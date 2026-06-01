@@ -3,18 +3,12 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import {
-  CallToolRequestSchema,
-  ListToolsRequestSchema,
-} from '@modelcontextprotocol/sdk/types.js';
+import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 import {
   GENERATE_FROM_JSON_SCHEMA_TOOL,
   generateFromJsonSchema,
 } from './tools/generate-from-json-schema';
-import {
-  GENERATE_FROM_OPENAPI_TOOL,
-  generateFromOpenapi,
-} from './tools/generate-from-openapi';
+import { GENERATE_FROM_OPENAPI_TOOL, generateFromOpenapi } from './tools/generate-from-openapi';
 import { GET_CONCEPT_TOOL, getConcept } from './tools/get-concept';
 import { GET_WIDGET_SPEC_TOOL, getWidgetSpec } from './tools/get-widget-spec';
 import {
@@ -32,7 +26,10 @@ function readPackageMeta(): { name: string; version: string } {
   const here = dirname(fileURLToPath(import.meta.url));
   for (const candidate of [join(here, 'package.json'), join(here, '..', 'package.json')]) {
     try {
-      const pkg = JSON.parse(readFileSync(candidate, 'utf-8')) as { name?: string; version?: string };
+      const pkg = JSON.parse(readFileSync(candidate, 'utf-8')) as {
+        name?: string;
+        version?: string;
+      };
       if (pkg.name && pkg.version) return { name: pkg.name, version: pkg.version };
     } catch {
       // try next
@@ -67,8 +64,8 @@ const SERVER_INSTRUCTIONS =
   'Schema (e.g. an API request body), call `generate_from_json_schema`. For an OpenAPI 3.x spec, ' +
   'call `generate_from_openapi`: pass `operation` as "METHOD /path" (e.g. "POST /users") or an ' +
   'exact operationId, plus the spec as a parsed `document` or a `documentUrl` to fetch — it ' +
-  'resolves the operation\'s request body, dereferences `$ref`s, and falls back to the ' +
-  'operation\'s parameters when there is no request body.\n' +
+  "resolves the operation's request body, dereferences `$ref`s, and falls back to the " +
+  "operation's parameters when there is no request body.\n" +
   '2. Building or editing by hand? Look up a single widget with `get_widget_spec` (its `kind`, ' +
   '`props`, and `validator` shape), and cross-cutting behavior that spans widgets — conditional ' +
   'rendering, per-state prop overrides — with `get_concept`.\n' +

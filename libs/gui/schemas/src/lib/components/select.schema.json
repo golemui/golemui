@@ -23,11 +23,7 @@
       "type": "array",
       "description": "Options may be primitive values (string/number), structured `{ label, value }` records, or arbitrary objects (paired with `labelField`/`valueField` for custom rendering).",
       "items": {
-        "type": [
-          "string",
-          "number",
-          "object"
-        ]
+        "type": ["string", "number", "object"]
       }
     },
     "placeholderProp": {
@@ -141,10 +137,6 @@
       "$ref": "../validators.schema.json#/$defs/validator"
     }
   },
-  "required": [
-    "kind",
-    "type",
-    "path"
-  ],
+  "required": ["kind", "type", "path"],
   "unevaluatedProperties": false
 }

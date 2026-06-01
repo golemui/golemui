@@ -24,24 +24,24 @@ That's all that's needed — every widget renders with the default look and the 
 
 Dark mode is **opt-in**, picked via a `data-theme` attribute on any ancestor element (most often `<html>` or `<body>`). The library never silently flips your page based on system preference — a component-library CSS import that quietly restyles a host page in dark systems is a surprise nobody wants, so you say what you want explicitly.
 
-| `data-theme` value | Effect                                                                            |
-| ------------------ | --------------------------------------------------------------------------------- |
-| _(no attribute)_   | Default light tokens everywhere.                                                  |
+| `data-theme` value | Effect                                                                                    |
+| ------------------ | ----------------------------------------------------------------------------------------- |
+| _(no attribute)_   | Default light tokens everywhere.                                                          |
 | `"auto"`           | Default theme, system-follow. Reads `prefers-color-scheme` — light by day, dark by night. |
-| `"dark"`           | Default theme, forced dark regardless of system preference.                       |
-| `"clay"`           | The bundled [Clay theme](#using-the-alternative-clay-theme), always light.        |
-| `"clay-auto"`      | Clay theme, system-follow.                                                        |
-| `"clay-dark"`      | Clay theme, forced dark.                                                          |
+| `"dark"`           | Default theme, forced dark regardless of system preference.                               |
+| `"clay"`           | The bundled [Clay theme](#using-the-alternative-clay-theme), always light.                |
+| `"clay-auto"`      | Clay theme, system-follow.                                                                |
+| `"clay-dark"`      | Clay theme, forced dark.                                                                  |
 
 ```html
 <!-- Always light (default) -->
 <html lang="en">
-
-<!-- Follow the user's system preference -->
-<html lang="en" data-theme="auto">
-
-<!-- Force dark for everyone, ignore system preference -->
-<html lang="en" data-theme="dark">
+  <!-- Follow the user's system preference -->
+  <html lang="en" data-theme="auto">
+    <!-- Force dark for everyone, ignore system preference -->
+    <html lang="en" data-theme="dark"></html>
+  </html>
+</html>
 ```
 
 The attribute can sit on `<html>`, `<body>`, or any container — the cascade decides what each form picks up. See [Scoped themes](#scoped-themes) below for mixing modes on the same page.

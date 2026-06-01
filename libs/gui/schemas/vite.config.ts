@@ -9,10 +9,7 @@ export default defineConfig(() => ({
   cacheDir: '../../../node_modules/.vite/libs/gui/schemas',
   plugins: [
     nxViteTsPaths(),
-    nxCopyAssetsPlugin([
-      '*.md',
-      { input: 'src/lib', glob: '**/*.schema.json', output: 'schemas' },
-    ]),
+    nxCopyAssetsPlugin(['*.md', { input: 'src/lib', glob: '**/*.schema.json', output: 'schemas' }]),
     dts({
       entryRoot: 'src',
       tsconfigPath: join(__dirname, 'tsconfig.lib.json'),

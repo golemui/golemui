@@ -5,12 +5,7 @@ import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 import { type TagsProps } from '@golemui/gui-shared';
 import './pills';
-import type {
-  GuiPillEventDetail,
-  GuiPillItem,
-  GuiPillKeydownEventDetail,
-  GuiPills,
-} from './pills';
+import type { GuiPillEventDetail, GuiPillItem, GuiPillKeydownEventDetail, GuiPills } from './pills';
 import { styleMap } from 'lit-html/directives/style-map.js';
 
 type TagsSeparator = 'Enter' | ',' | 'Tab' | 'blur' | string;
@@ -124,7 +119,7 @@ export class GuiTags extends LitElement {
 
           <gui-pills
             class="gui-tags__pills"
-            style=${styleMap(pillItems.length ? {} : {'min-width': 0})}
+            style=${styleMap(pillItems.length ? {} : { 'min-width': 0 })}
             .items=${pillItems}
             .removable=${true}
             .clickable=${false}
@@ -263,9 +258,7 @@ export class GuiTags extends LitElement {
     if (!text) return;
 
     const separators = this.getSeparators();
-    const charSeparators = separators.filter(
-      (s) => s !== 'Enter' && s !== 'Tab' && s !== 'blur',
-    );
+    const charSeparators = separators.filter((s) => s !== 'Enter' && s !== 'Tab' && s !== 'blur');
     if (charSeparators.length === 0) return;
 
     const splitRegex = new RegExp(

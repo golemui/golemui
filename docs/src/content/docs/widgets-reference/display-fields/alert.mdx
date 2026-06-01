@@ -53,22 +53,24 @@ The `text` prop supports [string interpolation](/features/string-interpolation/)
   ```ts
   import { gui } from '@golemui/gui-shared';
 
-  gui.displays.alert({
-    uid: 'greeting',
-    text: "Hello {{$form.firstName + ' ' + $form.lastName}}, status: {{$meta.connectionStatus}}",
-  });
-  ```
-  </Fragment>
-  <Fragment slot="json">
-  ```json
-  {
-    "kind": "display",
-    "type": "alert",
-    "props": {
-      "text": "Hello {{$form.firstName + ' ' + $form.lastName}}, status: {{$meta.connectionStatus}}"
-    }
+gui.displays.alert({
+uid: 'greeting',
+text: "Hello {{$form.firstName + ' ' + $form.lastName}}, status: {{$meta.connectionStatus}}",
+});
+
+````
+</Fragment>
+<Fragment slot="json">
+```json
+{
+  "kind": "display",
+  "type": "alert",
+  "props": {
+    "text": "Hello {{$form.firstName + ' ' + $form.lastName}}, status: {{$meta.connectionStatus}}"
   }
-  ```
+}
+````
+
   </Fragment>
 </DslTabs>
 
@@ -79,22 +81,24 @@ Use `$errors` and `$formIsInvalid` to show validation feedback inline:
   ```ts
   import { gui } from '@golemui/gui-shared';
 
-  gui.displays.alert({
-    uid: 'form_status',
-    text: "{{$formIsInvalid ? 'Please fix the errors below.' : 'Everything looks good!'}}",
-  });
-  ```
-  </Fragment>
-  <Fragment slot="json">
-  ```json
-  {
-    "kind": "display",
-    "type": "alert",
-    "props": {
-      "text": "{{$formIsInvalid ? 'Please fix the errors below.' : 'Everything looks good!'}}"
-    }
+gui.displays.alert({
+uid: 'form_status',
+text: "{{$formIsInvalid ? 'Please fix the errors below.' : 'Everything looks good!'}}",
+});
+
+````
+</Fragment>
+<Fragment slot="json">
+```json
+{
+  "kind": "display",
+  "type": "alert",
+  "props": {
+    "text": "{{$formIsInvalid ? 'Please fix the errors below.' : 'Everything looks good!'}}"
   }
-  ```
+}
+````
+
   </Fragment>
 </DslTabs>
 

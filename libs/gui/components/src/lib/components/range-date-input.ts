@@ -120,7 +120,9 @@ export class GuiRangeDateInput extends LitElement {
 
       <div class="gui-widget">
         <div
-          class="gui-widget-input gui-range-date-input ${this.icon ? 'gui-range-date-input--icon' : ''}"
+          class="gui-widget-input gui-range-date-input ${this.icon
+            ? 'gui-range-date-input--icon'
+            : ''}"
           role="group"
           aria-label=${this.label ?? 'Date range input'}
         >
@@ -130,7 +132,7 @@ export class GuiRangeDateInput extends LitElement {
 
           <gui-pills
             class="gui-range-date-input__pills"
-            style=${styleMap(pillItems.length ? {} : {'min-width': 0})}
+            style=${styleMap(pillItems.length ? {} : { 'min-width': 0 })}
             .items=${pillItems}
             .removable=${true}
             .clickable=${true}
@@ -204,9 +206,7 @@ export class GuiRangeDateInput extends LitElement {
 
   private onPillClickEvent = (e: CustomEvent<GuiPillEventDetail>) => {
     const sorted = this.getSortedPills();
-    const range = sorted.find(
-      (pill) => `${pill.start}-${pill.end ?? pill.start}` === e.detail.key,
-    );
+    const range = sorted.find((pill) => `${pill.start}-${pill.end ?? pill.start}` === e.detail.key);
     if (range) this.onPillClick(range);
   };
 

@@ -40,7 +40,10 @@ const SUPPORTED_STRING_FORMATS = new Set([
   'duration',
 ]);
 
-export function buildStringValidator(s: JsonSchemaLike, required: boolean): StringValidator | undefined {
+export function buildStringValidator(
+  s: JsonSchemaLike,
+  required: boolean,
+): StringValidator | undefined {
   const v: StringValidator = { type: 'string' };
   let used = false;
   if (required) {

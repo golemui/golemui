@@ -65,10 +65,7 @@ describe('Datepicker schema validation', () => {
               minDate: '2023-01-01',
               maxDate: '2025-12-31',
               numberOfMonths: 2,
-              disabledRanges: [
-                { start: '2023-12-25', end: '2024-01-01' },
-                { start: '2024-07-04' },
-              ],
+              disabledRanges: [{ start: '2023-12-25', end: '2024-01-01' }, { start: '2024-07-04' }],
             },
           },
         ],

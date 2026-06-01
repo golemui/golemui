@@ -27,20 +27,21 @@ Suppose you want to know which languages your users actually pick. GolemUI dispa
 import type { Middleware, State, Action } from '@golemui/core';
 import { analytics } from './analytics'; // your analytics SDK
 
-export const languageAnalyticsMiddleware: Middleware<State, Action> = (store) => (next) => (action) => {
-  if (action.type !== 'SET_LANGUAGE') {
-    return next(action);
-  }
+export const languageAnalyticsMiddleware: Middleware<State, Action> =
+  (store) => (next) => (action) => {
+    if (action.type !== 'SET_LANGUAGE') {
+      return next(action);
+    }
 
-  const from = store.getState().lang;
-  const result = next(action);
-  const to = action.payload.lang;
+    const from = store.getState().lang;
+    const result = next(action);
+    const to = action.payload.lang;
 
-  if (from !== to) {
-    analytics.track('language_changed', { from, to });
-  }
-  return result;
-};
+    if (from !== to) {
+      analytics.track('language_changed', { from, to });
+    }
+    return result;
+  };
 ```
 
 Two things worth pointing out:

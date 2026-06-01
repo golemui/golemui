@@ -303,6 +303,5 @@ describe('Dropdown schema validation', () => {
         validate.errors?.some((e) => e.keyword === 'type' && e.instancePath === '/props/items'),
       ).toBe(true);
     });
-
   });
 });

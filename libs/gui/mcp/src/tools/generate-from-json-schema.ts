@@ -1,4 +1,8 @@
-import { jsonSchemaToGui, type JsonSchemaLike, type MapOptions } from '../mapping/json-schema-to-gui';
+import {
+  jsonSchemaToGui,
+  type JsonSchemaLike,
+  type MapOptions,
+} from '../mapping/json-schema-to-gui';
 import { validateFormDefinition } from './validate-form-definition';
 
 export type GenerateFromJsonSchemaInput = {
@@ -52,7 +56,8 @@ export const GENERATE_FROM_JSON_SCHEMA_TOOL = {
       },
       submitLabel: {
         type: 'string' as const,
-        description: 'Label for the submit button when `submitAction` is true. Defaults to "Submit".',
+        description:
+          'Label for the submit button when `submitAction` is true. Defaults to "Submit".',
       },
       layout: {
         type: 'string' as const,

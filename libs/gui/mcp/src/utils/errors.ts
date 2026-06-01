@@ -19,7 +19,18 @@ export type FormattedResult = {
   warnings: FormattedError[];
 };
 
-const STRING_FORMATS = ['email', 'hostname', 'ipv4', 'ipv6', 'url', 'uuid', 'date', 'time', 'date-time', 'duration'];
+const STRING_FORMATS = [
+  'email',
+  'hostname',
+  'ipv4',
+  'ipv6',
+  'url',
+  'uuid',
+  'date',
+  'time',
+  'date-time',
+  'duration',
+];
 const WIDGET_TYPES = Object.keys(COMPONENT_SCHEMAS);
 
 function levenshtein(a: string, b: string): number {
@@ -60,7 +71,25 @@ function nearest(target: string, candidates: string[]): string | undefined {
 
 function suggestForAdditional(propertyName: string, instancePath: string): string | undefined {
   if (/\/validator(\/|$)/.test(instancePath)) {
-    const validatorKeys = ['type', 'required', 'minLength', 'maxLength', 'minimum', 'maximum', 'pattern', 'format', 'const', 'enum', 'messages', 'minItems', 'maxItems', 'uniqueItems', 'multipleOf', 'exclusiveMinimum', 'exclusiveMaximum'];
+    const validatorKeys = [
+      'type',
+      'required',
+      'minLength',
+      'maxLength',
+      'minimum',
+      'maximum',
+      'pattern',
+      'format',
+      'const',
+      'enum',
+      'messages',
+      'minItems',
+      'maxItems',
+      'uniqueItems',
+      'multipleOf',
+      'exclusiveMinimum',
+      'exclusiveMaximum',
+    ];
     const guess = nearest(propertyName, validatorKeys);
     // Don't suggest the same property name back — that means the property is valid for *some*
     // validator type but not the one in use. The error message itself already conveys this.
@@ -75,23 +104,32 @@ function suggestForEnum(value: unknown, allowed: unknown[]): string | undefined 
   const stringAllowed = allowed.filter((v): v is string => typeof v === 'string');
   if (!stringAllowed.length) return undefined;
   const guess = nearest(value, stringAllowed);
-  if (guess) return `Did you mean \`${guess}\`? Allowed values: ${stringAllowed.map((v) => `\`${v}\``).join(', ')}.`;
+  if (guess)
+    return `Did you mean \`${guess}\`? Allowed values: ${stringAllowed.map((v) => `\`${v}\``).join(', ')}.`;
   return `Allowed values: ${stringAllowed.map((v) => `\`${v}\``).join(', ')}.`;
 }
 
 const VALIDATOR_TYPES = ['string', 'number', 'integer', 'boolean', 'array', 'custom'];
 
-function suggestForConst(value: unknown, allowed: unknown, instancePath: string): string | undefined {
+function suggestForConst(
+  value: unknown,
+  allowed: unknown,
+  instancePath: string,
+): string | undefined {
   if (typeof value !== 'string' || typeof allowed !== 'string') return undefined;
   // Common: a widget has wrong `type` value. Match only widget-level `/type` paths, NOT nested
   // type fields like `/validator/type` or `/props/items/type`.
   if (/^\/form\/\d+(?:\/children\/\d+)*(?:\/props\/template)?\/type$/.test(instancePath)) {
     const guess = nearest(value, WIDGET_TYPES);
-    return guess ? `Did you mean \`type: '${guess}'\`?` : `Valid widget types: ${WIDGET_TYPES.map((v) => `\`${v}\``).join(', ')}.`;
+    return guess
+      ? `Did you mean \`type: '${guess}'\`?`
+      : `Valid widget types: ${WIDGET_TYPES.map((v) => `\`${v}\``).join(', ')}.`;
   }
   if (instancePath.endsWith('/validator/type')) {
     const guess = nearest(value, VALIDATOR_TYPES);
-    return guess ? `Did you mean \`type: '${guess}'\`?` : `Allowed validator types: ${VALIDATOR_TYPES.map((v) => `\`${v}\``).join(', ')}.`;
+    return guess
+      ? `Did you mean \`type: '${guess}'\`?`
+      : `Allowed validator types: ${VALIDATOR_TYPES.map((v) => `\`${v}\``).join(', ')}.`;
   }
   return undefined;
 }
@@ -288,15 +326,13 @@ function collectWidgetErrors(
     const widgetType = (widget as { type?: unknown } | undefined)?.type;
     if (typeof widgetType !== 'string' || !widgetType) {
       // No usable `type` at all — that's a hard error.
-      out.push(
-        {
-          keyword: 'required',
-          instancePath: widgetPath,
-          schemaPath: '',
-          params: { missingProperty: 'type' },
-          message: `Widget at ${widgetPath} is missing or has an invalid \`type\``,
-        } as unknown as ErrorObject,
-      );
+      out.push({
+        keyword: 'required',
+        instancePath: widgetPath,
+        schemaPath: '',
+        params: { missingProperty: 'type' },
+        message: `Widget at ${widgetPath} is missing or has an invalid \`type\``,
+      } as unknown as ErrorObject);
     } else {
       // Type is set but doesn't match any built-in — assume custom widget and warn.
       warnings.push({
@@ -372,7 +408,8 @@ function collectValidatorErrors(validator: unknown, path: string, out: ErrorObje
   const v = validator as { type?: unknown };
   const t = typeof v.type === 'string' ? v.type : null;
   const branches = getValidatorBranches();
-  const matchedType = t && branches.includes(t) ? t : t ? nearest(t, branches as string[]) : undefined;
+  const matchedType =
+    t && branches.includes(t) ? t : t ? nearest(t, branches as string[]) : undefined;
   if (!matchedType) {
     out.push({
       keyword: 'enum',
