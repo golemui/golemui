@@ -7,13 +7,6 @@ gui-markdown {
     .gui-markdown__preview {
       display: block;
     }
-    .gui-markdown__toolbar {
-      width: calc(50% - (var(--gui-space-2) * 2));
-    }
-    textarea {
-      padding-top: var(--gui-space-12);
-      width: calc(50% - (var(--gui-space-3) * 2));
-    }
   }
 
   .gui-widget {
@@ -30,10 +23,6 @@ gui-markdown {
       border-color 0.2s,
       box-shadow 0.2s;
 
-    .gui-widget-input {
-      border: 0;
-    }
-
     &:has(textarea[aria-invalid='true']) {
       border-color: var(--gui-intent-error);
     }
@@ -48,32 +37,31 @@ gui-markdown {
       box-shadow: var(--gui-shadow-focus);
     }
 
-    textarea:focus,
-    textarea[aria-invalid='true']:focus {
-      outline: none;
-      box-shadow: none;
-    }
-
-    textarea {
-      border-radius: 0;
+    .gui-widget-input {
+      flex: 1;
+      height: auto;
       border: 0;
-      padding: var(--gui-space-12) var(--gui-space-3) var(--gui-space-2);
+      box-shadow: none;
+      border-radius: 0;
+      padding: var(--gui-space-3) var(--gui-space-2);
       width: calc(100% - (var(--gui-space-3) * 2));
       resize: vertical;
+
+      &:focus,
+      &[aria-invalid='true']:focus {
+        border: 0;
+        outline: none;
+        box-shadow: none;
+      }
     }
   }
 
   .gui-markdown__preview {
     display: none;
-    position: absolute;
-    inset-inline-end: 0;
-    width: calc(50% - (var(--gui-space-3) * 2));
-    height: calc(100% - var(--gui-space-2));
-    padding-top: var(--gui-space-2);
-    padding-left: var(--gui-space-3);
-    padding-right: var(--gui-space-3);
+    padding: var(--gui-space-3) var(--gui-space-2);
     border-left: 1px solid var(--gui-border-default);
     overflow-y: scroll;
+    flex: 1;
 
     a {
       color: var(--gui-intent-primary);
@@ -86,15 +74,22 @@ gui-markdown {
   }
 
   .gui-markdown__toolbar {
-    position: absolute;
-    top: 0;
     width: calc(100% - (var(--gui-space-2) * 2));
     display: flex;
     justify-content: space-between;
     padding: var(--gui-space-1) var(--gui-space-2) var(--gui-space-1);
     background: var(--gui-bg-surface);
     border-bottom: 1px solid var(--gui-border-default);
+    border-top-right-radius: var(--gui-radius-md);
+    border-top-left-radius: var(--gui-radius-md);
     overflow: scroll;
+
+    // Hide scrollbars
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    &::-webkit-scrollbar {
+      display: none;
+    }
 
     &-separator {
       fill: var(--gui-text-default);
@@ -145,6 +140,14 @@ gui-markdown {
     }
   }
 
+  .gui-markdown__container {
+    display: flex;
+    flex-direction: row;
+    border-bottom-right-radius: var(--gui-radius-md);
+    border-bottom-left-radius: var(--gui-radius-md);
+    overflow: hidden;
+  }
+
   .gui-markdown--validation {
     grid-row: 3;
     display: flex;
@@ -169,18 +172,8 @@ gui-markdown {
 
 @container gui-markdown-widget (max-width: 768px) {
   gui-markdown .gui-widget.gui-markdown--with-preview {
-    .gui-markdown__preview {
-      display: block;
-      width: calc(100% - var(--gui-space-3) * 2);
-      height: calc(100% - var(--gui-space-12));
-      padding-top: var(--gui-space-12);
-    }
-    .gui-markdown__toolbar {
-      width: calc(100% - var(--gui-space-2) * 2);
-      z-index: 1;
-    }
     textarea {
-      margin-inline-start: -100%;
+      display: none;
     }
   }
 }

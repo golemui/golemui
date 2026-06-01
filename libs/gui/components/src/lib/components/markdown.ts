@@ -182,35 +182,39 @@ export class GuiMarkdown extends LitElement {
             </li>
           </ul>
         </nav>
-        <textarea
-          id=${ifDefined(this.uid)}
-          class=${classMap(fieldClasses)}
-          style=${styleMap(autoGrowStyles)}
-          ?required=${templateData.required}
-          ?disabled=${templateData.disabled}
-          ?readonly=${templateData.readonly}
-          placeholder=${ifDefined(templateData.placeholder)}
-          autocomplete=${this.autocomplete || nothing}
-          .value=${this.value || ''}
-          @input=${this.valueChanged}
-          @keyup=${this.detectFormats}
-          @mouseup=${this.detectFormats}
-          @blur=${this.onBlur}
-        ></textarea>
 
-        ${this.splitViewActive
-          ? html`
-              <section
-                data-cy=${ifDefined(this.uid ? `${this.uid}_markdown` : nothing)}
-                class="gui-markdown__preview"
-              >
-                <gui-markdown-text
-                  .md=${this.value || ''}
-                  .dependencies=${this.dependencies}
-                ></gui-markdown-text>
-              </section>
-            `
-          : nothing}
+        <div class="gui-markdown__container">
+          <textarea
+            id=${ifDefined(this.uid)}
+            class=${classMap(fieldClasses)}
+            style=${styleMap(autoGrowStyles)}
+            ?required=${templateData.required}
+            ?disabled=${templateData.disabled}
+            ?readonly=${templateData.readonly}
+            placeholder=${ifDefined(templateData.placeholder)}
+            autocomplete=${this.autocomplete || nothing}
+            .value=${this.value || ''}
+            @input=${this.valueChanged}
+            @keyup=${this.detectFormats}
+            @mouseup=${this.detectFormats}
+            @blur=${this.onBlur}
+          ></textarea>
+
+          ${this.splitViewActive
+            ? html`
+                <section
+                  data-cy=${ifDefined(this.uid ? `${this.uid}_markdown` : nothing)}
+                  class="gui-markdown__preview"
+                  style=${styleMap(autoGrowStyles)}
+                >
+                  <gui-markdown-text
+                    .md=${this.value || ''}
+                    .dependencies=${this.dependencies}
+                  ></gui-markdown-text>
+                </section>
+              `
+            : nothing}
+        </div>
       </div>
 
       <div class="gui-markdown--validation">
