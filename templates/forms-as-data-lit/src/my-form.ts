@@ -1,7 +1,8 @@
 import type { FormSubmitEvent } from '@golemui/core';
-import { GuiForm } from '@golemui/gui-react';
+import '@golemui/gui-lit';
 import { gui } from '@golemui/gui-shared';
-import { useState } from 'react';
+import { html, LitElement } from 'lit';
+import { customElement, state } from 'lit/decorators.js';
 
 /**
  * Forms as data
@@ -62,39 +63,47 @@ function toForm(schema: Schema) {
           });
       }
     }),
-    // actionType:'submit' validates the whole form first — formSubmit only
-    // fires when it's valid.
     gui.actions.button({ label: 'Save', actionType: 'submit' }),
   ];
 }
 
-const config = {
-  formDef: toForm(response.schema),
-  data: response.data,
-};
+@customElement('my-form')
+export class MyForm extends LitElement {
+  protected config = {
+    formDef: toForm(response.schema),
+    data: response.data,
+  };
 
-export function App() {
-  const [saved, setSaved] = useState<Record<string, unknown> | null>(null);
+  @state() private saved: Record<string, unknown> | null = null;
 
-  function handleSubmit(event: FormSubmitEvent) {
-    // event.data is the typed payload the backend would receive.
-    setSaved(event.data);
+  override createRenderRoot() {
+    return this;
   }
 
-  return (
-    <>
+  private onFormSubmit(event: CustomEvent<FormSubmitEvent>) {
+    // event.detail.data is the typed payload the backend would receive.
+    this.saved = event.detail.data;
+  }
+
+  override render() {
+    return html`
       <h1>Forms as data</h1>
-      <p className="lede">
+      <p class="lede">
         The form below was derived from <code>schema</code> — not one line of
-        form markup. Edit the schema in <code>src/App.tsx</code> (add a field,
-        change a type) and watch the form follow. Try a bad email, then Save.
+        form markup. Edit the schema in <code>src/my-form.ts</code> (add a
+        field, change a type) and watch the form follow. Try a bad email, then
+        Save.
       </p>
-      <GuiForm config={config} formSubmit={handleSubmit} />
-      {saved && (
-        <pre className="received">
-          {`// what the backend receives\n${JSON.stringify(saved, null, 2)}`}
-        </pre>
-      )}
-    </>
-  );
+      <gui-form
+        .config=${this.config}
+        @formSubmit=${(e: CustomEvent<FormSubmitEvent>) => this.onFormSubmit(e)}
+      ></gui-form>
+      ${this.saved
+        ? html`<pre class="received">
+// what the backend receives
+${JSON.stringify(this.saved, null, 2)}</pre
+          >`
+        : null}
+    `;
+  }
 }

@@ -1,5 +1,5 @@
 {
-  "name": "golemui-forms-as-data-template",
+  "name": "golemui-forms-as-data-lit-template",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -11,16 +11,12 @@
   },
   "dependencies": {
     "@golemui/core": "0.16.2",
-    "@golemui/react": "0.16.2",
-    "@golemui/gui-react": "0.16.2",
+    "@golemui/lit": "0.16.2",
+    "@golemui/gui-lit": "0.16.2",
     "@golemui/gui-shared": "0.16.2",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "lit": "^3.3.1"
   },
   "devDependencies": {
-    "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0",
-    "@vitejs/plugin-react": "^4.3.4",
     "typescript": "~5.6.3",
     "vite": "^6.0.5"
   }

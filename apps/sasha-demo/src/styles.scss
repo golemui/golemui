@@ -166,45 +166,36 @@ select {
   color: #ffe5ec;
 }
 
-/* ─── Explanatory sandbox header (bare mode) ──────────────────────── */
+/* ─── Sandbox header (bare mode) — logo · framework picker · code ──── */
 .bare-bar {
   flex: 0 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1.25rem;
-  padding: 0.7rem 1.25rem;
+  gap: 1rem 1.5rem;
+  flex-wrap: wrap;
+  padding: 0.6rem 1.25rem;
   background: var(--sasha-surface);
   border-bottom: 1px solid var(--sasha-border);
 }
 .bare-bar-info {
   display: flex;
   align-items: center;
-  gap: 0.85rem;
+  gap: 0.7rem;
   min-width: 0;
 }
 .bare-logo {
   flex: 0 0 auto;
   font-family: 'Press Start 2P', monospace;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   color: var(--sasha-endpoint);
+  text-shadow: 0 0 14px rgba(106, 76, 255, 0.45);
 }
-.bare-tagline {
-  font-size: 0.92rem;
-  line-height: 1.35;
-  color: var(--sasha-muted);
-}
-.bare-tagline code {
-  font-family: 'Fira Code', monospace;
-  font-size: 0.82em;
-  background: var(--sasha-endpoint-soft);
-  color: var(--sasha-endpoint);
-  padding: 0.05rem 0.35rem;
-  border-radius: 4px;
-}
-.bare-tagline strong {
+.bare-title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
   color: var(--sasha-fg);
-  font-weight: 700;
 }
 .bare-bar-actions {
   flex: 0 0 auto;
@@ -225,6 +216,12 @@ select {
   padding: 0.6rem 0.8rem;
   box-shadow: 0 2px 0 $pixel-amber-deep;
   transition: transform 0.08s ease;
+  /* Fixed width — the framework name (REACT…ANGULAR) changes length, so a
+     fluid button would shove the header around on every pick. */
+  box-sizing: border-box;
+  width: 16rem;
+  text-align: center;
+  white-space: nowrap;
 }
 .bare-code-btn:hover {
   transform: translateY(-1px);
@@ -248,6 +245,121 @@ select {
 .bare-exit:hover {
   color: var(--sasha-fg);
   border-color: var(--sasha-endpoint);
+}
+
+/* Framework picker — the same 8-bit character tiles as /demos. Re-points the
+   live mount line + VIEW THE CODE; the mapper itself never changes. */
+.bare-fw {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
+}
+.bare-fw-label {
+  flex: 0 0 auto;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.5rem;
+  letter-spacing: 0.1em;
+  color: var(--sasha-muted);
+}
+.bare-fw-tiles {
+  display: flex;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+.bare-fw-tile {
+  appearance: none;
+  cursor: pointer;
+  background: $pixel-cream;
+  border: 3px solid var(--fw-color);
+  box-shadow: 3px 3px 0 var(--fw-shadow);
+  padding: 0.3rem 0.4rem 0.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  color: $pixel-dark;
+  font-family: 'Press Start 2P', monospace;
+  border-radius: 0;
+  transition: transform 0.07s ease, box-shadow 0.07s ease;
+  min-width: 58px;
+}
+.bare-fw-tile:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0 var(--fw-shadow);
+}
+.bare-fw-tile.is-selected {
+  background: var(--fw-color);
+  color: #fff;
+  box-shadow: 3px 3px 0 var(--fw-shadow), 0 0 0 2px $pixel-cream, 0 0 0 4px var(--fw-color);
+}
+.bare-fw-portrait {
+  width: 26px;
+  height: 26px;
+  background: var(--fw-color);
+  border: 2px solid $pixel-dark;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.bare-fw-tile.is-selected .bare-fw-portrait {
+  background: $pixel-cream;
+}
+.bare-fw-mono {
+  font-size: 0.62rem;
+  color: $pixel-dark;
+}
+.bare-fw-name {
+  font-size: 0.42rem;
+  letter-spacing: 0.06em;
+}
+
+/* ─── The return trip — a panel right under the Save button ────────── */
+.return-bar {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.8rem 0.9rem;
+  background: var(--sasha-bg);
+  border: 2px dashed var(--sasha-border);
+  border-radius: 10px;
+}
+.return-bar.is-filled {
+  background: var(--sasha-app-soft);
+  border: 2px solid var(--sasha-app);
+}
+.rb-cap {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  color: var(--sasha-app);
+  text-shadow: 0 0 12px var(--sasha-app-soft);
+}
+.rb-cap--idle {
+  color: var(--sasha-muted);
+  text-shadow: none;
+}
+.rb-json {
+  margin: 0;
+  padding: 0.6rem 0.75rem;
+  background: var(--sasha-surface);
+  border: 1px solid var(--sasha-app);
+  border-radius: 8px;
+  font-family: 'Fira Code', ui-monospace, monospace;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--sasha-fg);
+  overflow-x: auto;
+  white-space: pre;
+}
+.rb-note {
+  font-size: 0.82rem;
+  line-height: 1.4;
+  color: var(--sasha-muted);
+}
+.rb-note strong {
+  color: var(--sasha-fg);
 }
 
 /* ─── Mini buttons (prev / restart) ──────────────────────────────── */
@@ -476,40 +588,166 @@ select {
   overflow: hidden;
 }
 
-/* The bare sandbox: DATA · {gui.} engine · FORM */
+/* The bare sandbox: DATA · the MAPPER · FORM */
 .sasha-shell.is-bare .sasha-stage {
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1.1fr);
+  grid-template-columns: minmax(0, 0.95fr) minmax(330px, 0.95fr) minmax(0, 1fr);
   padding: 1.25rem;
   gap: 1.1rem;
   align-items: stretch;
 }
 
-/* The engine column between the two panes — names GolemUI as the mapper */
-.bare-flow {
+/* Narrow viewports: stack the three panes so the mapper code stays legible. */
+@media (max-width: 1080px) {
+  .sasha-shell.is-bare .sasha-stage {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* The mapper card between DATA and FORM — and the pitch. Matches the other
+   two cards (card-head + body), and carries the forms-as-data sell: map the
+   record, OR ship the form definition whole. The edited type's case pulses. */
+.card--mapper {
+  border-top: 3px solid var(--sasha-endpoint);
+  min-width: 0;
+}
+.mapper-body {
   display: flex;
   flex-direction: column;
+  gap: 0.85rem;
+}
+.mp-lead {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.45;
+  color: var(--sasha-fg);
+}
+.mp-lead strong {
+  color: var(--sasha-endpoint);
+}
+.mp-mode {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.7rem 0.75rem;
+  border: 1px solid var(--sasha-border);
+  border-left: 3px solid var(--sasha-endpoint);
+  border-radius: 8px;
+  background: var(--sasha-endpoint-soft);
+}
+.mp-mode--alt {
+  border-left-color: var(--sasha-app);
+  background: var(--sasha-app-soft);
+}
+.mp-mode-head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.mp-mode-num {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  padding: 0 0.2rem;
-  text-align: center;
-}
-.flow-engine {
+  width: 1.25rem;
+  height: 1.25rem;
   font-family: 'Press Start 2P', monospace;
-  font-size: 0.85rem;
+  font-size: 0.55rem;
+  color: #fff;
+  background: var(--sasha-endpoint);
+  border-radius: 4px;
+}
+.mp-mode--alt .mp-mode-num {
+  background: var(--sasha-app);
+}
+.mp-mode-name {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.06em;
+  color: var(--sasha-fg);
+}
+.mp-mode-tag {
+  margin-left: auto;
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   color: var(--sasha-endpoint);
-  text-shadow: 0 0 14px rgba(106, 76, 255, 0.55);
+  background: var(--sasha-surface);
+  border: 1px solid var(--sasha-endpoint);
+  border-radius: 999px;
+  padding: 0.1rem 0.45rem;
 }
-.flow-arrow {
-  font-size: 1.6rem;
-  line-height: 1;
-  color: $pixel-amber;
-  text-shadow: 0 0 10px rgba(249, 211, 66, 0.5);
-}
-.flow-cap {
-  font-size: 0.72rem;
-  line-height: 1.3;
+.mp-mode-text {
+  margin: 0;
+  font-size: 0.86rem;
+  line-height: 1.45;
   color: var(--sasha-muted);
+}
+.mp-mode-text strong {
+  color: var(--sasha-fg);
+}
+.mp-mode-text code {
+  font-family: 'Fira Code', ui-monospace, monospace;
+  font-size: 0.82em;
+  color: var(--sasha-app);
+}
+.mp-code {
+  margin: 0;
+  padding: 0.6rem 0.65rem;
+  background: var(--sasha-bg);
+  border: 1px solid var(--sasha-border);
+  border-radius: 8px;
+  font-family: 'Fira Code', ui-monospace, monospace;
+  font-size: 0.71rem;
+  line-height: 1.55;
+  color: var(--sasha-fg);
+  overflow-x: auto;
+}
+.mp-line {
+  display: block;
+  border-radius: 4px;
+  /* keep the highlight box from collapsing the monospace columns */
+  white-space: pre;
+}
+.mp-line.is-pulse {
+  animation: mp-pulse 0.65s ease;
+}
+@keyframes mp-pulse {
+  0% {
+    background: transparent;
+    box-shadow: none;
+  }
+  35% {
+    background: var(--sasha-endpoint-soft);
+    box-shadow: -0.5rem 0 0 var(--sasha-endpoint-soft), 0.5rem 0 0 var(--sasha-endpoint-soft);
+    color: var(--sasha-endpoint);
+  }
+  100% {
+    background: transparent;
+    box-shadow: none;
+  }
+}
+.mp-mount-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.mp-mount-cap {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.48rem;
+  letter-spacing: 0.08em;
+  color: var(--sasha-muted);
+}
+.mp-mount {
+  margin: 0;
+  padding: 0.55rem 0.7rem;
+  background: var(--sasha-endpoint-soft);
+  border: 1px dashed var(--sasha-endpoint);
+  border-radius: 8px;
+  font-family: 'Fira Code', ui-monospace, monospace;
+  font-size: 0.72rem;
+  line-height: 1.5;
+  color: var(--sasha-endpoint);
+  overflow-x: auto;
+  white-space: pre;
 }
 
 /* Column labels over the editable data rows */
@@ -595,22 +833,6 @@ select {
   background: var(--sasha-app-soft);
 }
 
-/* the engine kicks as it maps the change across */
-.bare-flow.is-active .flow-engine {
-  animation: flow-kick 0.5s ease;
-}
-.bare-flow.is-active .flow-arrow {
-  animation: flow-arrow 0.5s ease;
-}
-@keyframes flow-kick {
-  0%, 100% { transform: scale(1); }
-  40% { transform: scale(1.22); }
-}
-@keyframes flow-arrow {
-  0% { transform: translateX(0); }
-  50% { transform: translateX(7px); }
-  100% { transform: translateX(0); }
-}
 
 
 /* ─── Big RPG stats (now grid items in the bottom battle frame) ────── */

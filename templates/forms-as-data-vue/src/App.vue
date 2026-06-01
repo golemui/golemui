@@ -1,7 +1,8 @@
+<script setup lang="ts">
 import type { FormSubmitEvent } from '@golemui/core';
-import { GuiForm } from '@golemui/gui-react';
-import { gui } from '@golemui/gui-shared';
-import { useState } from 'react';
+import { GuiForm } from '@golemui/gui-vue';
+import { gui, type GuiFormInitConfig } from '@golemui/gui-shared';
+import { ref } from 'vue';
 
 /**
  * Forms as data
@@ -62,39 +63,31 @@ function toForm(schema: Schema) {
           });
       }
     }),
-    // actionType:'submit' validates the whole form first — formSubmit only
-    // fires when it's valid.
     gui.actions.button({ label: 'Save', actionType: 'submit' }),
   ];
 }
 
-const config = {
+const config: GuiFormInitConfig = {
   formDef: toForm(response.schema),
   data: response.data,
 };
 
-export function App() {
-  const [saved, setSaved] = useState<Record<string, unknown> | null>(null);
+const saved = ref<Record<string, unknown> | null>(null);
 
-  function handleSubmit(event: FormSubmitEvent) {
-    // event.data is the typed payload the backend would receive.
-    setSaved(event.data);
-  }
-
-  return (
-    <>
-      <h1>Forms as data</h1>
-      <p className="lede">
-        The form below was derived from <code>schema</code> — not one line of
-        form markup. Edit the schema in <code>src/App.tsx</code> (add a field,
-        change a type) and watch the form follow. Try a bad email, then Save.
-      </p>
-      <GuiForm config={config} formSubmit={handleSubmit} />
-      {saved && (
-        <pre className="received">
-          {`// what the backend receives\n${JSON.stringify(saved, null, 2)}`}
-        </pre>
-      )}
-    </>
-  );
+function onFormSubmit(event: FormSubmitEvent) {
+  // event.data is the typed payload the backend would receive.
+  saved.value = event.data;
 }
+</script>
+
+<template>
+  <h1>Forms as data</h1>
+  <p class="lede">
+    The form below was derived from <code>schema</code> — not one line of form
+    markup. Edit the schema in <code>src/App.vue</code> (add a field, change a
+    type) and watch the form follow. Try a bad email, then Save.
+  </p>
+  <GuiForm :config="config" @form-submit="onFormSubmit" />
+  <pre v-if="saved" class="received">// what the backend receives
+{{ JSON.stringify(saved, null, 2) }}</pre>
+</template>

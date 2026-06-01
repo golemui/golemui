@@ -1,7 +1,7 @@
-import type { FormSubmitEvent } from '@golemui/core';
-import { GuiForm } from '@golemui/gui-react';
+import '@golemui/gui-components/index.css';
+import '@golemui/gui-lit';
 import { gui } from '@golemui/gui-shared';
-import { useState } from 'react';
+import './styles.css';
 
 /**
  * Forms as data
@@ -15,12 +15,8 @@ import { useState } from 'react';
  * numbers, booleans are booleans), not a bag of strings.
  */
 
-type FieldType = 'string' | 'number' | 'date' | 'boolean' | 'enum';
-type Field = { type: FieldType; label: string; format?: 'email'; options?: string[] };
-type Schema = Record<string, Field>;
-
 // What the server sends: the data, plus the shape that describes it.
-const response: { data: Record<string, unknown>; schema: Schema } = {
+const response = {
   data: {
     name: 'Alex García',
     email: 'alex@example.com',
@@ -38,7 +34,7 @@ const response: { data: Record<string, unknown>; schema: Schema } = {
 };
 
 // The only "form code" you write: one GolemUI input per field type.
-function toForm(schema: Schema) {
+function toForm(schema) {
   return [
     ...Object.entries(schema).map(([key, field]) => {
       switch (field.type) {
@@ -62,39 +58,24 @@ function toForm(schema: Schema) {
           });
       }
     }),
-    // actionType:'submit' validates the whole form first — formSubmit only
-    // fires when it's valid.
     gui.actions.button({ label: 'Save', actionType: 'submit' }),
   ];
 }
 
-const config = {
+const form = document.getElementById('app-form');
+form.config = {
   formDef: toForm(response.schema),
   data: response.data,
 };
 
-export function App() {
-  const [saved, setSaved] = useState<Record<string, unknown> | null>(null);
+const received = document.getElementById('received');
 
-  function handleSubmit(event: FormSubmitEvent) {
-    // event.data is the typed payload the backend would receive.
-    setSaved(event.data);
-  }
-
-  return (
-    <>
-      <h1>Forms as data</h1>
-      <p className="lede">
-        The form below was derived from <code>schema</code> — not one line of
-        form markup. Edit the schema in <code>src/App.tsx</code> (add a field,
-        change a type) and watch the form follow. Try a bad email, then Save.
-      </p>
-      <GuiForm config={config} formSubmit={handleSubmit} />
-      {saved && (
-        <pre className="received">
-          {`// what the backend receives\n${JSON.stringify(saved, null, 2)}`}
-        </pre>
-      )}
-    </>
-  );
-}
+form.addEventListener('formSubmit', (event) => {
+  // event.detail.data is the typed payload the backend would receive.
+  received.hidden = false;
+  received.textContent = `// what the backend receives\n${JSON.stringify(
+    event.detail.data,
+    null,
+    2,
+  )}`;
+});

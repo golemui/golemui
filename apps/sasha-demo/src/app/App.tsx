@@ -1,3 +1,4 @@
+import type { FormSubmitEvent } from '@golemui/core';
 import { GuiForm, widgetLoaders } from '@golemui/gui-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
@@ -39,6 +40,25 @@ const CHARACTERS: Character[] = [
   { id: 'vue',     name: 'VUE',     klass: 'REACTIVE RANGER', color: '#41b883', shadow: '#1f6e4d', monogram: 'V' },
   { id: 'vanilla', name: 'JS',      klass: 'VANILLA ROGUE',   color: '#f7df1e', shadow: '#8a7a00', monogram: '{}' },
 ];
+
+// Each framework's runnable forms-as-data starter (opened by VIEW THE CODE),
+// and the one line that mounts the form in that framework. The mapper itself
+// is identical everywhere — only the host changes.
+const TEMPLATE_BY_FW: Record<Framework, string> = {
+  react: 'forms-as-data',
+  angular: 'forms-as-data-angular',
+  lit: 'forms-as-data-lit',
+  vue: 'forms-as-data-vue',
+  vanilla: 'forms-as-data-js',
+};
+
+const MOUNT_BY_FW: Record<Framework, string> = {
+  react: '<GuiForm config={config} formSubmit={onSubmit} />',
+  angular: '<gui-form [config]="config" (formSubmit)="onSubmit($event)">',
+  vue: '<GuiForm :config="config" @form-submit="onSubmit" />',
+  lit: '<gui-form .config=${config} @formSubmit=${onSubmit}>',
+  vanilla: "form.config = config;\nform.addEventListener('formSubmit', onSubmit);",
+};
 
 /* ─── Scenes ─────────────────────────────────────────────────────────── */
 
@@ -151,7 +171,7 @@ export function App() {
   const [bareMode, setBareMode] = useState(START_BARE);
   const [reachedEnding, setReachedEnding] = useState(false);
   const [framework, setFramework] = useState<Framework | null>(
-    START_BARE ? 'react' : START_FW,
+    START_BARE ? START_FW ?? 'react' : START_FW,
   );
   const [tab, setTab] = useState<string | null>(START_BARE ? 'profile' : null);
   const [endpointRows, setEndpointRows] = useState<Record<string, RecordRow[]>>({});
@@ -168,6 +188,8 @@ export function App() {
   const [victory, setVictory] = useState(false); // quest complete screen
   const [typingDone, setTypingDone] = useState(false); // top prompt finished
   const [rebuiltPulse, setRebuiltPulse] = useState(false); // flashes the form on each edit
+  const [mapType, setMapType] = useState<FieldType | null>(null); // last-edited field type — pulses its case in the mapper
+  const [submitted, setSubmitted] = useState<Record<string, unknown> | null>(null); // the typed payload Save handed back
 
   // Visible endpoints — all three forms are available from the start.
   const sceneNumber = reachedEnding ? 99 : (sceneId as number);
@@ -274,10 +296,17 @@ export function App() {
 
   function handleTabClick(id: string) {
     setTab(id);
+    setSubmitted(null); // the readout belongs to the form you're leaving
   }
 
   function bumpEdits() {
     setShapeEdits((n) => n + 1);
+    setSubmitted(null); // shape/value changed — the last payload is stale
+  }
+
+  // Record the field type just touched so the mapper can pulse its case.
+  function noteEdit(type: FieldType) {
+    setMapType(type);
   }
 
   function patchTabRows(updater: (rs: RecordRow[]) => RecordRow[]) {
@@ -386,10 +415,12 @@ export function App() {
   }
 
   // "View the code" — opens THIS example in StackBlitz (the home page uses the
-  // same mechanism). The runnable source lives at templates/forms-as-data.
+  // same mechanism). Each framework has its own runnable forms-as-data starter
+  // under templates/, so the code matches the framework the user picked.
   function openCode() {
+    const template = TEMPLATE_BY_FW[framework ?? 'react'];
     window.open(
-      'https://stackblitz.com/github/golemui/golemui/tree/main/templates/forms-as-data',
+      `https://stackblitz.com/github/golemui/golemui/tree/main/templates/${template}`,
       '_blank',
       'noopener',
     );
@@ -599,15 +630,42 @@ export function App() {
         <header className="bare-bar">
           <div className="bare-bar-info">
             <span className="bare-logo">{'{gui.}'}</span>
-            <span className="bare-tagline">
-              GolemUI lets you handle <strong>forms as data</strong> — map a
-              schema straight to a form, dynamically. Edit the data on the left;
-              the form on the right re-renders itself. <strong>Zero form code.</strong>
-            </span>
+            <span className="bare-title">FORMS AS DATA</span>
+          </div>
+          <div
+            className="bare-fw"
+            role="radiogroup"
+            aria-label="Framework — switches the live form, the mount line, and VIEW THE CODE"
+          >
+            <span className="bare-fw-label">▸ YOUR FRAMEWORK</span>
+            <div className="bare-fw-tiles">
+              {CHARACTERS.map((c) => (
+                <button
+                  key={c.id}
+                  type="button"
+                  role="radio"
+                  aria-checked={framework === c.id}
+                  className={`bare-fw-tile ${framework === c.id ? 'is-selected' : ''}`}
+                  style={
+                    {
+                      '--fw-color': c.color,
+                      '--fw-shadow': c.shadow,
+                    } as React.CSSProperties
+                  }
+                  onClick={() => setFramework(c.id)}
+                  title={`See this demo in ${c.name}`}
+                >
+                  <span className="bare-fw-portrait" aria-hidden="true">
+                    <span className="bare-fw-mono">{c.monogram}</span>
+                  </span>
+                  <span className="bare-fw-name">{c.name}</span>
+                </button>
+              ))}
+            </div>
           </div>
           <div className="bare-bar-actions">
             <button type="button" className="bare-code-btn" onClick={openCode}>
-              ⌁ VIEW THE CODE
+              ⌁ VIEW THE {character ? character.name : ''} CODE
             </button>
             <button
               type="button"
@@ -689,25 +747,33 @@ export function App() {
                   <RecordFieldRow
                     key={row.id}
                     row={row}
-                    onName={(name) => updateRow(row.id, { name })}
-                    onType={(type) =>
+                    onName={(name) => {
+                      noteEdit(row.field.type);
+                      updateRow(row.id, { name });
+                    }}
+                    onType={(type) => {
+                      noteEdit(type);
                       updateField(row.id, {
                         type,
                         format:
                           type === 'string' ? row.field.format : undefined,
                         options:
                           type === 'enum' ? row.field.options : undefined,
-                      })
-                    }
-                    onValue={(value) => updateRow(row.id, { value })}
-                    onOptions={(opts) =>
+                      });
+                    }}
+                    onValue={(value) => {
+                      noteEdit(row.field.type);
+                      updateRow(row.id, { value });
+                    }}
+                    onOptions={(opts) => {
+                      noteEdit('enum');
                       updateField(row.id, {
                         options: opts
                           .split(',')
                           .map((s) => s.trim())
                           .filter(Boolean),
-                      })
-                    }
+                      });
+                    }}
                     onRemove={() => removeRow(row.id)}
                   />
                 ))}
@@ -720,14 +786,12 @@ export function App() {
         )}
 
         {bareMode && (
-          <div
-            className={`bare-flow${rebuiltPulse ? ' is-active' : ''}`}
-            aria-hidden="true"
-          >
-            <span className="flow-engine">{'{gui.}'}</span>
-            <span className="flow-arrow">→</span>
-            <span className="flow-cap">maps your data<br />into a live form</span>
-          </div>
+          <MapperPanel
+            activeType={mapType}
+            pulse={rebuiltPulse}
+            mount={MOUNT_BY_FW[framework ?? 'react']}
+            frameworkName={character?.name ?? 'REACT'}
+          />
         )}
 
         {showAppCard && !isBoss && (
@@ -798,12 +862,14 @@ export function App() {
                     data: derivedPayload.data,
                     formConfig: { widgetLoaders },
                   }}
+                  formSubmit={(e: FormSubmitEvent) => setSubmitted(e.data)}
                 />
               ) : showRecordBuilder ? (
                 <div className="app-empty">
                   <p>Forge fields on the left.</p>
                 </div>
               ) : null}
+              {bareMode && hasFields && <ReturnBar data={submitted} />}
             </div>
           </article>
         )}
@@ -984,6 +1050,123 @@ function GuiArtifact() {
       <span className="ga-rays" />
       <span className="ga-sigil">{'{gui.}'}</span>
       <span className="ga-cap">THE ENGINE AWAITS</span>
+    </div>
+  );
+}
+
+/* ─── MapperPanel (bare centre — the whole job, on screen) ─────────────── */
+
+// The one mapper that replaces every per-field form. Identical in every
+// framework (`gui.inputs.*`); only the mount line below changes. Whichever
+// field type you just edited, its case pulses — "this single line earns it."
+const MAP_CASES: { type: FieldType; code: string }[] = [
+  { type: 'number', code: "case 'number':  gui.inputs.numberInput(path)" },
+  { type: 'date', code: "case 'date':    gui.inputs.datePicker(path)" },
+  { type: 'boolean', code: "case 'boolean': gui.inputs.booleanInput(path)" },
+  { type: 'enum', code: "case 'enum':    gui.inputs.dropdown(path, {items})" },
+  { type: 'string', code: 'default:        gui.inputs.textInput(path)' },
+];
+
+interface MapperPanelProps {
+  activeType: FieldType | null;
+  pulse: boolean;
+  mount: string;
+  frameworkName: string;
+}
+
+// The middle card — the pitch. A {gui.} form is *data*: a serializable
+// definition. This demo MAPS a typed record into one (the switch), but the
+// definition could equally ship straight from the server. That's the hook.
+function MapperPanel({ activeType, pulse, mount, frameworkName }: MapperPanelProps) {
+  return (
+    <article className="card card--mapper">
+      <div className="card-head">
+        <span className="card-tag">◇ {'{gui.}'}</span>
+        <span className="card-sub">a form is just data</span>
+      </div>
+      <div className="card-body mapper-body">
+        <p className="mp-lead">
+          A GolemUI form is a <strong>serializable definition</strong> — not
+          markup, not components. Two ways to turn your backend into one:
+        </p>
+
+        <div className="mp-mode">
+          <div className="mp-mode-head">
+            <span className="mp-mode-num">1</span>
+            <span className="mp-mode-name">MAP IT</span>
+            <span className="mp-mode-tag">this demo</span>
+          </div>
+          <p className="mp-mode-text">
+            The server sends a typed record; one switch maps each field to an
+            input — <strong>written once</strong>, identical in every framework:
+          </p>
+          <pre className="mp-code">
+            <code>
+              {MAP_CASES.map((c) => (
+                <span
+                  key={c.type}
+                  className={`mp-line${pulse && activeType === c.type ? ' is-pulse' : ''}`}
+                >
+                  {c.code + '\n'}
+                </span>
+              ))}
+            </code>
+          </pre>
+        </div>
+
+        <div className="mp-mode mp-mode--alt">
+          <div className="mp-mode-head">
+            <span className="mp-mode-num">2</span>
+            <span className="mp-mode-name">…OR SHIP IT WHOLE</span>
+          </div>
+          <p className="mp-mode-text">
+            Skip the mapper entirely: your server can send the{' '}
+            <strong>form definition itself</strong> — it&rsquo;s plain JSON.{' '}
+            <code>{'{gui.}'}</code> renders it as-is. <strong>No client form
+            code at all.</strong>
+          </p>
+        </div>
+
+        <div className="mp-mount-block">
+          <span className="mp-mount-cap" aria-hidden="true">
+            mounted in {frameworkName}
+          </span>
+          <pre className="mp-mount">
+            <code>{mount}</code>
+          </pre>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+/* ─── ReturnBar (under Save — the validated, typed payload) ────────────── */
+
+// Content-unaware on purpose: Save hands back whatever shape the form holds,
+// already typed. The engine enforces whatever rules the schema declared — no
+// field is special-cased here.
+function ReturnBar({ data }: { data: Record<string, unknown> | null }) {
+  return (
+    <div className={`return-bar${data ? ' is-filled' : ''}`}>
+      {data ? (
+        <>
+          <span className="rb-cap">✓ YOUR BACKEND RECEIVES</span>
+          <code className="rb-json">{JSON.stringify(data, null, 2)}</code>
+          <span className="rb-note">
+            typed straight from the data — numbers, booleans, dates, whatever
+            the shape. No parsing on your end.
+          </span>
+        </>
+      ) : (
+        <>
+          <span className="rb-cap rb-cap--idle">▶ THE RETURN TRIP</span>
+          <span className="rb-note">
+            Hit <strong>Save</strong> — the form hands its <strong>typed</strong>{' '}
+            payload straight back, valid against whatever rules the schema
+            declared.
+          </span>
+        </>
+      )}
     </div>
   );
 }
@@ -1294,6 +1477,10 @@ function BattleBar({
             <button type="button" className="pixel-btn is-ready" onClick={onRestart}>
               ↻ PLAY THE WALK <span className="blink">▶</span>
             </button>
+          ) : !typingDone ? (
+            // Hold every command — options AND golden CTAs — until the enemy
+            // finishes "speaking". No button pops in over a half-typed line.
+            <span className="dialog-hint">…</span>
           ) : optionsReady ? (
             <div className="cmd-options-wrap">
               <ul className="dialog-options" role="menu">
@@ -1324,8 +1511,6 @@ function BattleBar({
                 </button>
               )}
             </div>
-          ) : options.length > 0 ? (
-            <span className="dialog-hint">…the Server is talking…</span>
           ) : atEnding ? (
             <button type="button" className="pixel-btn is-ready" onClick={onRestart}>
               ↻ PLAY AGAIN <span className="blink">▶</span>

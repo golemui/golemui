@@ -1,3 +1,5 @@
+// `@golemui/gui-components/lib/styles/index.css` is loaded via angular.json.
+
 html,
 body {
   background-color: var(--gui-bg-default);
@@ -10,7 +12,8 @@ body {
   min-height: 100vh;
 }
 
-#root {
+app-root {
+  display: block;
   max-width: 480px;
   margin: 2rem auto;
   padding: 0 1rem;

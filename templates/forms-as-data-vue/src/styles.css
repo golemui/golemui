@@ -10,7 +10,7 @@ body {
   min-height: 100vh;
 }
 
-#root {
+#app {
   max-width: 480px;
   margin: 2rem auto;
   padding: 0 1rem;

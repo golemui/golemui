@@ -52,14 +52,9 @@ export function deriveFormDefinition(schema: RecordSchema) {
       default:
         return gui.inputs.textInput(path, {
           label: field.label,
-          ...(field.format === 'email'
-            ? {
-                validator: {
-                  format: 'email',
-                  messages: { format: 'Please enter a valid email address' },
-                },
-              }
-            : {}),
+          // Forward whatever validation the schema declared — the mapper
+          // never names a field. Content in, form out.
+          ...(field.format ? { validator: { format: field.format } } : {}),
         });
     }
   });
