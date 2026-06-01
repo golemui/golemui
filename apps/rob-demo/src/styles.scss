@@ -1,0 +1,114 @@
+@use '../../../libs/gui/components/src/styles/index';
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code&display=swap');
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+
+:root {
+  --rob-bg: #ffffff;
+  --rob-surface: #f8fafc;
+  --rob-fg: #0f172a;
+  --rob-muted: #64748b;
+  --rob-border: #e2e8f0;
+  --rob-accent: #0ea5e9;
+  --rob-error: #dc2626;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --rob-bg: #0a0c10;
+    --rob-surface: #111318;
+    --rob-fg: #f1f5f9;
+    --rob-muted: #94a3b8;
+    --rob-border: #1e293b;
+    --rob-accent: #38bdf8;
+    --rob-error: #f87171;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: var(--rob-bg);
+  color: var(--rob-fg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  height: 100%;
+}
+
+.rob-shell {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.rob-strip {
+  flex: 0 0 auto;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--rob-border);
+  background: var(--rob-surface);
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.rob-strip h1 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.rob-strip .accent {
+  color: var(--rob-accent);
+  font-weight: 700;
+}
+
+.rob-strip .sub {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--rob-muted);
+}
+
+.rob-form-host {
+  flex: 1 1 auto;
+  padding: 1.5rem 2rem;
+  overflow: auto;
+  max-width: 1080px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.rob-errors {
+  border: 2px solid var(--rob-error);
+  background: rgba(220, 38, 38, 0.08);
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin-bottom: 12px;
+  color: var(--rob-error);
+}
+
+.rob-errors ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.gui-widget-icon[data-icon]::before {
+  content: attr(data-icon);
+  font-family: 'Material Icons';
+  font-size: var(--gui-font-lg);
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+}

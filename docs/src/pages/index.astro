@@ -47,7 +47,7 @@ import CTA from '../components/landing/CTA.astro';
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code&family=Press+Start+2P&display=swap"
       rel="stylesheet"
     />
   </head>
@@ -69,11 +69,33 @@ import CTA from '../components/landing/CTA.astro';
           </svg>
         </a>
         <nav>
+          <a href="/demos/" class="quest-chip" aria-label="Demos">
+            <span class="quest-chip-arrow" aria-hidden="true">▶</span>
+            <span class="quest-chip-label" data-quest-cycle>DEMOS</span>
+          </a>
           <a href="/dx/getting-started/installation/">Docs</a>
           <a href="https://github.com/golemui/golemui" target="_blank">GitHub</a>
         </nav>
       </div>
     </header>
+    <script is:inline>
+      (() => {
+        const el = document.querySelector('[data-quest-cycle]');
+        if (!el) return;
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        const labels = ['DEMOS', 'QUESTS'];
+        let i = 0;
+        setInterval(() => {
+          i = (i + 1) % labels.length;
+          el.classList.remove('flip');
+          void el.offsetWidth;
+          el.classList.add('flip');
+          setTimeout(() => {
+            el.textContent = labels[i];
+          }, 130);
+        }, 2000);
+      })();
+    </script>
 
     <main>
       <Hero />
@@ -496,6 +518,75 @@ import CTA from '../components/landing/CTA.astro';
   html.dark .landing-header {
     background: rgba(10, 12, 16, 0.7);
     border-bottom: 1px solid rgba(30, 41, 59, 0.6);
+  }
+
+  /* 8-bit "quest" chip — the Demos nav item, attract-mode label swap */
+  .landing-header nav a.quest-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    box-sizing: border-box;
+    height: 2rem; /* fixed — the label flip never resizes the chip */
+    overflow: hidden;
+    /* pixel caps sized to read at the same height as the Inter nav links */
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.04em;
+    line-height: 1;
+    color: #b5a3ff;
+    background: #181235;
+    border: 2px solid #6a4cff;
+    border-radius: 0;
+    padding: 0 0.6rem;
+    box-shadow: 2px 2px 0 0 #3a1f8c;
+    text-decoration: none;
+    transition:
+      transform 0.08s ease,
+      box-shadow 0.08s ease,
+      color 0.12s ease;
+  }
+  .landing-header nav a.quest-chip:hover {
+    color: #ffffff;
+    transform: translate(-1px, -1px);
+    box-shadow: 4px 4px 0 0 #3a1f8c;
+  }
+  .quest-chip-arrow {
+    color: #f9d342;
+    animation: quest-arrow 1s steps(2) infinite;
+  }
+  @keyframes quest-arrow {
+    50% {
+      opacity: 0.25;
+    }
+  }
+  .quest-chip-label {
+    display: inline-block;
+    width: 6.4em; /* fixed — fits both DEMOS and QUESTS, no width jump */
+    text-align: center;
+    white-space: nowrap;
+    backface-visibility: hidden;
+  }
+  .quest-chip-label.flip {
+    animation: quest-flip 0.26s ease;
+  }
+  @keyframes quest-flip {
+    0% {
+      transform: rotateX(0);
+      opacity: 1;
+    }
+    49% {
+      transform: rotateX(90deg);
+      opacity: 0;
+    }
+    50% {
+      transform: rotateX(-90deg);
+      opacity: 0;
+    }
+    100% {
+      transform: rotateX(0);
+      opacity: 1;
+    }
   }
 
   .landing-footer {

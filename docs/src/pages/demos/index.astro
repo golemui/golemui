@@ -1,0 +1,789 @@
+---
+const formsAsDataSrc = import.meta.env.DEV
+  ? 'http://localhost:4220/'
+  : '/sasha-demo/index.html';
+
+const dxSrc = import.meta.env.DEV
+  ? 'http://localhost:4221/'
+  : '/rob-demo/index.html';
+
+const FRAMEWORKS = [
+  { id: 'react', name: 'REACT', klass: 'HOOK CASTER', color: '#61dafb', shadow: '#0e7a9e', monogram: 'R' },
+  { id: 'angular', name: 'ANGULAR', klass: 'DI PALADIN', color: '#dd0031', shadow: '#7a0019', monogram: 'A' },
+  { id: 'lit', name: 'LIT', klass: 'WEB-NATIVE MAGE', color: '#324fff', shadow: '#1a2c99', monogram: 'L' },
+  { id: 'vue', name: 'VUE', klass: 'REACTIVE RANGER', color: '#41b883', shadow: '#1f6e4d', monogram: 'V' },
+  { id: 'vanilla', name: 'JS', klass: 'VANILLA ROGUE', color: '#f7df1e', shadow: '#8a7a00', monogram: '{}' },
+];
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GolemUI — Demos</title>
+    <script is:inline>
+      const setDarkMode = () => {
+        const theme =
+          typeof localStorage !== 'undefined' && localStorage.getItem('starlight-theme');
+        if (
+          theme === 'dark' ||
+          (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)
+        ) {
+          document.documentElement.classList.add('dark');
+          document.documentElement.dataset.theme = 'dark';
+        } else if (theme === 'light') {
+          document.documentElement.classList.remove('dark');
+          document.documentElement.dataset.theme = 'light';
+        } else {
+          const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          document.documentElement.classList.toggle('dark', isDark);
+          document.documentElement.dataset.theme = isDark ? 'dark' : 'light';
+        }
+      };
+      setDarkMode();
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', setDarkMode);
+    </script>
+    <meta
+      name="description"
+      content="Choose your adventure — forms-as-data, or the DX kitchen sink. Pick a framework and play."
+    />
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code&family=Press+Start+2P&family=VT323&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header class="landing-header">
+      <div class="container">
+        <a href="/" class="logo" aria-label="GolemUI home">
+          <svg class="logo-lockup" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 220" role="img" aria-label="GolemUI">
+            <defs>
+              <linearGradient id="header-brand" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#3b82f6" />
+                <stop offset="50%" stop-color="#8b5cf6" />
+                <stop offset="100%" stop-color="#a855f7" />
+              </linearGradient>
+            </defs>
+            <text x="200" y="170" font-family="Inter, system-ui, -apple-system, sans-serif" font-weight="600" font-size="160" text-anchor="middle" letter-spacing="-2">
+              <tspan fill="url(#header-brand)">{'{'}</tspan><tspan fill="currentColor">gui.</tspan><tspan fill="url(#header-brand)">{'}'}</tspan>
+            </text>
+          </svg>
+        </a>
+        <nav>
+          <a href="/demos/" class="demos-chip" aria-current="page">
+            <span class="demos-chip-arrow" aria-hidden="true">▶</span> DEMOS
+          </a>
+          <a href="/dx/getting-started/installation/">Docs</a>
+          <a href="https://github.com/golemui/golemui" target="_blank">GitHub</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <!-- ── CHOOSE YOUR ADVENTURE (the resting screen) ────────────── -->
+      <div class="adventure-select">
+        <div class="quest-prompt">
+          <span class="qp-nameplate">{'{gui.}'} · GUIDE</span>
+          <p class="qp-text" data-qp-type>Are you ready to discover the 3 pillars of GolemUI? Pick your framework, then choose a quest below.</p>
+        </div>
+
+        <h1 class="quest-title">CHOOSE YOUR ADVENTURE</h1>
+
+        <div class="fw-row">
+          <span class="fw-label">▸ PICK YOUR FRAMEWORK</span>
+          <div class="fw-tiles" role="radiogroup" aria-label="Framework">
+            {FRAMEWORKS.map((f, i) => (
+              <button
+                type="button"
+                role="radio"
+                aria-checked={i === 0 ? 'true' : 'false'}
+                class={`fw-tile ${i === 0 ? 'is-selected' : ''}`}
+                data-fw={f.id}
+                style={`--fw-color:${f.color};--fw-shadow:${f.shadow}`}
+              >
+                <span class="fw-portrait"><span class="fw-monogram">{f.monogram}</span></span>
+                <span class="fw-name">{f.name}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div class="adventure-grid">
+          <button type="button" class="adventure-card is-disabled" data-demo="studio" disabled aria-disabled="true">
+            <span class="adv-tag">PILLAR I</span>
+            <span class="adv-name">SAVE TOKEN$</span>
+            <span class="adv-blurb">
+              Studio — describe a form in plain language, AI drafts the
+              <code>&#123;gui.&#125;</code> schema. Burns a fraction of the tokens
+              of hand-prompting raw markup.
+            </span>
+            <span class="adv-start adv-soon">⏳ COMING SOON</span>
+          </button>
+
+          <button type="button" class="adventure-card" data-demo="forms-compose">
+            <span class="adv-tag">PILLAR II</span>
+            <span class="adv-name">FORMS COMPOSE</span>
+            <span class="adv-blurb">
+              Compose any interface from GolemUI widgets — inputs, layouts,
+              actions. The kitchen-sink coverage run.
+            </span>
+            <span class="adv-start">▶ START</span>
+          </button>
+
+          <button type="button" class="adventure-card" data-demo="forms-as-data">
+            <span class="adv-tag">PILLAR III</span>
+            <span class="adv-name">FORMS AS DATA</span>
+            <span class="adv-blurb">
+              Hand GolemUI your data's shape and it maps a live form — zero
+              form code. Endpoints multiply, schemas mutate; the UI just keeps
+              up. Out-build THE SERVER and claim the engine.
+            </span>
+            <span class="adv-start">▶ START</span>
+          </button>
+        </div>
+
+        <p class="quest-hint">USE THE MOUSE. PICK A FRAMEWORK, THEN A QUEST. ▲</p>
+      </div>
+
+      <!-- ── Fullscreen demo host (hidden until a quest launches) ───── -->
+      <section class="demos-viewport">
+        <div id="demo-pane-forms-as-data" role="tabpanel" class="demo-pane is-active">
+          <iframe
+            class="demo-iframe"
+            data-base={formsAsDataSrc}
+            title="Forms-as-data demo"
+          ></iframe>
+        </div>
+        <div id="demo-pane-forms-compose" role="tabpanel" class="demo-pane" hidden>
+          <iframe
+            class="demo-iframe"
+            data-base={dxSrc}
+            title="Forms compose demo"
+          ></iframe>
+        </div>
+        <button type="button" class="fs-exit" aria-label="Exit fullscreen" title="Exit fullscreen (Esc)">✕</button>
+      </section>
+    </main>
+
+    <script>
+      type DemoId = 'forms-as-data' | 'forms-compose';
+
+      const fwTiles = Array.from(
+        document.querySelectorAll<HTMLButtonElement>('.fw-tile'),
+      );
+      const cards = Array.from(
+        document.querySelectorAll<HTMLButtonElement>('.adventure-card:not([disabled])'),
+      );
+      const panes = Array.from(
+        document.querySelectorAll<HTMLElement>('.demo-pane'),
+      );
+      const viewport = document.querySelector<HTMLElement>('.demos-viewport')!;
+
+      let selectedFw = 'react';
+      let fullscreen = false;
+
+      fwTiles.forEach((tile) => {
+        tile.addEventListener('click', () => {
+          selectedFw = tile.dataset['fw'] || 'react';
+          fwTiles.forEach((t) => {
+            const on = t === tile;
+            t.classList.toggle('is-selected', on);
+            t.setAttribute('aria-checked', String(on));
+          });
+        });
+      });
+
+      function paneFor(demo: DemoId): HTMLElement | undefined {
+        return panes.find((p) => p.id === `demo-pane-${demo}`);
+      }
+
+      function launch(demo: DemoId) {
+        panes.forEach((p) => {
+          const active = p.id === `demo-pane-${demo}`;
+          p.toggleAttribute('hidden', !active);
+          p.classList.toggle('is-active', active);
+        });
+        const pane = paneFor(demo);
+        const iframe = pane?.querySelector<HTMLIFrameElement>('iframe.demo-iframe');
+        if (iframe) {
+          const base = iframe.dataset['base'] || '';
+          iframe.style.height = '100%';
+          iframe.src = `${base}?mode=walk&fw=${selectedFw}&n=${Date.now()}`;
+          // Hand keyboard focus to the demo so arrow keys work immediately.
+          iframe.addEventListener(
+            'load',
+            () => {
+              try {
+                iframe.focus();
+                iframe.contentWindow?.focus();
+              } catch {
+                /* cross-origin focus is best-effort */
+              }
+            },
+            { once: true },
+          );
+        }
+        fullscreen = true;
+        viewport.classList.toggle('has-internal-exit', demo === 'forms-as-data');
+        viewport.classList.remove('is-closing');
+        viewport.classList.add('is-fullscreen');
+        document.body.classList.add('demos-fullscreen');
+        if (location.hash !== `#${demo}`) {
+          history.replaceState(null, '', `#${demo}`);
+        }
+      }
+
+      const adventureSelect =
+        document.querySelector<HTMLElement>('.adventure-select');
+
+      // Hand the running demo into an inline embed under the site header, so the
+      // user can keep using the app and reach Docs. Keeps the iframe (and the
+      // forms they built) — only the host chrome changes.
+      function embedApp() {
+        if (!fullscreen) return;
+        fullscreen = false;
+        viewport.classList.remove('is-fullscreen', 'is-closing');
+        viewport.classList.add('is-embedded');
+        document.body.classList.remove('demos-fullscreen');
+        adventureSelect?.classList.add('is-hidden');
+        history.replaceState(null, '', location.pathname);
+      }
+
+      function backToSelect() {
+        const embedded = viewport.classList.contains('is-embedded');
+        if (!fullscreen && !embedded) return;
+        fullscreen = false;
+        viewport.classList.remove('is-fullscreen', 'is-embedded');
+        viewport.classList.add('is-closing');
+        document.body.classList.remove('demos-fullscreen');
+        adventureSelect?.classList.remove('is-hidden');
+        // stop the demo so audio/timers don't run behind the select screen
+        panes.forEach((p) => {
+          const iframe = p.querySelector<HTMLIFrameElement>('iframe.demo-iframe');
+          if (iframe) iframe.removeAttribute('src');
+        });
+        window.setTimeout(() => viewport.classList.remove('is-closing'), 320);
+        history.replaceState(null, '', location.pathname);
+      }
+
+      cards.forEach((card) => {
+        card.addEventListener('click', () => {
+          const demo = card.dataset['demo'] as DemoId | undefined;
+          if (demo) launch(demo);
+        });
+      });
+
+      document
+        .querySelector<HTMLButtonElement>('.fs-exit')
+        ?.addEventListener('click', backToSelect);
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') backToSelect();
+      });
+
+      // Theme broadcast to the demo iframe
+      const currentTheme = (): 'dark' | 'light' =>
+        document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+      const broadcastTheme = (target?: Window) => {
+        const msg = { type: 'golemui-theme', theme: currentTheme() };
+        if (target) {
+          target.postMessage(msg, '*');
+          return;
+        }
+        document
+          .querySelectorAll<HTMLIFrameElement>('iframe.demo-iframe')
+          .forEach((iframe) => iframe.contentWindow?.postMessage(msg, '*'));
+      };
+      document
+        .querySelectorAll<HTMLIFrameElement>('iframe.demo-iframe')
+        .forEach((iframe) => {
+          iframe.addEventListener('load', () =>
+            broadcastTheme(iframe.contentWindow ?? undefined),
+          );
+        });
+
+      window.addEventListener('message', (event) => {
+        const data = event.data as { type?: string } | null;
+        if (data?.type === 'golemui-demo-embed') {
+          embedApp();
+        } else if (data?.type === 'golemui-demo-exit') {
+          backToSelect();
+        } else if (data?.type === 'golemui-theme-ready') {
+          broadcastTheme((event.source as Window) ?? undefined);
+        }
+      });
+
+      const themeObserver = new MutationObserver(() => broadcastTheme());
+      themeObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class', 'data-theme'],
+      });
+
+      // 8-bit typewriter for the guide prompt (constant cps, rAF, wall-clock)
+      (() => {
+        const el = document.querySelector<HTMLElement>('[data-qp-type]');
+        if (!el) return;
+        const text = el.textContent ?? '';
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        el.textContent = '';
+        const cps = 38;
+        let start = 0;
+        const step = (ts: number) => {
+          if (!start) start = ts;
+          const n = Math.floor(((ts - start) / 1000) * cps);
+          if (n >= text.length) {
+            el.textContent = text;
+            return;
+          }
+          el.textContent = text.slice(0, n);
+          requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+      })();
+    </script>
+
+    <style lang="scss" is:global>
+      :root {
+        --bg-color: #ffffff;
+        --bg-surface: #f8fafc;
+        --text-color: #0f172a;
+        --text-muted: #64748b;
+        --accent-color: #3b82f6;
+        --accent-color-rgb: 59, 130, 246;
+        --border-color: #e2e8f0;
+      }
+
+      html.dark {
+        --bg-color: #0a0c10;
+        --bg-surface: #111318;
+        --text-color: #f1f5f9;
+        --text-muted: #94a3b8;
+        --accent-color: #60a5fa;
+        --accent-color-rgb: 96, 165, 250;
+        --border-color: #1e293b;
+      }
+
+      body {
+        margin: 0;
+        font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+        background: var(--bg-color);
+        color: var(--text-color);
+        transition: background-color 0.3s ease, color 0.3s ease;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1rem;
+      }
+
+      .landing-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 50;
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+
+        .container {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          height: 4rem;
+        }
+
+        .logo {
+          display: inline-flex;
+          align-items: center;
+          text-decoration: none;
+          color: var(--text-color);
+
+          .logo-lockup {
+            height: 36px;
+            width: auto;
+            display: block;
+          }
+        }
+
+        nav {
+          display: flex;
+          align-items: center;
+          gap: 1.75rem;
+
+          a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9375rem;
+            transition: color 0.2s;
+
+            &:hover {
+              color: var(--text-color);
+            }
+
+            &[aria-current='page'] {
+              color: var(--text-color);
+            }
+          }
+        }
+      }
+
+      html.dark .landing-header {
+        background: rgba(10, 12, 16, 0.7);
+        border-bottom: 1px solid rgba(30, 41, 59, 0.6);
+      }
+
+      /* 8-bit DEMOS chip — static (current page), matches the home chip */
+      .landing-header nav a.demos-chip {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        box-sizing: border-box;
+        height: 2rem;
+        font-family: 'Press Start 2P', monospace;
+        font-size: 0.62rem;
+        letter-spacing: 0.04em;
+        line-height: 1;
+        color: #ffffff;
+        background: #6a4cff;
+        border: 2px solid #6a4cff;
+        border-radius: 0;
+        padding: 0 0.7rem;
+        box-shadow: inset 0 0 0 2px #f8f4d7, 2px 2px 0 0 #3a1f8c;
+        text-decoration: none;
+      }
+      .landing-header nav a.demos-chip:hover {
+        color: #ffffff;
+      }
+      .demos-chip-arrow {
+        color: #f9d342;
+      }
+
+      body.demos-fullscreen {
+        overflow: hidden;
+      }
+    </style>
+
+    <style lang="scss">
+      $pixel-purple: #6a4cff;
+      $pixel-purple-deep: #3a1f8c;
+      $pixel-purple-light: #b5a3ff;
+      $pixel-cream: #f8f4d7;
+      $pixel-dark: #150726;
+      $pixel-amber: #f9d342;
+
+      main {
+        padding-top: 4rem; /* clear fixed header (padding avoids margin-collapse) */
+        min-height: 100vh;
+        background:
+          radial-gradient(ellipse 60% 50% at 50% 0%, rgba(106, 76, 255, 0.18), transparent 60%),
+          #0d0820;
+      }
+
+      /* ── Choose your adventure ─────────────────────────────────────── */
+      .adventure-select {
+        max-width: 1040px;
+        margin: 0 auto;
+        padding: 2.5rem 1.25rem 3rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2rem;
+        color: #f1ecff;
+      }
+
+      /* 8-bit guide prompt box at the top */
+      .quest-prompt {
+        position: relative;
+        width: 100%;
+        max-width: 760px;
+        background: $pixel-dark;
+        color: $pixel-cream;
+        border: 4px solid $pixel-cream;
+        box-shadow:
+          0 0 0 4px $pixel-dark,
+          0 0 0 8px $pixel-purple,
+          0 10px 0 0 $pixel-purple-deep;
+        padding: 1.3rem 1.5rem 1.2rem;
+        margin-top: 0.5rem;
+      }
+      .qp-nameplate {
+        position: absolute;
+        top: -16px;
+        left: 18px;
+        background: $pixel-purple;
+        color: $pixel-cream;
+        border: 3px solid $pixel-cream;
+        box-shadow: 0 4px 0 $pixel-purple-deep;
+        font-family: 'Press Start 2P', monospace;
+        font-size: 0.55rem;
+        letter-spacing: 0.08em;
+        padding: 6px 12px 5px;
+      }
+      .qp-text {
+        margin: 0.4rem 0 0;
+        font-family: 'VT323', 'Fira Code', monospace;
+        font-size: 1.5rem;
+        line-height: 1.3;
+      }
+      .qp-text::after {
+        content: '▋';
+        color: $pixel-amber;
+        animation: qp-blink 0.9s steps(2) infinite;
+      }
+      @keyframes qp-blink {
+        50% { opacity: 0; }
+      }
+
+      .quest-title {
+        font-family: 'Press Start 2P', monospace;
+        font-size: clamp(1rem, 3.2vw, 1.7rem);
+        letter-spacing: 0.14em;
+        color: $pixel-purple-light;
+        text-align: center;
+        margin: 0.5rem 0 0;
+        text-shadow: 3px 3px 0 $pixel-purple-deep, 0 0 18px rgba(106, 76, 255, 0.4);
+      }
+
+      .fw-row {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.9rem;
+      }
+      .fw-label {
+        font-family: 'Press Start 2P', monospace;
+        font-size: 0.55rem;
+        letter-spacing: 0.14em;
+        color: #968ea8;
+      }
+      .fw-tiles {
+        display: flex;
+        gap: 0.7rem;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .fw-tile {
+        appearance: none;
+        cursor: pointer;
+        background: $pixel-cream;
+        border: 3px solid var(--fw-color);
+        box-shadow: 4px 4px 0 var(--fw-shadow);
+        padding: 0.6rem 0.5rem 0.45rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.3rem;
+        color: $pixel-dark;
+        font-family: 'Press Start 2P', monospace;
+        border-radius: 0;
+        transition: transform 0.07s ease, box-shadow 0.07s ease;
+        min-width: 84px;
+      }
+      .fw-tile:hover {
+        transform: translate(-2px, -2px);
+        box-shadow: 6px 6px 0 var(--fw-shadow);
+      }
+      .fw-tile.is-selected {
+        background: var(--fw-color);
+        color: #fff;
+        box-shadow: 4px 4px 0 var(--fw-shadow), 0 0 0 3px $pixel-cream, 0 0 0 6px $pixel-purple;
+      }
+      .fw-portrait {
+        width: 38px;
+        height: 38px;
+        background: var(--fw-color);
+        border: 3px solid $pixel-dark;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .fw-tile.is-selected .fw-portrait {
+        background: $pixel-cream;
+      }
+      .fw-monogram {
+        font-size: 0.85rem;
+        color: $pixel-dark;
+      }
+      .fw-name {
+        font-size: 0.5rem;
+        letter-spacing: 0.08em;
+      }
+
+      .adventure-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.25rem;
+        width: 100%;
+      }
+      .adventure-card {
+        appearance: none;
+        cursor: pointer;
+        text-align: left;
+        background: #181235;
+        border: 4px solid $pixel-purple;
+        box-shadow: 8px 8px 0 $pixel-purple-deep;
+        padding: 1.4rem 1.5rem 1.6rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.7rem;
+        color: #f1ecff;
+        border-radius: 0;
+        transition: transform 0.08s ease, box-shadow 0.08s ease, border-color 0.12s ease;
+        min-height: 230px;
+      }
+      .adventure-card:hover {
+        transform: translate(-3px, -3px);
+        box-shadow: 11px 11px 0 $pixel-purple-deep;
+        border-color: $pixel-amber;
+      }
+      .adventure-card:active {
+        transform: translate(2px, 2px);
+        box-shadow: 4px 4px 0 $pixel-purple-deep;
+      }
+      .adventure-card.is-disabled {
+        cursor: not-allowed;
+        border-color: #3a3556;
+        background: #120f24;
+        box-shadow: 6px 6px 0 #241f3a;
+        opacity: 0.7;
+      }
+      .adventure-card.is-disabled:hover {
+        transform: none;
+        box-shadow: 6px 6px 0 #241f3a;
+        border-color: #3a3556;
+      }
+      .adventure-card.is-disabled .adv-name,
+      .adventure-card.is-disabled .adv-blurb {
+        color: #6f6790;
+      }
+      .adv-soon {
+        color: #968ea8 !important;
+      }
+      .adv-tag {
+        font-family: 'Press Start 2P', monospace;
+        font-size: 0.5rem;
+        letter-spacing: 0.16em;
+        color: $pixel-amber;
+      }
+      .adv-name {
+        font-family: 'Press Start 2P', monospace;
+        font-size: 1.05rem;
+        letter-spacing: 0.04em;
+        line-height: 1.25;
+        color: #fff;
+      }
+      .adv-blurb {
+        font-family: 'VT323', 'Fira Code', monospace;
+        font-size: 1.15rem;
+        line-height: 1.3;
+        color: #cabfe6;
+      }
+      .adv-blurb code {
+        font-family: 'Fira Code', monospace;
+        font-size: 0.85rem;
+        background: rgba(181, 163, 255, 0.16);
+        padding: 0.05rem 0.3rem;
+        color: $pixel-purple-light;
+      }
+      .adv-start {
+        margin-top: auto;
+        font-family: 'Press Start 2P', monospace;
+        font-size: 0.7rem;
+        letter-spacing: 0.1em;
+        color: $pixel-amber;
+      }
+
+      .quest-hint {
+        font-family: 'Press Start 2P', monospace;
+        font-size: 0.55rem;
+        letter-spacing: 0.14em;
+        color: #968ea8;
+        margin: 0;
+      }
+
+      /* ── Fullscreen demo host (hidden unless a quest is launched) ──── */
+      .demos-viewport {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 200;
+        background: #0a0c10;
+      }
+      .demos-viewport.is-fullscreen {
+        display: block;
+      }
+      /* "Take me to the app" / ✕ — the demo embedded inline under the header,
+         in normal page flow so the fixed header sits above and stays clickable. */
+      .demos-viewport.is-embedded {
+        display: block;
+        position: relative;
+        inset: auto;
+        z-index: 1;
+        width: 100%;
+        height: calc(100vh - 4rem);
+      }
+      .adventure-select.is-hidden {
+        display: none;
+      }
+      .demo-pane {
+        position: absolute;
+        inset: 0;
+      }
+      .demo-pane[hidden] {
+        display: none;
+      }
+      .demo-iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+        display: block;
+        background: #0a0c10;
+      }
+      .demos-viewport.is-fullscreen .demo-pane.is-active {
+        animation: demo-zoom-in 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+      }
+      @keyframes demo-zoom-in {
+        from { transform: scale(0.92); opacity: 0; }
+        to { transform: scale(1); opacity: 1; }
+      }
+
+      .fs-exit {
+        display: none;
+        position: fixed;
+        top: 0.8rem;
+        right: 0.9rem;
+        z-index: 210;
+        width: 40px;
+        height: 40px;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Press Start 2P', monospace;
+        font-size: 0.85rem;
+        color: $pixel-dark;
+        background: $pixel-amber;
+        border: 3px solid $pixel-dark;
+        border-radius: 0;
+        box-shadow: 0 0 0 3px $pixel-cream, 3px 3px 0 0 $pixel-purple-deep;
+        cursor: pointer;
+      }
+      .demos-viewport.is-fullscreen:not(.has-internal-exit) .fs-exit {
+        display: inline-flex;
+      }
+
+      @media (max-width: 880px) {
+        .adventure-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </body>
+</html>

@@ -10,7 +10,7 @@
     "format": "nx format:write --all",
     "precz": "nx run-many --target=lint --all --exclude=@golemui/source && nx format:write --all && git update-index --again",
     "cz": "czg checkbox",
-    "start:docs": "nx run-many --targets=dev --projects=appetizer,docs,freedom,serializable,template,theming --parallel",
+    "start:docs": "nx run-many --targets=dev --projects=appetizer,docs,freedom,rob-demo,sasha-demo,serializable,template,theming --parallel",
     "start:angular": "nx run angular-playground:serve",
     "start:lit": "nx run lit-playground:serve",
     "start:react": "nx run react-playground:serve",
