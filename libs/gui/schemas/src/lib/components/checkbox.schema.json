@@ -14,10 +14,7 @@
       "$ref": "../common.schema.json#/$defs/boolOrWhen"
     },
     "checkboxPositionProp": {
-      "enum": [
-        "left",
-        "right"
-      ],
+      "enum": ["left", "right"],
       "default": "left"
     },
     "hintProp": {
@@ -92,10 +89,6 @@
       "$ref": "../validators.schema.json#/$defs/validator"
     }
   },
-  "required": [
-    "kind",
-    "type",
-    "path"
-  ],
+  "required": ["kind", "type", "path"],
   "unevaluatedProperties": false
 }

@@ -119,7 +119,10 @@ describe('DX Pipeline — Container Types (Phase 6.3)', () => {
         _guiTabs([
           {
             label: 'Main',
-            children: [_guiTextInput('name'), _guiButton({ label: 'Submit', onClick: () => 'submit' })],
+            children: [
+              _guiTextInput('name'),
+              _guiButton({ label: 'Submit', onClick: () => 'submit' }),
+            ],
           },
         ]),
       );

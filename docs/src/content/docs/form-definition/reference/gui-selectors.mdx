@@ -138,17 +138,17 @@ Each leaf has a `<leaf>ByUid` variant that targets a **single** widget by its `u
 
 ### Actions, displays, layouts
 
-| Leaf method                       | Matches                                             |
-| --------------------------------- | --------------------------------------------------- |
-| `actionByUid(uid, config)`        | A single action (`button`, custom).                 |
-| `customActionByUid(uid, config)`  | A single `gui.actions.custom(...)`.                 |
-| `displayByUid(uid, config)`       | A single display (any kind).                        |
-| `alertByUid(uid, config)`         | A single `gui.displays.alert`.                      |
-| `customDisplayByUid(uid, config)` | A single `gui.displays.custom(...)`.                |
-| `layoutByUid(uid, config)`        | A single layout (any kind).                         |
-| `tabsByUid(uid, config)`          | A single `gui.layouts.tabs`.                        |
-| `accordionByUid(uid, config)`     | A single `gui.layouts.accordion`.                   |
-| `customLayoutByUid(uid, config)`  | A single `gui.layouts.custom(...)`.                 |
+| Leaf method                       | Matches                              |
+| --------------------------------- | ------------------------------------ |
+| `actionByUid(uid, config)`        | A single action (`button`, custom).  |
+| `customActionByUid(uid, config)`  | A single `gui.actions.custom(...)`.  |
+| `displayByUid(uid, config)`       | A single display (any kind).         |
+| `alertByUid(uid, config)`         | A single `gui.displays.alert`.       |
+| `customDisplayByUid(uid, config)` | A single `gui.displays.custom(...)`. |
+| `layoutByUid(uid, config)`        | A single layout (any kind).          |
+| `tabsByUid(uid, config)`          | A single `gui.layouts.tabs`.         |
+| `accordionByUid(uid, config)`     | A single `gui.layouts.accordion`.    |
+| `customLayoutByUid(uid, config)`  | A single `gui.layouts.custom(...)`.  |
 
 ```ts
 gui.selectors.inputByUid('email-field', {

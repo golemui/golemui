@@ -7,7 +7,10 @@ import { _guiTextInput } from '../index';
 describe('DX Pipeline — Actions', () => {
   describe('Basic action expansion', () => {
     it('maps explicit onClick button with click event wiring', () => {
-      const root = processDx([_guiTextInput('name'), _guiButton({ label: 'Save', onClick: () => undefined })]);
+      const root = processDx([
+        _guiTextInput('name'),
+        _guiButton({ label: 'Save', onClick: () => undefined }),
+      ]);
 
       const saveButton = root.children?.find(
         (child) => typeof child !== 'function' && (child as { kind?: string }).kind === 'action',

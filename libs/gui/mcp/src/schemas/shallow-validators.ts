@@ -86,7 +86,10 @@ export function getShallowWidgetValidator(widgetType: string): ValidateFunction 
  *
  * Anything else is preserved verbatim so the widget's own props still get validated strictly.
  */
-function makeShallow(schema: { $id?: string; [k: string]: unknown }, baseId: string): Record<string, unknown> {
+function makeShallow(
+  schema: { $id?: string; [k: string]: unknown },
+  baseId: string,
+): Record<string, unknown> {
   const cloned = JSON.parse(JSON.stringify(schema)) as Record<string, unknown>;
   rewriteRefs(cloned, baseId);
   delete cloned['$id'];

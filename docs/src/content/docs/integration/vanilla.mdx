@@ -129,20 +129,20 @@ form.addEventListener('formHealth', (event) => {
 
 All initialization properties are bundled in the required `.config` property (`GuiFormInitConfig`):
 
-| `config` property     | Type                                         | Description                                                                                     |
-| --------------------- | -------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| `formDef` (required)  | `FormInput`                                  | Programmatic `gui.*` array or parsed JSON form definition.                                      |
-| `formSelectors`       | `GslSelectorsInput`                          | GSL selector decorators. **Programmatic-only.**                                                 |
-| `formConfig`          | `DxFormConfig`                               | DX engine wiring (loaders, item renderers, dependencies, validateOn, …). **Programmatic-only.** |
-| `data`                | `Record<string, any>`                        | Initial form data.                                                                              |
-| `meta`                | `Record<string, any>`                        | Out-of-band metadata you want to thread through events and state.                               |
-| `customWidgetLoaders` | `WidgetLoaders<Type<WithWidget>>`            | Custom widget map; merged with the default widget set.                                          |
-| `itemRenderers`       | `Record<string, LitItemRenderer<any>>`       | Custom item-renderer map (for dropdown, list, etc.).                                            |
-| `customValidators`    | `CustomValidatorSchemas`                     | Custom validator schemas referenced by `validator: { type: 'custom', ... }`.                    |
-| `middlewares`         | `Middleware<State, Action>[]`                | Store middlewares (logging, persistence, devtools).                                             |
-| `validateOn`          | `ValidateOn`                                 | When validation runs: `'eager'` (default), `'change'`, `'blur'`, `'submit'`, or an array.       |
-| `dependencies`        | `Dependencies`                               | External helpers (e.g. a markdown parser).                                                      |
-| `localization`        | `I18nTranslator`                             | Translator implementing the `I18nTranslator` interface.                                         |
+| `config` property     | Type                                   | Description                                                                                     |
+| --------------------- | -------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `formDef` (required)  | `FormInput`                            | Programmatic `gui.*` array or parsed JSON form definition.                                      |
+| `formSelectors`       | `GslSelectorsInput`                    | GSL selector decorators. **Programmatic-only.**                                                 |
+| `formConfig`          | `DxFormConfig`                         | DX engine wiring (loaders, item renderers, dependencies, validateOn, …). **Programmatic-only.** |
+| `data`                | `Record<string, any>`                  | Initial form data.                                                                              |
+| `meta`                | `Record<string, any>`                  | Out-of-band metadata you want to thread through events and state.                               |
+| `customWidgetLoaders` | `WidgetLoaders<Type<WithWidget>>`      | Custom widget map; merged with the default widget set.                                          |
+| `itemRenderers`       | `Record<string, LitItemRenderer<any>>` | Custom item-renderer map (for dropdown, list, etc.).                                            |
+| `customValidators`    | `CustomValidatorSchemas`               | Custom validator schemas referenced by `validator: { type: 'custom', ... }`.                    |
+| `middlewares`         | `Middleware<State, Action>[]`          | Store middlewares (logging, persistence, devtools).                                             |
+| `validateOn`          | `ValidateOn`                           | When validation runs: `'eager'` (default), `'change'`, `'blur'`, `'submit'`, or an array.       |
+| `dependencies`        | `Dependencies`                         | External helpers (e.g. a markdown parser).                                                      |
+| `localization`        | `I18nTranslator`                       | Translator implementing the `I18nTranslator` interface.                                         |
 
 Direct properties (outside `config`):
 
@@ -152,10 +152,10 @@ Direct properties (outside `config`):
 
 The element also dispatches two **custom events**:
 
-| Event         | Detail type       | Description                                                                                    |
-| ------------- | ----------------- | ---------------------------------------------------------------------------------------------- |
-| `formEvent`   | `FormEvent`       | Fired when a widget fires a wired event. Listen via `form.addEventListener('formEvent', ...)`. |
-| `formHealth`  | `FormHealth`      | Fired when the form's validation status changes.                                               |
+| Event        | Detail type  | Description                                                                                    |
+| ------------ | ------------ | ---------------------------------------------------------------------------------------------- |
+| `formEvent`  | `FormEvent`  | Fired when a widget fires a wired event. Listen via `form.addEventListener('formEvent', ...)`. |
+| `formHealth` | `FormHealth` | Fired when the form's validation status changes.                                               |
 
 See [Configuration](/integration/configuration/) for details on each property, plus the **Programmatic-only vs JSON-form** notes.
 

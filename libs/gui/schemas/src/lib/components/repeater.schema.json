@@ -85,9 +85,7 @@
           "$ref": "#/$defs/removeButtonIconProp"
         }
       },
-      "required": [
-        "template"
-      ],
+      "required": ["template"],
       "patternProperties": {
         "^addLabel\\.[^.]+$": {
           "$ref": "#/$defs/addLabelProp"
@@ -122,11 +120,6 @@
       "$ref": "../validators.schema.json#/$defs/validator"
     }
   },
-  "required": [
-    "kind",
-    "type",
-    "path",
-    "props"
-  ],
+  "required": ["kind", "type", "path", "props"],
   "unevaluatedProperties": false
 }

@@ -153,8 +153,7 @@ function checkExpression(expr: string, path: string, out: ExpressionFinding[]): 
     out.push({
       path,
       expression: expr,
-      message:
-        'Expression negates a `$form`/`$meta` reference (relies on truthy/falsy coercion).',
+      message: 'Expression negates a `$form`/`$meta` reference (relies on truthy/falsy coercion).',
       suggestion:
         'Form data values can be `undefined`. Pick the case you actually mean and write it explicitly — `$form.x === undefined`, `$form.x === null`, `$form.x === 0`, `$form.x === ""` — instead of `!$form.x`.',
     });
@@ -196,14 +195,9 @@ function checkExpression(expr: string, path: string, out: ExpressionFinding[]): 
   //   (b) reference followed by `&&` / `||` / ternary `?` (and not `??` or `?.`)
   //   (c) `&&` / `||` followed by a trailing reference at the end of the expression
   const refOnly = /^\$(?:form|meta)(?:\.[\w?]+)*$/;
-  const refBeforeBool =
-    /\$(?:form|meta)(?:\.[\w?]+)*\s*(?:&&|\|\||\?(?![.?]))/;
+  const refBeforeBool = /\$(?:form|meta)(?:\.[\w?]+)*\s*(?:&&|\|\||\?(?![.?]))/;
   const refAfterBool = /(?:&&|\|\|)\s*\$(?:form|meta)(?:\.[\w?]+)*\s*$/;
-  if (
-    refOnly.test(trimmed) ||
-    refBeforeBool.test(trimmed) ||
-    refAfterBool.test(trimmed)
-  ) {
+  if (refOnly.test(trimmed) || refBeforeBool.test(trimmed) || refAfterBool.test(trimmed)) {
     out.push({
       path,
       expression: expr,

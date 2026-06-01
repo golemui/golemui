@@ -33,9 +33,7 @@ const CURRENCIES: CurrencyItem[] = [
 
 const currencyItemRenderer = (ctx: ItemRenderContext<CurrencyItem>): TemplateResult => html`
   <div
-    class="currency-item ${ctx.selected ? 'is-selected' : ''} ${ctx.focused
-      ? 'is-focused'
-      : ''}"
+    class="currency-item ${ctx.selected ? 'is-selected' : ''} ${ctx.focused ? 'is-focused' : ''}"
   >
     <span class="currency-item__symbol">${ctx.template.symbol}</span>
     <span class="currency-item__code">${ctx.template.code}</span>

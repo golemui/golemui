@@ -12,8 +12,7 @@ const { uid, errors, value, isTouched, templateData, onValueChanged, onBlur } = 
   TagsProps
 >(widget);
 
-const handleChange = (e: Event) =>
-  onValueChanged((e as CustomEvent).detail.value as string[]);
+const handleChange = (e: Event) => onValueChanged((e as CustomEvent).detail.value as string[]);
 
 const required = computed(() => (templateData.value.validator as Validator)?.required);
 </script>

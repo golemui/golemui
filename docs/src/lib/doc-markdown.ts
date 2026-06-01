@@ -122,7 +122,12 @@ function findBlock(src: string, tag: string, from: number): Block | null {
   while ((token = tokenRe.exec(src)) !== null) {
     if (token[0][1] === '/') {
       if (--depth === 0) {
-        return { outerStart: open.index, innerStart, innerEnd: token.index, outerEnd: tokenRe.lastIndex };
+        return {
+          outerStart: open.index,
+          innerStart,
+          innerEnd: token.index,
+          outerEnd: tokenRe.lastIndex,
+        };
       }
     } else {
       depth++;
@@ -167,7 +172,7 @@ export function toDslMarkdown(entry: DocEntry, dsl: Dsl): string {
     return p && existsSync(p) ? readFileSync(p, 'utf8') : null;
   };
   const titleOf = (varName?: string): string | undefined =>
-    varName ? consts.get(varName) ?? varName : undefined;
+    varName ? (consts.get(varName) ?? varName) : undefined;
 
   // Resolve self-closing code components (`<DslCode/>`, `<Code/>`) backed by
   // `?raw` imports into fenced blocks for the chosen DSL.
@@ -209,7 +214,9 @@ export function toDslMarkdown(entry: DocEntry, dsl: Dsl): string {
         content = render(dedent(fragment?.inner ?? inner).trim());
       } else {
         content = topFragments(inner)
-          .map((f) => `**${FRAMEWORK_LABELS[f.slot] ?? f.slot}**\n\n${render(dedent(f.inner).trim())}`)
+          .map(
+            (f) => `**${FRAMEWORK_LABELS[f.slot] ?? f.slot}**\n\n${render(dedent(f.inner).trim())}`,
+          )
           .join('\n\n');
       }
       const replacement = `\n${indentBlock(content, indent)}\n`;

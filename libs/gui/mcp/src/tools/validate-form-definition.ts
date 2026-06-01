@@ -54,7 +54,7 @@ export const VALIDATE_FORM_DEFINITION_TOOL = {
     'pastes it into their codebase. Returns `{ valid, errors, warnings, expressionWarnings, interpolationWarnings }`. ' +
     'Hard mistakes (typos in widget `type`, missing required props, invalid validator shapes) ' +
     'show up in `errors` and flip `valid` to false. Likely-custom widgets (a `type` value that ' +
-    'isn\'t a built-in and isn\'t close to one) show up in `warnings` instead — they don\'t ' +
+    "isn't a built-in and isn't close to one) show up in `warnings` instead — they don't " +
     'affect `valid`. Reactive expressions (`include.when`, `disabled.when`, etc.) are linted ' +
     'separately into `expressionWarnings`. String interpolation templates (`{{$form.x}}`, ' +
     '`{{$meta.y}}`, expressions like `{{$form.count + 1}}`, etc.) in widget props, and bare ' +

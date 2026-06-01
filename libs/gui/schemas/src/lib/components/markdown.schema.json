@@ -20,10 +20,7 @@
       "$ref": "../common.schema.json#/$defs/localizable"
     },
     "counterModeProp": {
-      "enum": [
-        "remaining",
-        "current"
-      ]
+      "enum": ["remaining", "current"]
     },
     "minimumHeightProp": {
       "type": "number"
@@ -40,16 +37,7 @@
     "toolsProp": {
       "type": "array",
       "items": {
-        "enum": [
-          "H",
-          "B",
-          "I",
-          "Q",
-          "L",
-          "OL",
-          "UL",
-          "|"
-        ]
+        "enum": ["H", "B", "I", "Q", "L", "OL", "UL", "|"]
       }
     },
     "splitViewTitleProp": {
@@ -247,10 +235,6 @@
       "$ref": "../validators.schema.json#/$defs/validator"
     }
   },
-  "required": [
-    "kind",
-    "type",
-    "path"
-  ],
+  "required": ["kind", "type", "path"],
   "unevaluatedProperties": false
 }

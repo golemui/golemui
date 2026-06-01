@@ -105,8 +105,7 @@ export class GuiPills extends LitElement {
     if (total === 0) return nothing;
 
     return html`
-      ${this.renderStrip()}
-      ${this.bubble ? this.renderCompact(total) : nothing}
+      ${this.renderStrip()} ${this.bubble ? this.renderCompact(total) : nothing}
       ${this.bubble && this._showDropdown ? this.renderDropdown() : nothing}
     `;
   }
@@ -204,7 +203,10 @@ export class GuiPills extends LitElement {
         }}
       >
         ${this.removeIcon
-          ? html`<span class=${`gui-widget-icon ${this.removeIcon}`} data-icon=${this.removeIcon}></span>`
+          ? html`<span
+              class=${`gui-widget-icon ${this.removeIcon}`}
+              data-icon=${this.removeIcon}
+            ></span>`
           : html`<svg
               xmlns="http://www.w3.org/2000/svg"
               width="16"
@@ -366,9 +368,7 @@ export class GuiPills extends LitElement {
     );
     requestAnimationFrame(() => {
       this.addOutsideListeners();
-      const firstPill = this.querySelector<HTMLElement>(
-        '.gui-pills__dropdown .gui-pills__pill',
-      );
+      const firstPill = this.querySelector<HTMLElement>('.gui-pills__dropdown .gui-pills__pill');
       firstPill?.focus();
     });
   }

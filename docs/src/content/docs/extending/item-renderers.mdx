@@ -14,12 +14,12 @@ Item renderers are framework-specific functions or components that the form engi
 
 Each framework adapts the same `ItemRenderContext<T>` to its idiomatic shape:
 
-| Framework  | Type                     | What the engine passes                                                                                                    |
-| ---------- | ------------------------ | ------------------------------------------------------------------------------------------------------------------------- |
-| React      | `ReactItemRenderer<T>`   | A `React.ComponentType<ItemRenderContext<T>>` — the context fields arrive as props.                                       |
-| Angular    | `AngularItemRenderer<T>` | A component class structurally matching `AngularItemRenderContext<T>` — one signal `input()` per context field.           |
-| Lit        | `LitItemRenderer<T>`     | A `(ctx: ItemRenderContext<T>) => TemplateResult` — called as a function, **not** a custom element.                       |
-| Vue        | `VueItemRenderer<T>`     | A `Component<Partial<ItemRenderContext<T>>>` — the context fields arrive as props on the SFC.                             |
+| Framework  | Type                     | What the engine passes                                                                                                                          |
+| ---------- | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| React      | `ReactItemRenderer<T>`   | A `React.ComponentType<ItemRenderContext<T>>` — the context fields arrive as props.                                                             |
+| Angular    | `AngularItemRenderer<T>` | A component class structurally matching `AngularItemRenderContext<T>` — one signal `input()` per context field.                                 |
+| Lit        | `LitItemRenderer<T>`     | A `(ctx: ItemRenderContext<T>) => TemplateResult` — called as a function, **not** a custom element.                                             |
+| Vue        | `VueItemRenderer<T>`     | A `Component<Partial<ItemRenderContext<T>>>` — the context fields arrive as props on the SFC.                                                   |
 | Vanilla JS | `(ctx) => HTMLElement`   | A plain function called with `ItemRenderContext<T>` that returns a DOM node — like Lit's, but returning real DOM instead of a `TemplateResult`. |
 
 The shared context shape comes from `@golemui/core`:
@@ -233,7 +233,9 @@ import { CountryItemRenderer } from './country-item-renderer';
 const config = {
   formDef: [
     gui.inputs.dropdown('country', {
-      items: [/* … */],
+      items: [
+        /* … */
+      ],
       itemRenderer: 'countryItemRenderer',
     }),
   ],
