@@ -127,6 +127,75 @@ select {
   box-shadow: none;
 }
 
+/* ─── Quest title bar (frame top: act · title · quest · SKIP) ───────────
+   Rendered by the shared engine on every walk screen; SKIP lives here, in
+   the frame's top-right corner. Mirrors rob-demo's title bar. */
+.quest-banner {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.7rem 1.1rem;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, #{$pixel-purple} 32%, var(--sasha-surface)),
+    color-mix(in srgb, #{$pixel-purple-light} 26%, var(--sasha-surface))
+  );
+  border-bottom: 3px solid $pixel-purple;
+}
+.qb-act {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.1em;
+  color: $pixel-purple;
+  background: var(--sasha-surface);
+  border: 1px solid $pixel-purple;
+  border-radius: 4px;
+  padding: 0.28rem 0.45rem;
+}
+.qb-title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  color: var(--sasha-fg);
+  text-shadow: 0 0 12px color-mix(in srgb, #{$pixel-purple} 55%, transparent);
+}
+.qb-quest {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.04em;
+  color: var(--sasha-muted);
+}
+.qb-step {
+  margin-left: auto;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.55rem;
+  color: var(--sasha-muted);
+}
+.qb-skip {
+  margin-left: 0.6rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  color: $pixel-dark;
+  background: $pixel-amber;
+  border: 2px solid $pixel-amber-deep;
+  border-radius: 6px;
+  padding: 0.5rem 0.7rem;
+  box-shadow: 0 2px 0 $pixel-amber-deep;
+  cursor: pointer;
+  transition: transform 0.08s ease;
+}
+.qb-skip:hover {
+  transform: translateY(-1px);
+}
+.qb-skip .skip-chevrons {
+  color: $pixel-dark;
+}
+
 /* Skip — a tab on the top-right of the dialog box, mirroring the CH·NN
    nameplate on the left. Lets a returning user jump straight to the app. */
 .dialog-skip {
@@ -184,13 +253,6 @@ select {
   gap: 0.7rem;
   min-width: 0;
 }
-.bare-logo {
-  flex: 0 0 auto;
-  font-family: 'Press Start 2P', monospace;
-  font-size: 0.9rem;
-  color: var(--sasha-endpoint);
-  text-shadow: 0 0 14px rgba(106, 76, 255, 0.45);
-}
 .bare-title {
   font-family: 'Press Start 2P', monospace;
   font-size: 0.6rem;
@@ -203,116 +265,60 @@ select {
   align-items: center;
   gap: 0.6rem;
 }
-.bare-code-btn {
-  appearance: none;
-  cursor: pointer;
-  font-family: 'Press Start 2P', monospace;
-  font-size: 0.6rem;
-  letter-spacing: 0.05em;
-  color: $pixel-dark;
-  background: $pixel-amber;
-  border: 2px solid $pixel-amber-deep;
-  border-radius: 6px;
-  padding: 0.6rem 0.8rem;
-  box-shadow: 0 2px 0 $pixel-amber-deep;
-  transition: transform 0.08s ease;
-  /* Fixed width — the framework name (REACT…ANGULAR) changes length, so a
-     fluid button would shove the header around on every pick. */
-  box-sizing: border-box;
-  width: 16rem;
-  text-align: center;
-  white-space: nowrap;
-}
-.bare-code-btn:hover {
-  transform: translateY(-1px);
-}
-
-/* The bare-mode exit ✕ — inline in the header bar */
-.bare-exit {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 34px;
-  height: 34px;
-  border: 2px solid var(--sasha-border);
-  background: var(--sasha-bg);
-  color: var(--sasha-muted);
-  font-family: 'Press Start 2P', monospace;
-  font-size: 0.7rem;
-  cursor: pointer;
-  border-radius: 6px;
-}
-.bare-exit:hover {
-  color: var(--sasha-fg);
-  border-color: var(--sasha-endpoint);
-}
-
-/* Framework picker — the same 8-bit character tiles as /demos. Re-points the
-   live mount line + VIEW THE CODE; the mapper itself never changes. */
 .bare-fw {
   display: flex;
   align-items: center;
   gap: 0.6rem;
   min-width: 0;
 }
-.bare-fw-label {
-  flex: 0 0 auto;
-  font-family: 'Press Start 2P', monospace;
-  font-size: 0.5rem;
-  letter-spacing: 0.1em;
-  color: var(--sasha-muted);
-}
-.bare-fw-tiles {
+
+/* ─── Framework pills — the same badges as the home page ──────────────── */
+.bare-fw-pills {
   display: flex;
-  gap: 0.45rem;
   flex-wrap: wrap;
+  gap: 0.4rem;
 }
-.bare-fw-tile {
-  appearance: none;
+.fw-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  background: rgba(148, 163, 184, 0.06);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  color: var(--sasha-muted);
   cursor: pointer;
-  background: $pixel-cream;
-  border: 3px solid var(--fw-color);
-  box-shadow: 3px 3px 0 var(--fw-shadow);
-  padding: 0.3rem 0.4rem 0.25rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.2rem;
-  color: $pixel-dark;
-  font-family: 'Press Start 2P', monospace;
-  border-radius: 0;
-  transition: transform 0.07s ease, box-shadow 0.07s ease;
-  min-width: 58px;
+  transition: transform 0.15s ease, background 0.2s, border-color 0.2s, box-shadow 0.2s, color 0.2s;
 }
-.bare-fw-tile:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 5px 5px 0 var(--fw-shadow);
+.fw-pill svg {
+  flex: 0 0 auto;
+  opacity: 0.7;
+  transition: opacity 0.2s;
 }
-.bare-fw-tile.is-selected {
-  background: var(--fw-color);
+.fw-pill:hover {
+  transform: translateY(-1px);
+  color: var(--sasha-fg);
+}
+.fw-pill:hover svg {
+  opacity: 1;
+}
+.fw-pill.is-active {
   color: #fff;
-  box-shadow: 3px 3px 0 var(--fw-shadow), 0 0 0 2px $pixel-cream, 0 0 0 4px var(--fw-color);
 }
-.bare-fw-portrait {
-  width: 26px;
-  height: 26px;
-  background: var(--fw-color);
-  border: 2px solid $pixel-dark;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.fw-pill.is-active svg {
+  opacity: 1;
 }
-.bare-fw-tile.is-selected .bare-fw-portrait {
-  background: $pixel-cream;
-}
-.bare-fw-mono {
-  font-size: 0.62rem;
-  color: $pixel-dark;
-}
-.bare-fw-name {
-  font-size: 0.42rem;
-  letter-spacing: 0.06em;
-}
+.fw-pill--react.is-active   { background: #61dafb; color: #0a1530; box-shadow: 0 0 0 3px rgba(97, 218, 251, 0.22); }
+.fw-pill--angular.is-active { background: #dd0031; box-shadow: 0 0 0 3px rgba(221, 0, 49, 0.22); }
+.fw-pill--lit.is-active     { background: #324fff; box-shadow: 0 0 0 3px rgba(50, 79, 255, 0.22); }
+.fw-pill--vue.is-active     { background: #4fc08d; color: #0a1530; box-shadow: 0 0 0 3px rgba(79, 192, 141, 0.22); }
+.fw-pill--vanilla.is-active { background: #f7df1e; color: #0a1530; box-shadow: 0 0 0 3px rgba(247, 223, 30, 0.28); }
+.fw-pill--vanilla.is-active .js-rect { fill: #0a1530; }
+.fw-pill--vanilla.is-active .js-text { fill: #f7df1e; }
 
 /* ─── The return trip — a panel right under the Save button ────────── */
 .return-bar {
@@ -588,166 +594,180 @@ select {
   overflow: hidden;
 }
 
-/* The bare sandbox: DATA · the MAPPER · FORM */
+/* The bare sandbox: a two-column hero — SERVER → (arrow) → GolemUI.
+   The bar (top) and the quest banner (bottom) are fixed; the hero fills what's
+   left and never makes the page scroll — each card scrolls internally instead. */
 .sasha-shell.is-bare .sasha-stage {
-  grid-template-columns: minmax(0, 0.95fr) minmax(330px, 0.95fr) minmax(0, 1fr);
+  display: flex;
+  flex-direction: column;
   padding: 1.25rem;
+  gap: 1.1rem;
+  min-height: 0;
+  overflow: hidden;
+}
+.sasha-shell.is-bare .bare-hero {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   gap: 1.1rem;
   align-items: stretch;
 }
-
-/* Narrow viewports: stack the three panes so the mapper code stays legible. */
-@media (max-width: 1080px) {
-  .sasha-shell.is-bare .sasha-stage {
-    grid-template-columns: 1fr;
-  }
+.sasha-shell.is-bare .bare-hero > .card {
+  min-height: 0;
 }
-
-/* The mapper card between DATA and FORM — and the pitch. Matches the other
-   two cards (card-head + body), and carries the forms-as-data sell: map the
-   record, OR ship the form definition whole. The edited type's case pulses. */
-.card--mapper {
-  border-top: 3px solid var(--sasha-endpoint);
-  min-width: 0;
-}
-.mapper-body {
-  display: flex;
-  flex-direction: column;
-  gap: 0.85rem;
-}
-.mp-lead {
-  margin: 0;
-  font-size: 0.92rem;
-  line-height: 1.45;
-  color: var(--sasha-fg);
-}
-.mp-lead strong {
-  color: var(--sasha-endpoint);
-}
-.mp-mode {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  padding: 0.7rem 0.75rem;
-  border: 1px solid var(--sasha-border);
-  border-left: 3px solid var(--sasha-endpoint);
-  border-radius: 8px;
-  background: var(--sasha-endpoint-soft);
-}
-.mp-mode--alt {
-  border-left-color: var(--sasha-app);
-  background: var(--sasha-app-soft);
-}
-.mp-mode-head {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-.mp-mode-num {
+/* The SERVER → GolemUI arrow between the two columns — the whole story, so
+   it gets a real badge: a brand-purple disc with a white arrow + soft glow. */
+.hero-arrow {
+  align-self: center;
+  justify-self: center;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 1.25rem;
-  height: 1.25rem;
-  font-family: 'Press Start 2P', monospace;
-  font-size: 0.55rem;
+  width: 2.6rem;
+  height: 2.6rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
   color: #fff;
-  background: var(--sasha-endpoint);
-  border-radius: 4px;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  border-radius: 50%;
+  box-shadow: 0 4px 16px rgba(139, 92, 246, 0.45);
+  user-select: none;
 }
-.mp-mode--alt .mp-mode-num {
-  background: var(--sasha-app);
+
+/* Narrow viewports: stack the panes; the arrow points down. */
+@media (max-width: 880px) {
+  .sasha-shell.is-bare .bare-hero {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+  .hero-arrow {
+    justify-self: center;
+    transform: rotate(90deg);
+  }
 }
-.mp-mode-name {
-  font-family: 'Press Start 2P', monospace;
-  font-size: 0.58rem;
+
+/* SERVER card reads as a real backend response: GET <endpoint> · 200 OK. */
+.server-resp {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+.sr-method {
+  font-family: 'Fira Code', ui-monospace, monospace;
+  font-size: 0.62rem;
+  font-weight: 700;
   letter-spacing: 0.06em;
+  color: #fff;
+  background: var(--sasha-muted);
+  border-radius: 4px;
+  padding: 0.1rem 0.4rem;
+}
+.sr-path {
+  font-family: 'Fira Code', ui-monospace, monospace;
+  font-size: 0.8rem;
   color: var(--sasha-fg);
 }
-.mp-mode-tag {
-  margin-left: auto;
-  font-size: 0.68rem;
+.sr-status {
+  font-family: 'Fira Code', ui-monospace, monospace;
+  font-size: 0.62rem;
+  font-weight: 600;
   letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--sasha-endpoint);
-  background: var(--sasha-surface);
-  border: 1px solid var(--sasha-endpoint);
+  color: var(--sasha-muted);
+  border: 1px solid var(--sasha-border);
   border-radius: 999px;
-  padding: 0.1rem 0.45rem;
+  padding: 0.06rem 0.4rem;
 }
-.mp-mode-text {
-  margin: 0;
-  font-size: 0.86rem;
+.server-hint {
+  margin: 0 0 0.1rem;
+  font-size: 0.84rem;
   line-height: 1.45;
   color: var(--sasha-muted);
-}
-.mp-mode-text strong {
-  color: var(--sasha-fg);
-}
-.mp-mode-text code {
-  font-family: 'Fira Code', ui-monospace, monospace;
-  font-size: 0.82em;
-  color: var(--sasha-app);
-}
-.mp-code {
-  margin: 0;
-  padding: 0.6rem 0.65rem;
-  background: var(--sasha-bg);
-  border: 1px solid var(--sasha-border);
-  border-radius: 8px;
-  font-family: 'Fira Code', ui-monospace, monospace;
-  font-size: 0.71rem;
-  line-height: 1.55;
-  color: var(--sasha-fg);
-  overflow-x: auto;
-}
-.mp-line {
-  display: block;
-  border-radius: 4px;
-  /* keep the highlight box from collapsing the monospace columns */
-  white-space: pre;
-}
-.mp-line.is-pulse {
-  animation: mp-pulse 0.65s ease;
-}
-@keyframes mp-pulse {
-  0% {
-    background: transparent;
-    box-shadow: none;
-  }
-  35% {
-    background: var(--sasha-endpoint-soft);
-    box-shadow: -0.5rem 0 0 var(--sasha-endpoint-soft), 0.5rem 0 0 var(--sasha-endpoint-soft);
-    color: var(--sasha-endpoint);
-  }
-  100% {
-    background: transparent;
-    box-shadow: none;
+  strong {
+    color: var(--sasha-fg);
   }
 }
-.mp-mount-block {
+
+/* The bottom "Play the quest?" banner (rendered by the engine in bare view).
+   Themed to match the violet CRT quest CTAs on the /demos selector cards. */
+.sasha-shell.is-bare {
+  --quest-violet: 124, 58, 237;
+}
+@media (prefers-color-scheme: dark) {
+  .sasha-shell.is-bare {
+    --quest-violet: 154, 108, 255;
+  }
+}
+.sasha-shell.is-bare .bare-quest-cta {
+  position: relative;
+  flex: 0 0 auto;
   display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.6rem 1rem;
+  padding: 0.8rem 1.25rem;
+  background: rgba(var(--quest-violet), 0.06);
+  border-top: 1px solid rgba(var(--quest-violet), 0.22);
+  overflow: hidden;
 }
-.mp-mount-cap {
-  font-family: 'Press Start 2P', monospace;
-  font-size: 0.48rem;
-  letter-spacing: 0.08em;
+.sasha-shell.is-bare .bare-quest-cta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(var(--quest-violet), 0.06) 0,
+    rgba(var(--quest-violet), 0.06) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  opacity: 0.6;
+}
+.sasha-shell.is-bare .bare-quest-cta > * {
+  position: relative;
+}
+.bqc-tag {
+  font-family: 'Press Start 2P', ui-monospace, monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgb(var(--quest-violet));
+  text-shadow: 0 0 8px rgba(var(--quest-violet), 0.5);
+}
+.bqc-text {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 0.88rem;
   color: var(--sasha-muted);
 }
-.mp-mount {
-  margin: 0;
-  padding: 0.55rem 0.7rem;
-  background: var(--sasha-endpoint-soft);
-  border: 1px dashed var(--sasha-endpoint);
-  border-radius: 8px;
-  font-family: 'Fira Code', ui-monospace, monospace;
-  font-size: 0.72rem;
-  line-height: 1.5;
-  color: var(--sasha-endpoint);
-  overflow-x: auto;
-  white-space: pre;
+.bqc-btn {
+  appearance: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  font-family: 'Press Start 2P', ui-monospace, monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: #1a0b2e;
+  background: linear-gradient(180deg, #b89dff 0%, #9a6cff 58%, #8a5cf0 100%);
+  border: 1px solid #6a4cff;
+  border-radius: 6px;
+  padding: 0.6rem 0.85rem;
+  box-shadow: 0 3px 0 #3a1f8c, 0 0 18px rgba(var(--quest-violet), 0.28);
+  transition: transform 0.12s, box-shadow 0.12s, filter 0.12s;
+  &:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.05);
+    box-shadow: 0 4px 0 #3a1f8c, 0 0 24px rgba(var(--quest-violet), 0.42);
+  }
+  &:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 #3a1f8c, 0 0 12px rgba(var(--quest-violet), 0.3);
+  }
 }
 
 /* Column labels over the editable data rows */
@@ -769,34 +789,6 @@ select {
 /* The FORM pane header (bare) */
 .card-head--form .card-tag {
   color: var(--sasha-app);
-}
-
-/* "TRY IT" — the obvious call to action over the data rows */
-.try-it {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.6rem;
-  padding: 0.7rem 0.85rem;
-  background: var(--sasha-saved-soft);
-  border: 2px solid var(--sasha-saved);
-  border-radius: 10px;
-}
-.try-it-bolt {
-  font-size: 1.05rem;
-  line-height: 1.35;
-  animation: try-it-bolt 1.4s ease-in-out infinite;
-}
-@keyframes try-it-bolt {
-  0%, 100% { transform: scale(1); opacity: 0.9; }
-  50% { transform: scale(1.18); opacity: 1; }
-}
-.try-it-text {
-  font-size: 0.86rem;
-  line-height: 1.4;
-  color: var(--sasha-fg);
-}
-.try-it-text strong {
-  color: var(--sasha-saved);
 }
 
 /* the data cells should read as editable */
@@ -2624,5 +2616,91 @@ select {
   .dialog-box {
     font-size: 1.2rem;
     padding: 1.2rem 1.4rem 1rem;
+  }
+}
+
+/* ─── Plain / vanilla theme for the app-direct (bare) view ─────────────
+   The guided walk keeps its 8-bit look (it renders in the quests portal).
+   The app embedded on the main site must look like the website, so the
+   bare-bar's pixel bits are re-skinned to Inter + the site palette. Scoped
+   under .is-bare so walk styling is untouched. */
+.sasha-shell.is-bare {
+  /* Adopt the website's neutral palette so the embedded app matches the site
+     (the demo's own purple theme stays in the walk / quests portal). */
+  --sasha-bg: #ffffff;
+  --sasha-surface: #f8fafc;
+  --sasha-fg: #0f172a;
+  --sasha-muted: #64748b;
+  --sasha-border: #e2e8f0;
+  /* Tell the story by colour: SERVER (left) is neutral/external slate; GolemUI
+     (right) wears the site's brand purple. No more off-brand green. */
+  --sasha-endpoint: #64748b;
+  --sasha-endpoint-soft: rgba(100, 116, 139, 0.1);
+  --sasha-app: #8b5cf6;
+  --sasha-app-soft: rgba(139, 92, 246, 0.1);
+
+  /* SERVER card reads as the neutral/external input; the brand accent is GolemUI's. */
+  .card--endpoint {
+    border-top-color: var(--sasha-endpoint);
+  }
+  .card-head--form .card-tag {
+    color: var(--sasha-app);
+  }
+
+  .bare-title {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 0.82rem;
+    letter-spacing: 0.01em;
+    color: var(--sasha-muted);
+  }
+  .bare-intro {
+    flex: 0 0 auto;
+    margin: 0;
+    padding: 0.85rem 1.25rem;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 0.92rem;
+    line-height: 1.5;
+    color: var(--sasha-muted);
+    background: var(--sasha-bg);
+    border-bottom: 1px solid var(--sasha-border);
+    strong {
+      color: var(--sasha-fg);
+      font-weight: 600;
+    }
+  }
+  .rb-cap {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 0.74rem;
+    letter-spacing: 0.01em;
+    text-shadow: none;
+  }
+  /* Remaining 8-bit labels in the app view → clean Inter tags */
+  .card-tag {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 0.72rem;
+    letter-spacing: 0.05em;
+  }
+  .record-head,
+  .form-live {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 0.68rem;
+    letter-spacing: 0.04em;
+  }
+}
+@media (prefers-color-scheme: dark) {
+  .sasha-shell.is-bare {
+    --sasha-bg: #0a0c10;
+    --sasha-surface: #111318;
+    --sasha-fg: #f1f5f9;
+    --sasha-muted: #94a3b8;
+    --sasha-border: #1e293b;
+    --sasha-endpoint: #94a3b8;
+    --sasha-endpoint-soft: rgba(148, 163, 184, 0.16);
+    --sasha-app: #a78bfa;
+    --sasha-app-soft: rgba(167, 139, 250, 0.16);
   }
 }

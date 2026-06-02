@@ -1,0 +1,20 @@
+{
+  "name": "quests-portal",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/quests-portal/src",
+  "projectType": "application",
+  "tags": ["scope:app", "type:app"],
+  "// targets": "to see all targets run: nx show project quests-portal --web",
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "vite",
+        "cwd": "apps/quests-portal"
+      }
+    }
+  }
+}

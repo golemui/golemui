@@ -97,20 +97,6 @@ export const ENDPOINTS: Endpoint[] = [
   },
 ];
 
-const NETWORK_DELAY_MS = 180;
-
-export function fetchEndpoint(id: EndpointId): Promise<EndpointPayload> {
-  const endpoint = ENDPOINTS.find((e) => e.id === id);
-  if (!endpoint) {
-    return Promise.reject(new Error(`unknown endpoint: ${id}`));
-  }
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(JSON.parse(JSON.stringify(endpoint.payload)));
-    }, NETWORK_DELAY_MS);
-  });
-}
-
 export const FIELD_TYPES: FieldType[] = [
   'string',
   'number',

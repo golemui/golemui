@@ -7,12 +7,79 @@ const dxSrc = import.meta.env.DEV
   ? 'http://localhost:4221/'
   : '/rob-demo/index.html';
 
-const FRAMEWORKS = [
-  { id: 'react', name: 'REACT', klass: 'HOOK CASTER', color: '#61dafb', shadow: '#0e7a9e', monogram: 'R' },
-  { id: 'angular', name: 'ANGULAR', klass: 'DI PALADIN', color: '#dd0031', shadow: '#7a0019', monogram: 'A' },
-  { id: 'lit', name: 'LIT', klass: 'WEB-NATIVE MAGE', color: '#324fff', shadow: '#1a2c99', monogram: 'L' },
-  { id: 'vue', name: 'VUE', klass: 'REACTIVE RANGER', color: '#41b883', shadow: '#1f6e4d', monogram: 'V' },
-  { id: 'vanilla', name: 'JS', klass: 'VANILLA ROGUE', color: '#f7df1e', shadow: '#8a7a00', monogram: '{}' },
+// The quests live in their own portal (extractable to quests.golemui.com).
+const questPortal = import.meta.env.DEV
+  ? 'http://localhost:4222'
+  : 'https://quests.golemui.com';
+
+// Five pillars, each a pain the visitor recognises. II + III are live demos;
+// I, IV and V are "Coming soon" (no app yet — locked CTA + forging quest).
+// The accent per pillar walks the brand gradient (blue → violet → magenta).
+const PILLARS = [
+  {
+    num: 'I',
+    accent: '#5b8cff',
+    pain: 'My business users need to define their own forms.',
+    title: 'Pillar I · Forms without code',
+    blurb:
+      '<strong>Studio</strong> is a form-authoring tool for the non-developers on your team. When your app needs the business to define its own forms, they build them in Studio — and they drop straight into GolemUI, live, with no handoff.',
+    soon: true,
+    quest: { line: 'A quest is being forged. Come back when Studio ships.' },
+  },
+  {
+    num: 'II',
+    accent: '#7d7cf5',
+    pain: "I'm hand-coding form after form.",
+    title: 'Pillar II · Forms compose',
+    demo: 'forms-compose',
+    open: true,
+    blurb:
+      'Real forms reuse the same fields, validators and logic. With GolemUI every one of those is just a <strong>block you compose once and reuse</strong> — plus third-party libraries and your own components wired in. No lock-in.',
+    quest: {
+      line: 'Survive <span class="boss">THE CLIENT</span> — whose requests never stop. A goofy little RPG that quietly teaches you composition.',
+    },
+  },
+  {
+    num: 'III',
+    accent: '#9a6cff',
+    pain: 'My server dictates the shape.',
+    title: 'Pillar III · Forms as data',
+    demo: 'forms-as-data',
+    blurb:
+      'When your server dictates the shape, just serialize it and send it to the UI — zero form code. Endpoints multiply and schemas mutate; the UI just keeps up.',
+    quest: {
+      line: 'Out-build <span class="boss">THE SERVER</span> — endpoints multiply, schemas mutate. A cheesy boss fight for forms-as-data.',
+    },
+  },
+  {
+    num: 'IV',
+    accent: '#b566f0',
+    pain: 'Good form components keep eating my sprints.',
+    title: 'Pillar IV · Components out of the box',
+    blurb:
+      'Unbelievable components, out of the box. Comboboxes, date ranges, multi-step wizards, file dropzones, masked and rich inputs — designed, themeable and ready to go. Need something exotic? Drop in a third-party widget or your own component; they all speak {gui.}.',
+    soon: true,
+    quest: { line: 'A quest is being forged. Out-style THE DESIGNER — coming soon.' },
+  },
+  {
+    num: 'V',
+    accent: '#c861ec',
+    pain: 'WCAG and a dozen locales are due at launch.',
+    title: 'Pillar V · Enterprise-grade out of the box',
+    blurb:
+      "Enterprise-grade, on day one. Accessibility and internationalization aren't add-ons — every form ships WCAG-ready ARIA, full keyboard nav and screen-reader semantics, RTL, and locale-aware formatting, validation and translations. Nothing to bolt on later.",
+    soon: true,
+    quest: { line: 'A quest is being forged. Clear THE AUDITOR — coming soon.' },
+  },
+];
+
+// The convergence rail: every pillar feeds the one {gui.} surface.
+const MM_INPUTS = [
+  { num: 'I', k: 'studio', accent: '#5b8cff', name: 'Forms without code', tag: 'author · soon' },
+  { num: 'II', k: 'compose', accent: '#7d7cf5', name: 'Forms compose', tag: 'compose' },
+  { num: 'III', k: 'data', accent: '#9a6cff', name: 'Forms as data', tag: 'serialize' },
+  { num: 'IV', k: 'components', accent: '#b566f0', name: 'Components out of the box', tag: 'drop in · soon' },
+  { num: 'V', k: 'enterprise', accent: '#c861ec', name: 'Enterprise-grade out of the box', tag: 'localize · soon' },
 ];
 ---
 
@@ -42,16 +109,21 @@ const FRAMEWORKS = [
       };
       setDarkMode();
       window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', setDarkMode);
+      // Deep-linked / returning from a quest (?demo= or ?open=)? Hide the
+      // selector before first paint so it never flashes before the app opens.
+      if (/[?&](demo|open)=/.test(location.search)) {
+        document.documentElement.classList.add('deep-quest');
+      }
     </script>
     <meta
       name="description"
-      content="Choose your adventure — forms-as-data, or the DX kitchen sink. Pick a framework and play."
+      content="Try GolemUI for yourself — five live, runnable demos: forms-compose, forms-as-data, and more."
     />
     <link rel="icon" href="/favicon.ico" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code&family=Press+Start+2P&family=VT323&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code&family=Press+Start+2P&display=swap"
       rel="stylesheet"
     />
   </head>
@@ -72,147 +144,177 @@ const FRAMEWORKS = [
             </text>
           </svg>
         </a>
-        <nav>
-          <a href="/demos/" class="demos-chip" aria-current="page">
-            <span class="demos-chip-arrow" aria-hidden="true">▶</span> DEMOS
-          </a>
+        <nav class="pill-nav">
+          <a href="/demos/" data-nav="demos" aria-current="page">Demos</a>
           <a href="/dx/getting-started/installation/">Docs</a>
-          <a href="https://github.com/golemui/golemui" target="_blank">GitHub</a>
+          <a href="https://github.com/golemui/golemui" target="_blank" rel="noopener">GitHub</a>
         </nav>
       </div>
     </header>
 
     <main>
-      <!-- ── CHOOSE YOUR ADVENTURE (the resting screen) ────────────── -->
-      <div class="adventure-select">
-        <div class="quest-prompt">
-          <span class="qp-nameplate">{'{gui.}'} · GUIDE</span>
-          <p class="qp-text" data-qp-type>Are you ready to discover the 3 pillars of GolemUI? Pick your framework, then choose a quest below.</p>
-        </div>
-
-        <h1 class="quest-title">CHOOSE YOUR ADVENTURE</h1>
-
-        <div class="fw-row">
-          <span class="fw-label">▸ PICK YOUR FRAMEWORK</span>
-          <div class="fw-tiles" role="radiogroup" aria-label="Framework">
-            {FRAMEWORKS.map((f, i) => (
-              <button
-                type="button"
-                role="radio"
-                aria-checked={i === 0 ? 'true' : 'false'}
-                class={`fw-tile ${i === 0 ? 'is-selected' : ''}`}
-                data-fw={f.id}
-                style={`--fw-color:${f.color};--fw-shadow:${f.shadow}`}
-              >
-                <span class="fw-portrait"><span class="fw-monogram">{f.monogram}</span></span>
-                <span class="fw-name">{f.name}</span>
-              </button>
-            ))}
+      <!-- ── Selector: hero + five-pillar router + mix & match ───────── -->
+      <div class="demos-select">
+        <section class="hero">
+          <div class="wrap">
+            <div class="hero-copy">
+              <div class="section-kicker"><span class="tick"></span>Demos</div>
+              <h1 class="hero-title">See it for yourself — <span class="grad-text">five live demos</span></h1>
+              <p class="lead">
+                Each demo is a small, runnable app built with GolemUI. Open one to try it live —
+                or play its quest for the guided, hands-on story.
+                <b>Whatever your form problem is, there’s a pillar for it</b> — and they combine.
+              </p>
+            </div>
           </div>
-        </div>
+        </section>
 
-        <div class="adventure-grid">
-          <button type="button" class="adventure-card is-disabled" data-demo="studio" disabled aria-disabled="true">
-            <span class="adv-tag">PILLAR I</span>
-            <span class="adv-name">SAVE TOKEN$</span>
-            <span class="adv-blurb">
-              Studio — describe a form in plain language, AI drafts the
-              <code>&#123;gui.&#125;</code> schema. Burns a fraction of the tokens
-              of hand-prompting raw markup.
-            </span>
-            <span class="adv-start adv-soon">⏳ COMING SOON</span>
-          </button>
+        <section class="pillars-section">
+          <div class="wrap">
+            <div class="ra">
+              <div class="rt-prompt">
+                <span class="hb-q mono">Which problem is yours?</span>
+                <span class="rt-prompt-hint">Open the one that sounds like your week.</span>
+              </div>
+              <div class="ra-rows">
+                {PILLARS.map((p) => (
+                  <div class:list={['ra-row', { upcoming: p.soon, open: p.open }]} style={`--accent: ${p.accent}`}>
+                    <button class="ra-head" aria-expanded={p.open ? 'true' : 'false'}>
+                      <span class="rt-num mono">{p.num}</span>
+                      <span class="rt-headtext">
+                        <span class="rt-pain">{p.pain}</span>
+                        <span class="rt-title mono">{p.title}</span>
+                      </span>
+                      {p.soon && <span class="rt-soon mono">SOON</span>}
+                      <span class="rt-chev" aria-hidden="true"><span></span><span></span></span>
+                    </button>
+                    <div class="ra-panel">
+                      <div class="pd">
+                        <div class="pd-main">
+                          <p class="pd-body" set:html={p.blurb}></p>
+                          {p.soon ? (
+                            <span class="btn btn-disabled pd-cta">Coming soon</span>
+                          ) : (
+                            <button class="btn btn-primary pd-cta" data-demo={p.demo}>
+                              Open the demo
+                              <svg class="arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                                <path d="M3 8h9M8.5 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
+                              </svg>
+                            </button>
+                          )}
+                        </div>
+                        <div class="pd-quest">
+                          <div class="quest">
+                            <div class="quest-head">
+                              <span class="quest-title">8-BIT QUEST</span>
+                              <span class:list={['quest-coin', 'mono', { locked: p.soon }]}>{p.soon ? 'FORGING…' : 'INSERT COIN'}</span>
+                            </div>
+                            <p set:html={p.quest.line}></p>
+                            {p.soon ? (
+                              <button class="btn-pixel locked" type="button" disabled>LOCKED</button>
+                            ) : (
+                              <button class="btn-pixel" type="button" data-quest={p.demo}>▶ PLAY THE QUEST</button>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
 
-          <button type="button" class="adventure-card" data-demo="forms-compose">
-            <span class="adv-tag">PILLAR II</span>
-            <span class="adv-name">FORMS COMPOSE</span>
-            <span class="adv-blurb">
-              Compose any interface from GolemUI widgets — inputs, layouts,
-              actions. The kitchen-sink coverage run.
-            </span>
-            <span class="adv-start">▶ START</span>
-          </button>
-
-          <button type="button" class="adventure-card" data-demo="forms-as-data">
-            <span class="adv-tag">PILLAR III</span>
-            <span class="adv-name">FORMS AS DATA</span>
-            <span class="adv-blurb">
-              Hand GolemUI your data's shape and it maps a live form — zero
-              form code. Endpoints multiply, schemas mutate; the UI just keeps
-              up. Out-build THE SERVER and claim the engine.
-            </span>
-            <span class="adv-start">▶ START</span>
-          </button>
-        </div>
-
-        <p class="quest-hint">USE THE MOUSE. PICK A FRAMEWORK, THEN A QUEST. ▲</p>
+        <section class="mm-section">
+          <div class="wrap">
+            <div class="mm-head">
+              <div class="section-kicker"><span class="tick"></span>Not exclusive</div>
+              <h2 class="mm-title">Most real apps <span class="grad-text">mix &amp; match</span> all five.</h2>
+              <p class="lead">
+                Every pillar feeds the same {'{gui.}'} surface — so whichever ones you reach for,
+                they compose into a single form. Pick a mix; ship it.
+              </p>
+            </div>
+            <div class="mm2">
+              <div class="mm2-flow" data-hot="">
+                <div class="mm2-inputs">
+                  {MM_INPUTS.map((m) => (
+                    <div class="mm2-input" data-k={m.k} style={`--a: ${m.accent}`}>
+                      <span class="mm2-input-num mono">{m.num}</span>
+                      <span class="mm2-input-txt"><b>{m.name}</b><em class="mono">{m.tag}</em></span>
+                    </div>
+                  ))}
+                </div>
+                <svg class="mm2-wires" viewBox="0 0 120 340" preserveAspectRatio="none" aria-hidden="true">
+                  <path class="w-studio" d="M0,34 C72,34 52,170 120,170" fill="none" style="--a: #5b8cff"></path>
+                  <path class="w-compose" d="M0,102 C72,102 56,170 120,170" fill="none" style="--a: #7d7cf5"></path>
+                  <path class="w-data" d="M0,170 L120,170" fill="none" style="--a: #9a6cff"></path>
+                  <path class="w-components" d="M0,238 C72,238 56,170 120,170" fill="none" style="--a: #b566f0"></path>
+                  <path class="w-enterprise" d="M0,306 C72,306 52,170 120,170" fill="none" style="--a: #c861ec"></path>
+                </svg>
+                <div class="mm2-core">
+                  <span class="mm2-core-mark mono">{'{gui.}'}</span>
+                  <span class="mm2-core-sub mono">one surface</span>
+                </div>
+                <div class="mm2-tail" aria-hidden="true"><span class="mm2-tail-line"></span><span class="mm2-tail-tip"></span></div>
+                <div class="mm2-result">
+                  <span class="mm2-result-eyebrow mono">The result</span>
+                  <span class="mm2-result-title">Every form problem,<br /><span class="grad-text">solved.</span></span>
+                  <span class="mm2-result-sub">Pick any mix of the five. It composes into one form — and ships.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
 
-      <!-- ── Fullscreen demo host (hidden until a quest launches) ───── -->
-      <section class="demos-viewport">
+      <!-- ── App-direct host (hidden until a demo is opened) ─────────── -->
+      <section class="demos-viewport" data-quest-portal={questPortal}>
         <div id="demo-pane-forms-as-data" role="tabpanel" class="demo-pane is-active">
-          <iframe
-            class="demo-iframe"
-            data-base={formsAsDataSrc}
-            title="Forms-as-data demo"
-          ></iframe>
+          <iframe class="demo-iframe" data-base={formsAsDataSrc} title="Forms-as-data demo"></iframe>
         </div>
         <div id="demo-pane-forms-compose" role="tabpanel" class="demo-pane" hidden>
-          <iframe
-            class="demo-iframe"
-            data-base={dxSrc}
-            title="Forms compose demo"
-          ></iframe>
+          <iframe class="demo-iframe" data-base={dxSrc} title="Forms-compose demo"></iframe>
         </div>
-        <button type="button" class="fs-exit" aria-label="Exit fullscreen" title="Exit fullscreen (Esc)">✕</button>
       </section>
     </main>
 
     <script>
       type DemoId = 'forms-as-data' | 'forms-compose';
 
-      const fwTiles = Array.from(
-        document.querySelectorAll<HTMLButtonElement>('.fw-tile'),
+      const demoBtns = Array.from(
+        document.querySelectorAll<HTMLButtonElement>('.pd-cta[data-demo]'),
       );
-      const cards = Array.from(
-        document.querySelectorAll<HTMLButtonElement>('.adventure-card:not([disabled])'),
+      const questBtns = Array.from(
+        document.querySelectorAll<HTMLButtonElement>('.btn-pixel[data-quest]'),
       );
-      const panes = Array.from(
-        document.querySelectorAll<HTMLElement>('.demo-pane'),
-      );
+      const panes = Array.from(document.querySelectorAll<HTMLElement>('.demo-pane'));
       const viewport = document.querySelector<HTMLElement>('.demos-viewport')!;
+      const intro = document.querySelector<HTMLElement>('.demos-select');
 
-      let selectedFw = 'react';
-      let fullscreen = false;
-
-      fwTiles.forEach((tile) => {
-        tile.addEventListener('click', () => {
-          selectedFw = tile.dataset['fw'] || 'react';
-          fwTiles.forEach((t) => {
-            const on = t === tile;
-            t.classList.toggle('is-selected', on);
-            t.setAttribute('aria-checked', String(on));
-          });
-        });
-      });
+      const questPortal = viewport.dataset['questPortal'] || '';
+      let open: DemoId | null = null;
 
       function paneFor(demo: DemoId): HTMLElement | undefined {
         return panes.find((p) => p.id === `demo-pane-${demo}`);
       }
+      function isDemoId(v: string | null): v is DemoId {
+        return v === 'forms-as-data' || v === 'forms-compose';
+      }
 
-      function launch(demo: DemoId) {
+      // Open the runnable app inline under the header (app-direct).
+      function openApp(demo: DemoId, push = true) {
         panes.forEach((p) => {
           const active = p.id === `demo-pane-${demo}`;
           p.toggleAttribute('hidden', !active);
           p.classList.toggle('is-active', active);
         });
-        const pane = paneFor(demo);
-        const iframe = pane?.querySelector<HTMLIFrameElement>('iframe.demo-iframe');
-        if (iframe) {
+        const iframe = paneFor(demo)?.querySelector<HTMLIFrameElement>('iframe.demo-iframe');
+        if (iframe && !iframe.src) {
           const base = iframe.dataset['base'] || '';
           iframe.style.height = '100%';
-          iframe.src = `${base}?mode=walk&fw=${selectedFw}&n=${Date.now()}`;
-          // Hand keyboard focus to the demo so arrow keys work immediately.
+          iframe.src = `${base}?mode=bare&fw=react&n=${Date.now()}`;
           iframe.addEventListener(
             'load',
             () => {
@@ -226,67 +328,123 @@ const FRAMEWORKS = [
             { once: true },
           );
         }
-        fullscreen = true;
-        viewport.classList.toggle('has-internal-exit', demo === 'forms-as-data');
-        viewport.classList.remove('is-closing');
-        viewport.classList.add('is-fullscreen');
-        document.body.classList.add('demos-fullscreen');
-        if (location.hash !== `#${demo}`) {
-          history.replaceState(null, '', `#${demo}`);
-        }
-      }
-
-      const adventureSelect =
-        document.querySelector<HTMLElement>('.adventure-select');
-
-      // Hand the running demo into an inline embed under the site header, so the
-      // user can keep using the app and reach Docs. Keeps the iframe (and the
-      // forms they built) — only the host chrome changes.
-      function embedApp() {
-        if (!fullscreen) return;
-        fullscreen = false;
-        viewport.classList.remove('is-fullscreen', 'is-closing');
+        open = demo;
         viewport.classList.add('is-embedded');
-        document.body.classList.remove('demos-fullscreen');
-        adventureSelect?.classList.add('is-hidden');
-        history.replaceState(null, '', location.pathname);
+        intro?.classList.add('is-hidden');
+        document.title = `GolemUI — ${demo === 'forms-as-data' ? 'Forms as data' : 'Forms compose'} demo`;
+        if (push) history.pushState({ demo }, '', `?demo=${demo}`);
       }
 
-      function backToSelect() {
-        const embedded = viewport.classList.contains('is-embedded');
-        if (!fullscreen && !embedded) return;
-        fullscreen = false;
-        viewport.classList.remove('is-fullscreen', 'is-embedded');
-        viewport.classList.add('is-closing');
-        document.body.classList.remove('demos-fullscreen');
-        adventureSelect?.classList.remove('is-hidden');
-        // stop the demo so audio/timers don't run behind the select screen
+      function backToSelect(push = true) {
+        if (!open) return;
+        open = null;
+        // `deep-quest` was only a pre-paint hint to suppress the initial flash;
+        // JS now owns visibility, so drop it or its CSS keeps the selector hidden.
+        document.documentElement.classList.remove('deep-quest');
+        viewport.classList.remove('is-embedded');
+        intro?.classList.remove('is-hidden');
         panes.forEach((p) => {
           const iframe = p.querySelector<HTMLIFrameElement>('iframe.demo-iframe');
           if (iframe) iframe.removeAttribute('src');
         });
-        window.setTimeout(() => viewport.classList.remove('is-closing'), 320);
-        history.replaceState(null, '', location.pathname);
+        document.title = 'GolemUI — Demos';
+        if (push) history.pushState({}, '', location.pathname);
       }
 
-      cards.forEach((card) => {
-        card.addEventListener('click', () => {
-          const demo = card.dataset['demo'] as DemoId | undefined;
-          if (demo) launch(demo);
+      // "Open the demo" → embed the live app inline.
+      demoBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const demo = btn.dataset['demo'] as DemoId | undefined;
+          if (demo) openApp(demo);
         });
       });
 
-      document
-        .querySelector<HTMLButtonElement>('.fs-exit')
-        ?.addEventListener('click', backToSelect);
+      // "Play the quest" → the quest portal (8-bit walk).
+      questBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const demo = btn.dataset['quest'];
+          if (demo && questPortal) location.href = `${questPortal}/?demo=${demo}&fw=react`;
+        });
+      });
+
+      // Accordion — single row open at a time.
+      const heads = Array.from(document.querySelectorAll<HTMLButtonElement>('.ra-head'));
+      heads.forEach((h) => {
+        h.addEventListener('click', () => {
+          const row = h.closest('.ra-row');
+          if (!row) return;
+          const wasOpen = row.classList.contains('open');
+          document.querySelectorAll<HTMLElement>('.ra-row.open').forEach((r) => {
+            r.classList.remove('open');
+            r.querySelector('.ra-head')?.setAttribute('aria-expanded', 'false');
+          });
+          if (!wasOpen) {
+            row.classList.add('open');
+            h.setAttribute('aria-expanded', 'true');
+          }
+        });
+      });
+
+      // Mix & match — light up the hovered pillar's wire into {gui.}.
+      const flow = document.querySelector<HTMLElement>('.mm2-flow');
+      document.querySelectorAll<HTMLElement>('.mm2-input').forEach((inp) => {
+        inp.addEventListener('mouseenter', () => {
+          if (flow) flow.dataset['hot'] = inp.dataset['k'] || '';
+        });
+        inp.addEventListener('mouseleave', () => {
+          if (flow) flow.dataset['hot'] = '';
+        });
+      });
+
+      // The header "Demos" pill returns to the selector without a full reload.
+      document.querySelector<HTMLAnchorElement>('nav a[data-nav="demos"]')?.addEventListener(
+        'click',
+        (e) => {
+          if (open) {
+            e.preventDefault();
+            backToSelect();
+          }
+        },
+      );
+
       window.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') backToSelect();
       });
 
-      // Theme broadcast to the demo iframe
+      // Browser back/forward: reflect ?demo= so every state has a real URL.
+      window.addEventListener('popstate', () => {
+        const demo = new URLSearchParams(location.search).get('demo');
+        if (isDemoId(demo)) openApp(demo, false);
+        else backToSelect(false);
+      });
+
+      // Messages from the embedded app — only trust our own demo iframes, never
+      // an arbitrary frame (the demos can host third-party widgets).
+      const demoWindows = () =>
+        Array.from(document.querySelectorAll<HTMLIFrameElement>('iframe.demo-iframe')).map(
+          (f) => f.contentWindow,
+        );
+      window.addEventListener('message', (event) => {
+        if (!demoWindows().includes(event.source as Window)) return;
+        const data = event.data as { type?: string } | null;
+        if (data?.type === 'golemui-demo-exit') backToSelect();
+        else if (data?.type === 'golemui-play-quest') {
+          const id = panes.find(
+            (p) =>
+              p.querySelector<HTMLIFrameElement>('iframe.demo-iframe')?.contentWindow ===
+              event.source,
+          )?.id?.replace('demo-pane-', '');
+          if (isDemoId(id ?? null) && questPortal) {
+            location.href = `${questPortal}/?demo=${id}&fw=react&from=app`;
+          }
+        } else if (data?.type === 'golemui-theme-ready')
+          broadcastTheme((event.source as Window) ?? undefined);
+      });
+
+      // Theme broadcast to the embedded app.
       const currentTheme = (): 'dark' | 'light' =>
         document.documentElement.classList.contains('dark') ? 'dark' : 'light';
-      const broadcastTheme = (target?: Window) => {
+      function broadcastTheme(target?: Window) {
         const msg = { type: 'golemui-theme', theme: currentTheme() };
         if (target) {
           target.postMessage(msg, '*');
@@ -295,92 +453,143 @@ const FRAMEWORKS = [
         document
           .querySelectorAll<HTMLIFrameElement>('iframe.demo-iframe')
           .forEach((iframe) => iframe.contentWindow?.postMessage(msg, '*'));
-      };
-      document
-        .querySelectorAll<HTMLIFrameElement>('iframe.demo-iframe')
-        .forEach((iframe) => {
-          iframe.addEventListener('load', () =>
-            broadcastTheme(iframe.contentWindow ?? undefined),
-          );
-        });
-
-      window.addEventListener('message', (event) => {
-        const data = event.data as { type?: string } | null;
-        if (data?.type === 'golemui-demo-embed') {
-          embedApp();
-        } else if (data?.type === 'golemui-demo-exit') {
-          backToSelect();
-        } else if (data?.type === 'golemui-theme-ready') {
-          broadcastTheme((event.source as Window) ?? undefined);
-        }
+      }
+      document.querySelectorAll<HTMLIFrameElement>('iframe.demo-iframe').forEach((iframe) => {
+        iframe.addEventListener('load', () => broadcastTheme(iframe.contentWindow ?? undefined));
       });
-
       const themeObserver = new MutationObserver(() => broadcastTheme());
       themeObserver.observe(document.documentElement, {
         attributes: true,
         attributeFilter: ['class', 'data-theme'],
       });
 
-      // 8-bit typewriter for the guide prompt (constant cps, rAF, wall-clock)
-      (() => {
-        const el = document.querySelector<HTMLElement>('[data-qp-type]');
-        if (!el) return;
-        const text = el.textContent ?? '';
-        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-        el.textContent = '';
-        const cps = 38;
-        let start = 0;
-        const step = (ts: number) => {
-          if (!start) start = ts;
-          const n = Math.floor(((ts - start) / 1000) * cps);
-          if (n >= text.length) {
-            el.textContent = text;
-            return;
-          }
-          el.textContent = text.slice(0, n);
-          requestAnimationFrame(step);
-        };
-        requestAnimationFrame(step);
-      })();
+      // Deep link / quest return: ?demo=<id> or ?open=<id> → open that app.
+      const params = new URLSearchParams(location.search);
+      const deepLink = params.get('demo') ?? params.get('open');
+      if (isDemoId(deepLink)) {
+        // Seed a selector entry *beneath* the deep-linked app so Back returns
+        // to the selector (e.g. after a quest hand-back) instead of leaving the site.
+        history.replaceState({}, '', location.pathname);
+        history.pushState({ demo: deepLink }, '', `?demo=${deepLink}`);
+        openApp(deepLink, false);
+      } else {
+        // Malformed ?demo=/?open= — the pre-paint hint hid the selector; nothing
+        // opened, so restore it rather than leave a blank page.
+        document.documentElement.classList.remove('deep-quest');
+      }
     </script>
 
     <style lang="scss" is:global>
+      /* ── Theme tokens ─────────────────────────────────────────────── */
       :root {
+        /* header tokens */
         --bg-color: #ffffff;
-        --bg-surface: #f8fafc;
         --text-color: #0f172a;
         --text-muted: #64748b;
-        --accent-color: #3b82f6;
-        --accent-color-rgb: 59, 130, 246;
-        --border-color: #e2e8f0;
-      }
 
+        /* brand gradient = the pillars */
+        --p1: #5b8cff;
+        --p2: #9a6cff;
+        --p3: #c861ec;
+        --grad: linear-gradient(100deg, var(--p1) 0%, var(--p2) 50%, var(--p3) 100%);
+
+        --radius: 16px;
+        --radius-sm: 10px;
+        --radius-lg: 24px;
+        --maxw: 1200px;
+        --gutter: clamp(20px, 4vw, 56px);
+        --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+        --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+        --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+        --font-mono: 'Fira Code', ui-monospace, 'SF Mono', Menlo, monospace;
+        --font-pixel: 'Press Start 2P', 'Fira Code', monospace;
+
+        /* surfaces — light */
+        --surface: #ffffff;
+        --surface-2: #fbfbfe;
+        --surface-3: #f0f0f6;
+        --border: rgba(15, 18, 40, 0.1);
+        --border-strong: rgba(15, 18, 40, 0.18);
+        --text: #14141c;
+        --text-2: #54546a;
+        --text-3: #8a8a9e;
+        --shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 22px 50px -28px rgba(40, 30, 90, 0.28);
+        --shadow-sm: 0 1px 0 rgba(255, 255, 255, 0.7) inset, 0 10px 24px -16px rgba(40, 30, 90, 0.22);
+        --crt-bg: #1a1330;
+        --crt-ink: #e6dcff;
+        --bg-grad-tint: radial-gradient(1100px 650px at 80% -10%, #d9d3ff 0%, #f6f6fa00 55%),
+          radial-gradient(800px 560px at -2% 0%, #cfe0ff 0%, #f6f6fa00 50%);
+      }
       html.dark {
-        --bg-color: #0a0c10;
-        --bg-surface: #111318;
+        --bg-color: #08080c;
         --text-color: #f1f5f9;
         --text-muted: #94a3b8;
-        --accent-color: #60a5fa;
-        --accent-color-rgb: 96, 165, 250;
-        --border-color: #1e293b;
+
+        /* surfaces — dark */
+        --surface: #0f0f17;
+        --surface-2: #14141f;
+        --surface-3: #1a1a27;
+        --border: rgba(255, 255, 255, 0.09);
+        --border-strong: rgba(255, 255, 255, 0.16);
+        --text: #f3f3f7;
+        --text-2: #a6a6b8;
+        --text-3: #6e6e84;
+        --shadow: 0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 24px 60px -24px rgba(0, 0, 0, 0.7);
+        --shadow-sm: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 8px 24px -12px rgba(0, 0, 0, 0.6);
+        --crt-bg: #0c0814;
+        --crt-ink: #d9c8ff;
+        --bg-grad-tint: radial-gradient(1200px 700px at 78% -8%, #2a1f57 0%, #14122400 55%),
+          radial-gradient(900px 600px at 0% 0%, #122046 0%, #0a0c1800 50%);
       }
 
+      * {
+        box-sizing: border-box;
+      }
       body {
         margin: 0;
-        font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+        font-family: var(--font-sans);
         background: var(--bg-color);
-        color: var(--text-color);
-        transition: background-color 0.3s ease, color 0.3s ease;
+        color: var(--text);
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
+        line-height: 1.5;
+        overflow-x: hidden;
+        transition: background-color 0.4s ease, color 0.4s ease;
+      }
+      /* ambient brand tint behind the content */
+      body::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background: var(--bg-grad-tint);
+        pointer-events: none;
+        z-index: 0;
       }
 
       .container {
         max-width: 1200px;
         margin: 0 auto;
-        padding: 0 1rem;
+        padding: 0 1.5rem;
+      }
+      .wrap {
+        max-width: var(--maxw);
+        margin: 0 auto;
+        padding-inline: var(--gutter);
+      }
+      .mono {
+        font-family: var(--font-mono);
+      }
+      .grad-text {
+        background: var(--grad);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      ::selection {
+        background: #9a6cff55;
       }
 
+      /* ── Header (unchanged) ───────────────────────────────────────── */
       .landing-header {
         position: fixed;
         top: 0;
@@ -398,341 +607,689 @@ const FRAMEWORKS = [
           align-items: center;
           height: 4rem;
         }
-
         .logo {
           display: inline-flex;
           align-items: center;
           text-decoration: none;
           color: var(--text-color);
-
           .logo-lockup {
             height: 36px;
             width: auto;
             display: block;
           }
         }
-
-        nav {
+        nav.pill-nav {
           display: flex;
           align-items: center;
-          gap: 1.75rem;
-
+          gap: 0.35rem;
+          padding: 0.25rem;
+          background: rgba(148, 163, 184, 0.1);
+          border-radius: 999px;
           a {
             color: var(--text-muted);
             text-decoration: none;
-            font-weight: 500;
+            font-weight: 600;
             font-size: 0.9375rem;
-            transition: color 0.2s;
-
+            line-height: 1;
+            padding: 0.45rem 0.95rem;
+            border-radius: 999px;
+            transition: color 0.2s, background 0.2s, box-shadow 0.2s;
             &:hover {
               color: var(--text-color);
             }
-
             &[aria-current='page'] {
-              color: var(--text-color);
+              color: #fff;
+              background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+              box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
             }
           }
         }
       }
-
       html.dark .landing-header {
-        background: rgba(10, 12, 16, 0.7);
-        border-bottom: 1px solid rgba(30, 41, 59, 0.6);
+        background: rgba(8, 8, 12, 0.72);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
       }
 
-      /* 8-bit DEMOS chip — static (current page), matches the home chip */
-      .landing-header nav a.demos-chip {
+      /* ── Page scaffold ────────────────────────────────────────────── */
+      main {
+        position: relative;
+        z-index: 1;
+        box-sizing: border-box;
+        padding-top: 4rem;
+        min-height: 100vh;
+        background: transparent;
+      }
+      /* When a demo is embedded the page itself must not scroll. */
+      main:has(.demos-viewport.is-embedded) {
+        height: 100vh;
+        overflow: hidden;
+      }
+      .demos-select.is-hidden {
+        display: none;
+      }
+      html.deep-quest .demos-select {
+        display: none;
+      }
+
+      section {
+        position: relative;
+      }
+      .section-kicker {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-family: var(--font-mono);
+        font-size: 12px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--text-3);
+        margin-bottom: 18px;
+      }
+      .section-kicker .tick {
+        width: 22px;
+        height: 1px;
+        background: var(--border-strong);
+      }
+      /* Match the home hero titles: 800 weight, tight tracking. */
+      h1.hero-title {
+        font-size: clamp(2rem, 3.6vw, 3rem);
+        line-height: 1.05;
+        letter-spacing: -0.035em;
+        font-weight: 800;
+        margin: 0 0 1.1rem;
+      }
+      .lead {
+        font-size: clamp(17px, 1.5vw, 20px);
+        color: var(--text-2);
+        max-width: 52rem;
+        margin: 0;
+        text-wrap: pretty;
+      }
+      .lead b {
+        color: var(--text);
+        font-weight: 600;
+      }
+
+      /* ── Hero ─────────────────────────────────────────────────────── */
+      .hero {
+        padding-top: 2.25rem;
+        padding-bottom: 1.5rem;
+      }
+      .hero-copy {
+        max-width: 56rem;
+      }
+
+      /* ── Five-pillar accordion ────────────────────────────────────── */
+      .pillars-section {
+        padding-bottom: clamp(40px, 6vw, 72px);
+      }
+      .ra {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+      .rt-prompt {
+        display: flex;
+        align-items: baseline;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .hb-q {
+        font-family: var(--font-mono);
+        font-size: 12px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--text-3);
+      }
+      .rt-prompt-hint {
+        font-size: 14px;
+        color: var(--text-3);
+      }
+      .ra-rows {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+      .ra-row {
+        --accent: var(--p2);
+        border: 1px solid var(--border);
+        border-left: 3px solid color-mix(in srgb, var(--accent) 45%, var(--border));
+        border-radius: 16px;
+        background: var(--surface);
+        box-shadow: var(--shadow-sm);
+        overflow: hidden;
+        transition: border-color 0.25s var(--ease), box-shadow 0.3s var(--ease), background 0.25s var(--ease);
+      }
+      .ra-row.open {
+        border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+        border-left-color: var(--accent);
+        background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 7%, transparent), transparent 32%), var(--surface);
+        box-shadow: var(--shadow), 0 0 44px -22px color-mix(in srgb, var(--accent) 85%, transparent);
+      }
+      .ra-row:not(.open):hover {
+        border-left-color: var(--accent);
+      }
+      .ra-head {
+        width: 100%;
+        text-align: left;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 20px 22px;
+        background: transparent;
+        border: none;
+        color: var(--text);
+        cursor: pointer;
+      }
+      .rt-num {
+        display: grid;
+        place-items: center;
+        width: 36px;
+        height: 36px;
+        flex: none;
+        border-radius: 9px;
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--accent);
+        background: color-mix(in srgb, var(--accent) 14%, transparent);
+        border: 1px solid color-mix(in srgb, var(--accent) 36%, transparent);
+      }
+      .ra-row.open .rt-num {
+        color: #fff;
+        background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 92%, #fff), var(--accent));
+        border-color: transparent;
+        box-shadow: 0 8px 18px -8px color-mix(in srgb, var(--accent) 90%, transparent);
+      }
+      .rt-headtext {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        min-width: 0;
+        flex: 1;
+      }
+      .rt-pain {
+        font-size: clamp(16px, 1.7vw, 19px);
+        font-weight: 600;
+        letter-spacing: -0.015em;
+        color: var(--text);
+      }
+      .rt-title {
+        font-size: 11.5px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: color-mix(in srgb, var(--accent) 78%, var(--text-3));
+      }
+      .rt-soon {
+        font-family: var(--font-mono);
+        font-size: 9px;
+        letter-spacing: 0.12em;
+        color: var(--p1);
+        padding: 2px 6px;
+        border-radius: 5px;
+        flex: none;
+        background: color-mix(in srgb, var(--p1) 14%, transparent);
+        border: 1px solid color-mix(in srgb, var(--p1) 34%, transparent);
+      }
+      .rt-chev {
+        position: relative;
+        width: 22px;
+        height: 22px;
+        flex: none;
+      }
+      .rt-chev span {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 13px;
+        height: 2px;
+        border-radius: 2px;
+        background: var(--text-2);
+        transition: transform 0.3s var(--ease);
+        transform: translate(-50%, -50%);
+      }
+      .rt-chev span:nth-child(2) {
+        transform: translate(-50%, -50%) rotate(90deg);
+      }
+      .open .rt-chev span:nth-child(2) {
+        transform: translate(-50%, -50%) rotate(0deg);
+      }
+      .open .rt-chev span {
+        background: var(--accent);
+      }
+      .ra-panel {
+        display: none;
+        padding: 0 22px 22px 74px;
+      }
+      .ra-row.open .ra-panel {
+        display: block;
+        animation: revealUp 0.4s var(--ease-out);
+      }
+      @keyframes revealUp {
+        from {
+          opacity: 0.35;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .ra-row.open .ra-panel {
+          animation: none;
+        }
+      }
+
+      /* unfolded pillar detail */
+      .pd {
+        display: grid;
+        grid-template-columns: 1fr minmax(280px, 340px);
+        gap: 26px;
+      }
+      .pd-body {
+        font-size: 15.5px;
+        line-height: 1.62;
+        color: var(--text-2);
+        margin: 0 0 20px;
+        text-wrap: pretty;
+        max-width: 54ch;
+      }
+      .pd-body b,
+      .pd-body strong {
+        color: var(--text);
+        font-weight: 600;
+      }
+      .pd-cta {
+        width: auto;
+        padding-inline: 24px;
+      }
+      .pd-quest {
+        align-self: start;
+      }
+      .pd-quest .quest {
+        margin-top: 0;
+      }
+      @media (max-width: 760px) {
+        .pd {
+          grid-template-columns: 1fr;
+          gap: 18px;
+        }
+        .pd-cta {
+          width: 100%;
+        }
+        .ra-panel {
+          padding: 0 20px 20px;
+        }
+        .ra-head {
+          padding: 18px;
+          gap: 13px;
+        }
+      }
+
+      /* ── Buttons ──────────────────────────────────────────────────── */
+      .btn {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 0.5rem;
-        box-sizing: border-box;
-        height: 2rem;
-        font-family: 'Press Start 2P', monospace;
-        font-size: 0.62rem;
-        letter-spacing: 0.04em;
-        line-height: 1;
-        color: #ffffff;
-        background: #6a4cff;
-        border: 2px solid #6a4cff;
-        border-radius: 0;
-        padding: 0 0.7rem;
-        box-shadow: inset 0 0 0 2px #f8f4d7, 2px 2px 0 0 #3a1f8c;
-        text-decoration: none;
+        gap: 9px;
+        padding: 13px 18px;
+        border-radius: var(--radius-sm);
+        font-size: 15px;
+        font-weight: 600;
+        white-space: nowrap;
+        border: 1px solid transparent;
+        cursor: pointer;
+        transition: transform 0.15s var(--ease), box-shadow 0.25s var(--ease), background 0.25s var(--ease);
       }
-      .landing-header nav a.demos-chip:hover {
-        color: #ffffff;
+      .btn-primary {
+        color: #fff;
+        background: var(--grad);
+        background-size: 140% 140%;
+        box-shadow: 0 10px 26px -12px #6f6cffaa, 0 1px 0 rgba(255, 255, 255, 0.18) inset;
       }
-      .demos-chip-arrow {
-        color: #f9d342;
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        background-position: 100% 0;
+        box-shadow: 0 16px 34px -12px #6f6cffcc, 0 1px 0 rgba(255, 255, 255, 0.22) inset;
+      }
+      .btn-primary .arrow {
+        transition: transform 0.25s var(--ease);
+      }
+      .btn-primary:hover .arrow {
+        transform: translateX(3px);
+      }
+      .btn-disabled {
+        color: var(--text-3);
+        background: var(--surface-2);
+        border-color: var(--border);
+        cursor: not-allowed;
       }
 
-      body.demos-fullscreen {
+      /* ── Quest zone (retro CRT) ───────────────────────────────────── */
+      .quest {
+        margin-top: 20px;
+        border-radius: 14px;
+        border: 1px solid color-mix(in srgb, var(--p3) 26%, var(--border));
+        background: repeating-linear-gradient(0deg, #ffffff06 0 1px, transparent 1px 3px),
+          linear-gradient(180deg, #15102a, var(--crt-bg));
+        padding: 15px 16px 16px;
+        position: relative;
         overflow: hidden;
       }
-    </style>
-
-    <style lang="scss">
-      $pixel-purple: #6a4cff;
-      $pixel-purple-deep: #3a1f8c;
-      $pixel-purple-light: #b5a3ff;
-      $pixel-cream: #f8f4d7;
-      $pixel-dark: #150726;
-      $pixel-amber: #f9d342;
-
-      main {
-        padding-top: 4rem; /* clear fixed header (padding avoids margin-collapse) */
-        min-height: 100vh;
-        background:
-          radial-gradient(ellipse 60% 50% at 50% 0%, rgba(106, 76, 255, 0.18), transparent 60%),
-          #0d0820;
-      }
-
-      /* ── Choose your adventure ─────────────────────────────────────── */
-      .adventure-select {
-        max-width: 1040px;
-        margin: 0 auto;
-        padding: 2.5rem 1.25rem 3rem;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 2rem;
-        color: #f1ecff;
-      }
-
-      /* 8-bit guide prompt box at the top */
-      .quest-prompt {
-        position: relative;
-        width: 100%;
-        max-width: 760px;
-        background: $pixel-dark;
-        color: $pixel-cream;
-        border: 4px solid $pixel-cream;
-        box-shadow:
-          0 0 0 4px $pixel-dark,
-          0 0 0 8px $pixel-purple,
-          0 10px 0 0 $pixel-purple-deep;
-        padding: 1.3rem 1.5rem 1.2rem;
-        margin-top: 0.5rem;
-      }
-      .qp-nameplate {
+      .quest::after {
+        content: '';
         position: absolute;
-        top: -16px;
-        left: 18px;
-        background: $pixel-purple;
-        color: $pixel-cream;
-        border: 3px solid $pixel-cream;
-        box-shadow: 0 4px 0 $pixel-purple-deep;
-        font-family: 'Press Start 2P', monospace;
-        font-size: 0.55rem;
-        letter-spacing: 0.08em;
-        padding: 6px 12px 5px;
+        inset: 0;
+        background: radial-gradient(120% 100% at 50% 0%, #9a6cff22, transparent 60%);
+        pointer-events: none;
+        animation: flicker 6s steps(40) infinite;
       }
-      .qp-text {
-        margin: 0.4rem 0 0;
-        font-family: 'VT323', 'Fira Code', monospace;
-        font-size: 1.5rem;
-        line-height: 1.3;
+      @keyframes flicker {
+        0%, 97%, 100% {
+          opacity: 0.9;
+        }
+        98% {
+          opacity: 0.7;
+        }
+        99% {
+          opacity: 1;
+        }
       }
-      .qp-text::after {
-        content: '▋';
-        color: $pixel-amber;
-        animation: qp-blink 0.9s steps(2) infinite;
+      @media (prefers-reduced-motion: reduce) {
+        .quest::after {
+          animation: none;
+        }
       }
-      @keyframes qp-blink {
-        50% { opacity: 0; }
+      .quest-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 11px;
       }
-
       .quest-title {
-        font-family: 'Press Start 2P', monospace;
-        font-size: clamp(1rem, 3.2vw, 1.7rem);
-        letter-spacing: 0.14em;
-        color: $pixel-purple-light;
-        text-align: center;
-        margin: 0.5rem 0 0;
-        text-shadow: 3px 3px 0 $pixel-purple-deep, 0 0 18px rgba(106, 76, 255, 0.4);
+        font-family: var(--font-pixel);
+        font-size: 9px;
+        line-height: 1.4;
+        color: var(--p3);
+        letter-spacing: 0.02em;
+        text-shadow: 0 0 8px #c861ec88;
       }
-
-      .fw-row {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 0.9rem;
+      .quest-coin {
+        font-family: var(--font-pixel);
+        font-size: 7px;
+        color: #8d7fb8;
+        letter-spacing: 0.02em;
       }
-      .fw-label {
-        font-family: 'Press Start 2P', monospace;
-        font-size: 0.55rem;
-        letter-spacing: 0.14em;
-        color: #968ea8;
+      .quest-coin.locked {
+        color: #6d6d80;
       }
-      .fw-tiles {
-        display: flex;
-        gap: 0.7rem;
-        flex-wrap: wrap;
-        justify-content: center;
+      .quest p {
+        font-size: 13px;
+        color: var(--crt-ink);
+        opacity: 0.82;
+        margin: 0 0 14px;
+        line-height: 1.55;
       }
-      .fw-tile {
-        appearance: none;
-        cursor: pointer;
-        background: $pixel-cream;
-        border: 3px solid var(--fw-color);
-        box-shadow: 4px 4px 0 var(--fw-shadow);
-        padding: 0.6rem 0.5rem 0.45rem;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 0.3rem;
-        color: $pixel-dark;
-        font-family: 'Press Start 2P', monospace;
-        border-radius: 0;
-        transition: transform 0.07s ease, box-shadow 0.07s ease;
-        min-width: 84px;
+      .quest p .boss {
+        color: #ff7eea;
+        font-weight: 600;
+        text-shadow: 0 0 8px #ff7eea66;
       }
-      .fw-tile:hover {
-        transform: translate(-2px, -2px);
-        box-shadow: 6px 6px 0 var(--fw-shadow);
-      }
-      .fw-tile.is-selected {
-        background: var(--fw-color);
-        color: #fff;
-        box-shadow: 4px 4px 0 var(--fw-shadow), 0 0 0 3px $pixel-cream, 0 0 0 6px $pixel-purple;
-      }
-      .fw-portrait {
-        width: 38px;
-        height: 38px;
-        background: var(--fw-color);
-        border: 3px solid $pixel-dark;
-        display: flex;
+      .btn-pixel {
+        display: inline-flex;
         align-items: center;
         justify-content: center;
-      }
-      .fw-tile.is-selected .fw-portrait {
-        background: $pixel-cream;
-      }
-      .fw-monogram {
-        font-size: 0.85rem;
-        color: $pixel-dark;
-      }
-      .fw-name {
-        font-size: 0.5rem;
-        letter-spacing: 0.08em;
-      }
-
-      .adventure-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 1.25rem;
+        gap: 10px;
         width: 100%;
-      }
-      .adventure-card {
-        appearance: none;
+        font-family: var(--font-pixel);
+        font-size: 9px;
+        letter-spacing: 0.04em;
+        color: #fff;
+        padding: 13px 14px;
+        border: none;
+        background: linear-gradient(180deg, #b07bff, #8a4fe6);
+        box-shadow: 0 4px 0 #5e2fae, 0 0 0 2px #2a1550, 0 0 18px -2px #9a6cffaa;
+        position: relative;
         cursor: pointer;
-        text-align: left;
-        background: #181235;
-        border: 4px solid $pixel-purple;
-        box-shadow: 8px 8px 0 $pixel-purple-deep;
-        padding: 1.4rem 1.5rem 1.6rem;
+        transition: transform 0.08s linear, box-shadow 0.08s linear, filter 0.2s var(--ease);
+        clip-path: polygon(
+          0 4px, 4px 4px, 4px 0, calc(100% - 4px) 0, calc(100% - 4px) 4px, 100% 4px,
+          100% calc(100% - 4px), calc(100% - 4px) calc(100% - 4px), calc(100% - 4px) 100%,
+          4px 100%, 4px calc(100% - 4px), 0 calc(100% - 4px)
+        );
+      }
+      .btn-pixel:hover {
+        filter: brightness(1.08);
+      }
+      .btn-pixel:active {
+        transform: translateY(4px);
+        box-shadow: 0 0 0 #5e2fae, 0 0 0 2px #2a1550, 0 0 12px -2px #9a6cffaa;
+      }
+      .btn-pixel.locked {
+        background: linear-gradient(180deg, #2a2740, #211f33);
+        color: #6d6d80;
+        box-shadow: 0 4px 0 #16141f, 0 0 0 2px #16141f;
+        cursor: not-allowed;
+      }
+      .btn-pixel.locked:hover {
+        filter: none;
+      }
+      .btn-pixel.locked:active {
+        transform: none;
+      }
+
+      /* ── Mix & match → converge into {gui.} ───────────────────────── */
+      .mm-section {
+        padding: clamp(56px, 8vw, 96px) 0 clamp(64px, 9vw, 108px);
+        margin-top: clamp(16px, 3vw, 28px);
+        border-top: 1px solid var(--border);
+      }
+      .mm-head {
+        max-width: 760px;
+        margin-bottom: 30px;
+      }
+      .mm-title {
+        font-size: clamp(28px, 4vw, 46px);
+        font-weight: 600;
+        letter-spacing: -0.03em;
+        line-height: 1.05;
+        margin: 0 0 16px;
+        color: var(--text);
+      }
+      .mm2 {
         display: flex;
         flex-direction: column;
-        gap: 0.7rem;
-        color: #f1ecff;
-        border-radius: 0;
-        transition: transform 0.08s ease, box-shadow 0.08s ease, border-color 0.12s ease;
-        min-height: 230px;
+        gap: 26px;
       }
-      .adventure-card:hover {
-        transform: translate(-3px, -3px);
-        box-shadow: 11px 11px 0 $pixel-purple-deep;
-        border-color: $pixel-amber;
+      .mm2-flow {
+        display: grid;
+        grid-template-columns: minmax(200px, 1fr) 88px auto 76px minmax(210px, 1.05fr);
+        align-items: center;
+        padding: 14px 10px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        background: radial-gradient(80% 120% at 50% 50%, color-mix(in srgb, var(--p2) 9%, transparent), transparent 70%), var(--surface);
+        box-shadow: var(--shadow);
       }
-      .adventure-card:active {
-        transform: translate(2px, 2px);
-        box-shadow: 4px 4px 0 $pixel-purple-deep;
+      .mm2-inputs {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        padding: 12px 14px;
       }
-      .adventure-card.is-disabled {
-        cursor: not-allowed;
-        border-color: #3a3556;
-        background: #120f24;
-        box-shadow: 6px 6px 0 #241f3a;
-        opacity: 0.7;
+      .mm2-input {
+        --a: var(--p2);
+        text-align: left;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-height: 56px;
+        padding: 11px 13px;
+        border-radius: 12px;
+        background: color-mix(in srgb, var(--a) 7%, var(--surface));
+        border: 1px solid color-mix(in srgb, var(--a) 34%, var(--border));
+        transition: all 0.22s var(--ease);
       }
-      .adventure-card.is-disabled:hover {
-        transform: none;
-        box-shadow: 6px 6px 0 #241f3a;
-        border-color: #3a3556;
-      }
-      .adventure-card.is-disabled .adv-name,
-      .adventure-card.is-disabled .adv-blurb {
-        color: #6f6790;
-      }
-      .adv-soon {
-        color: #968ea8 !important;
-      }
-      .adv-tag {
-        font-family: 'Press Start 2P', monospace;
-        font-size: 0.5rem;
-        letter-spacing: 0.16em;
-        color: $pixel-amber;
-      }
-      .adv-name {
-        font-family: 'Press Start 2P', monospace;
-        font-size: 1.05rem;
-        letter-spacing: 0.04em;
-        line-height: 1.25;
+      .mm2-input-num {
+        display: grid;
+        place-items: center;
+        width: 28px;
+        height: 28px;
+        flex: none;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 600;
         color: #fff;
+        background: linear-gradient(180deg, color-mix(in srgb, var(--a) 92%, #fff), var(--a));
+        box-shadow: 0 6px 14px -6px color-mix(in srgb, var(--a) 90%, transparent);
       }
-      .adv-blurb {
-        font-family: 'VT323', 'Fira Code', monospace;
-        font-size: 1.15rem;
-        line-height: 1.3;
-        color: #cabfe6;
+      .mm2-input-txt {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        min-width: 0;
       }
-      .adv-blurb code {
-        font-family: 'Fira Code', monospace;
-        font-size: 0.85rem;
-        background: rgba(181, 163, 255, 0.16);
-        padding: 0.05rem 0.3rem;
-        color: $pixel-purple-light;
+      .mm2-input-txt b {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text);
+        line-height: 1.2;
       }
-      .adv-start {
-        margin-top: auto;
-        font-family: 'Press Start 2P', monospace;
-        font-size: 0.7rem;
-        letter-spacing: 0.1em;
-        color: $pixel-amber;
+      .mm2-input-txt em {
+        font-style: normal;
+        font-size: 10.5px;
+        color: var(--text-3);
+        letter-spacing: 0.02em;
+      }
+      .mm2-input:hover {
+        border-color: var(--a);
+        box-shadow: 0 14px 30px -18px color-mix(in srgb, var(--a) 90%, transparent);
+        transform: translateX(3px);
+      }
+      .mm2-wires {
+        width: 88px;
+        height: 336px;
+      }
+      .mm2-wires path {
+        stroke: var(--a);
+        stroke-width: 2;
+        stroke-opacity: 0.5;
+        transition: stroke-opacity 0.2s var(--ease), stroke-width 0.2s var(--ease);
+      }
+      .mm2-flow[data-hot]:not([data-hot='']) .mm2-wires path {
+        stroke-opacity: 0.12;
+      }
+      .mm2-flow[data-hot='studio'] .w-studio,
+      .mm2-flow[data-hot='compose'] .w-compose,
+      .mm2-flow[data-hot='data'] .w-data,
+      .mm2-flow[data-hot='components'] .w-components,
+      .mm2-flow[data-hot='enterprise'] .w-enterprise {
+        stroke-opacity: 1;
+        stroke-width: 3;
+      }
+      .mm2-core {
+        display: grid;
+        place-content: center;
+        gap: 3px;
+        text-align: center;
+        width: clamp(104px, 12vw, 132px);
+        height: clamp(104px, 12vw, 132px);
+        border-radius: 22px;
+        background: radial-gradient(120% 120% at 50% 0%, color-mix(in srgb, var(--p2) 24%, transparent), transparent 70%), var(--surface);
+        border: 1px solid var(--border-strong);
+        box-shadow: 0 0 0 1px #9a6cff22, 0 26px 54px -26px #6f6cff66;
+      }
+      .mm2-core-mark {
+        font-family: var(--font-mono);
+        font-weight: 600;
+        font-size: clamp(20px, 2.4vw, 26px);
+        background: var(--grad);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      .mm2-core-sub {
+        font-size: 9.5px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--text-3);
+      }
+      .mm2-tail {
+        display: flex;
+        align-items: center;
+        padding: 0 8px;
+      }
+      .mm2-tail-line {
+        flex: 1;
+        height: 2px;
+        background: var(--grad);
+      }
+      .mm2-tail-tip {
+        width: 0;
+        height: 0;
+        border: 5px solid transparent;
+        border-left-color: var(--p3);
+        margin-left: -1px;
+      }
+      .mm2-result {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 14px 16px 14px 4px;
+      }
+      .mm2-result-eyebrow {
+        font-size: 10.5px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--text-3);
+      }
+      .mm2-result-title {
+        font-size: clamp(24px, 3vw, 33px);
+        font-weight: 600;
+        letter-spacing: -0.025em;
+        line-height: 1.04;
+        color: var(--text);
+      }
+      .mm2-result-sub {
+        font-size: 14px;
+        color: var(--text-2);
+        max-width: 30ch;
+        text-wrap: pretty;
+      }
+      @media (max-width: 900px) {
+        .mm2-flow {
+          grid-template-columns: 1fr;
+          justify-items: center;
+          gap: 8px;
+          padding: 22px;
+        }
+        .mm2-inputs {
+          width: 100%;
+          max-width: 380px;
+        }
+        .mm2-wires {
+          display: none;
+        }
+        .mm2-tail {
+          transform: rotate(90deg);
+          height: 28px;
+        }
+        .mm2-result {
+          text-align: center;
+          align-items: center;
+          padding-top: 6px;
+        }
       }
 
-      .quest-hint {
-        font-family: 'Press Start 2P', monospace;
-        font-size: 0.55rem;
-        letter-spacing: 0.14em;
-        color: #968ea8;
-        margin: 0;
-      }
-
-      /* ── Fullscreen demo host (hidden unless a quest is launched) ──── */
+      /* ── App-direct host — hidden until a demo is opened ──────────── */
       .demos-viewport {
         display: none;
-        position: fixed;
-        inset: 0;
-        z-index: 200;
-        background: #0a0c10;
-      }
-      .demos-viewport.is-fullscreen {
-        display: block;
-      }
-      /* "Take me to the app" / ✕ — the demo embedded inline under the header,
-         in normal page flow so the fixed header sits above and stays clickable. */
-      .demos-viewport.is-embedded {
-        display: block;
-        position: relative;
-        inset: auto;
-        z-index: 1;
         width: 100%;
         height: calc(100vh - 4rem);
+        position: relative;
       }
-      .adventure-select.is-hidden {
-        display: none;
+      .demos-viewport.is-embedded {
+        display: block;
       }
       .demo-pane {
         position: absolute;
@@ -746,43 +1303,7 @@ const FRAMEWORKS = [
         height: 100%;
         border: none;
         display: block;
-        background: #0a0c10;
-      }
-      .demos-viewport.is-fullscreen .demo-pane.is-active {
-        animation: demo-zoom-in 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
-      }
-      @keyframes demo-zoom-in {
-        from { transform: scale(0.92); opacity: 0; }
-        to { transform: scale(1); opacity: 1; }
-      }
-
-      .fs-exit {
-        display: none;
-        position: fixed;
-        top: 0.8rem;
-        right: 0.9rem;
-        z-index: 210;
-        width: 40px;
-        height: 40px;
-        align-items: center;
-        justify-content: center;
-        font-family: 'Press Start 2P', monospace;
-        font-size: 0.85rem;
-        color: $pixel-dark;
-        background: $pixel-amber;
-        border: 3px solid $pixel-dark;
-        border-radius: 0;
-        box-shadow: 0 0 0 3px $pixel-cream, 3px 3px 0 0 $pixel-purple-deep;
-        cursor: pointer;
-      }
-      .demos-viewport.is-fullscreen:not(.has-internal-exit) .fs-exit {
-        display: inline-flex;
-      }
-
-      @media (max-width: 880px) {
-        .adventure-grid {
-          grid-template-columns: 1fr;
-        }
+        background: var(--bg-color);
       }
     </style>
   </body>
