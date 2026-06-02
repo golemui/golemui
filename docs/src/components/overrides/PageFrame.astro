@@ -1,0 +1,15 @@
+---
+// Wrap Starlight's default page frame and append the shared site footer after
+// it, so every docs (and blog) page ends with the same footer as the marketing
+// pages. Importing the real component file (not the virtual one) renders the
+// stock frame without recursing into this override.
+import Default from '@astrojs/starlight/components/PageFrame.astro';
+import SiteFooter from '../SiteFooter.astro';
+---
+
+<Default>
+  <slot name="header" slot="header" />
+  <slot name="sidebar" slot="sidebar" />
+  <slot />
+</Default>
+<!--SiteFooter /-->

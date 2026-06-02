@@ -115,18 +115,23 @@ select {
 }
 
 /* "Take me to the app" — break out of the centred handheld frame and fill the
-   iframe width, growing with content. The layout flows top-to-bottom; when it's
-   taller than the viewport the iframe document scrolls as one. */
+   iframe width, growing with content. The document is exactly as tall as its
+   content, so when embedded the host iframe (driven by iframeResizer) grows AND
+   shrinks to match — the whole page scrolls as one, no viewport-height floor. */
+html:has(.sasha-shell.is-bare),
+html:has(.sasha-shell.is-bare) body {
+  min-height: 0;
+}
 #root:has(.sasha-shell.is-bare) {
   display: block;
   place-items: initial;
   padding: 0;
+  min-height: 0;
 }
 .sasha-shell.is-bare {
   position: static;
   width: 100%;
   height: auto;
-  min-height: 100vh;
   max-width: none;
   max-height: none;
   border: 0;

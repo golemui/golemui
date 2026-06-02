@@ -9,6 +9,7 @@ import Travel from '../components/landing/Travel.astro';
 import OutOfBox from '../components/landing/OutOfBox.astro';
 import Metrics from '../components/landing/Metrics.astro';
 import CTA from '../components/landing/CTA.astro';
+import SiteFooter from '../components/SiteFooter.astro';
 ---
 
 <html lang="en">
@@ -89,47 +90,7 @@ import CTA from '../components/landing/CTA.astro';
       <CTA />
     </main>
 
-    <footer class="landing-footer">
-      <div class="container">
-        <div class="footer-content">
-          <div class="footer-col">
-            <svg class="footer-mark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 220" width="140" height="42" role="img" aria-label="GolemUI">
-              <defs>
-                <linearGradient id="footer-brand" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stop-color="#3b82f6" />
-                  <stop offset="50%" stop-color="#8b5cf6" />
-                  <stop offset="100%" stop-color="#a855f7" />
-                </linearGradient>
-              </defs>
-              <text x="200" y="170" font-family="Inter, system-ui, -apple-system, sans-serif" font-weight="600" font-size="160" text-anchor="middle" letter-spacing="-2">
-                <tspan fill="url(#footer-brand)">{'{'}</tspan><tspan fill="currentColor">gui.</tspan><tspan fill="url(#footer-brand)">{'}'}</tspan>
-              </text>
-            </svg>
-            <p>The Declarative Form Engine.</p>
-          </div>
-          <div class="footer-col">
-            <h4>Product</h4>
-            <a href="/dx/getting-started/installation/">Documentation</a>
-            <a href="https://github.com/golemui/golemui/blob/main/CHANGELOG.md" target="_blank">Changelog</a>
-          </div>
-          <div class="footer-col">
-            <h4>Social</h4>
-            <a href="https://github.com/golemui/golemui" target="_blank">GitHub</a>
-            <a href="https://www.npmjs.com/org/golemui" target="_blank">NPM</a>
-            <a href="https://youtube.com/@getgolemui" target="_blank">Youtube</a>
-            <a href="https://x.com/getgolemui" target="_blank">X</a>
-            <a href="https://www.linkedin.com/company/golemui/" target="_blank">Linkedin</a>
-          </div>
-          <div class="footer-col">
-            <h4>Legal</h4>
-            <a href="/legal/privacy">Privacy</a>
-            <a href="/legal/terms">Terms</a>
-            <a href="https://github.com/golemui/golemui/blob/main/LICENSE" target="_blank">License</a>
-          </div>
-        </div>
-        <div class="copyright">&copy; 2025 GolemUI. All rights reserved.</div>
-      </div>
-    </footer>
+    <SiteFooter />
 
     <script>
       const themeToggle = document.getElementById('theme-toggle');
@@ -512,80 +473,6 @@ import CTA from '../components/landing/CTA.astro';
   html.dark .landing-header {
     background: rgba(10, 12, 16, 0.7);
     border-bottom: 1px solid rgba(30, 41, 59, 0.6);
-  }
-
-  .landing-footer {
-    padding: 5rem 0 2.5rem;
-    border-top: 1px solid var(--border-color);
-    background: var(--bg-surface);
-
-    .footer-content {
-      display: grid;
-      grid-template-columns: 2.5fr 1fr 1fr 1fr;
-      gap: 3rem;
-      margin-bottom: 3.5rem;
-
-      @media (max-width: 768px) {
-        grid-template-columns: 1fr 1fr;
-        gap: 2rem;
-      }
-
-      @media (max-width: 480px) {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .footer-col {
-      .footer-mark {
-        height: 36px;
-        width: auto;
-        display: block;
-        margin: 0 0 0.75rem;
-      }
-
-      h3 {
-        font-size: 1.35rem;
-        font-weight: 700;
-        margin: 0 0 0.5rem;
-        letter-spacing: -0.02em;
-      }
-
-      h4 {
-        font-size: 0.8125rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.06em;
-        margin: 0 0 1.25rem;
-        color: var(--text-muted);
-      }
-
-      p {
-        color: var(--text-muted);
-        line-height: 1.6;
-        font-size: 0.9375rem;
-      }
-
-      a {
-        display: block;
-        color: var(--text-muted);
-        text-decoration: none;
-        margin-bottom: 0.625rem;
-        font-size: 0.9375rem;
-        transition: color 0.2s;
-
-        &:hover {
-          color: var(--accent-color);
-        }
-      }
-    }
-
-    .copyright {
-      text-align: center;
-      color: var(--text-muted);
-      font-size: 0.8125rem;
-      padding-top: 2.5rem;
-      border-top: 1px solid var(--border-color);
-    }
   }
 
   .home-examples .expressive-code .frame pre {

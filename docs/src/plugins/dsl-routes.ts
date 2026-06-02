@@ -15,6 +15,8 @@ export function dslRoutesPlugin(): StarlightPlugin {
             LanguageSelect: './src/components/overrides/DslSelect.astro',
             SiteTitle: './src/components/overrides/SiteTitle.astro',
             SocialIcons: './src/components/overrides/SocialIcons.astro',
+            // Append the shared site footer to every docs/blog page.
+            PageFrame: './src/components/overrides/PageFrame.astro',
           },
         });
         addRouteMiddleware({

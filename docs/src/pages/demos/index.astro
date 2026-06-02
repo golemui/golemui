@@ -1,4 +1,7 @@
 ---
+import CTA from '../../components/landing/CTA.astro';
+import SiteFooter from '../../components/SiteFooter.astro';
+
 const formsAsDataSrc = import.meta.env.DEV
   ? 'http://localhost:4220/'
   : '/sasha-demo/index.html';
@@ -155,6 +158,15 @@ const MM_INPUTS = [
     <main>
       <!-- ── Selector: hero + five-pillar router + mix & match ───────── -->
       <div class="demos-select">
+        <!-- Quest entry — same 8-bit banner the demos carry below their bar. -->
+        <a class="quest-banner" href={questPortal} aria-label="Play the 8-bit quest">
+          <span class="qb-tag">■ 8-bit quest</span>
+          <span class="qb-text">
+            Want the story? Every demo has a goofy little 8-bit RPG that quietly teaches the concept.
+          </span>
+          <span class="qb-btn">▶ Play the quest</span>
+        </a>
+
         <section class="hero">
           <div class="wrap">
             <div class="hero-copy">
@@ -190,33 +202,17 @@ const MM_INPUTS = [
                     </button>
                     <div class="ra-panel">
                       <div class="pd">
-                        <div class="pd-main">
-                          <p class="pd-body" set:html={p.blurb}></p>
-                          {p.soon ? (
-                            <span class="btn btn-disabled pd-cta">Coming soon</span>
-                          ) : (
-                            <button class="btn btn-primary pd-cta" data-demo={p.demo}>
-                              Open the demo
-                              <svg class="arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                                <path d="M3 8h9M8.5 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
-                              </svg>
-                            </button>
-                          )}
-                        </div>
-                        <div class="pd-quest">
-                          <div class="quest">
-                            <div class="quest-head">
-                              <span class="quest-title">8-BIT QUEST</span>
-                              <span class:list={['quest-coin', 'mono', { locked: p.soon }]}>{p.soon ? 'FORGING…' : 'INSERT COIN'}</span>
-                            </div>
-                            <p set:html={p.quest.line}></p>
-                            {p.soon ? (
-                              <button class="btn-pixel locked" type="button" disabled>LOCKED</button>
-                            ) : (
-                              <button class="btn-pixel" type="button" data-quest={p.demo}>▶ PLAY THE QUEST</button>
-                            )}
-                          </div>
-                        </div>
+                        <p class="pd-body" set:html={p.blurb}></p>
+                        {p.soon ? (
+                          <span class="btn btn-disabled pd-cta">Coming soon</span>
+                        ) : (
+                          <button class="btn btn-primary pd-cta" data-demo={p.demo}>
+                            Open the demo
+                            <svg class="arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                              <path d="M3 8h9M8.5 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
+                            </svg>
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -267,6 +263,9 @@ const MM_INPUTS = [
             </div>
           </div>
         </section>
+
+        <!-- Same "Ready to start building?" CTA as the homepage. -->
+        <CTA />
       </div>
 
       <!-- ── App-direct host (hidden until a demo is opened) ─────────── -->
@@ -280,14 +279,14 @@ const MM_INPUTS = [
       </section>
     </main>
 
+    <!-- Same footer as the homepage. Hidden while a demo is embedded. -->
+    <SiteFooter />
+
     <script>
       type DemoId = 'forms-as-data' | 'forms-compose';
 
       const demoBtns = Array.from(
         document.querySelectorAll<HTMLButtonElement>('.pd-cta[data-demo]'),
-      );
-      const questBtns = Array.from(
-        document.querySelectorAll<HTMLButtonElement>('.btn-pixel[data-quest]'),
       );
       const panes = Array.from(document.querySelectorAll<HTMLElement>('.demo-pane'));
       const viewport = document.querySelector<HTMLElement>('.demos-viewport')!;
@@ -313,7 +312,7 @@ const MM_INPUTS = [
         const iframe = paneFor(demo)?.querySelector<HTMLIFrameElement>('iframe.demo-iframe');
         if (iframe && !iframe.src) {
           const base = iframe.dataset['base'] || '';
-          iframe.style.height = '100%';
+          // Height is driven by the demo's golemui-resize messages (see below).
           iframe.src = `${base}?mode=bare&fw=react&n=${Date.now()}`;
           iframe.addEventListener(
             'load',
@@ -356,14 +355,6 @@ const MM_INPUTS = [
         btn.addEventListener('click', () => {
           const demo = btn.dataset['demo'] as DemoId | undefined;
           if (demo) openApp(demo);
-        });
-      });
-
-      // "Play the quest" → the quest portal (8-bit walk).
-      questBtns.forEach((btn) => {
-        btn.addEventListener('click', () => {
-          const demo = btn.dataset['quest'];
-          if (demo && questPortal) location.href = `${questPortal}/?demo=${demo}&fw=react`;
         });
       });
 
@@ -426,8 +417,15 @@ const MM_INPUTS = [
         );
       window.addEventListener('message', (event) => {
         if (!demoWindows().includes(event.source as Window)) return;
-        const data = event.data as { type?: string } | null;
-        if (data?.type === 'golemui-demo-exit') backToSelect();
+        const data = event.data as { type?: string; height?: number } | null;
+        if (data?.type === 'golemui-resize' && typeof data.height === 'number') {
+          // Grow the reporting iframe to its content height so the page scrolls
+          // as one (no nested scrollbar inside the demo).
+          const iframe = Array.from(
+            document.querySelectorAll<HTMLIFrameElement>('iframe.demo-iframe'),
+          ).find((f) => f.contentWindow === event.source);
+          if (iframe) iframe.style.height = `${data.height}px`;
+        } else if (data?.type === 'golemui-demo-exit') backToSelect();
         else if (data?.type === 'golemui-play-quest') {
           const id = panes.find(
             (p) =>
@@ -659,11 +657,6 @@ const MM_INPUTS = [
         min-height: 100vh;
         background: transparent;
       }
-      /* When a demo is embedded the page itself must not scroll. */
-      main:has(.demos-viewport.is-embedded) {
-        height: 100vh;
-        overflow: hidden;
-      }
       .demos-select.is-hidden {
         display: none;
       }
@@ -880,17 +873,18 @@ const MM_INPUTS = [
         }
       }
 
-      /* unfolded pillar detail */
+      /* unfolded pillar detail — blurb on the left, the CTA pinned right */
       .pd {
-        display: grid;
-        grid-template-columns: 1fr minmax(280px, 340px);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
         gap: 26px;
       }
       .pd-body {
         font-size: 15.5px;
         line-height: 1.62;
         color: var(--text-2);
-        margin: 0 0 20px;
+        margin: 0;
         text-wrap: pretty;
         max-width: 54ch;
       }
@@ -900,18 +894,13 @@ const MM_INPUTS = [
         font-weight: 600;
       }
       .pd-cta {
-        width: auto;
+        flex: 0 0 auto;
         padding-inline: 24px;
-      }
-      .pd-quest {
-        align-self: start;
-      }
-      .pd-quest .quest {
-        margin-top: 0;
       }
       @media (max-width: 760px) {
         .pd {
-          grid-template-columns: 1fr;
+          flex-direction: column;
+          align-items: stretch;
           gap: 18px;
         }
         .pd-cta {
@@ -965,117 +954,77 @@ const MM_INPUTS = [
         cursor: not-allowed;
       }
 
-      /* ── Quest zone (retro CRT) ───────────────────────────────────── */
-      .quest {
-        margin-top: 20px;
-        border-radius: 14px;
-        border: 1px solid color-mix(in srgb, var(--p3) 26%, var(--border));
-        background: repeating-linear-gradient(0deg, #ffffff06 0 1px, transparent 1px 3px),
-          linear-gradient(180deg, #15102a, var(--crt-bg));
-        padding: 15px 16px 16px;
+      /* ── Quest banner — the same 8-bit strip the demos carry below their
+         bar, for a consistent quest entry across the product. ─────────── */
+      .quest-banner {
+        --quest-violet: 124, 58, 237;
         position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 0.6rem 1rem;
+        padding: 0.85rem 1.25rem;
+        text-decoration: none;
+        background: rgba(var(--quest-violet), 0.06);
+        border-bottom: 1px solid rgba(var(--quest-violet), 0.22);
         overflow: hidden;
       }
-      .quest::after {
+      .quest-banner::before {
         content: '';
         position: absolute;
         inset: 0;
-        background: radial-gradient(120% 100% at 50% 0%, #9a6cff22, transparent 60%);
         pointer-events: none;
-        animation: flicker 6s steps(40) infinite;
+        background: repeating-linear-gradient(
+          to bottom,
+          rgba(var(--quest-violet), 0.06) 0,
+          rgba(var(--quest-violet), 0.06) 1px,
+          transparent 1px,
+          transparent 3px
+        );
+        opacity: 0.6;
       }
-      @keyframes flicker {
-        0%, 97%, 100% {
-          opacity: 0.9;
-        }
-        98% {
-          opacity: 0.7;
-        }
-        99% {
-          opacity: 1;
-        }
+      .quest-banner > * {
+        position: relative;
       }
-      @media (prefers-reduced-motion: reduce) {
-        .quest::after {
-          animation: none;
-        }
-      }
-      .quest-head {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 11px;
-      }
-      .quest-title {
+      .qb-tag {
         font-family: var(--font-pixel);
-        font-size: 9px;
-        line-height: 1.4;
-        color: var(--p3);
-        letter-spacing: 0.02em;
-        text-shadow: 0 0 8px #c861ec88;
+        font-size: 0.58rem;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: rgb(var(--quest-violet));
+        text-shadow: 0 0 8px rgba(var(--quest-violet), 0.5);
       }
-      .quest-coin {
-        font-family: var(--font-pixel);
-        font-size: 7px;
-        color: #8d7fb8;
-        letter-spacing: 0.02em;
+      .qb-text {
+        font-size: 0.9rem;
+        color: var(--text-2);
       }
-      .quest-coin.locked {
-        color: #6d6d80;
-      }
-      .quest p {
-        font-size: 13px;
-        color: var(--crt-ink);
-        opacity: 0.82;
-        margin: 0 0 14px;
-        line-height: 1.55;
-      }
-      .quest p .boss {
-        color: #ff7eea;
-        font-weight: 600;
-        text-shadow: 0 0 8px #ff7eea66;
-      }
-      .btn-pixel {
+      .qb-btn {
         display: inline-flex;
         align-items: center;
-        justify-content: center;
-        gap: 10px;
-        width: 100%;
         font-family: var(--font-pixel);
-        font-size: 9px;
-        letter-spacing: 0.04em;
-        color: #fff;
-        padding: 13px 14px;
-        border: none;
-        background: linear-gradient(180deg, #b07bff, #8a4fe6);
-        box-shadow: 0 4px 0 #5e2fae, 0 0 0 2px #2a1550, 0 0 18px -2px #9a6cffaa;
-        position: relative;
-        cursor: pointer;
-        transition: transform 0.08s linear, box-shadow 0.08s linear, filter 0.2s var(--ease);
-        clip-path: polygon(
-          0 4px, 4px 4px, 4px 0, calc(100% - 4px) 0, calc(100% - 4px) 4px, 100% 4px,
-          100% calc(100% - 4px), calc(100% - 4px) calc(100% - 4px), calc(100% - 4px) 100%,
-          4px 100%, 4px calc(100% - 4px), 0 calc(100% - 4px)
-        );
+        font-size: 0.6rem;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+        color: #1a0b2e;
+        background: linear-gradient(180deg, #b89dff 0%, #9a6cff 58%, #8a5cf0 100%);
+        border: 1px solid #6a4cff;
+        border-radius: 6px;
+        padding: 0.55rem 0.8rem;
+        box-shadow: 0 3px 0 #3a1f8c, 0 0 18px rgba(var(--quest-violet), 0.28);
+        transition: transform 0.12s, box-shadow 0.12s, filter 0.12s;
       }
-      .btn-pixel:hover {
-        filter: brightness(1.08);
+      .quest-banner:hover .qb-btn {
+        transform: translateY(-1px);
+        filter: brightness(1.05);
+        box-shadow: 0 4px 0 #3a1f8c, 0 0 24px rgba(var(--quest-violet), 0.42);
       }
-      .btn-pixel:active {
-        transform: translateY(4px);
-        box-shadow: 0 0 0 #5e2fae, 0 0 0 2px #2a1550, 0 0 12px -2px #9a6cffaa;
+      .quest-banner:active .qb-btn {
+        transform: translateY(2px);
+        box-shadow: 0 1px 0 #3a1f8c, 0 0 12px rgba(var(--quest-violet), 0.3);
       }
-      .btn-pixel.locked {
-        background: linear-gradient(180deg, #2a2740, #211f33);
-        color: #6d6d80;
-        box-shadow: 0 4px 0 #16141f, 0 0 0 2px #16141f;
-        cursor: not-allowed;
-      }
-      .btn-pixel.locked:hover {
-        filter: none;
-      }
-      .btn-pixel.locked:active {
-        transform: none;
+      html.dark .quest-banner {
+        --quest-violet: 154, 108, 255;
       }
 
       /* ── Mix & match → converge into {gui.} ───────────────────────── */
@@ -1282,29 +1231,29 @@ const MM_INPUTS = [
       }
 
       /* ── App-direct host — hidden until a demo is opened ──────────── */
+      /* The iframe grows to its content height (reported via golemui-resize),
+         so the whole page scrolls as one — the demo never scrolls inside its
+         own box — and the footer sits naturally below it. */
       .demos-viewport {
         display: none;
         width: 100%;
-        height: calc(100vh - 4rem);
-        position: relative;
       }
       .demos-viewport.is-embedded {
         display: block;
-      }
-      .demo-pane {
-        position: absolute;
-        inset: 0;
       }
       .demo-pane[hidden] {
         display: none;
       }
       .demo-iframe {
         width: 100%;
-        height: 100%;
+        height: 0;
+        min-height: calc(100vh - 4rem);
         border: none;
         display: block;
         background: var(--bg-color);
+        transition: height 0.3s ease-out;
       }
+
     </style>
   </body>
 </html>
