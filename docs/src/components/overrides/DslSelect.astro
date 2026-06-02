@@ -4,6 +4,10 @@ import Select from '@astrojs/starlight/components/Select.astro';
 
 const localeKeys = Object.keys(config.locales ?? {}).filter((k) => k !== 'root');
 
+// The blog is DSL-agnostic, so the Programmatic/JSON selector is hidden there.
+const path = Astro.url.pathname.replace(/^\/(dx|json)(?=\/|$)/, '');
+const isBlog = path === '/blog' || path.startsWith('/blog/');
+
 /**
  * Get the equivalent of the current page path for the passed locale.
  * Replaces the current locale prefix in the URL with the target locale.
@@ -22,7 +26,7 @@ function localizedPathname(targetLocale: string): string {
 ---
 
 {
-  config.isMultilingual && (
+  !isBlog && config.isMultilingual && (
     <starlight-lang-select>
       <Select
         icon="seti:json"

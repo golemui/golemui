@@ -16,7 +16,8 @@
     "@iconify-json/tabler": "^1.2.33",
     "astro": "5.16.0",
     "astro-icon": "^1.1.5",
-    "sharp": "^0.34.2"
+    "sharp": "^0.34.2",
+    "starlight-blog": "0.25.0"
   },
   "devDependencies": {
     "sass": "^1.94.1"

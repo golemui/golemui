@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en" data-theme="auto">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GolemUI — Quests</title>
+    <meta
+      name="description"
+      content="The GolemUI quests — play the forms-as-data and forms-compose adventures. Pick a framework and play."
+    />
+    <script>
+      // Standalone portal: follow the OS theme (no Starlight localStorage here).
+      (() => {
+        const stored =
+          typeof localStorage !== 'undefined' && localStorage.getItem('starlight-theme');
+        const isDark =
+          stored === 'dark' ||
+          (stored !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.classList.toggle('dark', isDark);
+        document.documentElement.dataset.theme = isDark ? 'dark' : 'light';
+        window
+          .matchMedia('(prefers-color-scheme: dark)')
+          .addEventListener('change', (e) => {
+            document.documentElement.classList.toggle('dark', e.matches);
+            document.documentElement.dataset.theme = e.matches ? 'dark' : 'light';
+          });
+      })();
+      // Deep-linked into a quest (?demo=…)? Hide the 8-bit selector before first
+      // paint so it never flashes before the walk takes over.
+      if (/[?&]demo=/.test(location.search)) {
+        document.documentElement.classList.add('deep-quest');
+      }
+    </script>
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code&family=Press+Start+2P&family=VT323&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/src/styles.scss" />
+  </head>
+  <body>
+    <header class="landing-header">
+      <div class="container">
+        <a class="logo" data-home aria-label="GolemUI home" href="#">
+          <svg class="logo-lockup" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 220" role="img" aria-label="GolemUI">
+            <defs>
+              <linearGradient id="header-brand" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#3b82f6" />
+                <stop offset="50%" stop-color="#8b5cf6" />
+                <stop offset="100%" stop-color="#a855f7" />
+              </linearGradient>
+            </defs>
+            <text x="200" y="170" font-family="Inter, system-ui, -apple-system, sans-serif" font-weight="600" font-size="160" text-anchor="middle" letter-spacing="-2">
+              <tspan fill="url(#header-brand)">{</tspan><tspan fill="currentColor">gui.</tspan><tspan fill="url(#header-brand)">}</tspan>
+            </text>
+          </svg>
+        </a>
+        <nav>
+          <span class="quests-chip" aria-current="page">
+            <span class="quests-chip-arrow" aria-hidden="true">▶</span> QUESTS
+          </span>
+          <a data-demos-link href="#">Demos</a>
+          <a href="https://github.com/golemui/golemui" target="_blank" rel="noopener">GitHub</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <!-- ── CHOOSE YOUR ADVENTURE (the resting screen) ────────────── -->
+      <div class="adventure-select">
+        <div class="quest-prompt">
+          <span class="qp-nameplate">{gui.} · GUIDE</span>
+          <p class="qp-text" data-qp-type>Welcome, hero. Pick your framework, then choose a quest — out-build the boss and claim the engine.</p>
+        </div>
+
+        <h1 class="quest-title">CHOOSE YOUR ADVENTURE</h1>
+
+        <div class="fw-row">
+          <span class="fw-label">▸ PICK YOUR FRAMEWORK</span>
+          <div class="fw-tiles" role="radiogroup" aria-label="Framework">
+            <button type="button" role="radio" aria-checked="true" class="fw-tile is-selected" data-fw="react" style="--fw-color:#61dafb;--fw-shadow:#0e7a9e">
+              <span class="fw-portrait"><span class="fw-monogram">R</span></span>
+              <span class="fw-name">REACT</span>
+            </button>
+            <button type="button" role="radio" aria-checked="false" class="fw-tile" data-fw="angular" style="--fw-color:#dd0031;--fw-shadow:#7a0019">
+              <span class="fw-portrait"><span class="fw-monogram">A</span></span>
+              <span class="fw-name">ANGULAR</span>
+            </button>
+            <button type="button" role="radio" aria-checked="false" class="fw-tile" data-fw="lit" style="--fw-color:#324fff;--fw-shadow:#1a2c99">
+              <span class="fw-portrait"><span class="fw-monogram">L</span></span>
+              <span class="fw-name">LIT</span>
+            </button>
+            <button type="button" role="radio" aria-checked="false" class="fw-tile" data-fw="vue" style="--fw-color:#41b883;--fw-shadow:#1f6e4d">
+              <span class="fw-portrait"><span class="fw-monogram">V</span></span>
+              <span class="fw-name">VUE</span>
+            </button>
+            <button type="button" role="radio" aria-checked="false" class="fw-tile" data-fw="vanilla" style="--fw-color:#f7df1e;--fw-shadow:#8a7a00">
+              <span class="fw-portrait"><span class="fw-monogram">{}</span></span>
+              <span class="fw-name">JS</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="adventure-grid">
+          <div class="adventure-slot">
+            <button type="button" class="adventure-card is-disabled" data-quest="studio" disabled aria-disabled="true">
+              <span class="adv-tag">PILLAR I</span>
+              <span class="adv-name">SAVE TOKEN$</span>
+              <span class="adv-blurb">
+                Studio — describe a form in plain language, AI drafts the
+                <code>{gui.}</code> schema. Burns a fraction of the tokens of
+                hand-prompting raw markup.
+              </span>
+              <span class="adv-start adv-soon">⏳ COMING SOON</span>
+            </button>
+          </div>
+
+          <div class="adventure-slot">
+            <button type="button" class="adventure-card" data-quest="forms-compose">
+              <span class="adv-tag">PILLAR II</span>
+              <span class="adv-name">FORMS COMPOSE</span>
+              <span class="adv-blurb">
+                The Contract Job — out-build THE CLIENT. Compose any interface
+                from primitives: conditional sections, cross-field reactivity,
+                custom widgets, all just more blocks.
+              </span>
+              <span class="adv-start">⚔ PLAY THE QUEST</span>
+            </button>
+          </div>
+
+          <div class="adventure-slot">
+            <button type="button" class="adventure-card" data-quest="forms-as-data">
+              <span class="adv-tag">PILLAR III</span>
+              <span class="adv-name">FORMS AS DATA</span>
+              <span class="adv-blurb">
+                Out-build THE SERVER. Hand GolemUI your data's shape and it maps
+                a live form — zero form code. Endpoints multiply, schemas mutate;
+                the UI just keeps up.
+              </span>
+              <span class="adv-start">⚔ PLAY THE QUEST</span>
+            </button>
+          </div>
+        </div>
+
+        <p class="quest-hint">USE THE MOUSE. PICK A FRAMEWORK, THEN A QUEST. ▲</p>
+      </div>
+
+      <!-- ── Fullscreen quest host (hidden until a quest launches) ───── -->
+      <section class="demos-viewport">
+        <div id="demo-pane-forms-as-data" role="tabpanel" class="demo-pane is-active">
+          <iframe class="demo-iframe" data-demo="forms-as-data" title="Forms-as-data quest"></iframe>
+        </div>
+        <div id="demo-pane-forms-compose" role="tabpanel" class="demo-pane" hidden>
+          <iframe class="demo-iframe" data-demo="forms-compose" title="Forms-compose quest"></iframe>
+        </div>
+        <button type="button" class="fs-exit" aria-label="Exit fullscreen" title="Exit fullscreen (Esc)">✕</button>
+      </section>
+    </main>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
