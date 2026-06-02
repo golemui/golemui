@@ -14,6 +14,7 @@ import {
   BLOCKS,
   composeForm,
   composeTree,
+  createLocalization,
   SEED_DATA,
   type BlockId,
   type Lang,
@@ -147,6 +148,24 @@ const SECTION_BOXES: {
   },
 ];
 
+// The data fields each block contributes. The form's data store seeds every
+// field (so toggling stays instant), so on submit we keep only the fields that
+// belong to currently-active blocks — a deselected block never leaks into the
+// "your backend receives" payload. `country` is part of the always-on Region
+// section; `city` only arrives with the reactive block.
+const BASE_FIELDS = ['name', 'email', 'country'];
+const BLOCK_FIELDS: Record<BlockId, string[]> = {
+  address: ['shipStreet', 'shipPostcode'],
+  reactive: ['city'],
+  conditional: ['billingDiffers', 'billStreet', 'billPostcode'],
+  currency: ['currency'],
+};
+function pickActiveFields(data: Record<string, unknown>, active: Set<BlockId>) {
+  const allowed = new Set(BASE_FIELDS);
+  active.forEach((b) => BLOCK_FIELDS[b].forEach((f) => allowed.add(f)));
+  return Object.fromEntries(Object.entries(data).filter(([k]) => allowed.has(k)));
+}
+
 /* ─── App — thin orchestrator over the shared engine ─────────────────── */
 
 export function App() {
@@ -209,7 +228,7 @@ export function App() {
           a11ySpot={a11ySpot}
           onLang={api.bare ? setLang : undefined}
           submitted={submitted}
-          onSubmit={(e) => setSubmitted(e.data)}
+          onSubmit={(e) => setSubmitted(pickActiveFields(e.data, active))}
         />
       </>
     );
@@ -384,6 +403,16 @@ export function App() {
                 <span className="bt-power bt-power--free">FREE</span>
               </div>
             </div>
+          </div>
+        </article>
+        <article className="card card--code">
+          <div className="card-head">
+            <span className="card-tag">◈ CODE</span>
+            <span className="card-sub">
+              my-form.ts — the <code>{'{gui.}'}</code> definition
+            </span>
+          </div>
+          <div className="card-body code-body">
             <CodeBanner
               active={sandboxActive}
               lastToggled={lastToggled}
@@ -399,7 +428,7 @@ export function App() {
           a11ySpot={a11ySpot}
           onLang={setLang}
           submitted={submitted}
-          onSubmit={(e) => setSubmitted(e.data)}
+          onSubmit={(e) => setSubmitted(pickActiveFields(e.data, sandboxActive))}
           flashBlock={lastToggled}
           flashNonce={flashNonce}
           hoverSection={hoverSection}
@@ -472,16 +501,6 @@ function CodeBanner({
 }) {
   return (
     <div className="code-banner" role="group" aria-label="The composed {gui.} definition">
-      <div className="cb-bar" aria-hidden="true">
-        <span className="cb-dots">
-          <i />
-          <i />
-          <i />
-        </span>
-        <span className="cb-file">
-          compose.tsx — the <code>{'{gui.}'}</code> definition
-        </span>
-      </div>
       <pre className="cb-code">
         <code>
           {CODE_LINES.map((ln, i) => {
@@ -614,14 +633,26 @@ function FormCard({
 }: FormCardProps) {
   const blocksOn = active.size;
   const hostRef = useRef<HTMLDivElement>(null);
-  const formKey = useMemo(() => [...active].sort().join(',') + ':' + lang, [active, lang]);
+  // Compose once per block-set — the form re-mounts on a toggle (for the flash),
+  // NOT on a language change. The {gui.} translator below re-labels live instead.
+  const formKey = useMemo(() => [...active].sort().join(','), [active]);
+  // One translator instance, owned by this card. composeForm emits translation
+  // KEYS; this resolves them to the active language and tells GolemUI the lang,
+  // so the <form> flips to dir="rtl" for Arabic on its own.
+  const localizationRef = useRef<ReturnType<typeof createLocalization> | null>(null);
+  if (!localizationRef.current) localizationRef.current = createLocalization(lang);
+  const localization = localizationRef.current;
+  useEffect(() => {
+    localization.setLang(lang);
+  }, [lang, localization]);
   const config = useMemo(
     () => ({
-      formDef: composeForm(active, lang),
+      formDef: composeForm(active),
       data: SEED_DATA,
       formConfig: { widgetLoaders, itemRenderers: { currency: CurrencyItemRenderer } },
+      localization,
     }),
-    [active, lang],
+    [active, localization],
   );
 
   // Hovering a block lights its whole section in the form — the primary cue for
@@ -668,7 +699,11 @@ function FormCard({
             <LangToggle
               lang={lang}
               onLang={(l) => onLang(l as Lang)}
-              langs={[{ id: 'en', label: 'EN' }, { id: 'ja', label: '日本語' }]}
+              langs={[
+                { id: 'en', label: 'EN' },
+                { id: 'ja', label: '日本語' },
+                { id: 'ar', label: 'العربية' },
+              ]}
             />
           </span>
         )}

@@ -710,7 +710,7 @@ select {
   gap: 0.6rem 1rem;
   padding: 0.8rem 1.25rem;
   background: rgba(var(--quest-violet), 0.06);
-  border-top: 1px solid rgba(var(--quest-violet), 0.22);
+  border-bottom: 1px solid rgba(var(--quest-violet), 0.22);
   overflow: hidden;
 }
 .sasha-shell.is-bare .bare-quest-cta::before {

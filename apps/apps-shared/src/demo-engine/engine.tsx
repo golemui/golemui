@@ -175,7 +175,7 @@ export interface GameConfig {
   /** Demo title shown on the frame title bar (walk) and the bare bar. */
   title?: string;
   bareTitle?: string;
-  /** Teaser line in the bottom "Play the quest" banner of the bare app view. */
+  /** Teaser line in the "Play the quest" banner of the bare app view. */
   bareQuestTease?: string;
   bareHeaderExtra?: (api: GameApi) => ReactNode; // lang toggle, VIEW CODE…
   onEnterBare?: () => void;
@@ -332,27 +332,21 @@ export function GameShell(cfg: GameConfig) {
       className={`${cfg.shellClass} scene-${sceneId}${isBoss ? ' is-boss' : ''}${bare ? ' is-bare' : ''}`}
     >
       {bare && (
+        <footer className="bare-quest-cta">
+          <span className="bqc-tag">■ 8-bit quest</span>
+          <span className="bqc-text">
+            {cfg.bareQuestTease ?? 'Want the story behind this demo?'}
+          </span>
+          <button type="button" className="bqc-btn" onClick={playQuest}>
+            ▶ Play the quest
+          </button>
+        </footer>
+      )}
+
+      {bare && (
         <header className="bare-bar">
           <div className="bare-bar-info">
             {cfg.bareTitle && <span className="bare-title">{cfg.bareTitle}</span>}
-          </div>
-          <div className="bare-fw" role="radiogroup" aria-label="Framework">
-            <div className="bare-fw-pills">
-              {CHARACTERS.map((c) => (
-                <button
-                  key={c.id}
-                  type="button"
-                  role="radio"
-                  aria-checked={framework === c.id}
-                  className={`fw-pill fw-pill--${c.id} ${framework === c.id ? 'is-active' : ''}`}
-                  onClick={() => setFramework(c.id)}
-                  title={`See this demo in ${FW_LABEL[c.id]}`}
-                >
-                  {FW_ICON[c.id]}
-                  <span>{FW_LABEL[c.id]}</span>
-                </button>
-              ))}
-            </div>
           </div>
           <div className="bare-bar-actions">
             {cfg.bareHeaderExtra?.(api)}
@@ -396,17 +390,6 @@ export function GameShell(cfg: GameConfig) {
         )}
       </section>
 
-      {bare && (
-        <footer className="bare-quest-cta">
-          <span className="bqc-tag">■ 8-bit quest</span>
-          <span className="bqc-text">
-            {cfg.bareQuestTease ?? 'Want the story behind this demo?'}
-          </span>
-          <button type="button" className="bqc-btn" onClick={playQuest}>
-            ▶ Play the quest
-          </button>
-        </footer>
-      )}
 
       {!bare && (
         <BattleBar
