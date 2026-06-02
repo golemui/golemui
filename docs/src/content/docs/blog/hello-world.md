@@ -1,5 +1,5 @@
 ---
-title: Hello World — Welcome to the GolemUI Blog
+title: Hello World!
 date: 2026-06-02
 tags: [announcements]
 ---
