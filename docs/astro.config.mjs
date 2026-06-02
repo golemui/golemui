@@ -2,16 +2,18 @@
 import starlight from '@astrojs/starlight';
 import icon from 'astro-icon';
 import { defineConfig } from 'astro/config';
+import starlightBlog from 'starlight-blog';
 import { dslRoutesPlugin } from './src/plugins/dsl-routes';
 
 // https://astro.build/config
 export default defineConfig({
+  site: 'https://golemui.com',
   outDir: '../dist/docs',
   integrations: [
     icon(),
     starlight({
       title: 'GolemUI',
-      plugins: [dslRoutesPlugin()],
+      plugins: [dslRoutesPlugin(), starlightBlog({ title: 'Blog', navigation: 'none' })],
       customCss: ['./src/styles/custom.css'],
       social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/golemui/golemui' }],
       head: [

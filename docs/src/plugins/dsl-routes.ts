@@ -14,6 +14,7 @@ export function dslRoutesPlugin(): StarlightPlugin {
           components: {
             LanguageSelect: './src/components/overrides/DslSelect.astro',
             SiteTitle: './src/components/overrides/SiteTitle.astro',
+            SocialIcons: './src/components/overrides/SocialIcons.astro',
           },
         });
         addRouteMiddleware({
