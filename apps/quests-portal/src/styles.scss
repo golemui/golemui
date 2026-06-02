@@ -1,0 +1,466 @@
+/* Quests portal — 8-bit "choose your adventure" + the quest host. */
+
+$pixel-purple: #6a4cff;
+$pixel-purple-deep: #3a1f8c;
+$pixel-purple-light: #b5a3ff;
+$pixel-cream: #f8f4d7;
+$pixel-dark: #150726;
+$pixel-amber: #f9d342;
+
+:root {
+  --bg-color: #ffffff;
+  --bg-surface: #f8fafc;
+  --text-color: #0f172a;
+  --text-muted: #64748b;
+  --accent-color: #3b82f6;
+  --accent-color-rgb: 59, 130, 246;
+  --border-color: #e2e8f0;
+}
+
+html.dark {
+  --bg-color: #0a0c10;
+  --bg-surface: #111318;
+  --text-color: #f1f5f9;
+  --text-muted: #94a3b8;
+  --accent-color: #60a5fa;
+  --accent-color-rgb: 96, 165, 250;
+  --border-color: #1e293b;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.landing-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+
+  .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 4rem;
+  }
+
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    color: var(--text-color);
+
+    .logo-lockup {
+      height: 36px;
+      width: auto;
+      display: block;
+    }
+  }
+
+  nav {
+    display: flex;
+    align-items: center;
+    gap: 1.75rem;
+
+    a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.9375rem;
+      transition: color 0.2s;
+
+      &:hover {
+        color: var(--text-color);
+      }
+    }
+  }
+}
+
+html.dark .landing-header {
+  background: rgba(10, 12, 16, 0.7);
+  border-bottom: 1px solid rgba(30, 41, 59, 0.6);
+}
+
+/* 8-bit QUESTS chip — current-page marker on the portal */
+.landing-header nav .quests-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-sizing: border-box;
+  height: 2rem;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  color: #ffffff;
+  background: #6a4cff;
+  border: 2px solid #6a4cff;
+  border-radius: 0;
+  padding: 0 0.7rem;
+  box-shadow: inset 0 0 0 2px #f8f4d7, 2px 2px 0 0 #3a1f8c;
+}
+.quests-chip-arrow {
+  color: #f9d342;
+}
+
+body.demos-fullscreen {
+  overflow: hidden;
+}
+
+/* Deep-linked straight into a quest: never paint the 8-bit selector or header —
+   the walk goes fullscreen immediately, so there's no menu flash. */
+html.deep-quest .adventure-select,
+html.deep-quest .landing-header {
+  display: none;
+}
+html.deep-quest main {
+  padding-top: 0;
+}
+
+main {
+  padding-top: 4rem; /* clear fixed header */
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 0%, rgba(106, 76, 255, 0.18), transparent 60%),
+    #0d0820;
+}
+
+/* ── Choose your adventure ─────────────────────────────────────── */
+.adventure-select {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  color: #f1ecff;
+}
+
+.quest-prompt {
+  position: relative;
+  width: 100%;
+  max-width: 760px;
+  background: $pixel-dark;
+  color: $pixel-cream;
+  border: 4px solid $pixel-cream;
+  box-shadow: 0 0 0 4px $pixel-dark, 0 0 0 8px $pixel-purple, 0 10px 0 0 $pixel-purple-deep;
+  padding: 1.3rem 1.5rem 1.2rem;
+  margin-top: 0.5rem;
+}
+.qp-nameplate {
+  position: absolute;
+  top: -16px;
+  left: 18px;
+  background: $pixel-purple;
+  color: $pixel-cream;
+  border: 3px solid $pixel-cream;
+  box-shadow: 0 4px 0 $pixel-purple-deep;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.08em;
+  padding: 6px 12px 5px;
+}
+.qp-text {
+  margin: 0.4rem 0 0;
+  font-family: 'VT323', 'Fira Code', monospace;
+  font-size: 1.5rem;
+  line-height: 1.3;
+}
+.qp-text::after {
+  content: '▋';
+  color: $pixel-amber;
+  animation: qp-blink 0.9s steps(2) infinite;
+}
+@keyframes qp-blink {
+  50% { opacity: 0; }
+}
+
+.quest-title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(1rem, 3.2vw, 1.7rem);
+  letter-spacing: 0.14em;
+  color: $pixel-purple-light;
+  text-align: center;
+  margin: 0.5rem 0 0;
+  text-shadow: 3px 3px 0 $pixel-purple-deep, 0 0 18px rgba(106, 76, 255, 0.4);
+}
+
+.fw-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+}
+.fw-label {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.14em;
+  color: #968ea8;
+}
+.fw-tiles {
+  display: flex;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.fw-tile {
+  appearance: none;
+  cursor: pointer;
+  background: $pixel-cream;
+  border: 3px solid var(--fw-color);
+  box-shadow: 4px 4px 0 var(--fw-shadow);
+  padding: 0.6rem 0.5rem 0.45rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  color: $pixel-dark;
+  font-family: 'Press Start 2P', monospace;
+  border-radius: 0;
+  transition: transform 0.07s ease, box-shadow 0.07s ease;
+  min-width: 84px;
+}
+.fw-tile:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--fw-shadow);
+}
+.fw-tile.is-selected {
+  background: var(--fw-color);
+  color: #fff;
+  box-shadow: 4px 4px 0 var(--fw-shadow), 0 0 0 3px $pixel-cream, 0 0 0 6px $pixel-purple;
+}
+.fw-portrait {
+  width: 38px;
+  height: 38px;
+  background: var(--fw-color);
+  border: 3px solid $pixel-dark;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.fw-tile.is-selected .fw-portrait {
+  background: $pixel-cream;
+}
+.fw-monogram {
+  font-size: 0.85rem;
+  color: $pixel-dark;
+}
+.fw-name {
+  font-size: 0.5rem;
+  letter-spacing: 0.08em;
+}
+
+.adventure-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+  width: 100%;
+}
+.adventure-slot {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+.adventure-slot .adventure-card {
+  flex: 1;
+}
+.adventure-card {
+  appearance: none;
+  cursor: pointer;
+  text-align: left;
+  background: #181235;
+  border: 4px solid $pixel-purple;
+  box-shadow: 8px 8px 0 $pixel-purple-deep;
+  padding: 1.4rem 1.5rem 1.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  color: #f1ecff;
+  border-radius: 0;
+  transition: transform 0.08s ease, box-shadow 0.08s ease, border-color 0.12s ease;
+  min-height: 230px;
+}
+.adventure-card:hover {
+  transform: translate(-3px, -3px);
+  box-shadow: 11px 11px 0 $pixel-purple-deep;
+  border-color: $pixel-amber;
+}
+.adventure-card:active {
+  transform: translate(2px, 2px);
+  box-shadow: 4px 4px 0 $pixel-purple-deep;
+}
+.adventure-card.is-disabled {
+  cursor: not-allowed;
+  border-color: #3a3556;
+  background: #120f24;
+  box-shadow: 6px 6px 0 #241f3a;
+  opacity: 0.7;
+}
+.adventure-card.is-disabled:hover {
+  transform: none;
+  box-shadow: 6px 6px 0 #241f3a;
+  border-color: #3a3556;
+}
+.adventure-card.is-disabled .adv-name,
+.adventure-card.is-disabled .adv-blurb {
+  color: #6f6790;
+}
+.adv-soon {
+  color: #968ea8 !important;
+}
+.adv-tag {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.5rem;
+  letter-spacing: 0.16em;
+  color: $pixel-amber;
+}
+.adv-name {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 1.05rem;
+  letter-spacing: 0.04em;
+  line-height: 1.25;
+  color: #fff;
+}
+.adv-blurb {
+  font-family: 'VT323', 'Fira Code', monospace;
+  font-size: 1.15rem;
+  line-height: 1.3;
+  color: #cabfe6;
+}
+.adv-blurb code {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.85rem;
+  background: rgba(181, 163, 255, 0.16);
+  padding: 0.05rem 0.3rem;
+  color: $pixel-purple-light;
+}
+.adv-start {
+  margin-top: auto;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  color: $pixel-amber;
+}
+
+.quest-hint {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.14em;
+  color: #968ea8;
+  margin: 0;
+}
+
+/* ── Fullscreen quest host ─────────────────────────────────────── */
+.demos-viewport {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: #0a0c10;
+}
+.demos-viewport.is-fullscreen {
+  display: block;
+}
+.demos-viewport.is-embedded {
+  display: block;
+  position: relative;
+  inset: auto;
+  z-index: 1;
+  width: 100%;
+  height: calc(100vh - 4rem);
+}
+.adventure-select.is-hidden {
+  display: none;
+}
+.demo-pane {
+  position: absolute;
+  inset: 0;
+}
+.demo-pane[hidden] {
+  display: none;
+}
+.demo-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+  background: #0a0c10;
+}
+.demos-viewport.is-fullscreen .demo-pane.is-active {
+  animation: demo-zoom-in 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+@keyframes demo-zoom-in {
+  from { transform: scale(0.92); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* Back-to-demos (shown once a quest finishes into its app) */
+.portal-back {
+  position: fixed;
+  top: 0.8rem;
+  left: 0.9rem;
+  z-index: 210;
+  display: inline-flex;
+  align-items: center;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  color: $pixel-dark;
+  background: $pixel-amber;
+  border: 3px solid $pixel-dark;
+  border-radius: 0;
+  box-shadow: 0 0 0 3px $pixel-cream, 3px 3px 0 0 $pixel-purple-deep;
+  padding: 0.55rem 0.7rem;
+}
+.portal-back[hidden] {
+  display: none;
+}
+
+.fs-exit {
+  display: none;
+  position: fixed;
+  top: 0.8rem;
+  right: 0.9rem;
+  z-index: 210;
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.85rem;
+  color: $pixel-dark;
+  background: $pixel-amber;
+  border: 3px solid $pixel-dark;
+  border-radius: 0;
+  box-shadow: 0 0 0 3px $pixel-cream, 3px 3px 0 0 $pixel-purple-deep;
+  cursor: pointer;
+}
+.demos-viewport.is-fullscreen .fs-exit {
+  display: inline-flex;
+}
+
+@media (max-width: 880px) {
+  .adventure-grid {
+    grid-template-columns: 1fr;
+  }
+}

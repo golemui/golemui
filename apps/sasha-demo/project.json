@@ -1,0 +1,20 @@
+{
+  "name": "sasha-demo",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/sasha-demo/src",
+  "projectType": "application",
+  "tags": ["scope:app", "type:app"],
+  "// targets": "to see all targets run: nx show project sasha-demo --web",
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "vite",
+        "cwd": "apps/sasha-demo"
+      }
+    }
+  }
+}
