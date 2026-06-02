@@ -67,3 +67,42 @@ export function deriveFormDefinition(schema: RecordSchema) {
     }),
   ];
 }
+
+/**
+ * The same mapping as `deriveFormDefinition`, but emitted as the plain {gui.}
+ * JSON form-definition DSL — the honest twin of the builder calls above. The
+ * SERVER column edits the schema; this is the GolemUI definition that schema
+ * produces, and the right column renders exactly this. Kept declarative (no
+ * functions) so it serializes cleanly for display.
+ */
+export function deriveFormDsl(schema: RecordSchema): {
+  form: Record<string, unknown>[];
+} {
+  const form: Record<string, unknown>[] = Object.entries(schema).map(([path, field]) => {
+    switch (field.type) {
+      case 'number':
+        return { type: 'number', path, label: field.label };
+      case 'date':
+        return { type: 'date', path, label: field.label };
+      case 'boolean':
+        return { type: 'boolean', path, label: field.label };
+      case 'enum': {
+        const items = (field.options ?? []).map((o) =>
+          typeof o === 'string' ? { label: o, value: o } : o,
+        );
+        return { type: 'dropdown', path, label: field.label, items, labelField: 'label', valueField: 'value' };
+      }
+      case 'string':
+      default:
+        return {
+          type: 'text',
+          path,
+          label: field.label,
+          ...(field.format ? { validator: { format: field.format } } : {}),
+        };
+    }
+  });
+
+  form.push({ type: 'button', actionType: 'submit', label: 'Save' });
+  return { form };
+}

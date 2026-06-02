@@ -8,9 +8,10 @@ import {
   type Framework,
 } from '@golemui/demo-engine';
 import { GuiForm, widgetLoaders } from '@golemui/gui-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import {
   deriveFormDefinition,
+  deriveFormDsl,
   type EndpointPayload,
   type FieldSchema,
   type FieldType,
@@ -124,24 +125,56 @@ function buildPayload(rows: RecordRow[]): EndpointPayload {
     if (!key) continue;
     // Always give the field a label — user-added rows only edit the key, so an
     // empty label would render blank (and a broken boolean toggle).
-    schema[key] = {
+    const field: FieldSchema = {
       ...r.field,
       label: r.field.label?.trim() ? r.field.label : humanize(key),
     };
+    // Enum options need a value to drive the data; drop half-typed (blank-value)
+    // options so a freshly-added option never renders as an empty dropdown item,
+    // and fall back to the value when its label hasn't been typed yet.
+    if (field.type === 'enum') {
+      field.options = (field.options ?? [])
+        .map((o) => (typeof o === 'string' ? { value: o, label: o } : o))
+        .filter((o) => o.value.trim() !== '')
+        .map((o) => ({ value: o.value, label: o.label.trim() ? o.label : o.value }));
+    }
+    schema[key] = field;
     data[key] = stringToValue(r.value, r.field.type);
   }
   return { schema, data };
 }
-function schemaKey(rows: RecordRow[]): string {
-  return rows
-    .filter((r) => r.name.trim())
+// The form's remount key — its STRUCTURE (fields, types, options), derived from
+// the built schema so half-typed blank options don't churn it.
+function schemaKey(schema: RecordSchema): string {
+  return Object.entries(schema)
     .map(
-      (r) =>
-        `${r.name}:${r.field.type}:${(r.field.options ?? [])
-          .map((o) => (typeof o === 'string' ? o : o.value))
+      ([name, f]) =>
+        `${name}:${f.type}:${(f.options ?? [])
+          .map((o) => (typeof o === 'string' ? o : `${o.value}=${o.label}`))
           .join('|')}`,
     )
     .join(',');
+}
+
+// Lightweight JSON syntax highlight for the middle column — keys / strings /
+// keywords / numbers / punctuation, matching the {gui.} code-window palette.
+function highlightJson(json: string): ReactNode[] {
+  const re = /("(?:\\.|[^"\\])*"\s*:)|("(?:\\.|[^"\\])*")|\b(true|false|null)\b|(-?\d+(?:\.\d+)?)|([{}[\],])/g;
+  const out: ReactNode[] = [];
+  let last = 0;
+  let m: RegExpExecArray | null;
+  let k = 0;
+  while ((m = re.exec(json))) {
+    if (m.index > last) out.push(json.slice(last, m.index));
+    if (m[1]) out.push(<span key={k++} className="t-key">{m[1]}</span>);
+    else if (m[2]) out.push(<span key={k++} className="t-str">{m[2]}</span>);
+    else if (m[3]) out.push(<span key={k++} className="t-kw">{m[3]}</span>);
+    else if (m[4]) out.push(<span key={k++} className="t-num">{m[4]}</span>);
+    else out.push(<span key={k++} className="t-punc">{m[0]}</span>);
+    last = re.lastIndex;
+  }
+  if (last < json.length) out.push(json.slice(last));
+  return out;
 }
 
 /* ─── Launch params ──────────────────────────────────────────────────── */
@@ -196,7 +229,17 @@ export function App() {
 
   const rows = (tab && endpointRows[tab]) || [];
   const derivedPayload = useMemo(() => buildPayload(rows), [rows]);
-  const formMountKey = useMemo(() => schemaKey(rows), [rows]);
+  const formMountKey = useMemo(() => schemaKey(derivedPayload.schema), [derivedPayload]);
+  // Stable config — only rebuilt when the shape/data actually changes, so the
+  // form store isn't re-initialized on every unrelated render (e.g. the pulse).
+  const guiConfig = useMemo(
+    () => ({
+      formDef: deriveFormDefinition(derivedPayload.schema),
+      data: derivedPayload.data,
+      formConfig: { widgetLoaders },
+    }),
+    [derivedPayload],
+  );
   const hasFields = rows.some((r) => r.name.trim());
   const formsBuilt = Object.values(endpointRows).filter((r) => r.length > 0).length;
   const baseFormsBuilt = BASE_FORMS.filter((id) => endpointRows[id]?.length).length;
@@ -287,17 +330,37 @@ export function App() {
                   })
                 }
                 onValue={(value) => updateRow(row.id, { value })}
-                onOptions={(opts) =>
-                  updateField(row.id, {
-                    options: opts.split(',').map((s) => s.trim()).filter(Boolean),
-                  })
-                }
+                onOptions={(options) => updateField(row.id, { options })}
                 onRemove={() => removeRow(row.id)}
               />
             ))}
             <button type="button" className="add-row" onClick={addRow}>
               + ADD FIELD
             </button>
+          </div>
+        </div>
+      </article>
+    );
+  }
+
+  // Middle column — the GolemUI JSON definition the SERVER shape produces. The
+  // honest "forms as data" beat: the response IS the form definition, and the
+  // right column renders exactly this. Regenerates live as the shape is edited.
+  function jsonDslCard() {
+    const json = JSON.stringify(deriveFormDsl(derivedPayload.schema), null, 2);
+    return (
+      <article className="card card--code">
+        <div className="card-head">
+          <span className="card-tag">◈ JSON</span>
+          <span className="card-sub">
+            the <code>{'{gui.}'}</code> definition — derived from the shape
+          </span>
+        </div>
+        <div className="card-body code-body">
+          <div className="code-banner" role="group" aria-label="The GolemUI JSON definition">
+            <pre className={`cb-code${pulse ? ' is-pulse' : ''}`}>
+              <code>{highlightJson(json)}</code>
+            </pre>
           </div>
         </div>
       </article>
@@ -313,7 +376,7 @@ export function App() {
             <span className="card-tag">◣ GolemUI</span>
             <span className="card-sub">renders the form from that data — no form code</span>
             <span className={`form-live${pulse ? ' is-on' : ''}`} aria-hidden="true">
-              ● {pulse ? 'REBUILT' : 'LIVE'}
+              ● {pulse ? 'RE-RENDERED' : 'LIVE'}
             </span>
           </div>
         )}
@@ -342,11 +405,7 @@ export function App() {
           {hasFields ? (
             <GuiForm
               key={formMountKey}
-              config={{
-                formDef: deriveFormDefinition(derivedPayload.schema),
-                data: derivedPayload.data,
-                formConfig: { widgetLoaders },
-              }}
+              config={guiConfig}
               formSubmit={(e: FormSubmitEvent) => setSubmitted(e.data)}
             />
           ) : (
@@ -452,9 +511,7 @@ export function App() {
     renderBare: (api) => (
       <div className="bare-hero">
         {recordBuilderCard(api)}
-        <div className="hero-arrow" aria-hidden="true">
-          →
-        </div>
+        {jsonDslCard()}
         {appCard(api, { solo: false, showReturn: true })}
       </div>
     ),
@@ -465,23 +522,26 @@ export function App() {
 
 /* ─── RecordFieldRow ─────────────────────────────────────────────────── */
 
+type OptionPair = { label: string; value: string };
+
 interface RecordFieldRowProps {
   row: RecordRow;
   onName: (s: string) => void;
   onType: (t: FieldType) => void;
   onValue: (s: string) => void;
-  onOptions: (s: string) => void;
+  onOptions: (options: OptionPair[]) => void;
   onRemove: () => void;
 }
 
 function RecordFieldRow({ row, onName, onType, onValue, onOptions, onRemove }: RecordFieldRowProps) {
-  // Keep the raw options text local while typing. Binding the input straight to
-  // the normalized `options.join(', ')` stripped commas mid-type, so a second
-  // value could never be entered. We parse to options on change, but display
-  // exactly what was typed.
-  const [optionsText, setOptionsText] = useState(
-    (row.field.options ?? []).map((o) => (typeof o === 'string' ? o : o.value)).join(', '),
+  // Normalize options to {value,label} pairs — older shapes may carry bare
+  // strings; the editor always edits both fields so a value alone is never
+  // enough to drive the data, and the label drives what the dropdown shows.
+  const opts: OptionPair[] = (row.field.options ?? []).map((o) =>
+    typeof o === 'string' ? { value: o, label: o } : o,
   );
+  const patchOpt = (i: number, patch: Partial<OptionPair>) =>
+    onOptions(opts.map((o, j) => (j === i ? { ...o, ...patch } : o)));
   return (
     <div className="record-row">
       <input
@@ -511,17 +571,39 @@ function RecordFieldRow({ row, onName, onType, onValue, onOptions, onRemove }: R
         ✕
       </button>
       {row.field.type === 'enum' && (
-        <div className="rr-detail">
-          <label className="rr-detail-label">options</label>
-          <input
-            className="rr-detail-input"
-            placeholder="comma, separated, values"
-            value={optionsText}
-            onChange={(e) => {
-              setOptionsText(e.target.value);
-              onOptions(e.target.value);
-            }}
-          />
+        <div className="rr-options">
+          <span className="rr-options-cap">options</span>
+          {opts.map((opt, i) => (
+            <div className="rr-option" key={i}>
+              <input
+                className="rr-opt-value"
+                placeholder="value"
+                value={opt.value}
+                onChange={(e) => patchOpt(i, { value: e.target.value })}
+              />
+              <input
+                className="rr-opt-label"
+                placeholder="label"
+                value={opt.label}
+                onChange={(e) => patchOpt(i, { label: e.target.value })}
+              />
+              <button
+                type="button"
+                className="rr-opt-remove"
+                aria-label="Remove option"
+                onClick={() => onOptions(opts.filter((_, j) => j !== i))}
+              >
+                ✕
+              </button>
+            </div>
+          ))}
+          <button
+            type="button"
+            className="rr-opt-add"
+            onClick={() => onOptions([...opts, { value: '', label: '' }])}
+          >
+            + add option
+          </button>
         </div>
       )}
     </div>

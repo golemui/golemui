@@ -708,7 +708,7 @@ function FormCard({
           </span>
         )}
         <span className={`form-live${pulse ? ' is-on' : ''}`} aria-hidden="true">
-          ● {pulse ? 'RECOMPOSED' : 'LIVE'}
+          ● {pulse ? 'RE-RENDERED' : 'LIVE'}
         </span>
       </div>
       <div

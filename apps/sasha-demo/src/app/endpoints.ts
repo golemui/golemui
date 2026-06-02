@@ -90,7 +90,7 @@ export const ENDPOINTS: Endpoint[] = [
             { value: 'perf', label: 'Performance' },
           ],
         },
-        rating: { type: 'number', label: 'Rating (1-5)' },
+        rating: { type: 'number', label: 'Rating' },
         message: { type: 'string', label: 'Tell us more' },
       },
     },
