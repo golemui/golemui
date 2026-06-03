@@ -16,6 +16,9 @@ npx nx run template:build --base=template
 npx nx run headless:build --base=headless
 npx nx run serializable:build --base=serializable
 npx nx run freedom:build --base=freedom
+npx nx run rob-demo:build --base=rob-demo
+npx nx run sasha-demo:build --base=sasha-demo
+npx nx run aiden-demo:build --base=aiden-demo
 
 echo "Ensuring the docs/public directory exists..."
 mkdir -p docs/public/
@@ -29,5 +32,8 @@ cp -R dist/apps/template docs/public/
 cp -R dist/apps/headless docs/public/
 cp -R dist/apps/serializable docs/public/
 cp -R dist/apps/freedom docs/public/
+cp -R dist/apps/rob-demo docs/public/
+cp -R dist/apps/sasha-demo docs/public/
+cp -R dist/apps/aiden-demo docs/public/
 
 echo "Build and copy completely successfully! 🎉"

@@ -448,14 +448,18 @@ export function App() {
    box — so box → code → form is one connected chain. */
 type CodeOwner = BlockId | 'base' | 'contact';
 const CODE_LINES: { owner: CodeOwner; depth: number; text: string }[] = [
+  { owner: 'address', depth: 0, text: 'const address = (type: string) => ([' },
+  { owner: 'address', depth: 1, text: 'gui.inputs.textInput(`${type}Street`),' },
+  { owner: 'address', depth: 1, text: 'gui.inputs.textInput(`${type}Postcode`),' },
+  { owner: 'address', depth: 0, text: '])' },
   { owner: 'base', depth: 0, text: 'gui.layouts.column([' },
   { owner: 'contact', depth: 1, text: "gui.inputs.textInput('name')," },
   { owner: 'contact', depth: 1, text: "gui.inputs.textInput('email', { validator })," },
-  { owner: 'address', depth: 1, text: "...address('ship'),          // one reusable block" },
+  { owner: 'address', depth: 1, text: "...address('ship'), // one reusable block" },
   { owner: 'reactive', depth: 1, text: "gui.inputs.dropdown('country', { onChange: setCity })," },
   { owner: 'reactive', depth: 1, text: "gui.inputs.radiogroup('city', { when: '$country' })," },
   { owner: 'conditional', depth: 1, text: "gui.inputs.checkbox('billingDiffers')," },
-  { owner: 'conditional', depth: 1, text: "...address('bill'),          // reused, when billing differs" },
+  { owner: 'conditional', depth: 1, text: "...address('bill'), // reused, when billing differs" },
   { owner: 'currency', depth: 1, text: "gui.inputs.dropdown('currency', { itemRenderer })," },
   { owner: 'base', depth: 1, text: "gui.actions.button({ actionType: 'submit' })," },
   { owner: 'base', depth: 0, text: '])' },
