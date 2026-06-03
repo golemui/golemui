@@ -47,6 +47,45 @@ function highlightJson(json: string): ReactNode[] {
   return out;
 }
 
+// Render a multi-line prompt as a readable block: blank-line-separated
+// paragraphs, lines ending in ":" as sub-headings, and "- " lines grouped into
+// bullet lists. Keeps the left column legible for long, structured prompts.
+function renderPrompt(text: string): ReactNode {
+  const blocks: ReactNode[] = [];
+  let bullets: string[] = [];
+  let key = 0;
+  const flushBullets = () => {
+    if (!bullets.length) return;
+    blocks.push(
+      <ul key={key++} className="pp-list">
+        {bullets.map((b, i) => (
+          <li key={i}>{b}</li>
+        ))}
+      </ul>,
+    );
+    bullets = [];
+  };
+  for (const raw of text.split('\n')) {
+    const line = raw.trim();
+    if (!line) {
+      flushBullets();
+      continue;
+    }
+    if (line.startsWith('- ')) {
+      bullets.push(line.slice(2));
+      continue;
+    }
+    flushBullets();
+    blocks.push(
+      <p key={key++} className={line.endsWith(':') ? 'pp-head' : 'pp-para'}>
+        {line}
+      </p>,
+    );
+  }
+  flushBullets();
+  return blocks;
+}
+
 /* ─── App — thin orchestrator over the shared engine ─────────────────── */
 
 export function App() {
@@ -90,26 +129,23 @@ export function App() {
             Pick a prompt. An LLM turns it into a <code>{'{gui.}'}</code> form definition;
             our MCP validates it before it ships.
           </p>
-          <div className="prompt-list" role="radiogroup" aria-label="Example prompts">
+          <div className="prompt-list">
             {PROMPTS.map((p) => {
               const on = p.id === selected?.id;
               return (
-                <button
-                  key={p.id}
-                  type="button"
-                  role="radio"
-                  aria-checked={on}
-                  className={`prompt-item${on ? ' is-on' : ''}`}
-                  onClick={() => pick(p.id)}
-                >
-                  <span className="pi-dot" aria-hidden="true">
-                    {on ? '●' : '○'}
-                  </span>
-                  <span className="pi-text">
+                <div key={p.id} className={`prompt-item${on ? ' is-on' : ''}`}>
+                  <button
+                    type="button"
+                    className="pi-head"
+                    aria-expanded={on}
+                    onClick={() => pick(p.id)}
+                  >
+                    <span className="pi-dot" aria-hidden="true">{on ? '●' : '○'}</span>
                     <span className="pi-label">{p.label}</span>
-                    <span className="pi-prompt">“{p.prompt}”</span>
-                  </span>
-                </button>
+                    <span className="pi-chev" aria-hidden="true">▾</span>
+                  </button>
+                  {on && <div className="pi-prompt">{renderPrompt(p.prompt)}</div>}
+                </div>
               );
             })}
           </div>
