@@ -10,24 +10,30 @@ const dxSrc = import.meta.env.DEV
   ? 'http://localhost:4221/'
   : '/rob-demo/index.html';
 
+const aidenSrc = import.meta.env.DEV
+  ? 'http://localhost:4223/'
+  : '/aiden-demo/index.html';
+
 // The quests live in their own portal (extractable to quests.golemui.com).
 const questPortal = import.meta.env.DEV
   ? 'http://localhost:4222'
   : 'https://quests.golemui.com';
 
-// Five pillars, each a pain the visitor recognises. II + III are live demos;
-// I, IV and V are "Coming soon" (no app yet — locked CTA + forging quest).
+// Three pillars, each a pain the visitor recognises — all live demos.
 // The accent per pillar walks the brand gradient (blue → violet → magenta).
 const PILLARS = [
   {
     num: 'I',
     accent: '#5b8cff',
-    pain: 'My business users need to define their own forms.',
-    title: 'Pillar I · Forms without code',
+    pain: 'I want to describe a form in plain language.',
+    title: 'Pillar I · Forms from a prompt',
+    demo: 'forms-from-prompt',
+    open: true,
     blurb:
-      '<strong>Studio</strong> is a form-authoring tool for the non-developers on your team. When your app needs the business to define its own forms, they build them in Studio — and they drop straight into GolemUI, live, with no handoff.',
-    soon: true,
-    quest: { line: 'A quest is being forged. Come back when Studio ships.' },
+      'Describe the form you need to an LLM and it emits a <strong>{gui.} form definition</strong> — which <strong>our MCP validates</strong> against the GolemUI schemas before it ships. Prompt in, validated form out, rendered live. No form code.',
+    quest: {
+      line: 'Outwit <span class="boss">THE BUSINESS MANAGER</span> — who wants a new form by lunch. A goofy little RPG that teaches the prompt-to-form MCP loop.',
+    },
   },
   {
     num: 'II',
@@ -35,7 +41,6 @@ const PILLARS = [
     pain: "I'm hand-coding form after form.",
     title: 'Pillar II · Forms compose',
     demo: 'forms-compose',
-    open: true,
     blurb:
       'Real forms reuse the same fields, validators and logic. With GolemUI every one of those is just a <strong>block you compose once and reuse</strong> — plus third-party libraries and your own components wired in. No lock-in.',
     quest: {
@@ -54,35 +59,13 @@ const PILLARS = [
       line: 'Out-build <span class="boss">THE SERVER</span> — endpoints multiply, schemas mutate. A cheesy boss fight for forms-as-data.',
     },
   },
-  {
-    num: 'IV',
-    accent: '#b566f0',
-    pain: 'Good form components keep eating my sprints.',
-    title: 'Pillar IV · Components out of the box',
-    blurb:
-      'Unbelievable components, out of the box. Comboboxes, date ranges, multi-step wizards, file dropzones, masked and rich inputs — designed, themeable and ready to go. Need something exotic? Drop in a third-party widget or your own component; they all speak {gui.}.',
-    soon: true,
-    quest: { line: 'A quest is being forged. Out-style THE DESIGNER — coming soon.' },
-  },
-  {
-    num: 'V',
-    accent: '#c861ec',
-    pain: 'WCAG and a dozen locales are due at launch.',
-    title: 'Pillar V · Enterprise-grade out of the box',
-    blurb:
-      "Enterprise-grade, on day one. Accessibility and internationalization aren't add-ons — every form ships WCAG-ready ARIA, full keyboard nav and screen-reader semantics, RTL, and locale-aware formatting, validation and translations. Nothing to bolt on later.",
-    soon: true,
-    quest: { line: 'A quest is being forged. Clear THE AUDITOR — coming soon.' },
-  },
 ];
 
 // The convergence rail: every pillar feeds the one {gui.} surface.
 const MM_INPUTS = [
-  { num: 'I', k: 'studio', accent: '#5b8cff', name: 'Forms without code', tag: 'author · soon' },
+  { num: 'I', k: 'prompt', accent: '#5b8cff', name: 'Forms from a prompt', tag: 'describe' },
   { num: 'II', k: 'compose', accent: '#7d7cf5', name: 'Forms compose', tag: 'compose' },
   { num: 'III', k: 'data', accent: '#9a6cff', name: 'Forms as data', tag: 'serialize' },
-  { num: 'IV', k: 'components', accent: '#b566f0', name: 'Components out of the box', tag: 'drop in · soon' },
-  { num: 'V', k: 'enterprise', accent: '#c861ec', name: 'Enterprise-grade out of the box', tag: 'localize · soon' },
 ];
 ---
 
@@ -120,7 +103,7 @@ const MM_INPUTS = [
     </script>
     <meta
       name="description"
-      content="Try GolemUI for yourself — five live, runnable demos: forms-compose, forms-as-data, and more."
+      content="Try GolemUI for yourself — three live, runnable demos: forms from a prompt, forms-compose, and forms-as-data."
     />
     <link rel="icon" href="/favicon.ico" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -156,7 +139,7 @@ const MM_INPUTS = [
     </header>
 
     <main>
-      <!-- ── Selector: hero + five-pillar router + mix & match ───────── -->
+      <!-- ── Selector: hero + three-pillar router + mix & match ───────── -->
       <div class="demos-select">
         <!-- Quest entry — same 8-bit banner the demos carry below their bar. -->
         <a class="quest-banner" href={questPortal} aria-label="Play the 8-bit quest">
@@ -171,7 +154,7 @@ const MM_INPUTS = [
           <div class="wrap">
             <div class="hero-copy">
               <div class="section-kicker"><span class="tick"></span>Demos</div>
-              <h1 class="hero-title">See it for yourself — <span class="grad-text">five live demos</span></h1>
+              <h1 class="hero-title">See it for yourself — <span class="grad-text">three live demos</span></h1>
               <p class="lead">
                 Each demo is a small, runnable app built with GolemUI. Open one to try it live —
                 or play its quest for the guided, hands-on story.
@@ -190,29 +173,24 @@ const MM_INPUTS = [
               </div>
               <div class="ra-rows">
                 {PILLARS.map((p) => (
-                  <div class:list={['ra-row', { upcoming: p.soon, open: p.open }]} style={`--accent: ${p.accent}`}>
+                  <div class:list={['ra-row', { open: p.open }]} style={`--accent: ${p.accent}`}>
                     <button class="ra-head" aria-expanded={p.open ? 'true' : 'false'}>
                       <span class="rt-num mono">{p.num}</span>
                       <span class="rt-headtext">
                         <span class="rt-pain">{p.pain}</span>
                         <span class="rt-title mono">{p.title}</span>
                       </span>
-                      {p.soon && <span class="rt-soon mono">SOON</span>}
                       <span class="rt-chev" aria-hidden="true"><span></span><span></span></span>
                     </button>
                     <div class="ra-panel">
                       <div class="pd">
                         <p class="pd-body" set:html={p.blurb}></p>
-                        {p.soon ? (
-                          <span class="btn btn-disabled pd-cta">Coming soon</span>
-                        ) : (
-                          <button class="btn btn-primary pd-cta" data-demo={p.demo}>
-                            Open the demo
-                            <svg class="arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                              <path d="M3 8h9M8.5 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
-                            </svg>
-                          </button>
-                        )}
+                        <button class="btn btn-primary pd-cta" data-demo={p.demo}>
+                          Open the demo
+                          <svg class="arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                            <path d="M3 8h9M8.5 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
+                          </svg>
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -226,7 +204,7 @@ const MM_INPUTS = [
           <div class="wrap">
             <div class="mm-head">
               <div class="section-kicker"><span class="tick"></span>Not exclusive</div>
-              <h2 class="mm-title">Most real apps <span class="grad-text">mix &amp; match</span> all five.</h2>
+              <h2 class="mm-title">Most real apps <span class="grad-text">mix &amp; match</span> all three.</h2>
               <p class="lead">
                 Every pillar feeds the same {'{gui.}'} surface — so whichever ones you reach for,
                 they compose into a single form. Pick a mix; ship it.
@@ -242,12 +220,10 @@ const MM_INPUTS = [
                     </div>
                   ))}
                 </div>
-                <svg class="mm2-wires" viewBox="0 0 120 340" preserveAspectRatio="none" aria-hidden="true">
-                  <path class="w-studio" d="M0,34 C72,34 52,170 120,170" fill="none" style="--a: #5b8cff"></path>
-                  <path class="w-compose" d="M0,102 C72,102 56,170 120,170" fill="none" style="--a: #7d7cf5"></path>
-                  <path class="w-data" d="M0,170 L120,170" fill="none" style="--a: #9a6cff"></path>
-                  <path class="w-components" d="M0,238 C72,238 56,170 120,170" fill="none" style="--a: #b566f0"></path>
-                  <path class="w-enterprise" d="M0,306 C72,306 52,170 120,170" fill="none" style="--a: #c861ec"></path>
+                <svg class="mm2-wires" viewBox="0 0 120 220" preserveAspectRatio="none" aria-hidden="true">
+                  <path class="w-prompt" d="M0,40 C72,40 52,110 120,110" fill="none" style="--a: #5b8cff"></path>
+                  <path class="w-compose" d="M0,110 L120,110" fill="none" style="--a: #7d7cf5"></path>
+                  <path class="w-data" d="M0,180 C72,180 52,110 120,110" fill="none" style="--a: #9a6cff"></path>
                 </svg>
                 <div class="mm2-core">
                   <span class="mm2-core-mark mono">{'{gui.}'}</span>
@@ -257,7 +233,7 @@ const MM_INPUTS = [
                 <div class="mm2-result">
                   <span class="mm2-result-eyebrow mono">The result</span>
                   <span class="mm2-result-title">Every form problem,<br /><span class="grad-text">solved.</span></span>
-                  <span class="mm2-result-sub">Pick any mix of the five. It composes into one form — and ships.</span>
+                  <span class="mm2-result-sub">Pick any mix of the three. It composes into one form — and ships.</span>
                 </div>
               </div>
             </div>
@@ -270,6 +246,9 @@ const MM_INPUTS = [
 
       <!-- ── App-direct host (hidden until a demo is opened) ─────────── -->
       <section class="demos-viewport" data-quest-portal={questPortal}>
+        <div id="demo-pane-forms-from-prompt" role="tabpanel" class="demo-pane">
+          <iframe class="demo-iframe" data-base={aidenSrc} title="Forms-from-a-prompt demo"></iframe>
+        </div>
         <div id="demo-pane-forms-as-data" role="tabpanel" class="demo-pane is-active">
           <iframe class="demo-iframe" data-base={formsAsDataSrc} title="Forms-as-data demo"></iframe>
         </div>
@@ -283,7 +262,13 @@ const MM_INPUTS = [
     <SiteFooter />
 
     <script>
-      type DemoId = 'forms-as-data' | 'forms-compose';
+      type DemoId = 'forms-from-prompt' | 'forms-as-data' | 'forms-compose';
+
+      const DEMO_TITLES: Record<DemoId, string> = {
+        'forms-from-prompt': 'Forms from a prompt',
+        'forms-as-data': 'Forms as data',
+        'forms-compose': 'Forms compose',
+      };
 
       const demoBtns = Array.from(
         document.querySelectorAll<HTMLButtonElement>('.pd-cta[data-demo]'),
@@ -299,7 +284,7 @@ const MM_INPUTS = [
         return panes.find((p) => p.id === `demo-pane-${demo}`);
       }
       function isDemoId(v: string | null): v is DemoId {
-        return v === 'forms-as-data' || v === 'forms-compose';
+        return v === 'forms-from-prompt' || v === 'forms-as-data' || v === 'forms-compose';
       }
 
       // Open the runnable app inline under the header (app-direct).
@@ -330,7 +315,7 @@ const MM_INPUTS = [
         open = demo;
         viewport.classList.add('is-embedded');
         intro?.classList.add('is-hidden');
-        document.title = `GolemUI — ${demo === 'forms-as-data' ? 'Forms as data' : 'Forms compose'} demo`;
+        document.title = `GolemUI — ${DEMO_TITLES[demo]} demo`;
         if (push) history.pushState({ demo }, '', `?demo=${demo}`);
       }
 
@@ -712,7 +697,7 @@ const MM_INPUTS = [
         max-width: 56rem;
       }
 
-      /* ── Five-pillar accordion ────────────────────────────────────── */
+      /* ── Three-pillar accordion ───────────────────────────────────── */
       .pillars-section {
         padding-bottom: clamp(40px, 6vw, 72px);
       }
@@ -1117,7 +1102,9 @@ const MM_INPUTS = [
       }
       .mm2-wires {
         width: 88px;
-        height: 336px;
+        /* Matches the 3-pill input column height (list padding 12 + 3×56 pills
+           + 2×14 gaps), so the wires meet each pill's centre, not overshoot. */
+        height: 220px;
       }
       .mm2-wires path {
         stroke: var(--a);
@@ -1128,11 +1115,9 @@ const MM_INPUTS = [
       .mm2-flow[data-hot]:not([data-hot='']) .mm2-wires path {
         stroke-opacity: 0.12;
       }
-      .mm2-flow[data-hot='studio'] .w-studio,
+      .mm2-flow[data-hot='prompt'] .w-prompt,
       .mm2-flow[data-hot='compose'] .w-compose,
-      .mm2-flow[data-hot='data'] .w-data,
-      .mm2-flow[data-hot='components'] .w-components,
-      .mm2-flow[data-hot='enterprise'] .w-enterprise {
+      .mm2-flow[data-hot='data'] .w-data {
         stroke-opacity: 1;
         stroke-width: 3;
       }

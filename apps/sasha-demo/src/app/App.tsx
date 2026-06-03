@@ -373,7 +373,7 @@ export function App() {
       <article className={`card card--app${opts.solo ? ' card--app-solo' : ''}`}>
         {api.bare && (
           <div className="card-head card-head--form">
-            <span className="card-tag">◣ GolemUI</span>
+            <span className="card-tag">▶ THE FORM</span>
             <span className="card-sub">renders the form from that data — no form code</span>
             <span className={`form-live${pulse ? ' is-on' : ''}`} aria-hidden="true">
               ● {pulse ? 'RE-RENDERED' : 'LIVE'}
