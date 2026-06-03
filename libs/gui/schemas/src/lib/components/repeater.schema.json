@@ -24,7 +24,7 @@
       "$ref": "../layout-widget.schema.json"
     },
     "titleProp": {
-      "description": "Title displayed in the header of each item panel (supports reactive expressions referencing the item's index via `$index`)",
+      "description": "Title displayed in the header of each item panel.",
       "$ref": "../common.schema.json#/$defs/localizable"
     },
     "addButtonIconProp": {

@@ -3,32 +3,32 @@
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 
 :root {
-  --sasha-bg: #f5f3ff;
-  --sasha-surface: #ffffff;
-  --sasha-fg: #1a0d2e;
-  --sasha-muted: #6b6580;
-  --sasha-border: #d9d4f0;
-  --sasha-endpoint: #6a4cff;
-  --sasha-endpoint-soft: rgba(106, 76, 255, 0.08);
-  --sasha-app: #10b981;
-  --sasha-app-soft: rgba(16, 185, 129, 0.08);
-  --sasha-saved: #f59e0b;
-  --sasha-saved-soft: rgba(245, 158, 11, 0.08);
+  --aiden-bg: #f5f3ff;
+  --aiden-surface: #ffffff;
+  --aiden-fg: #1a0d2e;
+  --aiden-muted: #6b6580;
+  --aiden-border: #d9d4f0;
+  --aiden-endpoint: #6a4cff;
+  --aiden-endpoint-soft: rgba(106, 76, 255, 0.08);
+  --aiden-app: #10b981;
+  --aiden-app-soft: rgba(16, 185, 129, 0.08);
+  --aiden-saved: #f59e0b;
+  --aiden-saved-soft: rgba(245, 158, 11, 0.08);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --sasha-bg: #0d0820;
-    --sasha-surface: #181235;
-    --sasha-fg: #f1ecff;
-    --sasha-muted: #968ea8;
-    --sasha-border: #2a224c;
-    --sasha-endpoint: #b5a3ff;
-    --sasha-endpoint-soft: rgba(181, 163, 255, 0.14);
-    --sasha-app: #34d399;
-    --sasha-app-soft: rgba(52, 211, 153, 0.14);
-    --sasha-saved: #fbbf24;
-    --sasha-saved-soft: rgba(251, 191, 36, 0.14);
+    --aiden-bg: #0d0820;
+    --aiden-surface: #181235;
+    --aiden-fg: #f1ecff;
+    --aiden-muted: #968ea8;
+    --aiden-border: #2a224c;
+    --aiden-endpoint: #b5a3ff;
+    --aiden-endpoint-soft: rgba(181, 163, 255, 0.14);
+    --aiden-app: #34d399;
+    --aiden-app-soft: rgba(52, 211, 153, 0.14);
+    --aiden-saved: #fbbf24;
+    --aiden-saved-soft: rgba(251, 191, 36, 0.14);
   }
 }
 
@@ -57,7 +57,7 @@ body {
   background:
     radial-gradient(ellipse 70% 60% at 50% 0%, rgba(106, 76, 255, 0.16), transparent 60%),
     #07060f;
-  color: var(--sasha-fg);
+  color: var(--aiden-fg);
   -webkit-font-smoothing: antialiased;
 }
 
@@ -77,7 +77,7 @@ select {
 
 /* ─── The handheld frame ──────────────────────────────────────────── */
 
-.sasha-shell {
+.aiden-shell {
   --banner-h: 196px; // top prompt (enemy message)
   --console-h: 268px; // bottom console — taller, fits the 3-form menu + proceed
   position: relative;
@@ -87,7 +87,7 @@ select {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background: var(--sasha-bg);
+  background: var(--aiden-bg);
   border: 10px solid #221c3c;
   border-radius: 20px;
   box-shadow:
@@ -96,16 +96,16 @@ select {
 }
 
 /* Fixed-size sections — nothing resizes with content */
-.sasha-shell:not(.is-bare) .dialog-stage {
+.aiden-shell:not(.is-bare) .dialog-stage {
   height: var(--banner-h);
   flex: 0 0 auto;
 }
-.sasha-shell:not(.is-bare) .battle-frame {
+.aiden-shell:not(.is-bare) .battle-frame {
   /* taller than the prompt — fits the 3-form command menu + proceed */
   height: var(--console-h);
   flex: 0 0 auto;
 }
-.sasha-shell:not(.is-bare) .sasha-stage {
+.aiden-shell:not(.is-bare) .aiden-stage {
   /* Preferred height, but the stage yields FIRST when the screen is short, so
      the console (and its action buttons) is never pushed off-screen. The form
      scrolls inside if the stage shrinks below it. */
@@ -118,17 +118,17 @@ select {
    iframe width, growing with content. The document is exactly as tall as its
    content, so when embedded the host iframe (driven by iframeResizer) grows AND
    shrinks to match — the whole page scrolls as one, no viewport-height floor. */
-html:has(.sasha-shell.is-bare),
-html:has(.sasha-shell.is-bare) body {
+html:has(.aiden-shell.is-bare),
+html:has(.aiden-shell.is-bare) body {
   min-height: 0;
 }
-#root:has(.sasha-shell.is-bare) {
+#root:has(.aiden-shell.is-bare) {
   display: block;
   place-items: initial;
   padding: 0;
   min-height: 0;
 }
-.sasha-shell.is-bare {
+.aiden-shell.is-bare {
   position: static;
   width: 100%;
   height: auto;
@@ -151,8 +151,8 @@ html:has(.sasha-shell.is-bare) body {
   padding: 0.7rem 1.1rem;
   background: linear-gradient(
     90deg,
-    color-mix(in srgb, #{$pixel-purple} 32%, var(--sasha-surface)),
-    color-mix(in srgb, #{$pixel-purple-light} 26%, var(--sasha-surface))
+    color-mix(in srgb, #{$pixel-purple} 32%, var(--aiden-surface)),
+    color-mix(in srgb, #{$pixel-purple-light} 26%, var(--aiden-surface))
   );
   border-bottom: 3px solid $pixel-purple;
 }
@@ -161,7 +161,7 @@ html:has(.sasha-shell.is-bare) body {
   font-size: 0.55rem;
   letter-spacing: 0.1em;
   color: $pixel-purple;
-  background: var(--sasha-surface);
+  background: var(--aiden-surface);
   border: 1px solid $pixel-purple;
   border-radius: 4px;
   padding: 0.28rem 0.45rem;
@@ -170,20 +170,20 @@ html:has(.sasha-shell.is-bare) body {
   font-family: 'Press Start 2P', monospace;
   font-size: 0.72rem;
   letter-spacing: 0.06em;
-  color: var(--sasha-fg);
+  color: var(--aiden-fg);
   text-shadow: 0 0 12px color-mix(in srgb, #{$pixel-purple} 55%, transparent);
 }
 .qb-quest {
   font-family: 'Press Start 2P', monospace;
   font-size: 0.55rem;
   letter-spacing: 0.04em;
-  color: var(--sasha-muted);
+  color: var(--aiden-muted);
 }
 .qb-step {
   margin-left: auto;
   font-family: 'Press Start 2P', monospace;
   font-size: 0.55rem;
-  color: var(--sasha-muted);
+  color: var(--aiden-muted);
 }
 .qb-skip {
   margin-left: 0.6rem;
@@ -257,8 +257,8 @@ html:has(.sasha-shell.is-bare) body {
   gap: 1rem 1.5rem;
   flex-wrap: wrap;
   padding: 0.6rem 1.25rem;
-  background: var(--sasha-surface);
-  border-bottom: 1px solid var(--sasha-border);
+  background: var(--aiden-surface);
+  border-bottom: 1px solid var(--aiden-border);
 }
 .bare-bar-info {
   display: flex;
@@ -270,7 +270,7 @@ html:has(.sasha-shell.is-bare) body {
   font-family: 'Press Start 2P', monospace;
   font-size: 0.6rem;
   letter-spacing: 0.1em;
-  color: var(--sasha-fg);
+  color: var(--aiden-fg);
 }
 .bare-bar-actions {
   flex: 0 0 auto;
@@ -303,7 +303,7 @@ html:has(.sasha-shell.is-bare) body {
   letter-spacing: -0.01em;
   background: rgba(148, 163, 184, 0.06);
   border: 1px solid rgba(148, 163, 184, 0.2);
-  color: var(--sasha-muted);
+  color: var(--aiden-muted);
   cursor: pointer;
   transition: transform 0.15s ease, background 0.2s, border-color 0.2s, box-shadow 0.2s, color 0.2s;
 }
@@ -314,7 +314,7 @@ html:has(.sasha-shell.is-bare) body {
 }
 .fw-pill:hover {
   transform: translateY(-1px);
-  color: var(--sasha-fg);
+  color: var(--aiden-fg);
 }
 .fw-pill:hover svg {
   opacity: 1;
@@ -340,45 +340,45 @@ html:has(.sasha-shell.is-bare) body {
   flex-direction: column;
   gap: 0.5rem;
   padding: 0.8rem 0.9rem;
-  background: var(--sasha-bg);
-  border: 2px dashed var(--sasha-border);
+  background: var(--aiden-bg);
+  border: 2px dashed var(--aiden-border);
   border-radius: 10px;
 }
 .return-bar.is-filled {
-  background: var(--sasha-app-soft);
-  border: 2px solid var(--sasha-app);
+  background: var(--aiden-app-soft);
+  border: 2px solid var(--aiden-app);
 }
 .rb-cap {
   font-family: 'Press Start 2P', monospace;
   font-size: 0.58rem;
   letter-spacing: 0.08em;
-  color: var(--sasha-app);
-  text-shadow: 0 0 12px var(--sasha-app-soft);
+  color: var(--aiden-app);
+  text-shadow: 0 0 12px var(--aiden-app-soft);
 }
 .rb-cap--idle {
-  color: var(--sasha-muted);
+  color: var(--aiden-muted);
   text-shadow: none;
 }
 .rb-json {
   margin: 0;
   padding: 0.6rem 0.75rem;
-  background: var(--sasha-surface);
-  border: 1px solid var(--sasha-app);
+  background: var(--aiden-surface);
+  border: 1px solid var(--aiden-app);
   border-radius: 8px;
   font-family: 'Fira Code', ui-monospace, monospace;
   font-size: 0.82rem;
   line-height: 1.5;
-  color: var(--sasha-fg);
+  color: var(--aiden-fg);
   overflow-x: auto;
   white-space: pre;
 }
 .rb-note {
   font-size: 0.82rem;
   line-height: 1.4;
-  color: var(--sasha-muted);
+  color: var(--aiden-muted);
 }
 .rb-note strong {
-  color: var(--sasha-fg);
+  color: var(--aiden-fg);
 }
 
 /* ─── Mini buttons (prev / restart) ──────────────────────────────── */
@@ -459,8 +459,8 @@ html:has(.sasha-shell.is-bare) body {
   align-items: center;
   gap: 0.9rem;
   padding: 0.5rem 1.1rem;
-  background: var(--sasha-surface);
-  border-top: 1px solid var(--sasha-border);
+  background: var(--aiden-surface);
+  border-top: 1px solid var(--aiden-border);
 }
 
 .progress-bar.is-boss {
@@ -471,7 +471,7 @@ html:has(.sasha-shell.is-bare) body {
   font-family: 'Press Start 2P', monospace;
   font-size: 0.5rem;
   letter-spacing: 0.08em;
-  color: var(--sasha-muted);
+  color: var(--aiden-muted);
   white-space: nowrap;
 }
 
@@ -491,7 +491,7 @@ html:has(.sasha-shell.is-bare) body {
 .hud-key {
   font-size: 0.5rem;
   letter-spacing: 0.08em;
-  color: var(--sasha-muted);
+  color: var(--aiden-muted);
 }
 .hud-val {
   font-size: 0.62rem;
@@ -505,7 +505,7 @@ html:has(.sasha-shell.is-bare) body {
   text-shadow: none;
 }
 .hud-sep {
-  color: var(--sasha-border);
+  color: var(--aiden-border);
 }
 .progress-bar.is-boss .hud-val {
   color: #ffd7e0;
@@ -558,7 +558,7 @@ html:has(.sasha-shell.is-bare) body {
 .progress-track {
   flex: 1 1 auto;
   height: 12px;
-  background: var(--sasha-border);
+  background: var(--aiden-border);
   border: 2px solid $pixel-purple-deep;
   position: relative;
   overflow: hidden;
@@ -594,13 +594,13 @@ html:has(.sasha-shell.is-bare) body {
 
 /* ─── Stage ────────────────────────────────────────────────────────── */
 
-.sasha-stage {
+.aiden-stage {
   flex: 1 1 auto;
   display: grid;
   grid-template-columns: 1fr;
   padding: 0.8rem;
   gap: 0.8rem;
-  background: var(--sasha-bg);
+  background: var(--aiden-bg);
   align-items: stretch;
   min-height: 0;
   position: relative;
@@ -610,36 +610,36 @@ html:has(.sasha-shell.is-bare) body {
 /* The bare sandbox: a three-column hero — SERVER · JSON · GolemUI — matching
    the forms-compose demo. The layout grows top-to-bottom; when it's taller than
    the viewport the iframe document scrolls as one (no nested per-panel bars). */
-.sasha-shell.is-bare .sasha-stage {
+.aiden-shell.is-bare .aiden-stage {
   display: flex;
   flex-direction: column;
   flex: 1 1 auto;
   padding: 1.25rem;
   gap: 1.1rem;
 }
-.sasha-shell.is-bare .bare-hero {
+.aiden-shell.is-bare .bare-hero {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr) minmax(0, 1fr);
   gap: 1.1rem;
   align-items: start;
 }
-.sasha-shell.is-bare .bare-hero > .card {
+.aiden-shell.is-bare .bare-hero > .card {
   min-height: 0;
 }
 /* Bare cards grow with their content — the whole page scrolls, not each panel. */
-.sasha-shell.is-bare .card-body {
+.aiden-shell.is-bare .card-body {
   overflow: visible;
 }
 
 /* Mid viewports: drop to two columns (JSON wraps under). */
 @media (max-width: 1100px) {
-  .sasha-shell.is-bare .bare-hero {
+  .aiden-shell.is-bare .bare-hero {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   }
 }
 /* Narrow viewports: stack all three panes. */
 @media (max-width: 720px) {
-  .sasha-shell.is-bare .bare-hero {
+  .aiden-shell.is-bare .bare-hero {
     grid-template-columns: 1fr;
   }
 }
@@ -669,22 +669,22 @@ html:has(.sasha-shell.is-bare) body {
   font-weight: 700;
   letter-spacing: 0.06em;
   color: #fff;
-  background: var(--sasha-muted);
+  background: var(--aiden-muted);
   border-radius: 4px;
   padding: 0.1rem 0.4rem;
 }
 .sr-path {
   font-family: 'Fira Code', ui-monospace, monospace;
   font-size: 0.8rem;
-  color: var(--sasha-fg);
+  color: var(--aiden-fg);
 }
 .sr-status {
   font-family: 'Fira Code', ui-monospace, monospace;
   font-size: 0.62rem;
   font-weight: 600;
   letter-spacing: 0.04em;
-  color: var(--sasha-muted);
-  border: 1px solid var(--sasha-border);
+  color: var(--aiden-muted);
+  border: 1px solid var(--aiden-border);
   border-radius: 999px;
   padding: 0.06rem 0.4rem;
 }
@@ -692,23 +692,23 @@ html:has(.sasha-shell.is-bare) body {
   margin: 0 0 0.1rem;
   font-size: 0.84rem;
   line-height: 1.45;
-  color: var(--sasha-muted);
+  color: var(--aiden-muted);
   strong {
-    color: var(--sasha-fg);
+    color: var(--aiden-fg);
   }
 }
 
 /* The bottom "Play the quest?" banner (rendered by the engine in bare view).
    Themed to match the violet CRT quest CTAs on the /demos selector cards. */
-.sasha-shell.is-bare {
+.aiden-shell.is-bare {
   --quest-violet: 124, 58, 237;
 }
 @media (prefers-color-scheme: dark) {
-  .sasha-shell.is-bare {
+  .aiden-shell.is-bare {
     --quest-violet: 154, 108, 255;
   }
 }
-.sasha-shell.is-bare .bare-quest-cta {
+.aiden-shell.is-bare .bare-quest-cta {
   position: relative;
   flex: 0 0 auto;
   display: flex;
@@ -721,7 +721,7 @@ html:has(.sasha-shell.is-bare) body {
   border-bottom: 1px solid rgba(var(--quest-violet), 0.22);
   overflow: hidden;
 }
-.sasha-shell.is-bare .bare-quest-cta::before {
+.aiden-shell.is-bare .bare-quest-cta::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -735,7 +735,7 @@ html:has(.sasha-shell.is-bare) body {
   );
   opacity: 0.6;
 }
-.sasha-shell.is-bare .bare-quest-cta > * {
+.aiden-shell.is-bare .bare-quest-cta > * {
   position: relative;
 }
 .bqc-tag {
@@ -749,7 +749,7 @@ html:has(.sasha-shell.is-bare) body {
 .bqc-text {
   font-family: 'Inter', system-ui, sans-serif;
   font-size: 0.88rem;
-  color: var(--sasha-muted);
+  color: var(--aiden-muted);
 }
 .bqc-btn {
   appearance: none;
@@ -787,7 +787,7 @@ html:has(.sasha-shell.is-bare) body {
   font-family: 'Press Start 2P', monospace;
   font-size: 0.5rem;
   letter-spacing: 0.08em;
-  color: var(--sasha-muted);
+  color: var(--aiden-muted);
 }
 .record-head span:nth-child(2) {
   /* the TYPE column header — align over the select */
@@ -796,13 +796,13 @@ html:has(.sasha-shell.is-bare) body {
 
 /* The FORM pane header (bare) */
 .card-head--form .card-tag {
-  color: var(--sasha-app);
+  color: var(--aiden-app);
 }
 
 /* the data cells should read as editable */
 .record-row input:hover,
 .record-row select:hover {
-  border-color: var(--sasha-endpoint);
+  border-color: var(--aiden-endpoint);
   cursor: text;
 }
 .record-row select:hover {
@@ -817,12 +817,12 @@ html:has(.sasha-shell.is-bare) body {
   font-family: 'Press Start 2P', monospace;
   font-size: 0.5rem;
   letter-spacing: 0.08em;
-  color: var(--sasha-muted);
+  color: var(--aiden-muted);
   transition: color 0.15s ease, text-shadow 0.15s ease;
 }
 .form-live.is-on {
-  color: var(--sasha-app);
-  text-shadow: 0 0 10px var(--sasha-app);
+  color: var(--aiden-app);
+  text-shadow: 0 0 10px var(--aiden-app);
 }
 
 /* the form flashes the instant the data changes */
@@ -831,8 +831,8 @@ html:has(.sasha-shell.is-bare) body {
   transition: box-shadow 0.2s ease, background-color 0.2s ease;
 }
 .app-host.is-rebuilt {
-  box-shadow: 0 0 0 2px var(--sasha-app), 0 0 22px var(--sasha-app-soft);
-  background: var(--sasha-app-soft);
+  box-shadow: 0 0 0 2px var(--aiden-app), 0 0 22px var(--aiden-app-soft);
+  background: var(--aiden-app-soft);
 }
 
 
@@ -1363,7 +1363,7 @@ html:has(.sasha-shell.is-bare) body {
   font-family: 'Press Start 2P', monospace;
   font-size: 0.55rem;
   letter-spacing: 0.16em;
-  color: var(--sasha-muted);
+  color: var(--aiden-muted);
   margin: 0;
   text-align: center;
 }
@@ -1373,9 +1373,9 @@ html:has(.sasha-shell.is-bare) body {
 .card {
   display: flex;
   flex-direction: column;
-  background: var(--sasha-surface);
+  background: var(--aiden-surface);
   border-radius: 12px;
-  border: 1px solid var(--sasha-border);
+  border: 1px solid var(--aiden-border);
   border-top: 3px solid;
   overflow: hidden;
   min-height: 0;
@@ -1410,11 +1410,11 @@ html:has(.sasha-shell.is-bare) body {
   flex: 0 0 auto;
   height: 56px;
   padding: 0 0.9rem;
-  border-bottom: 1px solid var(--sasha-border);
+  border-bottom: 1px solid var(--aiden-border);
   display: flex;
   align-items: center;
   gap: 0.55rem;
-  background: var(--sasha-surface);
+  background: var(--aiden-surface);
   flex-wrap: nowrap;
 }
 
@@ -1423,7 +1423,7 @@ html:has(.sasha-shell.is-bare) body {
   font-family: 'Press Start 2P', monospace;
   font-size: 0.6rem;
   letter-spacing: 0.1em;
-  color: var(--sasha-fg);
+  color: var(--aiden-fg);
 }
 
 .card-method {
@@ -1432,21 +1432,21 @@ html:has(.sasha-shell.is-bare) body {
   font-weight: 700;
   padding: 0.18rem 0.4rem;
   border-radius: 4px;
-  background: var(--sasha-endpoint-soft);
-  color: var(--sasha-endpoint);
+  background: var(--aiden-endpoint-soft);
+  color: var(--aiden-endpoint);
   letter-spacing: 0.05em;
 }
 
 .card-path {
   font-size: 0.82rem;
   font-family: 'Fira Code', ui-monospace, monospace;
-  color: var(--sasha-fg);
+  color: var(--aiden-fg);
 }
 
 .card-sub {
   min-width: 0;
   font-size: 0.78rem;
-  color: var(--sasha-muted);
+  color: var(--aiden-muted);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1470,7 +1470,7 @@ html:has(.sasha-shell.is-bare) body {
 .endpoint-blurb {
   margin: 0;
   font-size: 0.82rem;
-  color: var(--sasha-muted);
+  color: var(--aiden-muted);
   line-height: 1.5;
 }
 
@@ -1486,17 +1486,17 @@ html:has(.sasha-shell.is-bare) body {
   gap: 0.4rem;
   align-items: center;
   padding: 0.4rem;
-  border: 1px solid var(--sasha-border);
+  border: 1px solid var(--aiden-border);
   border-radius: 8px;
-  background: var(--sasha-endpoint-soft);
+  background: var(--aiden-endpoint-soft);
 }
 
 .record-row input,
 .record-row select {
   appearance: none;
-  border: 1px solid var(--sasha-border);
-  background: var(--sasha-surface);
-  color: var(--sasha-fg);
+  border: 1px solid var(--aiden-border);
+  background: var(--aiden-surface);
+  color: var(--aiden-fg);
   padding: 0.35rem 0.5rem;
   border-radius: 6px;
   font-size: 0.82rem;
@@ -1506,8 +1506,8 @@ html:has(.sasha-shell.is-bare) body {
 .record-row input:focus,
 .record-row select:focus {
   outline: none;
-  border-color: var(--sasha-endpoint);
-  box-shadow: 0 0 0 2px var(--sasha-endpoint-soft);
+  border-color: var(--aiden-endpoint);
+  box-shadow: 0 0 0 2px var(--aiden-endpoint-soft);
 }
 
 .rr-name,
@@ -1525,7 +1525,7 @@ html:has(.sasha-shell.is-bare) body {
   appearance: none;
   border: 0;
   background: transparent;
-  color: var(--sasha-muted);
+  color: var(--aiden-muted);
   cursor: pointer;
   font-size: 0.9rem;
   padding: 0.2rem 0.4rem;
@@ -1534,15 +1534,15 @@ html:has(.sasha-shell.is-bare) body {
 }
 
 .rr-remove:hover {
-  color: var(--sasha-fg);
-  background: var(--sasha-border);
+  color: var(--aiden-fg);
+  background: var(--aiden-border);
 }
 
 .add-row {
   appearance: none;
-  border: 1px dashed var(--sasha-border);
+  border: 1px dashed var(--aiden-border);
   background: transparent;
-  color: var(--sasha-muted);
+  color: var(--aiden-muted);
   padding: 0.5rem;
   border-radius: 8px;
   cursor: pointer;
@@ -1557,9 +1557,9 @@ html:has(.sasha-shell.is-bare) body {
 }
 
 .add-row:hover {
-  color: var(--sasha-endpoint);
-  border-color: var(--sasha-endpoint);
-  background: var(--sasha-endpoint-soft);
+  color: var(--aiden-endpoint);
+  border-color: var(--aiden-endpoint);
+  background: var(--aiden-endpoint-soft);
 }
 
 /* ─── Enum options — a value/label list under the field row ──────────── */
@@ -1574,7 +1574,7 @@ html:has(.sasha-shell.is-bare) body {
   font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--sasha-muted);
+  color: var(--aiden-muted);
   font-weight: 600;
 }
 .rr-option {
@@ -1591,7 +1591,7 @@ html:has(.sasha-shell.is-bare) body {
   appearance: none;
   border: 0;
   background: transparent;
-  color: var(--sasha-muted);
+  color: var(--aiden-muted);
   cursor: pointer;
   font-size: 0.8rem;
   padding: 0.2rem 0.35rem;
@@ -1599,15 +1599,15 @@ html:has(.sasha-shell.is-bare) body {
   line-height: 1;
 }
 .rr-opt-remove:hover {
-  color: var(--sasha-fg);
-  background: var(--sasha-border);
+  color: var(--aiden-fg);
+  background: var(--aiden-border);
 }
 .rr-opt-add {
   appearance: none;
   align-self: start;
-  border: 1px dashed var(--sasha-border);
+  border: 1px dashed var(--aiden-border);
   background: transparent;
-  color: var(--sasha-muted);
+  color: var(--aiden-muted);
   padding: 0.3rem 0.6rem;
   border-radius: 6px;
   cursor: pointer;
@@ -1616,9 +1616,9 @@ html:has(.sasha-shell.is-bare) body {
   transition: color 0.18s ease, border-color 0.18s ease, background-color 0.18s ease;
 }
 .rr-opt-add:hover {
-  color: var(--sasha-endpoint);
-  border-color: var(--sasha-endpoint);
-  background: var(--sasha-endpoint-soft);
+  color: var(--aiden-endpoint);
+  border-color: var(--aiden-endpoint);
+  background: var(--aiden-endpoint-soft);
 }
 
 /* ─── Middle column — the {gui.} JSON definition (code window) ────────
@@ -1665,22 +1665,22 @@ html:has(.sasha-shell.is-bare) body {
 .app-tabs {
   flex: 0 0 auto;
   display: flex;
-  border-bottom: 1px solid var(--sasha-border);
-  background: var(--sasha-bg);
+  border-bottom: 1px solid var(--aiden-border);
+  background: var(--aiden-bg);
 }
 
 .app-tab {
   appearance: none;
   border: 0;
   background: transparent;
-  color: var(--sasha-muted);
+  color: var(--aiden-muted);
   cursor: pointer;
   font-size: 0.85rem;
   font-weight: 500;
   padding: 0.7rem 1.25rem;
   position: relative;
   transition: color 0.18s ease;
-  border-right: 1px solid var(--sasha-border);
+  border-right: 1px solid var(--aiden-border);
 }
 
 .app-tab:last-child {
@@ -1688,14 +1688,14 @@ html:has(.sasha-shell.is-bare) body {
 }
 
 .app-tab:hover:not(.is-active) {
-  color: var(--sasha-fg);
-  background: var(--sasha-endpoint-soft);
+  color: var(--aiden-fg);
+  background: var(--aiden-endpoint-soft);
 }
 
 .app-tab.is-active {
-  color: var(--sasha-fg);
+  color: var(--aiden-fg);
   font-weight: 600;
-  background: var(--sasha-surface);
+  background: var(--aiden-surface);
 }
 
 .app-tab.is-active::after {
@@ -1705,13 +1705,13 @@ html:has(.sasha-shell.is-bare) body {
   right: 0;
   bottom: -1px;
   height: 2px;
-  background: var(--sasha-endpoint);
+  background: var(--aiden-endpoint);
 }
 
 /* Nudge animation for tabs not yet visited */
 .app-tab.is-nudge {
   animation: nudge 1.4s ease-in-out infinite;
-  color: var(--sasha-fg);
+  color: var(--aiden-fg);
   font-weight: 600;
 }
 
@@ -1727,7 +1727,7 @@ html:has(.sasha-shell.is-bare) body {
 }
 
 .app-tab.is-visited {
-  color: var(--sasha-fg);
+  color: var(--aiden-fg);
 }
 
 /* Locked during the guided walk — all input flows through the prompt */
@@ -1736,7 +1736,7 @@ html:has(.sasha-shell.is-bare) body {
 }
 .app-tab.is-locked:hover:not(.is-active) {
   background: transparent;
-  color: var(--sasha-muted);
+  color: var(--aiden-muted);
 }
 
 /* Fresh tab arrival (feedback unlocked by boss) */
@@ -1803,7 +1803,7 @@ html:has(.sasha-shell.is-bare) body {
 }
 
 /* During the walk the rendered form is a read-only display — no caret, no input */
-.sasha-shell:not(.is-bare) .app-host {
+.aiden-shell:not(.is-bare) .app-host {
   pointer-events: none;
 }
 .app-host input,
@@ -1813,12 +1813,12 @@ html:has(.sasha-shell.is-bare) body {
 }
 
 .app-empty {
-  background: var(--sasha-app-soft);
+  background: var(--aiden-app-soft);
   border: 1px dashed rgba(16, 185, 129, 0.35);
   border-radius: 8px;
   padding: 1.5rem 1.25rem;
   text-align: center;
-  color: var(--sasha-fg);
+  color: var(--aiden-fg);
 }
 
 .app-empty p {
@@ -1840,7 +1840,7 @@ html:has(.sasha-shell.is-bare) body {
   gap: 0.5rem;
   font-family: 'Fira Code', ui-monospace, monospace;
   font-size: 0.88rem;
-  color: var(--sasha-app);
+  color: var(--aiden-app);
 }
 
 .spinner {
@@ -1848,7 +1848,7 @@ html:has(.sasha-shell.is-bare) body {
   height: 14px;
   border-radius: 50%;
   border: 2px solid rgba(16, 185, 129, 0.25);
-  border-top-color: var(--sasha-app);
+  border-top-color: var(--aiden-app);
   animation: spin 0.7s linear infinite;
   display: inline-block;
 }
@@ -2690,7 +2690,7 @@ html:has(.sasha-shell.is-bare) body {
 /* ─── Responsive ──────────────────────────────────────────────────── */
 
 @media (max-width: 1000px) {
-  .sasha-stage {
+  .aiden-stage {
     grid-template-columns: 1fr !important;
   }
 
@@ -2718,20 +2718,20 @@ html:has(.sasha-shell.is-bare) body {
    The app embedded on the main site must look like the website, so the
    bare-bar's pixel bits are re-skinned to Inter + the site palette. Scoped
    under .is-bare so walk styling is untouched. */
-.sasha-shell.is-bare {
+.aiden-shell.is-bare {
   /* Adopt the website's neutral palette so the embedded app matches the site
      (the demo's own purple theme stays in the walk / quests portal). */
-  --sasha-bg: #ffffff;
-  --sasha-surface: #f8fafc;
-  --sasha-fg: #0f172a;
-  --sasha-muted: #64748b;
-  --sasha-border: #e2e8f0;
+  --aiden-bg: #ffffff;
+  --aiden-surface: #f8fafc;
+  --aiden-fg: #0f172a;
+  --aiden-muted: #64748b;
+  --aiden-border: #e2e8f0;
   /* Same three-column palette as forms-compose, for consistency across demos:
      SERVER = info (blue) · JSON = primary (violet) · GolemUI render = brand. */
-  --sasha-endpoint: var(--gui-intent-info);
-  --sasha-endpoint-soft: var(--gui-intent-info-bg);
-  --sasha-app: #8b5cf6;
-  --sasha-app-soft: rgba(139, 92, 246, 0.1);
+  --aiden-endpoint: var(--gui-intent-info);
+  --aiden-endpoint-soft: var(--gui-intent-info-bg);
+  --aiden-app: #8b5cf6;
+  --aiden-app-soft: rgba(139, 92, 246, 0.1);
 
   /* Per-column accents (top border + tag), matching forms-compose. */
   .card--endpoint {
@@ -2747,19 +2747,19 @@ html:has(.sasha-shell.is-bare) body {
     color: var(--gui-intent-primary);
   }
   .card-head--form .card-tag {
-    color: var(--sasha-app);
+    color: var(--aiden-app);
   }
   /* The render column is a bordered card here too (like forms-compose's FORM),
      so all three columns share one frame; the walk keeps the frameless app. */
   .card--app {
-    border: 1px solid var(--sasha-border);
-    border-top: 3px solid var(--sasha-app);
+    border: 1px solid var(--aiden-border);
+    border-top: 3px solid var(--aiden-app);
     border-radius: 12px;
-    background: var(--sasha-surface);
+    background: var(--aiden-surface);
   }
   /* Tie the render column's tabs to the brand accent (not the server's blue). */
   .app-tab.is-active::after {
-    background: var(--sasha-app);
+    background: var(--aiden-app);
   }
 
   .bare-title {
@@ -2767,7 +2767,7 @@ html:has(.sasha-shell.is-bare) body {
     font-weight: 600;
     font-size: 0.82rem;
     letter-spacing: 0.01em;
-    color: var(--sasha-muted);
+    color: var(--aiden-muted);
   }
   .bare-intro {
     flex: 0 0 auto;
@@ -2776,11 +2776,11 @@ html:has(.sasha-shell.is-bare) body {
     font-family: 'Inter', system-ui, sans-serif;
     font-size: 0.92rem;
     line-height: 1.5;
-    color: var(--sasha-muted);
-    background: var(--sasha-bg);
-    border-bottom: 1px solid var(--sasha-border);
+    color: var(--aiden-muted);
+    background: var(--aiden-bg);
+    border-bottom: 1px solid var(--aiden-border);
     strong {
-      color: var(--sasha-fg);
+      color: var(--aiden-fg);
       font-weight: 600;
     }
   }
@@ -2807,15 +2807,161 @@ html:has(.sasha-shell.is-bare) body {
   }
 }
 @media (prefers-color-scheme: dark) {
-  .sasha-shell.is-bare {
-    --sasha-bg: #0a0c10;
-    --sasha-surface: #111318;
-    --sasha-fg: #f1f5f9;
-    --sasha-muted: #94a3b8;
-    --sasha-border: #1e293b;
-    --sasha-endpoint: var(--gui-intent-info);
-    --sasha-endpoint-soft: var(--gui-intent-info-bg);
-    --sasha-app: #a78bfa;
-    --sasha-app-soft: rgba(167, 139, 250, 0.16);
+  .aiden-shell.is-bare {
+    --aiden-bg: #0a0c10;
+    --aiden-surface: #111318;
+    --aiden-fg: #f1f5f9;
+    --aiden-muted: #94a3b8;
+    --aiden-border: #1e293b;
+    --aiden-endpoint: var(--gui-intent-info);
+    --aiden-endpoint-soft: var(--gui-intent-info-bg);
+    --aiden-app: #a78bfa;
+    --aiden-app-soft: rgba(167, 139, 250, 0.16);
   }
+}
+
+/* ─── Prompt column (left) — the three example prompts ─────────────── */
+
+.card--prompts {
+  border-top: 3px solid $pixel-purple;
+}
+
+.prompt-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.prompt-hint {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--aiden-muted);
+
+  code {
+    font-family: 'Fira Code', ui-monospace, monospace;
+    color: var(--aiden-endpoint);
+  }
+}
+
+.prompt-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+/* Each prompt is a collapsible accordion item — collapsed shows just the title;
+   the selected one expands into the formatted prompt. */
+.prompt-item {
+  border-radius: 10px;
+  border: 1px solid var(--aiden-border);
+  background: var(--aiden-surface);
+  overflow: hidden;
+  transition: border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+}
+
+.prompt-item:hover {
+  border-color: var(--aiden-endpoint);
+}
+
+.prompt-item.is-on {
+  border-color: var(--aiden-endpoint);
+  box-shadow: 0 0 0 1px var(--aiden-endpoint) inset;
+}
+
+.pi-head {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  text-align: left;
+  padding: 0.7rem 0.8rem;
+  border: 0;
+  background: transparent;
+  color: var(--aiden-fg);
+  cursor: pointer;
+}
+
+.prompt-item.is-on .pi-head {
+  background: var(--aiden-endpoint-soft);
+}
+
+.pi-dot {
+  flex: 0 0 auto;
+  font-size: 0.7rem;
+  line-height: 1.2;
+  color: var(--aiden-endpoint);
+}
+
+.pi-label {
+  flex: 1 1 auto;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--aiden-fg);
+}
+
+.pi-chev {
+  flex: 0 0 auto;
+  font-size: 0.8rem;
+  color: var(--aiden-muted);
+  transition: transform 0.2s ease;
+}
+
+.prompt-item.is-on .pi-chev {
+  transform: rotate(180deg);
+  color: var(--aiden-endpoint);
+}
+
+/* Expanded, formatted prompt body. */
+.pi-prompt {
+  padding: 0.2rem 0.9rem 0.85rem;
+  border-top: 1px solid var(--aiden-border);
+  font-size: 0.8rem;
+  line-height: 1.55;
+  color: var(--aiden-muted);
+}
+
+.pi-prompt .pp-para {
+  margin: 0.6rem 0 0;
+}
+
+.pi-prompt .pp-head {
+  margin: 0.8rem 0 0.2rem;
+  font-weight: 700;
+  color: var(--aiden-fg);
+}
+
+.pi-prompt .pp-list {
+  margin: 0.3rem 0 0;
+  padding-left: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.pi-prompt .pp-list li {
+  margin: 0;
+}
+
+.pi-prompt > :first-child {
+  margin-top: 0.6rem;
+}
+
+/* ─── "validated" badge in the JSON column head ────────────────────── */
+
+.mcp-valid {
+  flex: 0 0 auto;
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-family: 'Fira Code', ui-monospace, monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  color: var(--aiden-app);
+  background: var(--aiden-app-soft);
+  border: 1px solid color-mix(in srgb, var(--aiden-app) 40%, transparent);
 }
