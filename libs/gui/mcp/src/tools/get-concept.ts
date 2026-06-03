@@ -36,7 +36,7 @@ const STATES_CONCEPT: GetConceptResult = {
         'Add a `"states"` object to the top-level form definition. ' +
         'Each key is a state name; each value is a reactive expression string. ' +
         'Expressions are evaluated at runtime — they have access to `$form` (all current form values), ' +
-        '`$meta` (host-supplied metadata), and `$formIsInvalid` (built-in boolean — `true` when any field currently fails validation). ' +
+        '`$meta` (host-supplied metadata), and `$formIsInvalid`. ' +
         'State names can contain letters, numbers, hyphens, and underscores. ' +
         'Colons enable hierarchical composition — see the "Composed sub-states (colon notation)" pattern below.',
       example: {
@@ -79,9 +79,7 @@ const STATES_CONCEPT: GetConceptResult = {
       description:
         'Use `"include": { "in": ["stateName"] }` on any widget to render it only when the named state is active. ' +
         'Use `"exclude": { "from": ["stateName"] }` to render it only when the state is NOT active. ' +
-        'Both `in` and `from` are arrays — a widget can be gated on multiple states simultaneously. ' +
-        'Prefer this named-state form over the inline `when` expression when the same condition applies ' +
-        'to several widgets, since a single state declaration drives all of them.',
+        'Both `in` and `from` are arrays — a widget can be gated on multiple states simultaneously.',
       example: {
         $schema: 'https://golemui.com/schemas/form.schema.json',
         states: {
@@ -224,10 +222,9 @@ const STATES_CONCEPT: GetConceptResult = {
     'State-suffixed root props — only these support suffixes at the widget root level: `label`, `disabled`, `readonly`, `validator`, `size`. All other overridable properties live inside `props`.',
     'State-suffixed props inside `props` — any key inside the `props` object can be suffixed: `"hint.<state>"`, `"placeholder.<state>"`, `"items.<state>"`, `"addLabel.<state>"`, etc.',
     'Suffix names must not contain dots (the dot is the separator between property and state name): `"label.myState"` ✅, `"label.register:adult"` ✅ — `"label.my.state"` ❌.',
-    'Reactive expressions must reference `$form`, `$meta`, or `$formIsInvalid`. A bare identifier like `termsAccepted` without a root reference is invalid. `$formIsInvalid` is a built-in boolean (no property chain — use it as-is: `disabled: { when: "$formIsInvalid" }` or inside a state expression: `states: { formInvalid: "$formIsInvalid" }`).',
+    'Reactive expressions must reference `$form`, `$meta`, or `$formIsInvalid`. A bare identifier like `termsAccepted` without a root reference is invalid.',
     'Use `===` / `!==` for equality, `&&` / `||` for logic. Avoid `=` (assignment), `==`/`!=` (loose equality), or bitwise `&`/`|`.',
     'When multiple states are active at the same time and a property has more than one matching suffix, the longest state name wins (most specific takes priority). Example: if both `register` and `register:adult` are active, `"label.register:adult"` overrides `"label.register"`.',
-    'The `include.when` / `exclude.when` inline form is an alternative to named states for one-off conditions, but it cannot replace state-suffixed props — those require a named state.',
     '`include.in` and `exclude.from` each accept an Array of state names. A widget included `in: ["a", "b"]` renders when state `a` OR state `b` is active.',
     'Use optional chaining (`?.`) when accessing nested fields that may not yet exist in the form data: `$form.user?.age >= 18` not `$form.user.age >= 18`.',
   ],
@@ -369,8 +366,7 @@ const STRING_INTERPOLATION_CONCEPT: GetConceptResult = {
   ],
 
   rules: [
-    'Slots must reference at least one of `$form`, `$meta`, `$errors`, or `$formIsInvalid`. A bare identifier without a scope prefix is invalid inside `{{}}`: use `{{$form.name}}` not `{{name}}`.',
-    '`$formIsInvalid` is a built-in boolean — use it as-is: `{{$formIsInvalid}}`. Do not chain properties onto it.',
+    'Slots must reference at least one of `$form`, `$meta`, `$errors`, or `$formIsInvalid`. A bare identifier without a scope prefix is invalid inside `{{}}`: use `{{$form.name}}` not `{{name}}`. `$formIsInvalid` is a bare boolean — do not chain properties onto it.',
     'If an expression evaluates to `null` or `undefined`, the slot renders as an empty string in display text.',
     'Use optional chaining (`?.`) when accessing nested fields that may not yet exist: `{{$form.address?.city}}` not `{{$form.address.city}}`.',
     'Do not use assignment `=` inside a slot — slots are read-only. Use `===` for equality checks.',
@@ -378,8 +374,7 @@ const STRING_INTERPOLATION_CONCEPT: GetConceptResult = {
     'Every `{{` must have a matching `}}`. Unbalanced delimiters cause a lint warning.',
     'i18n `params` values are bare expressions — do NOT wrap them in `{{}}`. Write `"$form.name"` not `"{{$form.name}}"`.',
     'Static string params (not starting with `$`) are passed through as-is — use them for constant values like `"Hola"` or `"px"`.',
-    'Supported operators in expressions: arithmetic (`+`, `-`, `*`, `/`, `%`), comparison (`===`, `!==`, `<`, `>`, `<=`, `>=`), logical (`&&`, `||`, `!`), ternary (`? :`), optional chaining (`?.`), nullish coalescing (`??`).',
-    'Expressions are evaluated using a safe subset of JavaScript — no `eval`, no function calls, no side effects.',
+    'The expression language is the same as reactive expressions — see `get_concept({ concept: "reactive-scope" })` for the operator reference and safe-expression constraints.',
   ],
 };
 
@@ -407,10 +402,7 @@ const REACTIVE_SCOPE_CONCEPT: GetConceptResult = {
         'the dot segments in the path become dot-property accesses, and optional chaining (`?.`) ' +
         'is required at each intermediate segment because the parent object may not yet exist ' +
         'while the user is filling in the form. ' +
-        '`$form` itself is always a defined object; only leaf values may be `undefined` before the user fills them in. ' +
-        'For repeaters, `$form.users` is the array; individual item fields are accessed with an explicit index ' +
-        'in complex expressions (e.g. `$form.users?.[0]?.name`) but the `.items` segment in field `path` ' +
-        'values is a runtime placeholder — it does not appear in `$form` keys.',
+        '`$form` itself is always a defined object; only leaf values may be `undefined` before the user fills them in.',
       example: {
         states: {
           // path: "firstName" -> $form.firstName
