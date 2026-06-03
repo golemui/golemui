@@ -538,18 +538,6 @@ const ICONS_CONCEPT: GetConceptResult = {
 
   patterns: [
     {
-      name: 'Host setup — loading the Material Icons font',
-      description:
-        'Add the Google Fonts stylesheet for Material Icons to your HTML `<head>`. ' +
-        'This is required once per page; without it, `props.icon` values render as plain text instead of icons. ' +
-        'The link tag loads the icon font via CSS font ligatures — the browser maps the ligature string ' +
-        '(e.g. `"search"`) to the corresponding icon glyph automatically.',
-      example: {
-        html: '<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />',
-        note: 'Place this tag inside the <head> element of your HTML file, before any GolemUI scripts.',
-      },
-    },
-    {
       name: 'Widget icon props',
       description:
         'The following widgets accept `props.icon` (a Material Icons ligature name string): ' +
