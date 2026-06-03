@@ -15,11 +15,11 @@ import {
   composeForm,
   composeTree,
   createLocalization,
+  CurrencyItemRenderer,
   SEED_DATA,
   type BlockId,
   type Lang,
-} from './composeForm';
-import { CurrencyItemRenderer } from './CurrencyItemRenderer';
+} from '@golemui/forms-compose-core';
 
 /* ─── Per-framework code targets ─────────────────────────────────────── */
 

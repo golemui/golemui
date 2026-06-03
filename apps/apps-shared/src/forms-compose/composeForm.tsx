@@ -227,7 +227,9 @@ export function composeForm(active: Set<BlockId>) {
         header('secCurrency'),
         gui.inputs.dropdown('currency', {
           label: L('currency'),
-          items: CURRENCIES,
+          // Object items paired with labelField/valueField + a custom renderer;
+          // the factory's items type doesn't model that combo, so widen it.
+          items: CURRENCIES as unknown as Record<string, unknown>[],
           labelField: 'code',
           valueField: 'code',
           itemRenderer: 'currency',

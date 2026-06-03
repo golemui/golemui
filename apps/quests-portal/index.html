@@ -105,13 +105,13 @@
 
         <div class="adventure-grid">
           <div class="adventure-slot">
-            <button type="button" class="adventure-card is-disabled" data-quest="studio" disabled aria-disabled="true">
+            <button type="button" class="adventure-card is-disabled" data-quest="forms-from-prompt" disabled aria-disabled="true">
               <span class="adv-tag">PILLAR I</span>
-              <span class="adv-name">SAVE TOKEN$</span>
+              <span class="adv-name">FORMS FROM A PROMPT</span>
               <span class="adv-blurb">
-                Studio — describe a form in plain language, AI drafts the
-                <code>{gui.}</code> schema. Burns a fraction of the tokens of
-                hand-prompting raw markup.
+                Outwit THE BUSINESS MANAGER — describe a form in plain language
+                and our MCP emits a validated <code>{gui.}</code> form
+                definition. Prompt in, live form out, no raw markup.
               </span>
               <span class="adv-start adv-soon">⏳ COMING SOON</span>
             </button>
@@ -153,9 +153,9 @@
           <iframe class="demo-iframe" data-demo="forms-as-data" title="Forms-as-data quest"></iframe>
         </div>
         <div id="demo-pane-forms-compose" role="tabpanel" class="demo-pane" hidden>
-          <iframe class="demo-iframe" data-demo="forms-compose" title="Forms-compose quest"></iframe>
+          <!-- FORMS COMPOSE is hosted in-app (React) — see src/quests/forms-compose. -->
+          <div id="forms-compose-root" class="quest-mount"></div>
         </div>
-        <button type="button" class="fs-exit" aria-label="Exit fullscreen" title="Exit fullscreen (Esc)">✕</button>
       </section>
     </main>
 

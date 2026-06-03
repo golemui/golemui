@@ -7,7 +7,13 @@
  * `?demo=<id>&fw=<fw>`. A finished quest offers a way back to the demos.
  *
  * POC: extractable to its own repo later (Roger/Raúl split it).
+ *
+ * FORMS COMPOSE is now hosted in-app: the portal owns its 8-bit walk as a React
+ * mount (src/quests/forms-compose) instead of iframing rob-demo. FORMS AS DATA
+ * still embeds sasha-demo by iframe until it gets the same treatment.
  */
+
+import type { Framework } from '@golemui/demo-engine';
 
 type DemoId = 'forms-as-data' | 'forms-compose';
 
@@ -71,6 +77,20 @@ function paneFor(demo: DemoId): HTMLElement | undefined {
 
 let currentDemo: DemoId | null = null;
 
+// FORMS COMPOSE is React, mounted lazily into its pane (no iframe). The dynamic
+// import keeps React out of the landing bundle until a quest actually launches.
+function mountFormsComposeQuest() {
+  const host = document.getElementById('forms-compose-root');
+  if (!host) return;
+  void import('./quests/forms-compose/mount').then(({ mountFormsCompose }) => {
+    mountFormsCompose(host, {
+      framework: selectedFw as Framework,
+      // Finishing / skipping the walk hands back to the demos page (the app).
+      onComplete: () => goToDemos('forms-compose'),
+    });
+  });
+}
+
 function launchQuest(demo: DemoId) {
   currentDemo = demo;
   panes.forEach((p) => {
@@ -78,22 +98,26 @@ function launchQuest(demo: DemoId) {
     p.toggleAttribute('hidden', !active);
     p.classList.toggle('is-active', active);
   });
-  const iframe = paneFor(demo)?.querySelector<HTMLIFrameElement>('iframe.demo-iframe');
-  if (iframe) {
-    iframe.style.height = '100%';
-    iframe.src = `${DEMO_SRC[demo]}?mode=walk&fw=${selectedFw}&n=${Date.now()}`;
-    iframe.addEventListener(
-      'load',
-      () => {
-        try {
-          iframe.focus();
-          iframe.contentWindow?.focus();
-        } catch {
-          /* cross-origin focus is best-effort */
-        }
-      },
-      { once: true },
-    );
+  if (demo === 'forms-compose') {
+    mountFormsComposeQuest();
+  } else {
+    const iframe = paneFor(demo)?.querySelector<HTMLIFrameElement>('iframe.demo-iframe');
+    if (iframe) {
+      iframe.style.height = '100%';
+      iframe.src = `${DEMO_SRC[demo]}?mode=walk&fw=${selectedFw}&n=${Date.now()}`;
+      iframe.addEventListener(
+        'load',
+        () => {
+          try {
+            iframe.focus();
+            iframe.contentWindow?.focus();
+          } catch {
+            /* cross-origin focus is best-effort */
+          }
+        },
+        { once: true },
+      );
+    }
   }
   fullscreen = true;
   viewport.classList.remove('is-closing', 'is-embedded');
@@ -114,10 +138,10 @@ cards.forEach((card) => {
   });
 });
 
-// Close (X / Esc): return to where the quest was launched from — back into the
-// app if it came from there, otherwise the demos selector.
+// Close (Esc): return to where the quest was launched from — back into the
+// app if it came from there, otherwise the demos selector. (No floating X — the
+// in-quest SKIP / final CTA also leave the walk.)
 const closeQuest = () => goToDemos(fromApp ? currentDemo : null);
-document.querySelector<HTMLButtonElement>('.fs-exit')?.addEventListener('click', closeQuest);
 window.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && fullscreen) closeQuest();
 });

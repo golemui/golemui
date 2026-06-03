@@ -1,0 +1,671 @@
+/* ============================================================================
+   FORMS COMPOSE — the quests-portal's own 8-bit walk styling.
+   ----------------------------------------------------------------------------
+   Authored fresh against the @golemui/demo-engine class contract (NOT copied
+   from rob-demo). The middle CH-05 stage is a VERTICAL stack (code on top, form
+   below) and the top/bottom chrome is kept short so the stage has room. The
+   live {gui.} form opts into the reusable `8bit` theme; the chunky border WIDTH
+   (no token for it) is supplemented at the bottom of this file.
+   ========================================================================== */
+
+@use '../../../../../libs/gui/components/src/styles/index';
+// Filename starts with a digit, so Sass can't derive a default namespace — alias it.
+@use '../../../../../libs/gui/components/src/styles/themes/8bit' as eightbit;
+
+$pixel-purple: #6a4cff;
+$pixel-purple-deep: #3a1f8c;
+$pixel-purple-light: #b5a3ff;
+$pixel-cream: #f8f4d7;
+$pixel-dark: #150726;
+$pixel-amber: #f9d342;
+
+$press: 'Press Start 2P', monospace;
+$body: 'VT323', 'Fira Code', monospace;
+
+.quest-mount {
+  width: 100%;
+  height: 100%;
+}
+
+/* ── Shell — three stacked regions: banner+dialog / stage / battle ─────── */
+.quest-shell {
+  /* Top/bottom kept deliberately short so the middle stage gets the room. */
+  --dialog-h: 116px;
+  --console-h: 168px;
+
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  font-family: $body;
+  color: $pixel-cream;
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 0%, rgba(106, 76, 255, 0.22), transparent 62%),
+    #0d0820;
+  overflow: hidden;
+}
+.quest-shell *,
+.quest-shell *::before,
+.quest-shell *::after {
+  box-sizing: border-box;
+}
+
+/* ── Quest banner (top strip) ─────────────────────────────────────────── */
+.quest-banner {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.6rem 1rem;
+  border-bottom: 3px solid $pixel-purple;
+  background: rgba(21, 7, 38, 0.6);
+  font-family: $press;
+}
+.qb-act {
+  font-size: 0.5rem;
+  letter-spacing: 0.1em;
+  color: $pixel-dark;
+  background: $pixel-amber;
+  border: 2px solid $pixel-dark;
+  padding: 4px 6px;
+}
+.qb-title {
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  color: #fff;
+}
+.qb-quest {
+  font-family: $body;
+  font-size: 1.05rem;
+  color: $pixel-purple-light;
+}
+.qb-step {
+  margin-left: auto;
+  font-size: 0.55rem;
+  color: #968ea8;
+}
+.qb-skip {
+  appearance: none;
+  cursor: pointer;
+  font-family: $press;
+  font-size: 0.55rem;
+  letter-spacing: 0.06em;
+  color: $pixel-dark;
+  background: $pixel-amber;
+  border: 2px solid $pixel-dark;
+  box-shadow: 2px 2px 0 $pixel-purple-deep;
+  padding: 0.45rem 0.6rem;
+}
+.qb-skip:hover { transform: translate(-1px, -1px); }
+.skip-chevrons { letter-spacing: -0.1em; }
+
+/* ── Dialog box ───────────────────────────────────────────────────────── */
+.dialog-stage {
+  flex: 0 0 auto;
+  height: var(--dialog-h);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.9rem 1rem 0.3rem;
+}
+.dialog-box {
+  position: relative;
+  width: 100%;
+  max-width: 940px;
+  height: 100%;
+  background: $pixel-dark;
+  color: $pixel-cream;
+  border: 4px solid $pixel-cream;
+  box-shadow: 0 0 0 4px $pixel-dark, 0 0 0 7px $pixel-purple, 0 6px 0 0 $pixel-purple-deep;
+  padding: 0.85rem 1.1rem;
+  outline: none;
+  overflow: hidden;
+}
+.dialog-box.is-boss {
+  border-color: #ff5a7a;
+  box-shadow: 0 0 0 4px $pixel-dark, 0 0 0 7px #ff5a7a, 0 6px 0 0 #7a1830;
+}
+.dialog-box.is-shaking { animation: q-shake 0.22s steps(3); }
+@keyframes q-shake {
+  0%, 100% { transform: translate(0, 0); }
+  33% { transform: translate(-2px, 1px); }
+  66% { transform: translate(2px, -1px); }
+}
+.dialog-nameplate {
+  position: absolute;
+  top: -15px;
+  left: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: $pixel-purple;
+  border: 3px solid $pixel-cream;
+  box-shadow: 0 3px 0 $pixel-purple-deep;
+  padding: 4px 9px 3px;
+  font-family: $press;
+  font-size: 0.52rem;
+  letter-spacing: 0.06em;
+}
+.dialog-box.is-boss .dialog-nameplate { background: #ff5a7a; }
+.dialog-chapter { color: $pixel-amber; }
+.dialog-title { color: #fff; }
+.dialog-counter { color: $pixel-purple-light; }
+.dialog-body {
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+.dialog-type {
+  font-size: 1.35rem;
+  line-height: 1.25;
+  white-space: pre-wrap;
+}
+.type-caret { color: $pixel-amber; animation: q-blink 0.8s steps(2) infinite; }
+@keyframes q-blink { 50% { opacity: 0; } }
+
+/* ── Stage (the middle — where the room goes) ─────────────────────────── */
+.quest-stage {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  padding: 0.8rem 1rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* CH-05+ : full width — the {gui.} code on the LEFT, the live form on the RIGHT. */
+.quest-stage.is-compose {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  gap: 1rem;
+  width: 100%;
+  align-content: start;
+  align-items: start;
+}
+/* Narrow viewports can't carry two columns — stack code over form. */
+@media (max-width: 760px) {
+  .quest-stage.is-compose { grid-template-columns: 1fr; }
+}
+
+/* ── Cards (compose tree + form) ──────────────────────────────────────── */
+.card {
+  background: #181235;
+  border: 3px solid $pixel-purple;
+  box-shadow: 4px 4px 0 $pixel-purple-deep;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.card-head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  padding: 0.5rem 0.8rem;
+  border-bottom: 2px solid rgba(181, 163, 255, 0.4);
+}
+.card-tag {
+  font-family: $press;
+  font-size: 0.55rem;
+  letter-spacing: 0.06em;
+  color: $pixel-amber;
+}
+.card-sub {
+  font-family: $body;
+  font-size: 1rem;
+  color: #cabfe6;
+}
+.card-sub code {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.8rem;
+  color: $pixel-purple-light;
+}
+.card-body { padding: 0.75rem 0.85rem; }
+
+/* Compose tree (the {gui.} structure) */
+.tree-lead {
+  margin: 0 0 0.6rem;
+  font-family: $body;
+  font-size: 1.1rem;
+  line-height: 1.3;
+  color: #d7cef0;
+}
+.tree-lead strong { color: $pixel-amber; }
+.tree-code,
+.mp-mount {
+  margin: 0;
+  background: #0e0a22;
+  border: 2px solid rgba(106, 76, 255, 0.5);
+  padding: 0.6rem 0.7rem;
+  overflow: auto;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: #e7e2ff;
+}
+.tree-line { display: block; white-space: pre; }
+.tree-line.is-pulse {
+  background: rgba(249, 211, 66, 0.18);
+  animation: q-pulse 0.7s ease;
+}
+@keyframes q-pulse {
+  0% { background: rgba(249, 211, 66, 0.5); }
+  100% { background: rgba(249, 211, 66, 0); }
+}
+.mp-mount-block { margin-top: 0.7rem; display: flex; flex-direction: column; gap: 0.3rem; }
+.mp-mount-cap {
+  font-family: $press;
+  font-size: 0.45rem;
+  letter-spacing: 0.04em;
+  color: #8c84a8;
+  text-transform: uppercase;
+}
+.mp-mount--widget { color: #9ff5c2; border-color: rgba(65, 184, 131, 0.4); }
+
+/* Form card */
+.card-head--form { flex-wrap: wrap; }
+.form-live {
+  margin-left: auto;
+  font-family: $press;
+  font-size: 0.45rem;
+  letter-spacing: 0.06em;
+  color: #5fd08a;
+}
+.form-live.is-on { color: $pixel-amber; }
+.app-host {
+  position: relative;
+  background: var(--gui-bg-default);
+  border: 3px solid $pixel-dark;
+  box-shadow: inset 0 0 0 2px $pixel-purple;
+  padding: 0.9rem 1rem;
+  color: var(--gui-text-default);
+}
+.app-host .a11y-banner {
+  margin-bottom: 0.6rem;
+  font-family: $body;
+  font-size: 1rem;
+  color: $pixel-dark;
+  background: $pixel-amber;
+  border: 2px solid $pixel-dark;
+  padding: 0.35rem 0.5rem;
+}
+
+/* Section light-up cues (the engine/form add these classes to a section) */
+.section-flash { animation: q-section-flash 1.6s ease; }
+.section-hot { outline: 2px dashed $pixel-amber; outline-offset: 3px; }
+@keyframes q-section-flash {
+  0% { background: rgba(249, 211, 66, 0.35); }
+  100% { background: transparent; }
+}
+
+/* ── Requirements panel (Act II) ──────────────────────────────────────── */
+.reqs-panel {
+  width: 100%;
+  max-width: 560px;
+  background: #181235;
+  border: 3px solid $pixel-purple;
+  box-shadow: 4px 4px 0 $pixel-purple-deep;
+  padding: 1rem 1.2rem;
+}
+.reqs-head {
+  font-family: $press;
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  color: $pixel-amber;
+  margin-bottom: 0.7rem;
+}
+.reqs-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.35rem; }
+.reqs-item {
+  font-family: $body;
+  font-size: 1.2rem;
+  color: #d7cef0;
+  display: flex;
+  gap: 0.5rem;
+}
+.reqs-item.is-new { color: $pixel-amber; animation: q-reqs-in 0.4s ease; }
+@keyframes q-reqs-in {
+  from { transform: translateX(-8px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+.reqs-bullet { color: $pixel-purple-light; }
+.reqs-foot {
+  margin-top: 0.8rem;
+  font-family: $body;
+  font-size: 1rem;
+  color: #968ea8;
+}
+
+/* ── GuiArtifact (boss centre) ────────────────────────────────────────── */
+.gui-artifact {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+}
+.ga-rays {
+  position: absolute;
+  width: 280px;
+  height: 280px;
+  background: conic-gradient(from 0deg, transparent 0 18deg, rgba(249, 211, 66, 0.18) 18deg 30deg);
+  border-radius: 50%;
+  animation: q-spin 9s linear infinite;
+}
+@keyframes q-spin { to { transform: rotate(360deg); } }
+.ga-sigil {
+  position: relative;
+  font-family: $press;
+  font-size: 2.4rem;
+  color: $pixel-amber;
+  text-shadow: 0 0 18px rgba(249, 211, 66, 0.7), 4px 4px 0 $pixel-purple-deep;
+  animation: q-sigil 1.6s ease-in-out infinite alternate;
+}
+@keyframes q-sigil { to { transform: scale(1.06); } }
+.ga-cap {
+  position: relative;
+  font-family: $press;
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  color: #fff;
+}
+
+/* ── Battle bar (bottom) ──────────────────────────────────────────────── */
+.battle-frame {
+  flex: 0 0 auto;
+  /* min-height (not fixed): the bar now also carries the dialog narrative, so
+     let it size to content while still reserving the console height. */
+  min-height: var(--console-h);
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr) 120px;
+  gap: 0.6rem;
+  align-items: stretch;
+  padding: 0.6rem 0.8rem;
+  background: rgba(21, 7, 38, 0.85);
+  border-top: 4px solid $pixel-purple;
+}
+.stat-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  background: #120f24;
+  border: 3px solid $pixel-purple;
+  box-shadow: 3px 3px 0 $pixel-purple-deep;
+}
+.stat-box--loc { border-color: $pixel-amber; box-shadow: 3px 3px 0 #7a5e00; }
+.sb-num {
+  font-family: $press;
+  font-size: 1.8rem;
+  color: $pixel-cream;
+  text-shadow: 3px 3px 0 $pixel-purple-deep;
+}
+.stat-box--loc .sb-num { color: $pixel-amber; }
+.stat-box.is-frenzy .sb-num { color: #ff5a7a; animation: q-frenzy 0.1s steps(2) infinite; }
+@keyframes q-frenzy { 50% { transform: translate(-1px, 1px); } }
+.sb-num.is-bump { animation: q-bump 0.3s ease; }
+@keyframes q-bump {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.35); }
+  100% { transform: scale(1); }
+}
+.sb-label { font-family: $press; font-size: 0.45rem; letter-spacing: 0.08em; color: #968ea8; }
+
+.command-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  background: #120f24;
+  border: 3px solid $pixel-cream;
+  box-shadow: 3px 3px 0 $pixel-purple-deep;
+  padding: 0.5rem 0.7rem;
+  min-width: 0;
+}
+/* Split command box: dialog narrative on the left, the move(s) on the right. */
+.command-box.is-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 0.8fr);
+  gap: 0.9rem;
+  align-items: stretch;
+}
+.cb-dialog {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.4rem;
+  min-width: 0;
+  padding-right: 0.9rem;
+  border-right: 2px solid rgba(181, 163, 255, 0.3);
+}
+.cb-dialog.is-boss { border-right-color: rgba(255, 90, 122, 0.5); }
+.cb-nameplate { display: inline-flex; align-items: center; gap: 0.5rem; }
+.cb-chapter { font-family: $press; font-size: 0.5rem; color: $pixel-amber; }
+.cb-title { font-family: $press; font-size: 0.5rem; color: #fff; }
+.cb-dialog.is-boss .cb-title { color: #ff5a7a; }
+.cb-counter { font-family: $press; font-size: 0.45rem; color: $pixel-purple-light; }
+.cb-type {
+  font-family: $body;
+  font-size: 1.2rem;
+  line-height: 1.2;
+  color: $pixel-cream;
+  white-space: pre-wrap;
+}
+.cb-action { display: flex; flex-direction: column; gap: 0.4rem; min-width: 0; }
+.cb-action .command-foot { flex-wrap: wrap; }
+
+.command-cap { font-family: $press; font-size: 0.5rem; letter-spacing: 0.06em; color: $pixel-amber; }
+.command-main { flex: 1 1 auto; display: flex; align-items: center; min-height: 0; }
+.dialog-hint { font-family: $body; font-size: 1.2rem; color: #6f6790; }
+.dialog-options { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.25rem; width: 100%; }
+.dialog-option {
+  appearance: none;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: $body;
+  font-size: 1.15rem;
+  color: $pixel-cream;
+  background: transparent;
+  border: 2px solid transparent;
+  padding: 0.2rem 0.4rem;
+}
+.dialog-option.is-focused { border-color: $pixel-amber; background: rgba(249, 211, 66, 0.12); }
+.opt-cursor { width: 1ch; color: $pixel-amber; }
+.opt-key {
+  font-family: $press;
+  font-size: 0.5rem;
+  color: $pixel-dark;
+  background: $pixel-purple-light;
+  padding: 2px 5px;
+}
+.opt-label { flex: 1 1 auto; }
+
+.pixel-btn {
+  appearance: none;
+  cursor: pointer;
+  font-family: $press;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: $pixel-dark;
+  background: $pixel-amber;
+  border: 3px solid $pixel-dark;
+  box-shadow: 3px 3px 0 $pixel-purple-deep;
+  padding: 0.6rem 0.9rem;
+}
+.pixel-btn.is-ready:hover { transform: translate(-1px, -1px); }
+.pixel-btn.is-dim { opacity: 0.5; cursor: not-allowed; filter: grayscale(0.5); }
+
+.command-foot { display: flex; align-items: center; gap: 0.5rem; }
+.mini-btn {
+  appearance: none;
+  cursor: pointer;
+  font-family: $press;
+  font-size: 0.45rem;
+  letter-spacing: 0.04em;
+  color: $pixel-cream;
+  background: transparent;
+  border: 2px solid $pixel-purple;
+  padding: 0.3rem 0.4rem;
+}
+.mini-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.mini-btn--ghost { border-color: #4a3f6b; }
+.nav-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: $press;
+  font-size: 0.45rem;
+  border: 2px solid currentColor;
+  padding: 0.25rem 0.4rem;
+}
+.nav-chip-mono { font-size: 0.55rem; }
+.cmd-spacer { flex: 1 1 auto; }
+.blink { animation: q-blink 0.8s steps(2) infinite; }
+
+/* ── Overlays (reveal / item-get / game-over) — simplified pixel cinematics */
+.reveal-overlay,
+.zelda-overlay,
+.gameover-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-family: $press;
+  animation: q-overlay-in 0.25s ease;
+}
+@keyframes q-overlay-in { from { opacity: 0; } to { opacity: 1; } }
+
+.reveal-overlay { background: rgba(21, 7, 38, 0.92); }
+.reveal-flash { position: absolute; inset: 0; background: #ff5a7a; animation: q-flash 0.5s ease forwards; }
+@keyframes q-flash { 0% { opacity: 0.8; } 100% { opacity: 0; } }
+.reveal-vignette { position: absolute; inset: 0; box-shadow: inset 0 0 180px 40px rgba(0, 0, 0, 0.7); }
+.reveal-stack { position: relative; display: flex; flex-direction: column; gap: 0.8rem; padding: 1rem; }
+.reveal-pretitle { font-size: 0.6rem; color: $pixel-amber; letter-spacing: 0.1em; }
+.reveal-title { font-size: 2rem; color: #ff5a7a; text-shadow: 4px 4px 0 $pixel-dark; margin: 0; animation: q-slam 0.4s ease; }
+@keyframes q-slam { from { transform: scale(2.2); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.reveal-subtitle { font-size: 0.7rem; color: #fff; letter-spacing: 0.08em; }
+.reveal-payload {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.85rem;
+  text-align: left;
+  color: $pixel-purple-light;
+  background: #0e0a22;
+  border: 2px solid $pixel-purple;
+  padding: 0.7rem 0.9rem;
+  white-space: pre;
+}
+.reveal-footer { font-size: 0.6rem; color: $pixel-amber; letter-spacing: 0.08em; }
+.reveal-bolt { position: absolute; width: 4px; height: 60%; background: $pixel-amber; opacity: 0.7; }
+.reveal-bolt--1 { left: 20%; animation: q-bolt 0.3s steps(2) infinite; }
+.reveal-bolt--2 { left: 50%; animation: q-bolt 0.35s steps(2) infinite; }
+.reveal-bolt--3 { left: 80%; animation: q-bolt 0.28s steps(2) infinite; }
+@keyframes q-bolt { 50% { opacity: 0; } }
+
+.zelda-overlay { background: rgba(21, 7, 38, 0.94); }
+.zelda-rays {
+  position: absolute;
+  width: 460px;
+  height: 460px;
+  background: conic-gradient(from 0deg, transparent 0 14deg, rgba(249, 211, 66, 0.22) 14deg 24deg);
+  border-radius: 50%;
+  animation: q-spin 8s linear infinite;
+}
+.zelda-stack { position: relative; display: flex; flex-direction: column; align-items: center; gap: 0.7rem; }
+.zelda-pretitle { font-size: 0.7rem; color: $pixel-amber; letter-spacing: 0.12em; }
+.zelda-artifact { position: relative; }
+.zelda-sigil { font-size: 2.6rem; color: $pixel-cream; text-shadow: 0 0 22px rgba(249, 211, 66, 0.8); animation: q-sigil 1.4s ease-in-out infinite alternate; }
+.zelda-glow { position: absolute; inset: -20px; background: radial-gradient(circle, rgba(249, 211, 66, 0.4), transparent 70%); }
+.zelda-name { font-size: 1.6rem; color: $pixel-amber; text-shadow: 3px 3px 0 $pixel-purple-deep; }
+.zelda-spell { font-size: 0.65rem; color: #fff; letter-spacing: 0.08em; }
+
+.gameover-overlay { background: rgba(8, 4, 16, 0.96); flex-direction: column; gap: 0; }
+.go-scan { position: absolute; inset: 0; background: repeating-linear-gradient(transparent 0 3px, rgba(255, 90, 122, 0.08) 3px 4px); }
+.go-stack { position: relative; display: flex; flex-direction: column; align-items: center; gap: 0.8rem; }
+.go-pretitle { font-size: 0.6rem; color: #ff5a7a; letter-spacing: 0.1em; }
+.go-title { font-size: 2.6rem; color: #ff5a7a; margin: 0; text-shadow: 4px 4px 0 $pixel-dark; }
+.go-stat { font-size: 0.8rem; color: $pixel-amber; }
+.go-sub { font-family: $body; font-size: 1.2rem; color: #d7cef0; }
+.go-retry {
+  appearance: none;
+  cursor: pointer;
+  margin-top: 0.6rem;
+  font-family: $press;
+  font-size: 0.7rem;
+  color: $pixel-dark;
+  background: $pixel-amber;
+  border: 3px solid $pixel-dark;
+  box-shadow: 3px 3px 0 $pixel-purple-deep;
+  padding: 0.6rem 0.9rem;
+}
+
+/* ── Return bar (typed payload under Save) ────────────────────────────── */
+.return-bar {
+  margin-top: 0.8rem;
+  border: 2px dashed rgba(106, 76, 255, 0.5);
+  padding: 0.6rem 0.7rem;
+  font-family: $body;
+}
+.return-bar.is-filled { border-style: solid; border-color: #5fd08a; }
+.rb-cap { font-family: $press; font-size: 0.5rem; letter-spacing: 0.06em; color: #5fd08a; display: block; }
+.rb-cap--idle { color: $pixel-purple-light; }
+.rb-json {
+  display: block;
+  margin: 0.4rem 0;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.8rem;
+  white-space: pre;
+  color: #1c0e33;
+  background: $pixel-cream;
+  border: 2px solid $pixel-dark;
+  padding: 0.5rem 0.6rem;
+  overflow: auto;
+}
+.rb-note { font-size: 1rem; color: #968ea8; }
+.rb-note strong { color: $pixel-amber; }
+
+/* ── Bare hand-off stub ───────────────────────────────────────────────── */
+.quest-return {
+  margin: auto;
+  font-family: $press;
+  font-size: 0.7rem;
+  color: $pixel-amber;
+}
+
+/* ── Currency item renderer (custom widget block) ─────────────────────── */
+.currency-item { display: flex; align-items: center; gap: 0.5rem; }
+.currency-item__symbol { font-weight: 700; }
+.currency-item__code { font-family: 'Fira Code', monospace; }
+.currency-item__name { color: var(--gui-text-secondary); }
+.currency-item.is-focused,
+.currency-item.is-selected { color: var(--gui-intent-primary); }
+
+/* ============================================================================
+   8-bit form border supplement — the one pixel trait the theme tokens can't
+   express (there is no border-WIDTH token). Scope it tightly to the themed host.
+   ========================================================================== */
+[data-theme='8bit'] input,
+[data-theme='8bit'] select,
+[data-theme='8bit'] textarea,
+[data-theme='8bit'] button {
+  border-width: 2px;
+  border-style: solid;
+}
+[data-theme='8bit'] input:focus,
+[data-theme='8bit'] select:focus,
+[data-theme='8bit'] textarea:focus {
+  outline: none;
+}
+
+/* ── Short-viewport guard: let the stage scroll rather than crush chrome ── */
+@media (max-height: 720px) {
+  .quest-shell { --dialog-h: 104px; --console-h: 150px; }
+  .dialog-type { font-size: 1.2rem; }
+}
