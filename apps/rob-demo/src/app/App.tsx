@@ -9,13 +9,16 @@ import {
   type Framework,
 } from '@golemui/demo-engine';
 import { GuiForm, widgetLoaders } from '@golemui/gui-react';
+import type { FormComponentHandle } from '@golemui/react';
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import {
   BLOCKS,
   composeForm,
+  composeFormMeta,
   composeTree,
   createLocalization,
   CurrencyItemRenderer,
+  metaFromActive,
   SEED_DATA,
   type BlockId,
   type Lang,
@@ -421,25 +424,101 @@ export function App() {
             />
           </div>
         </article>
-        <FormCard
+        <BareForm
           active={sandboxActive}
           lang={lang}
-          pulse={pulse}
-          a11ySpot={a11ySpot}
           onLang={setLang}
           submitted={submitted}
           onSubmit={(e) => setSubmitted(pickActiveFields(e.data, sandboxActive))}
-          flashBlock={lastToggled}
-          flashNonce={flashNonce}
-          hoverSection={hoverSection}
-          localeFlash={localeFlash}
-          a11yHint={a11yHint}
         />
       </div>
     ),
   };
 
   return <GameShell {...config} />;
+}
+
+/* ─── BareForm (the /demos app — ONE declarative {gui.} definition) ───────
+   The whole form is a single composeFormMeta() definition; section visibility
+   is GolemUI's own include:{when:'$meta._block_*'} reactivity. The outside
+   toggles flip those flags through the form's setMeta handle, so the form never
+   rebuilds or remounts — typed values persist across toggles. */
+function BareForm({
+  active,
+  lang,
+  onLang,
+  submitted,
+  onSubmit,
+}: {
+  active: Set<BlockId>;
+  lang: Lang;
+  onLang: (l: Lang) => void;
+  submitted: Record<string, unknown> | null;
+  onSubmit: (e: FormSubmitEvent) => void;
+}) {
+  const formRef = useRef<FormComponentHandle>(null);
+  const localizationRef = useRef<ReturnType<typeof createLocalization> | null>(null);
+  if (!localizationRef.current) localizationRef.current = createLocalization(lang);
+  const localization = localizationRef.current;
+  useEffect(() => {
+    localization.setLang(lang);
+  }, [lang, localization]);
+
+  // Built ONCE — the definition is stable; block visibility rides in meta, so
+  // the form never re-resolves/remounts (which is what would discard edits).
+  const config = useMemo(
+    () => ({
+      formDef: composeFormMeta(),
+      data: SEED_DATA,
+      formConfig: { widgetLoaders, itemRenderers: { currency: CurrencyItemRenderer } },
+      localization,
+      meta: metaFromActive(active),
+    }),
+    // `active` only seeds the initial meta; later changes go via setMeta below.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [localization],
+  );
+
+  // Flip the block flags live as the outside toggles change — no rebuild.
+  useEffect(() => {
+    formRef.current?.setMeta(metaFromActive(active));
+  }, [active]);
+
+  const blocksOn = active.size;
+  return (
+    <article className="card card--app">
+      <div className="card-head card-head--form">
+        <span className="card-tag">▶ THE FORM</span>
+        <span className="card-sub">
+          composed by <code>{'{gui.}'}</code> — {blocksOn} block{blocksOn === 1 ? '' : 's'}
+        </span>
+        <span className="lang-wrap">
+          <LangToggle
+            lang={lang}
+            onLang={(l) => onLang(l as Lang)}
+            langs={[
+              { id: 'en', label: 'EN' },
+              { id: 'ja', label: '日本語' },
+              { id: 'ar', label: 'العربية' },
+            ]}
+          />
+        </span>
+      </div>
+      <div className="card-body app-host">
+        <GuiForm ref={formRef} config={config} formSubmit={onSubmit} />
+        <ReturnBar
+          data={submitted}
+          filledNote="one composed definition in, one typed payload out."
+          idleNote={
+            <>
+              Hit <strong>Save</strong> — the composed form hands its{' '}
+              <strong>typed</strong> payload straight back, valid against the schema.
+            </>
+          }
+        />
+      </div>
+    </article>
+  );
 }
 
 /* ─── CodeBanner (full-width strip under the bare hero) ───────────────────

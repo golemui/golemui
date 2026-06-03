@@ -149,17 +149,18 @@ function addressFields(prefix: 'ship' | 'bill') {
   ];
 }
 
+// A localised section header — plain framework content via gui.displays.display()
+// (a React <p> — no GolemUI widget); it re-labels by reading `translate` from the
+// runtime params at render time. Shared by both form builders.
+const header = (key: LabelKey) =>
+  gui.displays.display(({ translate }) =>
+    createElement('p', { className: 'sec-head' }, translate ? translate(key) : LABELS.en[key]),
+  );
+
 export function composeForm(active: Set<BlockId>) {
   // Each block is its own labelled SECTION (a verticalFlex with a header), in the
   // same order as the COMPOSE checklist — so a block ↔ a section is obvious, and
-  // hovering a block can light its whole section. The header is plain framework
-  // content via gui.displays.display() (here a React <p> — no GolemUI widget);
-  // it localises by reading `translate` from the runtime params at render time.
-  const header = (key: LabelKey) =>
-    gui.displays.display(({ translate }) =>
-      createElement('p', { className: 'sec-head' }, translate ? translate(key) : LABELS.en[key]),
-    );
-
+  // hovering a block can light its whole section.
   const def: any[] = [
     gui.layouts.verticalFlex([
       header('secContact'),
@@ -240,6 +241,99 @@ export function composeForm(active: Set<BlockId>) {
 
   def.push(gui.actions.button({ label: L('save'), actionType: 'submit' }));
   return def;
+}
+
+/* ─── Declarative single definition (the bare app "actually uses GolemUI") ──
+   ONE stable {gui.} definition: every section is present, and GolemUI's own
+   include:{when} reactivity shows/hides it based on block flags kept in form
+   META (not data, so the typed payload never carries them). The outside React
+   toggles flip those flags via the form's setMeta handle — no rebuild, no
+   remount. `composeForm(active)` above stays for the quest's scripted rebuild. */
+
+// Block → meta flag key. Flags live in meta so they never pollute the payload.
+export const BLOCK_META: Record<BlockId, string> = {
+  address: '_block_address',
+  reactive: '_block_reactive',
+  conditional: '_block_conditional',
+  currency: '_block_currency',
+};
+
+// The form's meta object for a given active-block set (all-true seeds the app
+// fully composed). Hand this to <GuiForm meta={…}> and to ref.setMeta(…).
+export function metaFromActive(active: Set<BlockId>): Record<string, boolean> {
+  return Object.fromEntries(
+    (Object.keys(BLOCK_META) as BlockId[]).map((b) => [BLOCK_META[b], active.has(b)]),
+  );
+}
+
+export function composeFormMeta() {
+  return [
+    // Contact — always present, the base of every form.
+    gui.layouts.verticalFlex([
+      header('secContact'),
+      gui.inputs.textInput('name', { label: L('name') }),
+      gui.inputs.textInput('email', { label: L('email'), validator: { format: 'email' } }),
+    ] as any),
+
+    // Shipping address — the reused block, shown when its flag is on.
+    gui.layouts.verticalFlex([header('shipping'), ...addressFields('ship')] as any, {
+      include: { when: '$meta._block_address == true' },
+    } as any),
+
+    // Region — country is always shown (and always reactive: updating a hidden
+    // city's options is harmless). City appears once the reactive flag is on AND
+    // a country is chosen.
+    gui.layouts.verticalFlex([
+      header('secRegion'),
+      gui.inputs.dropdown('country', {
+        label: L('country'),
+        items: COUNTRIES,
+        onChange: ({ data, update }: any) => {
+          const c = (data as FormShape).country ?? '';
+          update({ path: 'city', options: CITIES[c] ?? [] });
+        },
+      }),
+      gui.inputs.radiogroup('city', {
+        label: L('city'),
+        options: [],
+        include: { when: '$meta._block_reactive == true && !!$form.country' },
+        onLoad: ({ data, update }: any) => {
+          const c = (data as FormShape).country ?? '';
+          if (c) update({ path: 'city', options: CITIES[c] ?? [] });
+        },
+      }),
+    ] as any),
+
+    // Conditional billing — the SAME address block, reused + gated by its flag,
+    // its inner address further gated by the billingDiffers checkbox.
+    gui.layouts.verticalFlex(
+      [
+        header('secBilling'),
+        gui.inputs.checkbox('billingDiffers', { label: L('billingDiffers') }),
+        gui.layouts.verticalFlex(addressFields('bill') as any, {
+          include: { when: '$form.billingDiffers == true' },
+        } as any),
+      ] as any,
+      { include: { when: '$meta._block_conditional == true' } } as any,
+    ),
+
+    // Payment — a custom-rendered currency dropdown, shown when its flag is on.
+    gui.layouts.verticalFlex(
+      [
+        header('secCurrency'),
+        gui.inputs.dropdown('currency', {
+          label: L('currency'),
+          items: CURRENCIES as unknown as Record<string, unknown>[],
+          labelField: 'code',
+          valueField: 'code',
+          itemRenderer: 'currency',
+        }),
+      ] as any,
+      { include: { when: '$meta._block_currency == true' } } as any,
+    ),
+
+    gui.actions.button({ label: L('save'), actionType: 'submit' }),
+  ];
 }
 
 /* ─── The composition, as display lines (the on-screen hero) ──────────── */
