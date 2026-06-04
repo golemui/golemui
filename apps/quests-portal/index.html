@@ -81,26 +81,30 @@
           <span class="fw-label">▸ PICK YOUR FRAMEWORK</span>
           <div class="fw-tiles" role="radiogroup" aria-label="Framework">
             <button type="button" role="radio" aria-checked="true" class="fw-tile is-selected" data-fw="react" style="--fw-color:#61dafb;--fw-shadow:#0e7a9e">
-              <span class="fw-portrait"><span class="fw-monogram">R</span></span>
+              <span class="fw-portrait"><span class="fw-sprite" style="--col:1"></span></span>
               <span class="fw-name">REACT</span>
             </button>
             <button type="button" role="radio" aria-checked="false" class="fw-tile" data-fw="angular" style="--fw-color:#dd0031;--fw-shadow:#7a0019">
-              <span class="fw-portrait"><span class="fw-monogram">A</span></span>
+              <span class="fw-portrait"><span class="fw-sprite" style="--col:0"></span></span>
               <span class="fw-name">ANGULAR</span>
             </button>
             <button type="button" role="radio" aria-checked="false" class="fw-tile" data-fw="lit" style="--fw-color:#324fff;--fw-shadow:#1a2c99">
-              <span class="fw-portrait"><span class="fw-monogram">L</span></span>
+              <span class="fw-portrait"><span class="fw-sprite" style="--col:3"></span></span>
               <span class="fw-name">LIT</span>
             </button>
             <button type="button" role="radio" aria-checked="false" class="fw-tile" data-fw="vue" style="--fw-color:#41b883;--fw-shadow:#1f6e4d">
-              <span class="fw-portrait"><span class="fw-monogram">V</span></span>
+              <span class="fw-portrait"><span class="fw-sprite" style="--col:2"></span></span>
               <span class="fw-name">VUE</span>
             </button>
             <button type="button" role="radio" aria-checked="false" class="fw-tile" data-fw="vanilla" style="--fw-color:#f7df1e;--fw-shadow:#8a7a00">
-              <span class="fw-portrait"><span class="fw-monogram">{}</span></span>
+              <span class="fw-portrait"><span class="fw-sprite" style="--col:4"></span></span>
               <span class="fw-name">JS</span>
             </button>
           </div>
+          <p class="fw-readout" aria-live="polite">
+            <span class="fw-readout-klass" data-fw-klass></span>
+            <span class="fw-readout-blurb" data-fw-blurb></span>
+          </p>
         </div>
 
         <div class="adventure-grid">

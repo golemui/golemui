@@ -205,7 +205,7 @@ export function App() {
     return (
       <>
         <ComposePanel
-          tree={composeTree(active)}
+          tree={composeTree(active, fw)}
           pulse={pulse}
           lastToggled={lastToggled}
           mount={MOUNT_BY_FW[fw]}
@@ -382,7 +382,7 @@ export function App() {
           </div>
           <div className="card-body code-body">
             <CodeBanner
-              active={sandboxActive}
+              tree={composeTree(sandboxActive, START_FW ?? 'react')}
               lastToggled={lastToggled}
               pulse={pulse}
               hoverSection={hoverSection}
@@ -518,47 +518,9 @@ function BareForm({
 }
 
 /* ─── CodeBanner (full-width strip under the bare hero) ───────────────────
-   Shows the composed {gui.} definition. Each line belongs to a section; the line
-   dims when its block is off, pulses when toggled, and lights when you hover its
-   box — so box → code → form is one connected chain. */
-type CodeOwner = BlockId | 'base' | 'contact';
-const CODE_LINES: { owner: CodeOwner; depth: number; text: string }[] = [
-  // Each card is its OWN flex layout — a header (a display widget) + its fields.
-  { owner: 'base', depth: 0, text: 'const card = (title, fields) => gui.layouts.verticalFlex([' },
-  { owner: 'base', depth: 1, text: 'gui.displays.display(() => title),   // the card title widget' },
-  { owner: 'base', depth: 1, text: '...fields,' },
-  { owner: 'base', depth: 0, text: ']);' },
-  { owner: 'base', depth: 0, text: '' },
-  // The reusable address block, defined once (shipping + billing).
-  { owner: 'address', depth: 0, text: 'const address = (type) => [' },
-  { owner: 'address', depth: 1, text: "gui.inputs.textInput(type+'Street')," },
-  { owner: 'address', depth: 1, text: "gui.inputs.textInput(type+'Postcode')," },
-  { owner: 'address', depth: 0, text: '];' },
-  { owner: 'base', depth: 0, text: '' },
-  // The form — a column of cards, each its own labelled flex layout.
-  { owner: 'base', depth: 0, text: 'gui.layouts.column([' },
-  { owner: 'contact', depth: 1, text: "card('Contact', [" },
-  { owner: 'contact', depth: 2, text: "gui.inputs.textInput('name')," },
-  { owner: 'contact', depth: 2, text: "gui.inputs.textInput('email', { validator })," },
-  { owner: 'contact', depth: 1, text: ']),' },
-  { owner: 'address', depth: 1, text: "card('Shipping', address('ship'))," },
-  { owner: 'base', depth: 1, text: "card('Region', [" },
-  { owner: 'base', depth: 2, text: "gui.inputs.dropdown('country', { onChange: setCity })," },
-  { owner: 'reactive', depth: 2, text: "gui.inputs.radiogroup('city', { when: '$country' })," },
-  { owner: 'base', depth: 1, text: ']),' },
-  { owner: 'conditional', depth: 1, text: "card('Billing', [" },
-  { owner: 'conditional', depth: 2, text: "gui.inputs.checkbox('billingDiffers')," },
-  { owner: 'conditional', depth: 2, text: "gui.layouts.verticalFlex(address('bill'), {" },
-  { owner: 'conditional', depth: 3, text: "include: { when: '$form.billingDiffers' }," },
-  { owner: 'conditional', depth: 2, text: '}),' },
-  { owner: 'conditional', depth: 1, text: ']),' },
-  { owner: 'currency', depth: 1, text: "card('Payment', [" },
-  { owner: 'currency', depth: 2, text: "gui.inputs.dropdown('currency', { itemRenderer })," },
-  { owner: 'currency', depth: 1, text: ']),' },
-  { owner: 'base', depth: 1, text: "gui.actions.button({ actionType: 'submit' })," },
-  { owner: 'base', depth: 0, text: '])' },
-];
-
+   Renders the shared composeTree() — the SAME {gui.} definition shown in the
+   quest, so the two never drift. A line pulses when its block is toggled and
+   lights when you hover its compose box (box → code → form, one connected chain). */
 const CODE_NS = new Set(['layouts', 'inputs', 'actions', 'displays']);
 const CODE_FN = new Set([
   'column', 'verticalFlex', 'textInput', 'dropdown', 'radiogroup', 'checkbox', 'button', 'display', 'address',
@@ -587,12 +549,12 @@ function highlightCode(text: string, kp: string): ReactNode[] {
 }
 
 function CodeBanner({
-  active,
+  tree,
   lastToggled,
   pulse,
   hoverSection,
 }: {
-  active: Set<BlockId>;
+  tree: ReturnType<typeof composeTree>;
   lastToggled: BlockId | null;
   pulse: boolean;
   hoverSection?: string | null;
@@ -601,17 +563,13 @@ function CodeBanner({
     <div className="code-banner" role="group" aria-label="The composed {gui.} definition">
       <pre className="cb-code">
         <code>
-          {CODE_LINES.map((ln, i) => {
-            const on =
-              ln.owner === 'base' || ln.owner === 'contact' || active.has(ln.owner as BlockId);
+          {tree.map((ln, i) => {
             const hot = hoverSection != null && ln.owner === hoverSection;
             const pulsing = pulse && ln.owner === lastToggled;
             return (
               <span
                 key={i}
-                className={`cb-line${on ? '' : ' is-off'}${hot ? ' is-hot' : ''}${
-                  pulsing ? ' is-pulse' : ''
-                }`}
+                className={`cb-line${hot ? ' is-hot' : ''}${pulsing ? ' is-pulse' : ''}`}
               >
                 {'  '.repeat(ln.depth)}
                 {highlightCode(ln.text, i + '-')}

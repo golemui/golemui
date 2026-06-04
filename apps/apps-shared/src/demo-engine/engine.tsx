@@ -19,24 +19,12 @@ import {
 
 /* ─── Characters (the framework "classes") ───────────────────────────── */
 
-export type Framework = 'react' | 'angular' | 'lit' | 'vue' | 'vanilla';
-
-export interface Character {
-  id: Framework;
-  name: string;
-  klass: string;
-  color: string;
-  shadow: string;
-  monogram: string;
-}
-
-export const CHARACTERS: Character[] = [
-  { id: 'react',   name: 'REACT',   klass: 'HOOK CASTER',     color: '#61dafb', shadow: '#0e7a9e', monogram: 'R' },
-  { id: 'angular', name: 'ANGULAR', klass: 'DI PALADIN',      color: '#dd0031', shadow: '#7a0019', monogram: 'A' },
-  { id: 'lit',     name: 'LIT',     klass: 'WEB-NATIVE MAGE', color: '#324fff', shadow: '#1a2c99', monogram: 'L' },
-  { id: 'vue',     name: 'VUE',     klass: 'REACTIVE RANGER', color: '#41b883', shadow: '#1f6e4d', monogram: 'V' },
-  { id: 'vanilla', name: 'JS',      klass: 'VANILLA ROGUE',   color: '#f7df1e', shadow: '#8a7a00', monogram: '{}' },
-];
+// Pure character data lives in ./characters (no React) so the vanilla landing
+// can import it too; re-exported here so `@golemui/demo-engine` consumers are
+// unchanged.
+import { CHARACTERS, type Character, type Framework } from './characters';
+export { CHARACTERS };
+export type { Character, Framework };
 
 export const FW_IDS: Framework[] = ['react', 'angular', 'lit', 'vue', 'vanilla'];
 
@@ -370,6 +358,8 @@ export function GameShell(cfg: GameConfig) {
                 character,
                 onPrev: prev,
                 canPrev: sceneId > 0,
+                onNext: next,
+                nextEnabled: cfg.engagement(api),
                 onRestart: restart,
                 navExtra: cfg.navExtra?.(api),
               }
@@ -493,6 +483,8 @@ export function QuestBanner({
   character,
   onPrev,
   canPrev,
+  onNext,
+  nextEnabled,
   onRestart,
   navExtra,
 }: {
@@ -502,10 +494,12 @@ export function QuestBanner({
   step?: string;
   onSkip?: () => void;
   // Compact-layout extras: the framework chip sits by the quest line, and the
-  // prev/restart controls join the counter + skip on the right of the bar.
+  // prev/next/restart controls join the counter + skip on the right of the bar.
   character?: Character | null;
   onPrev?: () => void;
   canPrev?: boolean;
+  onNext?: () => void;
+  nextEnabled?: boolean;
   onRestart?: () => void;
   navExtra?: ReactNode;
 }) {
@@ -537,6 +531,17 @@ export function QuestBanner({
         </button>
       )}
       {step && <span className="qb-step">{step}</span>}
+      {onNext && (
+        <button
+          type="button"
+          className="mini-btn qb-nav"
+          onClick={onNext}
+          disabled={!nextEnabled}
+          title="Next step"
+        >
+          NEXT →
+        </button>
+      )}
       {onSkip && (
         <button
           type="button"
@@ -599,15 +604,20 @@ export function CharacterSelect({
               key={c.id}
               type="button"
               className={`char-tile ${isSelected ? 'is-selected' : ''}`}
-              style={{ '--char-color': c.color, '--char-shadow': c.shadow } as CSSProperties}
+              style={
+                { '--char-color': c.color, '--char-shadow': c.shadow, '--col': c.col } as CSSProperties
+              }
               onClick={() => onSelect(c.id)}
             >
               <span className="char-portrait" aria-hidden="true">
+                {/* The sprite is shown where its sheet CSS is provided; the
+                    monogram is the fallback (e.g. demos without the asset). */}
+                <span className="char-sprite" style={{ '--col': c.col } as CSSProperties} />
                 <span className="char-monogram">{c.monogram}</span>
               </span>
               <span className="char-name">{c.name}</span>
               <span className="char-klass">{c.klass}</span>
-              {isSelected && <span className="char-cursor">►</span>}
+              <span className="char-blurb">{c.blurb}</span>
             </button>
           );
         })}
@@ -959,7 +969,16 @@ function BattleBar({
               {!dlgDone && <span className="type-caret">▋</span>}
             </div>
           </div>
-          <div className="cb-action">{actionContent}</div>
+          <div className="cb-action">
+            {character && (
+              <span
+                className="cb-char"
+                style={{ '--col': character.col } as CSSProperties}
+                aria-hidden="true"
+              />
+            )}
+            <div className="cb-action-body">{actionContent}</div>
+          </div>
         </div>
       ) : (
         <div className="command-box">{actionContent}</div>

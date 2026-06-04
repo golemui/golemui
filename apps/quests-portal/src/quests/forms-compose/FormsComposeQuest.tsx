@@ -153,7 +153,7 @@ export function FormsComposeQuest({ framework, onComplete }: FormsComposeQuestPr
     return (
       <>
         <ComposePanel
-          tree={composeTree(active)}
+          tree={composeTree(active, fw)}
           pulse={pulse}
           lastToggled={lastToggled}
           mount={MOUNT_BY_FW[fw]}

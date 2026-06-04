@@ -1,4 +1,5 @@
 /* Quests portal — 8-bit "choose your adventure" + the quest host. */
+@use 'sprite';
 
 $pixel-purple: #6a4cff;
 $pixel-purple-deep: #3a1f8c;
@@ -249,25 +250,51 @@ main {
   color: #fff;
   box-shadow: 4px 4px 0 var(--fw-shadow), 0 0 0 3px $pixel-cream, 0 0 0 6px $pixel-purple;
 }
+/* A dark "stage" the pixel sprite stands on, tinted by the framework colour. */
 .fw-portrait {
-  width: 38px;
-  height: 38px;
-  background: var(--fw-color);
+  width: 72px;
+  height: 72px;
+  background:
+    radial-gradient(60% 45% at 50% 92%, color-mix(in srgb, var(--fw-color) 32%, transparent), transparent 70%),
+    #11131f;
   border: 3px solid $pixel-dark;
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
+  overflow: hidden;
 }
 .fw-tile.is-selected .fw-portrait {
-  background: $pixel-cream;
+  border-color: var(--fw-color);
 }
-.fw-monogram {
-  font-size: 0.85rem;
-  color: $pixel-dark;
+.fw-sprite {
+  @include sprite.frame(2);
 }
 .fw-name {
   font-size: 0.5rem;
   letter-spacing: 0.08em;
+}
+
+/* Readout below the tiles — the chosen framework's class + catchy blurb. */
+.fw-readout {
+  margin: 0.3rem 0 0;
+  min-height: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.6rem;
+  text-align: center;
+}
+.fw-readout-klass {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  color: var(--fw-color, #{$pixel-purple-light});
+}
+.fw-readout-blurb {
+  font-family: 'VT323', 'Fira Code', monospace;
+  font-size: 1.25rem;
+  color: #cabfe6;
 }
 
 .adventure-grid {

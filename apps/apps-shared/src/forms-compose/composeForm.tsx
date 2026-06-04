@@ -289,7 +289,7 @@ export interface TreeLine {
   text: string;
 }
 
-export function composeTree(active: Set<BlockId>): TreeLine[] {
+export function composeTree(active: Set<BlockId>, framework = 'react'): TreeLine[] {
   const lines: TreeLine[] = [];
   const push = (owner: TreeLine['owner'], depth: number, text: string) =>
     lines.push({ owner, depth, text });
@@ -311,42 +311,57 @@ export function composeTree(active: Set<BlockId>): TreeLine[] {
   }
 
   // The {gui.} form config — a column of cards, handed to <GuiForm config={config}>.
-  push('base', 0, 'const config = { formDef: gui.layouts.column([');
+  push('base', 0, 'const config = {');
+  push('base', 1, 'formDef: gui.layouts.column([');
 
-  push('base', 1, "card('Contact', [");
-  push('base', 2, "gui.inputs.textInput('name'),");
-  push('base', 2, "gui.inputs.textInput('email', { validator }),");
-  push('base', 1, ']),');
+  push('base', 2, "card('Contact', [");
+  push('base', 3, "gui.inputs.textInput('name'),");
+  push('base', 3, "gui.inputs.textInput('email', { validator }),");
+  push('base', 2, ']),');
 
   if (active.has('address')) {
-    push('address', 1, "card('Shipping', address('ship')),   // reused block");
+    push('address', 2, "card('Shipping', address('ship')),   // reused block");
   }
 
-  push('base', 1, "card('Region', [");
+  push('base', 2, "card('Region', [");
   if (active.has('reactive')) {
-    push('reactive', 2, "gui.inputs.dropdown('country', { onChange: setCity }),");
-    push('reactive', 2, "gui.inputs.radiogroup('city', { when: '$country' }),");
+    push('reactive', 3, "gui.inputs.dropdown('country', { onChange: setCity }),");
+    push('reactive', 3, "gui.inputs.radiogroup('city', { when: '$form.country' !== undefined }),");
   } else {
-    push('base', 2, "gui.inputs.dropdown('country'),");
+    push('base', 3, "gui.inputs.dropdown('country'),");
   }
-  push('base', 1, ']),');
+  push('base', 2, ']),');
 
   if (active.has('conditional')) {
-    push('conditional', 1, "card('Billing', [");
-    push('conditional', 2, "gui.inputs.checkbox('billingDiffers'),");
-    push('conditional', 2, "gui.layouts.verticalFlex(address('bill'), {");
-    push('conditional', 3, "include: { when: '$form.billingDiffers' },");
-    push('conditional', 2, '}),   // same block, again');
-    push('conditional', 1, ']),');
+    push('conditional', 2, "card('Billing', [");
+    push('conditional', 3, "gui.inputs.checkbox('billingDiffers'),");
+    push('conditional', 3, "gui.layouts.verticalFlex(address('bill'), {");
+    push('conditional', 4, "include: { when: '$form.billingDiffers' },");
+    push('conditional', 3, '}),   // same block, again');
+    push('conditional', 2, ']),');
   }
 
   if (active.has('currency')) {
-    push('currency', 1, "card('Payment', [");
-    push('currency', 2, "gui.inputs.dropdown('currency', { itemRenderer }),");
-    push('currency', 1, ']),');
+    push('currency', 2, "card('Payment', [");
+    push('currency', 3, "gui.inputs.dropdown('currency', { itemRenderer }),");
+    push('currency', 2, ']),');
   }
 
-  push('base', 1, "gui.actions.button({ actionType: 'submit' }),");
-  push('base', 0, ']) };');
+  push('base', 2, "gui.actions.button({ actionType: 'submit' }),");
+  push('base', 1, ']),');
+
+  // The custom currency renderer — registered per framework. Angular renderers
+  // are classes (need the cast); React / Lit / Vue / Vanilla are functions.
+  if (active.has('currency')) {
+    if (framework === 'angular') {
+      push('currency', 1, 'itemRenderers: {');
+      push('currency', 2, 'currency: CurrencyChip,');
+      push('currency', 1, '} as Record<string, AngularItemRenderer<any>>,');
+    } else {
+      push('currency', 1, 'itemRenderers: { currency: CurrencyChip },');
+    }
+  }
+
+  push('base', 0, '};');
   return lines;
 }

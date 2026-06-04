@@ -11,6 +11,7 @@
 @use '../../../../../libs/gui/components/src/styles/index';
 // Filename starts with a digit, so Sass can't derive a default namespace — alias it.
 @use '../../../../../libs/gui/components/src/styles/themes/8bit' as eightbit;
+@use '../../sprite';
 
 $pixel-purple: #6a4cff;
 $pixel-purple-deep: #3a1f8c;
@@ -41,8 +42,7 @@ $body: 'VT323', 'Fira Code', monospace;
   font-family: $body;
   color: $pixel-cream;
   background:
-    radial-gradient(ellipse 70% 55% at 50% 0%, rgba(106, 76, 255, 0.22), transparent 62%),
-    #0d0820;
+    radial-gradient(ellipse 70% 55% at 50% 0%, rgba(106, 76, 255, 0.22), transparent 62%), #0d0820;
   overflow: hidden;
 }
 .quest-shell *,
@@ -96,8 +96,12 @@ $body: 'VT323', 'Fira Code', monospace;
   box-shadow: 2px 2px 0 $pixel-purple-deep;
   padding: 0.45rem 0.6rem;
 }
-.qb-skip:hover { transform: translate(-1px, -1px); }
-.skip-chevrons { letter-spacing: -0.1em; }
+.qb-skip:hover {
+  transform: translate(-1px, -1px);
+}
+.skip-chevrons {
+  letter-spacing: -0.1em;
+}
 
 /* ── Dialog box ───────────────────────────────────────────────────────── */
 .dialog-stage {
@@ -116,20 +120,35 @@ $body: 'VT323', 'Fira Code', monospace;
   background: $pixel-dark;
   color: $pixel-cream;
   border: 4px solid $pixel-cream;
-  box-shadow: 0 0 0 4px $pixel-dark, 0 0 0 7px $pixel-purple, 0 6px 0 0 $pixel-purple-deep;
+  box-shadow:
+    0 0 0 4px $pixel-dark,
+    0 0 0 7px $pixel-purple,
+    0 6px 0 0 $pixel-purple-deep;
   padding: 0.85rem 1.1rem;
   outline: none;
   overflow: hidden;
 }
 .dialog-box.is-boss {
   border-color: #ff5a7a;
-  box-shadow: 0 0 0 4px $pixel-dark, 0 0 0 7px #ff5a7a, 0 6px 0 0 #7a1830;
+  box-shadow:
+    0 0 0 4px $pixel-dark,
+    0 0 0 7px #ff5a7a,
+    0 6px 0 0 #7a1830;
 }
-.dialog-box.is-shaking { animation: q-shake 0.22s steps(3); }
+.dialog-box.is-shaking {
+  animation: q-shake 0.22s steps(3);
+}
 @keyframes q-shake {
-  0%, 100% { transform: translate(0, 0); }
-  33% { transform: translate(-2px, 1px); }
-  66% { transform: translate(2px, -1px); }
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  33% {
+    transform: translate(-2px, 1px);
+  }
+  66% {
+    transform: translate(2px, -1px);
+  }
 }
 .dialog-nameplate {
   position: absolute;
@@ -146,10 +165,18 @@ $body: 'VT323', 'Fira Code', monospace;
   font-size: 0.52rem;
   letter-spacing: 0.06em;
 }
-.dialog-box.is-boss .dialog-nameplate { background: #ff5a7a; }
-.dialog-chapter { color: $pixel-amber; }
-.dialog-title { color: #fff; }
-.dialog-counter { color: $pixel-purple-light; }
+.dialog-box.is-boss .dialog-nameplate {
+  background: #ff5a7a;
+}
+.dialog-chapter {
+  color: $pixel-amber;
+}
+.dialog-title {
+  color: #fff;
+}
+.dialog-counter {
+  color: $pixel-purple-light;
+}
 .dialog-body {
   height: 100%;
   display: flex;
@@ -160,8 +187,15 @@ $body: 'VT323', 'Fira Code', monospace;
   line-height: 1.25;
   white-space: pre-wrap;
 }
-.type-caret { color: $pixel-amber; animation: q-blink 0.8s steps(2) infinite; }
-@keyframes q-blink { 50% { opacity: 0; } }
+.type-caret {
+  color: $pixel-amber;
+  animation: q-blink 0.8s steps(2) infinite;
+}
+@keyframes q-blink {
+  50% {
+    opacity: 0;
+  }
+}
 
 /* ── Stage (the middle — where the room goes) ─────────────────────────── */
 .quest-stage {
@@ -186,7 +220,9 @@ $body: 'VT323', 'Fira Code', monospace;
 }
 /* Narrow viewports can't carry two columns — stack code over form. */
 @media (max-width: 760px) {
-  .quest-stage.is-compose { grid-template-columns: 1fr; }
+  .quest-stage.is-compose {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* ── Cards (compose tree + form) ──────────────────────────────────────── */
@@ -221,7 +257,9 @@ $body: 'VT323', 'Fira Code', monospace;
   font-size: 0.8rem;
   color: $pixel-purple-light;
 }
-.card-body { padding: 0.75rem 0.85rem; }
+.card-body {
+  padding: 0.75rem 0.85rem;
+}
 
 /* Compose tree (the {gui.} structure) */
 .tree-lead {
@@ -231,7 +269,9 @@ $body: 'VT323', 'Fira Code', monospace;
   line-height: 1.3;
   color: #d7cef0;
 }
-.tree-lead strong { color: $pixel-amber; }
+.tree-lead strong {
+  color: $pixel-amber;
+}
 .tree-code,
 .mp-mount {
   margin: 0;
@@ -244,16 +284,28 @@ $body: 'VT323', 'Fira Code', monospace;
   line-height: 1.5;
   color: #e7e2ff;
 }
-.tree-line { display: block; white-space: pre; }
+.tree-line {
+  display: block;
+  white-space: pre;
+}
 .tree-line.is-pulse {
   background: rgba(249, 211, 66, 0.18);
   animation: q-pulse 0.7s ease;
 }
 @keyframes q-pulse {
-  0% { background: rgba(249, 211, 66, 0.5); }
-  100% { background: rgba(249, 211, 66, 0); }
+  0% {
+    background: rgba(249, 211, 66, 0.5);
+  }
+  100% {
+    background: rgba(249, 211, 66, 0);
+  }
 }
-.mp-mount-block { margin-top: 0.7rem; display: flex; flex-direction: column; gap: 0.3rem; }
+.mp-mount-block {
+  margin-top: 0.7rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
 .mp-mount-cap {
   font-family: $press;
   font-size: 0.45rem;
@@ -261,10 +313,15 @@ $body: 'VT323', 'Fira Code', monospace;
   color: #8c84a8;
   text-transform: uppercase;
 }
-.mp-mount--widget { color: #9ff5c2; border-color: rgba(65, 184, 131, 0.4); }
+.mp-mount--widget {
+  color: #9ff5c2;
+  border-color: rgba(65, 184, 131, 0.4);
+}
 
 /* Form card */
-.card-head--form { flex-wrap: wrap; }
+.card-head--form {
+  flex-wrap: wrap;
+}
 .form-live {
   margin-left: auto;
   font-family: $press;
@@ -272,7 +329,9 @@ $body: 'VT323', 'Fira Code', monospace;
   letter-spacing: 0.06em;
   color: #5fd08a;
 }
-.form-live.is-on { color: $pixel-amber; }
+.form-live.is-on {
+  color: $pixel-amber;
+}
 .app-host {
   position: relative;
   background: var(--gui-bg-default);
@@ -292,11 +351,20 @@ $body: 'VT323', 'Fira Code', monospace;
 }
 
 /* Section light-up cues (the engine/form add these classes to a section) */
-.section-flash { animation: q-section-flash 1.6s ease; }
-.section-hot { outline: 2px dashed $pixel-amber; outline-offset: 3px; }
+.section-flash {
+  animation: q-section-flash 1.6s ease;
+}
+.section-hot {
+  outline: 2px dashed $pixel-amber;
+  outline-offset: 3px;
+}
 @keyframes q-section-flash {
-  0% { background: rgba(249, 211, 66, 0.35); }
-  100% { background: transparent; }
+  0% {
+    background: rgba(249, 211, 66, 0.35);
+  }
+  100% {
+    background: transparent;
+  }
 }
 
 /* ── Requirements panel (Act II) ──────────────────────────────────────── */
@@ -315,7 +383,14 @@ $body: 'VT323', 'Fira Code', monospace;
   color: $pixel-amber;
   margin-bottom: 0.7rem;
 }
-.reqs-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.35rem; }
+.reqs-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
 .reqs-item {
   font-family: $body;
   font-size: 1.2rem;
@@ -323,12 +398,23 @@ $body: 'VT323', 'Fira Code', monospace;
   display: flex;
   gap: 0.5rem;
 }
-.reqs-item.is-new { color: $pixel-amber; animation: q-reqs-in 0.4s ease; }
-@keyframes q-reqs-in {
-  from { transform: translateX(-8px); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
+.reqs-item.is-new {
+  color: $pixel-amber;
+  animation: q-reqs-in 0.4s ease;
 }
-.reqs-bullet { color: $pixel-purple-light; }
+@keyframes q-reqs-in {
+  from {
+    transform: translateX(-8px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+.reqs-bullet {
+  color: $pixel-purple-light;
+}
 .reqs-foot {
   margin-top: 0.8rem;
   font-family: $body;
@@ -365,22 +451,156 @@ $body: 'VT323', 'Fira Code', monospace;
   pointer-events: none;
   animation: q-spin 9s linear infinite;
 }
-@keyframes q-spin { to { transform: rotate(360deg); } }
+@keyframes q-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 .ga-sigil {
   position: relative;
   font-family: $press;
   font-size: 2.4rem;
   color: $pixel-amber;
-  text-shadow: 0 0 18px rgba(249, 211, 66, 0.7), 4px 4px 0 $pixel-purple-deep;
+  text-shadow:
+    0 0 18px rgba(249, 211, 66, 0.7),
+    4px 4px 0 $pixel-purple-deep;
   animation: q-sigil 1.6s ease-in-out infinite alternate;
 }
-@keyframes q-sigil { to { transform: scale(1.06); } }
+@keyframes q-sigil {
+  to {
+    transform: scale(1.06);
+  }
+}
 .ga-cap {
   position: relative;
   font-family: $press;
   font-size: 0.6rem;
   letter-spacing: 0.08em;
   color: #fff;
+}
+
+/* ── CharacterSelect (engine scene-0 "CHOOSE YOUR FRAMEWORK") ──────────── */
+.char-select {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2rem;
+  width: 100%;
+}
+.char-select-title {
+  margin: 0;
+  font-family: $press;
+  font-size: 0.95rem;
+  letter-spacing: 0.16em;
+  color: $pixel-purple-light;
+  text-shadow:
+    2px 2px 0 $pixel-purple-deep,
+    0 0 14px rgba(106, 76, 255, 0.35);
+}
+.char-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.9rem;
+  width: 100%;
+  max-width: 860px;
+}
+.char-tile {
+  appearance: none;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem 0.6rem 0.7rem;
+  background: #181235;
+  border: 3px solid var(--char-color, #{$pixel-purple});
+  box-shadow: 5px 5px 0 var(--char-shadow, #{$pixel-purple-deep});
+  color: $pixel-cream;
+  font-family: $press;
+  transition:
+    transform 0.08s ease,
+    box-shadow 0.08s ease;
+}
+.char-tile:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 7px 7px 0 var(--char-shadow, #{$pixel-purple-deep});
+}
+.char-tile:active {
+  transform: translate(2px, 2px);
+  box-shadow: 3px 3px 0 var(--char-shadow, #{$pixel-purple-deep});
+}
+.char-tile.is-selected {
+  transform: translate(-2px, -2px);
+  box-shadow:
+    5px 5px 0 var(--char-shadow),
+    0 0 0 3px $pixel-cream,
+    0 0 0 6px var(--char-color);
+}
+.char-portrait {
+  width: 84px;
+  height: 76px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  overflow: hidden;
+  background:
+    radial-gradient(
+      60% 45% at 50% 90%,
+      color-mix(in srgb, var(--char-color) 34%, transparent),
+      transparent 70%
+    ),
+    #0e0a22;
+  border: 2px solid $pixel-dark;
+}
+.char-monogram {
+  display: none;
+}
+.char-sprite {
+  @include sprite.frame(2);
+}
+.char-name {
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  color: var(--char-color);
+}
+.char-klass {
+  font-size: 0.42rem;
+  letter-spacing: 0.1em;
+  line-height: 1.5;
+  text-align: center;
+  color: var(--char-color);
+  opacity: 0.85;
+}
+.char-blurb {
+  margin-top: 0.1rem;
+  font-family: $body;
+  font-size: 0.95rem;
+  line-height: 1.15;
+  text-align: center;
+  color: #cabfe6;
+}
+.char-cursor {
+  position: absolute;
+  left: -1.1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: $press;
+  font-size: 0.9rem;
+  color: $pixel-amber;
+  text-shadow: 0 0 8px $pixel-amber;
+}
+.char-hint {
+  margin: 0;
+  font-family: $press;
+  font-size: 0.5rem;
+  letter-spacing: 0.14em;
+  color: #968ea8;
+}
+@media (max-width: 760px) {
+  .char-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 /* ── Battle bar (bottom) ──────────────────────────────────────────────── */
@@ -407,23 +627,48 @@ $body: 'VT323', 'Fira Code', monospace;
   border: 3px solid $pixel-purple;
   box-shadow: 3px 3px 0 $pixel-purple-deep;
 }
-.stat-box--loc { border-color: $pixel-amber; box-shadow: 3px 3px 0 #7a5e00; }
+.stat-box--loc {
+  border-color: $pixel-amber;
+  box-shadow: 3px 3px 0 #7a5e00;
+}
 .sb-num {
   font-family: $press;
   font-size: 1.8rem;
   color: $pixel-cream;
   text-shadow: 3px 3px 0 $pixel-purple-deep;
 }
-.stat-box--loc .sb-num { color: $pixel-amber; }
-.stat-box.is-frenzy .sb-num { color: #ff5a7a; animation: q-frenzy 0.1s steps(2) infinite; }
-@keyframes q-frenzy { 50% { transform: translate(-1px, 1px); } }
-.sb-num.is-bump { animation: q-bump 0.3s ease; }
-@keyframes q-bump {
-  0% { transform: scale(1); }
-  40% { transform: scale(1.35); }
-  100% { transform: scale(1); }
+.stat-box--loc .sb-num {
+  color: $pixel-amber;
 }
-.sb-label { font-family: $press; font-size: 0.45rem; letter-spacing: 0.08em; color: #968ea8; }
+.stat-box.is-frenzy .sb-num {
+  color: #ff5a7a;
+  animation: q-frenzy 0.1s steps(2) infinite;
+}
+@keyframes q-frenzy {
+  50% {
+    transform: translate(-1px, 1px);
+  }
+}
+.sb-num.is-bump {
+  animation: q-bump 0.3s ease;
+}
+@keyframes q-bump {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.35);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.sb-label {
+  font-family: $press;
+  font-size: 0.45rem;
+  letter-spacing: 0.08em;
+  color: #968ea8;
+}
 
 .command-box {
   display: flex;
@@ -451,12 +696,32 @@ $body: 'VT323', 'Fira Code', monospace;
   padding-right: 0.9rem;
   border-right: 2px solid rgba(181, 163, 255, 0.3);
 }
-.cb-dialog.is-boss { border-right-color: rgba(255, 90, 122, 0.5); }
-.cb-nameplate { display: inline-flex; align-items: center; gap: 0.5rem; }
-.cb-chapter { font-family: $press; font-size: 0.5rem; color: $pixel-amber; }
-.cb-title { font-family: $press; font-size: 0.5rem; color: #fff; }
-.cb-dialog.is-boss .cb-title { color: #ff5a7a; }
-.cb-counter { font-family: $press; font-size: 0.45rem; color: $pixel-purple-light; }
+.cb-dialog.is-boss {
+  border-right-color: rgba(255, 90, 122, 0.5);
+}
+.cb-nameplate {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.cb-chapter {
+  font-family: $press;
+  font-size: 0.5rem;
+  color: $pixel-amber;
+}
+.cb-title {
+  font-family: $press;
+  font-size: 0.5rem;
+  color: #fff;
+}
+.cb-dialog.is-boss .cb-title {
+  color: #ff5a7a;
+}
+.cb-counter {
+  font-family: $press;
+  font-size: 0.45rem;
+  color: $pixel-purple-light;
+}
 .cb-type {
   font-family: $body;
   font-size: 1.2rem;
@@ -464,13 +729,56 @@ $body: 'VT323', 'Fira Code', monospace;
   color: $pixel-cream;
   white-space: pre-wrap;
 }
-.cb-action { display: flex; flex-direction: column; gap: 0.4rem; min-width: 0; }
-.cb-action .command-foot { flex-wrap: wrap; }
+/* YOUR MOVE: the chosen character sprite on the left, the move(s) to its right. */
+.cb-action {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 0.7rem;
+  min-width: 0;
+}
+.cb-char {
+  flex: 0 0 auto;
+  align-self: flex-end;
+  @include sprite.frame(2);
+}
+.cb-action-body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  min-width: 0;
+}
+.cb-action-body .command-foot {
+  flex-wrap: wrap;
+}
 
-.command-cap { font-family: $press; font-size: 0.5rem; letter-spacing: 0.06em; color: $pixel-amber; }
-.command-main { flex: 1 1 auto; display: flex; align-items: center; min-height: 0; }
-.dialog-hint { font-family: $body; font-size: 1.2rem; color: #6f6790; }
-.dialog-options { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.25rem; width: 100%; }
+.command-cap {
+  font-family: $press;
+  font-size: 0.5rem;
+  letter-spacing: 0.06em;
+  color: $pixel-amber;
+}
+.command-main {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  min-height: 0;
+}
+.dialog-hint {
+  font-family: $body;
+  font-size: 1.2rem;
+  color: #6f6790;
+}
+.dialog-options {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  width: 100%;
+}
 .dialog-option {
   appearance: none;
   cursor: pointer;
@@ -486,8 +794,14 @@ $body: 'VT323', 'Fira Code', monospace;
   border: 2px solid transparent;
   padding: 0.2rem 0.4rem;
 }
-.dialog-option.is-focused { border-color: $pixel-amber; background: rgba(249, 211, 66, 0.12); }
-.opt-cursor { width: 1ch; color: $pixel-amber; }
+.dialog-option.is-focused {
+  border-color: $pixel-amber;
+  background: rgba(249, 211, 66, 0.12);
+}
+.opt-cursor {
+  width: 1ch;
+  color: $pixel-amber;
+}
 .opt-key {
   font-family: $press;
   font-size: 0.5rem;
@@ -495,7 +809,9 @@ $body: 'VT323', 'Fira Code', monospace;
   background: $pixel-purple-light;
   padding: 2px 5px;
 }
-.opt-label { flex: 1 1 auto; }
+.opt-label {
+  flex: 1 1 auto;
+}
 
 .pixel-btn {
   appearance: none;
@@ -509,10 +825,20 @@ $body: 'VT323', 'Fira Code', monospace;
   box-shadow: 3px 3px 0 $pixel-purple-deep;
   padding: 0.6rem 0.9rem;
 }
-.pixel-btn.is-ready:hover { transform: translate(-1px, -1px); }
-.pixel-btn.is-dim { opacity: 0.5; cursor: not-allowed; filter: grayscale(0.5); }
+.pixel-btn.is-ready:hover {
+  transform: translate(-1px, -1px);
+}
+.pixel-btn.is-dim {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: grayscale(0.5);
+}
 
-.command-foot { display: flex; align-items: center; gap: 0.5rem; }
+.command-foot {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
 .mini-btn {
   appearance: none;
   cursor: pointer;
@@ -524,8 +850,13 @@ $body: 'VT323', 'Fira Code', monospace;
   border: 2px solid $pixel-purple;
   padding: 0.3rem 0.4rem;
 }
-.mini-btn:disabled { opacity: 0.35; cursor: not-allowed; }
-.mini-btn--ghost { border-color: #4a3f6b; }
+.mini-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.mini-btn--ghost {
+  border-color: #4a3f6b;
+}
 .nav-chip {
   margin-right: auto;
   display: inline-flex;
@@ -536,9 +867,15 @@ $body: 'VT323', 'Fira Code', monospace;
   border: 2px solid currentColor;
   padding: 0.25rem 0.4rem;
 }
-.nav-chip-mono { font-size: 0.55rem; }
-.cmd-spacer { flex: 1 1 auto; }
-.blink { animation: q-blink 0.8s steps(2) infinite; }
+.nav-chip-mono {
+  font-size: 0.55rem;
+}
+.cmd-spacer {
+  flex: 1 1 auto;
+}
+.blink {
+  animation: q-blink 0.8s steps(2) infinite;
+}
 
 /* ── Overlays (reveal / item-get / game-over) — simplified pixel cinematics */
 .reveal-overlay,
@@ -554,19 +891,74 @@ $body: 'VT323', 'Fira Code', monospace;
   font-family: $press;
   animation: q-overlay-in 0.25s ease;
 }
-@keyframes q-overlay-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes q-overlay-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
 
 /* Near-opaque so the boss-centre artifact (rays + "THE ENGINE AWAITS") behind
    the stage doesn't bleed through the cinematic. */
-.reveal-overlay { background: #0d0820; }
-.reveal-flash { position: absolute; inset: 0; background: #ff5a7a; animation: q-flash 0.5s ease forwards; }
-@keyframes q-flash { 0% { opacity: 0.8; } 100% { opacity: 0; } }
-.reveal-vignette { position: absolute; inset: 0; box-shadow: inset 0 0 180px 40px rgba(0, 0, 0, 0.7); }
-.reveal-stack { position: relative; z-index: 2; display: flex; flex-direction: column; gap: 0.8rem; padding: 1rem; }
-.reveal-pretitle { font-size: 0.6rem; color: $pixel-amber; letter-spacing: 0.1em; }
-.reveal-title { font-size: 2rem; color: #ff5a7a; text-shadow: 4px 4px 0 $pixel-dark; margin: 0; animation: q-slam 0.4s ease; }
-@keyframes q-slam { from { transform: scale(2.2); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-.reveal-subtitle { font-size: 0.7rem; color: #fff; letter-spacing: 0.08em; }
+.reveal-overlay {
+  background: #0d0820;
+}
+.reveal-flash {
+  position: absolute;
+  inset: 0;
+  background: #ff5a7a;
+  animation: q-flash 0.5s ease forwards;
+}
+@keyframes q-flash {
+  0% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+.reveal-vignette {
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 180px 40px rgba(0, 0, 0, 0.7);
+}
+.reveal-stack {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  padding: 1rem;
+}
+.reveal-pretitle {
+  font-size: 0.6rem;
+  color: $pixel-amber;
+  letter-spacing: 0.1em;
+}
+.reveal-title {
+  font-size: 2rem;
+  color: #ff5a7a;
+  text-shadow: 4px 4px 0 $pixel-dark;
+  margin: 0;
+  animation: q-slam 0.4s ease;
+}
+@keyframes q-slam {
+  from {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+.reveal-subtitle {
+  font-size: 0.7rem;
+  color: #fff;
+  letter-spacing: 0.08em;
+}
 .reveal-payload {
   font-family: 'Fira Code', monospace;
   font-size: 0.85rem;
@@ -577,14 +969,40 @@ $body: 'VT323', 'Fira Code', monospace;
   padding: 0.7rem 0.9rem;
   white-space: pre;
 }
-.reveal-footer { font-size: 0.6rem; color: $pixel-amber; letter-spacing: 0.08em; }
-.reveal-bolt { position: absolute; z-index: 1; width: 3px; height: 60%; background: $pixel-amber; opacity: 0.3; }
-.reveal-bolt--1 { left: 20%; animation: q-bolt 0.3s steps(2) infinite; }
-.reveal-bolt--2 { left: 50%; animation: q-bolt 0.35s steps(2) infinite; }
-.reveal-bolt--3 { left: 80%; animation: q-bolt 0.28s steps(2) infinite; }
-@keyframes q-bolt { 50% { opacity: 0; } }
+.reveal-footer {
+  font-size: 0.6rem;
+  color: $pixel-amber;
+  letter-spacing: 0.08em;
+}
+.reveal-bolt {
+  position: absolute;
+  z-index: 1;
+  width: 3px;
+  height: 60%;
+  background: $pixel-amber;
+  opacity: 0.3;
+}
+.reveal-bolt--1 {
+  left: 20%;
+  animation: q-bolt 0.3s steps(2) infinite;
+}
+.reveal-bolt--2 {
+  left: 50%;
+  animation: q-bolt 0.35s steps(2) infinite;
+}
+.reveal-bolt--3 {
+  left: 80%;
+  animation: q-bolt 0.28s steps(2) infinite;
+}
+@keyframes q-bolt {
+  50% {
+    opacity: 0;
+  }
+}
 
-.zelda-overlay { background: #0d0820; }
+.zelda-overlay {
+  background: #0d0820;
+}
 .zelda-rays {
   position: absolute;
   top: 50%;
@@ -603,21 +1021,80 @@ $body: 'VT323', 'Fira Code', monospace;
   pointer-events: none;
   animation: q-spin 8s linear infinite;
 }
-.zelda-stack { position: relative; display: flex; flex-direction: column; align-items: center; gap: 0.7rem; }
-.zelda-pretitle { font-size: 0.7rem; color: $pixel-amber; letter-spacing: 0.12em; }
-.zelda-artifact { position: relative; }
-.zelda-sigil { font-size: 2.6rem; color: $pixel-cream; text-shadow: 0 0 22px rgba(249, 211, 66, 0.8); animation: q-sigil 1.4s ease-in-out infinite alternate; }
-.zelda-glow { position: absolute; inset: -20px; background: radial-gradient(circle, rgba(249, 211, 66, 0.4), transparent 70%); }
-.zelda-name { font-size: 1.6rem; color: $pixel-amber; text-shadow: 3px 3px 0 $pixel-purple-deep; }
-.zelda-spell { font-size: 0.65rem; color: #fff; letter-spacing: 0.08em; }
+.zelda-stack {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.7rem;
+}
+.zelda-pretitle {
+  font-size: 0.7rem;
+  color: $pixel-amber;
+  letter-spacing: 0.12em;
+}
+.zelda-artifact {
+  position: relative;
+}
+.zelda-sigil {
+  font-size: 2.6rem;
+  color: $pixel-cream;
+  text-shadow: 0 0 22px rgba(249, 211, 66, 0.8);
+  animation: q-sigil 1.4s ease-in-out infinite alternate;
+}
+.zelda-glow {
+  position: absolute;
+  inset: -20px;
+  background: radial-gradient(circle, rgba(249, 211, 66, 0.4), transparent 70%);
+}
+.zelda-name {
+  font-size: 1.6rem;
+  color: $pixel-amber;
+  text-shadow: 3px 3px 0 $pixel-purple-deep;
+}
+.zelda-spell {
+  font-size: 0.65rem;
+  color: #fff;
+  letter-spacing: 0.08em;
+}
 
-.gameover-overlay { background: rgba(8, 4, 16, 0.96); flex-direction: column; gap: 0; }
-.go-scan { position: absolute; inset: 0; background: repeating-linear-gradient(transparent 0 3px, rgba(255, 90, 122, 0.08) 3px 4px); }
-.go-stack { position: relative; display: flex; flex-direction: column; align-items: center; gap: 0.8rem; }
-.go-pretitle { font-size: 0.6rem; color: #ff5a7a; letter-spacing: 0.1em; }
-.go-title { font-size: 2.6rem; color: #ff5a7a; margin: 0; text-shadow: 4px 4px 0 $pixel-dark; }
-.go-stat { font-size: 0.8rem; color: $pixel-amber; }
-.go-sub { font-family: $body; font-size: 1.2rem; color: #d7cef0; }
+.gameover-overlay {
+  background: rgba(8, 4, 16, 0.96);
+  flex-direction: column;
+  gap: 0;
+}
+.go-scan {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(transparent 0 3px, rgba(255, 90, 122, 0.08) 3px 4px);
+}
+.go-stack {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+}
+.go-pretitle {
+  font-size: 0.6rem;
+  color: #ff5a7a;
+  letter-spacing: 0.1em;
+}
+.go-title {
+  font-size: 2.6rem;
+  color: #ff5a7a;
+  margin: 0;
+  text-shadow: 4px 4px 0 $pixel-dark;
+}
+.go-stat {
+  font-size: 0.8rem;
+  color: $pixel-amber;
+}
+.go-sub {
+  font-family: $body;
+  font-size: 1.2rem;
+  color: #d7cef0;
+}
 .go-retry {
   appearance: none;
   cursor: pointer;
@@ -638,9 +1115,20 @@ $body: 'VT323', 'Fira Code', monospace;
   padding: 0.6rem 0.7rem;
   font-family: $body;
 }
-.return-bar.is-filled { border-style: solid; border-color: #5fd08a; }
-.rb-cap { font-family: $press; font-size: 0.5rem; letter-spacing: 0.06em; color: #5fd08a; display: block; }
-.rb-cap--idle { color: $pixel-purple-light; }
+.return-bar.is-filled {
+  border-style: solid;
+  border-color: #5fd08a;
+}
+.rb-cap {
+  font-family: $press;
+  font-size: 0.5rem;
+  letter-spacing: 0.06em;
+  color: #5fd08a;
+  display: block;
+}
+.rb-cap--idle {
+  color: $pixel-purple-light;
+}
 .rb-json {
   display: block;
   margin: 0.4rem 0;
@@ -653,8 +1141,13 @@ $body: 'VT323', 'Fira Code', monospace;
   padding: 0.5rem 0.6rem;
   overflow: auto;
 }
-.rb-note { font-size: 1rem; color: #968ea8; }
-.rb-note strong { color: $pixel-amber; }
+.rb-note {
+  font-size: 1rem;
+  color: #968ea8;
+}
+.rb-note strong {
+  color: $pixel-amber;
+}
 
 /* ── Bare hand-off stub ───────────────────────────────────────────────── */
 .quest-return {
@@ -665,12 +1158,35 @@ $body: 'VT323', 'Fira Code', monospace;
 }
 
 /* ── Currency item renderer (custom widget block) ─────────────────────── */
-.currency-item { display: flex; align-items: center; gap: 0.5rem; }
-.currency-item__symbol { font-weight: 700; }
-.currency-item__code { font-family: 'Fira Code', monospace; }
-.currency-item__name { color: var(--gui-text-secondary); }
+.currency-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 40px;
+  padding: 0 1rem;
+  cursor: pointer;
+
+  &:hover {
+    background-color: $pixel-amber;
+  }
+
+  &.is-selected {
+    background-color: $pixel-amber;
+  }
+}
+.currency-item__symbol {
+  font-weight: 700;
+}
+.currency-item__code {
+  font-family: 'Fira Code', monospace;
+}
+.currency-item__name {
+  color: var(--gui-text-secondary);
+}
 .currency-item.is-focused,
-.currency-item.is-selected { color: var(--gui-intent-primary); }
+.currency-item.is-selected {
+  color: var(--gui-intent-primary);
+}
 
 /* ============================================================================
    8-bit form border supplement — the one pixel trait the theme tokens can't
@@ -691,6 +1207,11 @@ $body: 'VT323', 'Fira Code', monospace;
 
 /* ── Short-viewport guard: let the stage scroll rather than crush chrome ── */
 @media (max-height: 720px) {
-  .quest-shell { --dialog-h: 104px; --console-h: 150px; }
-  .dialog-type { font-size: 1.2rem; }
+  .quest-shell {
+    --dialog-h: 104px;
+    --console-h: 150px;
+  }
+  .dialog-type {
+    font-size: 1.2rem;
+  }
 }

@@ -13,7 +13,8 @@
  * still embeds sasha-demo by iframe until it gets the same treatment.
  */
 
-import type { Framework } from '@golemui/demo-engine';
+// Pure character data (no React) — safe for this lightweight landing bundle.
+import { CHARACTERS, type Framework } from '@golemui/characters';
 
 type DemoId = 'forms-as-data' | 'forms-compose';
 
@@ -55,12 +56,24 @@ let fullscreen = false;
 // the selector. Card / direct launches default to the selector.
 const fromApp = params.get('from') === 'app';
 
+// Readout (below the tiles) describing the chosen framework's class + blurb.
+const fwKlass = document.querySelector<HTMLElement>('[data-fw-klass]');
+const fwBlurb = document.querySelector<HTMLElement>('[data-fw-blurb]');
+const fwReadout = document.querySelector<HTMLElement>('.fw-readout');
+const CHAR_BY_FW = Object.fromEntries(CHARACTERS.map((c) => [c.id, c]));
+
 function reflectFw() {
   fwTiles.forEach((t) => {
     const on = t.dataset['fw'] === selectedFw;
     t.classList.toggle('is-selected', on);
     t.setAttribute('aria-checked', String(on));
   });
+  const c = CHAR_BY_FW[selectedFw];
+  if (c) {
+    if (fwKlass) fwKlass.textContent = c.klass;
+    if (fwBlurb) fwBlurb.textContent = c.blurb;
+    fwReadout?.style.setProperty('--fw-color', c.color);
+  }
 }
 reflectFw();
 
