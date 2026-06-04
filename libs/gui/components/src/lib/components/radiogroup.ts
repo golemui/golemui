@@ -24,7 +24,7 @@ export class GuiRadiogroup extends LitElement {
   @property({ type: String }) value: OptionValue | undefined = undefined;
 
   @property({ type: String }) hint: string | undefined = undefined;
-  @property({ type: String }) options: Option[] = [];
+  @property({ type: Array }) options: Option[] = [];
   @property({ type: String }) labelField: string | undefined = undefined;
   @property({ type: String }) valueField: string | undefined = undefined;
   @property({ type: String }) direction: 'row' | 'column' | undefined = 'column';

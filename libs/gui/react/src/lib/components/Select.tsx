@@ -2,8 +2,9 @@ import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useInputWidget } from '@golemui/react';
 import { type OptionValue, type SelectProps } from '@golemui/gui-shared';
 import { useCallback } from 'react';
-import '@golemui/gui-components/select';
+import { GuiSelectReact } from '../web-components';
 import '../styles.scss';
+
 
 export function Select(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<string>;
@@ -19,27 +20,12 @@ export function Select(widgetInstance: WithWidget) {
   } = useInputWidget<OptionValue, SelectProps>(widget);
 
   const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLSelectElement>) =>
-      onValueChanged((e.nativeEvent as CustomEvent).detail.value),
+    (e: Event) => onValueChanged((e as CustomEvent).detail.value),
     [onValueChanged],
   );
 
-  const handleRef = useCallback(
-    (node: HTMLElement | null) => {
-      const target = node as any;
-
-      const errorHandler = (e: CustomEvent) => {
-        injectValidationIssues([e.detail.message]);
-      };
-
-      if (node) {
-        target.addEventListener('inputError', errorHandler);
-      }
-
-      return () => {
-        target.removeEventListener('inputError', errorHandler);
-      };
-    },
+  const handleInputError = useCallback(
+    (e: Event) => injectValidationIssues([(e as CustomEvent).detail.message]),
     [injectValidationIssues],
   );
 
@@ -57,8 +43,7 @@ export function Select(widgetInstance: WithWidget) {
 
   return (
     <div className="gui-select gui-field" style={{ flex: templateData.size }}>
-      <gui-select
-        ref={handleRef}
+      <GuiSelectReact
         uid={uid}
         label={label}
         errors={errors}
@@ -76,7 +61,8 @@ export function Select(widgetInstance: WithWidget) {
         valueField={valueField}
         onChange={handleChange}
         onBlur={onBlur}
-      ></gui-select>
+        onInputError={handleInputError}
+      ></GuiSelectReact>
     </div>
   );
 }

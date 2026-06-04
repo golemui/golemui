@@ -19,10 +19,10 @@ import {
 const PARAMS =
   typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : new URLSearchParams();
 // App-direct by default — the runnable three-column app shows immediately. The
-// guided 8-bit walk (boss: THE BUSINESS MANAGER) lives in the quests-portal.
+// guided 8-bit walk (boss: THE BUSINESS MANAGER) ships in a later PR.
 const START_BARE = PARAMS.get('mode') !== 'walk';
 
-/* ─── Scenes (placeholder — the walk lives in the quests-portal) ──────── */
+/* ─── Scenes (placeholder — the walk/game lands in a separate PR) ─────── */
 
 const SCENES: SceneDef[] = [
   { chapter: '00', title: 'FORMS FROM A PROMPT', quest: 'Describe a form in plain language' },

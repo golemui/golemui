@@ -2,8 +2,9 @@ import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useInputWidget } from '@golemui/react';
 import { type CurrencyProps } from '@golemui/gui-shared';
 import { useCallback } from 'react';
-import '@golemui/gui-components/currency';
+import { GuiCurrencyReact } from '../web-components';
 import '../styles.scss';
+
 
 export function Currency(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<number>;
@@ -13,8 +14,7 @@ export function Currency(widgetInstance: WithWidget) {
   >(widget);
 
   const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) =>
-      onValueChanged((e.nativeEvent as CustomEvent).detail.value),
+    (e: Event) => onValueChanged((e as CustomEvent).detail.value),
     [onValueChanged],
   );
 
@@ -34,7 +34,7 @@ export function Currency(widgetInstance: WithWidget) {
 
   return (
     <div className="gui-currency gui-field" style={{ flex: templateData.size }}>
-      <gui-currency
+      <GuiCurrencyReact
         uid={uid}
         label={label}
         hint={hint}
@@ -54,7 +54,7 @@ export function Currency(widgetInstance: WithWidget) {
         localeId={lang}
         onInput={handleChange}
         onBlur={onBlur}
-      ></gui-currency>
+      ></GuiCurrencyReact>
     </div>
   );
 }

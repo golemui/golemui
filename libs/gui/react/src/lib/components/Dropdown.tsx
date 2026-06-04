@@ -1,21 +1,12 @@
+import { GuiErrorsReact, GuiLabelReact, GuiListReact } from '../web-components';
 import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useDebounceCallback, useInputWidget, useItemRenderer } from '@golemui/react';
 import { type DropdownProps, type ListItem, type OptionValue } from '@golemui/gui-shared';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DefaultListItemRenderer } from './item-renderers/DefaultListItemRenderer';
 import { type ListItemRendererProps } from './item-renderers/props';
-import '@golemui/gui-components/label';
-import '@golemui/gui-components/list';
-import '@golemui/gui-components/errors';
-
-interface GuiListElement extends HTMLElement {
-  focusItemAtIndex(index: number): void;
-  scrollToSelectedIndex(): void;
-}
-
-interface GuiLabelElement extends HTMLElement {
-  targetElement?: HTMLElement | HTMLElement[];
-}
+import type { GuiList } from '@golemui/gui-components/list';
+import type { GuiLabel } from '@golemui/gui-components/label';
 
 export function Dropdown(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<string | null>;
@@ -31,9 +22,9 @@ export function Dropdown(widgetInstance: WithWidget) {
   const [isListVisible, setIsListVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState<ListItem<never> | undefined>(undefined);
 
-  const listRef = useRef<GuiListElement>(null);
+  const listRef = useRef<GuiList>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const labelRef = useRef<GuiLabelElement>(null);
+  const labelRef = useRef<GuiLabel>(null);
 
   const visibleItems = useMemo(() => listItems.slice(range.start, range.end), [listItems, range]);
 
@@ -288,7 +279,7 @@ export function Dropdown(widgetInstance: WithWidget) {
 
   return (
     <div className="gui-dropdown gui-field" style={{ flex: templateData.size }}>
-      <gui-label
+      <GuiLabelReact
         ref={labelRef}
         uid={uid}
         label={label}
@@ -297,7 +288,7 @@ export function Dropdown(widgetInstance: WithWidget) {
         touched={isTouched}
         required={isRequired}
         native={false}
-      ></gui-label>
+      ></GuiLabelReact>
 
       <div className="gui-widget" aria-expanded={isListVisible}>
         <input
@@ -325,7 +316,7 @@ export function Dropdown(widgetInstance: WithWidget) {
           </svg>
         </span>
 
-        <gui-list
+        <GuiListReact
           ref={listRef}
           id={`${uid}-list`}
           uid={uid}
@@ -376,10 +367,12 @@ export function Dropdown(widgetInstance: WithWidget) {
               </div>
             );
           })}
-        </gui-list>
+        </GuiListReact>
       </div>
 
-      {showErrors && <gui-errors uid={uid} errors={errors} touched={isTouched}></gui-errors>}
+      {showErrors && (
+        <GuiErrorsReact uid={uid} errors={errors} touched={isTouched}></GuiErrorsReact>
+      )}
     </div>
   );
 }

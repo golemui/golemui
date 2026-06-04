@@ -2,8 +2,9 @@ import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useInputWidget } from '@golemui/react';
 import { type PasswordProps } from '@golemui/gui-shared';
 import { useCallback } from 'react';
-import '@golemui/gui-components/password';
+import { GuiPasswordReact } from '../web-components';
 import '../styles.scss';
+
 
 export function Password(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<string>;
@@ -13,8 +14,7 @@ export function Password(widgetInstance: WithWidget) {
   >(widget);
 
   const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) =>
-      onValueChanged((e.nativeEvent as CustomEvent).detail.value),
+    (e: Event) => onValueChanged((e as CustomEvent).detail.value),
     [onValueChanged],
   );
 
@@ -33,7 +33,7 @@ export function Password(widgetInstance: WithWidget) {
 
   return (
     <div className="gui-password gui-field" style={{ flex: templateData.size }}>
-      <gui-password
+      <GuiPasswordReact
         uid={uid}
         label={label}
         hint={hint}
@@ -52,7 +52,7 @@ export function Password(widgetInstance: WithWidget) {
         hidePasswordLabel={hidePasswordLabel}
         onInput={handleChange}
         onBlur={onBlur}
-      ></gui-password>
+      ></GuiPasswordReact>
     </div>
   );
 }

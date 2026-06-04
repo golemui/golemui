@@ -2,8 +2,9 @@ import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useInputWidget } from '@golemui/react';
 import { type NumberinputProps } from '@golemui/gui-shared';
 import { useCallback } from 'react';
-import '@golemui/gui-components/number';
+import { GuiNumberReact } from '../web-components';
 import '../styles.scss';
+
 
 export function NumberInput(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<number>;
@@ -13,8 +14,7 @@ export function NumberInput(widgetInstance: WithWidget) {
   >(widget);
 
   const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) =>
-      onValueChanged((e.nativeEvent as CustomEvent).detail.value),
+    (e: Event) => onValueChanged((e as CustomEvent).detail.value),
     [onValueChanged],
   );
 
@@ -32,7 +32,7 @@ export function NumberInput(widgetInstance: WithWidget) {
 
   return (
     <div className="gui-number gui-field" style={{ flex: templateData.size }}>
-      <gui-number
+      <GuiNumberReact
         uid={uid}
         label={label}
         hint={hint}
@@ -50,7 +50,7 @@ export function NumberInput(widgetInstance: WithWidget) {
         placeholder={placeholder ?? undefined}
         onInput={handleChange}
         onBlur={onBlur}
-      ></gui-number>
+      ></GuiNumberReact>
     </div>
   );
 }

@@ -232,6 +232,9 @@ const NOTES: Record<string, string[]> = {
     '`path` is the dot-path into form data this field writes to.',
     '`validator.format` supports: `email`, `hostname`, `ipv4`, `ipv6`, `url`, `uuid`, `date`, `time`, `date-time`, `duration`.',
     'Root props `label`, `disabled`, `readonly`, `validator`, and `size` accept state suffixes — e.g. `"label.<stateName>": "New label"` overrides the label only when that named state is active. Props inside `props` (e.g. `hint`, `placeholder`) also accept suffixes as `"hint.<stateName>"`. Call `get_concept({ concept: "states" })` for the full pattern.',
+    '`props.icon` accepts a Google Material Icons ligature name (e.g. `"search"`, `"email"`, `"lock"`) to display a decorative icon inside the input field. ' +
+      'Supports state suffix: `"icon.<stateName>": "check"` to swap the icon when a state is active. ' +
+      'Call `get_concept({ concept: "icons" })` for setup and the full list of icon-capable widgets.',
   ],
   markdownText: [
     'Display-only widget for rendering markdown. Can be used as a top-level form widget (inside any layout) or inside templates like `dropdown.props.items[].template`.',
@@ -250,8 +253,29 @@ const NOTES: Record<string, string[]> = {
     '`props.options[]` is the simple form: `[{ label: "United States", value: "us" }, ...]`. Use this for ANY plain text list — countries, plans, sizes, status enums. Only switch to `dropdown` if you need custom per-item rendering (icons, flags, rich layouts).',
     'For very large lists (>50 items) consider `dropdown` for its virtualization (`height`, `itemHeight`, `searchFields`).',
   ],
-  flex: ['`children` is an array of any widgets (inputs, displays, nested layouts).'],
-  grid: ['`children` is an array of any widgets. `props.columns` controls layout.'],
+  flex: [
+    'Use `flex` for page scaffolding and directional grouping: a column stack of sections, a row of side-by-side panels, a row of action buttons. ' +
+      'For field-level layout (inputs that should sit in columns with aligned labels), prefer `grid` instead.',
+    '`props.direction`: `"row"` (default) | `"column"` | `"row-reverse"` | `"column-reverse"` — controls the main axis. ' +
+      '`"column"` stacks children vertically; `"row"` places them side by side.',
+    '`props.gap`: number (pixels) — uniform spacing between all children along the main axis.',
+    '`props.justify`: `"center"` | `"start"` | `"end"` | `"stretch"` — aligns children along the cross-axis (perpendicular to `direction`).',
+    '`props.align`: `"center"` | `"start"` | `"end"` | `"space-between"` | `"space-around"` | `"space-evenly"` — distributes children along the main axis.',
+    'All `flex` props support state suffixes: `"direction.<stateName>": "column"` swaps the direction when a state is active. Call `get_concept({ concept: "states" })` for the full pattern.',
+  ],
+  grid: [
+    'Use `grid` when you want multiple form fields to sit side by side with their labels and inputs aligned across columns. ' +
+      'GolemUI\'s `grid` uses CSS subgrid internally: each child widget gets two implicit sub-tracks (one for its label, one for its input) ' +
+      'that align to the parent grid columns, giving consistent label/input alignment across all rows without manual sizing.',
+    'For loose page scaffolding — stacking sections, wrapping a group in a header — use `flex` instead.',
+    '`props.columnGap`: number (pixels) — horizontal gap between columns.',
+    '`props.rowGap`: number (pixels) — vertical gap between rows.',
+    '`props.autoFit`: boolean — when `true`, the grid auto-fits as many columns as will fit in the available container width, using `columnGap` as the gutter. ' +
+      'Useful for responsive layouts where the number of columns should adapt to the viewport.',
+    '`props.direction`: `"row"` | `"column"` — controls how children flow into the grid tracks.',
+    '`props.align` and `props.justify` accept the same values as `flex`.',
+    'All `grid` props support state suffixes. Call `get_concept({ concept: "states" })` for the full pattern.',
+  ],
   tabs: [
     'Children are associated with tabs by **`uid` matching**, not by array order: each direct child must have a `uid` field at the widget level (alongside `kind`/`type`) whose string value equals one of the `props.tabs[].uid` entries. There is no `tag` property — that is not a real GolemUI field.',
     'Children are typically written in display order for readability, but rearranging them does not change which tab they belong to — only the `uid` string match does.',
@@ -270,6 +294,10 @@ const NOTES: Record<string, string[]> = {
     '`actionType` controls the button\'s role. `actionType: "submit"` makes the button fire the form\'s `formSubmit` event natively — the host listens for it via `(formSubmit)` (Angular), `@formSubmit` (Vue), `onFormSubmit` (React), or the `form-submit` event (Lit). No custom handler needed. Use this for the primary submit button on a form.',
     '`actionType: "button"` (the default, can be omitted) is a regular action button. Wire it via `on.click: "<handlerName>"` where `<handlerName>` is registered in the form config\'s event handlers.',
     'Supports state-suffixed props: `"label.<stateName>"` and `"disabled.<stateName>"` swap the label or disabled state when a named state is active — e.g. disable the submit button until terms are accepted, then re-enable it. Call `get_concept({ concept: "states" })` for the full pattern.',
+    '`props.icon` accepts a Google Material Icons ligature name (e.g. `"send"`, `"check"`, `"arrow_forward"`) to render an icon on the button. ' +
+      '`props.iconPosition` controls placement: `"left"` (default) or `"right"`. ' +
+      'Both support state suffixes: `"icon.<stateName>": "hourglass_empty"` swaps the icon while a state is active. ' +
+      'Call `get_concept({ concept: "icons" })` for setup instructions and the full list of icon-capable widgets.',
   ],
   checkbox: ['Set `validator.const: true` to require the user to tick it (e.g. terms acceptance).'],
   alert: [

@@ -10,7 +10,7 @@ import { type GuiFormInitConfig } from '@golemui/gui-shared';
 import { resolveFormInput } from '@golemui/gui-shared/internals';
 import { initValidators } from '@golemui/gui-validators';
 import { FormComponent, type FormComponentHandle, type ReactItemRenderer } from '@golemui/react';
-import { type ComponentType, type Ref, useCallback, useMemo } from 'react';
+import { type ComponentType, forwardRef, useCallback, useMemo } from 'react';
 import { widgetLoaders as golemWidgetLoaders } from '../widget.loaders';
 
 export interface ReactFormComponentProps {
@@ -19,17 +19,12 @@ export interface ReactFormComponentProps {
   formEvent?: (event: FormEvent) => void;
   formSubmit?: (event: FormSubmitEvent) => void;
   formHealth?: (formHealth: FormHealth) => void;
-  ref?: Ref<FormComponentHandle>;
 }
 
-export function GuiForm({
-  config,
-  formHealth,
-  formEvent,
-  formSubmit,
-  autocomplete,
+export const GuiForm = forwardRef<FormComponentHandle, ReactFormComponentProps>(function GuiForm(
+  { config, formHealth, formEvent, formSubmit, autocomplete },
   ref,
-}: ReactFormComponentProps) {
+) {
   const resolved = useMemo(
     () => resolveFormInput(config.formDef, config.formSelectors, config.formConfig),
     [config],
@@ -83,4 +78,4 @@ export function GuiForm({
       formSubmit={formSubmit}
     />
   );
-}
+});
