@@ -17,7 +17,7 @@
 // Pure character data (no React) — safe for this lightweight landing bundle.
 import { CHARACTERS, type Framework } from '@golemui/characters';
 
-type DemoId = 'forms-as-data' | 'forms-compose';
+type DemoId = 'forms-from-prompt' | 'forms-as-data' | 'forms-compose';
 
 const DEV = import.meta.env.DEV;
 
@@ -85,17 +85,24 @@ let currentDemo: DemoId | null = null;
 // each walk hands back to the /demos page (the bare app) on finish / skip.
 function mountQuest(demo: DemoId) {
   const onComplete = () => goToDemos(demo);
+  const fw = selectedFw as Framework;
   if (demo === 'forms-compose') {
     const host = document.getElementById('forms-compose-root');
     if (!host) return;
     void import('./quests/forms-compose/mount').then(({ mountFormsCompose }) => {
-      mountFormsCompose(host, { framework: selectedFw as Framework, onComplete });
+      mountFormsCompose(host, { framework: fw, onComplete });
     });
-  } else {
+  } else if (demo === 'forms-as-data') {
     const host = document.getElementById('forms-as-data-root');
     if (!host) return;
     void import('./quests/forms-as-data/mount').then(({ mountFormsAsData }) => {
-      mountFormsAsData(host, { framework: selectedFw as Framework, onComplete });
+      mountFormsAsData(host, { framework: fw, onComplete });
+    });
+  } else {
+    const host = document.getElementById('forms-from-prompt-root');
+    if (!host) return;
+    void import('./quests/forms-from-prompt/mount').then(({ mountFormsFromPrompt }) => {
+      mountFormsFromPrompt(host, { framework: fw, onComplete });
     });
   }
 }
@@ -189,6 +196,6 @@ themeObserver.observe(document.documentElement, {
 
 /* ── Deep link: ?demo=<id>&fw=<fw> launches that quest directly ── */
 const deepDemo = params.get('demo');
-if (deepDemo === 'forms-as-data' || deepDemo === 'forms-compose') {
+if (deepDemo === 'forms-from-prompt' || deepDemo === 'forms-as-data' || deepDemo === 'forms-compose') {
   launchQuest(deepDemo);
 }

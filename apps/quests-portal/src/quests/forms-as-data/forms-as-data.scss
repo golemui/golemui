@@ -27,13 +27,6 @@
   }
 }
 
-/* A solo form (scenes 1 & 3) sits centred at a readable width. */
-.card--app-solo {
-  width: 100%;
-  max-width: 460px;
-  margin: 0 auto;
-}
-
 /* ── SERVER card (the editable response shape) ────────────────────────── */
 .card--endpoint {
   border-color: $pixel-purple;
@@ -221,52 +214,8 @@
   border-color: $pixel-amber;
 }
 
-/* ── JSON card (the derived {gui.} definition) ────────────────────────── */
-.code-body {
-  padding: 0.6rem 0.7rem;
-}
-.code-banner {
-  background: #0e0a22;
-  border: 2px solid rgba(106, 76, 255, 0.5);
-  overflow: auto;
-}
-.cb-code {
-  margin: 0;
-  padding: 0.6rem 0.7rem;
-  font-family: 'Fira Code', monospace;
-  font-size: 0.78rem;
-  line-height: 1.5;
-  color: #e7e2ff;
-  white-space: pre;
-}
-.cb-code.is-pulse {
-  animation: q-cb-pulse 0.65s ease;
-}
-@keyframes q-cb-pulse {
-  0% {
-    background: rgba(249, 211, 66, 0.16);
-  }
-  100% {
-    background: transparent;
-  }
-}
-/* GitHub-dark-ish tokens on the pixel surface. */
-.t-key {
-  color: #79c0ff;
-}
-.t-str {
-  color: #a5d6ff;
-}
-.t-num {
-  color: #f0883e;
-}
-.t-kw {
-  color: #d2a8ff;
-  font-weight: 600;
-}
-.t-punc {
-  color: #8b949e;
-}
+/* The JSON card chrome (.card--code / .code-banner / .cb-code / tokens) is
+   shared — see ../_quest-base.scss. Only the SERVER + tabs are quest-specific. */
 
 /* ── App tabs + form host ─────────────────────────────────────────────── */
 .app-tabs {
@@ -301,20 +250,4 @@
   opacity: 0.55;
   cursor: not-allowed;
 }
-
-.app-host.is-rebuilt {
-  animation: q-section-flash 0.65s ease;
-}
-.app-empty {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 120px;
-  text-align: center;
-}
-.app-empty p {
-  margin: 0;
-  font-family: $body;
-  font-size: 1.1rem;
-  color: #968ea8;
-}
+/* .app-host.is-rebuilt + .app-empty are shared — see ../_quest-base.scss. */

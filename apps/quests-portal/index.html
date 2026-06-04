@@ -109,7 +109,7 @@
 
         <div class="adventure-grid">
           <div class="adventure-slot">
-            <button type="button" class="adventure-card is-disabled" data-quest="forms-from-prompt" disabled aria-disabled="true">
+            <button type="button" class="adventure-card" data-quest="forms-from-prompt">
               <span class="adv-tag">PILLAR I</span>
               <span class="adv-name">FORMS FROM A PROMPT</span>
               <span class="adv-blurb">
@@ -117,7 +117,7 @@
                 and our MCP emits a validated <code>{gui.}</code> form
                 definition. Prompt in, live form out, no raw markup.
               </span>
-              <span class="adv-start adv-soon">⏳ COMING SOON</span>
+              <span class="adv-start">⚔ PLAY THE QUEST</span>
             </button>
           </div>
 
@@ -153,7 +153,11 @@
 
       <!-- ── Fullscreen quest host (hidden until a quest launches) ───── -->
       <section class="demos-viewport">
-        <div id="demo-pane-forms-as-data" role="tabpanel" class="demo-pane is-active">
+        <div id="demo-pane-forms-from-prompt" role="tabpanel" class="demo-pane is-active">
+          <!-- FORMS FROM A PROMPT is hosted in-app (React) — see src/quests/forms-from-prompt. -->
+          <div id="forms-from-prompt-root" class="quest-mount"></div>
+        </div>
+        <div id="demo-pane-forms-as-data" role="tabpanel" class="demo-pane" hidden>
           <!-- FORMS AS DATA is hosted in-app (React) — see src/quests/forms-as-data. -->
           <div id="forms-as-data-root" class="quest-mount"></div>
         </div>
