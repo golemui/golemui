@@ -1,13 +1,12 @@
 import { isInputWidget } from '../../form-widget';
 import { pipe } from '../../utils/function';
-import { deleteKey, unset } from '../../utils/object';
+import { deleteKey } from '../../utils/object';
 import { type REMOVE_WIDGET } from '../actions';
 import { type State } from '../model';
 
 export function removeWidget(state: State, action: REMOVE_WIDGET): State {
   return pipe(
     state,
-    data(action),
     widgetFlags(action),
     calculatedWidgets(action),
     widgetPropOverrides(action),
@@ -15,19 +14,6 @@ export function removeWidget(state: State, action: REMOVE_WIDGET): State {
   );
   // TODO: clear widget from injectedValidations
 }
-
-const data =
-  (action: REMOVE_WIDGET) =>
-  (state: State): State => ({
-    ...state,
-    data: pipe(state.calculatedWidgets, (calculatedWidgets) => {
-      const widget = calculatedWidgets[action.payload.uid].current;
-      if (widget && isInputWidget(widget)) {
-        return unset(state.data, widget.path);
-      }
-      return state.data;
-    }),
-  });
 
 const widgetFlags =
   (action: REMOVE_WIDGET) =>

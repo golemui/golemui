@@ -738,8 +738,7 @@ describe('calculateWidgetProps', () => {
 
       const next = run(state);
 
-      expect(next.calculatedWidgets['d'].source).toBe(source);
-      expect(next.calculatedWidgets['d'].current).toEqual({});
+      expect('d' in next.calculatedWidgets).toBe(false);
     });
   });
 
