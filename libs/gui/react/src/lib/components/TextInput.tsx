@@ -2,8 +2,9 @@ import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useInputWidget } from '@golemui/react';
 import { type TextinputProps } from '@golemui/gui-shared';
 import { useCallback } from 'react';
-import '@golemui/gui-components/textinput';
+import { GuiTextinputReact } from '../web-components';
 import '../styles.scss';
+
 
 export function TextInput(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<string>;
@@ -13,8 +14,7 @@ export function TextInput(widgetInstance: WithWidget) {
   >(widget);
 
   const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) =>
-      onValueChanged((e.nativeEvent as CustomEvent).detail.value),
+    (e: Event) => onValueChanged((e as CustomEvent).detail.value),
     [onValueChanged],
   );
 
@@ -29,7 +29,7 @@ export function TextInput(widgetInstance: WithWidget) {
 
   return (
     <div className="gui-textinput gui-field" style={{ flex: templateData.size }}>
-      <gui-textinput
+      <GuiTextinputReact
         uid={uid}
         label={label}
         hint={hint}
@@ -44,7 +44,7 @@ export function TextInput(widgetInstance: WithWidget) {
         autocomplete={autocomplete ?? undefined}
         onInput={handleChange}
         onBlur={onBlur}
-      ></gui-textinput>
+      ></GuiTextinputReact>
     </div>
   );
 }

@@ -6,8 +6,7 @@ import { join, resolve } from 'path';
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 import { nxCopyAssetsPlugin } from '@nx/vite/plugins/nx-copy-assets.plugin';
 
-// Opt-in React 18 pin (set REACT18=1) — lets the component-test bundler resolve the
-// adapter against React 18 (the advertised floor) instead of the repo's hoisted React 19.
+// React 18 pin (REACT18=1): resolve the adapter against the advertised floor, not React 19.
 const react18Alias = process.env.REACT18
   ? {
       resolve: {
@@ -50,6 +49,7 @@ export default defineConfig(() => ({
         'react',
         'react-dom',
         'react/jsx-runtime',
+        '@lit/react',
         '@golemui/core',
         '@golemui/react',
         '@golemui/gui-components',

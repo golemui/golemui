@@ -2,7 +2,7 @@ import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useInputWidget } from '@golemui/react';
 import { type CalendarProps } from '@golemui/gui-shared';
 import { useCallback } from 'react';
-import '@golemui/gui-components/calendar';
+import { GuiCalendarReact } from '../web-components';
 import '../styles.scss';
 
 export function Calendar(widgetInstance: WithWidget) {
@@ -52,7 +52,7 @@ export function Calendar(widgetInstance: WithWidget) {
 
   return (
     <div className="gui-calendar gui-field" style={{ flex: templateData.size }}>
-      <gui-calendar
+      <GuiCalendarReact
         ref={handleRef}
         uid={uid}
         label={label}

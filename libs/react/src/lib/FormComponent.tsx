@@ -11,7 +11,7 @@ import {
   type FormSubmitEvent,
 } from '@golemui/core';
 import { type FormInitConfig } from '@golemui/core';
-import { useEffect, useImperativeHandle, useRef, useState } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { ReactFormContextProvider } from './ReactFormContextProvider';
 import WidgetErrorBoundary from './WidgetErrorBoundary';
 import WidgetRenderer from './WidgetRenderer';
@@ -28,29 +28,24 @@ export interface FormComponentProps {
   formSubmit?: (event: FormSubmitEvent) => void;
   formHealth?: (error: FormHealth) => void;
   autocomplete?: string;
-  ref?: React.Ref<FormComponentHandle>;
 }
 
-export function FormComponent({
-  config,
-  validators,
-  formHealth,
-  formEvent,
-  formSubmit,
-  autocomplete,
-  ref,
-}: FormComponentProps) {
+export const FormComponent = forwardRef<FormComponentHandle, FormComponentProps>(
+  function FormComponent(
+    { config, validators, formHealth, formEvent, formSubmit, autocomplete },
+    ref,
+  ) {
   const formContextRef = useRef<FormContext<React.ComponentType<WithWidget>>>(new FormContext());
   const formNameRef = useRef<string>(config.formName ?? shortUUID());
   const [formLayoutField, setFormLayoutField] = useState<LayoutWidget<string> | null>(null);
   const [direction, setDirection] = useState<'ltr' | 'rtl'>('ltr');
-  const [storeVersion, setStoreVersion] = useState(0);
 
-  // INITIALIZE FORM CONTEXT
-  // Recreates the store when config reference changes (atomic reinit) or validators change.
-  // Bumps storeVersion so downstream effects re-subscribe to the new store.
+  const callbacksRef = useRef({ formHealth, formEvent, formSubmit });
+  callbacksRef.current = { formHealth, formEvent, formSubmit };
+
   useEffect(() => {
-    formContextRef.current.initialize(
+    const context = formContextRef.current;
+    context.initialize(
       config.widgetLoaders,
       config.middlewares ?? [],
       validators,
@@ -59,94 +54,42 @@ export function FormComponent({
       config.localization,
       config.dependencies ?? {},
     );
-    setStoreVersion((v) => v + 1);
+    context.store.dispatch({
+      type: 'INITIALIZE',
+      payload: { formName: formNameRef.current, formDef: config.formDef },
+    });
+    context.store.dispatch({ type: 'SET_DATA', payload: { data: config.data ?? {} } });
+    context.store.dispatch({ type: 'SET_META', payload: { meta: config.meta ?? {} } });
+    setDirection(getDirectionFromLanguage(context.localization.lang));
+
+    const stateSub = context.store.state$.subscribe((state) => {
+      setFormLayoutField(state.formDef.form);
+      setDirection(getDirectionFromLanguage(context.localization.lang));
+    });
+    const healthSub = watchFormHealth(context.store.state$).subscribe((health) =>
+      callbacksRef.current.formHealth?.(health),
+    );
+    const unsubscribeI18n = context.localization.subscribe((lang) => {
+      setDirection(getDirectionFromLanguage(lang));
+      context.store.dispatch({ type: 'SET_LANGUAGE', payload: { lang } });
+    });
+
+    return () => {
+      stateSub.unsubscribe();
+      healthSub.unsubscribe();
+      unsubscribeI18n();
+    };
   }, [config, validators]);
 
-  // INITIALIZE FORM DEFINITION
-  // Re-dispatches when storeVersion bumps (new store) so the definition is always loaded.
   useEffect(() => {
-    formContextRef.current.store.dispatch({
-      type: 'INITIALIZE',
-      payload: {
-        formName: formNameRef.current,
-        formDef: config.formDef,
-      },
-    });
-  }, [config.formDef, storeVersion]);
-
-  // FORM HEALTH
-  // Re-subscribes when store is recreated (storeVersion changes).
-  useEffect(() => {
-    const sub = watchFormHealth(formContextRef.current.store.state$).subscribe((health) =>
-      formHealth?.(health),
+    const context = formContextRef.current;
+    const eventSub = context.events$.subscribe((event) => callbacksRef.current.formEvent?.(event));
+    const submitSub = context.submit$.subscribe((event) =>
+      callbacksRef.current.formSubmit?.(event),
     );
     return () => {
-      sub.unsubscribe();
-    };
-  }, [formHealth, storeVersion]);
-
-  /**
-   * Stable events subscriptions
-   * ( Stable events are those that survive store replacements )
-   */
-  useEffect(() => {
-    const sub = formContextRef.current.events$.subscribe((event) => formEvent?.(event));
-    return () => {
-      sub.unsubscribe();
-    };
-  }, [formEvent]);
-  useEffect(() => {
-    const sub = formContextRef.current.submit$.subscribe((event) => {
-      formSubmit?.(event);
-    });
-    return () => {
-      sub.unsubscribe();
-    };
-  }, [formSubmit]);
-
-  // FORM ENTRY POINT
-  // Re-subscribes when store is recreated so the rendered form tree is always
-  // consistent with the new store's flatForm and calculatedWidgets.
-  useEffect(() => {
-    const sub = formContextRef.current.store.state$.subscribe((state) => {
-      setFormLayoutField(state.formDef.form);
-      setDirection(getDirectionFromLanguage(formContextRef.current.localization.lang));
-    });
-    return () => {
-      sub.unsubscribe();
-    };
-  }, [storeVersion]);
-
-  // SET FORM DATA
-  // Also re-dispatches when the store is recreated so fresh store starts with the right data.
-  useEffect(() => {
-    formContextRef.current.store.dispatch({
-      type: 'SET_DATA',
-      payload: { data: config.data || {} },
-    });
-  }, [config.data, storeVersion]);
-
-  // SET FORM META
-  useEffect(() => {
-    formContextRef.current.store.dispatch({
-      type: 'SET_META',
-      payload: { meta: config.meta || {} },
-    });
-  }, [config.meta, storeVersion]);
-
-  // I18n
-  useEffect(() => {
-    const sub = formContextRef.current.localization.subscribe((lang) => {
-      setDirection(getDirectionFromLanguage(lang));
-      formContextRef.current.store.dispatch({
-        type: 'SET_LANGUAGE',
-        payload: {
-          lang,
-        },
-      });
-    });
-    return () => {
-      sub();
+      eventSub.unsubscribe();
+      submitSub.unsubscribe();
     };
   }, []);
 
@@ -189,6 +132,6 @@ export function FormComponent({
       </div>
     </ReactFormContextProvider>
   );
-}
+});
 
 export default FormComponent;

@@ -2,8 +2,9 @@ import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useInputWidget } from '@golemui/react';
 import { type OptionValue, type RadiogroupProps } from '@golemui/gui-shared';
 import { useCallback } from 'react';
-import '@golemui/gui-components/radiogroup';
+import { GuiRadiogroupReact } from '../web-components';
 import '../styles.scss';
+
 
 export function RadioGroup(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<string>;
@@ -13,8 +14,7 @@ export function RadioGroup(widgetInstance: WithWidget) {
   >(widget);
 
   const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) =>
-      onValueChanged((e.nativeEvent as CustomEvent).detail.value),
+    (e: Event) => onValueChanged((e as CustomEvent).detail.value),
     [onValueChanged],
   );
 
@@ -30,7 +30,7 @@ export function RadioGroup(widgetInstance: WithWidget) {
 
   return (
     <div className="gui-radiogroup gui-field" style={{ flex: templateData.size }}>
-      <gui-radiogroup
+      <GuiRadiogroupReact
         uid={uid}
         label={label}
         errors={errors}
@@ -46,7 +46,7 @@ export function RadioGroup(widgetInstance: WithWidget) {
         direction={direction}
         onChange={handleChange}
         onBlur={onBlur}
-      ></gui-radiogroup>
+      ></GuiRadiogroupReact>
     </div>
   );
 }

@@ -2,10 +2,9 @@ import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useInputWidget } from '@golemui/react';
 import { type DateRange, type RangeDatePickerProps } from '@golemui/gui-shared';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import '@golemui/gui-components/range-date-input';
-import '@golemui/gui-components/range-calendar';
 import '../styles.scss';
 import { Errors } from './shared/Errors';
+import { GuiRangeCalendarReact, GuiRangeDateReact } from '../web-components';
 
 export function RangeDatePicker(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<DateRange[]>;
@@ -218,7 +217,7 @@ export function RangeDatePicker(widgetInstance: WithWidget) {
         }}
         aria-expanded={isCalendarOpen}
       >
-        <gui-range-date
+        <GuiRangeDateReact
           ref={handleDateRef}
           uid={uid}
           hint={hint}
@@ -243,7 +242,7 @@ export function RangeDatePicker(widgetInstance: WithWidget) {
         </span>
 
         {isCalendarOpen && (
-          <gui-range-calendar
+          <GuiRangeCalendarReact
             ref={handleCalendarRef}
             uid={uid}
             hint={hint}

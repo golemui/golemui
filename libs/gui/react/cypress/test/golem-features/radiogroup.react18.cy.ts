@@ -1,14 +1,8 @@
 import { gui } from '@golemui/gui-shared';
 import { mountFramework } from '../../support/mount';
 
-// Consumption-boundary regression: render the radiogroup through the React adapter on
-// React 18 — the floor @golemui/gui-react advertises ("react": ">=18.0.0").
-//
-// React <=18 passes object props to custom elements as *stringified attributes*; the
-// gui-radiogroup declares `options` with a String converter, so on React 18 `options`
-// arrives as a string and `this.options.find(...)` throws during render → no radios.
-// React 19 (and Lit/Vue/Angular) property-bind, which masks the bug — and the monorepo
-// runs React 19, so nothing else catches it. Run this spec with REACT18=1.
+// Pinned to React 18 (run with REACT18=1): red on 18, green on 19 — guards the adapter
+// against the React <=18 prop-stringification crash the React-19 monorepo can't otherwise see.
 describe('radiogroup via @golemui/gui-react on React 18', () => {
   it('renders its options without crashing', () => {
     mountFramework({

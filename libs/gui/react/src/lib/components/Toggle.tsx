@@ -2,8 +2,9 @@ import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useInputWidget } from '@golemui/react';
 import { type ToggleProps } from '@golemui/gui-shared';
 import { useCallback } from 'react';
-import '@golemui/gui-components/toggle';
+import { GuiToggleReact } from '../web-components';
 import '../styles.scss';
+
 
 export function Toggle(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<boolean>;
@@ -13,8 +14,7 @@ export function Toggle(widgetInstance: WithWidget) {
   >(widget);
 
   const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) =>
-      onValueChanged((e.nativeEvent as CustomEvent).detail.value),
+    (e: Event) => onValueChanged((e as CustomEvent).detail.value),
     [onValueChanged],
   );
 
@@ -27,7 +27,7 @@ export function Toggle(widgetInstance: WithWidget) {
 
   return (
     <div className={`gui-toggle gui-field`} style={{ flex: templateData.size }}>
-      <gui-toggle
+      <GuiToggleReact
         uid={uid}
         label={label}
         errors={errors}
