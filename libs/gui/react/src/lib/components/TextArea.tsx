@@ -2,8 +2,9 @@ import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useInputWidget } from '@golemui/react';
 import { type TextareaProps } from '@golemui/gui-shared';
 import { useCallback } from 'react';
-import '@golemui/gui-components/textarea';
+import { GuiTextareaReact } from '../web-components';
 import '../styles.scss';
+
 
 export function TextArea(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<string>;
@@ -13,8 +14,7 @@ export function TextArea(widgetInstance: WithWidget) {
   >(widget);
 
   const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLTextAreaElement>) =>
-      onValueChanged((e.nativeEvent as CustomEvent).detail.value),
+    (e: Event) => onValueChanged((e as CustomEvent).detail.value),
     [onValueChanged],
   );
 
@@ -32,7 +32,7 @@ export function TextArea(widgetInstance: WithWidget) {
 
   return (
     <div className="gui-textarea gui-field" style={{ flex: templateData.size }}>
-      <gui-textarea
+      <GuiTextareaReact
         uid={uid}
         label={label}
         errors={errors}
@@ -50,7 +50,7 @@ export function TextArea(widgetInstance: WithWidget) {
         maxLength={maxLength}
         onInput={handleChange}
         onBlur={onBlur}
-      ></gui-textarea>
+      ></GuiTextareaReact>
     </div>
   );
 }

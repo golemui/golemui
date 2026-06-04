@@ -2,10 +2,9 @@ import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useInputWidget } from '@golemui/react';
 import { type DatePickerProps } from '@golemui/gui-shared';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import '@golemui/gui-components/date-input';
-import '@golemui/gui-components/calendar';
 import '../styles.scss';
 import { Errors } from './shared/Errors';
+import { GuiCalendarReact, GuiDateReact } from '../web-components';
 
 export function DatePicker(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<string>;
@@ -175,7 +174,7 @@ export function DatePicker(widgetInstance: WithWidget) {
         }}
         aria-expanded={isCalendarOpen}
       >
-        <gui-date
+        <GuiDateReact
           ref={handleDateRef}
           uid={uid}
           hint={hint}
@@ -196,7 +195,7 @@ export function DatePicker(widgetInstance: WithWidget) {
         </span>
 
         {isCalendarOpen && (
-          <gui-calendar
+          <GuiCalendarReact
             ref={handleCalendarRef}
             uid={uid}
             hint={hint}

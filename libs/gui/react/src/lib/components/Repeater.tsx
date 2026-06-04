@@ -1,3 +1,4 @@
+import { GuiErrorsReact, GuiLabelReact } from '../web-components';
 import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { type RepeaterProps } from '@golemui/gui-shared';
 import { getItemKey } from '@golemui/gui-shared/internals';
@@ -8,8 +9,6 @@ import {
   WidgetRenderer,
 } from '@golemui/react';
 import React, { useCallback, useRef, useState } from 'react';
-import '@golemui/gui-components/label';
-import '@golemui/gui-components/errors';
 import '../styles.scss';
 
 /**
@@ -110,7 +109,7 @@ export function Repeater(widgetInstance: WithWidget) {
         onFocus={onFocusIn}
         onBlur={onFocusOut}
       >
-        <gui-label
+        <GuiLabelReact
           targetElement={repeaterRef.current || undefined}
           uid={uid}
           label={templateData.label as string}
@@ -118,7 +117,7 @@ export function Repeater(widgetInstance: WithWidget) {
           touched={isTouched}
           required={isRequired}
           native={false}
-        ></gui-label>
+        ></GuiLabelReact>
 
         {renderWidgets()}
         <button
@@ -138,7 +137,9 @@ export function Repeater(widgetInstance: WithWidget) {
         </button>
       </div>
 
-      {showErrors && <gui-errors uid={uid} errors={errors} touched={isTouched}></gui-errors>}
+      {showErrors && (
+        <GuiErrorsReact uid={uid} errors={errors} touched={isTouched}></GuiErrorsReact>
+      )}
     </div>
   );
 }

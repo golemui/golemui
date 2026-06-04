@@ -2,8 +2,9 @@ import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useInputWidget } from '@golemui/react';
 import { type TagsProps } from '@golemui/gui-shared';
 import { useCallback } from 'react';
-import '@golemui/gui-components/tags';
+import { GuiTagsReact } from '../web-components';
 import '../styles.scss';
+
 
 export function Tags(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<string[]>;
@@ -13,8 +14,7 @@ export function Tags(widgetInstance: WithWidget) {
   >(widget);
 
   const handleChange = useCallback(
-    (e: React.SyntheticEvent<HTMLElement>) =>
-      onValueChanged((e.nativeEvent as CustomEvent).detail.value),
+    (e: Event) => onValueChanged((e as CustomEvent).detail.value),
     [onValueChanged],
   );
 
@@ -34,7 +34,7 @@ export function Tags(widgetInstance: WithWidget) {
 
   return (
     <div className="gui-tags gui-field" style={{ flex: templateData.size }}>
-      <gui-tags
+      <GuiTagsReact
         uid={uid}
         label={label}
         hint={hint}
@@ -54,7 +54,7 @@ export function Tags(widgetInstance: WithWidget) {
         removeIcon={removeIcon}
         onChange={handleChange}
         onBlur={onBlur}
-      ></gui-tags>
+      ></GuiTagsReact>
     </div>
   );
 }

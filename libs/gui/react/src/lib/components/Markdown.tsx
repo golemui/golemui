@@ -2,8 +2,9 @@ import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useInputWidget } from '@golemui/react';
 import { type MarkdownProps } from '@golemui/gui-shared';
 import { useCallback } from 'react';
-import '@golemui/gui-components/markdown';
+import { GuiMarkdownReact } from '../web-components';
 import '../styles.scss';
+
 
 export function Markdown(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<string>;
@@ -13,8 +14,7 @@ export function Markdown(widgetInstance: WithWidget) {
   >(widget);
 
   const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLTextAreaElement>) =>
-      onValueChanged((e.nativeEvent as CustomEvent).detail.value),
+    (e: Event) => onValueChanged((e as CustomEvent).detail.value),
     [onValueChanged],
   );
 
@@ -43,7 +43,7 @@ export function Markdown(widgetInstance: WithWidget) {
 
   return (
     <div className="gui-markdown gui-field" style={{ flex: templateData.size }}>
-      <gui-markdown
+      <GuiMarkdownReact
         uid={uid}
         label={label}
         errors={errors}
@@ -73,7 +73,7 @@ export function Markdown(widgetInstance: WithWidget) {
         dependencies={templateData.deps}
         onInput={handleChange}
         onBlur={onBlur}
-      ></gui-markdown>
+      ></GuiMarkdownReact>
     </div>
   );
 }

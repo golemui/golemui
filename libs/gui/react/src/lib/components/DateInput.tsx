@@ -2,7 +2,7 @@ import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useInputWidget } from '@golemui/react';
 import { type DatePickerProps } from '@golemui/gui-shared';
 import { useCallback } from 'react';
-import '@golemui/gui-components/date-input';
+import { GuiDateReact } from '../web-components';
 import '../styles.scss';
 
 export function DateInput(widgetInstance: WithWidget) {
@@ -54,7 +54,7 @@ export function DateInput(widgetInstance: WithWidget) {
 
   return (
     <div className="gui-date gui-field" style={{ flex: templateData.size }}>
-      <gui-date
+      <GuiDateReact
         ref={handleRef}
         uid={uid}
         label={label}

@@ -1,16 +1,11 @@
+import { GuiErrorsReact, GuiLabelReact, GuiListReact } from '../web-components';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useInputWidget, useItemRenderer } from '@golemui/react';
 import { type ListItem, type ListProps, type OptionValue } from '@golemui/gui-shared';
 import { DefaultListItemRenderer } from './item-renderers/DefaultListItemRenderer';
 import { type ListItemRendererProps } from './item-renderers/props';
-import '@golemui/gui-components/label';
-import '@golemui/gui-components/list';
-import '@golemui/gui-components/errors';
-
-interface GuiListElement extends HTMLElement {
-  focusItemAtIndex(index: number): void;
-}
+import type { GuiList } from '@golemui/gui-components/list';
 
 export function List(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<OptionValue>;
@@ -36,7 +31,7 @@ export function List(widgetInstance: WithWidget) {
   const [listItems, setListItems] = useState<ListItem<any>[]>([]);
   const [focusedIndex, setFocusedIndex] = useState<number>(-1);
 
-  const listRef = useRef<GuiListElement>(null);
+  const listRef = useRef<GuiList>(null);
 
   const visibleItems = useMemo(() => {
     const items = listItems.length > 0 ? listItems : templateData.items || [];
@@ -106,7 +101,7 @@ export function List(widgetInstance: WithWidget) {
 
   return (
     <div className="gui-list gui-field" style={{ flex: templateData.size }}>
-      <gui-label
+      <GuiLabelReact
         targetElement={listRef.current || undefined}
         uid={uid}
         label={label}
@@ -115,10 +110,10 @@ export function List(widgetInstance: WithWidget) {
         touched={isTouched}
         required={isRequired}
         native={false}
-      ></gui-label>
+      ></GuiLabelReact>
 
       <div className="gui-widget">
-        <gui-list
+        <GuiListReact
           ref={listRef}
           id={uid}
           uid={uid}
@@ -168,10 +163,12 @@ export function List(widgetInstance: WithWidget) {
               </div>
             );
           })}
-        </gui-list>
+        </GuiListReact>
       </div>
 
-      {showErrors && <gui-errors uid={uid} errors={errors} touched={isTouched}></gui-errors>}
+      {showErrors && (
+        <GuiErrorsReact uid={uid} errors={errors} touched={isTouched}></GuiErrorsReact>
+      )}
     </div>
   );
 }
