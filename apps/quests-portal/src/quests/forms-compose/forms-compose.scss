@@ -346,10 +346,23 @@ $body: 'VT323', 'Fira Code', monospace;
 }
 .ga-rays {
   position: absolute;
-  width: 280px;
-  height: 280px;
-  background: conic-gradient(from 0deg, transparent 0 18deg, rgba(249, 211, 66, 0.18) 18deg 30deg);
+  top: 50%;
+  left: 50%;
+  width: 340px;
+  height: 340px;
+  /* Centre on the artifact via margins (transform is owned by the spin animation). */
+  margin: -170px 0 0 -170px;
+  /* Thin repeating spokes (a sunburst), masked to a ring so they radiate around
+     the sigil and fade out — not one big translucent disc. */
+  background: repeating-conic-gradient(
+    from 0deg,
+    rgba(249, 211, 66, 0.16) 0 2.5deg,
+    transparent 2.5deg 16deg
+  );
   border-radius: 50%;
+  -webkit-mask: radial-gradient(closest-side, transparent 26%, #000 42%, transparent 74%);
+  mask: radial-gradient(closest-side, transparent 26%, #000 42%, transparent 74%);
+  pointer-events: none;
   animation: q-spin 9s linear infinite;
 }
 @keyframes q-spin { to { transform: rotate(360deg); } }
@@ -543,11 +556,13 @@ $body: 'VT323', 'Fira Code', monospace;
 }
 @keyframes q-overlay-in { from { opacity: 0; } to { opacity: 1; } }
 
-.reveal-overlay { background: rgba(21, 7, 38, 0.92); }
+/* Near-opaque so the boss-centre artifact (rays + "THE ENGINE AWAITS") behind
+   the stage doesn't bleed through the cinematic. */
+.reveal-overlay { background: #0d0820; }
 .reveal-flash { position: absolute; inset: 0; background: #ff5a7a; animation: q-flash 0.5s ease forwards; }
 @keyframes q-flash { 0% { opacity: 0.8; } 100% { opacity: 0; } }
 .reveal-vignette { position: absolute; inset: 0; box-shadow: inset 0 0 180px 40px rgba(0, 0, 0, 0.7); }
-.reveal-stack { position: relative; display: flex; flex-direction: column; gap: 0.8rem; padding: 1rem; }
+.reveal-stack { position: relative; z-index: 2; display: flex; flex-direction: column; gap: 0.8rem; padding: 1rem; }
 .reveal-pretitle { font-size: 0.6rem; color: $pixel-amber; letter-spacing: 0.1em; }
 .reveal-title { font-size: 2rem; color: #ff5a7a; text-shadow: 4px 4px 0 $pixel-dark; margin: 0; animation: q-slam 0.4s ease; }
 @keyframes q-slam { from { transform: scale(2.2); opacity: 0; } to { transform: scale(1); opacity: 1; } }
@@ -563,19 +578,29 @@ $body: 'VT323', 'Fira Code', monospace;
   white-space: pre;
 }
 .reveal-footer { font-size: 0.6rem; color: $pixel-amber; letter-spacing: 0.08em; }
-.reveal-bolt { position: absolute; width: 4px; height: 60%; background: $pixel-amber; opacity: 0.7; }
+.reveal-bolt { position: absolute; z-index: 1; width: 3px; height: 60%; background: $pixel-amber; opacity: 0.3; }
 .reveal-bolt--1 { left: 20%; animation: q-bolt 0.3s steps(2) infinite; }
 .reveal-bolt--2 { left: 50%; animation: q-bolt 0.35s steps(2) infinite; }
 .reveal-bolt--3 { left: 80%; animation: q-bolt 0.28s steps(2) infinite; }
 @keyframes q-bolt { 50% { opacity: 0; } }
 
-.zelda-overlay { background: rgba(21, 7, 38, 0.94); }
+.zelda-overlay { background: #0d0820; }
 .zelda-rays {
   position: absolute;
+  top: 50%;
+  left: 50%;
   width: 460px;
   height: 460px;
-  background: conic-gradient(from 0deg, transparent 0 14deg, rgba(249, 211, 66, 0.22) 14deg 24deg);
+  margin: -230px 0 0 -230px;
+  background: repeating-conic-gradient(
+    from 0deg,
+    rgba(249, 211, 66, 0.2) 0 2.5deg,
+    transparent 2.5deg 14deg
+  );
   border-radius: 50%;
+  -webkit-mask: radial-gradient(closest-side, transparent 20%, #000 42%, transparent 78%);
+  mask: radial-gradient(closest-side, transparent 20%, #000 42%, transparent 78%);
+  pointer-events: none;
   animation: q-spin 8s linear infinite;
 }
 .zelda-stack { position: relative; display: flex; flex-direction: column; align-items: center; gap: 0.7rem; }
