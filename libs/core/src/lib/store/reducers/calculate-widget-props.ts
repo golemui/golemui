@@ -59,6 +59,8 @@ function calculateAll(state: State, localization: I18nTranslator): State['calcul
 
   for (const uid of Object.keys(state.calculatedWidgets)) {
     if (state.widgetFlags[uid]?.hidden) {
+      // we keep it because 'REMOVE_WIDGET' takes care of the removal when the destroy life-cycle hits
+      result[uid] = state.calculatedWidgets[uid];
       continue;
     }
 
