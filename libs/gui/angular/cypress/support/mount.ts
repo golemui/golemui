@@ -1,7 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { EventEmitter, type Type } from '@angular/core';
 import { FormCoreComponent } from '@golemui/angular';
-import type { FormEvent, FormHealth, WidgetLoaders, WithWidget } from '@golemui/core';
+import type {
+  FormEvent,
+  FormHealth,
+  FormSubmitEvent,
+  WidgetLoaders,
+  WithWidget,
+} from '@golemui/core';
 import { type GuiFormInitConfig } from '@golemui/gui-shared';
 import { type MountOptions } from '@golemui/ui-testing';
 import { createOutputSpy, mount } from 'cypress/angular';
@@ -35,6 +41,15 @@ export const mountFramework = (options: MountOptions) => {
     formHealthOutput = createOutputSpy('formHealth');
   }
 
+  let formSubmitOutput;
+  if (options.formSubmit) {
+    const emitter = new EventEmitter<FormSubmitEvent>();
+    emitter.subscribe((e) => options.formSubmit!(e));
+    formSubmitOutput = emitter;
+  } else {
+    formSubmitOutput = createOutputSpy('formSubmit');
+  }
+
   const config: GuiFormInitConfig = {
     formDef: options.formDef,
     data: options.data,
@@ -53,6 +68,7 @@ export const mountFramework = (options: MountOptions) => {
       config,
       formHealth: formHealthOutput,
       formEvent: formEventOutput,
+      formSubmit: formSubmitOutput,
     },
   }).then(({ fixture }) => {
     // toObservable()'s internal effect is scheduled, not run, during the first detectChanges() call
