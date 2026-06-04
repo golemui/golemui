@@ -13,6 +13,7 @@ import {
 } from '../shared';
 import { type Action } from '../store/actions';
 import { type Middleware, type State } from '../store/model';
+import { pruneHiddenData } from '../utils/form';
 import { type WidgetLoaders, WidgetRegistry } from './widget-registry';
 
 export class FormContext<ComponentType> {
@@ -63,7 +64,7 @@ export class FormContext<ComponentType> {
         if (eventName) {
           this.events$.next({
             name: eventName,
-            data: this.store.getState().data,
+            data: pruneHiddenData(this.store.getState()),
             detail: detail ?? undefined,
             callback: (action: EventHandlerCallback) => {
               this.store.dispatch(action);
@@ -77,7 +78,7 @@ export class FormContext<ComponentType> {
       if (eventName) {
         this.events$.next({
           name: eventName,
-          data: this.store.getState().data,
+          data: pruneHiddenData(this.store.getState()),
           detail: detail,
           callback: (action: EventHandlerCallback) => {
             this.store.dispatch(action);
@@ -94,7 +95,7 @@ export class FormContext<ComponentType> {
 
     if (this.store.getState().isFormValid) {
       this.submit$.next({
-        data: this.store.getState().data,
+        data: pruneHiddenData(this.store.getState()),
         callback: (action: EventHandlerCallback) => {
           this.store.dispatch(action);
         },
