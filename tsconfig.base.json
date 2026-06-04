@@ -21,6 +21,7 @@
       "@golemui/demo-engine": ["apps/apps-shared/src/demo-engine/index.tsx"],
       "@golemui/characters": ["apps/apps-shared/src/demo-engine/characters.ts"],
       "@golemui/forms-compose-core": ["apps/apps-shared/src/forms-compose/index.tsx"],
+      "@golemui/forms-as-data-core": ["apps/apps-shared/src/forms-as-data/index.tsx"],
       "@golemui/core": ["libs/core/src/index.ts"],
       "@golemui/core/internals": ["libs/core/src/internals.ts"],
       "@golemui/gui-angular": ["libs/gui/angular/src/index.ts"],

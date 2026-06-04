@@ -1,14 +1,28 @@
+/**
+ * FORMS AS DATA — the quest, owned by the quests-portal.
+ * ======================================================
+ * The "sasha" pillar's 8-bit walk. Reuses the shared @golemui/demo-engine (the
+ * RPG shell + state machine) and @golemui/forms-as-data-core (the generic
+ * schema→{gui.} mapper + the mock endpoints + the record-builder helpers).
+ * Everything walk-specific lives here; there is no bare/app mode — that stays in
+ * sasha-demo for the /demos page. The portal picks the framework on its landing
+ * screen and passes it in, so the engine starts past its own CHOOSE-YOUR-HERO
+ * scene.
+ *
+ * Only the STAGE differs from FORMS COMPOSE: where that walk shows a {gui.}
+ * compose-tree beside the form, this one shows the editable SERVER response, the
+ * JSON definition it derives, and the form that renders from it — the same shell,
+ * banner, dialog, battle bar and overlays (see ../_quest-base.scss).
+ */
 import type { FormSubmitEvent } from '@golemui/core';
 import {
   GameShell,
   GuiArtifact,
   ReturnBar,
+  type Framework,
   type GameApi,
   type GameConfig,
-  type Framework,
 } from '@golemui/demo-engine';
-import { GuiForm, widgetLoaders } from '@golemui/gui-react';
-import { useEffect, useMemo, useState } from 'react';
 import {
   buildPayload,
   deriveFormDefinition,
@@ -24,6 +38,8 @@ import {
   type OptionPair,
   type RecordRow,
 } from '@golemui/forms-as-data-core';
+import { GuiForm, widgetLoaders } from '@golemui/gui-react';
+import { useEffect, useMemo, useState } from 'react';
 
 const NETWORK_DELAY_MS = 140;
 const SHAPE_EDIT_THRESHOLD = 2;
@@ -31,9 +47,7 @@ const BASE_FORMS: EndpointId[] = ['profile', 'orders', 'feedback'];
 
 /* ─── Per-framework code targets ─────────────────────────────────────── */
 
-// The install shown in the boss beat — the primary {gui.} package per framework
-// (the full set lives in each templates/forms-as-data-* starter). Never the
-// fictional `npm install golemui`.
+// The install shown in the boss beat — the primary {gui.} package per framework.
 const INSTALL_BY_FW: Record<Framework, string> = {
   react: 'npm i @golemui/gui-react',
   angular: 'npm i @golemui/gui-angular',
@@ -44,13 +58,13 @@ const INSTALL_BY_FW: Record<Framework, string> = {
 
 /* ─── Scenes (content + cinematic flags) ─────────────────────────────── */
 
-interface SashaScene {
+interface QuestScene {
   chapter: string; act?: string; title: string; quest?: string;
   boss?: boolean; bossTitle?: string; itemGet?: boolean;
   lines: string[]; counter?: string; cta?: string;
 }
 
-const SCENES: SashaScene[] = [
+const SCENES: QuestScene[] = [
   { chapter: '00', title: 'CHOOSE YOUR HERO', quest: 'Pick your class',
     lines: ['BEFORE THE QUEST: A CHOICE.', 'GOLEMUI RUNS IN ANY FRAMEWORK. WHICH IS YOURS?'], cta: '▶ BEGIN' },
   { chapter: '01', act: 'ACT I', title: 'THE QUEST', quest: 'Code three forms by hand',
@@ -93,22 +107,19 @@ function questDialog(n: number): { lines: string[]; counter?: string; cta?: stri
   return { lines, counter: `${n}/3`, cta: undefined };
 }
 
-/* ─── Launch params ──────────────────────────────────────────────────── */
+/* ─── Quest — thin orchestrator over the shared engine ───────────────── */
 
-const PARAMS =
-  typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : new URLSearchParams();
-// App-direct by default — the runnable app shows immediately. The guided 8-bit
-// walk is opt-in via ?mode=walk (the "Play the quest" CTA on /demos).
-const START_BARE = PARAMS.get('mode') !== 'walk';
-const FW_IDS: Framework[] = ['react', 'angular', 'lit', 'vue', 'vanilla'];
-const START_FW = FW_IDS.find((f) => f === PARAMS.get('fw')) ?? null;
+export interface FormsAsDataQuestProps {
+  /** Chosen on the portal landing screen — the engine starts past CH-00. */
+  framework: Framework;
+  /** Final CTA / SKIP — hand back to the portal (e.g. the /demos page). */
+  onComplete: () => void;
+}
 
-/* ─── App — thin orchestrator over the shared engine ─────────────────── */
-
-export function App() {
+export function FormsAsDataQuest({ framework, onComplete }: FormsAsDataQuestProps) {
   const [endpointRows, setEndpointRows] = useState<Record<string, RecordRow[]>>({});
-  const [hasResponded, setHasResponded] = useState(START_BARE);
-  const [tab, setTab] = useState<string | null>(START_BARE ? 'profile' : null);
+  const [hasResponded, setHasResponded] = useState(false);
+  const [tab, setTab] = useState<string | null>(null);
   const [shapeEdits, setShapeEdits] = useState(0);
   const [submitted, setSubmitted] = useState<Record<string, unknown> | null>(null);
   const [pulse, setPulse] = useState(false);
@@ -192,47 +203,32 @@ export function App() {
     bumpEdits();
   }
 
-  /* ── Stage pieces ── */
+  /* ── Stage pieces ─────────────────────────────────────────────────────
+     The only quest-specific UI. Everything else (shell, banner, console,
+     overlays, base cards) is shared chrome from ../_quest-base.scss. */
 
-  function recordBuilderCard(api: GameApi) {
+  // The editable SERVER response — "you are the backend, edit the shape".
+  function serverPanel() {
     return (
       <article className="card card--endpoint">
         <div className="card-head">
-          {api.bare ? (
-            <span className="server-resp">
-              <span className="card-tag">◢ SERVER</span>
-              <span className="sr-method">GET</span>
-              <code className="sr-path">
-                {ENDPOINTS.find((e) => e.id === tab)?.path ?? '/api/profile/me'}
-              </code>
-              <span className="sr-status">200 OK</span>
-            </span>
-          ) : (
-            <span className="card-tag">📡 MOCK BACKEND</span>
-          )}
+          <span className="card-tag">◢ SERVER</span>
+          <span className="sr-method">GET</span>
+          <code className="sr-path">{ENDPOINTS.find((e) => e.id === tab)?.path ?? '/api/profile/me'}</code>
+          <span className="sr-status">200 OK</span>
         </div>
         <div className="card-body endpoint-body">
-          {!api.bare && (
-            <p className="endpoint-blurb">
-              You are the backend. Edit the response shape — rename a field, change a type, add a
-              new one. The App rebuilds itself.
-            </p>
-          )}
-          {api.bare && (
-            <p className="server-hint">
-              This is your backend&rsquo;s JSON response. <strong>Edit any cell</strong> — rename a
-              field, change a type, add one — and watch GolemUI rebuild the form.
-            </p>
-          )}
+          <p className="server-hint">
+            This is your backend&rsquo;s JSON response. <strong>Edit any cell</strong> — rename a
+            field, change a type, add one — and watch GolemUI rebuild the form.
+          </p>
           <div className="record-builder">
-            {api.bare && (
-              <div className="record-head" aria-hidden="true">
-                <span>FIELD</span>
-                <span>TYPE</span>
-                <span>VALUE</span>
-                <span />
-              </div>
-            )}
+            <div className="record-head" aria-hidden="true">
+              <span>FIELD</span>
+              <span>TYPE</span>
+              <span>VALUE</span>
+              <span />
+            </div>
             {rows.map((row) => (
               <RecordFieldRow
                 key={row.id}
@@ -259,10 +255,9 @@ export function App() {
     );
   }
 
-  // Middle column — the GolemUI JSON definition the SERVER shape produces. The
-  // honest "forms as data" beat: the response IS the form definition, and the
-  // right column renders exactly this. Regenerates live as the shape is edited.
-  function jsonDslCard() {
+  // The derived {gui.} JSON definition — the honest "forms as data" beat: the
+  // response IS the form definition. Regenerates live as the shape is edited.
+  function jsonCard() {
     const json = JSON.stringify(deriveFormDsl(derivedPayload.schema), null, 2);
     return (
       <article className="card card--code">
@@ -283,11 +278,13 @@ export function App() {
     );
   }
 
-  function appCard(api: GameApi, opts: { solo: boolean; showReturn: boolean }) {
-    const tabsClickable = api.bare || api.scene >= 4;
+  // The live form rendered from the schema — no form code.
+  function formCard(api: GameApi, opts: { solo: boolean; showReturn: boolean }) {
+    const tabsClickable = api.scene >= 4;
+    const showHead = api.scene >= 4;
     return (
       <article className={`card card--app${opts.solo ? ' card--app-solo' : ''}`}>
-        {api.bare && (
+        {showHead && (
           <div className="card-head card-head--form">
             <span className="card-tag">▶ THE FORM</span>
             <span className="card-sub">renders the form from that data — no form code</span>
@@ -317,7 +314,7 @@ export function App() {
             </button>
           ))}
         </nav>
-        <div className={`card-body app-host${pulse ? ' is-rebuilt' : ''}`}>
+        <div className={`card-body app-host${pulse ? ' is-rebuilt' : ''}`} data-theme="8bit">
           {hasFields ? (
             <GuiForm
               key={formMountKey}
@@ -346,32 +343,33 @@ export function App() {
     );
   }
 
-  function renderWalkStage(api: GameApi) {
-    if (api.scene === 1) return appCard(api, { solo: true, showReturn: false });
+  function renderStage(api: GameApi) {
+    if (api.scene === 1) return formCard(api, { solo: true, showReturn: false });
     if (api.scene === 2) return <GuiArtifact />;
-    if (api.scene === 3) return appCard(api, { solo: true, showReturn: false });
-    // Act IV — wield: be the backend, edit shapes, Save → typed payload.
+    if (api.scene === 3) return formCard(api, { solo: true, showReturn: false });
+    // Act IV — wield: be the backend, edit the shape, watch it derive and render.
     return (
       <>
-        {recordBuilderCard(api)}
-        {appCard(api, { solo: false, showReturn: true })}
+        {serverPanel()}
+        {jsonCard()}
+        {formCard(api, { solo: false, showReturn: true })}
       </>
     );
   }
 
   const config: GameConfig = {
-    shellClass: 'sasha-shell',
+    shellClass: 'quest-shell',
     scenes: SCENES,
-    startBare: START_BARE,
-    startFramework: START_FW,
+    startBare: false,
+    startFramework: framework,
+    // The narrative rides in the command box (left), buttons on the right — no
+    // top dialog, so the stage gets the whole upper half for server + form.
+    dialogInConsole: true,
     title: 'FORMS AS DATA',
-    bareTitle: 'FORMS AS DATA',
-    bareQuestTease: 'Want the story? Out-build THE SERVER!! in a quick 8-bit quest.',
     lines: (api) => (api.scene === 1 ? questDialog(baseFormsBuilt).lines : SCENES[api.scene]?.lines ?? []),
     counter: (api) => (api.scene === 1 ? questDialog(baseFormsBuilt).counter : SCENES[api.scene]?.counter),
     cta: (api) => (api.scene === 1 ? questDialog(baseFormsBuilt).cta : SCENES[api.scene]?.cta),
     options: (api) => {
-      if (api.bare) return [];
       if (api.scene === 1) {
         return BASE_FORM_DEFS.filter((d) => !endpointRows[d.id]?.length).map((d, i) => ({
           key: String(i + 1),
@@ -381,7 +379,7 @@ export function App() {
       }
       if (api.scene === 2) {
         return [
-          { key: '1', label: INSTALL_BY_FW[api.framework ?? 'react'], action: api.next },
+          { key: '1', label: INSTALL_BY_FW[api.framework ?? framework], action: api.next },
           { key: '2', label: 'Nah… I’ll do it by hand', action: api.panic },
         ];
       }
@@ -399,7 +397,7 @@ export function App() {
       { label: 'LOC', value: api.frenzy ? api.frenzyVal : formsBuilt * 89, frenzy: api.frenzy, accent: 'warning' },
     ],
     reveal: () => ({
-      title: 'THE SERVER!!',
+      title: 'THE SERVER!!',
       subtitle: 'UP TO N ENDPOINTS',
       payload: REVEAL_PAYLOAD,
       footer: 'EACH ONE MUTATES · NOW WHAT?',
@@ -409,13 +407,13 @@ export function App() {
       statLine: `${v} LINES HAND-WRITTEN · 0 SHIPPED`,
       sub: 'The forms multiplied. You did not.',
     }),
+    stageClass: (api) => (api.scene >= 4 ? 'is-schema' : ''),
     onScene: (scene) => {
       if (scene >= 4 && tab == null) setTab('profile');
     },
-    onEnterBare: () => {
-      setTab((t) => t ?? 'profile');
-      setSubmitted(null);
-    },
+    // The final "TAKE ME TO THE APP" (and SKIP) leaves the walk → hand back to
+    // the portal, which returns to the /demos page (the app lives there).
+    onEnterBare: onComplete,
     onRestart: () => {
       setEndpointRows({});
       setHasResponded(false);
@@ -423,20 +421,15 @@ export function App() {
       setShapeEdits(0);
       setSubmitted(null);
     },
-    renderStage: renderWalkStage,
-    renderBare: (api) => (
-      <div className="bare-hero">
-        {recordBuilderCard(api)}
-        {jsonDslCard()}
-        {appCard(api, { solo: false, showReturn: true })}
-      </div>
-    ),
+    renderStage,
+    // Walk-only quest: bare is just the hand-off frame before the portal navigates.
+    renderBare: () => <div className="quest-return">▶ Returning to the demos…</div>,
   };
 
   return <GameShell {...config} />;
 }
 
-/* ─── RecordFieldRow ─────────────────────────────────────────────────── */
+/* ─── RecordFieldRow (one editable row in the SERVER response) ────────── */
 
 interface RecordFieldRowProps {
   row: RecordRow;

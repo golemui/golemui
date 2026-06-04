@@ -8,9 +8,10 @@
  *
  * POC: extractable to its own repo later (Roger/Raúl split it).
  *
- * FORMS COMPOSE is now hosted in-app: the portal owns its 8-bit walk as a React
- * mount (src/quests/forms-compose) instead of iframing rob-demo. FORMS AS DATA
- * still embeds sasha-demo by iframe until it gets the same treatment.
+ * Both quests are now hosted in-app: the portal owns each 8-bit walk as a React
+ * mount (src/quests/forms-compose and src/quests/forms-as-data) instead of
+ * iframing rob-demo / sasha-demo. The bare apps still live on the main /demos
+ * page; finishing or skipping a walk hands back there.
  */
 
 // Pure character data (no React) — safe for this lightweight landing bundle.
@@ -19,13 +20,6 @@ import { CHARACTERS, type Framework } from '@golemui/characters';
 type DemoId = 'forms-as-data' | 'forms-compose';
 
 const DEV = import.meta.env.DEV;
-
-// Where the demo apps live. Dev: their vite servers. Prod: served by the main
-// site (cross-origin from this subdomain — postMessage uses '*').
-const DEMO_SRC: Record<DemoId, string> = {
-  'forms-as-data': DEV ? 'http://localhost:4220/' : 'https://golemui.com/sasha-demo/index.html',
-  'forms-compose': DEV ? 'http://localhost:4221/' : 'https://golemui.com/rob-demo/index.html',
-};
 
 // The main site (for the logo + "back to demos").
 const MAIN_SITE = DEV ? 'http://localhost:4321' : 'https://golemui.com';
@@ -84,24 +78,26 @@ fwTiles.forEach((tile) => {
   });
 });
 
-function paneFor(demo: DemoId): HTMLElement | undefined {
-  return panes.find((p) => p.id === `demo-pane-${demo}`);
-}
-
 let currentDemo: DemoId | null = null;
 
-// FORMS COMPOSE is React, mounted lazily into its pane (no iframe). The dynamic
-// import keeps React out of the landing bundle until a quest actually launches.
-function mountFormsComposeQuest() {
-  const host = document.getElementById('forms-compose-root');
-  if (!host) return;
-  void import('./quests/forms-compose/mount').then(({ mountFormsCompose }) => {
-    mountFormsCompose(host, {
-      framework: selectedFw as Framework,
-      // Finishing / skipping the walk hands back to the demos page (the app).
-      onComplete: () => goToDemos('forms-compose'),
+// Both quests are React, mounted lazily into their pane (no iframe). The dynamic
+// imports keep React out of the landing bundle until a quest actually launches;
+// each walk hands back to the /demos page (the bare app) on finish / skip.
+function mountQuest(demo: DemoId) {
+  const onComplete = () => goToDemos(demo);
+  if (demo === 'forms-compose') {
+    const host = document.getElementById('forms-compose-root');
+    if (!host) return;
+    void import('./quests/forms-compose/mount').then(({ mountFormsCompose }) => {
+      mountFormsCompose(host, { framework: selectedFw as Framework, onComplete });
     });
-  });
+  } else {
+    const host = document.getElementById('forms-as-data-root');
+    if (!host) return;
+    void import('./quests/forms-as-data/mount').then(({ mountFormsAsData }) => {
+      mountFormsAsData(host, { framework: selectedFw as Framework, onComplete });
+    });
+  }
 }
 
 function launchQuest(demo: DemoId) {
@@ -111,27 +107,7 @@ function launchQuest(demo: DemoId) {
     p.toggleAttribute('hidden', !active);
     p.classList.toggle('is-active', active);
   });
-  if (demo === 'forms-compose') {
-    mountFormsComposeQuest();
-  } else {
-    const iframe = paneFor(demo)?.querySelector<HTMLIFrameElement>('iframe.demo-iframe');
-    if (iframe) {
-      iframe.style.height = '100%';
-      iframe.src = `${DEMO_SRC[demo]}?mode=walk&fw=${selectedFw}&n=${Date.now()}`;
-      iframe.addEventListener(
-        'load',
-        () => {
-          try {
-            iframe.focus();
-            iframe.contentWindow?.focus();
-          } catch {
-            /* cross-origin focus is best-effort */
-          }
-        },
-        { once: true },
-      );
-    }
-  }
+  mountQuest(demo);
   fullscreen = true;
   viewport.classList.remove('is-closing', 'is-embedded');
   viewport.classList.add('is-fullscreen');
