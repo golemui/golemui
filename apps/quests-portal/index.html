@@ -18,12 +18,10 @@
           (stored !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches);
         document.documentElement.classList.toggle('dark', isDark);
         document.documentElement.dataset.theme = isDark ? 'dark' : 'light';
-        window
-          .matchMedia('(prefers-color-scheme: dark)')
-          .addEventListener('change', (e) => {
-            document.documentElement.classList.toggle('dark', e.matches);
-            document.documentElement.dataset.theme = e.matches ? 'dark' : 'light';
-          });
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+          document.documentElement.classList.toggle('dark', e.matches);
+          document.documentElement.dataset.theme = e.matches ? 'dark' : 'light';
+        });
       })();
       // Deep-linked into a quest (?demo=…)? Hide the 8-bit selector before first
       // paint so it never flashes before the walk takes over.
@@ -44,7 +42,13 @@
     <header class="landing-header">
       <div class="container">
         <a class="logo" data-home aria-label="GolemUI home" href="#">
-          <svg class="logo-lockup" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 220" role="img" aria-label="GolemUI">
+          <svg
+            class="logo-lockup"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 400 220"
+            role="img"
+            aria-label="GolemUI"
+          >
             <defs>
               <linearGradient id="header-brand" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stop-color="#3b82f6" />
@@ -52,8 +56,18 @@
                 <stop offset="100%" stop-color="#a855f7" />
               </linearGradient>
             </defs>
-            <text x="200" y="170" font-family="Inter, system-ui, -apple-system, sans-serif" font-weight="600" font-size="160" text-anchor="middle" letter-spacing="-2">
-              <tspan fill="url(#header-brand)">{</tspan><tspan fill="currentColor">gui.</tspan><tspan fill="url(#header-brand)">}</tspan>
+            <text
+              x="200"
+              y="170"
+              font-family="Inter, system-ui, -apple-system, sans-serif"
+              font-weight="600"
+              font-size="160"
+              text-anchor="middle"
+              letter-spacing="-2"
+            >
+              <tspan fill="url(#header-brand)">{</tspan>
+              <tspan fill="currentColor">gui.</tspan>
+              <tspan fill="url(#header-brand)">}</tspan>
             </text>
           </svg>
         </a>
@@ -72,7 +86,10 @@
       <div class="adventure-select">
         <div class="quest-prompt">
           <span class="qp-nameplate">{gui.} · GUIDE</span>
-          <p class="qp-text" data-qp-type>Welcome, hero. Pick your framework, then choose a quest — out-build the boss and claim the engine.</p>
+          <p class="qp-text" data-qp-type>
+            Welcome, hero. Pick your framework, then choose a quest — out-build the boss and claim
+            the engine.
+          </p>
         </div>
 
         <h1 class="quest-title">CHOOSE YOUR ADVENTURE</h1>
@@ -80,24 +97,59 @@
         <div class="fw-row">
           <span class="fw-label">▸ PICK YOUR FRAMEWORK</span>
           <div class="fw-tiles" role="radiogroup" aria-label="Framework">
-            <button type="button" role="radio" aria-checked="true" class="fw-tile is-selected" data-fw="react" style="--fw-color:#61dafb;--fw-shadow:#0e7a9e">
-              <span class="fw-portrait"><span class="fw-sprite" style="--col:1"></span></span>
+            <button
+              type="button"
+              role="radio"
+              aria-checked="true"
+              class="fw-tile is-selected"
+              data-fw="react"
+              style="--fw-color: #61dafb; --fw-shadow: #0e7a9e"
+            >
+              <span class="fw-portrait"><span class="fw-sprite" style="--col: 1"></span></span>
               <span class="fw-name">REACT</span>
             </button>
-            <button type="button" role="radio" aria-checked="false" class="fw-tile" data-fw="angular" style="--fw-color:#dd0031;--fw-shadow:#7a0019">
-              <span class="fw-portrait"><span class="fw-sprite" style="--col:0"></span></span>
+            <button
+              type="button"
+              role="radio"
+              aria-checked="false"
+              class="fw-tile"
+              data-fw="angular"
+              style="--fw-color: #dd0031; --fw-shadow: #7a0019"
+            >
+              <span class="fw-portrait"><span class="fw-sprite" style="--col: 0"></span></span>
               <span class="fw-name">ANGULAR</span>
             </button>
-            <button type="button" role="radio" aria-checked="false" class="fw-tile" data-fw="lit" style="--fw-color:#324fff;--fw-shadow:#1a2c99">
-              <span class="fw-portrait"><span class="fw-sprite" style="--col:3"></span></span>
+            <button
+              type="button"
+              role="radio"
+              aria-checked="false"
+              class="fw-tile"
+              data-fw="lit"
+              style="--fw-color: #324fff; --fw-shadow: #1a2c99"
+            >
+              <span class="fw-portrait"><span class="fw-sprite" style="--col: 3"></span></span>
               <span class="fw-name">LIT</span>
             </button>
-            <button type="button" role="radio" aria-checked="false" class="fw-tile" data-fw="vue" style="--fw-color:#41b883;--fw-shadow:#1f6e4d">
-              <span class="fw-portrait"><span class="fw-sprite" style="--col:2"></span></span>
+            <button
+              type="button"
+              role="radio"
+              aria-checked="false"
+              class="fw-tile"
+              data-fw="vue"
+              style="--fw-color: #41b883; --fw-shadow: #1f6e4d"
+            >
+              <span class="fw-portrait"><span class="fw-sprite" style="--col: 2"></span></span>
               <span class="fw-name">VUE</span>
             </button>
-            <button type="button" role="radio" aria-checked="false" class="fw-tile" data-fw="vanilla" style="--fw-color:#f7df1e;--fw-shadow:#8a7a00">
-              <span class="fw-portrait"><span class="fw-sprite" style="--col:4"></span></span>
+            <button
+              type="button"
+              role="radio"
+              aria-checked="false"
+              class="fw-tile"
+              data-fw="vanilla"
+              style="--fw-color: #f7df1e; --fw-shadow: #8a7a00"
+            >
+              <span class="fw-portrait"><span class="fw-sprite" style="--col: 4"></span></span>
               <span class="fw-name">JS</span>
             </button>
           </div>
@@ -113,9 +165,9 @@
               <span class="adv-tag">PILLAR I</span>
               <span class="adv-name">FORMS FROM A PROMPT</span>
               <span class="adv-blurb">
-                Outwit THE BUSINESS MANAGER — describe a form in plain language
-                and our MCP emits a validated <code>{gui.}</code> form
-                definition. Prompt in, live form out, no raw markup.
+                Outwit THE BUSINESS MANAGER — describe a form in plain language and our MCP emits a
+                validated <code>{gui.}</code> form definition. Prompt in, live form out, no raw
+                markup.
               </span>
               <span class="adv-start">⚔ PLAY THE QUEST</span>
             </button>
@@ -126,9 +178,8 @@
               <span class="adv-tag">PILLAR II</span>
               <span class="adv-name">FORMS COMPOSE</span>
               <span class="adv-blurb">
-                The Contract Job — out-build THE CLIENT. Compose any interface
-                from primitives: conditional sections, cross-field reactivity,
-                custom widgets, all just more blocks.
+                The Contract Job — out-build THE CLIENT. Compose any interface from primitives:
+                conditional sections, cross-field reactivity, custom widgets, all just more blocks.
               </span>
               <span class="adv-start">⚔ PLAY THE QUEST</span>
             </button>
@@ -139,9 +190,8 @@
               <span class="adv-tag">PILLAR III</span>
               <span class="adv-name">FORMS AS DATA</span>
               <span class="adv-blurb">
-                Out-build THE SERVER. Hand GolemUI your data's shape and it maps
-                a live form — zero form code. Endpoints multiply, schemas mutate;
-                the UI just keeps up.
+                Out-build THE SERVER. Hand GolemUI your data's shape and it maps a live form — zero
+                form code. Endpoints multiply, schemas mutate; the UI just keeps up.
               </span>
               <span class="adv-start">⚔ PLAY THE QUEST</span>
             </button>

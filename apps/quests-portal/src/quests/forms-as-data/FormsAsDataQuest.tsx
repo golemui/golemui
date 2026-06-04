@@ -59,23 +59,66 @@ const INSTALL_BY_FW: Record<Framework, string> = {
 /* ─── Scenes (content + cinematic flags) ─────────────────────────────── */
 
 interface QuestScene {
-  chapter: string; act?: string; title: string; quest?: string;
-  boss?: boolean; bossTitle?: string; itemGet?: boolean;
-  lines: string[]; counter?: string; cta?: string;
+  chapter: string;
+  act?: string;
+  title: string;
+  quest?: string;
+  boss?: boolean;
+  bossTitle?: string;
+  itemGet?: boolean;
+  lines: string[];
+  counter?: string;
+  cta?: string;
 }
 
 const SCENES: QuestScene[] = [
-  { chapter: '00', title: 'CHOOSE YOUR HERO', quest: 'Pick your class',
-    lines: ['BEFORE THE QUEST: A CHOICE.', 'GOLEMUI RUNS IN ANY FRAMEWORK. WHICH IS YOURS?'], cta: '▶ BEGIN' },
-  { chapter: '01', act: 'ACT I', title: 'THE QUEST', quest: 'Code three forms by hand',
-    lines: [] }, // dialog computed from forms built
-  { chapter: '02', act: 'ACT II', title: 'THE SERVER!!', boss: true, bossTitle: '👹 THE SERVER',
+  {
+    chapter: '00',
+    title: 'CHOOSE YOUR HERO',
+    quest: 'Pick your class',
+    lines: ['BEFORE THE QUEST: A CHOICE.', 'GOLEMUI RUNS IN ANY FRAMEWORK. WHICH IS YOURS?'],
+    cta: '▶ BEGIN',
+  },
+  { chapter: '01', act: 'ACT I', title: 'THE QUEST', quest: 'Code three forms by hand', lines: [] }, // dialog computed from forms built
+  {
+    chapter: '02',
+    act: 'ACT II',
+    title: 'THE SERVER!!',
+    boss: true,
+    bossTitle: '👹 THE SERVER',
     quest: 'Survive the mutating server',
-    lines: ['YOUR USERS WILL DEMAND MORE — UP TO N ENDPOINTS.', 'AND EACH ONE IS DYNAMIC. THE SHAPES MUTATE.', 'HAND-CODE THAT. I DARE YOU.'], counter: 'N' },
-  { chapter: '03', act: 'ACT III', title: 'ITEM GET', itemGet: true, quest: 'Claim the engine',
-    lines: ['A LEGENDARY ENGINE IS BESTOWED UPON YOU.', 'IT IS CALLED GOLEMUI. IT HANDLES FORMS AS DATA—', '—MAP A SCHEMA, AND THE FORM RENDERS ITSELF.'], cta: 'WIELD IT ▶' },
-  { chapter: '04', act: 'ACT IV', title: 'WIELD IT', quest: 'Be the backend — shapes are data',
-    lines: ['YOU ARE THE BACKEND NOW. EDIT THE RESPONSE SHAPE—', 'RENAME A FIELD, CHANGE A TYPE, ADD ONE. THE APP REBUILDS.', 'THEN SAVE: A TYPED PAYLOAD COMES STRAIGHT BACK.'], cta: 'TAKE ME TO THE APP ▶' },
+    lines: [
+      'YOUR USERS WILL DEMAND MORE — UP TO N ENDPOINTS.',
+      'AND EACH ONE IS DYNAMIC. THE SHAPES MUTATE.',
+      'HAND-CODE THAT. I DARE YOU.',
+    ],
+    counter: 'N',
+  },
+  {
+    chapter: '03',
+    act: 'ACT III',
+    title: 'ITEM GET',
+    itemGet: true,
+    quest: 'Claim the engine',
+    lines: [
+      'A LEGENDARY ENGINE IS BESTOWED UPON YOU.',
+      'IT IS CALLED GOLEMUI. IT HANDLES FORMS AS DATA—',
+      '—MAP A SCHEMA, AND THE FORM RENDERS ITSELF.',
+    ],
+    cta: 'WIELD IT ▶',
+  },
+  {
+    chapter: '04',
+    act: 'ACT IV',
+    title: 'WIELD IT',
+    quest: 'Be the backend — shapes are data',
+    lines: [
+      'YOU ARE THE BACKEND NOW. EDIT THE RESPONSE SHAPE—',
+      'RENAME A FIELD, CHANGE A TYPE, ADD ONE. THE APP REBUILDS.',
+      'THEN SAVE: A TYPED PAYLOAD COMES STRAIGHT BACK.',
+    ],
+    cta: 'TAKE ME TO THE APP ▶',
+  },
 ];
 
 const REVEAL_PAYLOAD = `{
@@ -94,8 +137,13 @@ const BASE_FORM_DEFS: { id: EndpointId; label: string }[] = [
 function questDialog(n: number): { lines: string[]; counter?: string; cta?: string } {
   if (n >= 3) {
     return {
-      lines: ['Well DONE! See? Building forms is THAT easy.', 'Anyone could crank these out all day… right?', '…RIGHT?'],
-      counter: '✓✓✓', cta: 'RIGHT…? ▶',
+      lines: [
+        'Well DONE! See? Building forms is THAT easy.',
+        'Anyone could crank these out all day… right?',
+        '…RIGHT?',
+      ],
+      counter: '✓✓✓',
+      cta: 'RIGHT…? ▶',
     };
   }
   const lines =
@@ -103,7 +151,11 @@ function questDialog(n: number): { lines: string[]; counter?: string; cta?: stri
       ? ['TWO whole forms. Look at you go.', 'One to go. Try to contain yourself.']
       : n === 1
         ? ['…oh. You actually coded one. Adorable.', 'Only two more. Tick. Tock.']
-        : ['Ah… a CHALLENGER. So you would BUILD APPS?', 'Cute. Prove it — code me three forms by hand.', 'Profile, Orders, Feedback. Try to stay awake.'];
+        : [
+            'Ah… a CHALLENGER. So you would BUILD APPS?',
+            'Cute. Prove it — code me three forms by hand.',
+            'Profile, Orders, Feedback. Try to stay awake.',
+          ];
   return { lines, counter: `${n}/3`, cta: undefined };
 }
 
@@ -188,7 +240,9 @@ export function FormsAsDataQuest({ framework, onComplete }: FormsAsDataQuestProp
     bumpEdits();
   }
   function updateField(id: string, patch: Partial<FieldSchema>) {
-    patchTabRows((rs) => rs.map((r) => (r.id === id ? { ...r, field: { ...r.field, ...patch } } : r)));
+    patchTabRows((rs) =>
+      rs.map((r) => (r.id === id ? { ...r, field: { ...r.field, ...patch } } : r)),
+    );
     bumpEdits();
   }
   function removeRow(id: string) {
@@ -214,7 +268,9 @@ export function FormsAsDataQuest({ framework, onComplete }: FormsAsDataQuestProp
         <div className="card-head">
           <span className="card-tag">◢ SERVER</span>
           <span className="sr-method">GET</span>
-          <code className="sr-path">{ENDPOINTS.find((e) => e.id === tab)?.path ?? '/api/profile/me'}</code>
+          <code className="sr-path">
+            {ENDPOINTS.find((e) => e.id === tab)?.path ?? '/api/profile/me'}
+          </code>
           <span className="sr-status">200 OK</span>
         </div>
         <div className="card-body endpoint-body">
@@ -323,7 +379,11 @@ export function FormsAsDataQuest({ framework, onComplete }: FormsAsDataQuestProp
             />
           ) : (
             <div className="app-empty">
-              <p>{api.scene === 1 ? 'Pick a form to code — from the menu below.' : 'Forge fields on the left.'}</p>
+              <p>
+                {api.scene === 1
+                  ? 'Pick a form to code — from the menu below.'
+                  : 'Forge fields on the left.'}
+              </p>
             </div>
           )}
           {opts.showReturn && hasFields && (
@@ -366,8 +426,10 @@ export function FormsAsDataQuest({ framework, onComplete }: FormsAsDataQuestProp
     // top dialog, so the stage gets the whole upper half for server + form.
     dialogInConsole: true,
     title: 'FORMS AS DATA',
-    lines: (api) => (api.scene === 1 ? questDialog(baseFormsBuilt).lines : SCENES[api.scene]?.lines ?? []),
-    counter: (api) => (api.scene === 1 ? questDialog(baseFormsBuilt).counter : SCENES[api.scene]?.counter),
+    lines: (api) =>
+      api.scene === 1 ? questDialog(baseFormsBuilt).lines : (SCENES[api.scene]?.lines ?? []),
+    counter: (api) =>
+      api.scene === 1 ? questDialog(baseFormsBuilt).counter : SCENES[api.scene]?.counter,
     cta: (api) => (api.scene === 1 ? questDialog(baseFormsBuilt).cta : SCENES[api.scene]?.cta),
     options: (api) => {
       if (api.scene === 1) {
@@ -394,7 +456,12 @@ export function FormsAsDataQuest({ framework, onComplete }: FormsAsDataQuestProp
     },
     stats: (api) => [
       { label: 'FORMS', value: formsBuilt, accent: 'info' },
-      { label: 'LOC', value: api.frenzy ? api.frenzyVal : formsBuilt * 89, frenzy: api.frenzy, accent: 'warning' },
+      {
+        label: 'LOC',
+        value: api.frenzy ? api.frenzyVal : formsBuilt * 89,
+        frenzy: api.frenzy,
+        accent: 'warning',
+      },
     ],
     reveal: () => ({
       title: 'THE SERVER!!',
@@ -440,7 +507,14 @@ interface RecordFieldRowProps {
   onRemove: () => void;
 }
 
-function RecordFieldRow({ row, onName, onType, onValue, onOptions, onRemove }: RecordFieldRowProps) {
+function RecordFieldRow({
+  row,
+  onName,
+  onType,
+  onValue,
+  onOptions,
+  onRemove,
+}: RecordFieldRowProps) {
   // Normalize options to {value,label} pairs — older shapes may carry bare
   // strings; the editor always edits both fields so a value alone is never
   // enough to drive the data, and the label drives what the dropdown shows.

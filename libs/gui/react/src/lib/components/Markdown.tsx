@@ -5,7 +5,6 @@ import { useCallback } from 'react';
 import { GuiMarkdownReact } from '../web-components';
 import '../styles.scss';
 
-
 export function Markdown(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<string>;
   const { uid, errors, value, isTouched, templateData, onValueChanged, onBlur } = useInputWidget<

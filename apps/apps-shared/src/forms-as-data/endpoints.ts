@@ -97,10 +97,4 @@ export const ENDPOINTS: Endpoint[] = [
   },
 ];
 
-export const FIELD_TYPES: FieldType[] = [
-  'string',
-  'number',
-  'date',
-  'enum',
-  'boolean',
-];
+export const FIELD_TYPES: FieldType[] = ['string', 'number', 'date', 'enum', 'boolean'];

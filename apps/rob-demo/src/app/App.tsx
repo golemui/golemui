@@ -37,32 +37,135 @@ const MOUNT_BY_FW: Record<Framework, string> = {
 /* ─── Scenes (content + cinematic flags) ─────────────────────────────── */
 
 interface RobScene {
-  chapter: string; act?: string; title: string; quest?: string;
-  boss?: boolean; bossTitle?: string; itemGet?: boolean;
-  lines: string[]; cta?: string;
+  chapter: string;
+  act?: string;
+  title: string;
+  quest?: string;
+  boss?: boolean;
+  bossTitle?: string;
+  itemGet?: boolean;
+  lines: string[];
+  cta?: string;
 }
 
 const SCENES: RobScene[] = [
-  { chapter: '00', title: 'CHOOSE YOUR HERO', quest: 'Pick your class',
-    lines: ['BEFORE THE JOB: A CHOICE.', 'GOLEMUI RUNS IN ANY FRAMEWORK. WHICH IS YOURS?'], cta: '▶ BEGIN' },
-  { chapter: '01', act: 'ACT I', title: 'THE BRIEF', quest: 'Ship a signup form',
-    lines: ['A client calls. “We need a form. Signup —', 'name, email, a country dropdown. Nothing fancy.”', '“…Friday?” Easy. Three inputs. You hand-roll it.'], cta: 'SHIP IT ▶' },
-  { chapter: '02', act: 'ACT II', title: 'THE CALLBACK', quest: 'A 2nd form — don’t rewrite',
-    lines: ['…they call back. “LOVE it. Now a CHECKOUT too.”', '“Same address fields. Same validation. Don’t rewrite it.”', 'You copy-paste the block. A flicker of doubt.'], cta: 'FINE… ▶' },
-  { chapter: '03', act: 'ACT II', title: 'THE CREEP', quest: 'Make it react & branch',
-    lines: ['“Oh — city should FOLLOW the country.”', '“And billing? Only show it when it DIFFERS.”', 'The wiring spaghetti is starting to smell.'], cta: 'UH-OH ▶' },
-  { chapter: '04', act: 'ACT II', title: 'THE CLIENT!!', bossTitle: '👹 THE CLIENT', boss: true, quest: 'Survive the endless client',
-    lines: ['AND OUR OWN CURRENCY WIDGET. AND, AND, AND—', 'THE REQUESTS NEVER STOP. NESTED. MUTATING.', 'HAND-CODE THIS TANGLE FOREVER? OR…'] },
-  { chapter: '05', act: 'ACT III', title: 'ITEM GET', itemGet: true, quest: 'Claim the engine',
-    lines: ['A LEGENDARY ENGINE IS BESTOWED UPON YOU.', 'IT IS CALLED GOLEMUI. EVERY UI IS COMPOSED—', '—LAYOUTS, INPUTS, ACTIONS. EVEN THE HARD PARTS.'], cta: 'WIELD IT ▶' },
-  { chapter: '06', act: 'ACT III', title: 'REUSE', quest: 'Reuse one block, twice',
-    lines: ['REUSE, they said. Write the address block ONCE,', 'then drop it into shipping AND billing — a block is', 'just a value. Your move:'], cta: 'NICE ▶' },
-  { chapter: '07', act: 'ACT III', title: 'LOGIC', quest: 'Compose react + conditional',
-    lines: ['LOGIC, they said. City should follow country; billing', 'shows only when it differs. Declared, not wired —', 'compose both:'], cta: 'KEEP GOING ▶' },
-  { chapter: '08', act: 'ACT III', title: 'INTEGRATE', quest: 'Wrap your own widget',
-    lines: ['YOUR widget, they said. Wrap your framework’s own', 'component as a custom renderer — like any other field.', 'Drop it in:'], cta: 'ALMOST ▶' },
-  { chapter: '09', act: 'ACT IV', title: 'ONE MORE THING', quest: 'Ship it worldwide',
-    lines: ['“…one more thing. It ships to 12 COUNTRIES.', 'And legal wants a clean ACCESSIBILITY pass. Monday.”', 'Relax. It already shipped that way — watch.'], cta: 'TAKE ME TO THE APP ▶' },
+  {
+    chapter: '00',
+    title: 'CHOOSE YOUR HERO',
+    quest: 'Pick your class',
+    lines: ['BEFORE THE JOB: A CHOICE.', 'GOLEMUI RUNS IN ANY FRAMEWORK. WHICH IS YOURS?'],
+    cta: '▶ BEGIN',
+  },
+  {
+    chapter: '01',
+    act: 'ACT I',
+    title: 'THE BRIEF',
+    quest: 'Ship a signup form',
+    lines: [
+      'A client calls. “We need a form. Signup —',
+      'name, email, a country dropdown. Nothing fancy.”',
+      '“…Friday?” Easy. Three inputs. You hand-roll it.',
+    ],
+    cta: 'SHIP IT ▶',
+  },
+  {
+    chapter: '02',
+    act: 'ACT II',
+    title: 'THE CALLBACK',
+    quest: 'A 2nd form — don’t rewrite',
+    lines: [
+      '…they call back. “LOVE it. Now a CHECKOUT too.”',
+      '“Same address fields. Same validation. Don’t rewrite it.”',
+      'You copy-paste the block. A flicker of doubt.',
+    ],
+    cta: 'FINE… ▶',
+  },
+  {
+    chapter: '03',
+    act: 'ACT II',
+    title: 'THE CREEP',
+    quest: 'Make it react & branch',
+    lines: [
+      '“Oh — city should FOLLOW the country.”',
+      '“And billing? Only show it when it DIFFERS.”',
+      'The wiring spaghetti is starting to smell.',
+    ],
+    cta: 'UH-OH ▶',
+  },
+  {
+    chapter: '04',
+    act: 'ACT II',
+    title: 'THE CLIENT!!',
+    bossTitle: '👹 THE CLIENT',
+    boss: true,
+    quest: 'Survive the endless client',
+    lines: [
+      'AND OUR OWN CURRENCY WIDGET. AND, AND, AND—',
+      'THE REQUESTS NEVER STOP. NESTED. MUTATING.',
+      'HAND-CODE THIS TANGLE FOREVER? OR…',
+    ],
+  },
+  {
+    chapter: '05',
+    act: 'ACT III',
+    title: 'ITEM GET',
+    itemGet: true,
+    quest: 'Claim the engine',
+    lines: [
+      'A LEGENDARY ENGINE IS BESTOWED UPON YOU.',
+      'IT IS CALLED GOLEMUI. EVERY UI IS COMPOSED—',
+      '—LAYOUTS, INPUTS, ACTIONS. EVEN THE HARD PARTS.',
+    ],
+    cta: 'WIELD IT ▶',
+  },
+  {
+    chapter: '06',
+    act: 'ACT III',
+    title: 'REUSE',
+    quest: 'Reuse one block, twice',
+    lines: [
+      'REUSE, they said. Write the address block ONCE,',
+      'then drop it into shipping AND billing — a block is',
+      'just a value. Your move:',
+    ],
+    cta: 'NICE ▶',
+  },
+  {
+    chapter: '07',
+    act: 'ACT III',
+    title: 'LOGIC',
+    quest: 'Compose react + conditional',
+    lines: [
+      'LOGIC, they said. City should follow country; billing',
+      'shows only when it differs. Declared, not wired —',
+      'compose both:',
+    ],
+    cta: 'KEEP GOING ▶',
+  },
+  {
+    chapter: '08',
+    act: 'ACT III',
+    title: 'INTEGRATE',
+    quest: 'Wrap your own widget',
+    lines: [
+      'YOUR widget, they said. Wrap your framework’s own',
+      'component as a custom renderer — like any other field.',
+      'Drop it in:',
+    ],
+    cta: 'ALMOST ▶',
+  },
+  {
+    chapter: '09',
+    act: 'ACT IV',
+    title: 'ONE MORE THING',
+    quest: 'Ship it worldwide',
+    lines: [
+      '“…one more thing. It ships to 12 COUNTRIES.',
+      'And legal wants a clean ACCESSIBILITY pass. Monday.”',
+      'Relax. It already shipped that way — watch.',
+    ],
+    cta: 'TAKE ME TO THE APP ▶',
+  },
 ];
 
 const SCENE_MOVES: Record<number, BlockId[]> = {
@@ -96,7 +199,9 @@ const INSTALL_BY_FW: Record<Framework, string> = {
   vanilla: 'npm i @golemui/gui-lit',
 };
 const PARAMS =
-  typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : new URLSearchParams();
+  typeof window !== 'undefined'
+    ? new URLSearchParams(window.location.search)
+    : new URLSearchParams();
 // App-direct by default — the guided walk is opt-in via ?mode=walk.
 const START_BARE = PARAMS.get('mode') !== 'walk';
 const FW_IDS: Framework[] = ['react', 'angular', 'lit', 'vue', 'vanilla'];
@@ -113,7 +218,12 @@ const SECTION_BOXES: {
   blockId?: BlockId;
   locked?: boolean;
 }[] = [
-  { key: 'contact', section: 'Contact', hint: 'Name + email — the base of every form', locked: true },
+  {
+    key: 'contact',
+    section: 'Contact',
+    hint: 'Name + email — the base of every form',
+    locked: true,
+  },
   {
     key: 'address',
     section: 'Shipping address',
@@ -245,7 +355,11 @@ export function App() {
       if (moves) {
         return moves
           .filter((m) => !walkActive.has(m))
-          .map((m, i) => ({ key: String(i + 1), label: `▸ ${MOVE_LABEL[m]}`, action: () => composeMove(m) }));
+          .map((m, i) => ({
+            key: String(i + 1),
+            label: `▸ ${MOVE_LABEL[m]}`,
+            action: () => composeMove(m),
+          }));
       }
       return [];
     },
@@ -350,17 +464,29 @@ export function App() {
               })}
 
               {/* Accessibility + Localization come free — full blocks, locked on. */}
-              <div className="block-toggle is-free" role="switch" aria-checked="true" aria-disabled="true">
+              <div
+                className="block-toggle is-free"
+                role="switch"
+                aria-checked="true"
+                aria-disabled="true"
+              >
                 <span className="bt-box" aria-hidden="true">
                   ✓
                 </span>
                 <span className="bt-text">
                   <span className="bt-label">♿ Accessibility</span>
-                  <span className="bt-hint">Roles, labels, keyboard &amp; focus — Tab the form</span>
+                  <span className="bt-hint">
+                    Roles, labels, keyboard &amp; focus — Tab the form
+                  </span>
                 </span>
                 <span className="bt-power bt-power--free">FREE</span>
               </div>
-              <div className="block-toggle is-free" role="switch" aria-checked="true" aria-disabled="true">
+              <div
+                className="block-toggle is-free"
+                role="switch"
+                aria-checked="true"
+                aria-disabled="true"
+              >
                 <span className="bt-box" aria-hidden="true">
                   ✓
                 </span>
@@ -471,7 +597,6 @@ function BareForm({
       meta: metaFromActive(active),
     }),
     // `active` only seeds the initial meta; later changes go via setMeta below.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [localization],
   );
 
@@ -507,8 +632,8 @@ function BareForm({
           filledNote="one composed definition in, one typed payload out."
           idleNote={
             <>
-              Hit <strong>Save</strong> — the composed form hands its{' '}
-              <strong>typed</strong> payload straight back, valid against the schema.
+              Hit <strong>Save</strong> — the composed form hands its <strong>typed</strong> payload
+              straight back, valid against the schema.
             </>
           }
         />
@@ -523,7 +648,15 @@ function BareForm({
    lights when you hover its compose box (box → code → form, one connected chain). */
 const CODE_NS = new Set(['layouts', 'inputs', 'actions', 'displays']);
 const CODE_FN = new Set([
-  'column', 'verticalFlex', 'textInput', 'dropdown', 'radiogroup', 'checkbox', 'button', 'display', 'address',
+  'column',
+  'verticalFlex',
+  'textInput',
+  'dropdown',
+  'radiogroup',
+  'checkbox',
+  'button',
+  'display',
+  'address',
 ]);
 
 // Lightweight syntax highlight — gui / namespaces / calls / strings / comments.
@@ -536,15 +669,35 @@ function highlightCode(text: string, kp: string): ReactNode[] {
   let m: RegExpExecArray | null;
   let k = 0;
   while ((m = re.exec(code))) {
-    if (m[1]) out.push(<span key={kp + k++} className="t-str">{m[1]}</span>);
+    if (m[1])
+      out.push(
+        <span key={kp + k++} className="t-str">
+          {m[1]}
+        </span>,
+      );
     else if (m[2]) {
       const w = m[2];
-      const cls = w === 'gui' ? 't-gui' : CODE_NS.has(w) ? 't-ns' : CODE_FN.has(w) ? 't-fn' : 't-id';
-      out.push(<span key={kp + k++} className={cls}>{w}</span>);
+      const cls =
+        w === 'gui' ? 't-gui' : CODE_NS.has(w) ? 't-ns' : CODE_FN.has(w) ? 't-fn' : 't-id';
+      out.push(
+        <span key={kp + k++} className={cls}>
+          {w}
+        </span>,
+      );
     } else if (m[3]) out.push(m[3]);
-    else out.push(<span key={kp + k++} className="t-punc">{m[4]}</span>);
+    else
+      out.push(
+        <span key={kp + k++} className="t-punc">
+          {m[4]}
+        </span>,
+      );
   }
-  if (comment) out.push(<span key={kp + 'c'} className="t-comment">{comment}</span>);
+  if (comment)
+    out.push(
+      <span key={kp + 'c'} className="t-comment">
+        {comment}
+      </span>,
+    );
   return out;
 }
 
@@ -602,8 +755,8 @@ function ComposePanel({ tree, pulse, lastToggled, mount, frameworkName }: Compos
       </div>
       <div className="card-body tree-body">
         <p className="tree-lead">
-          Every UI is <strong>composed</strong> from primitives. This whole form
-          is one tree — and a block is just a value you reuse:
+          Every UI is <strong>composed</strong> from primitives. This whole form is one tree — and a
+          block is just a value you reuse:
         </p>
         <pre className="tree-code">
           <code>
@@ -678,7 +831,8 @@ function FormCard({ active, lang, pulse, a11ySpot, submitted, onSubmit }: FormCa
       <div className={`card-body app-host${a11ySpot ? ' a11y-spot' : ''}`}>
         {a11ySpot && (
           <div className="a11y-banner" aria-hidden="true">
-            ♿ ARIA roles · labels · keyboard · live errors — already there · 🌐 {lang === 'ja' ? '日本語' : 'localised'}
+            ♿ ARIA roles · labels · keyboard · live errors — already there · 🌐{' '}
+            {lang === 'ja' ? '日本語' : 'localised'}
           </div>
         )}
         <GuiForm key={formKey} config={config} formSubmit={onSubmit} />
@@ -687,8 +841,8 @@ function FormCard({ active, lang, pulse, a11ySpot, submitted, onSubmit }: FormCa
           filledNote="one composed definition in, one typed payload out."
           idleNote={
             <>
-              Hit <strong>Save</strong> — the composed form hands its{' '}
-              <strong>typed</strong> payload straight back, valid against the schema.
+              Hit <strong>Save</strong> — the composed form hands its <strong>typed</strong> payload
+              straight back, valid against the schema.
             </>
           }
         />

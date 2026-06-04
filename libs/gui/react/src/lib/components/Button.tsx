@@ -4,7 +4,6 @@ import { GuiButtonReact } from '../web-components';
 import '../styles.scss';
 import { type ButtonProps } from '@golemui/gui-shared';
 
-
 export function Button(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as ActionWidget;
   const { uid, templateData, onClick } = useActionWidget<ButtonProps>(widget);

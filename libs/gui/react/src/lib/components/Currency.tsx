@@ -5,7 +5,6 @@ import { useCallback } from 'react';
 import { GuiCurrencyReact } from '../web-components';
 import '../styles.scss';
 
-
 export function Currency(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<number>;
   const { uid, errors, value, isTouched, templateData, onValueChanged, onBlur } = useInputWidget<

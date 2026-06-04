@@ -13,18 +13,44 @@ import type { ReactNode } from 'react';
 // Lightweight JSON highlight for the JSON column — keys / strings / keywords /
 // numbers / punctuation, matching the {gui.} code-window palette.
 export function highlightJson(json: string): ReactNode[] {
-  const re = /("(?:\\.|[^"\\])*"\s*:)|("(?:\\.|[^"\\])*")|\b(true|false|null)\b|(-?\d+(?:\.\d+)?)|([{}[\],])/g;
+  const re =
+    /("(?:\\.|[^"\\])*"\s*:)|("(?:\\.|[^"\\])*")|\b(true|false|null)\b|(-?\d+(?:\.\d+)?)|([{}[\],])/g;
   const out: ReactNode[] = [];
   let last = 0;
   let m: RegExpExecArray | null;
   let k = 0;
   while ((m = re.exec(json))) {
     if (m.index > last) out.push(json.slice(last, m.index));
-    if (m[1]) out.push(<span key={k++} className="t-key">{m[1]}</span>);
-    else if (m[2]) out.push(<span key={k++} className="t-str">{m[2]}</span>);
-    else if (m[3]) out.push(<span key={k++} className="t-kw">{m[3]}</span>);
-    else if (m[4]) out.push(<span key={k++} className="t-num">{m[4]}</span>);
-    else out.push(<span key={k++} className="t-punc">{m[0]}</span>);
+    if (m[1])
+      out.push(
+        <span key={k++} className="t-key">
+          {m[1]}
+        </span>,
+      );
+    else if (m[2])
+      out.push(
+        <span key={k++} className="t-str">
+          {m[2]}
+        </span>,
+      );
+    else if (m[3])
+      out.push(
+        <span key={k++} className="t-kw">
+          {m[3]}
+        </span>,
+      );
+    else if (m[4])
+      out.push(
+        <span key={k++} className="t-num">
+          {m[4]}
+        </span>,
+      );
+    else
+      out.push(
+        <span key={k++} className="t-punc">
+          {m[0]}
+        </span>,
+      );
     last = re.lastIndex;
   }
   if (last < json.length) out.push(json.slice(last));

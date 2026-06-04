@@ -57,9 +57,7 @@ function toForm(schema: Schema) {
         default:
           return gui.inputs.textInput(key, {
             label: field.label,
-            ...(field.format === 'email'
-              ? { validator: { format: 'email' } }
-              : {}),
+            ...(field.format === 'email' ? { validator: { format: 'email' } } : {}),
           });
       }
     }),
@@ -89,10 +87,9 @@ export class MyForm extends LitElement {
     return html`
       <h1>Forms as data</h1>
       <p class="lede">
-        The form below was derived from <code>schema</code> — not one line of
-        form markup. Edit the schema in <code>src/my-form.ts</code> (add a
-        field, change a type) and watch the form follow. Try a bad email, then
-        Save.
+        The form below was derived from <code>schema</code> — not one line of form markup. Edit the
+        schema in <code>src/my-form.ts</code> (add a field, change a type) and watch the form
+        follow. Try a bad email, then Save.
       </p>
       <gui-form
         .config=${this.config}

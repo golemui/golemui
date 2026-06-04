@@ -163,7 +163,8 @@ window.addEventListener('message', (event) => {
   const data = event.data as { type?: string } | null;
   if (data?.type === 'golemui-demo-embed') goToDemos(currentDemo);
   else if (data?.type === 'golemui-demo-exit') goToDemos();
-  else if (data?.type === 'golemui-theme-ready') broadcastTheme((event.source as Window) ?? undefined);
+  else if (data?.type === 'golemui-theme-ready')
+    broadcastTheme((event.source as Window) ?? undefined);
 });
 
 const themeObserver = new MutationObserver(() => broadcastTheme());
@@ -196,6 +197,10 @@ themeObserver.observe(document.documentElement, {
 
 /* ── Deep link: ?demo=<id>&fw=<fw> launches that quest directly ── */
 const deepDemo = params.get('demo');
-if (deepDemo === 'forms-from-prompt' || deepDemo === 'forms-as-data' || deepDemo === 'forms-compose') {
+if (
+  deepDemo === 'forms-from-prompt' ||
+  deepDemo === 'forms-as-data' ||
+  deepDemo === 'forms-compose'
+) {
   launchQuest(deepDemo);
 }

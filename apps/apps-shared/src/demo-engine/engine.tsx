@@ -9,13 +9,7 @@
  * GAME OVER frenzy, the typewriter gate), the layout, the framework picker,
  * the quest title bar, SKIP, and the overlays. A change here hits every demo.
  */
-import {
-  type CSSProperties,
-  type ReactNode,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { type CSSProperties, type ReactNode, useEffect, useRef, useState } from 'react';
 
 /* ─── Characters (the framework "classes") ───────────────────────────── */
 
@@ -54,7 +48,14 @@ export const FW_ICON: Record<Framework, ReactNode> = {
     </svg>
   ),
   lit: (
-    <svg viewBox="0 0 768 960" width="14" height="18" fill="currentColor" fillRule="evenodd" aria-hidden="true">
+    <svg
+      viewBox="0 0 768 960"
+      width="14"
+      height="18"
+      fill="currentColor"
+      fillRule="evenodd"
+      aria-hidden="true"
+    >
       <path d="M192 576l96-288 432 432-144 240-192-192h-96" />
       <path d="M384 768V384l192-192v384m-480 0h96l96 192-96 192L0 768z" />
       <path d="M192 576V192L384 0v384m192 576V576l192-192v384M0 768V384l192 192" />
@@ -182,12 +183,10 @@ const inIframe = typeof window !== 'undefined' && window.parent !== window;
 
 export function GameShell(cfg: GameConfig) {
   const lastScene = cfg.scenes.length - 1;
-  const [sceneId, setSceneId] = useState(
-    cfg.startFramework && !cfg.startBare ? 1 : 0,
-  );
+  const [sceneId, setSceneId] = useState(cfg.startFramework && !cfg.startBare ? 1 : 0);
   const [bare, setBare] = useState(!!cfg.startBare);
   const [framework, setFramework] = useState<Framework | null>(
-    cfg.startBare ? cfg.startFramework ?? 'react' : cfg.startFramework ?? null,
+    cfg.startBare ? (cfg.startFramework ?? 'react') : (cfg.startFramework ?? null),
   );
   const [typingDone, setTypingDone] = useState(false);
   const [revealActive, setRevealActive] = useState(false);
@@ -340,9 +339,7 @@ export function GameShell(cfg: GameConfig) {
           <div className="bare-bar-info">
             {cfg.bareTitle && <span className="bare-title">{cfg.bareTitle}</span>}
           </div>
-          <div className="bare-bar-actions">
-            {cfg.bareHeaderExtra?.(api)}
-          </div>
+          <div className="bare-bar-actions">{cfg.bareHeaderExtra?.(api)}</div>
         </header>
       )}
 
@@ -370,7 +367,7 @@ export function GameShell(cfg: GameConfig) {
       {!bare && !cfg.dialogInConsole && (
         <DialogBox
           chapter={scene.chapter}
-          title={isBoss ? scene.bossTitle ?? '👹 BOSS' : scene.title}
+          title={isBoss ? (scene.bossTitle ?? '👹 BOSS') : scene.title}
           lines={cfg.lines(api)}
           counter={cfg.counter?.(api)}
           isBoss={isBoss}
@@ -393,7 +390,6 @@ export function GameShell(cfg: GameConfig) {
         )}
       </section>
 
-
       {!bare && (
         <BattleBar
           stats={stats}
@@ -413,7 +409,7 @@ export function GameShell(cfg: GameConfig) {
             cfg.dialogInConsole
               ? {
                   chapter: scene.chapter,
-                  title: isBoss ? scene.bossTitle ?? '👹 BOSS' : scene.title,
+                  title: isBoss ? (scene.bossTitle ?? '👹 BOSS') : scene.title,
                   lines: cfg.lines(api),
                   counter: cfg.counter?.(api),
                   isBoss,
@@ -427,7 +423,10 @@ export function GameShell(cfg: GameConfig) {
       {revealActive && cfg.reveal && <RevealOverlay {...cfg.reveal(api)} />}
       {zeldaActive && cfg.zelda && <ZeldaOverlay {...cfg.zelda} />}
       {gameOver && (
-        <GameOver {...(cfg.gameOver?.(frenzyVal) ?? { statLine: `${frenzyVal} LINES`, sub: '' })} onRetry={tryAgain} />
+        <GameOver
+          {...(cfg.gameOver?.(frenzyVal) ?? { statLine: `${frenzyVal} LINES`, sub: '' })}
+          onRetry={tryAgain}
+        />
       )}
     </main>
   );
@@ -435,7 +434,11 @@ export function GameShell(cfg: GameConfig) {
 
 /* ─── Hooks ──────────────────────────────────────────────────────────── */
 
-export function useTypewriter(text: string, cps = 38, hold = false): { shown: string; done: boolean } {
+export function useTypewriter(
+  text: string,
+  cps = 38,
+  hold = false,
+): { shown: string; done: boolean } {
   const [count, setCount] = useState(0);
   useEffect(() => {
     setCount(0);
@@ -605,7 +608,11 @@ export function CharacterSelect({
               type="button"
               className={`char-tile ${isSelected ? 'is-selected' : ''}`}
               style={
-                { '--char-color': c.color, '--char-shadow': c.shadow, '--col': c.col } as CSSProperties
+                {
+                  '--char-color': c.color,
+                  '--char-shadow': c.shadow,
+                  '--col': c.col,
+                } as CSSProperties
               }
               onClick={() => onSelect(c.id)}
             >
@@ -679,7 +686,15 @@ export function ZeldaOverlay({ name, spell }: { name: string; spell: string }) {
   );
 }
 
-export function GameOver({ statLine, sub, onRetry }: { statLine: string; sub: string; onRetry: () => void }) {
+export function GameOver({
+  statLine,
+  sub,
+  onRetry,
+}: {
+  statLine: string;
+  sub: string;
+  onRetry: () => void;
+}) {
   useOverlayConfirm(onRetry);
   return (
     <div className="gameover-overlay">
@@ -933,7 +948,10 @@ function BattleBar({
             ← PREV
           </button>
           {character && (
-            <span className="nav-chip" style={{ borderColor: character.color, color: character.color }}>
+            <span
+              className="nav-chip"
+              style={{ borderColor: character.color, color: character.color }}
+            >
               <span className="nav-chip-mono">{character.monogram}</span>
               {character.name}
             </span>

@@ -25,10 +25,30 @@ export interface Block {
 
 // The composable blocks — one per superpower the walk teaches.
 export const BLOCKS: Block[] = [
-  { id: 'address', label: 'Address block', hint: 'One block, reused in shipping + billing', power: 'REUSE' },
-  { id: 'reactive', label: 'City reacts to country', hint: 'One field drives another, live', power: 'REACTIVITY' },
-  { id: 'conditional', label: 'Conditional billing', hint: 'A section that appears on demand', power: 'CONDITIONAL' },
-  { id: 'currency', label: 'Currency picker', hint: 'A custom-rendered dropdown', power: 'CUSTOM WIDGET' },
+  {
+    id: 'address',
+    label: 'Address block',
+    hint: 'One block, reused in shipping + billing',
+    power: 'REUSE',
+  },
+  {
+    id: 'reactive',
+    label: 'City reacts to country',
+    hint: 'One field drives another, live',
+    power: 'REACTIVITY',
+  },
+  {
+    id: 'conditional',
+    label: 'Conditional billing',
+    hint: 'A section that appears on demand',
+    power: 'CONDITIONAL',
+  },
+  {
+    id: 'currency',
+    label: 'Currency picker',
+    hint: 'A custom-rendered dropdown',
+    power: 'CUSTOM WIDGET',
+  },
 ];
 
 const COUNTRIES = ['United States', 'Japan', 'Brazil', 'France'];
@@ -57,35 +77,76 @@ export const CURRENCIES: CurrencyItem[] = [
 // Labels are data — so localising the form is just swapping this map. The
 // CH.09 finale flips `lang` and the whole form re-renders in Japanese.
 type LabelKey =
-  | 'name' | 'email' | 'country' | 'city' | 'currency'
-  | 'shipping' | 'billing' | 'street' | 'postcode'
-  | 'billingDiffers' | 'save'
-  | 'secContact' | 'secRegion' | 'secBilling' | 'secCurrency';
+  | 'name'
+  | 'email'
+  | 'country'
+  | 'city'
+  | 'currency'
+  | 'shipping'
+  | 'billing'
+  | 'street'
+  | 'postcode'
+  | 'billingDiffers'
+  | 'save'
+  | 'secContact'
+  | 'secRegion'
+  | 'secBilling'
+  | 'secCurrency';
 
 const LABELS: Record<Lang, Record<LabelKey, string>> = {
   en: {
-    name: 'Full name', email: 'Email', country: 'Country', city: 'City',
-    currency: 'Currency', shipping: 'Shipping address', billing: 'Billing address',
-    street: 'Street', postcode: 'Postcode',
-    billingDiffers: 'Bill-to differs from ship-to', save: 'Save',
-    secContact: 'Contact', secRegion: 'Region', secBilling: 'Billing', secCurrency: 'Payment',
+    name: 'Full name',
+    email: 'Email',
+    country: 'Country',
+    city: 'City',
+    currency: 'Currency',
+    shipping: 'Shipping address',
+    billing: 'Billing address',
+    street: 'Street',
+    postcode: 'Postcode',
+    billingDiffers: 'Bill-to differs from ship-to',
+    save: 'Save',
+    secContact: 'Contact',
+    secRegion: 'Region',
+    secBilling: 'Billing',
+    secCurrency: 'Payment',
   },
   ja: {
-    name: '氏名', email: 'メール', country: '国', city: '市',
-    currency: '通貨', shipping: '配送先住所', billing: '請求先住所',
-    street: '番地', postcode: '郵便番号',
-    billingDiffers: '請求先は配送先と異なる', save: '保存',
-    secContact: '連絡先', secRegion: '地域', secBilling: '請求', secCurrency: '支払い',
+    name: '氏名',
+    email: 'メール',
+    country: '国',
+    city: '市',
+    currency: '通貨',
+    shipping: '配送先住所',
+    billing: '請求先住所',
+    street: '番地',
+    postcode: '郵便番号',
+    billingDiffers: '請求先は配送先と異なる',
+    save: '保存',
+    secContact: '連絡先',
+    secRegion: '地域',
+    secBilling: '請求',
+    secCurrency: '支払い',
   },
   // Arabic — a right-to-left script. GolemUI reads the active language from the
   // translator and sets dir="rtl" on the <form> automatically, so the whole
   // composed UI mirrors with zero layout code.
   ar: {
-    name: 'الاسم الكامل', email: 'البريد الإلكتروني', country: 'الدولة', city: 'المدينة',
-    currency: 'العملة', shipping: 'عنوان الشحن', billing: 'عنوان الفوترة',
-    street: 'الشارع', postcode: 'الرمز البريدي',
-    billingDiffers: 'عنوان الفوترة مختلف عن الشحن', save: 'حفظ',
-    secContact: 'جهة الاتصال', secRegion: 'المنطقة', secBilling: 'الفوترة', secCurrency: 'الدفع',
+    name: 'الاسم الكامل',
+    email: 'البريد الإلكتروني',
+    country: 'الدولة',
+    city: 'المدينة',
+    currency: 'العملة',
+    shipping: 'عنوان الشحن',
+    billing: 'عنوان الفوترة',
+    street: 'الشارع',
+    postcode: 'الرمز البريدي',
+    billingDiffers: 'عنوان الفوترة مختلف عن الشحن',
+    save: 'حفظ',
+    secContact: 'جهة الاتصال',
+    secRegion: 'المنطقة',
+    secBilling: 'الفوترة',
+    secCurrency: 'الدفع',
   },
 };
 
@@ -200,9 +261,12 @@ function regionFields(reactive: boolean, cityWhen = '!!$form.country') {
 // billingDiffers checkbox.
 const billingFields = () => [
   gui.inputs.checkbox('billingDiffers', { label: L('billingDiffers') }),
-  gui.layouts.verticalFlex(addressFields('bill') as any, {
-    include: { when: '$form.billingDiffers == true' },
-  } as any),
+  gui.layouts.verticalFlex(
+    addressFields('bill') as any,
+    {
+      include: { when: '$form.billingDiffers == true' },
+    } as any,
+  ),
 ];
 
 // The Payment card's field — a custom-rendered currency dropdown.

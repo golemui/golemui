@@ -1,10 +1,10 @@
 <h1>Forms as data</h1>
 <p class="lede">
-  The form below was derived from <code>schema</code> — not one line of form
-  markup. Edit the schema in <code>src/app/app.ts</code> (add a field, change a
-  type) and watch the form follow. Try a bad email, then Save.
+  The form below was derived from <code>schema</code> — not one line of form markup. Edit the schema
+  in <code>src/app/app.ts</code> (add a field, change a type) and watch the form follow. Try a bad
+  email, then Save.
 </p>
 <gui-form [config]="config" (formSubmit)="onFormSubmit($event)"></gui-form>
 @if (saved) {
-  <pre class="received">{{ savedJson }}</pre>
+<pre class="received">{{ savedJson }}</pre>
 }

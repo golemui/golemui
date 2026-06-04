@@ -6,8 +6,14 @@
 // Drop the PNG at apps/quests-portal/public/sprites/sprites_sheet.png.
 
 @keyframes sprite-idle {
-  0%, 49.999% { background-position-y: 0; }
-  50%, 100% { background-position-y: calc(-1 * var(--fh)); }
+  0%,
+  49.999% {
+    background-position-y: 0;
+  }
+  50%,
+  100% {
+    background-position-y: calc(-1 * var(--fh));
+  }
 }
 
 @mixin frame($scale) {

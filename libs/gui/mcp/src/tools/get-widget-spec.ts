@@ -265,7 +265,7 @@ const NOTES: Record<string, string[]> = {
   ],
   grid: [
     'Use `grid` when you want multiple form fields to sit side by side with their labels and inputs aligned across columns. ' +
-      'GolemUI\'s `grid` uses CSS subgrid internally: each child widget gets two implicit sub-tracks (one for its label, one for its input) ' +
+      "GolemUI's `grid` uses CSS subgrid internally: each child widget gets two implicit sub-tracks (one for its label, one for its input) " +
       'that align to the parent grid columns, giving consistent label/input alignment across all rows without manual sizing.',
     'For loose page scaffolding — stacking sections, wrapping a group in a header — use `flex` instead.',
     '`props.columnGap`: number (pixels) — horizontal gap between columns.',

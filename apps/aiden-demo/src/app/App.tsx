@@ -1,23 +1,15 @@
 import type { FormSubmitEvent } from '@golemui/core';
-import {
-  GameShell,
-  ReturnBar,
-  type GameConfig,
-  type SceneDef,
-} from '@golemui/demo-engine';
+import { GameShell, ReturnBar, type GameConfig, type SceneDef } from '@golemui/demo-engine';
 import { GuiForm, widgetLoaders } from '@golemui/gui-react';
 import { useMemo, useState } from 'react';
-import {
-  actionLabel,
-  highlightJson,
-  PROMPTS,
-  renderPrompt,
-} from '@golemui/forms-from-prompt-core';
+import { actionLabel, highlightJson, PROMPTS, renderPrompt } from '@golemui/forms-from-prompt-core';
 
 /* ─── Launch params ──────────────────────────────────────────────────── */
 
 const PARAMS =
-  typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : new URLSearchParams();
+  typeof window !== 'undefined'
+    ? new URLSearchParams(window.location.search)
+    : new URLSearchParams();
 // App-direct by default — the runnable three-column app shows immediately. The
 // guided 8-bit walk (boss: THE BUSINESS MANAGER) ships in a later PR.
 const START_BARE = PARAMS.get('mode') !== 'walk';
@@ -68,8 +60,8 @@ export function App() {
         </div>
         <div className="card-body prompt-body">
           <p className="prompt-hint">
-            Pick a prompt. An LLM turns it into a <code>{'{gui.}'}</code> form definition;
-            our MCP validates it before it ships.
+            Pick a prompt. An LLM turns it into a <code>{'{gui.}'}</code> form definition; our MCP
+            validates it before it ships.
           </p>
           <div className="prompt-list">
             {PROMPTS.map((p) => {
@@ -82,9 +74,13 @@ export function App() {
                     aria-expanded={on}
                     onClick={() => pick(p.id)}
                   >
-                    <span className="pi-dot" aria-hidden="true">{on ? '●' : '○'}</span>
+                    <span className="pi-dot" aria-hidden="true">
+                      {on ? '●' : '○'}
+                    </span>
                     <span className="pi-label">{p.label}</span>
-                    <span className="pi-chev" aria-hidden="true">▾</span>
+                    <span className="pi-chev" aria-hidden="true">
+                      ▾
+                    </span>
                   </button>
                   {on && <div className="pi-prompt">{renderPrompt(p.prompt)}</div>}
                 </div>
@@ -110,7 +106,11 @@ export function App() {
           </span>
         </div>
         <div className="card-body code-body">
-          <div className="code-banner" role="group" aria-label="The validated GolemUI JSON definition">
+          <div
+            className="code-banner"
+            role="group"
+            aria-label="The validated GolemUI JSON definition"
+          >
             <pre className="cb-code">
               <code>{highlightJson(json)}</code>
             </pre>
@@ -139,8 +139,8 @@ export function App() {
             filledNote="typed straight from the form — exactly the shape the prompt described."
             idleNote={
               <>
-                Hit <strong>{actionLabel(selected?.formDefinition)}</strong> — the form hands
-                back a <strong>typed</strong> payload, valid against the rules the MCP checked.
+                Hit <strong>{actionLabel(selected?.formDefinition)}</strong> — the form hands back a{' '}
+                <strong>typed</strong> payload, valid against the rules the MCP checked.
               </>
             }
           />

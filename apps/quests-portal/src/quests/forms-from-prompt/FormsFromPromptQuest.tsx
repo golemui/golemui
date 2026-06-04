@@ -47,9 +47,15 @@ const INSTALL_BY_FW: Record<Framework, string> = {
 /* ─── Scenes (content + cinematic flags) ─────────────────────────────── */
 
 interface QuestScene {
-  chapter: string; act?: string; title: string; quest?: string;
-  boss?: boolean; bossTitle?: string; itemGet?: boolean;
-  lines: string[]; cta?: string;
+  chapter: string;
+  act?: string;
+  title: string;
+  quest?: string;
+  boss?: boolean;
+  bossTitle?: string;
+  itemGet?: boolean;
+  lines: string[];
+  cta?: string;
 }
 
 // One step per example prompt — the manager's asks, each gnarlier than the last.
@@ -64,20 +70,87 @@ const SCENE_PROMPT: Record<number, string> = {
 };
 
 const SCENES: QuestScene[] = [
-  { chapter: '00', title: 'CHOOSE YOUR HERO', quest: 'Pick your class',
-    lines: ['BEFORE THE JOB: A CHOICE.', 'GOLEMUI RUNS IN ANY FRAMEWORK. WHICH IS YOURS?'], cta: '▶ BEGIN' },
-  { chapter: '01', act: 'ACT I', title: 'THE BRIEF', quest: 'Three forms — by lunch',
-    lines: ['THE MANAGER LEANS IN. “Quick one. I need THREE forms.', 'Support ticket. Job application. Team setup. By LUNCH.”', '“Easy, right?” You open your editor. It is not easy.'], cta: 'ON IT… ▶' },
-  { chapter: '02', act: 'ACT II', title: 'THE MANAGER!!', bossTitle: '👔 THE BUSINESS MANAGER', boss: true, quest: 'Survive the lunch deadline',
-    lines: ['“OH — and the job one has REPEATERS. And the team', 'one NESTS them. With CONDITIONAL fields. Obviously.”', 'HAND-CODE THREE OF THOSE BY LUNCH? OR…'] },
-  { chapter: '03', act: 'ACT III', title: 'ITEM GET', itemGet: true, quest: 'Claim the engine',
-    lines: ['A LEGENDARY ENGINE IS BESTOWED UPON YOU.', 'IT IS CALLED GOLEMUI. DESCRIBE A FORM IN WORDS—', '—ITS MCP EMITS A VALIDATED {gui.} DEFINITION.'], cta: 'WIELD IT ▶' },
-  { chapter: '04', act: 'ACT III', title: 'PROMPT IT', quest: 'Describe the support ticket',
-    lines: ['DESCRIBE, they said. Not code — DESCRIBE. Tell the MCP', 'what you want in plain language; it returns a validated', '{gui.} definition and the form renders. Your move:'], cta: 'NEXT ASK ▶' },
-  { chapter: '05', act: 'ACT III', title: 'PROMPT IT', quest: 'Describe the job application',
-    lines: ['HARDER one: a job application — email, a markdown bio,', 'and a REPEATABLE experience list with a conditional', 'end-date. Still just words. Describe it:'], cta: 'LAST ONE ▶' },
-  { chapter: '06', act: 'ACT IV', title: 'ONE MORE THING', quest: 'Describe the team setup',
-    lines: ['“…last one. Teams, with NESTED members, and four', 'show/hide rules per member.” The boss final form.', 'You don’t flinch. You just describe it:'], cta: 'TAKE ME TO THE APP ▶' },
+  {
+    chapter: '00',
+    title: 'CHOOSE YOUR HERO',
+    quest: 'Pick your class',
+    lines: ['BEFORE THE JOB: A CHOICE.', 'GOLEMUI RUNS IN ANY FRAMEWORK. WHICH IS YOURS?'],
+    cta: '▶ BEGIN',
+  },
+  {
+    chapter: '01',
+    act: 'ACT I',
+    title: 'THE BRIEF',
+    quest: 'Three forms — by lunch',
+    lines: [
+      'THE MANAGER LEANS IN. “Quick one. I need THREE forms.',
+      'Support ticket. Job application. Team setup. By LUNCH.”',
+      '“Easy, right?” You open your editor. It is not easy.',
+    ],
+    cta: 'ON IT… ▶',
+  },
+  {
+    chapter: '02',
+    act: 'ACT II',
+    title: 'THE MANAGER!!',
+    bossTitle: '👔 THE BUSINESS MANAGER',
+    boss: true,
+    quest: 'Survive the lunch deadline',
+    lines: [
+      '“OH — and the job one has REPEATERS. And the team',
+      'one NESTS them. With CONDITIONAL fields. Obviously.”',
+      'HAND-CODE THREE OF THOSE BY LUNCH? OR…',
+    ],
+  },
+  {
+    chapter: '03',
+    act: 'ACT III',
+    title: 'ITEM GET',
+    itemGet: true,
+    quest: 'Claim the engine',
+    lines: [
+      'A LEGENDARY ENGINE IS BESTOWED UPON YOU.',
+      'IT IS CALLED GOLEMUI. DESCRIBE A FORM IN WORDS—',
+      '—ITS MCP EMITS A VALIDATED {gui.} DEFINITION.',
+    ],
+    cta: 'WIELD IT ▶',
+  },
+  {
+    chapter: '04',
+    act: 'ACT III',
+    title: 'PROMPT IT',
+    quest: 'Describe the support ticket',
+    lines: [
+      'DESCRIBE, they said. Not code — DESCRIBE. Tell the MCP',
+      'what you want in plain language; it returns a validated',
+      '{gui.} definition and the form renders. Your move:',
+    ],
+    cta: 'NEXT ASK ▶',
+  },
+  {
+    chapter: '05',
+    act: 'ACT III',
+    title: 'PROMPT IT',
+    quest: 'Describe the job application',
+    lines: [
+      'HARDER one: a job application — email, a markdown bio,',
+      'and a REPEATABLE experience list with a conditional',
+      'end-date. Still just words. Describe it:',
+    ],
+    cta: 'LAST ONE ▶',
+  },
+  {
+    chapter: '06',
+    act: 'ACT IV',
+    title: 'ONE MORE THING',
+    quest: 'Describe the team setup',
+    lines: [
+      '“…last one. Teams, with NESTED members, and four',
+      'show/hide rules per member.” The boss final form.',
+      'You don’t flinch. You just describe it:',
+    ],
+    cta: 'TAKE ME TO THE APP ▶',
+  },
 ];
 
 const MOVE_LABEL: Record<string, string> = Object.fromEntries(
@@ -130,7 +203,9 @@ export function FormsFromPromptQuest({ framework, onComplete }: FormsFromPromptQ
             {PROMPTS.map((p, i) => (
               <div className="prompt-item" key={p.id}>
                 <div className="pi-head is-static">
-                  <span className="pi-dot" aria-hidden="true">{i + 1}</span>
+                  <span className="pi-dot" aria-hidden="true">
+                    {i + 1}
+                  </span>
                   <span className="pi-label">{p.label}</span>
                 </div>
               </div>
@@ -156,11 +231,20 @@ export function FormsFromPromptQuest({ framework, onComplete }: FormsFromPromptQ
               const on = p.id === active.id;
               const done = cast.has(p.id);
               return (
-                <div key={p.id} className={`prompt-item${on ? ' is-on' : ''}${done ? ' is-done' : ''}`}>
+                <div
+                  key={p.id}
+                  className={`prompt-item${on ? ' is-on' : ''}${done ? ' is-done' : ''}`}
+                >
                   <div className="pi-head is-static">
-                    <span className="pi-dot" aria-hidden="true">{done ? '●' : '○'}</span>
+                    <span className="pi-dot" aria-hidden="true">
+                      {done ? '●' : '○'}
+                    </span>
                     <span className="pi-label">{p.label}</span>
-                    {done && <span className="pi-check" aria-hidden="true">✓</span>}
+                    {done && (
+                      <span className="pi-check" aria-hidden="true">
+                        ✓
+                      </span>
+                    )}
                   </div>
                   {on && <div className="pi-prompt">{renderPrompt(p.prompt)}</div>}
                 </div>
@@ -190,13 +274,19 @@ export function FormsFromPromptQuest({ framework, onComplete }: FormsFromPromptQ
         </div>
         <div className="card-body code-body">
           {castNow ? (
-            <div className="code-banner" role="group" aria-label="The validated GolemUI JSON definition">
+            <div
+              className="code-banner"
+              role="group"
+              aria-label="The validated GolemUI JSON definition"
+            >
               <pre className={`cb-code${pulse ? ' is-pulse' : ''}`}>
                 <code>{highlightJson(json)}</code>
               </pre>
             </div>
           ) : (
-            <div className="code-awaiting" aria-hidden="true">▌ awaiting the MCP…</div>
+            <div className="code-awaiting" aria-hidden="true">
+              ▌ awaiting the MCP…
+            </div>
           )}
         </div>
       </article>
@@ -218,7 +308,11 @@ export function FormsFromPromptQuest({ framework, onComplete }: FormsFromPromptQ
         </div>
         <div className={`card-body app-host${pulse ? ' is-rebuilt' : ''}`} data-theme="8bit">
           {castNow ? (
-            <PromptForm prompt={active} onSubmit={(e) => setSubmitted(e.data)} submitted={submitted} />
+            <PromptForm
+              prompt={active}
+              onSubmit={(e) => setSubmitted(e.data)}
+              submitted={submitted}
+            />
           ) : (
             <div className="app-empty">
               <p>Send the ask to the MCP — the form renders itself.</p>
@@ -261,7 +355,9 @@ export function FormsFromPromptQuest({ framework, onComplete }: FormsFromPromptQ
       }
       const promptId = SCENE_PROMPT[api.scene];
       if (promptId && !cast.has(promptId)) {
-        return [{ key: '1', label: `▸ ${MOVE_LABEL[promptId]}`, action: () => castPrompt(promptId) }];
+        return [
+          { key: '1', label: `▸ ${MOVE_LABEL[promptId]}`, action: () => castPrompt(promptId) },
+        ];
       }
       return [];
     },
@@ -275,7 +371,12 @@ export function FormsFromPromptQuest({ framework, onComplete }: FormsFromPromptQ
     stats: (api) => [
       { label: 'PROMPTS', value: cast.size, accent: 'info' },
       // The punchline: form code stays at 0 — until you panic and hand-code it.
-      { label: 'FORM CODE', value: api.frenzy ? api.frenzyVal : 0, frenzy: api.frenzy, accent: 'warning' },
+      {
+        label: 'FORM CODE',
+        value: api.frenzy ? api.frenzyVal : 0,
+        frenzy: api.frenzy,
+        accent: 'warning',
+      },
     ],
     reveal: () => ({
       title: 'THE BUSINESS MANAGER!!',

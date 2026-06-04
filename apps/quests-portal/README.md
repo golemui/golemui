@@ -32,23 +32,23 @@ The demos + quests experience is **four pieces**. The boundary between them is
 the thing to get right; the intuitive "the 8-bit stuff all lives in the portal"
 guess is wrong.
 
-| Piece | Path | What it is |
-|---|---|---|
-| **`/demos` page** | `docs/src/pages/demos/index.astro` | The marketing showcase — five-pillar accordion; opens a demo inline as an iframe. Part of the main site. |
-| **Demo apps** | `apps/sasha-demo`, `apps/rob-demo` | The two **runnable** demos. Each renders *both* its plain app-direct view **and** its 8-bit walk. Ship to `golemui.com/{sasha,rob}-demo/`. |
-| **Demo engine** | `apps/apps-shared/src/demo-engine/` (`@golemui/demo-engine`) | The shared GameShell state machine + shell chrome. **Imported by the two demo apps only.** Private, never npm-published. |
-| **quests-portal** | `apps/quests-portal` | A **thin host** for the walks. Embeds the demo apps **by URL** (`iframe.src = …/sasha-demo?mode=walk`). Imports **nothing** shared. Becomes `quests.golemui.com`. |
+| Piece             | Path                                                         | What it is                                                                                                                                                        |
+| ----------------- | ------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`/demos` page** | `docs/src/pages/demos/index.astro`                           | The marketing showcase — five-pillar accordion; opens a demo inline as an iframe. Part of the main site.                                                          |
+| **Demo apps**     | `apps/sasha-demo`, `apps/rob-demo`                           | The two **runnable** demos. Each renders _both_ its plain app-direct view **and** its 8-bit walk. Ship to `golemui.com/{sasha,rob}-demo/`.                        |
+| **Demo engine**   | `apps/apps-shared/src/demo-engine/` (`@golemui/demo-engine`) | The shared GameShell state machine + shell chrome. **Imported by the two demo apps only.** Private, never npm-published.                                          |
+| **quests-portal** | `apps/quests-portal`                                         | A **thin host** for the walks. Embeds the demo apps **by URL** (`iframe.src = …/sasha-demo?mode=walk`). Imports **nothing** shared. Becomes `quests.golemui.com`. |
 
 Two boundary rules that answer the recurring "should this be in the portal?"
 question:
 
-- **The 8-bit walk renders *inside* the demo apps, not in the portal.** The
+- **The 8-bit walk renders _inside_ the demo apps, not in the portal.** The
   portal is only the frame that embeds them. So `@golemui/demo-engine` is
   **demo-app code** — it belongs in `apps-shared`, shared between the two demos,
   **never in `quests-portal`**. The portal reaches the walks through the demos,
   by URL.
 - **The portal imports no shared code** (no `@golemui/*`, no engine, no shared
-  SCSS) — which is *why* it lifts cleanly to its own repo. On the split, the
+  SCSS) — which is _why_ it lifts cleanly to its own repo. On the split, the
   demos + the engine **stay in this monorepo** (they ship to `golemui.com`); the
   portal embeds those deployed demos across origins. See checklist A.
 
@@ -117,7 +117,7 @@ When we do this for real, do it cleanly:
 - **New top-level `demos/` folder**, one runnable starter **per demo × per
   framework**: `demos/<demo>/<framework>/` — e.g.
   `demos/forms-as-data/{react,angular,lit,vue,js}/` and
-  `demos/forms-compose/{react,angular,lit,vue,js}/`. Each is the *actual* code
+  `demos/forms-compose/{react,angular,lit,vue,js}/`. Each is the _actual_ code
   behind that demo, not a generic kitchen-sink.
 - **Re-wire the buttons** in `apps/sasha-demo` and `apps/rob-demo`: build the
   StackBlitz URL from `demos/<demo>/<framework>` (the removed buttons used
