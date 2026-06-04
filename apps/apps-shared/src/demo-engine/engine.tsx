@@ -528,12 +528,12 @@ export function QuestBanner({
           onClick={onRestart}
           title="Restart the walk"
         >
-          ↻
+          RESTART
         </button>
       )}
       {onPrev && (
         <button type="button" className="mini-btn qb-nav" onClick={onPrev} disabled={!canPrev}>
-          ← PREV
+          PREV
         </button>
       )}
       {step && <span className="qb-step">{step}</span>}
@@ -936,7 +936,7 @@ function BattleBar({
             onClick={onRestart}
             title="Restart the walk"
           >
-            ↻
+            ↻ RESTART
           </button>
         </div>
       )}

@@ -33,13 +33,6 @@ const MOUNT_BY_FW: Record<Framework, string> = {
   lit: '<gui-form .config=${config} @formSubmit=${onSubmit}>',
   vanilla: "form.config = config;\nform.addEventListener('formSubmit', onSubmit);",
 };
-const WIDGET_BY_FW: Record<Framework, string> = {
-  react: 'itemRenderers: { currency: CurrencyChip }   // a React component',
-  angular: 'itemRenderers: { currency: CurrencyChip }   // an Angular component',
-  vue: 'itemRenderers: { currency: CurrencyChip }   // a Vue SFC',
-  lit: 'itemRenderers: { currency: currencyChip }   // a Lit template',
-  vanilla: 'itemRenderers: { currency: currencyChip }   // a DOM factory',
-};
 
 /* ─── Scenes (content + cinematic flags) ─────────────────────────────── */
 
@@ -179,12 +172,8 @@ export function App() {
   const [submitted, setSubmitted] = useState<Record<string, unknown> | null>(null);
   const [pulse, setPulse] = useState(false);
   const [lastToggled, setLastToggled] = useState<BlockId | null>(null);
-  const [flashNonce, setFlashNonce] = useState(0);
-  // Hovering a box lights its section in the form + its code (the "what is what" cue).
+  // Hovering a compose box lights its lines in the code panel (the "what is what" cue).
   const [hoverSection, setHoverSection] = useState<string | null>(null);
-  // Hover hints for the always-on, free blocks.
-  const [localeFlash, setLocaleFlash] = useState(false);
-  const [a11yHint, setA11yHint] = useState(false);
 
   useEffect(() => {
     if (lastToggled === null) return;
@@ -205,7 +194,6 @@ export function App() {
       return next;
     });
     setLastToggled(id);
-    setFlashNonce((n) => n + 1);
     setSubmitted(null);
   }
 
@@ -221,7 +209,6 @@ export function App() {
           pulse={pulse}
           lastToggled={lastToggled}
           mount={MOUNT_BY_FW[fw]}
-          widget={WIDGET_BY_FW[fw]}
           frameworkName={fw.toUpperCase()}
         />
         <FormCard
@@ -229,7 +216,6 @@ export function App() {
           lang={lang}
           pulse={pulse}
           a11ySpot={a11ySpot}
-          onLang={api.bare ? setLang : undefined}
           submitted={submitted}
           onSubmit={(e) => setSubmitted(pickActiveFields(e.data, active))}
         />
@@ -363,45 +349,24 @@ export function App() {
                 );
               })}
 
-              {/* Accessibility + Localization come free — full blocks, but locked
-                 on. Hovering each shows how to experience it. */}
-              <div
-                className="block-toggle is-free"
-                role="switch"
-                aria-checked="true"
-                aria-disabled="true"
-                tabIndex={0}
-                onMouseEnter={() => setA11yHint(true)}
-                onMouseLeave={() => setA11yHint(false)}
-                onFocus={() => setA11yHint(true)}
-                onBlur={() => setA11yHint(false)}
-              >
+              {/* Accessibility + Localization come free — full blocks, locked on. */}
+              <div className="block-toggle is-free" role="switch" aria-checked="true" aria-disabled="true">
                 <span className="bt-box" aria-hidden="true">
                   ✓
                 </span>
                 <span className="bt-text">
                   <span className="bt-label">♿ Accessibility</span>
-                  <span className="bt-hint">Roles, labels, keyboard &amp; focus — hover, then Tab the form</span>
+                  <span className="bt-hint">Roles, labels, keyboard &amp; focus — Tab the form</span>
                 </span>
                 <span className="bt-power bt-power--free">FREE</span>
               </div>
-              <div
-                className="block-toggle is-free"
-                role="switch"
-                aria-checked="true"
-                aria-disabled="true"
-                tabIndex={0}
-                onMouseEnter={() => setLocaleFlash(true)}
-                onMouseLeave={() => setLocaleFlash(false)}
-                onFocus={() => setLocaleFlash(true)}
-                onBlur={() => setLocaleFlash(false)}
-              >
+              <div className="block-toggle is-free" role="switch" aria-checked="true" aria-disabled="true">
                 <span className="bt-box" aria-hidden="true">
                   ✓
                 </span>
                 <span className="bt-text">
                   <span className="bt-label">🌐 Localization</span>
-                  <span className="bt-hint">Every label is data — hover, then flip EN / 日本語</span>
+                  <span className="bt-hint">Every label is data — flip EN / 日本語</span>
                 </span>
                 <span className="bt-power bt-power--free">FREE</span>
               </div>
@@ -428,6 +393,7 @@ export function App() {
           active={sandboxActive}
           lang={lang}
           onLang={setLang}
+          hoverSection={hoverSection}
           submitted={submitted}
           onSubmit={(e) => setSubmitted(pickActiveFields(e.data, sandboxActive))}
         />
@@ -436,6 +402,23 @@ export function App() {
   };
 
   return <GameShell {...config} />;
+}
+
+// The first field of each section — used to find its wrapper. GolemUI renders
+// each section (a verticalFlex) as one `.gui-flex`, and each field carries
+// data-cy="<path>_<type>"; from the first field we walk up to light the section.
+const SECTION_FIRST_PATH: Record<string, string> = {
+  contact: 'name',
+  address: 'shipStreet',
+  reactive: 'country',
+  conditional: 'billingDiffers',
+  currency: 'currency',
+};
+
+function sectionFor(host: HTMLElement, key: string): Element | null {
+  const first = SECTION_FIRST_PATH[key];
+  if (!first) return null;
+  return host.querySelector(`[data-cy^="${first}"]`)?.closest('.gui-flex') ?? null;
 }
 
 /* ─── BareForm (the /demos app — ONE declarative {gui.} definition) ───────
@@ -447,22 +430,35 @@ function BareForm({
   active,
   lang,
   onLang,
+  hoverSection,
   submitted,
   onSubmit,
 }: {
   active: Set<BlockId>;
   lang: Lang;
   onLang: (l: Lang) => void;
+  hoverSection: string | null;
   submitted: Record<string, unknown> | null;
   onSubmit: (e: FormSubmitEvent) => void;
 }) {
   const formRef = useRef<FormComponentHandle>(null);
+  const hostRef = useRef<HTMLDivElement>(null);
   const localizationRef = useRef<ReturnType<typeof createLocalization> | null>(null);
   if (!localizationRef.current) localizationRef.current = createLocalization(lang);
   const localization = localizationRef.current;
   useEffect(() => {
     localization.setLang(lang);
   }, [lang, localization]);
+
+  // Hovering a compose box lights its whole section in the form (the primary
+  // "which block is which" cue). `active` is a dep so it re-resolves after a
+  // section shows/hides.
+  useEffect(() => {
+    const host = hostRef.current;
+    if (!host) return;
+    host.querySelectorAll('.section-hot').forEach((el) => el.classList.remove('section-hot'));
+    if (hoverSection) sectionFor(host, hoverSection)?.classList.add('section-hot');
+  }, [hoverSection, active]);
 
   // Built ONCE — the definition is stable; block visibility rides in meta, so
   // the form never re-resolves/remounts (which is what would discard edits).
@@ -504,7 +500,7 @@ function BareForm({
           />
         </span>
       </div>
-      <div className="card-body app-host">
+      <div className="card-body app-host" ref={hostRef}>
         <GuiForm ref={formRef} config={config} formSubmit={onSubmit} />
         <ReturnBar
           data={submitted}
@@ -527,19 +523,38 @@ function BareForm({
    box — so box → code → form is one connected chain. */
 type CodeOwner = BlockId | 'base' | 'contact';
 const CODE_LINES: { owner: CodeOwner; depth: number; text: string }[] = [
-  { owner: 'address', depth: 0, text: 'const address = (type: string) => ([' },
-  { owner: 'address', depth: 1, text: 'gui.inputs.textInput(`${type}Street`),' },
-  { owner: 'address', depth: 1, text: 'gui.inputs.textInput(`${type}Postcode`),' },
-  { owner: 'address', depth: 0, text: '])' },
+  // Each card is its OWN flex layout — a header (a display widget) + its fields.
+  { owner: 'base', depth: 0, text: 'const card = (title, fields) => gui.layouts.verticalFlex([' },
+  { owner: 'base', depth: 1, text: 'gui.displays.display(() => title),   // the card title widget' },
+  { owner: 'base', depth: 1, text: '...fields,' },
+  { owner: 'base', depth: 0, text: ']);' },
+  { owner: 'base', depth: 0, text: '' },
+  // The reusable address block, defined once (shipping + billing).
+  { owner: 'address', depth: 0, text: 'const address = (type) => [' },
+  { owner: 'address', depth: 1, text: "gui.inputs.textInput(type+'Street')," },
+  { owner: 'address', depth: 1, text: "gui.inputs.textInput(type+'Postcode')," },
+  { owner: 'address', depth: 0, text: '];' },
+  { owner: 'base', depth: 0, text: '' },
+  // The form — a column of cards, each its own labelled flex layout.
   { owner: 'base', depth: 0, text: 'gui.layouts.column([' },
-  { owner: 'contact', depth: 1, text: "gui.inputs.textInput('name')," },
-  { owner: 'contact', depth: 1, text: "gui.inputs.textInput('email', { validator })," },
-  { owner: 'address', depth: 1, text: "...address('ship'), // one reusable block" },
-  { owner: 'reactive', depth: 1, text: "gui.inputs.dropdown('country', { onChange: setCity })," },
-  { owner: 'reactive', depth: 1, text: "gui.inputs.radiogroup('city', { when: '$country' })," },
-  { owner: 'conditional', depth: 1, text: "gui.inputs.checkbox('billingDiffers')," },
-  { owner: 'conditional', depth: 1, text: "...address('bill'), // reused, when billing differs" },
-  { owner: 'currency', depth: 1, text: "gui.inputs.dropdown('currency', { itemRenderer })," },
+  { owner: 'contact', depth: 1, text: "card('Contact', [" },
+  { owner: 'contact', depth: 2, text: "gui.inputs.textInput('name')," },
+  { owner: 'contact', depth: 2, text: "gui.inputs.textInput('email', { validator })," },
+  { owner: 'contact', depth: 1, text: ']),' },
+  { owner: 'address', depth: 1, text: "card('Shipping', address('ship'))," },
+  { owner: 'base', depth: 1, text: "card('Region', [" },
+  { owner: 'base', depth: 2, text: "gui.inputs.dropdown('country', { onChange: setCity })," },
+  { owner: 'reactive', depth: 2, text: "gui.inputs.radiogroup('city', { when: '$country' })," },
+  { owner: 'base', depth: 1, text: ']),' },
+  { owner: 'conditional', depth: 1, text: "card('Billing', [" },
+  { owner: 'conditional', depth: 2, text: "gui.inputs.checkbox('billingDiffers')," },
+  { owner: 'conditional', depth: 2, text: "gui.layouts.verticalFlex(address('bill'), {" },
+  { owner: 'conditional', depth: 3, text: "include: { when: '$form.billingDiffers' }," },
+  { owner: 'conditional', depth: 2, text: '}),' },
+  { owner: 'conditional', depth: 1, text: ']),' },
+  { owner: 'currency', depth: 1, text: "card('Payment', [" },
+  { owner: 'currency', depth: 2, text: "gui.inputs.dropdown('currency', { itemRenderer })," },
+  { owner: 'currency', depth: 1, text: ']),' },
   { owner: 'base', depth: 1, text: "gui.actions.button({ actionType: 'submit' })," },
   { owner: 'base', depth: 0, text: '])' },
 ];
@@ -617,11 +632,10 @@ interface ComposePanelProps {
   pulse: boolean;
   lastToggled: BlockId | null;
   mount: string;
-  widget: string;
   frameworkName: string;
 }
 
-function ComposePanel({ tree, pulse, lastToggled, mount, widget, frameworkName }: ComposePanelProps) {
+function ComposePanel({ tree, pulse, lastToggled, mount, frameworkName }: ComposePanelProps) {
   return (
     <article className="card card--compose-tree">
       <div className="card-head">
@@ -647,12 +661,6 @@ function ComposePanel({ tree, pulse, lastToggled, mount, widget, frameworkName }
         </pre>
         <div className="mp-mount-block">
           <span className="mp-mount-cap" aria-hidden="true">
-            wrap a native component — {frameworkName}-specific:
-          </span>
-          <pre className="mp-mount mp-mount--widget">
-            <code>{widget}</code>
-          </pre>
-          <span className="mp-mount-cap" aria-hidden="true">
             mounted in {frameworkName}
           </span>
           <pre className="mp-mount">
@@ -664,64 +672,24 @@ function ComposePanel({ tree, pulse, lastToggled, mount, widget, frameworkName }
   );
 }
 
-/* ─── FormCard (right — the composed, rendered form) ──────────────────── */
-
-// The first field of each section — used to find its wrapper (gui renders
-// light-DOM fields with data-cy="<path>_<type>") so we can light the whole section.
-const SECTION_FIRST_PATH: Record<string, string> = {
-  contact: 'name',
-  address: 'shipStreet',
-  reactive: 'country',
-  conditional: 'billingDiffers',
-  currency: 'currency',
-};
+/* ─── FormCard (right — the composed, rendered form, walk path) ───────────
+   The walk rebuilds composeForm(active) as blocks unlock (the {gui.} tree grows
+   scene by scene). Re-labels live via the localization translator. */
 
 interface FormCardProps {
   active: Set<BlockId>;
   lang: Lang;
   pulse: boolean;
   a11ySpot: boolean;
-  onLang?: (l: Lang) => void;
   submitted: Record<string, unknown> | null;
   onSubmit: (e: FormSubmitEvent) => void;
-  flashBlock?: BlockId | null;
-  flashNonce?: number;
-  hoverSection?: string | null;
-  localeFlash?: boolean;
-  a11yHint?: boolean;
 }
 
-// Light a whole section by finding its first field and walking up to its
-// section wrapper (each section is its own verticalFlex → one `.gui-flex`).
-function sectionFor(host: HTMLElement, key: string): Element | null {
-  const first = SECTION_FIRST_PATH[key];
-  if (!first) return null;
-  const field = host.querySelector(`[data-cy^="${first}"]`);
-  return field?.closest('.gui-flex') ?? null;
-}
-
-function FormCard({
-  active,
-  lang,
-  pulse,
-  a11ySpot,
-  onLang,
-  submitted,
-  onSubmit,
-  flashBlock,
-  flashNonce,
-  hoverSection,
-  localeFlash,
-  a11yHint,
-}: FormCardProps) {
+function FormCard({ active, lang, pulse, a11ySpot, submitted, onSubmit }: FormCardProps) {
   const blocksOn = active.size;
-  const hostRef = useRef<HTMLDivElement>(null);
-  // Compose once per block-set — the form re-mounts on a toggle (for the flash),
-  // NOT on a language change. The {gui.} translator below re-labels live instead.
+  // Compose once per block-set; re-mounts on unlock, NOT on a language change —
+  // the {gui.} translator below re-labels live instead.
   const formKey = useMemo(() => [...active].sort().join(','), [active]);
-  // One translator instance, owned by this card. composeForm emits translation
-  // KEYS; this resolves them to the active language and tells GolemUI the lang,
-  // so the <form> flips to dir="rtl" for Arabic on its own.
   const localizationRef = useRef<ReturnType<typeof createLocalization> | null>(null);
   if (!localizationRef.current) localizationRef.current = createLocalization(lang);
   const localization = localizationRef.current;
@@ -738,38 +706,6 @@ function FormCard({
     [active, localization],
   );
 
-  // Hovering a block lights its whole section in the form — the primary cue for
-  // "which block is which". Persistent while hovered, no remount involved.
-  useEffect(() => {
-    const host = hostRef.current;
-    if (!host) return;
-    host.querySelectorAll('.section-hot').forEach((el) => el.classList.remove('section-hot'));
-    if (!hoverSection) return;
-    sectionFor(host, hoverSection)?.classList.add('section-hot');
-  }, [hoverSection, active]);
-
-  // On a block toggle, briefly light the section that just appeared/changed —
-  // after the form re-composes (so it lands after the fields, not on top of them),
-  // and scroll it into view so the change is findable.
-  useEffect(() => {
-    if (!flashNonce || !flashBlock) return;
-    const host = hostRef.current;
-    if (!host) return;
-    let section: Element | null = null;
-    const show = setTimeout(() => {
-      section = sectionFor(host, flashBlock);
-      if (!section) return;
-      section.classList.add('section-flash');
-      section.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }, 320);
-    const clear = setTimeout(() => section?.classList.remove('section-flash'), 2000);
-    return () => {
-      clearTimeout(show);
-      clearTimeout(clear);
-      section?.classList.remove('section-flash');
-    };
-  }, [flashNonce, flashBlock]);
-
   return (
     <article className="card card--app">
       <div className="card-head card-head--form">
@@ -777,38 +713,14 @@ function FormCard({
         <span className="card-sub">
           composed by <code>{'{gui.}'}</code> — {blocksOn} block{blocksOn === 1 ? '' : 's'}
         </span>
-        {onLang && (
-          <span className={`lang-wrap${localeFlash ? ' is-hint' : ''}`}>
-            <LangToggle
-              lang={lang}
-              onLang={(l) => onLang(l as Lang)}
-              langs={[
-                { id: 'en', label: 'EN' },
-                { id: 'ja', label: '日本語' },
-                { id: 'ar', label: 'العربية' },
-              ]}
-            />
-          </span>
-        )}
         <span className={`form-live${pulse ? ' is-on' : ''}`} aria-hidden="true">
           ● {pulse ? 'RE-RENDERED' : 'LIVE'}
         </span>
       </div>
-      <div
-        ref={hostRef}
-        className={`card-body app-host${a11ySpot ? ' a11y-spot' : ''}${
-          localeFlash || a11yHint ? ' hover-flash' : ''
-        }`}
-      >
+      <div className={`card-body app-host${a11ySpot ? ' a11y-spot' : ''}`}>
         {a11ySpot && (
           <div className="a11y-banner" aria-hidden="true">
             ♿ ARIA roles · labels · keyboard · live errors — already there · 🌐 {lang === 'ja' ? '日本語' : 'localised'}
-          </div>
-        )}
-        {a11yHint && (
-          <div className="a11y-tab-hint" role="status">
-            ⇥ Press <kbd>Tab</kbd> — every field is keyboard-navigable, with focus rings, labels &amp;
-            ARIA. Free.
           </div>
         )}
         <GuiForm key={formKey} config={config} formSubmit={onSubmit} />

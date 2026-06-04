@@ -81,7 +81,6 @@ $body: 'VT323', 'Fira Code', monospace;
   color: $pixel-purple-light;
 }
 .qb-step {
-  margin-left: auto;
   font-size: 0.55rem;
   color: #968ea8;
 }
@@ -515,6 +514,7 @@ $body: 'VT323', 'Fira Code', monospace;
 .mini-btn:disabled { opacity: 0.35; cursor: not-allowed; }
 .mini-btn--ghost { border-color: #4a3f6b; }
 .nav-chip {
+  margin-right: auto;
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;

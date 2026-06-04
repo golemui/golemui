@@ -18,15 +18,17 @@ import {
   type GameConfig,
 } from '@golemui/demo-engine';
 import {
-  composeForm,
+  composeFormMeta,
   composeTree,
   createLocalization,
   CurrencyItemRenderer,
+  metaFromActive,
   SEED_DATA,
   type BlockId,
   type Lang,
 } from '@golemui/forms-compose-core';
 import { GuiForm, widgetLoaders } from '@golemui/gui-react';
+import type { FormComponentHandle } from '@golemui/react';
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 
 /* ─── Per-framework code targets ─────────────────────────────────────── */
@@ -37,13 +39,6 @@ const MOUNT_BY_FW: Record<Framework, string> = {
   vue: '<GuiForm :config="config" @form-submit="onSubmit" />',
   lit: '<gui-form .config=${config} @formSubmit=${onSubmit}>',
   vanilla: "form.config = config;\nform.addEventListener('formSubmit', onSubmit);",
-};
-const WIDGET_BY_FW: Record<Framework, string> = {
-  react: 'itemRenderers: { currency: CurrencyChip }   // a React component',
-  angular: 'itemRenderers: { currency: CurrencyChip }   // an Angular component',
-  vue: 'itemRenderers: { currency: CurrencyChip }   // a Vue SFC',
-  lit: 'itemRenderers: { currency: currencyChip }   // a Lit template',
-  vanilla: 'itemRenderers: { currency: currencyChip }   // a DOM factory',
 };
 // The install shown in the boss beat — the primary {gui.} package per framework.
 const INSTALL_BY_FW: Record<Framework, string> = {
@@ -162,7 +157,6 @@ export function FormsComposeQuest({ framework, onComplete }: FormsComposeQuestPr
           pulse={pulse}
           lastToggled={lastToggled}
           mount={MOUNT_BY_FW[fw]}
-          widget={WIDGET_BY_FW[fw]}
           frameworkName={fw.toUpperCase()}
         />
         <FormCard
@@ -273,11 +267,10 @@ interface ComposePanelProps {
   pulse: boolean;
   lastToggled: BlockId | null;
   mount: string;
-  widget: string;
   frameworkName: string;
 }
 
-function ComposePanel({ tree, pulse, lastToggled, mount, widget, frameworkName }: ComposePanelProps) {
+function ComposePanel({ tree, pulse, lastToggled, mount, frameworkName }: ComposePanelProps) {
   return (
     <article className="card card--compose-tree">
       <div className="card-head">
@@ -303,12 +296,6 @@ function ComposePanel({ tree, pulse, lastToggled, mount, widget, frameworkName }
         </pre>
         <div className="mp-mount-block">
           <span className="mp-mount-cap" aria-hidden="true">
-            wrap a native component — {frameworkName}-specific:
-          </span>
-          <pre className="mp-mount mp-mount--widget">
-            <code>{widget}</code>
-          </pre>
-          <span className="mp-mount-cap" aria-hidden="true">
             mounted in {frameworkName}
           </span>
           <pre className="mp-mount">
@@ -320,17 +307,11 @@ function ComposePanel({ tree, pulse, lastToggled, mount, widget, frameworkName }
   );
 }
 
-/* ─── FormCard (the composed, rendered form) ─────────────────────────── */
-
-// The first field of each section — used to find its wrapper (gui renders
-// light-DOM fields with data-cy="<path>_<type>") so we can light the section.
-const SECTION_FIRST_PATH: Record<string, string> = {
-  contact: 'name',
-  address: 'shipStreet',
-  reactive: 'country',
-  conditional: 'billingDiffers',
-  currency: 'currency',
-};
+/* ─── FormCard (the composed, rendered form — ONE declarative {gui.} def) ──
+   Like the /demos bare app, the form is a single composeFormMeta() definition;
+   sections show/hide via GolemUI's include:{when:'$meta._block_*'} reactivity.
+   As blocks unlock (composeMove → walkActive), setMeta flips the flags — the
+   form never rebuilds or remounts, just reveals the next section. */
 
 interface FormCardProps {
   active: Set<BlockId>;
@@ -339,68 +320,36 @@ interface FormCardProps {
   a11ySpot: boolean;
   submitted: Record<string, unknown> | null;
   onSubmit: (e: FormSubmitEvent) => void;
-  flashBlock?: BlockId | null;
-  flashNonce?: number;
 }
 
-function sectionFor(host: HTMLElement, key: string): Element | null {
-  const first = SECTION_FIRST_PATH[key];
-  if (!first) return null;
-  const field = host.querySelector(`[data-cy^="${first}"]`);
-  return field?.closest('.gui-flex') ?? null;
-}
-
-function FormCard({
-  active,
-  lang,
-  pulse,
-  a11ySpot,
-  submitted,
-  onSubmit,
-  flashBlock,
-  flashNonce,
-}: FormCardProps) {
+function FormCard({ active, lang, pulse, a11ySpot, submitted, onSubmit }: FormCardProps) {
   const blocksOn = active.size;
-  const hostRef = useRef<HTMLDivElement>(null);
-  // Compose once per block-set — the form re-mounts on a toggle (for the flash),
-  // NOT on a language change. The {gui.} translator below re-labels live instead.
-  const formKey = useMemo(() => [...active].sort().join(','), [active]);
+  const formRef = useRef<FormComponentHandle>(null);
   const localizationRef = useRef<ReturnType<typeof createLocalization> | null>(null);
   if (!localizationRef.current) localizationRef.current = createLocalization(lang);
   const localization = localizationRef.current;
   useEffect(() => {
     localization.setLang(lang);
   }, [lang, localization]);
+
+  // Built ONCE — block visibility rides in meta, so unlocking a block never
+  // re-resolves/remounts the form (`active` only seeds the initial meta).
   const config = useMemo(
     () => ({
-      formDef: composeForm(active),
+      formDef: composeFormMeta(),
       data: SEED_DATA,
       formConfig: { widgetLoaders, itemRenderers: { currency: CurrencyItemRenderer } },
       localization,
+      meta: metaFromActive(active),
     }),
-    [active, localization],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [localization],
   );
 
-  // On a block toggle, briefly light the section that just appeared/changed —
-  // after the form re-composes, and scroll it into view so the change is findable.
+  // Reveal each section as its block unlocks — live, no rebuild.
   useEffect(() => {
-    if (!flashNonce || !flashBlock) return;
-    const host = hostRef.current;
-    if (!host) return;
-    let section: Element | null = null;
-    const show = setTimeout(() => {
-      section = sectionFor(host, flashBlock);
-      if (!section) return;
-      section.classList.add('section-flash');
-      section.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }, 320);
-    const clear = setTimeout(() => section?.classList.remove('section-flash'), 2000);
-    return () => {
-      clearTimeout(show);
-      clearTimeout(clear);
-      section?.classList.remove('section-flash');
-    };
-  }, [flashNonce, flashBlock]);
+    formRef.current?.setMeta(metaFromActive(active));
+  }, [active]);
 
   return (
     <article className="card card--app">
@@ -413,17 +362,13 @@ function FormCard({
           ● {pulse ? 'RE-RENDERED' : 'LIVE'}
         </span>
       </div>
-      <div
-        ref={hostRef}
-        className={`card-body app-host${a11ySpot ? ' a11y-spot' : ''}`}
-        data-theme="8bit"
-      >
+      <div className={`card-body app-host${a11ySpot ? ' a11y-spot' : ''}`} data-theme="8bit">
         {a11ySpot && (
           <div className="a11y-banner" aria-hidden="true">
             ♿ ARIA roles · labels · keyboard · live errors — already there · 🌐 {lang === 'ja' ? '日本語' : 'localised'}
           </div>
         )}
-        <GuiForm key={formKey} config={config} formSubmit={onSubmit} />
+        <GuiForm ref={formRef} config={config} formSubmit={onSubmit} />
         <ReturnBar
           data={submitted}
           filledNote="one composed definition in, one typed payload out."

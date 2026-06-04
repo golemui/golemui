@@ -157,88 +157,79 @@ const header = (key: LabelKey) =>
     createElement('p', { className: 'sec-head' }, translate ? translate(key) : LABELS.en[key]),
   );
 
-export function composeForm(active: Set<BlockId>) {
-  // Each block is its own labelled SECTION (a verticalFlex with a header), in the
-  // same order as the COMPOSE checklist — so a block ↔ a section is obvious, and
-  // hovering a block can light its whole section.
-  const def: any[] = [
-    gui.layouts.verticalFlex([
-      header('secContact'),
-      gui.inputs.textInput('name', { label: L('name') }),
-      gui.inputs.textInput('email', { label: L('email'), validator: { format: 'email' } }),
-    ] as any),
+// A "card" — one section as its own flex layout: the header display widget plus
+// its fields. Every card is a verticalFlex, so a block ↔ a card ↔ its code is
+// obvious. `opts` carries an include condition when the card is conditional.
+const card = (key: LabelKey, children: any[], opts?: any) =>
+  gui.layouts.verticalFlex([header(key), ...children] as any, opts);
+
+// The Region card's fields — country (optionally reactive) + the city radiogroup.
+// `cityWhen` gates the city: the quest shows it once a country is picked; the
+// bare screen also requires its block flag.
+function regionFields(reactive: boolean, cityWhen = '!!$form.country') {
+  return [
+    gui.inputs.dropdown('country', {
+      label: L('country'),
+      items: COUNTRIES,
+      ...(reactive
+        ? {
+            onChange: ({ data, update }: any) => {
+              const c = (data as FormShape).country ?? '';
+              update({ path: 'city', options: CITIES[c] ?? [] });
+            },
+          }
+        : {}),
+    }),
+    ...(reactive
+      ? [
+          gui.inputs.radiogroup('city', {
+            label: L('city'),
+            options: [],
+            include: { when: cityWhen },
+            onLoad: ({ data, update }: any) => {
+              const c = (data as FormShape).country ?? '';
+              if (c) update({ path: 'city', options: CITIES[c] ?? [] });
+            },
+          }),
+        ]
+      : []),
   ];
+}
 
-  // 1 · Address block (reused shipping address).
-  if (active.has('address')) {
-    def.push(
-      gui.layouts.verticalFlex([header('shipping'), ...addressFields('ship')] as any),
-    );
-  }
+// The Billing card's fields — the SAME address block, reused + gated by the
+// billingDiffers checkbox.
+const billingFields = () => [
+  gui.inputs.checkbox('billingDiffers', { label: L('billingDiffers') }),
+  gui.layouts.verticalFlex(addressFields('bill') as any, {
+    include: { when: '$form.billingDiffers == true' },
+  } as any),
+];
 
-  // 2 · Reactive — country drives city.
-  def.push(
-    gui.layouts.verticalFlex([
-      header('secRegion'),
-      gui.inputs.dropdown('country', {
-        label: L('country'),
-        items: COUNTRIES,
-        ...(active.has('reactive')
-          ? {
-              onChange: ({ data, update }: any) => {
-                const c = (data as FormShape).country ?? '';
-                update({ path: 'city', options: CITIES[c] ?? [] });
-              },
-            }
-          : {}),
-      }),
-      ...(active.has('reactive')
-        ? [
-            gui.inputs.radiogroup('city', {
-              label: L('city'),
-              options: [],
-              include: { when: '!!$form.country' },
-              onLoad: ({ data, update }: any) => {
-                const c = (data as FormShape).country ?? '';
-                if (c) update({ path: 'city', options: CITIES[c] ?? [] });
-              },
-            }),
-          ]
-        : []),
-    ] as any),
-  );
+// The Payment card's field — a custom-rendered currency dropdown.
+const currencyFields = () => [
+  gui.inputs.dropdown('currency', {
+    label: L('currency'),
+    // Object items paired with labelField/valueField + a custom renderer; the
+    // factory's items type doesn't model that combo, so widen it.
+    items: CURRENCIES as unknown as Record<string, unknown>[],
+    labelField: 'code',
+    valueField: 'code',
+    itemRenderer: 'currency',
+  }),
+];
 
-  // 3 · Conditional billing — the SAME address block, reused + gated.
-  if (active.has('conditional')) {
-    def.push(
-      gui.layouts.verticalFlex([
-        header('secBilling'),
-        gui.inputs.checkbox('billingDiffers', { label: L('billingDiffers') }),
-        gui.layouts.verticalFlex(addressFields('bill') as any, {
-          include: { when: '$form.billingDiffers == true' },
-        } as any),
-      ] as any),
-    );
-  }
+const contactFields = () => [
+  gui.inputs.textInput('name', { label: L('name') }),
+  gui.inputs.textInput('email', { label: L('email'), validator: { format: 'email' } }),
+];
 
-  // 4 · Currency — a custom-rendered dropdown.
-  if (active.has('currency')) {
-    def.push(
-      gui.layouts.verticalFlex([
-        header('secCurrency'),
-        gui.inputs.dropdown('currency', {
-          label: L('currency'),
-          // Object items paired with labelField/valueField + a custom renderer;
-          // the factory's items type doesn't model that combo, so widen it.
-          items: CURRENCIES as unknown as Record<string, unknown>[],
-          labelField: 'code',
-          valueField: 'code',
-          itemRenderer: 'currency',
-        }),
-      ] as any),
-    );
-  }
-
+export function composeForm(active: Set<BlockId>) {
+  // One card per block, pushed by membership — the same order as the checklist.
+  const def: any[] = [card('secContact', contactFields())];
+  if (active.has('address')) def.push(card('shipping', addressFields('ship')));
+  def.push(card('secRegion', regionFields(active.has('reactive'))));
+  if (active.has('conditional')) def.push(card('secBilling', billingFields()));
+  if (active.has('currency')) def.push(card('secCurrency', currencyFields()));
   def.push(gui.actions.button({ label: L('save'), actionType: 'submit' }));
   return def;
 }
@@ -269,68 +260,22 @@ export function metaFromActive(active: Set<BlockId>): Record<string, boolean> {
 export function composeFormMeta() {
   return [
     // Contact — always present, the base of every form.
-    gui.layouts.verticalFlex([
-      header('secContact'),
-      gui.inputs.textInput('name', { label: L('name') }),
-      gui.inputs.textInput('email', { label: L('email'), validator: { format: 'email' } }),
-    ] as any),
+    card('secContact', contactFields()),
 
     // Shipping address — the reused block, shown when its flag is on.
-    gui.layouts.verticalFlex([header('shipping'), ...addressFields('ship')] as any, {
-      include: { when: '$meta._block_address == true' },
-    } as any),
+    card('shipping', addressFields('ship'), { include: { when: '$meta._block_address == true' } }),
 
     // Region — country is always shown (and always reactive: updating a hidden
     // city's options is harmless). City appears once the reactive flag is on AND
     // a country is chosen.
-    gui.layouts.verticalFlex([
-      header('secRegion'),
-      gui.inputs.dropdown('country', {
-        label: L('country'),
-        items: COUNTRIES,
-        onChange: ({ data, update }: any) => {
-          const c = (data as FormShape).country ?? '';
-          update({ path: 'city', options: CITIES[c] ?? [] });
-        },
-      }),
-      gui.inputs.radiogroup('city', {
-        label: L('city'),
-        options: [],
-        include: { when: '$meta._block_reactive == true && !!$form.country' },
-        onLoad: ({ data, update }: any) => {
-          const c = (data as FormShape).country ?? '';
-          if (c) update({ path: 'city', options: CITIES[c] ?? [] });
-        },
-      }),
-    ] as any),
+    card('secRegion', regionFields(true, '$meta._block_reactive == true && !!$form.country')),
 
-    // Conditional billing — the SAME address block, reused + gated by its flag,
-    // its inner address further gated by the billingDiffers checkbox.
-    gui.layouts.verticalFlex(
-      [
-        header('secBilling'),
-        gui.inputs.checkbox('billingDiffers', { label: L('billingDiffers') }),
-        gui.layouts.verticalFlex(addressFields('bill') as any, {
-          include: { when: '$form.billingDiffers == true' },
-        } as any),
-      ] as any,
-      { include: { when: '$meta._block_conditional == true' } } as any,
-    ),
+    // Conditional billing — the SAME address block, reused + gated by its flag
+    // (its inner address further gated by the billingDiffers checkbox).
+    card('secBilling', billingFields(), { include: { when: '$meta._block_conditional == true' } }),
 
     // Payment — a custom-rendered currency dropdown, shown when its flag is on.
-    gui.layouts.verticalFlex(
-      [
-        header('secCurrency'),
-        gui.inputs.dropdown('currency', {
-          label: L('currency'),
-          items: CURRENCIES as unknown as Record<string, unknown>[],
-          labelField: 'code',
-          valueField: 'code',
-          itemRenderer: 'currency',
-        }),
-      ] as any,
-      { include: { when: '$meta._block_currency == true' } } as any,
-    ),
+    card('secCurrency', currencyFields(), { include: { when: '$meta._block_currency == true' } }),
 
     gui.actions.button({ label: L('save'), actionType: 'submit' }),
   ];
@@ -349,45 +294,59 @@ export function composeTree(active: Set<BlockId>): TreeLine[] {
   const push = (owner: TreeLine['owner'], depth: number, text: string) =>
     lines.push({ owner, depth, text });
 
-  // The reusable block, defined once.
+  // Each card is its OWN flex layout — a header (a display widget) + its fields.
+  push('base', 0, 'const card = (title, fields) => gui.layouts.verticalFlex([');
+  push('base', 1, 'gui.displays.display(() => title),   // the card title widget');
+  push('base', 1, '...fields,');
+  push('base', 0, ']);');
+  push('base', 0, '');
+
+  // The reusable address block, defined once (shipping + billing).
   if (active.has('address') || active.has('conditional')) {
-    push('address', 0, 'const address = (p) => [');
-    push('address', 1, "gui.inputs.textInput(p+'Street'),");
-    push('address', 1, "gui.inputs.textInput(p+'Postcode'),");
+    push('address', 0, 'const address = (type) => [');
+    push('address', 1, "gui.inputs.textInput(type+'Street'),");
+    push('address', 1, "gui.inputs.textInput(type+'Postcode'),");
     push('address', 0, '];');
     push('base', 0, '');
   }
 
-  push('base', 0, 'gui.layouts.column([');
-  push('base', 1, "gui.inputs.textInput('name'),");
-  push('base', 1, "gui.inputs.textInput('email', { validator }),");
+  // The {gui.} form config — a column of cards, handed to <GuiForm config={config}>.
+  push('base', 0, 'const config = { formDef: gui.layouts.column([');
 
-  if (active.has('reactive')) {
-    push('reactive', 1, "gui.inputs.dropdown('country', {");
-    push('reactive', 2, 'onChange: ({ update }) => update({ path: city }),');
-    push('reactive', 1, '}),');
-    push('reactive', 1, "gui.inputs.radiogroup('city', {");
-    push('reactive', 2, "include: { when: '$form.country' },");
-    push('reactive', 1, '}),');
-  } else {
-    push('base', 1, "gui.inputs.dropdown('country'),");
-  }
+  push('base', 1, "card('Contact', [");
+  push('base', 2, "gui.inputs.textInput('name'),");
+  push('base', 2, "gui.inputs.textInput('email', { validator }),");
+  push('base', 1, ']),');
 
   if (active.has('address')) {
-    push('address', 1, "...address('ship'),   // reused");
+    push('address', 1, "card('Shipping', address('ship')),   // reused block");
   }
-  if (active.has('currency')) {
-    push('currency', 1, "gui.inputs.dropdown('currency', {");
-    push('currency', 2, "itemRenderer: 'currency',");
-    push('currency', 1, '}),');
+
+  push('base', 1, "card('Region', [");
+  if (active.has('reactive')) {
+    push('reactive', 2, "gui.inputs.dropdown('country', { onChange: setCity }),");
+    push('reactive', 2, "gui.inputs.radiogroup('city', { when: '$country' }),");
+  } else {
+    push('base', 2, "gui.inputs.dropdown('country'),");
   }
+  push('base', 1, ']),');
+
   if (active.has('conditional')) {
-    push('conditional', 1, "gui.inputs.checkbox('billingDiffers'),");
-    push('conditional', 1, "...address('bill'),   // same block, again");
-    push('conditional', 1, "// ^ include: { when: billingDiffers }");
+    push('conditional', 1, "card('Billing', [");
+    push('conditional', 2, "gui.inputs.checkbox('billingDiffers'),");
+    push('conditional', 2, "gui.layouts.verticalFlex(address('bill'), {");
+    push('conditional', 3, "include: { when: '$form.billingDiffers' },");
+    push('conditional', 2, '}),   // same block, again');
+    push('conditional', 1, ']),');
+  }
+
+  if (active.has('currency')) {
+    push('currency', 1, "card('Payment', [");
+    push('currency', 2, "gui.inputs.dropdown('currency', { itemRenderer }),");
+    push('currency', 1, ']),');
   }
 
   push('base', 1, "gui.actions.button({ actionType: 'submit' }),");
-  push('base', 0, '])');
+  push('base', 0, ']) };');
   return lines;
 }
