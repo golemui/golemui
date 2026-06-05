@@ -174,9 +174,105 @@ export const set = (object: Record<string, any>, path: DotPath, value: any) => {
   return object;
 };
 
+/**
+ * Removes the property at the given dot-path from object by mutation.
+ * After deletion, any ancestor plain objects that become empty are also removed.
+ * Ancestor arrays that become empty are left in place — upward pruning stops as
+ * soon as an array boundary is encountered.
+ *
+ * @param object - The object to modify
+ * @param path - The dot-separated path of the property to remove (e.g. "user.profile.name").
+ *   Pass an empty string to return the object unchanged.
+ * @returns The modified object (mutates the original object). Returns unchanged if path is
+ *   empty or does not exist.
+ *
+ * @example
+ * Basic property removal with sibling preserved:
+ * ```typescript
+ * const obj = { user: { name: 'John', age: 30 } };
+ * unset(obj, 'user.name');
+ * // Result: { user: { age: 30 } }
+ * ```
+ *
+ * @example
+ * Recursive pruning of empty ancestors:
+ * ```typescript
+ * const obj = { a: { b: { c: 1 } } };
+ * unset(obj, 'a.b.c');
+ * // Result: {} — 'b' and 'a' are pruned because they became empty objects
+ * ```
+ *
+ * @example
+ * Pruning stops at array boundaries:
+ * ```typescript
+ * const obj = { items: [{ name: 'Alice' }] };
+ * unset(obj, 'items.0.name');
+ * // Result: { items: [{}] } — the empty object is kept inside the array
+ * ```
+ */
+export const unset = <T extends Record<string, any>>(object: T, path: DotPath): T => {
+  if (path === '') {
+    return object;
+  }
+
+  const segments = path.split('.');
+  const containers: Array<any> = [object];
+
+  // Collect each intermediate container along the path
+  for (let i = 0; i < segments.length - 1; i++) {
+    const current = containers[i];
+    if (current === null || current === undefined || typeof current !== 'object') {
+      return object;
+    }
+    const segment = segments[i];
+    const next = Array.isArray(current) ? current[parseInt(segment, 10)] : current[segment];
+    if (next === null || next === undefined || typeof next !== 'object') {
+      return object;
+    }
+    containers.push(next);
+  }
+
+  // Delete the target property from its direct container
+  const targetContainer = containers[containers.length - 1];
+  const targetSegment = segments[segments.length - 1];
+  if (Array.isArray(targetContainer)) {
+    targetContainer.splice(parseInt(targetSegment, 10), 1);
+  } else {
+    delete targetContainer[targetSegment];
+  }
+
+  // Walk up, pruning ancestor plain objects that became empty.
+  // Stop when hitting a non-empty container or an array.
+  for (let i = containers.length - 1; i >= 1; i--) {
+    const child = containers[i];
+    if (Array.isArray(child) || !isEmptyPlainObject(child)) {
+      break;
+    }
+    const parent = containers[i - 1];
+    const segment = segments[i - 1];
+    if (Array.isArray(parent)) {
+      break;
+    } else {
+      delete parent[segment];
+    }
+  }
+
+  return object;
+};
+
 function isIndex(value: string) {
   const num = Number(value);
   return Number.isInteger(num) && num >= 0 && num.toString() === value;
+}
+
+function isEmptyPlainObject(value: any): boolean {
+  return (
+    value !== null &&
+    value !== undefined &&
+    typeof value === 'object' &&
+    !Array.isArray(value) &&
+    Object.keys(value).length === 0
+  );
 }
 
 /**

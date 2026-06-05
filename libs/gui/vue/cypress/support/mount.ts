@@ -1,4 +1,4 @@
-import type { WidgetLoaders, WithWidget } from '@golemui/core';
+import type { FormSubmitEvent, WidgetLoaders, WithWidget } from '@golemui/core';
 import type { GuiFormInitConfig } from '@golemui/gui-shared';
 import type { MountOptions } from '@golemui/ui-testing';
 import { h, ref, type Component } from 'vue';
@@ -15,6 +15,9 @@ export const mountFramework = (options: MountOptions) => {
 
   const handleFormEvent = options.formEvent ? options.formEvent : cy.spy().as('formEvent');
   const handleFormHealth = options.formHealth ? options.formHealth : cy.spy().as('formHealth');
+  const handleFormSubmit = options.formSubmit
+    ? options.formSubmit
+    : (cy.spy().as('formSubmit') as unknown as (event: FormSubmitEvent) => void);
 
   const config: GuiFormInitConfig = {
     formDef: options.formDef,
@@ -38,6 +41,7 @@ export const mountFramework = (options: MountOptions) => {
       config,
       'onForm-event': handleFormEvent,
       'onForm-health': handleFormHealth,
+      'onForm-submit': handleFormSubmit,
     }),
   );
 
