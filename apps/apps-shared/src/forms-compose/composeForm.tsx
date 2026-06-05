@@ -380,7 +380,7 @@ export function composeTree(active: Set<BlockId>, framework = 'react'): TreeLine
 
   push('base', 2, "card('Contact', [");
   push('base', 3, "gui.inputs.textInput('name'),");
-  push('base', 3, "gui.inputs.textInput('email', { validator }),");
+  push('base', 3, "gui.inputs.textInput('email', { required: true, format: 'email' }),");
   push('base', 2, ']),');
 
   if (active.has('address')) {
@@ -389,7 +389,7 @@ export function composeTree(active: Set<BlockId>, framework = 'react'): TreeLine
 
   push('base', 2, "card('Region', [");
   if (active.has('reactive')) {
-    push('reactive', 3, "gui.inputs.dropdown('country', { onChange: setCity }),");
+    push('reactive', 3, "gui.inputs.dropdown('country', { onChange: () => { /* fetch data */ }) }),");
     push('reactive', 3, "gui.inputs.radiogroup('city', { when: '$form.country' !== undefined }),");
   } else {
     push('base', 3, "gui.inputs.dropdown('country'),");
@@ -407,7 +407,7 @@ export function composeTree(active: Set<BlockId>, framework = 'react'): TreeLine
 
   if (active.has('currency')) {
     push('currency', 2, "card('Payment', [");
-    push('currency', 3, "gui.inputs.dropdown('currency', { itemRenderer }),");
+    push('currency', 3, "gui.inputs.dropdown('currency', { itemRenderer: 'currency' }),");
     push('currency', 2, ']),');
   }
 
