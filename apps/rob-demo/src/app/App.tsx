@@ -9,17 +9,20 @@ import {
   type Framework,
 } from '@golemui/demo-engine';
 import { GuiForm, widgetLoaders } from '@golemui/gui-react';
+import type { FormComponentHandle } from '@golemui/react';
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import {
   BLOCKS,
   composeForm,
+  composeFormMeta,
   composeTree,
   createLocalization,
+  CurrencyItemRenderer,
+  metaFromActive,
   SEED_DATA,
   type BlockId,
   type Lang,
-} from './composeForm';
-import { CurrencyItemRenderer } from './CurrencyItemRenderer';
+} from '@golemui/forms-compose-core';
 
 /* ─── Per-framework code targets ─────────────────────────────────────── */
 
@@ -30,43 +33,139 @@ const MOUNT_BY_FW: Record<Framework, string> = {
   lit: '<gui-form .config=${config} @formSubmit=${onSubmit}>',
   vanilla: "form.config = config;\nform.addEventListener('formSubmit', onSubmit);",
 };
-const WIDGET_BY_FW: Record<Framework, string> = {
-  react: 'itemRenderers: { currency: CurrencyChip }   // a React component',
-  angular: 'itemRenderers: { currency: CurrencyChip }   // an Angular component',
-  vue: 'itemRenderers: { currency: CurrencyChip }   // a Vue SFC',
-  lit: 'itemRenderers: { currency: currencyChip }   // a Lit template',
-  vanilla: 'itemRenderers: { currency: currencyChip }   // a DOM factory',
-};
 
 /* ─── Scenes (content + cinematic flags) ─────────────────────────────── */
 
 interface RobScene {
-  chapter: string; act?: string; title: string; quest?: string;
-  boss?: boolean; bossTitle?: string; itemGet?: boolean;
-  lines: string[]; cta?: string;
+  chapter: string;
+  act?: string;
+  title: string;
+  quest?: string;
+  boss?: boolean;
+  bossTitle?: string;
+  itemGet?: boolean;
+  lines: string[];
+  cta?: string;
 }
 
 const SCENES: RobScene[] = [
-  { chapter: '00', title: 'CHOOSE YOUR HERO', quest: 'Pick your class',
-    lines: ['BEFORE THE JOB: A CHOICE.', 'GOLEMUI RUNS IN ANY FRAMEWORK. WHICH IS YOURS?'], cta: '▶ BEGIN' },
-  { chapter: '01', act: 'ACT I', title: 'THE BRIEF', quest: 'Ship a signup form',
-    lines: ['A client calls. “We need a form. Signup —', 'name, email, a country dropdown. Nothing fancy.”', '“…Friday?” Easy. Three inputs. You hand-roll it.'], cta: 'SHIP IT ▶' },
-  { chapter: '02', act: 'ACT II', title: 'THE CALLBACK', quest: 'A 2nd form — don’t rewrite',
-    lines: ['…they call back. “LOVE it. Now a CHECKOUT too.”', '“Same address fields. Same validation. Don’t rewrite it.”', 'You copy-paste the block. A flicker of doubt.'], cta: 'FINE… ▶' },
-  { chapter: '03', act: 'ACT II', title: 'THE CREEP', quest: 'Make it react & branch',
-    lines: ['“Oh — city should FOLLOW the country.”', '“And billing? Only show it when it DIFFERS.”', 'The wiring spaghetti is starting to smell.'], cta: 'UH-OH ▶' },
-  { chapter: '04', act: 'ACT II', title: 'THE CLIENT!!', bossTitle: '👹 THE CLIENT', boss: true, quest: 'Survive the endless client',
-    lines: ['AND OUR OWN CURRENCY WIDGET. AND, AND, AND—', 'THE REQUESTS NEVER STOP. NESTED. MUTATING.', 'HAND-CODE THIS TANGLE FOREVER? OR…'] },
-  { chapter: '05', act: 'ACT III', title: 'ITEM GET', itemGet: true, quest: 'Claim the engine',
-    lines: ['A LEGENDARY ENGINE IS BESTOWED UPON YOU.', 'IT IS CALLED GOLEMUI. EVERY UI IS COMPOSED—', '—LAYOUTS, INPUTS, ACTIONS. EVEN THE HARD PARTS.'], cta: 'WIELD IT ▶' },
-  { chapter: '06', act: 'ACT III', title: 'REUSE', quest: 'Reuse one block, twice',
-    lines: ['REUSE, they said. Write the address block ONCE,', 'then drop it into shipping AND billing — a block is', 'just a value. Your move:'], cta: 'NICE ▶' },
-  { chapter: '07', act: 'ACT III', title: 'LOGIC', quest: 'Compose react + conditional',
-    lines: ['LOGIC, they said. City should follow country; billing', 'shows only when it differs. Declared, not wired —', 'compose both:'], cta: 'KEEP GOING ▶' },
-  { chapter: '08', act: 'ACT III', title: 'INTEGRATE', quest: 'Wrap your own widget',
-    lines: ['YOUR widget, they said. Wrap your framework’s own', 'component as a custom renderer — like any other field.', 'Drop it in:'], cta: 'ALMOST ▶' },
-  { chapter: '09', act: 'ACT IV', title: 'ONE MORE THING', quest: 'Ship it worldwide',
-    lines: ['“…one more thing. It ships to 12 COUNTRIES.', 'And legal wants a clean ACCESSIBILITY pass. Monday.”', 'Relax. It already shipped that way — watch.'], cta: 'TAKE ME TO THE APP ▶' },
+  {
+    chapter: '00',
+    title: 'CHOOSE YOUR HERO',
+    quest: 'Pick your class',
+    lines: ['BEFORE THE JOB: A CHOICE.', 'GOLEMUI RUNS IN ANY FRAMEWORK. WHICH IS YOURS?'],
+    cta: '▶ BEGIN',
+  },
+  {
+    chapter: '01',
+    act: 'ACT I',
+    title: 'THE BRIEF',
+    quest: 'Ship a signup form',
+    lines: [
+      'A client calls. “We need a form. Signup —',
+      'name, email, a country dropdown. Nothing fancy.”',
+      '“…Friday?” Easy. Three inputs. You hand-roll it.',
+    ],
+    cta: 'SHIP IT ▶',
+  },
+  {
+    chapter: '02',
+    act: 'ACT II',
+    title: 'THE CALLBACK',
+    quest: 'A 2nd form — don’t rewrite',
+    lines: [
+      '…they call back. “LOVE it. Now a CHECKOUT too.”',
+      '“Same address fields. Same validation. Don’t rewrite it.”',
+      'You copy-paste the block. A flicker of doubt.',
+    ],
+    cta: 'FINE… ▶',
+  },
+  {
+    chapter: '03',
+    act: 'ACT II',
+    title: 'THE CREEP',
+    quest: 'Make it react & branch',
+    lines: [
+      '“Oh — city should FOLLOW the country.”',
+      '“And billing? Only show it when it DIFFERS.”',
+      'The wiring spaghetti is starting to smell.',
+    ],
+    cta: 'UH-OH ▶',
+  },
+  {
+    chapter: '04',
+    act: 'ACT II',
+    title: 'THE CLIENT!!',
+    bossTitle: '👹 THE CLIENT',
+    boss: true,
+    quest: 'Survive the endless client',
+    lines: [
+      'AND OUR OWN CURRENCY WIDGET. AND, AND, AND—',
+      'THE REQUESTS NEVER STOP. NESTED. MUTATING.',
+      'HAND-CODE THIS TANGLE FOREVER? OR…',
+    ],
+  },
+  {
+    chapter: '05',
+    act: 'ACT III',
+    title: 'ITEM GET',
+    itemGet: true,
+    quest: 'Claim the engine',
+    lines: [
+      'A LEGENDARY ENGINE IS BESTOWED UPON YOU.',
+      'IT IS CALLED GOLEMUI. EVERY UI IS COMPOSED—',
+      '—LAYOUTS, INPUTS, ACTIONS. EVEN THE HARD PARTS.',
+    ],
+    cta: 'WIELD IT ▶',
+  },
+  {
+    chapter: '06',
+    act: 'ACT III',
+    title: 'REUSE',
+    quest: 'Reuse one block, twice',
+    lines: [
+      'REUSE, they said. Write the address block ONCE,',
+      'then drop it into shipping AND billing — a block is',
+      'just a value. Your move:',
+    ],
+    cta: 'NICE ▶',
+  },
+  {
+    chapter: '07',
+    act: 'ACT III',
+    title: 'LOGIC',
+    quest: 'Compose react + conditional',
+    lines: [
+      'LOGIC, they said. City should follow country; billing',
+      'shows only when it differs. Declared, not wired —',
+      'compose both:',
+    ],
+    cta: 'KEEP GOING ▶',
+  },
+  {
+    chapter: '08',
+    act: 'ACT III',
+    title: 'INTEGRATE',
+    quest: 'Wrap your own widget',
+    lines: [
+      'YOUR widget, they said. Wrap your framework’s own',
+      'component as a custom renderer — like any other field.',
+      'Drop it in:',
+    ],
+    cta: 'ALMOST ▶',
+  },
+  {
+    chapter: '09',
+    act: 'ACT IV',
+    title: 'ONE MORE THING',
+    quest: 'Ship it worldwide',
+    lines: [
+      '“…one more thing. It ships to 12 COUNTRIES.',
+      'And legal wants a clean ACCESSIBILITY pass. Monday.”',
+      'Relax. It already shipped that way — watch.',
+    ],
+    cta: 'TAKE ME TO THE APP ▶',
+  },
 ];
 
 const SCENE_MOVES: Record<number, BlockId[]> = {
@@ -100,7 +199,9 @@ const INSTALL_BY_FW: Record<Framework, string> = {
   vanilla: 'npm i @golemui/gui-lit',
 };
 const PARAMS =
-  typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : new URLSearchParams();
+  typeof window !== 'undefined'
+    ? new URLSearchParams(window.location.search)
+    : new URLSearchParams();
 // App-direct by default — the guided walk is opt-in via ?mode=walk.
 const START_BARE = PARAMS.get('mode') !== 'walk';
 const FW_IDS: Framework[] = ['react', 'angular', 'lit', 'vue', 'vanilla'];
@@ -117,7 +218,12 @@ const SECTION_BOXES: {
   blockId?: BlockId;
   locked?: boolean;
 }[] = [
-  { key: 'contact', section: 'Contact', hint: 'Name + email — the base of every form', locked: true },
+  {
+    key: 'contact',
+    section: 'Contact',
+    hint: 'Name + email — the base of every form',
+    locked: true,
+  },
   {
     key: 'address',
     section: 'Shipping address',
@@ -176,12 +282,8 @@ export function App() {
   const [submitted, setSubmitted] = useState<Record<string, unknown> | null>(null);
   const [pulse, setPulse] = useState(false);
   const [lastToggled, setLastToggled] = useState<BlockId | null>(null);
-  const [flashNonce, setFlashNonce] = useState(0);
-  // Hovering a box lights its section in the form + its code (the "what is what" cue).
+  // Hovering a compose box lights its lines in the code panel (the "what is what" cue).
   const [hoverSection, setHoverSection] = useState<string | null>(null);
-  // Hover hints for the always-on, free blocks.
-  const [localeFlash, setLocaleFlash] = useState(false);
-  const [a11yHint, setA11yHint] = useState(false);
 
   useEffect(() => {
     if (lastToggled === null) return;
@@ -202,7 +304,6 @@ export function App() {
       return next;
     });
     setLastToggled(id);
-    setFlashNonce((n) => n + 1);
     setSubmitted(null);
   }
 
@@ -214,11 +315,10 @@ export function App() {
     return (
       <>
         <ComposePanel
-          tree={composeTree(active)}
+          tree={composeTree(active, fw)}
           pulse={pulse}
           lastToggled={lastToggled}
           mount={MOUNT_BY_FW[fw]}
-          widget={WIDGET_BY_FW[fw]}
           frameworkName={fw.toUpperCase()}
         />
         <FormCard
@@ -226,7 +326,6 @@ export function App() {
           lang={lang}
           pulse={pulse}
           a11ySpot={a11ySpot}
-          onLang={api.bare ? setLang : undefined}
           submitted={submitted}
           onSubmit={(e) => setSubmitted(pickActiveFields(e.data, active))}
         />
@@ -256,7 +355,11 @@ export function App() {
       if (moves) {
         return moves
           .filter((m) => !walkActive.has(m))
-          .map((m, i) => ({ key: String(i + 1), label: `▸ ${MOVE_LABEL[m]}`, action: () => composeMove(m) }));
+          .map((m, i) => ({
+            key: String(i + 1),
+            label: `▸ ${MOVE_LABEL[m]}`,
+            action: () => composeMove(m),
+          }));
       }
       return [];
     },
@@ -360,25 +463,21 @@ export function App() {
                 );
               })}
 
-              {/* Accessibility + Localization come free — full blocks, but locked
-                 on. Hovering each shows how to experience it. */}
+              {/* Accessibility + Localization come free — full blocks, locked on. */}
               <div
                 className="block-toggle is-free"
                 role="switch"
                 aria-checked="true"
                 aria-disabled="true"
-                tabIndex={0}
-                onMouseEnter={() => setA11yHint(true)}
-                onMouseLeave={() => setA11yHint(false)}
-                onFocus={() => setA11yHint(true)}
-                onBlur={() => setA11yHint(false)}
               >
                 <span className="bt-box" aria-hidden="true">
                   ✓
                 </span>
                 <span className="bt-text">
                   <span className="bt-label">♿ Accessibility</span>
-                  <span className="bt-hint">Roles, labels, keyboard &amp; focus — hover, then Tab the form</span>
+                  <span className="bt-hint">
+                    Roles, labels, keyboard &amp; focus — Tab the form
+                  </span>
                 </span>
                 <span className="bt-power bt-power--free">FREE</span>
               </div>
@@ -387,18 +486,13 @@ export function App() {
                 role="switch"
                 aria-checked="true"
                 aria-disabled="true"
-                tabIndex={0}
-                onMouseEnter={() => setLocaleFlash(true)}
-                onMouseLeave={() => setLocaleFlash(false)}
-                onFocus={() => setLocaleFlash(true)}
-                onBlur={() => setLocaleFlash(false)}
               >
                 <span className="bt-box" aria-hidden="true">
                   ✓
                 </span>
                 <span className="bt-text">
                   <span className="bt-label">🌐 Localization</span>
-                  <span className="bt-hint">Every label is data — hover, then flip EN / 日本語</span>
+                  <span className="bt-hint">Every label is data — flip EN / 日本語</span>
                 </span>
                 <span className="bt-power bt-power--free">FREE</span>
               </div>
@@ -414,26 +508,20 @@ export function App() {
           </div>
           <div className="card-body code-body">
             <CodeBanner
-              active={sandboxActive}
+              tree={composeTree(sandboxActive, START_FW ?? 'react')}
               lastToggled={lastToggled}
               pulse={pulse}
               hoverSection={hoverSection}
             />
           </div>
         </article>
-        <FormCard
+        <BareForm
           active={sandboxActive}
           lang={lang}
-          pulse={pulse}
-          a11ySpot={a11ySpot}
           onLang={setLang}
+          hoverSection={hoverSection}
           submitted={submitted}
           onSubmit={(e) => setSubmitted(pickActiveFields(e.data, sandboxActive))}
-          flashBlock={lastToggled}
-          flashNonce={flashNonce}
-          hoverSection={hoverSection}
-          localeFlash={localeFlash}
-          a11yHint={a11yHint}
         />
       </div>
     ),
@@ -442,32 +530,133 @@ export function App() {
   return <GameShell {...config} />;
 }
 
-/* ─── CodeBanner (full-width strip under the bare hero) ───────────────────
-   Shows the composed {gui.} definition. Each line belongs to a section; the line
-   dims when its block is off, pulses when toggled, and lights when you hover its
-   box — so box → code → form is one connected chain. */
-type CodeOwner = BlockId | 'base' | 'contact';
-const CODE_LINES: { owner: CodeOwner; depth: number; text: string }[] = [
-  { owner: 'address', depth: 0, text: 'const address = (type: string) => ([' },
-  { owner: 'address', depth: 1, text: 'gui.inputs.textInput(`${type}Street`),' },
-  { owner: 'address', depth: 1, text: 'gui.inputs.textInput(`${type}Postcode`),' },
-  { owner: 'address', depth: 0, text: '])' },
-  { owner: 'base', depth: 0, text: 'gui.layouts.column([' },
-  { owner: 'contact', depth: 1, text: "gui.inputs.textInput('name')," },
-  { owner: 'contact', depth: 1, text: "gui.inputs.textInput('email', { validator })," },
-  { owner: 'address', depth: 1, text: "...address('ship'), // one reusable block" },
-  { owner: 'reactive', depth: 1, text: "gui.inputs.dropdown('country', { onChange: setCity })," },
-  { owner: 'reactive', depth: 1, text: "gui.inputs.radiogroup('city', { when: '$country' })," },
-  { owner: 'conditional', depth: 1, text: "gui.inputs.checkbox('billingDiffers')," },
-  { owner: 'conditional', depth: 1, text: "...address('bill'), // reused, when billing differs" },
-  { owner: 'currency', depth: 1, text: "gui.inputs.dropdown('currency', { itemRenderer })," },
-  { owner: 'base', depth: 1, text: "gui.actions.button({ actionType: 'submit' })," },
-  { owner: 'base', depth: 0, text: '])' },
-];
+// The first field of each section — used to find its wrapper. GolemUI renders
+// each section (a verticalFlex) as one `.gui-flex`, and each field carries
+// data-cy="<path>_<type>"; from the first field we walk up to light the section.
+const SECTION_FIRST_PATH: Record<string, string> = {
+  contact: 'name',
+  address: 'shipStreet',
+  reactive: 'country',
+  conditional: 'billingDiffers',
+  currency: 'currency',
+};
 
+function sectionFor(host: HTMLElement, key: string): Element | null {
+  const first = SECTION_FIRST_PATH[key];
+  if (!first) return null;
+  return host.querySelector(`[data-cy^="${first}"]`)?.closest('.gui-flex') ?? null;
+}
+
+/* ─── BareForm (the /demos app — ONE declarative {gui.} definition) ───────
+   The whole form is a single composeFormMeta() definition; section visibility
+   is GolemUI's own include:{when:'$meta._block_*'} reactivity. The outside
+   toggles flip those flags through the form's setMeta handle, so the form never
+   rebuilds or remounts — typed values persist across toggles. */
+function BareForm({
+  active,
+  lang,
+  onLang,
+  hoverSection,
+  submitted,
+  onSubmit,
+}: {
+  active: Set<BlockId>;
+  lang: Lang;
+  onLang: (l: Lang) => void;
+  hoverSection: string | null;
+  submitted: Record<string, unknown> | null;
+  onSubmit: (e: FormSubmitEvent) => void;
+}) {
+  const formRef = useRef<FormComponentHandle>(null);
+  const hostRef = useRef<HTMLDivElement>(null);
+  const localizationRef = useRef<ReturnType<typeof createLocalization> | null>(null);
+  if (!localizationRef.current) localizationRef.current = createLocalization(lang);
+  const localization = localizationRef.current;
+  useEffect(() => {
+    localization.setLang(lang);
+  }, [lang, localization]);
+
+  // Hovering a compose box lights its whole section in the form (the primary
+  // "which block is which" cue). `active` is a dep so it re-resolves after a
+  // section shows/hides.
+  useEffect(() => {
+    const host = hostRef.current;
+    if (!host) return;
+    host.querySelectorAll('.section-hot').forEach((el) => el.classList.remove('section-hot'));
+    if (hoverSection) sectionFor(host, hoverSection)?.classList.add('section-hot');
+  }, [hoverSection, active]);
+
+  // Built ONCE — the definition is stable; block visibility rides in meta, so
+  // the form never re-resolves/remounts (which is what would discard edits).
+  const config = useMemo(
+    () => ({
+      formDef: composeFormMeta(),
+      data: SEED_DATA,
+      formConfig: { widgetLoaders, itemRenderers: { currency: CurrencyItemRenderer } },
+      localization,
+      meta: metaFromActive(active),
+    }),
+    // `active` only seeds the initial meta; later changes go via setMeta below.
+    [localization],
+  );
+
+  // Flip the block flags live as the outside toggles change — no rebuild.
+  useEffect(() => {
+    formRef.current?.setMeta(metaFromActive(active));
+  }, [active]);
+
+  const blocksOn = active.size;
+  return (
+    <article className="card card--app">
+      <div className="card-head card-head--form">
+        <span className="card-tag">▶ THE FORM</span>
+        <span className="card-sub">
+          composed by <code>{'{gui.}'}</code> — {blocksOn} block{blocksOn === 1 ? '' : 's'}
+        </span>
+        <span className="lang-wrap">
+          <LangToggle
+            lang={lang}
+            onLang={(l) => onLang(l as Lang)}
+            langs={[
+              { id: 'en', label: 'EN' },
+              { id: 'ja', label: '日本語' },
+              { id: 'ar', label: 'العربية' },
+            ]}
+          />
+        </span>
+      </div>
+      <div className="card-body app-host" ref={hostRef}>
+        <GuiForm ref={formRef} config={config} formSubmit={onSubmit} />
+        <ReturnBar
+          data={submitted}
+          filledNote="one composed definition in, one typed payload out."
+          idleNote={
+            <>
+              Hit <strong>Save</strong> — the composed form hands its <strong>typed</strong> payload
+              straight back, valid against the schema.
+            </>
+          }
+        />
+      </div>
+    </article>
+  );
+}
+
+/* ─── CodeBanner (full-width strip under the bare hero) ───────────────────
+   Renders the shared composeTree() — the SAME {gui.} definition shown in the
+   quest, so the two never drift. A line pulses when its block is toggled and
+   lights when you hover its compose box (box → code → form, one connected chain). */
 const CODE_NS = new Set(['layouts', 'inputs', 'actions', 'displays']);
 const CODE_FN = new Set([
-  'column', 'verticalFlex', 'textInput', 'dropdown', 'radiogroup', 'checkbox', 'button', 'display', 'address',
+  'column',
+  'verticalFlex',
+  'textInput',
+  'dropdown',
+  'radiogroup',
+  'checkbox',
+  'button',
+  'display',
+  'address',
 ]);
 
 // Lightweight syntax highlight — gui / namespaces / calls / strings / comments.
@@ -480,25 +669,45 @@ function highlightCode(text: string, kp: string): ReactNode[] {
   let m: RegExpExecArray | null;
   let k = 0;
   while ((m = re.exec(code))) {
-    if (m[1]) out.push(<span key={kp + k++} className="t-str">{m[1]}</span>);
+    if (m[1])
+      out.push(
+        <span key={kp + k++} className="t-str">
+          {m[1]}
+        </span>,
+      );
     else if (m[2]) {
       const w = m[2];
-      const cls = w === 'gui' ? 't-gui' : CODE_NS.has(w) ? 't-ns' : CODE_FN.has(w) ? 't-fn' : 't-id';
-      out.push(<span key={kp + k++} className={cls}>{w}</span>);
+      const cls =
+        w === 'gui' ? 't-gui' : CODE_NS.has(w) ? 't-ns' : CODE_FN.has(w) ? 't-fn' : 't-id';
+      out.push(
+        <span key={kp + k++} className={cls}>
+          {w}
+        </span>,
+      );
     } else if (m[3]) out.push(m[3]);
-    else out.push(<span key={kp + k++} className="t-punc">{m[4]}</span>);
+    else
+      out.push(
+        <span key={kp + k++} className="t-punc">
+          {m[4]}
+        </span>,
+      );
   }
-  if (comment) out.push(<span key={kp + 'c'} className="t-comment">{comment}</span>);
+  if (comment)
+    out.push(
+      <span key={kp + 'c'} className="t-comment">
+        {comment}
+      </span>,
+    );
   return out;
 }
 
 function CodeBanner({
-  active,
+  tree,
   lastToggled,
   pulse,
   hoverSection,
 }: {
-  active: Set<BlockId>;
+  tree: ReturnType<typeof composeTree>;
   lastToggled: BlockId | null;
   pulse: boolean;
   hoverSection?: string | null;
@@ -507,17 +716,13 @@ function CodeBanner({
     <div className="code-banner" role="group" aria-label="The composed {gui.} definition">
       <pre className="cb-code">
         <code>
-          {CODE_LINES.map((ln, i) => {
-            const on =
-              ln.owner === 'base' || ln.owner === 'contact' || active.has(ln.owner as BlockId);
+          {tree.map((ln, i) => {
             const hot = hoverSection != null && ln.owner === hoverSection;
             const pulsing = pulse && ln.owner === lastToggled;
             return (
               <span
                 key={i}
-                className={`cb-line${on ? '' : ' is-off'}${hot ? ' is-hot' : ''}${
-                  pulsing ? ' is-pulse' : ''
-                }`}
+                className={`cb-line${hot ? ' is-hot' : ''}${pulsing ? ' is-pulse' : ''}`}
               >
                 {'  '.repeat(ln.depth)}
                 {highlightCode(ln.text, i + '-')}
@@ -538,11 +743,10 @@ interface ComposePanelProps {
   pulse: boolean;
   lastToggled: BlockId | null;
   mount: string;
-  widget: string;
   frameworkName: string;
 }
 
-function ComposePanel({ tree, pulse, lastToggled, mount, widget, frameworkName }: ComposePanelProps) {
+function ComposePanel({ tree, pulse, lastToggled, mount, frameworkName }: ComposePanelProps) {
   return (
     <article className="card card--compose-tree">
       <div className="card-head">
@@ -551,8 +755,8 @@ function ComposePanel({ tree, pulse, lastToggled, mount, widget, frameworkName }
       </div>
       <div className="card-body tree-body">
         <p className="tree-lead">
-          Every UI is <strong>composed</strong> from primitives. This whole form
-          is one tree — and a block is just a value you reuse:
+          Every UI is <strong>composed</strong> from primitives. This whole form is one tree — and a
+          block is just a value you reuse:
         </p>
         <pre className="tree-code">
           <code>
@@ -568,12 +772,6 @@ function ComposePanel({ tree, pulse, lastToggled, mount, widget, frameworkName }
         </pre>
         <div className="mp-mount-block">
           <span className="mp-mount-cap" aria-hidden="true">
-            wrap a native component — {frameworkName}-specific:
-          </span>
-          <pre className="mp-mount mp-mount--widget">
-            <code>{widget}</code>
-          </pre>
-          <span className="mp-mount-cap" aria-hidden="true">
             mounted in {frameworkName}
           </span>
           <pre className="mp-mount">
@@ -585,64 +783,24 @@ function ComposePanel({ tree, pulse, lastToggled, mount, widget, frameworkName }
   );
 }
 
-/* ─── FormCard (right — the composed, rendered form) ──────────────────── */
-
-// The first field of each section — used to find its wrapper (gui renders
-// light-DOM fields with data-cy="<path>_<type>") so we can light the whole section.
-const SECTION_FIRST_PATH: Record<string, string> = {
-  contact: 'name',
-  address: 'shipStreet',
-  reactive: 'country',
-  conditional: 'billingDiffers',
-  currency: 'currency',
-};
+/* ─── FormCard (right — the composed, rendered form, walk path) ───────────
+   The walk rebuilds composeForm(active) as blocks unlock (the {gui.} tree grows
+   scene by scene). Re-labels live via the localization translator. */
 
 interface FormCardProps {
   active: Set<BlockId>;
   lang: Lang;
   pulse: boolean;
   a11ySpot: boolean;
-  onLang?: (l: Lang) => void;
   submitted: Record<string, unknown> | null;
   onSubmit: (e: FormSubmitEvent) => void;
-  flashBlock?: BlockId | null;
-  flashNonce?: number;
-  hoverSection?: string | null;
-  localeFlash?: boolean;
-  a11yHint?: boolean;
 }
 
-// Light a whole section by finding its first field and walking up to its
-// section wrapper (each section is its own verticalFlex → one `.gui-flex`).
-function sectionFor(host: HTMLElement, key: string): Element | null {
-  const first = SECTION_FIRST_PATH[key];
-  if (!first) return null;
-  const field = host.querySelector(`[data-cy^="${first}"]`);
-  return field?.closest('.gui-flex') ?? null;
-}
-
-function FormCard({
-  active,
-  lang,
-  pulse,
-  a11ySpot,
-  onLang,
-  submitted,
-  onSubmit,
-  flashBlock,
-  flashNonce,
-  hoverSection,
-  localeFlash,
-  a11yHint,
-}: FormCardProps) {
+function FormCard({ active, lang, pulse, a11ySpot, submitted, onSubmit }: FormCardProps) {
   const blocksOn = active.size;
-  const hostRef = useRef<HTMLDivElement>(null);
-  // Compose once per block-set — the form re-mounts on a toggle (for the flash),
-  // NOT on a language change. The {gui.} translator below re-labels live instead.
+  // Compose once per block-set; re-mounts on unlock, NOT on a language change —
+  // the {gui.} translator below re-labels live instead.
   const formKey = useMemo(() => [...active].sort().join(','), [active]);
-  // One translator instance, owned by this card. composeForm emits translation
-  // KEYS; this resolves them to the active language and tells GolemUI the lang,
-  // so the <form> flips to dir="rtl" for Arabic on its own.
   const localizationRef = useRef<ReturnType<typeof createLocalization> | null>(null);
   if (!localizationRef.current) localizationRef.current = createLocalization(lang);
   const localization = localizationRef.current;
@@ -659,38 +817,6 @@ function FormCard({
     [active, localization],
   );
 
-  // Hovering a block lights its whole section in the form — the primary cue for
-  // "which block is which". Persistent while hovered, no remount involved.
-  useEffect(() => {
-    const host = hostRef.current;
-    if (!host) return;
-    host.querySelectorAll('.section-hot').forEach((el) => el.classList.remove('section-hot'));
-    if (!hoverSection) return;
-    sectionFor(host, hoverSection)?.classList.add('section-hot');
-  }, [hoverSection, active]);
-
-  // On a block toggle, briefly light the section that just appeared/changed —
-  // after the form re-composes (so it lands after the fields, not on top of them),
-  // and scroll it into view so the change is findable.
-  useEffect(() => {
-    if (!flashNonce || !flashBlock) return;
-    const host = hostRef.current;
-    if (!host) return;
-    let section: Element | null = null;
-    const show = setTimeout(() => {
-      section = sectionFor(host, flashBlock);
-      if (!section) return;
-      section.classList.add('section-flash');
-      section.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }, 320);
-    const clear = setTimeout(() => section?.classList.remove('section-flash'), 2000);
-    return () => {
-      clearTimeout(show);
-      clearTimeout(clear);
-      section?.classList.remove('section-flash');
-    };
-  }, [flashNonce, flashBlock]);
-
   return (
     <article className="card card--app">
       <div className="card-head card-head--form">
@@ -698,38 +824,15 @@ function FormCard({
         <span className="card-sub">
           composed by <code>{'{gui.}'}</code> — {blocksOn} block{blocksOn === 1 ? '' : 's'}
         </span>
-        {onLang && (
-          <span className={`lang-wrap${localeFlash ? ' is-hint' : ''}`}>
-            <LangToggle
-              lang={lang}
-              onLang={(l) => onLang(l as Lang)}
-              langs={[
-                { id: 'en', label: 'EN' },
-                { id: 'ja', label: '日本語' },
-                { id: 'ar', label: 'العربية' },
-              ]}
-            />
-          </span>
-        )}
         <span className={`form-live${pulse ? ' is-on' : ''}`} aria-hidden="true">
           ● {pulse ? 'RE-RENDERED' : 'LIVE'}
         </span>
       </div>
-      <div
-        ref={hostRef}
-        className={`card-body app-host${a11ySpot ? ' a11y-spot' : ''}${
-          localeFlash || a11yHint ? ' hover-flash' : ''
-        }`}
-      >
+      <div className={`card-body app-host${a11ySpot ? ' a11y-spot' : ''}`}>
         {a11ySpot && (
           <div className="a11y-banner" aria-hidden="true">
-            ♿ ARIA roles · labels · keyboard · live errors — already there · 🌐 {lang === 'ja' ? '日本語' : 'localised'}
-          </div>
-        )}
-        {a11yHint && (
-          <div className="a11y-tab-hint" role="status">
-            ⇥ Press <kbd>Tab</kbd> — every field is keyboard-navigable, with focus rings, labels &amp;
-            ARIA. Free.
+            ♿ ARIA roles · labels · keyboard · live errors — already there · 🌐{' '}
+            {lang === 'ja' ? '日本語' : 'localised'}
           </div>
         )}
         <GuiForm key={formKey} config={config} formSubmit={onSubmit} />
@@ -738,8 +841,8 @@ function FormCard({
           filledNote="one composed definition in, one typed payload out."
           idleNote={
             <>
-              Hit <strong>Save</strong> — the composed form hands its{' '}
-              <strong>typed</strong> payload straight back, valid against the schema.
+              Hit <strong>Save</strong> — the composed form hands its <strong>typed</strong> payload
+              straight back, valid against the schema.
             </>
           }
         />

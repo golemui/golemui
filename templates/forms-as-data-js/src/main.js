@@ -52,9 +52,7 @@ function toForm(schema) {
         default:
           return gui.inputs.textInput(key, {
             label: field.label,
-            ...(field.format === 'email'
-              ? { validator: { format: 'email' } }
-              : {}),
+            ...(field.format === 'email' ? { validator: { format: 'email' } } : {}),
           });
       }
     }),

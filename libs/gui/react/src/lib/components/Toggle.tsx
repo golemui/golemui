@@ -5,7 +5,6 @@ import { useCallback } from 'react';
 import { GuiToggleReact } from '../web-components';
 import '../styles.scss';
 
-
 export function Toggle(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<boolean>;
   const { uid, errors, value, onValueChanged, onBlur, templateData, isTouched } = useInputWidget<

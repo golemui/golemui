@@ -13,7 +13,10 @@ const react18Alias = process.env.REACT18
         alias: {
           'react-dom/client': resolve(__dirname, '../../../node_modules/react18-dom/client.js'),
           'react-dom': resolve(__dirname, '../../../node_modules/react18-dom/index.js'),
-          'react/jsx-dev-runtime': resolve(__dirname, '../../../node_modules/react18/jsx-dev-runtime.js'),
+          'react/jsx-dev-runtime': resolve(
+            __dirname,
+            '../../../node_modules/react18/jsx-dev-runtime.js',
+          ),
           'react/jsx-runtime': resolve(__dirname, '../../../node_modules/react18/jsx-runtime.js'),
           react: resolve(__dirname, '../../../node_modules/react18/index.js'),
         },

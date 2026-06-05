@@ -5,7 +5,6 @@ import { useCallback } from 'react';
 import { GuiTagsReact } from '../web-components';
 import '../styles.scss';
 
-
 export function Tags(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<string[]>;
   const { uid, errors, value, isTouched, templateData, onValueChanged, onBlur } = useInputWidget<

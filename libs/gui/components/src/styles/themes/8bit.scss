@@ -1,0 +1,63 @@
+// 8-bit theme — a pixel-art opt-in for {gui.} forms. Retro RPG palette
+// (purple / cream / amber), zero corner radius, chunky hard-offset shadows and
+// the VT323 pixel font. Built to sit inside the GolemUI quests' 8-bit chrome so
+// the live form matches the surrounding game UI. Opt in with `data-theme="8bit"`
+// on the form (or any ancestor); tokens inherit. Single variant by design — the
+// pixel look reads the same in light or dark hosts.
+//
+// Pair the chunky *border widths* (not expressible as tokens) with the scoped
+// supplement in the consumer's stylesheet — see quests-portal forms-compose.scss.
+[data-theme='8bit'] {
+  /* Backgrounds — parchment cream on a deep-violet world */
+  --gui-bg-default: #f3eecb;
+  --gui-bg-surface: #fffdf2;
+  --gui-bg-surface-hover: #efe7c0;
+  --gui-bg-surface-active: #e6dcae;
+  --gui-bg-disabled: #e0dac0;
+  --gui-bg-inverse: #150726;
+
+  /* Foreground / text — near-black violet for crisp pixel contrast */
+  --gui-text-default: #1c0e33;
+  --gui-text-secondary: #4a3f6b;
+  --gui-text-muted: #6f6790;
+  --gui-text-inverse: #f8f4d7;
+  --gui-text-disabled: #9b93b5;
+
+  /* Borders — purple by default, ink-dark when strong, amber focus */
+  --gui-border-default: #6a4cff;
+  --gui-border-subtle: #b5a3ff;
+  --gui-border-strong: #150726;
+  --gui-border-disabled: #cfc8a8;
+  --gui-border-focus: #f9d342;
+
+  /* Intent / primary — the brand purple, cream label on top */
+  --gui-intent-primary: #6a4cff;
+  --gui-intent-primary-hover: #3a1f8c;
+  --gui-intent-primary-active: #2a1566;
+  --gui-intent-primary-text: #f8f4d7;
+
+  /* Square everything off — pixels have no rounded corners */
+  --gui-radius-sm: 0px;
+  --gui-radius-md: 0px;
+  --gui-radius-lg: 0px;
+  --gui-radius-xl: 0px;
+
+  /* Chunky hard-offset drop shadows (no blur) — the classic 8-bit block look */
+  --gui-shadow-sm: 2px 2px 0 #3a1f8c;
+  --gui-shadow-md: 3px 3px 0 #3a1f8c;
+  --gui-shadow-lg: 5px 5px 0 #3a1f8c;
+  --gui-shadow-focus: 0 0 0 3px #f9d342;
+  --gui-shadow-focus-error: 0 0 0 3px var(--gui-intent-error);
+
+  /* Pixel typography — VT323 is readable at form sizes; Press Start 2P is too
+     wide for input text, so it stays in the chrome, not the tokens. VT323's low
+     x-height reads small, so nudge the scale up a touch. */
+  --gui-font-family: 'VT323', 'Press Start 2P', 'Courier New', monospace;
+  --gui-font-xs: 0.95rem;
+  --gui-font-sm: 1.05rem;
+  --gui-font-base: 1.2rem;
+  --gui-font-lg: 1.35rem;
+  --gui-font-xl: 1.5rem;
+  --gui-font-2xl: 1.75rem;
+  --gui-font-3xl: 2.2rem;
+}

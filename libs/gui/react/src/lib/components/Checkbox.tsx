@@ -5,7 +5,6 @@ import { useCallback } from 'react';
 import { GuiCheckboxReact } from '../web-components';
 import '../styles.scss';
 
-
 export function Checkbox(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<boolean>;
   const { uid, errors, value, onValueChanged, onBlur, templateData, isTouched } = useInputWidget<

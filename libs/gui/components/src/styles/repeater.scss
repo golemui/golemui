@@ -52,11 +52,10 @@
       &.gui-repeater__remove-btn {
         padding: var(--gui-space-1) var(--gui-space-2);
         background: transparent;
-        color: var(--gui-intent-error-text);
+        color: var(--gui-intent-error);
         border: 1px solid var(--gui-border-default);
-        opacity: 0.6;
         transition:
-          opacity var(--gui-transition-normal, 0.2s),
+          background var(--gui-transition-normal, 0.2s),
           border-color var(--gui-transition-normal, 0.2s);
 
         &:focus {

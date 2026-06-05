@@ -3,7 +3,6 @@ import { useDisplayWdiget } from '@golemui/react';
 import { type MarkdownTextProps } from '@golemui/gui-shared';
 import { GuiMarkdownTextReact } from '../web-components';
 
-
 export function MarkdownText(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as DisplayWidget;
   const { uid, templateData } = useDisplayWdiget<MarkdownTextProps>(widget);

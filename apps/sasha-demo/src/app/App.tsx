@@ -8,16 +8,22 @@ import {
   type Framework,
 } from '@golemui/demo-engine';
 import { GuiForm, widgetLoaders } from '@golemui/gui-react';
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
+  buildPayload,
   deriveFormDefinition,
   deriveFormDsl,
-  type EndpointPayload,
+  ENDPOINTS,
+  FIELD_TYPES,
+  highlightJson,
+  rowsFromPayload,
+  schemaKey,
+  type EndpointId,
   type FieldSchema,
   type FieldType,
-  type RecordSchema,
-} from './deriveFormDefinition';
-import { ENDPOINTS, FIELD_TYPES, type EndpointId } from './endpoints';
+  type OptionPair,
+  type RecordRow,
+} from '@golemui/forms-as-data-core';
 
 const NETWORK_DELAY_MS = 140;
 const SHAPE_EDIT_THRESHOLD = 2;
@@ -39,23 +45,66 @@ const INSTALL_BY_FW: Record<Framework, string> = {
 /* ─── Scenes (content + cinematic flags) ─────────────────────────────── */
 
 interface SashaScene {
-  chapter: string; act?: string; title: string; quest?: string;
-  boss?: boolean; bossTitle?: string; itemGet?: boolean;
-  lines: string[]; counter?: string; cta?: string;
+  chapter: string;
+  act?: string;
+  title: string;
+  quest?: string;
+  boss?: boolean;
+  bossTitle?: string;
+  itemGet?: boolean;
+  lines: string[];
+  counter?: string;
+  cta?: string;
 }
 
 const SCENES: SashaScene[] = [
-  { chapter: '00', title: 'CHOOSE YOUR HERO', quest: 'Pick your class',
-    lines: ['BEFORE THE QUEST: A CHOICE.', 'GOLEMUI RUNS IN ANY FRAMEWORK. WHICH IS YOURS?'], cta: '▶ BEGIN' },
-  { chapter: '01', act: 'ACT I', title: 'THE QUEST', quest: 'Code three forms by hand',
-    lines: [] }, // dialog computed from forms built
-  { chapter: '02', act: 'ACT II', title: 'THE SERVER!!', boss: true, bossTitle: '👹 THE SERVER',
+  {
+    chapter: '00',
+    title: 'CHOOSE YOUR HERO',
+    quest: 'Pick your class',
+    lines: ['BEFORE THE QUEST: A CHOICE.', 'GOLEMUI RUNS IN ANY FRAMEWORK. WHICH IS YOURS?'],
+    cta: '▶ BEGIN',
+  },
+  { chapter: '01', act: 'ACT I', title: 'THE QUEST', quest: 'Code three forms by hand', lines: [] }, // dialog computed from forms built
+  {
+    chapter: '02',
+    act: 'ACT II',
+    title: 'THE SERVER!!',
+    boss: true,
+    bossTitle: '👹 THE SERVER',
     quest: 'Survive the mutating server',
-    lines: ['YOUR USERS WILL DEMAND MORE — UP TO N ENDPOINTS.', 'AND EACH ONE IS DYNAMIC. THE SHAPES MUTATE.', 'HAND-CODE THAT. I DARE YOU.'], counter: 'N' },
-  { chapter: '03', act: 'ACT III', title: 'ITEM GET', itemGet: true, quest: 'Claim the engine',
-    lines: ['A LEGENDARY ENGINE IS BESTOWED UPON YOU.', 'IT IS CALLED GOLEMUI. IT HANDLES FORMS AS DATA—', '—MAP A SCHEMA, AND THE FORM RENDERS ITSELF.'], cta: 'WIELD IT ▶' },
-  { chapter: '04', act: 'ACT IV', title: 'WIELD IT', quest: 'Be the backend — shapes are data',
-    lines: ['YOU ARE THE BACKEND NOW. EDIT THE RESPONSE SHAPE—', 'RENAME A FIELD, CHANGE A TYPE, ADD ONE. THE APP REBUILDS.', 'THEN SAVE: A TYPED PAYLOAD COMES STRAIGHT BACK.'], cta: 'TAKE ME TO THE APP ▶' },
+    lines: [
+      'YOUR USERS WILL DEMAND MORE — UP TO N ENDPOINTS.',
+      'AND EACH ONE IS DYNAMIC. THE SHAPES MUTATE.',
+      'HAND-CODE THAT. I DARE YOU.',
+    ],
+    counter: 'N',
+  },
+  {
+    chapter: '03',
+    act: 'ACT III',
+    title: 'ITEM GET',
+    itemGet: true,
+    quest: 'Claim the engine',
+    lines: [
+      'A LEGENDARY ENGINE IS BESTOWED UPON YOU.',
+      'IT IS CALLED GOLEMUI. IT HANDLES FORMS AS DATA—',
+      '—MAP A SCHEMA, AND THE FORM RENDERS ITSELF.',
+    ],
+    cta: 'WIELD IT ▶',
+  },
+  {
+    chapter: '04',
+    act: 'ACT IV',
+    title: 'WIELD IT',
+    quest: 'Be the backend — shapes are data',
+    lines: [
+      'YOU ARE THE BACKEND NOW. EDIT THE RESPONSE SHAPE—',
+      'RENAME A FIELD, CHANGE A TYPE, ADD ONE. THE APP REBUILDS.',
+      'THEN SAVE: A TYPED PAYLOAD COMES STRAIGHT BACK.',
+    ],
+    cta: 'TAKE ME TO THE APP ▶',
+  },
 ];
 
 const REVEAL_PAYLOAD = `{
@@ -74,8 +123,13 @@ const BASE_FORM_DEFS: { id: EndpointId; label: string }[] = [
 function questDialog(n: number): { lines: string[]; counter?: string; cta?: string } {
   if (n >= 3) {
     return {
-      lines: ['Well DONE! See? Building forms is THAT easy.', 'Anyone could crank these out all day… right?', '…RIGHT?'],
-      counter: '✓✓✓', cta: 'RIGHT…? ▶',
+      lines: [
+        'Well DONE! See? Building forms is THAT easy.',
+        'Anyone could crank these out all day… right?',
+        '…RIGHT?',
+      ],
+      counter: '✓✓✓',
+      cta: 'RIGHT…? ▶',
     };
   }
   const lines =
@@ -83,104 +137,20 @@ function questDialog(n: number): { lines: string[]; counter?: string; cta?: stri
       ? ['TWO whole forms. Look at you go.', 'One to go. Try to contain yourself.']
       : n === 1
         ? ['…oh. You actually coded one. Adorable.', 'Only two more. Tick. Tock.']
-        : ['Ah… a CHALLENGER. So you would BUILD APPS?', 'Cute. Prove it — code me three forms by hand.', 'Profile, Orders, Feedback. Try to stay awake.'];
+        : [
+            'Ah… a CHALLENGER. So you would BUILD APPS?',
+            'Cute. Prove it — code me three forms by hand.',
+            'Profile, Orders, Feedback. Try to stay awake.',
+          ];
   return { lines, counter: `${n}/3`, cta: undefined };
-}
-
-/* ─── Record builder helpers ─────────────────────────────────────────── */
-
-type RecordRow = { id: string; name: string; field: FieldSchema; value: string };
-
-function valueToString(v: unknown): string {
-  if (v === null || v === undefined) return '';
-  if (typeof v === 'boolean') return v ? 'true' : 'false';
-  return String(v);
-}
-function stringToValue(s: string, type: FieldType): unknown {
-  if (type === 'number') return s === '' ? 0 : Number(s);
-  if (type === 'boolean') return s.trim().toLowerCase() === 'true';
-  return s;
-}
-function rowsFromPayload(payload: EndpointPayload): RecordRow[] {
-  return Object.entries(payload.schema).map(([name, field]) => ({
-    id: crypto.randomUUID(),
-    name,
-    field,
-    value: valueToString(payload.data[name]),
-  }));
-}
-// Turn a field key into a readable label (snake/kebab/camel → Title-ish).
-function humanize(key: string): string {
-  const s = key
-    .replace(/[_-]+/g, ' ')
-    .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
-    .trim();
-  return s ? s.charAt(0).toUpperCase() + s.slice(1) : key;
-}
-function buildPayload(rows: RecordRow[]): EndpointPayload {
-  const schema: RecordSchema = {};
-  const data: Record<string, unknown> = {};
-  for (const r of rows) {
-    const key = r.name.trim();
-    if (!key) continue;
-    // Always give the field a label — user-added rows only edit the key, so an
-    // empty label would render blank (and a broken boolean toggle).
-    const field: FieldSchema = {
-      ...r.field,
-      label: r.field.label?.trim() ? r.field.label : humanize(key),
-    };
-    // Enum options need a value to drive the data; drop half-typed (blank-value)
-    // options so a freshly-added option never renders as an empty dropdown item,
-    // and fall back to the value when its label hasn't been typed yet.
-    if (field.type === 'enum') {
-      field.options = (field.options ?? [])
-        .map((o) => (typeof o === 'string' ? { value: o, label: o } : o))
-        .filter((o) => o.value.trim() !== '')
-        .map((o) => ({ value: o.value, label: o.label.trim() ? o.label : o.value }));
-    }
-    schema[key] = field;
-    data[key] = stringToValue(r.value, r.field.type);
-  }
-  return { schema, data };
-}
-// The form's remount key — its STRUCTURE (fields, types, options), derived from
-// the built schema so half-typed blank options don't churn it.
-function schemaKey(schema: RecordSchema): string {
-  return Object.entries(schema)
-    .map(
-      ([name, f]) =>
-        `${name}:${f.type}:${(f.options ?? [])
-          .map((o) => (typeof o === 'string' ? o : `${o.value}=${o.label}`))
-          .join('|')}`,
-    )
-    .join(',');
-}
-
-// Lightweight JSON syntax highlight for the middle column — keys / strings /
-// keywords / numbers / punctuation, matching the {gui.} code-window palette.
-function highlightJson(json: string): ReactNode[] {
-  const re = /("(?:\\.|[^"\\])*"\s*:)|("(?:\\.|[^"\\])*")|\b(true|false|null)\b|(-?\d+(?:\.\d+)?)|([{}[\],])/g;
-  const out: ReactNode[] = [];
-  let last = 0;
-  let m: RegExpExecArray | null;
-  let k = 0;
-  while ((m = re.exec(json))) {
-    if (m.index > last) out.push(json.slice(last, m.index));
-    if (m[1]) out.push(<span key={k++} className="t-key">{m[1]}</span>);
-    else if (m[2]) out.push(<span key={k++} className="t-str">{m[2]}</span>);
-    else if (m[3]) out.push(<span key={k++} className="t-kw">{m[3]}</span>);
-    else if (m[4]) out.push(<span key={k++} className="t-num">{m[4]}</span>);
-    else out.push(<span key={k++} className="t-punc">{m[0]}</span>);
-    last = re.lastIndex;
-  }
-  if (last < json.length) out.push(json.slice(last));
-  return out;
 }
 
 /* ─── Launch params ──────────────────────────────────────────────────── */
 
 const PARAMS =
-  typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : new URLSearchParams();
+  typeof window !== 'undefined'
+    ? new URLSearchParams(window.location.search)
+    : new URLSearchParams();
 // App-direct by default — the runnable app shows immediately. The guided 8-bit
 // walk is opt-in via ?mode=walk (the "Play the quest" CTA on /demos).
 const START_BARE = PARAMS.get('mode') !== 'walk';
@@ -261,7 +231,9 @@ export function App() {
     bumpEdits();
   }
   function updateField(id: string, patch: Partial<FieldSchema>) {
-    patchTabRows((rs) => rs.map((r) => (r.id === id ? { ...r, field: { ...r.field, ...patch } } : r)));
+    patchTabRows((rs) =>
+      rs.map((r) => (r.id === id ? { ...r, field: { ...r.field, ...patch } } : r)),
+    );
     bumpEdits();
   }
   function removeRow(id: string) {
@@ -410,7 +382,11 @@ export function App() {
             />
           ) : (
             <div className="app-empty">
-              <p>{api.scene === 1 ? 'Pick a form to code — from the menu below.' : 'Forge fields on the left.'}</p>
+              <p>
+                {api.scene === 1
+                  ? 'Pick a form to code — from the menu below.'
+                  : 'Forge fields on the left.'}
+              </p>
             </div>
           )}
           {opts.showReturn && hasFields && (
@@ -451,8 +427,10 @@ export function App() {
     title: 'FORMS AS DATA',
     bareTitle: 'FORMS AS DATA',
     bareQuestTease: 'Want the story? Out-build THE SERVER!! in a quick 8-bit quest.',
-    lines: (api) => (api.scene === 1 ? questDialog(baseFormsBuilt).lines : SCENES[api.scene]?.lines ?? []),
-    counter: (api) => (api.scene === 1 ? questDialog(baseFormsBuilt).counter : SCENES[api.scene]?.counter),
+    lines: (api) =>
+      api.scene === 1 ? questDialog(baseFormsBuilt).lines : (SCENES[api.scene]?.lines ?? []),
+    counter: (api) =>
+      api.scene === 1 ? questDialog(baseFormsBuilt).counter : SCENES[api.scene]?.counter,
     cta: (api) => (api.scene === 1 ? questDialog(baseFormsBuilt).cta : SCENES[api.scene]?.cta),
     options: (api) => {
       if (api.bare) return [];
@@ -480,7 +458,12 @@ export function App() {
     },
     stats: (api) => [
       { label: 'FORMS', value: formsBuilt, accent: 'info' },
-      { label: 'LOC', value: api.frenzy ? api.frenzyVal : formsBuilt * 89, frenzy: api.frenzy, accent: 'warning' },
+      {
+        label: 'LOC',
+        value: api.frenzy ? api.frenzyVal : formsBuilt * 89,
+        frenzy: api.frenzy,
+        accent: 'warning',
+      },
     ],
     reveal: () => ({
       title: 'THE SERVER!!',
@@ -522,8 +505,6 @@ export function App() {
 
 /* ─── RecordFieldRow ─────────────────────────────────────────────────── */
 
-type OptionPair = { label: string; value: string };
-
 interface RecordFieldRowProps {
   row: RecordRow;
   onName: (s: string) => void;
@@ -533,7 +514,14 @@ interface RecordFieldRowProps {
   onRemove: () => void;
 }
 
-function RecordFieldRow({ row, onName, onType, onValue, onOptions, onRemove }: RecordFieldRowProps) {
+function RecordFieldRow({
+  row,
+  onName,
+  onType,
+  onValue,
+  onOptions,
+  onRemove,
+}: RecordFieldRowProps) {
   // Normalize options to {value,label} pairs — older shapes may carry bare
   // strings; the editor always edits both fields so a value alone is never
   // enough to drive the data, and the label drives what the dropdown shows.

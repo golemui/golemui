@@ -7,18 +7,19 @@
  * `?demo=<id>&fw=<fw>`. A finished quest offers a way back to the demos.
  *
  * POC: extractable to its own repo later (Roger/Raúl split it).
+ *
+ * Both quests are now hosted in-app: the portal owns each 8-bit walk as a React
+ * mount (src/quests/forms-compose and src/quests/forms-as-data) instead of
+ * iframing rob-demo / sasha-demo. The bare apps still live on the main /demos
+ * page; finishing or skipping a walk hands back there.
  */
 
-type DemoId = 'forms-as-data' | 'forms-compose';
+// Pure character data (no React) — safe for this lightweight landing bundle.
+import { CHARACTERS, type Framework } from '@golemui/characters';
+
+type DemoId = 'forms-from-prompt' | 'forms-as-data' | 'forms-compose';
 
 const DEV = import.meta.env.DEV;
-
-// Where the demo apps live. Dev: their vite servers. Prod: served by the main
-// site (cross-origin from this subdomain — postMessage uses '*').
-const DEMO_SRC: Record<DemoId, string> = {
-  'forms-as-data': DEV ? 'http://localhost:4220/' : 'https://golemui.com/sasha-demo/index.html',
-  'forms-compose': DEV ? 'http://localhost:4221/' : 'https://golemui.com/rob-demo/index.html',
-};
 
 // The main site (for the logo + "back to demos").
 const MAIN_SITE = DEV ? 'http://localhost:4321' : 'https://golemui.com';
@@ -49,12 +50,24 @@ let fullscreen = false;
 // the selector. Card / direct launches default to the selector.
 const fromApp = params.get('from') === 'app';
 
+// Readout (below the tiles) describing the chosen framework's class + blurb.
+const fwKlass = document.querySelector<HTMLElement>('[data-fw-klass]');
+const fwBlurb = document.querySelector<HTMLElement>('[data-fw-blurb]');
+const fwReadout = document.querySelector<HTMLElement>('.fw-readout');
+const CHAR_BY_FW = Object.fromEntries(CHARACTERS.map((c) => [c.id, c]));
+
 function reflectFw() {
   fwTiles.forEach((t) => {
     const on = t.dataset['fw'] === selectedFw;
     t.classList.toggle('is-selected', on);
     t.setAttribute('aria-checked', String(on));
   });
+  const c = CHAR_BY_FW[selectedFw];
+  if (c) {
+    if (fwKlass) fwKlass.textContent = c.klass;
+    if (fwBlurb) fwBlurb.textContent = c.blurb;
+    fwReadout?.style.setProperty('--fw-color', c.color);
+  }
 }
 reflectFw();
 
@@ -65,11 +78,34 @@ fwTiles.forEach((tile) => {
   });
 });
 
-function paneFor(demo: DemoId): HTMLElement | undefined {
-  return panes.find((p) => p.id === `demo-pane-${demo}`);
-}
-
 let currentDemo: DemoId | null = null;
+
+// Both quests are React, mounted lazily into their pane (no iframe). The dynamic
+// imports keep React out of the landing bundle until a quest actually launches;
+// each walk hands back to the /demos page (the bare app) on finish / skip.
+function mountQuest(demo: DemoId) {
+  const onComplete = () => goToDemos(demo);
+  const fw = selectedFw as Framework;
+  if (demo === 'forms-compose') {
+    const host = document.getElementById('forms-compose-root');
+    if (!host) return;
+    void import('./quests/forms-compose/mount').then(({ mountFormsCompose }) => {
+      mountFormsCompose(host, { framework: fw, onComplete });
+    });
+  } else if (demo === 'forms-as-data') {
+    const host = document.getElementById('forms-as-data-root');
+    if (!host) return;
+    void import('./quests/forms-as-data/mount').then(({ mountFormsAsData }) => {
+      mountFormsAsData(host, { framework: fw, onComplete });
+    });
+  } else {
+    const host = document.getElementById('forms-from-prompt-root');
+    if (!host) return;
+    void import('./quests/forms-from-prompt/mount').then(({ mountFormsFromPrompt }) => {
+      mountFormsFromPrompt(host, { framework: fw, onComplete });
+    });
+  }
+}
 
 function launchQuest(demo: DemoId) {
   currentDemo = demo;
@@ -78,23 +114,7 @@ function launchQuest(demo: DemoId) {
     p.toggleAttribute('hidden', !active);
     p.classList.toggle('is-active', active);
   });
-  const iframe = paneFor(demo)?.querySelector<HTMLIFrameElement>('iframe.demo-iframe');
-  if (iframe) {
-    iframe.style.height = '100%';
-    iframe.src = `${DEMO_SRC[demo]}?mode=walk&fw=${selectedFw}&n=${Date.now()}`;
-    iframe.addEventListener(
-      'load',
-      () => {
-        try {
-          iframe.focus();
-          iframe.contentWindow?.focus();
-        } catch {
-          /* cross-origin focus is best-effort */
-        }
-      },
-      { once: true },
-    );
-  }
+  mountQuest(demo);
   fullscreen = true;
   viewport.classList.remove('is-closing', 'is-embedded');
   viewport.classList.add('is-fullscreen');
@@ -114,10 +134,10 @@ cards.forEach((card) => {
   });
 });
 
-// Close (X / Esc): return to where the quest was launched from — back into the
-// app if it came from there, otherwise the demos selector.
+// Close (Esc): return to where the quest was launched from — back into the
+// app if it came from there, otherwise the demos selector. (No floating X — the
+// in-quest SKIP / final CTA also leave the walk.)
 const closeQuest = () => goToDemos(fromApp ? currentDemo : null);
-document.querySelector<HTMLButtonElement>('.fs-exit')?.addEventListener('click', closeQuest);
 window.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && fullscreen) closeQuest();
 });
@@ -143,7 +163,8 @@ window.addEventListener('message', (event) => {
   const data = event.data as { type?: string } | null;
   if (data?.type === 'golemui-demo-embed') goToDemos(currentDemo);
   else if (data?.type === 'golemui-demo-exit') goToDemos();
-  else if (data?.type === 'golemui-theme-ready') broadcastTheme((event.source as Window) ?? undefined);
+  else if (data?.type === 'golemui-theme-ready')
+    broadcastTheme((event.source as Window) ?? undefined);
 });
 
 const themeObserver = new MutationObserver(() => broadcastTheme());
@@ -176,6 +197,10 @@ themeObserver.observe(document.documentElement, {
 
 /* ── Deep link: ?demo=<id>&fw=<fw> launches that quest directly ── */
 const deepDemo = params.get('demo');
-if (deepDemo === 'forms-as-data' || deepDemo === 'forms-compose') {
+if (
+  deepDemo === 'forms-from-prompt' ||
+  deepDemo === 'forms-as-data' ||
+  deepDemo === 'forms-compose'
+) {
   launchQuest(deepDemo);
 }

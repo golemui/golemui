@@ -1,4 +1,5 @@
 /* Quests portal — 8-bit "choose your adventure" + the quest host. */
+@use 'sprite';
 
 $pixel-purple: #6a4cff;
 $pixel-purple-deep: #3a1f8c;
@@ -29,10 +30,17 @@ html.dark {
 
 body {
   margin: 0;
-  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family:
+    'Inter',
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
   background: var(--bg-color);
   color: var(--text-color);
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -115,7 +123,9 @@ html.dark .landing-header {
   border: 2px solid #6a4cff;
   border-radius: 0;
   padding: 0 0.7rem;
-  box-shadow: inset 0 0 0 2px #f8f4d7, 2px 2px 0 0 #3a1f8c;
+  box-shadow:
+    inset 0 0 0 2px #f8f4d7,
+    2px 2px 0 0 #3a1f8c;
 }
 .quests-chip-arrow {
   color: #f9d342;
@@ -136,18 +146,18 @@ html.deep-quest main {
 }
 
 main {
-  padding-top: 4rem; /* clear fixed header */
   min-height: 100vh;
   background:
-    radial-gradient(ellipse 60% 50% at 50% 0%, rgba(106, 76, 255, 0.18), transparent 60%),
-    #0d0820;
+    radial-gradient(ellipse 60% 50% at 50% 0%, rgba(106, 76, 255, 0.18), transparent 60%), #0d0820;
 }
 
 /* ── Choose your adventure ─────────────────────────────────────── */
 .adventure-select {
   max-width: 1040px;
   margin: 0 auto;
-  padding: 2.5rem 1.25rem 3rem;
+  /* Clears the fixed 4rem header (main no longer pads for it, so the
+     fullscreen quest can use the whole viewport). */
+  padding: 6.5rem 1.25rem 3rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -162,7 +172,10 @@ main {
   background: $pixel-dark;
   color: $pixel-cream;
   border: 4px solid $pixel-cream;
-  box-shadow: 0 0 0 4px $pixel-dark, 0 0 0 8px $pixel-purple, 0 10px 0 0 $pixel-purple-deep;
+  box-shadow:
+    0 0 0 4px $pixel-dark,
+    0 0 0 8px $pixel-purple,
+    0 10px 0 0 $pixel-purple-deep;
   padding: 1.3rem 1.5rem 1.2rem;
   margin-top: 0.5rem;
 }
@@ -191,7 +204,9 @@ main {
   animation: qp-blink 0.9s steps(2) infinite;
 }
 @keyframes qp-blink {
-  50% { opacity: 0; }
+  50% {
+    opacity: 0;
+  }
 }
 
 .quest-title {
@@ -201,7 +216,9 @@ main {
   color: $pixel-purple-light;
   text-align: center;
   margin: 0.5rem 0 0;
-  text-shadow: 3px 3px 0 $pixel-purple-deep, 0 0 18px rgba(106, 76, 255, 0.4);
+  text-shadow:
+    3px 3px 0 $pixel-purple-deep,
+    0 0 18px rgba(106, 76, 255, 0.4);
 }
 
 .fw-row {
@@ -236,7 +253,9 @@ main {
   color: $pixel-dark;
   font-family: 'Press Start 2P', monospace;
   border-radius: 0;
-  transition: transform 0.07s ease, box-shadow 0.07s ease;
+  transition:
+    transform 0.07s ease,
+    box-shadow 0.07s ease;
   min-width: 84px;
 }
 .fw-tile:hover {
@@ -246,27 +265,60 @@ main {
 .fw-tile.is-selected {
   background: var(--fw-color);
   color: #fff;
-  box-shadow: 4px 4px 0 var(--fw-shadow), 0 0 0 3px $pixel-cream, 0 0 0 6px $pixel-purple;
+  box-shadow:
+    4px 4px 0 var(--fw-shadow),
+    0 0 0 3px $pixel-cream,
+    0 0 0 6px $pixel-purple;
 }
+/* A dark "stage" the pixel sprite stands on, tinted by the framework colour. */
 .fw-portrait {
-  width: 38px;
-  height: 38px;
-  background: var(--fw-color);
+  width: 72px;
+  height: 72px;
+  background:
+    radial-gradient(
+      60% 45% at 50% 92%,
+      color-mix(in srgb, var(--fw-color) 32%, transparent),
+      transparent 70%
+    ),
+    #11131f;
   border: 3px solid $pixel-dark;
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
+  overflow: hidden;
 }
 .fw-tile.is-selected .fw-portrait {
-  background: $pixel-cream;
+  border-color: var(--fw-color);
 }
-.fw-monogram {
-  font-size: 0.85rem;
-  color: $pixel-dark;
+.fw-sprite {
+  @include sprite.frame(2);
 }
 .fw-name {
   font-size: 0.5rem;
   letter-spacing: 0.08em;
+}
+
+/* Readout below the tiles — the chosen framework's class + catchy blurb. */
+.fw-readout {
+  margin: 0.3rem 0 0;
+  min-height: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.6rem;
+  text-align: center;
+}
+.fw-readout-klass {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  color: var(--fw-color, #{$pixel-purple-light});
+}
+.fw-readout-blurb {
+  font-family: 'VT323', 'Fira Code', monospace;
+  font-size: 1.25rem;
+  color: #cabfe6;
 }
 
 .adventure-grid {
@@ -296,7 +348,10 @@ main {
   gap: 0.7rem;
   color: #f1ecff;
   border-radius: 0;
-  transition: transform 0.08s ease, box-shadow 0.08s ease, border-color 0.12s ease;
+  transition:
+    transform 0.08s ease,
+    box-shadow 0.08s ease,
+    border-color 0.12s ease;
   min-height: 230px;
 }
 .adventure-card:hover {
@@ -369,6 +424,11 @@ main {
   margin: 0;
 }
 
+.sec-head {
+  margin: 0;
+  text-transform: uppercase;
+}
+
 /* ── Fullscreen quest host ─────────────────────────────────────── */
 .demos-viewport {
   display: none;
@@ -409,8 +469,14 @@ main {
   animation: demo-zoom-in 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 @keyframes demo-zoom-in {
-  from { transform: scale(0.92); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
+  from {
+    transform: scale(0.92);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 /* Back-to-demos (shown once a quest finishes into its app) */
@@ -429,34 +495,13 @@ main {
   background: $pixel-amber;
   border: 3px solid $pixel-dark;
   border-radius: 0;
-  box-shadow: 0 0 0 3px $pixel-cream, 3px 3px 0 0 $pixel-purple-deep;
+  box-shadow:
+    0 0 0 3px $pixel-cream,
+    3px 3px 0 0 $pixel-purple-deep;
   padding: 0.55rem 0.7rem;
 }
 .portal-back[hidden] {
   display: none;
-}
-
-.fs-exit {
-  display: none;
-  position: fixed;
-  top: 0.8rem;
-  right: 0.9rem;
-  z-index: 210;
-  width: 40px;
-  height: 40px;
-  align-items: center;
-  justify-content: center;
-  font-family: 'Press Start 2P', monospace;
-  font-size: 0.85rem;
-  color: $pixel-dark;
-  background: $pixel-amber;
-  border: 3px solid $pixel-dark;
-  border-radius: 0;
-  box-shadow: 0 0 0 3px $pixel-cream, 3px 3px 0 0 $pixel-purple-deep;
-  cursor: pointer;
-}
-.demos-viewport.is-fullscreen .fs-exit {
-  display: inline-flex;
 }
 
 @media (max-width: 880px) {

@@ -52,11 +52,14 @@ body {
   margin: 0;
   padding: 0;
   min-height: 100%;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family:
+    'Inter',
+    system-ui,
+    -apple-system,
+    sans-serif;
   /* backdrop the handheld frame sits on */
   background:
-    radial-gradient(ellipse 70% 60% at 50% 0%, rgba(106, 76, 255, 0.16), transparent 60%),
-    #07060f;
+    radial-gradient(ellipse 70% 60% at 50% 0%, rgba(106, 76, 255, 0.16), transparent 60%), #07060f;
   color: var(--sasha-fg);
   -webkit-font-smoothing: antialiased;
 }
@@ -180,7 +183,6 @@ html:has(.sasha-shell.is-bare) body {
   color: var(--sasha-muted);
 }
 .qb-step {
-  margin-left: auto;
   font-family: 'Press Start 2P', monospace;
   font-size: 0.55rem;
   color: var(--sasha-muted);
@@ -230,7 +232,9 @@ html:has(.sasha-shell.is-bare) body {
   box-shadow: 0 4px 0 $pixel-purple-deep;
   border-radius: 0;
   cursor: pointer;
-  transition: transform 0.08s ease, color 0.12s ease;
+  transition:
+    transform 0.08s ease,
+    color 0.12s ease;
 }
 .dialog-skip:hover {
   color: $pixel-amber;
@@ -305,7 +309,12 @@ html:has(.sasha-shell.is-bare) body {
   border: 1px solid rgba(148, 163, 184, 0.2);
   color: var(--sasha-muted);
   cursor: pointer;
-  transition: transform 0.15s ease, background 0.2s, border-color 0.2s, box-shadow 0.2s, color 0.2s;
+  transition:
+    transform 0.15s ease,
+    background 0.2s,
+    border-color 0.2s,
+    box-shadow 0.2s,
+    color 0.2s;
 }
 .fw-pill svg {
   flex: 0 0 auto;
@@ -325,13 +334,35 @@ html:has(.sasha-shell.is-bare) body {
 .fw-pill.is-active svg {
   opacity: 1;
 }
-.fw-pill--react.is-active   { background: #61dafb; color: #0a1530; box-shadow: 0 0 0 3px rgba(97, 218, 251, 0.22); }
-.fw-pill--angular.is-active { background: #dd0031; box-shadow: 0 0 0 3px rgba(221, 0, 49, 0.22); }
-.fw-pill--lit.is-active     { background: #324fff; box-shadow: 0 0 0 3px rgba(50, 79, 255, 0.22); }
-.fw-pill--vue.is-active     { background: #4fc08d; color: #0a1530; box-shadow: 0 0 0 3px rgba(79, 192, 141, 0.22); }
-.fw-pill--vanilla.is-active { background: #f7df1e; color: #0a1530; box-shadow: 0 0 0 3px rgba(247, 223, 30, 0.28); }
-.fw-pill--vanilla.is-active .js-rect { fill: #0a1530; }
-.fw-pill--vanilla.is-active .js-text { fill: #f7df1e; }
+.fw-pill--react.is-active {
+  background: #61dafb;
+  color: #0a1530;
+  box-shadow: 0 0 0 3px rgba(97, 218, 251, 0.22);
+}
+.fw-pill--angular.is-active {
+  background: #dd0031;
+  box-shadow: 0 0 0 3px rgba(221, 0, 49, 0.22);
+}
+.fw-pill--lit.is-active {
+  background: #324fff;
+  box-shadow: 0 0 0 3px rgba(50, 79, 255, 0.22);
+}
+.fw-pill--vue.is-active {
+  background: #4fc08d;
+  color: #0a1530;
+  box-shadow: 0 0 0 3px rgba(79, 192, 141, 0.22);
+}
+.fw-pill--vanilla.is-active {
+  background: #f7df1e;
+  color: #0a1530;
+  box-shadow: 0 0 0 3px rgba(247, 223, 30, 0.28);
+}
+.fw-pill--vanilla.is-active .js-rect {
+  fill: #0a1530;
+}
+.fw-pill--vanilla.is-active .js-text {
+  fill: #f7df1e;
+}
 
 /* ─── The return trip — a panel right under the Save button ────────── */
 .return-bar {
@@ -396,7 +427,9 @@ html:has(.sasha-shell.is-bare) body {
   letter-spacing: 0.08em;
   cursor: pointer;
   border-radius: 0;
-  transition: background-color 0.12s ease, color 0.12s ease;
+  transition:
+    background-color 0.12s ease,
+    color 0.12s ease;
 }
 
 .mini-btn:hover:not(:disabled) {
@@ -440,8 +473,13 @@ html:has(.sasha-shell.is-bare) body {
 }
 
 @keyframes sword-glow {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(249, 211, 66, 0.5); }
-  50% { box-shadow: 0 0 0 4px rgba(249, 211, 66, 0.15); }
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(249, 211, 66, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgba(249, 211, 66, 0.15);
+  }
 }
 
 .nav-chip-mono {
@@ -536,7 +574,9 @@ html:has(.sasha-shell.is-bare) body {
   line-height: 1;
   cursor: pointer;
   border-radius: 0;
-  box-shadow: 0 0 0 3px $pixel-cream, 3px 3px 0 0 $pixel-purple-deep;
+  box-shadow:
+    0 0 0 3px $pixel-cream,
+    3px 3px 0 0 $pixel-purple-deep;
   transition: transform 0.06s ease;
 }
 
@@ -546,13 +586,17 @@ html:has(.sasha-shell.is-bare) body {
 
 .dialog-x:active {
   transform: translate(2px, 2px);
-  box-shadow: 0 0 0 3px $pixel-cream, 1px 1px 0 0 $pixel-purple-deep;
+  box-shadow:
+    0 0 0 3px $pixel-cream,
+    1px 1px 0 0 $pixel-purple-deep;
 }
 
 .dialog-box.is-boss .dialog-x {
   background: #ff3366;
   color: #ffe5ec;
-  box-shadow: 0 0 0 3px #ffe5ec, 3px 3px 0 0 #7a0019;
+  box-shadow:
+    0 0 0 3px #ffe5ec,
+    3px 3px 0 0 #7a0019;
 }
 
 .progress-track {
@@ -582,13 +626,7 @@ html:has(.sasha-shell.is-bare) body {
 }
 
 .progress-bar.is-boss .progress-fill {
-  background: repeating-linear-gradient(
-    45deg,
-    #ff3366 0,
-    #ff3366 6px,
-    #ff8aa6 6px,
-    #ff8aa6 12px
-  );
+  background: repeating-linear-gradient(45deg, #ff3366 0, #ff3366 6px, #ff8aa6 6px, #ff8aa6 12px);
   box-shadow: 0 0 10px rgba(255, 51, 102, 0.7);
 }
 
@@ -765,16 +803,25 @@ html:has(.sasha-shell.is-bare) body {
   border: 1px solid #6a4cff;
   border-radius: 6px;
   padding: 0.6rem 0.85rem;
-  box-shadow: 0 3px 0 #3a1f8c, 0 0 18px rgba(var(--quest-violet), 0.28);
-  transition: transform 0.12s, box-shadow 0.12s, filter 0.12s;
+  box-shadow:
+    0 3px 0 #3a1f8c,
+    0 0 18px rgba(var(--quest-violet), 0.28);
+  transition:
+    transform 0.12s,
+    box-shadow 0.12s,
+    filter 0.12s;
   &:hover {
     transform: translateY(-1px);
     filter: brightness(1.05);
-    box-shadow: 0 4px 0 #3a1f8c, 0 0 24px rgba(var(--quest-violet), 0.42);
+    box-shadow:
+      0 4px 0 #3a1f8c,
+      0 0 24px rgba(var(--quest-violet), 0.42);
   }
   &:active {
     transform: translateY(2px);
-    box-shadow: 0 1px 0 #3a1f8c, 0 0 12px rgba(var(--quest-violet), 0.3);
+    box-shadow:
+      0 1px 0 #3a1f8c,
+      0 0 12px rgba(var(--quest-violet), 0.3);
   }
 }
 
@@ -818,7 +865,9 @@ html:has(.sasha-shell.is-bare) body {
   font-size: 0.5rem;
   letter-spacing: 0.08em;
   color: var(--sasha-muted);
-  transition: color 0.15s ease, text-shadow 0.15s ease;
+  transition:
+    color 0.15s ease,
+    text-shadow 0.15s ease;
 }
 .form-live.is-on {
   color: var(--sasha-app);
@@ -828,14 +877,16 @@ html:has(.sasha-shell.is-bare) body {
 /* the form flashes the instant the data changes */
 .app-host {
   border-radius: 10px;
-  transition: box-shadow 0.2s ease, background-color 0.2s ease;
+  transition:
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
 }
 .app-host.is-rebuilt {
-  box-shadow: 0 0 0 2px var(--sasha-app), 0 0 22px var(--sasha-app-soft);
+  box-shadow:
+    0 0 0 2px var(--sasha-app),
+    0 0 22px var(--sasha-app-soft);
   background: var(--sasha-app-soft);
 }
-
-
 
 /* ─── Big RPG stats (now grid items in the bottom battle frame) ────── */
 
@@ -941,19 +992,11 @@ html:has(.sasha-shell.is-bare) body {
 }
 .battle-progress-fill {
   height: 100%;
-  background: repeating-linear-gradient(
-    45deg,
-    $pixel-purple 0 6px,
-    $pixel-purple-light 6px 12px
-  );
+  background: repeating-linear-gradient(45deg, $pixel-purple 0 6px, $pixel-purple-light 6px 12px);
   transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .battle-frame.is-boss .battle-progress-fill {
-  background: repeating-linear-gradient(
-    45deg,
-    #ff3366 0 6px,
-    #ff8aa6 6px 12px
-  );
+  background: repeating-linear-gradient(45deg, #ff3366 0 6px, #ff8aa6 6px 12px);
 }
 .sb-cap {
   font-family: 'Press Start 2P', monospace;
@@ -970,7 +1013,9 @@ html:has(.sasha-shell.is-bare) body {
 }
 .stat-box--loc .sb-num {
   color: $pixel-amber;
-  text-shadow: 3px 3px 0 $pixel-amber-deep, 0 0 16px rgba(249, 211, 66, 0.45);
+  text-shadow:
+    3px 3px 0 $pixel-amber-deep,
+    0 0 16px rgba(249, 211, 66, 0.45);
 }
 .sb-label {
   font-family: 'Press Start 2P', monospace;
@@ -985,9 +1030,16 @@ html:has(.sasha-shell.is-bare) body {
   animation: sb-bump 0.42s cubic-bezier(0.2, 0.9, 0.3, 1.4);
 }
 @keyframes sb-bump {
-  0% { transform: scale(1); }
-  35% { transform: scale(1.45); filter: brightness(1.5); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+  35% {
+    transform: scale(1.45);
+    filter: brightness(1.5);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 .sb-sub {
   font-family: 'VT323', 'Courier New', monospace;
@@ -1005,12 +1057,16 @@ html:has(.sasha-shell.is-bare) body {
 }
 .stat-box--loc.is-frenzy {
   border-color: #ff3366;
-  box-shadow: 6px 6px 0 #7a0019, 0 0 26px rgba(255, 51, 102, 0.6);
+  box-shadow:
+    6px 6px 0 #7a0019,
+    0 0 26px rgba(255, 51, 102, 0.6);
   animation: dialog-shake 0.18s steps(3) infinite;
 }
 .stat-box--loc.is-frenzy .sb-num {
   color: #ff3366;
-  text-shadow: 2px 0 0 #ff00aa, -2px 0 0 #00f0ff;
+  text-shadow:
+    2px 0 0 #ff00aa,
+    -2px 0 0 #00f0ff;
 }
 
 /* ─── {gui.} artifact (CH.02 centre) ──────────────────────────────── */
@@ -1047,7 +1103,10 @@ html:has(.sasha-shell.is-bare) body {
   font-size: clamp(3rem, 7vw, 5rem);
   color: $pixel-cream;
   letter-spacing: -0.04em;
-  text-shadow: 0 0 18px $pixel-amber, 0 0 36px $pixel-amber, 4px 4px 0 $pixel-purple-deep;
+  text-shadow:
+    0 0 18px $pixel-amber,
+    0 0 36px $pixel-amber,
+    4px 4px 0 $pixel-purple-deep;
   animation: sigil-pulse 0.9s ease-in-out infinite;
 }
 .ga-cap {
@@ -1074,11 +1133,7 @@ html:has(.sasha-shell.is-bare) body {
 .go-scan {
   position: absolute;
   inset: 0;
-  background: repeating-linear-gradient(
-    to bottom,
-    transparent 0 3px,
-    rgba(0, 0, 0, 0.4) 3px 4px
-  );
+  background: repeating-linear-gradient(to bottom, transparent 0 3px, rgba(0, 0, 0, 0.4) 3px 4px);
   pointer-events: none;
 }
 .go-stack {
@@ -1103,7 +1158,10 @@ html:has(.sasha-shell.is-bare) body {
   margin: 0;
   color: #ff3366;
   letter-spacing: 0.08em;
-  text-shadow: 4px 0 0 #ff00aa, -4px 0 0 #00f0ff, 0 8px 0 #7a0019;
+  text-shadow:
+    4px 0 0 #ff00aa,
+    -4px 0 0 #00f0ff,
+    0 8px 0 #7a0019;
   animation: title-shake 0.4s steps(7) 1;
 }
 .go-stat {
@@ -1130,7 +1188,10 @@ html:has(.sasha-shell.is-bare) body {
   padding: 0.8rem 1.4rem 0.7rem;
   cursor: pointer;
   border-radius: 0;
-  box-shadow: 0 0 0 3px $pixel-cream, 4px 4px 0 0 $pixel-purple-deep, 4px 4px 0 3px $pixel-cream;
+  box-shadow:
+    0 0 0 3px $pixel-cream,
+    4px 4px 0 0 $pixel-purple-deep,
+    4px 4px 0 3px $pixel-cream;
 }
 .go-retry:hover {
   transform: translate(-1px, -1px);
@@ -1148,8 +1209,7 @@ html:has(.sasha-shell.is-bare) body {
   /* Solid opaque base UNDER the glow — without it the bright app form behind
      bleeds through the translucent centre and washes the text out. */
   background:
-    radial-gradient(ellipse at center, rgba(106, 76, 255, 0.35) 0%, transparent 65%),
-    #120a26;
+    radial-gradient(ellipse at center, rgba(106, 76, 255, 0.35) 0%, transparent 65%), #120a26;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1197,7 +1257,9 @@ html:has(.sasha-shell.is-bare) body {
   margin: 0;
   color: $pixel-cream;
   letter-spacing: 0.04em;
-  text-shadow: 0 0 18px $pixel-amber, 3px 3px 0 $pixel-purple-deep;
+  text-shadow:
+    0 0 18px $pixel-amber,
+    3px 3px 0 $pixel-purple-deep;
 }
 .vo-sub {
   font-family: 'VT323', 'Courier New', monospace;
@@ -1274,7 +1336,9 @@ html:has(.sasha-shell.is-bare) body {
   cursor: pointer;
   position: relative;
   box-shadow: 6px 6px 0 var(--char-shadow, $pixel-purple-deep);
-  transition: transform 0.08s ease, box-shadow 0.08s ease;
+  transition:
+    transform 0.08s ease,
+    box-shadow 0.08s ease;
   color: $pixel-dark;
   border-radius: 0;
   font-family: 'Press Start 2P', monospace;
@@ -1303,8 +1367,13 @@ html:has(.sasha-shell.is-bare) body {
 }
 
 @keyframes char-pulse {
-  0%, 100% { filter: brightness(1); }
-  50% { filter: brightness(1.15); }
+  0%,
+  100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.15);
+  }
 }
 
 .char-portrait {
@@ -1383,8 +1452,14 @@ html:has(.sasha-shell.is-bare) body {
 }
 
 @keyframes card-in {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .card--endpoint {
@@ -1613,7 +1688,10 @@ html:has(.sasha-shell.is-bare) body {
   cursor: pointer;
   font-size: 0.74rem;
   letter-spacing: 0.04em;
-  transition: color 0.18s ease, border-color 0.18s ease, background-color 0.18s ease;
+  transition:
+    color 0.18s ease,
+    border-color 0.18s ease,
+    background-color 0.18s ease;
 }
 .rr-opt-add:hover {
   color: var(--sasha-endpoint);
@@ -1650,15 +1728,31 @@ html:has(.sasha-shell.is-bare) body {
   animation: cb-pulse 0.65s ease;
 }
 @keyframes cb-pulse {
-  0%, 100% { background: transparent; }
-  35% { background: color-mix(in srgb, var(--gui-intent-primary) 18%, transparent); }
+  0%,
+  100% {
+    background: transparent;
+  }
+  35% {
+    background: color-mix(in srgb, var(--gui-intent-primary) 18%, transparent);
+  }
 }
 /* JSON syntax tokens (GitHub-dark-ish). */
-.t-key  { color: #79c0ff; }
-.t-str  { color: #a5d6ff; }
-.t-num  { color: #f0883e; }
-.t-kw   { color: #d2a8ff; font-weight: 600; }
-.t-punc { color: #8b949e; }
+.t-key {
+  color: #79c0ff;
+}
+.t-str {
+  color: #a5d6ff;
+}
+.t-num {
+  color: #f0883e;
+}
+.t-kw {
+  color: #d2a8ff;
+  font-weight: 600;
+}
+.t-punc {
+  color: #8b949e;
+}
 
 /* ─── App tabs ───────────────────────────────────────────────────── */
 
@@ -1741,7 +1835,9 @@ html:has(.sasha-shell.is-bare) body {
 
 /* Fresh tab arrival (feedback unlocked by boss) */
 .app-tab.is-fresh {
-  animation: tab-arrive 0.7s ease-out, tab-fresh-pulse 1.2s 0.7s ease-in-out 2;
+  animation:
+    tab-arrive 0.7s ease-out,
+    tab-fresh-pulse 1.2s 0.7s ease-in-out 2;
   position: relative;
 }
 
@@ -1760,14 +1856,27 @@ html:has(.sasha-shell.is-bare) body {
 }
 
 @keyframes tab-arrive {
-  0%   { transform: translateY(-12px) scaleX(0.6); opacity: 0; }
-  60%  { transform: translateY(2px) scaleX(1.05); opacity: 1; }
-  100% { transform: translateY(0) scaleX(1); }
+  0% {
+    transform: translateY(-12px) scaleX(0.6);
+    opacity: 0;
+  }
+  60% {
+    transform: translateY(2px) scaleX(1.05);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0) scaleX(1);
+  }
 }
 
 @keyframes tab-fresh-pulse {
-  0%, 100% { background: transparent; }
-  50%      { background: rgba(249, 211, 66, 0.35); }
+  0%,
+  100% {
+    background: transparent;
+  }
+  50% {
+    background: rgba(249, 211, 66, 0.35);
+  }
 }
 
 .app-tab.is-custom {
@@ -1792,8 +1901,13 @@ html:has(.sasha-shell.is-bare) body {
 }
 
 @keyframes nudge {
-  0%, 100% { background: transparent; }
-  50% { background: rgba(249, 211, 66, 0.25); }
+  0%,
+  100% {
+    background: transparent;
+  }
+  50% {
+    background: rgba(249, 211, 66, 0.25);
+  }
 }
 
 .app-host {
@@ -1854,7 +1968,9 @@ html:has(.sasha-shell.is-bare) body {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* ─── Boss reveal overlay (scene 2 entry) ─────────────────────────── */
@@ -1874,13 +1990,21 @@ html:has(.sasha-shell.is-bare) body {
 }
 
 @keyframes overlay-in {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes overlay-out {
-  from { opacity: 1; }
-  to   { opacity: 0; }
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
 }
 
 .reveal-flash {
@@ -1892,11 +2016,25 @@ html:has(.sasha-shell.is-bare) body {
 }
 
 @keyframes reveal-flash {
-  0%   { opacity: 0; background: $pixel-cream; }
-  15%  { opacity: 0.85; background: $pixel-cream; }
-  30%  { opacity: 0.3; background: $pixel-purple-light; }
-  60%  { opacity: 0.6; background: $pixel-amber; }
-  100% { opacity: 0; }
+  0% {
+    opacity: 0;
+    background: $pixel-cream;
+  }
+  15% {
+    opacity: 0.85;
+    background: $pixel-cream;
+  }
+  30% {
+    opacity: 0.3;
+    background: $pixel-purple-light;
+  }
+  60% {
+    opacity: 0.6;
+    background: $pixel-amber;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 .reveal-vignette {
@@ -1937,7 +2075,9 @@ html:has(.sasha-shell.is-bare) body {
 }
 
 @keyframes pretitle-in {
-  to { opacity: 1; }
+  to {
+    opacity: 1;
+  }
 }
 
 .reveal-title {
@@ -1959,19 +2099,39 @@ html:has(.sasha-shell.is-bare) body {
 }
 
 @keyframes title-slam {
-  0%   { transform: translateX(-120vw) scale(0.5); }
-  70%  { transform: translateX(28px) scale(1.18); }
-  85%  { transform: translateX(-10px) scale(1.06); }
-  100% { transform: translateX(0) scale(1); }
+  0% {
+    transform: translateX(-120vw) scale(0.5);
+  }
+  70% {
+    transform: translateX(28px) scale(1.18);
+  }
+  85% {
+    transform: translateX(-10px) scale(1.06);
+  }
+  100% {
+    transform: translateX(0) scale(1);
+  }
 }
 
 @keyframes title-shake {
-  0%   { transform: translate(0, 0); }
-  20%  { transform: translate(-4px, 3px); }
-  40%  { transform: translate(5px, -4px); }
-  60%  { transform: translate(-3px, 4px); }
-  80%  { transform: translate(4px, -2px); }
-  100% { transform: translate(0, 0); }
+  0% {
+    transform: translate(0, 0);
+  }
+  20% {
+    transform: translate(-4px, 3px);
+  }
+  40% {
+    transform: translate(5px, -4px);
+  }
+  60% {
+    transform: translate(-3px, 4px);
+  }
+  80% {
+    transform: translate(4px, -2px);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
 }
 
 .reveal-subtitle {
@@ -1980,11 +2140,13 @@ html:has(.sasha-shell.is-bare) body {
   letter-spacing: 0.18em;
   color: $pixel-amber;
   opacity: 0;
-  animation: sub-in 0.3s 1.0s steps(2) forwards;
+  animation: sub-in 0.3s 1s steps(2) forwards;
 }
 
 @keyframes sub-in {
-  to { opacity: 1; }
+  to {
+    opacity: 1;
+  }
 }
 
 .reveal-payload {
@@ -2009,9 +2171,18 @@ html:has(.sasha-shell.is-bare) body {
 }
 
 @keyframes payload-in {
-  0%   { opacity: 0; transform: scale(0.85); }
-  60%  { opacity: 1; transform: scale(1.04); }
-  100% { opacity: 1; transform: scale(1); }
+  0% {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .reveal-footer {
@@ -2024,7 +2195,9 @@ html:has(.sasha-shell.is-bare) body {
 }
 
 @keyframes footer-in {
-  to { opacity: 1; }
+  to {
+    opacity: 1;
+  }
 }
 
 /* Lightning bolts across the overlay */
@@ -2059,10 +2232,18 @@ html:has(.sasha-shell.is-bare) body {
 }
 
 @keyframes bolt-strike {
-  0%   { opacity: 0; }
-  20%  { opacity: 1; }
-  80%  { opacity: 0.8; }
-  100% { opacity: 0; }
+  0% {
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 /* ─── Zelda ITEM GET overlay (scene 3 entry) ─────────────────────── */
@@ -2071,8 +2252,11 @@ html:has(.sasha-shell.is-bare) body {
   position: absolute;
   inset: 0;
   z-index: 20;
-  background:
-    radial-gradient(ellipse at center, rgba(106, 76, 255, 0.35) 0%, rgba(21, 7, 38, 0.98) 70%);
+  background: radial-gradient(
+    ellipse at center,
+    rgba(106, 76, 255, 0.35) 0%,
+    rgba(21, 7, 38, 0.98) 70%
+  );
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2083,13 +2267,21 @@ html:has(.sasha-shell.is-bare) body {
 }
 
 @keyframes zelda-fade-in {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes zelda-fade-out {
-  from { opacity: 1; }
-  to   { opacity: 0; }
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
 }
 
 .zelda-rays {
@@ -2098,19 +2290,18 @@ html:has(.sasha-shell.is-bare) body {
   height: 220%;
   top: -60%;
   left: -60%;
-  background:
-    conic-gradient(
-      from 0deg,
-      transparent 0deg 8deg,
-      rgba(249, 211, 66, 0.18) 8deg 14deg,
-      transparent 14deg 28deg,
-      rgba(249, 211, 66, 0.12) 28deg 32deg,
-      transparent 32deg 50deg,
-      rgba(255, 255, 255, 0.08) 50deg 54deg,
-      transparent 54deg 72deg,
-      rgba(249, 211, 66, 0.18) 72deg 78deg,
-      transparent 78deg
-    );
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg 8deg,
+    rgba(249, 211, 66, 0.18) 8deg 14deg,
+    transparent 14deg 28deg,
+    rgba(249, 211, 66, 0.12) 28deg 32deg,
+    transparent 32deg 50deg,
+    rgba(255, 255, 255, 0.08) 50deg 54deg,
+    transparent 54deg 72deg,
+    rgba(249, 211, 66, 0.18) 72deg 78deg,
+    transparent 78deg
+  );
   animation: zelda-spin 9s linear infinite;
   pointer-events: none;
   opacity: 0;
@@ -2120,11 +2311,15 @@ html:has(.sasha-shell.is-bare) body {
 }
 
 @keyframes zelda-spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes zelda-rays-in {
-  to { opacity: 1; }
+  to {
+    opacity: 1;
+  }
 }
 
 .zelda-stack {
@@ -2151,7 +2346,9 @@ html:has(.sasha-shell.is-bare) body {
 }
 
 @keyframes zelda-pretitle-in {
-  to { opacity: 1; }
+  to {
+    opacity: 1;
+  }
 }
 
 .zelda-artifact {
@@ -2163,9 +2360,18 @@ html:has(.sasha-shell.is-bare) body {
 }
 
 @keyframes artifact-rise {
-  0%   { opacity: 0; transform: translateY(60px) scale(0.4); }
-  60%  { opacity: 1; transform: translateY(-6px) scale(1.1); }
-  100% { opacity: 1; transform: translateY(0) scale(1); }
+  0% {
+    opacity: 0;
+    transform: translateY(60px) scale(0.4);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-6px) scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .zelda-sigil {
@@ -2184,8 +2390,13 @@ html:has(.sasha-shell.is-bare) body {
 }
 
 @keyframes sigil-pulse {
-  0%, 100% { transform: scale(1); }
-  50%      { transform: scale(1.06); }
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.06);
+  }
 }
 
 .zelda-glow {
@@ -2198,8 +2409,15 @@ html:has(.sasha-shell.is-bare) body {
 }
 
 @keyframes glow-pulse {
-  0%, 100% { opacity: 0.6; transform: scale(1); }
-  50%      { opacity: 1;   transform: scale(1.15); }
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
 }
 
 .zelda-name {
@@ -2214,7 +2432,9 @@ html:has(.sasha-shell.is-bare) body {
 }
 
 @keyframes zelda-name-in {
-  to { opacity: 1; }
+  to {
+    opacity: 1;
+  }
 }
 
 .zelda-spell {
@@ -2230,7 +2450,9 @@ html:has(.sasha-shell.is-bare) body {
 }
 
 @keyframes zelda-spell-in {
-  to { opacity: 1; }
+  to {
+    opacity: 1;
+  }
 }
 
 .zelda-blurb {
@@ -2241,11 +2463,13 @@ html:has(.sasha-shell.is-bare) body {
   color: $pixel-cream;
   margin-top: 0.4rem;
   opacity: 0;
-  animation: zelda-blurb-in 0.35s 2.0s steps(2) forwards;
+  animation: zelda-blurb-in 0.35s 2s steps(2) forwards;
 }
 
 @keyframes zelda-blurb-in {
-  to { opacity: 1; }
+  to {
+    opacity: 1;
+  }
 }
 
 /* ─── 8-bit dialog stage ─────────────────────────────────────────── */
@@ -2279,8 +2503,13 @@ html:has(.sasha-shell.is-bare) body {
 }
 
 @keyframes boss-bg {
-  0%, 100% { background: linear-gradient(135deg, #2a0d1a 0%, #1a0830 100%); }
-  50%      { background: linear-gradient(135deg, #3a0d2a 0%, #2a0840 100%); }
+  0%,
+  100% {
+    background: linear-gradient(135deg, #2a0d1a 0%, #1a0830 100%);
+  }
+  50% {
+    background: linear-gradient(135deg, #3a0d2a 0%, #2a0840 100%);
+  }
 }
 
 .dialog-box:focus,
@@ -2335,10 +2564,19 @@ html:has(.sasha-shell.is-bare) body {
 }
 
 @keyframes nameplate-shake {
-  0%, 100% { transform: translate(0, 0); }
-  25%      { transform: translate(-1px, 1px); }
-  50%      { transform: translate(2px, -1px); }
-  75%      { transform: translate(-1px, -1px); }
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(-1px, 1px);
+  }
+  50% {
+    transform: translate(2px, -1px);
+  }
+  75% {
+    transform: translate(-1px, -1px);
+  }
 }
 
 .dialog-nameplate {
@@ -2419,11 +2657,21 @@ html:has(.sasha-shell.is-bare) body {
 }
 
 @keyframes dialog-shake {
-  0% { transform: translate(0, 0); }
-  25% { transform: translate(-3px, 2px); }
-  50% { transform: translate(4px, -2px); }
-  75% { transform: translate(-2px, 2px); }
-  100% { transform: translate(0, 0); }
+  0% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(-3px, 2px);
+  }
+  50% {
+    transform: translate(4px, -2px);
+  }
+  75% {
+    transform: translate(-2px, 2px);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
 }
 
 .dialog-foot {
@@ -2488,7 +2736,9 @@ html:has(.sasha-shell.is-bare) body {
   padding: 0.25rem 0.6rem;
   cursor: pointer;
   border-radius: 0;
-  transition: background-color 0.1s ease, border-color 0.1s ease;
+  transition:
+    background-color 0.1s ease,
+    border-color 0.1s ease;
 }
 
 .dialog-option:hover,
@@ -2608,11 +2858,16 @@ html:has(.sasha-shell.is-bare) body {
 }
 
 @keyframes npm-glow {
-  0%, 100% {
-    box-shadow: 0 0 0 4px $pixel-purple-deep, 0 0 22px rgba(249, 211, 66, 0.45);
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 4px $pixel-purple-deep,
+      0 0 22px rgba(249, 211, 66, 0.45);
   }
   50% {
-    box-shadow: 0 0 0 4px $pixel-purple-deep, 0 0 40px rgba(249, 211, 66, 0.85);
+    box-shadow:
+      0 0 0 4px $pixel-purple-deep,
+      0 0 40px rgba(249, 211, 66, 0.85);
   }
 }
 
@@ -2637,7 +2892,9 @@ html:has(.sasha-shell.is-bare) body {
     0 0 0 3px $pixel-cream,
     4px 4px 0 0 $pixel-purple-deep,
     4px 4px 0 3px $pixel-cream;
-  transition: transform 0.05s ease, box-shadow 0.05s ease;
+  transition:
+    transform 0.05s ease,
+    box-shadow 0.05s ease;
 
   &.is-ready:hover {
     transform: translate(-1px, -1px);
@@ -2672,7 +2929,9 @@ html:has(.sasha-shell.is-bare) body {
 }
 
 @keyframes blink {
-  50% { opacity: 0; }
+  50% {
+    opacity: 0;
+  }
 }
 
 /* ─── Material icons fallback ─────────────────────────────────────── */

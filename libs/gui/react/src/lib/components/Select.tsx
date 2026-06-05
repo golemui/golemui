@@ -5,7 +5,6 @@ import { useCallback } from 'react';
 import { GuiSelectReact } from '../web-components';
 import '../styles.scss';
 
-
 export function Select(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<string>;
   const {

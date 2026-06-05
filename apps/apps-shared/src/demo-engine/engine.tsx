@@ -9,34 +9,16 @@
  * GAME OVER frenzy, the typewriter gate), the layout, the framework picker,
  * the quest title bar, SKIP, and the overlays. A change here hits every demo.
  */
-import {
-  type CSSProperties,
-  type ReactNode,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { type CSSProperties, type ReactNode, useEffect, useRef, useState } from 'react';
 
 /* ─── Characters (the framework "classes") ───────────────────────────── */
 
-export type Framework = 'react' | 'angular' | 'lit' | 'vue' | 'vanilla';
-
-export interface Character {
-  id: Framework;
-  name: string;
-  klass: string;
-  color: string;
-  shadow: string;
-  monogram: string;
-}
-
-export const CHARACTERS: Character[] = [
-  { id: 'react',   name: 'REACT',   klass: 'HOOK CASTER',     color: '#61dafb', shadow: '#0e7a9e', monogram: 'R' },
-  { id: 'angular', name: 'ANGULAR', klass: 'DI PALADIN',      color: '#dd0031', shadow: '#7a0019', monogram: 'A' },
-  { id: 'lit',     name: 'LIT',     klass: 'WEB-NATIVE MAGE', color: '#324fff', shadow: '#1a2c99', monogram: 'L' },
-  { id: 'vue',     name: 'VUE',     klass: 'REACTIVE RANGER', color: '#41b883', shadow: '#1f6e4d', monogram: 'V' },
-  { id: 'vanilla', name: 'JS',      klass: 'VANILLA ROGUE',   color: '#f7df1e', shadow: '#8a7a00', monogram: '{}' },
-];
+// Pure character data lives in ./characters (no React) so the vanilla landing
+// can import it too; re-exported here so `@golemui/demo-engine` consumers are
+// unchanged.
+import { CHARACTERS, type Character, type Framework } from './characters';
+export { CHARACTERS };
+export type { Character, Framework };
 
 export const FW_IDS: Framework[] = ['react', 'angular', 'lit', 'vue', 'vanilla'];
 
@@ -66,7 +48,14 @@ export const FW_ICON: Record<Framework, ReactNode> = {
     </svg>
   ),
   lit: (
-    <svg viewBox="0 0 768 960" width="14" height="18" fill="currentColor" fillRule="evenodd" aria-hidden="true">
+    <svg
+      viewBox="0 0 768 960"
+      width="14"
+      height="18"
+      fill="currentColor"
+      fillRule="evenodd"
+      aria-hidden="true"
+    >
       <path d="M192 576l96-288 432 432-144 240-192-192h-96" />
       <path d="M384 768V384l192-192v384m-480 0h96l96 192-96 192L0 768z" />
       <path d="M192 576V192L384 0v384m192 576V576l192-192v384M0 768V384l192 192" />
@@ -171,6 +160,10 @@ export interface GameConfig {
   renderBare: (api: GameApi) => ReactNode;
   /** Extra class on the stage <section> (e.g. 'is-compose' for a grid). */
   stageClass?: (api: GameApi) => string;
+  /** Render the dialog narrative inside the BattleBar command box (left column,
+   *  buttons on the right) instead of a separate top DialogBox — frees the top
+   *  for a taller stage. Opt-in; demos that don't set it keep the top dialog. */
+  dialogInConsole?: boolean;
   onScene?: (scene: number) => void;
   /** Demo title shown on the frame title bar (walk) and the bare bar. */
   title?: string;
@@ -190,12 +183,10 @@ const inIframe = typeof window !== 'undefined' && window.parent !== window;
 
 export function GameShell(cfg: GameConfig) {
   const lastScene = cfg.scenes.length - 1;
-  const [sceneId, setSceneId] = useState(
-    cfg.startFramework && !cfg.startBare ? 1 : 0,
-  );
+  const [sceneId, setSceneId] = useState(cfg.startFramework && !cfg.startBare ? 1 : 0);
   const [bare, setBare] = useState(!!cfg.startBare);
   const [framework, setFramework] = useState<Framework | null>(
-    cfg.startBare ? cfg.startFramework ?? 'react' : cfg.startFramework ?? null,
+    cfg.startBare ? (cfg.startFramework ?? 'react') : (cfg.startFramework ?? null),
   );
   const [typingDone, setTypingDone] = useState(false);
   const [revealActive, setRevealActive] = useState(false);
@@ -348,9 +339,7 @@ export function GameShell(cfg: GameConfig) {
           <div className="bare-bar-info">
             {cfg.bareTitle && <span className="bare-title">{cfg.bareTitle}</span>}
           </div>
-          <div className="bare-bar-actions">
-            {cfg.bareHeaderExtra?.(api)}
-          </div>
+          <div className="bare-bar-actions">{cfg.bareHeaderExtra?.(api)}</div>
         </header>
       )}
 
@@ -361,13 +350,24 @@ export function GameShell(cfg: GameConfig) {
           quest={scene?.quest ?? ''}
           step={`${sceneId}/${lastScene}`}
           onSkip={goBare}
+          {...(cfg.dialogInConsole
+            ? {
+                character,
+                onPrev: prev,
+                canPrev: sceneId > 0,
+                onNext: next,
+                nextEnabled: cfg.engagement(api),
+                onRestart: restart,
+                navExtra: cfg.navExtra?.(api),
+              }
+            : {})}
         />
       )}
 
-      {!bare && (
+      {!bare && !cfg.dialogInConsole && (
         <DialogBox
           chapter={scene.chapter}
-          title={isBoss ? scene.bossTitle ?? '👹 BOSS' : scene.title}
+          title={isBoss ? (scene.bossTitle ?? '👹 BOSS') : scene.title}
           lines={cfg.lines(api)}
           counter={cfg.counter?.(api)}
           isBoss={isBoss}
@@ -390,7 +390,6 @@ export function GameShell(cfg: GameConfig) {
         )}
       </section>
 
-
       {!bare && (
         <BattleBar
           stats={stats}
@@ -406,13 +405,28 @@ export function GameShell(cfg: GameConfig) {
           navExtra={cfg.navExtra?.(api)}
           locked={revealActive || zeldaActive || gameOver}
           onRestart={restart}
+          dialog={
+            cfg.dialogInConsole
+              ? {
+                  chapter: scene.chapter,
+                  title: isBoss ? (scene.bossTitle ?? '👹 BOSS') : scene.title,
+                  lines: cfg.lines(api),
+                  counter: cfg.counter?.(api),
+                  isBoss,
+                  hold: revealActive || zeldaActive,
+                }
+              : undefined
+          }
         />
       )}
 
       {revealActive && cfg.reveal && <RevealOverlay {...cfg.reveal(api)} />}
       {zeldaActive && cfg.zelda && <ZeldaOverlay {...cfg.zelda} />}
       {gameOver && (
-        <GameOver {...(cfg.gameOver?.(frenzyVal) ?? { statLine: `${frenzyVal} LINES`, sub: '' })} onRetry={tryAgain} />
+        <GameOver
+          {...(cfg.gameOver?.(frenzyVal) ?? { statLine: `${frenzyVal} LINES`, sub: '' })}
+          onRetry={tryAgain}
+        />
       )}
     </main>
   );
@@ -420,7 +434,11 @@ export function GameShell(cfg: GameConfig) {
 
 /* ─── Hooks ──────────────────────────────────────────────────────────── */
 
-export function useTypewriter(text: string, cps = 38, hold = false): { shown: string; done: boolean } {
+export function useTypewriter(
+  text: string,
+  cps = 38,
+  hold = false,
+): { shown: string; done: boolean } {
   const [count, setCount] = useState(0);
   useEffect(() => {
     setCount(0);
@@ -465,19 +483,68 @@ export function QuestBanner({
   quest,
   step,
   onSkip,
+  character,
+  onPrev,
+  canPrev,
+  onNext,
+  nextEnabled,
+  onRestart,
+  navExtra,
 }: {
   title?: string;
   act: string;
   quest: string;
   step?: string;
   onSkip?: () => void;
+  // Compact-layout extras: the framework chip sits by the quest line, and the
+  // prev/next/restart controls join the counter + skip on the right of the bar.
+  character?: Character | null;
+  onPrev?: () => void;
+  canPrev?: boolean;
+  onNext?: () => void;
+  nextEnabled?: boolean;
+  onRestart?: () => void;
+  navExtra?: ReactNode;
 }) {
   return (
     <div className="quest-banner">
       {act && <span className="qb-act">{act}</span>}
       {title && <span className="qb-title">{title}</span>}
       <span className="qb-quest">⚑ {quest}</span>
+      {character && (
+        <span className="nav-chip" style={{ borderColor: character.color, color: character.color }}>
+          <span className="nav-chip-mono">{character.monogram}</span>
+          {character.name}
+        </span>
+      )}
+      {navExtra}
+      {onRestart && (
+        <button
+          type="button"
+          className="mini-btn mini-btn--ghost qb-nav"
+          onClick={onRestart}
+          title="Restart the walk"
+        >
+          RESTART
+        </button>
+      )}
+      {onPrev && (
+        <button type="button" className="mini-btn qb-nav" onClick={onPrev} disabled={!canPrev}>
+          PREV
+        </button>
+      )}
       {step && <span className="qb-step">{step}</span>}
+      {onNext && (
+        <button
+          type="button"
+          className="mini-btn qb-nav"
+          onClick={onNext}
+          disabled={!nextEnabled}
+          title="Next step"
+        >
+          NEXT →
+        </button>
+      )}
       {onSkip && (
         <button
           type="button"
@@ -540,15 +607,24 @@ export function CharacterSelect({
               key={c.id}
               type="button"
               className={`char-tile ${isSelected ? 'is-selected' : ''}`}
-              style={{ '--char-color': c.color, '--char-shadow': c.shadow } as CSSProperties}
+              style={
+                {
+                  '--char-color': c.color,
+                  '--char-shadow': c.shadow,
+                  '--col': c.col,
+                } as CSSProperties
+              }
               onClick={() => onSelect(c.id)}
             >
               <span className="char-portrait" aria-hidden="true">
+                {/* The sprite is shown where its sheet CSS is provided; the
+                    monogram is the fallback (e.g. demos without the asset). */}
+                <span className="char-sprite" style={{ '--col': c.col } as CSSProperties} />
                 <span className="char-monogram">{c.monogram}</span>
               </span>
               <span className="char-name">{c.name}</span>
               <span className="char-klass">{c.klass}</span>
-              {isSelected && <span className="char-cursor">►</span>}
+              <span className="char-blurb">{c.blurb}</span>
             </button>
           );
         })}
@@ -610,7 +686,15 @@ export function ZeldaOverlay({ name, spell }: { name: string; spell: string }) {
   );
 }
 
-export function GameOver({ statLine, sub, onRetry }: { statLine: string; sub: string; onRetry: () => void }) {
+export function GameOver({
+  statLine,
+  sub,
+  onRetry,
+}: {
+  statLine: string;
+  sub: string;
+  onRetry: () => void;
+}) {
   useOverlayConfirm(onRetry);
   return (
     <div className="gameover-overlay">
@@ -738,6 +822,16 @@ interface BattleBarProps {
   navExtra?: ReactNode;
   locked: boolean;
   onRestart: () => void;
+  /** When set, the dialog narrative renders inside the command box (left column)
+   *  and this bar owns the typewriter (no separate top DialogBox). */
+  dialog?: {
+    chapter: string;
+    title: string;
+    lines: string[];
+    counter?: string;
+    isBoss: boolean;
+    hold: boolean;
+  };
 }
 
 function BattleBar({
@@ -754,8 +848,17 @@ function BattleBar({
   navExtra,
   locked,
   onRestart,
+  dialog,
 }: BattleBarProps) {
-  const optionsReady = options.length > 0 && typingDone;
+  // When the dialog lives in the console, this bar runs the typewriter and owns
+  // the typing gate; otherwise the top DialogBox does and feeds `typingDone`.
+  const { shown: dlgShown, done: dlgDone } = useTypewriter(
+    dialog ? dialog.lines.join('\n') : '',
+    38,
+    dialog?.hold ?? false,
+  );
+  const effTypingDone = dialog ? dlgDone : typingDone;
+  const optionsReady = options.length > 0 && effTypingDone;
   const [focus, setFocus] = useState(0);
   const focusRef = useRef(0);
   useEffect(() => {
@@ -800,52 +903,55 @@ function BattleBar({
     return () => window.removeEventListener('keydown', onKey);
   }, [options, optionsReady, cta, engagementMet, locked, onNext]);
 
-  return (
-    <footer className={`battle-frame ${isBoss ? 'is-boss' : ''}`}>
-      <StatBox def={stats[0]} />
-      <div className="command-box">
-        <div className="command-cap">
-          ▸ YOUR MOVE
-          {typingDone && <span className="blink cmd-blink">▌</span>}
-        </div>
-        <div className="command-main">
-          {!typingDone ? (
-            <span className="dialog-hint">…</span>
-          ) : optionsReady ? (
-            <ul className="dialog-options" role="menu">
-              {options.map((o, i) => (
-                <li key={o.key + o.label} role="none">
-                  <button
-                    type="button"
-                    role="menuitem"
-                    className={`dialog-option ${i === focus ? 'is-focused' : ''}`}
-                    onClick={o.action}
-                    onMouseEnter={() => setFocus(i)}
-                  >
-                    <span className="opt-cursor">{i === focus ? '▶' : ''}</span>
-                    <span className="opt-key">{o.key}</span>
-                    <span className="opt-label">{o.label}</span>
-                  </button>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <button
-              type="button"
-              className={`pixel-btn ${engagementMet ? 'is-ready' : 'is-dim'}`}
-              onClick={onNext}
-              disabled={!engagementMet}
-            >
-              {cta ?? 'NEXT'} {engagementMet && <span className="blink">▶</span>}
-            </button>
-          )}
-        </div>
+  const actionContent = (
+    <>
+      <div className="command-cap">
+        ▸ YOUR MOVE
+        {effTypingDone && <span className="blink cmd-blink">▌</span>}
+      </div>
+      <div className="command-main">
+        {!effTypingDone ? (
+          <span className="dialog-hint">…</span>
+        ) : optionsReady ? (
+          <ul className="dialog-options" role="menu">
+            {options.map((o, i) => (
+              <li key={o.key + o.label} role="none">
+                <button
+                  type="button"
+                  role="menuitem"
+                  className={`dialog-option ${i === focus ? 'is-focused' : ''}`}
+                  onClick={o.action}
+                  onMouseEnter={() => setFocus(i)}
+                >
+                  <span className="opt-cursor">{i === focus ? '▶' : ''}</span>
+                  <span className="opt-key">{o.key}</span>
+                  <span className="opt-label">{o.label}</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <button
+            type="button"
+            className={`pixel-btn ${engagementMet ? 'is-ready' : 'is-dim'}`}
+            onClick={onNext}
+            disabled={!engagementMet}
+          >
+            {cta ?? 'NEXT'} {engagementMet && <span className="blink">▶</span>}
+          </button>
+        )}
+      </div>
+      {/* In compact (dialog-in-console) mode these controls live in the top bar. */}
+      {!dialog && (
         <div className="command-foot">
           <button type="button" className="mini-btn" onClick={onPrev} disabled={!canPrev}>
             ← PREV
           </button>
           {character && (
-            <span className="nav-chip" style={{ borderColor: character.color, color: character.color }}>
+            <span
+              className="nav-chip"
+              style={{ borderColor: character.color, color: character.color }}
+            >
               <span className="nav-chip-mono">{character.monogram}</span>
               {character.name}
             </span>
@@ -858,10 +964,43 @@ function BattleBar({
             onClick={onRestart}
             title="Restart the walk"
           >
-            ↻
+            ↻ RESTART
           </button>
         </div>
-      </div>
+      )}
+    </>
+  );
+
+  return (
+    <footer className={`battle-frame ${isBoss ? 'is-boss' : ''}${dialog ? ' has-dialog' : ''}`}>
+      <StatBox def={stats[0]} />
+      {dialog ? (
+        <div className="command-box is-split">
+          <div className={`cb-dialog ${dialog.isBoss ? 'is-boss' : ''}`}>
+            <div className="cb-nameplate">
+              <span className="cb-chapter">CH·{dialog.chapter}</span>
+              <span className="cb-title">{dialog.title}</span>
+              {dialog.counter && <span className="cb-counter">{dialog.counter}</span>}
+            </div>
+            <div className="cb-type">
+              {dlgShown}
+              {!dlgDone && <span className="type-caret">▋</span>}
+            </div>
+          </div>
+          <div className="cb-action">
+            {character && (
+              <span
+                className="cb-char"
+                style={{ '--col': character.col } as CSSProperties}
+                aria-hidden="true"
+              />
+            )}
+            <div className="cb-action-body">{actionContent}</div>
+          </div>
+        </div>
+      ) : (
+        <div className="command-box">{actionContent}</div>
+      )}
       <StatBox def={stats[1]} />
     </footer>
   );

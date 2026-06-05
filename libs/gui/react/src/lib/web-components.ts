@@ -21,21 +21,45 @@ import { GuiTextarea } from '@golemui/gui-components/textarea';
 import { GuiTextinput } from '@golemui/gui-components/textinput';
 import { GuiToggle } from '@golemui/gui-components/toggle';
 
-const wrap = <I extends HTMLElement, E extends Record<string, EventName | string> = Record<never, never>>(
+const wrap = <
+  I extends HTMLElement,
+  E extends Record<string, EventName | string> = Record<never, never>,
+>(
   tagName: string,
   elementClass: { new (): I },
   events?: E,
 ) => createComponent({ react: React, tagName, elementClass, events });
 
-export const GuiTextinputReact = wrap('gui-textinput', GuiTextinput, { onInput: 'input', onBlur: 'blur' });
-export const GuiTextareaReact = wrap('gui-textarea', GuiTextarea, { onInput: 'input', onBlur: 'blur' });
+export const GuiTextinputReact = wrap('gui-textinput', GuiTextinput, {
+  onInput: 'input',
+  onBlur: 'blur',
+});
+export const GuiTextareaReact = wrap('gui-textarea', GuiTextarea, {
+  onInput: 'input',
+  onBlur: 'blur',
+});
 export const GuiNumberReact = wrap('gui-number', GuiNumber, { onInput: 'input', onBlur: 'blur' });
-export const GuiCurrencyReact = wrap('gui-currency', GuiCurrency, { onInput: 'input', onBlur: 'blur' });
-export const GuiPasswordReact = wrap('gui-password', GuiPassword, { onInput: 'input', onBlur: 'blur' });
-export const GuiMarkdownReact = wrap('gui-markdown', GuiMarkdown, { onInput: 'input', onBlur: 'blur' });
-export const GuiRadiogroupReact = wrap('gui-radiogroup', GuiRadiogroup, { onChange: 'change', onBlur: 'blur' });
+export const GuiCurrencyReact = wrap('gui-currency', GuiCurrency, {
+  onInput: 'input',
+  onBlur: 'blur',
+});
+export const GuiPasswordReact = wrap('gui-password', GuiPassword, {
+  onInput: 'input',
+  onBlur: 'blur',
+});
+export const GuiMarkdownReact = wrap('gui-markdown', GuiMarkdown, {
+  onInput: 'input',
+  onBlur: 'blur',
+});
+export const GuiRadiogroupReact = wrap('gui-radiogroup', GuiRadiogroup, {
+  onChange: 'change',
+  onBlur: 'blur',
+});
 export const GuiToggleReact = wrap('gui-toggle', GuiToggle, { onChange: 'change', onBlur: 'blur' });
-export const GuiCheckboxReact = wrap('gui-checkbox', GuiCheckbox, { onChange: 'change', onBlur: 'blur' });
+export const GuiCheckboxReact = wrap('gui-checkbox', GuiCheckbox, {
+  onChange: 'change',
+  onBlur: 'blur',
+});
 export const GuiTagsReact = wrap('gui-tags', GuiTags, { onChange: 'change', onBlur: 'blur' });
 export const GuiSelectReact = wrap('gui-select', GuiSelect, {
   onChange: 'change',

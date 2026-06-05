@@ -90,7 +90,14 @@ export function deriveFormDsl(schema: RecordSchema): {
         const items = (field.options ?? []).map((o) =>
           typeof o === 'string' ? { label: o, value: o } : o,
         );
-        return { type: 'dropdown', path, label: field.label, items, labelField: 'label', valueField: 'value' };
+        return {
+          type: 'dropdown',
+          path,
+          label: field.label,
+          items,
+          labelField: 'label',
+          valueField: 'value',
+        };
       }
       case 'string':
       default:
