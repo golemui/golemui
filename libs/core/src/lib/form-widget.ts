@@ -358,7 +358,7 @@ const functionWidgetDecoder: Decoder<FunctionWidget<string>> = new Decoder((json
 const inputWidgetDecoder = objectWithSuffix<InputWidget<any, string>>(
   {
     kind: { decoder: literal('input') },
-    uid: { decoder: uidDecoder },
+    uid: { decoder: optional(string()) },
     type: { decoder: string() },
     size: { suffixed: true, decoder: optional(number()) },
     include: { decoder: optional(includeDecoder) },
