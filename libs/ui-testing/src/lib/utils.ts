@@ -1,4 +1,11 @@
-import type { Form, FormEvent, FormHealth, I18nTranslator, UiState } from '@golemui/core';
+import type {
+  Form,
+  FormEvent,
+  FormHealth,
+  FormSubmitEvent,
+  I18nTranslator,
+  UiState,
+} from '@golemui/core';
 import { type Action, type Middleware, type State, type ValidateOn } from '@golemui/core';
 import { type Dependencies } from '@golemui/gui-shared';
 import { type CustomValidatorSchemas } from '@golemui/gui-validators';
@@ -16,6 +23,7 @@ export interface MountOptions<StateKeys extends UiState = string> {
   validators?: CustomValidatorSchemas;
   formEvent?: (event: FormEvent) => void | Promise<void>;
   formHealth?: (error: FormHealth) => void | Promise<void>;
+  formSubmit?: (event: FormSubmitEvent) => void;
   validateOn?: ValidateOn;
   withCustomComponent?: boolean;
   localization?: I18nTranslator;

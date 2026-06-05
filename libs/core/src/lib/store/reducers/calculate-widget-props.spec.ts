@@ -726,7 +726,8 @@ describe('calculateWidgetProps', () => {
   // ---------------------------------------------------------------------------
 
   describe('hidden widgets', () => {
-    it('hidden widget is absent from output', () => {
+    // This basically means that when a hidden widget is hit, the logic skips calculations with a `continue`.
+    it('hidden widget is unchanged', () => {
       const source = {
         kind: 'display',
         uid: 'd',

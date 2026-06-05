@@ -1,7 +1,7 @@
-import { type FormWidget, isLayoutWidget } from '../form-widget';
+import { type FormWidget, isInputWidget, isLayoutWidget } from '../form-widget';
 import { type $Errors } from '../shared';
 import { type State } from '../store/model';
-import { set } from './object';
+import { cloneObject, set, unset } from './object';
 
 /**
  * Flattens the hierarchical form structure into a single-level array of form widgets.
@@ -49,4 +49,24 @@ export function calculateValidationVariables(state: State): {
     { $formIsInvalid: false, $errors: {} },
   );
   return result;
+}
+
+/**
+ * Returns a copy of the form data with values for currently-hidden input widgets removed.
+ * Paths are derived from the flat form widget map so this works even though hidden widgets
+ * are absent from calculatedWidgets.
+ */
+export function pruneHiddenData(state: State): Record<string, any> {
+  const pruned = cloneObject(state.data);
+
+  for (const [uid, flags] of Object.entries(state.widgetFlags)) {
+    if (flags.hidden === true) {
+      const widget = state.flatForm[uid];
+      if (widget && isInputWidget(widget)) {
+        unset(pruned, widget.path);
+      }
+    }
+  }
+
+  return pruned;
 }

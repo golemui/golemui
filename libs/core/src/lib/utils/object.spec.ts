@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { cloneObject, get, set } from './object';
+import { cloneObject, get, set, unset } from './object';
 
 describe('object.set', () => {
   it('sets dot notation paths', () => {
@@ -255,6 +255,62 @@ describe('object.get', () => {
       expect(get(numericPropObj, '1.nested')).toBe('value');
       expect(get(numericPropObj, 'normal')).toBe('property');
     });
+  });
+});
+
+describe('object.unset', () => {
+  it('removes a leaf key while preserving siblings', () => {
+    const obj = { a: { b: { c: 1, d: 2 } } };
+    unset(obj, 'a.b.c');
+    expect(obj).toEqual({ a: { b: { d: 2 } } });
+  });
+
+  it('prunes empty plain object ancestors recursively', () => {
+    const obj = { a: { b: { c: 1 } } };
+    unset(obj, 'a.b.c');
+    expect(obj).toEqual({});
+  });
+
+  it('prunes only the empty branch, leaving non-empty siblings intact', () => {
+    const obj = { a: { b: { c: 1 }, keep: true } };
+    unset(obj, 'a.b.c');
+    expect(obj).toEqual({ a: { keep: true } });
+  });
+
+  it('removes a root-level key', () => {
+    const obj = { username: 'john' };
+    unset(obj, 'username');
+    expect(obj).toEqual({});
+  });
+
+  it('keeps the empty object in the array when its only property is removed', () => {
+    const obj = { items: [{ name: 'Alice' }] };
+    unset(obj, 'items.0.name');
+    expect(obj).toEqual({ items: [{}] });
+  });
+
+  it('keeps the empty object in the array at its original index when siblings remain', () => {
+    const obj = { items: [{ name: 'Alice' }, { name: 'Bob' }] };
+    unset(obj, 'items.0.name');
+    expect(obj).toEqual({ items: [{}, { name: 'Bob' }] });
+  });
+
+  it('is a no-op when the path does not exist', () => {
+    const obj = { a: 1 };
+    unset(obj, 'a.b.c');
+    expect(obj).toEqual({ a: 1 });
+  });
+
+  it('returns the object unchanged when path is empty', () => {
+    const obj = { a: 1 };
+    unset(obj, '');
+    expect(obj).toEqual({ a: 1 });
+  });
+
+  it('mutates and returns the original object reference', () => {
+    const obj = { a: { b: 1 } };
+    const result = unset(obj, 'a.b');
+    expect(result).toBe(obj);
   });
 });
 

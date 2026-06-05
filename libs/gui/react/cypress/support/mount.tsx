@@ -19,6 +19,8 @@ export const mountFramework = (options: MountOptions) => {
 
   const handleFormHealth = options.formHealth ? options.formHealth : cy.spy().as('formHealth');
 
+  const handleFormSubmit = options.formSubmit ? options.formSubmit : cy.spy().as('formSubmit');
+
   const config: GuiFormInitConfig = {
     formDef: options.formDef,
     data: options.data,
@@ -39,6 +41,7 @@ export const mountFramework = (options: MountOptions) => {
       config={config}
       formEvent={handleFormEvent}
       formHealth={handleFormHealth}
+      formSubmit={handleFormSubmit}
     />,
   );
 
