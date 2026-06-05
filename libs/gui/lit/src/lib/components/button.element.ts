@@ -54,6 +54,7 @@ export class ButtonElement extends LitElement implements WithWidget {
         .actionType=${this.adapter.templateData.actionType ?? 'button'}
         .label=${this.adapter.templateData.label}
         ?disabled=${this.adapter.templateData.disabled === true}
+        ?invalid=${this.adapter.templateData.invalid === true}
         .variant=${this.adapter.templateData.variant}
         .icon=${this.adapter.templateData.icon}
         .iconPosition=${this.adapter.templateData.iconPosition}

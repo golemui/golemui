@@ -15,6 +15,7 @@ export function Button(widgetInstance: WithWidget) {
         actionType={templateData.actionType ?? 'button'}
         label={templateData.label as string}
         disabled={templateData.disabled as boolean}
+        invalid={templateData.invalid as boolean}
         variant={templateData.variant}
         icon={templateData.icon}
         iconPosition={templateData.iconPosition}
