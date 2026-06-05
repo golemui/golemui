@@ -18,11 +18,11 @@ export type KeySpec<A> = Record<
  * - the decoder used to validate the corresponding values
  *
  * Matching rules:
- * - If `suffixed` is `false`, only the exact key is accepted.
+ * - If `suffixed` is `false`, only the exact key is decoded.
  * - If `suffixed` is `true`, both the base key and any keys starting with
- *   `<key>.` are accepted.
- * - Any object key that does not match one of the specifications causes
- *   decoding to fail.
+ *   `<key>.` are decoded.
+ * - Object keys that do not match any specification are silently stripped
+ *   from the decoded output.
  *
  * All values are decoded independently using the decoder associated with the
  * matched key. Decoded values are returned under their original object keys
