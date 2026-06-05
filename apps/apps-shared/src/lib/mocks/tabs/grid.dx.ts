@@ -20,12 +20,12 @@ export const gridTab = gui.layouts.grid(
     ),
     gui.layouts.grid(
       [
-        gui.inputs.textInput('listName2', {
+        gui.inputs.textInput('listName3', {
           label: 'List Name',
           size: 3,
           validator: { required: true },
         }),
-        gui.inputs.textInput('listOwner2', {
+        gui.inputs.textInput('listOwner3', {
           label: 'List Owner',
           size: 3,
           validator: { required: true },
