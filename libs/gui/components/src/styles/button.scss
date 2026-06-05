@@ -86,5 +86,23 @@
         color: var(--gui-intent-primary-active);
       }
     }
+
+    &.gui-button--invalid {
+      background: var(--gui-intent-error);
+      color: var(--gui-intent-error-text);
+
+      &:hover {
+        background: var(--gui-intent-error-hover);
+      }
+
+      &:active {
+        background: var(--gui-intent-error-hover);
+      }
+
+      &:focus {
+        outline: 0;
+        box-shadow: var(--gui-shadow-focus-error);
+      }
+    }
   }
 }

@@ -11,6 +11,7 @@ export class GuiButton extends LitElement {
   @property({ type: String }) variant: 'filled' | 'outlined' | 'link' | undefined = 'filled';
   @property({ type: String }) iconPosition: 'left' | 'right' | undefined = 'left';
   @property({ type: String }) actionType: 'submit' | 'button' | undefined = 'button';
+  @property({ type: Boolean }) invalid = false;
 
   override createRenderRoot() {
     return this;
@@ -30,6 +31,7 @@ export class GuiButton extends LitElement {
       [`gui-button-icon-${iconPosition}`]: true,
       'gui-button--outlined': this.variant === 'outlined',
       'gui-button--link': this.variant === 'link',
+      'gui-button--invalid': this.invalid && this.actionType === 'submit',
     };
 
     const iconTemplate = icon
