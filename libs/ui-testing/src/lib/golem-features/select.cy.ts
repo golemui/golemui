@@ -28,6 +28,7 @@ export const runSelectComponentTests = (mountFn: MountComponentFn) => {
         }),
       });
 
+      cy.get('[data-cy="testSubject_select"]').should('exist');
       cy.get('[data-cy="testButton_button"]').click();
       cy.get('[data-cy="testSubject_validator-errors"]').should('exist');
       cy.get('[data-cy="testSubject_validator-error"]').should('be.visible');
