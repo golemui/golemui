@@ -44,7 +44,7 @@ gui-markdown {
       box-shadow: none;
       border-radius: 0;
       padding: var(--gui-space-3) var(--gui-space-2);
-      width: calc(100% - (var(--gui-space-3) * 2));
+      width: calc(100% - (var(--gui-space-2) * 2));
       resize: vertical;
 
       &:focus,
