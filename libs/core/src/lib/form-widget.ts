@@ -301,7 +301,7 @@ const translationConfigDecoder = object<TranslationConfig>(
   {
     key: string(),
     default: optional(string()),
-    params: succeed(),
+    params: optional(succeed()),
   },
   'TranslationConfig',
 );
