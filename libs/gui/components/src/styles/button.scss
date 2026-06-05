@@ -88,16 +88,7 @@
     }
 
     &.gui-button--invalid {
-      background: var(--gui-intent-error);
-      color: var(--gui-intent-error-text);
-
-      &:hover {
-        background: var(--gui-intent-error-hover);
-      }
-
-      &:active {
-        background: var(--gui-intent-error-hover);
-      }
+      border: 2px solid var(--gui-intent-error);
 
       &:focus {
         outline: 0;
