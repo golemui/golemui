@@ -333,7 +333,10 @@ const actionWidgetDecoder = objectWithSuffix<ActionWidget<string>>(
     size: { suffixed: true, decoder: optional(number()) },
     include: { decoder: optional(includeDecoder) },
     exclude: { decoder: optional(excludeDecoder) },
-    label: { suffixed: true, decoder: decodeWidgetPropOrWidgetPropFn(localizableDecoder) },
+    label: {
+      suffixed: true,
+      decoder: decodeWidgetPropOrWidgetPropFn(optional(localizableDecoder)),
+    },
     disabled: { suffixed: true, decoder: optional(boolWhenDecoder) },
     on: { decoder: optional(onDecoder) },
     props: { decoder: optional(succeed()) },
