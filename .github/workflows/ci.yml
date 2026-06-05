@@ -31,7 +31,7 @@ jobs:
         run: npm ci
 
       - name: Build affected
-        run: npx nx affected --target=build --exclude=docs
+        run: npx nx affected --target=build
 
       - name: Test affected
         run: npx nx affected --target=vite:test
