@@ -109,7 +109,7 @@ export class DatePickerElement extends LitElement implements WithWidget {
           .numberOfMonths=${this.adapter.templateData.numberOfMonths}
           .localeId=${this.adapter.templateData.lang}
           @blur=${this.onBlurCalendar}
-          @change=${this.valueChanged}
+          @change=${this.onCalendarChange}
         ></gui-calendar>`
       : nothing;
 
@@ -163,6 +163,14 @@ export class DatePickerElement extends LitElement implements WithWidget {
   valueChanged(event: CustomEvent) {
     this.adapter.injectValidationIssues(null);
     this.adapter.valueChanged(event.detail.value);
+  }
+
+  // Selecting a day in the calendar commits a single date, so close the
+  // calendar afterwards. The range picker intentionally stays open so the user
+  // can select multiple ranges and closes it themselves.
+  onCalendarChange(event: CustomEvent) {
+    this.valueChanged(event);
+    this.closeCalendar();
   }
 
   onBlurCalendar() {

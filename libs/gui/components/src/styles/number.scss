@@ -37,9 +37,14 @@ gui-number {
       box-shadow: none;
     }
 
-    button.gui-button.gui-number__minus,
-    button.gui-button.gui-number__plus {
-      border-radius: 0;
+    .gui-number__decoration {
+      position: absolute;
+      inset-inline-end: var(--gui-space-1);
+      display: flex;
+      flex-direction: column;
+      fill: var(--gui-text-default);
+      height: 100%;
+      justify-content: center;
     }
 
     input[type='number'] {

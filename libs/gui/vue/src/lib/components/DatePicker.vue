@@ -65,6 +65,10 @@ watch(dateControlRef, (el) => {
 const calChange = (e: Event) => {
   injectValidationIssues(null);
   onValueChanged((e as CustomEvent).detail.value);
+  // Selecting a day in the calendar commits a single date, so close the
+  // calendar afterwards. The range picker intentionally stays open so the user
+  // can select multiple ranges and closes it themselves.
+  isCalendarOpen.value = false;
 };
 const calBlur = () => {
   onBlur();

@@ -8,7 +8,7 @@
       "kind": "input",
       "type": "number",
       "path": "number",
-      "label": "Temperature",
+      "label": "Celsius",
       "props": {
         "hint": "This is a hint",
         "placeholder": "ºC",
