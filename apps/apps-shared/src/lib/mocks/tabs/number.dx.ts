@@ -2,7 +2,7 @@ import { gui } from '@golemui/gui-shared';
 
 export const numberTab = gui.layouts.flex([
   gui.inputs.numberInput('number', {
-    label: 'Temperature',
+    label: 'Celsius',
     hint: 'This is a hint',
     placeholder: 'ºC',
     minimum: -45,

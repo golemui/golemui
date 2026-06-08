@@ -89,16 +89,6 @@ export class GuiNumber extends LitElement {
       ${addLabel(this.uid as string, templateData)}
 
       <div class="gui-widget">
-        <button
-          type="button"
-          tabindex="-1"
-          class="gui-button gui-number__minus"
-          ?disabled=${this.value! <= this.minimum! || this.disabled}
-          @click=${this.minus}
-        >
-          -
-        </button>
-
         <input
           type="number"
           inputmode="decimal"
@@ -117,16 +107,10 @@ export class GuiNumber extends LitElement {
           @keydown=${this.keyDown}
           @blur=${this.onBlur}
         />
-
-        <button
-          type="button"
-          tabindex="-1"
-          class="gui-button gui-number__plus"
-          ?disabled=${this.value! >= this.maximum! || this.disabled}
-          @click=${this.plus}
-        >
-          +
-        </button>
+        <span class="gui-number__decoration">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 256 256"><path d="M213.66,165.66a8,8,0,0,1-11.32,0L128,91.31,53.66,165.66a8,8,0,0,1-11.32-11.32l80-80a8,8,0,0,1,11.32,0l80,80A8,8,0,0,1,213.66,165.66Z"></path></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 256 256"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"></path></svg>
+        </span>
       </div>
 
       ${addErrors(this.uid as string, templateData)}
