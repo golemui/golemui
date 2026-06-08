@@ -69,8 +69,6 @@ export const calendarTab = gui.layouts.flex([
 
   gui.inputs.calendar('calendar', {
     defaultValue: '2026-02-13',
-    prevMonthIcon: 'chevron_left',
-    nextMonthIcon: 'chevron_right',
     prevMonthAriaLabel: 'Go To Previous Month',
     nextMonthAriaLabel: 'Go To Next Month',
     minDate: '2022-01-01',

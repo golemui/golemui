@@ -66,6 +66,7 @@ gui-calendar {
       border-radius: 100%;
       width: var(--gui-calendar-change-month-button-width);
       height: var(--gui-calendar-change-month-button-height);
+      fill: var(--gui-text-default);
 
       .gui-widget-icon {
         color: var(--gui-color-white);
