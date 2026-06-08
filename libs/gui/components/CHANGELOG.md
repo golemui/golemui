@@ -1,3 +1,22 @@
+## 0.17.0 (2026-06-08)
+
+### 🚀 Features
+
+- **core:** validation-aware submit buttons ([#167](https://github.com/golemui/golemui/pull/167))
+
+### 🩹 Fixes
+
+- minor UI fixes and design updates ([#168](https://github.com/golemui/golemui/pull/168))
+- **gui-components:** Fix right spacing to markdown textarea ([#158](https://github.com/golemui/golemui/pull/158))
+- **gui-react:** make the React adapter work on React 18 ([#154](https://github.com/golemui/golemui/pull/154))
+- refactor markdown input layout and fix visible scrollbars in windows ([#148](https://github.com/golemui/golemui/pull/148))
+
+### ❤️ Thank You
+
+- alberto-golem-ui
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
 ## 0.16.2 (2026-05-30)
 
 This was a version bump only for gui-components to align it with other projects, there were no code changes.

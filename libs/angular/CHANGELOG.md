@@ -1,3 +1,13 @@
+## 0.17.0 (2026-06-08)
+
+### 🚀 Features
+
+- **core:** validation-aware submit buttons ([#167](https://github.com/golemui/golemui/pull/167))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+
 ## 0.16.2 (2026-05-30)
 
 This was a version bump only for angular to align it with other projects, there were no code changes.
