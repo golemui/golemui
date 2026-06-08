@@ -1,9 +1,0 @@
-{
-    "key": "textarea-example",
-    "type": "textarea",
-    "props": {
-        "label": "Textarea",
-        "placeholder": "Type something here...",
-        "autoGrow": true
-    }
-}

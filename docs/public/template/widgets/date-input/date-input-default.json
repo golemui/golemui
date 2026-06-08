@@ -1,9 +1,0 @@
-{
-    "key": "date-input-example",
-    "type": "date",
-    "props": {
-        "label": "Date Input",
-        "hint": "Enter a date",
-        "required": true
-    }
-}

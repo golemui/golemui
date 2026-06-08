@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://golemui.com">
-    <img src="docs/public/assets/gui-lockup.svg" alt="{gui.}" height="64">
+    <img src=".github/assets/gui-lockup.svg" alt="{gui.}" height="64">
   </a>
 </p>
 
