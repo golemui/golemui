@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://golemui.com/schemas/components/toggle.schema.json",
-  "title": "Toggle Widget",
+  "$id": "https://golemui.com/schemas/archive/v0.17.0/components/number.schema.json",
+  "title": "Number Widget",
   "type": "object",
   "$defs": {
     "labelDef": {
@@ -13,12 +13,26 @@
     "readonlyDef": {
       "$ref": "../common.schema.json#/$defs/boolOrWhen"
     },
-    "togglePositionProp": {
-      "enum": ["left", "right"],
-      "default": "left"
+    "placeholderProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
     },
     "hintProp": {
       "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "stepProp": {
+      "type": "number"
+    },
+    "minimumProp": {
+      "type": "number"
+    },
+    "maximumProp": {
+      "type": "number"
+    },
+    "autoGrowProp": {
+      "type": "boolean"
+    },
+    "autocompleteProp": {
+      "type": "string"
     }
   },
   "allOf": [
@@ -31,7 +45,7 @@
       "const": "input"
     },
     "type": {
-      "const": "toggle"
+      "const": "number"
     },
     "path": {
       "$ref": "../common.schema.json#/$defs/dotPath"
@@ -52,24 +66,54 @@
       "$ref": "../validators.schema.json#/$defs/validator"
     },
     "defaultValue": {
-      "type": "boolean"
+      "type": "number"
     },
     "props": {
       "type": "object",
       "properties": {
-        "togglePosition": {
-          "$ref": "#/$defs/togglePositionProp"
+        "placeholder": {
+          "$ref": "#/$defs/placeholderProp"
         },
         "hint": {
           "$ref": "#/$defs/hintProp"
+        },
+        "step": {
+          "$ref": "#/$defs/stepProp"
+        },
+        "minimum": {
+          "$ref": "#/$defs/minimumProp"
+        },
+        "maximum": {
+          "$ref": "#/$defs/maximumProp"
+        },
+        "autoGrow": {
+          "$ref": "#/$defs/autoGrowProp"
+        },
+        "autocomplete": {
+          "$ref": "#/$defs/autocompleteProp"
         }
       },
       "patternProperties": {
-        "^togglePosition\\.[^.]+$": {
-          "$ref": "#/$defs/togglePositionProp"
+        "^placeholder\\.[^.]+$": {
+          "$ref": "#/$defs/placeholderProp"
         },
         "^hint\\.[^.]+$": {
           "$ref": "#/$defs/hintProp"
+        },
+        "^step\\.[^.]+$": {
+          "$ref": "#/$defs/stepProp"
+        },
+        "^minimum\\.[^.]+$": {
+          "$ref": "#/$defs/minimumProp"
+        },
+        "^maximum\\.[^.]+$": {
+          "$ref": "#/$defs/maximumProp"
+        },
+        "^autoGrow\\.[^.]+$": {
+          "$ref": "#/$defs/autoGrowProp"
+        },
+        "^autocomplete\\.[^.]+$": {
+          "$ref": "#/$defs/autocompleteProp"
         }
       },
       "additionalProperties": false
@@ -89,6 +133,10 @@
       "$ref": "../validators.schema.json#/$defs/validator"
     }
   },
-  "required": ["kind", "type", "path"],
+  "required": [
+    "kind",
+    "type",
+    "path"
+  ],
   "unevaluatedProperties": false
 }

@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://golemui.com/schemas/components/toggle.schema.json",
-  "title": "Toggle Widget",
+  "$id": "https://golemui.com/schemas/archive/v0.17.0/components/checkbox.schema.json",
+  "title": "Checkbox Widget",
   "type": "object",
   "$defs": {
     "labelDef": {
@@ -13,8 +13,11 @@
     "readonlyDef": {
       "$ref": "../common.schema.json#/$defs/boolOrWhen"
     },
-    "togglePositionProp": {
-      "enum": ["left", "right"],
+    "checkboxPositionProp": {
+      "enum": [
+        "left",
+        "right"
+      ],
       "default": "left"
     },
     "hintProp": {
@@ -31,7 +34,7 @@
       "const": "input"
     },
     "type": {
-      "const": "toggle"
+      "const": "checkbox"
     },
     "path": {
       "$ref": "../common.schema.json#/$defs/dotPath"
@@ -57,16 +60,16 @@
     "props": {
       "type": "object",
       "properties": {
-        "togglePosition": {
-          "$ref": "#/$defs/togglePositionProp"
+        "checkboxPosition": {
+          "$ref": "#/$defs/checkboxPositionProp"
         },
         "hint": {
           "$ref": "#/$defs/hintProp"
         }
       },
       "patternProperties": {
-        "^togglePosition\\.[^.]+$": {
-          "$ref": "#/$defs/togglePositionProp"
+        "^checkboxPosition\\.[^.]+$": {
+          "$ref": "#/$defs/checkboxPositionProp"
         },
         "^hint\\.[^.]+$": {
           "$ref": "#/$defs/hintProp"
@@ -89,6 +92,10 @@
       "$ref": "../validators.schema.json#/$defs/validator"
     }
   },
-  "required": ["kind", "type", "path"],
+  "required": [
+    "kind",
+    "type",
+    "path"
+  ],
   "unevaluatedProperties": false
 }

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://golemui.com/schemas/components/currency.schema.json",
+  "$id": "https://golemui.com/schemas/archive/v0.17.0/components/currency.schema.json",
   "title": "Currency Widget",
   "type": "object",
   "$defs": {
@@ -142,6 +142,10 @@
       "$ref": "../validators.schema.json#/$defs/validator"
     }
   },
-  "required": ["kind", "type", "path"],
+  "required": [
+    "kind",
+    "type",
+    "path"
+  ],
   "unevaluatedProperties": false
 }

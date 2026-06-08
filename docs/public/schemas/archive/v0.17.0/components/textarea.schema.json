@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://golemui.com/schemas/components/toggle.schema.json",
-  "title": "Toggle Widget",
+  "$id": "https://golemui.com/schemas/archive/v0.17.0/components/textarea.schema.json",
+  "title": "TextArea Widget",
   "type": "object",
   "$defs": {
     "labelDef": {
@@ -13,12 +13,29 @@
     "readonlyDef": {
       "$ref": "../common.schema.json#/$defs/boolOrWhen"
     },
-    "togglePositionProp": {
-      "enum": ["left", "right"],
-      "default": "left"
-    },
     "hintProp": {
       "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "placeholderProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "counterModeProp": {
+      "enum": [
+        "remaining",
+        "current"
+      ]
+    },
+    "minimumHeightProp": {
+      "type": "number"
+    },
+    "autoGrowProp": {
+      "type": "boolean"
+    },
+    "maxLengthProp": {
+      "type": "number"
+    },
+    "autocompleteProp": {
+      "type": "string"
     }
   },
   "allOf": [
@@ -31,7 +48,7 @@
       "const": "input"
     },
     "type": {
-      "const": "toggle"
+      "const": "textarea"
     },
     "path": {
       "$ref": "../common.schema.json#/$defs/dotPath"
@@ -52,24 +69,54 @@
       "$ref": "../validators.schema.json#/$defs/validator"
     },
     "defaultValue": {
-      "type": "boolean"
+      "type": "string"
     },
     "props": {
       "type": "object",
       "properties": {
-        "togglePosition": {
-          "$ref": "#/$defs/togglePositionProp"
-        },
         "hint": {
           "$ref": "#/$defs/hintProp"
+        },
+        "placeholder": {
+          "$ref": "#/$defs/placeholderProp"
+        },
+        "counterMode": {
+          "$ref": "#/$defs/counterModeProp"
+        },
+        "minimumHeight": {
+          "$ref": "#/$defs/minimumHeightProp"
+        },
+        "autoGrow": {
+          "$ref": "#/$defs/autoGrowProp"
+        },
+        "maxLength": {
+          "$ref": "#/$defs/maxLengthProp"
+        },
+        "autocomplete": {
+          "$ref": "#/$defs/autocompleteProp"
         }
       },
       "patternProperties": {
-        "^togglePosition\\.[^.]+$": {
-          "$ref": "#/$defs/togglePositionProp"
-        },
         "^hint\\.[^.]+$": {
           "$ref": "#/$defs/hintProp"
+        },
+        "^placeholder\\.[^.]+$": {
+          "$ref": "#/$defs/placeholderProp"
+        },
+        "^counterMode\\.[^.]+$": {
+          "$ref": "#/$defs/counterModeProp"
+        },
+        "^minimumHeight\\.[^.]+$": {
+          "$ref": "#/$defs/minimumHeightProp"
+        },
+        "^autoGrow\\.[^.]+$": {
+          "$ref": "#/$defs/autoGrowProp"
+        },
+        "^maxLength\\.[^.]+$": {
+          "$ref": "#/$defs/maxLengthProp"
+        },
+        "^autocomplete\\.[^.]+$": {
+          "$ref": "#/$defs/autocompleteProp"
         }
       },
       "additionalProperties": false
@@ -89,6 +136,10 @@
       "$ref": "../validators.schema.json#/$defs/validator"
     }
   },
-  "required": ["kind", "type", "path"],
+  "required": [
+    "kind",
+    "type",
+    "path"
+  ],
   "unevaluatedProperties": false
 }

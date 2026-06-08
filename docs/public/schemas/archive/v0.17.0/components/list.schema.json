@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://golemui.com/schemas/components/dropdown.schema.json",
-  "title": "Dropdown Widget",
+  "$id": "https://golemui.com/schemas/archive/v0.17.0/components/list.schema.json",
+  "title": "List Widget",
   "type": "object",
   "$defs": {
     "disabledDef": {
@@ -13,9 +13,6 @@
     "labelDef": {
       "$ref": "../common.schema.json#/$defs/localizable"
     },
-    "placeholderProp": {
-      "$ref": "../common.schema.json#/$defs/localizable"
-    },
     "hintProp": {
       "$ref": "../common.schema.json#/$defs/localizable"
     },
@@ -23,43 +20,27 @@
       "type": "array",
       "description": "Items are either primitive values (string/number) or arbitrary record objects (paired with `labelField`/`valueField`/`itemRenderer` for custom rendering). Note: widget templates inside items are only supported on `repeater`, not here.",
       "items": {
-        "type": ["string", "number", "object"]
+        "type": [
+          "string",
+          "number",
+          "object"
+        ]
       }
     },
     "labelFieldProp": {
-      "type": "string",
-      "description": "Object property used as the display label when items are objects (e.g. `\"name\"` reads `item.name`)"
+      "type": "string"
     },
     "valueFieldProp": {
-      "type": "string",
-      "description": "Object property used as the stored value when items are objects (e.g. `\"id\"` stores `item.id`)"
-    },
-    "searchFieldsProp": {
-      "type": "array",
-      "description": "Object properties searched when the user types in the filter box. Defaults to `labelField` when omitted.",
-      "items": {
-        "type": "string"
-      }
+      "type": "string"
     },
     "heightProp": {
-      "type": "number",
-      "description": "Fixed pixel height of the dropdown list panel (enables virtual scrolling for large lists)"
+      "type": "number"
     },
     "itemHeightProp": {
-      "type": "number",
-      "description": "Fixed pixel height of each item row, required for virtual scrolling when `height` is set"
+      "type": "number"
     },
     "itemRendererProp": {
-      "type": "string",
-      "description": "Name of a registered custom item renderer component used to display each option"
-    },
-    "inputDebounceProp": {
-      "type": "number",
-      "description": "Milliseconds to debounce the filter input before firing the `on.filter` event (default: 0)"
-    },
-    "autocompleteProp": {
-      "type": "string",
-      "description": "HTML `autocomplete` attribute applied to the underlying input element"
+      "type": "string"
     }
   },
   "allOf": [
@@ -72,7 +53,7 @@
       "const": "input"
     },
     "type": {
-      "const": "dropdown"
+      "const": "list"
     },
     "path": {
       "$ref": "../common.schema.json#/$defs/dotPath"
@@ -94,11 +75,7 @@
     },
     "props": {
       "type": "object",
-      "required": ["items"],
       "properties": {
-        "placeholder": {
-          "$ref": "#/$defs/placeholderProp"
-        },
         "hint": {
           "$ref": "#/$defs/hintProp"
         },
@@ -111,9 +88,6 @@
         "valueField": {
           "$ref": "#/$defs/valueFieldProp"
         },
-        "searchFields": {
-          "$ref": "#/$defs/searchFieldsProp"
-        },
         "height": {
           "$ref": "#/$defs/heightProp"
         },
@@ -122,18 +96,9 @@
         },
         "itemRenderer": {
           "$ref": "#/$defs/itemRendererProp"
-        },
-        "inputDebounce": {
-          "$ref": "#/$defs/inputDebounceProp"
-        },
-        "autocomplete": {
-          "$ref": "#/$defs/autocompleteProp"
         }
       },
       "patternProperties": {
-        "^placeholder\\.[^.]+$": {
-          "$ref": "#/$defs/placeholderProp"
-        },
         "^hint\\.[^.]+$": {
           "$ref": "#/$defs/hintProp"
         },
@@ -146,9 +111,6 @@
         "^valueField\\.[^.]+$": {
           "$ref": "#/$defs/valueFieldProp"
         },
-        "^searchFields\\.[^.]+$": {
-          "$ref": "#/$defs/searchFieldsProp"
-        },
         "^height\\.[^.]+$": {
           "$ref": "#/$defs/heightProp"
         },
@@ -157,12 +119,6 @@
         },
         "^itemRenderer\\.[^.]+$": {
           "$ref": "#/$defs/itemRendererProp"
-        },
-        "^inputDebounce\\.[^.]+$": {
-          "$ref": "#/$defs/inputDebounceProp"
-        },
-        "^autocomplete\\.[^.]+$": {
-          "$ref": "#/$defs/autocompleteProp"
         }
       },
       "additionalProperties": false
@@ -182,6 +138,10 @@
       "$ref": "../validators.schema.json#/$defs/validator"
     }
   },
-  "required": ["kind", "type", "path", "props"],
+  "required": [
+    "kind",
+    "type",
+    "path"
+  ],
   "unevaluatedProperties": false
 }

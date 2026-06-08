@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://golemui.com/schemas/components/select.schema.json",
-  "title": "Select Widget",
+  "$id": "https://golemui.com/schemas/archive/v0.17.0/components/radiogroup.schema.json",
+  "title": "RadioGroup Widget",
   "type": "object",
   "$defs": {
     "disabledDef": {
@@ -16,18 +16,16 @@
     "hintProp": {
       "$ref": "../common.schema.json#/$defs/localizable"
     },
-    "iconProp": {
-      "type": "string"
-    },
     "optionsProp": {
       "type": "array",
       "description": "Options may be primitive values (string/number), structured `{ label, value }` records, or arbitrary objects (paired with `labelField`/`valueField` for custom rendering).",
       "items": {
-        "type": ["string", "number", "object"]
+        "type": [
+          "string",
+          "number",
+          "object"
+        ]
       }
-    },
-    "placeholderProp": {
-      "$ref": "../common.schema.json#/$defs/localizable"
     },
     "labelFieldProp": {
       "type": "string",
@@ -37,9 +35,13 @@
       "type": "string",
       "description": "Object property used as the stored value when options are objects (e.g. `\"id\"` stores `item.id`)"
     },
-    "autocompleteProp": {
-      "type": "string",
-      "description": "HTML `autocomplete` attribute applied to the underlying input element"
+    "directionProp": {
+      "description": "Layout direction for the radio buttons (`row` = horizontal, `column` = vertical). Defaults to `column`.",
+      "enum": [
+        "row",
+        "column"
+      ],
+      "default": "column"
     }
   },
   "allOf": [
@@ -52,7 +54,7 @@
       "const": "input"
     },
     "type": {
-      "const": "select"
+      "const": "radiogroup"
     },
     "path": {
       "$ref": "../common.schema.json#/$defs/dotPath"
@@ -78,14 +80,8 @@
         "hint": {
           "$ref": "#/$defs/hintProp"
         },
-        "icon": {
-          "$ref": "#/$defs/iconProp"
-        },
         "options": {
           "$ref": "#/$defs/optionsProp"
-        },
-        "placeholder": {
-          "$ref": "#/$defs/placeholderProp"
         },
         "labelField": {
           "$ref": "#/$defs/labelFieldProp"
@@ -93,22 +89,16 @@
         "valueField": {
           "$ref": "#/$defs/valueFieldProp"
         },
-        "autocomplete": {
-          "$ref": "#/$defs/autocompleteProp"
+        "direction": {
+          "$ref": "#/$defs/directionProp"
         }
       },
       "patternProperties": {
         "^hint\\.[^.]+$": {
           "$ref": "#/$defs/hintProp"
         },
-        "^icon\\.[^.]+$": {
-          "$ref": "#/$defs/iconProp"
-        },
         "^options\\.[^.]+$": {
           "$ref": "#/$defs/optionsProp"
-        },
-        "^placeholder\\.[^.]+$": {
-          "$ref": "#/$defs/placeholderProp"
         },
         "^labelField\\.[^.]+$": {
           "$ref": "#/$defs/labelFieldProp"
@@ -116,8 +106,8 @@
         "^valueField\\.[^.]+$": {
           "$ref": "#/$defs/valueFieldProp"
         },
-        "^autocomplete\\.[^.]+$": {
-          "$ref": "#/$defs/autocompleteProp"
+        "^direction\\.[^.]+$": {
+          "$ref": "#/$defs/directionProp"
         }
       },
       "additionalProperties": false
@@ -137,6 +127,10 @@
       "$ref": "../validators.schema.json#/$defs/validator"
     }
   },
-  "required": ["kind", "type", "path"],
+  "required": [
+    "kind",
+    "type",
+    "path"
+  ],
   "unevaluatedProperties": false
 }

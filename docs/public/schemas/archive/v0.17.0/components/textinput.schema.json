@@ -1,24 +1,29 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://golemui.com/schemas/components/toggle.schema.json",
-  "title": "Toggle Widget",
+  "$id": "https://golemui.com/schemas/archive/v0.17.0/components/textinput.schema.json",
+  "title": "TextInput Widget",
   "type": "object",
   "$defs": {
-    "labelDef": {
-      "$ref": "../common.schema.json#/$defs/localizable"
-    },
     "disabledDef": {
       "$ref": "../common.schema.json#/$defs/boolOrWhen"
     },
     "readonlyDef": {
       "$ref": "../common.schema.json#/$defs/boolOrWhen"
     },
-    "togglePositionProp": {
-      "enum": ["left", "right"],
-      "default": "left"
+    "labelDef": {
+      "$ref": "../common.schema.json#/$defs/localizable"
     },
     "hintProp": {
       "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "placeholderProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "iconProp": {
+      "type": "string"
+    },
+    "autocompleteProp": {
+      "type": "string"
     }
   },
   "allOf": [
@@ -31,7 +36,7 @@
       "const": "input"
     },
     "type": {
-      "const": "toggle"
+      "const": "textinput"
     },
     "path": {
       "$ref": "../common.schema.json#/$defs/dotPath"
@@ -52,43 +57,59 @@
       "$ref": "../validators.schema.json#/$defs/validator"
     },
     "defaultValue": {
-      "type": "boolean"
+      "type": "string"
     },
     "props": {
       "type": "object",
       "properties": {
-        "togglePosition": {
-          "$ref": "#/$defs/togglePositionProp"
-        },
         "hint": {
           "$ref": "#/$defs/hintProp"
+        },
+        "placeholder": {
+          "$ref": "#/$defs/placeholderProp"
+        },
+        "icon": {
+          "$ref": "#/$defs/iconProp"
+        },
+        "autocomplete": {
+          "$ref": "#/$defs/autocompleteProp"
         }
       },
       "patternProperties": {
-        "^togglePosition\\.[^.]+$": {
-          "$ref": "#/$defs/togglePositionProp"
-        },
         "^hint\\.[^.]+$": {
           "$ref": "#/$defs/hintProp"
+        },
+        "^placeholder\\.[^.]+$": {
+          "$ref": "#/$defs/placeholderProp"
+        },
+        "^icon\\.[^.]+$": {
+          "$ref": "#/$defs/iconProp"
+        },
+        "^autocomplete\\.[^.]+$": {
+          "$ref": "#/$defs/autocompleteProp"
         }
       },
       "additionalProperties": false
     }
   },
   "patternProperties": {
-    "^label\\.[^.]+$": {
-      "$ref": "#/$defs/labelDef"
-    },
     "^disabled\\.[^.]+$": {
       "$ref": "#/$defs/disabledDef"
     },
     "^readonly\\.[^.]+$": {
       "$ref": "#/$defs/readonlyDef"
     },
+    "^label\\.[^.]+$": {
+      "$ref": "#/$defs/labelDef"
+    },
     "^validator\\.[^.]+$": {
       "$ref": "../validators.schema.json#/$defs/validator"
     }
   },
-  "required": ["kind", "type", "path"],
+  "required": [
+    "kind",
+    "type",
+    "path"
+  ],
   "unevaluatedProperties": false
 }

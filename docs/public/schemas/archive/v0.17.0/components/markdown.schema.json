@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://golemui.com/schemas/components/markdown.schema.json",
+  "$id": "https://golemui.com/schemas/archive/v0.17.0/components/markdown.schema.json",
   "title": "Markdown Widget",
   "type": "object",
   "$defs": {
@@ -20,7 +20,10 @@
       "$ref": "../common.schema.json#/$defs/localizable"
     },
     "counterModeProp": {
-      "enum": ["remaining", "current"]
+      "enum": [
+        "remaining",
+        "current"
+      ]
     },
     "minimumHeightProp": {
       "type": "number"
@@ -37,7 +40,16 @@
     "toolsProp": {
       "type": "array",
       "items": {
-        "enum": ["H", "B", "I", "Q", "L", "OL", "UL", "|"]
+        "enum": [
+          "H",
+          "B",
+          "I",
+          "Q",
+          "L",
+          "OL",
+          "UL",
+          "|"
+        ]
       }
     },
     "splitViewTitleProp": {
@@ -235,6 +247,10 @@
       "$ref": "../validators.schema.json#/$defs/validator"
     }
   },
-  "required": ["kind", "type", "path"],
+  "required": [
+    "kind",
+    "type",
+    "path"
+  ],
   "unevaluatedProperties": false
 }

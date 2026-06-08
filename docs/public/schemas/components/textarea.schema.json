@@ -20,10 +20,7 @@
       "$ref": "../common.schema.json#/$defs/localizable"
     },
     "counterModeProp": {
-      "enum": [
-        "remaining",
-        "current"
-      ]
+      "enum": ["remaining", "current"]
     },
     "minimumHeightProp": {
       "type": "number"
@@ -136,10 +133,6 @@
       "$ref": "../validators.schema.json#/$defs/validator"
     }
   },
-  "required": [
-    "kind",
-    "type",
-    "path"
-  ],
+  "required": ["kind", "type", "path"],
   "unevaluatedProperties": false
 }

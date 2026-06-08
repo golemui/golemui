@@ -32,26 +32,13 @@
       "$ref": "../common.schema.json#/$defs/localizable"
     },
     "dayFormatProp": {
-      "enum": [
-        "numeric",
-        "2-digit"
-      ]
+      "enum": ["numeric", "2-digit"]
     },
     "weekdayFormatProp": {
-      "enum": [
-        "short",
-        "long",
-        "narrow"
-      ]
+      "enum": ["short", "long", "narrow"]
     },
     "monthFormatProp": {
-      "enum": [
-        "numeric",
-        "2-digit",
-        "long",
-        "short",
-        "narrow"
-      ]
+      "enum": ["numeric", "2-digit", "long", "short", "narrow"]
     },
     "minDateProp": {
       "type": "string"
@@ -200,10 +187,6 @@
       "$ref": "../validators.schema.json#/$defs/validator"
     }
   },
-  "required": [
-    "kind",
-    "type",
-    "path"
-  ],
+  "required": ["kind", "type", "path"],
   "unevaluatedProperties": false
 }
