@@ -37,13 +37,14 @@ Button widgets are [Interactive Fields](/widgets-reference/interactive-fields/ov
 
 Use these `props` to customize your Button widget.
 
-| prop           | type                               | description                                                                |
-| -------------- | ---------------------------------- | -------------------------------------------------------------------------- |
-| `label`        | string                             | The text displayed inside the button (Optional if icon is present)         |
-| `disabled`     | boolean                            | Whether the button is interactive or not                                   |
-| `variant`      | `'filled' \| 'outlined' \| 'link'` | **Optional**. Button style variant (Default: `filled`)                     |
-| `icon`         | string                             | Optional CSS class for an icon (Implementation may vary by framework)      |
-| `iconPosition` | `'left' \| 'right'`                | **Optional**. Position of the icon relative to the label (Default: `left`) |
+| prop           | type                               | description                                                                                                      |
+| -------------- | ---------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `label`        | string                             | The text displayed inside the button (Optional if icon is present)                                               |
+| `actionType`   | `'button' \| 'submit'`             | **Optional**. Sets the HTML button type. `'submit'` triggers form-wide validation on click (Default: `'button'`) |
+| `disabled`     | boolean                            | Whether the button is interactive or not                                                                         |
+| `variant`      | `'filled' \| 'outlined' \| 'link'` | **Optional**. Button style variant (Default: `filled`)                                                           |
+| `icon`         | string                             | Optional CSS class for an icon (Implementation may vary by framework)                                            |
+| `iconPosition` | `'left' \| 'right'`                | **Optional**. Position of the icon relative to the label (Default: `left`)                                       |
 
 ### Variants
 
@@ -97,6 +98,43 @@ You can disable the button by setting the `disabled` property to `true`.
   src="/template/index.html?form=template/widgets/button/button-disabled.json"
 />
 
+## Submit behavior
+
+Setting `actionType: 'submit'` turns the button into a form submission trigger. Clicking it runs form-wide validation before emitting the `formSubmit` event. If any field fails validation, submission is blocked.
+
+### Validation feedback
+
+When a submit attempt fails due to validation errors, the button automatically displays an error border. This gives users a visual cue even when the invalid fields are not visible — for example in a long form or in a tab that is not currently selected.
+
+The error border clears automatically once all validation errors are resolved.
+
+This behavior is on by default and requires no additional configuration:
+
+```json
+{
+  "uid": "submit-button",
+  "kind": "action",
+  "type": "button",
+  "label": "Submit",
+  "actionType": "submit"
+}
+```
+
+If you prefer to block submission entirely rather than just flagging the button, you can combine `actionType: 'submit'` with the `$formIsInvalid` expression variable:
+
+```json
+{
+  "uid": "submit-button",
+  "kind": "action",
+  "type": "button",
+  "label": "Submit",
+  "actionType": "submit",
+  "disabled": { "when": "$formIsInvalid" }
+}
+```
+
+See [Validators](/features/validators/) for how to configure field-level validation rules.
+
 ## Styling
 
 Buttons can be styled as explained in the [Styling Guide](/styling/overview/).
@@ -105,13 +143,15 @@ Buttons can be styled as explained in the [Styling Guide](/styling/overview/).
 
 Following you will find a list with the CSS Variables and a quick description of what you will style.
 
-| CSS Variable                  | Description                         |
-| ----------------------------- | ----------------------------------- |
-| `--gui-intent-primary`        | Background color of the button      |
-| `--gui-intent-primary-text`   | Color of the text inside the button |
-| `--gui-intent-primary-hover`  | Background color on hover           |
-| `--gui-intent-primary-active` | Background color when clicked       |
-| `--gui-radius-md`             | Border radius of the button         |
+| CSS Variable                  | Description                                                        |
+| ----------------------------- | ------------------------------------------------------------------ |
+| `--gui-intent-primary`        | Background color of the button                                     |
+| `--gui-intent-primary-text`   | Color of the text inside the button                                |
+| `--gui-intent-primary-hover`  | Background color on hover                                          |
+| `--gui-intent-primary-active` | Background color when clicked                                      |
+| `--gui-radius-md`             | Border radius of the button                                        |
+| `--gui-intent-error`          | Border color when a submit button has unresolved validation errors |
+| `--gui-shadow-focus-error`    | Focus ring color when a submit button is in the invalid state      |
 
 ### Anatomy
 

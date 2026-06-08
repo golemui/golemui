@@ -7,7 +7,7 @@ import '@golemui/gui-components/button';
 
 const props = defineProps<WithWidget>();
 const widget = props.widget as ActionWidget;
-const { uid, templateData, onClick } = useActionWidget<ButtonProps>(widget);
+const { uid, templateData, invalid, onClick } = useActionWidget<ButtonProps>(widget);
 
 // Mirror the Lit element's class-field defaults so Vue never sends '' or undefined
 // to an enum prop (which Lit's String converter would coerce to '', overriding the default).
@@ -22,6 +22,7 @@ const iconPosition = computed(() => templateData.value.iconPosition || 'left');
       :actionType="templateData.actionType ?? 'button'"
       :label="templateData.label"
       :disabled="templateData.disabled"
+      :invalid.prop="invalid"
       :variant.prop="variant"
       :icon="templateData.icon"
       :iconPosition.prop="iconPosition"

@@ -1,5 +1,6 @@
 import type { ActionWidget } from '@golemui/core';
 import { useCallback, useEffect, useState } from 'react';
+import { distinctUntilChanged, map } from 'rxjs';
 import { useReactFormContext } from '../ReactFormContext';
 import { useTemplateData } from './internal/useExtraProps';
 
@@ -9,6 +10,7 @@ export function useActionWidget<ExtraProps extends Record<string, any>>(
   const { formContext } = useReactFormContext();
   const [uid, setUid] = useState('');
   const templateData = useTemplateData<ActionWidget<string>, ExtraProps>(widget);
+  const [invalid, setInvalid] = useState(false);
 
   useEffect(() => {
     setUid(widget.uid);
@@ -34,13 +36,25 @@ export function useActionWidget<ExtraProps extends Record<string, any>>(
     };
   }, [formContext, widget]);
 
+  useEffect(() => {
+    const subscription = formContext.store.state$
+      .pipe(
+        map((state) => state.touched && !state.isFormValid),
+        distinctUntilChanged(),
+      )
+      .subscribe((isInvalid) => {
+        setInvalid(isInvalid);
+      });
+    return () => subscription.unsubscribe();
+  }, [formContext.store.state$]);
+
   const onClick = useCallback(() => {
     formContext.emitEvent('click', widget);
   }, [widget, formContext]);
 
   return {
     uid,
-    templateData,
+    templateData: { ...templateData, invalid },
     onClick,
   };
 }
