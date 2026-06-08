@@ -301,7 +301,7 @@ const translationConfigDecoder = object<TranslationConfig>(
   {
     key: string(),
     default: optional(string()),
-    params: succeed(),
+    params: optional(succeed()),
   },
   'TranslationConfig',
 );
@@ -333,7 +333,10 @@ const actionWidgetDecoder = objectWithSuffix<ActionWidget<string>>(
     size: { suffixed: true, decoder: optional(number()) },
     include: { decoder: optional(includeDecoder) },
     exclude: { decoder: optional(excludeDecoder) },
-    label: { suffixed: true, decoder: decodeWidgetPropOrWidgetPropFn(localizableDecoder) },
+    label: {
+      suffixed: true,
+      decoder: decodeWidgetPropOrWidgetPropFn(optional(localizableDecoder)),
+    },
     disabled: { suffixed: true, decoder: optional(boolWhenDecoder) },
     on: { decoder: optional(onDecoder) },
     props: { decoder: optional(succeed()) },
@@ -358,7 +361,7 @@ const functionWidgetDecoder: Decoder<FunctionWidget<string>> = new Decoder((json
 const inputWidgetDecoder = objectWithSuffix<InputWidget<any, string>>(
   {
     kind: { decoder: literal('input') },
-    uid: { decoder: uidDecoder },
+    uid: { decoder: optional(string()) },
     type: { decoder: string() },
     size: { suffixed: true, decoder: optional(number()) },
     include: { decoder: optional(includeDecoder) },

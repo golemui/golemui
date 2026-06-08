@@ -1,3 +1,28 @@
+## 0.17.0 (2026-06-08)
+
+### 🚀 Features
+
+- **core:** validation-aware submit buttons ([#167](https://github.com/golemui/golemui/pull/167))
+- **demos:** /demos five-pillar showcase + forms-as-data & forms-compose demos ([#149](https://github.com/golemui/golemui/pull/149))
+
+### 🩹 Fixes
+
+- refactor markdown input layout and fix visible scrollbars in windows ([#148](https://github.com/golemui/golemui/pull/148))
+- minor UI fixes and design updates ([#168](https://github.com/golemui/golemui/pull/168))
+- **core:** clear `data` after an input widget is removed ([#157](https://github.com/golemui/golemui/pull/157))
+- **core:** sync touched on widgets added after VALIDATE_ALL ([#163](https://github.com/golemui/golemui/pull/163))
+- **core:** action label should be optional ([#164](https://github.com/golemui/golemui/pull/164))
+- **core:** form-widget fixes ([#165](https://github.com/golemui/golemui/pull/165))
+- **gui-components:** Fix right spacing to markdown textarea ([#158](https://github.com/golemui/golemui/pull/158))
+- **gui-react:** make the React adapter work on React 18 ([#154](https://github.com/golemui/golemui/pull/154))
+- **mcp:** fill documentation gaps and deduplicate get_concept/get_widget_spec tools ([#153](https://github.com/golemui/golemui/pull/153))
+
+### ❤️ Thank You
+
+- alberto-golem-ui
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
 ## 0.16.2 (2026-05-30)
 
 ### 🩹 Fixes

@@ -86,5 +86,14 @@
         color: var(--gui-intent-primary-active);
       }
     }
+
+    &.gui-button--invalid {
+      border: 2px solid var(--gui-intent-error);
+
+      &:focus {
+        outline: 0;
+        box-shadow: var(--gui-shadow-focus-error);
+      }
+    }
   }
 }

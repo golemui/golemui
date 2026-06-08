@@ -177,6 +177,11 @@ export type ActionWidgetTemplateData = {
   label?: string;
   disabled?: boolean;
   /**
+   * True when the form has been touched and is currently invalid.
+   * Used by submit buttons to show an error visual state.
+   */
+  invalid?: boolean;
+  /**
    * A size relative to the container and sibling components
    * @example
    * // This component will measure twice than sibling components with size: 1

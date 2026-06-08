@@ -66,15 +66,22 @@ gui-checkbox {
 
     &::before {
       content: '';
-      width: 0.65rem;
-      height: 0.65rem;
-      clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+      width: 0.75rem;
+      height: 0.75rem;
+      background-color: var(--gui-intent-primary);
+      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cpath d='M232.49,80.49l-128,128a12,12,0,0,1-17,0l-56-56a12,12,0,1,1,17-17L96,183,215.51,63.51a12,12,0,0,1,17,17Z'/%3E%3C/svg%3E")
+        center / contain no-repeat;
+      -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cpath d='M232.49,80.49l-128,128a12,12,0,0,1-17,0l-56-56a12,12,0,1,1,17-17L96,183,215.51,63.51a12,12,0,0,1,17,17Z'/%3E%3C/svg%3E")
+        center / contain no-repeat;
       transform: scale(0);
       transform-origin: center center;
       transition: 150ms transform cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: inset 1em 1em var(--gui-intent-primary);
-      /* Windows High Contrast Mode */
-      background-color: CanvasText;
+
+      /* Windows High Contrast Mode: masks drop out under forced colors,
+         so fall back to a system color that stays visible. */
+      @media (forced-colors: active) {
+        background-color: CanvasText;
+      }
     }
 
     &:checked::before {

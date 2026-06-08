@@ -1,3 +1,20 @@
+## 0.17.0 (2026-06-08)
+
+### 🚀 Features
+
+- **core:** validation-aware submit buttons ([#167](https://github.com/golemui/golemui/pull/167))
+
+### 🩹 Fixes
+
+- **core:** form-widget fixes ([#165](https://github.com/golemui/golemui/pull/165))
+- **core:** action label should be optional ([#164](https://github.com/golemui/golemui/pull/164))
+- **core:** sync touched on widgets added after VALIDATE_ALL ([#163](https://github.com/golemui/golemui/pull/163))
+- **core:** clear `data` after an input widget is removed ([#157](https://github.com/golemui/golemui/pull/157))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+
 ## 0.16.2 (2026-05-30)
 
 This was a version bump only for core to align it with other projects, there were no code changes.

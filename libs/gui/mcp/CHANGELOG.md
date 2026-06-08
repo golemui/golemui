@@ -1,3 +1,14 @@
+## 0.17.0 (2026-06-08)
+
+### 🩹 Fixes
+
+- **mcp:** fill documentation gaps and deduplicate get_concept/get_widget_spec tools ([#153](https://github.com/golemui/golemui/pull/153))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
 ## 0.16.2 (2026-05-30)
 
 ### 🩹 Fixes

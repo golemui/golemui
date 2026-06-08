@@ -1,3 +1,19 @@
+## 0.17.0 (2026-06-08)
+
+### 🚀 Features
+
+- **core:** validation-aware submit buttons ([#167](https://github.com/golemui/golemui/pull/167))
+
+### 🩹 Fixes
+
+- minor UI fixes and design updates ([#168](https://github.com/golemui/golemui/pull/168))
+- **core:** clear `data` after an input widget is removed ([#157](https://github.com/golemui/golemui/pull/157))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
 ## 0.16.2 (2026-05-30)
 
 This was a version bump only for gui-angular to align it with other projects, there were no code changes.

@@ -114,8 +114,6 @@
       "path": "calendar",
       "defaultValue": "2026-02-13",
       "props": {
-        "prevMonthIcon": "chevron_left",
-        "nextMonthIcon": "chevron_right",
         "prevMonthAriaLabel": "Go To Previous Month",
         "nextMonthAriaLabel": "Go To Next Month",
         "minDate": "2022-01-01",

@@ -1,4 +1,5 @@
 // Core features
+export * from './lib/core-features/actions.cy';
 export * from './lib/core-features/data.cy';
 export * from './lib/core-features/dependencies.cy';
 export * from './lib/core-features/disabled.cy';

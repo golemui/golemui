@@ -62,6 +62,10 @@ export function DatePicker(widgetInstance: WithWidget) {
       const changeHandler = (e: CustomEvent) => {
         injectValidationIssues(null);
         onValueChanged(e.detail.value);
+        // Selecting a day in the calendar commits a single date, so close the
+        // calendar afterwards. The range picker intentionally stays open so the
+        // user can select multiple ranges and closes it themselves.
+        setIsCalendarOpen(false);
       };
       const blurHandler = (e: CustomEvent) => {
         onBlur();

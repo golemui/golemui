@@ -73,6 +73,14 @@ export class DatePickerComponent implements OnInit, OnDestroy, WithWidget {
     this.adapter.valueChanged((event as CustomEvent).detail.value);
   }
 
+  // Selecting a day in the calendar commits a single date, so close the
+  // calendar afterwards. The range picker intentionally stays open so the user
+  // can select multiple ranges and closes it themselves.
+  onCalendarChange(event: Event) {
+    this.onChangeDate(event);
+    this.closeCalendar();
+  }
+
   onInputError(event: Event) {
     this.adapter.injectValidationIssues([(event as CustomEvent).detail.message]);
   }
