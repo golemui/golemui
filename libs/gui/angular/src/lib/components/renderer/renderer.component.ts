@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, type OnDestroy, type OnInit, type Type } from '@angular/core';
 import { DisplayWidgetAdapter } from '@golemui/angular';
 import type { DisplayWidget, WithWidget } from '@golemui/core';
-import { type ComponentRendererProps } from '@golemui/gui-shared';
+import type { ComponentRendererProps } from '@golemui/gui-shared/internals';
 
 @Component({
   standalone: true,

@@ -1,6 +1,6 @@
 import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useInputWidget } from '@golemui/react';
-import { type OptionValue, type SelectProps } from '@golemui/gui-shared';
+import type { OptionValue, SelectProps } from '@golemui/gui-shared/internals';
 import { useCallback } from 'react';
 import { GuiSelectReact } from '../web-components';
 import '../styles.scss';

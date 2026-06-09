@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { InputWidget, Validator, WithWidget } from '@golemui/core';
-import type { RepeaterProps } from '@golemui/gui-shared';
-import { getItemKey } from '@golemui/gui-shared/internals';
+import { getItemKey, type RepeaterProps } from '@golemui/gui-shared/internals';
 import { useInputWidget, useRepeaterIndexes } from '@golemui/vue';
 import { computed, ref } from 'vue';
 import RepeaterItem from './shared/RepeaterItem.vue';

@@ -8,7 +8,7 @@ import {
   displayWidgetContext,
   formContext,
 } from '@golemui/lit';
-import { type AlertProps } from '@golemui/gui-shared';
+import type { AlertProps } from '@golemui/gui-shared/internals';
 import { type Subscription } from 'rxjs';
 
 @customElement('gui-alert-display')

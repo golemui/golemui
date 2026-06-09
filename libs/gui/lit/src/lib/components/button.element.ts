@@ -4,7 +4,7 @@ import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { type Subscription } from 'rxjs';
-import { type ButtonProps } from '@golemui/gui-shared';
+import type { ButtonProps } from '@golemui/gui-shared/internals';
 import '@golemui/gui-components/button';
 
 @customElement('gui-button-interactive')

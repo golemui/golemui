@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { ActionWidgetAdapter } from '@golemui/angular';
 import type { ActionWidget, WithWidget } from '@golemui/core';
-import { type ButtonProps } from '@golemui/gui-shared';
+import type { ButtonProps } from '@golemui/gui-shared/internals';
 import '@golemui/gui-components/button';
 
 @Component({

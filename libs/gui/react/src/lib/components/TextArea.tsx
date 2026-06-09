@@ -1,6 +1,6 @@
 import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useInputWidget } from '@golemui/react';
-import { type TextareaProps } from '@golemui/gui-shared';
+import type { TextareaProps } from '@golemui/gui-shared/internals';
 import { useCallback } from 'react';
 import { GuiTextareaReact } from '../web-components';
 import '../styles.scss';

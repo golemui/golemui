@@ -1,6 +1,6 @@
 import type { DisplayWidget, WithWidget } from '@golemui/core';
 import { useDisplayWdiget } from '@golemui/react';
-import { type RendererProps } from '@golemui/gui-shared';
+import type { RendererProps } from '@golemui/gui-shared/internals';
 import { type ReactNode } from 'react';
 
 export function Renderer(widgetInstance: WithWidget) {

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useInputWidget } from '@golemui/vue';
-import type { DateRange, RangeDatePickerProps } from '@golemui/gui-shared';
+import type { DateRange, RangeDatePickerProps } from '@golemui/gui-shared/internals';
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import Errors from './shared/Errors.vue';
 import '@golemui/gui-components/range-date-input';

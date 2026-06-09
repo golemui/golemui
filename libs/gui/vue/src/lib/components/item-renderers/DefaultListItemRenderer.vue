@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import type { OptionValue } from '@golemui/gui-shared';
+import type { OptionValue } from '@golemui/gui-shared/internals';
 import type { ListItemRendererProps } from './props';
 
 const props = defineProps<ListItemRendererProps<OptionValue>>();

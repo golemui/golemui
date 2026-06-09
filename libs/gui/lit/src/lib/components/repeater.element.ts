@@ -1,6 +1,5 @@
 import type { InputWidget, WithWidget } from '@golemui/core';
-import { type RepeaterProps } from '@golemui/gui-shared';
-import { getItemKey } from '@golemui/gui-shared/internals';
+import { getItemKey, type RepeaterProps } from '@golemui/gui-shared/internals';
 import { formContext, inputContext, InputWidgetAdapter, type LitFormContext } from '@golemui/lit';
 import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';

@@ -1,7 +1,7 @@
 import type { InputWidget, WithWidget } from '@golemui/core';
 import { InputWidgetAdapter, type LitFormContext, formContext, inputContext } from '@golemui/lit';
 import { addErrors, addIcon, addLabel } from '@golemui/gui-components/internals';
-import { type DateRange, type RangeDatePickerProps } from '@golemui/gui-shared';
+import type { DateRange, RangeDatePickerProps } from '@golemui/gui-shared/internals';
 import '@golemui/gui-components/range-calendar';
 import '@golemui/gui-components/range-date-input';
 import { consume, provide } from '@lit/context';

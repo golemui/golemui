@@ -1,4 +1,4 @@
-import { type DateinputProps } from '@golemui/gui-shared';
+import type { DateinputProps } from '@golemui/gui-shared/internals';
 import { html, LitElement, nothing, type PropertyValues } from 'lit';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { customElement, property, state } from 'lit/decorators.js';

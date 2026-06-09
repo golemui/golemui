@@ -1,5 +1,5 @@
 import { defineForm } from '@golemui/core';
-import { golemForm, type Option } from '@golemui/gui-shared';
+import { golemForm, type Option } from '@golemui/gui-shared/internals';
 import { type MountComponentFn } from '../utils';
 
 const options: Option[] = [

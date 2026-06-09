@@ -1,6 +1,6 @@
 import type { InputWidget, WithWidget } from '@golemui/core';
 import { InputWidgetAdapter, type LitFormContext, formContext, inputContext } from '@golemui/lit';
-import { type ToggleProps } from '@golemui/gui-shared';
+import type { ToggleProps } from '@golemui/gui-shared/internals';
 import '@golemui/gui-components/toggle';
 import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';

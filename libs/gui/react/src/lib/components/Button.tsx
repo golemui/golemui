@@ -2,7 +2,7 @@ import type { ActionWidget, WithWidget } from '@golemui/core';
 import { useActionWidget } from '@golemui/react';
 import { GuiButtonReact } from '../web-components';
 import '../styles.scss';
-import { type ButtonProps } from '@golemui/gui-shared';
+import type { ButtonProps } from '@golemui/gui-shared/internals';
 
 export function Button(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as ActionWidget;

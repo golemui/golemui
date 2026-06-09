@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { DisplayWidget, WithWidget } from '@golemui/core';
 import { useDisplayWidget } from '@golemui/vue';
-import type { MarkdownTextProps } from '@golemui/gui-shared';
+import type { MarkdownTextProps } from '@golemui/gui-shared/internals';
 import '@golemui/gui-components/markdown-text';
 
 const props = defineProps<WithWidget>();

@@ -2,7 +2,7 @@ import { GuiErrorsReact, GuiLabelReact, GuiListReact } from '../web-components';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useInputWidget, useItemRenderer } from '@golemui/react';
-import { type ListItem, type ListProps, type OptionValue } from '@golemui/gui-shared';
+import type { ListItem, ListProps, OptionValue } from '@golemui/gui-shared/internals';
 import { DefaultListItemRenderer } from './item-renderers/DefaultListItemRenderer';
 import { type ListItemRendererProps } from './item-renderers/props';
 import type { GuiList } from '@golemui/gui-components/list';

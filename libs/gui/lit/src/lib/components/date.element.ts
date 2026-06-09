@@ -1,7 +1,7 @@
 import type { InputWidget, WithWidget } from '@golemui/core';
 import { InputWidgetAdapter, type LitFormContext, formContext, inputContext } from '@golemui/lit';
 import { addIcon } from '@golemui/gui-components/internals';
-import { type DatePickerProps } from '@golemui/gui-shared';
+import type { DatePickerProps } from '@golemui/gui-shared/internals';
 import '@golemui/gui-components/date-input';
 import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';

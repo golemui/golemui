@@ -16,7 +16,7 @@ import {
   createIntersectionObserver,
   type TabsEventDetail,
 } from '@golemui/gui-components/internals';
-import { type TabsProps } from '@golemui/gui-shared';
+import type { TabsProps } from '@golemui/gui-shared/internals';
 
 @Component({
   standalone: true,

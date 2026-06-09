@@ -1,6 +1,6 @@
 import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useInputWidget } from '@golemui/react';
-import { type DatePickerProps } from '@golemui/gui-shared';
+import type { DatePickerProps } from '@golemui/gui-shared/internals';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import '../styles.scss';
 import { Errors } from './shared/Errors';

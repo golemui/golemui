@@ -1,6 +1,6 @@
 import type { DisplayWidget, WithWidget } from '@golemui/core';
 import { useDisplayWdiget } from '@golemui/react';
-import { type MarkdownTextProps } from '@golemui/gui-shared';
+import type { MarkdownTextProps } from '@golemui/gui-shared/internals';
 import { GuiMarkdownTextReact } from '../web-components';
 
 export function MarkdownText(widgetInstance: WithWidget) {

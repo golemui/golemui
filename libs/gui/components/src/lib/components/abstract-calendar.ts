@@ -4,7 +4,7 @@ import { GUIAriaController } from '../controllers/aria.controller';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { getMonthYearParts, getWeekdayLabels, toISODateString, weekDaysOrder } from '../utils/date';
 import { addErrors, addLabel } from '../utils/templates';
-import { type DateRange } from '@golemui/gui-shared';
+import type { DateRange } from '@golemui/gui-shared/internals';
 
 export interface AbstractCalendarDay {
   date: Date;
@@ -112,7 +112,16 @@ export abstract class AbstractCalendar extends LitElement {
                     class=${`gui-widget-icon ${this.prevMonthIcon}`}
                     data-icon=${this.prevMonthIcon}
                   ></span>`
-                : html`<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256"><path d="M165.66,202.34a8,8,0,0,1-11.32,11.32l-80-80a8,8,0,0,1,0-11.32l80-80a8,8,0,0,1,11.32,11.32L91.31,128Z"></path></svg>`}
+                : html`<svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 256 256"
+                  >
+                    <path
+                      d="M165.66,202.34a8,8,0,0,1-11.32,11.32l-80-80a8,8,0,0,1,0-11.32l80-80a8,8,0,0,1,11.32,11.32L91.31,128Z"
+                    ></path>
+                  </svg>`}
             </button>
 
             <div class="gui-calendar__months-grid">
@@ -132,7 +141,16 @@ export abstract class AbstractCalendar extends LitElement {
                     class=${`gui-widget-icon ${this.nextMonthIcon}`}
                     data-icon=${this.nextMonthIcon}
                   ></span>`
-                : html`<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"></path></svg>`}
+                : html`<svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 256 256"
+                  >
+                    <path
+                      d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"
+                    ></path>
+                  </svg>`}
             </button>
           </div>
         </div>

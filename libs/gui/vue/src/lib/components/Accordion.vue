@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
 import { useLayoutWidget, WidgetRenderer } from '@golemui/vue';
-import type { AccordionProps } from '@golemui/gui-shared';
+import type { AccordionProps } from '@golemui/gui-shared/internals';
 import { computed, ref, watch } from 'vue';
 
 const props = defineProps<WithWidget>();

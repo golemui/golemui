@@ -1,6 +1,6 @@
 import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useInputWidget } from '@golemui/react';
-import { type OptionValue, type RadiogroupProps } from '@golemui/gui-shared';
+import type { OptionValue, RadiogroupProps } from '@golemui/gui-shared/internals';
 import { useCallback } from 'react';
 import { GuiRadiogroupReact } from '../web-components';
 import '../styles.scss';

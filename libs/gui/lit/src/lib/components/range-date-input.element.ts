@@ -1,6 +1,6 @@
 import type { InputWidget, WithWidget } from '@golemui/core';
 import { InputWidgetAdapter, type LitFormContext, formContext, inputContext } from '@golemui/lit';
-import { type DateRange, type RangeDateInputProps } from '@golemui/gui-shared';
+import type { DateRange, RangeDateInputProps } from '@golemui/gui-shared/internals';
 import '@golemui/gui-components/range-date-input';
 import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';

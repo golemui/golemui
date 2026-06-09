@@ -3,7 +3,7 @@ import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addIcon, addLabel, type ControlTemplateData } from '../utils/templates';
-import { type TextinputProps } from '@golemui/gui-shared';
+import type { TextinputProps } from '@golemui/gui-shared/internals';
 
 @customElement('gui-textinput')
 export class GuiTextinput extends LitElement {

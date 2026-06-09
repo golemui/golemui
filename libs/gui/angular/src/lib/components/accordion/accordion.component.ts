@@ -3,7 +3,7 @@ import { Component, inject, type OnDestroy, type OnInit } from '@angular/core';
 import { LayoutWidgetAdapter, WidgetDirective } from '@golemui/angular';
 import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
 import type { AccordionEventDetail } from '@golemui/gui-components/internals';
-import { type AccordionProps } from '@golemui/gui-shared';
+import type { AccordionProps } from '@golemui/gui-shared/internals';
 
 @Component({
   standalone: true,

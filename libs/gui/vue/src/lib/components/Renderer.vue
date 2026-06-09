@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { DisplayWidget, WithWidget } from '@golemui/core';
 import { useDisplayWidget } from '@golemui/vue';
-import type { RendererProps } from '@golemui/gui-shared';
+import type { RendererProps } from '@golemui/gui-shared/internals';
 import type { VNode } from 'vue';
 
 const props = defineProps<WithWidget>();

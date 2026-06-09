@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { ActionWidget, WithWidget } from '@golemui/core';
 import { useActionWidget } from '@golemui/vue';
-import type { ButtonProps } from '@golemui/gui-shared';
+import type { ButtonProps } from '@golemui/gui-shared/internals';
 import { computed } from 'vue';
 import '@golemui/gui-components/button';
 

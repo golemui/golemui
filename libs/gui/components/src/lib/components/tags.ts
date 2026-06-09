@@ -3,7 +3,7 @@ import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
-import { type TagsProps } from '@golemui/gui-shared';
+import type { TagsProps } from '@golemui/gui-shared/internals';
 import './pills';
 import type { GuiPillEventDetail, GuiPillItem, GuiPillKeydownEventDetail, GuiPills } from './pills';
 import { styleMap } from 'lit-html/directives/style-map.js';
