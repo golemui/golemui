@@ -1,3 +1,7 @@
+## 1.0.0-rc.0 (2026-06-09)
+
+This was a version bump only for lit to align it with other projects, there were no code changes.
+
 ## 0.17.0 (2026-06-08)
 
 ### 🚀 Features

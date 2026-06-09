@@ -1,3 +1,19 @@
+## 1.0.0-rc.0 (2026-06-09)
+
+### 🩹 Fixes
+
+- ⚠️  Clean Public API ([#173](https://github.com/golemui/golemui/pull/173))
+
+### ⚠️  Breaking Changes
+
+- Clean Public API  ([#173](https://github.com/golemui/golemui/pull/173))
+  Promoted dx functions, widget props and golemForm to internals API, import now from
+  @golemui/gui-shared/internals
+
+### ❤️ Thank You
+
+- Raúl Jiménez @Elecash
+
 ## 0.17.0 (2026-06-08)
 
 ### 🚀 Features
