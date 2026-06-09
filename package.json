@@ -84,7 +84,7 @@
     "@swc/helpers": "~0.5.11",
     "@testing-library/dom": "10.4.0",
     "@testing-library/react": "16.1.0",
-    "@types/node": "20.19.9",
+    "@types/node": "25.9.2",
     "@types/react": "19.0.0",
     "@types/react-dom": "19.0.0",
     "@typescript-eslint/utils": "^8.40.0",
