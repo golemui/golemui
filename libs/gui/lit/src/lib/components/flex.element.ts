@@ -1,6 +1,6 @@
 import type { LayoutWidget, WithWidget } from '@golemui/core';
 import { LayoutWidgetAdapter, type LitFormContext, formContext, layoutContext } from '@golemui/lit';
-import { type FlexProps } from '@golemui/gui-shared';
+import type { FlexProps } from '@golemui/gui-shared/internals';
 import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';

@@ -13,7 +13,7 @@ import {
 } from '@angular/core';
 import { type AngularItemRenderer, InputWidgetAdapter } from '@golemui/angular';
 import type { InputWidget, WithWidget } from '@golemui/core';
-import { type DropdownProps, type ListItem } from '@golemui/gui-shared';
+import type { DropdownProps, ListItem } from '@golemui/gui-shared/internals';
 import { debounceTime, Subject, type Subscription } from 'rxjs';
 import { DefaultListItemRenderer } from '../list/default-list.item-renderer';
 import '@golemui/gui-components/label';

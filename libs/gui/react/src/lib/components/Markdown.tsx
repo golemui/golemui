@@ -1,6 +1,6 @@
 import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useInputWidget } from '@golemui/react';
-import { type MarkdownProps } from '@golemui/gui-shared';
+import type { MarkdownProps } from '@golemui/gui-shared/internals';
 import { useCallback } from 'react';
 import { GuiMarkdownReact } from '../web-components';
 import '../styles.scss';

@@ -1,6 +1,6 @@
 import Ajv2020 from 'ajv/dist/2020';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { golemForm } from '@golemui/gui-shared';
+import { golemForm } from '@golemui/gui-shared/internals';
 import {
   type GetSchema,
   registerGolemSchemas,

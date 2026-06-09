@@ -4,7 +4,7 @@ import {
   createIntersectionObserver,
   type TabsEventDetail,
 } from '@golemui/gui-components/internals';
-import { type TabsProps } from '@golemui/gui-shared';
+import type { TabsProps } from '@golemui/gui-shared/internals';
 import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing, type PropertyValues } from 'lit';
 import { repeat } from 'lit-html/directives/repeat.js';

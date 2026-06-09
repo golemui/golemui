@@ -1,6 +1,6 @@
 import type { DisplayWidget, WithWidget } from '@golemui/core';
 import { useDisplayWdiget } from '@golemui/react';
-import { type AlertProps } from '@golemui/gui-shared';
+import type { AlertProps } from '@golemui/gui-shared/internals';
 
 export function Alert(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as DisplayWidget;

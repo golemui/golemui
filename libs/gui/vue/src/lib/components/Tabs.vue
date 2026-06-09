@@ -2,7 +2,7 @@
 import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
 import { useLayoutWidget, WidgetRenderer } from '@golemui/vue';
 import { createIntersectionObserver } from '@golemui/gui-components/internals';
-import type { TabsProps } from '@golemui/gui-shared';
+import type { TabsProps } from '@golemui/gui-shared/internals';
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 
 const props = defineProps<WithWidget>();

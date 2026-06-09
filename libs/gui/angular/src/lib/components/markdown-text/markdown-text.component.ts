@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { DisplayWidgetAdapter } from '@golemui/angular';
 import type { DisplayWidget, WithWidget } from '@golemui/core';
-import { type MarkdownTextProps } from '@golemui/gui-shared';
+import type { MarkdownTextProps } from '@golemui/gui-shared/internals';
 import '@golemui/gui-components/markdown-text';
 
 @Component({

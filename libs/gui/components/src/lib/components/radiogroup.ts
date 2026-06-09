@@ -1,9 +1,9 @@
-import {
-  type OneOfProps,
-  type Option,
-  type OptionValue,
-  type RadiogroupProps,
-} from '@golemui/gui-shared';
+import type {
+  OneOfProps,
+  Option,
+  OptionValue,
+  RadiogroupProps,
+} from '@golemui/gui-shared/internals';
 import { html, LitElement, nothing } from 'lit';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { customElement, property } from 'lit/decorators.js';

@@ -1,5 +1,5 @@
 import { type MountComponentFn } from '../utils';
-import { golemForm } from '@golemui/gui-shared';
+import { golemForm } from '@golemui/gui-shared/internals';
 
 export const runActionsComponentTests = (mountFn: MountComponentFn) => {
   describe('Actions', () => {

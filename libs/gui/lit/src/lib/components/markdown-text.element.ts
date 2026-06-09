@@ -8,7 +8,7 @@ import {
   displayWidgetContext,
   formContext,
 } from '@golemui/lit';
-import { type MarkdownTextProps } from '@golemui/gui-shared';
+import type { MarkdownTextProps } from '@golemui/gui-shared/internals';
 import '@golemui/gui-components/markdown-text';
 import { type Subscription } from 'rxjs';
 

@@ -5,7 +5,7 @@ import {
   registerGolemSchemas,
   specValidationErrorsLogger,
 } from '../schema.spec.utils';
-import { golemForm } from '@golemui/gui-shared';
+import { golemForm } from '@golemui/gui-shared/internals';
 
 const SCHEMA_ID_UNDER_TEST = 'https://golemui.com/schemas/components/dateinput.schema.json';
 

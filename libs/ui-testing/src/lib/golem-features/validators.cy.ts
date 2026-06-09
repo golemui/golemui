@@ -1,5 +1,5 @@
 import { type I18nTranslator, defineForm } from '@golemui/core';
-import { golemForm } from '@golemui/gui-shared';
+import { golemForm } from '@golemui/gui-shared/internals';
 import type { CustomValidatorSchemaFn, CustomValidatorSchemas } from '@golemui/gui-validators';
 import { string, superRefine } from 'zod/mini';
 import { type MountComponentFn } from '../utils';

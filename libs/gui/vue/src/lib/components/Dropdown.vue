@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useDebounceCallback, useInputWidget, useVueFormContext } from '@golemui/vue';
-import type { DropdownProps, ListItem, OptionValue } from '@golemui/gui-shared';
+import type { DropdownProps, ListItem, OptionValue } from '@golemui/gui-shared/internals';
 import { computed, onMounted, onUnmounted, ref, watch, type Component } from 'vue';
 import DefaultListItemRenderer from './item-renderers/DefaultListItemRenderer.vue';
 import '@golemui/gui-components/label';

@@ -5,7 +5,7 @@ import {
   displayWidgetContext,
   formContext,
 } from '@golemui/lit';
-import { type RendererProps } from '@golemui/gui-shared';
+import type { RendererProps } from '@golemui/gui-shared/internals';
 import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';

@@ -1,5 +1,5 @@
 import type { WidgetLoaders, WithWidget } from '@golemui/core';
-import type { GolemWidget } from '@golemui/gui-shared';
+import type { GolemWidget } from '@golemui/gui-shared/internals';
 import type { Component } from 'vue';
 
 export const widgetLoaders: WidgetLoaders<Component<WithWidget>, GolemWidget> = {

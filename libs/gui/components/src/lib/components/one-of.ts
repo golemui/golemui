@@ -1,4 +1,9 @@
-import { isOption, type OneOfProps, type Option, type OptionValue } from '@golemui/gui-shared';
+import {
+  isOption,
+  type OneOfProps,
+  type Option,
+  type OptionValue,
+} from '@golemui/gui-shared/internals';
 
 /**
  * Checks whether a value is a valid option value

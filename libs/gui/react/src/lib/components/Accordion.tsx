@@ -1,6 +1,6 @@
 import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
 import { useLayoutWidget, WidgetRenderer } from '@golemui/react';
-import { type AccordionProps } from '@golemui/gui-shared';
+import type { AccordionProps } from '@golemui/gui-shared/internals';
 import { useCallback, useEffect, useState } from 'react';
 
 const empty = {};

@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { InputWidgetAdapter } from '@golemui/angular';
 import type { InputWidget, WithWidget } from '@golemui/core';
-import { type SelectProps } from '@golemui/gui-shared';
+import type { SelectProps } from '@golemui/gui-shared/internals';
 import '@golemui/gui-components/select';
 
 @Component({

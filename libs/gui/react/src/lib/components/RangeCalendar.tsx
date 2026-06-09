@@ -1,6 +1,6 @@
 import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useInputWidget } from '@golemui/react';
-import { type DateRange, type RangeCalendarProps } from '@golemui/gui-shared';
+import type { DateRange, RangeCalendarProps } from '@golemui/gui-shared/internals';
 import { useCallback } from 'react';
 import { GuiRangeCalendarReact } from '../web-components';
 import '../styles.scss';

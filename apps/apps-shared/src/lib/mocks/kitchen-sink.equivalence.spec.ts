@@ -1,4 +1,4 @@
-import { formDefs } from '@golemui/gui-shared';
+import { formDefs } from '@golemui/gui-shared/internals';
 import { describe, expect, it } from 'vitest';
 
 import { buildKitchenSinkDx } from './kitchen-sink.dx';

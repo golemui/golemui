@@ -1,4 +1,4 @@
-import { type DateRange } from '@golemui/gui-shared';
+import type { DateRange } from '@golemui/gui-shared/internals';
 import { weekInfoData } from './week-info';
 
 /**

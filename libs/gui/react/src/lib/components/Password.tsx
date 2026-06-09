@@ -1,6 +1,6 @@
 import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useInputWidget } from '@golemui/react';
-import { type PasswordProps } from '@golemui/gui-shared';
+import type { PasswordProps } from '@golemui/gui-shared/internals';
 import { useCallback } from 'react';
 import { GuiPasswordReact } from '../web-components';
 import '../styles.scss';

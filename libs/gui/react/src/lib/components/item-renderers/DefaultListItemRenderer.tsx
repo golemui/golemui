@@ -1,6 +1,6 @@
 import React from 'react';
 import { type ListItemRendererProps } from './props';
-import { type OptionValue } from '@golemui/gui-shared';
+import type { OptionValue } from '@golemui/gui-shared/internals';
 
 export function DefaultListItemRenderer({
   template,

@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import { InputWidgetAdapter } from '@golemui/angular';
 import type { InputWidget, WithWidget } from '@golemui/core';
-import { type DatePickerProps } from '@golemui/gui-shared';
+import type { DatePickerProps } from '@golemui/gui-shared/internals';
 import { ErrorsComponent } from '../../utils/templates/errors.component';
 import { LabelComponent } from '../../utils/templates/label.component';
 import '@golemui/gui-components/date-input';

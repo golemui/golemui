@@ -1,4 +1,4 @@
-import { type DateRange, type RangeDateInputProps } from '@golemui/gui-shared';
+import type { DateRange, RangeDateInputProps } from '@golemui/gui-shared/internals';
 import { html, LitElement, nothing } from 'lit';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { customElement, property, state } from 'lit/decorators.js';

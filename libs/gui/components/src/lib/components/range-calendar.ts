@@ -12,7 +12,7 @@ import {
 import { AbstractCalendar, type AbstractCalendarDay } from './abstract-calendar';
 import './pills';
 import type { GuiPillEventDetail, GuiPillItem } from './pills';
-import { type DateRange } from '@golemui/gui-shared';
+import type { DateRange } from '@golemui/gui-shared/internals';
 
 export interface RangeCalendarDay extends AbstractCalendarDay {
   isToday: boolean;

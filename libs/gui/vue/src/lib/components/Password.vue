@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useInputWidget } from '@golemui/vue';
-import type { PasswordProps } from '@golemui/gui-shared';
+import type { PasswordProps } from '@golemui/gui-shared/internals';
 import { computed } from 'vue';
 import '@golemui/gui-components/password';
 

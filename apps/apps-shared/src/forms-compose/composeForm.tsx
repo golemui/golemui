@@ -389,7 +389,11 @@ export function composeTree(active: Set<BlockId>, framework = 'react'): TreeLine
 
   push('base', 2, "card('Region', [");
   if (active.has('reactive')) {
-    push('reactive', 3, "gui.inputs.dropdown('country', { onChange: () => { /* fetch data */ }) }),");
+    push(
+      'reactive',
+      3,
+      "gui.inputs.dropdown('country', { onChange: () => { /* fetch data */ }) }),",
+    );
     push('reactive', 3, "gui.inputs.radiogroup('city', { when: '$form.country' !== undefined }),");
   } else {
     push('base', 3, "gui.inputs.dropdown('country'),");

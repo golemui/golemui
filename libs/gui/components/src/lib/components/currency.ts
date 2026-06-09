@@ -1,4 +1,4 @@
-import { type CurrencyProps } from '@golemui/gui-shared';
+import type { CurrencyProps } from '@golemui/gui-shared/internals';
 import { html, LitElement, nothing, type PropertyValues } from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';

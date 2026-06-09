@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useInputWidget, useVueFormContext } from '@golemui/vue';
-import type { ListItem, ListProps, OptionValue } from '@golemui/gui-shared';
+import type { ListItem, ListProps, OptionValue } from '@golemui/gui-shared/internals';
 import { computed, onUnmounted, ref, watch, type Component } from 'vue';
 import DefaultListItemRenderer from './item-renderers/DefaultListItemRenderer.vue';
 import '@golemui/gui-components/label';

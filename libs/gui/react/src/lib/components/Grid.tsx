@@ -1,6 +1,6 @@
 import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
 import { useLayoutWidget, WidgetRenderer } from '@golemui/react';
-import { type GridProps } from '@golemui/gui-shared';
+import type { GridProps } from '@golemui/gui-shared/internals';
 import { useCallback } from 'react';
 import '../styles.scss';
 
