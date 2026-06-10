@@ -1,9 +1,13 @@
 import { nxComponentTestingPreset } from '@nx/react/plugins/component-testing';
 import { defineConfig } from 'cypress';
+import { fileURLToPath } from 'node:url';
+
+// Cypress 15 loads this config as an ES module, where __filename is not defined.
+const configFilename = fileURLToPath(import.meta.url);
 
 export default defineConfig({
   component: {
-    ...nxComponentTestingPreset(__filename, { bundler: 'vite' }),
+    ...nxComponentTestingPreset(configFilename, { bundler: 'vite' }),
     specPattern: ['cypress/test/**/*.cy.ts'],
     numTestsKeptInMemory: 0,
     video: false,
