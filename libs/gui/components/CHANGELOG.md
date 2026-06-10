@@ -1,3 +1,13 @@
+## 1.0.0-rc.1 (2026-06-10)
+
+### 🩹 Fixes
+
+- **gui-components:** fix next/prev month button color for default icon ([#179](https://github.com/golemui/golemui/pull/179))
+
+### ❤️ Thank You
+
+- Raúl Jiménez @Elecash
+
 ## 1.0.0-rc.0 (2026-06-09)
 
 ### 🩹 Fixes
