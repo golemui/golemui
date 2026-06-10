@@ -1,4 +1,4 @@
-// Knip config
+// Knip config `npx knip --dependencies`
 const config = {
   entry: [
     // Apps (playgrounds)
