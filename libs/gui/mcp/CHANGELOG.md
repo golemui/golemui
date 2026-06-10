@@ -1,3 +1,7 @@
+## 1.0.0-rc.2 (2026-06-10)
+
+This was a version bump only for gui-mcp to align it with other projects, there were no code changes.
+
 ## 1.0.0-rc.1 (2026-06-10)
 
 This was a version bump only for gui-mcp to align it with other projects, there were no code changes.
