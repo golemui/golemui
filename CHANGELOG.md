@@ -1,13 +1,3 @@
-## 1.0.0-rc.2 (2026-06-10)
-
-### 🩹 Fixes
-
-- reduce deps ([#180](https://github.com/golemui/golemui/pull/180))
-
-### ❤️ Thank You
-
-- Raúl Jiménez @Elecash
-
 ## 1.0.0-rc.1 (2026-06-10)
 
 ### 🩹 Fixes
