@@ -28,6 +28,7 @@ export class FormElement extends LitElement {
   @property({ type: String }) autocomplete: string | undefined = undefined;
 
   @state() direction: 'ltr' | 'rtl' = 'ltr';
+  @state() healthError: string | null = null;
 
   // Tracks the current form state for rendering. Not a @state() to avoid
   // re-rendering on every store emission - we call requestUpdate() explicitly
@@ -108,6 +109,9 @@ export class FormElement extends LitElement {
     });
 
     this.healthSub = formHealth(this.context.store.state$).subscribe((health) => {
+      const message = health.status === 'errored' ? health.message : null;
+      this.healthError = message;
+      if (message) console.error('GolemUI form failed to initialize:', message);
       this.dispatchEvent(
         new CustomEvent<FormHealth>(FormElement.FORM_HEALTH_EVENT, {
           detail: health,
@@ -134,6 +138,15 @@ export class FormElement extends LitElement {
   }
 
   override render() {
+    // A bad formDef errors formHealth and never produces a layout — surface it visibly
+    // (same red-box pattern as WidgetErrorBoundary) instead of a stuck "Loading form...".
+    if (this.healthError) {
+      return html`<div role="alert" style="border: 2px solid red; border-radius: 4px; padding: 12px;">
+        <strong style="color: red;">GolemUI form error</strong>
+        <p style="margin-top: 4px;"><code>${this.healthError}</code></p>
+      </div>`;
+    }
+
     const ready = this.formState?.formDef && this.context.widgetRegistry.ready;
     const formName = this.config?.formName ?? this._defaultFormName;
 

@@ -44,6 +44,7 @@ export class FormCoreComponent implements OnInit, OnDestroy {
   validators = input.required<ValidatorFn<any>>();
   autocomplete = input<string | undefined>(undefined);
   protected direction = signal<'ltr' | 'rtl'>('ltr');
+  protected healthError = signal<string | null>(null);
 
   // OUTPUTS
   protected formHealth = output<FormHealth>();
@@ -106,7 +107,12 @@ export class FormCoreComponent implements OnInit, OnDestroy {
         switchMap(() => formHealth(this.context.store.state$)),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe((health) => this.formHealth.emit(health));
+      .subscribe((health) => {
+        const message = health.status === 'errored' ? health.message : null;
+        this.healthError.set(message);
+        if (message) console.error('GolemUI form failed to initialize:', message);
+        this.formHealth.emit(health);
+      });
 
     this.configureLongLivedEvents();
   }

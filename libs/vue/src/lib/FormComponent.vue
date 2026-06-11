@@ -25,6 +25,7 @@ const emit = defineEmits<{
 const formContext = new VueFormContext();
 const formName = ref<string>(props.config.formName ?? shortUUID());
 const formLayoutField = ref<LayoutWidget<string> | null>(null);
+const healthError = ref<string | null>(null);
 const direction = ref<'ltr' | 'rtl'>('ltr');
 const storeVersion = ref(0);
 
@@ -105,9 +106,12 @@ watch(
   () => storeVersion.value,
   () => {
     healthSub?.unsubscribe();
-    healthSub = watchFormHealth(formContext.store.state$).subscribe((health) =>
-      emit('form-health', health),
-    );
+    healthSub = watchFormHealth(formContext.store.state$).subscribe((health) => {
+      const message = health.status === 'errored' ? health.message : null;
+      healthError.value = message;
+      if (message) console.error('GolemUI form failed to initialize:', message);
+      emit('form-health', health);
+    });
   },
   { immediate: true },
 );
@@ -162,5 +166,16 @@ const onFormSubmit = (event: SubmitEvent) => {
         <WidgetRenderer :widget="formLayoutField" />
       </WidgetErrorBoundary>
     </form>
+  </div>
+  <!-- A bad formDef errors formHealth and never produces a layout — surface it visibly
+       (same red-box pattern as WidgetErrorBoundary) instead of rendering nothing. -->
+  <div
+    v-else-if="healthError"
+    class="gui-form"
+    role="alert"
+    style="border: 2px solid red; border-radius: 4px; padding: 12px"
+  >
+    <strong style="color: red">GolemUI form error</strong>
+    <p style="margin-top: 4px"><code>{{ healthError }}</code></p>
   </div>
 </template>
