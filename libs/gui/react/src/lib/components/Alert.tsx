@@ -1,10 +1,10 @@
 import type { DisplayWidget, WithWidget } from '@golemui/core';
-import { useDisplayWdiget } from '@golemui/react';
+import { useDisplayWidget } from '@golemui/react';
 import type { AlertProps } from '@golemui/gui-shared/internals';
 
 export function Alert(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as DisplayWidget;
-  const { uid, templateData } = useDisplayWdiget<AlertProps>(widget);
+  const { uid, templateData } = useDisplayWidget<AlertProps>(widget);
 
   return (
     <div className="gui-alert gui-field" style={{ flex: templateData.size }}>

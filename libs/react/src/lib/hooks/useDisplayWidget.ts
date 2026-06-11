@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useReactFormContext } from '../ReactFormContext';
 import { useTemplateData } from './internal/useExtraProps';
 
-export function useDisplayWdiget<ExtraProps extends Record<string, any>>(
+export function useDisplayWidget<ExtraProps extends Record<string, any>>(
   widget: DisplayWidget<string>,
 ) {
   const { formContext } = useReactFormContext();

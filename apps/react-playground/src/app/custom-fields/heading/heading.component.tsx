@@ -1,5 +1,5 @@
 import type { DisplayWidget, WithWidget } from '@golemui/core';
-import { useDisplayWdiget } from '@golemui/react';
+import { useDisplayWidget } from '@golemui/react';
 import { createElement, type PropsWithChildren } from 'react';
 import styles from './heading.component.module.scss';
 
@@ -10,7 +10,7 @@ type OwnWidgetProps = {
 
 export function HeadingComponent(fieldInstance: WithWidget) {
   const field = fieldInstance.widget as DisplayWidget;
-  const { uid, templateData } = useDisplayWdiget<OwnWidgetProps>(field);
+  const { uid, templateData } = useDisplayWidget<OwnWidgetProps>(field);
 
   return (
     <div className="gui-widget" id={uid}>

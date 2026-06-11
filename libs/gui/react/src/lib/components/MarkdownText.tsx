@@ -1,11 +1,11 @@
 import type { DisplayWidget, WithWidget } from '@golemui/core';
-import { useDisplayWdiget } from '@golemui/react';
+import { useDisplayWidget } from '@golemui/react';
 import type { MarkdownTextProps } from '@golemui/gui-shared/internals';
 import { GuiMarkdownTextReact } from '../web-components';
 
 export function MarkdownText(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as DisplayWidget;
-  const { uid, templateData } = useDisplayWdiget<MarkdownTextProps>(widget);
+  const { uid, templateData } = useDisplayWidget<MarkdownTextProps>(widget);
 
   return (
     <div className="gui-markdown-text gui-field" style={{ flex: templateData.size }}>
