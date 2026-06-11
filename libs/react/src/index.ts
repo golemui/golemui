@@ -5,7 +5,7 @@ export type { FormComponentHandle, FormComponentProps } from './lib/FormComponen
 
 export { useActionWidget } from './lib/hooks/useActionWidget';
 export { useDebounceCallback } from './lib/hooks/useDebounceCallback';
-export { useDisplayWdiget } from './lib/hooks/useDisplayWdiget';
+export { useDisplayWidget } from './lib/hooks/useDisplayWidget';
 export { useInputWidget } from './lib/hooks/useInputWidget';
 export { useItemRenderer } from './lib/hooks/useItemRenderer';
 export { useLayoutWidget } from './lib/hooks/useLayoutWidget';
