@@ -43,6 +43,20 @@ describe('DX Pipeline — Repeater', () => {
     expect(child1.type).toBe('textinput');
   });
 
+  // Full `<path>.items.<field>` child paths (what docs/grounding write) must not be double-prefixed.
+  it('accepts a full <path>.items.<field> child path without double-prefixing', () => {
+    const result = processDx(
+      _guiRepeater('guests', {
+        template: [_guiTextInput('guests.items.guest_name')],
+      }),
+    );
+    const w = getStaticChild(result, 0) as NonFunctionWidget & {
+      props?: { template?: LayoutWidget };
+    };
+    const leaf = w.props?.template?.children?.[0] as NonFunctionWidget & { path?: string };
+    expect(leaf.path).toBe('guests.items.guest_name');
+  });
+
   it('works with template-only props (no other config)', () => {
     const result = processDx(
       _guiRepeater('items', {

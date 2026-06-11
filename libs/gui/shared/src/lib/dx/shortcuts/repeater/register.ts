@@ -49,7 +49,10 @@ function prefixTemplatePaths(widgets: FormWidget[], prefix: string): void {
   for (const widget of widgets) {
     if (typeof widget === 'function') continue;
     const w = widget as NonFunctionWidget & { path?: string };
-    if (typeof w.path === 'string' && w.path) {
+    // Idempotent: a child path may be relative (`guest_name`) or full (`guests.items.guest_name`);
+    // only prepend when not already prefixed, so a full path isn't double-prefixed (which throws in
+    // `toRepeaterItemPath`).
+    if (typeof w.path === 'string' && w.path && !w.path.startsWith(prefix)) {
       w.path = prefix + w.path;
     }
     // Recurse into layout children (e.g. horizontal/vertical stacks)

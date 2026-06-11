@@ -54,6 +54,31 @@ describe('DX Pipeline — Displays', () => {
     });
   });
 
+  describe('render params always carry $form', () => {
+    // Guards the arena crash: a render read `params.$form.serviceLines` when the walk passed no `$form`.
+    it('resolves a display that reads params.$form.<field> without form data, never throwing', () => {
+      const root = processDx(
+        _guiDisplay((params) => {
+          const lines = Array.isArray(params.$form.serviceLines) ? params.$form.serviceLines : [];
+          return `count:${lines.length}`;
+        }),
+      );
+      const rawChild = getRawChild(root, 0);
+      expect(() => resolveDynamic(rawChild)).not.toThrow();
+      const resolved = resolveDynamic(rawChild) as { props?: { render?: unknown } };
+      expect(resolved.props?.render).toBe('count:0');
+    });
+
+    it('still passes real $form data through when provided', () => {
+      const root = processDx(_guiDisplay((params) => `n:${params.$form.serviceLines?.length ?? 0}`));
+      const rawChild = getRawChild(root, 0);
+      const resolved = resolveDynamic(rawChild, { $form: { serviceLines: [1, 2, 3] } }) as {
+        props?: { render?: unknown };
+      };
+      expect(resolved.props?.render).toBe('n:3');
+    });
+  });
+
   describe('GSL tag matching — Phase 2 safety baseline', () => {
     it('processes tagged display with matching _gslTag + _gslDisplays selector', () => {
       const defs = [_guiDisplay(() => 'tagged', ['highlight']), _guiTextInput('a')];
