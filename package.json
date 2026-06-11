@@ -45,7 +45,7 @@
     "react-dom": "19.0.0",
     "rxjs": "~7.8.0",
     "subscript": "^10.1.8",
-    "ts.data.json": "^3.3.0",
+    "ts.data.json": "^4.1.0",
     "vue": "^3.5.0",
     "zod": "^4.0.0",
     "zone.js": "~0.15.0"
