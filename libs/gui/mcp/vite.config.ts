@@ -31,7 +31,18 @@ export default defineConfig(() => ({
       fileName: (_format, entryName) => `${entryName}.js`,
     },
     rollupOptions: {
-      external: [/^@modelcontextprotocol\/sdk(\/.*)?$/, /^ajv(\/.*)?$/, 'ajv-formats'],
+      external: [
+        /^@modelcontextprotocol\/sdk(\/.*)?$/,
+        /^ajv(\/.*)?$/,
+        'ajv-formats',
+        // `typescript` is loaded lazily by the DX type-check only — keep it external
+        // so the JSON path never pulls the compiler into its bundle.
+        'typescript',
+        'node:fs',
+        'node:module',
+        'node:path',
+        'node:url',
+      ],
       output: {
         // shebang only on the CLI bundle
         banner: (chunk) => (chunk.name === 'cli' ? '#!/usr/bin/env node' : ''),

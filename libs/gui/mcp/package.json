@@ -23,6 +23,7 @@
     "schemas",
     "utils",
     "lint",
+    "dx",
     "*.md"
   ],
   "keywords": [
@@ -36,7 +37,13 @@
   "dependencies": {
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
-    "@golemui/gui-schemas": "*"
+    "typescript": "^5.9.2",
+    "@golemui/gui-schemas": "*",
+    "@golemui/gui-shared": "*",
+    "@golemui/gui-validators": "*",
+    "@golemui/core": "*",
+    "zod": "^4.0.0",
+    "@standard-schema/spec": "^1.0.0"
   },
   "peerDependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0"
