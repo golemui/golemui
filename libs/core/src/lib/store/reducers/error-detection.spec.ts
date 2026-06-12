@@ -15,7 +15,7 @@ describe('detectMalformedFormShape', () => {
         status: 'errored',
         code: errorCodes.initializeMalformedFormShapeError,
       });
-      expect(health?.status === 'errored' && health.message).toContain('DX fix');
+      expect(health?.status === 'errored' && health.message).toContain('gui.* array');
       expect(health?.status === 'errored' && health.message).toContain('formConfig');
       expect(health?.status === 'errored' && health.message).toContain('Do NOT wrap');
     });
@@ -26,7 +26,7 @@ describe('detectMalformedFormShape', () => {
         status: 'errored',
         code: errorCodes.initializeMalformedFormShapeError,
       });
-      expect(health?.status === 'errored' && health.message).toContain('DX fix');
+      expect(health?.status === 'errored' && health.message).toContain('gui.* array');
     });
   });
 
@@ -42,8 +42,8 @@ describe('detectMalformedFormShape', () => {
         status: 'errored',
         code: errorCodes.initializeMalformedFormShapeError,
       });
-      expect(health?.status === 'errored' && health.message).toContain('JSON fix');
-      expect(health?.status === 'errored' && health.message).toContain('Do NOT wrap');
+      expect(health?.status === 'errored' && health.message).toContain('form definition object');
+      expect(health?.status === 'errored' && health.message).toContain('extra `{ form: ... }`');
     });
   });
 
