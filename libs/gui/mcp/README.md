@@ -9,6 +9,33 @@ strict enough that one wrong property name breaks the runtime. This server close
 your AI calls it to **validate** what it wrote and to **generate** forms from existing
 JSON Schemas or OpenAPI operations, with the bundled GolemUI schemas as the source of truth.
 
+## Two entry points (one surface, two ways to author it)
+
+A GolemUI form can be authored two ways, and the MCP serves both:
+
+- a **JSON form definition** — the declarative, serializable object `{ form: [...widgets], states?: {...} }`;
+- **`gui.*` DX code** — the fluent TypeScript builder that *produces* that same definition.
+
+There is **no toggle**. On connect, the server hands the client a single block of guidance — the MCP
+`initialize.instructions` field (`SERVER_INSTRUCTIONS` in [`src/cli.ts`](./src/cli.ts)) — and the agent
+**self-routes** from it by *what it is producing*. The block is **two parts**:
+
+1. **JSON path** (first) — *"Starting from a schema? …"* → use a generator, or look widgets/concepts up by
+   hand → **always finish with `validate_form_definition`**.
+2. **`gui.*` path** (second) — *"Writing GolemUI as DX code … instead of a JSON definition?"* → **call
+   `list_dx_factories` first** (the complete reference), write the form from it → **always finish with
+   `check_dx_code`**.
+
+It is framed **JSON-first on purpose** — an agent sees the same JSON guidance it always saw, with the
+programmatic path added after, so existing behaviour isn't diluted. The two terminal checks are **not
+interchangeable**, and the instructions say so:
+
+> Use `check_dx_code` for `gui.*` *code* and `validate_form_definition` for a JSON *definition object*.
+
+Each tool also carries its own `description` that cross-steers — e.g. `get_widget_spec` tells a `gui.*`
+author it isn't needed; `list_dx_factories` says call it first. To read the whole thing exactly as a client
+sees it (instructions + every tool), run `npm run start:mcp` (the MCP Inspector).
+
 ## Install
 
 The server is a standalone Node CLI distributed on npm. Add it to your IDE's MCP config —
@@ -84,12 +111,42 @@ single GolemUI widget. Cheaper than dumping the whole API into the model's conte
 
 ### `get_concept`
 
-Returns a detailed guide for a cross-cutting concept - things that span multiple widgets
-and affect the whole form. Use it when you need state-suffixed props
-(`"label.stateName": "..."`) or to reuse a condition across multiple widgets via
-`include`/`exclude`. Currently supported: `"states"`, `"string-interpolation"`.
+Returns a detailed guide for a cross-cutting concept — things that span multiple widgets
+and affect the whole form: conditional rendering (`include`/`exclude`, named-state and
+inline `when`), state-suffixed props (`"label.stateName": "..."`), the reactive scope
+(`$form`, `$meta`, `$errors`, `$formIsInvalid`), and widget icons.
 
-**Input:** `{ concept }` - one of `"states"`, `"string-interpolation"`
+**Input:** `{ concept }` — one of `"states"`, `"string-interpolation"`, `"reactive-scope"`, `"icons"`
+
+> The five tools above serve the **JSON** surface. The three below serve the **`gui.*`** (DX code) surface —
+> see [Two entry points](#two-entry-points-one-surface-two-ways-to-author-it).
+
+### `list_dx_factories`
+
+**Call this first when writing `gui.*` code.** Returns the complete `gui.*` DX reference in one call: every
+factory with its namespace, calling convention, a **compile-verified** example, and its gotchas — plus the
+cross-cutting patterns and the common authoring rules. Its imports + render snippet are **tailored to your
+target framework** (`GOLEMUI_FRAMEWORK`). Self-sufficient for most forms; keep it in context and write from it.
+
+**Input:** none.
+
+### `get_dx_spec`
+
+A rare single-factory deep-dive — one factory's calling convention, example, and notes. Usually unneeded
+(`list_dx_factories` already carries every factory); reach here only to re-confirm one in isolation.
+
+**Input:** `{ factory }` — the camelCase name (`textInput`, `dropdown`, `radiogroup`, `button`, …).
+
+### `check_dx_code`
+
+**The `gui.*` terminal check** — the counterpart of `validate_form_definition` for *code* instead of a JSON
+*object*. Type-checks the snippet against the **real `@golemui` type declarations** (compile-is-truth: GolemUI
+isn't in any model's training data, so generated `gui.*` is often a confident fabrication that doesn't
+compile). Also catches two compiler-invisible footguns — a misplaced `include`/`exclude` on a `gui.*` spread,
+and reactive-expression mistakes in `when` strings. Returns `{ ok, diagnostics }`; each diagnostic carries a
+fix `hint`. Treat `ok: false` as blocking.
+
+**Input:** `{ code }` — the `gui.*` snippet (a bare `gui.inputs.*` array is fine; the import is added if missing).
 
 ## Library usage
 
@@ -174,7 +231,7 @@ Create or edit the project-level MCP config at .mcp.json in the workspace root:
 }
 ```
 
-Then reload the VS Code window (Cmd+Shift+P -> "Developer: Reload Window"). The 4 tools will appear in Claude's tool list for this workspace.
+Then reload the VS Code window (Cmd+Shift+P -> "Developer: Reload Window"). The tools will appear in Claude's tool list for this workspace.
 
 Remove the entry from .mcp.json when done.
 
