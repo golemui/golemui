@@ -2,6 +2,7 @@ import {
   array,
   boolean,
   Decoder,
+  discriminatedUnion,
   err,
   lazy,
   literal,
@@ -256,23 +257,23 @@ export const isFunctionWidget = <
 //
 // --------------------------------
 
-const inDecoder = object({ in: array(string(), 'In[]') }, 'In');
+const inDecoder = object({ in: array(string()) });
 type In = FromDecoder<typeof inDecoder>;
 
-const whenDecoder = object({ when: string() }, 'When');
+const whenDecoder = object({ when: string() });
 type When = FromDecoder<typeof whenDecoder>;
 
 // include
-const includeDecoder = oneOf<In | When>([inDecoder, whenDecoder], 'In | When');
+const includeDecoder = oneOf<In | When>([inDecoder, whenDecoder]);
 
-const fromDecoder = object({ from: array(string(), 'From[]') }, 'From');
+const fromDecoder = object({ from: array(string()) });
 type From = FromDecoder<typeof fromDecoder>;
 
 // exclude
-const excludeDecoder = oneOf<From | When>([fromDecoder, whenDecoder], 'Exclude');
+const excludeDecoder = oneOf<From | When>([fromDecoder, whenDecoder]);
 
 // disable / readonly
-const boolWhenDecoder = oneOf<boolean | When>([boolean(), whenDecoder], 'Bool | When');
+const boolWhenDecoder = oneOf<boolean | When>([boolean(), whenDecoder]);
 
 // all widget properties that support states can potentially be a WidgetPropertyFunction
 const widgetPropFnDecoder: Decoder<WidgetPropertyFunction<any>> = new Decoder((json: unknown) => {
@@ -280,69 +281,57 @@ const widgetPropFnDecoder: Decoder<WidgetPropertyFunction<any>> = new Decoder((j
   if (jsonTypeof === 'function') {
     return ok(json as WidgetPropertyFunction<any>);
   } else {
-    return err(`Expected a function, got '${jsonTypeof}'`);
+    return err([{ message: `Expected a function, got '${jsonTypeof}'`, path: [] }]);
   }
 });
 const decodeWidgetPropOrWidgetPropFn = <T>(decoder: Decoder<T>) =>
-  oneOf<T | WidgetPropertyFunction<any>>([decoder, widgetPropFnDecoder], '');
+  oneOf<T | WidgetPropertyFunction<any>>([decoder, widgetPropFnDecoder]);
 
-const onDecoder = objectWithSuffix(
-  {
-    load: { suffixed: true, decoder: decodeWidgetPropOrWidgetPropFn(optional(string())) },
-    click: { suffixed: true, decoder: decodeWidgetPropOrWidgetPropFn(optional(string())) },
-    change: { suffixed: true, decoder: decodeWidgetPropOrWidgetPropFn(optional(string())) },
-    filter: { suffixed: true, decoder: decodeWidgetPropOrWidgetPropFn(optional(string())) },
-    blur: { suffixed: true, decoder: decodeWidgetPropOrWidgetPropFn(optional(string())) },
-  },
-  'On',
-);
+const onDecoder = objectWithSuffix({
+  load: { suffixed: true, decoder: decodeWidgetPropOrWidgetPropFn(optional(string())) },
+  click: { suffixed: true, decoder: decodeWidgetPropOrWidgetPropFn(optional(string())) },
+  change: { suffixed: true, decoder: decodeWidgetPropOrWidgetPropFn(optional(string())) },
+  filter: { suffixed: true, decoder: decodeWidgetPropOrWidgetPropFn(optional(string())) },
+  blur: { suffixed: true, decoder: decodeWidgetPropOrWidgetPropFn(optional(string())) },
+});
 
-const translationConfigDecoder = object<TranslationConfig>(
-  {
-    key: string(),
-    default: optional(string()),
-    params: optional(succeed()),
-  },
-  'TranslationConfig',
-);
-const localizableDecoder = oneOf<Localizable>([string(), translationConfigDecoder], 'Localizable');
+const translationConfigDecoder = object<TranslationConfig>({
+  key: string(),
+  default: optional(string()),
+  params: optional(succeed()),
+});
+const localizableDecoder = oneOf<Localizable>([string(), translationConfigDecoder]);
 
 const uidDecoder = optional(string()).map((s) => s || shortUUID());
 
-const displayWidgetDecoder = objectWithSuffix<DisplayWidget<string>>(
-  {
-    kind: { decoder: literal('display') },
-    uid: { decoder: uidDecoder },
-    type: { decoder: string() },
-    size: { suffixed: true, decoder: optional(number()) },
-    include: { decoder: optional(includeDecoder) },
-    exclude: { decoder: optional(excludeDecoder) },
-    props: { decoder: optional(succeed()) },
-  },
-  'DisplayWidget',
-);
+const displayWidgetDecoder = objectWithSuffix<DisplayWidget<string>>({
+  kind: { decoder: literal('display') },
+  uid: { decoder: uidDecoder },
+  type: { decoder: string() },
+  size: { suffixed: true, decoder: optional(number()) },
+  include: { decoder: optional(includeDecoder) },
+  exclude: { decoder: optional(excludeDecoder) },
+  props: { decoder: optional(succeed()) },
+});
 
-const actionWidgetDecoder = objectWithSuffix<ActionWidget<string>>(
-  {
-    kind: { decoder: literal('action') },
-    uid: { decoder: uidDecoder },
-    type: { decoder: string() },
-    actionType: {
-      decoder: optional(oneOf([literal('button'), literal('submit')], 'button | submit ')),
-    },
-    size: { suffixed: true, decoder: optional(number()) },
-    include: { decoder: optional(includeDecoder) },
-    exclude: { decoder: optional(excludeDecoder) },
-    label: {
-      suffixed: true,
-      decoder: decodeWidgetPropOrWidgetPropFn(optional(localizableDecoder)),
-    },
-    disabled: { suffixed: true, decoder: optional(boolWhenDecoder) },
-    on: { decoder: optional(onDecoder) },
-    props: { decoder: optional(succeed()) },
+const actionWidgetDecoder = objectWithSuffix<ActionWidget<string>>({
+  kind: { decoder: literal('action') },
+  uid: { decoder: uidDecoder },
+  type: { decoder: string() },
+  actionType: {
+    decoder: optional(oneOf([literal('button'), literal('submit')])),
   },
-  'ActionWidget',
-);
+  size: { suffixed: true, decoder: optional(number()) },
+  include: { decoder: optional(includeDecoder) },
+  exclude: { decoder: optional(excludeDecoder) },
+  label: {
+    suffixed: true,
+    decoder: decodeWidgetPropOrWidgetPropFn(optional(localizableDecoder)),
+  },
+  disabled: { suffixed: true, decoder: optional(boolWhenDecoder) },
+  on: { decoder: optional(onDecoder) },
+  props: { decoder: optional(succeed()) },
+});
 
 const functionWidgetDecoder: Decoder<FunctionWidget<string>> = new Decoder((json: unknown) => {
   const jsonTypeof = typeof json;
@@ -354,35 +343,32 @@ const functionWidgetDecoder: Decoder<FunctionWidget<string>> = new Decoder((json
     fnWidget.path = (widget as InputWidget<unknown>).path; // this could be undefined, and it's ok.
     return ok(fnWidget);
   } else {
-    return err(`Expected a function, got '${jsonTypeof}'`);
+    return err([{ message: `Expected a function, got '${jsonTypeof}'`, path: [] }]);
   }
 });
 
-const inputWidgetDecoder = objectWithSuffix<InputWidget<any, string>>(
-  {
-    kind: { decoder: literal('input') },
-    uid: { decoder: optional(string()) },
-    type: { decoder: string() },
-    size: { suffixed: true, decoder: optional(number()) },
-    include: { decoder: optional(includeDecoder) },
-    exclude: { decoder: optional(excludeDecoder) },
-    disabled: { suffixed: true, decoder: optional(boolWhenDecoder) },
-    readonly: { suffixed: true, decoder: optional(boolWhenDecoder) },
-    on: { decoder: optional(onDecoder) },
-    props: { decoder: optional(succeed()) },
-    label: {
-      suffixed: true,
-      decoder: decodeWidgetPropOrWidgetPropFn(optional(localizableDecoder)),
-    },
-    path: { decoder: string() },
-    defaultValue: { decoder: optional(succeed()) },
-    validator: {
-      suffixed: true,
-      decoder: decodeWidgetPropOrWidgetPropFn(optional(succeed())),
-    },
+const inputWidgetDecoder = objectWithSuffix<InputWidget<any, string>>({
+  kind: { decoder: literal('input') },
+  uid: { decoder: optional(string()) },
+  type: { decoder: string() },
+  size: { suffixed: true, decoder: optional(number()) },
+  include: { decoder: optional(includeDecoder) },
+  exclude: { decoder: optional(excludeDecoder) },
+  disabled: { suffixed: true, decoder: optional(boolWhenDecoder) },
+  readonly: { suffixed: true, decoder: optional(boolWhenDecoder) },
+  on: { decoder: optional(onDecoder) },
+  props: { decoder: optional(succeed()) },
+  label: {
+    suffixed: true,
+    decoder: decodeWidgetPropOrWidgetPropFn(optional(localizableDecoder)),
   },
-  'InputWidget',
-).map((ctrl) => {
+  path: { decoder: string() },
+  defaultValue: { decoder: optional(succeed()) },
+  validator: {
+    suffixed: true,
+    decoder: decodeWidgetPropOrWidgetPropFn(optional(succeed())),
+  },
+}).map((ctrl) => {
   const transformed = { ...ctrl };
   if (!ctrl.uid) {
     transformed.uid = `${ctrl.path}-${ctrl.type}`;
@@ -402,37 +388,28 @@ type FormWidgetDecoder = Decoder<
   | LayoutWidget<string>
   | FunctionWidget<string>
 >;
-const formWidgetDecoder = lazy(
-  (): FormWidgetDecoder =>
-    oneOf<
-      | DisplayWidget<string>
-      | ActionWidget<string>
-      | InputWidget<any, string>
-      | LayoutWidget<string>
-      | FunctionWidget<string>
-    >(
-      [
-        functionWidgetDecoder,
-        inputWidgetDecoder,
-        layoutWidgetDecoder,
-        displayWidgetDecoder,
-        actionWidgetDecoder,
-      ],
-      'FormWidget',
-    ),
-);
+const formWidgetDecoder = lazy((): FormWidgetDecoder => {
+  const objectWidgetDecoder = discriminatedUnion('kind', {
+    input: inputWidgetDecoder,
+    layout: layoutWidgetDecoder,
+    display: displayWidgetDecoder,
+    action: actionWidgetDecoder,
+  });
+  return new Decoder<FormWidget<string>>((json: unknown) =>
+    typeof json === 'function'
+      ? functionWidgetDecoder.decode(json)
+      : objectWidgetDecoder.decode(json),
+  );
+});
 
-export const layoutWidgetDecoder = objectWithSuffix<LayoutWidget<string>>(
-  {
-    kind: { decoder: literal('layout') },
-    uid: { decoder: uidDecoder },
-    type: { decoder: string() },
-    size: { suffixed: true, decoder: optional(number()) },
-    include: { decoder: optional(includeDecoder) },
-    exclude: { decoder: optional(excludeDecoder) },
-    props: { decoder: optional(succeed()) },
-    on: { decoder: optional(onDecoder) },
-    children: { decoder: array(formWidgetDecoder, 'FormWidget[]') },
-  },
-  'LayoutWidget',
-);
+export const layoutWidgetDecoder = objectWithSuffix<LayoutWidget<string>>({
+  kind: { decoder: literal('layout') },
+  uid: { decoder: uidDecoder },
+  type: { decoder: string() },
+  size: { suffixed: true, decoder: optional(number()) },
+  include: { decoder: optional(includeDecoder) },
+  exclude: { decoder: optional(excludeDecoder) },
+  props: { decoder: optional(succeed()) },
+  on: { decoder: optional(onDecoder) },
+  children: { decoder: array(formWidgetDecoder) },
+});

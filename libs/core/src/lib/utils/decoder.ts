@@ -31,20 +31,16 @@ export type KeySpec<A> = Record<
  * @typeParam T - The resulting object shape after successful decoding.
  *
  * @param specs - A map of base keys to their decoding specification.
- * @param decoderName - Human-readable name used in error messages.
  *
  * @returns A `jd.Decoder` that validates and decodes objects according to the
  *          provided key specifications.
  *
  * @example
  * ```ts
- * const decoder = objectWithSuffix<Record<string, string>>(
- *   {
- *     label: { suffixed: true, decoder: jd.string() },
- *     title: { suffixed: false, decoder: jd.string() },
- *   },
- *   'MyObj',
- * );
+ * const decoder = objectWithSuffix<Record<string, string>>({
+ *   label: { suffixed: true, decoder: jd.string() },
+ *   title: { suffixed: false, decoder: jd.string() },
+ * });
  *
  * decoder.decode({
  *   label: 'Submit',
@@ -54,13 +50,10 @@ export type KeySpec<A> = Record<
  * ```
  */
 
-export function objectWithSuffix<T extends Record<string, any>>(
-  specs: KeySpec<any>,
-  decoderName: string,
-): Decoder<T> {
+export function objectWithSuffix<T extends Record<string, any>>(specs: KeySpec<any>): Decoder<T> {
   return new Decoder<T>((json: any) => {
     if (typeof json !== 'object' || json === null) {
-      return err<T>(`<${decoderName}> failed. Expected object literal, got "${typeof json}"`);
+      return err<T>([{ message: `Expected object literal, got "${typeof json}"`, path: [] }]);
     }
 
     const out: Record<string, any> = {};
@@ -69,7 +62,12 @@ export function objectWithSuffix<T extends Record<string, any>>(
       // decode normal properties (without state)
       const res = spec.decoder.decode(json[specKey]);
       if (!res.isOk()) {
-        return err<T>(`<${decoderName}> failed at "${specKey}" with ${res.error}`);
+        return err<T>(
+          res.issues.map((issue) => ({
+            message: issue.message,
+            path: [specKey, ...issue.path],
+          })),
+        );
       }
       out[specKey] = res.value;
 
@@ -79,7 +77,12 @@ export function objectWithSuffix<T extends Record<string, any>>(
           if (jsonKey.startsWith(specKey + '.')) {
             const res = spec.decoder.decode(jsonValue);
             if (!res.isOk()) {
-              return err<T>(`<${decoderName}> failed at "${jsonKey}" with ${res.error}`);
+              return err<T>(
+                res.issues.map((issue) => ({
+                  message: issue.message,
+                  path: [jsonKey, ...issue.path],
+                })),
+              );
             }
             out[jsonKey] = res.value;
           }

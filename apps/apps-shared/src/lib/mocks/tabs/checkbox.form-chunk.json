@@ -1,5 +1,5 @@
 {
-  "$schema": "../../../../../../libs/gui/shared/src/lib/schemas/layout-widget.schema.json",
+  "$schema": "../../../../../../libs/gui/schemas/src/lib/layout-widget.schema.json",
   "uid": "tabCheckbox",
   "kind": "layout",
   "type": "flex",
@@ -8,24 +8,21 @@
       "kind": "input",
       "type": "checkbox",
       "label": "Create new account?",
-      "path": "isNewUser",
-      "props": {}
+      "path": "isNewUser"
     },
     {
       "kind": "input",
       "type": "checkbox",
       "label": "Disabled checkbox",
       "path": "isDisabled",
-      "disabled": true,
-      "props": {}
+      "disabled": true
     },
     {
       "kind": "input",
       "type": "checkbox",
       "label": "Readonly checkbox",
       "path": "isReadonly",
-      "readonly": true,
-      "props": {}
+      "readonly": true
     },
     {
       "kind": "input",
