@@ -18,7 +18,7 @@ describe('initialize — unresolved gui.* items guard', () => {
   it('errors when a `{ states, form: [gui.* items] }` object is passed as formDef', () => {
     const result = init({ states: { x: '$form.a === true' }, form: [dxItem('textInput')] });
     expect(result.formHealth.status).toBe('errored');
-    expect(result.formHealth).toMatchObject({ code: errorCodes.initializeUnresolvedDxError });
+    expect(result.formHealth).toMatchObject({ code: errorCodes.initializeMalformedFormShapeError });
     // The message must tell the user what to do.
     if (result.formHealth.status === 'errored') {
       expect(result.formHealth.message).toContain('formConfig');
@@ -29,7 +29,7 @@ describe('initialize — unresolved gui.* items guard', () => {
   it('errors when `form` is a single unresolved gui.* item', () => {
     const result = init({ form: dxItem('textInput') });
     expect(result.formHealth.status).toBe('errored');
-    expect(result.formHealth).toMatchObject({ code: errorCodes.initializeUnresolvedDxError });
+    expect(result.formHealth).toMatchObject({ code: errorCodes.initializeMalformedFormShapeError });
   });
 
   it('does NOT fire for a normal core formDef (bare-array form, no ITEMS)', () => {
