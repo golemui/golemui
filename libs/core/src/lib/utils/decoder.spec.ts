@@ -3,15 +3,12 @@ import { objectWithSuffix } from './decoder';
 
 describe('objectWithSuffix (KeySpec)', () => {
   it('decodes a non-suffixed key (exact match)', () => {
-    const decoder = objectWithSuffix<{ label: string }>(
-      {
-        label: {
-          suffixed: false,
-          decoder: string(),
-        },
+    const decoder = objectWithSuffix<{ label: string }>({
+      label: {
+        suffixed: false,
+        decoder: string(),
       },
-      'MyObj',
-    );
+    });
 
     const res = decoder.decode({ label: 'Submit' });
 
@@ -22,15 +19,12 @@ describe('objectWithSuffix (KeySpec)', () => {
   });
 
   it('accepts base and suffixed keys together when suffixed is true', () => {
-    const decoder = objectWithSuffix<Record<string, string>>(
-      {
-        label: {
-          suffixed: true,
-          decoder: string(),
-        },
+    const decoder = objectWithSuffix<Record<string, string>>({
+      label: {
+        suffixed: true,
+        decoder: string(),
       },
-      'MyObj',
-    );
+    });
 
     const res = decoder.decode({
       label: 'Submit',
@@ -47,15 +41,12 @@ describe('objectWithSuffix (KeySpec)', () => {
   });
 
   it('rejects suffixed keys when suffixed is false', () => {
-    const decoder = objectWithSuffix<Record<string, string>>(
-      {
-        label: {
-          suffixed: false,
-          decoder: string(),
-        },
+    const decoder = objectWithSuffix<Record<string, string>>({
+      label: {
+        suffixed: false,
+        decoder: string(),
       },
-      'MyObj',
-    );
+    });
 
     const res = decoder.decode({
       'label.register': 'Register',
@@ -63,20 +54,22 @@ describe('objectWithSuffix (KeySpec)', () => {
 
     expect(res.isOk()).toBe(false);
     if (!res.isOk()) {
-      expect(res.error).toContain('<MyObj> failed at "label" with undefined is not a valid string');
+      expect(res.issues).toContainEqual(
+        expect.objectContaining({
+          message: expect.stringContaining('is not a valid string'),
+          path: ['label'],
+        }),
+      );
     }
   });
 
   it('fails when a required spec key is not provided', () => {
-    const decoder = objectWithSuffix<{ label: string }>(
-      {
-        label: {
-          suffixed: false,
-          decoder: string(),
-        },
+    const decoder = objectWithSuffix<{ label: string }>({
+      label: {
+        suffixed: false,
+        decoder: string(),
       },
-      'MyObj',
-    );
+    });
 
     const res = decoder.decode({
       somethingelse: 'Hello',
@@ -84,20 +77,22 @@ describe('objectWithSuffix (KeySpec)', () => {
 
     expect(res.isOk()).toBe(false);
     if (!res.isOk()) {
-      expect(res.error).toContain('<MyObj> failed at "label" with undefined is not a valid string');
+      expect(res.issues).toContainEqual(
+        expect.objectContaining({
+          message: expect.stringContaining('is not a valid string'),
+          path: ['label'],
+        }),
+      );
     }
   });
 
   it('fails when a value does not match the decoder', () => {
-    const decoder = objectWithSuffix<Record<string, string>>(
-      {
-        label: {
-          suffixed: true,
-          decoder: string(),
-        },
+    const decoder = objectWithSuffix<Record<string, string>>({
+      label: {
+        suffixed: true,
+        decoder: string(),
       },
-      'MyObj',
-    );
+    });
 
     const res = decoder.decode({
       'label.register': 123,
@@ -107,21 +102,22 @@ describe('objectWithSuffix (KeySpec)', () => {
   });
 
   it('fails when input is not an object literal', () => {
-    const decoder = objectWithSuffix<Record<string, string>>(
-      {
-        label: {
-          suffixed: true,
-          decoder: string(),
-        },
+    const decoder = objectWithSuffix<Record<string, string>>({
+      label: {
+        suffixed: true,
+        decoder: string(),
       },
-      'MyObj',
-    );
+    });
 
     const res = decoder.decode(null);
 
     expect(res.isOk()).toBe(false);
     if (!res.isOk()) {
-      expect(res.error).toContain('Expected object literal');
+      expect(res.issues).toContainEqual(
+        expect.objectContaining({
+          message: expect.stringContaining('Expected object literal'),
+        }),
+      );
     }
   });
 
@@ -129,12 +125,9 @@ describe('objectWithSuffix (KeySpec)', () => {
     const generateId = vi.fn(() => 'generated-id-123');
     const uidDecoder = optional(string()).map((s) => s || generateId());
 
-    const decoder = objectWithSuffix<{ uid: string }>(
-      {
-        uid: { suffixed: false, decoder: uidDecoder },
-      },
-      'MyObj',
-    );
+    const decoder = objectWithSuffix<{ uid: string }>({
+      uid: { suffixed: false, decoder: uidDecoder },
+    });
 
     const res = decoder.decode({ uid: '' });
     expect(res.isOk()).toBe(true);
@@ -147,12 +140,9 @@ describe('objectWithSuffix (KeySpec)', () => {
     const generateId = vi.fn(() => 'generated-id-123');
     const uidDecoder = optional(string()).map((s) => s || generateId());
 
-    const decoder = objectWithSuffix<{ uid: string }>(
-      {
-        uid: { suffixed: false, decoder: uidDecoder },
-      },
-      'MyObj',
-    );
+    const decoder = objectWithSuffix<{ uid: string }>({
+      uid: { suffixed: false, decoder: uidDecoder },
+    });
 
     const res = decoder.decode({});
     expect(res.isOk()).toBe(true);
@@ -165,12 +155,9 @@ describe('objectWithSuffix (KeySpec)', () => {
     const generateId = vi.fn(() => 'generated-id-123');
     const uidDecoder = optional(string()).map((s) => s || generateId());
 
-    const decoder = objectWithSuffix<{ uid: string }>(
-      {
-        uid: { suffixed: false, decoder: uidDecoder },
-      },
-      'MyObj',
-    );
+    const decoder = objectWithSuffix<{ uid: string }>({
+      uid: { suffixed: false, decoder: uidDecoder },
+    });
 
     const res = decoder.decode({ uid: 'my-custom-id' });
     expect(res.isOk()).toBe(true);

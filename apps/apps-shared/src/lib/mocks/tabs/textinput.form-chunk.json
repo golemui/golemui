@@ -1,5 +1,5 @@
 {
-  "$schema": "../../../../../../libs/gui/shared/src/lib/schemas/layout-widget.schema.json",
+  "$schema": "../../../../../../libs/gui/schemas/src/lib/layout-widget.schema.json",
   "uid": "tabTextinput",
   "kind": "layout",
   "type": "flex",

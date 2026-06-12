@@ -1,3 +1,4 @@
+import { formatIssuePath } from 'ts.data.json';
 import { errorCodes } from '../../errors';
 import { type Form, formDefDecoder } from '../../form';
 import { type FormWidget, isInputWidget } from '../../form-widget';
@@ -96,11 +97,17 @@ export const initialize = ({ lang }: State, action: INITIALIZE): State => {
   }
 
   const code = errorCodes.initializeUnknownError;
+  const message = result.issues
+    .map((issue) => {
+      const location = issue.path.length > 0 ? formatIssuePath(issue.path) : 'root';
+      return `${location}: ${issue.message}`;
+    })
+    .join('; ');
   return {
     ...initialState,
     formHealth: {
       status: 'errored',
-      message: `[${code}] ${result.error}`,
+      message: `[${code}] ${message}`,
       code,
     },
   };
