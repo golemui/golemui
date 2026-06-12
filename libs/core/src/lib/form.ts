@@ -60,10 +60,7 @@ export interface FormInitConfig<ComponentType = unknown> {
   meta?: Record<string, any>;
 }
 
-export const formDefDecoder = object(
-  {
-    states: optional(record(string(), 'states')),
-    form: lazy(() => layoutWidgetDecoder),
-  },
-  'FormDef',
-);
+export const formDefDecoder = object({
+  states: optional(record(string())),
+  form: lazy(() => layoutWidgetDecoder),
+});

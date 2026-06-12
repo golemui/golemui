@@ -28,7 +28,7 @@
     "*.md"
   ],
   "dependencies": {
-    "ts.data.json": "^3.3.0"
+    "ts.data.json": "^4.1.0"
   },
   "peerDependencies": {
     "subscript": "^10.1.8",

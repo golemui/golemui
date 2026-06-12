@@ -1,5 +1,5 @@
 {
-  "$schema": "../../../../../../libs/gui/shared/src/lib/schemas/layout-widget.schema.json",
+  "$schema": "../../../../../../libs/gui/schemas/src/lib/layout-widget.schema.json",
   "uid": "tabToggle",
   "kind": "layout",
   "type": "flex",
@@ -8,8 +8,7 @@
       "kind": "input",
       "type": "toggle",
       "label": "Create new account?",
-      "path": "isNewUser",
-      "props": {}
+      "path": "isNewUser"
     },
     {
       "kind": "input",
@@ -17,8 +16,7 @@
       "label": "Disabled toggle",
       "path": "isDisabled",
       "disabled": true,
-      "readonly": true,
-      "props": {}
+      "readonly": true
     },
     {
       "kind": "input",
