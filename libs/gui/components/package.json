@@ -1,6 +1,7 @@
 {
   "name": "@golemui/gui-components",
   "version": "0.0.0",
+  "license": "MIT",
   "type": "module",
   "main": "./index.umd.cjs",
   "module": "./index.js",
