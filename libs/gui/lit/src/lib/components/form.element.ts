@@ -9,7 +9,7 @@ import {
   type Validator,
 } from '@golemui/gui-validators';
 import '@golemui/lit';
-import type { FormElement as CoreFormElement } from '@golemui/lit';
+import type { FormElement as CoreFormElement, FormHealthBoundary } from '@golemui/lit';
 import { type LitItemRenderer, type Type } from '@golemui/lit';
 import { html, LitElement } from 'lit';
 import { customElement, property, query } from 'lit/decorators.js';
@@ -19,6 +19,8 @@ import { widgetLoaders } from '../widget.loaders';
 export class FormElement extends LitElement {
   @property({ attribute: false }) config!: GuiFormInitConfig;
   @property({ type: String }) autocomplete: string | undefined = undefined;
+  /** Wraps the form and renders the error UI for an errored FormHealth. Defaults to a red banner. */
+  @property({ attribute: false }) formHealthBoundary?: FormHealthBoundary;
 
   @query('gui-core-form') private coreForm?: CoreFormElement;
 
@@ -72,6 +74,7 @@ export class FormElement extends LitElement {
         .config=${coreConfig}
         .validators=${allValidators}
         .autocomplete=${this.autocomplete}
+        .formHealthBoundary=${this.formHealthBoundary}
         @formEvent=${formEventListener}
       ></gui-core-form>
     `;
