@@ -1,5 +1,5 @@
-import { typeCheckDx } from '../dx/typecheck';
-import type { DxCheckResult } from '../dx/typecheck';
+import { typeCheckDx } from './typecheck';
+import type { DxCheckResult } from './typecheck';
 
 export type CheckDxCodeInput = {
   /** A `gui.*` DX snippet (TypeScript). May be a bare array of `gui.inputs.*` items. */

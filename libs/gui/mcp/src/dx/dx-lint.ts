@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/no-namespace -- typing the lazily-loaded TS compiler API; mirrors typecheck.ts
 import type * as TS from 'typescript';
-import { checkReactiveExpression, type ExpressionFinding } from '../lint/reactive-expressions';
+import { checkReactiveExpression, type ExpressionFinding } from '../shared/lint/reactive-expressions';
 import type { DxDiagnostic } from './typecheck';
 
 /**

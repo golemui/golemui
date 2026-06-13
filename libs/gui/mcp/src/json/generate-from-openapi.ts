@@ -1,4 +1,4 @@
-import { jsonSchemaToGui, type JsonSchemaLike } from '../mapping/json-schema-to-gui';
+import { jsonSchemaToGui, type JsonSchemaLike } from './mapping/json-schema-to-gui';
 import { validateFormDefinition } from './validate-form-definition';
 
 type OpenAPIDoc = {

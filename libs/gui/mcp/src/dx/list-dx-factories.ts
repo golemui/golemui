@@ -1,5 +1,5 @@
-import { dxCatalog, resolveDxFramework } from '../dx/dx-specs';
-import type { DxCatalog, DxFramework } from '../dx/dx-specs';
+import { dxCatalog, resolveDxFramework } from './dx-specs';
+import type { DxCatalog, DxFramework } from './dx-specs';
 
 export type ListDxFactoriesResult = DxCatalog;
 

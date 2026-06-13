@@ -2,7 +2,7 @@ import {
   jsonSchemaToGui,
   type JsonSchemaLike,
   type MapOptions,
-} from '../mapping/json-schema-to-gui';
+} from './mapping/json-schema-to-gui';
 import { validateFormDefinition } from './validate-form-definition';
 
 export type GenerateFromJsonSchemaInput = {

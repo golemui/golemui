@@ -1,4 +1,4 @@
-import { COMPONENT_SCHEMAS, VALIDATORS_SCHEMA, type WidgetSchema } from '../schemas/index';
+import { COMPONENT_SCHEMAS, VALIDATORS_SCHEMA, type WidgetSchema } from './schemas/index';
 
 export type GetWidgetSpecInput = {
   widgetType: string;

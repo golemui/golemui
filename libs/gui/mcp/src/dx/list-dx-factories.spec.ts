@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { listDxFactoriesCatalog } from './list-dx-factories';
-import { listDxFactories } from '../dx/dx-specs';
+import { listDxFactories } from './dx-specs';
 
 describe('list_dx_factories', () => {
   it('returns every factory with its namespace and call signature in one payload', () => {

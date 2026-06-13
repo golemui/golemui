@@ -18,12 +18,9 @@
   "files": [
     "*.js",
     "*.d.ts",
-    "tools",
-    "mapping",
-    "schemas",
-    "utils",
-    "lint",
+    "json",
     "dx",
+    "shared",
     "*.md"
   ],
   "keywords": [

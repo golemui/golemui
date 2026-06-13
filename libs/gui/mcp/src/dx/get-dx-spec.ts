@@ -1,5 +1,5 @@
-import { DX_SPECS, listDxFactories } from '../dx/dx-specs';
-import type { DxSpec } from '../dx/dx-specs';
+import { DX_SPECS, listDxFactories } from './dx-specs';
+import type { DxSpec } from './dx-specs';
 
 export type GetDxSpecInput = {
   /** The `gui.*` factory name, e.g. `textInput`, `dropdown`, `button`. */

@@ -1,7 +1,7 @@
-import { getFormValidator } from '../schemas/ajv';
-import { formatAjvErrors, type FormattedError } from '../utils/errors';
-import { lintReactiveExpressions, type ExpressionFinding } from '../lint/reactive-expressions';
-import { lintStringInterpolations, type InterpolationFinding } from '../lint/string-interpolation';
+import { getFormValidator } from './schemas/ajv';
+import { formatAjvErrors, type FormattedError } from './errors';
+import { lintReactiveExpressions, type ExpressionFinding } from '../shared/lint/reactive-expressions';
+import { lintStringInterpolations, type InterpolationFinding } from './string-interpolation';
 
 export type ValidateInput = {
   formDefinition: unknown;
