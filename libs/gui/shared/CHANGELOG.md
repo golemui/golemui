@@ -1,3 +1,16 @@
+## 1.0.0-rc.3 (2026-06-13)
+
+### 🩹 Fixes
+
+- **gui-shared:** add missing registered components ([#186](https://github.com/golemui/golemui/pull/186))
+- **gui:** repeater + display render correctness ([#183](https://github.com/golemui/golemui/pull/183))
+
+### ❤️ Thank You
+
+- alberto-golem-ui
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
 ## 1.0.0-rc.2 (2026-06-10)
 
 This was a version bump only for gui-shared to align it with other projects, there were no code changes.

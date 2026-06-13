@@ -1,3 +1,17 @@
+## 1.0.0-rc.3 (2026-06-13)
+
+### 🩹 Fixes
+
+- **gui:** repeater + display render correctness ([#183](https://github.com/golemui/golemui/pull/183))
+- **gui-shared:** add missing registered components ([#186](https://github.com/golemui/golemui/pull/186))
+- **react:** rename useDisplayWdiget to useDisplayWidget ([#182](https://github.com/golemui/golemui/pull/182))
+
+### ❤️ Thank You
+
+- alberto-golem-ui
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
 ## 1.0.0-rc.2 (2026-06-10)
 
 ### 🩹 Fixes
