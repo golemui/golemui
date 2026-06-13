@@ -12,6 +12,7 @@ import {
 } from '@golemui/core';
 import { type FormInitConfig } from '@golemui/core';
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import { DefaultFormHealthBoundary, type FormHealthBoundary } from './FormHealthBoundary';
 import { ReactFormContextProvider } from './ReactFormContextProvider';
 import WidgetErrorBoundary from './WidgetErrorBoundary';
 import WidgetRenderer from './WidgetRenderer';
@@ -27,17 +28,20 @@ export interface FormComponentProps {
   formEvent?: (event: FormEvent) => void;
   formSubmit?: (event: FormSubmitEvent) => void;
   formHealth?: (error: FormHealth) => void;
+  /** Wraps the form and renders the error UI for an errored {@link FormHealth}. Defaults to {@link DefaultFormHealthBoundary} (a red banner). */
+  formHealthBoundary?: FormHealthBoundary;
   autocomplete?: string;
 }
 
 export const FormComponent = forwardRef<FormComponentHandle, FormComponentProps>(
   function FormComponent(
-    { config, validators, formHealth, formEvent, formSubmit, autocomplete },
+    { config, validators, formHealth, formEvent, formSubmit, formHealthBoundary, autocomplete },
     ref,
   ) {
     const formContextRef = useRef<FormContext<React.ComponentType<WithWidget>>>(new FormContext());
     const formNameRef = useRef<string>(config.formName ?? shortUUID());
     const [formLayoutField, setFormLayoutField] = useState<LayoutWidget<string> | null>(null);
+    const [healthError, setHealthError] = useState<FormHealth | null>(null);
     const [direction, setDirection] = useState<'ltr' | 'rtl'>('ltr');
 
     const callbacksRef = useRef({ formHealth, formEvent, formSubmit });
@@ -66,9 +70,13 @@ export const FormComponent = forwardRef<FormComponentHandle, FormComponentProps>
         setFormLayoutField(state.formDef.form);
         setDirection(getDirectionFromLanguage(context.localization.lang));
       });
-      const healthSub = watchFormHealth(context.store.state$).subscribe((health) =>
-        callbacksRef.current.formHealth?.(health),
-      );
+      const healthSub = watchFormHealth(context.store.state$).subscribe((health) => {
+        setHealthError(health.status === 'errored' ? health : null);
+        if (health.status === 'errored') {
+          console.error('GolemUI form failed to initialize:', health.message);
+        }
+        callbacksRef.current.formHealth?.(health);
+      });
       const unsubscribeI18n = context.localization.subscribe((lang) => {
         setDirection(getDirectionFromLanguage(lang));
         context.store.dispatch({ type: 'SET_LANGUAGE', payload: { lang } });
@@ -113,25 +121,28 @@ export const FormComponent = forwardRef<FormComponentHandle, FormComponentProps>
       formContextRef.current.emitSubmitEvent();
     };
 
-    if (!formLayoutField) {
-      return null;
-    }
+    // Always render the form inside the boundary so a recovered health clears the error in place.
+    const Boundary = formHealthBoundary ?? DefaultFormHealthBoundary;
 
     return (
       <ReactFormContextProvider formContext={formContextRef.current}>
-        <div className="gui-form">
-          <form
-            id={formNameRef.current}
-            noValidate
-            dir={direction}
-            autoComplete={autocomplete}
-            onSubmit={onFormSubmit}
-          >
-            <WidgetErrorBoundary widget={formLayoutField}>
-              <WidgetRenderer widget={formLayoutField} />
-            </WidgetErrorBoundary>
-          </form>
-        </div>
+        <Boundary health={healthError ?? { status: 'ok' }}>
+          <div className="gui-form">
+            <form
+              id={formNameRef.current}
+              noValidate
+              dir={direction}
+              autoComplete={autocomplete}
+              onSubmit={onFormSubmit}
+            >
+              {formLayoutField && (
+                <WidgetErrorBoundary widget={formLayoutField}>
+                  <WidgetRenderer widget={formLayoutField} />
+                </WidgetErrorBoundary>
+              )}
+            </form>
+          </div>
+        </Boundary>
       </ReactFormContextProvider>
     );
   },

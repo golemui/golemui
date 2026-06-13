@@ -16,7 +16,7 @@ import {
 import { GuiForm } from '@golemui/gui-react';
 import { type Dependencies, type GuiFormInitConfig } from '@golemui/gui-shared';
 import type { CustomValidatorSchemas } from '@golemui/gui-validators';
-import { type ReactItemRenderer } from '@golemui/react';
+import { type FormHealthBoundary, type ReactItemRenderer } from '@golemui/react';
 import i18next from 'i18next';
 import { useEffect, useMemo, useState } from 'react';
 import snarkdown from 'snarkdown';
@@ -24,7 +24,6 @@ import { AirportItemRenderer } from '../../item-renderers/AirportItemRenderer';
 import { ComplexListItemRenderer } from '../../item-renderers/ComplexListItemRenderer';
 import { CountryItemRenderer } from '../../item-renderers/CountryItemRenderer';
 import { ProductItemRenderer } from '../../item-renderers/ProductItemRenderer';
-import styles from './form.page.module.scss';
 
 const mock = kitchenSink;
 const formData = mock.data;
@@ -66,8 +65,29 @@ function formSubmitHandler(event: FormSubmitEvent) {
   console.log('👉 onFormSubmit', event.data);
 }
 
+const CustomFormHealthBoundary: FormHealthBoundary = ({ health, children }) => (
+  <>
+    {health.status === 'errored' && (
+      <div
+        role="alert"
+        style={{
+          padding: '0.75rem 1rem',
+          marginBottom: '0.5rem',
+          borderLeft: '4px solid #b91c1c',
+          borderRadius: 4,
+          background: '#fef2f2',
+          color: '#b91c1c',
+        }}
+      >
+        <strong>This form could not be loaded</strong>
+        <div>{health.message}</div>
+      </div>
+    )}
+    {children}
+  </>
+);
+
 export function FormPage() {
-  const [error, setError] = useState('');
   const [formDef, setFormDef] = useState<Form<string> | undefined>(undefined);
 
   useEffect(() => {
@@ -100,18 +120,18 @@ export function FormPage() {
 
   function onFormHealth(formHealth: FormHealth) {
     if (formHealth.status === 'errored') {
-      setError(formHealth.message);
+      console.log('GolemUI form health error:', formHealth.message);
     }
   }
 
   return (
     <div>
       {languages.length > 0 ? <LanguagePicker /> : null}
-      {error ? <p className={styles.error}>{error}</p> : null}
       {config && (
         <GuiForm
           config={config}
           autocomplete="off"
+          formHealthBoundary={CustomFormHealthBoundary}
           formHealth={onFormHealth}
           formEvent={formEventHandler}
           formSubmit={formSubmitHandler}

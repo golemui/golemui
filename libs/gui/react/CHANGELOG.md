@@ -1,3 +1,13 @@
+## 1.0.0-rc.3 (2026-06-13)
+
+### 🩹 Fixes
+
+- **react:** rename useDisplayWdiget to useDisplayWidget ([#182](https://github.com/golemui/golemui/pull/182))
+
+### ❤️ Thank You
+
+- Raúl Jiménez @Elecash
+
 ## 1.0.0-rc.2 (2026-06-10)
 
 This was a version bump only for gui-react to align it with other projects, there were no code changes.

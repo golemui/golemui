@@ -22,6 +22,8 @@ import { widgetLoaders } from '../../widget.loaders';
 export class FormComponent {
   config = input.required<GuiFormInitConfig>();
   autocomplete = input<string | undefined>(undefined);
+  /** Wraps the form and renders the error UI for an errored FormHealth. Defaults to a red banner. */
+  formHealthBoundary = input<Type<unknown> | undefined>(undefined);
 
   private coreForm = viewChild(FormCoreComponent);
 

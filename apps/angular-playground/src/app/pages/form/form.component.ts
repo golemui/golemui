@@ -24,6 +24,7 @@ import { AirportItemRenderer } from '../../item-renderers/airport.item-renderer'
 import { ComplexListItemRenderer } from '../../item-renderers/complex-list.item-renderer';
 import { CountryItemRenderer } from '../../item-renderers/country.item-renderer';
 import { ProductItemRenderer } from '../../item-renderers/product.item-renderer';
+import { CustomFormHealthBoundaryComponent } from './custom-form-health-boundary.component';
 
 const mock = kitchenSink;
 
@@ -31,7 +32,6 @@ const mock = kitchenSink;
   imports: [CommonModule, FormComponent],
   selector: 'app-form-page',
   templateUrl: './form.component.html',
-  styleUrl: './form.component.scss',
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class AppFormPage {
@@ -43,7 +43,7 @@ export class AppFormPage {
       label: `${flag} ${label}`,
     }));
   protected config: GuiFormInitConfig | undefined;
-  protected error = '';
+  protected readonly customFormHealthBoundary = CustomFormHealthBoundaryComponent;
 
   constructor() {
     console.log(`Playground started in "${this.appConfig.env}" mode`);
@@ -80,7 +80,7 @@ export class AppFormPage {
 
   protected onFormHealth(formHealth: FormHealth) {
     if (formHealth.status === 'errored') {
-      this.error = formHealth.message;
+      console.log('GolemUI form health error:', formHealth.message);
     }
   }
 

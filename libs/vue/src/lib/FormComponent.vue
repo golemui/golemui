@@ -9,6 +9,7 @@ import {
   shortUUID,
 } from '@golemui/core';
 import { onMounted, onUnmounted, ref, watch } from 'vue';
+import DefaultFormHealthBoundary from './DefaultFormHealthBoundary.vue';
 import WidgetErrorBoundary from './WidgetErrorBoundary.vue';
 import WidgetRenderer from './WidgetRenderer.vue';
 import { VueFormContext } from './VueFormContext';
@@ -25,6 +26,7 @@ const emit = defineEmits<{
 const formContext = new VueFormContext();
 const formName = ref<string>(props.config.formName ?? shortUUID());
 const formLayoutField = ref<LayoutWidget<string> | null>(null);
+const health = ref<FormHealth>({ status: 'ok' });
 const direction = ref<'ltr' | 'rtl'>('ltr');
 const storeVersion = ref(0);
 
@@ -105,9 +107,13 @@ watch(
   () => storeVersion.value,
   () => {
     healthSub?.unsubscribe();
-    healthSub = watchFormHealth(formContext.store.state$).subscribe((health) =>
-      emit('form-health', health),
-    );
+    healthSub = watchFormHealth(formContext.store.state$).subscribe((next) => {
+      health.value = next;
+      if (next.status === 'errored') {
+        console.error('GolemUI form failed to initialize:', next.message);
+      }
+      emit('form-health', next);
+    });
   },
   { immediate: true },
 );
@@ -150,17 +156,20 @@ const onFormSubmit = (event: SubmitEvent) => {
 </script>
 
 <template>
-  <div v-if="formLayoutField" class="gui-form">
-    <form
-      :id="formName"
-      novalidate
-      :dir="direction"
-      :autocomplete="autocomplete"
-      @submit.stop="onFormSubmit"
-    >
-      <WidgetErrorBoundary :widget="formLayoutField">
-        <WidgetRenderer :widget="formLayoutField" />
-      </WidgetErrorBoundary>
-    </form>
-  </div>
+  <!-- Always render the form inside the boundary so a recovered health clears the error in place. -->
+  <component :is="formHealthBoundary ?? DefaultFormHealthBoundary" :health="health">
+    <div class="gui-form">
+      <form
+        :id="formName"
+        novalidate
+        :dir="direction"
+        :autocomplete="autocomplete"
+        @submit.stop="onFormSubmit"
+      >
+        <WidgetErrorBoundary v-if="formLayoutField" :widget="formLayoutField">
+          <WidgetRenderer :widget="formLayoutField" />
+        </WidgetErrorBoundary>
+      </form>
+    </div>
+  </component>
 </template>

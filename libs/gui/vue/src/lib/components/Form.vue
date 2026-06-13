@@ -76,6 +76,7 @@ defineExpose<GuiFormHandle>({
     :config="coreConfig"
     :validators="allValidators"
     :autocomplete="autocomplete"
+    :form-health-boundary="formHealthBoundary"
     @form-event="onInnerFormEvent"
     @form-submit="$emit('form-submit', $event)"
     @form-health="onInnerFormHealth"

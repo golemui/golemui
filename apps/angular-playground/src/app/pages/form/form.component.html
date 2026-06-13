@@ -13,14 +13,11 @@
     </div>
   }
 
-  @if (error) {
-    <p class="error">{{ error }}</p>
-  }
-
   @if (config) {
     <gui-form
       [config]="config"
       [autocomplete]="'off'"
+      [formHealthBoundary]="customFormHealthBoundary"
       (formHealth)="onFormHealth($event)"
       (formEvent)="onFormEvent($event)"
       (formSubmit)="onFormSubmit($event)"

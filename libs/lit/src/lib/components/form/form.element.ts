@@ -17,6 +17,7 @@ import { when } from 'lit/directives/when.js';
 import { type Subscription } from 'rxjs';
 import { formContext, LitFormContext } from '../../context/form.context';
 import '../widget/widget-element';
+import { defaultFormHealthBoundary, type FormHealthBoundary } from './form-health-boundary';
 
 @customElement('gui-core-form')
 export class FormElement extends LitElement {
@@ -26,8 +27,11 @@ export class FormElement extends LitElement {
   @property({ attribute: false }) config!: FormInitConfig<WithWidget>;
   @property({ attribute: false }) validators!: ValidatorFn<any>;
   @property({ type: String }) autocomplete: string | undefined = undefined;
+  /** Wraps the form and renders the error UI for an errored {@link FormHealth}. Defaults to {@link defaultFormHealthBoundary} (a red banner). */
+  @property({ attribute: false }) formHealthBoundary?: FormHealthBoundary;
 
   @state() direction: 'ltr' | 'rtl' = 'ltr';
+  @state() health: FormHealth = { status: 'ok' };
 
   // Tracks the current form state for rendering. Not a @state() to avoid
   // re-rendering on every store emission - we call requestUpdate() explicitly
@@ -108,6 +112,10 @@ export class FormElement extends LitElement {
     });
 
     this.healthSub = formHealth(this.context.store.state$).subscribe((health) => {
+      this.health = health;
+      if (health.status === 'errored') {
+        console.error('GolemUI form failed to initialize:', health.message);
+      }
       this.dispatchEvent(
         new CustomEvent<FormHealth>(FormElement.FORM_HEALTH_EVENT, {
           detail: health,
@@ -136,8 +144,10 @@ export class FormElement extends LitElement {
   override render() {
     const ready = this.formState?.formDef && this.context.widgetRegistry.ready;
     const formName = this.config?.formName ?? this._defaultFormName;
+    const isErrored = this.health.status === 'errored';
 
-    return html`
+    // Always render the form inside the boundary so a recovered health clears the error in place.
+    const form = html`
       <form
         id=${formName}
         novalidate
@@ -148,10 +158,13 @@ export class FormElement extends LitElement {
         ${when(
           ready,
           () => html` <gui-widget .widget=${this.formState?.formDef.form}></gui-widget>`,
-          () => html` <div>Loading form...</div>`,
+          () => (isErrored ? nothing : html` <div>Loading form...</div>`),
         )}
       </form>
     `;
+
+    const boundary = this.formHealthBoundary ?? defaultFormHealthBoundary;
+    return boundary({ health: this.health, form });
   }
 
   private onFormSubmit(event: SubmitEvent) {
