@@ -25,7 +25,7 @@ export function lintReactiveExpressions(formDefinition: unknown): ExpressionFind
 /**
  * Lint a single reactive expression string in isolation, against the same rules
  * `lintReactiveExpressions` applies while walking a JSON form definition. This is
- * the shared engine the DX path (`check_dx_code`) reuses: the JSON walker has the
+ * the shared engine the DX path (`dx_check_code`) reuses: the JSON walker has the
  * object tree, the DX linter has the AST — both funnel each `when` expression
  * through here so the two surfaces can never drift.
  */

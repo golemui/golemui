@@ -14,7 +14,7 @@ export const signupForm = [
 ];
 `;
 
-describe('check_dx_code', () => {
+describe('dx_check_code', () => {
   it('passes a correct gui.* form', async () => {
     const r = await checkDxCode({ code: VALID_FORM });
     if (!r.ok) console.error(JSON.stringify(r.diagnostics, null, 2));
@@ -44,7 +44,9 @@ describe('check_dx_code', () => {
       code: `[ gui.inputs.radiogroup('plan', { label: 'Plan', items: [{ value: 'a', label: 'A' }] }) ]`,
     });
     expect(r.ok).toBe(false);
-    expect(r.diagnostics.some((d) => /dropdown.*items|radiogroup.*options/.test(d.hint ?? ''))).toBe(true);
+    expect(
+      r.diagnostics.some((d) => /dropdown.*items|radiogroup.*options/.test(d.hint ?? '')),
+    ).toBe(true);
   });
 
   it('hints the display content key when `content` is used instead of `text`/`md`', async () => {
@@ -110,8 +112,10 @@ describe('check_dx_code', () => {
     const r = await checkDxCode({
       code: `[ gui.inputs.textInput('promoCode', { label: 'Promo code', include: { when: 'hasPromoCode === true' } }) ]`,
     });
-    // Missing `$form` prefix is advisory — it does not flip `ok` (mirrors validate_form_definition).
+    // Missing `$form` prefix is advisory — it does not flip `ok` (mirrors json_validate_form_definition).
     expect(r.ok).toBe(true);
-    expect(r.expressionWarnings.some((w) => /\$form/.test(w.message + (w.suggestion ?? '')))).toBe(true);
+    expect(r.expressionWarnings.some((w) => /\$form/.test(w.message + (w.suggestion ?? '')))).toBe(
+      true,
+    );
   });
 });

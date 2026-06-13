@@ -2,7 +2,7 @@
  * DX grounding registry — the real `gui.*` builder surface, one entry per factory.
  *
  * GolemUI is not in any model's training data, so a cold model fabricates the
- * `gui.*` API wholesale. This registry is what `get_dx_spec` serves so the model
+ * `gui.*` API wholesale. This registry is what `dx_get_spec` serves so the model
  * writes the real thing. Every `example` here is **compile-verified against the
  * real `@golemui` types** by `dx-specs.spec.ts` — if an example is wrong, the test
  * suite fails. (Hand-written references are unreliable even with repo access; the
@@ -55,61 +55,62 @@ export function resolveDxFramework(): DxFramework {
 
 const FRAMEWORK_SETUP: Record<DxFramework, string> = {
   react:
-    'RENDER (React) — `import { gui } from \'@golemui/gui-shared\'; import { GuiForm } from ' +
-    '\'@golemui/gui-react\'; import type { FormSubmitEvent } from \'@golemui/core\';`, then render ' +
+    "RENDER (React) — `import { gui } from '@golemui/gui-shared'; import { GuiForm } from " +
+    "'@golemui/gui-react'; import type { FormSubmitEvent } from '@golemui/core';`, then render " +
     '`<GuiForm config={{ formDef: form }} formSubmit={(e: FormSubmitEvent) => { /* e.data is the form data */ }} />`. ' +
     'A `gui.displays.display(() => <h2>…</h2>)` returns React JSX.',
   angular:
-    'RENDER (Angular) — `import { gui } from \'@golemui/gui-shared\'; import { FormComponent } from ' +
-    '\'@golemui/gui-angular\';`, add `FormComponent` to the standalone component\'s `imports`, then in the ' +
+    "RENDER (Angular) — `import { gui } from '@golemui/gui-shared'; import { FormComponent } from " +
+    "'@golemui/gui-angular';`, add `FormComponent` to the standalone component's `imports`, then in the " +
     'template `<gui-form [config]="{ formDef: form }" (formSubmit)="onSubmit($event)"></gui-form>` — `$event` is ' +
     'a `FormSubmitEvent` (type from `@golemui/core`), `$event.data` is the form data.',
   vue:
-    'RENDER (Vue) — `import { gui } from \'@golemui/gui-shared\'; import { GuiForm } from \'@golemui/gui-vue\';`, ' +
+    "RENDER (Vue) — `import { gui } from '@golemui/gui-shared'; import { GuiForm } from '@golemui/gui-vue';`, " +
     'then `<GuiForm :config="{ formDef: form }" @form-submit="onSubmit" />` — the handler receives a ' +
     '`FormSubmitEvent` (`.data` is the form data). The event is `form-submit` (kebab-case), not `formSubmit`.',
   lit:
-    'RENDER (Lit) — `import { gui } from \'@golemui/gui-shared\'; import \'@golemui/gui-lit\';` (registers the ' +
+    "RENDER (Lit) — `import { gui } from '@golemui/gui-shared'; import '@golemui/gui-lit';` (registers the " +
     '`<gui-form>` custom element), then `<gui-form .config=${{ formDef: form }} @form-submit=${(e: CustomEvent) ' +
     '=> { /* e.detail is the FormSubmitEvent; e.detail.data */ }}></gui-form>`.',
   vanilla:
-    'RENDER (vanilla JS) — `import { gui } from \'@golemui/gui-shared\'; import \'@golemui/gui-lit\';` (registers ' +
-    '`<gui-form>`), then `const el = document.querySelector(\'gui-form\'); el.config = { formDef: form }; ' +
-    'el.addEventListener(\'form-submit\', (e) => { /* e.detail.data */ });`',
+    "RENDER (vanilla JS) — `import { gui } from '@golemui/gui-shared'; import '@golemui/gui-lit';` (registers " +
+    "`<gui-form>`), then `const el = document.querySelector('gui-form'); el.config = { formDef: form }; " +
+    "el.addEventListener('form-submit', (e) => { /* e.detail.data */ });`",
 };
 
 function commonNote(fw: DxFramework = 'react'): string {
   return (
-  'GolemUI builds FORMS — data collection and validation. It is NOT a general-purpose UI toolkit: it never ' +
-  'renders documents, page content, or markdown for display. ' +
-  'A form is just an array of these items: `export const form = [ /* items */ ];`. ' +
-  FRAMEWORK_SETUP[fw] + ' ' +
-  'Import the component stylesheet ONCE — `@golemui/gui-components/index.css` — or the form renders unstyled. ' +
-  'To RECEIVE A SUBMIT: add a `gui.actions.button({ label, actionType: \'submit\' })` to the form and listen for ' +
-  'the submit on the host component (the RENDER line above shows how for your framework) — the handler gets a ' +
-  '`FormSubmitEvent` whose `.data` is the collected form data. ' +
-  "To DISABLE submit until the form is valid, add `disabled: { when: '$formIsInvalid' }` to that button " +
-  '(`$formIsInvalid` is a built-in validity flag) — see the conditional-and-state-props pattern. ' +
-  'The SAME `formDef` renders in every framework (React/Angular/Vue/Lit/vanilla) — only the host wrapper changes. ' +
-  'FORM-LEVEL CONFIG — `formDef` is ALWAYS the bare array. Anything form-wide (named `states`, `validateOn`) ' +
-  'goes in a sibling `formConfig` on the config (`config={{ formDef: form, formConfig: { states, validateOn } }}`), ' +
-  'NEVER inside `formDef`. Do NOT wrap the array as `{ states, form: [...] }` and pass THAT as `formDef` — ' +
-  '`formDef` is typed `Record<string, any>` so it COMPILES, but the `gui.*` items are never resolved and the form ' +
-  'renders BLANK with no error. See the form-level-states pattern. ' +
-  'Common fields like `include`/`exclude` (conditional visibility) go INSIDE a factory’s config argument — ' +
-  'never spread them onto the result (`{ ...gui.inputs.x(...), include }` compiles but silently does nothing). ' +
-  'See the conditional-visibility pattern. ' +
-  'STATIC CONTENT — a section heading or any non-input text/block is the HOST’s job, not GolemUI’s: use ' +
-  '`gui.displays.display(() => <h2>…</h2>)` returning your framework’s own node (React JSX, Vue/Angular/Lit ' +
-  'node) — it needs no dependency and always renders. ' +
-  'MARKDOWN has exactly ONE use: `gui.inputs.markdown`, an INPUT where the user EDITS markdown (its value is ' +
-  'their markdown string). There is NO markdown-for-display widget — never use markdown to render a heading or ' +
-  'content; use `display` for that. ' +
-  'VALIDATOR `type` — one rule, three cases (so you never have to guess): (1) choice widgets ' +
-  "(`dropdown`, `radiogroup`, `select`) REQUIRE an explicit `type`: `validator: { type: 'string', required: true }`. " +
-  '(2) `repeater` (array) validators auto-supply `type: \'array\'` — supply only the rules, e.g. ' +
-  '`validator: { required: true, minItems: 1 }`, never `type`. (3) everything else (text, number, date) takes the ' +
-  'loose validator with NO `type`: `validator: { required: true }`.'
+    'GolemUI builds FORMS — data collection and validation. It is NOT a general-purpose UI toolkit: it never ' +
+    'renders documents, page content, or markdown for display. ' +
+    'A form is just an array of these items: `export const form = [ /* items */ ];`. ' +
+    FRAMEWORK_SETUP[fw] +
+    ' ' +
+    'Import the component stylesheet ONCE — `@golemui/gui-components/index.css` — or the form renders unstyled. ' +
+    "To RECEIVE A SUBMIT: add a `gui.actions.button({ label, actionType: 'submit' })` to the form and listen for " +
+    'the submit on the host component (the RENDER line above shows how for your framework) — the handler gets a ' +
+    '`FormSubmitEvent` whose `.data` is the collected form data. ' +
+    "To DISABLE submit until the form is valid, add `disabled: { when: '$formIsInvalid' }` to that button " +
+    '(`$formIsInvalid` is a built-in validity flag) — see the conditional-and-state-props pattern. ' +
+    'The SAME `formDef` renders in every framework (React/Angular/Vue/Lit/vanilla) — only the host wrapper changes. ' +
+    'FORM-LEVEL CONFIG — `formDef` is ALWAYS the bare array. Anything form-wide (named `states`, `validateOn`) ' +
+    'goes in a sibling `formConfig` on the config (`config={{ formDef: form, formConfig: { states, validateOn } }}`), ' +
+    'NEVER inside `formDef`. Do NOT wrap the array as `{ states, form: [...] }` and pass THAT as `formDef` — ' +
+    '`formDef` is typed `Record<string, any>` so it COMPILES, but the `gui.*` items are never resolved and the form ' +
+    'renders BLANK with no error. See the form-level-states pattern. ' +
+    'Common fields like `include`/`exclude` (conditional visibility) go INSIDE a factory’s config argument — ' +
+    'never spread them onto the result (`{ ...gui.inputs.x(...), include }` compiles but silently does nothing). ' +
+    'See the conditional-visibility pattern. ' +
+    'STATIC CONTENT — a section heading or any non-input text/block is the HOST’s job, not GolemUI’s: use ' +
+    '`gui.displays.display(() => <h2>…</h2>)` returning your framework’s own node (React JSX, Vue/Angular/Lit ' +
+    'node) — it needs no dependency and always renders. ' +
+    'MARKDOWN has exactly ONE use: `gui.inputs.markdown`, an INPUT where the user EDITS markdown (its value is ' +
+    'their markdown string). There is NO markdown-for-display widget — never use markdown to render a heading or ' +
+    'content; use `display` for that. ' +
+    'VALIDATOR `type` — one rule, three cases (so you never have to guess): (1) choice widgets ' +
+    "(`dropdown`, `radiogroup`, `select`) REQUIRE an explicit `type`: `validator: { type: 'string', required: true }`. " +
+    "(2) `repeater` (array) validators auto-supply `type: 'array'` — supply only the rules, e.g. " +
+    '`validator: { required: true, minItems: 1 }`, never `type`. (3) everything else (text, number, date) takes the ' +
+    'loose validator with NO `type`: `validator: { required: true }`.'
   );
 }
 
@@ -142,7 +143,7 @@ const PATTERNS: DxPattern[] = [
       "gui.inputs.textInput('spouseName', { label: 'Spouse name', include: { in: ['familyCoverage'] } })",
     notes: [
       'Named states are form-level: declare them in `formConfig.states`, a sibling of `formDef` on the ' +
-        "`<GuiForm>` config — NOT a wrapper around the array. `formConfig.states` maps each state name to a " +
+        '`<GuiForm>` config — NOT a wrapper around the array. `formConfig.states` maps each state name to a ' +
         "`ReactiveExpression` string, e.g. `{ familyCoverage: '$form.coverageType === \\'family\\'' }`. Then any " +
         "item references it by name: `include: { in: ['familyCoverage'] }` (show while true) / " +
         "`exclude: { from: ['familyCoverage'] }` (hide while true).",
@@ -180,7 +181,7 @@ const INPUTS: DxSpec[] = [
   {
     factory: 'textInput',
     namespace: 'inputs',
-    call: "gui.inputs.textInput(path, { label, placeholder?, defaultValue?, validator? })",
+    call: 'gui.inputs.textInput(path, { label, placeholder?, defaultValue?, validator? })',
     example:
       "gui.inputs.textInput('fullName', { label: 'Full name', validator: { required: true, minLength: 2 } })",
     notes: [
@@ -195,13 +196,16 @@ const INPUTS: DxSpec[] = [
     call: 'gui.inputs.numberInput(path, { label, defaultValue?, validator? })',
     example:
       "gui.inputs.numberInput('age', { label: 'Age', validator: { required: true, minimum: 0, maximum: 120 } })",
-    notes: ['Number validator: `{ required, minimum, maximum, exclusiveMinimum, exclusiveMaximum, multipleOf }`.'],
+    notes: [
+      'Number validator: `{ required, minimum, maximum, exclusiveMinimum, exclusiveMaximum, multipleOf }`.',
+    ],
   },
   {
     factory: 'booleanInput',
     namespace: 'inputs',
     call: 'gui.inputs.booleanInput(path, { label, defaultValue? })',
-    example: "gui.inputs.booleanInput('newsletter', { label: 'Subscribe to newsletter', defaultValue: false })",
+    example:
+      "gui.inputs.booleanInput('newsletter', { label: 'Subscribe to newsletter', defaultValue: false })",
     notes: ['The on/off toggle for a single boolean. Use `checkbox` for a checkbox presentation.'],
   },
   {
@@ -222,7 +226,8 @@ const INPUTS: DxSpec[] = [
     factory: 'password',
     namespace: 'inputs',
     call: 'gui.inputs.password(path, { label, validator? })',
-    example: "gui.inputs.password('password', { label: 'Password', validator: { required: true, minLength: 8 } })",
+    example:
+      "gui.inputs.password('password', { label: 'Password', validator: { required: true, minLength: 8 } })",
     notes: ['Masked text input; loose string validator.'],
   },
   {
@@ -266,7 +271,8 @@ const INPUTS: DxSpec[] = [
     factory: 'currency',
     namespace: 'inputs',
     call: 'gui.inputs.currency(path, { label, validator? })',
-    example: "gui.inputs.currency('price', { label: 'Price', validator: { required: true, minimum: 0 } })",
+    example:
+      "gui.inputs.currency('price', { label: 'Price', validator: { required: true, minimum: 0 } })",
     notes: ['Numeric money input; number-style validator.'],
   },
   {
@@ -284,7 +290,8 @@ const INPUTS: DxSpec[] = [
     factory: 'dateInput',
     namespace: 'inputs',
     call: 'gui.inputs.dateInput(path, { label, minDate?, maxDate?, validator? })',
-    example: "gui.inputs.dateInput('startDate', { label: 'Start date', validator: { required: true } })",
+    example:
+      "gui.inputs.dateInput('startDate', { label: 'Start date', validator: { required: true } })",
     notes: [
       'Typed date entry, NO calendar UI — use only when keyboard-first entry is wanted. For most dates use ' +
         '`datePicker` (popover calendar) instead. Accepts the loose `{ required: true }`.',
@@ -353,7 +360,9 @@ const INPUTS: DxSpec[] = [
     namespace: 'inputs',
     call: 'gui.inputs.rangeCalendar(path, { label? })',
     example: "gui.inputs.rangeCalendar('stayDates', { label: 'Stay dates' })",
-    notes: ['Inline calendar for a start–end date **range** (the value is a date range). For a single date use `calendar`.'],
+    notes: [
+      'Inline calendar for a start–end date **range** (the value is a date range). For a single date use `calendar`.',
+    ],
   },
   {
     factory: 'rangeDateInput',
@@ -379,7 +388,7 @@ const ACTIONS: DxSpec[] = [
     example: "gui.actions.button({ label: 'Sign up', actionType: 'submit' })",
     notes: [
       "Submit button: `gui.actions.button({ label, actionType: 'submit' })`.",
-      'There is NO `gui.actions.submitButton` — it was removed. Use `button` with `actionType: \'submit\'`.',
+      "There is NO `gui.actions.submitButton` — it was removed. Use `button` with `actionType: 'submit'`.",
       'For a non-submit action use an `onClick: (event) => { /* event.data is the form data */ }` handler.',
     ],
   },
@@ -391,7 +400,9 @@ const DISPLAYS: DxSpec[] = [
     namespace: 'displays',
     call: 'gui.displays.alert({ text })',
     example: "gui.displays.alert({ text: 'Please review your details before submitting.' })",
-    notes: ['Static, non-input callout. Uses **`text`** (not `content`). Displays do not take a `path`.'],
+    notes: [
+      'Static, non-input callout. Uses **`text`** (not `content`). Displays do not take a `path`.',
+    ],
   },
   {
     factory: 'display',
@@ -428,35 +439,40 @@ const LAYOUTS: DxSpec[] = [
     factory: 'verticalFlex',
     namespace: 'layouts',
     call: 'gui.layouts.verticalFlex(children, props?)',
-    example: "gui.layouts.verticalFlex([ gui.inputs.textInput('a', { label: 'A' }), gui.inputs.textInput('b', { label: 'B' }) ])",
+    example:
+      "gui.layouts.verticalFlex([ gui.inputs.textInput('a', { label: 'A' }), gui.inputs.textInput('b', { label: 'B' }) ])",
     notes: ['A `flex` with direction fixed to vertical.'],
   },
   {
     factory: 'horizontalFlex',
     namespace: 'layouts',
     call: 'gui.layouts.horizontalFlex(children, props?)',
-    example: "gui.layouts.horizontalFlex([ gui.inputs.textInput('a', { label: 'A' }), gui.inputs.textInput('b', { label: 'B' }) ])",
+    example:
+      "gui.layouts.horizontalFlex([ gui.inputs.textInput('a', { label: 'A' }), gui.inputs.textInput('b', { label: 'B' }) ])",
     notes: ['A `flex` with direction fixed to horizontal.'],
   },
   {
     factory: 'grid',
     namespace: 'layouts',
     call: 'gui.layouts.grid(children, props?)',
-    example: "gui.layouts.grid([ gui.inputs.textInput('a', { label: 'A' }), gui.inputs.textInput('b', { label: 'B' }) ])",
+    example:
+      "gui.layouts.grid([ gui.inputs.textInput('a', { label: 'A' }), gui.inputs.textInput('b', { label: 'B' }) ])",
     notes: ['Grid layout; `horizontalGrid` / `verticalGrid` lock the direction.'],
   },
   {
     factory: 'verticalGrid',
     namespace: 'layouts',
     call: 'gui.layouts.verticalGrid(children, props?)',
-    example: "gui.layouts.verticalGrid([ gui.inputs.textInput('a', { label: 'A' }), gui.inputs.textInput('b', { label: 'B' }) ])",
+    example:
+      "gui.layouts.verticalGrid([ gui.inputs.textInput('a', { label: 'A' }), gui.inputs.textInput('b', { label: 'B' }) ])",
     notes: ['A `grid` with direction fixed to vertical.'],
   },
   {
     factory: 'horizontalGrid',
     namespace: 'layouts',
     call: 'gui.layouts.horizontalGrid(children, props?)',
-    example: "gui.layouts.horizontalGrid([ gui.inputs.textInput('a', { label: 'A' }), gui.inputs.textInput('b', { label: 'B' }) ])",
+    example:
+      "gui.layouts.horizontalGrid([ gui.inputs.textInput('a', { label: 'A' }), gui.inputs.textInput('b', { label: 'B' }) ])",
     notes: ['A `grid` with direction fixed to horizontal.'],
   },
   {
@@ -465,7 +481,9 @@ const LAYOUTS: DxSpec[] = [
     call: 'gui.layouts.tabs(sections)',
     example:
       "gui.layouts.tabs([ { label: 'Account', children: [ gui.inputs.textInput('email', { label: 'Email' }) ] }, { label: 'Profile', children: [ gui.inputs.textInput('name', { label: 'Name' }) ] } ])",
-    notes: ['Takes `sections: { label, children, uid? }[]` — each section is a tab with its own children.'],
+    notes: [
+      'Takes `sections: { label, children, uid? }[]` — each section is a tab with its own children.',
+    ],
   },
   {
     factory: 'accordion',
@@ -473,7 +491,9 @@ const LAYOUTS: DxSpec[] = [
     call: 'gui.layouts.accordion(sections)',
     example:
       "gui.layouts.accordion([ { label: 'Billing', children: [ gui.inputs.textInput('card', { label: 'Card' }) ] } ])",
-    notes: ['Takes `sections: { label, children, uid? }[]` — same shape as `tabs`, rendered as collapsible panels.'],
+    notes: [
+      'Takes `sections: { label, children, uid? }[]` — same shape as `tabs`, rendered as collapsible panels.',
+    ],
   },
 ];
 
@@ -509,8 +529,8 @@ export interface DxCatalog {
 /**
  * The whole `gui.*` surface as a SELF-SUFFICIENT reference in one payload: every factory's
  * signature, a compile-verified example, and its gotchas, plus the cross-cutting patterns and the
- * common note. Serves `list_dx_factories`. The agentic intent: the model fetches this ONCE, keeps
- * it resident, and writes most forms from it directly — `get_dx_spec` becomes the rare deep-dive,
+ * common note. Serves `dx_list_factories`. The agentic intent: the model fetches this ONCE, keeps
+ * it resident, and writes most forms from it directly — `dx_get_spec` becomes the rare deep-dive,
  * not a per-factory round-trip. (Richer than a name-only index by design: in a resumed session
  * this is paid once and reused, so front-loading the examples removes mid-task lookups and turns.)
  */

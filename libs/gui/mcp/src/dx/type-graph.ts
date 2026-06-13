@@ -77,7 +77,7 @@ function findDistTypesRoot(): string {
     dir = dirname(dir);
   }
   throw new Error(
-    'check_dx_code: could not locate the @golemui type graph — neither an installed ' +
+    'dx_check_code: could not locate the @golemui type graph — neither an installed ' +
       "`@golemui/gui-shared` in node_modules nor the monorepo's dist/libs. The DX type-check " +
       'cannot run without the real declarations.',
   );
@@ -121,7 +121,9 @@ export function diagnose(
       : originalGet(fileName, languageVersion, onError, shouldCreate);
   const originalExists = host.fileExists.bind(host);
   host.fileExists = (fileName) =>
-    fileName === SNIPPET_FILE || resolve(fileName) === resolve(SNIPPET_FILE) || originalExists(fileName);
+    fileName === SNIPPET_FILE ||
+    resolve(fileName) === resolve(SNIPPET_FILE) ||
+    originalExists(fileName);
   const originalRead = host.readFile.bind(host);
   host.readFile = (fileName) => (fileName === SNIPPET_FILE ? code : originalRead(fileName));
 
@@ -142,7 +144,7 @@ export function assertTypesAreLive(ts: typeof TS, options: TS.CompilerOptions): 
   const diags = diagnose(ts, bogus, options);
   if (diags.length === 0) {
     throw new Error(
-      'check_dx_code: internal type-resolution guard failed — a known-invalid snippet type-checked ' +
+      'dx_check_code: internal type-resolution guard failed — a known-invalid snippet type-checked ' +
         'clean, which means the @golemui types resolved to `any`. Refusing to return misleading results.',
     );
   }

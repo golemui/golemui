@@ -195,7 +195,7 @@ function resolveLocalRef(ref: string, doc: OpenAPIDoc): JsonSchemaLike | null {
 }
 
 export const GENERATE_FROM_OPENAPI_TOOL = {
-  name: 'generate_from_openapi',
+  name: 'json_generate_from_openapi',
   description:
     'Generate a GolemUI form for a specific OpenAPI 3.x operation (e.g. "POST /users"). ' +
     "Resolves the operation's JSON request body, dereferences `$ref`s, then maps it to a " +

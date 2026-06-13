@@ -59,7 +59,7 @@ const PREAMBLE =
   'Recommended workflow:\n';
 
 const CLOSER =
-  'Do not hand a form definition to the user until `validate_form_definition` reports `valid: true`.';
+  'Do not hand a form definition to the user until `json_validate_form_definition` reports `valid: true`.';
 
 const SERVER_INSTRUCTIONS = PREAMBLE + JSON_INSTRUCTIONS + DX_INSTRUCTIONS + CLOSER;
 

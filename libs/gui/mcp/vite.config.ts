@@ -55,7 +55,7 @@ export default defineConfig(() => ({
     globals: true,
     environment: 'node',
     include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts}'],
-    // check_dx_code / dx-specs run a real `tsc` compile against the full @golemui type graph;
+    // dx_check_code / dx-specs run a real `tsc` compile against the full @golemui type graph;
     // the cold program init is several seconds, more on slower CI runners. The 5s vitest default
     // times them out on CI — give the compile-based tests room.
     testTimeout: 30000,

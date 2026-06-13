@@ -1,6 +1,9 @@
 // eslint-disable-next-line import/no-namespace -- typing the lazily-loaded TS compiler API; mirrors typecheck.ts
 import type * as TS from 'typescript';
-import { checkReactiveExpression, type ExpressionFinding } from '../shared/lint/reactive-expressions';
+import {
+  checkReactiveExpression,
+  type ExpressionFinding,
+} from '../shared/lint/reactive-expressions';
 import type { DxDiagnostic } from './typecheck';
 
 /**
@@ -18,7 +21,7 @@ import type { DxDiagnostic } from './typecheck';
  *
  *  2. **Reactive-expression quality.** The `when` strings inside `include`/`exclude`/etc.
  *     are opaque to the type-checker. We funnel each through the SAME engine the JSON
- *     `validate_form_definition` path uses ({@link checkReactiveExpression}), so the two
+ *     `json_validate_form_definition` path uses ({@link checkReactiveExpression}), so the two
  *     surfaces share one set of rules. Reported as non-blocking `expressionWarnings`,
  *     mirroring the JSON path.
  */
@@ -61,11 +64,15 @@ export function lintDxSnippet(ts: typeof TS, sourceText: string, lineOffset: num
   const visit = (node: TS.Node): void => {
     // (1) Misplaced common field as a sibling of a `gui.*` spread.
     if (ts.isObjectLiteralExpression(node)) {
-      const spreadsGui = node.properties.some((p) => ts.isSpreadAssignment(p) && isGuiCall(p.expression));
+      const spreadsGui = node.properties.some(
+        (p) => ts.isSpreadAssignment(p) && isGuiCall(p.expression),
+      );
       if (spreadsGui) {
         for (const p of node.properties) {
           const name =
-            ts.isPropertyAssignment(p) || ts.isShorthandPropertyAssignment(p) ? nameOf(p.name) : undefined;
+            ts.isPropertyAssignment(p) || ts.isShorthandPropertyAssignment(p)
+              ? nameOf(p.name)
+              : undefined;
           if (name && CONFIG_FIELDS.includes(name)) {
             const { line, column } = posOf(p);
             diagnostics.push({

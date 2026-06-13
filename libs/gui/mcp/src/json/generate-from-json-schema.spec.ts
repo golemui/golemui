@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { generateFromJsonSchema } from './generate-from-json-schema';
 
-describe('generate_from_json_schema', () => {
+describe('json_generate_from_schema', () => {
   it('maps a simple user signup schema to a valid form', () => {
     const result = generateFromJsonSchema({
       jsonSchema: {

@@ -46,7 +46,7 @@ const SAMPLE_DOC = {
   },
 };
 
-describe('generate_from_openapi', () => {
+describe('json_generate_from_openapi', () => {
   it('resolves a POST operation via "METHOD /path"', async () => {
     const r = await generateFromOpenapi({
       document: SAMPLE_DOC as any,

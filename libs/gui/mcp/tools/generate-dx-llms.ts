@@ -2,7 +2,7 @@
  * Generate the `llms.txt` floor for GolemUI's DX surface from the compile-verified
  * registry in `src/dx/dx-specs.ts`. This is the universal grounding delivery form for
  * AI surfaces that can't reach the MCP (a bare chat, a fetch-capable agent): same
- * source of truth as `get_dx_spec`, so the two can't drift.
+ * source of truth as `dx_get_spec`, so the two can't drift.
  *
  * Run: `tsx libs/gui/mcp/tools/generate-dx-llms.ts`
  */
@@ -57,7 +57,7 @@ function build(): string {
   lines.push('');
   lines.push(
     'GolemUI forms are **data, not markup**: a form is an array of field items built with the `gui` ' +
-      "builder (imported from `@golemui/gui-shared`). There is NO chained/fluent builder (`gui.form().text()...`) " +
+      'builder (imported from `@golemui/gui-shared`). There is NO chained/fluent builder (`gui.form().text()...`) ' +
       'and no `gui.actions.submitButton`. Each item is `gui.<namespace>.<factory>(...)`.',
   );
   lines.push('');
@@ -73,14 +73,18 @@ function build(): string {
   lines.push('');
   lines.push('General: ' + dxCommonNote());
   lines.push('');
-  lines.push('Every example below is compile-checked against the real `@golemui` type declarations.');
+  lines.push(
+    'Every example below is compile-checked against the real `@golemui` type declarations.',
+  );
   lines.push('');
 
   // Factory index — the whole surface up front, so the reader knows every real name and
-  // signature before scrolling (mirrors the `list_dx_factories` MCP catalog). Never guess a name.
+  // signature before scrolling (mirrors the `dx_list_factories` MCP catalog). Never guess a name.
   lines.push('## Factory index');
   lines.push('');
-  lines.push('Every `gui.*` factory and its calling convention. Look up the detail below for the ones you use.');
+  lines.push(
+    'Every `gui.*` factory and its calling convention. Look up the detail below for the ones you use.',
+  );
   lines.push('');
   for (const factory of listDxFactories()) {
     const s = DX_SPECS[factory];

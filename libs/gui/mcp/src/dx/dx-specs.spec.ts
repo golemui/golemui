@@ -9,20 +9,30 @@ import { typeCheckDx } from './typecheck';
  */
 describe('dx-specs registry', () => {
   it('has at least the core signup factories', () => {
-    for (const f of ['textInput', 'dropdown', 'radiogroup', 'datePicker', 'booleanInput', 'button']) {
+    for (const f of [
+      'textInput',
+      'dropdown',
+      'radiogroup',
+      'datePicker',
+      'booleanInput',
+      'button',
+    ]) {
       expect(listDxFactories()).toContain(f);
     }
   });
 
-  it.each(listDxFactories())('example for "%s" compiles against real @golemui types', async (factory) => {
-    const { example } = DX_SPECS[factory];
-    const result = await typeCheckDx(`[ ${example} ]`);
-    if (!result.ok) {
-      // eslint-disable-next-line no-console
-      console.error(factory, JSON.stringify(result.diagnostics, null, 2));
-    }
-    expect(result.ok).toBe(true);
-  });
+  it.each(listDxFactories())(
+    'example for "%s" compiles against real @golemui types',
+    async (factory) => {
+      const { example } = DX_SPECS[factory];
+      const result = await typeCheckDx(`[ ${example} ]`);
+      if (!result.ok) {
+        // eslint-disable-next-line no-console
+        console.error(factory, JSON.stringify(result.diagnostics, null, 2));
+      }
+      expect(result.ok).toBe(true);
+    },
+  );
 
   it.each(dxPatterns())('pattern "$name" compiles against real @golemui types', async (pattern) => {
     const result = await typeCheckDx(`[ ${pattern.example} ]`);

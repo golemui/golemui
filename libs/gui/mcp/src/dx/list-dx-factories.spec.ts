@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { listDxFactoriesCatalog } from './list-dx-factories';
 import { listDxFactories } from './dx-specs';
 
-describe('list_dx_factories', () => {
+describe('dx_list_factories', () => {
   it('returns every factory with its namespace and call signature in one payload', () => {
     const cat = listDxFactoriesCatalog();
     // Same coverage as the per-factory registry — the catalog must not omit any factory.

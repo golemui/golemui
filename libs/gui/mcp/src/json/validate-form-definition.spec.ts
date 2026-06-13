@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { validateFormDefinition } from './validate-form-definition';
 
-describe('validate_form_definition', () => {
+describe('json_validate_form_definition', () => {
   it('accepts a minimal valid textinput form', () => {
     const result = validateFormDefinition({
       formDefinition: {
