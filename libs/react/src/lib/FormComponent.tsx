@@ -12,6 +12,7 @@ import {
 } from '@golemui/core';
 import { type FormInitConfig } from '@golemui/core';
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import { DefaultFormHealthBoundary, type FormHealthBoundary } from './FormHealthBoundary';
 import { ReactFormContextProvider } from './ReactFormContextProvider';
 import WidgetErrorBoundary from './WidgetErrorBoundary';
 import WidgetRenderer from './WidgetRenderer';
@@ -27,12 +28,14 @@ export interface FormComponentProps {
   formEvent?: (event: FormEvent) => void;
   formSubmit?: (event: FormSubmitEvent) => void;
   formHealth?: (error: FormHealth) => void;
+  /** Wraps the form and renders the error UI for an errored {@link FormHealth}. Defaults to {@link DefaultFormHealthBoundary} (a red banner). */
+  formHealthBoundary?: FormHealthBoundary;
   autocomplete?: string;
 }
 
 export const FormComponent = forwardRef<FormComponentHandle, FormComponentProps>(
   function FormComponent(
-    { config, validators, formHealth, formEvent, formSubmit, autocomplete },
+    { config, validators, formHealth, formEvent, formSubmit, formHealthBoundary, autocomplete },
     ref,
   ) {
     const formContextRef = useRef<FormContext<React.ComponentType<WithWidget>>>(new FormContext());
@@ -69,6 +72,9 @@ export const FormComponent = forwardRef<FormComponentHandle, FormComponentProps>
       });
       const healthSub = watchFormHealth(context.store.state$).subscribe((health) => {
         setHealthError(health.status === 'errored' ? health : null);
+        if (health.status === 'errored') {
+          console.error('GolemUI form failed to initialize:', health.message);
+        }
         callbacksRef.current.formHealth?.(health);
       });
       const unsubscribeI18n = context.localization.subscribe((lang) => {
@@ -115,53 +121,31 @@ export const FormComponent = forwardRef<FormComponentHandle, FormComponentProps>
       formContextRef.current.emitSubmitEvent();
     };
 
-    // A bad formDef sets an errored formHealth and never produces a layout — which otherwise renders
-    // as a silent blank. Surface it on screen (the same visible-error pattern as WidgetErrorBoundary)
-    // so the developer sees the problem and the fix instead of an empty form.
-    if (healthError) {
-      return <FormHealthError health={healthError} />;
-    }
-
-    if (!formLayoutField) {
-      return null;
-    }
+    // Always render the form inside the boundary so a recovered health clears the error in place.
+    const Boundary = formHealthBoundary ?? DefaultFormHealthBoundary;
 
     return (
       <ReactFormContextProvider formContext={formContextRef.current}>
-        <div className="gui-form">
-          <form
-            id={formNameRef.current}
-            noValidate
-            dir={direction}
-            autoComplete={autocomplete}
-            onSubmit={onFormSubmit}
-          >
-            <WidgetErrorBoundary widget={formLayoutField}>
-              <WidgetRenderer widget={formLayoutField} />
-            </WidgetErrorBoundary>
-          </form>
-        </div>
+        <Boundary health={healthError ?? { status: 'ok' }}>
+          <div className="gui-form">
+            <form
+              id={formNameRef.current}
+              noValidate
+              dir={direction}
+              autoComplete={autocomplete}
+              onSubmit={onFormSubmit}
+            >
+              {formLayoutField && (
+                <WidgetErrorBoundary widget={formLayoutField}>
+                  <WidgetRenderer widget={formLayoutField} />
+                </WidgetErrorBoundary>
+              )}
+            </form>
+          </div>
+        </Boundary>
       </ReactFormContextProvider>
     );
   },
 );
-
-/**
- * Visible fallback for an errored formHealth — a bad formDef would otherwise render as a silent
- * blank form. Mirrors WidgetErrorBoundary's red-box style; the core error message is already
- * self-fixing (it states what to do), and we also log it so it's caught in dev tooling/screenshots.
- */
-function FormHealthError({ health }: { health: FormHealth }) {
-  const message = health.status === 'errored' ? health.message : 'Unknown form error';
-  console.error('GolemUI form failed to initialize:', message);
-  return (
-    <div className="gui-form" role="alert" style={{ border: '2px solid red', borderRadius: 4, padding: 12 }}>
-      <strong style={{ color: 'red' }}>GolemUI form error</strong>
-      <p style={{ marginTop: 4 }}>
-        <code>{message}</code>
-      </p>
-    </div>
-  );
-}
 
 export default FormComponent;
