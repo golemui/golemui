@@ -1,4 +1,4 @@
-import { jsonSchemaToGui, type JsonSchemaLike } from '../mapping/json-schema-to-gui';
+import { jsonSchemaToGui, type JsonSchemaLike } from './mapping/json-schema-to-gui';
 import { validateFormDefinition } from './validate-form-definition';
 
 type OpenAPIDoc = {
@@ -194,8 +194,8 @@ function resolveLocalRef(ref: string, doc: OpenAPIDoc): JsonSchemaLike | null {
   return (cur as JsonSchemaLike) ?? null;
 }
 
-export const GENERATE_FROM_OPENAPI_TOOL = {
-  name: 'generate_from_openapi',
+export const JSON_GENERATE_FROM_OPENAPI_TOOL = {
+  name: 'json_generate_from_openapi',
   description:
     'Generate a GolemUI form for a specific OpenAPI 3.x operation (e.g. "POST /users"). ' +
     "Resolves the operation's JSON request body, dereferences `$ref`s, then maps it to a " +

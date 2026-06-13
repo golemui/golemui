@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { getWidgetSpec, listWidgetTypes } from './get-widget-spec';
 import { validateFormDefinition } from './validate-form-definition';
 
-describe('get_widget_spec', () => {
+describe('json_get_widget_spec', () => {
   it('returns schema + example for textinput', () => {
     const r = getWidgetSpec({ widgetType: 'textinput' });
     expect(r.widgetType).toBe('textinput');

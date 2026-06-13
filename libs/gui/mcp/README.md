@@ -9,6 +9,30 @@ strict enough that one wrong property name breaks the runtime. This server close
 your AI calls it to **validate** what it wrote and to **generate** forms from existing
 JSON Schemas or OpenAPI operations, with the bundled GolemUI schemas as the source of truth.
 
+## Two entry points (one surface, two ways to author it)
+
+A GolemUI form can be written two ways, and the MCP serves both:
+
+- a **JSON form definition**: the serializable object `{ form: [...widgets], states?: {...} }`;
+- **`gui.*` DX code**: the fluent TypeScript builder that _produces_ that same definition.
+
+There is no toggle. On connect the server sends one block of guidance (the MCP `initialize.instructions`
+field, `SERVER_INSTRUCTIONS` in [`src/cli.ts`](./src/cli.ts)) and the agent self-routes by what it is
+producing:
+
+1. **JSON path**: generate or hand-author, then **always finish with `json_validate_form_definition`**.
+2. **`gui.*` path**: call **`dx_list_factories` first** (the complete reference), write the form, then
+   **always finish with `dx_check_code`**.
+
+The two terminal checks are not interchangeable: `dx_check_code` validates `gui.*` _code_,
+`json_validate_form_definition` validates a JSON _object_. Each tool's own `description` reinforces the routing
+(e.g. `json_get_widget_spec` tells a `gui.*` author it isn't needed). To read what a client actually sees, run
+`npm run start:mcp` (the MCP Inspector).
+
+The split is structural, not just textual: the two paths live in separate modules
+([`src/json/`](./src/json) and [`src/dx/`](./src/dx)) over a small shared surface
+([`src/shared/`](./src/shared)); neither imports the other.
+
 ## Install
 
 The server is a standalone Node CLI distributed on npm. Add it to your IDE's MCP config —
@@ -46,7 +70,7 @@ npx -y @golemui/gui-mcp < /dev/null
 
 ## Tools
 
-### `validate_form_definition`
+### `json_validate_form_definition`
 
 Validates a GolemUI form definition against the bundled JSON Schemas. Returns
 `{ valid: true }` on success, or a structured list of errors with JSON Pointer paths
@@ -56,7 +80,7 @@ like missing `$form.` prefixes, single `=` in equality checks, and unbalanced br
 
 **Input:** `{ formDefinition: { form: [...], states?: {...} } }`
 
-### `generate_from_json_schema`
+### `json_generate_from_schema`
 
 Maps a JSON Schema (the form-data shape, e.g. a Zod-derived schema) into a GolemUI
 form definition. Handles strings (with `format` → specialized widgets), numbers,
@@ -66,7 +90,7 @@ not be mapped.
 
 **Input:** `{ jsonSchema, submitAction?, submitLabel?, layout? }`
 
-### `generate_from_openapi`
+### `json_generate_from_openapi`
 
 Resolves an OpenAPI 3.x operation (e.g. `"POST /users"` or an `operationId`), dereferences
 its request body schema, and emits a validated GolemUI form. Falls back to operation
@@ -74,7 +98,7 @@ parameters when no JSON request body is present.
 
 **Input:** `{ document | documentUrl, operation, submitAction?, submitLabel? }`
 
-### `get_widget_spec`
+### `json_get_widget_spec`
 
 Returns the JSON Schema, kind, a minimal working example, and authoring notes for a
 single GolemUI widget. Cheaper than dumping the whole API into the model's context.
@@ -84,12 +108,42 @@ single GolemUI widget. Cheaper than dumping the whole API into the model's conte
 
 ### `get_concept`
 
-Returns a detailed guide for a cross-cutting concept - things that span multiple widgets
-and affect the whole form. Use it when you need state-suffixed props
-(`"label.stateName": "..."`) or to reuse a condition across multiple widgets via
-`include`/`exclude`. Currently supported: `"states"`, `"string-interpolation"`.
+Returns a detailed guide for a cross-cutting concept — things that span multiple widgets
+and affect the whole form: conditional rendering (`include`/`exclude`, named-state and
+inline `when`), state-suffixed props (`"label.stateName": "..."`), the reactive scope
+(`$form`, `$meta`, `$errors`, `$formIsInvalid`), and widget icons.
 
-**Input:** `{ concept }` - one of `"states"`, `"string-interpolation"`
+**Input:** `{ concept }` — one of `"states"`, `"string-interpolation"`, `"reactive-scope"`, `"icons"`
+
+> The five tools above serve the **JSON** surface. The three below serve the **`gui.*`** (DX code) surface —
+> see [Two entry points](#two-entry-points-one-surface-two-ways-to-author-it).
+
+### `dx_list_factories`
+
+**Call this first when writing `gui.*` code.** Returns the complete `gui.*` DX reference in one call: every
+factory with its namespace, calling convention, a **compile-verified** example, and its gotchas — plus the
+cross-cutting patterns and the common authoring rules. Its imports + render snippet are **tailored to your
+target framework** (`GOLEMUI_FRAMEWORK`). Self-sufficient for most forms; keep it in context and write from it.
+
+**Input:** none.
+
+### `dx_get_spec`
+
+A rare single-factory deep-dive — one factory's calling convention, example, and notes. Usually unneeded
+(`dx_list_factories` already carries every factory); reach here only to re-confirm one in isolation.
+
+**Input:** `{ factory }` — the camelCase name (`textInput`, `dropdown`, `radiogroup`, `button`, …).
+
+### `dx_check_code`
+
+**The `gui.*` terminal check** — the counterpart of `json_validate_form_definition` for _code_ instead of a JSON
+_object_. Type-checks the snippet against the **real `@golemui` type declarations** (compile-is-truth: GolemUI
+isn't in any model's training data, so generated `gui.*` is often a confident fabrication that doesn't
+compile). Also catches two compiler-invisible footguns — a misplaced `include`/`exclude` on a `gui.*` spread,
+and reactive-expression mistakes in `when` strings. Returns `{ ok, diagnostics }`; each diagnostic carries a
+fix `hint`. Treat `ok: false` as blocking.
+
+**Input:** `{ code }` — the `gui.*` snippet (a bare `gui.inputs.*` array is fine; the import is added if missing).
 
 ## Library usage
 
@@ -125,17 +179,6 @@ const { form } = await generateFromOpenapi({
 
 The tool descriptor objects (`VALIDATE_FORM_DEFINITION_TOOL`, `GENERATE_FROM_JSON_SCHEMA_TOOL`, ...)
 are also exported if you want to register the tools in your own MCP server.
-
-## How it stays accurate
-
-The server ships a frozen snapshot of the GolemUI JSON Schemas inside its npm package,
-version-locked to a specific GolemUI release. A CI check in this monorepo
-(`npm run check:mcp-schemas`) fails if the snapshot drifts from the source schemas in
-`@golemui/gui-shared`, so a published `@golemui/gui-mcp@X.Y.Z` always validates
-against the exact same schema definitions as `@golemui/gui-*@X.Y.Z`.
-
-No LLM calls happen inside this server — every tool is deterministic. The MCP is the
-_grounding layer_ the host IDE's model calls into.
 
 ## Development
 
@@ -174,7 +217,7 @@ Create or edit the project-level MCP config at .mcp.json in the workspace root:
 }
 ```
 
-Then reload the VS Code window (Cmd+Shift+P -> "Developer: Reload Window"). The 4 tools will appear in Claude's tool list for this workspace.
+Then reload the VS Code window (Cmd+Shift+P -> "Developer: Reload Window"). The tools will appear in Claude's tool list for this workspace.
 
 Remove the entry from .mcp.json when done.
 
@@ -182,6 +225,4 @@ Remove the entry from .mcp.json when done.
 
 ```bash
 npx nx run gui-mcp:vite:test     # run the test suite
-npm run sync:mcp-schemas            # refresh bundled schemas from libs/gui/shared
-npm run check:mcp-schemas           # CI mode — exits non-zero if out of sync
 ```

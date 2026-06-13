@@ -31,7 +31,18 @@ export default defineConfig(() => ({
       fileName: (_format, entryName) => `${entryName}.js`,
     },
     rollupOptions: {
-      external: [/^@modelcontextprotocol\/sdk(\/.*)?$/, /^ajv(\/.*)?$/, 'ajv-formats'],
+      external: [
+        /^@modelcontextprotocol\/sdk(\/.*)?$/,
+        /^ajv(\/.*)?$/,
+        'ajv-formats',
+        // `typescript` is loaded lazily by the DX type-check only — keep it external
+        // so the JSON path never pulls the compiler into its bundle.
+        'typescript',
+        'node:fs',
+        'node:module',
+        'node:path',
+        'node:url',
+      ],
       output: {
         // shebang only on the CLI bundle
         banner: (chunk) => (chunk.name === 'cli' ? '#!/usr/bin/env node' : ''),
@@ -44,6 +55,10 @@ export default defineConfig(() => ({
     globals: true,
     environment: 'node',
     include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts}'],
+    // dx_check_code / dx-specs run a real `tsc` compile against the full @golemui type graph;
+    // the cold program init is several seconds, more on slower CI runners. The 5s vitest default
+    // times them out on CI — give the compile-based tests room.
+    testTimeout: 30000,
     reporters: ['default'],
     coverage: {
       reportsDirectory: '../../../coverage/libs/gui/mcp',

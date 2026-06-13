@@ -620,7 +620,7 @@ const ICONS_CONCEPT: GetConceptResult = {
     'Widgets that support `props.icon`: `button`, `textinput`, `password`, `select`, `currency`, `tags`, `dateInput`, `datePicker`, `rangeCalendar`, `rangedateinput`, `rangedatepicker`.',
     '`button` is the only widget with `props.iconPosition`. Allowed values: `"left"` (default) and `"right"`.',
     'All icon props support state suffixes: `"icon.<stateName>": "check"` swaps the icon when that state is active. Call `get_concept({ concept: "states" })` for the full state-suffix pattern.',
-    'Do not set `props.icon` on widgets that do not support it — the schema will reject it and `validate_form_definition` will report an error.',
+    'Do not set `props.icon` on widgets that do not support it — the schema will reject it and `json_validate_form_definition` will report an error.',
   ],
 };
 

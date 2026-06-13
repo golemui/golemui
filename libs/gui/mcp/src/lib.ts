@@ -1,16 +1,31 @@
+// --- JSON form-definition path ---
 export {
   validateFormDefinition,
-  VALIDATE_FORM_DEFINITION_TOOL,
-} from './tools/validate-form-definition';
-export type { ValidateInput, ValidateResult } from './tools/validate-form-definition';
+  JSON_VALIDATE_FORM_DEFINITION_TOOL,
+} from './json/validate-form-definition';
+export type { ValidateInput, ValidateResult } from './json/validate-form-definition';
 export {
   generateFromJsonSchema,
-  GENERATE_FROM_JSON_SCHEMA_TOOL,
-} from './tools/generate-from-json-schema';
+  JSON_GENERATE_FROM_SCHEMA_TOOL,
+} from './json/generate-from-json-schema';
 export type {
   GenerateFromJsonSchemaInput,
   GenerateFromJsonSchemaResult,
-} from './tools/generate-from-json-schema';
-export { generateFromOpenapi, GENERATE_FROM_OPENAPI_TOOL } from './tools/generate-from-openapi';
-export { getWidgetSpec, GET_WIDGET_SPEC_TOOL } from './tools/get-widget-spec';
-export { getConcept, GET_CONCEPT_TOOL } from './tools/get-concept';
+} from './json/generate-from-json-schema';
+export { generateFromOpenapi, JSON_GENERATE_FROM_OPENAPI_TOOL } from './json/generate-from-openapi';
+export { getWidgetSpec, JSON_GET_WIDGET_SPEC_TOOL } from './json/get-widget-spec';
+
+// --- gui.* DX path ---
+export { checkDxCode, DX_CHECK_CODE_TOOL } from './dx/check-dx-code';
+export type { CheckDxCodeInput, CheckDxCodeResult } from './dx/check-dx-code';
+export { getDxSpec, DX_GET_SPEC_TOOL } from './dx/get-dx-spec';
+export type { GetDxSpecInput, GetDxSpecResult } from './dx/get-dx-spec';
+export { listDxFactoriesCatalog, DX_LIST_FACTORIES_TOOL } from './dx/list-dx-factories';
+export type { ListDxFactoriesResult } from './dx/list-dx-factories';
+export { typeCheckDx } from './dx/typecheck';
+export type { DxDiagnostic, DxCheckResult } from './dx/typecheck';
+export { DX_SPECS, listDxFactories, dxCatalog } from './dx/dx-specs';
+export type { DxSpec, DxNamespace, DxCatalog, DxCatalogEntry } from './dx/dx-specs';
+
+// --- shared (cross-cutting reference) ---
+export { getConcept, GET_CONCEPT_TOOL } from './shared/get-concept';

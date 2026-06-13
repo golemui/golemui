@@ -8,6 +8,7 @@
   "license": "MIT",
   "scripts": {
     "format": "nx format:write --all",
+    "format:affected": "nx format:write",
     "precz": "nx run-many --target=lint --all --exclude=@golemui/source && nx format:write --all && git update-index --again",
     "cz": "czg checkbox",
     "reset:dev": "pkill -f 'astro dev' 2>/dev/null; pkill -f 'nx run-many' 2>/dev/null; lsof -ti:4220,4221,4222,4223,4321,4322,4323 2>/dev/null | xargs kill -9 2>/dev/null; rm -rf docs/.astro docs/node_modules/.astro node_modules/.astro; npx nx reset",
@@ -26,7 +27,8 @@
     "build:libs": "npx nx run-many --target=build --projects=libs/**/*",
     "build:styles": "sh ./tools/build-sass.sh",
     "cz:breaking": "npm run precz && czg break",
-    "release": "npm run build:libs && npm run build:styles && tsx tools/release.ts"
+    "release": "npm run build:libs && npm run build:styles && tsx tools/release.ts",
+    "generate:dx-llms": "tsx libs/gui/mcp/tools/generate-dx-llms.ts"
   },
   "private": true,
   "dependencies": {

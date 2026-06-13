@@ -20,6 +20,9 @@
         "configFile": "libs/gui/mcp/vite.config.ts"
       }
     },
+    "vite:test": {
+      "dependsOn": ["^build"]
+    },
     "nx-release-publish": {
       "options": {
         "packageRoot": "dist/{projectRoot}"

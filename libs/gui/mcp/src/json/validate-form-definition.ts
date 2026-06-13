@@ -1,7 +1,10 @@
-import { getFormValidator } from '../schemas/ajv';
-import { formatAjvErrors, type FormattedError } from '../utils/errors';
-import { lintReactiveExpressions, type ExpressionFinding } from '../lint/reactive-expressions';
-import { lintStringInterpolations, type InterpolationFinding } from '../lint/string-interpolation';
+import { getFormValidator } from './schemas/ajv';
+import { formatAjvErrors, type FormattedError } from './errors';
+import {
+  lintReactiveExpressions,
+  type ExpressionFinding,
+} from '../shared/lint/reactive-expressions';
+import { lintStringInterpolations, type InterpolationFinding } from './string-interpolation';
 
 export type ValidateInput = {
   formDefinition: unknown;
@@ -32,7 +35,7 @@ export function validateFormDefinition(input: ValidateInput): ValidateResult {
       path: '/',
       keyword: 'oneOf',
       message:
-        'Form failed schema validation but no specific error could be localized. The form may contain a widget at a position the form schema does not allow, or a structural shape that our targeted validator missed. Verify each widget against its `get_widget_spec` entry.',
+        'Form failed schema validation but no specific error could be localized. The form may contain a widget at a position the form schema does not allow, or a structural shape that our targeted validator missed. Verify each widget against its `json_get_widget_spec` entry.',
     });
   }
 
@@ -46,8 +49,8 @@ export function validateFormDefinition(input: ValidateInput): ValidateResult {
   };
 }
 
-export const VALIDATE_FORM_DEFINITION_TOOL = {
-  name: 'validate_form_definition',
+export const JSON_VALIDATE_FORM_DEFINITION_TOOL = {
+  name: 'json_validate_form_definition',
   description:
     'Validate a GolemUI form definition against the bundled JSON Schemas. Use this AFTER ' +
     'generating or modifying a form definition to guarantee it is correct before the user ' +

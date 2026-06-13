@@ -2,7 +2,7 @@ import {
   jsonSchemaToGui,
   type JsonSchemaLike,
   type MapOptions,
-} from '../mapping/json-schema-to-gui';
+} from './mapping/json-schema-to-gui';
 import { validateFormDefinition } from './validate-form-definition';
 
 export type GenerateFromJsonSchemaInput = {
@@ -31,8 +31,8 @@ export function generateFromJsonSchema(
   return { formDefinition, unmapped, validation };
 }
 
-export const GENERATE_FROM_JSON_SCHEMA_TOOL = {
-  name: 'generate_from_json_schema',
+export const JSON_GENERATE_FROM_SCHEMA_TOOL = {
+  name: 'json_generate_from_schema',
   description:
     'Generate a GolemUI form definition from a JSON Schema describing the form data shape ' +
     '(typically an API request body or a Zod-derived schema). The result is validated against ' +

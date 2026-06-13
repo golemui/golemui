@@ -1,10 +1,10 @@
 import type { ErrorObject } from 'ajv';
-import { COMPONENT_SCHEMAS } from '../schemas/index';
+import { COMPONENT_SCHEMAS } from './schemas/index';
 import {
   getShallowWidgetValidator,
   getValidatorBranchValidator,
   getValidatorBranches,
-} from '../schemas/shallow-validators';
+} from './schemas/shallow-validators';
 
 export type FormattedError = {
   path: string;
