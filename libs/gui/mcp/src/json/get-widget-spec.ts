@@ -340,7 +340,7 @@ export function getValidatorsSchema() {
   return VALIDATORS_SCHEMA;
 }
 
-export const GET_WIDGET_SPEC_TOOL = {
+export const JSON_GET_WIDGET_SPEC_TOOL = {
   name: 'json_get_widget_spec',
   description:
     'Look up the JSON Schema and a minimal working example for a single GolemUI widget on the ' +

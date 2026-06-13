@@ -24,7 +24,7 @@ export function getDxSpec(input: GetDxSpecInput): GetDxSpecResult {
   return { ...spec };
 }
 
-export const GET_DX_SPEC_TOOL = {
+export const DX_GET_SPEC_TOOL = {
   name: 'dx_get_spec',
   description:
     'Deep-dive lookup for ONE `gui.*` factory — its calling convention, a compile-verified example, and ' +

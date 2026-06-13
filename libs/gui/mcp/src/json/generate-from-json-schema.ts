@@ -31,7 +31,7 @@ export function generateFromJsonSchema(
   return { formDefinition, unmapped, validation };
 }
 
-export const GENERATE_FROM_JSON_SCHEMA_TOOL = {
+export const JSON_GENERATE_FROM_SCHEMA_TOOL = {
   name: 'json_generate_from_schema',
   description:
     'Generate a GolemUI form definition from a JSON Schema describing the form data shape ' +

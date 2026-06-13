@@ -19,7 +19,7 @@ export async function checkDxCode(input: CheckDxCodeInput): Promise<CheckDxCodeR
   return typeCheckDx(input.code);
 }
 
-export const CHECK_DX_CODE_TOOL = {
+export const DX_CHECK_CODE_TOOL = {
   name: 'dx_check_code',
   description:
     'Type-check GolemUI **DX code** (the `gui.*` fluent builder, written in TypeScript) against the ' +

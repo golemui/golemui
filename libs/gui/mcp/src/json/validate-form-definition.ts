@@ -49,7 +49,7 @@ export function validateFormDefinition(input: ValidateInput): ValidateResult {
   };
 }
 
-export const VALIDATE_FORM_DEFINITION_TOOL = {
+export const JSON_VALIDATE_FORM_DEFINITION_TOOL = {
   name: 'json_validate_form_definition',
   description:
     'Validate a GolemUI form definition against the bundled JSON Schemas. Use this AFTER ' +

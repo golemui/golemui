@@ -17,7 +17,7 @@ export function listDxFactoriesCatalog(
   return dxCatalog(framework);
 }
 
-export const LIST_DX_FACTORIES_TOOL = {
+export const DX_LIST_FACTORIES_TOOL = {
   name: 'dx_list_factories',
   description:
     'The complete GolemUI `gui.*` DX reference in ONE call: EVERY factory with its namespace, calling ' +

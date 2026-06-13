@@ -32,7 +32,7 @@ export interface ToolEntry {
  * every dispatch arm.
  *
  * @example
- * const jsonTools = [defineTool(VALIDATE_FORM_DEFINITION_TOOL, validateFormDefinition)];
+ * const jsonTools = [defineTool(JSON_VALIDATE_FORM_DEFINITION_TOOL, validateFormDefinition)];
  */
 export function defineTool<Input, Output>(
   tool: ToolDescriptor,
