@@ -6,6 +6,7 @@ export const errorCodes = {
   initializeParseError: 20,
   initializeUidCollisionError: 21,
   initializeUnknownError: 22,
+  initializeMalformedFormShapeError: 23,
   widgetCouldNotBeLoaded: 30,
   resolveStringInterpolationError: 40,
 };

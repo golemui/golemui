@@ -3,6 +3,9 @@ export { default as WidgetRenderer } from './lib/WidgetRenderer';
 export { FormComponent } from './lib/FormComponent';
 export type { FormComponentHandle, FormComponentProps } from './lib/FormComponent';
 
+export { DefaultFormHealthBoundary } from './lib/FormHealthBoundary';
+export type { FormHealthBoundary, FormHealthBoundaryProps } from './lib/FormHealthBoundary';
+
 export { useActionWidget } from './lib/hooks/useActionWidget';
 export { useDebounceCallback } from './lib/hooks/useDebounceCallback';
 export { useDisplayWidget } from './lib/hooks/useDisplayWidget';

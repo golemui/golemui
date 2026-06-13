@@ -5,6 +5,11 @@ export { inputContext, InputWidgetAdapter } from './lib/adapters/input-widget.ad
 export { layoutContext, LayoutWidgetAdapter } from './lib/adapters/layout-widget.adapter';
 
 export { FormElement } from './lib/components/form/form.element';
+export {
+  defaultFormHealthBoundary,
+  type FormHealthBoundary,
+  type FormHealthBoundaryParams,
+} from './lib/components/form/form-health-boundary';
 export type { LitItemRenderer } from './lib/components/item-renderers/item-renderer';
 export { RepeaterWidgetElement } from './lib/components/widget/repeater-widget.element';
 export { WidgetElement } from './lib/components/widget/widget-element';

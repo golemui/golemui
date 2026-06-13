@@ -25,6 +25,7 @@ import AirportItemRenderer from '../../item-renderers/AirportItemRenderer.vue';
 import ComplexListItemRenderer from '../../item-renderers/ComplexListItemRenderer.vue';
 import CountryItemRenderer from '../../item-renderers/CountryItemRenderer.vue';
 import ProductItemRenderer from '../../item-renderers/ProductItemRenderer.vue';
+import CustomFormHealthBoundary from './CustomFormHealthBoundary.vue';
 
 const mock = kitchenSink;
 const formData = mock.data;
@@ -63,7 +64,6 @@ function formSubmitHandler(event: FormSubmitEvent) {
   console.log('👉 onFormSubmit', event.data);
 }
 
-const error = ref('');
 const formDef = ref<Form<string> | undefined>(undefined);
 
 onMounted(async () => {
@@ -93,7 +93,9 @@ const config = computed<GuiFormInitConfig | undefined>(() =>
 );
 
 const onFormHealth = (formHealth: FormHealth) => {
-  if (formHealth.status === 'errored') error.value = formHealth.message;
+  if (formHealth.status === 'errored') {
+    console.log('GolemUI form health error:', formHealth.message);
+  }
 };
 
 const onLanguageChanged = (event: Event) => {
@@ -113,21 +115,14 @@ const onLanguageChanged = (event: Event) => {
         @change="onLanguageChanged"
       ></gui-select>
     </div>
-    <p v-if="error" class="error">{{ error }}</p>
     <GuiForm
       v-if="config"
       :config="config"
       autocomplete="off"
+      :form-health-boundary="CustomFormHealthBoundary"
       @form-health="onFormHealth"
       @form-event="formEventHandler"
       @form-submit="formSubmitHandler"
     />
   </div>
 </template>
-
-<style scoped>
-.error {
-  color: var(--gui-intent-danger, #dc2626);
-  font-weight: 600;
-}
-</style>

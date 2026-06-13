@@ -67,6 +67,27 @@ function isDxDefinitionItem(item: unknown): boolean {
   return obj['type'] === 'ITEMS' && typeof obj['itemType'] === 'string';
 }
 
+/**
+ * Throws on a common mistake: wrapping a gui.* definition in an extra `{ form: ... }`. The outer
+ * object is not a DxDefinitions bundle, so it slips past `isDxDefinitions` and would reach core as
+ * raw JSON with unresolved `type: 'ITEMS'` items (blank render). Caught here so core stays gui.*-free.
+ */
+function assertNotWrappedDx(formDef: unknown): void {
+  if (!formDef || typeof formDef !== 'object' || Array.isArray(formDef)) {
+    return;
+  }
+  const inner = (formDef as Record<string, unknown>)['form'];
+  if (!isDxDefinitions(inner)) {
+    return;
+  }
+  throw new Error(
+    '[GolemUI] The gui.* form definition was wrapped in an extra `{ form: ... }` object, so its ' +
+      'fields were never resolved. Pass the gui.* array DIRECTLY as formDef (`config={{ formDef: form }}`) ' +
+      'and put any named `states` in `formConfig`: `config={{ formDef: form, formConfig: { states } }}`. ' +
+      'Do NOT wrap them as a `{ form: [...] }` object.',
+  );
+}
+
 // ─── Memoization ───
 // Three-level WeakMap keyed by (defs, selectors, config). Falls back to a
 // sentinel for the "selectors omitted" / "config omitted" cases so undefined
@@ -92,6 +113,7 @@ export function resolveFormInput<FormData extends Record<string, any> = any>(
   formConfig?: DxFormConfig,
 ): ResolvedFormInput<FormData> {
   if (!isDxDefinitions(formDef)) {
+    assertNotWrappedDx(formDef);
     return { formDef: formDef as string | Record<string, any> };
   }
 

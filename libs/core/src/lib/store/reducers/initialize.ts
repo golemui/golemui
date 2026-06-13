@@ -1,7 +1,7 @@
 import { formatIssuePath } from 'ts.data.json';
 import { errorCodes } from '../../errors';
 import { type Form, formDefDecoder } from '../../form';
-import { type FormWidget, isInputWidget } from '../../form-widget';
+import { type FormWidget, isInputWidget, isLayoutWidget } from '../../form-widget';
 import { flattenForm } from '../../utils/form';
 import type { INITIALIZE } from '../actions';
 import { createInitialState, type FormHealth, type State } from '../model';
@@ -64,14 +64,11 @@ export const initialize = ({ lang }: State, action: INITIALIZE): State => {
         {} as State['flatForm'],
       );
     } catch (error: any) {
-      const code = errorCodes.initializeUidCollisionError;
-      formHealth = {
-        status: 'errored',
-        message: `[${code}] ${uidCollisionErrorMessage(error.existingWidget, error.newWidget)}`,
-        code,
-      };
+      formHealth = uidCollisionError(error.existingWidget, error.newWidget);
       flatForm = {};
     }
+
+    warnUndeclaredStateReferences(flatForm, result.value.states);
 
     return {
       ...initialState,
@@ -79,6 +76,11 @@ export const initialize = ({ lang }: State, action: INITIALIZE): State => {
       flatForm,
       formHealth,
     };
+  }
+
+  const doubleWrapped = detectDoubleWrappedForm(formDef);
+  if (doubleWrapped) {
+    return { ...initialState, formHealth: doubleWrapped };
   }
 
   const code = errorCodes.initializeUnknownError;
@@ -98,10 +100,76 @@ export const initialize = ({ lang }: State, action: INITIALIZE): State => {
   };
 };
 
-function uidCollisionErrorMessage(
+function erroredHealth(code: number, message: string): FormHealth {
+  return { status: 'errored', code, message: `[${code}] ${message}` };
+}
+
+function malformedShapeMessage(): string {
+  return 'Malformed form definition. Pass it directly as formDef - `config={{ formDef: { states, form: [...] } }}`. Do NOT wrap it in an extra `{ form: ... }`.';
+}
+
+/**
+ * A valid `form` is an array or a `kind: 'layout'` widget; any other object is a double-wrap bug.
+ */
+function detectDoubleWrappedForm(formDef: unknown): FormHealth | null {
+  if (!formDef || typeof formDef !== 'object' || Array.isArray(formDef)) {
+    return null;
+  }
+  const form = (formDef as Record<string, any>)['form'];
+
+  if (
+    form &&
+    typeof form === 'object' &&
+    !Array.isArray(form) &&
+    !isLayoutWidget(form as FormWidget)
+  ) {
+    return erroredHealth(errorCodes.initializeMalformedFormShapeError, malformedShapeMessage());
+  }
+
+  return null;
+}
+
+/** Errored FormHealth for two widgets sharing a UID (raised while flattening the form). */
+function uidCollisionError(
   existingWidget: FormWidget<string>,
   newWidget: FormWidget<string>,
-) {
+): FormHealth {
   const getPath = (f: FormWidget<string>) => (isInputWidget(f) ? ` at "${f.path}"` : '');
-  return `Duplicate UID "${newWidget.uid}": Assigned to widget "${existingWidget.type}"${getPath(existingWidget)} and "${newWidget.type}"${getPath(newWidget)}.`;
+  const message = `Duplicate UID "${newWidget.uid}": Assigned to widget "${existingWidget.type}"${getPath(existingWidget)} and "${newWidget.type}"${getPath(newWidget)}.`;
+  return erroredHealth(errorCodes.initializeUidCollisionError, message);
+}
+
+/** console.error when an `include.in` / `exclude.from` names an undeclared state. */
+function warnUndeclaredStateReferences(
+  flatForm: State['flatForm'],
+  declaredStates: Form['states'],
+): void {
+  const declared = new Set(Object.keys(declaredStates ?? {}));
+  const offenders = new Map<string, string[]>(); // state name -> widget uids that reference it
+  for (const widget of Object.values(flatForm)) {
+    const refs: string[] = [];
+    const include = (widget as { include?: { in?: unknown } }).include;
+    if (include && Array.isArray(include.in)) refs.push(...(include.in as string[]));
+    const exclude = (widget as { exclude?: { from?: unknown } }).exclude;
+    if (exclude && Array.isArray(exclude.from)) refs.push(...(exclude.from as string[]));
+    for (const name of refs) {
+      if (declared.has(name)) {
+        continue;
+      }
+      const uids = offenders.get(name) ?? [];
+      uids.push((widget.uid as string) || '(unknown)');
+      offenders.set(name, uids);
+    }
+  }
+  if (offenders.size === 0) {
+    return;
+  }
+  const available = declared.size ? [...declared].join(', ') : '(none declared)';
+  for (const [name, uids] of offenders) {
+    console.error(
+      `[GolemUI] include/exclude references undefined state "${name}" (on ${uids.join(', ')}); ` +
+        `these widgets will stay hidden. Declared states: ${available}. ` +
+        `Fix: declare "${name}" in formConfig.states, or correct the name.`,
+    );
+  }
 }

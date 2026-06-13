@@ -1,5 +1,8 @@
 @let formState = context.store.state$ | async;
 
+<!-- Always render the form inside the boundary so a recovered health clears the error in place. -->
+<ng-container *ngComponentOutlet="effectiveHealthBoundary(); inputs: { health: health() }" />
+
 <form
   [id]="config().formName ?? _defaultFormName"
   novalidate
@@ -9,7 +12,7 @@
 >
   @if (formState && formState.formDef && context.widgetRegistry.ready) {
     <ng-container guiWidget [widget]="formState.formDef.form" />
-  } @else {
+  } @else if (health().status !== 'errored') {
     <div>Loading form...</div>
   }
 </form>

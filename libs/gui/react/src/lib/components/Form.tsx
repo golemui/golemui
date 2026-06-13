@@ -9,7 +9,12 @@ import { type FormInitConfig } from '@golemui/core';
 import { type GuiFormInitConfig } from '@golemui/gui-shared';
 import { resolveFormInput } from '@golemui/gui-shared/internals';
 import { initValidators } from '@golemui/gui-validators';
-import { FormComponent, type FormComponentHandle, type ReactItemRenderer } from '@golemui/react';
+import {
+  FormComponent,
+  type FormComponentHandle,
+  type FormHealthBoundary,
+  type ReactItemRenderer,
+} from '@golemui/react';
 import { type ComponentType, forwardRef, useCallback, useMemo } from 'react';
 import { widgetLoaders as golemWidgetLoaders } from '../widget.loaders';
 
@@ -19,10 +24,12 @@ export interface ReactFormComponentProps {
   formEvent?: (event: FormEvent) => void;
   formSubmit?: (event: FormSubmitEvent) => void;
   formHealth?: (formHealth: FormHealth) => void;
+  /** Wraps the form and renders the error UI for an errored FormHealth. Defaults to a red banner. */
+  formHealthBoundary?: FormHealthBoundary;
 }
 
 export const GuiForm = forwardRef<FormComponentHandle, ReactFormComponentProps>(function GuiForm(
-  { config, formHealth, formEvent, formSubmit, autocomplete },
+  { config, formHealth, formEvent, formSubmit, formHealthBoundary, autocomplete },
   ref,
 ) {
   const resolved = useMemo(
@@ -74,6 +81,7 @@ export const GuiForm = forwardRef<FormComponentHandle, ReactFormComponentProps>(
       validators={allValidators}
       autocomplete={autocomplete}
       formHealth={formHealth}
+      formHealthBoundary={formHealthBoundary}
       formEvent={mergedFormEvent}
       formSubmit={formSubmit}
     />
