@@ -17,6 +17,13 @@ export interface FormComponentProps {
   config: FormInitConfig<Component<WithWidget>>;
   validators: ValidatorFn<any>;
   autocomplete?: string;
+  /** Wraps the form (received as its default slot) and renders the error UI for an errored {@link FormHealth} via a `health` prop. Defaults to a red banner. */
+  formHealthBoundary?: Component<FormHealthBoundaryProps>;
+}
+
+/** Props a {@link FormComponentProps.formHealthBoundary} component receives. */
+export interface FormHealthBoundaryProps {
+  health: FormHealth;
 }
 
 export type FormComponentEmits = {

@@ -9,6 +9,7 @@ import {
   shortUUID,
 } from '@golemui/core';
 import { onMounted, onUnmounted, ref, watch } from 'vue';
+import DefaultFormHealthBoundary from './DefaultFormHealthBoundary.vue';
 import WidgetErrorBoundary from './WidgetErrorBoundary.vue';
 import WidgetRenderer from './WidgetRenderer.vue';
 import { VueFormContext } from './VueFormContext';
@@ -25,7 +26,7 @@ const emit = defineEmits<{
 const formContext = new VueFormContext();
 const formName = ref<string>(props.config.formName ?? shortUUID());
 const formLayoutField = ref<LayoutWidget<string> | null>(null);
-const healthError = ref<string | null>(null);
+const health = ref<FormHealth>({ status: 'ok' });
 const direction = ref<'ltr' | 'rtl'>('ltr');
 const storeVersion = ref(0);
 
@@ -106,11 +107,12 @@ watch(
   () => storeVersion.value,
   () => {
     healthSub?.unsubscribe();
-    healthSub = watchFormHealth(formContext.store.state$).subscribe((health) => {
-      const message = health.status === 'errored' ? health.message : null;
-      healthError.value = message;
-      if (message) console.error('GolemUI form failed to initialize:', message);
-      emit('form-health', health);
+    healthSub = watchFormHealth(formContext.store.state$).subscribe((next) => {
+      health.value = next;
+      if (next.status === 'errored') {
+        console.error('GolemUI form failed to initialize:', next.message);
+      }
+      emit('form-health', next);
     });
   },
   { immediate: true },
@@ -154,28 +156,20 @@ const onFormSubmit = (event: SubmitEvent) => {
 </script>
 
 <template>
-  <div v-if="formLayoutField" class="gui-form">
-    <form
-      :id="formName"
-      novalidate
-      :dir="direction"
-      :autocomplete="autocomplete"
-      @submit.stop="onFormSubmit"
-    >
-      <WidgetErrorBoundary :widget="formLayoutField">
-        <WidgetRenderer :widget="formLayoutField" />
-      </WidgetErrorBoundary>
-    </form>
-  </div>
-  <!-- A bad formDef errors formHealth and never produces a layout — surface it visibly
-       (same red-box pattern as WidgetErrorBoundary) instead of rendering nothing. -->
-  <div
-    v-else-if="healthError"
-    class="gui-form"
-    role="alert"
-    style="border: 2px solid red; border-radius: 4px; padding: 12px"
-  >
-    <strong style="color: red">GolemUI form error</strong>
-    <p style="margin-top: 4px"><code>{{ healthError }}</code></p>
-  </div>
+  <!-- Always render the form inside the boundary so a recovered health clears the error in place. -->
+  <component :is="formHealthBoundary ?? DefaultFormHealthBoundary" :health="health">
+    <div class="gui-form">
+      <form
+        :id="formName"
+        novalidate
+        :dir="direction"
+        :autocomplete="autocomplete"
+        @submit.stop="onFormSubmit"
+      >
+        <WidgetErrorBoundary v-if="formLayoutField" :widget="formLayoutField">
+          <WidgetRenderer :widget="formLayoutField" />
+        </WidgetErrorBoundary>
+      </form>
+    </div>
+  </component>
 </template>

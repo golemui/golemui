@@ -3,7 +3,9 @@ export type {
   FormComponentEmits,
   FormComponentHandle,
   FormComponentProps,
+  FormHealthBoundaryProps,
 } from './lib/FormComponent.types';
+export { default as DefaultFormHealthBoundary } from './lib/DefaultFormHealthBoundary.vue';
 export { default as WidgetRenderer } from './lib/WidgetRenderer.vue';
 export { default as WidgetErrorBoundary } from './lib/WidgetErrorBoundary.vue';
 export * from './lib/composables';
