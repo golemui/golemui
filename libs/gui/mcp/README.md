@@ -11,30 +11,27 @@ JSON Schemas or OpenAPI operations, with the bundled GolemUI schemas as the sour
 
 ## Two entry points (one surface, two ways to author it)
 
-A GolemUI form can be authored two ways, and the MCP serves both:
+A GolemUI form can be written two ways, and the MCP serves both:
 
-- a **JSON form definition** — the declarative, serializable object `{ form: [...widgets], states?: {...} }`;
-- **`gui.*` DX code** — the fluent TypeScript builder that *produces* that same definition.
+- a **JSON form definition**: the serializable object `{ form: [...widgets], states?: {...} }`;
+- **`gui.*` DX code**: the fluent TypeScript builder that _produces_ that same definition.
 
-There is **no toggle**. On connect, the server hands the client a single block of guidance — the MCP
-`initialize.instructions` field (`SERVER_INSTRUCTIONS` in [`src/cli.ts`](./src/cli.ts)) — and the agent
-**self-routes** from it by *what it is producing*. The block is **two parts**:
+There is no toggle. On connect the server sends one block of guidance (the MCP `initialize.instructions`
+field, `SERVER_INSTRUCTIONS` in [`src/cli.ts`](./src/cli.ts)) and the agent self-routes by what it is
+producing:
 
-1. **JSON path** (first) — *"Starting from a schema? …"* → use a generator, or look widgets/concepts up by
-   hand → **always finish with `validate_form_definition`**.
-2. **`gui.*` path** (second) — *"Writing GolemUI as DX code … instead of a JSON definition?"* → **call
-   `list_dx_factories` first** (the complete reference), write the form from it → **always finish with
-   `check_dx_code`**.
+1. **JSON path**: generate or hand-author, then **always finish with `validate_form_definition`**.
+2. **`gui.*` path**: call **`list_dx_factories` first** (the complete reference), write the form, then
+   **always finish with `check_dx_code`**.
 
-It is framed **JSON-first on purpose** — an agent sees the same JSON guidance it always saw, with the
-programmatic path added after, so existing behaviour isn't diluted. The two terminal checks are **not
-interchangeable**, and the instructions say so:
+The two terminal checks are not interchangeable: `check_dx_code` validates `gui.*` _code_,
+`validate_form_definition` validates a JSON _object_. Each tool's own `description` reinforces the routing
+(e.g. `get_widget_spec` tells a `gui.*` author it isn't needed). To read what a client actually sees, run
+`npm run start:mcp` (the MCP Inspector).
 
-> Use `check_dx_code` for `gui.*` *code* and `validate_form_definition` for a JSON *definition object*.
-
-Each tool also carries its own `description` that cross-steers — e.g. `get_widget_spec` tells a `gui.*`
-author it isn't needed; `list_dx_factories` says call it first. To read the whole thing exactly as a client
-sees it (instructions + every tool), run `npm run start:mcp` (the MCP Inspector).
+The split is structural, not just textual: the two paths live in separate modules
+([`src/json/`](./src/json) and [`src/dx/`](./src/dx)) over a small shared surface
+([`src/shared/`](./src/shared)); neither imports the other.
 
 ## Install
 
@@ -139,8 +136,8 @@ A rare single-factory deep-dive — one factory's calling convention, example, a
 
 ### `check_dx_code`
 
-**The `gui.*` terminal check** — the counterpart of `validate_form_definition` for *code* instead of a JSON
-*object*. Type-checks the snippet against the **real `@golemui` type declarations** (compile-is-truth: GolemUI
+**The `gui.*` terminal check** — the counterpart of `validate_form_definition` for _code_ instead of a JSON
+_object_. Type-checks the snippet against the **real `@golemui` type declarations** (compile-is-truth: GolemUI
 isn't in any model's training data, so generated `gui.*` is often a confident fabrication that doesn't
 compile). Also catches two compiler-invisible footguns — a misplaced `include`/`exclude` on a `gui.*` spread,
 and reactive-expression mistakes in `when` strings. Returns `{ ok, diagnostics }`; each diagnostic carries a
@@ -182,17 +179,6 @@ const { form } = await generateFromOpenapi({
 
 The tool descriptor objects (`VALIDATE_FORM_DEFINITION_TOOL`, `GENERATE_FROM_JSON_SCHEMA_TOOL`, ...)
 are also exported if you want to register the tools in your own MCP server.
-
-## How it stays accurate
-
-The server ships a frozen snapshot of the GolemUI JSON Schemas inside its npm package,
-version-locked to a specific GolemUI release. A CI check in this monorepo
-(`npm run check:mcp-schemas`) fails if the snapshot drifts from the source schemas in
-`@golemui/gui-shared`, so a published `@golemui/gui-mcp@X.Y.Z` always validates
-against the exact same schema definitions as `@golemui/gui-*@X.Y.Z`.
-
-No LLM calls happen inside this server — every tool is deterministic. The MCP is the
-_grounding layer_ the host IDE's model calls into.
 
 ## Development
 
@@ -239,6 +225,4 @@ Remove the entry from .mcp.json when done.
 
 ```bash
 npx nx run gui-mcp:vite:test     # run the test suite
-npm run sync:mcp-schemas            # refresh bundled schemas from libs/gui/shared
-npm run check:mcp-schemas           # CI mode — exits non-zero if out of sync
 ```
