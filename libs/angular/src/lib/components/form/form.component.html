@@ -1,24 +1,18 @@
 @let formState = context.store.state$ | async;
 
-@if (healthError()) {
-  <!-- A bad formDef errors formHealth and never produces a layout — surface it visibly
-       (same red-box pattern as WidgetErrorBoundary) instead of a stuck "Loading form...". -->
-  <div role="alert" style="border: 2px solid red; border-radius: 4px; padding: 12px">
-    <strong style="color: red">GolemUI form error</strong>
-    <p style="margin-top: 4px"><code>{{ healthError() }}</code></p>
-  </div>
-} @else {
-  <form
-    [id]="config().formName ?? _defaultFormName"
-    novalidate
-    [attr.dir]="direction()"
-    [attr.autocomplete]="autocomplete()"
-    (submit)="onFormSubmit($event)"
-  >
-    @if (formState && formState.formDef && context.widgetRegistry.ready) {
-      <ng-container guiWidget [widget]="formState.formDef.form" />
-    } @else {
-      <div>Loading form...</div>
-    }
-  </form>
-}
+<!-- Always render the form inside the boundary so a recovered health clears the error in place. -->
+<ng-container *ngComponentOutlet="effectiveHealthBoundary(); inputs: { health: health() }" />
+
+<form
+  [id]="config().formName ?? _defaultFormName"
+  novalidate
+  [attr.dir]="direction()"
+  [attr.autocomplete]="autocomplete()"
+  (submit)="onFormSubmit($event)"
+>
+  @if (formState && formState.formDef && context.widgetRegistry.ready) {
+    <ng-container guiWidget [widget]="formState.formDef.form" />
+  } @else if (health().status !== 'errored') {
+    <div>Loading form...</div>
+  }
+</form>

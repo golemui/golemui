@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   DestroyRef,
   inject,
   input,
@@ -26,6 +27,7 @@ import {
 import { share, switchMap, tap } from 'rxjs';
 import { AngularFormContext } from '../../context/form.context';
 import { WidgetDirective } from '../../directives/widget.directive';
+import { DefaultFormHealthBoundaryComponent } from './default-form-health-boundary.component';
 
 @Component({
   selector: 'gui-core-form',
@@ -43,8 +45,16 @@ export class FormCoreComponent implements OnInit, OnDestroy {
   config = input.required<FormInitConfig<Type<WithWidget>>>();
   validators = input.required<ValidatorFn<any>>();
   autocomplete = input<string | undefined>(undefined);
+  /**
+   * Wraps the form and renders the error UI for an errored {@link FormHealth}.
+   * Defaults to {@link DefaultFormHealthBoundaryComponent} (a red banner).
+   */
+  formHealthBoundary = input<Type<unknown> | undefined>(undefined);
+  protected effectiveHealthBoundary = computed(
+    () => this.formHealthBoundary() ?? DefaultFormHealthBoundaryComponent,
+  );
   protected direction = signal<'ltr' | 'rtl'>('ltr');
-  protected healthError = signal<string | null>(null);
+  protected health = signal<FormHealth>({ status: 'ok' });
 
   // OUTPUTS
   protected formHealth = output<FormHealth>();
@@ -108,9 +118,10 @@ export class FormCoreComponent implements OnInit, OnDestroy {
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((health) => {
-        const message = health.status === 'errored' ? health.message : null;
-        this.healthError.set(message);
-        if (message) console.error('GolemUI form failed to initialize:', message);
+        this.health.set(health);
+        if (health.status === 'errored') {
+          console.error('GolemUI form failed to initialize:', health.message);
+        }
         this.formHealth.emit(health);
       });
 

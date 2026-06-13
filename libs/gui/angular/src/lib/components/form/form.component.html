@@ -2,6 +2,7 @@
   [config]="coreConfig()"
   [validators]="allValidators()"
   [autocomplete]="autocomplete()"
+  [formHealthBoundary]="formHealthBoundary()"
   (formHealth)="formHealth.emit($event)"
   (formEvent)="onCoreFormEvent($event)"
   (formSubmit)="onCoreFormSubmitEvent($event)"
