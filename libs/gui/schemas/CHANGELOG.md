@@ -1,3 +1,7 @@
+## 1.0.0-rc.5 (2026-06-14)
+
+This was a version bump only for gui-schemas to align it with other projects, there were no code changes.
+
 ## 1.0.0-rc.4 (2026-06-14)
 
 ### 🩹 Fixes

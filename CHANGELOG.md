@@ -1,3 +1,14 @@
+## 1.0.0-rc.5 (2026-06-14)
+
+### 🩹 Fixes
+
+- **gui-mcp:** defer DX createRequire and add portable /json export ([#193](https://github.com/golemui/golemui/pull/193))
+- **gui-react:** fix gui-react:build TS4033 errors during TypeScript declaration emit ([#191](https://github.com/golemui/golemui/pull/191))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+
 ## 1.0.0-rc.4 (2026-06-14)
 
 ### 🚀 Features
