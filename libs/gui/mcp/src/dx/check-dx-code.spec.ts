@@ -65,6 +65,21 @@ describe('dx_check_code', () => {
     expect(r.diagnostics.some((d) => /actionType: 'submit'/.test(d.hint ?? ''))).toBe(true);
   });
 
+  it('rejects a bare-string event handler (dx events must be functions, like actions)', async () => {
+    const r = await checkDxCode({
+      code: `[ gui.inputs.textInput('name', { label: 'Name', onChange: 'doSomething' }) ]`,
+    });
+    expect(r.ok).toBe(false);
+  });
+
+  it('accepts a function event handler that returns a host-managed event name', async () => {
+    const r = await checkDxCode({
+      code: `[ gui.inputs.textInput('name', { label: 'Name', onChange: () => 'doSomething' }) ]`,
+    });
+    if (!r.ok) console.error(JSON.stringify(r.diagnostics, null, 2));
+    expect(r.ok).toBe(true);
+  });
+
   it('catches the cold hallucination (invented chained builder)', async () => {
     const r = await checkDxCode({
       code: `gui.form('signup').text('name', (f) => f.label('Name')).build();`,
