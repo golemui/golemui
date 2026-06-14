@@ -71,7 +71,13 @@ export interface DxCommonFields {
   uid?: string;
   tags?: string[];
   size?: number;
-  /** Per-state property overrides. Keys are state names (use `:` for hierarchy). */
+  /**
+   * Per-state property overrides. Keys are state names (use `:` for hierarchy).
+   *
+   * NOTE: the override values are an untyped escape hatch (`Record<string, any>`), so they
+   * are NOT type-checked — e.g. `states: { editing: { onChange: 'foo' } }` compiles even
+   * though a top-level `onChange: 'foo'` does not (events are function-only).
+   */
   states?: Record<string, Record<string, any>>;
   /** Conditionally include the widget — by active state list or reactive expression. */
   include?: DxIncludeCondition;

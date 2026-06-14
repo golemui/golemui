@@ -140,13 +140,30 @@ export function diagnose(
 let guardChecked = false;
 export function assertTypesAreLive(ts: typeof TS, options: TS.CompilerOptions): void {
   if (guardChecked) return;
+
+  // Negative control: an invented member must fail. Catches a TOTAL collapse to `any`
+  // (the whole `gui.*` graph degraded, so every member access type-checks clean).
   const bogus = `import { gui } from '@golemui/gui-shared';\n[gui.inputs.__definitely_not_a_real_member__('x', {})];\n`;
-  const diags = diagnose(ts, bogus, options);
-  if (diags.length === 0) {
+  if (diagnose(ts, bogus, options).length === 0) {
     throw new Error(
       'dx_check_code: internal type-resolution guard failed — a known-invalid snippet type-checked ' +
         'clean, which means the @golemui types resolved to `any`. Refusing to return misleading results.',
     );
   }
+
+  // Positive control: a bare-string event handler must fail. Catches a PARTIAL degradation
+  // the negative control would miss — e.g. a stale `dist` `.d.ts` that predates the
+  // function-only `DxEventHandler`, where `onChange` resolves to `any` while `gui.inputs`
+  // is otherwise live. Without this, the exact protection `dx_check_code` advertises could
+  // silently regress and let `onChange: 'string'` through.
+  const looseEvent = `import { gui } from '@golemui/gui-shared';\n[gui.inputs.textInput('x', { onChange: 'not-a-function' })];\n`;
+  if (diagnose(ts, looseEvent, options).length === 0) {
+    throw new Error(
+      'dx_check_code: internal type-resolution guard failed — a bare-string event handler type-checked ' +
+        'clean, so the DxEventHandler type resolved to `any` (likely a stale @golemui build). Refusing ' +
+        'to return misleading results.',
+    );
+  }
+
   guardChecked = true;
 }

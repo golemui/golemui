@@ -142,7 +142,8 @@ export class EventWiringService {
         }
         hasNewEvents = true;
       } else if (typeof value === 'string') {
-        // Internal/legacy path — the public DX type no longer accepts bare strings.
+        // Strings are still honored at runtime for internal/core wiring (and untyped
+        // `states` overrides); the public DX type rejects them, so authors use functions.
         on[coreKey] = value;
         hasNewEvents = true;
       }

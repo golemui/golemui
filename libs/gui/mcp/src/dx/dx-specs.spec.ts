@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { DX_SPECS, dxPatterns, listDxFactories } from './dx-specs';
+import { DX_SPECS, dxCommonNote, dxPatterns, listDxFactories } from './dx-specs';
 import { typeCheckDx } from './typecheck';
 
 /**
@@ -19,6 +19,14 @@ describe('dx-specs registry', () => {
     ]) {
       expect(listDxFactories()).toContain(f);
     }
+  });
+
+  it('teaches the function-only event-handler rule in the common note', () => {
+    const note = dxCommonNote();
+    expect(note).toMatch(/EVENT HANDLERS/);
+    // Both forms a model needs: declarative host name and imperative event.update.
+    expect(note).toMatch(/onChange: \(\) =>/);
+    expect(note).toMatch(/event\.update\(/);
   });
 
   it.each(listDxFactories())(
