@@ -19,6 +19,31 @@ const INPUT_LAYOUT_EVENT_PROPS: Record<string, string> = {
 const INPUT_LAYOUT_EVENT_KEYS = Object.keys(INPUT_LAYOUT_EVENT_PROPS);
 
 /**
+ * Probe a DX event handler for a host-managed event name.
+ *
+ * Mirrors the action `onClick` pattern: a handler that simply returns a string
+ * (`() => 'fieldChange'`) declares a host-managed dispatch by name. Only **zero-arg**
+ * handlers are probed — a handler that declares the `event` parameter
+ * (`(event) => event.update(...)`) is an imperative handler and is never invoked here,
+ * so its method-bearing `DxFormEvent` is never touched with `undefined`.
+ *
+ * @returns the returned event name, or `null` when the handler is not a declarative
+ *   zero-arg string-returning handler (i.e. it should be registered and run on dispatch).
+ */
+export function probeForHostEventName(handler: (...args: any[]) => any): string | null {
+  if (handler.length > 0) {
+    return null;
+  }
+  try {
+    const result = handler();
+    return typeof result === 'string' ? result : null;
+  } catch {
+    // A zero-arg handler that throws is treated as an imperative handler.
+    return null;
+  }
+}
+
+/**
  * Generalisation of ActionOnClickService.
  *
  * Two entry points:
@@ -106,11 +131,18 @@ export class EventWiringService {
       const coreKey = INPUT_LAYOUT_EVENT_PROPS[prop];
 
       if (typeof value === 'function') {
-        const eventName = eventIdGenerator.next();
-        eventRegistry.set(eventName, value);
-        on[coreKey] = eventName;
+        const hostEventName = probeForHostEventName(value);
+        if (hostEventName != null) {
+          // Declarative form `() => 'evName'`: wire the host-managed event name directly.
+          on[coreKey] = hostEventName;
+        } else {
+          const eventName = eventIdGenerator.next();
+          eventRegistry.set(eventName, value);
+          on[coreKey] = eventName;
+        }
         hasNewEvents = true;
       } else if (typeof value === 'string') {
+        // Internal/legacy path — the public DX type no longer accepts bare strings.
         on[coreKey] = value;
         hasNewEvents = true;
       }

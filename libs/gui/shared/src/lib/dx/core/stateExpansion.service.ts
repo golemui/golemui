@@ -1,6 +1,7 @@
 import { type FunctionWidgetParams, type NonFunctionWidget } from '@golemui/core';
 import { type GslLeafSelector, type MergeResult, type RuntimeFunction } from './dx.domain';
 import { type EventIdGenerator, type EventRegistry } from './itemTypeRegistry';
+import { probeForHostEventName } from './eventWiring.service';
 
 // ═══════════════════════════════════════════════════
 // State Expansion Service
@@ -180,9 +181,15 @@ export class StateExpansionService {
     if (!widget['on']) widget['on'] = {};
 
     if (typeof value === 'function') {
-      const eventName = eventIdGenerator.next();
-      eventRegistry.set(eventName, value);
-      widget['on'][`${coreKey}.${coreStateName}`] = eventName;
+      const hostEventName = probeForHostEventName(value);
+      if (hostEventName != null) {
+        // Declarative form `() => 'evName'`: wire the host-managed event name directly.
+        widget['on'][`${coreKey}.${coreStateName}`] = hostEventName;
+      } else {
+        const eventName = eventIdGenerator.next();
+        eventRegistry.set(eventName, value);
+        widget['on'][`${coreKey}.${coreStateName}`] = eventName;
+      }
     } else if (typeof value === 'string') {
       widget['on'][`${coreKey}.${coreStateName}`] = value;
     }

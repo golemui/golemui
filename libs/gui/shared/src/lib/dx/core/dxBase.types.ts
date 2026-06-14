@@ -17,10 +17,24 @@ export type DxFormEvent = FormEvent & {
 
 /**
  * Event handler type for DX event properties.
- * - Function: handler invoked with a DxFormEvent (use event.update to push widget changes).
- * - String: pass-through event name for host-managed dispatch.
+ *
+ * Function-only, mirroring action `onClick`. Bare strings are NOT accepted — a stray
+ * `onChange: 'something'` is a footgun (it looks like a value, not a handler), so the
+ * type rejects it.
+ *
+ * - Return a string to wire a host-managed event name (e.g. `onChange: () => 'fieldChange'`
+ *   dispatches `fieldChange` to the host event bus). Only zero-arg handlers are probed for
+ *   this, so the `event` parameter is never touched at build time.
+ * - Otherwise the handler runs on dispatch; use `event.update(...)` to push widget changes.
+ *
+ * @example
+ * // Host-managed dispatch by name:
+ * onChange: () => 'fieldChange'
+ * @example
+ * // Imperative handler:
+ * onChange: (event) => event.update({ path: 'country', options: [] })
  */
-export type DxEventHandler = string | ((event: DxFormEvent) => void);
+export type DxEventHandler = (event: DxFormEvent) => void | string;
 
 /**
  * INTERNAL decorator fields — used by the pipeline, NOT by form authors.
