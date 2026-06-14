@@ -1,3 +1,20 @@
+## 1.0.0-rc.4 (2026-06-14)
+
+### 🚀 Features
+
+- surface form init errors instead of a silent blank form ([#184](https://github.com/golemui/golemui/pull/184))
+
+### 🩹 Fixes
+
+- **gui-shared:** make dx event handlers function-only ([#190](https://github.com/golemui/golemui/pull/190))
+- added license field and copied license to all publishable packages ([#189](https://github.com/golemui/golemui/pull/189))
+
+### ❤️ Thank You
+
+- alberto-golem-ui
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
 ## 1.0.0-rc.3 (2026-06-13)
 
 ### 🩹 Fixes

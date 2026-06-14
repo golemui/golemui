@@ -1,3 +1,13 @@
+## 1.0.0-rc.4 (2026-06-14)
+
+### 🩹 Fixes
+
+- added license field and copied license to all publishable packages ([#189](https://github.com/golemui/golemui/pull/189))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+
 ## 1.0.0-rc.3 (2026-06-13)
 
 This was a version bump only for gui-validators to align it with other projects, there were no code changes.
