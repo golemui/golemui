@@ -1,6 +1,7 @@
 {
   "name": "@golemui/ui-testing",
   "version": "0.0.1",
+  "license": "MIT",
   "private": true,
   "type": "commonjs",
   "main": "./src/index.js",

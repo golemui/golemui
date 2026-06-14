@@ -1,4 +1,6 @@
 import { execSync } from 'node:child_process';
+import { copyFileSync, existsSync } from 'node:fs';
+import { join } from 'node:path';
 import { releaseChangelog, releasePublish, releaseVersion } from 'nx/release';
 import { type VersionData } from 'nx/src/command-line/release/utils/shared';
 import { updateTemplateVersions } from './update-template-versions';
@@ -21,6 +23,47 @@ const PUBLISHABLE_PACKAGES = [
   '@golemui/gui-shared',
   '@golemui/gui-mcp',
 ];
+
+/**
+ * Derives the built `dist` directory for a publishable package from its npm name.
+ * `@golemui/core` lives at `dist/libs/core`, while `gui-` scoped packages live one
+ * level deeper, e.g. `@golemui/gui-mcp` => `dist/libs/gui/mcp`.
+ */
+function distDirForPackage(packageName: string): string {
+  const shortName = packageName.replace('@golemui/', '');
+  const relativePath = shortName.startsWith('gui-')
+    ? join('gui', shortName.slice('gui-'.length))
+    : shortName;
+  return join('dist', 'libs', relativePath);
+}
+
+/**
+ * Copies the root LICENSE file into every publishable package's `dist` directory
+ */
+function copyLicenseToPackages(dryRun: boolean) {
+  const licenseFile = join(process.cwd(), 'LICENSE');
+  if (!existsSync(licenseFile)) {
+    console.warn(`LICENSE not found at ${licenseFile}; skipping license copy.`);
+    return;
+  }
+
+  PUBLISHABLE_PACKAGES.forEach((packageName) => {
+    const destDir = join(process.cwd(), distDirForPackage(packageName));
+    if (!existsSync(destDir)) {
+      console.warn(`Build output missing for ${packageName} (${destDir}); skipping license copy.`);
+      return;
+    }
+
+    const destination = join(destDir, 'LICENSE');
+    if (dryRun) {
+      console.log(`[dry-run] Would copy LICENSE => ${destination}`);
+      return;
+    }
+
+    copyFileSync(licenseFile, destination);
+    console.log(`Copied LICENSE => ${destination}`);
+  });
+}
 
 function updateLatestDistTag(projectsVersionData: VersionData) {
   const version = projectsVersionData.newVersion;
@@ -58,6 +101,9 @@ function updateLatestDistTag(projectsVersionData: VersionData) {
     version: workspaceVersion,
     dryRun,
   });
+
+  // Ensure the MIT license text ships inside every package tarball.
+  copyLicenseToPackages(dryRun);
 
   const publishResult = await releasePublish({
     registry: 'https://registry.npmjs.org/',

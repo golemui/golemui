@@ -21,17 +21,11 @@ const config = {
     '**/eslint.config.{js,mjs,cjs}',
     'vitest.workspace.ts',
   ],
-  project: [
-    'apps/**/*.{ts,tsx,js,vue,html}',
-    'libs/**/*.{ts,tsx,js,vue,html}',
-    'tools/**/*.ts',
-  ],
+  project: ['apps/**/*.{ts,tsx,js,vue,html}', 'libs/**/*.{ts,tsx,js,vue,html}', 'tools/**/*.ts'],
   // Knip does not parse .vue files by default: extract the <script> blocks
   compilers: {
     vue: (text: string) =>
-      [...text.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/g)]
-        .map((m) => m[1])
-        .join('\n'),
+      [...text.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/g)].map((m) => m[1]).join('\n'),
   },
   // Used by Nx executors / Angular CLI / tooling, never imported in source code:
   ignoreDependencies: [

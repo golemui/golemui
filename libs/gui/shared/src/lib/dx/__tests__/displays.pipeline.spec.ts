@@ -70,7 +70,9 @@ describe('DX Pipeline — Displays', () => {
     });
 
     it('still passes real $form data through when provided', () => {
-      const root = processDx(_guiDisplay((params) => `n:${params.$form.serviceLines?.length ?? 0}`));
+      const root = processDx(
+        _guiDisplay((params) => `n:${params.$form.serviceLines?.length ?? 0}`),
+      );
       const rawChild = getRawChild(root, 0);
       const resolved = resolveDynamic(rawChild, { $form: { serviceLines: [1, 2, 3] } }) as {
         props?: { render?: unknown };
