@@ -24,7 +24,8 @@ export default defineConfig(() => ({
     ssr: true,
     lib: {
       entry: {
-        lib: 'src/lib.ts', // library - no server, importable anywhere
+        lib: 'src/lib.ts', // full surface (JSON + DX) - Node consumers
+        json: 'src/json.ts', // JSON + shared only, no Node-only DX - bundles anywhere (e.g. Workers)
         cli: 'src/cli.ts', // MCP stdio server - Node.js only
       },
       formats: ['es'],

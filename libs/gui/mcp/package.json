@@ -11,6 +11,10 @@
     ".": {
       "types": "./lib.d.ts",
       "import": "./lib.js"
+    },
+    "./json": {
+      "types": "./json.d.ts",
+      "import": "./json.js"
     }
   },
   "bin": {
