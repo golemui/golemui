@@ -21,7 +21,19 @@ import type * as TS from 'typescript';
  * to return results in that state.
  */
 
-const requireFrom = createRequire(import.meta.url);
+let cachedRequire: ReturnType<typeof createRequire> | undefined;
+
+/**
+ * Lazily construct a `require` bound to this module.
+ *
+ * Deferred (not evaluated at module load) so consumers that import only the JSON
+ * tools can be bundled for non-Node runtimes (e.g. Cloudflare Workers) without
+ * `createRequire(import.meta.url)` throwing at import time, where `import.meta.url`
+ * is undefined. Only ever called on the DX type-check path, which is Node-only.
+ */
+function getRequire(): ReturnType<typeof createRequire> {
+  return (cachedRequire ??= createRequire(import.meta.url));
+}
 
 /** The `@golemui` packages the `gui.*` type graph transitively references. */
 const GOLEMUI_TYPE_PACKAGES = [
@@ -53,7 +65,7 @@ interface ResolveStrategy {
  */
 function resolveStrategy(): ResolveStrategy {
   try {
-    const pj = requireFrom.resolve('@golemui/gui-shared/package.json');
+    const pj = getRequire().resolve('@golemui/gui-shared/package.json');
     const [root] = pj.split(/[\\/]node_modules[\\/]/);
     if (root && root !== pj) return { baseUrl: root };
   } catch {
