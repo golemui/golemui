@@ -1,3 +1,21 @@
+# 1.0.0 (2026-06-14)
+
+### 🚀 Features
+
+- **mcp:** add type-checked gui.* DX authoring surface ([#185](https://github.com/golemui/golemui/pull/185))
+
+### 🩹 Fixes
+
+- **gui-mcp:** defer DX createRequire and add portable /json export ([#193](https://github.com/golemui/golemui/pull/193))
+- **gui-shared:** make dx event handlers function-only ([#190](https://github.com/golemui/golemui/pull/190))
+- added license field and copied license to all publishable packages ([#189](https://github.com/golemui/golemui/pull/189))
+
+### ❤️ Thank You
+
+- alberto-golem-ui
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
 ## 1.0.0-rc.5 (2026-06-14)
 
 ### 🩹 Fixes

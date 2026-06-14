@@ -1,3 +1,28 @@
+# 1.0.0 (2026-06-14)
+
+### 🚀 Features
+
+- surface form init errors instead of a silent blank form ([#184](https://github.com/golemui/golemui/pull/184))
+
+### 🩹 Fixes
+
+- **gui-react:** fix gui-react:build TS4033 errors during TypeScript declaration emit ([#191](https://github.com/golemui/golemui/pull/191))
+- added license field and copied license to all publishable packages ([#189](https://github.com/golemui/golemui/pull/189))
+- **react:** rename useDisplayWdiget to useDisplayWidget ([#182](https://github.com/golemui/golemui/pull/182))
+- ⚠️  Clean Public API ([#173](https://github.com/golemui/golemui/pull/173))
+
+### ⚠️  Breaking Changes
+
+- Clean Public API  ([#173](https://github.com/golemui/golemui/pull/173))
+  Promoted dx functions, widget props and golemForm to internals API, import now from
+  @golemui/gui-shared/internals
+
+### ❤️ Thank You
+
+- alberto-golem-ui
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
 ## 1.0.0-rc.5 (2026-06-14)
 
 ### 🩹 Fixes

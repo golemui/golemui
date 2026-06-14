@@ -1,3 +1,19 @@
+# 1.0.0 (2026-06-14)
+
+### 🚀 Features
+
+- surface form init errors instead of a silent blank form ([#184](https://github.com/golemui/golemui/pull/184))
+
+### 🩹 Fixes
+
+- added license field and copied license to all publishable packages ([#189](https://github.com/golemui/golemui/pull/189))
+
+### ❤️ Thank You
+
+- alberto-golem-ui
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
 ## 1.0.0-rc.5 (2026-06-14)
 
 This was a version bump only for vue to align it with other projects, there were no code changes.

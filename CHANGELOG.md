@@ -1,3 +1,35 @@
+# 1.0.0 (2026-06-14)
+
+### 🚀 Features
+
+- surface form init errors instead of a silent blank form ([#184](https://github.com/golemui/golemui/pull/184))
+- **mcp:** add type-checked gui.* DX authoring surface ([#185](https://github.com/golemui/golemui/pull/185))
+
+### 🩹 Fixes
+
+- ⚠️  Clean Public API ([#173](https://github.com/golemui/golemui/pull/173))
+- reduce deps ([#180](https://github.com/golemui/golemui/pull/180))
+- added license field and copied license to all publishable packages ([#189](https://github.com/golemui/golemui/pull/189))
+- **gui:** repeater + display render correctness ([#183](https://github.com/golemui/golemui/pull/183))
+- **gui-components:** fix next/prev month button color for default icon ([#179](https://github.com/golemui/golemui/pull/179))
+- **gui-mcp:** defer DX createRequire and add portable /json export ([#193](https://github.com/golemui/golemui/pull/193))
+- **gui-react:** fix gui-react:build TS4033 errors during TypeScript declaration emit ([#191](https://github.com/golemui/golemui/pull/191))
+- **gui-shared:** add missing registered components ([#186](https://github.com/golemui/golemui/pull/186))
+- **gui-shared:** make dx event handlers function-only ([#190](https://github.com/golemui/golemui/pull/190))
+- **react:** rename useDisplayWdiget to useDisplayWidget ([#182](https://github.com/golemui/golemui/pull/182))
+
+### ⚠️  Breaking Changes
+
+- Clean Public API  ([#173](https://github.com/golemui/golemui/pull/173))
+  Promoted dx functions, widget props and golemForm to internals API, import now from
+  @golemui/gui-shared/internals
+
+### ❤️ Thank You
+
+- alberto-golem-ui
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
 ## 1.0.0-rc.5 (2026-06-14)
 
 ### 🩹 Fixes

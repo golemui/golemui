@@ -1,3 +1,22 @@
+# 1.0.0 (2026-06-14)
+
+### 🩹 Fixes
+
+- added license field and copied license to all publishable packages ([#189](https://github.com/golemui/golemui/pull/189))
+- **gui-components:** fix next/prev month button color for default icon ([#179](https://github.com/golemui/golemui/pull/179))
+- ⚠️  Clean Public API ([#173](https://github.com/golemui/golemui/pull/173))
+
+### ⚠️  Breaking Changes
+
+- Clean Public API  ([#173](https://github.com/golemui/golemui/pull/173))
+  Promoted dx functions, widget props and golemForm to internals API, import now from
+  @golemui/gui-shared/internals
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
 ## 1.0.0-rc.5 (2026-06-14)
 
 This was a version bump only for gui-components to align it with other projects, there were no code changes.
