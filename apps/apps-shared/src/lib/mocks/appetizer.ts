@@ -58,7 +58,7 @@ const formDef: DxDefinitions = [
         },
       },
     },
-    onChange: 'onSelectLanguage',
+    onChange: () => 'onSelectLanguage',
   }),
 
   gui.layouts.grid(
@@ -110,7 +110,7 @@ const formDef: DxDefinitions = [
             },
           },
         },
-        onChange: 'fieldChange',
+        onChange: () => 'fieldChange',
       }),
       gui.inputs.currency('budget', {
         label: {
@@ -136,7 +136,7 @@ const formDef: DxDefinitions = [
             },
           },
         },
-        onChange: 'fieldChange',
+        onChange: () => 'fieldChange',
       }),
     ],
     { direction: 'row', autoFit: true, align: 'stretch' },
@@ -215,7 +215,7 @@ const formDef: DxDefinitions = [
           key: 'travelPlanner.field.includePets',
           default: 'Include Pets',
         },
-        onChange: 'fieldChange',
+        onChange: () => 'fieldChange',
       }),
     ],
     { direction: 'column', align: 'end', justify: 'end' },
@@ -261,7 +261,7 @@ const formDef: DxDefinitions = [
         },
       },
     },
-    onChange: 'fieldChange',
+    onChange: () => 'fieldChange',
   }),
 
   gui.actions.button({

@@ -39,6 +39,6 @@ export const accordionTab = gui.layouts.accordion(
   {
     singleOpen: false,
     defaultOpen: { section1: true },
-    onChange: 'onAccordionEvent',
+    onChange: () => 'onAccordionEvent',
   },
 );

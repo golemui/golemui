@@ -31,8 +31,8 @@ export const selectTab = gui.layouts.flex([
   gui.inputs.select('selects.subregion', {
     label: 'Country subregion',
     hint: 'The disabled  "Select an Option" option should be selected',
-    onLoad: 'getSubregionsForSelect',
-    onChange: 'getCountriesForSelect',
+    onLoad: () => 'getSubregionsForSelect',
+    onChange: () => 'getCountriesForSelect',
   }),
   gui.inputs.select('selects.country', {
     include: { in: ['hasSubregionSelect'] },

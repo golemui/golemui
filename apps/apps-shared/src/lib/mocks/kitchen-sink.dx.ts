@@ -162,7 +162,7 @@ export const buildKitchenSinkDx = (options: KitchenSinkDxOptions = {}): KitchenS
             ]
           : []),
       ],
-      { defaultOpen: 'tabAlert', onChange: 'onTabEvent' },
+      { defaultOpen: 'tabAlert', onChange: () => 'onTabEvent' },
     ),
     gui.actions.button({
       uid: 'submit-button',

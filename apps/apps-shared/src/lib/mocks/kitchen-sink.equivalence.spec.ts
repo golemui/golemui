@@ -130,13 +130,13 @@ const collapseLayoutWrappers = (node: any): any => {
       out[k] = collapseLayoutWrappers(v);
     }
     if (
-      out.kind === 'layout' &&
-      out.type === 'flex' &&
-      Array.isArray(out.children) &&
-      out.children.length === 1 &&
-      out.children[0]?.kind === 'layout'
+      out['kind'] === 'layout' &&
+      out['type'] === 'flex' &&
+      Array.isArray(out['children']) &&
+      out['children'].length === 1 &&
+      out['children'][0]?.kind === 'layout'
     ) {
-      return out.children[0];
+      return out['children'][0];
     }
     return out;
   }
