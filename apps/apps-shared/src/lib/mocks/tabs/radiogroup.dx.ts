@@ -28,8 +28,8 @@ export const radiogroupTab = gui.layouts.flex([
   gui.inputs.radiogroup('radiogroups.subregion', {
     label: 'Country subregion',
     hint: 'No option should be selected',
-    onLoad: 'getSubregionsForRadio',
-    onChange: 'getCountriesForRadio',
+    onLoad: () => 'getSubregionsForRadio',
+    onChange: () => 'getCountriesForRadio',
   }),
   gui.inputs.radiogroup('radiogroups.country', {
     include: { in: ['hasSubregionRadiogroup'] },

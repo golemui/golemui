@@ -17,8 +17,8 @@ export const dropdownTab = gui.layouts.flex([
     items: [],
     hint: 'Search as you type with server side filtering',
     autocomplete: 'off',
-    onLoad: 'searchProductForDropdown',
-    onFilter: 'searchProductForDropdown',
+    onLoad: () => 'searchProductForDropdown',
+    onFilter: () => 'searchProductForDropdown',
   }),
   gui.inputs.dropdown('dropdowns.defaultListRendererObjectItems', {
     label: 'Default list renderer with object values',

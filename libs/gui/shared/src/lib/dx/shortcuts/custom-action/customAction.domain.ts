@@ -8,7 +8,7 @@ import type { DefOrCallback, GslConfigBase, GuiShortcutOf } from '../../core/dxU
 export interface CustomActionDecorator extends DxActionBase, DxCommonFields {
   customType: string;
   props?: Record<string, unknown>;
-  onClick?: ((data: any) => void) | string;
+  onClick?: (data: any) => void | string;
   data?: any | null;
   on?: { click: string };
 }

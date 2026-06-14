@@ -17,7 +17,7 @@ function getRootFromFacadeResult(
 describe('DX Pipeline — Event Wiring', () => {
   describe('Input events — onLoad', () => {
     it('wires onLoad callback on a select to on.load with generated event name', () => {
-      const loadFn = vi.fn();
+      const loadFn = vi.fn((_event: FormEvent) => undefined);
       const root = processDx([_guiSelect('country', { options: [], onLoad: loadFn })]);
 
       const select = getStaticChild(root, 0) as any;
@@ -27,15 +27,15 @@ describe('DX Pipeline — Event Wiring', () => {
       expect(select.on.load).toMatch(/^event_\d+$/);
     });
 
-    it('wires onLoad string passthrough to on.load', () => {
-      const root = processDx([_guiSelect('country', { options: [], onLoad: 'myLoadEvent' })]);
+    it('wires a zero-arg handler returning a string to on.load (host-managed dispatch)', () => {
+      const root = processDx([_guiSelect('country', { options: [], onLoad: () => 'myLoadEvent' })]);
 
       const select = getStaticChild(root, 0) as any;
       expect(select.on?.load).toBe('myLoadEvent');
     });
 
     it('registers onLoad callback in event registry and dispatches FormEvent with update', () => {
-      const loadFn = vi.fn();
+      const loadFn = vi.fn((_event: FormEvent) => undefined);
       const result = formDefs.processDxFacade(
         [_guiSelect('country', { options: [], onLoad: loadFn })],
         [],
@@ -66,7 +66,7 @@ describe('DX Pipeline — Event Wiring', () => {
 
   describe('Input events — onChange', () => {
     it('wires onChange callback on a select to on.change', () => {
-      const changeFn = vi.fn();
+      const changeFn = vi.fn((_event: FormEvent) => undefined);
       const root = processDx([_guiSelect('country', { options: [], onChange: changeFn })]);
 
       const select = getStaticChild(root, 0) as any;
@@ -74,15 +74,17 @@ describe('DX Pipeline — Event Wiring', () => {
       expect(select.on.change).toMatch(/^event_\d+$/);
     });
 
-    it('wires onChange string passthrough to on.change', () => {
-      const root = processDx([_guiSelect('country', { options: [], onChange: 'myChangeEvent' })]);
+    it('wires a zero-arg handler returning a string to on.change (host-managed dispatch)', () => {
+      const root = processDx([
+        _guiSelect('country', { options: [], onChange: () => 'myChangeEvent' }),
+      ]);
 
       const select = getStaticChild(root, 0) as any;
       expect(select.on?.change).toBe('myChangeEvent');
     });
 
     it('registers onChange callback and dispatches FormEvent with update', () => {
-      const changeFn = vi.fn();
+      const changeFn = vi.fn((_event: FormEvent) => undefined);
       const result = formDefs.processDxFacade(
         [_guiSelect('country', { options: [], onChange: changeFn })],
         [],
@@ -113,7 +115,7 @@ describe('DX Pipeline — Event Wiring', () => {
 
   describe('Input events — onFilter', () => {
     it('wires onFilter callback on a dropdown to on.filter', () => {
-      const filterFn = vi.fn();
+      const filterFn = vi.fn((_event: FormEvent) => undefined);
       const root = processDx([_guiDropdown('product', { items: [], onFilter: filterFn })]);
 
       const dropdown = getStaticChild(root, 0) as any;
@@ -121,8 +123,10 @@ describe('DX Pipeline — Event Wiring', () => {
       expect(dropdown.on.filter).toMatch(/^event_\d+$/);
     });
 
-    it('wires onFilter string passthrough to on.filter', () => {
-      const root = processDx([_guiDropdown('product', { items: [], onFilter: 'searchProduct' })]);
+    it('wires a zero-arg handler returning a string to on.filter (host-managed dispatch)', () => {
+      const root = processDx([
+        _guiDropdown('product', { items: [], onFilter: () => 'searchProduct' }),
+      ]);
 
       const dropdown = getStaticChild(root, 0) as any;
       expect(dropdown.on?.filter).toBe('searchProduct');
@@ -131,8 +135,8 @@ describe('DX Pipeline — Event Wiring', () => {
 
   describe('Multiple events on a single widget', () => {
     it('wires onLoad and onChange on the same select with unique event names', () => {
-      const loadFn = vi.fn();
-      const changeFn = vi.fn();
+      const loadFn = vi.fn((_event: FormEvent) => undefined);
+      const changeFn = vi.fn((_event: FormEvent) => undefined);
       const root = processDx([
         _guiSelect('country', { options: [], onLoad: loadFn, onChange: changeFn }),
       ]);
@@ -144,9 +148,9 @@ describe('DX Pipeline — Event Wiring', () => {
     });
 
     it('wires onLoad, onChange, and onFilter on a dropdown', () => {
-      const loadFn = vi.fn();
-      const changeFn = vi.fn();
-      const filterFn = vi.fn();
+      const loadFn = vi.fn((_event: FormEvent) => undefined);
+      const changeFn = vi.fn((_event: FormEvent) => undefined);
+      const filterFn = vi.fn((_event: FormEvent) => undefined);
       const root = processDx([
         _guiDropdown('product', {
           items: [],
@@ -168,7 +172,7 @@ describe('DX Pipeline — Event Wiring', () => {
 
   describe('Layout events — onChange', () => {
     it('wires onChange callback on tabs to on.change', () => {
-      const changeFn = vi.fn();
+      const changeFn = vi.fn((_event: FormEvent) => undefined);
       const root = processDx([
         _guiTabs(
           [
@@ -187,7 +191,7 @@ describe('DX Pipeline — Event Wiring', () => {
     });
 
     it('registers tabs onChange callback and dispatches FormEvent with update', () => {
-      const changeFn = vi.fn();
+      const changeFn = vi.fn((_event: FormEvent) => undefined);
       const result = formDefs.processDxFacade(
         [
           _guiTabs(
@@ -315,7 +319,7 @@ describe('DX Pipeline — Event Wiring', () => {
 
   describe('Input events — onBlur', () => {
     it('wires onBlur callback to on.blur with generated event name', () => {
-      const blurFn = vi.fn();
+      const blurFn = vi.fn((_event: FormEvent) => undefined);
       const root = processDx([_guiTextInput('email', { onBlur: blurFn })]);
 
       const input = getStaticChild(root, 0) as any;
@@ -324,17 +328,27 @@ describe('DX Pipeline — Event Wiring', () => {
       expect(input.on.blur).toMatch(/^event_\d+$/);
     });
 
-    it('wires onBlur string passthrough to on.blur', () => {
-      const root = processDx([_guiTextInput('email', { onBlur: 'myBlurEvent' })]);
+    it('wires a zero-arg handler returning a string to on.blur (host-managed dispatch)', () => {
+      const root = processDx([_guiTextInput('email', { onBlur: () => 'myBlurEvent' })]);
 
       const input = getStaticChild(root, 0) as any;
       expect(input.on?.blur).toBe('myBlurEvent');
+    });
+
+    it('registers an imperative handler that reads the event without invoking it at build time', () => {
+      const blurFn = vi.fn((event: any) => event.update({ path: 'email' }));
+      const root = processDx([_guiTextInput('email', { onBlur: blurFn })]);
+
+      const input = getStaticChild(root, 0) as any;
+      // Handler declares the `event` param, so it is registered (generated name), not probed.
+      expect(input.on?.blur).toMatch(/^event_\d+$/);
+      expect(blurFn).not.toHaveBeenCalled();
     });
   });
 
   describe('DX update wrapper — event.update({ path, prop: value })', () => {
     it('translates DX-friendly update shape to OVERRIDE_WIDGET_PROP dispatch', () => {
-      const changeFn = vi.fn();
+      const changeFn = vi.fn((_event: FormEvent) => undefined);
       const result = formDefs.processDxFacade(
         [
           _guiSelect('country', { options: [], onChange: changeFn }),
@@ -372,7 +386,7 @@ describe('DX Pipeline — Event Wiring', () => {
     });
 
     it('translates multiple props in a single update call', () => {
-      const loadFn = vi.fn();
+      const loadFn = vi.fn((_event: FormEvent) => undefined);
       const result = formDefs.processDxFacade(
         [_guiSelect('tz', { options: [], onLoad: loadFn })],
         [],
@@ -402,7 +416,7 @@ describe('DX Pipeline — Event Wiring', () => {
     });
 
     it('passes through raw OVERRIDE_WIDGET_PROP actions unchanged via callback (backward compat)', () => {
-      const changeFn = vi.fn();
+      const changeFn = vi.fn((_event: FormEvent) => undefined);
       const result = formDefs.processDxFacade(
         [_guiSelect('country', { options: [], onChange: changeFn })],
         [],
@@ -430,7 +444,7 @@ describe('DX Pipeline — Event Wiring', () => {
 
   describe('Dynamic (callback) widgets with events', () => {
     it('wires onLoad on a dynamic select at runtime', () => {
-      const loadFn = vi.fn();
+      const loadFn = vi.fn((_event: FormEvent) => undefined);
       const root = processDx([
         _guiSelect('country', (p: any) => ({
           options: p?.$form?.ready ? ['US'] : [],

@@ -110,7 +110,11 @@ function commonNote(fw: DxFramework = 'react'): string {
     "(`dropdown`, `radiogroup`, `select`) REQUIRE an explicit `type`: `validator: { type: 'string', required: true }`. " +
     "(2) `repeater` (array) validators auto-supply `type: 'array'` — supply only the rules, e.g. " +
     '`validator: { required: true, minItems: 1 }`, never `type`. (3) everything else (text, number, date) takes the ' +
-    'loose validator with NO `type`: `validator: { required: true }`.'
+    'loose validator with NO `type`: `validator: { required: true }`. ' +
+    'EVENT HANDLERS — `onChange`/`onLoad`/`onFilter`/`onBlur` (inputs/layouts) and `onClick` (actions) are ' +
+    'FUNCTIONS, never bare strings: return a string to dispatch a host event by that name ' +
+    "(`onChange: () => 'languageChanged'`), or take the event to push live changes " +
+    "(`onChange: (event) => event.update({ path: 'city', options: [...] })`)."
   );
 }
 
