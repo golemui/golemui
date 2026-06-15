@@ -1,3 +1,13 @@
+## 1.0.1 (2026-06-15)
+
+### 🩹 Fixes
+
+- **mcp:** resolve the @golemui type graph in a published install ([#206](https://github.com/golemui/golemui/pull/206))
+
+### ❤️ Thank You
+
+- alberto-golem-ui
+
 # 1.0.0 (2026-06-14)
 
 ### 🚀 Features

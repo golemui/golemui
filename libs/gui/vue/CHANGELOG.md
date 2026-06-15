@@ -1,3 +1,7 @@
+## 1.0.1 (2026-06-15)
+
+This was a version bump only for gui-vue to align it with other projects, there were no code changes.
+
 # 1.0.0 (2026-06-14)
 
 ### 🚀 Features
