@@ -63,11 +63,17 @@ interface ResolveStrategy {
  *  2. Dev/monorepo — packages aren't in `node_modules` (they resolve via tsconfig paths to
  *     source): fall back to mapping each package to the built `dist/libs` `.d.ts`.
  */
-function resolveStrategy(): ResolveStrategy {
+export function resolveStrategy(
+  resolveSpec: (spec: string) => string = (s) => getRequire().resolve(s),
+): ResolveStrategy {
   try {
-    const pj = getRequire().resolve('@golemui/gui-shared/package.json');
-    const [root] = pj.split(/[\\/]node_modules[\\/]/);
-    if (root && root !== pj) return { baseUrl: root };
+    // Resolve the `.` main entry, NOT `@golemui/gui-shared/package.json`: the published
+    // @golemui packages don't list `./package.json` in `exports`, so that subpath throws
+    // `ERR_PACKAGE_PATH_NOT_EXPORTED` and drops every installed consumer to the dev-only
+    // `dist/libs` fallback. The entry is always exported; same baseUrl root.
+    const entry = resolveSpec('@golemui/gui-shared');
+    const [root] = entry.split(/[\\/]node_modules[\\/]/);
+    if (root && root !== entry) return { baseUrl: root };
   } catch {
     // not installed — fall through to the dev/monorepo dist fallback
   }
