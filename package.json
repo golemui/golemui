@@ -59,7 +59,7 @@
     "@angular-devkit/core": "20.3.24",
     "@angular-devkit/schematics": "20.3.24",
     "@angular/build": "20.3.24",
-    "@angular/cli": "20.3.24",
+    "@angular/cli": "22.0.1",
     "@angular/compiler-cli": "20.3.24",
     "@angular/language-service": "20.3.24",
     "@angular/platform-browser-dynamic": "20.3.24",
