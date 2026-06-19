@@ -39,6 +39,12 @@
         "defaultValue": true,
         "props": { "type": "object" }
       },
+      "patternProperties": {
+        "^label\\.[^.]+$": { "$ref": "../common.schema.json#/$defs/localizable" },
+        "^disabled\\.[^.]+$": { "$ref": "../common.schema.json#/$defs/boolOrWhen" },
+        "^readonly\\.[^.]+$": { "$ref": "../common.schema.json#/$defs/boolOrWhen" },
+        "^validator\\.[^.]+$": { "$ref": "../validators.schema.json#/$defs/validator" }
+      },
       "required": ["kind", "type", "path"]
     },
     "customDisplay": {
@@ -61,6 +67,10 @@
         "disabled": { "$ref": "../common.schema.json#/$defs/boolOrWhen" },
         "on": { "$ref": "../common.schema.json#/$defs/on" },
         "props": { "type": "object" }
+      },
+      "patternProperties": {
+        "^label\\.[^.]+$": { "$ref": "../common.schema.json#/$defs/localizable" },
+        "^disabled\\.[^.]+$": { "$ref": "../common.schema.json#/$defs/boolOrWhen" }
       },
       "required": ["kind", "type"]
     },

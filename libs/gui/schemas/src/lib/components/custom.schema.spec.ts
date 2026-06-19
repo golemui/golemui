@@ -84,11 +84,70 @@ describe('Custom widget schema validation', () => {
       expect(isValid).toBe(true);
     });
 
-    it('should accept arbitrary props keys and shapes (loose props)', () => {
+    it('should accept arbitrary props keys and shapes (loose props), including suffixed prop keys', () => {
       const widget = {
         kind: 'display',
         type: 'fancyChart',
-        props: { series: [1, 2, 3], options: { legend: true }, 'data-id': 'x' },
+        props: {
+          series: [1, 2, 3],
+          options: { legend: true },
+          'data-id': 'x',
+          'text.myState': 'Hi',
+        },
+      };
+
+      const isValid = validate(widget);
+      if (!isValid) {
+        specValidationErrorsLogger(validate, widget);
+      }
+      expect(isValid).toBe(true);
+    });
+  });
+
+  describe('State-suffixed root properties', () => {
+    it('should validate a custom input with suffixed label/disabled/readonly/validator', () => {
+      const widget = {
+        kind: 'input',
+        type: 'matTextInput',
+        path: 'user.email',
+        label: 'Email',
+        'label.myState': 'Email (active)',
+        'disabled.myState': { when: '$form.locked === true' },
+        'readonly.myState': true,
+        'validator.myState': { type: 'string', required: true },
+        props: {},
+      };
+
+      const isValid = validate(widget);
+      if (!isValid) {
+        specValidationErrorsLogger(validate, widget);
+      }
+      expect(isValid).toBe(true);
+    });
+
+    it('should validate a custom action with suffixed label/disabled', () => {
+      const widget = {
+        kind: 'action',
+        type: 'matButton',
+        label: 'Send',
+        'label.myState': 'Sending...',
+        'disabled.myState': true,
+        props: {},
+      };
+
+      const isValid = validate(widget);
+      if (!isValid) {
+        specValidationErrorsLogger(validate, widget);
+      }
+      expect(isValid).toBe(true);
+    });
+
+    it('should validate suffixed event handlers via the shared `on` definition', () => {
+      const widget = {
+        kind: 'action',
+        type: 'matButton',
+        on: { click: 'submitForm', 'click.myState': 'cancel' },
+        props: {},
       };
 
       const isValid = validate(widget);
@@ -103,6 +162,12 @@ describe('Custom widget schema validation', () => {
     it('should reject unknown root-level keys (strict root)', () => {
       // `level` belongs inside `props`, not at the root.
       const widget = { kind: 'display', type: 'heading', level: 1, props: { text: 'Hi' } };
+      expect(validate(widget)).toBe(false);
+    });
+
+    it('should reject a suffixed root key on a kind that does not support it', () => {
+      // `display` widgets have no root-level `disabled`, so `disabled.myState` is unevaluated.
+      const widget = { kind: 'display', type: 'heading', 'disabled.myState': true, props: {} };
       expect(validate(widget)).toBe(false);
     });
 
