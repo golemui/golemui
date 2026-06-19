@@ -8,6 +8,7 @@ export { default as buttonSchema } from './lib/components/button.schema.json';
 export { default as calendarSchema } from './lib/components/calendar.schema.json';
 export { default as checkboxSchema } from './lib/components/checkbox.schema.json';
 export { default as currencySchema } from './lib/components/currency.schema.json';
+export { default as customSchema } from './lib/components/custom.schema.json';
 export { default as dateinputSchema } from './lib/components/dateinput.schema.json';
 export { default as datepickerSchema } from './lib/components/datepicker.schema.json';
 export { default as dropdownSchema } from './lib/components/dropdown.schema.json';

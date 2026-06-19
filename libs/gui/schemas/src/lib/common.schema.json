@@ -31,6 +31,38 @@
       "type": "string",
       "description": "Unique identifier for the widget"
     },
+    "knownWidgetTypes": {
+      "description": "Built-in widget `type` identifiers. Used to exclude built-ins from the custom-widget fallback so every widget matches exactly one schema.",
+      "enum": [
+        "accordion",
+        "alert",
+        "button",
+        "calendar",
+        "checkbox",
+        "currency",
+        "dateInput",
+        "datePicker",
+        "dropdown",
+        "flex",
+        "grid",
+        "list",
+        "markdown",
+        "markdownText",
+        "number",
+        "password",
+        "radiogroup",
+        "rangeCalendar",
+        "rangeDateInput",
+        "rangeDatePicker",
+        "repeater",
+        "select",
+        "tabs",
+        "tags",
+        "textarea",
+        "textinput",
+        "toggle"
+      ]
+    },
     "localizable": {
       "description": "A value that can be a plain string or an i18n key object. Use a plain string for static text, or `{key, default, params}` to reference a translation key.",
       "oneOf": [

@@ -122,6 +122,9 @@
           "$ref": "./components/toggle.schema.json"
         },
         {
+          "$ref": "./components/custom.schema.json"
+        },
+        {
           "$ref": "#/$defs/chunkRef"
         }
       ]

@@ -153,11 +153,15 @@ export function formatAjvErrors(
   errors: ErrorObject[] | null | undefined,
   dataRoot?: unknown,
 ): FormattedResult {
-  if (!errors?.length) return { errors: [], warnings: [] };
+  // With a `dataRoot` we always run the per-widget pass, even when ajv reports no errors. The
+  // custom-widget fallback in the form schema makes ajv accept any unknown `type` (including typos
+  // of built-ins), so the targeted per-widget diagnostics (typo suggestions, custom-widget
+  // warnings) are now the only place those are surfaced.
+  if (!errors?.length && dataRoot === undefined) return { errors: [], warnings: [] };
   const collapsed =
     dataRoot !== undefined
-      ? collapseOneOfErrors(errors, dataRoot)
-      : { errors, warnings: [] as FormattedError[] };
+      ? collapseOneOfErrors(errors ?? [], dataRoot)
+      : { errors: errors as ErrorObject[], warnings: [] as FormattedError[] };
   const filtered = collapsed.errors;
   const out: FormattedError[] = [];
   for (const err of filtered) {
