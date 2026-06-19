@@ -9,6 +9,7 @@ import {
   calendarSchema as calendar,
   checkboxSchema as checkbox,
   currencySchema as currency,
+  customSchema as custom,
   dateinputSchema as dateinput,
   datepickerSchema as datepicker,
   dropdownSchema as dropdown,
@@ -43,6 +44,13 @@ export const COMMON_SCHEMA = commonSchema as WidgetSchema;
 export const FORM_SCHEMA = formSchema as WidgetSchema;
 export const LAYOUT_WIDGET_SCHEMA = layoutWidgetSchema as WidgetSchema;
 export const VALIDATORS_SCHEMA = validatorsSchema as WidgetSchema;
+
+/**
+ * Fallback schema for user-registered custom components (any `type` not in COMPONENT_SCHEMAS).
+ * Referenced by `form.schema.json`'s `formWidget` oneOf, so it must be registered for the form
+ * validator to compile. Kept out of COMPONENT_SCHEMAS because it has no single `type` const.
+ */
+export const CUSTOM_SCHEMA = custom as WidgetSchema;
 
 /**
  * Component schemas, keyed by their widget `type` constant (the value of `properties.type.const`
@@ -83,5 +91,6 @@ export const ALL_SCHEMAS: WidgetSchema[] = [
   VALIDATORS_SCHEMA,
   LAYOUT_WIDGET_SCHEMA,
   ...Object.values(COMPONENT_SCHEMAS),
+  CUSTOM_SCHEMA,
   FORM_SCHEMA,
 ];
