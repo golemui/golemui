@@ -11,6 +11,7 @@ gui-toggle {
     margin-bottom: 0;
     width: auto;
     min-width: auto;
+    height: var(--gui-toggle-height);
 
     &__container {
       display: flex;
@@ -41,6 +42,8 @@ gui-toggle {
     min-width: var(--gui-toggle-width);
     min-height: var(--gui-toggle-height);
     align-self: start;
+    /* Correct top position in comparison with checkboxes that have 16px height instead of 20px */
+    margin-top: -2px;
 
     /* Hide default HTML checkbox */
     input {
