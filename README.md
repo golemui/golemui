@@ -4,9 +4,7 @@
   </a>
 </p>
 
-<p align="center"><strong>The Declarative Form Engine</strong></p>
-
-<p align="center">JSON forms with a DX layer on top {gui.}. Best of both worlds.</p>
+<p align="center">Declarative, JSON-based forms for React, Angular, Lit, Vue, and vanilla JS.</p>
 
 <p align="center">
   <a href="https://golemui.com/integration/react/" title="React"><img alt="React" src="https://cdn.simpleicons.org/react/61DAFB" height="44"></a>
@@ -16,6 +14,8 @@
   <a href="https://golemui.com/integration/lit/" title="Lit"><img alt="Lit" src="https://cdn.simpleicons.org/lit/324FFF" height="44"></a>
   &nbsp;&nbsp;&nbsp;&nbsp;
   <a href="https://golemui.com/integration/vue/" title="Vue"><img alt="Vue" src="https://cdn.simpleicons.org/vuedotjs/4FC08D" height="44"></a>
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <a href="https://golemui.com/integration/overview/" title="Vanilla JS"><img alt="JavaScript" src="https://cdn.simpleicons.org/javascript/F7DF1E" height="44"></a>
 </p>
 
 <p align="center">
@@ -32,14 +32,54 @@
 
 ---
 
-## The New Paradigm for forms
+## Overview
 
-Underneath, every form is a serializable JSON schema. Portable, storable, framework-independent. On top, `{gui.}` is your DX layer: a typed, autocompletable builder that constructs that schema. You write `{gui.}`, you get JSON. **Best of both worlds: the portability of data, the ergonomics of typed code.**
+Underneath every form is a serializable JSON definition. Author it directly as schema-validated JSON, or with the typed `gui` builder API.
 
-```ts
+- One definition renders in React, Angular, Lit, Vue, or vanilla JS.
+- Validation, conditional fields, i18n, and accessibility come from the schema and runtime.
+- The output is plain data: store it, transfer it, diff it, generate it.
+
+## Installation
+
+Install the four `@golemui/*` packages for your framework. The versions are published together; use matching versions.
+
+```bash
+# React
+npm i @golemui/core @golemui/react @golemui/gui-react @golemui/gui-shared
+
+# Angular
+npm i @golemui/core @golemui/angular @golemui/gui-angular @golemui/gui-shared
+
+# Lit
+npm i @golemui/core @golemui/lit @golemui/gui-lit @golemui/gui-shared
+
+# Vue
+npm i @golemui/core @golemui/vue @golemui/gui-vue @golemui/gui-shared
+
+# Vanilla JS (web component)
+npm i @golemui/core @golemui/lit @golemui/gui-lit @golemui/gui-shared
+```
+
+Import the component styles once, anywhere in your app entry:
+
+```scss
+@import '@golemui/gui-components/index.css';
+```
+
+Full walkthrough at [golemui.com/getting-started/installation](https://golemui.com/getting-started/installation/).
+
+## Quick start
+
+Define a form as an array of `gui` builders and pass it to the framework component (React shown):
+
+```tsx
+import '@golemui/gui-components/index.css';
+import type { FormSubmitEvent } from '@golemui/core';
+import { GuiForm } from '@golemui/gui-react';
 import { gui } from '@golemui/gui-shared';
 
-export const signupForm = [
+const formDef = [
   gui.inputs.textInput('email', {
     label: 'Email',
     validator: { type: 'string', required: true, format: 'email' },
@@ -48,100 +88,94 @@ export const signupForm = [
     label: 'Password',
     validator: { type: 'string', required: true, minLength: 8 },
   }),
-  gui.inputs.dropdown('accountType', {
-    label: 'Account type',
-    items: ['Free', 'Pro', 'Enterprise'],
-    defaultValue: 'Free',
-    validator: { type: 'string', required: true },
+  gui.inputs.checkbox('newsletter', {
+    label: 'Subscribe to the newsletter',
+    include: { when: '!!$form.email' },
   }),
-  gui.inputs.numberInput('seats', {
-    label: 'Seats',
-    validator: { type: 'number', required: true, minimum: 5, maximum: 1000 },
-    include: { when: '$form.accountType === "Enterprise"' },
+  gui.actions.button({
+    label: 'Sign up',
+    actionType: 'submit',
+    disabled: { when: '$formIsInvalid' },
   }),
-  gui.inputs.checkbox('terms', {
-    label: 'I accept the terms of service',
-    validator: { type: 'boolean', const: true },
-  }),
-  gui.actions.button({ label: 'Sign up', onClick: 'submit' }),
 ];
+
+function handleSubmit(event: FormSubmitEvent) {
+  console.log(event.data);
+}
+
+export function App() {
+  return <GuiForm config={{ formDef }} formSubmit={handleSubmit} />;
+}
 ```
 
-Conditional fields, validation, accessibility, and i18n come built in. The same schema renders in React, Angular, Lit, or Vue. No `useState`, no `register`, no `FormControl`.
+The submit button stays disabled while the form is invalid (`$formIsInvalid` is a built-in validity flag); on submit, `formSubmit` receives the collected `data`.
 
-[How it works →](https://golemui.com/form-definition/how-it-works/)
+The same `formDef` value renders in every supported framework. See [Integrations](https://golemui.com/integration/overview/) for per-framework setup, and the starter templates under [`templates/`](templates/) for runnable examples.
 
-## Save tokens. Breeze through reviews.
+## Core concepts
 
-`{gui.}` is small enough for your agent to emit cleanly, and small enough for your team to review at a glance. **Same code, both jobs.**
+**Form definition.** A form is an array of nodes (or a single node). Each node is either a `gui` builder result or a render function. The output is serializable JSON, so a definition can be stored, transferred, and rendered later.
 
-|                         | Lines | Branches | Tokens |
-| ----------------------- | ----: | -------: | -----: |
-| React + React Hook Form |    76 |        8 |    622 |
-| `{gui.}`                |    35 |        0 |    366 |
+**The `gui` builder.** Exported from `@golemui/gui-shared`, grouped into namespaces:
 
-The signup form above, measured. Tokens counted with `cl100k_base`.
+| Namespace       | Purpose                                               | Examples                                                                                                                                                                       |
+| --------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `gui.inputs`    | Field widgets                                         | `textInput`, `numberInput`, `password`, `textarea`, `checkbox`, `dropdown`, `select`, `radiogroup`, `currency`, `tags`, `datePicker`, `calendar`, `repeater`, `list`, `custom` |
+| `gui.actions`   | Buttons and custom actions                            | `button`, `custom`                                                                                                                                                             |
+| `gui.displays`  | Non-input content                                     | `display`, `alert`, `markdownText`, `custom`                                                                                                                                   |
+| `gui.layouts`   | Containers                                            | `flex`, `grid`, `tabs`, `accordion`, `custom`                                                                                                                                  |
+| `gui.selectors` | Select and update widgets by type, uid, tag, or state | -                                                                                                                                                                              |
 
-## Install
-
-```bash
-# React → https://golemui.com/integration/react/
-npm i @golemui/gui-react
-
-# Angular → https://golemui.com/integration/angular/
-npm i @golemui/gui-angular
-
-# Lit → https://golemui.com/integration/lit/
-npm i @golemui/gui-lit
-
-# Vue → https://golemui.com/integration/vue/
-npm i @golemui/gui-vue
-```
-
-Then import the styles once:
-
-```scss
-@import '@golemui/gui-components/index.css';
-```
-
-Full walkthrough at [golemui.com/getting-started/installation](https://golemui.com/getting-started/installation/).
-
-Then use named imports:
+**Conditional fields.** Widgets accept `include` / `exclude` with a reactive expression over form data:
 
 ```ts
-import { gui } from '@golemui/gui-shared'; // primary API
-import type { GuiFormInitConfig } from '@golemui/gui-shared'; // types
-import { GuiForm } from '@golemui/gui-react'; // framework component
+gui.inputs.radiogroup('city', { label: 'City', include: { when: '!!$form.country' } });
+gui.actions.button({ label: 'Reset', include: { when: '$form.debug === true' } });
 ```
 
-> Do not import from `@golemui/*/internals` — those paths are internal and unstable.
+`$form.<path>` reads the current form data; the expression is evaluated at runtime.
 
-## Your forms can live anywhere
+**Rendering per framework.** Every adapter takes the definition through a `config` prop and emits a `formSubmit` event:
 
-- **Persist.** Store form definitions in any data store. Version them. Diff them. Roll them back. The same way you treat content.
-- **Ship.** Marketers and ops teams can publish, update, and A/B test forms. No deploys, no engineering tickets.
-- **Generate.** Ask a model for a form schema and render it instantly. Auto-build flows from a prompt, a doc, or a database column list.
+| Framework | Import                                                 | Element                                                       |
+| --------- | ------------------------------------------------------ | ------------------------------------------------------------- |
+| React     | `import { GuiForm } from '@golemui/gui-react'`         | `<GuiForm config={config} formSubmit={handler} />`            |
+| Vue       | `import { GuiForm } from '@golemui/gui-vue'`           | `<GuiForm :config="config" @formSubmit="handler" />`          |
+| Angular   | `import { FormComponent } from '@golemui/gui-angular'` | `<gui-form [config]="config" (formSubmit)="handler($event)">` |
+| Lit       | `import '@golemui/gui-lit'`                            | `<gui-form .config=${config} @formSubmit=${handler}>`         |
 
-## Three things every form needs. Already done.
+For vanilla JS, import `@golemui/gui-lit` to register the `<gui-form>` custom element, then set `el.config = config` and listen for the `formSubmit` event (`e.detail` is the `FormSubmitEvent`).
 
-- **Accessibility.** WCAG 2.1 AA, full keyboard navigation, semantic HTML, ARIA managed for you. Errors wired to `aria-describedby`. Screen-reader friendly out of the gate.
-- **Internationalization.** Bring your own i18n library (i18next, Lingui, custom) through a simple adapter. Translate labels, hints, validators. Switch languages live. Automatic RTL. [→ docs](https://golemui.com/features/i18n/)
-- **Validation.** Schema-driven, [`@standard-schema/spec`](https://standardschema.dev/) compliant. Built-in rules plus your own custom validators. Localized error messages with smart timing. [→ docs](https://golemui.com/features/validators/)
+## Features
 
-## Built for speed
+- **Validation.** [`@standard-schema/spec`](https://standardschema.dev/) compliant. Built-in `string`, `number`, `boolean`, `array`, and `custom` validators with rules such as `required`, `minLength`, `format`, `minimum`/`maximum`, and `const`. Error messages are localizable, and timing is configurable via `validateOn` (`change`, `blur`, `submit`, `eager`). [Docs](https://golemui.com/features/validators/)
+- **Internationalization.** Provide an `I18nTranslator` adapter (i18next, Lingui, or your own) through `localization`. Labels, hints, and validator messages are translatable, with live language switching and automatic RTL. [Docs](https://golemui.com/features/i18n/)
+- **Accessibility.** Native form elements with ARIA wiring managed for you: `aria-describedby` for hints, `aria-invalid` and `aria-errormessage` on errors, plus keyboard navigation on interactive widgets.
+- **Theming.** Styling is driven by CSS custom properties (design tokens) from a single stylesheet. Override tokens, or supply your own widget components through `customWidgetLoaders`. [Docs](https://golemui.com/styling/theming/)
+- **AI assistants (MCP).** `@golemui/gui-mcp` ships a `golemui-mcp` Model Context Protocol server with tools to validate form definitions, generate them from JSON Schema or OpenAPI, and type-check `gui.*` code.
 
-|    Library Weight    |     LCP     | Lighthouse |
-| :------------------: | :---------: | :--------: |
-| **14.32 kB** gzipped | **0.19 ms** |  **100**   |
+## Packages
 
-## Your brand. Your rules.
+| Package                                             | Description                                                                  |
+| --------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `@golemui/gui-react` / `-angular` / `-lit` / `-vue` | Framework form component and bindings                                        |
+| `@golemui/gui-shared`                               | The `gui` builder and form definition types (`GuiFormInitConfig`)            |
+| `@golemui/gui-components`                           | Default widget components and the stylesheet (`index.css`)                   |
+| `@golemui/core`                                     | Framework-agnostic form runtime and shared types (`FormEvent`, `ValidateOn`) |
+| `@golemui/gui-validators`                           | Validation schemas (`@standard-schema/spec`)                                 |
+| `@golemui/gui-schemas`                              | JSON Schemas for form definitions                                            |
+| `@golemui/gui-mcp`                                  | MCP server for coding assistants                                             |
 
-Design tokens, custom widgets, full theming control. Bring your own components when you need them; default widgets when you don't. [Theming guide →](https://golemui.com/styling/theming/)
+Import only from a package's public entry points. The `@golemui/*/internals` paths are internal and unstable.
 
 ## Documentation
 
 [**golemui.com**](https://golemui.com) for full docs, API reference, per-framework guides, examples, and migration paths.
 
-## Status
+## Contributing
 
-Approaching v1.0. Public launch at [DevBcn 2026](https://www.devbcn.com/) (16–17 June 2026, Barcelona).
+See [CONTRIBUTING.md](CONTRIBUTING.md). The repository is an Nx monorepo; tests run on Vitest, and pull requests follow Conventional Commits.
+
+## License
+
+[MIT](LICENSE)
