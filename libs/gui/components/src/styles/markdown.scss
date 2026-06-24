@@ -123,6 +123,10 @@ gui-markdown {
           fill: var(--gui-intent-primary-text);
         }
       }
+
+      &--disabled {
+        pointer-events: none;
+      }
     }
 
     ul {

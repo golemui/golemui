@@ -389,6 +389,7 @@ export class GuiMarkdown extends LitElement {
   private toolbarBtnClass(format?: string) {
     return classMap({
       'gui-markdown__toolbar-button': true,
+      'gui-markdown__toolbar-button--disabled': this.disabled === true || this.readOnly === true,
       'gui-markdown__toolbar-button--active': !!format && !!this.activeFormats[format],
     });
   }
