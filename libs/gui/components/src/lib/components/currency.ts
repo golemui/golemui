@@ -166,12 +166,18 @@ export class GuiCurrency extends LitElement {
     if (value === '' || value === undefined || value === null || isNaN(value as number)) return '';
 
     try {
+      // Resolve max first, then clamp min so it never exceeds max — otherwise
+      // e.g. `maximumFractionDigits: 0` with the default min of 2 would make
+      // Intl.NumberFormat throw "maximumFractionDigits value is out of range".
+      const maximumFractionDigits =
+        this.maximumFractionDigits ?? Math.max(this.minimumFractionDigits ?? 2, 2);
+      const minimumFractionDigits = Math.min(this.minimumFractionDigits ?? 2, maximumFractionDigits);
+
       return new Intl.NumberFormat(this.localeId ?? 'en', {
         style: 'currency',
         currency: this.currency ?? 'USD',
-        maximumFractionDigits:
-          this.maximumFractionDigits ?? Math.max(this.minimumFractionDigits ?? 2, 2),
-        minimumFractionDigits: this.minimumFractionDigits ?? 2,
+        maximumFractionDigits,
+        minimumFractionDigits,
       }).format(value as number);
     } catch (e) {
       console.warn('Invalid locale or currency', e);
