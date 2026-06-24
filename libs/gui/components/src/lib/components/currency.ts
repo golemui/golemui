@@ -136,9 +136,10 @@ export class GuiCurrency extends LitElement {
       const target = event.target as HTMLInputElement;
       this.displayValue = this.formatCurrency(target.valueAsNumber);
 
+      const value = target.valueAsNumber;
       this.dispatchEvent(
         new CustomEvent('input', {
-          detail: { value: target.valueAsNumber },
+          detail: { value: Number.isNaN(value) ? undefined : value },
           bubbles: true,
           composed: true,
         }),

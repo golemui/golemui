@@ -195,9 +195,10 @@ export class GuiNumber extends LitElement {
 
     if (!this.readOnly) {
       const target = event.target as HTMLInputElement;
+      const value = target.valueAsNumber;
       this.dispatchEvent(
         new CustomEvent('input', {
-          detail: { value: target.valueAsNumber },
+          detail: { value: Number.isNaN(value) ? undefined : value },
           bubbles: true,
           composed: true,
         }),
