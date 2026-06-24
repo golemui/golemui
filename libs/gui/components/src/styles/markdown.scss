@@ -74,7 +74,6 @@ gui-markdown {
   }
 
   .gui-markdown__toolbar {
-    width: calc(100% - (var(--gui-space-2) * 2));
     display: flex;
     justify-content: space-between;
     padding: var(--gui-space-1) var(--gui-space-2) var(--gui-space-1);
