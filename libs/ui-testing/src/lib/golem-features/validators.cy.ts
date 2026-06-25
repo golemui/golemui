@@ -334,7 +334,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
         cy.get('[data-cy="requiredNumber_number"]').type('1{backspace}');
         cy.get('[data-cy="requiredNumber_validator-errors"]').should('exist');
         cy.get('[data-cy="requiredNumber_validator-error"]').contains(
-          'Invalid input: expected number, received NaN',
+          'Invalid input: expected number, received undefined',
         );
 
         cy.get('[data-cy="requiredNumber_number"]').type('1');

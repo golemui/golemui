@@ -10,6 +10,7 @@ gui-currency {
       font-size: var(--gui-font-sm);
       top: 13px;
       inset-inline-start: 13px;
+      pointer-events: none;
 
       transition: all 0.2s ease-in-out;
 

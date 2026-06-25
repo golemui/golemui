@@ -1,5 +1,6 @@
 gui-number {
   display: inline-block;
+  width: 100%;
 
   .gui-widget {
     display: inline-flex;
@@ -55,6 +56,7 @@ gui-number {
       padding-bottom: 0;
       font-size: 20px;
       width: 100%;
+      box-sizing: content-box;
       max-width: 80px;
       height: var(--gui-widget-size);
       font-variant-numeric: tabular-nums;
