@@ -126,6 +126,7 @@ export class GuiTextarea extends LitElement {
           ?readonly=${templateData.readonly}
           placeholder=${templateData.placeholder || nothing}
           autocomplete=${this.autocomplete || nothing}
+          .value=${this.value || ''}
           @input=${this.valueChanged}
           @blur=${this.onBlur}
         ></textarea>
