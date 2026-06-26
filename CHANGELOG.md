@@ -1,3 +1,16 @@
+## 1.0.2 (2026-06-26)
+
+### 🩹 Fixes
+
+- Update textarea value on set programmatically ([#211](https://github.com/golemui/golemui/pull/211))
+- **gui-components:** styling issues ([#212](https://github.com/golemui/golemui/pull/212))
+- **schemas:** add custom widget fallback to the JSON form schema ([#208](https://github.com/golemui/golemui/pull/208))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
 ## 1.0.1 (2026-06-15)
 
 ### 🩹 Fixes

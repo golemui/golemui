@@ -1,3 +1,15 @@
+## 1.0.2 (2026-06-26)
+
+### 🩹 Fixes
+
+- **gui-components:** styling issues ([#212](https://github.com/golemui/golemui/pull/212))
+- Update textarea value on set programmatically ([#211](https://github.com/golemui/golemui/pull/211))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
 ## 1.0.1 (2026-06-15)
 
 This was a version bump only for gui-components to align it with other projects, there were no code changes.

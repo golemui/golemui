@@ -1,3 +1,13 @@
+## 1.0.2 (2026-06-26)
+
+### 🩹 Fixes
+
+- **schemas:** add custom widget fallback to the JSON form schema ([#208](https://github.com/golemui/golemui/pull/208))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+
 ## 1.0.1 (2026-06-15)
 
 ### 🩹 Fixes
