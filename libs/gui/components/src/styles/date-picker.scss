@@ -85,7 +85,7 @@
     }
 
     @container gui-date-picker-widget (max-width: 540px) {
-      gui-calendar {
+      .gui-widget gui-calendar {
         width: 100%;
       }
     }

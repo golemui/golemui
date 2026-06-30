@@ -33,7 +33,7 @@
     }
 
     @container gui-range-date-picker-widget (max-width: 540px) {
-      gui-range-calendar {
+      .gui-widget gui-range-calendar {
         width: 100%;
       }
     }
