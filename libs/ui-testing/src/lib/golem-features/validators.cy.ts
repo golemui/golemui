@@ -41,6 +41,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
             ],
           }),
         });
+        cy.get('[data-cy="requiredString_textinput"]').should('exist');
         cy.get('[data-cy="testButton_button"]').click();
         cy.get('[data-cy="requiredString_validator-errors"]').should('exist');
         cy.get('[data-cy="requiredString_validator-error"]').contains(
