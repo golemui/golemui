@@ -199,15 +199,13 @@ export function Dropdown(widgetInstance: WithWidget) {
         const hasSearchFields = searchFields.length > 0;
         const items = templateData.items || [];
         const filteredItems = items.filter((item: any) => {
-          const keys = Object.keys(item);
+          const isPrimitiveValue = item === null || typeof item !== 'object';
 
-          // If it's a primitive value, we search by value
-          const isPrimitiveValue = !keys.length;
           if (isPrimitiveValue) {
-            return item.toString().toLowerCase().includes(filterValue.toLowerCase());
+            return item != null && item.toString().toLowerCase().includes(filterValue.toLowerCase());
           }
 
-          // Otherwise, we search by object
+          const keys = Object.keys(item);
           const reduceFunc = (acc: boolean, prop: string) =>
             acc || item[prop].toString().toLowerCase().includes(filterValue.toLowerCase());
 

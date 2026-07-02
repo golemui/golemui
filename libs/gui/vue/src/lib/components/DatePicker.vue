@@ -23,8 +23,7 @@ const {
 const required = computed(() => (templateData.value.validator as Validator)?.required);
 const showErrors = computed(() => isTouched.value && errors.value && errors.value.length > 0);
 
-// Default to the same values as the Lit element's class-field initializers so
-// we never pass undefined or '' (which Intl.DateTimeFormat rejects with a RangeError).
+// Default to the same values as the Lit element's class-field initializers
 const dayFormat = computed(() => templateData.value.dayFormat || 'numeric');
 const weekdayFormat = computed(() => templateData.value.weekdayFormat || 'narrow');
 const monthFormat = computed(() => templateData.value.monthFormat || 'long');
@@ -115,6 +114,9 @@ const onFocusOut = (event: FocusEvent) => {
 
 const toggleCalendar = (event: MouseEvent) => {
   const target = event.target as HTMLElement;
+
+  if (target.closest('.gui-calendar__day-button')) return;
+
   const isInputClick = target.closest('.gui-date-input__part');
   const isCalendarClick = target.closest('gui-calendar');
   if (isInputClick || isCalendarClick) {

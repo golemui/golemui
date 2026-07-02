@@ -16,6 +16,25 @@ export function toISODateString(date: Date): string {
 }
 
 /**
+ * Parses an ISO 8601 date string (YYYY-MM-DD) into a Date at local midnight.
+ *
+ * `new Date('YYYY-MM-DD')` interprets date-only strings as UTC midnight, so in
+ * timezones behind UTC the resulting Date falls on the previous local day.
+ * Calendar values are timezone-less calendar days, so they must be parsed in
+ * local time. Strings that are not date-only fall back to native parsing.
+ *
+ * @param {string} value - The ISO date string to parse.
+ * @return {Date} The parsed Date anchored to the local timezone.
+ */
+export function parseISODateString(value: string): Date {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  if (match) {
+    return new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+  }
+  return new Date(value);
+}
+
+/**
  * Determines whether the given date is today's date.
  *
  * @param {Date} date - The date to be checked.
@@ -184,8 +203,8 @@ export function mergeDateRanges(ranges: DateRange[]): DateRange[] {
   // Sort dates by "start"
   const sorted = ranges
     .map((r) => ({
-      start: new Date(r.start).getTime(),
-      end: new Date(r.end ?? r.start).getTime(),
+      start: parseISODateString(r.start).getTime(),
+      end: parseISODateString(r.end ?? r.start).getTime(),
     }))
     .sort((a, b) => a.start - b.start);
 

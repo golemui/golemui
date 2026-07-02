@@ -2,7 +2,13 @@ import { html, LitElement, nothing, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { repeat } from 'lit-html/directives/repeat.js';
-import { getMonthYearParts, getWeekdayLabels, toISODateString, weekDaysOrder } from '../utils/date';
+import {
+  getMonthYearParts,
+  getWeekdayLabels,
+  parseISODateString,
+  toISODateString,
+  weekDaysOrder,
+} from '../utils/date';
 import { addErrors, addLabel } from '../utils/templates';
 import type { DateRange } from '@golemui/gui-shared/internals';
 
@@ -389,11 +395,11 @@ export abstract class AbstractCalendar extends LitElement {
   }
 
   protected get _effectiveMinYear(): number {
-    return this.minDate ? new Date(this.minDate).getFullYear() : 1900;
+    return this.minDate ? parseISODateString(this.minDate).getFullYear() : 1900;
   }
 
   protected get _effectiveMaxYear(): number {
-    return this.maxDate ? new Date(this.maxDate).getFullYear() : 2099;
+    return this.maxDate ? parseISODateString(this.maxDate).getFullYear() : 2099;
   }
 
   protected get _yearList(): number[] {

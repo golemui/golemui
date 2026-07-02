@@ -5,7 +5,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { live } from 'lit/directives/live.js';
 import { GUIAriaController } from '../controllers/aria.controller';
-import { toISODateString } from '../utils/date';
+import { parseISODateString, toISODateString } from '../utils/date';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 
 @customElement('gui-date')
@@ -178,7 +178,7 @@ export class GuiDate extends LitElement {
       this._year = '';
       return;
     }
-    const date = new Date(isoValue);
+    const date = parseISODateString(isoValue);
     if (!isNaN(date.getTime())) {
       this._day = date.getDate().toString().padStart(2, '0');
       this._month = (date.getMonth() + 1).toString().padStart(2, '0');
