@@ -19,4 +19,8 @@ export const buildRendererTab = (render: (api: any) => unknown) =>
       placeholder: 'Type to see the renderer above react live',
       hint: 'The renderer reads $form.rendererClientName and re-renders on every keystroke.',
     }),
+    gui.inputs.booleanInput('registerMode', (params) => ({
+      label: params.$form.registerMode ? 'Switch to login' : 'Switch to register',
+      hint: 'Runtime functions can change also your props.'
+    })),
   ]);

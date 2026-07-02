@@ -337,7 +337,13 @@ const functionWidgetDecoder: Decoder<FunctionWidget<string>> = new Decoder((json
   const jsonTypeof = typeof json;
   if (jsonTypeof === 'function') {
     const fnWidget = json as FunctionWidget<string>;
-    const widget = fnWidget(undefined);
+    // Widget functions expect an empty object for `$form`, otherwise the evaluation crashes
+    const widget = fnWidget({
+      $form: {},
+      errors: undefined,
+      touched: undefined,
+      translate: undefined,
+    });
     fnWidget.uid = widget.uid || shortUUID();
     fnWidget.type = widget.type;
     fnWidget.path = (widget as InputWidget<unknown>).path; // this could be undefined, and it's ok.

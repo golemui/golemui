@@ -9,20 +9,8 @@ import {
 import { type MergeResult } from '../../core/dx.domain';
 import { type BuildWidgetContext } from '../../core/itemTypeRegistry';
 import { defineShortcutType } from '../../core/defineShortcutType';
+import { withForm } from '../../core/withForm';
 import { type DisplayDecorator, type DisplayEntry, type GslDisplaysConfig } from './display.domain';
-
-// Render runs during the build walk before form data exists; the FunctionWidgetParams contract
-// guarantees `$form` is an object, so normalize it to at least `{}` — a render reading
-// `params.$form.field` must get `undefined`, not crash.
-function withForm(params?: FunctionWidgetParams<any>): FunctionWidgetParams<any> {
-  return {
-    errors: undefined,
-    touched: undefined,
-    translate: undefined,
-    ...(params ?? {}),
-    $form: params?.$form ?? {},
-  };
-}
 
 function mapToWidget<StateKeys extends UiState = never, FormData extends Record<string, any> = any>(
   def: DisplayDecorator,

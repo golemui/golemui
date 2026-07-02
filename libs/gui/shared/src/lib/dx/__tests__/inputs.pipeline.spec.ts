@@ -108,6 +108,23 @@ describe('DX Pipeline — Inputs', () => {
       expect(withErrors.label).toBe('Fix!');
       expect(withoutErrors.label).toBe('Msg');
     });
+
+    // The decode probe calls function widgets before form data exists; the pipeline
+    // must normalize params so an unguarded `$form.field` read gets undefined, not a crash.
+    it('resolves a callback reading `$form.field` without optional chaining when params carry no $form', () => {
+      const result = processDx(
+        _guiBooleanInput('agreed', ({ $form }) => ({
+          label: $form.rtlMode ? 'RTL' : 'LTR',
+        })),
+      );
+
+      const rawChild = getRawChild(result, 0);
+      expect(typeof rawChild).toBe('function');
+
+      const resolved = resolveDynamic(rawChild) as { label?: string; path?: string };
+      expect(resolved.label).toBe('LTR');
+      expect(resolved.path).toBe('agreed');
+    });
   });
 
   describe('Validators', () => {
