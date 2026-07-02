@@ -106,9 +106,8 @@ describe('initialize - undeclared state reference diagnostic', () => {
   });
 });
 
-// The decoder probes function widgets once (before any form data exists) to extract
-// uid/type/path. The probe must honor the FunctionWidgetParams contract ($form is
-// always an object) so unguarded `$form.field` reads return undefined, not crash.
+// FunctionWidgetParams contract says ($form is always an object) check that
+// `$form.field` reads return undefined, not crash because `$form` is `undefined`.
 describe('initialize - function widget decode probe', () => {
   const init = (formDef: Record<string, any>) =>
     initialize(createInitialState('en-US'), {

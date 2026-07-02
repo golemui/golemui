@@ -337,10 +337,7 @@ const functionWidgetDecoder: Decoder<FunctionWidget<string>> = new Decoder((json
   const jsonTypeof = typeof json;
   if (jsonTypeof === 'function') {
     const fnWidget = json as FunctionWidget<string>;
-    // Probe call to extract uid/type/path before any form data exists; the
-    // FunctionWidgetParams contract guarantees `$form` is an object, so pass at
-    // least `{}` — a widget function reading `$form.field` must get `undefined`,
-    // not crash.
+    // Widget functions expect an empty object for `$form`, otherwise the evaluation crashes
     const widget = fnWidget({
       $form: {},
       errors: undefined,
