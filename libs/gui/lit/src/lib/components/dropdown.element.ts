@@ -192,13 +192,14 @@ export class DropdownElement extends LitElement implements WithWidget {
       const hasSearchFields = searchFields.length > 0;
       const items = templateData.items || [];
       const filteredItems = items.filter((item: any) => {
-        const keys = Object.keys(item);
-
-        // If it's a primitive value, we search by value
-        const isPrimitiveValue = !keys.length;
+        // If it's a primitive value, we search by value. Note: Object.keys on a
+        // string returns its character indices, so check the type instead
+        const isPrimitiveValue = item === null || typeof item !== 'object';
         if (isPrimitiveValue) {
-          return item.toString().toLowerCase().includes(filterValue.toLowerCase());
+          return item != null && item.toString().toLowerCase().includes(filterValue.toLowerCase());
         }
+
+        const keys = Object.keys(item);
 
         // Otherwise, we search by object
         const reduceFunc = (acc: boolean, prop: string) =>

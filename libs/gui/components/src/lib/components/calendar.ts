@@ -6,6 +6,7 @@ import {
   isDateInVisibleMonths,
   isSameDay,
   isToday,
+  parseISODateString,
   toISODateString,
 } from '../utils/date';
 import { AbstractCalendar } from './abstract-calendar';
@@ -36,7 +37,7 @@ export class GuiCalendar extends AbstractCalendar {
   override willUpdate(changedProperties: PropertyValues): void {
     if (changedProperties.has('value')) {
       if (this.value) {
-        const date = new Date(this.value);
+        const date = parseISODateString(this.value);
         if (
           !isNaN(date.getTime()) &&
           !isDateInVisibleMonths(date, this._currentDate, this.numberOfMonths ?? 1)
@@ -63,7 +64,7 @@ export class GuiCalendar extends AbstractCalendar {
         class=${classMap(classes)}
         tabindex=${day.isFocusable ? 0 : -1}
         ?disabled=${!day.isCurrentMonth || day.isDisabled}
-        data-date=${day.date.toISOString()}
+        data-date=${toISODateString(day.date)}
         @click=${() => this.selectDate(day)}
         @keydown=${(e: KeyboardEvent) => this.handleKeydown(e, day)}
         aria-selected=${day.isSelected}
@@ -85,7 +86,7 @@ export class GuiCalendar extends AbstractCalendar {
     let days = rawDates.map((date) => {
       const isCurrentMonth = date.getMonth() === targetMonth;
       const isDisabled = this.isDisabled(date);
-      const isSelected = !!this.value && isSameDay(date, new Date(this.value));
+      const isSelected = !!this.value && isSameDay(date, parseISODateString(this.value));
       const isTodayDate = isToday(date);
       const isFocusable = (isSelected || isTodayDate) && isCurrentMonth;
 
@@ -109,7 +110,7 @@ export class GuiCalendar extends AbstractCalendar {
     }
 
     if (offset === 0 && !days.some((d) => d.isFocusable)) {
-      const referenceDate = this.value ? new Date(this.value) : new Date();
+      const referenceDate = this.value ? parseISODateString(this.value) : new Date();
       if (!isDateInVisibleMonths(referenceDate, this._currentDate, this.numberOfMonths ?? 1)) {
         const firstDay = days.find((d) => d.isCurrentMonth && !d.isDisabled);
         if (firstDay) firstDay.isFocusable = true;

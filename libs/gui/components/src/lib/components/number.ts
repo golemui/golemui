@@ -2,6 +2,7 @@ import { html, LitElement, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
+import { blockNonNumericInput, blockNonNumericKeys } from '../utils/numeric';
 import type { NumberinputProps } from '@golemui/gui-shared/internals';
 import { styleMap } from 'lit-html/directives/style-map.js';
 
@@ -104,6 +105,7 @@ export class GuiNumber extends LitElement {
           placeholder=${this.placeholder || nothing}
           autocomplete=${this.autocomplete || nothing}
           @input=${this.valueChanged}
+          @beforeinput=${blockNonNumericInput}
           @keydown=${this.keyDown}
           @blur=${this.onBlur}
         />
@@ -127,6 +129,7 @@ export class GuiNumber extends LitElement {
 
   keyDown(event: KeyboardEvent) {
     event.stopPropagation();
+    blockNonNumericKeys(event);
 
     switch (event.key) {
       case 'ArrowUp':

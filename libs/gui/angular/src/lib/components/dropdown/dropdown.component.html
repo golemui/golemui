@@ -19,6 +19,7 @@
     type="text"
     class="gui-widget-input"
     [id]="widget.uid"
+    [attr.data-cy]="widget.uid + '_textinput'"
     [required]="templateData.validator?.required"
     [disabled]="templateData.disabled"
     [readonly]="templateData.readonly"

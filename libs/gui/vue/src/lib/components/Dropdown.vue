@@ -196,11 +196,12 @@ const filterItems = (filterValue: string) => {
     const hasSearchFields = searchFields.length > 0;
     const items = templateData.value.items || [];
     const filtered = items.filter((item: any) => {
-      const keys = Object.keys(item);
-      const isPrimitive = !keys.length;
+      // Object.keys on a string returns its character indices, so check the type instead
+      const isPrimitive = item === null || typeof item !== 'object';
       if (isPrimitive) {
-        return item.toString().toLowerCase().includes(filterValue.toLowerCase());
+        return item != null && item.toString().toLowerCase().includes(filterValue.toLowerCase());
       }
+      const keys = Object.keys(item);
       const reduceFn = (acc: boolean, prop: string) =>
         acc || item[prop].toString().toLowerCase().includes(filterValue.toLowerCase());
       return hasSearchFields

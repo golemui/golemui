@@ -4,6 +4,7 @@ import { customElement, property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addIcon, addLabel, type ControlTemplateData } from '../utils/templates';
+import { blockNonNumericInput, blockNonNumericKeys } from '../utils/numeric';
 
 @customElement('gui-currency')
 export class GuiCurrency extends LitElement {
@@ -110,6 +111,8 @@ export class GuiCurrency extends LitElement {
           placeholder=${this.placeholder || nothing}
           autocomplete=${this.autocomplete || nothing}
           @input=${this.handleInput}
+          @beforeinput=${blockNonNumericInput}
+          @keydown=${blockNonNumericKeys}
           @focus=${this.handleFocus}
           @blur=${this.handleBlur}
         />

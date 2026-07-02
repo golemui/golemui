@@ -5,7 +5,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { live } from 'lit/directives/live.js';
 import { GUIAriaController } from '../controllers/aria.controller';
-import { mergeDateRanges, toISODateString } from '../utils/date';
+import { mergeDateRanges, parseISODateString, toISODateString } from '../utils/date';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 import './pills';
 import type { GuiPillEventDetail, GuiPillItem } from './pills';
@@ -271,7 +271,7 @@ export class GuiRangeDateInput extends LitElement {
   }
 
   private formatDateForDisplay(isoDate: string): string {
-    const date = new Date(isoDate);
+    const date = parseISODateString(isoDate);
     if (isNaN(date.getTime())) return isoDate;
     return new Intl.DateTimeFormat(this.localeId ?? 'en', {
       year: 'numeric',
@@ -283,7 +283,7 @@ export class GuiRangeDateInput extends LitElement {
   private getSortedPills(): DateRange[] {
     if (!this.value || !Array.isArray(this.value)) return [];
     return [...this.value].sort(
-      (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime(),
+      (a, b) => parseISODateString(a.start).getTime() - parseISODateString(b.start).getTime(),
     );
   }
 

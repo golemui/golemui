@@ -8,6 +8,8 @@ import {
   isSameDay,
   isToday,
   mergeDateRanges,
+  parseISODateString,
+  toISODateString,
 } from '../utils/date';
 import { AbstractCalendar, type AbstractCalendarDay } from './abstract-calendar';
 import './pills';
@@ -56,7 +58,7 @@ export class GuiRangeCalendar extends AbstractCalendar {
           : [{ start: this.value as unknown as string }];
 
         if (value.length > 0 && value[0].start) {
-          const date = new Date(value[0].start);
+          const date = parseISODateString(value[0].start);
           if (
             !isNaN(date.getTime()) &&
             !isDateInVisibleMonths(date, this._currentDate, this.numberOfMonths ?? 1)
@@ -68,7 +70,7 @@ export class GuiRangeCalendar extends AbstractCalendar {
     }
     if (changedProperties.has('focusDate')) {
       if (this.focusDate) {
-        const date = new Date(this.focusDate);
+        const date = parseISODateString(this.focusDate);
         if (!isNaN(date.getTime())) {
           if (!isDateInVisibleMonths(date, this._currentDate, this.numberOfMonths ?? 1)) {
             this._currentDate = date;
@@ -101,7 +103,7 @@ export class GuiRangeCalendar extends AbstractCalendar {
         class=${classMap(classes)}
         tabindex=${day.isFocusable ? 0 : -1}
         ?disabled=${!day.isCurrentMonth || day.isDisabled}
-        data-date=${day.date.toISOString()}
+        data-date=${toISODateString(day.date)}
         @click=${(e: MouseEvent) => this.selectDate(day, e)}
         @mouseover=${() => this.onMouseOver(day)}
         @focus=${() => this.onMouseOver(day)}
@@ -159,7 +161,7 @@ export class GuiRangeCalendar extends AbstractCalendar {
       const todayVisible = isDateInVisibleMonths(new Date(), this._currentDate, months);
       const rangeStartVisible =
         this.value?.some((range) =>
-          isDateInVisibleMonths(new Date(range.start), this._currentDate, months),
+          isDateInVisibleMonths(parseISODateString(range.start), this._currentDate, months),
         ) ?? false;
 
       if (!todayVisible && !rangeStartVisible) {
@@ -189,7 +191,7 @@ export class GuiRangeCalendar extends AbstractCalendar {
 
     if (this.value && Array.isArray(this.value)) {
       for (const range of this.value) {
-        const start = new Date(range.start);
+        const start = parseISODateString(range.start);
 
         if (isSameDay(date, start)) {
           isRangeStart = true;
@@ -197,7 +199,7 @@ export class GuiRangeCalendar extends AbstractCalendar {
         }
 
         if (range.end) {
-          const end = new Date(range.end);
+          const end = parseISODateString(range.end);
 
           if (isSameDay(date, end)) {
             isRangeEnd = true;
@@ -375,7 +377,7 @@ export class GuiRangeCalendar extends AbstractCalendar {
   };
 
   private formatDateForDisplay(isoDate: string): string {
-    const date = new Date(isoDate);
+    const date = parseISODateString(isoDate);
     if (isNaN(date.getTime())) return isoDate;
     return new Intl.DateTimeFormat(this.localeId ?? 'en', {
       year: 'numeric',
@@ -387,12 +389,12 @@ export class GuiRangeCalendar extends AbstractCalendar {
   private getSortedPills(): DateRange[] {
     if (!this.value || !Array.isArray(this.value)) return [];
     return [...this.value].sort(
-      (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime(),
+      (a, b) => parseISODateString(a.start).getTime() - parseISODateString(b.start).getTime(),
     );
   }
 
   private navigateToDate(isoDate: string) {
-    const date = new Date(isoDate);
+    const date = parseISODateString(isoDate);
     if (
       !isNaN(date.getTime()) &&
       !isDateInVisibleMonths(date, this._currentDate, this.numberOfMonths ?? 1)
