@@ -138,11 +138,6 @@ onMounted(() => {
   if (labelRef.value && inputRef.value && listRef.value) {
     labelRef.value.targetElement = [inputRef.value, listRef.value];
   }
-  // Seed the input's initial display value once at mount — mirrors React's
-  // `defaultValue={value ?? ''}` behavior. After this, the input is uncontrolled
-  // and all updates go through imperative inputRef.value.value assignments
-  // (in handleValueChange and the selectedItem watcher) so labelField-based
-  // display labels aren't clobbered by Vue re-applying a reactive :value binding.
   if (inputRef.value) {
     inputRef.value.value = String(value.value ?? '');
   }
@@ -196,14 +191,16 @@ const filterItems = (filterValue: string) => {
     const hasSearchFields = searchFields.length > 0;
     const items = templateData.value.items || [];
     const filtered = items.filter((item: any) => {
-      // Object.keys on a string returns its character indices, so check the type instead
       const isPrimitive = item === null || typeof item !== 'object';
+
       if (isPrimitive) {
         return item != null && item.toString().toLowerCase().includes(filterValue.toLowerCase());
       }
+
       const keys = Object.keys(item);
       const reduceFn = (acc: boolean, prop: string) =>
         acc || item[prop].toString().toLowerCase().includes(filterValue.toLowerCase());
+
       return hasSearchFields
         ? keys.filter((p: string) => searchFields.includes(p)).reduce(reduceFn, false)
         : keys.reduce(reduceFn, false);

@@ -193,8 +193,7 @@ export class DatePickerElement extends LitElement implements WithWidget {
 
   toggleCalendar(event: Event) {
     const target = event.target as HTMLElement;
-    // Day selections are committed by the calendar change event, which closes
-    // the calendar; the toggle must not reopen it from the same click
+
     if (target.closest('.gui-calendar__day-button')) return;
 
     const isInputClick = target.closest('.gui-date-input__part');
