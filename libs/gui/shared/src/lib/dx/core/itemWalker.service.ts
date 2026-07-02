@@ -28,6 +28,7 @@ import {
 } from './itemTypeRegistry';
 import { type EventWiringService } from './eventWiring.service';
 import { type StateExpansionService } from './stateExpansion.service';
+import { withForm } from './withForm';
 
 function createEventIdGenerator(): EventIdGenerator {
   let count = 0;
@@ -262,7 +263,7 @@ export class ItemWalker {
 
     if (typeof baseProvider === 'function') {
       return (params: FunctionWidgetParams<any>) => {
-        const safeParams = params ?? ({} as FunctionWidgetParams<any>);
+        const safeParams = withForm(params);
         const hotMapping = baseProvider(safeParams);
         return parsed.path != null ? { ...hotMapping, path: parsed.path } : hotMapping;
       };

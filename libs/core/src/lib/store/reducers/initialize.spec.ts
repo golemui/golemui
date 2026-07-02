@@ -105,3 +105,26 @@ describe('initialize - undeclared state reference diagnostic', () => {
     expect(errorSpy).not.toHaveBeenCalled();
   });
 });
+
+// FunctionWidgetParams contract says ($form is always an object) check that
+// `$form.field` reads return undefined, not crash because `$form` is `undefined`.
+describe('initialize - function widget decode probe', () => {
+  const init = (formDef: Record<string, any>) =>
+    initialize(createInitialState('en-US'), {
+      type: 'INITIALIZE',
+      payload: { formName: 'f', formDef },
+    });
+
+  it('decodes a function widget that reads `$form.field` without optional chaining', () => {
+    const fnWidget = ({ $form }: any) => ({
+      uid: 'agreed',
+      kind: 'input' as const,
+      type: 'checkbox',
+      path: 'agreed',
+      label: $form.rtlMode ? 'RTL' : 'LTR',
+    });
+    const result = init({ form: [fnWidget] });
+    expect(result.formHealth.status).toBe('ok');
+    expect(result.flatForm['agreed']).toBeDefined();
+  });
+});
