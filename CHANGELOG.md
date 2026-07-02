@@ -1,3 +1,16 @@
+## 1.0.3 (2026-07-02)
+
+### 🩹 Fixes
+
+- date picker responsive styles ([#214](https://github.com/golemui/golemui/pull/214))
+- runtime functions were failing on init ([#216](https://github.com/golemui/golemui/pull/216))
+- firefox issues with date inputs, numeric inputs and dropdown ([#215](https://github.com/golemui/golemui/pull/215))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
 ## 1.0.2 (2026-06-26)
 
 ### 🩹 Fixes

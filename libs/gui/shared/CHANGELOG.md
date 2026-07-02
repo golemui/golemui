@@ -1,3 +1,13 @@
+## 1.0.3 (2026-07-02)
+
+### 🩹 Fixes
+
+- runtime functions were failing on init ([#216](https://github.com/golemui/golemui/pull/216))
+
+### ❤️ Thank You
+
+- Raúl Jiménez @Elecash
+
 ## 1.0.2 (2026-06-26)
 
 This was a version bump only for gui-shared to align it with other projects, there were no code changes.
