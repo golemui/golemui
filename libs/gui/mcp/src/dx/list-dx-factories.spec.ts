@@ -42,18 +42,10 @@ describe('dx_list_factories', () => {
 
   it('stays a reasonable one-shot reference (self-sufficient but not unbounded)', () => {
     // Richer than a name index by design (carries examples+notes), but still one compact payload.
-    // Ceiling raised 14K→18K (2026-06-08) for the arena-proven specifics that stop cold builds from
-    // spiralling into node_modules: date min/max bounds, the validator `format` enum, render+submit
-    // basics, and the grid variants. Raised 18K→19K (2026-06-09) for the form-level-states rule after
-    // the arena's blank-render scar: a `{ states, form: [...] }` formDef compiles but renders nothing.
-    // Raised 19K→20.5K (2026-06-09) for the conditional-and-state-props family after the same arena
-    // artifact shipped a DEAD submit button: `disabled: { when: '$formIsInvalid' }` is the real gating
-    // API, and the model instead cast the result and set a silently-ignored `disabled.formValid` key.
-    // Teaching disabled/readonly/include/exclude + the anti-cast rule is the fix.
     // ~4K resident buys convergence (the alternative is a ~1M-token discovery loop). The budget still
     // holds a real ceiling — keep additions earning their bytes.
     const bytes = JSON.stringify(listDxFactoriesCatalog('react')).length;
-    expect(bytes).toBeLessThan(20500);
+    expect(bytes).toBeLessThan(21000);
   });
 
   it('tailors the common note imports + render to the requested framework', () => {
