@@ -52,6 +52,12 @@ export const runDateTimeInputComponentTests = (mountFn: MountComponentFn) => {
       return cy.get(formSubmitAlias).then((stub: any) => stub.getCall(0).args[0].data);
     };
 
+    // The toggle's template may render whitespace around the label
+    const expectDayPeriod = (label: string) =>
+      cy.get(sel.dayPeriod).should(($el) => {
+        expect($el.text().trim()).to.equal(label);
+      });
+
     describe('rendering', () => {
       it('should display date and time parts in locale order (12h locale)', () => {
         mountDateTimeInput({ data: { myDateTime: '2026-06-15T14:30:00' } });
@@ -67,7 +73,7 @@ export const runDateTimeInputComponentTests = (mountFn: MountComponentFn) => {
         cy.get(sel.year).should('have.value', '2026');
         cy.get(sel.hour).should('have.value', '02');
         cy.get(sel.minute).should('have.value', '30');
-        cy.get(sel.dayPeriod).should('have.text', 'PM');
+        expectDayPeriod('PM');
       });
 
       it('should display a 24h layout without a day period in a 24h locale', () => {
@@ -103,7 +109,7 @@ export const runDateTimeInputComponentTests = (mountFn: MountComponentFn) => {
         const formSubmitHandler = cy.stub().as('formSubmitHandler');
         mountDateTimeInput({ formSubmit: formSubmitHandler });
 
-        cy.get(sel.dayPeriod).should('have.text', 'AM');
+        expectDayPeriod('AM');
 
         cy.get(sel.month).type('06');
         cy.focused().type('15');
@@ -171,9 +177,9 @@ export const runDateTimeInputComponentTests = (mountFn: MountComponentFn) => {
           formSubmit: formSubmitHandler,
         });
 
-        cy.get(sel.dayPeriod).should('have.text', 'PM');
+        expectDayPeriod('PM');
         cy.get(sel.dayPeriod).click();
-        cy.get(sel.dayPeriod).should('have.text', 'AM');
+        expectDayPeriod('AM');
 
         submitAndGetData('@formSubmitHandler').then((data) => {
           expect(data).to.deep.equal({ myDateTime: '2026-06-15T02:30:00' });
@@ -232,7 +238,7 @@ export const runDateTimeInputComponentTests = (mountFn: MountComponentFn) => {
         cy.get(sel.day).should('have.value', '15');
 
         cy.get(sel.dayPeriod).click();
-        cy.get(sel.dayPeriod).should('have.text', 'PM');
+        expectDayPeriod('PM');
       });
 
       it('should render disabled parts when disabled', () => {

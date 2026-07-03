@@ -49,13 +49,19 @@ export const runTimeInputComponentTests = (mountFn: MountComponentFn) => {
       return cy.get(formSubmitAlias).then((stub: any) => stub.getCall(0).args[0].data);
     };
 
+    // The toggle's template may render whitespace around the label
+    const expectDayPeriod = (label: string) =>
+      cy.get(sel.dayPeriod).should(($el) => {
+        expect($el.text().trim()).to.equal(label);
+      });
+
     describe('rendering', () => {
       it('should display a 12h value with a day period in a 12h locale', () => {
         mountTimeInput({ data: { myTime: '14:30:00' } });
 
         cy.get(sel.hour).should('have.value', '02').and('have.attr', 'placeholder', 'hh');
         cy.get(sel.minute).should('have.value', '30').and('have.attr', 'placeholder', 'mm');
-        cy.get(sel.dayPeriod).should('have.text', 'PM');
+        expectDayPeriod('PM');
       });
 
       it('should display a 24h value without a day period in a 24h locale', () => {
@@ -238,7 +244,7 @@ export const runTimeInputComponentTests = (mountFn: MountComponentFn) => {
         const formSubmitHandler = cy.stub().as('formSubmitHandler');
         mountTimeInput({ formSubmit: formSubmitHandler });
 
-        cy.get(sel.dayPeriod).should('have.text', 'AM');
+        expectDayPeriod('AM');
 
         cy.get(sel.hour).type('09');
         cy.focused().type('30');
@@ -252,9 +258,9 @@ export const runTimeInputComponentTests = (mountFn: MountComponentFn) => {
         const formSubmitHandler = cy.stub().as('formSubmitHandler');
         mountTimeInput({ data: { myTime: '14:30:00' }, formSubmit: formSubmitHandler });
 
-        cy.get(sel.dayPeriod).should('have.text', 'PM');
+        expectDayPeriod('PM');
         cy.get(sel.dayPeriod).click();
-        cy.get(sel.dayPeriod).should('have.text', 'AM');
+        expectDayPeriod('AM');
 
         submitAndGetData('@formSubmitHandler').then((data) => {
           expect(data).to.deep.equal({ myTime: '02:30:00' });
@@ -269,19 +275,19 @@ export const runTimeInputComponentTests = (mountFn: MountComponentFn) => {
         cy.focused().type('{rightArrow}');
         cy.focused().should('have.attr', 'data-type', 'dayPeriod');
         cy.focused().type('{enter}');
-        cy.get(sel.dayPeriod).should('have.text', 'PM');
+        expectDayPeriod('PM');
       });
 
       it('should toggle AM/PM with the arrow keys', () => {
         mountTimeInput({ data: { myTime: '14:30:00' } });
 
-        cy.get(sel.dayPeriod).should('have.text', 'PM');
+        expectDayPeriod('PM');
         // focus() instead of click() so focusing itself does not toggle
         cy.get(sel.dayPeriod).focus();
         cy.focused().type('{upArrow}');
-        cy.get(sel.dayPeriod).should('have.text', 'AM');
+        expectDayPeriod('AM');
         cy.focused().type('{downArrow}');
-        cy.get(sel.dayPeriod).should('have.text', 'PM');
+        expectDayPeriod('PM');
       });
 
       it('should participate in arrow navigation', () => {
@@ -320,7 +326,7 @@ export const runTimeInputComponentTests = (mountFn: MountComponentFn) => {
         cy.get(sel.minute).should('have.value', '30');
 
         cy.get(sel.dayPeriod).click();
-        cy.get(sel.dayPeriod).should('have.text', 'PM');
+        expectDayPeriod('PM');
       });
 
       it('should render disabled inputs when disabled', () => {
