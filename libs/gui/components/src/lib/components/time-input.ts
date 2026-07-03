@@ -13,17 +13,18 @@ import {
   getDayPeriodLabels,
   getTimeFormatParts,
   parseISODateTimeString,
+  parseISOTimeString,
   resolveHourFormat,
   to24Hour,
-  toISODateTimeString,
+  toISOTimeString,
   type HourFormat,
 } from '../utils/time';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 
 /**
- * Segmented time input (hh:mm) that emits a local ISO date-time string
- * (YYYY-MM-DDTHH:mm:ss) on change; the date portion is the system's current
- * date at emit time.
+ * Segmented time input (hh:mm) that emits an ISO time string (HH:mm:ss) on
+ * change. Values hydrate from HH:mm[:ss] or, leniently, from the time part
+ * of a local ISO date-time string.
  *
  * The 12h/24h layout comes from the locale's hour cycle, overridable via
  * hour-format. In 12h mode a dayPeriod segment is rendered at the locale's
@@ -151,10 +152,16 @@ export class GuiTime extends AbstractDateTimeInput {
       this.clearGroup('default');
       return;
     }
-    const date = parseISODateTimeString(isoValue);
-    if (isNaN(date.getTime())) return;
 
-    const hour24 = date.getHours();
+    let time = parseISOTimeString(isoValue);
+    if (!time) {
+      // Lenient fallback: accept the time part of a local ISO date-time
+      const date = parseISODateTimeString(isoValue);
+      if (isNaN(date.getTime())) return;
+      time = { hours: date.getHours(), minutes: date.getMinutes(), seconds: date.getSeconds() };
+    }
+
+    const hour24 = time.hours;
     if (this.effectiveHourFormat === '12') {
       const { hour12, period } = from24Hour(hour24);
       this.setPartValue('default', 'hour', hour12.toString().padStart(2, '0'));
@@ -162,7 +169,7 @@ export class GuiTime extends AbstractDateTimeInput {
     } else {
       this.setPartValue('default', 'hour', hour24.toString().padStart(2, '0'));
     }
-    this.setPartValue('default', 'minute', date.getMinutes().toString().padStart(2, '0'));
+    this.setPartValue('default', 'minute', time.minutes.toString().padStart(2, '0'));
   }
 
   protected override commitParts(): void {
@@ -198,16 +205,7 @@ export class GuiTime extends AbstractDateTimeInput {
 
     if (isHourValid && isMinuteValid && isPeriodValid) {
       const hour24 = is12h ? to24Hour(hourVal, period as 'am' | 'pm') : hourVal;
-      const now = new Date();
-      const dateTime = new Date(
-        now.getFullYear(),
-        now.getMonth(),
-        now.getDate(),
-        hour24,
-        minuteVal,
-        0,
-      );
-      this.value = toISODateTimeString(dateTime);
+      this.value = toISOTimeString(new Date(1970, 0, 1, hour24, minuteVal, 0));
 
       this.dispatchEvent(
         new CustomEvent('change', {

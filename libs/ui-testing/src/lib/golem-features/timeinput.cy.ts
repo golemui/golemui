@@ -49,16 +49,9 @@ export const runTimeInputComponentTests = (mountFn: MountComponentFn) => {
       return cy.get(formSubmitAlias).then((stub: any) => stub.getCall(0).args[0].data);
     };
 
-    /** Local ISO date-time for today's date at the given time, like the widget emits. */
-    const todayAt = (hours: number, minutes: number) => {
-      const now = new Date();
-      const pad = (n: number) => String(n).padStart(2, '0');
-      return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(hours)}:${pad(minutes)}:00`;
-    };
-
     describe('rendering', () => {
       it('should display a 12h value with a day period in a 12h locale', () => {
-        mountTimeInput({ data: { myTime: '2026-06-15T14:30:00' } });
+        mountTimeInput({ data: { myTime: '14:30:00' } });
 
         cy.get(sel.hour).should('have.value', '02').and('have.attr', 'placeholder', 'hh');
         cy.get(sel.minute).should('have.value', '30').and('have.attr', 'placeholder', 'mm');
@@ -66,7 +59,7 @@ export const runTimeInputComponentTests = (mountFn: MountComponentFn) => {
       });
 
       it('should display a 24h value without a day period in a 24h locale', () => {
-        mountTimeInput({ data: { myTime: '2026-06-15T14:30:00' }, lang: 'en-GB' });
+        mountTimeInput({ data: { myTime: '14:30:00' }, lang: 'en-GB' });
 
         cy.get(sel.hour).should('have.value', '14');
         cy.get(sel.minute).should('have.value', '30');
@@ -75,7 +68,7 @@ export const runTimeInputComponentTests = (mountFn: MountComponentFn) => {
 
       it('should force a 24h layout with hourFormat=24 in a 12h locale', () => {
         mountTimeInput({
-          data: { myTime: '2026-06-15T14:30:00' },
+          data: { myTime: '14:30:00' },
           props: { hourFormat: '24' },
         });
 
@@ -85,13 +78,20 @@ export const runTimeInputComponentTests = (mountFn: MountComponentFn) => {
 
       it('should force a 12h layout with hourFormat=12 in a 24h locale', () => {
         mountTimeInput({
-          data: { myTime: '2026-06-15T14:30:00' },
+          data: { myTime: '14:30:00' },
           lang: 'en-GB',
           props: { hourFormat: '12' },
         });
 
         cy.get(sel.hour).should('have.value', '02');
         cy.get(sel.dayPeriod).should('exist');
+      });
+
+      it('should leniently hydrate from a local ISO date-time value', () => {
+        mountTimeInput({ data: { myTime: '2026-06-15T14:30:00' }, lang: 'en-GB' });
+
+        cy.get(sel.hour).should('have.value', '14');
+        cy.get(sel.minute).should('have.value', '30');
       });
     });
 
@@ -131,7 +131,7 @@ export const runTimeInputComponentTests = (mountFn: MountComponentFn) => {
         cy.get(sel.minute).should('have.value', '59');
       });
 
-      it('should submit the typed time as a local ISO date-time on the current date', () => {
+      it('should submit the typed time as an ISO time string', () => {
         const formSubmitHandler = cy.stub().as('formSubmitHandler');
         mountTimeInput({ lang: 'en-GB', formSubmit: formSubmitHandler });
 
@@ -141,7 +141,7 @@ export const runTimeInputComponentTests = (mountFn: MountComponentFn) => {
         cy.focused().should('have.attr', 'data-type', 'hour');
 
         submitAndGetData('@formSubmitHandler').then((data) => {
-          expect(data).to.deep.equal({ myTime: todayAt(21, 45) });
+          expect(data).to.deep.equal({ myTime: '21:45:00' });
         });
       });
     });
@@ -149,7 +149,7 @@ export const runTimeInputComponentTests = (mountFn: MountComponentFn) => {
     describe('arrow up/down', () => {
       it('should increment and decrement minutes by 1 by default', () => {
         const formSubmitHandler = cy.stub().as('formSubmitHandler');
-        mountTimeInput({ data: { myTime: '2026-06-15T14:30:00' }, formSubmit: formSubmitHandler });
+        mountTimeInput({ data: { myTime: '14:30:00' }, formSubmit: formSubmitHandler });
 
         // Settle after each press: each arrow emits a change whose value
         // round-trips through the form before the next press
@@ -161,14 +161,14 @@ export const runTimeInputComponentTests = (mountFn: MountComponentFn) => {
         cy.get(sel.minute).should('have.value', '29');
 
         submitAndGetData('@formSubmitHandler').then((data) => {
-          expect(data).to.deep.equal({ myTime: todayAt(14, 29) });
+          expect(data).to.deep.equal({ myTime: '14:29:00' });
         });
       });
 
       it('should move minutes by minuteStep', () => {
         const formSubmitHandler = cy.stub().as('formSubmitHandler');
         mountTimeInput({
-          data: { myTime: '2026-06-15T14:30:00' },
+          data: { myTime: '14:30:00' },
           props: { minuteStep: 15 },
           formSubmit: formSubmitHandler,
         });
@@ -177,25 +177,25 @@ export const runTimeInputComponentTests = (mountFn: MountComponentFn) => {
         cy.get(sel.minute).should('have.value', '45');
 
         submitAndGetData('@formSubmitHandler').then((data) => {
-          expect(data).to.deep.equal({ myTime: todayAt(14, 45) });
+          expect(data).to.deep.equal({ myTime: '14:45:00' });
         });
       });
 
       it('should wrap minutes from 59 to 00 on ArrowUp', () => {
         const formSubmitHandler = cy.stub().as('formSubmitHandler');
-        mountTimeInput({ data: { myTime: '2026-06-15T14:59:00' }, formSubmit: formSubmitHandler });
+        mountTimeInput({ data: { myTime: '14:59:00' }, formSubmit: formSubmitHandler });
 
         cy.get(sel.minute).type('{upArrow}');
         cy.get(sel.minute).should('have.value', '00');
 
         // Wrapping does not carry into the hour part
         submitAndGetData('@formSubmitHandler').then((data) => {
-          expect(data).to.deep.equal({ myTime: todayAt(14, 0) });
+          expect(data).to.deep.equal({ myTime: '14:00:00' });
         });
       });
 
       it('should wrap minutes from 00 to 59 on ArrowDown', () => {
-        mountTimeInput({ data: { myTime: '2026-06-15T14:00:00' } });
+        mountTimeInput({ data: { myTime: '14:00:00' } });
 
         cy.get(sel.minute).type('{downArrow}');
         cy.get(sel.minute).should('have.value', '59');
@@ -203,7 +203,7 @@ export const runTimeInputComponentTests = (mountFn: MountComponentFn) => {
 
       it('should wrap minutes past 60 with minuteStep', () => {
         mountTimeInput({
-          data: { myTime: '2026-06-15T14:55:00' },
+          data: { myTime: '14:55:00' },
           props: { minuteStep: 15 },
         });
 
@@ -212,14 +212,14 @@ export const runTimeInputComponentTests = (mountFn: MountComponentFn) => {
       });
 
       it('should stop at the max hour limit instead of wrapping (24h)', () => {
-        mountTimeInput({ data: { myTime: '2026-06-15T23:30:00' }, lang: 'en-GB' });
+        mountTimeInput({ data: { myTime: '23:30:00' }, lang: 'en-GB' });
 
         cy.get(sel.hour).type('{upArrow}');
         cy.get(sel.hour).should('have.value', '23');
       });
 
       it('should stop at the min hour limit instead of wrapping (24h)', () => {
-        mountTimeInput({ data: { myTime: '2026-06-15T00:30:00' }, lang: 'en-GB' });
+        mountTimeInput({ data: { myTime: '00:30:00' }, lang: 'en-GB' });
 
         cy.get(sel.hour).type('{downArrow}');
         cy.get(sel.hour).should('have.value', '00');
@@ -236,18 +236,18 @@ export const runTimeInputComponentTests = (mountFn: MountComponentFn) => {
     describe('day period', () => {
       it('should toggle AM/PM with the arrow keys and shift the value by 12h', () => {
         const formSubmitHandler = cy.stub().as('formSubmitHandler');
-        mountTimeInput({ data: { myTime: '2026-06-15T14:30:00' }, formSubmit: formSubmitHandler });
+        mountTimeInput({ data: { myTime: '14:30:00' }, formSubmit: formSubmitHandler });
 
         cy.get(sel.dayPeriod).type('{upArrow}');
         cy.get(sel.dayPeriod).should('have.value', 'AM');
 
         submitAndGetData('@formSubmitHandler').then((data) => {
-          expect(data).to.deep.equal({ myTime: todayAt(2, 30) });
+          expect(data).to.deep.equal({ myTime: '02:30:00' });
         });
       });
 
       it('should ignore typed characters (arrows are the only way to set the period)', () => {
-        mountTimeInput({ data: { myTime: '2026-06-15T09:30:00' } });
+        mountTimeInput({ data: { myTime: '09:30:00' } });
 
         cy.get(sel.dayPeriod).should('have.value', 'AM');
         cy.get(sel.dayPeriod).type('p');
@@ -257,14 +257,14 @@ export const runTimeInputComponentTests = (mountFn: MountComponentFn) => {
       });
 
       it('should clear the period with Backspace', () => {
-        mountTimeInput({ data: { myTime: '2026-06-15T09:30:00' } });
+        mountTimeInput({ data: { myTime: '09:30:00' } });
 
         cy.get(sel.dayPeriod).type('{backspace}');
         cy.get(sel.dayPeriod).should('have.value', '');
       });
 
       it('should participate in arrow navigation', () => {
-        mountTimeInput({ data: { myTime: '2026-06-15T09:30:00' } });
+        mountTimeInput({ data: { myTime: '09:30:00' } });
 
         cy.get(sel.hour).click();
         cy.focused().type('{rightArrow}');
@@ -279,7 +279,7 @@ export const runTimeInputComponentTests = (mountFn: MountComponentFn) => {
     describe('blur', () => {
       it('should emit a null value when a part is emptied and blurred', () => {
         const formSubmitHandler = cy.stub().as('formSubmitHandler');
-        mountTimeInput({ data: { myTime: '2026-06-15T14:30:00' }, formSubmit: formSubmitHandler });
+        mountTimeInput({ data: { myTime: '14:30:00' }, formSubmit: formSubmitHandler });
 
         cy.get(sel.minute).type('{selectAll}{backspace}');
         cy.get(sel.minute).blur();
@@ -292,7 +292,7 @@ export const runTimeInputComponentTests = (mountFn: MountComponentFn) => {
 
     describe('readonly and disabled', () => {
       it('should ignore typing and arrows when readonly', () => {
-        mountTimeInput({ data: { myTime: '2026-06-15T14:30:00' }, readonly: true });
+        mountTimeInput({ data: { myTime: '14:30:00' }, readonly: true });
 
         cy.get(sel.minute).should('have.attr', 'readonly');
         cy.get(sel.minute).type('{upArrow}', { force: true });
@@ -300,7 +300,7 @@ export const runTimeInputComponentTests = (mountFn: MountComponentFn) => {
       });
 
       it('should render disabled inputs when disabled', () => {
-        mountTimeInput({ data: { myTime: '2026-06-15T14:30:00' }, disabled: true });
+        mountTimeInput({ data: { myTime: '14:30:00' }, disabled: true });
 
         cy.get(sel.hour).should('be.disabled');
         cy.get(sel.minute).should('be.disabled');

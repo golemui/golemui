@@ -80,6 +80,42 @@ export function toISODateTimeString(date: Date): string {
 }
 
 /**
+ * Formats the time-of-day of a Date as an ISO 8601 time string (HH:mm:ss).
+ *
+ * @param {Date} date - The Date object whose time portion to format.
+ * @return {string} The formatted time string.
+ */
+export function toISOTimeString(date: Date): string {
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+
+  return `${hours}:${minutes}:${seconds}`;
+}
+
+/**
+ * Parses an ISO 8601 time string (HH:mm or HH:mm:ss) into its numeric parts.
+ * Date-time strings are not handled here; parse those with
+ * parseISODateTimeString instead.
+ *
+ * @param {string} value - The time string to parse.
+ * @return {{ hours: number; minutes: number; seconds: number } | null} The
+ *   numeric parts, or null when the string is not a valid time.
+ */
+export function parseISOTimeString(
+  value: string,
+): { hours: number; minutes: number; seconds: number } | null {
+  const match = /^([01]\d|2[0-3]):([0-5]\d)(?::([0-5]\d))?$/.exec(value);
+  if (!match) return null;
+
+  return {
+    hours: Number(match[1]),
+    minutes: Number(match[2]),
+    seconds: Number(match[3] ?? 0),
+  };
+}
+
+/**
  * Parses an ISO 8601 date-time string (YYYY-MM-DD[THH:mm[:ss]]) as local
  * time. Like parseISODateString, this avoids the UTC interpretation the
  * native parser applies to date-only strings; offset-less date-times are

@@ -309,8 +309,8 @@ const INPUTS: DxSpec[] = [
     example:
       "gui.inputs.timeInput('meetingTime', { label: 'Meeting time', minuteStep: 15, validator: { required: true } })",
     notes: [
-      'Typed time entry (hh:mm segments, no popover UI). Emits a local ISO date-time string ' +
-        '(`YYYY-MM-DDTHH:mm:ss`) whose date portion is the current date at entry time.',
+      'Typed time entry (hh:mm segments, no popover UI). Emits an ISO time string (`HH:mm:ss`); ' +
+        'pair it with the `{ format: \'time\' }` string validator.',
       '`hourFormat` forces `\'12\'` or `\'24\'`; when omitted the locale decides (12h locales get an AM/PM ' +
         'segment). `minuteStep` sets the ArrowUp/ArrowDown minute increment (default 1).',
     ],

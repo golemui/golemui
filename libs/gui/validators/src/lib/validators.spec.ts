@@ -216,6 +216,16 @@ describe('Golem validators', () => {
         expect(isValid(schema, '20260101')).toBe(false);
         expect(isValid(schema, '2026-01-01')).toBe(true);
       });
+
+      it('validates date-time', () => {
+        const schema = validate({ type: 'string', format: 'date-time' } satisfies StringValidator);
+        // Offset-less local datetimes are what the gui date/time widgets emit
+        expect(isValid(schema, '2026-07-03T14:30:00')).toBe(true);
+        expect(isValid(schema, '2026-07-03T14:30:00Z')).toBe(true);
+        expect(isValid(schema, '2026-07-03T14:30:00+02:00')).toBe(true);
+        expect(isValid(schema, '2026-07-03')).toBe(false);
+        expect(isValid(schema, '2026-07-03 14:30:00')).toBe(false);
+      });
     });
   });
 

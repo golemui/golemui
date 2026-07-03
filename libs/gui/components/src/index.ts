@@ -79,8 +79,10 @@ export {
   getDayPeriodLabels,
   getTimeFormatParts,
   parseISODateTimeString,
+  parseISOTimeString,
   resolveHourFormat,
   to24Hour,
   toISODateTimeString,
+  toISOTimeString,
   type HourFormat,
 } from './lib/utils/time';

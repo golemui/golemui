@@ -137,21 +137,24 @@
       "kind": "input",
       "type": "timeInput",
       "path": "timeInput",
-      "defaultValue": "2026-07-02T09:30:00",
+      "defaultValue": "09:30:00",
+      "label": "12h time format",
       "props": {
+        "hint": "15m step jumps on minutes",
         "icon": "schedule",
         "minuteStep": 15
       },
-      "validator": { "type": "string", "required": true }
+      "validator": { "type": "string", "required": true, "format": "time" }
     },
     {
       "kind": "input",
       "type": "timeInput",
       "path": "timeInput24",
+      "label": "24 time format",
       "props": {
-        "icon": "schedule",
         "hourFormat": "24"
-      }
+      },
+      "validator": { "type": "string", "required": true, "format": "time" }
     }
   ]
 }

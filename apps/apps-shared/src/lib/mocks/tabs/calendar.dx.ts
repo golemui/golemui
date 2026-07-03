@@ -80,13 +80,17 @@ export const calendarTab = gui.layouts.flex([
   gui.displays.custom('heading', { text: 'TIME INPUTS', level: 3 }),
 
   gui.inputs.timeInput('timeInput', {
-    defaultValue: '2026-07-02T09:30:00',
+    label: '12h time format',
+    hint: '15m step jumps on minutes',
+    defaultValue: '09:30:00',
     icon: 'schedule',
     minuteStep: 15,
-    validator: { required: true },
+    validator: { required: true, format: 'time' },
   }),
 
   gui.inputs.timeInput('timeInput24', {
+    label: '24h time format',
     hourFormat: '24',
+    validator: { required: true, format: 'time' },
   }),
 ]);
