@@ -22,18 +22,6 @@ import {
 } from '../utils/time';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 
-/**
- * Segmented date-time input that combines the date parts of gui-date with the
- * time parts of gui-time in one locale-ordered row. Emits a local ISO
- * date-time string without offset (YYYY-MM-DDTHH:mm:ss) on change; hydrating
- * from a date-only value fills the time as 00:00.
- *
- * The 12h/24h layout comes from the locale's hour cycle, overridable via
- * hour-format; in 12h mode the AM/PM part is a click toggle defaulting to AM.
- * Typed values clamp at their limits; on arrow increments the date parts and
- * the hour stop at their limits while minutes wrap around (59 -> 00);
- * minute-step controls the minute arrow increment.
- */
 @customElement('gui-date-time')
 export class GuiDateTime extends AbstractDateTimeInput {
   @property({ type: String }) value: string | undefined = undefined;

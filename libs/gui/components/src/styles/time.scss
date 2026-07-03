@@ -62,8 +62,6 @@ gui-time {
         text-align: center;
         padding: 0;
         margin-block: -16px;
-        // Match the date input's part spacing; the AM/PM button below keeps a
-        // smaller overlap because its separator is a thin space (CI click fix)
         margin-inline: -12px;
         position: relative;
         z-index: 2;
