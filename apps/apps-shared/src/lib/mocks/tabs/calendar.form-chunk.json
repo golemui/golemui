@@ -150,7 +150,7 @@
       "kind": "input",
       "type": "timeInput",
       "path": "timeInput24",
-      "label": "24 time format",
+      "label": "24h time format",
       "props": {
         "hourFormat": "24"
       },
