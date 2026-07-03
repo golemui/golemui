@@ -124,6 +124,37 @@
         ]
       },
       "validator": { "type": "string", "required": true, "format": "date" }
+    },
+    {
+      "kind": "display",
+      "type": "heading",
+      "props": {
+        "text": "TIME INPUTS",
+        "level": 3
+      }
+    },
+    {
+      "kind": "input",
+      "type": "timeInput",
+      "path": "timeInput",
+      "defaultValue": "09:30:00",
+      "label": "12h time format",
+      "props": {
+        "hint": "15m step jumps on minutes",
+        "icon": "schedule",
+        "minuteStep": 15
+      },
+      "validator": { "type": "string", "required": true, "format": "time" }
+    },
+    {
+      "kind": "input",
+      "type": "timeInput",
+      "path": "timeInput24",
+      "label": "24h time format",
+      "props": {
+        "hourFormat": "24"
+      },
+      "validator": { "type": "string", "required": true, "format": "time" }
     }
   ]
 }

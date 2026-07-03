@@ -101,4 +101,10 @@ export default [
       '@nx/enforce-module-boundaries': 'off',
     },
   },
+  {
+    files: ['**/cypress/support/component.ts'],
+    rules: {
+      '@nx/enforce-module-boundaries': 'off',
+    },
+  },
 ];

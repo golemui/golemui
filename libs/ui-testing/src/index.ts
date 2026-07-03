@@ -20,11 +20,14 @@ export * from './lib/core-features/widget-loaders.cy';
 // Golem features and components
 export * from './lib/golem-features/alert.cy';
 export * from './lib/golem-features/currency.cy';
+export * from './lib/golem-features/dateinput.cy';
 export * from './lib/golem-features/datepicker.cy';
 export * from './lib/golem-features/dropdown.cy';
 export * from './lib/golem-features/number.cy';
+export * from './lib/golem-features/rangedateinput.cy';
 export * from './lib/golem-features/repeater.cy';
 export * from './lib/golem-features/select.cy';
+export * from './lib/golem-features/timeinput.cy';
 export * from './lib/golem-features/validators.cy';
 
 // Utils

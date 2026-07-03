@@ -44,6 +44,7 @@ export { GuiSelect } from './lib/components/select';
 export { GuiTags } from './lib/components/tags';
 export { GuiTextarea } from './lib/components/textarea';
 export { GuiTextinput } from './lib/components/textinput';
+export { GuiTime } from './lib/components/time-input';
 export { GuiToggle } from './lib/components/toggle';
 export { weekInfoData } from './lib/utils/week-info';
 export type { WeekInfo } from './lib/utils/week-info';
@@ -56,6 +57,7 @@ export { GUIAriaController } from './lib/controllers/aria.controller';
 
 export {
   createDateRange,
+  getDateFormatParts,
   getDayLabel,
   getMonthName,
   getMonthYearParts,
@@ -64,7 +66,23 @@ export {
   isDateInVisibleMonths,
   isSameDay,
   isToday,
+  maxValidDayInMonth,
   mergeDateRanges,
   toISODateString,
   weekDaysOrder,
 } from './lib/utils/date';
+
+// ─── Time utilities ───
+
+export {
+  from24Hour,
+  getDayPeriodLabels,
+  getTimeFormatParts,
+  parseISODateTimeString,
+  parseISOTimeString,
+  resolveHourFormat,
+  to24Hour,
+  toISODateTimeString,
+  toISOTimeString,
+  type HourFormat,
+} from './lib/utils/time';

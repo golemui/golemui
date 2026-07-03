@@ -55,7 +55,7 @@ const stringFormat = {
   uuid: { schema: uuid() },
   date: { schema: iso.date() },
   time: { schema: iso.time() },
-  'date-time': { schema: iso.datetime() },
+  'date-time': { schema: iso.datetime({ local: true, offset: true }) },
   duration: { schema: iso.duration() },
 };
 

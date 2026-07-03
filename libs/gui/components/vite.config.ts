@@ -45,6 +45,7 @@ export default defineConfig(() => ({
         'lib/components/tags': 'src/lib/components/tags.ts',
         'lib/components/textarea': 'src/lib/components/textarea.ts',
         'lib/components/textinput': 'src/lib/components/textinput.ts',
+        'lib/components/time-input': 'src/lib/components/time-input.ts',
         'lib/components/toggle': 'src/lib/components/toggle.ts',
       },
       formats: ['es', 'cjs'],

@@ -60,6 +60,7 @@
         "tags",
         "textarea",
         "textinput",
+        "timeInput",
         "toggle"
       ]
     },

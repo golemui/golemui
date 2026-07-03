@@ -35,6 +35,40 @@ export function parseISODateString(value: string): Date {
 }
 
 /**
+ * Returns the locale-ordered numeric date parts (day, month, year and literal
+ * separators) used to lay out segmented date inputs.
+ *
+ * @param {string | undefined} localeId - The locale identifier. Defaults to 'en'.
+ * @return {Intl.DateTimeFormatPart[]} The ordered parts, including literals.
+ */
+export function getDateFormatParts(localeId: string | undefined): Intl.DateTimeFormatPart[] {
+  return new Intl.DateTimeFormat(localeId ?? 'en', {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+  }).formatToParts(new Date());
+}
+
+/**
+ * Returns the maximum valid day for the given month and year, accounting for
+ * leap years. When the year is 0 or missing, February allows 29 so partial
+ * input is not rejected prematurely.
+ *
+ * @param {number} month - The 1-based month.
+ * @param {number} year - The full year.
+ * @return {number} The maximum valid day of that month.
+ */
+export function maxValidDayInMonth(month: number, year: number): number {
+  if (month === 2) {
+    const isLeapYear = new Date(year, 1, 29).getDate() === 29;
+    return isLeapYear || !year ? 29 : 28;
+  } else if (month === 4 || month === 6 || month === 9 || month === 11) {
+    return 30;
+  }
+  return 31;
+}
+
+/**
  * Determines whether the given date is today's date.
  *
  * @param {Date} date - The date to be checked.

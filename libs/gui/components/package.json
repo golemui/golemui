@@ -123,6 +123,11 @@
       "import": "./lib/components/textinput.js",
       "require": "./lib/components/textinput.umd.cjs"
     },
+    "./time-input": {
+      "types": "./lib/components/time-input.d.ts",
+      "import": "./lib/components/time-input.js",
+      "require": "./lib/components/time-input.umd.cjs"
+    },
     "./toggle": {
       "types": "./lib/components/toggle.d.ts",
       "import": "./lib/components/toggle.js",

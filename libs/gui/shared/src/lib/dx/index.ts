@@ -46,6 +46,7 @@ export { _guiSelect } from './shortcuts/select/guiSelect.impl';
 export { _guiTabs } from './shortcuts/tabs/guiTabs.impl';
 export { _guiTags } from './shortcuts/tags/guiTags.impl';
 export { _guiTextarea } from './shortcuts/textarea/guiTextarea.impl';
+export { _guiTimeInput } from './shortcuts/time-input/guiTimeInput.impl';
 
 // ─── GSL selectors (behavior) ───
 
@@ -89,6 +90,7 @@ export { _gslSelectByUid, _gslSelects } from './shortcuts/select/register';
 export { _gslTabs, _gslTabsByUid } from './shortcuts/tabs/register';
 export { _gslTags, _gslTagsByUid } from './shortcuts/tags/register';
 export { _gslTextareaByUid, _gslTextareas } from './shortcuts/textarea/register';
+export { _gslTimeInputByUid, _gslTimeInputs } from './shortcuts/time-input/register';
 
 // ─── Scope selectors ───
 //
@@ -185,6 +187,10 @@ export type { GslSelectConfig, SelectDecorator } from './shortcuts/select/select
 export type { GslTabsConfig, TabsDecorator } from './shortcuts/tabs/tabs.domain';
 export type { GslTagsConfig, TagsDecorator } from './shortcuts/tags/tags.domain';
 export type { GslTextareaConfig, TextareaDecorator } from './shortcuts/textarea/textarea.domain';
+export type {
+  GslTimeInputConfig,
+  TimeInputDecorator,
+} from './shortcuts/time-input/timeInput.domain';
 
 // ─── Extension API (for adding custom shortcut types) ───
 

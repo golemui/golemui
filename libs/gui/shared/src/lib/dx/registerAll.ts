@@ -8,6 +8,7 @@ import './shortcuts/textarea/register';
 import './shortcuts/password/register';
 import './shortcuts/checkbox/register';
 import './shortcuts/date-input/register';
+import './shortcuts/time-input/register';
 import './shortcuts/currency/register';
 import './shortcuts/range-calendar/register';
 import './shortcuts/select/register';

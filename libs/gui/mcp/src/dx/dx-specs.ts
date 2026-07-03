@@ -303,6 +303,17 @@ const INPUTS: DxSpec[] = [
     ],
   },
   {
+    factory: 'timeInput',
+    namespace: 'inputs',
+    call: 'gui.inputs.timeInput(path, { label, hourFormat?, minuteStep?, validator? })',
+    example: "gui.inputs.timeInput('meetingTime', { label: 'Meeting time', minuteStep: 15 })",
+    notes: [
+      'Typed time entry (hh:mm segments). Emits an ISO time string (`HH:mm:ss`) — pair with the ' +
+        "`{ format: 'time' }` validator. `hourFormat` forces '12'/'24' (default: locale); " +
+        '`minuteStep` sets the arrow-key minute increment.',
+    ],
+  },
+  {
     factory: 'calendar',
     namespace: 'inputs',
     call: 'gui.inputs.calendar(path, { label, minDate?, maxDate? })',

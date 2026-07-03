@@ -37,6 +37,7 @@ import type {
   TabsProps,
   TextareaProps,
   TextinputProps,
+  TimeInputProps,
   ToggleProps,
 } from './widget.props';
 
@@ -210,6 +211,7 @@ type GolemWidget<
   | GuiTabs<FormType, States, V, CustomWidget>
   | GuiTextarea<FormType, States, V>
   | GuiTextInput<FormType, States, V>
+  | GuiTimeInput<FormType, States, V>
   | GuiToggle<FormType, States, V>
   | CustomWidget;
 
@@ -440,6 +442,14 @@ type GuiPassword<FormType extends Record<string, any>, States extends string, V>
   PasswordProps,
   V
 > & { type: 'password' };
+
+type GuiTimeInput<FormType extends Record<string, any>, States extends string, V> = InputWidget<
+  string,
+  States,
+  FormType,
+  TimeInputProps,
+  V
+> & { type: 'timeInput' };
 
 type GuiToggle<FormType extends Record<string, any>, States extends string, V> = InputWidget<
   boolean,

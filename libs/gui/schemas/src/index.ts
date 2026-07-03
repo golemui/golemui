@@ -29,4 +29,5 @@ export { default as tabsSchema } from './lib/components/tabs.schema.json';
 export { default as tagsSchema } from './lib/components/tags.schema.json';
 export { default as textareaSchema } from './lib/components/textarea.schema.json';
 export { default as textinputSchema } from './lib/components/textinput.schema.json';
+export { default as timeinputSchema } from './lib/components/timeinput.schema.json';
 export { default as toggleSchema } from './lib/components/toggle.schema.json';

@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://golemui.com/schemas/components/timeinput.schema.json",
+  "title": "TimeInput Widget",
+  "type": "object",
+  "$defs": {
+    "labelDef": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "disabledDef": {
+      "$ref": "../common.schema.json#/$defs/boolOrWhen"
+    },
+    "readonlyDef": {
+      "$ref": "../common.schema.json#/$defs/boolOrWhen"
+    },
+    "hintProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "iconProp": {
+      "type": "string"
+    },
+    "hourFormatProp": {
+      "enum": ["12", "24"]
+    },
+    "minuteStepProp": {
+      "type": "number",
+      "minimum": 1
+    }
+  },
+  "allOf": [
+    {
+      "$ref": "../common.schema.json#/$defs/baseWidget"
+    }
+  ],
+  "properties": {
+    "kind": {
+      "const": "input"
+    },
+    "type": {
+      "const": "timeInput"
+    },
+    "path": {
+      "$ref": "../common.schema.json#/$defs/dotPath"
+    },
+    "label": {
+      "$ref": "#/$defs/labelDef"
+    },
+    "disabled": {
+      "$ref": "#/$defs/disabledDef"
+    },
+    "readonly": {
+      "$ref": "#/$defs/readonlyDef"
+    },
+    "on": {
+      "$ref": "../common.schema.json#/$defs/on"
+    },
+    "validator": {
+      "$ref": "../validators.schema.json#/$defs/validator"
+    },
+    "props": {
+      "type": "object",
+      "properties": {
+        "hint": {
+          "$ref": "#/$defs/hintProp"
+        },
+        "icon": {
+          "$ref": "#/$defs/iconProp"
+        },
+        "hourFormat": {
+          "$ref": "#/$defs/hourFormatProp"
+        },
+        "minuteStep": {
+          "$ref": "#/$defs/minuteStepProp"
+        }
+      },
+      "patternProperties": {
+        "^hint\\.[^.]+$": {
+          "$ref": "#/$defs/hintProp"
+        },
+        "^icon\\.[^.]+$": {
+          "$ref": "#/$defs/iconProp"
+        },
+        "^hourFormat\\.[^.]+$": {
+          "$ref": "#/$defs/hourFormatProp"
+        },
+        "^minuteStep\\.[^.]+$": {
+          "$ref": "#/$defs/minuteStepProp"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "patternProperties": {
+    "^label\\.[^.]+$": {
+      "$ref": "#/$defs/labelDef"
+    },
+    "^disabled\\.[^.]+$": {
+      "$ref": "#/$defs/disabledDef"
+    },
+    "^readonly\\.[^.]+$": {
+      "$ref": "#/$defs/readonlyDef"
+    },
+    "^validator\\.[^.]+$": {
+      "$ref": "../validators.schema.json#/$defs/validator"
+    }
+  },
+  "required": ["kind", "type", "path"],
+  "unevaluatedProperties": false
+}
