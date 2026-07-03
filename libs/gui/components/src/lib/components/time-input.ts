@@ -23,8 +23,8 @@ import { addErrors, addLabel, type ControlTemplateData } from '../utils/template
 
 /**
  * Segmented time input (hh:mm) that emits an ISO time string (HH:mm:ss) on
- * change. Values hydrate from HH:mm[:ss] or, leniently, from the time part
- * of a local ISO date-time string.
+ * change. Values hydrate from HH:mm[:ss], or from the time part of a local
+ * ISO date-time string.
  *
  * The 12h/24h layout comes from the locale's hour cycle, overridable via
  * hour-format. In 12h mode a dayPeriod segment is rendered at the locale's

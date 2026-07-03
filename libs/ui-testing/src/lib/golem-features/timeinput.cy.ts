@@ -87,7 +87,7 @@ export const runTimeInputComponentTests = (mountFn: MountComponentFn) => {
         cy.get(sel.dayPeriod).should('exist');
       });
 
-      it('should leniently hydrate from a local ISO date-time value', () => {
+      it('should hydrate from a local ISO date-time value', () => {
         mountTimeInput({ data: { myTime: '2026-06-15T14:30:00' }, lang: 'en-GB' });
 
         cy.get(sel.hour).should('have.value', '14');
