@@ -113,7 +113,9 @@ gui-date-time {
       cursor: pointer;
 
       &.gui-date-time-input__dayperiod {
-        margin-inline: -12px;
+        width: 40px;
+        min-width: 40px;
+        margin-inline: -8px;
       }
 
       &:hover ~ .gui-date-time-input__visual-underline,
