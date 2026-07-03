@@ -202,7 +202,9 @@ export function Dropdown(widgetInstance: WithWidget) {
           const isPrimitiveValue = item === null || typeof item !== 'object';
 
           if (isPrimitiveValue) {
-            return item != null && item.toString().toLowerCase().includes(filterValue.toLowerCase());
+            return (
+              item != null && item.toString().toLowerCase().includes(filterValue.toLowerCase())
+            );
           }
 
           const keys = Object.keys(item);

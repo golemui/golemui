@@ -63,10 +63,7 @@ export { _gslCustomInputByUid, _gslCustomInputs } from './shortcuts/custom-input
 export { _gslCustomLayoutByUid, _gslCustomLayouts } from './shortcuts/custom-layout/register';
 export { _gslDateInputByUid, _gslDateInputs } from './shortcuts/date-input/register';
 export { _gslDatePickerByUid, _gslDatePickers } from './shortcuts/date-picker/register';
-export {
-  _gslDateTimeInputByUid,
-  _gslDateTimeInputs,
-} from './shortcuts/date-time-input/register';
+export { _gslDateTimeInputByUid, _gslDateTimeInputs } from './shortcuts/date-time-input/register';
 export { _gslDisplayByUid, _gslDisplays } from './shortcuts/display/register';
 export { _gslDropdownByUid, _gslDropdowns } from './shortcuts/dropdown/register';
 export {

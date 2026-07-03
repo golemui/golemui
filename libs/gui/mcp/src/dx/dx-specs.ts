@@ -321,7 +321,7 @@ const INPUTS: DxSpec[] = [
     notes: [
       'Typed date+time entry in one locale-ordered row. Emits a local ISO date-time ' +
         "(`YYYY-MM-DDTHH:mm:ss`) — pair with the `{ format: 'date-time' }` validator. " +
-        "`hourFormat`/`minuteStep` as in `timeInput`.",
+        '`hourFormat`/`minuteStep` as in `timeInput`.',
     ],
   },
   {

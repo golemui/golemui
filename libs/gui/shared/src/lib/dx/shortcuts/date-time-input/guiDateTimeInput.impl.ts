@@ -1,5 +1,9 @@
 import { type DxRuntimeParams } from '../../core/dxUtilityTypes';
-import type { DateTimeInputDecorator, DateTimeInputEntry, GuiDateTimeInputShortcut } from './dateTimeInput.domain';
+import type {
+  DateTimeInputDecorator,
+  DateTimeInputEntry,
+  GuiDateTimeInputShortcut,
+} from './dateTimeInput.domain';
 
 export function _guiDateTimeInput(path: string): GuiDateTimeInputShortcut;
 export function _guiDateTimeInput(
@@ -25,7 +29,10 @@ export function _guiDateTimeInput(
 ): GuiDateTimeInputShortcut {
   if (typeof propsOrCallback === 'function') {
     const callback = propsOrCallback;
-    const def = (params: DxRuntimeParams) => ({ type: 'dateTimeInput' as const, ...callback(params) });
+    const def = (params: DxRuntimeParams) => ({
+      type: 'dateTimeInput' as const,
+      ...callback(params),
+    });
     const items: DateTimeInputEntry[] = [{ key: path, def }];
     return { type: 'ITEMS', itemType: 'DATE_TIME_INPUT', items, tags: tags ?? [] };
   }

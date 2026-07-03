@@ -125,9 +125,8 @@ export abstract class AbstractDateTimeInput extends LitElement {
   @property({ type: String }) hint: string | undefined = undefined;
 
   /** Part values per group, e.g. { default: { day: '15', month: '06' } }. */
-  @state() private _partValues: Partial<
-    Record<string, Partial<Record<DateTimePartType, string>>>
-  > = {};
+  @state() private _partValues: Partial<Record<string, Partial<Record<DateTimePartType, string>>>> =
+    {};
 
   protected abstract readonly inputBlockClass: string;
   protected abstract readonly groups: readonly string[];
@@ -333,7 +332,9 @@ export abstract class AbstractDateTimeInput extends LitElement {
           @keyup=${(e: KeyboardEvent) => this.handleKeyUp(e, group, type)}
           @focus=${this.handleFocus}
           @blur=${(e: FocusEvent) => this.handleBlur(e, group, type)}
-        >${this.getPartDisplayValue(group, type)}</button>
+        >
+          ${this.getPartDisplayValue(group, type)}
+        </button>
         <div class="${block}__visual-underline"></div>
       </div>
     `;
@@ -413,11 +414,7 @@ export abstract class AbstractDateTimeInput extends LitElement {
           const range = descriptor.max - descriptor.min + 1;
           value = ((((value - descriptor.min) % range) + range) % range) + descriptor.min;
         }
-        this.setPartValue(
-          group,
-          type,
-          value.toString().padStart(descriptor?.maxLength ?? 2, '0'),
-        );
+        this.setPartValue(group, type, value.toString().padStart(descriptor?.maxLength ?? 2, '0'));
         this.selectPart(target);
         this.commitParts(group);
         break;

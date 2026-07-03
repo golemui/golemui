@@ -174,7 +174,10 @@ export class GuiCurrency extends LitElement {
       // Intl.NumberFormat throw "maximumFractionDigits value is out of range".
       const maximumFractionDigits =
         this.maximumFractionDigits ?? Math.max(this.minimumFractionDigits ?? 2, 2);
-      const minimumFractionDigits = Math.min(this.minimumFractionDigits ?? 2, maximumFractionDigits);
+      const minimumFractionDigits = Math.min(
+        this.minimumFractionDigits ?? 2,
+        maximumFractionDigits,
+      );
 
       return new Intl.NumberFormat(this.localeId ?? 'en', {
         style: 'currency',

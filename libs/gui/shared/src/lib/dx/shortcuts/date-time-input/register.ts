@@ -2,7 +2,11 @@ import { defineShortcutType } from '../../core/defineShortcutType';
 import { buildTypedValidator } from '../../core/dxValidatorHelper';
 import { extractWidgetProps } from '../../core/dxPropsHelper';
 import { processAutoLabel } from '../../core/sharedSensibleDefaults.service';
-import type { DateTimeInputDecorator, DateTimeInputEntry, GslDateTimeInputConfig } from './dateTimeInput.domain';
+import type {
+  DateTimeInputDecorator,
+  DateTimeInputEntry,
+  GslDateTimeInputConfig,
+} from './dateTimeInput.domain';
 
 export const { gsl: _gslDateTimeInputs, gslByUid: _gslDateTimeInputByUid } = defineShortcutType<
   DateTimeInputEntry,

@@ -4,7 +4,10 @@ import type { DxCommonFields, DxInputBase } from '../../core/dxBase.types';
 import type { DefOrCallback, GslConfigBase, GuiShortcutOf } from '../../core/dxUtilityTypes';
 import type { DxValidator } from '../../core/dxValidatorHelper';
 
-export interface DateTimeInputDecorator extends DxInputBase, DxCommonFields, Partial<DateTimeInputProps> {
+export interface DateTimeInputDecorator
+  extends DxInputBase,
+    DxCommonFields,
+    Partial<DateTimeInputProps> {
   type: 'dateTimeInput';
   validator?: DxValidator<StringValidator>;
 }

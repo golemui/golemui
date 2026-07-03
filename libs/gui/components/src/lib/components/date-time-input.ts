@@ -94,11 +94,7 @@ export class GuiDateTime extends AbstractDateTimeInput {
   override willUpdate(changedProperties: PropertyValues): void {
     // !hasUpdated: parse on first render even when no value was ever set,
     // so the AM/PM toggle starts with its default state
-    if (
-      !this.hasUpdated ||
-      changedProperties.has('value') ||
-      changedProperties.has('hourFormat')
-    ) {
+    if (!this.hasUpdated || changedProperties.has('value') || changedProperties.has('hourFormat')) {
       this.parseValue(this.value ?? '');
     }
   }
@@ -206,7 +202,14 @@ export class GuiDateTime extends AbstractDateTimeInput {
     const isMinuteValid = !isNaN(minuteVal);
     const isPeriodValid = !is12h || period === 'am' || period === 'pm';
 
-    if (isYearValid && isMonthValid && isDayValid && isHourValid && isMinuteValid && isPeriodValid) {
+    if (
+      isYearValid &&
+      isMonthValid &&
+      isDayValid &&
+      isHourValid &&
+      isMinuteValid &&
+      isPeriodValid
+    ) {
       const maxValidDay = maxValidDayInMonth(monthVal, yearVal);
       // Date is complete but invalid
       if (dayVal > maxValidDay) {
