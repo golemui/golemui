@@ -14,6 +14,7 @@ import { mount } from 'cypress-ct-lit';
 // https://on.cypress.io/configuration
 // ***********************************************************
 // Import commands.ts using ES2015 syntax:
+import '../../../components/src/styles/index.scss';
 import { memoryCleaner } from '@golemui/ui-testing';
 import './commands';
 

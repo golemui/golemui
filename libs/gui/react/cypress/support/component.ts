@@ -15,6 +15,7 @@ import { mount } from 'cypress/react';
 // ***********************************************************
 
 // Import commands.ts using ES2015 syntax:
+import '../../../components/src/styles/index.scss';
 import { memoryCleaner } from '@golemui/ui-testing';
 import './commands';
 
