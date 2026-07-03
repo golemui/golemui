@@ -1,0 +1,42 @@
+import { CommonModule } from '@angular/common';
+import {
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  inject,
+  type OnDestroy,
+  type OnInit,
+} from '@angular/core';
+import { InputWidgetAdapter } from '@golemui/angular';
+import type { InputWidget, WithWidget } from '@golemui/core';
+import type { TimeInputProps } from '@golemui/gui-shared/internals';
+import '@golemui/gui-components/time-input';
+
+@Component({
+  standalone: true,
+  selector: 'gui-time-control',
+  imports: [CommonModule],
+  providers: [InputWidgetAdapter],
+  templateUrl: './time.component.html',
+  host: {
+    class: 'gui-time gui-field',
+    '[style.flex]': 'this.adapter.templateData().size',
+  },
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+})
+export class TimeComponent implements OnInit, OnDestroy, WithWidget {
+  widget!: InputWidget<string>;
+  protected adapter: InputWidgetAdapter<string, TimeInputProps> = inject(InputWidgetAdapter);
+
+  ngOnInit(): void {
+    this.adapter.init(this.widget);
+  }
+
+  onChangeTime(event: Event) {
+    this.adapter.injectValidationIssues(null);
+    this.adapter.valueChanged((event as CustomEvent).detail.value);
+  }
+
+  ngOnDestroy(): void {
+    this.adapter.destroy();
+  }
+}

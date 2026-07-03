@@ -32,6 +32,7 @@ const UMBRELLA_ITEMTYPES: Record<string, ReadonlySet<string>> = {
     'RANGE_CALENDAR',
     'RANGE_DATE_INPUT',
     'RANGE_DATE_PICKER',
+    'TIME_INPUT',
     'CURRENCY',
     'MARKDOWN',
     'LIST',

@@ -19,6 +19,7 @@ import { GuiSelect } from '@golemui/gui-components/select';
 import { GuiTags } from '@golemui/gui-components/tags';
 import { GuiTextarea } from '@golemui/gui-components/textarea';
 import { GuiTextinput } from '@golemui/gui-components/textinput';
+import { GuiTime } from '@golemui/gui-components/time-input';
 import { GuiToggle } from '@golemui/gui-components/toggle';
 
 const wrap = <
@@ -71,6 +72,7 @@ export const GuiCalendarReact = wrap('gui-calendar', GuiCalendar);
 export const GuiRangeCalendarReact = wrap('gui-range-calendar', GuiRangeCalendar);
 export const GuiDateReact = wrap('gui-date', GuiDate);
 export const GuiRangeDateReact = wrap('gui-range-date', GuiRangeDateInput);
+export const GuiTimeReact = wrap('gui-time', GuiTime);
 
 export const GuiListReact = wrap('gui-list', GuiList);
 export const GuiLabelReact = wrap('gui-label', GuiLabel);

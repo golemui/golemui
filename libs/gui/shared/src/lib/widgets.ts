@@ -18,6 +18,7 @@ export const inputWidgets = [
   'tags',
   'textarea',
   'textinput',
+  'timeInput',
   'toggle',
 ] as const;
 export const layoutWidgets = ['accordion', 'flex', 'grid', 'tabs'] as const;

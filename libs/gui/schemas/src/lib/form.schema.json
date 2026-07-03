@@ -119,6 +119,9 @@
           "$ref": "./components/textinput.schema.json"
         },
         {
+          "$ref": "./components/timeinput.schema.json"
+        },
+        {
           "$ref": "./components/toggle.schema.json"
         },
         {

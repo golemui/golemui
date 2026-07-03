@@ -124,6 +124,34 @@
         ]
       },
       "validator": { "type": "string", "required": true, "format": "date" }
+    },
+    {
+      "kind": "display",
+      "type": "heading",
+      "props": {
+        "text": "TIME INPUTS",
+        "level": 3
+      }
+    },
+    {
+      "kind": "input",
+      "type": "timeInput",
+      "path": "timeInput",
+      "defaultValue": "2026-07-02T09:30:00",
+      "props": {
+        "icon": "schedule",
+        "minuteStep": 15
+      },
+      "validator": { "type": "string", "required": true }
+    },
+    {
+      "kind": "input",
+      "type": "timeInput",
+      "path": "timeInput24",
+      "props": {
+        "icon": "schedule",
+        "hourFormat": "24"
+      }
     }
   ]
 }

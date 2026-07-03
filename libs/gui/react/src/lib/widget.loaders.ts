@@ -14,6 +14,7 @@ export const widgetLoaders: WidgetLoaders<React.ComponentType<WithWidget>, Golem
   list: async () => (await import('./components/List')).List,
   password: async () => (await import('./components/Password')).Password,
   textinput: async () => (await import('./components/TextInput')).TextInput,
+  timeInput: async () => (await import('./components/TimeInput')).TimeInput,
   textarea: async () => (await import('./components/TextArea')).TextArea,
   markdown: async () => (await import('./components/Markdown')).Markdown,
   checkbox: async () => (await import('./components/Checkbox')).Checkbox,
