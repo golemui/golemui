@@ -6,6 +6,7 @@ export type { CalendarDay } from './lib/components/calendar';
 export { GuiCheckbox } from './lib/components/checkbox';
 export { GuiCurrency } from './lib/components/currency';
 export { GuiDate } from './lib/components/date-input';
+export { GuiDateTime } from './lib/components/date-time-input';
 export { GuiErrors } from './lib/components/errors';
 export { GuiLabel } from './lib/components/label';
 export { GuiList } from './lib/components/list';
@@ -76,6 +77,7 @@ export {
 
 export {
   from24Hour,
+  getDateTimeFormatParts,
   getDayPeriodLabels,
   getTimeFormatParts,
   parseISODateTimeString,

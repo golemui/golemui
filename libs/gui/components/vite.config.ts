@@ -30,6 +30,7 @@ export default defineConfig(() => ({
         'lib/components/checkbox': 'src/lib/components/checkbox.ts',
         'lib/components/currency': 'src/lib/components/currency.ts',
         'lib/components/date-input': 'src/lib/components/date-input.ts',
+        'lib/components/date-time-input': 'src/lib/components/date-time-input.ts',
         'lib/components/errors': 'src/lib/components/errors.ts',
         'lib/components/label': 'src/lib/components/label.ts',
         'lib/components/list': 'src/lib/components/list.ts',

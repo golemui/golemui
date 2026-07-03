@@ -314,6 +314,17 @@ const INPUTS: DxSpec[] = [
     ],
   },
   {
+    factory: 'dateTimeInput',
+    namespace: 'inputs',
+    call: 'gui.inputs.dateTimeInput(path, { label, hourFormat?, minuteStep?, validator? })',
+    example: "gui.inputs.dateTimeInput('meetingAt', { label: 'Meeting at' })",
+    notes: [
+      'Typed date+time entry in one locale-ordered row. Emits a local ISO date-time ' +
+        "(`YYYY-MM-DDTHH:mm:ss`) — pair with the `{ format: 'date-time' }` validator. " +
+        "`hourFormat`/`minuteStep` as in `timeInput`.",
+    ],
+  },
+  {
     factory: 'calendar',
     namespace: 'inputs',
     call: 'gui.inputs.calendar(path, { label, minDate?, maxDate? })',

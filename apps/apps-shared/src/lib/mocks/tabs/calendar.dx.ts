@@ -93,4 +93,21 @@ export const calendarTab = gui.layouts.flex([
     hourFormat: '24',
     validator: { required: true, format: 'time' },
   }),
+
+  gui.displays.custom('heading', { text: 'DATE TIME INPUTS', level: 3 }),
+
+  gui.inputs.dateTimeInput('dateTimeInput', {
+    label: '12h date time format',
+    hint: '15m step jumps on minutes',
+    defaultValue: '2026-07-03T09:30:00',
+    icon: 'calendar_month',
+    minuteStep: 15,
+    validator: { required: true, format: 'date-time' },
+  }),
+
+  gui.inputs.dateTimeInput('dateTimeInput24', {
+    label: '24h date time format',
+    hourFormat: '24',
+    validator: { required: true, format: 'date-time' },
+  }),
 ]);

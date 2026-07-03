@@ -73,7 +73,7 @@ export class GuiRangeDateInput extends AbstractDateTimeInput {
         if (otherInputs.length > 0) {
           const target = otherInputs[otherInputs.length - 1];
           target.focus();
-          target.select();
+          this.selectPart(target);
         }
       }
     } else {
@@ -82,7 +82,7 @@ export class GuiRangeDateInput extends AbstractDateTimeInput {
         const otherInputs = this.getGroupInputs(otherGroup);
         if (otherInputs.length > 0) {
           otherInputs[0].focus();
-          otherInputs[0].select();
+          this.selectPart(otherInputs[0]);
         }
       }
     }

@@ -62,6 +62,9 @@
           "$ref": "./components/dateinput.schema.json"
         },
         {
+          "$ref": "./components/datetimeinput.schema.json"
+        },
+        {
           "$ref": "./components/datepicker.schema.json"
         },
         {

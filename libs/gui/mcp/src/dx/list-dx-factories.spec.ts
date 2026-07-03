@@ -45,7 +45,7 @@ describe('dx_list_factories', () => {
     // ~4K resident buys convergence (the alternative is a ~1M-token discovery loop). The budget still
     // holds a real ceiling — keep additions earning their bytes.
     const bytes = JSON.stringify(listDxFactoriesCatalog('react')).length;
-    expect(bytes).toBeLessThan(21000);
+    expect(bytes).toBeLessThan(21500);
   });
 
   it('tailors the common note imports + render to the requested framework', () => {

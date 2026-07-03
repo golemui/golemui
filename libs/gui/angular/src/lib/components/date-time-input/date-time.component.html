@@ -1,0 +1,20 @@
+@let templateData = adapter.templateData();
+
+<gui-date-time
+  [uid]="widget.uid"
+  [label]="templateData.label"
+  [hint]="templateData.hint"
+  [errors]="templateData.errors"
+  [touched]="templateData.touched"
+  [required]="templateData.validator?.required"
+  [disabled]="templateData.disabled"
+  [readonly]="templateData.readonly"
+  [value]="templateData.value"
+  [icon]="templateData.icon"
+  [localeId]="templateData.lang"
+  [hourFormat]="templateData.hourFormat"
+  [minuteStep]="templateData.minuteStep"
+  (change)="onChangeDateTime($event)"
+  (inputError)="onInputError($event)"
+  (blur)="adapter.onBlur()"
+></gui-date-time>

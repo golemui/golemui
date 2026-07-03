@@ -4,6 +4,7 @@ export const inputWidgets = [
   'currency',
   'dateInput',
   'datePicker',
+  'dateTimeInput',
   'dropdown',
   'list',
   'markdown',

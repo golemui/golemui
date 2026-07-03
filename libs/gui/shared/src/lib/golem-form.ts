@@ -35,6 +35,7 @@ import type {
   RepeaterProps,
   SelectProps,
   TabsProps,
+  DateTimeInputProps,
   TextareaProps,
   TextinputProps,
   TimeInputProps,
@@ -192,6 +193,7 @@ type GolemWidget<
   | GuiCurrency<FormType, States, V>
   | GuiDateinput<FormType, States, V>
   | GuiDatePicker<FormType, States, V>
+  | GuiDateTimeInput<FormType, States, V>
   | GuiDropdown<FormType, States, V>
   | GuiFunctionWidget<FormType, States, V, CustomWidget>
   | GuiList<FormType, States, V>
@@ -450,6 +452,14 @@ type GuiTimeInput<FormType extends Record<string, any>, States extends string, V
   TimeInputProps,
   V
 > & { type: 'timeInput' };
+
+type GuiDateTimeInput<FormType extends Record<string, any>, States extends string, V> = InputWidget<
+  string,
+  States,
+  FormType,
+  DateTimeInputProps,
+  V
+> & { type: 'dateTimeInput' };
 
 type GuiToggle<FormType extends Record<string, any>, States extends string, V> = InputWidget<
   boolean,

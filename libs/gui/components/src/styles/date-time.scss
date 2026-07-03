@@ -1,7 +1,7 @@
-gui-time {
+gui-date-time {
   display: block;
 
-  .gui-time-input {
+  .gui-date-time-input {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
@@ -26,16 +26,16 @@ gui-time {
       box-shadow: var(--gui-shadow-focus);
     }
 
-    .gui-time-input__touch-target {
+    .gui-date-time-input__touch-target {
       display: block;
       position: relative;
     }
 
-    .gui-time-input__visual-underline {
+    .gui-date-time-input__visual-underline {
       position: absolute;
       bottom: -1px;
-      inset-inline-start: 2px;
-      width: 19px;
+      inset-inline-start: 3px;
+      width: 18px;
       height: 1px;
       background-color: var(--gui-text-default);
       z-index: 1;
@@ -54,7 +54,7 @@ gui-time {
       text-align: center;
       color: var(--gui-text-default);
 
-      &.gui-time-input__part {
+      &.gui-date-time-input__part {
         min-width: 48px;
         min-height: 48px;
         border: none;
@@ -62,17 +62,23 @@ gui-time {
         text-align: center;
         padding: 0;
         margin-block: -16px;
-        // Match the date input's part spacing; the AM/PM button below keeps a
-        // smaller overlap because its separator is a thin space (CI click fix)
         margin-inline: -12px;
         position: relative;
         z-index: 2;
       }
 
+      &.gui-date-time-input__year {
+        width: 64px;
+
+        & ~ .gui-date-time-input__visual-underline {
+          width: 34px;
+        }
+      }
+
       &:focus {
         box-shadow: none;
 
-        & ~ .gui-time-input__visual-underline {
+        & ~ .gui-date-time-input__visual-underline {
           display: block;
         }
       }
@@ -87,7 +93,7 @@ gui-time {
     }
 
     // The AM/PM part is a toggle button styled like the text segments
-    button.gui-time-input__part {
+    button.gui-date-time-input__part {
       font-family: monospace;
       font-size: inherit;
       color: var(--gui-text-default);
@@ -106,12 +112,12 @@ gui-time {
       z-index: 2;
       cursor: pointer;
 
-      &.gui-time-input__dayperiod {
+      &.gui-date-time-input__dayperiod {
         margin-inline: -12px;
       }
 
-      &:hover ~ .gui-time-input__visual-underline,
-      &:focus ~ .gui-time-input__visual-underline {
+      &:hover ~ .gui-date-time-input__visual-underline,
+      &:focus ~ .gui-date-time-input__visual-underline {
         display: block;
       }
 

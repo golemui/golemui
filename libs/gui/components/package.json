@@ -48,6 +48,11 @@
       "import": "./lib/components/date-input.js",
       "require": "./lib/components/date-input.umd.cjs"
     },
+    "./date-time-input": {
+      "types": "./lib/components/date-time-input.d.ts",
+      "import": "./lib/components/date-time-input.js",
+      "require": "./lib/components/date-time-input.umd.cjs"
+    },
     "./errors": {
       "types": "./lib/components/errors.d.ts",
       "import": "./lib/components/errors.js",

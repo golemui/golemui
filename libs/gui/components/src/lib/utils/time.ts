@@ -41,6 +41,31 @@ export function getTimeFormatParts(
 }
 
 /**
+ * Returns the locale-ordered date-time parts (day, month, year, hour, minute,
+ * dayPeriod and literal separators) used to lay out segmented date-time
+ * inputs. A single formatToParts call yields the whole sequence in locale
+ * order, including the literals between the date and time blocks (and e.g.
+ * ko-KR placing the day period between them).
+ *
+ * @param {string | undefined} localeId - The locale identifier. Defaults to 'en'.
+ * @param {HourFormat} hourFormat - The effective hour format.
+ * @return {Intl.DateTimeFormatPart[]} The ordered parts, including literals.
+ */
+export function getDateTimeFormatParts(
+  localeId: string | undefined,
+  hourFormat: HourFormat,
+): Intl.DateTimeFormatPart[] {
+  return new Intl.DateTimeFormat(localeId ?? 'en', {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    hourCycle: hourFormat === '12' ? 'h12' : 'h23',
+  }).formatToParts(TIME_PARTS_ANCHOR);
+}
+
+/**
  * Returns the locale's day period labels (e.g. { am: 'AM', pm: 'PM' } for
  * 'en-US', { am: 'a. m.', pm: 'p. m.' } for 'es-ES').
  *
