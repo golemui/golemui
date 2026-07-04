@@ -117,7 +117,9 @@ export class GuiTime extends AbstractDateTimeInput {
 
       <div class="gui-widget">
         <div
-          class="gui-widget-input gui-time-input ${this.icon ? 'gui-calendar--icon' : ''}"
+          class="gui-widget-input gui-parts gui-parts-ring gui-time-input ${this.icon
+            ? 'gui-calendar--icon'
+            : ''}"
           role="group"
         >
           ${this.renderGroupParts('default')}

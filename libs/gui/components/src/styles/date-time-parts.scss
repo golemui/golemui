@@ -1,0 +1,138 @@
+// Error border and focus ring for the element that owns the field border.
+.gui-parts-ring {
+  &[aria-invalid='true'] {
+    border-color: var(--gui-intent-error);
+
+    &:has(input:focus, button:focus, .gui-pills__pill:focus) {
+      outline: 0;
+      border-color: var(--gui-intent-error);
+      box-shadow: var(--gui-shadow-focus-error);
+    }
+  }
+
+  &:has(input:focus, button:focus, .gui-pills__pill:focus) {
+    outline: 0;
+    border-color: var(--gui-border-focus);
+    box-shadow: var(--gui-shadow-focus);
+  }
+}
+
+// Flex row hosting the part inputs
+.gui-parts {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  flex-direction: row;
+  gap: 0;
+  color: var(--gui-text-default);
+
+  &.gui-calendar--icon {
+    padding-inline-start: 2.5rem;
+  }
+
+  .gui-parts__touch-target {
+    display: block;
+    position: relative;
+  }
+
+  .gui-parts__visual-underline {
+    position: absolute;
+    bottom: -1px;
+    inset-inline-start: 2px;
+    width: 19px;
+    height: 1px;
+    background-color: var(--gui-text-default);
+    z-index: 1;
+    pointer-events: none;
+    display: none;
+  }
+
+  input[type='text'] {
+    font-family: monospace;
+    border: 0;
+    padding: 0;
+    background: transparent;
+    border-radius: 0;
+    outline: none;
+    width: 24px;
+    text-align: center;
+    color: var(--gui-text-default);
+
+    &.gui-parts__part {
+      min-width: 48px;
+      min-height: 48px;
+      border: none;
+      background: transparent;
+      text-align: center;
+      padding: 0;
+      margin-block: -16px;
+      margin-inline: -12px;
+      position: relative;
+      z-index: 2;
+    }
+
+    // The four-digit year part is wider than the two-digit ones
+    &.gui-parts__year {
+      width: 64px;
+
+      & ~ .gui-parts__visual-underline {
+        width: 36px;
+      }
+    }
+
+    &:focus {
+      box-shadow: none;
+
+      & ~ .gui-parts__visual-underline {
+        display: block;
+      }
+    }
+
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      margin: 0;
+    }
+  }
+
+  // The AM/PM part is a toggle button styled like the text segments
+  button.gui-parts__part {
+    font-family: monospace;
+    font-size: inherit;
+    color: var(--gui-text-default);
+    border: 0;
+    border-radius: 0;
+    padding: 0;
+    background: transparent;
+    outline: none;
+    width: 48px;
+    min-width: 48px;
+    min-height: 48px;
+    text-align: center;
+    margin-block: -16px;
+    margin-inline: -8px;
+    position: relative;
+    z-index: 2;
+    cursor: pointer;
+
+    // Same 24px flow footprint as the numeric parts (width + margins), but
+    // with the hit-box pulled in so it can't cover the minute's click center
+    &.gui-parts__dayperiod {
+      width: 40px;
+      min-width: 40px;
+      margin-inline: -8px;
+    }
+
+    &:hover ~ .gui-parts__visual-underline,
+    &:focus ~ .gui-parts__visual-underline {
+      display: block;
+    }
+
+    &:disabled {
+      cursor: default;
+    }
+  }
+}

@@ -269,14 +269,14 @@ export abstract class AbstractDateTimeInput extends LitElement {
       return this.renderDayPeriodToggle(group, descriptor, tabIndex);
     }
 
-    const modifierClass = type === 'year' ? `${block}__year` : '';
+    const modifierClass = type === 'year' ? `gui-parts__year ${block}__year` : '';
 
     return html`
-      <div class="${block}__touch-target">
+      <div class="gui-parts__touch-target ${block}__touch-target">
         <input
           type="text"
           inputmode="numeric"
-          class="${block}__part ${modifierClass}"
+          class="gui-parts__part ${block}__part ${modifierClass}"
           data-type=${type}
           data-group=${this.groups.length > 1 ? group : nothing}
           maxlength=${descriptor.maxLength}
@@ -293,7 +293,7 @@ export abstract class AbstractDateTimeInput extends LitElement {
           @blur=${(e: FocusEvent) => this.handleBlur(e, group, type)}
           @change=${(e: Event) => this.handleChange(e, group, type)}
         />
-        <div class="${block}__visual-underline"></div>
+        <div class="gui-parts__visual-underline ${block}__visual-underline"></div>
       </div>
     `;
   }
@@ -319,10 +319,10 @@ export abstract class AbstractDateTimeInput extends LitElement {
     const type = descriptor.type;
 
     return html`
-      <div class="${block}__touch-target">
+      <div class="gui-parts__touch-target ${block}__touch-target">
         <button
           type="button"
-          class="${block}__part ${block}__dayperiod"
+          class="gui-parts__part gui-parts__dayperiod ${block}__part ${block}__dayperiod"
           data-type=${type}
           data-group=${this.groups.length > 1 ? group : nothing}
           tabindex=${tabIndex}
@@ -335,7 +335,7 @@ export abstract class AbstractDateTimeInput extends LitElement {
         >
           ${this.getPartDisplayValue(group, type)}
         </button>
-        <div class="${block}__visual-underline"></div>
+        <div class="gui-parts__visual-underline ${block}__visual-underline"></div>
       </div>
     `;
   }

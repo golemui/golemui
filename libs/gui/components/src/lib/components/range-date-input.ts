@@ -127,7 +127,7 @@ export class GuiRangeDateInput extends AbstractDateTimeInput {
 
       <div class="gui-widget">
         <div
-          class="gui-widget-input gui-range-date-input ${this.icon
+          class="gui-widget-input gui-parts-ring gui-range-date-input ${this.icon
             ? 'gui-range-date-input--icon'
             : ''}"
           role="group"
@@ -154,7 +154,7 @@ export class GuiRangeDateInput extends AbstractDateTimeInput {
 
           <div class="gui-range-date-input__inputs">
             <div
-              class="gui-range-date-input__field"
+              class="gui-parts gui-range-date-input__field"
               role="group"
               aria-label=${this.startDateAriaLabel ?? 'Start date'}
             >
@@ -164,7 +164,7 @@ export class GuiRangeDateInput extends AbstractDateTimeInput {
             <span class="gui-range-date-input__separator">${this.separator ?? '-'}</span>
 
             <div
-              class="gui-range-date-input__field"
+              class="gui-parts gui-range-date-input__field"
               role="group"
               aria-label=${this.endDateAriaLabel ?? 'End date'}
             >
