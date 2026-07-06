@@ -1,4 +1,4 @@
-import { defineForm, identityTranslator } from '@golemui/core';
+import { defineForm, identityTranslator, type MutableI18nTranslator } from '@golemui/core';
 import { type MountComponentFn } from '../utils';
 
 export const runDateTimeInputComponentTests = (mountFn: MountComponentFn) => {
@@ -15,13 +15,14 @@ export const runDateTimeInputComponentTests = (mountFn: MountComponentFn) => {
     const mountDateTimeInput = (options?: {
       data?: Record<string, any>;
       lang?: string;
+      translator?: MutableI18nTranslator;
       props?: Record<string, any>;
       formSubmit?: (event: any) => void;
       readonly?: boolean;
       disabled?: boolean;
     }) => {
       mountFn({
-        localization: identityTranslator(options?.lang ?? 'en-US'),
+        localization: options?.translator ?? identityTranslator(options?.lang ?? 'en-US'),
         data: options?.data,
         formDef: defineForm({
           form: [
@@ -194,6 +195,44 @@ export const runDateTimeInputComponentTests = (mountFn: MountComponentFn) => {
 
         cy.get(sel.minute).type('{upArrow}');
         cy.get(sel.minute).should('have.value', '45');
+      });
+    });
+
+    describe('runtime locale change', () => {
+      // Issue: runtime localeId change ignored. The parts must be re-derived
+      // from the canonical value when the locale switches at runtime, not
+      // left at the display values of the previous locale.
+      it('should re-derive the parts when switching to a 24h locale at runtime', () => {
+        const translator = identityTranslator('en-US');
+        mountDateTimeInput({ data: { myDateTime: '2026-06-15T14:30:00' }, translator });
+
+        cy.get(sel.hour).should('have.value', '02');
+        expectDayPeriod('PM');
+
+        cy.then(() => translator.setLang('en-GB'));
+
+        // en-GB reorders the date parts and drops the day period
+        cy.get('gui-date-time input, gui-date-time button[data-type]').should(($els) => {
+          const types = $els.toArray().map((el) => el.getAttribute('data-type'));
+          expect(types).to.deep.equal(['day', 'month', 'year', 'hour', 'minute']);
+        });
+        cy.get(sel.hour).should('have.value', '14');
+        cy.get(sel.day).should('have.value', '15');
+        cy.get(sel.month).should('have.value', '06');
+      });
+
+      it('should re-derive the parts when switching to a 12h locale at runtime', () => {
+        const translator = identityTranslator('en-GB');
+        mountDateTimeInput({ data: { myDateTime: '2026-06-15T14:30:00' }, translator });
+
+        cy.get(sel.hour).should('have.value', '14');
+        cy.get(sel.dayPeriod).should('not.exist');
+
+        cy.then(() => translator.setLang('en-US'));
+
+        cy.get(sel.hour).should('have.value', '02');
+        cy.get(sel.minute).should('have.value', '30');
+        expectDayPeriod('PM');
       });
     });
 
