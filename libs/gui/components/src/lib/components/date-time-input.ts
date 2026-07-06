@@ -1,34 +1,35 @@
-import type { TimeInputProps } from '@golemui/gui-shared/internals';
+import type { DateTimeInputProps } from '@golemui/gui-shared/internals';
 import { html, nothing, type PropertyValues } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import {
   AbstractDateTimeInput,
+  dateInputPartDescriptors,
   timeInputPartDescriptors,
   type DateTimePartDescriptor,
   type DateTimePartType,
 } from './abstract-date-time-input';
+import { maxValidDayInMonth } from '../utils/date';
 import {
   from24Hour,
+  getDateTimeFormatParts,
   getDayPeriodLabels,
-  getTimeFormatParts,
   parseISODateTimeString,
-  parseISOTimeString,
   resolveHourFormat,
   to24Hour,
-  toISOTimeString,
+  toISODateTimeString,
   type HourFormat,
 } from '../utils/time';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 
-@customElement('gui-time')
-export class GuiTime extends AbstractDateTimeInput {
+@customElement('gui-date-time')
+export class GuiDateTime extends AbstractDateTimeInput {
   @property({ type: String }) value: string | undefined = undefined;
   @property({ type: String, attribute: 'hour-format' }) hourFormat: HourFormat | undefined =
     undefined;
   @property({ type: Number, attribute: 'minute-step' }) minuteStep: number | undefined = 1;
 
-  protected override readonly inputBlockClass = 'gui-time-input';
+  protected override readonly inputBlockClass = 'gui-date-time-input';
   protected override readonly groups = ['default'] as const;
 
   // Intl.DateTimeFormat construction is expensive and these are consulted on
@@ -56,7 +57,7 @@ export class GuiTime extends AbstractDateTimeInput {
   }
 
   protected override getFormatParts(): Intl.DateTimeFormatPart[] {
-    return getTimeFormatParts(this.localeId, this.effectiveHourFormat);
+    return getDateTimeFormatParts(this.localeId, this.effectiveHourFormat);
   }
 
   protected override getPartDescriptor(type: string): DateTimePartDescriptor | undefined {
@@ -68,11 +69,14 @@ export class GuiTime extends AbstractDateTimeInput {
     if (cache?.key !== key) {
       cache = {
         key,
-        descriptors: timeInputPartDescriptors(
-          this.effectiveHourFormat,
-          minuteStep,
-          this.dayPeriodLabels.am,
-        ),
+        descriptors: {
+          ...dateInputPartDescriptors(),
+          ...timeInputPartDescriptors(
+            this.effectiveHourFormat,
+            minuteStep,
+            this.dayPeriodLabels.am,
+          ),
+        },
       };
       this._descriptorsCache = cache;
     }
@@ -88,6 +92,7 @@ export class GuiTime extends AbstractDateTimeInput {
   }
 
   override willUpdate(changedProperties: PropertyValues): void {
+    // !hasUpdated: parse on first render even when no value was ever set,
     if (
       !this.hasUpdated ||
       changedProperties.has('value') ||
@@ -99,7 +104,7 @@ export class GuiTime extends AbstractDateTimeInput {
   }
 
   override render() {
-    const templateData: ControlTemplateData<string> & TimeInputProps = {
+    const templateData: ControlTemplateData<string> & DateTimeInputProps = {
       uid: this.uid,
       label: this.label,
       errors: this.errors,
@@ -122,7 +127,7 @@ export class GuiTime extends AbstractDateTimeInput {
 
       <div class="gui-widget">
         <div
-          class="gui-widget-input gui-parts gui-parts-ring gui-time-input ${this.icon
+          class="gui-widget-input gui-parts gui-parts-ring gui-date-time-input ${this.icon
             ? 'gui-calendar--icon'
             : ''}"
           role="group"
@@ -150,15 +155,14 @@ export class GuiTime extends AbstractDateTimeInput {
       return;
     }
 
-    let time = parseISOTimeString(isoValue);
-    if (!time) {
-      // Lenient fallback: accept the time part of a local ISO date-time
-      const date = parseISODateTimeString(isoValue);
-      if (isNaN(date.getTime())) return;
-      time = { hours: date.getHours(), minutes: date.getMinutes(), seconds: date.getSeconds() };
-    }
+    const date = parseISODateTimeString(isoValue);
+    if (isNaN(date.getTime())) return;
 
-    const hour24 = time.hours;
+    this.setPartValue('default', 'day', date.getDate().toString().padStart(2, '0'));
+    this.setPartValue('default', 'month', (date.getMonth() + 1).toString().padStart(2, '0'));
+    this.setPartValue('default', 'year', date.getFullYear().toString());
+
+    const hour24 = date.getHours();
     if (this.effectiveHourFormat === '12') {
       const { hour12, period } = from24Hour(hour24);
       this.setPartValue('default', 'hour', hour12.toString().padStart(2, '0'));
@@ -166,50 +170,78 @@ export class GuiTime extends AbstractDateTimeInput {
     } else {
       this.setPartValue('default', 'hour', hour24.toString().padStart(2, '0'));
     }
-    this.setPartValue('default', 'minute', time.minutes.toString().padStart(2, '0'));
+    this.setPartValue('default', 'minute', date.getMinutes().toString().padStart(2, '0'));
   }
 
   protected override commitParts(): void {
     this.validateAndEmit();
   }
 
+  /** Clamps a part to its descriptor bounds, writing the correction back. */
+  private clampPart(type: DateTimePartType, value: number): number {
+    if (isNaN(value)) return value;
+    const clamped = this.clampToDescriptor(type, value);
+    if (clamped !== value) {
+      const width = this.getPartDescriptor(type)?.maxLength ?? 2;
+      this.setPartValue('default', type, clamped.toString().padStart(width, '0'));
+    }
+    return clamped;
+  }
+
   private validateAndEmit() {
     const is12h = this.effectiveHourFormat === '12';
-    let hourVal = parseInt(this.getPartValue('default', 'hour'), 10);
-    let minuteVal = parseInt(this.getPartValue('default', 'minute'), 10);
+
+    const yearVal = this.clampPart('year', parseInt(this.getPartValue('default', 'year'), 10));
+    const monthVal = this.clampPart('month', parseInt(this.getPartValue('default', 'month'), 10));
+    const dayVal = this.clampPart('day', parseInt(this.getPartValue('default', 'day'), 10));
+    const hourVal = this.clampPart('hour', parseInt(this.getPartValue('default', 'hour'), 10));
+    const minuteVal = this.clampPart(
+      'minute',
+      parseInt(this.getPartValue('default', 'minute'), 10),
+    );
     const period = this.getPartValue('default', 'dayPeriod');
 
-    // Clamp out-of-range values and write them back so the user sees the
-    // corrected part immediately
-    if (!isNaN(hourVal)) {
-      const clamped = this.clampToDescriptor('hour', hourVal);
-      if (clamped !== hourVal) {
-        hourVal = clamped;
-        this.setPartValue('default', 'hour', hourVal.toString().padStart(2, '0'));
-      }
-    }
-    if (!isNaN(minuteVal)) {
-      const clamped = this.clampToDescriptor('minute', minuteVal);
-      if (clamped !== minuteVal) {
-        minuteVal = clamped;
-        this.setPartValue('default', 'minute', minuteVal.toString().padStart(2, '0'));
-      }
-    }
-
+    const isYearValid = !isNaN(yearVal) && String(yearVal).length === 4;
+    const isMonthValid = !isNaN(monthVal) && monthVal > 0;
+    const isDayValid = !isNaN(dayVal) && dayVal > 0;
     const isHourValid = !isNaN(hourVal);
     const isMinuteValid = !isNaN(minuteVal);
     const isPeriodValid = !is12h || period === 'am' || period === 'pm';
 
-    if (isHourValid && isMinuteValid && isPeriodValid) {
-      const hour24 = is12h ? to24Hour(hourVal, period as 'am' | 'pm') : hourVal;
-      this.value = toISOTimeString(new Date(1970, 0, 1, hour24, minuteVal, 0));
+    if (
+      isYearValid &&
+      isMonthValid &&
+      isDayValid &&
+      isHourValid &&
+      isMinuteValid &&
+      isPeriodValid
+    ) {
+      const maxValidDay = maxValidDayInMonth(monthVal, yearVal);
+      // Date is complete but invalid
+      if (dayVal > maxValidDay) {
+        // TODO: add property for i18n error messages
+        this.dispatchEvent(
+          new CustomEvent('inputError', {
+            detail: {
+              message:
+                'Invalid date: day is greater than the maximum valid day for the month and year.',
+            },
+            bubbles: true,
+          }),
+        );
+      } else {
+        const hour24 = is12h ? to24Hour(hourVal, period as 'am' | 'pm') : hourVal;
+        this.value = toISODateTimeString(
+          new Date(yearVal, monthVal - 1, dayVal, hour24, minuteVal, 0),
+        );
 
-      this.dispatchEvent(
-        new CustomEvent('change', {
-          detail: { value: this.value },
-          bubbles: true,
-        }),
-      );
+        this.dispatchEvent(
+          new CustomEvent('change', {
+            detail: { value: this.value },
+            bubbles: true,
+          }),
+        );
+      }
     }
 
     this.requestUpdate();
@@ -218,10 +250,10 @@ export class GuiTime extends AbstractDateTimeInput {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'gui-time': GuiTime;
+    'gui-date-time': GuiDateTime;
   }
 }
 
-if (typeof customElements !== 'undefined' && !customElements.get('gui-time')) {
-  customElements.define('gui-time', GuiTime);
+if (typeof customElements !== 'undefined' && !customElements.get('gui-date-time')) {
+  customElements.define('gui-date-time', GuiDateTime);
 }

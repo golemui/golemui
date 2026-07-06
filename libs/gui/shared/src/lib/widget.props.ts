@@ -282,6 +282,13 @@ export type DateinputProps = {
   icon?: string;
 };
 
+export type DateTimeInputProps = {
+  hint?: string;
+  icon?: string;
+  hourFormat?: '12' | '24';
+  minuteStep?: number;
+};
+
 export type TimeInputProps = {
   hint?: string;
   icon?: string;

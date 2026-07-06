@@ -6,6 +6,7 @@ export type { CalendarDay } from './lib/components/calendar';
 export { GuiCheckbox } from './lib/components/checkbox';
 export { GuiCurrency } from './lib/components/currency';
 export { GuiDate } from './lib/components/date-input';
+export { GuiDateTime } from './lib/components/date-time-input';
 export { GuiErrors } from './lib/components/errors';
 export { GuiLabel } from './lib/components/label';
 export { GuiList } from './lib/components/list';
@@ -52,37 +53,3 @@ export type { WeekInfo } from './lib/utils/week-info';
 // ─── Controllers ───
 
 export { GUIAriaController } from './lib/controllers/aria.controller';
-
-// ─── Date utilities ───
-
-export {
-  createDateRange,
-  getDateFormatParts,
-  getDayLabel,
-  getMonthName,
-  getMonthYearParts,
-  getOrderedWeekDays,
-  getWeekdayLabels,
-  isDateInVisibleMonths,
-  isSameDay,
-  isToday,
-  maxValidDayInMonth,
-  mergeDateRanges,
-  toISODateString,
-  weekDaysOrder,
-} from './lib/utils/date';
-
-// ─── Time utilities ───
-
-export {
-  from24Hour,
-  getDayPeriodLabels,
-  getTimeFormatParts,
-  parseISODateTimeString,
-  parseISOTimeString,
-  resolveHourFormat,
-  to24Hour,
-  toISODateTimeString,
-  toISOTimeString,
-  type HourFormat,
-} from './lib/utils/time';

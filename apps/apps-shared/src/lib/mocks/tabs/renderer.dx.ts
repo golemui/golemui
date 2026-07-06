@@ -21,6 +21,6 @@ export const buildRendererTab = (render: (api: any) => unknown) =>
     }),
     gui.inputs.booleanInput('registerMode', (params) => ({
       label: params.$form.registerMode ? 'Switch to login' : 'Switch to register',
-      hint: 'Runtime functions can change also your props.'
+      hint: 'Runtime functions can change also your props.',
     })),
   ]);

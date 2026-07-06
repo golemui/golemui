@@ -5,6 +5,7 @@ import { GuiCalendar } from '@golemui/gui-components/calendar';
 import { GuiCheckbox } from '@golemui/gui-components/checkbox';
 import { GuiCurrency } from '@golemui/gui-components/currency';
 import { GuiDate } from '@golemui/gui-components/date-input';
+import { GuiDateTime } from '@golemui/gui-components/date-time-input';
 import { GuiErrors } from '@golemui/gui-components/errors';
 import { GuiLabel } from '@golemui/gui-components/label';
 import { GuiList } from '@golemui/gui-components/list';
@@ -73,6 +74,7 @@ export const GuiRangeCalendarReact = wrap('gui-range-calendar', GuiRangeCalendar
 export const GuiDateReact = wrap('gui-date', GuiDate);
 export const GuiRangeDateReact = wrap('gui-range-date', GuiRangeDateInput);
 export const GuiTimeReact = wrap('gui-time', GuiTime);
+export const GuiDateTimeReact = wrap('gui-date-time', GuiDateTime);
 
 export const GuiListReact = wrap('gui-list', GuiList);
 export const GuiLabelReact = wrap('gui-label', GuiLabel);

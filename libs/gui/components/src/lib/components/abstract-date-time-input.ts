@@ -125,9 +125,8 @@ export abstract class AbstractDateTimeInput extends LitElement {
   @property({ type: String }) hint: string | undefined = undefined;
 
   /** Part values per group, e.g. { default: { day: '15', month: '06' } }. */
-  @state() private _partValues: Partial<
-    Record<string, Partial<Record<DateTimePartType, string>>>
-  > = {};
+  @state() private _partValues: Partial<Record<string, Partial<Record<DateTimePartType, string>>>> =
+    {};
 
   protected abstract readonly inputBlockClass: string;
   protected abstract readonly groups: readonly string[];
@@ -222,10 +221,19 @@ export abstract class AbstractDateTimeInput extends LitElement {
     return Math.max(descriptor.min, Math.min(descriptor.max, value));
   }
 
-  protected getGroupInputs(group: string): HTMLInputElement[] {
+  /**
+   * Focusable part elements of a group in DOM order. Numeric parts are
+   * inputs; dayPeriod parts are toggle buttons — both carry the __part class.
+   */
+  protected getGroupInputs(group: string): HTMLElement[] {
     return this.groups.length > 1
-      ? Array.from(this.querySelectorAll<HTMLInputElement>(`input[data-group="${group}"]`))
-      : Array.from(this.querySelectorAll<HTMLInputElement>(`input.${this.inputBlockClass}__part`));
+      ? Array.from(this.querySelectorAll<HTMLElement>(`[data-group="${group}"]`))
+      : Array.from(this.querySelectorAll<HTMLElement>(`.${this.inputBlockClass}__part`));
+  }
+
+  /** Selects an input's text; a no-op for non-input parts (the toggle button). */
+  protected selectPart(el: HTMLElement): void {
+    if (el instanceof HTMLInputElement) el.select();
   }
 
   protected renderGroupParts(group: string) {
@@ -256,19 +264,19 @@ export abstract class AbstractDateTimeInput extends LitElement {
   ): TemplateResult {
     const block = this.inputBlockClass;
     const type = descriptor.type;
-    const modifierClass =
-      type === 'year'
-        ? `${block}__year`
-        : descriptor.kind === 'dayPeriod'
-          ? `${block}__dayperiod`
-          : '';
+
+    if (descriptor.kind === 'dayPeriod') {
+      return this.renderDayPeriodToggle(group, descriptor, tabIndex);
+    }
+
+    const modifierClass = type === 'year' ? `gui-parts__year ${block}__year` : '';
 
     return html`
-      <div class="${block}__touch-target">
+      <div class="gui-parts__touch-target ${block}__touch-target">
         <input
           type="text"
-          inputmode=${descriptor.kind === 'numeric' ? 'numeric' : 'text'}
-          class="${block}__part ${modifierClass}"
+          inputmode="numeric"
+          class="gui-parts__part ${block}__part ${modifierClass}"
           data-type=${type}
           data-group=${this.groups.length > 1 ? group : nothing}
           maxlength=${descriptor.maxLength}
@@ -285,12 +293,61 @@ export abstract class AbstractDateTimeInput extends LitElement {
           @blur=${(e: FocusEvent) => this.handleBlur(e, group, type)}
           @change=${(e: Event) => this.handleChange(e, group, type)}
         />
-        <div class="${block}__visual-underline"></div>
+        <div class="gui-parts__visual-underline ${block}__visual-underline"></div>
       </div>
     `;
   }
 
-  protected handleKeyDown(event: KeyboardEvent, group: string, type: DateTimePartType) {
+  /** Accessible name for the dayPeriod toggle. English default like other aria labels. */
+  protected dayPeriodAriaLabel(): string {
+    return 'AM/PM';
+  }
+
+  /**
+   * The dayPeriod part is a toggle button, not a free-text input: clicking it
+   * (or Enter/Space natively) swaps AM and PM. A typed shortcut cannot work
+   * across locales (e.g. Japanese 午前/午後 share their first character) and
+   * mobile keyboards have no arrow keys, so the switch interaction is the one
+   * that works everywhere.
+   */
+  protected renderDayPeriodToggle(
+    group: string,
+    descriptor: DateTimePartDescriptor,
+    tabIndex: number,
+  ): TemplateResult {
+    const block = this.inputBlockClass;
+    const type = descriptor.type;
+
+    return html`
+      <div class="gui-parts__touch-target ${block}__touch-target">
+        <button
+          type="button"
+          class="gui-parts__part gui-parts__dayperiod ${block}__part ${block}__dayperiod"
+          data-type=${type}
+          data-group=${this.groups.length > 1 ? group : nothing}
+          tabindex=${tabIndex}
+          ?disabled=${this.disabled}
+          aria-label=${this.dayPeriodAriaLabel()}
+          @click=${() => this.toggleDayPeriod(group, type)}
+          @keyup=${(e: KeyboardEvent) => this.handleKeyUp(e, group, type)}
+          @focus=${this.handleFocus}
+          @blur=${(e: FocusEvent) => this.handleBlur(e, group, type)}
+        >
+          ${this.getPartDisplayValue(group, type)}
+        </button>
+        <div class="gui-parts__visual-underline ${block}__visual-underline"></div>
+      </div>
+    `;
+  }
+
+  protected toggleDayPeriod(group: string, type: DateTimePartType): void {
+    if (this.readOnly || this.disabled) return;
+    const current = this.getPartValue(group, type);
+    this.setPartValue(group, type, current === 'am' ? 'pm' : 'am');
+    this.commitParts(group);
+  }
+
+  protected handleKeyDown(event: KeyboardEvent, _group: string, _type: DateTimePartType) {
     const allowedKeys = [
       'Backspace',
       'Tab',
@@ -302,35 +359,9 @@ export abstract class AbstractDateTimeInput extends LitElement {
       'Enter',
     ];
 
-    const descriptor = this.getPartDescriptor(type);
-
-    if (descriptor?.kind === 'dayPeriod' && !this.readOnly && !event.ctrlKey && !event.metaKey) {
-      this.handleDayPeriodKeyDown(event, group, type);
-      return;
-    }
-
     if (allowedKeys.includes(event.key) || event.ctrlKey || event.metaKey || this.readOnly) return;
 
     if (!/^[0-9]$/.test(event.key)) {
-      event.preventDefault();
-    }
-  }
-
-  /**
-   * dayPeriod parts are not free-text: the period is set with ArrowUp/Down
-   * only (typed-letter shortcuts cannot work across locales — e.g. Japanese
-   * 午前/午後 share their first character), printable keys are swallowed and
-   * Backspace/Delete clear the part.
-   */
-  private handleDayPeriodKeyDown(event: KeyboardEvent, group: string, type: DateTimePartType) {
-    if (event.key === 'Backspace' || event.key === 'Delete') {
-      event.preventDefault();
-      this.setPartValue(group, type, '');
-      this.commitParts(group);
-      return;
-    }
-
-    if (event.key.length === 1) {
       event.preventDefault();
     }
   }
@@ -343,13 +374,18 @@ export abstract class AbstractDateTimeInput extends LitElement {
     if (this.readOnly) return;
 
     const isRTL = window.getComputedStyle(this).direction === 'rtl';
-    const input = event.target as HTMLInputElement;
+    const target = event.target as HTMLElement;
+    const input = target as HTMLInputElement;
     const inputs = this.getGroupInputs(group);
-    const index = inputs.indexOf(input);
+    const index = inputs.indexOf(target);
     const descriptor = this.getPartDescriptor(type);
 
-    // Jump to the next input when the part is filled
-    if (input.value.length === input.maxLength && /^[0-9]$/.test(event.key)) {
+    // Jump to the next part when an input is filled
+    if (
+      target instanceof HTMLInputElement &&
+      input.value.length === input.maxLength &&
+      /^[0-9]$/.test(event.key)
+    ) {
       if (index === inputs.length - 1) {
         this.autoAdvanceFromGroupEnd(group);
       } else {
@@ -364,13 +400,8 @@ export abstract class AbstractDateTimeInput extends LitElement {
       }
       case 'ArrowUp':
       case 'ArrowDown': {
-        if (descriptor?.kind === 'dayPeriod') {
-          const current = this.getPartValue(group, type);
-          this.setPartValue(group, type, current === 'am' ? 'pm' : 'am');
-          input.select();
-          this.commitParts(group);
-          break;
-        }
+        // The dayPeriod toggle only changes with Enter/Space key press
+        if (descriptor?.kind === 'dayPeriod') break;
 
         const step = descriptor?.step ?? 1;
         const fallback = descriptor?.incrementFallback ?? 1;
@@ -381,12 +412,8 @@ export abstract class AbstractDateTimeInput extends LitElement {
           const range = descriptor.max - descriptor.min + 1;
           value = ((((value - descriptor.min) % range) + range) % range) + descriptor.min;
         }
-        this.setPartValue(
-          group,
-          type,
-          value.toString().padStart(descriptor?.maxLength ?? 2, '0'),
-        );
-        input.select();
+        this.setPartValue(group, type, value.toString().padStart(descriptor?.maxLength ?? 2, '0'));
+        this.selectPart(target);
         this.commitParts(group);
         break;
       }
@@ -394,7 +421,7 @@ export abstract class AbstractDateTimeInput extends LitElement {
         const prevIdx = isRTL ? index + 1 : index - 1;
         if (prevIdx >= 0 && prevIdx < inputs.length) {
           inputs[prevIdx].focus();
-          inputs[prevIdx].select();
+          this.selectPart(inputs[prevIdx]);
         } else {
           this.navigatePastGroupEdge('ArrowLeft', group, isRTL);
         }
@@ -404,7 +431,7 @@ export abstract class AbstractDateTimeInput extends LitElement {
         const nextIdx = isRTL ? index - 1 : index + 1;
         if (nextIdx >= 0 && nextIdx < inputs.length) {
           inputs[nextIdx].focus();
-          inputs[nextIdx].select();
+          this.selectPart(inputs[nextIdx]);
         } else {
           this.navigatePastGroupEdge('ArrowRight', group, isRTL);
         }

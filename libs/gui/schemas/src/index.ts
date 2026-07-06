@@ -11,6 +11,7 @@ export { default as currencySchema } from './lib/components/currency.schema.json
 export { default as customSchema } from './lib/components/custom.schema.json';
 export { default as dateinputSchema } from './lib/components/dateinput.schema.json';
 export { default as datepickerSchema } from './lib/components/datepicker.schema.json';
+export { default as datetimeinputSchema } from './lib/components/datetimeinput.schema.json';
 export { default as dropdownSchema } from './lib/components/dropdown.schema.json';
 export { default as flexSchema } from './lib/components/flex.schema.json';
 export { default as gridSchema } from './lib/components/grid.schema.json';

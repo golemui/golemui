@@ -155,6 +155,37 @@
         "hourFormat": "24"
       },
       "validator": { "type": "string", "required": true, "format": "time" }
+    },
+    {
+      "kind": "display",
+      "type": "heading",
+      "props": {
+        "text": "DATE TIME INPUTS",
+        "level": 3
+      }
+    },
+    {
+      "kind": "input",
+      "type": "dateTimeInput",
+      "path": "dateTimeInput",
+      "label": "12h date time format",
+      "defaultValue": "2026-07-03T09:30:00",
+      "props": {
+        "hint": "15m step jumps on minutes",
+        "icon": "calendar_month",
+        "minuteStep": 15
+      },
+      "validator": { "type": "string", "required": true, "format": "date-time" }
+    },
+    {
+      "kind": "input",
+      "type": "dateTimeInput",
+      "path": "dateTimeInput24",
+      "label": "24h date time format",
+      "props": {
+        "hourFormat": "24"
+      },
+      "validator": { "type": "string", "required": true, "format": "date-time" }
     }
   ]
 }

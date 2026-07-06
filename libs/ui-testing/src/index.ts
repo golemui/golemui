@@ -21,6 +21,7 @@ export * from './lib/core-features/widget-loaders.cy';
 export * from './lib/golem-features/alert.cy';
 export * from './lib/golem-features/currency.cy';
 export * from './lib/golem-features/dateinput.cy';
+export * from './lib/golem-features/datetimeinput.cy';
 export * from './lib/golem-features/datepicker.cy';
 export * from './lib/golem-features/dropdown.cy';
 export * from './lib/golem-features/number.cy';

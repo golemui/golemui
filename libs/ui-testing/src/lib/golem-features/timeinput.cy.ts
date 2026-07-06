@@ -1,4 +1,4 @@
-import { defineForm, identityTranslator } from '@golemui/core';
+import { defineForm, identityTranslator, type MutableI18nTranslator } from '@golemui/core';
 import { type MountComponentFn } from '../utils';
 
 export const runTimeInputComponentTests = (mountFn: MountComponentFn) => {
@@ -6,19 +6,20 @@ export const runTimeInputComponentTests = (mountFn: MountComponentFn) => {
     const sel = {
       hour: 'gui-time input[data-type="hour"]',
       minute: 'gui-time input[data-type="minute"]',
-      dayPeriod: 'gui-time input[data-type="dayPeriod"]',
+      dayPeriod: 'gui-time button[data-type="dayPeriod"]',
     };
 
     const mountTimeInput = (options?: {
       data?: Record<string, any>;
       lang?: string;
+      translator?: MutableI18nTranslator;
       props?: Record<string, any>;
       formSubmit?: (event: any) => void;
       readonly?: boolean;
       disabled?: boolean;
     }) => {
       mountFn({
-        localization: identityTranslator(options?.lang ?? 'en-US'),
+        localization: options?.translator ?? identityTranslator(options?.lang ?? 'en-US'),
         data: options?.data,
         formDef: defineForm({
           form: [
@@ -49,13 +50,19 @@ export const runTimeInputComponentTests = (mountFn: MountComponentFn) => {
       return cy.get(formSubmitAlias).then((stub: any) => stub.getCall(0).args[0].data);
     };
 
+    // The toggle's template may render whitespace around the label
+    const expectDayPeriod = (label: string) =>
+      cy.get(sel.dayPeriod).should(($el) => {
+        expect($el.text().trim()).to.equal(label);
+      });
+
     describe('rendering', () => {
       it('should display a 12h value with a day period in a 12h locale', () => {
         mountTimeInput({ data: { myTime: '14:30:00' } });
 
         cy.get(sel.hour).should('have.value', '02').and('have.attr', 'placeholder', 'hh');
         cy.get(sel.minute).should('have.value', '30').and('have.attr', 'placeholder', 'mm');
-        cy.get(sel.dayPeriod).should('have.value', 'PM');
+        expectDayPeriod('PM');
       });
 
       it('should display a 24h value without a day period in a 24h locale', () => {
@@ -234,33 +241,65 @@ export const runTimeInputComponentTests = (mountFn: MountComponentFn) => {
     });
 
     describe('day period', () => {
-      it('should toggle AM/PM with the arrow keys and shift the value by 12h', () => {
+      it('should default to AM so hour and minute alone emit a value', () => {
+        const formSubmitHandler = cy.stub().as('formSubmitHandler');
+        mountTimeInput({ formSubmit: formSubmitHandler });
+
+        expectDayPeriod('AM');
+
+        cy.get(sel.hour).type('09');
+        cy.focused().type('30');
+
+        submitAndGetData('@formSubmitHandler').then((data) => {
+          expect(data).to.deep.equal({ myTime: '09:30:00' });
+        });
+      });
+
+      it('should toggle the period on click and shift the value by 12h', () => {
         const formSubmitHandler = cy.stub().as('formSubmitHandler');
         mountTimeInput({ data: { myTime: '14:30:00' }, formSubmit: formSubmitHandler });
 
-        cy.get(sel.dayPeriod).type('{upArrow}');
-        cy.get(sel.dayPeriod).should('have.value', 'AM');
+        expectDayPeriod('PM');
+        cy.get(sel.dayPeriod).click();
+        expectDayPeriod('AM');
 
         submitAndGetData('@formSubmitHandler').then((data) => {
           expect(data).to.deep.equal({ myTime: '02:30:00' });
         });
       });
 
-      it('should ignore typed characters (arrows are the only way to set the period)', () => {
+      it('should toggle the period once with Enter', () => {
         mountTimeInput({ data: { myTime: '09:30:00' } });
 
-        cy.get(sel.dayPeriod).should('have.value', 'AM');
-        cy.get(sel.dayPeriod).type('p');
-        cy.get(sel.dayPeriod).should('have.value', 'AM');
-        cy.get(sel.dayPeriod).type('x');
-        cy.get(sel.dayPeriod).should('have.value', 'AM');
+        // Reach the toggle via keyboard so focusing does not click it
+        cy.get(sel.minute).click();
+        cy.focused().type('{rightArrow}');
+        cy.focused().should('have.attr', 'data-type', 'dayPeriod');
+        cy.focused().type('{enter}');
+        expectDayPeriod('PM');
       });
 
-      it('should clear the period with Backspace', () => {
+      it('should toggle the period once with Space', () => {
         mountTimeInput({ data: { myTime: '09:30:00' } });
 
-        cy.get(sel.dayPeriod).type('{backspace}');
-        cy.get(sel.dayPeriod).should('have.value', '');
+        // Reach the toggle via keyboard so focusing does not click it
+        cy.get(sel.minute).click();
+        cy.focused().type('{rightArrow}');
+        cy.focused().should('have.attr', 'data-type', 'dayPeriod');
+        cy.focused().type(' ');
+        expectDayPeriod('PM');
+      });
+
+      it('should not toggle AM/PM with the arrow keys', () => {
+        mountTimeInput({ data: { myTime: '14:30:00' } });
+
+        expectDayPeriod('PM');
+        // focus() instead of click() so focusing itself does not toggle
+        cy.get(sel.dayPeriod).focus();
+        cy.focused().type('{upArrow}');
+        expectDayPeriod('PM');
+        cy.focused().type('{downArrow}');
+        expectDayPeriod('PM');
       });
 
       it('should participate in arrow navigation', () => {
@@ -273,6 +312,66 @@ export const runTimeInputComponentTests = (mountFn: MountComponentFn) => {
         cy.focused().should('have.attr', 'data-type', 'dayPeriod');
         cy.focused().type('{leftArrow}');
         cy.focused().should('have.attr', 'data-type', 'minute');
+      });
+    });
+
+    describe('runtime locale change', () => {
+      it('should re-derive the parts when switching to a 24h locale at runtime', () => {
+        const translator = identityTranslator('en-US');
+        mountTimeInput({ data: { myTime: '14:30:00' }, translator });
+
+        cy.get(sel.hour).should('have.value', '02');
+        expectDayPeriod('PM');
+
+        cy.then(() => translator.setLang('en-GB'));
+
+        // A 24h locale drops the day period and shows the 24h hour
+        cy.get(sel.dayPeriod).should('not.exist');
+        cy.get(sel.hour).should('have.value', '14');
+        cy.get(sel.minute).should('have.value', '30');
+      });
+
+      it('should re-derive the parts when switching to a 12h locale at runtime', () => {
+        const translator = identityTranslator('en-GB');
+        mountTimeInput({ data: { myTime: '14:30:00' }, translator });
+
+        cy.get(sel.hour).should('have.value', '14');
+        cy.get(sel.dayPeriod).should('not.exist');
+
+        cy.then(() => translator.setLang('en-US'));
+
+        cy.get(sel.hour).should('have.value', '02');
+        cy.get(sel.minute).should('have.value', '30');
+        expectDayPeriod('PM');
+      });
+    });
+
+    describe('runtime locale change', () => {
+      it('should re-derive the parts when switching to a 24h locale at runtime', () => {
+        const translator = identityTranslator('en-US');
+        mountTimeInput({ data: { myTime: '14:30:00' }, translator });
+
+        cy.get(sel.hour).should('have.value', '02');
+        expectDayPeriod('PM');
+
+        cy.then(() => translator.setLang('en-GB'));
+
+        cy.get(sel.hour).should('have.value', '14');
+        cy.get(sel.dayPeriod).should('not.exist');
+      });
+
+      it('should re-derive the parts when switching to a 12h locale at runtime', () => {
+        const translator = identityTranslator('en-GB');
+        mountTimeInput({ data: { myTime: '14:30:00' }, translator });
+
+        cy.get(sel.hour).should('have.value', '14');
+        cy.get(sel.dayPeriod).should('not.exist');
+
+        cy.then(() => translator.setLang('en-US'));
+
+        cy.get(sel.hour).should('have.value', '02');
+        cy.get(sel.minute).should('have.value', '30');
+        expectDayPeriod('PM');
       });
     });
 
@@ -297,6 +396,9 @@ export const runTimeInputComponentTests = (mountFn: MountComponentFn) => {
         cy.get(sel.minute).should('have.attr', 'readonly');
         cy.get(sel.minute).type('{upArrow}', { force: true });
         cy.get(sel.minute).should('have.value', '30');
+
+        cy.get(sel.dayPeriod).click();
+        expectDayPeriod('PM');
       });
 
       it('should render disabled inputs when disabled', () => {

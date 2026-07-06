@@ -42,6 +42,7 @@
         "currency",
         "dateInput",
         "datePicker",
+        "dateTimeInput",
         "dropdown",
         "flex",
         "grid",

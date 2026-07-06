@@ -73,7 +73,7 @@ export class GuiRangeDateInput extends AbstractDateTimeInput {
         if (otherInputs.length > 0) {
           const target = otherInputs[otherInputs.length - 1];
           target.focus();
-          target.select();
+          this.selectPart(target);
         }
       }
     } else {
@@ -82,7 +82,7 @@ export class GuiRangeDateInput extends AbstractDateTimeInput {
         const otherInputs = this.getGroupInputs(otherGroup);
         if (otherInputs.length > 0) {
           otherInputs[0].focus();
-          otherInputs[0].select();
+          this.selectPart(otherInputs[0]);
         }
       }
     }
@@ -127,7 +127,7 @@ export class GuiRangeDateInput extends AbstractDateTimeInput {
 
       <div class="gui-widget">
         <div
-          class="gui-widget-input gui-range-date-input ${this.icon
+          class="gui-widget-input gui-parts-ring gui-range-date-input ${this.icon
             ? 'gui-range-date-input--icon'
             : ''}"
           role="group"
@@ -154,7 +154,7 @@ export class GuiRangeDateInput extends AbstractDateTimeInput {
 
           <div class="gui-range-date-input__inputs">
             <div
-              class="gui-range-date-input__field"
+              class="gui-parts gui-range-date-input__field"
               role="group"
               aria-label=${this.startDateAriaLabel ?? 'Start date'}
             >
@@ -164,7 +164,7 @@ export class GuiRangeDateInput extends AbstractDateTimeInput {
             <span class="gui-range-date-input__separator">${this.separator ?? '-'}</span>
 
             <div
-              class="gui-range-date-input__field"
+              class="gui-parts gui-range-date-input__field"
               role="group"
               aria-label=${this.endDateAriaLabel ?? 'End date'}
             >

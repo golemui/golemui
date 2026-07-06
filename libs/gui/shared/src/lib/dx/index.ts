@@ -20,6 +20,7 @@ export { _guiCustomInput } from './shortcuts/custom-input/guiCustomInput.impl';
 export { _guiCustomLayout } from './shortcuts/custom-layout/guiCustomLayout.impl';
 export { _guiDateInput } from './shortcuts/date-input/guiDateInput.impl';
 export { _guiDatePicker } from './shortcuts/date-picker/guiDatePicker.impl';
+export { _guiDateTimeInput } from './shortcuts/date-time-input/guiDateTimeInput.impl';
 export { _guiDisplay } from './shortcuts/display/guiDisplay.impl';
 export { _guiDropdown } from './shortcuts/dropdown/guiDropdown.impl';
 export { _guiBooleanInput } from './shortcuts/inputs/guiBooleanInput.impl';
@@ -62,6 +63,7 @@ export { _gslCustomInputByUid, _gslCustomInputs } from './shortcuts/custom-input
 export { _gslCustomLayoutByUid, _gslCustomLayouts } from './shortcuts/custom-layout/register';
 export { _gslDateInputByUid, _gslDateInputs } from './shortcuts/date-input/register';
 export { _gslDatePickerByUid, _gslDatePickers } from './shortcuts/date-picker/register';
+export { _gslDateTimeInputByUid, _gslDateTimeInputs } from './shortcuts/date-time-input/register';
 export { _gslDisplayByUid, _gslDisplays } from './shortcuts/display/register';
 export { _gslDropdownByUid, _gslDropdowns } from './shortcuts/dropdown/register';
 export {
@@ -150,6 +152,10 @@ export type {
   DatePickerDecorator,
   GslDatePickerConfig,
 } from './shortcuts/date-picker/datePicker.domain';
+export type {
+  DateTimeInputDecorator,
+  GslDateTimeInputConfig,
+} from './shortcuts/date-time-input/dateTimeInput.domain';
 export type { DisplayDecorator, GslDisplaysConfig } from './shortcuts/display/display.domain';
 export type { DropdownDecorator, GslDropdownConfig } from './shortcuts/dropdown/dropdown.domain';
 export type {
