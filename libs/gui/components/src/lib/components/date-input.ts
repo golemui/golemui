@@ -4,6 +4,7 @@ import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import {
   AbstractDateTimeInput,
+  INVALID_DATE_MESSAGE,
   dateInputPartDescriptors,
   type DateTimePartDescriptor,
 } from './abstract-date-time-input';
@@ -18,6 +19,9 @@ import { addErrors, addLabel, type ControlTemplateData } from '../utils/template
 @customElement('gui-date')
 export class GuiDate extends AbstractDateTimeInput {
   @property({ type: String }) value: string | undefined = undefined;
+  @property({ type: String, attribute: 'invalid-date-message' }) invalidDateMessage:
+    | string
+    | undefined = undefined;
 
   protected override readonly inputBlockClass = 'gui-date-input';
   protected override readonly groups = ['default'] as const;
@@ -134,13 +138,9 @@ export class GuiDate extends AbstractDateTimeInput {
       const maxValidDay = maxValidDayInMonth(monthVal, yearVal);
       // Date is complete but invalid
       if (dayVal > maxValidDay) {
-        // TODO: add property for i18n error messages
         this.dispatchEvent(
           new CustomEvent('inputError', {
-            detail: {
-              message:
-                'Invalid date: day is greater than the maximum valid day for the month and year.',
-            },
+            detail: { message: this.invalidDateMessage ?? INVALID_DATE_MESSAGE },
             bubbles: true,
           }),
         );

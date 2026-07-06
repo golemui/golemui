@@ -274,6 +274,9 @@ export function TimePicker(widgetInstance: WithWidget) {
           minTime={templateData.minTime}
           maxTime={templateData.maxTime}
           disabledRanges={templateData.disabledRanges}
+          minTimeMessage={templateData.minTimeMessage as string}
+          maxTimeMessage={templateData.maxTimeMessage as string}
+          disabledRangeMessage={templateData.disabledRangeMessage as string}
         />
         <span className="gui-time-picker__arrow">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256">

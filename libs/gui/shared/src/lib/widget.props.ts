@@ -280,6 +280,7 @@ export type RangeCalendarProps = {
 export type DateinputProps = {
   hint?: string;
   icon?: string;
+  invalidDateMessage?: Localizable;
 };
 
 export type DateTimeInputProps = {
@@ -287,6 +288,7 @@ export type DateTimeInputProps = {
   icon?: string;
   hourFormat?: '12' | '24';
   minuteStep?: number;
+  invalidDateMessage?: Localizable;
 };
 
 export type TimeInputProps = {
@@ -316,6 +318,9 @@ export type TimePickerProps = TimeInputProps & {
   itemRenderer?: string;
   height?: number;
   itemHeight?: number;
+  minTimeMessage?: Localizable;
+  maxTimeMessage?: Localizable;
+  disabledRangeMessage?: Localizable;
 };
 
 export type RangeDateInputProps = {
@@ -325,6 +330,7 @@ export type RangeDateInputProps = {
   removePillAriaLabel?: string;
   startDateAriaLabel?: string;
   endDateAriaLabel?: string;
+  invalidDateMessage?: Localizable;
 };
 
 export type DatePickerProps = {
@@ -341,6 +347,7 @@ export type DatePickerProps = {
   maxDate?: string;
   disabledRanges?: DateRange[];
   numberOfMonths?: number;
+  invalidDateMessage?: Localizable;
 };
 
 export type RangeDatePickerProps = {
@@ -361,6 +368,7 @@ export type RangeDatePickerProps = {
   maxDate?: string;
   disabledRanges?: DateRange[];
   numberOfMonths?: number;
+  invalidDateMessage?: Localizable;
 };
 
 export type NumberinputProps = {
@@ -434,6 +442,7 @@ export type SelectProps = {
   placeholder?: string;
   labelField?: string;
   valueField?: string;
+  invalidOptionMessage?: Localizable;
 };
 
 export type ListItem<T> = {

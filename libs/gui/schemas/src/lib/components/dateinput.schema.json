@@ -53,6 +53,9 @@
     "props": {
       "type": "object",
       "properties": {
+        "invalidDateMessage": {
+          "$ref": "../common.schema.json#/$defs/localizable"
+        },
         "hint": {
           "$ref": "#/$defs/hintProp"
         },
@@ -61,6 +64,9 @@
         }
       },
       "patternProperties": {
+        "^invalidDateMessage\\.[^.]+$": {
+          "$ref": "../common.schema.json#/$defs/localizable"
+        },
         "^hint\\.[^.]+$": {
           "$ref": "#/$defs/hintProp"
         },

@@ -167,6 +167,9 @@ export class TimePickerElement extends LitElement implements WithWidget {
           .minTime=${templateData.minTime}
           .maxTime=${templateData.maxTime}
           .disabledRanges=${templateData.disabledRanges}
+          .minTimeMessage=${templateData.minTimeMessage}
+          .maxTimeMessage=${templateData.maxTimeMessage}
+          .disabledRangeMessage=${templateData.disabledRangeMessage}
           @inputError=${this.onInputError}
           @blur=${() => this.adapter.onBlur()}
           @focus=${this.openList}

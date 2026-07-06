@@ -234,6 +234,7 @@ export function RangeDatePicker(widgetInstance: WithWidget) {
           removePillAriaLabel={removePillAriaLabel}
           startDateAriaLabel={startDateAriaLabel}
           endDateAriaLabel={endDateAriaLabel}
+          invalidDateMessage={templateData.invalidDateMessage as string}
         />
         <span className="gui-range-date-picker__arrow">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256">

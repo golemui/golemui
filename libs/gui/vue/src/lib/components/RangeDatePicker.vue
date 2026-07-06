@@ -211,6 +211,7 @@ const onKeyUp = (event: KeyboardEvent) => {
         :removePillAriaLabel="templateData.removePillAriaLabel"
         :startDateAriaLabel="templateData.startDateAriaLabel"
         :endDateAriaLabel="templateData.endDateAriaLabel"
+        :invalidDateMessage="templateData.invalidDateMessage"
       />
       <span class="gui-range-date-picker__arrow">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256">

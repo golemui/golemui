@@ -58,6 +58,7 @@ export function Select(widgetInstance: WithWidget) {
         options={options}
         labelField={labelField}
         valueField={valueField}
+        invalidOptionMessage={templateData.invalidOptionMessage as string}
         onChange={handleChange}
         onBlur={onBlur}
         onInputError={handleInputError}

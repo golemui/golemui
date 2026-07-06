@@ -67,6 +67,7 @@ export function DateInput(widgetInstance: WithWidget) {
         value={value}
         icon={icon}
         localeId={lang}
+        invalidDateMessage={templateData.invalidDateMessage as string}
       />
     </div>
   );

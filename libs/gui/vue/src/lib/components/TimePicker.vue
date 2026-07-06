@@ -255,6 +255,9 @@ const onKeyDown = (event: KeyboardEvent) => {
         :minTime="templateData.minTime"
         :maxTime="templateData.maxTime"
         :disabledRanges="templateData.disabledRanges"
+        :minTimeMessage="templateData.minTimeMessage"
+        :maxTimeMessage="templateData.maxTimeMessage"
+        :disabledRangeMessage="templateData.disabledRangeMessage"
       />
       <span class="gui-time-picker__arrow">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256">

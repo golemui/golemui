@@ -70,6 +70,7 @@ export function DateTimeInput(widgetInstance: WithWidget) {
         value={value}
         icon={icon}
         localeId={lang}
+        invalidDateMessage={templateData.invalidDateMessage as string}
         hourFormat={hourFormat}
         minuteStep={minuteStep}
       />

@@ -4,6 +4,7 @@ import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import {
   AbstractDateTimeInput,
+  INVALID_DATE_MESSAGE,
   dateInputPartDescriptors,
   type DateTimePartDescriptor,
 } from './abstract-date-time-input';
@@ -22,6 +23,9 @@ import { styleMap } from 'lit-html/directives/style-map.js';
 @customElement('gui-range-date')
 export class GuiRangeDateInput extends AbstractDateTimeInput {
   @property({ type: Array }) value: DateRange[] | undefined = [];
+  @property({ type: String, attribute: 'invalid-date-message' }) invalidDateMessage:
+    | string
+    | undefined = undefined;
 
   @property({ type: String }) removePillAriaLabel: string | undefined = undefined;
   @property({ type: String }) startDateAriaLabel: string | undefined = undefined;
@@ -261,10 +265,7 @@ export class GuiRangeDateInput extends AbstractDateTimeInput {
     if (dayVal > maxValidDay) {
       this.dispatchEvent(
         new CustomEvent('inputError', {
-          detail: {
-            message:
-              'Invalid date: day is greater than the maximum valid day for the month and year.',
-          },
+          detail: { message: this.invalidDateMessage ?? INVALID_DATE_MESSAGE },
           bubbles: true,
         }),
       );

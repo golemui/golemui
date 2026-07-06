@@ -168,6 +168,7 @@ const onKeyUp = (event: KeyboardEvent) => {
         :value="value"
         :icon="templateData.icon"
         :localeId="templateData.lang"
+        :invalidDateMessage="templateData.invalidDateMessage"
       />
       <span class="gui-date-picker__arrow">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256">

@@ -67,6 +67,7 @@ onUnmounted(() => {
       :value="value"
       :icon="templateData.icon"
       :localeId="templateData.lang"
+      :invalidDateMessage="templateData.invalidDateMessage"
       :separator="templateData.separator"
       :removePillAriaLabel="templateData.removePillAriaLabel"
       :startDateAriaLabel="templateData.startDateAriaLabel"

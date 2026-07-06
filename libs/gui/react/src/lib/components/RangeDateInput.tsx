@@ -74,6 +74,7 @@ export function RangeDateInput(widgetInstance: WithWidget) {
         value={value}
         icon={icon}
         localeId={lang}
+        invalidDateMessage={templateData.invalidDateMessage as string}
         separator={separator}
         removePillAriaLabel={removePillAriaLabel}
         startDateAriaLabel={startDateAriaLabel}

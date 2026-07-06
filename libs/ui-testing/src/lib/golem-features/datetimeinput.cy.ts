@@ -156,6 +156,28 @@ export const runDateTimeInputComponentTests = (mountFn: MountComponentFn) => {
         cy.get('@inputErrorSpy').should('have.been.called');
         cy.get('@changeSpy').should('not.have.been.called');
       });
+
+      it('should emit the custom invalidDateMessage when provided', () => {
+        mountDateTimeInput({
+          lang: 'en-GB',
+          props: { invalidDateMessage: 'Nope, no such day' },
+        });
+
+        const inputErrorSpy = cy.spy().as('inputErrorSpy');
+        cy.get('gui-date-time').then(($el) => {
+          $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
+        });
+
+        cy.get(sel.day).type('31');
+        cy.get(sel.month).type('02', { force: true });
+        cy.get(sel.year).type('2026', { force: true });
+        cy.get(sel.hour).type('09', { force: true });
+        cy.get(sel.minute).type('30', { force: true });
+
+        cy.get('@inputErrorSpy').then((spy: any) => {
+          expect(spy.getCall(0).args[0].detail.message).to.equal('Nope, no such day');
+        });
+      });
     });
 
     describe('arrows and toggle', () => {

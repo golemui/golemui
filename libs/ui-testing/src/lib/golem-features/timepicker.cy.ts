@@ -268,6 +268,49 @@ export const runTimePickerComponentTests = (mountFn: MountComponentFn) => {
           expect(spy.getCall(0).args[0].detail.message).to.contain('disabled range');
         });
       });
+
+      it('should emit the custom minTimeMessage when provided', () => {
+        mountTimePicker({
+          props: { ...officeProps, allowCustomTime: true, minTimeMessage: 'Too early' },
+        });
+
+        const inputErrorSpy = cy.spy().as('inputErrorSpy');
+        cy.get('gui-time').then(($el) => {
+          $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
+        });
+
+        cy.get(sel.hour).type('08');
+        cy.focused().type('00', { force: true });
+
+        cy.get('@inputErrorSpy').then((spy: any) => {
+          expect(spy.getCall(0).args[0].detail.message).to.equal('Too early');
+        });
+      });
+
+      it('should run a localizable minTimeMessage through the translator', () => {
+        // identityTranslator resolves translate(key) to the key itself, so a
+        // { key, default } message arriving as the key proves it went through
+        // the i18n pipeline (a real translator would return the translation)
+        mountTimePicker({
+          props: {
+            ...officeProps,
+            allowCustomTime: true,
+            minTimeMessage: { key: 'err.tooEarly', default: 'Too early' },
+          },
+        });
+
+        const inputErrorSpy = cy.spy().as('inputErrorSpy');
+        cy.get('gui-time').then(($el) => {
+          $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
+        });
+
+        cy.get(sel.hour).type('08');
+        cy.focused().type('00', { force: true });
+
+        cy.get('@inputErrorSpy').then((spy: any) => {
+          expect(spy.getCall(0).args[0].detail.message).to.equal('err.tooEarly');
+        });
+      });
     });
 
     describe('readonly and disabled', () => {

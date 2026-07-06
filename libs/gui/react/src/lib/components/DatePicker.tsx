@@ -194,6 +194,7 @@ export function DatePicker(widgetInstance: WithWidget) {
           value={value}
           icon={icon}
           localeId={lang}
+          invalidDateMessage={templateData.invalidDateMessage as string}
         />
         <span className="gui-date-picker__arrow">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256">

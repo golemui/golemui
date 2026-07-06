@@ -67,6 +67,7 @@ export class SelectElement extends LitElement implements WithWidget {
         .options=${this.adapter.templateData.options}
         .labelField=${this.adapter.templateData.labelField}
         .valueField=${this.adapter.templateData.valueField}
+        .invalidOptionMessage=${this.adapter.templateData.invalidOptionMessage}
         @change=${this.valueChanged}
         @inputError=${this.onInputError}
         @blur=${() => this.adapter.onBlur()}

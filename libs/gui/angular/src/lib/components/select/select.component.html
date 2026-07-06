@@ -16,6 +16,7 @@
   [options]="templateData.options"
   [labelField]="templateData.labelField"
   [valueField]="templateData.valueField"
+  [invalidOptionMessage]="templateData.invalidOptionMessage"
   (change)="valueChanged($event)"
   (inputError)="onInputError($event)"
   (blur)="adapter.onBlur()"

@@ -35,6 +35,13 @@ export class GuiTime extends AbstractDateTimeInput {
   @property({ type: Array, attribute: 'disabled-ranges' }) disabledRanges:
     | TimeRange[]
     | undefined = undefined;
+  @property({ type: String, attribute: 'min-time-message' }) minTimeMessage: string | undefined =
+    undefined;
+  @property({ type: String, attribute: 'max-time-message' }) maxTimeMessage: string | undefined =
+    undefined;
+  @property({ type: String, attribute: 'disabled-range-message' }) disabledRangeMessage:
+    | string
+    | undefined = undefined;
 
   protected override readonly inputBlockClass = 'gui-time-input';
   protected override readonly groups = ['default'] as const;
@@ -241,16 +248,15 @@ export class GuiTime extends AbstractDateTimeInput {
    * Checks a complete time against minTime/maxTime and disabledRanges.
    * Returns the error message for the first violated constraint, or null.
    */
-  // TODO: add property for i18n error messages
   private validateBounds(candidate: string): string | null {
     if (this.minTime && compareISOTimes(candidate, this.minTime) < 0) {
-      return 'Invalid time: time is before the minimum allowed time.';
+      return this.minTimeMessage ?? 'Invalid time: time is before the minimum allowed time.';
     }
     if (this.maxTime && compareISOTimes(candidate, this.maxTime) > 0) {
-      return 'Invalid time: time is after the maximum allowed time.';
+      return this.maxTimeMessage ?? 'Invalid time: time is after the maximum allowed time.';
     }
     if (isTimeDisabled(candidate, this.disabledRanges)) {
-      return 'Invalid time: time is within a disabled range.';
+      return this.disabledRangeMessage ?? 'Invalid time: time is within a disabled range.';
     }
     return null;
   }

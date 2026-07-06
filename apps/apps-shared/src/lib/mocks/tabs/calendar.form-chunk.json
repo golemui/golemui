@@ -173,6 +173,7 @@
       "props": {
         "hint": "30m slots from 9:00 to 18:00, lunch break disabled",
         "icon": "schedule",
+        "allowCustomTime": true,
         "minTime": "09:00:00",
         "maxTime": "18:00:00",
         "minuteStep": 30,

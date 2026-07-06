@@ -103,6 +103,10 @@ export function timeInputPartDescriptors(
   };
 }
 
+/** Default inputError message for a complete but impossible date (e.g. Feb 31). */
+export const INVALID_DATE_MESSAGE =
+  'Invalid date: day is greater than the maximum valid day for the month and year.';
+
 /**
  * Shared behavior for segmented date/time inputs (gui-date, gui-range-date,
  * gui-time and future date-time widgets), mirroring the AbstractCalendar
