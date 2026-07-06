@@ -1,6 +1,3 @@
-// Shared picker chrome (container, arrow, input gap) comes from `picker.scss`;
-// this file adds the time picker's popup: a `gui-list` anchored below the
-// widget, like the dropdown's
 .gui-form {
   .gui-time-picker.gui-field {
     .gui-widget gui-list {
@@ -9,8 +6,6 @@
       top: 100%;
       z-index: 10;
 
-      // gui-list sets its own `display: block`, which would defeat the
-      // `hidden` attribute the wrapper toggles
       &[hidden] {
         display: none;
       }
