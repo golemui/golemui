@@ -278,14 +278,25 @@ export const runTimeInputComponentTests = (mountFn: MountComponentFn) => {
         expectDayPeriod('PM');
       });
 
-      it('should toggle AM/PM with the arrow keys', () => {
+      it('should toggle the period once with Space', () => {
+        mountTimeInput({ data: { myTime: '09:30:00' } });
+
+        // Reach the toggle via keyboard so focusing does not click it
+        cy.get(sel.minute).click();
+        cy.focused().type('{rightArrow}');
+        cy.focused().should('have.attr', 'data-type', 'dayPeriod');
+        cy.focused().type(' ');
+        expectDayPeriod('PM');
+      });
+
+      it('should not toggle AM/PM with the arrow keys', () => {
         mountTimeInput({ data: { myTime: '14:30:00' } });
 
         expectDayPeriod('PM');
         // focus() instead of click() so focusing itself does not toggle
         cy.get(sel.dayPeriod).focus();
         cy.focused().type('{upArrow}');
-        expectDayPeriod('AM');
+        expectDayPeriod('PM');
         cy.focused().type('{downArrow}');
         expectDayPeriod('PM');
       });

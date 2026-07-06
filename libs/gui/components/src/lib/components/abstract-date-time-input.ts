@@ -305,10 +305,10 @@ export abstract class AbstractDateTimeInput extends LitElement {
 
   /**
    * The dayPeriod part is a toggle button, not a free-text input: clicking it
-   * (or Enter/Space natively, or ArrowUp/ArrowDown) swaps AM and PM. A typed
-   * shortcut cannot work across locales (e.g. Japanese 午前/午後 share their
-   * first character) and mobile keyboards have no arrow keys, so the switch
-   * interaction is the one that works everywhere.
+   * (or Enter/Space natively) swaps AM and PM. A typed shortcut cannot work
+   * across locales (e.g. Japanese 午前/午後 share their first character) and
+   * mobile keyboards have no arrow keys, so the switch interaction is the one
+   * that works everywhere.
    */
   protected renderDayPeriodToggle(
     group: string,
@@ -400,10 +400,8 @@ export abstract class AbstractDateTimeInput extends LitElement {
       }
       case 'ArrowUp':
       case 'ArrowDown': {
-        if (descriptor?.kind === 'dayPeriod') {
-          this.toggleDayPeriod(group, type);
-          break;
-        }
+        // The dayPeriod toggle only changes with Enter/Space key press
+        if (descriptor?.kind === 'dayPeriod') break;
 
         const step = descriptor?.step ?? 1;
         const fallback = descriptor?.incrementFallback ?? 1;
