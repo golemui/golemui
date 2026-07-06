@@ -199,9 +199,6 @@ export const runDateTimeInputComponentTests = (mountFn: MountComponentFn) => {
     });
 
     describe('runtime locale change', () => {
-      // Issue: runtime localeId change ignored. The parts must be re-derived
-      // from the canonical value when the locale switches at runtime, not
-      // left at the display values of the previous locale.
       it('should re-derive the parts when switching to a 24h locale at runtime', () => {
         const translator = identityTranslator('en-US');
         mountDateTimeInput({ data: { myDateTime: '2026-06-15T14:30:00' }, translator });

@@ -88,7 +88,12 @@ export class GuiTime extends AbstractDateTimeInput {
   }
 
   override willUpdate(changedProperties: PropertyValues): void {
-    if (!this.hasUpdated || changedProperties.has('value') || changedProperties.has('hourFormat')) {
+    if (
+      !this.hasUpdated ||
+      changedProperties.has('value') ||
+      changedProperties.has('hourFormat') ||
+      changedProperties.has('localeId')
+    ) {
       this.parseValue(this.value ?? '');
     }
   }

@@ -316,9 +316,6 @@ export const runTimeInputComponentTests = (mountFn: MountComponentFn) => {
     });
 
     describe('runtime locale change', () => {
-      // Issue: runtime localeId change ignored. The parts must be re-derived
-      // from the canonical value when the locale switches at runtime, not
-      // left at the display values of the previous locale.
       it('should re-derive the parts when switching to a 24h locale at runtime', () => {
         const translator = identityTranslator('en-US');
         mountTimeInput({ data: { myTime: '14:30:00' }, translator });
@@ -332,6 +329,35 @@ export const runTimeInputComponentTests = (mountFn: MountComponentFn) => {
         cy.get(sel.dayPeriod).should('not.exist');
         cy.get(sel.hour).should('have.value', '14');
         cy.get(sel.minute).should('have.value', '30');
+      });
+
+      it('should re-derive the parts when switching to a 12h locale at runtime', () => {
+        const translator = identityTranslator('en-GB');
+        mountTimeInput({ data: { myTime: '14:30:00' }, translator });
+
+        cy.get(sel.hour).should('have.value', '14');
+        cy.get(sel.dayPeriod).should('not.exist');
+
+        cy.then(() => translator.setLang('en-US'));
+
+        cy.get(sel.hour).should('have.value', '02');
+        cy.get(sel.minute).should('have.value', '30');
+        expectDayPeriod('PM');
+      });
+    });
+
+    describe('runtime locale change', () => {
+      it('should re-derive the parts when switching to a 24h locale at runtime', () => {
+        const translator = identityTranslator('en-US');
+        mountTimeInput({ data: { myTime: '14:30:00' }, translator });
+
+        cy.get(sel.hour).should('have.value', '02');
+        expectDayPeriod('PM');
+
+        cy.then(() => translator.setLang('en-GB'));
+
+        cy.get(sel.hour).should('have.value', '14');
+        cy.get(sel.dayPeriod).should('not.exist');
       });
 
       it('should re-derive the parts when switching to a 12h locale at runtime', () => {

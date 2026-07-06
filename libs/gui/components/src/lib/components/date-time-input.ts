@@ -93,8 +93,12 @@ export class GuiDateTime extends AbstractDateTimeInput {
 
   override willUpdate(changedProperties: PropertyValues): void {
     // !hasUpdated: parse on first render even when no value was ever set,
-    // so the AM/PM toggle starts with its default state
-    if (!this.hasUpdated || changedProperties.has('value') || changedProperties.has('hourFormat')) {
+    if (
+      !this.hasUpdated ||
+      changedProperties.has('value') ||
+      changedProperties.has('hourFormat') ||
+      changedProperties.has('localeId')
+    ) {
       this.parseValue(this.value ?? '');
     }
   }
