@@ -63,7 +63,7 @@ export function Dropdown(widgetInstance: WithWidget) {
 
   const handleClickItem = useCallback(
     (item: ListItem<never>, index: number) => {
-      if (templateData.readonly) return;
+      if (templateData.readonly || item.disabled) return;
 
       handleValueChange(item.value);
       onFilter('');
@@ -337,6 +337,7 @@ export function Dropdown(widgetInstance: WithWidget) {
             const absoluteIndex = range.start + index;
             const isSelected = value === item.value;
             const isFocused = focusedIndex === absoluteIndex;
+            const isItemDisabled = isDisabled || !!item.disabled;
 
             const labelField = templateData.labelField ?? 'label';
             const isObject = item.template !== null && typeof item.template === 'object';
@@ -354,6 +355,7 @@ export function Dropdown(widgetInstance: WithWidget) {
                 id={`${uid}-item-${absoluteIndex}`}
                 style={{ height: `${templateData.itemHeight || 40}px` }}
                 aria-selected={isSelected}
+                aria-disabled={isItemDisabled ? 'true' : 'false'}
                 onClick={() => handleClickItem(item, absoluteIndex)}
               >
                 <ItemRenderer
@@ -361,7 +363,7 @@ export function Dropdown(widgetInstance: WithWidget) {
                   value={item.value}
                   index={absoluteIndex}
                   selected={isSelected}
-                  disabled={isDisabled || isReadOnly}
+                  disabled={isItemDisabled || isReadOnly}
                   focused={isFocused}
                 />
               </div>

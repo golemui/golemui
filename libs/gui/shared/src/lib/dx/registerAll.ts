@@ -9,6 +9,7 @@ import './shortcuts/password/register';
 import './shortcuts/checkbox/register';
 import './shortcuts/date-input/register';
 import './shortcuts/time-input/register';
+import './shortcuts/time-picker/register';
 import './shortcuts/date-time-input/register';
 import './shortcuts/currency/register';
 import './shortcuts/range-calendar/register';

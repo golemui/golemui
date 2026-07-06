@@ -296,6 +296,28 @@ export type TimeInputProps = {
   minuteStep?: number;
 };
 
+export type TimeRange = {
+  start: string;
+  end: string;
+};
+
+export type TimePickerProps = TimeInputProps & {
+  /** First selectable option (ISO time, inclusive). Defaults to '00:00:00'. */
+  minTime?: string;
+  /** Last selectable option (ISO time, inclusive). Defaults to '23:59:59'. */
+  maxTime?: string;
+  /** Times inside these ranges (both ends inclusive) render disabled. */
+  disabledRanges?: TimeRange[];
+  /** Allows typing a time in the input; when false (default) values come only from the list. */
+  allowCustomTime?: boolean;
+  /**
+   * Should match with one of the provided itemRenderer keys
+   */
+  itemRenderer?: string;
+  height?: number;
+  itemHeight?: number;
+};
+
 export type RangeDateInputProps = {
   hint?: string;
   icon?: string;
@@ -417,6 +439,8 @@ export type SelectProps = {
 export type ListItem<T> = {
   template: T;
   value: OptionValue;
+  /** Disabled items render greyed out, are skipped by keyboard navigation and cannot be selected */
+  disabled?: boolean;
 };
 
 type ItemKeys<T> = T extends Record<string, any> ? keyof T : string;

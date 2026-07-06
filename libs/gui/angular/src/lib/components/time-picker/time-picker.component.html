@@ -2,50 +2,56 @@
 @let itemRenderer = adapter.getItemRenderer(templateData.itemRenderer, defaultListItemRenderer);
 @let showErrors = templateData.touched && templateData.errors && templateData.errors.length > 0;
 
-<gui-label
-  [targetElement]="[inputRef, listRef]"
-  [uid]="widget.uid"
-  [label]="templateData.label"
-  [hint]="templateData.hint"
-  [errors]="templateData.errors"
-  [touched]="templateData.touched"
-  [required]="templateData.validator?.required"
-  [native]="false"
-></gui-label>
+@if (templateData.label) {
+  <label gui-label [for]="widget.uid" [uid]="widget.uid" [templateData]="templateData"></label>
+}
 
-<div class="gui-widget" [attr.aria-expanded]="isListVisible()">
-  <input
-    #inputRef
-    type="text"
-    class="gui-widget-input"
-    [id]="widget.uid"
-    [attr.data-cy]="widget.uid + '_textinput'"
+<div
+  role="button"
+  tabindex="-1"
+  class="gui-widget"
+  [attr.aria-expanded]="isListVisible()"
+  (keyup.space)="$event.target === $event.currentTarget && isListVisible.set(!isListVisible())"
+  (keyup.enter)="$event.target === $event.currentTarget && isListVisible.set(!isListVisible())"
+  (keydown)="onKeyDown($event)"
+  (click)="toggleList($event)"
+>
+  <gui-time
+    #timeControlRef
+    [uid]="widget.uid"
+    [hint]="templateData.hint"
+    [showErrors]="false"
+    [errors]="templateData.errors"
+    [touched]="templateData.touched"
     [required]="templateData.validator?.required"
     [disabled]="templateData.disabled"
-    [readonly]="templateData.readonly"
-    [placeholder]="templateData.placeholder ?? ''"
-    [attr.autocomplete]="templateData.autocomplete"
-    [value]="selectedItemValue() ?? templateData.value ?? ''"
-    (keydown)="onInputKeyDown($event)"
-    (input)="onInput($event)"
-    (focus)="onInputFocus()"
-    (focusout)="onFocusOutInput($event)"
-    [attr.aria-labelledby]="templateData.label ? widget.uid + '_label' : null"
-    [attr.aria-describedby]="templateData.hint ? widget.uid + '_hint' : null"
-  />
-  <span class="gui-dropdown__arrow"
+    [readonly]="templateData.readonly || !templateData.allowCustomTime"
+    [value]="templateData.value"
+    [icon]="templateData.icon"
+    [localeId]="templateData.lang"
+    [hourFormat]="templateData.hourFormat"
+    [minuteStep]="templateData.minuteStep"
+    [minTime]="templateData.minTime"
+    [maxTime]="templateData.maxTime"
+    [disabledRanges]="templateData.disabledRanges"
+    (change)="onChangeTime($event)"
+    (inputError)="onInputError($event)"
+    (focus)="openList()"
+    (blur)="adapter.onBlur()"
+  ></gui-time>
+  <span class="gui-time-picker__arrow"
     ><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256">
       <path
         d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"
       ></path></svg
   ></span>
+
   <gui-list
     #listRef
-    [id]="widget.uid + '-list'"
+    [id]="widget.uid"
     [uid]="widget.uid"
     [value]="templateData.value ?? ''"
-    [valueField]="templateData.valueField"
-    [items]="displayItems()"
+    [items]="timeItems()"
     [itemHeight]="templateData.itemHeight"
     [height]="templateData.height"
     [required]="templateData.validator?.required"
@@ -53,22 +59,13 @@
     [disabled]="templateData.disabled"
     [readonly]="templateData.readonly"
     [hidden]="!isListVisible()"
-    (gui-update-items)="onUpdateItems($event)"
+    (change)="onValueChange($event)"
     (gui-range-change)="onRangeChange($event)"
     (gui-focus-change)="onFocusChange($event)"
-    (blur)="onListBlur()"
-    (focus)="onInputFocus()"
-    (focusout)="onFocusOutInput($event)"
-    (change)="onValueChange($event)"
   >
     @for (item of visibleItems(); track $index) {
       @let absoluteIndex = currentRange().start + $index;
-      @let labelField = templateData.labelField ?? 'label';
-      @let isObject = item.template !== null && typeof item.template === 'object';
-      @let template =
-        isObject && labelField && !templateData.itemRenderer
-          ? item.template[labelField]
-          : item.template;
+      @let isItemDisabled = templateData.disabled || !!item.disabled;
 
       <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events -->
       <div
@@ -78,16 +75,16 @@
         [id]="widget.uid + '-item-' + absoluteIndex"
         [style.height.px]="templateData.itemHeight || 40"
         [attr.aria-selected]="templateData.value === item.value"
-        [attr.aria-disabled]="templateData.disabled || !!item.disabled"
+        [attr.aria-disabled]="isItemDisabled"
         (click)="onClickItem(item, absoluteIndex)"
       >
         <ng-container
           *ngComponentOutlet="
             itemRenderer;
             inputs: {
-              template: template,
+              template: item.template,
               value: item.value,
-              disabled: templateData.disabled || !!item.disabled,
+              disabled: isItemDisabled,
               selected: templateData.value === item.value,
               focused: focusedIndex() === absoluteIndex,
               index: absoluteIndex,
@@ -101,9 +98,10 @@
 </div>
 
 @if (showErrors) {
-  <gui-errors
+  <ul
+    gui-errors
     [uid]="widget.uid"
-    [errors]="templateData.errors"
-    [touched]="templateData.touched"
-  ></gui-errors>
+    [templateData]="templateData"
+    [attr.data-cy]="widget.uid + '_validator-errors'"
+  ></ul>
 }

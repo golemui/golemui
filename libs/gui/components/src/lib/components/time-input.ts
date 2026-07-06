@@ -9,15 +9,18 @@ import {
   type DateTimePartType,
 } from './abstract-date-time-input';
 import {
+  compareISOTimes,
   from24Hour,
   getDayPeriodLabels,
   getTimeFormatParts,
+  isTimeDisabled,
   parseISODateTimeString,
   parseISOTimeString,
   resolveHourFormat,
   to24Hour,
   toISOTimeString,
   type HourFormat,
+  type TimeRange,
 } from '../utils/time';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 
@@ -27,6 +30,11 @@ export class GuiTime extends AbstractDateTimeInput {
   @property({ type: String, attribute: 'hour-format' }) hourFormat: HourFormat | undefined =
     undefined;
   @property({ type: Number, attribute: 'minute-step' }) minuteStep: number | undefined = 1;
+  @property({ type: String, attribute: 'min-time' }) minTime: string | undefined = undefined;
+  @property({ type: String, attribute: 'max-time' }) maxTime: string | undefined = undefined;
+  @property({ type: Array, attribute: 'disabled-ranges' }) disabledRanges:
+    | TimeRange[]
+    | undefined = undefined;
 
   protected override readonly inputBlockClass = 'gui-time-input';
   protected override readonly groups = ['default'] as const;
@@ -202,7 +210,21 @@ export class GuiTime extends AbstractDateTimeInput {
 
     if (isHourValid && isMinuteValid && isPeriodValid) {
       const hour24 = is12h ? to24Hour(hourVal, period as 'am' | 'pm') : hourVal;
-      this.value = toISOTimeString(new Date(1970, 0, 1, hour24, minuteVal, 0));
+      const candidate = toISOTimeString(new Date(1970, 0, 1, hour24, minuteVal, 0));
+
+      const boundsError = this.validateBounds(candidate);
+      if (boundsError) {
+        this.dispatchEvent(
+          new CustomEvent('inputError', {
+            detail: { message: boundsError },
+            bubbles: true,
+          }),
+        );
+        this.requestUpdate();
+        return;
+      }
+
+      this.value = candidate;
 
       this.dispatchEvent(
         new CustomEvent('change', {
@@ -213,6 +235,24 @@ export class GuiTime extends AbstractDateTimeInput {
     }
 
     this.requestUpdate();
+  }
+
+  /**
+   * Checks a complete time against minTime/maxTime and disabledRanges.
+   * Returns the error message for the first violated constraint, or null.
+   */
+  // TODO: add property for i18n error messages
+  private validateBounds(candidate: string): string | null {
+    if (this.minTime && compareISOTimes(candidate, this.minTime) < 0) {
+      return 'Invalid time: time is before the minimum allowed time.';
+    }
+    if (this.maxTime && compareISOTimes(candidate, this.maxTime) > 0) {
+      return 'Invalid time: time is after the maximum allowed time.';
+    }
+    if (isTimeDisabled(candidate, this.disabledRanges)) {
+      return 'Invalid time: time is within a disabled range.';
+    }
+    return null;
   }
 }
 

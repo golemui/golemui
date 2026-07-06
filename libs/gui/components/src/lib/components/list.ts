@@ -113,33 +113,35 @@ export class GuiList extends LitElement {
 
     switch (e.key) {
       case 'ArrowDown':
-        this.setFocusedIndex(Math.min(this._focusedIndex + 1, maxIndex));
+        this.setFocusedIndex(this.findEnabledIndex(Math.min(this._focusedIndex + 1, maxIndex), 1));
         handled = true;
         break;
       case 'ArrowUp':
-        this.setFocusedIndex(Math.max(this._focusedIndex - 1, 0));
+        this.setFocusedIndex(this.findEnabledIndex(Math.max(this._focusedIndex - 1, 0), -1));
         handled = true;
         break;
       case 'PageDown':
-        this.setFocusedIndex(Math.min(this._focusedIndex + visibleCount, maxIndex));
+        this.setFocusedIndex(
+          this.findEnabledIndex(Math.min(this._focusedIndex + visibleCount, maxIndex), 1),
+        );
         handled = true;
         break;
       case 'PageUp':
-        this.setFocusedIndex(Math.max(this._focusedIndex - visibleCount, 0));
+        this.setFocusedIndex(this.findEnabledIndex(Math.max(this._focusedIndex - visibleCount, 0), -1));
         handled = true;
         break;
       case 'Home':
-        this.setFocusedIndex(0);
+        this.setFocusedIndex(this.findEnabledIndex(0, 1));
         handled = true;
         break;
       case 'End':
-        this.setFocusedIndex(maxIndex);
+        this.setFocusedIndex(this.findEnabledIndex(maxIndex, -1));
         handled = true;
         break;
       case 'Enter':
       case ' ': {
         const item = this._items[this._focusedIndex];
-        if (this._focusedIndex >= 0 && item != null) {
+        if (this._focusedIndex >= 0 && item != null && !item.disabled) {
           this.selectItem(item);
         }
         handled = true;
@@ -212,6 +214,17 @@ export class GuiList extends LitElement {
         composed: true,
       }),
     );
+  }
+
+  /**
+   * First enabled item index walking from `from` in `direction`, or -1 when
+   * every item that way is disabled — keyboard navigation skips disabled rows.
+   */
+  private findEnabledIndex(from: number, direction: 1 | -1): number {
+    for (let i = from; i >= 0 && i < this._items.length; i += direction) {
+      if (!this._items[i]?.disabled) return i;
+    }
+    return -1;
   }
 
   private setFocusedIndex(index: number) {

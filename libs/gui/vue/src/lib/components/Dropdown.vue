@@ -71,7 +71,7 @@ const handleValueChange = (newValue: OptionValue | null) => {
 };
 
 const handleClickItem = (item: ListItem<never>, index: number) => {
-  if (templateData.value.readonly) return;
+  if (templateData.value.readonly || item.disabled) return;
   handleValueChange(item.value);
   onFilter('' as never);
   focusedIndex.value = index;
@@ -309,6 +309,7 @@ const ItemRenderer = computed<Component>(() => {
           :id="`${uid}-item-${rangeStart + idx}`"
           :style="{ height: `${templateData.itemHeight || 40}px` }"
           :aria-selected="value === item.value"
+          :aria-disabled="isDisabled || item.disabled ? 'true' : 'false'"
           @click="handleClickItem(item, rangeStart + idx)"
         >
           <component
@@ -325,7 +326,7 @@ const ItemRenderer = computed<Component>(() => {
             :value="item.value"
             :index="rangeStart + idx"
             :selected="value === item.value"
-            :disabled="isDisabled || isReadOnly"
+            :disabled="isDisabled || isReadOnly || !!item.disabled"
             :focused="focusedIndex === rangeStart + idx"
           />
         </div>

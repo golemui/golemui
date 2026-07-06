@@ -49,6 +49,7 @@ export {
   _guiTextarea,
   _guiTextInput,
   _guiTimeInput,
+  _guiTimePicker,
   _guiVerticalFlex,
   _guiVerticalGrid,
 } from './lib/dx';
@@ -125,6 +126,8 @@ export {
   _gslTextInputs,
   _gslTimeInputByUid,
   _gslTimeInputs,
+  _gslTimePickerByUid,
+  _gslTimePickers,
 } from './lib/dx';
 
 // ─── DX pipeline / extension API ───
@@ -206,6 +209,7 @@ export type {
   GslTagsConfig,
   GslTextareaConfig,
   GslTimeInputConfig,
+  GslTimePickerConfig,
   GuiShortcutOf,
   InputDecorator,
   InputTags,
@@ -228,6 +232,7 @@ export type {
   TextareaDecorator,
   TextDataInputDecorator,
   TimeInputDecorator,
+  TimePickerDecorator,
   ValidShortcutType,
 } from './lib/dx';
 
@@ -270,6 +275,8 @@ export type {
   TextareaProps,
   TextinputProps,
   TimeInputProps,
+  TimePickerProps,
+  TimeRange,
   ToggleProps,
 } from './lib/widget.props';
 

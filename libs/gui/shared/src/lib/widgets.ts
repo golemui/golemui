@@ -20,6 +20,7 @@ export const inputWidgets = [
   'textarea',
   'textinput',
   'timeInput',
+  'timePicker',
   'toggle',
 ] as const;
 export const layoutWidgets = ['accordion', 'flex', 'grid', 'tabs'] as const;

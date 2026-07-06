@@ -94,6 +94,36 @@ export const calendarTab = gui.layouts.flex([
     validator: { required: true, format: 'time' },
   }),
 
+  gui.displays.custom('heading', { text: 'TIME PICKERS', level: 3 }),
+
+  gui.inputs.timePicker('timePicker', {
+    label: 'Pick a time slot',
+    hint: '30m slots from 9:00 to 18:00, lunch break disabled',
+    defaultValue: '09:30:00',
+    icon: 'schedule',
+    minTime: '09:00:00',
+    maxTime: '18:00:00',
+    minuteStep: 30,
+    disabledRanges: [{ start: '13:00:00', end: '14:00:00' }],
+    validator: { required: true, format: 'time' },
+  }),
+
+  gui.inputs.timePicker('timePickerFree', {
+    label: 'Custom time allowed',
+    hint: 'Type any time or pick a 15m slot',
+    allowCustomTime: true,
+    minTime: '08:00:00',
+    maxTime: '20:00:00',
+    minuteStep: 15,
+    validator: { format: 'time' },
+  }),
+
+  gui.inputs.timePicker('timePicker24', {
+    label: '24h time picker',
+    hourFormat: '24',
+    validator: { format: 'time' },
+  }),
+
   gui.displays.custom('heading', { text: 'DATE TIME INPUTS', level: 3 }),
 
   gui.inputs.dateTimeInput('dateTimeInput', {

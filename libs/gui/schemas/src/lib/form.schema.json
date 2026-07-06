@@ -125,6 +125,9 @@
           "$ref": "./components/timeinput.schema.json"
         },
         {
+          "$ref": "./components/timepicker.schema.json"
+        },
+        {
           "$ref": "./components/toggle.schema.json"
         },
         {

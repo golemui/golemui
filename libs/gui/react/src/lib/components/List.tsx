@@ -79,7 +79,7 @@ export function List(widgetInstance: WithWidget) {
 
   const handleClickItem = useCallback(
     (item: ListItem<any>, index: number) => {
-      if (templateData.disabled) return;
+      if (templateData.disabled || item.disabled) return;
 
       onValueChanged(item.value);
       setFocusedIndex(index);
@@ -132,6 +132,7 @@ export function List(widgetInstance: WithWidget) {
             const absoluteIndex = range.start + index;
             const isSelected = value === item.value;
             const isFocused = focusedIndex === absoluteIndex;
+            const isItemDisabled = isDisabled || !!item.disabled;
 
             const labelField = templateData.labelField ?? 'label';
             const isObject = item.template !== null && typeof item.template === 'object';
@@ -149,7 +150,7 @@ export function List(widgetInstance: WithWidget) {
                 className="gui-list__item-wrapper"
                 style={{ height: `${templateData.itemHeight || 40}px` }}
                 aria-selected={isSelected}
-                aria-disabled={isDisabled ? 'true' : 'false'}
+                aria-disabled={isItemDisabled ? 'true' : 'false'}
                 onClick={() => handleClickItem(item, absoluteIndex)}
               >
                 <ItemRenderer
@@ -157,7 +158,7 @@ export function List(widgetInstance: WithWidget) {
                   value={item.value}
                   index={index}
                   selected={isSelected}
-                  disabled={isDisabled}
+                  disabled={isItemDisabled}
                   focused={isFocused}
                 />
               </div>

@@ -115,6 +115,7 @@ export class ListElement extends LitElement implements WithWidget {
             const absoluteIndex = this._range.start + index;
             const isSelected = templateData.value === item.value;
             const isFocused = this._focusedIndex === absoluteIndex;
+            const isDisabled = !!templateData.disabled || !!item.disabled;
 
             const labelField = templateData.labelField ?? 'label';
             const isObject = item.template !== null && typeof item.template === 'object';
@@ -131,7 +132,7 @@ export class ListElement extends LitElement implements WithWidget {
                 id="${this.widget.uid}-item-${absoluteIndex}"
                 style="height: ${templateData.itemHeight || 40}px"
                 aria-selected=${isSelected ? 'true' : 'false'}
-                aria-disabled=${templateData.disabled ? 'true' : 'false'}
+                aria-disabled=${isDisabled ? 'true' : 'false'}
                 @click=${() => this._onClickItem(item, absoluteIndex)}
               >
                 ${itemRenderer({
@@ -139,7 +140,7 @@ export class ListElement extends LitElement implements WithWidget {
                   value: item.value,
                   index: absoluteIndex,
                   selected: isSelected,
-                  disabled: !!templateData.disabled,
+                  disabled: isDisabled,
                   focused: isFocused,
                 })}
               </div>
@@ -171,7 +172,7 @@ export class ListElement extends LitElement implements WithWidget {
   }
 
   private _onClickItem(item: ListItem<any>, index: number) {
-    if (this.adapter.templateData.disabled) return;
+    if (this.adapter.templateData.disabled || item.disabled) return;
 
     this.adapter.valueChanged(item.value);
 

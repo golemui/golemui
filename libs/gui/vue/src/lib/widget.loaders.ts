@@ -16,6 +16,7 @@ export const widgetLoaders: WidgetLoaders<Component<WithWidget>, GolemWidget> = 
   password: async () => (await import('./components/Password.vue')).default,
   textinput: async () => (await import('./components/TextInput.vue')).default,
   timeInput: async () => (await import('./components/TimeInput.vue')).default,
+  timePicker: async () => (await import('./components/TimePicker.vue')).default,
   dateTimeInput: async () => (await import('./components/DateTimeInput.vue')).default,
   textarea: async () => (await import('./components/TextArea.vue')).default,
   markdown: async () => (await import('./components/Markdown.vue')).default,

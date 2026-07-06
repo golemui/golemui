@@ -203,7 +203,7 @@ export class DropdownComponent implements OnInit, OnDestroy, WithWidget {
   protected onClickItem(item: ListItem<never>, index: number) {
     const templateData = this.adapter.templateData();
 
-    if (templateData.readonly) return;
+    if (templateData.readonly || item.disabled) return;
 
     this.adapter.valueChanged(item.value);
     this.adapter.filterChanged('');

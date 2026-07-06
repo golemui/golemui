@@ -39,6 +39,7 @@ import type {
   TextareaProps,
   TextinputProps,
   TimeInputProps,
+  TimePickerProps,
   ToggleProps,
 } from './widget.props';
 
@@ -214,6 +215,7 @@ type GolemWidget<
   | GuiTextarea<FormType, States, V>
   | GuiTextInput<FormType, States, V>
   | GuiTimeInput<FormType, States, V>
+  | GuiTimePicker<FormType, States, V>
   | GuiToggle<FormType, States, V>
   | CustomWidget;
 
@@ -452,6 +454,14 @@ type GuiTimeInput<FormType extends Record<string, any>, States extends string, V
   TimeInputProps,
   V
 > & { type: 'timeInput' };
+
+type GuiTimePicker<FormType extends Record<string, any>, States extends string, V> = InputWidget<
+  string,
+  States,
+  FormType,
+  TimePickerProps,
+  V
+> & { type: 'timePicker' };
 
 type GuiDateTimeInput<FormType extends Record<string, any>, States extends string, V> = InputWidget<
   string,

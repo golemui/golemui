@@ -160,6 +160,54 @@
       "kind": "display",
       "type": "heading",
       "props": {
+        "text": "TIME PICKERS",
+        "level": 3
+      }
+    },
+    {
+      "kind": "input",
+      "type": "timePicker",
+      "path": "timePicker",
+      "defaultValue": "09:30:00",
+      "label": "Pick a time slot",
+      "props": {
+        "hint": "30m slots from 9:00 to 18:00, lunch break disabled",
+        "icon": "schedule",
+        "minTime": "09:00:00",
+        "maxTime": "18:00:00",
+        "minuteStep": 30,
+        "disabledRanges": [{ "start": "13:00:00", "end": "14:00:00" }]
+      },
+      "validator": { "type": "string", "required": true, "format": "time" }
+    },
+    {
+      "kind": "input",
+      "type": "timePicker",
+      "path": "timePickerFree",
+      "label": "Custom time allowed",
+      "props": {
+        "hint": "Type any time or pick a 15m slot",
+        "allowCustomTime": true,
+        "minTime": "08:00:00",
+        "maxTime": "20:00:00",
+        "minuteStep": 15
+      },
+      "validator": { "type": "string", "format": "time" }
+    },
+    {
+      "kind": "input",
+      "type": "timePicker",
+      "path": "timePicker24",
+      "label": "24h time picker",
+      "props": {
+        "hourFormat": "24"
+      },
+      "validator": { "type": "string", "format": "time" }
+    },
+    {
+      "kind": "display",
+      "type": "heading",
+      "props": {
         "text": "DATE TIME INPUTS",
         "level": 3
       }

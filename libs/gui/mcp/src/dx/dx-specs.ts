@@ -314,6 +314,18 @@ const INPUTS: DxSpec[] = [
     ],
   },
   {
+    factory: 'timePicker',
+    namespace: 'inputs',
+    call: 'gui.inputs.timePicker(path, { label, minTime?, maxTime?, minuteStep?, disabledRanges?, allowCustomTime?, validator? })',
+    example:
+      "gui.inputs.timePicker('meetingTime', { label: 'Meeting time', minTime: '09:00', maxTime: '18:00', minuteStep: 30 })",
+    notes: [
+      'Time field with a popover list of slots built from `minTime`..`maxTime` stepping `minuteStep` ' +
+        '(default 30). `disabledRanges` (`{ start, end }[]`, inclusive) greys slots out. Typing is off ' +
+        'unless `allowCustomTime: true`. Emits `HH:mm:ss` — pair with the `{ format: \'time\' }` validator.',
+    ],
+  },
+  {
     factory: 'dateTimeInput',
     namespace: 'inputs',
     call: 'gui.inputs.dateTimeInput(path, { label, hourFormat?, minuteStep?, validator? })',
