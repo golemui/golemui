@@ -255,6 +255,27 @@ export const runDateTimeInputComponentTests = (mountFn: MountComponentFn) => {
       });
     });
 
+    describe('RTL', () => {
+      it('should mirror the date parts but keep hour:minute unmirrored', () => {
+        mountDateTimeInput({ data: { myDateTime: '2026-06-15T08:00:00' }, lang: 'ar' });
+
+        cy.get(sel.hour).should('have.value', '08');
+        cy.get('gui-date-time').should(($el) => {
+          const left = (type: string) => {
+            const part = $el[0].querySelector(`[data-type="${type}"]`);
+            expect(part, `${type} part exists`).to.not.equal(null);
+            return (part as HTMLElement).getBoundingClientRect().left;
+          };
+          // Date parts mirror in RTL (CLDR inserts direction marks): the day
+          // ends up visually rightmost
+          expect(left('year'), 'year left of month').to.be.lessThan(left('month'));
+          expect(left('month'), 'month left of day').to.be.lessThan(left('day'));
+          // The time run never mirrors: hour stays left of minute
+          expect(left('hour'), 'hour left of minute').to.be.lessThan(left('minute'));
+        });
+      });
+    });
+
     describe('blur', () => {
       it('should emit a null value when a part is emptied and blurred', () => {
         const formSubmitHandler = cy.stub().as('formSubmitHandler');
