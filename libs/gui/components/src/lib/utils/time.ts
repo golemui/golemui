@@ -176,6 +176,8 @@ export interface TimeOption {
   disabled: boolean;
 }
 
+export const NO_AVAILABLE_TIMES_MESSAGE = 'No available times';
+
 /**
  * Compares two ISO time strings chronologically. HH:mm values are normalized
  * to HH:mm:ss so the comparison stays lexicographic like the calendar's

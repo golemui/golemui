@@ -66,6 +66,11 @@
     (gui-range-change)="onRangeChange($event)"
     (gui-focus-change)="onFocusChange($event)"
   >
+    @if (timeItems().length === 0) {
+      <div class="gui-time-picker__empty">
+        {{ templateData.noAvailableTimesMessage ?? noAvailableTimesDefault }}
+      </div>
+    }
     @for (item of visibleItems(); track $index) {
       @let absoluteIndex = currentRange().start + $index;
       @let isItemDisabled = templateData.disabled || !!item.disabled;

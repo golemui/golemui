@@ -6,6 +6,7 @@ import {
   addLabel,
   buildTimeOptions,
   formatISOTimeForLocale,
+  NO_AVAILABLE_TIMES_MESSAGE,
   resolveHourFormat,
 } from '@golemui/gui-components/internals';
 import type { ListItem, TimePickerProps } from '@golemui/gui-shared/internals';
@@ -199,6 +200,11 @@ export class TimePickerElement extends LitElement implements WithWidget {
           @gui-focus-change=${this._onFocusChange}
           @change=${this._onValueChange}
         >
+          ${this.timeItems.length === 0
+            ? html`<div class="gui-time-picker__empty">
+                ${templateData.noAvailableTimesMessage ?? NO_AVAILABLE_TIMES_MESSAGE}
+              </div>`
+            : ''}
           ${visibleItems.map((item, index) => {
             const absoluteIndex = this._range.start + index;
             const isSelected = templateData.value === item.value;

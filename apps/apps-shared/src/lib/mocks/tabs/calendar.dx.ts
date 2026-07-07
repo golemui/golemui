@@ -100,6 +100,7 @@ export const calendarTab = gui.layouts.flex([
     label: 'Pick a time slot',
     hint: '30m slots from 9:00 to 18:00, lunch break disabled',
     disabledRangeMessage: 'Lunch break is not available',
+    noAvailableTimesMessage: 'No time slots available',
     maxTimeMessage: 'Office closed from 18:00',
     minTimeMessage: 'Office not open until 9:00',
     defaultValue: '09:30:00',

@@ -9,6 +9,15 @@
       &[hidden] {
         display: none;
       }
+
+      .gui-time-picker__empty {
+        display: flex;
+        align-items: center;
+        min-height: 40px;
+        padding: 0 12px;
+        color: var(--gui-text-muted);
+        cursor: default;
+      }
     }
   }
 }

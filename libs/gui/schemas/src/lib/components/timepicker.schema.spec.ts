@@ -69,6 +69,7 @@ describe('Timepicker schema validation', () => {
               minTimeMessage: 'Too early',
               maxTimeMessage: { key: 'tp.max', default: 'Too late' },
               disabledRangeMessage: 'Unavailable slot',
+              noAvailableTimesMessage: 'No slots today',
             },
           },
         ],

@@ -321,6 +321,7 @@ export type TimePickerProps = TimeInputProps & {
   minTimeMessage?: Localizable;
   maxTimeMessage?: Localizable;
   disabledRangeMessage?: Localizable;
+  noAvailableTimesMessage?: Localizable;
 };
 
 export type RangeDateInputProps = {

@@ -3,6 +3,7 @@ import { useInputWidget, useItemRenderer } from '@golemui/react';
 import {
   buildTimeOptions,
   formatISOTimeForLocale,
+  NO_AVAILABLE_TIMES_MESSAGE,
   resolveHourFormat,
 } from '@golemui/gui-components/internals';
 import type { ListItem, TimePickerProps } from '@golemui/gui-shared/internals';
@@ -298,6 +299,11 @@ export function TimePicker(widgetInstance: WithWidget) {
           readOnly={isReadonly}
           hidden={!isListVisible}
         >
+          {timeItems.length === 0 && (
+            <div className="gui-time-picker__empty">
+              {(templateData.noAvailableTimesMessage as string) ?? NO_AVAILABLE_TIMES_MESSAGE}
+            </div>
+          )}
           {visibleItems.map((item, index) => {
             const absoluteIndex = range.start + index;
             const isSelected = value === item.value;

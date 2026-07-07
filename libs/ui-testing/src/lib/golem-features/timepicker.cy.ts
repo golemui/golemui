@@ -125,6 +125,31 @@ export const runTimePickerComponentTests = (mountFn: MountComponentFn) => {
           expect(data).to.deep.equal({ myTime: '10:30:00' });
         });
       });
+
+      it('should show an empty-state message when the bounds yield no slots', () => {
+        mountTimePicker({ props: { minTime: '18:00:00', maxTime: '09:00:00' } });
+
+        cy.get(sel.hour).click();
+        cy.get(sel.items).should('have.length', 0);
+        cy.get(`${sel.openList} .gui-time-picker__empty`).should(($el) => {
+          expect($el.text().trim()).to.equal('No available times');
+        });
+      });
+
+      it('should show the custom noAvailableTimesMessage when provided', () => {
+        mountTimePicker({
+          props: {
+            minTime: '18:00:00',
+            maxTime: '09:00:00',
+            noAvailableTimesMessage: 'Nothing available today',
+          },
+        });
+
+        cy.get(sel.hour).click();
+        cy.get(`${sel.openList} .gui-time-picker__empty`).should(($el) => {
+          expect($el.text().trim()).to.equal('Nothing available today');
+        });
+      });
     });
 
     describe('disabled ranges', () => {

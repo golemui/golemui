@@ -4,6 +4,7 @@ import { useInputWidget, useVueFormContext } from '@golemui/vue';
 import {
   buildTimeOptions,
   formatISOTimeForLocale,
+  NO_AVAILABLE_TIMES_MESSAGE,
   resolveHourFormat,
 } from '@golemui/gui-components/internals';
 import type { ListItem, TimePickerProps } from '@golemui/gui-shared/internals';
@@ -281,6 +282,9 @@ const onKeyDown = (event: KeyboardEvent) => {
         :readOnly="isReadOnly"
         :hidden="!isListVisible"
       >
+        <div v-if="timeItems.length === 0" class="gui-time-picker__empty">
+          {{ templateData.noAvailableTimesMessage ?? NO_AVAILABLE_TIMES_MESSAGE }}
+        </div>
         <div
           v-for="(item, idx) in visibleItems"
           :key="rangeStart + idx"

@@ -98,6 +98,9 @@
         "disabledRangeMessage": {
           "$ref": "../common.schema.json#/$defs/localizable"
         },
+        "noAvailableTimesMessage": {
+          "$ref": "../common.schema.json#/$defs/localizable"
+        },
         "hint": {
           "$ref": "#/$defs/hintProp"
         },
@@ -140,6 +143,9 @@
           "$ref": "../common.schema.json#/$defs/localizable"
         },
         "^disabledRangeMessage\\.[^.]+$": {
+          "$ref": "../common.schema.json#/$defs/localizable"
+        },
+        "^noAvailableTimesMessage\\.[^.]+$": {
           "$ref": "../common.schema.json#/$defs/localizable"
         },
         "^hint\\.[^.]+$": {

@@ -17,6 +17,7 @@ import type { ListItem, TimePickerProps } from '@golemui/gui-shared/internals';
 import {
   buildTimeOptions,
   formatISOTimeForLocale,
+  NO_AVAILABLE_TIMES_MESSAGE,
   resolveHourFormat,
 } from '@golemui/gui-components/internals';
 import { DefaultListItemRenderer } from '../list/default-list.item-renderer';
@@ -48,6 +49,7 @@ export class TimePickerComponent implements OnInit, OnDestroy, WithWidget {
   listRef = viewChild.required<ElementRef>('listRef');
 
   protected defaultListItemRenderer: AngularItemRenderer<string> = DefaultListItemRenderer;
+  protected readonly noAvailableTimesDefault = NO_AVAILABLE_TIMES_MESSAGE;
 
   protected currentRange = signal({ start: 0, end: 10 });
   protected focusedIndex = signal<number>(-1);
