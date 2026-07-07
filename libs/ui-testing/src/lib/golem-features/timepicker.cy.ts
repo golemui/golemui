@@ -106,6 +106,25 @@ export const runTimePickerComponentTests = (mountFn: MountComponentFn) => {
         expectItemLabel(0, /^09:00$/);
         expectItemLabel(4, /^11:00$/);
       });
+
+      it('should keep the options on whole minutes when minTime has seconds', () => {
+        const formSubmitHandler = cy.stub().as('formSubmitHandler');
+        mountTimePicker({
+          props: { minTime: '09:00:30', maxTime: '10:30:00', minuteStep: 30 },
+          formSubmit: formSubmitHandler,
+        });
+
+        // 09:00:00 falls before minTime, so the grid starts at 09:30
+        cy.get(sel.hour).click();
+        cy.get(sel.items).should('have.length', 3);
+        expectItemLabel(0, /^9:30\sAM$/);
+        expectItemLabel(2, /^10:30\sAM$/);
+
+        cy.get(sel.items).eq(2).click();
+        submitAndGetData('@formSubmitHandler').then((data) => {
+          expect(data).to.deep.equal({ myTime: '10:30:00' });
+        });
+      });
     });
 
     describe('disabled ranges', () => {

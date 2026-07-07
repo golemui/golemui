@@ -210,12 +210,14 @@ export function isTimeDisabled(time: string, ranges: TimeRange[] | undefined): b
 }
 
 /**
- * Builds the selectable time slots for a time picker: minTime stepping by
- * minuteStep while <= maxTime (both bounds inclusive), each slot flagged as
- * disabled when it falls inside a disabled range.
+ * Builds the selectable time slots for a time picker: whole-minute slots
+ * anchored at minTime's HH:mm, stepping by minuteStep while inside
+ * [minTime, maxTime] (both bounds inclusive), each slot flagged as disabled
+ * when it falls inside a disabled range. When minTime carries seconds the
+ * anchor slot itself falls before minTime and is excluded.
  *
  * @param {object} options - The generation options.
- * @param {string} [options.minTime] - First slot (ISO time). Defaults to '00:00:00'.
+ * @param {string} [options.minTime] - Lower bound (ISO time). Defaults to '00:00:00'.
  * @param {string} [options.maxTime] - Upper bound (ISO time). Defaults to '23:59:59'.
  * @param {number} [options.minuteStep] - Minutes between slots. Defaults to 30.
  * @param {TimeRange[]} [options.disabledRanges] - Ranges rendered as disabled.
@@ -231,6 +233,7 @@ export function buildTimeOptions(options: {
   // to 0 (e.g. Vue's patchDOMProp), and a 0 step would loop forever
   const step = options.minuteStep || 30;
   const min = parseISOTimeString(options.minTime ?? '') ?? { hours: 0, minutes: 0, seconds: 0 };
+  const minTime = toISOTimeString(new Date(1970, 0, 1, min.hours, min.minutes, min.seconds));
   const maxTime = options.maxTime ?? '23:59:59';
 
   const slots: TimeOption[] = [];
@@ -240,9 +243,10 @@ export function buildTimeOptions(options: {
     totalMinutes += step
   ) {
     const value = toISOTimeString(
-      new Date(1970, 0, 1, Math.floor(totalMinutes / 60), totalMinutes % 60, min.seconds),
+      new Date(1970, 0, 1, Math.floor(totalMinutes / 60), totalMinutes % 60, 0),
     );
     if (compareISOTimes(value, maxTime) > 0) break;
+    if (compareISOTimes(value, minTime) < 0) continue;
     slots.push({ value, disabled: isTimeDisabled(value, options.disabledRanges) });
   }
   return slots;
