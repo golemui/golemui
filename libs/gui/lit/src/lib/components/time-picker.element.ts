@@ -73,10 +73,10 @@ export class TimePickerElement extends LitElement implements WithWidget {
         ?allow-custom-time=${templateData.allowCustomTime}
         .height=${templateData.height}
         .itemHeight=${templateData.itemHeight}
-        .minTimeMessage=${templateData.minTimeMessage}
-        .maxTimeMessage=${templateData.maxTimeMessage}
-        .disabledRangeMessage=${templateData.disabledRangeMessage}
-        .noAvailableTimesMessage=${templateData.noAvailableTimesMessage}
+        .minTimeMessage=${templateData.minTimeMessage as string}
+        .maxTimeMessage=${templateData.maxTimeMessage as string}
+        .disabledRangeMessage=${templateData.disabledRangeMessage as string}
+        .noAvailableTimesMessage=${templateData.noAvailableTimesMessage as string}
         @inputError=${this.onInputError}
         @blur=${() => this.adapter.onBlur()}
         @change=${this.valueChanged}

@@ -81,10 +81,10 @@ export class DateTimeCalendarElement extends LitElement implements WithWidget {
         .maxTime=${templateData.maxTime}
         .disabledTimeRanges=${templateData.disabledTimeRanges}
         ?allow-custom-time=${templateData.allowCustomTime}
-        .minTimeMessage=${templateData.minTimeMessage}
-        .maxTimeMessage=${templateData.maxTimeMessage}
-        .disabledTimeRangeMessage=${templateData.disabledTimeRangeMessage}
-        .noAvailableTimesMessage=${templateData.noAvailableTimesMessage}
+        .minTimeMessage=${templateData.minTimeMessage as string}
+        .maxTimeMessage=${templateData.maxTimeMessage as string}
+        .disabledTimeRangeMessage=${templateData.disabledTimeRangeMessage as string}
+        .noAvailableTimesMessage=${templateData.noAvailableTimesMessage as string}
         @change=${this.valueChanged}
         @inputError=${this.onInputError}
         @blur=${() => this.adapter.onBlur()}

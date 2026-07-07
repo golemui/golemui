@@ -69,7 +69,7 @@ export class DateElement extends LitElement implements WithWidget {
         .value=${this.adapter.templateData.value}
         .icon=${this.adapter.templateData.icon}
         .localeId=${this.adapter.templateData.lang}
-        .invalidDateMessage=${this.adapter.templateData.invalidDateMessage}
+        .invalidDateMessage=${this.adapter.templateData.invalidDateMessage as string}
         @inputError=${this.onInputError}
         @blur=${() => this.adapter.onBlur()}
         @change=${this.valueChanged}
