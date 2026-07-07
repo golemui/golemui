@@ -110,6 +110,7 @@ export class TimePickerComponent implements OnInit, OnDestroy, WithWidget {
   }
 
   protected toggleList(event: Event) {
+    if (this.adapter.templateData().disabled) return;
     const target = event.target as HTMLElement;
 
     if (target.closest('.gui-list__item-wrapper')) return;
@@ -124,6 +125,7 @@ export class TimePickerComponent implements OnInit, OnDestroy, WithWidget {
   }
 
   protected openList() {
+    if (this.adapter.templateData().disabled) return;
     this.isListVisible.set(true);
 
     setTimeout(() => {
@@ -135,6 +137,12 @@ export class TimePickerComponent implements OnInit, OnDestroy, WithWidget {
 
   protected closeList() {
     this.isListVisible.set(false);
+  }
+
+  protected toggleListFromKeyboard(event: Event) {
+    if (this.adapter.templateData().disabled) return;
+    if (event.target !== event.currentTarget) return;
+    this.isListVisible.set(!this.isListVisible());
   }
 
   /**

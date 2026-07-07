@@ -250,6 +250,7 @@ export class TimePickerElement extends LitElement implements WithWidget {
   }
 
   onKeyUp(event: Event) {
+    if (this.adapter.templateData.disabled) return;
     const evt = event as KeyboardEvent;
     if (evt.target !== evt.currentTarget) return;
     if (evt?.key === 'Enter' || evt?.key === ' ') {
@@ -298,6 +299,7 @@ export class TimePickerElement extends LitElement implements WithWidget {
   }
 
   toggleList(event: Event) {
+    if (this.adapter.templateData.disabled) return;
     const target = event.target as HTMLElement;
 
     if (target.closest('.gui-list__item-wrapper')) return;
@@ -312,6 +314,7 @@ export class TimePickerElement extends LitElement implements WithWidget {
   }
 
   openList = () => {
+    if (this.adapter.templateData.disabled) return;
     if (!this._isListVisible) {
       this._isListVisible = true;
       this.updateComplete.then(() => this._listRef?.scrollToSelectedIndex());

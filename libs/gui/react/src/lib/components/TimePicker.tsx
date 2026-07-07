@@ -60,9 +60,10 @@ export function TimePicker(widgetInstance: WithWidget) {
   const visibleItems = useMemo(() => timeItems.slice(range.start, range.end), [timeItems, range]);
 
   const openList = useCallback(() => {
+    if (templateData.disabled) return;
     setIsListVisible(true);
     requestAnimationFrame(() => listRef.current?.scrollToSelectedIndex());
-  }, []);
+  }, [templateData.disabled]);
 
   const selectValue = useCallback(
     (newValue: string) => {
@@ -176,6 +177,7 @@ export function TimePicker(widgetInstance: WithWidget) {
   };
 
   const toggleList = (event: React.MouseEvent) => {
+    if (templateData.disabled) return;
     const target = event.target as HTMLElement;
 
     if (target.closest('.gui-list__item-wrapper')) return;
@@ -250,6 +252,7 @@ export function TimePicker(widgetInstance: WithWidget) {
         onClick={toggleList}
         onKeyDown={onKeyDown}
         onKeyUp={(event) => {
+          if (templateData.disabled) return;
           if (event.target !== event.currentTarget) return;
           if (event.key === 'Enter' || event.key === ' ') {
             setIsListVisible((prev) => !prev);

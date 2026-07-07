@@ -376,6 +376,17 @@ export const runTimePickerComponentTests = (mountFn: MountComponentFn) => {
         cy.get(sel.hour).should('be.disabled');
         cy.get(sel.minute).should('be.disabled');
       });
+
+      it('should not open the list when disabled', () => {
+        mountTimePicker({ data: { myTime: '09:30:00' }, props: officeProps, disabled: true });
+
+        // Disabled inputs swallow clicks, so aim at the widget row and arrow
+        cy.get('.gui-time-picker .gui-widget').first().click({ force: true });
+        cy.get(sel.list).should('have.attr', 'hidden');
+
+        cy.get('.gui-time-picker__arrow').click({ force: true });
+        cy.get(sel.list).should('have.attr', 'hidden');
+      });
     });
   });
 };

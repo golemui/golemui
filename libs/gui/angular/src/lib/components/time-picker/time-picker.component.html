@@ -11,8 +11,8 @@
   tabindex="-1"
   class="gui-widget"
   [attr.aria-expanded]="isListVisible()"
-  (keyup.space)="$event.target === $event.currentTarget && isListVisible.set(!isListVisible())"
-  (keyup.enter)="$event.target === $event.currentTarget && isListVisible.set(!isListVisible())"
+  (keyup.space)="toggleListFromKeyboard($event)"
+  (keyup.enter)="toggleListFromKeyboard($event)"
   (keydown)="onKeyDown($event)"
   (click)="toggleList($event)"
 >

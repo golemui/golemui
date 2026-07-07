@@ -70,6 +70,7 @@ const ItemRenderer = computed<Component>(() => {
 });
 
 const openList = () => {
+  if (isDisabled.value) return;
   isListVisible.value = true;
   requestAnimationFrame(() => listRef.value?.scrollToSelectedIndex());
 };
@@ -166,6 +167,7 @@ const onFocusOut = (event: FocusEvent) => {
 };
 
 const toggleList = (event: MouseEvent) => {
+  if (isDisabled.value) return;
   const target = event.target as HTMLElement;
 
   if (target.closest('.gui-list__item-wrapper')) return;
@@ -180,6 +182,7 @@ const toggleList = (event: MouseEvent) => {
 };
 
 const onKeyUp = (event: KeyboardEvent) => {
+  if (isDisabled.value) return;
   if (event.target !== event.currentTarget) return;
   if (event.key === 'Enter' || event.key === ' ') {
     isListVisible.value = !isListVisible.value;
