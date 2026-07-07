@@ -90,6 +90,25 @@ export const runTimePickerComponentTests = (mountFn: MountComponentFn) => {
         cy.get(sel.list).should('have.attr', 'hidden');
       });
 
+      it('should close the list with Enter from a time part', () => {
+        const formSubmitHandler = cy.stub().as('formSubmitHandler');
+        mountTimePicker({
+          props: { ...officeProps, allowCustomTime: true },
+          formSubmit: formSubmitHandler,
+        });
+
+        cy.get(sel.hour).type('09');
+        cy.focused().type('45', { force: true });
+        cy.get(sel.openList).should('exist');
+
+        cy.focused().type('{enter}', { force: true });
+        cy.get(sel.list).should('have.attr', 'hidden');
+
+        submitAndGetData('@formSubmitHandler').then((data) => {
+          expect(data).to.deep.equal({ myTime: '09:45:00' });
+        });
+      });
+
       it('should build the options from minTime, maxTime and minuteStep', () => {
         mountTimePicker({ props: officeProps });
 

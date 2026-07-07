@@ -162,13 +162,11 @@ export class GuiDateTimeCalendar extends GuiCalendar {
     );
   };
 
-  private closeTimeGrid() {
+  private closeTimeGrid(restoreFocus = true) {
     if (!this._timeGridOpen) return;
 
-    // Move focus into the time input BEFORE removing the grid, so focusout
-    // fires with relatedTarget inside the component (year-grid idiom)
     const part = this.querySelector<HTMLElement>('.gui-calendar__time-input-row input');
-    if (part) {
+    if (restoreFocus && part) {
       this._restoringFocus = true;
       part.focus();
       setTimeout(() => {
@@ -176,6 +174,44 @@ export class GuiDateTimeCalendar extends GuiCalendar {
       });
     }
     this._timeGridOpen = false;
+  }
+
+  /** The time input row plus the open grid: focus/clicks inside keep it open. */
+  private isInsideTimeCluster(node: Node | null | undefined): boolean {
+    if (!node) return false;
+    const row = this.querySelector('.gui-calendar__time-input-row');
+    const grid = this.querySelector('gui-time-list');
+    return !!(row?.contains(node) || grid?.contains(node));
+  }
+
+  // Tabbing or clicking away from the time input/grid closes the grid
+  private onTimeClusterFocusOut = (event: FocusEvent) => {
+    if (!this._timeGridOpen || this._restoringFocus) return;
+    if (this.isInsideTimeCluster(event.relatedTarget as Node | null)) return;
+    this.closeTimeGrid(false);
+  };
+
+  private onDocumentClick = (event: MouseEvent) => {
+    if (!this._timeGridOpen) return;
+
+    const path = event.composedPath();
+    const row = this.querySelector('.gui-calendar__time-input-row');
+    const grid = this.querySelector('gui-time-list');
+    if ((row && path.includes(row)) || (grid && path.includes(grid))) return;
+
+    this.closeTimeGrid(false);
+  };
+
+  override connectedCallback() {
+    super.connectedCallback();
+    document.addEventListener('click', this.onDocumentClick);
+    this.addEventListener('focusout', this.onTimeClusterFocusOut);
+  }
+
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    document.removeEventListener('click', this.onDocumentClick);
+    this.removeEventListener('focusout', this.onTimeClusterFocusOut);
   }
 
   protected override toggleYearSelector() {

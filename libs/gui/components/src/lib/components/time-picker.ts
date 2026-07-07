@@ -196,6 +196,14 @@ export class GuiTimePicker extends LitElement {
    * last one when nothing is selected yet).
    */
   private onKeyDown = (event: KeyboardEvent) => {
+    if (event.key === 'Enter' && this._isListOpen) {
+      const target = event.target as HTMLElement;
+      if (target.tagName === 'INPUT' && target.closest('gui-time')) {
+        this.closeList();
+        return;
+      }
+    }
+
     if (this.allowCustomTime || this.readOnly || this.disabled) return;
     if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return;
 

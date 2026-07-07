@@ -393,6 +393,32 @@ export const runDateTimeCalendarComponentTests = (mountFn: MountComponentFn) => 
       });
     });
 
+    describe('grid dismissal', () => {
+      it('should close the grid when clicking outside the time cluster', () => {
+        mountCalendar({ data: { myAppointment: '2026-02-13T09:30:00' }, props: officeProps });
+
+        cy.get(sel.hour).click();
+        cy.get(sel.timeGrid).should('exist');
+
+        cy.get('body').click(0, 0);
+        cy.get(sel.timeGrid).should('not.exist');
+        cy.get(sel.daysGrid).should('exist');
+      });
+
+      it('should close the grid when focus moves out of the time cluster', () => {
+        mountCalendar({ data: { myAppointment: '2026-02-13T09:30:00' }, props: officeProps });
+
+        cy.get(sel.hour).click();
+        cy.get(sel.rovingOption).focus();
+
+        // Tabbing out: focus lands outside the time input/grid
+        cy.get('[data-cy="submitBtn_button"]').focus();
+
+        cy.get(sel.timeGrid).should('not.exist');
+        cy.get(sel.daysGrid).should('exist');
+      });
+    });
+
     describe('keyboard and panel interplay', () => {
       it('should navigate the grid with arrows (4 columns), select with Enter and close with Escape', () => {
         const formSubmitHandler = cy.stub().as('formSubmitHandler');
