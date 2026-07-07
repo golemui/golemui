@@ -101,8 +101,11 @@ export const runTimePickerComponentTests = (mountFn: MountComponentFn) => {
         cy.focused().type('45', { force: true });
         cy.get(sel.openList).should('exist');
 
-        cy.focused().type('{enter}', { force: true });
+        cy.get(sel.hour).type('{enter}', { force: true });
         cy.get(sel.list).should('have.attr', 'hidden');
+
+        cy.get(sel.hour).should('have.value', '09');
+        cy.get(sel.minute).should('have.value', '45');
 
         submitAndGetData('@formSubmitHandler').then((data) => {
           expect(data).to.deep.equal({ myTime: '09:45:00' });
