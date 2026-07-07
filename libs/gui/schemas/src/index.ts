@@ -6,6 +6,7 @@ export { default as accordionSchema } from './lib/components/accordion.schema.js
 export { default as alertSchema } from './lib/components/alert.schema.json';
 export { default as buttonSchema } from './lib/components/button.schema.json';
 export { default as calendarSchema } from './lib/components/calendar.schema.json';
+export { default as datetimecalendarSchema } from './lib/components/datetimecalendar.schema.json';
 export { default as checkboxSchema } from './lib/components/checkbox.schema.json';
 export { default as currencySchema } from './lib/components/currency.schema.json';
 export { default as customSchema } from './lib/components/custom.schema.json';

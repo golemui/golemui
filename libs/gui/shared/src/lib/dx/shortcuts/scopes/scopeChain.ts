@@ -12,6 +12,10 @@ import { _gslCurrencies, _gslCurrencyByUid } from '../currency/register';
 import { _gslMarkdowns, _gslMarkdownByUid } from '../markdown/register';
 import { _gslLists, _gslListByUid } from '../list/register';
 import { _gslCalendars, _gslCalendarByUid } from '../calendar/register';
+import {
+  _gslDateTimeCalendars,
+  _gslDateTimeCalendarByUid,
+} from '../date-time-calendar/register';
 import { _gslDateInputs, _gslDateInputByUid } from '../date-input/register';
 import { _gslDatePickers, _gslDatePickerByUid } from '../date-picker/register';
 import { _gslRangeCalendars, _gslRangeCalendarByUid } from '../range-calendar/register';
@@ -184,6 +188,15 @@ export class ScopeChain {
   }
   calendarByUid(uid: string, config: CfgByUid<typeof _gslCalendarByUid>): GslLeafSelector {
     return this.apply(_gslCalendarByUid(uid, config));
+  }
+  dateTimeCalendars(config: CfgGsl<typeof _gslDateTimeCalendars>): GslLeafSelector {
+    return this.apply(_gslDateTimeCalendars(config));
+  }
+  dateTimeCalendarByUid(
+    uid: string,
+    config: CfgByUid<typeof _gslDateTimeCalendarByUid>,
+  ): GslLeafSelector {
+    return this.apply(_gslDateTimeCalendarByUid(uid, config));
   }
 
   dateInputs(config: CfgGsl<typeof _gslDateInputs>): GslLeafSelector {

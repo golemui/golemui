@@ -8,6 +8,7 @@ export const widgetLoaders: WidgetLoaders<Component<WithWidget>, GolemWidget> = 
 
   // CONTROLS
   calendar: async () => (await import('./components/Calendar.vue')).default,
+  dateTimeCalendar: async () => (await import('./components/DateTimeCalendar.vue')).default,
   currency: async () => (await import('./components/Currency.vue')).default,
   dateInput: async () => (await import('./components/DateInput.vue')).default,
   datePicker: async () => (await import('./components/DatePicker.vue')).default,

@@ -54,7 +54,7 @@ export abstract class AbstractCalendar extends LitElement {
   @property({ type: Number }) numberOfMonths: number | undefined = 1;
 
   @state() _currentDate: Date = new Date();
-  @state() private _yearSelectorOpen = false;
+  @state() protected _yearSelectorOpen = false;
 
   private _blurRafId: number | undefined;
 
@@ -170,43 +170,61 @@ export abstract class AbstractCalendar extends LitElement {
    * Render a month panel
    */
   private renderMonthPanel(offset: number) {
-    const days = this.getDaysInMonth(offset);
-    const weeks = this.chunkDays(days);
-    const weekDays = getWeekdayLabels(this.localeId);
     const panelDate = new Date(this._currentDate);
     panelDate.setDate(1);
     panelDate.setMonth(panelDate.getMonth() + offset);
 
     return html`
       <div class="gui-calendar__panel">
-        ${this.renderHeader(panelDate)}
-        ${this._yearSelectorOpen && offset === 0
-          ? this.renderYearGrid()
-          : html`
-              <div class="gui-calendar__days-grid" role="grid">
-                <div role="row" class="gui-calendar__rows">
-                  ${repeat(
-                    weekDays,
-                    (weekday, i) => i,
-                    (weekday) =>
-                      html`<span class="gui-calendar__weekday" role="gridcell">${weekday}</span>`,
-                  )}
-                </div>
+        ${this.renderHeader(panelDate)} ${this.renderBelowHeader(offset)}
+        ${this.renderPanelBody(offset)}
+      </div>
+    `;
+  }
 
-                ${repeat(
-                  weeks,
-                  (week) => html`
-                    <div role="row" class="gui-calendar__rows">
-                      ${repeat(
-                        week,
-                        (day) => day.date.toISOString(),
-                        (day) => this.renderDay(day),
-                      )}
-                    </div>
-                  `,
-                )}
-              </div>
-            `}
+  /** Hook rendered between the header and the panel body. Default: nothing. */
+  protected renderBelowHeader(_offset: number): TemplateResult | typeof nothing {
+    return nothing;
+  }
+
+  /**
+   * The panel content below the header: the year grid replaces the days grid
+   * of the first panel while the year selector is open. Subclasses can swap
+   * in other bodies (e.g. the date-time calendar's time grid).
+   */
+  protected renderPanelBody(offset: number): TemplateResult {
+    return this._yearSelectorOpen && offset === 0
+      ? this.renderYearGrid()
+      : this.renderDaysGrid(offset);
+  }
+
+  protected renderDaysGrid(offset: number): TemplateResult {
+    const days = this.getDaysInMonth(offset);
+    const weeks = this.chunkDays(days);
+    const weekDays = getWeekdayLabels(this.localeId);
+
+    return html`
+      <div class="gui-calendar__days-grid" role="grid">
+        <div role="row" class="gui-calendar__rows">
+          ${repeat(
+            weekDays,
+            (weekday, i) => i,
+            (weekday) => html`<span class="gui-calendar__weekday" role="gridcell">${weekday}</span>`,
+          )}
+        </div>
+
+        ${repeat(
+          weeks,
+          (week) => html`
+            <div role="row" class="gui-calendar__rows">
+              ${repeat(
+                week,
+                (day) => day.date.toISOString(),
+                (day) => this.renderDay(day),
+              )}
+            </div>
+          `,
+        )}
       </div>
     `;
   }
@@ -295,7 +313,7 @@ export abstract class AbstractCalendar extends LitElement {
     return chunks;
   }
 
-  private toggleYearSelector() {
+  protected toggleYearSelector() {
     this._yearSelectorOpen = !this._yearSelectorOpen;
     if (this._yearSelectorOpen) {
       this.updateComplete.then(() => {

@@ -2,6 +2,7 @@ import { createComponent, type EventName } from '@lit/react';
 import React from 'react';
 import { GuiButton } from '@golemui/gui-components/button';
 import { GuiCalendar } from '@golemui/gui-components/calendar';
+import { GuiDateTimeCalendar } from '@golemui/gui-components/date-time-calendar';
 import { GuiCheckbox } from '@golemui/gui-components/checkbox';
 import { GuiCurrency } from '@golemui/gui-components/currency';
 import { GuiDate } from '@golemui/gui-components/date-input';
@@ -21,6 +22,7 @@ import { GuiTags } from '@golemui/gui-components/tags';
 import { GuiTextarea } from '@golemui/gui-components/textarea';
 import { GuiTextinput } from '@golemui/gui-components/textinput';
 import { GuiTime } from '@golemui/gui-components/time-input';
+import { GuiTimePicker } from '@golemui/gui-components/time-picker';
 import { GuiToggle } from '@golemui/gui-components/toggle';
 
 const wrap = <
@@ -70,10 +72,20 @@ export const GuiSelectReact = wrap('gui-select', GuiSelect, {
 });
 
 export const GuiCalendarReact = wrap('gui-calendar', GuiCalendar);
+export const GuiDateTimeCalendarReact = wrap('gui-date-time-calendar', GuiDateTimeCalendar, {
+  onChange: 'change',
+  onBlur: 'blur',
+  onInputError: 'inputError',
+});
 export const GuiRangeCalendarReact = wrap('gui-range-calendar', GuiRangeCalendar);
 export const GuiDateReact = wrap('gui-date', GuiDate);
 export const GuiRangeDateReact = wrap('gui-range-date', GuiRangeDateInput);
 export const GuiTimeReact = wrap('gui-time', GuiTime);
+export const GuiTimePickerReact = wrap('gui-time-picker', GuiTimePicker, {
+  onChange: 'change',
+  onBlur: 'blur',
+  onInputError: 'inputError',
+});
 export const GuiDateTimeReact = wrap('gui-date-time', GuiDateTime);
 
 export const GuiListReact = wrap('gui-list', GuiList);

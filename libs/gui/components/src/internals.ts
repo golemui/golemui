@@ -29,6 +29,7 @@ export {
   NO_AVAILABLE_TIMES_MESSAGE,
   parseISODateTimeString,
   parseISOTimeString,
+  resolveDisabledTimeRangesForDate,
   resolveHourFormat,
   to24Hour,
   toISODateTimeString,

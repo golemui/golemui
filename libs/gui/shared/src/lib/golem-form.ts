@@ -17,6 +17,7 @@ import type {
   CheckboxProps,
   CurrencyProps,
   DatePickerProps,
+  DateTimeCalendarProps,
   DateRange,
   DateinputProps,
   DropdownProps,
@@ -191,6 +192,7 @@ type GolemWidget<
   | GuiButton<FormType, States>
   | GuiCalendar<FormType, States, V>
   | GuiCheckbox<FormType, States, V>
+  | GuiDateTimeCalendar<FormType, States, V>
   | GuiCurrency<FormType, States, V>
   | GuiDateinput<FormType, States, V>
   | GuiDatePicker<FormType, States, V>
@@ -250,6 +252,14 @@ type GuiCalendar<FormType extends Record<string, any>, States extends string, V>
   CalendarProps,
   V
 > & { type: 'calendar' };
+
+type GuiDateTimeCalendar<
+  FormType extends Record<string, any>,
+  States extends string,
+  V,
+> = InputWidget<string, States, FormType, DateTimeCalendarProps, V> & {
+  type: 'dateTimeCalendar';
+};
 
 type GuiCheckbox<FormType extends Record<string, any>, States extends string, V> = InputWidget<
   boolean,

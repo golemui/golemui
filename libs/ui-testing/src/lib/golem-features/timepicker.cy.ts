@@ -7,9 +7,9 @@ export const runTimePickerComponentTests = (mountFn: MountComponentFn) => {
       hour: 'gui-time input[data-type="hour"]',
       minute: 'gui-time input[data-type="minute"]',
       dayPeriod: 'gui-time button[data-type="dayPeriod"]',
-      list: 'gui-list',
-      openList: 'gui-list:not([hidden])',
-      items: 'gui-list:not([hidden]) .gui-list__item-wrapper',
+      list: 'gui-time-list',
+      openList: 'gui-time-list:not([hidden])',
+      items: 'gui-time-list:not([hidden]) .gui-time-list__option',
     };
 
     // Office hours with a disabled mid-morning slot: 09:00, 09:30, [10:00,
@@ -131,7 +131,7 @@ export const runTimePickerComponentTests = (mountFn: MountComponentFn) => {
 
         cy.get(sel.hour).click();
         cy.get(sel.items).should('have.length', 0);
-        cy.get(`${sel.openList} .gui-time-picker__empty`).should(($el) => {
+        cy.get(`${sel.openList} .gui-time-list__empty`).should(($el) => {
           expect($el.text().trim()).to.equal('No available times');
         });
       });
@@ -146,7 +146,7 @@ export const runTimePickerComponentTests = (mountFn: MountComponentFn) => {
         });
 
         cy.get(sel.hour).click();
-        cy.get(`${sel.openList} .gui-time-picker__empty`).should(($el) => {
+        cy.get(`${sel.openList} .gui-time-list__empty`).should(($el) => {
           expect($el.text().trim()).to.equal('Nothing available today');
         });
       });
@@ -175,16 +175,15 @@ export const runTimePickerComponentTests = (mountFn: MountComponentFn) => {
         mountTimePicker({ props: officeProps });
 
         cy.get(sel.hour).click();
-        cy.get(sel.openList).shadow().find('[role="listbox"]').as('listbox');
-        cy.get('@listbox').focus();
+        // Roving tabindex: the first enabled option carries tabindex 0
+        cy.get(`${sel.openList} .gui-time-list__option[tabindex="0"]`).focus();
+        cy.focused().should('have.attr', 'data-value', '09:00:00');
 
         // 09:00 -> 09:30 -> (skip 10:00 and 10:30) -> 11:00
-        cy.get('@listbox').type('{downArrow}');
-        cy.get('@listbox').should('have.attr', 'aria-activedescendant', 'testSubject-item-0');
-        cy.get('@listbox').type('{downArrow}');
-        cy.get('@listbox').should('have.attr', 'aria-activedescendant', 'testSubject-item-1');
-        cy.get('@listbox').type('{downArrow}');
-        cy.get('@listbox').should('have.attr', 'aria-activedescendant', 'testSubject-item-4');
+        cy.focused().type('{downArrow}');
+        cy.focused().should('have.attr', 'data-value', '09:30:00');
+        cy.focused().type('{downArrow}');
+        cy.focused().should('have.attr', 'data-value', '11:00:00');
       });
     });
 
@@ -210,10 +209,8 @@ export const runTimePickerComponentTests = (mountFn: MountComponentFn) => {
         mountTimePicker({ props: officeProps, formSubmit: formSubmitHandler });
 
         cy.get(sel.hour).click();
-        cy.get(sel.openList).shadow().find('[role="listbox"]').as('listbox');
-        cy.get('@listbox').focus();
-        cy.get('@listbox').type('{downArrow}');
-        cy.get('@listbox').type('{enter}');
+        cy.get(`${sel.openList} .gui-time-list__option[tabindex="0"]`).focus();
+        cy.focused().type('{enter}');
 
         cy.get(sel.list).should('have.attr', 'hidden');
 

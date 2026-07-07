@@ -49,9 +49,6 @@
     "allowCustomTimeProp": {
       "type": "boolean"
     },
-    "itemRendererProp": {
-      "type": "string"
-    },
     "sizeProp": {
       "type": "number"
     }
@@ -124,9 +121,6 @@
         },
         "allowCustomTime": {
           "$ref": "#/$defs/allowCustomTimeProp"
-        },
-        "itemRenderer": {
-          "$ref": "#/$defs/itemRendererProp"
         },
         "height": {
           "$ref": "#/$defs/sizeProp"

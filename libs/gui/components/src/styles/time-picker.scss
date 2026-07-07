@@ -1,23 +1,14 @@
+gui-time-picker {
+  display: block;
+}
+
 .gui-form {
   .gui-time-picker.gui-field {
-    .gui-widget gui-list {
+    .gui-widget gui-time-list {
       position: absolute;
       width: 100%;
       top: 100%;
       z-index: 10;
-
-      &[hidden] {
-        display: none;
-      }
-
-      .gui-time-picker__empty {
-        display: flex;
-        align-items: center;
-        min-height: 40px;
-        padding: 0 12px;
-        color: var(--gui-text-muted);
-        cursor: default;
-      }
     }
   }
 }

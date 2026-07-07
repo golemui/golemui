@@ -4,6 +4,7 @@ import './shortcuts/actions/register';
 import './shortcuts/layouts/register';
 import './shortcuts/display/register';
 import './shortcuts/calendar/register';
+import './shortcuts/date-time-calendar/register';
 import './shortcuts/textarea/register';
 import './shortcuts/password/register';
 import './shortcuts/checkbox/register';

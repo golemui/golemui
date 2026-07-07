@@ -38,6 +38,9 @@
       "@golemui/gui-components/date-input": [
         "libs/gui/components/src/lib/components/date-input.ts"
       ],
+      "@golemui/gui-components/date-time-calendar": [
+        "libs/gui/components/src/lib/components/date-time-calendar.ts"
+      ],
       "@golemui/gui-components/date-time-input": [
         "libs/gui/components/src/lib/components/date-time-input.ts"
       ],
@@ -65,6 +68,12 @@
       "@golemui/gui-components/textarea": ["libs/gui/components/src/lib/components/textarea.ts"],
       "@golemui/gui-components/time-input": [
         "libs/gui/components/src/lib/components/time-input.ts"
+      ],
+      "@golemui/gui-components/time-list": [
+        "libs/gui/components/src/lib/components/time-list.ts"
+      ],
+      "@golemui/gui-components/time-picker": [
+        "libs/gui/components/src/lib/components/time-picker.ts"
       ],
       "@golemui/gui-components/textinput": ["libs/gui/components/src/lib/components/textinput.ts"],
       "@golemui/gui-components/toggle": ["libs/gui/components/src/lib/components/toggle.ts"],

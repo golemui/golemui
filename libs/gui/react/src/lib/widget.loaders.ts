@@ -7,6 +7,8 @@ export const widgetLoaders: WidgetLoaders<React.ComponentType<WithWidget>, Golem
 
   // CONTROLS
   calendar: async () => (await import('./components/Calendar')).Calendar,
+  dateTimeCalendar: async () =>
+    (await import('./components/DateTimeCalendar')).DateTimeCalendar,
   currency: async () => (await import('./components/Currency')).Currency,
   dateInput: async () => (await import('./components/DateInput')).DateInput,
   datePicker: async () => (await import('./components/DatePicker')).DatePicker,

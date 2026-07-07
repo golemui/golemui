@@ -190,6 +190,32 @@ export type CalendarProps = {
   numberOfMonths?: number;
 };
 
+/**
+ * Calendar with an embedded time picker. The value is a local ISO date-time
+ * (YYYY-MM-DDTHH:mm:ss), emitted only when both the day and the time are
+ * selected; picking a different day clears the time and emits null. With
+ * numberOfMonths > 1 the time row and grid render on the first panel only.
+ */
+export type DateTimeCalendarProps = CalendarProps & {
+  /** '12' or '24'. Defaults to the locale's hour cycle. */
+  hourFormat?: '12' | '24';
+  /** Minutes between selectable slots. Defaults to 30. */
+  minuteStep?: number;
+  /** First selectable time (ISO time, inclusive). Defaults to '00:00:00'. */
+  minTime?: string;
+  /** Last selectable time (ISO time, inclusive). Defaults to '23:59:59'. */
+  maxTime?: string;
+  /** Times inside these ranges render disabled; entries can scope per day. */
+  disabledTimeRanges?: DisabledTimeRange[];
+  /** Allows typing a time in the input; when false (default) times come only from the grid. */
+  allowCustomTime?: boolean;
+  minTimeMessage?: Localizable;
+  maxTimeMessage?: Localizable;
+  disabledTimeRangeMessage?: Localizable;
+  /** Shown in the time grid when the bounds yield no slots. Defaults to 'No available times'. */
+  noAvailableTimesMessage?: Localizable;
+};
+
 export type RangeCalendarProps = {
   /**
    * An optional descriptive text providing guidance or information about the associated widget or functionality.
@@ -303,6 +329,18 @@ export type TimeRange = {
   end: string;
 };
 
+/**
+ * A disabled time-of-day range, optionally scoped to specific days. An entry
+ * with neither `date` nor `weekdays` applies every day; when both are given
+ * they must both match.
+ */
+export type DisabledTimeRange = TimeRange & {
+  /** ISO date (YYYY-MM-DD): the range only applies on that date. */
+  date?: string;
+  /** Weekday numbers as returned by Date.prototype.getDay(): 0=Sunday … 6=Saturday. */
+  weekdays?: number[];
+};
+
 export type TimePickerProps = TimeInputProps & {
   /** First selectable option (ISO time, inclusive). Defaults to '00:00:00'. */
   minTime?: string;
@@ -312,10 +350,6 @@ export type TimePickerProps = TimeInputProps & {
   disabledRanges?: TimeRange[];
   /** Allows typing a time in the input; when false (default) values come only from the list. */
   allowCustomTime?: boolean;
-  /**
-   * Should match with one of the provided itemRenderer keys
-   */
-  itemRenderer?: string;
   height?: number;
   itemHeight?: number;
   minTimeMessage?: Localizable;

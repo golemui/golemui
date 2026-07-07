@@ -166,7 +166,7 @@ export abstract class AbstractDateTimeInput extends LitElement {
 
   /** Called when a part is blurred while empty/invalid. Default: emit null. */
   protected onEmptyPartBlur(): void {
-    this.dispatchEvent(new CustomEvent('change', { detail: { value: null } }));
+    this.dispatchEvent(new CustomEvent('change', { detail: { value: null }, bubbles: true }));
   }
 
   protected renderLiteral(part: Intl.DateTimeFormatPart): TemplateResult {

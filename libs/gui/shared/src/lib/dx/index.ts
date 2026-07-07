@@ -12,6 +12,7 @@ export { _guiAccordion } from './shortcuts/accordion/guiAccordion.impl';
 export { _guiButton } from './shortcuts/actions/guiActions.impl';
 export { _guiAlert } from './shortcuts/alert/guiAlert.impl';
 export { _guiCalendar } from './shortcuts/calendar/guiCalendar.impl';
+export { _guiDateTimeCalendar } from './shortcuts/date-time-calendar/guiDateTimeCalendar.impl';
 export { _guiCheckbox } from './shortcuts/checkbox/guiCheckbox.impl';
 export { _guiCurrency } from './shortcuts/currency/guiCurrency.impl';
 export { _guiCustomAction } from './shortcuts/custom-action/guiCustomAction.impl';
@@ -56,6 +57,10 @@ export { _gslAccordionByUid, _gslAccordions } from './shortcuts/accordion/regist
 export { _gslActionByUid, _gslActions } from './shortcuts/actions/register';
 export { _gslAlertByUid, _gslAlerts } from './shortcuts/alert/register';
 export { _gslCalendarByUid, _gslCalendars } from './shortcuts/calendar/register';
+export {
+  _gslDateTimeCalendarByUid,
+  _gslDateTimeCalendars,
+} from './shortcuts/date-time-calendar/register';
 export { _gslCheckboxByUid, _gslCheckboxes } from './shortcuts/checkbox/register';
 export { _gslCurrencies, _gslCurrencyByUid } from './shortcuts/currency/register';
 export { _gslCustomActionByUid, _gslCustomActions } from './shortcuts/custom-action/register';
@@ -128,6 +133,10 @@ export type {
 export type { ActionDecorator, GslActionsConfig } from './shortcuts/actions/actions.domain';
 export type { AlertDecorator, GslAlertsConfig } from './shortcuts/alert/alert.domain';
 export type { CalendarDecorator, GslCalendarConfig } from './shortcuts/calendar/calendar.domain';
+export type {
+  DateTimeCalendarDecorator,
+  GslDateTimeCalendarConfig,
+} from './shortcuts/date-time-calendar/dateTimeCalendar.domain';
 export type { CheckboxDecorator, GslCheckboxConfig } from './shortcuts/checkbox/checkbox.domain';
 export type { CurrencyDecorator, GslCurrencyConfig } from './shortcuts/currency/currency.domain';
 export type {

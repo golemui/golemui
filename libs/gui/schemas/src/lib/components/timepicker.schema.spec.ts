@@ -63,7 +63,6 @@ describe('Timepicker schema validation', () => {
               maxTime: '18:00:00',
               disabledRanges: [{ start: '12:00:00', end: '13:00:00' }],
               allowCustomTime: true,
-              itemRenderer: 'myTimeRenderer',
               height: 200,
               itemHeight: 40,
               minTimeMessage: 'Too early',

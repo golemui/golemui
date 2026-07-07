@@ -1,5 +1,6 @@
 export const inputWidgets = [
   'calendar',
+  'dateTimeCalendar',
   'checkbox',
   'currency',
   'dateInput',

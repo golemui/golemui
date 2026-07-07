@@ -348,6 +348,22 @@ const INPUTS: DxSpec[] = [
     ],
   },
   {
+    factory: 'dateTimeCalendar',
+    namespace: 'inputs',
+    call: 'gui.inputs.dateTimeCalendar(path, { label, minDate?, maxDate?, minTime?, maxTime?, minuteStep?, disabledTimeRanges?, allowCustomTime? })',
+    example:
+      "gui.inputs.dateTimeCalendar('appointmentAt', { label: 'Appointment', minTime: '09:00', maxTime: '18:00' })",
+    notes: [
+      'An INLINE calendar with an embedded time picker: a segmented time input between the header and the days ' +
+        'grid opens a time grid in place of the days (like the year selector).',
+      'Emits a local ISO date-time (`YYYY-MM-DDTHH:mm:ss`) only when BOTH day and time are selected — pair with a ' +
+        "`{ type: 'string', format: 'date-time' }` validator. Picking a different day clears the time and resets " +
+        'the value to null.',
+      '`disabledTimeRanges` entries take `start`/`end` ISO times plus optional `date` (ISO date) and/or `weekdays` ' +
+        '(getDay() numbering: 0=Sunday … 6=Saturday) to scope the range to specific days.',
+    ],
+  },
+  {
     factory: 'markdown',
     namespace: 'inputs',
     call: 'gui.inputs.markdown(path, { label })',

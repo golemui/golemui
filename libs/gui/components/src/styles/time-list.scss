@@ -1,0 +1,83 @@
+gui-time-list {
+  display: block;
+  background-color: var(--gui-bg-default);
+  border: 1px solid var(--gui-border-default);
+  border-radius: var(--gui-radius-md);
+  overflow: hidden;
+
+  &[hidden] {
+    display: none;
+  }
+
+  .gui-time-list__viewport {
+    max-height: var(--gui-time-list-height, 300px);
+    overflow-y: auto;
+    scrollbar-width: thin;
+
+    &--grid {
+      display: grid;
+      align-content: start;
+      grid-template-columns: repeat(var(--gui-time-list-columns, 4), 1fr);
+      gap: var(--gui-space-1);
+      padding: var(--gui-space-1);
+    }
+  }
+
+  .gui-time-list__row {
+    display: contents;
+  }
+
+  .gui-time-list__option {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: var(--gui-time-list-item-height, 40px);
+    padding: 0 12px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--gui-text-default);
+    font: inherit;
+    font-variant-numeric: tabular-nums;
+    text-align: start;
+    cursor: pointer;
+
+    &:focus {
+      outline: 0;
+      border-color: var(--gui-border-focus);
+      box-shadow:
+        0 0 0 0 var(--gui-bg-default),
+        0 0 0 2px color-mix(in srgb, var(--gui-border-focus) 50%, transparent);
+    }
+
+    &:hover:not(:disabled) {
+      background-color: var(--gui-intent-primary-hover);
+      color: var(--gui-intent-primary-text);
+    }
+
+    &--selected {
+      background-color: var(--gui-intent-primary);
+      color: var(--gui-intent-primary-text);
+    }
+
+    &:disabled {
+      background-color: var(--gui-bg-disabled);
+      cursor: not-allowed;
+    }
+  }
+
+  .gui-time-list__viewport--grid .gui-time-list__option {
+    justify-content: center;
+    border-radius: var(--gui-radius-md);
+    padding: 0;
+  }
+
+  .gui-time-list__empty {
+    display: flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 0 12px;
+    color: var(--gui-text-muted);
+    cursor: default;
+  }
+}

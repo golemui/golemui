@@ -38,6 +38,7 @@
         "alert",
         "button",
         "calendar",
+        "dateTimeCalendar",
         "checkbox",
         "currency",
         "dateInput",

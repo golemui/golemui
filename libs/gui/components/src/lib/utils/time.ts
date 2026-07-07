@@ -1,3 +1,6 @@
+import type { DisabledTimeRange } from '@golemui/gui-shared/internals';
+import { parseISODateString } from './date';
+
 export type HourFormat = '12' | '24';
 
 /** Fixed anchor so part ordering and literals are deterministic. */
@@ -192,6 +195,33 @@ export function compareISOTimes(a: string, b: string): number {
   const left = normalize(a);
   const right = normalize(b);
   return left < right ? -1 : left > right ? 1 : 0;
+}
+
+/**
+ * Resolves day-scoped disabled time ranges to the plain ranges applying on a
+ * given date. An entry scopes with `date` (exact ISO date) and/or `weekdays`
+ * (Date.prototype.getDay() numbers, 0=Sunday); provided scopes must all
+ * match, and an unscoped entry applies every day.
+ *
+ * @param {DisabledTimeRange[] | undefined} entries - The scoped ranges.
+ * @param {string} isoDate - The date (YYYY-MM-DD) to resolve for.
+ * @return {TimeRange[]} The plain ranges in effect on that date.
+ */
+export function resolveDisabledTimeRangesForDate(
+  entries: DisabledTimeRange[] | undefined,
+  isoDate: string,
+): TimeRange[] {
+  if (!entries?.length) return [];
+
+  const weekday = parseISODateString(isoDate).getDay();
+
+  return entries
+    .filter(
+      (entry) =>
+        (entry.date == null || entry.date === isoDate) &&
+        (entry.weekdays == null || entry.weekdays.includes(weekday)),
+    )
+    .map(({ start, end }) => ({ start, end }));
 }
 
 /**

@@ -46,7 +46,8 @@ describe('dx_list_factories', () => {
     // holds a real ceiling — keep additions earning their bytes.
     const bytes = JSON.stringify(listDxFactoriesCatalog('react')).length;
     // 2026-07: 21500 -> 22000 for the timePicker factory
-    expect(bytes).toBeLessThan(22000);
+    // 2026-07: 22000 -> 23000 for the dateTimeCalendar factory
+    expect(bytes).toBeLessThan(23000);
   });
 
   it('tailors the common note imports + render to the requested framework', () => {

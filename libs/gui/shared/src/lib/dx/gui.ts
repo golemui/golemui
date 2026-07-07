@@ -21,6 +21,7 @@ import { _guiCurrency } from './shortcuts/currency/guiCurrency.impl';
 import { _guiMarkdown } from './shortcuts/markdown/guiMarkdown.impl';
 import { _guiList } from './shortcuts/list/guiList.impl';
 import { _guiCalendar } from './shortcuts/calendar/guiCalendar.impl';
+import { _guiDateTimeCalendar } from './shortcuts/date-time-calendar/guiDateTimeCalendar.impl';
 import { _guiDateInput } from './shortcuts/date-input/guiDateInput.impl';
 import { _guiDatePicker } from './shortcuts/date-picker/guiDatePicker.impl';
 import { _guiRangeCalendar } from './shortcuts/range-calendar/guiRangeCalendar.impl';
@@ -78,6 +79,7 @@ export const gui = {
     markdown: _guiMarkdown,
     list: _guiList,
     calendar: _guiCalendar,
+    dateTimeCalendar: _guiDateTimeCalendar,
     dateInput: _guiDateInput,
     datePicker: _guiDatePicker,
     timeInput: _guiTimeInput,

@@ -1,115 +1,30 @@
 @let templateData = adapter.templateData();
-@let itemRenderer = adapter.getItemRenderer(templateData.itemRenderer, defaultListItemRenderer);
-@let showErrors = templateData.touched && templateData.errors && templateData.errors.length > 0;
 
-@if (templateData.label) {
-  <label gui-label [for]="widget.uid" [uid]="widget.uid" [templateData]="templateData"></label>
-}
-
-<div
-  role="button"
-  tabindex="-1"
-  class="gui-widget"
-  [attr.aria-expanded]="isListVisible()"
-  (keyup.space)="toggleListFromKeyboard($event)"
-  (keyup.enter)="toggleListFromKeyboard($event)"
-  (keydown)="onKeyDown($event)"
-  (click)="toggleList($event)"
->
-  <gui-time
-    #timeControlRef
-    [uid]="widget.uid"
-    [hint]="templateData.hint"
-    [showErrors]="false"
-    [errors]="templateData.errors"
-    [touched]="templateData.touched"
-    [required]="templateData.validator?.required"
-    [disabled]="templateData.disabled"
-    [readonly]="templateData.readonly || !templateData.allowCustomTime"
-    [value]="templateData.value"
-    [icon]="templateData.icon"
-    [localeId]="templateData.lang"
-    [hourFormat]="templateData.hourFormat"
-    [minuteStep]="templateData.minuteStep"
-    [minTime]="templateData.minTime"
-    [maxTime]="templateData.maxTime"
-    [disabledRanges]="templateData.disabledRanges"
-    [minTimeMessage]="templateData.minTimeMessage"
-    [maxTimeMessage]="templateData.maxTimeMessage"
-    [disabledRangeMessage]="templateData.disabledRangeMessage"
-    (change)="onChangeTime($event)"
-    (inputError)="onInputError($event)"
-    (focus)="openList()"
-    (blur)="adapter.onBlur()"
-  ></gui-time>
-  <span class="gui-time-picker__arrow"
-    ><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256">
-      <path
-        d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"
-      ></path></svg
-  ></span>
-
-  <gui-list
-    #listRef
-    [id]="widget.uid"
-    [uid]="widget.uid"
-    [value]="templateData.value ?? ''"
-    [items]="timeItems()"
-    [itemHeight]="templateData.itemHeight"
-    [height]="templateData.height"
-    [required]="templateData.validator?.required"
-    [touched]="templateData.touched"
-    [disabled]="templateData.disabled"
-    [readonly]="templateData.readonly"
-    [hidden]="!isListVisible()"
-    (change)="onValueChange($event)"
-    (gui-range-change)="onRangeChange($event)"
-    (gui-focus-change)="onFocusChange($event)"
-  >
-    @if (timeItems().length === 0) {
-      <div class="gui-time-picker__empty">
-        {{ templateData.noAvailableTimesMessage ?? noAvailableTimesDefault }}
-      </div>
-    }
-    @for (item of visibleItems(); track $index) {
-      @let absoluteIndex = currentRange().start + $index;
-      @let isItemDisabled = templateData.disabled || !!item.disabled;
-
-      <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events -->
-      <div
-        role="option"
-        tabindex="-1"
-        class="gui-list__item-wrapper"
-        [id]="widget.uid + '-item-' + absoluteIndex"
-        [style.height.px]="templateData.itemHeight || 40"
-        [attr.aria-selected]="templateData.value === item.value"
-        [attr.aria-disabled]="isItemDisabled"
-        (click)="onClickItem(item, absoluteIndex)"
-      >
-        <ng-container
-          *ngComponentOutlet="
-            itemRenderer;
-            inputs: {
-              template: item.template,
-              value: item.value,
-              disabled: isItemDisabled,
-              selected: templateData.value === item.value,
-              focused: focusedIndex() === absoluteIndex,
-              index: absoluteIndex,
-            }
-          "
-        >
-        </ng-container>
-      </div>
-    }
-  </gui-list>
-</div>
-
-@if (showErrors) {
-  <ul
-    gui-errors
-    [uid]="widget.uid"
-    [templateData]="templateData"
-    [attr.data-cy]="widget.uid + '_validator-errors'"
-  ></ul>
-}
+<gui-time-picker
+  [uid]="widget.uid"
+  [label]="templateData.label"
+  [hint]="templateData.hint"
+  [errors]="templateData.errors"
+  [touched]="templateData.touched"
+  [required]="templateData.validator?.required"
+  [disabled]="templateData.disabled"
+  [readonly]="templateData.readonly"
+  [value]="templateData.value"
+  [icon]="templateData.icon"
+  [localeId]="templateData.lang"
+  [hourFormat]="templateData.hourFormat"
+  [minuteStep]="templateData.minuteStep"
+  [minTime]="templateData.minTime"
+  [maxTime]="templateData.maxTime"
+  [disabledRanges]="templateData.disabledRanges"
+  [allowCustomTime]="templateData.allowCustomTime"
+  [height]="templateData.height"
+  [itemHeight]="templateData.itemHeight"
+  [minTimeMessage]="templateData.minTimeMessage"
+  [maxTimeMessage]="templateData.maxTimeMessage"
+  [disabledRangeMessage]="templateData.disabledRangeMessage"
+  [noAvailableTimesMessage]="templateData.noAvailableTimesMessage"
+  (change)="onChangeTime($event)"
+  (inputError)="onInputError($event)"
+  (blur)="adapter.onBlur()"
+></gui-time-picker>
