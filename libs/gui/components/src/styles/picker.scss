@@ -18,6 +18,7 @@
         inset-inline-end: var(--gui-space-3);
         transform-origin: 50% 40%;
         pointer-events: none;
+        top: 14px;
       }
 
       &[aria-expanded='true'] :is(.gui-date-picker__arrow, .gui-range-date-picker__arrow, .gui-time-picker__arrow) {

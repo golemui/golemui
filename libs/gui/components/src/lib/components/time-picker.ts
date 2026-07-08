@@ -34,6 +34,7 @@ export class GuiTimePicker extends LitElement {
     | undefined = false;
   @property({ type: Number }) height: number | undefined = undefined;
   @property({ type: Number, attribute: 'item-height' }) itemHeight: number | undefined = undefined;
+  @property({ type: Number }) columns: number | undefined = undefined;
   @property({ type: String, attribute: 'min-time-message' }) minTimeMessage: string | undefined =
     undefined;
   @property({ type: String, attribute: 'max-time-message' }) maxTimeMessage: string | undefined =
@@ -155,6 +156,7 @@ export class GuiTimePicker extends LitElement {
           .disabledRanges=${this.disabledRanges}
           .height=${this.height}
           .itemHeight=${this.itemHeight}
+          .columns=${this.columns}
           .noAvailableTimesMessage=${this.noAvailableTimesMessage}
           ?readonly=${this.readOnly}
           ?hidden=${!this._isListOpen}
@@ -186,7 +188,8 @@ export class GuiTimePicker extends LitElement {
     if (this.disabled) return;
     if (event.target !== event.currentTarget) return;
     if (event.key === 'Enter' || event.key === ' ') {
-      this._isListOpen = !this._isListOpen;
+      if (this._isListOpen) this.closeList();
+      else this.openList();
     }
   };
 
@@ -196,6 +199,13 @@ export class GuiTimePicker extends LitElement {
    * last one when nothing is selected yet).
    */
   private onKeyDown = (event: KeyboardEvent) => {
+    if (event.key === 'Escape' && this._isListOpen) {
+      event.preventDefault();
+      this.restoreFocusToInput();
+      this.closeList();
+      return;
+    }
+
     if (event.key === 'Enter' && this._isListOpen) {
       const target = event.target as HTMLElement;
       if (target.tagName === 'INPUT' && target.closest('gui-time')) {
@@ -253,21 +263,34 @@ export class GuiTimePicker extends LitElement {
     const isListClick = target.closest('gui-time-list');
     if (isInputClick || isListClick) {
       this.openList();
+    } else if (this._isListOpen) {
+      this.closeList();
     } else {
-      this._isListOpen = !this._isListOpen;
+      this.openList();
     }
   };
 
   openList = () => {
-    if (this.disabled || this._restoringFocus) return;
-    if (!this._isListOpen) {
-      this._isListOpen = true;
-      this.updateComplete.then(() => this._listRef?.scrollToSelectedValue());
-    }
+    if (this.disabled || this._restoringFocus || this._isListOpen) return;
+    this._isListOpen = true;
+    this.dispatchListToggle(true);
+    this.updateComplete.then(() => this._listRef?.scrollToSelectedValue());
   };
 
   closeList() {
+    if (!this._isListOpen) return;
     this._isListOpen = false;
+    this.dispatchListToggle(false);
+  }
+
+  private dispatchListToggle(open: boolean) {
+    this.dispatchEvent(
+      new CustomEvent('listtoggle', {
+        detail: { open },
+        bubbles: true,
+        composed: true,
+      }),
+    );
   }
 
   private restoreFocusToInput() {

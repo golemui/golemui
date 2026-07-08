@@ -15,13 +15,21 @@ gui-date-time-calendar {
     gap: var(--gui-space-1);
     margin-block-end: var(--gui-space-2);
 
-    gui-time.gui-field {
-      gap: 0;
+    .gui-time-picker.gui-field {
+      flex: 1 1 auto;
     }
   }
+}
 
-  gui-time-list.gui-calendar__time-grid {
-    border-radius: var(--gui-radius-md);
+.gui-form gui-date-time-calendar .gui-time-picker.gui-field > .gui-widget {
+  &:has(input:disabled) {
+    cursor: default;
+    opacity: 1;
+  }
+
+  gui-time-list {
+    position: static;
+    width: auto;
 
     .gui-time-list__viewport {
       max-height: var(--gui-calendar-time-grid-height);

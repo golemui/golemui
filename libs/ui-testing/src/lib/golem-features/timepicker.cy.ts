@@ -90,6 +90,37 @@ export const runTimePickerComponentTests = (mountFn: MountComponentFn) => {
         cy.get(sel.list).should('have.attr', 'hidden');
       });
 
+      it('should close the list with Escape and restore focus to the time input', () => {
+        mountTimePicker({ data: { myTime: '09:30:00' }, props: officeProps });
+
+        cy.get(sel.hour).click();
+        cy.get(`${sel.items}[tabindex="0"]`).focus();
+        cy.focused().type('{esc}');
+
+        cy.get(sel.list).should('have.attr', 'hidden');
+        cy.focused().should('have.attr', 'data-type', 'hour');
+      });
+
+      it('should emit listtoggle when the list opens and closes', () => {
+        mountTimePicker({ props: officeProps });
+
+        const toggleSpy = cy.spy().as('toggleSpy');
+        cy.get('gui-time-picker').then(($el) => {
+          $el[0].addEventListener('listtoggle', toggleSpy as unknown as EventListener);
+        });
+
+        cy.get(sel.hour).click();
+        cy.get(sel.openList).should('exist');
+
+        cy.get('body').click(0, 0);
+        cy.get(sel.list).should('have.attr', 'hidden');
+
+        cy.get('@toggleSpy').then((spy: any) => {
+          expect(spy.getCall(0).args[0].detail).to.deep.equal({ open: true });
+          expect(spy.getCall(1).args[0].detail).to.deep.equal({ open: false });
+        });
+      });
+
       it('should close the list with Enter from a time part', () => {
         const formSubmitHandler = cy.stub().as('formSubmitHandler');
         mountTimePicker({

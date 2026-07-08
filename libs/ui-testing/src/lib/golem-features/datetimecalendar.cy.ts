@@ -8,7 +8,8 @@ export const runDateTimeCalendarComponentTests = (mountFn: MountComponentFn) => 
       minute: 'gui-date-time-calendar gui-time input[data-type="minute"]',
       daysGrid: 'gui-date-time-calendar .gui-calendar__days-grid',
       dayButton: 'gui-date-time-calendar .gui-calendar__day-button',
-      timeGrid: 'gui-date-time-calendar gui-time-list.gui-calendar__time-grid',
+      timeGrid: 'gui-date-time-calendar gui-time-picker gui-time-list',
+      openTimeGrid: 'gui-date-time-calendar gui-time-picker gui-time-list:not([hidden])',
       options: 'gui-date-time-calendar gui-time-list .gui-time-list__option',
       rovingOption: 'gui-date-time-calendar gui-time-list .gui-time-list__option[tabindex="0"]',
       yearSelector: 'gui-date-time-calendar .gui-calendar__year-selector',
@@ -75,7 +76,7 @@ export const runDateTimeCalendarComponentTests = (mountFn: MountComponentFn) => 
 
         cy.get(sel.daysGrid).should('exist');
         cy.get(sel.hour).should('be.disabled');
-        cy.get(sel.timeGrid).should('not.exist');
+        cy.get(sel.timeGrid).should('have.attr', 'hidden');
       });
 
       it('should hydrate a full ISO date-time into day and time', () => {
@@ -111,7 +112,7 @@ export const runDateTimeCalendarComponentTests = (mountFn: MountComponentFn) => 
         firstAvailableDay().click();
         cy.get(sel.hour).click();
 
-        cy.get(sel.timeGrid).should('exist');
+        cy.get(sel.openTimeGrid).should('exist');
         cy.get(sel.daysGrid).should('not.exist');
         cy.get(sel.options).should('have.length', 5);
       });
@@ -131,7 +132,7 @@ export const runDateTimeCalendarComponentTests = (mountFn: MountComponentFn) => 
           cy.get(sel.hour).click();
           option('10:00:00').click();
 
-          cy.get(sel.timeGrid).should('not.exist');
+          cy.get(sel.timeGrid).should('have.attr', 'hidden');
           cy.get(sel.daysGrid).should('exist');
           cy.get(sel.hour).should('have.value', '10');
 
@@ -195,7 +196,7 @@ export const runDateTimeCalendarComponentTests = (mountFn: MountComponentFn) => 
 
         cy.get(sel.rovingOption).focus();
         cy.focused().type('{esc}');
-        cy.get(sel.timeGrid).should('not.exist');
+        cy.get(sel.timeGrid).should('have.attr', 'hidden');
 
         // 2026-02-15 is a Sunday: the range does not apply
         day('2026-02-15').click();
@@ -271,13 +272,13 @@ export const runDateTimeCalendarComponentTests = (mountFn: MountComponentFn) => 
 
         day('2026-02-13').click();
         cy.get(sel.hour).click();
-        cy.get(sel.timeGrid).should('exist');
+        cy.get(sel.openTimeGrid).should('exist');
 
         cy.get(sel.hour).type('10');
         cy.focused().type('30', { force: true });
         cy.focused().type('{enter}', { force: true });
 
-        cy.get(sel.timeGrid).should('not.exist');
+        cy.get(sel.timeGrid).should('have.attr', 'hidden');
         cy.get(sel.daysGrid).should('exist');
 
         submitAndGetData('@formSubmitHandler').then((data) => {
@@ -368,7 +369,7 @@ export const runDateTimeCalendarComponentTests = (mountFn: MountComponentFn) => 
         firstAvailableDay().click();
         cy.get(sel.hour).click();
 
-        cy.get('gui-date-time-calendar .gui-time-list__empty').should(($el) => {
+        cy.get('gui-date-time-calendar gui-time-list:not([hidden]) .gui-time-list__empty').should(($el) => {
           expect($el.text().trim()).to.equal('No available times');
         });
       });
@@ -387,7 +388,7 @@ export const runDateTimeCalendarComponentTests = (mountFn: MountComponentFn) => 
         firstAvailableDay().click();
         cy.get(sel.hour).click();
 
-        cy.get('gui-date-time-calendar .gui-time-list__empty').should(($el) => {
+        cy.get('gui-date-time-calendar gui-time-list:not([hidden]) .gui-time-list__empty').should(($el) => {
           expect($el.text().trim()).to.equal('Fully booked');
         });
       });
@@ -398,10 +399,10 @@ export const runDateTimeCalendarComponentTests = (mountFn: MountComponentFn) => 
         mountCalendar({ data: { myAppointment: '2026-02-13T09:30:00' }, props: officeProps });
 
         cy.get(sel.hour).click();
-        cy.get(sel.timeGrid).should('exist');
+        cy.get(sel.openTimeGrid).should('exist');
 
         cy.get('body').click(0, 0);
-        cy.get(sel.timeGrid).should('not.exist');
+        cy.get(sel.timeGrid).should('have.attr', 'hidden');
         cy.get(sel.daysGrid).should('exist');
       });
 
@@ -414,7 +415,7 @@ export const runDateTimeCalendarComponentTests = (mountFn: MountComponentFn) => 
         // Tabbing out: focus lands outside the time input/grid
         cy.get('[data-cy="submitBtn_button"]').focus();
 
-        cy.get(sel.timeGrid).should('not.exist');
+        cy.get(sel.timeGrid).should('have.attr', 'hidden');
         cy.get(sel.daysGrid).should('exist');
       });
     });
@@ -439,14 +440,14 @@ export const runDateTimeCalendarComponentTests = (mountFn: MountComponentFn) => 
         cy.focused().should('have.attr', 'data-value', '11:00:00');
 
         cy.focused().type('{enter}');
-        cy.get(sel.timeGrid).should('not.exist');
+        cy.get(sel.timeGrid).should('have.attr', 'hidden');
         cy.get(sel.hour).should('have.value', '11');
 
         // Escape closes without selecting and returns focus to the time input
         cy.get(sel.hour).click();
         cy.get(sel.rovingOption).focus();
         cy.focused().type('{esc}');
-        cy.get(sel.timeGrid).should('not.exist');
+        cy.get(sel.timeGrid).should('have.attr', 'hidden');
         cy.focused().should('have.attr', 'data-type', 'hour');
 
         submitAndGetData('@formSubmitHandler').then((data) => {
@@ -474,10 +475,10 @@ export const runDateTimeCalendarComponentTests = (mountFn: MountComponentFn) => 
         mountCalendar({ data: { myAppointment: '2026-02-13T09:30:00' }, props: officeProps });
 
         cy.get(sel.hour).click();
-        cy.get(sel.timeGrid).should('exist');
+        cy.get(sel.openTimeGrid).should('exist');
 
         cy.get(sel.yearSelector).click();
-        cy.get(sel.timeGrid).should('not.exist');
+        cy.get(sel.timeGrid).should('have.attr', 'hidden');
         cy.get(sel.yearGrid).should('exist');
       });
     });
@@ -494,7 +495,7 @@ export const runDateTimeCalendarComponentTests = (mountFn: MountComponentFn) => 
         cy.get(sel.hour).should('have.value', '09');
 
         cy.get(sel.hour).click({ force: true });
-        cy.get(sel.timeGrid).should('not.exist');
+        cy.get(sel.timeGrid).should('have.attr', 'hidden');
       });
 
       it('should render everything disabled and never open the grid when disabled', () => {
@@ -511,7 +512,7 @@ export const runDateTimeCalendarComponentTests = (mountFn: MountComponentFn) => 
         day('2026-02-13').should('have.class', 'selected');
 
         cy.get(sel.hour).click({ force: true });
-        cy.get(sel.timeGrid).should('not.exist');
+        cy.get(sel.timeGrid).should('have.attr', 'hidden');
       });
     });
   });
