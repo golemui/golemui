@@ -1,0 +1,68 @@
+{
+  "$schema": "../../../../../../libs/gui/schemas/src/lib/layout-widget.schema.json",
+  "uid": "tabDateTimeInput",
+  "kind": "layout",
+  "type": "flex",
+  "children": [
+    {
+      "kind": "input",
+      "type": "dateTimeInput",
+      "path": "dateTimeInputEmpty",
+      "label": "Empty",
+      "props": {
+        "icon": "calendar_month",
+        "minuteStep": 15
+      }
+    },
+    {
+      "kind": "input",
+      "type": "dateTimeInput",
+      "path": "dateTimeInputDefault",
+      "defaultValue": "2026-02-13T09:30:00",
+      "label": "With default value",
+      "props": {
+        "icon": "calendar_month",
+        "minuteStep": 15
+      }
+    },
+    {
+      "kind": "input",
+      "type": "dateTimeInput",
+      "path": "dateTimeInputDisabled",
+      "defaultValue": "2026-02-13T09:30:00",
+      "disabled": true,
+      "label": "Disabled",
+      "props": {
+        "icon": "calendar_month",
+        "minuteStep": 15
+      }
+    },
+    {
+      "kind": "input",
+      "type": "dateTimeInput",
+      "path": "dateTimeInputReadonly",
+      "defaultValue": "2026-02-13T09:30:00",
+      "readonly": true,
+      "label": "Read only",
+      "props": {
+        "icon": "calendar_month",
+        "minuteStep": 15
+      }
+    },
+    {
+      "kind": "input",
+      "type": "dateTimeInput",
+      "path": "dateTimeInputValidation",
+      "label": "Required (validation)",
+      "props": {
+        "icon": "calendar_month",
+        "minuteStep": 15
+      },
+      "validator": {
+        "type": "string",
+        "required": true,
+        "format": "date-time"
+      }
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "$schema": "../../../../../../libs/gui/schemas/src/lib/layout-widget.schema.json",
+  "uid": "tabDateTimeCalendar",
+  "kind": "layout",
+  "type": "flex",
+  "children": [
+    {
+      "kind": "input",
+      "type": "dateTimeCalendar",
+      "path": "dateTimeCalendarEmpty",
+      "label": "Empty",
+      "props": {
+        "minTime": "09:00:00",
+        "maxTime": "18:00:00",
+        "minuteStep": 30
+      }
+    },
+    {
+      "kind": "input",
+      "type": "dateTimeCalendar",
+      "path": "dateTimeCalendarDefault",
+      "defaultValue": "2026-02-13T09:30:00",
+      "label": "With default value",
+      "props": {
+        "minTime": "09:00:00",
+        "maxTime": "18:00:00",
+        "minuteStep": 30
+      }
+    },
+    {
+      "kind": "input",
+      "type": "dateTimeCalendar",
+      "path": "dateTimeCalendarDisabled",
+      "defaultValue": "2026-02-13T09:30:00",
+      "disabled": true,
+      "label": "Disabled",
+      "props": {
+        "minTime": "09:00:00",
+        "maxTime": "18:00:00",
+        "minuteStep": 30
+      }
+    },
+    {
+      "kind": "input",
+      "type": "dateTimeCalendar",
+      "path": "dateTimeCalendarReadonly",
+      "defaultValue": "2026-02-13T09:30:00",
+      "readonly": true,
+      "label": "Read only",
+      "props": {
+        "minTime": "09:00:00",
+        "maxTime": "18:00:00",
+        "minuteStep": 30
+      }
+    },
+    {
+      "kind": "input",
+      "type": "dateTimeCalendar",
+      "path": "dateTimeCalendarValidation",
+      "label": "Required (validation)",
+      "props": {
+        "minTime": "09:00:00",
+        "maxTime": "18:00:00",
+        "minuteStep": 30
+      },
+      "validator": {
+        "type": "string",
+        "required": true,
+        "format": "date-time"
+      }
+    }
+  ]
+}

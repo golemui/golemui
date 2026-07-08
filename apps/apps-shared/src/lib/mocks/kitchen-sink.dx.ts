@@ -11,7 +11,17 @@ import { allowedNames } from '../custom-validators/allowed-names';
 import { accordionTab } from './tabs/accordion.dx';
 import { alertTab } from './tabs/alert.dx';
 import { buttonTab } from './tabs/button.dx';
+import { dateInputTab } from './tabs/dateinput.dx';
 import { calendarTab } from './tabs/calendar.dx';
+import { datePickerTab } from './tabs/datepicker.dx';
+import { rangeDateInputTab } from './tabs/rangedateinput.dx';
+import { rangeCalendarTab } from './tabs/rangecalendar.dx';
+import { rangeDatePickerTab } from './tabs/rangedatepicker.dx';
+import { timeInputTab } from './tabs/timeinput.dx';
+import { timePickerTab } from './tabs/timepicker.dx';
+import { dateTimeInputTab } from './tabs/datetimeinput.dx';
+import { dateTimeCalendarTab } from './tabs/datetimecalendar.dx';
+import { dateTimePickerTab } from './tabs/datetimepicker.dx';
 import { checkboxTab } from './tabs/checkbox.dx';
 import { currencyTab } from './tabs/currency.dx';
 import { dropdownTab } from './tabs/dropdown.dx';
@@ -141,7 +151,33 @@ export const buildKitchenSinkDx = (options: KitchenSinkDxOptions = {}): KitchenS
         { label: 'Password Component', uid: 'tabPassword', children: [passwordTab] },
         { label: 'Number Component', uid: 'tabNumber', children: [numberTab] },
         { label: 'Currency Component', uid: 'tabCurrency', children: [currencyTab] },
-        { label: 'Date Components', uid: 'tabDate', children: [calendarTab] },
+        { label: 'Date Input Component', uid: 'tabDateInput', children: [dateInputTab] },
+        { label: 'Calendar Component', uid: 'tabCalendar', children: [calendarTab] },
+        { label: 'Date Picker Component', uid: 'tabDatePicker', children: [datePickerTab] },
+        {
+          label: 'Range Date Input Component',
+          uid: 'tabRangeDateInput',
+          children: [rangeDateInputTab],
+        },
+        { label: 'Range Calendar Component', uid: 'tabRangeCalendar', children: [rangeCalendarTab] },
+        {
+          label: 'Range Date Picker Component',
+          uid: 'tabRangeDatePicker',
+          children: [rangeDatePickerTab],
+        },
+        { label: 'Time Input Component', uid: 'tabTimeInput', children: [timeInputTab] },
+        { label: 'Time Picker Component', uid: 'tabTimePicker', children: [timePickerTab] },
+        { label: 'Date Time Input Component', uid: 'tabDateTimeInput', children: [dateTimeInputTab] },
+        {
+          label: 'Date Time Calendar Component',
+          uid: 'tabDateTimeCalendar',
+          children: [dateTimeCalendarTab],
+        },
+        {
+          label: 'Date Time Picker Component',
+          uid: 'tabDateTimePicker',
+          children: [dateTimePickerTab],
+        },
         { label: 'Markdown Component', uid: 'tabMarkdown', children: [markdownTab] },
         { label: 'Textarea Component', uid: 'tabTextarea', children: [textareaTab] },
         { label: 'Checkbox Component', uid: 'tabCheckbox', children: [checkboxTab] },
@@ -161,8 +197,8 @@ export const buildKitchenSinkDx = (options: KitchenSinkDxOptions = {}): KitchenS
               },
             ]
           : []),
-      ],
-      { defaultOpen: 'tabAlert', onChange: () => 'onTabEvent' },
+      ].sort((a, b) => a.label.localeCompare(b.label)),
+      { defaultOpen: 'tabAccordion', onChange: () => 'onTabEvent' },
     ),
     gui.actions.button({
       uid: 'submit-button',

@@ -1,0 +1,78 @@
+{
+  "$schema": "../../../../../../libs/gui/schemas/src/lib/layout-widget.schema.json",
+  "uid": "tabTimePicker",
+  "kind": "layout",
+  "type": "flex",
+  "children": [
+    {
+      "kind": "input",
+      "type": "timePicker",
+      "path": "timePickerEmpty",
+      "label": "Empty",
+      "props": {
+        "icon": "schedule",
+        "minTime": "09:00:00",
+        "maxTime": "18:00:00",
+        "minuteStep": 30
+      }
+    },
+    {
+      "kind": "input",
+      "type": "timePicker",
+      "path": "timePickerDefault",
+      "defaultValue": "09:30:00",
+      "label": "With default value",
+      "props": {
+        "icon": "schedule",
+        "minTime": "09:00:00",
+        "maxTime": "18:00:00",
+        "minuteStep": 30
+      }
+    },
+    {
+      "kind": "input",
+      "type": "timePicker",
+      "path": "timePickerDisabled",
+      "defaultValue": "09:30:00",
+      "disabled": true,
+      "label": "Disabled",
+      "props": {
+        "icon": "schedule",
+        "minTime": "09:00:00",
+        "maxTime": "18:00:00",
+        "minuteStep": 30
+      }
+    },
+    {
+      "kind": "input",
+      "type": "timePicker",
+      "path": "timePickerReadonly",
+      "defaultValue": "09:30:00",
+      "readonly": true,
+      "label": "Read only",
+      "props": {
+        "icon": "schedule",
+        "minTime": "09:00:00",
+        "maxTime": "18:00:00",
+        "minuteStep": 30
+      }
+    },
+    {
+      "kind": "input",
+      "type": "timePicker",
+      "path": "timePickerValidation",
+      "label": "Required (validation)",
+      "props": {
+        "icon": "schedule",
+        "minTime": "09:00:00",
+        "maxTime": "18:00:00",
+        "minuteStep": 30
+      },
+      "validator": {
+        "type": "string",
+        "required": true,
+        "format": "time"
+      }
+    }
+  ]
+}
