@@ -329,11 +329,6 @@ export type TimeRange = {
   end: string;
 };
 
-/**
- * A disabled time-of-day range, optionally scoped to specific days. An entry
- * with neither `date` nor `weekdays` applies every day; when both are given
- * they must both match.
- */
 export type DisabledTimeRange = TimeRange & {
   /** ISO date (YYYY-MM-DD): the range only applies on that date. */
   date?: string;
@@ -368,43 +363,11 @@ export type RangeDateInputProps = {
   invalidDateMessage?: Localizable;
 };
 
-export type DatePickerProps = {
-  hint?: string;
-  icon?: string;
-  prevMonthIcon?: string;
-  nextMonthIcon?: string;
-  prevMonthAriaLabel?: string;
-  nextMonthAriaLabel?: string;
-  dayFormat?: 'numeric' | '2-digit';
-  weekdayFormat?: 'short' | 'long' | 'narrow';
-  monthFormat?: 'numeric' | '2-digit' | 'long' | 'short' | 'narrow';
-  minDate?: string;
-  maxDate?: string;
-  disabledRanges?: DateRange[];
-  numberOfMonths?: number;
-  invalidDateMessage?: Localizable;
-};
+export type DatePickerProps = CalendarProps & DateinputProps;
 
-export type RangeDatePickerProps = {
-  hint?: string;
-  icon?: string;
-  separator?: string;
-  removePillAriaLabel?: string;
-  startDateAriaLabel?: string;
-  endDateAriaLabel?: string;
-  prevMonthIcon?: string;
-  nextMonthIcon?: string;
-  prevMonthAriaLabel?: string;
-  nextMonthAriaLabel?: string;
-  dayFormat?: 'numeric' | '2-digit';
-  weekdayFormat?: 'short' | 'long' | 'narrow';
-  monthFormat?: 'numeric' | '2-digit' | 'long' | 'short' | 'narrow';
-  minDate?: string;
-  maxDate?: string;
-  disabledRanges?: DateRange[];
-  numberOfMonths?: number;
-  invalidDateMessage?: Localizable;
-};
+export type DateTimePickerProps = DateTimeCalendarProps & DateTimeInputProps;
+
+export type RangeDatePickerProps = RangeCalendarProps & RangeDateInputProps;
 
 export type NumberinputProps = {
   placeholder?: string;

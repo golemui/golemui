@@ -28,6 +28,7 @@ const UMBRELLA_ITEMTYPES: Record<string, ReadonlySet<string>> = {
     'CHECKBOX',
     'CALENDAR',
     'DATE_TIME_CALENDAR',
+    'DATE_TIME_PICKER',
     'DATE_INPUT',
     'DATE_PICKER',
     'RANGE_CALENDAR',

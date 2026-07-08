@@ -8,6 +8,7 @@ import { GuiCurrency } from '@golemui/gui-components/currency';
 import { GuiDate } from '@golemui/gui-components/date-input';
 import { GuiDatePicker } from '@golemui/gui-components/date-picker';
 import { GuiDateTime } from '@golemui/gui-components/date-time-input';
+import { GuiDateTimePicker } from '@golemui/gui-components/date-time-picker';
 import { GuiErrors } from '@golemui/gui-components/errors';
 import { GuiLabel } from '@golemui/gui-components/label';
 import { GuiList } from '@golemui/gui-components/list';
@@ -99,6 +100,11 @@ export const GuiTimePickerReact = wrap('gui-time-picker', GuiTimePicker, {
   onInputError: 'inputError',
 });
 export const GuiDateTimeReact = wrap('gui-date-time', GuiDateTime);
+export const GuiDateTimePickerReact = wrap('gui-date-time-picker', GuiDateTimePicker, {
+  onChange: 'change',
+  onBlur: 'blur',
+  onInputError: 'inputError',
+});
 
 export const GuiListReact = wrap('gui-list', GuiList);
 export const GuiLabelReact = wrap('gui-label', GuiLabel);

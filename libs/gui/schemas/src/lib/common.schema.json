@@ -39,6 +39,7 @@
         "button",
         "calendar",
         "dateTimeCalendar",
+        "dateTimePicker",
         "checkbox",
         "currency",
         "dateInput",

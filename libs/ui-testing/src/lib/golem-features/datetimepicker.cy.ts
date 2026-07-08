@@ -1,0 +1,229 @@
+import { defineForm, identityTranslator } from '@golemui/core';
+import { type MountComponentFn } from '../utils';
+
+// Behavior tests for the gui-date-time-picker web component: a gui-date-time
+// input opening a gui-date-time-calendar popover. The popover closes only on
+// a COMPLETE day+time commit — picking a day emits null (time cleared) and
+// must keep it open for the second step.
+export const runDateTimePickerComponentTests = (mountFn: MountComponentFn) => {
+  describe('DateTimePicker Component', () => {
+    const sel = {
+      // The typed field parts (the popover's own time input is scoped under gui-time)
+      day: 'gui-date-time-picker gui-date-time input[data-type="day"]',
+      month: 'gui-date-time-picker gui-date-time input[data-type="month"]',
+      year: 'gui-date-time-picker gui-date-time input[data-type="year"]',
+      hour: 'gui-date-time-picker gui-date-time input[data-type="hour"]',
+      minute: 'gui-date-time-picker gui-date-time input[data-type="minute"]',
+      calendar: 'gui-date-time-picker gui-date-time-calendar',
+      popoverHour: 'gui-date-time-calendar gui-time input[data-type="hour"]',
+      timeList: 'gui-date-time-calendar gui-time-picker gui-time-list',
+      openTimeList: 'gui-date-time-calendar gui-time-picker gui-time-list:not([hidden])',
+      dayButton: (isoDate: string) =>
+        `gui-date-time-calendar .gui-calendar__day-button[data-date="${isoDate}"]`,
+      option: (isoTime: string) =>
+        `gui-date-time-calendar gui-time-list .gui-time-list__option[data-value="${isoTime}"]`,
+    };
+
+    // Office hours; date-anchored tests hydrate a February 2026 value (the
+    // 13th is a Friday, the 15th a Sunday, the 16th a Monday) because the
+    // calendar anchors its visible month on the value
+    const officeProps = {
+      minTime: '09:00:00',
+      maxTime: '11:00:00',
+      minuteStep: 30,
+    };
+
+    const mountPicker = (options?: {
+      data?: Record<string, any>;
+      props?: Record<string, any>;
+      formSubmit?: (event: any) => void;
+      readonly?: boolean;
+      disabled?: boolean;
+    }) => {
+      mountFn({
+        localization: identityTranslator('en-US'),
+        data: options?.data,
+        formDef: defineForm({
+          form: [
+            {
+              uid: 'testSubject',
+              kind: 'input',
+              type: 'dateTimePicker',
+              path: 'myAppointment',
+              ...(options?.props ? { props: options.props } : {}),
+              ...(options?.readonly !== undefined ? { readonly: options.readonly } : {}),
+              ...(options?.disabled !== undefined ? { disabled: options.disabled } : {}),
+            },
+            {
+              uid: 'submitBtn',
+              kind: 'action',
+              type: 'button',
+              label: 'Submit',
+              actionType: 'submit',
+            },
+          ],
+        }),
+        formSubmit: options?.formSubmit,
+      });
+    };
+
+    const submitAndGetData = (formSubmitAlias: string) => {
+      cy.get('[data-cy="submitBtn_button"]').click({ force: true });
+      return cy.get(formSubmitAlias).then((stub: any) => stub.getCall(0).args[0].data);
+    };
+
+    it('should hydrate a full ISO date-time into the field and keep the popover closed', () => {
+      mountPicker({ data: { myAppointment: '2026-02-13T09:30:00' }, props: officeProps });
+
+      cy.get(sel.day).should('have.value', '13');
+      cy.get(sel.month).should('have.value', '02');
+      cy.get(sel.year).should('have.value', '2026');
+      cy.get(sel.hour).should('have.value', '09');
+      cy.get(sel.minute).should('have.value', '30');
+      cy.get(sel.calendar).should('not.exist');
+    });
+
+    it('should open the popover on a field part click with the day and time hydrated', () => {
+      mountPicker({ data: { myAppointment: '2026-02-13T09:30:00' }, props: officeProps });
+
+      cy.get(sel.day).click();
+      cy.get(sel.calendar).should('exist');
+      cy.get(sel.dayButton('2026-02-13')).should('have.attr', 'aria-selected', 'true');
+      cy.get(sel.popoverHour).should('have.value', '09');
+    });
+
+    it('should keep the popover open across the day step and close it on the time commit', () => {
+      const formSubmitHandler = cy.stub().as('formSubmitHandler');
+      mountPicker({
+        data: { myAppointment: '2026-02-13T09:30:00' },
+        props: officeProps,
+        formSubmit: formSubmitHandler,
+      });
+
+      cy.get(sel.day).click();
+
+      // Day step: emits null (time cleared) and the popover must stay open
+      cy.get(sel.dayButton('2026-02-16')).click();
+      cy.get(sel.calendar).should('exist');
+      cy.get(sel.day).should('have.value', '');
+
+      // Time step: the commit closes the popover and fills the field
+      cy.get(sel.popoverHour).click();
+      cy.get(sel.openTimeList).should('exist');
+      cy.get(sel.option('10:00:00')).click();
+
+      cy.get(sel.calendar).should('not.exist');
+      cy.get(sel.day).should('have.value', '16');
+      cy.get(sel.hour).should('have.value', '10');
+      cy.get(sel.minute).should('have.value', '00');
+
+      submitAndGetData('@formSubmitHandler').then((data) => {
+        expect(data).to.deep.equal({ myAppointment: '2026-02-16T10:00:00' });
+      });
+    });
+
+    it('should commit a fully typed date-time from the field', () => {
+      const formSubmitHandler = cy.stub().as('formSubmitHandler');
+      mountPicker({
+        props: { ...officeProps, hourFormat: '24' },
+        formSubmit: formSubmitHandler,
+      });
+
+      // en-US orders the parts month/day/year then hour/minute (auto-advance)
+      cy.get(sel.month).click();
+      cy.focused().type('02');
+      cy.focused().type('13');
+      cy.focused().type('2026');
+      cy.focused().type('10');
+      cy.focused().type('30');
+
+      submitAndGetData('@formSubmitHandler').then((data) => {
+        expect(data).to.deep.equal({ myAppointment: '2026-02-13T10:30:00' });
+      });
+    });
+
+    it('should keep the popover open when keyboard navigation crosses a month boundary', () => {
+      mountPicker({ data: { myAppointment: '2026-06-15T09:30:00' }, props: officeProps });
+
+      cy.get(sel.day).click();
+      cy.get(sel.dayButton('2026-06-30')).focus();
+      cy.focused().type('{downArrow}');
+
+      cy.get(sel.calendar).should('exist');
+      cy.focused()
+        .should('have.class', 'gui-calendar__day-button')
+        .invoke('attr', 'data-date')
+        .should('contain', '2026-07');
+    });
+
+    it('should close the popover when clicking outside', () => {
+      mountPicker({ data: { myAppointment: '2026-02-13T09:30:00' }, props: officeProps });
+
+      cy.get(sel.day).click();
+      cy.get(sel.calendar).should('exist');
+
+      cy.get('body').click(0, 0);
+      cy.get(sel.calendar).should('not.exist');
+    });
+
+    it('should close the popover when focus leaves the picker', () => {
+      mountPicker({ data: { myAppointment: '2026-02-13T09:30:00' }, props: officeProps });
+
+      cy.get(sel.day).click();
+      cy.get(sel.calendar).should('exist');
+
+      cy.get('[data-cy="submitBtn_button"]').focus();
+      cy.get(sel.calendar).should('not.exist');
+    });
+
+    it('should apply day-scoped disabled time ranges in the popover', () => {
+      mountPicker({
+        data: { myAppointment: '2026-02-13T09:30:00' },
+        props: {
+          ...officeProps,
+          maxTime: '14:00:00',
+          disabledTimeRanges: [{ start: '13:00:00', end: '14:00:00', weekdays: [1, 2, 3, 4, 5] }],
+        },
+      });
+
+      // 2026-02-13 is a Friday: the lunch range applies
+      cy.get(sel.day).click();
+      cy.get(sel.popoverHour).click();
+      cy.get(sel.option('13:00:00')).should('be.disabled');
+
+      // Escape closes the time list so the days grid is visible again
+      cy.get(sel.popoverHour).type('{esc}', { force: true });
+      cy.get(sel.openTimeList).should('not.exist');
+
+      // 2026-02-15 is a Sunday: the range does not apply (day step keeps the
+      // popover open, then the time list reflects the new day)
+      cy.get(sel.dayButton('2026-02-15')).click();
+      cy.get(sel.popoverHour).click();
+      cy.get(sel.option('13:00:00')).should('not.be.disabled');
+    });
+
+    it('should not open when disabled and not change the value when readonly', () => {
+      mountPicker({
+        data: { myAppointment: '2026-02-13T09:30:00' },
+        props: officeProps,
+        disabled: true,
+      });
+
+      cy.get('.gui-date-time-picker .gui-widget').first().click({ force: true });
+      cy.get(sel.calendar).should('not.exist');
+
+      mountPicker({
+        data: { myAppointment: '2026-02-13T09:30:00' },
+        props: officeProps,
+        readonly: true,
+      });
+
+      cy.get(sel.day).click();
+      cy.get(sel.calendar).should('exist');
+
+      cy.get(sel.dayButton('2026-02-16')).click();
+      cy.get(sel.dayButton('2026-02-13')).should('have.attr', 'aria-selected', 'true');
+      cy.get(sel.day).should('have.value', '13');
+    });
+  });
+};

@@ -18,6 +18,7 @@ import type {
   CurrencyProps,
   DatePickerProps,
   DateTimeCalendarProps,
+  DateTimePickerProps,
   DateRange,
   DateinputProps,
   DropdownProps,
@@ -197,6 +198,7 @@ type GolemWidget<
   | GuiDateinput<FormType, States, V>
   | GuiDatePicker<FormType, States, V>
   | GuiDateTimeInput<FormType, States, V>
+  | GuiDateTimePicker<FormType, States, V>
   | GuiDropdown<FormType, States, V>
   | GuiFunctionWidget<FormType, States, V, CustomWidget>
   | GuiList<FormType, States, V>
@@ -292,6 +294,14 @@ type GuiDatePicker<FormType extends Record<string, any>, States extends string, 
   DatePickerProps,
   V
 > & { type: 'datePicker' };
+
+type GuiDateTimePicker<
+  FormType extends Record<string, any>,
+  States extends string,
+  V,
+> = InputWidget<string, States, FormType, DateTimePickerProps, V> & {
+  type: 'dateTimePicker';
+};
 
 type GuiDropdown<FormType extends Record<string, any>, States extends string, V> = InputWidget<
   OptionValue,

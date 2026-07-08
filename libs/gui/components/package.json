@@ -63,6 +63,11 @@
       "import": "./lib/components/date-time-input.js",
       "require": "./lib/components/date-time-input.umd.cjs"
     },
+    "./date-time-picker": {
+      "types": "./lib/components/date-time-picker.d.ts",
+      "import": "./lib/components/date-time-picker.js",
+      "require": "./lib/components/date-time-picker.umd.cjs"
+    },
     "./errors": {
       "types": "./lib/components/errors.d.ts",
       "import": "./lib/components/errors.js",

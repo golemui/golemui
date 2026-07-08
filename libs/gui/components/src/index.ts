@@ -9,6 +9,7 @@ export { GuiDate } from './lib/components/date-input';
 export { GuiDatePicker } from './lib/components/date-picker';
 export { GuiDateTime } from './lib/components/date-time-input';
 export { GuiDateTimeCalendar } from './lib/components/date-time-calendar';
+export { GuiDateTimePicker } from './lib/components/date-time-picker';
 export { GuiErrors } from './lib/components/errors';
 export { GuiLabel } from './lib/components/label';
 export { GuiList } from './lib/components/list';

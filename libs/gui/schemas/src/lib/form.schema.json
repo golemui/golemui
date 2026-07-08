@@ -56,6 +56,9 @@
           "$ref": "./components/datetimecalendar.schema.json"
         },
         {
+          "$ref": "./components/datetimepicker.schema.json"
+        },
+        {
           "$ref": "./components/checkbox.schema.json"
         },
         {

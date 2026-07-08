@@ -174,4 +174,33 @@ export const calendarTab = gui.layouts.flex([
     hourFormat: '24',
     validator: { format: 'date-time' },
   }),
+
+  gui.displays.custom('heading', { text: 'DATE TIME PICKERS', level: 3 }),
+
+  gui.inputs.dateTimePicker('dateTimePicker', {
+    label: 'Book an appointment (popover)',
+    hint: '30m slots from 9:00 to 18:00, weekday lunch break disabled',
+    icon: 'calendar_month',
+    minDate: '2026-02-01',
+    maxDate: '2026-07-31',
+    minTime: '09:00:00',
+    maxTime: '18:00:00',
+    minuteStep: 30,
+    allowCustomTime: true,
+    disabledTimeRanges: [
+      { start: '13:00:00', end: '14:00:00', weekdays: [1, 2, 3, 4, 5] },
+      { start: '09:00:00', end: '10:30:00', date: '2026-02-13' },
+    ],
+    disabledRanges: [{ start: '2026-02-09', end: '2026-02-10' }, { start: '2026-02-17' }],
+    validator: { required: true, format: 'date-time' },
+  }),
+
+  gui.inputs.dateTimePicker('dateTimePickerPrefilled', {
+    label: 'Prefilled slot (popover)',
+    defaultValue: '2026-02-13T11:00:00',
+    minTime: '09:00:00',
+    maxTime: '18:00:00',
+    hourFormat: '24',
+    validator: { format: 'date-time' },
+  }),
 ]);

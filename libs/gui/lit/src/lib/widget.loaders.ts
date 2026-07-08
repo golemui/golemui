@@ -19,6 +19,8 @@ export const widgetLoaders: WidgetLoaders<Type<WithWidget>, GolemWidget> = {
   currency: async () => (await import('./components/currency.element')).CurrencyElement,
   dateInput: async () => (await import('./components/date.element')).DateElement,
   datePicker: async () => (await import('./components/date-picker.element')).DatePickerElement,
+  dateTimePicker: async () =>
+    (await import('./components/date-time-picker.element')).DateTimePickerElement,
   dropdown: async () => (await import('./components/dropdown.element')).DropdownElement,
   list: async () => (await import('./components/list.element')).ListElement,
   markdown: async () => (await import('./components/markdown.element')).MarkdownElement,

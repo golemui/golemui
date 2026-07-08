@@ -47,6 +47,9 @@
       "@golemui/gui-components/date-time-input": [
         "libs/gui/components/src/lib/components/date-time-input.ts"
       ],
+      "@golemui/gui-components/date-time-picker": [
+        "libs/gui/components/src/lib/components/date-time-picker.ts"
+      ],
       "@golemui/gui-components/errors": ["libs/gui/components/src/lib/components/errors.ts"],
       "@golemui/gui-components/label": ["libs/gui/components/src/lib/components/label.ts"],
       "@golemui/gui-components/list": ["libs/gui/components/src/lib/components/list.ts"],

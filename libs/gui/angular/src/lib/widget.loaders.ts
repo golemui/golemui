@@ -37,6 +37,9 @@ export const widgetLoaders: WidgetLoaders<Type<WithWidget>, GolemWidget> = {
     (await import('./components/date-time-input/date-time.component')).DateTimeComponent,
   datePicker: async () =>
     (await import('./components/date-picker/date-picker.component')).DatePickerComponent,
+  dateTimePicker: async () =>
+    (await import('./components/date-time-picker/date-time-picker.component'))
+      .DateTimePickerComponent,
   dropdown: async () =>
     (await import('./components/dropdown/dropdown.component')).DropdownComponent,
   toggle: async () => (await import('./components/toggle/toggle.component')).ToggleComponent,

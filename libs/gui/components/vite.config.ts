@@ -33,6 +33,7 @@ export default defineConfig(() => ({
         'lib/components/date-picker': 'src/lib/components/date-picker.ts',
         'lib/components/date-time-calendar': 'src/lib/components/date-time-calendar.ts',
         'lib/components/date-time-input': 'src/lib/components/date-time-input.ts',
+        'lib/components/date-time-picker': 'src/lib/components/date-time-picker.ts',
         'lib/components/errors': 'src/lib/components/errors.ts',
         'lib/components/label': 'src/lib/components/label.ts',
         'lib/components/list': 'src/lib/components/list.ts',

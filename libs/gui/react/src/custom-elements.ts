@@ -7,6 +7,7 @@ import type { GuiCheckbox } from '@golemui/gui-components/checkbox';
 import type { GuiCurrency } from '@golemui/gui-components/currency';
 import type { GuiDate } from '@golemui/gui-components/date-input';
 import type { GuiDatePicker } from '@golemui/gui-components/date-picker';
+import type { GuiDateTimePicker } from '@golemui/gui-components/date-time-picker';
 import type { GuiErrors } from '@golemui/gui-components/errors';
 import type { GuiLabel } from '@golemui/gui-components/label';
 import type { GuiList } from '@golemui/gui-components/list';
@@ -49,6 +50,11 @@ declare module 'react' {
         Partial<GuiDate>;
       'gui-date-picker': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiDatePicker>;
+      'gui-date-time-picker': React.DetailedHTMLProps<
+        React.HTMLAttributes<HTMLElement>,
+        HTMLElement
+      > &
+        Partial<GuiDateTimePicker>;
 
       'gui-errors': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiErrors>;

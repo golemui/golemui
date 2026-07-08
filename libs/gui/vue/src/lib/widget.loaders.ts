@@ -12,6 +12,7 @@ export const widgetLoaders: WidgetLoaders<Component<WithWidget>, GolemWidget> = 
   currency: async () => (await import('./components/Currency.vue')).default,
   dateInput: async () => (await import('./components/DateInput.vue')).default,
   datePicker: async () => (await import('./components/DatePicker.vue')).default,
+  dateTimePicker: async () => (await import('./components/DateTimePicker.vue')).default,
   dropdown: async () => (await import('./components/Dropdown.vue')).default,
   list: async () => (await import('./components/List.vue')).default,
   password: async () => (await import('./components/Password.vue')).default,

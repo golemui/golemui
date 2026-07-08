@@ -21,6 +21,11 @@ gui-date-time-calendar {
   }
 }
 
+.gui-form .gui-date-time-picker.gui-field .gui-widget:has(gui-date-time-calendar) {
+  cursor: default;
+  opacity: 1;
+}
+
 .gui-form gui-date-time-calendar .gui-time-picker.gui-field > .gui-widget {
   &:has(input:disabled) {
     cursor: default;

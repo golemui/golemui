@@ -364,6 +364,21 @@ const INPUTS: DxSpec[] = [
     ],
   },
   {
+    factory: 'dateTimePicker',
+    namespace: 'inputs',
+    call: 'gui.inputs.dateTimePicker(path, { label, minDate?, maxDate?, minTime?, maxTime?, minuteStep?, disabledTimeRanges?, allowCustomTime? })',
+    example:
+      "gui.inputs.dateTimePicker('appointmentAt', { label: 'Appointment', minTime: '09:00', maxTime: '18:00' })",
+    notes: [
+      'A compact date-time FIELD that opens a `dateTimeCalendar` POPOVER on focus — the space-saving counterpart ' +
+        'to the inline `dateTimeCalendar`, like `datePicker` is to `calendar`.',
+      'Emits a local ISO date-time (`YYYY-MM-DDTHH:mm:ss`); the popover closes only when BOTH day and time are ' +
+        "selected. Pair with a `{ type: 'string', format: 'date-time' }` validator.",
+      'Takes the same time props as `dateTimeCalendar` (`minTime`/`maxTime`/`minuteStep`/`disabledTimeRanges` with ' +
+        'per-date/weekday scoping/`allowCustomTime`) plus `icon` and `invalidDateMessage` for the typed input.',
+    ],
+  },
+  {
     factory: 'markdown',
     namespace: 'inputs',
     call: 'gui.inputs.markdown(path, { label })',
