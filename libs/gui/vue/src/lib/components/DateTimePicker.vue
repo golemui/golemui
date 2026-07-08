@@ -24,7 +24,6 @@ const dayFormat = computed(() => templateData.value.dayFormat || 'numeric');
 const weekdayFormat = computed(() => templateData.value.weekdayFormat || 'narrow');
 const monthFormat = computed(() => templateData.value.monthFormat || 'long');
 const numberOfMonths = computed(() => templateData.value.numberOfMonths ?? 1);
-const minuteStep = computed(() => templateData.value.minuteStep ?? 1);
 
 const pickerRef = ref<HTMLElement | null>(null);
 const changeHandler = (e: Event) => {
@@ -84,7 +83,7 @@ onUnmounted(() => {
       :disabledRanges.prop="templateData.disabledRanges"
       :numberOfMonths.prop="numberOfMonths"
       :hourFormat="templateData.hourFormat"
-      :minuteStep.prop="minuteStep"
+      :minuteStep.prop="templateData.minuteStep"
       :minTime="templateData.minTime"
       :maxTime="templateData.maxTime"
       :disabledTimeRanges.prop="templateData.disabledTimeRanges"
