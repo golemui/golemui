@@ -1,9 +1,4 @@
 gui-date-time-calendar {
-  > .gui-widget:has(input:disabled) {
-    cursor: default;
-    opacity: 1;
-  }
-
   .gui-calendar__panel {
     min-width: calc(7 * var(--gui-calendar-day-button-size) + 6px);
   }
