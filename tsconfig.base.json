@@ -38,6 +38,9 @@
       "@golemui/gui-components/date-input": [
         "libs/gui/components/src/lib/components/date-input.ts"
       ],
+      "@golemui/gui-components/date-picker": [
+        "libs/gui/components/src/lib/components/date-picker.ts"
+      ],
       "@golemui/gui-components/date-time-calendar": [
         "libs/gui/components/src/lib/components/date-time-calendar.ts"
       ],
@@ -62,6 +65,9 @@
       ],
       "@golemui/gui-components/range-date-input": [
         "libs/gui/components/src/lib/components/range-date-input.ts"
+      ],
+      "@golemui/gui-components/range-date-picker": [
+        "libs/gui/components/src/lib/components/range-date-picker.ts"
       ],
       "@golemui/gui-components/select": ["libs/gui/components/src/lib/components/select.ts"],
       "@golemui/gui-components/tags": ["libs/gui/components/src/lib/components/tags.ts"],

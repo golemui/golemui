@@ -6,6 +6,7 @@ import type { GuiDateTimeCalendar } from '@golemui/gui-components/date-time-cale
 import type { GuiCheckbox } from '@golemui/gui-components/checkbox';
 import type { GuiCurrency } from '@golemui/gui-components/currency';
 import type { GuiDate } from '@golemui/gui-components/date-input';
+import type { GuiDatePicker } from '@golemui/gui-components/date-picker';
 import type { GuiErrors } from '@golemui/gui-components/errors';
 import type { GuiLabel } from '@golemui/gui-components/label';
 import type { GuiList } from '@golemui/gui-components/list';
@@ -17,6 +18,7 @@ import type { GuiPills } from '@golemui/gui-components/pills';
 import type { GuiRadiogroup } from '@golemui/gui-components/radiogroup';
 import type { GuiRangeCalendar } from '@golemui/gui-components/range-calendar';
 import type { GuiRangeDateInput } from '@golemui/gui-components/range-date-input';
+import type { GuiRangeDatePicker } from '@golemui/gui-components/range-date-picker';
 import type { GuiSelect } from '@golemui/gui-components/select';
 import type { GuiTags } from '@golemui/gui-components/tags';
 import type { GuiTextarea } from '@golemui/gui-components/textarea';
@@ -45,6 +47,8 @@ declare module 'react' {
 
       'gui-date': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiDate>;
+      'gui-date-picker': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
+        Partial<GuiDatePicker>;
 
       'gui-errors': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiErrors>;
@@ -78,6 +82,11 @@ declare module 'react' {
         Partial<GuiRangeCalendar>;
       'gui-range-date': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiRangeDateInput>;
+      'gui-range-date-picker': React.DetailedHTMLProps<
+        React.HTMLAttributes<HTMLElement>,
+        HTMLElement
+      > &
+        Partial<GuiRangeDatePicker>;
 
       'gui-select': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiSelect>;

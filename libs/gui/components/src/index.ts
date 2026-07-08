@@ -6,6 +6,7 @@ export type { CalendarDay } from './lib/components/calendar';
 export { GuiCheckbox } from './lib/components/checkbox';
 export { GuiCurrency } from './lib/components/currency';
 export { GuiDate } from './lib/components/date-input';
+export { GuiDatePicker } from './lib/components/date-picker';
 export { GuiDateTime } from './lib/components/date-time-input';
 export { GuiDateTimeCalendar } from './lib/components/date-time-calendar';
 export { GuiErrors } from './lib/components/errors';
@@ -42,6 +43,7 @@ export { GuiRangeCalendar } from './lib/components/range-calendar';
 export type { RangeCalendarDay } from './lib/components/range-calendar';
 
 export { GuiRangeDateInput } from './lib/components/range-date-input';
+export { GuiRangeDatePicker } from './lib/components/range-date-picker';
 export { GuiSelect } from './lib/components/select';
 export { GuiTags } from './lib/components/tags';
 export { GuiTextarea } from './lib/components/textarea';

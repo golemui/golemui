@@ -49,6 +49,22 @@ export const runDatePickerComponentTests = (mountFn: MountComponentFn) => {
       );
     });
 
+    it('should keep the calendar open when keyboard navigation crosses a month boundary', () => {
+      mountWithDate();
+
+      cy.get('gui-date input[data-type="day"]').click();
+      cy.get('gui-calendar button[data-date="2026-06-30"]').focus();
+      // ArrowDown from the last week re-renders the calendar into July; the
+      // focused button is removed mid-navigation and must not close the picker
+      cy.focused().type('{downArrow}');
+
+      cy.get('gui-calendar').should('exist');
+      cy.focused()
+        .should('have.class', 'gui-calendar__day-button')
+        .invoke('attr', 'data-date')
+        .should('contain', '2026-07');
+    });
+
     it('should select the exact day that is clicked', () => {
       const formSubmitHandler = cy.stub().as('formSubmitHandler');
       mountWithDate(formSubmitHandler);

@@ -48,6 +48,11 @@
       "import": "./lib/components/date-input.js",
       "require": "./lib/components/date-input.umd.cjs"
     },
+    "./date-picker": {
+      "types": "./lib/components/date-picker.d.ts",
+      "import": "./lib/components/date-picker.js",
+      "require": "./lib/components/date-picker.umd.cjs"
+    },
     "./date-time-calendar": {
       "types": "./lib/components/date-time-calendar.d.ts",
       "import": "./lib/components/date-time-calendar.js",
@@ -112,6 +117,11 @@
       "types": "./lib/components/range-date-input.d.ts",
       "import": "./lib/components/range-date-input.js",
       "require": "./lib/components/range-date-input.umd.cjs"
+    },
+    "./range-date-picker": {
+      "types": "./lib/components/range-date-picker.d.ts",
+      "import": "./lib/components/range-date-picker.js",
+      "require": "./lib/components/range-date-picker.umd.cjs"
     },
     "./select": {
       "types": "./lib/components/select.d.ts",
