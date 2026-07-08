@@ -29,9 +29,9 @@
     flex-direction: row;
   }
 
-  &:has(input:disabled),
-  &:has(textarea:disabled),
-  &:has(select:disabled) {
+  &:not([role='button']):has(input:disabled),
+  &:not([role='button']):has(textarea:disabled),
+  &:not([role='button']):has(select:disabled) {
     cursor: not-allowed;
     opacity: 0.75;
   }
