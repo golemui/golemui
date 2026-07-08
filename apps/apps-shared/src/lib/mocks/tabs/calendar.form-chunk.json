@@ -43,6 +43,24 @@
         "required": true,
         "format": "date"
       }
+    },
+    {
+      "kind": "input",
+      "type": "calendar",
+      "path": "calendarDisabledRanges",
+      "defaultValue": "2026-02-13",
+      "label": "Disabled date ranges",
+      "props": {
+        "disabledRanges": [
+          {
+            "start": "2026-02-09",
+            "end": "2026-02-10"
+          },
+          {
+            "start": "2026-02-17"
+          }
+        ]
+      }
     }
   ]
 }

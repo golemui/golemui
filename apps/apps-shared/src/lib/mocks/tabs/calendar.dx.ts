@@ -25,4 +25,17 @@ export const calendarTab = gui.layouts.flex([
       format: 'date',
     },
   }),
+  gui.inputs.calendar('calendarDisabledRanges', {
+    label: 'Disabled date ranges',
+    defaultValue: '2026-02-13',
+    disabledRanges: [
+      {
+        start: '2026-02-09',
+        end: '2026-02-10',
+      },
+      {
+        start: '2026-02-17',
+      },
+    ],
+  }),
 ]);

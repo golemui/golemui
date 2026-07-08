@@ -30,4 +30,18 @@ export const datePickerTab = gui.layouts.flex([
     },
     icon: 'calendar_month',
   }),
+  gui.inputs.datePicker('datePickerDisabledRanges', {
+    label: 'Disabled date ranges',
+    defaultValue: '2026-02-13',
+    icon: 'calendar_month',
+    disabledRanges: [
+      {
+        start: '2026-02-09',
+        end: '2026-02-10',
+      },
+      {
+        start: '2026-02-17',
+      },
+    ],
+  }),
 ]);

@@ -73,6 +73,25 @@
         "required": true,
         "format": "time"
       }
+    },
+    {
+      "kind": "input",
+      "type": "timePicker",
+      "path": "timePickerDisabledRanges",
+      "defaultValue": "09:30:00",
+      "label": "Disabled time ranges",
+      "props": {
+        "icon": "schedule",
+        "minTime": "09:00:00",
+        "maxTime": "18:00:00",
+        "minuteStep": 30,
+        "disabledRanges": [
+          {
+            "start": "13:00:00",
+            "end": "14:00:00"
+          }
+        ]
+      }
     }
   ]
 }

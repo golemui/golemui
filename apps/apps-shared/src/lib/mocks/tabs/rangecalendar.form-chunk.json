@@ -66,6 +66,32 @@
         "type": "array",
         "required": true
       }
+    },
+    {
+      "kind": "input",
+      "type": "rangeCalendar",
+      "path": "rangeCalendarDisabledRanges",
+      "defaultValue": [
+        {
+          "start": "2026-02-13",
+          "end": "2026-02-16"
+        },
+        {
+          "start": "2026-02-20"
+        }
+      ],
+      "label": "Disabled date ranges",
+      "props": {
+        "disabledRanges": [
+          {
+            "start": "2026-02-09",
+            "end": "2026-02-10"
+          },
+          {
+            "start": "2026-02-17"
+          }
+        ]
+      }
     }
   ]
 }
