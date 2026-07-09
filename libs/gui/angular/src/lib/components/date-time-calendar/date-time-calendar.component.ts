@@ -25,8 +25,7 @@ import '@golemui/gui-components/date-time-calendar';
 })
 export class DateTimeCalendarComponent implements OnInit, OnDestroy, WithWidget {
   widget!: InputWidget<string>;
-  protected adapter: InputWidgetAdapter<string, DateTimeCalendarProps> =
-    inject(InputWidgetAdapter);
+  protected adapter: InputWidgetAdapter<string, DateTimeCalendarProps> = inject(InputWidgetAdapter);
 
   ngOnInit(): void {
     this.adapter.init(this.widget);

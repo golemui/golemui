@@ -7,8 +7,7 @@ import {
 } from '../schema.spec.utils';
 import { golemForm } from '@golemui/gui-shared/internals';
 
-const SCHEMA_ID_UNDER_TEST =
-  'https://golemui.com/schemas/components/datetimecalendar.schema.json';
+const SCHEMA_ID_UNDER_TEST = 'https://golemui.com/schemas/components/datetimecalendar.schema.json';
 
 describe('DateTimeCalendar schema validation', () => {
   let ajv: Ajv2020;

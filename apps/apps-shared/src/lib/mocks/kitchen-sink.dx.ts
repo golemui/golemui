@@ -159,7 +159,11 @@ export const buildKitchenSinkDx = (options: KitchenSinkDxOptions = {}): KitchenS
           uid: 'tabRangeDateInput',
           children: [rangeDateInputTab],
         },
-        { label: 'Range Calendar Component', uid: 'tabRangeCalendar', children: [rangeCalendarTab] },
+        {
+          label: 'Range Calendar Component',
+          uid: 'tabRangeCalendar',
+          children: [rangeCalendarTab],
+        },
         {
           label: 'Range Date Picker Component',
           uid: 'tabRangeDatePicker',
@@ -167,7 +171,11 @@ export const buildKitchenSinkDx = (options: KitchenSinkDxOptions = {}): KitchenS
         },
         { label: 'Time Input Component', uid: 'tabTimeInput', children: [timeInputTab] },
         { label: 'Time Picker Component', uid: 'tabTimePicker', children: [timePickerTab] },
-        { label: 'Date Time Input Component', uid: 'tabDateTimeInput', children: [dateTimeInputTab] },
+        {
+          label: 'Date Time Input Component',
+          uid: 'tabDateTimeInput',
+          children: [dateTimeInputTab],
+        },
         {
           label: 'Date Time Calendar Component',
           uid: 'tabDateTimeCalendar',

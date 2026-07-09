@@ -26,9 +26,8 @@ export class GuiTimePicker extends LitElement {
   @property({ type: Number, attribute: 'minute-step' }) minuteStep: number | undefined = undefined;
   @property({ type: String, attribute: 'min-time' }) minTime: string | undefined = undefined;
   @property({ type: String, attribute: 'max-time' }) maxTime: string | undefined = undefined;
-  @property({ type: Array, attribute: 'disabled-ranges' }) disabledRanges:
-    | TimeRange[]
-    | undefined = undefined;
+  @property({ type: Array, attribute: 'disabled-ranges' }) disabledRanges: TimeRange[] | undefined =
+    undefined;
   @property({ type: Boolean, attribute: 'allow-custom-time' }) allowCustomTime:
     | boolean
     | undefined = false;
@@ -196,7 +195,11 @@ export class GuiTimePicker extends LitElement {
     );
     if (error) {
       this.dispatchEvent(
-        new CustomEvent('inputError', { detail: { message: error }, bubbles: true, composed: true }),
+        new CustomEvent('inputError', {
+          detail: { message: error },
+          bubbles: true,
+          composed: true,
+        }),
       );
     }
   }

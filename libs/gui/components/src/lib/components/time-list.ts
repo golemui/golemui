@@ -20,9 +20,8 @@ export class GuiTimeList extends LitElement {
   @property({ type: String, attribute: 'min-time' }) minTime: string | undefined = undefined;
   @property({ type: String, attribute: 'max-time' }) maxTime: string | undefined = undefined;
   @property({ type: Number, attribute: 'minute-step' }) minuteStep: number | undefined = undefined;
-  @property({ type: Array, attribute: 'disabled-ranges' }) disabledRanges:
-    | TimeRange[]
-    | undefined = undefined;
+  @property({ type: Array, attribute: 'disabled-ranges' }) disabledRanges: TimeRange[] | undefined =
+    undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
   @property({ type: String, attribute: 'hour-format' }) hourFormat: HourFormat | undefined =
     undefined;

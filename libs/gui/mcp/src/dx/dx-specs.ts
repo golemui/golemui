@@ -322,7 +322,7 @@ const INPUTS: DxSpec[] = [
     notes: [
       'Time field with a popover list of slots built from `minTime`..`maxTime` stepping `minuteStep` ' +
         '(default 30). `disabledRanges` (`{ start, end }[]`, inclusive) greys slots out. Typing is off ' +
-        'unless `allowCustomTime: true`. Emits `HH:mm:ss` — pair with the `{ format: \'time\' }` validator.',
+        "unless `allowCustomTime: true`. Emits `HH:mm:ss` — pair with the `{ format: 'time' }` validator.",
     ],
   },
   {

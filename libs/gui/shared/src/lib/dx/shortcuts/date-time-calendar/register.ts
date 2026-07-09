@@ -9,11 +9,7 @@ import {
 } from './dateTimeCalendar.domain';
 
 export const { gsl: _gslDateTimeCalendars, gslByUid: _gslDateTimeCalendarByUid } =
-  defineShortcutType<
-    DateTimeCalendarEntry,
-    DateTimeCalendarDecorator,
-    GslDateTimeCalendarConfig
-  >({
+  defineShortcutType<DateTimeCalendarEntry, DateTimeCalendarDecorator, GslDateTimeCalendarConfig>({
     itemType: 'DATE_TIME_CALENDAR',
     entryShape: 'bare',
     sensibleDefaults: {

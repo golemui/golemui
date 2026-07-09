@@ -67,7 +67,8 @@ export const runDateTimeCalendarComponentTests = (mountFn: MountComponentFn) => 
 
     const day = (isoDate: string) => cy.get(`${sel.dayButton}[data-date="${isoDate}"]`);
     // Empty-start tests pick a day from the currently visible month
-    const firstAvailableDay = () => cy.get(`${sel.dayButton}:not(.other-month):not(:disabled)`).first();
+    const firstAvailableDay = () =>
+      cy.get(`${sel.dayButton}:not(.other-month):not(:disabled)`).first();
     const option = (isoTime: string) => cy.get(`${sel.options}[data-value="${isoTime}"]`);
 
     describe('rendering and hydration', () => {
@@ -184,9 +185,7 @@ export const runDateTimeCalendarComponentTests = (mountFn: MountComponentFn) => 
           props: {
             ...officeProps,
             maxTime: '14:00:00',
-            disabledTimeRanges: [
-              { start: '13:00:00', end: '14:00:00', weekdays: [1, 2, 3, 4, 5] },
-            ],
+            disabledTimeRanges: [{ start: '13:00:00', end: '14:00:00', weekdays: [1, 2, 3, 4, 5] }],
           },
         });
 
@@ -369,9 +368,11 @@ export const runDateTimeCalendarComponentTests = (mountFn: MountComponentFn) => 
         firstAvailableDay().click();
         cy.get(sel.hour).click();
 
-        cy.get('gui-date-time-calendar gui-time-list:not([hidden]) .gui-time-list__empty').should(($el) => {
-          expect($el.text().trim()).to.equal('No available times');
-        });
+        cy.get('gui-date-time-calendar gui-time-list:not([hidden]) .gui-time-list__empty').should(
+          ($el) => {
+            expect($el.text().trim()).to.equal('No available times');
+          },
+        );
       });
 
       it('should show the custom noAvailableTimesMessage when provided', () => {
@@ -388,9 +389,11 @@ export const runDateTimeCalendarComponentTests = (mountFn: MountComponentFn) => 
         firstAvailableDay().click();
         cy.get(sel.hour).click();
 
-        cy.get('gui-date-time-calendar gui-time-list:not([hidden]) .gui-time-list__empty').should(($el) => {
-          expect($el.text().trim()).to.equal('Fully booked');
-        });
+        cy.get('gui-date-time-calendar gui-time-list:not([hidden]) .gui-time-list__empty').should(
+          ($el) => {
+            expect($el.text().trim()).to.equal('Fully booked');
+          },
+        );
       });
     });
 

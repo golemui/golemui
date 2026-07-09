@@ -390,9 +390,7 @@ export const runTimeInputComponentTests = (mountFn: MountComponentFn) => {
             expect(part, `${type} part exists`).to.not.equal(null);
             return (part as HTMLElement).getBoundingClientRect().left;
           };
-          expect(left('dayPeriod'), 'day period is visually leftmost').to.be.lessThan(
-            left('hour'),
-          );
+          expect(left('dayPeriod'), 'day period is visually leftmost').to.be.lessThan(left('hour'));
           expect(left('hour'), 'hour stays left of minute').to.be.lessThan(left('minute'));
         });
       });

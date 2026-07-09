@@ -228,7 +228,11 @@ export class GuiDatePicker extends LitElement {
     );
     if (error) {
       this.dispatchEvent(
-        new CustomEvent('inputError', { detail: { message: error }, bubbles: true, composed: true }),
+        new CustomEvent('inputError', {
+          detail: { message: error },
+          bubbles: true,
+          composed: true,
+        }),
       );
     }
   }

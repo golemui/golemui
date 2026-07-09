@@ -15,7 +15,12 @@
     }
 
     .gui-widget {
-      :is(.gui-date-picker__arrow, .gui-range-date-picker__arrow, .gui-time-picker__arrow, .gui-date-time-picker__arrow) {
+      :is(
+        .gui-date-picker__arrow,
+        .gui-range-date-picker__arrow,
+        .gui-time-picker__arrow,
+        .gui-date-time-picker__arrow
+      ) {
         fill: var(--gui-text-default);
         transform: rotate(0deg);
         transition: transform 0.3s;
@@ -26,7 +31,13 @@
         top: 14px;
       }
 
-      &[aria-expanded='true'] > :is(.gui-date-picker__arrow, .gui-range-date-picker__arrow, .gui-time-picker__arrow, .gui-date-time-picker__arrow) {
+      &[aria-expanded='true']
+        > :is(
+          .gui-date-picker__arrow,
+          .gui-range-date-picker__arrow,
+          .gui-time-picker__arrow,
+          .gui-date-time-picker__arrow
+        ) {
         transform: rotate(180deg);
       }
 

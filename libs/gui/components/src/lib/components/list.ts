@@ -127,7 +127,9 @@ export class GuiList extends LitElement {
         handled = true;
         break;
       case 'PageUp':
-        this.setFocusedIndex(this.findEnabledIndex(Math.max(this._focusedIndex - visibleCount, 0), -1));
+        this.setFocusedIndex(
+          this.findEnabledIndex(Math.max(this._focusedIndex - visibleCount, 0), -1),
+        );
         handled = true;
         break;
       case 'Home':

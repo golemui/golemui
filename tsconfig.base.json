@@ -78,9 +78,7 @@
       "@golemui/gui-components/time-input": [
         "libs/gui/components/src/lib/components/time-input.ts"
       ],
-      "@golemui/gui-components/time-list": [
-        "libs/gui/components/src/lib/components/time-list.ts"
-      ],
+      "@golemui/gui-components/time-list": ["libs/gui/components/src/lib/components/time-list.ts"],
       "@golemui/gui-components/time-picker": [
         "libs/gui/components/src/lib/components/time-picker.ts"
       ],

@@ -57,9 +57,8 @@ export class GuiRangeDatePicker extends LitElement {
     | undefined = undefined;
   @property({ type: String, attribute: 'min-date' }) minDate: string | undefined = undefined;
   @property({ type: String, attribute: 'max-date' }) maxDate: string | undefined = undefined;
-  @property({ type: Array, attribute: 'disabled-ranges' }) disabledRanges:
-    | DateRange[]
-    | undefined = undefined;
+  @property({ type: Array, attribute: 'disabled-ranges' }) disabledRanges: DateRange[] | undefined =
+    undefined;
   @property({ type: Number, attribute: 'number-of-months' }) numberOfMonths: number | undefined =
     undefined;
   @property({ type: String, attribute: 'invalid-date-message' }) invalidDateMessage:
@@ -261,7 +260,11 @@ export class GuiRangeDatePicker extends LitElement {
     );
     if (error) {
       this.dispatchEvent(
-        new CustomEvent('inputError', { detail: { message: error }, bubbles: true, composed: true }),
+        new CustomEvent('inputError', {
+          detail: { message: error },
+          bubbles: true,
+          composed: true,
+        }),
       );
     }
   }

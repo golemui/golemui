@@ -12,10 +12,7 @@ import { _gslCurrencies, _gslCurrencyByUid } from '../currency/register';
 import { _gslMarkdowns, _gslMarkdownByUid } from '../markdown/register';
 import { _gslLists, _gslListByUid } from '../list/register';
 import { _gslCalendars, _gslCalendarByUid } from '../calendar/register';
-import {
-  _gslDateTimeCalendars,
-  _gslDateTimeCalendarByUid,
-} from '../date-time-calendar/register';
+import { _gslDateTimeCalendars, _gslDateTimeCalendarByUid } from '../date-time-calendar/register';
 import { _gslDateInputs, _gslDateInputByUid } from '../date-input/register';
 import { _gslDatePickers, _gslDatePickerByUid } from '../date-picker/register';
 import { _gslDateTimePickers, _gslDateTimePickerByUid } from '../date-time-picker/register';

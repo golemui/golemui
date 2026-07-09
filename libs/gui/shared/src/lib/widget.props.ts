@@ -393,7 +393,9 @@ export type DateTimePickerProps = DateTimeCalendarProps &
   DateTimeInputProps &
   DateBoundsMessageProps;
 
-export type RangeDatePickerProps = RangeCalendarProps & RangeDateInputProps & DateBoundsMessageProps;
+export type RangeDatePickerProps = RangeCalendarProps &
+  RangeDateInputProps &
+  DateBoundsMessageProps;
 
 export type NumberinputProps = {
   placeholder?: string;

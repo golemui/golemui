@@ -27,8 +27,7 @@ export const widgetLoaders: WidgetLoaders<Type<WithWidget>, GolemWidget> = {
   password: async () => (await import('./components/password.element')).PasswordElement,
   textinput: async () => (await import('./components/textinput.element')).TextinputElement,
   timeInput: async () => (await import('./components/time.element')).TimeElement,
-  timePicker: async () =>
-    (await import('./components/time-picker.element')).TimePickerElement,
+  timePicker: async () => (await import('./components/time-picker.element')).TimePickerElement,
   dateTimeInput: async () => (await import('./components/date-time.element')).DateTimeElement,
   textarea: async () => (await import('./components/textarea.element')).TextareaElement,
   toggle: async () => (await import('./components/toggle.element')).ToggleElement,

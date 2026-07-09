@@ -210,7 +210,8 @@ export abstract class AbstractCalendar extends LitElement {
           ${repeat(
             weekDays,
             (weekday, i) => i,
-            (weekday) => html`<span class="gui-calendar__weekday" role="gridcell">${weekday}</span>`,
+            (weekday) =>
+              html`<span class="gui-calendar__weekday" role="gridcell">${weekday}</span>`,
           )}
         </div>
 
@@ -570,12 +571,7 @@ export abstract class AbstractCalendar extends LitElement {
   }
 
   protected isDisabled(date: Date): boolean {
-    return isDateDisabled(
-      toISODateString(date),
-      this.minDate,
-      this.maxDate,
-      this.disabledRanges,
-    );
+    return isDateDisabled(toISODateString(date), this.minDate, this.maxDate, this.disabledRanges);
   }
 
   protected prevMonth() {

@@ -33,28 +33,15 @@
     },
     "dayFormatProp": {
       "description": "Formatting of day numbers in the calendar grid (`numeric` = 1\u201331, `2-digit` = 01\u201331)",
-      "enum": [
-        "numeric",
-        "2-digit"
-      ]
+      "enum": ["numeric", "2-digit"]
     },
     "weekdayFormatProp": {
       "description": "Formatting of weekday column headers (`short` = Mon, `long` = Monday, `narrow` = M)",
-      "enum": [
-        "short",
-        "long",
-        "narrow"
-      ]
+      "enum": ["short", "long", "narrow"]
     },
     "monthFormatProp": {
       "description": "Formatting of the month heading (`long` = January, `short` = Jan, `narrow` = J, `numeric` = 1, `2-digit` = 01)",
-      "enum": [
-        "numeric",
-        "2-digit",
-        "long",
-        "short",
-        "narrow"
-      ]
+      "enum": ["numeric", "2-digit", "long", "short", "narrow"]
     },
     "minDateProp": {
       "type": "string",
@@ -76,10 +63,7 @@
       }
     },
     "hourFormatProp": {
-      "enum": [
-        "12",
-        "24"
-      ]
+      "enum": ["12", "24"]
     },
     "allowCustomTimeProp": {
       "type": "boolean"
@@ -119,10 +103,7 @@
             "description": "Date.prototype.getDay() numbering: 0=Sunday \u2026 6=Saturday"
           }
         },
-        "required": [
-          "start",
-          "end"
-        ],
+        "required": ["start", "end"],
         "additionalProperties": false
       }
     }
@@ -342,10 +323,6 @@
       "$ref": "../validators.schema.json#/$defs/validator"
     }
   },
-  "required": [
-    "kind",
-    "type",
-    "path"
-  ],
+  "required": ["kind", "type", "path"],
   "unevaluatedProperties": false
 }
