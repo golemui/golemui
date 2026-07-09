@@ -82,7 +82,6 @@ export class GuiDatePicker extends LitElement {
       return;
     }
 
-    // Avoid closing the calendar on render new month with keyboard navigation
     if (this._focusOutRafId !== undefined) {
       cancelAnimationFrame(this._focusOutRafId);
     }

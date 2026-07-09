@@ -105,9 +105,6 @@ export class GuiDateTimePicker extends LitElement {
       return;
     }
 
-    // Keyboard month navigation and the calendar's inner time picker both
-    // move focus through transient null-relatedTarget focusouts. Defer the
-    // close one frame and only close if focus has really left the picker.
     if (this._focusOutRafId !== undefined) {
       cancelAnimationFrame(this._focusOutRafId);
     }
@@ -239,13 +236,7 @@ export class GuiDateTimePicker extends LitElement {
     this.dispatchEvent(new CustomEvent('blur'));
   }
 
-  // The calendar emits null when a day is picked while a value was set (time
-  // cleared, awaiting a new time), so the popover only closes on a complete
-  // day+time commit — closing on null would break the two-step flow.
   private onCalendarChange(event: CustomEvent) {
-    // Unmounting the closed calendar blurs its not-yet-rendered inner time
-    // input, which cascades into a spurious null change that would clobber
-    // the value just committed — nothing from a closed calendar is real.
     if (!this._isCalendarOpen) {
       event.stopPropagation();
       return;
@@ -284,8 +275,6 @@ export class GuiDateTimePicker extends LitElement {
     const target = event.target as HTMLElement;
 
     if (target.closest('.gui-calendar__day-button')) return;
-    // A time option click commits the value and closes the popover; without
-    // this guard the same click would bubble here and re-open it
     if (target.closest('.gui-time-list__option')) return;
 
     const isInputClick = target.closest('.gui-date-time-input__part');

@@ -99,7 +99,6 @@ export class GuiRangeDatePicker extends LitElement {
       return;
     }
 
-    // Avoid closing the calendar on render new month with keyboard navigation
     if (this._focusOutRafId !== undefined) {
       cancelAnimationFrame(this._focusOutRafId);
     }
@@ -236,8 +235,6 @@ export class GuiRangeDatePicker extends LitElement {
     this.dispatchEvent(new CustomEvent('blur'));
   }
 
-  // Unlike the single date picker, selecting a day keeps the calendar open so
-  // the user can select multiple ranges and closes it themselves.
   private onCalendarChange(event: CustomEvent) {
     this.value = event.detail.value ?? undefined;
   }
