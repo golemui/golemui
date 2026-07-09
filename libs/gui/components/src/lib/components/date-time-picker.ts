@@ -262,7 +262,7 @@ export class GuiDateTimePicker extends LitElement {
 
     event.stopPropagation();
     this.commitValue(event.detail.value);
-    if (event.detail.value) {
+    if (event.detail.value && event.detail.commit) {
       this.closeCalendar();
     }
   }

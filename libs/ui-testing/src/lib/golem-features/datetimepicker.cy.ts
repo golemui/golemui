@@ -72,6 +72,28 @@ export const runDateTimePickerComponentTests = (mountFn: MountComponentFn) => {
       return cy.get(formSubmitAlias).then((stub: any) => stub.getCall(0).args[0].data);
     };
 
+    it('should keep the popover open while editing the calendar time and close on Enter', () => {
+      mountPicker({
+        data: { myAppointment: '2026-02-13T09:30:00' },
+        props: { minTime: '09:00:00', maxTime: '18:00:00', minuteStep: 30, allowCustomTime: true },
+      });
+      cy.get(sel.day).click();
+      cy.get(sel.calendar).should('exist');
+
+      // Arrowing the time in the calendar's field commits the value but must NOT
+      // close the popover (typing runs through the same non-committing path)
+      cy.get(sel.popoverHour).click();
+      cy.get(sel.popoverHour).type('{upArrow}');
+      cy.get(sel.popoverHour).should('have.value', '10');
+      cy.get(sel.calendar).should('exist');
+
+      // Enter is the deliberate commit: the popover closes and the value sticks
+      cy.get(sel.popoverHour).type('{enter}', { force: true });
+      cy.get(sel.calendar).should('not.exist');
+      cy.get(sel.hour).should('have.value', '10');
+      cy.get(sel.minute).should('have.value', '30');
+    });
+
     it('should hydrate a full ISO date-time into the field and keep the popover closed', () => {
       mountPicker({ data: { myAppointment: '2026-02-13T09:30:00' }, props: officeProps });
 

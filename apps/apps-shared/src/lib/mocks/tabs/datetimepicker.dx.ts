@@ -50,6 +50,7 @@ export const dateTimePickerTab = gui.layouts.flex([
     label: 'Disabled date & time ranges',
     defaultValue: '2026-02-16T09:30:00',
     icon: 'calendar_month',
+    allowCustomTime: true,
     minTime: '09:00:00',
     maxTime: '18:00:00',
     minuteStep: 30,

@@ -85,10 +85,10 @@ export class GuiDateTimeCalendar extends GuiCalendar {
     this.value = value;
   }
 
-  private emitChange(value: string | null) {
+  private emitChange(value: string | null, commit = false) {
     this.dispatchEvent(
       new CustomEvent('change', {
-        detail: { value },
+        detail: { value, commit },
         bubbles: true,
         composed: true,
       }),
@@ -110,18 +110,19 @@ export class GuiDateTimeCalendar extends GuiCalendar {
     }
   }
 
-  private commitTime(isoTime: string) {
+  private commitTime(isoTime: string, commit = false) {
     if (!this._selectedDate) return;
 
     this._selectedTime = isoTime;
     this.setValueInternal(`${this._selectedDate}T${isoTime}`);
-    this.emitChange(this.value as string);
+    this.emitChange(this.value as string, commit);
   }
 
   private onTimePickerChange(event: CustomEvent) {
     event.stopPropagation();
 
     const time = event.detail.value as string | null;
+    const commit = event.detail.commit === true;
     if (!time) {
       this._selectedTime = undefined;
       if (this.value) {
@@ -131,7 +132,7 @@ export class GuiDateTimeCalendar extends GuiCalendar {
       return;
     }
 
-    this.commitTime(time);
+    this.commitTime(time, commit);
   }
 
   private onListToggle(event: CustomEvent<{ open: boolean }>) {

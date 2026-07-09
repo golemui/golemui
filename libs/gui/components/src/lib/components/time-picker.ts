@@ -178,17 +178,24 @@ export class GuiTimePicker extends LitElement {
 
   private onListChange(event: CustomEvent) {
     event.stopPropagation();
-    this.commitValue(event.detail.value);
+    // Picking an option from the list is a deliberate, final selection.
+    this.commitValue(event.detail.value, true);
     this.restoreFocusToInput();
     this.closeList();
   }
 
-  private commitValue(value: string | null | undefined) {
+  /**
+   * @param commit Marks the change as a deliberate final selection (list pick
+   *   or Enter) as opposed to continuous field editing (typing/arrows). A host
+   *   popover (the date-time calendar) closes only on a committed change, so
+   *   editing the time in place doesn't dismiss it mid-entry.
+   */
+  private commitValue(value: string | null | undefined, commit = false) {
     this.value = value ?? undefined;
     const error = this.validateBounds(this.value);
     this.dispatchEvent(
       new CustomEvent('change', {
-        detail: { value: value ?? null },
+        detail: { value: value ?? null, commit },
         bubbles: true,
         composed: true,
       }),
@@ -235,10 +242,11 @@ export class GuiTimePicker extends LitElement {
       return;
     }
 
-    if (event.key === 'Enter' && this._isListOpen) {
+    if (event.key === 'Enter') {
       const target = event.target as HTMLElement;
       if (target.tagName === 'INPUT' && target.closest('gui-time')) {
-        this.closeList();
+        if (this._isListOpen) this.closeList();
+        this.commitValue(this.value, true);
         return;
       }
     }
