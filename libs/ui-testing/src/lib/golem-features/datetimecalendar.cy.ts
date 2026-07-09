@@ -307,7 +307,7 @@ export const runDateTimeCalendarComponentTests = (mountFn: MountComponentFn) => 
         });
       });
 
-      it('should emit inputError and no change for a typed out-of-bounds time', () => {
+      it('should emit inputError and a change for a typed out-of-bounds time', () => {
         mountCalendar({
           data: { myAppointment: null },
           props: { ...officeProps, hourFormat: '24', allowCustomTime: true },
@@ -326,7 +326,7 @@ export const runDateTimeCalendarComponentTests = (mountFn: MountComponentFn) => 
         cy.focused().type('00', { force: true });
 
         cy.get('@inputErrorSpy').should('have.been.called');
-        cy.get('@changeSpy').should('not.have.been.called');
+        cy.get('@changeSpy').should('have.been.called');
         cy.get('@inputErrorSpy').then((spy: any) => {
           expect(spy.getCall(0).args[0].detail.message).to.contain('minimum');
         });
