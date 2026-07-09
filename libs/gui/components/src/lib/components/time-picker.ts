@@ -4,7 +4,7 @@ import { classMap } from 'lit/directives/class-map.js';
 import './time-input';
 import './time-list';
 import type { GuiTimeList } from './time-list';
-import { buildTimeOptions, type HourFormat, type TimeRange } from '../utils/time';
+import { buildTimeOptions, isTimeDisabled, type HourFormat, type TimeRange } from '../utils/time';
 import { addErrors, addIcon, addLabel } from '../utils/templates';
 
 @customElement('gui-time-picker')
@@ -129,10 +129,8 @@ export class GuiTimePicker extends LitElement {
           .minuteStep=${this.minuteStep}
           .minTime=${this.minTime}
           .maxTime=${this.maxTime}
-          .disabledRanges=${this.disabledRanges}
           .minTimeMessage=${this.minTimeMessage}
           .maxTimeMessage=${this.maxTimeMessage}
-          .disabledRangeMessage=${this.disabledRangeMessage}
           @blur=${this.onTimeBlur}
           @focus=${this.openList}
           @change=${this.onTimeChange}
@@ -171,7 +169,8 @@ export class GuiTimePicker extends LitElement {
   }
 
   private onTimeChange(event: CustomEvent) {
-    this.value = event.detail.value ?? undefined;
+    event.stopPropagation();
+    this.commitValue(event.detail.value);
   }
 
   private onTimeBlur() {
@@ -179,9 +178,35 @@ export class GuiTimePicker extends LitElement {
   }
 
   private onListChange(event: CustomEvent) {
-    this.value = event.detail.value;
+    event.stopPropagation();
+    this.commitValue(event.detail.value);
     this.restoreFocusToInput();
     this.closeList();
+  }
+
+  private commitValue(value: string | null | undefined) {
+    this.value = value ?? undefined;
+    const error = this.validateBounds(this.value);
+    this.dispatchEvent(
+      new CustomEvent('change', {
+        detail: { value: value ?? null },
+        bubbles: true,
+        composed: true,
+      }),
+    );
+    if (error) {
+      this.dispatchEvent(
+        new CustomEvent('inputError', { detail: { message: error }, bubbles: true, composed: true }),
+      );
+    }
+  }
+
+  private validateBounds(value: string | undefined): string | null {
+    if (!value) return null;
+    if (isTimeDisabled(value, this.disabledRanges)) {
+      return this.disabledRangeMessage ?? 'Invalid time: time is within a disabled range.';
+    }
+    return null;
   }
 
   private onKeyUp = (event: KeyboardEvent) => {
@@ -242,14 +267,7 @@ export class GuiTimePicker extends LitElement {
     }
     if (index < 0 || index >= options.length) return;
 
-    this.value = options[index].value;
-    this.dispatchEvent(
-      new CustomEvent('change', {
-        detail: { value: this.value },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    this.commitValue(options[index].value);
     this.openList();
     this.updateComplete.then(() => this._listRef?.scrollToSelectedValue());
   }

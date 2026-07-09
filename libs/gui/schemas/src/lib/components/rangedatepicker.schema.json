@@ -104,6 +104,15 @@
         "invalidDateMessage": {
           "$ref": "../common.schema.json#/$defs/localizable"
         },
+        "minDateMessage": {
+          "$ref": "../common.schema.json#/$defs/localizable"
+        },
+        "maxDateMessage": {
+          "$ref": "../common.schema.json#/$defs/localizable"
+        },
+        "disabledDateRangeMessage": {
+          "$ref": "../common.schema.json#/$defs/localizable"
+        },
         "hint": {
           "$ref": "#/$defs/hintProp"
         },
@@ -158,6 +167,15 @@
       },
       "patternProperties": {
         "^invalidDateMessage\\.[^.]+$": {
+          "$ref": "../common.schema.json#/$defs/localizable"
+        },
+        "^minDateMessage\\.[^.]+$": {
+          "$ref": "../common.schema.json#/$defs/localizable"
+        },
+        "^maxDateMessage\\.[^.]+$": {
+          "$ref": "../common.schema.json#/$defs/localizable"
+        },
+        "^disabledDateRangeMessage\\.[^.]+$": {
           "$ref": "../common.schema.json#/$defs/localizable"
         },
         "^hint\\.[^.]+$": {

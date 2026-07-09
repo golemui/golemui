@@ -4,7 +4,14 @@ import { classMap } from 'lit/directives/class-map.js';
 import type { DateRange, DisabledTimeRange } from '@golemui/gui-shared/internals';
 import './date-time-input';
 import './date-time-calendar';
-import type { HourFormat } from '../utils/time';
+import { dateBoundsError, toISODateString } from '../utils/date';
+import {
+  isTimeDisabled,
+  parseISODateTimeString,
+  resolveDisabledTimeRangesForDate,
+  toISOTimeString,
+  type HourFormat,
+} from '../utils/time';
 import { addErrors, addIcon, addLabel } from '../utils/templates';
 
 @customElement('gui-date-time-picker')
@@ -64,6 +71,13 @@ export class GuiDateTimePicker extends LitElement {
     | boolean
     | undefined = false;
   @property({ type: String, attribute: 'invalid-date-message' }) invalidDateMessage:
+    | string
+    | undefined = undefined;
+  @property({ type: String, attribute: 'min-date-message' }) minDateMessage: string | undefined =
+    undefined;
+  @property({ type: String, attribute: 'max-date-message' }) maxDateMessage: string | undefined =
+    undefined;
+  @property({ type: String, attribute: 'disabled-date-range-message' }) disabledDateRangeMessage:
     | string
     | undefined = undefined;
   @property({ type: String, attribute: 'min-time-message' }) minTimeMessage: string | undefined =
@@ -207,7 +221,11 @@ export class GuiDateTimePicker extends LitElement {
           .localeId=${this.localeId}
           .hourFormat=${this.hourFormat}
           .minuteStep=${this.minuteStep}
+          .minTime=${this.minTime}
+          .maxTime=${this.maxTime}
           .invalidDateMessage=${this.invalidDateMessage}
+          .minTimeMessage=${this.minTimeMessage}
+          .maxTimeMessage=${this.maxTimeMessage}
           @blur=${this.onDateBlur}
           @focus=${this.openCalendar}
           @change=${this.onDateChange}
@@ -229,7 +247,8 @@ export class GuiDateTimePicker extends LitElement {
   }
 
   private onDateChange(event: CustomEvent) {
-    this.value = event.detail.value ?? undefined;
+    event.stopPropagation();
+    this.commitValue(event.detail.value);
   }
 
   private onDateBlur() {
@@ -242,10 +261,49 @@ export class GuiDateTimePicker extends LitElement {
       return;
     }
 
-    this.value = event.detail.value ?? undefined;
+    event.stopPropagation();
+    this.commitValue(event.detail.value);
     if (event.detail.value) {
       this.closeCalendar();
     }
+  }
+
+  private commitValue(value: string | null | undefined) {
+    this.value = value ?? undefined;
+    const error = this.validateBounds(this.value);
+    this.dispatchEvent(
+      new CustomEvent('change', {
+        detail: { value: value ?? null },
+        bubbles: true,
+        composed: true,
+      }),
+    );
+    if (error) {
+      this.dispatchEvent(
+        new CustomEvent('inputError', { detail: { message: error }, bubbles: true, composed: true }),
+      );
+    }
+  }
+
+  private validateBounds(value: string | undefined): string | null {
+    if (!value) return null;
+    const date = parseISODateTimeString(value);
+    if (isNaN(date.getTime())) return null;
+
+    const isoDate = toISODateString(date);
+    const dateError = dateBoundsError(isoDate, this.minDate, this.maxDate, this.disabledRanges, {
+      minDateMessage: this.minDateMessage,
+      maxDateMessage: this.maxDateMessage,
+      disabledDateRangeMessage: this.disabledDateRangeMessage,
+    });
+    if (dateError) return dateError;
+
+    // Disabled time ranges are date-scoped, so resolve them for the value's day.
+    const ranges = resolveDisabledTimeRangesForDate(this.disabledTimeRanges, isoDate);
+    if (isTimeDisabled(toISOTimeString(date), ranges)) {
+      return this.disabledTimeRangeMessage ?? 'Invalid time: time is within a disabled range.';
+    }
+    return null;
   }
 
   // The calendar's blur already bubbles up to the host, so only close here.

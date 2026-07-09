@@ -5,6 +5,7 @@ import { repeat } from 'lit-html/directives/repeat.js';
 import {
   getMonthYearParts,
   getWeekdayLabels,
+  isDateDisabled,
   parseISODateString,
   toISODateString,
   weekDaysOrder,
@@ -569,23 +570,12 @@ export abstract class AbstractCalendar extends LitElement {
   }
 
   protected isDisabled(date: Date): boolean {
-    const isoDate = toISODateString(date);
-
-    if (this.minDate && isoDate < this.minDate) return true;
-    if (this.maxDate && isoDate > this.maxDate) return true;
-
-    if (this.disabledRanges && this.disabledRanges.length > 0) {
-      for (const range of this.disabledRanges) {
-        const start = range.start.split('T')[0];
-        const end = range.end ? range.end.split('T')[0] : start;
-
-        if (isoDate >= start && isoDate <= end) {
-          return true;
-        }
-      }
-    }
-
-    return false;
+    return isDateDisabled(
+      toISODateString(date),
+      this.minDate,
+      this.maxDate,
+      this.disabledRanges,
+    );
   }
 
   protected prevMonth() {

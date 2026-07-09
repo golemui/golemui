@@ -65,6 +65,9 @@ export function RangeDatePicker(widgetInstance: WithWidget) {
         disabledRanges={templateData.disabledRanges}
         numberOfMonths={templateData.numberOfMonths}
         invalidDateMessage={templateData.invalidDateMessage as string}
+        minDateMessage={templateData.minDateMessage as string}
+        maxDateMessage={templateData.maxDateMessage as string}
+        disabledDateRangeMessage={templateData.disabledDateRangeMessage as string}
         onChange={handleChange}
         onBlur={onBlur}
         onInputError={handleInputError}

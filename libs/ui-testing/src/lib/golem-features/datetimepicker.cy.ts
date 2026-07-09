@@ -142,6 +142,100 @@ export const runDateTimePickerComponentTests = (mountFn: MountComponentFn) => {
       });
     });
 
+    it('should reject an out-of-bounds time toggled in the field with inputError', () => {
+      mountPicker({
+        data: { myAppointment: '2026-02-13T09:30:00' },
+        props: { ...officeProps, maxTimeMessage: 'Office closes at 11' },
+      });
+
+      const inputErrorSpy = cy.spy().as('inputErrorSpy');
+      const changeSpy = cy.spy().as('changeSpy');
+      cy.get('gui-date-time-picker').then(($el) => {
+        $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
+        $el[0].addEventListener('change', changeSpy as unknown as EventListener);
+      });
+
+      // 09:30 AM is valid; toggling the field's period to PM makes 21:30, past
+      // the 11:00 maxTime — the field must surface an inputError, not commit
+      cy.get('gui-date-time-picker gui-date-time button[data-type="dayPeriod"]').click();
+
+      cy.get('@inputErrorSpy').then((spy: any) => {
+        expect(spy.getCall(0).args[0].detail.message).to.equal('Office closes at 11');
+      });
+      cy.get('@changeSpy').should('not.have.been.called');
+    });
+
+    it('should advance the value and emit inputError when the field date lands in a disabled range', () => {
+      mountPicker({
+        props: {
+          ...officeProps,
+          hourFormat: '24',
+          disabledRanges: [{ start: '2026-02-20', end: '2026-02-22' }],
+          disabledDateRangeMessage: 'That week is blocked',
+        },
+      });
+
+      const changeSpy = cy.spy().as('changeSpy');
+      const inputErrorSpy = cy.spy().as('inputErrorSpy');
+      cy.get('gui-date-time-picker').then(($el) => {
+        $el[0].addEventListener('change', changeSpy as unknown as EventListener);
+        $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
+      });
+
+      // Type a full date-time on a disabled day. Unlike a time bound, the date is
+      // validated by the picker, so the value advances (the field reflects '20')
+      // and the picker surfaces the disabled-date error.
+      cy.get(sel.month).click();
+      cy.focused().type('02');
+      cy.focused().type('20');
+      cy.focused().type('2026');
+      cy.focused().type('10');
+      cy.focused().type('30');
+
+      cy.get(sel.day).should('have.value', '20');
+      cy.get('@changeSpy').should('have.been.called');
+      cy.get('@inputErrorSpy').then((spy: any) => {
+        expect(spy.getCall(0).args[0].detail.message).to.equal('That week is blocked');
+      });
+    });
+
+    it('should advance the value and emit inputError when the field time lands in a disabled time range', () => {
+      mountPicker({
+        props: {
+          minTime: '09:00:00',
+          maxTime: '11:00:00',
+          minuteStep: 30,
+          hourFormat: '24',
+          disabledTimeRanges: [{ start: '10:00:00', end: '10:30:00' }],
+          disabledTimeRangeMessage: 'Reserved for standup',
+        },
+      });
+
+      const changeSpy = cy.spy().as('changeSpy');
+      const inputErrorSpy = cy.spy().as('inputErrorSpy');
+      cy.get('gui-date-time-picker').then(($el) => {
+        $el[0].addEventListener('change', changeSpy as unknown as EventListener);
+        $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
+      });
+
+      // Type a full date-time whose time (10:15) is inside the disabled range but
+      // within min/max, so the field commits it and the picker raises the
+      // disabled-time-range error while the value advances.
+      cy.get(sel.month).click();
+      cy.focused().type('02');
+      cy.focused().type('13');
+      cy.focused().type('2026');
+      cy.focused().type('10');
+      cy.focused().type('15');
+
+      cy.get(sel.hour).should('have.value', '10');
+      cy.get(sel.minute).should('have.value', '15');
+      cy.get('@changeSpy').should('have.been.called');
+      cy.get('@inputErrorSpy').then((spy: any) => {
+        expect(spy.getCall(0).args[0].detail.message).to.equal('Reserved for standup');
+      });
+    });
+
     it('should keep the popover open when keyboard navigation crosses a month boundary', () => {
       mountPicker({ data: { myAppointment: '2026-06-15T09:30:00' }, props: officeProps });
 

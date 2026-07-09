@@ -17,6 +17,7 @@ export const runRangeDatePickerComponentTests = (mountFn: MountComponentFn) => {
 
     const mountRangeDatePicker = (options?: {
       data?: Record<string, any>;
+      props?: Record<string, any>;
       formSubmit?: (event: any) => void;
       readonly?: boolean;
       disabled?: boolean;
@@ -31,6 +32,7 @@ export const runRangeDatePickerComponentTests = (mountFn: MountComponentFn) => {
               kind: 'input',
               type: 'rangeDatePicker',
               path: 'myRanges',
+              ...(options?.props ? { props: options.props } : {}),
               ...(options?.readonly !== undefined ? { readonly: options.readonly } : {}),
               ...(options?.disabled !== undefined ? { disabled: options.disabled } : {}),
             },
@@ -164,6 +166,39 @@ export const runRangeDatePickerComponentTests = (mountFn: MountComponentFn) => {
       cy.get(sel.dayButton('2026-06-18')).click();
       cy.get(sel.dayButton('2026-06-20')).click();
       cy.get(sel.pillText).should('have.length', 1);
+    });
+
+    it('should advance the value and emit inputError when a typed range endpoint is out of bounds', () => {
+      mountRangeDatePicker({
+        props: { maxDate: '2026-06-20', maxDateMessage: 'Outside the window' },
+      });
+
+      const changeSpy = cy.spy().as('changeSpy');
+      const inputErrorSpy = cy.spy().as('inputErrorSpy');
+      cy.get('gui-range-date-picker').then(($el) => {
+        $el[0].addEventListener('change', changeSpy as unknown as EventListener);
+        $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
+      });
+
+      // Type a full range 06/25 – 06/26, both past maxDate, and press Enter to
+      // create the pill. gui-range-date has no date bounds so it commits the
+      // range; the picker validates each endpoint. The value advances (a pill
+      // appears) and the picker surfaces the out-of-bounds error.
+      cy.get(sel.startMonth).click();
+      cy.focused().type('06');
+      cy.focused().type('25');
+      cy.focused().type('2026');
+      cy.get('gui-range-date input[data-group="end"][data-type="month"]').click();
+      cy.focused().type('06');
+      cy.focused().type('26');
+      cy.focused().type('2026');
+      cy.focused().type('{enter}');
+
+      cy.get(sel.pillText).should('contain', '06/25/2026');
+      cy.get('@changeSpy').should('have.been.called');
+      cy.get('@inputErrorSpy').then((spy: any) => {
+        expect(spy.getCall(0).args[0].detail.message).to.equal('Outside the window');
+      });
     });
   });
 };

@@ -67,6 +67,9 @@ export function DateTimePicker(widgetInstance: WithWidget) {
         disabledTimeRanges={templateData.disabledTimeRanges}
         allowCustomTime={templateData.allowCustomTime}
         invalidDateMessage={templateData.invalidDateMessage as string}
+        minDateMessage={templateData.minDateMessage as string}
+        maxDateMessage={templateData.maxDateMessage as string}
+        disabledDateRangeMessage={templateData.disabledDateRangeMessage as string}
         minTimeMessage={templateData.minTimeMessage as string}
         maxTimeMessage={templateData.maxTimeMessage as string}
         disabledTimeRangeMessage={templateData.disabledTimeRangeMessage as string}

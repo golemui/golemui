@@ -363,11 +363,19 @@ export type RangeDateInputProps = {
   invalidDateMessage?: Localizable;
 };
 
-export type DatePickerProps = CalendarProps & DateinputProps;
+export type DateBoundsMessageProps = {
+  minDateMessage?: Localizable;
+  maxDateMessage?: Localizable;
+  disabledDateRangeMessage?: Localizable;
+};
 
-export type DateTimePickerProps = DateTimeCalendarProps & DateTimeInputProps;
+export type DatePickerProps = CalendarProps & DateinputProps & DateBoundsMessageProps;
 
-export type RangeDatePickerProps = RangeCalendarProps & RangeDateInputProps;
+export type DateTimePickerProps = DateTimeCalendarProps &
+  DateTimeInputProps &
+  DateBoundsMessageProps;
+
+export type RangeDatePickerProps = RangeCalendarProps & RangeDateInputProps & DateBoundsMessageProps;
 
 export type NumberinputProps = {
   placeholder?: string;

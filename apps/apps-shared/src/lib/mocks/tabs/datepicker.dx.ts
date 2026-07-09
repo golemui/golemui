@@ -34,6 +34,8 @@ export const datePickerTab = gui.layouts.flex([
     label: 'Disabled date ranges',
     defaultValue: '2026-02-13',
     icon: 'calendar_month',
+    minDate: '2026-02-01',
+    maxDate: '2026-02-28',
     disabledRanges: [
       {
         start: '2026-02-09',

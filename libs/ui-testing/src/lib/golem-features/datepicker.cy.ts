@@ -1,4 +1,4 @@
-import { defineForm } from '@golemui/core';
+import { defineForm, identityTranslator } from '@golemui/core';
 import { type MountComponentFn } from '../utils';
 
 export const runDatePickerComponentTests = (mountFn: MountComponentFn) => {
@@ -24,6 +24,36 @@ export const runDatePickerComponentTests = (mountFn: MountComponentFn) => {
           ],
         }),
         formSubmit,
+      });
+    };
+
+    const mountWithProps = (options: {
+      data?: Record<string, any>;
+      props?: Record<string, any>;
+      formSubmit?: (event: any) => void;
+    }) => {
+      mountFn({
+        localization: identityTranslator('en-US'),
+        data: options.data,
+        formDef: defineForm({
+          form: [
+            {
+              uid: 'testSubject',
+              kind: 'input',
+              type: 'datePicker',
+              path: 'myDate',
+              ...(options.props ? { props: options.props } : {}),
+            },
+            {
+              uid: 'submitBtn',
+              kind: 'action',
+              type: 'button',
+              label: 'Submit',
+              actionType: 'submit',
+            },
+          ],
+        }),
+        formSubmit: options.formSubmit,
       });
     };
 
@@ -108,6 +138,33 @@ export const runDatePickerComponentTests = (mountFn: MountComponentFn) => {
       cy.get('@formSubmitHandler').then((stub: any) => {
         const submittedData = stub.getCall(0).args[0].data;
         expect(submittedData).to.deep.equal({ myDate: '2026-06-18' });
+      });
+    });
+
+    it('should advance the value and emit inputError when a typed date is out of bounds', () => {
+      mountWithProps({
+        props: { maxDate: '2026-06-20', maxDateMessage: 'Too far out' },
+      });
+
+      const changeSpy = cy.spy().as('changeSpy');
+      const inputErrorSpy = cy.spy().as('inputErrorSpy');
+      cy.get('gui-date-picker').then(($el) => {
+        $el[0].addEventListener('change', changeSpy as unknown as EventListener);
+        $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
+      });
+
+      // Type a full date 06/25/2026 (en-US order), past maxDate. gui-date has no
+      // date bounds, so it commits the date; the picker validates it. The value
+      // advances (the field shows the 25th) and the picker surfaces the error.
+      cy.get('gui-date input[data-type="month"]').click();
+      cy.focused().type('06');
+      cy.focused().type('25');
+      cy.focused().type('2026');
+
+      cy.get('gui-date input[data-type="day"]').should('have.value', '25');
+      cy.get('@changeSpy').should('have.been.called');
+      cy.get('@inputErrorSpy').then((spy: any) => {
+        expect(spy.getCall(0).args[0].detail.message).to.equal('Too far out');
       });
     });
   });

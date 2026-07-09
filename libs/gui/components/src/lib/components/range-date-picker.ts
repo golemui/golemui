@@ -4,6 +4,7 @@ import { classMap } from 'lit/directives/class-map.js';
 import type { DateRange } from '@golemui/gui-shared/internals';
 import './range-date-input';
 import './range-calendar';
+import { dateBoundsError } from '../utils/date';
 import { addErrors, addIcon, addLabel } from '../utils/templates';
 
 @customElement('gui-range-date-picker')
@@ -62,6 +63,13 @@ export class GuiRangeDatePicker extends LitElement {
   @property({ type: Number, attribute: 'number-of-months' }) numberOfMonths: number | undefined =
     undefined;
   @property({ type: String, attribute: 'invalid-date-message' }) invalidDateMessage:
+    | string
+    | undefined = undefined;
+  @property({ type: String, attribute: 'min-date-message' }) minDateMessage: string | undefined =
+    undefined;
+  @property({ type: String, attribute: 'max-date-message' }) maxDateMessage: string | undefined =
+    undefined;
+  @property({ type: String, attribute: 'disabled-date-range-message' }) disabledDateRangeMessage:
     | string
     | undefined = undefined;
 
@@ -228,7 +236,8 @@ export class GuiRangeDatePicker extends LitElement {
   }
 
   private onDateChange(event: CustomEvent) {
-    this.value = event.detail.value ?? undefined;
+    event.stopPropagation();
+    this.commitValue(event.detail.value);
   }
 
   private onDateBlur() {
@@ -236,7 +245,48 @@ export class GuiRangeDatePicker extends LitElement {
   }
 
   private onCalendarChange(event: CustomEvent) {
-    this.value = event.detail.value ?? undefined;
+    event.stopPropagation();
+    this.commitValue(event.detail.value);
+  }
+
+  private commitValue(value: DateRange[] | null | undefined) {
+    this.value = value ?? undefined;
+    const error = this.validateBounds(this.value);
+    this.dispatchEvent(
+      new CustomEvent('change', {
+        detail: { value: value ?? null },
+        bubbles: true,
+        composed: true,
+      }),
+    );
+    if (error) {
+      this.dispatchEvent(
+        new CustomEvent('inputError', { detail: { message: error }, bubbles: true, composed: true }),
+      );
+    }
+  }
+
+  private validateBounds(value: DateRange[] | undefined): string | null {
+    if (!value || value.length === 0) return null;
+    const messages = {
+      minDateMessage: this.minDateMessage,
+      maxDateMessage: this.maxDateMessage,
+      disabledDateRangeMessage: this.disabledDateRangeMessage,
+    };
+    for (const range of value) {
+      for (const endpoint of [range.start, range.end]) {
+        if (!endpoint) continue;
+        const error = dateBoundsError(
+          endpoint,
+          this.minDate,
+          this.maxDate,
+          this.disabledRanges,
+          messages,
+        );
+        if (error) return error;
+      }
+    }
+    return null;
   }
 
   private onCalendarBlur() {

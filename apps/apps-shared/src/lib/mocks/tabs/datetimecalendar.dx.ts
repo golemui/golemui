@@ -6,6 +6,7 @@ export const dateTimeCalendarTab = gui.layouts.flex([
     minTime: '09:00:00',
     maxTime: '18:00:00',
     minuteStep: 30,
+    allowCustomTime: true,
   }),
   gui.inputs.dateTimeCalendar('dateTimeCalendarDefault', {
     label: 'With default value',

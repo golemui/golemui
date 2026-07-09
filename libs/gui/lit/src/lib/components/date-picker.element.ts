@@ -77,6 +77,9 @@ export class DatePickerElement extends LitElement implements WithWidget {
         .disabledRanges=${templateData.disabledRanges}
         .numberOfMonths=${templateData.numberOfMonths}
         .invalidDateMessage=${templateData.invalidDateMessage as string}
+        .minDateMessage=${templateData.minDateMessage as string}
+        .maxDateMessage=${templateData.maxDateMessage as string}
+        .disabledDateRangeMessage=${templateData.disabledDateRangeMessage as string}
         @inputError=${this.onInputError}
         @blur=${() => this.adapter.onBlur()}
         @change=${this.valueChanged}

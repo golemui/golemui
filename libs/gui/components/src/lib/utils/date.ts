@@ -35,6 +35,85 @@ export function parseISODateString(value: string): Date {
 }
 
 /**
+ * Determines whether an ISO calendar day (YYYY-MM-DD) falls outside the allowed
+ * bounds — before `minDate`, after `maxDate`, or inside any `disabledRanges`
+ * entry (inclusive; an open-ended range with no `end` disables its `start` day
+ * only). All comparisons are lexical on the date-only portion, which is safe for
+ * zero-padded ISO dates. Shared by the calendars (rendering disabled days) and
+ * the pickers (validating a selected value).
+ *
+ * @param {string} isoDate - The ISO date to test (YYYY-MM-DD, or a longer ISO
+ *   string whose date portion is used).
+ * @param {string} [minDate] - Earliest allowed ISO date, inclusive.
+ * @param {string} [maxDate] - Latest allowed ISO date, inclusive.
+ * @param {DateRange[]} [disabledRanges] - Ranges of disabled days.
+ * @return {boolean} True when the day is disabled.
+ */
+export function isDateDisabled(
+  isoDate: string,
+  minDate?: string,
+  maxDate?: string,
+  disabledRanges?: DateRange[],
+): boolean {
+  const day = isoDate.split('T')[0];
+
+  if (minDate && day < minDate.split('T')[0]) return true;
+  if (maxDate && day > maxDate.split('T')[0]) return true;
+
+  if (disabledRanges && disabledRanges.length > 0) {
+    for (const range of disabledRanges) {
+      const start = range.start.split('T')[0];
+      const end = range.end ? range.end.split('T')[0] : start;
+      if (day >= start && day <= end) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+export interface DateBoundsMessages {
+  minDateMessage?: string;
+  maxDateMessage?: string;
+  disabledDateRangeMessage?: string;
+}
+
+/**
+ * Validates an ISO day against `minDate`/`maxDate`/`disabledRanges` and returns
+ * the message for the first violated constraint (falling back to an English
+ * default), or null when the day is allowed. This is the picker-side companion
+ * to {@link isDateDisabled}: the calendars render disabled days from the boolean
+ * predicate, while the pickers surface a specific error for a selected value.
+ *
+ * @param {string} isoDate - The ISO date to test (its date portion is used).
+ * @param {string} [minDate] - Earliest allowed ISO date, inclusive.
+ * @param {string} [maxDate] - Latest allowed ISO date, inclusive.
+ * @param {DateRange[]} [disabledRanges] - Ranges of disabled days.
+ * @param {DateBoundsMessages} [messages] - Overrides for each constraint message.
+ * @return {string | null} The violated-constraint message, or null.
+ */
+export function dateBoundsError(
+  isoDate: string,
+  minDate?: string,
+  maxDate?: string,
+  disabledRanges?: DateRange[],
+  messages?: DateBoundsMessages,
+): string | null {
+  const day = isoDate.split('T')[0];
+  if (minDate && day < minDate.split('T')[0]) {
+    return messages?.minDateMessage ?? 'Invalid date: date is before the minimum allowed date.';
+  }
+  if (maxDate && day > maxDate.split('T')[0]) {
+    return messages?.maxDateMessage ?? 'Invalid date: date is after the maximum allowed date.';
+  }
+  if (isDateDisabled(day, undefined, undefined, disabledRanges)) {
+    return messages?.disabledDateRangeMessage ?? 'Invalid date: date is within a disabled range.';
+  }
+  return null;
+}
+
+/**
  * Returns the locale-ordered numeric date parts (day, month, year and literal
  * separators) used to lay out segmented date inputs.
  *

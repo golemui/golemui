@@ -82,6 +82,9 @@ onUnmounted(() => {
       :disabledRanges.prop="templateData.disabledRanges"
       :numberOfMonths.prop="numberOfMonths"
       :invalidDateMessage="templateData.invalidDateMessage"
+      :minDateMessage="templateData.minDateMessage"
+      :maxDateMessage="templateData.maxDateMessage"
+      :disabledDateRangeMessage="templateData.disabledDateRangeMessage"
     />
   </div>
 </template>

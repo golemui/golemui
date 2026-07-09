@@ -347,11 +347,37 @@ export const runTimePickerComponentTests = (mountFn: MountComponentFn) => {
         });
       });
 
-      it('should emit inputError for a typed time inside a disabled range', () => {
+      it('should advance the value and emit inputError for a typed time inside a disabled range', () => {
         mountTimePicker({ props: { ...officeProps, allowCustomTime: true } });
 
+        // The picker owns disabled-range validation now: the value advances (so
+        // the field reflects it) and the picker — not the field — surfaces the
+        // error, keeping the form invalid.
+        const changeSpy = cy.spy().as('changeSpy');
         const inputErrorSpy = cy.spy().as('inputErrorSpy');
-        cy.get('gui-time').then(($el) => {
+        cy.get('gui-time-picker').then(($el) => {
+          $el[0].addEventListener('change', changeSpy as unknown as EventListener);
+          $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
+        });
+
+        cy.get(sel.hour).type('10');
+        cy.focused().type('15', { force: true });
+
+        cy.get(sel.hour).should('have.value', '10');
+        cy.get(sel.minute).should('have.value', '15');
+        cy.get('@changeSpy').should('have.been.called');
+        cy.get('@inputErrorSpy').then((spy: any) => {
+          expect(spy.getCall(0).args[0].detail.message).to.contain('disabled range');
+        });
+      });
+
+      it('should emit the custom disabledRangeMessage from the picker', () => {
+        mountTimePicker({
+          props: { ...officeProps, allowCustomTime: true, disabledRangeMessage: 'Slot is booked' },
+        });
+
+        const inputErrorSpy = cy.spy().as('inputErrorSpy');
+        cy.get('gui-time-picker').then(($el) => {
           $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
         });
 
@@ -359,7 +385,7 @@ export const runTimePickerComponentTests = (mountFn: MountComponentFn) => {
         cy.focused().type('15', { force: true });
 
         cy.get('@inputErrorSpy').then((spy: any) => {
-          expect(spy.getCall(0).args[0].detail.message).to.contain('disabled range');
+          expect(spy.getCall(0).args[0].detail.message).to.equal('Slot is booked');
         });
       });
 
