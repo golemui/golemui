@@ -70,6 +70,14 @@ export class DateTimeElement extends LitElement implements WithWidget {
         .icon=${this.adapter.templateData.icon}
         .localeId=${this.adapter.templateData.lang}
         .invalidDateMessage=${this.adapter.templateData.invalidDateMessage as string}
+        .minDate=${this.adapter.templateData.minDate}
+        .maxDate=${this.adapter.templateData.maxDate}
+        .minTime=${this.adapter.templateData.minTime}
+        .maxTime=${this.adapter.templateData.maxTime}
+        .minDateMessage=${this.adapter.templateData.minDateMessage as string}
+        .maxDateMessage=${this.adapter.templateData.maxDateMessage as string}
+        .minTimeMessage=${this.adapter.templateData.minTimeMessage as string}
+        .maxTimeMessage=${this.adapter.templateData.maxTimeMessage as string}
         .hourFormat=${this.adapter.templateData.hourFormat}
         .minuteStep=${this.adapter.templateData.minuteStep}
         @inputError=${this.onInputError}

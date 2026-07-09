@@ -36,6 +36,10 @@ export class TimeComponent implements OnInit, OnDestroy, WithWidget {
     this.adapter.valueChanged((event as CustomEvent).detail.value);
   }
 
+  onInputError(event: Event) {
+    this.adapter.injectValidationIssues([(event as CustomEvent).detail.message]);
+  }
+
   ngOnDestroy(): void {
     this.adapter.destroy();
   }

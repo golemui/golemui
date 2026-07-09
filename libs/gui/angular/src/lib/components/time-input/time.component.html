@@ -14,6 +14,11 @@
   [localeId]="templateData.lang"
   [hourFormat]="templateData.hourFormat"
   [minuteStep]="templateData.minuteStep"
+  [minTime]="templateData.minTime"
+  [maxTime]="templateData.maxTime"
+  [minTimeMessage]="templateData.minTimeMessage"
+  [maxTimeMessage]="templateData.maxTimeMessage"
   (change)="onChangeTime($event)"
+  (inputError)="onInputError($event)"
   (blur)="adapter.onBlur()"
 ></gui-time>

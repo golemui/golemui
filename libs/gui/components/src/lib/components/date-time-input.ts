@@ -10,7 +10,7 @@ import {
   type DateTimePartDescriptor,
   type DateTimePartType,
 } from './abstract-date-time-input';
-import { maxValidDayInMonth } from '../utils/date';
+import { dateBoundsError, maxValidDayInMonth, toISODateString } from '../utils/date';
 import {
   compareISOTimes,
   from24Hour,
@@ -34,8 +34,14 @@ export class GuiDateTime extends AbstractDateTimeInput {
   @property({ type: String, attribute: 'hour-format' }) hourFormat: HourFormat | undefined =
     undefined;
   @property({ type: Number, attribute: 'minute-step' }) minuteStep: number | undefined = 1;
+  @property({ type: String, attribute: 'min-date' }) minDate: string | undefined = undefined;
+  @property({ type: String, attribute: 'max-date' }) maxDate: string | undefined = undefined;
   @property({ type: String, attribute: 'min-time' }) minTime: string | undefined = undefined;
   @property({ type: String, attribute: 'max-time' }) maxTime: string | undefined = undefined;
+  @property({ type: String, attribute: 'min-date-message' }) minDateMessage: string | undefined =
+    undefined;
+  @property({ type: String, attribute: 'max-date-message' }) maxDateMessage: string | undefined =
+    undefined;
   @property({ type: String, attribute: 'min-time-message' }) minTimeMessage: string | undefined =
     undefined;
   @property({ type: String, attribute: 'max-time-message' }) maxTimeMessage: string | undefined =
@@ -242,7 +248,9 @@ export class GuiDateTime extends AbstractDateTimeInput {
         const candidate = toISODateTimeString(
           new Date(yearVal, monthVal - 1, dayVal, hour24, minuteVal, 0),
         );
-        const boundsError = this.validateTimeBounds(hour24, minuteVal);
+        const boundsError =
+          this.validateDateBounds(yearVal, monthVal, dayVal) ??
+          this.validateTimeBounds(hour24, minuteVal);
 
         if (boundsError) {
           this.dispatchEvent(
@@ -273,6 +281,19 @@ export class GuiDateTime extends AbstractDateTimeInput {
     }
 
     this.requestUpdate();
+  }
+
+  /**
+   * Checks the date portion against the scalar minDate/maxDate bounds. Returns
+   * the error message for the first violated constraint, or null. Disabled date
+   * ranges live in the date-time picker (which owns `disabledRanges`).
+   */
+  private validateDateBounds(year: number, month: number, day: number): string | null {
+    const iso = toISODateString(new Date(year, month - 1, day));
+    return dateBoundsError(iso, this.minDate, this.maxDate, undefined, {
+      minDateMessage: this.minDateMessage,
+      maxDateMessage: this.maxDateMessage,
+    });
   }
 
   /**

@@ -327,9 +327,11 @@ export const runTimePickerComponentTests = (mountFn: MountComponentFn) => {
         });
       });
 
-      it('should emit inputError and no change for a typed time out of bounds', () => {
+      it('should advance the value and emit inputError for a typed time out of bounds', () => {
         mountTimePicker({ props: { ...officeProps, allowCustomTime: true } });
 
+        // The field owns minTime/maxTime: an out-of-bounds time advances the
+        // value (change) alongside the error, so the entry is reflected.
         const changeSpy = cy.spy().as('changeSpy');
         const inputErrorSpy = cy.spy().as('inputErrorSpy');
         cy.get('gui-time').then(($el) => {
@@ -340,8 +342,7 @@ export const runTimePickerComponentTests = (mountFn: MountComponentFn) => {
         cy.get(sel.hour).type('08');
         cy.focused().type('00', { force: true });
 
-        cy.get('@inputErrorSpy').should('have.been.called');
-        cy.get('@changeSpy').should('not.have.been.called');
+        cy.get('@changeSpy').should('have.been.called');
         cy.get('@inputErrorSpy').then((spy: any) => {
           expect(spy.getCall(0).args[0].detail.message).to.contain('minimum');
         });

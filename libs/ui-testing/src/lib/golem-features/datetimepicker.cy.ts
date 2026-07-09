@@ -142,7 +142,7 @@ export const runDateTimePickerComponentTests = (mountFn: MountComponentFn) => {
       });
     });
 
-    it('should reject an out-of-bounds time toggled in the field with inputError', () => {
+    it('should advance the value and emit inputError for an out-of-bounds time toggled in the field', () => {
       mountPicker({
         data: { myAppointment: '2026-02-13T09:30:00' },
         props: { ...officeProps, maxTimeMessage: 'Office closes at 11' },
@@ -156,13 +156,13 @@ export const runDateTimePickerComponentTests = (mountFn: MountComponentFn) => {
       });
 
       // 09:30 AM is valid; toggling the field's period to PM makes 21:30, past
-      // the 11:00 maxTime — the field must surface an inputError, not commit
+      // the 11:00 maxTime — the value advances (change) alongside the error.
       cy.get('gui-date-time-picker gui-date-time button[data-type="dayPeriod"]').click();
 
+      cy.get('@changeSpy').should('have.been.called');
       cy.get('@inputErrorSpy').then((spy: any) => {
         expect(spy.getCall(0).args[0].detail.message).to.equal('Office closes at 11');
       });
-      cy.get('@changeSpy').should('not.have.been.called');
     });
 
     it('should advance the value and emit inputError when the field date lands in a disabled range', () => {

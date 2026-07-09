@@ -71,6 +71,11 @@ export class TimeElement extends LitElement implements WithWidget {
         .localeId=${this.adapter.templateData.lang}
         .hourFormat=${this.adapter.templateData.hourFormat}
         .minuteStep=${this.adapter.templateData.minuteStep}
+        .minTime=${this.adapter.templateData.minTime}
+        .maxTime=${this.adapter.templateData.maxTime}
+        .minTimeMessage=${this.adapter.templateData.minTimeMessage as string}
+        .maxTimeMessage=${this.adapter.templateData.maxTimeMessage as string}
+        @inputError=${this.onInputError}
         @blur=${() => this.adapter.onBlur()}
         @change=${this.valueChanged}
       ></gui-time>
@@ -80,6 +85,10 @@ export class TimeElement extends LitElement implements WithWidget {
   valueChanged(event: CustomEvent) {
     this.adapter.injectValidationIssues(null);
     this.adapter.valueChanged(event.detail.value);
+  }
+
+  onInputError(event: CustomEvent) {
+    this.adapter.injectValidationIssues([event.detail.message]);
   }
 
   override disconnectedCallback() {

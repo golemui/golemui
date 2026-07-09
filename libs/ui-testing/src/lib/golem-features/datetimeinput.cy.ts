@@ -328,5 +328,59 @@ export const runDateTimeInputComponentTests = (mountFn: MountComponentFn) => {
         cy.get(sel.dayPeriod).should('be.disabled');
       });
     });
+
+    describe('bounds validation', () => {
+      it('should emit change and inputError when the date is past maxDate', () => {
+        mountDateTimeInput({
+          lang: 'en-GB',
+          props: { maxDate: '2026-06-20', maxDateMessage: 'Date too far out' },
+        });
+
+        const changeSpy = cy.spy().as('changeSpy');
+        const inputErrorSpy = cy.spy().as('inputErrorSpy');
+        cy.get('gui-date-time').then(($el) => {
+          $el[0].addEventListener('change', changeSpy as unknown as EventListener);
+          $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
+        });
+
+        // en-GB orders day/month/year and renders 24h; 25/06/2026 10:30 is past maxDate
+        cy.get(sel.day).click();
+        cy.focused().type('25');
+        cy.focused().type('06');
+        cy.focused().type('2026');
+        cy.focused().type('10');
+        cy.focused().type('30');
+
+        cy.get(sel.day).should('have.value', '25');
+        cy.get('@changeSpy').should('have.been.called');
+        cy.get('@inputErrorSpy').then((spy: any) => {
+          expect(spy.getCall(0).args[0].detail.message).to.equal('Date too far out');
+        });
+      });
+
+      it('should emit change and inputError when the time is past maxTime', () => {
+        mountDateTimeInput({
+          lang: 'en-GB',
+          props: { maxTime: '17:00:00', maxTimeMessage: 'Time too late' },
+        });
+
+        const inputErrorSpy = cy.spy().as('inputErrorSpy');
+        cy.get('gui-date-time').then(($el) => {
+          $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
+        });
+
+        // 15/06/2026 18:00 is a valid date but past maxTime
+        cy.get(sel.day).click();
+        cy.focused().type('15');
+        cy.focused().type('06');
+        cy.focused().type('2026');
+        cy.focused().type('18');
+        cy.focused().type('00');
+
+        cy.get('@inputErrorSpy').then((spy: any) => {
+          expect(spy.getCall(0).args[0].detail.message).to.equal('Time too late');
+        });
+      });
+    });
   });
 };

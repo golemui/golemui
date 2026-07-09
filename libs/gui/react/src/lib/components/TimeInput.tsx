@@ -26,14 +26,20 @@ export function TimeInput(widgetInstance: WithWidget) {
         onValueChanged(e.detail.value);
       };
 
+      const errorHandler = (e: CustomEvent) => {
+        injectValidationIssues([e.detail.message]);
+      };
+
       if (node) {
         target.addEventListener('change', changeHandler);
         target.addEventListener('blur', onBlur);
+        target.addEventListener('inputError', errorHandler);
       }
 
       return () => {
         target.removeEventListener('change', changeHandler);
         target.removeEventListener('blur', onBlur);
+        target.removeEventListener('inputError', errorHandler);
       };
     },
     [onValueChanged, onBlur, injectValidationIssues],
@@ -66,6 +72,10 @@ export function TimeInput(widgetInstance: WithWidget) {
         localeId={lang}
         hourFormat={hourFormat}
         minuteStep={minuteStep}
+        minTime={templateData.minTime}
+        maxTime={templateData.maxTime}
+        minTimeMessage={templateData.minTimeMessage as string}
+        maxTimeMessage={templateData.maxTimeMessage as string}
       />
     </div>
   );

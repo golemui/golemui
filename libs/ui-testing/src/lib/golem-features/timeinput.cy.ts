@@ -444,5 +444,30 @@ export const runTimeInputComponentTests = (mountFn: MountComponentFn) => {
         cy.get(sel.minute).should('be.disabled');
       });
     });
+
+    describe('bounds validation', () => {
+      it('should emit change and inputError for a time past maxTime', () => {
+        // en-GB renders 24h, so the hour is typed directly without a period
+        mountTimeInput({
+          lang: 'en-GB',
+          props: { minTime: '09:00:00', maxTime: '17:00:00', maxTimeMessage: 'Too late' },
+        });
+
+        const changeSpy = cy.spy().as('changeSpy');
+        const inputErrorSpy = cy.spy().as('inputErrorSpy');
+        cy.get('gui-time').then(($el) => {
+          $el[0].addEventListener('change', changeSpy as unknown as EventListener);
+          $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
+        });
+
+        cy.get(sel.hour).type('18');
+        cy.focused().type('00', { force: true });
+
+        cy.get('@changeSpy').should('have.been.called');
+        cy.get('@inputErrorSpy').then((spy: any) => {
+          expect(spy.getCall(0).args[0].detail.message).to.equal('Too late');
+        });
+      });
+    });
   });
 };

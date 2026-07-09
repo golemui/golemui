@@ -25,6 +25,12 @@
     "minuteStepProp": {
       "type": "number",
       "minimum": 1
+    },
+    "minTimeProp": {
+      "type": "string"
+    },
+    "maxTimeProp": {
+      "type": "string"
     }
   },
   "allOf": [
@@ -71,6 +77,18 @@
         },
         "minuteStep": {
           "$ref": "#/$defs/minuteStepProp"
+        },
+        "minTime": {
+          "$ref": "#/$defs/minTimeProp"
+        },
+        "maxTime": {
+          "$ref": "#/$defs/maxTimeProp"
+        },
+        "minTimeMessage": {
+          "$ref": "../common.schema.json#/$defs/localizable"
+        },
+        "maxTimeMessage": {
+          "$ref": "../common.schema.json#/$defs/localizable"
         }
       },
       "patternProperties": {
@@ -85,6 +103,18 @@
         },
         "^minuteStep\\.[^.]+$": {
           "$ref": "#/$defs/minuteStepProp"
+        },
+        "^minTime\\.[^.]+$": {
+          "$ref": "#/$defs/minTimeProp"
+        },
+        "^maxTime\\.[^.]+$": {
+          "$ref": "#/$defs/maxTimeProp"
+        },
+        "^minTimeMessage\\.[^.]+$": {
+          "$ref": "../common.schema.json#/$defs/localizable"
+        },
+        "^maxTimeMessage\\.[^.]+$": {
+          "$ref": "../common.schema.json#/$defs/localizable"
         }
       },
       "additionalProperties": false

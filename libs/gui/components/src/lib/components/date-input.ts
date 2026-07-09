@@ -9,6 +9,7 @@ import {
   type DateTimePartDescriptor,
 } from './abstract-date-time-input';
 import {
+  dateBoundsError,
   getDateFormatParts,
   maxValidDayInMonth,
   parseISODateString,
@@ -22,6 +23,12 @@ export class GuiDate extends AbstractDateTimeInput {
   @property({ type: String, attribute: 'invalid-date-message' }) invalidDateMessage:
     | string
     | undefined = undefined;
+  @property({ type: String, attribute: 'min-date' }) minDate: string | undefined = undefined;
+  @property({ type: String, attribute: 'max-date' }) maxDate: string | undefined = undefined;
+  @property({ type: String, attribute: 'min-date-message' }) minDateMessage: string | undefined =
+    undefined;
+  @property({ type: String, attribute: 'max-date-message' }) maxDateMessage: string | undefined =
+    undefined;
 
   protected override readonly inputBlockClass = 'gui-date-input';
   protected override readonly groups = ['default'] as const;
@@ -145,8 +152,30 @@ export class GuiDate extends AbstractDateTimeInput {
           }),
         );
       } else {
-        const currentDate = new Date(yearVal, monthVal - 1, dayVal);
-        this.value = toISODateString(currentDate);
+        const candidate = toISODateString(new Date(yearVal, monthVal - 1, dayVal));
+        const boundsError = dateBoundsError(candidate, this.minDate, this.maxDate, undefined, {
+          minDateMessage: this.minDateMessage,
+          maxDateMessage: this.maxDateMessage,
+        });
+
+        if (boundsError) {
+          this.dispatchEvent(
+            new CustomEvent('change', {
+              detail: { value: candidate },
+              bubbles: true,
+            }),
+          );
+          this.dispatchEvent(
+            new CustomEvent('inputError', {
+              detail: { message: boundsError },
+              bubbles: true,
+            }),
+          );
+          this.requestUpdate();
+          return;
+        }
+
+        this.value = candidate;
 
         this.dispatchEvent(
           new CustomEvent('change', {

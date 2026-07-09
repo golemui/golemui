@@ -307,6 +307,12 @@ export type DateinputProps = {
   hint?: string;
   icon?: string;
   invalidDateMessage?: Localizable;
+  /** Earliest allowed date (ISO date, inclusive). */
+  minDate?: string;
+  /** Latest allowed date (ISO date, inclusive). */
+  maxDate?: string;
+  minDateMessage?: Localizable;
+  maxDateMessage?: Localizable;
 };
 
 export type DateTimeInputProps = {
@@ -315,6 +321,18 @@ export type DateTimeInputProps = {
   hourFormat?: '12' | '24';
   minuteStep?: number;
   invalidDateMessage?: Localizable;
+  /** Earliest allowed date (ISO date, inclusive). */
+  minDate?: string;
+  /** Latest allowed date (ISO date, inclusive). */
+  maxDate?: string;
+  /** First allowed time (ISO time, inclusive). */
+  minTime?: string;
+  /** Last allowed time (ISO time, inclusive). */
+  maxTime?: string;
+  minDateMessage?: Localizable;
+  maxDateMessage?: Localizable;
+  minTimeMessage?: Localizable;
+  maxTimeMessage?: Localizable;
 };
 
 export type TimeInputProps = {
@@ -322,6 +340,12 @@ export type TimeInputProps = {
   icon?: string;
   hourFormat?: '12' | '24';
   minuteStep?: number;
+  /** First allowed time (ISO time, inclusive). */
+  minTime?: string;
+  /** Last allowed time (ISO time, inclusive). */
+  maxTime?: string;
+  minTimeMessage?: Localizable;
+  maxTimeMessage?: Localizable;
 };
 
 export type TimeRange = {
@@ -337,18 +361,12 @@ export type DisabledTimeRange = TimeRange & {
 };
 
 export type TimePickerProps = TimeInputProps & {
-  /** First selectable option (ISO time, inclusive). Defaults to '00:00:00'. */
-  minTime?: string;
-  /** Last selectable option (ISO time, inclusive). Defaults to '23:59:59'. */
-  maxTime?: string;
   /** Times inside these ranges (both ends inclusive) render disabled. */
   disabledRanges?: TimeRange[];
   /** Allows typing a time in the input; when false (default) values come only from the list. */
   allowCustomTime?: boolean;
   height?: number;
   itemHeight?: number;
-  minTimeMessage?: Localizable;
-  maxTimeMessage?: Localizable;
   disabledRangeMessage?: Localizable;
   noAvailableTimesMessage?: Localizable;
 };

@@ -18,6 +18,12 @@
     },
     "iconProp": {
       "type": "string"
+    },
+    "minDateProp": {
+      "type": "string"
+    },
+    "maxDateProp": {
+      "type": "string"
     }
   },
   "allOf": [
@@ -56,6 +62,18 @@
         "invalidDateMessage": {
           "$ref": "../common.schema.json#/$defs/localizable"
         },
+        "minDate": {
+          "$ref": "#/$defs/minDateProp"
+        },
+        "maxDate": {
+          "$ref": "#/$defs/maxDateProp"
+        },
+        "minDateMessage": {
+          "$ref": "../common.schema.json#/$defs/localizable"
+        },
+        "maxDateMessage": {
+          "$ref": "../common.schema.json#/$defs/localizable"
+        },
         "hint": {
           "$ref": "#/$defs/hintProp"
         },
@@ -65,6 +83,18 @@
       },
       "patternProperties": {
         "^invalidDateMessage\\.[^.]+$": {
+          "$ref": "../common.schema.json#/$defs/localizable"
+        },
+        "^minDate\\.[^.]+$": {
+          "$ref": "#/$defs/minDateProp"
+        },
+        "^maxDate\\.[^.]+$": {
+          "$ref": "#/$defs/maxDateProp"
+        },
+        "^minDateMessage\\.[^.]+$": {
+          "$ref": "../common.schema.json#/$defs/localizable"
+        },
+        "^maxDateMessage\\.[^.]+$": {
           "$ref": "../common.schema.json#/$defs/localizable"
         },
         "^hint\\.[^.]+$": {
