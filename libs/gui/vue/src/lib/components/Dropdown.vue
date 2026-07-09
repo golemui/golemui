@@ -221,9 +221,23 @@ const handleInputFilter = (event: Event) => {
 };
 
 const handleInputFocus = () => {
+  if (ignoreNextFocus) return;
   if (isListVisible.value) return;
   isListVisible.value = true;
   setTimeout(() => listRef.value?.scrollToSelectedIndex(), 0);
+};
+
+let ignoreNextFocus = false;
+const handleWidgetKeyDown = (event: KeyboardEvent) => {
+  if (event.key !== 'Escape' || !isListVisible.value) return;
+  event.preventDefault();
+  isListVisible.value = false;
+  isFiltering.value = false;
+  ignoreNextFocus = true;
+  inputRef.value?.focus();
+  setTimeout(() => {
+    ignoreNextFocus = false;
+  });
 };
 
 const handleFocusOut = (e: FocusEvent) => {
@@ -256,7 +270,7 @@ const ItemRenderer = computed<Component>(() => {
       :native="false"
     ></gui-label>
 
-    <div class="gui-widget" :aria-expanded="isListVisible">
+    <div class="gui-widget" :aria-expanded="isListVisible" @keydown="handleWidgetKeyDown">
       <input
         ref="inputRef"
         type="text"

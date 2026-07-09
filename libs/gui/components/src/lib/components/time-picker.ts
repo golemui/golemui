@@ -201,6 +201,7 @@ export class GuiTimePicker extends LitElement {
   private onKeyDown = (event: KeyboardEvent) => {
     if (event.key === 'Escape' && this._isListOpen) {
       event.preventDefault();
+      event.stopPropagation();
       this.restoreFocusToInput();
       this.closeList();
       return;

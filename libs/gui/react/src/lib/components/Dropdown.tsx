@@ -25,6 +25,7 @@ export function Dropdown(widgetInstance: WithWidget) {
   const listRef = useRef<GuiList>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const labelRef = useRef<GuiLabel>(null);
+  const ignoreNextFocusRef = useRef(false);
 
   const visibleItems = useMemo(() => listItems.slice(range.start, range.end), [listItems, range]);
 
@@ -245,6 +246,7 @@ export function Dropdown(widgetInstance: WithWidget) {
   };
 
   const handleInputFocus = useCallback(() => {
+    if (ignoreNextFocusRef.current) return;
     if (isListVisible) return;
 
     setIsListVisible(true);
@@ -255,6 +257,18 @@ export function Dropdown(widgetInstance: WithWidget) {
       }
     }, 0);
   }, [isListVisible]);
+
+  const handleWidgetKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key !== 'Escape' || !isListVisible) return;
+    event.preventDefault();
+    setIsListVisible(false);
+    setIsFiltering(false);
+    ignoreNextFocusRef.current = true;
+    inputRef.current?.focus();
+    setTimeout(() => {
+      ignoreNextFocusRef.current = false;
+    });
+  };
 
   const handleFocusOut = (e: React.FocusEvent) => {
     const newFocusTarget = e.relatedTarget as Node;
@@ -290,7 +304,7 @@ export function Dropdown(widgetInstance: WithWidget) {
         native={false}
       ></GuiLabelReact>
 
-      <div className="gui-widget" aria-expanded={isListVisible}>
+      <div className="gui-widget" aria-expanded={isListVisible} onKeyDown={handleWidgetKeyDown}>
         <input
           ref={inputRef}
           type="text"

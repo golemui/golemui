@@ -176,6 +176,34 @@ export const runDateTimePickerComponentTests = (mountFn: MountComponentFn) => {
       cy.get(sel.calendar).should('not.exist');
     });
 
+    it('should close the popover with Escape from a focused day', () => {
+      mountPicker({ data: { myAppointment: '2026-02-13T09:30:00' }, props: officeProps });
+
+      cy.get(sel.day).click();
+      cy.get(sel.calendar).should('exist');
+
+      cy.get(sel.dayButton('2026-02-13')).focus();
+      cy.focused().type('{esc}');
+      cy.get(sel.calendar).should('not.exist');
+    });
+
+    it('should close the time list first, then the popover, on successive Escapes', () => {
+      mountPicker({ data: { myAppointment: '2026-02-13T09:30:00' }, props: officeProps });
+
+      cy.get(sel.day).click();
+      cy.get(sel.popoverHour).click();
+      cy.get(sel.openTimeList).should('exist');
+
+      // First Escape closes the embedded time list, popover stays open
+      cy.get(sel.popoverHour).type('{esc}', { force: true });
+      cy.get(sel.timeList).should('have.attr', 'hidden');
+      cy.get(sel.calendar).should('exist');
+
+      // Second Escape closes the popover
+      cy.get(sel.popoverHour).type('{esc}', { force: true });
+      cy.get(sel.calendar).should('not.exist');
+    });
+
     it('should apply day-scoped disabled time ranges in the popover', () => {
       mountPicker({
         data: { myAppointment: '2026-02-13T09:30:00' },

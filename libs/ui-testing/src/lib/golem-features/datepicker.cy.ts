@@ -65,6 +65,20 @@ export const runDatePickerComponentTests = (mountFn: MountComponentFn) => {
         .should('contain', '2026-07');
     });
 
+    it('should close the calendar with Escape and restore focus to the input', () => {
+      mountWithDate();
+
+      cy.get('gui-date input[data-type="day"]').click();
+      cy.get('gui-calendar').should('exist');
+
+      // Escape from a focused day button closes the calendar
+      cy.get('gui-calendar button[data-date="2026-06-15"]').focus();
+      cy.focused().type('{esc}');
+
+      cy.get('gui-calendar').should('not.exist');
+      cy.focused().should('match', 'gui-date input');
+    });
+
     it('should select the exact day that is clicked', () => {
       const formSubmitHandler = cy.stub().as('formSubmitHandler');
       mountWithDate(formSubmitHandler);

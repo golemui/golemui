@@ -73,6 +73,7 @@ export class GuiRangeDatePicker extends LitElement {
 
   private _ignoreNextFocusOut = false;
   private _focusOutRafId: number | undefined;
+  private _restoringFocus = false;
 
   onDocumentClick = (event: MouseEvent) => {
     if (!this._isCalendarOpen) return;
@@ -184,6 +185,7 @@ export class GuiRangeDatePicker extends LitElement {
         class="gui-widget"
         aria-expanded=${this._isCalendarOpen}
         @keyup=${this.onKeyUp}
+        @keydown=${this.onKeyDown}
         @click=${this.toggleCalendar}
       >
         <gui-range-date
@@ -258,6 +260,15 @@ export class GuiRangeDatePicker extends LitElement {
     }
   };
 
+  private onKeyDown = (event: KeyboardEvent) => {
+    if (this.disabled) return;
+    if (event.key === 'Escape' && this._isCalendarOpen) {
+      event.preventDefault();
+      this.restoreFocusToInput();
+      this.closeCalendar();
+    }
+  };
+
   private toggleCalendar = (event: Event) => {
     if (this.disabled) return;
     const target = event.target as HTMLElement;
@@ -274,7 +285,7 @@ export class GuiRangeDatePicker extends LitElement {
   };
 
   openCalendar = () => {
-    if (this.disabled) return;
+    if (this.disabled || this._restoringFocus) return;
     const dropdownWasOpen = !!this.querySelector('.gui-pills__dropdown');
     if (dropdownWasOpen) this._ignoreNextFocusOut = true;
     this.closePillsDropdown();
@@ -285,6 +296,16 @@ export class GuiRangeDatePicker extends LitElement {
 
   closeCalendar() {
     this._isCalendarOpen = false;
+  }
+
+  private restoreFocusToInput() {
+    const part = this.querySelector<HTMLElement>('gui-range-date input');
+    if (!part) return;
+    this._restoringFocus = true;
+    part.focus();
+    setTimeout(() => {
+      this._restoringFocus = false;
+    });
   }
 
   private closePillsDropdown() {

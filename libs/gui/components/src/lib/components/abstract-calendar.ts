@@ -395,6 +395,7 @@ export abstract class AbstractCalendar extends LitElement {
       }
       case 'Escape': {
         event.preventDefault();
+        event.stopPropagation();
         // Move focus to year selector button BEFORE removing the year grid
         const yearBtn = this.querySelector('.gui-calendar__year-selector') as HTMLButtonElement;
         yearBtn?.focus();

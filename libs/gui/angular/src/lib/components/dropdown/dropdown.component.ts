@@ -48,6 +48,7 @@ export class DropdownComponent implements OnInit, OnDestroy, WithWidget {
   protected focusedIndex = signal<number>(-1);
   protected isListVisible = signal(false);
   protected isFiltering = signal(false);
+  private ignoreNextFocus = false;
 
   protected selectedItem = signal<ListItem<never> | undefined>(undefined);
   protected filteredItems = signal<ListItem<never>[]>([]);
@@ -111,6 +112,7 @@ export class DropdownComponent implements OnInit, OnDestroy, WithWidget {
   }
 
   protected onInputFocus() {
+    if (this.ignoreNextFocus) return;
     this.isListVisible.set(true);
 
     setTimeout(() => {
@@ -118,6 +120,18 @@ export class DropdownComponent implements OnInit, OnDestroy, WithWidget {
         this.listRef().nativeElement.scrollToSelectedIndex();
       }
     }, 0);
+  }
+
+  protected onWidgetKeyDown(event: KeyboardEvent) {
+    if (event.key !== 'Escape' || !this.isListVisible()) return;
+    event.preventDefault();
+    this.isListVisible.set(false);
+    this.isFiltering.set(false);
+    this.ignoreNextFocus = true;
+    this.inputRef().nativeElement.focus();
+    setTimeout(() => {
+      this.ignoreNextFocus = false;
+    });
   }
 
   protected onInputKeyDown(event: KeyboardEvent) {

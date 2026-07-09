@@ -39,6 +39,28 @@ export const runDropdownComponentTests = (mountFn: MountComponentFn) => {
       visibleItems().first().should('contain.text', 'React');
     });
 
+    it('should close the list with Escape from the input', () => {
+      mountWithItems(['React', 'Angular', 'Vue']);
+
+      cy.get('[data-cy="testSubject_textinput"]').click();
+      cy.get('gui-list:not([hidden])').should('exist');
+
+      cy.get('[data-cy="testSubject_textinput"]').type('{esc}');
+      cy.get('gui-list').should('have.attr', 'hidden');
+    });
+
+    it('should close the list with Escape after navigating into it', () => {
+      mountWithItems(['React', 'Angular', 'Vue']);
+
+      cy.get('[data-cy="testSubject_textinput"]').click();
+      cy.get('gui-list:not([hidden])').should('exist');
+
+      // ArrowDown moves focus into the list; Escape there still closes it
+      cy.get('[data-cy="testSubject_textinput"]').type('{downArrow}');
+      cy.focused().type('{esc}');
+      cy.get('gui-list').should('have.attr', 'hidden');
+    });
+
     it('should show all primitive items again when the search is cleared', () => {
       mountWithItems(['React', 'Angular', 'Vue']);
 

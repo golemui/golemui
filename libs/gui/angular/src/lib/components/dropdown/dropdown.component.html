@@ -13,7 +13,11 @@
   [native]="false"
 ></gui-label>
 
-<div class="gui-widget" [attr.aria-expanded]="isListVisible()">
+<div
+  class="gui-widget"
+  [attr.aria-expanded]="isListVisible()"
+  (keydown)="onWidgetKeyDown($event)"
+>
   <input
     #inputRef
     type="text"

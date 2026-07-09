@@ -83,6 +83,7 @@ export class GuiDateTimePicker extends LitElement {
   @state() private _isCalendarOpen = false;
 
   private _focusOutRafId: number | undefined;
+  private _restoringFocus = false;
 
   onDocumentClick = (event: MouseEvent) => {
     if (!this._isCalendarOpen) return;
@@ -190,6 +191,7 @@ export class GuiDateTimePicker extends LitElement {
         class="gui-widget"
         aria-expanded=${this._isCalendarOpen}
         @keyup=${this.onKeyUp}
+        @keydown=${this.onKeyDown}
         @click=${this.toggleCalendar}
       >
         <gui-date-time
@@ -268,6 +270,15 @@ export class GuiDateTimePicker extends LitElement {
     }
   };
 
+  private onKeyDown = (event: KeyboardEvent) => {
+    if (this.disabled) return;
+    if (event.key === 'Escape' && this._isCalendarOpen) {
+      event.preventDefault();
+      this.restoreFocusToInput();
+      this.closeCalendar();
+    }
+  };
+
   private toggleCalendar = (event: Event) => {
     if (this.disabled) return;
     const target = event.target as HTMLElement;
@@ -287,7 +298,7 @@ export class GuiDateTimePicker extends LitElement {
   };
 
   openCalendar = () => {
-    if (this.disabled) return;
+    if (this.disabled || this._restoringFocus) return;
     if (!this._isCalendarOpen) {
       this._isCalendarOpen = true;
     }
@@ -295,6 +306,16 @@ export class GuiDateTimePicker extends LitElement {
 
   closeCalendar() {
     this._isCalendarOpen = false;
+  }
+
+  private restoreFocusToInput() {
+    const part = this.querySelector<HTMLElement>('gui-date-time input');
+    if (!part) return;
+    this._restoringFocus = true;
+    part.focus();
+    setTimeout(() => {
+      this._restoringFocus = false;
+    });
   }
 }
 

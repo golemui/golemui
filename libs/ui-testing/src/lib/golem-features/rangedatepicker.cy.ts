@@ -117,6 +117,17 @@ export const runRangeDatePickerComponentTests = (mountFn: MountComponentFn) => {
       cy.get(sel.calendar).should('not.exist');
     });
 
+    it('should close the calendar with Escape', () => {
+      mountRangeDatePicker({ data: { myRanges: [juneRange] } });
+
+      cy.get(sel.startMonth).click();
+      cy.get(sel.calendar).should('exist');
+
+      cy.get(sel.dayButton('2026-06-18')).focus();
+      cy.focused().type('{esc}');
+      cy.get(sel.calendar).should('not.exist');
+    });
+
     it('should close the calendar when focus leaves the picker', () => {
       mountRangeDatePicker({ data: { myRanges: [juneRange] } });
 
