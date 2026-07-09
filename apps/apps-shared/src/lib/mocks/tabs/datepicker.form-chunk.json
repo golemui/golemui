@@ -67,6 +67,8 @@
       "label": "Disabled date ranges",
       "props": {
         "icon": "calendar_month",
+        "minDate": "2026-02-01",
+        "maxDate": "2026-02-28",
         "disabledRanges": [
           {
             "start": "2026-02-09",
