@@ -1,0 +1,91 @@
+{
+  "$schema": "../../../../../../libs/gui/schemas/src/lib/layout-widget.schema.json",
+  "uid": "tabRangeDateInput",
+  "kind": "layout",
+  "type": "flex",
+  "children": [
+    {
+      "kind": "input",
+      "type": "rangeDateInput",
+      "path": "rangeDateInputEmpty",
+      "label": "Empty",
+      "props": {
+        "icon": "calendar_month",
+        "separator": "to"
+      }
+    },
+    {
+      "kind": "input",
+      "type": "rangeDateInput",
+      "path": "rangeDateInputDefault",
+      "defaultValue": [
+        {
+          "start": "2026-02-13",
+          "end": "2026-02-16"
+        },
+        {
+          "start": "2026-02-20"
+        }
+      ],
+      "label": "With default value",
+      "props": {
+        "icon": "calendar_month",
+        "separator": "to"
+      }
+    },
+    {
+      "kind": "input",
+      "type": "rangeDateInput",
+      "path": "rangeDateInputDisabled",
+      "defaultValue": [
+        {
+          "start": "2026-02-13",
+          "end": "2026-02-16"
+        },
+        {
+          "start": "2026-02-20"
+        }
+      ],
+      "disabled": true,
+      "label": "Disabled",
+      "props": {
+        "icon": "calendar_month",
+        "separator": "to"
+      }
+    },
+    {
+      "kind": "input",
+      "type": "rangeDateInput",
+      "path": "rangeDateInputReadonly",
+      "defaultValue": [
+        {
+          "start": "2026-02-13",
+          "end": "2026-02-16"
+        },
+        {
+          "start": "2026-02-20"
+        }
+      ],
+      "readonly": true,
+      "label": "Read only",
+      "props": {
+        "icon": "calendar_month",
+        "separator": "to"
+      }
+    },
+    {
+      "kind": "input",
+      "type": "rangeDateInput",
+      "path": "rangeDateInputValidation",
+      "label": "Required (validation)",
+      "props": {
+        "icon": "calendar_month",
+        "separator": "to"
+      },
+      "validator": {
+        "type": "array",
+        "required": true
+      }
+    }
+  ]
+}

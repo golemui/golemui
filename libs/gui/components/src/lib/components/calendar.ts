@@ -25,6 +25,14 @@ export interface CalendarDay {
 export class GuiCalendar extends AbstractCalendar {
   @property({ type: String }) value: string | undefined = undefined;
 
+  /**
+   * ISO date driving the selected-day highlight. Subclasses whose `value` is
+   * not a plain date (e.g. the date-time calendar) override this.
+   */
+  protected get selectedDateISO(): string | undefined {
+    return this.value;
+  }
+
   override createRenderRoot() {
     return this;
   }
@@ -83,10 +91,12 @@ export class GuiCalendar extends AbstractCalendar {
     const rawDates = this.generateDateGrid(offset);
     const targetMonth = panelDate.getMonth();
 
+    const selectedDate = this.selectedDateISO;
+
     let days = rawDates.map((date) => {
       const isCurrentMonth = date.getMonth() === targetMonth;
       const isDisabled = this.isDisabled(date);
-      const isSelected = !!this.value && isSameDay(date, parseISODateString(this.value));
+      const isSelected = !!selectedDate && isSameDay(date, parseISODateString(selectedDate));
       const isTodayDate = isToday(date);
       const isFocusable = (isSelected || isTodayDate) && isCurrentMonth;
 
@@ -110,7 +120,7 @@ export class GuiCalendar extends AbstractCalendar {
     }
 
     if (offset === 0 && !days.some((d) => d.isFocusable)) {
-      const referenceDate = this.value ? parseISODateString(this.value) : new Date();
+      const referenceDate = selectedDate ? parseISODateString(selectedDate) : new Date();
       if (!isDateInVisibleMonths(referenceDate, this._currentDate, this.numberOfMonths ?? 1)) {
         const firstDay = days.find((d) => d.isCurrentMonth && !d.isDisabled);
         if (firstDay) firstDay.isFocusable = true;

@@ -67,6 +67,12 @@
               "with": "apps/angular-playground/src/environments/environment.development.ts"
             }
           ]
+        },
+        "ct": {
+          "optimization": false,
+          "buildOptimizer": false,
+          "sourceMap": false,
+          "outputHashing": "none"
         }
       },
       "defaultConfiguration": "production"

@@ -1,77 +1,33 @@
 @let templateData = adapter.templateData();
-@let showErrors = templateData.touched && templateData.errors && templateData.errors.length > 0;
 
-@if (templateData.label) {
-  <label gui-label [for]="widget.uid" [uid]="widget.uid" [templateData]="templateData"></label>
-}
-
-<div
-  role="button"
-  tabindex="-1"
-  class="gui-widget"
-  [attr.aria-expanded]="isCalendarOpen()"
-  (keyup.space)="$event.target === $event.currentTarget && isCalendarOpen.set(!isCalendarOpen())"
-  (keyup.enter)="$event.target === $event.currentTarget && isCalendarOpen.set(!isCalendarOpen())"
-  (click)="toggleCalendar($event)"
->
-  <gui-date
-    #dateControlRef
-    [uid]="widget.uid"
-    [hint]="templateData.hint"
-    [showErrors]="false"
-    [errors]="templateData.errors"
-    [touched]="templateData.touched"
-    [required]="templateData.validator?.required"
-    [disabled]="templateData.disabled"
-    [readonly]="templateData.readonly"
-    [value]="templateData.value"
-    [icon]="templateData.icon"
-    [localeId]="templateData.lang"
-    (change)="onChangeDate($event)"
-    (inputError)="onInputError($event)"
-    (focus)="openCalendar()"
-    (blur)="adapter.onBlur()"
-  ></gui-date>
-  <span class="gui-date-picker__arrow"
-    ><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256">
-      <path
-        d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"
-      ></path></svg
-  ></span>
-
-  @if (isCalendarOpen()) {
-    <gui-calendar
-      #calendarControlRef
-      [uid]="widget.uid"
-      [hint]="templateData.hint"
-      [touched]="templateData.touched"
-      [required]="templateData.validator?.required"
-      [disabled]="templateData.disabled"
-      [readonly]="templateData.readonly"
-      [value]="templateData.value"
-      [prevMonthIcon]="templateData.prevMonthIcon"
-      [nextMonthIcon]="templateData.nextMonthIcon"
-      [nextMonthAriaLabel]="templateData.nextMonthAriaLabel"
-      [prevMonthAriaLabel]="templateData.prevMonthAriaLabel"
-      [dayFormat]="templateData.dayFormat"
-      [weekdayFormat]="templateData.weekdayFormat"
-      [monthFormat]="templateData.monthFormat"
-      [minDate]="templateData.minDate"
-      [maxDate]="templateData.maxDate"
-      [disabledRanges]="templateData.disabledRanges"
-      [numberOfMonths]="templateData.numberOfMonths"
-      [localeId]="templateData.lang"
-      (change)="onCalendarChange($event)"
-      (blur)="onBlurCalendar()"
-    ></gui-calendar>
-  }
-</div>
-
-@if (showErrors) {
-  <ul
-    gui-errors
-    [uid]="widget.uid"
-    [templateData]="templateData"
-    [attr.data-cy]="widget.uid + '_validator-errors'"
-  ></ul>
-}
+<gui-date-picker
+  [uid]="widget.uid"
+  [label]="templateData.label"
+  [hint]="templateData.hint"
+  [errors]="templateData.errors"
+  [touched]="templateData.touched"
+  [required]="templateData.validator?.required"
+  [disabled]="templateData.disabled"
+  [readonly]="templateData.readonly"
+  [value]="templateData.value"
+  [icon]="templateData.icon"
+  [localeId]="templateData.lang"
+  [prevMonthIcon]="templateData.prevMonthIcon"
+  [nextMonthIcon]="templateData.nextMonthIcon"
+  [prevMonthAriaLabel]="templateData.prevMonthAriaLabel"
+  [nextMonthAriaLabel]="templateData.nextMonthAriaLabel"
+  [dayFormat]="templateData.dayFormat"
+  [weekdayFormat]="templateData.weekdayFormat"
+  [monthFormat]="templateData.monthFormat"
+  [minDate]="templateData.minDate"
+  [maxDate]="templateData.maxDate"
+  [disabledRanges]="templateData.disabledRanges"
+  [numberOfMonths]="templateData.numberOfMonths"
+  [invalidDateMessage]="templateData.invalidDateMessage"
+  [minDateMessage]="templateData.minDateMessage"
+  [maxDateMessage]="templateData.maxDateMessage"
+  [disabledDateRangeMessage]="templateData.disabledDateRangeMessage"
+  (change)="onChangeDate($event)"
+  (inputError)="onInputError($event)"
+  (blur)="adapter.onBlur()"
+></gui-date-picker>

@@ -24,6 +24,9 @@ export class GuiSelect extends LitElement {
   @property({ type: String }) autocomplete: string | undefined = undefined;
   @property({ type: Array }) options: Option[] = [];
   @property({ type: String }) placeholder: string | undefined = undefined;
+  @property({ type: String, attribute: 'invalid-option-message' }) invalidOptionMessage:
+    | string
+    | undefined = undefined;
   @property({ type: String }) labelField: string | undefined = undefined;
   @property({ type: String }) valueField: string | undefined = undefined;
 
@@ -141,7 +144,9 @@ export class GuiSelect extends LitElement {
         this.dispatchEvent(
           new CustomEvent('inputError', {
             detail: {
-              message: `Invalid selection: '${this.value}' is not a valid option.`,
+              message: (
+                this.invalidOptionMessage ?? `Invalid selection: '{value}' is not a valid option.`
+              ).replace('{value}', String(this.value)),
             },
             bubbles: true,
           }),

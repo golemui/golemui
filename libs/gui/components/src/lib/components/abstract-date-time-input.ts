@@ -103,6 +103,10 @@ export function timeInputPartDescriptors(
   };
 }
 
+/** Default inputError message for a complete but impossible date (e.g. Feb 31). */
+export const INVALID_DATE_MESSAGE =
+  'Invalid date: day is greater than the maximum valid day for the month and year.';
+
 /**
  * Shared behavior for segmented date/time inputs (gui-date, gui-range-date,
  * gui-time and future date-time widgets), mirroring the AbstractCalendar
@@ -162,7 +166,7 @@ export abstract class AbstractDateTimeInput extends LitElement {
 
   /** Called when a part is blurred while empty/invalid. Default: emit null. */
   protected onEmptyPartBlur(): void {
-    this.dispatchEvent(new CustomEvent('change', { detail: { value: null } }));
+    this.dispatchEvent(new CustomEvent('change', { detail: { value: null }, bubbles: true }));
   }
 
   protected renderLiteral(part: Intl.DateTimeFormatPart): TemplateResult {
@@ -240,21 +244,36 @@ export abstract class AbstractDateTimeInput extends LitElement {
     const parts = this.getFormatParts();
     const multiGroup = this.groups.length > 1;
 
-    return repeat(
-      parts,
-      (part: Intl.DateTimeFormatPart) => (multiGroup ? `${group}-${part.type}` : part.type),
-      (part: Intl.DateTimeFormatPart, index: number) => {
-        if (part.type === 'literal') {
-          return this.renderLiteral(part);
-        }
+    const keyOf = (part: Intl.DateTimeFormatPart) =>
+      multiGroup ? `${group}-${part.type}` : part.type;
+    const renderPart = (part: Intl.DateTimeFormatPart, index: number) => {
+      if (part.type === 'literal') {
+        return this.renderLiteral(part);
+      }
 
-        const descriptor = this.getPartDescriptor(part.type);
-        if (!descriptor) return '';
+      const descriptor = this.getPartDescriptor(part.type);
+      if (!descriptor) return '';
 
-        const tabIndex = group === this.groups[0] && index === 0 ? 0 : -1;
-        return this.renderPartInput(group, descriptor, tabIndex);
-      },
-    );
+      const tabIndex = group === this.groups[0] && index === 0 ? 0 : -1;
+      return this.renderPartInput(group, descriptor, tabIndex);
+    };
+
+    const isTimePart = (part: Intl.DateTimeFormatPart) =>
+      part.type === 'hour' || part.type === 'minute' || part.type === 'second';
+    const first = parts.findIndex(isTimePart);
+    if (first === -1) {
+      return repeat(parts, keyOf, renderPart);
+    }
+    let last = parts.length - 1;
+    while (!isTimePart(parts[last])) last--;
+
+    return html`
+      ${repeat(parts.slice(0, first), keyOf, renderPart)}
+      <div class="gui-parts__time-cluster ${this.inputBlockClass}__time-cluster" dir="ltr">
+        ${repeat(parts.slice(first, last + 1), keyOf, (part, i) => renderPart(part, first + i))}
+      </div>
+      ${repeat(parts.slice(last + 1), keyOf, (part, i) => renderPart(part, last + 1 + i))}
+    `;
   }
 
   protected renderPartInput(
@@ -417,23 +436,20 @@ export abstract class AbstractDateTimeInput extends LitElement {
         this.commitParts(group);
         break;
       }
-      case 'ArrowLeft': {
-        const prevIdx = isRTL ? index + 1 : index - 1;
-        if (prevIdx >= 0 && prevIdx < inputs.length) {
-          inputs[prevIdx].focus();
-          this.selectPart(inputs[prevIdx]);
-        } else {
-          this.navigatePastGroupEdge('ArrowLeft', group, isRTL);
-        }
-        break;
-      }
+      case 'ArrowLeft':
       case 'ArrowRight': {
-        const nextIdx = isRTL ? index - 1 : index + 1;
-        if (nextIdx >= 0 && nextIdx < inputs.length) {
-          inputs[nextIdx].focus();
-          this.selectPart(inputs[nextIdx]);
+        // Move by VISUAL position: inside an RTL row the hour:minute cluster
+        // stays LTR, so DOM order alone cannot tell which part is adjacent
+        const visualOrder = [...inputs].sort(
+          (a, b) => a.getBoundingClientRect().left - b.getBoundingClientRect().left,
+        );
+        const visualIndex = visualOrder.indexOf(target);
+        const nextIdx = event.key === 'ArrowRight' ? visualIndex + 1 : visualIndex - 1;
+        if (nextIdx >= 0 && nextIdx < visualOrder.length) {
+          visualOrder[nextIdx].focus();
+          this.selectPart(visualOrder[nextIdx]);
         } else {
-          this.navigatePastGroupEdge('ArrowRight', group, isRTL);
+          this.navigatePastGroupEdge(event.key, group, isRTL);
         }
         break;
       }

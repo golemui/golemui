@@ -12,6 +12,12 @@
     },
     "variantProp": {
       "enum": ["filled", "outlined", "link"]
+    },
+    "iconProp": {
+      "type": "string"
+    },
+    "iconPositionProp": {
+      "enum": ["left", "right"]
     }
   },
   "allOf": [
@@ -45,15 +51,21 @@
           "$ref": "#/$defs/variantProp"
         },
         "icon": {
-          "type": "string"
+          "$ref": "#/$defs/iconProp"
         },
         "iconPosition": {
-          "enum": ["left", "right"]
+          "$ref": "#/$defs/iconPositionProp"
         }
       },
       "patternProperties": {
         "^variant\\.[^.]+$": {
           "$ref": "#/$defs/variantProp"
+        },
+        "^icon\\.[^.]+$": {
+          "$ref": "#/$defs/iconProp"
+        },
+        "^iconPosition\\.[^.]+$": {
+          "$ref": "#/$defs/iconPositionProp"
         }
       },
       "additionalProperties": false

@@ -12,11 +12,14 @@ import { _gslCurrencies, _gslCurrencyByUid } from '../currency/register';
 import { _gslMarkdowns, _gslMarkdownByUid } from '../markdown/register';
 import { _gslLists, _gslListByUid } from '../list/register';
 import { _gslCalendars, _gslCalendarByUid } from '../calendar/register';
+import { _gslDateTimeCalendars, _gslDateTimeCalendarByUid } from '../date-time-calendar/register';
 import { _gslDateInputs, _gslDateInputByUid } from '../date-input/register';
 import { _gslDatePickers, _gslDatePickerByUid } from '../date-picker/register';
+import { _gslDateTimePickers, _gslDateTimePickerByUid } from '../date-time-picker/register';
 import { _gslRangeCalendars, _gslRangeCalendarByUid } from '../range-calendar/register';
 import { _gslRangeDateInputs, _gslRangeDateInputByUid } from '../range-date-input/register';
 import { _gslTimeInputs, _gslTimeInputByUid } from '../time-input/register';
+import { _gslTimePickers, _gslTimePickerByUid } from '../time-picker/register';
 import { _gslDateTimeInputs, _gslDateTimeInputByUid } from '../date-time-input/register';
 import { _gslRangeDatePickers, _gslRangeDatePickerByUid } from '../range-date-picker/register';
 import { _gslRepeaters, _gslRepeaterByUid } from '../repeater/register';
@@ -184,6 +187,15 @@ export class ScopeChain {
   calendarByUid(uid: string, config: CfgByUid<typeof _gslCalendarByUid>): GslLeafSelector {
     return this.apply(_gslCalendarByUid(uid, config));
   }
+  dateTimeCalendars(config: CfgGsl<typeof _gslDateTimeCalendars>): GslLeafSelector {
+    return this.apply(_gslDateTimeCalendars(config));
+  }
+  dateTimeCalendarByUid(
+    uid: string,
+    config: CfgByUid<typeof _gslDateTimeCalendarByUid>,
+  ): GslLeafSelector {
+    return this.apply(_gslDateTimeCalendarByUid(uid, config));
+  }
 
   dateInputs(config: CfgGsl<typeof _gslDateInputs>): GslLeafSelector {
     return this.apply(_gslDateInputs(config));
@@ -197,6 +209,13 @@ export class ScopeChain {
   }
   timeInputByUid(uid: string, config: CfgByUid<typeof _gslTimeInputByUid>): GslLeafSelector {
     return this.apply(_gslTimeInputByUid(uid, config));
+  }
+
+  timePickers(config: CfgGsl<typeof _gslTimePickers>): GslLeafSelector {
+    return this.apply(_gslTimePickers(config));
+  }
+  timePickerByUid(uid: string, config: CfgByUid<typeof _gslTimePickerByUid>): GslLeafSelector {
+    return this.apply(_gslTimePickerByUid(uid, config));
   }
 
   dateTimeInputs(config: CfgGsl<typeof _gslDateTimeInputs>): GslLeafSelector {
@@ -214,6 +233,17 @@ export class ScopeChain {
   }
   datePickerByUid(uid: string, config: CfgByUid<typeof _gslDatePickerByUid>): GslLeafSelector {
     return this.apply(_gslDatePickerByUid(uid, config));
+  }
+
+  dateTimePickers(config: CfgGsl<typeof _gslDateTimePickers>): GslLeafSelector {
+    return this.apply(_gslDateTimePickers(config));
+  }
+
+  dateTimePickerByUid(
+    uid: string,
+    config: CfgByUid<typeof _gslDateTimePickerByUid>,
+  ): GslLeafSelector {
+    return this.apply(_gslDateTimePickerByUid(uid, config));
   }
 
   rangeCalendars(config: CfgGsl<typeof _gslRangeCalendars>): GslLeafSelector {

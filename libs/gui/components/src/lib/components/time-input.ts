@@ -9,6 +9,7 @@ import {
   type DateTimePartType,
 } from './abstract-date-time-input';
 import {
+  compareISOTimes,
   from24Hour,
   getDayPeriodLabels,
   getTimeFormatParts,
@@ -27,6 +28,12 @@ export class GuiTime extends AbstractDateTimeInput {
   @property({ type: String, attribute: 'hour-format' }) hourFormat: HourFormat | undefined =
     undefined;
   @property({ type: Number, attribute: 'minute-step' }) minuteStep: number | undefined = 1;
+  @property({ type: String, attribute: 'min-time' }) minTime: string | undefined = undefined;
+  @property({ type: String, attribute: 'max-time' }) maxTime: string | undefined = undefined;
+  @property({ type: String, attribute: 'min-time-message' }) minTimeMessage: string | undefined =
+    undefined;
+  @property({ type: String, attribute: 'max-time-message' }) maxTimeMessage: string | undefined =
+    undefined;
 
   protected override readonly inputBlockClass = 'gui-time-input';
   protected override readonly groups = ['default'] as const;
@@ -60,8 +67,6 @@ export class GuiTime extends AbstractDateTimeInput {
   }
 
   protected override getPartDescriptor(type: string): DateTimePartDescriptor | undefined {
-    // `|| 1` (not ??): some framework bindings coerce an absent number prop
-    // to 0 (e.g. Vue's patchDOMProp), and a 0 step would freeze the arrows
     const minuteStep = this.minuteStep || 1;
     const key = `${this.localeId ?? ''}|${this.effectiveHourFormat}|${minuteStep}`;
     let cache = this._descriptorsCache;
@@ -152,7 +157,6 @@ export class GuiTime extends AbstractDateTimeInput {
 
     let time = parseISOTimeString(isoValue);
     if (!time) {
-      // Lenient fallback: accept the time part of a local ISO date-time
       const date = parseISODateTimeString(isoValue);
       if (isNaN(date.getTime())) return;
       time = { hours: date.getHours(), minutes: date.getMinutes(), seconds: date.getSeconds() };
@@ -202,7 +206,27 @@ export class GuiTime extends AbstractDateTimeInput {
 
     if (isHourValid && isMinuteValid && isPeriodValid) {
       const hour24 = is12h ? to24Hour(hourVal, period as 'am' | 'pm') : hourVal;
-      this.value = toISOTimeString(new Date(1970, 0, 1, hour24, minuteVal, 0));
+      const candidate = toISOTimeString(new Date(1970, 0, 1, hour24, minuteVal, 0));
+      const boundsError = this.validateBounds(candidate);
+
+      if (boundsError) {
+        this.dispatchEvent(
+          new CustomEvent('change', {
+            detail: { value: candidate },
+            bubbles: true,
+          }),
+        );
+        this.dispatchEvent(
+          new CustomEvent('inputError', {
+            detail: { message: boundsError },
+            bubbles: true,
+          }),
+        );
+        this.requestUpdate();
+        return;
+      }
+
+      this.value = candidate;
 
       this.dispatchEvent(
         new CustomEvent('change', {
@@ -213,6 +237,20 @@ export class GuiTime extends AbstractDateTimeInput {
     }
 
     this.requestUpdate();
+  }
+
+  /**
+   * Checks a complete time against the scalar minTime/maxTime bounds. Returns
+   * the error message for the first violated constraint, or null.
+   */
+  private validateBounds(candidate: string): string | null {
+    if (this.minTime && compareISOTimes(candidate, this.minTime) < 0) {
+      return this.minTimeMessage ?? 'Invalid time: time is before the minimum allowed time.';
+    }
+    if (this.maxTime && compareISOTimes(candidate, this.maxTime) > 0) {
+      return this.maxTimeMessage ?? 'Invalid time: time is after the maximum allowed time.';
+    }
+    return null;
   }
 }
 

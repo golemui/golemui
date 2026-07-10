@@ -25,6 +25,18 @@
     "minuteStepProp": {
       "type": "number",
       "minimum": 1
+    },
+    "minDateProp": {
+      "type": "string"
+    },
+    "maxDateProp": {
+      "type": "string"
+    },
+    "minTimeProp": {
+      "type": "string"
+    },
+    "maxTimeProp": {
+      "type": "string"
     }
   },
   "allOf": [
@@ -60,6 +72,9 @@
     "props": {
       "type": "object",
       "properties": {
+        "invalidDateMessage": {
+          "$ref": "../common.schema.json#/$defs/localizable"
+        },
         "hint": {
           "$ref": "#/$defs/hintProp"
         },
@@ -71,9 +86,60 @@
         },
         "minuteStep": {
           "$ref": "#/$defs/minuteStepProp"
+        },
+        "minDate": {
+          "$ref": "#/$defs/minDateProp"
+        },
+        "maxDate": {
+          "$ref": "#/$defs/maxDateProp"
+        },
+        "minTime": {
+          "$ref": "#/$defs/minTimeProp"
+        },
+        "maxTime": {
+          "$ref": "#/$defs/maxTimeProp"
+        },
+        "minDateMessage": {
+          "$ref": "../common.schema.json#/$defs/localizable"
+        },
+        "maxDateMessage": {
+          "$ref": "../common.schema.json#/$defs/localizable"
+        },
+        "minTimeMessage": {
+          "$ref": "../common.schema.json#/$defs/localizable"
+        },
+        "maxTimeMessage": {
+          "$ref": "../common.schema.json#/$defs/localizable"
         }
       },
       "patternProperties": {
+        "^invalidDateMessage\\.[^.]+$": {
+          "$ref": "../common.schema.json#/$defs/localizable"
+        },
+        "^minDate\\.[^.]+$": {
+          "$ref": "#/$defs/minDateProp"
+        },
+        "^maxDate\\.[^.]+$": {
+          "$ref": "#/$defs/maxDateProp"
+        },
+        "^minTime\\.[^.]+$": {
+          "$ref": "#/$defs/minTimeProp"
+        },
+        "^maxTime\\.[^.]+$": {
+          "$ref": "#/$defs/maxTimeProp"
+        },
+        "^minDateMessage\\.[^.]+$": {
+          "$ref": "../common.schema.json#/$defs/localizable"
+        },
+        "^maxDateMessage\\.[^.]+$": {
+          "$ref": "../common.schema.json#/$defs/localizable"
+        },
+        "^minTimeMessage\\.[^.]+$": {
+          "$ref": "../common.schema.json#/$defs/localizable"
+        },
+        "^maxTimeMessage\\.[^.]+$": {
+          "$ref": "../common.schema.json#/$defs/localizable"
+        },
         "^hint\\.[^.]+$": {
           "$ref": "#/$defs/hintProp"
         },

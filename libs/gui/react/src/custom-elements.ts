@@ -2,9 +2,12 @@
 import type * as React from 'react';
 import type { GuiButton } from '@golemui/gui-components/button';
 import type { GuiCalendar } from '@golemui/gui-components/calendar';
+import type { GuiDateTimeCalendar } from '@golemui/gui-components/date-time-calendar';
 import type { GuiCheckbox } from '@golemui/gui-components/checkbox';
 import type { GuiCurrency } from '@golemui/gui-components/currency';
 import type { GuiDate } from '@golemui/gui-components/date-input';
+import type { GuiDatePicker } from '@golemui/gui-components/date-picker';
+import type { GuiDateTimePicker } from '@golemui/gui-components/date-time-picker';
 import type { GuiErrors } from '@golemui/gui-components/errors';
 import type { GuiLabel } from '@golemui/gui-components/label';
 import type { GuiList } from '@golemui/gui-components/list';
@@ -16,10 +19,13 @@ import type { GuiPills } from '@golemui/gui-components/pills';
 import type { GuiRadiogroup } from '@golemui/gui-components/radiogroup';
 import type { GuiRangeCalendar } from '@golemui/gui-components/range-calendar';
 import type { GuiRangeDateInput } from '@golemui/gui-components/range-date-input';
+import type { GuiRangeDatePicker } from '@golemui/gui-components/range-date-picker';
 import type { GuiSelect } from '@golemui/gui-components/select';
 import type { GuiTags } from '@golemui/gui-components/tags';
 import type { GuiTextarea } from '@golemui/gui-components/textarea';
 import type { GuiTextinput } from '@golemui/gui-components/textinput';
+import type { GuiTimeList } from '@golemui/gui-components/time-list';
+import type { GuiTimePicker } from '@golemui/gui-components/time-picker';
 import type { GuiToggle } from '@golemui/gui-components/toggle';
 
 declare module 'react' {
@@ -30,6 +36,11 @@ declare module 'react' {
         Partial<GuiButton>;
       'gui-calendar': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiCalendar>;
+      'gui-date-time-calendar': React.DetailedHTMLProps<
+        React.HTMLAttributes<HTMLElement>,
+        HTMLElement
+      > &
+        Partial<GuiDateTimeCalendar>;
       'gui-checkbox': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiCheckbox>;
       'gui-currency': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
@@ -37,6 +48,13 @@ declare module 'react' {
 
       'gui-date': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiDate>;
+      'gui-date-picker': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
+        Partial<GuiDatePicker>;
+      'gui-date-time-picker': React.DetailedHTMLProps<
+        React.HTMLAttributes<HTMLElement>,
+        HTMLElement
+      > &
+        Partial<GuiDateTimePicker>;
 
       'gui-errors': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiErrors>;
@@ -70,6 +88,11 @@ declare module 'react' {
         Partial<GuiRangeCalendar>;
       'gui-range-date': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiRangeDateInput>;
+      'gui-range-date-picker': React.DetailedHTMLProps<
+        React.HTMLAttributes<HTMLElement>,
+        HTMLElement
+      > &
+        Partial<GuiRangeDatePicker>;
 
       'gui-select': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiSelect>;
@@ -81,6 +104,10 @@ declare module 'react' {
         Partial<GuiTextarea>;
       'gui-textinput': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiTextinput>;
+      'gui-time-list': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
+        Partial<GuiTimeList>;
+      'gui-time-picker': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
+        Partial<GuiTimePicker>;
       'gui-toggle': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiToggle>;
     }

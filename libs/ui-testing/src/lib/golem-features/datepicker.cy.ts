@@ -1,4 +1,4 @@
-import { defineForm } from '@golemui/core';
+import { defineForm, identityTranslator } from '@golemui/core';
 import { type MountComponentFn } from '../utils';
 
 export const runDatePickerComponentTests = (mountFn: MountComponentFn) => {
@@ -27,6 +27,36 @@ export const runDatePickerComponentTests = (mountFn: MountComponentFn) => {
       });
     };
 
+    const mountWithProps = (options: {
+      data?: Record<string, any>;
+      props?: Record<string, any>;
+      formSubmit?: (event: any) => void;
+    }) => {
+      mountFn({
+        localization: identityTranslator('en-US'),
+        data: options.data,
+        formDef: defineForm({
+          form: [
+            {
+              uid: 'testSubject',
+              kind: 'input',
+              type: 'datePicker',
+              path: 'myDate',
+              ...(options.props ? { props: options.props } : {}),
+            },
+            {
+              uid: 'submitBtn',
+              kind: 'action',
+              type: 'button',
+              label: 'Submit',
+              actionType: 'submit',
+            },
+          ],
+        }),
+        formSubmit: options.formSubmit,
+      });
+    };
+
     // These specs guard against timezone regressions: date-only ISO strings
     // parsed as UTC render as the previous day in timezones behind UTC
 
@@ -47,6 +77,64 @@ export const runDatePickerComponentTests = (mountFn: MountComponentFn) => {
         'aria-selected',
         'true',
       );
+    });
+
+    it('should keep the calendar open when keyboard navigation crosses a month boundary', () => {
+      mountWithDate();
+
+      cy.get('gui-date input[data-type="day"]').click();
+      cy.get('gui-calendar button[data-date="2026-06-30"]').focus();
+      // ArrowDown from the last week re-renders the calendar into July; the
+      // focused button is removed mid-navigation and must not close the picker
+      cy.focused().type('{downArrow}');
+
+      cy.get('gui-calendar').should('exist');
+      cy.focused()
+        .should('have.class', 'gui-calendar__day-button')
+        .invoke('attr', 'data-date')
+        .should('contain', '2026-07');
+    });
+
+    it('should close the calendar with Escape and restore focus to the input', () => {
+      mountWithDate();
+
+      cy.get('gui-date input[data-type="day"]').click();
+      cy.get('gui-calendar').should('exist');
+
+      // Escape from a focused day button closes the calendar
+      cy.get('gui-calendar button[data-date="2026-06-15"]').focus();
+      cy.focused().type('{esc}');
+
+      cy.get('gui-calendar').should('not.exist');
+      cy.focused().should('match', 'gui-date input');
+    });
+
+    it('should consume Escape while the calendar is open so it does not bubble to a modal', () => {
+      mountWithDate();
+
+      // A modal ancestor typically closes on a document-level Escape keydown.
+      const escSpy = cy.spy().as('escSpy');
+      cy.document().then((doc) => {
+        doc.addEventListener('keydown', (e) => {
+          if ((e as KeyboardEvent).key === 'Escape') escSpy();
+        });
+      });
+
+      cy.get('gui-date input[data-type="day"]').click();
+      cy.get('gui-calendar').should('exist');
+
+      // Escape closes the calendar and is consumed — it must not reach document
+      cy.get('gui-calendar button[data-date="2026-06-15"]').focus();
+      cy.focused().type('{esc}');
+      cy.get('gui-calendar').should('not.exist');
+      cy.get('@escSpy').should('not.have.been.called');
+
+      // With the calendar closed, Escape is free to bubble (so a modal can close)
+      cy.get('gui-date input[data-type="day"]').trigger('keydown', {
+        key: 'Escape',
+        bubbles: true,
+      });
+      cy.get('@escSpy').should('have.been.called');
     });
 
     it('should select the exact day that is clicked', () => {
@@ -78,6 +166,33 @@ export const runDatePickerComponentTests = (mountFn: MountComponentFn) => {
       cy.get('@formSubmitHandler').then((stub: any) => {
         const submittedData = stub.getCall(0).args[0].data;
         expect(submittedData).to.deep.equal({ myDate: '2026-06-18' });
+      });
+    });
+
+    it('should advance the value and emit inputError when a typed date is out of bounds', () => {
+      mountWithProps({
+        props: { maxDate: '2026-06-20', maxDateMessage: 'Too far out' },
+      });
+
+      const changeSpy = cy.spy().as('changeSpy');
+      const inputErrorSpy = cy.spy().as('inputErrorSpy');
+      cy.get('gui-date-picker').then(($el) => {
+        $el[0].addEventListener('change', changeSpy as unknown as EventListener);
+        $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
+      });
+
+      // Type a full date 06/25/2026 (en-US order), past maxDate. gui-date has no
+      // date bounds, so it commits the date; the picker validates it. The value
+      // advances (the field shows the 25th) and the picker surfaces the error.
+      cy.get('gui-date input[data-type="month"]').click();
+      cy.focused().type('06');
+      cy.focused().type('25');
+      cy.focused().type('2026');
+
+      cy.get('gui-date input[data-type="day"]').should('have.value', '25');
+      cy.get('@changeSpy').should('have.been.called');
+      cy.get('@inputErrorSpy').then((spy: any) => {
+        expect(spy.getCall(0).args[0].detail.message).to.equal('Too far out');
       });
     });
   });

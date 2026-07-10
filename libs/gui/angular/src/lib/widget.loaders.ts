@@ -19,6 +19,9 @@ export const widgetLoaders: WidgetLoaders<Type<WithWidget>, GolemWidget> = {
     (await import('./components/textarea/textarea.component')).TextareaComponent,
   calendar: async () =>
     (await import('./components/calendar/calendar.component')).CalendarComponent,
+  dateTimeCalendar: async () =>
+    (await import('./components/date-time-calendar/date-time-calendar.component'))
+      .DateTimeCalendarComponent,
   rangeCalendar: async () =>
     (await import('./components/range-calendar/range-calendar.component')).RangeCalendarComponent,
   rangeDateInput: async () =>
@@ -28,10 +31,15 @@ export const widgetLoaders: WidgetLoaders<Type<WithWidget>, GolemWidget> = {
       .RangeDatePickerComponent,
   dateInput: async () => (await import('./components/date-input/date.component')).DateComponent,
   timeInput: async () => (await import('./components/time-input/time.component')).TimeComponent,
+  timePicker: async () =>
+    (await import('./components/time-picker/time-picker.component')).TimePickerComponent,
   dateTimeInput: async () =>
     (await import('./components/date-time-input/date-time.component')).DateTimeComponent,
   datePicker: async () =>
     (await import('./components/date-picker/date-picker.component')).DatePickerComponent,
+  dateTimePicker: async () =>
+    (await import('./components/date-time-picker/date-time-picker.component'))
+      .DateTimePickerComponent,
   dropdown: async () =>
     (await import('./components/dropdown/dropdown.component')).DropdownComponent,
   toggle: async () => (await import('./components/toggle/toggle.component')).ToggleComponent,

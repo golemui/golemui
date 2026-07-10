@@ -1,113 +1,41 @@
 import { gui } from '@golemui/gui-shared';
 
 export const calendarTab = gui.layouts.flex([
-  gui.displays.custom('heading', { text: 'RANGE DATE INPUTS', level: 3 }),
-
-  gui.inputs.rangeDateInput('rangeDateInput', {
-    defaultValue: [
-      { start: '2026-02-13', end: '2026-02-16' },
-      { start: '2026-02-20' },
-      { start: '2026-02-07', end: '2026-02-16' },
-      { start: '2026-07-20', end: '2026-07-26' },
-      { start: '2024-12-02', end: '2024-12-06' },
-      { start: '2023-02-20' },
-    ],
-    removePillAriaLabel: 'Delete holiday period',
-    startDateAriaLabel: 'Begin of holiday period',
-    endDateAriaLabel: 'End of holiday period',
-    separator: 'to',
-    icon: 'calendar_month',
+  gui.inputs.calendar('calendarEmpty', {
+    label: 'Empty',
   }),
-
-  gui.inputs.rangeDatePicker('rangeDatePicker', {
-    defaultValue: [
-      { start: '2026-02-13', end: '2026-02-16' },
-      { start: '2026-02-20' },
-      { start: '2026-07-20', end: '2026-07-26' },
-      { start: '2024-12-02', end: '2024-12-06' },
-    ],
-    numberOfMonths: 1,
-    icon: 'calendar_month',
-    prevMonthIcon: 'chevron_left',
-    nextMonthIcon: 'chevron_right',
-    prevMonthAriaLabel: 'Go To Previous Month',
-    nextMonthAriaLabel: 'Go To Next Month',
-    disabledRanges: [{ start: '2026-02-09', end: '2026-02-10' }, { start: '2026-02-17' }],
-    removePillAriaLabel: 'Delete holiday period',
-    startDateAriaLabel: 'Begin of holiday period',
-    endDateAriaLabel: 'End of holiday period',
-    separator: 'to',
-    validator: { required: true },
-  }),
-
-  gui.inputs.rangeCalendar('rangeCalendar', {
-    defaultValue: [{ start: '2026-02-13', end: '2026-02-16' }, { start: '2026-02-20' }],
-    numberOfMonths: 3,
-    prevMonthIcon: 'chevron_left',
-    nextMonthIcon: 'chevron_right',
-    removePillAriaLabel: 'Delete holiday period',
-    prevMonthAriaLabel: 'Go To Previous Month',
-    nextMonthAriaLabel: 'Go To Next Month',
-    disabledRanges: [{ start: '2026-02-09', end: '2026-02-10' }, { start: '2026-02-17' }],
-  }),
-
-  gui.displays.custom('heading', { text: 'DATE INPUTS', level: 3 }),
-
-  gui.inputs.dateInput('dateInput', {
-    icon: 'calendar_month',
-    validator: { required: true, format: 'date' },
-  }),
-
-  gui.inputs.datePicker('datePicker', {
-    icon: 'calendar_month',
-    prevMonthIcon: 'chevron_left',
-    nextMonthIcon: 'chevron_right',
-    prevMonthAriaLabel: 'Go To Previous Month',
-    nextMonthAriaLabel: 'Go To Next Month',
-    validator: { required: true, format: 'date' },
-  }),
-
-  gui.inputs.calendar('calendar', {
+  gui.inputs.calendar('calendarDefault', {
+    label: 'With default value',
     defaultValue: '2026-02-13',
-    prevMonthAriaLabel: 'Go To Previous Month',
-    nextMonthAriaLabel: 'Go To Next Month',
-    minDate: '2022-01-01',
-    maxDate: '2026-03-28',
-    disabledRanges: [{ start: '2026-02-09', end: '2026-02-10' }, { start: '2026-02-17' }],
-    validator: { required: true, format: 'date' },
   }),
-
-  gui.displays.custom('heading', { text: 'TIME INPUTS', level: 3 }),
-
-  gui.inputs.timeInput('timeInput', {
-    label: '12h time format',
-    hint: '15m step jumps on minutes',
-    defaultValue: '09:30:00',
-    icon: 'schedule',
-    minuteStep: 15,
-    validator: { required: true, format: 'time' },
+  gui.inputs.calendar('calendarDisabled', {
+    label: 'Disabled',
+    defaultValue: '2026-02-13',
+    disabled: true,
   }),
-
-  gui.inputs.timeInput('timeInput24', {
-    label: '24h time format',
-    hourFormat: '24',
-    validator: { required: true, format: 'time' },
+  gui.inputs.calendar('calendarReadonly', {
+    label: 'Read only',
+    defaultValue: '2026-02-13',
+    readonly: true,
   }),
-
-  gui.displays.custom('heading', { text: 'DATE TIME INPUTS', level: 3 }),
-
-  gui.inputs.dateTimeInput('dateTimeInput', {
-    label: '12h date time format',
-    hint: '15m step jumps on minutes',
-    defaultValue: '2026-07-03T09:30:00',
-    icon: 'calendar_month',
-    minuteStep: 15,
-    validator: { required: true, format: 'date-time' },
+  gui.inputs.calendar('calendarValidation', {
+    label: 'Required (validation)',
+    validator: {
+      required: true,
+      format: 'date',
+    },
   }),
-
-  gui.inputs.dateTimeInput('dateTimeInput24', {
-    label: '24h date time format',
-    hourFormat: '24',
-    validator: { required: true, format: 'date-time' },
+  gui.inputs.calendar('calendarDisabledRanges', {
+    label: 'Disabled date ranges',
+    defaultValue: '2026-02-13',
+    disabledRanges: [
+      {
+        start: '2026-02-09',
+        end: '2026-02-10',
+      },
+      {
+        start: '2026-02-17',
+      },
+    ],
   }),
 ]);

@@ -16,6 +16,7 @@ export const runDateInputComponentTests = (mountFn: MountComponentFn) => {
     const mountDateInput = (options?: {
       data?: Record<string, any>;
       lang?: string;
+      props?: Record<string, any>;
       formSubmit?: (event: any) => void;
       readonly?: boolean;
       disabled?: boolean;
@@ -30,6 +31,7 @@ export const runDateInputComponentTests = (mountFn: MountComponentFn) => {
               kind: 'input',
               type: 'dateInput',
               path: 'myDate',
+              ...(options?.props ? { props: options.props } : {}),
               ...(options?.readonly !== undefined ? { readonly: options.readonly } : {}),
               ...(options?.disabled !== undefined ? { disabled: options.disabled } : {}),
             },
@@ -287,6 +289,31 @@ export const runDateInputComponentTests = (mountFn: MountComponentFn) => {
         cy.get(sel.day).should('be.disabled');
         cy.get(sel.month).should('be.disabled');
         cy.get(sel.year).should('be.disabled');
+      });
+    });
+
+    describe('bounds validation', () => {
+      it('should emit change and inputError for a date past maxDate', () => {
+        mountDateInput({ props: { maxDate: '2026-06-20', maxDateMessage: 'Too far out' } });
+
+        const changeSpy = cy.spy().as('changeSpy');
+        const inputErrorSpy = cy.spy().as('inputErrorSpy');
+        cy.get('gui-date').then(($el) => {
+          $el[0].addEventListener('change', changeSpy as unknown as EventListener);
+          $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
+        });
+
+        // en-US order month/day/year; 06/25/2026 is past maxDate
+        cy.get(sel.month).click();
+        cy.focused().type('06');
+        cy.focused().type('25');
+        cy.focused().type('2026');
+
+        cy.get(sel.day).should('have.value', '25');
+        cy.get('@changeSpy').should('have.been.called');
+        cy.get('@inputErrorSpy').then((spy: any) => {
+          expect(spy.getCall(0).args[0].detail.message).to.equal('Too far out');
+        });
       });
     });
   });

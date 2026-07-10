@@ -190,6 +190,32 @@ export type CalendarProps = {
   numberOfMonths?: number;
 };
 
+/**
+ * Calendar with an embedded time picker. The value is a local ISO date-time
+ * (YYYY-MM-DDTHH:mm:ss), emitted only when both the day and the time are
+ * selected; picking a different day clears the time and emits null. With
+ * numberOfMonths > 1 the time row and grid render on the first panel only.
+ */
+export type DateTimeCalendarProps = CalendarProps & {
+  /** '12' or '24'. Defaults to the locale's hour cycle. */
+  hourFormat?: '12' | '24';
+  /** Minutes between selectable slots. Defaults to 30. */
+  minuteStep?: number;
+  /** First selectable time (ISO time, inclusive). Defaults to '00:00:00'. */
+  minTime?: string;
+  /** Last selectable time (ISO time, inclusive). Defaults to '23:59:59'. */
+  maxTime?: string;
+  /** Times inside these ranges render disabled; entries can scope per day. */
+  disabledTimeRanges?: DisabledTimeRange[];
+  /** Allows typing a time in the input; when false (default) times come only from the grid. */
+  allowCustomTime?: boolean;
+  minTimeMessage?: Localizable;
+  maxTimeMessage?: Localizable;
+  disabledTimeRangeMessage?: Localizable;
+  /** Shown in the time grid when the bounds yield no slots. Defaults to 'No available times'. */
+  noAvailableTimesMessage?: Localizable;
+};
+
 export type RangeCalendarProps = {
   /**
    * An optional descriptive text providing guidance or information about the associated widget or functionality.
@@ -280,6 +306,13 @@ export type RangeCalendarProps = {
 export type DateinputProps = {
   hint?: string;
   icon?: string;
+  invalidDateMessage?: Localizable;
+  /** Earliest allowed date (ISO date, inclusive). */
+  minDate?: string;
+  /** Latest allowed date (ISO date, inclusive). */
+  maxDate?: string;
+  minDateMessage?: Localizable;
+  maxDateMessage?: Localizable;
 };
 
 export type DateTimeInputProps = {
@@ -287,6 +320,19 @@ export type DateTimeInputProps = {
   icon?: string;
   hourFormat?: '12' | '24';
   minuteStep?: number;
+  invalidDateMessage?: Localizable;
+  /** Earliest allowed date (ISO date, inclusive). */
+  minDate?: string;
+  /** Latest allowed date (ISO date, inclusive). */
+  maxDate?: string;
+  /** First allowed time (ISO time, inclusive). */
+  minTime?: string;
+  /** Last allowed time (ISO time, inclusive). */
+  maxTime?: string;
+  minDateMessage?: Localizable;
+  maxDateMessage?: Localizable;
+  minTimeMessage?: Localizable;
+  maxTimeMessage?: Localizable;
 };
 
 export type TimeInputProps = {
@@ -294,6 +340,35 @@ export type TimeInputProps = {
   icon?: string;
   hourFormat?: '12' | '24';
   minuteStep?: number;
+  /** First allowed time (ISO time, inclusive). */
+  minTime?: string;
+  /** Last allowed time (ISO time, inclusive). */
+  maxTime?: string;
+  minTimeMessage?: Localizable;
+  maxTimeMessage?: Localizable;
+};
+
+export type TimeRange = {
+  start: string;
+  end: string;
+};
+
+export type DisabledTimeRange = TimeRange & {
+  /** ISO date (YYYY-MM-DD): the range only applies on that date. */
+  date?: string;
+  /** Weekday numbers as returned by Date.prototype.getDay(): 0=Sunday … 6=Saturday. */
+  weekdays?: number[];
+};
+
+export type TimePickerProps = TimeInputProps & {
+  /** Times inside these ranges (both ends inclusive) render disabled. */
+  disabledRanges?: TimeRange[];
+  /** Allows typing a time in the input; when false (default) values come only from the list. */
+  allowCustomTime?: boolean;
+  height?: number;
+  itemHeight?: number;
+  disabledRangeMessage?: Localizable;
+  noAvailableTimesMessage?: Localizable;
 };
 
 export type RangeDateInputProps = {
@@ -303,43 +378,24 @@ export type RangeDateInputProps = {
   removePillAriaLabel?: string;
   startDateAriaLabel?: string;
   endDateAriaLabel?: string;
+  invalidDateMessage?: Localizable;
 };
 
-export type DatePickerProps = {
-  hint?: string;
-  icon?: string;
-  prevMonthIcon?: string;
-  nextMonthIcon?: string;
-  prevMonthAriaLabel?: string;
-  nextMonthAriaLabel?: string;
-  dayFormat?: 'numeric' | '2-digit';
-  weekdayFormat?: 'short' | 'long' | 'narrow';
-  monthFormat?: 'numeric' | '2-digit' | 'long' | 'short' | 'narrow';
-  minDate?: string;
-  maxDate?: string;
-  disabledRanges?: DateRange[];
-  numberOfMonths?: number;
+export type DateBoundsMessageProps = {
+  minDateMessage?: Localizable;
+  maxDateMessage?: Localizable;
+  disabledDateRangeMessage?: Localizable;
 };
 
-export type RangeDatePickerProps = {
-  hint?: string;
-  icon?: string;
-  separator?: string;
-  removePillAriaLabel?: string;
-  startDateAriaLabel?: string;
-  endDateAriaLabel?: string;
-  prevMonthIcon?: string;
-  nextMonthIcon?: string;
-  prevMonthAriaLabel?: string;
-  nextMonthAriaLabel?: string;
-  dayFormat?: 'numeric' | '2-digit';
-  weekdayFormat?: 'short' | 'long' | 'narrow';
-  monthFormat?: 'numeric' | '2-digit' | 'long' | 'short' | 'narrow';
-  minDate?: string;
-  maxDate?: string;
-  disabledRanges?: DateRange[];
-  numberOfMonths?: number;
-};
+export type DatePickerProps = CalendarProps & DateinputProps & DateBoundsMessageProps;
+
+export type DateTimePickerProps = DateTimeCalendarProps &
+  DateTimeInputProps &
+  DateBoundsMessageProps;
+
+export type RangeDatePickerProps = RangeCalendarProps &
+  RangeDateInputProps &
+  DateBoundsMessageProps;
 
 export type NumberinputProps = {
   placeholder?: string;
@@ -412,11 +468,14 @@ export type SelectProps = {
   placeholder?: string;
   labelField?: string;
   valueField?: string;
+  invalidOptionMessage?: Localizable;
 };
 
 export type ListItem<T> = {
   template: T;
   value: OptionValue;
+  /** Disabled items render greyed out, are skipped by keyboard navigation and cannot be selected */
+  disabled?: boolean;
 };
 
 type ItemKeys<T> = T extends Record<string, any> ? keyof T : string;

@@ -1,0 +1,97 @@
+{
+  "$schema": "../../../../../../libs/gui/schemas/src/lib/layout-widget.schema.json",
+  "uid": "tabRangeCalendar",
+  "kind": "layout",
+  "type": "flex",
+  "children": [
+    {
+      "kind": "input",
+      "type": "rangeCalendar",
+      "path": "rangeCalendarEmpty",
+      "label": "Empty"
+    },
+    {
+      "kind": "input",
+      "type": "rangeCalendar",
+      "path": "rangeCalendarDefault",
+      "defaultValue": [
+        {
+          "start": "2026-02-13",
+          "end": "2026-02-16"
+        },
+        {
+          "start": "2026-02-20"
+        }
+      ],
+      "label": "With default value"
+    },
+    {
+      "kind": "input",
+      "type": "rangeCalendar",
+      "path": "rangeCalendarDisabled",
+      "defaultValue": [
+        {
+          "start": "2026-02-13",
+          "end": "2026-02-16"
+        },
+        {
+          "start": "2026-02-20"
+        }
+      ],
+      "disabled": true,
+      "label": "Disabled"
+    },
+    {
+      "kind": "input",
+      "type": "rangeCalendar",
+      "path": "rangeCalendarReadonly",
+      "defaultValue": [
+        {
+          "start": "2026-02-13",
+          "end": "2026-02-16"
+        },
+        {
+          "start": "2026-02-20"
+        }
+      ],
+      "readonly": true,
+      "label": "Read only"
+    },
+    {
+      "kind": "input",
+      "type": "rangeCalendar",
+      "path": "rangeCalendarValidation",
+      "label": "Required (validation)",
+      "validator": {
+        "type": "array",
+        "required": true
+      }
+    },
+    {
+      "kind": "input",
+      "type": "rangeCalendar",
+      "path": "rangeCalendarDisabledRanges",
+      "defaultValue": [
+        {
+          "start": "2026-02-13",
+          "end": "2026-02-16"
+        },
+        {
+          "start": "2026-02-20"
+        }
+      ],
+      "label": "Disabled date ranges",
+      "props": {
+        "disabledRanges": [
+          {
+            "start": "2026-02-09",
+            "end": "2026-02-10"
+          },
+          {
+            "start": "2026-02-17"
+          }
+        ]
+      }
+    }
+  ]
+}

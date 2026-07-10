@@ -198,9 +198,11 @@
   --gui-calendar-change-month-button-width: 36px;
   --gui-calendar-change-month-button-height: 36px;
   --gui-calendar-day-button-size: var(--gui-widget-size);
-  --gui-calendar-year-button-width: 64px;
+  --gui-calendar-year-button-width: 66px;
   --gui-calendar-year-button-height: 32px;
   --gui-calendar-year-grid-height: 216px;
+  --gui-calendar-time-grid-height: 216px;
+  --gui-calendar-time-button-height: 32px;
 
   /* Markdown Text Typography */
   --gui-md-text-color: var(--gui-text-default);

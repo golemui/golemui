@@ -306,6 +306,7 @@ export class GuiPills extends LitElement {
 
     if (e.key === 'Escape' && isDropdown) {
       e.preventDefault();
+      e.stopPropagation();
       this.closeDropdown();
       return;
     }

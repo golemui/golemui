@@ -60,7 +60,7 @@ export class ListComponent implements OnInit, OnDestroy, WithWidget {
   }
 
   protected onClickItem(item: any, index: number, listRef: any) {
-    if (this.adapter.templateData().disabled) return;
+    if (this.adapter.templateData().disabled || item.disabled) return;
 
     this.setValue(item.value);
     this.focusedIndex.set(index);

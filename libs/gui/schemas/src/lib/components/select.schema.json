@@ -75,6 +75,9 @@
     "props": {
       "type": "object",
       "properties": {
+        "invalidOptionMessage": {
+          "$ref": "../common.schema.json#/$defs/localizable"
+        },
         "hint": {
           "$ref": "#/$defs/hintProp"
         },
@@ -98,6 +101,9 @@
         }
       },
       "patternProperties": {
+        "^invalidOptionMessage\\.[^.]+$": {
+          "$ref": "../common.schema.json#/$defs/localizable"
+        },
         "^hint\\.[^.]+$": {
           "$ref": "#/$defs/hintProp"
         },

@@ -81,7 +81,7 @@ const handleBlur = (e: FocusEvent) => {
 };
 
 const handleClickItem = (item: ListItem<any>, index: number) => {
-  if (templateData.value.disabled) return;
+  if (templateData.value.disabled || item.disabled) return;
   onValueChanged(item.value);
   focusedIndex.value = index;
   listRef.value?.focusItemAtIndex(index);
@@ -133,7 +133,7 @@ const ItemRenderer = computed<Component>(() => {
           class="gui-list__item-wrapper"
           :style="{ height: `${templateData.itemHeight || 40}px` }"
           :aria-selected="value === item.value"
-          :aria-disabled="isDisabled ? 'true' : 'false'"
+          :aria-disabled="isDisabled || item.disabled ? 'true' : 'false'"
           @click="handleClickItem(item, rangeStart + idx)"
         >
           <component
@@ -150,7 +150,7 @@ const ItemRenderer = computed<Component>(() => {
             :value="item.value"
             :index="idx"
             :selected="value === item.value"
-            :disabled="isDisabled"
+            :disabled="isDisabled || !!item.disabled"
             :focused="focusedIndex === rangeStart + idx"
           />
         </div>

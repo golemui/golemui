@@ -25,6 +25,7 @@ export function Dropdown(widgetInstance: WithWidget) {
   const listRef = useRef<GuiList>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const labelRef = useRef<GuiLabel>(null);
+  const ignoreNextFocusRef = useRef(false);
 
   const visibleItems = useMemo(() => listItems.slice(range.start, range.end), [listItems, range]);
 
@@ -63,7 +64,7 @@ export function Dropdown(widgetInstance: WithWidget) {
 
   const handleClickItem = useCallback(
     (item: ListItem<never>, index: number) => {
-      if (templateData.readonly) return;
+      if (templateData.readonly || item.disabled) return;
 
       handleValueChange(item.value);
       onFilter('');
@@ -245,6 +246,7 @@ export function Dropdown(widgetInstance: WithWidget) {
   };
 
   const handleInputFocus = useCallback(() => {
+    if (ignoreNextFocusRef.current) return;
     if (isListVisible) return;
 
     setIsListVisible(true);
@@ -255,6 +257,19 @@ export function Dropdown(widgetInstance: WithWidget) {
       }
     }, 0);
   }, [isListVisible]);
+
+  const handleWidgetKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key !== 'Escape' || !isListVisible) return;
+    event.preventDefault();
+    event.stopPropagation();
+    setIsListVisible(false);
+    setIsFiltering(false);
+    ignoreNextFocusRef.current = true;
+    inputRef.current?.focus();
+    setTimeout(() => {
+      ignoreNextFocusRef.current = false;
+    });
+  };
 
   const handleFocusOut = (e: React.FocusEvent) => {
     const newFocusTarget = e.relatedTarget as Node;
@@ -290,7 +305,7 @@ export function Dropdown(widgetInstance: WithWidget) {
         native={false}
       ></GuiLabelReact>
 
-      <div className="gui-widget" aria-expanded={isListVisible}>
+      <div className="gui-widget" aria-expanded={isListVisible} onKeyDown={handleWidgetKeyDown}>
         <input
           ref={inputRef}
           type="text"
@@ -337,6 +352,7 @@ export function Dropdown(widgetInstance: WithWidget) {
             const absoluteIndex = range.start + index;
             const isSelected = value === item.value;
             const isFocused = focusedIndex === absoluteIndex;
+            const isItemDisabled = isDisabled || !!item.disabled;
 
             const labelField = templateData.labelField ?? 'label';
             const isObject = item.template !== null && typeof item.template === 'object';
@@ -354,6 +370,7 @@ export function Dropdown(widgetInstance: WithWidget) {
                 id={`${uid}-item-${absoluteIndex}`}
                 style={{ height: `${templateData.itemHeight || 40}px` }}
                 aria-selected={isSelected}
+                aria-disabled={isItemDisabled ? 'true' : 'false'}
                 onClick={() => handleClickItem(item, absoluteIndex)}
               >
                 <ItemRenderer
@@ -361,7 +378,7 @@ export function Dropdown(widgetInstance: WithWidget) {
                   value={item.value}
                   index={absoluteIndex}
                   selected={isSelected}
-                  disabled={isDisabled || isReadOnly}
+                  disabled={isItemDisabled || isReadOnly}
                   focused={isFocused}
                 />
               </div>

@@ -1,0 +1,84 @@
+{
+  "$schema": "../../../../../../libs/gui/schemas/src/lib/layout-widget.schema.json",
+  "uid": "tabDatePicker",
+  "kind": "layout",
+  "type": "flex",
+  "children": [
+    {
+      "kind": "input",
+      "type": "datePicker",
+      "path": "datePickerEmpty",
+      "label": "Empty",
+      "props": {
+        "icon": "calendar_month"
+      }
+    },
+    {
+      "kind": "input",
+      "type": "datePicker",
+      "path": "datePickerDefault",
+      "defaultValue": "2026-02-13",
+      "label": "With default value",
+      "props": {
+        "icon": "calendar_month"
+      }
+    },
+    {
+      "kind": "input",
+      "type": "datePicker",
+      "path": "datePickerDisabled",
+      "defaultValue": "2026-02-13",
+      "disabled": true,
+      "label": "Disabled",
+      "props": {
+        "icon": "calendar_month"
+      }
+    },
+    {
+      "kind": "input",
+      "type": "datePicker",
+      "path": "datePickerReadonly",
+      "defaultValue": "2026-02-13",
+      "readonly": true,
+      "label": "Read only",
+      "props": {
+        "icon": "calendar_month"
+      }
+    },
+    {
+      "kind": "input",
+      "type": "datePicker",
+      "path": "datePickerValidation",
+      "label": "Required (validation)",
+      "props": {
+        "icon": "calendar_month"
+      },
+      "validator": {
+        "type": "string",
+        "required": true,
+        "format": "date"
+      }
+    },
+    {
+      "kind": "input",
+      "type": "datePicker",
+      "path": "datePickerDisabledRanges",
+      "defaultValue": "2026-02-13",
+      "label": "Disabled date ranges",
+      "props": {
+        "icon": "calendar_month",
+        "minDate": "2026-02-01",
+        "maxDate": "2026-02-28",
+        "disabledRanges": [
+          {
+            "start": "2026-02-09",
+            "end": "2026-02-10"
+          },
+          {
+            "start": "2026-02-17"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -29,9 +29,9 @@
     flex-direction: row;
   }
 
-  &:has(input:disabled),
-  &:has(textarea:disabled),
-  &:has(select:disabled) {
+  &:has(input:disabled):not(:has(.gui-widget input:disabled)),
+  &:has(textarea:disabled):not(:has(.gui-widget textarea:disabled)),
+  &:has(select:disabled):not(:has(.gui-widget select:disabled)) {
     cursor: not-allowed;
     opacity: 0.75;
   }

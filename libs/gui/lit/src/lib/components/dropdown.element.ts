@@ -35,6 +35,8 @@ export class DropdownElement extends LitElement implements WithWidget {
   @query('input') private _inputRef!: any;
   @query('gui-list') private _listRef!: any;
 
+  private _ignoreNextFocus = false;
+
   onDocumentClick = (event: MouseEvent) => {
     if (!this._isListVisible) return;
 
@@ -119,7 +121,7 @@ export class DropdownElement extends LitElement implements WithWidget {
   }
 
   private _onClickItem(item: ListItem<never>, index: number) {
-    if (this.adapter.templateData.readonly) return;
+    if (this.adapter.templateData.readonly || item.disabled) return;
 
     const templateData = this.adapter.templateData;
     this.adapter.valueChanged(item.value);
@@ -214,7 +216,21 @@ export class DropdownElement extends LitElement implements WithWidget {
     }
   }
 
+  private _onWidgetKeyDown(event: Event) {
+    if ((event as KeyboardEvent).key !== 'Escape' || !this._isListVisible) return;
+    event.preventDefault();
+    event.stopPropagation();
+    this._isListVisible = false;
+    this._isFiltering = false;
+    this._ignoreNextFocus = true;
+    this._inputRef?.focus();
+    setTimeout(() => {
+      this._ignoreNextFocus = false;
+    });
+  }
+
   private async _onFocus() {
+    if (this._ignoreNextFocus) return;
     this._isListVisible = true;
 
     await this.updateComplete;
@@ -274,7 +290,11 @@ export class DropdownElement extends LitElement implements WithWidget {
         .native=${false}
       ></gui-label>
 
-      <div class="gui-widget" aria-expanded=${this._isListVisible}>
+      <div
+        class="gui-widget"
+        aria-expanded=${this._isListVisible}
+        @keydown=${this._onWidgetKeyDown}
+      >
         <input
           type="text"
           id=${this.widget.uid}
@@ -324,6 +344,7 @@ export class DropdownElement extends LitElement implements WithWidget {
             const absoluteIndex = this._range.start + index;
             const isSelected = templateData.value === item.value;
             const isFocused = this._focusedIndex === absoluteIndex;
+            const isDisabled = !!templateData.disabled || !!item.disabled;
 
             const labelField = templateData.labelField ?? 'label';
             const isObject = item.template !== null && typeof item.template === 'object';
@@ -340,6 +361,7 @@ export class DropdownElement extends LitElement implements WithWidget {
                 id="${this.widget.uid}-item-${absoluteIndex}"
                 style="height: ${templateData.itemHeight || 40}px"
                 aria-selected=${isSelected ? 'true' : 'false'}
+                aria-disabled=${isDisabled ? 'true' : 'false'}
                 @click=${() => this._onClickItem(item, absoluteIndex)}
               >
                 ${itemRenderer({
@@ -347,7 +369,7 @@ export class DropdownElement extends LitElement implements WithWidget {
                   value: item.value,
                   index: absoluteIndex,
                   selected: isSelected,
-                  disabled: !!templateData.disabled,
+                  disabled: isDisabled,
                   focused: isFocused,
                 })}
               </div>

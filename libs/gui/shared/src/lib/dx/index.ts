@@ -12,6 +12,8 @@ export { _guiAccordion } from './shortcuts/accordion/guiAccordion.impl';
 export { _guiButton } from './shortcuts/actions/guiActions.impl';
 export { _guiAlert } from './shortcuts/alert/guiAlert.impl';
 export { _guiCalendar } from './shortcuts/calendar/guiCalendar.impl';
+export { _guiDateTimeCalendar } from './shortcuts/date-time-calendar/guiDateTimeCalendar.impl';
+export { _guiDateTimePicker } from './shortcuts/date-time-picker/guiDateTimePicker.impl';
 export { _guiCheckbox } from './shortcuts/checkbox/guiCheckbox.impl';
 export { _guiCurrency } from './shortcuts/currency/guiCurrency.impl';
 export { _guiCustomAction } from './shortcuts/custom-action/guiCustomAction.impl';
@@ -48,6 +50,7 @@ export { _guiTabs } from './shortcuts/tabs/guiTabs.impl';
 export { _guiTags } from './shortcuts/tags/guiTags.impl';
 export { _guiTextarea } from './shortcuts/textarea/guiTextarea.impl';
 export { _guiTimeInput } from './shortcuts/time-input/guiTimeInput.impl';
+export { _guiTimePicker } from './shortcuts/time-picker/guiTimePicker.impl';
 
 // ─── GSL selectors (behavior) ───
 
@@ -55,6 +58,10 @@ export { _gslAccordionByUid, _gslAccordions } from './shortcuts/accordion/regist
 export { _gslActionByUid, _gslActions } from './shortcuts/actions/register';
 export { _gslAlertByUid, _gslAlerts } from './shortcuts/alert/register';
 export { _gslCalendarByUid, _gslCalendars } from './shortcuts/calendar/register';
+export {
+  _gslDateTimeCalendarByUid,
+  _gslDateTimeCalendars,
+} from './shortcuts/date-time-calendar/register';
 export { _gslCheckboxByUid, _gslCheckboxes } from './shortcuts/checkbox/register';
 export { _gslCurrencies, _gslCurrencyByUid } from './shortcuts/currency/register';
 export { _gslCustomActionByUid, _gslCustomActions } from './shortcuts/custom-action/register';
@@ -63,6 +70,10 @@ export { _gslCustomInputByUid, _gslCustomInputs } from './shortcuts/custom-input
 export { _gslCustomLayoutByUid, _gslCustomLayouts } from './shortcuts/custom-layout/register';
 export { _gslDateInputByUid, _gslDateInputs } from './shortcuts/date-input/register';
 export { _gslDatePickerByUid, _gslDatePickers } from './shortcuts/date-picker/register';
+export {
+  _gslDateTimePickerByUid,
+  _gslDateTimePickers,
+} from './shortcuts/date-time-picker/register';
 export { _gslDateTimeInputByUid, _gslDateTimeInputs } from './shortcuts/date-time-input/register';
 export { _gslDisplayByUid, _gslDisplays } from './shortcuts/display/register';
 export { _gslDropdownByUid, _gslDropdowns } from './shortcuts/dropdown/register';
@@ -93,6 +104,7 @@ export { _gslTabs, _gslTabsByUid } from './shortcuts/tabs/register';
 export { _gslTags, _gslTagsByUid } from './shortcuts/tags/register';
 export { _gslTextareaByUid, _gslTextareas } from './shortcuts/textarea/register';
 export { _gslTimeInputByUid, _gslTimeInputs } from './shortcuts/time-input/register';
+export { _gslTimePickerByUid, _gslTimePickers } from './shortcuts/time-picker/register';
 
 // ─── Scope selectors ───
 //
@@ -126,6 +138,10 @@ export type {
 export type { ActionDecorator, GslActionsConfig } from './shortcuts/actions/actions.domain';
 export type { AlertDecorator, GslAlertsConfig } from './shortcuts/alert/alert.domain';
 export type { CalendarDecorator, GslCalendarConfig } from './shortcuts/calendar/calendar.domain';
+export type {
+  DateTimeCalendarDecorator,
+  GslDateTimeCalendarConfig,
+} from './shortcuts/date-time-calendar/dateTimeCalendar.domain';
 export type { CheckboxDecorator, GslCheckboxConfig } from './shortcuts/checkbox/checkbox.domain';
 export type { CurrencyDecorator, GslCurrencyConfig } from './shortcuts/currency/currency.domain';
 export type {
@@ -152,6 +168,10 @@ export type {
   DatePickerDecorator,
   GslDatePickerConfig,
 } from './shortcuts/date-picker/datePicker.domain';
+export type {
+  DateTimePickerDecorator,
+  GslDateTimePickerConfig,
+} from './shortcuts/date-time-picker/dateTimePicker.domain';
 export type {
   DateTimeInputDecorator,
   GslDateTimeInputConfig,
@@ -197,6 +217,10 @@ export type {
   GslTimeInputConfig,
   TimeInputDecorator,
 } from './shortcuts/time-input/timeInput.domain';
+export type {
+  GslTimePickerConfig,
+  TimePickerDecorator,
+} from './shortcuts/time-picker/timePicker.domain';
 
 // ─── Extension API (for adding custom shortcut types) ───
 

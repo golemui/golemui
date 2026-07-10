@@ -1,0 +1,110 @@
+{
+  "$schema": "../../../../../../libs/gui/schemas/src/lib/layout-widget.schema.json",
+  "uid": "tabDateTimeCalendar",
+  "kind": "layout",
+  "type": "flex",
+  "children": [
+    {
+      "kind": "input",
+      "type": "dateTimeCalendar",
+      "path": "dateTimeCalendarEmpty",
+      "label": "Empty",
+      "props": {
+        "minTime": "09:00:00",
+        "maxTime": "18:00:00",
+        "minuteStep": 30,
+        "allowCustomTime": true
+      }
+    },
+    {
+      "kind": "input",
+      "type": "dateTimeCalendar",
+      "path": "dateTimeCalendarDefault",
+      "defaultValue": "2026-02-13T09:30:00",
+      "label": "With default value",
+      "props": {
+        "minTime": "09:00:00",
+        "maxTime": "18:00:00",
+        "minuteStep": 30
+      }
+    },
+    {
+      "kind": "input",
+      "type": "dateTimeCalendar",
+      "path": "dateTimeCalendarDisabled",
+      "defaultValue": "2026-02-13T09:30:00",
+      "disabled": true,
+      "label": "Disabled",
+      "props": {
+        "minTime": "09:00:00",
+        "maxTime": "18:00:00",
+        "minuteStep": 30
+      }
+    },
+    {
+      "kind": "input",
+      "type": "dateTimeCalendar",
+      "path": "dateTimeCalendarReadonly",
+      "defaultValue": "2026-02-13T09:30:00",
+      "readonly": true,
+      "label": "Read only",
+      "props": {
+        "minTime": "09:00:00",
+        "maxTime": "18:00:00",
+        "minuteStep": 30
+      }
+    },
+    {
+      "kind": "input",
+      "type": "dateTimeCalendar",
+      "path": "dateTimeCalendarValidation",
+      "label": "Required (validation)",
+      "props": {
+        "minTime": "09:00:00",
+        "maxTime": "18:00:00",
+        "minuteStep": 30
+      },
+      "validator": {
+        "type": "string",
+        "required": true,
+        "format": "date-time"
+      }
+    },
+    {
+      "kind": "input",
+      "type": "dateTimeCalendar",
+      "path": "dateTimeCalendarDisabledRanges",
+      "defaultValue": "2026-02-16T09:30:00",
+      "label": "Disabled date & time ranges",
+      "props": {
+        "minTime": "09:00:00",
+        "maxTime": "18:00:00",
+        "minuteStep": 30,
+        "minDate": "2026-02-01",
+        "maxDate": "2026-07-31",
+        "allowCustomTime": true,
+        "disabledRanges": [
+          {
+            "start": "2026-02-09",
+            "end": "2026-02-10"
+          },
+          {
+            "start": "2026-02-17"
+          }
+        ],
+        "disabledTimeRanges": [
+          {
+            "start": "13:00:00",
+            "end": "14:00:00",
+            "weekdays": [1, 2, 3, 4, 5]
+          },
+          {
+            "start": "09:00:00",
+            "end": "10:30:00",
+            "date": "2026-02-13"
+          }
+        ]
+      }
+    }
+  ]
+}

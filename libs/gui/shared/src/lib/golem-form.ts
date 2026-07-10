@@ -17,6 +17,8 @@ import type {
   CheckboxProps,
   CurrencyProps,
   DatePickerProps,
+  DateTimeCalendarProps,
+  DateTimePickerProps,
   DateRange,
   DateinputProps,
   DropdownProps,
@@ -39,6 +41,7 @@ import type {
   TextareaProps,
   TextinputProps,
   TimeInputProps,
+  TimePickerProps,
   ToggleProps,
 } from './widget.props';
 
@@ -190,10 +193,12 @@ type GolemWidget<
   | GuiButton<FormType, States>
   | GuiCalendar<FormType, States, V>
   | GuiCheckbox<FormType, States, V>
+  | GuiDateTimeCalendar<FormType, States, V>
   | GuiCurrency<FormType, States, V>
   | GuiDateinput<FormType, States, V>
   | GuiDatePicker<FormType, States, V>
   | GuiDateTimeInput<FormType, States, V>
+  | GuiDateTimePicker<FormType, States, V>
   | GuiDropdown<FormType, States, V>
   | GuiFunctionWidget<FormType, States, V, CustomWidget>
   | GuiList<FormType, States, V>
@@ -214,6 +219,7 @@ type GolemWidget<
   | GuiTextarea<FormType, States, V>
   | GuiTextInput<FormType, States, V>
   | GuiTimeInput<FormType, States, V>
+  | GuiTimePicker<FormType, States, V>
   | GuiToggle<FormType, States, V>
   | CustomWidget;
 
@@ -249,6 +255,14 @@ type GuiCalendar<FormType extends Record<string, any>, States extends string, V>
   V
 > & { type: 'calendar' };
 
+type GuiDateTimeCalendar<
+  FormType extends Record<string, any>,
+  States extends string,
+  V,
+> = InputWidget<string, States, FormType, DateTimeCalendarProps, V> & {
+  type: 'dateTimeCalendar';
+};
+
 type GuiCheckbox<FormType extends Record<string, any>, States extends string, V> = InputWidget<
   boolean,
   States,
@@ -280,6 +294,14 @@ type GuiDatePicker<FormType extends Record<string, any>, States extends string, 
   DatePickerProps,
   V
 > & { type: 'datePicker' };
+
+type GuiDateTimePicker<
+  FormType extends Record<string, any>,
+  States extends string,
+  V,
+> = InputWidget<string, States, FormType, DateTimePickerProps, V> & {
+  type: 'dateTimePicker';
+};
 
 type GuiDropdown<FormType extends Record<string, any>, States extends string, V> = InputWidget<
   OptionValue,
@@ -452,6 +474,14 @@ type GuiTimeInput<FormType extends Record<string, any>, States extends string, V
   TimeInputProps,
   V
 > & { type: 'timeInput' };
+
+type GuiTimePicker<FormType extends Record<string, any>, States extends string, V> = InputWidget<
+  string,
+  States,
+  FormType,
+  TimePickerProps,
+  V
+> & { type: 'timePicker' };
 
 type GuiDateTimeInput<FormType extends Record<string, any>, States extends string, V> = InputWidget<
   string,

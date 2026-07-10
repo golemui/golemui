@@ -31,6 +31,12 @@
     padding-inline-start: 2.5rem;
   }
 
+  // The hour:minute run keeps its own dir="ltr" so it never mirrors in RTL
+  .gui-parts__time-cluster {
+    display: flex;
+    align-items: center;
+  }
+
   .gui-parts__touch-target {
     display: block;
     position: relative;

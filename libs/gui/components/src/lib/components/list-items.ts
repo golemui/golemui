@@ -62,6 +62,7 @@ export function createListItemMapper(opt: unknown, { valueField }: ListProps<any
     return {
       template: item,
       value: resolvedValueField ? o[resolvedValueField] : '',
+      ...(typeof o.disabled === 'boolean' ? { disabled: o.disabled } : {}),
     };
   };
 }

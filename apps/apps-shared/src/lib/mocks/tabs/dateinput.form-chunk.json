@@ -1,0 +1,65 @@
+{
+  "$schema": "../../../../../../libs/gui/schemas/src/lib/layout-widget.schema.json",
+  "uid": "tabDateInput",
+  "kind": "layout",
+  "type": "flex",
+  "children": [
+    {
+      "kind": "input",
+      "type": "dateInput",
+      "path": "dateInputEmpty",
+      "label": "Empty",
+      "props": {
+        "icon": "calendar_month"
+      }
+    },
+    {
+      "kind": "input",
+      "type": "dateInput",
+      "path": "dateInputDefault",
+      "defaultValue": "2026-02-13",
+      "label": "With default value",
+      "props": {
+        "icon": "calendar_month"
+      }
+    },
+    {
+      "kind": "input",
+      "type": "dateInput",
+      "path": "dateInputDisabled",
+      "defaultValue": "2026-02-13",
+      "disabled": true,
+      "label": "Disabled",
+      "props": {
+        "icon": "calendar_month"
+      }
+    },
+    {
+      "kind": "input",
+      "type": "dateInput",
+      "path": "dateInputReadonly",
+      "defaultValue": "2026-02-13",
+      "readonly": true,
+      "label": "Read only",
+      "props": {
+        "icon": "calendar_month"
+      }
+    },
+    {
+      "kind": "input",
+      "type": "dateInput",
+      "path": "dateInputValidation",
+      "label": "Required (validation)",
+      "props": {
+        "minDate": "2026-02-01",
+        "maxDate": "2026-02-28",
+        "icon": "calendar_month"
+      },
+      "validator": {
+        "type": "string",
+        "required": true,
+        "format": "date"
+      }
+    }
+  ]
+}

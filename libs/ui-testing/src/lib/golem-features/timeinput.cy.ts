@@ -375,6 +375,40 @@ export const runTimeInputComponentTests = (mountFn: MountComponentFn) => {
       });
     });
 
+    describe('RTL', () => {
+      // CLDR emits no bidi marks inside h:mm (it must read hour-first in any
+      // direction); only the day period reorders around it. So in RTL the
+      // expected visual order is [period] [hour]:[minute], left to right.
+      it('should keep hour:minute unmirrored with the day period on the left', () => {
+        mountTimeInput({ data: { myTime: '08:00:00' }, lang: 'ar' });
+
+        cy.get(sel.hour).should('have.value', '08');
+        cy.get(sel.minute).should('have.value', '00');
+        cy.get('gui-time').should(($el) => {
+          const left = (type: string) => {
+            const part = $el[0].querySelector(`[data-type="${type}"]`);
+            expect(part, `${type} part exists`).to.not.equal(null);
+            return (part as HTMLElement).getBoundingClientRect().left;
+          };
+          expect(left('dayPeriod'), 'day period is visually leftmost').to.be.lessThan(left('hour'));
+          expect(left('hour'), 'hour stays left of minute').to.be.lessThan(left('minute'));
+        });
+      });
+
+      it('should navigate visually with the arrow keys', () => {
+        mountTimeInput({ data: { myTime: '08:00:00' }, lang: 'ar' });
+
+        // Visual order (left to right): dayPeriod, hour, minute
+        cy.get(sel.hour).click();
+        cy.focused().type('{rightArrow}');
+        cy.focused().should('have.attr', 'data-type', 'minute');
+        cy.focused().type('{leftArrow}');
+        cy.focused().should('have.attr', 'data-type', 'hour');
+        cy.focused().type('{leftArrow}');
+        cy.focused().should('have.attr', 'data-type', 'dayPeriod');
+      });
+    });
+
     describe('blur', () => {
       it('should emit a null value when a part is emptied and blurred', () => {
         const formSubmitHandler = cy.stub().as('formSubmitHandler');
@@ -406,6 +440,31 @@ export const runTimeInputComponentTests = (mountFn: MountComponentFn) => {
 
         cy.get(sel.hour).should('be.disabled');
         cy.get(sel.minute).should('be.disabled');
+      });
+    });
+
+    describe('bounds validation', () => {
+      it('should emit change and inputError for a time past maxTime', () => {
+        // en-GB renders 24h, so the hour is typed directly without a period
+        mountTimeInput({
+          lang: 'en-GB',
+          props: { minTime: '09:00:00', maxTime: '17:00:00', maxTimeMessage: 'Too late' },
+        });
+
+        const changeSpy = cy.spy().as('changeSpy');
+        const inputErrorSpy = cy.spy().as('inputErrorSpy');
+        cy.get('gui-time').then(($el) => {
+          $el[0].addEventListener('change', changeSpy as unknown as EventListener);
+          $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
+        });
+
+        cy.get(sel.hour).type('18');
+        cy.focused().type('00', { force: true });
+
+        cy.get('@changeSpy').should('have.been.called');
+        cy.get('@inputErrorSpy').then((spy: any) => {
+          expect(spy.getCall(0).args[0].detail.message).to.equal('Too late');
+        });
       });
     });
   });

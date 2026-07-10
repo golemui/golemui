@@ -314,6 +314,18 @@ const INPUTS: DxSpec[] = [
     ],
   },
   {
+    factory: 'timePicker',
+    namespace: 'inputs',
+    call: 'gui.inputs.timePicker(path, { label, minTime?, maxTime?, minuteStep?, disabledRanges?, allowCustomTime?, validator? })',
+    example:
+      "gui.inputs.timePicker('meetingTime', { label: 'Meeting time', minTime: '09:00', maxTime: '18:00', minuteStep: 30 })",
+    notes: [
+      'Time field with a popover list of slots built from `minTime`..`maxTime` stepping `minuteStep` ' +
+        '(default 30). `disabledRanges` (`{ start, end }[]`, inclusive) greys slots out. Typing is off ' +
+        "unless `allowCustomTime: true`. Emits `HH:mm:ss` — pair with the `{ format: 'time' }` validator.",
+    ],
+  },
+  {
     factory: 'dateTimeInput',
     namespace: 'inputs',
     call: 'gui.inputs.dateTimeInput(path, { label, hourFormat?, minuteStep?, validator? })',
@@ -333,6 +345,37 @@ const INPUTS: DxSpec[] = [
       'An always-visible INLINE calendar (no popover) — use when the calendar should be shown on the page. ' +
         'For a compact single-date field use `datePicker` instead.',
       '`minDate` / `maxDate` (ISO `YYYY-MM-DD` strings) constrain the selectable range — see `datePicker`.',
+    ],
+  },
+  {
+    factory: 'dateTimeCalendar',
+    namespace: 'inputs',
+    call: 'gui.inputs.dateTimeCalendar(path, { label, minDate?, maxDate?, minTime?, maxTime?, minuteStep?, disabledTimeRanges?, allowCustomTime? })',
+    example:
+      "gui.inputs.dateTimeCalendar('appointmentAt', { label: 'Appointment', minTime: '09:00', maxTime: '18:00' })",
+    notes: [
+      'An INLINE calendar with an embedded time picker: a segmented time input between the header and the days ' +
+        'grid opens a time grid in place of the days (like the year selector).',
+      'Emits a local ISO date-time (`YYYY-MM-DDTHH:mm:ss`) only when BOTH day and time are selected — pair with a ' +
+        "`{ type: 'string', format: 'date-time' }` validator. Picking a different day clears the time and resets " +
+        'the value to null.',
+      '`disabledTimeRanges` entries take `start`/`end` ISO times plus optional `date` (ISO date) and/or `weekdays` ' +
+        '(getDay() numbering: 0=Sunday … 6=Saturday) to scope the range to specific days.',
+    ],
+  },
+  {
+    factory: 'dateTimePicker',
+    namespace: 'inputs',
+    call: 'gui.inputs.dateTimePicker(path, { label, minDate?, maxDate?, minTime?, maxTime?, minuteStep?, disabledTimeRanges?, allowCustomTime? })',
+    example:
+      "gui.inputs.dateTimePicker('appointmentAt', { label: 'Appointment', minTime: '09:00', maxTime: '18:00' })",
+    notes: [
+      'A compact date-time FIELD that opens a `dateTimeCalendar` POPOVER on focus — the space-saving counterpart ' +
+        'to the inline `dateTimeCalendar`, like `datePicker` is to `calendar`.',
+      'Emits a local ISO date-time (`YYYY-MM-DDTHH:mm:ss`); the popover closes only when BOTH day and time are ' +
+        "selected. Pair with a `{ type: 'string', format: 'date-time' }` validator.",
+      'Takes the same time props as `dateTimeCalendar` (`minTime`/`maxTime`/`minuteStep`/`disabledTimeRanges` with ' +
+        'per-date/weekday scoping/`allowCustomTime`) plus `icon` and `invalidDateMessage` for the typed input.',
     ],
   },
   {

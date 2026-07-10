@@ -8,6 +8,7 @@ export default defineConfig({
   component: {
     ...nxComponentTestingPreset(configFilename),
     specPattern: ['cypress/test/**/*.cy.ts'],
+    justInTimeCompile: false,
     numTestsKeptInMemory: 0,
     video: false,
     // Docker containers (which GitHub Actions runners use) often have a very

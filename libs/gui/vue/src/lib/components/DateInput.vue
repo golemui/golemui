@@ -66,6 +66,11 @@ onUnmounted(() => {
       :value="value"
       :icon="templateData.icon"
       :localeId="templateData.lang"
+      :invalidDateMessage="templateData.invalidDateMessage"
+      :minDate="templateData.minDate"
+      :maxDate="templateData.maxDate"
+      :minDateMessage="templateData.minDateMessage"
+      :maxDateMessage="templateData.maxDateMessage"
     />
   </div>
 </template>

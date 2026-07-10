@@ -1,3 +1,6 @@
+import type { DisabledTimeRange } from '@golemui/gui-shared/internals';
+import { parseISODateString } from './date';
+
 export type HourFormat = '12' | '24';
 
 /** Fixed anchor so part ordering and literals are deterministic. */
@@ -162,6 +165,147 @@ export function parseISODateTimeString(value: string): Date {
     );
   }
   return new Date(value);
+}
+
+/** A time-of-day range; both ends are ISO time strings (HH:mm or HH:mm:ss). */
+export interface TimeRange {
+  start: string;
+  end: string;
+}
+
+/** A selectable time slot as consumed by the time picker list. */
+export interface TimeOption {
+  value: string;
+  disabled: boolean;
+}
+
+export const NO_AVAILABLE_TIMES_MESSAGE = 'No available times';
+
+/**
+ * Compares two ISO time strings chronologically. HH:mm values are normalized
+ * to HH:mm:ss so the comparison stays lexicographic like the calendar's
+ * ISO date comparisons.
+ *
+ * @param {string} a - The first ISO time string.
+ * @param {string} b - The second ISO time string.
+ * @return {number} Negative when a < b, 0 when equal, positive when a > b.
+ */
+export function compareISOTimes(a: string, b: string): number {
+  const normalize = (value: string) => (value.length === 5 ? `${value}:00` : value);
+  const left = normalize(a);
+  const right = normalize(b);
+  return left < right ? -1 : left > right ? 1 : 0;
+}
+
+/**
+ * Resolves day-scoped disabled time ranges to the plain ranges applying on a
+ * given date. An entry scopes with `date` (exact ISO date) and/or `weekdays`
+ * (Date.prototype.getDay() numbers, 0=Sunday); provided scopes must all
+ * match, and an unscoped entry applies every day.
+ *
+ * @param {DisabledTimeRange[] | undefined} entries - The scoped ranges.
+ * @param {string} isoDate - The date (YYYY-MM-DD) to resolve for.
+ * @return {TimeRange[]} The plain ranges in effect on that date.
+ */
+export function resolveDisabledTimeRangesForDate(
+  entries: DisabledTimeRange[] | undefined,
+  isoDate: string,
+): TimeRange[] {
+  if (!entries?.length) return [];
+
+  const weekday = parseISODateString(isoDate).getDay();
+
+  return entries
+    .filter(
+      (entry) =>
+        (entry.date == null || entry.date === isoDate) &&
+        (entry.weekdays == null || entry.weekdays.includes(weekday)),
+    )
+    .map(({ start, end }) => ({ start, end }));
+}
+
+/**
+ * Determines whether a time falls inside any of the given disabled ranges.
+ * Both range ends are inclusive, mirroring the calendar's disabledRanges.
+ *
+ * @param {string} time - The ISO time string to test.
+ * @param {TimeRange[] | undefined} ranges - The disabled ranges.
+ * @return {boolean} True when the time is disabled.
+ */
+export function isTimeDisabled(time: string, ranges: TimeRange[] | undefined): boolean {
+  if (!ranges?.length) return false;
+  return ranges.some(
+    (range) =>
+      compareISOTimes(time, range.start) >= 0 &&
+      compareISOTimes(time, range.end ?? range.start) <= 0,
+  );
+}
+
+/**
+ * Builds the selectable time slots for a time picker: whole-minute slots
+ * anchored at minTime's HH:mm, stepping by minuteStep while inside
+ * [minTime, maxTime] (both bounds inclusive), each slot flagged as disabled
+ * when it falls inside a disabled range. When minTime carries seconds the
+ * anchor slot itself falls before minTime and is excluded.
+ *
+ * @param {object} options - The generation options.
+ * @param {string} [options.minTime] - Lower bound (ISO time). Defaults to '00:00:00'.
+ * @param {string} [options.maxTime] - Upper bound (ISO time). Defaults to '23:59:59'.
+ * @param {number} [options.minuteStep] - Minutes between slots. Defaults to 30.
+ * @param {TimeRange[]} [options.disabledRanges] - Ranges rendered as disabled.
+ * @return {TimeOption[]} The ordered slots.
+ */
+export function buildTimeOptions(options: {
+  minTime?: string;
+  maxTime?: string;
+  minuteStep?: number;
+  disabledRanges?: TimeRange[];
+}): TimeOption[] {
+  // `|| 30` (not ??): some framework bindings coerce an absent number prop
+  // to 0 (e.g. Vue's patchDOMProp), and a 0 step would loop forever
+  const step = options.minuteStep || 30;
+  const min = parseISOTimeString(options.minTime ?? '') ?? { hours: 0, minutes: 0, seconds: 0 };
+  const minTime = toISOTimeString(new Date(1970, 0, 1, min.hours, min.minutes, min.seconds));
+  const maxTime = options.maxTime ?? '23:59:59';
+
+  const slots: TimeOption[] = [];
+  for (
+    let totalMinutes = min.hours * 60 + min.minutes;
+    totalMinutes < 24 * 60;
+    totalMinutes += step
+  ) {
+    const value = toISOTimeString(
+      new Date(1970, 0, 1, Math.floor(totalMinutes / 60), totalMinutes % 60, 0),
+    );
+    if (compareISOTimes(value, maxTime) > 0) break;
+    if (compareISOTimes(value, minTime) < 0) continue;
+    slots.push({ value, disabled: isTimeDisabled(value, options.disabledRanges) });
+  }
+  return slots;
+}
+
+/**
+ * Formats an ISO time string as the locale's display label (e.g. '9:30 AM'
+ * for 'en-US', '09:30' for 'en-GB').
+ *
+ * @param {string} isoTime - The ISO time string (HH:mm or HH:mm:ss).
+ * @param {string | undefined} localeId - The locale identifier. Defaults to 'en'.
+ * @param {HourFormat} hourFormat - The effective hour format.
+ * @return {string} The localized label, or the input when it cannot be parsed.
+ */
+export function formatISOTimeForLocale(
+  isoTime: string,
+  localeId: string | undefined,
+  hourFormat: HourFormat,
+): string {
+  const time = parseISOTimeString(isoTime);
+  if (!time) return isoTime;
+
+  return new Intl.DateTimeFormat(localeId ?? 'en', {
+    hour: 'numeric',
+    minute: 'numeric',
+    hourCycle: hourFormat === '12' ? 'h12' : 'h23',
+  }).format(new Date(2025, 0, 15, time.hours, time.minutes, time.seconds));
 }
 
 /**

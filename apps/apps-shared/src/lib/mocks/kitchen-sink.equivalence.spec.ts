@@ -8,8 +8,28 @@ import jsonAlertTab from './tabs/alert.form-chunk.json';
 import { alertTab as dxAlertTab } from './tabs/alert.dx';
 import jsonButtonTab from './tabs/button.form-chunk.json';
 import { buttonTab as dxButtonTab } from './tabs/button.dx';
+import jsonDateinputTab from './tabs/dateinput.form-chunk.json';
+import { dateInputTab as dxDateinputTab } from './tabs/dateinput.dx';
 import jsonCalendarTab from './tabs/calendar.form-chunk.json';
 import { calendarTab as dxCalendarTab } from './tabs/calendar.dx';
+import jsonDatepickerTab from './tabs/datepicker.form-chunk.json';
+import { datePickerTab as dxDatepickerTab } from './tabs/datepicker.dx';
+import jsonRangedateinputTab from './tabs/rangedateinput.form-chunk.json';
+import { rangeDateInputTab as dxRangedateinputTab } from './tabs/rangedateinput.dx';
+import jsonRangecalendarTab from './tabs/rangecalendar.form-chunk.json';
+import { rangeCalendarTab as dxRangecalendarTab } from './tabs/rangecalendar.dx';
+import jsonRangedatepickerTab from './tabs/rangedatepicker.form-chunk.json';
+import { rangeDatePickerTab as dxRangedatepickerTab } from './tabs/rangedatepicker.dx';
+import jsonTimeinputTab from './tabs/timeinput.form-chunk.json';
+import { timeInputTab as dxTimeinputTab } from './tabs/timeinput.dx';
+import jsonTimepickerTab from './tabs/timepicker.form-chunk.json';
+import { timePickerTab as dxTimepickerTab } from './tabs/timepicker.dx';
+import jsonDatetimeinputTab from './tabs/datetimeinput.form-chunk.json';
+import { dateTimeInputTab as dxDatetimeinputTab } from './tabs/datetimeinput.dx';
+import jsonDatetimecalendarTab from './tabs/datetimecalendar.form-chunk.json';
+import { dateTimeCalendarTab as dxDatetimecalendarTab } from './tabs/datetimecalendar.dx';
+import jsonDatetimepickerTab from './tabs/datetimepicker.form-chunk.json';
+import { dateTimePickerTab as dxDatetimepickerTab } from './tabs/datetimepicker.dx';
 import jsonCheckboxTab from './tabs/checkbox.form-chunk.json';
 import { checkboxTab as dxCheckboxTab } from './tabs/checkbox.dx';
 import jsonCurrencyTab from './tabs/currency.form-chunk.json';
@@ -248,9 +268,69 @@ describe('Kitchen Sink — JSON ↔ DX equivalence', () => {
     expect(normalise(dx)).toEqual(normalise(json));
   });
 
+  it('dateinput tab', () => {
+    const json = buildJsonTab(jsonDateinputTab).form;
+    const dx = buildDxTab(dxDateinputTab);
+    expect(normalise(dx)).toEqual(normalise(json));
+  });
+
   it('calendar tab', () => {
     const json = buildJsonTab(jsonCalendarTab).form;
     const dx = buildDxTab(dxCalendarTab);
+    expect(normalise(dx)).toEqual(normalise(json));
+  });
+
+  it('datepicker tab', () => {
+    const json = buildJsonTab(jsonDatepickerTab).form;
+    const dx = buildDxTab(dxDatepickerTab);
+    expect(normalise(dx)).toEqual(normalise(json));
+  });
+
+  it('rangedateinput tab', () => {
+    const json = buildJsonTab(jsonRangedateinputTab).form;
+    const dx = buildDxTab(dxRangedateinputTab);
+    expect(normalise(dx)).toEqual(normalise(json));
+  });
+
+  it('rangecalendar tab', () => {
+    const json = buildJsonTab(jsonRangecalendarTab).form;
+    const dx = buildDxTab(dxRangecalendarTab);
+    expect(normalise(dx)).toEqual(normalise(json));
+  });
+
+  it('rangedatepicker tab', () => {
+    const json = buildJsonTab(jsonRangedatepickerTab).form;
+    const dx = buildDxTab(dxRangedatepickerTab);
+    expect(normalise(dx)).toEqual(normalise(json));
+  });
+
+  it('timeinput tab', () => {
+    const json = buildJsonTab(jsonTimeinputTab).form;
+    const dx = buildDxTab(dxTimeinputTab);
+    expect(normalise(dx)).toEqual(normalise(json));
+  });
+
+  it('timepicker tab', () => {
+    const json = buildJsonTab(jsonTimepickerTab).form;
+    const dx = buildDxTab(dxTimepickerTab);
+    expect(normalise(dx)).toEqual(normalise(json));
+  });
+
+  it('datetimeinput tab', () => {
+    const json = buildJsonTab(jsonDatetimeinputTab).form;
+    const dx = buildDxTab(dxDatetimeinputTab);
+    expect(normalise(dx)).toEqual(normalise(json));
+  });
+
+  it('datetimecalendar tab', () => {
+    const json = buildJsonTab(jsonDatetimecalendarTab).form;
+    const dx = buildDxTab(dxDatetimecalendarTab);
+    expect(normalise(dx)).toEqual(normalise(json));
+  });
+
+  it('datetimepicker tab', () => {
+    const json = buildJsonTab(jsonDatetimepickerTab).form;
+    const dx = buildDxTab(dxDatetimepickerTab);
     expect(normalise(dx)).toEqual(normalise(json));
   });
 

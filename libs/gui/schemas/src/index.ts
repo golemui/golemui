@@ -6,6 +6,8 @@ export { default as accordionSchema } from './lib/components/accordion.schema.js
 export { default as alertSchema } from './lib/components/alert.schema.json';
 export { default as buttonSchema } from './lib/components/button.schema.json';
 export { default as calendarSchema } from './lib/components/calendar.schema.json';
+export { default as datetimecalendarSchema } from './lib/components/datetimecalendar.schema.json';
+export { default as datetimepickerSchema } from './lib/components/datetimepicker.schema.json';
 export { default as checkboxSchema } from './lib/components/checkbox.schema.json';
 export { default as currencySchema } from './lib/components/currency.schema.json';
 export { default as customSchema } from './lib/components/custom.schema.json';
@@ -31,4 +33,5 @@ export { default as tagsSchema } from './lib/components/tags.schema.json';
 export { default as textareaSchema } from './lib/components/textarea.schema.json';
 export { default as textinputSchema } from './lib/components/textinput.schema.json';
 export { default as timeinputSchema } from './lib/components/timeinput.schema.json';
+export { default as timepickerSchema } from './lib/components/timepicker.schema.json';
 export { default as toggleSchema } from './lib/components/toggle.schema.json';

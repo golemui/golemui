@@ -39,6 +39,52 @@ export const runDropdownComponentTests = (mountFn: MountComponentFn) => {
       visibleItems().first().should('contain.text', 'React');
     });
 
+    it('should close the list with Escape from the input', () => {
+      mountWithItems(['React', 'Angular', 'Vue']);
+
+      cy.get('[data-cy="testSubject_textinput"]').click();
+      cy.get('gui-list:not([hidden])').should('exist');
+
+      cy.get('[data-cy="testSubject_textinput"]').type('{esc}');
+      cy.get('gui-list').should('have.attr', 'hidden');
+    });
+
+    it('should consume Escape while the list is open so it does not bubble to a modal', () => {
+      mountWithItems(['React', 'Angular', 'Vue']);
+
+      // A modal ancestor typically closes on a document-level Escape keydown.
+      const escSpy = cy.spy().as('escSpy');
+      cy.document().then((doc) => {
+        doc.addEventListener('keydown', (e) => {
+          if ((e as KeyboardEvent).key === 'Escape') escSpy();
+        });
+      });
+
+      cy.get('[data-cy="testSubject_textinput"]').click();
+      cy.get('gui-list:not([hidden])').should('exist');
+
+      // Escape closes the list and is consumed — it must not reach document
+      cy.get('[data-cy="testSubject_textinput"]').type('{esc}');
+      cy.get('gui-list').should('have.attr', 'hidden');
+      cy.get('@escSpy').should('not.have.been.called');
+
+      // With the list closed, Escape is free to bubble (so a modal can close)
+      cy.get('[data-cy="testSubject_textinput"]').type('{esc}');
+      cy.get('@escSpy').should('have.been.called');
+    });
+
+    it('should close the list with Escape after navigating into it', () => {
+      mountWithItems(['React', 'Angular', 'Vue']);
+
+      cy.get('[data-cy="testSubject_textinput"]').click();
+      cy.get('gui-list:not([hidden])').should('exist');
+
+      // ArrowDown moves focus into the list; Escape there still closes it
+      cy.get('[data-cy="testSubject_textinput"]').type('{downArrow}');
+      cy.focused().type('{esc}');
+      cy.get('gui-list').should('have.attr', 'hidden');
+    });
+
     it('should show all primitive items again when the search is cleared', () => {
       mountWithItems(['React', 'Angular', 'Vue']);
 

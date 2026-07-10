@@ -1,10 +1,12 @@
 export const inputWidgets = [
   'calendar',
+  'dateTimeCalendar',
   'checkbox',
   'currency',
   'dateInput',
   'datePicker',
   'dateTimeInput',
+  'dateTimePicker',
   'dropdown',
   'list',
   'markdown',
@@ -20,6 +22,7 @@ export const inputWidgets = [
   'textarea',
   'textinput',
   'timeInput',
+  'timePicker',
   'toggle',
 ] as const;
 export const layoutWidgets = ['accordion', 'flex', 'grid', 'tabs'] as const;

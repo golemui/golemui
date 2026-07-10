@@ -13,7 +13,12 @@
   [native]="false"
 ></gui-label>
 
-<div class="gui-widget" [attr.aria-expanded]="isListVisible()">
+<div
+  class="gui-widget"
+  tabindex="-1"
+  [attr.aria-expanded]="isListVisible()"
+  (keydown)="onWidgetKeyDown($event)"
+>
   <input
     #inputRef
     type="text"
@@ -78,6 +83,7 @@
         [id]="widget.uid + '-item-' + absoluteIndex"
         [style.height.px]="templateData.itemHeight || 40"
         [attr.aria-selected]="templateData.value === item.value"
+        [attr.aria-disabled]="templateData.disabled || !!item.disabled"
         (click)="onClickItem(item, absoluteIndex)"
       >
         <ng-container
@@ -86,7 +92,7 @@
             inputs: {
               template: template,
               value: item.value,
-              disabled: templateData.disabled,
+              disabled: templateData.disabled || !!item.disabled,
               selected: templateData.value === item.value,
               focused: focusedIndex() === absoluteIndex,
               index: absoluteIndex,

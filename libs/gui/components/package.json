@@ -48,10 +48,25 @@
       "import": "./lib/components/date-input.js",
       "require": "./lib/components/date-input.umd.cjs"
     },
+    "./date-picker": {
+      "types": "./lib/components/date-picker.d.ts",
+      "import": "./lib/components/date-picker.js",
+      "require": "./lib/components/date-picker.umd.cjs"
+    },
+    "./date-time-calendar": {
+      "types": "./lib/components/date-time-calendar.d.ts",
+      "import": "./lib/components/date-time-calendar.js",
+      "require": "./lib/components/date-time-calendar.umd.cjs"
+    },
     "./date-time-input": {
       "types": "./lib/components/date-time-input.d.ts",
       "import": "./lib/components/date-time-input.js",
       "require": "./lib/components/date-time-input.umd.cjs"
+    },
+    "./date-time-picker": {
+      "types": "./lib/components/date-time-picker.d.ts",
+      "import": "./lib/components/date-time-picker.js",
+      "require": "./lib/components/date-time-picker.umd.cjs"
     },
     "./errors": {
       "types": "./lib/components/errors.d.ts",
@@ -108,6 +123,11 @@
       "import": "./lib/components/range-date-input.js",
       "require": "./lib/components/range-date-input.umd.cjs"
     },
+    "./range-date-picker": {
+      "types": "./lib/components/range-date-picker.d.ts",
+      "import": "./lib/components/range-date-picker.js",
+      "require": "./lib/components/range-date-picker.umd.cjs"
+    },
     "./select": {
       "types": "./lib/components/select.d.ts",
       "import": "./lib/components/select.js",
@@ -132,6 +152,16 @@
       "types": "./lib/components/time-input.d.ts",
       "import": "./lib/components/time-input.js",
       "require": "./lib/components/time-input.umd.cjs"
+    },
+    "./time-list": {
+      "types": "./lib/components/time-list.d.ts",
+      "import": "./lib/components/time-list.js",
+      "require": "./lib/components/time-list.umd.cjs"
+    },
+    "./time-picker": {
+      "types": "./lib/components/time-picker.d.ts",
+      "import": "./lib/components/time-picker.js",
+      "require": "./lib/components/time-picker.umd.cjs"
     },
     "./toggle": {
       "types": "./lib/components/toggle.d.ts",

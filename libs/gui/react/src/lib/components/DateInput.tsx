@@ -67,6 +67,11 @@ export function DateInput(widgetInstance: WithWidget) {
         value={value}
         icon={icon}
         localeId={lang}
+        invalidDateMessage={templateData.invalidDateMessage as string}
+        minDate={templateData.minDate}
+        maxDate={templateData.maxDate}
+        minDateMessage={templateData.minDateMessage as string}
+        maxDateMessage={templateData.maxDateMessage as string}
       />
     </div>
   );

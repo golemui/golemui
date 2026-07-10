@@ -38,6 +38,8 @@
         "alert",
         "button",
         "calendar",
+        "dateTimeCalendar",
+        "dateTimePicker",
         "checkbox",
         "currency",
         "dateInput",
@@ -62,6 +64,7 @@
         "textarea",
         "textinput",
         "timeInput",
+        "timePicker",
         "toggle"
       ]
     },

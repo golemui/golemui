@@ -25,23 +25,29 @@ const changeHandler = (e: Event) => {
   injectValidationIssues(null);
   onValueChanged((e as CustomEvent).detail.value);
 };
+const errorHandler = (e: Event) => {
+  injectValidationIssues([(e as CustomEvent).detail.message]);
+};
 
 let currentEl: HTMLElement | null = null;
 watch(timeRef, (el) => {
   if (currentEl) {
     currentEl.removeEventListener('change', changeHandler);
     currentEl.removeEventListener('blur', onBlur);
+    currentEl.removeEventListener('inputError', errorHandler);
   }
   currentEl = el;
   if (el) {
     el.addEventListener('change', changeHandler);
     el.addEventListener('blur', onBlur);
+    el.addEventListener('inputError', errorHandler);
   }
 });
 
 onUnmounted(() => {
   currentEl?.removeEventListener('change', changeHandler);
   currentEl?.removeEventListener('blur', onBlur);
+  currentEl?.removeEventListener('inputError', errorHandler);
 });
 </script>
 
@@ -62,6 +68,10 @@ onUnmounted(() => {
       :localeId="templateData.lang"
       :hourFormat="templateData.hourFormat"
       :minuteStep="templateData.minuteStep ?? 1"
+      :minTime="templateData.minTime"
+      :maxTime="templateData.maxTime"
+      :minTimeMessage="templateData.minTimeMessage"
+      :maxTimeMessage="templateData.maxTimeMessage"
     />
   </div>
 </template>

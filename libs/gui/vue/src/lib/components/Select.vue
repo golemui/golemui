@@ -58,6 +58,7 @@ onUnmounted(() => {
       :options="templateData.options"
       :labelField="templateData.labelField"
       :valueField="templateData.valueField"
+      :invalidOptionMessage="templateData.invalidOptionMessage"
       @change="handleChange"
       @blur="onBlur"
     ></gui-select>

@@ -156,6 +156,28 @@ export const runDateTimeInputComponentTests = (mountFn: MountComponentFn) => {
         cy.get('@inputErrorSpy').should('have.been.called');
         cy.get('@changeSpy').should('not.have.been.called');
       });
+
+      it('should emit the custom invalidDateMessage when provided', () => {
+        mountDateTimeInput({
+          lang: 'en-GB',
+          props: { invalidDateMessage: 'Nope, no such day' },
+        });
+
+        const inputErrorSpy = cy.spy().as('inputErrorSpy');
+        cy.get('gui-date-time').then(($el) => {
+          $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
+        });
+
+        cy.get(sel.day).type('31');
+        cy.get(sel.month).type('02', { force: true });
+        cy.get(sel.year).type('2026', { force: true });
+        cy.get(sel.hour).type('09', { force: true });
+        cy.get(sel.minute).type('30', { force: true });
+
+        cy.get('@inputErrorSpy').then((spy: any) => {
+          expect(spy.getCall(0).args[0].detail.message).to.equal('Nope, no such day');
+        });
+      });
     });
 
     describe('arrows and toggle', () => {
@@ -233,6 +255,27 @@ export const runDateTimeInputComponentTests = (mountFn: MountComponentFn) => {
       });
     });
 
+    describe('RTL', () => {
+      it('should mirror the date parts but keep hour:minute unmirrored', () => {
+        mountDateTimeInput({ data: { myDateTime: '2026-06-15T08:00:00' }, lang: 'ar' });
+
+        cy.get(sel.hour).should('have.value', '08');
+        cy.get('gui-date-time').should(($el) => {
+          const left = (type: string) => {
+            const part = $el[0].querySelector(`[data-type="${type}"]`);
+            expect(part, `${type} part exists`).to.not.equal(null);
+            return (part as HTMLElement).getBoundingClientRect().left;
+          };
+          // Date parts mirror in RTL (CLDR inserts direction marks): the day
+          // ends up visually rightmost
+          expect(left('year'), 'year left of month').to.be.lessThan(left('month'));
+          expect(left('month'), 'month left of day').to.be.lessThan(left('day'));
+          // The time run never mirrors: hour stays left of minute
+          expect(left('hour'), 'hour left of minute').to.be.lessThan(left('minute'));
+        });
+      });
+    });
+
     describe('blur', () => {
       it('should emit a null value when a part is emptied and blurred', () => {
         const formSubmitHandler = cy.stub().as('formSubmitHandler');
@@ -283,6 +326,60 @@ export const runDateTimeInputComponentTests = (mountFn: MountComponentFn) => {
         cy.get(sel.day).should('be.disabled');
         cy.get(sel.hour).should('be.disabled');
         cy.get(sel.dayPeriod).should('be.disabled');
+      });
+    });
+
+    describe('bounds validation', () => {
+      it('should emit change and inputError when the date is past maxDate', () => {
+        mountDateTimeInput({
+          lang: 'en-GB',
+          props: { maxDate: '2026-06-20', maxDateMessage: 'Date too far out' },
+        });
+
+        const changeSpy = cy.spy().as('changeSpy');
+        const inputErrorSpy = cy.spy().as('inputErrorSpy');
+        cy.get('gui-date-time').then(($el) => {
+          $el[0].addEventListener('change', changeSpy as unknown as EventListener);
+          $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
+        });
+
+        // en-GB orders day/month/year and renders 24h; 25/06/2026 10:30 is past maxDate
+        cy.get(sel.day).click();
+        cy.focused().type('25');
+        cy.focused().type('06');
+        cy.focused().type('2026');
+        cy.focused().type('10');
+        cy.focused().type('30');
+
+        cy.get(sel.day).should('have.value', '25');
+        cy.get('@changeSpy').should('have.been.called');
+        cy.get('@inputErrorSpy').then((spy: any) => {
+          expect(spy.getCall(0).args[0].detail.message).to.equal('Date too far out');
+        });
+      });
+
+      it('should emit change and inputError when the time is past maxTime', () => {
+        mountDateTimeInput({
+          lang: 'en-GB',
+          props: { maxTime: '17:00:00', maxTimeMessage: 'Time too late' },
+        });
+
+        const inputErrorSpy = cy.spy().as('inputErrorSpy');
+        cy.get('gui-date-time').then(($el) => {
+          $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
+        });
+
+        // 15/06/2026 18:00 is a valid date but past maxTime
+        cy.get(sel.day).click();
+        cy.focused().type('15');
+        cy.focused().type('06');
+        cy.focused().type('2026');
+        cy.focused().type('18');
+        cy.focused().type('00');
+
+        cy.get('@inputErrorSpy').then((spy: any) => {
+          expect(spy.getCall(0).args[0].detail.message).to.equal('Time too late');
+        });
       });
     });
   });

@@ -1,0 +1,33 @@
+gui-date-time-calendar {
+  .gui-calendar__panel {
+    min-width: calc(7 * var(--gui-calendar-day-button-size) + 6px);
+  }
+
+  .gui-calendar__time-input-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--gui-space-1);
+    margin-block-end: var(--gui-space-2);
+
+    .gui-time-picker.gui-field {
+      flex: 1 1 auto;
+    }
+  }
+}
+
+.gui-form gui-date-time-calendar .gui-time-picker.gui-field > .gui-widget {
+  gui-time-list {
+    position: static;
+    width: auto;
+
+    .gui-time-list__viewport {
+      max-height: var(--gui-calendar-time-grid-height);
+    }
+
+    .gui-time-list__option {
+      height: var(--gui-calendar-time-button-height);
+      font-variant-numeric: tabular-nums;
+    }
+  }
+}

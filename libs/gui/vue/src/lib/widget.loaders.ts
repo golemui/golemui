@@ -8,14 +8,17 @@ export const widgetLoaders: WidgetLoaders<Component<WithWidget>, GolemWidget> = 
 
   // CONTROLS
   calendar: async () => (await import('./components/Calendar.vue')).default,
+  dateTimeCalendar: async () => (await import('./components/DateTimeCalendar.vue')).default,
   currency: async () => (await import('./components/Currency.vue')).default,
   dateInput: async () => (await import('./components/DateInput.vue')).default,
   datePicker: async () => (await import('./components/DatePicker.vue')).default,
+  dateTimePicker: async () => (await import('./components/DateTimePicker.vue')).default,
   dropdown: async () => (await import('./components/Dropdown.vue')).default,
   list: async () => (await import('./components/List.vue')).default,
   password: async () => (await import('./components/Password.vue')).default,
   textinput: async () => (await import('./components/TextInput.vue')).default,
   timeInput: async () => (await import('./components/TimeInput.vue')).default,
+  timePicker: async () => (await import('./components/TimePicker.vue')).default,
   dateTimeInput: async () => (await import('./components/DateTimeInput.vue')).default,
   textarea: async () => (await import('./components/TextArea.vue')).default,
   markdown: async () => (await import('./components/Markdown.vue')).default,

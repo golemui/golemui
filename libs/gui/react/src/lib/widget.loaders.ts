@@ -7,14 +7,17 @@ export const widgetLoaders: WidgetLoaders<React.ComponentType<WithWidget>, Golem
 
   // CONTROLS
   calendar: async () => (await import('./components/Calendar')).Calendar,
+  dateTimeCalendar: async () => (await import('./components/DateTimeCalendar')).DateTimeCalendar,
   currency: async () => (await import('./components/Currency')).Currency,
   dateInput: async () => (await import('./components/DateInput')).DateInput,
   datePicker: async () => (await import('./components/DatePicker')).DatePicker,
+  dateTimePicker: async () => (await import('./components/DateTimePicker')).DateTimePicker,
   dropdown: async () => (await import('./components/Dropdown')).Dropdown,
   list: async () => (await import('./components/List')).List,
   password: async () => (await import('./components/Password')).Password,
   textinput: async () => (await import('./components/TextInput')).TextInput,
   timeInput: async () => (await import('./components/TimeInput')).TimeInput,
+  timePicker: async () => (await import('./components/TimePicker')).TimePicker,
   dateTimeInput: async () => (await import('./components/DateTimeInput')).DateTimeInput,
   textarea: async () => (await import('./components/TextArea')).TextArea,
   markdown: async () => (await import('./components/Markdown')).Markdown,

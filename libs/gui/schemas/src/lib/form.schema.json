@@ -53,6 +53,12 @@
           "$ref": "./components/calendar.schema.json"
         },
         {
+          "$ref": "./components/datetimecalendar.schema.json"
+        },
+        {
+          "$ref": "./components/datetimepicker.schema.json"
+        },
+        {
           "$ref": "./components/checkbox.schema.json"
         },
         {
@@ -123,6 +129,9 @@
         },
         {
           "$ref": "./components/timeinput.schema.json"
+        },
+        {
+          "$ref": "./components/timepicker.schema.json"
         },
         {
           "$ref": "./components/toggle.schema.json"

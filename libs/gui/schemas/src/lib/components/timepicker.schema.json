@@ -1,0 +1,195 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://golemui.com/schemas/components/timepicker.schema.json",
+  "title": "TimePicker Widget",
+  "type": "object",
+  "$defs": {
+    "labelDef": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "disabledDef": {
+      "$ref": "../common.schema.json#/$defs/boolOrWhen"
+    },
+    "readonlyDef": {
+      "$ref": "../common.schema.json#/$defs/boolOrWhen"
+    },
+    "hintProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "iconProp": {
+      "type": "string"
+    },
+    "hourFormatProp": {
+      "enum": ["12", "24"]
+    },
+    "minuteStepProp": {
+      "type": "number",
+      "minimum": 1
+    },
+    "isoTimeProp": {
+      "type": "string",
+      "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?$"
+    },
+    "disabledRangesProp": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "start": {
+            "$ref": "#/$defs/isoTimeProp"
+          },
+          "end": {
+            "$ref": "#/$defs/isoTimeProp"
+          }
+        },
+        "required": ["start", "end"],
+        "additionalProperties": false
+      }
+    },
+    "allowCustomTimeProp": {
+      "type": "boolean"
+    },
+    "sizeProp": {
+      "type": "number"
+    }
+  },
+  "allOf": [
+    {
+      "$ref": "../common.schema.json#/$defs/baseWidget"
+    }
+  ],
+  "properties": {
+    "kind": {
+      "const": "input"
+    },
+    "type": {
+      "const": "timePicker"
+    },
+    "path": {
+      "$ref": "../common.schema.json#/$defs/dotPath"
+    },
+    "label": {
+      "$ref": "#/$defs/labelDef"
+    },
+    "disabled": {
+      "$ref": "#/$defs/disabledDef"
+    },
+    "readonly": {
+      "$ref": "#/$defs/readonlyDef"
+    },
+    "on": {
+      "$ref": "../common.schema.json#/$defs/on"
+    },
+    "validator": {
+      "$ref": "../validators.schema.json#/$defs/validator"
+    },
+    "props": {
+      "type": "object",
+      "properties": {
+        "minTimeMessage": {
+          "$ref": "../common.schema.json#/$defs/localizable"
+        },
+        "maxTimeMessage": {
+          "$ref": "../common.schema.json#/$defs/localizable"
+        },
+        "disabledRangeMessage": {
+          "$ref": "../common.schema.json#/$defs/localizable"
+        },
+        "noAvailableTimesMessage": {
+          "$ref": "../common.schema.json#/$defs/localizable"
+        },
+        "hint": {
+          "$ref": "#/$defs/hintProp"
+        },
+        "icon": {
+          "$ref": "#/$defs/iconProp"
+        },
+        "hourFormat": {
+          "$ref": "#/$defs/hourFormatProp"
+        },
+        "minuteStep": {
+          "$ref": "#/$defs/minuteStepProp"
+        },
+        "minTime": {
+          "$ref": "#/$defs/isoTimeProp"
+        },
+        "maxTime": {
+          "$ref": "#/$defs/isoTimeProp"
+        },
+        "disabledRanges": {
+          "$ref": "#/$defs/disabledRangesProp"
+        },
+        "allowCustomTime": {
+          "$ref": "#/$defs/allowCustomTimeProp"
+        },
+        "height": {
+          "$ref": "#/$defs/sizeProp"
+        },
+        "itemHeight": {
+          "$ref": "#/$defs/sizeProp"
+        }
+      },
+      "patternProperties": {
+        "^minTimeMessage\\.[^.]+$": {
+          "$ref": "../common.schema.json#/$defs/localizable"
+        },
+        "^maxTimeMessage\\.[^.]+$": {
+          "$ref": "../common.schema.json#/$defs/localizable"
+        },
+        "^disabledRangeMessage\\.[^.]+$": {
+          "$ref": "../common.schema.json#/$defs/localizable"
+        },
+        "^noAvailableTimesMessage\\.[^.]+$": {
+          "$ref": "../common.schema.json#/$defs/localizable"
+        },
+        "^hint\\.[^.]+$": {
+          "$ref": "#/$defs/hintProp"
+        },
+        "^icon\\.[^.]+$": {
+          "$ref": "#/$defs/iconProp"
+        },
+        "^hourFormat\\.[^.]+$": {
+          "$ref": "#/$defs/hourFormatProp"
+        },
+        "^minuteStep\\.[^.]+$": {
+          "$ref": "#/$defs/minuteStepProp"
+        },
+        "^minTime\\.[^.]+$": {
+          "$ref": "#/$defs/isoTimeProp"
+        },
+        "^maxTime\\.[^.]+$": {
+          "$ref": "#/$defs/isoTimeProp"
+        },
+        "^disabledRanges\\.[^.]+$": {
+          "$ref": "#/$defs/disabledRangesProp"
+        },
+        "^allowCustomTime\\.[^.]+$": {
+          "$ref": "#/$defs/allowCustomTimeProp"
+        },
+        "^height\\.[^.]+$": {
+          "$ref": "#/$defs/sizeProp"
+        },
+        "^itemHeight\\.[^.]+$": {
+          "$ref": "#/$defs/sizeProp"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "patternProperties": {
+    "^label\\.[^.]+$": {
+      "$ref": "#/$defs/labelDef"
+    },
+    "^disabled\\.[^.]+$": {
+      "$ref": "#/$defs/disabledDef"
+    },
+    "^readonly\\.[^.]+$": {
+      "$ref": "#/$defs/readonlyDef"
+    },
+    "^validator\\.[^.]+$": {
+      "$ref": "../validators.schema.json#/$defs/validator"
+    }
+  },
+  "required": ["kind", "type", "path"],
+  "unevaluatedProperties": false
+}
