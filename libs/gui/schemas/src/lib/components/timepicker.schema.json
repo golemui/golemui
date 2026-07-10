@@ -153,6 +153,24 @@
         },
         "^minuteStep\\.[^.]+$": {
           "$ref": "#/$defs/minuteStepProp"
+        },
+        "^minTime\\.[^.]+$": {
+          "$ref": "#/$defs/isoTimeProp"
+        },
+        "^maxTime\\.[^.]+$": {
+          "$ref": "#/$defs/isoTimeProp"
+        },
+        "^disabledRanges\\.[^.]+$": {
+          "$ref": "#/$defs/disabledRangesProp"
+        },
+        "^allowCustomTime\\.[^.]+$": {
+          "$ref": "#/$defs/allowCustomTimeProp"
+        },
+        "^height\\.[^.]+$": {
+          "$ref": "#/$defs/sizeProp"
+        },
+        "^itemHeight\\.[^.]+$": {
+          "$ref": "#/$defs/sizeProp"
         }
       },
       "additionalProperties": false
