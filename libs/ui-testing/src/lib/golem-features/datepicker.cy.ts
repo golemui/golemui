@@ -130,7 +130,10 @@ export const runDatePickerComponentTests = (mountFn: MountComponentFn) => {
       cy.get('@escSpy').should('not.have.been.called');
 
       // With the calendar closed, Escape is free to bubble (so a modal can close)
-      cy.get('gui-date input[data-type="day"]').type('{esc}', { force: true });
+      cy.get('gui-date input[data-type="day"]').trigger('keydown', {
+        key: 'Escape',
+        bubbles: true,
+      });
       cy.get('@escSpy').should('have.been.called');
     });
 
