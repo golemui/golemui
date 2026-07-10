@@ -231,6 +231,7 @@ let ignoreNextFocus = false;
 const handleWidgetKeyDown = (event: KeyboardEvent) => {
   if (event.key !== 'Escape' || !isListVisible.value) return;
   event.preventDefault();
+  event.stopPropagation();
   isListVisible.value = false;
   isFiltering.value = false;
   ignoreNextFocus = true;

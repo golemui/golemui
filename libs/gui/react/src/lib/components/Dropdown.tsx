@@ -261,6 +261,7 @@ export function Dropdown(widgetInstance: WithWidget) {
   const handleWidgetKeyDown = (event: React.KeyboardEvent) => {
     if (event.key !== 'Escape' || !isListVisible) return;
     event.preventDefault();
+    event.stopPropagation();
     setIsListVisible(false);
     setIsFiltering(false);
     ignoreNextFocusRef.current = true;

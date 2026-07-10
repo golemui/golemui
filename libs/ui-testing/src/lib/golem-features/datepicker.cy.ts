@@ -109,6 +109,31 @@ export const runDatePickerComponentTests = (mountFn: MountComponentFn) => {
       cy.focused().should('match', 'gui-date input');
     });
 
+    it('should consume Escape while the calendar is open so it does not bubble to a modal', () => {
+      mountWithDate();
+
+      // A modal ancestor typically closes on a document-level Escape keydown.
+      const escSpy = cy.spy().as('escSpy');
+      cy.document().then((doc) => {
+        doc.addEventListener('keydown', (e) => {
+          if ((e as KeyboardEvent).key === 'Escape') escSpy();
+        });
+      });
+
+      cy.get('gui-date input[data-type="day"]').click();
+      cy.get('gui-calendar').should('exist');
+
+      // Escape closes the calendar and is consumed — it must not reach document
+      cy.get('gui-calendar button[data-date="2026-06-15"]').focus();
+      cy.focused().type('{esc}');
+      cy.get('gui-calendar').should('not.exist');
+      cy.get('@escSpy').should('not.have.been.called');
+
+      // With the calendar closed, Escape is free to bubble (so a modal can close)
+      cy.get('gui-date input[data-type="day"]').type('{esc}', { force: true });
+      cy.get('@escSpy').should('have.been.called');
+    });
+
     it('should select the exact day that is clicked', () => {
       const formSubmitHandler = cy.stub().as('formSubmitHandler');
       mountWithDate(formSubmitHandler);

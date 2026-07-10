@@ -219,6 +219,7 @@ export class DropdownElement extends LitElement implements WithWidget {
   private _onWidgetKeyDown(event: Event) {
     if ((event as KeyboardEvent).key !== 'Escape' || !this._isListVisible) return;
     event.preventDefault();
+    event.stopPropagation();
     this._isListVisible = false;
     this._isFiltering = false;
     this._ignoreNextFocus = true;

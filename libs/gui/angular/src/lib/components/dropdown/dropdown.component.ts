@@ -125,6 +125,7 @@ export class DropdownComponent implements OnInit, OnDestroy, WithWidget {
   protected onWidgetKeyDown(event: KeyboardEvent) {
     if (event.key !== 'Escape' || !this.isListVisible()) return;
     event.preventDefault();
+    event.stopPropagation();
     this.isListVisible.set(false);
     this.isFiltering.set(false);
     this.ignoreNextFocus = true;

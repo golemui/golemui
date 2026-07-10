@@ -314,6 +314,7 @@ export class GuiRangeDatePicker extends LitElement {
     if (this.disabled) return;
     if (event.key === 'Escape' && this._isCalendarOpen) {
       event.preventDefault();
+      event.stopPropagation();
       this.restoreFocusToInput();
       this.closeCalendar();
     }

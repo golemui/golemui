@@ -49,6 +49,30 @@ export const runDropdownComponentTests = (mountFn: MountComponentFn) => {
       cy.get('gui-list').should('have.attr', 'hidden');
     });
 
+    it('should consume Escape while the list is open so it does not bubble to a modal', () => {
+      mountWithItems(['React', 'Angular', 'Vue']);
+
+      // A modal ancestor typically closes on a document-level Escape keydown.
+      const escSpy = cy.spy().as('escSpy');
+      cy.document().then((doc) => {
+        doc.addEventListener('keydown', (e) => {
+          if ((e as KeyboardEvent).key === 'Escape') escSpy();
+        });
+      });
+
+      cy.get('[data-cy="testSubject_textinput"]').click();
+      cy.get('gui-list:not([hidden])').should('exist');
+
+      // Escape closes the list and is consumed — it must not reach document
+      cy.get('[data-cy="testSubject_textinput"]').type('{esc}');
+      cy.get('gui-list').should('have.attr', 'hidden');
+      cy.get('@escSpy').should('not.have.been.called');
+
+      // With the list closed, Escape is free to bubble (so a modal can close)
+      cy.get('[data-cy="testSubject_textinput"]').type('{esc}');
+      cy.get('@escSpy').should('have.been.called');
+    });
+
     it('should close the list with Escape after navigating into it', () => {
       mountWithItems(['React', 'Angular', 'Vue']);
 
