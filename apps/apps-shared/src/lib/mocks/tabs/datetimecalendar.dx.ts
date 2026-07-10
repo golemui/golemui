@@ -49,6 +49,7 @@ export const dateTimeCalendarTab = gui.layouts.flex([
     minuteStep: 30,
     minDate: '2026-02-01',
     maxDate: '2026-07-31',
+    allowCustomTime: true,
     disabledRanges: [
       {
         start: '2026-02-09',

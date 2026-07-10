@@ -49,6 +49,7 @@ export const timePickerTab = gui.layouts.flex([
     label: 'Disabled time ranges',
     defaultValue: '09:30:00',
     icon: 'schedule',
+    allowCustomTime: true,
     minTime: '09:00:00',
     maxTime: '18:00:00',
     minuteStep: 30,

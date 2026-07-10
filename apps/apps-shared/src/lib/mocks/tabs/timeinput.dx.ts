@@ -32,6 +32,8 @@ export const timeInputTab = gui.layouts.flex([
       required: true,
       format: 'time',
     },
+    minTime: '09:00:00',
+    maxTime: '18:00:00',
     icon: 'schedule',
     minuteStep: 15,
   }),

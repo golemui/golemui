@@ -33,6 +33,10 @@ export const dateTimeInputTab = gui.layouts.flex([
       format: 'date-time',
     },
     icon: 'calendar_month',
-    minuteStep: 15,
+    minTime: '09:00:00',
+    maxTime: '18:00:00',
+    minuteStep: 30,
+    minDate: '2026-02-01',
+    maxDate: '2026-07-31',
   }),
 ]);

@@ -56,7 +56,9 @@
       "label": "Required (validation)",
       "props": {
         "icon": "schedule",
-        "minuteStep": 15
+        "minuteStep": 15,
+        "minTime": "09:00:00",
+        "maxTime": "18:00:00"
       },
       "validator": {
         "type": "string",

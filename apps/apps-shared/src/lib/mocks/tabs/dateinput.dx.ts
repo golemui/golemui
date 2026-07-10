@@ -28,6 +28,8 @@ export const dateInputTab = gui.layouts.flex([
       required: true,
       format: 'date',
     },
+    minDate: '2026-02-01',
+    maxDate: '2026-02-28',
     icon: 'calendar_month',
   }),
 ]);
