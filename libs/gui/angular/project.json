@@ -41,7 +41,7 @@
         "cypressConfig": "libs/gui/angular/cypress.config.ts",
         "testingType": "component",
         "skipServe": true,
-        "devServerTarget": "angular-playground:build"
+        "devServerTarget": "angular-playground:build:ct"
       }
     }
   }
