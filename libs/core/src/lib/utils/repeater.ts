@@ -1,24 +1,53 @@
-import { isInputWidget, type NonFunctionWidget } from '../form-widget';
+import {
+  type FormWidget,
+  type FunctionWidget,
+  isFunctionWidget,
+  isInputWidget,
+  type NonFunctionWidget,
+} from '../form-widget';
 import { type DotPath, type Uid } from '../shared';
 
 /**
- * Derives a concrete widget config for a specific repeater item by stamping
- * the provided indexes into the widget's `uid` (and `path` for input widgets).
+ * Derives a concrete widget config for a specific repeater item by materializing the provided indexes into the
+ * widget's `uid` (and `path` for input widgets).
+ *
+ * Function widgets are wrapped in a new function that delegates to the original, so they stay callable while
+ * carrying the materialized `uid` and `path`.
  *
  * @param widget - The base widget config defined on the repeater template.
- * @param repeaterIndexes - Ordered list of indexes for each nesting level,
- *   e.g. `[2, 0]` for the first item of a nested repeater inside the third
- *   item of an outer repeater.
- * @returns A new widget config with the indexes baked in; the original is not mutated.
+ * @param repeaterIndexes - Ordered list of indexes for each nesting level
+ *   e.g. `[2, 0]` for the first item of a nested repeater inside the third item of an outer repeater.
+ * @returns A new widget config with the indexes baked in. The original is not mutated.
  *
  * @example
  * makeRepeaterItemConfig(widget, [1]) // { uid: 'user-name[1]', path: 'users.1.name' }
+ *
+ * @example
+ * // Nested repeater: the first item of an inner repeater inside the third item of the outer one.
+ * makeRepeaterItemConfig(widget, [2, 0]) // { uid: 'dev-name[2][0]', path: 'teams.2.devs.0.name' }
  */
 export function makeRepeaterItemConfig(
   widget: NonFunctionWidget<string>,
   repeaterIndexes: number[],
-): NonFunctionWidget<string> {
-  const uid = toRepeaterItemUid(widget.uid, repeaterIndexes);
+): NonFunctionWidget<string>;
+export function makeRepeaterItemConfig(
+  widget: FormWidget<string>,
+  repeaterIndexes: number[],
+): FormWidget<string>;
+export function makeRepeaterItemConfig(
+  widget: FormWidget<string>,
+  repeaterIndexes: number[],
+): FormWidget<string> {
+  const uid = toRepeaterItemUid(widget.uid as Uid, repeaterIndexes);
+  if (isFunctionWidget(widget)) {
+    const materialized: FunctionWidget<string> = (api) => widget(api);
+    materialized.uid = uid;
+    materialized.type = widget.type;
+    if (widget.path !== undefined) {
+      materialized.path = toRepeaterItemPath(widget.path, repeaterIndexes);
+    }
+    return materialized;
+  }
   if (isInputWidget(widget)) {
     return {
       ...widget,
@@ -92,4 +121,50 @@ export function transformRepeaterItemWhenExpression(
     }
     return `.${index}${optionalChaining}.`;
   });
+}
+
+const WHEN_FIELDS = ['include', 'exclude', 'disabled', 'readonly'] as const;
+
+/**
+ * Returns a copy of a repeater item widget whose reactive flag conditions
+ * (`include.when`, `exclude.when`, `disabled.when`, `readonly.when`) are rewritten
+ * for a concrete item via {@link transformRepeaterItemWhenExpression}.
+ *
+ * State-based flags (`include.in`, `exclude.from`) carry no expression and are left untouched.
+ *
+ * @param widget - A widget already materialized for a repeater item (see {@link makeRepeaterItemConfig}).
+ * @param repeaterIndexes - Ordered list of indexes for each nesting level.
+ * @returns A new widget config with item-concrete `when` expressions. The original is not mutated.
+ *
+ * @example
+ * // repeaterIndexes = [1]
+ * // { include: { when: '$form.lineItems.items.active' } }
+ * //   -> { include: { when: '$form.lineItems.1.active' } }
+ */
+export function transformWidgetWhenExpressions(
+  widget: NonFunctionWidget<string>,
+  repeaterIndexes: number[],
+): NonFunctionWidget<string> {
+  const transformed = { ...widget } as Record<string, unknown>;
+
+  for (const field of WHEN_FIELDS) {
+    const value = transformed[field];
+    if (hasWhenExpression(value)) {
+      transformed[field] = {
+        ...value,
+        when: transformRepeaterItemWhenExpression(value.when, repeaterIndexes),
+      };
+    }
+  }
+
+  return transformed as NonFunctionWidget<string>;
+}
+
+function hasWhenExpression(value: unknown): value is { when: string } {
+  return (
+    value !== null &&
+    typeof value === 'object' &&
+    'when' in value &&
+    typeof (value as { when: unknown }).when === 'string'
+  );
 }

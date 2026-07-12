@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { expressionIsTrue } from './justin';
+import { expressionIsTrue, normalizeArrayIndexes } from './justin';
 
 describe('justin', () => {
   const $form = {
@@ -105,6 +105,87 @@ describe('justin', () => {
       expect(expressionIsTrue('$errors.address.street !== null', {}, {}, $errors, false)).toBe(
         true,
       );
+    });
+  });
+
+  describe('normalizeArrayIndexes', () => {
+    it('converts dot numeric indexes to bracket notation', () => {
+      expect(normalizeArrayIndexes('$form.teams.1.developers?.0?.firstName')).toBe(
+        '$form.teams[1].developers?.[0]?.firstName',
+      );
+    });
+
+    it('converts consecutive numeric indexes', () => {
+      expect(normalizeArrayIndexes('$form.matrix.1.0.value')).toBe('$form.matrix[1][0].value');
+    });
+
+    it('converts an index after an identifier ending in a digit', () => {
+      expect(normalizeArrayIndexes('$form.item2.0.name')).toBe('$form.item2[0].name');
+    });
+
+    it('keeps decimal number literals untouched', () => {
+      expect(normalizeArrayIndexes('35 * 0.02')).toBe('35 * 0.02');
+      expect(normalizeArrayIndexes("$form.x === 'EUR' ? 0.15 : 0.02")).toBe(
+        "$form.x === 'EUR' ? 0.15 : 0.02",
+      );
+      expect(normalizeArrayIndexes('0.5')).toBe('0.5');
+    });
+
+    it('keeps a leading-dot decimal untouched', () => {
+      expect(normalizeArrayIndexes('$form.total * .5')).toBe('$form.total * .5');
+    });
+
+    it('handles indexes and decimals in the same expression', () => {
+      expect(normalizeArrayIndexes('$form.lineItems.0.unitPrice * 1.15')).toBe(
+        '$form.lineItems[0].unitPrice * 1.15',
+      );
+    });
+
+    it('evaluates a decimal multiplication end to end', () => {
+      expect(
+        expressionIsTrue('($form.subtotal ?? 0) * 0.5 === 17.5', { subtotal: 35 }, {}, {}, false),
+      ).toBe(true);
+    });
+  });
+
+  describe('expressionIsTrue with $item / $index extra scope', () => {
+    const extraScope = { $item: { quantity: 2, unitPrice: 10 }, $index: 1 };
+
+    it('reads an $item property', () => {
+      expect(expressionIsTrue('$item.quantity === 2', {}, {}, {}, false, extraScope)).toBe(true);
+    });
+
+    it('computes with $item values', () => {
+      expect(
+        expressionIsTrue('$item.quantity * $item.unitPrice === 20', {}, {}, {}, false, extraScope),
+      ).toBe(true);
+    });
+
+    it('reads $index', () => {
+      expect(expressionIsTrue('$index === 1', {}, {}, {}, false, extraScope)).toBe(true);
+    });
+
+    it('guards a missing $item leaf with nullish coalescing', () => {
+      expect(expressionIsTrue('($item.missing ?? 0) === 0', {}, {}, {}, false, extraScope)).toBe(
+        true,
+      );
+    });
+
+    it('combines $item with $form in a single expression', () => {
+      expect(
+        expressionIsTrue(
+          '$item.quantity === 2 && $form.teams.0.developers.0.firstName === "Alice"',
+          $form,
+          {},
+          {},
+          false,
+          extraScope,
+        ),
+      ).toBe(true);
+    });
+
+    it('treats $item as undefined when no extra scope is provided', () => {
+      expect(expressionIsTrue('$item?.quantity === undefined', {}, {}, {}, false)).toBe(true);
     });
   });
 
