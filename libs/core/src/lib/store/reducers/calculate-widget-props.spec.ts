@@ -787,6 +787,8 @@ describe('calculateWidgetProps', () => {
         children: [c1, c2],
       } satisfies LayoutWidget<string>;
       seed(state, 'row[0]', source);
+      // Live materialized widgets always carry a scope entry (built by materializeRepeaterItems)
+      state.repeaterItemScopes['row[0]'] = { itemPath: 'rows.0', index: 0 };
       state.widgetFlags['cell1[0]'] = { hidden: true };
 
       const next = run(state);
@@ -806,6 +808,8 @@ describe('calculateWidgetProps', () => {
         children: [c1, c2],
       } satisfies LayoutWidget<string>;
       seed(state, 'grid[2][3]', source);
+      // Live materialized widgets always carry a scope entry (built by materializeRepeaterItems)
+      state.repeaterItemScopes['grid[2][3]'] = { itemPath: 'grid.2.rows.3', index: 3 };
       state.widgetFlags['leaf1[2][3]'] = { hidden: true };
 
       const next = run(state);
@@ -1068,6 +1072,188 @@ describe('calculateWidgetProps', () => {
 
       expect((next.calculatedWidgets['d'].current as DisplayWidget<string>).props?.['text']).toBe(
         'true',
+      );
+    });
+  });
+
+  // ---------------------------------------------------------------------------
+  // $item / $index repeater item scope
+  // ---------------------------------------------------------------------------
+
+  describe('$item / $index repeater item scope', () => {
+    const seedLineItems = () => {
+      state.data = {
+        lineItems: [
+          { quantity: 2, unitPrice: 10 },
+          { quantity: 3, unitPrice: 5 },
+        ],
+      };
+      state.repeaterItemScopes = {
+        'row-total[0]': { itemPath: 'lineItems.0', index: 0 },
+        'row-total[1]': { itemPath: 'lineItems.1', index: 1 },
+      };
+    };
+
+    it('interpolates {{$item.x}} and {{$index}} for a widget inside a repeater item', () => {
+      seedLineItems();
+      const source = {
+        kind: 'display',
+        uid: 'row-total[0]',
+        type: 'heading',
+        props: { text: 'Row {{$index + 1}}: {{($item.quantity ?? 0) * ($item.unitPrice ?? 0)}}' },
+      } satisfies DisplayWidget<string>;
+      seed(state, 'row-total[0]', source);
+
+      const next = run(state);
+
+      expect(
+        (next.calculatedWidgets['row-total[0]'].current as DisplayWidget<string>).props?.['text'],
+      ).toBe('Row 1: 20');
+    });
+
+    it('binds each widget to its own item', () => {
+      seedLineItems();
+      const makeSource = (uid: string) =>
+        ({
+          kind: 'display',
+          uid,
+          type: 'heading',
+          props: { text: '{{($item.quantity ?? 0) * ($item.unitPrice ?? 0)}}' },
+        }) satisfies DisplayWidget<string>;
+      seed(state, 'row-total[0]', makeSource('row-total[0]'));
+      seed(state, 'row-total[1]', makeSource('row-total[1]'));
+
+      const next = run(state);
+
+      expect(
+        (next.calculatedWidgets['row-total[0]'].current as DisplayWidget<string>).props?.['text'],
+      ).toBe('20');
+      expect(
+        (next.calculatedWidgets['row-total[1]'].current as DisplayWidget<string>).props?.['text'],
+      ).toBe('15');
+    });
+
+    it('pins the invoice per-row and aggregation expressions', () => {
+      seedLineItems();
+      const rowSource = {
+        kind: 'display',
+        uid: 'row-total[0]',
+        type: 'markdownText',
+        props: {
+          md: '**Total Price:** {{ (($item.quantity ?? 0) * ($item.unitPrice ?? 0)).toFixed(2) }}',
+        },
+      } satisfies DisplayWidget<string>;
+      const subtotalSource = {
+        kind: 'display',
+        uid: 'subtotal',
+        type: 'markdownText',
+        props: {
+          md: '**Subtotal:** {{($form.lineItems?.reduce((acc, item) => acc + ((item.quantity ?? 0) * (item.unitPrice ?? 0)), 0) ?? 0).toFixed(2)}}',
+        },
+      } satisfies DisplayWidget<string>;
+      seed(state, 'row-total[0]', rowSource);
+      seed(state, 'subtotal', subtotalSource);
+
+      const next = run(state);
+
+      expect(
+        (next.calculatedWidgets['row-total[0]'].current as DisplayWidget<string>).props?.['md'],
+      ).toBe('**Total Price:** 20.00');
+      expect(
+        (next.calculatedWidgets['subtotal'].current as DisplayWidget<string>).props?.['md'],
+      ).toBe('**Subtotal:** 35.00');
+    });
+
+    it('resolves $item and $index in i18n params', () => {
+      seedLineItems();
+      const source = {
+        kind: 'display',
+        uid: 'row-total[0]',
+        type: 'heading',
+        props: {
+          text: { key: 'row.total', params: { qty: '$item.quantity', row: '$index + 1' } },
+        },
+      } satisfies DisplayWidget<string>;
+      seed(state, 'row-total[0]', source);
+      const translator = makeTranslator();
+
+      run(state, translator);
+
+      expect(translator.calls[0]?.params).toEqual({ qty: 2, row: 1 });
+    });
+
+    it('passes $item and $index to a WidgetPropertyFunction prop', () => {
+      seedLineItems();
+      const source = {
+        kind: 'display',
+        uid: 'row-total[1]',
+        type: 'heading',
+        props: {
+          text: (params: any) => `Row ${params.$index}: ${params.$item.quantity}`,
+        },
+      } as unknown as DisplayWidget<string>;
+      seed(state, 'row-total[1]', source);
+
+      const next = run(state);
+
+      expect(
+        (next.calculatedWidgets['row-total[1]'].current as DisplayWidget<string>).props?.['text'],
+      ).toBe('Row 1: 3');
+    });
+
+    it('passes $item and $index to a FunctionWidget source', () => {
+      seedLineItems();
+      const source = Object.assign(
+        (params: any) =>
+          ({
+            kind: 'display',
+            uid: 'row-total[0]',
+            type: 'heading',
+            props: { text: `Row ${params?.$index}: ${params?.$item?.unitPrice}` },
+          }) as DisplayWidget<string>,
+        { uid: 'row-total[0]', type: 'heading' },
+      ) as unknown as FunctionWidget<string>;
+      seed(state, 'row-total[0]', source);
+
+      const next = run(state);
+
+      expect(
+        (next.calculatedWidgets['row-total[0]'].current as DisplayWidget<string>).props?.['text'],
+      ).toBe('Row 0: 10');
+    });
+
+    it('keeps the previous computation for a materialized uid whose item was removed', () => {
+      seedLineItems();
+      // Only item 0 remains registered in the scope map, simulating a removed row 1 whose component has not unmounted yet
+      delete state.repeaterItemScopes['row-total[1]'];
+      const source = {
+        kind: 'display',
+        uid: 'row-total[1]',
+        type: 'heading',
+        props: { text: '{{$item.quantity}}' },
+      } satisfies DisplayWidget<string>;
+      const previous = { source: source as any, current: { stale: true } as any };
+      state.calculatedWidgets['row-total[1]'] = previous;
+
+      const next = run(state);
+
+      expect(next.formHealth.status).toBe('ok');
+      expect(next.calculatedWidgets['row-total[1]']).toBe(previous);
+    });
+
+    it('leaves $item undefined for widgets outside any repeater', () => {
+      const source = {
+        kind: 'display',
+        uid: 'd',
+        type: 'heading',
+        props: { text: '{{$item?.quantity === undefined ? "no item" : "item"}}' },
+      } satisfies DisplayWidget<string>;
+      seed(state, 'd', source);
+
+      const next = run(state);
+
+      expect((next.calculatedWidgets['d'].current as DisplayWidget<string>).props?.['text']).toBe(
+        'no item',
       );
     });
   });

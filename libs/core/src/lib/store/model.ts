@@ -1,5 +1,5 @@
 import { type Form, formDefDecoder } from '../form';
-import type { FormWidget, FunctionWidget } from '../form-widget';
+import type { FormWidget, FunctionWidget, NonFunctionWidget } from '../form-widget';
 import { type DotPath, type Uid, type ValidationStatus } from '../shared';
 
 // ------------------------------
@@ -67,6 +67,29 @@ export type State = {
   widgetFlags: Record<Uid, { hidden?: boolean; readonly?: boolean; disabled?: boolean }>;
 
   /**
+   * Maps every widget rendered inside a repeater item (by its materialized uid) to the repeater item that owns it.
+   * Used to bind the `$item` and `$index` expression scope variables.
+   * For nested repeaters the entry points to the innermost enclosing item.
+   * Built by `materializeRepeaterItems` on every reducer pipeline run.
+   *
+   * @example { 'quantity-number[0]': { itemPath: 'lineItems.0', index: 0 } }
+   * @example Nested repeater, keyed by the innermost item: { 'dev-name[2][0]': { itemPath: 'teams.2.devs.0', index: 0 } }
+   */
+  repeaterItemScopes: Record<Uid, RepeaterItemScope>;
+
+  /**
+   * State-managed copies of the repeater template widgets, one per repeater item, keyed by materialized uid.
+   * Each entry mirrors the widget the renderer mounts for that item:
+   * - the uid and data path carry the concrete indexes,
+   * - `when` expressions are rewritten for the item's row,
+   * - and function widgets are already resolved to plain configs.
+   * Built by `materializeRepeaterItems` on every reducer pipeline run and consumed by `calculateWidgetFlags`.
+   *
+   * @example { 'quantity-number[0]': { uid: 'quantity-number[0]', path: 'lineItems.0.quantity', ... } }
+   */
+  materializedRepeaterWidgets: Record<Uid, NonFunctionWidget<string>>;
+
+  /**
    * Allows overriding a widget’s `prop` properties externally via its event handler mechanism.
    * For example, this can be used to load options for a select widget asynchronously.
    */
@@ -120,6 +143,8 @@ export const createInitialState = (lang: string): State => ({
   injectedValidations: {},
   isFormValid: true,
   widgetFlags: {},
+  repeaterItemScopes: {},
+  materializedRepeaterWidgets: {},
   widgetPropOverrides: {},
   data: {},
   meta: {},
@@ -142,6 +167,16 @@ export type MiddlewareAPI<S, A> = {
 export type Middleware<S, A> = (
   api: MiddlewareAPI<S, A>,
 ) => (next: (action: A) => void) => (action: A) => void;
+
+/**
+ * Identifies the repeater item that owns a widget rendered inside a repeater `props.template`.
+ */
+export type RepeaterItemScope = {
+  /** Data path of the owning item, e.g. `lineItems.0` */
+  itemPath: DotPath;
+  /** Zero-based position of the owning item in the repeater array */
+  index: number;
+};
 
 /**
  * Represents the current operational state of the form.

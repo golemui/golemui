@@ -4,6 +4,7 @@ import { type I18nTranslator } from '../i18n';
 import { type ValidateOn } from '../shared';
 import { assertNever } from '../utils/assert-never';
 import { pipe } from '../utils/function';
+import { get } from '../utils/object';
 import { type Action } from './actions';
 import { type State } from './model';
 import {
@@ -13,6 +14,7 @@ import {
   calculateWidgetProps,
   initialize,
   injectValidationIssues,
+  materializeRepeaterItems,
   overrideWidgetProp,
   removeWidget,
   setData,
@@ -43,6 +45,7 @@ export const reducer =
         return pipe(
           setData(state, action),
           calculateCurrentState,
+          materializeRepeaterItems,
           calculateWidgetFlags,
           calculateWidgetProps(localization),
         );
@@ -51,6 +54,7 @@ export const reducer =
         return pipe(
           setMeta(state, action),
           calculateCurrentState,
+          materializeRepeaterItems,
           calculateWidgetFlags,
           calculateWidgetProps(localization),
         );
@@ -62,6 +66,7 @@ export const reducer =
         return pipe(
           addWidget(state, action),
           reduceIf(formIsHealthy, calculateCurrentState),
+          reduceIf(formIsHealthy, materializeRepeaterItems),
           reduceIf(formIsHealthy, calculateWidgetFlags),
           reduceIf(formIsHealthy, calculateWidgetProps(localization)),
         );
@@ -70,6 +75,7 @@ export const reducer =
         return pipe(
           removeWidget(state, action),
           calculateCurrentState,
+          materializeRepeaterItems,
           calculateWidgetFlags,
           calculateWidgetProps(localization),
         );
@@ -79,6 +85,7 @@ export const reducer =
         return pipe(
           setWidgetData(state, action),
           calculateCurrentState,
+          materializeRepeaterItems,
           calculateWidgetFlags,
           calculateWidgetProps(localization),
         );
@@ -87,6 +94,7 @@ export const reducer =
         return pipe(
           overrideWidgetProp(state, action),
           calculateCurrentState,
+          materializeRepeaterItems,
           calculateWidgetFlags,
           calculateWidgetProps(localization),
           // Apply validation here because this action can be dispatched from the form's event handlers callback
@@ -134,6 +142,7 @@ export const reducer =
           validateAll(validators, localization),
           // This handles $errors and $formIsValid expressions variables
           calculateCurrentState,
+          materializeRepeaterItems,
           calculateWidgetFlags,
           calculateWidgetProps(localization),
           calculateIsFormValid,
@@ -157,6 +166,7 @@ export const reducer =
             validateAll(validators, localization),
             // This handles $errors and $formIsValid expressions variables
             calculateCurrentState,
+            materializeRepeaterItems,
             calculateWidgetFlags,
             calculateWidgetProps(localization),
             // TODO: extract this into a separate function
@@ -166,12 +176,15 @@ export const reducer =
               const originalDerivedWidget = state.calculatedWidgets[uid];
               const originalSource = originalDerivedWidget.source;
               if (isFunctionWidget(originalSource)) {
+                const itemScope = state.repeaterItemScopes[uid];
                 // TODO: prev vs current validation comparison to avoid change detection here
                 const current = originalSource({
                   $form: state.data,
                   errors: state.validations[path],
                   touched: true,
                   translate: localization.translate,
+                  $item: itemScope ? get(state.data, itemScope.itemPath) : undefined,
+                  $index: itemScope?.index,
                 });
                 return {
                   ...state,

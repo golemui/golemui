@@ -4,6 +4,7 @@ export { calculateWidgetFlags } from './calculate-widget-flags';
 export { calculateWidgetProps } from './calculate-widget-props';
 export { initialize } from './initialize';
 export { injectValidationIssues } from './inject-validation-issues';
+export { materializeRepeaterItems } from './materialize-repeater-items';
 export { overrideWidgetProp } from './override-widget-prop';
 export { removeWidget } from './remove-widget';
 export { setData } from './set-data';
