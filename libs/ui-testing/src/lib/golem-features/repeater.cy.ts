@@ -455,6 +455,224 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
         cy.get('[id="companyStatusAlert[0]"]').should('contain.text', 'Company is Msoft');
       });
 
+      it('should interpolate $item and $index independently per repeater item', () => {
+        const LINE_ITEMS_PATH = 'lineItems';
+        const getItemScopeFormDefinition = () =>
+          defineForm({
+            form: [
+              {
+                uid: 'lineItemsRepeater',
+                kind: 'input',
+                type: 'repeater',
+                path: LINE_ITEMS_PATH,
+                props: {
+                  addLabel: 'Add line item',
+                  removeLabel: 'Remove line item',
+                  template: {
+                    kind: 'layout',
+                    type: 'flex',
+                    children: [
+                      {
+                        uid: 'qty',
+                        kind: 'input',
+                        type: 'textinput',
+                        path: `${LINE_ITEMS_PATH}.items.quantity`,
+                        label: 'Quantity',
+                      },
+                      {
+                        uid: 'rowTotal',
+                        kind: 'display',
+                        type: 'alert',
+                        props: {
+                          level: 'success',
+                          text: 'Row {{$index + 1}} total: {{($item.quantity ?? 0) * 2}}',
+                        },
+                        include: { when: '$item.quantity !== undefined' },
+                      },
+                    ],
+                  },
+                },
+              },
+            ],
+          });
+
+        mountFn({
+          data: { lineItems: [{ quantity: 2 }, { quantity: 5 }, {}] },
+          formDef: getItemScopeFormDefinition(),
+        });
+
+        // Each row reads its own $item and $index
+        cy.get('[id="rowTotal[0]"]').should('contain.text', 'Row 1 total: 4');
+        cy.get('[id="rowTotal[1]"]').should('contain.text', 'Row 2 total: 10');
+        // include.when with $item: quantity is undefined on the third item
+        cy.get('[id="rowTotal[2]"]').should('not.exist');
+
+        // Typing in row 1 must only affect row 1's total
+        cy.get('[data-cy="qty[1]_textinput"]').clear();
+        cy.get('[data-cy="qty[1]_textinput"]').type('7');
+        cy.get('[id="rowTotal[1]"]').should('contain.text', 'Row 2 total: 14');
+        cy.get('[id="rowTotal[0]"]').should('contain.text', 'Row 1 total: 4');
+
+        // Removing row 0 rebinds $item/$index: the old row 1 becomes row 0
+        cy.get('.gui-button').contains('Remove line item').first().click();
+        cy.get('[id="rowTotal[0]"]').should('contain.text', 'Row 1 total: 14');
+        cy.get('[id="rowTotal[1]"]').should('not.exist');
+      });
+
+      it('should render markdownText displays with $item interpolation inside repeater items', () => {
+        const LINE_ITEMS_PATH = 'invoiceLines';
+        const getMarkdownItemScopeFormDefinition = () =>
+          defineForm({
+            form: [
+              {
+                uid: 'invoiceLinesRepeater',
+                kind: 'input',
+                type: 'repeater',
+                path: LINE_ITEMS_PATH,
+                props: {
+                  addLabel: 'Add invoice line',
+                  removeLabel: 'Remove invoice line',
+                  template: {
+                    kind: 'layout',
+                    type: 'flex',
+                    children: [
+                      {
+                        uid: 'lineQty',
+                        kind: 'input',
+                        type: 'textinput',
+                        path: `${LINE_ITEMS_PATH}.items.quantity`,
+                        label: 'Quantity',
+                      },
+                      {
+                        uid: 'lineTotalMd',
+                        kind: 'display',
+                        type: 'markdownText',
+                        props: {
+                          md: 'Row {{$index + 1}} total: {{($item.quantity ?? 0) * 2}}',
+                        },
+                        include: { when: '$item.quantity !== undefined' },
+                      },
+                    ],
+                  },
+                },
+              },
+            ],
+          });
+
+        mountFn({
+          data: { invoiceLines: [{ quantity: 2 }, {}] },
+          formDef: getMarkdownItemScopeFormDefinition(),
+          // The markdown widget renders nothing without a parser; a passthrough
+          // parser keeps the test dependency-free while still proving the
+          // dependency reaches the component and the interpolated text renders.
+          dependencies: { markdown: { parse: (markdown) => markdown } },
+        });
+
+        // Interpolated $item/$index content must actually render in the DOM
+        cy.get('[id="lineTotalMd[0]"]').should('contain.text', 'Row 1 total: 4');
+        // include.when with $item: quantity is undefined on the second item
+        cy.get('[id="lineTotalMd[1]"]').should('not.exist');
+
+        // Editing the row updates the rendered markdown
+        cy.get('[data-cy="lineQty[0]_textinput"]').clear();
+        cy.get('[data-cy="lineQty[0]_textinput"]').type('5');
+        cy.get('[id="lineTotalMd[0]"]').should('contain.text', 'Row 1 total: 10');
+      });
+
+      it('should scope $item and $index to the innermost item in nested repeaters', () => {
+        const ORDERS_PATH = 'orders';
+        const LINES_PATH = `${ORDERS_PATH}.items.lines`;
+        const getNestedItemScopeFormDefinition = () =>
+          defineForm({
+            form: [
+              {
+                uid: 'orderRepeater',
+                kind: 'input',
+                type: 'repeater',
+                path: ORDERS_PATH,
+                props: {
+                  addLabel: 'Add order',
+                  removeLabel: 'Remove order',
+                  template: {
+                    kind: 'layout',
+                    type: 'flex',
+                    children: [
+                      {
+                        uid: 'customer',
+                        kind: 'input',
+                        type: 'textinput',
+                        path: `${ORDERS_PATH}.items.customer`,
+                        label: 'Customer',
+                      },
+                      {
+                        uid: 'lineRepeater',
+                        kind: 'input',
+                        type: 'repeater',
+                        path: LINES_PATH,
+                        props: {
+                          addLabel: 'Add line',
+                          removeLabel: 'Remove line',
+                          template: {
+                            kind: 'layout',
+                            type: 'flex',
+                            children: [
+                              {
+                                uid: 'qty',
+                                kind: 'input',
+                                type: 'textinput',
+                                path: `${LINES_PATH}.items.quantity`,
+                                label: 'Quantity',
+                              },
+                              {
+                                uid: 'lineSubtotal',
+                                kind: 'display',
+                                type: 'alert',
+                                props: {
+                                  level: 'success',
+                                  text: 'Line {{$index + 1}} subtotal: {{($item.quantity ?? 0) * ($item.price ?? 0)}}',
+                                },
+                                include: { when: '$item.quantity !== undefined' },
+                              },
+                            ],
+                          },
+                        },
+                      },
+                    ],
+                  },
+                },
+              },
+            ],
+          });
+
+        mountFn({
+          data: {
+            orders: [
+              {
+                customer: 'Acme',
+                lines: [{ quantity: 2, price: 10 }, { quantity: 1, price: 5 }, {}],
+              },
+              { customer: 'Globex', lines: [{ quantity: 3, price: 4 }] },
+            ],
+          },
+          formDef: getNestedItemScopeFormDefinition(),
+        });
+
+        // $item and $index are the innermost line, so each line reads its own values.
+        // $index restarts at 0 inside every order's line repeater.
+        cy.get('[id="lineSubtotal[0][0]"]').should('contain.text', 'Line 1 subtotal: 20');
+        cy.get('[id="lineSubtotal[0][1]"]').should('contain.text', 'Line 2 subtotal: 5');
+        // The first line of the second order is index 0 again and reads its own $item (3 * 4).
+        cy.get('[id="lineSubtotal[1][0]"]').should('contain.text', 'Line 1 subtotal: 12');
+        // include.when with $item: the third line of the first order has no quantity
+        cy.get('[id="lineSubtotal[0][2]"]').should('not.exist');
+
+        // Typing in the second order's line only affects that line's subtotal
+        cy.get('[data-cy="qty[1][0]_textinput"]').clear();
+        cy.get('[data-cy="qty[1][0]_textinput"]').type('10');
+        cy.get('[id="lineSubtotal[1][0]"]').should('contain.text', 'Line 1 subtotal: 40');
+        cy.get('[id="lineSubtotal[0][0]"]').should('contain.text', 'Line 1 subtotal: 20');
+      });
+
       it('should evaluate index-aware include.when expressions independently per repeater item', () => {
         mountFn({
           data: {
