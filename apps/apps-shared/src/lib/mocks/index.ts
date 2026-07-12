@@ -3,6 +3,8 @@ export * from './demo-a11y';
 export * from './demo-i18n';
 export * from './demo-validation';
 export * from './flight-tickets';
+export * from './invoice';
+export * from './invoice-nested';
 export * from './item-renderers';
 export * from './kitchen-sink';
 export * from './kitchen-sink.dx';

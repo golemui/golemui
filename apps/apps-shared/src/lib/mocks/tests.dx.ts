@@ -52,7 +52,7 @@ const formConfig: DxFormConfig = {
   states: { vip: '$form.isVip === true' },
 };
 
-export const testsDxModule: DxModule = {
+export const testsDxModular: DxModule = {
   label: 'Tests',
   data,
   formDef,

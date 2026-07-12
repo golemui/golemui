@@ -5,9 +5,10 @@ import type {
   GslSelectorsInput,
 } from '@golemui/gui-shared';
 import { gui } from '@golemui/gui-shared';
-import { testsDxModule } from './index.dx';
+import { testsDxModular, invoiceDxModular } from './index.dx';
 
-const dxMock: DxModule = testsDxModule;
+// Available Dx Modular mocks
+const dxModularMocks = {testsDxModular, invoiceDxModular};
 
 export interface DxModule {
   label: string;
@@ -41,4 +42,4 @@ export function buildModularDx(modules: DxModule[]): ModularDx {
   };
 }
 
-export const modularDx = buildModularDx([dxMock]);
+export const modularDx = buildModularDx([dxModularMocks.invoiceDxModular]);
