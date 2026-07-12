@@ -450,14 +450,107 @@ describe('json_validate_form_definition', () => {
       // The ref `$form.x` here is operand of `??`, not `>`. The wrapper `(... ?? 0)` is what's > 180.
       expect(has(r, /comparison or arithmetic/)).toBe(false);
     });
-    it('flags `$index > 0` for missing root reference, not comparison/arithmetic', () => {
+    it('flags `$index > 0` outside a repeater template, not comparison/arithmetic', () => {
       const r = validateFormDefinition(formWith('$index > 0'));
-      expect(has(r, /does not reference/)).toBe(true);
+      expect(has(r, /only available inside a repeater/)).toBe(true);
+      expect(has(r, /does not reference/)).toBe(false);
       expect(has(r, /comparison or arithmetic/)).toBe(false);
     });
     it('does not flag a guarded comparison', () => {
       const r = validateFormDefinition(formWith('$form.size !== undefined && $form.size > 180'));
       expect(has(r, /comparison or arithmetic/)).toBe(false);
+    });
+  });
+
+  describe('$item / $index repeater template scope', () => {
+    const repeaterFormWith = (when: string, md = '## Row') => ({
+      formDefinition: {
+        form: [
+          {
+            kind: 'input',
+            type: 'repeater',
+            path: 'lineItems',
+            props: {
+              template: {
+                kind: 'layout',
+                type: 'flex',
+                props: { direction: 'column' },
+                children: [
+                  {
+                    kind: 'display',
+                    type: 'markdownText',
+                    props: { md },
+                    include: { when },
+                  },
+                ],
+              },
+            },
+          },
+        ],
+      },
+    });
+
+    it('accepts `$item` in a `when` inside a repeater template', () => {
+      const r = validateFormDefinition(repeaterFormWith('$item.quantity !== undefined'));
+      expect(has(r, /only available inside a repeater/)).toBe(false);
+      expect(has(r, /does not reference/)).toBe(false);
+    });
+
+    it('accepts `$index` in a `when` inside a repeater template', () => {
+      const r = validateFormDefinition(repeaterFormWith('$index === 0'));
+      expect(has(r, /only available inside a repeater/)).toBe(false);
+      expect(has(r, /does not reference/)).toBe(false);
+    });
+
+    it('accepts `$item` in an interpolation slot inside a repeater template', () => {
+      const r = validateFormDefinition(
+        repeaterFormWith(
+          '$item.quantity !== undefined',
+          '**Total:** {{(($item.quantity ?? 0) * ($item.unitPrice ?? 0)).toFixed(2)}}',
+        ),
+      );
+      expect(
+        r.interpolationWarnings.some((w) => /only available inside a repeater/.test(w.message)),
+      ).toBe(false);
+      expect(r.interpolationWarnings.some((w) => /does not reference/.test(w.message))).toBe(false);
+    });
+
+    it('flags `$item` in a `when` outside a repeater template', () => {
+      const r = validateFormDefinition(formWith('$item.quantity !== undefined'));
+      expect(has(r, /only available inside a repeater/)).toBe(true);
+      expect(has(r, /does not reference/)).toBe(false);
+    });
+
+    it('flags `$item` in an interpolation slot outside a repeater template', () => {
+      const r = validateFormDefinition({
+        formDefinition: {
+          form: [
+            {
+              kind: 'display',
+              type: 'markdownText',
+              props: { md: '{{$item.quantity}}' },
+            },
+          ],
+        },
+      });
+      expect(
+        r.interpolationWarnings.some((w) => /only available inside a repeater/.test(w.message)),
+      ).toBe(true);
+    });
+
+    it('flags `$item` in a `states` expression (global scope)', () => {
+      const r = validateFormDefinition({
+        formDefinition: {
+          states: { hasQuantity: '$item.quantity !== undefined' },
+          form: [{ kind: 'input', type: 'textinput', path: 'x' }],
+        },
+      });
+      expect(has(r, /only available inside a repeater/)).toBe(true);
+    });
+
+    it('applies the defensive rules to `$item` references inside templates', () => {
+      const r = validateFormDefinition(repeaterFormWith('!$item.done'));
+      expect(has(r, /negates a `\$form/)).toBe(true);
     });
   });
 

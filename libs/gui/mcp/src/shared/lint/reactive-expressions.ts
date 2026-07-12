@@ -18,9 +18,17 @@ export type ExpressionFinding = {
  */
 export function lintReactiveExpressions(formDefinition: unknown): ExpressionFinding[] {
   const findings: ExpressionFinding[] = [];
-  walk(formDefinition, '', findings);
+  walk(formDefinition, '', findings, false, false);
   return findings;
 }
+
+export type CheckExpressionOptions = {
+  /**
+   * True when the expression lives inside a repeater `props.template`, where the
+   * `$item` and `$index` scope variables are available.
+   */
+  inRepeaterTemplate?: boolean;
+};
 
 /**
  * Lint a single reactive expression string in isolation, against the same rules
@@ -29,16 +37,26 @@ export function lintReactiveExpressions(formDefinition: unknown): ExpressionFind
  * object tree, the DX linter has the AST — both funnel each `when` expression
  * through here so the two surfaces can never drift.
  */
-export function checkReactiveExpression(expression: string, path = ''): ExpressionFinding[] {
+export function checkReactiveExpression(
+  expression: string,
+  path = '',
+  options: CheckExpressionOptions = {},
+): ExpressionFinding[] {
   const out: ExpressionFinding[] = [];
-  checkExpression(expression, path, out);
+  checkExpression(expression, path, out, options.inRepeaterTemplate === true);
   return out;
 }
 
-function walk(node: unknown, path: string, out: ExpressionFinding[]): void {
+function walk(
+  node: unknown,
+  path: string,
+  out: ExpressionFinding[],
+  inTemplate: boolean,
+  propsOfRepeater: boolean,
+): void {
   if (node === null || typeof node !== 'object') return;
   if (Array.isArray(node)) {
-    node.forEach((item, i) => walk(item, `${path}/${i}`, out));
+    node.forEach((item, i) => walk(item, `${path}/${i}`, out, inTemplate, false));
     return;
   }
   const obj = node as Record<string, unknown>;
@@ -49,16 +67,17 @@ function walk(node: unknown, path: string, out: ExpressionFinding[]): void {
     if (child && typeof child === 'object' && 'when' in (child as object)) {
       const expr = (child as { when: unknown }).when;
       if (typeof expr === 'string') {
-        checkExpression(expr, `${path}/${key}/when`, out);
+        checkExpression(expr, `${path}/${key}/when`, out, inTemplate);
       }
     }
   }
 
   // states map: { someState: '...expression...' }
+  // States are global scope, so `$item`/`$index` are never available here.
   if (path === '' && obj['states'] && typeof obj['states'] === 'object') {
     for (const [name, expr] of Object.entries(obj['states'] as Record<string, unknown>)) {
       if (typeof expr === 'string') {
-        checkExpression(expr, `/states/${name}`, out);
+        checkExpression(expr, `/states/${name}`, out, false);
       }
     }
   }
@@ -68,16 +87,24 @@ function walk(node: unknown, path: string, out: ExpressionFinding[]): void {
     if (v && typeof v === 'object' && !Array.isArray(v) && 'when' in (v as object)) {
       const expr = (v as { when: unknown }).when;
       if (typeof expr === 'string' && k !== 'include' && k !== 'exclude') {
-        checkExpression(expr, `${path}/${k}/when`, out);
+        checkExpression(expr, `${path}/${k}/when`, out, inTemplate);
       }
     }
     if (typeof v === 'object' && v !== null) {
-      walk(v, `${path}/${k}`, out);
+      // A repeater's `props.template` subtree gets the `$item`/`$index` scope.
+      // The flag is sticky so nested templates inherit it (innermost semantics).
+      const childInTemplate = inTemplate || (propsOfRepeater && k === 'template');
+      walk(v, `${path}/${k}`, out, childInTemplate, obj['type'] === 'repeater' && k === 'props');
     }
   }
 }
 
-function checkExpression(expr: string, path: string, out: ExpressionFinding[]): void {
+function checkExpression(
+  expr: string,
+  path: string,
+  out: ExpressionFinding[],
+  inTemplate: boolean,
+): void {
   const trimmed = expr.trim();
   if (!trimmed) {
     out.push({ path, expression: expr, message: 'Expression is empty.' });
@@ -113,13 +140,25 @@ function checkExpression(expr: string, path: string, out: ExpressionFinding[]): 
   //   $form           — form data
   //   $meta           — user-supplied form metadata (e.g. systemMessage, connectionStatus)
   //   $formIsInvalid  — boolean; true when any field currently fails validation
-  if (!/\$form\b|\$meta\b|\$formIsInvalid\b/.test(trimmed)) {
+  //   $item / $index  — current repeater item and its position; only inside a repeater `props.template`
+  const referencesItemScope = /\$item\b|\$index\b/.test(trimmed);
+  const hasGlobalRoot = /\$form\b|\$meta\b|\$formIsInvalid\b/.test(trimmed);
+  if (referencesItemScope && !inTemplate) {
+    out.push({
+      path,
+      expression: expr,
+      message:
+        'Expression references `$item` or `$index`, which are only available inside a repeater `props.template`.',
+      suggestion:
+        'Move the widget inside the repeater template, or read the data through `$form` (e.g. `$form.lineItems?.[0]?.quantity`).',
+    });
+  } else if (!hasGlobalRoot && !(inTemplate && referencesItemScope)) {
     out.push({
       path,
       expression: expr,
       message: 'Expression does not reference `$form`, `$meta`, or `$formIsInvalid`.',
       suggestion:
-        'GolemUI expressions read form data via `$form.fieldName`, form metadata via `$meta.key`, or the built-in `$formIsInvalid` boolean. Did you forget the prefix?',
+        'GolemUI expressions read form data via `$form.fieldName`, form metadata via `$meta.key`, or the built-in `$formIsInvalid` boolean. Inside a repeater `props.template` the current item is available via `$item` and its position via `$index`. Did you forget the prefix?',
     });
   }
 
@@ -160,13 +199,15 @@ function checkExpression(expr: string, path: string, out: ExpressionFinding[]): 
     });
   }
 
-  // R2: negation of a `$form`/`$meta` reference (`!$form.x`).
+  // R2: negation of a `$form`/`$meta`/`$item` reference (`!$form.x`).
   // The lookbehind/lookahead exclude `!=` and `!==` operators.
-  if (/(?<![=!])!\s*\$(?:form|meta)\b/.test(trimmed)) {
+  // `$index` is exempt from the defensive rules: it is always a defined number.
+  if (/(?<![=!])!\s*\$(?:form|meta|item)\b/.test(trimmed)) {
     out.push({
       path,
       expression: expr,
-      message: 'Expression negates a `$form`/`$meta` reference (relies on truthy/falsy coercion).',
+      message:
+        'Expression negates a `$form`/`$meta`/`$item` reference (relies on truthy/falsy coercion).',
       suggestion:
         'Form data values can be `undefined`. Pick the case you actually mean and write it explicitly — `$form.x === undefined`, `$form.x === null`, `$form.x === 0`, `$form.x === ""` — instead of `!$form.x`.',
     });
@@ -175,7 +216,7 @@ function checkExpression(expr: string, path: string, out: ExpressionFinding[]): 
   // R3: chained nested-property access without optional chaining.
   // For each `$root.<chain>` match, split the chain on `.` and walk segment pairs.
   // A transition from segments[i] to segments[i+1] is safe iff segments[i] ends with `?`.
-  const refChainRe = /\$(?:form|meta)\b((?:\.[\w?]+)*)/g;
+  const refChainRe = /\$(?:form|meta|item)\b((?:\.[\w?]+)*)/g;
   let chainFlagged = false;
   let chainMatch: RegExpExecArray | null;
   while ((chainMatch = refChainRe.exec(trimmed)) !== null) {
@@ -207,9 +248,9 @@ function checkExpression(expr: string, path: string, out: ExpressionFinding[]): 
   //   (a) the whole expression is a bare reference (`$form.x`)
   //   (b) reference followed by `&&` / `||` / ternary `?` (and not `??` or `?.`)
   //   (c) `&&` / `||` followed by a trailing reference at the end of the expression
-  const refOnly = /^\$(?:form|meta)(?:\.[\w?]+)*$/;
-  const refBeforeBool = /\$(?:form|meta)(?:\.[\w?]+)*\s*(?:&&|\|\||\?(?![.?]))/;
-  const refAfterBool = /(?:&&|\|\|)\s*\$(?:form|meta)(?:\.[\w?]+)*\s*$/;
+  const refOnly = /^\$(?:form|meta|item)(?:\.[\w?]+)*$/;
+  const refBeforeBool = /\$(?:form|meta|item)(?:\.[\w?]+)*\s*(?:&&|\|\||\?(?![.?]))/;
+  const refAfterBool = /(?:&&|\|\|)\s*\$(?:form|meta|item)(?:\.[\w?]+)*\s*$/;
   if (refOnly.test(trimmed) || refBeforeBool.test(trimmed) || refAfterBool.test(trimmed)) {
     out.push({
       path,
@@ -230,7 +271,7 @@ function checkExpression(expr: string, path: string, out: ExpressionFinding[]): 
   // the unsafe operator, assume the LHS is the guard (`$form.x !== undefined && $form.x > 180`
   // idiom) and skip. This produces occasional false negatives but no false positives on the
   // common guarding pattern.
-  const refForCmpRe = /\$(?:form|meta)(?:\.[\w?]+)+/g;
+  const refForCmpRe = /\$(?:form|meta|item)(?:\.[\w?]+)+/g;
   let r5Flagged = false;
   let cmpMatch: RegExpExecArray | null;
   while ((cmpMatch = refForCmpRe.exec(trimmed)) !== null) {
