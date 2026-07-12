@@ -38,7 +38,12 @@ function WidgetRenderer(props: Props) {
         const loadedComponent = await formContext.widgetRegistry.loadWidget(props.widget.type);
         if (isMounted.current) {
           if (repeaterIndexes.length > 0) {
-            setWidget(makeRepeaterItemConfig(cloneObject(props.widget), repeaterIndexes));
+            const materializedWidget = makeRepeaterItemConfig(
+              cloneObject(props.widget),
+              repeaterIndexes,
+            );
+            // Wrapped in a closure to avoid being treated as a setState updater function!
+            setWidget(() => materializedWidget);
           }
           setComponent(() => loadedComponent);
         }
