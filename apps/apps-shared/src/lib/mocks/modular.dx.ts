@@ -8,7 +8,7 @@ import { gui } from '@golemui/gui-shared';
 import { testsDxModular, invoiceDxModular } from './index.dx';
 
 // Available Dx Modular mocks
-const dxModularMocks = {testsDxModular, invoiceDxModular};
+const dxModularMocks = { testsDxModular, invoiceDxModular };
 
 export interface DxModule {
   label: string;
