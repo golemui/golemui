@@ -20,7 +20,7 @@
       "description": "Maximum number of items the user can add. No limit when omitted."
     },
     "templateProp": {
-      "description": "Widget tree used as the template for each repeated item. Paths inside are resolved relative to the item's index in the array.",
+      "description": "Widget tree used as the template for each repeated item. Paths inside are resolved relative to the item's index in the array. Widgets inside the template can reference the current item in reactive expressions ('when' conditions, '{{}}' interpolation slots, and i18n params) through the scope variables '$item' (the item object, e.g. '$item.quantity') and '$index' (the item's zero-based position). For nested repeaters these bind to the innermost enclosing item.",
       "$ref": "../layout-widget.schema.json"
     },
     "titleProp": {

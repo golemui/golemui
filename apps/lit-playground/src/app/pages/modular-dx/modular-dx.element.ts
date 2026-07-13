@@ -1,17 +1,23 @@
 import { modularDx, onFormEvent } from '@golemui/apps-shared';
 import type { FormEvent, FormHealth, FormSubmitEvent } from '@golemui/core';
 import '@golemui/gui-lit';
-import { type GuiFormInitConfig } from '@golemui/gui-shared';
+import { type Dependencies, type GuiFormInitConfig } from '@golemui/gui-shared';
 import { html, LitElement, nothing } from 'lit';
 import { customElement } from 'lit/decorators.js';
+import snarkdown from 'snarkdown';
 
 const md = modularDx;
+
+const dependencies: Dependencies = {
+  markdown: { parse: (markdown: string) => snarkdown(markdown) },
+};
 
 const config: GuiFormInitConfig = {
   formDef: md.formDef,
   data: md.data,
   formSelectors: md.formSelectors,
   formConfig: md.formConfig,
+  dependencies,
 };
 
 @customElement('lit-modular-dx')

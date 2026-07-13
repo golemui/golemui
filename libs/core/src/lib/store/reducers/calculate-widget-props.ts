@@ -22,7 +22,7 @@ import { type $Errors } from '../../shared';
 import { calculateValidationVariables } from '../../utils/form';
 import { normalizeArrayIndexes } from '../../utils/justin';
 import { get, set } from '../../utils/object';
-import { type DerivedWidget, type State } from '../model';
+import { type DerivedWidget, type RepeaterItemScope, type State } from '../model';
 import { hasWhen } from './utils';
 import { errorCodes } from '../../errors';
 
@@ -64,17 +64,30 @@ function calculateAll(state: State, localization: I18nTranslator): State['calcul
 
     const prev = state.calculatedWidgets[uid];
     const source = prev.source;
+    const itemScope = state.repeaterItemScopes[uid];
 
-    if (isFunctionWidget(source)) {
-      result[uid] = computeFunctionWidget(uid, source, state, localization);
+    // A removed repeater item leaves its widgets registered until their components unmount.
+    // Their item data is already gone, so keep the previous computation instead of evaluating expressions against it.
+    if (!itemScope && extractRepeaterIndexes(uid).length > 0) {
+      result[uid] = prev;
       continue;
     }
+
+    if (isFunctionWidget(source)) {
+      result[uid] = computeFunctionWidget(uid, source, state, localization, itemScope);
+      continue;
+    }
+
+    // Widgets inside a repeater item see that item through $item / $index
+    const widgetCtx = itemScope
+      ? { ...ctx, $item: get(ctx.$form, itemScope.itemPath), $index: itemScope.index }
+      : ctx;
 
     result[uid] = computeNonFunctionWidget(
       prev as DerivedWidget<NonFunctionWidget<string>>,
       source,
       state,
-      ctx,
+      widgetCtx,
     );
   }
 
@@ -90,12 +103,15 @@ function computeFunctionWidget(
   source: FunctionWidget<string>,
   state: State,
   localization: I18nTranslator,
+  itemScope?: RepeaterItemScope,
 ): DerivedWidget<FormWidget<string>> {
   const current = source({
     $form: state.data,
     errors: source.path ? state.validations[source.path] : undefined,
     touched: source.path ? state.touchedControls[source.path] : undefined,
     translate: localization.translate,
+    $item: itemScope ? get(state.data, itemScope.itemPath) : undefined,
+    $index: itemScope?.index,
   });
   current.uid = uid;
   // TODO: structural comparison to preserve ref when equal?
@@ -291,10 +307,20 @@ function applyOnField(t: ChangeTracker, ctx: ResolverCtx, subProp: string): void
 // Value-type resolvers - pure: (value, ctx) -> value.
 // -----------------------------------------------------------------------------
 
-type WidgetFn = (api: { $form: any; translate: I18nTranslator['translate'] }) => unknown;
+type WidgetFn = (api: {
+  $form: any;
+  translate: I18nTranslator['translate'];
+  $item?: any;
+  $index?: number;
+}) => unknown;
 
 function resolveFunctionProp(fn: WidgetFn, ctx: ResolverCtx): unknown {
-  return fn({ $form: ctx.$form, translate: ctx.localization.translate });
+  return fn({
+    $form: ctx.$form,
+    translate: ctx.localization.translate,
+    $item: ctx.$item,
+    $index: ctx.$index,
+  });
 }
 
 function resolveTranslationConfig(tc: TranslationConfig, ctx: ResolverCtx): string {
@@ -316,6 +342,8 @@ function resolveString(input: string, ctx: ResolverCtx): string {
         $meta: ctx.$meta,
         $errors: ctx.$errors,
         $formIsInvalid: ctx.$formIsInvalid,
+        $item: ctx.$item,
+        $index: ctx.$index,
       });
       return result == null ? '' : String(result);
     } catch (err) {
@@ -402,6 +430,8 @@ function isPotentialExpression(value: string): boolean {
     value.startsWith('$form') ||
     value.startsWith('$meta') ||
     value.startsWith('$errors') ||
+    value.startsWith('$item') ||
+    value.startsWith('$index') ||
     value === '$formIsInvalid'
   );
 }
@@ -428,6 +458,8 @@ function resolveI18nParams(
           $meta: ctx.$meta,
           $errors: ctx.$errors,
           $formIsInvalid: ctx.$formIsInvalid,
+          $item: ctx.$item,
+          $index: ctx.$index,
         });
         acc[key] = result ?? param;
       } catch (err) {
@@ -490,6 +522,10 @@ interface ResolverCtx {
   $formIsInvalid: boolean;
   $errors: $Errors;
   localization: I18nTranslator;
+  /** Set only for widgets inside a repeater item: the item object itself */
+  $item?: unknown;
+  /** Set only for widgets inside a repeater item: the item's position. */
+  $index?: number;
 }
 
 function makeResolverCtx(

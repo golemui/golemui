@@ -1,0 +1,133 @@
+{
+  "$schema": "https://golemui.com/schemas/form.schema.json",
+  "form": [
+    {
+      "kind": "display",
+      "type": "markdownText",
+      "props": { "md": "## Freelance invoice by project" }
+    },
+    {
+      "kind": "display",
+      "type": "markdownText",
+      "props": {
+        "md": "Bill each project's tasks (hours x rate). This is a repeater of tasks nested inside a repeater of projects, so `$item` and `$index` always resolve to the innermost item: the task."
+      }
+    },
+    {
+      "kind": "input",
+      "type": "repeater",
+      "path": "projects",
+      "label": "Projects",
+      "validator": { "type": "array", "required": true, "minItems": 1 },
+      "props": {
+        "addLabel": "Add project",
+        "removeLabel": "Remove project",
+        "title": "Project",
+        "template": {
+          "kind": "layout",
+          "type": "flex",
+          "props": { "direction": "column", "gap": 12 },
+          "children": [
+            {
+              "kind": "input",
+              "type": "textinput",
+              "path": "projects.items.name",
+              "label": "Project name",
+              "validator": { "type": "string", "required": true, "minLength": 1 },
+              "props": { "placeholder": "e.g. Website redesign" }
+            },
+            {
+              "kind": "input",
+              "type": "repeater",
+              "path": "projects.items.tasks",
+              "label": "Tasks",
+              "validator": { "type": "array", "required": true, "minItems": 1 },
+              "props": {
+                "addLabel": "Add task",
+                "removeLabel": "Remove",
+                "title": "Task",
+                "template": {
+                  "kind": "layout",
+                  "type": "flex",
+                  "props": { "direction": "row", "gap": 12 },
+                  "children": [
+                    {
+                      "kind": "input",
+                      "type": "textinput",
+                      "path": "projects.items.tasks.items.description",
+                      "size": 5,
+                      "label": "Task",
+                      "validator": { "type": "string", "required": true, "minLength": 1 }
+                    },
+                    {
+                      "kind": "input",
+                      "type": "number",
+                      "path": "projects.items.tasks.items.hours",
+                      "size": 2,
+                      "label": "Hours",
+                      "validator": { "type": "number", "required": true, "minimum": 0 },
+                      "props": { "minimum": 0, "step": 0.5 }
+                    },
+                    {
+                      "kind": "input",
+                      "type": "currency",
+                      "path": "projects.items.tasks.items.rate",
+                      "size": 3,
+                      "label": "Hourly rate",
+                      "validator": { "type": "number", "required": true },
+                      "props": {
+                        "currency": "USD",
+                        "minimumFractionDigits": 2,
+                        "maximumFractionDigits": 2
+                      }
+                    },
+                    {
+                      "kind": "display",
+                      "type": "markdownText",
+                      "size": 2,
+                      "props": {
+                        "md": "**Task {{$index + 1}}**  \n${{ (($item.hours ?? 0) * ($item.rate ?? 0)).toFixed(2) }}"
+                      },
+                      "include": { "when": "$item.hours !== undefined" }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "kind": "display",
+              "type": "alert",
+              "props": {
+                "level": "info",
+                "text": "Project subtotal: ${{ ($item.tasks?.reduce((sum, task) => sum + ((task.hours ?? 0) * (task.rate ?? 0)), 0) ?? 0).toFixed(2) }}"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "kind": "display",
+      "type": "alert",
+      "props": {
+        "level": "success",
+        "text": "Total due: ${{ ($form.projects?.reduce((total, project) => total + (project.tasks?.reduce((sum, task) => sum + ((task.hours ?? 0) * (task.rate ?? 0)), 0) ?? 0), 0) ?? 0).toFixed(2) }}"
+      }
+    },
+    {
+      "kind": "layout",
+      "type": "flex",
+      "props": { "direction": "row", "align": "end" },
+      "children": [
+        {
+          "kind": "action",
+          "type": "button",
+          "actionType": "submit",
+          "label": "Send invoice",
+          "disabled": { "when": "$formIsInvalid" },
+          "props": { "variant": "filled" }
+        }
+      ]
+    }
+  ]
+}

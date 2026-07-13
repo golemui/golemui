@@ -61,7 +61,7 @@ export function lintDxSnippet(ts: typeof TS, sourceText: string, lineOffset: num
     return ts.isIdentifier(e) && e.text === 'gui';
   };
 
-  const visit = (node: TS.Node): void => {
+  const visit = (node: TS.Node, inTemplate: boolean): void => {
     // (1) Misplaced common field as a sibling of a `gui.*` spread.
     if (ts.isObjectLiteralExpression(node)) {
       const spreadsGui = node.properties.some(
@@ -99,14 +99,21 @@ export function lintDxSnippet(ts: typeof TS, sourceText: string, lineOffset: num
       ts.isStringLiteralLike(node.initializer)
     ) {
       const { line, column } = posOf(node.initializer);
-      for (const f of checkReactiveExpression(node.initializer.text, `when@${line}:${column}`)) {
+      const findings = checkReactiveExpression(node.initializer.text, `when@${line}:${column}`, {
+        inRepeaterTemplate: inTemplate,
+      });
+      for (const f of findings) {
         expressionWarnings.push(f);
       }
     }
 
-    ts.forEachChild(node, visit);
+    // A repeater's `template:` subtree gets the `$item`/`$index` scope; the flag
+    // is sticky so nested templates inherit it (innermost semantics).
+    const childInTemplate =
+      inTemplate || (ts.isPropertyAssignment(node) && nameOf(node.name) === 'template');
+    ts.forEachChild(node, (child) => visit(child, childInTemplate));
   };
 
-  visit(sf);
+  visit(sf, false);
   return { diagnostics, expressionWarnings };
 }

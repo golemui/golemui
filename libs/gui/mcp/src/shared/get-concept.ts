@@ -367,6 +367,7 @@ const STRING_INTERPOLATION_CONCEPT: GetConceptResult = {
 
   rules: [
     'Slots must reference at least one of `$form`, `$meta`, `$errors`, or `$formIsInvalid`. A bare identifier without a scope prefix is invalid inside `{{}}`: use `{{$form.name}}` not `{{name}}`. `$formIsInvalid` is a bare boolean — do not chain properties onto it.',
+    'Inside a repeater `props.template`, slots can additionally reference `$item` (the current repeater item object) and `$index` (its zero-based position): `{{($item.quantity ?? 0) * ($item.unitPrice ?? 0)}}`. Outside a template, `$item`/`$index` are undefined and invalid.',
     'If an expression evaluates to `null` or `undefined`, the slot renders as an empty string in display text.',
     'Use optional chaining (`?.`) when accessing nested fields that may not yet exist: `{{$form.address?.city}}` not `{{$form.address.city}}`.',
     'Do not use assignment `=` inside a slot — slots are read-only. Use `===` for equality checks.',
@@ -386,9 +387,11 @@ const REACTIVE_SCOPE_CONCEPT: GetConceptResult = {
   concept: 'reactive-scope',
   summary:
     'GolemUI reactive expressions (used in `states`, `include.when`, `exclude.when`, and `{{}}` template slots) ' +
-    'share a common read-only scope object. The scope exposes four variables: ' +
+    'share a common read-only scope object. The scope exposes four global variables: ' +
     '`$form` (live form data), `$meta` (host-supplied metadata), `$errors` (validation error messages), ' +
     'and `$formIsInvalid` (built-in boolean). ' +
+    'Inside a repeater `props.template` two more variables are available: ' +
+    '`$item` (the current repeater item object) and `$index` (its zero-based position). ' +
     'All variables are read-only — expressions can only read from them, never write to them.',
 
   patterns: [
@@ -506,10 +509,60 @@ const REACTIVE_SCOPE_CONCEPT: GetConceptResult = {
         },
       },
     },
+    {
+      name: '$item / $index — current repeater item (template scope only)',
+      description:
+        '`$item` is the data object of the repeater item a widget belongs to, and `$index` is that ' +
+        "item's zero-based position in the array. They are available ONLY to widgets inside a " +
+        'repeater `props.template` — in `include`/`exclude`/`disabled`/`readonly` `when` conditions, ' +
+        '`{{}}` template slots, and i18n params. Outside a template they are `undefined` and the ' +
+        'linter flags them. For nested repeaters, `$item`/`$index` refer to the INNERMOST enclosing ' +
+        'item; to address an outer level, use the `items` path token through `$form` instead ' +
+        '(e.g. `$form.teams.items.name` resolves against each item of the `teams` repeater). ' +
+        '`$item` leaf values may be `undefined` while the user fills in the row, so guard them; ' +
+        '`$index` is always a defined number.',
+      example: {
+        $schema: 'https://golemui.com/schemas/form.schema.json',
+        form: [
+          {
+            kind: 'input',
+            type: 'repeater',
+            path: 'lineItems',
+            label: 'Line Items',
+            props: {
+              template: {
+                kind: 'layout',
+                type: 'flex',
+                props: { direction: 'column' },
+                children: [
+                  {
+                    kind: 'input',
+                    type: 'number',
+                    path: 'lineItems.items.quantity',
+                    label: 'Quantity {{$index + 1}}',
+                  },
+                  {
+                    kind: 'display',
+                    type: 'markdownText',
+                    props: {
+                      md: '**Total:** {{(($item.quantity ?? 0) * ($item.unitPrice ?? 0)).toFixed(2)}}',
+                    },
+                    include: { when: '$item.quantity !== undefined' },
+                  },
+                ],
+              },
+            },
+          },
+        ],
+      },
+    },
   ],
 
   rules: [
-    'All four scope variables are read-only. Expressions may only read values, never assign them.',
+    'All scope variables are read-only. Expressions may only read values, never assign them.',
+    '`$item` and `$index` exist only for widgets inside a repeater `props.template`. In `states` and in widgets outside a template they are undefined and invalid.',
+    'For nested repeaters `$item`/`$index` bind to the innermost enclosing item. Use the `items` path token through `$form` to address outer levels.',
+    '`$item` leaf values (`$item.someField`) may be `undefined` until the user fills them in — guard with `??` or explicit comparisons. `$index` is always a defined number.',
     '`$form` is always a defined object. Its leaf values (`$form.someField`) may be `undefined` until the user fills them in.',
     'Use optional chaining (`?.`) at every intermediate segment of a nested path. `$form.address?.city` is safe; `$form.address.city` throws if `address` is undefined.',
     'A widget\'s `path` value maps directly to a `$form` key path using the same dot segments. `path: "shipping.address.zip"` -> `$form.shipping?.address?.zip`.',

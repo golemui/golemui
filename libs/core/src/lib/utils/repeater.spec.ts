@@ -1,10 +1,16 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { isInputWidget, type NonFunctionWidget } from '../form-widget';
-import { makeRepeaterItemConfig, transformRepeaterItemWhenExpression } from './repeater';
+import { isInputWidget, type FunctionWidget, type NonFunctionWidget } from '../form-widget';
+import {
+  makeRepeaterItemConfig,
+  transformRepeaterItemWhenExpression,
+  transformWidgetWhenExpressions,
+} from './repeater';
 
-// Mock the external dependency to easily control the execution branch
+// Mock the external dependency to easily control the execution branch.
+// isFunctionWidget keeps its real behavior so function widgets take their branch.
 vi.mock('../form-widget', () => ({
   isInputWidget: vi.fn(),
+  isFunctionWidget: vi.fn((widget: unknown) => typeof widget === 'function'),
 }));
 
 describe('makeRepeaterItemConfig', () => {
@@ -61,6 +67,46 @@ describe('makeRepeaterItemConfig', () => {
         uid: 'user-address-street[1][3]',
         path: 'users.1.addresses.3.street',
       });
+    });
+  });
+
+  describe('Function widgets', () => {
+    it('should wrap the function so it stays callable and materialize uid, type and path', () => {
+      vi.mocked(isInputWidget).mockReturnValue(false);
+
+      const resolvedWidget = { kind: 'display', type: 'markdownText' };
+      const original = Object.assign(
+        vi.fn(() => resolvedWidget),
+        { uid: 'row-total', type: 'markdownText', path: 'users.items.total' },
+      ) as unknown as FunctionWidget<string>;
+
+      const result = makeRepeaterItemConfig(original, [1]) as FunctionWidget<string>;
+
+      expect(typeof result).toBe('function');
+      expect(result).not.toBe(original);
+      expect(result.uid).toBe('row-total[1]');
+      expect(result.type).toBe('markdownText');
+      expect(result.path).toBe('users.1.total');
+
+      const api = { $form: {}, errors: undefined, touched: undefined, translate: undefined };
+      expect(result(api)).toBe(resolvedWidget);
+      expect(original).toHaveBeenCalledWith(api);
+
+      // Ensure the original function was not mutated
+      expect(original.uid).toBe('row-total');
+      expect(original.path).toBe('users.items.total');
+    });
+
+    it('should not materialize a path when the function widget has none', () => {
+      const original = Object.assign(vi.fn(), {
+        uid: 'fn-widget',
+        type: 'markdownText',
+      }) as unknown as FunctionWidget<string>;
+
+      const result = makeRepeaterItemConfig(original, [0]) as FunctionWidget<string>;
+
+      expect(result.uid).toBe('fn-widget[0]');
+      expect(result.path).toBeUndefined();
     });
   });
 
@@ -144,5 +190,62 @@ describe('transformRepeaterItemWhenExpression', () => {
         'users.1?.addresses.items?.active',
       );
     });
+  });
+});
+
+describe('transformWidgetWhenExpressions', () => {
+  it('should rewrite the when expression of every reactive flag field', () => {
+    const widget = {
+      uid: 'row-qty[1]',
+      include: { when: '$form.users.items.active' },
+      exclude: { when: '$form.users.items.done' },
+      disabled: { when: '$form.users.items.locked' },
+      readonly: { when: '$form.users.items.frozen' },
+    } as unknown as NonFunctionWidget<string>;
+
+    const result = transformWidgetWhenExpressions(widget, [1]);
+
+    expect(result).toEqual({
+      uid: 'row-qty[1]',
+      include: { when: '$form.users.1.active' },
+      exclude: { when: '$form.users.1.done' },
+      disabled: { when: '$form.users.1.locked' },
+      readonly: { when: '$form.users.1.frozen' },
+    });
+    // Ensure the original widget and its flag objects were not mutated
+    expect(result).not.toBe(widget);
+    expect((widget as { include?: { when: string } }).include?.when).toBe(
+      '$form.users.items.active',
+    );
+  });
+
+  it('should leave state-based and boolean flag fields untouched', () => {
+    const widget = {
+      uid: 'row-note[0]',
+      include: { in: ['editing'] },
+      exclude: { from: ['summary'] },
+      disabled: true,
+    } as unknown as NonFunctionWidget<string>;
+
+    const result = transformWidgetWhenExpressions(widget, [0]);
+
+    expect(result).toEqual({
+      uid: 'row-note[0]',
+      include: { in: ['editing'] },
+      exclude: { from: ['summary'] },
+      disabled: true,
+    });
+  });
+
+  it('should return an equivalent widget when no flag field is present', () => {
+    const widget = {
+      uid: 'row-note[0]',
+      props: { md: 'hello' },
+    } as unknown as NonFunctionWidget<string>;
+
+    const result = transformWidgetWhenExpressions(widget, [0]);
+
+    expect(result).toEqual(widget);
+    expect(result).not.toBe(widget);
   });
 });

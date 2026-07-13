@@ -1,0 +1,271 @@
+{
+  "$schema": "https://golemui.com/schemas/form.schema.json",
+  "states": {
+    "eurSelected": "$form.invoice?.currency === 'EUR'"
+  },
+  "form": [
+    {
+      "kind": "display",
+      "type": "markdownText",
+      "props": { "md": "## Invoice" }
+    },
+    {
+      "kind": "layout",
+      "type": "grid",
+      "props": {
+        "autoFit": false,
+        "direction": "row",
+        "columnGap": 24,
+        "rowGap": 8
+      },
+      "children": [
+        {
+          "kind": "display",
+          "type": "markdownText",
+          "size": 6,
+          "props": { "md": "**From**" }
+        },
+        {
+          "kind": "display",
+          "type": "markdownText",
+          "size": 6,
+          "props": { "md": "**Bill To**" }
+        },
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "company.name",
+          "size": 6,
+          "label": "Company Name",
+          "validator": { "type": "string", "required": true, "minLength": 1 },
+          "props": { "placeholder": "Acme Inc." }
+        },
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "client.name",
+          "size": 6,
+          "label": "Invoiced To Name",
+          "validator": { "type": "string", "required": true, "minLength": 1 },
+          "props": { "placeholder": "Client name" }
+        },
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "company.id",
+          "size": 6,
+          "label": "Company ID",
+          "validator": { "type": "string", "required": true, "minLength": 1 },
+          "props": { "placeholder": "Tax ID / Reg. no." }
+        },
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "client.id",
+          "size": 6,
+          "label": "Invoiced To ID",
+          "validator": { "type": "string", "required": true, "minLength": 1 },
+          "props": { "placeholder": "Tax ID / Reg. no." }
+        }
+      ]
+    },
+    {
+      "kind": "display",
+      "type": "markdownText",
+      "props": { "md": "#### Invoice details" }
+    },
+    {
+      "kind": "layout",
+      "type": "grid",
+      "props": {
+        "autoFit": false,
+        "direction": "row",
+        "columnGap": 16,
+        "rowGap": 8
+      },
+      "children": [
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "invoice.number",
+          "size": 3,
+          "label": "Invoice Number",
+          "validator": { "type": "string", "required": true, "minLength": 1 },
+          "props": { "placeholder": "INV-0001" }
+        },
+        {
+          "kind": "input",
+          "type": "datePicker",
+          "path": "invoice.date",
+          "size": 3,
+          "label": "Date",
+          "validator": { "type": "string", "required": true, "format": "date" }
+        },
+        {
+          "kind": "input",
+          "type": "select",
+          "path": "invoice.currency",
+          "size": 3,
+          "label": "Invoice Currency",
+          "validator": { "type": "string", "required": true },
+          "props": {
+            "placeholder": "Select currency",
+            "options": [
+              { "label": "EUR", "value": "EUR" },
+              { "label": "USD", "value": "USD" }
+            ]
+          }
+        },
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "invoice.vatNumber",
+          "size": 3,
+          "label": "VAT Number",
+          "include": { "in": ["eurSelected"] },
+          "props": { "placeholder": "EU VAT" }
+        }
+      ]
+    },
+    {
+      "kind": "display",
+      "type": "markdownText",
+      "props": { "md": "#### Line Items" }
+    },
+    {
+      "kind": "input",
+      "type": "repeater",
+      "path": "lineItems",
+      "label": "Line Items",
+      "validator": { "type": "array", "required": true, "minItems": 1 },
+      "props": {
+        "addLabel": "Add line item",
+        "removeLabel": "Remove",
+        "title": "Line Item",
+        "template": {
+          "kind": "layout",
+          "type": "flex",
+          "props": {
+            "direction": "row",
+            "gap": 12
+          },
+          "children": [
+            {
+              "kind": "input",
+              "type": "number",
+              "path": "lineItems.items.quantity",
+              "size": 2,
+              "label": "Quantity",
+              "validator": { "type": "integer", "required": true, "minimum": 1 },
+              "props": { "minimum": 1, "step": 1 }
+            },
+            {
+              "kind": "input",
+              "type": "textinput",
+              "path": "lineItems.items.description",
+              "size": 5,
+              "label": "Description",
+              "validator": { "type": "string", "required": true, "minLength": 1 }
+            },
+            {
+              "kind": "input",
+              "type": "currency",
+              "path": "lineItems.items.unitPrice",
+              "size": 3,
+              "label": "Unit Price",
+              "validator": { "type": "number", "required": true },
+              "props": {
+                "currency": "USD",
+                "currency.eurSelected": "EUR",
+                "minimumFractionDigits": 2,
+                "maximumFractionDigits": 2
+              }
+            },
+            {
+              "kind": "display",
+              "type": "markdownText",
+              "size": 2,
+              "props": {
+                "md": "**Total**  \n{{ (($item.quantity ?? 0) * ($item.unitPrice ?? 0)).toFixed(2) }}"
+              },
+              "include": { "when": "$item.quantity !== undefined" }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "kind": "display",
+      "type": "markdownText",
+      "props": { "md": "#### Totals" }
+    },
+    {
+      "kind": "layout",
+      "type": "grid",
+      "props": {
+        "autoFit": false,
+        "direction": "row",
+        "columnGap": 12,
+        "rowGap": 4
+      },
+      "children": [
+        {
+          "kind": "display",
+          "type": "markdownText",
+          "size": 9,
+          "props": { "md": "**Subtotal (Taxable Base)**" }
+        },
+        {
+          "kind": "display",
+          "type": "markdownText",
+          "size": 3,
+          "props": {
+            "md": "{{($form.lineItems?.reduce((acc, item) => acc + ((item.quantity ?? 0) * (item.unitPrice ?? 0)), 0) ?? 0).toFixed(2)}}"
+          }
+        },
+        {
+          "kind": "display",
+          "type": "markdownText",
+          "size": 9,
+          "props": {
+            "md": "**Currency Tax ({{$form.invoice?.currency === 'EUR' ? '15%' : '2%'}})**"
+          }
+        },
+        {
+          "kind": "display",
+          "type": "markdownText",
+          "size": 3,
+          "props": {
+            "md": "{{(($form.lineItems?.reduce((acc, item) => acc + ((item.quantity ?? 0) * (item.unitPrice ?? 0)), 0) ?? 0) * ($form.invoice?.currency === 'EUR' ? 0.15 : 0.02)).toFixed(2)}}"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "display",
+      "type": "alert",
+      "props": {
+        "level": "success",
+        "text": "Grand Total: {{$form.invoice?.currency === 'EUR' ? '€' : '$'}}{{(($form.lineItems?.reduce((acc, item) => acc + ((item.quantity ?? 0) * (item.unitPrice ?? 0)), 0) ?? 0) * ($form.invoice?.currency === 'EUR' ? 1.15 : 1.02)).toFixed(2)}}"
+      }
+    },
+    {
+      "kind": "layout",
+      "type": "flex",
+      "props": {
+        "direction": "row",
+        "align": "end"
+      },
+      "children": [
+        {
+          "kind": "action",
+          "type": "button",
+          "actionType": "submit",
+          "label": "Submit Invoice",
+          "disabled": { "when": "$formIsInvalid" },
+          "props": { "variant": "filled" }
+        }
+      ]
+    }
+  ]
+}

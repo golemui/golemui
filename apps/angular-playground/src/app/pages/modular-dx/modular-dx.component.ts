@@ -3,9 +3,14 @@ import { Component } from '@angular/core';
 import { modularDx, onFormEvent } from '@golemui/apps-shared';
 import type { FormEvent, FormHealth, FormSubmitEvent } from '@golemui/core';
 import { FormComponent } from '@golemui/gui-angular';
-import type { GuiFormInitConfig } from '@golemui/gui-shared';
+import type { Dependencies, GuiFormInitConfig } from '@golemui/gui-shared';
+import snarkdown from 'snarkdown';
 
-const md = modularDx;
+const formExample = modularDx;
+
+const dependencies: Dependencies = {
+  markdown: { parse: (markdown: string) => snarkdown(markdown) },
+};
 
 @Component({
   imports: [CommonModule, FormComponent],
@@ -14,10 +19,11 @@ const md = modularDx;
 })
 export class ModularDxPage {
   protected config: GuiFormInitConfig = {
-    formDef: md.formDef,
-    data: md.data,
-    formSelectors: md.formSelectors,
-    formConfig: md.formConfig,
+    formDef: formExample.formDef,
+    data: formExample.data,
+    formSelectors: formExample.formSelectors,
+    formConfig: formExample.formConfig,
+    dependencies,
   };
   protected error = '';
 

@@ -1,14 +1,20 @@
 import { modularDx, onFormEvent } from '@golemui/apps-shared';
 import type { FormHealth, FormSubmitEvent } from '@golemui/core';
 import { GuiForm } from '@golemui/gui-react';
+import type { Dependencies } from '@golemui/gui-shared';
 import { useCallback, useState } from 'react';
+import snarkdown from 'snarkdown';
 
 const md = modularDx;
+const dependencies: Dependencies = {
+  markdown: { parse: (markdown: string) => snarkdown(markdown) },
+};
 const config = {
   formDef: md.formDef,
   data: md.data,
   formSelectors: md.formSelectors,
   formConfig: md.formConfig,
+  dependencies,
 };
 
 export function ModularDxPage() {

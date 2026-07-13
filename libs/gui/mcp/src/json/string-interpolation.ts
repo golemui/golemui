@@ -16,18 +16,24 @@ export type InterpolationFinding = {
  */
 export function lintStringInterpolations(formDefinition: unknown): InterpolationFinding[] {
   const findings: InterpolationFinding[] = [];
-  walk(formDefinition, '', findings);
+  walk(formDefinition, '', findings, false, false);
   return findings;
 }
 
 const SLOT_REGEX = /\{\{([^}]*(?:\}[^}]+)*)\}\}/g;
 
-function walk(node: unknown, path: string, out: InterpolationFinding[]): void {
+function walk(
+  node: unknown,
+  path: string,
+  out: InterpolationFinding[],
+  inTemplate: boolean,
+  propsOfRepeater: boolean,
+): void {
   if (node === null || typeof node !== 'object') {
     return;
   }
   if (Array.isArray(node)) {
-    node.forEach((item, i) => walk(item, `${path}/${i}`, out));
+    node.forEach((item, i) => walk(item, `${path}/${i}`, out, inTemplate, false));
     return;
   }
   const obj = node as Record<string, unknown>;
@@ -53,9 +59,12 @@ function walk(node: unknown, path: string, out: InterpolationFinding[]): void {
     }
     const childPath = `${path}/${key}`;
     if (typeof value === 'string') {
-      checkTemplate(value, childPath, out);
+      checkTemplate(value, childPath, out, inTemplate);
     } else {
-      walk(value, childPath, out);
+      // A repeater's `props.template` subtree gets the `$item`/`$index` scope.
+      // The flag is sticky so nested templates inherit it (innermost semantics).
+      const childInTemplate = inTemplate || (propsOfRepeater && key === 'template');
+      walk(value, childPath, out, childInTemplate, obj['type'] === 'repeater' && key === 'props');
     }
   }
 }
@@ -80,7 +89,12 @@ function checkParamExpression(value: string, path: string, out: InterpolationFin
   }
 }
 
-function checkTemplate(value: string, path: string, out: InterpolationFinding[]): void {
+function checkTemplate(
+  value: string,
+  path: string,
+  out: InterpolationFinding[],
+  inTemplate: boolean,
+): void {
   // S3 — unbalanced delimiters: count {{ and }} occurrences
   const openCount = (value.match(/\{\{/g) ?? []).length;
   const closeCount = (value.match(/\}\}/g) ?? []).length;
@@ -101,11 +115,17 @@ function checkTemplate(value: string, path: string, out: InterpolationFinding[])
   while ((match = SLOT_REGEX.exec(value)) !== null) {
     const slot = match[0];
     const expr = match[1];
-    checkSlot(expr, slot, path, out);
+    checkSlot(expr, slot, path, out, inTemplate);
   }
 }
 
-function checkSlot(expr: string, slot: string, path: string, out: InterpolationFinding[]): void {
+function checkSlot(
+  expr: string,
+  slot: string,
+  path: string,
+  out: InterpolationFinding[],
+  inTemplate: boolean,
+): void {
   const trimmed = expr.trim();
 
   // S1 — empty slot
@@ -131,14 +151,25 @@ function checkSlot(expr: string, slot: string, path: string, out: InterpolationF
   }
 
   // S2 — missing scope reference
-  if (!/\$form\b|\$meta\b|\$errors\b|\$formIsInvalid\b/.test(trimmed)) {
+  const referencesItemScope = /\$item\b|\$index\b/.test(trimmed);
+  const hasGlobalRoot = /\$form\b|\$meta\b|\$errors\b|\$formIsInvalid\b/.test(trimmed);
+  if (referencesItemScope && !inTemplate) {
+    out.push({
+      path,
+      slot,
+      message:
+        'Interpolation slot references `$item` or `$index`, which are only available inside a repeater `props.template`.',
+      suggestion:
+        'Move the widget inside the repeater template, or read the data through `$form` (e.g. `$form.lineItems?.[0]?.quantity`).',
+    });
+  } else if (!hasGlobalRoot && !(inTemplate && referencesItemScope)) {
     out.push({
       path,
       slot,
       message:
         'Interpolation slot does not reference `$form`, `$meta`, `$errors`, or `$formIsInvalid`.',
       suggestion:
-        'GolemUI template slots read data via `$form.fieldName`, metadata via `$meta.key`, validation errors via `$errors.fieldName`, or the built-in `$formIsInvalid` boolean.',
+        'GolemUI template slots read data via `$form.fieldName`, metadata via `$meta.key`, validation errors via `$errors.fieldName`, or the built-in `$formIsInvalid` boolean. Inside a repeater `props.template` the current item is available via `$item` and its position via `$index`.',
     });
   }
 

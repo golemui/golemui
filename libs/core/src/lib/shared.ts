@@ -51,6 +51,14 @@ export type $Errors = {
 export type WidgetPropertyFunctionParams<FormType extends Record<string, any>> = {
   $form: ImmutableRecord<FormType>;
   translate?: I18nTranslator['translate'];
+  /**
+   * The current repeater item. Bound only when the widget is inside a repeater `props.template`, for nested repeaters it is the innermost enclosing item.
+   */
+  $item?: any;
+  /**
+   * Zero-based position of the current repeater item. Bound only when the widget is inside a repeater `props.template`.
+   */
+  $index?: number;
 };
 
 /**
@@ -65,6 +73,14 @@ export type FunctionWidgetParams<FormType> = {
   errors: ValidationStatus | undefined;
   touched: boolean | undefined;
   translate: I18nTranslator['translate'] | undefined;
+  /**
+   * The current repeater item. Bound only when the widget is inside a repeater `props.template`, for nested repeaters it is the innermost enclosing item.
+   */
+  $item?: any;
+  /**
+   * Zero-based position of the current repeater item. Bound only when the widget is inside a repeater `props.template`.
+   */
+  $index?: number;
 };
 
 /**
