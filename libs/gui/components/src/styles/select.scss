@@ -3,7 +3,12 @@ gui-select {
 
   .gui-widget {
     select {
-      height: 42px;
+      box-sizing: content-box;
+      appearance: none;
+
+      &.gui-select--icon {
+        padding-inline-start: 2.5rem;
+      }
     }
 
     .gui-select__arrow {
@@ -14,13 +19,6 @@ gui-select {
       inset-inline-end: var(--gui-space-3);
       transform-origin: 50% 40%;
       pointer-events: none;
-    }
-    select {
-      appearance: none;
-
-      &.gui-select--icon {
-        padding-inline-start: 2.5rem;
-      }
     }
   }
 }
