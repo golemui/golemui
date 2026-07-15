@@ -3,7 +3,6 @@ import { html, nothing, type PropertyValues } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { AbstractTimePartsInput } from './abstract-time-parts-input';
-import { from24Hour, parseISODateTimeString, parseISOTimeString } from '../utils/time';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 
 @customElement('gui-time')
@@ -20,7 +19,7 @@ export class GuiTime extends AbstractTimePartsInput {
       changedProperties.has('hourFormat') ||
       changedProperties.has('localeId')
     ) {
-      this.parseValue(this.value ?? '');
+      this.setGroupTime('default', this.value ?? '');
     }
   }
 
@@ -64,31 +63,6 @@ export class GuiTime extends AbstractTimePartsInput {
         ? addErrors(this.uid as string, templateData)
         : nothing}
     `;
-  }
-
-  private parseValue(isoValue: string | null) {
-    if (!isoValue) {
-      this.clearGroup('default');
-      this.seedDayPeriods(['default']);
-      return;
-    }
-
-    let time = parseISOTimeString(isoValue);
-    if (!time) {
-      const date = parseISODateTimeString(isoValue);
-      if (isNaN(date.getTime())) return;
-      time = { hours: date.getHours(), minutes: date.getMinutes(), seconds: date.getSeconds() };
-    }
-
-    const hour24 = time.hours;
-    if (this.effectiveHourFormat === '12') {
-      const { hour12, period } = from24Hour(hour24);
-      this.setPartValue('default', 'hour', hour12.toString().padStart(2, '0'));
-      this.setPartValue('default', 'dayPeriod', period);
-    } else {
-      this.setPartValue('default', 'hour', hour24.toString().padStart(2, '0'));
-    }
-    this.setPartValue('default', 'minute', time.minutes.toString().padStart(2, '0'));
   }
 
   protected override commitParts(): void {

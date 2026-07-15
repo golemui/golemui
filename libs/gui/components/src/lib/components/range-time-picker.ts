@@ -3,11 +3,11 @@ import { customElement, property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import type { TimeRange } from '@golemui/gui-shared/internals';
 import './range-time-input';
+import type { GuiRangeTimeInput } from './range-time-input';
 import './time-list';
 import {
   compareISOTimes,
   isTimeRangeDisabled,
-  mergeTimeRanges,
   oneStepAfterISOTime,
   type HourFormat,
 } from '../utils/time';
@@ -71,11 +71,12 @@ export class GuiRangeTimePicker extends LitElement {
     | string
     | undefined = undefined;
 
-  @query('#time-input') private _inputRef?: HTMLElement;
+  @query('#time-input') private _inputRef?: GuiRangeTimeInput;
   @query('#list-panel') private _panelRef?: HTMLElement;
 
   @state() private _isListOpen = false;
   @state() private _workingIn: string | undefined = undefined;
+  @state() private _workingOut: string | undefined = undefined;
 
   private _ignoreNextFocusOut = false;
   private _focusOutRafId: number | undefined;
@@ -181,7 +182,7 @@ export class GuiRangeTimePicker extends LitElement {
               class="gui-range-time-picker__list"
               .uid=${this.uid}
               .label=${endLabel}
-              .value=${undefined}
+              .value=${this._workingOut}
               .localeId=${this.localeId}
               .hourFormat=${this.hourFormat}
               .minuteStep=${this.minuteStep}
@@ -235,15 +236,18 @@ export class GuiRangeTimePicker extends LitElement {
           .minuteStep=${this.minuteStep}
           .minTime=${this.minTime}
           .maxTime=${this.maxTime}
+          .disabledRanges=${this.disabledRanges}
           .minTimeMessage=${this.minTimeMessage}
           .maxTimeMessage=${this.maxTimeMessage}
           .rangeOrderMessage=${this.rangeOrderMessage}
+          .disabledRangeMessage=${this.disabledRangeMessage}
           .removePillAriaLabel=${this.removePillAriaLabel}
           .startTimeAriaLabel=${this.startTimeAriaLabel}
           .endTimeAriaLabel=${this.endTimeAriaLabel}
           @blur=${this.onInputBlur}
           @focus=${this.openList}
           @change=${this.onInputChange}
+          @partsChange=${this.onPartsChange}
           @pillClick=${this.onPillClick}
         ></gui-range-time>
         <span class="gui-range-time-picker__arrow"
@@ -264,7 +268,23 @@ export class GuiRangeTimePicker extends LitElement {
 
   private onInputChange(event: CustomEvent) {
     event.stopPropagation();
+    // A successful commit turns the entry into a pill and empties the fields, so
+    // the two lists must drop their working selection: the start list deselects
+    // and the end list disables again, ready for the next range.
+    this._workingIn = undefined;
+    this._workingOut = undefined;
     this.commitValue(event.detail.value);
+  }
+
+  /**
+   * Mirrors the input's live, in-bounds start/end into the two lists, so typing
+   * a value that exists as a slot highlights it (and a typed start enables and
+   * floors the end list) — the reverse of a list pick filling the fields.
+   */
+  private onPartsChange(event: CustomEvent<{ start: string | null; end: string | null }>) {
+    event.stopPropagation();
+    this._workingIn = event.detail.start ?? undefined;
+    this._workingOut = event.detail.end ?? undefined;
   }
 
   private onInputBlur() {
@@ -273,21 +293,30 @@ export class GuiRangeTimePicker extends LitElement {
 
   private onInListChange(event: CustomEvent) {
     event.stopPropagation();
-    this._workingIn = event.detail.value ?? undefined;
+    const start = event.detail.value as string | undefined;
+    this._workingIn = start ?? undefined;
+    this._workingOut = undefined;
+    if (start) this._inputRef?.fillGroup('start', start);
   }
 
   private onOutListChange(event: CustomEvent) {
     event.stopPropagation();
     const end = event.detail.value as string | undefined;
-    if (!this._workingIn || !end) return;
+    if (!this._workingIn || !end || !this._inputRef) return;
 
-    const merged = mergeTimeRanges([...(this.value ?? []), { start: this._workingIn, end }]);
-    this._workingIn = undefined;
-    this.commitValue(merged);
+    this._inputRef.fillGroup('end', end);
+    const committed = this._inputRef.commitFromParts();
 
-    this.updateComplete.then(() => {
-      this._inListRef()?.scrollToSelectedValue?.();
-    });
+    if (committed) {
+      this._workingIn = undefined;
+      this._workingOut = undefined;
+      this.updateComplete.then(() => {
+        this._inListRef()?.scrollToSelectedValue?.();
+      });
+    } else {
+      this.closeList();
+      this.dispatchEvent(new CustomEvent('blur'));
+    }
   }
 
   private _inListRef() {
@@ -388,6 +417,7 @@ export class GuiRangeTimePicker extends LitElement {
     if (!this._isListOpen) return;
     this._isListOpen = false;
     this._workingIn = undefined;
+    this._workingOut = undefined;
   }
 
   private restoreFocusToInput() {

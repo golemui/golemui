@@ -7,8 +7,11 @@ import {
 } from './abstract-date-time-input';
 import {
   compareISOTimes,
+  from24Hour,
   getDayPeriodLabels,
   getTimeFormatParts,
+  parseISODateTimeString,
+  parseISOTimeString,
   resolveHourFormat,
   to24Hour,
   toISOTimeString,
@@ -109,6 +112,36 @@ export abstract class AbstractTimePartsInput extends AbstractDateTimeInput {
         this.setPartValue(group, 'dayPeriod', 'am');
       }
     }
+  }
+
+  /**
+   * Seeds a group's hour/minute/dayPeriod parts from an ISO time (or a full ISO
+   * date-time, whose time-of-day is taken). Shared by the scalar input (seeding
+   * its `value`) and the range picker (driving a group from a list pick). A
+   * null/empty value clears the group back to its seeded day-period.
+   */
+  protected setGroupTime(group: string, isoValue: string | null): void {
+    if (!isoValue) {
+      this.clearGroup(group);
+      this.seedDayPeriods([group]);
+      return;
+    }
+
+    let time = parseISOTimeString(isoValue);
+    if (!time) {
+      const date = parseISODateTimeString(isoValue);
+      if (isNaN(date.getTime())) return;
+      time = { hours: date.getHours(), minutes: date.getMinutes(), seconds: date.getSeconds() };
+    }
+
+    if (this.effectiveHourFormat === '12') {
+      const { hour12, period } = from24Hour(time.hours);
+      this.setPartValue(group, 'hour', hour12.toString().padStart(2, '0'));
+      this.setPartValue(group, 'dayPeriod', period);
+    } else {
+      this.setPartValue(group, 'hour', time.hours.toString().padStart(2, '0'));
+    }
+    this.setPartValue(group, 'minute', time.minutes.toString().padStart(2, '0'));
   }
 
   /**

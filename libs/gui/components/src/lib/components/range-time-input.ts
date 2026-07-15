@@ -4,12 +4,18 @@ import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { styleMap } from 'lit-html/directives/style-map.js';
 import { AbstractTimePartsInput } from './abstract-time-parts-input';
-import { compareISOTimes, formatISOTimeForLocale, mergeTimeRanges } from '../utils/time';
+import {
+  compareISOTimes,
+  formatISOTimeForLocale,
+  isTimeRangeDisabled,
+  mergeTimeRanges,
+} from '../utils/time';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 import './pills';
 import type { GuiPillEventDetail, GuiPillItem } from './pills';
 
 const INVALID_RANGE_ORDER_MESSAGE = 'Invalid range: end time must be after start time.';
+const INVALID_DISABLED_RANGE_MESSAGE = 'Invalid time: time is within a disabled range.';
 
 @customElement('gui-range-time')
 export class GuiRangeTimeInput extends AbstractTimePartsInput {
@@ -23,6 +29,11 @@ export class GuiRangeTimeInput extends AbstractTimePartsInput {
   @property({ type: String }) separator: string | undefined = undefined;
   @property({ type: Boolean, attribute: 'allow-custom-time' }) allowCustomTime: boolean | undefined =
     undefined;
+  @property({ type: Array, attribute: 'disabled-ranges' }) disabledRanges: TimeRange[] | undefined =
+    undefined;
+  @property({ type: String, attribute: 'disabled-range-message' }) disabledRangeMessage:
+    | string
+    | undefined = undefined;
 
   protected override readonly inputBlockClass = 'gui-range-time-input';
   protected override readonly groups = ['start', 'end'] as const;
@@ -236,10 +247,44 @@ export class GuiRangeTimeInput extends AbstractTimePartsInput {
     return parsed.iso;
   }
 
-  private tryCreatePill() {
+  /**
+   * Fills a group's segmented parts from an ISO time. The range time picker
+   * calls this so a list pick lands in the visible input (start/end field)
+   * before it attempts to commit — see {@link commitFromParts}.
+   */
+  fillGroup(group: 'start' | 'end', iso: string): void {
+    this.setGroupTime(group, iso);
+    this.requestUpdate();
+  }
+
+  /**
+   * Attempts to commit the currently-entered parts as a pill, returning whether
+   * one was created. A public entry point onto the same {@link tryCreatePill}
+   * pipeline typed entry uses, so the picker's list-driven commits validate
+   * (order + bounds + disabled ranges) through one path.
+   */
+  commitFromParts(): boolean {
+    return this.tryCreatePill();
+  }
+
+  /**
+   * @return true when a pill was created; false when the parts are incomplete
+   * or the range is rejected (reversed order, out of bounds, or overlapping a
+   * disabled range)
+   */
+  private tryCreatePill(): boolean {
     const start = this.validateTimeParts('start');
     const end = this.validateTimeParts('end');
-    if (!start || !end) return;
+
+    this.dispatchEvent(
+      new CustomEvent('partsChange', {
+        detail: { start, end },
+        bubbles: true,
+        composed: true,
+      }),
+    );
+
+    if (!start || !end) return false;
 
     if (compareISOTimes(end, start) <= 0) {
       this.dispatchEvent(
@@ -248,7 +293,17 @@ export class GuiRangeTimeInput extends AbstractTimePartsInput {
           bubbles: true,
         }),
       );
-      return;
+      return false;
+    }
+
+    if (isTimeRangeDisabled(start, end, this.disabledRanges)) {
+      this.dispatchEvent(
+        new CustomEvent('inputError', {
+          detail: { message: this.disabledRangeMessage ?? INVALID_DISABLED_RANGE_MESSAGE },
+          bubbles: true,
+        }),
+      );
+      return false;
     }
 
     this.value = mergeTimeRanges([...(this.value ?? []), { start, end }]);
@@ -265,6 +320,7 @@ export class GuiRangeTimeInput extends AbstractTimePartsInput {
       this.getGroupInputs('start')[0]?.focus();
     });
     this.requestUpdate();
+    return true;
   }
 }
 

@@ -215,7 +215,60 @@ export const runRangeTimePickerComponentTests = (mountFn: MountComponentFn) => {
       });
     });
 
-    it('should raise the disabled-range error when the picked range spans a disabled block', () => {
+    it('should highlight the matching list slot when a typed time is available', () => {
+      mountRangeTimePicker({ props: { ...officeProps, allowCustomTime: true } });
+
+      cy.get(sel.startHour).click();
+      cy.focused().type('10');
+      cy.focused().type('00');
+      // Move focus off the start field so its parts commit and emit their value.
+      cy.get(sel.endHour).click();
+
+      // The typed 10:00 is selected in the start list, and the end list has
+      // enabled and floored to one slot after it.
+      cy.get(sel.inItems)
+        .filter('[data-value="10:00:00"]')
+        .should('have.attr', 'aria-selected', 'true');
+      cy.get(sel.outItems).eq(0).should('have.attr', 'data-value', '10:30:00');
+      cy.get(sel.outItems).eq(0).should('have.attr', 'aria-disabled', 'false');
+    });
+
+    it('should reset both lists after a range is committed by typing and Enter', () => {
+      mountRangeTimePicker({ props: { ...officeProps, allowCustomTime: true } });
+
+      // Pick the start from the list, then type the end and commit with Enter.
+      cy.get(sel.startHour).click();
+      cy.get(sel.inItems).filter('[data-value="09:00:00"]').click();
+      cy.get(sel.endHour).click();
+      cy.focused().type('11');
+      cy.focused().type('00');
+      cy.focused().type('{enter}');
+
+      cy.get(sel.pillText).should('have.length', 1);
+      // The panel stays open, but both lists reset: the start deselects and the
+      // end disables again, ready for the next range.
+      cy.get(sel.panel).should('exist');
+      cy.get(sel.inItems).filter('.gui-time-list__option--selected').should('not.exist');
+      cy.get(sel.outItems).eq(0).should('have.attr', 'aria-disabled', 'true');
+    });
+
+    it('should fill the start/end input fields as options are picked from the lists', () => {
+      mountRangeTimePicker({ props: officeProps });
+
+      cy.get(sel.startHour).click();
+      cy.get(sel.inItems).filter('[data-value="09:00:00"]').click();
+      // The start field mirrors the in-list pick immediately (out still pending).
+      cy.get(sel.startHour).should('have.value', '09');
+      cy.get(sel.startMinute).should('have.value', '00');
+
+      cy.get(sel.outItems).filter('[data-value="11:00:00"]').click();
+      // A valid range commits to a pill and clears the fields for the next entry.
+      cy.get(sel.pillText).should('have.length', 1).and('contain', '09:00');
+      cy.get(sel.startHour).should('have.value', '');
+      cy.get(sel.endHour).should('have.value', '');
+    });
+
+    it('should not commit a range that spans a disabled block, keeping the values and showing the error', () => {
       mountRangeTimePicker({
         props: {
           minTime: '09:00:00',
@@ -237,9 +290,17 @@ export const runRangeTimePickerComponentTests = (mountFn: MountComponentFn) => {
       cy.get(sel.inItems).filter('[data-value="12:00:00"]').click();
       cy.get(sel.outItems).filter('[data-value="18:00:00"]').click();
 
+      // No pill is created and the dropdown closes...
+      cy.get(sel.pillText).should('have.length', 0);
+      cy.get(sel.panel).should('not.exist');
+      // ...but the offending values stay in the inputs so the user sees them...
+      cy.get(sel.startHour).should('have.value', '12');
+      cy.get(sel.endHour).should('have.value', '18');
+      // ...alongside the error explaining what's wrong.
       cy.get('@inputErrorSpy').then((spy: any) => {
         expect(spy.getCall(0).args[0].detail.message).to.equal('Time is within a disabled range');
       });
+      cy.get('.gui-validator__error').should('contain', 'Time is within a disabled range');
     });
 
     it('should remove a pill', () => {
