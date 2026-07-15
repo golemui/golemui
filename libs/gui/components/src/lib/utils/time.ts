@@ -264,6 +264,34 @@ export function isTimeDisabled(time: string, ranges: TimeRange[] | undefined): b
   );
 }
 
+/**
+ * Determines whether a selected time range `[start, end]` overlaps any disabled
+ * range. Unlike {@link isTimeDisabled} (which only tests a single instant), this
+ * catches a span that *straddles* a disabled block — e.g. picking 12:00–18:00
+ * when 13:00–14:00 is disabled, where neither endpoint is itself disabled. Two
+ * closed intervals overlap when each starts on or before the other ends. Both
+ * range ends are inclusive, matching the disabled-slot semantics of the lists.
+ *
+ * @param {string} start - The selected range start (ISO time).
+ * @param {string | undefined} end - The selected range end (ISO time); defaults to `start`.
+ * @param {TimeRange[] | undefined} ranges - The disabled ranges.
+ * @return {boolean} True when the selected range overlaps a disabled range.
+ */
+export function isTimeRangeDisabled(
+  start: string,
+  end: string | undefined,
+  ranges: TimeRange[] | undefined,
+): boolean {
+  if (!ranges?.length) return false;
+  const rangeEnd = end ?? start;
+  return ranges.some((range) => {
+    const disabledEnd = range.end ?? range.start;
+    return (
+      compareISOTimes(start, disabledEnd) <= 0 && compareISOTimes(range.start, rangeEnd) <= 0
+    );
+  });
+}
+
 /** Normalizes an ISO time to HH:mm:ss so merged output is consistent. */
 function normalizeISOTime(value: string): string {
   return value.length === 5 ? `${value}:00` : value;

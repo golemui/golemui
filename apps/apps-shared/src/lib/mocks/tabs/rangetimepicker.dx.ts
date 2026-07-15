@@ -12,6 +12,13 @@ export const rangeTimePickerTab = gui.layouts.flex([
     allowCustomTime: true,
     startTimeLabel: 'Time In',
     endTimeLabel: 'Time Out',
+    disabledRanges: [
+      {
+        start: '13:00:00',
+        end: '14:00:00',
+      },
+    ],
+    disabledRangeMessage: 'Time is withing a disabled range.',
   }),
   gui.inputs.rangeTimePicker('rangeTimePickerDefault', {
     label: 'Shift schedule',

@@ -215,6 +215,33 @@ export const runRangeTimePickerComponentTests = (mountFn: MountComponentFn) => {
       });
     });
 
+    it('should raise the disabled-range error when the picked range spans a disabled block', () => {
+      mountRangeTimePicker({
+        props: {
+          minTime: '09:00:00',
+          maxTime: '22:00:00',
+          minuteStep: 60,
+          disabledRanges: [{ start: '13:00:00', end: '14:00:00' }],
+          disabledRangeMessage: 'Time is within a disabled range',
+        },
+      });
+
+      const inputErrorSpy = cy.spy().as('inputErrorSpy');
+      cy.get('gui-range-time-picker').then(($el) => {
+        $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
+      });
+
+      // in=12:00, out=18:00 straddles the disabled 13:00-14:00 block: neither
+      // endpoint is disabled, but the span is invalid.
+      cy.get(sel.startHour).click();
+      cy.get(sel.inItems).filter('[data-value="12:00:00"]').click();
+      cy.get(sel.outItems).filter('[data-value="18:00:00"]').click();
+
+      cy.get('@inputErrorSpy').then((spy: any) => {
+        expect(spy.getCall(0).args[0].detail.message).to.equal('Time is within a disabled range');
+      });
+    });
+
     it('should remove a pill', () => {
       mountRangeTimePicker({
         data: {

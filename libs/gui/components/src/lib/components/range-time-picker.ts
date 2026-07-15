@@ -6,7 +6,7 @@ import './range-time-input';
 import './time-list';
 import {
   compareISOTimes,
-  isTimeDisabled,
+  isTimeRangeDisabled,
   mergeTimeRanges,
   oneStepAfterISOTime,
   type HourFormat,
@@ -328,9 +328,9 @@ export class GuiRangeTimePicker extends LitElement {
         if (this.maxTime && compareISOTimes(endpoint, this.maxTime) > 0) {
           return this.maxTimeMessage ?? INVALID_MAX_TIME_MESSAGE;
         }
-        if (isTimeDisabled(endpoint, this.disabledRanges)) {
-          return this.disabledRangeMessage ?? INVALID_DISABLED_RANGE_MESSAGE;
-        }
+      }
+      if (isTimeRangeDisabled(range.start, range.end, this.disabledRanges)) {
+        return this.disabledRangeMessage ?? INVALID_DISABLED_RANGE_MESSAGE;
       }
     }
     return null;
