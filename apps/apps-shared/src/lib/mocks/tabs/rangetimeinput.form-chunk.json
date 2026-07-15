@@ -11,7 +11,8 @@
       "label": "Empty",
       "props": {
         "icon": "schedule",
-        "separator": "to"
+        "separator": "to",
+        "hourFormat": "24"
       }
     },
     {
@@ -24,7 +25,8 @@
           "end": "11:00:00"
         },
         {
-          "start": "14:00:00"
+          "start": "14:00:00",
+          "end": "14:30:00"
         }
       ],
       "label": "With default value",
@@ -56,7 +58,8 @@
           "end": "11:00:00"
         },
         {
-          "start": "14:00:00"
+          "start": "14:00:00",
+          "end": "14:30:00"
         }
       ],
       "disabled": true,
@@ -76,7 +79,8 @@
           "end": "11:00:00"
         },
         {
-          "start": "14:00:00"
+          "start": "14:00:00",
+          "end": "14:30:00"
         }
       ],
       "readonly": true,

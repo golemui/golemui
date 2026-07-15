@@ -21,9 +21,15 @@ export class GuiRangeTimeInput extends AbstractTimePartsInput {
   @property({ type: String }) startTimeAriaLabel: string | undefined = undefined;
   @property({ type: String }) endTimeAriaLabel: string | undefined = undefined;
   @property({ type: String }) separator: string | undefined = undefined;
+  @property({ type: Boolean, attribute: 'allow-custom-time' }) allowCustomTime: boolean | undefined =
+    undefined;
 
   protected override readonly inputBlockClass = 'gui-range-time-input';
   protected override readonly groups = ['start', 'end'] as const;
+
+  protected override get partsReadonly(): boolean {
+    return !!this.readOnly || this.allowCustomTime === false;
+  }
 
   override willUpdate(changedProperties: PropertyValues): void {
     if (

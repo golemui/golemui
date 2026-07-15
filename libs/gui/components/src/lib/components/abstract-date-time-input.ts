@@ -135,6 +135,10 @@ export abstract class AbstractDateTimeInput extends LitElement {
   protected abstract readonly inputBlockClass: string;
   protected abstract readonly groups: readonly string[];
 
+  protected get partsReadonly(): boolean {
+    return !!this.readOnly;
+  }
+
   protected abstract getFormatParts(): Intl.DateTimeFormatPart[];
   protected abstract getPartDescriptor(type: string): DateTimePartDescriptor | undefined;
   protected abstract commitParts(group: string): void;
@@ -303,7 +307,7 @@ export abstract class AbstractDateTimeInput extends LitElement {
           tabindex=${tabIndex}
           ?required=${this.required}
           ?disabled=${this.disabled}
-          ?readonly=${this.readOnly}
+          ?readonly=${this.partsReadonly}
           autocomplete="off"
           .value=${live(this.getPartDisplayValue(group, type))}
           @keydown=${(e: KeyboardEvent) => this.handleKeyDown(e, group, type)}
@@ -360,7 +364,7 @@ export abstract class AbstractDateTimeInput extends LitElement {
   }
 
   protected toggleDayPeriod(group: string, type: DateTimePartType): void {
-    if (this.readOnly || this.disabled) return;
+    if (this.partsReadonly || this.disabled) return;
     const current = this.getPartValue(group, type);
     this.setPartValue(group, type, current === 'am' ? 'pm' : 'am');
     this.commitParts(group);
@@ -378,7 +382,8 @@ export abstract class AbstractDateTimeInput extends LitElement {
       'Enter',
     ];
 
-    if (allowedKeys.includes(event.key) || event.ctrlKey || event.metaKey || this.readOnly) return;
+    if (allowedKeys.includes(event.key) || event.ctrlKey || event.metaKey || this.partsReadonly)
+      return;
 
     if (!/^[0-9]$/.test(event.key)) {
       event.preventDefault();
@@ -390,7 +395,7 @@ export abstract class AbstractDateTimeInput extends LitElement {
   }
 
   protected handleKeyUp(event: KeyboardEvent, group: string, type: DateTimePartType) {
-    if (this.readOnly) return;
+    if (this.partsReadonly) return;
 
     const isRTL = window.getComputedStyle(this).direction === 'rtl';
     const target = event.target as HTMLElement;
@@ -459,7 +464,7 @@ export abstract class AbstractDateTimeInput extends LitElement {
   protected handleChange(event: Event, group: string, type: DateTimePartType) {
     event.stopImmediatePropagation();
 
-    if (this.readOnly) return;
+    if (this.partsReadonly) return;
 
     const descriptor = this.getPartDescriptor(type);
     if (descriptor?.kind === 'dayPeriod') return;

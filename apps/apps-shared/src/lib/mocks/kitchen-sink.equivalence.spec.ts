@@ -18,6 +18,8 @@ import jsonRangedateinputTab from './tabs/rangedateinput.form-chunk.json';
 import { rangeDateInputTab as dxRangedateinputTab } from './tabs/rangedateinput.dx';
 import jsonRangetimeinputTab from './tabs/rangetimeinput.form-chunk.json';
 import { rangeTimeInputTab as dxRangetimeinputTab } from './tabs/rangetimeinput.dx';
+import jsonRangetimepickerTab from './tabs/rangetimepicker.form-chunk.json';
+import { rangeTimePickerTab as dxRangetimepickerTab } from './tabs/rangetimepicker.dx';
 import jsonRangecalendarTab from './tabs/rangecalendar.form-chunk.json';
 import { rangeCalendarTab as dxRangecalendarTab } from './tabs/rangecalendar.dx';
 import jsonRangedatepickerTab from './tabs/rangedatepicker.form-chunk.json';
@@ -297,6 +299,12 @@ describe('Kitchen Sink — JSON ↔ DX equivalence', () => {
   it('rangetimeinput tab', () => {
     const json = buildJsonTab(jsonRangetimeinputTab).form;
     const dx = buildDxTab(dxRangetimeinputTab);
+    expect(normalise(dx)).toEqual(normalise(json));
+  });
+
+  it('rangetimepicker tab', () => {
+    const json = buildJsonTab(jsonRangetimepickerTab).form;
+    const dx = buildDxTab(dxRangetimepickerTab);
     expect(normalise(dx)).toEqual(normalise(json));
   });
 

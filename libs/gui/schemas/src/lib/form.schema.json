@@ -107,6 +107,9 @@
           "$ref": "./components/rangedatepicker.schema.json"
         },
         {
+          "$ref": "./components/rangetimepicker.schema.json"
+        },
+        {
           "$ref": "./components/repeater.schema.json"
         },
         {

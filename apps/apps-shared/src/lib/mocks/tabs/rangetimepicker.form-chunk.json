@@ -1,0 +1,135 @@
+{
+  "$schema": "../../../../../../libs/gui/schemas/src/lib/layout-widget.schema.json",
+  "uid": "tabRangeTimePicker",
+  "kind": "layout",
+  "type": "flex",
+  "children": [
+    {
+      "kind": "input",
+      "type": "rangeTimePicker",
+      "path": "rangeTimePickerEmpty",
+      "label": "Empty",
+      "props": {
+        "icon": "schedule",
+        "separator": "to",
+        "hourFormat": "24",
+        "minTime": "06:00:00",
+        "maxTime": "22:00:00",
+        "minuteStep": 30
+      }
+    },
+    {
+      "kind": "input",
+      "type": "rangeTimePicker",
+      "path": "rangeTimePickerDefault",
+      "defaultValue": [
+        {
+          "start": "09:00:00",
+          "end": "12:00:00"
+        },
+        {
+          "start": "14:00:00",
+          "end": "17:00:00"
+        }
+      ],
+      "label": "Shift schedule",
+      "props": {
+        "icon": "schedule",
+        "separator": "to",
+        "hourFormat": "24",
+        "minTime": "06:00:00",
+        "maxTime": "22:00:00",
+        "minuteStep": 30
+      }
+    },
+    {
+      "kind": "input",
+      "type": "rangeTimePicker",
+      "path": "rangeTimePickerConstraints",
+      "label": "Booking with lunch break",
+      "props": {
+        "icon": "schedule",
+        "separator": "to",
+        "hourFormat": "24",
+        "minTime": "09:00:00",
+        "maxTime": "18:00:00",
+        "minuteStep": 15,
+        "allowCustomTime": true,
+        "disabledRanges": [
+          {
+            "start": "13:00:00",
+            "end": "14:00:00"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "input",
+      "type": "rangeTimePicker",
+      "path": "rangeTimePickerDisabled",
+      "defaultValue": [
+        {
+          "start": "09:00:00",
+          "end": "12:00:00"
+        },
+        {
+          "start": "14:00:00",
+          "end": "17:00:00"
+        }
+      ],
+      "disabled": true,
+      "label": "Disabled",
+      "props": {
+        "icon": "schedule",
+        "separator": "to",
+        "hourFormat": "24",
+        "minTime": "06:00:00",
+        "maxTime": "22:00:00",
+        "minuteStep": 30
+      }
+    },
+    {
+      "kind": "input",
+      "type": "rangeTimePicker",
+      "path": "rangeTimePickerReadonly",
+      "defaultValue": [
+        {
+          "start": "09:00:00",
+          "end": "12:00:00"
+        },
+        {
+          "start": "14:00:00",
+          "end": "17:00:00"
+        }
+      ],
+      "readonly": true,
+      "label": "Read only",
+      "props": {
+        "icon": "schedule",
+        "separator": "to",
+        "hourFormat": "24",
+        "minTime": "06:00:00",
+        "maxTime": "22:00:00",
+        "minuteStep": 30
+      }
+    },
+    {
+      "kind": "input",
+      "type": "rangeTimePicker",
+      "path": "rangeTimePickerValidation",
+      "label": "Required (validation)",
+      "props": {
+        "icon": "schedule",
+        "separator": "to",
+        "hourFormat": "24",
+        "minTime": "06:00:00",
+        "maxTime": "22:00:00",
+        "minuteStep": 30
+      },
+      "validator": {
+        "type": "array",
+        "required": true
+      }
+    }
+  ]
+}

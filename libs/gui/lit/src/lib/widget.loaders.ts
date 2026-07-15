@@ -18,6 +18,8 @@ export const widgetLoaders: WidgetLoaders<Type<WithWidget>, GolemWidget> = {
     (await import('./components/range-time-input.element')).RangeTimeInputElement,
   rangeDatePicker: async () =>
     (await import('./components/range-date-picker.element')).RangeDatePickerElement,
+  rangeTimePicker: async () =>
+    (await import('./components/range-time-picker.element')).RangeTimePickerElement,
   currency: async () => (await import('./components/currency.element')).CurrencyElement,
   dateInput: async () => (await import('./components/date.element')).DateElement,
   datePicker: async () => (await import('./components/date-picker.element')).DatePickerElement,

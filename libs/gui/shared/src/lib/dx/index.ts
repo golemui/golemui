@@ -45,6 +45,7 @@ export { _guiRangeCalendar } from './shortcuts/range-calendar/guiRangeCalendar.i
 export { _guiRangeDateInput } from './shortcuts/range-date-input/guiRangeDateInput.impl';
 export { _guiRangeTimeInput } from './shortcuts/range-time-input/guiRangeTimeInput.impl';
 export { _guiRangeDatePicker } from './shortcuts/range-date-picker/guiRangeDatePicker.impl';
+export { _guiRangeTimePicker } from './shortcuts/range-time-picker/guiRangeTimePicker.impl';
 export { _guiRepeater } from './shortcuts/repeater/guiRepeater.impl';
 export { _guiSelect } from './shortcuts/select/guiSelect.impl';
 export { _guiTabs } from './shortcuts/tabs/guiTabs.impl';
@@ -103,6 +104,10 @@ export {
   _gslRangeDatePickerByUid,
   _gslRangeDatePickers,
 } from './shortcuts/range-date-picker/register';
+export {
+  _gslRangeTimePickerByUid,
+  _gslRangeTimePickers,
+} from './shortcuts/range-time-picker/register';
 export { _gslRepeaterByUid, _gslRepeaters } from './shortcuts/repeater/register';
 export { _gslSelectByUid, _gslSelects } from './shortcuts/select/register';
 export { _gslTabs, _gslTabsByUid } from './shortcuts/tabs/register';
@@ -217,6 +222,10 @@ export type {
   GslRangeDatePickerConfig,
   RangeDatePickerDecorator,
 } from './shortcuts/range-date-picker/rangeDatePicker.domain';
+export type {
+  GslRangeTimePickerConfig,
+  RangeTimePickerDecorator,
+} from './shortcuts/range-time-picker/rangeTimePicker.domain';
 export type { GslRepeaterConfig, RepeaterDecorator } from './shortcuts/repeater/repeater.domain';
 export type { GslSelectConfig, SelectDecorator } from './shortcuts/select/select.domain';
 export type { GslTabsConfig, TabsDecorator } from './shortcuts/tabs/tabs.domain';

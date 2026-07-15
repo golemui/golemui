@@ -29,6 +29,7 @@ import { _guiRangeCalendar } from './shortcuts/range-calendar/guiRangeCalendar.i
 import { _guiRangeDateInput } from './shortcuts/range-date-input/guiRangeDateInput.impl';
 import { _guiRangeTimeInput } from './shortcuts/range-time-input/guiRangeTimeInput.impl';
 import { _guiRangeDatePicker } from './shortcuts/range-date-picker/guiRangeDatePicker.impl';
+import { _guiRangeTimePicker } from './shortcuts/range-time-picker/guiRangeTimePicker.impl';
 import { _guiTimeInput } from './shortcuts/time-input/guiTimeInput.impl';
 import { _guiTimePicker } from './shortcuts/time-picker/guiTimePicker.impl';
 import { _guiDateTimeInput } from './shortcuts/date-time-input/guiDateTimeInput.impl';
@@ -92,6 +93,7 @@ export const gui = {
     rangeDateInput: _guiRangeDateInput,
     rangeTimeInput: _guiRangeTimeInput,
     rangeDatePicker: _guiRangeDatePicker,
+    rangeTimePicker: _guiRangeTimePicker,
     repeater: _guiRepeater,
     tags: _guiTags,
     custom: _guiCustomInput,

@@ -28,6 +28,7 @@ export * from './lib/golem-features/number.cy';
 export * from './lib/golem-features/rangedateinput.cy';
 export * from './lib/golem-features/rangetimeinput.cy';
 export * from './lib/golem-features/rangedatepicker.cy';
+export * from './lib/golem-features/rangetimepicker.cy';
 export * from './lib/golem-features/repeater.cy';
 export * from './lib/golem-features/select.cy';
 export * from './lib/golem-features/timeinput.cy';

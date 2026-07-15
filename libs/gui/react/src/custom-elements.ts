@@ -21,6 +21,7 @@ import type { GuiRangeCalendar } from '@golemui/gui-components/range-calendar';
 import type { GuiRangeDateInput } from '@golemui/gui-components/range-date-input';
 import type { GuiRangeTimeInput } from '@golemui/gui-components/range-time-input';
 import type { GuiRangeDatePicker } from '@golemui/gui-components/range-date-picker';
+import type { GuiRangeTimePicker } from '@golemui/gui-components/range-time-picker';
 import type { GuiSelect } from '@golemui/gui-components/select';
 import type { GuiTags } from '@golemui/gui-components/tags';
 import type { GuiTextarea } from '@golemui/gui-components/textarea';
@@ -96,6 +97,11 @@ declare module 'react' {
         HTMLElement
       > &
         Partial<GuiRangeDatePicker>;
+      'gui-range-time-picker': React.DetailedHTMLProps<
+        React.HTMLAttributes<HTMLElement>,
+        HTMLElement
+      > &
+        Partial<GuiRangeTimePicker>;
 
       'gui-select': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiSelect>;

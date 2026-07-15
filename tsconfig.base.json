@@ -75,6 +75,9 @@
       "@golemui/gui-components/range-date-picker": [
         "libs/gui/components/src/lib/components/range-date-picker.ts"
       ],
+      "@golemui/gui-components/range-time-picker": [
+        "libs/gui/components/src/lib/components/range-time-picker.ts"
+      ],
       "@golemui/gui-components/select": ["libs/gui/components/src/lib/components/select.ts"],
       "@golemui/gui-components/tags": ["libs/gui/components/src/lib/components/tags.ts"],
       "@golemui/gui-components/textarea": ["libs/gui/components/src/lib/components/textarea.ts"],

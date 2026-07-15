@@ -21,6 +21,7 @@ import { GuiRangeCalendar } from '@golemui/gui-components/range-calendar';
 import { GuiRangeDateInput } from '@golemui/gui-components/range-date-input';
 import { GuiRangeTimeInput } from '@golemui/gui-components/range-time-input';
 import { GuiRangeDatePicker } from '@golemui/gui-components/range-date-picker';
+import { GuiRangeTimePicker } from '@golemui/gui-components/range-time-picker';
 import { GuiSelect } from '@golemui/gui-components/select';
 import { GuiTags } from '@golemui/gui-components/tags';
 import { GuiTextarea } from '@golemui/gui-components/textarea';
@@ -97,6 +98,11 @@ export const GuiRangeDatePickerReact = wrap('gui-range-date-picker', GuiRangeDat
 });
 export const GuiTimeReact = wrap('gui-time', GuiTime);
 export const GuiTimePickerReact = wrap('gui-time-picker', GuiTimePicker, {
+  onChange: 'change',
+  onBlur: 'blur',
+  onInputError: 'inputError',
+});
+export const GuiRangeTimePickerReact = wrap('gui-range-time-picker', GuiRangeTimePicker, {
   onChange: 'change',
   onBlur: 'blur',
   onInputError: 'inputError',

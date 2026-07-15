@@ -27,6 +27,7 @@ export { default as rangecalendarSchema } from './lib/components/rangecalendar.s
 export { default as rangedateinputSchema } from './lib/components/rangedateinput.schema.json';
 export { default as rangetimeinputSchema } from './lib/components/rangetimeinput.schema.json';
 export { default as rangedatepickerSchema } from './lib/components/rangedatepicker.schema.json';
+export { default as rangetimepickerSchema } from './lib/components/rangetimepicker.schema.json';
 export { default as repeaterSchema } from './lib/components/repeater.schema.json';
 export { default as selectSchema } from './lib/components/select.schema.json';
 export { default as tabsSchema } from './lib/components/tabs.schema.json';

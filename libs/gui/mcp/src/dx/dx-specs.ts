@@ -457,6 +457,16 @@ const INPUTS: DxSpec[] = [
     example: "gui.inputs.rangeDatePicker('stayDates', { label: 'Stay dates' })",
     notes: ['Popover calendar for a start–end date **range** (the range sibling of `datePicker`).'],
   },
+  {
+    factory: 'rangeTimePicker',
+    namespace: 'inputs',
+    call: 'gui.inputs.rangeTimePicker(path, { label?, minTime?, maxTime? })',
+    example:
+      "gui.inputs.rangeTimePicker('shift', { label: 'Shift', minTime: '06:00:00', maxTime: '22:00:00' })",
+    notes: [
+      'Two-list popover for a start–end time **range** (the range sibling of `timePicker`); value is `TimeRange[]`. The out list floors one slot after the chosen in so end is strictly after start.',
+    ],
+  },
 ];
 
 const ACTIONS: DxSpec[] = [

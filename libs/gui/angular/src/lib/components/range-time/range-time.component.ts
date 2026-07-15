@@ -33,6 +33,7 @@ export class RangeTimeComponent implements OnInit, OnDestroy, WithWidget {
   }
 
   onChangeTime(event: Event) {
+    this.adapter.injectValidationIssues(null);
     this.adapter.valueChanged((event as CustomEvent).detail.value);
   }
 

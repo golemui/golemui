@@ -175,6 +175,28 @@ export const runRangeTimeInputComponentTests = (mountFn: MountComponentFn) => {
       });
     });
 
+    it('should clear the visible order error once a corrected range is committed', () => {
+      // Regression: a valid `change` must clear the injected rangeOrderMessage.
+      // The Angular wrapper previously omitted injectValidationIssues(null) on
+      // change, so the error lingered after the range was fixed.
+      mountRangeTimeInput({ props: { rangeOrderMessage: 'End must be after start' } });
+
+      // 11:00 -> 09:00 is reversed → order error injected.
+      typeRange(['11', '00'], ['09', '00']);
+      // Submitting marks the form touched so the injected error renders.
+      cy.get('[data-cy="submitBtn_button"]').click({ force: true });
+      cy.get('[data-cy="testSubject_validator-error"]')
+        .should('be.visible')
+        .and('contain', 'End must be after start');
+
+      // Correct it: overwrite the end hour 09 → 13 (valid 11:00–13:00).
+      cy.get(sel.end.hour).click();
+      cy.focused().type('{selectall}13', { force: true });
+
+      cy.get(sel.pillText).should('have.length', 1);
+      cy.get('[data-cy="testSubject_validator-error"]').should('not.exist');
+    });
+
     it('should remove a pill', () => {
       const formSubmitHandler = cy.stub().as('formSubmitHandler');
       mountRangeTimeInput({

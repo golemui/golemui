@@ -58,6 +58,7 @@
         "rangeDateInput",
         "rangeTimeInput",
         "rangeDatePicker",
+        "rangeTimePicker",
         "repeater",
         "select",
         "tabs",

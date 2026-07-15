@@ -202,6 +202,25 @@ export function compareISOTimes(a: string, b: string): number {
 }
 
 /**
+ * Returns the ISO time one `minuteStep` after `iso`, or `undefined` when that
+ * would spill past the end of the day. Used by the range time picker to floor
+ * the "time out" list one slot above the chosen "time in" so `out > in` holds
+ * strictly (there is no next-day interpretation for a pure time range).
+ *
+ * @param {string} iso - The anchor ISO time (HH:mm or HH:mm:ss).
+ * @param {number | undefined} minuteStep - Slot size; defaults to 30 (matches
+ *   `buildTimeOptions`). `|| 30` guards the 0 some framework bindings coerce.
+ * @return {string | undefined} The next slot's ISO time, or undefined at day end.
+ */
+export function oneStepAfterISOTime(iso: string, minuteStep?: number): string | undefined {
+  const time = parseISOTimeString(iso);
+  if (!time) return undefined;
+  const total = time.hours * 60 + time.minutes + (minuteStep || 30);
+  if (total >= 24 * 60) return undefined;
+  return toISOTimeString(new Date(1970, 0, 1, Math.floor(total / 60), total % 60, 0));
+}
+
+/**
  * Resolves day-scoped disabled time ranges to the plain ranges applying on a
  * given date. An entry scopes with `date` (exact ISO date) and/or `weekdays`
  * (Date.prototype.getDay() numbers, 0=Sunday); provided scopes must all

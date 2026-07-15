@@ -5,7 +5,6 @@ export const rangeTimeInputTab = gui.layouts.flex([
     label: 'Empty',
     icon: 'schedule',
     separator: 'to',
-    hourFormat: '24',
   }),
   gui.inputs.rangeTimeInput('rangeTimeInputDefault', {
     label: 'With default value',

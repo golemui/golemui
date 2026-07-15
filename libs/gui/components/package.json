@@ -133,6 +133,11 @@
       "import": "./lib/components/range-date-picker.js",
       "require": "./lib/components/range-date-picker.umd.cjs"
     },
+    "./range-time-picker": {
+      "types": "./lib/components/range-time-picker.d.ts",
+      "import": "./lib/components/range-time-picker.js",
+      "require": "./lib/components/range-time-picker.umd.cjs"
+    },
     "./select": {
       "types": "./lib/components/select.d.ts",
       "import": "./lib/components/select.js",

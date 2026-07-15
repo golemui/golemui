@@ -8,36 +8,36 @@ import {
 } from '@angular/core';
 import { InputWidgetAdapter } from '@golemui/angular';
 import type { InputWidget, WithWidget } from '@golemui/core';
-import type { DateRange, RangeDateInputProps } from '@golemui/gui-shared/internals';
-import '@golemui/gui-components/range-date-input';
+import type { TimeRange, RangeTimePickerProps } from '@golemui/gui-shared/internals';
+import '@golemui/gui-components/range-time-picker';
 
 @Component({
   standalone: true,
-  selector: 'gui-range-date-control',
+  selector: 'gui-range-time-picker-control',
   imports: [CommonModule],
   providers: [InputWidgetAdapter],
-  templateUrl: './range-date.component.html',
+  templateUrl: './range-time-picker.component.html',
   host: {
-    class: 'gui-range-date gui-field',
+    class: 'gui-range-time-picker gui-field',
     '[style.flex]': 'this.adapter.templateData().size',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class RangeDateComponent implements OnInit, OnDestroy, WithWidget {
-  widget!: InputWidget<DateRange[]>;
-  protected adapter: InputWidgetAdapter<DateRange[], RangeDateInputProps> =
+export class RangeTimePickerComponent implements OnInit, OnDestroy, WithWidget {
+  widget!: InputWidget<TimeRange[]>;
+  protected adapter: InputWidgetAdapter<TimeRange[], RangeTimePickerProps> =
     inject(InputWidgetAdapter);
 
   ngOnInit(): void {
     this.adapter.init(this.widget);
   }
 
-  onChangeDate(event: Event) {
+  protected onChangeTime(event: Event) {
     this.adapter.injectValidationIssues(null);
     this.adapter.valueChanged((event as CustomEvent).detail.value);
   }
 
-  onInputError(event: Event) {
+  protected onInputError(event: Event) {
     this.adapter.injectValidationIssues([(event as CustomEvent).detail.message]);
   }
 

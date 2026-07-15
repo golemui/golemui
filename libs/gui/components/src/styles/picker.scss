@@ -4,7 +4,7 @@
 // wrapper markup needs no shared class. Month-calendar rules specific to the
 // date picker stay in `date-picker.scss`.
 .gui-form {
-  :is(.gui-date-picker, .gui-range-date-picker, .gui-time-picker, .gui-date-time-picker).gui-field {
+  :is(.gui-date-picker, .gui-range-date-picker, .gui-range-time-picker, .gui-time-picker, .gui-date-time-picker).gui-field {
     display: block;
     container-type: inline-size;
     container-name: gui-picker-widget;
@@ -18,6 +18,7 @@
       :is(
         .gui-date-picker__arrow,
         .gui-range-date-picker__arrow,
+        .gui-range-time-picker__arrow,
         .gui-time-picker__arrow,
         .gui-date-time-picker__arrow
       ) {
@@ -35,6 +36,7 @@
         > :is(
           .gui-date-picker__arrow,
           .gui-range-date-picker__arrow,
+          .gui-range-time-picker__arrow,
           .gui-time-picker__arrow,
           .gui-date-time-picker__arrow
         ) {
