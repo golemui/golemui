@@ -4,8 +4,8 @@ import { classMap } from 'lit/directives/class-map.js';
 import type { DateRange } from '@golemui/gui-shared/internals';
 import './range-date-input';
 import type { GuiRangeDateInput } from './range-date-input';
-import './range-calendar';
-import { dateBoundsError } from '../utils/date';
+import { DISABLED_DATE_RANGE_MESSAGE } from './range-calendar';
+import { dateBoundsError, rangeSpansDisabledDay } from '../utils/date';
 import { addErrors, addIcon, addLabel } from '../utils/templates';
 
 @customElement('gui-range-date-picker')
@@ -241,7 +241,53 @@ export class GuiRangeDatePicker extends LitElement {
 
   private onDateChange(event: CustomEvent) {
     event.stopPropagation();
-    this.commitValue(event.detail.value);
+    const value = event.detail.value as DateRange[] | undefined;
+    for (const range of value ?? []) {
+      const error = this.rangeError(range);
+      if (error) {
+        this.rejectTypedRange(range, error);
+        return;
+      }
+    }
+    this.commitValue(value);
+  }
+
+  /** The message for the first constraint a range violates, or null when valid. */
+  private rangeError(range: DateRange): string | null {
+    const start = range.start;
+    const end = range.end ?? range.start;
+    // A disabled day anywhere in the span — not just at the endpoints.
+    if (rangeSpansDisabledDay(start, end, this.disabledRanges)) {
+      return this.disabledDateRangeMessage ?? DISABLED_DATE_RANGE_MESSAGE;
+    }
+    // Either endpoint outside the allowed [minDate, maxDate] window.
+    const messages = {
+      minDateMessage: this.minDateMessage,
+      maxDateMessage: this.maxDateMessage,
+    };
+    for (const endpoint of [start, end]) {
+      const error = dateBoundsError(endpoint, this.minDate, this.maxDate, undefined, messages);
+      if (error) return error;
+    }
+    return null;
+  }
+
+  private rejectTypedRange(range: DateRange, message: string) {
+    const start = range.start;
+    const end = range.end ?? range.start;
+    this._invalidRange = { start, end };
+    const input = this._dateRef as GuiRangeDateInput | undefined;
+    if (input) {
+      input.value = this.value ?? [];
+      input.showRange(start, end);
+    }
+    this.dispatchEvent(
+      new CustomEvent('inputError', {
+        detail: { message },
+        bubbles: true,
+        composed: true,
+      }),
+    );
   }
 
   private onDateBlur() {
@@ -264,7 +310,6 @@ export class GuiRangeDatePicker extends LitElement {
   private commitValue(value: DateRange[] | null | undefined) {
     this.value = value ?? undefined;
     this._invalidRange = null;
-    const error = this.validateBounds(this.value);
     this.dispatchEvent(
       new CustomEvent('change', {
         detail: { value: value ?? null },
@@ -272,38 +317,6 @@ export class GuiRangeDatePicker extends LitElement {
         composed: true,
       }),
     );
-    if (error) {
-      this.dispatchEvent(
-        new CustomEvent('inputError', {
-          detail: { message: error },
-          bubbles: true,
-          composed: true,
-        }),
-      );
-    }
-  }
-
-  private validateBounds(value: DateRange[] | undefined): string | null {
-    if (!value || value.length === 0) return null;
-    const messages = {
-      minDateMessage: this.minDateMessage,
-      maxDateMessage: this.maxDateMessage,
-      disabledDateRangeMessage: this.disabledDateRangeMessage,
-    };
-    for (const range of value) {
-      for (const endpoint of [range.start, range.end]) {
-        if (!endpoint) continue;
-        const error = dateBoundsError(
-          endpoint,
-          this.minDate,
-          this.maxDate,
-          this.disabledRanges,
-          messages,
-        );
-        if (error) return error;
-      }
-    }
-    return null;
   }
 
   private onCalendarBlur() {

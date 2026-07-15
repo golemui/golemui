@@ -9,6 +9,7 @@ import {
   isToday,
   mergeDateRanges,
   parseISODateString,
+  rangeSpansDisabledDay,
   toISODateString,
 } from '../utils/date';
 import { AbstractCalendar, type AbstractCalendarDay } from './abstract-calendar';
@@ -307,7 +308,15 @@ export class GuiRangeCalendar extends AbstractCalendar {
     this._anchorDate = null;
 
     // A range that spans any disabled day is rejected, throw error, and no pill added.
-    if (this.rangeContainsDisabled(startDate, endDate)) {
+    if (
+      rangeSpansDisabledDay(
+        toISODateString(startDate),
+        toISODateString(endDate),
+        this.disabledRanges,
+        this.minDate,
+        this.maxDate,
+      )
+    ) {
       this._invalidRange = { start: startDate, end: endDate };
       this.dispatchEvent(
         new CustomEvent('inputError', {
@@ -334,23 +343,6 @@ export class GuiRangeCalendar extends AbstractCalendar {
         composed: true,
       }),
     );
-  }
-
-  /**
-   * Whether any day in the inclusive [startDate, endDate] span is disabled.
-   * A single disabled day rejects the whole selection.
-   */
-  private rangeContainsDisabled(startDate: Date, endDate: Date): boolean {
-    const iterator = new Date(startDate);
-    const endLimit = new Date(endDate);
-    iterator.setHours(0, 0, 0, 0);
-    endLimit.setHours(0, 0, 0, 0);
-
-    while (iterator <= endLimit) {
-      if (this.isDisabled(iterator)) return true;
-      iterator.setDate(iterator.getDate() + 1);
-    }
-    return false;
   }
 
   private onMouseOver(day: RangeCalendarDay) {

@@ -170,7 +170,7 @@ export const runRangeDatePickerComponentTests = (mountFn: MountComponentFn) => {
       cy.get(sel.pillText).should('have.length', 1);
     });
 
-    it('should advance the value and emit inputError when a typed range endpoint is out of bounds', () => {
+    it('should reject a typed range with an out-of-bounds endpoint (no pill, inputs stay filled)', () => {
       mountRangeDatePicker({
         props: { maxDate: '2026-06-20', maxDateMessage: 'Outside the window' },
       });
@@ -182,10 +182,9 @@ export const runRangeDatePickerComponentTests = (mountFn: MountComponentFn) => {
         $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
       });
 
-      // Type a full range 06/25 – 06/26, both past maxDate, and press Enter to
-      // create the pill. gui-range-date has no date bounds so it commits the
-      // range; the picker validates each endpoint. The value advances (a pill
-      // appears) and the picker surfaces the out-of-bounds error.
+      // Type a full range 06/25 – 06/26, both past maxDate, and press Enter.
+      // The range is rejected: no pill, no value change, the error surfaces, and
+      // the typed values stay in the inputs so the user can correct them.
       cy.get(sel.startMonth).click();
       cy.focused().type('06');
       cy.focused().type('25');
@@ -196,11 +195,82 @@ export const runRangeDatePickerComponentTests = (mountFn: MountComponentFn) => {
       cy.focused().type('2026');
       cy.focused().type('{enter}');
 
-      cy.get(sel.pillText).should('contain', '06/25/2026');
-      cy.get('@changeSpy').should('have.been.called');
+      cy.get(sel.pillText).should('not.exist');
+      cy.get('@changeSpy').should('not.have.been.called');
       cy.get('@inputErrorSpy').then((spy: any) => {
         expect(spy.getCall(0).args[0].detail.message).to.equal('Outside the window');
       });
+      cy.get(sel.startDay).should('have.value', '25');
+      cy.get(sel.endDay).should('have.value', '26');
+    });
+
+    it('should reject a typed range that steps over a disabled day (no pill)', () => {
+      const now = new Date();
+      const y = now.getFullYear();
+      const m = now.getMonth();
+      const mm = String(m + 1).padStart(2, '0');
+      const yyyy = String(y);
+      const iso = (d: number) => `${yyyy}-${mm}-${String(d).padStart(2, '0')}`;
+
+      mountRangeDatePicker({
+        props: {
+          disabledRanges: [{ start: iso(9), end: iso(10) }],
+          disabledDateRangeMessage: 'Range includes unavailable days',
+        },
+      });
+
+      // Type 08 → 12, which steps over the disabled 9–10 (both endpoints clean).
+      cy.get(sel.startMonth).click();
+      cy.focused().type(mm);
+      cy.focused().type('08');
+      cy.focused().type(yyyy);
+      cy.get('gui-range-date input[data-group="end"][data-type="month"]').click();
+      cy.focused().type(mm);
+      cy.focused().type('12');
+      cy.focused().type(yyyy);
+      cy.focused().type('{enter}');
+
+      // No pill; the error surfaces; the range is echoed and highlighted in red.
+      cy.get(sel.pillText).should('not.exist');
+      cy.get('[data-cy="testSubject_validator-error"]')
+        .should('be.visible')
+        .and('contain', 'Range includes unavailable days');
+      cy.get(sel.startDay).should('have.value', '08');
+      cy.get(sel.endDay).should('have.value', '12');
+      cy.get(sel.dayButton(iso(8))).should('have.class', 'invalid-range-start');
+      cy.get(sel.dayButton(iso(12))).should('have.class', 'invalid-range-end');
+    });
+
+    it('should reject a typed range that starts on a disabled day (no pill)', () => {
+      const now = new Date();
+      const y = now.getFullYear();
+      const m = now.getMonth();
+      const mm = String(m + 1).padStart(2, '0');
+      const yyyy = String(y);
+      const iso = (d: number) => `${yyyy}-${mm}-${String(d).padStart(2, '0')}`;
+
+      mountRangeDatePicker({
+        props: {
+          disabledRanges: [{ start: iso(9), end: iso(10) }],
+          disabledDateRangeMessage: 'Range includes unavailable days',
+        },
+      });
+
+      // Start on the disabled 9 → the whole range is rejected, no pill created.
+      cy.get(sel.startMonth).click();
+      cy.focused().type(mm);
+      cy.focused().type('09');
+      cy.focused().type(yyyy);
+      cy.get('gui-range-date input[data-group="end"][data-type="month"]').click();
+      cy.focused().type(mm);
+      cy.focused().type('12');
+      cy.focused().type(yyyy);
+      cy.focused().type('{enter}');
+
+      cy.get(sel.pillText).should('not.exist');
+      cy.get('[data-cy="testSubject_validator-error"]')
+        .should('be.visible')
+        .and('contain', 'Range includes unavailable days');
     });
 
     it('should clear a group error once its invalid date is corrected in the input', () => {

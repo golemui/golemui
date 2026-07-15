@@ -114,6 +114,44 @@ export function dateBoundsError(
 }
 
 /**
+ * Whether any day in the inclusive `[startISO, endISO]` span is disabled. A
+ * single disabled day inside the span makes the whole range invalid — used to
+ * reject a range that steps over a disabled day, both from the calendar (day
+ * clicks) and from typed entry in the picker.
+ *
+ * @param {string} startISO - The range start (its date portion is used).
+ * @param {string} endISO - The range end (its date portion is used).
+ * @param {DateRange[]} [disabledRanges] - Ranges of disabled days.
+ * @param {string} [minDate] - Earliest allowed ISO date, inclusive.
+ * @param {string} [maxDate] - Latest allowed ISO date, inclusive.
+ * @return {boolean} True when at least one day in the span is disabled.
+ */
+export function rangeSpansDisabledDay(
+  startISO: string,
+  endISO: string,
+  disabledRanges?: DateRange[],
+  minDate?: string,
+  maxDate?: string,
+): boolean {
+  const start = parseISODateString(startISO);
+  const end = parseISODateString(endISO);
+  if (isNaN(start.getTime()) || isNaN(end.getTime())) return false;
+
+  const iterator = new Date(start);
+  iterator.setHours(0, 0, 0, 0);
+  const limit = new Date(end);
+  limit.setHours(0, 0, 0, 0);
+
+  while (iterator <= limit) {
+    if (isDateDisabled(toISODateString(iterator), minDate, maxDate, disabledRanges)) {
+      return true;
+    }
+    iterator.setDate(iterator.getDate() + 1);
+  }
+  return false;
+}
+
+/**
  * Returns the locale-ordered numeric date parts (day, month, year and literal
  * separators) used to lay out segmented date inputs.
  *
