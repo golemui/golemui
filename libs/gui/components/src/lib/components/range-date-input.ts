@@ -248,29 +248,28 @@ export class GuiRangeDateInput extends AbstractDateTimeInput {
     );
   }
 
-  private validateDateParts(group: string): Date | null {
-    let yearVal = parseInt(this.getPartValue(group, 'year'), 10);
-    let monthVal = parseInt(this.getPartValue(group, 'month'), 10);
-    let dayVal = parseInt(this.getPartValue(group, 'day'), 10);
+  private validateDateParts(group: string): Date | 'invalid' | null {
+    const yearVal = this.clampNumericPart(
+      group,
+      'year',
+      parseInt(this.getPartValue(group, 'year'), 10),
+    );
+    const monthVal = this.clampNumericPart(
+      group,
+      'month',
+      parseInt(this.getPartValue(group, 'month'), 10),
+    );
+    const dayVal = this.clampNumericPart(
+      group,
+      'day',
+      parseInt(this.getPartValue(group, 'day'), 10),
+    );
 
     if (isNaN(yearVal) || isNaN(monthVal) || isNaN(dayVal)) return null;
     if (String(yearVal).length < 4) return null;
 
-    // Clamp values transiently, without writing back to the inputs
-    yearVal = this.clampToDescriptor('year', yearVal);
-    monthVal = this.clampToDescriptor('month', monthVal);
-    dayVal = this.clampToDescriptor('day', dayVal);
-
     const maxValidDay = maxValidDayInMonth(monthVal, yearVal);
-    if (dayVal > maxValidDay) {
-      this.dispatchEvent(
-        new CustomEvent('inputError', {
-          detail: { message: this.invalidDateMessage ?? INVALID_DATE_MESSAGE },
-          bubbles: true,
-        }),
-      );
-      return null;
-    }
+    if (dayVal > maxValidDay) return 'invalid';
 
     return new Date(yearVal, monthVal - 1, dayVal);
   }
@@ -279,7 +278,18 @@ export class GuiRangeDateInput extends AbstractDateTimeInput {
     const startDate = this.validateDateParts('start');
     const endDate = this.validateDateParts('end');
 
-    if (!startDate || !endDate) return;
+    // A completed-but-impossible date in either group is surfaced right away.
+    if (startDate === 'invalid' || endDate === 'invalid') {
+      this.surfaceInputError(this.invalidDateMessage ?? INVALID_DATE_MESSAGE);
+      return;
+    }
+
+    // Not both complete yet: no group is invalid, so clear any error a
+    // now-corrected group left behind, then wait for the rest of the range.
+    if (!(startDate instanceof Date) || !(endDate instanceof Date)) {
+      this.clearSurfacedInputError(this.value ?? []);
+      return;
+    }
 
     let rangeStart = startDate;
     let rangeEnd = endDate;
@@ -304,6 +314,8 @@ export class GuiRangeDateInput extends AbstractDateTimeInput {
     this.clearGroup('start');
     this.clearGroup('end');
 
+    // The commit's own change clears any injected error downstream.
+    this._hasSurfacedInputError = false;
     this.dispatchEvent(
       new CustomEvent('change', {
         detail: { value: this.value },

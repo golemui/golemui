@@ -117,7 +117,8 @@
 
 .gui-widget .gui-tags-input,
 .gui-widget .gui-range-time-input,
-.gui-widget .gui-range-date-input {
+.gui-widget .gui-range-date-input,
+.gui-widget .gui-range-date-time-input {
   padding: 0;
   min-height: var(--gui-widget-size);
 }

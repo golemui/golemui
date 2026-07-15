@@ -214,13 +214,14 @@ export const runRangeDateInputComponentTests = (mountFn: MountComponentFn) => {
     });
 
     describe('clamping', () => {
-      it('should keep an out-of-range typed value visible (no write-back) and clamp on pill creation', () => {
+      it('should clamp an out-of-range typed value in place, matching gui-date', () => {
         const formSubmitHandler = cy.stub().as('formSubmitHandler');
         mountRangeDateInput({ formSubmit: formSubmitHandler });
 
         typeDate('start', '07', '35', '2026');
-        // Unlike gui-date, the typed value is not clamped in place
-        cy.get(sel.start.day).should('have.value', '35');
+        // Consistent with gui-date / gui-date-time: the typed day 35 is clamped
+        // to the month maximum (31) in place, not left visible until commit.
+        cy.get(sel.start.day).should('have.value', '31');
 
         typeDate('end', '08', '02', '2026');
         cy.focused().type('{enter}');
@@ -246,6 +247,39 @@ export const runRangeDateInputComponentTests = (mountFn: MountComponentFn) => {
 
         cy.get('@inputErrorSpy').should('have.been.called');
         cy.get(sel.pillText).should('not.exist');
+      });
+
+      it('should clear a group error once its invalid date is corrected, before the range completes', () => {
+        mountRangeDateInput({ props: { invalidDateMessage: 'Invalid date' } });
+
+        // Feb 30 in the start group → invalid-date error injected.
+        typeDate('start', '02', '30', '2026');
+        // Submitting marks the form touched so the injected error renders.
+        cy.get('[data-cy="submitBtn_button"]').click({ force: true });
+        cy.get('[data-cy="testSubject_validator-error"]')
+          .should('be.visible')
+          .and('contain', 'Invalid date');
+
+        // Correct just the start day to 28 (valid); the end is still empty, but
+        // the completed-and-valid start must clear its error on its own.
+        cy.get(sel.start.day).click();
+        cy.focused().type('{selectall}28', { force: true });
+        cy.get(sel.end.month).click();
+
+        cy.get('[data-cy="testSubject_validator-error"]').should('not.exist');
+        cy.get(sel.pillText).should('not.exist');
+      });
+
+      it('should clamp an ArrowDown spinner at the minimum instead of going negative', () => {
+        mountRangeDateInput();
+
+        // ArrowDown on an empty month seeds the increment fallback (01); a
+        // further ArrowDown must clamp at the month minimum, never step to 0/-1.
+        cy.get(sel.start.month).type('{downArrow}{downArrow}{downArrow}');
+        cy.get(sel.start.month).should('have.value', '01');
+
+        cy.get(sel.start.day).type('{downArrow}{downArrow}{downArrow}');
+        cy.get(sel.start.day).should('have.value', '01');
       });
     });
 

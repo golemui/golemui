@@ -451,6 +451,16 @@ const INPUTS: DxSpec[] = [
     ],
   },
   {
+    factory: 'rangeDateTimeInput',
+    namespace: 'inputs',
+    call: 'gui.inputs.rangeDateTimeInput(path, { label?, minDate?, maxDate?, minTime?, maxTime? })',
+    example:
+      "gui.inputs.rangeDateTimeInput('window', { label: 'Window', minTime: '06:00:00', maxTime: '22:00:00' })",
+    notes: [
+      'Typed start–end date-time **range** entry (the range sibling of `dateTimeInput`); value is `DateTimeRange[]`. A backward selection reorders (swaps) instead of erroring.',
+    ],
+  },
+  {
     factory: 'rangeDatePicker',
     namespace: 'inputs',
     call: 'gui.inputs.rangeDatePicker(path, { label? })',

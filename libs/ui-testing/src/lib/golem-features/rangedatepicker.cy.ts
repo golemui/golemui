@@ -200,5 +200,28 @@ export const runRangeDatePickerComponentTests = (mountFn: MountComponentFn) => {
         expect(spy.getCall(0).args[0].detail.message).to.equal('Outside the window');
       });
     });
+
+    it('should clear a group error once its invalid date is corrected in the input', () => {
+      mountRangeDatePicker({ props: { invalidDateMessage: 'Invalid date' } });
+
+      // Type Feb 30 into the start group of the picker's input → invalid date.
+      cy.get(sel.startMonth).click();
+      cy.focused().type('02');
+      cy.focused().type('30');
+      cy.focused().type('2026');
+      // Submit marks the form touched so the picker renders the injected error.
+      cy.get('[data-cy="submitBtn_button"]').click({ force: true });
+      cy.get('[data-cy="testSubject_validator-error"]')
+        .should('be.visible')
+        .and('contain', 'Invalid date');
+
+      // Correct just the start day to 28; the end is still empty, but the
+      // corrected start clears the error through the picker.
+      cy.get('gui-range-date input[data-group="start"][data-type="day"]').click();
+      cy.focused().type('{selectall}28', { force: true });
+      cy.get('gui-range-date input[data-group="end"][data-type="month"]').click();
+
+      cy.get('[data-cy="testSubject_validator-error"]').should('not.exist');
+    });
   });
 };

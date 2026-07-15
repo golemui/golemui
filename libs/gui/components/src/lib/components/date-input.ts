@@ -109,33 +109,23 @@ export class GuiDate extends AbstractDateTimeInput {
   }
 
   private validateAndEmit() {
-    let yearVal = parseInt(this.getPartValue('default', 'year'), 10);
-    let monthVal = parseInt(this.getPartValue('default', 'month'), 10);
-    let dayVal = parseInt(this.getPartValue('default', 'day'), 10);
-
     // Clamp out-of-range values and write them back so the user sees the
     // corrected part immediately
-    if (!isNaN(yearVal)) {
-      const clamped = this.clampToDescriptor('year', yearVal);
-      if (clamped !== yearVal) {
-        yearVal = clamped;
-        this.setPartValue('default', 'year', yearVal.toString().padStart(4, '0'));
-      }
-    }
-    if (!isNaN(monthVal)) {
-      const clamped = this.clampToDescriptor('month', monthVal);
-      if (clamped !== monthVal) {
-        monthVal = clamped;
-        this.setPartValue('default', 'month', monthVal.toString().padStart(2, '0'));
-      }
-    }
-    if (!isNaN(dayVal)) {
-      const clamped = this.clampToDescriptor('day', dayVal);
-      if (clamped !== dayVal) {
-        dayVal = clamped;
-        this.setPartValue('default', 'day', dayVal.toString().padStart(2, '0'));
-      }
-    }
+    const yearVal = this.clampNumericPart(
+      'default',
+      'year',
+      parseInt(this.getPartValue('default', 'year'), 10),
+    );
+    const monthVal = this.clampNumericPart(
+      'default',
+      'month',
+      parseInt(this.getPartValue('default', 'month'), 10),
+    );
+    const dayVal = this.clampNumericPart(
+      'default',
+      'day',
+      parseInt(this.getPartValue('default', 'day'), 10),
+    );
 
     const isYearValid = !isNaN(yearVal) && String(yearVal).length === 4;
     const isMonthValid = !isNaN(monthVal) && monthVal > 0;

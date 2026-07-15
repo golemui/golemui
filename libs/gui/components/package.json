@@ -123,6 +123,11 @@
       "import": "./lib/components/range-date-input.js",
       "require": "./lib/components/range-date-input.umd.cjs"
     },
+    "./range-date-time-input": {
+      "types": "./lib/components/range-date-time-input.d.ts",
+      "import": "./lib/components/range-date-time-input.js",
+      "require": "./lib/components/range-date-time-input.umd.cjs"
+    },
     "./range-time-input": {
       "types": "./lib/components/range-time-input.d.ts",
       "import": "./lib/components/range-time-input.js",

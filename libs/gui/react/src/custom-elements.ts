@@ -19,6 +19,7 @@ import type { GuiPills } from '@golemui/gui-components/pills';
 import type { GuiRadiogroup } from '@golemui/gui-components/radiogroup';
 import type { GuiRangeCalendar } from '@golemui/gui-components/range-calendar';
 import type { GuiRangeDateInput } from '@golemui/gui-components/range-date-input';
+import type { GuiRangeDateTimeInput } from '@golemui/gui-components/range-date-time-input';
 import type { GuiRangeTimeInput } from '@golemui/gui-components/range-time-input';
 import type { GuiRangeDatePicker } from '@golemui/gui-components/range-date-picker';
 import type { GuiRangeTimePicker } from '@golemui/gui-components/range-time-picker';
@@ -90,6 +91,11 @@ declare module 'react' {
         Partial<GuiRangeCalendar>;
       'gui-range-date': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiRangeDateInput>;
+      'gui-range-date-time': React.DetailedHTMLProps<
+        React.HTMLAttributes<HTMLElement>,
+        HTMLElement
+      > &
+        Partial<GuiRangeDateTimeInput>;
       'gui-range-time': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiRangeTimeInput>;
       'gui-range-date-picker': React.DetailedHTMLProps<

@@ -428,6 +428,30 @@ export type RangeTimeInputProps = {
   rangeOrderMessage?: Localizable;
 };
 
+export type RangeDateTimeInputProps = {
+  hint?: string;
+  icon?: string;
+  separator?: string;
+  removePillAriaLabel?: string;
+  startDateTimeAriaLabel?: string;
+  endDateTimeAriaLabel?: string;
+  hourFormat?: '12' | '24';
+  minuteStep?: number;
+  invalidDateMessage?: Localizable;
+  /** Earliest allowed date (ISO date, inclusive). */
+  minDate?: string;
+  /** Latest allowed date (ISO date, inclusive). */
+  maxDate?: string;
+  /** First allowed time (ISO time, inclusive). */
+  minTime?: string;
+  /** Last allowed time (ISO time, inclusive). */
+  maxTime?: string;
+  minDateMessage?: Localizable;
+  maxDateMessage?: Localizable;
+  minTimeMessage?: Localizable;
+  maxTimeMessage?: Localizable;
+};
+
 export type RangeTimePickerProps = RangeTimeInputProps & {
   /** Times inside these ranges (both ends inclusive) render disabled. */
   disabledRanges?: TimeRange[];

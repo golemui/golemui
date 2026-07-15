@@ -229,6 +229,42 @@ export abstract class AbstractDateTimeInput extends LitElement {
     return Math.max(descriptor.min, Math.min(descriptor.max, value));
   }
 
+  protected _hasSurfacedInputError = false;
+
+  /** Dispatches an `inputError` and remembers it, so it can later be cleared. */
+  protected surfaceInputError(message: string): void {
+    this._hasSurfacedInputError = true;
+    this.dispatchEvent(new CustomEvent('inputError', { detail: { message }, bubbles: true }));
+  }
+
+  /**
+   * Clears a previously-surfaced `inputError` by emitting a `change` carrying the
+   * given (unchanged) value. Callers that already emit their own `change` should
+   * instead just reset {@link _hasSurfacedInputError}.
+   */
+  protected clearSurfacedInputError(value: unknown): void {
+    if (!this._hasSurfacedInputError) return;
+    this._hasSurfacedInputError = false;
+    this.dispatchEvent(
+      new CustomEvent('change', { detail: { value }, bubbles: true, composed: true }),
+    );
+  }
+
+  /**
+   * Clamps a numeric part to its descriptor bounds and, when the value actually
+   * changed, writes the correction back. Returns the clamped value, or the
+   * original `NaN` for an empty part.
+   */
+  protected clampNumericPart(group: string, type: DateTimePartType, value: number): number {
+    if (isNaN(value)) return value;
+    const clamped = this.clampToDescriptor(type, value);
+    if (clamped !== value) {
+      const width = this.getPartDescriptor(type)?.maxLength ?? 2;
+      this.setPartValue(group, type, clamped.toString().padStart(width, '0'));
+    }
+    return clamped;
+  }
+
   /**
    * Focusable part elements of a group in DOM order. Numeric parts are
    * inputs; dayPeriod parts are toggle buttons — both carry the __part class.
@@ -431,10 +467,17 @@ export abstract class AbstractDateTimeInput extends LitElement {
         const fallback = descriptor?.incrementFallback ?? 1;
         const delta = event.key === 'ArrowUp' ? step : -step;
         const parsed = parseInt(input.value, 10);
-        let value = isNaN(parsed) ? fallback : parsed + delta;
-        if (descriptor?.wrap && !isNaN(parsed)) {
-          const range = descriptor.max - descriptor.min + 1;
-          value = ((((value - descriptor.min) % range) + range) % range) + descriptor.min;
+        let value: number;
+        if (isNaN(parsed)) {
+          value = fallback;
+        } else {
+          value = parsed + delta;
+          if (descriptor?.wrap) {
+            const range = descriptor.max - descriptor.min + 1;
+            value = ((((value - descriptor.min) % range) + range) % range) + descriptor.min;
+          } else if (descriptor) {
+            value = Math.max(descriptor.min, Math.min(descriptor.max, value));
+          }
         }
         this.setPartValue(group, type, value.toString().padStart(descriptor?.maxLength ?? 2, '0'));
         this.selectPart(target);

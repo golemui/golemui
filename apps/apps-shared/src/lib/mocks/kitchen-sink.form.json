@@ -43,6 +43,7 @@
           { "label": "Range Calendar Component", "uid": "tabRangeCalendar" },
           { "label": "Range Date Input Component", "uid": "tabRangeDateInput" },
           { "label": "Range Time Input Component", "uid": "tabRangeTimeInput" },
+          { "label": "Range Date Time Input Component", "uid": "tabRangeDateTimeInput" },
           { "label": "Range Time Picker Component", "uid": "tabRangeTimePicker" },
           { "label": "Range Date Picker Component", "uid": "tabRangeDatePicker" },
           { "label": "Repeater Component", "uid": "tabRepeater" },
