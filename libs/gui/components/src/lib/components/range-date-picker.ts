@@ -3,6 +3,7 @@ import { customElement, property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import type { DateRange } from '@golemui/gui-shared/internals';
 import './range-date-input';
+import type { GuiRangeDateInput } from './range-date-input';
 import './range-calendar';
 import { dateBoundsError } from '../utils/date';
 import { addErrors, addIcon, addLabel } from '../utils/templates';
@@ -170,11 +171,13 @@ export class GuiRangeDatePicker extends LitElement {
           .minDate=${this.minDate}
           .maxDate=${this.maxDate}
           .disabledRanges=${this.disabledRanges}
+          .disabledDateRangeMessage=${this.disabledDateRangeMessage}
           .numberOfMonths=${this.numberOfMonths}
           .localeId=${this.localeId}
           .hidePills=${true}
           @blur=${this.onCalendarBlur}
           @change=${this.onCalendarChange}
+          @inputError=${this.onCalendarInputError}
         ></gui-range-calendar>`
       : nothing;
 
@@ -245,7 +248,14 @@ export class GuiRangeDatePicker extends LitElement {
 
   private onCalendarChange(event: CustomEvent) {
     event.stopPropagation();
+    (this._dateRef as GuiRangeDateInput | undefined)?.clearRangeInputs();
     this.commitValue(event.detail.value);
+  }
+
+  private onCalendarInputError(event: CustomEvent) {
+    const range = event.detail?.range as { start: string; end: string } | undefined;
+    if (!range) return;
+    (this._dateRef as GuiRangeDateInput | undefined)?.showRange(range.start, range.end);
   }
 
   private commitValue(value: DateRange[] | null | undefined) {

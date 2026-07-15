@@ -334,6 +334,29 @@ export class GuiRangeDateInput extends AbstractDateTimeInput {
 
     this.requestUpdate();
   }
+
+  /**
+   * Echo a range into the input parts without committing it (no pill, no change
+   * event). Used by the picker to show a range the calendar rejected.
+   */
+  public showRange(startISO: string, endISO: string): void {
+    this.writeGroupDate('start', startISO);
+    this.writeGroupDate('end', endISO);
+  }
+
+  /** Clear both groups' parts (e.g. once a valid range is committed). */
+  public clearRangeInputs(): void {
+    this.clearGroup('start');
+    this.clearGroup('end');
+  }
+
+  private writeGroupDate(group: 'start' | 'end', iso: string): void {
+    const date = parseISODateString(iso);
+    if (isNaN(date.getTime())) return;
+    this.setPartValue(group, 'year', String(date.getFullYear()).padStart(4, '0'));
+    this.setPartValue(group, 'month', String(date.getMonth() + 1).padStart(2, '0'));
+    this.setPartValue(group, 'day', String(date.getDate()).padStart(2, '0'));
+  }
 }
 
 declare global {

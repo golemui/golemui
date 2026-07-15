@@ -16,6 +16,9 @@ import './pills';
 import type { GuiPillEventDetail, GuiPillItem } from './pills';
 import type { DateRange } from '@golemui/gui-shared/internals';
 
+/** Default error when a selected range spans one or more disabled days. */
+export const DISABLED_DATE_RANGE_MESSAGE = 'Invalid date: date is within a disabled range.';
+
 export interface RangeCalendarDay extends AbstractCalendarDay {
   isToday: boolean;
   isRangeStart: boolean;
@@ -24,6 +27,9 @@ export interface RangeCalendarDay extends AbstractCalendarDay {
   isOneDayRange: boolean;
   isAnchor: boolean;
   isSelecting: boolean;
+  isInvalidStart: boolean;
+  isInvalidEnd: boolean;
+  isInvalidInRange: boolean;
 }
 
 @customElement('gui-range-calendar')
@@ -32,10 +38,14 @@ export class GuiRangeCalendar extends AbstractCalendar {
   @property({ type: String }) focusDate: string | undefined = undefined;
   @property({ type: Boolean }) hidePills = false;
   @property({ type: String }) removePillAriaLabel: string | undefined = undefined;
+  @property({ type: String, attribute: 'disabled-date-range-message' }) disabledDateRangeMessage:
+    | string
+    | undefined = undefined;
 
   @state() private _anchorDate: Date | null = null;
   @state() private _nextDate: RangeCalendarDay | null = null;
   @state() private _isSelecting = false;
+  @state() private _invalidRange: { start: Date; end: Date } | null = null;
 
   private _skipValueNavigation = false;
 
@@ -83,6 +93,7 @@ export class GuiRangeCalendar extends AbstractCalendar {
   }
 
   override renderDay(day: RangeCalendarDay): TemplateResult {
+    const isInvalidSingle = day.isInvalidStart && day.isInvalidEnd;
     const classes = {
       'gui-calendar__day-button': true,
       today: day.isToday,
@@ -91,6 +102,10 @@ export class GuiRangeCalendar extends AbstractCalendar {
       'range-end': day.isRangeEnd && !day.isOneDayRange,
       selected: day.isOneDayRange,
       'in-range': day.isInRange,
+      'invalid-range-start': day.isInvalidStart && !isInvalidSingle,
+      'invalid-range-end': day.isInvalidEnd && !isInvalidSingle,
+      'invalid-range-single': isInvalidSingle,
+      'invalid-in-range': day.isInvalidInRange,
       'is-anchor': day.isAnchor,
       'is-selecting': day.isSelecting,
       disabled: day.isDisabled,
@@ -128,7 +143,15 @@ export class GuiRangeCalendar extends AbstractCalendar {
       const isCurrentMonth = date.getMonth() === targetMonth;
       const isDisabled = this.isDisabled(date);
       const isTodayDate = isToday(date);
-      const { isRangeStart, isRangeEnd, isInRange, isSelecting } = this.checkDateStatus(date);
+      const {
+        isRangeStart,
+        isRangeEnd,
+        isInRange,
+        isSelecting,
+        isInvalidStart,
+        isInvalidEnd,
+        isInvalidInRange,
+      } = this.checkDateStatus(date);
       const isFocusable = isTodayDate || isRangeStart;
       const isAnchor = this._anchorDate ? isSameDay(date, this._anchorDate) : false;
 
@@ -140,6 +163,9 @@ export class GuiRangeCalendar extends AbstractCalendar {
         isRangeStart,
         isRangeEnd,
         isInRange,
+        isInvalidStart: isInvalidStart && isCurrentMonth,
+        isInvalidEnd: isInvalidEnd && isCurrentMonth,
+        isInvalidInRange: isInvalidInRange && isCurrentMonth,
         isDisabled,
         isOneDayRange: isRangeStart && isRangeEnd,
         isAnchor,
@@ -178,6 +204,20 @@ export class GuiRangeCalendar extends AbstractCalendar {
     let isRangeEnd = false;
     let isInRange = false;
     let isSelecting = false;
+    let isInvalidStart = false;
+    let isInvalidEnd = false;
+    let isInvalidInRange = false;
+
+    if (this._invalidRange) {
+      const invalidStart = this._invalidRange.start;
+      const invalidEnd = this._invalidRange.end;
+      isInvalidStart = isSameDay(date, invalidStart);
+      isInvalidEnd = isSameDay(date, invalidEnd);
+      const dateTime = date.getTime();
+      if (dateTime > invalidStart.getTime() && dateTime < invalidEnd.getTime()) {
+        isInvalidInRange = true;
+      }
+    }
 
     if (this._isSelecting && this._nextDate && this._anchorDate) {
       const nextDate = this._nextDate.date;
@@ -216,7 +256,15 @@ export class GuiRangeCalendar extends AbstractCalendar {
       }
     }
 
-    return { isRangeStart, isRangeEnd, isInRange, isSelecting };
+    return {
+      isRangeStart,
+      isRangeEnd,
+      isInRange,
+      isSelecting,
+      isInvalidStart,
+      isInvalidEnd,
+      isInvalidInRange,
+    };
   }
 
   override selectDate(day: RangeCalendarDay, _e: MouseEvent | KeyboardEvent | null = null) {
@@ -226,6 +274,8 @@ export class GuiRangeCalendar extends AbstractCalendar {
 
     // Start selection
     if (!this._anchorDate) {
+      // Starting over clears any previously rejected range still shown in red.
+      this._invalidRange = null;
       this._isSelecting = true;
       this._anchorDate = clickedDate;
       return;
@@ -241,15 +291,30 @@ export class GuiRangeCalendar extends AbstractCalendar {
       endDate = this._anchorDate;
     }
 
-    // Calculate ranges based on disabled days
-    const newRanges = this.calculateValidRanges(startDate, endDate);
-    const combinedRanges = [...(this.value || []), ...newRanges];
-    this._skipValueNavigation = true;
-    this.value = mergeDateRanges(combinedRanges);
-
     this._isSelecting = false;
     this._nextDate = null;
     this._anchorDate = null;
+
+    // A range that spans any disabled day is rejected, throw error, and no pill added.
+    if (this.rangeContainsDisabled(startDate, endDate)) {
+      this._invalidRange = { start: startDate, end: endDate };
+      this.dispatchEvent(
+        new CustomEvent('inputError', {
+          detail: {
+            message: this.disabledDateRangeMessage ?? DISABLED_DATE_RANGE_MESSAGE,
+            range: { start: toISODateString(startDate), end: toISODateString(endDate) },
+          },
+          bubbles: true,
+          composed: true,
+        }),
+      );
+      this.requestUpdate();
+      return;
+    }
+
+    this._invalidRange = null;
+    this._skipValueNavigation = true;
+    this.value = mergeDateRanges([...(this.value || []), createDateRange(startDate, endDate)]);
 
     this.dispatchEvent(
       new CustomEvent('change', {
@@ -261,52 +326,20 @@ export class GuiRangeCalendar extends AbstractCalendar {
   }
 
   /**
-   * Calculates and returns an array of valid date ranges between the given start date and end date.
-   * A date range is considered valid if no dates within the range are disabled.
-   *
-   * @param {Date} startDate - The starting date for the range calculation.
-   * @param {Date} endDate - The ending date for the range calculation.
-   * @return {DateRange[]} An array of valid date ranges where each range defines consecutive, non-disabled dates.
+   * Whether any day in the inclusive [startDate, endDate] span is disabled.
+   * A single disabled day rejects the whole selection.
    */
-  private calculateValidRanges(startDate: Date, endDate: Date): DateRange[] {
-    const validRanges: DateRange[] = [];
+  private rangeContainsDisabled(startDate: Date, endDate: Date): boolean {
     const iterator = new Date(startDate);
     const endLimit = new Date(endDate);
-
     iterator.setHours(0, 0, 0, 0);
     endLimit.setHours(0, 0, 0, 0);
 
-    let currentRangeStart: Date | null = null;
-
     while (iterator <= endLimit) {
-      const disabled = this.isDisabled(iterator);
-
-      if (!disabled) {
-        // It's a valid date, start range
-        if (!currentRangeStart) {
-          currentRangeStart = new Date(iterator);
-        }
-      } else {
-        // It's a disabled date, and we have an open range, so we close it
-        if (currentRangeStart) {
-          const rangeEnd = new Date(iterator);
-          rangeEnd.setDate(iterator.getDate() - 1);
-
-          validRanges.push(createDateRange(currentRangeStart, rangeEnd));
-          currentRangeStart = null;
-        }
-      }
-
-      // Move to next date
+      if (this.isDisabled(iterator)) return true;
       iterator.setDate(iterator.getDate() + 1);
     }
-
-    // Close range
-    if (currentRangeStart) {
-      validRanges.push(createDateRange(currentRangeStart, endDate));
-    }
-
-    return validRanges;
+    return false;
   }
 
   private onMouseOver(day: RangeCalendarDay) {

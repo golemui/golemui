@@ -302,6 +302,13 @@ export type RangeCalendarProps = {
    */
   disabledRanges?: DateRange[];
   /**
+   * Error surfaced when a selected range spans one or more disabled days. The
+   * whole range is rejected (no pill added), rather than split around the
+   * disabled days — consistent with the time pickers. Defaults to
+   * "Invalid date: date is within a disabled range."
+   */
+  disabledDateRangeMessage?: Localizable;
+  /**
    * Specifies the number of months to be displayed in the calendar.
    * Default is 1.
    */

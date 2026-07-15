@@ -26,6 +26,7 @@ export const runRangeDateInputComponentTests = (mountFn: MountComponentFn) => {
     const mountRangeDateInput = (options?: {
       data?: Record<string, any>;
       lang?: string;
+      props?: Record<string, any>;
       formSubmit?: (event: any) => void;
       readonly?: boolean;
       disabled?: boolean;
@@ -40,6 +41,7 @@ export const runRangeDateInputComponentTests = (mountFn: MountComponentFn) => {
               kind: 'input',
               type: 'rangeDateInput',
               path: 'myRanges',
+              ...(options?.props ? { props: options.props } : {}),
               ...(options?.readonly !== undefined ? { readonly: options.readonly } : {}),
               ...(options?.disabled !== undefined ? { disabled: options.disabled } : {}),
             },

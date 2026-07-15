@@ -39,6 +39,7 @@ export class RangeDatePickerComponent implements OnInit, OnDestroy, WithWidget {
 
   protected onInputError(event: Event) {
     this.adapter.injectValidationIssues([(event as CustomEvent).detail.message]);
+    this.adapter.onBlur();
   }
 
   ngOnDestroy(): void {
