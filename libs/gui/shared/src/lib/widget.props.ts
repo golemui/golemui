@@ -5,6 +5,15 @@ export interface DateRange {
   end?: string;
 }
 
+/**
+ * A selected date-time range value. Both ends are local ISO date-time strings
+ * (`YYYY-MM-DDTHH:mm:ss`).
+ */
+export interface DateTimeRange {
+  start: string;
+  end: string;
+}
+
 export type AccordionProps = {
   singleOpen?: boolean;
   defaultOpen?: { [key: string]: boolean };
@@ -348,6 +357,9 @@ export type TimeInputProps = {
   maxTimeMessage?: Localizable;
 };
 
+/**
+ * A time range value (also the base of {@link DisabledTimeRange}).
+ */
 export type TimeRange = {
   start: string;
   end: string;
@@ -396,6 +408,36 @@ export type DateTimePickerProps = DateTimeCalendarProps &
 export type RangeDatePickerProps = RangeCalendarProps &
   RangeDateInputProps &
   DateBoundsMessageProps;
+
+export type RangeTimeInputProps = {
+  hint?: string;
+  icon?: string;
+  separator?: string;
+  removePillAriaLabel?: string;
+  startTimeAriaLabel?: string;
+  endTimeAriaLabel?: string;
+  hourFormat?: '12' | '24';
+  minuteStep?: number;
+  /** First allowed time (ISO time, inclusive). */
+  minTime?: string;
+  /** Last allowed time (ISO time, inclusive). */
+  maxTime?: string;
+  minTimeMessage?: Localizable;
+  maxTimeMessage?: Localizable;
+  /** Shown when the entered "time out" is not strictly after "time in". */
+  rangeOrderMessage?: Localizable;
+};
+
+export type RangeTimePickerProps = RangeTimeInputProps & {
+  /** Times inside these ranges (both ends inclusive) render disabled. */
+  disabledRanges?: TimeRange[];
+  /** Allows typing a time in the input; when false (default) values come only from the lists. */
+  allowCustomTime?: boolean;
+  height?: number;
+  itemHeight?: number;
+  disabledRangeMessage?: Localizable;
+  noAvailableTimesMessage?: Localizable;
+};
 
 export type NumberinputProps = {
   placeholder?: string;

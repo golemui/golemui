@@ -441,6 +441,16 @@ const INPUTS: DxSpec[] = [
     notes: ['Typed start–end date **range** entry (the range sibling of `dateInput`).'],
   },
   {
+    factory: 'rangeTimeInput',
+    namespace: 'inputs',
+    call: 'gui.inputs.rangeTimeInput(path, { label?, minTime?, maxTime? })',
+    example:
+      "gui.inputs.rangeTimeInput('shift', { label: 'Shift', minTime: '06:00:00', maxTime: '22:00:00' })",
+    notes: [
+      'Typed start–end time **range** entry (the range sibling of `timeInput`); value is `TimeRange[]`. End time must be after start time.',
+    ],
+  },
+  {
     factory: 'rangeDatePicker',
     namespace: 'inputs',
     call: 'gui.inputs.rangeDatePicker(path, { label? })',

@@ -43,6 +43,7 @@ export { _guiPassword } from './shortcuts/password/guiPassword.impl';
 export { _guiRadiogroup } from './shortcuts/radiogroup/guiRadiogroup.impl';
 export { _guiRangeCalendar } from './shortcuts/range-calendar/guiRangeCalendar.impl';
 export { _guiRangeDateInput } from './shortcuts/range-date-input/guiRangeDateInput.impl';
+export { _guiRangeTimeInput } from './shortcuts/range-time-input/guiRangeTimeInput.impl';
 export { _guiRangeDatePicker } from './shortcuts/range-date-picker/guiRangeDatePicker.impl';
 export { _guiRepeater } from './shortcuts/repeater/guiRepeater.impl';
 export { _guiSelect } from './shortcuts/select/guiSelect.impl';
@@ -94,6 +95,10 @@ export {
   _gslRangeDateInputByUid,
   _gslRangeDateInputs,
 } from './shortcuts/range-date-input/register';
+export {
+  _gslRangeTimeInputByUid,
+  _gslRangeTimeInputs,
+} from './shortcuts/range-time-input/register';
 export {
   _gslRangeDatePickerByUid,
   _gslRangeDatePickers,
@@ -204,6 +209,10 @@ export type {
   GslRangeDateInputConfig,
   RangeDateInputDecorator,
 } from './shortcuts/range-date-input/rangeDateInput.domain';
+export type {
+  GslRangeTimeInputConfig,
+  RangeTimeInputDecorator,
+} from './shortcuts/range-time-input/rangeTimeInput.domain';
 export type {
   GslRangeDatePickerConfig,
   RangeDatePickerDecorator,

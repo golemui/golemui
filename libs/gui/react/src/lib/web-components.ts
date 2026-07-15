@@ -19,6 +19,7 @@ import { GuiPassword } from '@golemui/gui-components/password';
 import { GuiRadiogroup } from '@golemui/gui-components/radiogroup';
 import { GuiRangeCalendar } from '@golemui/gui-components/range-calendar';
 import { GuiRangeDateInput } from '@golemui/gui-components/range-date-input';
+import { GuiRangeTimeInput } from '@golemui/gui-components/range-time-input';
 import { GuiRangeDatePicker } from '@golemui/gui-components/range-date-picker';
 import { GuiSelect } from '@golemui/gui-components/select';
 import { GuiTags } from '@golemui/gui-components/tags';
@@ -88,6 +89,7 @@ export const GuiDatePickerReact = wrap('gui-date-picker', GuiDatePicker, {
   onInputError: 'inputError',
 });
 export const GuiRangeDateReact = wrap('gui-range-date', GuiRangeDateInput);
+export const GuiRangeTimeReact = wrap('gui-range-time', GuiRangeTimeInput);
 export const GuiRangeDatePickerReact = wrap('gui-range-date-picker', GuiRangeDatePicker, {
   onChange: 'change',
   onBlur: 'blur',

@@ -44,6 +44,7 @@ export { GuiRangeCalendar } from './lib/components/range-calendar';
 export type { RangeCalendarDay } from './lib/components/range-calendar';
 
 export { GuiRangeDateInput } from './lib/components/range-date-input';
+export { GuiRangeTimeInput } from './lib/components/range-time-input';
 export { GuiRangeDatePicker } from './lib/components/range-date-picker';
 export { GuiSelect } from './lib/components/select';
 export { GuiTags } from './lib/components/tags';

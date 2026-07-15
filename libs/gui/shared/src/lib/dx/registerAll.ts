@@ -28,6 +28,7 @@ import './shortcuts/accordion/register';
 import './shortcuts/repeater/register';
 import './shortcuts/markdown/register';
 import './shortcuts/range-date-input/register';
+import './shortcuts/range-time-input/register';
 import './shortcuts/range-date-picker/register';
 import './shortcuts/custom-display/register';
 import './shortcuts/custom-input/register';

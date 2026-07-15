@@ -45,6 +45,7 @@ export default defineConfig(() => ({
         'lib/components/radiogroup': 'src/lib/components/radiogroup.ts',
         'lib/components/range-calendar': 'src/lib/components/range-calendar.ts',
         'lib/components/range-date-input': 'src/lib/components/range-date-input.ts',
+        'lib/components/range-time-input': 'src/lib/components/range-time-input.ts',
         'lib/components/range-date-picker': 'src/lib/components/range-date-picker.ts',
         'lib/components/select': 'src/lib/components/select.ts',
         'lib/components/tags': 'src/lib/components/tags.ts',

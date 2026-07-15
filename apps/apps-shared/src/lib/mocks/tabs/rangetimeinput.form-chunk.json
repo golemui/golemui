@@ -1,0 +1,104 @@
+{
+  "$schema": "../../../../../../libs/gui/schemas/src/lib/layout-widget.schema.json",
+  "uid": "tabRangeTimeInput",
+  "kind": "layout",
+  "type": "flex",
+  "children": [
+    {
+      "kind": "input",
+      "type": "rangeTimeInput",
+      "path": "rangeTimeInputEmpty",
+      "label": "Empty",
+      "props": {
+        "icon": "schedule",
+        "separator": "to"
+      }
+    },
+    {
+      "kind": "input",
+      "type": "rangeTimeInput",
+      "path": "rangeTimeInputDefault",
+      "defaultValue": [
+        {
+          "start": "09:00:00",
+          "end": "11:00:00"
+        },
+        {
+          "start": "14:00:00"
+        }
+      ],
+      "label": "With default value",
+      "props": {
+        "icon": "schedule",
+        "separator": "to"
+      }
+    },
+    {
+      "kind": "input",
+      "type": "rangeTimeInput",
+      "path": "rangeTimeInputConstraints",
+      "label": "With min/max time",
+      "props": {
+        "icon": "schedule",
+        "separator": "to",
+        "minTime": "09:00:00",
+        "maxTime": "18:00:00",
+        "minuteStep": 15
+      }
+    },
+    {
+      "kind": "input",
+      "type": "rangeTimeInput",
+      "path": "rangeTimeInputDisabled",
+      "defaultValue": [
+        {
+          "start": "09:00:00",
+          "end": "11:00:00"
+        },
+        {
+          "start": "14:00:00"
+        }
+      ],
+      "disabled": true,
+      "label": "Disabled",
+      "props": {
+        "icon": "schedule",
+        "separator": "to"
+      }
+    },
+    {
+      "kind": "input",
+      "type": "rangeTimeInput",
+      "path": "rangeTimeInputReadonly",
+      "defaultValue": [
+        {
+          "start": "09:00:00",
+          "end": "11:00:00"
+        },
+        {
+          "start": "14:00:00"
+        }
+      ],
+      "readonly": true,
+      "label": "Read only",
+      "props": {
+        "icon": "schedule",
+        "separator": "to"
+      }
+    },
+    {
+      "kind": "input",
+      "type": "rangeTimeInput",
+      "path": "rangeTimeInputValidation",
+      "label": "Required (validation)",
+      "props": {
+        "icon": "schedule",
+        "separator": "to"
+      },
+      "validator": {
+        "type": "array",
+        "required": true
+      }
+    }
+  ]
+}

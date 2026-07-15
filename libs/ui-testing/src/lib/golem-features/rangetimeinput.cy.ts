@@ -1,0 +1,221 @@
+import { defineForm, identityTranslator } from '@golemui/core';
+import { type MountComponentFn } from '../utils';
+
+// Behavior tests for the gui-range-time web component: two segmented time inputs
+// (start/end) accumulating a TimeRange[] value as pills. Pins the pill
+// create/merge/remove model and the "end must be after start" ordering error
+// (unlike the date range, which swaps). Uses en-GB (24h) so parts are just
+// hour+minute with no day-period.
+export const runRangeTimeInputComponentTests = (mountFn: MountComponentFn) => {
+  describe('RangeTimeInput Component', () => {
+    const uid = 'testSubject';
+    const sel = {
+      start: {
+        hour: 'gui-range-time input[data-group="start"][data-type="hour"]',
+        minute: 'gui-range-time input[data-group="start"][data-type="minute"]',
+      },
+      end: {
+        hour: 'gui-range-time input[data-group="end"][data-type="hour"]',
+        minute: 'gui-range-time input[data-group="end"][data-type="minute"]',
+      },
+      pillText: 'gui-range-time .gui-pills__pill-text',
+      pillRemove: 'gui-range-time .gui-pills__pill-remove',
+    };
+
+    const mountRangeTimeInput = (options?: {
+      data?: Record<string, any>;
+      lang?: string;
+      props?: Record<string, any>;
+      formSubmit?: (event: any) => void;
+      readonly?: boolean;
+      disabled?: boolean;
+    }) => {
+      mountFn({
+        localization: identityTranslator(options?.lang ?? 'en-GB'),
+        data: options?.data,
+        formDef: defineForm({
+          form: [
+            {
+              uid,
+              kind: 'input',
+              type: 'rangeTimeInput',
+              path: 'myRanges',
+              ...(options?.props ? { props: options.props } : {}),
+              ...(options?.readonly !== undefined ? { readonly: options.readonly } : {}),
+              ...(options?.disabled !== undefined ? { disabled: options.disabled } : {}),
+            },
+            {
+              uid: 'submitBtn',
+              kind: 'action',
+              type: 'button',
+              label: 'Submit',
+              actionType: 'submit',
+            },
+          ],
+        }),
+        formSubmit: options?.formSubmit,
+      });
+    };
+
+    const submitAndGetData = (formSubmitAlias: string) => {
+      cy.get('[data-cy="submitBtn_button"]').click({ force: true });
+      return cy.get(formSubmitAlias).then((stub: any) => stub.getCall(0).args[0].data);
+    };
+
+    const typeRange = (
+      start: [string, string],
+      end: [string, string],
+      commit = true,
+    ) => {
+      cy.get(sel.start.hour).click();
+      cy.focused().type(start[0]);
+      cy.focused().type(start[1]);
+      cy.get(sel.end.hour).click();
+      cy.focused().type(end[0]);
+      cy.focused().type(end[1]);
+      if (commit) cy.focused().type('{enter}');
+    };
+
+    it('should hydrate a TimeRange[] value into pills', () => {
+      mountRangeTimeInput({
+        data: { myRanges: [{ start: '09:00:00', end: '11:00:00' }] },
+      });
+      cy.get(sel.pillText).should('have.length', 1).and('contain', '09:00');
+    });
+
+    it('should render a range without an end as start–start (not "undefined")', () => {
+      // A hydrated single-instant range ({start} only) must mirror gui-range-date's
+      // single-day pills ("14:00 - 14:00"), never "14:00 - undefined".
+      mountRangeTimeInput({ data: { myRanges: [{ start: '14:00:00' }] } });
+      cy.get(sel.pillText)
+        .should('have.length', 1)
+        .should(($el) => {
+          const text = $el.text();
+          expect(text).to.not.contain('undefined');
+          expect((text.match(/14:00/g) || []).length).to.equal(2);
+        });
+    });
+
+    it('should seed the AM/PM toggle to AM in a 12h locale', () => {
+      // en-US resolves to 12h: the day-period switch always has a state, so an
+      // empty start/end group must still show "AM", not a blank toggle.
+      mountRangeTimeInput({ lang: 'en-US' });
+      cy.get('gui-range-time button[data-group="start"][data-type="dayPeriod"]').should(($el) => {
+        expect($el.text().trim()).to.match(/AM/);
+      });
+      cy.get('gui-range-time button[data-group="end"][data-type="dayPeriod"]').should(($el) => {
+        expect($el.text().trim()).to.match(/AM/);
+      });
+    });
+
+    it('should clamp the hour to 12 in a 12h locale', () => {
+      // With an AM/PM toggle present, the hour cannot exceed 12: typing 15
+      // must correct to 12 (matching gui-time), not stay 15.
+      mountRangeTimeInput({ lang: 'en-US' });
+      cy.get('gui-range-time input[data-group="start"][data-type="hour"]').click();
+      cy.focused().type('15');
+      cy.get('gui-range-time input[data-group="start"][data-type="hour"]').should(
+        'have.value',
+        '12',
+      );
+    });
+
+    it('should create a pill from a typed range and submit it', () => {
+      const formSubmitHandler = cy.stub().as('formSubmitHandler');
+      mountRangeTimeInput({ formSubmit: formSubmitHandler });
+
+      typeRange(['09', '00'], ['11', '30']);
+
+      cy.get(sel.pillText).should('have.length', 1);
+      cy.get(sel.start.hour).should('have.value', '');
+
+      submitAndGetData('@formSubmitHandler').then((data) => {
+        expect(data).to.deep.equal({ myRanges: [{ start: '09:00:00', end: '11:30:00' }] });
+      });
+    });
+
+    it('should merge overlapping ranges into a single pill', () => {
+      const formSubmitHandler = cy.stub().as('formSubmitHandler');
+      mountRangeTimeInput({
+        data: { myRanges: [{ start: '09:00:00', end: '11:00:00' }] },
+        formSubmit: formSubmitHandler,
+      });
+
+      // 10:00–13:00 overlaps 09:00–11:00 → merge to 09:00–13:00
+      typeRange(['10', '00'], ['13', '00']);
+
+      cy.get(sel.pillText).should('have.length', 1);
+      submitAndGetData('@formSubmitHandler').then((data) => {
+        expect(data).to.deep.equal({ myRanges: [{ start: '09:00:00', end: '13:00:00' }] });
+      });
+    });
+
+    it('should keep non-overlapping ranges as separate pills', () => {
+      mountRangeTimeInput({
+        data: { myRanges: [{ start: '09:00:00', end: '10:00:00' }] },
+      });
+      typeRange(['14', '00'], ['15', '00']);
+      cy.get(sel.pillText).should('have.length', 2);
+    });
+
+    it('should reject a range whose end is not after start with the order error', () => {
+      mountRangeTimeInput({ props: { rangeOrderMessage: 'End must be after start' } });
+
+      const inputErrorSpy = cy.spy().as('inputErrorSpy');
+      cy.get('gui-range-time').then(($el) => {
+        $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
+      });
+
+      // 11:00 → 09:00 is reversed; time ranges error (no swap)
+      typeRange(['11', '00'], ['09', '00']);
+
+      cy.get(sel.pillText).should('have.length', 0);
+      cy.get('@inputErrorSpy').then((spy: any) => {
+        expect(spy.getCall(0).args[0].detail.message).to.equal('End must be after start');
+      });
+    });
+
+    it('should remove a pill', () => {
+      const formSubmitHandler = cy.stub().as('formSubmitHandler');
+      mountRangeTimeInput({
+        data: {
+          myRanges: [
+            { start: '09:00:00', end: '10:00:00' },
+            { start: '14:00:00', end: '15:00:00' },
+          ],
+        },
+        formSubmit: formSubmitHandler,
+      });
+
+      cy.get(sel.pillText).should('have.length', 2);
+      cy.get(sel.pillRemove).first().click({ force: true });
+      cy.get(sel.pillText).should('have.length', 1);
+    });
+
+    it('should emit an inputError for a typed time past maxTime', () => {
+      mountRangeTimeInput({ props: { maxTime: '17:00:00', maxTimeMessage: 'Too late' } });
+
+      const inputErrorSpy = cy.spy().as('inputErrorSpy');
+      cy.get('gui-range-time').then(($el) => {
+        $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
+      });
+
+      cy.get(sel.start.hour).click();
+      cy.focused().type('18');
+      cy.focused().type('00');
+
+      cy.get('@inputErrorSpy').then((spy: any) => {
+        expect(spy.getCall(0).args[0].detail.message).to.equal('Too late');
+      });
+    });
+
+    it('should render disabled inputs when disabled', () => {
+      mountRangeTimeInput({
+        data: { myRanges: [{ start: '09:00:00', end: '10:00:00' }] },
+        disabled: true,
+      });
+      cy.get(sel.start.hour).should('be.disabled');
+      cy.get(sel.end.hour).should('be.disabled');
+    });
+  });
+};

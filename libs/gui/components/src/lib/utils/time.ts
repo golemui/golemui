@@ -1,4 +1,4 @@
-import type { DisabledTimeRange } from '@golemui/gui-shared/internals';
+import type { DateTimeRange, DisabledTimeRange } from '@golemui/gui-shared/internals';
 import { parseISODateString } from './date';
 
 export type HourFormat = '12' | '24';
@@ -167,7 +167,11 @@ export function parseISODateTimeString(value: string): Date {
   return new Date(value);
 }
 
-/** A time-of-day range; both ends are ISO time strings (HH:mm or HH:mm:ss). */
+/**
+ * A time-of-day range; both ends are ISO time strings (HH:mm or HH:mm:ss).
+ * `end` is required (mirrors the shared `TimeRange`) — a time range is always a
+ * span; the `?? start` fallbacks below are defensive against malformed data.
+ */
 export interface TimeRange {
   start: string;
   end: string;
@@ -239,6 +243,90 @@ export function isTimeDisabled(time: string, ranges: TimeRange[] | undefined): b
       compareISOTimes(time, range.start) >= 0 &&
       compareISOTimes(time, range.end ?? range.start) <= 0,
   );
+}
+
+/** Normalizes an ISO time to HH:mm:ss so merged output is consistent. */
+function normalizeISOTime(value: string): string {
+  return value.length === 5 ? `${value}:00` : value;
+}
+
+/**
+ * Merges overlapping or touching time-of-day ranges into a minimal set, sorted
+ * by start. Unlike {@link mergeDateRanges} there is no adjacency bump: time is
+ * continuous, so ranges merge only when they overlap or exactly touch
+ * (`next.start <= current.end`). Both ends stay inclusive ISO times.
+ *
+ * @param {TimeRange[]} ranges - The time ranges to merge.
+ * @return {TimeRange[]} Merged, non-overlapping ranges sorted by start.
+ */
+export function mergeTimeRanges(ranges: TimeRange[]): TimeRange[] {
+  if (!ranges.length) return [];
+
+  const sorted = ranges
+    .map((r) => ({ start: normalizeISOTime(r.start), end: normalizeISOTime(r.end ?? r.start) }))
+    .sort((a, b) => compareISOTimes(a.start, b.start));
+
+  const merged: TimeRange[] = [];
+  for (const next of sorted) {
+    const current = merged[merged.length - 1];
+    if (current && compareISOTimes(next.start, current.end) <= 0) {
+      if (compareISOTimes(next.end, current.end) > 0) current.end = next.end;
+    } else {
+      merged.push({ ...next });
+    }
+  }
+  return merged;
+}
+
+/**
+ * Orders a date-time range so `start <= end`, swapping the two ends when the
+ * caller provided them reversed. Date-time ranges are just two ISO date-times,
+ * so a "backward" selection (e.g. same day, end time before start time) is
+ * reordered rather than rejected — mirroring the range calendar's date swap.
+ *
+ * @param {string} start - The (possibly-later) start date-time.
+ * @param {string} end - The (possibly-earlier) end date-time.
+ * @return {DateTimeRange} The ordered range.
+ */
+export function orderDateTimeRange(start: string, end: string): DateTimeRange {
+  return parseISODateTimeString(start).getTime() <= parseISODateTimeString(end).getTime()
+    ? { start, end }
+    : { start: end, end: start };
+}
+
+/**
+ * Merges overlapping or touching date-time ranges into a minimal set, sorted by
+ * start. Comparison is on the full local date-time (millis), so this single
+ * pass implements "several times in one day → separate pills unless they
+ * overlap" and "a range spanning midnight → one pill" with no special-casing.
+ *
+ * @param {DateTimeRange[]} ranges - The date-time ranges to merge.
+ * @return {DateTimeRange[]} Merged, non-overlapping ranges sorted by start.
+ */
+export function mergeDateTimeRanges(ranges: DateTimeRange[]): DateTimeRange[] {
+  if (!ranges.length) return [];
+
+  const sorted = ranges
+    .map((r) => ({
+      start: parseISODateTimeString(r.start).getTime(),
+      end: parseISODateTimeString(r.end ?? r.start).getTime(),
+    }))
+    .sort((a, b) => a.start - b.start);
+
+  const merged: { start: number; end: number }[] = [];
+  for (const next of sorted) {
+    const current = merged[merged.length - 1];
+    if (current && next.start <= current.end) {
+      if (next.end > current.end) current.end = next.end;
+    } else {
+      merged.push({ start: next.start, end: next.end });
+    }
+  }
+
+  return merged.map((m) => ({
+    start: toISODateTimeString(new Date(m.start)),
+    end: toISODateTimeString(new Date(m.end)),
+  }));
 }
 
 /**

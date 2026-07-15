@@ -2,95 +2,16 @@ import type { TimeInputProps } from '@golemui/gui-shared/internals';
 import { html, nothing, type PropertyValues } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
-import {
-  AbstractDateTimeInput,
-  timeInputPartDescriptors,
-  type DateTimePartDescriptor,
-  type DateTimePartType,
-} from './abstract-date-time-input';
-import {
-  compareISOTimes,
-  from24Hour,
-  getDayPeriodLabels,
-  getTimeFormatParts,
-  parseISODateTimeString,
-  parseISOTimeString,
-  resolveHourFormat,
-  to24Hour,
-  toISOTimeString,
-  type HourFormat,
-} from '../utils/time';
+import { AbstractTimePartsInput } from './abstract-time-parts-input';
+import { from24Hour, parseISODateTimeString, parseISOTimeString } from '../utils/time';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 
 @customElement('gui-time')
-export class GuiTime extends AbstractDateTimeInput {
+export class GuiTime extends AbstractTimePartsInput {
   @property({ type: String }) value: string | undefined = undefined;
-  @property({ type: String, attribute: 'hour-format' }) hourFormat: HourFormat | undefined =
-    undefined;
-  @property({ type: Number, attribute: 'minute-step' }) minuteStep: number | undefined = 1;
-  @property({ type: String, attribute: 'min-time' }) minTime: string | undefined = undefined;
-  @property({ type: String, attribute: 'max-time' }) maxTime: string | undefined = undefined;
-  @property({ type: String, attribute: 'min-time-message' }) minTimeMessage: string | undefined =
-    undefined;
-  @property({ type: String, attribute: 'max-time-message' }) maxTimeMessage: string | undefined =
-    undefined;
 
   protected override readonly inputBlockClass = 'gui-time-input';
   protected override readonly groups = ['default'] as const;
-
-  // Intl.DateTimeFormat construction is expensive and these are consulted on
-  // every keystroke, so the derived locale data is memoized per input change
-  private _hourFormatCache: { key: string; format: HourFormat } | undefined;
-  private _labelsCache: { key: string; labels: { am: string; pm: string } } | undefined;
-  private _descriptorsCache:
-    | { key: string; descriptors: Partial<Record<DateTimePartType, DateTimePartDescriptor>> }
-    | undefined;
-
-  private get effectiveHourFormat(): HourFormat {
-    const key = `${this.localeId ?? ''}|${this.hourFormat ?? ''}`;
-    if (this._hourFormatCache?.key !== key) {
-      this._hourFormatCache = { key, format: resolveHourFormat(this.localeId, this.hourFormat) };
-    }
-    return this._hourFormatCache.format;
-  }
-
-  private get dayPeriodLabels(): { am: string; pm: string } {
-    const key = this.localeId ?? '';
-    if (this._labelsCache?.key !== key) {
-      this._labelsCache = { key, labels: getDayPeriodLabels(this.localeId) };
-    }
-    return this._labelsCache.labels;
-  }
-
-  protected override getFormatParts(): Intl.DateTimeFormatPart[] {
-    return getTimeFormatParts(this.localeId, this.effectiveHourFormat);
-  }
-
-  protected override getPartDescriptor(type: string): DateTimePartDescriptor | undefined {
-    const minuteStep = this.minuteStep || 1;
-    const key = `${this.localeId ?? ''}|${this.effectiveHourFormat}|${minuteStep}`;
-    let cache = this._descriptorsCache;
-    if (cache?.key !== key) {
-      cache = {
-        key,
-        descriptors: timeInputPartDescriptors(
-          this.effectiveHourFormat,
-          minuteStep,
-          this.dayPeriodLabels.am,
-        ),
-      };
-      this._descriptorsCache = cache;
-    }
-    return cache.descriptors[type as keyof typeof cache.descriptors];
-  }
-
-  protected override getPartDisplayValue(group: string, type: DateTimePartType): string {
-    const value = this.getPartValue(group, type);
-    if (type === 'dayPeriod' && (value === 'am' || value === 'pm')) {
-      return this.dayPeriodLabels[value];
-    }
-    return value;
-  }
 
   override willUpdate(changedProperties: PropertyValues): void {
     if (
@@ -148,10 +69,7 @@ export class GuiTime extends AbstractDateTimeInput {
   private parseValue(isoValue: string | null) {
     if (!isoValue) {
       this.clearGroup('default');
-      // The AM/PM toggle is a switch and always has a state
-      if (this.effectiveHourFormat === '12') {
-        this.setPartValue('default', 'dayPeriod', 'am');
-      }
+      this.seedDayPeriods(['default']);
       return;
     }
 
@@ -178,79 +96,29 @@ export class GuiTime extends AbstractDateTimeInput {
   }
 
   private validateAndEmit() {
-    const is12h = this.effectiveHourFormat === '12';
-    let hourVal = parseInt(this.getPartValue('default', 'hour'), 10);
-    let minuteVal = parseInt(this.getPartValue('default', 'minute'), 10);
-    const period = this.getPartValue('default', 'dayPeriod');
-
-    // Clamp out-of-range values and write them back so the user sees the
-    // corrected part immediately
-    if (!isNaN(hourVal)) {
-      const clamped = this.clampToDescriptor('hour', hourVal);
-      if (clamped !== hourVal) {
-        hourVal = clamped;
-        this.setPartValue('default', 'hour', hourVal.toString().padStart(2, '0'));
-      }
+    const parsed = this.parseTimeGroup('default');
+    if (!parsed) {
+      this.requestUpdate();
+      return;
     }
-    if (!isNaN(minuteVal)) {
-      const clamped = this.clampToDescriptor('minute', minuteVal);
-      if (clamped !== minuteVal) {
-        minuteVal = clamped;
-        this.setPartValue('default', 'minute', minuteVal.toString().padStart(2, '0'));
-      }
-    }
+    const { iso, boundsError } = parsed;
 
-    const isHourValid = !isNaN(hourVal);
-    const isMinuteValid = !isNaN(minuteVal);
-    const isPeriodValid = !is12h || period === 'am' || period === 'pm';
-
-    if (isHourValid && isMinuteValid && isPeriodValid) {
-      const hour24 = is12h ? to24Hour(hourVal, period as 'am' | 'pm') : hourVal;
-      const candidate = toISOTimeString(new Date(1970, 0, 1, hour24, minuteVal, 0));
-      const boundsError = this.validateBounds(candidate);
-
-      if (boundsError) {
-        this.dispatchEvent(
-          new CustomEvent('change', {
-            detail: { value: candidate },
-            bubbles: true,
-          }),
-        );
-        this.dispatchEvent(
-          new CustomEvent('inputError', {
-            detail: { message: boundsError },
-            bubbles: true,
-          }),
-        );
-        this.requestUpdate();
-        return;
-      }
-
-      this.value = candidate;
-
+    if (boundsError) {
       this.dispatchEvent(
-        new CustomEvent('change', {
-          detail: { value: this.value },
-          bubbles: true,
-        }),
+        new CustomEvent('change', { detail: { value: iso }, bubbles: true }),
       );
+      this.dispatchEvent(
+        new CustomEvent('inputError', { detail: { message: boundsError }, bubbles: true }),
+      );
+      this.requestUpdate();
+      return;
     }
 
+    this.value = iso;
+    this.dispatchEvent(
+      new CustomEvent('change', { detail: { value: this.value }, bubbles: true }),
+    );
     this.requestUpdate();
-  }
-
-  /**
-   * Checks a complete time against the scalar minTime/maxTime bounds. Returns
-   * the error message for the first violated constraint, or null.
-   */
-  private validateBounds(candidate: string): string | null {
-    if (this.minTime && compareISOTimes(candidate, this.minTime) < 0) {
-      return this.minTimeMessage ?? 'Invalid time: time is before the minimum allowed time.';
-    }
-    if (this.maxTime && compareISOTimes(candidate, this.maxTime) > 0) {
-      return this.maxTimeMessage ?? 'Invalid time: time is after the maximum allowed time.';
-    }
-    return null;
   }
 }
 

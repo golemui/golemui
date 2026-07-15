@@ -34,6 +34,8 @@ import type {
   RangeCalendarProps,
   RangeDateInputProps,
   RangeDatePickerProps,
+  RangeTimeInputProps,
+  TimeRange,
   RepeaterProps,
   SelectProps,
   TabsProps,
@@ -210,6 +212,7 @@ type GolemWidget<
   | GuiRangeCalendar<FormType, States, V>
   | GuiRangeDateInput<FormType, States, V>
   | GuiRangeDatePicker<FormType, States, V>
+  | GuiRangeTimeInput<FormType, States, V>
   // | GuiRenderer<FormType, States>
   | GuiRepeater<FormType, States, V, CustomWidget>
   | GuiSelect<FormType, States, V>
@@ -376,6 +379,14 @@ type GuiRangeDateInput<
   V,
 > = InputWidget<DateRange[], States, FormType, RangeDateInputProps, V> & {
   type: 'rangeDateInput';
+};
+
+type GuiRangeTimeInput<
+  FormType extends Record<string, any>,
+  States extends string,
+  V,
+> = InputWidget<TimeRange[], States, FormType, RangeTimeInputProps, V> & {
+  type: 'rangeTimeInput';
 };
 
 type GuiRangeDatePicker<

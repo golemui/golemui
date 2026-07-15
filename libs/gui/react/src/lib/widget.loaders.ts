@@ -28,6 +28,7 @@ export const widgetLoaders: WidgetLoaders<React.ComponentType<WithWidget>, Golem
   radiogroup: async () => (await import('./components/RadioGroup')).RadioGroup,
   rangeCalendar: async () => (await import('./components/RangeCalendar')).RangeCalendar,
   rangeDateInput: async () => (await import('./components/RangeDateInput')).RangeDateInput,
+  rangeTimeInput: async () => (await import('./components/RangeTimeInput')).RangeTimeInput,
   rangeDatePicker: async () => (await import('./components/RangeDatePicker')).RangeDatePicker,
   tags: async () => (await import('./components/Tags')).Tags,
 
