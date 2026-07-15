@@ -69,6 +69,8 @@ export class RangeTimePickerElement extends LitElement implements WithWidget {
         .removePillAriaLabel=${templateData.removePillAriaLabel}
         .startTimeAriaLabel=${templateData.startTimeAriaLabel}
         .endTimeAriaLabel=${templateData.endTimeAriaLabel}
+        .startTimeLabel=${templateData.startTimeLabel}
+        .endTimeLabel=${templateData.endTimeLabel}
         .hourFormat=${templateData.hourFormat}
         .minuteStep=${templateData.minuteStep}
         .minTime=${templateData.minTime}

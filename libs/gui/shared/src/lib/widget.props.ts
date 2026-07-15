@@ -435,6 +435,10 @@ export type RangeTimePickerProps = RangeTimeInputProps & {
   allowCustomTime?: boolean;
   height?: number;
   itemHeight?: number;
+  /** Visible heading above the "time in" list in the popover. Defaults to "Start time". */
+  startTimeLabel?: Localizable;
+  /** Visible heading above the "time out" list in the popover. Defaults to "End time". */
+  endTimeLabel?: Localizable;
   disabledRangeMessage?: Localizable;
   noAvailableTimesMessage?: Localizable;
 };

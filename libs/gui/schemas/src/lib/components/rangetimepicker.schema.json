@@ -116,6 +116,12 @@
         "endTimeAriaLabel": {
           "$ref": "#/$defs/endTimeAriaLabelProp"
         },
+        "startTimeLabel": {
+          "$ref": "../common.schema.json#/$defs/localizable"
+        },
+        "endTimeLabel": {
+          "$ref": "../common.schema.json#/$defs/localizable"
+        },
         "hourFormat": {
           "$ref": "#/$defs/hourFormatProp"
         },
@@ -174,6 +180,12 @@
         },
         "^endTimeAriaLabel\\.[^.]+$": {
           "$ref": "#/$defs/endTimeAriaLabelProp"
+        },
+        "^startTimeLabel\\.[^.]+$": {
+          "$ref": "../common.schema.json#/$defs/localizable"
+        },
+        "^endTimeLabel\\.[^.]+$": {
+          "$ref": "../common.schema.json#/$defs/localizable"
         },
         "^hourFormat\\.[^.]+$": {
           "$ref": "#/$defs/hourFormatProp"

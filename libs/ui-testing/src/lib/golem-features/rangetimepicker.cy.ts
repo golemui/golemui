@@ -90,6 +90,15 @@ export const runRangeTimePickerComponentTests = (mountFn: MountComponentFn) => {
       cy.get(sel.outItems).eq(0).should('have.attr', 'aria-disabled', 'true');
     });
 
+    it('should render localizable start/end column headings from startTimeLabel/endTimeLabel', () => {
+      mountRangeTimePicker({ props: { ...officeProps, startTimeLabel: 'From', endTimeLabel: 'Until' } });
+
+      cy.get(sel.startHour).click();
+      cy.get('.gui-range-time-picker__column-label').should('have.length', 2);
+      cy.get('.gui-range-time-picker__column-label').first().should('have.text', 'From');
+      cy.get('.gui-range-time-picker__column-label').last().should('have.text', 'Until');
+    });
+
     it('should floor the out list one slot after the chosen in (out > in)', () => {
       mountRangeTimePicker({ props: officeProps });
 

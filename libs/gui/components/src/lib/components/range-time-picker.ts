@@ -41,6 +41,10 @@ export class GuiRangeTimePicker extends LitElement {
   @property({ type: String, attribute: 'end-time-aria-label' }) endTimeAriaLabel:
     | string
     | undefined = undefined;
+  @property({ type: String, attribute: 'start-time-label' }) startTimeLabel: string | undefined =
+    undefined;
+  @property({ type: String, attribute: 'end-time-label' }) endTimeLabel: string | undefined =
+    undefined;
   @property({ type: String, attribute: 'hour-format' }) hourFormat: HourFormat | undefined =
     undefined;
   @property({ type: Number, attribute: 'minute-step' }) minuteStep: number | undefined = undefined;
@@ -145,16 +149,17 @@ export class GuiRangeTimePicker extends LitElement {
   override render() {
     const pickerIcon = addIcon('rangeTimePicker', { icon: this.icon });
     const out = this.outListBounds;
+    const startLabel = this.startTimeLabel ?? 'Start time';
+    const endLabel = this.endTimeLabel ?? 'End time';
 
     const panel = this._isListOpen
       ? html`<div class="gui-range-time-picker__panel" id="list-panel" role="group">
           <div class="gui-range-time-picker__column">
-            <span class="gui-range-time-picker__column-label"
-              >${this.startTimeAriaLabel ?? 'Start time'}</span
-            >
+            <span class="gui-range-time-picker__column-label">${startLabel}</span>
             <gui-time-list
               class="gui-range-time-picker__list"
               .uid=${this.uid}
+              .label=${startLabel}
               .value=${this._workingIn}
               .localeId=${this.localeId}
               .hourFormat=${this.hourFormat}
@@ -171,12 +176,11 @@ export class GuiRangeTimePicker extends LitElement {
           </div>
 
           <div class="gui-range-time-picker__column">
-            <span class="gui-range-time-picker__column-label"
-              >${this.endTimeAriaLabel ?? 'End time'}</span
-            >
+            <span class="gui-range-time-picker__column-label">${endLabel}</span>
             <gui-time-list
               class="gui-range-time-picker__list"
               .uid=${this.uid}
+              .label=${endLabel}
               .value=${undefined}
               .localeId=${this.localeId}
               .hourFormat=${this.hourFormat}

@@ -53,6 +53,8 @@ export function RangeTimePicker(widgetInstance: WithWidget) {
         removePillAriaLabel={templateData.removePillAriaLabel}
         startTimeAriaLabel={templateData.startTimeAriaLabel}
         endTimeAriaLabel={templateData.endTimeAriaLabel}
+        startTimeLabel={templateData.startTimeLabel as string}
+        endTimeLabel={templateData.endTimeLabel as string}
         hourFormat={templateData.hourFormat}
         minuteStep={templateData.minuteStep}
         minTime={templateData.minTime}

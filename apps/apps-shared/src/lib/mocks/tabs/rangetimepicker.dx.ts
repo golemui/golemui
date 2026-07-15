@@ -10,6 +10,8 @@ export const rangeTimePickerTab = gui.layouts.flex([
     maxTime: '22:00:00',
     minuteStep: 30,
     allowCustomTime: true,
+    startTimeLabel: 'Time In',
+    endTimeLabel: 'Time Out',
   }),
   gui.inputs.rangeTimePicker('rangeTimePickerDefault', {
     label: 'Shift schedule',
