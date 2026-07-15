@@ -78,6 +78,7 @@ export class GuiRangeDatePicker extends LitElement {
 
   @state() private _isCalendarOpen = false;
   @state() private _focusDate: string | undefined = undefined;
+  @state() private _invalidRange: { start: string; end: string } | null = null;
 
   private _ignoreNextFocusOut = false;
   private _focusOutRafId: number | undefined;
@@ -175,6 +176,7 @@ export class GuiRangeDatePicker extends LitElement {
           .numberOfMonths=${this.numberOfMonths}
           .localeId=${this.localeId}
           .hidePills=${true}
+          .invalidRange=${this._invalidRange}
           @blur=${this.onCalendarBlur}
           @change=${this.onCalendarChange}
           @inputError=${this.onCalendarInputError}
@@ -255,11 +257,13 @@ export class GuiRangeDatePicker extends LitElement {
   private onCalendarInputError(event: CustomEvent) {
     const range = event.detail?.range as { start: string; end: string } | undefined;
     if (!range) return;
+    this._invalidRange = range;
     (this._dateRef as GuiRangeDateInput | undefined)?.showRange(range.start, range.end);
   }
 
   private commitValue(value: DateRange[] | null | undefined) {
     this.value = value ?? undefined;
+    this._invalidRange = null;
     const error = this.validateBounds(this.value);
     this.dispatchEvent(
       new CustomEvent('change', {

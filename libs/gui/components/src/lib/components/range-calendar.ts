@@ -41,6 +41,7 @@ export class GuiRangeCalendar extends AbstractCalendar {
   @property({ type: String, attribute: 'disabled-date-range-message' }) disabledDateRangeMessage:
     | string
     | undefined = undefined;
+  @property({ attribute: false }) invalidRange: { start: string; end: string } | null = null;
 
   @state() private _anchorDate: Date | null = null;
   @state() private _nextDate: RangeCalendarDay | null = null;
@@ -59,6 +60,16 @@ export class GuiRangeCalendar extends AbstractCalendar {
   }
 
   override willUpdate(changedProperties: PropertyValues): void {
+    if (changedProperties.has('invalidRange')) {
+      if (this.invalidRange) {
+        const start = parseISODateString(this.invalidRange.start);
+        const end = parseISODateString(this.invalidRange.end);
+        this._invalidRange =
+          isNaN(start.getTime()) || isNaN(end.getTime()) ? null : { start, end };
+      } else {
+        this._invalidRange = null;
+      }
+    }
     if (changedProperties.has('value') && !changedProperties.has('focusDate')) {
       if (this._skipValueNavigation) {
         this._skipValueNavigation = false;

@@ -262,6 +262,36 @@ export const runRangeDatePickerComponentTests = (mountFn: MountComponentFn) => {
       cy.get(sel.endDay).should('have.value', '20');
     });
 
+    it('should restore the rejected-range highlight after closing and reopening the calendar', () => {
+      const now = new Date();
+      const y = now.getFullYear();
+      const m = now.getMonth();
+      const iso = (d: number) =>
+        `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+
+      mountRangeDatePicker({
+        props: {
+          disabledRanges: [{ start: iso(15), end: iso(15) }],
+          disabledDateRangeMessage: 'Range includes unavailable days',
+        },
+      });
+
+      cy.get(sel.startMonth).click();
+      cy.get(sel.dayButton(iso(10))).click();
+      cy.get(sel.dayButton(iso(20))).click();
+      cy.get(sel.dayButton(iso(10))).should('have.class', 'invalid-range-start');
+
+      // Close the calendar (it gets destroyed) then reopen it.
+      cy.get('body').click(0, 0);
+      cy.get(sel.calendar).should('not.exist');
+      cy.get(sel.startMonth).click();
+
+      // The red highlight is restored on the freshly recreated calendar.
+      cy.get(sel.dayButton(iso(10))).should('have.class', 'invalid-range-start');
+      cy.get(sel.dayButton(iso(20))).should('have.class', 'invalid-range-end');
+      cy.get(sel.startDay).should('have.value', '10');
+    });
+
     it('should clear the rejected range once a valid range is selected', () => {
       const now = new Date();
       const y = now.getFullYear();
