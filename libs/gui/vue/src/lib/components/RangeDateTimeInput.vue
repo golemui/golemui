@@ -73,15 +73,11 @@ onUnmounted(() => {
       :endDateTimeAriaLabel="templateData.endDateTimeAriaLabel"
       :hourFormat="templateData.hourFormat"
       :minuteStep="templateData.minuteStep"
-      :minDate="templateData.minDate"
-      :maxDate="templateData.maxDate"
-      :minTime="templateData.minTime"
-      :maxTime="templateData.maxTime"
+      :minDateTime="templateData.minDateTime"
+      :maxDateTime="templateData.maxDateTime"
       :invalidDateMessage="templateData.invalidDateMessage"
-      :minDateMessage="templateData.minDateMessage"
-      :maxDateMessage="templateData.maxDateMessage"
-      :minTimeMessage="templateData.minTimeMessage"
-      :maxTimeMessage="templateData.maxTimeMessage"
+      :minDateTimeMessage="templateData.minDateTimeMessage"
+      :maxDateTimeMessage="templateData.maxDateTimeMessage"
     />
   </div>
 </template>

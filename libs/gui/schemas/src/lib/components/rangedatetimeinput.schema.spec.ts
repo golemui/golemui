@@ -65,14 +65,10 @@ describe('RangeDateTimeInput schema validation', () => {
               hourFormat: '24',
               minuteStep: 15,
               invalidDateMessage: 'Invalid date',
-              minDate: '2026-01-01',
-              maxDate: '2026-12-31',
-              minTime: '09:00:00',
-              maxTime: '18:00:00',
-              minDateMessage: 'Too early a date',
-              maxDateMessage: 'Too late a date',
-              minTimeMessage: 'Too early',
-              maxTimeMessage: 'Too late',
+              minDateTime: '2026-01-01T09:00:00',
+              maxDateTime: '2026-12-31T18:00:00',
+              minDateTimeMessage: 'Too early',
+              maxDateTimeMessage: 'Too late',
             },
           },
         ],
@@ -95,9 +91,9 @@ describe('RangeDateTimeInput schema validation', () => {
             type: 'rangeDateTimeInput',
             props: {
               'hint.hasError': 'Date-time ranges required',
-              'minTime.isMobile': '10:00:00',
-              'maxTime.isMobile': '16:00:00',
-              'minDateMessage.hasError': 'Too early',
+              'minDateTime.isMobile': '2026-01-01T10:00:00',
+              'maxDateTime.isMobile': '2026-12-31T16:00:00',
+              'minDateTimeMessage.hasError': 'Too early',
             },
           },
         ],
@@ -143,7 +139,7 @@ describe('RangeDateTimeInput schema validation', () => {
   });
 
   describe('Invalid configurations', () => {
-    it('should fail on a malformed minTime', () => {
+    it('should reject the date-only bound it replaced', () => {
       const formDef = golemForm().create({
         form: [
           {
@@ -152,16 +148,39 @@ describe('RangeDateTimeInput schema validation', () => {
             kind: 'input',
             type: 'rangeDateTimeInput',
             props: {
-              minTime: '25:00:00',
+              // Each endpoint is an instant, so it is bounded by minDateTime /
+              // maxDateTime; a date-only bound cannot express the time of day.
+              // @ts-expect-error Expected, minDate is not a rangeDateTimeInput prop
+              minDate: '2026-01-01',
             },
           },
         ],
       });
 
       const widget = formDef.form.children[0];
-      const isValid = validate(widget);
-      expect(isValid).toBe(false);
-      expect(validate.errors?.some((e) => e.instancePath === '/props/minTime')).toBe(true);
+      expect(validate(widget)).toBe(false);
+    });
+
+    it('should reject the time-of-day bound it replaced', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            uid: 'rdti-2',
+            path: 'dateTimeRanges',
+            kind: 'input',
+            type: 'rangeDateTimeInput',
+            props: {
+              // A recurring daily window is a different constraint from an
+              // instant bound; it belongs to the date-time calendar, not here.
+              // @ts-expect-error Expected, minTime is not a rangeDateTimeInput prop
+              minTime: '09:00:00',
+            },
+          },
+        ],
+      });
+
+      const widget = formDef.form.children[0];
+      expect(validate(widget)).toBe(false);
     });
 
     it('should fail on invalid type for icon', () => {

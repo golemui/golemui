@@ -178,20 +178,60 @@ export const runRangeDateTimeInputComponentTests = (mountFn: MountComponentFn) =
       cy.get(sel.pillText).should('have.length', 2);
     });
 
-    it('should emit an inputError for a typed time past maxTime', () => {
-      mountRangeDateTimeInput({ props: { maxTime: '17:00:00', maxTimeMessage: 'Too late' } });
+    it('should emit an inputError for a typed date-time past maxDateTime', () => {
+      mountRangeDateTimeInput({
+        props: { maxDateTime: '2026-11-22T17:00:00', maxDateTimeMessage: 'Too late' },
+      });
 
       const inputErrorSpy = cy.spy().as('inputErrorSpy');
       cy.get('gui-range-date-time').then(($el) => {
         $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
       });
 
-      // A complete start date-time whose time is past maxTime commits its bound error.
+      // Nov 22 18:00 is past the Nov 22 17:00 instant → rejected.
       typeGroup('start', ['22', '11', '2026', '18', '00']);
       cy.get(sel.endDay).click();
 
       cy.get('@inputErrorSpy').then((spy: any) => {
         expect(spy.getCall(0).args[0].detail.message).to.equal('Too late');
+      });
+    });
+
+    it('should accept a later day whose time-of-day precedes minDateTime', () => {
+      // The bound is an instant, not a (date, time-of-day) pair: Nov 23 08:00 is
+      // after Nov 22 09:00 and must be accepted. Validating the date and time
+      // axes independently would wrongly reject it on the time axis alone.
+      mountRangeDateTimeInput({
+        props: { minDateTime: '2026-11-22T09:00:00', minDateTimeMessage: 'Too early' },
+      });
+
+      const inputErrorSpy = cy.spy().as('inputErrorSpy');
+      cy.get('gui-range-date-time').then(($el) => {
+        $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
+      });
+
+      typeRange(['23', '11', '2026', '08', '00'], ['23', '11', '2026', '10', '00']);
+
+      cy.get('@inputErrorSpy').should('not.have.been.called');
+      cy.get(sel.pillText).should('have.length', 1);
+    });
+
+    it('should emit an inputError for a typed date-time before minDateTime', () => {
+      mountRangeDateTimeInput({
+        props: { minDateTime: '2026-11-22T09:00:00', minDateTimeMessage: 'Too early' },
+      });
+
+      const inputErrorSpy = cy.spy().as('inputErrorSpy');
+      cy.get('gui-range-date-time').then(($el) => {
+        $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
+      });
+
+      // Nov 22 08:00 is before the Nov 22 09:00 instant → rejected.
+      typeGroup('start', ['22', '11', '2026', '08', '00']);
+      cy.get(sel.endDay).click();
+
+      cy.get('@inputErrorSpy').then((spy: any) => {
+        expect(spy.getCall(0).args[0].detail.message).to.equal('Too early');
       });
     });
 

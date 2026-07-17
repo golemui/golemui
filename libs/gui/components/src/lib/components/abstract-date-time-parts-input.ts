@@ -7,9 +7,8 @@ import {
   type DateTimePartDescriptor,
   type DateTimePartType,
 } from './abstract-date-time-input';
-import { dateBoundsError, maxValidDayInMonth, toISODateString } from '../utils/date';
+import { maxValidDayInMonth } from '../utils/date';
 import {
-  compareISOTimes,
   from24Hour,
   getDateTimeFormatParts,
   getDayPeriodLabels,
@@ -17,17 +16,13 @@ import {
   resolveHourFormat,
   to24Hour,
   toISODateTimeString,
-  toISOTimeString,
   type HourFormat,
 } from '../utils/time';
 
-export const INVALID_MIN_TIME_MESSAGE = 'Invalid time: time is before the minimum allowed time.';
-export const INVALID_MAX_TIME_MESSAGE = 'Invalid time: time is after the maximum allowed time.';
-
 /**
  * A parsed date-time group. `iso` is the built ISO date-time, or `null` when the
- * date is impossible (e.g. Feb 31). `error` is the first bound/validity
- * violation (invalid date, out-of-range date, or out-of-range time), or `null`.
+ * date is impossible (e.g. Feb 31). `error` is the first validity/bound
+ * violation, or `null`.
  */
 export interface ParsedDateTimeGroup {
   iso: string | null;
@@ -38,21 +33,9 @@ export abstract class AbstractDateTimePartsInput extends AbstractDateTimeInput {
   @property({ type: String, attribute: 'hour-format' }) hourFormat: HourFormat | undefined =
     undefined;
   @property({ type: Number, attribute: 'minute-step' }) minuteStep: number | undefined = 1;
-  @property({ type: String, attribute: 'min-date' }) minDate: string | undefined = undefined;
-  @property({ type: String, attribute: 'max-date' }) maxDate: string | undefined = undefined;
-  @property({ type: String, attribute: 'min-time' }) minTime: string | undefined = undefined;
-  @property({ type: String, attribute: 'max-time' }) maxTime: string | undefined = undefined;
   @property({ type: String, attribute: 'invalid-date-message' }) invalidDateMessage:
     | string
     | undefined = undefined;
-  @property({ type: String, attribute: 'min-date-message' }) minDateMessage: string | undefined =
-    undefined;
-  @property({ type: String, attribute: 'max-date-message' }) maxDateMessage: string | undefined =
-    undefined;
-  @property({ type: String, attribute: 'min-time-message' }) minTimeMessage: string | undefined =
-    undefined;
-  @property({ type: String, attribute: 'max-time-message' }) maxTimeMessage: string | undefined =
-    undefined;
 
   // Intl.DateTimeFormat construction is expensive and these are consulted on
   // every keystroke, so the derived locale data is memoized per input change.
@@ -196,31 +179,18 @@ export abstract class AbstractDateTimePartsInput extends AbstractDateTimeInput {
     }
 
     const hour24 = is12h ? to24Hour(hourVal, period as 'am' | 'pm') : hourVal;
-    const iso = toISODateTimeString(new Date(yearVal, monthVal - 1, dayVal, hour24, minuteVal, 0));
-    const error =
-      this.validateDateBounds(yearVal, monthVal, dayVal) ??
-      this.validateTimeBounds(hour24, minuteVal);
-    return { iso, error };
+    const instant = new Date(yearVal, monthVal - 1, dayVal, hour24, minuteVal, 0);
+    const iso = toISODateTimeString(instant);
+    return { iso, error: this.boundsError(iso, instant) };
   }
 
-  /** Checks the date portion against the scalar minDate/maxDate bounds. */
-  private validateDateBounds(year: number, month: number, day: number): string | null {
-    const iso = toISODateString(new Date(year, month - 1, day));
-    return dateBoundsError(iso, this.minDate, this.maxDate, undefined, {
-      minDateMessage: this.minDateMessage,
-      maxDateMessage: this.maxDateMessage,
-    });
-  }
-
-  /** Checks the time portion against the scalar minTime/maxTime bounds. */
-  private validateTimeBounds(hour24: number, minuteVal: number): string | null {
-    const time = toISOTimeString(new Date(1970, 0, 1, hour24, minuteVal, 0));
-    if (this.minTime && compareISOTimes(time, this.minTime) < 0) {
-      return this.minTimeMessage ?? INVALID_MIN_TIME_MESSAGE;
-    }
-    if (this.maxTime && compareISOTimes(time, this.maxTime) > 0) {
-      return this.maxTimeMessage ?? INVALID_MAX_TIME_MESSAGE;
-    }
+  /**
+   * The bound violation for a complete date-time, or null when it is allowed.
+   * The bound model is component-specific and so is left to subclasses: a
+   * single-value input may constrain the date and time axes independently,
+   * while a range input constrains the instant itself.
+   */
+  protected boundsError(_iso: string, _instant: Date): string | null {
     return null;
   }
 }

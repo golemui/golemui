@@ -80,15 +80,11 @@ export function RangeDateTimeInput(widgetInstance: WithWidget) {
         endDateTimeAriaLabel={endDateTimeAriaLabel}
         hourFormat={templateData.hourFormat}
         minuteStep={templateData.minuteStep}
-        minDate={templateData.minDate}
-        maxDate={templateData.maxDate}
-        minTime={templateData.minTime}
-        maxTime={templateData.maxTime}
+        minDateTime={templateData.minDateTime}
+        maxDateTime={templateData.maxDateTime}
         invalidDateMessage={templateData.invalidDateMessage as string}
-        minDateMessage={templateData.minDateMessage as string}
-        maxDateMessage={templateData.maxDateMessage as string}
-        minTimeMessage={templateData.minTimeMessage as string}
-        maxTimeMessage={templateData.maxTimeMessage as string}
+        minDateTimeMessage={templateData.minDateTimeMessage as string}
+        maxDateTimeMessage={templateData.maxDateTimeMessage as string}
       />
     </div>
   );

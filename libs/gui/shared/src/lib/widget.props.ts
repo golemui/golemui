@@ -445,18 +445,16 @@ export type RangeDateTimeInputProps = {
   hourFormat?: '12' | '24';
   minuteStep?: number;
   invalidDateMessage?: Localizable;
-  /** Earliest allowed date (ISO date, inclusive). */
-  minDate?: string;
-  /** Latest allowed date (ISO date, inclusive). */
-  maxDate?: string;
-  /** First allowed time (ISO time, inclusive). */
-  minTime?: string;
-  /** Last allowed time (ISO time, inclusive). */
-  maxTime?: string;
-  minDateMessage?: Localizable;
-  maxDateMessage?: Localizable;
-  minTimeMessage?: Localizable;
-  maxTimeMessage?: Localizable;
+  /**
+   * Earliest allowed date-time (ISO date-time, inclusive). Each endpoint of the
+   * value is an instant, so the bound is an instant too: a date-only bound
+   * cannot say whether its last day is allowed until 00:00 or 23:59.
+   */
+  minDateTime?: string;
+  /** Latest allowed date-time (ISO date-time, inclusive). */
+  maxDateTime?: string;
+  minDateTimeMessage?: Localizable;
+  maxDateTimeMessage?: Localizable;
 };
 
 export type RangeTimePickerProps = RangeTimeInputProps & {

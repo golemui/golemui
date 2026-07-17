@@ -453,11 +453,12 @@ const INPUTS: DxSpec[] = [
   {
     factory: 'rangeDateTimeInput',
     namespace: 'inputs',
-    call: 'gui.inputs.rangeDateTimeInput(path, { label?, minDate?, maxDate?, minTime?, maxTime? })',
+    call: 'gui.inputs.rangeDateTimeInput(path, { label?, minDateTime?, maxDateTime? })',
     example:
-      "gui.inputs.rangeDateTimeInput('window', { label: 'Window', minTime: '06:00:00', maxTime: '22:00:00' })",
+      "gui.inputs.rangeDateTimeInput('window', { label: 'Window', minDateTime: '2026-03-01T06:00:00', maxDateTime: '2026-03-31T22:00:00' })",
     notes: [
       'Typed start–end date-time **range** entry (the range sibling of `dateTimeInput`); value is `DateTimeRange[]`. A backward selection reorders (swaps) instead of erroring.',
+      'Each endpoint is an instant, so it is bounded by instants: use **`minDateTime`** / **`maxDateTime`** (ISO `YYYY-MM-DDTHH:mm:ss`), not `minDate`/`maxDate`. There is no `minTime`/`maxTime` here — a per-day time window is a different constraint from an instant bound.',
     ],
   },
   {

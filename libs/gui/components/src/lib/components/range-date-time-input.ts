@@ -9,6 +9,11 @@ import { addErrors, addLabel, type ControlTemplateData } from '../utils/template
 import './pills';
 import type { GuiPillEventDetail, GuiPillItem } from './pills';
 
+export const INVALID_MIN_DATE_TIME_MESSAGE =
+  'Invalid date-time: date-time is before the minimum allowed date-time.';
+export const INVALID_MAX_DATE_TIME_MESSAGE =
+  'Invalid date-time: date-time is after the maximum allowed date-time.';
+
 @customElement('gui-range-date-time')
 export class GuiRangeDateTimeInput extends AbstractDateTimePartsInput {
   @property({ type: Array }) value: DateTimeRange[] | undefined = [];
@@ -16,9 +21,41 @@ export class GuiRangeDateTimeInput extends AbstractDateTimePartsInput {
   @property({ type: String }) startDateTimeAriaLabel: string | undefined = undefined;
   @property({ type: String }) endDateTimeAriaLabel: string | undefined = undefined;
   @property({ type: String }) separator: string | undefined = undefined;
+  @property({ type: String, attribute: 'min-date-time' }) minDateTime: string | undefined =
+    undefined;
+  @property({ type: String, attribute: 'max-date-time' }) maxDateTime: string | undefined =
+    undefined;
+  @property({ type: String, attribute: 'min-date-time-message' }) minDateTimeMessage:
+    | string
+    | undefined = undefined;
+  @property({ type: String, attribute: 'max-date-time-message' }) maxDateTimeMessage:
+    | string
+    | undefined = undefined;
 
   protected override readonly inputBlockClass = 'gui-range-date-time-input';
   protected override readonly groups = ['start', 'end'] as const;
+
+  /**
+   * Each endpoint is an instant, so it is bounded by instants. A date-only
+   * bound could not express this: `maxDate: 2026-02-10` is ambiguous about
+   * whether the 10th is allowed until 00:00 or 23:59, and independent date/time
+   * axes would wrongly reject Feb 11 08:00 for a `minTime` of 09:00.
+   */
+  protected override boundsError(_iso: string, instant: Date): string | null {
+    const time = instant.getTime();
+
+    const min = this.minDateTime ? parseISODateTimeString(this.minDateTime) : undefined;
+    if (min && !isNaN(min.getTime()) && time < min.getTime()) {
+      return this.minDateTimeMessage ?? INVALID_MIN_DATE_TIME_MESSAGE;
+    }
+
+    const max = this.maxDateTime ? parseISODateTimeString(this.maxDateTime) : undefined;
+    if (max && !isNaN(max.getTime()) && time > max.getTime()) {
+      return this.maxDateTimeMessage ?? INVALID_MAX_DATE_TIME_MESSAGE;
+    }
+
+    return null;
+  }
 
   override willUpdate(changedProperties: PropertyValues): void {
     if (

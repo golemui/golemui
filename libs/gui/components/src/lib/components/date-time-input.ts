@@ -3,14 +3,55 @@ import { html, nothing, type PropertyValues } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { AbstractDateTimePartsInput } from './abstract-date-time-parts-input';
+import { dateBoundsError } from '../utils/date';
+import { compareISOTimes, toISOTimeString } from '../utils/time';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
+
+export const INVALID_MIN_TIME_MESSAGE = 'Invalid time: time is before the minimum allowed time.';
+export const INVALID_MAX_TIME_MESSAGE = 'Invalid time: time is after the maximum allowed time.';
 
 @customElement('gui-date-time')
 export class GuiDateTime extends AbstractDateTimePartsInput {
   @property({ type: String }) value: string | undefined = undefined;
+  @property({ type: String, attribute: 'min-date' }) minDate: string | undefined = undefined;
+  @property({ type: String, attribute: 'max-date' }) maxDate: string | undefined = undefined;
+  @property({ type: String, attribute: 'min-time' }) minTime: string | undefined = undefined;
+  @property({ type: String, attribute: 'max-time' }) maxTime: string | undefined = undefined;
+  @property({ type: String, attribute: 'min-date-message' }) minDateMessage: string | undefined =
+    undefined;
+  @property({ type: String, attribute: 'max-date-message' }) maxDateMessage: string | undefined =
+    undefined;
+  @property({ type: String, attribute: 'min-time-message' }) minTimeMessage: string | undefined =
+    undefined;
+  @property({ type: String, attribute: 'max-time-message' }) maxTimeMessage: string | undefined =
+    undefined;
 
   protected override readonly inputBlockClass = 'gui-date-time-input';
   protected override readonly groups = ['default'] as const;
+
+  /**
+   * Constrains the date and time axes independently: `minDate`/`maxDate` bound
+   * the day, `minTime`/`maxTime` bound the time-of-day on every allowed day.
+   */
+  protected override boundsError(iso: string, instant: Date): string | null {
+    return (
+      dateBoundsError(iso, this.minDate, this.maxDate, undefined, {
+        minDateMessage: this.minDateMessage,
+        maxDateMessage: this.maxDateMessage,
+      }) ?? this.timeBoundsError(instant)
+    );
+  }
+
+  private timeBoundsError(instant: Date): string | null {
+    const time = toISOTimeString(instant);
+    if (this.minTime && compareISOTimes(time, this.minTime) < 0) {
+      return this.minTimeMessage ?? INVALID_MIN_TIME_MESSAGE;
+    }
+    if (this.maxTime && compareISOTimes(time, this.maxTime) > 0) {
+      return this.maxTimeMessage ?? INVALID_MAX_TIME_MESSAGE;
+    }
+    return null;
+  }
 
   override willUpdate(changedProperties: PropertyValues): void {
     // !hasUpdated: parse on first render even when no value was ever set,
