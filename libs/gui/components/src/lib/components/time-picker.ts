@@ -1,4 +1,4 @@
-import { html, LitElement } from 'lit';
+import { html, LitElement, type PropertyValues } from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import './time-input';
@@ -77,6 +77,12 @@ export class GuiTimePicker extends LitElement {
 
   override createRenderRoot() {
     return this;
+  }
+
+  override updated(changed: PropertyValues) {
+    if (changed.has('value') && this._listRef && this._listRef.value !== this.value) {
+      this._listRef.value = this.value;
+    }
   }
 
   override connectedCallback() {

@@ -1,6 +1,7 @@
 gui-range-calendar,
 gui-calendar,
-gui-date-time-calendar {
+gui-date-time-calendar,
+gui-range-date-time-calendar {
   display: block;
   width: fit-content;
   max-width: 100%;
@@ -253,7 +254,8 @@ gui-date-time-calendar {
 @container gui-form (max-width: 480px) {
   gui-range-calendar,
   gui-calendar,
-  gui-date-time-calendar {
+  gui-date-time-calendar,
+  gui-range-date-time-calendar {
     width: auto;
   }
 }

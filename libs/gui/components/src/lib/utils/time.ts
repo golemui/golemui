@@ -377,6 +377,76 @@ export function mergeDateTimeRanges(ranges: DateTimeRange[]): DateTimeRange[] {
 }
 
 /**
+ * Whether a date-time range overlaps any of the given absolute instant spans.
+ *
+ * @param {DateTimeRange} range - The range to test.
+ * @param {DateTimeRange[] | undefined} spans - The disabled instant spans.
+ * @return {boolean} True when the range overlaps at least one span.
+ */
+export function dateTimeRangeOverlaps(
+  range: DateTimeRange,
+  spans: DateTimeRange[] | undefined,
+): boolean {
+  if (!spans?.length) return false;
+  const start = parseISODateTimeString(range.start).getTime();
+  const end = parseISODateTimeString(range.end ?? range.start).getTime();
+  return spans.some((span) => {
+    const spanStart = parseISODateTimeString(span.start).getTime();
+    const spanEnd = parseISODateTimeString(span.end ?? span.start).getTime();
+    return start < spanEnd && spanStart < end;
+  });
+}
+
+/**
+ * Whether some span covers an entire calendar day.
+ *
+ * @param {string} isoDay - The day (YYYY-MM-DD) to test.
+ * @param {DateTimeRange[] | undefined} spans - The disabled instant spans.
+ * @return {boolean} True when a span covers the whole day.
+ */
+export function isDayFullyBlocked(
+  isoDay: string,
+  spans: DateTimeRange[] | undefined,
+): boolean {
+  if (!spans?.length) return false;
+  const dayStart = parseISODateTimeString(`${isoDay}T00:00:00`).getTime();
+  const dayEnd = parseISODateTimeString(`${isoDay}T23:59:59`).getTime();
+  return spans.some((span) => {
+    const spanStart = parseISODateTimeString(span.start).getTime();
+    const spanEnd = parseISODateTimeString(span.end ?? span.start).getTime();
+    return spanStart <= dayStart && spanEnd >= dayEnd;
+  });
+}
+
+/**
+ * Clips absolute instant spans to a single day's clock, so a time list can grey
+ * the affected slots.
+ *
+ * @param {DateTimeRange[] | undefined} spans - The disabled instant spans.
+ * @param {string} isoDay - The day (YYYY-MM-DD) to resolve for.
+ * @return {TimeRange[]} The plain clock ranges disabled on that day.
+ */
+export function resolveDisabledTimesForDate(
+  spans: DateTimeRange[] | undefined,
+  isoDay: string,
+): TimeRange[] {
+  if (!spans?.length) return [];
+  const dayStart = parseISODateTimeString(`${isoDay}T00:00:00`).getTime();
+  const dayEnd = parseISODateTimeString(`${isoDay}T23:59:59`).getTime();
+
+  const ranges: TimeRange[] = [];
+  for (const span of spans) {
+    const spanStart = parseISODateTimeString(span.start).getTime();
+    const spanEnd = parseISODateTimeString(span.end ?? span.start).getTime();
+    if (spanEnd < dayStart || spanStart > dayEnd) continue;
+    const start = spanStart <= dayStart ? '00:00:00' : toISOTimeString(new Date(spanStart));
+    const end = spanEnd >= dayEnd ? '23:59:59' : toISOTimeString(new Date(spanEnd));
+    ranges.push({ start, end });
+  }
+  return ranges;
+}
+
+/**
  * Builds the selectable time slots for a time picker: whole-minute slots
  * anchored at minTime's HH:mm, stepping by minuteStep while inside
  * [minTime, maxTime] (both bounds inclusive), each slot flagged as disabled
@@ -441,6 +511,78 @@ export function formatISOTimeForLocale(
     minute: 'numeric',
     hourCycle: hourFormat === '12' ? 'h12' : 'h23',
   }).format(new Date(2025, 0, 15, time.hours, time.minutes, time.seconds));
+}
+
+/**
+ * Formats an ISO date-time for display, honouring the locale and hour format.
+ * Returns the raw input when it cannot be parsed.
+ *
+ * @param {string} iso - The ISO date-time string.
+ * @param {string | undefined} localeId - The locale identifier. Defaults to 'en'.
+ * @param {HourFormat} hourFormat - The effective hour format.
+ * @return {string} The localized label.
+ */
+export function formatISODateTimeForLocale(
+  iso: string,
+  localeId: string | undefined,
+  hourFormat: HourFormat,
+): string {
+  const date = parseISODateTimeString(iso);
+  if (isNaN(date.getTime())) return iso;
+
+  return new Intl.DateTimeFormat(localeId ?? 'en', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: hourFormat === '12',
+  }).format(date);
+}
+
+export const INVALID_MIN_DATE_TIME_MESSAGE =
+  'Invalid date-time: date-time is before the minimum allowed date-time.';
+export const INVALID_MAX_DATE_TIME_MESSAGE =
+  'Invalid date-time: date-time is after the maximum allowed date-time.';
+
+export interface DateTimeBoundsMessages {
+  minDateTimeMessage?: string;
+  maxDateTimeMessage?: string;
+}
+
+/**
+ * Validates an ISO date-time against `minDateTime`/`maxDateTime` (both inclusive
+ * instants) and returns the first violated bound's message, or null when in
+ * range.
+ *
+ * @param {string} iso - The ISO date-time to test.
+ * @param {string | undefined} minDateTime - Earliest allowed instant, inclusive.
+ * @param {string | undefined} maxDateTime - Latest allowed instant, inclusive.
+ * @param {DateTimeBoundsMessages} [messages] - Overrides for each bound message.
+ * @return {string | null} The violated-bound message, or null.
+ */
+export function dateTimeBoundsError(
+  iso: string,
+  minDateTime: string | undefined,
+  maxDateTime: string | undefined,
+  messages?: DateTimeBoundsMessages,
+): string | null {
+  const time = parseISODateTimeString(iso).getTime();
+  if (isNaN(time)) return null;
+
+  if (minDateTime) {
+    const min = parseISODateTimeString(minDateTime);
+    if (!isNaN(min.getTime()) && time < min.getTime()) {
+      return messages?.minDateTimeMessage ?? INVALID_MIN_DATE_TIME_MESSAGE;
+    }
+  }
+  if (maxDateTime) {
+    const max = parseISODateTimeString(maxDateTime);
+    if (!isNaN(max.getTime()) && time > max.getTime()) {
+      return messages?.maxDateTimeMessage ?? INVALID_MAX_DATE_TIME_MESSAGE;
+    }
+  }
+  return null;
 }
 
 /**

@@ -4,15 +4,22 @@ import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { styleMap } from 'lit-html/directives/style-map.js';
 import { AbstractDateTimePartsInput } from './abstract-date-time-parts-input';
-import { mergeDateTimeRanges, orderDateTimeRange, parseISODateTimeString } from '../utils/time';
+import {
+  dateTimeBoundsError,
+  formatISODateTimeForLocale,
+  mergeDateTimeRanges,
+  orderDateTimeRange,
+  parseISODateTimeString,
+} from '../utils/time';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 import './pills';
 import type { GuiPillEventDetail, GuiPillItem } from './pills';
 
-export const INVALID_MIN_DATE_TIME_MESSAGE =
-  'Invalid date-time: date-time is before the minimum allowed date-time.';
-export const INVALID_MAX_DATE_TIME_MESSAGE =
-  'Invalid date-time: date-time is after the maximum allowed date-time.';
+// Re-exported for back-compat; the definitions now live in utils/time.ts.
+export {
+  INVALID_MIN_DATE_TIME_MESSAGE,
+  INVALID_MAX_DATE_TIME_MESSAGE,
+} from '../utils/time';
 
 @customElement('gui-range-date-time')
 export class GuiRangeDateTimeInput extends AbstractDateTimePartsInput {
@@ -41,20 +48,11 @@ export class GuiRangeDateTimeInput extends AbstractDateTimePartsInput {
    * whether the 10th is allowed until 00:00 or 23:59, and independent date/time
    * axes would wrongly reject Feb 11 08:00 for a `minTime` of 09:00.
    */
-  protected override boundsError(_iso: string, instant: Date): string | null {
-    const time = instant.getTime();
-
-    const min = this.minDateTime ? parseISODateTimeString(this.minDateTime) : undefined;
-    if (min && !isNaN(min.getTime()) && time < min.getTime()) {
-      return this.minDateTimeMessage ?? INVALID_MIN_DATE_TIME_MESSAGE;
-    }
-
-    const max = this.maxDateTime ? parseISODateTimeString(this.maxDateTime) : undefined;
-    if (max && !isNaN(max.getTime()) && time > max.getTime()) {
-      return this.maxDateTimeMessage ?? INVALID_MAX_DATE_TIME_MESSAGE;
-    }
-
-    return null;
+  protected override boundsError(iso: string, _instant: Date): string | null {
+    return dateTimeBoundsError(iso, this.minDateTime, this.maxDateTime, {
+      minDateTimeMessage: this.minDateTimeMessage,
+      maxDateTimeMessage: this.maxDateTimeMessage,
+    });
   }
 
   override willUpdate(changedProperties: PropertyValues): void {
@@ -234,16 +232,7 @@ export class GuiRangeDateTimeInput extends AbstractDateTimePartsInput {
   }
 
   private formatDateTimeForDisplay(iso: string): string {
-    const date = parseISODateTimeString(iso);
-    if (isNaN(date.getTime())) return iso;
-    return new Intl.DateTimeFormat(this.localeId ?? 'en', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: this.effectiveHourFormat === '12',
-    }).format(date);
+    return formatISODateTimeForLocale(iso, this.localeId, this.effectiveHourFormat);
   }
 
   private getSortedPills(): DateTimeRange[] {

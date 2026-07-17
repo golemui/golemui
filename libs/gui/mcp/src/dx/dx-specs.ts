@@ -462,6 +462,17 @@ const INPUTS: DxSpec[] = [
     ],
   },
   {
+    factory: 'rangeDateTimeCalendar',
+    namespace: 'inputs',
+    call: 'gui.inputs.rangeDateTimeCalendar(path, { label?, minDateTime?, maxDateTime?, disabledRanges?, startTimeLabel?, endTimeLabel? })',
+    example:
+      "gui.inputs.rangeDateTimeCalendar('stay', { label: 'Stay', startTimeLabel: 'Check-in', endTimeLabel: 'Check-out' })",
+    notes: [
+      'INLINE range calendar with TWO embedded time pickers (start/end); value is `DateTimeRange[]`, rendered as pills. Pick a date range, then a start time (enables the end time), then an end time to commit a pill. A day holding more than one range shows a count badge.',
+      'Everything is in instant-space: bounds are **`minDateTime`** / **`maxDateTime`** and **`disabledRanges`** are `DateTimeRange[]` instant spans (block a whole day with `00:00:00`–`23:59:59`). There is no `minDate`/`maxDate`/`minTime`/`maxTime`/`disabledTimeRanges` — a time-of-day constraint cannot bound a multi-day span.',
+    ],
+  },
+  {
     factory: 'rangeDatePicker',
     namespace: 'inputs',
     call: 'gui.inputs.rangeDatePicker(path, { label? })',

@@ -22,6 +22,10 @@ import {
   _gslRangeDateTimeInputs,
   _gslRangeDateTimeInputByUid,
 } from '../range-date-time-input/register';
+import {
+  _gslRangeDateTimeCalendars,
+  _gslRangeDateTimeCalendarByUid,
+} from '../range-date-time-calendar/register';
 import { _gslRangeTimeInputs, _gslRangeTimeInputByUid } from '../range-time-input/register';
 import { _gslTimeInputs, _gslTimeInputByUid } from '../time-input/register';
 import { _gslTimePickers, _gslTimePickerByUid } from '../time-picker/register';
@@ -290,6 +294,16 @@ export class ScopeChain {
     config: CfgByUid<typeof _gslRangeDateTimeInputByUid>,
   ): GslLeafSelector {
     return this.apply(_gslRangeDateTimeInputByUid(uid, config));
+  }
+
+  rangeDateTimeCalendars(config: CfgGsl<typeof _gslRangeDateTimeCalendars>): GslLeafSelector {
+    return this.apply(_gslRangeDateTimeCalendars(config));
+  }
+  rangeDateTimeCalendarByUid(
+    uid: string,
+    config: CfgByUid<typeof _gslRangeDateTimeCalendarByUid>,
+  ): GslLeafSelector {
+    return this.apply(_gslRangeDateTimeCalendarByUid(uid, config));
   }
 
   rangeDatePickers(config: CfgGsl<typeof _gslRangeDatePickers>): GslLeafSelector {

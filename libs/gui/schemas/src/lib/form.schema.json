@@ -104,6 +104,9 @@
           "$ref": "./components/rangedatetimeinput.schema.json"
         },
         {
+          "$ref": "./components/rangedatetimecalendar.schema.json"
+        },
+        {
           "$ref": "./components/rangetimeinput.schema.json"
         },
         {

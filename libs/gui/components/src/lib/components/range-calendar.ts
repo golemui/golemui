@@ -44,12 +44,41 @@ export class GuiRangeCalendar extends AbstractCalendar {
     | undefined = undefined;
   @property({ attribute: false }) invalidRange: { start: string; end: string } | null = null;
 
-  @state() private _anchorDate: Date | null = null;
-  @state() private _nextDate: RangeCalendarDay | null = null;
-  @state() private _isSelecting = false;
-  @state() private _invalidRange: { start: Date; end: Date } | null = null;
+  @state() protected _anchorDate: Date | null = null;
+  @state() protected _nextDate: RangeCalendarDay | null = null;
+  @state() protected _isSelecting = false;
+  @state() protected _invalidRange: { start: Date; end: Date } | null = null;
 
-  private _skipValueNavigation = false;
+  protected _skipValueNavigation = false;
+
+  /**
+   * Full instant of an endpoint, used to order the pills. Date-only here; a
+   * subclass whose endpoints carry a time overrides it so two ranges on the
+   * same day still sort by time.
+   */
+  protected parseEndpoint(iso: string): Date {
+    return parseISODateString(iso);
+  }
+
+  /**
+   * Midnight-truncated calendar day of an endpoint, used to highlight the day
+   * grid.
+   */
+  protected endpointDay(iso: string): Date {
+    return parseISODateString(iso);
+  }
+
+  /** Pill text for one committed range. */
+  protected formatPillLabel(range: DateRange): string {
+    const startFormatted = this.formatDateForDisplay(range.start);
+    const endFormatted = range.end ? this.formatDateForDisplay(range.end) : startFormatted;
+    return `${startFormatted} - ${endFormatted}`;
+  }
+
+  /** Day-button inner content. */
+  protected renderDayContent(day: RangeCalendarDay): TemplateResult {
+    return html`${day.dayLabel}`;
+  }
 
   override createRenderRoot() {
     return this;
@@ -63,8 +92,8 @@ export class GuiRangeCalendar extends AbstractCalendar {
   override willUpdate(changedProperties: PropertyValues): void {
     if (changedProperties.has('invalidRange')) {
       if (this.invalidRange) {
-        const start = parseISODateString(this.invalidRange.start);
-        const end = parseISODateString(this.invalidRange.end);
+        const start = this.endpointDay(this.invalidRange.start);
+        const end = this.endpointDay(this.invalidRange.end);
         this._invalidRange =
           isNaN(start.getTime()) || isNaN(end.getTime()) ? null : { start, end };
       } else {
@@ -80,7 +109,7 @@ export class GuiRangeCalendar extends AbstractCalendar {
           : [{ start: this.value as unknown as string }];
 
         if (value.length > 0 && value[0].start) {
-          const date = parseISODateString(value[0].start);
+          const date = this.endpointDay(value[0].start);
           if (
             !isNaN(date.getTime()) &&
             !isDateInVisibleMonths(date, this._currentDate, this.numberOfMonths ?? 1)
@@ -137,7 +166,7 @@ export class GuiRangeCalendar extends AbstractCalendar {
         @keydown=${(e: KeyboardEvent) => this.handleKeydown(e, day)}
         aria-selected=${day.isRangeStart || day.isRangeEnd || day.isInRange ? 'true' : 'false'}
       >
-        ${day.dayLabel}
+        ${this.renderDayContent(day)}
       </button>
     `;
   }
@@ -199,7 +228,7 @@ export class GuiRangeCalendar extends AbstractCalendar {
       const todayVisible = isDateInVisibleMonths(new Date(), this._currentDate, months);
       const rangeStartVisible =
         this.value?.some((range) =>
-          isDateInVisibleMonths(parseISODateString(range.start), this._currentDate, months),
+          isDateInVisibleMonths(this.endpointDay(range.start), this._currentDate, months),
         ) ?? false;
 
       if (!todayVisible && !rangeStartVisible) {
@@ -211,7 +240,7 @@ export class GuiRangeCalendar extends AbstractCalendar {
     return days;
   }
 
-  private checkDateStatus(date: Date) {
+  protected checkDateStatus(date: Date) {
     let isRangeStart = false;
     let isRangeEnd = false;
     let isInRange = false;
@@ -243,7 +272,7 @@ export class GuiRangeCalendar extends AbstractCalendar {
 
     if (this.value && Array.isArray(this.value)) {
       for (const range of this.value) {
-        const start = parseISODateString(range.start);
+        const start = this.endpointDay(range.start);
 
         if (isSameDay(date, start)) {
           isRangeStart = true;
@@ -251,7 +280,7 @@ export class GuiRangeCalendar extends AbstractCalendar {
         }
 
         if (range.end) {
-          const end = parseISODateString(range.end);
+          const end = this.endpointDay(range.end);
 
           if (isSameDay(date, end)) {
             isRangeEnd = true;
@@ -345,7 +374,7 @@ export class GuiRangeCalendar extends AbstractCalendar {
     );
   }
 
-  private onMouseOver(day: RangeCalendarDay) {
+  protected onMouseOver(day: RangeCalendarDay) {
     if (this._isSelecting) {
       this._nextDate = day;
     }
@@ -360,9 +389,7 @@ export class GuiRangeCalendar extends AbstractCalendar {
     if (pills.length === 0) return nothing;
 
     const pillItems: GuiPillItem[] = pills.map((pill) => {
-      const startFormatted = this.formatDateForDisplay(pill.start);
-      const endFormatted = pill.end ? this.formatDateForDisplay(pill.end) : startFormatted;
-      const pillLabel = `${startFormatted} - ${endFormatted}`;
+      const pillLabel = this.formatPillLabel(pill);
       return {
         key: `${pill.start}-${pill.end ?? pill.start}`,
         label: pillLabel,
@@ -422,15 +449,15 @@ export class GuiRangeCalendar extends AbstractCalendar {
     }).format(date);
   }
 
-  private getSortedPills(): DateRange[] {
+  protected getSortedPills(): DateRange[] {
     if (!this.value || !Array.isArray(this.value)) return [];
     return [...this.value].sort(
-      (a, b) => parseISODateString(a.start).getTime() - parseISODateString(b.start).getTime(),
+      (a, b) => this.parseEndpoint(a.start).getTime() - this.parseEndpoint(b.start).getTime(),
     );
   }
 
-  private navigateToDate(isoDate: string) {
-    const date = parseISODateString(isoDate);
+  protected navigateToDate(isoDate: string) {
+    const date = this.endpointDay(isoDate);
     if (
       !isNaN(date.getTime()) &&
       !isDateInVisibleMonths(date, this._currentDate, this.numberOfMonths ?? 1)

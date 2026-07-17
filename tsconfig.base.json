@@ -72,6 +72,9 @@
       "@golemui/gui-components/range-date-time-input": [
         "libs/gui/components/src/lib/components/range-date-time-input.ts"
       ],
+      "@golemui/gui-components/range-date-time-calendar": [
+        "libs/gui/components/src/lib/components/range-date-time-calendar.ts"
+      ],
       "@golemui/gui-components/range-time-input": [
         "libs/gui/components/src/lib/components/range-time-input.ts"
       ],

@@ -1,0 +1,66 @@
+gui-range-date-time-calendar {
+  .gui-calendar__panel {
+    min-width: calc(7 * var(--gui-calendar-day-button-size) + 6px);
+  }
+
+  .gui-range-date-time-calendar__time-row {
+    display: flex;
+    gap: var(--gui-space-2);
+    margin-block-end: var(--gui-space-2);
+  }
+
+  .gui-range-date-time-calendar__time-column {
+    flex: 1 1 0;
+    min-width: 0;
+
+    .gui-time-picker.gui-field {
+      width: 100%;
+    }
+  }
+
+  .gui-range-date-time-calendar__time-row.is-list-open {
+    .gui-range-date-time-calendar__time-column:not(.is-open) {
+      display: none;
+    }
+
+    .gui-range-date-time-calendar__time-column.is-open {
+      flex-basis: 100%;
+    }
+  }
+
+  .gui-calendar__day-button .gui-range-date-time-calendar__day-count {
+    position: absolute;
+    inset-block-start: -4px;
+    inset-inline-end: -4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-width: 14px;
+    height: 14px;
+    padding: 0 2px;
+    font-size: 9px;
+    line-height: 1;
+    color: var(--gui-color-white);
+    background-color: var(--gui-intent-primary);
+    border-radius: var(--gui-radius-full);
+    pointer-events: none;
+    z-index: 1;
+  }
+}
+
+.gui-form gui-range-date-time-calendar .gui-time-picker.gui-field > .gui-widget {
+  gui-time-list {
+    position: static;
+    width: auto;
+
+    .gui-time-list__viewport {
+      max-height: var(--gui-calendar-time-grid-height);
+    }
+
+    .gui-time-list__option {
+      height: var(--gui-calendar-time-button-height);
+      font-variant-numeric: tabular-nums;
+    }
+  }
+}

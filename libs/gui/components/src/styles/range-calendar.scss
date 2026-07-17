@@ -4,7 +4,8 @@
   --gui-radius-range: calc(var(--gui-radius-md) * 2);
 }
 
-gui-range-calendar {
+gui-range-calendar,
+gui-range-date-time-calendar {
   --gui-range-bg: color-mix(in srgb, var(--gui-intent-primary), transparent 50%);
   --gui-range-error-bg: color-mix(in srgb, var(--gui-intent-error), transparent 50%);
 

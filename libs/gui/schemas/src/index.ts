@@ -26,6 +26,7 @@ export { default as radiogroupSchema } from './lib/components/radiogroup.schema.
 export { default as rangecalendarSchema } from './lib/components/rangecalendar.schema.json';
 export { default as rangedateinputSchema } from './lib/components/rangedateinput.schema.json';
 export { default as rangedatetimeinputSchema } from './lib/components/rangedatetimeinput.schema.json';
+export { default as rangedatetimecalendarSchema } from './lib/components/rangedatetimecalendar.schema.json';
 export { default as rangetimeinputSchema } from './lib/components/rangetimeinput.schema.json';
 export { default as rangedatepickerSchema } from './lib/components/rangedatepicker.schema.json';
 export { default as rangetimepickerSchema } from './lib/components/rangetimepicker.schema.json';
