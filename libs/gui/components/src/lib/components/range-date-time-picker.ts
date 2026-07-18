@@ -4,6 +4,7 @@ import { classMap } from 'lit/directives/class-map.js';
 import type { DateTimeRange } from '@golemui/gui-shared/internals';
 import './range-date-time-input';
 import './range-date-time-calendar';
+import { GUIPopupController } from '../controllers/popup.controller';
 import { type HourFormat } from '../utils/time';
 import { addErrors, addIcon, addLabel } from '../utils/templates';
 
@@ -106,53 +107,37 @@ export class GuiRangeDateTimePicker extends LitElement {
   @query('#date-input') private _dateRef?: HTMLElement;
   @query('#calendar-input') private _calendarRef?: HTMLElement;
 
-  @state() private _isCalendarOpen = false;
   @state() private _focusDate: string | undefined = undefined;
 
-  private _ignoreNextFocusOut = false;
-  private _focusOutRafId: number | undefined;
-  private _restoringFocus = false;
-
-  onDocumentClick = (event: MouseEvent) => {
-    if (!this._isCalendarOpen) return;
-
-    const path = event.composedPath();
-    const clickedInsideDate = this._dateRef && path.includes(this._dateRef);
-    const clickedInsideCalendar = this._calendarRef && path.includes(this._calendarRef);
-
-    if (!clickedInsideDate && !clickedInsideCalendar) {
-      this.closeCalendar();
-    }
-  };
-
-  onFocusOut = (event: FocusEvent) => {
-    if (this._ignoreNextFocusOut) {
-      this._ignoreNextFocusOut = false;
-      return;
-    }
-    if (!this._isCalendarOpen) return;
-
-    const newFocusTarget = event.relatedTarget as Node;
-    if (newFocusTarget && this.contains(newFocusTarget)) {
-      return;
-    }
-
-    if (this._focusOutRafId !== undefined) {
-      cancelAnimationFrame(this._focusOutRafId);
-    }
-    this._focusOutRafId = requestAnimationFrame(() => {
-      this._focusOutRafId = undefined;
-      if (!this.contains(document.activeElement)) {
-        this.closeCalendar();
-      }
-    });
-  };
+  private _popup = new GUIPopupController(this, {
+    getInteriorElements: () => [this._dateRef, this._calendarRef],
+    focusRestoreSelector: 'gui-range-date-time input',
+    isDisabled: () => !!this.disabled,
+    clickIntent: (target) => {
+      if (target.closest('.gui-calendar__day-button')) return 'ignore';
+      if (target.closest('.gui-time-list__option')) return 'ignore';
+      if (target.closest('gui-time-picker')) return 'ignore';
+      return target.closest('.gui-range-date-time-input__field') ||
+        target.closest('gui-range-date-time-calendar')
+        ? 'open'
+        : 'toggle';
+    },
+    keyToggleMode: 'openClose',
+    beforeOpen: (popup) => {
+      const dropdownWasOpen = !!this.querySelector('.gui-pills__dropdown');
+      if (dropdownWasOpen) popup.suppressNextFocusOut();
+      this.closePillsDropdown();
+    },
+    onOpenChanged: (open) => {
+      if (!open) this._focusDate = undefined;
+    },
+  });
 
   // Pills dropdown and the calendar are mutually exclusive; opening one closes the other.
   onDropdownToggle = (event: Event) => {
     const detail = (event as CustomEvent<{ open: boolean }>).detail;
-    if (detail?.open && this._isCalendarOpen) {
-      this.closeCalendar();
+    if (detail?.open && this._popup.open) {
+      this._popup.close();
     }
   };
 
@@ -162,25 +147,18 @@ export class GuiRangeDateTimePicker extends LitElement {
 
   override connectedCallback() {
     super.connectedCallback();
-    document.addEventListener('click', this.onDocumentClick);
-    this.addEventListener('focusout', this.onFocusOut);
     this.addEventListener('dropdowntoggle', this.onDropdownToggle);
   }
 
   override disconnectedCallback() {
     super.disconnectedCallback();
-    document.removeEventListener('click', this.onDocumentClick);
-    this.removeEventListener('focusout', this.onFocusOut);
     this.removeEventListener('dropdowntoggle', this.onDropdownToggle);
-    if (this._focusOutRafId !== undefined) {
-      cancelAnimationFrame(this._focusOutRafId);
-    }
   }
 
   override render() {
     const datePickerIcon = addIcon('datePicker', { icon: this.icon });
 
-    const calendar = this._isCalendarOpen
+    const calendar = this._popup.open
       ? html`<gui-range-date-time-calendar
           id="calendar-input"
           .uid=${this.uid}
@@ -232,10 +210,10 @@ export class GuiRangeDateTimePicker extends LitElement {
         role="button"
         tabindex="-1"
         class="gui-widget"
-        aria-expanded=${this._isCalendarOpen}
-        @keyup=${this.onKeyUp}
-        @keydown=${this.onKeyDown}
-        @click=${this.toggleCalendar}
+        aria-expanded=${this._popup.open}
+        @keyup=${this._popup.onAnchorKeyUp}
+        @keydown=${this._popup.onAnchorKeyDown}
+        @click=${this._popup.onAnchorClick}
       >
         <gui-range-date-time
           id="date-input"
@@ -265,7 +243,7 @@ export class GuiRangeDateTimePicker extends LitElement {
           .disabledRanges=${this.disabledRanges}
           .disabledRangeMessage=${this.disabledRangeMessage}
           @blur=${this.onDateBlur}
-          @focus=${this.openCalendar}
+          @focus=${this._popup.show}
           @change=${this.onDateChange}
           @pillClick=${this.onPillClick}
         ></gui-range-date-time>
@@ -295,15 +273,15 @@ export class GuiRangeDateTimePicker extends LitElement {
   }
 
   private onCalendarChange(event: CustomEvent) {
-    if (!this._isCalendarOpen) {
+    if (!this._popup.open) {
       event.stopPropagation();
       return;
     }
     event.stopPropagation();
     this.commitValue(event.detail.value);
-    this._ignoreNextFocusOut = true;
+    this._popup.suppressNextFocusOut();
     requestAnimationFrame(() => {
-      if (!this._isCalendarOpen) return;
+      if (!this._popup.open) return;
       const day = this.querySelector<HTMLElement>(
         'gui-range-date-time-calendar .gui-calendar__day-button[tabindex="0"]',
       );
@@ -334,75 +312,12 @@ export class GuiRangeDateTimePicker extends LitElement {
   }
 
   private onCalendarBlur() {
-    this.closeCalendar();
+    this._popup.close();
   }
 
   private onPillClick(event: CustomEvent) {
     this._focusDate = event.detail.range.start;
-    this.openCalendar();
-  }
-
-  private onKeyUp = (event: KeyboardEvent) => {
-    if (this.disabled) return;
-    if (event.target !== event.currentTarget) return;
-    if (event.key === 'Enter' || event.key === ' ') {
-      if (this._isCalendarOpen) this.closeCalendar();
-      else this.openCalendar();
-    }
-  };
-
-  private onKeyDown = (event: KeyboardEvent) => {
-    if (this.disabled) return;
-    if (event.key === 'Escape' && this._isCalendarOpen) {
-      event.preventDefault();
-      event.stopPropagation();
-      this.restoreFocusToInput();
-      this.closeCalendar();
-    }
-  };
-
-  private toggleCalendar = (event: Event) => {
-    if (this.disabled) return;
-    const target = event.target as HTMLElement;
-
-    if (target.closest('.gui-calendar__day-button')) return;
-    if (target.closest('.gui-time-list__option')) return;
-    if (target.closest('gui-time-picker')) return;
-
-    const isInputClick = target.closest('.gui-range-date-time-input__field');
-    const isCalendarClick = target.closest('gui-range-date-time-calendar');
-    if (isInputClick || isCalendarClick) {
-      this.openCalendar();
-    } else if (this._isCalendarOpen) {
-      this.closeCalendar();
-    } else {
-      this.openCalendar();
-    }
-  };
-
-  openCalendar = () => {
-    if (this.disabled || this._restoringFocus) return;
-    const dropdownWasOpen = !!this.querySelector('.gui-pills__dropdown');
-    if (dropdownWasOpen) this._ignoreNextFocusOut = true;
-    this.closePillsDropdown();
-    if (!this._isCalendarOpen) {
-      this._isCalendarOpen = true;
-    }
-  };
-
-  closeCalendar() {
-    this._isCalendarOpen = false;
-    this._focusDate = undefined;
-  }
-
-  private restoreFocusToInput() {
-    const part = this.querySelector<HTMLElement>('gui-range-date-time input');
-    if (!part) return;
-    this._restoringFocus = true;
-    part.focus();
-    setTimeout(() => {
-      this._restoringFocus = false;
-    });
+    this._popup.show();
   }
 
   private closePillsDropdown() {

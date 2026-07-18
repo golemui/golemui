@@ -5,6 +5,7 @@ import type { TimeRange } from '@golemui/gui-shared/internals';
 import './range-time-input';
 import type { GuiRangeTimeInput } from './range-time-input';
 import './time-list';
+import { GUIPopupController } from '../controllers/popup.controller';
 import {
   compareISOTimes,
   isTimeRangeDisabled,
@@ -74,45 +75,38 @@ export class GuiRangeTimePicker extends LitElement {
   @query('#time-input') private _inputRef?: GuiRangeTimeInput;
   @query('#list-panel') private _panelRef?: HTMLElement;
 
-  @state() private _isListOpen = false;
   @state() private _workingIn: string | undefined = undefined;
   @state() private _workingOut: string | undefined = undefined;
 
-  private _ignoreNextFocusOut = false;
-  private _focusOutRafId: number | undefined;
-  private _restoringFocus = false;
-
-  onDocumentClick = (event: MouseEvent) => {
-    if (!this._isListOpen) return;
-    const path = event.composedPath();
-    const clickedInsideInput = this._inputRef && path.includes(this._inputRef);
-    const clickedInsidePanel = this._panelRef && path.includes(this._panelRef);
-    if (!clickedInsideInput && !clickedInsidePanel) {
-      this.closeList();
-    }
-  };
-
-  onFocusOut = (event: FocusEvent) => {
-    if (this._ignoreNextFocusOut) {
-      this._ignoreNextFocusOut = false;
-      return;
-    }
-    if (!this._isListOpen) return;
-
-    const newFocusTarget = event.relatedTarget as Node;
-    if (newFocusTarget && this.contains(newFocusTarget)) return;
-
-    if (this._focusOutRafId !== undefined) cancelAnimationFrame(this._focusOutRafId);
-    this._focusOutRafId = requestAnimationFrame(() => {
-      this._focusOutRafId = undefined;
-      if (!this.contains(document.activeElement)) this.closeList();
-    });
-  };
+  private _popup = new GUIPopupController(this, {
+    getInteriorElements: () => [this._inputRef, this._panelRef],
+    focusRestoreSelector: 'gui-range-time input, gui-range-time button',
+    isDisabled: () => !!this.disabled,
+    clickIntent: (target) => {
+      if (target.closest('.gui-time-list__option')) return 'ignore';
+      return target.closest('.gui-range-time-input__part') ||
+        target.closest('.gui-range-time-picker__panel')
+        ? 'open'
+        : 'toggle';
+    },
+    keyToggleMode: 'openClose',
+    beforeOpen: (popup) => {
+      const dropdownWasOpen = !!this.querySelector('.gui-pills__dropdown');
+      if (dropdownWasOpen) popup.suppressNextFocusOut();
+      this.closePillsDropdown();
+    },
+    onOpenChanged: (open) => {
+      if (!open) {
+        this._workingIn = undefined;
+        this._workingOut = undefined;
+      }
+    },
+  });
 
   // The pills dropdown and the list panel are mutually exclusive.
   onDropdownToggle = (event: Event) => {
     const detail = (event as CustomEvent<{ open: boolean }>).detail;
-    if (detail?.open && this._isListOpen) this.closeList();
+    if (detail?.open && this._popup.open) this._popup.close();
   };
 
   override createRenderRoot() {
@@ -121,17 +115,12 @@ export class GuiRangeTimePicker extends LitElement {
 
   override connectedCallback() {
     super.connectedCallback();
-    document.addEventListener('click', this.onDocumentClick);
-    this.addEventListener('focusout', this.onFocusOut);
     this.addEventListener('dropdowntoggle', this.onDropdownToggle);
   }
 
   override disconnectedCallback() {
     super.disconnectedCallback();
-    document.removeEventListener('click', this.onDocumentClick);
-    this.removeEventListener('focusout', this.onFocusOut);
     this.removeEventListener('dropdowntoggle', this.onDropdownToggle);
-    if (this._focusOutRafId !== undefined) cancelAnimationFrame(this._focusOutRafId);
   }
 
   /**
@@ -153,7 +142,7 @@ export class GuiRangeTimePicker extends LitElement {
     const startLabel = this.startTimeLabel ?? 'Start time';
     const endLabel = this.endTimeLabel ?? 'End time';
 
-    const panel = this._isListOpen
+    const panel = this._popup.open
       ? html`<div class="gui-range-time-picker__panel" id="list-panel" role="group">
           <div class="gui-range-time-picker__column">
             <span class="gui-range-time-picker__column-label">${startLabel}</span>
@@ -211,10 +200,10 @@ export class GuiRangeTimePicker extends LitElement {
         role="button"
         tabindex="-1"
         class="gui-widget"
-        aria-expanded=${this._isListOpen}
-        @keyup=${this.onKeyUp}
-        @keydown=${this.onKeyDown}
-        @click=${this.toggleList}
+        aria-expanded=${this._popup.open}
+        @keyup=${this._popup.onAnchorKeyUp}
+        @keydown=${this._popup.onAnchorKeyDown}
+        @click=${this._popup.onAnchorClick}
       >
         <gui-range-time
           id="time-input"
@@ -245,7 +234,7 @@ export class GuiRangeTimePicker extends LitElement {
           .startTimeAriaLabel=${this.startTimeAriaLabel}
           .endTimeAriaLabel=${this.endTimeAriaLabel}
           @blur=${this.onInputBlur}
-          @focus=${this.openList}
+          @focus=${this._popup.show}
           @change=${this.onInputChange}
           @partsChange=${this.onPartsChange}
           @pillClick=${this.onPillClick}
@@ -314,7 +303,7 @@ export class GuiRangeTimePicker extends LitElement {
         this._inListRef()?.scrollToSelectedValue?.();
       });
     } else {
-      this.closeList();
+      this._popup.close();
       this.dispatchEvent(new CustomEvent('blur'));
     }
   }
@@ -366,68 +355,7 @@ export class GuiRangeTimePicker extends LitElement {
   }
 
   private onPillClick() {
-    this.openList();
-  }
-
-  private onKeyUp = (event: KeyboardEvent) => {
-    if (this.disabled) return;
-    if (event.target !== event.currentTarget) return;
-    if (event.key === 'Enter' || event.key === ' ') {
-      if (this._isListOpen) this.closeList();
-      else this.openList();
-    }
-  };
-
-  private onKeyDown = (event: KeyboardEvent) => {
-    if (this.disabled) return;
-    if (event.key === 'Escape' && this._isListOpen) {
-      event.preventDefault();
-      event.stopPropagation();
-      this.restoreFocusToInput();
-      this.closeList();
-    }
-  };
-
-  private toggleList = (event: Event) => {
-    if (this.disabled) return;
-    const target = event.target as HTMLElement;
-
-    if (target.closest('.gui-time-list__option')) return;
-
-    const isInputClick = target.closest('.gui-range-time-input__part');
-    const isPanelClick = target.closest('.gui-range-time-picker__panel');
-    if (isInputClick || isPanelClick) {
-      this.openList();
-    } else if (this._isListOpen) {
-      this.closeList();
-    } else {
-      this.openList();
-    }
-  };
-
-  openList = () => {
-    if (this.disabled || this._restoringFocus || this._isListOpen) return;
-    const dropdownWasOpen = !!this.querySelector('.gui-pills__dropdown');
-    if (dropdownWasOpen) this._ignoreNextFocusOut = true;
-    this.closePillsDropdown();
-    this._isListOpen = true;
-  };
-
-  closeList() {
-    if (!this._isListOpen) return;
-    this._isListOpen = false;
-    this._workingIn = undefined;
-    this._workingOut = undefined;
-  }
-
-  private restoreFocusToInput() {
-    const part = this.querySelector<HTMLElement>('gui-range-time input, gui-range-time button');
-    if (!part) return;
-    this._restoringFocus = true;
-    part.focus();
-    setTimeout(() => {
-      this._restoringFocus = false;
-    });
+    this._popup.show();
   }
 
   private closePillsDropdown() {

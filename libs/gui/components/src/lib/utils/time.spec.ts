@@ -359,7 +359,7 @@ describe('getDayPeriodLabels', () => {
   });
 
   it('returns the localized es-ES labels', () => {
-    // ICU may use U+202F between the letters ('a. m.'); compare space-normalized
+    // ICU may use U+202F (narrow no-break space) between the letters; compare space-normalized
     const labels = getDayPeriodLabels('es-ES');
     expect(normalizeSpaces(labels.am)).toBe('a. m.');
     expect(normalizeSpaces(labels.pm)).toBe('p. m.');
