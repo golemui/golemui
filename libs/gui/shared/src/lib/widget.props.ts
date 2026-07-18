@@ -445,6 +445,12 @@ export type RangeDateTimeCalendarProps = Omit<
    * substituted with the number of ranges on that day. Defaults to '{count} ranges'.
    */
   dayCountAriaLabel?: Localizable;
+  /**
+   * ARIA label template for the grey per-day disabled-spans badge shown on
+   * partially-blocked days; a `{count}` token is substituted with the number of
+   * disabled spans on that day. Defaults to '{count} disabled ranges'.
+   */
+  disabledDayCountAriaLabel?: Localizable;
 };
 
 export type RangeTimeInputProps = {

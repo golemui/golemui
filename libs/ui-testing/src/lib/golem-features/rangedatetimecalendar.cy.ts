@@ -179,6 +179,12 @@ export const runRangeDateTimeCalendarComponentTests = (mountFn: MountComponentFn
 
         cy.get(sel.pillText).should('have.length', 2);
         day(13).find(sel.dayCount).should('have.text', '2');
+        // The selection bubble's hover label lists the committed ranges.
+        day(13)
+          .find('.gui-range-date-time-calendar__badge-tooltip')
+          .should('contain', '9:00 AM')
+          .and('contain', '3:00 PM')
+          .and('not.be.visible');
       });
 
       it('should merge overlapping same-day ranges into one pill with no badge', () => {
@@ -193,6 +199,50 @@ export const runRangeDateTimeCalendarComponentTests = (mountFn: MountComponentFn
     });
 
     describe('bounds and disabled spans', () => {
+      it('should badge a partially-blocked day with its span count and hover label', () => {
+        mountCalendar({
+          props: {
+            disabledRanges: [
+              { start: dt(17, '10:00:00'), end: dt(17, '11:00:00') },
+              { start: dt(17, '13:00:00'), end: dt(17, '14:00:00') },
+              { start: dt(15, '00:00:00'), end: dt(15, '23:59:59') },
+            ],
+          },
+        });
+
+        // Two partial spans on the 17th → grey bubble '2', hover label listing
+        // both clock windows (hidden until hovered).
+        day(17)
+          .find('.gui-range-date-time-calendar__disabled-count')
+          .should('have.text', '2');
+        day(17)
+          .find('.gui-range-date-time-calendar__badge-tooltip')
+          .should('contain', '10:00 AM – 11:00 AM')
+          .and('contain', '1:00 PM – 2:00 PM')
+          .and('not.be.visible');
+
+        // A fully-blocked day greys out as a whole — no bubble; free days none.
+        day(15).find('.gui-range-date-time-calendar__disabled-count').should('not.exist');
+        day(16).find('.gui-range-date-time-calendar__disabled-count').should('not.exist');
+      });
+
+      it('should stack the selection and disabled bubbles side by side', () => {
+        mountCalendar({
+          props: {
+            disabledRanges: [{ start: dt(13, '16:00:00'), end: dt(13, '17:00:00') }],
+          },
+        });
+
+        commitRange(13, '09:00:00', 13, '11:00:00');
+        commitRange(13, '13:00:00', 13, '14:00:00');
+
+        day(13).find('.gui-range-date-time-calendar__badges').should('exist');
+        day(13).find(sel.dayCount).should('have.text', '2');
+        day(13)
+          .find('.gui-range-date-time-calendar__disabled-count')
+          .should('have.text', '1');
+      });
+
       it('should clamp the start list on the minDateTime boundary day', () => {
         mountCalendar({ props: { minDateTime: dt(13, '10:00:00') } });
 

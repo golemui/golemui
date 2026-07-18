@@ -204,6 +204,9 @@
         },
         "dayCountAriaLabel": {
           "$ref": "../common.schema.json#/$defs/localizable"
+        },
+        "disabledDayCountAriaLabel": {
+          "$ref": "../common.schema.json#/$defs/localizable"
         }
       },
       "patternProperties": {
@@ -289,6 +292,9 @@
           "$ref": "../common.schema.json#/$defs/localizable"
         },
         "^dayCountAriaLabel\\.[^.]+$": {
+          "$ref": "../common.schema.json#/$defs/localizable"
+        },
+        "^disabledDayCountAriaLabel\\.[^.]+$": {
           "$ref": "../common.schema.json#/$defs/localizable"
         }
       },

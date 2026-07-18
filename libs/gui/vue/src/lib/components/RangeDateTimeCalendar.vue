@@ -93,6 +93,7 @@ onUnmounted(() => {
       :disabledRangeMessage="templateData.disabledRangeMessage"
       :noAvailableTimesMessage="templateData.noAvailableTimesMessage"
       :dayCountAriaLabel="templateData.dayCountAriaLabel"
+      :disabledDayCountAriaLabel="templateData.disabledDayCountAriaLabel"
     />
   </div>
 </template>

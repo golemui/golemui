@@ -19,6 +19,7 @@ import {
   dateTimeBoundsError,
   dateTimeRangeOverlaps,
   formatISODateTimeForLocale,
+  formatISOTimeForLocale,
   isDayFullyBlocked,
   isTimeDisabled,
   mergeDateTimeRanges,
@@ -67,6 +68,8 @@ export class GuiRangeDateTimeCalendar extends GuiRangeCalendar {
   @property({ type: String, attribute: 'day-count-aria-label' }) dayCountAriaLabel:
     | string
     | undefined = undefined;
+  @property({ type: String, attribute: 'disabled-day-count-aria-label' })
+  disabledDayCountAriaLabel: string | undefined = undefined;
 
   @state() private _workingDateStart: string | undefined = undefined;
   @state() private _workingDateEnd: string | undefined = undefined;
@@ -437,26 +440,80 @@ export class GuiRangeDateTimeCalendar extends GuiRangeCalendar {
   }
 
   protected override renderDayContent(day: RangeCalendarDay): TemplateResult {
-    const count = day.isCurrentMonth ? this.countRangesOnDay(day.date) : 0;
-    if (count <= 1) return html`${day.dayLabel}`;
+    const rangeBadge = this.renderRangeCountBadge(day);
+    const disabledBadge = this.renderDisabledSlotsBadge(day);
+    if (rangeBadge === nothing && disabledBadge === nothing) return html`${day.dayLabel}`;
 
-    const label = (this.dayCountAriaLabel ?? '{count} ranges').replace('{count}', String(count));
-    return html`${day.dayLabel}<span
-        class="gui-range-date-time-calendar__day-count"
-        aria-label=${label}
-        >${count}</span
+    // One shared corner row: when a day has both a selection count and a
+    // disabled count, the bubbles stack side by side instead of fighting for
+    // the corner.
+    return html`${day.dayLabel}<span class="gui-range-date-time-calendar__badges"
+        >${rangeBadge}${disabledBadge}</span
       >`;
   }
 
+  /**
+   * Renders a count bubble plus its hover label as SIBLINGS (the label must not
+   * live inside the count span — the bubble shows only the number).
+   */
+  private renderBadge(
+    kind: 'day-count' | 'disabled-count',
+    count: number,
+    aria: string,
+    labels: string[],
+  ): TemplateResult {
+    return html`<span
+        class="gui-range-date-time-calendar__${kind}"
+        aria-label=${aria}
+        >${count}</span
+      ><span class="gui-range-date-time-calendar__badge-tooltip" aria-hidden="true"
+        >${labels.map((label) => html`<span>${label}</span>`)}</span
+      >`;
+  }
+
+  private renderRangeCountBadge(day: RangeCalendarDay): TemplateResult | typeof nothing {
+    if (!day.isCurrentMonth) return nothing;
+    const ranges = this.rangesOnDay(day.date);
+    if (ranges.length <= 1) return nothing;
+
+    const labels = ranges.map((range) => this.formatPillLabel(range));
+    const aria = `${(this.dayCountAriaLabel ?? '{count} ranges').replace(
+      '{count}',
+      String(ranges.length),
+    )}: ${labels.join(', ')}`;
+    return this.renderBadge('day-count', ranges.length, aria, labels);
+  }
+
+  private renderDisabledSlotsBadge(day: RangeCalendarDay): TemplateResult | typeof nothing {
+    if (!day.isCurrentMonth || day.isDisabled) return nothing;
+    const slots = resolveDisabledTimesForDate(this.disabledRanges, toISODateString(day.date));
+    if (!slots.length) return nothing;
+
+    const hourFormat = resolveHourFormat(this.localeId, this.hourFormat);
+    const labels = slots.map(
+      (slot) =>
+        `${formatISOTimeForLocale(slot.start, this.localeId, hourFormat)} – ${formatISOTimeForLocale(
+          slot.end,
+          this.localeId,
+          hourFormat,
+        )}`,
+    );
+    const aria = `${(this.disabledDayCountAriaLabel ?? '{count} disabled ranges').replace(
+      '{count}',
+      String(slots.length),
+    )}: ${labels.join(', ')}`;
+    return this.renderBadge('disabled-count', slots.length, aria, labels);
+  }
+
   /** Committed ranges covering `date`, a range counts on every day of its span. */
-  private countRangesOnDay(date: Date): number {
-    if (!this.value?.length) return 0;
+  private rangesOnDay(date: Date): DateTimeRange[] {
+    if (!this.value?.length) return [];
     const iso = toISODateString(date);
     return this.value.filter((range) => {
       const start = range.start.split('T')[0];
       const end = (range.end ?? range.start).split('T')[0];
       return iso >= start && iso <= end;
-    }).length;
+    });
   }
 }
 

@@ -91,6 +91,7 @@ export class RangeDateTimePickerElement extends LitElement implements WithWidget
         .disabledRangeMessage=${templateData.disabledRangeMessage as string}
         .noAvailableTimesMessage=${templateData.noAvailableTimesMessage as string}
         .dayCountAriaLabel=${templateData.dayCountAriaLabel as string}
+        .disabledDayCountAriaLabel=${templateData.disabledDayCountAriaLabel as string}
         @change=${this.valueChanged}
         @inputError=${this.onInputError}
         @blur=${() => this.adapter.onBlur()}

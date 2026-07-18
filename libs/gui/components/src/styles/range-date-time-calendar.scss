@@ -28,10 +28,17 @@ gui-range-date-time-calendar {
     }
   }
 
-  .gui-calendar__day-button .gui-range-date-time-calendar__day-count {
+  .gui-calendar__day-button .gui-range-date-time-calendar__badges {
     position: absolute;
     inset-block-start: -4px;
     inset-inline-end: -4px;
+    display: flex;
+    gap: 2px;
+    z-index: 1;
+  }
+
+  .gui-range-date-time-calendar__day-count,
+  .gui-range-date-time-calendar__disabled-count {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -41,11 +48,72 @@ gui-range-date-time-calendar {
     padding: 0 2px;
     font-size: 9px;
     line-height: 1;
+    border-radius: var(--gui-radius-full);
+  }
+
+  .gui-range-date-time-calendar__day-count {
     color: var(--gui-color-white);
     background-color: var(--gui-intent-primary);
-    border-radius: var(--gui-radius-full);
-    pointer-events: none;
-    z-index: 1;
+  }
+
+  .gui-range-date-time-calendar__disabled-count {
+    color: var(--gui-text-default);
+    background-color: var(--gui-bg-disabled);
+  }
+
+  .gui-range-date-time-calendar__badge-tooltip {
+    display: none;
+    flex-direction: column;
+    gap: 2px;
+    padding: var(--gui-space-1) var(--gui-space-2);
+    font-size: 11px;
+    white-space: nowrap;
+    text-align: start;
+    font-variant-numeric: tabular-nums;
+    color: var(--gui-text-default);
+    background-color: var(--gui-bg-surface);
+    border: 1px solid var(--gui-border-default);
+    border-radius: var(--gui-radius-md);
+    box-shadow: var(--gui-shadow-md);
+    z-index: 30;
+  }
+
+  @supports not (position-area: center) {
+    .gui-range-date-time-calendar__badge-tooltip {
+      position: absolute;
+      inset-block-end: calc(100% + 4px);
+      inset-inline-end: 0;
+    }
+
+    .gui-calendar__rows
+      > .gui-calendar__day-button:nth-child(-n + 3)
+      .gui-range-date-time-calendar__badge-tooltip {
+      inset-inline-end: auto;
+      inset-inline-start: 0;
+    }
+  }
+
+  @supports (position-area: center) {
+    .gui-range-date-time-calendar__day-count,
+    .gui-range-date-time-calendar__disabled-count {
+      anchor-name: --gui-rdtc-badge;
+    }
+
+    .gui-range-date-time-calendar__badge-tooltip {
+      position: fixed;
+      position-anchor: --gui-rdtc-badge;
+      position-area: block-start span-inline-start;
+      position-try-fallbacks: flip-inline, flip-block;
+      margin-block: 4px;
+    }
+  }
+
+  :is(
+      .gui-range-date-time-calendar__day-count,
+      .gui-range-date-time-calendar__disabled-count
+    ):hover
+    + .gui-range-date-time-calendar__badge-tooltip {
+    display: flex;
   }
 }
 

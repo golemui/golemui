@@ -77,6 +77,7 @@ export function RangeDateTimePicker(widgetInstance: WithWidget) {
         disabledRangeMessage={templateData.disabledRangeMessage as string}
         noAvailableTimesMessage={templateData.noAvailableTimesMessage as string}
         dayCountAriaLabel={templateData.dayCountAriaLabel as string}
+        disabledDayCountAriaLabel={templateData.disabledDayCountAriaLabel as string}
         onChange={handleChange}
         onBlur={onBlur}
         onInputError={handleInputError}

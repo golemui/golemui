@@ -100,6 +100,8 @@ export class GuiRangeDateTimePicker extends LitElement {
   @property({ type: String, attribute: 'day-count-aria-label' }) dayCountAriaLabel:
     | string
     | undefined = undefined;
+  @property({ type: String, attribute: 'disabled-day-count-aria-label' })
+  disabledDayCountAriaLabel: string | undefined = undefined;
 
   @query('#date-input') private _dateRef?: HTMLElement;
   @query('#calendar-input') private _calendarRef?: HTMLElement;
@@ -212,6 +214,7 @@ export class GuiRangeDateTimePicker extends LitElement {
           .disabledRangeMessage=${this.disabledRangeMessage}
           .noAvailableTimesMessage=${this.noAvailableTimesMessage}
           .dayCountAriaLabel=${this.dayCountAriaLabel}
+          .disabledDayCountAriaLabel=${this.disabledDayCountAriaLabel}
           @blur=${this.onCalendarBlur}
           @change=${this.onCalendarChange}
           @inputError=${this.onCalendarInputError}

@@ -61,6 +61,7 @@ export const rangeDateTimePickerTab = gui.layouts.flex([
     minDateTime: '2026-02-01T09:00:00',
     maxDateTime: '2026-07-31T18:00:00',
     allowCustomTime: true,
+    disabledDayCountAriaLabel: 'Disabled slots: {count}',
     disabledRanges: [
       {
         start: '2026-02-09T00:00:00',
