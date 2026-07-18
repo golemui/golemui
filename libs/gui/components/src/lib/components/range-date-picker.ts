@@ -4,6 +4,7 @@ import { classMap } from 'lit/directives/class-map.js';
 import type { DateRange } from '@golemui/gui-shared/internals';
 import './range-date-input';
 import type { GuiRangeDateInput } from './range-date-input';
+import './range-calendar';
 import { dateBoundsError, DISABLED_DATE_RANGE_MESSAGE, rangeSpansDisabledDay } from '../utils/date';
 import { addErrors, addIcon, addLabel } from '../utils/templates';
 
