@@ -488,6 +488,13 @@ export type RangeDateTimeInputProps = {
   maxDateTimeMessage?: Localizable;
 };
 
+/**
+ * The date-time range picker is the calendar (instant-space bounds, disabled
+ * spans, two time pickers, per-day count badge) with the typed range input as
+ * its trigger.
+ */
+export type RangeDateTimePickerProps = RangeDateTimeCalendarProps & RangeDateTimeInputProps;
+
 export type RangeTimePickerProps = RangeTimeInputProps & {
   /** Times inside these ranges (both ends inclusive) render disabled. */
   disabledRanges?: TimeRange[];

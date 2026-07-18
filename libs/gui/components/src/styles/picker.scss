@@ -4,7 +4,7 @@
 // wrapper markup needs no shared class. Month-calendar rules specific to the
 // date picker stay in `date-picker.scss`.
 .gui-form {
-  :is(.gui-date-picker, .gui-range-date-picker, .gui-range-time-picker, .gui-time-picker, .gui-date-time-picker).gui-field {
+  :is(.gui-date-picker, .gui-range-date-picker, .gui-range-time-picker, .gui-time-picker, .gui-date-time-picker, .gui-range-date-time-picker).gui-field {
     display: block;
     container-type: inline-size;
     container-name: gui-picker-widget;
@@ -20,7 +20,8 @@
         .gui-range-date-picker__arrow,
         .gui-range-time-picker__arrow,
         .gui-time-picker__arrow,
-        .gui-date-time-picker__arrow
+        .gui-date-time-picker__arrow,
+        .gui-range-date-time-picker__arrow
       ) {
         fill: var(--gui-text-default);
         transform: rotate(0deg);
@@ -38,16 +39,17 @@
           .gui-range-date-picker__arrow,
           .gui-range-time-picker__arrow,
           .gui-time-picker__arrow,
-          .gui-date-time-picker__arrow
+          .gui-date-time-picker__arrow,
+          .gui-range-date-time-picker__arrow
         ) {
         transform: rotate(180deg);
       }
 
-      :is(gui-date, gui-range-date, gui-time, gui-date-time).gui-field {
+      :is(gui-date, gui-range-date, gui-time, gui-date-time, gui-range-date-time).gui-field {
         gap: 0;
       }
 
-      > :is(gui-calendar, gui-range-calendar, gui-date-time-calendar) {
+      > :is(gui-calendar, gui-range-calendar, gui-date-time-calendar, gui-range-date-time-calendar) {
         position: absolute;
         top: 100%;
         z-index: 10;
@@ -57,7 +59,8 @@
     }
 
     @container gui-picker-widget (max-width: 540px) {
-      .gui-widget > :is(gui-calendar, gui-range-calendar, gui-date-time-calendar) {
+      .gui-widget
+        > :is(gui-calendar, gui-range-calendar, gui-date-time-calendar, gui-range-date-time-calendar) {
         width: 100%;
       }
     }

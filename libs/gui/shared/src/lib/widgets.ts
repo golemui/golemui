@@ -18,6 +18,7 @@ export const inputWidgets = [
   'rangeDatePicker',
   'rangeDateTimeInput',
   'rangeDateTimeCalendar',
+  'rangeDateTimePicker',
   'rangeTimeInput',
   'rangeTimePicker',
   'repeater',

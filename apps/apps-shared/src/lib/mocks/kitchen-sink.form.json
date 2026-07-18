@@ -48,6 +48,10 @@
             "label": "Range Date Time Calendar Component",
             "uid": "tabRangeDateTimeCalendar"
           },
+          {
+            "label": "Range Date Time Picker Component",
+            "uid": "tabRangeDateTimePicker"
+          },
           { "label": "Range Time Picker Component", "uid": "tabRangeTimePicker" },
           { "label": "Range Date Picker Component", "uid": "tabRangeDatePicker" },
           { "label": "Repeater Component", "uid": "tabRepeater" },
@@ -79,6 +83,7 @@
         { "$ref": "./tabs/rangetimeinput.form-chunk.json" },
         { "$ref": "./tabs/rangedatetimeinput.form-chunk.json" },
         { "$ref": "./tabs/rangedatetimecalendar.form-chunk.json" },
+        { "$ref": "./tabs/rangedatetimepicker.form-chunk.json" },
         { "$ref": "./tabs/rangetimepicker.form-chunk.json" },
         { "$ref": "./tabs/rangecalendar.form-chunk.json" },
         { "$ref": "./tabs/rangedatepicker.form-chunk.json" },

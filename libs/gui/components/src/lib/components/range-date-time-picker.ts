@@ -1,14 +1,14 @@
 import { html, LitElement, nothing } from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
-import type { DateRange } from '@golemui/gui-shared/internals';
-import './range-date-input';
-import type { GuiRangeDateInput } from './range-date-input';
-import { dateBoundsError, DISABLED_DATE_RANGE_MESSAGE, rangeSpansDisabledDay } from '../utils/date';
+import type { DateTimeRange } from '@golemui/gui-shared/internals';
+import './range-date-time-input';
+import './range-date-time-calendar';
+import { type HourFormat } from '../utils/time';
 import { addErrors, addIcon, addLabel } from '../utils/templates';
 
-@customElement('gui-range-date-picker')
-export class GuiRangeDatePicker extends LitElement {
+@customElement('gui-range-date-time-picker')
+export class GuiRangeDateTimePicker extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String }) hint: string | undefined = undefined;
@@ -20,17 +20,24 @@ export class GuiRangeDatePicker extends LitElement {
   @property({ type: Boolean }) disabled: boolean | undefined = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
-  @property({ type: Array }) value: DateRange[] | undefined = [];
+  @property({ type: Array }) value: DateTimeRange[] | undefined = [];
+
+  // Trigger (input) chrome
   @property({ type: String }) separator: string | undefined = undefined;
   @property({ type: String, attribute: 'remove-pill-aria-label' }) removePillAriaLabel:
     | string
     | undefined = undefined;
-  @property({ type: String, attribute: 'start-date-aria-label' }) startDateAriaLabel:
+  @property({ type: String, attribute: 'start-date-time-aria-label' }) startDateTimeAriaLabel:
     | string
     | undefined = undefined;
-  @property({ type: String, attribute: 'end-date-aria-label' }) endDateAriaLabel:
+  @property({ type: String, attribute: 'end-date-time-aria-label' }) endDateTimeAriaLabel:
     | string
     | undefined = undefined;
+  @property({ type: String, attribute: 'invalid-date-message' }) invalidDateMessage:
+    | string
+    | undefined = undefined;
+
+  // Calendar chrome
   @property({ type: String, attribute: 'prev-month-icon' }) prevMonthIcon: string | undefined = '';
   @property({ type: String, attribute: 'next-month-icon' }) nextMonthIcon: string | undefined = '';
   @property({ type: String, attribute: 'prev-month-aria-label' }) prevMonthAriaLabel:
@@ -55,20 +62,42 @@ export class GuiRangeDatePicker extends LitElement {
     | 'short'
     | 'narrow'
     | undefined = undefined;
-  @property({ type: String, attribute: 'min-date' }) minDate: string | undefined = undefined;
-  @property({ type: String, attribute: 'max-date' }) maxDate: string | undefined = undefined;
-  @property({ type: Array, attribute: 'disabled-ranges' }) disabledRanges: DateRange[] | undefined =
-    undefined;
   @property({ type: Number, attribute: 'number-of-months' }) numberOfMonths: number | undefined =
     undefined;
-  @property({ type: String, attribute: 'invalid-date-message' }) invalidDateMessage:
+
+  // Time
+  @property({ type: String, attribute: 'hour-format' }) hourFormat: HourFormat | undefined =
+    undefined;
+  @property({ type: Number, attribute: 'minute-step' }) minuteStep: number | undefined = undefined;
+  @property({ type: Boolean, attribute: 'allow-custom-time' }) allowCustomTime:
+    | boolean
+    | undefined = false;
+  @property({ type: String, attribute: 'start-time-label' }) startTimeLabel: string | undefined =
+    undefined;
+  @property({ type: String, attribute: 'end-time-label' }) endTimeLabel: string | undefined =
+    undefined;
+
+  // Instant-space bounds and holes
+  @property({ type: String, attribute: 'min-date-time' }) minDateTime: string | undefined =
+    undefined;
+  @property({ type: String, attribute: 'max-date-time' }) maxDateTime: string | undefined =
+    undefined;
+  @property({ type: String, attribute: 'min-date-time-message' }) minDateTimeMessage:
     | string
     | undefined = undefined;
-  @property({ type: String, attribute: 'min-date-message' }) minDateMessage: string | undefined =
-    undefined;
-  @property({ type: String, attribute: 'max-date-message' }) maxDateMessage: string | undefined =
-    undefined;
-  @property({ type: String, attribute: 'disabled-date-range-message' }) disabledDateRangeMessage:
+  @property({ type: String, attribute: 'max-date-time-message' }) maxDateTimeMessage:
+    | string
+    | undefined = undefined;
+  @property({ type: Array, attribute: 'disabled-ranges' }) disabledRanges:
+    | DateTimeRange[]
+    | undefined = undefined;
+  @property({ type: String, attribute: 'disabled-range-message' }) disabledRangeMessage:
+    | string
+    | undefined = undefined;
+  @property({ type: String, attribute: 'no-available-times-message' }) noAvailableTimesMessage:
+    | string
+    | undefined = undefined;
+  @property({ type: String, attribute: 'day-count-aria-label' }) dayCountAriaLabel:
     | string
     | undefined = undefined;
 
@@ -77,7 +106,6 @@ export class GuiRangeDatePicker extends LitElement {
 
   @state() private _isCalendarOpen = false;
   @state() private _focusDate: string | undefined = undefined;
-  @state() private _invalidRange: { start: string; end: string } | null = null;
 
   private _ignoreNextFocusOut = false;
   private _focusOutRafId: number | undefined;
@@ -118,7 +146,7 @@ export class GuiRangeDatePicker extends LitElement {
     });
   };
 
-  // Pills dropdown and the calendar are mutually exclusive, opening one closes the other
+  // Pills dropdown and the calendar are mutually exclusive; opening one closes the other.
   onDropdownToggle = (event: Event) => {
     const detail = (event as CustomEvent<{ open: boolean }>).detail;
     if (detail?.open && this._isCalendarOpen) {
@@ -151,7 +179,7 @@ export class GuiRangeDatePicker extends LitElement {
     const datePickerIcon = addIcon('datePicker', { icon: this.icon });
 
     const calendar = this._isCalendarOpen
-      ? html`<gui-range-calendar
+      ? html`<gui-range-date-time-calendar
           id="calendar-input"
           .uid=${this.uid}
           .hint=${this.hint}
@@ -161,6 +189,8 @@ export class GuiRangeDatePicker extends LitElement {
           ?readonly=${this.readOnly}
           .value=${this.value}
           .focusDate=${this._focusDate}
+          .hidePills=${true}
+          .localeId=${this.localeId}
           .prevMonthIcon=${this.prevMonthIcon}
           .nextMonthIcon=${this.nextMonthIcon}
           .prevMonthAriaLabel=${this.prevMonthAriaLabel}
@@ -168,18 +198,24 @@ export class GuiRangeDatePicker extends LitElement {
           .dayFormat=${this.dayFormat}
           .weekdayFormat=${this.weekdayFormat}
           .monthFormat=${this.monthFormat}
-          .minDate=${this.minDate}
-          .maxDate=${this.maxDate}
-          .disabledRanges=${this.disabledRanges}
-          .disabledDateRangeMessage=${this.disabledDateRangeMessage}
           .numberOfMonths=${this.numberOfMonths}
-          .localeId=${this.localeId}
-          .hidePills=${true}
-          .invalidRange=${this._invalidRange}
+          .hourFormat=${this.hourFormat}
+          .minuteStep=${this.minuteStep}
+          .allowCustomTime=${this.allowCustomTime}
+          .startTimeLabel=${this.startTimeLabel}
+          .endTimeLabel=${this.endTimeLabel}
+          .minDateTime=${this.minDateTime}
+          .maxDateTime=${this.maxDateTime}
+          .minDateTimeMessage=${this.minDateTimeMessage}
+          .maxDateTimeMessage=${this.maxDateTimeMessage}
+          .disabledRanges=${this.disabledRanges}
+          .disabledRangeMessage=${this.disabledRangeMessage}
+          .noAvailableTimesMessage=${this.noAvailableTimesMessage}
+          .dayCountAriaLabel=${this.dayCountAriaLabel}
           @blur=${this.onCalendarBlur}
           @change=${this.onCalendarChange}
           @inputError=${this.onCalendarInputError}
-        ></gui-range-calendar>`
+        ></gui-range-date-time-calendar>`
       : nothing;
 
     return html`
@@ -198,7 +234,7 @@ export class GuiRangeDatePicker extends LitElement {
         @keydown=${this.onKeyDown}
         @click=${this.toggleCalendar}
       >
-        <gui-range-date
+        <gui-range-date-time
           id="date-input"
           class=${classMap(datePickerIcon.widgetClasses)}
           .uid=${this.uid}
@@ -212,17 +248,25 @@ export class GuiRangeDatePicker extends LitElement {
           .value=${this.value}
           .icon=${this.icon}
           .localeId=${this.localeId}
+          .hourFormat=${this.hourFormat}
+          .minuteStep=${this.minuteStep}
           .separator=${this.separator}
           .removePillAriaLabel=${this.removePillAriaLabel}
-          .startDateAriaLabel=${this.startDateAriaLabel}
-          .endDateAriaLabel=${this.endDateAriaLabel}
+          .startDateTimeAriaLabel=${this.startDateTimeAriaLabel}
+          .endDateTimeAriaLabel=${this.endDateTimeAriaLabel}
           .invalidDateMessage=${this.invalidDateMessage}
+          .minDateTime=${this.minDateTime}
+          .maxDateTime=${this.maxDateTime}
+          .minDateTimeMessage=${this.minDateTimeMessage}
+          .maxDateTimeMessage=${this.maxDateTimeMessage}
+          .disabledRanges=${this.disabledRanges}
+          .disabledRangeMessage=${this.disabledRangeMessage}
           @blur=${this.onDateBlur}
           @focus=${this.openCalendar}
           @change=${this.onDateChange}
           @pillClick=${this.onPillClick}
-        ></gui-range-date>
-        <span class="gui-range-date-picker__arrow"
+        ></gui-range-date-time>
+        <span class="gui-range-date-time-picker__arrow"
           ><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256">
             <path
               d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"
@@ -240,53 +284,7 @@ export class GuiRangeDatePicker extends LitElement {
 
   private onDateChange(event: CustomEvent) {
     event.stopPropagation();
-    const value = event.detail.value as DateRange[] | undefined;
-    for (const range of value ?? []) {
-      const error = this.rangeError(range);
-      if (error) {
-        this.rejectTypedRange(range, error);
-        return;
-      }
-    }
-    this.commitValue(value);
-  }
-
-  /** The message for the first constraint a range violates, or null when valid. */
-  private rangeError(range: DateRange): string | null {
-    const start = range.start;
-    const end = range.end ?? range.start;
-    // A disabled day anywhere in the span — not just at the endpoints.
-    if (rangeSpansDisabledDay(start, end, this.disabledRanges)) {
-      return this.disabledDateRangeMessage ?? DISABLED_DATE_RANGE_MESSAGE;
-    }
-    // Either endpoint outside the allowed [minDate, maxDate] window.
-    const messages = {
-      minDateMessage: this.minDateMessage,
-      maxDateMessage: this.maxDateMessage,
-    };
-    for (const endpoint of [start, end]) {
-      const error = dateBoundsError(endpoint, this.minDate, this.maxDate, undefined, messages);
-      if (error) return error;
-    }
-    return null;
-  }
-
-  private rejectTypedRange(range: DateRange, message: string) {
-    const start = range.start;
-    const end = range.end ?? range.start;
-    this._invalidRange = { start, end };
-    const input = this._dateRef as GuiRangeDateInput | undefined;
-    if (input) {
-      input.value = this.value ?? [];
-      input.showRange(start, end);
-    }
-    this.dispatchEvent(
-      new CustomEvent('inputError', {
-        detail: { message },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    this.commitValue(event.detail.value);
   }
 
   private onDateBlur() {
@@ -294,21 +292,35 @@ export class GuiRangeDatePicker extends LitElement {
   }
 
   private onCalendarChange(event: CustomEvent) {
+    if (!this._isCalendarOpen) {
+      event.stopPropagation();
+      return;
+    }
     event.stopPropagation();
-    (this._dateRef as GuiRangeDateInput | undefined)?.clearRangeInputs();
     this.commitValue(event.detail.value);
+    this._ignoreNextFocusOut = true;
+    requestAnimationFrame(() => {
+      if (!this._isCalendarOpen) return;
+      const day = this.querySelector<HTMLElement>(
+        'gui-range-date-time-calendar .gui-calendar__day-button[tabindex="0"]',
+      );
+      day?.focus();
+    });
   }
 
   private onCalendarInputError(event: CustomEvent) {
-    const range = event.detail?.range as { start: string; end: string } | undefined;
-    if (!range) return;
-    this._invalidRange = range;
-    (this._dateRef as GuiRangeDateInput | undefined)?.showRange(range.start, range.end);
+    event.stopPropagation();
+    this.dispatchEvent(
+      new CustomEvent('inputError', {
+        detail: event.detail,
+        bubbles: true,
+        composed: true,
+      }),
+    );
   }
 
-  private commitValue(value: DateRange[] | null | undefined) {
+  private commitValue(value: DateTimeRange[] | null | undefined) {
     this.value = value ?? undefined;
-    this._invalidRange = null;
     this.dispatchEvent(
       new CustomEvent('change', {
         detail: { value: value ?? null },
@@ -350,8 +362,12 @@ export class GuiRangeDatePicker extends LitElement {
     if (this.disabled) return;
     const target = event.target as HTMLElement;
 
-    const isInputClick = target.closest('.gui-range-date-input__part');
-    const isCalendarClick = target.closest('gui-range-calendar');
+    if (target.closest('.gui-calendar__day-button')) return;
+    if (target.closest('.gui-time-list__option')) return;
+    if (target.closest('gui-time-picker')) return;
+
+    const isInputClick = target.closest('.gui-range-date-time-input__field');
+    const isCalendarClick = target.closest('gui-range-date-time-calendar');
     if (isInputClick || isCalendarClick) {
       this.openCalendar();
     } else if (this._isCalendarOpen) {
@@ -373,10 +389,11 @@ export class GuiRangeDatePicker extends LitElement {
 
   closeCalendar() {
     this._isCalendarOpen = false;
+    this._focusDate = undefined;
   }
 
   private restoreFocusToInput() {
-    const part = this.querySelector<HTMLElement>('gui-range-date input');
+    const part = this.querySelector<HTMLElement>('gui-range-date-time input');
     if (!part) return;
     this._restoringFocus = true;
     part.focus();
@@ -395,10 +412,13 @@ export class GuiRangeDatePicker extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'gui-range-date-picker': GuiRangeDatePicker;
+    'gui-range-date-time-picker': GuiRangeDateTimePicker;
   }
 }
 
-if (typeof customElements !== 'undefined' && !customElements.get('gui-range-date-picker')) {
-  customElements.define('gui-range-date-picker', GuiRangeDatePicker);
+if (
+  typeof customElements !== 'undefined' &&
+  !customElements.get('gui-range-date-time-picker')
+) {
+  customElements.define('gui-range-date-time-picker', GuiRangeDateTimePicker);
 }

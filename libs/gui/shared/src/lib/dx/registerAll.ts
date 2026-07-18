@@ -31,6 +31,7 @@ import './shortcuts/range-date-input/register';
 import './shortcuts/range-time-input/register';
 import './shortcuts/range-date-time-input/register';
 import './shortcuts/range-date-time-calendar/register';
+import './shortcuts/range-date-time-picker/register';
 import './shortcuts/range-date-picker/register';
 import './shortcuts/range-time-picker/register';
 import './shortcuts/custom-display/register';

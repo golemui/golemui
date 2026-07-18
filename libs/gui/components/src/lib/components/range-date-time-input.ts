@@ -6,11 +6,13 @@ import { styleMap } from 'lit-html/directives/style-map.js';
 import { AbstractDateTimePartsInput } from './abstract-date-time-parts-input';
 import {
   dateTimeBoundsError,
+  dateTimeRangeOverlaps,
   formatISODateTimeForLocale,
   mergeDateTimeRanges,
   orderDateTimeRange,
   parseISODateTimeString,
 } from '../utils/time';
+import { DISABLED_DATE_RANGE_MESSAGE } from '../utils/date';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 import './pills';
 import type { GuiPillEventDetail, GuiPillItem } from './pills';
@@ -36,6 +38,18 @@ export class GuiRangeDateTimeInput extends AbstractDateTimePartsInput {
     | string
     | undefined = undefined;
   @property({ type: String, attribute: 'max-date-time-message' }) maxDateTimeMessage:
+    | string
+    | undefined = undefined;
+  /**
+   * Disabled instant spans a typed range must not overlap. Not part of the
+   * standalone rangeDateTimeInput widget's public API (typed inputs in this
+   * family stay hole-unaware, matching rangeTimeInput); this is here just to
+   * pass them down to the range date-time picker's calendar
+   */
+  @property({ type: Array, attribute: 'disabled-ranges' }) disabledRanges:
+    | DateTimeRange[]
+    | undefined = undefined;
+  @property({ type: String, attribute: 'disabled-range-message' }) disabledRangeMessage:
     | string
     | undefined = undefined;
 
@@ -280,6 +294,11 @@ export class GuiRangeDateTimeInput extends AbstractDateTimePartsInput {
     // Date-time ranges are two instants: a backward selection reorders (swap)
     // rather than erroring — mirroring the range calendar's date swap.
     const ordered = orderDateTimeRange(start.iso, end.iso);
+
+    if (dateTimeRangeOverlaps(ordered, this.disabledRanges)) {
+      this.surfaceInputError(this.disabledRangeMessage ?? DISABLED_DATE_RANGE_MESSAGE);
+      return;
+    }
 
     this.value = mergeDateTimeRanges([...(this.value ?? []), ordered]);
 

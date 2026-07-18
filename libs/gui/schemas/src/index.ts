@@ -27,6 +27,7 @@ export { default as rangecalendarSchema } from './lib/components/rangecalendar.s
 export { default as rangedateinputSchema } from './lib/components/rangedateinput.schema.json';
 export { default as rangedatetimeinputSchema } from './lib/components/rangedatetimeinput.schema.json';
 export { default as rangedatetimecalendarSchema } from './lib/components/rangedatetimecalendar.schema.json';
+export { default as rangedatetimepickerSchema } from './lib/components/rangedatetimepicker.schema.json';
 export { default as rangetimeinputSchema } from './lib/components/rangetimeinput.schema.json';
 export { default as rangedatepickerSchema } from './lib/components/rangedatepicker.schema.json';
 export { default as rangetimepickerSchema } from './lib/components/rangetimepicker.schema.json';

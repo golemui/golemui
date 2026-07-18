@@ -18,6 +18,7 @@ import { rangeDateInputTab } from './tabs/rangedateinput.dx';
 import { rangeTimeInputTab } from './tabs/rangetimeinput.dx';
 import { rangeDateTimeInputTab } from './tabs/rangedatetimeinput.dx';
 import { rangeDateTimeCalendarTab } from './tabs/rangedatetimecalendar.dx';
+import { rangeDateTimePickerTab } from './tabs/rangedatetimepicker.dx';
 import { rangeTimePickerTab } from './tabs/rangetimepicker.dx';
 import { rangeCalendarTab } from './tabs/rangecalendar.dx';
 import { rangeDatePickerTab } from './tabs/rangedatepicker.dx';
@@ -177,6 +178,11 @@ export const buildKitchenSinkDx = (options: KitchenSinkDxOptions = {}): KitchenS
           label: 'Range Date Time Calendar Component',
           uid: 'tabRangeDateTimeCalendar',
           children: [rangeDateTimeCalendarTab],
+        },
+        {
+          label: 'Range Date Time Picker Component',
+          uid: 'tabRangeDateTimePicker',
+          children: [rangeDateTimePickerTab],
         },
         {
           label: 'Range Time Picker Component',

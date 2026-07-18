@@ -473,6 +473,17 @@ const INPUTS: DxSpec[] = [
     ],
   },
   {
+    factory: 'rangeDateTimePicker',
+    namespace: 'inputs',
+    call: 'gui.inputs.rangeDateTimePicker(path, { label?, minDateTime?, maxDateTime?, disabledRanges?, startTimeLabel?, endTimeLabel? })',
+    example:
+      "gui.inputs.rangeDateTimePicker('stay', { label: 'Stay', startTimeLabel: 'Check-in', endTimeLabel: 'Check-out' })",
+    notes: [
+      'POPOVER date-time range picker: the typed `rangeDateTimeInput` as the trigger (pills live there) with the `rangeDateTimeCalendar` in a dropdown. Value is `DateTimeRange[]`. Committing a pill keeps the popover open so several ranges can be added; it closes on outside-click, blur or Escape.',
+      'Everything is in instant-space: bounds are **`minDateTime`** / **`maxDateTime`** and **`disabledRanges`** are `DateTimeRange[]` instant spans (block a whole day with `00:00:00`–`23:59:59`). There is no `minDate`/`maxDate`/`minTime`/`maxTime`/`disabledTimeRanges`.',
+    ],
+  },
+  {
     factory: 'rangeDatePicker',
     namespace: 'inputs',
     call: 'gui.inputs.rangeDatePicker(path, { label? })',

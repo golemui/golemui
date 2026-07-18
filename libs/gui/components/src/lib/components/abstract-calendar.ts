@@ -111,7 +111,7 @@ export abstract class AbstractCalendar extends LitElement {
               tabindex="0"
               class="gui-button gui-calendar__month-button gui-calendar__month-button--prev"
               ?disabled=${!this.canGoPrev()}
-              @click=${this.prevMonth}
+              @click=${this.onPrevMonthClick}
               aria-label=${this.prevMonthAriaLabel ?? 'Previous month'}
             >
               ${this.prevMonthIcon
@@ -140,7 +140,7 @@ export abstract class AbstractCalendar extends LitElement {
               tabindex="0"
               class="gui-button gui-calendar__month-button gui-calendar__month-button--next"
               ?disabled=${!this.canGoNext()}
-              @click=${this.nextMonth}
+              @click=${this.onNextMonthClick}
               aria-label=${this.nextMonthAriaLabel ?? 'Next month'}
             >
               ${this.nextMonthIcon
@@ -582,6 +582,29 @@ export abstract class AbstractCalendar extends LitElement {
   protected nextMonth() {
     const d = this._currentDate;
     this._currentDate = new Date(d.getFullYear(), d.getMonth() + 1, 1);
+  }
+
+  private onPrevMonthClick = () => {
+    this.prevMonth();
+    this.keepNavFocusInside('prev', 'next');
+  };
+
+  private onNextMonthClick = () => {
+    this.nextMonth();
+    this.keepNavFocusInside('next', 'prev');
+  };
+
+  private async keepNavFocusInside(clicked: 'prev' | 'next', opposite: 'prev' | 'next') {
+    await this.updateComplete;
+    const clickedBtn = this.querySelector<HTMLButtonElement>(
+      `.gui-calendar__month-button--${clicked}`,
+    );
+    if (!clickedBtn || !clickedBtn.disabled) return;
+    const fallback =
+      this.querySelector<HTMLButtonElement>(
+        `.gui-calendar__month-button--${opposite}:not([disabled])`,
+      ) ?? this.querySelector<HTMLButtonElement>('.gui-calendar__day-button:not([disabled])');
+    fallback?.focus();
   }
 
   protected generateDateGrid(offset = 0): Date[] {

@@ -3,6 +3,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import {
   createDateRange,
+  DISABLED_DATE_RANGE_MESSAGE,
   getDayLabel,
   isDateInVisibleMonths,
   isSameDay,
@@ -16,9 +17,6 @@ import { AbstractCalendar, type AbstractCalendarDay } from './abstract-calendar'
 import './pills';
 import type { GuiPillEventDetail, GuiPillItem } from './pills';
 import type { DateRange } from '@golemui/gui-shared/internals';
-
-/** Default error when a selected range spans one or more disabled days. */
-export const DISABLED_DATE_RANGE_MESSAGE = 'Invalid date: date is within a disabled range.';
 
 export interface RangeCalendarDay extends AbstractCalendarDay {
   isToday: boolean;

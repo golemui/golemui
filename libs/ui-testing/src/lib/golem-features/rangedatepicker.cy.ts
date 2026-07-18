@@ -111,6 +111,27 @@ export const runRangeDatePickerComponentTests = (mountFn: MountComponentFn) => {
         .should('contain', '2026-07');
     });
 
+    it('should stay open when navigating to the minDate boundary month', () => {
+      // minDate two months back: clicking prev into the boundary month disables
+      // the prev arrow that holds focus, which used to drop focus to <body> and
+      // close the whole popover.
+      const now = new Date();
+      const min = new Date(now.getFullYear(), now.getMonth() - 2, 1);
+      const minIso = `${min.getFullYear()}-${String(min.getMonth() + 1).padStart(2, '0')}-01`;
+      mountRangeDatePicker({ props: { minDate: minIso } });
+
+      cy.get(sel.startMonth).click();
+      cy.get(sel.calendar).should('exist');
+
+      cy.get(`${sel.calendar} .gui-calendar__month-button--prev`).click();
+      cy.get(sel.calendar).should('exist');
+      cy.get(`${sel.calendar} .gui-calendar__month-button--prev`).click();
+
+      cy.get(sel.calendar).should('exist');
+      cy.get(`${sel.calendar} .gui-calendar__month-button--prev`).should('be.disabled');
+      cy.get(sel.dayButton(minIso)).should('exist');
+    });
+
     it('should close the calendar when clicking outside', () => {
       mountRangeDatePicker({ data: { myRanges: [juneRange] } });
 

@@ -74,6 +74,7 @@
         "rangeDateInput",
         "rangeDateTimeInput",
         "rangeDateTimeCalendar",
+        "rangeDateTimePicker",
         "rangeTimeInput",
         "rangeDatePicker",
         "rangeTimePicker",

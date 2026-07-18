@@ -1,6 +1,9 @@
 import type { DateRange } from '@golemui/gui-shared/internals';
 import { weekInfoData } from './week-info';
 
+/** Default error when a selected range spans one or more disabled days/spans. */
+export const DISABLED_DATE_RANGE_MESSAGE = 'Invalid date: date is within a disabled range.';
+
 /**
  * Converts a Date object to a string formatted as an ISO 8601 date (YYYY-MM-DD).
  *
