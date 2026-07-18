@@ -11,10 +11,11 @@ import type { GuiTimePicker } from './time-picker';
 import {
   DISABLED_DATE_RANGE_MESSAGE,
   isDateDisabled,
-  isSameDay,
   parseISODateString,
   toISODateString,
 } from '../utils/date';
+import type { DaySpan } from '../utils/day-status';
+import { reduceRangeSelection } from '../utils/range-selection';
 import {
   dateTimeBoundsError,
   dateTimeRangeOverlaps,
@@ -118,39 +119,29 @@ export class GuiRangeDateTimeCalendar extends GuiRangeCalendar {
   override selectDate(day: RangeCalendarDay, _e: MouseEvent | KeyboardEvent | null = null) {
     if (!day.isCurrentMonth || this.disabled || this.readOnly) return;
 
-    const clickedDate = day.date;
+    const { state, commit } = reduceRangeSelection(this._selection, {
+      type: 'pick',
+      date: day.date,
+    });
+    this._selection = state;
 
     // Start selection
-    if (!this._anchorDate) {
+    if (!commit) {
       this.resetWorking();
       this._invalidRange = null;
-      this._isSelecting = true;
-      this._anchorDate = clickedDate;
       return;
     }
 
-    // End selection — order the days (start <= end)
-    let startDate = this._anchorDate;
-    let endDate = clickedDate;
-    if (clickedDate < startDate) {
-      startDate = clickedDate;
-      endDate = this._anchorDate;
-    }
-
-    this._isSelecting = false;
-    this._nextDate = null;
-    this._anchorDate = null;
-
-    if (this.spanCoversBlockedDay(startDate, endDate)) {
-      this._invalidRange = { start: startDate, end: endDate };
+    if (this.spanCoversBlockedDay(commit.start, commit.end)) {
+      this._invalidRange = { start: commit.start, end: commit.end };
       this.emitInputError(this.disabledRangeMessage ?? DISABLED_DATE_RANGE_MESSAGE);
       this.requestUpdate();
       return;
     }
 
     this._invalidRange = null;
-    this._workingDateStart = toISODateString(startDate);
-    this._workingDateEnd = toISODateString(endDate);
+    this._workingDateStart = toISODateString(commit.start);
+    this._workingDateEnd = toISODateString(commit.end);
     this._workingTimeIn = undefined;
     this._workingTimeOut = undefined;
   }
@@ -168,17 +159,12 @@ export class GuiRangeDateTimeCalendar extends GuiRangeCalendar {
   }
 
   /** Highlights the parked working date range like a committed one. */
-  protected override checkDateStatus(date: Date) {
-    const status = super.checkDateStatus(date);
-    if (this._workingDateStart && this._workingDateEnd) {
-      const start = parseISODateString(this._workingDateStart);
-      const end = parseISODateString(this._workingDateEnd);
-      const time = date.getTime();
-      if (isSameDay(date, start)) status.isRangeStart = true;
-      if (isSameDay(date, end)) status.isRangeEnd = true;
-      if (time > start.getTime() && time < end.getTime()) status.isInRange = true;
-    }
-    return status;
+  protected override get workingRange(): DaySpan | undefined {
+    if (!this._workingDateStart || !this._workingDateEnd) return undefined;
+    return {
+      start: parseISODateString(this._workingDateStart),
+      end: parseISODateString(this._workingDateEnd),
+    };
   }
 
   private onStartTimeChange(event: CustomEvent) {

@@ -1,15 +1,18 @@
-import { html, type PropertyValues } from 'lit';
+import { html, LitElement, nothing, type PropertyValues, type TemplateResult } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
+import type { DateRange } from '@golemui/gui-shared/internals';
+import { GUIAriaController } from '../controllers/aria.controller';
+import { GUICalendarKeyboardController } from '../controllers/calendar-keyboard.controller';
+import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
+import { GUIMonthNavigationController } from '../controllers/month-navigation.controller';
 import {
-  getDayLabel,
-  isDateInVisibleMonths,
-  isSameDay,
-  isToday,
-  parseISODateString,
-  toISODateString,
-} from '../utils/date';
-import { AbstractCalendar } from './abstract-calendar';
+  renderCalendarChrome,
+  renderCalendarMonthPanel,
+  renderCalendarPanelBody,
+} from '../utils/calendar-templates';
+import { getDayLabel, isToday, parseISODateString, toISODateString } from '../utils/date';
+import { buildMonthDays, computeDayStatus } from '../utils/day-status';
 
 export interface CalendarDay {
   date: Date;
@@ -22,8 +25,71 @@ export interface CalendarDay {
 }
 
 @customElement('gui-calendar')
-export class GuiCalendar extends AbstractCalendar {
+export class GuiCalendar extends LitElement {
+  @property({ type: String }) uid: string | undefined = undefined;
+  @property({ type: String }) label: string | undefined = undefined;
+  @property({ type: String }) hint: string | undefined = undefined;
+  @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
+  @property({ type: Array }) errors: string[] | undefined = [];
+  @property({ type: Boolean }) touched: boolean | undefined = undefined;
+  @property({ type: Boolean }) required: boolean | undefined = false;
+  @property({ type: Boolean }) disabled: boolean | undefined = false;
+  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
+
+  @property({ type: String, attribute: 'prev-month-icon' }) prevMonthIcon: string | undefined = '';
+  @property({ type: String, attribute: 'next-month-icon' }) nextMonthIcon: string | undefined = '';
+  @property({ type: String, attribute: 'prev-month-aria-label' }) prevMonthAriaLabel:
+    | string
+    | undefined = '';
+  @property({ type: String, attribute: 'next-month-aria-label' }) nextMonthAriaLabel:
+    | string
+    | undefined = '';
+  @property({ type: String }) dayFormat: 'numeric' | '2-digit' | undefined = 'numeric';
+  @property({ type: String }) weekdayFormat: 'short' | 'long' | 'narrow' | undefined = 'narrow';
+  @property({ type: String }) monthFormat:
+    | 'numeric'
+    | '2-digit'
+    | 'long'
+    | 'short'
+    | 'narrow'
+    | undefined = 'long';
+  @property({ type: String }) minDate: string | undefined = undefined;
+  @property({ type: String }) maxDate: string | undefined = undefined;
+  @property({ type: Array }) disabledRanges: DateRange[] | undefined = undefined;
+  @property({ type: Number }) numberOfMonths: number | undefined = 1;
+
   @property({ type: String }) value: string | undefined = undefined;
+
+  /**
+   * Month/year navigation state and guards, shared with the range calendar.
+   * The controller requests host updates on every state change, replacing the
+   * former `_currentDate`/`_yearSelectorOpen` reactive state.
+   */
+  protected _nav = new GUIMonthNavigationController(this, {
+    getMinDate: () => this.minDate,
+    getMaxDate: () => this.maxDate,
+    getNumberOfMonths: () => this.numberOfMonths,
+    getDisabledRanges: () => this.disabledRanges,
+    onYearSelectorToggled: () => this._keyboard.onYearGridToggled(),
+  });
+
+  /** The nav controller's month cursor, kept under its historical name. */
+  get _currentDate(): Date {
+    return this._nav.currentDate;
+  }
+
+  set _currentDate(date: Date) {
+    this._nav.currentDate = date;
+  }
+
+  /** The nav controller's year-grid flag; subclasses read and close it. */
+  protected get _yearSelectorOpen(): boolean {
+    return this._nav.yearSelectorOpen;
+  }
+
+  protected set _yearSelectorOpen(open: boolean) {
+    this._nav.yearSelectorOpen = open;
+  }
 
   /**
    * ISO date driving the selected-day highlight. Subclasses whose `value` is
@@ -32,6 +98,52 @@ export class GuiCalendar extends AbstractCalendar {
   protected get selectedDateISO(): string | undefined {
     return this.value;
   }
+
+  protected ariaController: GUIAriaController<unknown, any> = new GUIAriaController(this, {
+    getTargets: () => this.querySelectorAll(`.gui-calendar-input`),
+    getState: () => ({
+      uid: this.uid as string,
+      templateData: {
+        hint: this.hint,
+        errors: this.errors,
+        readonly: this.readOnly,
+        disabled: this.disabled,
+        touched: this.touched,
+      },
+    }),
+  });
+
+  private _keyboard = new GUICalendarKeyboardController(this, {
+    canGoPrev: () => this._nav.canGoPrev(),
+    canGoNext: () => this._nav.canGoNext(),
+    goPrev: () => this._nav.prevMonth(),
+    goNext: () => this._nav.nextMonth(),
+    // Enter/Space can only fire on a focused (hence enabled, in-month) day
+    // button; the `disabled`/`readOnly` host guards stay inside `selectDate`.
+    onActivateDay: (isoDate) => {
+      const date = parseISODateString(isoDate);
+      this.selectDate({
+        date,
+        dayLabel: getDayLabel(this.localeId, date),
+        isCurrentMonth: true,
+        isToday: isToday(date),
+        isSelected: false,
+        isFocusable: true,
+        isDisabled: false,
+      });
+    },
+    onSelectYear: (year) => this._nav.selectYear(year),
+    onCloseYearGrid: () => this._nav.closeYearSelector(),
+    isYearGridOpen: () => this._nav.yearSelectorOpen,
+  });
+
+  private _focusLeave = new GUIFocusLeaveController(this, {
+    attach: 'manual',
+    defer: 'raf',
+    onLeave: () => {
+      this.dispatchEvent(new CustomEvent('blur', { bubbles: true, composed: true }));
+    },
+  });
 
   override createRenderRoot() {
     return this;
@@ -45,18 +157,78 @@ export class GuiCalendar extends AbstractCalendar {
   override willUpdate(changedProperties: PropertyValues): void {
     if (changedProperties.has('value')) {
       if (this.value) {
-        const date = parseISODateString(this.value);
-        if (
-          !isNaN(date.getTime()) &&
-          !isDateInVisibleMonths(date, this._currentDate, this.numberOfMonths ?? 1)
-        ) {
-          this._currentDate = date;
-        }
+        this._nav.navigateToDate(parseISODateString(this.value));
       }
     }
   }
 
-  override renderDay(day: CalendarDay) {
+  override render() {
+    return renderCalendarChrome({
+      uid: this.uid,
+      label: this.label,
+      hint: this.hint,
+      errors: this.errors,
+      touched: this.touched,
+      required: this.required,
+      disabled: this.disabled,
+      numberOfMonths: this.numberOfMonths,
+      prevMonthIcon: this.prevMonthIcon,
+      nextMonthIcon: this.nextMonthIcon,
+      prevMonthAriaLabel: this.prevMonthAriaLabel,
+      nextMonthAriaLabel: this.nextMonthAriaLabel,
+      canGoPrev: this._nav.canGoPrev(),
+      canGoNext: this._nav.canGoNext(),
+      onPrevMonthClick: this._keyboard.onPrevMonthClick,
+      onNextMonthClick: this._keyboard.onNextMonthClick,
+      onFocusOut: this._focusLeave.onFocusOut,
+      renderAboveCalendar: () => nothing,
+      renderMonthPanel: (offset) =>
+        renderCalendarMonthPanel({
+          currentDate: this._nav.currentDate,
+          offset,
+          localeId: this.localeId,
+          monthFormat: this.monthFormat,
+          yearSelectorOpen: this._nav.yearSelectorOpen,
+          onToggleYearSelector: () => this.toggleYearSelector(),
+          renderBelowHeader: (o) => this.renderBelowHeader(o),
+          renderPanelBody: (o) => this.renderPanelBody(o),
+        }),
+    });
+  }
+
+  /** Hook rendered between the header and the panel body. Default: nothing. */
+  protected renderBelowHeader(_offset: number): TemplateResult | typeof nothing {
+    return nothing;
+  }
+
+  /**
+   * The panel content below the header: the year grid replaces the days grid
+   * of the first panel while the year selector is open. Subclasses can swap
+   * in other bodies (e.g. the date-time calendar's time grid).
+   */
+  protected renderPanelBody(offset: number): TemplateResult {
+    return renderCalendarPanelBody({
+      offset,
+      yearSelectorOpen: this._nav.yearSelectorOpen,
+      years: this._nav.yearList,
+      currentYear: this._nav.currentDate.getFullYear(),
+      onSelectYear: (year) => this._keyboard.selectYear(year),
+      onYearKeydown: this._keyboard.handleYearKeydown,
+      localeId: this.localeId,
+      getDays: (o) => this.getDaysInMonth(o),
+      renderDay: (day) => this.renderDay(day),
+    });
+  }
+
+  /**
+   * Kept as a thin override point — the date-time subclass closes its time
+   * picker before delegating to the nav controller.
+   */
+  protected toggleYearSelector() {
+    this._nav.toggleYearSelector();
+  }
+
+  renderDay(day: CalendarDay) {
     const classes = {
       'gui-calendar__day-button': true,
       today: day.isToday,
@@ -74,7 +246,7 @@ export class GuiCalendar extends AbstractCalendar {
         ?disabled=${!day.isCurrentMonth || day.isDisabled}
         data-date=${toISODateString(day.date)}
         @click=${() => this.selectDate(day)}
-        @keydown=${(e: KeyboardEvent) => this.handleKeydown(e, day)}
+        @keydown=${(e: KeyboardEvent) => this._keyboard.handleDayKeydown(e)}
         aria-selected=${day.isSelected}
       >
         ${day.dayLabel}
@@ -82,55 +254,33 @@ export class GuiCalendar extends AbstractCalendar {
     `;
   }
 
-  override getDaysInMonth(offset: number): CalendarDay[] {
-    // Normalize to the first day of the month so we calculate the months to render always from day 1
-    const panelDate = new Date(this._currentDate);
-    panelDate.setDate(1);
-    panelDate.setMonth(panelDate.getMonth() + offset);
-
-    const rawDates = this.generateDateGrid(offset);
-    const targetMonth = panelDate.getMonth();
-
+  getDaysInMonth(offset: number): CalendarDay[] {
     const selectedDate = this.selectedDateISO;
 
-    let days = rawDates.map((date) => {
-      const isCurrentMonth = date.getMonth() === targetMonth;
-      const isDisabled = this.isDisabled(date);
-      const isSelected = !!selectedDate && isSameDay(date, parseISODateString(selectedDate));
-      const isTodayDate = isToday(date);
-      const isFocusable = (isSelected || isTodayDate) && isCurrentMonth;
+    return buildMonthDays<CalendarDay>({
+      currentDate: this._currentDate,
+      offset,
+      localeId: this.localeId,
+      numberOfMonths: this.numberOfMonths ?? 1,
+      isDisabled: (date) => this.isDisabled(date),
+      toDay: (base) => {
+        const isSelected = computeDayStatus(base.date, { selectedISO: selectedDate }).isSelected;
 
-      return {
-        date,
-        dayLabel: getDayLabel(this.localeId, date),
-        isCurrentMonth,
-        isToday: isTodayDate,
-        isDisabled,
-        isSelected,
-        isFocusable,
-      };
+        return {
+          date: base.date,
+          dayLabel: base.dayLabel,
+          isCurrentMonth: base.isCurrentMonth,
+          isToday: base.isToday,
+          isDisabled: base.isDisabled,
+          isSelected,
+          isFocusable: (isSelected || base.isToday) && base.isCurrentMonth,
+        };
+      },
+      focusFallbackDates: [selectedDate ? parseISODateString(selectedDate) : new Date()],
     });
-
-    // We remove the 6th and 5th week if it only contains days of the next month
-    for (let i = 0; i < 2; i++) {
-      const lastWeek = days.slice(-7);
-      if (lastWeek.every((day) => !day.isCurrentMonth)) {
-        days = days.slice(0, -7);
-      }
-    }
-
-    if (offset === 0 && !days.some((d) => d.isFocusable)) {
-      const referenceDate = selectedDate ? parseISODateString(selectedDate) : new Date();
-      if (!isDateInVisibleMonths(referenceDate, this._currentDate, this.numberOfMonths ?? 1)) {
-        const firstDay = days.find((d) => d.isCurrentMonth && !d.isDisabled);
-        if (firstDay) firstDay.isFocusable = true;
-      }
-    }
-
-    return days;
   }
 
-  override selectDate(day: CalendarDay) {
+  selectDate(day: CalendarDay) {
     if (!day.isCurrentMonth || day.isDisabled || this.disabled || this.readOnly) return;
 
     const isoDate = toISODateString(day.date);
@@ -144,6 +294,10 @@ export class GuiCalendar extends AbstractCalendar {
         composed: true,
       }),
     );
+  }
+
+  protected isDisabled(date: Date): boolean {
+    return this._nav.isDisabled(date);
   }
 }
 
