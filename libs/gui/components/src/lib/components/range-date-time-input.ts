@@ -1,30 +1,62 @@
 import type { DateTimeRange, RangeDateTimeInputProps } from '@golemui/gui-shared/internals';
-import { html, nothing, type PropertyValues } from 'lit';
+import { html, LitElement, nothing, type PropertyValues } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { styleMap } from 'lit-html/directives/style-map.js';
-import { AbstractDateTimePartsInput } from './abstract-date-time-parts-input';
+import { GUIAriaController } from '../controllers/aria.controller';
+import { GUIPartsController } from '../controllers/parts.controller';
 import {
   dateTimeBoundsError,
   dateTimeRangeOverlaps,
   formatISODateTimeForLocale,
+  getDateTimeFormatParts,
   mergeDateTimeRanges,
   orderDateTimeRange,
   parseISODateTimeString,
+  type HourFormat,
 } from '../utils/time';
 import { DISABLED_DATE_RANGE_MESSAGE } from '../utils/date';
+import { renderGroupParts, type GUIPartsTemplateData } from '../utils/part-templates';
+import {
+  getTimeLocaleData,
+  parseDateTimeGroup,
+  type DateTimePartDescriptor,
+  type DateTimePartType,
+} from '../utils/parts';
+import { commitRange, type RangeEndpoint } from '../utils/range-commit';
+import {
+  buildPillItems,
+  findRangeByKey,
+  formatRangeLabel,
+  removeRangeByKey,
+  sortRangesByStart,
+} from '../utils/pill-ranges';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 import './pills';
 import type { GuiPillEventDetail, GuiPillItem } from './pills';
 
-// Re-exported for back-compat; the definitions now live in utils/time.ts.
-export {
-  INVALID_MIN_DATE_TIME_MESSAGE,
-  INVALID_MAX_DATE_TIME_MESSAGE,
-} from '../utils/time';
-
 @customElement('gui-range-date-time')
-export class GuiRangeDateTimeInput extends AbstractDateTimePartsInput {
+export class GuiRangeDateTimeInput extends LitElement {
+  @property({ type: String }) uid: string | undefined = undefined;
+  @property({ type: String }) label: string | undefined = undefined;
+  @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
+  @property({ type: Array }) errors: string[] | undefined = [];
+  @property({ type: Boolean }) showErrors: boolean | undefined = true;
+  @property({ type: Boolean }) touched: boolean | undefined = false;
+  @property({ type: Boolean }) required: boolean | undefined = false;
+  @property({ type: Boolean }) disabled: boolean | undefined = false;
+  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
+
+  @property({ type: String }) icon: string | undefined = '';
+  @property({ type: String }) hint: string | undefined = undefined;
+
+  @property({ type: String, attribute: 'hour-format' }) hourFormat: HourFormat | undefined =
+    undefined;
+  @property({ type: Number, attribute: 'minute-step' }) minuteStep: number | undefined = 1;
+  @property({ type: String, attribute: 'invalid-date-message' }) invalidDateMessage:
+    | string
+    | undefined = undefined;
+
   @property({ type: Array }) value: DateTimeRange[] | undefined = [];
   @property({ type: String }) removePillAriaLabel: string | undefined = undefined;
   @property({ type: String }) startDateTimeAriaLabel: string | undefined = undefined;
@@ -53,20 +85,64 @@ export class GuiRangeDateTimeInput extends AbstractDateTimePartsInput {
     | string
     | undefined = undefined;
 
-  protected override readonly inputBlockClass = 'gui-range-date-time-input';
-  protected override readonly groups = ['start', 'end'] as const;
+  private readonly inputBlockClass = 'gui-range-date-time-input';
+  private readonly groups = ['start', 'end'] as const;
 
-  /**
-   * Each endpoint is an instant, so it is bounded by instants. A date-only
-   * bound could not express this: `maxDate: 2026-02-10` is ambiguous about
-   * whether the 10th is allowed until 00:00 or 23:59, and independent date/time
-   * axes would wrongly reject Feb 11 08:00 for a `minTime` of 09:00.
-   */
-  protected override boundsError(iso: string, _instant: Date): string | null {
-    return dateTimeBoundsError(iso, this.minDateTime, this.maxDateTime, {
-      minDateTimeMessage: this.minDateTimeMessage,
-      maxDateTimeMessage: this.maxDateTimeMessage,
-    });
+  private _parts = new GUIPartsController(this, {
+    blockClass: this.inputBlockClass,
+    groups: this.groups,
+    getDescriptor: (type) => this.getPartDescriptor(type),
+    commitGroup: () => this.tryCreatePill(),
+    isReadonly: () => !!this.readOnly,
+    isDisabled: () => !!this.disabled,
+    onEmptyPartBlur: () => {
+      // Unlike gui-date-time, an empty part never commits a null value
+    },
+    onEnter: () => {
+      this.tryCreatePill();
+      if (this.value && this.value.length > 0) {
+        this.onPillClick(this.value[this.value.length - 1]);
+      }
+    },
+    getHourFormat: () => this.localeData.effectiveHourFormat,
+    getDayPeriodLabels: () => this.localeData.dayPeriodLabels,
+    onInputErrorSurfaced: (message) =>
+      this.dispatchEvent(new CustomEvent('inputError', { detail: { message }, bubbles: true })),
+    onSurfacedErrorCleared: (value) =>
+      this.dispatchEvent(
+        new CustomEvent('change', { detail: { value }, bubbles: true, composed: true }),
+      ),
+  });
+
+  protected ariaController: GUIAriaController<unknown, any> = new GUIAriaController(this, {
+    getTargets: () => this.querySelectorAll(`.${this.inputBlockClass}`),
+    getState: () => ({
+      uid: this.uid as string,
+      templateData: {
+        hint: this.hint,
+        errors: this.errors,
+        readonly: this.readOnly,
+        disabled: this.disabled,
+        touched: this.touched,
+      },
+    }),
+  });
+
+  override createRenderRoot() {
+    return this;
+  }
+
+  override connectedCallback() {
+    super.connectedCallback();
+    this.classList.add('gui-field');
+  }
+
+  private get localeData() {
+    return getTimeLocaleData(this.localeId, this.hourFormat, this.minuteStep, true);
+  }
+
+  private getPartDescriptor(type: string): DateTimePartDescriptor | undefined {
+    return this.localeData.descriptors[type as DateTimePartType];
   }
 
   override willUpdate(changedProperties: PropertyValues): void {
@@ -75,56 +151,8 @@ export class GuiRangeDateTimeInput extends AbstractDateTimePartsInput {
       changedProperties.has('hourFormat') ||
       changedProperties.has('localeId')
     ) {
-      this.seedDayPeriods(this.groups);
+      this._parts.seedDayPeriods();
     }
-  }
-
-  protected override commitParts(): void {
-    this.tryCreatePill();
-  }
-
-  protected override onEnter(): void {
-    this.tryCreatePill();
-    if (this.value && this.value.length > 0) {
-      this.onPillClick(this.value[this.value.length - 1]);
-    }
-  }
-
-  protected override autoAdvanceFromGroupEnd(group: string): void {
-    if (group === 'start') {
-      this.getGroupInputs('end')[0]?.focus();
-    }
-  }
-
-  protected override navigatePastGroupEdge(
-    key: 'ArrowLeft' | 'ArrowRight',
-    group: string,
-    isRTL: boolean,
-  ): void {
-    if (key === 'ArrowLeft') {
-      const otherGroup = isRTL ? 'end' : 'start';
-      if (group !== otherGroup) {
-        const otherInputs = this.getGroupInputs(otherGroup);
-        const target = otherInputs[otherInputs.length - 1];
-        if (target) {
-          target.focus();
-          this.selectPart(target);
-        }
-      }
-    } else {
-      const otherGroup = isRTL ? 'start' : 'end';
-      if (group !== otherGroup) {
-        const otherInputs = this.getGroupInputs(otherGroup);
-        if (otherInputs[0]) {
-          otherInputs[0].focus();
-          this.selectPart(otherInputs[0]);
-        }
-      }
-    }
-  }
-
-  protected override onEmptyPartBlur(): void {
-    // Unlike gui-date-time, an empty part never commits a null value
   }
 
   override render() {
@@ -140,17 +168,22 @@ export class GuiRangeDateTimeInput extends AbstractDateTimePartsInput {
       hint: this.hint,
     };
 
-    const pills = this.getSortedPills();
-    const pillItems: GuiPillItem[] = pills.map((pill) => {
-      const pillLabel = `${this.formatDateTimeForDisplay(pill.start)} - ${this.formatDateTimeForDisplay(
-        pill.end,
-      )}`;
-      return {
-        key: `${pill.start}-${pill.end}`,
-        label: pillLabel,
-        ariaLabel: `${this.removePillAriaLabel ?? 'Remove date-time'} ${pillLabel}`,
-      };
-    });
+    const partsData: GUIPartsTemplateData = {
+      blockClass: this.inputBlockClass,
+      groups: this.groups,
+      formatParts: getDateTimeFormatParts(this.localeId, this.localeData.effectiveHourFormat),
+      getDescriptor: (type) => this.getPartDescriptor(type),
+      getDisplayValue: this._parts.getPartDisplay,
+      required: this.required,
+      disabled: this.disabled,
+      partsReadonly: !!this.readOnly,
+    };
+
+    const pillItems: GuiPillItem[] = buildPillItems(
+      this.getSortedPills(),
+      (range) => formatRangeLabel(range, (iso) => this.formatDateTimeForDisplay(iso)),
+      this.removePillAriaLabel ?? 'Remove date-time',
+    );
 
     const iconClassMap = {
       'gui-widget-icon': true,
@@ -193,7 +226,7 @@ export class GuiRangeDateTimeInput extends AbstractDateTimePartsInput {
               role="group"
               aria-label=${this.startDateTimeAriaLabel ?? 'Start date-time'}
             >
-              ${this.renderGroupParts('start')}
+              ${renderGroupParts('start', partsData, this._parts)}
             </div>
 
             <span class="gui-range-date-time-input__separator">${this.separator ?? '-'}</span>
@@ -203,7 +236,7 @@ export class GuiRangeDateTimeInput extends AbstractDateTimePartsInput {
               role="group"
               aria-label=${this.endDateTimeAriaLabel ?? 'End date-time'}
             >
-              ${this.renderGroupParts('end')}
+              ${renderGroupParts('end', partsData, this._parts)}
             </div>
           </div>
         </div>
@@ -217,17 +250,14 @@ export class GuiRangeDateTimeInput extends AbstractDateTimePartsInput {
 
   private onPillRemoveEvent = (e: CustomEvent<GuiPillEventDetail>) => {
     if (this.disabled || this.readOnly) return;
-    const removed = this.getSortedPills().find((pill) => `${pill.start}-${pill.end}` === e.detail.key);
-    if (!removed) return;
-    const next = (this.value ?? []).filter(
-      (pill) => !(pill.start === removed.start && pill.end === removed.end),
-    );
-    this.value = next;
+    const removal = removeRangeByKey(this.value, e.detail.key);
+    if (!removal) return;
+    this.value = removal.next;
     this.dispatchEvent(
       new CustomEvent('change', { detail: { value: this.value }, bubbles: true, composed: true }),
     );
 
-    if (next.length === 0) {
+    if (removal.next.length === 0) {
       requestAnimationFrame(() => {
         this.querySelector<HTMLInputElement>('.gui-range-date-time-input__field input')?.focus();
       });
@@ -235,7 +265,7 @@ export class GuiRangeDateTimeInput extends AbstractDateTimePartsInput {
   };
 
   private onPillClickEvent = (e: CustomEvent<GuiPillEventDetail>) => {
-    const range = this.getSortedPills().find((pill) => `${pill.start}-${pill.end}` === e.detail.key);
+    const range = findRangeByKey(this.getSortedPills(), e.detail.key);
     if (range) this.onPillClick(range);
   };
 
@@ -246,75 +276,96 @@ export class GuiRangeDateTimeInput extends AbstractDateTimePartsInput {
   }
 
   private formatDateTimeForDisplay(iso: string): string {
-    return formatISODateTimeForLocale(iso, this.localeId, this.effectiveHourFormat);
+    return formatISODateTimeForLocale(iso, this.localeId, this.localeData.effectiveHourFormat);
   }
 
   private getSortedPills(): DateTimeRange[] {
-    if (!this.value || !Array.isArray(this.value)) return [];
-    return [...this.value].sort(
-      (a, b) => parseISODateTimeString(a.start).getTime() - parseISODateTimeString(b.start).getTime(),
+    return sortRangesByStart(
+      this.value,
+      (a, b) => parseISODateTimeString(a).getTime() - parseISODateTimeString(b).getTime(),
     );
   }
 
   /**
    * Parses a group into an ISO date-time via the shared clamp/bounds pipeline,
-   * distinguishing an incomplete group (`null`, nothing to report) from a
-   * complete-but-rejected one (`{ error }` — an impossible date or an
-   * out-of-bounds date/time). Unlike before it does not emit: the caller
-   * decides whether to surface or clear an error, so fixing one group clears
-   * its error even while the other is still empty.
+   * distinguishing an incomplete group (nothing to report) from a
+   * complete-but-rejected one (an impossible date or an out-of-bounds
+   * date-time). It does not emit: the caller decides whether to surface or
+   * clear an error, so fixing one group clears its error even while the other
+   * is still empty.
+   *
+   * Each endpoint is an instant, so it is bounded by instants. A date-only
+   * bound could not express this: `maxDate: 2026-02-10` is ambiguous about
+   * whether the 10th is allowed until 00:00 or 23:59, and independent date/time
+   * axes would wrongly reject Feb 11 08:00 for a `minTime` of 09:00.
    */
-  private validateDateTimeParts(group: string): { iso: string } | { error: string } | null {
-    const parsed = this.parseDateTimeGroup(group);
-    if (!parsed) return null;
-    if (parsed.error) return { error: parsed.error };
-    return { iso: parsed.iso as string };
+  private validateDateTimeParts(group: string): RangeEndpoint<string> {
+    const { effectiveHourFormat, descriptors } = this.localeData;
+    const { result, writeBacks } = parseDateTimeGroup(this._parts.values[group] ?? {}, {
+      hourFormat: effectiveHourFormat,
+      descriptors,
+      invalidDateMessage: this.invalidDateMessage,
+    });
+    this._parts.applyWriteBacks(group, writeBacks);
+
+    if (result.kind === 'incomplete') return { kind: 'incomplete' };
+    if (result.kind === 'invalid') return { kind: 'invalid', message: result.message };
+
+    const boundsError = dateTimeBoundsError(result.iso, this.minDateTime, this.maxDateTime, {
+      minDateTimeMessage: this.minDateTimeMessage,
+      maxDateTimeMessage: this.maxDateTimeMessage,
+    });
+    if (boundsError) return { kind: 'invalid', message: boundsError };
+
+    return { kind: 'valid', value: result.iso };
   }
 
   private tryCreatePill() {
     const start = this.validateDateTimeParts('start');
     const end = this.validateDateTimeParts('end');
 
+    const result = commitRange(start, end, this.value, {
+      // Date-time ranges are two instants: a backward selection reorders (swap)
+      // rather than erroring — mirroring the range calendar's date swap.
+      order: (s, e) => {
+        const ordered = orderDateTimeRange(s, e);
+        return { start: ordered.start, end: ordered.end };
+      },
+      validate: (ordered) =>
+        dateTimeRangeOverlaps({ start: ordered.start, end: ordered.end }, this.disabledRanges)
+          ? this.disabledRangeMessage ?? DISABLED_DATE_RANGE_MESSAGE
+          : null,
+      toRange: (ordered) => ({ start: ordered.start, end: ordered.end }),
+      merge: mergeDateTimeRanges,
+    });
+
     // A completed-but-rejected group (impossible date, or out of bounds) is
     // surfaced right away, using its own specific message.
-    const errorMessage =
-      start && 'error' in start ? start.error : end && 'error' in end ? end.error : null;
-    if (errorMessage) {
-      this.surfaceInputError(errorMessage);
+    if (result.kind === 'invalid') {
+      this._parts.surfaceInputError(result.message);
       return;
     }
 
     // Not both complete yet: no group is rejected, so clear any error a
     // now-corrected group left behind, then wait for the rest of the range.
-    if (!(start && 'iso' in start) || !(end && 'iso' in end)) {
-      this.clearSurfacedInputError(this.value ?? []);
+    if (result.kind === 'incomplete') {
+      this._parts.clearSurfacedInputError(this.value ?? []);
       return;
     }
 
-    // Date-time ranges are two instants: a backward selection reorders (swap)
-    // rather than erroring — mirroring the range calendar's date swap.
-    const ordered = orderDateTimeRange(start.iso, end.iso);
+    this.value = result.value;
 
-    if (dateTimeRangeOverlaps(ordered, this.disabledRanges)) {
-      this.surfaceInputError(this.disabledRangeMessage ?? DISABLED_DATE_RANGE_MESSAGE);
-      return;
-    }
-
-    this.value = mergeDateTimeRanges([...(this.value ?? []), ordered]);
-
-    this.clearGroup('start');
-    this.clearGroup('end');
-    this.seedDayPeriods(this.groups);
+    this._parts.clearGroup('start');
+    this._parts.clearGroup('end');
+    this._parts.seedDayPeriods();
 
     // The commit's own change clears any injected error downstream.
-    this._hasSurfacedInputError = false;
+    this._parts.resetSurfacedInputError();
     this.dispatchEvent(
       new CustomEvent('change', { detail: { value: this.value }, bubbles: true, composed: true }),
     );
 
-    requestAnimationFrame(() => {
-      this.getGroupInputs('start')[0]?.focus();
-    });
+    this._parts.focusFirst('start');
     this.requestUpdate();
   }
 }

@@ -13,10 +13,11 @@ import {
   type HourFormat,
 } from '../utils/time';
 import { addErrors, addIcon, addLabel } from '../utils/templates';
-
-const INVALID_MIN_TIME_MESSAGE = 'Invalid time: time is before the minimum allowed time.';
-const INVALID_MAX_TIME_MESSAGE = 'Invalid time: time is after the maximum allowed time.';
-const INVALID_DISABLED_RANGE_MESSAGE = 'Invalid time: time is within a disabled range.';
+import {
+  INVALID_DISABLED_TIME_RANGE_MESSAGE,
+  INVALID_MAX_TIME_MESSAGE,
+  INVALID_MIN_TIME_MESSAGE,
+} from '../utils/messages';
 
 @customElement('gui-range-time-picker')
 export class GuiRangeTimePicker extends LitElement {
@@ -309,9 +310,9 @@ export class GuiRangeTimePicker extends LitElement {
   }
 
   private _inListRef() {
-    return this.querySelector<
-      HTMLElement & { scrollToSelectedValue?: () => void }
-    >('.gui-range-time-picker__column:first-child gui-time-list');
+    return this.querySelector<HTMLElement & { scrollToSelectedValue?: () => void }>(
+      '.gui-range-time-picker__column:first-child gui-time-list',
+    );
   }
 
   private commitValue(value: TimeRange[] | null | undefined) {
@@ -348,7 +349,7 @@ export class GuiRangeTimePicker extends LitElement {
         }
       }
       if (isTimeRangeDisabled(range.start, range.end, this.disabledRanges)) {
-        return this.disabledRangeMessage ?? INVALID_DISABLED_RANGE_MESSAGE;
+        return this.disabledRangeMessage ?? INVALID_DISABLED_TIME_RANGE_MESSAGE;
       }
     }
     return null;

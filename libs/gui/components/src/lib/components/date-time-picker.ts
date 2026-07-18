@@ -14,6 +14,7 @@ import {
   type HourFormat,
 } from '../utils/time';
 import { addErrors, addIcon, addLabel } from '../utils/templates';
+import { INVALID_DISABLED_TIME_RANGE_MESSAGE } from '../utils/messages';
 
 @customElement('gui-date-time-picker')
 export class GuiDateTimePicker extends LitElement {
@@ -269,7 +270,7 @@ export class GuiDateTimePicker extends LitElement {
     // Disabled time ranges are date-scoped, so resolve them for the value's day.
     const ranges = resolveDisabledTimeRangesForDate(this.disabledTimeRanges, isoDate);
     if (isTimeDisabled(toISOTimeString(date), ranges)) {
-      return this.disabledTimeRangeMessage ?? 'Invalid time: time is within a disabled range.';
+      return this.disabledTimeRangeMessage ?? INVALID_DISABLED_TIME_RANGE_MESSAGE;
     }
     return null;
   }

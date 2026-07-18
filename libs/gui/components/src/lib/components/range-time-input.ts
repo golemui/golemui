@@ -1,24 +1,67 @@
 import type { RangeTimeInputProps, TimeRange } from '@golemui/gui-shared/internals';
-import { html, nothing, type PropertyValues } from 'lit';
+import { html, LitElement, nothing, type PropertyValues } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { styleMap } from 'lit-html/directives/style-map.js';
-import { AbstractTimePartsInput } from './abstract-time-parts-input';
+import { GUIAriaController } from '../controllers/aria.controller';
+import { GUIPartsController } from '../controllers/parts.controller';
+import { renderGroupParts, type GUIPartsTemplateData } from '../utils/part-templates';
+import {
+  getTimeLocaleData,
+  parseTimeGroup,
+  timeBoundsError,
+  type DateTimePartDescriptor,
+  type DateTimePartType,
+} from '../utils/parts';
+import { commitRange, type RangeEndpoint } from '../utils/range-commit';
+import {
+  buildPillItems,
+  findRangeByKey,
+  formatRangeLabel,
+  removeRangeByKey,
+  sortRangesByStart,
+} from '../utils/pill-ranges';
 import {
   compareISOTimes,
   formatISOTimeForLocale,
+  getTimeFormatParts,
   isTimeRangeDisabled,
   mergeTimeRanges,
+  type HourFormat,
 } from '../utils/time';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 import './pills';
 import type { GuiPillEventDetail, GuiPillItem } from './pills';
-
-const INVALID_RANGE_ORDER_MESSAGE = 'Invalid range: end time must be after start time.';
-const INVALID_DISABLED_RANGE_MESSAGE = 'Invalid time: time is within a disabled range.';
+import {
+  INVALID_DISABLED_TIME_RANGE_MESSAGE,
+  INVALID_TIME_RANGE_ORDER_MESSAGE,
+} from '../utils/messages';
 
 @customElement('gui-range-time')
-export class GuiRangeTimeInput extends AbstractTimePartsInput {
+export class GuiRangeTimeInput extends LitElement {
+  @property({ type: String }) uid: string | undefined = undefined;
+  @property({ type: String }) label: string | undefined = undefined;
+  @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
+  @property({ type: Array }) errors: string[] | undefined = [];
+  @property({ type: Boolean }) showErrors: boolean | undefined = true;
+  @property({ type: Boolean }) touched: boolean | undefined = false;
+  @property({ type: Boolean }) required: boolean | undefined = false;
+  @property({ type: Boolean }) disabled: boolean | undefined = false;
+  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
+
+  @property({ type: String }) icon: string | undefined = '';
+  @property({ type: String }) hint: string | undefined = undefined;
+
+  @property({ type: String, attribute: 'hour-format' }) hourFormat: HourFormat | undefined =
+    undefined;
+  @property({ type: Number, attribute: 'minute-step' }) minuteStep: number | undefined = 1;
+  @property({ type: String, attribute: 'min-time' }) minTime: string | undefined = undefined;
+  @property({ type: String, attribute: 'max-time' }) maxTime: string | undefined = undefined;
+  @property({ type: String, attribute: 'min-time-message' }) minTimeMessage: string | undefined =
+    undefined;
+  @property({ type: String, attribute: 'max-time-message' }) maxTimeMessage: string | undefined =
+    undefined;
+
   @property({ type: Array }) value: TimeRange[] | undefined = [];
   @property({ type: String, attribute: 'range-order-message' }) rangeOrderMessage:
     | string
@@ -27,19 +70,69 @@ export class GuiRangeTimeInput extends AbstractTimePartsInput {
   @property({ type: String }) startTimeAriaLabel: string | undefined = undefined;
   @property({ type: String }) endTimeAriaLabel: string | undefined = undefined;
   @property({ type: String }) separator: string | undefined = undefined;
-  @property({ type: Boolean, attribute: 'allow-custom-time' }) allowCustomTime: boolean | undefined =
-    undefined;
+  @property({ type: Boolean, attribute: 'allow-custom-time' }) allowCustomTime:
+    | boolean
+    | undefined = undefined;
   @property({ type: Array, attribute: 'disabled-ranges' }) disabledRanges: TimeRange[] | undefined =
     undefined;
   @property({ type: String, attribute: 'disabled-range-message' }) disabledRangeMessage:
     | string
     | undefined = undefined;
 
-  protected override readonly inputBlockClass = 'gui-range-time-input';
-  protected override readonly groups = ['start', 'end'] as const;
+  private readonly inputBlockClass = 'gui-range-time-input';
+  private readonly groups = ['start', 'end'] as const;
 
-  protected override get partsReadonly(): boolean {
-    return !!this.readOnly || this.allowCustomTime === false;
+  private _parts = new GUIPartsController(this, {
+    blockClass: this.inputBlockClass,
+    groups: this.groups,
+    getDescriptor: (type) => this.getPartDescriptor(type),
+    commitGroup: () => {
+      this.tryCreatePill();
+    },
+    isReadonly: () => !!this.readOnly || this.allowCustomTime === false,
+    isDisabled: () => !!this.disabled,
+    onEmptyPartBlur: () => {
+      // Unlike gui-time, an empty part never commits a null value
+    },
+    onEnter: () => {
+      this.tryCreatePill();
+      if (this.value && this.value.length > 0) {
+        this.onPillClick(this.value[this.value.length - 1]);
+      }
+    },
+    getHourFormat: () => this.timeLocaleData.effectiveHourFormat,
+    getDayPeriodLabels: () => this.timeLocaleData.dayPeriodLabels,
+  });
+
+  protected ariaController: GUIAriaController<unknown, any> = new GUIAriaController(this, {
+    getTargets: () => this.querySelectorAll(`.${this.inputBlockClass}`),
+    getState: () => ({
+      uid: this.uid as string,
+      templateData: {
+        hint: this.hint,
+        errors: this.errors,
+        readonly: this.readOnly,
+        disabled: this.disabled,
+        touched: this.touched,
+      },
+    }),
+  });
+
+  override createRenderRoot() {
+    return this;
+  }
+
+  override connectedCallback() {
+    super.connectedCallback();
+    this.classList.add('gui-field');
+  }
+
+  private get timeLocaleData() {
+    return getTimeLocaleData(this.localeId, this.hourFormat, this.minuteStep);
+  }
+
+  private getPartDescriptor(type: string): DateTimePartDescriptor | undefined {
+    return this.timeLocaleData.descriptors[type as DateTimePartType];
   }
 
   override willUpdate(changedProperties: PropertyValues): void {
@@ -48,56 +141,8 @@ export class GuiRangeTimeInput extends AbstractTimePartsInput {
       changedProperties.has('hourFormat') ||
       changedProperties.has('localeId')
     ) {
-      this.seedDayPeriods(this.groups);
+      this._parts.seedDayPeriods();
     }
-  }
-
-  protected override commitParts(): void {
-    this.tryCreatePill();
-  }
-
-  protected override onEnter(): void {
-    this.tryCreatePill();
-    if (this.value && this.value.length > 0) {
-      this.onPillClick(this.value[this.value.length - 1]);
-    }
-  }
-
-  protected override autoAdvanceFromGroupEnd(group: string): void {
-    if (group === 'start') {
-      this.getGroupInputs('end')[0]?.focus();
-    }
-  }
-
-  protected override navigatePastGroupEdge(
-    key: 'ArrowLeft' | 'ArrowRight',
-    group: string,
-    isRTL: boolean,
-  ): void {
-    if (key === 'ArrowLeft') {
-      const otherGroup = isRTL ? 'end' : 'start';
-      if (group !== otherGroup) {
-        const otherInputs = this.getGroupInputs(otherGroup);
-        const target = otherInputs[otherInputs.length - 1];
-        if (target) {
-          target.focus();
-          this.selectPart(target);
-        }
-      }
-    } else {
-      const otherGroup = isRTL ? 'start' : 'end';
-      if (group !== otherGroup) {
-        const otherInputs = this.getGroupInputs(otherGroup);
-        if (otherInputs[0]) {
-          otherInputs[0].focus();
-          this.selectPart(otherInputs[0]);
-        }
-      }
-    }
-  }
-
-  protected override onEmptyPartBlur(): void {
-    // Unlike gui-time, an empty part never commits a null value
   }
 
   override render() {
@@ -113,16 +158,22 @@ export class GuiRangeTimeInput extends AbstractTimePartsInput {
       hint: this.hint,
     };
 
-    const pills = this.getSortedPills();
-    const pillItems: GuiPillItem[] = pills.map((pill) => {
-      const endLabel = this.formatTimeForDisplay(pill.end ?? pill.start);
-      const pillLabel = `${this.formatTimeForDisplay(pill.start)} - ${endLabel}`;
-      return {
-        key: `${pill.start}-${pill.end ?? pill.start}`,
-        label: pillLabel,
-        ariaLabel: `${this.removePillAriaLabel ?? 'Remove time'} ${pillLabel}`,
-      };
-    });
+    const partsData: GUIPartsTemplateData = {
+      blockClass: this.inputBlockClass,
+      groups: this.groups,
+      formatParts: getTimeFormatParts(this.localeId, this.timeLocaleData.effectiveHourFormat),
+      getDescriptor: (type) => this.getPartDescriptor(type),
+      getDisplayValue: this._parts.getPartDisplay,
+      required: this.required,
+      disabled: this.disabled,
+      partsReadonly: !!this.readOnly || this.allowCustomTime === false,
+    };
+
+    const pillItems: GuiPillItem[] = buildPillItems(
+      this.getSortedPills(),
+      (pill) => formatRangeLabel(pill, (iso) => this.formatTimeForDisplay(iso)),
+      this.removePillAriaLabel ?? 'Remove time',
+    );
 
     const iconClassMap = {
       'gui-widget-icon': true,
@@ -165,7 +216,7 @@ export class GuiRangeTimeInput extends AbstractTimePartsInput {
               role="group"
               aria-label=${this.startTimeAriaLabel ?? 'Start time'}
             >
-              ${this.renderGroupParts('start')}
+              ${renderGroupParts('start', partsData, this._parts)}
             </div>
 
             <span class="gui-range-time-input__separator">${this.separator ?? '-'}</span>
@@ -175,7 +226,7 @@ export class GuiRangeTimeInput extends AbstractTimePartsInput {
               role="group"
               aria-label=${this.endTimeAriaLabel ?? 'End time'}
             >
-              ${this.renderGroupParts('end')}
+              ${renderGroupParts('end', partsData, this._parts)}
             </div>
           </div>
         </div>
@@ -189,19 +240,14 @@ export class GuiRangeTimeInput extends AbstractTimePartsInput {
 
   private onPillRemoveEvent = (e: CustomEvent<GuiPillEventDetail>) => {
     if (this.disabled || this.readOnly) return;
-    const removed = this.getSortedPills().find(
-      (pill) => `${pill.start}-${pill.end ?? pill.start}` === e.detail.key,
-    );
-    if (!removed) return;
-    const next = (this.value ?? []).filter(
-      (pill) => !(pill.start === removed.start && (pill.end ?? null) === (removed.end ?? null)),
-    );
-    this.value = next;
+    const removal = removeRangeByKey(this.value, e.detail.key);
+    if (!removal) return;
+    this.value = removal.next;
     this.dispatchEvent(
       new CustomEvent('change', { detail: { value: this.value }, bubbles: true, composed: true }),
     );
 
-    if (next.length === 0) {
+    if (removal.next.length === 0) {
       requestAnimationFrame(() => {
         this.querySelector<HTMLInputElement>('.gui-range-time-input__field input')?.focus();
       });
@@ -209,9 +255,7 @@ export class GuiRangeTimeInput extends AbstractTimePartsInput {
   };
 
   private onPillClickEvent = (e: CustomEvent<GuiPillEventDetail>) => {
-    const range = this.getSortedPills().find(
-      (pill) => `${pill.start}-${pill.end ?? pill.start}` === e.detail.key,
-    );
+    const range = findRangeByKey(this.getSortedPills(), e.detail.key);
     if (range) this.onPillClick(range);
   };
 
@@ -222,12 +266,11 @@ export class GuiRangeTimeInput extends AbstractTimePartsInput {
   }
 
   private formatTimeForDisplay(isoTime: string): string {
-    return formatISOTimeForLocale(isoTime, this.localeId, this.effectiveHourFormat);
+    return formatISOTimeForLocale(isoTime, this.localeId, this.timeLocaleData.effectiveHourFormat);
   }
 
   private getSortedPills(): TimeRange[] {
-    if (!this.value || !Array.isArray(this.value)) return [];
-    return [...this.value].sort((a, b) => compareISOTimes(a.start, b.start));
+    return sortRangesByStart(this.value, compareISOTimes);
   }
 
   /**
@@ -236,15 +279,28 @@ export class GuiRangeTimeInput extends AbstractTimePartsInput {
    * the group is incomplete or out of bounds.
    */
   private validateTimeParts(group: string): string | null {
-    const parsed = this.parseTimeGroup(group);
-    if (!parsed) return null;
-    if (parsed.boundsError) {
+    const { effectiveHourFormat, descriptors } = this.timeLocaleData;
+    const { result, writeBacks } = parseTimeGroup(this._parts.values[group] ?? {}, {
+      hourFormat: effectiveHourFormat,
+      descriptors,
+    });
+    this._parts.applyWriteBacks(group, writeBacks);
+
+    if (result.kind !== 'valid') return null;
+
+    const boundsError = timeBoundsError(result.iso, {
+      minTime: this.minTime,
+      maxTime: this.maxTime,
+      minTimeMessage: this.minTimeMessage,
+      maxTimeMessage: this.maxTimeMessage,
+    });
+    if (boundsError) {
       this.dispatchEvent(
-        new CustomEvent('inputError', { detail: { message: parsed.boundsError }, bubbles: true }),
+        new CustomEvent('inputError', { detail: { message: boundsError }, bubbles: true }),
       );
       return null;
     }
-    return parsed.iso;
+    return result.iso;
   }
 
   /**
@@ -253,7 +309,7 @@ export class GuiRangeTimeInput extends AbstractTimePartsInput {
    * before it attempts to commit — see {@link commitFromParts}.
    */
   fillGroup(group: 'start' | 'end', iso: string): void {
-    this.setGroupTime(group, iso);
+    this._parts.setGroupFromISO(group, iso, 'time', this.timeLocaleData.effectiveHourFormat);
     this.requestUpdate();
   }
 
@@ -284,41 +340,45 @@ export class GuiRangeTimeInput extends AbstractTimePartsInput {
       }),
     );
 
-    if (!start || !end) return false;
+    // A bounds-violating endpoint was surfaced above and behaves as incomplete
+    // (no swap, no error clear), matching the original null return.
+    const toEndpoint = (iso: string | null): RangeEndpoint<string> =>
+      iso ? { kind: 'valid', value: iso } : { kind: 'incomplete' };
 
-    if (compareISOTimes(end, start) <= 0) {
+    const outcome = commitRange(toEndpoint(start), toEndpoint(end), this.value, {
+      validate: (ordered) =>
+        compareISOTimes(ordered.end, ordered.start) <= 0
+          ? (this.rangeOrderMessage ?? INVALID_TIME_RANGE_ORDER_MESSAGE)
+          : isTimeRangeDisabled(ordered.start, ordered.end, this.disabledRanges)
+            ? (this.disabledRangeMessage ?? INVALID_DISABLED_TIME_RANGE_MESSAGE)
+            : null,
+      toRange: (ordered) => ({ start: ordered.start, end: ordered.end }),
+      merge: mergeTimeRanges,
+    });
+
+    if (outcome.kind === 'incomplete') return false;
+
+    if (outcome.kind === 'invalid') {
       this.dispatchEvent(
         new CustomEvent('inputError', {
-          detail: { message: this.rangeOrderMessage ?? INVALID_RANGE_ORDER_MESSAGE },
+          detail: { message: outcome.message },
           bubbles: true,
         }),
       );
       return false;
     }
 
-    if (isTimeRangeDisabled(start, end, this.disabledRanges)) {
-      this.dispatchEvent(
-        new CustomEvent('inputError', {
-          detail: { message: this.disabledRangeMessage ?? INVALID_DISABLED_RANGE_MESSAGE },
-          bubbles: true,
-        }),
-      );
-      return false;
-    }
+    this.value = outcome.value;
 
-    this.value = mergeTimeRanges([...(this.value ?? []), { start, end }]);
-
-    this.clearGroup('start');
-    this.clearGroup('end');
-    this.seedDayPeriods(this.groups);
+    this._parts.clearGroup('start');
+    this._parts.clearGroup('end');
+    this._parts.seedDayPeriods();
 
     this.dispatchEvent(
       new CustomEvent('change', { detail: { value: this.value }, bubbles: true, composed: true }),
     );
 
-    requestAnimationFrame(() => {
-      this.getGroupInputs('start')[0]?.focus();
-    });
+    this._parts.focusFirst('start');
     this.requestUpdate();
     return true;
   }
