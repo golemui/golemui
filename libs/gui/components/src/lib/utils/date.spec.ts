@@ -381,12 +381,15 @@ describe('weekDaysOrder', () => {
     expect(weekDaysOrder(undefined)).toEqual([0, 1, 2, 3, 4, 5, 6]);
   });
 
-  it('falls back to a Sunday start for locales missing from weekInfoData', () => {
-    // Neither "en-US" nor "es-ES" is a key in weekInfoData (CLDR omits default
-    // regions), so both hit the { firstDay: 0 } fallback — including es-ES,
-    // even though the bare "es" entry is Monday-first. Current behavior.
+  it('strips the region subtag to reach the base-language entry', () => {
+    // Region-tagged locales (CLDR omits default regions like "es-ES") fall back
+    // to the base language: "es-ES" resolves through "es" to Monday-first, while
+    // "en-US" resolves through "en" to Sunday-first.
     expect(weekDaysOrder('en-US')).toEqual([0, 1, 2, 3, 4, 5, 6]);
-    expect(weekDaysOrder('es-ES')).toEqual([0, 1, 2, 3, 4, 5, 6]);
+    expect(weekDaysOrder('es-ES')).toEqual([1, 2, 3, 4, 5, 6, 0]);
+  });
+
+  it('defaults to a Sunday start when neither the locale nor its base is known', () => {
     expect(weekDaysOrder('xx-XX')).toEqual([0, 1, 2, 3, 4, 5, 6]);
   });
 });
@@ -400,10 +403,10 @@ describe('getWeekdayLabels', () => {
     expect(getWeekdayLabels('es')).toEqual(['L', 'M', 'X', 'J', 'V', 'S', 'D']);
   });
 
-  it('returns Spanish narrow labels but Sunday-first for "es-ES" (fallback ordering)', () => {
-    // Labels come from Intl (es-ES) while the order comes from the
-    // weekInfoData fallback, so es-ES currently renders Sunday-first.
-    expect(getWeekdayLabels('es-ES')).toEqual(['D', 'L', 'M', 'X', 'J', 'V', 'S']);
+  it('returns Spanish narrow labels Monday-first for "es-ES" (base-subtag order)', () => {
+    // Labels come from Intl (es-ES); the order resolves through the "es" base
+    // entry, so es-ES renders Monday-first.
+    expect(getWeekdayLabels('es-ES')).toEqual(['L', 'M', 'X', 'J', 'V', 'S', 'D']);
   });
 });
 

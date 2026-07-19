@@ -234,7 +234,10 @@ export function getOrderedWeekDays(firstDay: number): number[] {
  * @return {number[]} An array of numbers representing the days of the week, reordered to start with the locale's first day.
  */
 export function weekDaysOrder(localeId: string | undefined): number[] {
-  const localeData = weekInfoData[localeId ?? 'en'] || { firstDay: 0 };
+  const id = localeId ?? 'en';
+  // Try the exact locale, then fall back to its base language subtag before the
+  // Sunday-start default.
+  const localeData = weekInfoData[id] || weekInfoData[id.split('-')[0]] || { firstDay: 0 };
   return getOrderedWeekDays(localeData.firstDay);
 }
 
