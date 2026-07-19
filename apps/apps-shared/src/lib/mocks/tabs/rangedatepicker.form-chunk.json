@@ -17,6 +17,25 @@
     {
       "kind": "input",
       "type": "rangeDatePicker",
+      "path": "rangeDatePickerMinMax",
+      "defaultValue": [
+        {
+          "start": "2026-02-20"
+        }
+      ],
+      "label": "Min/Max",
+      "props": {
+        "icon": "calendar_month",
+        "separator": "to",
+        "minDate": "2026-02-01",
+        "maxDate": "2026-02-28",
+        "minDateMessage": "Min date is 01.02.2026",
+        "maxDateMessage": "Max date is 28.02.2026"
+      }
+    },
+    {
+      "kind": "input",
+      "type": "rangeDatePicker",
       "path": "rangeDatePickerDefault",
       "defaultValue": [
         {

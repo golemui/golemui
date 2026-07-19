@@ -15,7 +15,17 @@
         "hourFormat": "24",
         "minTime": "06:00:00",
         "maxTime": "22:00:00",
-        "minuteStep": 30
+        "minuteStep": 30,
+        "allowCustomTime": true,
+        "startTimeLabel": "Time In",
+        "endTimeLabel": "Time Out",
+        "disabledRanges": [
+          {
+            "start": "13:00:00",
+            "end": "14:00:00"
+          }
+        ],
+        "disabledRangeMessage": "Time is withing a disabled range."
       }
     },
     {

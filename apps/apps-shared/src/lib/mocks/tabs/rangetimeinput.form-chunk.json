@@ -11,8 +11,7 @@
       "label": "Empty",
       "props": {
         "icon": "schedule",
-        "separator": "to",
-        "hourFormat": "24"
+        "separator": "to"
       }
     },
     {
