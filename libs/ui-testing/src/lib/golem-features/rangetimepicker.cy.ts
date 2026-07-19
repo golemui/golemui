@@ -91,7 +91,9 @@ export const runRangeTimePickerComponentTests = (mountFn: MountComponentFn) => {
     });
 
     it('should render localizable start/end column headings from startTimeLabel/endTimeLabel', () => {
-      mountRangeTimePicker({ props: { ...officeProps, startTimeLabel: 'From', endTimeLabel: 'Until' } });
+      mountRangeTimePicker({
+        props: { ...officeProps, startTimeLabel: 'From', endTimeLabel: 'Until' },
+      });
 
       cy.get(sel.startHour).click();
       cy.get('.gui-range-time-picker__column-label').should('have.length', 2);
@@ -193,7 +195,11 @@ export const runRangeTimePickerComponentTests = (mountFn: MountComponentFn) => {
 
     it('should reject a typed reversed range with the order error', () => {
       mountRangeTimePicker({
-        props: { ...officeProps, allowCustomTime: true, rangeOrderMessage: 'End must be after start' },
+        props: {
+          ...officeProps,
+          allowCustomTime: true,
+          rangeOrderMessage: 'End must be after start',
+        },
       });
 
       const inputErrorSpy = cy.spy().as('inputErrorSpy');

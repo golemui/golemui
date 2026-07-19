@@ -71,12 +71,7 @@ export const runRangeDateTimeCalendarComponentTests = (mountFn: MountComponentFn
     };
 
     // Select a date range then a start + end time, committing one pill.
-    const commitRange = (
-      startDay: number,
-      startTime: string,
-      endDay: number,
-      endTime: string,
-    ) => {
+    const commitRange = (startDay: number, startTime: string, endDay: number, endTime: string) => {
       day(startDay).click();
       day(endDay).click();
       startHour().click();
@@ -212,9 +207,7 @@ export const runRangeDateTimeCalendarComponentTests = (mountFn: MountComponentFn
 
         // Two partial spans on the 17th → grey bubble '2', hover label listing
         // both clock windows (hidden until hovered).
-        day(17)
-          .find('.gui-range-date-time-calendar__disabled-count')
-          .should('have.text', '2');
+        day(17).find('.gui-range-date-time-calendar__disabled-count').should('have.text', '2');
         day(17)
           .find('.gui-range-date-time-calendar__badge-tooltip')
           .should('contain', '10:00 AM – 11:00 AM')
@@ -238,9 +231,7 @@ export const runRangeDateTimeCalendarComponentTests = (mountFn: MountComponentFn
 
         day(13).find('.gui-range-date-time-calendar__badges').should('exist');
         day(13).find(sel.dayCount).should('have.text', '2');
-        day(13)
-          .find('.gui-range-date-time-calendar__disabled-count')
-          .should('have.text', '1');
+        day(13).find('.gui-range-date-time-calendar__disabled-count').should('have.text', '1');
       });
 
       it('should clamp the start list on the minDateTime boundary day', () => {

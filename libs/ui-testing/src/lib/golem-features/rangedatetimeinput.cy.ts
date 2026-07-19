@@ -101,9 +101,11 @@ export const runRangeDateTimeInputComponentTests = (mountFn: MountComponentFn) =
           expect($el.text().trim()).to.match(/AM/);
         },
       );
-      cy.get('gui-range-date-time button[data-group="end"][data-type="dayPeriod"]').should(($el) => {
-        expect($el.text().trim()).to.match(/AM/);
-      });
+      cy.get('gui-range-date-time button[data-group="end"][data-type="dayPeriod"]').should(
+        ($el) => {
+          expect($el.text().trim()).to.match(/AM/);
+        },
+      );
     });
 
     it('should create a pill from a typed range and submit it', () => {

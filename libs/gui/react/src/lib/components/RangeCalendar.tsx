@@ -7,8 +7,16 @@ import '../styles.scss';
 
 export function RangeCalendar(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<DateRange[]>;
-  const { uid, errors, value, isTouched, templateData, onBlur, onValueChanged, injectValidationIssues } =
-    useInputWidget<DateRange[], RangeCalendarProps>(widget);
+  const {
+    uid,
+    errors,
+    value,
+    isTouched,
+    templateData,
+    onBlur,
+    onValueChanged,
+    injectValidationIssues,
+  } = useInputWidget<DateRange[], RangeCalendarProps>(widget);
 
   const handleRef = useCallback(
     (node: HTMLElement | null) => {

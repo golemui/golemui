@@ -283,9 +283,7 @@ export function isTimeRangeDisabled(
   const rangeEnd = end ?? start;
   return ranges.some((range) => {
     const disabledEnd = range.end ?? range.start;
-    return (
-      compareISOTimes(start, disabledEnd) <= 0 && compareISOTimes(range.start, rangeEnd) <= 0
-    );
+    return compareISOTimes(start, disabledEnd) <= 0 && compareISOTimes(range.start, rangeEnd) <= 0;
   });
 }
 
@@ -401,10 +399,7 @@ export function dateTimeRangeOverlaps(
  * @param {DateTimeRange[] | undefined} spans - The disabled instant spans.
  * @return {boolean} True when a span covers the whole day.
  */
-export function isDayFullyBlocked(
-  isoDay: string,
-  spans: DateTimeRange[] | undefined,
-): boolean {
+export function isDayFullyBlocked(isoDay: string, spans: DateTimeRange[] | undefined): boolean {
   if (!spans?.length) return false;
   const dayStart = parseISODateTimeString(`${isoDay}T00:00:00`).getTime();
   const dayEnd = parseISODateTimeString(`${isoDay}T23:59:59`).getTime();
@@ -536,7 +531,6 @@ export function formatISODateTimeForLocale(
     hour12: hourFormat === '12',
   }).format(date);
 }
-
 
 export interface DateTimeBoundsMessages {
   minDateTimeMessage?: string;

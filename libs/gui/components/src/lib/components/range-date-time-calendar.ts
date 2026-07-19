@@ -11,11 +11,7 @@ import './pills';
 import type { GuiPillEventDetail, GuiPillItem } from './pills';
 import './time-picker';
 import type { GuiTimePicker } from './time-picker';
-import {
-  isDateDisabled,
-  parseISODateString,
-  toISODateString,
-} from '../utils/date';
+import { isDateDisabled, parseISODateString, toISODateString } from '../utils/date';
 import {
   renderCalendarChrome,
   renderCalendarMonthPanel,
@@ -197,8 +193,7 @@ export class GuiRangeDateTimeCalendar extends LitElement {
   });
 
   private _focusLeave = new GUIFocusLeaveController(this, {
-    onLeave: () =>
-      this.dispatchEvent(new CustomEvent('blur', { bubbles: true, composed: true })),
+    onLeave: () => this.dispatchEvent(new CustomEvent('blur', { bubbles: true, composed: true })),
   });
 
   /**
@@ -258,8 +253,7 @@ export class GuiRangeDateTimeCalendar extends LitElement {
       if (this.invalidRange) {
         const start = this.endpointDay(this.invalidRange.start);
         const end = this.endpointDay(this.invalidRange.end);
-        this._invalidRange =
-          isNaN(start.getTime()) || isNaN(end.getTime()) ? null : { start, end };
+        this._invalidRange = isNaN(start.getTime()) || isNaN(end.getTime()) ? null : { start, end };
       } else {
         this._invalidRange = null;
       }
@@ -784,9 +778,7 @@ export class GuiRangeDateTimeCalendar extends LitElement {
     aria: string,
     labels: string[],
   ): TemplateResult {
-    return html`<span
-        class="gui-range-date-time-calendar__${kind}"
-        aria-label=${aria}
+    return html`<span class="gui-range-date-time-calendar__${kind}" aria-label=${aria}
         >${count}</span
       ><span class="gui-range-date-time-calendar__badge-tooltip" aria-hidden="true"
         >${labels.map((label) => html`<span>${label}</span>`)}</span

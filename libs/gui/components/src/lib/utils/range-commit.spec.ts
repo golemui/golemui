@@ -142,9 +142,7 @@ describe('commitRange - time flavor (identity order + validate rejection)', () =
 });
 
 describe('commitRange - date-time flavor (swap + overlap validate)', () => {
-  const disabled: DateTimeRange[] = [
-    { start: '2026-01-05T13:00:00', end: '2026-01-05T14:00:00' },
-  ];
+  const disabled: DateTimeRange[] = [{ start: '2026-01-05T13:00:00', end: '2026-01-05T14:00:00' }];
   const dateTimeOptions: CommitRangeOptions<string, DateTimeRange> = {
     order: (start, end) => orderDateTimeRange(start, end),
     validate: (ordered) =>

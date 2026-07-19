@@ -90,7 +90,9 @@ export const runRangeDateTimePickerComponentTests = (mountFn: MountComponentFn) 
 
     describe('open / close', () => {
       it('should not render the calendar initially', () => {
-        mountPicker({ data: { myRanges: [{ start: dt(10, '09:00:00'), end: dt(12, '17:00:00') }] } });
+        mountPicker({
+          data: { myRanges: [{ start: dt(10, '09:00:00'), end: dt(12, '17:00:00') }] },
+        });
         cy.get(sel.calendar).should('not.exist');
       });
 

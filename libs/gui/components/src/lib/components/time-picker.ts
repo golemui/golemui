@@ -56,9 +56,7 @@ export class GuiTimePicker extends LitElement {
     isDisabled: () => !!this.disabled,
     clickIntent: (target) => {
       if (target.closest('.gui-time-list__option')) return 'ignore';
-      return target.closest('gui-time') || target.closest('gui-time-list')
-        ? 'open'
-        : 'toggle';
+      return target.closest('gui-time') || target.closest('gui-time-list') ? 'open' : 'toggle';
     },
     keyToggleMode: 'openClose',
     onOpenChanged: (open) => {

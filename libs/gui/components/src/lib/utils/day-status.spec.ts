@@ -212,7 +212,9 @@ describe('computeDayStatus - working range (range date-time calendar)', () => {
 
   it('ORs into committed-range flags (applied after them, like the override on super)', () => {
     const ranges = [{ start: day(8), end: day(12) }];
-    expect(computeDayStatus(day(8), { ranges, workingRange: { start: day(5), end: day(8) } })).toEqual({
+    expect(
+      computeDayStatus(day(8), { ranges, workingRange: { start: day(5), end: day(8) } }),
+    ).toEqual({
       ...emptyStatus,
       isRangeStart: true, // committed range starts here
       isRangeEnd: true, // working range ends here

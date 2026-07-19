@@ -229,9 +229,7 @@ export class GuiDateTime extends LitElement {
     }
 
     this.value = result.iso;
-    this.dispatchEvent(
-      new CustomEvent('change', { detail: { value: this.value }, bubbles: true }),
-    );
+    this.dispatchEvent(new CustomEvent('change', { detail: { value: this.value }, bubbles: true }));
     this.requestUpdate();
   }
 }

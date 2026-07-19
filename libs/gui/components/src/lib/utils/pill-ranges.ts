@@ -106,7 +106,10 @@ export function formatISODateForDisplay(iso: string, localeId: string | undefine
  * @param {(iso: string) => string} formatEndpoint - Endpoint display formatter.
  * @return {string} The label.
  */
-export function formatRangeLabel(range: RangeLike, formatEndpoint: (iso: string) => string): string {
+export function formatRangeLabel(
+  range: RangeLike,
+  formatEndpoint: (iso: string) => string,
+): string {
   const startLabel = formatEndpoint(range.start);
   const endLabel = range.end ? formatEndpoint(range.end) : startLabel;
   return `${startLabel} - ${endLabel}`;

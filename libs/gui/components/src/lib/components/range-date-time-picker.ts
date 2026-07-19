@@ -334,9 +334,6 @@ declare global {
   }
 }
 
-if (
-  typeof customElements !== 'undefined' &&
-  !customElements.get('gui-range-date-time-picker')
-) {
+if (typeof customElements !== 'undefined' && !customElements.get('gui-range-date-time-picker')) {
   customElements.define('gui-range-date-time-picker', GuiRangeDateTimePicker);
 }

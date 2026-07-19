@@ -59,11 +59,7 @@
     },
     "component-test": {
       "cache": true,
-      "inputs": [
-        "default",
-        "^production",
-        { "input": "default", "projects": ["ui-testing"] }
-      ]
+      "inputs": ["default", "^production", { "input": "default", "projects": ["ui-testing"] }]
     },
     "@angular/build:application": {
       "cache": true,

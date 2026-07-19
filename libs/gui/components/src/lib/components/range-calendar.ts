@@ -151,8 +151,7 @@ export class GuiRangeCalendar extends LitElement {
   });
 
   private _focusLeave = new GUIFocusLeaveController(this, {
-    onLeave: () =>
-      this.dispatchEvent(new CustomEvent('blur', { bubbles: true, composed: true })),
+    onLeave: () => this.dispatchEvent(new CustomEvent('blur', { bubbles: true, composed: true })),
   });
 
   /**
@@ -196,8 +195,7 @@ export class GuiRangeCalendar extends LitElement {
       if (this.invalidRange) {
         const start = this.endpointDay(this.invalidRange.start);
         const end = this.endpointDay(this.invalidRange.end);
-        this._invalidRange =
-          isNaN(start.getTime()) || isNaN(end.getTime()) ? null : { start, end };
+        this._invalidRange = isNaN(start.getTime()) || isNaN(end.getTime()) ? null : { start, end };
       } else {
         this._invalidRange = null;
       }
@@ -450,7 +448,10 @@ export class GuiRangeCalendar extends LitElement {
 
     this._invalidRange = null;
     this._skipValueNavigation = true;
-    this.value = mergeDateRanges([...(this.value || []), createDateRange(commit.start, commit.end)]);
+    this.value = mergeDateRanges([
+      ...(this.value || []),
+      createDateRange(commit.start, commit.end),
+    ]);
 
     this.dispatchEvent(
       new CustomEvent('change', {

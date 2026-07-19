@@ -292,9 +292,9 @@ describe('parseTimeGroup', () => {
     expect(parseTimeGroup({ hour: '09', minute: '30' }, opts12).result).toEqual({
       kind: 'incomplete',
     });
-    expect(
-      parseTimeGroup({ hour: '09', minute: '30', dayPeriod: 'AM' }, opts12).result,
-    ).toEqual({ kind: 'incomplete' });
+    expect(parseTimeGroup({ hour: '09', minute: '30', dayPeriod: 'AM' }, opts12).result).toEqual({
+      kind: 'incomplete',
+    });
   });
 
   it('clamps 12h hour 15 to 12 with write-back even while minute is empty', () => {
@@ -323,12 +323,12 @@ describe('timeBoundsError', () => {
   });
 
   it('prefers the caller-supplied messages', () => {
-    expect(
-      timeBoundsError('08:00:00', { minTime: '09:00', minTimeMessage: 'too early' }),
-    ).toBe('too early');
-    expect(
-      timeBoundsError('18:00:00', { maxTime: '17:00', maxTimeMessage: 'too late' }),
-    ).toBe('too late');
+    expect(timeBoundsError('08:00:00', { minTime: '09:00', minTimeMessage: 'too early' })).toBe(
+      'too early',
+    );
+    expect(timeBoundsError('18:00:00', { maxTime: '17:00', maxTimeMessage: 'too late' })).toBe(
+      'too late',
+    );
   });
 });
 

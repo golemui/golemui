@@ -62,11 +62,7 @@ export const runRangeTimeInputComponentTests = (mountFn: MountComponentFn) => {
       return cy.get(formSubmitAlias).then((stub: any) => stub.getCall(0).args[0].data);
     };
 
-    const typeRange = (
-      start: [string, string],
-      end: [string, string],
-      commit = true,
-    ) => {
+    const typeRange = (start: [string, string], end: [string, string], commit = true) => {
       cy.get(sel.start.hour).click();
       cy.focused().type(start[0]);
       cy.focused().type(start[1]);

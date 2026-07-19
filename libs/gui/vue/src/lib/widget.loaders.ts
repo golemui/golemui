@@ -33,8 +33,7 @@ export const widgetLoaders: WidgetLoaders<Component<WithWidget>, GolemWidget> = 
   rangeDateTimeInput: async () => (await import('./components/RangeDateTimeInput.vue')).default,
   rangeDateTimeCalendar: async () =>
     (await import('./components/RangeDateTimeCalendar.vue')).default,
-  rangeDateTimePicker: async () =>
-    (await import('./components/RangeDateTimePicker.vue')).default,
+  rangeDateTimePicker: async () => (await import('./components/RangeDateTimePicker.vue')).default,
   rangeDatePicker: async () => (await import('./components/RangeDatePicker.vue')).default,
   rangeTimePicker: async () => (await import('./components/RangeTimePicker.vue')).default,
   tags: async () => (await import('./components/Tags.vue')).default,

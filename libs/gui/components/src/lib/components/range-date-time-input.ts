@@ -333,7 +333,7 @@ export class GuiRangeDateTimeInput extends LitElement {
       },
       validate: (ordered) =>
         dateTimeRangeOverlaps({ start: ordered.start, end: ordered.end }, this.disabledRanges)
-          ? this.disabledRangeMessage ?? DISABLED_DATE_RANGE_MESSAGE
+          ? (this.disabledRangeMessage ?? DISABLED_DATE_RANGE_MESSAGE)
           : null,
       toRange: (ordered) => ({ start: ordered.start, end: ordered.end }),
       merge: mergeDateTimeRanges,

@@ -15,8 +15,6 @@ export const INVALID_MAX_DATE_MESSAGE = 'Invalid date: date is after the maximum
 /** Default error when a selected range spans one or more disabled days/spans. */
 export const DISABLED_DATE_RANGE_MESSAGE = 'Invalid date: date is within a disabled range.';
 
-
-
 /** Default inputError message for a time before the minTime bound. **/
 export const INVALID_MIN_TIME_MESSAGE = 'Invalid time: time is before the minimum allowed time.';
 
@@ -28,7 +26,6 @@ export const INVALID_TIME_RANGE_ORDER_MESSAGE = 'Invalid range: end time must be
 
 /** Default inputError message for a time within a disabled range **/
 export const INVALID_DISABLED_TIME_RANGE_MESSAGE = 'Invalid time: time is within a disabled range.';
-
 
 /** Default inputError message for a date-time before the minDateTime bound. **/
 export const INVALID_MIN_DATE_TIME_MESSAGE =

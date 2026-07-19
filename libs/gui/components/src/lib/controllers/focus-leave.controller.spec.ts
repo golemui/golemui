@@ -174,5 +174,4 @@ describe('GUIFocusLeaveController', () => {
     flushRaf();
     expect(onLeave).not.toHaveBeenCalled();
   });
-
 });

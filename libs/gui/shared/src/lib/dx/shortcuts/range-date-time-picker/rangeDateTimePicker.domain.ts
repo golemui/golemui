@@ -12,8 +12,7 @@ export interface RangeDateTimePickerDecorator
   validator?: DxValidator<ArrayValidator>;
 }
 
-export interface GslRangeDateTimePickerConfig
-  extends GslConfigBase<RangeDateTimePickerDecorator> {
+export interface GslRangeDateTimePickerConfig extends GslConfigBase<RangeDateTimePickerDecorator> {
   suppressAutomaticLabels?: boolean;
 }
 

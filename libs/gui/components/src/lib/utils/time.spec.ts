@@ -254,9 +254,9 @@ describe('buildTimeOptions', () => {
   });
 
   it('excludes the anchor slot when minTime carries seconds', () => {
-    expect(
-      buildTimeOptions({ minTime: '09:00:30', maxTime: '10:30' }).map((s) => s.value),
-    ).toEqual(['09:30:00', '10:00:00', '10:30:00']);
+    expect(buildTimeOptions({ minTime: '09:00:30', maxTime: '10:30' }).map((s) => s.value)).toEqual(
+      ['09:30:00', '10:00:00', '10:30:00'],
+    );
   });
 
   it('flags slots inside disabled ranges (both ends inclusive)', () => {

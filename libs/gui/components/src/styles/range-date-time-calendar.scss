@@ -108,10 +108,7 @@ gui-range-date-time-calendar {
     }
   }
 
-  :is(
-      .gui-range-date-time-calendar__day-count,
-      .gui-range-date-time-calendar__disabled-count
-    ):hover
+  :is(.gui-range-date-time-calendar__day-count, .gui-range-date-time-calendar__disabled-count):hover
     + .gui-range-date-time-calendar__badge-tooltip {
     display: flex;
   }

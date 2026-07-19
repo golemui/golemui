@@ -7,8 +7,16 @@ import '@golemui/gui-components/range-calendar';
 
 const props = defineProps<WithWidget>();
 const widget = props.widget as InputWidget<DateRange[]>;
-const { uid, errors, value, isTouched, templateData, onValueChanged, onBlur, injectValidationIssues } =
-  useInputWidget<DateRange[], RangeCalendarProps>(widget);
+const {
+  uid,
+  errors,
+  value,
+  isTouched,
+  templateData,
+  onValueChanged,
+  onBlur,
+  injectValidationIssues,
+} = useInputWidget<DateRange[], RangeCalendarProps>(widget);
 
 const required = computed(() => (templateData.value.validator as Validator)?.required);
 

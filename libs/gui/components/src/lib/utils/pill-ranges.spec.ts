@@ -77,7 +77,10 @@ describe('findRangeByKey / removeRangeByKey', () => {
   it('removes the matching range and returns it with the remaining list', () => {
     const result = removeRangeByKey(ranges, '2026-01-05-2026-01-10');
     expect(result?.removed).toEqual({ start: '2026-01-05', end: '2026-01-10' });
-    expect(result?.next).toEqual([{ start: '2026-02-01' }, { start: '2026-03-01', end: '2026-03-02' }]);
+    expect(result?.next).toEqual([
+      { start: '2026-02-01' },
+      { start: '2026-03-01', end: '2026-03-02' },
+    ]);
     expect(ranges).toHaveLength(3);
   });
 
@@ -133,10 +136,7 @@ describe('formatRangeLabel', () => {
 describe('buildPillItems', () => {
   it('builds key, label and "<removeAriaLabel> <label>" aria label per range', () => {
     const items = buildPillItems(
-      [
-        { start: '2026-01-05', end: '2026-01-10' },
-        { start: '2026-02-01' },
-      ],
+      [{ start: '2026-01-05', end: '2026-01-10' }, { start: '2026-02-01' }],
       (range) => formatRangeLabel(range, (iso) => formatISODateForDisplay(iso, 'en-US')),
       'Remove date',
     );

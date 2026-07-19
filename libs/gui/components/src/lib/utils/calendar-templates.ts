@@ -121,10 +121,7 @@ export function renderMonthNavButton(
         aria-label=${data.ariaLabel ?? 'Previous month'}
       >
         ${data.icon
-          ? html`<span
-              class=${`gui-widget-icon ${data.icon}`}
-              data-icon=${data.icon}
-            ></span>`
+          ? html`<span class=${`gui-widget-icon ${data.icon}`} data-icon=${data.icon}></span>`
           : html`<svg
               xmlns="http://www.w3.org/2000/svg"
               width="16"
@@ -149,16 +146,8 @@ export function renderMonthNavButton(
       aria-label=${data.ariaLabel ?? 'Next month'}
     >
       ${data.icon
-        ? html`<span
-            class=${`gui-widget-icon ${data.icon}`}
-            data-icon=${data.icon}
-          ></span>`
-        : html`<svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            viewBox="0 0 256 256"
-          >
+        ? html`<span class=${`gui-widget-icon ${data.icon}`} data-icon=${data.icon}></span>`
+        : html`<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256">
             <path
               d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"
             ></path>
