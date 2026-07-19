@@ -18,7 +18,7 @@ import {
   renderCalendarMonthPanel,
   renderCalendarPanelBody,
 } from '../utils/calendar-templates';
-import { buildMonthDays, computeDayStatus, type DaySpan } from '../utils/day-status';
+import { buildMonthDays, computeDayStatus } from '../utils/day-status';
 import {
   buildPillItems,
   findRangeByKey,
@@ -125,15 +125,6 @@ export class GuiRangeCalendar extends LitElement {
     this._nav.currentDate = date;
   }
 
-  /** The nav controller's year-grid flag; subclasses read and close it. */
-  protected get _yearSelectorOpen(): boolean {
-    return this._nav.yearSelectorOpen;
-  }
-
-  protected set _yearSelectorOpen(open: boolean) {
-    this._nav.yearSelectorOpen = open;
-  }
-
   protected ariaController: GUIAriaController<unknown, any> = new GUIAriaController(this, {
     getTargets: () => this.querySelectorAll(`.gui-calendar-input`),
     getState: () => ({
@@ -191,14 +182,6 @@ export class GuiRangeCalendar extends LitElement {
   /** Day-button inner content. */
   protected renderDayContent(day: RangeCalendarDay): TemplateResult {
     return html`${day.dayLabel}`;
-  }
-
-  /**
-   * The parked working range a subclass highlights like a committed one
-   * (the range date-time calendar's two-step commit). None here.
-   */
-  protected get workingRange(): DaySpan | undefined {
-    return undefined;
   }
 
   override createRenderRoot() {
@@ -396,7 +379,6 @@ export class GuiRangeCalendar extends LitElement {
       toDay: (base) => {
         const status = computeDayStatus(base.date, {
           ranges,
-          workingRange: this.workingRange,
           anchor: this._selection.anchor,
           selectingSpan,
           invalidRange: this._invalidRange,

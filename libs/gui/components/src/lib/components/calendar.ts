@@ -82,23 +82,6 @@ export class GuiCalendar extends LitElement {
     this._nav.currentDate = date;
   }
 
-  /** The nav controller's year-grid flag; subclasses read and close it. */
-  protected get _yearSelectorOpen(): boolean {
-    return this._nav.yearSelectorOpen;
-  }
-
-  protected set _yearSelectorOpen(open: boolean) {
-    this._nav.yearSelectorOpen = open;
-  }
-
-  /**
-   * ISO date driving the selected-day highlight. Subclasses whose `value` is
-   * not a plain date (e.g. the date-time calendar) override this.
-   */
-  protected get selectedDateISO(): string | undefined {
-    return this.value;
-  }
-
   protected ariaController: GUIAriaController<unknown, any> = new GUIAriaController(this, {
     getTargets: () => this.querySelectorAll(`.gui-calendar-input`),
     getState: () => ({
@@ -189,16 +172,10 @@ export class GuiCalendar extends LitElement {
           localeId: this.localeId,
           monthFormat: this.monthFormat,
           yearSelectorOpen: this._nav.yearSelectorOpen,
-          onToggleYearSelector: () => this.toggleYearSelector(),
-          renderBelowHeader: (o) => this.renderBelowHeader(o),
+          onToggleYearSelector: () => this._nav.toggleYearSelector(),
           renderPanelBody: (o) => this.renderPanelBody(o),
         }),
     });
-  }
-
-  /** Hook rendered between the header and the panel body. Default: nothing. */
-  protected renderBelowHeader(_offset: number): TemplateResult | typeof nothing {
-    return nothing;
   }
 
   /**
@@ -218,14 +195,6 @@ export class GuiCalendar extends LitElement {
       getDays: (o) => this.getDaysInMonth(o),
       renderDay: (day) => this.renderDay(day),
     });
-  }
-
-  /**
-   * Kept as a thin override point — the date-time subclass closes its time
-   * picker before delegating to the nav controller.
-   */
-  protected toggleYearSelector() {
-    this._nav.toggleYearSelector();
   }
 
   renderDay(day: CalendarDay) {
@@ -255,7 +224,7 @@ export class GuiCalendar extends LitElement {
   }
 
   getDaysInMonth(offset: number): CalendarDay[] {
-    const selectedDate = this.selectedDateISO;
+    const selectedDate = this.value;
 
     return buildMonthDays<CalendarDay>({
       currentDate: this._currentDate,
