@@ -1,24 +1,5 @@
 import { parseISODateString } from './date';
 
-/**
- * Pills-accessory helpers shared by `range-calendar.ts` and the three range
- * inputs (`range-date-input.ts`, `range-time-input.ts`,
- * `range-date-time-input.ts`): sorting ranges for display, the endpoint-based
- * pill key, key-matched lookup/removal, and the display label plumbing. Where
- * the four call sites differ — how a start endpoint is compared (date vs time
- * vs date-time) and how an endpoint is formatted — the helpers take a
- * function parameter.
- *
- * Key/removal semantics reconciled across the call sites:
- * - Pill key: date/time/calendar build `${start}-${end ?? start}`;
- *   `range-date-time-input` builds `${start}-${end}` with `end` required by
- *   its range type — identical output whenever `end` is defined, so
- *   {@link rangeKey} uses the `?? start` fallback everywhere.
- * - Removal filter: date/time compare `(end ?? null)`, date-time compares
- *   `end` directly — again identical for a required `end`;
- *   {@link removeRangeByKey} uses the `?? null` form.
- */
-
 /** The structural shape all pill-backed ranges share. */
 export interface RangeLike {
   start: string;
@@ -78,10 +59,7 @@ export function findRangeByKey<R extends RangeLike>(
 }
 
 /**
- * Removes the range matching a pill key. Reproduces the shared onPillRemove
- * core: resolve the key to a range, then filter out every range with the same
- * endpoints (duplicates included, `end` compared as `?? null`). Returns null
- * when no range matches — the caller then does nothing.
+ * Removes the range matching a pill key. Returns null when no range matches.
  *
  * @param {readonly R[] | undefined} ranges - The current ranges (`value ?? []`).
  * @param {string} key - The pill key from the event detail.
@@ -103,9 +81,7 @@ export function removeRangeByKey<R extends RangeLike>(
 
 /**
  * Formats an ISO date for pill display: numeric year with 2-digit month and
- * day in the locale's order. Faithful port of the formatDateForDisplay
- * duplicated in `range-calendar.ts` and `range-date-input.ts` — an
- * unparseable input is returned as-is.
+ * day in the locale's order.
  *
  * @param {string} iso - The ISO date (YYYY-MM-DD).
  * @param {string | undefined} localeId - The locale identifier. Defaults to 'en'.

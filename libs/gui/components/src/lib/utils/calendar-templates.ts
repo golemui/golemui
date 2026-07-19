@@ -4,18 +4,6 @@ import { getMonthYearParts, getWeekdayLabels } from './date';
 import { chunk } from './grid-nav';
 import { addErrors, addLabel } from './templates';
 
-/**
- * Pure lit-html templates for the calendar components, extracted from the
- * render layer of `AbstractCalendar` (render / renderMonthPanel / renderHeader
- * / renderDaysGrid / renderYearGrid and the two month-nav buttons). The
- * emitted DOM is byte-identical to the abstract's: same classes, roles, aria
- * wiring, data attributes, tabindex policy and inline SVGs. Everything
- * host-specific (state, callbacks) arrives through the data parameters; the
- * subclass hooks (`renderAboveCalendar`, `renderBelowHeader`,
- * `renderPanelBody`'s year-grid/time-grid switching, `renderDay`) stay in the
- * components and are passed in as closures.
- */
-
 /** The month/year label formats the calendar header supports. */
 export type CalendarMonthFormat = 'numeric' | '2-digit' | 'long' | 'short' | 'narrow';
 
@@ -47,10 +35,7 @@ export interface CalendarChromeData {
 }
 
 /**
- * The full calendar skeleton (the abstract's `render`): optional label, the
- * `.gui-widget` wrapper with its focusout binding, the `.gui-calendar-input`
- * group with aria wiring, the above-calendar hook, prev/next month-nav
- * buttons around the months grid, and the trailing errors block.
+ * The full calendar skeleton.
  *
  * @param {CalendarChromeData} data - Host state and hooks.
  * @return {TemplateResult} The calendar chrome.
@@ -108,20 +93,14 @@ export function renderCalendarChrome(data: CalendarChromeData): TemplateResult {
 export interface MonthNavButtonData {
   /** Icon class (`prevMonthIcon`/`nextMonthIcon`); falsy renders the inline SVG chevron. */
   icon: string | undefined;
-  /**
-   * `prevMonthAriaLabel`/`nextMonthAriaLabel`. The `?? 'Previous month'` /
-   * `?? 'Next month'` fallback only fires for undefined — the components
-   * default these properties to '', exactly as before.
-   */
+  /** `prevMonthAriaLabel`/`nextMonthAriaLabel`. */
   ariaLabel: string | undefined;
-  /** `!canGoPrev()` / `!canGoNext()`. */
   disabled: boolean;
   onClick(): void;
 }
 
 /**
- * A month navigation button (the two inline button templates of the
- * abstract's `render`), including the direction's inline SVG chevron.
+ * A month navigation button, including the direction's inline SVG chevron.
  *
  * @param {'prev' | 'next'} direction - Which nav button.
  * @param {MonthNavButtonData} data - Icon, label, disabled state and click.
@@ -202,9 +181,7 @@ export interface MonthPanelData {
 }
 
 /**
- * A month panel (the abstract's `renderMonthPanel`): derives the panel date —
- * day-1 normalization before the month offset — and composes header, the
- * below-header hook and the panel body.
+ * A month panel.
  *
  * @param {MonthPanelData} data - Panel inputs and hooks.
  * @return {TemplateResult} The panel.
@@ -231,19 +208,13 @@ export interface CalendarMonthPanelData {
   monthFormat: CalendarMonthFormat | undefined;
   /** The nav controller's `yearSelectorOpen`, for the header's aria-expanded. */
   yearSelectorOpen: boolean;
-  /** The year-button click — the host's `toggleYearSelector` (subclasses close time pickers first). */
   onToggleYearSelector(): void;
-  /** The `renderBelowHeader` hook (the date-time subclasses' time-picker rows); defaults to nothing. */
   renderBelowHeader?(offset: number): TemplateResult | typeof nothing;
-  /** The `renderPanelBody` hook (year-grid/days switch, or a subclass takeover). */
   renderPanelBody(offset: number): TemplateResult;
 }
 
 /**
- * The standard month panel both calendar hosts previously composed inline:
- * {@link renderMonthPanel} with a {@link renderMonthHeader} header wired to
- * the year-selector toggle, the below-header hook (nothing unless supplied)
- * and the panel-body hook. DOM byte-identical to the former per-host wiring.
+ * The standard month panel.
  *
  * @param {CalendarMonthPanelData} data - Panel state and hooks.
  * @return {TemplateResult} The panel.
@@ -267,29 +238,18 @@ export function renderCalendarMonthPanel(data: CalendarMonthPanelData): Template
 export interface CalendarPanelBodyData<D extends { date: Date }> {
   /** Panel offset in months — only the first panel swaps in the year grid. */
   offset: number;
-  /** The nav controller's `yearSelectorOpen`. */
   yearSelectorOpen: boolean;
-  /** The nav controller's `yearList`. */
   years: number[];
-  /** The nav controller's `currentDate.getFullYear()`. */
   currentYear: number;
-  /** Year pick — bind the keyboard controller's `selectYear`. */
   onSelectYear(year: number): void;
-  /** Year-grid keydown — bind the keyboard controller's `handleYearKeydown`. */
   onYearKeydown(event: KeyboardEvent): void;
   localeId: string | undefined;
-  /** The host's `getDaysInMonth`. */
   getDays(offset: number): D[];
-  /** The host's `renderDay`. */
   renderDay(day: D): TemplateResult;
 }
 
 /**
- * The default panel body both calendar hosts previously duplicated as
- * `renderPanelBody`/`renderDays`: the year grid replaces the days grid of the
- * first panel while the year selector is open; otherwise the days grid
- * renders the host's days chunked into weeks of 7 with the locale's weekday
- * labels. DOM byte-identical to the former host members.
+ * The default panel body.
  *
  * @param {CalendarPanelBodyData<D>} data - Panel state, year-grid callbacks and day rendering.
  * @return {TemplateResult} The panel body.
@@ -315,14 +275,11 @@ export interface MonthHeaderData {
   monthFormat: CalendarMonthFormat | undefined;
   /** Whether the year grid is open (`_yearSelectorOpen`), for aria-expanded. */
   yearSelectorOpen: boolean;
-  /** The year-button click — the host's `toggleYearSelector` (subclasses close time pickers first). */
   onToggleYearSelector(): void;
 }
 
 /**
- * A panel header (the abstract's `renderHeader`): the locale-ordered
- * month/year parts, with the year rendered as the year-selector toggle button
- * (chevron SVG included) and the month as a plain span.
+ * A panel month header.
  *
  * @param {Date} panelDate - The panel's month (from {@link renderMonthPanel}).
  * @param {MonthHeaderData} data - Locale, format and the toggle callback.
@@ -366,13 +323,9 @@ export function renderMonthHeader(panelDate: Date, data: MonthHeaderData): Templ
 }
 
 /**
- * The days grid of one panel (the abstract's `renderDaysGrid`, minus the day
- * generation): a weekday header row plus the given weeks, each day rendered
- * through the component's `renderDay`. Keys are preserved exactly — weekdays
- * by index, days by `date.toISOString()`.
+ * The days grid of a panel.
  *
- * @param {D[][]} weeks - The panel's days chunked into weeks of 7
- *   (`chunk(getDaysInMonth(offset), 7)`).
+ * @param {D[][]} weeks - The panel's days chunked into weeks of 7.
  * @param {string[]} weekdayLabels - `getWeekdayLabels(localeId)`.
  * @param {(day: D) => TemplateResult} renderDay - The component's day renderer.
  * @return {TemplateResult} The days grid.
@@ -411,19 +364,13 @@ export function renderDaysGrid<D extends { date: Date }>(
 export interface YearGridData {
   /** `_yearList` (min..max year, inclusive). */
   years: number[];
-  /** `_currentDate.getFullYear()` — gets the roving tabindex 0 and `.current`. */
   currentYear: number;
-  /** Year pick — bind the keyboard controller's `selectYear`. */
   onSelectYear(year: number): void;
-  /** Grid keydown — bind the keyboard controller's `handleYearKeydown`. */
   onKeydown(event: KeyboardEvent): void;
 }
 
 /**
- * The year-selector grid (the abstract's `renderYearGrid` + `chunkYears`):
- * rows of 4 year buttons with the roving tabindex on the current year,
- * `data-year` attributes and click-to-select (with the original's
- * stopPropagation).
+ * The year-selector grid.
  *
  * @param {YearGridData} data - Years, current year and callbacks.
  * @return {TemplateResult} The year grid.

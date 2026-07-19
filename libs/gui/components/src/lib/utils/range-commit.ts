@@ -1,35 +1,3 @@
-/**
- * The shared commit skeleton of the three range inputs' `tryCreatePill`
- * implementations (`range-date-input.ts`, `range-time-input.ts`,
- * `range-date-time-input.ts`), as one pure, generic pipeline:
- *
- * 1. An 'invalid' endpoint rejects the commit immediately — BEFORE the
- *    completeness check, and with the start group's message taking precedence
- *    over the end group's (both orderings match all three originals).
- * 2. Unless both endpoints are 'valid', the commit is 'incomplete' (the
- *    callers then wait for the rest of the range, clearing any previously
- *    surfaced error).
- * 3. Both valid: the endpoints are ordered by the caller-supplied `order`
- *    policy (swap for the date and date-time inputs, identity for the time
- *    input which rejects reversed ranges instead), then run through the
- *    optional `validate` hook, then merged into the existing ranges via the
- *    caller-supplied `toRange` + `merge` functions.
- *
- * Overlap/order rejection lives in the `validate` hook, NOT in the core: the
- * three originals diverge exactly there — `range-date-input` accepts any
- * ordered pair, `range-time-input` rejects `end <= start` and ranges
- * overlapping a disabled range, `range-date-time-input` swaps and then rejects
- * overlaps with `dateTimeRangeOverlaps`. Keeping the core shape-only and
- * pushing those checks into a hook reproduces each behavior without the core
- * knowing about clocks or calendars.
- *
- * Event policy (surfaceInputError vs plain inputError vs clearing) also stays
- * with the callers — this module only decides WHAT happened, not how to
- * announce it. In particular, `range-time-input` surfaces a bounds violation
- * while parsing an endpoint and then treats that endpoint as incomplete; its
- * caller maps such endpoints to `{ kind: 'incomplete' }` here.
- */
-
 /** One parsed endpoint (start or end group) of a range commit. */
 export type RangeEndpoint<V> =
   | { kind: 'incomplete' }
@@ -62,14 +30,13 @@ export interface CommitRangeOptions<V, R> {
   validate?: (ordered: OrderedEndpoints<V>) => string | null;
   /** Builds the range object appended to the existing ranges. */
   toRange: (ordered: OrderedEndpoints<V>) => R;
-  /** Normalizes the appended list (the widgets' mergeXxxRanges functions). */
+  /** Normalizes the appended list. */
   merge: (ranges: R[]) => R[];
 }
 
 /**
  * Orders two endpoint values by a comparator, swapping when the end sorts
- * before the start — the reorder-not-reject policy of `range-date-input`
- * (Date getTime comparison) and `orderDateTimeRange`.
+ * before the start.
  *
  * @param {V} start - The entered start value.
  * @param {V} end - The entered end value.
@@ -85,9 +52,7 @@ export function orderEndpoints<V>(
 }
 
 /**
- * Attempts to commit two parsed endpoints as a new range. See the module doc
- * for the exact precedence rules extracted from the three `tryCreatePill`
- * implementations.
+ * Attempts to commit two parsed endpoints as a new range.
  *
  * @param {RangeEndpoint<V>} start - The parsed start group.
  * @param {RangeEndpoint<V>} end - The parsed end group.

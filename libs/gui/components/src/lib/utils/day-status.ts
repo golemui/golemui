@@ -1,22 +1,6 @@
 /**
  * Pure day-grid construction and per-day highlight computation for the
- * calendar components:
- *
- * - {@link computeDayStatus} unifies GuiCalendar's inline `isSelected`,
- *   `GuiRangeCalendar.checkDateStatus` (committed ranges, invalid range,
- *   selecting preview) and `GuiRangeDateTimeCalendar.checkDateStatus`'s
- *   override patch (the parked working range). Every context input is
- *   optional — each component passes only what it renders. The count/blocked
- *   badges of the range date-time calendar are day-button CONTENT (templates
- *   over `value`/`disabledRanges`), not highlight flags, and stay in that
- *   component.
- * - {@link buildMonthDays} absorbs `AbstractCalendar.generateDateGrid`
- *   (42-cell grid aligned to the locale's first weekday) plus the skeleton
- *   shared by `GuiCalendar.getDaysInMonth` and
- *   `GuiRangeCalendar.getDaysInMonth`: current-month gating, the component
- *   `isDisabled` policy hook, exact trailing-week trimming, and the
- *   focusable-fallback policy. Per-day flags/focusability stay in the `toDay`
- *   callback, where the components genuinely differ.
+ * calendar components.
  */
 import {
   getDayLabel,
@@ -46,7 +30,7 @@ export interface NormalizedDayRange {
 
 /** The optional inputs a component provides for its day highlights. */
 export interface DayStatusContext {
-  /** ISO day of the single selected value (gui-calendar's `selectedDateISO`). */
+  /** ISO day of the single selected value. */
   selectedISO?: string;
   /** Committed ranges, endpoints normalized to day Dates. */
   ranges?: NormalizedDayRange[];
@@ -54,18 +38,13 @@ export interface DayStatusContext {
   workingRange?: DaySpan;
   /** Anchor day of an in-progress two-click selection. */
   anchor?: Date | null;
-  /** Ordered hover-preview span (see `selectionPreviewSpan`). */
+  /** Ordered hover-preview span. */
   selectingSpan?: DaySpan | null;
   /** The rejected range currently highlighted in red. */
   invalidRange?: DaySpan | null;
 }
 
-/**
- * Every highlight flag any of the three calendars' `renderDay` bindings
- * consume. Flags are UNGATED by current-month membership, exactly like
- * `checkDateStatus` — the `isCurrentMonth` gating of the invalid/selecting
- * flags lives in the components' day mapping, as before.
- */
+/** Every highlight flag any of the three calendars' `renderDay` bindings consume. */
 export interface DayStatus {
   /** gui-calendar `selected` (single-value calendars). */
   isSelected: boolean;
@@ -85,22 +64,6 @@ export interface DayStatus {
 
 /**
  * Computes the highlight flags of one grid day. Semantics ported exactly:
- *
- * - `isSelected`: `selectedISO` parses to the same calendar day.
- * - Invalid range: endpoint days match by `isSameDay`; `isInvalidInRange` is
- *   strictly between the endpoint instants.
- * - Selecting preview: inside `selectingSpan`, endpoints inclusive.
- * - Committed ranges, per range in order: a day matching the range's start
- *   sets `isRangeStart` and ASSIGNS `isRangeEnd = !range.end` (an open-ended
- *   range is its own end; a later range's start can therefore clear an
- *   earlier range's end flag on a shared day — a preserved, order-dependent
- *   quirk of `checkDateStatus`, unreachable through merged values). A day
- *   matching the range's end sets `isRangeEnd`; strictly-between days set
- *   `isInRange`.
- * - Working range (applied AFTER the committed ranges, like the subclass
- *   override running on `super`'s result): OR-in start/end/strictly-between.
- * - `isOneDayRange` = `isRangeStart && isRangeEnd` (the mapping layer's
- *   derivation in `getDaysInMonth`).
  *
  * @param {Date} date - The grid day (local midnight).
  * @param {DayStatusContext} ctx - The component's highlight inputs.
@@ -202,7 +165,7 @@ export interface BuildMonthDaysOptions<D extends MonthDayFlags> {
   localeId?: string;
   /** Visible months window for the focus-fallback visibility check. Default 1. */
   numberOfMonths?: number;
-  /** The component's day-disabling policy (`AbstractCalendar.isDisabled` or an override). */
+  /** The component's day-disabling policy. */
   isDisabled: (date: Date) => boolean;
   /**
    * Maps one cell to the component's day object — per-day status flags and
@@ -229,12 +192,10 @@ export interface BuildMonthDaysOptions<D extends MonthDayFlags> {
  *    week containing day 1, mapping each cell through `isDisabled` and
  *    `toDay` with the shared facts (date, locale day label, current-month
  *    membership, today).
- * 3. Trims the trailing week up to TWICE when it contains only next-month
- *    days (exact original behavior: at most two 7-day slices are dropped).
- * 4. Focusable fallback, first panel only (`offset === 0`): when no mapped
- *    day is focusable AND no `focusFallbackDates` entry falls inside the
- *    visible months window, the first current-month non-disabled day is
- *    mutated to `isFocusable = true`.
+ * 3. Trims the trailing week up to TWICE when it contains only next-month days.
+ * 4. Focusable fallback, in the first panel when no mapped day is focusable AND
+ *    no `focusFallbackDates` entry falls inside the visible months window, the
+ *    first current-month non-disabled day is focused.
  *
  * @param {BuildMonthDaysOptions<D>} options - Grid inputs and the component hooks.
  * @return {D[]} The mapped days, trimmed, in grid order.

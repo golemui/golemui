@@ -15,7 +15,6 @@ import {
   parseISODateTimeString,
   type HourFormat,
 } from '../utils/time';
-import { DISABLED_DATE_RANGE_MESSAGE } from '../utils/date';
 import { renderGroupParts, type GUIPartsTemplateData } from '../utils/part-templates';
 import {
   getTimeLocaleData,
@@ -34,6 +33,7 @@ import {
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 import './pills';
 import type { GuiPillEventDetail, GuiPillItem } from './pills';
+import { DISABLED_DATE_RANGE_MESSAGE } from '../utils/messages';
 
 @customElement('gui-range-date-time')
 export class GuiRangeDateTimeInput extends LitElement {

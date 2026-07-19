@@ -12,7 +12,6 @@ import type { GuiPillEventDetail, GuiPillItem } from './pills';
 import './time-picker';
 import type { GuiTimePicker } from './time-picker';
 import {
-  DISABLED_DATE_RANGE_MESSAGE,
   isDateDisabled,
   parseISODateString,
   toISODateString,
@@ -51,6 +50,7 @@ import {
   type HourFormat,
   type TimeRange,
 } from '../utils/time';
+import { DISABLED_DATE_RANGE_MESSAGE } from '../utils/messages';
 
 @customElement('gui-range-date-time-calendar')
 export class GuiRangeDateTimeCalendar extends LitElement {
@@ -197,8 +197,6 @@ export class GuiRangeDateTimeCalendar extends LitElement {
   });
 
   private _focusLeave = new GUIFocusLeaveController(this, {
-    attach: 'manual',
-    defer: 'raf',
     onLeave: () =>
       this.dispatchEvent(new CustomEvent('blur', { bubbles: true, composed: true })),
   });

@@ -254,15 +254,6 @@ describe('GUIPopupController', () => {
       expect(ctrl.open).toBe(true);
     });
 
-    it("focusOutClose 'immediate' closes synchronously without a rAF (time-picker)", () => {
-      const { host, ctrl } = setup({ focusOutClose: 'immediate' });
-      ctrl.show();
-
-      host.dispatchEvent(focusOutEvent(null));
-      expect(ctrl.open).toBe(false);
-      expect(requestAnimationFrame).not.toHaveBeenCalled();
-    });
-
     it('suppressNextFocusOut swallows exactly one focusout, then re-arms normal behavior', () => {
       const { host, ctrl } = setup();
       ctrl.show();

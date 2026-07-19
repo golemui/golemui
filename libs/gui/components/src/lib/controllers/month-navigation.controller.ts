@@ -14,38 +14,16 @@ export interface GUIMonthNavigationControllerOptions {
   getMinDate(): string | undefined;
   /** The host's `maxDate` property (ISO date, inclusive); falsy = unbounded. */
   getMaxDate(): string | undefined;
-  /**
-   * The host's `numberOfMonths` property. Consumers apply the original
-   * `?? 1` guard exactly as the host members did.
-   */
+  /** The host's `numberOfMonths` property. */
   getNumberOfMonths(): number | undefined;
   /** The host's `disabledRanges` property, for {@link GUIMonthNavigationController.isDisabled}. */
   getDisabledRanges(): DateRange[] | undefined;
-  /**
-   * Fired after every {@link GUIMonthNavigationController.toggleYearSelector}
-   * flip — open AND close, exactly like the hosts' `toggleYearSelector`,
-   * which always called the keyboard controller's `onYearGridToggled` (that
-   * method gates itself on the grid being open).
-   */
+  /** Fired after every {@link GUIMonthNavigationController.toggleYearSelector} flip */
   onYearSelectorToggled?(): void;
 }
 
 /**
- * Month/year navigation state shared by the calendar components, extracted
- * from the byte-identical members of `GuiCalendar` and `GuiRangeCalendar`.
- * The controller owns the visible-month cursor (`currentDate`) and the
- * year-selector open flag (`yearSelectorOpen`); every mutation goes through
- * `host.requestUpdate()` with the `@state` decorator's `!Object.is` change
- * guard, so re-render scheduling matches the previous reactive state exactly.
- *
- * It exposes the navigation members the hosts previously duplicated:
- * `prevMonth`/`nextMonth` stepping, the `canGoPrev`/`canGoNext` min/max
- * boundary guards, the year-selector helpers (`effectiveMinYear`,
- * `effectiveMaxYear`, `yearList`, `toggleYearSelector`, `selectYear`,
- * `closeYearSelector`), `navigateToDate` (jump only when the target month is
- * not already visible) and the min/max/disabled-ranges `isDisabled` check.
- * Host-specific inputs arrive through the option closures; the hosts keep
- * thin protected wrappers where their subclasses override or read them.
+ * Month/year navigation state shared by the calendar components.
  */
 export class GUIMonthNavigationController implements ReactiveController {
   private host: GUIMonthNavigationHost;
@@ -60,13 +38,12 @@ export class GUIMonthNavigationController implements ReactiveController {
     host.addController(this);
   }
 
-  /** No lifecycle work; present so the class satisfies ReactiveController. */
   hostConnected(): void {
     // no-op: the controller holds state only — the hosts' templates read it
     // and call the mutators.
   }
 
-  /** The first visible month (the hosts' former `_currentDate` state). */
+  /** The first visible month. */
   get currentDate(): Date {
     return this._currentDate;
   }
@@ -77,7 +54,7 @@ export class GUIMonthNavigationController implements ReactiveController {
     this.host.requestUpdate();
   }
 
-  /** Whether the year grid is open (the hosts' former `_yearSelectorOpen`). */
+  /** Whether the year grid is open. */
   get yearSelectorOpen(): boolean {
     return this._yearSelectorOpen;
   }
@@ -88,13 +65,10 @@ export class GUIMonthNavigationController implements ReactiveController {
     this.host.requestUpdate();
   }
 
-  /** Steps to the first day of the previous month. */
   prevMonth(): void {
     const d = this._currentDate;
     this.currentDate = new Date(d.getFullYear(), d.getMonth() - 1, 1);
   }
-
-  /** Steps to the first day of the next month. */
   nextMonth(): void {
     const d = this._currentDate;
     this.currentDate = new Date(d.getFullYear(), d.getMonth() + 1, 1);
@@ -165,33 +139,26 @@ export class GUIMonthNavigationController implements ReactiveController {
     return years;
   }
 
-  /**
-   * Flips the year grid and fires `onYearSelectorToggled` — on open AND
-   * close, matching the hosts' unconditional keyboard-controller call.
-   */
+  /** Flips the year grid and fires `onYearSelectorToggled` */
   toggleYearSelector(): void {
     this.yearSelectorOpen = !this._yearSelectorOpen;
     this.options.onYearSelectorToggled?.();
   }
 
-  /**
-   * Applies a picked year (the hosts' `onSelectYear` closure): jump to the
-   * same month of `year` and close the year grid.
-   */
+  /** Applies a picked year: jump to the same month of `year` and close the year grid. */
   selectYear(year: number): void {
     this.currentDate = new Date(year, this._currentDate.getMonth(), 1);
     this.yearSelectorOpen = false;
   }
 
-  /** Closes the year grid (the keyboard controller's Escape path). */
+  /** Closes the year grid. */
   closeYearSelector(): void {
     this.yearSelectorOpen = false;
   }
 
   /**
    * Navigates so `date` becomes visible — a no-op for invalid dates and for
-   * dates already inside the visible months (the hosts' duplicated
-   * `!isNaN && !isDateInVisibleMonths` navigation pattern).
+   * dates already inside the visible months.
    */
   navigateToDate(date: Date): void {
     if (

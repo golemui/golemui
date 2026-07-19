@@ -9,8 +9,6 @@ import {
   getDateTimeFormatParts,
   getDayPeriodLabels,
   getTimeFormatParts,
-  INVALID_MAX_DATE_TIME_MESSAGE,
-  INVALID_MIN_DATE_TIME_MESSAGE,
   isDayFullyBlocked,
   isTimeDisabled,
   isTimeRangeDisabled,
@@ -27,6 +25,7 @@ import {
   toISODateTimeString,
   toISOTimeString,
 } from './time';
+import { INVALID_MAX_DATE_TIME_MESSAGE, INVALID_MIN_DATE_TIME_MESSAGE } from './messages';
 
 /**
  * Characterization tests: they pin the CURRENT behavior of time.ts ahead of a

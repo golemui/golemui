@@ -1,22 +1,3 @@
-/**
- * The pure anchor/two-click range-selection state machine shared by
- * `GuiRangeCalendar.selectDate`/`onMouseOver` and the re-implementation in
- * `GuiRangeDateTimeCalendar.selectDate` (which parks the committed pair as a
- * working range instead of merging a pill — the commit TARGET differs, the
- * state machine does not).
- *
- * What stays in the callers, by design (the two originals diverge exactly
- * there):
- * - The pick guards (`!day.isCurrentMonth || disabled || readOnly`).
- * - Clearing/raising the invalid-range highlight and any working state on the
- *   first pick.
- * - Disabled-span rejection of the committed pair (`rangeSpansDisabledDay` vs
- *   `spanCoversBlockedDay`) — the reducer always reports the ordered commit;
- *   the caller decides whether it survives.
- * - Merge + change dispatch (range calendar) vs parking the working range
- *   (range date-time calendar).
- */
-
 /** The in-progress selection: anchor day, hovered day, and whether active. */
 export interface RangeSelectionState {
   /** First-picked day (`_anchorDate`), or null when idle. */
@@ -54,19 +35,7 @@ export function idleRangeSelection(): RangeSelectionState {
 }
 
 /**
- * Advances the selection state machine. Transition table (pinned by the
- * colocated spec):
- *
- * - pick with no anchor: anchors the day and starts selecting (hover is left
- *   untouched, as the originals never reset `_nextDate` on the first pick —
- *   it is already null from the previous completed selection).
- * - pick with an anchor: completes the selection — the pair is ordered with a
- *   backward swap (`clicked < anchor` compares the Date instants), state
- *   returns to idle, and the ordered pair is reported as `commit`. A same-day
- *   second pick commits a single-day pair (start === anchor, end === clicked).
- * - hover while selecting: records the hovered day for the live preview.
- * - hover while not selecting: inert (the state is returned unchanged).
- * - reset: back to idle, no commit.
+ * Advances the selection state machine.
  *
  * @param {RangeSelectionState} state - The current state.
  * @param {RangeSelectionEvent} event - The event to apply.
@@ -106,10 +75,7 @@ export function reduceRangeSelection(
 }
 
 /**
- * The live hover-preview span `GuiRangeCalendar.checkDateStatus` derives from
- * anchor + hover while selecting: the inclusive day span between them,
- * ordered either way. Null unless a selection is in progress with both an
- * anchor and a hovered day.
+ * Returns an in progress selection both an anchor and a hovered day, or null.
  *
  * A day `d` is inside the preview when
  * `span.start.getTime() <= d.getTime() <= span.end.getTime()` — endpoints

@@ -17,8 +17,7 @@ export interface GUIPopupControllerOptions {
   /**
    * Elements whose composedPath containment counts as an "inside" click for
    * the document-level outside-click close (the input ref and the popup ref
-   * in the pickers). Null/undefined entries are skipped, matching the
-   * `ref && path.includes(ref)` checks in the components.
+   * in the pickers). Null/undefined entries are skipped.
    */
   getInteriorElements(): (Element | null | undefined)[];
   /**
@@ -31,22 +30,15 @@ export interface GUIPopupControllerOptions {
   clickIntent(target: HTMLElement): GUIPopupClickIntent;
   /**
    * How Enter/Space (keyup) and a 'toggle' click intent flip the popup:
-   * - 'toggle': flip the open state directly, bypassing the show() guards —
-   *   the scalar date/date-time pickers' `_isOpen = !_isOpen`, which ignores
-   *   the restoring-focus guard and skips `beforeOpen`.
-   * - 'openClose': `close()` when open, `show()` when closed — the
+   * - 'toggle': flip the open state directly, bypassing the show() guards,
+   *   which ignores the restoring-focus guard and skips `beforeOpen`.
+   * - 'openClose': `close()` when open, `show()` when closed, the
    *   time-picker and range pickers' guarded open/close methods.
    *
    * The two paths correlate in every picker (direct flips for scalars,
    * guarded open/close for time/range), so one option governs both.
    */
   keyToggleMode: 'toggle' | 'openClose';
-  /**
-   * Focusout close policy: 'deferred' (default) uses the rAF deferral with
-   * an activeElement re-check; 'immediate' closes synchronously (time-picker
-   * has no rAF in its focusout close).
-   */
-  focusOutClose?: 'deferred' | 'immediate';
   /**
    * Runs at the start of every guarded show() — even when the popup is
    * already open, matching the range pickers' openCalendar, which always
@@ -65,17 +57,11 @@ export interface GUIPopupControllerOptions {
  *
  * - Document 'click' listener (bubble phase, added in hostConnected) closes
  *   the popup when the composedPath contains none of the interior elements.
- * - 'focusout' listener on the host closes the popup when focus leaves the
- *   host subtree, via {@link GUIFocusLeaveController} (rAF deferral with a
- *   stored id, cancelled on disconnect — or an immediate close). The
- *   suppress-one-focusout flag is consumed BEFORE the open check, exactly
- *   like the range pickers' `_ignoreNextFocusOut`.
- * - Enter/Space toggling happens on keyup, only when the event target is the
- *   anchor itself; Escape is handled on keydown with preventDefault +
- *   stopPropagation (so it never reaches the document while open), restores
- *   focus to `focusRestoreSelector`, then closes.
- * - Restoring focus arms a `_restoringFocus` flag, reset via setTimeout(0),
- *   which blocks the focus-triggered show() from re-opening the popup.
+ * - Close popup on 'focusout' the host subtree.
+ * - Enter/Space toggling happens on keyup
+ * - Escape is handled on keydown with preventDefault + stopPropagation
+ *   (so it never reaches the document while open), restores focus to
+ *   `focusRestoreSelector`, then closes.
  */
 export class GUIPopupController implements ReactiveController {
   private host: GUIPopupHost;
@@ -90,8 +76,6 @@ export class GUIPopupController implements ReactiveController {
     this.host = host;
     this.options = options;
     this.focusLeave = new GUIFocusLeaveController(host, {
-      attach: 'manual',
-      defer: options.focusOutClose === 'immediate' ? 'immediate' : 'raf',
       onLeave: () => this.close(),
     });
     host.addController(this);
@@ -105,7 +89,6 @@ export class GUIPopupController implements ReactiveController {
    * Guarded open: no-ops while disabled or while focus is being restored
    * after Escape. Always runs `beforeOpen` (even when already open); only an
    * actual closed→open transition fires `onOpenChanged`/requestUpdate.
-   * Arrow fn so it can be template-bound directly (e.g. `@focus=${ctrl.show}`).
    */
   show = () => {
     if (this.options.isDisabled() || this._restoringFocus) return;
@@ -113,7 +96,6 @@ export class GUIPopupController implements ReactiveController {
     this.setOpen(true);
   };
 
-  /** Guarded close: only an actual open→closed transition has effects. */
   close = () => {
     this.setOpen(false);
   };
@@ -167,9 +149,7 @@ export class GUIPopupController implements ReactiveController {
 
   /**
    * Template-bindable anchor keydown handler. Escape while open prevents
-   * default, stops propagation (a characterization test asserts Escape must
-   * NOT reach the document while open, and MUST when closed), restores focus
-   * to the input, then closes.
+   * default, stops propagation, restores focus to the input, then closes.
    *
    * @returns true when it consumed the event (Escape while open), so hosts
    *   with extra keydown behavior (time-picker's arrow stepping / Enter
@@ -219,8 +199,7 @@ export class GUIPopupController implements ReactiveController {
   /**
    * Focuses the `focusRestoreSelector` element, arming the restoring-focus
    * flag (reset via setTimeout(0)) so the resulting focus event does not
-   * re-open the popup through show(). Public because time-picker also
-   * restores focus after a list pick, outside the Escape path.
+   * re-open the popup through show().
    */
   restoreFocusToInput() {
     const part = this.host.querySelector<HTMLElement>(this.options.focusRestoreSelector);
@@ -240,7 +219,5 @@ export class GUIPopupController implements ReactiveController {
   hostDisconnected() {
     document.removeEventListener('click', this.onDocumentClick);
     this.host.removeEventListener('focusout', this.onHostFocusOut);
-    // The composed GUIFocusLeaveController cancels its own pending rAF in its
-    // hostDisconnected (it is registered on the same host).
   }
 }

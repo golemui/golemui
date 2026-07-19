@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import {
-  DISABLED_DATE_RANGE_MESSAGE,
   createDateRange,
   dateBoundsError,
   getDateFormatParts,
@@ -20,6 +19,7 @@ import {
   toISODateString,
   weekDaysOrder,
 } from './date';
+import { DISABLED_DATE_RANGE_MESSAGE } from './messages';
 
 /**
  * Characterization tests: these pin the CURRENT behavior of the utilities in

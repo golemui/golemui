@@ -6,8 +6,9 @@ import './range-date-input';
 import type { GuiRangeDateInput } from './range-date-input';
 import './range-calendar';
 import { GUIPopupController } from '../controllers/popup.controller';
-import { dateBoundsError, DISABLED_DATE_RANGE_MESSAGE, rangeSpansDisabledDay } from '../utils/date';
+import { dateBoundsError, rangeSpansDisabledDay } from '../utils/date';
 import { addErrors, addIcon, addLabel } from '../utils/templates';
+import { DISABLED_DATE_RANGE_MESSAGE } from '../utils/messages';
 
 @customElement('gui-range-date-picker')
 export class GuiRangeDatePicker extends LitElement {

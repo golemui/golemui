@@ -4,51 +4,27 @@ import { repeat } from 'lit-html/directives/repeat.js';
 import type { GUIPartsController } from '../controllers/parts.controller';
 import type { DateTimePartDescriptor, DateTimePartType } from './parts';
 
-/**
- * Pure lit-html templates for the segmented date/time part inputs, extracted
- * from the render layer of `AbstractDateTimeInput` (renderGroupParts /
- * renderPartInput / renderDayPeriodToggle / renderLiteral). The emitted DOM is
- * byte-identical to the abstract's: same classes, data-type/data-group
- * attributes, aria wiring and the LTR time-cluster grouping inside RTL rows.
- * Event handling is delegated to a {@link GUIPartsController}; everything
- * host-specific arrives through {@link GUIPartsTemplateData}.
- */
-
 export interface GUIPartsTemplateData {
-  /** BEM block class (the abstract's `inputBlockClass`), e.g. 'gui-date-input'. */
+  /** BEM block class, e.g. 'gui-date-input'. */
   blockClass: string;
-  /**
-   * The part groups (the abstract's `groups`). More than one group keys the
-   * repeat directives per group and stamps `data-group` on every part.
-   */
+  /** The part groups, e.g. 'start' and 'end' */
   groups: readonly string[];
-  /**
-   * The locale's format parts for a group (the abstract's `getFormatParts()`),
-   * e.g. `getDateFormatParts(localeId)`.
-   */
+  /** The locale's format parts for a group, e.g. `getDateFormatParts(localeId)`. */
   formatParts: Intl.DateTimeFormatPart[];
-  /** Descriptor lookup by part type (the abstract's `getPartDescriptor`). */
+  /** Descriptor lookup by part type. */
   getDescriptor(type: string): DateTimePartDescriptor | undefined;
-  /**
-   * Value shown inside a part input (the abstract's `getPartDisplayValue`).
-   * Pass `controller.getPartDisplay` for the default stored-value display
-   * (with the optional dayPeriod label mapping).
-   */
+  /** Value shown inside a part input. */
   getDisplayValue(group: string, type: DateTimePartType): string;
   required: boolean | undefined;
   disabled: boolean | undefined;
-  /** The effective parts-readonly state (the abstract's `partsReadonly`). */
+  /** The effective parts-readonly state. */
   partsReadonly: boolean;
-  /**
-   * Accessible name for the dayPeriod toggle (the abstract's
-   * `dayPeriodAriaLabel()`). Omitted: 'AM/PM', the English default no input
-   * overrides.
-   */
+  /** Accessible name for the dayPeriod toggle. Omitted: 'AM/PM'. */
   dayPeriodAriaLabel?: string;
 }
 
 /**
- * A literal format part (the abstract's renderLiteral): a separator span.
+ * A literal format part: a separator span.
  *
  * @param {Intl.DateTimeFormatPart} part - The literal part.
  * @param {string} blockClass - The input's BEM block class.
@@ -62,9 +38,7 @@ export const renderPartLiteral = (
 };
 
 /**
- * One group's part inputs interleaved with their literal separators (the
- * abstract's renderGroupParts). Parts are keyed for `repeat` per group when
- * multiple groups exist; the first part of the first group gets tabindex 0.
+ * One group's part inputs interleaved with their literal separators.
  * When the format contains time parts, the hour..minute/second span is wrapped
  * in an always-LTR time cluster so an RTL row keeps `hour:minute` order.
  *
@@ -114,8 +88,8 @@ export function renderGroupParts(
 }
 
 /**
- * A single part (the abstract's renderPartInput): a numeric segment input in
- * its touch target, or the dayPeriod toggle for dayPeriod descriptors.
+ * A single part: a numeric segment input in its touch target, or the dayPeriod
+ * toggle for dayPeriod descriptors.
  *
  * @param {string} group - The part's group.
  * @param {DateTimePartDescriptor} descriptor - The part descriptor.
@@ -168,11 +142,12 @@ export function renderPartInput(
 }
 
 /**
- * The dayPeriod part (the abstract's renderDayPeriodToggle): a toggle button,
- * not a free-text input — clicking it (or Enter/Space natively) swaps AM and
- * PM. A typed shortcut cannot work across locales (e.g. Japanese 午前/午後
+ * The dayPeriod part: a toggle button, clicking it (or Enter/Space natively)
+ * swaps AM and PM. A typed shortcut cannot work across locales (e.g. Japanese 午前/午後
  * share their first character) and mobile keyboards have no arrow keys, so
  * the switch interaction is the one that works everywhere.
+ *
+ * TODO: Avoid Enter/Intro here so users have to switch with spacebar?? Better for UX
  *
  * @param {string} group - The part's group.
  * @param {DateTimePartDescriptor} descriptor - The dayPeriod descriptor.

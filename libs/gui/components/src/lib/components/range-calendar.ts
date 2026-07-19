@@ -7,7 +7,6 @@ import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
 import { GUIMonthNavigationController } from '../controllers/month-navigation.controller';
 import {
   createDateRange,
-  DISABLED_DATE_RANGE_MESSAGE,
   mergeDateRanges,
   parseISODateString,
   rangeSpansDisabledDay,
@@ -36,6 +35,7 @@ import {
 import './pills';
 import type { GuiPillEventDetail, GuiPillItem } from './pills';
 import type { DateRange } from '@golemui/gui-shared/internals';
+import { DISABLED_DATE_RANGE_MESSAGE } from '../utils/messages';
 
 export interface RangeCalendarDay {
   date: Date;
@@ -151,8 +151,6 @@ export class GuiRangeCalendar extends LitElement {
   });
 
   private _focusLeave = new GUIFocusLeaveController(this, {
-    attach: 'manual',
-    defer: 'raf',
     onLeave: () =>
       this.dispatchEvent(new CustomEvent('blur', { bubbles: true, composed: true })),
   });

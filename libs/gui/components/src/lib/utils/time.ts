@@ -1,5 +1,6 @@
 import type { DateTimeRange, DisabledTimeRange } from '@golemui/gui-shared/internals';
 import { parseISODateString } from './date';
+import { INVALID_MAX_DATE_TIME_MESSAGE, INVALID_MIN_DATE_TIME_MESSAGE } from './messages';
 
 export type HourFormat = '12' | '24';
 
@@ -169,8 +170,6 @@ export function parseISODateTimeString(value: string): Date {
 
 /**
  * A time-of-day range; both ends are ISO time strings (HH:mm or HH:mm:ss).
- * `end` is required (mirrors the shared `TimeRange`) — a time range is always a
- * span; the `?? start` fallbacks below are defensive against malformed data.
  */
 export interface TimeRange {
   start: string;
@@ -203,9 +202,7 @@ export function compareISOTimes(a: string, b: string): number {
 
 /**
  * Returns the ISO time one `minuteStep` after `iso`, or `undefined` when that
- * would spill past the end of the day. Used by the range time picker to floor
- * the "time out" list one slot above the chosen "time in" so `out > in` holds
- * strictly (there is no next-day interpretation for a pure time range).
+ * would spill past the end of the day.
  *
  * @param {string} iso - The anchor ISO time (HH:mm or HH:mm:ss).
  * @param {number | undefined} minuteStep - Slot size; defaults to 30 (matches
@@ -540,10 +537,6 @@ export function formatISODateTimeForLocale(
   }).format(date);
 }
 
-export const INVALID_MIN_DATE_TIME_MESSAGE =
-  'Invalid date-time: date-time is before the minimum allowed date-time.';
-export const INVALID_MAX_DATE_TIME_MESSAGE =
-  'Invalid date-time: date-time is after the maximum allowed date-time.';
 
 export interface DateTimeBoundsMessages {
   minDateTimeMessage?: string;

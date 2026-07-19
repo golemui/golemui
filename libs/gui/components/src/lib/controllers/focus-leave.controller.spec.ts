@@ -7,6 +7,10 @@ import { GUIFocusLeaveController, type GUIFocusLeaveHost } from './focus-leave.c
  * Characterization tests for the focus-leave logic extracted from the six
  * picker components and abstract-calendar. jsdom has no requestAnimationFrame,
  * so a manual queue stands in for it and is flushed explicitly.
+ *
+ * The owner drives focusout into the controller (the pickers forward from their
+ * own host listener; the calendars bind `@focusout=${ctrl.onFocusOut}`), so the
+ * tests call `handleFocusOut`/`onFocusOut` directly, exactly as those bindings do.
  */
 
 let rafQueue: Map<number, FrameRequestCallback>;
@@ -33,7 +37,6 @@ function createHost() {
   document.body.appendChild(el);
   return {
     host: el,
-    connect: () => controllers.forEach((c) => c.hostConnected?.()),
     disconnect: () => controllers.forEach((c) => c.hostDisconnected?.()),
   };
 }
@@ -79,14 +82,13 @@ describe('GUIFocusLeaveController', () => {
   });
 
   it('calls onLeave after the rAF when focus moved outside', () => {
-    const { host, connect } = createHost();
+    const { host } = createHost();
     const onLeave = vi.fn();
-    new GUIFocusLeaveController(host, { onLeave });
-    connect();
+    const ctrl = new GUIFocusLeaveController(host, { onLeave });
 
     const outside = document.createElement('button');
     document.body.appendChild(outside);
-    host.dispatchEvent(focusOutEvent(outside));
+    ctrl.handleFocusOut(focusOutEvent(outside));
 
     expect(onLeave).not.toHaveBeenCalled(); // deferred, not synchronous
     flushRaf();
@@ -94,25 +96,23 @@ describe('GUIFocusLeaveController', () => {
   });
 
   it('treats a null relatedTarget as outside', () => {
-    const { host, connect } = createHost();
+    const { host } = createHost();
     const onLeave = vi.fn();
-    new GUIFocusLeaveController(host, { onLeave });
-    connect();
+    const ctrl = new GUIFocusLeaveController(host, { onLeave });
 
-    host.dispatchEvent(focusOutEvent(null));
+    ctrl.handleFocusOut(focusOutEvent(null));
     flushRaf();
     expect(onLeave).toHaveBeenCalledTimes(1);
   });
 
   it('does nothing when the relatedTarget is inside the host', () => {
-    const { host, connect } = createHost();
+    const { host } = createHost();
     const inner = document.createElement('input');
     host.appendChild(inner);
     const onLeave = vi.fn();
-    new GUIFocusLeaveController(host, { onLeave });
-    connect();
+    const ctrl = new GUIFocusLeaveController(host, { onLeave });
 
-    host.dispatchEvent(focusOutEvent(inner));
+    ctrl.handleFocusOut(focusOutEvent(inner));
 
     expect(rafQueue.size).toBe(0); // no deferral even scheduled
     flushRaf();
@@ -120,14 +120,13 @@ describe('GUIFocusLeaveController', () => {
   });
 
   it('does not call onLeave when focus is back inside by the time the rAF fires', () => {
-    const { host, connect } = createHost();
+    const { host } = createHost();
     const inner = document.createElement('input');
     host.appendChild(inner);
     const onLeave = vi.fn();
-    new GUIFocusLeaveController(host, { onLeave });
-    connect();
+    const ctrl = new GUIFocusLeaveController(host, { onLeave });
 
-    host.dispatchEvent(focusOutEvent(null));
+    ctrl.handleFocusOut(focusOutEvent(null));
     inner.focus(); // focus returns inside before the frame
     expect(document.activeElement).toBe(inner);
 
@@ -136,13 +135,12 @@ describe('GUIFocusLeaveController', () => {
   });
 
   it('cancels the pending rAF when a second focusout arrives, leaving one deferral', () => {
-    const { host, connect } = createHost();
+    const { host } = createHost();
     const onLeave = vi.fn();
-    new GUIFocusLeaveController(host, { onLeave });
-    connect();
+    const ctrl = new GUIFocusLeaveController(host, { onLeave });
 
-    host.dispatchEvent(focusOutEvent(null));
-    host.dispatchEvent(focusOutEvent(null));
+    ctrl.handleFocusOut(focusOutEvent(null));
+    ctrl.handleFocusOut(focusOutEvent(null));
 
     expect(cancelAnimationFrame).toHaveBeenCalledTimes(1);
     expect(rafQueue.size).toBe(1);
@@ -150,76 +148,24 @@ describe('GUIFocusLeaveController', () => {
     expect(onLeave).toHaveBeenCalledTimes(1);
   });
 
-  it("defer 'immediate' calls onLeave synchronously without any rAF", () => {
-    const { host, connect } = createHost();
+  it('exposes onFocusOut as a detached-callable template binding', () => {
+    const { host } = createHost();
     const onLeave = vi.fn();
-    new GUIFocusLeaveController(host, { onLeave, defer: 'immediate' });
-    connect();
+    const ctrl = new GUIFocusLeaveController(host, { onLeave });
 
-    host.dispatchEvent(focusOutEvent(null));
-
-    expect(onLeave).toHaveBeenCalledTimes(1);
-    expect(requestAnimationFrame).not.toHaveBeenCalled();
-  });
-
-  it("defer 'immediate' still respects the relatedTarget containment check", () => {
-    const { host, connect } = createHost();
-    const inner = document.createElement('input');
-    host.appendChild(inner);
-    const onLeave = vi.fn();
-    new GUIFocusLeaveController(host, { onLeave, defer: 'immediate' });
-    connect();
-
-    host.dispatchEvent(focusOutEvent(inner));
-    expect(onLeave).not.toHaveBeenCalled();
-  });
-
-  it('uses a custom isInside for both the relatedTarget and activeElement checks', () => {
-    const { host, connect } = createHost();
-    const sibling = document.createElement('div');
-    document.body.appendChild(sibling);
-    const onLeave = vi.fn();
-    const isInside = vi.fn((el: Element | null) => !!el && (host.contains(el) || sibling.contains(el)));
-    new GUIFocusLeaveController(host, { onLeave, isInside });
-    connect();
-
-    // relatedTarget outside the host but accepted by the custom predicate.
-    host.dispatchEvent(focusOutEvent(sibling));
-    expect(isInside).toHaveBeenCalledWith(sibling);
-    expect(rafQueue.size).toBe(0);
-    expect(onLeave).not.toHaveBeenCalled();
-
-    // relatedTarget rejected -> deferral -> activeElement re-checked through the predicate.
-    host.dispatchEvent(focusOutEvent(null));
-    flushRaf();
-    expect(isInside).toHaveBeenCalledWith(document.activeElement);
-    expect(onLeave).toHaveBeenCalledTimes(1);
-  });
-
-  it("attach 'manual' does not listen on the host but exposes a bindable onFocusOut", () => {
-    const { host, connect } = createHost();
-    const onLeave = vi.fn();
-    const ctrl = new GUIFocusLeaveController(host, { onLeave, attach: 'manual' });
-    connect();
-
-    host.dispatchEvent(focusOutEvent(null));
-    flushRaf();
-    expect(onLeave).not.toHaveBeenCalled();
-
-    // Detached-callable, as a template binding would invoke it.
+    // Destructured as `@focusout=${ctrl.onFocusOut}` would invoke it.
     const { onFocusOut } = ctrl;
     onFocusOut(focusOutEvent(null));
     flushRaf();
     expect(onLeave).toHaveBeenCalledTimes(1);
   });
 
-  it('hostDisconnected removes the host listener and cancels a pending rAF', () => {
-    const { host, connect, disconnect } = createHost();
+  it('hostDisconnected cancels a pending rAF so a queued leave never fires', () => {
+    const { host, disconnect } = createHost();
     const onLeave = vi.fn();
-    new GUIFocusLeaveController(host, { onLeave });
-    connect();
+    const ctrl = new GUIFocusLeaveController(host, { onLeave });
 
-    host.dispatchEvent(focusOutEvent(null));
+    ctrl.handleFocusOut(focusOutEvent(null));
     expect(rafQueue.size).toBe(1);
 
     disconnect();
@@ -227,22 +173,6 @@ describe('GUIFocusLeaveController', () => {
     expect(rafQueue.size).toBe(0);
     flushRaf();
     expect(onLeave).not.toHaveBeenCalled();
-
-    // Listener is gone: further focusout events are ignored entirely.
-    host.dispatchEvent(focusOutEvent(null));
-    flushRaf();
-    expect(onLeave).not.toHaveBeenCalled();
   });
 
-  it('cancelPendingLeave drops a scheduled deferral', () => {
-    const { host, connect } = createHost();
-    const onLeave = vi.fn();
-    const ctrl = new GUIFocusLeaveController(host, { onLeave });
-    connect();
-
-    host.dispatchEvent(focusOutEvent(null));
-    ctrl.cancelPendingLeave();
-    flushRaf();
-    expect(onLeave).not.toHaveBeenCalled();
-  });
 });

@@ -1,33 +1,12 @@
-/**
- * Pure keyboard-navigation helpers shared by the calendar day grid and year
- * grid (`abstract-calendar.ts`) and the time list (`time-list.ts`):
- *
- * - {@link nextEnabledIndex} unifies `AbstractCalendar.findNextFocusableIndex`
- *   and `GuiTimeList.findEnabledIndex`, whose edge semantics differ (see its
- *   doc for the two knobs that cover both call sites).
- * - {@link gridKeyStep} is the key -> movement-intent mapping of all three
- *   grids. Home/End do not fit a delta model (the time list resolves them to
- *   the first/last ENABLED item), so the result is discriminated.
- * - {@link listPageSize} is the time list's PageUp/PageDown page size.
- * - {@link chunk} generalizes `AbstractCalendar.chunkDays` / `chunkYears` and
- *   the time list's row slicing.
- */
-
 export interface NextEnabledIndexOptions {
   /**
    * When true the walk probes `from` itself first (the time list's
    * `findEnabledIndex(from, direction)`, whose landing index may already be
-   * the answer). Default false: the first probe is `from + step`
-   * (`AbstractCalendar.findNextFocusableIndex`, which always moves off the
-   * currently focused button).
+   * the answer). Default false: the first probe is `from + step`.
    */
   includeStart?: boolean;
   /**
-   * What to return when the walk exits the list without finding an enabled
-   * index. Default 'index': the raw out-of-bounds index (may be any value
-   * `< 0` or `>= length`) — the calendar's month-crossing keyboard handler
-   * does arithmetic with that exact value, so it must be preserved. 'none'
-   * returns -1 (the time list's semantics).
+   * What to return when the walk exits the list without finding an enabled index.
    */
   outOfBounds?: 'index' | 'none';
 }
@@ -35,15 +14,6 @@ export interface NextEnabledIndexOptions {
 /**
  * Walks from an index by `step` to the next enabled index, skipping disabled
  * entries.
- *
- * Unifies two originals with different edge semantics:
- * - `AbstractCalendar.findNextFocusableIndex(currentIndex, step, buttons)`:
- *   exclusive start (first probe `currentIndex + step`), walks by `step`
- *   (±1/±7), and returns the raw out-of-bounds index when the walk leaves the
- *   list. Defaults reproduce this exactly.
- * - `GuiTimeList.findEnabledIndex(from, direction)`: inclusive start, walks
- *   by ±1, returns -1 when out of bounds. Pass
- *   `{ includeStart: true, outOfBounds: 'none' }` (with `step` = ±1).
  *
  * @param {number} from - The reference index the walk starts from.
  * @param {number} step - Index delta per probe (positive or negative).
@@ -93,10 +63,7 @@ export type GridKeyStepResult =
   | { kind: 'none' };
 
 /**
- * Maps a keyboard key to a grid movement intent — the shared switch of
- * `AbstractCalendar.handleKeydown` (day grid, columns 7),
- * `AbstractCalendar.handleYearKeydown` (year grid, columns 4) and
- * `GuiTimeList.onKeyDown` (columns 1..n):
+ * Maps a keyboard key to a grid movement intent
  *
  * - ArrowUp/ArrowDown: ±columns (±7 day grid, ±4 year grid, ±columns list).
  * - ArrowLeft/ArrowRight: ±1, flipped in RTL. In a single-column grid they
@@ -150,11 +117,6 @@ export function gridKeyStep(key: string, options: GridKeyStepOptions): GridKeySt
  * The time list's PageUp/PageDown page size: visible rows (viewport height
  * over item height, at least one row) times columns.
  *
- * Fallback semantics are preserved exactly from `GuiTimeList.onKeyDown`:
- * `height` defaults with `??` (an explicit 0 is honored and clamps to one
- * row), while `itemHeight` and `columns` default with `||` — the Vue adapter
- * passes 0 for unset number props, so 0 must fall back like undefined.
- *
  * @param {number | undefined} height - Viewport height in px (default 300 via `??`).
  * @param {number | undefined} itemHeight - Item height in px (default 40 via `||`).
  * @param {number | undefined} columns - Columns (default 1 via `||`).
@@ -165,13 +127,12 @@ export function listPageSize(
   itemHeight: number | undefined,
   columns: number | undefined,
 ): number {
+  // TODO: Move defaults to a constant?? Can we get these with CSS??
   return Math.max(1, Math.floor((height ?? 300) / (itemHeight || 40))) * (columns || 1);
 }
 
 /**
- * Splits an array into consecutive chunks of up to `size` items — the shape
- * of `AbstractCalendar.chunkDays` (weeks of 7), `chunkYears` (rows of 4) and
- * the time list's row slicing (rows of `columns`).
+ * Splits an array into consecutive chunks of up to `size` items
  *
  * @param {T[]} items - The items to group.
  * @param {number} size - Maximum chunk length; must be a positive integer.

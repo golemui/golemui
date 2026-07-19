@@ -14,36 +14,6 @@ import {
   INVALID_MIN_TIME_MESSAGE,
 } from './messages';
 
-/**
- * Pure part model and parse pipelines for the segmented date/time inputs,
- * extracted from `abstract-date-time-input.ts`, `abstract-time-parts-input.ts`,
- * `abstract-date-time-parts-input.ts` and the inline date logic of
- * `date-input.ts`. Everything here is host-free: state goes in, new state (or
- * a result plus write-backs) comes out, and the caller decides how to store it
- * and which events to emit.
- *
- * Divergences reconciled from the twin abstract layers (flagged so behavior
- * stays auditable):
- * - Clamp write-back padding: `AbstractDateTimeInput.clampNumericPart` pads to
- *   `descriptor.maxLength ?? 2` while `AbstractTimePartsInput.clampAndWriteBack`
- *   hardcodes `padStart(2, '0')`. Both coincide for every time part (hour and
- *   minute have maxLength 2); {@link clampPart} uses the maxLength-based rule,
- *   which also reproduces the year's 4-wide padding.
- * - Descriptor caches: the time twin memoized `timeInputPartDescriptors` only,
- *   the date-time twin memoized the merge with `dateInputPartDescriptors`.
- *   {@link getTimeLocaleData} unifies both behind an `includeDateParts` flag.
- * - Bounds: `parseTimeGroup` embedded its bounds check via the separate
- *   `validateTimeBounds` method, while `parseDateTimeGroup` delegated to a
- *   subclass `boundsError` hook. The pure parsers here keep bounds OUT; the
- *   embedded time call is reproduced by composing {@link timeBoundsError}
- *   after a `valid` result.
- * - Date completeness: `date-input.ts` required `String(year).length === 4`,
- *   `month > 0` and `day > 0`; `range-date-input.ts` only rejected NaN parts
- *   and `String(year).length < 4`. Post-clamp these are equivalent (the clamp
- *   forces year into [1000, 9999], month ≥ 1, day ≥ 1); {@link parseDateGroup}
- *   uses the `date-input.ts` formulation.
- */
-
 export type DateTimePartType =
   | 'day'
   | 'month'
@@ -151,8 +121,6 @@ export function timeInputPartDescriptors(
   };
 }
 
-// --- Part model (pure state transitions; the input state is never mutated) ---
-
 /**
  * Reads a part's raw string value; '' when the group or part is unset.
  *
@@ -167,8 +135,7 @@ export function getPart(values: PartValues, group: string, type: DateTimePartTyp
 
 /**
  * Returns new state with one part value set. The previous state (and its
- * group objects) are left untouched, matching the copy-on-write updates the
- * abstract base performed for Lit change detection.
+ * group objects) are left untouched.
  *
  * @param {PartValues} values - The current part state.
  * @param {string} group - The group name.
@@ -222,25 +189,16 @@ export function seedDayPeriods(
   return next;
 }
 
-// --- Clamp pipeline ---
-
 /** The outcome of clamping one numeric part. */
 export interface ClampedPart {
   /** The clamped numeric value, or the original NaN for an empty part. */
   value: number;
-  /**
-   * The zero-padded string to write back into the part, present only when the
-   * clamp actually changed the value (padded to the descriptor's maxLength,
-   * defaulting to 2) — exactly what `clampNumericPart` wrote to state.
-   */
+  /** The zero-padded string to write back into the part. */
   writeBack?: string;
 }
 
 /**
  * Clamps a numeric part to its descriptor bounds without touching any state.
- * Extracted from `AbstractDateTimeInput.clampNumericPart`/`clampToDescriptor`:
- * NaN passes through untouched, a missing descriptor means no clamping, and a
- * correction yields the zero-padded write-back string the abstract stored.
  *
  * @param {DateTimePartDescriptor | undefined} descriptor - The part descriptor.
  * @param {number} raw - The parsed part value (may be NaN).
@@ -260,8 +218,6 @@ export function clampPart(
   };
 }
 
-// --- Group parse pipelines ---
-
 /** Corrections a parse produced; the caller writes them back into its state. */
 export type GroupWriteBacks = Partial<Record<DateTimePartType, string>>;
 
@@ -273,7 +229,7 @@ export type GroupWriteBacks = Partial<Record<DateTimePartType, string>>;
  * - 'valid': the committed ISO string plus, when a calendar date is involved,
  *   the local-time Date instant it was built from. Bounds are NOT checked
  *   here — callers apply `dateBoundsError`/{@link timeBoundsError}/their own
- *   instant bounds to a 'valid' result, mirroring the abstract layers' split.
+ *   instant bounds to a 'valid' result.
  */
 export type GroupParseResult =
   | { kind: 'incomplete' }
@@ -284,8 +240,8 @@ export type GroupParseResult =
 export interface ParsedGroup {
   result: GroupParseResult;
   /**
-   * Write-backs are produced even for an incomplete group: the abstract layers
-   * clamped BEFORE the completeness check so an out-of-range part is corrected
+   * Write-backs are produced even for an incomplete group.
+   * We clamp BEFORE the completeness check so an out-of-range part is corrected
    * (e.g. hour 15 -> '12' in a 12h locale) while the other part is still empty.
    */
   writeBacks: GroupWriteBacks;
@@ -304,12 +260,7 @@ function clampInto(
 }
 
 /**
- * Parses a day/month/year group into an ISO date (YYYY-MM-DD). Faithful port
- * of the inline pipeline of `date-input.ts` (validateAndEmit) and
- * `range-date-input.ts` (validateDateParts): clamp each part to its descriptor
- * (recording write-backs), require a complete 4-digit-year date, reject an
- * impossible day for the month/year, otherwise build the local-midnight Date.
- * Bounds (`dateBoundsError`) stay with the caller.
+ * Parses a day/month/year group into an ISO date (YYYY-MM-DD).
  *
  * @param {GroupPartValues} parts - The group's raw part values.
  * @param {object} options - Parse configuration.
@@ -345,12 +296,7 @@ export function parseDateGroup(
 }
 
 /**
- * Parses an hour/minute/dayPeriod group into an ISO time (HH:mm:00). Faithful
- * port of `AbstractTimePartsInput.parseTimeGroup` minus its embedded
- * `validateTimeBounds` call: clamp hour and minute (recording write-backs even
- * when the group is still incomplete), require both parts plus — in 12h — an
- * am/pm day period, then convert via `to24Hour`. Compose {@link timeBoundsError}
- * on a 'valid' result to reproduce the original's bounds behavior.
+ * Parses an hour/minute/dayPeriod group into an ISO time (HH:mm:00).
  *
  * @param {GroupPartValues} parts - The group's raw part values.
  * @param {object} options - Parse configuration.
@@ -382,12 +328,6 @@ export function parseTimeGroup(
 
 /**
  * Parses a full date-time group into an ISO date-time (YYYY-MM-DDTHH:mm:00).
- * Faithful port of `AbstractDateTimePartsInput.parseDateTimeGroup`: clamp all
- * numeric parts (recording write-backs), require a complete group (4-digit
- * year, month/day > 0, hour, minute, and — in 12h — an am/pm day period),
- * reject an impossible day via `maxValidDayInMonth`, then build the local
- * Date. Bounds stay with the caller (the abstract's `boundsError` was a
- * subclass hook defaulting to null).
  *
  * @param {GroupPartValues} parts - The group's raw part values.
  * @param {object} options - Parse configuration.
@@ -447,9 +387,7 @@ export interface TimeBounds {
 }
 
 /**
- * Checks a complete ISO time against min/max time bounds. Faithful port of
- * `AbstractTimePartsInput.validateTimeBounds`: the min bound is checked first,
- * each falling back to the shared default message.
+ * Checks a complete ISO time against min/max time bounds.
  *
  * @param {string} iso - The ISO time to test.
  * @param {TimeBounds} bounds - The bounds plus optional message overrides.
@@ -491,10 +429,7 @@ export function isDigitKey(key: string): boolean {
 }
 
 /**
- * Whether a part input's keydown must be preventDefault-ed. Faithful port of
- * `AbstractDateTimeInput.handleKeyDown`: editing/navigation keys, any
- * ctrl/meta chord, and readonly parts pass through; everything else is
- * prevented unless it is a digit.
+ * Whether a part input's keydown must be preventDefault-ed.
  *
  * @param {Pick<KeyboardEvent, 'key' | 'ctrlKey' | 'metaKey'>} event - The keydown event (or a subset).
  * @param {boolean} partsReadonly - The widget's effective parts-readonly state.
@@ -516,12 +451,7 @@ export function shouldPreventPartKeyDown(
 }
 
 /**
- * The ArrowUp/ArrowDown value for a numeric part. Faithful port of the
- * arithmetic in `AbstractDateTimeInput.handleKeyUp`: an empty part jumps to
- * the descriptor's incrementFallback (default 1), otherwise the value steps by
- * `step` (default 1) and either wraps modulo the descriptor range (minute) or
- * clamps to [min, max]. The result is zero-padded to the descriptor's
- * maxLength (default 2) — so an empty year still increments to '0001'.
+ * The ArrowUp/ArrowDown value for a numeric part.
  *
  * @param {DateTimePartDescriptor | undefined} descriptor - The part descriptor.
  * @param {string} current - The part's current raw string value.
@@ -552,8 +482,6 @@ export function incrementPartValue(
   return value.toString().padStart(descriptor?.maxLength ?? 2, '0');
 }
 
-// --- Locale data memo ---
-
 /** Derived locale data consumed on every keystroke by the time-aware inputs. */
 export interface TimeLocaleData {
   effectiveHourFormat: HourFormat;
@@ -566,13 +494,11 @@ const timeLocaleDataCache = new Map<string, TimeLocaleData>();
 /**
  * Resolves and memoizes the locale-derived data of the time-aware inputs:
  * the effective hour format, the day-period labels and the part descriptors
- * (whose dayPeriod placeholder is the locale's AM label). Replaces the twin
- * per-instance `_hourFormatCache`/`_labelsCache`/`_descriptorsCache` blocks of
- * `abstract-time-parts-input.ts` and `abstract-date-time-parts-input.ts` with
- * one module-level memo — Intl.DateTimeFormat construction is expensive and
- * these are consulted on every keystroke. The cache key covers every input,
- * so entries are shared across hosts and bounded by the distinct
- * locale/format/step combinations in use.
+ * (whose dayPeriod placeholder is the locale's AM label).
+ *
+ * Intl.DateTimeFormat construction is expensive and these are consulted on every
+ * keystroke. The cache key covers every input, so entries are shared across hosts
+ * and bounded by the distinct locale/format/step combinations in use.
  *
  * @param {string | undefined} localeId - The locale identifier. Defaults to 'en'.
  * @param {HourFormat | undefined} hourFormat - Explicit hour-format override, if any.

@@ -7,6 +7,7 @@ import type { GuiTimeList } from './time-list';
 import { GUIPopupController } from '../controllers/popup.controller';
 import { buildTimeOptions, isTimeDisabled, type HourFormat, type TimeRange } from '../utils/time';
 import { addErrors, addIcon, addLabel } from '../utils/templates';
+import { INVALID_DISABLED_TIME_RANGE_MESSAGE } from '../utils/messages';
 
 @customElement('gui-time-picker')
 export class GuiTimePicker extends LitElement {
@@ -60,7 +61,6 @@ export class GuiTimePicker extends LitElement {
         : 'toggle';
     },
     keyToggleMode: 'openClose',
-    focusOutClose: 'immediate',
     onOpenChanged: (open) => {
       this.dispatchListToggle(open);
       if (open) {
@@ -202,7 +202,7 @@ export class GuiTimePicker extends LitElement {
   private validateBounds(value: string | undefined): string | null {
     if (!value) return null;
     if (isTimeDisabled(value, this.disabledRanges)) {
-      return this.disabledRangeMessage ?? 'Invalid time: time is within a disabled range.';
+      return this.disabledRangeMessage ?? INVALID_DISABLED_TIME_RANGE_MESSAGE;
     }
     return null;
   }

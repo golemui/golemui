@@ -121,8 +121,6 @@ export class GuiCalendar extends LitElement {
   });
 
   private _focusLeave = new GUIFocusLeaveController(this, {
-    attach: 'manual',
-    defer: 'raf',
     onLeave: () => {
       this.dispatchEvent(new CustomEvent('blur', { bubbles: true, composed: true }));
     },

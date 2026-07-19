@@ -1,8 +1,6 @@
 import type { DateRange } from '@golemui/gui-shared/internals';
 import { weekInfoData } from './week-info';
-
-/** Default error when a selected range spans one or more disabled days/spans. */
-export const DISABLED_DATE_RANGE_MESSAGE = 'Invalid date: date is within a disabled range.';
+import { DISABLED_DATE_RANGE_MESSAGE, INVALID_MAX_DATE_MESSAGE, INVALID_MIN_DATE_MESSAGE } from './messages';
 
 /**
  * Converts a Date object to a string formatted as an ISO 8601 date (YYYY-MM-DD).
@@ -105,13 +103,13 @@ export function dateBoundsError(
 ): string | null {
   const day = isoDate.split('T')[0];
   if (minDate && day < minDate.split('T')[0]) {
-    return messages?.minDateMessage ?? 'Invalid date: date is before the minimum allowed date.';
+    return messages?.minDateMessage ?? INVALID_MIN_DATE_MESSAGE;
   }
   if (maxDate && day > maxDate.split('T')[0]) {
-    return messages?.maxDateMessage ?? 'Invalid date: date is after the maximum allowed date.';
+    return messages?.maxDateMessage ?? INVALID_MAX_DATE_MESSAGE;
   }
   if (isDateDisabled(day, undefined, undefined, disabledRanges)) {
-    return messages?.disabledDateRangeMessage ?? 'Invalid date: date is within a disabled range.';
+    return messages?.disabledDateRangeMessage ?? DISABLED_DATE_RANGE_MESSAGE;
   }
   return null;
 }
