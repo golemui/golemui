@@ -58,6 +58,7 @@ export class FormElement extends LitElement {
           parse: (md: string) => snarkdown(md),
         },
       },
+      functions: mock.functions,
       customWidgetLoaders: {
         heading: async () =>
           (await import('../../custom-widgets/heading/heading.element')).HeadingElement,

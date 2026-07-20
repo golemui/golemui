@@ -59,6 +59,7 @@ export class AppFormPage {
       data: mock.data,
       meta: mock.meta || {},
       dependencies: deps,
+      functions: mock.functions,
       middlewares: [devToolsMiddleware()],
       customWidgetLoaders: {
         heading: async () =>
