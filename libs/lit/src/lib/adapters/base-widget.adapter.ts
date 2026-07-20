@@ -1,5 +1,9 @@
-import { type FormWidget, assertNoPropCollisions, calculatedWidgetsByUid$ } from '@golemui/core';
-import type { WithWidget } from '@golemui/core/internals';
+import {
+  type FormWidget,
+  type WithWidget,
+  assertNoPropCollisions,
+  calculatedWidgetsByUid$,
+} from '@golemui/core';
 import { Subject, takeUntil } from 'rxjs';
 import { type LitFormContext } from '../context/form.context';
 
