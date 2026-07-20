@@ -12,8 +12,7 @@ export type RepeaterItemExpressionScope = {
 };
 
 /**
- * Everything a call site can add to the base expression scope: the repeater
- * item variables plus the host-provided `$fn` functions.
+ * Extra scope available to expressions: repeater item variables and host-provided $fn functions.
  */
 export type ExpressionExtraScope = RepeaterItemExpressionScope & {
   $fn?: ExpressionFunctions;
@@ -36,8 +35,6 @@ export function expressionIsTrue(
     $errors,
     $formIsInvalid,
     $log: Debug.log,
-    // Default keeps `$fn.someName` an undefined property read instead of a
-    // missing-root failure when the host configured no functions.
     $fn: {},
     ...extraScope,
   });
