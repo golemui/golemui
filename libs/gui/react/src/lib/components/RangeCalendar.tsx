@@ -7,29 +7,44 @@ import '../styles.scss';
 
 export function RangeCalendar(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<DateRange[]>;
-  const { uid, errors, value, isTouched, templateData, onBlur, onValueChanged } = useInputWidget<
-    DateRange[],
-    RangeCalendarProps
-  >(widget);
+  const {
+    uid,
+    errors,
+    value,
+    isTouched,
+    templateData,
+    onBlur,
+    onValueChanged,
+    injectValidationIssues,
+  } = useInputWidget<DateRange[], RangeCalendarProps>(widget);
 
   const handleRef = useCallback(
     (node: HTMLElement | null) => {
       const target = node as any;
-      const changeHandler = (e: CustomEvent) => onValueChanged(e.detail.value);
-      const blurHandler = (e: CustomEvent) => {
+      const changeHandler = (e: CustomEvent) => {
+        injectValidationIssues(null);
+        onValueChanged(e.detail.value);
+      };
+      const blurHandler = () => {
+        onBlur();
+      };
+      const errorHandler = (e: CustomEvent) => {
+        injectValidationIssues([e.detail.message]);
         onBlur();
       };
       if (node) {
         target.addEventListener('blur', blurHandler);
         target.addEventListener('change', changeHandler);
+        target.addEventListener('inputError', errorHandler);
       }
 
       return () => {
         target.removeEventListener('blur', blurHandler);
         target.removeEventListener('change', changeHandler);
+        target.removeEventListener('inputError', errorHandler);
       };
     },
-    [onValueChanged, onBlur],
+    [onValueChanged, onBlur, injectValidationIssues],
   );
 
   const label = templateData.label as string;
@@ -74,6 +89,7 @@ export function RangeCalendar(widgetInstance: WithWidget) {
         minDate={minDate}
         maxDate={maxDate}
         disabledRanges={disabledRanges}
+        disabledDateRangeMessage={templateData.disabledDateRangeMessage as string}
         numberOfMonths={numberOfMonths}
         hidePills={false}
         removePillAriaLabel={removePillAriaLabel}

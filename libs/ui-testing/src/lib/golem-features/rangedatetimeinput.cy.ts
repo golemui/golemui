@@ -1,0 +1,294 @@
+import { defineForm, identityTranslator } from '@golemui/core';
+import { type MountComponentFn } from '../utils';
+
+// Behavior tests for the gui-range-date-time web component: two segmented
+// date-time inputs (start/end) accumulating a DateTimeRange[] value as pills.
+// Pins the pill create/merge/remove model and — unlike the pure time range,
+// which errors on a reversed range — the **swap** ordering (a backward
+// selection silently reorders on the full date-time). Uses en-GB (24h) so the
+// parts are dd/mm/yyyy hh:mm with no day-period.
+export const runRangeDateTimeInputComponentTests = (mountFn: MountComponentFn) => {
+  describe('RangeDateTimeInput Component', () => {
+    const uid = 'testSubject';
+    const partSel = (group: string, type: string) =>
+      `gui-range-date-time input[data-group="${group}"][data-type="${type}"]`;
+    const sel = {
+      startDay: partSel('start', 'day'),
+      startHour: partSel('start', 'hour'),
+      endDay: partSel('end', 'day'),
+      endHour: partSel('end', 'hour'),
+      pillText: 'gui-range-date-time .gui-pills__pill-text',
+      pillRemove: 'gui-range-date-time .gui-pills__pill-remove',
+    };
+
+    const mountRangeDateTimeInput = (options?: {
+      data?: Record<string, any>;
+      lang?: string;
+      props?: Record<string, any>;
+      formSubmit?: (event: any) => void;
+      readonly?: boolean;
+      disabled?: boolean;
+    }) => {
+      mountFn({
+        localization: identityTranslator(options?.lang ?? 'en-GB'),
+        data: options?.data,
+        formDef: defineForm({
+          form: [
+            {
+              uid,
+              kind: 'input',
+              type: 'rangeDateTimeInput',
+              path: 'myRanges',
+              ...(options?.props ? { props: options.props } : {}),
+              ...(options?.readonly !== undefined ? { readonly: options.readonly } : {}),
+              ...(options?.disabled !== undefined ? { disabled: options.disabled } : {}),
+            },
+            {
+              uid: 'submitBtn',
+              kind: 'action',
+              type: 'button',
+              label: 'Submit',
+              actionType: 'submit',
+            },
+          ],
+        }),
+        formSubmit: options?.formSubmit,
+      });
+    };
+
+    const submitAndGetData = (formSubmitAlias: string) => {
+      cy.get('[data-cy="submitBtn_button"]').click({ force: true });
+      return cy.get(formSubmitAlias).then((stub: any) => stub.getCall(0).args[0].data);
+    };
+
+    // day/month/year/hour/minute for a group, in en-GB (dd/mm/yyyy hh:mm) order.
+    const typeGroup = (
+      group: 'start' | 'end',
+      [d, mo, y, h, mi]: [string, string, string, string, string],
+    ) => {
+      cy.get(partSel(group, 'day')).click();
+      cy.focused().type(d);
+      cy.focused().type(mo);
+      cy.focused().type(y);
+      cy.focused().type(h);
+      cy.focused().type(mi);
+    };
+
+    const typeRange = (
+      start: [string, string, string, string, string],
+      end: [string, string, string, string, string],
+      commit = true,
+    ) => {
+      typeGroup('start', start);
+      typeGroup('end', end);
+      if (commit) cy.focused().type('{enter}');
+    };
+
+    it('should hydrate a DateTimeRange[] value into pills', () => {
+      mountRangeDateTimeInput({
+        data: { myRanges: [{ start: '2026-11-22T09:00:00', end: '2026-11-22T11:00:00' }] },
+      });
+      cy.get(sel.pillText)
+        .should('have.length', 1)
+        .and('contain', '22/11/2026')
+        .and('contain', '09:00');
+    });
+
+    it('should seed the AM/PM toggle to AM in a 12h locale', () => {
+      mountRangeDateTimeInput({ lang: 'en-US' });
+      cy.get('gui-range-date-time button[data-group="start"][data-type="dayPeriod"]').should(
+        ($el) => {
+          expect($el.text().trim()).to.match(/AM/);
+        },
+      );
+      cy.get('gui-range-date-time button[data-group="end"][data-type="dayPeriod"]').should(
+        ($el) => {
+          expect($el.text().trim()).to.match(/AM/);
+        },
+      );
+    });
+
+    it('should create a pill from a typed range and submit it', () => {
+      const formSubmitHandler = cy.stub().as('formSubmitHandler');
+      mountRangeDateTimeInput({ formSubmit: formSubmitHandler });
+
+      typeRange(['22', '11', '2026', '09', '00'], ['22', '11', '2026', '11', '30']);
+
+      cy.get(sel.pillText).should('have.length', 1);
+      cy.get(sel.startDay).should('have.value', '');
+
+      submitAndGetData('@formSubmitHandler').then((data) => {
+        expect(data).to.deep.equal({
+          myRanges: [{ start: '2026-11-22T09:00:00', end: '2026-11-22T11:30:00' }],
+        });
+      });
+    });
+
+    it('should reorder (swap) a backward same-day range instead of erroring', () => {
+      const formSubmitHandler = cy.stub().as('formSubmitHandler');
+      mountRangeDateTimeInput({ formSubmit: formSubmitHandler });
+
+      // start 18:00 → end 09:00 on the same day: silently swaps to 09:00 → 18:00.
+      typeRange(['22', '11', '2026', '18', '00'], ['22', '11', '2026', '09', '00']);
+
+      cy.get(sel.pillText).should('have.length', 1);
+      submitAndGetData('@formSubmitHandler').then((data) => {
+        expect(data).to.deep.equal({
+          myRanges: [{ start: '2026-11-22T09:00:00', end: '2026-11-22T18:00:00' }],
+        });
+      });
+    });
+
+    it('should keep a cross-day range as-is (later time on the earlier day)', () => {
+      const formSubmitHandler = cy.stub().as('formSubmitHandler');
+      mountRangeDateTimeInput({ formSubmit: formSubmitHandler });
+
+      // Nov 22 18:00 → Nov 23 09:00 is already ordered on the full date-time.
+      typeRange(['22', '11', '2026', '18', '00'], ['23', '11', '2026', '09', '00']);
+
+      cy.get(sel.pillText).should('have.length', 1);
+      submitAndGetData('@formSubmitHandler').then((data) => {
+        expect(data).to.deep.equal({
+          myRanges: [{ start: '2026-11-22T18:00:00', end: '2026-11-23T09:00:00' }],
+        });
+      });
+    });
+
+    it('should merge overlapping ranges into a single pill', () => {
+      const formSubmitHandler = cy.stub().as('formSubmitHandler');
+      mountRangeDateTimeInput({
+        data: { myRanges: [{ start: '2026-11-22T09:00:00', end: '2026-11-22T11:00:00' }] },
+        formSubmit: formSubmitHandler,
+      });
+
+      // 10:00–13:00 same day overlaps 09:00–11:00 → merge to 09:00–13:00
+      typeRange(['22', '11', '2026', '10', '00'], ['22', '11', '2026', '13', '00']);
+
+      cy.get(sel.pillText).should('have.length', 1);
+      submitAndGetData('@formSubmitHandler').then((data) => {
+        expect(data).to.deep.equal({
+          myRanges: [{ start: '2026-11-22T09:00:00', end: '2026-11-22T13:00:00' }],
+        });
+      });
+    });
+
+    it('should keep non-overlapping ranges as separate pills', () => {
+      mountRangeDateTimeInput({
+        data: { myRanges: [{ start: '2026-11-22T09:00:00', end: '2026-11-22T10:00:00' }] },
+      });
+      typeRange(['24', '11', '2026', '14', '00'], ['24', '11', '2026', '15', '00']);
+      cy.get(sel.pillText).should('have.length', 2);
+    });
+
+    it('should emit an inputError for a typed date-time past maxDateTime', () => {
+      mountRangeDateTimeInput({
+        props: { maxDateTime: '2026-11-22T17:00:00', maxDateTimeMessage: 'Too late' },
+      });
+
+      const inputErrorSpy = cy.spy().as('inputErrorSpy');
+      cy.get('gui-range-date-time').then(($el) => {
+        $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
+      });
+
+      // Nov 22 18:00 is past the Nov 22 17:00 instant → rejected.
+      typeGroup('start', ['22', '11', '2026', '18', '00']);
+      cy.get(sel.endDay).click();
+
+      // Quiet until the user attempts a commit.
+      cy.get('@inputErrorSpy').should('not.have.been.called');
+
+      cy.focused().type('{enter}');
+      cy.get('@inputErrorSpy').then((spy: any) => {
+        expect(spy.getCall(0).args[0].detail.message).to.equal('Too late');
+      });
+    });
+
+    it('should accept a later day whose time-of-day precedes minDateTime', () => {
+      // The bound is an instant, not a (date, time-of-day) pair: Nov 23 08:00 is
+      // after Nov 22 09:00 and must be accepted. Validating the date and time
+      // axes independently would wrongly reject it on the time axis alone.
+      mountRangeDateTimeInput({
+        props: { minDateTime: '2026-11-22T09:00:00', minDateTimeMessage: 'Too early' },
+      });
+
+      const inputErrorSpy = cy.spy().as('inputErrorSpy');
+      cy.get('gui-range-date-time').then(($el) => {
+        $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
+      });
+
+      typeRange(['23', '11', '2026', '08', '00'], ['23', '11', '2026', '10', '00']);
+
+      cy.get('@inputErrorSpy').should('not.have.been.called');
+      cy.get(sel.pillText).should('have.length', 1);
+    });
+
+    it('should emit an inputError for a typed date-time before minDateTime', () => {
+      mountRangeDateTimeInput({
+        props: { minDateTime: '2026-11-22T09:00:00', minDateTimeMessage: 'Too early' },
+      });
+
+      const inputErrorSpy = cy.spy().as('inputErrorSpy');
+      cy.get('gui-range-date-time').then(($el) => {
+        $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
+      });
+
+      // Nov 22 08:00 is before the Nov 22 09:00 instant → rejected.
+      typeGroup('start', ['22', '11', '2026', '08', '00']);
+      cy.get(sel.endDay).click();
+
+      // Quiet until the user attempts a commit.
+      cy.get('@inputErrorSpy').should('not.have.been.called');
+
+      cy.focused().type('{enter}');
+      cy.get('@inputErrorSpy').then((spy: any) => {
+        expect(spy.getCall(0).args[0].detail.message).to.equal('Too early');
+      });
+    });
+
+    it('should clear a group error once its invalid date is corrected, before the range completes', () => {
+      mountRangeDateTimeInput({ props: { invalidDateMessage: 'Invalid date' } });
+
+      // Feb 30 09:00 in the start group, committed with Enter → invalid-date error.
+      typeGroup('start', ['30', '02', '2026', '09', '00']);
+      cy.focused().type('{enter}');
+      // Submitting marks the form touched so the injected error renders.
+      cy.get('[data-cy="submitBtn_button"]').click({ force: true });
+      cy.get('[data-cy="testSubject_validator-error"]')
+        .should('be.visible')
+        .and('contain', 'Invalid date');
+
+      // Correct just the start day to 28 (valid); the end is still empty, but the
+      // completed-and-valid start must clear its error on its own.
+      cy.get(sel.startDay).click();
+      cy.focused().type('{selectall}28', { force: true });
+      cy.get(sel.endDay).click();
+
+      cy.get('[data-cy="testSubject_validator-error"]').should('not.exist');
+      cy.get(sel.pillText).should('not.exist');
+    });
+
+    it('should remove a pill', () => {
+      mountRangeDateTimeInput({
+        data: {
+          myRanges: [
+            { start: '2026-11-22T09:00:00', end: '2026-11-22T10:00:00' },
+            { start: '2026-11-24T14:00:00', end: '2026-11-24T15:00:00' },
+          ],
+        },
+      });
+
+      cy.get(sel.pillText).should('have.length', 2);
+      cy.get(sel.pillRemove).first().click({ force: true });
+      cy.get(sel.pillText).should('have.length', 1);
+    });
+
+    it('should render disabled inputs when disabled', () => {
+      mountRangeDateTimeInput({
+        data: { myRanges: [{ start: '2026-11-22T09:00:00', end: '2026-11-22T10:00:00' }] },
+        disabled: true,
+      });
+      cy.get(sel.startDay).should('be.disabled');
+      cy.get(sel.endDay).should('be.disabled');
+    });
+  });
+};

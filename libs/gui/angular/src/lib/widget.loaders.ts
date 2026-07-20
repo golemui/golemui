@@ -26,9 +26,22 @@ export const widgetLoaders: WidgetLoaders<Type<WithWidget>, GolemWidget> = {
     (await import('./components/range-calendar/range-calendar.component')).RangeCalendarComponent,
   rangeDateInput: async () =>
     (await import('./components/range-date/range-date.component')).RangeDateComponent,
+  rangeTimeInput: async () =>
+    (await import('./components/range-time/range-time.component')).RangeTimeComponent,
+  rangeDateTimeInput: async () =>
+    (await import('./components/range-date-time/range-date-time.component')).RangeDateTimeComponent,
+  rangeDateTimeCalendar: async () =>
+    (await import('./components/range-date-time-calendar/range-date-time-calendar.component'))
+      .RangeDateTimeCalendarComponent,
+  rangeDateTimePicker: async () =>
+    (await import('./components/range-date-time-picker/range-date-time-picker.component'))
+      .RangeDateTimePickerComponent,
   rangeDatePicker: async () =>
     (await import('./components/range-date-picker/range-date-picker.component'))
       .RangeDatePickerComponent,
+  rangeTimePicker: async () =>
+    (await import('./components/range-time-picker/range-time-picker.component'))
+      .RangeTimePickerComponent,
   dateInput: async () => (await import('./components/date-input/date.component')).DateComponent,
   timeInput: async () => (await import('./components/time-input/time.component')).TimeComponent,
   timePicker: async () =>

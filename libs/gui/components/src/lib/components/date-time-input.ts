@@ -1,39 +1,45 @@
 import type { DateTimeInputProps } from '@golemui/gui-shared/internals';
-import { html, nothing, type PropertyValues } from 'lit';
+import { html, LitElement, nothing, type PropertyValues } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
+import { GUIAriaController } from '../controllers/aria.controller';
+import { GUIPartsController } from '../controllers/parts.controller';
+import { dateBoundsError } from '../utils/date';
+import { renderGroupParts, type GUIPartsTemplateData } from '../utils/part-templates';
 import {
-  AbstractDateTimeInput,
-  INVALID_DATE_MESSAGE,
-  dateInputPartDescriptors,
-  timeInputPartDescriptors,
+  getTimeLocaleData,
+  parseDateTimeGroup,
+  timeBoundsError,
   type DateTimePartDescriptor,
   type DateTimePartType,
-} from './abstract-date-time-input';
-import { dateBoundsError, maxValidDayInMonth, toISODateString } from '../utils/date';
-import {
-  compareISOTimes,
-  from24Hour,
-  getDateTimeFormatParts,
-  getDayPeriodLabels,
-  parseISODateTimeString,
-  resolveHourFormat,
-  to24Hour,
-  toISODateTimeString,
-  toISOTimeString,
-  type HourFormat,
-} from '../utils/time';
+  type TimeLocaleData,
+} from '../utils/parts';
+import { getDateTimeFormatParts, toISOTimeString, type HourFormat } from '../utils/time';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 
 @customElement('gui-date-time')
-export class GuiDateTime extends AbstractDateTimeInput {
-  @property({ type: String }) value: string | undefined = undefined;
-  @property({ type: String, attribute: 'invalid-date-message' }) invalidDateMessage:
-    | string
-    | undefined = undefined;
+export class GuiDateTime extends LitElement {
+  @property({ type: String }) uid: string | undefined = undefined;
+  @property({ type: String }) label: string | undefined = undefined;
+  @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
+  @property({ type: Array }) errors: string[] | undefined = [];
+  @property({ type: Boolean }) showErrors: boolean | undefined = true;
+  @property({ type: Boolean }) touched: boolean | undefined = false;
+  @property({ type: Boolean }) required: boolean | undefined = false;
+  @property({ type: Boolean }) disabled: boolean | undefined = false;
+  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
+
+  @property({ type: String }) icon: string | undefined = '';
+  @property({ type: String }) hint: string | undefined = undefined;
+
   @property({ type: String, attribute: 'hour-format' }) hourFormat: HourFormat | undefined =
     undefined;
   @property({ type: Number, attribute: 'minute-step' }) minuteStep: number | undefined = 1;
+  @property({ type: String, attribute: 'invalid-date-message' }) invalidDateMessage:
+    | string
+    | undefined = undefined;
+
+  @property({ type: String }) value: string | undefined = undefined;
   @property({ type: String, attribute: 'min-date' }) minDate: string | undefined = undefined;
   @property({ type: String, attribute: 'max-date' }) maxDate: string | undefined = undefined;
   @property({ type: String, attribute: 'min-time' }) minTime: string | undefined = undefined;
@@ -47,66 +53,70 @@ export class GuiDateTime extends AbstractDateTimeInput {
   @property({ type: String, attribute: 'max-time-message' }) maxTimeMessage: string | undefined =
     undefined;
 
-  protected override readonly inputBlockClass = 'gui-date-time-input';
-  protected override readonly groups = ['default'] as const;
+  private readonly inputBlockClass = 'gui-date-time-input';
+  private readonly groups = ['default'] as const;
 
-  // Intl.DateTimeFormat construction is expensive and these are consulted on
-  // every keystroke, so the derived locale data is memoized per input change
-  private _hourFormatCache: { key: string; format: HourFormat } | undefined;
-  private _labelsCache: { key: string; labels: { am: string; pm: string } } | undefined;
-  private _descriptorsCache:
-    | { key: string; descriptors: Partial<Record<DateTimePartType, DateTimePartDescriptor>> }
-    | undefined;
+  private _parts = new GUIPartsController(this, {
+    blockClass: this.inputBlockClass,
+    groups: this.groups,
+    getDescriptor: (type) => this.getPartDescriptor(type),
+    commitGroup: (group) => this.validateAndEmit(group),
+    isReadonly: () => !!this.readOnly,
+    isDisabled: () => !!this.disabled,
+    onEmptyPartBlur: () =>
+      this.dispatchEvent(new CustomEvent('change', { detail: { value: null }, bubbles: true })),
+    getHourFormat: () => this.localeData.effectiveHourFormat,
+    getDayPeriodLabels: () => this.localeData.dayPeriodLabels,
+  });
 
-  private get effectiveHourFormat(): HourFormat {
-    const key = `${this.localeId ?? ''}|${this.hourFormat ?? ''}`;
-    if (this._hourFormatCache?.key !== key) {
-      this._hourFormatCache = { key, format: resolveHourFormat(this.localeId, this.hourFormat) };
-    }
-    return this._hourFormatCache.format;
+  protected ariaController: GUIAriaController<unknown, any> = new GUIAriaController(this, {
+    getTargets: () => this.querySelectorAll(`.${this.inputBlockClass}`),
+    getState: () => ({
+      uid: this.uid as string,
+      templateData: {
+        hint: this.hint,
+        errors: this.errors,
+        readonly: this.readOnly,
+        disabled: this.disabled,
+        touched: this.touched,
+      },
+    }),
+  });
+
+  override createRenderRoot() {
+    return this;
   }
 
-  private get dayPeriodLabels(): { am: string; pm: string } {
-    const key = this.localeId ?? '';
-    if (this._labelsCache?.key !== key) {
-      this._labelsCache = { key, labels: getDayPeriodLabels(this.localeId) };
-    }
-    return this._labelsCache.labels;
+  override connectedCallback() {
+    super.connectedCallback();
+    this.classList.add('gui-field');
   }
 
-  protected override getFormatParts(): Intl.DateTimeFormatPart[] {
-    return getDateTimeFormatParts(this.localeId, this.effectiveHourFormat);
+  private get localeData(): TimeLocaleData {
+    return getTimeLocaleData(this.localeId, this.hourFormat, this.minuteStep, true);
   }
 
-  protected override getPartDescriptor(type: string): DateTimePartDescriptor | undefined {
-    // `|| 1` (not ??): some framework bindings coerce an absent number prop
-    // to 0 (e.g. Vue's patchDOMProp), and a 0 step would freeze the arrows
-    const minuteStep = this.minuteStep || 1;
-    const key = `${this.localeId ?? ''}|${this.effectiveHourFormat}|${minuteStep}`;
-    let cache = this._descriptorsCache;
-    if (cache?.key !== key) {
-      cache = {
-        key,
-        descriptors: {
-          ...dateInputPartDescriptors(),
-          ...timeInputPartDescriptors(
-            this.effectiveHourFormat,
-            minuteStep,
-            this.dayPeriodLabels.am,
-          ),
-        },
-      };
-      this._descriptorsCache = cache;
-    }
-    return cache.descriptors[type as keyof typeof cache.descriptors];
+  private getPartDescriptor(type: string): DateTimePartDescriptor | undefined {
+    return this.localeData.descriptors[type as DateTimePartType];
   }
 
-  protected override getPartDisplayValue(group: string, type: DateTimePartType): string {
-    const value = this.getPartValue(group, type);
-    if (type === 'dayPeriod' && (value === 'am' || value === 'pm')) {
-      return this.dayPeriodLabels[value];
-    }
-    return value;
+  /**
+   * Constrains the date and time axes independently: `minDate`/`maxDate` bound
+   * the day, `minTime`/`maxTime` bound the time-of-day on every allowed day.
+   */
+  private boundsError(iso: string, instant: Date): string | null {
+    return (
+      dateBoundsError(iso, this.minDate, this.maxDate, undefined, {
+        minDateMessage: this.minDateMessage,
+        maxDateMessage: this.maxDateMessage,
+      }) ??
+      timeBoundsError(toISOTimeString(instant), {
+        minTime: this.minTime,
+        maxTime: this.maxTime,
+        minTimeMessage: this.minTimeMessage,
+        maxTimeMessage: this.maxTimeMessage,
+      })
+    );
   }
 
   override willUpdate(changedProperties: PropertyValues): void {
@@ -117,7 +127,12 @@ export class GuiDateTime extends AbstractDateTimeInput {
       changedProperties.has('hourFormat') ||
       changedProperties.has('localeId')
     ) {
-      this.parseValue(this.value ?? '');
+      this._parts.setGroupFromISO(
+        'default',
+        this.value ?? '',
+        'dateTime',
+        this.localeData.effectiveHourFormat,
+      );
     }
   }
 
@@ -135,6 +150,17 @@ export class GuiDateTime extends AbstractDateTimeInput {
       hint: this.hint,
     };
 
+    const partsData: GUIPartsTemplateData = {
+      blockClass: this.inputBlockClass,
+      groups: this.groups,
+      formatParts: getDateTimeFormatParts(this.localeId, this.localeData.effectiveHourFormat),
+      getDescriptor: (type) => this.getPartDescriptor(type),
+      getDisplayValue: this._parts.getPartDisplay,
+      required: this.required,
+      disabled: this.disabled,
+      partsReadonly: !!this.readOnly,
+    };
+
     const iconClassMap = {
       'gui-widget-icon': true,
       [this.icon as string]: true,
@@ -150,7 +176,7 @@ export class GuiDateTime extends AbstractDateTimeInput {
             : ''}"
           role="group"
         >
-          ${this.renderGroupParts('default')}
+          ${renderGroupParts('default', partsData, this._parts)}
         </div>
         ${this.icon
           ? html`<span class=${classMap(iconClassMap)} data-icon=${this.icon}></span>`
@@ -163,154 +189,48 @@ export class GuiDateTime extends AbstractDateTimeInput {
     `;
   }
 
-  private parseValue(isoValue: string | null) {
-    if (!isoValue) {
-      this.clearGroup('default');
-      // The AM/PM toggle is a switch and always has a state
-      if (this.effectiveHourFormat === '12') {
-        this.setPartValue('default', 'dayPeriod', 'am');
-      }
+  private validateAndEmit(group: string): void {
+    // Clamp out-of-range values and write them back so the user sees the
+    // corrected part immediately
+    const { effectiveHourFormat, descriptors } = this.localeData;
+    const { result, writeBacks } = parseDateTimeGroup(this._parts.values[group] ?? {}, {
+      hourFormat: effectiveHourFormat,
+      descriptors,
+      invalidDateMessage: this.invalidDateMessage,
+    });
+    this._parts.applyWriteBacks(group, writeBacks);
+
+    if (result.kind === 'incomplete') {
+      this.requestUpdate();
       return;
     }
 
-    const date = parseISODateTimeString(isoValue);
-    if (isNaN(date.getTime())) return;
-
-    this.setPartValue('default', 'day', date.getDate().toString().padStart(2, '0'));
-    this.setPartValue('default', 'month', (date.getMonth() + 1).toString().padStart(2, '0'));
-    this.setPartValue('default', 'year', date.getFullYear().toString());
-
-    const hour24 = date.getHours();
-    if (this.effectiveHourFormat === '12') {
-      const { hour12, period } = from24Hour(hour24);
-      this.setPartValue('default', 'hour', hour12.toString().padStart(2, '0'));
-      this.setPartValue('default', 'dayPeriod', period);
-    } else {
-      this.setPartValue('default', 'hour', hour24.toString().padStart(2, '0'));
-    }
-    this.setPartValue('default', 'minute', date.getMinutes().toString().padStart(2, '0'));
-  }
-
-  protected override commitParts(): void {
-    this.validateAndEmit();
-  }
-
-  /** Clamps a part to its descriptor bounds, writing the correction back. */
-  private clampPart(type: DateTimePartType, value: number): number {
-    if (isNaN(value)) return value;
-    const clamped = this.clampToDescriptor(type, value);
-    if (clamped !== value) {
-      const width = this.getPartDescriptor(type)?.maxLength ?? 2;
-      this.setPartValue('default', type, clamped.toString().padStart(width, '0'));
-    }
-    return clamped;
-  }
-
-  private validateAndEmit() {
-    const is12h = this.effectiveHourFormat === '12';
-
-    const yearVal = this.clampPart('year', parseInt(this.getPartValue('default', 'year'), 10));
-    const monthVal = this.clampPart('month', parseInt(this.getPartValue('default', 'month'), 10));
-    const dayVal = this.clampPart('day', parseInt(this.getPartValue('default', 'day'), 10));
-    const hourVal = this.clampPart('hour', parseInt(this.getPartValue('default', 'hour'), 10));
-    const minuteVal = this.clampPart(
-      'minute',
-      parseInt(this.getPartValue('default', 'minute'), 10),
-    );
-    const period = this.getPartValue('default', 'dayPeriod');
-
-    const isYearValid = !isNaN(yearVal) && String(yearVal).length === 4;
-    const isMonthValid = !isNaN(monthVal) && monthVal > 0;
-    const isDayValid = !isNaN(dayVal) && dayVal > 0;
-    const isHourValid = !isNaN(hourVal);
-    const isMinuteValid = !isNaN(minuteVal);
-    const isPeriodValid = !is12h || period === 'am' || period === 'pm';
-
-    if (
-      isYearValid &&
-      isMonthValid &&
-      isDayValid &&
-      isHourValid &&
-      isMinuteValid &&
-      isPeriodValid
-    ) {
-      const maxValidDay = maxValidDayInMonth(monthVal, yearVal);
-      // Date is complete but invalid
-      if (dayVal > maxValidDay) {
-        this.dispatchEvent(
-          new CustomEvent('inputError', {
-            detail: { message: this.invalidDateMessage ?? INVALID_DATE_MESSAGE },
-            bubbles: true,
-          }),
-        );
-      } else {
-        const hour24 = is12h ? to24Hour(hourVal, period as 'am' | 'pm') : hourVal;
-        const candidate = toISODateTimeString(
-          new Date(yearVal, monthVal - 1, dayVal, hour24, minuteVal, 0),
-        );
-        const boundsError =
-          this.validateDateBounds(yearVal, monthVal, dayVal) ??
-          this.validateTimeBounds(hour24, minuteVal);
-
-        if (boundsError) {
-          this.dispatchEvent(
-            new CustomEvent('change', {
-              detail: { value: candidate },
-              bubbles: true,
-            }),
-          );
-          this.dispatchEvent(
-            new CustomEvent('inputError', {
-              detail: { message: boundsError },
-              bubbles: true,
-            }),
-          );
-          this.requestUpdate();
-          return;
-        }
-
-        this.value = candidate;
-
-        this.dispatchEvent(
-          new CustomEvent('change', {
-            detail: { value: this.value },
-            bubbles: true,
-          }),
-        );
-      }
+    // Impossible date (e.g. Feb 31): surface the error, nothing to advance to.
+    if (result.kind === 'invalid') {
+      this.dispatchEvent(
+        new CustomEvent('inputError', { detail: { message: result.message }, bubbles: true }),
+      );
+      this.requestUpdate();
+      return;
     }
 
+    const boundsError = this.boundsError(result.iso, result.instant as Date);
+
+    // Out of bounds: advance the value (so a host popover reflects it) then error.
+    if (boundsError) {
+      this.dispatchEvent(
+        new CustomEvent('change', { detail: { value: result.iso }, bubbles: true }),
+      );
+      this.dispatchEvent(
+        new CustomEvent('inputError', { detail: { message: boundsError }, bubbles: true }),
+      );
+      this.requestUpdate();
+      return;
+    }
+
+    this.value = result.iso;
+    this.dispatchEvent(new CustomEvent('change', { detail: { value: this.value }, bubbles: true }));
     this.requestUpdate();
-  }
-
-  /**
-   * Checks the date portion against the scalar minDate/maxDate bounds. Returns
-   * the error message for the first violated constraint, or null. Disabled date
-   * ranges live in the date-time picker (which owns `disabledRanges`).
-   */
-  private validateDateBounds(year: number, month: number, day: number): string | null {
-    const iso = toISODateString(new Date(year, month - 1, day));
-    return dateBoundsError(iso, this.minDate, this.maxDate, undefined, {
-      minDateMessage: this.minDateMessage,
-      maxDateMessage: this.maxDateMessage,
-    });
-  }
-
-  /**
-   * Checks the time portion against the scalar minTime/maxTime bounds. Returns
-   * the error message for the first violated constraint, or null. Disabled-range
-   * validation lives in the date-time picker (which owns `disabledTimeRanges`),
-   * so the value can advance and be reflected in the popover before the error.
-   */
-  private validateTimeBounds(hour24: number, minuteVal: number): string | null {
-    const time = toISOTimeString(new Date(1970, 0, 1, hour24, minuteVal, 0));
-    if (this.minTime && compareISOTimes(time, this.minTime) < 0) {
-      return this.minTimeMessage ?? 'Invalid time: time is before the minimum allowed time.';
-    }
-    if (this.maxTime && compareISOTimes(time, this.maxTime) > 0) {
-      return this.maxTimeMessage ?? 'Invalid time: time is after the maximum allowed time.';
-    }
-    return null;
   }
 }
 

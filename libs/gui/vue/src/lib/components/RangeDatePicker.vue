@@ -31,6 +31,7 @@ const changeHandler = (e: Event) => {
 };
 const errorHandler = (e: Event) => {
   injectValidationIssues([(e as CustomEvent).detail.message]);
+  onBlur();
 };
 
 let currentEl: HTMLElement | null = null;

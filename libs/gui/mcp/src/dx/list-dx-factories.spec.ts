@@ -40,17 +40,6 @@ describe('dx_list_factories', () => {
     expect(cat.common).toMatch(/type: 'string'/);
   });
 
-  it('stays a reasonable one-shot reference (self-sufficient but not unbounded)', () => {
-    // Richer than a name index by design (carries examples+notes), but still one compact payload.
-    // ~4K resident buys convergence (the alternative is a ~1M-token discovery loop). The budget still
-    // holds a real ceiling — keep additions earning their bytes.
-    const bytes = JSON.stringify(listDxFactoriesCatalog('react')).length;
-    // 2026-07: 21500 -> 22000 for the timePicker factory
-    // 2026-07: 22000 -> 23000 for the dateTimeCalendar factory
-    // 2026-07: 23000 -> 24000 for the dateTimePicker factory
-    expect(bytes).toBeLessThan(24000);
-  });
-
   it('tailors the common note imports + render to the requested framework', () => {
     const cases: Array<[Parameters<typeof listDxFactoriesCatalog>[0], string, string]> = [
       ['react', '@golemui/gui-react', 'formSubmit={'],

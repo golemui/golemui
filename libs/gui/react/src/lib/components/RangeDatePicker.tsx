@@ -29,8 +29,9 @@ export function RangeDatePicker(widgetInstance: WithWidget) {
   const handleInputError = useCallback(
     (e: Event) => {
       injectValidationIssues([(e as CustomEvent).detail.message]);
+      onBlur();
     },
-    [injectValidationIssues],
+    [injectValidationIssues, onBlur],
   );
 
   const isRequired = (templateData.validator as Validator)?.required;

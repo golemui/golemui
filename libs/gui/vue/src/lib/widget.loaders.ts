@@ -29,7 +29,13 @@ export const widgetLoaders: WidgetLoaders<Component<WithWidget>, GolemWidget> = 
   radiogroup: async () => (await import('./components/RadioGroup.vue')).default,
   rangeCalendar: async () => (await import('./components/RangeCalendar.vue')).default,
   rangeDateInput: async () => (await import('./components/RangeDateInput.vue')).default,
+  rangeTimeInput: async () => (await import('./components/RangeTimeInput.vue')).default,
+  rangeDateTimeInput: async () => (await import('./components/RangeDateTimeInput.vue')).default,
+  rangeDateTimeCalendar: async () =>
+    (await import('./components/RangeDateTimeCalendar.vue')).default,
+  rangeDateTimePicker: async () => (await import('./components/RangeDateTimePicker.vue')).default,
   rangeDatePicker: async () => (await import('./components/RangeDatePicker.vue')).default,
+  rangeTimePicker: async () => (await import('./components/RangeTimePicker.vue')).default,
   tags: async () => (await import('./components/Tags.vue')).default,
 
   // REPEATER

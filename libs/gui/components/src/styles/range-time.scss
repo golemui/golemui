@@ -1,0 +1,43 @@
+@use 'pill' as *;
+
+// Field and focus-ring styles come from `date-time-parts.scss` via the shared
+// `gui-parts` / `gui-parts-ring` classes
+gui-range-time {
+  display: block;
+
+  .gui-range-time-input {
+    display: flex;
+    align-items: center;
+    position: relative;
+    container-type: inline-size;
+    container-name: gui-pills-widget;
+
+    &--icon {
+      & > .gui-widget-icon {
+        flex-shrink: 0;
+        border-inline-end: 1px solid var(--gui-border-default);
+      }
+
+      & > gui-pills {
+        margin-inline-start: 2.5rem;
+      }
+    }
+  }
+
+  .gui-range-time-input__inputs {
+    display: flex;
+    padding-inline-start: 1rem;
+    gap: var(--gui-space-2);
+    flex-wrap: wrap;
+    min-width: 265px;
+  }
+
+  .gui-range-time-input__pills {
+    border-inline-end: 1px solid var(--gui-border-default);
+  }
+
+  .gui-range-time-input__separator {
+    display: flex;
+    align-items: center;
+  }
+}

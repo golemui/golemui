@@ -197,6 +197,10 @@ export class GuiPills extends LitElement {
         tabindex="-1"
         aria-hidden="true"
         ?disabled=${this.disabled || this.readOnly}
+        @mousedown=${(e: Event) => {
+          e.stopPropagation();
+          e.preventDefault();
+        }}
         @click=${(e: Event) => {
           e.stopPropagation();
           this.emitRemove(item.key, this.items.indexOf(item));

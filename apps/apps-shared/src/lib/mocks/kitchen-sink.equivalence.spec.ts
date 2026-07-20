@@ -16,6 +16,16 @@ import jsonDatepickerTab from './tabs/datepicker.form-chunk.json';
 import { datePickerTab as dxDatepickerTab } from './tabs/datepicker.dx';
 import jsonRangedateinputTab from './tabs/rangedateinput.form-chunk.json';
 import { rangeDateInputTab as dxRangedateinputTab } from './tabs/rangedateinput.dx';
+import jsonRangetimeinputTab from './tabs/rangetimeinput.form-chunk.json';
+import { rangeTimeInputTab as dxRangetimeinputTab } from './tabs/rangetimeinput.dx';
+import jsonRangedatetimeinputTab from './tabs/rangedatetimeinput.form-chunk.json';
+import { rangeDateTimeInputTab as dxRangedatetimeinputTab } from './tabs/rangedatetimeinput.dx';
+import jsonRangedatetimecalendarTab from './tabs/rangedatetimecalendar.form-chunk.json';
+import { rangeDateTimeCalendarTab as dxRangedatetimecalendarTab } from './tabs/rangedatetimecalendar.dx';
+import jsonRangedatetimepickerTab from './tabs/rangedatetimepicker.form-chunk.json';
+import { rangeDateTimePickerTab as dxRangedatetimepickerTab } from './tabs/rangedatetimepicker.dx';
+import jsonRangetimepickerTab from './tabs/rangetimepicker.form-chunk.json';
+import { rangeTimePickerTab as dxRangetimepickerTab } from './tabs/rangetimepicker.dx';
 import jsonRangecalendarTab from './tabs/rangecalendar.form-chunk.json';
 import { rangeCalendarTab as dxRangecalendarTab } from './tabs/rangecalendar.dx';
 import jsonRangedatepickerTab from './tabs/rangedatepicker.form-chunk.json';
@@ -289,6 +299,36 @@ describe('Kitchen Sink — JSON ↔ DX equivalence', () => {
   it('rangedateinput tab', () => {
     const json = buildJsonTab(jsonRangedateinputTab).form;
     const dx = buildDxTab(dxRangedateinputTab);
+    expect(normalise(dx)).toEqual(normalise(json));
+  });
+
+  it('rangetimeinput tab', () => {
+    const json = buildJsonTab(jsonRangetimeinputTab).form;
+    const dx = buildDxTab(dxRangetimeinputTab);
+    expect(normalise(dx)).toEqual(normalise(json));
+  });
+
+  it('rangedatetimeinput tab', () => {
+    const json = buildJsonTab(jsonRangedatetimeinputTab).form;
+    const dx = buildDxTab(dxRangedatetimeinputTab);
+    expect(normalise(dx)).toEqual(normalise(json));
+  });
+
+  it('rangedatetimecalendar tab', () => {
+    const json = buildJsonTab(jsonRangedatetimecalendarTab).form;
+    const dx = buildDxTab(dxRangedatetimecalendarTab);
+    expect(normalise(dx)).toEqual(normalise(json));
+  });
+
+  it('rangedatetimepicker tab', () => {
+    const json = buildJsonTab(jsonRangedatetimepickerTab).form;
+    const dx = buildDxTab(dxRangedatetimepickerTab);
+    expect(normalise(dx)).toEqual(normalise(json));
+  });
+
+  it('rangetimepicker tab', () => {
+    const json = buildJsonTab(jsonRangetimepickerTab).form;
+    const dx = buildDxTab(dxRangetimepickerTab);
     expect(normalise(dx)).toEqual(normalise(json));
   });
 

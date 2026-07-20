@@ -3,9 +3,12 @@ import { customElement, property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import type { DateRange } from '@golemui/gui-shared/internals';
 import './range-date-input';
+import type { GuiRangeDateInput } from './range-date-input';
 import './range-calendar';
-import { dateBoundsError } from '../utils/date';
+import { GUIPopupController } from '../controllers/popup.controller';
+import { dateBoundsError, rangeSpansDisabledDay } from '../utils/date';
 import { addErrors, addIcon, addLabel } from '../utils/templates';
+import { DISABLED_DATE_RANGE_MESSAGE } from '../utils/messages';
 
 @customElement('gui-range-date-picker')
 export class GuiRangeDatePicker extends LitElement {
@@ -75,53 +78,30 @@ export class GuiRangeDatePicker extends LitElement {
   @query('#date-input') private _dateRef?: HTMLElement;
   @query('#calendar-input') private _calendarRef?: HTMLElement;
 
-  @state() private _isCalendarOpen = false;
   @state() private _focusDate: string | undefined = undefined;
+  @state() private _invalidRange: { start: string; end: string } | null = null;
 
-  private _ignoreNextFocusOut = false;
-  private _focusOutRafId: number | undefined;
-  private _restoringFocus = false;
-
-  onDocumentClick = (event: MouseEvent) => {
-    if (!this._isCalendarOpen) return;
-
-    const path = event.composedPath();
-    const clickedInsideDate = this._dateRef && path.includes(this._dateRef);
-    const clickedInsideCalendar = this._calendarRef && path.includes(this._calendarRef);
-
-    if (!clickedInsideDate && !clickedInsideCalendar) {
-      this.closeCalendar();
-    }
-  };
-
-  onFocusOut = (event: FocusEvent) => {
-    if (this._ignoreNextFocusOut) {
-      this._ignoreNextFocusOut = false;
-      return;
-    }
-    if (!this._isCalendarOpen) return;
-
-    const newFocusTarget = event.relatedTarget as Node;
-    if (newFocusTarget && this.contains(newFocusTarget)) {
-      return;
-    }
-
-    if (this._focusOutRafId !== undefined) {
-      cancelAnimationFrame(this._focusOutRafId);
-    }
-    this._focusOutRafId = requestAnimationFrame(() => {
-      this._focusOutRafId = undefined;
-      if (!this.contains(document.activeElement)) {
-        this.closeCalendar();
-      }
-    });
-  };
+  private _popup = new GUIPopupController(this, {
+    getInteriorElements: () => [this._dateRef, this._calendarRef],
+    focusRestoreSelector: 'gui-range-date input',
+    isDisabled: () => !!this.disabled,
+    clickIntent: (target) =>
+      target.closest('.gui-range-date-input__part') || target.closest('gui-range-calendar')
+        ? 'open'
+        : 'toggle',
+    keyToggleMode: 'openClose',
+    beforeOpen: (popup) => {
+      const dropdownWasOpen = !!this.querySelector('.gui-pills__dropdown');
+      if (dropdownWasOpen) popup.suppressNextFocusOut();
+      this.closePillsDropdown();
+    },
+  });
 
   // Pills dropdown and the calendar are mutually exclusive, opening one closes the other
   onDropdownToggle = (event: Event) => {
     const detail = (event as CustomEvent<{ open: boolean }>).detail;
-    if (detail?.open && this._isCalendarOpen) {
-      this.closeCalendar();
+    if (detail?.open && this._popup.open) {
+      this._popup.close();
     }
   };
 
@@ -131,25 +111,18 @@ export class GuiRangeDatePicker extends LitElement {
 
   override connectedCallback() {
     super.connectedCallback();
-    document.addEventListener('click', this.onDocumentClick);
-    this.addEventListener('focusout', this.onFocusOut);
     this.addEventListener('dropdowntoggle', this.onDropdownToggle);
   }
 
   override disconnectedCallback() {
     super.disconnectedCallback();
-    document.removeEventListener('click', this.onDocumentClick);
-    this.removeEventListener('focusout', this.onFocusOut);
     this.removeEventListener('dropdowntoggle', this.onDropdownToggle);
-    if (this._focusOutRafId !== undefined) {
-      cancelAnimationFrame(this._focusOutRafId);
-    }
   }
 
   override render() {
     const datePickerIcon = addIcon('datePicker', { icon: this.icon });
 
-    const calendar = this._isCalendarOpen
+    const calendar = this._popup.open
       ? html`<gui-range-calendar
           id="calendar-input"
           .uid=${this.uid}
@@ -170,11 +143,14 @@ export class GuiRangeDatePicker extends LitElement {
           .minDate=${this.minDate}
           .maxDate=${this.maxDate}
           .disabledRanges=${this.disabledRanges}
+          .disabledDateRangeMessage=${this.disabledDateRangeMessage}
           .numberOfMonths=${this.numberOfMonths}
           .localeId=${this.localeId}
           .hidePills=${true}
+          .invalidRange=${this._invalidRange}
           @blur=${this.onCalendarBlur}
           @change=${this.onCalendarChange}
+          @inputError=${this.onCalendarInputError}
         ></gui-range-calendar>`
       : nothing;
 
@@ -189,10 +165,10 @@ export class GuiRangeDatePicker extends LitElement {
         role="button"
         tabindex="-1"
         class="gui-widget"
-        aria-expanded=${this._isCalendarOpen}
-        @keyup=${this.onKeyUp}
-        @keydown=${this.onKeyDown}
-        @click=${this.toggleCalendar}
+        aria-expanded=${this._popup.open}
+        @keyup=${this._popup.onAnchorKeyUp}
+        @keydown=${this._popup.onAnchorKeyDown}
+        @click=${this._popup.onAnchorClick}
       >
         <gui-range-date
           id="date-input"
@@ -214,7 +190,7 @@ export class GuiRangeDatePicker extends LitElement {
           .endDateAriaLabel=${this.endDateAriaLabel}
           .invalidDateMessage=${this.invalidDateMessage}
           @blur=${this.onDateBlur}
-          @focus=${this.openCalendar}
+          @focus=${this._popup.show}
           @change=${this.onDateChange}
           @pillClick=${this.onPillClick}
         ></gui-range-date>
@@ -236,7 +212,53 @@ export class GuiRangeDatePicker extends LitElement {
 
   private onDateChange(event: CustomEvent) {
     event.stopPropagation();
-    this.commitValue(event.detail.value);
+    const value = event.detail.value as DateRange[] | undefined;
+    for (const range of value ?? []) {
+      const error = this.rangeError(range);
+      if (error) {
+        this.rejectTypedRange(range, error);
+        return;
+      }
+    }
+    this.commitValue(value);
+  }
+
+  /** The message for the first constraint a range violates, or null when valid. */
+  private rangeError(range: DateRange): string | null {
+    const start = range.start;
+    const end = range.end ?? range.start;
+    // A disabled day anywhere in the span — not just at the endpoints.
+    if (rangeSpansDisabledDay(start, end, this.disabledRanges)) {
+      return this.disabledDateRangeMessage ?? DISABLED_DATE_RANGE_MESSAGE;
+    }
+    // Either endpoint outside the allowed [minDate, maxDate] window.
+    const messages = {
+      minDateMessage: this.minDateMessage,
+      maxDateMessage: this.maxDateMessage,
+    };
+    for (const endpoint of [start, end]) {
+      const error = dateBoundsError(endpoint, this.minDate, this.maxDate, undefined, messages);
+      if (error) return error;
+    }
+    return null;
+  }
+
+  private rejectTypedRange(range: DateRange, message: string) {
+    const start = range.start;
+    const end = range.end ?? range.start;
+    this._invalidRange = { start, end };
+    const input = this._dateRef as GuiRangeDateInput | undefined;
+    if (input) {
+      input.value = this.value ?? [];
+      input.showRange(start, end);
+    }
+    this.dispatchEvent(
+      new CustomEvent('inputError', {
+        detail: { message },
+        bubbles: true,
+        composed: true,
+      }),
+    );
   }
 
   private onDateBlur() {
@@ -245,12 +267,20 @@ export class GuiRangeDatePicker extends LitElement {
 
   private onCalendarChange(event: CustomEvent) {
     event.stopPropagation();
+    (this._dateRef as GuiRangeDateInput | undefined)?.clearRangeInputs();
     this.commitValue(event.detail.value);
+  }
+
+  private onCalendarInputError(event: CustomEvent) {
+    const range = event.detail?.range as { start: string; end: string } | undefined;
+    if (!range) return;
+    this._invalidRange = range;
+    (this._dateRef as GuiRangeDateInput | undefined)?.showRange(range.start, range.end);
   }
 
   private commitValue(value: DateRange[] | null | undefined) {
     this.value = value ?? undefined;
-    const error = this.validateBounds(this.value);
+    this._invalidRange = null;
     this.dispatchEvent(
       new CustomEvent('change', {
         detail: { value: value ?? null },
@@ -258,105 +288,15 @@ export class GuiRangeDatePicker extends LitElement {
         composed: true,
       }),
     );
-    if (error) {
-      this.dispatchEvent(
-        new CustomEvent('inputError', {
-          detail: { message: error },
-          bubbles: true,
-          composed: true,
-        }),
-      );
-    }
-  }
-
-  private validateBounds(value: DateRange[] | undefined): string | null {
-    if (!value || value.length === 0) return null;
-    const messages = {
-      minDateMessage: this.minDateMessage,
-      maxDateMessage: this.maxDateMessage,
-      disabledDateRangeMessage: this.disabledDateRangeMessage,
-    };
-    for (const range of value) {
-      for (const endpoint of [range.start, range.end]) {
-        if (!endpoint) continue;
-        const error = dateBoundsError(
-          endpoint,
-          this.minDate,
-          this.maxDate,
-          this.disabledRanges,
-          messages,
-        );
-        if (error) return error;
-      }
-    }
-    return null;
   }
 
   private onCalendarBlur() {
-    this.closeCalendar();
+    this._popup.close();
   }
 
   private onPillClick(event: CustomEvent) {
     this._focusDate = event.detail.range.start;
-    this.openCalendar();
-  }
-
-  private onKeyUp = (event: KeyboardEvent) => {
-    if (this.disabled) return;
-    if (event.target !== event.currentTarget) return;
-    if (event.key === 'Enter' || event.key === ' ') {
-      if (this._isCalendarOpen) this.closeCalendar();
-      else this.openCalendar();
-    }
-  };
-
-  private onKeyDown = (event: KeyboardEvent) => {
-    if (this.disabled) return;
-    if (event.key === 'Escape' && this._isCalendarOpen) {
-      event.preventDefault();
-      event.stopPropagation();
-      this.restoreFocusToInput();
-      this.closeCalendar();
-    }
-  };
-
-  private toggleCalendar = (event: Event) => {
-    if (this.disabled) return;
-    const target = event.target as HTMLElement;
-
-    const isInputClick = target.closest('.gui-range-date-input__part');
-    const isCalendarClick = target.closest('gui-range-calendar');
-    if (isInputClick || isCalendarClick) {
-      this.openCalendar();
-    } else if (this._isCalendarOpen) {
-      this.closeCalendar();
-    } else {
-      this.openCalendar();
-    }
-  };
-
-  openCalendar = () => {
-    if (this.disabled || this._restoringFocus) return;
-    const dropdownWasOpen = !!this.querySelector('.gui-pills__dropdown');
-    if (dropdownWasOpen) this._ignoreNextFocusOut = true;
-    this.closePillsDropdown();
-    if (!this._isCalendarOpen) {
-      this._isCalendarOpen = true;
-    }
-  };
-
-  closeCalendar() {
-    this._isCalendarOpen = false;
-  }
-
-  private restoreFocusToInput() {
-    const part = this.querySelector<HTMLElement>('gui-range-date input');
-    if (!part) return;
-    this._restoringFocus = true;
-    part.focus();
-    setTimeout(() => {
-      this._restoringFocus = false;
-    });
+    this._popup.show();
   }
 
   private closePillsDropdown() {

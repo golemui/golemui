@@ -71,19 +71,26 @@ export class RangeCalendarElement extends LitElement implements WithWidget {
         .minDate=${this.adapter.templateData.minDate}
         .maxDate=${this.adapter.templateData.maxDate}
         .disabledRanges=${this.adapter.templateData.disabledRanges}
+        .disabledDateRangeMessage=${this.adapter.templateData.disabledDateRangeMessage as string}
         .numberOfMonths=${this.adapter.templateData.numberOfMonths}
         .hidePills=${false}
         .removePillAriaLabel=${this.adapter.templateData.removePillAriaLabel}
         .localeId=${this.adapter.templateData.lang}
         @change=${this.valueChanged}
+        @inputError=${this.onInputError}
         @blur=${() => this.adapter.onBlur()}
       ></gui-range-calendar>
     `;
   }
 
-  valueChanged(event: InputEvent) {
-    const target = event?.target as HTMLInputElement;
-    this.adapter.valueChanged(target.value);
+  valueChanged(event: CustomEvent) {
+    this.adapter.injectValidationIssues(null);
+    this.adapter.valueChanged(event.detail.value);
+  }
+
+  onInputError(event: CustomEvent) {
+    this.adapter.injectValidationIssues([event.detail.message]);
+    this.adapter.onBlur();
   }
 
   override disconnectedCallback() {

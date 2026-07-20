@@ -1,0 +1,179 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://golemui.com/schemas/components/rangetimeinput.schema.json",
+  "title": "RangeTimeInput Widget",
+  "type": "object",
+  "$defs": {
+    "labelDef": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "disabledDef": {
+      "$ref": "../common.schema.json#/$defs/boolOrWhen"
+    },
+    "readonlyDef": {
+      "$ref": "../common.schema.json#/$defs/boolOrWhen"
+    },
+    "hintProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "iconProp": {
+      "type": "string"
+    },
+    "separatorProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "removePillAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "startTimeAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "endTimeAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "hourFormatProp": {
+      "enum": ["12", "24"]
+    },
+    "minuteStepProp": {
+      "type": "number",
+      "minimum": 1
+    },
+    "isoTimeProp": {
+      "type": "string",
+      "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?$"
+    }
+  },
+  "allOf": [
+    {
+      "$ref": "../common.schema.json#/$defs/baseWidget"
+    }
+  ],
+  "properties": {
+    "kind": {
+      "const": "input"
+    },
+    "type": {
+      "const": "rangeTimeInput"
+    },
+    "path": {
+      "$ref": "../common.schema.json#/$defs/dotPath"
+    },
+    "label": {
+      "$ref": "#/$defs/labelDef"
+    },
+    "disabled": {
+      "$ref": "#/$defs/disabledDef"
+    },
+    "readonly": {
+      "$ref": "#/$defs/readonlyDef"
+    },
+    "on": {
+      "$ref": "../common.schema.json#/$defs/on"
+    },
+    "validator": {
+      "$ref": "../validators.schema.json#/$defs/validator"
+    },
+    "props": {
+      "type": "object",
+      "properties": {
+        "hint": {
+          "$ref": "#/$defs/hintProp"
+        },
+        "icon": {
+          "$ref": "#/$defs/iconProp"
+        },
+        "separator": {
+          "$ref": "#/$defs/separatorProp"
+        },
+        "removePillAriaLabel": {
+          "$ref": "#/$defs/removePillAriaLabelProp"
+        },
+        "startTimeAriaLabel": {
+          "$ref": "#/$defs/startTimeAriaLabelProp"
+        },
+        "endTimeAriaLabel": {
+          "$ref": "#/$defs/endTimeAriaLabelProp"
+        },
+        "hourFormat": {
+          "$ref": "#/$defs/hourFormatProp"
+        },
+        "minuteStep": {
+          "$ref": "#/$defs/minuteStepProp"
+        },
+        "minTime": {
+          "$ref": "#/$defs/isoTimeProp"
+        },
+        "maxTime": {
+          "$ref": "#/$defs/isoTimeProp"
+        },
+        "minTimeMessage": {
+          "$ref": "../common.schema.json#/$defs/localizable"
+        },
+        "maxTimeMessage": {
+          "$ref": "../common.schema.json#/$defs/localizable"
+        },
+        "rangeOrderMessage": {
+          "$ref": "../common.schema.json#/$defs/localizable"
+        }
+      },
+      "patternProperties": {
+        "^hint\\.[^.]+$": {
+          "$ref": "#/$defs/hintProp"
+        },
+        "^icon\\.[^.]+$": {
+          "$ref": "#/$defs/iconProp"
+        },
+        "^separator\\.[^.]+$": {
+          "$ref": "#/$defs/separatorProp"
+        },
+        "^removePillAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/removePillAriaLabelProp"
+        },
+        "^startTimeAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/startTimeAriaLabelProp"
+        },
+        "^endTimeAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/endTimeAriaLabelProp"
+        },
+        "^hourFormat\\.[^.]+$": {
+          "$ref": "#/$defs/hourFormatProp"
+        },
+        "^minuteStep\\.[^.]+$": {
+          "$ref": "#/$defs/minuteStepProp"
+        },
+        "^minTime\\.[^.]+$": {
+          "$ref": "#/$defs/isoTimeProp"
+        },
+        "^maxTime\\.[^.]+$": {
+          "$ref": "#/$defs/isoTimeProp"
+        },
+        "^minTimeMessage\\.[^.]+$": {
+          "$ref": "../common.schema.json#/$defs/localizable"
+        },
+        "^maxTimeMessage\\.[^.]+$": {
+          "$ref": "../common.schema.json#/$defs/localizable"
+        },
+        "^rangeOrderMessage\\.[^.]+$": {
+          "$ref": "../common.schema.json#/$defs/localizable"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "patternProperties": {
+    "^label\\.[^.]+$": {
+      "$ref": "#/$defs/labelDef"
+    },
+    "^disabled\\.[^.]+$": {
+      "$ref": "#/$defs/disabledDef"
+    },
+    "^readonly\\.[^.]+$": {
+      "$ref": "#/$defs/readonlyDef"
+    },
+    "^validator\\.[^.]+$": {
+      "$ref": "../validators.schema.json#/$defs/validator"
+    }
+  },
+  "required": ["kind", "type", "path"],
+  "unevaluatedProperties": false
+}

@@ -1,24 +1,33 @@
 import type { DateinputProps } from '@golemui/gui-shared/internals';
-import { html, nothing, type PropertyValues } from 'lit';
+import { html, LitElement, nothing, type PropertyValues } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
+import { GUIAriaController } from '../controllers/aria.controller';
+import { GUIPartsController } from '../controllers/parts.controller';
+import { dateBoundsError, getDateFormatParts } from '../utils/date';
+import { renderGroupParts, type GUIPartsTemplateData } from '../utils/part-templates';
 import {
-  AbstractDateTimeInput,
-  INVALID_DATE_MESSAGE,
   dateInputPartDescriptors,
+  parseDateGroup,
   type DateTimePartDescriptor,
-} from './abstract-date-time-input';
-import {
-  dateBoundsError,
-  getDateFormatParts,
-  maxValidDayInMonth,
-  parseISODateString,
-  toISODateString,
-} from '../utils/date';
+} from '../utils/parts';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 
 @customElement('gui-date')
-export class GuiDate extends AbstractDateTimeInput {
+export class GuiDate extends LitElement {
+  @property({ type: String }) uid: string | undefined = undefined;
+  @property({ type: String }) label: string | undefined = undefined;
+  @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
+  @property({ type: Array }) errors: string[] | undefined = [];
+  @property({ type: Boolean }) showErrors: boolean | undefined = true;
+  @property({ type: Boolean }) touched: boolean | undefined = false;
+  @property({ type: Boolean }) required: boolean | undefined = false;
+  @property({ type: Boolean }) disabled: boolean | undefined = false;
+  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
+
+  @property({ type: String }) icon: string | undefined = '';
+  @property({ type: String }) hint: string | undefined = undefined;
+
   @property({ type: String }) value: string | undefined = undefined;
   @property({ type: String, attribute: 'invalid-date-message' }) invalidDateMessage:
     | string
@@ -30,22 +39,52 @@ export class GuiDate extends AbstractDateTimeInput {
   @property({ type: String, attribute: 'max-date-message' }) maxDateMessage: string | undefined =
     undefined;
 
-  protected override readonly inputBlockClass = 'gui-date-input';
-  protected override readonly groups = ['default'] as const;
+  private readonly inputBlockClass = 'gui-date-input';
+  private readonly groups = ['default'] as const;
 
   private readonly partDescriptors = dateInputPartDescriptors();
 
-  protected override getFormatParts(): Intl.DateTimeFormatPart[] {
-    return getDateFormatParts(this.localeId);
+  private _parts = new GUIPartsController(this, {
+    blockClass: this.inputBlockClass,
+    groups: this.groups,
+    getDescriptor: (type) => this.getPartDescriptor(type),
+    commitGroup: (group) => this.validateAndEmit(group),
+    isReadonly: () => !!this.readOnly,
+    isDisabled: () => !!this.disabled,
+    onEmptyPartBlur: () =>
+      this.dispatchEvent(new CustomEvent('change', { detail: { value: null }, bubbles: true })),
+  });
+
+  protected ariaController: GUIAriaController<unknown, any> = new GUIAriaController(this, {
+    getTargets: () => this.querySelectorAll(`.${this.inputBlockClass}`),
+    getState: () => ({
+      uid: this.uid as string,
+      templateData: {
+        hint: this.hint,
+        errors: this.errors,
+        readonly: this.readOnly,
+        disabled: this.disabled,
+        touched: this.touched,
+      },
+    }),
+  });
+
+  override createRenderRoot() {
+    return this;
   }
 
-  protected override getPartDescriptor(type: string): DateTimePartDescriptor | undefined {
+  override connectedCallback() {
+    super.connectedCallback();
+    this.classList.add('gui-field');
+  }
+
+  private getPartDescriptor(type: string): DateTimePartDescriptor | undefined {
     return this.partDescriptors[type as keyof typeof this.partDescriptors];
   }
 
   override willUpdate(changedProperties: PropertyValues): void {
     if (changedProperties.has('value')) {
-      this.parseValue(this.value ?? '');
+      this._parts.setGroupFromISO('default', this.value ?? '', 'date');
     }
   }
 
@@ -63,6 +102,17 @@ export class GuiDate extends AbstractDateTimeInput {
       hint: this.hint,
     };
 
+    const partsData: GUIPartsTemplateData = {
+      blockClass: this.inputBlockClass,
+      groups: this.groups,
+      formatParts: getDateFormatParts(this.localeId),
+      getDescriptor: (type) => this.getPartDescriptor(type),
+      getDisplayValue: this._parts.getPartDisplay,
+      required: this.required,
+      disabled: this.disabled,
+      partsReadonly: !!this.readOnly,
+    };
+
     const iconClassMap = {
       'gui-widget-icon': true,
       [this.icon as string]: true,
@@ -78,7 +128,7 @@ export class GuiDate extends AbstractDateTimeInput {
             : ''}"
           role="group"
         >
-          ${this.renderGroupParts('default')}
+          ${renderGroupParts('default', partsData, this._parts)}
         </div>
         ${this.icon
           ? html`<span class=${classMap(iconClassMap)} data-icon=${this.icon}></span>`
@@ -91,99 +141,54 @@ export class GuiDate extends AbstractDateTimeInput {
     `;
   }
 
-  private parseValue(isoValue: string | null) {
-    if (!isoValue) {
-      this.clearGroup('default');
-      return;
-    }
-    const date = parseISODateString(isoValue);
-    if (!isNaN(date.getTime())) {
-      this.setPartValue('default', 'day', date.getDate().toString().padStart(2, '0'));
-      this.setPartValue('default', 'month', (date.getMonth() + 1).toString().padStart(2, '0'));
-      this.setPartValue('default', 'year', date.getFullYear().toString());
-    }
-  }
-
-  protected override commitParts(): void {
-    this.validateAndEmit();
-  }
-
-  private validateAndEmit() {
-    let yearVal = parseInt(this.getPartValue('default', 'year'), 10);
-    let monthVal = parseInt(this.getPartValue('default', 'month'), 10);
-    let dayVal = parseInt(this.getPartValue('default', 'day'), 10);
-
+  private validateAndEmit(group: string): void {
     // Clamp out-of-range values and write them back so the user sees the
     // corrected part immediately
-    if (!isNaN(yearVal)) {
-      const clamped = this.clampToDescriptor('year', yearVal);
-      if (clamped !== yearVal) {
-        yearVal = clamped;
-        this.setPartValue('default', 'year', yearVal.toString().padStart(4, '0'));
-      }
-    }
-    if (!isNaN(monthVal)) {
-      const clamped = this.clampToDescriptor('month', monthVal);
-      if (clamped !== monthVal) {
-        monthVal = clamped;
-        this.setPartValue('default', 'month', monthVal.toString().padStart(2, '0'));
-      }
-    }
-    if (!isNaN(dayVal)) {
-      const clamped = this.clampToDescriptor('day', dayVal);
-      if (clamped !== dayVal) {
-        dayVal = clamped;
-        this.setPartValue('default', 'day', dayVal.toString().padStart(2, '0'));
-      }
-    }
+    const { result, writeBacks } = parseDateGroup(this._parts.values[group] ?? {}, {
+      descriptors: this.partDescriptors,
+      invalidDateMessage: this.invalidDateMessage,
+    });
+    this._parts.applyWriteBacks(group, writeBacks);
 
-    const isYearValid = !isNaN(yearVal) && String(yearVal).length === 4;
-    const isMonthValid = !isNaN(monthVal) && monthVal > 0;
-    const isDayValid = !isNaN(dayVal) && dayVal > 0;
-
-    if (isDayValid && isMonthValid && isYearValid) {
-      const maxValidDay = maxValidDayInMonth(monthVal, yearVal);
+    if (result.kind === 'invalid') {
       // Date is complete but invalid
-      if (dayVal > maxValidDay) {
-        this.dispatchEvent(
-          new CustomEvent('inputError', {
-            detail: { message: this.invalidDateMessage ?? INVALID_DATE_MESSAGE },
-            bubbles: true,
-          }),
-        );
-      } else {
-        const candidate = toISODateString(new Date(yearVal, monthVal - 1, dayVal));
-        const boundsError = dateBoundsError(candidate, this.minDate, this.maxDate, undefined, {
-          minDateMessage: this.minDateMessage,
-          maxDateMessage: this.maxDateMessage,
-        });
+      this.dispatchEvent(
+        new CustomEvent('inputError', {
+          detail: { message: result.message },
+          bubbles: true,
+        }),
+      );
+    } else if (result.kind === 'valid') {
+      const boundsError = dateBoundsError(result.iso, this.minDate, this.maxDate, undefined, {
+        minDateMessage: this.minDateMessage,
+        maxDateMessage: this.maxDateMessage,
+      });
 
-        if (boundsError) {
-          this.dispatchEvent(
-            new CustomEvent('change', {
-              detail: { value: candidate },
-              bubbles: true,
-            }),
-          );
-          this.dispatchEvent(
-            new CustomEvent('inputError', {
-              detail: { message: boundsError },
-              bubbles: true,
-            }),
-          );
-          this.requestUpdate();
-          return;
-        }
-
-        this.value = candidate;
-
+      if (boundsError) {
         this.dispatchEvent(
           new CustomEvent('change', {
-            detail: { value: this.value },
+            detail: { value: result.iso },
             bubbles: true,
           }),
         );
+        this.dispatchEvent(
+          new CustomEvent('inputError', {
+            detail: { message: boundsError },
+            bubbles: true,
+          }),
+        );
+        this.requestUpdate();
+        return;
       }
+
+      this.value = result.iso;
+
+      this.dispatchEvent(
+        new CustomEvent('change', {
+          detail: { value: this.value },
+          bubbles: true,
+        }),
+      );
     }
 
     this.requestUpdate();
