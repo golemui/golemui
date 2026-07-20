@@ -4,8 +4,9 @@ const config = {
     // Apps (playgrounds)
     'apps/*/src/main.{ts,tsx}',
     'apps/apps-shared/src/index.ts',
-    // Publishable libs
+    // Publishable libs (public and cross-package entry points)
     'libs/**/src/index.ts',
+    'libs/**/src/internals.ts',
     // MCP server CLI (not exported through index.ts)
     'libs/**/src/cli.ts',
     // Test setup and Cypress support files
