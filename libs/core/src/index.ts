@@ -44,6 +44,8 @@ export type {
   DisplayWidgetTemplateData,
   DotPath,
   EventHandlerCallback,
+  ExpressionFunction,
+  ExpressionFunctions,
   FormEvent,
   FormSubmitEvent,
   FunctionWidgetParams,

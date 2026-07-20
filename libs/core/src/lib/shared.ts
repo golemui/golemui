@@ -15,6 +15,34 @@ export type UiState = string;
 export type ReactiveExpression = string;
 
 /**
+ * A pure function that the host application exposes to reactive expressions under the `$fn` namespace.
+ *
+ * Purity contract: the function must derive its result exclusively from its arguments.
+ * It must not mutate its arguments, read external mutable state, or perform side effects
+ * (network, storage, DOM, timers). The engine re-evaluates expressions on every data
+ * change and relies on this contract to stay deterministic.
+ *
+ * The `any[]` parameter type is deliberate: with `strictFunctionTypes`, a typed function
+ * like `(items: LineItem[]) => number` is assignable to this shape but not to
+ * `(...args: unknown[]) => unknown`.
+ *
+ * @example
+ * const functions = {
+ *   grandTotal: (items: Array<{ price?: number }> = []) =>
+ *     items.reduce((total, item) => total + (item.price ?? 0), 0),
+ * };
+ * // In the form definition:
+ * // "text": "Grand Total: {{ $fn.grandTotal($form.lineItems) }}"
+ */
+export type ExpressionFunction = (...args: any[]) => unknown;
+
+/**
+ * Map of {@link ExpressionFunction} entries. The key is the name used after `$fn.`
+ * in reactive expressions: `functions: { grandTotal }` is called as `$fn.grandTotal(...)`.
+ */
+export type ExpressionFunctions = Record<string, ExpressionFunction>;
+
+/**
  * The path to a json object
  */
 export type DotPath = string;

@@ -189,6 +189,44 @@ describe('justin', () => {
     });
   });
 
+  describe('expressionIsTrue with $fn extra scope', () => {
+    const $fn = {
+      isAdult: (age: number) => age >= 18,
+      total: (items: Array<{ price?: number }> = []) =>
+        items.reduce((sum, item) => sum + (item.price ?? 0), 0),
+    };
+
+    it('calls a host function with a $form argument', () => {
+      expect(expressionIsTrue('$fn.isAdult($form.age)', { age: 21 }, {}, {}, false, { $fn })).toBe(
+        true,
+      );
+    });
+
+    it('returns false when the host function result does not match', () => {
+      expect(expressionIsTrue('$fn.isAdult($form.age)', { age: 12 }, {}, {}, false, { $fn })).toBe(
+        false,
+      );
+    });
+
+    it('combines $fn with $item and $index in the same extra scope', () => {
+      expect(
+        expressionIsTrue('$fn.total($item.lines) === 30 && $index === 0', {}, {}, {}, false, {
+          $item: { lines: [{ price: 10 }, { price: 20 }] },
+          $index: 0,
+          $fn,
+        }),
+      ).toBe(true);
+    });
+
+    it('treats a missing $fn entry as undefined when no functions are configured', () => {
+      expect(expressionIsTrue('$fn.missing === undefined', {}, {}, {}, false)).toBe(true);
+    });
+
+    it('throws when calling a function the host did not provide', () => {
+      expect(() => expressionIsTrue('$fn.missing()', {}, {}, {}, false, { $fn })).toThrow();
+    });
+  });
+
   describe('expressionIsTrue with $formIsInvalid parameter', () => {
     it('evaluates $formIsInvalid as true', () => {
       expect(expressionIsTrue('$formIsInvalid === true', {}, {}, {}, true)).toBe(true);

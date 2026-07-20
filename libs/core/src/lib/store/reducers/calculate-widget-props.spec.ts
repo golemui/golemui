@@ -6,6 +6,7 @@ import {
   type LayoutWidget,
 } from '../../form-widget';
 import { type I18nParams, type I18nTranslator, type TranslationKey } from '../../i18n';
+import { type ExpressionFunctions } from '../../shared';
 import { createInitialState, type State } from '../model';
 import { calculateWidgetProps } from './calculate-widget-props';
 
@@ -40,8 +41,11 @@ const seed = <W>(state: State, uid: string, source: W): void => {
   state.calculatedWidgets[uid] = { source: source as any, current: {} as any };
 };
 
-const run = (state: State, translator: I18nTranslator = makeTranslator()) =>
-  calculateWidgetProps(translator)(state);
+const run = (
+  state: State,
+  translator: I18nTranslator = makeTranslator(),
+  functions: ExpressionFunctions = {},
+) => calculateWidgetProps(translator, functions)(state);
 
 // -----------------------------------------------------------------------------
 // Tests
@@ -1029,6 +1033,81 @@ describe('calculateWidgetProps', () => {
       seed(state, 'd', source);
 
       const next = run(state);
+      expect(next.formHealth.status).toBe('errored');
+      if (next.formHealth.status === 'errored') {
+        expect(next.formHealth.code).toBe(40);
+      }
+    });
+  });
+
+  // ---------------------------------------------------------------------------
+  // $fn host functions
+  // ---------------------------------------------------------------------------
+
+  describe('$fn host functions', () => {
+    const functions: ExpressionFunctions = {
+      upper: (value: string) => String(value).toUpperCase(),
+      total: (items: Array<{ price?: number }> = []) =>
+        items.reduce((sum, item) => sum + (item.price ?? 0), 0),
+      lineTotal: (item: { quantity?: number; unitPrice?: number }) =>
+        (item.quantity ?? 0) * (item.unitPrice ?? 0),
+    };
+
+    it('calls a host function inside a {{ }} slot', () => {
+      const source = {
+        kind: 'display',
+        uid: 'd',
+        type: 'heading',
+        props: { text: 'Hello {{$fn.upper($form.name)}}' },
+      } satisfies DisplayWidget<string>;
+      seed(state, 'd', source);
+      state.data = { name: 'jane' };
+
+      const next = run(state, makeTranslator(), functions);
+      expect(next.calculatedWidgets['d']?.current?.props?.['text']).toBe('Hello JANE');
+    });
+
+    it('i18n params: $fn expression resolves', () => {
+      const translator = makeTranslator();
+      const source = {
+        kind: 'action',
+        uid: 'a',
+        type: 'button',
+        label: { key: 'k', params: { total: '$fn.total($form.items)' } },
+      } satisfies ActionWidget<string>;
+      seed(state, 'a', source);
+      state.data = { items: [{ price: 10 }, { price: 20 }] };
+
+      run(state, translator, functions);
+
+      expect(translator.calls[0].params).toEqual({ total: 30 });
+    });
+
+    it('combines $fn with $item inside a repeater template', () => {
+      const source = {
+        kind: 'display',
+        uid: 'row-total[0]',
+        type: 'heading',
+        props: { text: 'Total: {{$fn.lineTotal($item)}}' },
+      } satisfies DisplayWidget<string>;
+      seed(state, 'row-total[0]', source);
+      state.repeaterItemScopes['row-total[0]'] = { itemPath: 'lineItems.0', index: 0 };
+      state.data = { lineItems: [{ quantity: 3, unitPrice: 5 }] };
+
+      const next = run(state, makeTranslator(), functions);
+      expect(next.calculatedWidgets['row-total[0]']?.current?.props?.['text']).toBe('Total: 15');
+    });
+
+    it('sets formHealth to errored when calling a function the host did not provide', () => {
+      const source = {
+        kind: 'display',
+        uid: 'd',
+        type: 'heading',
+        props: { text: '{{$fn.missing($form.name)}}' },
+      } satisfies DisplayWidget<string>;
+      seed(state, 'd', source);
+
+      const next = run(state, makeTranslator(), functions);
       expect(next.formHealth.status).toBe('errored');
       if (next.formHealth.status === 'errored') {
         expect(next.formHealth.code).toBe(40);

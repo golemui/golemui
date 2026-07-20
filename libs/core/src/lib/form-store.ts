@@ -1,7 +1,7 @@
 import { BehaviorSubject, distinctUntilChanged, type Observable } from 'rxjs';
 import { type ValidatorFn } from './form-validator';
 import { type I18nTranslator } from './i18n';
-import { type ValidateOn } from './shared';
+import { type ExpressionFunctions, type ValidateOn } from './shared';
 import { type Action } from './store/actions';
 import { createInitialState, type Middleware, type MiddlewareAPI, type State } from './store/model';
 import { reducer } from './store/reducer';
@@ -11,10 +11,11 @@ export function createFormStore(
   validators: ValidatorFn<any>,
   validateOn: ValidateOn,
   localization: I18nTranslator,
+  functions: ExpressionFunctions = {},
 ): FormStore {
   const subject = new BehaviorSubject<State>(createInitialState(localization.lang));
   const state$ = subject.asObservable().pipe(distinctUntilChanged());
-  const reducerFn = reducer({ validators, validateOn, localization });
+  const reducerFn = reducer({ validators, validateOn, localization, functions });
 
   function baseDispatch(action: Action) {
     const current = subject.getValue();

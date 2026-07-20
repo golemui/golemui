@@ -7,6 +7,7 @@ import { type ItemRenderer } from '../item-renderer';
 import {
   type EventHandlerCallback,
   type EventName,
+  type ExpressionFunctions,
   type FormEvent,
   type FormSubmitEvent,
   type ValidateOn,
@@ -38,12 +39,13 @@ export class FormContext<ComponentType> {
     itemRenderers: Record<string, ItemRenderer>,
     localization: I18nTranslator = identityTranslator(),
     dependencies: Record<string, unknown>,
+    functions: ExpressionFunctions = {},
   ) {
     this.localization = localization;
     this.dependencies = dependencies;
     this.widgetRegistry.setWidgetLoaders(widgetLoaders);
     this.itemRenderers = itemRenderers;
-    this.store = createFormStore(middlewares, validators, validateOn, localization);
+    this.store = createFormStore(middlewares, validators, validateOn, localization, functions);
   }
 
   emitEvent(

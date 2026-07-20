@@ -102,6 +102,7 @@ export class FormElement extends LitElement {
       c.itemRenderers ?? {},
       c.localization,
       c.dependencies ?? {},
+      c.functions ?? {},
     );
 
     this.direction = getDirectionFromLanguage(this.context.localization.lang);

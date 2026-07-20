@@ -1,7 +1,7 @@
 import { type ValidatorFn } from '../form-validator';
 import { type InputWidget, isFunctionWidget, isInputWidget } from '../form-widget';
 import { type I18nTranslator } from '../i18n';
-import { type ValidateOn } from '../shared';
+import { type ExpressionFunctions, type ValidateOn } from '../shared';
 import { assertNever } from '../utils/assert-never';
 import { pipe } from '../utils/function';
 import { get } from '../utils/object';
@@ -26,17 +26,22 @@ import {
 } from './reducers';
 import { reduceIf } from './reducers/utils';
 
-export const reducer =
-  ({
-    validators,
-    validateOn,
-    localization,
-  }: {
-    validators: ValidatorFn<any>;
-    validateOn: ValidateOn;
-    localization: I18nTranslator;
-  }) =>
-  (state: State, action: Action): State => {
+export const reducer = ({
+  validators,
+  validateOn,
+  localization,
+  functions,
+}: {
+  validators: ValidatorFn<any>;
+  validateOn: ValidateOn;
+  localization: I18nTranslator;
+  functions: ExpressionFunctions;
+}) => {
+  const applyCurrentState = calculateCurrentState(functions);
+  const applyWidgetFlags = calculateWidgetFlags(functions);
+  const applyWidgetProps = calculateWidgetProps(localization, functions);
+
+  return (state: State, action: Action): State => {
     switch (action.type) {
       case 'INITIALIZE':
         return initialize(state, action);
@@ -44,59 +49,59 @@ export const reducer =
       case 'SET_DATA':
         return pipe(
           setData(state, action),
-          calculateCurrentState,
+          applyCurrentState,
           materializeRepeaterItems,
-          calculateWidgetFlags,
-          calculateWidgetProps(localization),
+          applyWidgetFlags,
+          applyWidgetProps,
         );
 
       case 'SET_META':
         return pipe(
           setMeta(state, action),
-          calculateCurrentState,
+          applyCurrentState,
           materializeRepeaterItems,
-          calculateWidgetFlags,
-          calculateWidgetProps(localization),
+          applyWidgetFlags,
+          applyWidgetProps,
         );
 
       case 'SET_LANGUAGE':
-        return pipe(setLanguage(state, action), calculateWidgetProps(localization));
+        return pipe(setLanguage(state, action), applyWidgetProps);
 
       case 'ADD_WIDGET':
         return pipe(
           addWidget(state, action),
-          reduceIf(formIsHealthy, calculateCurrentState),
+          reduceIf(formIsHealthy, applyCurrentState),
           reduceIf(formIsHealthy, materializeRepeaterItems),
-          reduceIf(formIsHealthy, calculateWidgetFlags),
-          reduceIf(formIsHealthy, calculateWidgetProps(localization)),
+          reduceIf(formIsHealthy, applyWidgetFlags),
+          reduceIf(formIsHealthy, applyWidgetProps),
         );
 
       case 'REMOVE_WIDGET':
         return pipe(
           removeWidget(state, action),
-          calculateCurrentState,
+          applyCurrentState,
           materializeRepeaterItems,
-          calculateWidgetFlags,
-          calculateWidgetProps(localization),
+          applyWidgetFlags,
+          applyWidgetProps,
         );
 
       case 'SET_WIDGET_INITIAL_DATA':
       case 'SET_WIDGET_DATA':
         return pipe(
           setWidgetData(state, action),
-          calculateCurrentState,
+          applyCurrentState,
           materializeRepeaterItems,
-          calculateWidgetFlags,
-          calculateWidgetProps(localization),
+          applyWidgetFlags,
+          applyWidgetProps,
         );
 
       case 'OVERRIDE_WIDGET_PROP':
         return pipe(
           overrideWidgetProp(state, action),
-          calculateCurrentState,
+          applyCurrentState,
           materializeRepeaterItems,
-          calculateWidgetFlags,
-          calculateWidgetProps(localization),
+          applyWidgetFlags,
+          applyWidgetProps,
           // Apply validation here because this action can be dispatched from the form's event handlers callback
           // Apply only when the action is related to an input
           reduceIf(
@@ -141,10 +146,10 @@ export const reducer =
           },
           validateAll(validators, localization),
           // This handles $errors and $formIsValid expressions variables
-          calculateCurrentState,
+          applyCurrentState,
           materializeRepeaterItems,
-          calculateWidgetFlags,
-          calculateWidgetProps(localization),
+          applyWidgetFlags,
+          applyWidgetProps,
           calculateIsFormValid,
         );
       }
@@ -165,10 +170,10 @@ export const reducer =
             },
             validateAll(validators, localization),
             // This handles $errors and $formIsValid expressions variables
-            calculateCurrentState,
+            applyCurrentState,
             materializeRepeaterItems,
-            calculateWidgetFlags,
-            calculateWidgetProps(localization),
+            applyWidgetFlags,
+            applyWidgetProps,
             // TODO: extract this into a separate function
             // When the widget is a Widget Function, we propagate the validation result immediately
             (state) => {
@@ -215,6 +220,7 @@ export const reducer =
       }
     }
   };
+};
 
 const formIsHealthy = (state: State) => state.formHealth.status === 'ok';
 

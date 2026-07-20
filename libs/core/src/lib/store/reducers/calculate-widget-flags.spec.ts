@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { type FormWidget } from '../../form-widget';
+import { type ExpressionFunctions } from '../../shared';
 import { createInitialState, type State } from '../model';
 import { calculateWidgetFlags } from './calculate-widget-flags';
 import { materializeRepeaterItems } from './materialize-repeater-items';
@@ -34,7 +35,8 @@ const repeater = (uid: string, path: string, children: unknown[]) =>
   }) as unknown as FormWidget<string>;
 
 // Flags read the maps built by the materialization stage, so run both, in pipeline order
-const runFlagsPipeline = (state: State) => calculateWidgetFlags(materializeRepeaterItems(state));
+const runFlagsPipeline = (state: State, functions: ExpressionFunctions = {}) =>
+  calculateWidgetFlags(functions)(materializeRepeaterItems(state));
 
 describe('calculateWidgetFlags: $item / $index in item when conditions', () => {
   let state: State;
@@ -125,5 +127,45 @@ describe('calculateWidgetFlags: $item / $index in item when conditions', () => {
 
     expect(next.widgetFlags['row-note[0]']).toBeUndefined();
     expect(next.widgetFlags['row-note[1]']).toBeUndefined();
+  });
+});
+
+describe('calculateWidgetFlags: $fn in when conditions', () => {
+  let state: State;
+
+  const functions: ExpressionFunctions = {
+    hasItems: (items: unknown[] | undefined) => (items?.length ?? 0) > 0,
+    isEven: (value: number) => value % 2 === 0,
+  };
+
+  beforeEach(() => {
+    state = createInitialState('en-US');
+  });
+
+  it('evaluates include.when with a $fn call outside a repeater', () => {
+    state.flatForm = {
+      summary: displayChild('summary', { include: { when: '$fn.hasItems($form.items)' } }),
+    };
+    state.data = { items: [] };
+
+    expect(runFlagsPipeline(state, functions).widgetFlags['summary'].hidden).toBe(true);
+
+    state.data = { items: [1] };
+
+    expect(runFlagsPipeline(state, functions).widgetFlags['summary'].hidden).toBe(false);
+  });
+
+  it('evaluates include.when combining $fn with $item inside a repeater template', () => {
+    state.flatForm = {
+      lineItems: repeater('lineItems', 'lineItems', [
+        displayChild('row-note', { include: { when: '$fn.isEven($item.quantity)' } }),
+      ]),
+    };
+    state.data = { lineItems: [{ quantity: 2 }, { quantity: 3 }] };
+
+    const next = runFlagsPipeline(state, functions);
+
+    expect(next.widgetFlags['row-note[0]'].hidden).toBe(false);
+    expect(next.widgetFlags['row-note[1]'].hidden).toBe(true);
   });
 });
