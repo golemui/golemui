@@ -1,4 +1,5 @@
 import type {
+  ExpressionFunctions,
   Form,
   FormEvent,
   FormHealth,
@@ -28,6 +29,7 @@ export interface MountOptions<StateKeys extends UiState = string> {
   withCustomComponent?: boolean;
   localization?: I18nTranslator;
   dependencies?: Dependencies;
+  functions?: ExpressionFunctions;
   onFormReady?: (handle: FormHandle) => void;
 }
 

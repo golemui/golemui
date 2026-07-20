@@ -4,6 +4,7 @@ export * from './lib/core-features/data.cy';
 export * from './lib/core-features/dependencies.cy';
 export * from './lib/core-features/disabled.cy';
 export * from './lib/core-features/events.cy';
+export * from './lib/core-features/host-functions.cy';
 export * from './lib/core-features/i18n.cy';
 export * from './lib/core-features/include-exclude.cy';
 export * from './lib/core-features/label.cy';
