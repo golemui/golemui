@@ -1,0 +1,39 @@
+// The range time picker reuses the shared picker chrome (arrow, expanded
+// z-index) from `picker.scss`; this file only lays out the two-list popover.
+.gui-form {
+  .gui-range-time-picker.gui-field {
+    .gui-widget > .gui-range-time-picker__panel {
+      position: absolute;
+      top: 100%;
+      z-index: 10;
+      display: flex;
+      gap: var(--gui-space-2);
+      padding: var(--gui-space-2);
+      background: var(--gui-bg-default);
+      border: 1px solid var(--gui-border-default);
+      border-radius: var(--gui-radius-md, 6px);
+      box-shadow: var(--gui-shadow-md, 0 4px 12px rgb(0 0 0 / 12%));
+      width: max-content;
+      max-width: none;
+    }
+
+    .gui-range-time-picker__column {
+      display: flex;
+      flex-direction: column;
+      min-width: 120px;
+    }
+
+    .gui-range-time-picker__column-label {
+      font-size: var(--gui-font-size-sm, 0.85rem);
+      font-weight: 600;
+      color: var(--gui-text-muted, var(--gui-text-default));
+      padding: var(--gui-space-1) var(--gui-space-2);
+    }
+
+    .gui-range-time-picker__list gui-time-list,
+    gui-time-list.gui-range-time-picker__list {
+      position: static;
+      width: 100%;
+    }
+  }
+}

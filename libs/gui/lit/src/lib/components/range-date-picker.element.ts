@@ -98,6 +98,7 @@ export class RangeDatePickerElement extends LitElement implements WithWidget {
 
   onInputError(event: CustomEvent) {
     this.adapter.injectValidationIssues([event.detail.message]);
+    this.adapter.onBlur();
   }
 
   override disconnectedCallback() {

@@ -143,6 +143,34 @@ export const runTimePickerComponentTests = (mountFn: MountComponentFn) => {
         });
       });
 
+      it('should set the time with Enter from the AM/PM toggle without flipping it', () => {
+        // The day-period is the last part, so Enter often lands on it. It used
+        // to activate the button (flipping AM->PM) and never reach the picker's
+        // commit, because that was gated on the target being an <input>.
+        const formSubmitHandler = cy.stub().as('formSubmitHandler');
+        mountTimePicker({
+          props: { ...officeProps, allowCustomTime: true },
+          formSubmit: formSubmitHandler,
+        });
+
+        cy.get(sel.hour).type('09');
+        cy.focused().type('45', { force: true });
+        cy.get(sel.openList).should('exist');
+
+        // Move onto the day-period toggle and commit from there.
+        cy.get(sel.dayPeriod).focus();
+        cy.focused().should('have.attr', 'data-type', 'dayPeriod');
+        cy.focused().type('{enter}');
+
+        cy.get(sel.dayPeriod).should('contain', 'AM');
+        cy.get(sel.list).should('have.attr', 'hidden');
+
+        submitAndGetData('@formSubmitHandler').then((data) => {
+          // 09:45 AM — a stray toggle would have committed 21:45.
+          expect(data).to.deep.equal({ myTime: '09:45:00' });
+        });
+      });
+
       it('should build the options from minTime, maxTime and minuteStep', () => {
         mountTimePicker({ props: officeProps });
 

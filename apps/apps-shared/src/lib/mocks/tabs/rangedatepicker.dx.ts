@@ -6,6 +6,16 @@ export const rangeDatePickerTab = gui.layouts.flex([
     icon: 'calendar_month',
     separator: 'to',
   }),
+  gui.inputs.rangeDatePicker('rangeDatePickerMinMax', {
+    label: 'Min/Max',
+    icon: 'calendar_month',
+    separator: 'to',
+    defaultValue: [{ start: '2026-02-20' }],
+    minDate: '2026-02-01',
+    maxDate: '2026-02-28',
+    minDateMessage: 'Min date is 01.02.2026',
+    maxDateMessage: 'Max date is 28.02.2026',
+  }),
   gui.inputs.rangeDatePicker('rangeDatePickerDefault', {
     label: 'With default value',
     defaultValue: [

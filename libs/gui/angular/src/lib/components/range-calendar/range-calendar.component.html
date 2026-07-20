@@ -21,10 +21,12 @@
   [minDate]="templateData.minDate"
   [maxDate]="templateData.maxDate"
   [disabledRanges]="templateData.disabledRanges"
+  [disabledDateRangeMessage]="templateData.disabledDateRangeMessage"
   [numberOfMonths]="templateData.numberOfMonths"
   [hidePills]="false"
   [removePillAriaLabel]="templateData.removePillAriaLabel"
   [localeId]="templateData.lang"
   (blur)="adapter.onBlur()"
   (change)="onChangeDate($event)"
+  (inputError)="onInputError($event)"
 ></gui-range-calendar>

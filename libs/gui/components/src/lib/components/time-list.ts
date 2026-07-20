@@ -1,6 +1,7 @@
 import { html, LitElement, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
+import { chunk, gridKeyStep, listPageSize, nextEnabledIndex } from '../utils/grid-nav';
 import {
   buildTimeOptions,
   compareISOTimes,
@@ -122,20 +123,6 @@ export class GuiTimeList extends LitElement {
     );
   }
 
-  /**
-   * Walks from an index in a direction to the next enabled option, so
-   * arrow steps landing on a disabled slot keep moving (gui-list's
-   * findEnabledIndex semantics).
-   */
-  private findEnabledIndex(from: number, direction: 1 | -1): number {
-    const options = this.timeOptions;
-    let index = from;
-    while (index >= 0 && index < options.length && options[index].disabled) {
-      index += direction;
-    }
-    return index >= 0 && index < options.length ? index : -1;
-  }
-
   private onKeyDown(event: KeyboardEvent) {
     const target = event.target as HTMLButtonElement;
     if (!target.classList.contains('gui-time-list__option')) return;
@@ -144,58 +131,47 @@ export class GuiTimeList extends LitElement {
     const currentIndex = buttons.indexOf(target);
     const columns = this.effectiveColumns;
     const isRTL = window.getComputedStyle(this).direction === 'rtl';
-    const pageSize =
-      Math.max(1, Math.floor((this.height ?? 300) / (this.itemHeight || 40))) * columns;
+    const isOptionDisabled = (index: number) => this.timeOptions[index].disabled;
 
-    let step = 0;
-    switch (event.key) {
-      case 'ArrowUp':
-        step = -columns;
-        break;
-      case 'ArrowDown':
-        step = columns;
-        break;
-      case 'ArrowLeft':
-        if (columns === 1) return;
-        step = isRTL ? 1 : -1;
-        break;
-      case 'ArrowRight':
-        if (columns === 1) return;
-        step = isRTL ? -1 : 1;
-        break;
-      case 'PageUp':
-        step = -pageSize;
-        break;
-      case 'PageDown':
-        step = pageSize;
-        break;
-      case 'Home': {
-        event.preventDefault();
-        const first = this.findEnabledIndex(0, 1);
-        if (first !== -1) buttons[first].focus();
-        return;
-      }
-      case 'End': {
-        event.preventDefault();
-        const last = this.findEnabledIndex(buttons.length - 1, -1);
-        if (last !== -1) buttons[last].focus();
-        return;
-      }
-      case 'Enter':
-      case ' ': {
-        event.preventDefault();
-        const option = this.timeOptions[currentIndex];
-        if (option) this.selectOption(option, event);
-        return;
-      }
-      default:
-        return;
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      const option = this.timeOptions[currentIndex];
+      if (option) this.selectOption(option, event);
+      return;
     }
 
+    const intent = gridKeyStep(event.key, {
+      columns,
+      isRTL,
+      pageSize: listPageSize(this.height, this.itemHeight, columns),
+    });
+    if (intent.kind === 'none') return;
+
     event.preventDefault();
+
+    if (intent.kind === 'edge') {
+      const from = intent.edge === 'first' ? 0 : buttons.length - 1;
+      const index = nextEnabledIndex(
+        from,
+        intent.edge === 'first' ? 1 : -1,
+        this.timeOptions.length,
+        isOptionDisabled,
+        { includeStart: true, outOfBounds: 'none' },
+      );
+      if (index !== -1) buttons[index].focus();
+      return;
+    }
+
+    const step = intent.delta;
     const landing = Math.min(Math.max(currentIndex + step, 0), buttons.length - 1);
     if (landing === currentIndex) return;
-    const next = this.findEnabledIndex(landing, step > 0 ? 1 : -1);
+    const next = nextEnabledIndex(
+      landing,
+      step > 0 ? 1 : -1,
+      this.timeOptions.length,
+      isOptionDisabled,
+      { includeStart: true, outOfBounds: 'none' },
+    );
     if (next !== -1 && next !== currentIndex) buttons[next].focus();
   }
 
@@ -251,10 +227,7 @@ export class GuiTimeList extends LitElement {
       `;
     }
 
-    const rows: (TimeOption & { template: string })[][] = [];
-    for (let i = 0; i < options.length; i += columns) {
-      rows.push(options.slice(i, i + columns));
-    }
+    const rows = chunk(options, columns);
 
     return html`
       <div

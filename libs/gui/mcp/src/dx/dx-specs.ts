@@ -441,11 +441,64 @@ const INPUTS: DxSpec[] = [
     notes: ['Typed start–end date **range** entry (the range sibling of `dateInput`).'],
   },
   {
+    factory: 'rangeTimeInput',
+    namespace: 'inputs',
+    call: 'gui.inputs.rangeTimeInput(path, { label?, minTime?, maxTime? })',
+    example:
+      "gui.inputs.rangeTimeInput('shift', { label: 'Shift', minTime: '06:00:00', maxTime: '22:00:00' })",
+    notes: [
+      'Typed start–end time **range** entry (the range sibling of `timeInput`); value is `TimeRange[]`. End time must be after start time.',
+    ],
+  },
+  {
+    factory: 'rangeDateTimeInput',
+    namespace: 'inputs',
+    call: 'gui.inputs.rangeDateTimeInput(path, { label?, minDateTime?, maxDateTime? })',
+    example:
+      "gui.inputs.rangeDateTimeInput('window', { label: 'Window', minDateTime: '2026-03-01T06:00:00', maxDateTime: '2026-03-31T22:00:00' })",
+    notes: [
+      'Typed start–end date-time **range** entry (the range sibling of `dateTimeInput`); value is `DateTimeRange[]`. A backward selection reorders (swaps) instead of erroring.',
+      'Each endpoint is an instant, so it is bounded by instants: use **`minDateTime`** / **`maxDateTime`** (ISO `YYYY-MM-DDTHH:mm:ss`), not `minDate`/`maxDate`. There is no `minTime`/`maxTime` here — a per-day time window is a different constraint from an instant bound.',
+    ],
+  },
+  {
+    factory: 'rangeDateTimeCalendar',
+    namespace: 'inputs',
+    call: 'gui.inputs.rangeDateTimeCalendar(path, { label?, minDateTime?, maxDateTime?, disabledRanges?, startTimeLabel?, endTimeLabel? })',
+    example:
+      "gui.inputs.rangeDateTimeCalendar('stay', { label: 'Stay', startTimeLabel: 'Check-in', endTimeLabel: 'Check-out' })",
+    notes: [
+      'INLINE range calendar with TWO embedded time pickers (start/end); value is `DateTimeRange[]`, rendered as pills. Pick a date range, then a start time (enables the end time), then an end time to commit a pill. A day holding more than one range shows a count badge.',
+      'Everything is in instant-space: bounds are **`minDateTime`** / **`maxDateTime`** and **`disabledRanges`** are `DateTimeRange[]` instant spans (block a whole day with `00:00:00`–`23:59:59`). There is no `minDate`/`maxDate`/`minTime`/`maxTime`/`disabledTimeRanges` — a time-of-day constraint cannot bound a multi-day span.',
+    ],
+  },
+  {
+    factory: 'rangeDateTimePicker',
+    namespace: 'inputs',
+    call: 'gui.inputs.rangeDateTimePicker(path, { label?, minDateTime?, maxDateTime?, disabledRanges?, startTimeLabel?, endTimeLabel? })',
+    example:
+      "gui.inputs.rangeDateTimePicker('stay', { label: 'Stay', startTimeLabel: 'Check-in', endTimeLabel: 'Check-out' })",
+    notes: [
+      'POPOVER date-time range picker: the typed `rangeDateTimeInput` as the trigger (pills live there) with the `rangeDateTimeCalendar` in a dropdown. Value is `DateTimeRange[]`. Committing a pill keeps the popover open so several ranges can be added; it closes on outside-click, blur or Escape.',
+      'Everything is in instant-space: bounds are **`minDateTime`** / **`maxDateTime`** and **`disabledRanges`** are `DateTimeRange[]` instant spans (block a whole day with `00:00:00`–`23:59:59`). There is no `minDate`/`maxDate`/`minTime`/`maxTime`/`disabledTimeRanges`.',
+    ],
+  },
+  {
     factory: 'rangeDatePicker',
     namespace: 'inputs',
     call: 'gui.inputs.rangeDatePicker(path, { label? })',
     example: "gui.inputs.rangeDatePicker('stayDates', { label: 'Stay dates' })",
     notes: ['Popover calendar for a start–end date **range** (the range sibling of `datePicker`).'],
+  },
+  {
+    factory: 'rangeTimePicker',
+    namespace: 'inputs',
+    call: 'gui.inputs.rangeTimePicker(path, { label?, minTime?, maxTime? })',
+    example:
+      "gui.inputs.rangeTimePicker('shift', { label: 'Shift', minTime: '06:00:00', maxTime: '22:00:00' })",
+    notes: [
+      'Two-list popover for a start–end time **range** (the range sibling of `timePicker`); value is `TimeRange[]`. The out list floors one slot after the chosen in so end is strictly after start.',
+    ],
   },
 ];
 

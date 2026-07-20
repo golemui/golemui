@@ -268,7 +268,10 @@ export const runTimeInputComponentTests = (mountFn: MountComponentFn) => {
         });
       });
 
-      it('should toggle the period once with Enter', () => {
+      it('should NOT toggle the period with Enter', () => {
+        // Enter belongs to whoever owns "commit" — a host time-picker sets the
+        // time with it, and inside a range input it creates the pill. It must
+        // never flip AM/PM as a side effect. Space, click and the arrows do that.
         mountTimeInput({ data: { myTime: '09:30:00' } });
 
         // Reach the toggle via keyboard so focusing does not click it
@@ -276,7 +279,7 @@ export const runTimeInputComponentTests = (mountFn: MountComponentFn) => {
         cy.focused().type('{rightArrow}');
         cy.focused().should('have.attr', 'data-type', 'dayPeriod');
         cy.focused().type('{enter}');
-        expectDayPeriod('PM');
+        expectDayPeriod('AM');
       });
 
       it('should toggle the period once with Space', () => {
@@ -290,14 +293,16 @@ export const runTimeInputComponentTests = (mountFn: MountComponentFn) => {
         expectDayPeriod('PM');
       });
 
-      it('should not toggle AM/PM with the arrow keys', () => {
+      it('should toggle AM/PM with the arrow keys', () => {
+        // Arrows cycle the day-period like every other part (and like a native
+        // <input type="time">), so it is reachable without Enter or Space.
         mountTimeInput({ data: { myTime: '14:30:00' } });
 
         expectDayPeriod('PM');
         // focus() instead of click() so focusing itself does not toggle
         cy.get(sel.dayPeriod).focus();
         cy.focused().type('{upArrow}');
-        expectDayPeriod('PM');
+        expectDayPeriod('AM');
         cy.focused().type('{downArrow}');
         expectDayPeriod('PM');
       });

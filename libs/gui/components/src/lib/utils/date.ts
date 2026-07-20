@@ -1,5 +1,10 @@
 import type { DateRange } from '@golemui/gui-shared/internals';
 import { weekInfoData } from './week-info';
+import {
+  DISABLED_DATE_RANGE_MESSAGE,
+  INVALID_MAX_DATE_MESSAGE,
+  INVALID_MIN_DATE_MESSAGE,
+} from './messages';
 
 /**
  * Converts a Date object to a string formatted as an ISO 8601 date (YYYY-MM-DD).
@@ -102,15 +107,53 @@ export function dateBoundsError(
 ): string | null {
   const day = isoDate.split('T')[0];
   if (minDate && day < minDate.split('T')[0]) {
-    return messages?.minDateMessage ?? 'Invalid date: date is before the minimum allowed date.';
+    return messages?.minDateMessage ?? INVALID_MIN_DATE_MESSAGE;
   }
   if (maxDate && day > maxDate.split('T')[0]) {
-    return messages?.maxDateMessage ?? 'Invalid date: date is after the maximum allowed date.';
+    return messages?.maxDateMessage ?? INVALID_MAX_DATE_MESSAGE;
   }
   if (isDateDisabled(day, undefined, undefined, disabledRanges)) {
-    return messages?.disabledDateRangeMessage ?? 'Invalid date: date is within a disabled range.';
+    return messages?.disabledDateRangeMessage ?? DISABLED_DATE_RANGE_MESSAGE;
   }
   return null;
+}
+
+/**
+ * Whether any day in the inclusive `[startISO, endISO]` span is disabled. A
+ * single disabled day inside the span makes the whole range invalid — used to
+ * reject a range that steps over a disabled day, both from the calendar (day
+ * clicks) and from typed entry in the picker.
+ *
+ * @param {string} startISO - The range start (its date portion is used).
+ * @param {string} endISO - The range end (its date portion is used).
+ * @param {DateRange[]} [disabledRanges] - Ranges of disabled days.
+ * @param {string} [minDate] - Earliest allowed ISO date, inclusive.
+ * @param {string} [maxDate] - Latest allowed ISO date, inclusive.
+ * @return {boolean} True when at least one day in the span is disabled.
+ */
+export function rangeSpansDisabledDay(
+  startISO: string,
+  endISO: string,
+  disabledRanges?: DateRange[],
+  minDate?: string,
+  maxDate?: string,
+): boolean {
+  const start = parseISODateString(startISO);
+  const end = parseISODateString(endISO);
+  if (isNaN(start.getTime()) || isNaN(end.getTime())) return false;
+
+  const iterator = new Date(start);
+  iterator.setHours(0, 0, 0, 0);
+  const limit = new Date(end);
+  limit.setHours(0, 0, 0, 0);
+
+  while (iterator <= limit) {
+    if (isDateDisabled(toISODateString(iterator), minDate, maxDate, disabledRanges)) {
+      return true;
+    }
+    iterator.setDate(iterator.getDate() + 1);
+  }
+  return false;
 }
 
 /**
@@ -193,7 +236,10 @@ export function getOrderedWeekDays(firstDay: number): number[] {
  * @return {number[]} An array of numbers representing the days of the week, reordered to start with the locale's first day.
  */
 export function weekDaysOrder(localeId: string | undefined): number[] {
-  const localeData = weekInfoData[localeId ?? 'en'] || { firstDay: 0 };
+  const id = localeId ?? 'en';
+  // Try the exact locale, then fall back to its base language subtag before the
+  // Sunday-start default.
+  const localeData = weekInfoData[id] || weekInfoData[id.split('-')[0]] || { firstDay: 0 };
   return getOrderedWeekDays(localeData.firstDay);
 }
 

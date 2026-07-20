@@ -1,11 +1,13 @@
-import { html, LitElement } from 'lit';
-import { customElement, property, query, state } from 'lit/decorators.js';
+import { html, LitElement, type PropertyValues } from 'lit';
+import { customElement, property, query } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import './time-input';
 import './time-list';
 import type { GuiTimeList } from './time-list';
+import { GUIPopupController } from '../controllers/popup.controller';
 import { buildTimeOptions, isTimeDisabled, type HourFormat, type TimeRange } from '../utils/time';
 import { addErrors, addIcon, addLabel } from '../utils/templates';
+import { INVALID_DISABLED_TIME_RANGE_MESSAGE } from '../utils/messages';
 
 @customElement('gui-time-picker')
 export class GuiTimePicker extends LitElement {
@@ -48,47 +50,31 @@ export class GuiTimePicker extends LitElement {
   @query('gui-time') private _timeRef?: HTMLElement;
   @query('gui-time-list') private _listRef?: GuiTimeList;
 
-  @state() private _isListOpen = false;
-
-  private _restoringFocus = false;
-
-  onDocumentClick = (event: MouseEvent) => {
-    if (!this._isListOpen) return;
-
-    const path = event.composedPath();
-    const clickedInsideTime = this._timeRef && path.includes(this._timeRef);
-    const clickedInsideList = this._listRef && path.includes(this._listRef);
-
-    if (!clickedInsideTime && !clickedInsideList) {
-      this.closeList();
-    }
-  };
-
-  onFocusOut = (event: FocusEvent) => {
-    if (!this._isListOpen) return;
-
-    const newFocusTarget = event.relatedTarget as Node;
-    if (newFocusTarget && this.contains(newFocusTarget)) {
-      return;
-    }
-
-    this.closeList();
-  };
+  private _popup = new GUIPopupController(this, {
+    getInteriorElements: () => [this._timeRef, this._listRef],
+    focusRestoreSelector: 'gui-time input, gui-time button',
+    isDisabled: () => !!this.disabled,
+    clickIntent: (target) => {
+      if (target.closest('.gui-time-list__option')) return 'ignore';
+      return target.closest('gui-time') || target.closest('gui-time-list') ? 'open' : 'toggle';
+    },
+    keyToggleMode: 'openClose',
+    onOpenChanged: (open) => {
+      this.dispatchListToggle(open);
+      if (open) {
+        this.updateComplete.then(() => this._listRef?.scrollToSelectedValue());
+      }
+    },
+  });
 
   override createRenderRoot() {
     return this;
   }
 
-  override connectedCallback() {
-    super.connectedCallback();
-    document.addEventListener('click', this.onDocumentClick);
-    this.addEventListener('focusout', this.onFocusOut);
-  }
-
-  override disconnectedCallback() {
-    super.disconnectedCallback();
-    document.removeEventListener('click', this.onDocumentClick);
-    this.removeEventListener('focusout', this.onFocusOut);
+  override updated(changed: PropertyValues) {
+    if (changed.has('value') && this._listRef && this._listRef.value !== this.value) {
+      this._listRef.value = this.value;
+    }
   }
 
   override render() {
@@ -105,10 +91,10 @@ export class GuiTimePicker extends LitElement {
         role="button"
         tabindex="-1"
         class="gui-widget"
-        aria-expanded=${this._isListOpen}
-        @keyup=${this.onKeyUp}
+        aria-expanded=${this._popup.open}
+        @keyup=${this._popup.onAnchorKeyUp}
         @keydown=${this.onKeyDown}
-        @click=${this.toggleList}
+        @click=${this._popup.onAnchorClick}
       >
         <gui-time
           id="time-input"
@@ -131,7 +117,7 @@ export class GuiTimePicker extends LitElement {
           .minTimeMessage=${this.minTimeMessage}
           .maxTimeMessage=${this.maxTimeMessage}
           @blur=${this.onTimeBlur}
-          @focus=${this.openList}
+          @focus=${this._popup.show}
           @change=${this.onTimeChange}
         ></gui-time>
         <span class="gui-time-picker__arrow"
@@ -156,7 +142,7 @@ export class GuiTimePicker extends LitElement {
           .columns=${this.columns}
           .noAvailableTimesMessage=${this.noAvailableTimesMessage}
           ?readonly=${this.readOnly}
-          ?hidden=${!this._isListOpen}
+          ?hidden=${!this._popup.open}
           @change=${this.onListChange}
         ></gui-time-list>
       </div>
@@ -180,8 +166,8 @@ export class GuiTimePicker extends LitElement {
     event.stopPropagation();
     // Picking an option from the list is a deliberate, final selection.
     this.commitValue(event.detail.value, true);
-    this.restoreFocusToInput();
-    this.closeList();
+    this._popup.restoreFocusToInput();
+    this._popup.close();
   }
 
   /**
@@ -214,19 +200,10 @@ export class GuiTimePicker extends LitElement {
   private validateBounds(value: string | undefined): string | null {
     if (!value) return null;
     if (isTimeDisabled(value, this.disabledRanges)) {
-      return this.disabledRangeMessage ?? 'Invalid time: time is within a disabled range.';
+      return this.disabledRangeMessage ?? INVALID_DISABLED_TIME_RANGE_MESSAGE;
     }
     return null;
   }
-
-  private onKeyUp = (event: KeyboardEvent) => {
-    if (this.disabled) return;
-    if (event.target !== event.currentTarget) return;
-    if (event.key === 'Enter' || event.key === ' ') {
-      if (this._isListOpen) this.closeList();
-      else this.openList();
-    }
-  };
 
   /**
    * Select-like keyboard behavior when custom time entry is off: ArrowDown/
@@ -234,18 +211,12 @@ export class GuiTimePicker extends LitElement {
    * last one when nothing is selected yet).
    */
   private onKeyDown = (event: KeyboardEvent) => {
-    if (event.key === 'Escape' && this._isListOpen) {
-      event.preventDefault();
-      event.stopPropagation();
-      this.restoreFocusToInput();
-      this.closeList();
-      return;
-    }
+    if (this._popup.onAnchorKeyDown(event)) return;
 
     if (event.key === 'Enter') {
       const target = event.target as HTMLElement;
-      if (target.tagName === 'INPUT' && target.closest('gui-time')) {
-        if (this._isListOpen) this.closeList();
+      if (target.closest('gui-time')) {
+        if (this._popup.open) this._popup.close();
         this.commitValue(this.value, true);
         return;
       }
@@ -279,38 +250,14 @@ export class GuiTimePicker extends LitElement {
     if (index < 0 || index >= options.length) return;
 
     this.commitValue(options[index].value);
-    this.openList();
+    this._popup.show();
     this.updateComplete.then(() => this._listRef?.scrollToSelectedValue());
   }
 
-  private toggleList = (event: Event) => {
-    if (this.disabled) return;
-    const target = event.target as HTMLElement;
-
-    if (target.closest('.gui-time-list__option')) return;
-
-    const isInputClick = target.closest('.gui-time-input__part');
-    const isListClick = target.closest('gui-time-list');
-    if (isInputClick || isListClick) {
-      this.openList();
-    } else if (this._isListOpen) {
-      this.closeList();
-    } else {
-      this.openList();
-    }
-  };
-
-  openList = () => {
-    if (this.disabled || this._restoringFocus || this._isListOpen) return;
-    this._isListOpen = true;
-    this.dispatchListToggle(true);
-    this.updateComplete.then(() => this._listRef?.scrollToSelectedValue());
-  };
-
+  /** Public close hook kept for the date-time calendars, which close the
+   * embedded time-picker's list imperatively. */
   closeList() {
-    if (!this._isListOpen) return;
-    this._isListOpen = false;
-    this.dispatchListToggle(false);
+    this._popup.close();
   }
 
   private dispatchListToggle(open: boolean) {
@@ -321,16 +268,6 @@ export class GuiTimePicker extends LitElement {
         composed: true,
       }),
     );
-  }
-
-  private restoreFocusToInput() {
-    const part = this.querySelector<HTMLElement>('gui-time input, gui-time button');
-    if (!part) return;
-    this._restoringFocus = true;
-    part.focus();
-    setTimeout(() => {
-      this._restoringFocus = false;
-    });
   }
 }
 

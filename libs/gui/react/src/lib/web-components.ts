@@ -19,7 +19,12 @@ import { GuiPassword } from '@golemui/gui-components/password';
 import { GuiRadiogroup } from '@golemui/gui-components/radiogroup';
 import { GuiRangeCalendar } from '@golemui/gui-components/range-calendar';
 import { GuiRangeDateInput } from '@golemui/gui-components/range-date-input';
+import { GuiRangeDateTimeInput } from '@golemui/gui-components/range-date-time-input';
+import { GuiRangeDateTimeCalendar } from '@golemui/gui-components/range-date-time-calendar';
+import { GuiRangeDateTimePicker } from '@golemui/gui-components/range-date-time-picker';
+import { GuiRangeTimeInput } from '@golemui/gui-components/range-time-input';
 import { GuiRangeDatePicker } from '@golemui/gui-components/range-date-picker';
+import { GuiRangeTimePicker } from '@golemui/gui-components/range-time-picker';
 import { GuiSelect } from '@golemui/gui-components/select';
 import { GuiTags } from '@golemui/gui-components/tags';
 import { GuiTextarea } from '@golemui/gui-components/textarea';
@@ -88,6 +93,26 @@ export const GuiDatePickerReact = wrap('gui-date-picker', GuiDatePicker, {
   onInputError: 'inputError',
 });
 export const GuiRangeDateReact = wrap('gui-range-date', GuiRangeDateInput);
+export const GuiRangeDateTimeReact = wrap('gui-range-date-time', GuiRangeDateTimeInput);
+export const GuiRangeDateTimeCalendarReact = wrap(
+  'gui-range-date-time-calendar',
+  GuiRangeDateTimeCalendar,
+  {
+    onChange: 'change',
+    onBlur: 'blur',
+    onInputError: 'inputError',
+  },
+);
+export const GuiRangeDateTimePickerReact = wrap(
+  'gui-range-date-time-picker',
+  GuiRangeDateTimePicker,
+  {
+    onChange: 'change',
+    onBlur: 'blur',
+    onInputError: 'inputError',
+  },
+);
+export const GuiRangeTimeReact = wrap('gui-range-time', GuiRangeTimeInput);
 export const GuiRangeDatePickerReact = wrap('gui-range-date-picker', GuiRangeDatePicker, {
   onChange: 'change',
   onBlur: 'blur',
@@ -95,6 +120,11 @@ export const GuiRangeDatePickerReact = wrap('gui-range-date-picker', GuiRangeDat
 });
 export const GuiTimeReact = wrap('gui-time', GuiTime);
 export const GuiTimePickerReact = wrap('gui-time-picker', GuiTimePicker, {
+  onChange: 'change',
+  onBlur: 'blur',
+  onInputError: 'inputError',
+});
+export const GuiRangeTimePickerReact = wrap('gui-range-time-picker', GuiRangeTimePicker, {
   onChange: 'change',
   onBlur: 'blur',
   onInputError: 'inputError',

@@ -34,6 +34,13 @@ import type {
   RangeCalendarProps,
   RangeDateInputProps,
   RangeDatePickerProps,
+  RangeDateTimeInputProps,
+  RangeDateTimeCalendarProps,
+  RangeDateTimePickerProps,
+  RangeTimeInputProps,
+  RangeTimePickerProps,
+  DateTimeRange,
+  TimeRange,
   RepeaterProps,
   SelectProps,
   TabsProps,
@@ -210,6 +217,11 @@ type GolemWidget<
   | GuiRangeCalendar<FormType, States, V>
   | GuiRangeDateInput<FormType, States, V>
   | GuiRangeDatePicker<FormType, States, V>
+  | GuiRangeDateTimeInput<FormType, States, V>
+  | GuiRangeDateTimeCalendar<FormType, States, V>
+  | GuiRangeDateTimePicker<FormType, States, V>
+  | GuiRangeTimeInput<FormType, States, V>
+  | GuiRangeTimePicker<FormType, States, V>
   // | GuiRenderer<FormType, States>
   | GuiRepeater<FormType, States, V, CustomWidget>
   | GuiSelect<FormType, States, V>
@@ -378,12 +390,52 @@ type GuiRangeDateInput<
   type: 'rangeDateInput';
 };
 
+type GuiRangeTimeInput<
+  FormType extends Record<string, any>,
+  States extends string,
+  V,
+> = InputWidget<TimeRange[], States, FormType, RangeTimeInputProps, V> & {
+  type: 'rangeTimeInput';
+};
+
+type GuiRangeDateTimeInput<
+  FormType extends Record<string, any>,
+  States extends string,
+  V,
+> = InputWidget<DateTimeRange[], States, FormType, RangeDateTimeInputProps, V> & {
+  type: 'rangeDateTimeInput';
+};
+
+type GuiRangeDateTimeCalendar<
+  FormType extends Record<string, any>,
+  States extends string,
+  V,
+> = InputWidget<DateTimeRange[], States, FormType, RangeDateTimeCalendarProps, V> & {
+  type: 'rangeDateTimeCalendar';
+};
+
+type GuiRangeDateTimePicker<
+  FormType extends Record<string, any>,
+  States extends string,
+  V,
+> = InputWidget<DateTimeRange[], States, FormType, RangeDateTimePickerProps, V> & {
+  type: 'rangeDateTimePicker';
+};
+
 type GuiRangeDatePicker<
   FormType extends Record<string, any>,
   States extends string,
   V,
 > = InputWidget<DateRange[], States, FormType, RangeDatePickerProps, V> & {
   type: 'rangeDatePicker';
+};
+
+type GuiRangeTimePicker<
+  FormType extends Record<string, any>,
+  States extends string,
+  V,
+> = InputWidget<TimeRange[], States, FormType, RangeTimePickerProps, V> & {
+  type: 'rangeTimePicker';
 };
 
 // TODO: how to do this one?

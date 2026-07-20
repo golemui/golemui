@@ -4,8 +4,10 @@
   --gui-radius-range: calc(var(--gui-radius-md) * 2);
 }
 
-gui-range-calendar {
+gui-range-calendar,
+gui-range-date-time-calendar {
   --gui-range-bg: color-mix(in srgb, var(--gui-intent-primary), transparent 50%);
+  --gui-range-error-bg: color-mix(in srgb, var(--gui-intent-error), transparent 50%);
 
   &.gui-field {
     width: fit-content;
@@ -63,6 +65,37 @@ gui-range-calendar {
     }
     &.is-selecting {
       border: 1px dashed #2196f3;
+    }
+
+    &.invalid-in-range:not([disabled]) {
+      background-color: var(--gui-range-error-bg);
+      color: var(--gui-color-white);
+      border-radius: 0;
+    }
+    &.invalid-range-start {
+      background-color: var(--gui-intent-error);
+      color: var(--gui-color-white);
+
+      // Top Left - Top Right - Bottom Left - Bottom Right
+      border-start-end-radius: 0;
+      border-start-start-radius: var(--gui-radius-range);
+      border-end-end-radius: 0;
+      border-end-start-radius: var(--gui-radius-range);
+    }
+    &.invalid-range-end {
+      background-color: var(--gui-intent-error);
+      color: var(--gui-color-white);
+
+      // Top Left - Top Right - Bottom Left - Bottom Right
+      border-start-end-radius: var(--gui-radius-range);
+      border-start-start-radius: 0;
+      border-end-end-radius: var(--gui-radius-range);
+      border-end-start-radius: 0;
+    }
+    &.invalid-range-single {
+      background-color: var(--gui-intent-error);
+      color: var(--gui-color-white);
+      border-radius: var(--gui-radius-range);
     }
   }
 

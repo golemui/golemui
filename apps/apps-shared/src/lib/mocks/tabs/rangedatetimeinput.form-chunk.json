@@ -1,0 +1,100 @@
+{
+  "$schema": "../../../../../../libs/gui/schemas/src/lib/layout-widget.schema.json",
+  "uid": "tabRangeDateTimeInput",
+  "kind": "layout",
+  "type": "flex",
+  "children": [
+    {
+      "kind": "input",
+      "type": "rangeDateTimeInput",
+      "path": "rangeDateTimeInputEmpty",
+      "label": "Empty",
+      "props": {
+        "separator": "to"
+      }
+    },
+    {
+      "kind": "input",
+      "type": "rangeDateTimeInput",
+      "path": "rangeDateTimeInputDefault",
+      "defaultValue": [
+        {
+          "start": "2026-11-22T09:00:00",
+          "end": "2026-11-22T11:00:00"
+        },
+        {
+          "start": "2026-11-23T14:00:00",
+          "end": "2026-11-24T09:30:00"
+        }
+      ],
+      "label": "With default value",
+      "props": {
+        "icon": "schedule",
+        "separator": "to"
+      }
+    },
+    {
+      "kind": "input",
+      "type": "rangeDateTimeInput",
+      "path": "rangeDateTimeInputConstraints",
+      "label": "With min/max date-time",
+      "props": {
+        "icon": "schedule",
+        "separator": "to",
+        "minDateTime": "2026-01-01T09:00:00",
+        "maxDateTime": "2026-12-31T18:00:00",
+        "minDateTimeMessage": "No slots available before Jan 1st, 2026 at 9:00.",
+        "maxDateTimeMessage": "No slots available after Dec 31st, 2026 at 18:00.",
+        "minuteStep": 15
+      }
+    },
+    {
+      "kind": "input",
+      "type": "rangeDateTimeInput",
+      "path": "rangeDateTimeInputDisabled",
+      "defaultValue": [
+        {
+          "start": "2026-11-22T09:00:00",
+          "end": "2026-11-22T11:00:00"
+        }
+      ],
+      "disabled": true,
+      "label": "Disabled",
+      "props": {
+        "icon": "schedule",
+        "separator": "to"
+      }
+    },
+    {
+      "kind": "input",
+      "type": "rangeDateTimeInput",
+      "path": "rangeDateTimeInputReadonly",
+      "defaultValue": [
+        {
+          "start": "2026-11-22T09:00:00",
+          "end": "2026-11-22T11:00:00"
+        }
+      ],
+      "readonly": true,
+      "label": "Read only",
+      "props": {
+        "icon": "schedule",
+        "separator": "to"
+      }
+    },
+    {
+      "kind": "input",
+      "type": "rangeDateTimeInput",
+      "path": "rangeDateTimeInputValidation",
+      "label": "Required (validation)",
+      "props": {
+        "icon": "schedule",
+        "separator": "to"
+      },
+      "validator": {
+        "type": "array",
+        "required": true
+      }
+    }
+  ]
+}
