@@ -18,7 +18,7 @@ import {
   type TranslationConfig,
 } from '../../i18n';
 import { compile, parse } from 'subscript/justin';
-import { type $Errors } from '../../shared';
+import { type $Errors, type ExpressionFunctions } from '../../shared';
 import { calculateValidationVariables } from '../../utils/form';
 import { normalizeArrayIndexes } from '../../utils/justin';
 import { get, set } from '../../utils/object';
@@ -31,10 +31,10 @@ import { errorCodes } from '../../errors';
 // -----------------------------------------------------------------------------
 
 export const calculateWidgetProps =
-  (localization: I18nTranslator) =>
+  (localization: I18nTranslator, functions: ExpressionFunctions) =>
   (state: State): State => {
     try {
-      return { ...state, calculatedWidgets: calculateAll(state, localization) };
+      return { ...state, calculatedWidgets: calculateAll(state, localization, functions) };
     } catch (err) {
       const error = err as Error & { code: number };
       return {
@@ -52,9 +52,13 @@ export const calculateWidgetProps =
 // Orchestrator
 // -----------------------------------------------------------------------------
 
-function calculateAll(state: State, localization: I18nTranslator): State['calculatedWidgets'] {
+function calculateAll(
+  state: State,
+  localization: I18nTranslator,
+  functions: ExpressionFunctions,
+): State['calculatedWidgets'] {
   const { $formIsInvalid, $errors } = calculateValidationVariables(state);
-  const ctx = makeResolverCtx(state, localization, $formIsInvalid, $errors);
+  const ctx = makeResolverCtx(state, localization, $formIsInvalid, $errors, functions);
   const result: State['calculatedWidgets'] = {};
 
   for (const uid of Object.keys(state.calculatedWidgets)) {
@@ -344,6 +348,7 @@ function resolveString(input: string, ctx: ResolverCtx): string {
         $formIsInvalid: ctx.$formIsInvalid,
         $item: ctx.$item,
         $index: ctx.$index,
+        $fn: ctx.$fn,
       });
       return result == null ? '' : String(result);
     } catch (err) {
@@ -432,6 +437,7 @@ function isPotentialExpression(value: string): boolean {
     value.startsWith('$errors') ||
     value.startsWith('$item') ||
     value.startsWith('$index') ||
+    value.startsWith('$fn') ||
     value === '$formIsInvalid'
   );
 }
@@ -460,6 +466,7 @@ function resolveI18nParams(
           $formIsInvalid: ctx.$formIsInvalid,
           $item: ctx.$item,
           $index: ctx.$index,
+          $fn: ctx.$fn,
         });
         acc[key] = result ?? param;
       } catch (err) {
@@ -522,6 +529,8 @@ interface ResolverCtx {
   $formIsInvalid: boolean;
   $errors: $Errors;
   localization: I18nTranslator;
+  /** Host-provided pure functions, exposed to expressions as `$fn`. */
+  $fn: ExpressionFunctions;
   /** Set only for widgets inside a repeater item: the item object itself */
   $item?: unknown;
   /** Set only for widgets inside a repeater item: the item's position. */
@@ -533,6 +542,7 @@ function makeResolverCtx(
   localization: I18nTranslator,
   $formIsInvalid: boolean,
   $errors: $Errors,
+  functions: ExpressionFunctions,
 ): ResolverCtx {
   return {
     sortedStates: [...state.currentStates].sort((a, b) => b.length - a.length),
@@ -543,6 +553,7 @@ function makeResolverCtx(
     $formIsInvalid,
     $errors,
     localization,
+    $fn: functions,
   };
 }
 

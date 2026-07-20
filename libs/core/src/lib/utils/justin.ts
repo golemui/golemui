@@ -1,5 +1,5 @@
 import { compile, parse } from 'subscript/justin';
-import { type $Errors, type ReactiveExpression } from '../shared';
+import { type $Errors, type ExpressionFunctions, type ReactiveExpression } from '../shared';
 import { type State } from '../store/model';
 import { Debug } from './debug';
 
@@ -11,6 +11,13 @@ export type RepeaterItemExpressionScope = {
   $index?: number;
 };
 
+/**
+ * Extra scope available to expressions: repeater item variables and host-provided $fn functions.
+ */
+export type ExpressionExtraScope = RepeaterItemExpressionScope & {
+  $fn?: ExpressionFunctions;
+};
+
 // TODO: caching or memoization
 export function expressionIsTrue(
   expression: ReactiveExpression,
@@ -18,7 +25,7 @@ export function expressionIsTrue(
   $meta: State['meta'],
   $errors: $Errors,
   $formIsInvalid: boolean,
-  extraScope?: RepeaterItemExpressionScope,
+  extraScope?: ExpressionExtraScope,
 ): boolean {
   const ast = parse(normalizeArrayIndexes(expression));
   const evaluate = compile(ast);
@@ -28,6 +35,7 @@ export function expressionIsTrue(
     $errors,
     $formIsInvalid,
     $log: Debug.log,
+    $fn: {},
     ...extraScope,
   });
   return result === true;

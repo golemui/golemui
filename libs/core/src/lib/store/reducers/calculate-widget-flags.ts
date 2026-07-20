@@ -1,25 +1,28 @@
 import { isActionWidget, isFunctionWidget, isInputWidget } from '../../form-widget';
-import { type $Errors } from '../../shared';
+import { type $Errors, type ExpressionFunctions } from '../../shared';
 import { calculateValidationVariables } from '../../utils/form';
 import { expressionIsTrue } from '../../utils/justin';
 import { get } from '../../utils/object';
 import { type State } from '../model';
 import { hasWhen } from './utils';
 
-export const calculateWidgetFlags = (state: State): State => {
-  // Precalculate the validation variables for all the following steps
-  const { $formIsInvalid, $errors } = calculateValidationVariables(state);
+export const calculateWidgetFlags =
+  (functions: ExpressionFunctions) =>
+  (state: State): State => {
+    // Precalculate the validation variables for all the following steps
+    const { $formIsInvalid, $errors } = calculateValidationVariables(state);
 
-  return {
-    ...state,
-    widgetFlags: calculateFlags(state, $errors, $formIsInvalid),
+    return {
+      ...state,
+      widgetFlags: calculateFlags(state, $errors, $formIsInvalid, functions),
+    };
   };
-};
 
 function calculateFlags(
   state: State,
   $errors: $Errors,
   $formIsInvalid: boolean,
+  functions: ExpressionFunctions,
 ): State['widgetFlags'] {
   const plainWidgets = Object.values(state.flatForm).map((widget) => {
     if (isFunctionWidget(widget)) {
@@ -61,8 +64,8 @@ function calculateFlags(
         // Widgets inside a repeater item see that item through $item / $index
         const itemScope = state.repeaterItemScopes[widget.uid];
         const extraScope = itemScope
-          ? { $item: get(state.data, itemScope.itemPath), $index: itemScope.index }
-          : undefined;
+          ? { $item: get(state.data, itemScope.itemPath), $index: itemScope.index, $fn: functions }
+          : { $fn: functions };
 
         // show
         if (widget.include && 'in' in widget.include) {

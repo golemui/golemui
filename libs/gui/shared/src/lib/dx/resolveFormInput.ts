@@ -1,4 +1,4 @@
-import type { ValidateOn } from '@golemui/core';
+import type { ExpressionFunctions, ValidateOn } from '@golemui/core';
 import type { Action, Form, I18nTranslator, Middleware, State } from '@golemui/core';
 import type { CustomValidatorSchemas } from '@golemui/gui-validators';
 import type { Dependencies } from '../shared';
@@ -35,6 +35,13 @@ export interface GuiFormInitConfig {
   itemRenderers?: Record<string, unknown>;
   localization?: I18nTranslator;
   dependencies?: Dependencies;
+  /**
+   * Pure functions callable from reactive expressions under the `$fn` namespace,
+   * e.g. `"text": "Total: {{ $fn.grandTotal($form.lineItems) }}"`.
+   * Merged over any functions declared by the DX bundle's `formConfig`;
+   * this config wins on name collisions.
+   */
+  functions?: ExpressionFunctions;
   formName?: string;
 }
 
@@ -42,6 +49,7 @@ export interface ResolvedFormInput<FormData extends Record<string, any> = any> {
   formDef: string | Record<string, any> | Form<any, FormData>;
   formEvent?: FormEvents;
   dependencies?: Dependencies;
+  functions?: ExpressionFunctions;
   widgetLoaders?: Record<string, () => Promise<unknown>>;
   validateOn?: ValidateOn;
   itemRenderers?: Record<string, unknown>;
@@ -143,6 +151,7 @@ export function resolveFormInput<FormData extends Record<string, any> = any>(
     formDef: result.form,
     formEvent: result.events,
     dependencies: result.dependencies,
+    functions: result.functions,
     widgetLoaders: result.widgetLoaders,
     validateOn: result.validateOn,
     itemRenderers: result.itemRenderers,

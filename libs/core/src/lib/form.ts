@@ -3,7 +3,12 @@ import { type WidgetLoaders } from './context/widget-registry';
 import { type FormWidget, type LayoutWidget, layoutWidgetDecoder } from './form-widget';
 import { type I18nTranslator } from './i18n';
 import { type ItemRenderer } from './item-renderer';
-import { type ReactiveExpression, type UiState, type ValidateOn } from './shared';
+import {
+  type ExpressionFunctions,
+  type ReactiveExpression,
+  type UiState,
+  type ValidateOn,
+} from './shared';
 import { type Action } from './store/actions';
 import { type Middleware, type State } from './store/model';
 
@@ -54,6 +59,14 @@ export interface FormInitConfig<ComponentType = unknown> {
   itemRenderers?: Record<string, ItemRenderer>;
   localization?: I18nTranslator;
   dependencies?: Record<string, unknown>;
+  /**
+   * Pure functions callable from reactive expressions under the `$fn` namespace,
+   * e.g. `"text": "Total: {{ $fn.grandTotal($form.lineItems) }}"`.
+   *
+   * Available in every expression context: `{{...}}` string interpolation, i18n params,
+   * `when` expressions (include/exclude/disabled/readonly) and state expressions.
+   */
+  functions?: ExpressionFunctions;
   middlewares?: Middleware<State, Action>[];
   validateOn?: ValidateOn;
   data?: Record<string, any>;

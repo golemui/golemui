@@ -1,5 +1,6 @@
 export * from './appetizer';
 export * from './demo-a11y';
+export * from './demo-functions';
 export * from './demo-i18n';
 export * from './demo-validation';
 export * from './flight-tickets';

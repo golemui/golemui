@@ -82,6 +82,7 @@ export class FormCoreComponent implements OnInit, OnDestroy {
         c.itemRenderers ?? {},
         c.localization,
         c.dependencies ?? {},
+        c.functions ?? {},
       );
       this.context.store.dispatch({
         type: 'INITIALIZE',

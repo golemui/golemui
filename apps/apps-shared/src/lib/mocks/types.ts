@@ -1,4 +1,4 @@
-import { type Form, type FormEvent } from '@golemui/core';
+import { type ExpressionFunctions, type Form, type FormEvent } from '@golemui/core';
 import { type Resource } from 'i18next';
 
 export type FromLoaderFn = () => Promise<Form<string>>;
@@ -9,4 +9,5 @@ export interface Example {
   form: Form<string> | FromLoaderFn;
   resources: Resource;
   onFormEvent?: (event: FormEvent) => void;
+  functions?: ExpressionFunctions;
 }

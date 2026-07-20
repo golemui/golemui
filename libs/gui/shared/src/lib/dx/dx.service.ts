@@ -188,6 +188,10 @@ export class DxService {
       result.dependencies = formConfig.dependencies;
     }
 
+    if (formConfig.functions) {
+      result.functions = formConfig.functions;
+    }
+
     if (formConfig.widgetLoaders) {
       result.widgetLoaders = formConfig.widgetLoaders;
     }

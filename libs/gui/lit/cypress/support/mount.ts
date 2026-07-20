@@ -53,6 +53,7 @@ export const mountFramework = (options: MountOptions) => {
     validateOn: options.validateOn ?? 'eager',
     localization: options.localization,
     dependencies: options.dependencies,
+    functions: options.functions,
     customWidgetLoaders,
   };
 

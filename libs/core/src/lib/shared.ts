@@ -15,6 +15,24 @@ export type UiState = string;
 export type ReactiveExpression = string;
 
 /**
+ * A pure function exposed to expressions via `$fn`.
+ *
+ * @example
+ * const functions = {
+ *   grandTotal: (items: Array<{ price?: number }> = []) =>
+ *     items.reduce((total, item) => total + (item.price ?? 0), 0),
+ * };
+ * // Form usage: "Grand Total: {{ $fn.grandTotal($form.lineItems) }}"
+ */
+export type ExpressionFunction = (...args: any[]) => unknown;
+
+/**
+ * Map of {@link ExpressionFunction} entries. The key is the name used after `$fn.`
+ * in reactive expressions: `functions: { grandTotal }` is called as `$fn.grandTotal(...)`.
+ */
+export type ExpressionFunctions = Record<string, ExpressionFunction>;
+
+/**
  * The path to a json object
  */
 export type DotPath = string;

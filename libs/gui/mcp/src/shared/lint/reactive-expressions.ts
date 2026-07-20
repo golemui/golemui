@@ -140,9 +140,10 @@ function checkExpression(
   //   $form           — form data
   //   $meta           — user-supplied form metadata (e.g. systemMessage, connectionStatus)
   //   $formIsInvalid  — boolean; true when any field currently fails validation
+  //   $fn             — host-provided pure functions (from the `functions` init config)
   //   $item / $index  — current repeater item and its position; only inside a repeater `props.template`
   const referencesItemScope = /\$item\b|\$index\b/.test(trimmed);
-  const hasGlobalRoot = /\$form\b|\$meta\b|\$formIsInvalid\b/.test(trimmed);
+  const hasGlobalRoot = /\$form\b|\$meta\b|\$formIsInvalid\b|\$fn\b/.test(trimmed);
   if (referencesItemScope && !inTemplate) {
     out.push({
       path,
@@ -156,9 +157,9 @@ function checkExpression(
     out.push({
       path,
       expression: expr,
-      message: 'Expression does not reference `$form`, `$meta`, or `$formIsInvalid`.',
+      message: 'Expression does not reference `$form`, `$meta`, `$formIsInvalid`, or `$fn`.',
       suggestion:
-        'GolemUI expressions read form data via `$form.fieldName`, form metadata via `$meta.key`, or the built-in `$formIsInvalid` boolean. Inside a repeater `props.template` the current item is available via `$item` and its position via `$index`. Did you forget the prefix?',
+        'GolemUI expressions read form data via `$form.fieldName`, form metadata via `$meta.key`, or the built-in `$formIsInvalid` boolean. Host-provided pure functions are callable via `$fn.functionName(...)` when the host passes a `functions` map in the form init config. Inside a repeater `props.template` the current item is available via `$item` and its position via `$index`. Did you forget the prefix?',
     });
   }
 

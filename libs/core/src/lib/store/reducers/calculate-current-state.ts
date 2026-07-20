@@ -1,50 +1,55 @@
 import { errorCodes } from '../../errors';
+import { type ExpressionFunctions } from '../../shared';
 import { calculateValidationVariables } from '../../utils/form';
 import { expressionIsTrue } from '../../utils/justin';
 import { type FormHealth, type State } from '../model';
 
-export const calculateCurrentState = (state: State): State => {
-  let stateExpressions = state.formDef.states;
-  if (!stateExpressions || Object.keys(stateExpressions).length === 0) {
-    return state;
-  }
+export const calculateCurrentState =
+  (functions: ExpressionFunctions) =>
+  (state: State): State => {
+    let stateExpressions = state.formDef.states;
+    if (!stateExpressions || Object.keys(stateExpressions).length === 0) {
+      return state;
+    }
 
-  if (state.formHealth.status === 'errored') {
-    return state;
-  }
+    if (state.formHealth.status === 'errored') {
+      return state;
+    }
 
-  // Precalculate the validation variables for all the following steps
-  const { $formIsInvalid, $errors } = calculateValidationVariables(state);
+    // Precalculate the validation variables for all the following steps
+    const { $formIsInvalid, $errors } = calculateValidationVariables(state);
 
-  stateExpressions = expandStateExpressions(stateExpressions);
+    stateExpressions = expandStateExpressions(stateExpressions);
 
-  let currentStates: string[] = [];
-  let formHealth: FormHealth = { status: 'ok' };
-  try {
-    currentStates = Object.keys(stateExpressions)
-      .map((stateName) => {
-        const expression = stateExpressions[stateName];
-        let result: boolean;
-        try {
-          result = expressionIsTrue(expression, state.data, state.meta, $errors, $formIsInvalid);
-        } catch {
-          result = false;
-        }
-        return result === true ? stateName : undefined;
-      })
-      .filter((stateName) => stateName !== undefined);
-  } catch (err) {
-    const error = err as Error;
-    const code = errorCodes.calculateCurrentStateError;
-    formHealth = {
-      status: 'errored',
-      message: `[${code}] ${error.message}`,
-      code,
-    };
-  }
+    let currentStates: string[] = [];
+    let formHealth: FormHealth = { status: 'ok' };
+    try {
+      currentStates = Object.keys(stateExpressions)
+        .map((stateName) => {
+          const expression = stateExpressions[stateName];
+          let result: boolean;
+          try {
+            result = expressionIsTrue(expression, state.data, state.meta, $errors, $formIsInvalid, {
+              $fn: functions,
+            });
+          } catch {
+            result = false;
+          }
+          return result === true ? stateName : undefined;
+        })
+        .filter((stateName) => stateName !== undefined);
+    } catch (err) {
+      const error = err as Error;
+      const code = errorCodes.calculateCurrentStateError;
+      formHealth = {
+        status: 'errored',
+        message: `[${code}] ${error.message}`,
+        code,
+      };
+    }
 
-  return { ...state, currentStates, formHealth };
-};
+    return { ...state, currentStates, formHealth };
+  };
 
 /**
  * Expands state expressions by combining inherited conditions with logical AND operators.

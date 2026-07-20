@@ -111,6 +111,7 @@ export function FormPage() {
             itemRenderers,
             localization,
             dependencies: deps,
+            functions: mock.functions,
             customWidgetLoaders,
             validateOn,
           }

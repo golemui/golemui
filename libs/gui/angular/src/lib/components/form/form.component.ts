@@ -42,6 +42,7 @@ export class FormComponent {
         ...((c.customWidgetLoaders ?? {}) as WidgetLoaders<Type<WithWidget>>),
       },
       dependencies: { ...(r.dependencies ?? {}), ...(c.dependencies ?? {}) },
+      functions: { ...(r.functions ?? {}), ...(c.functions ?? {}) },
       validateOn: c.validateOn ?? r.validateOn ?? 'eager',
       itemRenderers: {
         ...((r.itemRenderers ?? {}) as Record<string, AngularItemRenderer<any>>),

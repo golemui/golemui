@@ -1,4 +1,8 @@
-import { type FunctionWidgetParams, type ValidateOn } from '@golemui/core';
+import {
+  type ExpressionFunctions,
+  type FunctionWidgetParams,
+  type ValidateOn,
+} from '@golemui/core';
 import type { WidgetItemDecorator, GslItemType } from '../formDef.domain';
 import { type Dependencies } from '../../shared';
 
@@ -72,6 +76,11 @@ export interface GslLeafSelector {
 export interface FormConfig {
   suppressAutomaticStack?: boolean;
   dependencies?: Dependencies;
+  /**
+   * Pure functions callable from reactive expressions under the `$fn` namespace.
+   * Functions passed in the wrapper's `config.functions` win on name collisions.
+   */
+  functions?: ExpressionFunctions;
   widgetLoaders?: Record<string, () => Promise<unknown>>;
   validateOn?: ValidateOn;
   states?: Record<string, string>;

@@ -86,6 +86,7 @@ const config = computed<GuiFormInitConfig | undefined>(() =>
         itemRenderers,
         localization,
         dependencies: deps,
+        functions: mock.functions,
         customWidgetLoaders,
         validateOn,
       }

@@ -41,6 +41,7 @@ const reinit = () => {
     props.config.itemRenderers ?? {},
     props.config.localization,
     props.config.dependencies ?? {},
+    props.config.functions ?? {},
   );
   storeVersion.value += 1;
 };

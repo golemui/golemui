@@ -1,0 +1,116 @@
+{
+  "$schema": "https://golemui.com/schemas/form.schema.json",
+  "form": [
+    {
+      "kind": "display",
+      "type": "markdownText",
+      "props": { "md": "## Invoice with host functions" }
+    },
+    {
+      "kind": "display",
+      "type": "markdownText",
+      "props": {
+        "md": "The totals below are computed by pure functions the host passes via `config.functions` and expressions call as `$fn.name(...)`. Compare with the invoice-nested demo, where the same math lives inline in the expressions."
+      }
+    },
+    {
+      "kind": "input",
+      "type": "select",
+      "path": "currency",
+      "label": "Currency",
+      "props": {
+        "options": [
+          { "label": "USD", "value": "USD" },
+          { "label": "EUR", "value": "EUR" }
+        ]
+      }
+    },
+    {
+      "kind": "input",
+      "type": "repeater",
+      "path": "lineItems",
+      "label": "Line items",
+      "validator": { "type": "array", "required": true, "minItems": 1 },
+      "props": {
+        "addLabel": "Add line item",
+        "removeLabel": "Remove",
+        "title": "Line item",
+        "template": {
+          "kind": "layout",
+          "type": "flex",
+          "props": { "direction": "row", "gap": 12 },
+          "children": [
+            {
+              "kind": "input",
+              "type": "textinput",
+              "path": "lineItems.items.description",
+              "size": 5,
+              "label": "Description",
+              "validator": { "type": "string", "required": true, "minLength": 1 }
+            },
+            {
+              "kind": "input",
+              "type": "number",
+              "path": "lineItems.items.quantity",
+              "size": 2,
+              "label": "Quantity",
+              "validator": { "type": "number", "required": true, "minimum": 0 },
+              "props": { "minimum": 0, "step": 1 }
+            },
+            {
+              "kind": "input",
+              "type": "number",
+              "path": "lineItems.items.unitPrice",
+              "size": 3,
+              "label": "Unit price",
+              "validator": { "type": "number", "required": true, "minimum": 0 },
+              "props": { "minimum": 0, "step": 0.5 }
+            },
+            {
+              "kind": "display",
+              "type": "markdownText",
+              "size": 2,
+              "props": {
+                "md": "**Line {{$index + 1}}**  \n{{ $fn.formatMoney($fn.lineTotal($item), $form.currency) }}"
+              },
+              "include": { "when": "$item.quantity !== undefined" }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "kind": "display",
+      "type": "alert",
+      "props": {
+        "level": "success",
+        "text": "Grand total: {{ $fn.formatMoney($fn.grandTotal($form.lineItems), $form.currency) }}"
+      },
+      "include": { "when": "$fn.hasItems($form.lineItems)" }
+    },
+    {
+      "kind": "display",
+      "type": "alert",
+      "props": {
+        "level": "warning",
+        "text": "Add at least one line item to see the grand total."
+      },
+      "exclude": { "when": "$fn.hasItems($form.lineItems)" }
+    },
+    {
+      "kind": "layout",
+      "type": "flex",
+      "props": { "direction": "row", "align": "end" },
+      "children": [
+        {
+          "kind": "action",
+          "type": "button",
+          "actionType": "submit",
+          "label": "Send invoice",
+          "disabled": { "when": "$formIsInvalid" },
+          "props": { "variant": "filled" }
+        }
+      ]
+    }
+  ]
+}

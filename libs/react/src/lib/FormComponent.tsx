@@ -57,6 +57,7 @@ export const FormComponent = forwardRef<FormComponentHandle, FormComponentProps>
         config.itemRenderers ?? {},
         config.localization,
         config.dependencies ?? {},
+        config.functions ?? {},
       );
       context.store.dispatch({
         type: 'INITIALIZE',

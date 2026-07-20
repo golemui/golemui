@@ -59,13 +59,27 @@ describe('lintStringInterpolations', () => {
   });
 
   describe('S2 — missing scope reference', () => {
-    it('flags a slot with no $form / $meta / $errors / $formIsInvalid reference', () => {
+    it('flags a slot with no $form / $meta / $errors / $formIsInvalid / $fn reference', () => {
       const form = {
         form: [{ uid: 'a', kind: 'display', type: 'alert', props: { text: '{{userName}}' } }],
       };
       const findings = lintStringInterpolations(form);
       expect(findings).toHaveLength(1);
       expect(findings[0].message).toMatch(/\$form/);
+    });
+
+    it('returns no findings for a pure-$fn slot', () => {
+      const form = {
+        form: [
+          {
+            uid: 'a',
+            kind: 'display',
+            type: 'alert',
+            props: { text: 'Total: {{$fn.grandTotal($form.lineItems)}} {{$fn.promoLabel()}}' },
+          },
+        ],
+      };
+      expect(lintStringInterpolations(form)).toHaveLength(0);
     });
   });
 

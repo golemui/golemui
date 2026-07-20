@@ -152,7 +152,7 @@ function checkSlot(
 
   // S2 — missing scope reference
   const referencesItemScope = /\$item\b|\$index\b/.test(trimmed);
-  const hasGlobalRoot = /\$form\b|\$meta\b|\$errors\b|\$formIsInvalid\b/.test(trimmed);
+  const hasGlobalRoot = /\$form\b|\$meta\b|\$errors\b|\$formIsInvalid\b|\$fn\b/.test(trimmed);
   if (referencesItemScope && !inTemplate) {
     out.push({
       path,
@@ -167,9 +167,9 @@ function checkSlot(
       path,
       slot,
       message:
-        'Interpolation slot does not reference `$form`, `$meta`, `$errors`, or `$formIsInvalid`.',
+        'Interpolation slot does not reference `$form`, `$meta`, `$errors`, `$formIsInvalid`, or `$fn`.',
       suggestion:
-        'GolemUI template slots read data via `$form.fieldName`, metadata via `$meta.key`, validation errors via `$errors.fieldName`, or the built-in `$formIsInvalid` boolean. Inside a repeater `props.template` the current item is available via `$item` and its position via `$index`.',
+        'GolemUI template slots read data via `$form.fieldName`, metadata via `$meta.key`, validation errors via `$errors.fieldName`, or the built-in `$formIsInvalid` boolean. Host-provided pure functions are callable via `$fn.functionName(...)` when the host passes a `functions` map in the form init config. Inside a repeater `props.template` the current item is available via `$item` and its position via `$index`.',
     });
   }
 
