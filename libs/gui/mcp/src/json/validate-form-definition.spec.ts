@@ -554,6 +554,48 @@ describe('json_validate_form_definition', () => {
     });
   });
 
+  describe('$fn host function scope', () => {
+    it('accepts a pure-$fn `when` expression with no other root reference', () => {
+      const r = validateFormDefinition(formWith('$fn.isWeekendPromo()'));
+      expect(has(r, /does not reference/)).toBe(false);
+    });
+
+    it('accepts $fn combined with $form arguments', () => {
+      const r = validateFormDefinition(formWith('$fn.hasItems($form.items)'));
+      expect(has(r, /does not reference/)).toBe(false);
+    });
+
+    it('accepts a pure-$fn interpolation slot', () => {
+      const r = validateFormDefinition({
+        formDefinition: {
+          form: [
+            {
+              kind: 'display',
+              type: 'markdownText',
+              props: { md: '**Total:** {{$fn.grandTotal($form.lineItems)}}' },
+            },
+          ],
+        },
+      });
+      expect(r.interpolationWarnings.some((w) => /does not reference/.test(w.message))).toBe(false);
+    });
+
+    it('accepts a pure-$fn `states` expression', () => {
+      const r = validateFormDefinition({
+        formDefinition: {
+          states: { promo: '$fn.isWeekendPromo()' },
+          form: [{ kind: 'input', type: 'textinput', path: 'x' }],
+        },
+      });
+      expect(has(r, /does not reference/)).toBe(false);
+    });
+
+    it('still flags a bare identifier without any scope root', () => {
+      const r = validateFormDefinition(formWith('isWeekendPromo()'));
+      expect(has(r, /does not reference/)).toBe(true);
+    });
+  });
+
   it('leaves existing idiomatic safe expressions unflagged', () => {
     // Composite safe expression touching all four new rules.
     const r = validateFormDefinition({

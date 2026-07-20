@@ -23,7 +23,7 @@ const STATES_CONCEPT: GetConceptResult = {
   concept: 'states',
   summary:
     'States are named boolean conditions declared at the form root. ' +
-    'Each state name maps to a reactive expression string (using `$form`, `$meta`, or `$formIsInvalid`) ' +
+    'Each state name maps to a reactive expression string (using `$form`, `$meta`, `$formIsInvalid`, or `$fn`) ' +
     'that the runtime evaluates continuously as the user interacts with the form. ' +
     'Once declared, state names can gate widget visibility (include / exclude) and ' +
     'swap individual widget properties per-state — a capability unique to named states ' +
@@ -36,7 +36,7 @@ const STATES_CONCEPT: GetConceptResult = {
         'Add a `"states"` object to the top-level form definition. ' +
         'Each key is a state name; each value is a reactive expression string. ' +
         'Expressions are evaluated at runtime — they have access to `$form` (all current form values), ' +
-        '`$meta` (host-supplied metadata), and `$formIsInvalid`. ' +
+        '`$meta` (host-supplied metadata), `$formIsInvalid`, and `$fn` (host-provided pure functions). ' +
         'State names can contain letters, numbers, hyphens, and underscores. ' +
         'Colons enable hierarchical composition — see the "Composed sub-states (colon notation)" pattern below.',
       example: {
@@ -114,8 +114,8 @@ const STATES_CONCEPT: GetConceptResult = {
         'For a one-off condition that applies to a single widget only, use the inline `when` form: ' +
         '`"include": { "when": "expression" }` or `"exclude": { "when": "expression" }`. ' +
         'The expression is evaluated exactly like a state expression — it has access to `$form`, ' +
-        '`$meta`, and `$formIsInvalid`, uses the same safe operator subset, and must use optional ' +
-        'chaining for nested fields. ' +
+        '`$meta`, `$formIsInvalid`, and `$fn`, uses the same safe operator subset, and must use ' +
+        'optional chaining for nested fields. ' +
         'No entry in the root `states` map is required. ' +
         'Use this form when the condition is not shared with any other widget; use the named-state ' +
         'form (`in`/`from`) when the same condition gates two or more widgets.',
@@ -222,7 +222,7 @@ const STATES_CONCEPT: GetConceptResult = {
     'State-suffixed root props — only these support suffixes at the widget root level: `label`, `disabled`, `readonly`, `validator`, `size`. All other overridable properties live inside `props`.',
     'State-suffixed props inside `props` — any key inside the `props` object can be suffixed: `"hint.<state>"`, `"placeholder.<state>"`, `"items.<state>"`, `"addLabel.<state>"`, etc.',
     'Suffix names must not contain dots (the dot is the separator between property and state name): `"label.myState"` ✅, `"label.register:adult"` ✅ — `"label.my.state"` ❌.',
-    'Reactive expressions must reference `$form`, `$meta`, or `$formIsInvalid`. A bare identifier like `termsAccepted` without a root reference is invalid.',
+    'Reactive expressions must reference `$form`, `$meta`, `$formIsInvalid`, or `$fn`. A bare identifier like `termsAccepted` without a root reference is invalid.',
     'Use `===` / `!==` for equality, `&&` / `||` for logic. Avoid `=` (assignment), `==`/`!=` (loose equality), or bitwise `&`/`|`.',
     'When multiple states are active at the same time and a property has more than one matching suffix, the longest state name wins (most specific takes priority). Example: if both `register` and `register:adult` are active, `"label.register:adult"` overrides `"label.register"`.',
     '`include.in` and `exclude.from` each accept an Array of state names. A widget included `in: ["a", "b"]` renders when state `a` OR state `b` is active.',
@@ -240,7 +240,8 @@ const STRING_INTERPOLATION_CONCEPT: GetConceptResult = {
     'GolemUI supports live data binding in text props via `{{expression}}` template slots. ' +
     'Any string-valued property (e.g. `props.text`, `props.hint`, `label`) can embed one or more ' +
     '`{{...}}` slots. Each slot is a JavaScript-like expression evaluated against the live form ' +
-    'state using a safe subset of JavaScript (no side effects, no function calls). ' +
+    'state using a safe subset of JavaScript (no side effects; method calls on scope values and ' +
+    'host-provided `$fn` functions are the only calls allowed). ' +
     'i18n translation `params` objects accept a matching bare-expression format — the same ' +
     'expressions but without the `{{}}` delimiters.',
 
@@ -251,7 +252,8 @@ const STRING_INTERPOLATION_CONCEPT: GetConceptResult = {
         'Embed `{{expression}}` in any string prop to inject live values. ' +
         'Available scopes: `$form` (all current field values), `$meta` (host-supplied metadata), ' +
         '`$errors` (current validation error messages keyed by field uid), ' +
-        '`$formIsInvalid` (boolean — `true` when any field currently fails validation). ' +
+        '`$formIsInvalid` (boolean — `true` when any field currently fails validation), ' +
+        'and `$fn` (host-provided pure functions, called as `$fn.name(...)`). ' +
         'Use optional chaining (`?.`) when accessing nested fields that may not yet exist. ' +
         'Multiple slots can appear in a single string.',
       example: {
@@ -299,7 +301,7 @@ const STRING_INTERPOLATION_CONCEPT: GetConceptResult = {
       description:
         'Slots support full JavaScript-like expressions: arithmetic, string concatenation, ' +
         'ternary conditionals, and optional chaining. The expression is evaluated against the ' +
-        'same scope object (`$form`, `$meta`, `$errors`, `$formIsInvalid`). ' +
+        'same scope object (`$form`, `$meta`, `$errors`, `$formIsInvalid`, `$fn`). ' +
         'If the expression evaluates to `null` or `undefined`, the slot renders as an empty string.',
       example: {
         $schema: 'https://golemui.com/schemas/form.schema.json',
@@ -338,7 +340,7 @@ const STRING_INTERPOLATION_CONCEPT: GetConceptResult = {
         'When using i18n translations, `params` values support the same expression language ' +
         'as `{{}}` slots, but as **bare expressions** without the `{{}}` delimiters. ' +
         'Params that start with a `$` scope prefix are evaluated; others are passed as static strings. ' +
-        'The expression has access to `$form`, `$meta`, `$errors`, and `$formIsInvalid`.',
+        'The expression has access to `$form`, `$meta`, `$errors`, `$formIsInvalid`, and `$fn`.',
       example: {
         $schema: 'https://golemui.com/schemas/form.schema.json',
         data: { firstName: 'Jane', lastName: 'Doe', count: 4 },
@@ -366,7 +368,7 @@ const STRING_INTERPOLATION_CONCEPT: GetConceptResult = {
   ],
 
   rules: [
-    'Slots must reference at least one of `$form`, `$meta`, `$errors`, or `$formIsInvalid`. A bare identifier without a scope prefix is invalid inside `{{}}`: use `{{$form.name}}` not `{{name}}`. `$formIsInvalid` is a bare boolean — do not chain properties onto it.',
+    'Slots must reference at least one of `$form`, `$meta`, `$errors`, `$formIsInvalid`, or `$fn`. A bare identifier without a scope prefix is invalid inside `{{}}`: use `{{$form.name}}` not `{{name}}`. `$formIsInvalid` is a bare boolean — do not chain properties onto it.',
     'Inside a repeater `props.template`, slots can additionally reference `$item` (the current repeater item object) and `$index` (its zero-based position): `{{($item.quantity ?? 0) * ($item.unitPrice ?? 0)}}`. Outside a template, `$item`/`$index` are undefined and invalid.',
     'If an expression evaluates to `null` or `undefined`, the slot renders as an empty string in display text.',
     'Use optional chaining (`?.`) when accessing nested fields that may not yet exist: `{{$form.address?.city}}` not `{{$form.address.city}}`.',
@@ -387,9 +389,9 @@ const REACTIVE_SCOPE_CONCEPT: GetConceptResult = {
   concept: 'reactive-scope',
   summary:
     'GolemUI reactive expressions (used in `states`, `include.when`, `exclude.when`, and `{{}}` template slots) ' +
-    'share a common read-only scope object. The scope exposes four global variables: ' +
+    'share a common read-only scope object. The scope exposes five global variables: ' +
     '`$form` (live form data), `$meta` (host-supplied metadata), `$errors` (validation error messages), ' +
-    'and `$formIsInvalid` (built-in boolean). ' +
+    '`$formIsInvalid` (built-in boolean), and `$fn` (host-provided pure functions). ' +
     'Inside a repeater `props.template` two more variables are available: ' +
     '`$item` (the current repeater item object) and `$index` (its zero-based position). ' +
     'All variables are read-only — expressions can only read from them, never write to them.',
@@ -510,6 +512,36 @@ const REACTIVE_SCOPE_CONCEPT: GetConceptResult = {
       },
     },
     {
+      name: '$fn — host-provided pure functions',
+      description:
+        '`$fn` is a namespace of pure functions that the host application passes to the form component ' +
+        'via the `functions` entry of the init config (a sibling of `dependencies`). ' +
+        'Call them as `$fn.functionName(arg1, arg2)`; arguments can be any scope value, including ' +
+        '`$form` paths and `$item`/`$index` inside a repeater template, and the returned value is ' +
+        'substituted like any other expression result. ' +
+        'Use `$fn` to keep complex derivations (totals, currency conversion, formatting) out of the ' +
+        'expression string and inside typed, testable host code. ' +
+        'The MCP tool has no knowledge of which function names the host supplies. ' +
+        'Calling a name the host did not provide throws at evaluation time: template slots surface a ' +
+        'form-health error, `when` conditions in flags propagate the error, and `states` treat the ' +
+        'expression as `false`. ' +
+        'Host functions MUST be pure: derive the result only from the arguments, no side effects.',
+      example: {
+        $schema: 'https://golemui.com/schemas/form.schema.json',
+        form: [
+          {
+            kind: 'display',
+            type: 'markdownText',
+            props: {
+              // grandTotal comes from the host: config.functions = { grandTotal: (items) => ... }
+              md: '**Grand Total:** {{$fn.grandTotal($form.lineItems)}}',
+            },
+            include: { when: '$fn.grandTotal($form.lineItems) > 0' },
+          },
+        ],
+      },
+    },
+    {
       name: '$item / $index — current repeater item (template scope only)',
       description:
         '`$item` is the data object of the repeater item a widget belongs to, and `$index` is that ' +
@@ -571,7 +603,8 @@ const REACTIVE_SCOPE_CONCEPT: GetConceptResult = {
     '`$meta` keys are arbitrary — they depend entirely on what the host application passes to the form component. Use optional chaining if a key may be absent.',
     'Supported operators across all expressions: arithmetic (`+`, `-`, `*`, `/`, `%`), comparison (`===`, `!==`, `<`, `>`, `<=`, `>=`), logical (`&&`, `||`, `!`), ternary (`? :`), optional chaining (`?.`), nullish coalescing (`??`).',
     'Use `===` / `!==` for equality. Avoid `==` / `!=` (loose equality causes unexpected coercions with `undefined`).',
-    'No function calls, no `eval`, no side effects. The expression must be a pure read.',
+    'Expressions may call methods on scope values (e.g. `.includes()`, `.toFixed()`) and host functions via `$fn.name(...)`. Everything must stay a pure read: no `eval`, no assignments, no side effects.',
+    '`$fn` names are defined by the host through the `functions` init config. Calling a name the host did not provide errors the expression at evaluation time — coordinate names with the host.',
   ],
 };
 
@@ -708,7 +741,7 @@ export const GET_CONCEPT_TOOL = {
     'Call this when you need to: ' +
     '(1) conditionally show or hide widgets (`include`/`exclude`) — both the named-state form (`in`/`from`) and the inline `when` expression form are covered under the `states` concept; ' +
     '(2) change a widget\'s props based on form state (state-suffixed props like `"label.stateName": "…"`); ' +
-    '(3) understand what `$form`, `$meta`, `$errors`, and `$formIsInvalid` are and how to reference form data in reactive expressions — use the `reactive-scope` concept; ' +
+    '(3) understand what `$form`, `$meta`, `$errors`, `$formIsInvalid`, and `$fn` are and how to reference form data in reactive expressions — use the `reactive-scope` concept; ' +
     '(4) add icons to widgets — use the `icons` concept. ' +
     'Currently supported concepts: `states`, `string-interpolation`, `reactive-scope`, `icons`.',
   inputSchema: {
