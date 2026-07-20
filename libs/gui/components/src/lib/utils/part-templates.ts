@@ -177,6 +177,7 @@ export function renderDayPeriodToggle(
         ?disabled=${data.disabled}
         aria-label=${data.dayPeriodAriaLabel ?? 'AM/PM'}
         @click=${() => controller.toggleDayPeriod(group, type)}
+        @keydown=${controller.handleDayPeriodKeyDown}
         @keyup=${(e: KeyboardEvent) => controller.handleKeyUp(e, group, type)}
         @focus=${controller.handleFocus}
         @blur=${(e: FocusEvent) => controller.handleBlur(e, group, type)}

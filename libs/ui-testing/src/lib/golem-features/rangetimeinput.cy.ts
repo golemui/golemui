@@ -116,6 +116,63 @@ export const runRangeTimeInputComponentTests = (mountFn: MountComponentFn) => {
       );
     });
 
+    it('should not create a pill until Enter is pressed', () => {
+      mountRangeTimeInput();
+
+      // Completing both endpoints is deliberately not enough: the range is only
+      // committed by an explicit Enter, which is what frees the user to correct
+      // the trailing AM/PM toggle first.
+      typeRange(['09', '00'], ['11', '30'], false);
+
+      cy.get(sel.pillText).should('have.length', 0);
+      // The typed values stay put so the user can come back and commit them.
+      cy.get(sel.start.hour).should('have.value', '09');
+      cy.get(sel.end.minute).should('have.value', '30');
+
+      cy.get(sel.end.minute).type('{enter}');
+      cy.get(sel.pillText).should('have.length', 1);
+    });
+
+    it('should toggle AM/PM with the arrows without committing the range', () => {
+      mountRangeTimeInput({ lang: 'en-US' });
+      const startPeriod = 'gui-range-time button[data-group="start"][data-type="dayPeriod"]';
+
+      // Arrows cycle the day-period like every other part. The keydown is
+      // prevented so a focused button does not scroll the page.
+      cy.get(startPeriod).should('contain', 'AM');
+      cy.get(startPeriod).focus().type('{downarrow}');
+      cy.get(startPeriod).should('contain', 'PM');
+      cy.get(startPeriod).type('{uparrow}');
+      cy.get(startPeriod).should('contain', 'AM');
+
+      cy.get(sel.pillText).should('have.length', 0);
+    });
+
+    it('should commit from the AM/PM toggle with Enter without flipping it', () => {
+      // The regression this whole model exists for: Enter used to activate the
+      // day-period button (flipping AM->PM) *and* commit in one keypress, so a
+      // trailing 11:30 AM committed as 23:30. Enter must only commit.
+      const formSubmitHandler = cy.stub().as('formSubmitHandler');
+      mountRangeTimeInput({ lang: 'en-US', formSubmit: formSubmitHandler });
+      const endPeriod = 'gui-range-time button[data-group="end"][data-type="dayPeriod"]';
+
+      cy.get(sel.start.hour).click();
+      cy.focused().type('0900');
+      cy.get(sel.end.hour).click();
+      cy.focused().type('1130');
+
+      cy.get(endPeriod).should('contain', 'AM');
+      cy.get(sel.pillText).should('have.length', 0);
+
+      cy.get(endPeriod).focus().type('{enter}');
+      cy.get(sel.pillText).should('have.length', 1);
+
+      submitAndGetData('@formSubmitHandler').then((data) => {
+        // 11:30 AM, not the 23:30 a stray toggle would have produced.
+        expect(data).to.deep.equal({ myRanges: [{ start: '09:00:00', end: '11:30:00' }] });
+      });
+    });
+
     it('should create a pill from a typed range and submit it', () => {
       const formSubmitHandler = cy.stub().as('formSubmitHandler');
       mountRangeTimeInput({ formSubmit: formSubmitHandler });
@@ -185,12 +242,16 @@ export const runRangeTimeInputComponentTests = (mountFn: MountComponentFn) => {
         .should('be.visible')
         .and('contain', 'End must be after start');
 
-      // Correct it: overwrite the end hour 09 → 13 (valid 11:00–13:00).
+      // Correct it: overwrite the end hour 09 → 13 (valid 11:00–13:00). Once a
+      // commit has been attempted, every edit re-validates, so the error must
+      // clear as soon as the range is valid — without waiting for another Enter.
       cy.get(sel.end.hour).click();
       cy.focused().type('{selectall}13', { force: true });
-
-      cy.get(sel.pillText).should('have.length', 1);
       cy.get('[data-cy="testSubject_validator-error"]').should('not.exist');
+
+      // The pill itself still requires the explicit commit.
+      cy.focused().type('{enter}');
+      cy.get(sel.pillText).should('have.length', 1);
     });
 
     it('should remove a pill', () => {
@@ -222,6 +283,12 @@ export const runRangeTimeInputComponentTests = (mountFn: MountComponentFn) => {
       cy.focused().type('18');
       cy.focused().type('00');
 
+      // Nothing is reported while the user is still typing — a half-entered
+      // time is frequently out of the window and would flash an error.
+      cy.get('@inputErrorSpy').should('not.have.been.called');
+
+      // Attempting the commit is what triggers validation.
+      cy.focused().type('{enter}');
       cy.get('@inputErrorSpy').then((spy: any) => {
         expect(spy.getCall(0).args[0].detail.message).to.equal('Too late');
       });

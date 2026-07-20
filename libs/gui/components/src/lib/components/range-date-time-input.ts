@@ -88,11 +88,24 @@ export class GuiRangeDateTimeInput extends LitElement {
   private readonly inputBlockClass = 'gui-range-date-time-input';
   private readonly groups = ['start', 'end'] as const;
 
+  /**
+   * Set on the first commit attempt (Enter). While set, every part change
+   * re-runs validation so a resolved error clears without another Enter.
+   * Cleared once a pill is committed, so the next range starts quiet.
+   */
+  private _validationTriggered = false;
+
   private _parts = new GUIPartsController(this, {
     blockClass: this.inputBlockClass,
     groups: this.groups,
     getDescriptor: (type) => this.getPartDescriptor(type),
-    commitGroup: () => this.tryCreatePill(),
+    commitGroup: () => {
+      if (this._validationTriggered) {
+        this.revalidate();
+      } else {
+        this.syncParts();
+      }
+    },
     isReadonly: () => !!this.readOnly,
     isDisabled: () => !!this.disabled,
     onEmptyPartBlur: () => {
@@ -320,9 +333,24 @@ export class GuiRangeDateTimeInput extends LitElement {
     return { kind: 'valid', value: result.iso };
   }
 
-  private tryCreatePill() {
-    const start = this.validateDateTimeParts('start');
-    const end = this.validateDateTimeParts('end');
+  /**
+   * Re-parses both endpoints so per-endpoint problems (impossible date-time,
+   * out of instant bounds) surface while the user types. Runs on every part
+   * change.
+   */
+  private syncParts() {
+    return {
+      start: this.validateDateTimeParts('start'),
+      end: this.validateDateTimeParts('end'),
+    };
+  }
+
+  /**
+   * Parses the range and updates the error state, without ever committing.
+   * Shared by the Enter commit and by {@link revalidate}.
+   */
+  private evaluateRange() {
+    const { start, end } = this.syncParts();
 
     const result = commitRange(start, end, this.value, {
       // Date-time ranges are two instants: a backward selection reorders (swap)
@@ -343,17 +371,39 @@ export class GuiRangeDateTimeInput extends LitElement {
     // surfaced right away, using its own specific message.
     if (result.kind === 'invalid') {
       this._parts.surfaceInputError(result.message);
-      return;
     }
 
     // Not both complete yet: no group is rejected, so clear any error a
     // now-corrected group left behind, then wait for the rest of the range.
     if (result.kind === 'incomplete') {
       this._parts.clearSurfacedInputError(this.value ?? []);
-      return;
     }
 
+    return result;
+  }
+
+  /**
+   * Once the user has attempted a commit, every later edit re-runs validation
+   * so a corrected range clears its error immediately, otherwise the message
+   * would linger until the next Enter and the user could not tell the problem
+   * was solved.
+   */
+  private revalidate() {
+    const result = this.evaluateRange();
+
+    if (result.kind === 'commit') {
+      this._parts.clearSurfacedInputError(this.value ?? []);
+    }
+  }
+
+  private tryCreatePill() {
+    this._validationTriggered = true;
+
+    const result = this.evaluateRange();
+    if (result.kind !== 'commit') return;
+
     this.value = result.value;
+    this._validationTriggered = false;
 
     this._parts.clearGroup('start');
     this._parts.clearGroup('end');

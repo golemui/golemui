@@ -82,13 +82,30 @@ export class GuiRangeTimeInput extends LitElement {
   private readonly inputBlockClass = 'gui-range-time-input';
   private readonly groups = ['start', 'end'] as const;
 
+  /**
+   * Set on the first commit attempt (Enter). While set, every part change
+   * re-runs validation so a resolved error clears without another Enter.
+   * Cleared once a pill is committed, so the next range starts quiet.
+   */
+  private _validationTriggered = false;
+
   private _parts = new GUIPartsController(this, {
     blockClass: this.inputBlockClass,
     groups: this.groups,
     getDescriptor: (type) => this.getPartDescriptor(type),
     commitGroup: () => {
-      this.tryCreatePill();
+      if (this._validationTriggered) {
+        this.revalidate();
+      } else {
+        this.syncParts();
+      }
     },
+    onInputErrorSurfaced: (message) =>
+      this.dispatchEvent(new CustomEvent('inputError', { detail: { message }, bubbles: true })),
+    onSurfacedErrorCleared: (value) =>
+      this.dispatchEvent(
+        new CustomEvent('change', { detail: { value }, bubbles: true, composed: true }),
+      ),
     isReadonly: () => !!this.readOnly || this.allowCustomTime === false,
     isDisabled: () => !!this.disabled,
     onEmptyPartBlur: () => {
@@ -278,7 +295,7 @@ export class GuiRangeTimeInput extends LitElement {
    * pipeline, surfacing a bounds violation as an inputError. Returns null while
    * the group is incomplete or out of bounds.
    */
-  private validateTimeParts(group: string): string | null {
+  private validateTimeParts(group: string): RangeEndpoint<string> {
     const { effectiveHourFormat, descriptors } = this.timeLocaleData;
     const { result, writeBacks } = parseTimeGroup(this._parts.values[group] ?? {}, {
       hourFormat: effectiveHourFormat,
@@ -286,7 +303,7 @@ export class GuiRangeTimeInput extends LitElement {
     });
     this._parts.applyWriteBacks(group, writeBacks);
 
-    if (result.kind !== 'valid') return null;
+    if (result.kind !== 'valid') return { kind: 'incomplete' };
 
     const boundsError = timeBoundsError(result.iso, {
       minTime: this.minTime,
@@ -294,13 +311,9 @@ export class GuiRangeTimeInput extends LitElement {
       minTimeMessage: this.minTimeMessage,
       maxTimeMessage: this.maxTimeMessage,
     });
-    if (boundsError) {
-      this.dispatchEvent(
-        new CustomEvent('inputError', { detail: { message: boundsError }, bubbles: true }),
-      );
-      return null;
-    }
-    return result.iso;
+    if (boundsError) return { kind: 'invalid', message: boundsError };
+
+    return { kind: 'valid', value: result.iso };
   }
 
   /**
@@ -324,28 +337,36 @@ export class GuiRangeTimeInput extends LitElement {
   }
 
   /**
-   * @return true when a pill was created; false when the parts are incomplete
-   * or the range is rejected (reversed order, out of bounds, or overlapping a
-   * disabled range)
+   * Re-parses both endpoints (surfacing per-endpoint bounds errors as the user
+   * types) and notifies the host picker via `partsChange` so its time lists
+   * follow the typed values. Runs on every part change.
    */
-  private tryCreatePill(): boolean {
+  private syncParts(): { start: RangeEndpoint<string>; end: RangeEndpoint<string> } {
     const start = this.validateTimeParts('start');
     const end = this.validateTimeParts('end');
 
+    const iso = (endpoint: RangeEndpoint<string>) =>
+      endpoint.kind === 'valid' ? endpoint.value : null;
+
     this.dispatchEvent(
       new CustomEvent('partsChange', {
-        detail: { start, end },
+        detail: { start: iso(start), end: iso(end) },
         bubbles: true,
         composed: true,
       }),
     );
 
-    // A bounds-violating endpoint was surfaced above and behaves as incomplete
-    // (no swap, no error clear), matching the original null return.
-    const toEndpoint = (iso: string | null): RangeEndpoint<string> =>
-      iso ? { kind: 'valid', value: iso } : { kind: 'incomplete' };
+    return { start, end };
+  }
 
-    const outcome = commitRange(toEndpoint(start), toEndpoint(end), this.value, {
+  /**
+   * Parses the range and updates the error state, without ever committing.
+   * Shared by the Enter commit and by {@link revalidate}.
+   */
+  private evaluateRange() {
+    const { start, end } = this.syncParts();
+
+    const outcome = commitRange(start, end, this.value, {
       validate: (ordered) =>
         compareISOTimes(ordered.end, ordered.start) <= 0
           ? (this.rangeOrderMessage ?? INVALID_TIME_RANGE_ORDER_MESSAGE)
@@ -356,19 +377,39 @@ export class GuiRangeTimeInput extends LitElement {
       merge: mergeTimeRanges,
     });
 
-    if (outcome.kind === 'incomplete') return false;
-
-    if (outcome.kind === 'invalid') {
-      this.dispatchEvent(
-        new CustomEvent('inputError', {
-          detail: { message: outcome.message },
-          bubbles: true,
-        }),
-      );
-      return false;
+    if (outcome.kind === 'incomplete') {
+      this._parts.clearSurfacedInputError(this.value ?? []);
     }
 
+    if (outcome.kind === 'invalid') {
+      this._parts.surfaceInputError(outcome.message);
+    }
+
+    return outcome;
+  }
+
+  /**
+   * Once the user has attempted a commit, every later edit re-runs validation
+   * so a corrected range clears its error immediately, otherwise the message
+   * would linger until the next Enter and the user could not tell the problem
+   * was solved.
+   */
+  private revalidate() {
+    const outcome = this.evaluateRange();
+
+    if (outcome.kind === 'commit') {
+      this._parts.clearSurfacedInputError(this.value ?? []);
+    }
+  }
+
+  private tryCreatePill(): boolean {
+    this._validationTriggered = true;
+
+    const outcome = this.evaluateRange();
+    if (outcome.kind !== 'commit') return false;
+
     this.value = outcome.value;
+    this._validationTriggered = false;
 
     this._parts.clearGroup('start');
     this._parts.clearGroup('end');

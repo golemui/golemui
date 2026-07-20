@@ -297,11 +297,14 @@ export const runRangeDatePickerComponentTests = (mountFn: MountComponentFn) => {
     it('should clear a group error once its invalid date is corrected in the input', () => {
       mountRangeDatePicker({ props: { invalidDateMessage: 'Invalid date' } });
 
-      // Type Feb 30 into the start group of the picker's input → invalid date.
+      // Type Feb 30 into the start group of the picker's input and commit with
+      // Enter — validation only runs on a commit attempt, so nothing is
+      // reported while the date is still being typed.
       cy.get(sel.startMonth).click();
       cy.focused().type('02');
       cy.focused().type('30');
       cy.focused().type('2026');
+      cy.focused().type('{enter}');
       // Submit marks the form touched so the picker renders the injected error.
       cy.get('[data-cy="submitBtn_button"]').click({ force: true });
       cy.get('[data-cy="testSubject_validator-error"]')

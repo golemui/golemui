@@ -215,7 +215,7 @@ export class GuiTimePicker extends LitElement {
 
     if (event.key === 'Enter') {
       const target = event.target as HTMLElement;
-      if (target.tagName === 'INPUT' && target.closest('gui-time')) {
+      if (target.closest('gui-time')) {
         if (this._popup.open) this._popup.close();
         this.commitValue(this.value, true);
         return;

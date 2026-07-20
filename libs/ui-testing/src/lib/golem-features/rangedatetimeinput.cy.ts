@@ -194,6 +194,10 @@ export const runRangeDateTimeInputComponentTests = (mountFn: MountComponentFn) =
       typeGroup('start', ['22', '11', '2026', '18', '00']);
       cy.get(sel.endDay).click();
 
+      // Quiet until the user attempts a commit.
+      cy.get('@inputErrorSpy').should('not.have.been.called');
+
+      cy.focused().type('{enter}');
       cy.get('@inputErrorSpy').then((spy: any) => {
         expect(spy.getCall(0).args[0].detail.message).to.equal('Too late');
       });
@@ -232,6 +236,10 @@ export const runRangeDateTimeInputComponentTests = (mountFn: MountComponentFn) =
       typeGroup('start', ['22', '11', '2026', '08', '00']);
       cy.get(sel.endDay).click();
 
+      // Quiet until the user attempts a commit.
+      cy.get('@inputErrorSpy').should('not.have.been.called');
+
+      cy.focused().type('{enter}');
       cy.get('@inputErrorSpy').then((spy: any) => {
         expect(spy.getCall(0).args[0].detail.message).to.equal('Too early');
       });
@@ -240,8 +248,9 @@ export const runRangeDateTimeInputComponentTests = (mountFn: MountComponentFn) =
     it('should clear a group error once its invalid date is corrected, before the range completes', () => {
       mountRangeDateTimeInput({ props: { invalidDateMessage: 'Invalid date' } });
 
-      // Feb 30 09:00 in the start group → invalid-date error injected.
+      // Feb 30 09:00 in the start group, committed with Enter → invalid-date error.
       typeGroup('start', ['30', '02', '2026', '09', '00']);
+      cy.focused().type('{enter}');
       // Submitting marks the form touched so the injected error renders.
       cy.get('[data-cy="submitBtn_button"]').click({ force: true });
       cy.get('[data-cy="testSubject_validator-error"]')

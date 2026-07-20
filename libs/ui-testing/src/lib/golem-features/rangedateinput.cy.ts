@@ -247,6 +247,10 @@ export const runRangeDateInputComponentTests = (mountFn: MountComponentFn) => {
 
         typeDate('start', '02', '31', '2026');
 
+        // Quiet until the user attempts a commit.
+        cy.get('@inputErrorSpy').should('not.have.been.called');
+
+        cy.focused().type('{enter}');
         cy.get('@inputErrorSpy').should('have.been.called');
         cy.get(sel.pillText).should('not.exist');
       });
@@ -254,8 +258,9 @@ export const runRangeDateInputComponentTests = (mountFn: MountComponentFn) => {
       it('should clear a group error once its invalid date is corrected, before the range completes', () => {
         mountRangeDateInput({ props: { invalidDateMessage: 'Invalid date' } });
 
-        // Feb 30 in the start group → invalid-date error injected.
+        // Feb 30 in the start group, committed with Enter → invalid-date error.
         typeDate('start', '02', '30', '2026');
+        cy.focused().type('{enter}');
         // Submitting marks the form touched so the injected error renders.
         cy.get('[data-cy="submitBtn_button"]').click({ force: true });
         cy.get('[data-cy="testSubject_validator-error"]')

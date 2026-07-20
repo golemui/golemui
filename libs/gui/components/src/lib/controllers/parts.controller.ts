@@ -237,8 +237,37 @@ export class GUIPartsController implements ReactiveController {
    * We allow here editing/navigation keys, ctrl/meta chords and readonly parts
    * pass through; any other non-digit key is prevented.
    */
-  handleKeyDown = (event: KeyboardEvent, _group: string, _type: DateTimePartType): void => {
+  handleKeyDown = (event: KeyboardEvent, group: string, type: DateTimePartType): void => {
+    if (event.key === 'Enter' && this.options.onEnter) {
+      event.preventDefault();
+
+      if (event.target instanceof HTMLInputElement) {
+        this.setPart(group, type, event.target.value.replace(/[^0-9]/g, ''));
+      }
+    }
+
     if (shouldPreventPartKeyDown(event, this.options.isReadonly())) {
+      event.preventDefault();
+    }
+  };
+
+  /**
+   * Keydown for the dayPeriod `<button>`, which -- unlike the numeric parts --
+   * has native activation semantics we have to suppress:
+   *
+   * - Enter activates a button on keydown, which would toggle AM/PM. We block
+   *   it so Enter is free to mean "commit" (the keyup still fires, so
+   *   {@link handleKeyUp} routes it to `onEnter`). Space is left alone and
+   *   keeps toggling natively on keyup.
+   * - ArrowUp/Down scroll the page on a focused button. We block that; the
+   *   toggle itself happens on keyup, so holding the key does not rapid-cycle.
+   */
+  handleDayPeriodKeyDown = (event: KeyboardEvent): void => {
+    if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+      event.preventDefault();
+    }
+
+    if (event.key === 'Enter') {
       event.preventDefault();
     }
   };
@@ -285,8 +314,10 @@ export class GUIPartsController implements ReactiveController {
       }
       case 'ArrowUp':
       case 'ArrowDown': {
-        // The dayPeriod toggle only changes with Enter/Space key press
-        if (descriptor?.kind === 'dayPeriod') break;
+        if (descriptor?.kind === 'dayPeriod') {
+          this.toggleDayPeriod(group, type);
+          break;
+        }
 
         const next = incrementPartValue(
           descriptor,
