@@ -46,6 +46,7 @@ export const GuiForm = forwardRef<FormComponentHandle, ReactFormComponentProps>(
         ...((config.customWidgetLoaders ?? {}) as WidgetLoaders<ComponentType<WithWidget>>),
       },
       dependencies: { ...(resolved.dependencies ?? {}), ...(config.dependencies ?? {}) },
+      functions: { ...(resolved.functions ?? {}), ...(config.functions ?? {}) },
       validateOn: config.validateOn ?? resolved.validateOn ?? 'eager',
       itemRenderers: {
         ...((resolved.itemRenderers ?? {}) as Record<string, ReactItemRenderer<any>>),

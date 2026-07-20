@@ -48,6 +48,7 @@ export class FormElement extends LitElement {
         ...((c.customWidgetLoaders ?? {}) as WidgetLoaders<Type<WithWidget>>),
       },
       dependencies: { ...(resolved.dependencies ?? {}), ...(c.dependencies ?? {}) },
+      functions: { ...(resolved.functions ?? {}), ...(c.functions ?? {}) },
       validateOn: c.validateOn ?? resolved.validateOn ?? 'eager',
       itemRenderers: {
         ...((resolved.itemRenderers ?? {}) as Record<string, LitItemRenderer<any>>),

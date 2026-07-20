@@ -17,6 +17,7 @@ export type {
 
 // ─── shared (external libs dependency injection) ───
 export type { Dependencies } from './lib/shared';
+export type { ExpressionFunction, ExpressionFunctions } from '@golemui/core';
 
 // ─── utils (form composition) ───
 export { resolveChunkRefs } from './lib/utils/schema';

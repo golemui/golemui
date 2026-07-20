@@ -42,6 +42,7 @@ const coreConfig = computed<FormInitConfig<Component<WithWidget>>>(() => {
       ...((props.config.customWidgetLoaders ?? {}) as WidgetLoaders<Component<WithWidget>>),
     },
     dependencies: { ...(r.dependencies ?? {}), ...(props.config.dependencies ?? {}) },
+    functions: { ...(r.functions ?? {}), ...(props.config.functions ?? {}) },
     validateOn: props.config.validateOn ?? r.validateOn ?? 'eager',
     itemRenderers: {
       ...((r.itemRenderers ?? {}) as Record<string, VueItemRenderer<any>>),
