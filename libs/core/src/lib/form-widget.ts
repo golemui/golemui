@@ -302,7 +302,8 @@ const translationConfigDecoder = object<TranslationConfig>({
 });
 const localizableDecoder = oneOf<Localizable>([string(), translationConfigDecoder]);
 
-const uidDecoder = optional(string()).map((s) => s || shortUUID());
+// Missing uids are assigned later by assignDeterministicUids (see formDefDecoder)
+const uidDecoder = optional(string());
 
 const displayWidgetDecoder = objectWithSuffix<DisplayWidget<string>>({
   kind: { decoder: literal('display') },
@@ -344,7 +345,8 @@ const functionWidgetDecoder: Decoder<FunctionWidget<string>> = new Decoder((json
       touched: undefined,
       translate: undefined,
     });
-    fnWidget.uid = widget.uid || shortUUID();
+    // The uid is stored on the function object itself so re-decoding the same function keeps the same uid
+    fnWidget.uid = fnWidget.uid || widget.uid || shortUUID();
     fnWidget.type = widget.type;
     fnWidget.path = (widget as InputWidget<unknown>).path; // this could be undefined, and it's ok.
     return ok(fnWidget);
@@ -382,7 +384,8 @@ const inputWidgetDecoder = objectWithSuffix<InputWidget<any, string>>({
   // TODO: no type safety in this block
   if (ctrl.type === 'repeater') {
     const props = ctrl['props'] as Record<string, any>;
-    props['template'] = layoutWidgetDecoder.parse(props['template']);
+    // Copy the props so decoding never writes into the original form definition
+    transformed.props = { ...props, template: layoutWidgetDecoder.parse(props['template']) };
   }
   return transformed;
 });
