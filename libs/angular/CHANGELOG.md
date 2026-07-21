@@ -1,3 +1,13 @@
+## 1.1.0 (2026-07-21)
+
+### 🚀 Features
+
+- `$fn` host functions for reactive expressions ([#227](https://github.com/golemui/golemui/pull/227))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+
 ## 1.0.3 (2026-07-02)
 
 This was a version bump only for angular to align it with other projects, there were no code changes.
