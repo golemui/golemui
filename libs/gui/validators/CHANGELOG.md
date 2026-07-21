@@ -1,3 +1,13 @@
+## 1.1.0 (2026-07-21)
+
+### 🚀 Features
+
+- add time input ([#217](https://github.com/golemui/golemui/pull/217))
+
+### ❤️ Thank You
+
+- Raúl Jiménez @Elecash
+
 ## 1.0.3 (2026-07-02)
 
 This was a version bump only for gui-validators to align it with other projects, there were no code changes.

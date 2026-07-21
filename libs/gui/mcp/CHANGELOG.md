@@ -1,3 +1,19 @@
+## 1.1.0 (2026-07-21)
+
+### 🚀 Features
+
+- `$fn` host functions for reactive expressions ([#227](https://github.com/golemui/golemui/pull/227))
+- range time and range date time inputs ([#225](https://github.com/golemui/golemui/pull/225))
+- add $item / $index scope to repeater templates ([#222](https://github.com/golemui/golemui/pull/222))
+- add time and date-time inputs and input error localizable messages ([#220](https://github.com/golemui/golemui/pull/220))
+- add date time input ([#218](https://github.com/golemui/golemui/pull/218))
+- add time input ([#217](https://github.com/golemui/golemui/pull/217))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
 ## 1.0.3 (2026-07-02)
 
 This was a version bump only for gui-mcp to align it with other projects, there were no code changes.
