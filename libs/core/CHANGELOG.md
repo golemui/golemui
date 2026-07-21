@@ -1,3 +1,14 @@
+## 1.1.0 (2026-07-21)
+
+### 🚀 Features
+
+- `$fn` host functions for reactive expressions ([#227](https://github.com/golemui/golemui/pull/227))
+- add $item / $index scope to repeater templates ([#222](https://github.com/golemui/golemui/pull/222))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+
 ## 1.0.3 (2026-07-02)
 
 ### 🩹 Fixes
