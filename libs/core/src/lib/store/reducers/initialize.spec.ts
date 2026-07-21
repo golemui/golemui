@@ -106,6 +106,77 @@ describe('initialize - undeclared state reference diagnostic', () => {
   });
 });
 
+// Re-initializing with an equal form definition (StrictMode double-effect, a re-fetched JSON) must produce the exact same uids,
+// otherwise the already rendered widgets point at flags and repeater scopes that no longer exist
+describe('initialize - deterministic uids across re-initializes', () => {
+  const init = (formDef: Record<string, any>) =>
+    initialize(createInitialState('en-US'), {
+      type: 'INITIALIZE',
+      payload: { formName: 'f', formDef },
+    });
+
+  // Bare-array form shape with no explicit uids, so it also exercises the root layout synthesized by the reducer itself
+  const makeRawFormDef = (): Record<string, any> =>
+    JSON.parse(
+      JSON.stringify({
+        form: [
+          { kind: 'display', type: 'text', props: { text: 'hello' } },
+          {
+            kind: 'input',
+            type: 'repeater',
+            path: 'items',
+            props: {
+              template: {
+                kind: 'layout',
+                type: 'flex',
+                children: [{ kind: 'display', type: 'text', props: { text: 'row' } }],
+              },
+            },
+          },
+        ],
+      }),
+    );
+
+  it('produces identical flatForm uids for two copies of the same definition', () => {
+    const firstRun = init(makeRawFormDef());
+    const secondRun = init(makeRawFormDef());
+
+    expect(firstRun.formHealth.status).toBe('ok');
+    expect(Object.keys(firstRun.flatForm)).toEqual(Object.keys(secondRun.flatForm));
+  });
+
+  it('produces identical repeater template uids for two copies of the same definition', () => {
+    const collectTemplateUids = (state: ReturnType<typeof init>): string[] => {
+      const repeater = state.flatForm['items-repeater'] as Record<string, any>;
+      const template = repeater['props']['template'];
+      return [template.uid, ...template.children.map((child: any) => child.uid)];
+    };
+
+    const firstUids = collectTemplateUids(init(makeRawFormDef()));
+    const secondUids = collectTemplateUids(init(makeRawFormDef()));
+
+    expect(firstUids).toEqual(secondUids);
+    for (const uid of firstUids) {
+      expect(uid).toBeTruthy();
+    }
+  });
+
+  it('keeps the same uid for a function widget across re-initializes', () => {
+    const fnWidget = () => ({
+      kind: 'display' as const,
+      type: 'text',
+      uid: '',
+      props: { text: 'from a function' },
+    });
+    const formDef = { form: [fnWidget] };
+
+    const firstKeys = Object.keys(init(formDef).flatForm);
+    const secondKeys = Object.keys(init(formDef).flatForm);
+
+    expect(firstKeys).toEqual(secondKeys);
+  });
+});
+
 // FunctionWidgetParams contract says ($form is always an object) check that
 // `$form.field` reads return undefined, not crash because `$form` is `undefined`.
 describe('initialize - function widget decode probe', () => {
