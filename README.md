@@ -1,10 +1,13 @@
 <p align="center">
   <a href="https://golemui.com">
-    <img src=".github/assets/gui-lockup.svg" alt="{gui.}" height="64">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset=".github/assets/gui-lockup-dark.png">
+      <img src=".github/assets/gui-lockup-light.png" alt="{gui.} GolemUI" height="64">
+    </picture>
   </a>
 </p>
 
-<p align="center">Declarative, JSON-based forms for React, Angular, Lit, Vue, and vanilla JS.</p>
+<p align="center">The one stop shop for JS forms.</p>
 
 <p align="center">
   <a href="https://golemui.com/integration/react/" title="React"><img alt="React" src="https://cdn.simpleicons.org/react/61DAFB" height="44"></a>
@@ -21,7 +24,7 @@
 <p align="center">
   <a href="https://www.npmjs.com/package/@golemui/gui-shared"><img alt="npm" src="https://img.shields.io/npm/v/@golemui/gui-shared.svg"></a>
   <a href="https://github.com/golemui/golemui/blob/main/LICENSE"><img alt="license" src="https://img.shields.io/npm/l/@golemui/gui-shared.svg"></a>
-  <a href="https://golemui.com"><img alt="docs" src="https://img.shields.io/badge/docs-golemui.com-3b82f6"></a>
+  <a href="https://golemui.com"><img alt="docs" src="https://img.shields.io/badge/docs-golemui.com-c15a2c"></a>
 </p>
 <p align="center">
   <a href="https://golemui.com/getting-started/installation/"><strong>Get started</strong></a> ·
@@ -34,7 +37,7 @@
 
 ## Overview
 
-Underneath every form is a serializable JSON definition. Author it directly as schema-validated JSON, or with the typed `gui` builder API.
+Define forms with the typed `gui` builder API, or as schema-validated JSON. Both produce the same serializable definition.
 
 - One definition renders in React, Angular, Lit, Vue, or vanilla JS.
 - Validation, conditional fields, i18n, and accessibility come from the schema and runtime.
@@ -118,13 +121,13 @@ The same `formDef` value renders in every supported framework. See [Integrations
 
 **The `gui` builder.** Exported from `@golemui/gui-shared`, grouped into namespaces:
 
-| Namespace       | Purpose                                               | Examples                                                                                                                                                                       |
-| --------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `gui.inputs`    | Field widgets                                         | `textInput`, `numberInput`, `password`, `textarea`, `checkbox`, `dropdown`, `select`, `radiogroup`, `currency`, `tags`, `datePicker`, `calendar`, `repeater`, `list`, `custom` |
-| `gui.actions`   | Buttons and custom actions                            | `button`, `custom`                                                                                                                                                             |
-| `gui.displays`  | Non-input content                                     | `display`, `alert`, `markdownText`, `custom`                                                                                                                                   |
-| `gui.layouts`   | Containers                                            | `flex`, `grid`, `tabs`, `accordion`, `custom`                                                                                                                                  |
-| `gui.selectors` | Select and update widgets by type, uid, tag, or state | -                                                                                                                                                                              |
+| Namespace       | Purpose                                               | Examples                                                                                                                                                                                                     |
+| --------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `gui.inputs`    | Field widgets                                         | `textInput`, `numberInput`, `password`, `textarea`, `checkbox`, `dropdown`, `select`, `radiogroup`, `currency`, `tags`, `datePicker`, `timeInput`, `dateTimeInput`, `calendar`, `repeater`, `list`, `custom` |
+| `gui.actions`   | Buttons and custom actions                            | `button`, `custom`                                                                                                                                                                                           |
+| `gui.displays`  | Non-input content                                     | `display`, `alert`, `markdownText`, `custom`                                                                                                                                                                 |
+| `gui.layouts`   | Containers                                            | `flex`, `grid`, `tabs`, `accordion`, `custom`                                                                                                                                                                |
+| `gui.selectors` | Select and update widgets by type, uid, tag, or state | -                                                                                                                                                                                                            |
 
 **Conditional fields.** Widgets accept `include` / `exclude` with a reactive expression over form data:
 
