@@ -1,6 +1,6 @@
 import { type ActionWidget, type NonFunctionWidget } from './form-widget';
 import { type I18nTranslator } from './i18n';
-import { type OVERRIDE_WIDGET_PROP } from './store/actions';
+import { type INJECT_VALIDATION_ISSUES, type OVERRIDE_WIDGET_PROP } from './store/actions';
 import { type ImmutableRecord } from './utils/types';
 
 /**
@@ -130,7 +130,7 @@ export type EventName = string;
 /**
  * Actions that can be called back from the event handler callback
  */
-export type EventHandlerCallback = OVERRIDE_WIDGET_PROP;
+export type EventHandlerCallback = OVERRIDE_WIDGET_PROP | INJECT_VALIDATION_ISSUES;
 
 export type FormEvent<T = any> = {
   /** The name of the form widget that dispatched the event. */
