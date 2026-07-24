@@ -5,11 +5,12 @@ import {
   type FormSubmitEvent,
   type State,
   type ValidatorFn,
+  type WidgetLoaders,
+  type WithWidget,
   formHealth,
   getDirectionFromLanguage,
   shortUUID,
 } from '@golemui/core';
-import type { WidgetLoaders, WithWidget } from '@golemui/core/internals';
 import { provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
