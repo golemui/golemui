@@ -13,6 +13,7 @@ export * from './messages';
 export * from './modular.dx';
 export * from './selects';
 export * from './shipping-manifest';
+export * from './simple-signin';
 export * from './signin';
 export * from './software-issue-management';
 export * from './template';
