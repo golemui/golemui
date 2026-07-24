@@ -11,6 +11,7 @@ import {
 } from './shared';
 import { type Action } from './store/actions';
 import { type Middleware, type State } from './store/model';
+import { assignDeterministicUids } from './utils/deterministic-uids';
 
 // --------------------------------
 //
@@ -76,4 +77,7 @@ export interface FormInitConfig<ComponentType = unknown> {
 export const formDefDecoder = object({
   states: optional(record(string())),
   form: lazy(() => layoutWidgetDecoder),
+}).map((formDef) => {
+  assignDeterministicUids(formDef.form);
+  return formDef;
 });
