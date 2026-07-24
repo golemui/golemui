@@ -1,6 +1,5 @@
-import type { FormEvent, ValidatorFn } from '@golemui/core';
+import type { FormEvent, ValidatorFn, WidgetLoaders, WithWidget } from '@golemui/core';
 import { type FormInitConfig } from '@golemui/core';
-import type { WidgetLoaders, WithWidget } from '@golemui/core/internals';
 import { type GuiFormInitConfig } from '@golemui/gui-shared';
 import { resolveFormInput } from '@golemui/gui-shared/internals';
 import {

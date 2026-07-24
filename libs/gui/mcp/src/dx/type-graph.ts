@@ -41,7 +41,6 @@ const GOLEMUI_TYPE_PACKAGES = [
   { spec: '@golemui/gui-shared/internals', rel: 'gui/shared/internals.d.ts' },
   { spec: '@golemui/gui-validators', rel: 'gui/validators/index.d.ts' },
   { spec: '@golemui/core', rel: 'core/index.d.ts' },
-  { spec: '@golemui/core/internals', rel: 'core/internals.d.ts' },
 ] as const;
 
 /** How many directories to walk up from this module when hunting for the built `dist/libs`. */

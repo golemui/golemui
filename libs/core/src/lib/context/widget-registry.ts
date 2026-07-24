@@ -1,7 +1,9 @@
 import { type NonFunctionWidget } from '../form-widget';
 
 /**
- * @internal Framework adapter contract — not part of the end-user public API.
+ * Map of widget type to a lazy component loader. This is the shape of
+ * `FormInitConfig.widgetLoaders`: each entry loads the component that renders
+ * that widget type, including custom widgets.
  */
 export type WidgetLoaders<
   ComponentType,
