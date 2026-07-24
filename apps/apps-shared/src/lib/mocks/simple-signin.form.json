@@ -1,0 +1,79 @@
+{
+  "$schema": "../../../../../libs/gui/schemas/src/lib/form.schema.json",
+  "states": {
+    "register": "$form.registerMode === true",
+    "register:canSubmit": "$form.terms === true"
+  },
+  "form": [
+    {
+      "kind": "input",
+      "type": "textinput",
+      "label": "User Email",
+      "path": "user.email",
+      "validator": { "type": "string", "required": true, "format": "email" }
+    },
+    {
+      "kind": "input",
+      "type": "password",
+      "label": "Password",
+      "label.register": "Create Password",
+      "props": {
+        "icon": "password",
+        "hint.register": "Requires an uppercase, lowercase, and a number",
+        "placeholder": "Password",
+        "placeholder.register": "Create Password",
+        "showPasswordIcon": "visibility",
+        "hidePasswordIcon": "visibility_off"
+      },
+      "path": "user.password",
+      "validator": {
+        "type": "string",
+        "required": true,
+        "minLength": 8,
+        "maxLength": 20,
+        "pattern": "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]+$"
+      },
+      "on": { "change.register": "checkPasswordMatch" }
+    },
+    {
+      "kind": "input",
+      "type": "password",
+      "label": "Confirm Password",
+      "props": {
+        "icon": "password",
+        "placeholder": "Confirm Password",
+        "showPasswordIcon": "visibility",
+        "hidePasswordIcon": "visibility_off"
+      },
+      "path": "user.confirm",
+      "on": { "change": "checkPasswordMatch" },
+      "include": { "in": ["register"] }
+    },
+    {
+      "kind": "input",
+      "type": "checkbox",
+      "label": "Register",
+      "path": "registerMode"
+    },
+    {
+      "kind": "input",
+      "type": "checkbox",
+      "label": "Accept Terms",
+      "path": "terms",
+      "include": { "in": ["register"] }
+    },
+    {
+      "kind": "action",
+      "type": "button",
+      "label": "Login",
+      "label.register": "Register",
+      "disabled": false,
+      "disabled.register": true,
+      "disabled.register:canSubmit": false,
+      "on": {
+        "click": "handleLogin",
+        "click.register": "handleRegister"
+      }
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-import type { DotPath, FormEvent } from '@golemui/core';
+import type { DotPath, EventHandlerCallback, FormEvent } from '@golemui/core';
 import i18next from 'i18next';
 
 export const onFormEvent = (event: FormEvent) => {
@@ -22,7 +22,31 @@ const SHARE_URLS: Record<string, (url: string) => string> = {
     `https://www.reddit.com/submit?url=${encodeURIComponent(url)}&title=${encodeURIComponent('Check out GolemUI Pro!')}`,
 };
 
+interface UserLogin {
+  user: { password: string; confirm: string };
+}
+
 const eventHandlers = {
+  checkPasswordMatch(event: FormEvent) {
+    const data: UserLogin = event.data as UserLogin;
+    if (data.user.password !== data.user.confirm && !!data.user.confirm) {
+      event.callback({
+        type: 'INJECT_VALIDATION_ISSUES',
+        payload: {
+          path: 'user.confirm',
+          issues: ['Passwords do not match'],
+        },
+      });
+    } else {
+      event.callback({
+        type: 'INJECT_VALIDATION_ISSUES',
+        payload: {
+          path: 'user.confirm',
+          issues: null,
+        },
+      });
+    }
+  },
   shareEvent(event: FormEvent) {
     const network = event.detail as string;
     const buildUrl = SHARE_URLS[network];
