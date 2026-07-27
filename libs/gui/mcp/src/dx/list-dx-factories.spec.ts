@@ -1,3 +1,4 @@
+import { formEventNames } from '@golemui/core';
 import { describe, expect, it } from 'vitest';
 import { listDxFactoriesCatalog } from './list-dx-factories';
 import { listDxFactories } from './dx-specs';
@@ -45,7 +46,8 @@ describe('dx_list_factories', () => {
       ['react', '@golemui/gui-react', 'formSubmit={'],
       ['angular', '@golemui/gui-angular', '(formSubmit)='],
       ['vue', '@golemui/gui-vue', '@form-submit='],
-      ['lit', '@golemui/gui-lit', '<gui-form'],
+      ['lit', '@golemui/gui-lit', `@${formEventNames.submit}=`],
+      ['vanilla', '@golemui/gui-lit', `addEventListener('${formEventNames.submit}'`],
     ];
     for (const [fw, pkg, wiring] of cases) {
       const common = listDxFactoriesCatalog(fw).common;
@@ -53,6 +55,9 @@ describe('dx_list_factories', () => {
       expect(common).toContain(wiring);
       // `gui` is always from gui-shared, regardless of framework.
       expect(common).toContain("import { gui } from '@golemui/gui-shared'");
+    }
+    for (const fw of ['lit', 'vanilla'] as const) {
+      expect(listDxFactoriesCatalog(fw).common).not.toContain('form-submit');
     }
     // A React catalog must NOT leak another framework's component package.
     expect(listDxFactoriesCatalog('react').common).not.toContain('@golemui/gui-vue');

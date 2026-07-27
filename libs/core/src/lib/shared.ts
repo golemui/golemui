@@ -146,6 +146,16 @@ export type FormEvent<T = any> = {
 export type FormSubmitEvent<T = any> = Omit<FormEvent<T>, 'name' | 'detail'>;
 
 /**
+ * The DOM event names dispatched by `<gui-core-form>`, and therefore the names the Lit
+ * and vanilla-JS surfaces listen for.
+ */
+export const formEventNames = {
+  submit: 'formSubmit',
+  health: 'formHealth',
+  event: 'formEvent',
+} as const;
+
+/**
  * Control adapter templateData
  */
 export type ControlTemplateData<T, V = any> = {

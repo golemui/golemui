@@ -138,12 +138,12 @@ gui.actions.button({ label: 'Reset', include: { when: '$form.debug === true' } }
 
 `$form.<path>` reads the current form data; the expression is evaluated at runtime.
 
-**Rendering per framework.** Every adapter takes the definition through a `config` prop and emits a `formSubmit` event:
+**Rendering per framework.** Every adapter takes the definition through a `config` prop and emits a form submit event:
 
 | Framework | Import                                                 | Element                                                       |
 | --------- | ------------------------------------------------------ | ------------------------------------------------------------- |
 | React     | `import { GuiForm } from '@golemui/gui-react'`         | `<GuiForm config={config} formSubmit={handler} />`            |
-| Vue       | `import { GuiForm } from '@golemui/gui-vue'`           | `<GuiForm :config="config" @formSubmit="handler" />`          |
+| Vue       | `import { GuiForm } from '@golemui/gui-vue'`           | `<GuiForm :config="config" @form-submit="handler" />`         |
 | Angular   | `import { FormComponent } from '@golemui/gui-angular'` | `<gui-form [config]="config" (formSubmit)="handler($event)">` |
 | Lit       | `import '@golemui/gui-lit'`                            | `<gui-form .config=${config} @formSubmit=${handler}>`         |
 

@@ -7,6 +7,7 @@ import {
   type ValidatorFn,
   type WidgetLoaders,
   type WithWidget,
+  formEventNames,
   formHealth,
   getDirectionFromLanguage,
   shortUUID,
@@ -47,9 +48,9 @@ export class FormElement extends LitElement {
   private unsubscribeI18n: () => void = () => undefined;
   private readonly _defaultFormName = shortUUID();
 
-  static FORM_SUBMIT_EVENT = 'formSubmit';
-  static FORM_HEALTH_EVENT = 'formHealth';
-  static FORM_EVENT = 'formEvent';
+  static FORM_SUBMIT_EVENT = formEventNames.submit;
+  static FORM_HEALTH_EVENT = formEventNames.health;
+  static FORM_EVENT = formEventNames.event;
 
   override connectedCallback() {
     super.connectedCallback();

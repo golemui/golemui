@@ -9,6 +9,8 @@
  * compile gate is the cure.)
  */
 
+import { formEventNames } from '@golemui/core';
+
 export type DxNamespace = 'inputs' | 'actions' | 'displays' | 'layouts';
 
 export interface DxSpec {
@@ -70,12 +72,19 @@ const FRAMEWORK_SETUP: Record<DxFramework, string> = {
     '`FormSubmitEvent` (`.data` is the form data). The event is `form-submit` (kebab-case), not `formSubmit`.',
   lit:
     "RENDER (Lit) — `import { gui } from '@golemui/gui-shared'; import '@golemui/gui-lit';` (registers the " +
-    '`<gui-form>` custom element), then `<gui-form .config=${{ formDef: form }} @form-submit=${(e: CustomEvent) ' +
-    '=> { /* e.detail is the FormSubmitEvent; e.detail.data */ }}></gui-form>`.',
+    '`<gui-form>` custom element), then `<gui-form .config=${{ formDef: form }} @' +
+    formEventNames.submit +
+    '=${(e: CustomEvent) ' +
+    '=> { /* e.detail is the FormSubmitEvent; e.detail.data */ }}></gui-form>`. The event name is ' +
+    '`' +
+    formEventNames.submit +
+    '` (camelCase) — Lit dispatches a raw CustomEvent, so there is no kebab-case alias.',
   vanilla:
     "RENDER (vanilla JS) — `import { gui } from '@golemui/gui-shared'; import '@golemui/gui-lit';` (registers " +
     "`<gui-form>`), then `const el = document.querySelector('gui-form'); el.config = { formDef: form }; " +
-    "el.addEventListener('form-submit', (e) => { /* e.detail.data */ });`",
+    "el.addEventListener('" +
+    formEventNames.submit +
+    "', (e) => { /* e.detail.data */ });`",
 };
 
 function commonNote(fw: DxFramework = 'react'): string {

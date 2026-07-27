@@ -4,6 +4,7 @@ import {
   type NonFunctionWidget,
   cloneObject,
   errorCodes,
+  formEventNames,
   makeRepeaterItemConfig,
 } from '@golemui/core';
 import { consume, ContextProvider } from '@lit/context';
@@ -55,7 +56,7 @@ export const RepeaterWidgetMixin = <T extends new (...args: any[]) => LitElement
         console.error(`Widget "${this.widget.type}" could not be loaded`, err);
         const code = errorCodes.widgetCouldNotBeLoaded;
         this.dispatchEvent(
-          new CustomEvent<FormHealth>('formHealth', {
+          new CustomEvent<FormHealth>(formEventNames.health, {
             detail: {
               status: 'errored',
               message: `[${code}] Widget "${this.widget.type}" could not be loaded`,
