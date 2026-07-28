@@ -10,7 +10,7 @@
     "esModuleInterop": true,
     "types": ["node"]
   },
-  "include": ["src/**/*.ts", "src/**/*.json"],
+  "include": ["src/**/*.ts", "src/**/*.json", "tools/**/*.ts"],
   "exclude": [
     "vite.config.ts",
     "vite.config.mts",
