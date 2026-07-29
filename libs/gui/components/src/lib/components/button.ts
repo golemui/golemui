@@ -35,7 +35,11 @@ export class GuiButton extends LitElement {
     };
 
     const iconTemplate = icon
-      ? html`<span class="gui-widget-icon gui-button-icon ${icon}" data-icon=${icon}></span>`
+      ? html`<span
+          class="gui-widget-icon gui-button-icon ${icon}"
+          data-icon=${icon}
+          aria-hidden="true"
+        ></span>`
       : nothing;
 
     return html`

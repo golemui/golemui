@@ -115,7 +115,11 @@ export class GuiTags extends LitElement {
           aria-label=${this.label ?? 'Tags input'}
         >
           ${this.icon
-            ? html`<span class=${classMap(iconClassMap)} data-icon=${this.icon}></span>`
+            ? html`<span
+                class=${classMap(iconClassMap)}
+                data-icon=${this.icon}
+                aria-hidden="true"
+              ></span>`
             : nothing}
 
           <gui-pills

@@ -73,7 +73,11 @@ export const addIcon = <T, ExtraProps extends { icon?: string }>(
     };
     return {
       widgetClasses: widgetClasses,
-      html: html`<span class=${classMap(classes)} data-icon=${templateData.icon}></span>`,
+      html: html`<span
+        class=${classMap(classes)}
+        data-icon=${templateData.icon}
+        aria-hidden="true"
+      ></span>`,
     };
   } else {
     return { widgetClasses: widgetClasses, html: html`` };

@@ -132,7 +132,11 @@ export class GuiDate extends LitElement {
           ${renderGroupParts('default', partsData, this._parts)}
         </div>
         ${this.icon
-          ? html`<span class=${classMap(iconClassMap)} data-icon=${this.icon}></span>`
+          ? html`<span
+              class=${classMap(iconClassMap)}
+              data-icon=${this.icon}
+              aria-hidden="true"
+            ></span>`
           : nothing}
       </div>
 
