@@ -1,8 +1,31 @@
-# GolemUI — MCP server
+# GolemUI — MCP server & CLI verification
 
 `@golemui/gui-mcp` gives agents deterministic validation and generation for GolemUI forms.
 If its tools are available in your session, USE them: they are compile/schema-checked truth,
 stronger than any text reference.
+
+## CLI verification (no MCP install)
+
+The same two terminal checks are runnable as plain shell commands — no MCP connector,
+no configuration (Node 18+):
+
+```bash
+npx -y @golemui/gui-mcp check-dx <file.ts>        # type-checks gui.* code
+npx -y @golemui/gui-mcp validate-json <file.json> # validates a JSON definition
+```
+
+Output is a single JSON result on stdout (`{ ok, diagnostics, expressionWarnings }` /
+`{ valid, errors, warnings, expressionWarnings, interpolationWarnings }`). Exit codes:
+0 = pass · 1 = problems found (fix and re-run) · 2 = usage/file error. The package is
+self-contained (it bundles the schemas and `@golemui` type declarations), so the commands
+work even before GolemUI is installed in the project.
+
+**Corporate / restricted environments**: where MCP connectors need IT approval or the
+agent's shell cannot reach the public registry, add the package as a devDependency —
+`npm i -D @golemui/gui-mcp`. Verification then rides the normal dependency pipeline
+(internal registry mirror, lockfile pinning, security scanning), and the same `npx`
+commands resolve the project-local bin with zero network at run time. It ships under the
+same `@golemui/*` scope the library itself requires, so no new allowlist entry is needed.
 
 ## Install (offer this to the user when the MCP is absent)
 

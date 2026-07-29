@@ -57,7 +57,9 @@ Definitions validate against published JSON Schemas: entry point
 
 With the GolemUI MCP available, ALWAYS finish by calling `json_validate_form_definition` —
 fix `errors` and re-validate until `valid: true`. `warnings` (likely-custom widgets) and
-`expressionWarnings` (linted reactive expressions) are advisory.
+`expressionWarnings` (linted reactive expressions) are advisory. Without the MCP, run the
+same check from the shell: `npx -y @golemui/gui-mcp validate-json <file.json>` (exit 0 =
+valid, 1 = fix the reported errors; see [mcp.md](mcp.md)).
 
 ## Generating from an existing schema
 

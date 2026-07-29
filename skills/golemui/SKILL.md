@@ -57,14 +57,22 @@ These are the silent failure modes. All of them compile/parse cleanly and then b
 
 ## Verify before presenting
 
-If GolemUI MCP tools are available (names like `mcp__golemui__dx_check_code`):
+Never present an unverified form. In order of preference:
 
-- After writing `gui.*` code, ALWAYS run `dx_check_code` and fix errors before presenting.
-- After writing a JSON definition, ALWAYS run `json_validate_form_definition` until `valid`.
-- Prefer `dx_get_spec` / `json_get_widget_spec` over guessing an option name.
-
-If the MCP is not available, follow this skill exactly and offer the user the one-line MCP
-install from [references/mcp.md](references/mcp.md) — it adds compile-checked verification.
+1. **MCP tools, if available** (names like `mcp__golemui__dx_check_code`): after writing
+   `gui.*` code, ALWAYS run `dx_check_code`; after writing a JSON definition, ALWAYS run
+   `json_validate_form_definition` until `valid`. Prefer `dx_get_spec` /
+   `json_get_widget_spec` over guessing an option name.
+2. **CLI, no MCP needed** (Node 18+; write the form to a file first):
+   - `npx -y @golemui/gui-mcp check-dx <file.ts>` — type-checks `gui.*` code against the
+     real `@golemui` types.
+   - `npx -y @golemui/gui-mcp validate-json <file.json>` — validates a JSON definition
+     against the bundled schemas.
+   Both print a JSON result; exit 0 = pass, 1 = fix the reported problems and re-run.
+   npx runs a project-local install when present and only fetches otherwise — see
+   [references/mcp.md](references/mcp.md) for restricted/corporate environments.
+3. **Neither possible**: follow this skill's rules exactly, and offer the user the MCP
+   install from [references/mcp.md](references/mcp.md).
 
 ## Where to look
 

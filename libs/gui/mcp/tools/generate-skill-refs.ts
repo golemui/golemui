@@ -44,7 +44,9 @@ export function buildDxReference(): string {
       'beyond what is here, follow the **Reference:** link printed under that factory below — each is a full ' +
       `absolute URL on ${DOCS_BASE}. The complete page index is at ${DOCS_BASE}/llms.txt. ` +
       'These docs are the authoritative source — do NOT read the `@golemui` TypeScript declarations in ' +
-      '`node_modules` or search the filesystem; everything you need is here or one Reference link away.',
+      '`node_modules` or search the filesystem; everything you need is here or one Reference link away. ' +
+      'VERIFY when done: write the form to a file and run `npx -y @golemui/gui-mcp check-dx <file.ts>` ' +
+      '(exit 0 = compiles against the real `@golemui` types; exit 1 = fix the reported diagnostics and re-run).',
   );
   lines.push('');
   lines.push('General: ' + dxCommonNote());
