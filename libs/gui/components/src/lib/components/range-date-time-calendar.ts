@@ -177,6 +177,7 @@ export class GuiRangeDateTimeCalendar extends LitElement {
         readonly: this.readOnly,
         disabled: this.disabled,
         touched: this.touched,
+        required: this.required,
       },
     }),
   });

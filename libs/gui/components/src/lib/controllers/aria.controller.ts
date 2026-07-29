@@ -1,7 +1,7 @@
 import { type ControlTemplateData, filterTap } from '@golemui/core';
 import { type ReactiveController, type ReactiveControllerHost } from 'lit';
 
-export class GUIAriaController<T, ExtraProps extends { hint?: string }>
+export class GUIAriaController<T, ExtraProps extends { hint?: string; required?: boolean }>
   implements ReactiveController
 {
   private getTargets: () => NodeListOf<Element> | HTMLElement[] | HTMLElement | null;
@@ -44,7 +44,7 @@ export class GUIAriaController<T, ExtraProps extends { hint?: string }>
     }
 
     const { uid, templateData } = this.getState();
-    const { touched, errors, readonly, disabled, hint } = templateData;
+    const { touched, errors, readonly, disabled, hint, required } = templateData;
     const showErrors = touched && errors && errors.length > 0;
 
     filterTap(
@@ -63,6 +63,7 @@ export class GUIAriaController<T, ExtraProps extends { hint?: string }>
         toggleAttr('aria-invalid', showErrors ? 'true' : null);
         toggleAttr('aria-errormessage', showErrors ? `${uid}_errors` : null);
         toggleAttr('aria-readonly', disabled || readonly ? 'true' : null);
+        toggleAttr('aria-required', required ? 'true' : null);
       },
     );
   }

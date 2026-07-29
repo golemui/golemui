@@ -108,6 +108,7 @@ export class GuiRangeDateInput extends LitElement {
         readonly: this.readOnly,
         disabled: this.disabled,
         touched: this.touched,
+        required: this.required,
       },
     }),
   });

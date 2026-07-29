@@ -38,6 +38,7 @@ export class GuiPassword extends LitElement {
         readonly: this.readOnly,
         disabled: this.disabled,
         touched: this.touched,
+        required: this.required,
       },
     }),
   });
@@ -91,7 +92,7 @@ export class GuiPassword extends LitElement {
           data-cy=${`${this.uid}_password`}
           class=${classMap(fieldClasses)}
           value=${this.value}
-          ?required=${this.disabled}
+          ?required=${this.required}
           ?disabled=${this.disabled}
           ?readonly=${this.readOnly}
           placeholder=${this.placeholder || nothing}
