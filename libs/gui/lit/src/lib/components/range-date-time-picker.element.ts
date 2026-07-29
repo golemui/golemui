@@ -78,6 +78,13 @@ export class RangeDateTimePickerElement extends LitElement implements WithWidget
         .monthFormat=${templateData.monthFormat}
         .numberOfMonths=${templateData.numberOfMonths}
         .localeId=${templateData.lang}
+        .toggleAriaLabel=${templateData.toggleAriaLabel}
+        .dayAriaLabel=${templateData.dayAriaLabel}
+        .monthAriaLabel=${templateData.monthAriaLabel}
+        .yearAriaLabel=${templateData.yearAriaLabel}
+        .hourAriaLabel=${templateData.hourAriaLabel}
+        .minuteAriaLabel=${templateData.minuteAriaLabel}
+        .dayPeriodAriaLabel=${templateData.dayPeriodAriaLabel}
         .hourFormat=${templateData.hourFormat}
         .minuteStep=${templateData.minuteStep}
         ?allow-custom-time=${templateData.allowCustomTime}

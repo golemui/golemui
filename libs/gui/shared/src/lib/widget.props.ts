@@ -391,16 +391,17 @@ export type DisabledTimeRange = TimeRange & {
   weekdays?: number[];
 };
 
-export type TimePickerProps = TimeInputProps & {
-  /** Times inside these ranges (both ends inclusive) render disabled. */
-  disabledRanges?: TimeRange[];
-  /** Allows typing a time in the input; when false (default) values come only from the list. */
-  allowCustomTime?: boolean;
-  height?: number;
-  itemHeight?: number;
-  disabledRangeMessage?: Localizable;
-  noAvailableTimesMessage?: Localizable;
-};
+export type TimePickerProps = TimeInputProps &
+  PickerToggleProps & {
+    /** Times inside these ranges (both ends inclusive) render disabled. */
+    disabledRanges?: TimeRange[];
+    /** Allows typing a time in the input; when false (default) values come only from the list. */
+    allowCustomTime?: boolean;
+    height?: number;
+    itemHeight?: number;
+    disabledRangeMessage?: Localizable;
+    noAvailableTimesMessage?: Localizable;
+  };
 
 export type RangeDateInputProps = {
   hint?: string;
@@ -421,15 +422,25 @@ export type DateBoundsMessageProps = {
   disabledDateRangeMessage?: Localizable;
 };
 
-export type DatePickerProps = CalendarProps & DateinputProps & DateBoundsMessageProps;
+/** The popup toggle button shared by the six pickers. */
+export type PickerToggleProps = {
+  toggleAriaLabel?: string;
+};
+
+export type DatePickerProps = CalendarProps &
+  DateinputProps &
+  DateBoundsMessageProps &
+  PickerToggleProps;
 
 export type DateTimePickerProps = DateTimeCalendarProps &
   DateTimeInputProps &
-  DateBoundsMessageProps;
+  DateBoundsMessageProps &
+  PickerToggleProps;
 
 export type RangeDatePickerProps = RangeCalendarProps &
   RangeDateInputProps &
-  DateBoundsMessageProps;
+  DateBoundsMessageProps &
+  PickerToggleProps;
 
 export type RangeDateTimeCalendarProps = Omit<
   RangeCalendarProps,
@@ -523,22 +534,25 @@ export type RangeDateTimeInputProps = {
  * spans, two time pickers, per-day count badge) with the typed range input as
  * its trigger.
  */
-export type RangeDateTimePickerProps = RangeDateTimeCalendarProps & RangeDateTimeInputProps;
+export type RangeDateTimePickerProps = RangeDateTimeCalendarProps &
+  RangeDateTimeInputProps &
+  PickerToggleProps;
 
-export type RangeTimePickerProps = RangeTimeInputProps & {
-  /** Times inside these ranges (both ends inclusive) render disabled. */
-  disabledRanges?: TimeRange[];
-  /** Allows typing a time in the input; when false (default) values come only from the lists. */
-  allowCustomTime?: boolean;
-  height?: number;
-  itemHeight?: number;
-  /** Visible heading above the "time in" list in the popover. Defaults to "Start time". */
-  startTimeLabel?: Localizable;
-  /** Visible heading above the "time out" list in the popover. Defaults to "End time". */
-  endTimeLabel?: Localizable;
-  disabledRangeMessage?: Localizable;
-  noAvailableTimesMessage?: Localizable;
-};
+export type RangeTimePickerProps = RangeTimeInputProps &
+  PickerToggleProps & {
+    /** Times inside these ranges (both ends inclusive) render disabled. */
+    disabledRanges?: TimeRange[];
+    /** Allows typing a time in the input; when false (default) values come only from the lists. */
+    allowCustomTime?: boolean;
+    height?: number;
+    itemHeight?: number;
+    /** Visible heading above the "time in" list in the popover. Defaults to "Start time". */
+    startTimeLabel?: Localizable;
+    /** Visible heading above the "time out" list in the popover. Defaults to "End time". */
+    endTimeLabel?: Localizable;
+    disabledRangeMessage?: Localizable;
+    noAvailableTimesMessage?: Localizable;
+  };
 
 export type NumberinputProps = {
   placeholder?: string;

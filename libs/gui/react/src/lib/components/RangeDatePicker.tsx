@@ -50,6 +50,10 @@ export function RangeDatePicker(widgetInstance: WithWidget) {
         value={value}
         icon={templateData.icon}
         localeId={templateData.lang}
+        toggleAriaLabel={templateData.toggleAriaLabel}
+        dayAriaLabel={templateData.dayAriaLabel}
+        monthAriaLabel={templateData.monthAriaLabel}
+        yearAriaLabel={templateData.yearAriaLabel}
         separator={templateData.separator}
         removePillAriaLabel={templateData.removePillAriaLabel}
         startDateAriaLabel={templateData.startDateAriaLabel}

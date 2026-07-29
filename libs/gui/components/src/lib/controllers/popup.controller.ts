@@ -25,6 +25,7 @@ export interface GUIPopupControllerOptions {
    * Escape closes the popup, e.g. `'gui-date input'`.
    */
   focusRestoreSelector: string;
+  focusPopupSelector?: string;
   isDisabled(): boolean;
   /** Classifies a click on the anchor. See {@link GUIPopupClickIntent}. */
   clickIntent(target: HTMLElement): GUIPopupClickIntent;
@@ -58,7 +59,7 @@ export interface GUIPopupControllerOptions {
  * - Document 'click' listener (bubble phase, added in hostConnected) closes
  *   the popup when the composedPath contains none of the interior elements.
  * - Close popup on 'focusout' the host subtree.
- * - Enter/Space toggling happens on keyup
+ * - Enter/Space toggling is native: each picker's toggle is a real button.
  * - Escape is handled on keydown with preventDefault + stopPropagation
  *   (so it never reaches the document while open), restores focus to
  *   `focusRestoreSelector`, then closes.
@@ -100,6 +101,14 @@ export class GUIPopupController implements ReactiveController {
     this.setOpen(false);
   };
 
+  openAndFocus = () => {
+    this.show();
+    if (!this._open || !this.options.focusPopupSelector) return;
+    Promise.resolve(this.host.updateComplete).then(() => {
+      this.host.querySelector<HTMLElement>(this.options.focusPopupSelector as string)?.focus();
+    });
+  };
+
   /** Flips the popup according to `keyToggleMode` (see the option docs). */
   toggle = () => {
     if (this.options.isDisabled()) return;
@@ -133,18 +142,6 @@ export class GUIPopupController implements ReactiveController {
       return;
     }
     this.toggle();
-  };
-
-  /**
-   * Template-bindable anchor keyup handler. Enter/Space toggle the popup,
-   * but only when the event target IS the anchor the handler is bound to.
-   */
-  onAnchorKeyUp = (event: KeyboardEvent) => {
-    if (this.options.isDisabled()) return;
-    if (event.target !== event.currentTarget) return;
-    if (event.key === 'Enter' || event.key === ' ') {
-      this.toggle();
-    }
   };
 
   /**

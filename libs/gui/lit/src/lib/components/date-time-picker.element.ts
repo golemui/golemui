@@ -65,6 +65,13 @@ export class DateTimePickerElement extends LitElement implements WithWidget {
         .value=${templateData.value}
         .icon=${templateData.icon}
         .localeId=${templateData.lang}
+        .toggleAriaLabel=${templateData.toggleAriaLabel}
+        .dayAriaLabel=${templateData.dayAriaLabel}
+        .monthAriaLabel=${templateData.monthAriaLabel}
+        .yearAriaLabel=${templateData.yearAriaLabel}
+        .hourAriaLabel=${templateData.hourAriaLabel}
+        .minuteAriaLabel=${templateData.minuteAriaLabel}
+        .dayPeriodAriaLabel=${templateData.dayPeriodAriaLabel}
         .prevMonthIcon=${templateData.prevMonthIcon}
         .nextMonthIcon=${templateData.nextMonthIcon}
         .prevMonthAriaLabel=${templateData.prevMonthAriaLabel}

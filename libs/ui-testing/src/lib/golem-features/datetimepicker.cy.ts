@@ -369,5 +369,28 @@ export const runDateTimePickerComponentTests = (mountFn: MountComponentFn) => {
       cy.get(sel.dayButton('2026-02-13')).should('have.attr', 'aria-selected', 'true');
       cy.get(sel.day).should('have.value', '13');
     });
+
+    describe('accessibility', () => {
+      const toggleSel = 'button.gui-date-time-picker__arrow';
+
+      it('should expose a named popup toggle button', () => {
+        mountPicker();
+        cy.get(toggleSel)
+          .should('have.attr', 'aria-label', 'Show calendar')
+          .should('have.attr', 'aria-haspopup', 'dialog')
+          .should('have.attr', 'aria-expanded', 'false')
+          .should('have.attr', 'aria-controls', 'testSubject_popup');
+      });
+
+      it('should open the calendar dialog from the toggle and move focus into it', () => {
+        mountPicker();
+        cy.get(toggleSel).click();
+        cy.get(toggleSel).should('have.attr', 'aria-expanded', 'true');
+        cy.get('gui-date-time-calendar')
+          .should('have.attr', 'role', 'dialog')
+          .should('have.id', 'testSubject_popup');
+        cy.focused().should('have.class', 'gui-calendar__day-button');
+      });
+    });
   });
 };

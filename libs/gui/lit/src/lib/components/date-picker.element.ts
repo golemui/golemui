@@ -65,6 +65,10 @@ export class DatePickerElement extends LitElement implements WithWidget {
         .value=${templateData.value}
         .icon=${templateData.icon}
         .localeId=${templateData.lang}
+        .toggleAriaLabel=${templateData.toggleAriaLabel}
+        .dayAriaLabel=${templateData.dayAriaLabel}
+        .monthAriaLabel=${templateData.monthAriaLabel}
+        .yearAriaLabel=${templateData.yearAriaLabel}
         .prevMonthIcon=${templateData.prevMonthIcon}
         .nextMonthIcon=${templateData.nextMonthIcon}
         .prevMonthAriaLabel=${templateData.prevMonthAriaLabel}

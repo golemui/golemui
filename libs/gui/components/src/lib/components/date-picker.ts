@@ -14,6 +14,11 @@ export class GuiDatePicker extends LitElement {
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String }) hint: string | undefined = undefined;
   @property({ type: String }) icon: string | undefined = '';
+  @property({ type: String, attribute: 'toggle-aria-label' }) toggleAriaLabel: string | undefined =
+    undefined;
+  @property({ type: String }) dayAriaLabel: string | undefined = undefined;
+  @property({ type: String }) monthAriaLabel: string | undefined = undefined;
+  @property({ type: String }) yearAriaLabel: string | undefined = undefined;
   @property({ type: Array }) errors: string[] | undefined = [];
   @property({ type: Boolean }) showErrors: boolean | undefined = true;
   @property({ type: Boolean }) touched: boolean | undefined = false;
@@ -64,11 +69,13 @@ export class GuiDatePicker extends LitElement {
     | undefined = undefined;
 
   @query('#date-input') private _dateRef?: HTMLElement;
-  @query('#calendar-input') private _calendarRef?: HTMLElement;
+  @query('gui-calendar') private _calendarRef?: HTMLElement;
+  @query('.gui-date-picker__arrow') private _toggleRef?: HTMLElement;
 
   private _popup = new GUIPopupController(this, {
-    getInteriorElements: () => [this._dateRef, this._calendarRef],
+    getInteriorElements: () => [this._dateRef, this._calendarRef, this._toggleRef],
     focusRestoreSelector: 'gui-date input',
+    focusPopupSelector: '.gui-calendar__day-button[tabindex="0"]',
     isDisabled: () => !!this.disabled,
     clickIntent: (target) => {
       if (target.closest('.gui-calendar__day-button')) return 'ignore';
@@ -88,7 +95,9 @@ export class GuiDatePicker extends LitElement {
 
     const calendar = this._popup.open
       ? html`<gui-calendar
-          id="calendar-input"
+          id=${`${this.uid}_popup`}
+          role="dialog"
+          aria-label=${this.label ?? 'Calendar'}
           .uid=${this.uid}
           .hint=${this.hint}
           ?touched=${this.touched}
@@ -114,18 +123,20 @@ export class GuiDatePicker extends LitElement {
       : nothing;
 
     return html`
-      ${addLabel(this.uid ?? '', {
-        label: this.label,
-        hint: this.hint,
-        required: this.required,
-      })}
+      ${addLabel(
+        this.uid ?? '',
+        {
+          label: this.label,
+          hint: this.hint,
+          required: this.required,
+        },
+        false,
+        undefined,
+        false,
+      )}
 
       <div
-        role="button"
-        tabindex="-1"
         class="gui-widget"
-        aria-expanded=${this._popup.open}
-        @keyup=${this._popup.onAnchorKeyUp}
         @keydown=${this._popup.onAnchorKeyDown}
         @click=${this._popup.onAnchorClick}
       >
@@ -143,13 +154,25 @@ export class GuiDatePicker extends LitElement {
           .value=${this.value}
           .icon=${this.icon}
           .localeId=${this.localeId}
+          .dayAriaLabel=${this.dayAriaLabel}
+          .monthAriaLabel=${this.monthAriaLabel}
+          .yearAriaLabel=${this.yearAriaLabel}
           .invalidDateMessage=${this.invalidDateMessage}
           @blur=${this.onDateBlur}
           @focus=${this._popup.show}
           @change=${this.onDateChange}
         ></gui-date>
-        <span class="gui-date-picker__arrow"
-          ><svg
+        <button
+          type="button"
+          class="gui-date-picker__arrow"
+          aria-label=${this.toggleAriaLabel ?? 'Show calendar'}
+          aria-haspopup="dialog"
+          aria-expanded=${this._popup.open ? 'true' : 'false'}
+          aria-controls=${`${this.uid}_popup`}
+          ?disabled=${this.disabled}
+          @click=${this.onToggleClick}
+        >
+          <svg
             xmlns="http://www.w3.org/2000/svg"
             width="16"
             height="16"
@@ -158,8 +181,9 @@ export class GuiDatePicker extends LitElement {
           >
             <path
               d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"
-            ></path></svg
-        ></span>
+            ></path>
+          </svg>
+        </button>
 
         ${calendar}
       </div>
@@ -169,6 +193,15 @@ export class GuiDatePicker extends LitElement {
         : ''}
     `;
   }
+
+  private onToggleClick = (event: Event) => {
+    event.stopPropagation();
+    if (this._popup.open) {
+      this._popup.close();
+    } else {
+      this._popup.openAndFocus();
+    }
+  };
 
   private onDateChange(event: CustomEvent) {
     event.stopPropagation();
