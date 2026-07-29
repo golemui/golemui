@@ -322,6 +322,9 @@ export type RangeCalendarProps = {
 export type DateinputProps = {
   hint?: string;
   icon?: string;
+  dayAriaLabel?: string;
+  monthAriaLabel?: string;
+  yearAriaLabel?: string;
   invalidDateMessage?: Localizable;
   /** Earliest allowed date (ISO date, inclusive). */
   minDate?: string;
@@ -334,6 +337,12 @@ export type DateinputProps = {
 export type DateTimeInputProps = {
   hint?: string;
   icon?: string;
+  dayAriaLabel?: string;
+  monthAriaLabel?: string;
+  yearAriaLabel?: string;
+  hourAriaLabel?: string;
+  minuteAriaLabel?: string;
+  dayPeriodAriaLabel?: string;
   hourFormat?: '12' | '24';
   minuteStep?: number;
   invalidDateMessage?: Localizable;
@@ -354,6 +363,9 @@ export type DateTimeInputProps = {
 export type TimeInputProps = {
   hint?: string;
   icon?: string;
+  hourAriaLabel?: string;
+  minuteAriaLabel?: string;
+  dayPeriodAriaLabel?: string;
   hourFormat?: '12' | '24';
   minuteStep?: number;
   /** First allowed time (ISO time, inclusive). */
@@ -397,6 +409,9 @@ export type RangeDateInputProps = {
   removePillAriaLabel?: string;
   startDateAriaLabel?: string;
   endDateAriaLabel?: string;
+  dayAriaLabel?: string;
+  monthAriaLabel?: string;
+  yearAriaLabel?: string;
   invalidDateMessage?: Localizable;
 };
 
@@ -460,6 +475,9 @@ export type RangeTimeInputProps = {
   removePillAriaLabel?: string;
   startTimeAriaLabel?: string;
   endTimeAriaLabel?: string;
+  hourAriaLabel?: string;
+  minuteAriaLabel?: string;
+  dayPeriodAriaLabel?: string;
   hourFormat?: '12' | '24';
   minuteStep?: number;
   /** First allowed time (ISO time, inclusive). */
@@ -479,6 +497,12 @@ export type RangeDateTimeInputProps = {
   removePillAriaLabel?: string;
   startDateTimeAriaLabel?: string;
   endDateTimeAriaLabel?: string;
+  dayAriaLabel?: string;
+  monthAriaLabel?: string;
+  yearAriaLabel?: string;
+  hourAriaLabel?: string;
+  minuteAriaLabel?: string;
+  dayPeriodAriaLabel?: string;
   hourFormat?: '12' | '24';
   minuteStep?: number;
   invalidDateMessage?: Localizable;

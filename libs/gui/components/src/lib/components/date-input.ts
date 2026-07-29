@@ -9,7 +9,9 @@ import { renderGroupParts, type GUIPartsTemplateData } from '../utils/part-templ
 import {
   dateInputPartDescriptors,
   parseDateGroup,
+  PART_DEFAULT_ARIA_LABELS,
   type DateTimePartDescriptor,
+  type DateTimePartType,
 } from '../utils/parts';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 
@@ -27,6 +29,9 @@ export class GuiDate extends LitElement {
 
   @property({ type: String }) icon: string | undefined = '';
   @property({ type: String }) hint: string | undefined = undefined;
+  @property({ type: String }) dayAriaLabel: string | undefined = undefined;
+  @property({ type: String }) monthAriaLabel: string | undefined = undefined;
+  @property({ type: String }) yearAriaLabel: string | undefined = undefined;
 
   @property({ type: String }) value: string | undefined = undefined;
   @property({ type: String, attribute: 'invalid-date-message' }) invalidDateMessage:
@@ -109,7 +114,14 @@ export class GuiDate extends LitElement {
       formatParts: getDateFormatParts(this.localeId),
       getDescriptor: (type) => this.getPartDescriptor(type),
       getDisplayValue: this._parts.getPartDisplay,
-      required: this.required,
+      getPartAriaLabel: (_group: string, type: DateTimePartType) => {
+        const overrides: Partial<Record<DateTimePartType, string | undefined>> = {
+          day: this.dayAriaLabel,
+          month: this.monthAriaLabel,
+          year: this.yearAriaLabel,
+        };
+        return overrides[type] ?? PART_DEFAULT_ARIA_LABELS[type];
+      },
       disabled: this.disabled,
       partsReadonly: !!this.readOnly,
     };
@@ -120,14 +132,16 @@ export class GuiDate extends LitElement {
     };
 
     return html`
-      ${this.label ? addLabel(this.uid as string, templateData) : nothing}
+      ${this.label ? addLabel(this.uid as string, templateData, false, undefined, false) : nothing}
 
       <div class="gui-widget">
         <div
+          id=${this.uid}
           class="gui-widget-input gui-parts gui-parts-ring gui-date-input ${this.icon
             ? 'gui-calendar--icon'
             : ''}"
           role="group"
+          aria-labelledby=${`${this.uid}_label`}
         >
           ${renderGroupParts('default', partsData, this._parts)}
         </div>

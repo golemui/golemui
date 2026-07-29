@@ -19,6 +19,7 @@ import { renderGroupParts, type GUIPartsTemplateData } from '../utils/part-templ
 import {
   getTimeLocaleData,
   parseDateTimeGroup,
+  PART_DEFAULT_ARIA_LABELS,
   type DateTimePartDescriptor,
   type DateTimePartType,
 } from '../utils/parts';
@@ -49,6 +50,12 @@ export class GuiRangeDateTimeInput extends LitElement {
 
   @property({ type: String }) icon: string | undefined = '';
   @property({ type: String }) hint: string | undefined = undefined;
+  @property({ type: String }) dayAriaLabel: string | undefined = undefined;
+  @property({ type: String }) monthAriaLabel: string | undefined = undefined;
+  @property({ type: String }) yearAriaLabel: string | undefined = undefined;
+  @property({ type: String }) hourAriaLabel: string | undefined = undefined;
+  @property({ type: String }) minuteAriaLabel: string | undefined = undefined;
+  @property({ type: String }) dayPeriodAriaLabel: string | undefined = undefined;
 
   @property({ type: String, attribute: 'hour-format' }) hourFormat: HourFormat | undefined =
     undefined;
@@ -188,7 +195,17 @@ export class GuiRangeDateTimeInput extends LitElement {
       formatParts: getDateTimeFormatParts(this.localeId, this.localeData.effectiveHourFormat),
       getDescriptor: (type) => this.getPartDescriptor(type),
       getDisplayValue: this._parts.getPartDisplay,
-      required: this.required,
+      getPartAriaLabel: (_group: string, type: DateTimePartType) => {
+        const overrides: Partial<Record<DateTimePartType, string | undefined>> = {
+          day: this.dayAriaLabel,
+          month: this.monthAriaLabel,
+          year: this.yearAriaLabel,
+          hour: this.hourAriaLabel,
+          minute: this.minuteAriaLabel,
+        };
+        return overrides[type] ?? PART_DEFAULT_ARIA_LABELS[type];
+      },
+      dayPeriodAriaLabel: this.dayPeriodAriaLabel,
       disabled: this.disabled,
       partsReadonly: !!this.readOnly,
     };

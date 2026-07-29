@@ -316,5 +316,60 @@ export const runDateInputComponentTests = (mountFn: MountComponentFn) => {
         });
       });
     });
+
+    describe('accessibility', () => {
+      it('should expose each segment as a named spinbutton with its bounds', () => {
+        mountDateInput();
+
+        cy.get(sel.day)
+          .should('have.attr', 'role', 'spinbutton')
+          .should('have.attr', 'aria-label', 'Day')
+          .should('have.attr', 'aria-valuemin', '1')
+          .should('have.attr', 'aria-valuemax', '31');
+        cy.get(sel.month)
+          .should('have.attr', 'aria-label', 'Month')
+          .should('have.attr', 'aria-valuemin', '1')
+          .should('have.attr', 'aria-valuemax', '12');
+        cy.get(sel.year)
+          .should('have.attr', 'aria-label', 'Year')
+          .should('have.attr', 'aria-valuemin', '1000')
+          .should('have.attr', 'aria-valuemax', '9999');
+      });
+
+      it('should not expose aria-valuenow while a segment is empty', () => {
+        mountDateInput();
+        cy.get(sel.day).should('not.have.attr', 'aria-valuenow');
+      });
+
+      it('should expose aria-valuenow for filled segments', () => {
+        mountDateInput({ data: { myDate: '2026-06-15' } });
+        cy.get(sel.day).should('have.attr', 'aria-valuenow', '15');
+        cy.get(sel.month).should('have.attr', 'aria-valuenow', '6');
+        cy.get(sel.year).should('have.attr', 'aria-valuenow', '2026');
+      });
+
+      it('should not mark individual segments as required', () => {
+        mountDateInput();
+        cy.get(sel.day).should('not.have.attr', 'required');
+        cy.get(sel.month).should('not.have.attr', 'required');
+        cy.get(sel.year).should('not.have.attr', 'required');
+      });
+
+      it('should honor the segment aria-label override props', () => {
+        mountDateInput({
+          props: { dayAriaLabel: 'Día', monthAriaLabel: 'Mes', yearAriaLabel: 'Año' },
+        });
+        cy.get(sel.day).should('have.attr', 'aria-label', 'Día');
+        cy.get(sel.month).should('have.attr', 'aria-label', 'Mes');
+        cy.get(sel.year).should('have.attr', 'aria-label', 'Año');
+      });
+
+      it('should name the group via its label element', () => {
+        mountDateInput();
+        cy.get('gui-date [role="group"]')
+          .should('have.id', 'testSubject')
+          .should('have.attr', 'aria-labelledby', 'testSubject_label');
+      });
+    });
   });
 };

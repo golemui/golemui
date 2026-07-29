@@ -67,6 +67,9 @@ export function DateInput(widgetInstance: WithWidget) {
         value={value}
         icon={icon}
         localeId={lang}
+        dayAriaLabel={templateData.dayAriaLabel}
+        monthAriaLabel={templateData.monthAriaLabel}
+        yearAriaLabel={templateData.yearAriaLabel}
         invalidDateMessage={templateData.invalidDateMessage as string}
         minDate={templateData.minDate}
         maxDate={templateData.maxDate}

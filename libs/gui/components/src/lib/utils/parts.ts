@@ -38,6 +38,17 @@ export interface DateTimePartDescriptor {
 /** Descriptor lookup by part type, as consumed by the parse pipelines. */
 export type PartDescriptorMap = Partial<Record<DateTimePartType, DateTimePartDescriptor>>;
 
+/** Default English accessible names for the part inputs; hosts override via aria-label props. */
+export const PART_DEFAULT_ARIA_LABELS: Record<DateTimePartType, string> = {
+  day: 'Day',
+  month: 'Month',
+  year: 'Year',
+  hour: 'Hour',
+  minute: 'Minute',
+  second: 'Second',
+  dayPeriod: 'AM/PM',
+};
+
 /** The raw string values of one group's parts, e.g. { day: '15', month: '06' }. */
 export type GroupPartValues = Partial<Record<DateTimePartType, string>>;
 

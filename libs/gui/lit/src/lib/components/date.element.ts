@@ -69,6 +69,9 @@ export class DateElement extends LitElement implements WithWidget {
         .value=${this.adapter.templateData.value}
         .icon=${this.adapter.templateData.icon}
         .localeId=${this.adapter.templateData.lang}
+        .dayAriaLabel=${this.adapter.templateData.dayAriaLabel}
+        .monthAriaLabel=${this.adapter.templateData.monthAriaLabel}
+        .yearAriaLabel=${this.adapter.templateData.yearAriaLabel}
         .invalidDateMessage=${this.adapter.templateData.invalidDateMessage as string}
         .minDate=${this.adapter.templateData.minDate}
         .maxDate=${this.adapter.templateData.maxDate}
