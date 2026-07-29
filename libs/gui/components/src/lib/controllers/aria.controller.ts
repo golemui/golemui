@@ -62,7 +62,8 @@ export class GUIAriaController<T, ExtraProps extends { hint?: string; required?:
         toggleAttr('aria-describedby', hint ? `${uid}_hint` : null);
         toggleAttr('aria-invalid', showErrors ? 'true' : null);
         toggleAttr('aria-errormessage', showErrors ? `${uid}_errors` : null);
-        toggleAttr('aria-readonly', disabled || readonly ? 'true' : null);
+        toggleAttr('aria-readonly', readonly ? 'true' : null);
+        toggleAttr('aria-disabled', disabled ? 'true' : null);
         toggleAttr('aria-required', required ? 'true' : null);
       },
     );
