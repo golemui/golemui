@@ -257,7 +257,7 @@ export class GuiDatePicker extends LitElement {
   }
 
   private onCalendarBlur() {
-    this._popup.close();
+    this._popup.closeOnFocusLeave();
   }
 }
 

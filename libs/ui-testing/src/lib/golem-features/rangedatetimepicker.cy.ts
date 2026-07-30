@@ -127,6 +127,33 @@ export const runRangeDateTimePickerComponentTests = (mountFn: MountComponentFn) 
         cy.get(sel.calendar).should('not.exist');
       });
 
+      it('should stay open when clicking a non-interactive area inside the calendar', () => {
+        mountPicker();
+
+        // Select a range so the start time picker enables and focus is parked
+        // on the last-clicked day button
+        cy.get(sel.triggerPart('start', 'day')).click();
+        cy.get(sel.dayButton(iso(13))).click();
+        cy.get(sel.dayButton(iso(15))).click();
+        startHour().should('not.be.disabled');
+
+        // Clicking dead space inside the popover blurs the day button to body;
+        // that must not light-dismiss the popover — only real outside
+        // interactions may close it
+        cy.get(`${cal} .gui-calendar__weekday`).first().click();
+        cy.get(sel.calendar).should('exist');
+
+        // The still-disabled end picker is also "inside" (mouse events are
+        // swallowed by disabled controls, pointerdown is not)
+        endHour().should('be.disabled');
+        endHour().click({ force: true });
+        cy.get(sel.calendar).should('exist');
+
+        // Outside clicks still close
+        cy.get('body').click(0, 0);
+        cy.get(sel.calendar).should('not.exist');
+      });
+
       it('should stay open when navigating to the minDateTime boundary month', () => {
         // minDateTime two months back: clicking prev into the boundary month
         // disables the prev arrow that holds focus, which used to drop focus to

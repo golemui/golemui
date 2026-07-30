@@ -366,7 +366,7 @@ export class GuiRangeDateTimePicker extends LitElement {
   }
 
   private onCalendarBlur() {
-    this._popup.close();
+    this._popup.closeOnFocusLeave();
   }
 
   private onPillClick(event: CustomEvent) {

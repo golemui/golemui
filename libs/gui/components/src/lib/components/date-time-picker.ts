@@ -331,7 +331,7 @@ export class GuiDateTimePicker extends LitElement {
 
   // The calendar's blur already bubbles up to the host, so only close here.
   private onCalendarBlur() {
-    this._popup.close();
+    this._popup.closeOnFocusLeave();
   }
 }
 
