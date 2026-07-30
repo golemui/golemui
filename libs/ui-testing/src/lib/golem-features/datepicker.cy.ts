@@ -240,6 +240,16 @@ export const runDatePickerComponentTests = (mountFn: MountComponentFn) => {
         mountWithProps({ props: { toggleAriaLabel: 'Abrir calendario' } });
         cy.get(toggleSel).should('have.attr', 'aria-label', 'Abrir calendario');
       });
+
+      it('should not duplicate the widget id while the popup is open', () => {
+        mountWithDate();
+        cy.get(toggleSel).click();
+        cy.get('gui-calendar').should('exist');
+        // The date input's segment group owns the bare uid; the calendar
+        // chrome carries the _calendar suffix
+        cy.get('[id="testSubject"]').should('have.length', 1);
+        cy.get('[id="testSubject_calendar"]').should('have.length', 1);
+      });
     });
   });
 };

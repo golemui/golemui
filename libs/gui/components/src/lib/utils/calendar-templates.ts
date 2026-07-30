@@ -81,7 +81,7 @@ export function renderCalendarChrome(data: CalendarChromeData): TemplateResult {
 
     <div class="gui-widget" @focusout=${data.onFocusOut}>
       <div
-        id=${data.uid}
+        id=${`${data.uid}_calendar`}
         class="gui-calendar-input"
         role="group"
         aria-labelledby=${data.label ? `${data.uid}_calendar_label` : nothing}
