@@ -20,7 +20,7 @@ export class GuiToggle extends LitElement {
   @property({ type: String }) togglePosition: 'left' | 'right' | undefined = 'left';
 
   private ariaController = new GUIAriaController(this, {
-    getTargets: () => this.querySelectorAll(`span[role="presentation"]`),
+    getTargets: () => this.querySelectorAll(`input[id="${this.uid}"]`),
     getState: () => ({
       uid: this.uid as string,
       templateData: {
@@ -30,6 +30,7 @@ export class GuiToggle extends LitElement {
         // Checkboxes can't have aria-readonly
         readonly: false,
         disabled: false,
+        required: this.required,
       },
     }),
   });
@@ -75,6 +76,7 @@ export class GuiToggle extends LitElement {
         <div class="gui-widget gui-widget--horizontal gui-toggle--switch">
           <input
             type="checkbox"
+            role="switch"
             tabindex="0"
             id=${this.uid}
             data-cy=${`${this.uid}_toggle`}

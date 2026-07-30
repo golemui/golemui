@@ -210,6 +210,7 @@ export class GuiPills extends LitElement {
           ? html`<span
               class=${`gui-widget-icon ${this.removeIcon}`}
               data-icon=${this.removeIcon}
+              aria-hidden="true"
             ></span>`
           : html`<svg
               xmlns="http://www.w3.org/2000/svg"

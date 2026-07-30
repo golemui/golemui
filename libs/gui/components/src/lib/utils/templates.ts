@@ -73,7 +73,11 @@ export const addIcon = <T, ExtraProps extends { icon?: string }>(
     };
     return {
       widgetClasses: widgetClasses,
-      html: html`<span class=${classMap(classes)} data-icon=${templateData.icon}></span>`,
+      html: html`<span
+        class=${classMap(classes)}
+        data-icon=${templateData.icon}
+        aria-hidden="true"
+      ></span>`,
     };
   } else {
     return { widgetClasses: widgetClasses, html: html`` };
@@ -86,14 +90,24 @@ export const addErrors = <T, ExtraProps extends { hint?: string }>(
 ) => {
   const showErrors = templateData.touched && templateData.errors && templateData.errors.length > 0;
 
-  return html`${showErrors
-    ? html`<ul class="gui-validator" id=${`${uid}_errors`} data-cy=${`${uid}_validator-errors`}>
-        ${templateData.errors?.map(
+  const classes = {
+    'gui-validator': true,
+    'gui-validator--empty': !showErrors,
+  };
+
+  return html`<ul
+    class=${classMap(classes)}
+    id=${`${uid}_errors`}
+    role="alert"
+    data-cy=${showErrors ? `${uid}_validator-errors` : nothing}
+  >
+    ${showErrors
+      ? templateData.errors?.map(
           (error: any) =>
-            html`<li class="gui-validator__error" role="alert" data-cy=${`${uid}_validator-error`}>
+            html`<li class="gui-validator__error" data-cy=${`${uid}_validator-error`}>
               ${error}
             </li>`,
-        )}
-      </ul>`
-    : ''}`;
+        )
+      : nothing}
+  </ul>`;
 };
