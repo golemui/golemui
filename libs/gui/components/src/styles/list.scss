@@ -11,8 +11,18 @@ gui-list {
   border-radius: var(--gui-radius-md);
   overflow: hidden;
 
+  &:focus {
+    outline: 0;
+    border-color: var(--gui-border-focus);
+    box-shadow: var(--gui-shadow-focus);
+  }
+
   &[aria-invalid='true'] {
     border-color: var(--gui-intent-error);
+
+    &:focus {
+      box-shadow: var(--gui-shadow-focus-error);
+    }
   }
 
   ul {
