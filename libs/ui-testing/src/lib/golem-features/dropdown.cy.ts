@@ -118,5 +118,43 @@ export const runDropdownComponentTests = (mountFn: MountComponentFn) => {
       visibleItems().should('have.length', 1);
       visibleItems().first().should('contain.text', 'React');
     });
+
+    describe('accessibility', () => {
+      const inputSel = '[data-cy="testSubject_textinput"]';
+
+      it('should expose the input as a combobox controlling the listbox', () => {
+        mountWithItems(['React', 'Angular', 'Vue']);
+
+        cy.get(inputSel)
+          .should('have.attr', 'role', 'combobox')
+          .should('have.attr', 'aria-autocomplete', 'list')
+          .should('have.attr', 'aria-expanded', 'false')
+          .should('have.attr', 'aria-controls', 'testSubject-list');
+        cy.get('gui-list#testSubject-list').should('have.attr', 'role', 'listbox');
+
+        cy.get(inputSel).click();
+        cy.get(inputSel).should('have.attr', 'aria-expanded', 'true');
+      });
+
+      it('should not render duplicate ids for the input and the list', () => {
+        mountWithItems(['React', 'Angular', 'Vue']);
+        cy.get('[id="testSubject"]').should('have.length', 1);
+        cy.get('[id="testSubject-list"]').should('have.length', 1);
+      });
+
+      it('should point aria-activedescendant at a resolvable option', () => {
+        mountWithItems(['React', 'Angular', 'Vue']);
+
+        cy.get(inputSel).click();
+        cy.get('gui-list').focus();
+        cy.get('gui-list').trigger('keydown', { key: 'ArrowDown' });
+
+        cy.get('gui-list')
+          .should('have.attr', 'aria-activedescendant')
+          .then((activeId) => {
+            cy.get(`#${activeId}`).should('exist').should('have.attr', 'role', 'option');
+          });
+      });
+    });
   });
 };

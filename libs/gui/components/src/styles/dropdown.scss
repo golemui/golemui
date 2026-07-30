@@ -21,7 +21,7 @@
       pointer-events: none;
     }
 
-    &[aria-expanded='true'] .gui-dropdown__arrow {
+    &:has(> input[aria-expanded='true']) .gui-dropdown__arrow {
       transform: rotate(180deg);
     }
   }
