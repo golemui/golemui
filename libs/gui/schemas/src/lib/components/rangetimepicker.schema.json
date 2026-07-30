@@ -63,6 +63,18 @@
     },
     "sizeProp": {
       "type": "number"
+    },
+    "toggleAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "hourAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "minuteAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "dayPeriodAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
     }
   },
   "allOf": [
@@ -160,6 +172,18 @@
         },
         "noAvailableTimesMessage": {
           "$ref": "../common.schema.json#/$defs/localizable"
+        },
+        "toggleAriaLabel": {
+          "$ref": "#/$defs/toggleAriaLabelProp"
+        },
+        "hourAriaLabel": {
+          "$ref": "#/$defs/hourAriaLabelProp"
+        },
+        "minuteAriaLabel": {
+          "$ref": "#/$defs/minuteAriaLabelProp"
+        },
+        "dayPeriodAriaLabel": {
+          "$ref": "#/$defs/dayPeriodAriaLabelProp"
         }
       },
       "patternProperties": {
@@ -225,6 +249,18 @@
         },
         "^noAvailableTimesMessage\\.[^.]+$": {
           "$ref": "../common.schema.json#/$defs/localizable"
+        },
+        "^toggleAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/toggleAriaLabelProp"
+        },
+        "^hourAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/hourAriaLabelProp"
+        },
+        "^minuteAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/minuteAriaLabelProp"
+        },
+        "^dayPeriodAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/dayPeriodAriaLabelProp"
         }
       },
       "additionalProperties": false

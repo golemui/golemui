@@ -47,6 +47,9 @@ export class GuiMarkdown extends LitElement {
   @property({ type: String }) orderedListTitle: string | undefined = undefined;
   @property({ type: String }) unorderedListTitle: string | undefined = undefined;
   @property({ type: String }) splitViewTitle: string | undefined = undefined;
+  @property({ type: String, attribute: 'toolbar-aria-label' }) toolbarAriaLabel:
+    | string
+    | undefined = undefined;
 
   // Deps
   @property({ type: Object }) dependencies: Dependencies | undefined = undefined;
@@ -154,19 +157,25 @@ export class GuiMarkdown extends LitElement {
           'gui-markdown--with-preview': this.splitViewActive,
         })}
       >
-        <nav class="gui-markdown__toolbar">
-          <ul>
+        <nav
+          class="gui-markdown__toolbar"
+          role="toolbar"
+          aria-label=${this.toolbarAriaLabel ?? 'Text formatting'}
+        >
+          <ul role="presentation">
             ${(this.tools ?? ['H', 'B', 'I', 'S', 'Q', 'L', '|', 'OL', 'UL']).map((tool) =>
               this.renderToolbarItem(tool),
             )}
-            <li>
+            <li role="presentation">
               <button
                 type="button"
-                tabindex="0"
                 class=${classMap({
                   'gui-markdown__toolbar-button': true,
                   'gui-markdown__toolbar-button--active': this.splitViewActive,
                 })}
+                ?disabled=${this.disabled}
+                aria-label=${this.splitViewTitle ?? 'Split View'}
+                aria-pressed=${this.splitViewActive ? 'true' : 'false'}
                 @click=${this.splitView}
                 title=${this.splitViewTitle ?? 'Split View'}
               >
@@ -242,17 +251,20 @@ export class GuiMarkdown extends LitElement {
   }
 
   splitView() {
+    if (this.disabled) return;
     this.splitViewActive = !this.splitViewActive;
   }
 
   private renderToolbarItem(token: string) {
     switch (token) {
       case 'H':
-        return html`<li>
+        return html`<li role="presentation">
           <button
             type="button"
-            tabindex="0"
             class=${this.toolbarBtnClass('heading')}
+            ?disabled=${this.disabled || this.readOnly}
+            aria-label=${this.headingTitle ?? 'Heading'}
+            aria-pressed=${this.activeFormats['heading'] ? 'true' : 'false'}
             @click=${this.applyFormat('# ', '', 'heading')}
             title=${this.headingTitle ?? 'Heading'}
           >
@@ -270,11 +282,13 @@ export class GuiMarkdown extends LitElement {
           </button>
         </li>`;
       case 'B':
-        return html`<li>
+        return html`<li role="presentation">
           <button
             type="button"
-            tabindex="0"
             class=${this.toolbarBtnClass('bold')}
+            ?disabled=${this.disabled || this.readOnly}
+            aria-label=${this.boldTitle ?? 'Bold'}
+            aria-pressed=${this.activeFormats['bold'] ? 'true' : 'false'}
             @click=${this.applyFormat('**', '**', 'bold')}
             title=${this.boldTitle ?? 'Bold'}
           >
@@ -292,11 +306,13 @@ export class GuiMarkdown extends LitElement {
           </button>
         </li>`;
       case 'I':
-        return html`<li>
+        return html`<li role="presentation">
           <button
             type="button"
-            tabindex="0"
             class=${this.toolbarBtnClass('italic')}
+            ?disabled=${this.disabled || this.readOnly}
+            aria-label=${this.italicTitle ?? 'Italic'}
+            aria-pressed=${this.activeFormats['italic'] ? 'true' : 'false'}
             @click=${this.applyFormat('_', '_', 'italic')}
             title=${this.italicTitle ?? 'Italic'}
           >
@@ -314,11 +330,13 @@ export class GuiMarkdown extends LitElement {
           </button>
         </li>`;
       case 'S':
-        return html`<li>
+        return html`<li role="presentation">
           <button
             type="button"
-            tabindex="0"
             class=${this.toolbarBtnClass('strikethrough')}
+            ?disabled=${this.disabled || this.readOnly}
+            aria-label=${this.strikethroughTitle ?? 'Strikethrough'}
+            aria-pressed=${this.activeFormats['strikethrough'] ? 'true' : 'false'}
             @click=${this.applyFormat('~~', '~~', 'strikethrough')}
             title=${this.strikethroughTitle ?? 'Strikethrough'}
           >
@@ -336,11 +354,13 @@ export class GuiMarkdown extends LitElement {
           </button>
         </li>`;
       case 'Q':
-        return html`<li>
+        return html`<li role="presentation">
           <button
             type="button"
-            tabindex="0"
             class=${this.toolbarBtnClass('quote')}
+            ?disabled=${this.disabled || this.readOnly}
+            aria-label=${this.quoteTitle ?? 'Quote'}
+            aria-pressed=${this.activeFormats['quote'] ? 'true' : 'false'}
             @click=${this.applyFormat('> ', '', 'quote')}
             title=${this.quoteTitle ?? 'Quote'}
           >
@@ -358,11 +378,13 @@ export class GuiMarkdown extends LitElement {
           </button>
         </li>`;
       case 'L':
-        return html`<li>
+        return html`<li role="presentation">
           <button
             type="button"
-            tabindex="0"
             class=${this.toolbarBtnClass('link')}
+            ?disabled=${this.disabled || this.readOnly}
+            aria-label=${this.linkTitle ?? 'Link'}
+            aria-pressed=${this.activeFormats['link'] ? 'true' : 'false'}
             @click=${this.applyFormat('[', '](url)', 'link')}
             title=${this.linkTitle ?? 'Link'}
           >
@@ -380,11 +402,13 @@ export class GuiMarkdown extends LitElement {
           </button>
         </li>`;
       case 'OL':
-        return html`<li>
+        return html`<li role="presentation">
           <button
             type="button"
-            tabindex="0"
             class=${this.toolbarBtnClass('orderedList')}
+            ?disabled=${this.disabled || this.readOnly}
+            aria-label=${this.orderedListTitle ?? 'Ordered List'}
+            aria-pressed=${this.activeFormats['orderedList'] ? 'true' : 'false'}
             @click=${this.applyFormat('1. ', '', 'orderedList')}
             title=${this.orderedListTitle ?? 'Ordered List'}
           >
@@ -402,11 +426,13 @@ export class GuiMarkdown extends LitElement {
           </button>
         </li>`;
       case 'UL':
-        return html`<li>
+        return html`<li role="presentation">
           <button
             type="button"
-            tabindex="0"
             class=${this.toolbarBtnClass('unorderedList')}
+            ?disabled=${this.disabled || this.readOnly}
+            aria-label=${this.unorderedListTitle ?? 'Unordered List'}
+            aria-pressed=${this.activeFormats['unorderedList'] ? 'true' : 'false'}
             @click=${this.applyFormat('- ', '', 'unorderedList')}
             title=${this.unorderedListTitle ?? 'Unordered List'}
           >
@@ -424,7 +450,7 @@ export class GuiMarkdown extends LitElement {
           </button>
         </li>`;
       case '|':
-        return html`<li>
+        return html`<li role="presentation">
           <span class="gui-markdown__toolbar-separator">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -515,6 +541,9 @@ export class GuiMarkdown extends LitElement {
 
   applyFormat(formatStart: string, formatEnd = '', formatKey = '') {
     return () => {
+      // The buttons are natively disabled too; this guards programmatic calls
+      if (this.disabled || this.readOnly) return;
+
       const textarea = this.querySelector(`textarea[id="${this.uid}"]`) as HTMLTextAreaElement;
       if (!textarea) return;
 

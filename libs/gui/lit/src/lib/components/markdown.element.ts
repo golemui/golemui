@@ -67,6 +67,16 @@ export class MarkdownElement extends LitElement implements WithWidget {
         .minimumHeight=${this.adapter.templateData.minimumHeight}
         .autoGrow=${this.adapter.templateData.autoGrow}
         .tools=${this.adapter.templateData.tools}
+        .headingTitle=${this.adapter.templateData.headingTitle}
+        .boldTitle=${this.adapter.templateData.boldTitle}
+        .italicTitle=${this.adapter.templateData.italicTitle}
+        .strikethroughTitle=${this.adapter.templateData.strikethroughTitle}
+        .quoteTitle=${this.adapter.templateData.quoteTitle}
+        .linkTitle=${this.adapter.templateData.linkTitle}
+        .orderedListTitle=${this.adapter.templateData.orderedListTitle}
+        .unorderedListTitle=${this.adapter.templateData.unorderedListTitle}
+        .splitViewTitle=${this.adapter.templateData.splitViewTitle}
+        .toolbarAriaLabel=${this.adapter.templateData.toolbarAriaLabel}
         .defaultOpenPreview=${this.adapter.templateData.defaultOpenPreview}
         .maxLength=${this.adapter.templateData.validator?.maxLength}
         .dependencies=${this.adapter.templateData.deps}

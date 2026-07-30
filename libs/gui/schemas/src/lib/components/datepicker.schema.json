@@ -31,6 +31,24 @@
     "nextMonthAriaLabelProp": {
       "$ref": "../common.schema.json#/$defs/localizable"
     },
+    "toggleAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "selectYearAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "yearGridAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "dayAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "monthAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "yearAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
     "dayFormatProp": {
       "enum": ["numeric", "2-digit"]
     },
@@ -119,6 +137,24 @@
         "nextMonthAriaLabel": {
           "$ref": "#/$defs/nextMonthAriaLabelProp"
         },
+        "toggleAriaLabel": {
+          "$ref": "#/$defs/toggleAriaLabelProp"
+        },
+        "selectYearAriaLabel": {
+          "$ref": "#/$defs/selectYearAriaLabelProp"
+        },
+        "yearGridAriaLabel": {
+          "$ref": "#/$defs/yearGridAriaLabelProp"
+        },
+        "dayAriaLabel": {
+          "$ref": "#/$defs/dayAriaLabelProp"
+        },
+        "monthAriaLabel": {
+          "$ref": "#/$defs/monthAriaLabelProp"
+        },
+        "yearAriaLabel": {
+          "$ref": "#/$defs/yearAriaLabelProp"
+        },
         "dayFormat": {
           "$ref": "#/$defs/dayFormatProp"
         },
@@ -171,6 +207,24 @@
         },
         "^nextMonthAriaLabel\\.[^.]+$": {
           "$ref": "#/$defs/nextMonthAriaLabelProp"
+        },
+        "^toggleAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/toggleAriaLabelProp"
+        },
+        "^selectYearAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/selectYearAriaLabelProp"
+        },
+        "^yearGridAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/yearGridAriaLabelProp"
+        },
+        "^dayAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/dayAriaLabelProp"
+        },
+        "^monthAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/monthAriaLabelProp"
+        },
+        "^yearAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/yearAriaLabelProp"
         },
         "^dayFormat\\.[^.]+$": {
           "$ref": "#/$defs/dayFormatProp"

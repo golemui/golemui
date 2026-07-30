@@ -24,6 +24,15 @@
     },
     "maxDateProp": {
       "type": "string"
+    },
+    "dayAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "monthAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "yearAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
     }
   },
   "allOf": [
@@ -79,6 +88,15 @@
         },
         "icon": {
           "$ref": "#/$defs/iconProp"
+        },
+        "dayAriaLabel": {
+          "$ref": "#/$defs/dayAriaLabelProp"
+        },
+        "monthAriaLabel": {
+          "$ref": "#/$defs/monthAriaLabelProp"
+        },
+        "yearAriaLabel": {
+          "$ref": "#/$defs/yearAriaLabelProp"
         }
       },
       "patternProperties": {
@@ -102,6 +120,15 @@
         },
         "^icon\\.[^.]+$": {
           "$ref": "#/$defs/iconProp"
+        },
+        "^dayAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/dayAriaLabelProp"
+        },
+        "^monthAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/monthAriaLabelProp"
+        },
+        "^yearAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/yearAriaLabelProp"
         }
       },
       "additionalProperties": false

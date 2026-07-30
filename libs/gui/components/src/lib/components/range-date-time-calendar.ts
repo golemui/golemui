@@ -11,7 +11,12 @@ import './pills';
 import type { GuiPillEventDetail, GuiPillItem } from './pills';
 import './time-picker';
 import type { GuiTimePicker } from './time-picker';
-import { isDateDisabled, parseISODateString, toISODateString } from '../utils/date';
+import {
+  getFullDateLabel,
+  isDateDisabled,
+  parseISODateString,
+  toISODateString,
+} from '../utils/date';
 import {
   renderCalendarChrome,
   renderCalendarMonthPanel,
@@ -68,6 +73,12 @@ export class GuiRangeDateTimeCalendar extends LitElement {
   @property({ type: String, attribute: 'next-month-aria-label' }) nextMonthAriaLabel:
     | string
     | undefined = '';
+  @property({ type: String, attribute: 'select-year-aria-label' }) selectYearAriaLabel:
+    | string
+    | undefined = undefined;
+  @property({ type: String, attribute: 'year-grid-aria-label' }) yearGridAriaLabel:
+    | string
+    | undefined = undefined;
   @property({ type: String }) dayFormat: 'numeric' | '2-digit' | undefined = 'numeric';
   @property({ type: String }) weekdayFormat: 'short' | 'long' | 'narrow' | undefined = 'narrow';
   @property({ type: String }) monthFormat:
@@ -294,6 +305,8 @@ export class GuiRangeDateTimeCalendar extends LitElement {
       required: this.required,
       disabled: this.disabled,
       numberOfMonths: this.numberOfMonths,
+      localeId: this.localeId,
+      currentDate: this._nav.currentDate,
       prevMonthIcon: this.prevMonthIcon,
       nextMonthIcon: this.nextMonthIcon,
       prevMonthAriaLabel: this.prevMonthAriaLabel,
@@ -311,6 +324,7 @@ export class GuiRangeDateTimeCalendar extends LitElement {
           localeId: this.localeId,
           monthFormat: this.monthFormat,
           yearSelectorOpen: this._nav.yearSelectorOpen,
+          selectYearAriaLabel: this.selectYearAriaLabel,
           onToggleYearSelector: () => this.toggleYearSelector(),
           renderBelowHeader: (panelOffset) => this.renderBelowHeader(panelOffset),
           renderPanelBody: (panelOffset) => this.renderPanelBody(panelOffset),
@@ -410,6 +424,8 @@ export class GuiRangeDateTimeCalendar extends LitElement {
       onSelectYear: (year) => this._keyboard.selectYear(year),
       onYearKeydown: this._keyboard.handleYearKeydown,
       localeId: this.localeId,
+      currentDate: this._nav.currentDate,
+      yearGridAriaLabel: this.yearGridAriaLabel,
       getDays: (o) => this.getDaysInMonth(o),
       renderDay: (day) => this.renderDay(day),
     });
@@ -438,10 +454,11 @@ export class GuiRangeDateTimeCalendar extends LitElement {
    * `selectDate`.
    */
   private activationDay(isoDate: string): RangeCalendarDay {
+    const date = parseISODateString(isoDate);
     return {
-      date: parseISODateString(isoDate),
+      date,
       isCurrentMonth: true,
-      isDisabled: false,
+      isDisabled: this.isDisabled(date),
       isFocusable: true,
       dayLabel: '',
       isToday: false,
@@ -482,7 +499,10 @@ export class GuiRangeDateTimeCalendar extends LitElement {
         role="gridcell"
         class=${classMap(classes)}
         tabindex=${day.isFocusable ? 0 : -1}
-        ?disabled=${!day.isCurrentMonth || day.isDisabled}
+        ?disabled=${!day.isCurrentMonth}
+        aria-disabled=${day.isCurrentMonth && day.isDisabled ? 'true' : nothing}
+        aria-label=${getFullDateLabel(this.localeId, day.date)}
+        aria-current=${day.isToday ? 'date' : nothing}
         data-date=${toISODateString(day.date)}
         @click=${(e: MouseEvent) => this.selectDate(day, e)}
         @mouseover=${() => this.onMouseOver(day)}
@@ -543,7 +563,7 @@ export class GuiRangeDateTimeCalendar extends LitElement {
   }
 
   selectDate(day: RangeCalendarDay, _e: MouseEvent | KeyboardEvent | null = null) {
-    if (!day.isCurrentMonth || this.disabled || this.readOnly) return;
+    if (!day.isCurrentMonth || day.isDisabled || this.disabled || this.readOnly) return;
 
     const { state, commit } = reduceRangeSelection(this._selection, {
       type: 'pick',
@@ -585,6 +605,8 @@ export class GuiRangeDateTimeCalendar extends LitElement {
   }
 
   protected onMouseOver(day: RangeCalendarDay) {
+    if (day.isDisabled) return;
+
     this._selection = reduceRangeSelection(this._selection, {
       type: 'hover',
       date: day.date,
@@ -839,15 +861,13 @@ export class GuiRangeDateTimeCalendar extends LitElement {
     const pills = this.getSortedPills();
     if (pills.length === 0) return nothing;
 
-    const pillItems: GuiPillItem[] = buildPillItems(
-      pills,
-      (pill) => this.formatPillLabel(pill),
-      this.removePillAriaLabel ?? 'Remove date',
-    );
+    const pillItems: GuiPillItem[] = buildPillItems(pills, (pill) => this.formatPillLabel(pill));
 
     return html`
       <gui-pills
         class="gui-range-calendar__pills"
+        .uid=${this.uid}
+        .toolbarAriaLabel=${'Selected date-time ranges'}
         .items=${pillItems}
         .removable=${true}
         .clickable=${true}

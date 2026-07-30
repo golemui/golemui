@@ -107,12 +107,15 @@ export class GuiPassword extends LitElement {
             ? templateData.showPasswordIcon
             : templateData.hidePasswordIcon}
           type="button"
-          tabindex="-1"
+          ?disabled=${this.disabled}
+          aria-label=${!this.showPassword
+            ? (templateData.showPasswordLabel ?? 'Show password')
+            : (templateData.hidePasswordLabel ?? 'Hide password')}
           @click=${() => (this.showPassword = !this.showPassword)}
         >
           ${templateData.showPasswordIcon || templateData.hidePasswordIcon
             ? nothing
-            : html`<span
+            : html`<span aria-hidden="true"
                 >${!this.showPassword
                   ? (templateData.showPasswordLabel ?? 'Show')
                   : (templateData.hidePasswordLabel ?? 'Hide')}</span

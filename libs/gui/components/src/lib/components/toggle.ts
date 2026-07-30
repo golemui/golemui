@@ -1,7 +1,7 @@
 import { GUIAriaController } from '../controllers/aria.controller';
 import { html, LitElement, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { addErrors, type ControlTemplateData } from '../utils/templates';
+import { addErrors, requiredMarker, type ControlTemplateData } from '../utils/templates';
 import type { ToggleProps } from '@golemui/gui-shared/internals';
 
 @customElement('gui-toggle')
@@ -77,7 +77,6 @@ export class GuiToggle extends LitElement {
           <input
             type="checkbox"
             role="switch"
-            tabindex="0"
             id=${this.uid}
             data-cy=${`${this.uid}_toggle`}
             ?checked=${templateData.value}
@@ -91,7 +90,7 @@ export class GuiToggle extends LitElement {
         </div>
 
         <span class="gui-label__container">
-          ${templateData.label + (templateData.required ? ' *' : '')}
+          ${templateData.label}${requiredMarker(templateData.required)}
         </span>
       </label>
 

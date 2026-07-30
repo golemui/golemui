@@ -15,6 +15,7 @@ import {
 } from '../utils/calendar-templates';
 import {
   getDayLabel,
+  getFullDateLabel,
   isDateInVisibleMonths,
   isToday,
   parseISODateString,
@@ -59,6 +60,12 @@ export class GuiDateTimeCalendar extends LitElement {
   @property({ type: String, attribute: 'next-month-aria-label' }) nextMonthAriaLabel:
     | string
     | undefined = '';
+  @property({ type: String, attribute: 'select-year-aria-label' }) selectYearAriaLabel:
+    | string
+    | undefined = undefined;
+  @property({ type: String, attribute: 'year-grid-aria-label' }) yearGridAriaLabel:
+    | string
+    | undefined = undefined;
   @property({ type: String }) dayFormat: 'numeric' | '2-digit' | undefined = 'numeric';
   @property({ type: String }) weekdayFormat: 'short' | 'long' | 'narrow' | undefined = 'narrow';
   @property({ type: String }) monthFormat:
@@ -135,8 +142,6 @@ export class GuiDateTimeCalendar extends LitElement {
     canGoNext: () => this._nav.canGoNext(),
     goPrev: () => this._nav.prevMonth(),
     goNext: () => this._nav.nextMonth(),
-    // Enter/Space can only fire on a focused (hence enabled, in-month) day
-    // button; the `disabled`/`readOnly` host guards stay inside `selectDate`.
     onActivateDay: (isoDate) => {
       const date = parseISODateString(isoDate);
       this.selectDate({
@@ -146,7 +151,7 @@ export class GuiDateTimeCalendar extends LitElement {
         isToday: isToday(date),
         isSelected: false,
         isFocusable: true,
-        isDisabled: false,
+        isDisabled: this.isDisabled(date),
       });
     },
     onSelectYear: (year) => this._nav.selectYear(year),
@@ -286,6 +291,8 @@ export class GuiDateTimeCalendar extends LitElement {
       required: this.required,
       disabled: this.disabled,
       numberOfMonths: this.numberOfMonths,
+      localeId: this.localeId,
+      currentDate: this._nav.currentDate,
       prevMonthIcon: this.prevMonthIcon,
       nextMonthIcon: this.nextMonthIcon,
       prevMonthAriaLabel: this.prevMonthAriaLabel,
@@ -303,6 +310,7 @@ export class GuiDateTimeCalendar extends LitElement {
           localeId: this.localeId,
           monthFormat: this.monthFormat,
           yearSelectorOpen: this._nav.yearSelectorOpen,
+          selectYearAriaLabel: this.selectYearAriaLabel,
           onToggleYearSelector: () => this.toggleYearSelector(),
           renderBelowHeader: (o) => this.renderBelowHeader(o),
           renderPanelBody: (o) => this.renderPanelBody(o),
@@ -356,6 +364,8 @@ export class GuiDateTimeCalendar extends LitElement {
       onSelectYear: (year) => this._keyboard.selectYear(year),
       onYearKeydown: this._keyboard.handleYearKeydown,
       localeId: this.localeId,
+      currentDate: this._nav.currentDate,
+      yearGridAriaLabel: this.yearGridAriaLabel,
       getDays: (o) => this.getDaysInMonth(o),
       renderDay: (day) => this.renderDay(day),
     });
@@ -376,7 +386,10 @@ export class GuiDateTimeCalendar extends LitElement {
         role="gridcell"
         class=${classMap(classes)}
         tabindex=${day.isFocusable ? 0 : -1}
-        ?disabled=${!day.isCurrentMonth || day.isDisabled}
+        ?disabled=${!day.isCurrentMonth}
+        aria-disabled=${day.isCurrentMonth && day.isDisabled ? 'true' : nothing}
+        aria-label=${getFullDateLabel(this.localeId, day.date)}
+        aria-current=${day.isToday ? 'date' : nothing}
         data-date=${toISODateString(day.date)}
         @click=${() => this.selectDate(day)}
         @keydown=${(e: KeyboardEvent) => this._keyboard.handleDayKeydown(e)}

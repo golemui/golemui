@@ -182,14 +182,14 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
         name: 'onTabEvent',
         detail: 'tab2',
       });
-      cy.get('[data-cy="tabpanel_tabsComponent_1"]').should('exist');
+      cy.get('[data-cy="tabpanel_tabsComponent_1"]').should('have.attr', 'tabindex', '0');
 
       cy.get('[data-cy="tab_tabsComponent_0"]').click();
       cy.get('@formEventHandler').should('have.been.calledWithMatch', {
         name: 'onTabEvent',
         detail: 'tab1',
       });
-      cy.get('[data-cy="tabpanel_tabsComponent_0"]').should('exist');
+      cy.get('[data-cy="tabpanel_tabsComponent_0"]').should('have.attr', 'tabindex', '0');
     });
 
     it('Should execute form events on click', () => {

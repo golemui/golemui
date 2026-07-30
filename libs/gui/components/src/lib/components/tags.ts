@@ -125,6 +125,8 @@ export class GuiTags extends LitElement {
           <gui-pills
             class="gui-tags__pills"
             style=${styleMap(pillItems.length ? {} : { 'min-width': 0 })}
+            .uid=${this.uid}
+            .toolbarAriaLabel=${'Selected tags'}
             .items=${pillItems}
             .removable=${true}
             .clickable=${false}

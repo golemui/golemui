@@ -72,6 +72,7 @@ describe('Markdown schema validation', () => {
               orderedListTitle: 'Ordered list',
               unorderedListTitle: 'Unordered list',
               splitViewTitle: 'Split view',
+              toolbarAriaLabel: 'Formatting tools',
             },
           },
         ],

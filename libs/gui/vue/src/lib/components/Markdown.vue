@@ -50,6 +50,7 @@ const minimumHeight = computed(() => templateData.value.minimumHeight ?? 120);
       :orderedListTitle="templateData.orderedListTitle"
       :unorderedListTitle="templateData.unorderedListTitle"
       :splitViewTitle="templateData.splitViewTitle"
+      :toolbarAriaLabel="templateData.toolbarAriaLabel"
       :dependencies="templateData.deps"
       @input="handleInput"
       @blur="onBlur"

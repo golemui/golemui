@@ -141,6 +141,7 @@ export class TabsElement extends LitElement implements WithWidget {
         (section, index) =>
           html`<section
             role="tabpanel"
+            tabindex="0"
             data-cy=${`tabpanel_${this.widget.uid}_${index}`}
             id=${`tabpanel_${this.widget.uid}_${index}`}
             ?hidden=${section.uid !== this.activeTab &&

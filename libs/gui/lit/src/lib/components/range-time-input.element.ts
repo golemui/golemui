@@ -63,6 +63,9 @@ export class RangeTimeInputElement extends LitElement implements WithWidget {
         ?readonly=${this.adapter.templateData.readonly}
         .value=${this.adapter.templateData.value}
         .localeId=${this.adapter.templateData.lang}
+        .hourAriaLabel=${this.adapter.templateData.hourAriaLabel}
+        .minuteAriaLabel=${this.adapter.templateData.minuteAriaLabel}
+        .dayPeriodAriaLabel=${this.adapter.templateData.dayPeriodAriaLabel}
         .separator=${this.adapter.templateData.separator}
         .removePillAriaLabel=${this.adapter.templateData.removePillAriaLabel}
         .startTimeAriaLabel=${this.adapter.templateData.startTimeAriaLabel}

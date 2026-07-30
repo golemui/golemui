@@ -68,7 +68,9 @@ export const runDateTimeCalendarComponentTests = (mountFn: MountComponentFn) => 
     const day = (isoDate: string) => cy.get(`${sel.dayButton}[data-date="${isoDate}"]`);
     // Empty-start tests pick a day from the currently visible month
     const firstAvailableDay = () =>
-      cy.get(`${sel.dayButton}:not(.other-month):not(:disabled)`).first();
+      cy
+        .get(`${sel.dayButton}:not(.other-month):not(:disabled):not([aria-disabled="true"])`)
+        .first();
     const option = (isoTime: string) => cy.get(`${sel.options}[data-value="${isoTime}"]`);
 
     describe('rendering and hydration', () => {
@@ -516,6 +518,107 @@ export const runDateTimeCalendarComponentTests = (mountFn: MountComponentFn) => 
 
         cy.get(sel.hour).click({ force: true });
         cy.get(sel.timeGrid).should('have.attr', 'hidden');
+      });
+    });
+
+    describe('accessibility', () => {
+      const liveRegion = 'gui-date-time-calendar .gui-visually-hidden[aria-live="polite"]';
+      const nextMonth = 'gui-date-time-calendar .gui-calendar__month-button--next';
+
+      it('should name the days grid after the visible month and announce month changes', () => {
+        mountCalendar({ data: { myAppointment: '2026-02-13T09:30:00' }, props: officeProps });
+
+        cy.get(sel.daysGrid).should('have.attr', 'aria-label', 'February 2026');
+        cy.get(`${sel.daysGrid} .gui-calendar__weekday`)
+          .should('have.length', 7)
+          .each(($cell) => cy.wrap($cell).should('have.attr', 'role', 'columnheader'));
+        cy.get(liveRegion).should('have.text', 'February 2026');
+
+        cy.get(nextMonth).click();
+        cy.get(sel.daysGrid).should('have.attr', 'aria-label', 'March 2026');
+        cy.get(liveRegion).should('have.text', 'March 2026');
+      });
+
+      it('should label the year selector and year grid with English defaults', () => {
+        mountCalendar({ data: { myAppointment: '2026-02-13T09:30:00' }, props: officeProps });
+
+        cy.get(sel.yearSelector).should('have.attr', 'aria-label', 'Select year, 2026');
+        cy.get(sel.yearSelector).click();
+        cy.get(sel.yearGrid).should('have.attr', 'aria-label', 'Year selection');
+      });
+
+      it('should honor the year label override props', () => {
+        mountCalendar({
+          data: { myAppointment: '2026-02-13T09:30:00' },
+          props: {
+            ...officeProps,
+            selectYearAriaLabel: 'Elegir año',
+            yearGridAriaLabel: 'Selección de año',
+          },
+        });
+
+        cy.get(sel.yearSelector).should('have.attr', 'aria-label', 'Elegir año, 2026');
+        cy.get(sel.yearSelector).click();
+        cy.get(sel.yearGrid).should('have.attr', 'aria-label', 'Selección de año');
+      });
+
+      it('should name day buttons with the full date', () => {
+        // March 2026 (unlike February) ends midweek, so trailing out-of-month
+        // cells are rendered
+        mountCalendar({ data: { myAppointment: '2026-03-13T09:30:00' }, props: officeProps });
+
+        day('2026-03-13').should('have.attr', 'aria-label', 'Friday, March 13, 2026');
+
+        // Out-of-month days are named too — the label carries the date the
+        // button represents regardless of its state
+        cy.get(`${sel.dayButton}.other-month`)
+          .first()
+          .should('have.attr', 'aria-label', 'Wednesday, April 1, 2026');
+      });
+
+      it('should mark today with aria-current', () => {
+        // No value: the calendar opens on the current month, so today is visible
+        mountCalendar({ props: officeProps });
+
+        cy.get(`${sel.dayButton}.today`)
+          .should('have.length', 1)
+          .should('have.attr', 'aria-current', 'date')
+          .then(($btn) => {
+            const expected = new Intl.DateTimeFormat('en-US', { dateStyle: 'full' }).format(
+              new Date(),
+            );
+            expect($btn.attr('aria-label')).to.equal(expected);
+          });
+        cy.get(`${sel.dayButton}:not(.today)[aria-current]`).should('not.exist');
+      });
+
+      it('should expose blocked in-month days as aria-disabled instead of removing them from the tree', () => {
+        mountCalendar({
+          data: { myAppointment: '2026-03-13T09:30:00' },
+          props: { ...officeProps, disabledRanges: [{ start: '2026-03-14', end: '2026-03-14' }] },
+        });
+
+        day('2026-03-14')
+          .should('have.attr', 'aria-disabled', 'true')
+          .should('not.have.attr', 'disabled');
+        // Out-of-month placeholders keep the native attribute
+        cy.get(`${sel.dayButton}.other-month`).first().should('be.disabled');
+
+        // Clicking a blocked day must not select it
+        day('2026-03-14').click();
+        day('2026-03-14').should('not.have.class', 'selected');
+        day('2026-03-13').should('have.class', 'selected');
+      });
+
+      it('should skip aria-disabled days during arrow navigation', () => {
+        mountCalendar({
+          data: { myAppointment: '2026-03-13T09:30:00' },
+          props: { ...officeProps, disabledRanges: [{ start: '2026-03-14', end: '2026-03-14' }] },
+        });
+
+        day('2026-03-13').focus();
+        cy.focused().type('{rightArrow}');
+        cy.focused().should('have.attr', 'data-date', '2026-03-15');
       });
     });
   });

@@ -25,6 +25,7 @@ export interface GUIPopupControllerOptions {
    * Escape closes the popup, e.g. `'gui-date input'`.
    */
   focusRestoreSelector: string;
+  focusPopupSelector?: string;
   isDisabled(): boolean;
   /** Classifies a click on the anchor. See {@link GUIPopupClickIntent}. */
   clickIntent(target: HTMLElement): GUIPopupClickIntent;
@@ -58,7 +59,7 @@ export interface GUIPopupControllerOptions {
  * - Document 'click' listener (bubble phase, added in hostConnected) closes
  *   the popup when the composedPath contains none of the interior elements.
  * - Close popup on 'focusout' the host subtree.
- * - Enter/Space toggling happens on keyup
+ * - Enter/Space toggling is native: each picker's toggle is a real button.
  * - Escape is handled on keydown with preventDefault + stopPropagation
  *   (so it never reaches the document while open), restores focus to
  *   `focusRestoreSelector`, then closes.
@@ -71,6 +72,7 @@ export class GUIPopupController implements ReactiveController {
   private _open = false;
   private _restoringFocus = false;
   private _suppressNextFocusOut = false;
+  private _pointerDownInside = false;
 
   constructor(host: GUIPopupHost, options: GUIPopupControllerOptions) {
     this.host = host;
@@ -98,6 +100,14 @@ export class GUIPopupController implements ReactiveController {
 
   close = () => {
     this.setOpen(false);
+  };
+
+  openAndFocus = () => {
+    this.show();
+    if (!this._open || !this.options.focusPopupSelector) return;
+    Promise.resolve(this.host.updateComplete).then(() => {
+      this.host.querySelector<HTMLElement>(this.options.focusPopupSelector as string)?.focus();
+    });
   };
 
   /** Flips the popup according to `keyToggleMode` (see the option docs). */
@@ -136,18 +146,6 @@ export class GUIPopupController implements ReactiveController {
   };
 
   /**
-   * Template-bindable anchor keyup handler. Enter/Space toggle the popup,
-   * but only when the event target IS the anchor the handler is bound to.
-   */
-  onAnchorKeyUp = (event: KeyboardEvent) => {
-    if (this.options.isDisabled()) return;
-    if (event.target !== event.currentTarget) return;
-    if (event.key === 'Enter' || event.key === ' ') {
-      this.toggle();
-    }
-  };
-
-  /**
    * Template-bindable anchor keydown handler. Escape while open prevents
    * default, stops propagation, restores focus to the input, then closes.
    *
@@ -180,12 +178,49 @@ export class GUIPopupController implements ReactiveController {
     }
   };
 
+  /**
+   * TODO: Find a better way to do this, this is UGLY.
+   *
+   * A pointerdown on an interior element arms a short-lived guard: clicking a
+   * non-focusable area inside the popup blurs whatever held focus (relatedTarget
+   * null → looks like "focus left"), but a click inside the component must
+   * never light-dismiss it. Real departures (Tab, outside clicks) never arm it.
+   *
+   * The guard must outlive the focus-leave controllers' rAF-deferred
+   * activeElement check (the popup content's own leave detection dispatches
+   * its 'blur' one frame later), hence the double-rAF clear with a timeout
+   * safety net for throttled/hidden tabs.
+   */
+  private onHostPointerDown = (event: Event) => {
+    if (!this._open) return;
+    const path = event.composedPath();
+    const inside = this.options.getInteriorElements().some((el) => !!el && path.includes(el));
+    if (!inside) return;
+    this._pointerDownInside = true;
+    const clear = () => {
+      this._pointerDownInside = false;
+    };
+    requestAnimationFrame(() => requestAnimationFrame(clear));
+    setTimeout(clear, 200);
+  };
+
+  /**
+   * Close driven by the popup content's own focus-leave detection (the
+   * pickers' `@blur` on the calendar). Ignored while an interior pointer
+   * interaction is in flight — its focus churn is not a real departure.
+   */
+  closeOnFocusLeave = () => {
+    if (this._pointerDownInside) return;
+    this.close();
+  };
+
   private onHostFocusOut = (event: FocusEvent) => {
     if (this._suppressNextFocusOut) {
       this._suppressNextFocusOut = false;
       return;
     }
     if (!this._open) return;
+    if (this._pointerDownInside) return;
     this.focusLeave.handleFocusOut(event);
   };
 
@@ -213,11 +248,13 @@ export class GUIPopupController implements ReactiveController {
 
   hostConnected() {
     document.addEventListener('click', this.onDocumentClick);
+    this.host.addEventListener('pointerdown', this.onHostPointerDown);
     this.host.addEventListener('focusout', this.onHostFocusOut);
   }
 
   hostDisconnected() {
     document.removeEventListener('click', this.onDocumentClick);
+    this.host.removeEventListener('pointerdown', this.onHostPointerDown);
     this.host.removeEventListener('focusout', this.onHostFocusOut);
   }
 }

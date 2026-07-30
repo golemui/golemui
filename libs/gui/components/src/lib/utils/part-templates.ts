@@ -2,7 +2,11 @@ import { html, nothing, type TemplateResult } from 'lit';
 import { live } from 'lit/directives/live.js';
 import { repeat } from 'lit-html/directives/repeat.js';
 import type { GUIPartsController } from '../controllers/parts.controller';
-import type { DateTimePartDescriptor, DateTimePartType } from './parts';
+import {
+  PART_DEFAULT_ARIA_LABELS,
+  type DateTimePartDescriptor,
+  type DateTimePartType,
+} from './parts';
 
 export interface GUIPartsTemplateData {
   /** BEM block class, e.g. 'gui-date-input'. */
@@ -15,12 +19,16 @@ export interface GUIPartsTemplateData {
   getDescriptor(type: string): DateTimePartDescriptor | undefined;
   /** Value shown inside a part input. */
   getDisplayValue(group: string, type: DateTimePartType): string;
-  required: boolean | undefined;
   disabled: boolean | undefined;
   /** The effective parts-readonly state. */
   partsReadonly: boolean;
   /** Accessible name for the dayPeriod toggle. Omitted: 'AM/PM'. */
   dayPeriodAriaLabel?: string;
+  /**
+   * Accessible name for a numeric part input. Omitted: the part type's
+   * English default ('Day', 'Month', ...).
+   */
+  getPartAriaLabel?(group: string, type: DateTimePartType): string;
 }
 
 /**
@@ -113,19 +121,25 @@ export function renderPartInput(
   }
 
   const modifierClass = type === 'year' ? `gui-parts__year ${block}__year` : '';
+  const displayValue = data.getDisplayValue(group, type);
+  const numericValue = parseInt(displayValue, 10);
 
   return html`
     <div class="gui-parts__touch-target ${block}__touch-target">
       <input
         type="text"
         inputmode="numeric"
+        role="spinbutton"
         class="gui-parts__part ${block}__part ${modifierClass}"
         data-type=${type}
         data-group=${data.groups.length > 1 ? group : nothing}
         maxlength=${descriptor.maxLength}
         placeholder=${descriptor.placeholder}
         tabindex=${tabIndex}
-        ?required=${data.required}
+        aria-label=${data.getPartAriaLabel?.(group, type) ?? PART_DEFAULT_ARIA_LABELS[type]}
+        aria-valuemin=${descriptor.min}
+        aria-valuemax=${descriptor.max}
+        aria-valuenow=${isNaN(numericValue) ? nothing : numericValue}
         ?disabled=${data.disabled}
         ?readonly=${data.partsReadonly}
         autocomplete="off"

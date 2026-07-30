@@ -9,6 +9,7 @@ import { renderGroupParts, type GUIPartsTemplateData } from '../utils/part-templ
 import {
   getTimeLocaleData,
   parseTimeGroup,
+  PART_DEFAULT_ARIA_LABELS,
   timeBoundsError,
   type DateTimePartDescriptor,
   type DateTimePartType,
@@ -51,6 +52,9 @@ export class GuiRangeTimeInput extends LitElement {
 
   @property({ type: String }) icon: string | undefined = '';
   @property({ type: String }) hint: string | undefined = undefined;
+  @property({ type: String }) hourAriaLabel: string | undefined = undefined;
+  @property({ type: String }) minuteAriaLabel: string | undefined = undefined;
+  @property({ type: String }) dayPeriodAriaLabel: string | undefined = undefined;
 
   @property({ type: String, attribute: 'hour-format' }) hourFormat: HourFormat | undefined =
     undefined;
@@ -182,15 +186,20 @@ export class GuiRangeTimeInput extends LitElement {
       formatParts: getTimeFormatParts(this.localeId, this.timeLocaleData.effectiveHourFormat),
       getDescriptor: (type) => this.getPartDescriptor(type),
       getDisplayValue: this._parts.getPartDisplay,
-      required: this.required,
+      getPartAriaLabel: (_group: string, type: DateTimePartType) => {
+        const overrides: Partial<Record<DateTimePartType, string | undefined>> = {
+          hour: this.hourAriaLabel,
+          minute: this.minuteAriaLabel,
+        };
+        return overrides[type] ?? PART_DEFAULT_ARIA_LABELS[type];
+      },
+      dayPeriodAriaLabel: this.dayPeriodAriaLabel,
       disabled: this.disabled,
       partsReadonly: !!this.readOnly || this.allowCustomTime === false,
     };
 
-    const pillItems: GuiPillItem[] = buildPillItems(
-      this.getSortedPills(),
-      (pill) => formatRangeLabel(pill, (iso) => this.formatTimeForDisplay(iso)),
-      this.removePillAriaLabel ?? 'Remove time',
+    const pillItems: GuiPillItem[] = buildPillItems(this.getSortedPills(), (pill) =>
+      formatRangeLabel(pill, (iso) => this.formatTimeForDisplay(iso)),
     );
 
     const iconClassMap = {
@@ -220,6 +229,8 @@ export class GuiRangeTimeInput extends LitElement {
           <gui-pills
             class="gui-range-time-input__pills"
             style=${styleMap(pillItems.length ? {} : { 'min-width': 0 })}
+            .uid=${this.uid}
+            .toolbarAriaLabel=${'Selected time ranges'}
             .items=${pillItems}
             .removable=${true}
             .clickable=${true}

@@ -25,6 +25,11 @@ export class GuiRangeTimePicker extends LitElement {
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String }) hint: string | undefined = undefined;
   @property({ type: String }) icon: string | undefined = '';
+  @property({ type: String, attribute: 'toggle-aria-label' }) toggleAriaLabel: string | undefined =
+    undefined;
+  @property({ type: String }) hourAriaLabel: string | undefined = undefined;
+  @property({ type: String }) minuteAriaLabel: string | undefined = undefined;
+  @property({ type: String }) dayPeriodAriaLabel: string | undefined = undefined;
   @property({ type: Array }) errors: string[] | undefined = [];
   @property({ type: Boolean }) showErrors: boolean | undefined = true;
   @property({ type: Boolean }) touched: boolean | undefined = false;
@@ -74,14 +79,16 @@ export class GuiRangeTimePicker extends LitElement {
     | undefined = undefined;
 
   @query('#time-input') private _inputRef?: GuiRangeTimeInput;
-  @query('#list-panel') private _panelRef?: HTMLElement;
+  @query('.gui-range-time-picker__panel') private _panelRef?: HTMLElement;
+  @query('.gui-range-time-picker__arrow') private _toggleRef?: HTMLElement;
 
   @state() private _workingIn: string | undefined = undefined;
   @state() private _workingOut: string | undefined = undefined;
 
   private _popup = new GUIPopupController(this, {
-    getInteriorElements: () => [this._inputRef, this._panelRef],
+    getInteriorElements: () => [this._inputRef, this._panelRef, this._toggleRef],
     focusRestoreSelector: 'gui-range-time input, gui-range-time button',
+    focusPopupSelector: '.gui-time-list__option[tabindex="0"]',
     isDisabled: () => !!this.disabled,
     clickIntent: (target) => {
       if (target.closest('.gui-time-list__option')) return 'ignore';
@@ -144,7 +151,12 @@ export class GuiRangeTimePicker extends LitElement {
     const endLabel = this.endTimeLabel ?? 'End time';
 
     const panel = this._popup.open
-      ? html`<div class="gui-range-time-picker__panel" id="list-panel" role="group">
+      ? html`<div
+          class="gui-range-time-picker__panel"
+          id=${`${this.uid}_popup`}
+          role="dialog"
+          aria-label=${this.label ?? 'Time list'}
+        >
           <div class="gui-range-time-picker__column">
             <span class="gui-range-time-picker__column-label">${startLabel}</span>
             <gui-time-list
@@ -191,18 +203,20 @@ export class GuiRangeTimePicker extends LitElement {
       : nothing;
 
     return html`
-      ${addLabel(this.uid ?? '', {
-        label: this.label,
-        hint: this.hint,
-        required: this.required,
-      })}
+      ${addLabel(
+        this.uid ?? '',
+        {
+          label: this.label,
+          hint: this.hint,
+          required: this.required,
+        },
+        false,
+        undefined,
+        false,
+      )}
 
       <div
-        role="button"
-        tabindex="-1"
         class="gui-widget"
-        aria-expanded=${this._popup.open}
-        @keyup=${this._popup.onAnchorKeyUp}
         @keydown=${this._popup.onAnchorKeyDown}
         @click=${this._popup.onAnchorClick}
       >
@@ -234,14 +248,26 @@ export class GuiRangeTimePicker extends LitElement {
           .removePillAriaLabel=${this.removePillAriaLabel}
           .startTimeAriaLabel=${this.startTimeAriaLabel}
           .endTimeAriaLabel=${this.endTimeAriaLabel}
+          .hourAriaLabel=${this.hourAriaLabel}
+          .minuteAriaLabel=${this.minuteAriaLabel}
+          .dayPeriodAriaLabel=${this.dayPeriodAriaLabel}
           @blur=${this.onInputBlur}
           @focus=${this._popup.show}
           @change=${this.onInputChange}
           @partsChange=${this.onPartsChange}
           @pillClick=${this.onPillClick}
         ></gui-range-time>
-        <span class="gui-range-time-picker__arrow"
-          ><svg
+        <button
+          type="button"
+          class="gui-range-time-picker__arrow"
+          aria-label=${this.toggleAriaLabel ?? 'Show time list'}
+          aria-haspopup="dialog"
+          aria-expanded=${this._popup.open ? 'true' : 'false'}
+          aria-controls=${`${this.uid}_popup`}
+          ?disabled=${this.disabled}
+          @click=${this.onToggleClick}
+        >
+          <svg
             xmlns="http://www.w3.org/2000/svg"
             width="16"
             height="16"
@@ -250,8 +276,9 @@ export class GuiRangeTimePicker extends LitElement {
           >
             <path
               d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"
-            ></path></svg
-        ></span>
+            ></path>
+          </svg>
+        </button>
 
         ${panel}
       </div>
@@ -261,6 +288,16 @@ export class GuiRangeTimePicker extends LitElement {
         : ''}
     `;
   }
+
+  private onToggleClick = (event: Event) => {
+    // The wrapper's clickIntent handler must not double-handle the toggle.
+    event.stopPropagation();
+    if (this._popup.open) {
+      this._popup.close();
+    } else {
+      this._popup.openAndFocus();
+    }
+  };
 
   private onInputChange(event: CustomEvent) {
     event.stopPropagation();

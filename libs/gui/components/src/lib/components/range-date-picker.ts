@@ -16,6 +16,11 @@ export class GuiRangeDatePicker extends LitElement {
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String }) hint: string | undefined = undefined;
   @property({ type: String }) icon: string | undefined = '';
+  @property({ type: String, attribute: 'toggle-aria-label' }) toggleAriaLabel: string | undefined =
+    undefined;
+  @property({ type: String }) dayAriaLabel: string | undefined = undefined;
+  @property({ type: String }) monthAriaLabel: string | undefined = undefined;
+  @property({ type: String }) yearAriaLabel: string | undefined = undefined;
   @property({ type: Array }) errors: string[] | undefined = [];
   @property({ type: Boolean }) showErrors: boolean | undefined = true;
   @property({ type: Boolean }) touched: boolean | undefined = false;
@@ -40,6 +45,12 @@ export class GuiRangeDatePicker extends LitElement {
     | string
     | undefined = undefined;
   @property({ type: String, attribute: 'next-month-aria-label' }) nextMonthAriaLabel:
+    | string
+    | undefined = undefined;
+  @property({ type: String, attribute: 'select-year-aria-label' }) selectYearAriaLabel:
+    | string
+    | undefined = undefined;
+  @property({ type: String, attribute: 'year-grid-aria-label' }) yearGridAriaLabel:
     | string
     | undefined = undefined;
   @property({ type: String, attribute: 'day-format' }) dayFormat:
@@ -76,14 +87,16 @@ export class GuiRangeDatePicker extends LitElement {
     | undefined = undefined;
 
   @query('#date-input') private _dateRef?: HTMLElement;
-  @query('#calendar-input') private _calendarRef?: HTMLElement;
+  @query('gui-range-calendar') private _calendarRef?: HTMLElement;
+  @query('.gui-range-date-picker__arrow') private _toggleRef?: HTMLElement;
 
   @state() private _focusDate: string | undefined = undefined;
   @state() private _invalidRange: { start: string; end: string } | null = null;
 
   private _popup = new GUIPopupController(this, {
-    getInteriorElements: () => [this._dateRef, this._calendarRef],
+    getInteriorElements: () => [this._dateRef, this._calendarRef, this._toggleRef],
     focusRestoreSelector: 'gui-range-date input',
+    focusPopupSelector: '.gui-calendar__day-button[tabindex="0"]',
     isDisabled: () => !!this.disabled,
     clickIntent: (target) =>
       target.closest('.gui-range-date-input__part') || target.closest('gui-range-calendar')
@@ -124,7 +137,9 @@ export class GuiRangeDatePicker extends LitElement {
 
     const calendar = this._popup.open
       ? html`<gui-range-calendar
-          id="calendar-input"
+          id=${`${this.uid}_popup`}
+          role="dialog"
+          aria-label=${this.label ?? 'Calendar'}
           .uid=${this.uid}
           .hint=${this.hint}
           ?touched=${this.touched}
@@ -137,6 +152,8 @@ export class GuiRangeDatePicker extends LitElement {
           .nextMonthIcon=${this.nextMonthIcon}
           .prevMonthAriaLabel=${this.prevMonthAriaLabel}
           .nextMonthAriaLabel=${this.nextMonthAriaLabel}
+          .selectYearAriaLabel=${this.selectYearAriaLabel}
+          .yearGridAriaLabel=${this.yearGridAriaLabel}
           .dayFormat=${this.dayFormat}
           .weekdayFormat=${this.weekdayFormat}
           .monthFormat=${this.monthFormat}
@@ -155,18 +172,20 @@ export class GuiRangeDatePicker extends LitElement {
       : nothing;
 
     return html`
-      ${addLabel(this.uid ?? '', {
-        label: this.label,
-        hint: this.hint,
-        required: this.required,
-      })}
+      ${addLabel(
+        this.uid ?? '',
+        {
+          label: this.label,
+          hint: this.hint,
+          required: this.required,
+        },
+        false,
+        undefined,
+        false,
+      )}
 
       <div
-        role="button"
-        tabindex="-1"
         class="gui-widget"
-        aria-expanded=${this._popup.open}
-        @keyup=${this._popup.onAnchorKeyUp}
         @keydown=${this._popup.onAnchorKeyDown}
         @click=${this._popup.onAnchorClick}
       >
@@ -188,14 +207,26 @@ export class GuiRangeDatePicker extends LitElement {
           .removePillAriaLabel=${this.removePillAriaLabel}
           .startDateAriaLabel=${this.startDateAriaLabel}
           .endDateAriaLabel=${this.endDateAriaLabel}
+          .dayAriaLabel=${this.dayAriaLabel}
+          .monthAriaLabel=${this.monthAriaLabel}
+          .yearAriaLabel=${this.yearAriaLabel}
           .invalidDateMessage=${this.invalidDateMessage}
           @blur=${this.onDateBlur}
           @focus=${this._popup.show}
           @change=${this.onDateChange}
           @pillClick=${this.onPillClick}
         ></gui-range-date>
-        <span class="gui-range-date-picker__arrow"
-          ><svg
+        <button
+          type="button"
+          class="gui-range-date-picker__arrow"
+          aria-label=${this.toggleAriaLabel ?? 'Show calendar'}
+          aria-haspopup="dialog"
+          aria-expanded=${this._popup.open ? 'true' : 'false'}
+          aria-controls=${`${this.uid}_popup`}
+          ?disabled=${this.disabled}
+          @click=${this.onToggleClick}
+        >
+          <svg
             xmlns="http://www.w3.org/2000/svg"
             width="16"
             height="16"
@@ -204,8 +235,9 @@ export class GuiRangeDatePicker extends LitElement {
           >
             <path
               d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"
-            ></path></svg
-        ></span>
+            ></path>
+          </svg>
+        </button>
 
         ${calendar}
       </div>
@@ -215,6 +247,16 @@ export class GuiRangeDatePicker extends LitElement {
         : ''}
     `;
   }
+
+  private onToggleClick = (event: Event) => {
+    // The wrapper's clickIntent handler must not double-handle the toggle.
+    event.stopPropagation();
+    if (this._popup.open) {
+      this._popup.close();
+    } else {
+      this._popup.openAndFocus();
+    }
+  };
 
   private onDateChange(event: CustomEvent) {
     event.stopPropagation();
@@ -297,7 +339,7 @@ export class GuiRangeDatePicker extends LitElement {
   }
 
   private onCalendarBlur() {
-    this._popup.close();
+    this._popup.closeOnFocusLeave();
   }
 
   private onPillClick(event: CustomEvent) {

@@ -65,6 +65,10 @@ export class TimePickerElement extends LitElement implements WithWidget {
         .value=${templateData.value}
         .icon=${templateData.icon}
         .localeId=${templateData.lang}
+        .toggleAriaLabel=${templateData.toggleAriaLabel}
+        .hourAriaLabel=${templateData.hourAriaLabel}
+        .minuteAriaLabel=${templateData.minuteAriaLabel}
+        .dayPeriodAriaLabel=${templateData.dayPeriodAriaLabel}
         .hourFormat=${templateData.hourFormat}
         .minuteStep=${templateData.minuteStep}
         .minTime=${templateData.minTime}

@@ -195,5 +195,61 @@ export const runDatePickerComponentTests = (mountFn: MountComponentFn) => {
         expect(spy.getCall(0).args[0].detail.message).to.equal('Too far out');
       });
     });
+
+    describe('accessibility', () => {
+      const toggleSel = 'button.gui-date-picker__arrow';
+
+      it('should expose a named popup toggle button', () => {
+        mountWithDate();
+        cy.get(toggleSel)
+          .should('have.attr', 'aria-label', 'Show calendar')
+          .should('have.attr', 'aria-haspopup', 'dialog')
+          .should('have.attr', 'aria-expanded', 'false')
+          .should('have.attr', 'aria-controls', 'testSubject_popup');
+      });
+
+      it('should open a dialog from the toggle and move focus into the calendar', () => {
+        mountWithDate();
+        cy.get(toggleSel).click();
+        cy.get(toggleSel).should('have.attr', 'aria-expanded', 'true');
+        cy.get('gui-calendar')
+          .should('have.attr', 'role', 'dialog')
+          .should('have.id', 'testSubject_popup');
+        cy.focused().should('have.class', 'gui-calendar__day-button');
+      });
+
+      it('should close the popup from the toggle button', () => {
+        mountWithDate();
+        cy.get(toggleSel).click();
+        cy.get('gui-calendar').should('exist');
+        cy.get(toggleSel).click();
+        cy.get('gui-calendar').should('not.exist');
+        cy.get(toggleSel).should('have.attr', 'aria-expanded', 'false');
+      });
+
+      it('should return focus to the input when Escape closes the popup', () => {
+        mountWithDate();
+        cy.get(toggleSel).click();
+        cy.focused().should('have.class', 'gui-calendar__day-button');
+        cy.focused().type('{esc}');
+        cy.get('gui-calendar').should('not.exist');
+        cy.focused().should('have.class', 'gui-parts__part');
+      });
+
+      it('should honor the toggle aria-label override', () => {
+        mountWithProps({ props: { toggleAriaLabel: 'Abrir calendario' } });
+        cy.get(toggleSel).should('have.attr', 'aria-label', 'Abrir calendario');
+      });
+
+      it('should not duplicate the widget id while the popup is open', () => {
+        mountWithDate();
+        cy.get(toggleSel).click();
+        cy.get('gui-calendar').should('exist');
+        // The date input's segment group owns the bare uid; the calendar
+        // chrome carries the _calendar suffix
+        cy.get('[id="testSubject"]').should('have.length', 1);
+        cy.get('[id="testSubject_calendar"]').should('have.length', 1);
+      });
+    });
   });
 };

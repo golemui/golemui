@@ -24,6 +24,14 @@ export class GuiRangeDateTimePicker extends LitElement {
   @property({ type: Array }) value: DateTimeRange[] | undefined = [];
 
   // Trigger (input) chrome
+  @property({ type: String, attribute: 'toggle-aria-label' }) toggleAriaLabel: string | undefined =
+    undefined;
+  @property({ type: String }) dayAriaLabel: string | undefined = undefined;
+  @property({ type: String }) monthAriaLabel: string | undefined = undefined;
+  @property({ type: String }) yearAriaLabel: string | undefined = undefined;
+  @property({ type: String }) hourAriaLabel: string | undefined = undefined;
+  @property({ type: String }) minuteAriaLabel: string | undefined = undefined;
+  @property({ type: String }) dayPeriodAriaLabel: string | undefined = undefined;
   @property({ type: String }) separator: string | undefined = undefined;
   @property({ type: String, attribute: 'remove-pill-aria-label' }) removePillAriaLabel:
     | string
@@ -45,6 +53,12 @@ export class GuiRangeDateTimePicker extends LitElement {
     | string
     | undefined = undefined;
   @property({ type: String, attribute: 'next-month-aria-label' }) nextMonthAriaLabel:
+    | string
+    | undefined = undefined;
+  @property({ type: String, attribute: 'select-year-aria-label' }) selectYearAriaLabel:
+    | string
+    | undefined = undefined;
+  @property({ type: String, attribute: 'year-grid-aria-label' }) yearGridAriaLabel:
     | string
     | undefined = undefined;
   @property({ type: String, attribute: 'day-format' }) dayFormat:
@@ -105,13 +119,15 @@ export class GuiRangeDateTimePicker extends LitElement {
   disabledDayCountAriaLabel: string | undefined = undefined;
 
   @query('#date-input') private _dateRef?: HTMLElement;
-  @query('#calendar-input') private _calendarRef?: HTMLElement;
+  @query('gui-range-date-time-calendar') private _calendarRef?: HTMLElement;
+  @query('.gui-range-date-time-picker__arrow') private _toggleRef?: HTMLElement;
 
   @state() private _focusDate: string | undefined = undefined;
 
   private _popup = new GUIPopupController(this, {
-    getInteriorElements: () => [this._dateRef, this._calendarRef],
+    getInteriorElements: () => [this._dateRef, this._calendarRef, this._toggleRef],
     focusRestoreSelector: 'gui-range-date-time input',
+    focusPopupSelector: '.gui-calendar__day-button[tabindex="0"]',
     isDisabled: () => !!this.disabled,
     clickIntent: (target) => {
       if (target.closest('.gui-calendar__day-button')) return 'ignore';
@@ -160,7 +176,9 @@ export class GuiRangeDateTimePicker extends LitElement {
 
     const calendar = this._popup.open
       ? html`<gui-range-date-time-calendar
-          id="calendar-input"
+          id=${`${this.uid}_popup`}
+          role="dialog"
+          aria-label=${this.label ?? 'Calendar'}
           .uid=${this.uid}
           .hint=${this.hint}
           ?touched=${this.touched}
@@ -175,6 +193,8 @@ export class GuiRangeDateTimePicker extends LitElement {
           .nextMonthIcon=${this.nextMonthIcon}
           .prevMonthAriaLabel=${this.prevMonthAriaLabel}
           .nextMonthAriaLabel=${this.nextMonthAriaLabel}
+          .selectYearAriaLabel=${this.selectYearAriaLabel}
+          .yearGridAriaLabel=${this.yearGridAriaLabel}
           .dayFormat=${this.dayFormat}
           .weekdayFormat=${this.weekdayFormat}
           .monthFormat=${this.monthFormat}
@@ -200,18 +220,20 @@ export class GuiRangeDateTimePicker extends LitElement {
       : nothing;
 
     return html`
-      ${addLabel(this.uid ?? '', {
-        label: this.label,
-        hint: this.hint,
-        required: this.required,
-      })}
+      ${addLabel(
+        this.uid ?? '',
+        {
+          label: this.label,
+          hint: this.hint,
+          required: this.required,
+        },
+        false,
+        undefined,
+        false,
+      )}
 
       <div
-        role="button"
-        tabindex="-1"
         class="gui-widget"
-        aria-expanded=${this._popup.open}
-        @keyup=${this._popup.onAnchorKeyUp}
         @keydown=${this._popup.onAnchorKeyDown}
         @click=${this._popup.onAnchorClick}
       >
@@ -235,6 +257,12 @@ export class GuiRangeDateTimePicker extends LitElement {
           .removePillAriaLabel=${this.removePillAriaLabel}
           .startDateTimeAriaLabel=${this.startDateTimeAriaLabel}
           .endDateTimeAriaLabel=${this.endDateTimeAriaLabel}
+          .dayAriaLabel=${this.dayAriaLabel}
+          .monthAriaLabel=${this.monthAriaLabel}
+          .yearAriaLabel=${this.yearAriaLabel}
+          .hourAriaLabel=${this.hourAriaLabel}
+          .minuteAriaLabel=${this.minuteAriaLabel}
+          .dayPeriodAriaLabel=${this.dayPeriodAriaLabel}
           .invalidDateMessage=${this.invalidDateMessage}
           .minDateTime=${this.minDateTime}
           .maxDateTime=${this.maxDateTime}
@@ -247,8 +275,17 @@ export class GuiRangeDateTimePicker extends LitElement {
           @change=${this.onDateChange}
           @pillClick=${this.onPillClick}
         ></gui-range-date-time>
-        <span class="gui-range-date-time-picker__arrow"
-          ><svg
+        <button
+          type="button"
+          class="gui-range-date-time-picker__arrow"
+          aria-label=${this.toggleAriaLabel ?? 'Show calendar'}
+          aria-haspopup="dialog"
+          aria-expanded=${this._popup.open ? 'true' : 'false'}
+          aria-controls=${`${this.uid}_popup`}
+          ?disabled=${this.disabled}
+          @click=${this.onToggleClick}
+        >
+          <svg
             xmlns="http://www.w3.org/2000/svg"
             width="16"
             height="16"
@@ -257,8 +294,9 @@ export class GuiRangeDateTimePicker extends LitElement {
           >
             <path
               d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"
-            ></path></svg
-        ></span>
+            ></path>
+          </svg>
+        </button>
 
         ${calendar}
       </div>
@@ -268,6 +306,16 @@ export class GuiRangeDateTimePicker extends LitElement {
         : ''}
     `;
   }
+
+  private onToggleClick = (event: Event) => {
+    // The wrapper's clickIntent handler must not double-handle the toggle.
+    event.stopPropagation();
+    if (this._popup.open) {
+      this._popup.close();
+    } else {
+      this._popup.openAndFocus();
+    }
+  };
 
   private onDateChange(event: CustomEvent) {
     event.stopPropagation();
@@ -318,7 +366,7 @@ export class GuiRangeDateTimePicker extends LitElement {
   }
 
   private onCalendarBlur() {
-    this._popup.close();
+    this._popup.closeOnFocusLeave();
   }
 
   private onPillClick(event: CustomEvent) {

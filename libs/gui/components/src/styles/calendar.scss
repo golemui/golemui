@@ -129,10 +129,15 @@ gui-range-date-time-calendar {
         background-color: var(--gui-intent-primary);
       }
 
-      &[disabled] {
+      &[disabled],
+      &[aria-disabled='true'] {
         background-color: var(--gui-bg-disabled);
         color: var(--gui-text-default);
         cursor: not-allowed;
+      }
+
+      &[aria-disabled='true']:hover {
+        border-color: transparent;
       }
     }
 

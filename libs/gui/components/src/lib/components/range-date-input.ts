@@ -14,7 +14,9 @@ import { renderGroupParts, type GUIPartsTemplateData } from '../utils/part-templ
 import {
   dateInputPartDescriptors,
   parseDateGroup,
+  PART_DEFAULT_ARIA_LABELS,
   type DateTimePartDescriptor,
+  type DateTimePartType,
 } from '../utils/parts';
 import {
   buildPillItems,
@@ -44,6 +46,9 @@ export class GuiRangeDateInput extends LitElement {
 
   @property({ type: String }) icon: string | undefined = '';
   @property({ type: String }) hint: string | undefined = undefined;
+  @property({ type: String }) dayAriaLabel: string | undefined = undefined;
+  @property({ type: String }) monthAriaLabel: string | undefined = undefined;
+  @property({ type: String }) yearAriaLabel: string | undefined = undefined;
 
   @property({ type: Array }) value: DateRange[] | undefined = [];
   @property({ type: String, attribute: 'invalid-date-message' }) invalidDateMessage:
@@ -145,15 +150,20 @@ export class GuiRangeDateInput extends LitElement {
       formatParts: getDateFormatParts(this.localeId),
       getDescriptor: (type) => this.getPartDescriptor(type),
       getDisplayValue: this._parts.getPartDisplay,
-      required: this.required,
+      getPartAriaLabel: (_group: string, type: DateTimePartType) => {
+        const overrides: Partial<Record<DateTimePartType, string | undefined>> = {
+          day: this.dayAriaLabel,
+          month: this.monthAriaLabel,
+          year: this.yearAriaLabel,
+        };
+        return overrides[type] ?? PART_DEFAULT_ARIA_LABELS[type];
+      },
       disabled: this.disabled,
       partsReadonly: !!this.readOnly,
     };
 
-    const pillItems: GuiPillItem[] = buildPillItems(
-      this.getSortedPills(),
-      (pill) => formatRangeLabel(pill, (iso) => formatISODateForDisplay(iso, this.localeId)),
-      this.removePillAriaLabel ?? 'Remove date',
+    const pillItems: GuiPillItem[] = buildPillItems(this.getSortedPills(), (pill) =>
+      formatRangeLabel(pill, (iso) => formatISODateForDisplay(iso, this.localeId)),
     );
 
     const iconClassMap = {
@@ -183,6 +193,8 @@ export class GuiRangeDateInput extends LitElement {
           <gui-pills
             class="gui-range-date-input__pills"
             style=${styleMap(pillItems.length ? {} : { 'min-width': 0 })}
+            .uid=${this.uid}
+            .toolbarAriaLabel=${'Selected date ranges'}
             .items=${pillItems}
             .removable=${true}
             .clickable=${true}

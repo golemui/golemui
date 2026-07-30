@@ -5,11 +5,15 @@
 
 @mixin gui-pill {
   display: flex;
+  align-items: center;
   flex-wrap: nowrap;
   flex-shrink: 0;
   gap: var(--gui-space-3);
   color: var(--gui-color-white);
   background-color: var(--gui-intent-primary);
+  border: 0;
+  font: inherit;
+  text-align: start;
   border-radius: var(--gui-radius-md);
   padding: var(--gui-space-1);
   cursor: pointer;

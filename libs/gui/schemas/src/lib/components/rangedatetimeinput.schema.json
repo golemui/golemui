@@ -45,6 +45,24 @@
     "maxDateTimeProp": {
       "type": "string",
       "description": "ISO-8601 date-time string for the latest selectable date-time (inclusive)"
+    },
+    "dayAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "monthAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "yearAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "hourAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "minuteAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "dayPeriodAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
     }
   },
   "allOf": [
@@ -118,6 +136,24 @@
         },
         "maxDateTimeMessage": {
           "$ref": "../common.schema.json#/$defs/localizable"
+        },
+        "dayAriaLabel": {
+          "$ref": "#/$defs/dayAriaLabelProp"
+        },
+        "monthAriaLabel": {
+          "$ref": "#/$defs/monthAriaLabelProp"
+        },
+        "yearAriaLabel": {
+          "$ref": "#/$defs/yearAriaLabelProp"
+        },
+        "hourAriaLabel": {
+          "$ref": "#/$defs/hourAriaLabelProp"
+        },
+        "minuteAriaLabel": {
+          "$ref": "#/$defs/minuteAriaLabelProp"
+        },
+        "dayPeriodAriaLabel": {
+          "$ref": "#/$defs/dayPeriodAriaLabelProp"
         }
       },
       "patternProperties": {
@@ -159,6 +195,24 @@
         },
         "^maxDateTimeMessage\\.[^.]+$": {
           "$ref": "../common.schema.json#/$defs/localizable"
+        },
+        "^dayAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/dayAriaLabelProp"
+        },
+        "^monthAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/monthAriaLabelProp"
+        },
+        "^yearAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/yearAriaLabelProp"
+        },
+        "^hourAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/hourAriaLabelProp"
+        },
+        "^minuteAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/minuteAriaLabelProp"
+        },
+        "^dayPeriodAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/dayPeriodAriaLabelProp"
         }
       },
       "additionalProperties": false

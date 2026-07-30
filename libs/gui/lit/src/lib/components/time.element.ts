@@ -69,6 +69,9 @@ export class TimeElement extends LitElement implements WithWidget {
         .value=${this.adapter.templateData.value}
         .icon=${this.adapter.templateData.icon}
         .localeId=${this.adapter.templateData.lang}
+        .hourAriaLabel=${this.adapter.templateData.hourAriaLabel}
+        .minuteAriaLabel=${this.adapter.templateData.minuteAriaLabel}
+        .dayPeriodAriaLabel=${this.adapter.templateData.dayPeriodAriaLabel}
         .hourFormat=${this.adapter.templateData.hourFormat}
         .minuteStep=${this.adapter.templateData.minuteStep}
         .minTime=${this.adapter.templateData.minTime}

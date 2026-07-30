@@ -13,6 +13,13 @@ export type ControlTemplateData<T, V = any> = {
   required?: boolean;
 };
 
+/**
+ * The visual required marker. Hidden from AT — `aria-required` on the control
+ * carries the semantics, so screen readers don't announce a stray "star".
+ */
+export const requiredMarker = (required: boolean | undefined) =>
+  required ? html`<span aria-hidden="true"> *</span>` : nothing;
+
 export const addLabel = <T, ExtraProps extends { hint?: string }>(
   uid: string,
   templateData: ControlTemplateData<T> & ExtraProps,
@@ -28,8 +35,8 @@ export const addLabel = <T, ExtraProps extends { hint?: string }>(
           data-cy=${`${uid}_label`}
           id=${type ? `${uid}_${type}_label` : `${uid}_label`}
         >
-          ${templateData.label + (templateData.required ? ' *' : '')} ${addHint(uid, templateData)}
-          ${withErrors ? addErrors(uid, templateData) : nothing}
+          ${templateData.label}${requiredMarker(templateData.required)}
+          ${addHint(uid, templateData)} ${withErrors ? addErrors(uid, templateData) : nothing}
         </label>`
       : nothing;
   } else {
@@ -39,8 +46,8 @@ export const addLabel = <T, ExtraProps extends { hint?: string }>(
           data-cy=${`${uid}_label`}
           id=${type ? `${uid}_${type}_label` : `${uid}_label`}
         >
-          ${templateData.label + (templateData.required ? ' *' : '')} ${addHint(uid, templateData)}
-          ${withErrors ? addErrors(uid, templateData) : nothing}
+          ${templateData.label}${requiredMarker(templateData.required)}
+          ${addHint(uid, templateData)} ${withErrors ? addErrors(uid, templateData) : nothing}
         </span>`
       : nothing;
   }
