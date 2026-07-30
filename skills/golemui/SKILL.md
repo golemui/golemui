@@ -17,10 +17,15 @@ TypeScript declarations in `node_modules` or search the filesystem for them.
 
 ## Choose the API
 
-Two ways to author the same form — never mix their syntaxes in one artifact:
+Two ways to author the same form. **HARD GATE — do not write a single line of form code until
+the user has told you which API they want.** If the current request doesn't already state it,
+you MUST stop and ask (use the AskUserQuestion tool when available): TS API (gui.*, coded
+programmatically) or JSON API (a serializable document, e.g. stored or served at runtime). There
+is NO default — never pick one silently, even when operating autonomously, even if one seems
+obvious. Never mix their syntaxes in one artifact:
 
-- **TS API (default)** — the `gui.*` builder from `@golemui/gui-shared`
-  (`gui.inputs.textInput('email', { label: 'Email' })`). Use unless there is a reason not to.
+- **TS API** — the `gui.*` builder from `@golemui/gui-shared`
+  (`gui.inputs.textInput('email', { label: 'Email' })`).
   → Read [references/forms-dx.md](references/forms-dx.md) ONCE and write the whole form from it.
 - **JSON API** — a serializable `{ "form": [...] }` document. Use when forms must be stored,
   transferred, diffed, or served from a backend at runtime.
