@@ -85,7 +85,7 @@ export function renderCalendarChrome(data: CalendarChromeData): TemplateResult {
         class="gui-calendar-input"
         role="group"
         aria-labelledby=${data.label ? `${data.uid}_calendar_label` : nothing}
-        ?aria-disabled=${data.disabled}
+        aria-disabled=${data.disabled ? 'true' : nothing}
       >
         <div class="gui-visually-hidden" aria-live="polite">${visibleMonthsAnnouncement}</div>
         ${data.renderAboveCalendar()}

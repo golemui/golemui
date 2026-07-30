@@ -7,7 +7,10 @@ import type { ControlTemplateData } from '@golemui/core';
   selector: '[gui-label]',
   imports: [CommonModule],
   template: `@if (templateData().label) {
-      {{ templateData().label + (templateData().validator?.required ? ' *' : '') }}
+      {{ templateData().label
+      }}@if (templateData().validator?.required) {
+        <span aria-hidden="true"> *</span>
+      }
     }
     @if (templateData().hint) {
       <div class="gui-widget-hint" [id]="uid() + '_hint'">{{ templateData().hint }}</div>

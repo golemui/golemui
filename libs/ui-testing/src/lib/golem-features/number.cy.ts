@@ -3,7 +3,9 @@ import { type MountComponentFn } from '../utils';
 
 export const runNumberComponentTests = (mountFn: MountComponentFn) => {
   describe('Number Component', () => {
-    beforeEach(() => {
+    const input = () => cy.get('[data-cy="testSubject_number"]');
+
+    const mountNumber = (props?: Record<string, unknown>) => {
       mountFn({
         formDef: defineForm({
           form: [
@@ -12,6 +14,7 @@ export const runNumberComponentTests = (mountFn: MountComponentFn) => {
               kind: 'input',
               type: 'number',
               path: 'myField',
+              ...(props ? { props } : {}),
             },
             {
               uid: 'submitBtn',
@@ -23,23 +26,43 @@ export const runNumberComponentTests = (mountFn: MountComponentFn) => {
           ],
         }),
       });
+    };
+
+    describe('input filtering', () => {
+      beforeEach(() => {
+        mountNumber();
+      });
+
+      // Chrome filters letters natively on number inputs but Firefox does not,
+      // so the widget must block them itself
+      it('should not allow typing letters', () => {
+        input().type('abc');
+        input().should('have.value', '');
+      });
+
+      it('should keep only the numeric characters when typing mixed input', () => {
+        input().type('x1y2z3');
+        input().should('have.value', '123');
+      });
+
+      it('should accept decimal numbers', () => {
+        input().type('12.5');
+        input().should('have.value', '12.5');
+      });
     });
 
-    // Chrome filters letters natively on number inputs but Firefox does not,
-    // so the widget must block them itself
-    it('should not allow typing letters', () => {
-      cy.get('[data-cy="testSubject_number"]').type('abc');
-      cy.get('[data-cy="testSubject_number"]').should('have.value', '');
-    });
+    describe('accessibility', () => {
+      it('should surface minimum and maximum as native min/max', () => {
+        mountNumber({ minimum: 1, maximum: 10 });
+        input().should('have.attr', 'min', '1');
+        input().should('have.attr', 'max', '10');
+      });
 
-    it('should keep only the numeric characters when typing mixed input', () => {
-      cy.get('[data-cy="testSubject_number"]').type('x1y2z3');
-      cy.get('[data-cy="testSubject_number"]').should('have.value', '123');
-    });
-
-    it('should accept decimal numbers', () => {
-      cy.get('[data-cy="testSubject_number"]').type('12.5');
-      cy.get('[data-cy="testSubject_number"]').should('have.value', '12.5');
+      it('should not render min/max when no bounds are set', () => {
+        mountNumber();
+        input().should('not.have.attr', 'min');
+        input().should('not.have.attr', 'max');
+      });
     });
   });
 };

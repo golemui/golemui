@@ -48,5 +48,14 @@ export const runCurrencyComponentTests = (mountFn: MountComponentFn) => {
       cy.get('[data-cy="testSubject_currency"]').blur();
       cy.get('.gui-currency__format-value').should('contain.text', '$1,234.50');
     });
+
+    it('should hide the formatted overlay from assistive technology', () => {
+      cy.get('[data-cy="testSubject_currency"]').type('1234.5');
+      cy.get('[data-cy="testSubject_currency"]').blur();
+      // The overlay repeats the input value visually; a second <label> would
+      // duplicate the accessible name, so it renders as an aria-hidden span
+      cy.get('span.gui-currency__format-value').should('have.attr', 'aria-hidden', 'true');
+      cy.get('label.gui-currency__format-value').should('not.exist');
+    });
   });
 };
