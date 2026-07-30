@@ -36,6 +36,7 @@
   @if (child.uid === activeTab() || templateData.renderMode !== 'activeOnly') {
     <section
       role="tabpanel"
+      tabindex="0"
       [hidden]="child.uid !== activeTab() && templateData.renderMode !== 'activeOnly'"
       [attr.data-cy]="'tabpanel_' + widget.uid + '_' + i"
       [id]="'tabpanel_' + widget.uid + '_' + i"

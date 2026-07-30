@@ -46,7 +46,6 @@ export class GuiButton extends LitElement {
       <div class="gui-widget">
         <button
           type=${this.actionType ?? 'button'}
-          tabindex="0"
           id=${this.uid!}
           class=${classMap(buttonClasses)}
           data-cy=${`${this.uid}_button`}

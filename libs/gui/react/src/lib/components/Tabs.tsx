@@ -141,6 +141,7 @@ export function Tabs(widgetInstance: WithWidget) {
         <section
           key={`tabpanel_${widget.uid}_${section.uid}`}
           role="tabpanel"
+          tabIndex={0}
           data-cy={`tabpanel_${widget.uid}_${activeSectionIndex}`}
           id={`tabpanel_${widget.uid}_${activeSectionIndex}`}
           hidden={section.uid !== activeTab && templateData.renderMode !== 'activeOnly'}

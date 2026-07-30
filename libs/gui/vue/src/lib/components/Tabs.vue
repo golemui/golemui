@@ -158,6 +158,7 @@ const visibleSections = computed(() => {
       v-for="(section, idx) in visibleSections"
       :key="`tabpanel_${widget.uid}_${section.uid}`"
       role="tabpanel"
+      tabindex="0"
       :data-cy="`tabpanel_${widget.uid}_${idx}`"
       :id="`tabpanel_${widget.uid}_${idx}`"
       :hidden="section.uid !== activeTab && templateData.renderMode !== 'activeOnly'"

@@ -77,7 +77,6 @@ export class GuiToggle extends LitElement {
           <input
             type="checkbox"
             role="switch"
-            tabindex="0"
             id=${this.uid}
             data-cy=${`${this.uid}_toggle`}
             ?checked=${templateData.value}

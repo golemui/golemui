@@ -169,7 +169,6 @@ export class GuiMarkdown extends LitElement {
             <li role="presentation">
               <button
                 type="button"
-                tabindex="0"
                 class=${classMap({
                   'gui-markdown__toolbar-button': true,
                   'gui-markdown__toolbar-button--active': this.splitViewActive,
@@ -262,7 +261,6 @@ export class GuiMarkdown extends LitElement {
         return html`<li role="presentation">
           <button
             type="button"
-            tabindex="0"
             class=${this.toolbarBtnClass('heading')}
             ?disabled=${this.disabled || this.readOnly}
             aria-label=${this.headingTitle ?? 'Heading'}
@@ -287,7 +285,6 @@ export class GuiMarkdown extends LitElement {
         return html`<li role="presentation">
           <button
             type="button"
-            tabindex="0"
             class=${this.toolbarBtnClass('bold')}
             ?disabled=${this.disabled || this.readOnly}
             aria-label=${this.boldTitle ?? 'Bold'}
@@ -312,7 +309,6 @@ export class GuiMarkdown extends LitElement {
         return html`<li role="presentation">
           <button
             type="button"
-            tabindex="0"
             class=${this.toolbarBtnClass('italic')}
             ?disabled=${this.disabled || this.readOnly}
             aria-label=${this.italicTitle ?? 'Italic'}
@@ -337,7 +333,6 @@ export class GuiMarkdown extends LitElement {
         return html`<li role="presentation">
           <button
             type="button"
-            tabindex="0"
             class=${this.toolbarBtnClass('strikethrough')}
             ?disabled=${this.disabled || this.readOnly}
             aria-label=${this.strikethroughTitle ?? 'Strikethrough'}
@@ -362,7 +357,6 @@ export class GuiMarkdown extends LitElement {
         return html`<li role="presentation">
           <button
             type="button"
-            tabindex="0"
             class=${this.toolbarBtnClass('quote')}
             ?disabled=${this.disabled || this.readOnly}
             aria-label=${this.quoteTitle ?? 'Quote'}
@@ -387,7 +381,6 @@ export class GuiMarkdown extends LitElement {
         return html`<li role="presentation">
           <button
             type="button"
-            tabindex="0"
             class=${this.toolbarBtnClass('link')}
             ?disabled=${this.disabled || this.readOnly}
             aria-label=${this.linkTitle ?? 'Link'}
@@ -412,7 +405,6 @@ export class GuiMarkdown extends LitElement {
         return html`<li role="presentation">
           <button
             type="button"
-            tabindex="0"
             class=${this.toolbarBtnClass('orderedList')}
             ?disabled=${this.disabled || this.readOnly}
             aria-label=${this.orderedListTitle ?? 'Ordered List'}
@@ -437,7 +429,6 @@ export class GuiMarkdown extends LitElement {
         return html`<li role="presentation">
           <button
             type="button"
-            tabindex="0"
             class=${this.toolbarBtnClass('unorderedList')}
             ?disabled=${this.disabled || this.readOnly}
             aria-label=${this.unorderedListTitle ?? 'Unordered List'}

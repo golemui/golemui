@@ -139,7 +139,6 @@ export function renderMonthNavButton(
     return html`
       <button
         type="button"
-        tabindex="0"
         class="gui-button gui-calendar__month-button gui-calendar__month-button--prev"
         ?disabled=${data.disabled}
         @click=${data.onClick}
@@ -169,7 +168,6 @@ export function renderMonthNavButton(
   return html`
     <button
       type="button"
-      tabindex="0"
       class="gui-button gui-calendar__month-button gui-calendar__month-button--next"
       ?disabled=${data.disabled}
       @click=${data.onClick}
@@ -335,7 +333,6 @@ export function renderMonthHeader(panelDate: Date, data: MonthHeaderData): Templ
           part.type === 'year'
             ? html`<button
                 type="button"
-                tabindex="0"
                 class="gui-calendar__year-selector"
                 @click=${data.onToggleYearSelector}
                 aria-expanded=${data.yearSelectorOpen}
