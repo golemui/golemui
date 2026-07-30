@@ -162,10 +162,8 @@ export class GuiRangeDateInput extends LitElement {
       partsReadonly: !!this.readOnly,
     };
 
-    const pillItems: GuiPillItem[] = buildPillItems(
-      this.getSortedPills(),
-      (pill) => formatRangeLabel(pill, (iso) => formatISODateForDisplay(iso, this.localeId)),
-      this.removePillAriaLabel ?? 'Remove date',
+    const pillItems: GuiPillItem[] = buildPillItems(this.getSortedPills(), (pill) =>
+      formatRangeLabel(pill, (iso) => formatISODateForDisplay(iso, this.localeId)),
     );
 
     const iconClassMap = {
@@ -195,6 +193,8 @@ export class GuiRangeDateInput extends LitElement {
           <gui-pills
             class="gui-range-date-input__pills"
             style=${styleMap(pillItems.length ? {} : { 'min-width': 0 })}
+            .uid=${this.uid}
+            .toolbarAriaLabel=${'Selected date ranges'}
             .items=${pillItems}
             .removable=${true}
             .clickable=${true}

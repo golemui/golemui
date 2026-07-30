@@ -116,27 +116,25 @@ export function formatRangeLabel(
 }
 
 /**
- * Maps sorted ranges to gui-pills items: endpoint key, display label, and the
- * `"<removeAriaLabel> <label>"` aria label all four call sites build.
+ * Maps sorted ranges to gui-pills items: endpoint key and display label. The
+ * pill button is named by its label — the remove hint travels separately as
+ * gui-pills' `removeAriaLabel` (announced as the button's description).
  *
  * @param {readonly R[]} sortedRanges - The ranges, already display-sorted.
  * @param {(range: R) => string} formatLabel - Range label formatter (e.g.
  *   {@link formatRangeLabel} partially applied with an endpoint formatter).
- * @param {string} removeAriaLabel - The resolved remove-label prefix (the
- *   caller applies its own `?? 'Remove date'`-style default).
  * @return {PillItemShape[]} The pill items.
  */
 export function buildPillItems<R extends RangeLike>(
   sortedRanges: readonly R[],
   formatLabel: (range: R) => string,
-  removeAriaLabel: string,
 ): PillItemShape[] {
   return sortedRanges.map((range) => {
     const label = formatLabel(range);
     return {
       key: rangeKey(range),
       label,
-      ariaLabel: `${removeAriaLabel} ${label}`,
+      ariaLabel: label,
     };
   });
 }

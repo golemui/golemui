@@ -9,7 +9,7 @@ export interface GuiPillItem {
   key: string;
   /** Pre-formatted text the pill displays. */
   label: string;
-  /** Override for the chip's `aria-label`. Defaults to `${removeAriaLabel}: ${label}`. */
+  /** Override for the pill button's accessible name. Defaults to `label`. */
   ariaLabel?: string;
 }
 
@@ -50,6 +50,7 @@ export interface GuiPillsDropdownEventDetail {
  */
 @customElement('gui-pills')
 export class GuiPills extends LitElement {
+  @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: Array }) items: GuiPillItem[] = [];
 
   @property({ type: Boolean }) clickable = false;
@@ -63,6 +64,7 @@ export class GuiPills extends LitElement {
   @property({ type: String, attribute: 'remove-aria-label' }) removeAriaLabel = 'Remove';
   @property({ type: String, attribute: 'remove-icon' }) removeIcon: string | undefined;
   @property({ type: String, attribute: 'compact-aria-label' }) compactAriaLabel: string | undefined;
+  @property({ type: String, attribute: 'toolbar-aria-label' }) toolbarAriaLabel = 'Selected items';
 
   @state() private _isStartVisible = true;
   @state() private _isEndVisible = true;
@@ -119,7 +121,12 @@ export class GuiPills extends LitElement {
           'gui-pills--end-shadow': !this._isEndVisible,
         })}
       >
-        <div class="gui-pills__strip" role="list" tabindex="-1">
+        <div
+          class="gui-pills__strip"
+          role="toolbar"
+          aria-label=${this.toolbarAriaLabel}
+          tabindex="-1"
+        >
           <span class="gui-sentinel gui-sentinel__start"></span>
           ${repeat(
             this.items,
@@ -132,6 +139,10 @@ export class GuiPills extends LitElement {
     `;
   }
 
+  private get dropdownId(): string | undefined {
+    return this.uid ? `${this.uid}_pills_dropdown` : undefined;
+  }
+
   private renderCompact(count: number) {
     return html`
       <div class="gui-pills__compact">
@@ -139,7 +150,9 @@ export class GuiPills extends LitElement {
           type="button"
           class="gui-pills__count"
           aria-label=${this.compactAriaLabel ?? `${count} items`}
+          aria-haspopup="true"
           aria-expanded=${this._showDropdown}
+          aria-controls=${this.dropdownId ?? nothing}
           ?disabled=${this.disabled || this.readOnly}
           @click=${(e: Event) => {
             e.stopPropagation();
@@ -154,7 +167,13 @@ export class GuiPills extends LitElement {
 
   private renderDropdown() {
     return html`
-      <div class="gui-pills__dropdown" role="list">
+      <div
+        id=${this.dropdownId ?? nothing}
+        class="gui-pills__dropdown"
+        role="toolbar"
+        aria-orientation="vertical"
+        aria-label=${this.toolbarAriaLabel}
+      >
         ${repeat(
           this.items,
           (item) => `dd-${item.key}`,
@@ -165,38 +184,38 @@ export class GuiPills extends LitElement {
   }
 
   private renderPill(item: GuiPillItem, index: number, inDropdown: boolean) {
-    const ariaLabel = item.ariaLabel ?? `${this.removeAriaLabel}: ${item.label}`;
     const isClickable = this.clickable && !this.disabled && !this.readOnly;
     return html`
-      <div
+      <button
+        type="button"
         class=${classMap({
           'gui-pills__pill': true,
           'gui-pills__pill--clickable': isClickable,
         })}
-        role="listitem"
         data-key=${item.key}
         data-index=${index}
         data-in-dropdown=${inDropdown}
         tabindex=${this.tabbable && !this.disabled && !this.readOnly ? 0 : -1}
-        aria-label=${ariaLabel}
+        ?disabled=${this.disabled || this.readOnly}
+        aria-label=${item.ariaLabel ?? item.label}
+        aria-description=${this.removable && !this.disabled && !this.readOnly
+          ? this.removeAriaLabel
+          : nothing}
         @click=${(e: Event) => this.onPillClick(e, item)}
         @focus=${this.handlePillFocus}
         @keydown=${(e: KeyboardEvent) => this.onPillKeydown(e, item, index)}
       >
         <span class="gui-pills__pill-text">${item.label}</span>
         ${this.removable ? this.renderRemoveButton(item) : nothing}
-      </div>
+      </button>
     `;
   }
 
   private renderRemoveButton(item: GuiPillItem) {
     return html`
-      <button
-        type="button"
+      <span
         class="gui-pills__pill-remove"
-        tabindex="-1"
         aria-hidden="true"
-        ?disabled=${this.disabled || this.readOnly}
         @mousedown=${(e: Event) => {
           e.stopPropagation();
           e.preventDefault();
@@ -224,7 +243,7 @@ export class GuiPills extends LitElement {
                 d="M165.66,101.66,139.31,128l26.35,26.34a8,8,0,0,1-11.32,11.32L128,139.31l-26.34,26.35a8,8,0,0,1-11.32-11.32L116.69,128,90.34,101.66a8,8,0,0,1,11.32-11.32L128,116.69l26.34-26.35a8,8,0,0,1,11.32,11.32ZM232,128A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z"
               ></path>
             </svg>`}
-      </button>
+      </span>
     `;
   }
 

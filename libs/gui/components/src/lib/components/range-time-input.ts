@@ -198,10 +198,8 @@ export class GuiRangeTimeInput extends LitElement {
       partsReadonly: !!this.readOnly || this.allowCustomTime === false,
     };
 
-    const pillItems: GuiPillItem[] = buildPillItems(
-      this.getSortedPills(),
-      (pill) => formatRangeLabel(pill, (iso) => this.formatTimeForDisplay(iso)),
-      this.removePillAriaLabel ?? 'Remove time',
+    const pillItems: GuiPillItem[] = buildPillItems(this.getSortedPills(), (pill) =>
+      formatRangeLabel(pill, (iso) => this.formatTimeForDisplay(iso)),
     );
 
     const iconClassMap = {
@@ -231,6 +229,8 @@ export class GuiRangeTimeInput extends LitElement {
           <gui-pills
             class="gui-range-time-input__pills"
             style=${styleMap(pillItems.length ? {} : { 'min-width': 0 })}
+            .uid=${this.uid}
+            .toolbarAriaLabel=${'Selected time ranges'}
             .items=${pillItems}
             .removable=${true}
             .clickable=${true}

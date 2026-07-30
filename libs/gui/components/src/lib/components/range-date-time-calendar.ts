@@ -861,15 +861,13 @@ export class GuiRangeDateTimeCalendar extends LitElement {
     const pills = this.getSortedPills();
     if (pills.length === 0) return nothing;
 
-    const pillItems: GuiPillItem[] = buildPillItems(
-      pills,
-      (pill) => this.formatPillLabel(pill),
-      this.removePillAriaLabel ?? 'Remove date',
-    );
+    const pillItems: GuiPillItem[] = buildPillItems(pills, (pill) => this.formatPillLabel(pill));
 
     return html`
       <gui-pills
         class="gui-range-calendar__pills"
+        .uid=${this.uid}
+        .toolbarAriaLabel=${'Selected date-time ranges'}
         .items=${pillItems}
         .removable=${true}
         .clickable=${true}
