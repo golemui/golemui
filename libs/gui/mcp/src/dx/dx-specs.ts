@@ -9,18 +9,34 @@
  * compile gate is the cure.)
  */
 
+import { formEventNames } from '@golemui/core';
+
 export type DxNamespace = 'inputs' | 'actions' | 'displays' | 'layouts';
+
+/** Widgets-reference URL group per namespace: `widgets-reference/<group>/<docSlug>.md`. */
+export const DOC_GROUP: Record<DxNamespace, string> = {
+  inputs: 'input-fields',
+  actions: 'interactive-fields',
+  displays: 'display-fields',
+  layouts: 'layout-fields',
+};
 
 export interface DxSpec {
   /** Factory name, e.g. `textInput`. */
   factory: string;
   namespace: DxNamespace;
+  docSlug: string;
   /** Human-readable calling convention. */
   call: string;
   /** A compiling `gui.*` snippet (verified by the suite). */
   example: string;
   /** Authoring notes and gotchas. */
   notes: string[];
+}
+
+/** The absolute widgets-reference page URL for a factory (dx or json flavor). */
+export function dxDocUrl(spec: DxSpec, dsl: 'dx' | 'json' = 'dx'): string {
+  return `https://golemui.com/${dsl}/widgets-reference/${DOC_GROUP[spec.namespace]}/${spec.docSlug}.md`;
 }
 
 /**
@@ -70,12 +86,22 @@ const FRAMEWORK_SETUP: Record<DxFramework, string> = {
     '`FormSubmitEvent` (`.data` is the form data). The event is `form-submit` (kebab-case), not `formSubmit`.',
   lit:
     "RENDER (Lit) — `import { gui } from '@golemui/gui-shared'; import '@golemui/gui-lit';` (registers the " +
-    '`<gui-form>` custom element), then `<gui-form .config=${{ formDef: form }} @form-submit=${(e: CustomEvent) ' +
-    '=> { /* e.detail is the FormSubmitEvent; e.detail.data */ }}></gui-form>`.',
+    '`<gui-form>` custom element), then `<gui-form .config=${{ formDef: form }} @' +
+    formEventNames.submit +
+    '=${(e: CustomEvent) ' +
+    '=> { /* e.detail is the FormSubmitEvent; e.detail.data */ }}></gui-form>`. The event name is ' +
+    '`' +
+    formEventNames.submit +
+    '` (camelCase) — Lit dispatches a raw CustomEvent, so there is no kebab-case alias.',
   vanilla:
     "RENDER (vanilla JS) — `import { gui } from '@golemui/gui-shared'; import '@golemui/gui-lit';` (registers " +
     "`<gui-form>`), then `const el = document.querySelector('gui-form'); el.config = { formDef: form }; " +
-    "el.addEventListener('form-submit', (e) => { /* e.detail.data */ });`",
+    "el.addEventListener('" +
+    formEventNames.submit +
+    "', (e) => { /* e.detail.data */ });`. In TypeScript, type the element — " +
+    "`import type { FormElement } from '@golemui/gui-lit'; const el = document.querySelector<FormElement>('gui-form');` — " +
+    'the published types do not register `gui-form` in `HTMLElementTagNameMap`, so an untyped ' +
+    '`querySelector` yields `Element` and `el.config` fails to compile.',
 };
 
 function commonNote(fw: DxFramework = 'react'): string {
@@ -185,6 +211,7 @@ const INPUTS: DxSpec[] = [
   {
     factory: 'textInput',
     namespace: 'inputs',
+    docSlug: 'textinput',
     call: 'gui.inputs.textInput(path, { label, placeholder?, defaultValue?, validator? })',
     example:
       "gui.inputs.textInput('fullName', { label: 'Full name', validator: { required: true, minLength: 2 } })",
@@ -197,6 +224,7 @@ const INPUTS: DxSpec[] = [
   {
     factory: 'numberInput',
     namespace: 'inputs',
+    docSlug: 'number',
     call: 'gui.inputs.numberInput(path, { label, defaultValue?, validator? })',
     example:
       "gui.inputs.numberInput('age', { label: 'Age', validator: { required: true, minimum: 0, maximum: 120 } })",
@@ -207,6 +235,7 @@ const INPUTS: DxSpec[] = [
   {
     factory: 'booleanInput',
     namespace: 'inputs',
+    docSlug: 'toggle',
     call: 'gui.inputs.booleanInput(path, { label, defaultValue? })',
     example:
       "gui.inputs.booleanInput('newsletter', { label: 'Subscribe to newsletter', defaultValue: false })",
@@ -215,6 +244,7 @@ const INPUTS: DxSpec[] = [
   {
     factory: 'checkbox',
     namespace: 'inputs',
+    docSlug: 'checkbox',
     call: 'gui.inputs.checkbox(path, { label, defaultValue? })',
     example: "gui.inputs.checkbox('terms', { label: 'I accept the terms', defaultValue: false })",
     notes: ['A single boolean rendered as a checkbox.'],
@@ -222,6 +252,7 @@ const INPUTS: DxSpec[] = [
   {
     factory: 'textarea',
     namespace: 'inputs',
+    docSlug: 'textarea',
     call: 'gui.inputs.textarea(path, { label, placeholder?, validator? })',
     example: "gui.inputs.textarea('bio', { label: 'Bio', validator: { maxLength: 500 } })",
     notes: ['Multi-line text; same loose string validator as `textInput`.'],
@@ -229,6 +260,7 @@ const INPUTS: DxSpec[] = [
   {
     factory: 'password',
     namespace: 'inputs',
+    docSlug: 'password',
     call: 'gui.inputs.password(path, { label, validator? })',
     example:
       "gui.inputs.password('password', { label: 'Password', validator: { required: true, minLength: 8 } })",
@@ -237,6 +269,7 @@ const INPUTS: DxSpec[] = [
   {
     factory: 'dropdown',
     namespace: 'inputs',
+    docSlug: 'dropdown',
     call: 'gui.inputs.dropdown(path, { label, items, validator? })',
     example:
       "gui.inputs.dropdown('country', { label: 'Country', items: [{ value: 'us', label: 'United States' }, { value: 'ca', label: 'Canada' }], validator: { type: 'string', required: true } })",
@@ -248,6 +281,7 @@ const INPUTS: DxSpec[] = [
   {
     factory: 'radiogroup',
     namespace: 'inputs',
+    docSlug: 'radiogroup',
     call: 'gui.inputs.radiogroup(path, { label, options, defaultValue?, validator? })',
     example:
       "gui.inputs.radiogroup('accountType', { label: 'Account type', defaultValue: 'personal', options: [{ value: 'personal', label: 'Personal' }, { value: 'business', label: 'Business' }] })",
@@ -259,6 +293,7 @@ const INPUTS: DxSpec[] = [
   {
     factory: 'datePicker',
     namespace: 'inputs',
+    docSlug: 'date-picker',
     call: 'gui.inputs.datePicker(path, { label, minDate?, maxDate?, validator? })',
     example:
       "gui.inputs.datePicker('startDate', { label: 'Coverage start', minDate: '2025-01-01', validator: { required: true } })",
@@ -274,6 +309,7 @@ const INPUTS: DxSpec[] = [
   {
     factory: 'currency',
     namespace: 'inputs',
+    docSlug: 'currency',
     call: 'gui.inputs.currency(path, { label, validator? })',
     example:
       "gui.inputs.currency('price', { label: 'Price', validator: { required: true, minimum: 0 } })",
@@ -282,6 +318,7 @@ const INPUTS: DxSpec[] = [
   {
     factory: 'select',
     namespace: 'inputs',
+    docSlug: 'select',
     call: 'gui.inputs.select(path, { label, options, validator? })',
     example:
       "gui.inputs.select('plan', { label: 'Plan', options: [{ value: 'free', label: 'Free' }, { value: 'pro', label: 'Pro' }], validator: { type: 'string', required: true } })",
@@ -293,6 +330,7 @@ const INPUTS: DxSpec[] = [
   {
     factory: 'dateInput',
     namespace: 'inputs',
+    docSlug: 'dateinput',
     call: 'gui.inputs.dateInput(path, { label, minDate?, maxDate?, validator? })',
     example:
       "gui.inputs.dateInput('startDate', { label: 'Start date', validator: { required: true } })",
@@ -305,6 +343,7 @@ const INPUTS: DxSpec[] = [
   {
     factory: 'timeInput',
     namespace: 'inputs',
+    docSlug: 'timeinput',
     call: 'gui.inputs.timeInput(path, { label, hourFormat?, minuteStep?, validator? })',
     example: "gui.inputs.timeInput('meetingTime', { label: 'Meeting time', minuteStep: 15 })",
     notes: [
@@ -316,6 +355,7 @@ const INPUTS: DxSpec[] = [
   {
     factory: 'timePicker',
     namespace: 'inputs',
+    docSlug: 'timepicker',
     call: 'gui.inputs.timePicker(path, { label, minTime?, maxTime?, minuteStep?, disabledRanges?, allowCustomTime?, validator? })',
     example:
       "gui.inputs.timePicker('meetingTime', { label: 'Meeting time', minTime: '09:00', maxTime: '18:00', minuteStep: 30 })",
@@ -328,6 +368,7 @@ const INPUTS: DxSpec[] = [
   {
     factory: 'dateTimeInput',
     namespace: 'inputs',
+    docSlug: 'datetimeinput',
     call: 'gui.inputs.dateTimeInput(path, { label, hourFormat?, minuteStep?, validator? })',
     example: "gui.inputs.dateTimeInput('meetingAt', { label: 'Meeting at' })",
     notes: [
@@ -339,6 +380,7 @@ const INPUTS: DxSpec[] = [
   {
     factory: 'calendar',
     namespace: 'inputs',
+    docSlug: 'calendar',
     call: 'gui.inputs.calendar(path, { label, minDate?, maxDate? })',
     example: "gui.inputs.calendar('day', { label: 'Pick a day', minDate: '2025-01-01' })",
     notes: [
@@ -350,6 +392,7 @@ const INPUTS: DxSpec[] = [
   {
     factory: 'dateTimeCalendar',
     namespace: 'inputs',
+    docSlug: 'datetimecalendar',
     call: 'gui.inputs.dateTimeCalendar(path, { label, minDate?, maxDate?, minTime?, maxTime?, minuteStep?, disabledTimeRanges?, allowCustomTime? })',
     example:
       "gui.inputs.dateTimeCalendar('appointmentAt', { label: 'Appointment', minTime: '09:00', maxTime: '18:00' })",
@@ -366,6 +409,7 @@ const INPUTS: DxSpec[] = [
   {
     factory: 'dateTimePicker',
     namespace: 'inputs',
+    docSlug: 'datetimepicker',
     call: 'gui.inputs.dateTimePicker(path, { label, minDate?, maxDate?, minTime?, maxTime?, minuteStep?, disabledTimeRanges?, allowCustomTime? })',
     example:
       "gui.inputs.dateTimePicker('appointmentAt', { label: 'Appointment', minTime: '09:00', maxTime: '18:00' })",
@@ -381,6 +425,7 @@ const INPUTS: DxSpec[] = [
   {
     factory: 'markdown',
     namespace: 'inputs',
+    docSlug: 'markdown',
     call: 'gui.inputs.markdown(path, { label })',
     example: "gui.inputs.markdown('notes', { label: 'Notes (markdown)' })",
     notes: [
@@ -392,6 +437,7 @@ const INPUTS: DxSpec[] = [
   {
     factory: 'tags',
     namespace: 'inputs',
+    docSlug: 'tags',
     call: 'gui.inputs.tags(path, { label })',
     example: "gui.inputs.tags('skills', { label: 'Skills' })",
     notes: ['Free-form multi-value tag input; the value is a string array.'],
@@ -399,6 +445,7 @@ const INPUTS: DxSpec[] = [
   {
     factory: 'repeater',
     namespace: 'inputs',
+    docSlug: 'repeater',
     call: 'gui.inputs.repeater(path, { label?, addLabel?, removeLabel?, limit?, template })',
     example:
       "gui.inputs.repeater('attendees', { label: 'Attendees', addLabel: 'Add attendee', template: [ gui.inputs.textInput('attendees.items.name', { label: 'Name' }) ] })",
@@ -416,6 +463,7 @@ const INPUTS: DxSpec[] = [
   {
     factory: 'list',
     namespace: 'inputs',
+    docSlug: 'list',
     call: 'gui.inputs.list(path, { label, items, height?, itemHeight? })',
     example:
       "gui.inputs.list('selection', { label: 'Pick an option', items: ['Option 1', 'Option 2', 'Option 3'], height: 200, itemHeight: 40 })",
@@ -427,6 +475,7 @@ const INPUTS: DxSpec[] = [
   {
     factory: 'rangeCalendar',
     namespace: 'inputs',
+    docSlug: 'range-calendar',
     call: 'gui.inputs.rangeCalendar(path, { label? })',
     example: "gui.inputs.rangeCalendar('stayDates', { label: 'Stay dates' })",
     notes: [
@@ -436,6 +485,7 @@ const INPUTS: DxSpec[] = [
   {
     factory: 'rangeDateInput',
     namespace: 'inputs',
+    docSlug: 'range-date-input',
     call: 'gui.inputs.rangeDateInput(path, { label? })',
     example: "gui.inputs.rangeDateInput('stayDates', { label: 'Stay dates' })",
     notes: ['Typed start–end date **range** entry (the range sibling of `dateInput`).'],
@@ -443,6 +493,7 @@ const INPUTS: DxSpec[] = [
   {
     factory: 'rangeTimeInput',
     namespace: 'inputs',
+    docSlug: 'range-time-input',
     call: 'gui.inputs.rangeTimeInput(path, { label?, minTime?, maxTime? })',
     example:
       "gui.inputs.rangeTimeInput('shift', { label: 'Shift', minTime: '06:00:00', maxTime: '22:00:00' })",
@@ -453,6 +504,7 @@ const INPUTS: DxSpec[] = [
   {
     factory: 'rangeDateTimeInput',
     namespace: 'inputs',
+    docSlug: 'range-datetime-input',
     call: 'gui.inputs.rangeDateTimeInput(path, { label?, minDateTime?, maxDateTime? })',
     example:
       "gui.inputs.rangeDateTimeInput('window', { label: 'Window', minDateTime: '2026-03-01T06:00:00', maxDateTime: '2026-03-31T22:00:00' })",
@@ -464,6 +516,7 @@ const INPUTS: DxSpec[] = [
   {
     factory: 'rangeDateTimeCalendar',
     namespace: 'inputs',
+    docSlug: 'range-datetime-calendar',
     call: 'gui.inputs.rangeDateTimeCalendar(path, { label?, minDateTime?, maxDateTime?, disabledRanges?, startTimeLabel?, endTimeLabel? })',
     example:
       "gui.inputs.rangeDateTimeCalendar('stay', { label: 'Stay', startTimeLabel: 'Check-in', endTimeLabel: 'Check-out' })",
@@ -475,6 +528,7 @@ const INPUTS: DxSpec[] = [
   {
     factory: 'rangeDateTimePicker',
     namespace: 'inputs',
+    docSlug: 'range-datetime-picker',
     call: 'gui.inputs.rangeDateTimePicker(path, { label?, minDateTime?, maxDateTime?, disabledRanges?, startTimeLabel?, endTimeLabel? })',
     example:
       "gui.inputs.rangeDateTimePicker('stay', { label: 'Stay', startTimeLabel: 'Check-in', endTimeLabel: 'Check-out' })",
@@ -486,6 +540,7 @@ const INPUTS: DxSpec[] = [
   {
     factory: 'rangeDatePicker',
     namespace: 'inputs',
+    docSlug: 'range-date-picker',
     call: 'gui.inputs.rangeDatePicker(path, { label? })',
     example: "gui.inputs.rangeDatePicker('stayDates', { label: 'Stay dates' })",
     notes: ['Popover calendar for a start–end date **range** (the range sibling of `datePicker`).'],
@@ -493,6 +548,7 @@ const INPUTS: DxSpec[] = [
   {
     factory: 'rangeTimePicker',
     namespace: 'inputs',
+    docSlug: 'range-time-picker',
     call: 'gui.inputs.rangeTimePicker(path, { label?, minTime?, maxTime? })',
     example:
       "gui.inputs.rangeTimePicker('shift', { label: 'Shift', minTime: '06:00:00', maxTime: '22:00:00' })",
@@ -506,6 +562,7 @@ const ACTIONS: DxSpec[] = [
   {
     factory: 'button',
     namespace: 'actions',
+    docSlug: 'button',
     call: "gui.actions.button({ label, actionType?: 'submit', onClick? })",
     example: "gui.actions.button({ label: 'Sign up', actionType: 'submit' })",
     notes: [
@@ -520,6 +577,7 @@ const DISPLAYS: DxSpec[] = [
   {
     factory: 'alert',
     namespace: 'displays',
+    docSlug: 'alert',
     call: 'gui.displays.alert({ text })',
     example: "gui.displays.alert({ text: 'Please review your details before submitting.' })",
     notes: [
@@ -529,6 +587,7 @@ const DISPLAYS: DxSpec[] = [
   {
     factory: 'display',
     namespace: 'displays',
+    docSlug: 'renderer',
     call: 'gui.displays.display(render)',
     example: "gui.displays.display(() => 'Order summary')",
     notes: [
@@ -549,6 +608,7 @@ const LAYOUTS: DxSpec[] = [
   {
     factory: 'flex',
     namespace: 'layouts',
+    docSlug: 'flex',
     call: 'gui.layouts.flex(children, props?)',
     example:
       "gui.layouts.flex([ gui.inputs.textInput('firstName', { label: 'First name' }), gui.inputs.textInput('lastName', { label: 'Last name' }) ])",
@@ -560,6 +620,7 @@ const LAYOUTS: DxSpec[] = [
   {
     factory: 'verticalFlex',
     namespace: 'layouts',
+    docSlug: 'flex',
     call: 'gui.layouts.verticalFlex(children, props?)',
     example:
       "gui.layouts.verticalFlex([ gui.inputs.textInput('a', { label: 'A' }), gui.inputs.textInput('b', { label: 'B' }) ])",
@@ -568,6 +629,7 @@ const LAYOUTS: DxSpec[] = [
   {
     factory: 'horizontalFlex',
     namespace: 'layouts',
+    docSlug: 'flex',
     call: 'gui.layouts.horizontalFlex(children, props?)',
     example:
       "gui.layouts.horizontalFlex([ gui.inputs.textInput('a', { label: 'A' }), gui.inputs.textInput('b', { label: 'B' }) ])",
@@ -576,6 +638,7 @@ const LAYOUTS: DxSpec[] = [
   {
     factory: 'grid',
     namespace: 'layouts',
+    docSlug: 'grid',
     call: 'gui.layouts.grid(children, props?)',
     example:
       "gui.layouts.grid([ gui.inputs.textInput('a', { label: 'A' }), gui.inputs.textInput('b', { label: 'B' }) ])",
@@ -584,6 +647,7 @@ const LAYOUTS: DxSpec[] = [
   {
     factory: 'verticalGrid',
     namespace: 'layouts',
+    docSlug: 'grid',
     call: 'gui.layouts.verticalGrid(children, props?)',
     example:
       "gui.layouts.verticalGrid([ gui.inputs.textInput('a', { label: 'A' }), gui.inputs.textInput('b', { label: 'B' }) ])",
@@ -592,6 +656,7 @@ const LAYOUTS: DxSpec[] = [
   {
     factory: 'horizontalGrid',
     namespace: 'layouts',
+    docSlug: 'grid',
     call: 'gui.layouts.horizontalGrid(children, props?)',
     example:
       "gui.layouts.horizontalGrid([ gui.inputs.textInput('a', { label: 'A' }), gui.inputs.textInput('b', { label: 'B' }) ])",
@@ -600,6 +665,7 @@ const LAYOUTS: DxSpec[] = [
   {
     factory: 'tabs',
     namespace: 'layouts',
+    docSlug: 'tabs',
     call: 'gui.layouts.tabs(sections)',
     example:
       "gui.layouts.tabs([ { label: 'Account', children: [ gui.inputs.textInput('email', { label: 'Email' }) ] }, { label: 'Profile', children: [ gui.inputs.textInput('name', { label: 'Name' }) ] } ])",
@@ -610,6 +676,7 @@ const LAYOUTS: DxSpec[] = [
   {
     factory: 'accordion',
     namespace: 'layouts',
+    docSlug: 'accordion',
     call: 'gui.layouts.accordion(sections)',
     example:
       "gui.layouts.accordion([ { label: 'Billing', children: [ gui.inputs.textInput('card', { label: 'Card' }) ] } ])",
@@ -672,6 +739,19 @@ export function dxCatalog(framework: DxFramework = 'react'): DxCatalog {
 
 export function dxCommonNote(framework: DxFramework = 'react'): string {
   return commonNote(framework);
+}
+
+/**
+ * The per-framework host-wiring lines (imports + render + submit event), keyed by framework.
+ * The MCP serves one (selected by `GOLEMUI_FRAMEWORK`); the skill generator prints all five,
+ * since an installed skill serves whatever framework the host project uses.
+ */
+export function dxFrameworkSetup(): Record<DxFramework, string> {
+  return FRAMEWORK_SETUP;
+}
+
+export function listDxFrameworks(): readonly DxFramework[] {
+  return DX_FRAMEWORKS;
 }
 
 export function dxPatterns(): DxPattern[] {

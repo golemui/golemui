@@ -38,6 +38,7 @@ export type { ItemRenderContext, ItemRenderItemData } from './lib/item-renderer'
 
 export { devToolsMiddleware } from './lib/middleware/devtools/devtools.middleware';
 
+export { formEventNames } from './lib/shared';
 export type {
   ActionWidgetTemplateData,
   ControlTemplateData,

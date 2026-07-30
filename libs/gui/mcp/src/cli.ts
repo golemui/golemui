@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
+import { runCli } from './cli-commands';
 import { DX_INSTRUCTIONS } from './dx/instructions';
 import { dxTools } from './dx/tools';
 import { JSON_INSTRUCTIONS } from './json/instructions';
@@ -84,6 +85,14 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 });
 
 async function main() {
+  // Any argument routes to the CLI subcommands (validate-json, check-dx, help) and exits —
+  // never fall through to the stdio server with argv present: in an agent's non-interactive
+  // shell a silently started server would hang the command.
+  const argv = process.argv.slice(2);
+  if (argv.length > 0) {
+    process.exit(await runCli(argv));
+  }
+
   const transport = new StdioServerTransport();
   await server.connect(transport);
   // The MCP SDK writes a friendly startup line to stderr; stdout is reserved for the JSON-RPC stream.

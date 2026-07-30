@@ -28,7 +28,7 @@
     "build:styles": "sh ./tools/build-sass.sh",
     "cz:breaking": "npm run precz && czg break",
     "release": "npm run build:libs && npm run build:styles && tsx tools/release.ts",
-    "generate:dx-llms": "tsx libs/gui/mcp/tools/generate-dx-llms.ts"
+    "generate:skill": "tsx --tsconfig ./libs/gui/mcp/tsconfig.json libs/gui/mcp/tools/generate-skill-refs.ts"
   },
   "private": true,
   "dependencies": {

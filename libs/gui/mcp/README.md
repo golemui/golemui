@@ -68,6 +68,22 @@ npx -y @golemui/gui-mcp < /dev/null
 # → @golemui/gui-mcp v0.0.1 ready on stdio
 ```
 
+## CLI (no MCP client needed)
+
+The two terminal checks are also plain subcommands of the same bin, so any shell — a CI
+step, a git hook, or an AI agent without an MCP connector — can verify a form:
+
+```bash
+npx -y @golemui/gui-mcp validate-json signup-form.json  # JSON definition → bundled schemas
+npx -y @golemui/gui-mcp check-dx src/forms/signup.ts    # gui.* code → real @golemui types
+npx -y @golemui/gui-mcp --help
+```
+
+Each prints a single JSON result on stdout (the same shape as the corresponding MCP tool)
+and exits `0` on pass, `1` when problems were found, `2` on usage or file errors. In
+restricted environments, install it as a devDependency (`npm i -D @golemui/gui-mcp`) and the
+same commands resolve the project-local bin with no network at run time.
+
 ## Tools
 
 ### `json_validate_form_definition`
