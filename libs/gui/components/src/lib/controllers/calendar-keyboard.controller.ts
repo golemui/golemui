@@ -255,15 +255,20 @@ export class GUICalendarKeyboardController implements ReactiveController {
     const fallback =
       this.host.querySelector<HTMLButtonElement>(
         `.gui-calendar__month-button--${opposite}:not([disabled])`,
-      ) ?? this.host.querySelector<HTMLButtonElement>('.gui-calendar__day-button:not([disabled])');
+      ) ??
+      this.host.querySelector<HTMLButtonElement>(
+        '.gui-calendar__day-button:not([disabled]):not([aria-disabled="true"])',
+      );
     fallback?.focus();
   }
 
   /**
-   * Whether a queried button is disabled; a missing button counts as disabled
+   * Whether a queried button is disabled; a missing button counts as disabled.
+   * Blocked in-month days carry `aria-disabled` instead of the native
+   * attribute (they stay in the accessibility tree) — skip both alike.
    */
   private isButtonDisabled(button: HTMLButtonElement | undefined): boolean {
     if (!button) return true;
-    return button.hasAttribute('disabled');
+    return button.hasAttribute('disabled') || button.getAttribute('aria-disabled') === 'true';
   }
 }

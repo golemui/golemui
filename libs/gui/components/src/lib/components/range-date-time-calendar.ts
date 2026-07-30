@@ -11,7 +11,12 @@ import './pills';
 import type { GuiPillEventDetail, GuiPillItem } from './pills';
 import './time-picker';
 import type { GuiTimePicker } from './time-picker';
-import { isDateDisabled, parseISODateString, toISODateString } from '../utils/date';
+import {
+  getFullDateLabel,
+  isDateDisabled,
+  parseISODateString,
+  toISODateString,
+} from '../utils/date';
 import {
   renderCalendarChrome,
   renderCalendarMonthPanel,
@@ -449,10 +454,11 @@ export class GuiRangeDateTimeCalendar extends LitElement {
    * `selectDate`.
    */
   private activationDay(isoDate: string): RangeCalendarDay {
+    const date = parseISODateString(isoDate);
     return {
-      date: parseISODateString(isoDate),
+      date,
       isCurrentMonth: true,
-      isDisabled: false,
+      isDisabled: this.isDisabled(date),
       isFocusable: true,
       dayLabel: '',
       isToday: false,
@@ -493,7 +499,10 @@ export class GuiRangeDateTimeCalendar extends LitElement {
         role="gridcell"
         class=${classMap(classes)}
         tabindex=${day.isFocusable ? 0 : -1}
-        ?disabled=${!day.isCurrentMonth || day.isDisabled}
+        ?disabled=${!day.isCurrentMonth}
+        aria-disabled=${day.isCurrentMonth && day.isDisabled ? 'true' : nothing}
+        aria-label=${getFullDateLabel(this.localeId, day.date)}
+        aria-current=${day.isToday ? 'date' : nothing}
         data-date=${toISODateString(day.date)}
         @click=${(e: MouseEvent) => this.selectDate(day, e)}
         @mouseover=${() => this.onMouseOver(day)}
@@ -554,7 +563,7 @@ export class GuiRangeDateTimeCalendar extends LitElement {
   }
 
   selectDate(day: RangeCalendarDay, _e: MouseEvent | KeyboardEvent | null = null) {
-    if (!day.isCurrentMonth || this.disabled || this.readOnly) return;
+    if (!day.isCurrentMonth || day.isDisabled || this.disabled || this.readOnly) return;
 
     const { state, commit } = reduceRangeSelection(this._selection, {
       type: 'pick',
@@ -596,6 +605,8 @@ export class GuiRangeDateTimeCalendar extends LitElement {
   }
 
   protected onMouseOver(day: RangeCalendarDay) {
+    if (day.isDisabled) return;
+
     this._selection = reduceRangeSelection(this._selection, {
       type: 'hover',
       date: day.date,

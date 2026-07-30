@@ -7,6 +7,7 @@ import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
 import { GUIMonthNavigationController } from '../controllers/month-navigation.controller';
 import {
   createDateRange,
+  getFullDateLabel,
   mergeDateRanges,
   parseISODateString,
   rangeSpansDisabledDay,
@@ -314,10 +315,11 @@ export class GuiRangeCalendar extends LitElement {
    * `selectDate`.
    */
   private activationDay(isoDate: string): RangeCalendarDay {
+    const date = parseISODateString(isoDate);
     return {
-      date: parseISODateString(isoDate),
+      date,
       isCurrentMonth: true,
-      isDisabled: false,
+      isDisabled: this.isDisabled(date),
       isFocusable: true,
       dayLabel: '',
       isToday: false,
@@ -358,7 +360,10 @@ export class GuiRangeCalendar extends LitElement {
         role="gridcell"
         class=${classMap(classes)}
         tabindex=${day.isFocusable ? 0 : -1}
-        ?disabled=${!day.isCurrentMonth || day.isDisabled}
+        ?disabled=${!day.isCurrentMonth}
+        aria-disabled=${day.isCurrentMonth && day.isDisabled ? 'true' : nothing}
+        aria-label=${getFullDateLabel(this.localeId, day.date)}
+        aria-current=${day.isToday ? 'date' : nothing}
         data-date=${toISODateString(day.date)}
         @click=${(e: MouseEvent) => this.selectDate(day, e)}
         @mouseover=${() => this.onMouseOver(day)}
@@ -418,7 +423,7 @@ export class GuiRangeCalendar extends LitElement {
   }
 
   selectDate(day: RangeCalendarDay, _e: MouseEvent | KeyboardEvent | null = null) {
-    if (!day.isCurrentMonth || this.disabled || this.readOnly) return;
+    if (!day.isCurrentMonth || day.isDisabled || this.disabled || this.readOnly) return;
 
     const { state, commit } = reduceRangeSelection(this._selection, {
       type: 'pick',
@@ -475,6 +480,8 @@ export class GuiRangeCalendar extends LitElement {
   }
 
   protected onMouseOver(day: RangeCalendarDay) {
+    if (day.isDisabled) return;
+
     this._selection = reduceRangeSelection(this._selection, {
       type: 'hover',
       date: day.date,

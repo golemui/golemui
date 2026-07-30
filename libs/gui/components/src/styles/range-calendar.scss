@@ -67,7 +67,7 @@ gui-range-date-time-calendar {
       border: 1px dashed #2196f3;
     }
 
-    &.invalid-in-range:not([disabled]) {
+    &.invalid-in-range:not([disabled]):not([aria-disabled='true']) {
       background-color: var(--gui-range-error-bg);
       color: var(--gui-color-white);
       border-radius: 0;

@@ -437,6 +437,26 @@ export const runRangeDatePickerComponentTests = (mountFn: MountComponentFn) => {
           .should('have.id', 'testSubject_popup');
         cy.focused().should('have.class', 'gui-calendar__day-button');
       });
+
+      it('should expose blocked days as aria-disabled and never start a range on them', () => {
+        mountRangeDatePicker({
+          data: { myRanges: [juneRange] },
+          props: { disabledRanges: [{ start: '2026-06-15', end: '2026-06-15' }] },
+        });
+
+        cy.get(sel.startDay).click();
+        cy.get(sel.calendar).should('exist');
+
+        cy.get(sel.dayButton('2026-06-15'))
+          .should('have.attr', 'aria-disabled', 'true')
+          .should('not.have.attr', 'disabled');
+
+        // A click on the blocked day must not start a selection
+        cy.get(sel.dayButton('2026-06-15')).click();
+        cy.get(sel.dayButton('2026-06-15')).should('not.have.class', 'is-anchor');
+        cy.get(sel.dayButton('2026-06-15')).should('not.have.class', 'selected');
+        cy.get(sel.calendar).should('exist');
+      });
     });
   });
 };

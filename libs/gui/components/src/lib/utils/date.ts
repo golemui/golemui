@@ -285,6 +285,19 @@ export function getMonthYearLabel(localeId: string | undefined, date: Date): str
 }
 
 /**
+ * Returns the full localized date, e.g. 'Friday, February 13, 2026' in
+ * 'en-US'. Used as the accessible name of calendar day buttons, so screen
+ * readers announce the complete date instead of a bare day number.
+ *
+ * @param {string | undefined} localeId - The locale identifier used to format the label.
+ * @param {Date} date - The date to format.
+ * @return {string} The full localized date label.
+ */
+export function getFullDateLabel(localeId: string | undefined, date: Date): string {
+  return new Intl.DateTimeFormat(localeId, { dateStyle: 'full' }).format(date);
+}
+
+/**
  * Checks whether a given date falls within any of the visible months
  * starting from a base date across a specified number of months.
  *
