@@ -1,0 +1,4 @@
+import { runPasswordComponentTests } from '@golemui/ui-testing';
+import { mountFramework } from '../../support/mount';
+
+runPasswordComponentTests(mountFramework);
