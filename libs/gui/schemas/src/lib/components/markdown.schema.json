@@ -43,6 +43,9 @@
     "splitViewTitleProp": {
       "$ref": "../common.schema.json#/$defs/localizable"
     },
+    "toolbarAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
     "headingTitleProp": {
       "$ref": "../common.schema.json#/$defs/localizable"
     },
@@ -134,6 +137,9 @@
         "splitViewTitle": {
           "$ref": "#/$defs/splitViewTitleProp"
         },
+        "toolbarAriaLabel": {
+          "$ref": "#/$defs/toolbarAriaLabelProp"
+        },
         "headingTitle": {
           "$ref": "#/$defs/headingTitleProp"
         },
@@ -189,6 +195,9 @@
         },
         "^splitViewTitle\\.[^.]+$": {
           "$ref": "#/$defs/splitViewTitleProp"
+        },
+        "^toolbarAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/toolbarAriaLabelProp"
         },
         "^headingTitle\\.[^.]+$": {
           "$ref": "#/$defs/headingTitleProp"

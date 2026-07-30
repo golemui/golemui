@@ -113,6 +113,7 @@ export type MarkdownProps = {
   orderedListTitle?: string;
   unorderedListTitle?: string;
   splitViewTitle?: string;
+  toolbarAriaLabel?: string;
   defaultOpenPreview?: boolean;
 } & TextareaProps;
 

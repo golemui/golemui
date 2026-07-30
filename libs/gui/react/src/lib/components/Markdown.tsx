@@ -36,6 +36,7 @@ export function Markdown(widgetInstance: WithWidget) {
   const orderedListTitle = templateData.orderedListTitle;
   const unorderedListTitle = templateData.unorderedListTitle;
   const splitViewTitle = templateData.splitViewTitle;
+  const toolbarAriaLabel = templateData.toolbarAriaLabel;
   const isDisabled = templateData.disabled as boolean;
   const isReadonly = templateData.readonly as boolean;
   const isRequired = (templateData.validator as Validator)?.required;
@@ -69,6 +70,7 @@ export function Markdown(widgetInstance: WithWidget) {
         orderedListTitle={orderedListTitle}
         unorderedListTitle={unorderedListTitle}
         splitViewTitle={splitViewTitle}
+        toolbarAriaLabel={toolbarAriaLabel}
         dependencies={templateData.deps}
         onInput={handleChange}
         onBlur={onBlur}

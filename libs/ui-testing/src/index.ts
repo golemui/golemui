@@ -26,6 +26,7 @@ export * from './lib/golem-features/dateinput.cy';
 export * from './lib/golem-features/datetimeinput.cy';
 export * from './lib/golem-features/datepicker.cy';
 export * from './lib/golem-features/dropdown.cy';
+export * from './lib/golem-features/markdown.cy';
 export * from './lib/golem-features/number.cy';
 export * from './lib/golem-features/password.cy';
 export * from './lib/golem-features/rangedateinput.cy';
