@@ -72,10 +72,14 @@ gui-toggle {
         box-shadow: var(--gui-shadow-focus);
       }
 
-      &:focus + .gui-toggle--slider[aria-invalid='true'] {
+      &:focus[aria-invalid='true'] + .gui-toggle--slider {
         outline: 0;
         border-color: var(--gui-intent-error);
         box-shadow: var(--gui-shadow-focus-error);
+      }
+
+      &[aria-invalid='true'] + .gui-toggle--slider {
+        border-color: var(--gui-intent-error);
       }
 
       &:checked + .gui-toggle--slider:before {
@@ -97,10 +101,6 @@ gui-toggle {
       border: 1px solid var(--gui-border-default);
       transition: 0.4s;
       border-radius: 30px;
-
-      &[aria-invalid='true'] {
-        border-color: var(--gui-intent-error);
-      }
 
       &:before {
         position: absolute;

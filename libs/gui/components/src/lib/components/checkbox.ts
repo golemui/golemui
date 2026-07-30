@@ -30,6 +30,7 @@ export class GuiCheckbox extends LitElement {
         // Checkboxes can't have aria-readonly
         readonly: false,
         disabled: false,
+        required: this.required,
       },
     }),
   });

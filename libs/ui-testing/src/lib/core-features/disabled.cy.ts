@@ -278,6 +278,8 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
             }),
           });
           cy.get(selector).should('have.attr', 'disabled');
+          cy.get(selector).should('have.attr', 'aria-disabled', 'true');
+          cy.get(selector).should('not.have.attr', 'aria-readonly');
         });
 
         it('should be disabled via a state', () => {

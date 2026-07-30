@@ -41,6 +41,7 @@ export class GuiCurrency extends LitElement {
         readonly: this.readOnly,
         disabled: this.disabled,
         touched: this.touched,
+        required: this.required,
       },
     }),
   });
@@ -105,7 +106,7 @@ export class GuiCurrency extends LitElement {
           class=${classMap(fieldClasses)}
           step=${this.step && this.step > 0 ? this.step : nothing}
           .value=${this.value ?? ''}
-          ?required=${this.disabled}
+          ?required=${this.required}
           ?disabled=${this.disabled}
           ?readonly=${this.readOnly}
           placeholder=${this.placeholder || nothing}

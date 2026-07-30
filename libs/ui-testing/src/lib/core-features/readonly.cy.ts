@@ -194,6 +194,7 @@ export const runReadonlyComponentTests = (mountFn: MountComponentFn) => {
           });
           cy.get(selector).should('have.attr', 'disabled');
           cy.get(selector).should('have.attr', 'aria-readonly', 'true');
+          cy.get(selector).should('not.have.attr', 'aria-disabled');
         });
 
         it('should be readonly via a state', () => {

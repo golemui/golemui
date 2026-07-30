@@ -10,6 +10,10 @@
     width: 0;
     min-width: 100%;
 
+    &--empty {
+      margin-top: 0;
+    }
+
     &__error {
       list-style: none;
       color: var(--gui-intent-error);

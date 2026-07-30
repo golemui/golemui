@@ -43,6 +43,7 @@ export class GuiRadiogroup extends LitElement {
         // Radiogroup inputs can't be readonly
         readonly: false,
         disabled: false,
+        required: this.required,
       },
     }),
   });
