@@ -55,6 +55,12 @@ describe('Datetimeinput schema validation', () => {
             kind: 'input',
             type: 'dateTimeInput',
             props: {
+              dayAriaLabel: 'Day',
+              monthAriaLabel: 'Month',
+              yearAriaLabel: 'Year',
+              hourAriaLabel: 'Hour',
+              minuteAriaLabel: 'Minute',
+              dayPeriodAriaLabel: 'AM/PM',
               hint: 'Pick a time',
               icon: 'schedule',
               hourFormat: '24',

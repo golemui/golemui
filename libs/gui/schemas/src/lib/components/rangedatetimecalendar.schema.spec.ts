@@ -56,6 +56,8 @@ describe('RangeDateTimeCalendar schema validation', () => {
             kind: 'input',
             type: 'rangeDateTimeCalendar',
             props: {
+              selectYearAriaLabel: 'Choose year',
+              yearGridAriaLabel: 'Years',
               hint: 'Pick date-time ranges',
               hourFormat: '24',
               minuteStep: 15,

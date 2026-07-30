@@ -55,6 +55,9 @@ describe('Timeinput schema validation', () => {
             kind: 'input',
             type: 'timeInput',
             props: {
+              hourAriaLabel: 'Hour',
+              minuteAriaLabel: 'Minute',
+              dayPeriodAriaLabel: 'AM/PM',
               hint: 'Pick a time',
               icon: 'schedule',
               hourFormat: '24',

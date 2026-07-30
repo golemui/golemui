@@ -55,6 +55,9 @@ describe('RangeDateInput schema validation', () => {
             kind: 'input',
             type: 'rangeDateInput',
             props: {
+              dayAriaLabel: 'Day',
+              monthAriaLabel: 'Month',
+              yearAriaLabel: 'Year',
               hint: 'Select date ranges',
               icon: 'calendar',
               separator: '-',

@@ -55,6 +55,9 @@ describe('RangeTimeInput schema validation', () => {
             kind: 'input',
             type: 'rangeTimeInput',
             props: {
+              hourAriaLabel: 'Hour',
+              minuteAriaLabel: 'Minute',
+              dayPeriodAriaLabel: 'AM/PM',
               hint: 'Select time ranges',
               icon: 'schedule',
               separator: '-',

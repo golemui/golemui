@@ -46,6 +46,33 @@
     "nextMonthAriaLabelProp": {
       "$ref": "../common.schema.json#/$defs/localizable"
     },
+    "toggleAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "selectYearAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "yearGridAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "dayAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "monthAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "yearAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "hourAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "minuteAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "dayPeriodAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
     "dayFormatProp": {
       "description": "Formatting of day numbers in the calendar grid (`numeric` = 1–31, `2-digit` = 01–31)",
       "enum": ["numeric", "2-digit"]
@@ -154,6 +181,33 @@
         "nextMonthAriaLabel": {
           "$ref": "#/$defs/nextMonthAriaLabelProp"
         },
+        "toggleAriaLabel": {
+          "$ref": "#/$defs/toggleAriaLabelProp"
+        },
+        "selectYearAriaLabel": {
+          "$ref": "#/$defs/selectYearAriaLabelProp"
+        },
+        "yearGridAriaLabel": {
+          "$ref": "#/$defs/yearGridAriaLabelProp"
+        },
+        "dayAriaLabel": {
+          "$ref": "#/$defs/dayAriaLabelProp"
+        },
+        "monthAriaLabel": {
+          "$ref": "#/$defs/monthAriaLabelProp"
+        },
+        "yearAriaLabel": {
+          "$ref": "#/$defs/yearAriaLabelProp"
+        },
+        "hourAriaLabel": {
+          "$ref": "#/$defs/hourAriaLabelProp"
+        },
+        "minuteAriaLabel": {
+          "$ref": "#/$defs/minuteAriaLabelProp"
+        },
+        "dayPeriodAriaLabel": {
+          "$ref": "#/$defs/dayPeriodAriaLabelProp"
+        },
         "dayFormat": {
           "$ref": "#/$defs/dayFormatProp"
         },
@@ -242,6 +296,33 @@
         },
         "^nextMonthAriaLabel\\.[^.]+$": {
           "$ref": "#/$defs/nextMonthAriaLabelProp"
+        },
+        "^toggleAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/toggleAriaLabelProp"
+        },
+        "^selectYearAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/selectYearAriaLabelProp"
+        },
+        "^yearGridAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/yearGridAriaLabelProp"
+        },
+        "^dayAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/dayAriaLabelProp"
+        },
+        "^monthAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/monthAriaLabelProp"
+        },
+        "^yearAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/yearAriaLabelProp"
+        },
+        "^hourAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/hourAriaLabelProp"
+        },
+        "^minuteAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/minuteAriaLabelProp"
+        },
+        "^dayPeriodAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/dayPeriodAriaLabelProp"
         },
         "^dayFormat\\.[^.]+$": {
           "$ref": "#/$defs/dayFormatProp"

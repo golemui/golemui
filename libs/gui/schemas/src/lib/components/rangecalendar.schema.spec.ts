@@ -57,6 +57,8 @@ describe('RangeCalendar schema validation', () => {
             kind: 'input',
             type: 'rangeCalendar',
             props: {
+              selectYearAriaLabel: 'Choose year',
+              yearGridAriaLabel: 'Years',
               hint: 'Select the date range',
               prevMonthIcon: 'left-arrow',
               nextMonthIcon: 'right-arrow',

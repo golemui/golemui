@@ -28,6 +28,12 @@
     "nextMonthAriaLabelProp": {
       "$ref": "../common.schema.json#/$defs/localizable"
     },
+    "selectYearAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "yearGridAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
     "removePillAriaLabelProp": {
       "$ref": "../common.schema.json#/$defs/localizable"
     },
@@ -121,6 +127,12 @@
         "nextMonthAriaLabel": {
           "$ref": "#/$defs/nextMonthAriaLabelProp"
         },
+        "selectYearAriaLabel": {
+          "$ref": "#/$defs/selectYearAriaLabelProp"
+        },
+        "yearGridAriaLabel": {
+          "$ref": "#/$defs/yearGridAriaLabelProp"
+        },
         "removePillAriaLabel": {
           "$ref": "#/$defs/removePillAriaLabelProp"
         },
@@ -194,6 +206,12 @@
         },
         "^nextMonthAriaLabel\\.[^.]+$": {
           "$ref": "#/$defs/nextMonthAriaLabelProp"
+        },
+        "^selectYearAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/selectYearAriaLabelProp"
+        },
+        "^yearGridAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/yearGridAriaLabelProp"
         },
         "^removePillAriaLabel\\.[^.]+$": {
           "$ref": "#/$defs/removePillAriaLabelProp"

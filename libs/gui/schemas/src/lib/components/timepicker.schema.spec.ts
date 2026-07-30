@@ -55,6 +55,10 @@ describe('Timepicker schema validation', () => {
             kind: 'input',
             type: 'timePicker',
             props: {
+              toggleAriaLabel: 'Open picker',
+              hourAriaLabel: 'Hour',
+              minuteAriaLabel: 'Minute',
+              dayPeriodAriaLabel: 'AM/PM',
               hint: 'Pick a time',
               icon: 'schedule',
               hourFormat: '24',
