@@ -55,6 +55,12 @@ export class GuiRangeDateTimePicker extends LitElement {
   @property({ type: String, attribute: 'next-month-aria-label' }) nextMonthAriaLabel:
     | string
     | undefined = undefined;
+  @property({ type: String, attribute: 'select-year-aria-label' }) selectYearAriaLabel:
+    | string
+    | undefined = undefined;
+  @property({ type: String, attribute: 'year-grid-aria-label' }) yearGridAriaLabel:
+    | string
+    | undefined = undefined;
   @property({ type: String, attribute: 'day-format' }) dayFormat:
     | 'numeric'
     | '2-digit'
@@ -187,6 +193,8 @@ export class GuiRangeDateTimePicker extends LitElement {
           .nextMonthIcon=${this.nextMonthIcon}
           .prevMonthAriaLabel=${this.prevMonthAriaLabel}
           .nextMonthAriaLabel=${this.nextMonthAriaLabel}
+          .selectYearAriaLabel=${this.selectYearAriaLabel}
+          .yearGridAriaLabel=${this.yearGridAriaLabel}
           .dayFormat=${this.dayFormat}
           .weekdayFormat=${this.weekdayFormat}
           .monthFormat=${this.monthFormat}

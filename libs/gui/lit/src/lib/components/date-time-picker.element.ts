@@ -76,6 +76,8 @@ export class DateTimePickerElement extends LitElement implements WithWidget {
         .nextMonthIcon=${templateData.nextMonthIcon}
         .prevMonthAriaLabel=${templateData.prevMonthAriaLabel}
         .nextMonthAriaLabel=${templateData.nextMonthAriaLabel}
+        .selectYearAriaLabel=${templateData.selectYearAriaLabel}
+        .yearGridAriaLabel=${templateData.yearGridAriaLabel}
         .dayFormat=${templateData.dayFormat}
         .weekdayFormat=${templateData.weekdayFormat}
         .monthFormat=${templateData.monthFormat}

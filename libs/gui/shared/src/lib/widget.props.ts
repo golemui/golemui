@@ -144,6 +144,16 @@ export type CalendarProps = {
    */
   nextMonthAriaLabel?: string;
   /**
+   * An optional string that represents the ARIA label for the year-selector toggle button in the
+   * calendar header. The current year is appended to it. Defaults to 'Select year'.
+   */
+  selectYearAriaLabel?: string;
+  /**
+   * An optional string that represents the ARIA label for the year-selector grid.
+   * Defaults to 'Year selection'.
+   */
+  yearGridAriaLabel?: string;
+  /**
    * Specifies the formatting style for displaying the day portion of a date.
    *
    * The variable `dayFormat` can accept one of the following values:
@@ -252,6 +262,16 @@ export type RangeCalendarProps = {
    * This label is used to improve accessibility by providing screen readers with descriptive text.
    */
   nextMonthAriaLabel?: string;
+  /**
+   * An optional string that represents the ARIA label for the year-selector toggle button in the
+   * calendar header. The current year is appended to it. Defaults to 'Select year'.
+   */
+  selectYearAriaLabel?: string;
+  /**
+   * An optional string that represents the ARIA label for the year-selector grid.
+   * Defaults to 'Year selection'.
+   */
+  yearGridAriaLabel?: string;
   /**
    * Specifies the formatting style for displaying the day portion of a date.
    *

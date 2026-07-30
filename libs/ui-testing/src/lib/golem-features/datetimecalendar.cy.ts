@@ -518,5 +518,47 @@ export const runDateTimeCalendarComponentTests = (mountFn: MountComponentFn) => 
         cy.get(sel.timeGrid).should('have.attr', 'hidden');
       });
     });
+
+    describe('accessibility', () => {
+      const liveRegion = 'gui-date-time-calendar .gui-visually-hidden[aria-live="polite"]';
+      const nextMonth = 'gui-date-time-calendar .gui-calendar__month-button--next';
+
+      it('should name the days grid after the visible month and announce month changes', () => {
+        mountCalendar({ data: { myAppointment: '2026-02-13T09:30:00' }, props: officeProps });
+
+        cy.get(sel.daysGrid).should('have.attr', 'aria-label', 'February 2026');
+        cy.get(`${sel.daysGrid} .gui-calendar__weekday`)
+          .should('have.length', 7)
+          .each(($cell) => cy.wrap($cell).should('have.attr', 'role', 'columnheader'));
+        cy.get(liveRegion).should('have.text', 'February 2026');
+
+        cy.get(nextMonth).click();
+        cy.get(sel.daysGrid).should('have.attr', 'aria-label', 'March 2026');
+        cy.get(liveRegion).should('have.text', 'March 2026');
+      });
+
+      it('should label the year selector and year grid with English defaults', () => {
+        mountCalendar({ data: { myAppointment: '2026-02-13T09:30:00' }, props: officeProps });
+
+        cy.get(sel.yearSelector).should('have.attr', 'aria-label', 'Select year, 2026');
+        cy.get(sel.yearSelector).click();
+        cy.get(sel.yearGrid).should('have.attr', 'aria-label', 'Year selection');
+      });
+
+      it('should honor the year label override props', () => {
+        mountCalendar({
+          data: { myAppointment: '2026-02-13T09:30:00' },
+          props: {
+            ...officeProps,
+            selectYearAriaLabel: 'Elegir año',
+            yearGridAriaLabel: 'Selección de año',
+          },
+        });
+
+        cy.get(sel.yearSelector).should('have.attr', 'aria-label', 'Elegir año, 2026');
+        cy.get(sel.yearSelector).click();
+        cy.get(sel.yearGrid).should('have.attr', 'aria-label', 'Selección de año');
+      });
+    });
   });
 };

@@ -59,6 +59,12 @@ export class GuiDateTimeCalendar extends LitElement {
   @property({ type: String, attribute: 'next-month-aria-label' }) nextMonthAriaLabel:
     | string
     | undefined = '';
+  @property({ type: String, attribute: 'select-year-aria-label' }) selectYearAriaLabel:
+    | string
+    | undefined = undefined;
+  @property({ type: String, attribute: 'year-grid-aria-label' }) yearGridAriaLabel:
+    | string
+    | undefined = undefined;
   @property({ type: String }) dayFormat: 'numeric' | '2-digit' | undefined = 'numeric';
   @property({ type: String }) weekdayFormat: 'short' | 'long' | 'narrow' | undefined = 'narrow';
   @property({ type: String }) monthFormat:
@@ -286,6 +292,8 @@ export class GuiDateTimeCalendar extends LitElement {
       required: this.required,
       disabled: this.disabled,
       numberOfMonths: this.numberOfMonths,
+      localeId: this.localeId,
+      currentDate: this._nav.currentDate,
       prevMonthIcon: this.prevMonthIcon,
       nextMonthIcon: this.nextMonthIcon,
       prevMonthAriaLabel: this.prevMonthAriaLabel,
@@ -303,6 +311,7 @@ export class GuiDateTimeCalendar extends LitElement {
           localeId: this.localeId,
           monthFormat: this.monthFormat,
           yearSelectorOpen: this._nav.yearSelectorOpen,
+          selectYearAriaLabel: this.selectYearAriaLabel,
           onToggleYearSelector: () => this.toggleYearSelector(),
           renderBelowHeader: (o) => this.renderBelowHeader(o),
           renderPanelBody: (o) => this.renderPanelBody(o),
@@ -356,6 +365,8 @@ export class GuiDateTimeCalendar extends LitElement {
       onSelectYear: (year) => this._keyboard.selectYear(year),
       onYearKeydown: this._keyboard.handleYearKeydown,
       localeId: this.localeId,
+      currentDate: this._nav.currentDate,
+      yearGridAriaLabel: this.yearGridAriaLabel,
       getDays: (o) => this.getDaysInMonth(o),
       renderDay: (day) => this.renderDay(day),
     });
