@@ -55,6 +55,12 @@ describe('RangeDatePicker schema validation', () => {
             kind: 'input',
             type: 'rangeDatePicker',
             props: {
+              toggleAriaLabel: 'Open picker',
+              selectYearAriaLabel: 'Choose year',
+              yearGridAriaLabel: 'Years',
+              dayAriaLabel: 'Day',
+              monthAriaLabel: 'Month',
+              yearAriaLabel: 'Year',
               hint: 'Select date ranges',
               icon: 'calendar',
               separator: 'to',

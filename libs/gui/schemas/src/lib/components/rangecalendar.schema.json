@@ -28,6 +28,12 @@
     "nextMonthAriaLabelProp": {
       "$ref": "../common.schema.json#/$defs/localizable"
     },
+    "selectYearAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "yearGridAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
     "removePillAriaLabelProp": {
       "description": "Accessible label for the button that clears the selected range pill",
       "$ref": "../common.schema.json#/$defs/localizable"
@@ -112,6 +118,12 @@
         "nextMonthAriaLabel": {
           "$ref": "#/$defs/nextMonthAriaLabelProp"
         },
+        "selectYearAriaLabel": {
+          "$ref": "#/$defs/selectYearAriaLabelProp"
+        },
+        "yearGridAriaLabel": {
+          "$ref": "#/$defs/yearGridAriaLabelProp"
+        },
         "removePillAriaLabel": {
           "$ref": "#/$defs/removePillAriaLabelProp"
         },
@@ -155,6 +167,12 @@
         },
         "^nextMonthAriaLabel\\.[^.]+$": {
           "$ref": "#/$defs/nextMonthAriaLabelProp"
+        },
+        "^selectYearAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/selectYearAriaLabelProp"
+        },
+        "^yearGridAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/yearGridAriaLabelProp"
         },
         "^removePillAriaLabel\\.[^.]+$": {
           "$ref": "#/$defs/removePillAriaLabelProp"

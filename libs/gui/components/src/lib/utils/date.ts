@@ -272,6 +272,32 @@ export function getMonthName(localeId: string | undefined, currentDate: Date): s
 }
 
 /**
+ * Returns the month and year of the given date as a single localized string,
+ * e.g. 'March 2026' in 'en-US' or '2026年3月' in 'ja-JP'. Used for the days
+ * grid accessible name and the visible-months live announcement.
+ *
+ * @param {string | undefined} localeId - The locale identifier used to format the label.
+ * @param {Date} date - The date whose month and year are formatted.
+ * @return {string} The localized month/year label.
+ */
+export function getMonthYearLabel(localeId: string | undefined, date: Date): string {
+  return new Intl.DateTimeFormat(localeId, { month: 'long', year: 'numeric' }).format(date);
+}
+
+/**
+ * Returns the full localized date, e.g. 'Friday, February 13, 2026' in
+ * 'en-US'. Used as the accessible name of calendar day buttons, so screen
+ * readers announce the complete date instead of a bare day number.
+ *
+ * @param {string | undefined} localeId - The locale identifier used to format the label.
+ * @param {Date} date - The date to format.
+ * @return {string} The full localized date label.
+ */
+export function getFullDateLabel(localeId: string | undefined, date: Date): string {
+  return new Intl.DateTimeFormat(localeId, { dateStyle: 'full' }).format(date);
+}
+
+/**
  * Checks whether a given date falls within any of the visible months
  * starting from a base date across a specified number of months.
  *

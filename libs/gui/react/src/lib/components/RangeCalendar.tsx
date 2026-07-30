@@ -53,6 +53,8 @@ export function RangeCalendar(widgetInstance: WithWidget) {
   const nextMonthIcon = templateData.nextMonthIcon;
   const prevMonthAriaLabel = templateData.prevMonthAriaLabel;
   const nextMonthAriaLabel = templateData.nextMonthAriaLabel;
+  const selectYearAriaLabel = templateData.selectYearAriaLabel;
+  const yearGridAriaLabel = templateData.yearGridAriaLabel;
   const dayFormat = templateData.dayFormat;
   const weekdayFormat = templateData.weekdayFormat;
   const monthFormat = templateData.monthFormat;
@@ -83,6 +85,8 @@ export function RangeCalendar(widgetInstance: WithWidget) {
         nextMonthIcon={nextMonthIcon}
         prevMonthAriaLabel={prevMonthAriaLabel}
         nextMonthAriaLabel={nextMonthAriaLabel}
+        selectYearAriaLabel={selectYearAriaLabel}
+        yearGridAriaLabel={yearGridAriaLabel}
         dayFormat={dayFormat}
         weekdayFormat={weekdayFormat}
         monthFormat={monthFormat}

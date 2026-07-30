@@ -49,6 +49,10 @@ export function TimePicker(widgetInstance: WithWidget) {
         value={value}
         icon={templateData.icon}
         localeId={templateData.lang}
+        toggleAriaLabel={templateData.toggleAriaLabel}
+        hourAriaLabel={templateData.hourAriaLabel}
+        minuteAriaLabel={templateData.minuteAriaLabel}
+        dayPeriodAriaLabel={templateData.dayPeriodAriaLabel}
         hourFormat={templateData.hourFormat}
         minuteStep={templateData.minuteStep}
         minTime={templateData.minTime}

@@ -1,8 +1,23 @@
 import { html, nothing, type TemplateResult } from 'lit';
 import { repeat } from 'lit-html/directives/repeat.js';
-import { getMonthYearParts, getWeekdayLabels } from './date';
+import { getMonthYearLabel, getMonthYearParts, getWeekdayLabels } from './date';
 import { chunk } from './grid-nav';
 import { addErrors, addLabel } from './templates';
+
+/**
+ * The month a panel shows: the nav cursor normalized to day 1, shifted by the
+ * panel offset.
+ *
+ * @param {Date} currentDate - The nav controller's month cursor.
+ * @param {number} offset - Panel offset in months.
+ * @return {Date} The first day of the panel's month.
+ */
+export function getPanelDate(currentDate: Date, offset: number): Date {
+  const panelDate = new Date(currentDate);
+  panelDate.setDate(1);
+  panelDate.setMonth(panelDate.getMonth() + offset);
+  return panelDate;
+}
 
 /** The month/year label formats the calendar header supports. */
 export type CalendarMonthFormat = 'numeric' | '2-digit' | 'long' | 'short' | 'narrow';
@@ -17,6 +32,9 @@ export interface CalendarChromeData {
   disabled: boolean | undefined;
   /** Months rendered side by side (`numberOfMonths ?? 1`). */
   numberOfMonths: number | undefined;
+  localeId: string | undefined;
+  /** The nav controller's month cursor, for the visible-months announcer. */
+  currentDate: Date;
   prevMonthIcon: string | undefined;
   nextMonthIcon: string | undefined;
   prevMonthAriaLabel: string | undefined;
@@ -52,17 +70,24 @@ export function renderCalendarChrome(data: CalendarChromeData): TemplateResult {
 
   const monthsToRender = Array.from({ length: data.numberOfMonths ?? 1 }, (_, i) => i);
 
+  // Read by screen readers on month navigation; permanently mounted so the
+  // text swap is what triggers the announcement.
+  const visibleMonthsAnnouncement = monthsToRender
+    .map((offset) => getMonthYearLabel(data.localeId, getPanelDate(data.currentDate, offset)))
+    .join(', ');
+
   return html`
     ${data.label ? addLabel(data.uid as string, templateData, false, 'calendar') : nothing}
 
     <div class="gui-widget" @focusout=${data.onFocusOut}>
       <div
-        id=${data.uid}
+        id=${`${data.uid}_calendar`}
         class="gui-calendar-input"
         role="group"
         aria-labelledby=${data.label ? `${data.uid}_calendar_label` : nothing}
-        ?aria-disabled=${data.disabled}
+        aria-disabled=${data.disabled ? 'true' : nothing}
       >
+        <div class="gui-visually-hidden" aria-live="polite">${visibleMonthsAnnouncement}</div>
         ${data.renderAboveCalendar()}
         <div class="gui-calendar__container">
           ${renderMonthNavButton('prev', {
@@ -114,7 +139,6 @@ export function renderMonthNavButton(
     return html`
       <button
         type="button"
-        tabindex="0"
         class="gui-button gui-calendar__month-button gui-calendar__month-button--prev"
         ?disabled=${data.disabled}
         @click=${data.onClick}
@@ -144,7 +168,6 @@ export function renderMonthNavButton(
   return html`
     <button
       type="button"
-      tabindex="0"
       class="gui-button gui-calendar__month-button gui-calendar__month-button--next"
       ?disabled=${data.disabled}
       @click=${data.onClick}
@@ -191,9 +214,7 @@ export interface MonthPanelData {
  * @return {TemplateResult} The panel.
  */
 export function renderMonthPanel(data: MonthPanelData): TemplateResult {
-  const panelDate = new Date(data.currentDate);
-  panelDate.setDate(1);
-  panelDate.setMonth(panelDate.getMonth() + data.offset);
+  const panelDate = getPanelDate(data.currentDate, data.offset);
 
   return html`
     <div class="gui-calendar__panel">
@@ -212,6 +233,8 @@ export interface CalendarMonthPanelData {
   monthFormat: CalendarMonthFormat | undefined;
   /** The nav controller's `yearSelectorOpen`, for the header's aria-expanded. */
   yearSelectorOpen: boolean;
+  /** `selectYearAriaLabel`; defaults to 'Select year'. */
+  selectYearAriaLabel?: string;
   onToggleYearSelector(): void;
   renderBelowHeader?(offset: number): TemplateResult | typeof nothing;
   renderPanelBody(offset: number): TemplateResult;
@@ -232,6 +255,7 @@ export function renderCalendarMonthPanel(data: CalendarMonthPanelData): Template
         localeId: data.localeId,
         monthFormat: data.monthFormat,
         yearSelectorOpen: data.yearSelectorOpen,
+        selectYearAriaLabel: data.selectYearAriaLabel,
         onToggleYearSelector: data.onToggleYearSelector,
       }),
     renderBelowHeader: data.renderBelowHeader ?? (() => nothing),
@@ -248,6 +272,10 @@ export interface CalendarPanelBodyData<D extends { date: Date }> {
   onSelectYear(year: number): void;
   onYearKeydown(event: KeyboardEvent): void;
   localeId: string | undefined;
+  /** The nav controller's month cursor, for the days grid accessible name. */
+  currentDate: Date;
+  /** `yearGridAriaLabel`; defaults to 'Year selection'. */
+  yearGridAriaLabel?: string;
   getDays(offset: number): D[];
   renderDay(day: D): TemplateResult;
 }
@@ -267,9 +295,13 @@ export function renderCalendarPanelBody<D extends { date: Date }>(
         currentYear: data.currentYear,
         onSelectYear: data.onSelectYear,
         onKeydown: data.onYearKeydown,
+        ariaLabel: data.yearGridAriaLabel,
       })
-    : renderDaysGrid(chunk(data.getDays(data.offset), 7), getWeekdayLabels(data.localeId), (day) =>
-        data.renderDay(day),
+    : renderDaysGrid(
+        chunk(data.getDays(data.offset), 7),
+        getWeekdayLabels(data.localeId),
+        (day) => data.renderDay(day),
+        getMonthYearLabel(data.localeId, getPanelDate(data.currentDate, data.offset)),
       );
 }
 
@@ -279,6 +311,8 @@ export interface MonthHeaderData {
   monthFormat: CalendarMonthFormat | undefined;
   /** Whether the year grid is open (`_yearSelectorOpen`), for aria-expanded. */
   yearSelectorOpen: boolean;
+  /** `selectYearAriaLabel`; defaults to 'Select year'. */
+  selectYearAriaLabel?: string;
   onToggleYearSelector(): void;
 }
 
@@ -299,11 +333,10 @@ export function renderMonthHeader(panelDate: Date, data: MonthHeaderData): Templ
           part.type === 'year'
             ? html`<button
                 type="button"
-                tabindex="0"
                 class="gui-calendar__year-selector"
                 @click=${data.onToggleYearSelector}
                 aria-expanded=${data.yearSelectorOpen}
-                aria-label="Select year"
+                aria-label=${`${data.selectYearAriaLabel ?? 'Select year'}, ${part.value}`}
               >
                 <span class="gui-calendar__year-value">${part.value}</span>
                 <span class="gui-calendar__year-arrow" aria-hidden="true">
@@ -332,20 +365,23 @@ export function renderMonthHeader(panelDate: Date, data: MonthHeaderData): Templ
  * @param {D[][]} weeks - The panel's days chunked into weeks of 7.
  * @param {string[]} weekdayLabels - `getWeekdayLabels(localeId)`.
  * @param {(day: D) => TemplateResult} renderDay - The component's day renderer.
+ * @param {string} [ariaLabel] - The grid's accessible name (the panel's month and year).
  * @return {TemplateResult} The days grid.
  */
 export function renderDaysGrid<D extends { date: Date }>(
   weeks: D[][],
   weekdayLabels: string[],
   renderDay: (day: D) => TemplateResult,
+  ariaLabel?: string,
 ): TemplateResult {
   return html`
-    <div class="gui-calendar__days-grid" role="grid">
+    <div class="gui-calendar__days-grid" role="grid" aria-label=${ariaLabel ?? nothing}>
       <div role="row" class="gui-calendar__rows">
         ${repeat(
           weekdayLabels,
           (weekday, i) => i,
-          (weekday) => html`<span class="gui-calendar__weekday" role="gridcell">${weekday}</span>`,
+          (weekday) =>
+            html`<span class="gui-calendar__weekday" role="columnheader">${weekday}</span>`,
         )}
       </div>
 
@@ -371,6 +407,8 @@ export interface YearGridData {
   currentYear: number;
   onSelectYear(year: number): void;
   onKeydown(event: KeyboardEvent): void;
+  /** `yearGridAriaLabel`; defaults to 'Year selection'. */
+  ariaLabel?: string;
 }
 
 /**
@@ -386,7 +424,7 @@ export function renderYearGrid(data: YearGridData): TemplateResult {
     <div
       class="gui-calendar__year-grid"
       role="grid"
-      aria-label="Year selection"
+      aria-label=${data.ariaLabel ?? 'Year selection'}
       @keydown=${data.onKeydown}
     >
       ${chunk(data.years, 4).map(

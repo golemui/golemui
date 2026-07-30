@@ -472,5 +472,52 @@ export const runTimeInputComponentTests = (mountFn: MountComponentFn) => {
         });
       });
     });
+
+    describe('accessibility', () => {
+      it('should expose each segment as a named spinbutton with its bounds', () => {
+        mountTimeInput();
+
+        cy.get(sel.hour)
+          .should('have.attr', 'role', 'spinbutton')
+          .should('have.attr', 'aria-label', 'Hour')
+          .should('have.attr', 'aria-valuemin', '1')
+          .should('have.attr', 'aria-valuemax', '12');
+        cy.get(sel.minute)
+          .should('have.attr', 'aria-label', 'Minute')
+          .should('have.attr', 'aria-valuemin', '0')
+          .should('have.attr', 'aria-valuemax', '59');
+        cy.get(sel.dayPeriod).should('have.attr', 'aria-label', 'AM/PM');
+      });
+
+      it('should not expose aria-valuenow while a segment is empty', () => {
+        mountTimeInput();
+        cy.get(sel.hour).should('not.have.attr', 'aria-valuenow');
+      });
+
+      it('should expose aria-valuenow for filled segments', () => {
+        mountTimeInput({ data: { myTime: '14:30' } });
+        cy.get(sel.hour).should('have.attr', 'aria-valuenow', '2');
+        cy.get(sel.minute).should('have.attr', 'aria-valuenow', '30');
+      });
+
+      it('should not mark individual segments as required', () => {
+        mountTimeInput();
+        cy.get(sel.hour).should('not.have.attr', 'required');
+        cy.get(sel.minute).should('not.have.attr', 'required');
+      });
+
+      it('should honor the segment aria-label override props', () => {
+        mountTimeInput({
+          props: {
+            hourAriaLabel: 'Hora',
+            minuteAriaLabel: 'Minuto',
+            dayPeriodAriaLabel: 'Meridiano',
+          },
+        });
+        cy.get(sel.hour).should('have.attr', 'aria-label', 'Hora');
+        cy.get(sel.minute).should('have.attr', 'aria-label', 'Minuto');
+        cy.get(sel.dayPeriod).should('have.attr', 'aria-label', 'Meridiano');
+      });
+    });
   });
 };

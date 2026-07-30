@@ -74,6 +74,12 @@ export function RangeDateTimeInput(widgetInstance: WithWidget) {
         value={value}
         icon={icon}
         localeId={lang}
+        dayAriaLabel={templateData.dayAriaLabel}
+        monthAriaLabel={templateData.monthAriaLabel}
+        yearAriaLabel={templateData.yearAriaLabel}
+        hourAriaLabel={templateData.hourAriaLabel}
+        minuteAriaLabel={templateData.minuteAriaLabel}
+        dayPeriodAriaLabel={templateData.dayPeriodAriaLabel}
         separator={separator}
         removePillAriaLabel={removePillAriaLabel}
         startDateTimeAriaLabel={startDateTimeAriaLabel}

@@ -57,6 +57,12 @@ describe('Datepicker schema validation', () => {
             kind: 'input',
             type: 'datePicker',
             props: {
+              toggleAriaLabel: 'Open picker',
+              selectYearAriaLabel: 'Choose year',
+              yearGridAriaLabel: 'Years',
+              dayAriaLabel: 'Day',
+              monthAriaLabel: 'Month',
+              yearAriaLabel: 'Year',
               hint: 'Pick a date',
               icon: 'calendar',
               dayFormat: '2-digit',

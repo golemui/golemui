@@ -55,6 +55,10 @@ describe('RangeTimePicker schema validation', () => {
             kind: 'input',
             type: 'rangeTimePicker',
             props: {
+              toggleAriaLabel: 'Open picker',
+              hourAriaLabel: 'Hour',
+              minuteAriaLabel: 'Minute',
+              dayPeriodAriaLabel: 'AM/PM',
               hint: 'Select time ranges',
               icon: 'schedule',
               separator: '-',

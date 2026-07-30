@@ -103,6 +103,8 @@ export class GuiNumber extends LitElement {
           ?disabled=${this.disabled}
           ?readonly=${this.readOnly}
           step=${typeof this.step === 'number' ? this.step : nothing}
+          min=${Number(this.minimum) ? this.minimum : nothing}
+          max=${Number(this.maximum) ? this.maximum : nothing}
           placeholder=${this.placeholder || nothing}
           autocomplete=${this.autocomplete || nothing}
           @input=${this.valueChanged}

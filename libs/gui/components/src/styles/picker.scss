@@ -16,7 +16,7 @@
     container-type: inline-size;
     container-name: gui-picker-widget;
 
-    &:has(.gui-widget[aria-expanded='true']) {
+    &:has(.gui-widget > button[aria-expanded='true']) {
       position: relative;
       z-index: 20;
     }
@@ -40,8 +40,7 @@
         top: 14px;
       }
 
-      &[aria-expanded='true']
-        > :is(
+      > button[aria-expanded='true']:is(
           .gui-date-picker__arrow,
           .gui-range-date-picker__arrow,
           .gui-range-time-picker__arrow,
@@ -50,6 +49,24 @@
           .gui-range-date-time-picker__arrow
         ) {
         transform: rotate(180deg);
+      }
+
+      // The picker toggle: a real button that keeps the arrow's visual box.
+      > button:is(
+          .gui-date-picker__arrow,
+          .gui-range-date-picker__arrow,
+          .gui-range-time-picker__arrow,
+          .gui-time-picker__arrow,
+          .gui-date-time-picker__arrow,
+          .gui-range-date-time-picker__arrow
+        ) {
+        pointer-events: auto;
+        background: none;
+        border: 0;
+        padding: 0;
+        margin: 0;
+        line-height: 0;
+        cursor: pointer;
       }
 
       :is(gui-date, gui-range-date, gui-time, gui-date-time, gui-range-date-time).gui-field {

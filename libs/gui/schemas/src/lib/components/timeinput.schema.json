@@ -31,6 +31,15 @@
     },
     "maxTimeProp": {
       "type": "string"
+    },
+    "hourAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "minuteAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "dayPeriodAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
     }
   },
   "allOf": [
@@ -89,6 +98,15 @@
         },
         "maxTimeMessage": {
           "$ref": "../common.schema.json#/$defs/localizable"
+        },
+        "hourAriaLabel": {
+          "$ref": "#/$defs/hourAriaLabelProp"
+        },
+        "minuteAriaLabel": {
+          "$ref": "#/$defs/minuteAriaLabelProp"
+        },
+        "dayPeriodAriaLabel": {
+          "$ref": "#/$defs/dayPeriodAriaLabelProp"
         }
       },
       "patternProperties": {
@@ -115,6 +133,15 @@
         },
         "^maxTimeMessage\\.[^.]+$": {
           "$ref": "../common.schema.json#/$defs/localizable"
+        },
+        "^hourAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/hourAriaLabelProp"
+        },
+        "^minuteAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/minuteAriaLabelProp"
+        },
+        "^dayPeriodAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/dayPeriodAriaLabelProp"
         }
       },
       "additionalProperties": false

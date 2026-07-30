@@ -124,6 +124,9 @@ export class GuiRadiogroup extends LitElement {
         id=${this.uid!}
         aria-labelledby=${templateData.label ? `${this.uid}_label` : nothing}
         aria-describedby=${templateData.hint ? `${this.uid}_hint` : nothing}
+        aria-required=${this.required ? 'true' : nothing}
+        aria-invalid=${this.touched && this.errors?.length ? 'true' : nothing}
+        aria-errormessage=${this.touched && this.errors?.length ? `${this.uid}_errors` : nothing}
       >
         ${options}
       </div>

@@ -70,6 +70,9 @@ export function TimeInput(widgetInstance: WithWidget) {
         value={value}
         icon={icon}
         localeId={lang}
+        hourAriaLabel={templateData.hourAriaLabel}
+        minuteAriaLabel={templateData.minuteAriaLabel}
+        dayPeriodAriaLabel={templateData.dayPeriodAriaLabel}
         hourFormat={hourFormat}
         minuteStep={minuteStep}
         minTime={templateData.minTime}

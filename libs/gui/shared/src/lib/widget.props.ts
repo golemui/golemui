@@ -113,6 +113,7 @@ export type MarkdownProps = {
   orderedListTitle?: string;
   unorderedListTitle?: string;
   splitViewTitle?: string;
+  toolbarAriaLabel?: string;
   defaultOpenPreview?: boolean;
 } & TextareaProps;
 
@@ -143,6 +144,16 @@ export type CalendarProps = {
    * This label is used to improve accessibility by providing screen readers with descriptive text.
    */
   nextMonthAriaLabel?: string;
+  /**
+   * An optional string that represents the ARIA label for the year-selector toggle button in the
+   * calendar header. The current year is appended to it. Defaults to 'Select year'.
+   */
+  selectYearAriaLabel?: string;
+  /**
+   * An optional string that represents the ARIA label for the year-selector grid.
+   * Defaults to 'Year selection'.
+   */
+  yearGridAriaLabel?: string;
   /**
    * Specifies the formatting style for displaying the day portion of a date.
    *
@@ -253,6 +264,16 @@ export type RangeCalendarProps = {
    */
   nextMonthAriaLabel?: string;
   /**
+   * An optional string that represents the ARIA label for the year-selector toggle button in the
+   * calendar header. The current year is appended to it. Defaults to 'Select year'.
+   */
+  selectYearAriaLabel?: string;
+  /**
+   * An optional string that represents the ARIA label for the year-selector grid.
+   * Defaults to 'Year selection'.
+   */
+  yearGridAriaLabel?: string;
+  /**
    * Specifies the formatting style for displaying the day portion of a date.
    *
    * The variable `dayFormat` can accept one of the following values:
@@ -322,6 +343,9 @@ export type RangeCalendarProps = {
 export type DateinputProps = {
   hint?: string;
   icon?: string;
+  dayAriaLabel?: string;
+  monthAriaLabel?: string;
+  yearAriaLabel?: string;
   invalidDateMessage?: Localizable;
   /** Earliest allowed date (ISO date, inclusive). */
   minDate?: string;
@@ -334,6 +358,12 @@ export type DateinputProps = {
 export type DateTimeInputProps = {
   hint?: string;
   icon?: string;
+  dayAriaLabel?: string;
+  monthAriaLabel?: string;
+  yearAriaLabel?: string;
+  hourAriaLabel?: string;
+  minuteAriaLabel?: string;
+  dayPeriodAriaLabel?: string;
   hourFormat?: '12' | '24';
   minuteStep?: number;
   invalidDateMessage?: Localizable;
@@ -354,6 +384,9 @@ export type DateTimeInputProps = {
 export type TimeInputProps = {
   hint?: string;
   icon?: string;
+  hourAriaLabel?: string;
+  minuteAriaLabel?: string;
+  dayPeriodAriaLabel?: string;
   hourFormat?: '12' | '24';
   minuteStep?: number;
   /** First allowed time (ISO time, inclusive). */
@@ -379,16 +412,17 @@ export type DisabledTimeRange = TimeRange & {
   weekdays?: number[];
 };
 
-export type TimePickerProps = TimeInputProps & {
-  /** Times inside these ranges (both ends inclusive) render disabled. */
-  disabledRanges?: TimeRange[];
-  /** Allows typing a time in the input; when false (default) values come only from the list. */
-  allowCustomTime?: boolean;
-  height?: number;
-  itemHeight?: number;
-  disabledRangeMessage?: Localizable;
-  noAvailableTimesMessage?: Localizable;
-};
+export type TimePickerProps = TimeInputProps &
+  PickerToggleProps & {
+    /** Times inside these ranges (both ends inclusive) render disabled. */
+    disabledRanges?: TimeRange[];
+    /** Allows typing a time in the input; when false (default) values come only from the list. */
+    allowCustomTime?: boolean;
+    height?: number;
+    itemHeight?: number;
+    disabledRangeMessage?: Localizable;
+    noAvailableTimesMessage?: Localizable;
+  };
 
 export type RangeDateInputProps = {
   hint?: string;
@@ -397,6 +431,9 @@ export type RangeDateInputProps = {
   removePillAriaLabel?: string;
   startDateAriaLabel?: string;
   endDateAriaLabel?: string;
+  dayAriaLabel?: string;
+  monthAriaLabel?: string;
+  yearAriaLabel?: string;
   invalidDateMessage?: Localizable;
 };
 
@@ -406,15 +443,25 @@ export type DateBoundsMessageProps = {
   disabledDateRangeMessage?: Localizable;
 };
 
-export type DatePickerProps = CalendarProps & DateinputProps & DateBoundsMessageProps;
+/** The popup toggle button shared by the six pickers. */
+export type PickerToggleProps = {
+  toggleAriaLabel?: string;
+};
+
+export type DatePickerProps = CalendarProps &
+  DateinputProps &
+  DateBoundsMessageProps &
+  PickerToggleProps;
 
 export type DateTimePickerProps = DateTimeCalendarProps &
   DateTimeInputProps &
-  DateBoundsMessageProps;
+  DateBoundsMessageProps &
+  PickerToggleProps;
 
 export type RangeDatePickerProps = RangeCalendarProps &
   RangeDateInputProps &
-  DateBoundsMessageProps;
+  DateBoundsMessageProps &
+  PickerToggleProps;
 
 export type RangeDateTimeCalendarProps = Omit<
   RangeCalendarProps,
@@ -460,6 +507,9 @@ export type RangeTimeInputProps = {
   removePillAriaLabel?: string;
   startTimeAriaLabel?: string;
   endTimeAriaLabel?: string;
+  hourAriaLabel?: string;
+  minuteAriaLabel?: string;
+  dayPeriodAriaLabel?: string;
   hourFormat?: '12' | '24';
   minuteStep?: number;
   /** First allowed time (ISO time, inclusive). */
@@ -479,6 +529,12 @@ export type RangeDateTimeInputProps = {
   removePillAriaLabel?: string;
   startDateTimeAriaLabel?: string;
   endDateTimeAriaLabel?: string;
+  dayAriaLabel?: string;
+  monthAriaLabel?: string;
+  yearAriaLabel?: string;
+  hourAriaLabel?: string;
+  minuteAriaLabel?: string;
+  dayPeriodAriaLabel?: string;
   hourFormat?: '12' | '24';
   minuteStep?: number;
   invalidDateMessage?: Localizable;
@@ -499,22 +555,25 @@ export type RangeDateTimeInputProps = {
  * spans, two time pickers, per-day count badge) with the typed range input as
  * its trigger.
  */
-export type RangeDateTimePickerProps = RangeDateTimeCalendarProps & RangeDateTimeInputProps;
+export type RangeDateTimePickerProps = RangeDateTimeCalendarProps &
+  RangeDateTimeInputProps &
+  PickerToggleProps;
 
-export type RangeTimePickerProps = RangeTimeInputProps & {
-  /** Times inside these ranges (both ends inclusive) render disabled. */
-  disabledRanges?: TimeRange[];
-  /** Allows typing a time in the input; when false (default) values come only from the lists. */
-  allowCustomTime?: boolean;
-  height?: number;
-  itemHeight?: number;
-  /** Visible heading above the "time in" list in the popover. Defaults to "Start time". */
-  startTimeLabel?: Localizable;
-  /** Visible heading above the "time out" list in the popover. Defaults to "End time". */
-  endTimeLabel?: Localizable;
-  disabledRangeMessage?: Localizable;
-  noAvailableTimesMessage?: Localizable;
-};
+export type RangeTimePickerProps = RangeTimeInputProps &
+  PickerToggleProps & {
+    /** Times inside these ranges (both ends inclusive) render disabled. */
+    disabledRanges?: TimeRange[];
+    /** Allows typing a time in the input; when false (default) values come only from the lists. */
+    allowCustomTime?: boolean;
+    height?: number;
+    itemHeight?: number;
+    /** Visible heading above the "time in" list in the popover. Defaults to "Start time". */
+    startTimeLabel?: Localizable;
+    /** Visible heading above the "time out" list in the popover. Defaults to "End time". */
+    endTimeLabel?: Localizable;
+    disabledRangeMessage?: Localizable;
+    noAvailableTimesMessage?: Localizable;
+  };
 
 export type NumberinputProps = {
   placeholder?: string;

@@ -301,7 +301,9 @@ export const runRangeDateTimeCalendarComponentTests = (mountFn: MountComponentFn
           },
         });
 
-        day(15).should('be.disabled');
+        // Fully-blocked in-month days stay in the accessibility tree
+        // (aria-disabled) instead of being natively disabled
+        day(15).should('have.attr', 'aria-disabled', 'true').and('not.have.attr', 'disabled');
 
         day(13).click();
         day(17).click();

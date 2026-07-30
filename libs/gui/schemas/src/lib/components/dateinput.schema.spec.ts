@@ -55,6 +55,9 @@ describe('Dateinput schema validation', () => {
             kind: 'input',
             type: 'dateInput',
             props: {
+              dayAriaLabel: 'Day',
+              monthAriaLabel: 'Month',
+              yearAriaLabel: 'Year',
               hint: 'Enter your birthday',
               icon: 'calendar',
             },

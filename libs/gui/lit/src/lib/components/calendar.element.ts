@@ -65,6 +65,8 @@ export class CalendarElement extends LitElement implements WithWidget {
         .nextMonthIcon=${this.adapter.templateData.nextMonthIcon}
         .prevMonthAriaLabel=${this.adapter.templateData.prevMonthAriaLabel}
         .nextMonthAriaLabel=${this.adapter.templateData.nextMonthAriaLabel}
+        .selectYearAriaLabel=${this.adapter.templateData.selectYearAriaLabel}
+        .yearGridAriaLabel=${this.adapter.templateData.yearGridAriaLabel}
         .dayFormat=${this.adapter.templateData.dayFormat}
         .weekdayFormat=${this.adapter.templateData.weekdayFormat}
         .monthFormat=${this.adapter.templateData.monthFormat}

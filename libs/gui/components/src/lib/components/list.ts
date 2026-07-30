@@ -1,4 +1,4 @@
-import { html, LitElement, nothing, type PropertyValues } from 'lit';
+import { html, LitElement, type PropertyValues } from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
 import { updateListItems } from './list-items';
 import type { ListItem, ListProps, OptionValue } from '@golemui/gui-shared/internals';
@@ -40,6 +40,36 @@ export class GuiList extends LitElement {
     ) {
       this.emitRangeChange();
     }
+    this.syncHostAria();
+  }
+
+  private syncHostAria() {
+    this.setAttribute('role', 'listbox');
+    this.tabIndex = this.disabled ? -1 : 0;
+
+    const toggleAttr = (attr: string, value: string | null) => {
+      if (value === null) {
+        this.removeAttribute(attr);
+      } else {
+        this.setAttribute(attr, value);
+      }
+    };
+
+    toggleAttr('aria-required', this.required ? 'true' : null);
+    toggleAttr('aria-disabled', this.disabled || this.readOnly ? 'true' : null);
+    toggleAttr(
+      'aria-activedescendant',
+      this._focusedIndex >= 0 ? `${this.uid}-item-${this._focusedIndex}` : null,
+    );
+    toggleAttr('aria-label', this.label ?? null);
+    toggleAttr('aria-description', this.hint ?? null);
+  }
+
+  override connectedCallback() {
+    super.connectedCallback();
+    this.addEventListener('keydown', this.onKeyDown);
+    this.addEventListener('focus', this.onFocus);
+    this.addEventListener('focusout', this.onFocusOut);
   }
 
   override firstUpdated() {
@@ -52,24 +82,12 @@ export class GuiList extends LitElement {
     const itemHeight = this.itemHeight ?? 40;
     const totalHeight = (this.items?.length ?? 0) * itemHeight;
     const { offsetY } = this.calculateRange();
-    const activeId = this._focusedIndex >= 0 ? `${this.uid}-item-${this._focusedIndex}` : undefined;
 
     return html`
       <div
-        role="listbox"
-        id=${this.uid}
-        tabindex=${this.disabled ? -1 : 0}
         class="gui-list__scroll-viewport"
         style="max-height: ${height}px; min-height: 40px; overflow-y: auto; position: relative; display: block;"
         @scroll="${this.onScroll}"
-        @keydown="${this.onKeyDown}"
-        @focus="${this.onFocus}"
-        @focusout="${this.onFocusOut}"
-        aria-required=${this.required ? 'true' : nothing}
-        aria-disabled=${this.disabled || this.readOnly ? 'true' : nothing}
-        aria-activedescendant="${activeId ?? nothing}"
-        aria-label=${this.label ?? nothing}
-        aria-description=${this.hint ?? nothing}
       >
         <div
           class="gui-list__spacer"
@@ -86,14 +104,6 @@ export class GuiList extends LitElement {
     `;
   }
 
-  override focus(options?: FocusOptions) {
-    if (this.viewportElement) {
-      this.viewportElement.focus(options);
-    } else {
-      super.focus(options);
-    }
-  }
-
   public focusItemAtIndex(index: number) {
     this._focusedIndex = index;
   }
@@ -103,7 +113,7 @@ export class GuiList extends LitElement {
     this.scrollToIndex(selectedIndex);
   }
 
-  private onKeyDown(e: KeyboardEvent) {
+  private onKeyDown = (e: KeyboardEvent) => {
     if (this.disabled || this.readOnly) return;
 
     const itemHeight = this.itemHeight ?? 40;
@@ -154,9 +164,9 @@ export class GuiList extends LitElement {
     if (handled) {
       e.preventDefault();
     }
-  }
+  };
 
-  private onFocus() {
+  private onFocus = () => {
     if (!this.value || !this.items.length) return;
 
     const selectedIndex = this._items.findIndex((item) => item.value === this.value);
@@ -171,9 +181,9 @@ export class GuiList extends LitElement {
         composed: true,
       }),
     );
-  }
+  };
 
-  private onFocusOut(e: FocusEvent) {
+  private onFocusOut = (e: FocusEvent) => {
     if (e.relatedTarget && this.contains(e.relatedTarget as Node)) {
       return;
     }
@@ -189,7 +199,7 @@ export class GuiList extends LitElement {
     );
 
     this.dispatchEvent(new CustomEvent('blur', { bubbles: true, composed: true }));
-  }
+  };
 
   private scrollToIndex(index: number) {
     const itemHeight = this.itemHeight ?? 40;
@@ -292,6 +302,13 @@ export class GuiList extends LitElement {
     const offsetY = startIndex * itemHeight;
 
     return { startIndex, endIndex, offsetY };
+  }
+
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    this.removeEventListener('keydown', this.onKeyDown);
+    this.removeEventListener('focus', this.onFocus);
+    this.removeEventListener('focusout', this.onFocusOut);
   }
 }
 

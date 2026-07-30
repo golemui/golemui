@@ -15,6 +15,11 @@ export class GuiTimePicker extends LitElement {
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String }) hint: string | undefined = undefined;
   @property({ type: String }) icon: string | undefined = '';
+  @property({ type: String, attribute: 'toggle-aria-label' }) toggleAriaLabel: string | undefined =
+    undefined;
+  @property({ type: String }) hourAriaLabel: string | undefined = undefined;
+  @property({ type: String }) minuteAriaLabel: string | undefined = undefined;
+  @property({ type: String }) dayPeriodAriaLabel: string | undefined = undefined;
   @property({ type: Array }) errors: string[] | undefined = [];
   @property({ type: Boolean }) showErrors: boolean | undefined = true;
   @property({ type: Boolean }) touched: boolean | undefined = false;
@@ -49,10 +54,12 @@ export class GuiTimePicker extends LitElement {
 
   @query('gui-time') private _timeRef?: HTMLElement;
   @query('gui-time-list') private _listRef?: GuiTimeList;
+  @query('.gui-time-picker__arrow') private _toggleRef?: HTMLElement;
 
   private _popup = new GUIPopupController(this, {
-    getInteriorElements: () => [this._timeRef, this._listRef],
+    getInteriorElements: () => [this._timeRef, this._listRef, this._toggleRef],
     focusRestoreSelector: 'gui-time input, gui-time button',
+    focusPopupSelector: '.gui-time-list__option[tabindex="0"]',
     isDisabled: () => !!this.disabled,
     clickIntent: (target) => {
       if (target.closest('.gui-time-list__option')) return 'ignore';
@@ -81,21 +88,19 @@ export class GuiTimePicker extends LitElement {
     const timePickerIcon = addIcon('timePicker', { icon: this.icon });
 
     return html`
-      ${addLabel(this.uid ?? '', {
-        label: this.label,
-        hint: this.hint,
-        required: this.required,
-      })}
+      ${addLabel(
+        this.uid ?? '',
+        {
+          label: this.label,
+          hint: this.hint,
+          required: this.required,
+        },
+        false,
+        undefined,
+        false,
+      )}
 
-      <div
-        role="button"
-        tabindex="-1"
-        class="gui-widget"
-        aria-expanded=${this._popup.open}
-        @keyup=${this._popup.onAnchorKeyUp}
-        @keydown=${this.onKeyDown}
-        @click=${this._popup.onAnchorClick}
-      >
+      <div class="gui-widget" @keydown=${this.onKeyDown} @click=${this._popup.onAnchorClick}>
         <gui-time
           id="time-input"
           class=${classMap(timePickerIcon.widgetClasses)}
@@ -114,14 +119,26 @@ export class GuiTimePicker extends LitElement {
           .minuteStep=${this.minuteStep}
           .minTime=${this.minTime}
           .maxTime=${this.maxTime}
+          .hourAriaLabel=${this.hourAriaLabel}
+          .minuteAriaLabel=${this.minuteAriaLabel}
+          .dayPeriodAriaLabel=${this.dayPeriodAriaLabel}
           .minTimeMessage=${this.minTimeMessage}
           .maxTimeMessage=${this.maxTimeMessage}
           @blur=${this.onTimeBlur}
           @focus=${this._popup.show}
           @change=${this.onTimeChange}
         ></gui-time>
-        <span class="gui-time-picker__arrow"
-          ><svg
+        <button
+          type="button"
+          class="gui-time-picker__arrow"
+          aria-label=${this.toggleAriaLabel ?? 'Show time list'}
+          aria-haspopup="dialog"
+          aria-expanded=${this._popup.open ? 'true' : 'false'}
+          aria-controls=${`${this.uid}_popup`}
+          ?disabled=${this.disabled}
+          @click=${this.onToggleClick}
+        >
+          <svg
             xmlns="http://www.w3.org/2000/svg"
             width="16"
             height="16"
@@ -130,10 +147,14 @@ export class GuiTimePicker extends LitElement {
           >
             <path
               d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"
-            ></path></svg
-        ></span>
+            ></path>
+          </svg>
+        </button>
 
         <gui-time-list
+          id=${`${this.uid}_popup`}
+          role="dialog"
+          aria-label=${this.label ?? 'Time list'}
           .uid=${this.uid}
           .value=${this.value}
           .label=${this.label}
@@ -158,6 +179,16 @@ export class GuiTimePicker extends LitElement {
         : ''}
     `;
   }
+
+  private onToggleClick = (event: Event) => {
+    // The wrapper's clickIntent handler must not double-handle the toggle.
+    event.stopPropagation();
+    if (this._popup.open) {
+      this._popup.close();
+    } else {
+      this._popup.openAndFocus();
+    }
+  };
 
   private onTimeChange(event: CustomEvent) {
     event.stopPropagation();

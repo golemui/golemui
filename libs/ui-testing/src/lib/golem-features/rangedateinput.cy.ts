@@ -376,5 +376,44 @@ export const runRangeDateInputComponentTests = (mountFn: MountComponentFn) => {
         cy.get(sel.end.year).should('be.disabled');
       });
     });
+
+    describe('pills accessibility', () => {
+      const juneRange = { start: '2026-06-10', end: '2026-06-16' };
+
+      it('should expose the strip as a labeled toolbar of named pill buttons', () => {
+        mountRangeDateInput({ data: { myRanges: [juneRange] } });
+
+        cy.get('.gui-pills__strip')
+          .should('have.attr', 'role', 'toolbar')
+          .should('have.attr', 'aria-label', 'Selected date ranges');
+
+        // A real button, named by the range itself; the remove hint travels
+        // as the description instead of polluting the accessible name
+        cy.get('button.gui-pills__pill')
+          .should('have.attr', 'aria-label', '06/10/2026 - 06/16/2026')
+          .should('have.attr', 'aria-description', 'Remove date');
+        cy.get('.gui-pills__pill-remove').should('have.attr', 'aria-hidden', 'true');
+      });
+
+      it('should wire the count bubble to the dropdown toolbar', () => {
+        mountRangeDateInput({ data: { myRanges: [juneRange] } });
+
+        cy.get('.gui-pills__count')
+          .should('have.attr', 'aria-haspopup', 'true')
+          .should('have.attr', 'aria-expanded', 'false')
+          .should('have.attr', 'aria-controls', 'testSubject_pills_dropdown');
+
+        cy.get('.gui-pills__count').click({ force: true });
+        cy.get('#testSubject_pills_dropdown')
+          .should('have.attr', 'role', 'toolbar')
+          .should('have.attr', 'aria-orientation', 'vertical');
+        cy.get('.gui-pills__count').should('have.attr', 'aria-expanded', 'true');
+      });
+
+      it('should natively disable pill buttons when the widget is disabled', () => {
+        mountRangeDateInput({ data: { myRanges: [juneRange] }, disabled: true });
+        cy.get('button.gui-pills__pill').should('be.disabled');
+      });
+    });
   });
 };

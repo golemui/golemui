@@ -55,6 +55,8 @@ describe('Calendar schema validation', () => {
             kind: 'input',
             type: 'calendar',
             props: {
+              selectYearAriaLabel: 'Choose year',
+              yearGridAriaLabel: 'Years',
               hint: 'Select a date',
               prevMonthIcon: 'left',
               nextMonthIcon: 'right',

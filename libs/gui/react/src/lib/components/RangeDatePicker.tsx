@@ -50,6 +50,10 @@ export function RangeDatePicker(widgetInstance: WithWidget) {
         value={value}
         icon={templateData.icon}
         localeId={templateData.lang}
+        toggleAriaLabel={templateData.toggleAriaLabel}
+        dayAriaLabel={templateData.dayAriaLabel}
+        monthAriaLabel={templateData.monthAriaLabel}
+        yearAriaLabel={templateData.yearAriaLabel}
         separator={templateData.separator}
         removePillAriaLabel={templateData.removePillAriaLabel}
         startDateAriaLabel={templateData.startDateAriaLabel}
@@ -58,6 +62,8 @@ export function RangeDatePicker(widgetInstance: WithWidget) {
         nextMonthIcon={templateData.nextMonthIcon}
         prevMonthAriaLabel={templateData.prevMonthAriaLabel}
         nextMonthAriaLabel={templateData.nextMonthAriaLabel}
+        selectYearAriaLabel={templateData.selectYearAriaLabel}
+        yearGridAriaLabel={templateData.yearGridAriaLabel}
         dayFormat={templateData.dayFormat}
         weekdayFormat={templateData.weekdayFormat}
         monthFormat={templateData.monthFormat}

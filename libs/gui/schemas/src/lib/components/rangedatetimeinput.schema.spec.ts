@@ -56,6 +56,12 @@ describe('RangeDateTimeInput schema validation', () => {
             kind: 'input',
             type: 'rangeDateTimeInput',
             props: {
+              dayAriaLabel: 'Day',
+              monthAriaLabel: 'Month',
+              yearAriaLabel: 'Year',
+              hourAriaLabel: 'Hour',
+              minuteAriaLabel: 'Minute',
+              dayPeriodAriaLabel: 'AM/PM',
               hint: 'Select date-time ranges',
               icon: 'schedule',
               separator: '-',
