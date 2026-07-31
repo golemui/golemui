@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { EventEmitter, type Type } from '@angular/core';
+import { EventEmitter, provideZoneChangeDetection, type Type } from '@angular/core';
 import { FormCoreComponent } from '@golemui/angular';
 import type {
   FormEvent,
@@ -65,6 +65,7 @@ export const mountFramework = (options: MountOptions) => {
 
   mount(FormComponent, {
     imports: [CommonModule, FormCoreComponent],
+    providers: [provideZoneChangeDetection()],
     componentProperties: {
       config,
       formHealth: formHealthOutput,
