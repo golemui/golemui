@@ -19,7 +19,7 @@ TypeScript declarations in `node_modules` or search the filesystem for them.
 
 Two ways to author the same form. **HARD GATE — do not write a single line of form code until
 the user has told you which API they want.** If the current request doesn't already state it,
-you MUST stop and ask (use the AskUserQuestion tool when available): TS API (gui.*, coded
+you MUST stop and ask (use the AskUserQuestion tool when available): TS API (gui.\*, coded
 programmatically) or JSON API (a serializable document, e.g. stored or served at runtime). There
 is NO default — never pick one silently, even when operating autonomously, even if one seems
 obvious. Never mix their syntaxes in one artifact:
@@ -49,7 +49,7 @@ These are the silent failure modes. All of them compile/parse cleanly and then b
    `select`) REQUIRE an explicit `type` (`validator: { type: 'string', required: true }`);
    `repeater` auto-supplies `type: 'array'` — pass only rules (`{ required: true, minItems: 1 }`);
    everything else takes the loose validator with NO `type` (`{ required: true }`).
-4. **Markdown is an input, not a display.** `gui.inputs.markdown` is a markdown *editor*. For a
+4. **Markdown is an input, not a display.** `gui.inputs.markdown` is a markdown _editor_. For a
    heading or static block use `gui.displays.display(() => <h2>…</h2>)` returning your
    framework's own node.
 5. **Import `@golemui/gui-components/index.css` once** or the form renders unstyled.
@@ -73,25 +73,25 @@ Never present an unverified form. In order of preference:
      real `@golemui` types.
    - `npx -y @golemui/gui-mcp validate-json <file.json>` — validates a JSON definition
      against the bundled schemas.
-   Both print a JSON result; exit 0 = pass, 1 = fix the reported problems and re-run.
-   npx runs a project-local install when present and only fetches otherwise — see
-   [references/mcp.md](references/mcp.md) for restricted/corporate environments.
+     Both print a JSON result; exit 0 = pass, 1 = fix the reported problems and re-run.
+     npx runs a project-local install when present and only fetches otherwise — see
+     [references/mcp.md](references/mcp.md) for restricted/corporate environments.
 3. **Neither possible**: follow this skill's rules exactly, and offer the user the MCP
    install from [references/mcp.md](references/mcp.md).
 
 ## Where to look
 
-| Task | Read |
-| --- | --- |
-| Write a form in TypeScript (`gui.*`) | [references/forms-dx.md](references/forms-dx.md) — complete, compile-verified factory reference |
-| Write/validate a JSON form definition, generate from JSON Schema or OpenAPI | [references/forms-json.md](references/forms-json.md) |
-| Install packages, render the form, receive submits in a framework | [references/framework-setup.md](references/framework-setup.md) |
-| A widget's exhaustive props/options/CSS variables | [references/widgets-index.md](references/widgets-index.md) → fetch that page's URL |
-| Validators, states, events, i18n, interpolation, dependencies, host functions, loaders, item renderers, runtime methods, selectors | [references/features.md](references/features.md) |
-| Custom widgets, custom item renderers, custom validators, custom middlewares | [references/extending.md](references/extending.md) |
-| Theming, CSS customization, headless rendering | [references/styling.md](references/styling.md) |
-| Set up or use the GolemUI MCP server | [references/mcp.md](references/mcp.md) |
-| Anything else | Fetch `https://golemui.com/llms.txt` (full page index) |
+| Task                                                                                                                               | Read                                                                                            |
+| ---------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| Write a form in TypeScript (`gui.*`)                                                                                               | [references/forms-dx.md](references/forms-dx.md) — complete, compile-verified factory reference |
+| Write/validate a JSON form definition, generate from JSON Schema or OpenAPI                                                        | [references/forms-json.md](references/forms-json.md)                                            |
+| Install packages, render the form, receive submits in a framework                                                                  | [references/framework-setup.md](references/framework-setup.md)                                  |
+| A widget's exhaustive props/options/CSS variables                                                                                  | [references/widgets-index.md](references/widgets-index.md) → fetch that page's URL              |
+| Validators, states, events, i18n, interpolation, dependencies, host functions, loaders, item renderers, runtime methods, selectors | [references/features.md](references/features.md)                                                |
+| Custom widgets, custom item renderers, custom validators, custom middlewares                                                       | [references/extending.md](references/extending.md)                                              |
+| Theming, CSS customization, headless rendering                                                                                     | [references/styling.md](references/styling.md)                                                  |
+| Set up or use the GolemUI MCP server                                                                                               | [references/mcp.md](references/mcp.md)                                                          |
+| Anything else                                                                                                                      | Fetch `https://golemui.com/llms.txt` (full page index)                                          |
 
 Fetch discipline: `forms-dx.md` is self-sufficient for almost every TS form — read it once, keep
 it in context, and write from it instead of making many small lookups.

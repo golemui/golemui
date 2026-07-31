@@ -63,7 +63,9 @@ export function buildDxReference(): string {
     lines.push(`- ${setup[fw]}`);
   }
   lines.push('');
-  lines.push('Every example below is compile-checked against the real `@golemui` type declarations.');
+  lines.push(
+    'Every example below is compile-checked against the real `@golemui` type declarations.',
+  );
   lines.push('');
 
   // Factory index — the whole surface up front, so the reader knows every real name and
@@ -147,10 +149,17 @@ export function buildWidgetsIndex(): string {
     lines.push('');
     for (const [, factories] of [...rows.entries()].sort(([a], [b]) => a.localeCompare(b))) {
       const s = DX_SPECS[factories[0].split('.')[2]];
-      lines.push(`- ${factories.map((f) => `\`${f}\``).join(', ')} — ${dxDocUrl(s)} (json: ${dxDocUrl(s, 'json')})`);
+      lines.push(
+        `- ${factories.map((f) => `\`${f}\``).join(', ')} — ${dxDocUrl(s)} (json: ${dxDocUrl(s, 'json')})`,
+      );
     }
     const overview = `${DOCS_BASE}/dx/widgets-reference/${
-      { inputs: 'input-fields', actions: 'interactive-fields', displays: 'display-fields', layouts: 'layout-fields' }[ns]
+      {
+        inputs: 'input-fields',
+        actions: 'interactive-fields',
+        displays: 'display-fields',
+        layouts: 'layout-fields',
+      }[ns]
     }/overview.md`;
     lines.push(`- Category overview — ${overview}`);
     lines.push('');
