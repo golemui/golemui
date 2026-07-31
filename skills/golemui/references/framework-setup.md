@@ -28,13 +28,13 @@ Add `gui.actions.button({ label, actionType: 'submit' })` to the form, then list
 component. The handler receives a `FormSubmitEvent` (type from `@golemui/core`); `.data` is the
 collected form data. **Vue is the ONLY kebab-case event.**
 
-| Framework | Component | Submit wiring |
-| --- | --- | --- |
-| React | `<GuiForm>` from `@golemui/gui-react` | `formSubmit={(e: FormSubmitEvent) => e.data}` |
-| Angular | `<gui-form>` (`FormComponent` from `@golemui/gui-angular`) | `(formSubmit)="onSubmit($event)"` |
-| Vue | `<GuiForm>` from `@golemui/gui-vue` | `@form-submit="onSubmit"` |
-| Lit | `<gui-form>` (import `@golemui/gui-lit`) | `@formSubmit=${(e: CustomEvent) => e.detail.data}` |
-| Vanilla | `<gui-form>` (import `@golemui/gui-lit`) | `el.addEventListener('formSubmit', (e) => e.detail.data)` |
+| Framework | Component                                                  | Submit wiring                                             |
+| --------- | ---------------------------------------------------------- | --------------------------------------------------------- |
+| React     | `<GuiForm>` from `@golemui/gui-react`                      | `formSubmit={(e: FormSubmitEvent) => e.data}`             |
+| Angular   | `<gui-form>` (`FormComponent` from `@golemui/gui-angular`) | `(formSubmit)="onSubmit($event)"`                         |
+| Vue       | `<GuiForm>` from `@golemui/gui-vue`                        | `@form-submit="onSubmit"`                                 |
+| Lit       | `<gui-form>` (import `@golemui/gui-lit`)                   | `@formSubmit=${(e: CustomEvent) => e.detail.data}`        |
+| Vanilla   | `<gui-form>` (import `@golemui/gui-lit`)                   | `el.addEventListener('formSubmit', (e) => e.detail.data)` |
 
 ## Render snippets
 
@@ -65,7 +65,10 @@ import type { FormSubmitEvent } from '@golemui/core';
 **Lit** — `import '@golemui/gui-lit'` registers the `<gui-form>` custom element:
 
 ```ts
-html`<gui-form .config=${{ formDef: form }} @formSubmit=${(e: CustomEvent) => e.detail.data}></gui-form>`;
+html`<gui-form
+  .config=${{ formDef: form }}
+  @formSubmit=${(e: CustomEvent) => e.detail.data}
+></gui-form>`;
 ```
 
 **Vanilla JS**
