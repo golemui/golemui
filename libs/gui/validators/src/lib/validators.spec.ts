@@ -7,6 +7,7 @@ import {
   initValidators,
   type NumberValidator,
   type StringValidator,
+  type Validator,
 } from './validators';
 
 const validate = initValidators();
@@ -397,6 +398,13 @@ describe('Golem validators', () => {
 
     it('throws when no customValidators are provided', () => {
       expect(() => validate({ type: 'custom', minAge: 18 })).toThrow();
+    });
+  });
+
+  describe('unknown validator config', () => {
+    it('throws a descriptive error when the config has no known type', () => {
+      const typelessConfig = { required: true } as unknown as Validator;
+      expect(() => validate(typelessConfig)).toThrow(/Unknown validator config/);
     });
   });
 

@@ -140,6 +140,13 @@ export const initValidators =
         }
         return fromCustomValidator(validator, customValidators);
       }
+
+      default: {
+        const unknownValidator: never = validator;
+        throw new Error(
+          `Unknown validator config: ${JSON.stringify(unknownValidator)}. The "type" property must be one of: "string", "number", "integer", "boolean", "array", "custom".`,
+        );
+      }
     }
   };
 
