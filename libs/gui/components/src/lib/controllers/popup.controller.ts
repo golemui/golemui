@@ -15,12 +15,6 @@ export type GUIPopupClickIntent = 'open' | 'toggle' | 'ignore';
 
 export interface GUIPopupControllerOptions {
   /**
-   * Elements whose composedPath containment counts as an "inside" click for
-   * the document-level outside-click close (the input ref and the popup ref
-   * in the pickers). Null/undefined entries are skipped.
-   */
-  getInteriorElements(): (Element | null | undefined)[];
-  /**
    * Selector (scoped to the host, light DOM) for the element to focus when
    * Escape closes the popup, e.g. `'gui-date input'`.
    */
@@ -53,12 +47,12 @@ export interface GUIPopupControllerOptions {
 }
 
 /**
- * Overlay shell shared by the six picker components. Reproduces their exact
- * micro-semantics:
+ * Overlay shell shared by the six picker components.
  *
- * - Document 'click' listener (bubble phase, added in hostConnected) closes
- *   the popup when the composedPath contains none of the interior elements.
- * - Close popup on 'focusout' the host subtree.
+ * - Document 'click' listener (bubble phase) closes the popup when neither
+ *   the click path nor the gesture origin is inside the host.
+ * - 'focusout' of the host subtree closes unless caused by an interior
+ *   gesture; keydown (Tab/Escape) re-arms normal behavior first.
  * - Enter/Space toggling is native: each picker's toggle is a real button.
  * - Escape is handled on keydown with preventDefault + stopPropagation
  *   (so it never reaches the document while open), restores focus to
@@ -73,12 +67,15 @@ export class GUIPopupController implements ReactiveController {
   private _restoringFocus = false;
   private _suppressNextFocusOut = false;
   private _pointerDownInside = false;
+  private _pointerDownTarget: HTMLElement | null = null;
 
   constructor(host: GUIPopupHost, options: GUIPopupControllerOptions) {
     this.host = host;
     this.options = options;
     this.focusLeave = new GUIFocusLeaveController(host, {
-      onLeave: () => this.close(),
+      onLeave: () => {
+        this.close();
+      },
     });
     host.addController(this);
   }
@@ -131,10 +128,12 @@ export class GUIPopupController implements ReactiveController {
     this._suppressNextFocusOut = true;
   }
 
-  /** Template-bindable anchor click handler (`@click=${ctrl.onAnchorClick}`). */
+  /**
+   * Template-bindable anchor click handler (`@click=${ctrl.onAnchorClick}`).
+   */
   onAnchorClick = (event: Event) => {
     if (this.options.isDisabled()) return;
-    const target = event.target as HTMLElement;
+    const target = (this._pointerDownTarget ?? event.target) as HTMLElement;
 
     const intent = this.options.clickIntent(target);
     if (intent === 'ignore') return;
@@ -168,46 +167,29 @@ export class GUIPopupController implements ReactiveController {
   private onDocumentClick = (event: MouseEvent) => {
     if (!this._open) return;
 
-    const path = event.composedPath();
-    const clickedInside = this.options
-      .getInteriorElements()
-      .some((el) => !!el && path.includes(el));
+    const clickedInside = event.composedPath().includes(this.host);
 
-    if (!clickedInside) {
+    if (!clickedInside && !this._pointerDownInside) {
       this.close();
     }
   };
 
-  /**
-   * TODO: Find a better way to do this, this is UGLY.
-   *
-   * A pointerdown on an interior element arms a short-lived guard: clicking a
-   * non-focusable area inside the popup blurs whatever held focus (relatedTarget
-   * null → looks like "focus left"), but a click inside the component must
-   * never light-dismiss it. Real departures (Tab, outside clicks) never arm it.
-   *
-   * The guard must outlive the focus-leave controllers' rAF-deferred
-   * activeElement check (the popup content's own leave detection dispatches
-   * its 'blur' one frame later), hence the double-rAF clear with a timeout
-   * safety net for throttled/hidden tabs.
-   */
-  private onHostPointerDown = (event: Event) => {
-    if (!this._open) return;
+  private onDocumentPointerDown = (event: Event) => {
     const path = event.composedPath();
-    const inside = this.options.getInteriorElements().some((el) => !!el && path.includes(el));
-    if (!inside) return;
-    this._pointerDownInside = true;
-    const clear = () => {
-      this._pointerDownInside = false;
-    };
-    requestAnimationFrame(() => requestAnimationFrame(clear));
-    setTimeout(clear, 200);
+    this._pointerDownInside = path.includes(this.host);
+    this._pointerDownTarget = (path[0] as HTMLElement) ?? null;
+  };
+
+  private onDocumentKeyDown = (event: KeyboardEvent) => {
+    if (event.key !== 'Tab' && event.key !== 'Escape') return;
+    this._pointerDownInside = false;
+    this._pointerDownTarget = null;
   };
 
   /**
    * Close driven by the popup content's own focus-leave detection (the
-   * pickers' `@blur` on the calendar). Ignored while an interior pointer
-   * interaction is in flight — its focus churn is not a real departure.
+   * pickers' `@blur` on the calendar). Ignored while the latest pointer
+   * interaction started inside — its focus churn is not a real departure.
    */
   closeOnFocusLeave = () => {
     if (this._pointerDownInside) return;
@@ -220,7 +202,8 @@ export class GUIPopupController implements ReactiveController {
       return;
     }
     if (!this._open) return;
-    if (this._pointerDownInside) return;
+    const related = event.relatedTarget as Node | null;
+    if (this._pointerDownInside && (!related || related.contains(this.host))) return;
     this.focusLeave.handleFocusOut(event);
   };
 
@@ -248,13 +231,15 @@ export class GUIPopupController implements ReactiveController {
 
   hostConnected() {
     document.addEventListener('click', this.onDocumentClick);
-    this.host.addEventListener('pointerdown', this.onHostPointerDown);
+    document.addEventListener('pointerdown', this.onDocumentPointerDown, true);
+    document.addEventListener('keydown', this.onDocumentKeyDown, true);
     this.host.addEventListener('focusout', this.onHostFocusOut);
   }
 
   hostDisconnected() {
     document.removeEventListener('click', this.onDocumentClick);
-    this.host.removeEventListener('pointerdown', this.onHostPointerDown);
+    document.removeEventListener('pointerdown', this.onDocumentPointerDown, true);
+    document.removeEventListener('keydown', this.onDocumentKeyDown, true);
     this.host.removeEventListener('focusout', this.onHostFocusOut);
   }
 }

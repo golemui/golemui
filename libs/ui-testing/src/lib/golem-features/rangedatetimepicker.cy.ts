@@ -154,6 +154,112 @@ export const runRangeDateTimePickerComponentTests = (mountFn: MountComponentFn) 
         cy.get(sel.calendar).should('not.exist');
       });
 
+      it('should stay open while interacting with the embedded time picker chrome', () => {
+        mountPicker();
+
+        cy.get(sel.triggerPart('start', 'day')).click();
+        cy.get(sel.calendar).should('exist');
+        cy.get(sel.dayButton(iso(13))).click();
+        cy.get(sel.dayButton(iso(15))).click();
+        startHour().should('not.be.disabled');
+
+        // Non-focusable chrome around the time input (label, widget padding)
+        // blurs the focused day button with no relatedTarget; the popover must
+        // not read that as a departure
+        cy.get(`${sel.startPicker} .gui-label`).first().click();
+        cy.get(sel.calendar).should('exist');
+        cy.get(`${sel.startPicker} .gui-widget`).first().click('topLeft');
+        cy.get(sel.calendar).should('exist');
+
+        // Entering the time input opens the list; picking an option commits
+        // the start time — all without dismissing the popover
+        startHour().click();
+        cy.get(sel.calendar).should('exist');
+        startOption('09:00:00').should('be.visible').click();
+        cy.get(sel.calendar).should('exist');
+        endHour().should('not.be.disabled');
+      });
+
+      it('should toggle the time list from its chevron without dismissing the popover', () => {
+        mountPicker();
+
+        cy.get(sel.triggerPart('start', 'day')).click();
+        cy.get(sel.dayButton(iso(13))).click();
+        cy.get(sel.dayButton(iso(15))).click();
+        startHour().should('not.be.disabled');
+
+        cy.get(`${sel.startPicker} .gui-time-picker__arrow`).click();
+        startOption('09:00:00').should('be.visible');
+        cy.get(sel.calendar).should('exist');
+
+        cy.get(`${sel.startPicker} .gui-time-picker__arrow`).click();
+        startOption('09:00:00').should('not.be.visible');
+        cy.get(sel.calendar).should('exist');
+      });
+
+      it('should stay open when a mid-gesture layout shift retargets the click', () => {
+        // Real browsers retarget a click to the common ancestor when the
+        // mousedown and mouseup targets differ — which happens when the time
+        // list opens mid-gesture and re-flows the popover. Simulate the
+        // retarget: pointerdown on the hour input, the trailing click
+        // materializing on the picker's anchor chrome
+        mountPicker();
+
+        cy.get(sel.triggerPart('start', 'day')).click();
+        cy.get(sel.dayButton(iso(13))).click();
+        cy.get(sel.dayButton(iso(15))).click();
+        startHour().trigger('pointerdown');
+        cy.get(`${picker} > .gui-widget`).then(($el) => {
+          $el[0].dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+        });
+        // Give a wrongly-triggered close a beat to unmount before asserting
+        cy.wait(50);
+        cy.get(sel.calendar).should('exist');
+        startHour().should('not.be.disabled');
+      });
+
+      it('should stay open when chrome clicks hand focus to a focusable tabpanel ancestor', () => {
+        // The playgrounds host widgets inside tabs, and role="tabpanel"
+        // carries tabindex="0" — so in a real browser, clicking non-focusable
+        // chrome moves focus to the SECTION ancestor (focusout with a non-null
+        // relatedTarget outside the picker) instead of dropping it to body.
+        // That is still gesture churn, not a departure.
+        mountFn({
+          localization: identityTranslator('en-US'),
+          formDef: defineForm({
+            form: [
+              {
+                uid: 'hostTabs',
+                kind: 'layout',
+                type: 'tabs',
+                props: { tabs: [{ label: 'Pickers', uid: 'testSubject' }] },
+                children: [
+                  {
+                    uid: 'testSubject',
+                    kind: 'input',
+                    type: 'rangeDateTimePicker',
+                    path: 'myRanges',
+                  },
+                ],
+              },
+            ],
+          }),
+        });
+
+        cy.get(sel.triggerPart('start', 'day')).click();
+        cy.get(sel.dayButton(iso(13))).click();
+        cy.get(sel.dayButton(iso(15))).click();
+        startHour().click();
+
+        // Gesture starts on the time picker's label; the browser's
+        // focus-nearest-focusable-ancestor fallback lands on the tabpanel
+        cy.get(`${sel.startPicker} .gui-label`).first().trigger('pointerdown');
+        cy.get('section[role="tabpanel"]').first().focus();
+        cy.wait(50);
+        cy.get(sel.calendar).should('exist');
+        startHour().should('not.be.disabled');
+      });
+
       it('should stay open when navigating to the minDateTime boundary month', () => {
         // minDateTime two months back: clicking prev into the boundary month
         // disables the prev arrow that holds focus, which used to drop focus to

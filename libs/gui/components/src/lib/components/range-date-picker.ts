@@ -87,14 +87,11 @@ export class GuiRangeDatePicker extends LitElement {
     | undefined = undefined;
 
   @query('#date-input') private _dateRef?: HTMLElement;
-  @query('gui-range-calendar') private _calendarRef?: HTMLElement;
-  @query('.gui-range-date-picker__arrow') private _toggleRef?: HTMLElement;
 
   @state() private _focusDate: string | undefined = undefined;
   @state() private _invalidRange: { start: string; end: string } | null = null;
 
   private _popup = new GUIPopupController(this, {
-    getInteriorElements: () => [this._dateRef, this._calendarRef, this._toggleRef],
     focusRestoreSelector: 'gui-range-date input',
     focusPopupSelector: '.gui-calendar__day-button[tabindex="0"]',
     isDisabled: () => !!this.disabled,

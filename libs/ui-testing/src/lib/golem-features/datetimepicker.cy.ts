@@ -346,7 +346,10 @@ export const runDateTimePickerComponentTests = (mountFn: MountComponentFn) => {
       cy.get(sel.option('13:00:00')).should('not.be.disabled');
     });
 
-    it('should not open when disabled and not change the value when readonly', () => {
+    it('should not open when disabled', () => {
+      // Split from the readonly case below: with two mounts in one test the
+      // Angular mount adapter runs both before the interactions, so the
+      // clicks land on the second mount's component.
       mountPicker({
         data: { myAppointment: '2026-02-13T09:30:00' },
         props: officeProps,
@@ -355,7 +358,9 @@ export const runDateTimePickerComponentTests = (mountFn: MountComponentFn) => {
 
       cy.get('.gui-date-time-picker .gui-widget').first().click({ force: true });
       cy.get(sel.calendar).should('not.exist');
+    });
 
+    it('should not change the value when readonly', () => {
       mountPicker({
         data: { myAppointment: '2026-02-13T09:30:00' },
         props: officeProps,

@@ -52,12 +52,9 @@ export class GuiTimePicker extends LitElement {
     | string
     | undefined = undefined;
 
-  @query('gui-time') private _timeRef?: HTMLElement;
   @query('gui-time-list') private _listRef?: GuiTimeList;
-  @query('.gui-time-picker__arrow') private _toggleRef?: HTMLElement;
 
   private _popup = new GUIPopupController(this, {
-    getInteriorElements: () => [this._timeRef, this._listRef, this._toggleRef],
     focusRestoreSelector: 'gui-time input, gui-time button',
     focusPopupSelector: '.gui-time-list__option[tabindex="0"]',
     isDisabled: () => !!this.disabled,
