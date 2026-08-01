@@ -376,6 +376,26 @@ export const runTimePickerComponentTests = (mountFn: MountComponentFn) => {
         });
       });
 
+      it('should keep the bounds error visible after committing with Enter', () => {
+        mountTimePicker({ props: { ...officeProps, allowCustomTime: true } });
+
+        // Touch the field first (click in, blur out) so errors render as
+        // soon as they exist, like a field the user has already visited
+        cy.get(sel.hour).click();
+        cy.get('body').click(0, 0);
+
+        cy.get(sel.hour).type('08');
+        cy.focused().type('00', { force: true });
+        cy.get('[data-cy="testSubject_validator-error"]').should('be.visible');
+
+        // Enter commits and closes the list, but the value is still out of
+        // bounds — the error must not be wiped by the commit
+        cy.get(sel.hour).type('{enter}', { force: true });
+        cy.get(sel.list).should('have.attr', 'hidden');
+        cy.wait(50);
+        cy.get('[data-cy="testSubject_validator-error"]').should('be.visible');
+      });
+
       it('should advance the value and emit inputError for a typed time inside a disabled range', () => {
         mountTimePicker({ props: { ...officeProps, allowCustomTime: true } });
 
