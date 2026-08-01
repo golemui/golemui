@@ -1,3 +1,14 @@
+## 1.1.1-rc.0 (2026-08-01)
+
+### 🩹 Fixes
+
+- **gui-validators:** fail loudly on unknown custom rules and string formats ([024b41db](https://github.com/golemui/golemui/commit/024b41db))
+- **gui-validators:** make initValidators fail loudly on unknown configs ([#237](https://github.com/golemui/golemui/pull/237))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+
 ## 1.1.0 (2026-07-21)
 
 ### 🚀 Features

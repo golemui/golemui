@@ -1,3 +1,20 @@
+## 1.1.1-rc.0 (2026-08-01)
+
+### 🚀 Features
+
+- **mcp:** add golemui-mcp CLI subcommands for skills ([58b9c21f](https://github.com/golemui/golemui/commit/58b9c21f))
+
+### 🩹 Fixes
+
+- **gui-validators:** make initValidators fail loudly on unknown configs ([#237](https://github.com/golemui/golemui/pull/237))
+- **mcp:** correct lit and vanilla submit event names in DX grounding ([47cf777f](https://github.com/golemui/golemui/commit/47cf777f))
+- **core:** make WithWidget and WidgetLoaders public-only ([#228](https://github.com/golemui/golemui/pull/228))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
 ## 1.1.0 (2026-07-21)
 
 ### 🚀 Features

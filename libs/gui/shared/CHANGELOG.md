@@ -1,3 +1,16 @@
+## 1.1.1-rc.0 (2026-08-01)
+
+### 🩹 Fixes
+
+- **components:** use role toolbar in markdown editor and pass missing titles ([88488312](https://github.com/golemui/golemui/commit/88488312))
+- **components:** announce calendar month changes and label the year selector ([eca6ad26](https://github.com/golemui/golemui/commit/eca6ad26))
+- **components:** accessible date/time pickers ([7e13a999](https://github.com/golemui/golemui/commit/7e13a999))
+- **components:** expose segment aria-label props for date/time parts ([3e80ef30](https://github.com/golemui/golemui/commit/3e80ef30))
+
+### ❤️ Thank You
+
+- Raúl Jiménez @Elecash
+
 ## 1.1.0 (2026-07-21)
 
 ### 🚀 Features

@@ -1,3 +1,44 @@
+## 1.1.1-rc.0 (2026-08-01)
+
+### 🚀 Features
+
+- **mcp:** add golemui-mcp CLI subcommands for skills ([58b9c21f](https://github.com/golemui/golemui/commit/58b9c21f))
+
+### 🩹 Fixes
+
+- allow inject validations from event handlers ([#231](https://github.com/golemui/golemui/pull/231))
+- make tabpanels focusable and drop redundant tabindex on native buttons ([fa08ed35](https://github.com/golemui/golemui/commit/fa08ed35))
+- **angular:** remove unused aria directive ([68c07899](https://github.com/golemui/golemui/commit/68c07899))
+- **components:** expose aria-required and fix required attribute binding ([3c347517](https://github.com/golemui/golemui/commit/3c347517))
+- **components:** announce validation errors via live region ([f4355a39](https://github.com/golemui/golemui/commit/f4355a39))
+- **components:** split aria-disabled from aria-readonly ([a562b218](https://github.com/golemui/golemui/commit/a562b218))
+- **components:** expose toggle ARIA on the real control ([5f840269](https://github.com/golemui/golemui/commit/5f840269))
+- **components:** hide decorative icons from assistive technology ([84b3afb1](https://github.com/golemui/golemui/commit/84b3afb1))
+- **components:** expose segment aria-label props for date/time parts ([3e80ef30](https://github.com/golemui/golemui/commit/3e80ef30))
+- **components:** accessible date/time pickers ([7e13a999](https://github.com/golemui/golemui/commit/7e13a999))
+- **components:** move aria to host in list component ([b1a6b368](https://github.com/golemui/golemui/commit/b1a6b368))
+- **components:** improve list focus styling ([e459856c](https://github.com/golemui/golemui/commit/e459856c))
+- **components:** announce calendar month changes and label the year selector ([eca6ad26](https://github.com/golemui/golemui/commit/eca6ad26))
+- **components:** update json schemas to accept the aria-label props ([f34ee9b8](https://github.com/golemui/golemui/commit/f34ee9b8))
+- **components:** avoid duplicate widget id while a picker popup is open ([a27e7ef7](https://github.com/golemui/golemui/commit/a27e7ef7))
+- **components:** announce full day names and keep blocked days in the accessibility tree ([32c99d2f](https://github.com/golemui/golemui/commit/32c99d2f))
+- **components:** focusable, named password visibility toggle ([f87de7e2](https://github.com/golemui/golemui/commit/f87de7e2))
+- **components:** add aria attributes to number, currency, radiogroup and labels ([dd93f816](https://github.com/golemui/golemui/commit/dd93f816))
+- **components:** expose pills as a toolbar of real buttons ([52641f23](https://github.com/golemui/golemui/commit/52641f23))
+- **components:** keep picker popovers open on interior non-focusable clicks ([8f136865](https://github.com/golemui/golemui/commit/8f136865))
+- **components:** use role toolbar in markdown editor and pass missing titles ([88488312](https://github.com/golemui/golemui/commit/88488312))
+- **core:** make WithWidget and WidgetLoaders public-only ([#228](https://github.com/golemui/golemui/pull/228))
+- **core:** deterministic uids for widgets ([#229](https://github.com/golemui/golemui/pull/229))
+- **gui-validators:** make initValidators fail loudly on unknown configs ([#237](https://github.com/golemui/golemui/pull/237))
+- **gui-validators:** fail loudly on unknown custom rules and string formats ([024b41db](https://github.com/golemui/golemui/commit/024b41db))
+- **mcp:** correct lit and vanilla submit event names in DX grounding ([47cf777f](https://github.com/golemui/golemui/commit/47cf777f))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+- Raúl Jiménez @Elecash
+
 ## 1.1.0 (2026-07-21)
 
 ### 🚀 Features
