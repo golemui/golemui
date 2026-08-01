@@ -56,6 +56,7 @@ export const { gsl: _gslDisplays, gslByUid: _gslDisplayByUid } = defineShortcutT
   GslDisplaysConfig
 >({
   itemType: 'DISPLAYS',
+  kind: 'display',
   entryShape: 'bare',
   mapToWidget,
   buildCustomWidget,

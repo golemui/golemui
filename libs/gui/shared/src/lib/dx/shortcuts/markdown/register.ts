@@ -13,6 +13,7 @@ export const { gsl: _gslMarkdowns, gslByUid: _gslMarkdownByUid } = defineShortcu
   GslMarkdownConfig
 >({
   itemType: 'MARKDOWN',
+  kind: 'input',
   entryShape: 'keyed',
   sensibleDefaults: {
     base: { suppressAutomaticLabels: false, suppressAutomaticPlaceholders: false },

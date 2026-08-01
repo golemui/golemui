@@ -8,7 +8,7 @@ import type {
   AfterMergeContext,
   BuildWidgetContext,
 } from './itemTypeRegistry';
-import { registerItemType } from './itemTypeRegistry';
+import { registerItemType, type ShortcutItemKind } from './itemTypeRegistry';
 import type { DxCommonFields } from './dxBase.types';
 
 type EntryShape = 'bare' | 'keyed' | 'compound';
@@ -21,6 +21,7 @@ interface SensibleDefaultsSpec<TDecorator, TConfig> {
 
 interface ShortcutTypeConfig<TEntry, TDecorator, TConfig> {
   itemType: string;
+  kind?: ShortcutItemKind;
   entryShape: EntryShape;
   mapToWidget: (def: TDecorator) => NonFunctionWidget;
   sensibleDefaults?: SensibleDefaultsSpec<TDecorator, TConfig>;
@@ -127,7 +128,7 @@ export function defineShortcutType<
     ...(config.getChildren ? { getChildren: config.getChildren } : {}),
   };
 
-  registerItemType(config.itemType, handler);
+  registerItemType(config.itemType, handler, config.kind);
 
   const gsl = createGslSelector<TDecorator, TConfig>(config.itemType);
   const gslByUid = (uid: string, gslConfig: TConfig) =>

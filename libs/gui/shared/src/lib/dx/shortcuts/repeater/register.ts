@@ -130,7 +130,7 @@ const handler: ItemTypeHandler<RepeaterEntry, RepeaterDecorator, GslRepeaterConf
   getChildren,
 };
 
-registerItemType('REPEATER', handler);
+registerItemType('REPEATER', handler, 'input');
 
 // GSL selectors
 export const _gslRepeaters = createGslSelector<RepeaterDecorator, GslRepeaterConfig>('REPEATER');

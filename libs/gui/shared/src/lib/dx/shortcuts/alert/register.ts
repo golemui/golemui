@@ -9,6 +9,7 @@ export const { gsl: _gslAlerts, gslByUid: _gslAlertByUid } = defineShortcutType<
   GslAlertsConfig
 >({
   itemType: 'ALERTS',
+  kind: 'display',
   entryShape: 'bare',
   mapToWidget: (def) => ({
     uid: def.uid ?? '',

@@ -14,6 +14,7 @@ export const { gsl: _gslRangeDateInputs, gslByUid: _gslRangeDateInputByUid } = d
   GslRangeDateInputConfig
 >({
   itemType: 'RANGE_DATE_INPUT',
+  kind: 'input',
   entryShape: 'keyed',
   sensibleDefaults: {
     base: { suppressAutomaticLabels: false },

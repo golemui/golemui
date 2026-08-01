@@ -55,6 +55,7 @@ export const { gsl: _gslAccordions, gslByUid: _gslAccordionByUid } = defineShort
   GslAccordionConfig
 >({
   itemType: 'ACCORDION',
+  kind: 'layout',
   entryShape: 'compound',
   mapToWidget,
   buildCustomWidget,

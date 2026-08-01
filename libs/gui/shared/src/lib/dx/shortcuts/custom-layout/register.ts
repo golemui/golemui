@@ -44,6 +44,7 @@ export const { gsl: _gslCustomLayouts, gslByUid: _gslCustomLayoutByUid } = defin
   GslCustomLayoutConfig
 >({
   itemType: 'CUSTOM_LAYOUT',
+  kind: 'layout',
   entryShape: 'compound',
   mapToWidget,
   buildCustomWidget,

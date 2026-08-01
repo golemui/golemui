@@ -13,6 +13,7 @@ export const { gsl: _gslPasswords, gslByUid: _gslPasswordByUid } = defineShortcu
   GslPasswordConfig
 >({
   itemType: 'PASSWORD',
+  kind: 'input',
   entryShape: 'keyed',
   sensibleDefaults: {
     base: { suppressAutomaticLabels: false, suppressAutomaticPlaceholders: false },

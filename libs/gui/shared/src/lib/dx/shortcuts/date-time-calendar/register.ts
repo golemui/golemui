@@ -11,6 +11,7 @@ import {
 export const { gsl: _gslDateTimeCalendars, gslByUid: _gslDateTimeCalendarByUid } =
   defineShortcutType<DateTimeCalendarEntry, DateTimeCalendarDecorator, GslDateTimeCalendarConfig>({
     itemType: 'DATE_TIME_CALENDAR',
+    kind: 'input',
     entryShape: 'bare',
     sensibleDefaults: {
       base: { suppressAutomaticLabels: false },

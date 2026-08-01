@@ -9,6 +9,7 @@ export const { gsl: _gslLists, gslByUid: _gslListByUid } = defineShortcutType<
   GslListConfig
 >({
   itemType: 'LIST',
+  kind: 'input',
   entryShape: 'keyed',
   sensibleDefaults: {
     base: { suppressAutomaticLabels: false },

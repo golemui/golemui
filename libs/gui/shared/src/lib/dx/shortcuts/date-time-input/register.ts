@@ -14,6 +14,7 @@ export const { gsl: _gslDateTimeInputs, gslByUid: _gslDateTimeInputByUid } = def
   GslDateTimeInputConfig
 >({
   itemType: 'DATE_TIME_INPUT',
+  kind: 'input',
   entryShape: 'keyed',
   sensibleDefaults: {
     base: { suppressAutomaticLabels: false },

@@ -54,6 +54,7 @@ export const { gsl: _gslTabs, gslByUid: _gslTabsByUid } = defineShortcutType<
   GslTabsConfig
 >({
   itemType: 'TABS',
+  kind: 'layout',
   entryShape: 'compound',
   mapToWidget,
   buildCustomWidget,

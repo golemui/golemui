@@ -11,6 +11,7 @@ export const { gsl: _gslCustomDisplays, gslByUid: _gslCustomDisplayByUid } = def
   GslCustomDisplayConfig
 >({
   itemType: 'CUSTOM_DISPLAY',
+  kind: 'display',
   entryShape: 'bare',
   mapToWidget: (def) => ({
     uid: def.uid ?? '',

@@ -15,6 +15,7 @@ export const { gsl: _gslRangeDateTimePickers, gslByUid: _gslRangeDateTimePickerB
     GslRangeDateTimePickerConfig
   >({
     itemType: 'RANGE_DATE_TIME_PICKER',
+    kind: 'input',
     entryShape: 'keyed',
     sensibleDefaults: {
       base: { suppressAutomaticLabels: false },

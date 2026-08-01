@@ -15,6 +15,7 @@ export const { gsl: _gslRangeDateTimeCalendars, gslByUid: _gslRangeDateTimeCalen
     GslRangeDateTimeCalendarConfig
   >({
     itemType: 'RANGE_DATE_TIME_CALENDAR',
+    kind: 'input',
     entryShape: 'keyed',
     sensibleDefaults: {
       base: { suppressAutomaticLabels: false },

@@ -19,6 +19,7 @@ export const { gsl: _gslDateTimePickers, gslByUid: _gslDateTimePickerByUid } = d
   GslDateTimePickerConfig
 >({
   itemType: 'DATE_TIME_PICKER',
+  kind: 'input',
   entryShape: 'keyed',
   sensibleDefaults: {
     base: {

@@ -14,6 +14,7 @@ export const { gsl: _gslRangeCalendars, gslByUid: _gslRangeCalendarByUid } = def
   GslRangeCalendarConfig
 >({
   itemType: 'RANGE_CALENDAR',
+  kind: 'input',
   entryShape: 'keyed',
   sensibleDefaults: {
     base: { suppressAutomaticLabels: false },
