@@ -238,6 +238,16 @@ describe('Golem validators', () => {
         expect(isValid(schema, '2026-07-03')).toBe(false);
         expect(isValid(schema, '2026-07-03 14:30:00')).toBe(false);
       });
+
+      it('throws a descriptive error for an unknown format', () => {
+        const configWithBadFormat = {
+          type: 'string',
+          format: 'phone-number',
+        } as unknown as StringValidator;
+        expect(() => validate(configWithBadFormat)).toThrow(
+          /Unknown string validation format: "phone-number"\. The "format" property must be one of:/,
+        );
+      });
     });
   });
 
@@ -398,6 +408,19 @@ describe('Golem validators', () => {
 
     it('throws when no customValidators are provided', () => {
       expect(() => validate({ type: 'custom', minAge: 18 })).toThrow();
+    });
+
+    it('throws a descriptive error for a rule name that is not registered', () => {
+      expect(() => validateWithCustom({ type: 'custom', minAgeTypo: 18 })).toThrow(
+        /Unknown custom validator rule "minAgeTypo"\. Registered rules: "minAge"\./,
+      );
+    });
+
+    it('lists no registered rules when the customValidators object is empty', () => {
+      const validateWithEmptyCustom = initValidators({});
+      expect(() => validateWithEmptyCustom({ type: 'custom', minAge: 18 })).toThrow(
+        /Unknown custom validator rule "minAge"\. Registered rules: \(none\)\./,
+      );
     });
   });
 
