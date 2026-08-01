@@ -231,7 +231,9 @@ function fromStringValidator(v: StringValidator, localization?: I18nTranslator) 
             : stringFormat[v.format].schema,
         );
       } else {
-        console.error(`The string validation format "${v.format}" is not supported`);
+        throw new Error(
+          `Unknown string validation format: ${JSON.stringify(v.format)}. The "format" property must be one of: ${stringFormatKeys.map((key) => `"${key}"`).join(', ')}.`,
+        );
       }
     }
 
@@ -369,6 +371,14 @@ function fromCustomValidator(v: CustomValidator, customValidators: CustomValidat
         const validatorInput = v[key];
         // This originates from the user-defined custom validators in the form
         const resolvedSchemaFn = customValidators[key];
+        if (!resolvedSchemaFn) {
+          const registeredRules = Object.keys(customValidators)
+            .map((rule) => `"${rule}"`)
+            .join(', ');
+          throw new Error(
+            `Unknown custom validator rule "${key}". Registered rules: ${registeredRules || '(none)'}.`,
+          );
+        }
         const resolvedSchema = resolvedSchemaFn(validatorInput);
 
         schema = schema.check(

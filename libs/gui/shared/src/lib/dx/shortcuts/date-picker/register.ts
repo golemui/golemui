@@ -19,6 +19,7 @@ export const { gsl: _gslDatePickers, gslByUid: _gslDatePickerByUid } = defineSho
   GslDatePickerConfig
 >({
   itemType: 'DATE_PICKER',
+  kind: 'input',
   entryShape: 'keyed',
   sensibleDefaults: {
     base: {

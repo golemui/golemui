@@ -12,6 +12,7 @@ export const { gsl: _gslDropdowns, gslByUid: _gslDropdownByUid } = defineShortcu
   GslDropdownConfig
 >({
   itemType: 'DROPDOWN',
+  kind: 'input',
   entryShape: 'keyed',
   sensibleDefaults: {
     base: {

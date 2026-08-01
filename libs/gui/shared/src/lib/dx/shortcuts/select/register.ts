@@ -12,6 +12,7 @@ export const { gsl: _gslSelects, gslByUid: _gslSelectByUid } = defineShortcutTyp
   GslSelectConfig
 >({
   itemType: 'SELECT',
+  kind: 'input',
   entryShape: 'keyed',
   sensibleDefaults: {
     base: { suppressAutomaticLabels: false, suppressAutomaticPlaceholders: false },

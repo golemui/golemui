@@ -101,6 +101,7 @@ export const { gsl: _gslInputs, gslByUid: _gslInputByUid } = defineShortcutType<
   GslInputsConfig
 >({
   itemType: 'INPUTS',
+  kind: 'input',
   entryShape: 'keyed',
   sensibleDefaults: {
     base: {

@@ -12,6 +12,7 @@ export const { gsl: _gslCustomActions, gslByUid: _gslCustomActionByUid } = defin
   GslCustomActionConfig
 >({
   itemType: 'CUSTOM_ACTION',
+  kind: 'action',
   entryShape: 'bare',
   mapToWidget: (def) => {
     const {

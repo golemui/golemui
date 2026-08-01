@@ -13,6 +13,7 @@ export const { gsl: _gslTextareas, gslByUid: _gslTextareaByUid } = defineShortcu
   GslTextareaConfig
 >({
   itemType: 'TEXTAREA',
+  kind: 'input',
   entryShape: 'keyed',
   sensibleDefaults: {
     base: { suppressAutomaticLabels: false, suppressAutomaticPlaceholders: false },

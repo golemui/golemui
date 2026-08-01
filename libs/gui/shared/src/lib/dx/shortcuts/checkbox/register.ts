@@ -10,6 +10,7 @@ export const { gsl: _gslCheckboxes, gslByUid: _gslCheckboxByUid } = defineShortc
   GslCheckboxConfig
 >({
   itemType: 'CHECKBOX',
+  kind: 'input',
   entryShape: 'keyed',
   sensibleDefaults: {
     base: { suppressAutomaticLabels: false },

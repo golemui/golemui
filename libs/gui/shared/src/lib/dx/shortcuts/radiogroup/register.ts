@@ -13,6 +13,7 @@ export const { gsl: _gslRadiogroups, gslByUid: _gslRadiogroupByUid } = defineSho
   GslRadiogroupConfig
 >({
   itemType: 'RADIOGROUP',
+  kind: 'input',
   entryShape: 'keyed',
   sensibleDefaults: {
     base: { suppressAutomaticLabels: false },

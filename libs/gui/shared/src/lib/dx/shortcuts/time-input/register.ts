@@ -10,6 +10,7 @@ export const { gsl: _gslTimeInputs, gslByUid: _gslTimeInputByUid } = defineShort
   GslTimeInputConfig
 >({
   itemType: 'TIME_INPUT',
+  kind: 'input',
   entryShape: 'keyed',
   sensibleDefaults: {
     base: { suppressAutomaticLabels: false },

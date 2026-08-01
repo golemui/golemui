@@ -13,6 +13,7 @@ export const { gsl: _gslCurrencies, gslByUid: _gslCurrencyByUid } = defineShortc
   GslCurrencyConfig
 >({
   itemType: 'CURRENCY',
+  kind: 'input',
   entryShape: 'keyed',
   sensibleDefaults: {
     base: { suppressAutomaticLabels: false, suppressAutomaticPlaceholders: false },

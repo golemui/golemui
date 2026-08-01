@@ -117,13 +117,40 @@ export interface ItemTypeHandler<
 // Registry singleton
 // ═══════════════════════════════════════════════════
 
-const registry = new Map<string, ItemTypeHandler<any, any, any>>();
+/**
+ * The widget kind an item type belongs to. Matches the `kind` discriminator of core widgets
+ */
+export type ShortcutItemKind = NonFunctionWidget['kind'];
 
-export function registerItemType(itemType: string, handler: ItemTypeHandler<any, any, any>): void {
+const registry = new Map<string, ItemTypeHandler<any, any, any>>();
+const kindByItemType = new Map<string, ShortcutItemKind>();
+
+export function registerItemType(
+  itemType: string,
+  handler: ItemTypeHandler<any, any, any>,
+  kind?: ShortcutItemKind,
+): void {
   if (registry.has(itemType)) {
     throw new Error(`Item type "${itemType}" is already registered.`);
   }
   registry.set(itemType, handler);
+  if (kind) {
+    kindByItemType.set(itemType, kind);
+  }
+}
+
+/**
+ * Returns the widget kind declared when the item type was registered, or undefined when it was registered without one
+ */
+export function getItemTypeKind(itemType: string): ShortcutItemKind | undefined {
+  return kindByItemType.get(itemType);
+}
+
+/**
+ * Returns the names of every registered item type
+ */
+export function getRegisteredItemTypes(): string[] {
+  return [...registry.keys()];
 }
 
 export function getItemTypeHandler(itemType: string): ItemTypeHandler<any, any, any> {

@@ -12,6 +12,7 @@ export const { gsl: _gslMarkdownTexts, gslByUid: _gslMarkdownTextByUid } = defin
   GslMarkdownTextsConfig
 >({
   itemType: 'MARKDOWN_TEXTS',
+  kind: 'display',
   entryShape: 'bare',
   mapToWidget: (def) => ({
     uid: def.uid ?? '',

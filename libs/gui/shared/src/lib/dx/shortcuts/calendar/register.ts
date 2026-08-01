@@ -14,6 +14,7 @@ export const { gsl: _gslCalendars, gslByUid: _gslCalendarByUid } = defineShortcu
   GslCalendarConfig
 >({
   itemType: 'CALENDAR',
+  kind: 'input',
   entryShape: 'bare',
   sensibleDefaults: {
     base: { suppressAutomaticLabels: false },

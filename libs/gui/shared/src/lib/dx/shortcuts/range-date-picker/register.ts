@@ -17,6 +17,7 @@ export const { gsl: _gslRangeDatePickers, gslByUid: _gslRangeDatePickerByUid } =
   GslRangeDatePickerConfig
 >({
   itemType: 'RANGE_DATE_PICKER',
+  kind: 'input',
   entryShape: 'keyed',
   sensibleDefaults: {
     base: {

@@ -64,6 +64,7 @@ export const { gsl: _gslLayouts, gslByUid: _gslLayoutByUid } = defineShortcutTyp
   GslLayoutsConfig
 >({
   itemType: 'LAYOUTS',
+  kind: 'layout',
   entryShape: 'compound',
   mapToWidget,
   buildCustomWidget,

@@ -13,6 +13,7 @@ export const { gsl: _gslTags, gslByUid: _gslTagsByUid } = defineShortcutType<
   GslTagsConfig
 >({
   itemType: 'TAGS',
+  kind: 'input',
   entryShape: 'keyed',
   sensibleDefaults: {
     base: { suppressAutomaticLabels: false, suppressAutomaticPlaceholders: false },

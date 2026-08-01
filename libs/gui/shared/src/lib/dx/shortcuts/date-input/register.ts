@@ -10,6 +10,7 @@ export const { gsl: _gslDateInputs, gslByUid: _gslDateInputByUid } = defineShort
   GslDateInputConfig
 >({
   itemType: 'DATE_INPUT',
+  kind: 'input',
   entryShape: 'keyed',
   sensibleDefaults: {
     base: { suppressAutomaticLabels: false },

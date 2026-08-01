@@ -12,6 +12,7 @@ export const { gsl: _gslCustomInputs, gslByUid: _gslCustomInputByUid } = defineS
   GslCustomInputConfig
 >({
   itemType: 'CUSTOM_INPUT',
+  kind: 'input',
   entryShape: 'keyed',
   sensibleDefaults: {
     base: {

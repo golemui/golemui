@@ -42,6 +42,7 @@ export const { gsl: _gslActions, gslByUid: _gslActionByUid } = defineShortcutTyp
   GslActionsConfig
 >({
   itemType: 'ACTIONS',
+  kind: 'action',
   entryShape: 'bare',
   mapToWidget,
   afterMerge: (mergeResult, context) =>

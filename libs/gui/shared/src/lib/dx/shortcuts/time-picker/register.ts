@@ -19,6 +19,7 @@ export const { gsl: _gslTimePickers, gslByUid: _gslTimePickerByUid } = defineSho
   GslTimePickerConfig
 >({
   itemType: 'TIME_PICKER',
+  kind: 'input',
   entryShape: 'keyed',
   sensibleDefaults: {
     base: {

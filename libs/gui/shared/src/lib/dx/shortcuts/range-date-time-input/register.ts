@@ -15,6 +15,7 @@ export const { gsl: _gslRangeDateTimeInputs, gslByUid: _gslRangeDateTimeInputByU
     GslRangeDateTimeInputConfig
   >({
     itemType: 'RANGE_DATE_TIME_INPUT',
+    kind: 'input',
     entryShape: 'keyed',
     sensibleDefaults: {
       base: { suppressAutomaticLabels: false },
