@@ -1,5 +1,5 @@
 import { html, LitElement, nothing } from 'lit';
-import { customElement, property, query, state } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import type { DateTimeRange } from '@golemui/gui-shared/internals';
 import './range-date-time-input';
@@ -118,14 +118,9 @@ export class GuiRangeDateTimePicker extends LitElement {
   @property({ type: String, attribute: 'disabled-day-count-aria-label' })
   disabledDayCountAriaLabel: string | undefined = undefined;
 
-  @query('#date-input') private _dateRef?: HTMLElement;
-  @query('gui-range-date-time-calendar') private _calendarRef?: HTMLElement;
-  @query('.gui-range-date-time-picker__arrow') private _toggleRef?: HTMLElement;
-
   @state() private _focusDate: string | undefined = undefined;
 
   private _popup = new GUIPopupController(this, {
-    getInteriorElements: () => [this._dateRef, this._calendarRef, this._toggleRef],
     focusRestoreSelector: 'gui-range-date-time input',
     focusPopupSelector: '.gui-calendar__day-button[tabindex="0"]',
     isDisabled: () => !!this.disabled,
