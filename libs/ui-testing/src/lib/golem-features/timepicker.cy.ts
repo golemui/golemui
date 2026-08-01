@@ -485,11 +485,19 @@ export const runTimePickerComponentTests = (mountFn: MountComponentFn) => {
       it('should not open the list when disabled', () => {
         mountTimePicker({ data: { myTime: '09:30:00' }, props: officeProps, disabled: true });
 
+        // Wait for the disabled state to land before clicking: force-clicks
+        // skip actionability, so without this the click can race the adapter
+        // applying props on a slow runner
+        cy.get(sel.hour).should('be.disabled');
+
         // Disabled inputs swallow clicks, so aim at the widget row and arrow
         cy.get('.gui-time-picker .gui-widget').first().click({ force: true });
+        // Give a wrongly-triggered open a beat to land before asserting
+        cy.wait(50);
         cy.get(sel.list).should('have.attr', 'hidden');
 
         cy.get('.gui-time-picker__arrow').click({ force: true });
+        cy.wait(50);
         cy.get(sel.list).should('have.attr', 'hidden');
       });
     });

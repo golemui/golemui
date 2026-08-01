@@ -485,7 +485,9 @@ export const runRangeDateTimePickerComponentTests = (mountFn: MountComponentFn) 
           disabled: true,
         });
 
+        cy.get(sel.triggerPart('start', 'day')).should('be.disabled');
         cy.get(`${picker} .gui-widget`).first().click({ force: true });
+        cy.wait(50);
         cy.get(sel.calendar).should('not.exist');
         cy.get(sel.pillText).should('have.length', 1);
       });

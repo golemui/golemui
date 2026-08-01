@@ -229,6 +229,12 @@ export class GUIPopupController implements ReactiveController {
     });
   }
 
+  hostUpdated() {
+    if (this._open && this.options.isDisabled()) {
+      this.close();
+    }
+  }
+
   hostConnected() {
     document.addEventListener('click', this.onDocumentClick);
     document.addEventListener('pointerdown', this.onDocumentPointerDown, true);

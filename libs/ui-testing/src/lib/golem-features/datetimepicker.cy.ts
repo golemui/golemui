@@ -356,7 +356,12 @@ export const runDateTimePickerComponentTests = (mountFn: MountComponentFn) => {
         disabled: true,
       });
 
+      // Wait for the disabled state to land before clicking: force-clicks
+      // skip actionability, so the click could otherwise race the adapter
+      // applying props on a slow runner
+      cy.get(sel.day).should('be.disabled');
       cy.get('.gui-date-time-picker .gui-widget').first().click({ force: true });
+      cy.wait(50);
       cy.get(sel.calendar).should('not.exist');
     });
 
