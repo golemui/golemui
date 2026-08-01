@@ -176,7 +176,9 @@ export const runRangeDatePickerComponentTests = (mountFn: MountComponentFn) => {
     it('should not open the calendar when disabled', () => {
       mountRangeDatePicker({ data: { myRanges: [juneRange] }, disabled: true });
 
+      cy.get(sel.startMonth).should('be.disabled');
       cy.get(`.gui-range-date-picker .gui-widget`).first().click({ force: true });
+      cy.wait(50);
       cy.get(sel.calendar).should('not.exist');
     });
 

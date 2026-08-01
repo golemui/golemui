@@ -101,7 +101,7 @@
     },
     "test": {
       "executor": "@nx/vitest:test",
-      "outputs": ["{options.reportsDirectory}"],
+      "outputs": ["{workspaceRoot}/coverage/apps/angular-playground"],
       "options": {
         "reportsDirectory": "../../coverage/apps/angular-playground"
       }

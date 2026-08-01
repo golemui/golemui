@@ -6,6 +6,7 @@ import './time-list';
 import type { GuiTimeList } from './time-list';
 import { GUIPopupController } from '../controllers/popup.controller';
 import { buildTimeOptions, isTimeDisabled, type HourFormat, type TimeRange } from '../utils/time';
+import { timeBoundsError } from '../utils/parts';
 import { addErrors, addIcon, addLabel } from '../utils/templates';
 import { INVALID_DISABLED_TIME_RANGE_MESSAGE } from '../utils/messages';
 
@@ -52,12 +53,9 @@ export class GuiTimePicker extends LitElement {
     | string
     | undefined = undefined;
 
-  @query('gui-time') private _timeRef?: HTMLElement;
   @query('gui-time-list') private _listRef?: GuiTimeList;
-  @query('.gui-time-picker__arrow') private _toggleRef?: HTMLElement;
 
   private _popup = new GUIPopupController(this, {
-    getInteriorElements: () => [this._timeRef, this._listRef, this._toggleRef],
     focusRestoreSelector: 'gui-time input, gui-time button',
     focusPopupSelector: '.gui-time-list__option[tabindex="0"]',
     isDisabled: () => !!this.disabled,
@@ -236,6 +234,13 @@ export class GuiTimePicker extends LitElement {
 
   private validateBounds(value: string | undefined): string | null {
     if (!value) return null;
+    const boundsError = timeBoundsError(value, {
+      minTime: this.minTime,
+      maxTime: this.maxTime,
+      minTimeMessage: this.minTimeMessage,
+      maxTimeMessage: this.maxTimeMessage,
+    });
+    if (boundsError) return boundsError;
     if (isTimeDisabled(value, this.disabledRanges)) {
       return this.disabledRangeMessage ?? INVALID_DISABLED_TIME_RANGE_MESSAGE;
     }

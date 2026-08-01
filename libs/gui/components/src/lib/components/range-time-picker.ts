@@ -79,14 +79,11 @@ export class GuiRangeTimePicker extends LitElement {
     | undefined = undefined;
 
   @query('#time-input') private _inputRef?: GuiRangeTimeInput;
-  @query('.gui-range-time-picker__panel') private _panelRef?: HTMLElement;
-  @query('.gui-range-time-picker__arrow') private _toggleRef?: HTMLElement;
 
   @state() private _workingIn: string | undefined = undefined;
   @state() private _workingOut: string | undefined = undefined;
 
   private _popup = new GUIPopupController(this, {
-    getInteriorElements: () => [this._inputRef, this._panelRef, this._toggleRef],
     focusRestoreSelector: 'gui-range-time input, gui-range-time button',
     focusPopupSelector: '.gui-time-list__option[tabindex="0"]',
     isDisabled: () => !!this.disabled,
