@@ -9,9 +9,9 @@ import {
 import type { DxCommonFields } from './dxBase.types';
 import type { GslItemType } from './dx.domain';
 
-// ═══════════════════════════════════════════════════
-// Item Type Handler — each shortcut folder implements this
-// ═══════════════════════════════════════════════════
+// ===================================================
+// Item Type Handler - each shortcut folder implements this
+// ===================================================
 
 export interface ParsedEntry<TDecorator extends DxCommonFields = DxCommonFields> {
   baseDef: TDecorator | ((params: DxRuntimeParams) => Partial<TDecorator>);
@@ -42,18 +42,18 @@ export interface BuildWidgetContext {
 /**
  * Strategy interface for a widget type (inputs, actions, layouts, calendars, etc.).
  *
- * The DX pipeline (`ItemWalker.processItem`) is generic — it walks the widget tree,
+ * The DX pipeline (`ItemWalker.processItem`) is generic - it walks the widget tree,
  * resolves selectors, merges definitions, and maps to framework widgets. But each
  * widget type has its own entry shape, its own sensible defaults, and sometimes
  * custom post-merge or widget-building logic. The handler provides these type-specific
  * behaviors at well-defined extension points in the pipeline:
  *
- *   1. `parseEntry`             — parse raw entry into a normalized `ParsedEntry`
- *   2. `rollUpSensibleDefaults` — aggregate config from matching leaf selectors
- *   3. `applySensibleDefaults`  — apply aggregated config to a merged decorator
- *   4. `mapToWidget`            — map a decorator to a core `FormWidget`
- *   5. `afterMerge` (optional)  — post-merge hook (e.g. actions use this to wire onClick)
- *   6. `buildCustomWidget` (optional) — custom widget building for compound types (e.g. layouts
+ *   1. `parseEntry`             - parse raw entry into a normalized `ParsedEntry`
+ *   2. `rollUpSensibleDefaults` - aggregate config from matching leaf selectors
+ *   3. `applySensibleDefaults`  - apply aggregated config to a merged decorator
+ *   4. `mapToWidget`            - map a decorator to a core `FormWidget`
+ *   5. `afterMerge` (optional)  - post-merge hook (e.g. actions use this to wire onClick)
+ *   6. `buildCustomWidget` (optional) - custom widget building for compound types (e.g. layouts
  *                                  that need to recursively walk children)
  *
  * Shortcut authors do NOT implement this interface directly. Instead, they call
@@ -62,17 +62,17 @@ export interface BuildWidgetContext {
  *
  * Entry shape taxonomy:
  *
- * 1. Keyed entries — { key, def } — path derived from key
+ * 1. Keyed entries - { key, def } - path derived from key
  *    Used by: inputs, future select/radiogroup
  *
- * 2. Bare entries — decorator | callback directly
+ * 2. Bare entries - decorator | callback directly
  *    Used by: actions, calendar, displays
  *
- * 3. Compound entries — { def, children } — container with nested shortcuts
+ * 3. Compound entries - { def, children } - container with nested shortcuts
  *    Used by: layouts, future tabs/accordion
  *
  * Each handler declares TEntry to match its shape.
- * There is no shared base type — the shapes are intentionally different.
+ * There is no shared base type - the shapes are intentionally different.
  * parseEntry(entry: TEntry) is the type-safe boundary.
  */
 export interface ItemTypeHandler<
@@ -86,7 +86,7 @@ export interface ItemTypeHandler<
   // Used by widgetMerger: apply sensible defaults to a merged decorator
   applySensibleDefaults(def: TDecorator, config: TConfig): TDecorator;
 
-  // Used by widgetMapper: map a decorator → core FormWidget
+  // Used by widgetMapper: map a decorator -> core FormWidget
   mapToWidget<StateKeys extends UiState = never, FormData extends Record<string, any> = any>(
     def: TDecorator,
   ): NonFunctionWidget<StateKeys, FormData>;
@@ -113,9 +113,9 @@ export interface ItemTypeHandler<
   getChildren?(entry: TEntry): ValidGuiShortcut[] | undefined;
 }
 
-// ═══════════════════════════════════════════════════
-// Registry — one instance per widget set implementation
-// ═══════════════════════════════════════════════════
+// ===================================================
+// Registry - one instance per widget set implementation
+// ===================================================
 
 /**
  * The widget kind an item type belongs to. Matches the `kind` discriminator of core widgets
@@ -183,7 +183,9 @@ export class ItemTypeRegistry {
     if (!handler) {
       throw new Error(
         `No handler registered for item type "${itemType}". ` +
-          `Did you forget to import the registration module?`,
+          `Register its definition in the widget set's registry with ` +
+          `registerShortcutType (for the gui widget set: add it to ` +
+          `guiShortcutTypes in registry.ts).`,
       );
     }
     return handler;
