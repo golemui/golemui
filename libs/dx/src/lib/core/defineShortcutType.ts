@@ -38,7 +38,7 @@ export interface ShortcutTypeSelectors<TDecorator, TConfig extends GslConfigBase
 
 /**
  * A fully assembled widget type: the handler for the DX pipeline, the GSL
- * selector factories, and the registration metadata. Pure data — building one
+ * selector factories, and the registration metadata. Pure data - building one
  * has no side effects, registration happens separately through
  * {@link registerShortcutType} (or in one step through {@link defineShortcutType}).
  */
@@ -48,14 +48,20 @@ export interface ShortcutTypeDefinition<
   TConfig extends GslConfigBase<TDecorator>,
 > extends ShortcutTypeSelectors<TDecorator, TConfig> {
   itemType: string;
-  kind: ShortcutItemKind;
+  /**
+   * The widget kind used for umbrella selector matching. The dx config
+   * requires a kind, but the gui compat `defineShortcutType` keeps it
+   * optional, so a definition built through that path can carry no kind.
+   * A kindless type never matches umbrella selectors.
+   */
+  kind?: ShortcutItemKind;
   handler: ItemTypeHandler<TEntry, TDecorator, TConfig>;
 }
 
 /**
  * Assembles a full widget type definition from a simple config object
- * (entry shape, mapToWidget, optional hooks) — generating `parseEntry`,
- * `rollUpSensibleDefaults`, and `applySensibleDefaults` automatically —
+ * (entry shape, mapToWidget, optional hooks) - generating `parseEntry`,
+ * `rollUpSensibleDefaults`, and `applySensibleDefaults` automatically -
  * plus the GSL selector factories (`gsl`, `gslByUid`) for styling/configuring
  * widgets of this type.
  *
@@ -104,7 +110,7 @@ export function createShortcutType<
   /**
    * Generated parseEntry for the '${config.entryShape}' entry shape.
    *
-   * ⚠️ AUDIT BOUNDARY: Uses `as any` for entry shape coercion.
+   * AUDIT BOUNDARY: Uses `as any` for entry shape coercion.
    * Type safety relies on the generic constraints at the
    * `createShortcutType<TEntry, TDecorator>` call site.
    * Do NOT replicate this pattern elsewhere.
