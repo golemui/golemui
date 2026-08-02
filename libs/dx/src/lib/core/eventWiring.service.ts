@@ -1,7 +1,12 @@
 import { type FormEvent, type FunctionWidgetParams } from '@golemui/core';
 import { type MergeResult, type RuntimeFunction } from './dx.domain';
-import { type ActionDecorator } from '../shortcuts/actions/actions.domain';
 import { type EventIdGenerator } from './itemTypeRegistry';
+
+/**
+ * Structural view of an action decorator: the only field this service reads
+ * is `onClick`. Widget sets keep their own richer action decorator types.
+ */
+type ActionDefLike = { onClick?: (...args: any[]) => any } & Record<string, any>;
 
 export type EventRegistry = Map<string, (event: FormEvent) => void>;
 
@@ -63,19 +68,19 @@ export class EventWiringService {
     if (mergeResult.kind === 'dynamic') {
       const originalFn = mergeResult.fn;
       const wrappedFn: RuntimeFunction = (params: FunctionWidgetParams<any>) => {
-        const result = originalFn(params) as ActionDecorator & Record<string, any>;
+        const result = originalFn(params) as ActionDefLike;
         return this.wireOnClick(result, eventRegistry, eventIdGenerator);
       };
       return { kind: 'dynamic', fn: wrappedFn };
     }
 
-    const actionDef = mergeResult.def as ActionDecorator & Record<string, any>;
+    const actionDef = mergeResult.def as ActionDefLike;
     const wired = this.wireOnClick(actionDef, eventRegistry, eventIdGenerator);
-    return { kind: 'static', def: wired as ActionDecorator };
+    return { kind: 'static', def: wired };
   }
 
   private wireOnClick(
-    actionDef: ActionDecorator & Record<string, any>,
+    actionDef: ActionDefLike,
     eventRegistry: EventRegistry,
     eventIdGenerator: EventIdGenerator,
   ): Record<string, any> {
@@ -143,7 +148,7 @@ export class EventWiringService {
         hasNewEvents = true;
       } else if (typeof value === 'string') {
         // Strings are still honored at runtime for internal/core wiring (and untyped
-        // `states` overrides); the public DX type rejects them, so authors use functions.
+        // `states` overrides), the public DX type rejects them, so authors use functions.
         on[coreKey] = value;
         hasNewEvents = true;
       }

@@ -1,4 +1,4 @@
-import type { ValidGuiShortcut } from '../../core/dx.domain';
+import type { ValidGuiShortcut } from '@golemui/dx';
 import type { RepeaterDecorator, GuiRepeaterShortcut } from './repeater.domain';
 
 export interface RepeaterProps extends Omit<Partial<RepeaterDecorator>, 'template'> {

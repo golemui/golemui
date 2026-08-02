@@ -5,11 +5,14 @@ import {
   type ResolvedSelectors,
   type RuntimeFunction,
 } from './dx.domain';
-import { objectUtils, type ObjectUtils } from '../../utils/objectUtils.service';
-import { getItemTypeHandler, hasItemTypeHandler } from './itemTypeRegistry';
+import { type ObjectUtils } from '../utils/objectUtils.service';
+import { type ItemTypeRegistry } from './itemTypeRegistry';
 
 export class WidgetMerger {
-  constructor(private readonly objectUtils: ObjectUtils) {}
+  constructor(
+    private readonly objectUtils: ObjectUtils,
+    private readonly registry: ItemTypeRegistry,
+  ) {}
 
   merge(
     baseDef: Record<string, any> | RuntimeFunction,
@@ -101,9 +104,9 @@ export class WidgetMerger {
     itemType: GslItemType,
     resolved: ResolvedSelectors,
   ): Record<string, any> {
-    if (!hasItemTypeHandler(itemType)) return def;
+    if (!this.registry.hasItemTypeHandler(itemType)) return def;
     const config = resolved.sensibleDefaults[itemType] ?? {};
-    return getItemTypeHandler(itemType).applySensibleDefaults(def, config);
+    return this.registry.getItemTypeHandler(itemType).applySensibleDefaults(def, config);
   }
 
   // ── Create promoted FunctionWidget ──
@@ -168,6 +171,3 @@ export class WidgetMerger {
     };
   }
 }
-
-const widgetMerger = new WidgetMerger(objectUtils);
-export default widgetMerger;

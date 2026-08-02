@@ -1,14 +1,14 @@
-import { defineShortcutType } from '../../core/defineShortcutType';
-import { buildTypedValidator } from '../../core/dxValidatorHelper';
-import { extractWidgetProps } from '../../core/dxPropsHelper';
-import { processAutoLabel } from '../../core/sharedSensibleDefaults.service';
+import { createShortcutType } from '@golemui/dx';
+import { buildTypedValidator } from '@golemui/dx';
+import { extractWidgetProps } from '@golemui/dx';
+import { processAutoLabel } from '@golemui/dx';
 import type {
   GslRangeTimePickerConfig,
   RangeTimePickerDecorator,
   RangeTimePickerEntry,
 } from './rangeTimePicker.domain';
 
-export const { gsl: _gslRangeTimePickers, gslByUid: _gslRangeTimePickerByUid } = defineShortcutType<
+export const rangeTimePickerShortcutType = createShortcutType<
   RangeTimePickerEntry,
   RangeTimePickerDecorator,
   GslRangeTimePickerConfig
@@ -35,3 +35,6 @@ export const { gsl: _gslRangeTimePickers, gslByUid: _gslRangeTimePickerByUid } =
     props: extractWidgetProps(def),
   }),
 });
+
+export const _gslRangeTimePickers = rangeTimePickerShortcutType.gsl;
+export const _gslRangeTimePickerByUid = rangeTimePickerShortcutType.gslByUid;

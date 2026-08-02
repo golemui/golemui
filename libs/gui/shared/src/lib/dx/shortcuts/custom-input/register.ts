@@ -1,12 +1,12 @@
-import { defineShortcutType } from '../../core/defineShortcutType';
-import { processAutoLabel } from '../../core/sharedSensibleDefaults.service';
+import { createShortcutType } from '@golemui/dx';
+import { processAutoLabel } from '@golemui/dx';
 import type {
   CustomInputDecorator,
   CustomInputEntry,
   GslCustomInputConfig,
 } from './customInput.domain';
 
-export const { gsl: _gslCustomInputs, gslByUid: _gslCustomInputByUid } = defineShortcutType<
+export const customInputShortcutType = createShortcutType<
   CustomInputEntry,
   CustomInputDecorator,
   GslCustomInputConfig
@@ -34,3 +34,6 @@ export const { gsl: _gslCustomInputs, gslByUid: _gslCustomInputByUid } = defineS
     props: def.props ?? {},
   }),
 });
+
+export const _gslCustomInputs = customInputShortcutType.gsl;
+export const _gslCustomInputByUid = customInputShortcutType.gslByUid;

@@ -2,7 +2,7 @@ import {
   type DateTimeCalendarDecorator,
   type DateTimeCalendarSensibleDefaultsConfig,
 } from './dateTimeCalendar.domain';
-import { processAutoLabel } from '../../core/sharedSensibleDefaults.service';
+import { processAutoLabel } from '@golemui/dx';
 
 export class DateTimeCalendarSensibleDefaultsService {
   public processAutomaticLabels(

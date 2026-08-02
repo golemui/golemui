@@ -1,10 +1,10 @@
-import { defineShortcutType } from '../../core/defineShortcutType';
-import { buildTypedValidator } from '../../core/dxValidatorHelper';
-import { extractWidgetProps } from '../../core/dxPropsHelper';
-import { processAutoLabel } from '../../core/sharedSensibleDefaults.service';
+import { createShortcutType } from '@golemui/dx';
+import { buildTypedValidator } from '@golemui/dx';
+import { extractWidgetProps } from '@golemui/dx';
+import { processAutoLabel } from '@golemui/dx';
 import type { CheckboxDecorator, CheckboxEntry, GslCheckboxConfig } from './checkbox.domain';
 
-export const { gsl: _gslCheckboxes, gslByUid: _gslCheckboxByUid } = defineShortcutType<
+export const checkboxShortcutType = createShortcutType<
   CheckboxEntry,
   CheckboxDecorator,
   GslCheckboxConfig
@@ -31,3 +31,6 @@ export const { gsl: _gslCheckboxes, gslByUid: _gslCheckboxByUid } = defineShortc
     props: extractWidgetProps(def),
   }),
 });
+
+export const _gslCheckboxes = checkboxShortcutType.gsl;
+export const _gslCheckboxByUid = checkboxShortcutType.gslByUid;

@@ -1,4 +1,4 @@
-import type { DxRuntimeParams } from '../../core/dxUtilityTypes';
+import type { DxRuntimeParams } from '@golemui/dx';
 import type { AlertDecorator, AlertEntry, GuiAlertShortcut } from './alert.domain';
 
 type AlertFactoryProps = AlertDecorator;

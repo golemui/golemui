@@ -1,4 +1,4 @@
-import { type DxRuntimeParams } from '../../core/dxUtilityTypes';
+import { type DxRuntimeParams } from '@golemui/dx';
 import type { GuiMarkdownShortcut, MarkdownDecorator, MarkdownEntry } from './markdown.domain';
 
 export function _guiMarkdown(path: string): GuiMarkdownShortcut;

@@ -5,7 +5,7 @@ import {
   type ResolvedSelectors,
 } from './dx.domain';
 import type { DxCommonFields, DxInternalFields } from './dxBase.types';
-import { getItemTypeHandler, hasItemTypeHandler } from './itemTypeRegistry';
+import { type ItemTypeRegistry, type ShortcutItemKind } from './itemTypeRegistry';
 
 type DecoratorForMatching = DxInternalFields & DxCommonFields;
 
@@ -16,50 +16,20 @@ type DecoratorForMatching = DxInternalFields & DxCommonFields;
 // textInputs, textareas, calendars, etc. — while `gui.selectors.calendars`
 // (specific) only fires on CALENDAR itemType.
 //
-// When a new itemType is added, list it under its kind here.
-const UMBRELLA_ITEMTYPES: Record<string, ReadonlySet<string>> = {
-  INPUTS: new Set([
-    'INPUTS',
-    'TEXTAREA',
-    'PASSWORD',
-    'SELECT',
-    'DROPDOWN',
-    'RADIOGROUP',
-    'CHECKBOX',
-    'CALENDAR',
-    'DATE_TIME_CALENDAR',
-    'DATE_TIME_PICKER',
-    'DATE_INPUT',
-    'DATE_PICKER',
-    'RANGE_CALENDAR',
-    'RANGE_DATE_INPUT',
-    'RANGE_DATE_TIME_INPUT',
-    'RANGE_DATE_TIME_CALENDAR',
-    'RANGE_DATE_TIME_PICKER',
-    'RANGE_TIME_INPUT',
-    'RANGE_DATE_PICKER',
-    'RANGE_TIME_PICKER',
-    'TIME_INPUT',
-    'TIME_PICKER',
-    'DATE_TIME_INPUT',
-    'CURRENCY',
-    'MARKDOWN',
-    'LIST',
-    'CUSTOM_INPUT',
-    'REPEATER',
-    'TAGS',
-  ]),
-  ACTIONS: new Set(['ACTIONS', 'CUSTOM_ACTION']),
-  DISPLAYS: new Set(['DISPLAYS', 'ALERTS', 'MARKDOWN_TEXTS', 'CUSTOM_DISPLAY']),
-  LAYOUTS: new Set(['LAYOUTS', 'TABS', 'ACCORDION', 'CUSTOM_LAYOUT']),
+// The umbrella names double as the item type of the base batch (e.g. `INPUTS`
+// is both an umbrella and the item type of the text, number, and boolean
+// shortcuts). Membership comes from the kind declared at registration; an
+// item type registered without a kind never matches an umbrella selector.
+const KIND_BY_UMBRELLA_SELECTOR: Record<string, ShortcutItemKind> = {
+  INPUTS: 'input',
+  ACTIONS: 'action',
+  DISPLAYS: 'display',
+  LAYOUTS: 'layout',
 };
 
-function selectorMatchesItemType(selectorType: string, itemType: string): boolean {
-  const umbrella = UMBRELLA_ITEMTYPES[selectorType];
-  return umbrella ? umbrella.has(itemType) : selectorType === itemType;
-}
-
 export class SelectorResolver {
+  constructor(private readonly registry: ItemTypeRegistry) {}
+
   resolve(decorator: DecoratorForMatching, allSelectors: GslSelector[]): ResolvedSelectors {
     const leafSelectors: GslLeafSelector[] = [];
 
@@ -80,6 +50,14 @@ export class SelectorResolver {
     };
   }
 
+  private selectorMatchesItemType(selectorType: string, itemType: string): boolean {
+    const umbrellaKind = KIND_BY_UMBRELLA_SELECTOR[selectorType];
+    if (umbrellaKind) {
+      return this.registry.getItemTypeKind(itemType) === umbrellaKind;
+    }
+    return selectorType === itemType;
+  }
+
   private collectFromAggregated(
     agg: GslAggregatedSelector,
     decorator: DecoratorForMatching,
@@ -97,7 +75,7 @@ export class SelectorResolver {
     decorator: DecoratorForMatching,
     out: GslLeafSelector[],
   ): void {
-    if (!selectorMatchesItemType(leaf.selectorType, decorator.itemType ?? '')) return;
+    if (!this.selectorMatchesItemType(leaf.selectorType, decorator.itemType ?? '')) return;
     if (!leaf.matcher(decorator)) return;
     out.push(leaf);
   }
@@ -106,7 +84,7 @@ export class SelectorResolver {
     leafSelectors: GslLeafSelector[],
   ): Record<string, Record<string, any>> {
     // Group leaves by every itemType they apply to.
-    // Umbrella leaves contribute to every itemType in their kind set
+    // Umbrella leaves contribute to every itemType registered under their kind
     // (per spec: `gui.selectors.inputs({...})` propagates to all input types).
     // Specific leaves contribute only to their own itemType.
     const byType = new Map<string, GslLeafSelector[]>();
@@ -117,9 +95,11 @@ export class SelectorResolver {
     };
 
     for (const leaf of leafSelectors) {
-      const umbrella = UMBRELLA_ITEMTYPES[leaf.selectorType];
-      if (umbrella) {
-        for (const itemType of umbrella) push(itemType, leaf);
+      const umbrellaKind = KIND_BY_UMBRELLA_SELECTOR[leaf.selectorType];
+      if (umbrellaKind) {
+        for (const itemType of this.registry.getItemTypesOfKind(umbrellaKind)) {
+          push(itemType, leaf);
+        }
       } else {
         push(leaf.selectorType, leaf);
       }
@@ -130,13 +110,12 @@ export class SelectorResolver {
     // finds the right rollup.
     const result: Record<string, Record<string, any>> = {};
     for (const [itemType, leaves] of byType) {
-      if (hasItemTypeHandler(itemType)) {
-        result[itemType] = getItemTypeHandler(itemType).rollUpSensibleDefaults(leaves);
+      if (this.registry.hasItemTypeHandler(itemType)) {
+        result[itemType] = this.registry
+          .getItemTypeHandler(itemType)
+          .rollUpSensibleDefaults(leaves);
       }
     }
     return result;
   }
 }
-
-const selectorResolver = new SelectorResolver();
-export default selectorResolver;

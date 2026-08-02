@@ -1,4 +1,4 @@
-import { GuiItemTypes, type ValidGuiShortcut } from '../../core/dx.domain';
+import { GuiItemTypes, type ValidGuiShortcut } from '@golemui/dx';
 import type { AccordionDecorator, GuiAccordionShortcut } from './accordion.domain';
 
 type AccordionFactoryProps = Omit<AccordionDecorator, 'sections'>;

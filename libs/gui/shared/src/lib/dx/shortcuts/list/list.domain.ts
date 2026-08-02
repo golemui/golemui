@@ -1,7 +1,7 @@
 import type { Validator } from '@golemui/gui-validators';
 import type { ListItem, ListProps, OptionValue } from '../../../widget.props';
-import type { DxCommonFields, DxInputBase } from '../../core/dxBase.types';
-import type { DefOrCallback, GslConfigBase, GuiShortcutOf } from '../../core/dxUtilityTypes';
+import type { DxCommonFields, DxInputBase } from '@golemui/dx';
+import type { DefOrCallback, GslConfigBase, GuiShortcutOf } from '@golemui/dx';
 
 export interface ListDecorator
   extends DxInputBase,

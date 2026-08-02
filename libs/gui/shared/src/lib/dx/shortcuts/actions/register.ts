@@ -1,9 +1,9 @@
 // Complexity: MODERATE — bare entry shape with afterMerge hook for onClick wiring.
 // The hook pattern is straightforward; the onClick service does the heavy lifting.
 import { type ActionWidget, type NonFunctionWidget, type UiState } from '@golemui/core';
-import { defineShortcutType } from '../../core/defineShortcutType';
+import { createShortcutType } from '@golemui/dx';
 import { type ActionDecorator, type ActionEntry, type GslActionsConfig } from './actions.domain';
-import eventWiringService from '../../core/eventWiring.service';
+import { eventWiringService } from '@golemui/dx';
 
 function mapToWidget<StateKeys extends UiState = never, FormData extends Record<string, any> = any>(
   def: ActionDecorator,
@@ -36,7 +36,7 @@ function mapToWidget<StateKeys extends UiState = never, FormData extends Record<
   } as ActionWidget<StateKeys, FormData>;
 }
 
-export const { gsl: _gslActions, gslByUid: _gslActionByUid } = defineShortcutType<
+export const actionsShortcutType = createShortcutType<
   ActionEntry,
   ActionDecorator,
   GslActionsConfig
@@ -52,3 +52,6 @@ export const { gsl: _gslActions, gslByUid: _gslActionByUid } = defineShortcutTyp
       context.eventIdGenerator,
     ),
 });
+
+export const _gslActions = actionsShortcutType.gsl;
+export const _gslActionByUid = actionsShortcutType.gslByUid;

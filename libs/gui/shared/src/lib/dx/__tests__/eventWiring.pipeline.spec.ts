@@ -5,7 +5,7 @@ import { _guiSelect } from '../shortcuts/select/guiSelect.impl';
 import { _guiDropdown } from '../shortcuts/dropdown/guiDropdown.impl';
 import { _guiTabs } from '../shortcuts/tabs/guiTabs.impl';
 import { _guiButton } from '../shortcuts/actions/guiActions.impl';
-import { formDefs } from '../dx.service';
+import { formDefs } from '../formDefs';
 import { _guiTextInput, _guiNumberInput } from '../index';
 
 function getRootFromFacadeResult(

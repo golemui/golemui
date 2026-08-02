@@ -1,4 +1,4 @@
-import { type DxRuntimeParams } from '../../core/dxUtilityTypes';
+import { type DxRuntimeParams } from '@golemui/dx';
 import type { CurrencyDecorator, CurrencyEntry, GuiCurrencyShortcut } from './currency.domain';
 
 export function _guiCurrency(path: string): GuiCurrencyShortcut;

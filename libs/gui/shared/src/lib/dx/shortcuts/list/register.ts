@@ -1,13 +1,9 @@
-import { defineShortcutType } from '../../core/defineShortcutType';
-import { extractWidgetProps } from '../../core/dxPropsHelper';
-import { processAutoLabel } from '../../core/sharedSensibleDefaults.service';
+import { createShortcutType } from '@golemui/dx';
+import { extractWidgetProps } from '@golemui/dx';
+import { processAutoLabel } from '@golemui/dx';
 import type { GslListConfig, ListDecorator, ListEntry } from './list.domain';
 
-export const { gsl: _gslLists, gslByUid: _gslListByUid } = defineShortcutType<
-  ListEntry,
-  ListDecorator,
-  GslListConfig
->({
+export const listShortcutType = createShortcutType<ListEntry, ListDecorator, GslListConfig>({
   itemType: 'LIST',
   kind: 'input',
   entryShape: 'keyed',
@@ -28,3 +24,6 @@ export const { gsl: _gslLists, gslByUid: _gslListByUid } = defineShortcutType<
     props: extractWidgetProps(def),
   }),
 });
+
+export const _gslLists = listShortcutType.gsl;
+export const _gslListByUid = listShortcutType.gslByUid;

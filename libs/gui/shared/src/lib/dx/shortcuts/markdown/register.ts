@@ -1,13 +1,10 @@
-import { defineShortcutType } from '../../core/defineShortcutType';
-import { buildTypedValidator } from '../../core/dxValidatorHelper';
-import { extractWidgetProps } from '../../core/dxPropsHelper';
-import {
-  processAutoLabel,
-  processAutoPlaceholder,
-} from '../../core/sharedSensibleDefaults.service';
+import { createShortcutType } from '@golemui/dx';
+import { buildTypedValidator } from '@golemui/dx';
+import { extractWidgetProps } from '@golemui/dx';
+import { processAutoLabel, processAutoPlaceholder } from '@golemui/dx';
 import type { GslMarkdownConfig, MarkdownDecorator, MarkdownEntry } from './markdown.domain';
 
-export const { gsl: _gslMarkdowns, gslByUid: _gslMarkdownByUid } = defineShortcutType<
+export const markdownShortcutType = createShortcutType<
   MarkdownEntry,
   MarkdownDecorator,
   GslMarkdownConfig
@@ -34,3 +31,6 @@ export const { gsl: _gslMarkdowns, gslByUid: _gslMarkdownByUid } = defineShortcu
     props: extractWidgetProps(def),
   }),
 });
+
+export const _gslMarkdowns = markdownShortcutType.gsl;
+export const _gslMarkdownByUid = markdownShortcutType.gslByUid;

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { type LayoutWidget, type NonFunctionWidget } from '@golemui/core';
 import { processDx, getStaticChild } from './helpers';
-import { formDefs } from '../dx.service';
+import { formDefs } from '../formDefs';
 import { _guiTextInput } from '../shortcuts/inputs/guiTextInput.impl';
 import { _guiSelect } from '../shortcuts/select/guiSelect.impl';
 import { _guiRepeater } from '../shortcuts/repeater/guiRepeater.impl';

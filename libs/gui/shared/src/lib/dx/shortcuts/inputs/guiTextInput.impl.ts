@@ -1,5 +1,5 @@
-import { GuiItemTypes } from '../../core/dx.domain';
-import { type DxRuntimeParams } from '../../core/dxUtilityTypes';
+import { GuiItemTypes } from '@golemui/dx';
+import { type DxRuntimeParams } from '@golemui/dx';
 import { type GuiInputsShortcut, type TextDataInputDecorator } from './inputs.domain';
 
 export function _guiTextInput(path: string): GuiInputsShortcut;

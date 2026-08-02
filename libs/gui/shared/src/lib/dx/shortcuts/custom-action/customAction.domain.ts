@@ -1,5 +1,5 @@
-import type { DxActionBase, DxCommonFields } from '../../core/dxBase.types';
-import type { DefOrCallback, GslConfigBase, GuiShortcutOf } from '../../core/dxUtilityTypes';
+import type { DxActionBase, DxCommonFields } from '@golemui/dx';
+import type { DefOrCallback, GslConfigBase, GuiShortcutOf } from '@golemui/dx';
 
 // ═══════════════════════════════════════════════════
 // Custom Action Decorator

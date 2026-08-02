@@ -32,6 +32,7 @@
   ],
   "dependencies": {
     "@golemui/core": "*",
+    "@golemui/dx": "*",
     "@golemui/gui-validators": "*"
   },
   "repository": {

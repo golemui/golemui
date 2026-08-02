@@ -5,9 +5,11 @@ import {
   type UiState,
 } from '@golemui/core';
 import { type GslItemType, type MergeResult } from './dx.domain';
-import { getItemTypeHandler } from './itemTypeRegistry';
+import { type ItemTypeRegistry } from './itemTypeRegistry';
 
 export class WidgetMapper {
+  constructor(private readonly registry: ItemTypeRegistry) {}
+
   mapToWidget<StateKeys extends UiState = never, FormData extends Record<string, any> = any>(
     mergeResult: MergeResult,
     itemType: GslItemType,
@@ -27,7 +29,7 @@ export class WidgetMapper {
     def: Record<string, any>,
     itemType: GslItemType,
   ): NonFunctionWidget<StateKeys, FormData> {
-    const widget = getItemTypeHandler(itemType).mapToWidget<StateKeys, FormData>(def);
+    const widget = this.registry.getItemTypeHandler(itemType).mapToWidget<StateKeys, FormData>(def);
     return this.applyBaseWidgetFields(widget, def);
   }
 
@@ -60,6 +62,3 @@ export class WidgetMapper {
     return widget;
   }
 }
-
-const widgetMapper = new WidgetMapper();
-export default widgetMapper;

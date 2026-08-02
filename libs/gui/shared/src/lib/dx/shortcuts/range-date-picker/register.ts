@@ -1,17 +1,14 @@
-import { defineShortcutType } from '../../core/defineShortcutType';
-import { buildTypedValidator } from '../../core/dxValidatorHelper';
-import { extractWidgetProps } from '../../core/dxPropsHelper';
-import {
-  processAutoLabel,
-  processAutoPlaceholder,
-} from '../../core/sharedSensibleDefaults.service';
+import { createShortcutType } from '@golemui/dx';
+import { buildTypedValidator } from '@golemui/dx';
+import { extractWidgetProps } from '@golemui/dx';
+import { processAutoLabel, processAutoPlaceholder } from '@golemui/dx';
 import type {
   GslRangeDatePickerConfig,
   RangeDatePickerDecorator,
   RangeDatePickerEntry,
 } from './rangeDatePicker.domain';
 
-export const { gsl: _gslRangeDatePickers, gslByUid: _gslRangeDatePickerByUid } = defineShortcutType<
+export const rangeDatePickerShortcutType = createShortcutType<
   RangeDatePickerEntry,
   RangeDatePickerDecorator,
   GslRangeDatePickerConfig
@@ -41,3 +38,6 @@ export const { gsl: _gslRangeDatePickers, gslByUid: _gslRangeDatePickerByUid } =
     props: extractWidgetProps(def),
   }),
 });
+
+export const _gslRangeDatePickers = rangeDatePickerShortcutType.gsl;
+export const _gslRangeDatePickerByUid = rangeDatePickerShortcutType.gslByUid;

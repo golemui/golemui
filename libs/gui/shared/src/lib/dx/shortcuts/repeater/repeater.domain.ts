@@ -1,8 +1,8 @@
 import type { ArrayValidator } from '@golemui/gui-validators';
-import type { DxCommonFields } from '../../core/dxBase.types';
-import type { DefOrCallback, GslConfigBase, GuiShortcutOf } from '../../core/dxUtilityTypes';
-import type { ValidGuiShortcut } from '../../core/dx.domain';
-import type { DxValidator } from '../../core/dxValidatorHelper';
+import type { DxCommonFields } from '@golemui/dx';
+import type { DefOrCallback, GslConfigBase, GuiShortcutOf } from '@golemui/dx';
+import type { ValidGuiShortcut } from '@golemui/dx';
+import type { DxValidator } from '@golemui/dx';
 
 export interface RepeaterDecorator extends DxCommonFields {
   label?: string;

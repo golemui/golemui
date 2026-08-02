@@ -4,7 +4,7 @@ import {
   type ValidateOn,
 } from '@golemui/core';
 import type { WidgetItemDecorator, GslItemType } from '../formDef.domain';
-import { type Dependencies } from '../../shared';
+import { type Dependencies } from '../shared';
 
 export type { GslItemType } from '../formDef.domain';
 
@@ -86,7 +86,7 @@ export interface FormConfig {
   states?: Record<string, string>;
   /**
    * Framework-specific item renderers (e.g. ReactItemRenderer / AngularItemRenderer / LitItemRenderer).
-   * Forwarded to the unified <gui-form>; the type is intentionally framework-agnostic
+   * Forwarded to the unified <gui-form>, the type is intentionally framework-agnostic
    * here and gets narrowed at the framework wrapper boundary.
    */
   itemRenderers?: Record<string, unknown>;

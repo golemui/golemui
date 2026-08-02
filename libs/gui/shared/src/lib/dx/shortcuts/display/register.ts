@@ -6,10 +6,10 @@ import {
   type NonFunctionWidget,
   type UiState,
 } from '@golemui/core';
-import { type MergeResult } from '../../core/dx.domain';
-import { type BuildWidgetContext } from '../../core/itemTypeRegistry';
-import { defineShortcutType } from '../../core/defineShortcutType';
-import { withForm } from '../../core/withForm';
+import { type MergeResult } from '@golemui/dx';
+import { type BuildWidgetContext } from '@golemui/dx';
+import { createShortcutType } from '@golemui/dx';
+import { withForm } from '@golemui/dx';
 import { type DisplayDecorator, type DisplayEntry, type GslDisplaysConfig } from './display.domain';
 
 function mapToWidget<StateKeys extends UiState = never, FormData extends Record<string, any> = any>(
@@ -50,7 +50,7 @@ function buildCustomWidget(mergeResult: MergeResult, _context: BuildWidgetContex
   }) as FormWidget;
 }
 
-export const { gsl: _gslDisplays, gslByUid: _gslDisplayByUid } = defineShortcutType<
+export const displayShortcutType = createShortcutType<
   DisplayEntry,
   DisplayDecorator,
   GslDisplaysConfig
@@ -61,3 +61,6 @@ export const { gsl: _gslDisplays, gslByUid: _gslDisplayByUid } = defineShortcutT
   mapToWidget,
   buildCustomWidget,
 });
+
+export const _gslDisplays = displayShortcutType.gsl;
+export const _gslDisplayByUid = displayShortcutType.gslByUid;

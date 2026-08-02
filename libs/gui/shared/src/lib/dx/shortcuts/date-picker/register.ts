@@ -1,19 +1,16 @@
 // Complexity: STANDARD — typical keyed input with sensible defaults and pass-through props.
 // This is the pattern most new shortcuts follow. See SHORTCUTS.md for the progression.
-import { defineShortcutType } from '../../core/defineShortcutType';
-import { buildTypedValidator } from '../../core/dxValidatorHelper';
-import { extractWidgetProps } from '../../core/dxPropsHelper';
-import {
-  processAutoLabel,
-  processAutoPlaceholder,
-} from '../../core/sharedSensibleDefaults.service';
+import { createShortcutType } from '@golemui/dx';
+import { buildTypedValidator } from '@golemui/dx';
+import { extractWidgetProps } from '@golemui/dx';
+import { processAutoLabel, processAutoPlaceholder } from '@golemui/dx';
 import type {
   DatePickerDecorator,
   DatePickerEntry,
   GslDatePickerConfig,
 } from './datePicker.domain';
 
-export const { gsl: _gslDatePickers, gslByUid: _gslDatePickerByUid } = defineShortcutType<
+export const datePickerShortcutType = createShortcutType<
   DatePickerEntry,
   DatePickerDecorator,
   GslDatePickerConfig
@@ -43,3 +40,6 @@ export const { gsl: _gslDatePickers, gslByUid: _gslDatePickerByUid } = defineSho
     props: extractWidgetProps(def),
   }),
 });
+
+export const _gslDatePickers = datePickerShortcutType.gsl;
+export const _gslDatePickerByUid = datePickerShortcutType.gslByUid;

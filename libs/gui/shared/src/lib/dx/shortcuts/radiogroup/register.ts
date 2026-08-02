@@ -1,13 +1,13 @@
-import { defineShortcutType } from '../../core/defineShortcutType';
-import { extractWidgetProps } from '../../core/dxPropsHelper';
-import { processAutoLabel } from '../../core/sharedSensibleDefaults.service';
+import { createShortcutType } from '@golemui/dx';
+import { extractWidgetProps } from '@golemui/dx';
+import { processAutoLabel } from '@golemui/dx';
 import type {
   GslRadiogroupConfig,
   RadiogroupDecorator,
   RadiogroupEntry,
 } from './radiogroup.domain';
 
-export const { gsl: _gslRadiogroups, gslByUid: _gslRadiogroupByUid } = defineShortcutType<
+export const radiogroupShortcutType = createShortcutType<
   RadiogroupEntry,
   RadiogroupDecorator,
   GslRadiogroupConfig
@@ -32,3 +32,6 @@ export const { gsl: _gslRadiogroups, gslByUid: _gslRadiogroupByUid } = defineSho
     props: extractWidgetProps(def),
   }),
 });
+
+export const _gslRadiogroups = radiogroupShortcutType.gsl;
+export const _gslRadiogroupByUid = radiogroupShortcutType.gslByUid;

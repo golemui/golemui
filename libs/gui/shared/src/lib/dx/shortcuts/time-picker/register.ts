@@ -1,19 +1,16 @@
 // Complexity: STANDARD — typical keyed input with sensible defaults and pass-through props.
 // This is the pattern most new shortcuts follow. See SHORTCUTS.md for the progression.
-import { defineShortcutType } from '../../core/defineShortcutType';
-import { buildTypedValidator } from '../../core/dxValidatorHelper';
-import { extractWidgetProps } from '../../core/dxPropsHelper';
-import {
-  processAutoLabel,
-  processAutoPlaceholder,
-} from '../../core/sharedSensibleDefaults.service';
+import { createShortcutType } from '@golemui/dx';
+import { buildTypedValidator } from '@golemui/dx';
+import { extractWidgetProps } from '@golemui/dx';
+import { processAutoLabel, processAutoPlaceholder } from '@golemui/dx';
 import type {
   TimePickerDecorator,
   TimePickerEntry,
   GslTimePickerConfig,
 } from './timePicker.domain';
 
-export const { gsl: _gslTimePickers, gslByUid: _gslTimePickerByUid } = defineShortcutType<
+export const timePickerShortcutType = createShortcutType<
   TimePickerEntry,
   TimePickerDecorator,
   GslTimePickerConfig
@@ -43,3 +40,6 @@ export const { gsl: _gslTimePickers, gslByUid: _gslTimePickerByUid } = defineSho
     props: extractWidgetProps(def),
   }),
 });
+
+export const _gslTimePickers = timePickerShortcutType.gsl;
+export const _gslTimePickerByUid = timePickerShortcutType.gslByUid;

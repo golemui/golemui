@@ -1,12 +1,9 @@
-import { defineShortcutType } from '../../core/defineShortcutType';
-import { extractWidgetProps } from '../../core/dxPropsHelper';
-import {
-  processAutoLabel,
-  processAutoPlaceholder,
-} from '../../core/sharedSensibleDefaults.service';
+import { createShortcutType } from '@golemui/dx';
+import { extractWidgetProps } from '@golemui/dx';
+import { processAutoLabel, processAutoPlaceholder } from '@golemui/dx';
 import type { DropdownDecorator, DropdownEntry, GslDropdownConfig } from './dropdown.domain';
 
-export const { gsl: _gslDropdowns, gslByUid: _gslDropdownByUid } = defineShortcutType<
+export const dropdownShortcutType = createShortcutType<
   DropdownEntry,
   DropdownDecorator,
   GslDropdownConfig
@@ -34,3 +31,6 @@ export const { gsl: _gslDropdowns, gslByUid: _gslDropdownByUid } = defineShortcu
     props: extractWidgetProps(def),
   }),
 });
+
+export const _gslDropdowns = dropdownShortcutType.gsl;
+export const _gslDropdownByUid = dropdownShortcutType.gslByUid;

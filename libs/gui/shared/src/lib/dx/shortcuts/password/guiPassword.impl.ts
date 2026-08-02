@@ -1,4 +1,4 @@
-import { type DxRuntimeParams } from '../../core/dxUtilityTypes';
+import { type DxRuntimeParams } from '@golemui/dx';
 import type { GuiPasswordShortcut, PasswordDecorator, PasswordEntry } from './password.domain';
 
 export function _guiPassword(path: string): GuiPasswordShortcut;

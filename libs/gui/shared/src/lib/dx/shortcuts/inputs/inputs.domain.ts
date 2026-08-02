@@ -5,18 +5,14 @@ import {
   type TextinputProps,
   type ToggleProps,
 } from '../../../widget.props';
-import {
-  type DxCommonFields,
-  type DxInputBase,
-  type DxInternalFields,
-} from '../../core/dxBase.types';
+import { type DxCommonFields, type DxInputBase, type DxInternalFields } from '@golemui/dx';
 import {
   type DefOrCallback,
   type DxRuntimeParams,
   type GslConfigBase,
   type GuiShortcutOf,
-} from '../../core/dxUtilityTypes';
-import { type DxValidator } from '../../core/dxValidatorHelper';
+} from '@golemui/dx';
+import { type DxValidator } from '@golemui/dx';
 
 // ═══════════════════════════════════════════════════
 // Input Decorators

@@ -1,15 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import '../registerAll';
-import {
-  getItemTypeKind,
-  getRegisteredItemTypes,
-  type ShortcutItemKind,
-} from '../core/itemTypeRegistry';
+import { type ShortcutItemKind } from '@golemui/dx';
+import { guiRegistry } from '../registry';
 
 // Umbrella selectors (INPUTS, ACTIONS, DISPLAYS, LAYOUTS) match item types by
-// kind. Every registration declares its kind, and this snapshot pins the full
-// mapping so the declared kinds and the umbrella table in
-// selectorResolver.service.ts cannot drift apart.
+// the kind declared at registration. This snapshot pins the full mapping, so a
+// changed or forgotten kind declaration fails here instead of silently changing
+// which widgets an umbrella selector reaches.
 const expectedKindByItemType: Record<string, ShortcutItemKind> = {
   ACCORDION: 'layout',
   ACTIONS: 'action',
@@ -54,19 +50,19 @@ const expectedKindByItemType: Record<string, ShortcutItemKind> = {
 
 describe('item type kind registration', () => {
   it('registers exactly the snapshotted item types', () => {
-    const registered = [...getRegisteredItemTypes()].sort();
+    const registered = [...guiRegistry.getRegisteredItemTypes()].sort();
     expect(registered).toEqual(Object.keys(expectedKindByItemType).sort());
   });
 
   it('declares a kind for every registered item type', () => {
-    for (const itemType of getRegisteredItemTypes()) {
-      expect(getItemTypeKind(itemType), `item type ${itemType}`).toBeDefined();
+    for (const itemType of guiRegistry.getRegisteredItemTypes()) {
+      expect(guiRegistry.getItemTypeKind(itemType), `item type ${itemType}`).toBeDefined();
     }
   });
 
-  it('declares the kind that matches the umbrella table for every item type', () => {
+  it('declares the snapshotted kind for every item type', () => {
     for (const [itemType, expectedKind] of Object.entries(expectedKindByItemType)) {
-      expect(getItemTypeKind(itemType), `item type ${itemType}`).toBe(expectedKind);
+      expect(guiRegistry.getItemTypeKind(itemType), `item type ${itemType}`).toBe(expectedKind);
     }
   });
 });

@@ -7,9 +7,9 @@ import {
   type NonFunctionWidget,
   type UiState,
 } from '@golemui/core';
-import type { MergeResult } from '../../core/dx.domain';
-import { type BuildWidgetContext } from '../../core/itemTypeRegistry';
-import { defineShortcutType } from '../../core/defineShortcutType';
+import type { MergeResult } from '@golemui/dx';
+import { type BuildWidgetContext } from '@golemui/dx';
+import { createShortcutType } from '@golemui/dx';
 import type { GslTabsConfig, TabsDecorator, TabsEntry } from './tabs.domain';
 
 function mapToWidget<StateKeys extends UiState = never, FormData extends Record<string, any> = any>(
@@ -48,11 +48,7 @@ function getChildren(entry: TabsEntry): any[] | undefined {
   return entry.children;
 }
 
-export const { gsl: _gslTabs, gslByUid: _gslTabsByUid } = defineShortcutType<
-  TabsEntry,
-  TabsDecorator,
-  GslTabsConfig
->({
+export const tabsShortcutType = createShortcutType<TabsEntry, TabsDecorator, GslTabsConfig>({
   itemType: 'TABS',
   kind: 'layout',
   entryShape: 'compound',
@@ -60,3 +56,6 @@ export const { gsl: _gslTabs, gslByUid: _gslTabsByUid } = defineShortcutType<
   buildCustomWidget,
   getChildren,
 });
+
+export const _gslTabs = tabsShortcutType.gsl;
+export const _gslTabsByUid = tabsShortcutType.gslByUid;

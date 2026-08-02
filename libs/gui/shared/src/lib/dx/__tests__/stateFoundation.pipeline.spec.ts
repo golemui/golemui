@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { processDx } from './helpers';
-import { formDefs } from '../dx.service';
+import { formDefs } from '../formDefs';
 import { _guiSelect } from '../shortcuts/select/guiSelect.impl';
 import { _guiTextInput } from '../index';
 

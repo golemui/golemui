@@ -1,14 +1,14 @@
-import { defineShortcutType } from '../../core/defineShortcutType';
-import { buildTypedValidator } from '../../core/dxValidatorHelper';
-import { extractWidgetProps } from '../../core/dxPropsHelper';
-import { processAutoLabel } from '../../core/sharedSensibleDefaults.service';
+import { createShortcutType } from '@golemui/dx';
+import { buildTypedValidator } from '@golemui/dx';
+import { extractWidgetProps } from '@golemui/dx';
+import { processAutoLabel } from '@golemui/dx';
 import type {
   GslRangeTimeInputConfig,
   RangeTimeInputDecorator,
   RangeTimeInputEntry,
 } from './rangeTimeInput.domain';
 
-export const { gsl: _gslRangeTimeInputs, gslByUid: _gslRangeTimeInputByUid } = defineShortcutType<
+export const rangeTimeInputShortcutType = createShortcutType<
   RangeTimeInputEntry,
   RangeTimeInputDecorator,
   GslRangeTimeInputConfig
@@ -35,3 +35,6 @@ export const { gsl: _gslRangeTimeInputs, gslByUid: _gslRangeTimeInputByUid } = d
     props: extractWidgetProps(def),
   }),
 });
+
+export const _gslRangeTimeInputs = rangeTimeInputShortcutType.gsl;
+export const _gslRangeTimeInputByUid = rangeTimeInputShortcutType.gslByUid;

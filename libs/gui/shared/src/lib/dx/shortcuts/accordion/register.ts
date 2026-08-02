@@ -7,9 +7,9 @@ import {
   type NonFunctionWidget,
   type UiState,
 } from '@golemui/core';
-import type { MergeResult } from '../../core/dx.domain';
-import { type BuildWidgetContext } from '../../core/itemTypeRegistry';
-import { defineShortcutType } from '../../core/defineShortcutType';
+import type { MergeResult } from '@golemui/dx';
+import { type BuildWidgetContext } from '@golemui/dx';
+import { createShortcutType } from '@golemui/dx';
 import type { AccordionDecorator, AccordionEntry, GslAccordionConfig } from './accordion.domain';
 
 function mapToWidget<StateKeys extends UiState = never, FormData extends Record<string, any> = any>(
@@ -49,7 +49,7 @@ function getChildren(entry: AccordionEntry): any[] | undefined {
   return entry.children;
 }
 
-export const { gsl: _gslAccordions, gslByUid: _gslAccordionByUid } = defineShortcutType<
+export const accordionShortcutType = createShortcutType<
   AccordionEntry,
   AccordionDecorator,
   GslAccordionConfig
@@ -61,3 +61,6 @@ export const { gsl: _gslAccordions, gslByUid: _gslAccordionByUid } = defineShort
   buildCustomWidget,
   getChildren,
 });
+
+export const _gslAccordions = accordionShortcutType.gsl;
+export const _gslAccordionByUid = accordionShortcutType.gslByUid;

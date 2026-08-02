@@ -1,9 +1,5 @@
 import { type InputDecorator, type InputSensibleDefaultsConfig } from './inputs.domain';
-import {
-  pathToLabel,
-  processAutoLabel,
-  processAutoPlaceholder,
-} from '../../core/sharedSensibleDefaults.service';
+import { pathToLabel, processAutoLabel, processAutoPlaceholder } from '@golemui/dx';
 
 export { pathToLabel };
 

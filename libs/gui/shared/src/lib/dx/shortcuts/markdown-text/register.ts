@@ -1,12 +1,12 @@
 // Mirrors the alert shortcut — a bare, props-only display widget with no callback hook.
-import { defineShortcutType } from '../../core/defineShortcutType';
+import { createShortcutType } from '@golemui/dx';
 import type {
   GslMarkdownTextsConfig,
   MarkdownTextDecorator,
   MarkdownTextEntry,
 } from './markdownText.domain';
 
-export const { gsl: _gslMarkdownTexts, gslByUid: _gslMarkdownTextByUid } = defineShortcutType<
+export const markdownTextShortcutType = createShortcutType<
   MarkdownTextEntry,
   MarkdownTextDecorator,
   GslMarkdownTextsConfig
@@ -23,3 +23,6 @@ export const { gsl: _gslMarkdownTexts, gslByUid: _gslMarkdownTextByUid } = defin
     },
   }),
 });
+
+export const _gslMarkdownTexts = markdownTextShortcutType.gsl;
+export const _gslMarkdownTextByUid = markdownTextShortcutType.gslByUid;

@@ -22,8 +22,8 @@ import {
   type EventIdGenerator,
   type EventRegistry,
   type BuildWidgetContext,
-  getItemTypeHandler,
   type ItemTypeHandler,
+  type ItemTypeRegistry,
   type ParsedEntry,
 } from './itemTypeRegistry';
 import { type EventWiringService } from './eventWiring.service';
@@ -46,6 +46,7 @@ export interface WalkResult<
 
 export class ItemWalker {
   constructor(
+    private readonly registry: ItemTypeRegistry,
     private readonly resolver: SelectorResolver,
     private readonly merger: WidgetMerger,
     private readonly mapper: WidgetMapper,
@@ -120,7 +121,7 @@ export class ItemWalker {
   ): FormWidget<StateKeys, FormData> {
     const gslItemType: GslItemType = itemType;
     // Look up the type-specific strategy for this widget type (inputs, actions, layouts, etc.).
-    const handler = getItemTypeHandler(itemType);
+    const handler = this.registry.getItemTypeHandler(itemType);
     const parsed = handler.parseEntry(entry);
     const baseDef = this.buildBaseDef(parsed);
 

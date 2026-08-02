@@ -1,8 +1,8 @@
 import type { ArrayValidator } from '@golemui/gui-validators';
 import type { RangeDateTimeInputProps } from '../../../widget.props';
-import type { DxCommonFields, DxInputBase } from '../../core/dxBase.types';
-import type { DefOrCallback, GslConfigBase, GuiShortcutOf } from '../../core/dxUtilityTypes';
-import type { DxValidator } from '../../core/dxValidatorHelper';
+import type { DxCommonFields, DxInputBase } from '@golemui/dx';
+import type { DefOrCallback, GslConfigBase, GuiShortcutOf } from '@golemui/dx';
+import type { DxValidator } from '@golemui/dx';
 
 export interface RangeDateTimeInputDecorator
   extends DxInputBase,

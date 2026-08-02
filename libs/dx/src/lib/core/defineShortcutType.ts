@@ -4,24 +4,25 @@ import { createGslSelector } from './dxUtilityTypes';
 import type { GslConfigBase } from './dxUtilityTypes';
 import type {
   ItemTypeHandler,
+  ItemTypeRegistry,
   ParsedEntry,
   AfterMergeContext,
   BuildWidgetContext,
 } from './itemTypeRegistry';
-import { registerItemType, type ShortcutItemKind } from './itemTypeRegistry';
+import { type ShortcutItemKind } from './itemTypeRegistry';
 import type { DxCommonFields } from './dxBase.types';
 
-type EntryShape = 'bare' | 'keyed' | 'compound';
+export type EntryShape = 'bare' | 'keyed' | 'compound';
 
-interface SensibleDefaultsSpec<TDecorator, TConfig> {
+export interface SensibleDefaultsSpec<TDecorator, TConfig> {
   base: TConfig;
   fields: (keyof TConfig)[];
   apply: (def: TDecorator, config: TConfig) => TDecorator;
 }
 
-interface ShortcutTypeConfig<TEntry, TDecorator, TConfig> {
+export interface ShortcutTypeConfig<TEntry, TDecorator, TConfig> {
   itemType: string;
-  kind?: ShortcutItemKind;
+  kind: ShortcutItemKind;
   entryShape: EntryShape;
   mapToWidget: (def: TDecorator) => NonFunctionWidget;
   sensibleDefaults?: SensibleDefaultsSpec<TDecorator, TConfig>;
@@ -36,24 +37,40 @@ export interface ShortcutTypeSelectors<TDecorator, TConfig extends GslConfigBase
 }
 
 /**
- * Convenience factory for registering a new widget type into the DX pipeline.
- *
- * Accepts a simple config object (entry shape, mapToWidget, optional hooks) and
- * assembles a full {@link ItemTypeHandler} from it — generating `parseEntry`,
- * `rollUpSensibleDefaults`, and `applySensibleDefaults` automatically.
- * The handler is registered in the global registry so the pipeline can look it up
- * by `itemType` at runtime.
- *
- * Returns GSL selector factories (`gsl`, `gslByUid`) for styling/configuring
- * widgets of this type.
+ * A fully assembled widget type: the handler for the DX pipeline, the GSL
+ * selector factories, and the registration metadata. Pure data — building one
+ * has no side effects, registration happens separately through
+ * {@link registerShortcutType} (or in one step through {@link defineShortcutType}).
  */
-export function defineShortcutType<
+export interface ShortcutTypeDefinition<
+  TEntry,
+  TDecorator extends DxCommonFields,
+  TConfig extends GslConfigBase<TDecorator>,
+> extends ShortcutTypeSelectors<TDecorator, TConfig> {
+  itemType: string;
+  kind: ShortcutItemKind;
+  handler: ItemTypeHandler<TEntry, TDecorator, TConfig>;
+}
+
+/**
+ * Assembles a full widget type definition from a simple config object
+ * (entry shape, mapToWidget, optional hooks) — generating `parseEntry`,
+ * `rollUpSensibleDefaults`, and `applySensibleDefaults` automatically —
+ * plus the GSL selector factories (`gsl`, `gslByUid`) for styling/configuring
+ * widgets of this type.
+ *
+ * This function is pure: it does NOT register anything. A widget set builds
+ * its definitions with this and registers them all in one explicit place with
+ * {@link registerShortcutType}, so registration is carried by the module that
+ * owns the registry instead of import side effects (which bundlers may drop).
+ */
+export function createShortcutType<
   TEntry,
   TDecorator extends DxCommonFields,
   TConfig extends GslConfigBase<TDecorator> = GslConfigBase<TDecorator>,
 >(
   config: ShortcutTypeConfig<TEntry, TDecorator, TConfig>,
-): ShortcutTypeSelectors<TDecorator, TConfig> {
+): ShortcutTypeDefinition<TEntry, TDecorator, TConfig> {
   const rollUpSensibleDefaults = (leafSelectors: GslLeafSelector[]): TConfig => {
     if (!config.sensibleDefaults) {
       return {} as TConfig;
@@ -89,7 +106,7 @@ export function defineShortcutType<
    *
    * ⚠️ AUDIT BOUNDARY: Uses `as any` for entry shape coercion.
    * Type safety relies on the generic constraints at the
-   * `defineShortcutType<TEntry, TDecorator>` call site.
+   * `createShortcutType<TEntry, TDecorator>` call site.
    * Do NOT replicate this pattern elsewhere.
    */
   const parseEntry = (entry: TEntry): ParsedEntry<TDecorator> => {
@@ -113,11 +130,6 @@ export function defineShortcutType<
   //
   // See ItemTypeHandler in itemTypeRegistry.ts for the contract and pipeline stages.
   // The pipeline that consumes this handler lives in ItemWalker.processItem.
-  //
-  // Examples of registrations that show different capabilities:
-  //   - shortcuts/inputs/register.ts   — keyed entries + sensibleDefaults (simplest full example)
-  //   - shortcuts/actions/register.ts  — bare entries + afterMerge hook (onClick wiring)
-  //   - shortcuts/layouts/register.ts  — compound entries + buildCustomWidget + getChildren (recursive)
   const handler: ItemTypeHandler<TEntry, TDecorator, TConfig> = {
     rollUpSensibleDefaults,
     applySensibleDefaults,
@@ -128,11 +140,54 @@ export function defineShortcutType<
     ...(config.getChildren ? { getChildren: config.getChildren } : {}),
   };
 
-  registerItemType(config.itemType, handler, config.kind);
-
   const gsl = createGslSelector<TDecorator, TConfig>(config.itemType);
   const gslByUid = (uid: string, gslConfig: TConfig) =>
     gsl(gslConfig, ((d: any) => d.uid === uid) as any);
 
-  return { gsl, gslByUid };
+  return { itemType: config.itemType, kind: config.kind, handler, gsl, gslByUid };
+}
+
+/**
+ * Registers an assembled widget type definition in the given registry.
+ */
+export function registerShortcutType<
+  TEntry,
+  TDecorator extends DxCommonFields,
+  TConfig extends GslConfigBase<TDecorator>,
+>(
+  registry: ItemTypeRegistry,
+  definition: ShortcutTypeDefinition<TEntry, TDecorator, TConfig>,
+): void {
+  registry.registerItemType(definition.itemType, definition.handler, definition.kind);
+}
+
+/**
+ * Convenience factory for registering a new widget type into a widget set's
+ * DX pipeline: {@link createShortcutType} plus {@link registerShortcutType}
+ * in one call.
+ *
+ * Returns GSL selector factories (`gsl`, `gslByUid`) for styling/configuring
+ * widgets of this type.
+ *
+ * @example
+ * const gridSelectors = defineShortcutType(kendoRegistry, {
+ *   itemType: 'KENDO_GRID',
+ *   kind: 'input',
+ *   entryShape: 'keyed',
+ *   mapToWidget: (def) => {
+ *     return { kind: 'input', type: 'kendoGrid', path: def.path, props: buildGridProps(def) };
+ *   },
+ * });
+ */
+export function defineShortcutType<
+  TEntry,
+  TDecorator extends DxCommonFields,
+  TConfig extends GslConfigBase<TDecorator> = GslConfigBase<TDecorator>,
+>(
+  registry: ItemTypeRegistry,
+  config: ShortcutTypeConfig<TEntry, TDecorator, TConfig>,
+): ShortcutTypeSelectors<TDecorator, TConfig> {
+  const definition = createShortcutType(config);
+  registerShortcutType(registry, definition);
+  return { gsl: definition.gsl, gslByUid: definition.gslByUid };
 }

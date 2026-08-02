@@ -1,10 +1,10 @@
-import { defineShortcutType } from '../../core/defineShortcutType';
-import { buildTypedValidator } from '../../core/dxValidatorHelper';
-import { extractWidgetProps } from '../../core/dxPropsHelper';
-import { processAutoLabel } from '../../core/sharedSensibleDefaults.service';
+import { createShortcutType } from '@golemui/dx';
+import { buildTypedValidator } from '@golemui/dx';
+import { extractWidgetProps } from '@golemui/dx';
+import { processAutoLabel } from '@golemui/dx';
 import type { TimeInputDecorator, TimeInputEntry, GslTimeInputConfig } from './timeInput.domain';
 
-export const { gsl: _gslTimeInputs, gslByUid: _gslTimeInputByUid } = defineShortcutType<
+export const timeInputShortcutType = createShortcutType<
   TimeInputEntry,
   TimeInputDecorator,
   GslTimeInputConfig
@@ -31,3 +31,6 @@ export const { gsl: _gslTimeInputs, gslByUid: _gslTimeInputByUid } = defineShort
     props: extractWidgetProps(def),
   }),
 });
+
+export const _gslTimeInputs = timeInputShortcutType.gsl;
+export const _gslTimeInputByUid = timeInputShortcutType.gslByUid;

@@ -1,13 +1,10 @@
-import { defineShortcutType } from '../../core/defineShortcutType';
-import { buildTypedValidator } from '../../core/dxValidatorHelper';
-import { extractWidgetProps } from '../../core/dxPropsHelper';
-import {
-  processAutoLabel,
-  processAutoPlaceholder,
-} from '../../core/sharedSensibleDefaults.service';
+import { createShortcutType } from '@golemui/dx';
+import { buildTypedValidator } from '@golemui/dx';
+import { extractWidgetProps } from '@golemui/dx';
+import { processAutoLabel, processAutoPlaceholder } from '@golemui/dx';
 import type { GslPasswordConfig, PasswordDecorator, PasswordEntry } from './password.domain';
 
-export const { gsl: _gslPasswords, gslByUid: _gslPasswordByUid } = defineShortcutType<
+export const passwordShortcutType = createShortcutType<
   PasswordEntry,
   PasswordDecorator,
   GslPasswordConfig
@@ -34,3 +31,6 @@ export const { gsl: _gslPasswords, gslByUid: _gslPasswordByUid } = defineShortcu
     props: extractWidgetProps(def),
   }),
 });
+
+export const _gslPasswords = passwordShortcutType.gsl;
+export const _gslPasswordByUid = passwordShortcutType.gslByUid;

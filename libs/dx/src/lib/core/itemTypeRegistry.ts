@@ -58,7 +58,7 @@ export interface BuildWidgetContext {
  *
  * Shortcut authors do NOT implement this interface directly. Instead, they call
  * {@link defineShortcutType} with a simple config object, and it assembles the full
- * handler and registers it in the global registry.
+ * handler and registers it in the widget set's registry.
  *
  * Entry shape taxonomy:
  *
@@ -114,7 +114,7 @@ export interface ItemTypeHandler<
 }
 
 // ═══════════════════════════════════════════════════
-// Registry singleton
+// Registry — one instance per widget set implementation
 // ═══════════════════════════════════════════════════
 
 /**
@@ -122,48 +122,85 @@ export interface ItemTypeHandler<
  */
 export type ShortcutItemKind = NonFunctionWidget['kind'];
 
-const registry = new Map<string, ItemTypeHandler<any, any, any>>();
-const kindByItemType = new Map<string, ShortcutItemKind>();
+/**
+ * Holds the item type handlers of one widget set implementation.
+ *
+ * Each implementation (gui, kendo, ...) owns its own instance, so shortcut
+ * names can overlap across implementations. Duplicate registration inside a
+ * single registry throws, because that is a real authoring error.
+ *
+ * Umbrella selectors (`inputs`, `actions`, `displays`, `layouts`) match item
+ * types by their registered kind. An item type registered without a kind never
+ * matches an umbrella selector; only selectors naming it exactly reach it.
+ */
+export class ItemTypeRegistry {
+  private readonly handlerByItemType = new Map<string, ItemTypeHandler<any, any, any>>();
+  private readonly kindByItemType = new Map<string, ShortcutItemKind>();
 
-export function registerItemType(
-  itemType: string,
-  handler: ItemTypeHandler<any, any, any>,
-  kind?: ShortcutItemKind,
-): void {
-  if (registry.has(itemType)) {
-    throw new Error(`Item type "${itemType}" is already registered.`);
+  registerItemType(
+    itemType: string,
+    handler: ItemTypeHandler<any, any, any>,
+    kind?: ShortcutItemKind,
+  ): void {
+    if (this.handlerByItemType.has(itemType)) {
+      throw new Error(`Item type "${itemType}" is already registered.`);
+    }
+    this.handlerByItemType.set(itemType, handler);
+    if (kind) {
+      this.kindByItemType.set(itemType, kind);
+    }
   }
-  registry.set(itemType, handler);
-  if (kind) {
-    kindByItemType.set(itemType, kind);
+
+  /**
+   * Returns the widget kind declared when the item type was registered, or undefined when it was registered without one
+   */
+  getItemTypeKind(itemType: string): ShortcutItemKind | undefined {
+    return this.kindByItemType.get(itemType);
+  }
+
+  /**
+   * Returns the names of every registered item type
+   */
+  getRegisteredItemTypes(): string[] {
+    return [...this.handlerByItemType.keys()];
+  }
+
+  /**
+   * Returns the names of every registered item type of the given kind
+   */
+  getItemTypesOfKind(kind: ShortcutItemKind): string[] {
+    const itemTypes: string[] = [];
+    for (const [itemType, itemKind] of this.kindByItemType) {
+      if (itemKind === kind) {
+        itemTypes.push(itemType);
+      }
+    }
+    return itemTypes;
+  }
+
+  getItemTypeHandler(itemType: string): ItemTypeHandler<any, any, any> {
+    const handler = this.handlerByItemType.get(itemType);
+    if (!handler) {
+      throw new Error(
+        `No handler registered for item type "${itemType}". ` +
+          `Did you forget to import the registration module?`,
+      );
+    }
+    return handler;
+  }
+
+  hasItemTypeHandler(itemType: string): boolean {
+    return this.handlerByItemType.has(itemType);
   }
 }
 
 /**
- * Returns the widget kind declared when the item type was registered, or undefined when it was registered without one
+ * Creates the item type registry of a widget set implementation.
+ *
+ * @example
+ * const kendoRegistry = createItemTypeRegistry();
+ * defineShortcutType(kendoRegistry, { itemType: 'KENDO_GRID', kind: 'input', ... });
  */
-export function getItemTypeKind(itemType: string): ShortcutItemKind | undefined {
-  return kindByItemType.get(itemType);
-}
-
-/**
- * Returns the names of every registered item type
- */
-export function getRegisteredItemTypes(): string[] {
-  return [...registry.keys()];
-}
-
-export function getItemTypeHandler(itemType: string): ItemTypeHandler<any, any, any> {
-  const handler = registry.get(itemType);
-  if (!handler) {
-    throw new Error(
-      `No handler registered for item type "${itemType}". ` +
-        `Did you forget to import the registration module?`,
-    );
-  }
-  return handler;
-}
-
-export function hasItemTypeHandler(itemType: string): boolean {
-  return registry.has(itemType);
+export function createItemTypeRegistry(): ItemTypeRegistry {
+  return new ItemTypeRegistry();
 }

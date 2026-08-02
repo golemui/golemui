@@ -1,13 +1,10 @@
-import { defineShortcutType } from '../../core/defineShortcutType';
-import { buildTypedValidator } from '../../core/dxValidatorHelper';
-import { extractWidgetProps } from '../../core/dxPropsHelper';
-import {
-  processAutoLabel,
-  processAutoPlaceholder,
-} from '../../core/sharedSensibleDefaults.service';
+import { createShortcutType } from '@golemui/dx';
+import { buildTypedValidator } from '@golemui/dx';
+import { extractWidgetProps } from '@golemui/dx';
+import { processAutoLabel, processAutoPlaceholder } from '@golemui/dx';
 import type { CurrencyDecorator, CurrencyEntry, GslCurrencyConfig } from './currency.domain';
 
-export const { gsl: _gslCurrencies, gslByUid: _gslCurrencyByUid } = defineShortcutType<
+export const currencyShortcutType = createShortcutType<
   CurrencyEntry,
   CurrencyDecorator,
   GslCurrencyConfig
@@ -34,3 +31,6 @@ export const { gsl: _gslCurrencies, gslByUid: _gslCurrencyByUid } = defineShortc
     props: extractWidgetProps(def),
   }),
 });
+
+export const _gslCurrencies = currencyShortcutType.gsl;
+export const _gslCurrencyByUid = currencyShortcutType.gslByUid;

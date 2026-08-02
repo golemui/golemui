@@ -1,4 +1,4 @@
-import { type ValidGuiShortcut, GuiItemTypes } from '../../core/dx.domain';
+import { type ValidGuiShortcut, GuiItemTypes } from '@golemui/dx';
 import {
   type FlexFamilyProps,
   type GridFamilyProps,

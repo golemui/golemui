@@ -1,5 +1,5 @@
 import { type CalendarDecorator, type CalendarSensibleDefaultsConfig } from './calendar.domain';
-import { processAutoLabel } from '../../core/sharedSensibleDefaults.service';
+import { processAutoLabel } from '@golemui/dx';
 
 export class CalendarSensibleDefaultsService {
   public processAutomaticLabels(

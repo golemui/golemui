@@ -40,6 +40,7 @@ const GOLEMUI_TYPE_PACKAGES = [
   { spec: '@golemui/gui-shared', rel: 'gui/shared/index.d.ts' },
   { spec: '@golemui/gui-shared/internals', rel: 'gui/shared/internals.d.ts' },
   { spec: '@golemui/gui-validators', rel: 'gui/validators/index.d.ts' },
+  { spec: '@golemui/dx', rel: 'dx/index.d.ts' },
   { spec: '@golemui/core', rel: 'core/index.d.ts' },
 ] as const;
 

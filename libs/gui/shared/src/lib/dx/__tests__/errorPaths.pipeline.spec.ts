@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { formDefs } from '../dx.service';
-import { type ValidGuiShortcut, GuiItemTypes } from '../core/dx.domain';
-import { registerItemType, hasItemTypeHandler } from '../core/itemTypeRegistry';
+import { formDefs } from '../formDefs';
+import { type ValidGuiShortcut, GuiItemTypes } from '@golemui/dx';
+import { guiRegistry } from '../registry';
 
 describe('DX Pipeline — Error Paths', () => {
   it('throws when an unregistered item type is encountered', () => {
@@ -18,9 +18,9 @@ describe('DX Pipeline — Error Paths', () => {
   });
 
   it('throws when the same item type is registered twice', () => {
-    expect(hasItemTypeHandler(GuiItemTypes.INPUTS)).toBe(true);
+    expect(guiRegistry.hasItemTypeHandler(GuiItemTypes.INPUTS)).toBe(true);
 
-    expect(() => registerItemType(GuiItemTypes.INPUTS, {} as any)).toThrow(
+    expect(() => guiRegistry.registerItemType(GuiItemTypes.INPUTS, {} as any)).toThrow(
       `Item type "${GuiItemTypes.INPUTS}" is already registered`,
     );
   });

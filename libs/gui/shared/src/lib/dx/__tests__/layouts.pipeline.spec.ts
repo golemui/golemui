@@ -1,6 +1,6 @@
 import { type LayoutWidget } from '@golemui/core';
 import { describe, expect, it } from 'vitest';
-import { GuiItemTypes, type ValidGuiShortcut } from '../core/dx.domain';
+import { GuiItemTypes, type ValidGuiShortcut } from '@golemui/dx';
 import { processDx, getStaticChild, getRawChild, resolveDynamic } from './helpers';
 import { _guiHorizontalFlex, _guiVerticalFlex, _guiFlex } from '../shortcuts/layouts/guiFlex.impl';
 import { _gslLayoutByUid } from '../shortcuts/layouts/register';
