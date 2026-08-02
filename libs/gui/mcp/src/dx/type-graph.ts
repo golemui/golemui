@@ -113,8 +113,10 @@ export function resolveTypeCheckOptions(ts: typeof TS): TS.CompilerOptions {
     moduleResolution: ts.ModuleResolutionKind.Bundler,
     jsx: ts.JsxEmit.ReactJSX,
     lib: ['lib.es2020.d.ts', 'lib.dom.d.ts'],
-    // baseUrl roots node_modules resolution (zod, @standard-schema/spec, and — in the
-    // installed case — the @golemui packages themselves).
+    // baseUrl serves the dev-fallback `paths` mappings and is where {@link diagnose}
+    // anchors the in-memory snippet. It does NOT root node_modules resolution by itself:
+    // under `moduleResolution: Bundler`, non-relative imports walk upward from the
+    // importing file's directory — which is exactly why the snippet must live here.
     baseUrl: strat.baseUrl,
     ...(strat.paths ? { paths: strat.paths } : {}),
   };
@@ -122,7 +124,7 @@ export function resolveTypeCheckOptions(ts: typeof TS): TS.CompilerOptions {
 
 /**
  * Compile a single in-memory file against the type graph and return ONLY that file's
- * diagnostics (the host serves {@link SNIPPET_FILE} from memory; every other file is read
+ * diagnostics (the host serves the snippet from memory; every other file is read
  * from disk as usual).
  */
 export function diagnose(
@@ -130,23 +132,21 @@ export function diagnose(
   code: string,
   options: TS.CompilerOptions,
 ): readonly TS.Diagnostic[] {
-  const sf = ts.createSourceFile(SNIPPET_FILE, code, ts.ScriptTarget.ES2020, true);
+  const snippetPath = resolve(options.baseUrl ?? '.', SNIPPET_FILE);
+  const isSnippet = (fileName: string) =>
+    fileName === snippetPath || resolve(fileName) === snippetPath;
+  const sf = ts.createSourceFile(snippetPath, code, ts.ScriptTarget.ES2020, true);
   const host = ts.createCompilerHost(options, true);
   const originalGet = host.getSourceFile.bind(host);
   host.getSourceFile = (fileName, languageVersion, onError, shouldCreate) =>
-    fileName === SNIPPET_FILE || resolve(fileName) === resolve(SNIPPET_FILE)
-      ? sf
-      : originalGet(fileName, languageVersion, onError, shouldCreate);
+    isSnippet(fileName) ? sf : originalGet(fileName, languageVersion, onError, shouldCreate);
   const originalExists = host.fileExists.bind(host);
-  host.fileExists = (fileName) =>
-    fileName === SNIPPET_FILE ||
-    resolve(fileName) === resolve(SNIPPET_FILE) ||
-    originalExists(fileName);
+  host.fileExists = (fileName) => isSnippet(fileName) || originalExists(fileName);
   const originalRead = host.readFile.bind(host);
-  host.readFile = (fileName) => (fileName === SNIPPET_FILE ? code : originalRead(fileName));
+  host.readFile = (fileName) => (isSnippet(fileName) ? code : originalRead(fileName));
 
-  const program = ts.createProgram([SNIPPET_FILE], options, host);
-  return ts.getPreEmitDiagnostics(program).filter((d) => d.file?.fileName === SNIPPET_FILE);
+  const program = ts.createProgram([snippetPath], options, host);
+  return ts.getPreEmitDiagnostics(program).filter((d) => d.file?.fileName === snippetPath);
 }
 
 /**
