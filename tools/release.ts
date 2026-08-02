@@ -2,7 +2,6 @@ import { execSync } from 'node:child_process';
 import { copyFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { releaseChangelog, releasePublish, releaseVersion } from 'nx/release';
-import { type VersionData } from 'nx/src/command-line/release/utils/shared';
 import { updateTemplateVersions } from './update-template-versions';
 
 process.setMaxListeners(20);
@@ -86,22 +85,6 @@ function updateSkillReferences(dryRun: boolean) {
   }
 }
 
-function updateLatestDistTag(projectsVersionData: VersionData) {
-  const version = projectsVersionData.newVersion;
-  if (version) {
-    PUBLISHABLE_PACKAGES.forEach((packageName) => {
-      console.log(`Updating dist-tag: latest => ${packageName}@${version}`);
-      try {
-        execSync(`npm dist-tag add ${packageName}@${version} latest`, {
-          stdio: 'inherit',
-        });
-      } catch (e) {
-        console.warn(`Tag update failed: ${(e as Error).message}`);
-      }
-    });
-  }
-}
-
 (async () => {
   const releaseType = process.env.RELEASE_TYPE === 'rc' ? 'rc' : 'stable';
   const dryRun = process.env.DRY_RUN === 'true';
@@ -132,10 +115,6 @@ function updateLatestDistTag(projectsVersionData: VersionData) {
     tag: releaseType === 'rc' ? 'next' : undefined,
     dryRun,
   });
-
-  if (releaseType === 'stable' && !dryRun) {
-    updateLatestDistTag(projectsVersionData);
-  }
 
   const ok = Object.values(publishResult).every((result) => result.code === 0);
   process.exit(ok ? 0 : 1);
