@@ -1,9 +1,9 @@
-// ═══════════════════════════════════════════════════
-// DX Shared Utility Types — collapse per-type domain boilerplate
-// ═══════════════════════════════════════════════════
+// ===================================================
+// DX Shared Utility Types - collapse per-type domain boilerplate
+// ===================================================
 
 import type { FunctionWidgetParams } from '@golemui/core';
-import type { RuntimeFunction, GuiItemsShortcut, GslLeafSelector } from './dx.domain';
+import type { RuntimeFunction, ItemsShortcut, GslLeafSelector } from './dx.domain';
 
 export type DxRuntimeParams<FormData = any> = FunctionWidgetParams<FormData>;
 
@@ -29,13 +29,19 @@ export interface GslConfigBase<D> {
 }
 
 /**
- * Typed GUI shortcut sub-interface.
+ * Typed shortcut sub-interface.
  * Usage: replace per-type `GuiCalendarShortcut`, `GuiInputsShortcut`, etc.
  */
-export interface GuiShortcutOf<TItemType extends string, TEntry> extends GuiItemsShortcut {
+export interface ShortcutOf<TItemType extends string, TEntry> extends ItemsShortcut {
   itemType: TItemType;
   items: TEntry[];
 }
+
+/**
+ * Kept as a permanent alias of {@link ShortcutOf} so pre-refactor imports
+ * keep working. New code should use the neutral name.
+ */
+export type GuiShortcutOf<TItemType extends string, TEntry> = ShortcutOf<TItemType, TEntry>;
 
 /**
  * Creates a GSL selector factory for a given shortcut type.
