@@ -155,8 +155,9 @@ import {
 // A dropped value export fails this file at module-link time (the named import
 // above no longer resolves); the runtime assertions below give a readable
 // per-name report on top. Type exports are covered by the `import type` blocks
-// at the bottom, which fail `tsc -p tsconfig.spec.json` when a type re-export
-// is dropped.
+// at the bottom, which fail the vitest typecheck pass configured in
+// vite.config.ts (`test.typecheck`, using tsconfig.legacy-imports.json) when a
+// type re-export is dropped.
 
 const publicValueExports = { gui, resolveChunkRefs };
 
@@ -334,8 +335,9 @@ describe('legacy import surface', () => {
 });
 
 // ─── Type exports (compile-time coverage) ─────────────────────────────────
-// A dropped type re-export breaks these imports under
-// `tsc -p libs/gui/shared/tsconfig.spec.json`.
+// A dropped type re-export breaks these imports under the vitest typecheck
+// pass (see `test.typecheck` in vite.config.ts), which CI runs as part of
+// the vite:test target.
 
 import type {
   DxDefinitionItem as _T1,

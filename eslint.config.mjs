@@ -22,12 +22,12 @@ export default [
       //  scope:app ----> scope:framework ------> scope:gui -----> scope:core
       //  apps/           react/lit/angular       gui-shared       core
       //  docs/           gui-react/lit/angular   gui-components   gui-validators
-      //                  ui-testing
+      //                  ui-testing                               dx
       //
       // |------------------------------------------------------------------------------------------------|
       // | Tag             | Projects                                                                     |
       // |------------------------------------------------------------------------------------------------|
-      // | scope:core      | @golemui/core, gui-validators                                                |
+      // | scope:core      | @golemui/core, @golemui/dx, gui-validators                                   |
       // | scope:gui       | @golemui/gui-shared, gui-components                                          |
       // | scope:framework | @golemui/react/lit/angular, gui-react/lit/angular, ui-testing                |
       // | scope:app       | everything under apps/ and docs/                                             |

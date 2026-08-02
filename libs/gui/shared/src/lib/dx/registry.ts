@@ -1,15 +1,15 @@
-// ═══════════════════════════════════════════════════
+// ===================================================
 // The gui widget set registry.
 //
 // Every shortcut folder exports a pure shortcut type definition
 // (`createShortcutType` in its register.ts); this module is the single
 // explicit place where they are registered. Registration rides on the
-// value-dependency chain (registry → formDefs → resolveFormInput), so no
+// value-dependency chain (registry -> formDefs -> resolveFormInput), so no
 // side-effect import is needed and bundlers cannot drop it.
 //
 // Adding a shortcut: export its `<name>ShortcutType` from the folder's
 // register.ts and add it to `guiShortcutTypes` below. See SHORTCUTS.md.
-// ═══════════════════════════════════════════════════
+// ===================================================
 
 import {
   createItemTypeRegistry,
@@ -144,6 +144,11 @@ export function defineShortcutType<
 >(
   config: GuiShortcutTypeConfig<TEntry, TDecorator, TConfig>,
 ): ShortcutTypeSelectors<TDecorator, TConfig> {
+  // AUDIT BOUNDARY: The cast presents a possibly-kindless config as the
+  // kind-required dx config. Safe because `ShortcutTypeDefinition.kind` is
+  // optional and its only runtime consumer (`registerItemType`) accepts an
+  // absent kind, in which case the type never matches umbrella selectors.
+  // Do NOT replicate this pattern elsewhere.
   return dxDefineShortcutType(
     guiRegistry,
     config as ShortcutTypeConfig<TEntry, TDecorator, TConfig>,

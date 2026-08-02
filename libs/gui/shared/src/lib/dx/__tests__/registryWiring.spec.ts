@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
+import { guiRegistry } from '../registry';
 
 // Each shortcut folder exports a pure shortcut type definition from its
 // `register.ts`; `registry.ts` is the single place that registers them all
@@ -41,5 +42,40 @@ describe('gui registry wiring', () => {
         missing.map((name) => `'./shortcuts/${name}/register'`).join(', ') +
         ` and add it to guiShortcutTypes`,
     ).toEqual([]);
+  });
+
+  it('registers every exported shortcut type definition in guiRegistry', async () => {
+    // The import check above only proves registry.ts references each folder.
+    // Registration additionally requires the definition to be listed in the
+    // guiShortcutTypes array, so this test asserts actual registration: a
+    // definition that is imported but not listed fails here.
+    for (const name of shortcutsWithRegister) {
+      const registerModule: Record<string, unknown> = await import(
+        `../shortcuts/${name}/register.ts`
+      );
+
+      const definitions = Object.values(registerModule).filter(
+        (candidate): candidate is { itemType: string } => {
+          if (typeof candidate !== 'object' || candidate === null) {
+            return false;
+          }
+          const shape = candidate as { itemType?: unknown; handler?: unknown };
+          return typeof shape.itemType === 'string' && typeof shape.handler === 'object';
+        },
+      );
+
+      expect(
+        definitions.length,
+        `shortcuts/${name}/register.ts exports no shortcut type definition`,
+      ).toBeGreaterThan(0);
+
+      for (const definition of definitions) {
+        expect(
+          guiRegistry.hasItemTypeHandler(definition.itemType),
+          `"${definition.itemType}" (from shortcuts/${name}) is not registered in guiRegistry. ` +
+            `Add it to guiShortcutTypes in registry.ts`,
+        ).toBe(true);
+      }
+    }
   });
 });

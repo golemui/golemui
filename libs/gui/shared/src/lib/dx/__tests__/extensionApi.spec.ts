@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { defineShortcutType } from '../registry';
+import { _gslInputs } from '../shortcuts/inputs/register';
 import { processAutoLabel } from '@golemui/dx';
 import { type DxCommonFields, type DxInputBase } from '@golemui/dx';
 import { type DefOrCallback, type GslConfigBase, type GuiShortcutOf } from '@golemui/dx';
@@ -73,5 +74,20 @@ describe('Extension API — defineShortcutType', () => {
     };
 
     expect(widget.props?.customField).toBe('from-gsl');
+  });
+
+  it('never matches umbrella selectors for a type registered without a kind', () => {
+    // TEST_CUSTOM_WIDGET is registered without a kind, so the INPUTS umbrella
+    // selector must skip it entirely: no umbrella override and no umbrella
+    // sensible defaults (label suppression). The auto-label stays in place.
+    // This pins the legacy behavior for custom widget authors. If the compat
+    // wrapper ever defaults `kind` or the resolver treats a missing kind as a
+    // match, the label changes and this test fails.
+    const result = processDx(_guiCustom('field'), [
+      _gslInputs({ suppressAutomaticLabels: true, override: { label: 'From Umbrella' } }),
+    ]);
+    const widget = getStaticChild(result, 0) as { label?: string };
+
+    expect(widget.label).toBe('Field');
   });
 });

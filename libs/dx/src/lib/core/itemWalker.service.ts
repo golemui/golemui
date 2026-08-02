@@ -86,7 +86,7 @@ export class ItemWalker {
   ): FormWidget<StateKeys, FormData>[] {
     return guiShortcuts.flatMap((shortcut) => {
       if (shortcut.type !== 'ITEMS') {
-        throw new Error('Unexpected gui shortcut type');
+        throw new Error(`Unexpected shortcut type "${(shortcut as { type?: string }).type}"`);
       }
 
       return shortcut.items.map((entry) => {
@@ -145,7 +145,7 @@ export class ItemWalker {
       });
     }
 
-    // Universal event wiring: onLoad, onChange, onFilter → core on: { ... }
+    // Universal event wiring: onLoad, onChange, onFilter -> core on: { ... }
     mergeResult = this.eventWiring.wireInputLayoutEvents(
       mergeResult,
       eventRegistry,
@@ -176,7 +176,7 @@ export class ItemWalker {
 
     // Assign deterministic uids to widgets that don't have one.
     // First widget at a given path keeps `uid = path` (preserves the INITIALIZE
-    // decode invariant — flatForm and rendered tree match for stable paths).
+    // decode invariant - flatForm and rendered tree match for stable paths).
     // Subsequent widgets at the same path (legitimate when paths repeat across
     // tabs, e.g., a checkbox and a toggle both binding `isNewUser`) fall back
     // to the counter to avoid duplicate-uid errors from core.
