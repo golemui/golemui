@@ -25,6 +25,7 @@
       "@golemui/forms-from-prompt-core": ["apps/apps-shared/src/forms-from-prompt/index.tsx"],
       "@golemui/core": ["libs/core/src/index.ts"],
       "@golemui/core/internals": ["libs/core/src/internals.ts"],
+      "@golemui/dx": ["libs/dx/src/index.ts"],
       "@golemui/gui-angular": ["libs/gui/angular/src/index.ts"],
       "@golemui/gui-lit": ["libs/gui/lit/src/index.ts"],
       "@golemui/gui-react": ["libs/gui/react/src/index.ts"],
