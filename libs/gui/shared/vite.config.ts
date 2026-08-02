@@ -44,10 +44,10 @@ export default defineConfig(() => ({
     include: ['{src,tests}/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     // Runs `tsc --noEmit` over legacy-imports.spec.ts so a dropped TYPE
     // re-export fails the vite:test CI step. Value exports already fail at
-    // module link time; without this, esbuild erases the `import type` lines
-    // and the type half of the compatibility guard asserts nothing.
-    // The dedicated tsconfig keeps the checked program down to that one spec
-    // plus the entry points it imports.
+    // module link time, but without this check esbuild erases the
+    // `import type` lines and the type half of the compatibility guard
+    // asserts nothing. The dedicated tsconfig keeps the checked program down
+    // to that one spec plus the entry points it imports.
     typecheck: {
       enabled: true,
       include: ['src/legacy-imports.spec.ts'],

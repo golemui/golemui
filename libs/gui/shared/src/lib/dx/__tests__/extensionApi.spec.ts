@@ -80,7 +80,7 @@ describe('Extension API — defineShortcutType', () => {
     // TEST_CUSTOM_WIDGET is registered without a kind, so the INPUTS umbrella
     // selector must skip it entirely: no umbrella override and no umbrella
     // sensible defaults (label suppression). The auto-label stays in place.
-    // This pins the legacy behavior for custom widget authors; if the compat
+    // This pins the legacy behavior for custom widget authors. If the compat
     // wrapper ever defaults `kind` or the resolver treats a missing kind as a
     // match, the label changes and this test fails.
     const result = processDx(_guiCustom('field'), [

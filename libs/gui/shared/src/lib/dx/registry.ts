@@ -147,7 +147,7 @@ export function defineShortcutType<
   // AUDIT BOUNDARY: The cast presents a possibly-kindless config as the
   // kind-required dx config. Safe because `ShortcutTypeDefinition.kind` is
   // optional and its only runtime consumer (`registerItemType`) accepts an
-  // absent kind; a kindless type simply never matches umbrella selectors.
+  // absent kind, in which case the type never matches umbrella selectors.
   // Do NOT replicate this pattern elsewhere.
   return dxDefineShortcutType(
     guiRegistry,

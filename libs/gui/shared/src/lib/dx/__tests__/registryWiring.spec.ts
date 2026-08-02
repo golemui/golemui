@@ -72,8 +72,8 @@ describe('gui registry wiring', () => {
       for (const definition of definitions) {
         expect(
           guiRegistry.hasItemTypeHandler(definition.itemType),
-          `"${definition.itemType}" (from shortcuts/${name}) is not registered in guiRegistry; ` +
-            `add it to guiShortcutTypes in registry.ts`,
+          `"${definition.itemType}" (from shortcuts/${name}) is not registered in guiRegistry. ` +
+            `Add it to guiShortcutTypes in registry.ts`,
         ).toBe(true);
       }
     }
