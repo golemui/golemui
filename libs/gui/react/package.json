@@ -2,6 +2,9 @@
   "name": "@golemui/gui-react",
   "version": "0.0.0",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "main": "./index.umd.cjs",
   "module": "./index.js",
