@@ -1,3 +1,7 @@
+## 1.1.1-rc.1 (2026-08-02)
+
+This was a version bump only for vue to align it with other projects, there were no code changes.
+
 ## 1.1.1-rc.0 (2026-08-01)
 
 This was a version bump only for vue to align it with other projects, there were no code changes.

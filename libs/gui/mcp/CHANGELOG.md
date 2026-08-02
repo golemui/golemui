@@ -1,3 +1,13 @@
+## 1.1.1-rc.1 (2026-08-02)
+
+### 🩹 Fixes
+
+- **gui-mcp:** resolve @golemui/dx in the dx_check_code type graph ([8afa41db](https://github.com/golemui/golemui/commit/8afa41db))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+
 ## 1.1.1-rc.0 (2026-08-01)
 
 ### 🚀 Features
