@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { processDx, getRawChild, resolveDynamic } from './helpers';
 import { _guiButton } from '../shortcuts/actions/guiActions.impl';
-import { formDefs } from '../dx.service';
+import { formDefs } from '../formDefs';
 import { _guiTextInput } from '../index';
 
 describe('DX Pipeline — Actions', () => {

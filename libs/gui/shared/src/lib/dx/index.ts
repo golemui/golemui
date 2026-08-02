@@ -143,10 +143,10 @@ export { _gslTag } from './shortcuts/scopes/gslTag.impl';
 
 // ─── Public types ───
 
-export type { DxFormConfig, FormConfig, GslSelectorsInput } from './core/dx.domain';
-export type { DxRuntimeParams } from './core/dxUtilityTypes';
-export type { DxValidator } from './core/dxValidatorHelper';
-export { formDefs } from './dx.service';
+export type { DxFormConfig, FormConfig, GslSelectorsInput } from '@golemui/dx';
+export type { DxRuntimeParams } from '@golemui/dx';
+export type { DxValidator } from '@golemui/dx';
+export { formDefs } from './formDefs';
 export type {
   DxDefinitionItem,
   DxDefinitions,
@@ -269,8 +269,8 @@ export type {
 
 // ─── Extension API (for adding custom shortcut types) ───
 
-export { defineShortcutType } from './core/defineShortcutType';
-export type { ShortcutTypeSelectors } from './core/defineShortcutType';
+export { defineShortcutType, guiRegistry } from './registry';
+export type { ShortcutTypeSelectors } from '@golemui/dx';
 export type {
   DxActionBase,
   DxCommonFields,
@@ -279,13 +279,13 @@ export type {
   DxInputBase,
   DxInternalFields,
   DxLayoutBase,
-} from './core/dxBase.types';
-export { extractWidgetProps } from './core/dxPropsHelper';
-export { createGslSelector } from './core/dxUtilityTypes';
+} from '@golemui/dx';
+export { extractWidgetProps } from '@golemui/dx';
+export { createGslSelector } from '@golemui/dx';
 export type {
   DefOrCallback,
   GslConfigBase,
   GslDecoratorCallback,
   GuiShortcutOf,
-} from './core/dxUtilityTypes';
-export { processAutoLabel, processAutoPlaceholder } from './core/sharedSensibleDefaults.service';
+} from '@golemui/dx';
+export { processAutoLabel, processAutoPlaceholder } from '@golemui/dx';

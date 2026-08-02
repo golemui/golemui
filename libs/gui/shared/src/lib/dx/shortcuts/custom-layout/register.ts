@@ -1,7 +1,7 @@
 import { type FormWidget, type FunctionWidgetParams, type LayoutWidget } from '@golemui/core';
-import { type MergeResult, type ValidGuiShortcut } from '../../core/dx.domain';
-import { type BuildWidgetContext } from '../../core/itemTypeRegistry';
-import { defineShortcutType } from '../../core/defineShortcutType';
+import { type MergeResult, type ValidGuiShortcut } from '@golemui/dx';
+import { type BuildWidgetContext } from '@golemui/dx';
+import { createShortcutType } from '@golemui/dx';
 import type {
   CustomLayoutDecorator,
   CustomLayoutEntry,
@@ -38,7 +38,7 @@ function getChildren(entry: CustomLayoutEntry): ValidGuiShortcut[] | undefined {
   return entry.children;
 }
 
-export const { gsl: _gslCustomLayouts, gslByUid: _gslCustomLayoutByUid } = defineShortcutType<
+export const customLayoutShortcutType = createShortcutType<
   CustomLayoutEntry,
   CustomLayoutDecorator,
   GslCustomLayoutConfig
@@ -50,3 +50,6 @@ export const { gsl: _gslCustomLayouts, gslByUid: _gslCustomLayoutByUid } = defin
   buildCustomWidget,
   getChildren,
 });
+
+export const _gslCustomLayouts = customLayoutShortcutType.gsl;
+export const _gslCustomLayoutByUid = customLayoutShortcutType.gslByUid;

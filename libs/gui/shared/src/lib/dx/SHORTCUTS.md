@@ -26,7 +26,7 @@ Adds the `afterMerge` hook for onClick wiring. This is the only type that needs 
 
 **`display/`** — Always produces a `FunctionWidget` (dynamic). The `buildCustomWidget` hook wraps the developer's render function. Unique because every display widget re-evaluates on form state changes.
 
-**`repeater/`** — The only type that bypasses `defineShortcutType` and registers a custom `ItemTypeHandler` directly. It's both keyed (has a data path) and compound (has children) — a hybrid that doesn't fit any standard entry shape. Also implements auto-prefixing of child paths. You'll probably never need this pattern.
+**`repeater/`** — The only type that bypasses `createShortcutType` and hand-builds its `ItemTypeHandler`. It's both keyed (has a data path) and compound (has children) — a hybrid that doesn't fit any standard entry shape. Also implements auto-prefixing of child paths. You'll probably never need this pattern.
 
 ### Quick reference: complexity by folder
 
@@ -54,7 +54,7 @@ Adds the `afterMerge` hook for onClick wiring. This is the only type that needs 
 | `display/`           | Moderate   | bare        | buildCustomWidget                                 | Always dynamic (FunctionWidget)             |
 | `layouts/`           | Compound   | compound    | buildCustomWidget, getChildren                    | Recursive children                          |
 | `inputs/`            | Complex    | keyed       | sensibleDefaults                                  | Batch factory, 3 sub-types, key expansion   |
-| `repeater/`          | Custom     | hybrid      | buildCustomWidget, getChildren, custom parseEntry | Bypasses defineShortcutType, auto-prefixing |
+| `repeater/`          | Custom     | hybrid      | buildCustomWidget, getChildren, custom parseEntry | Bypasses createShortcutType, auto-prefixing |
 
 ---
 
@@ -152,7 +152,7 @@ Level 3 is the most powerful: one selector can make every matched widget reactiv
 
 ## One Core Shape
 
-All GUI shortcuts produce a single core shape (defined in `core/dx.domain.ts`):
+All GUI shortcuts produce a single core shape (defined in `@golemui/dx`):
 
 **`GuiItemsShortcut`** — `{ type: 'ITEMS', itemType, items, tags }`. Sub-interfaces narrow `itemType` and `items` for each widget kind:
 
@@ -163,7 +163,7 @@ All GUI shortcuts produce a single core shape (defined in `core/dx.domain.ts`):
 
 All four flow through the same `processItem` → resolver → merger → mapper pipeline in `dx.service.ts`. Layouts additionally recurse into their children after the pipeline. Displays produce function widgets that receive runtime params.
 
-Item type constants are defined once in `core/dx.domain.ts` as type aliases (`GUI_ITEM_TYPE_INPUTS`, `GUI_ITEM_TYPE_ACTIONS`, `GUI_ITEM_TYPE_LAYOUTS`, `GUI_ITEM_TYPE_DISPLAYS`) with a runtime object `GuiItemTypes` for use in comparisons and object literals.
+Item type constants are defined once in `@golemui/dx` as type aliases (`GUI_ITEM_TYPE_INPUTS`, `GUI_ITEM_TYPE_ACTIONS`, `GUI_ITEM_TYPE_LAYOUTS`, `GUI_ITEM_TYPE_DISPLAYS`) with a runtime object `GuiItemTypes` for use in comparisons and object literals.
 
 ## Entry Shape Taxonomy
 
@@ -268,16 +268,13 @@ If a shortcut has no visible demo, it is not considered complete.
 
 ## Folder Structure
 
-```
-services/dx/
-├── core/                              ← Shared DX infrastructure
-│   ├── dx.domain.ts                   ← Core shape (GuiItemsShortcut), type aliases (GUI_ITEM_TYPE_*),
-│   │                                    runtime constants (GuiItemTypes), GSL selector types,
-│   │                                    MergeResult, ValidGuiShortcut union
-│   ├── selectorResolver.service.ts    ← Resolves GSL selectors for a given item
-│   ├── widgetMerger.service.ts        ← Merges decorators + applies sensible defaults
-│   └── widgetMapper.service.ts        ← Maps decorator → core FormWidget
-│
+The shared DX infrastructure (core shape `GuiItemsShortcut`, `GuiItemTypes`,
+GSL selector types, `MergeResult`, the resolver / merger / mapper pipeline,
+`createShortcutType`, and the item type registry) lives in the `@golemui/dx`
+package (`libs/dx`). This package contains the gui catalog built on top of it:
+
+```text
+lib/dx/
 ├── shortcuts/                         ← Pluggable shortcut folders
 │   ├── inputs/                        ← Input shortcut (text, number, boolean)
 │   │   ├── inputs.domain.ts           ← InputDecorator, InputEntry, GuiInputsShortcut, GslInputsConfig
@@ -311,8 +308,10 @@ services/dx/
 │       ├── gslTag.impl.ts             ← _gslTag()  (internal, focus-closeout removal)
 │       └── gslStates.impl.ts          ← _gslStates() (internal, focus-closeout removal)
 │
-├── dx.service.ts                      ← Orchestration: walks GUI tree, calls pipeline
-├── formDef.domain.ts                  ← Base WidgetItemDecorator + DxDefinitions + re-exports
+├── registry.ts                        ← guiRegistry: registers every shortcut type definition
+├── formDefs.ts                        ← formDefs: the DX service bound to guiRegistry + gui adapter
+├── resolveFormInput.ts                ← gui-bound resolveFormInput + GuiFormInitConfig
+├── formDef.domain.ts                  ← Compatibility re-exports + gui decorator re-exports
 └── SHORTCUTS.md                       ← This file
 ```
 
@@ -350,11 +349,11 @@ A `--` means the shortcut does not implement that piece.
 
 ## How to Add a New Item Shortcut (Phase 5+)
 
-Phase 5 introduced three shared helpers that remove almost all registration boilerplate:
+Three shared helpers from `@golemui/dx` remove almost all registration boilerplate:
 
-- `DefOrCallback<D>`, `GslConfigBase<D>`, `GuiShortcutOf<Type, Entry>` in `core/dxUtilityTypes.ts`
-- `createGslSelector<D, TConfig>(itemType)` in `core/dxUtilityTypes.ts`
-- `defineShortcutType<TEntry, TDecorator, TConfig>(config)` in `core/defineShortcutType.ts`
+- `DefOrCallback<D>`, `GslConfigBase<D>`, `GuiShortcutOf<Type, Entry>`
+- `createGslSelector<D, TConfig>(itemType)`
+- `createShortcutType<TEntry, TDecorator, TConfig>(config)`
 
 ### Minimal files now
 
@@ -362,15 +361,15 @@ Phase 5 introduced three shared helpers that remove almost all registration boil
 
 1. `{type}.domain.ts` — decorator + `GslConfig` + entry + gui shortcut type aliases
 2. `gui{Type}.impl.ts` — hand-crafted ergonomic `_gui*` function
-3. `register.ts` — one `defineShortcutType(...)` call + exported `_gsl*` selector
+3. `register.ts` — one `createShortcutType(...)` call + exported `_gsl*` selectors
 
 #### Keyed-entry type (inputs-like)
 
-Same 3 files. In `defineShortcutType`, use `entryShape: 'keyed'`.
+Same 3 files. In `createShortcutType`, use `entryShape: 'keyed'`.
 
 #### Complex type with hooks (layouts/actions/displays)
 
-Same 3 files. Add only the hooks you need in `defineShortcutType`:
+Same 3 files. Add only the hooks you need in `createShortcutType`:
 
 - `afterMerge` (actions)
 - `buildCustomWidget` (layouts/displays)
@@ -409,12 +408,12 @@ export const _guiMyType = (entry: MyTypeEntry, tags?: string[]): GuiMyTypeShortc
 `register.ts`
 
 ```ts
-import { defineShortcutType } from '../../core/defineShortcutType';
-import { createGslSelector } from '../../core/dxUtilityTypes';
-import type { GslMyTypeConfig, MyTypeDecorator, MyTypeEntry } from './myType.domain';
+import { createShortcutType } from '@golemui/dx';
+import type { MyTypeDecorator, MyTypeEntry } from './myType.domain';
 
-defineShortcutType<MyTypeEntry, MyTypeDecorator>({
+export const myTypeShortcutType = createShortcutType<MyTypeEntry, MyTypeDecorator>({
   itemType: 'MY_TYPE',
+  kind: 'display',
   entryShape: 'bare',
   mapToWidget: (def) => ({
     uid: def.uid ?? '',
@@ -424,11 +423,21 @@ defineShortcutType<MyTypeEntry, MyTypeDecorator>({
   }),
 });
 
-export const _gslMyType = createGslSelector<MyTypeDecorator, GslMyTypeConfig>('MY_TYPE');
+export const _gslMyType = myTypeShortcutType.gsl;
+export const _gslMyTypeByUid = myTypeShortcutType.gslByUid;
 ```
+
+### Wire it up
+
+`createShortcutType` is pure — it builds the handler and selectors but registers
+nothing. Import the exported `myTypeShortcutType` in `registry.ts` and add it to
+the `guiShortcutTypes` list; that module is the single place where the gui
+registry is built. The `registryWiring.spec.ts` guard fails if a shortcut folder
+ships a `register.ts` that is not wired in.
 
 ### Notes
 
 - Keep `_gui*` factories hand-crafted for API ergonomics.
-- `defineShortcutType` already handles registration (`registerItemType`) internally.
+- `kind` decides which umbrella selector (`inputs`, `actions`, `displays`,
+  `layouts`) reaches widgets of this type.
 - Preserve existing behavior in `mapToWidget`/hooks when migrating old types — only ceremony should change.

@@ -1,14 +1,14 @@
-import { defineShortcutType } from '../../core/defineShortcutType';
-import { buildTypedValidator } from '../../core/dxValidatorHelper';
-import { extractWidgetProps } from '../../core/dxPropsHelper';
-import { processAutoLabel } from '../../core/sharedSensibleDefaults.service';
+import { createShortcutType } from '@golemui/dx';
+import { buildTypedValidator } from '@golemui/dx';
+import { extractWidgetProps } from '@golemui/dx';
+import { processAutoLabel } from '@golemui/dx';
 import {
   type CalendarDecorator,
   type CalendarEntry,
   type GslCalendarConfig,
 } from './calendar.domain';
 
-export const { gsl: _gslCalendars, gslByUid: _gslCalendarByUid } = defineShortcutType<
+export const calendarShortcutType = createShortcutType<
   CalendarEntry,
   CalendarDecorator,
   GslCalendarConfig
@@ -35,3 +35,6 @@ export const { gsl: _gslCalendars, gslByUid: _gslCalendarByUid } = defineShortcu
     props: extractWidgetProps(def),
   }),
 });
+
+export const _gslCalendars = calendarShortcutType.gsl;
+export const _gslCalendarByUid = calendarShortcutType.gslByUid;

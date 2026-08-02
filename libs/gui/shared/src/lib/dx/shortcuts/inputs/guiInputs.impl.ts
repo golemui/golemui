@@ -1,4 +1,4 @@
-import { GuiItemTypes } from '../../core/dx.domain';
+import { GuiItemTypes } from '@golemui/dx';
 import {
   type GuiInputsShortcut,
   type InputEntry,

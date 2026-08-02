@@ -1,8 +1,8 @@
 import type { StringValidator } from '@golemui/gui-validators';
 import type { MarkdownProps } from '../../../widget.props';
-import type { DxCommonFields, DxInputBase } from '../../core/dxBase.types';
-import type { DefOrCallback, GslConfigBase, GuiShortcutOf } from '../../core/dxUtilityTypes';
-import type { DxValidator } from '../../core/dxValidatorHelper';
+import type { DxCommonFields, DxInputBase } from '@golemui/dx';
+import type { DefOrCallback, GslConfigBase, GuiShortcutOf } from '@golemui/dx';
+import type { DxValidator } from '@golemui/dx';
 export interface MarkdownDecorator extends DxInputBase, DxCommonFields, Partial<MarkdownProps> {
   type: 'markdown';
   validator?: DxValidator<StringValidator>;

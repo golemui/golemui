@@ -7,7 +7,7 @@
  * - Gap 6: `validateOn` flows from FormConfig to DxResult
  */
 import { describe, it, expect } from 'vitest';
-import { formDefs } from '../dx.service';
+import { formDefs } from '../formDefs';
 import { processDx, getStaticChild, getRawChild, resolveDynamic } from './helpers';
 import { _guiTextInput } from '../shortcuts/inputs/guiTextInput.impl';
 import { _guiNumberInput } from '../shortcuts/inputs/guiNumberInput.impl';
@@ -25,7 +25,7 @@ import { _guiMarkdown } from '../shortcuts/markdown/guiMarkdown.impl';
 import { _guiRangeDateInput } from '../shortcuts/range-date-input/guiRangeDateInput.impl';
 import { _guiRangeDatePicker } from '../shortcuts/range-date-picker/guiRangeDatePicker.impl';
 import { _guiButton } from '../shortcuts/actions/guiActions.impl';
-import { GuiItemTypes, type ValidGuiShortcut } from '../core/dx.domain';
+import { GuiItemTypes, type ValidGuiShortcut } from '@golemui/dx';
 
 // ═══════════════════════════════════════════════════
 // Gap 4: defaultValue pass-through

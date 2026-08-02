@@ -1,4 +1,4 @@
-import type { DxRuntimeParams } from '../../core/dxUtilityTypes';
+import type { DxRuntimeParams } from '@golemui/dx';
 import type { DropdownDecorator, DropdownEntry, GuiDropdownShortcut } from './dropdown.domain';
 
 type DropdownFactoryProps = Omit<DropdownDecorator, 'type'>;

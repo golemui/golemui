@@ -1,6 +1,6 @@
 import type { MarkdownTextProps } from '../../../widget.props';
-import type { DxCommonFields } from '../../core/dxBase.types';
-import type { DefOrCallback, GslConfigBase, GuiShortcutOf } from '../../core/dxUtilityTypes';
+import type { DxCommonFields } from '@golemui/dx';
+import type { DefOrCallback, GslConfigBase, GuiShortcutOf } from '@golemui/dx';
 
 // ═══════════════════════════════════════════════════
 // Markdown Text Decorator

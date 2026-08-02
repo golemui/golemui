@@ -1,13 +1,10 @@
-import { defineShortcutType } from '../../core/defineShortcutType';
-import { buildTypedValidator } from '../../core/dxValidatorHelper';
-import { extractWidgetProps } from '../../core/dxPropsHelper';
-import {
-  processAutoLabel,
-  processAutoPlaceholder,
-} from '../../core/sharedSensibleDefaults.service';
+import { createShortcutType } from '@golemui/dx';
+import { buildTypedValidator } from '@golemui/dx';
+import { extractWidgetProps } from '@golemui/dx';
+import { processAutoLabel, processAutoPlaceholder } from '@golemui/dx';
 import type { GslTextareaConfig, TextareaDecorator, TextareaEntry } from './textarea.domain';
 
-export const { gsl: _gslTextareas, gslByUid: _gslTextareaByUid } = defineShortcutType<
+export const textareaShortcutType = createShortcutType<
   TextareaEntry,
   TextareaDecorator,
   GslTextareaConfig
@@ -34,3 +31,6 @@ export const { gsl: _gslTextareas, gslByUid: _gslTextareaByUid } = defineShortcu
     props: extractWidgetProps(def),
   }),
 });
+
+export const _gslTextareas = textareaShortcutType.gsl;
+export const _gslTextareaByUid = textareaShortcutType.gslByUid;

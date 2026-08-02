@@ -1,13 +1,9 @@
 // Complexity: MINIMAL — the simplest shortcut. Start here when learning the pattern.
 // See SHORTCUTS.md "Onboarding: Where to Start" for the full progression.
-import { defineShortcutType } from '../../core/defineShortcutType';
+import { createShortcutType } from '@golemui/dx';
 import type { AlertDecorator, AlertEntry, GslAlertsConfig } from './alert.domain';
 
-export const { gsl: _gslAlerts, gslByUid: _gslAlertByUid } = defineShortcutType<
-  AlertEntry,
-  AlertDecorator,
-  GslAlertsConfig
->({
+export const alertShortcutType = createShortcutType<AlertEntry, AlertDecorator, GslAlertsConfig>({
   itemType: 'ALERTS',
   kind: 'display',
   entryShape: 'bare',
@@ -21,3 +17,6 @@ export const { gsl: _gslAlerts, gslByUid: _gslAlertByUid } = defineShortcutType<
     },
   }),
 });
+
+export const _gslAlerts = alertShortcutType.gsl;
+export const _gslAlertByUid = alertShortcutType.gslByUid;

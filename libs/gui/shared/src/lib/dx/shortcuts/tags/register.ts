@@ -1,17 +1,10 @@
-import { defineShortcutType } from '../../core/defineShortcutType';
-import { buildTypedValidator } from '../../core/dxValidatorHelper';
-import { extractWidgetProps } from '../../core/dxPropsHelper';
-import {
-  processAutoLabel,
-  processAutoPlaceholder,
-} from '../../core/sharedSensibleDefaults.service';
+import { createShortcutType } from '@golemui/dx';
+import { buildTypedValidator } from '@golemui/dx';
+import { extractWidgetProps } from '@golemui/dx';
+import { processAutoLabel, processAutoPlaceholder } from '@golemui/dx';
 import type { GslTagsConfig, TagsDecorator, TagsEntry } from './tags.domain';
 
-export const { gsl: _gslTags, gslByUid: _gslTagsByUid } = defineShortcutType<
-  TagsEntry,
-  TagsDecorator,
-  GslTagsConfig
->({
+export const tagsShortcutType = createShortcutType<TagsEntry, TagsDecorator, GslTagsConfig>({
   itemType: 'TAGS',
   kind: 'input',
   entryShape: 'keyed',
@@ -34,3 +27,6 @@ export const { gsl: _gslTags, gslByUid: _gslTagsByUid } = defineShortcutType<
     props: extractWidgetProps(def),
   }),
 });
+
+export const _gslTags = tagsShortcutType.gsl;
+export const _gslTagsByUid = tagsShortcutType.gslByUid;

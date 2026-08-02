@@ -1,6 +1,6 @@
-import type { ValidGuiShortcut } from '../../core/dx.domain';
-import type { DxCommonFields, DxLayoutBase } from '../../core/dxBase.types';
-import type { DefOrCallback, GslConfigBase, GuiShortcutOf } from '../../core/dxUtilityTypes';
+import type { ValidGuiShortcut } from '@golemui/dx';
+import type { DxCommonFields, DxLayoutBase } from '@golemui/dx';
+import type { DefOrCallback, GslConfigBase, GuiShortcutOf } from '@golemui/dx';
 
 // ═══════════════════════════════════════════════════
 // Custom Layout Decorator

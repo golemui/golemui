@@ -1,16 +1,8 @@
 import type { StringValidator } from '@golemui/gui-validators';
 import { type DateTimeCalendarProps } from '../../../widget.props';
-import {
-  type DxCommonFields,
-  type DxInputBase,
-  type DxInternalFields,
-} from '../../core/dxBase.types';
-import {
-  type DefOrCallback,
-  type GslConfigBase,
-  type GuiShortcutOf,
-} from '../../core/dxUtilityTypes';
-import { type DxValidator } from '../../core/dxValidatorHelper';
+import { type DxCommonFields, type DxInputBase, type DxInternalFields } from '@golemui/dx';
+import { type DefOrCallback, type GslConfigBase, type GuiShortcutOf } from '@golemui/dx';
+import { type DxValidator } from '@golemui/dx';
 
 // ═══════════════════════════════════════════════════
 // DateTimeCalendar Decorators

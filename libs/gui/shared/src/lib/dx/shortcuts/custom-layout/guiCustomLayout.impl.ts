@@ -1,5 +1,5 @@
-import type { ValidGuiShortcut } from '../../core/dx.domain';
-import type { DxRuntimeParams } from '../../core/dxUtilityTypes';
+import type { ValidGuiShortcut } from '@golemui/dx';
+import type { DxRuntimeParams } from '@golemui/dx';
 import type {
   CustomLayoutDecorator,
   CustomLayoutEntry,

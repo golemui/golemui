@@ -1,4 +1,4 @@
-import { type DxRuntimeParams } from '../../core/dxUtilityTypes';
+import { type DxRuntimeParams } from '@golemui/dx';
 import type { TimeInputDecorator, TimeInputEntry, GuiTimeInputShortcut } from './timeInput.domain';
 
 export function _guiTimeInput(path: string): GuiTimeInputShortcut;

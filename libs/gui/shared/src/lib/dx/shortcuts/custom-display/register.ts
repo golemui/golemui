@@ -1,11 +1,11 @@
-import { defineShortcutType } from '../../core/defineShortcutType';
+import { createShortcutType } from '@golemui/dx';
 import type {
   CustomDisplayDecorator,
   CustomDisplayEntry,
   GslCustomDisplayConfig,
 } from './customDisplay.domain';
 
-export const { gsl: _gslCustomDisplays, gslByUid: _gslCustomDisplayByUid } = defineShortcutType<
+export const customDisplayShortcutType = createShortcutType<
   CustomDisplayEntry,
   CustomDisplayDecorator,
   GslCustomDisplayConfig
@@ -20,3 +20,6 @@ export const { gsl: _gslCustomDisplays, gslByUid: _gslCustomDisplayByUid } = def
     props: def.props ?? {},
   }),
 });
+
+export const _gslCustomDisplays = customDisplayShortcutType.gsl;
+export const _gslCustomDisplayByUid = customDisplayShortcutType.gslByUid;

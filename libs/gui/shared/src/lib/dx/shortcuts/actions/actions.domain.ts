@@ -1,15 +1,7 @@
 import { type ButtonProps } from '../../../widget.props';
-import {
-  type DxActionBase,
-  type DxCommonFields,
-  type DxInternalFields,
-} from '../../core/dxBase.types';
-import { type DxRuntimeParams } from '../../core/dxUtilityTypes';
-import {
-  type DefOrCallback,
-  type GslConfigBase,
-  type GuiShortcutOf,
-} from '../../core/dxUtilityTypes';
+import { type DxActionBase, type DxCommonFields, type DxInternalFields } from '@golemui/dx';
+import { type DxRuntimeParams } from '@golemui/dx';
+import { type DefOrCallback, type GslConfigBase, type GuiShortcutOf } from '@golemui/dx';
 
 // ═══════════════════════════════════════════════════
 // Action Decorators

@@ -1,4 +1,4 @@
-import { type DxRuntimeParams } from '../../core/dxUtilityTypes';
+import { type DxRuntimeParams } from '@golemui/dx';
 import type { GuiTextareaShortcut, TextareaDecorator, TextareaEntry } from './textarea.domain';
 
 export function _guiTextarea(path: string): GuiTextareaShortcut;

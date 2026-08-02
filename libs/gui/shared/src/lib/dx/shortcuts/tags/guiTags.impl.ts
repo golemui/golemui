@@ -1,4 +1,4 @@
-import { type DxRuntimeParams } from '../../core/dxUtilityTypes';
+import { type DxRuntimeParams } from '@golemui/dx';
 import type { GuiTagsShortcut, TagsDecorator, TagsEntry } from './tags.domain';
 
 export function _guiTags(path: string): GuiTagsShortcut;

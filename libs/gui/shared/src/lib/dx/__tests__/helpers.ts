@@ -5,8 +5,8 @@ import {
   type NonFunctionWidget,
 } from '@golemui/core';
 import { type DxDefinitions } from '../formDef.domain';
-import { type FormConfig, type GslSelectorsInput } from '../core/dx.domain';
-import { formDefs } from '../dx.service';
+import { type FormConfig, type GslSelectorsInput } from '@golemui/dx';
+import { formDefs } from '../formDefs';
 
 /**
  * Process a form definition through the full DX pipeline.

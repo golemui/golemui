@@ -1,16 +1,8 @@
 import { type FlexProps, type GridProps } from '../../../widget.props';
-import { type DxRuntimeParams } from '../../core/dxUtilityTypes';
-import { type ValidGuiShortcut } from '../../core/dx.domain';
-import {
-  type DxCommonFields,
-  type DxInternalFields,
-  type DxLayoutBase,
-} from '../../core/dxBase.types';
-import {
-  type DefOrCallback,
-  type GslConfigBase,
-  type GuiShortcutOf,
-} from '../../core/dxUtilityTypes';
+import { type DxRuntimeParams } from '@golemui/dx';
+import { type ValidGuiShortcut } from '@golemui/dx';
+import { type DxCommonFields, type DxInternalFields, type DxLayoutBase } from '@golemui/dx';
+import { type DefOrCallback, type GslConfigBase, type GuiShortcutOf } from '@golemui/dx';
 
 // ═══════════════════════════════════════════════════
 // Layout Decorator (DX-level type for layouts)

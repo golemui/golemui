@@ -1,4 +1,4 @@
-import type { GslLeafSelector } from '../../core/dx.domain';
+import type { GslLeafSelector } from '@golemui/dx';
 
 import { _gslInputs, _gslInputByUid } from '../inputs/register';
 import { _gslTextInputs, _gslNumberInputs, _gslBooleanInputs } from '../inputs/gslInputSubtypes';

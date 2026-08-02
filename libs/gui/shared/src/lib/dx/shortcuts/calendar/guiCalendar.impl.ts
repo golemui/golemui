@@ -1,4 +1,4 @@
-import { type DxRuntimeParams } from '../../core/dxUtilityTypes';
+import { type DxRuntimeParams } from '@golemui/dx';
 import { type GuiCalendarShortcut, type CalendarDecorator } from './calendar.domain';
 
 export function _guiCalendar(path: string): GuiCalendarShortcut;

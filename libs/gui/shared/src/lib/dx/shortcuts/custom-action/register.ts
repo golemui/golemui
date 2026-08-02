@@ -1,12 +1,12 @@
-import { defineShortcutType } from '../../core/defineShortcutType';
+import { createShortcutType } from '@golemui/dx';
 import type {
   CustomActionDecorator,
   CustomActionEntry,
   GslCustomActionConfig,
 } from './customAction.domain';
-import eventWiringService from '../../core/eventWiring.service';
+import { eventWiringService } from '@golemui/dx';
 
-export const { gsl: _gslCustomActions, gslByUid: _gslCustomActionByUid } = defineShortcutType<
+export const customActionShortcutType = createShortcutType<
   CustomActionEntry,
   CustomActionDecorator,
   GslCustomActionConfig
@@ -48,3 +48,6 @@ export const { gsl: _gslCustomActions, gslByUid: _gslCustomActionByUid } = defin
       context.eventIdGenerator,
     ),
 });
+
+export const _gslCustomActions = customActionShortcutType.gsl;
+export const _gslCustomActionByUid = customActionShortcutType.gslByUid;

@@ -15,7 +15,7 @@ import {
   _gslCustomLayouts,
   _gslCustomLayoutByUid,
 } from '../index';
-import { formDefs } from '../dx.service';
+import { formDefs } from '../formDefs';
 import { _guiTextInput } from '../index';
 
 describe('DX Pipeline — Custom Display', () => {

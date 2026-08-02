@@ -2,13 +2,10 @@
 // This is NOT representative of a typical shortcut. If you're learning the system,
 // start with alert/ (minimal) or date-picker/ (standard keyed type).
 import { type InputWidget, type NonFunctionWidget, type UiState } from '@golemui/core';
-import { defineShortcutType } from '../../core/defineShortcutType';
-import { extractWidgetProps } from '../../core/dxPropsHelper';
-import { buildTypedValidator } from '../../core/dxValidatorHelper';
-import {
-  processAutoLabel,
-  processAutoPlaceholder,
-} from '../../core/sharedSensibleDefaults.service';
+import { createShortcutType } from '@golemui/dx';
+import { extractWidgetProps } from '@golemui/dx';
+import { buildTypedValidator } from '@golemui/dx';
+import { processAutoLabel, processAutoPlaceholder } from '@golemui/dx';
 import {
   type InputDecorator,
   type InputEntry,
@@ -95,11 +92,7 @@ function mapNumberInputDef<
   };
 }
 
-export const { gsl: _gslInputs, gslByUid: _gslInputByUid } = defineShortcutType<
-  InputEntry,
-  InputDecorator,
-  GslInputsConfig
->({
+export const inputsShortcutType = createShortcutType<InputEntry, InputDecorator, GslInputsConfig>({
   itemType: 'INPUTS',
   kind: 'input',
   entryShape: 'keyed',
@@ -117,3 +110,6 @@ export const { gsl: _gslInputs, gslByUid: _gslInputByUid } = defineShortcutType<
   },
   mapToWidget,
 });
+
+export const _gslInputs = inputsShortcutType.gsl;
+export const _gslInputByUid = inputsShortcutType.gslByUid;

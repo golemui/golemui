@@ -1,6 +1,6 @@
-// Complexity: CUSTOM — bypasses defineShortcutType entirely. Uses registerItemType
-// directly because the repeater is both keyed (has a data path) and compound (has
-// children) — a hybrid that doesn't fit any standard entry shape. Also implements
+// Complexity: CUSTOM — bypasses createShortcutType entirely. Hand-builds its
+// ItemTypeHandler because the repeater is both keyed (has a data path) and compound
+// (has children) — a hybrid that doesn't fit any standard entry shape. Also implements
 // auto-prefixing of child paths. You almost certainly don't need this pattern.
 import {
   type FormWidget,
@@ -8,11 +8,11 @@ import {
   type LayoutWidget,
   type NonFunctionWidget,
 } from '@golemui/core';
-import type { MergeResult } from '../../core/dx.domain';
-import type { BuildWidgetContext, ItemTypeHandler, ParsedEntry } from '../../core/itemTypeRegistry';
-import { registerItemType } from '../../core/itemTypeRegistry';
-import { createGslSelector } from '../../core/dxUtilityTypes';
-import { buildTypedValidator } from '../../core/dxValidatorHelper';
+import type { MergeResult } from '@golemui/dx';
+import type { BuildWidgetContext, ItemTypeHandler, ParsedEntry } from '@golemui/dx';
+import type { ShortcutTypeDefinition } from '@golemui/dx';
+import { createGslSelector } from '@golemui/dx';
+import { buildTypedValidator } from '@golemui/dx';
 import type { RepeaterDecorator, RepeaterEntry, GslRepeaterConfig } from './repeater.domain';
 
 function buildRepeaterProps(def: RepeaterDecorator): Record<string, any> {
@@ -130,10 +130,20 @@ const handler: ItemTypeHandler<RepeaterEntry, RepeaterDecorator, GslRepeaterConf
   getChildren,
 };
 
-registerItemType('REPEATER', handler, 'input');
-
 // GSL selectors
 export const _gslRepeaters = createGslSelector<RepeaterDecorator, GslRepeaterConfig>('REPEATER');
 
 export const _gslRepeaterByUid = (id: string, config: GslRepeaterConfig) =>
   _gslRepeaters(config, ((d: any) => d.uid === id) as any);
+
+export const repeaterShortcutType: ShortcutTypeDefinition<
+  RepeaterEntry,
+  RepeaterDecorator,
+  GslRepeaterConfig
+> = {
+  itemType: 'REPEATER',
+  kind: 'input',
+  handler,
+  gsl: _gslRepeaters,
+  gslByUid: _gslRepeaterByUid,
+};
