@@ -8,7 +8,7 @@ import type {
   WidgetLoaders,
   WithWidget,
 } from '@golemui/core';
-import { type GuiFormInitConfig } from '@golemui/gui-shared';
+import { type Dependencies, type GuiFormInitConfig } from '@golemui/gui-shared';
 import { type MountOptions } from '@golemui/ui-testing';
 import { createOutputSpy, mount } from 'cypress/angular';
 import { FormComponent } from '../../src/lib/components/form/form.component';
@@ -59,7 +59,8 @@ export const mountFramework = (options: MountOptions) => {
     customValidators: options.validators,
     validateOn: options.validateOn ?? 'eager',
     localization: options.localization,
-    dependencies: options.dependencies,
+    // The conformance MountOptions declare the open dependency record. The gui suites pass gui dependencies.
+    dependencies: options.dependencies as Dependencies | undefined,
     functions: options.functions,
   };
 
