@@ -1,5 +1,5 @@
 import { type I18nTranslator, defineForm } from '@golemui/core';
-import { golemForm } from '@golemui/gui-shared/internals';
+import { testForm } from '../test-form';
 import type { CustomValidatorSchemaFn, CustomValidatorSchemas } from '@golemui/gui-validators';
 import { string, superRefine } from 'zod/mini';
 import { type MountComponentFn } from '../utils';
@@ -534,7 +534,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
     context('Array validators', () => {
       it('should display an error validating required arrays on submit', () => {
         mountFn({
-          formDef: golemForm().create({
+          formDef: testForm({
             form: [
               {
                 uid: 'requiredArray',
@@ -583,7 +583,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
 
       it('should display an error validating minItems', () => {
         mountFn({
-          formDef: golemForm().create({
+          formDef: testForm({
             form: [
               {
                 uid: 'minItems',
@@ -632,7 +632,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
 
       it('should display an error validating maxItems', () => {
         mountFn({
-          formDef: golemForm().create({
+          formDef: testForm({
             form: [
               {
                 uid: 'maxItems',
@@ -1322,7 +1322,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
 
         it('should show custom message for multipleOf', () => {
           mountFn({
-            formDef: golemForm().create({
+            formDef: testForm({
               form: [
                 {
                   uid: 'rating',
@@ -1451,7 +1451,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
         it('should show translated message for required array (TranslationConfig)', () => {
           mountFn({
             data: { tags: [] },
-            formDef: golemForm().create({
+            formDef: testForm({
               form: [
                 {
                   uid: 'tags',
@@ -1486,7 +1486,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
 
         it('should show translated message for minItems (TranslationConfig)', () => {
           mountFn({
-            formDef: golemForm().create({
+            formDef: testForm({
               form: [
                 {
                   uid: 'tags',
@@ -1522,7 +1522,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
 
         it('should show custom message for maxItems', () => {
           mountFn({
-            formDef: golemForm().create({
+            formDef: testForm({
               form: [
                 {
                   uid: 'tags',

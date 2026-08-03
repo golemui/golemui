@@ -1,9 +1,8 @@
-<gui-core-form
-  [config]="coreConfig()"
-  [validators]="allValidators()"
+<gui-widget-set-form
+  [config]="config()"
   [autocomplete]="autocomplete()"
   [formHealthBoundary]="formHealthBoundary()"
   (formHealth)="formHealth.emit($event)"
-  (formEvent)="onCoreFormEvent($event)"
-  (formSubmit)="onCoreFormSubmitEvent($event)"
-></gui-core-form>
+  (formEvent)="formEvent.emit($event)"
+  (formSubmit)="formSubmit.emit($event)"
+></gui-widget-set-form>

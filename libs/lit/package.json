@@ -23,6 +23,9 @@
     "index.umd.cjs",
     "*.md"
   ],
+  "dependencies": {
+    "@golemui/dx": "*"
+  },
   "peerDependencies": {
     "@golemui/core": "*",
     "@lit/context": "^1.1.6",

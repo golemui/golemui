@@ -1,82 +1,17 @@
-import type { FormEvent, ValidatorFn, WidgetLoaders, WithWidget } from '@golemui/core';
-import { type FormInitConfig } from '@golemui/core';
 import { type GuiFormInitConfig } from '@golemui/gui-shared';
 import { resolveFormInput } from '@golemui/gui-shared/internals';
-import {
-  type CustomValidatorSchemas,
-  initValidators,
-  type Validator,
-} from '@golemui/gui-validators';
-import '@golemui/lit';
-import type { FormElement as CoreFormElement, FormHealthBoundary } from '@golemui/lit';
-import { type LitItemRenderer, type Type } from '@golemui/lit';
-import { html, LitElement } from 'lit';
-import { customElement, property, query } from 'lit/decorators.js';
+import { initValidators } from '@golemui/gui-validators';
+import { createFormComponent } from '@golemui/lit';
+import { customElement } from 'lit/decorators.js';
 import { widgetLoaders } from '../widget.loaders';
 
+// The factory binds the gui widget set (loaders, validators, form input
+// resolver) to the shared form element class. The subclass only chooses the
+// tag name. Properties: config, autocomplete, formHealthBoundary. Methods:
+// setData, setMeta.
 @customElement('gui-form')
-export class FormElement extends LitElement {
-  @property({ attribute: false }) config!: GuiFormInitConfig;
-  @property({ type: String }) autocomplete: string | undefined = undefined;
-  /** Wraps the form and renders the error UI for an errored FormHealth. Defaults to a red banner. */
-  @property({ attribute: false }) formHealthBoundary?: FormHealthBoundary;
-
-  @query('gui-core-form') private coreForm?: CoreFormElement;
-
-  setData(data: Record<string, any>): void {
-    this.coreForm?.setData(data);
-  }
-
-  setMeta(meta: Record<string, any>): void {
-    this.coreForm?.setMeta(meta);
-  }
-
-  override createRenderRoot() {
-    return this;
-  }
-
-  override render() {
-    const c = this.config;
-    const resolved = resolveFormInput(c.formDef, c.formSelectors, c.formConfig);
-
-    const coreConfig: FormInitConfig<Type<WithWidget>> = {
-      formDef: resolved.formDef as string | Record<string, any>,
-      widgetLoaders: {
-        ...widgetLoaders,
-        ...(resolved.widgetLoaders as WidgetLoaders<Type<WithWidget>>),
-        ...((c.customWidgetLoaders ?? {}) as WidgetLoaders<Type<WithWidget>>),
-      },
-      dependencies: { ...(resolved.dependencies ?? {}), ...(c.dependencies ?? {}) },
-      functions: { ...(resolved.functions ?? {}), ...(c.functions ?? {}) },
-      validateOn: c.validateOn ?? resolved.validateOn ?? 'eager',
-      itemRenderers: {
-        ...((resolved.itemRenderers ?? {}) as Record<string, LitItemRenderer<any>>),
-        ...((c.itemRenderers ?? {}) as Record<string, LitItemRenderer<any>>),
-      },
-      localization: c.localization,
-      middlewares: c.middlewares ?? [],
-      data: c.data,
-      meta: c.meta,
-      formName: c.formName,
-    };
-
-    const allValidators: ValidatorFn<Validator> = initValidators({
-      ...((c.customValidators ?? {}) as CustomValidatorSchemas),
-    });
-
-    const onFormEvent = resolved.formEvent;
-    const formEventListener = onFormEvent
-      ? (e: Event) => onFormEvent((e as CustomEvent<FormEvent>).detail)
-      : undefined;
-
-    return html`
-      <gui-core-form
-        .config=${coreConfig}
-        .validators=${allValidators}
-        .autocomplete=${this.autocomplete}
-        .formHealthBoundary=${this.formHealthBoundary}
-        @formEvent=${formEventListener}
-      ></gui-core-form>
-    `;
-  }
-}
+export class FormElement extends createFormComponent<GuiFormInitConfig>({
+  widgetLoaders,
+  validators: initValidators,
+  resolveFormInput,
+}) {}

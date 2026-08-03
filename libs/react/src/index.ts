@@ -3,6 +3,9 @@ export { default as WidgetRenderer } from './lib/WidgetRenderer';
 export { FormComponent } from './lib/FormComponent';
 export type { FormComponentHandle, FormComponentProps } from './lib/FormComponent';
 
+export { createFormComponent } from './lib/createFormComponent';
+export type { WidgetSetFormComponent, WidgetSetFormProps } from './lib/createFormComponent';
+
 export { DefaultFormHealthBoundary } from './lib/FormHealthBoundary';
 export type { FormHealthBoundary, FormHealthBoundaryProps } from './lib/FormHealthBoundary';
 

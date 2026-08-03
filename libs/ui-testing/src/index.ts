@@ -1,4 +1,5 @@
-// Core features
+// Core features (also available alone via the ./core-features entry point,
+// which is the widget-set-independent half of this package)
 export * from './lib/core-features/actions.cy';
 export * from './lib/core-features/data.cy';
 export * from './lib/core-features/dependencies.cy';
@@ -19,30 +20,31 @@ export * from './lib/core-features/uid.cy';
 export * from './lib/core-features/validator-injection.cy';
 export * from './lib/core-features/widget-loaders.cy';
 
-// Golem features and components
-export * from './lib/golem-features/alert.cy';
-export * from './lib/golem-features/currency.cy';
-export * from './lib/golem-features/dateinput.cy';
-export * from './lib/golem-features/datetimeinput.cy';
-export * from './lib/golem-features/datepicker.cy';
-export * from './lib/golem-features/dropdown.cy';
-export * from './lib/golem-features/markdown.cy';
-export * from './lib/golem-features/number.cy';
-export * from './lib/golem-features/password.cy';
-export * from './lib/golem-features/rangedateinput.cy';
-export * from './lib/golem-features/rangedatetimeinput.cy';
-export * from './lib/golem-features/rangedatetimecalendar.cy';
-export * from './lib/golem-features/rangedatetimepicker.cy';
-export * from './lib/golem-features/rangetimeinput.cy';
-export * from './lib/golem-features/rangedatepicker.cy';
-export * from './lib/golem-features/rangetimepicker.cy';
-export * from './lib/golem-features/repeater.cy';
-export * from './lib/golem-features/select.cy';
-export * from './lib/golem-features/timeinput.cy';
-export * from './lib/golem-features/datetimecalendar.cy';
-export * from './lib/golem-features/datetimepicker.cy';
-export * from './lib/golem-features/timepicker.cy';
-export * from './lib/golem-features/validators.cy';
+// gui widget suites
+export * from './lib/gui-features/alert.cy';
+export * from './lib/gui-features/currency.cy';
+export * from './lib/gui-features/dateinput.cy';
+export * from './lib/gui-features/datetimeinput.cy';
+export * from './lib/gui-features/datepicker.cy';
+export * from './lib/gui-features/dropdown.cy';
+export * from './lib/gui-features/markdown.cy';
+export * from './lib/gui-features/number.cy';
+export * from './lib/gui-features/password.cy';
+export * from './lib/gui-features/rangedateinput.cy';
+export * from './lib/gui-features/rangedatetimeinput.cy';
+export * from './lib/gui-features/rangedatetimecalendar.cy';
+export * from './lib/gui-features/rangedatetimepicker.cy';
+export * from './lib/gui-features/rangetimeinput.cy';
+export * from './lib/gui-features/rangedatepicker.cy';
+export * from './lib/gui-features/rangetimepicker.cy';
+export * from './lib/gui-features/repeater.cy';
+export * from './lib/gui-features/select.cy';
+export * from './lib/gui-features/timeinput.cy';
+export * from './lib/gui-features/datetimecalendar.cy';
+export * from './lib/gui-features/datetimepicker.cy';
+export * from './lib/gui-features/timepicker.cy';
+export * from './lib/gui-features/validators.cy';
 
 // Utils
+export * from './lib/test-form';
 export * from './lib/utils';

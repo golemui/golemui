@@ -29,7 +29,7 @@ export default defineConfig(() => ({
       fileName: 'index',
     },
     rollupOptions: {
-      external: ['react', 'react-dom', 'react/jsx-runtime', '@golemui/core'],
+      external: ['react', 'react-dom', 'react/jsx-runtime', '@golemui/core', '@golemui/dx'],
     },
   },
   test: {

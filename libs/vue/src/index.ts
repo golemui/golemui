@@ -5,6 +5,12 @@ export type {
   FormComponentProps,
   FormHealthBoundaryProps,
 } from './lib/FormComponent.types';
+export { createFormComponent } from './lib/createFormComponent';
+export type {
+  WidgetSetFormComponent,
+  WidgetSetFormHandle,
+  WidgetSetFormProps,
+} from './lib/createFormComponent';
 export { default as DefaultFormHealthBoundary } from './lib/DefaultFormHealthBoundary.vue';
 export { default as WidgetRenderer } from './lib/WidgetRenderer.vue';
 export { default as WidgetErrorBoundary } from './lib/WidgetErrorBoundary.vue';

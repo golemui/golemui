@@ -23,6 +23,9 @@
     "index.umd.cjs",
     "*.md"
   ],
+  "dependencies": {
+    "@golemui/dx": "*"
+  },
   "peerDependencies": {
     "react": ">=18.0.0",
     "react-dom": ">=18.0.0",

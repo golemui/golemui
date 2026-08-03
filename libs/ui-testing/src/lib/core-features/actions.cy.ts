@@ -1,12 +1,12 @@
 import { type MountComponentFn } from '../utils';
-import { golemForm } from '@golemui/gui-shared/internals';
+import { testForm } from '../test-form';
 
 export const runActionsComponentTests = (mountFn: MountComponentFn) => {
   describe('Actions', () => {
     context('Submit button invalid state', () => {
       it('should not have the invalid class before any submit attempt', () => {
         mountFn({
-          formDef: golemForm().create({
+          formDef: testForm({
             form: [
               {
                 uid: 'name',
@@ -31,7 +31,7 @@ export const runActionsComponentTests = (mountFn: MountComponentFn) => {
 
       it('should apply the invalid class when submitted with validation errors', () => {
         mountFn({
-          formDef: golemForm().create({
+          formDef: testForm({
             form: [
               {
                 uid: 'name',
@@ -57,7 +57,7 @@ export const runActionsComponentTests = (mountFn: MountComponentFn) => {
 
       it('should remove the invalid class once all errors are resolved', () => {
         mountFn({
-          formDef: golemForm().create({
+          formDef: testForm({
             form: [
               {
                 uid: 'name',
@@ -86,7 +86,7 @@ export const runActionsComponentTests = (mountFn: MountComponentFn) => {
 
       it('should not apply the invalid class to a non-submit button', () => {
         mountFn({
-          formDef: golemForm().create({
+          formDef: testForm({
             form: [
               {
                 uid: 'name',

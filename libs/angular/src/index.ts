@@ -4,6 +4,12 @@ export { InputWidgetAdapter } from './lib/adapters/input-widget-adapter.service'
 export { LayoutWidgetAdapter } from './lib/adapters/layout-widget-adapter.service';
 
 export { FormCoreComponent } from './lib/components/form/form.component';
+export {
+  GOLEMUI_WIDGET_SET,
+  provideWidgetSet,
+  WidgetSetFormComponent,
+} from './lib/components/form/widget-set-form.component';
+export type { AngularWidgetSet } from './lib/components/form/widget-set-form.component';
 export { DefaultFormHealthBoundaryComponent } from './lib/components/form/default-form-health-boundary.component';
 export type {
   AngularItemRenderContext,

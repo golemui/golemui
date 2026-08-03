@@ -1,22 +1,25 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, input, output, type Type, viewChild } from '@angular/core';
-import { type AngularItemRenderer, FormCoreComponent } from '@golemui/angular';
-import type {
-  FormEvent,
-  FormHealth,
-  FormSubmitEvent,
-  WidgetLoaders,
-  WithWidget,
-} from '@golemui/core';
-import { type FormInitConfig } from '@golemui/core';
+import { Component, input, output, type Type, viewChild } from '@angular/core';
+import { type AngularWidgetSet, provideWidgetSet, WidgetSetFormComponent } from '@golemui/angular';
+import type { FormEvent, FormHealth, FormSubmitEvent } from '@golemui/core';
 import { type GuiFormInitConfig } from '@golemui/gui-shared';
 import { resolveFormInput } from '@golemui/gui-shared/internals';
 import { initValidators } from '@golemui/gui-validators';
 import { widgetLoaders } from '../../widget.loaders';
 
+// The gui widget set: loaders, validators, and the implementation-bound form
+// input resolver. The generic WidgetSetFormComponent reads it through
+// dependency injection and applies the shared merge precedence rules.
+const guiWidgetSet: AngularWidgetSet<GuiFormInitConfig> = {
+  widgetLoaders,
+  validators: initValidators,
+  resolveFormInput,
+};
+
 @Component({
-  imports: [CommonModule, FormCoreComponent],
+  imports: [CommonModule, WidgetSetFormComponent],
   selector: 'gui-form',
+  providers: [provideWidgetSet(guiWidgetSet)],
   templateUrl: './form.component.html',
 })
 export class FormComponent {
@@ -25,59 +28,17 @@ export class FormComponent {
   /** Wraps the form and renders the error UI for an errored FormHealth. Defaults to a red banner. */
   formHealthBoundary = input<Type<unknown> | undefined>(undefined);
 
-  private coreForm = viewChild(FormCoreComponent);
-
-  protected resolved = computed(() =>
-    resolveFormInput(this.config().formDef, this.config().formSelectors, this.config().formConfig),
-  );
-
-  protected coreConfig = computed((): FormInitConfig<Type<WithWidget>> => {
-    const c = this.config();
-    const r = this.resolved();
-    return {
-      formDef: r.formDef as string | Record<string, any>,
-      widgetLoaders: {
-        ...widgetLoaders,
-        ...((r.widgetLoaders ?? {}) as WidgetLoaders<Type<WithWidget>>),
-        ...((c.customWidgetLoaders ?? {}) as WidgetLoaders<Type<WithWidget>>),
-      },
-      dependencies: { ...(r.dependencies ?? {}), ...(c.dependencies ?? {}) },
-      functions: { ...(r.functions ?? {}), ...(c.functions ?? {}) },
-      validateOn: c.validateOn ?? r.validateOn ?? 'eager',
-      itemRenderers: {
-        ...((r.itemRenderers ?? {}) as Record<string, AngularItemRenderer<any>>),
-        ...((c.itemRenderers ?? {}) as Record<string, AngularItemRenderer<any>>),
-      },
-      localization: c.localization,
-      middlewares: c.middlewares ?? [],
-      data: c.data,
-      meta: c.meta,
-      formName: c.formName,
-    };
-  });
-
-  protected allValidators = computed(() =>
-    initValidators({ ...(this.config().customValidators ?? {}) }),
-  );
+  private innerForm = viewChild(WidgetSetFormComponent);
 
   formHealth = output<FormHealth>();
   formEvent = output<FormEvent>();
   formSubmit = output<FormSubmitEvent>();
 
-  protected onCoreFormEvent(event: FormEvent): void {
-    this.resolved().formEvent?.(event);
-    this.formEvent.emit(event);
-  }
-
-  protected onCoreFormSubmitEvent(event: FormSubmitEvent): void {
-    this.formSubmit.emit(event);
-  }
-
   setData(data: Record<string, any>): void {
-    this.coreForm()?.setData(data);
+    this.innerForm()?.setData(data);
   }
 
   setMeta(meta: Record<string, any>): void {
-    this.coreForm()?.setMeta(meta);
+    this.innerForm()?.setMeta(meta);
   }
 }

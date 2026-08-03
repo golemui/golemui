@@ -565,7 +565,7 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
           // The markdown widget renders nothing without a parser; a passthrough
           // parser keeps the test dependency-free while still proving the
           // dependency reaches the component and the interpolated text renders.
-          dependencies: { markdown: { parse: (markdown) => markdown } },
+          dependencies: { markdown: { parse: (markdown: string) => markdown } },
         });
 
         // Interpolated $item/$index content must actually render in the DOM
