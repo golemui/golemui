@@ -99,7 +99,7 @@
     "i18next": "^25.7.4",
     "jiti": "2.4.2",
     "jsdom": "~22.1.0",
-    "jsonc-eslint-parser": "^2.1.0",
+    "jsonc-eslint-parser": "^3.1.0",
     "ng-packagr": "21.2.5",
     "nx": "22.7.8",
     "postcss": "^8.4.5",
