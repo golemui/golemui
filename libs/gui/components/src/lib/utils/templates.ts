@@ -35,7 +35,9 @@ export const addLabel = <T, ExtraProps extends { hint?: string }>(
           data-cy=${`${uid}_label`}
           id=${type ? `${uid}_${type}_label` : `${uid}_label`}
         >
-          ${templateData.label}${requiredMarker(templateData.required)}
+          <span class="gui-label__text"
+            >${templateData.label}${requiredMarker(templateData.required)}</span
+          >
           ${addHint(uid, templateData)} ${withErrors ? addErrors(uid, templateData) : nothing}
         </label>`
       : nothing;
@@ -46,7 +48,9 @@ export const addLabel = <T, ExtraProps extends { hint?: string }>(
           data-cy=${`${uid}_label`}
           id=${type ? `${uid}_${type}_label` : `${uid}_label`}
         >
-          ${templateData.label}${requiredMarker(templateData.required)}
+          <span class="gui-label__text"
+            >${templateData.label}${requiredMarker(templateData.required)}</span
+          >
           ${addHint(uid, templateData)} ${withErrors ? addErrors(uid, templateData) : nothing}
         </span>`
       : nothing;
