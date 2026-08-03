@@ -5,6 +5,11 @@ export { inputContext, InputWidgetAdapter } from './lib/adapters/input-widget.ad
 export { layoutContext, LayoutWidgetAdapter } from './lib/adapters/layout-widget.adapter';
 
 export { FormElement } from './lib/components/form/form.element';
+export { createFormComponent } from './lib/components/form/createFormComponent';
+export type {
+  WidgetSetFormElement,
+  WidgetSetFormElementClass,
+} from './lib/components/form/createFormComponent';
 export {
   defaultFormHealthBoundary,
   type FormHealthBoundary,
