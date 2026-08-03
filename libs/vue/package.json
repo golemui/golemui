@@ -23,6 +23,9 @@
     "index.umd.cjs",
     "*.md"
   ],
+  "dependencies": {
+    "@golemui/dx": "*"
+  },
   "peerDependencies": {
     "vue": ">=3.3.0",
     "rxjs": "^7.8.0",
