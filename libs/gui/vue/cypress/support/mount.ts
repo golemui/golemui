@@ -1,8 +1,8 @@
 import type { FormSubmitEvent, WidgetLoaders, WithWidget } from '@golemui/core';
-import type { GuiFormInitConfig } from '@golemui/gui-shared';
+import type { Dependencies, GuiFormInitConfig } from '@golemui/gui-shared';
 import type { MountOptions } from '@golemui/ui-testing';
 import { h, ref, type Component } from 'vue';
-import GuiForm from '../../src/lib/components/Form.vue';
+import GuiForm from '../../src/lib/components/Form';
 import type { GuiFormHandle } from '../../src/lib/components/Form.types';
 
 export const mountFramework = (options: MountOptions) => {
@@ -27,7 +27,8 @@ export const mountFramework = (options: MountOptions) => {
     customValidators: options.validators,
     validateOn: options.validateOn ?? 'eager',
     localization: options.localization,
-    dependencies: options.dependencies,
+    // The conformance MountOptions declare the open dependency record. The gui suites pass gui dependencies.
+    dependencies: options.dependencies as Dependencies | undefined,
     functions: options.functions,
     customWidgetLoaders,
   };
