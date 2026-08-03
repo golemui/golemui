@@ -8,7 +8,7 @@ import type {
   UiState,
 } from '@golemui/core';
 import { type Action, type Middleware, type State, type ValidateOn } from '@golemui/core';
-import { type Dependencies } from '@golemui/gui-shared';
+import { type Dependencies } from '@golemui/dx';
 import { type CustomValidatorSchemas } from '@golemui/gui-validators';
 
 export interface FormHandle {

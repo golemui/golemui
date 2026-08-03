@@ -323,7 +323,7 @@ export const runHostFunctionsComponentTests = (mountFn: MountComponentFn) => {
           formDef: getRepeaterFormDefinition(),
           // The markdown widget renders nothing without a parser; a passthrough
           // parser keeps the test dependency-free.
-          dependencies: { markdown: { parse: (markdown) => markdown } },
+          dependencies: { markdown: { parse: (markdown: string) => markdown } },
         });
 
         cy.get('[id="lineTotalMd[0]"]').should('contain.text', 'Line 1: 10');
@@ -346,7 +346,7 @@ export const runHostFunctionsComponentTests = (mountFn: MountComponentFn) => {
             ],
           },
           formDef: getRepeaterFormDefinition(),
-          dependencies: { markdown: { parse: (markdown) => markdown } },
+          dependencies: { markdown: { parse: (markdown: string) => markdown } },
         });
 
         cy.get('[id="evenQtyMd[0]"]').should('exist');

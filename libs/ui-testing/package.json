@@ -9,6 +9,7 @@
   "dependencies": {
     "tslib": "^2.3.0",
     "@golemui/core": "*",
+    "@golemui/dx": "*",
     "@golemui/gui-validators": "*"
   }
 }
