@@ -146,3 +146,12 @@ export { DxService, createDxService } from './lib/dx.service';
 export type { DxAdapter } from './lib/dx.service';
 export { createResolveFormInput, isDxDefinitions } from './lib/resolveFormInput';
 export type { FormInput, ResolvedFormInput, ResolveFormInputFn } from './lib/resolveFormInput';
+
+// --- Form component factory support ---
+
+export { buildWidgetSetForm } from './lib/widgetSetForm';
+export type {
+  WidgetSetDefinition,
+  WidgetSetFormBundle,
+  WidgetSetFormInitConfig,
+} from './lib/widgetSetForm';
