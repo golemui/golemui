@@ -10,6 +10,7 @@
 import { type ItemTypeRegistry } from './core/itemTypeRegistry';
 import { createDxService, type DxAdapter, type DxService } from './dx.service';
 import { createResolveFormInput, type ResolveFormInputFn } from './resolveFormInput';
+import { type Dependencies } from './shared';
 
 export interface ImplementationConfig<TFacade extends Record<string, unknown>, TSelectors> {
   /** The implementation's name, e.g. 'gui' or 'kendo'. Used in error messages. */
@@ -29,8 +30,22 @@ export interface ImplementationConfig<TFacade extends Record<string, unknown>, T
   adapter: DxAdapter;
 }
 
-export interface WidgetSetImplementation<TFacade extends Record<string, unknown>, TSelectors> {
+/**
+ * Everything a widget set implementation package exports, assembled by
+ * {@link createImplementation}.
+ *
+ * `TDependencies` is the dependency shape this widget set's components read.
+ * It is carried by the form config and the resolved form input, so the
+ * implementation's form authors get those keys typed.
+ */
+export interface WidgetSetImplementation<
+  TFacade extends Record<string, unknown>,
+  TSelectors,
+  TDependencies extends Dependencies = Dependencies,
+> {
+  /** The implementation's name, as passed to {@link createImplementation}. */
   name: string;
+  /** The registry holding one handler per shortcut type of this widget set. */
   registry: ItemTypeRegistry;
   /**
    * The public authoring namespace: the facade groups plus `selectors`.
@@ -40,14 +55,14 @@ export interface WidgetSetImplementation<TFacade extends Record<string, unknown>
   namespace: TFacade & { selectors: TSelectors };
   /**
    * The DX form-definition service bound to the registry and adapter:
-   * transforms builder-style definitions into fully-fledged core forms.
+   * transforms builder-style definitions into complete core forms.
    */
-  formDefs: DxService;
+  formDefs: DxService<TDependencies>;
   /**
    * The memoized framework bridge bound to `formDefs`. The implementation's
    * framework Form wrappers use it to resolve their form input.
    */
-  resolveFormInput: ResolveFormInputFn;
+  resolveFormInput: ResolveFormInputFn<TDependencies>;
 }
 
 /**
@@ -71,10 +86,26 @@ export interface WidgetSetImplementation<TFacade extends Record<string, unknown>
  *   },
  * });
  * export const kendo = kendoImplementation.namespace;
+ *
+ * @example
+ * // A widget set whose components read third party services: declare the
+ * // dependency shape so form authors get those keys typed on `formConfig`
+ * // and on the resolved form input. All three type arguments must be given
+ * // together, so name the facade and the selector chain first.
+ * const kendoFacade = { inputs: { grid: _kendoGrid } };
+ * export const kendoImplementation = createImplementation<
+ *   typeof kendoFacade,
+ *   typeof kendoSelectors,
+ *   KendoDependencies
+ * >({ name: 'kendo', registry, facade: kendoFacade, selectors: kendoSelectors, adapter });
  */
-export function createImplementation<TFacade extends Record<string, unknown>, TSelectors>(
+export function createImplementation<
+  TFacade extends Record<string, unknown>,
+  TSelectors,
+  TDependencies extends Dependencies = Dependencies,
+>(
   config: ImplementationConfig<TFacade, TSelectors>,
-): WidgetSetImplementation<TFacade, TSelectors> {
+): WidgetSetImplementation<TFacade, TSelectors, TDependencies> {
   if ('selectors' in config.facade) {
     throw new Error(
       `The "${config.name}" implementation facade must not contain a "selectors" ` +
@@ -82,7 +113,10 @@ export function createImplementation<TFacade extends Record<string, unknown>, TS
     );
   }
 
-  const formDefs = createDxService({ registry: config.registry, adapter: config.adapter });
+  const formDefs = createDxService<TDependencies>({
+    registry: config.registry,
+    adapter: config.adapter,
+  });
 
   return {
     name: config.name,

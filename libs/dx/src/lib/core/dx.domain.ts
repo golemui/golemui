@@ -108,9 +108,17 @@ export interface GslLeafSelector {
 // Aggregated Selectors
 // ===================================================
 
-export interface FormConfig {
+/**
+ * Form-level behavioral settings.
+ *
+ * Generic over the dependency shape so a widget set implementation can expose
+ * its own narrowed dependency keys to form authors. The default is the open
+ * {@link Dependencies} record, which is what a caller that does not care about
+ * a specific widget set gets.
+ */
+export interface FormConfig<TDependencies extends Dependencies = Dependencies> {
   suppressAutomaticStack?: boolean;
-  dependencies?: Dependencies;
+  dependencies?: TDependencies;
   /**
    * Pure functions callable from reactive expressions under the `$fn` namespace.
    * Functions passed in the wrapper's `config.functions` win on name collisions.
@@ -130,11 +138,15 @@ export interface FormConfig {
 /**
  * Public-facing form config type for `processDxFacade`'s third argument.
  * Generic over state keys - TypeScript enforces that every declared state name
- * has a corresponding expression.
+ * has a corresponding expression - and over the dependency shape, which a
+ * widget set implementation narrows to the keys its components read.
  *
  * Usage: `processDxFacade<typeof states[number], FormData>(defs, selectors, formConfig)`
  */
-export type DxFormConfig<S extends string = string> = Omit<FormConfig, 'states'> & {
+export type DxFormConfig<
+  S extends string = string,
+  TDependencies extends Dependencies = Dependencies,
+> = Omit<FormConfig<TDependencies>, 'states'> & {
   states?: Record<S, string>;
 };
 

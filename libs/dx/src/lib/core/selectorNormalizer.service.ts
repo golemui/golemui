@@ -4,6 +4,7 @@ import {
   type GslSelector,
   type GslSelectorsInput,
 } from './dx.domain';
+import { type Dependencies } from '../shared';
 
 export class SelectorNormalizer {
   /**
@@ -30,7 +31,7 @@ export class SelectorNormalizer {
     }
 
     // Wrap bare leaves in a catch-all aggregated selector (matcher: () => true)
-    // and prepend them so they act as lowest-precedence defaults — explicit
+    // and prepend them so they act as lowest-precedence defaults - explicit
     // aggregated selectors that come later will override them during merging.
     if (bareLeafSelectors.length > 0) {
       gslSelectors.unshift({
@@ -43,7 +44,15 @@ export class SelectorNormalizer {
     return gslSelectors;
   }
 
-  extractFormConfig(): FormConfig {
+  /**
+   * The form-level defaults every form starts from, before the caller's own
+   * `formConfig` is merged over them. Generic over the dependency shape only so
+   * the result slots into a caller working with a narrowed shape - no default
+   * declares a dependency.
+   */
+  extractFormConfig<
+    TDependencies extends Dependencies = Dependencies,
+  >(): FormConfig<TDependencies> {
     return {
       suppressAutomaticStack: false,
     };

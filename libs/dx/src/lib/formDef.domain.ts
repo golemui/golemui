@@ -5,9 +5,9 @@ import { type DxCommonFields, type DxInternalFields } from './core/dxBase.types'
 import { type DxRuntimeParams } from './core/dxUtilityTypes';
 import { type Dependencies } from './shared';
 
-// ═══════════════════════════════════════════════════
+// ===================================================
 // Base Types (owned here)
-// ═══════════════════════════════════════════════════
+// ===================================================
 
 export type GslItemType = string;
 
@@ -20,9 +20,9 @@ export type GslItemType = string;
  */
 export type WidgetItemDecorator = DxInternalFields & DxCommonFields;
 
-// ═══════════════════════════════════════════════════
+// ===================================================
 // DX-level aggregate types
-// ═══════════════════════════════════════════════════
+// ===================================================
 
 export type DxDisplayRenderFn = (params: DxRuntimeParams) => any;
 export type DxDefinitionItem = ValidGuiShortcut | DxDisplayRenderFn;
@@ -30,10 +30,19 @@ export type DxDefinitions = DxDefinitionItem | DxDefinitionItem[];
 
 export type FormEvents = (event: FormEvent) => void;
 
-export interface DxResult<S extends UiState = never, F extends Record<string, any> = any> {
+/**
+ * The output of the DX pipeline. Generic over the dependency shape so a widget
+ * set implementation can hand its form authors the narrowed dependency keys its
+ * components read (the default is the open {@link Dependencies} record).
+ */
+export interface DxResult<
+  S extends UiState = never,
+  F extends Record<string, any> = any,
+  TDependencies extends Dependencies = Dependencies,
+> {
   form: Form<S, F>;
   events?: FormEvents;
-  dependencies?: Dependencies;
+  dependencies?: TDependencies;
   functions?: ExpressionFunctions;
   widgetLoaders?: Record<string, () => Promise<unknown>>;
   validateOn?: ValidateOn;
