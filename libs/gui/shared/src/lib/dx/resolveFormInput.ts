@@ -1,8 +1,9 @@
 import type { ExpressionFunctions, ValidateOn } from '@golemui/core';
 import type { Action, I18nTranslator, Middleware, State } from '@golemui/core';
 import type { CustomValidatorSchemas } from '@golemui/gui-validators';
-import type { DxFormConfig, GslSelectorsInput, FormInput } from '@golemui/dx';
+import type { GslSelectorsInput, FormInput } from '@golemui/dx';
 import type { Dependencies } from '../shared';
+import type { DxFormConfig } from './guiDependencyTypes';
 import { guiImplementation } from './gui';
 
 // ===================================================
@@ -14,7 +15,9 @@ import { guiImplementation } from './gui';
 // ===================================================
 
 export { isDxDefinitions } from '@golemui/dx';
-export type { FormInput, ResolvedFormInput } from '@golemui/dx';
+export type { FormInput } from '@golemui/dx';
+// ResolvedFormInput carries the gui dependency shape, see guiDependencyTypes.ts.
+export type { ResolvedFormInput } from './guiDependencyTypes';
 
 export interface GuiFormInitConfig {
   formDef: FormInput;

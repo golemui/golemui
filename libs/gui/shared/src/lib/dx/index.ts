@@ -1,12 +1,12 @@
-// ═══════════════════════════════════════════════════
-// FormForge DX — Public API
-// ═══════════════════════════════════════════════════
+// ===================================================
+// FormForge DX - Public API
+// ===================================================
 
-// ─── Public namespace ───
+// --- Public namespace ---
 
 export { gui } from './gui';
 
-// ─── GUI factories (structure) ───
+// --- GUI factories (structure) ---
 
 export { _guiAccordion } from './shortcuts/accordion/guiAccordion.impl';
 export { _guiButton } from './shortcuts/actions/guiActions.impl';
@@ -57,7 +57,7 @@ export { _guiTextarea } from './shortcuts/textarea/guiTextarea.impl';
 export { _guiTimeInput } from './shortcuts/time-input/guiTimeInput.impl';
 export { _guiTimePicker } from './shortcuts/time-picker/guiTimePicker.impl';
 
-// ─── GSL selectors (behavior) ───
+// --- GSL selectors (behavior) ---
 
 export { _gslAccordionByUid, _gslAccordions } from './shortcuts/accordion/register';
 export { _gslActionByUid, _gslActions } from './shortcuts/actions/register';
@@ -131,19 +131,20 @@ export { _gslTextareaByUid, _gslTextareas } from './shortcuts/textarea/register'
 export { _gslTimeInputByUid, _gslTimeInputs } from './shortcuts/time-input/register';
 export { _gslTimePickerByUid, _gslTimePickers } from './shortcuts/time-picker/register';
 
-// ─── Scope selectors ───
+// --- Scope selectors ---
 //
 // `_gslTag` and `_gslStates` are kept as internal underscore-era primitives
 // pending focus-closeout removal. They are not part of the spec entrance
 // (`gui.selectors.tag(...)` / `.state(...)` are). `_gslRoot` retired in
-// Phase 15 — the chain emits combined-matcher leaves directly, no wrap step.
+// Phase 15 - the chain emits combined-matcher leaves directly, no wrap step.
 
 export { _gslStates } from './shortcuts/scopes/gslStates.impl';
 export { _gslTag } from './shortcuts/scopes/gslTag.impl';
 
-// ─── Public types ───
+// --- Public types ---
 
-export type { DxFormConfig, FormConfig, GslSelectorsInput } from '@golemui/dx';
+export type { GslSelectorsInput } from '@golemui/dx';
+export type { DxFormConfig, FormConfig } from './guiDependencyTypes';
 export type { DxRuntimeParams } from '@golemui/dx';
 export type { DxValidator } from '@golemui/dx';
 export { formDefs } from './formDefs';
@@ -267,7 +268,7 @@ export type {
   TimePickerDecorator,
 } from './shortcuts/time-picker/timePicker.domain';
 
-// ─── Extension API (for adding custom shortcut types) ───
+// --- Extension API (for adding custom shortcut types) ---
 
 export { defineShortcutType, guiRegistry } from './registry';
 export type { ShortcutTypeSelectors } from '@golemui/dx';
