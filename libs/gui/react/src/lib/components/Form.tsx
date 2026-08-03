@@ -1,22 +1,14 @@
-import type {
-  FormEvent,
-  FormHealth,
-  FormSubmitEvent,
-  WidgetLoaders,
-  WithWidget,
-} from '@golemui/core';
-import { type FormInitConfig } from '@golemui/core';
+import type { FormEvent, FormHealth, FormSubmitEvent } from '@golemui/core';
 import { type GuiFormInitConfig } from '@golemui/gui-shared';
 import { resolveFormInput } from '@golemui/gui-shared/internals';
 import { initValidators } from '@golemui/gui-validators';
 import {
-  FormComponent,
+  createFormComponent,
   type FormComponentHandle,
   type FormHealthBoundary,
-  type ReactItemRenderer,
 } from '@golemui/react';
-import { type ComponentType, forwardRef, useCallback, useMemo } from 'react';
-import { widgetLoaders as golemWidgetLoaders } from '../widget.loaders';
+import { type ForwardRefExoticComponent, type PropsWithoutRef, type RefAttributes } from 'react';
+import { widgetLoaders } from '../widget.loaders';
 
 export interface ReactFormComponentProps {
   config: GuiFormInitConfig;
@@ -28,63 +20,15 @@ export interface ReactFormComponentProps {
   formHealthBoundary?: FormHealthBoundary;
 }
 
-export const GuiForm = forwardRef<FormComponentHandle, ReactFormComponentProps>(function GuiForm(
-  { config, formHealth, formEvent, formSubmit, formHealthBoundary, autocomplete },
-  ref,
-) {
-  const resolved = useMemo(
-    () => resolveFormInput(config.formDef, config.formSelectors, config.formConfig),
-    [config],
-  );
-
-  const coreConfig = useMemo(
-    (): FormInitConfig<ComponentType<WithWidget>> => ({
-      formDef: resolved.formDef as string | Record<string, any>,
-      widgetLoaders: {
-        ...golemWidgetLoaders,
-        ...(resolved.widgetLoaders as WidgetLoaders<ComponentType<WithWidget>>),
-        ...((config.customWidgetLoaders ?? {}) as WidgetLoaders<ComponentType<WithWidget>>),
-      },
-      dependencies: { ...(resolved.dependencies ?? {}), ...(config.dependencies ?? {}) },
-      functions: { ...(resolved.functions ?? {}), ...(config.functions ?? {}) },
-      validateOn: config.validateOn ?? resolved.validateOn ?? 'eager',
-      itemRenderers: {
-        ...((resolved.itemRenderers ?? {}) as Record<string, ReactItemRenderer<any>>),
-        ...((config.itemRenderers ?? {}) as Record<string, ReactItemRenderer<any>>),
-      },
-      localization: config.localization,
-      middlewares: config.middlewares ?? [],
-      data: config.data,
-      meta: config.meta,
-      formName: config.formName,
-    }),
-    [config, resolved],
-  );
-
-  const allValidators = useMemo(
-    () => initValidators({ ...(config.customValidators ?? {}) }),
-    [config],
-  );
-
-  // Chain DX-registered event handlers with the user-supplied callback so both fire.
-  const mergedFormEvent = useCallback(
-    (event: FormEvent) => {
-      resolved.formEvent?.(event);
-      formEvent?.(event);
-    },
-    [resolved.formEvent, formEvent],
-  );
-
-  return (
-    <FormComponent
-      ref={ref}
-      config={coreConfig}
-      validators={allValidators}
-      autocomplete={autocomplete}
-      formHealth={formHealth}
-      formHealthBoundary={formHealthBoundary}
-      formEvent={mergedFormEvent}
-      formSubmit={formSubmit}
-    />
-  );
+// The explicit type annotation keeps the public GuiForm type expressed in
+// gui's own prop names. The assignment fails to compile if these props ever
+// drift from what the factory-built component accepts.
+export const GuiForm: ForwardRefExoticComponent<
+  PropsWithoutRef<ReactFormComponentProps> & RefAttributes<FormComponentHandle>
+> = createFormComponent<GuiFormInitConfig>({
+  widgetLoaders,
+  validators: initValidators,
+  resolveFormInput,
 });
+
+GuiForm.displayName = 'GuiForm';
