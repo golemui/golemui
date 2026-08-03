@@ -90,7 +90,9 @@ export class GuiToggle extends LitElement {
         </div>
 
         <span class="gui-label__container">
-          ${templateData.label}${requiredMarker(templateData.required)}
+          <span class="gui-label__text"
+            >${templateData.label}${requiredMarker(templateData.required)}</span
+          >
         </span>
       </label>
 
