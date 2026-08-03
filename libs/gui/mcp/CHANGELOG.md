@@ -1,3 +1,13 @@
+## 1.1.1-rc.2 (2026-08-03)
+
+### 🩹 Fixes
+
+- dependencies and type graph ([#241](https://github.com/golemui/golemui/pull/241))
+
+### ❤️ Thank You
+
+- Raúl Jiménez @Elecash
+
 ## 1.1.1-rc.1 (2026-08-02)
 
 ### 🩹 Fixes
