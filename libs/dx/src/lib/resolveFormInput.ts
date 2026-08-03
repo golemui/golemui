@@ -5,8 +5,8 @@ import type { DxFormConfig, GslSelectorsInput } from './core/dx.domain';
 import { type DxService } from './dx.service';
 import type { DxDefinitions, FormEvents } from './formDef.domain';
 
-// ═══════════════════════════════════════════════════
-// resolveFormInput — shared bridge used by every framework's <Form> wrapper.
+// ===================================================
+// resolveFormInput - shared bridge used by every framework's <Form> wrapper.
 //
 // Accepts either a JSON form definition (string | Record<string, any>) or a
 // DX bundle (DxDefinitions + optional selectors/config) and returns a
@@ -17,16 +17,25 @@ import type { DxDefinitions, FormEvents } from './formDef.domain';
 //
 // Memoization: `processDxFacade` walks the entire form tree, so the result is
 // cached by reference identity of the (defs, selectors, config) triple. Each
-// framework wrapper calls this on every render — without memoization a typical
+// framework wrapper calls this on every render - without memoization a typical
 // kitchen-sink form would re-walk hundreds of nodes per keystroke.
-// ═══════════════════════════════════════════════════
+// ===================================================
 
 export type FormInput = string | Record<string, any> | DxDefinitions;
 
-export interface ResolvedFormInput<FormData extends Record<string, any> = any> {
+/**
+ * The uniform shape every framework Form wrapper consumes. Generic over the
+ * dependency shape so a widget set implementation hands its form authors the
+ * dependency keys its components read (the default is the open
+ * {@link Dependencies} record).
+ */
+export interface ResolvedFormInput<
+  FormData extends Record<string, any> = any,
+  TDependencies extends Dependencies = Dependencies,
+> {
   formDef: string | Record<string, any> | Form<any, FormData>;
   formEvent?: FormEvents;
-  dependencies?: Dependencies;
+  dependencies?: TDependencies;
   functions?: ExpressionFunctions;
   widgetLoaders?: Record<string, () => Promise<unknown>>;
   validateOn?: ValidateOn;
@@ -34,13 +43,16 @@ export interface ResolvedFormInput<FormData extends Record<string, any> = any> {
 }
 
 /**
- * The bound resolver returned by {@link createResolveFormInput}.
+ * The bound resolver returned by {@link createResolveFormInput}, carrying the
+ * dependency shape of the widget set it was bound to.
  */
-export type ResolveFormInputFn = <FormData extends Record<string, any> = any>(
+export type ResolveFormInputFn<TDependencies extends Dependencies = Dependencies> = <
+  FormData extends Record<string, any> = any,
+>(
   formDef: FormInput | undefined,
   formSelectors?: GslSelectorsInput,
-  formConfig?: DxFormConfig,
-) => ResolvedFormInput<FormData>;
+  formConfig?: DxFormConfig<string, TDependencies>,
+) => ResolvedFormInput<FormData, TDependencies>;
 
 /**
  * Heuristic discriminator: a DX bundle is an array of builder shortcuts (each
@@ -89,14 +101,16 @@ function assertNotWrappedDx(formDef: unknown): void {
  * @internal Used by widget set packages to build the `resolveFormInput` their
  * framework Form wrappers consume; not part of the end-user public API.
  */
-export function createResolveFormInput(dxService: DxService): ResolveFormInputFn {
-  // ─── Memoization ───
+export function createResolveFormInput<TDependencies extends Dependencies = Dependencies>(
+  dxService: DxService<TDependencies>,
+): ResolveFormInputFn<TDependencies> {
+  // --- Memoization ---
   // Three-level WeakMap keyed by (defs, selectors, config). Falls back to a
   // sentinel for the "selectors omitted" / "config omitted" cases so undefined
   // arguments still hit the cache.
   const NO_SELECTORS = Object.freeze({}) as object;
   const NO_CONFIG = Object.freeze({}) as object;
-  type Triple = WeakMap<object, WeakMap<object, ResolvedFormInput<any>>>;
+  type Triple = WeakMap<object, WeakMap<object, ResolvedFormInput<any, TDependencies>>>;
   const cache = new WeakMap<object, Triple>();
 
   function cacheKey(value: unknown, sentinel: object): object {
@@ -109,8 +123,8 @@ export function createResolveFormInput(dxService: DxService): ResolveFormInputFn
   return function resolveFormInput<FormData extends Record<string, any> = any>(
     formDef: FormInput | undefined,
     formSelectors?: GslSelectorsInput,
-    formConfig?: DxFormConfig,
-  ): ResolvedFormInput<FormData> {
+    formConfig?: DxFormConfig<string, TDependencies>,
+  ): ResolvedFormInput<FormData, TDependencies> {
     if (!isDxDefinitions(formDef)) {
       assertNotWrappedDx(formDef);
       return { formDef: formDef as string | Record<string, any> };
@@ -130,7 +144,9 @@ export function createResolveFormInput(dxService: DxService): ResolveFormInputFn
       byConfig = new WeakMap();
       bySelectors.set(selectorsKey, byConfig);
     }
-    const cached = byConfig.get(configKey) as ResolvedFormInput<FormData> | undefined;
+    const cached = byConfig.get(configKey) as
+      | ResolvedFormInput<FormData, TDependencies>
+      | undefined;
     if (cached) return cached;
 
     const result = dxService.processDxFacade<never, FormData>(
@@ -138,7 +154,7 @@ export function createResolveFormInput(dxService: DxService): ResolveFormInputFn
       formSelectors,
       formConfig,
     );
-    const resolved: ResolvedFormInput<FormData> = {
+    const resolved: ResolvedFormInput<FormData, TDependencies> = {
       formDef: result.form,
       formEvent: result.events,
       dependencies: result.dependencies,

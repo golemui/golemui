@@ -1,8 +1,8 @@
-// ═══════════════════════════════════════════════════
+// ===================================================
 // The generic DX base types moved to `@golemui/dx`; they stay re-exported
 // here permanently so existing import paths keep working. The gui shortcut
 // type re-exports below are owned by this package.
-// ═══════════════════════════════════════════════════
+// ===================================================
 
 export type {
   GslItemType,
@@ -11,12 +11,14 @@ export type {
   DxDefinitionItem,
   DxDefinitions,
   FormEvents,
-  DxResult,
 } from '@golemui/dx';
 
-// ═══════════════════════════════════════════════════
+// DxResult carries the gui dependency shape, see guiDependencyTypes.ts.
+export type { DxResult } from './guiDependencyTypes';
+
+// ===================================================
 // Re-exports from shortcut folders (backward compat)
-// ═══════════════════════════════════════════════════
+// ===================================================
 
 export type {
   DxEventHandler,

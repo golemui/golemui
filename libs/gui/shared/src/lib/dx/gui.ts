@@ -17,6 +17,7 @@ import {
 } from '@golemui/dx';
 
 import { guiRegistry } from './registry';
+import type { Dependencies } from '../shared';
 
 // --- Inputs ---
 import { _guiTextInput } from './shortcuts/inputs/guiTextInput.impl';
@@ -254,70 +255,81 @@ const guiAdapter: DxAdapter = {
   },
 };
 
+// The shortcut factory groups of the public namespace. Named so the
+// dependency shape can be passed to createImplementation explicitly: giving
+// any type argument means giving all of them.
+const guiFacade = {
+  inputs: {
+    textInput: _guiTextInput,
+    numberInput: _guiNumberInput,
+    booleanInput: _guiBooleanInput,
+    select: _guiSelect,
+    dropdown: _guiDropdown,
+    radiogroup: _guiRadiogroup,
+    checkbox: _guiCheckbox,
+    textarea: _guiTextarea,
+    password: _guiPassword,
+    currency: _guiCurrency,
+    markdown: _guiMarkdown,
+    list: _guiList,
+    calendar: _guiCalendar,
+    dateTimeCalendar: _guiDateTimeCalendar,
+    dateInput: _guiDateInput,
+    datePicker: _guiDatePicker,
+    dateTimePicker: _guiDateTimePicker,
+    timeInput: _guiTimeInput,
+    timePicker: _guiTimePicker,
+    dateTimeInput: _guiDateTimeInput,
+    rangeCalendar: _guiRangeCalendar,
+    rangeDateInput: _guiRangeDateInput,
+    rangeDateTimeInput: _guiRangeDateTimeInput,
+    rangeDateTimeCalendar: _guiRangeDateTimeCalendar,
+    rangeDateTimePicker: _guiRangeDateTimePicker,
+    rangeTimeInput: _guiRangeTimeInput,
+    rangeDatePicker: _guiRangeDatePicker,
+    rangeTimePicker: _guiRangeTimePicker,
+    repeater: _guiRepeater,
+    tags: _guiTags,
+    custom: _guiCustomInput,
+  },
+  actions: {
+    button: _guiButton,
+    custom: _guiCustomAction,
+  },
+  displays: {
+    display: _guiDisplay,
+    alert: _guiAlert,
+    markdownText: _guiMarkdownText,
+    custom: _guiCustomDisplay,
+  },
+  layouts: {
+    flex: _guiFlex,
+    horizontalFlex: _guiHorizontalFlex,
+    verticalFlex: _guiVerticalFlex,
+    grid: _guiGrid,
+    horizontalGrid: _guiHorizontalGrid,
+    verticalGrid: _guiVerticalGrid,
+    tabs: _guiTabs,
+    accordion: _guiAccordion,
+    custom: _guiCustomLayout,
+  },
+};
+
 /**
  * The assembled gui widget set: the authoring namespace plus the DX
  * form-definition service and the framework bridge, all bound to the gui
- * registry and adapter.
+ * registry and adapter. `Dependencies` is the gui widget set's dependency
+ * shape, so form authors get its keys typed on `formConfig.dependencies` and
+ * on the resolved form input.
  */
-export const guiImplementation = createImplementation({
+export const guiImplementation = createImplementation<
+  typeof guiFacade,
+  typeof guiSelectors,
+  Dependencies
+>({
   name: 'gui',
   registry: guiRegistry,
-  facade: {
-    inputs: {
-      textInput: _guiTextInput,
-      numberInput: _guiNumberInput,
-      booleanInput: _guiBooleanInput,
-      select: _guiSelect,
-      dropdown: _guiDropdown,
-      radiogroup: _guiRadiogroup,
-      checkbox: _guiCheckbox,
-      textarea: _guiTextarea,
-      password: _guiPassword,
-      currency: _guiCurrency,
-      markdown: _guiMarkdown,
-      list: _guiList,
-      calendar: _guiCalendar,
-      dateTimeCalendar: _guiDateTimeCalendar,
-      dateInput: _guiDateInput,
-      datePicker: _guiDatePicker,
-      dateTimePicker: _guiDateTimePicker,
-      timeInput: _guiTimeInput,
-      timePicker: _guiTimePicker,
-      dateTimeInput: _guiDateTimeInput,
-      rangeCalendar: _guiRangeCalendar,
-      rangeDateInput: _guiRangeDateInput,
-      rangeDateTimeInput: _guiRangeDateTimeInput,
-      rangeDateTimeCalendar: _guiRangeDateTimeCalendar,
-      rangeDateTimePicker: _guiRangeDateTimePicker,
-      rangeTimeInput: _guiRangeTimeInput,
-      rangeDatePicker: _guiRangeDatePicker,
-      rangeTimePicker: _guiRangeTimePicker,
-      repeater: _guiRepeater,
-      tags: _guiTags,
-      custom: _guiCustomInput,
-    },
-    actions: {
-      button: _guiButton,
-      custom: _guiCustomAction,
-    },
-    displays: {
-      display: _guiDisplay,
-      alert: _guiAlert,
-      markdownText: _guiMarkdownText,
-      custom: _guiCustomDisplay,
-    },
-    layouts: {
-      flex: _guiFlex,
-      horizontalFlex: _guiHorizontalFlex,
-      verticalFlex: _guiVerticalFlex,
-      grid: _guiGrid,
-      horizontalGrid: _guiHorizontalGrid,
-      verticalGrid: _guiVerticalGrid,
-      tabs: _guiTabs,
-      accordion: _guiAccordion,
-      custom: _guiCustomLayout,
-    },
-  },
+  facade: guiFacade,
   selectors: guiSelectors,
   adapter: guiAdapter,
 });

@@ -14,9 +14,9 @@ import {
 
 // ===================================================
 // A minimal second widget set ("demo") with its own vocabulary. This is the
-// counterpart of the gui wiring: it pins that the pipeline seams
-// (registry, adapter, umbrella kinds, facade, bridge) work for an
-// implementation other than gui.
+// counterpart of the gui wiring: it checks that every shared part of the
+// pipeline (registry, adapter, umbrella kinds, exact item type matching,
+// facade, bridge) works for an implementation other than gui.
 // ===================================================
 
 interface DemoFieldDecorator extends DxCommonFields {
@@ -201,6 +201,29 @@ describe('createImplementation', () => {
 
     const field = rootLayoutOf(result).children[0];
     expect(field.label).toBe('From umbrella');
+  });
+
+  it('applies a selector that matches the second vocabulary item type exactly', () => {
+    const demo = buildDemoImplementation();
+    const result = demo.formDefs.processDxFacade(
+      [demoText('email')],
+      [demo.namespace.selectors.fields({ override: { label: 'From DEMO_FIELD' } })],
+    );
+
+    const field = rootLayoutOf(result).children[0];
+    expect(field.label).toBe('From DEMO_FIELD');
+  });
+
+  it('targets one widget of the second vocabulary by its declared uid', () => {
+    const demo = buildDemoImplementation();
+    const result = demo.formDefs.processDxFacade(
+      [demoText('email', { uid: 'email-field' }), demoText('name', { uid: 'name-field' })],
+      [demo.namespace.selectors.fieldByUid('email-field', { override: { label: 'Only email' } })],
+    );
+
+    const [email, name] = rootLayoutOf(result).children;
+    expect(email.label).toBe('Only email');
+    expect(name.label).toBeUndefined();
   });
 
   it('maps bare functions through the adapter', () => {

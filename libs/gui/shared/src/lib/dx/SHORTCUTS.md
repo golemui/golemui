@@ -259,10 +259,17 @@ It does **not** accept object literals or callbacks. For any per-field customiza
 
 ## Demo Requirement for New Shortcut Types
 
-Every new shortcut type must ship with at least one demo under `src/app/demos/` and be registered in:
+Every new shortcut type must be visible in the kitchen sink demo, which the four
+playground apps render at `/dx/kitchen-sink` and `/json/kitchen-sink`. Add a tab
+pair under `apps/apps-shared/src/lib/mocks/tabs/`:
 
-- `src/app/demos/index.ts`
-- `src/app/app.tsx` (`formRegistry.registerAll([...])`)
+- `<widget>.dx.ts` (the builder version) wired into
+  `apps/apps-shared/src/lib/mocks/kitchen-sink.dx.ts`
+- `<widget>.form-chunk.json` (the JSON version) wired into
+  `apps/apps-shared/src/lib/mocks/kitchen-sink.form.json`
+
+`kitchen-sink.equivalence.spec.ts` compares the two versions tab by tab, so both
+must produce the same form.
 
 If a shortcut has no visible demo, it is not considered complete.
 
@@ -303,17 +310,29 @@ lib/dx/
 │   │   ├── guiDisplay.impl.ts         ← _guiDisplay()
 │   │   └── register.ts                ← _gslDisplays(), _gslDisplayByUid()
 │   │
-│   └── scopes/                        ← Scope chain + legacy primitives
-│       ├── scopeChain.ts              ← ScopeChain class — `gui.selectors` root
+│   └── scopes/                        ← Legacy scope primitives
 │       ├── gslTag.impl.ts             ← _gslTag()  (internal, focus-closeout removal)
 │       └── gslStates.impl.ts          ← _gslStates() (internal, focus-closeout removal)
 │
+├── gui.ts                             ← The assembly point: the selector map passed to
+│                                        createSelectors, the gui adapter, the one
+│                                        createImplementation call, and the `gui` namespace
 ├── registry.ts                        ← guiRegistry: registers every shortcut type definition
-├── formDefs.ts                        ← formDefs: the DX service bound to guiRegistry + gui adapter
+├── guiDependencyTypes.ts              ← The DX types bound to the gui `Dependencies` shape
+├── formDefs.ts                        ← formDefs: re-exported from the implementation object
 ├── resolveFormInput.ts                ← gui-bound resolveFormInput + GuiFormInitConfig
 ├── formDef.domain.ts                  ← Compatibility re-exports + gui decorator re-exports
+├── __tests__/selectorChain.spec.ts    ← Pinned list of every `gui.selectors` method
 └── SHORTCUTS.md                       ← This file
 ```
+
+A new widget type needs three edits outside its own folder: register the
+definition in `registry.ts`, add the factory to the facade in `gui.ts`, and add
+its selector pair (`<widget>s` and `<widget>ByUid`) to the selector map in
+`gui.ts`. The selector map is the replacement for the hand-written selector
+class that used to live in `shortcuts/scopes/`: `createSelectors` builds the
+chain from that flat map. `selectorChain.spec.ts` pins the resulting method
+list, so it fails until the new pair is added there too.
 
 ## Existing Shortcuts — Reference Implementation Map
 

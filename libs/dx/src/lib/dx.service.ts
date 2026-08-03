@@ -13,6 +13,7 @@ import {
   type GslSelectorsInput,
   type ValidGuiShortcut,
 } from './core/dx.domain';
+import { type Dependencies } from './shared';
 import { SelectorResolver } from './core/selectorResolver.service';
 import { WidgetMerger } from './core/widgetMerger.service';
 import { WidgetMapper } from './core/widgetMapper.service';
@@ -30,7 +31,7 @@ import { objectUtils } from './utils/objectUtils.service';
  */
 export interface DxAdapter {
   /**
-   * What a bare function in a form definition becomes — typically the
+   * What a bare function in a form definition becomes - typically the
    * implementation's display shortcut wrapping the render function.
    */
   bareItemToWidget(renderFn: DxDisplayRenderFn): ValidGuiShortcut;
@@ -46,26 +47,29 @@ export interface DxAdapter {
  * The output of {@link DxService.prepareForm}: a fully normalized form
  * ready for the walk-and-map phase.
  *
- * - `defs` — widget definitions, possibly wrapped in a synthetic root layout
- * - `gslSelectors` — normalized selectors (always aggregated shape)
- * - `formConfig` — form-level behavioral settings (auto-stack, onSubmit, etc.)
+ * - `defs` - widget definitions, possibly wrapped in a synthetic root layout
+ * - `gslSelectors` - normalized selectors (always aggregated shape)
+ * - `formConfig` - form-level behavioral settings (auto-stack, onSubmit, etc.)
  */
-interface PreparedForm {
+interface PreparedForm<TDependencies extends Dependencies = Dependencies> {
   defs: ValidGuiShortcut[];
   gslSelectors: GslSelector[];
-  formConfig: FormConfig;
+  formConfig: FormConfig<TDependencies>;
 }
 
 /**
  * Transforms a developer-friendly form definition into a fully-fledged form definition
  * usable by the framework ({@link Form}<STATE_KEYS, FORM_DATA>).
  *
- * Orchestrates: prepareForm → walkAndMap → buildResult.
+ * Orchestrates: prepareForm -> walkAndMap -> buildResult.
  *
- * One instance exists per widget set implementation; build it with
- * {@link createDxService}.
+ * One instance exists per widget set implementation, build it with
+ * {@link createDxService}. The `TDependencies` parameter is the dependency
+ * shape the implementation exposes to its form authors (see
+ * {@link Dependencies}), and it flows from the form config through to the
+ * result.
  */
-export class DxService {
+export class DxService<TDependencies extends Dependencies = Dependencies> {
   constructor(
     private readonly selectorNormalizer: SelectorNormalizer,
     private readonly walker: ItemWalker,
@@ -75,23 +79,23 @@ export class DxService {
   processDxFacade<STATE_KEYS extends UiState = never, FORM_DATA extends Record<string, any> = any>(
     dxDefinitionsRaw: DxDefinitions,
     gslSelectorsInput: GslSelectorsInput = [],
-    formConfigInput?: DxFormConfig<STATE_KEYS>,
-  ): DxResult<STATE_KEYS, FORM_DATA> {
-    // ── 1. Prepare: normalize, auto-stack ──
+    formConfigInput?: DxFormConfig<STATE_KEYS, TDependencies>,
+  ): DxResult<STATE_KEYS, FORM_DATA, TDependencies> {
+    // -- 1. Prepare: normalize, auto-stack --
     const { defs, gslSelectors, formConfig } = this.prepareForm(
       dxDefinitionsRaw,
       gslSelectorsInput,
       formConfigInput,
     );
 
-    // ── 2. Walk the shortcut tree and map each widget ──
+    // -- 2. Walk the shortcut tree and map each widget --
     const { widgets, eventRegistry } = this.walker.walkAndMap<STATE_KEYS, FORM_DATA>(
       defs,
       gslSelectors,
       formConfig,
     );
 
-    // ── 3. Build result ──
+    // -- 3. Build result --
     const rootLayout = widgets[0] as LayoutWidget<STATE_KEYS, FORM_DATA>;
     return this.buildResult<STATE_KEYS, FORM_DATA>({ form: rootLayout }, eventRegistry, formConfig);
   }
@@ -100,17 +104,17 @@ export class DxService {
    * Normalizes raw form definitions and applies form-level defaults.
    *
    * Steps:
-   *  1. Normalize definitions — ensure a flat array; convert bare functions to display widgets.
-   *  2. Normalize selectors — convert mixed leaf/aggregated selectors into a uniform
+   *  1. Normalize definitions - ensure a flat array; convert bare functions to display widgets.
+   *  2. Normalize selectors - convert mixed leaf/aggregated selectors into a uniform
    *     aggregated shape, and extract form-level config (see {@link FormConfig}).
-   *  3. Auto-stack — unless suppressed, wrap all definitions in a synthetic root
+   *  3. Auto-stack - unless suppressed, wrap all definitions in a synthetic root
    *     flex column layout so the form renders as a single vertical container.
    */
   private prepareForm(
     dxDefinitionsRaw: DxDefinitions,
     gslSelectorsInput: GslSelectorsInput,
-    formConfigInput?: FormConfig,
-  ): PreparedForm {
+    formConfigInput?: FormConfig<TDependencies>,
+  ): PreparedForm<TDependencies> {
     // 1. Normalize definitions
     const rawItems: DxDefinitionItem[] = Array.isArray(dxDefinitionsRaw)
       ? [...dxDefinitionsRaw]
@@ -122,8 +126,8 @@ export class DxService {
     // 2. Normalize selectors + extract form config
     //    Defaults come from extractFormConfig(); third-arg overrides them.
     const gslSelectors = this.selectorNormalizer.normalizeSelectors(gslSelectorsInput);
-    const formConfig = {
-      ...this.selectorNormalizer.extractFormConfig(),
+    const formConfig: FormConfig<TDependencies> = {
+      ...this.selectorNormalizer.extractFormConfig<TDependencies>(),
       ...formConfigInput,
     };
 
@@ -141,7 +145,7 @@ export class DxService {
 
   /**
    * Converts DX `$`-separated state names to core's `:`-separated names.
-   * E.g. `{ register$adult: 'expr' }` → `{ 'register:adult': 'expr' }`.
+   * E.g. `{ register$adult: 'expr' }` becomes `{ 'register:adult': 'expr' }`.
    */
   private convertStateNames(states: Record<string, string>): Record<string, string> {
     const converted: Record<string, string> = {};
@@ -157,8 +161,8 @@ export class DxService {
   >(
     form: Form<StateKeys, FormData>,
     eventRegistry: EventRegistry,
-    formConfig: FormConfig,
-  ): DxResult<StateKeys, FormData> {
+    formConfig: FormConfig<TDependencies>,
+  ): DxResult<StateKeys, FormData, TDependencies> {
     // Inject states into the core form if provided
     if (formConfig.states && Object.keys(formConfig.states).length > 0) {
       form = {
@@ -167,7 +171,7 @@ export class DxService {
       };
     }
 
-    const result: DxResult<StateKeys, FormData> = { form };
+    const result: DxResult<StateKeys, FormData, TDependencies> = { form };
 
     if (eventRegistry.size > 0) {
       result.events = (event: FormEvent) => {
@@ -233,14 +237,23 @@ export class DxService {
  * the full walk-and-map pipeline bound to the implementation's item type
  * registry and adapter.
  *
+ * Pass `TDependencies` to declare the dependency shape this widget set's
+ * components read, so its form authors get those keys typed on both the form
+ * config and the result. Omit it for the open {@link Dependencies} record.
+ *
  * @example
  * const formDefs = createDxService({ registry: guiRegistry, adapter: guiAdapter });
  * const result = formDefs.processDxFacade(definitions, selectors, config);
+ *
+ * @example
+ * // A widget set that documents its own dependency keys.
+ * type KendoDependencies = { icons?: IconPack };
+ * const formDefs = createDxService<KendoDependencies>({ registry, adapter });
  */
-export function createDxService(options: {
+export function createDxService<TDependencies extends Dependencies = Dependencies>(options: {
   registry: ItemTypeRegistry;
   adapter: DxAdapter;
-}): DxService {
+}): DxService<TDependencies> {
   const { registry, adapter } = options;
   const walker = new ItemWalker(
     registry,
@@ -250,5 +263,5 @@ export function createDxService(options: {
     eventWiringService,
     stateExpansionService,
   );
-  return new DxService(new SelectorNormalizer(), walker, adapter);
+  return new DxService<TDependencies>(new SelectorNormalizer(), walker, adapter);
 }

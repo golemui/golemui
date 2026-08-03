@@ -665,3 +665,67 @@ export type LegacyWidgetPropsTypeSurface = [
   ToggleProps,
   GolemWidget,
 ];
+
+// --- Dependency shape (compile-time coverage) -----------------------------
+// `@golemui/dx` declares the dependency-carrying types generic over the
+// dependency shape, defaulted to an open record, so a second widget set can
+// bring its own keys. gui-shared binds them to the gui `Dependencies` (see
+// `lib/dx/guiDependencyTypes.ts`). These probes fail the typecheck pass if
+// that binding is ever lost: reading a documented key must keep compiling,
+// and a wrong dependency value must keep failing.
+
+import type { DxFormConfig as GuiDxFormConfig, GuiFormInitConfig as GuiInitConfig } from './index';
+
+/**
+ * Never called. Its body is the assertion: every read path that compiled
+ * before `@golemui/dx` was extracted must still compile.
+ */
+export function legacyDependencyReadProbes(
+  resolved: ResolvedFormInput,
+  result: DxResult,
+  resolve: typeof resolveFormInput,
+  service: typeof formDefs,
+): (string | undefined)[] {
+  return [
+    resolved.dependencies?.markdown?.parse('# heading'),
+    result.dependencies?.markdown?.parse('# heading'),
+    resolve([]).dependencies?.markdown?.parse('# heading'),
+    service.processDxFacade([]).dependencies?.markdown?.parse('# heading'),
+  ];
+}
+
+export const legacyFormConfigDependencyProbe: FormConfig = {
+  dependencies: {
+    markdown: {
+      // @ts-expect-error the gui markdown dependency must declare a parse function
+      parse: 42,
+    },
+  },
+};
+
+export const legacyDxFormConfigDependencyProbe: GuiDxFormConfig = {
+  dependencies: {
+    markdown: {
+      // @ts-expect-error the gui markdown dependency must declare a parse function
+      parse: 42,
+    },
+  },
+};
+
+export const legacyInitConfigDependencyProbe: GuiInitConfig = {
+  formDef: [],
+  dependencies: {
+    markdown: {
+      // @ts-expect-error the gui markdown dependency must declare a parse function
+      parse: 42,
+    },
+  },
+  formConfig: {
+    dependencies: {
+      markdown: {
+        // @ts-expect-error the gui markdown dependency must declare a parse function
+        parse: 42,
+      },
+    },
+  },
+};
