@@ -1,4 +1,5 @@
 import {
+  UmbrellaItemTypes,
   type GslAggregatedSelector,
   type GslLeafSelector,
   type GslSelector,
@@ -12,8 +13,8 @@ type DecoratorForMatching = DxInternalFields & DxCommonFields;
 // Umbrella selector types match by widget kind, not by exact itemType
 // (per spec: "Type selectors match all widgets of a given kind").
 //
-// `gui.selectors.inputs` (umbrella) fires on every input-kind widget —
-// textInputs, textareas, calendars, etc. — while `gui.selectors.calendars`
+// `gui.selectors.inputs` (umbrella) fires on every input-kind widget -
+// textInputs, textareas, calendars, etc. - while `gui.selectors.calendars`
 // (specific) only fires on CALENDAR itemType.
 //
 // The umbrella names double as the item type of the base batch (e.g. `INPUTS`
@@ -21,10 +22,10 @@ type DecoratorForMatching = DxInternalFields & DxCommonFields;
 // shortcuts). Membership comes from the kind declared at registration; an
 // item type registered without a kind never matches an umbrella selector.
 const KIND_BY_UMBRELLA_SELECTOR: Record<string, ShortcutItemKind> = {
-  INPUTS: 'input',
-  ACTIONS: 'action',
-  DISPLAYS: 'display',
-  LAYOUTS: 'layout',
+  [UmbrellaItemTypes.INPUTS]: 'input',
+  [UmbrellaItemTypes.ACTIONS]: 'action',
+  [UmbrellaItemTypes.DISPLAYS]: 'display',
+  [UmbrellaItemTypes.LAYOUTS]: 'layout',
 };
 
 export class SelectorResolver {
@@ -105,7 +106,7 @@ export class SelectorResolver {
       }
     }
 
-    // Delegate rollup to each registered handler — keyed by itemType so
+    // Delegate rollup to each registered handler - keyed by itemType so
     // widgetMerger's per-decorator lookup (`resolved.sensibleDefaults[itemType]`)
     // finds the right rollup.
     const result: Record<string, Record<string, any>> = {};

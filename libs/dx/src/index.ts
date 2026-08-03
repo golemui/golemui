@@ -1,15 +1,17 @@
-// ═══════════════════════════════════════════════════
-// @golemui/dx — the generic form-authoring (DX) pipeline
+// ===================================================
+// @golemui/dx - the generic form-authoring (DX) pipeline
 //
 // A widget set implementation builds on this package by:
 //   1. creating its item type registry (`createItemTypeRegistry`),
 //   2. registering one shortcut type per widget type
 //      (`defineShortcutType`, or `createShortcutType` + `registerShortcutType`),
-//   3. building its form-definition service (`createDxService`) and its
-//      framework bridge (`createResolveFormInput`).
-// ═══════════════════════════════════════════════════
+//   3. building its selector chain (`createSelectors`) and assembling the
+//      whole widget set (`createImplementation`), which bundles the
+//      form-definition service (`createDxService`) and the framework bridge
+//      (`createResolveFormInput`).
+// ===================================================
 
-// ─── Item type registry ───
+// --- Item type registry ---
 
 export { ItemTypeRegistry, createItemTypeRegistry } from './lib/core/itemTypeRegistry';
 export type {
@@ -22,7 +24,7 @@ export type {
   ShortcutItemKind,
 } from './lib/core/itemTypeRegistry';
 
-// ─── Shortcut type definition ───
+// --- Shortcut type definition ---
 
 export {
   createShortcutType,
@@ -37,12 +39,30 @@ export type {
   ShortcutTypeSelectors,
 } from './lib/core/defineShortcutType';
 
-// ─── Domain types ───
+// --- Selector chain ---
 
-export { GuiItemTypes } from './lib/core/dx.domain';
+export { createSelectors } from './lib/core/createSelectors';
 export type {
+  SelectorFactory,
+  SelectorFactoryMap,
+  SelectorChain,
+  UmbrellaSelectorMethods,
+} from './lib/core/createSelectors';
+
+// --- Implementation assembly ---
+
+export { createImplementation } from './lib/createImplementation';
+export type { ImplementationConfig, WidgetSetImplementation } from './lib/createImplementation';
+
+// --- Domain types ---
+
+export { GuiItemTypes, UmbrellaItemTypes } from './lib/core/dx.domain';
+export type {
+  ShortcutItemType,
   GuiItemType,
+  ItemsShortcut,
   GuiItemsShortcut,
+  ValidShortcut,
   ValidGuiShortcut,
   GslMatcher,
   GslLeafConfig,
@@ -67,7 +87,7 @@ export type {
 } from './lib/formDef.domain';
 export type { Dependencies } from './lib/shared';
 
-// ─── Decorator base types ───
+// --- Decorator base types ---
 
 export type {
   DxFormEvent,
@@ -82,7 +102,7 @@ export type {
   DxDisplayBase,
 } from './lib/core/dxBase.types';
 
-// ─── Utility types and helpers ───
+// --- Utility types and helpers ---
 
 export { createGslSelector } from './lib/core/dxUtilityTypes';
 export type {
@@ -90,6 +110,7 @@ export type {
   GslDecoratorCallback,
   DefOrCallback,
   GslConfigBase,
+  ShortcutOf,
   GuiShortcutOf,
 } from './lib/core/dxUtilityTypes';
 export { extractWidgetProps } from './lib/core/dxPropsHelper';
@@ -106,7 +127,7 @@ export type {
 } from './lib/core/sharedSensibleDefaults.service';
 export { withForm } from './lib/core/withForm';
 
-// ─── Pipeline services ───
+// --- Pipeline services ---
 
 export { SelectorResolver } from './lib/core/selectorResolver.service';
 export { WidgetMerger } from './lib/core/widgetMerger.service';
@@ -119,7 +140,7 @@ export { StateExpansionService } from './lib/core/stateExpansion.service';
 export type { StateData } from './lib/core/stateExpansion.service';
 export { SelectorNormalizer } from './lib/core/selectorNormalizer.service';
 
-// ─── Form-definition service and framework bridge ───
+// --- Form-definition service and framework bridge ---
 
 export { DxService, createDxService } from './lib/dx.service';
 export type { DxAdapter } from './lib/dx.service';

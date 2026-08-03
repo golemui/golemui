@@ -8,55 +8,90 @@ import { type Dependencies } from '../shared';
 
 export type { GslItemType } from '../formDef.domain';
 
-// ═══════════════════════════════════════════════════
+// ===================================================
 // Runtime Function
-// ═══════════════════════════════════════════════════
+// ===================================================
 
 export type RuntimeFunction = (params: FunctionWidgetParams<any>) => any;
 
-// ═══════════════════════════════════════════════════
-// GUI Item Type (open — new types register at runtime)
-// ═══════════════════════════════════════════════════
+// ===================================================
+// Item Type (open, new types register at runtime)
+// ===================================================
 
-export type GuiItemType = string;
+export type ShortcutItemType = string;
 
-export const GuiItemTypes = {
+/**
+ * Kept as a permanent alias of {@link ShortcutItemType} so pre-refactor
+ * imports keep working. New code should use the neutral name.
+ */
+export type GuiItemType = ShortcutItemType;
+
+/**
+ * The four umbrella selector names. They are a fixed cross-implementation
+ * convention: an umbrella selector matches every item type registered under
+ * its kind, and each name doubles as the item type of an implementation's
+ * base batch (for the gui set, `INPUTS` is both the umbrella and the item
+ * type of the text, number, and boolean shortcuts).
+ */
+export const UmbrellaItemTypes = {
   INPUTS: 'INPUTS',
   ACTIONS: 'ACTIONS',
   LAYOUTS: 'LAYOUTS',
   DISPLAYS: 'DISPLAYS',
+} as const satisfies Record<string, string>;
+
+/**
+ * The umbrella names plus the gui widget set's custom item types. Kept with
+ * this exact shape as a permanent compatibility surface; new code should use
+ * {@link UmbrellaItemTypes} for the shared names and the implementation's own
+ * constants for its vocabulary.
+ */
+export const GuiItemTypes = {
+  ...UmbrellaItemTypes,
   CUSTOM_DISPLAY: 'CUSTOM_DISPLAY',
   CUSTOM_INPUT: 'CUSTOM_INPUT',
   CUSTOM_ACTION: 'CUSTOM_ACTION',
   CUSTOM_LAYOUT: 'CUSTOM_LAYOUT',
 } as const satisfies Record<string, string>;
 
-// ═══════════════════════════════════════════════════
-// GUI Shortcut Core Shapes
-// ═══════════════════════════════════════════════════
+// ===================================================
+// Shortcut Core Shapes
+// ===================================================
 
-// ── Shape 1: Items (base) ──
+// The base shape every builder shortcut reduces to.
 
-export interface GuiItemsShortcut {
+export interface ItemsShortcut {
   type: 'ITEMS';
-  itemType: GuiItemType;
+  itemType: ShortcutItemType;
   items: unknown[];
   tags: string[];
 }
 
-// ── Union (open — sub-interfaces live in each shortcut folder) ──
+/**
+ * Kept as a permanent alias of {@link ItemsShortcut} so pre-refactor imports
+ * keep working. New code should use the neutral name.
+ */
+export type GuiItemsShortcut = ItemsShortcut;
 
-export type ValidGuiShortcut = GuiItemsShortcut;
+// The open union of shortcut shapes (sub-interfaces live in each shortcut folder).
 
-// ═══════════════════════════════════════════════════
+export type ValidShortcut = ItemsShortcut;
+
+/**
+ * Kept as a permanent alias of {@link ValidShortcut} so pre-refactor imports
+ * keep working. New code should use the neutral name.
+ */
+export type ValidGuiShortcut = ValidShortcut;
+
+// ===================================================
 // GSL Matcher
-// ═══════════════════════════════════════════════════
+// ===================================================
 
 export type GslMatcher = (decorator: WidgetItemDecorator) => boolean;
 
-// ═══════════════════════════════════════════════════
-// Leaf Selectors (open — config is generic)
-// ═══════════════════════════════════════════════════
+// ===================================================
+// Leaf Selectors (open - config is generic)
+// ===================================================
 
 export type GslLeafConfig = Record<string, any>;
 
@@ -69,9 +104,9 @@ export interface GslLeafSelector {
   targetState?: string;
 }
 
-// ═══════════════════════════════════════════════════
+// ===================================================
 // Aggregated Selectors
-// ═══════════════════════════════════════════════════
+// ===================================================
 
 export interface FormConfig {
   suppressAutomaticStack?: boolean;
@@ -94,7 +129,7 @@ export interface FormConfig {
 
 /**
  * Public-facing form config type for `processDxFacade`'s third argument.
- * Generic over state keys — TypeScript enforces that every declared state name
+ * Generic over state keys - TypeScript enforces that every declared state name
  * has a corresponding expression.
  *
  * Usage: `processDxFacade<typeof states[number], FormData>(defs, selectors, formConfig)`
@@ -109,26 +144,26 @@ export interface GslAggregatedSelector {
   children: GslLeafSelector[];
 }
 
-// ═══════════════════════════════════════════════════
+// ===================================================
 // Top-level Selector (what goes in formSelectors[])
-// ═══════════════════════════════════════════════════
+// ===================================================
 
 export type GslSelector = GslAggregatedSelector | GslLeafSelector;
 
 export type GslSelectorsInput = GslSelector | GslSelector[];
 
-// ═══════════════════════════════════════════════════
+// ===================================================
 // Resolved Selectors (output of SelectorResolver)
-// ═══════════════════════════════════════════════════
+// ===================================================
 
 export interface ResolvedSelectors {
   leafSelectors: GslLeafSelector[];
   sensibleDefaults: Record<string, Record<string, any>>;
 }
 
-// ═══════════════════════════════════════════════════
+// ===================================================
 // Merge Result (output of WidgetMerger)
-// ═══════════════════════════════════════════════════
+// ===================================================
 
 export type MergeResult =
   | { kind: 'static'; def: Record<string, any> }
