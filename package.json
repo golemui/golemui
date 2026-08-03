@@ -85,7 +85,7 @@
     "@vitest/coverage-v8": "4.1.9",
     "@vitest/ui": "4.1.9",
     "ajv": "^8.0.0",
-    "angular-eslint": "21.4.0",
+    "angular-eslint": "22.1.0",
     "cypress": "^15.6.0",
     "cypress-ct-lit": "^1.0.0",
     "czg": "^1.12.0",
