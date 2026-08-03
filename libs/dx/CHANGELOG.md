@@ -1,3 +1,18 @@
+## 1.1.1-rc.2 (2026-08-03)
+
+### 🚀 Features
+
+- **dx:** add createSelectors and createImplementation factories ([994c68eb](https://github.com/golemui/golemui/commit/994c68eb))
+
+### 🩹 Fixes
+
+- **dx:** pass the dependency shape as a type parameter ([384464ed](https://github.com/golemui/golemui/commit/384464ed))
+- **dx:** update registration error messages for the pure-definition model ([493f51fd](https://github.com/golemui/golemui/commit/493f51fd))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+
 ## 1.1.1-rc.1 (2026-08-02)
 
 ### 🚀 Features

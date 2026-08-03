@@ -1,3 +1,7 @@
+## 1.1.1-rc.2 (2026-08-03)
+
+This was a version bump only for react to align it with other projects, there were no code changes.
+
 ## 1.1.1-rc.1 (2026-08-02)
 
 This was a version bump only for react to align it with other projects, there were no code changes.

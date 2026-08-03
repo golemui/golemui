@@ -1,3 +1,13 @@
+## 1.1.1-rc.2 (2026-08-03)
+
+### 🩹 Fixes
+
+- **gui-shared:** restore the gui dependency typing on the DX types ([6068097d](https://github.com/golemui/golemui/commit/6068097d))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+
 ## 1.1.1-rc.1 (2026-08-02)
 
 This was a version bump only for gui-shared to align it with other projects, there were no code changes.
