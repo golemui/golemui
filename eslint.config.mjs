@@ -19,24 +19,27 @@ export default [
     rules: {
       // Tags direction
       // ------------------------
-      //  scope:app ----> scope:framework ------> scope:gui -----> scope:core
-      //  apps/           react/lit/angular       gui-shared       core
-      //  docs/           gui-react/lit/angular   gui-components   gui-validators
-      //                  ui-testing                               dx
+      //  scope:app ----> scope:impl -------------> scope:framework ----> scope:core
+      //  apps/           gui-shared                react/lit/angular     core
+      //  docs/           gui-react/lit/angular     ui-testing            gui-validators
+      //                  gui-components/schemas                          dx
+      //                  gui-mcp
       //
       // |------------------------------------------------------------------------------------------------|
       // | Tag             | Projects                                                                     |
       // |------------------------------------------------------------------------------------------------|
       // | scope:core      | @golemui/core, @golemui/dx, gui-validators                                   |
-      // | scope:gui       | @golemui/gui-shared, gui-components                                          |
-      // | scope:framework | @golemui/react/lit/angular, gui-react/lit/angular, ui-testing                |
+      // | scope:framework | @golemui/react/lit/angular/vue, ui-testing                                   |
+      // | scope:impl      | gui-shared, gui-react/lit/angular/vue, gui-components, gui-schemas, gui-mcp  |
       // | scope:app       | everything under apps/ and docs/                                             |
       // |------------------------------------------------------------------------------------------------|
       // ( type:app projects cannot import @golemui/*/internals )
       //
       // Notes
       // ------------------------
-      // - ui-testing is tagged scope:framework so both framework and app scopes can import it in tests
+      // - every scope:impl project also carries an impl:* tag naming its widget set (today: impl:gui).
+      //   The impl:* constraint keeps two widget set implementations from importing each other.
+      // - ui-testing is tagged scope:framework so any implementation and the apps can import it in tests
       // - apps-shared is intentionally type:lib (not type:app), so the /internals ban does not apply to it
       // ------------------------
       '@nx/enforce-module-boundaries': [
@@ -47,14 +50,26 @@ export default [
           depConstraints: [
             { sourceTag: 'type:app', bannedExternalImports: ['@golemui/*/internals'] },
             { sourceTag: 'scope:core', onlyDependOnLibsWithTags: ['scope:core'] },
-            { sourceTag: 'scope:gui', onlyDependOnLibsWithTags: ['scope:core', 'scope:gui'] },
             {
               sourceTag: 'scope:framework',
-              onlyDependOnLibsWithTags: ['scope:core', 'scope:gui', 'scope:framework'],
+              onlyDependOnLibsWithTags: ['scope:core', 'scope:framework'],
+            },
+            {
+              sourceTag: 'scope:impl',
+              onlyDependOnLibsWithTags: ['scope:core', 'scope:framework', 'scope:impl'],
+            },
+            {
+              sourceTag: 'impl:gui',
+              onlyDependOnLibsWithTags: ['scope:core', 'scope:framework', 'impl:gui'],
             },
             {
               sourceTag: 'scope:app',
-              onlyDependOnLibsWithTags: ['scope:core', 'scope:gui', 'scope:framework', 'scope:app'],
+              onlyDependOnLibsWithTags: [
+                'scope:core',
+                'scope:framework',
+                'scope:impl',
+                'scope:app',
+              ],
             },
           ],
         },
