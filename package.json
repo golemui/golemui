@@ -33,7 +33,7 @@
   "private": true,
   "dependencies": {
     "@angular/common": "21.2.19",
-    "@angular/compiler": "21.2.19",
+    "@angular/compiler": "22.1.0",
     "@angular/core": "21.2.19",
     "@angular/platform-browser": "21.2.19",
     "@angular/router": "21.2.19",
