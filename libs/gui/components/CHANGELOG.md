@@ -1,3 +1,13 @@
+## 1.1.1-rc.3 (2026-08-04)
+
+### 🩹 Fixes
+
+- **gui-components:** fix required star position ([#257](https://github.com/golemui/golemui/pull/257))
+
+### ❤️ Thank You
+
+- Raúl Jiménez @Elecash
+
 ## 1.1.1-rc.2 (2026-08-03)
 
 This was a version bump only for gui-components to align it with other projects, there were no code changes.

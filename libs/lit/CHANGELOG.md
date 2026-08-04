@@ -1,3 +1,13 @@
+## 1.1.1-rc.3 (2026-08-04)
+
+### 🚀 Features
+
+- **lit:** add createFormComponent for building a form element class from a widget set ([b3f0a13c](https://github.com/golemui/golemui/commit/b3f0a13c))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+
 ## 1.1.1-rc.2 (2026-08-03)
 
 This was a version bump only for lit to align it with other projects, there were no code changes.

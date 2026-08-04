@@ -1,3 +1,13 @@
+## 1.1.1-rc.3 (2026-08-04)
+
+### 🚀 Features
+
+- **dx:** add the widget set form config merge helper ([7b0c0d48](https://github.com/golemui/golemui/commit/7b0c0d48))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+
 ## 1.1.1-rc.2 (2026-08-03)
 
 ### 🚀 Features

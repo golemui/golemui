@@ -1,3 +1,13 @@
+## 1.1.1-rc.3 (2026-08-04)
+
+### 🚀 Features
+
+- **react:** add createFormComponent for building a form component from a widget set ([0be35258](https://github.com/golemui/golemui/commit/0be35258))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+
 ## 1.1.1-rc.2 (2026-08-03)
 
 This was a version bump only for react to align it with other projects, there were no code changes.

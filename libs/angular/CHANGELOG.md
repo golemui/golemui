@@ -1,3 +1,13 @@
+## 1.1.1-rc.3 (2026-08-04)
+
+### 🚀 Features
+
+- **angular:** add provideWidgetSet and a generic widget set form component ([bd40f494](https://github.com/golemui/golemui/commit/bd40f494))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+
 ## 1.1.1-rc.2 (2026-08-03)
 
 This was a version bump only for angular to align it with other projects, there were no code changes.
