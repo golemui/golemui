@@ -1,3 +1,22 @@
+## 1.2.0 (2026-08-04)
+
+### 🩹 Fixes
+
+- make tabpanels focusable and drop redundant tabindex on native buttons ([fa08ed35](https://github.com/golemui/golemui/commit/fa08ed35))
+- **components:** use role toolbar in markdown editor and pass missing titles ([88488312](https://github.com/golemui/golemui/commit/88488312))
+- **components:** focusable, named password visibility toggle ([f87de7e2](https://github.com/golemui/golemui/commit/f87de7e2))
+- **components:** announce calendar month changes and label the year selector ([eca6ad26](https://github.com/golemui/golemui/commit/eca6ad26))
+- **components:** move aria to host in list component ([b1a6b368](https://github.com/golemui/golemui/commit/b1a6b368))
+- **components:** accessible date/time pickers ([7e13a999](https://github.com/golemui/golemui/commit/7e13a999))
+- **components:** expose segment aria-label props for date/time parts ([3e80ef30](https://github.com/golemui/golemui/commit/3e80ef30))
+- **components:** expose aria-required and fix required attribute binding ([3c347517](https://github.com/golemui/golemui/commit/3c347517))
+- **core:** make WithWidget and WidgetLoaders public-only ([#228](https://github.com/golemui/golemui/pull/228))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
 ## 1.1.1-rc.3 (2026-08-04)
 
 This was a version bump only for gui-lit to align it with other projects, there were no code changes.

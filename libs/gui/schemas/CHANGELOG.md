@@ -1,3 +1,14 @@
+## 1.2.0 (2026-08-04)
+
+### 🩹 Fixes
+
+- **components:** use role toolbar in markdown editor and pass missing titles ([88488312](https://github.com/golemui/golemui/commit/88488312))
+- **components:** update json schemas to accept the aria-label props ([f34ee9b8](https://github.com/golemui/golemui/commit/f34ee9b8))
+
+### ❤️ Thank You
+
+- Raúl Jiménez @Elecash
+
 ## 1.1.1-rc.3 (2026-08-04)
 
 This was a version bump only for gui-schemas to align it with other projects, there were no code changes.

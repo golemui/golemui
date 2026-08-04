@@ -1,3 +1,57 @@
+## 1.2.0 (2026-08-04)
+
+### 🚀 Features
+
+- **angular:** add provideWidgetSet and a generic widget set form component ([bd40f494](https://github.com/golemui/golemui/commit/bd40f494))
+- **dx:** add @golemui/dx, the form authoring pipeline independent of widget-set ([0ee37028](https://github.com/golemui/golemui/commit/0ee37028))
+- **dx:** add createSelectors and createImplementation factories ([994c68eb](https://github.com/golemui/golemui/commit/994c68eb))
+- **dx:** add the widget set form config merge helper ([7b0c0d48](https://github.com/golemui/golemui/commit/7b0c0d48))
+- **lit:** add createFormComponent for building a form element class from a widget set ([b3f0a13c](https://github.com/golemui/golemui/commit/b3f0a13c))
+- **mcp:** add golemui-mcp CLI subcommands for skills ([58b9c21f](https://github.com/golemui/golemui/commit/58b9c21f))
+- **react:** add createFormComponent for building a form component from a widget set ([0be35258](https://github.com/golemui/golemui/commit/0be35258))
+- **vue:** add createFormComponent for building a form component from a widget set ([76f56a3d](https://github.com/golemui/golemui/commit/76f56a3d))
+
+### 🩹 Fixes
+
+- allow inject validations from event handlers ([#231](https://github.com/golemui/golemui/pull/231))
+- make tabpanels focusable and drop redundant tabindex on native buttons ([fa08ed35](https://github.com/golemui/golemui/commit/fa08ed35))
+- dependencies and type graph ([#241](https://github.com/golemui/golemui/pull/241))
+- **angular:** remove unused aria directive ([68c07899](https://github.com/golemui/golemui/commit/68c07899))
+- **components:** expose aria-required and fix required attribute binding ([3c347517](https://github.com/golemui/golemui/commit/3c347517))
+- **components:** announce validation errors via live region ([f4355a39](https://github.com/golemui/golemui/commit/f4355a39))
+- **components:** split aria-disabled from aria-readonly ([a562b218](https://github.com/golemui/golemui/commit/a562b218))
+- **components:** expose toggle ARIA on the real control ([5f840269](https://github.com/golemui/golemui/commit/5f840269))
+- **components:** hide decorative icons from assistive technology ([84b3afb1](https://github.com/golemui/golemui/commit/84b3afb1))
+- **components:** expose segment aria-label props for date/time parts ([3e80ef30](https://github.com/golemui/golemui/commit/3e80ef30))
+- **components:** accessible date/time pickers ([7e13a999](https://github.com/golemui/golemui/commit/7e13a999))
+- **components:** move aria to host in list component ([b1a6b368](https://github.com/golemui/golemui/commit/b1a6b368))
+- **components:** improve list focus styling ([e459856c](https://github.com/golemui/golemui/commit/e459856c))
+- **components:** announce calendar month changes and label the year selector ([eca6ad26](https://github.com/golemui/golemui/commit/eca6ad26))
+- **components:** update json schemas to accept the aria-label props ([f34ee9b8](https://github.com/golemui/golemui/commit/f34ee9b8))
+- **components:** avoid duplicate widget id while a picker popup is open ([a27e7ef7](https://github.com/golemui/golemui/commit/a27e7ef7))
+- **components:** announce full day names and keep blocked days in the accessibility tree ([32c99d2f](https://github.com/golemui/golemui/commit/32c99d2f))
+- **components:** focusable, named password visibility toggle ([f87de7e2](https://github.com/golemui/golemui/commit/f87de7e2))
+- **components:** add aria attributes to number, currency, radiogroup and labels ([dd93f816](https://github.com/golemui/golemui/commit/dd93f816))
+- **components:** expose pills as a toolbar of real buttons ([52641f23](https://github.com/golemui/golemui/commit/52641f23))
+- **components:** keep picker popovers open on interior non-focusable clicks ([8f136865](https://github.com/golemui/golemui/commit/8f136865))
+- **components:** use role toolbar in markdown editor and pass missing titles ([88488312](https://github.com/golemui/golemui/commit/88488312))
+- **core:** make WithWidget and WidgetLoaders public-only ([#228](https://github.com/golemui/golemui/pull/228))
+- **core:** deterministic uids for widgets ([#229](https://github.com/golemui/golemui/pull/229))
+- **dx:** update registration error messages for the pure-definition model ([493f51fd](https://github.com/golemui/golemui/commit/493f51fd))
+- **dx:** pass the dependency shape as a type parameter ([384464ed](https://github.com/golemui/golemui/commit/384464ed))
+- **gui-components:** fix required star position ([#257](https://github.com/golemui/golemui/pull/257))
+- **gui-mcp:** resolve @golemui/dx in the dx_check_code type graph ([8afa41db](https://github.com/golemui/golemui/commit/8afa41db))
+- **gui-shared:** restore the gui dependency typing on the DX types ([6068097d](https://github.com/golemui/golemui/commit/6068097d))
+- **gui-validators:** make initValidators fail loudly on unknown configs ([#237](https://github.com/golemui/golemui/pull/237))
+- **gui-validators:** fail loudly on unknown custom rules and string formats ([024b41db](https://github.com/golemui/golemui/commit/024b41db))
+- **mcp:** correct lit and vanilla submit event names in DX grounding ([47cf777f](https://github.com/golemui/golemui/commit/47cf777f))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+- Raúl Jiménez @Elecash
+
 ## 1.1.1-rc.3 (2026-08-04)
 
 ### 🚀 Features

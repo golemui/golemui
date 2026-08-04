@@ -1,3 +1,18 @@
+## 1.2.0 (2026-08-04)
+
+### 🩹 Fixes
+
+- **gui-shared:** restore the gui dependency typing on the DX types ([6068097d](https://github.com/golemui/golemui/commit/6068097d))
+- **components:** use role toolbar in markdown editor and pass missing titles ([88488312](https://github.com/golemui/golemui/commit/88488312))
+- **components:** announce calendar month changes and label the year selector ([eca6ad26](https://github.com/golemui/golemui/commit/eca6ad26))
+- **components:** accessible date/time pickers ([7e13a999](https://github.com/golemui/golemui/commit/7e13a999))
+- **components:** expose segment aria-label props for date/time parts ([3e80ef30](https://github.com/golemui/golemui/commit/3e80ef30))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
 ## 1.1.1-rc.3 (2026-08-04)
 
 This was a version bump only for gui-shared to align it with other projects, there were no code changes.

@@ -1,3 +1,19 @@
+## 1.2.0 (2026-08-04)
+
+### 🚀 Features
+
+- **lit:** add createFormComponent for building a form element class from a widget set ([b3f0a13c](https://github.com/golemui/golemui/commit/b3f0a13c))
+
+### 🩹 Fixes
+
+- **mcp:** correct lit and vanilla submit event names in DX grounding ([47cf777f](https://github.com/golemui/golemui/commit/47cf777f))
+- **core:** make WithWidget and WidgetLoaders public-only ([#228](https://github.com/golemui/golemui/pull/228))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
 ## 1.1.1-rc.3 (2026-08-04)
 
 ### 🚀 Features

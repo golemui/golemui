@@ -1,3 +1,13 @@
+## 1.2.0 (2026-08-04)
+
+### 🚀 Features
+
+- **vue:** add createFormComponent for building a form component from a widget set ([76f56a3d](https://github.com/golemui/golemui/commit/76f56a3d))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+
 ## 1.1.1-rc.3 (2026-08-04)
 
 ### 🚀 Features
