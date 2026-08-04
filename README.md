@@ -7,7 +7,7 @@
   </a>
 </p>
 
-<p align="center">The one stop shop for JS forms.</p>
+<p align="center">The form engine built for humans and agents.</p>
 
 <p align="center">
   <a href="https://golemui.com/integration/react/" title="React"><img alt="React" src="https://cdn.simpleicons.org/react/61DAFB" height="44"></a>
@@ -31,6 +31,15 @@
   <a href="https://golemui.com">Documentation</a> ·
   <a href="https://golemui.com/form-definition/how-it-works/">How it works</a> ·
   <a href="https://golemui.com/integration/overview/">Integrations</a>
+</p>
+
+<p align="center">
+  <a href="https://golemui.com">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset=".github/assets/demo-dark.gif">
+      <img src=".github/assets/demo-light.gif" alt="GolemUI Demo">
+    </picture>
+  </a>
 </p>
 
 ---
