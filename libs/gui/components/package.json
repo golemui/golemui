@@ -10,6 +10,8 @@
   "module": "./index.js",
   "types": "./index.d.ts",
   "sideEffects": [
+    "./*.js",
+    "./*.cjs",
     "./lib/components/*.js",
     "./lib/components/*.umd.cjs",
     "./src/lib/components/*.ts",
