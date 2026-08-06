@@ -121,6 +121,12 @@ export type State = {
   touched: boolean;
 
   /**
+   * True once a VALIDATE_ALL pass has run (typically a submit attempt).
+   * Input widgets added afterwards are immediately marked as touched.
+   */
+  allControlsValidated: boolean;
+
+  /**
    * The BCP 47 language tag of the current locale (e.g., 'en-US', 'es', 'fr-CA').
    */
   lang: string;
@@ -150,6 +156,7 @@ export const createInitialState = (lang: string): State => ({
   meta: {},
   formHealth: { status: 'ok' },
   touched: false,
+  allControlsValidated: false,
   lang,
 });
 
