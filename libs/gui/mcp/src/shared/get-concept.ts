@@ -483,21 +483,31 @@ const REACTIVE_SCOPE_CONCEPT: GetConceptResult = {
       name: '$formIsInvalid — whole-form validity flag',
       description:
         '`$formIsInvalid` is a built-in boolean that the runtime maintains automatically. ' +
-        'It is `true` when ANY field in the form currently fails its validator; `false` otherwise. ' +
-        'Use it to disable the submit button, show a banner, or guard a navigation step. ' +
+        'It is `true` when ANY field currently has a RECORDED validation failure; `false` otherwise. ' +
+        'CAVEAT: validation never runs at mount, so on a pristine form the flag is `false` even when ' +
+        'required fields are empty — it flips only after the first validated interaction. ' +
+        'To disable a submit button from the start, combine it with a data check ' +
+        '(see `get_concept({ concept: "validation" })` for the full explanation). ' +
         'It is NOT a property of `$form` — use it as a bare identifier. ' +
         'Do NOT chain properties onto it: `$formIsInvalid.something` is invalid.',
       example: {
         $schema: 'https://golemui.com/schemas/form.schema.json',
         form: [
           {
+            kind: 'input',
+            type: 'textinput',
+            path: 'email',
+            label: 'Email',
+            validator: { type: 'string', required: true, format: 'email' },
+          },
+          {
             kind: 'action',
             type: 'button',
             actionType: 'submit',
             label: 'Submit',
-            // Disable the submit button while any field is invalid.
-            disabled: true,
-            'disabled.formValid': false,
+            // '$formIsInvalid' alone starts ENABLED on the pristine form (no validation has run
+            // yet) — the extra data check covers the not-yet-validated empty state.
+            disabled: { when: '$formIsInvalid || $form.email === undefined' },
           },
           {
             kind: 'display',
@@ -506,9 +516,6 @@ const REACTIVE_SCOPE_CONCEPT: GetConceptResult = {
             include: { when: '$formIsInvalid' },
           },
         ],
-        states: {
-          formValid: '!$formIsInvalid',
-        },
       },
     },
     {
@@ -605,6 +612,194 @@ const REACTIVE_SCOPE_CONCEPT: GetConceptResult = {
     'Use `===` / `!==` for equality. Avoid `==` / `!=` (loose equality causes unexpected coercions with `undefined`).',
     'Expressions may call methods on scope values (e.g. `.includes()`, `.toFixed()`) and host functions via `$fn.name(...)`. Everything must stay a pure read: no `eval`, no assignments, no side effects.',
     '`$fn` names are defined by the host through the `functions` init config. Calling a name the host did not provide errors the expression at evaluation time — coordinate names with the host.',
+  ],
+};
+
+// ---------------------------------------------------------------------------
+// Validation concept
+// ---------------------------------------------------------------------------
+
+const VALIDATION_CONCEPT: GetConceptResult = {
+  concept: 'validation',
+  summary:
+    'Input widgets validate through their declarative `validator` object. Three behaviors are ' +
+    'non-obvious and cause real bugs when missed: ' +
+    '(1) validation NEVER runs at mount — a pristine form has zero recorded errors, so ' +
+    '`$formIsInvalid` starts `false` in every `validateOn` mode; ' +
+    '(2) on boolean fields `required: true` does NOT force a checkbox to be checked — `false` is a ' +
+    'valid boolean; a mandatory checkbox needs `const: true` AND `required: true` together; ' +
+    '(3) when a required field is `undefined` or `null` the failure comes from the base type check, ' +
+    'not the `required` rule, so the user sees the `invalid` message (a raw "Invalid input: expected ' +
+    'string, received undefined" unless you customize it). Always set custom `messages`.',
+
+  patterns: [
+    {
+      name: 'Custom error messages per rule (`messages`)',
+      description:
+        'Every validator accepts a `messages` object mapping rule names to custom error text. ' +
+        'The allowed keys depend on the validator type — string: `invalid`, `required`, `minLength`, ' +
+        '`maxLength`, `pattern`, `format`, `enum`, `const`; number/integer: `invalid`, `minimum`, ' +
+        '`maximum`, `exclusiveMinimum`, `exclusiveMaximum`, `multipleOf`, `enum`, `const`; ' +
+        'boolean: `invalid`, `const`; array: `invalid`, `required`, `minItems`, `maxItems`. ' +
+        'The special key `invalid` customizes the base type check (wrong type, or `undefined`/`null` ' +
+        'on a required field). Note that only string and array validators have a `required` message ' +
+        'key — they are the only types with a present-but-empty state (`""` / `[]`); for ' +
+        'number/integer/boolean a missing value can only ever show the `invalid` message. ' +
+        'Values are plain strings or i18n descriptors `{ key, params?, default? }`. ' +
+        'Without `messages`, failures surface library-default text (e.g. "Invalid input: expected ' +
+        'string, received undefined") that is not written for end users — production forms should ' +
+        'set custom messages for every rule they use, and ALWAYS set `invalid` whenever ' +
+        '`required: true` is set (see the next patterns for why).',
+      example: {
+        $schema: 'https://golemui.com/schemas/form.schema.json',
+        form: [
+          {
+            kind: 'input',
+            type: 'textinput',
+            path: 'email',
+            label: 'Email',
+            validator: {
+              type: 'string',
+              required: true,
+              format: 'email',
+              messages: {
+                // `invalid` fires when the value is undefined/null (pristine or cleared) —
+                // for the user that IS the required case, so give it the same text.
+                invalid: 'Email is required',
+                required: 'Email is required',
+                format: 'Enter a valid email address',
+              },
+            },
+          },
+        ],
+      },
+    },
+    {
+      name: 'Mandatory checkbox — `const: true` AND `required: true`, never `required` alone',
+      description:
+        'On a boolean validator `required: true` is a silent trap: it only rejects a MISSING value ' +
+        '(`undefined`/`null`); an unchecked checkbox holding `false` is a perfectly valid boolean and ' +
+        'PASSES. To force the box to be checked you need `const: true` — but `const: true` alone is ' +
+        'also not enough: a validator without `required: true` is optional, so a pristine checkbox ' +
+        'whose value is still `undefined` skips validation entirely and passes too. ' +
+        'The full recipe is BOTH rules together, plus messages for BOTH failure modes: ' +
+        'a pristine/never-touched checkbox fails the base type check (`invalid` message) while a ' +
+        'checked-then-unchecked checkbox fails the `const` rule (`const` message) — set both keys ' +
+        'to the same user-facing text.',
+      example: {
+        $schema: 'https://golemui.com/schemas/form.schema.json',
+        form: [
+          {
+            kind: 'input',
+            type: 'checkbox',
+            path: 'termsAccepted',
+            label: 'I accept the terms',
+            validator: {
+              type: 'boolean',
+              required: true, // rejects undefined/null (never touched)
+              const: true, // rejects false (unchecked)
+              messages: {
+                invalid: 'You must accept the terms',
+                const: 'You must accept the terms',
+              },
+            },
+          },
+        ],
+      },
+    },
+    {
+      name: 'The `invalid` message — what empty required fields actually show',
+      description:
+        'When a required field holds `undefined` or `null` (pristine, or the widget cleared it), the ' +
+        'failure is raised by the BASE TYPE check ("expected string, received undefined"), NOT by ' +
+        'the `required` rule — the `required` rule only fires on present-but-empty values such as ' +
+        '`""` for strings or `[]` for arrays. Consequence: `messages.required` alone does not cover ' +
+        'the most common empty state, and the user sees the raw library default instead. ' +
+        'Whenever you set `required: true` on a string or array validator, set BOTH ' +
+        "`messages.required` AND `messages.invalid`, normally to the same text — from the user's " +
+        'perspective both mean "this field is required". On number/integer/boolean validators there ' +
+        'is no `required` message key at all — `messages.invalid` is the ONLY way to word the ' +
+        'missing-value error, so setting it is not optional there. ' +
+        'Note `null` is never valid: even on a non-required field, `null` fails the type check and ' +
+        'shows the `invalid` message (only `undefined` is treated as "not filled in yet").',
+      example: {
+        $schema: 'https://golemui.com/schemas/form.schema.json',
+        form: [
+          {
+            kind: 'input',
+            type: 'number',
+            path: 'age',
+            label: 'Age',
+            validator: {
+              type: 'integer',
+              required: true,
+              minimum: 18,
+              messages: {
+                // Number validators have no `required` message key — `invalid` covers the
+                // undefined/null case (pristine or cleared input), which IS the required case.
+                invalid: 'Age is required',
+                minimum: 'You must be at least 18',
+              },
+            },
+          },
+        ],
+      },
+    },
+    {
+      name: 'When validation runs — `validateOn` and the pristine-form gap',
+      description:
+        'Validation runs only in response to user interaction, filtered by the form-level ' +
+        '`validateOn` config: `"eager"` (the default — the first change OR blur on any field ' +
+        'validates the WHOLE form), `"change"`, `"blur"`, `"submit"`, or an array of those. ' +
+        'NOTHING validates at mount in ANY mode, so on a pristine form the error map is empty and ' +
+        '`$formIsInvalid` is `false` — a submit button with `disabled: { when: "$formIsInvalid" }` ' +
+        'starts out ENABLED even when required fields are empty. ' +
+        'Clicking a submit button always validates the whole form and the runtime refuses to emit ' +
+        'the submit event while invalid — data integrity is safe — but the disabled-until-valid UX ' +
+        'needs a compound expression that also checks the data directly, because `$formIsInvalid` ' +
+        'only reflects validations that have already run.',
+      example: {
+        $schema: 'https://golemui.com/schemas/form.schema.json',
+        form: [
+          {
+            kind: 'input',
+            type: 'textinput',
+            path: 'email',
+            label: 'Email',
+            validator: {
+              type: 'string',
+              required: true,
+              format: 'email',
+              messages: { invalid: 'Email is required', required: 'Email is required' },
+            },
+          },
+          {
+            kind: 'action',
+            type: 'button',
+            actionType: 'submit',
+            label: 'Submit',
+            // '$formIsInvalid' alone leaves this ENABLED on the pristine form (no validation has
+            // run yet). The compound expression also disables it while the field is still empty.
+            disabled: { when: '$formIsInvalid || $form.email === undefined' },
+          },
+        ],
+      },
+    },
+  ],
+
+  rules: [
+    'Validation NEVER runs at mount. A pristine form has an empty error map and `$formIsInvalid === false` in every `validateOn` mode, including the default `"eager"`.',
+    '`disabled: { when: "$formIsInvalid" }` on a submit button leaves it ENABLED on the pristine form. For disabled-until-valid UX, use a compound expression that also checks the data: `"$formIsInvalid || $form.email === undefined"`.',
+    'The runtime always re-validates everything on submit click and blocks the submit event while invalid — the pristine gap is a UX issue, not a data-integrity issue.',
+    '`validateOn` values: `"eager"` (default; first change or blur anywhere validates the whole form), `"change"`, `"blur"`, `"submit"`, or an array of `"change"`/`"blur"`/`"submit"`.',
+    'Boolean `required: true` does NOT force a checkbox to be checked — `false` is a valid boolean. Only `const: true` rejects `false`.',
+    '`const: true` alone does NOT cover the pristine case — without `required: true` the validator is optional and `undefined` passes. A mandatory checkbox needs BOTH.',
+    'A required field holding `undefined`/`null` fails the base TYPE check, not the `required` rule — the user sees the `invalid` message. The `required` rule only fires on present-but-empty values (`""`, `[]`).',
+    'Only string and array validators accept a `required` message key. Number/integer and boolean validators do NOT — `messages.invalid` is the only way to word their missing-value error.',
+    'ALWAYS pair `messages.required` with `messages.invalid` (same text) on string/array validators. For a mandatory checkbox, pair `messages.const` with `messages.invalid`.',
+    '`null` is never a valid value, even for non-required fields — it fails the type check and shows the `invalid` message. Only `undefined` means "not filled in yet".',
+    'Message values are strings or i18n descriptors `{ key, params?, default? }` — the same `Localizable` shape as labels.',
+    'Production forms should define custom `messages` for every rule they use — the library defaults (e.g. "Invalid input: expected string, received undefined") are developer-facing, not user-facing.',
   ],
 };
 
@@ -718,6 +913,7 @@ const CONCEPTS: Record<string, GetConceptResult> = {
   states: STATES_CONCEPT,
   'string-interpolation': STRING_INTERPOLATION_CONCEPT,
   'reactive-scope': REACTIVE_SCOPE_CONCEPT,
+  validation: VALIDATION_CONCEPT,
   icons: ICONS_CONCEPT,
 };
 
@@ -742,15 +938,17 @@ export const GET_CONCEPT_TOOL = {
     '(1) conditionally show or hide widgets (`include`/`exclude`) — both the named-state form (`in`/`from`) and the inline `when` expression form are covered under the `states` concept; ' +
     '(2) change a widget\'s props based on form state (state-suffixed props like `"label.stateName": "…"`); ' +
     '(3) understand what `$form`, `$meta`, `$errors`, `$formIsInvalid`, and `$fn` are and how to reference form data in reactive expressions — use the `reactive-scope` concept; ' +
-    '(4) add icons to widgets — use the `icons` concept. ' +
-    'Currently supported concepts: `states`, `string-interpolation`, `reactive-scope`, `icons`.',
+    '(4) write validators with custom error messages, make a checkbox mandatory, or gate a submit button on validity — use the `validation` concept (it covers three non-obvious traps: no validation at mount, boolean `required` vs `const`, and the `invalid` message); ' +
+    '(5) add icons to widgets — use the `icons` concept. ' +
+    'Currently supported concepts: `states`, `string-interpolation`, `reactive-scope`, `validation`, `icons`.',
   inputSchema: {
     type: 'object' as const,
     properties: {
       concept: {
         type: 'string' as const,
         description:
-          'The concept to explain. Currently supported: `"states"`, `"string-interpolation"`.',
+          'The concept to explain. Currently supported: `"states"`, `"string-interpolation"`, ' +
+          '`"reactive-scope"`, `"validation"`, `"icons"`.',
         enum: Object.keys(CONCEPTS),
       },
     },

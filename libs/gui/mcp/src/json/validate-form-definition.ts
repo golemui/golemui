@@ -4,6 +4,7 @@ import {
   lintReactiveExpressions,
   type ExpressionFinding,
 } from '../shared/lint/reactive-expressions';
+import { lintBooleanValidators } from '../shared/lint/boolean-validator';
 import { lintStringInterpolations, type InterpolationFinding } from './string-interpolation';
 
 export type ValidateInput = {
@@ -39,11 +40,24 @@ export function validateFormDefinition(input: ValidateInput): ValidateResult {
     });
   }
 
+  // Semantic lint the schema cannot express: a boolean validator with only half of the
+  // `required: true` + `const: true` pair validates something the author almost never
+  // means (the mandatory-checkbox trap). Merged after the safety net above so these
+  // advisory findings can never mask an unlocalized hard error.
+  const booleanValidatorWarnings = lintBooleanValidators(input.formDefinition).map<FormattedError>(
+    (f) => ({
+      path: f.path,
+      message: f.message,
+      suggestion: f.suggestion,
+      keyword: 'booleanValidator',
+    }),
+  );
+
   // `valid` follows hard errors only — custom-widget warnings don't fail validation.
   return {
     valid: errors.length === 0,
     errors,
-    warnings,
+    warnings: [...warnings, ...booleanValidatorWarnings],
     expressionWarnings,
     interpolationWarnings,
   };
@@ -57,8 +71,10 @@ export const JSON_VALIDATE_FORM_DEFINITION_TOOL = {
     'pastes it into their codebase. Returns `{ valid, errors, warnings, expressionWarnings, interpolationWarnings }`. ' +
     'Hard mistakes (typos in widget `type`, missing required props, invalid validator shapes) ' +
     'show up in `errors` and flip `valid` to false. Likely-custom widgets (a `type` value that ' +
-    "isn't a built-in and isn't close to one) show up in `warnings` instead — they don't " +
-    'affect `valid`. Reactive expressions (`include.when`, `disabled.when`, etc.) are linted ' +
+    "isn't a built-in and isn't close to one) and semantic validator traps (a boolean validator " +
+    'with only half of the `required: true` + `const: true` pair — it will not force a mandatory ' +
+    "checkbox to be checked) show up in `warnings` instead — they don't " +
+    'affect `valid`, but surface them and apply their `suggestion`. Reactive expressions (`include.when`, `disabled.when`, etc.) are linted ' +
     'separately into `expressionWarnings`. String interpolation templates (`{{$form.x}}`, ' +
     '`{{$meta.y}}`, expressions like `{{$form.count + 1}}`, etc.) in widget props, and bare ' +
     'expressions inside i18n `params` objects, are linted into `interpolationWarnings`.',

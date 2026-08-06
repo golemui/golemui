@@ -4,12 +4,16 @@ import {
   checkReactiveExpression,
   type ExpressionFinding,
 } from '../shared/lint/reactive-expressions';
+import {
+  checkBooleanValidatorRules,
+  type BooleanValidatorFinding,
+} from '../shared/lint/boolean-validator';
 import type { DxDiagnostic } from './typecheck';
 
 /**
  * Static lints over a `gui.*` DX snippet that the TypeScript compiler cannot catch.
  *
- * The compiler is the truthful gate for *type* errors, but two real defects slip past
+ * The compiler is the truthful gate for *type* errors, but three real defects slip past
  * it because the code is structurally valid TypeScript:
  *
  *  1. **Misplaced `include`/`exclude` (the silent no-op).** Spreading a factory result
@@ -24,11 +28,22 @@ import type { DxDiagnostic } from './typecheck';
  *     `json_validate_form_definition` path uses ({@link checkReactiveExpression}), so the two
  *     surfaces share one set of rules. Reported as non-blocking `expressionWarnings`,
  *     mirroring the JSON path.
+ *
+ *  3. **The mandatory-checkbox trap.** On `gui.inputs.checkbox`/`gui.inputs.booleanInput`,
+ *     a validator with only half of the `required: true` + `const: true` pair type-checks
+ *     but validates something the author almost never means (`required` alone passes
+ *     `false`; `const` alone passes the pristine `undefined`). Shares the JSON path's rule
+ *     engine ({@link checkBooleanValidatorRules}). Reported as non-blocking
+ *     `validatorWarnings` — either half alone is legal, just rarely intended.
  */
 export interface DxLintResult {
   diagnostics: DxDiagnostic[];
   expressionWarnings: ExpressionFinding[];
+  validatorWarnings: BooleanValidatorFinding[];
 }
+
+/** DX factories whose validator is a boolean validator (the checkbox trap applies). */
+const BOOLEAN_FACTORIES = ['checkbox', 'booleanInput'];
 
 /**
  * Common config fields the factory itself owns and processes. Attached as a sibling of a
@@ -41,6 +56,7 @@ export function lintDxSnippet(ts: typeof TS, sourceText: string, lineOffset: num
   const sf = ts.createSourceFile('__dx_lint__.ts', sourceText, ts.ScriptTarget.ES2020, true);
   const diagnostics: DxDiagnostic[] = [];
   const expressionWarnings: ExpressionFinding[] = [];
+  const validatorWarnings: BooleanValidatorFinding[] = [];
 
   const posOf = (node: TS.Node): { line: number; column: number } => {
     const p = sf.getLineAndCharacterOfPosition(node.getStart(sf));
@@ -61,7 +77,36 @@ export function lintDxSnippet(ts: typeof TS, sourceText: string, lineOffset: num
     return ts.isIdentifier(e) && e.text === 'gui';
   };
 
-  const visit = (node: TS.Node, inTemplate: boolean): void => {
+  // The factory name of a `gui.*` call (`gui.inputs.checkbox(...)` -> `checkbox`), or undefined.
+  const guiFactoryName = (node: TS.Node): string | undefined => {
+    if (!ts.isCallExpression(node) || !isGuiCall(node)) return undefined;
+    return ts.isPropertyAccessExpression(node.expression) ? node.expression.name.text : undefined;
+  };
+
+  // (3) The mandatory-checkbox trap: a boolean-widget validator with only half of the
+  // `required: true` + `const: true` pair. Extracts the literal halves from the object
+  // literal and funnels them through the shared rule engine. Non-literal values (a
+  // spread, an identifier) make the intent unknowable statically — skip, never guess.
+  const checkBooleanValidator = (validatorObj: TS.ObjectLiteralExpression): void => {
+    const shape: { required?: unknown; const?: unknown } = {};
+    for (const p of validatorObj.properties) {
+      if (!ts.isPropertyAssignment(p)) return;
+      const name = nameOf(p.name);
+      if (name === 'required') {
+        if (p.initializer.kind === ts.SyntaxKind.TrueKeyword) shape.required = true;
+        else if (p.initializer.kind === ts.SyntaxKind.FalseKeyword) shape.required = false;
+        else return;
+      }
+      if (name === 'const') {
+        if (ts.isIdentifier(p.initializer) && p.initializer.text === 'undefined') continue;
+        shape.const = true;
+      }
+    }
+    const { line, column } = posOf(validatorObj);
+    validatorWarnings.push(...checkBooleanValidatorRules(shape, `validator@${line}:${column}`));
+  };
+
+  const visit = (node: TS.Node, inTemplate: boolean, inBooleanFactory: boolean): void => {
     // (1) Misplaced common field as a sibling of a `gui.*` spread.
     if (ts.isObjectLiteralExpression(node)) {
       const spreadsGui = node.properties.some(
@@ -107,13 +152,29 @@ export function lintDxSnippet(ts: typeof TS, sourceText: string, lineOffset: num
       }
     }
 
+    // (3) Boolean-widget validators — `validator` and its state-suffixed variants
+    // (`'validator.<stateName>'`) inside a `gui.inputs.checkbox`/`booleanInput` config.
+    if (
+      inBooleanFactory &&
+      ts.isPropertyAssignment(node) &&
+      (nameOf(node.name) === 'validator' || nameOf(node.name)?.startsWith('validator.') === true) &&
+      ts.isObjectLiteralExpression(node.initializer)
+    ) {
+      checkBooleanValidator(node.initializer);
+    }
+
     // A repeater's `template:` subtree gets the `$item`/`$index` scope; the flag
     // is sticky so nested templates inherit it (innermost semantics).
     const childInTemplate =
       inTemplate || (ts.isPropertyAssignment(node) && nameOf(node.name) === 'template');
-    ts.forEachChild(node, (child) => visit(child, childInTemplate));
+    // The boolean-factory context resets at every `gui.*` call boundary, so a checkbox
+    // nested inside a repeater template gets it and the repeater's own validator doesn't.
+    const factory = guiFactoryName(node);
+    const childInBooleanFactory =
+      factory !== undefined ? BOOLEAN_FACTORIES.includes(factory) : inBooleanFactory;
+    ts.forEachChild(node, (child) => visit(child, childInTemplate, childInBooleanFactory));
   };
 
-  visit(sf, false);
-  return { diagnostics, expressionWarnings };
+  visit(sf, false, false);
+  return { diagnostics, expressionWarnings, validatorWarnings };
 }

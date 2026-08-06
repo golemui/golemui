@@ -616,4 +616,101 @@ describe('json_validate_form_definition', () => {
     });
     expect(r.expressionWarnings).toEqual([]);
   });
+
+  describe('boolean validator semantics (the mandatory-checkbox trap)', () => {
+    const booleanWarnings = (r: ReturnType<typeof validateFormDefinition>) =>
+      r.warnings.filter((w) => w.keyword === 'booleanValidator');
+
+    it('warns on `required: true` without `const` — it does not force the box checked', () => {
+      const r = validateFormDefinition({
+        formDefinition: {
+          form: [
+            {
+              kind: 'input',
+              type: 'checkbox',
+              path: 'terms',
+              label: 'Accept terms',
+              validator: { type: 'boolean', required: true },
+            },
+          ],
+        },
+      });
+      // Advisory — half a recipe is legal, just rarely intended.
+      expect(r.valid).toBe(true);
+      const warnings = booleanWarnings(r);
+      expect(warnings).toHaveLength(1);
+      expect(warnings[0].path).toBe('/form/0/validator');
+      expect(warnings[0].message).toMatch(/`false` is a valid boolean/);
+      expect(warnings[0].suggestion).toMatch(/`const: true`/);
+    });
+
+    it('warns on `const: true` without `required` — the pristine undefined passes', () => {
+      const r = validateFormDefinition({
+        formDefinition: {
+          form: [
+            {
+              kind: 'input',
+              type: 'checkbox',
+              path: 'terms',
+              validator: { type: 'boolean', const: true },
+            },
+          ],
+        },
+      });
+      expect(r.valid).toBe(true);
+      const warnings = booleanWarnings(r);
+      expect(warnings).toHaveLength(1);
+      expect(warnings[0].message).toMatch(/pristine value passes/);
+      expect(warnings[0].suggestion).toMatch(/`required: true`/);
+    });
+
+    it('stays quiet on the full recipe and on non-boolean validators', () => {
+      const r = validateFormDefinition({
+        formDefinition: {
+          form: [
+            {
+              kind: 'input',
+              type: 'checkbox',
+              path: 'terms',
+              validator: { type: 'boolean', required: true, const: true },
+            },
+            {
+              kind: 'input',
+              type: 'textinput',
+              path: 'name',
+              validator: { type: 'string', required: true },
+            },
+          ],
+        },
+      });
+      expect(r.valid).toBe(true);
+      expect(booleanWarnings(r)).toEqual([]);
+    });
+
+    it('finds the trap on widgets nested inside layouts', () => {
+      const r = validateFormDefinition({
+        formDefinition: {
+          form: [
+            {
+              kind: 'layout',
+              type: 'flex',
+              props: { direction: 'column' },
+              children: [
+                {
+                  kind: 'input',
+                  type: 'checkbox',
+                  path: 'terms',
+                  validator: { type: 'boolean', required: true },
+                },
+              ],
+            },
+          ],
+        },
+      });
+      expect(r.valid).toBe(true);
+      const warnings = booleanWarnings(r);
+      expect(warnings).toHaveLength(1);
+      expect(warnings[0].path).toBe('/form/0/children/0/validator');
+    });
+  });
 });

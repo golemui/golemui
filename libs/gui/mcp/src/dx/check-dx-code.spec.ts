@@ -133,4 +133,37 @@ describe('dx_check_code', () => {
       true,
     );
   });
+
+  it('warns on a checkbox validator with `required: true` but no `const` (the mandatory-checkbox trap)', async () => {
+    const r = await checkDxCode({
+      code: `[ gui.inputs.checkbox('terms', { label: 'I accept the terms', validator: { required: true } }) ]`,
+    });
+    // Half a mandatory-checkbox recipe compiles — advisory, does not flip `ok`.
+    expect(r.ok).toBe(true);
+    expect(r.validatorWarnings).toHaveLength(1);
+    expect(r.validatorWarnings[0].message).toMatch(/`false` is a valid boolean/);
+    expect(r.validatorWarnings[0].suggestion).toMatch(/`const: true`/);
+  });
+
+  it('warns on a checkbox validator with `const: true` but no `required` (pristine undefined passes)', async () => {
+    const r = await checkDxCode({
+      code: `[ gui.inputs.checkbox('terms', { label: 'I accept the terms', validator: { const: true } }) ]`,
+    });
+    expect(r.ok).toBe(true);
+    expect(r.validatorWarnings).toHaveLength(1);
+    expect(r.validatorWarnings[0].message).toMatch(/pristine value passes/);
+    expect(r.validatorWarnings[0].suggestion).toMatch(/`required: true`/);
+  });
+
+  it('stays quiet on the full mandatory-checkbox recipe and on non-boolean validators', async () => {
+    const r = await checkDxCode({
+      code: `[
+  gui.inputs.checkbox('terms', { label: 'I accept the terms', validator: { required: true, const: true } }),
+  gui.inputs.textInput('fullName', { label: 'Full name', validator: { required: true } }),
+]`,
+    });
+    if (!r.ok) console.error(JSON.stringify(r.diagnostics, null, 2));
+    expect(r.ok).toBe(true);
+    expect(r.validatorWarnings).toEqual([]);
+  });
 });

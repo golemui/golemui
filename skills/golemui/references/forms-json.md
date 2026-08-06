@@ -49,6 +49,26 @@ shapes with `gui.*` syntax in one artifact.
   registered on the form component — see
   https://golemui.com/json/features/host-functions.md
 
+### Validator gotchas (real-world traps — read before writing validators)
+
+- **Mandatory checkbox**: `"required": true` on a boolean does NOT force it checked — `false` is
+  a valid boolean; only `"const": true` rejects `false`. And `const` alone lets the pristine
+  `undefined` pass (non-required validators are optional). Use BOTH:
+  `"validator": { "type": "boolean", "required": true, "const": true }`.
+- **Custom messages**: add a `"messages"` map (rule name → text) on production forms — defaults
+  are developer-facing. When `"required": true`, ALWAYS also set `"messages": { "invalid": … }`:
+  an `undefined`/`null` value (pristine or cleared field) fails the base type check and shows the
+  `invalid` message, not the `required` one. Only string/array validators even have a `required`
+  message key (pair it with `invalid`, same text); for number/boolean, `invalid` is the only
+  missing-value message. For a mandatory checkbox, pair `invalid` with `const` the same way.
+- **Pristine-form gap**: validation never runs at mount, so `$formIsInvalid` starts `false` —
+  `"disabled": { "when": "$formIsInvalid" }` on a submit button leaves it ENABLED while required
+  fields are still empty. Use a compound expression that also checks the data, e.g.
+  `"$formIsInvalid || $form.email === undefined"`. (The runtime still blocks the actual submit
+  while invalid — this is a UX concern, not data integrity.)
+
+With the MCP available, `get_concept({ "concept": "validation" })` returns the full guide.
+
 ## Validation
 
 Definitions validate against published JSON Schemas: entry point
