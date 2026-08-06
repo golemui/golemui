@@ -486,4 +486,72 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
       cy.get('[id="successMessage"]').should('exist');
     });
   });
+
+  describe('Error visibility of inputs revealed after form interaction', () => {
+    const revealFormDef = () =>
+      defineForm({
+        form: [
+          {
+            uid: 'firstName',
+            kind: 'input',
+            type: 'textinput',
+            path: 'firstName',
+            label: 'First Name',
+            validator: { type: 'string', required: true },
+          },
+          {
+            uid: 'toggle',
+            kind: 'input',
+            type: 'checkbox',
+            path: 'showDetails',
+            label: 'Show Details',
+          },
+          {
+            uid: 'details',
+            kind: 'input',
+            type: 'textinput',
+            path: 'details',
+            label: 'Details',
+            validator: { type: 'string', required: true },
+            include: { when: '$form.showDetails === true' },
+          },
+          {
+            uid: 'submitBtn',
+            kind: 'action',
+            type: 'button',
+            label: 'Submit',
+            actionType: 'submit',
+          },
+        ],
+      });
+
+    it('should not show errors on a revealed input when another control was touched before', () => {
+      mountFn({ formDef: revealFormDef() });
+
+      // Provoke a required error on firstName by typing and deleting a character
+      cy.get('[data-cy="firstName_textinput"]').type('a{backspace}');
+      cy.get('[data-cy="firstName_validator-errors"]').should('exist');
+
+      // Reveal the details input, it must appear without visible errors
+      cy.get('[data-cy="toggle_checkbox"]').click();
+      cy.get('[data-cy="details_textinput"]').should('exist');
+      cy.get('[data-cy="details_validator-errors"]').should('not.exist');
+
+      // Only after interacting with the revealed input do its errors show
+      cy.get('[data-cy="details_textinput"]').type('a{backspace}');
+      cy.get('[data-cy="details_validator-errors"]').should('exist');
+    });
+
+    it('should show errors immediately on a revealed input after a submit attempt', () => {
+      mountFn({ formDef: revealFormDef() });
+
+      cy.get('[data-cy="submitBtn_button"]').click();
+      cy.get('[data-cy="firstName_validator-errors"]').should('exist');
+
+      // After a submit attempt, a revealed input shows its errors without interaction
+      cy.get('[data-cy="toggle_checkbox"]').click();
+      cy.get('[data-cy="details_textinput"]').should('exist');
+      cy.get('[data-cy="details_validator-errors"]').should('exist');
+    });
+  });
 };
