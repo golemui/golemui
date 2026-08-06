@@ -31,7 +31,7 @@ Commands:
 
 Output: a single JSON result on stdout.
   validate-json → { valid, errors, warnings, expressionWarnings, interpolationWarnings }
-  check-dx      → { ok, diagnostics, expressionWarnings }
+  check-dx      → { ok, diagnostics, expressionWarnings, validatorWarnings }
 
 Exit codes: 0 = valid/ok · 1 = invalid (fix the reported problems and re-run) ·
 2 = usage or file error.

@@ -1,6 +1,7 @@
 // eslint-disable-next-line import/no-namespace -- the TypeScript compiler API is namespace-imported by convention
 import type * as TS from 'typescript';
 import type { ExpressionFinding } from '../shared/lint/reactive-expressions';
+import type { BooleanValidatorFinding } from '../shared/lint/boolean-validator';
 import { lintDxSnippet } from './dx-lint';
 import { assertTypesAreLive, diagnose, resolveTypeCheckOptions } from './type-graph';
 
@@ -39,6 +40,12 @@ export interface DxCheckResult {
    * etc.), linted by the same engine as the JSON path. Advisory — they do not flip `ok`.
    */
   expressionWarnings: ExpressionFinding[];
+  /**
+   * Non-blocking boolean-validator findings (a `checkbox`/`booleanInput` validator with only
+   * half of the `required: true` + `const: true` pair — the mandatory-checkbox trap), linted
+   * by the same rule engine as the JSON path. Advisory — they do not flip `ok`.
+   */
+  validatorWarnings: BooleanValidatorFinding[];
 }
 
 let cachedTs: typeof TS | null = null;
@@ -119,10 +126,15 @@ export async function typeCheckDx(code: string): Promise<DxCheckResult> {
     };
   });
 
-  // Static lints the compiler can't see: misplaced `include`/`exclude` (blocking) and
-  // reactive-expression quality (advisory). Share the JSON path's expression engine.
-  const { diagnostics: lintDiagnostics, expressionWarnings } = lintDxSnippet(ts, full, lineOffset);
+  // Static lints the compiler can't see: misplaced `include`/`exclude` (blocking), plus
+  // reactive-expression quality and the mandatory-checkbox validator trap (both advisory).
+  // All share the JSON path's rule engines.
+  const {
+    diagnostics: lintDiagnostics,
+    expressionWarnings,
+    validatorWarnings,
+  } = lintDxSnippet(ts, full, lineOffset);
   const diagnostics = [...tscDiagnostics, ...lintDiagnostics];
 
-  return { ok: diagnostics.length === 0, diagnostics, expressionWarnings };
+  return { ok: diagnostics.length === 0, diagnostics, expressionWarnings, validatorWarnings };
 }

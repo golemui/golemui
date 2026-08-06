@@ -13,7 +13,9 @@ export const JSON_INSTRUCTIONS =
   "operation's parameters when there is no request body.\n" +
   '2. Building or editing by hand? Look up a single widget with `json_get_widget_spec` (its `kind`, ' +
   '`props`, and `validator` shape), and cross-cutting behavior that spans widgets — conditional ' +
-  'rendering, per-state prop overrides — with `get_concept`.\n' +
+  'rendering, per-state prop overrides, validation rules and error messages — with `get_concept`. ' +
+  'Before writing a mandatory checkbox or gating a button on `$formIsInvalid`, call ' +
+  '`get_concept({ concept: "validation" })` — both have non-obvious traps.\n' +
   '3. ALWAYS finish by calling `json_validate_form_definition`. It checks the definition against the ' +
   'bundled JSON Schemas and returns `{ valid, errors, warnings, expressionWarnings }`. Treat ' +
   '`errors` as blocking: fix them and re-validate until `valid` is true. `warnings` (likely-custom ' +

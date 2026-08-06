@@ -87,7 +87,15 @@ const EXAMPLES: Record<string, Record<string, unknown>> = {
     type: 'checkbox',
     path: 'termsAccepted',
     label: 'I accept the terms',
-    validator: { type: 'boolean', required: true, const: true },
+    validator: {
+      type: 'boolean',
+      required: true,
+      const: true,
+      messages: {
+        invalid: 'You must accept the terms',
+        const: 'You must accept the terms',
+      },
+    },
   },
   toggle: {
     kind: 'input',
@@ -231,6 +239,7 @@ const NOTES: Record<string, string[]> = {
   textinput: [
     '`path` is the dot-path into form data this field writes to.',
     '`validator.format` supports: `email`, `hostname`, `ipv4`, `ipv6`, `url`, `uuid`, `date`, `time`, `date-time`, `duration`.',
+    'Add custom `validator.messages` (per-rule map) on production forms — the library defaults are developer-facing. When `required: true`, ALWAYS also set `messages.invalid` with the same text as `messages.required`: an `undefined`/`null` value (pristine or cleared) fails the base type check and shows the `invalid` message, not the `required` one. Call `get_concept({ concept: "validation" })` for the full explanation.',
     'Root props `label`, `disabled`, `readonly`, `validator`, and `size` accept state suffixes — e.g. `"label.<stateName>": "New label"` overrides the label only when that named state is active. Props inside `props` (e.g. `hint`, `placeholder`) also accept suffixes as `"hint.<stateName>"`. Call `get_concept({ concept: "states" })` for the full pattern.',
     '`props.icon` accepts a Google Material Icons ligature name (e.g. `"search"`, `"email"`, `"lock"`) to display a decorative icon inside the input field. ' +
       'Supports state suffix: `"icon.<stateName>": "check"` to swap the icon when a state is active. ' +
@@ -299,7 +308,10 @@ const NOTES: Record<string, string[]> = {
       'Both support state suffixes: `"icon.<stateName>": "hourglass_empty"` swaps the icon while a state is active. ' +
       'Call `get_concept({ concept: "icons" })` for setup instructions and the full list of icon-capable widgets.',
   ],
-  checkbox: ['Set `validator.const: true` to require the user to tick it (e.g. terms acceptance).'],
+  checkbox: [
+    'MANDATORY CHECKBOX (e.g. terms acceptance): `required: true` alone is a silent trap — it only rejects a MISSING value; an unchecked box holding `false` is a valid boolean and passes. `const: true` is what rejects `false` — but alone it lets the pristine `undefined` pass (non-required validators are optional). Use BOTH: `validator: { type: "boolean", required: true, const: true }`.',
+    'Set BOTH `messages.invalid` and `messages.const` to the same user-facing text: a never-touched box fails the type check (`invalid` message), a checked-then-unchecked box fails the `const` rule. Call `get_concept({ concept: "validation" })` for the full explanation.',
+  ],
   alert: [
     'Use `include: { in: ["stateName"] }` to show this alert only when a named state is active, or `exclude: { from: ["stateName"] }` to hide it when a state is active. This is cleaner than `include: { when: "..." }` when the same condition is reused across multiple widgets. Call `get_concept({ concept: "states" })` for the full states pattern.',
     'Props inside `props` (e.g. `text`, `level`) accept state suffixes: `"text.<stateName>": "New message"` swaps the message when that state is active.',

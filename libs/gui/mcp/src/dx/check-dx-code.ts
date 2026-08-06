@@ -27,15 +27,18 @@ export const DX_CHECK_CODE_TOOL = {
     'distinct from `json_validate_form_definition`, which validates a JSON form-definition *object*. ' +
     "GolemUI is not in any model's training data, so generated `gui.*` code is frequently a confident " +
     'fabrication that does not compile; this is the only trustworthy check (inspection misses it). ' +
-    'Beyond type errors it also catches two defects the compiler cannot see: a misplaced ' +
+    'Beyond type errors it also catches defects the compiler cannot see: a misplaced ' +
     '`include`/`exclude` attached as a sibling of a `gui.*` spread (`{ ...gui.inputs.x(...), include }` ' +
     'compiles but silently never hides the field — put `include`/`exclude` INSIDE the config argument), ' +
-    'and reactive-expression mistakes in `when` strings (linted by the same engine as ' +
-    '`json_validate_form_definition`). Pass the `gui.*` snippet as `code` (a bare array of `gui.inputs.*` items ' +
+    'reactive-expression mistakes in `when` strings, and the mandatory-checkbox trap (a ' +
+    '`checkbox`/`booleanInput` validator with only half of the `required: true` + `const: true` pair — ' +
+    'it will not force the box to be checked). Both lints share their rule engines with ' +
+    '`json_validate_form_definition`. Pass the `gui.*` snippet as `code` (a bare array of `gui.inputs.*` items ' +
     'is fine — a `@golemui/gui-shared` import is added if missing). Returns `{ ok, diagnostics, ' +
-    'expressionWarnings }`; each diagnostic has a TypeScript `code` (0 for the static lints), `message`, ' +
+    'expressionWarnings, validatorWarnings }`; each diagnostic has a TypeScript `code` (0 for the static lints), `message`, ' +
     '`line`/`column`, and — for recognized GolemUI mistakes — a `hint` with the fix. `expressionWarnings` ' +
-    'are advisory and do not flip `ok`. Treat `ok: false` as blocking: apply the fixes and re-check until `ok` is true.',
+    'and `validatorWarnings` are advisory and do not flip `ok` — surface them and apply their `suggestion`. ' +
+    'Treat `ok: false` as blocking: apply the fixes and re-check until `ok` is true.',
   inputSchema: {
     type: 'object',
     properties: {

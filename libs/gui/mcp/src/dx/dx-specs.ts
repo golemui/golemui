@@ -115,8 +115,12 @@ function commonNote(fw: DxFramework = 'react'): string {
     "To RECEIVE A SUBMIT: add a `gui.actions.button({ label, actionType: 'submit' })` to the form and listen for " +
     'the submit on the host component (the RENDER line above shows how for your framework) — the handler gets a ' +
     '`FormSubmitEvent` whose `.data` is the collected form data. ' +
-    "To DISABLE submit until the form is valid, add `disabled: { when: '$formIsInvalid' }` to that button " +
-    '(`$formIsInvalid` is a built-in validity flag) — see the conditional-and-state-props pattern. ' +
+    'To DISABLE submit until the form is valid, add ' +
+    "`disabled: { when: '$formIsInvalid || $form.<requiredField> === undefined' }` to that button. " +
+    '`$formIsInvalid` is a built-in validity flag, but validation NEVER runs at mount, so on the ' +
+    'pristine form it is `false` and `$formIsInvalid` ALONE leaves the button ENABLED while required ' +
+    'fields are still empty — the extra data check covers that gap. See the ' +
+    'conditional-and-state-props pattern. ' +
     'The SAME `formDef` renders in every framework (React/Angular/Vue/Lit/vanilla) — only the host wrapper changes. ' +
     'FORM-LEVEL CONFIG — `formDef` is ALWAYS the bare array. Anything form-wide (named `states`, `validateOn`) ' +
     'goes in a sibling `formConfig` on the config (`config={{ formDef: form, formConfig: { states, validateOn } }}`), ' +
@@ -190,11 +194,15 @@ const PATTERNS: DxPattern[] = [
     name: 'conditionalAndStateProps',
     title: 'Conditional & state-driven props (enable/disable, show/hide, readonly)',
     example:
-      "gui.actions.button({ label: 'Submit', actionType: 'submit', disabled: { when: '$formIsInvalid' } })",
+      "gui.actions.button({ label: 'Submit', actionType: 'submit', disabled: { when: '$formIsInvalid || $form.email === undefined' } })",
     notes: [
-      'ENABLE/DISABLE & READONLY: `disabled` and `readonly` are typed `boolean | { when: <expr> }`. To gate the ' +
-        "submit button on validity: `gui.actions.button({ label, actionType: 'submit', disabled: { when: '$formIsInvalid' } })`. " +
+      'ENABLE/DISABLE & READONLY: `disabled` and `readonly` are typed `boolean | { when: <expr> }`. ' +
         '`$formIsInvalid` is a built-in validity flag — do not declare it as a state.',
+      "PRISTINE-FORM TRAP: validation never runs at mount, so `$formIsInvalid` starts `false` and `disabled: { when: '$formIsInvalid' }` " +
+        'leaves the submit button ENABLED while required fields are still empty (it disables only after the first ' +
+        'validated interaction). Gate the button with a compound expression that also checks the data — the example ' +
+        'above adds `|| $form.email === undefined` for a form whose required field is `email`. The runtime still blocks the actual submit while ' +
+        'invalid, so this is a UX concern, not a data-integrity one.',
       "SHOW/HIDE: `include` / `exclude` are typed `{ in: ['stateName'] }` / `{ from: ['stateName'] }` (state lists) " +
         'or `{ when: <expr> }`. Every state name in `in`/`from` MUST be declared in `formConfig.states`; an ' +
         'undeclared name leaves the widget hidden forever (the engine logs an error to the console).',
@@ -202,6 +210,34 @@ const PATTERNS: DxPattern[] = [
         "casting the factory result and assigning a key (`(btn as any)['disabled.formValid'] = false`) or by " +
         'spreading (`{ ...gui.actions.button(...), disabled }`): keys added that way are SILENTLY ignored and the ' +
         'behavior never fires. If a prop is not on the typed config, you are guessing — it is not a real field.',
+    ],
+  },
+  {
+    name: 'validationMessages',
+    title: 'Validation rules & custom error messages (required, const, messages)',
+    example:
+      "gui.inputs.textInput('email', { label: 'Email', validator: { required: true, format: 'email', messages: { invalid: 'Email is required', required: 'Email is required', format: 'Enter a valid email address' } } })",
+    notes: [
+      'Every validator accepts a `messages` map from rule name to custom error text (string or i18n ' +
+        '`{ key, params?, default? }`). Keys per type — string: `invalid`, `required`, `minLength`, `maxLength`, ' +
+        '`pattern`, `format`, `enum`, `const`; number: `invalid`, `minimum`, `maximum`, `exclusiveMinimum`, ' +
+        '`exclusiveMaximum`, `multipleOf`, `enum`, `const`; boolean: `invalid`, `const`; array: `invalid`, ' +
+        '`required`, `minItems`, `maxItems`. The special key `invalid` customizes the base type check. ' +
+        'Set custom messages for every rule you use — the library defaults (e.g. "Invalid input: expected string, ' +
+        'received undefined") are developer-facing, not user-facing.',
+      'ALWAYS pair `messages.required` with `messages.invalid` (same text): an `undefined`/`null` value — the ' +
+        'pristine or cleared field, the most common empty state — fails the base TYPE check and shows the `invalid` ' +
+        'message; the `required` rule only fires on present-but-empty values (`""`, `[]`). That is also why ' +
+        'number/boolean validators have NO `required` message key — for them `messages.invalid` is the only way to ' +
+        'word the missing-value error. `null` is never valid, even on non-required fields.',
+      'MANDATORY CHECKBOX: boolean `required: true` does NOT force it checked (`false` is a valid boolean) and ' +
+        '`const: true` alone lets the pristine `undefined` pass. Use both plus paired messages — see the ' +
+        '`gui.inputs.checkbox` entry for the full recipe.',
+      'WHEN VALIDATION RUNS: only on user interaction, per `formConfig.validateOn` — `"eager"` (default: first ' +
+        'change or blur anywhere validates the whole form), `"change"`, `"blur"`, `"submit"`, or an array. NOTHING ' +
+        'validates at mount, which is why `$formIsInvalid` starts `false` — see the conditional-and-state-props ' +
+        'pattern for gating the submit button correctly. Submit clicks always re-validate everything and the ' +
+        'runtime blocks the submit event while invalid.',
     ],
   },
 ];
@@ -245,9 +281,18 @@ const INPUTS: DxSpec[] = [
     factory: 'checkbox',
     namespace: 'inputs',
     docSlug: 'checkbox',
-    call: 'gui.inputs.checkbox(path, { label, defaultValue? })',
-    example: "gui.inputs.checkbox('terms', { label: 'I accept the terms', defaultValue: false })",
-    notes: ['A single boolean rendered as a checkbox.'],
+    call: 'gui.inputs.checkbox(path, { label, defaultValue?, validator? })',
+    example:
+      "gui.inputs.checkbox('terms', { label: 'I accept the terms', validator: { required: true, const: true, messages: { invalid: 'You must accept the terms', const: 'You must accept the terms' } } })",
+    notes: [
+      'A single boolean rendered as a checkbox.',
+      'MANDATORY CHECKBOX (terms acceptance): `required: true` alone is a silent trap — an unchecked box holding ' +
+        '`false` is a valid boolean and PASSES; only `const: true` rejects `false`. And `const: true` alone lets the ' +
+        'pristine `undefined` pass (non-required validators are optional). Use BOTH, as in the example.',
+      'Set BOTH `messages.invalid` and `messages.const` to the same text: a never-touched box fails the type check ' +
+        '(`invalid` message), a checked-then-unchecked box fails the `const` rule (`const` message). See the ' +
+        'validation-messages pattern.',
+    ],
   },
   {
     factory: 'textarea',
