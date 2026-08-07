@@ -67,14 +67,31 @@ export const reducer = ({
       case 'SET_LANGUAGE':
         return pipe(setLanguage(state, action), applyWidgetProps);
 
-      case 'ADD_WIDGET':
-        return pipe(
+      case 'ADD_WIDGET': {
+        const stateAfterAdd = pipe(
           addWidget(state, action),
           reduceIf(formIsHealthy, applyCurrentState),
           reduceIf(formIsHealthy, materializeRepeaterItems),
           reduceIf(formIsHealthy, applyWidgetFlags),
           reduceIf(formIsHealthy, applyWidgetProps),
         );
+        // After a VALIDATE_ALL pass, a widget added later is touched but never validated, so validate
+        // here or its errors stay hidden until the next validation event.
+        // Must run after applyWidgetProps because validateAll reads the calculated `current` widget,
+        // which is empty until then.
+        if (formIsHealthy(stateAfterAdd) && stateAfterAdd.allControlsValidated) {
+          return pipe(
+            stateAfterAdd,
+            validateAll(validators, localization),
+            applyCurrentState,
+            materializeRepeaterItems,
+            applyWidgetFlags,
+            applyWidgetProps,
+            calculateIsFormValid,
+          );
+        }
+        return stateAfterAdd;
+      }
 
       case 'REMOVE_WIDGET':
         return pipe(
@@ -133,6 +150,7 @@ export const reducer = ({
           {
             ...state,
             touched: true,
+            allControlsValidated: true,
             touchedControls: Object.keys(state.calculatedWidgets).reduce(
               (touchedControls, key) => {
                 const widget = state.calculatedWidgets[key].source;

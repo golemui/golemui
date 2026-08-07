@@ -42,4 +42,4 @@ export function buildModularDx(modules: DxModule[]): ModularDx {
   };
 }
 
-export const modularDx = buildModularDx([dxModularMocks.invoiceDxModular]);
+export const modularDx = buildModularDx([dxModularMocks.testsDxModular]);

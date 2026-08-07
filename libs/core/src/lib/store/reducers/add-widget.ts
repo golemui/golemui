@@ -10,11 +10,11 @@ export function addWidget(state: State, action: ADD_WIDGET): State {
 
   const widget = action.payload.widget;
 
-  // If the form has already been globally touched (e.g. submitted), immediately
-  // mark the incoming widget as touched so its validation errors are visible.
+  // Widgets added after a VALIDATE_ALL pass (a submit attempt) are marked as touched so
+  // their errors show immediately.
   const touchedControls =
-    state.touched && isInputWidget(widget)
-      ? { ...state.touchedControls, [(widget as any).path]: true }
+    state.allControlsValidated && isInputWidget(widget)
+      ? { ...state.touchedControls, [widget.path]: true }
       : state.touchedControls;
 
   return {
