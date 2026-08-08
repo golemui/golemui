@@ -19,6 +19,7 @@
       inset-inline-end: var(--gui-space-3);
       transform-origin: 50% 40%;
       pointer-events: none;
+      display: flex;
     }
 
     &:has(> input[aria-expanded='true']) .gui-dropdown__arrow {
