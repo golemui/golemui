@@ -91,10 +91,13 @@ export class GuiRangeDatePicker extends LitElement {
 
   @state() private _focusDate: string | undefined = undefined;
   /**
-   * The calendar's in-progress span anchor. It lives here — the picker stays
-   * mounted — so a half-picked span survives closing and reopening the popover.
+   * The in-progress range, from either half of the widget: days picked in the
+   * calendar or endpoints typed into the input. It lives here — the picker
+   * stays mounted — so a half-picked span survives closing and reopening the
+   * popover, and it is what the calendar and the input each render.
    */
-  @state() private _workingAnchor: string | undefined = undefined;
+  @state() private _workingStart: string | undefined = undefined;
+  @state() private _workingEnd: string | undefined = undefined;
   @state() private _invalidRange: { start: string; end: string } | null = null;
 
   private _popup = new GUIPopupController(this, {
@@ -163,7 +166,8 @@ export class GuiRangeDatePicker extends LitElement {
           ?readonly=${this.readOnly}
           .value=${this.value}
           .focusDate=${this._focusDate}
-          .workingAnchor=${this._workingAnchor}
+          .workingStart=${this._workingStart}
+          .workingEnd=${this._workingEnd}
           .prevMonthIcon=${this.prevMonthIcon}
           .nextMonthIcon=${this.nextMonthIcon}
           .prevMonthAriaLabel=${this.prevMonthAriaLabel}
@@ -233,6 +237,7 @@ export class GuiRangeDatePicker extends LitElement {
           @blur=${this.onDateBlur}
           @focus=${this._popup.show}
           @change=${this.onDateChange}
+          @partsChange=${this.onInputPartsChange}
           @pillClick=${this.onPillClick}
         ></gui-range-date>
         <button
@@ -287,7 +292,7 @@ export class GuiRangeDatePicker extends LitElement {
         return;
       }
     }
-    this.commitValue(value);
+    this.commitValue(value, event.detail.commit !== false);
   }
 
   /** The message for the first constraint a range violates, or null when valid. */
@@ -314,6 +319,7 @@ export class GuiRangeDatePicker extends LitElement {
     const start = range.start;
     const end = range.end ?? range.start;
     this._invalidRange = { start, end };
+    this.setWorking(undefined, undefined);
     const input = this._dateRef;
     if (input) {
       input.value = this.value ?? [];
@@ -341,27 +347,55 @@ export class GuiRangeDatePicker extends LitElement {
   private onCalendarChange(event: CustomEvent) {
     event.stopPropagation();
     this._dateRef?.clearRangeInputs();
-    this._workingAnchor = undefined;
     this.commitValue(event.detail.value);
   }
 
   /**
-   * The calendar's in-progress anchor, held here so it survives the popover,
-   * and painted into the start field so the day just picked is readable as a
-   * date — the reverse of typed parts moving the calendar's selection. An
-   * anchor dropped for a completed or restarted span empties the fields.
+   * Applies a new working range, repainting only the endpoints that actually
+   * changed. Repainting every reported endpoint would wipe half-typed
+   * segments the other half of the widget never saw; skipping the unchanged
+   * ones also keeps the caret out of the way while the user types.
    */
-  private onCalendarPartsChange(event: CustomEvent<{ anchor: string | null }>) {
-    event.stopPropagation();
-    const anchor = event.detail.anchor;
-    this._workingAnchor = anchor ?? undefined;
+  private setWorking(start?: string, end?: string, paint = false): void {
+    const startChanged = start !== this._workingStart;
+    const endChanged = end !== this._workingEnd;
+    this._workingStart = start;
+    this._workingEnd = end;
 
-    if (anchor) {
-      this._dateRef?.fillGroup('start', anchor);
-      this._dateRef?.fillGroup('end', null);
+    if (!paint) return;
+    if (startChanged) this._dateRef?.fillGroup('start', start ?? null);
+    if (endChanged) this._dateRef?.fillGroup('end', end ?? null);
+  }
+
+  /** Typed endpoints feed the working range; the calendar follows them. */
+  private onInputPartsChange(event: CustomEvent<{ start: string | null; end: string | null }>) {
+    event.stopPropagation();
+    this.setWorking(event.detail.start ?? undefined, event.detail.end ?? undefined);
+  }
+
+  /**
+   * The calendar's in-progress selection, held here so it survives the
+   * popover, and painted into the fields so a picked day reads back as a date
+   * — the reverse of typed parts moving the calendar's selection.
+   */
+  private onCalendarPartsChange(
+    event: CustomEvent<{ anchor: string | null; start: string | null; end: string | null }>,
+  ) {
+    event.stopPropagation();
+    const { anchor, start, end } = event.detail;
+
+    if (start || end) {
+      this.setWorking(start ?? undefined, end ?? undefined, true);
       return;
     }
-    this._dateRef?.clearRangeInputs();
+
+    if (anchor) {
+      if (!this._workingStart && this._workingEnd === anchor) return;
+      this.setWorking(anchor, undefined, true);
+      return;
+    }
+
+    this.setWorking(undefined, undefined, true);
   }
 
   private onCalendarInputError(event: CustomEvent) {
@@ -371,9 +405,17 @@ export class GuiRangeDatePicker extends LitElement {
     this._dateRef?.showRange(range.start, range.end);
   }
 
-  private commitValue(value: DateRange[] | null | undefined) {
+  /**
+   * The single funnel every commit passes through — a calendar span, a typed
+   * Enter — so the working selection is torn down once, and the calendar
+   * (which follows the cleared props) with it. `committed` is false for the
+   * input's error-clearing echo, which carries no new pill and must leave a
+   * half-entered range alone.
+   */
+  private commitValue(value: DateRange[] | null | undefined, committed = true) {
     this.value = value ?? undefined;
     this._invalidRange = null;
+    if (committed) this.setWorking(undefined, undefined);
     this.dispatchEvent(
       new CustomEvent('change', {
         detail: { value: value ?? null },

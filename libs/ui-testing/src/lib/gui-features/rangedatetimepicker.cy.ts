@@ -311,6 +311,103 @@ export const runRangeDateTimePickerComponentTests = (mountFn: MountComponentFn) 
         cy.get(sel.triggerPart('end', 'day')).should('have.value', '');
       });
 
+      it('should fill the calendar time picker from a time typed in the trigger', () => {
+        mountPicker();
+
+        cy.get(sel.triggerPart('start', 'day')).click();
+        cy.get(sel.triggerPart('start', 'hour')).click();
+        cy.focused().type('09');
+        cy.focused().type('30');
+
+        startHour().should('have.value', '09');
+      });
+
+      it('should start a calendar selection from a date typed in the trigger', () => {
+        mountPicker();
+
+        cy.get(sel.triggerPart('start', 'month')).click();
+        cy.focused().type(mm);
+        cy.focused().type('13');
+        cy.focused().type(String(y));
+
+        // The typed day is the in-progress anchor, so one click completes the span
+        cy.get(sel.dayButton(iso(13))).should('have.class', 'is-anchor');
+        cy.get(sel.dayButton(iso(15))).click();
+        cy.get(sel.triggerPart('end', 'day')).should('have.value', '15');
+        // Both times are still missing, so the span stays in progress
+        cy.get(sel.dayButton(iso(14)))
+          .should('have.class', 'is-selecting')
+          .and('not.have.class', 'in-range');
+      });
+
+      it('should highlight a typed range whose end comes before its start', () => {
+        mountPicker();
+
+        cy.get(sel.triggerPart('start', 'month')).click();
+        cy.focused().type(mm);
+        cy.focused().type('15');
+        cy.focused().type(String(y));
+
+        cy.get(sel.triggerPart('end', 'month')).click();
+        cy.focused().type(mm);
+        cy.focused().type('13');
+        cy.focused().type(String(y));
+
+        // Reversed: the commit will reject it, but while it is being entered
+        // the days between the two endpoints still show what was typed.
+        cy.get(sel.dayButton(iso(13))).should('have.class', 'is-selecting');
+        cy.get(sel.dayButton(iso(14))).should('have.class', 'is-selecting');
+        cy.get(sel.dayButton(iso(15))).should('have.class', 'is-selecting');
+      });
+
+      it('should keep the working selection while a custom time is typed in the calendar', () => {
+        mountPicker({ props: { allowCustomTime: true } });
+
+        cy.get(sel.triggerPart('start', 'day')).click();
+        cy.get(sel.dayButton(iso(13))).click();
+        cy.get(sel.dayButton(iso(15))).click();
+        cy.get(sel.triggerPart('start', 'day')).should('have.value', '13');
+
+        // The calendar's own time field reports its parts as it goes, and a
+        // half-typed time reports nothing else — which must not read as "the
+        // range lost its days"
+        startHour().click();
+        cy.focused().type('09');
+        cy.get(`${sel.startPicker} gui-time input[data-type="minute"]`).click();
+
+        cy.get(sel.triggerPart('start', 'day')).should('have.value', '13');
+        cy.get(sel.triggerPart('end', 'day')).should('have.value', '15');
+      });
+
+      it('should clear the calendar time pickers when a pill is committed from the trigger', () => {
+        mountPicker();
+
+        // Start time first, then the day span — the end time is still missing,
+        // so nothing commits and the start time sits in the calendar's picker
+        cy.get(sel.triggerPart('start', 'day')).click();
+        startHour().click();
+        startOption('09:00:00').click();
+        cy.get(sel.dayButton(iso(13))).click();
+        cy.get(sel.dayButton(iso(15))).click();
+        startHour().should('have.value', '09');
+
+        // Typing the last piece in the trigger commits the pill from there —
+        // the calendar must not be left holding the range it just became
+        cy.get(sel.triggerPart('end', 'hour')).click();
+        cy.focused().type('11');
+        cy.focused().type('00');
+        cy.focused().type('{enter}');
+
+        cy.get(sel.pillText).should('have.length', 1);
+        startHour().should('have.value', '');
+        endHour().should('have.value', '');
+        cy.get(sel.triggerPart('start', 'day')).should('have.value', '');
+        // The span is now a committed pill, with nothing left in progress
+        cy.get(sel.dayButton(iso(13)))
+          .should('not.have.class', 'is-anchor')
+          .and('not.have.class', 'is-selecting');
+      });
+
       it('should report an incomplete range when the popover is left half-finished', () => {
         mountPicker();
 
@@ -337,12 +434,15 @@ export const runRangeDateTimePickerComponentTests = (mountFn: MountComponentFn) 
         cy.get('body').click(0, 0);
         cy.get(sel.calendar).should('not.exist');
 
-        // Reopening restores the span and the chosen start time
+        // Reopening restores the span and the chosen start time. The end time
+        // is still missing, so the span reads as in progress, not committed.
         cy.get(sel.triggerPart('start', 'day')).click();
         cy.get(sel.calendar).should('exist');
         startHour().should('have.value', '09');
-        cy.get(sel.dayButton(iso(13))).should('have.class', 'range-start');
-        cy.get(sel.dayButton(iso(15))).should('have.class', 'range-end');
+        cy.get(sel.dayButton(iso(13)))
+          .should('have.class', 'is-selecting')
+          .and('not.have.class', 'range-start');
+        cy.get(sel.dayButton(iso(15))).should('have.class', 'is-selecting');
       });
 
       it('should commit a pill into the trigger, keep the popover open, and submit', () => {

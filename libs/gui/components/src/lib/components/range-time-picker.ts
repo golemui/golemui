@@ -308,12 +308,7 @@ export class GuiRangeTimePicker extends LitElement {
 
   private onInputChange(event: CustomEvent) {
     event.stopPropagation();
-    // A successful commit turns the entry into a pill and empties the fields, so
-    // the two lists must drop their working selection: the start list deselects
-    // and the end list disables again, ready for the next range.
-    this._workingIn = undefined;
-    this._workingOut = undefined;
-    this.commitValue(event.detail.value);
+    this.commitValue(event.detail.value, event.detail.commit !== false);
   }
 
   /**
@@ -363,8 +358,6 @@ export class GuiRangeTimePicker extends LitElement {
     if (!this._workingIn || !this._workingOut || !this._inputRef) return;
 
     if (this._inputRef.commitFromParts()) {
-      this._workingIn = undefined;
-      this._workingOut = undefined;
       this.updateComplete.then(() => {
         this._inListRef()?.scrollToSelectedValue?.();
       });
@@ -381,8 +374,19 @@ export class GuiRangeTimePicker extends LitElement {
     );
   }
 
-  private commitValue(value: TimeRange[] | null | undefined) {
+  /**
+   * The single funnel every commit passes through — a list pick, a typed Enter
+   * — so the working selection is torn down once: the start list deselects and
+   * the end list unfloors, ready for the next range. `committed` is false for
+   * the input's error-clearing echo, which carries no new pill and must leave
+   * a half-entered range alone.
+   */
+  private commitValue(value: TimeRange[] | null | undefined, committed = true) {
     this.value = value ?? undefined;
+    if (committed) {
+      this._workingIn = undefined;
+      this._workingOut = undefined;
+    }
     const error = this.validateBounds(this.value);
     this.dispatchEvent(
       new CustomEvent('change', {

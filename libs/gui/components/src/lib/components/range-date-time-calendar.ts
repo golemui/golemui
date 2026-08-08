@@ -22,7 +22,12 @@ import {
   renderCalendarMonthPanel,
   renderCalendarPanelBody,
 } from '../utils/calendar-templates';
-import { buildMonthDays, computeDayStatus, type DaySpan } from '../utils/day-status';
+import {
+  buildMonthDays,
+  computeDayStatus,
+  orderedDaySpan,
+  type DaySpan,
+} from '../utils/day-status';
 import {
   buildPillItems,
   findRangeByKey,
@@ -33,6 +38,7 @@ import {
   idleRangeSelection,
   reduceRangeSelection,
   selectionPreviewSpan,
+  workingPhase,
   type RangeSelectionState,
 } from '../utils/range-selection';
 import {
@@ -135,13 +141,14 @@ export class GuiRangeDateTimeCalendar extends LitElement {
     | undefined = undefined;
   @property({ type: String, attribute: 'disabled-day-count-aria-label' })
   disabledDayCountAriaLabel: string | undefined = undefined;
-  @property({ type: String, attribute: 'working-anchor' }) workingAnchor: string | undefined =
+  /**
+   * The host picker's working selection — typed into its input, or picked here
+   * and held there across the popover's unmount/remount cycle. One date
+   * renders as an in-progress anchor, both as a parked span.
+   */
+  @property({ type: String, attribute: 'working-start' }) workingStart: string | undefined =
     undefined;
-  @property({ type: String, attribute: 'working-start-date' }) workingStartDate:
-    | string
-    | undefined = undefined;
-  @property({ type: String, attribute: 'working-end-date' }) workingEndDate: string | undefined =
-    undefined;
+  @property({ type: String, attribute: 'working-end' }) workingEnd: string | undefined = undefined;
   @property({ type: String, attribute: 'working-start-time' }) workingStartTime:
     | string
     | undefined = undefined;
@@ -151,10 +158,10 @@ export class GuiRangeDateTimeCalendar extends LitElement {
   @state() protected _selection: RangeSelectionState = idleRangeSelection();
   @state() protected _invalidRange: { start: Date; end: Date } | null = null;
 
-  @state() private _workingDateStart: string | undefined = undefined;
-  @state() private _workingDateEnd: string | undefined = undefined;
-  @state() private _workingTimeIn: string | undefined = undefined;
-  @state() private _workingTimeOut: string | undefined = undefined;
+  @state() private _workingStart: string | undefined = undefined;
+  @state() private _workingEnd: string | undefined = undefined;
+  @state() private _workingStartTime: string | undefined = undefined;
+  @state() private _workingEndTime: string | undefined = undefined;
   @state() private _openList: 'start' | 'end' | null = null;
 
   protected _skipValueNavigation = false;
@@ -246,13 +253,12 @@ export class GuiRangeDateTimeCalendar extends LitElement {
     return `${start} - ${end}`;
   }
 
-  /** Highlights the parked working date range like a committed one. */
-  protected get workingRange(): DaySpan | undefined {
-    if (!this._workingDateStart || !this._workingDateEnd) return undefined;
-    return {
-      start: parseISODateString(this._workingDateStart),
-      end: parseISODateString(this._workingDateEnd),
-    };
+  protected get workingSpan(): DaySpan | undefined {
+    if (!this._workingStart || !this._workingEnd) return undefined;
+    return orderedDaySpan(
+      parseISODateString(this._workingStart),
+      parseISODateString(this._workingEnd),
+    );
   }
 
   override createRenderRoot() {
@@ -376,7 +382,7 @@ export class GuiRangeDateTimeCalendar extends LitElement {
             ?disabled=${!startEnabled}
             ?readonly=${this.readOnly}
             .allowCustomTime=${this.allowCustomTime}
-            .value=${this._workingTimeIn}
+            .value=${this._workingStartTime}
             .localeId=${this.localeId}
             .hourFormat=${this.hourFormat}
             .minuteStep=${this.minuteStep}
@@ -387,6 +393,7 @@ export class GuiRangeDateTimeCalendar extends LitElement {
             .disabledRangeMessage=${this.disabledRangeMessage}
             .noAvailableTimesMessage=${this.noAvailableTimesMessage}
             @change=${this.onStartTimeChange}
+            @partsChange=${this.stopInnerPartsChange}
             @listtoggle=${(e: CustomEvent<{ open: boolean }>) => this.onListToggle(e, 'start')}
           ></gui-time-picker>
         </div>
@@ -407,7 +414,7 @@ export class GuiRangeDateTimeCalendar extends LitElement {
             ?disabled=${!endEnabled}
             ?readonly=${this.readOnly}
             .allowCustomTime=${this.allowCustomTime}
-            .value=${this._workingTimeOut}
+            .value=${this._workingEndTime}
             .localeId=${this.localeId}
             .hourFormat=${this.hourFormat}
             .minuteStep=${this.minuteStep}
@@ -418,6 +425,7 @@ export class GuiRangeDateTimeCalendar extends LitElement {
             .disabledRangeMessage=${this.disabledRangeMessage}
             .noAvailableTimesMessage=${this.noAvailableTimesMessage}
             @change=${this.onEndTimeChange}
+            @partsChange=${this.stopInnerPartsChange}
             @listtoggle=${(e: CustomEvent<{ open: boolean }>) => this.onListToggle(e, 'end')}
           ></gui-time-picker>
         </div>
@@ -535,7 +543,7 @@ export class GuiRangeDateTimeCalendar extends LitElement {
       start: this.endpointDay(range.start),
       end: range.end ? this.endpointDay(range.end) : undefined,
     }));
-    const selectingSpan = selectionPreviewSpan(this._selection);
+    const selectingSpan = selectionPreviewSpan(this._selection) ?? this.workingSpan ?? null;
 
     return buildMonthDays({
       currentDate: this._currentDate,
@@ -546,7 +554,6 @@ export class GuiRangeDateTimeCalendar extends LitElement {
       toDay: (base) => {
         const status = computeDayStatus(base.date, {
           ranges,
-          workingRange: this.workingRange,
           anchor: this._selection.anchor,
           selectingSpan,
           invalidRange: this._invalidRange,
@@ -589,8 +596,8 @@ export class GuiRangeDateTimeCalendar extends LitElement {
     // Starting a new span drops the previous days but keeps the chosen times:
     // a time of day is independent of which days the range covers.
     if (!commit) {
-      this._workingDateStart = undefined;
-      this._workingDateEnd = undefined;
+      this._workingStart = undefined;
+      this._workingEnd = undefined;
       this._invalidRange = null;
       this.emitPartsChange();
       return;
@@ -604,8 +611,8 @@ export class GuiRangeDateTimeCalendar extends LitElement {
     }
 
     this._invalidRange = null;
-    this._workingDateStart = toISODateString(commit.start);
-    this._workingDateEnd = toISODateString(commit.end);
+    this._workingStart = toISODateString(commit.start);
+    this._workingEnd = toISODateString(commit.end);
     this.emitPartsChange();
     this.tryCommitWorkingRange();
   }
@@ -650,9 +657,9 @@ export class GuiRangeDateTimeCalendar extends LitElement {
 
     const time = (event.detail.value as string | null) ?? undefined;
     if (endpoint === 'start') {
-      this._workingTimeIn = time;
+      this._workingStartTime = time;
     } else {
-      this._workingTimeOut = time;
+      this._workingEndTime = time;
     }
     this.emitPartsChange();
 
@@ -666,10 +673,10 @@ export class GuiRangeDateTimeCalendar extends LitElement {
    * next to its error, so the user corrects one piece instead of restarting.
    */
   private tryCommitWorkingRange(): void {
-    const startDate = this._workingDateStart;
-    const endDate = this._workingDateEnd;
-    const timeIn = this._workingTimeIn;
-    const timeOut = this._workingTimeOut;
+    const startDate = this._workingStart;
+    const endDate = this._workingEnd;
+    const timeIn = this._workingStartTime;
+    const timeOut = this._workingEndTime;
     if (!startDate || !endDate || !timeIn || !timeOut) return;
 
     const startError = this.timeError(timeIn, startDate, this.resolvedStartTimeRanges);
@@ -709,11 +716,11 @@ export class GuiRangeDateTimeCalendar extends LitElement {
     this.dispatchEvent(
       new CustomEvent('partsChange', {
         detail: {
-          anchor: this._selection.anchor ? toISODateString(this._selection.anchor) : null,
-          startDate: this._workingDateStart ?? null,
-          endDate: this._workingDateEnd ?? null,
-          startTime: this._workingTimeIn ?? null,
-          endTime: this._workingTimeOut ?? null,
+          anchor: this.anchorISO() ?? null,
+          start: this._workingStart ?? null,
+          end: this._workingEnd ?? null,
+          startTime: this._workingStartTime ?? null,
+          endTime: this._workingEndTime ?? null,
         },
         bubbles: true,
         composed: true,
@@ -722,29 +729,62 @@ export class GuiRangeDateTimeCalendar extends LitElement {
   }
 
   /**
-   * Takes over the host picker's working selection on the mount that follows
-   * a popover reopen. Only empty fields are adopted, so the picker echoing
-   * back what this calendar just reported can never overwrite live state.
+   * Takes over the host picker's working selection: on the mount that follows
+   * a popover reopen, and on every later change, so a value typed into the
+   * picker's input reaches the days grid and the two time pickers. Adoption
+   * compares values and never emits, so the picker echoing back what this
+   * calendar just reported settles as a no-op instead of looping.
    */
   private adoptWorkingSelection(changedProperties: PropertyValues): void {
-    if (changedProperties.has('workingAnchor') && !this._selection.anchor && this.workingAnchor) {
-      const anchor = parseISODateString(this.workingAnchor);
-      if (!isNaN(anchor.getTime())) {
-        this._selection = { anchor, hover: null, selecting: true };
-      }
+    if (changedProperties.has('workingStart') || changedProperties.has('workingEnd')) {
+      this.adoptWorkingDates();
     }
-    if (changedProperties.has('workingStartDate') && !this._workingDateStart) {
-      this._workingDateStart = this.workingStartDate || undefined;
+    if (changedProperties.has('workingStartTime')) {
+      this._workingStartTime = this.workingStartTime || undefined;
     }
-    if (changedProperties.has('workingEndDate') && !this._workingDateEnd) {
-      this._workingDateEnd = this.workingEndDate || undefined;
+    if (changedProperties.has('workingEndTime')) {
+      this._workingEndTime = this.workingEndTime || undefined;
     }
-    if (changedProperties.has('workingStartTime') && !this._workingTimeIn) {
-      this._workingTimeIn = this.workingStartTime || undefined;
+  }
+
+  /**
+   * One date is an in-progress anchor the next click completes; both are the
+   * parked span that waits for the times. Navigates to a span or anchor that
+   * falls outside the visible months.
+   */
+  private adoptWorkingDates(): void {
+    const phase = workingPhase(this.workingStart, this.workingEnd);
+
+    if (phase.kind === 'span') {
+      if (this._workingStart === phase.start && this._workingEnd === phase.end) return;
+      this._workingStart = phase.start;
+      this._workingEnd = phase.end;
+      this._selection = idleRangeSelection();
+      // The earliest endpoint, so a pair entered end-first still opens on the
+      // beginning of its span.
+      this._nav.navigateToDate(this.workingSpan?.start ?? this.endpointDay(phase.start));
+      return;
     }
-    if (changedProperties.has('workingEndTime') && !this._workingTimeOut) {
-      this._workingTimeOut = this.workingEndTime || undefined;
+
+    this._workingStart = undefined;
+    this._workingEnd = undefined;
+
+    if (phase.kind === 'idle') {
+      if (this._selection.anchor) this._selection = idleRangeSelection();
+      return;
     }
+
+    if (this.anchorISO() === phase.iso) return;
+
+    const anchor = this.endpointDay(phase.iso);
+    if (isNaN(anchor.getTime())) return;
+    this._selection = { anchor, hover: null, selecting: true };
+    this._nav.navigateToDate(anchor);
+  }
+
+  /** ISO day of the in-progress anchor, or undefined while idle. */
+  private anchorISO(): string | undefined {
+    return this._selection.anchor ? toISODateString(this._selection.anchor) : undefined;
   }
 
   /**
@@ -764,10 +804,11 @@ export class GuiRangeDateTimeCalendar extends LitElement {
   }
 
   private resetWorking() {
-    this._workingDateStart = undefined;
-    this._workingDateEnd = undefined;
-    this._workingTimeIn = undefined;
-    this._workingTimeOut = undefined;
+    this._workingStart = undefined;
+    this._workingEnd = undefined;
+    this._workingStartTime = undefined;
+    this._workingEndTime = undefined;
+    this._selection = idleRangeSelection();
     this._openList = null;
     this.resetPicker(this.startPicker);
     this.resetPicker(this.endPicker);
@@ -778,6 +819,17 @@ export class GuiRangeDateTimeCalendar extends LitElement {
     picker.value = undefined;
     picker.closeList();
   }
+
+  /**
+   * The embedded time pickers' own segmented inputs broadcast a bubbling,
+   * composed `partsChange` carrying only `{time}`. Left alone it reaches the
+   * host picker's listener looking like this calendar's report, whose missing
+   * keys read as "every piece is gone" and blank the working selection. The
+   * times this calendar holds already flow out through `@change`.
+   */
+  private stopInnerPartsChange = (event: Event) => {
+    event.stopPropagation();
+  };
 
   private emitInputError(message: string) {
     this.dispatchEvent(
@@ -814,14 +866,14 @@ export class GuiRangeDateTimeCalendar extends LitElement {
   }
 
   private get resolvedStartTimeRanges() {
-    return this._workingDateStart
-      ? resolveDisabledTimesForDate(this.disabledRanges, this._workingDateStart)
+    return this._workingStart
+      ? resolveDisabledTimesForDate(this.disabledRanges, this._workingStart)
       : [];
   }
 
   private get resolvedEndTimeRanges() {
-    return this._workingDateEnd
-      ? resolveDisabledTimesForDate(this.disabledRanges, this._workingDateEnd)
+    return this._workingEnd
+      ? resolveDisabledTimesForDate(this.disabledRanges, this._workingEnd)
       : [];
   }
 
@@ -838,14 +890,14 @@ export class GuiRangeDateTimeCalendar extends LitElement {
   }
 
   private get startListBounds(): { minTime?: string; maxTime?: string } {
-    return this._workingDateStart ? this.dayClampedBounds(this._workingDateStart) : {};
+    return this._workingStart ? this.dayClampedBounds(this._workingStart) : {};
   }
 
   private get endListBounds(): { minTime?: string; maxTime?: string } {
-    if (!this._workingDateEnd) return {};
-    const base = this.dayClampedBounds(this._workingDateEnd);
-    if (this._workingDateEnd !== this._workingDateStart || !this._workingTimeIn) return base;
-    const floor = oneStepAfterISOTime(this._workingTimeIn, this.minuteStep);
+    if (!this._workingEnd) return {};
+    const base = this.dayClampedBounds(this._workingEnd);
+    if (this._workingEnd !== this._workingStart || !this._workingStartTime) return base;
+    const floor = oneStepAfterISOTime(this._workingStartTime, this.minuteStep);
     if (!floor) return { minTime: '23:59:59', maxTime: '00:00:00' };
     return { minTime: floor, maxTime: base.maxTime };
   }

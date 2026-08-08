@@ -301,6 +301,10 @@ export class GuiDateTimeCalendar extends LitElement {
     this.emitChange(this.value as string, commit);
   }
 
+  private stopInnerPartsChange = (event: Event) => {
+    event.stopPropagation();
+  };
+
   private onTimePickerChange(event: CustomEvent) {
     event.stopPropagation();
 
@@ -464,6 +468,7 @@ export class GuiDateTimeCalendar extends LitElement {
           .disabledRangeMessage=${this.disabledTimeRangeMessage}
           .noAvailableTimesMessage=${this.noAvailableTimesMessage}
           @change=${this.onTimePickerChange}
+          @partsChange=${this.stopInnerPartsChange}
           @listtoggle=${this.onListToggle}
         ></gui-time-picker>
       </div>

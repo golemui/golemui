@@ -151,7 +151,11 @@ export class GuiRangeDateTimeInput extends LitElement {
       this.dispatchEvent(new CustomEvent('inputError', { detail: { message }, bubbles: true })),
     onSurfacedErrorCleared: (value) =>
       this.dispatchEvent(
-        new CustomEvent('change', { detail: { value }, bubbles: true, composed: true }),
+        new CustomEvent('change', {
+          detail: { value, commit: false },
+          bubbles: true,
+          composed: true,
+        }),
       ),
   });
 

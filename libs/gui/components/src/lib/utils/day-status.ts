@@ -18,6 +18,19 @@ export interface DaySpan {
 }
 
 /**
+ * Orders two days into a span. Every highlight test here walks start → end, so
+ * an unordered pair — a range whose end was entered before its start — would
+ * light up nothing at all.
+ *
+ * @param {Date} a - One endpoint.
+ * @param {Date} b - The other endpoint.
+ * @return {DaySpan} The pair, earliest first.
+ */
+export function orderedDaySpan(a: Date, b: Date): DaySpan {
+  return a.getTime() <= b.getTime() ? { start: a, end: b } : { start: b, end: a };
+}
+
+/**
  * A committed range normalized to calendar-day Dates — the caller applies its
  * `endpointDay` policy first (plain parse for the range calendar, date-part
  * parse for the date-time flavor), so this module never sees ISO endpoint
@@ -34,11 +47,13 @@ export interface DayStatusContext {
   selectedISO?: string;
   /** Committed ranges, endpoints normalized to day Dates. */
   ranges?: NormalizedDayRange[];
-  /** The parked working range of the range date-time calendar. */
-  workingRange?: DaySpan;
   /** Anchor day of an in-progress two-click selection. */
   anchor?: Date | null;
-  /** Ordered hover-preview span. */
+  /**
+   * The ordered in-progress span: the hover preview, or a picker's parked
+   * working range. Only `ranges` renders the solid committed look, so a span
+   * that is not a pill yet always reads as in progress.
+   */
   selectingSpan?: DaySpan | null;
   /** The rejected range currently highlighted in red. */
   invalidRange?: DaySpan | null;
@@ -54,7 +69,7 @@ export interface DayStatus {
   /** Both endpoints on this day — renders `selected` instead of start/end caps. */
   isOneDayRange: boolean;
   isAnchor: boolean;
-  /** Inside the live hover-preview span (endpoints inclusive). */
+  /** Inside the in-progress span (endpoints inclusive). */
   isSelecting: boolean;
   isInvalidStart: boolean;
   isInvalidEnd: boolean;
@@ -117,13 +132,6 @@ export function computeDayStatus(date: Date, ctx: DayStatusContext): DayStatus {
         }
       }
     }
-  }
-
-  if (ctx.workingRange) {
-    const { start, end } = ctx.workingRange;
-    if (isSameDay(date, start)) isRangeStart = true;
-    if (isSameDay(date, end)) isRangeEnd = true;
-    if (dateTime > start.getTime() && dateTime < end.getTime()) isInRange = true;
   }
 
   return {

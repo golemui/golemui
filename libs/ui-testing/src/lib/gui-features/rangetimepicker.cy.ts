@@ -275,6 +275,25 @@ export const runRangeTimePickerComponentTests = (mountFn: MountComponentFn) => {
       cy.get(sel.outItems).eq(0).should('have.attr', 'aria-disabled', 'false');
     });
 
+    it('should highlight the end list slot as soon as the last typed digit lands', () => {
+      mountRangeTimePicker({ props: { ...officeProps, allowCustomTime: true } });
+
+      cy.get(sel.startHour).click();
+      cy.get(sel.inItems).filter('[data-value="09:00:00"]').click();
+
+      // en-GB is 24h, so the end minute is the last field of the last group,
+      // with no day-period toggle after it to advance into. Nothing is clicked
+      // afterwards on purpose: the digit that completes the time is what has to
+      // commit it.
+      cy.get(sel.endHour).click();
+      cy.focused().type('11');
+      cy.focused().type('00');
+
+      cy.get(sel.outItems)
+        .filter('[data-value="11:00:00"]')
+        .should('have.attr', 'aria-selected', 'true');
+    });
+
     it('should reset both lists after a range is committed by typing and Enter', () => {
       mountRangeTimePicker({ props: { ...officeProps, allowCustomTime: true } });
 

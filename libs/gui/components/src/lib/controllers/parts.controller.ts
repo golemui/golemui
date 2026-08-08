@@ -322,10 +322,11 @@ export class GUIPartsController implements ReactiveController {
       input.value.length === input.maxLength &&
       isDigitKey(event.key)
     ) {
-      if (index === inputs.length - 1) {
-        this.autoAdvanceFromGroupEnd(group);
-      } else {
+      if (index !== inputs.length - 1) {
         inputs[index + 1].focus();
+      } else if (!this.autoAdvanceFromGroupEnd(group)) {
+        this.setPart(group, type, input.value.replace(/[^0-9]/g, ''));
+        this.options.commitGroup(group);
       }
     }
 
@@ -424,17 +425,21 @@ export class GUIPartsController implements ReactiveController {
   /**
    * Auto-advance past the last input of a group, or into the next
    * group's first input, if it has more than one group (like ranged inputs).
+   *
+   * @param {string} group - The group whose last input was just filled.
+   * @return {boolean} Whether focus moved — false past the last group, where
+   *   there is nothing left to advance into and the caller commits instead.
    */
-  private autoAdvanceFromGroupEnd(group: string): void {
+  private autoAdvanceFromGroupEnd(group: string): boolean {
     const groups = this.options.groups;
     if (groups.length > 1) {
       const nextGroup = groups[groups.indexOf(group) + 1];
-      if (nextGroup !== undefined) {
-        this.getGroupInputs(nextGroup)[0]?.focus();
-      }
-      return;
+      if (nextGroup === undefined) return false;
+      this.getGroupInputs(nextGroup)[0]?.focus();
+      return true;
     }
     this.getGroupInputs(group)[0]?.focus();
+    return true;
   }
 
   /**
