@@ -95,6 +95,34 @@ export const runRangeDatePickerComponentTests = (mountFn: MountComponentFn) => {
       });
     });
 
+    it('should fill the date fields with the days picked in the calendar', () => {
+      mountRangeDatePicker({ data: { myRanges: [juneRange] } });
+
+      cy.get(sel.startMonth).click();
+
+      // The anchor lands in the start field straight away, so a half-picked
+      // span reads back as a date instead of only a calendar highlight
+      cy.get(sel.dayButton('2026-06-18')).click();
+      cy.get(sel.startMonth).should('have.value', '06');
+      cy.get(sel.startDay).should('have.value', '18');
+      cy.get(sel.endDay).should('have.value', '');
+
+      // Completing the span turns it into a pill and empties the fields again
+      cy.get(sel.dayButton('2026-06-20')).click();
+      cy.get(sel.pillText).should('have.length', 2);
+      cy.get(sel.startDay).should('have.value', '');
+    });
+
+    it('should report an incomplete range when only the span anchor was picked', () => {
+      mountRangeDatePicker({ data: { myRanges: [juneRange] } });
+
+      cy.get(sel.startMonth).click();
+      cy.get(sel.dayButton('2026-06-18')).click();
+
+      cy.get('[data-cy="submitBtn_button"]').focus();
+      cy.get(`[data-cy="${uid}_validator-error"]`).should('contain.text', 'Incomplete date');
+    });
+
     it('should keep the calendar open when keyboard navigation crosses a month boundary', () => {
       mountRangeDatePicker({ data: { myRanges: [juneRange] } });
 

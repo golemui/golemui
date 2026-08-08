@@ -81,30 +81,55 @@ export const runRangeDateTimeCalendarComponentTests = (mountFn: MountComponentFn
     };
 
     describe('selection flow', () => {
-      it('should keep both time pickers disabled until a date range is completed', () => {
+      it('should keep both time pickers usable from the start', () => {
         mountCalendar();
 
-        startHour().should('be.disabled');
-        endHour().should('be.disabled');
-
-        day(13).click();
-        // Anchor only — a range is not complete yet.
-        startHour().should('be.disabled');
+        startHour().should('not.be.disabled');
+        endHour().should('not.be.disabled');
 
         day(13).click();
         startHour().should('not.be.disabled');
-        endHour().should('be.disabled');
+
+        day(13).click();
+        startHour().should('not.be.disabled');
+        endHour().should('not.be.disabled');
       });
 
-      it('should enable the end picker only after a start time is picked', () => {
+      it('should commit a range whose times were picked before the days', () => {
+        const formSubmit = cy.stub().as('formSubmit');
+        mountCalendar({ formSubmit });
+
+        // Times first, no day span yet: nothing commits, both are kept
+        startHour().click();
+        startOption('09:00:00').click();
+        endHour().click();
+        endOption('11:00:00').click();
+        cy.get(sel.pillText).should('have.length', 0);
+
+        // Completing the span commits the whole range
+        day(13).click();
+        day(13).click();
+
+        cy.get(sel.pillText).should('have.length', 1);
+        submitAndGetData('@formSubmit').then((data) => {
+          expect(data.myRanges).to.deep.equal([
+            { start: dt(13, '09:00:00'), end: dt(13, '11:00:00') },
+          ]);
+        });
+      });
+
+      it('should keep the picked times when a new day span is started', () => {
         mountCalendar();
 
-        day(13).click();
-        day(13).click();
         startHour().click();
         startOption('09:00:00').click();
 
-        endHour().should('not.be.disabled');
+        // Restarting the span must not discard a time already chosen
+        day(13).click();
+        day(16).click();
+        day(20).click();
+
+        startHour().should('have.value', '09');
       });
 
       it('should commit a same-day range as a pill and reset the pickers', () => {
@@ -114,12 +139,12 @@ export const runRangeDateTimeCalendarComponentTests = (mountFn: MountComponentFn
         commitRange(13, '09:00:00', 13, '11:00:00');
 
         cy.get(sel.pillText).should('have.length', 1);
-        startHour().should('be.disabled');
-        endHour().should('be.disabled');
         // Both time inputs are cleared after a commit — the end picker must not
-        // keep showing the last picked value.
+        // keep showing the last picked value — and both stay usable.
         startHour().should('have.value', '');
         endHour().should('have.value', '');
+        startHour().should('not.be.disabled');
+        endHour().should('not.be.disabled');
 
         submitAndGetData('@formSubmit').then((data) => {
           expect(data.myRanges).to.deep.equal([

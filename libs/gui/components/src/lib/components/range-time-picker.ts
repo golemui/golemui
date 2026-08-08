@@ -5,6 +5,7 @@ import type { TimeRange } from '@golemui/gui-shared/internals';
 import './range-time-input';
 import type { GuiRangeTimeInput } from './range-time-input';
 import './time-list';
+import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
 import { GUIPopupController } from '../controllers/popup.controller';
 import {
   compareISOTimes,
@@ -100,11 +101,19 @@ export class GuiRangeTimePicker extends LitElement {
       if (dropdownWasOpen) popup.suppressNextFocusOut();
       this.closePillsDropdown();
     },
-    onOpenChanged: (open) => {
-      if (!open) {
-        this._workingIn = undefined;
-        this._workingOut = undefined;
-      }
+    // Closing the panel keeps the working endpoints: a half-picked range is
+    // restored when the user reopens it.
+  });
+
+  /**
+   * The single point where the picker reports focus leaving the control: it
+   * blurs (which the form layer reads as "validate now") and lets the input
+   * surface a half-typed endpoint left behind.
+   */
+  private _focusLeave = new GUIFocusLeaveController(this, {
+    onLeave: () => {
+      this.dispatchEvent(new CustomEvent('blur'));
+      this._inputRef?.reportIncompleteOnLeave();
     },
   });
 
@@ -191,7 +200,6 @@ export class GuiRangeTimePicker extends LitElement {
               .height=${this.height}
               .itemHeight=${this.itemHeight}
               .noAvailableTimesMessage=${this.noAvailableTimesMessage}
-              ?disabled=${!this._workingIn}
               ?readonly=${this.readOnly}
               @change=${this.onOutListChange}
             ></gui-time-list>
@@ -216,6 +224,7 @@ export class GuiRangeTimePicker extends LitElement {
         class="gui-widget"
         @keydown=${this._popup.onAnchorKeyDown}
         @click=${this._popup.onAnchorClick}
+        @focusout=${this._focusLeave.onFocusOut}
       >
         <gui-range-time
           id="time-input"
@@ -223,6 +232,7 @@ export class GuiRangeTimePicker extends LitElement {
           .uid=${this.uid}
           .hint=${this.hint}
           .showErrors=${false}
+          .deferFocusLeave=${true}
           .errors=${this.errors}
           ?touched=${this.touched}
           ?required=${this.required}
@@ -317,36 +327,52 @@ export class GuiRangeTimePicker extends LitElement {
     this._workingOut = event.detail.end ?? undefined;
   }
 
-  private onInputBlur() {
-    this.dispatchEvent(new CustomEvent('blur'));
+  /**
+   * The input's per-part blur stays inside the widget: moving from a segment
+   * into the panel is not leaving the control, so it must not be reported as
+   * a blur (which the form layer reads as "validate now"). The picker reports
+   * blur from its own focus-leave check instead.
+   */
+  private onInputBlur(event: Event) {
+    event.stopPropagation();
   }
 
   private onInListChange(event: CustomEvent) {
     event.stopPropagation();
     const start = event.detail.value as string | undefined;
     this._workingIn = start ?? undefined;
-    this._workingOut = undefined;
     if (start) this._inputRef?.fillGroup('start', start);
+    this.tryCommitWorkingRange();
   }
 
   private onOutListChange(event: CustomEvent) {
     event.stopPropagation();
     const end = event.detail.value as string | undefined;
-    if (!this._workingIn || !end || !this._inputRef) return;
+    this._workingOut = end ?? undefined;
+    if (end) this._inputRef?.fillGroup('end', end);
+    this.tryCommitWorkingRange();
+  }
 
-    this._inputRef.fillGroup('end', end);
-    const committed = this._inputRef.commitFromParts();
+  /**
+   * Commits once both endpoints are present, whichever order they were picked
+   * in — an end chosen before a start simply waits in the fields. A rejected
+   * range (reversed, out of bounds, spanning a disabled block) keeps both
+   * values on show and closes the panel so its error is visible.
+   */
+  private tryCommitWorkingRange(): void {
+    if (!this._workingIn || !this._workingOut || !this._inputRef) return;
 
-    if (committed) {
+    if (this._inputRef.commitFromParts()) {
       this._workingIn = undefined;
       this._workingOut = undefined;
       this.updateComplete.then(() => {
         this._inListRef()?.scrollToSelectedValue?.();
       });
-    } else {
-      this._popup.close();
-      this.dispatchEvent(new CustomEvent('blur'));
+      return;
     }
+
+    this._popup.close();
+    this.dispatchEvent(new CustomEvent('blur'));
   }
 
   private _inListRef() {

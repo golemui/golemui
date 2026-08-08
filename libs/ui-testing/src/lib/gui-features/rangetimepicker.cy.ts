@@ -2,10 +2,10 @@ import { defineForm, identityTranslator } from '@golemui/core';
 import { type MountComponentFn } from '../utils';
 
 // Behavior tests for the gui-range-time-picker: the gui-range-time typed input
-// plus a two-list popover (time-in left, time-out right). The out list stays
-// disabled until an in is chosen, then floors one slot after it so end > start
-// strictly. Committed ranges accumulate as merged pills (value = TimeRange[]).
-// Uses en-GB (24h) so option labels are plain HH:mm.
+// plus a two-list popover (time-in left, time-out right). Both lists are usable
+// from the start, and once an in is chosen the out list floors one slot after
+// it so end > start strictly. Committed ranges accumulate as merged pills
+// (value = TimeRange[]). Uses en-GB (24h) so option labels are plain HH:mm.
 export const runRangeTimePickerComponentTests = (mountFn: MountComponentFn) => {
   describe('RangeTimePicker Component', () => {
     const uid = 'testSubject';
@@ -79,15 +79,51 @@ export const runRangeTimePickerComponentTests = (mountFn: MountComponentFn) => {
       cy.get(sel.panel).should('not.exist');
     });
 
-    it('should open the panel with both lists, the out list disabled until an in is picked', () => {
+    it('should open the panel with both lists usable from the start', () => {
       mountRangeTimePicker({ props: officeProps });
 
       cy.get(sel.startHour).click();
       cy.get(sel.panel).should('exist');
       cy.get(sel.inItems).should('have.length', 7);
-      // Out list renders its slots but every option is disabled up front.
+      // The end list is pickable before a start exists: order is up to the user.
       cy.get(sel.outItems).should('have.length', 7);
-      cy.get(sel.outItems).eq(0).should('have.attr', 'aria-disabled', 'true');
+      cy.get(sel.outItems).eq(0).should('have.attr', 'aria-disabled', 'false');
+    });
+
+    it('should keep an end picked before a start and commit once the start arrives', () => {
+      const formSubmitHandler = cy.stub().as('formSubmitHandler');
+      mountRangeTimePicker({ props: officeProps, formSubmit: formSubmitHandler });
+
+      cy.get(sel.startHour).click();
+      cy.get(sel.outItems).filter('[data-value="11:00:00"]').click();
+
+      // Nothing commits yet, but the end is kept in its field
+      cy.get(sel.pillText).should('have.length', 0);
+      cy.get(sel.endHour).should('have.value', '11');
+
+      cy.get(sel.inItems).filter('[data-value="09:00:00"]').click();
+      cy.get(sel.pillText).should('have.length', 1);
+
+      submitAndGetData('@formSubmitHandler').then((data) => {
+        expect(data).to.deep.equal({ myRanges: [{ start: '09:00:00', end: '11:00:00' }] });
+      });
+    });
+
+    it('should keep a half-picked range when the panel is closed and reopened', () => {
+      mountRangeTimePicker({ props: officeProps });
+
+      cy.get(sel.startHour).click();
+      cy.get(sel.inItems).filter('[data-value="10:00:00"]').click();
+
+      cy.get('body').click(0, 0);
+      cy.get(sel.panel).should('not.exist');
+
+      cy.get(sel.startHour).click();
+      cy.get(sel.panel).should('exist');
+      cy.get(sel.startHour).should('have.value', '10');
+      cy.get(sel.inItems)
+        .filter('.gui-time-list__option--selected')
+        .should('have.attr', 'data-value', '10:00:00');
     });
 
     it('should render localizable start/end column headings from startTimeLabel/endTimeLabel', () => {
@@ -251,11 +287,12 @@ export const runRangeTimePickerComponentTests = (mountFn: MountComponentFn) => {
       cy.focused().type('{enter}');
 
       cy.get(sel.pillText).should('have.length', 1);
-      // The panel stays open, but both lists reset: the start deselects and the
-      // end disables again, ready for the next range.
+      // The panel stays open and both lists reset ready for the next range:
+      // the start deselects and the end list is back to its full window.
       cy.get(sel.panel).should('exist');
       cy.get(sel.inItems).filter('.gui-time-list__option--selected').should('not.exist');
-      cy.get(sel.outItems).eq(0).should('have.attr', 'aria-disabled', 'true');
+      cy.get(sel.outItems).filter('.gui-time-list__option--selected').should('not.exist');
+      cy.get(sel.outItems).eq(0).should('have.attr', 'data-value', '09:00:00');
     });
 
     it('should fill the start/end input fields as options are picked from the lists', () => {
@@ -272,6 +309,19 @@ export const runRangeTimePickerComponentTests = (mountFn: MountComponentFn) => {
       cy.get(sel.pillText).should('have.length', 1).and('contain', '09:00');
       cy.get(sel.startHour).should('have.value', '');
       cy.get(sel.endHour).should('have.value', '');
+    });
+
+    it('should report an incomplete range when only the start time was picked', () => {
+      // One endpoint picked and the other left empty never became a pill, so
+      // leaving the widget must say so instead of dropping the entry silently.
+      mountRangeTimePicker({ props: officeProps });
+
+      cy.get(sel.startHour).click();
+      cy.get(sel.inItems).filter('[data-value="09:00:00"]').click();
+
+      cy.get('[data-cy="submitBtn_button"]').focus();
+      cy.get(`[data-cy="${uid}_validator-error"]`).should('contain.text', 'Incomplete time');
+      cy.get(sel.pillText).should('have.length', 0);
     });
 
     it('should not commit a range that spans a disabled block, keeping the values and showing the error', () => {

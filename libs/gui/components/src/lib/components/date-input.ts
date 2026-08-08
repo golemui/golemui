@@ -275,12 +275,17 @@ export class GuiDate extends LitElement {
   };
 
   /**
-   * A partial group left behind flips the value to null — so validators
-   * report it even on non-required fields — and surfaces the incomplete
-   * message. An emptied group instead clears any surfaced error. A complete
-   * group already reported through the commit pipeline.
+   * The single point where the input reports focus leaving the control: it
+   * blurs (which the form layer reads as "validate now"), so hopping between
+   * segments never validates a half-typed entry. A partial group left behind
+   * then flips the value to null — so validators report it even on
+   * non-required fields — and surfaces the incomplete message. An emptied
+   * group instead clears any surfaced error. A complete group already
+   * reported through the commit pipeline.
    */
   private onFocusLeave(): void {
+    this.dispatchEvent(new CustomEvent('blur'));
+
     const completeness = this.groupCompleteness();
     if (completeness === 'complete') return;
 

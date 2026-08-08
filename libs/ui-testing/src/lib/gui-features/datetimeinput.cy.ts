@@ -17,6 +17,7 @@ export const runDateTimeInputComponentTests = (mountFn: MountComponentFn) => {
       lang?: string;
       translator?: MutableI18nTranslator;
       props?: Record<string, any>;
+      validator?: Record<string, any>;
       formSubmit?: (event: any) => void;
       readonly?: boolean;
       disabled?: boolean;
@@ -32,6 +33,7 @@ export const runDateTimeInputComponentTests = (mountFn: MountComponentFn) => {
               type: 'dateTimeInput',
               path: 'myDateTime',
               ...(options?.props ? { props: options.props } : {}),
+              ...(options?.validator ? { validator: options.validator as any } : {}),
               ...(options?.readonly !== undefined ? { readonly: options.readonly } : {}),
               ...(options?.disabled !== undefined ? { disabled: options.disabled } : {}),
             },
@@ -317,6 +319,23 @@ export const runDateTimeInputComponentTests = (mountFn: MountComponentFn) => {
     });
 
     describe('incomplete input on focus leave', () => {
+      it('should not validate while moving between the parts of one entry', () => {
+        // Filling a part auto-advances to the next one. That hop is not
+        // leaving the widget, so the form must not judge a half-typed entry:
+        // a required field lighting up after the first part is the bug.
+        mountDateTimeInput({ validator: { type: 'string', required: true } });
+
+        cy.get(sel.month).click();
+        cy.focused().type('06');
+        cy.get('[data-cy="testSubject_validator-errors"]').should('not.exist');
+        cy.focused().type('15');
+        cy.get('[data-cy="testSubject_validator-errors"]').should('not.exist');
+
+        // Leaving the widget is the one moment the entry is judged
+        cy.get('[data-cy="submitBtn_button"]').focus();
+        cy.get('[data-cy="testSubject_validator-errors"]').should('exist');
+      });
+
       it('should flip a date-only entry to null with an incomplete error when focus leaves', () => {
         mountDateTimeInput();
 

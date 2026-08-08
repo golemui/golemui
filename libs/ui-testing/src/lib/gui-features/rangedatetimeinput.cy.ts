@@ -25,6 +25,7 @@ export const runRangeDateTimeInputComponentTests = (mountFn: MountComponentFn) =
       data?: Record<string, any>;
       lang?: string;
       props?: Record<string, any>;
+      validator?: Record<string, any>;
       formSubmit?: (event: any) => void;
       readonly?: boolean;
       disabled?: boolean;
@@ -40,6 +41,7 @@ export const runRangeDateTimeInputComponentTests = (mountFn: MountComponentFn) =
               type: 'rangeDateTimeInput',
               path: 'myRanges',
               ...(options?.props ? { props: options.props } : {}),
+              ...(options?.validator ? { validator: options.validator as any } : {}),
               ...(options?.readonly !== undefined ? { readonly: options.readonly } : {}),
               ...(options?.disabled !== undefined ? { disabled: options.disabled } : {}),
             },
@@ -280,6 +282,38 @@ export const runRangeDateTimeInputComponentTests = (mountFn: MountComponentFn) =
       cy.get(sel.pillText).should('have.length', 2);
       cy.get(sel.pillRemove).first().click({ force: true });
       cy.get(sel.pillText).should('have.length', 1);
+    });
+
+    it('should not validate while moving between the parts of one endpoint', () => {
+      // Filling a part auto-advances to the next one. That hop is not leaving
+      // the widget, so the form must not judge a half-typed entry: a required
+      // field lighting up after the first part is the bug.
+      mountRangeDateTimeInput({ validator: { type: 'array', required: true } });
+
+      cy.get(sel.startDay).click();
+      cy.focused().type('22');
+      cy.get('[data-cy="testSubject_validator-errors"]').should('not.exist');
+      cy.focused().type('11');
+      cy.get('[data-cy="testSubject_validator-errors"]').should('not.exist');
+
+      // Leaving the widget is the one moment the entry is judged
+      cy.get('[data-cy="submitBtn_button"]').focus();
+      cy.get('[data-cy="testSubject_validator-errors"]').should('exist');
+    });
+
+    it('should report an incomplete range when only one endpoint was filled', () => {
+      // A whole endpoint typed with the other left empty is as unfinished as a
+      // half-typed one: the range never became a pill.
+      mountRangeDateTimeInput();
+
+      typeGroup('start', ['22', '11', '2026', '09', '00']);
+      cy.get('[data-cy="submitBtn_button"]').focus();
+
+      cy.get('[data-cy="testSubject_validator-error"]').should(
+        'contain.text',
+        'Incomplete date-time',
+      );
+      cy.get(sel.pillText).should('not.exist');
     });
 
     it('should render disabled inputs when disabled', () => {

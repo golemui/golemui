@@ -130,8 +130,7 @@ export const runRangeDateTimePickerComponentTests = (mountFn: MountComponentFn) 
       it('should stay open when clicking a non-interactive area inside the calendar', () => {
         mountPicker();
 
-        // Select a range so the start time picker enables and focus is parked
-        // on the last-clicked day button
+        // Select a range so focus is parked on the last-clicked day button
         cy.get(sel.triggerPart('start', 'day')).click();
         cy.get(sel.dayButton(iso(13))).click();
         cy.get(sel.dayButton(iso(15))).click();
@@ -143,10 +142,9 @@ export const runRangeDateTimePickerComponentTests = (mountFn: MountComponentFn) 
         cy.get(`${cal} .gui-calendar__weekday`).first().click();
         cy.get(sel.calendar).should('exist');
 
-        // The still-disabled end picker is also "inside" (mouse events are
-        // swallowed by disabled controls, pointerdown is not)
-        endHour().should('be.disabled');
-        endHour().click({ force: true });
+        // The end picker is inside the popover too, and now always usable
+        endHour().should('not.be.disabled');
+        endHour().click();
         cy.get(sel.calendar).should('exist');
 
         // Outside clicks still close
@@ -286,6 +284,67 @@ export const runRangeDateTimePickerComponentTests = (mountFn: MountComponentFn) 
     });
 
     describe('committing ranges', () => {
+      it('should fill the trigger fields with every piece picked in the calendar', () => {
+        mountPicker();
+
+        cy.get(sel.triggerPart('start', 'day')).click();
+
+        // The span anchor reads back as a date before the span completes
+        cy.get(sel.dayButton(iso(13))).click();
+        cy.get(sel.triggerPart('start', 'day')).should('have.value', '13');
+        cy.get(sel.triggerPart('end', 'day')).should('have.value', '');
+
+        cy.get(sel.dayButton(iso(15))).click();
+        cy.get(sel.triggerPart('start', 'day')).should('have.value', '13');
+        cy.get(sel.triggerPart('end', 'day')).should('have.value', '15');
+
+        // Times picked in the embedded pickers mirror into the same fields
+        startHour().click();
+        startOption('09:00:00').click();
+        cy.get(sel.triggerPart('start', 'hour')).should('have.value', '09');
+
+        // The last piece completes the range: it commits and the fields empty
+        endHour().click();
+        endOption('11:00:00').click();
+        cy.get(sel.pillText).should('have.length', 1);
+        cy.get(sel.triggerPart('start', 'day')).should('have.value', '');
+        cy.get(sel.triggerPart('end', 'day')).should('have.value', '');
+      });
+
+      it('should report an incomplete range when the popover is left half-finished', () => {
+        mountPicker();
+
+        // A day span with neither time chosen never became a pill
+        cy.get(sel.triggerPart('start', 'day')).click();
+        cy.get(sel.dayButton(iso(13))).click();
+        cy.get(sel.dayButton(iso(15))).click();
+
+        cy.get('[data-cy="submitBtn_button"]').focus();
+        cy.get(sel.error).should('contain.text', 'Incomplete date-time');
+        cy.get(sel.pillText).should('not.exist');
+      });
+
+      it('should keep a half-finished range when the popover is closed and reopened', () => {
+        mountPicker();
+
+        // A day span and a start time, but no end time yet
+        cy.get(sel.triggerPart('start', 'day')).click();
+        cy.get(sel.dayButton(iso(13))).click();
+        cy.get(sel.dayButton(iso(15))).click();
+        startHour().click();
+        startOption('09:00:00').click();
+
+        cy.get('body').click(0, 0);
+        cy.get(sel.calendar).should('not.exist');
+
+        // Reopening restores the span and the chosen start time
+        cy.get(sel.triggerPart('start', 'day')).click();
+        cy.get(sel.calendar).should('exist');
+        startHour().should('have.value', '09');
+        cy.get(sel.dayButton(iso(13))).should('have.class', 'range-start');
+        cy.get(sel.dayButton(iso(15))).should('have.class', 'range-end');
+      });
+
       it('should commit a pill into the trigger, keep the popover open, and submit', () => {
         const formSubmit = cy.stub().as('formSubmit');
         mountPicker({ formSubmit });

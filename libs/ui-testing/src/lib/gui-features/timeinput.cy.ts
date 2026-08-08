@@ -14,6 +14,7 @@ export const runTimeInputComponentTests = (mountFn: MountComponentFn) => {
       lang?: string;
       translator?: MutableI18nTranslator;
       props?: Record<string, any>;
+      validator?: Record<string, any>;
       formSubmit?: (event: any) => void;
       readonly?: boolean;
       disabled?: boolean;
@@ -29,6 +30,7 @@ export const runTimeInputComponentTests = (mountFn: MountComponentFn) => {
               type: 'timeInput',
               path: 'myTime',
               ...(options?.props ? { props: options.props } : {}),
+              ...(options?.validator ? { validator: options.validator as any } : {}),
               ...(options?.readonly !== undefined ? { readonly: options.readonly } : {}),
               ...(options?.disabled !== undefined ? { disabled: options.disabled } : {}),
             },
@@ -438,6 +440,20 @@ export const runTimeInputComponentTests = (mountFn: MountComponentFn) => {
     });
 
     describe('incomplete input on focus leave', () => {
+      it('should not validate while moving between the parts of one entry', () => {
+        // Filling a part auto-advances to the next one. That hop is not
+        // leaving the widget, so the form must not judge a half-typed entry:
+        // a required field lighting up after the first part is the bug.
+        mountTimeInput({ validator: { type: 'string', required: true } });
+
+        cy.get(sel.hour).type('09');
+        cy.get('[data-cy="testSubject_validator-errors"]').should('not.exist');
+
+        // Leaving the widget is the one moment the entry is judged
+        cy.get('[data-cy="submitBtn_button"]').focus();
+        cy.get('[data-cy="testSubject_validator-errors"]').should('exist');
+      });
+
       it('should flip a partial time to null with an incomplete error when focus leaves', () => {
         mountTimeInput();
 

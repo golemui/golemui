@@ -98,6 +98,13 @@ export class GuiRangeCalendar extends LitElement {
 
   @property({ type: Array }) value: DateRange[] | undefined = [];
   @property({ type: String }) focusDate: string | undefined = undefined;
+  /**
+   * Host picker's in-progress span anchor: the first day of a two-click
+   * selection. Seeding it back restores a half-picked span after the popover
+   * has been closed and reopened (which unmounts this calendar).
+   */
+  @property({ type: String, attribute: 'working-anchor' }) workingAnchor: string | undefined =
+    undefined;
   @property({ type: Boolean }) hidePills = false;
   @property({ type: String }) removePillAriaLabel: string | undefined = undefined;
   @property({ type: String, attribute: 'disabled-date-range-message' }) disabledDateRangeMessage:
@@ -163,6 +170,21 @@ export class GuiRangeCalendar extends LitElement {
   });
 
   /**
+   * Live-syncs the in-progress span anchor to a host picker, which holds it
+   * across the popover's unmount/remount cycle. Never wired by the form
+   * layer, so it can't trigger validation.
+   */
+  protected emitAnchorChange(): void {
+    this.dispatchEvent(
+      new CustomEvent('partsChange', {
+        detail: { anchor: this._selection.anchor ? toISODateString(this._selection.anchor) : null },
+        bubbles: true,
+        composed: true,
+      }),
+    );
+  }
+
+  /**
    * Full instant of an endpoint, used to order the pills. Date-only here; a
    * subclass whose endpoints carry a time overrides it so two ranges on the
    * same day still sort by time.
@@ -199,6 +221,12 @@ export class GuiRangeCalendar extends LitElement {
   }
 
   override willUpdate(changedProperties: PropertyValues): void {
+    if (changedProperties.has('workingAnchor') && !this._selection.anchor) {
+      const anchor = this.workingAnchor ? parseISODateString(this.workingAnchor) : null;
+      if (anchor && !isNaN(anchor.getTime())) {
+        this._selection = { anchor, hover: null, selecting: true };
+      }
+    }
     if (changedProperties.has('invalidRange')) {
       if (this.invalidRange) {
         const start = this.endpointDay(this.invalidRange.start);
@@ -430,6 +458,7 @@ export class GuiRangeCalendar extends LitElement {
       date: day.date,
     });
     this._selection = state;
+    this.emitAnchorChange();
 
     // Start selection
     if (!commit) {

@@ -392,7 +392,6 @@ export class GUIPartsController implements ReactiveController {
    * Blur handling:
    * - zero-pads a valid numeric part in the DOM
    * - routes an empty/invalid part to `onEmptyPartBlur`
-   * - always dispatches the host's `blur` CustomEvent.
    */
   handleBlur = (event: FocusEvent, group: string, type: DateTimePartType): void => {
     const descriptor = this.options.getDescriptor(type);
@@ -409,8 +408,6 @@ export class GUIPartsController implements ReactiveController {
         this.options.onEmptyPartBlur(group, type);
       }
     }
-
-    this.host.dispatchEvent(new CustomEvent('blur'));
   };
 
   /**

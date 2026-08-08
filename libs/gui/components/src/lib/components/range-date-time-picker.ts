@@ -1,9 +1,11 @@
 import { html, LitElement, nothing } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
+import { customElement, property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import type { DateTimeRange } from '@golemui/gui-shared/internals';
 import './range-date-time-input';
 import './range-date-time-calendar';
+import type { GuiRangeDateTimeInput } from './range-date-time-input';
+import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
 import { GUIPopupController } from '../controllers/popup.controller';
 import { type HourFormat } from '../utils/time';
 import { addErrors, addIcon, addLabel } from '../utils/templates';
@@ -118,7 +120,19 @@ export class GuiRangeDateTimePicker extends LitElement {
   @property({ type: String, attribute: 'disabled-day-count-aria-label' })
   disabledDayCountAriaLabel: string | undefined = undefined;
 
+  @query('#date-input') private _dateRef?: GuiRangeDateTimeInput;
+
   @state() private _focusDate: string | undefined = undefined;
+  /**
+   * The calendar's in-progress selection. It lives here — the picker stays
+   * mounted — so a half-finished range survives closing and reopening the
+   * popover, which unmounts the calendar.
+   */
+  @state() private _workingAnchor: string | undefined = undefined;
+  @state() private _workingStartDate: string | undefined = undefined;
+  @state() private _workingEndDate: string | undefined = undefined;
+  @state() private _workingStartTime: string | undefined = undefined;
+  @state() private _workingEndTime: string | undefined = undefined;
 
   private _popup = new GUIPopupController(this, {
     focusRestoreSelector: 'gui-range-date-time input',
@@ -140,7 +154,21 @@ export class GuiRangeDateTimePicker extends LitElement {
       this.closePillsDropdown();
     },
     onOpenChanged: (open) => {
+      // The working selection deliberately survives a close: only the
+      // transient focus target is dropped.
       if (!open) this._focusDate = undefined;
+    },
+  });
+
+  /**
+   * The single point where the picker reports focus leaving the control: it
+   * blurs (which the form layer reads as "validate now") and lets the input
+   * surface a half-typed endpoint left behind.
+   */
+  private _focusLeave = new GUIFocusLeaveController(this, {
+    onLeave: () => {
+      this.dispatchEvent(new CustomEvent('blur'));
+      this._dateRef?.reportIncompleteOnLeave();
     },
   });
 
@@ -208,8 +236,14 @@ export class GuiRangeDateTimePicker extends LitElement {
           .noAvailableTimesMessage=${this.noAvailableTimesMessage}
           .dayCountAriaLabel=${this.dayCountAriaLabel}
           .disabledDayCountAriaLabel=${this.disabledDayCountAriaLabel}
+          .workingAnchor=${this._workingAnchor}
+          .workingStartDate=${this._workingStartDate}
+          .workingEndDate=${this._workingEndDate}
+          .workingStartTime=${this._workingStartTime}
+          .workingEndTime=${this._workingEndTime}
           @blur=${this.onCalendarBlur}
           @change=${this.onCalendarChange}
+          @partsChange=${this.onCalendarPartsChange}
           @inputError=${this.onCalendarInputError}
         ></gui-range-date-time-calendar>`
       : nothing;
@@ -231,8 +265,10 @@ export class GuiRangeDateTimePicker extends LitElement {
         class="gui-widget"
         @keydown=${this._popup.onAnchorKeyDown}
         @click=${this._popup.onAnchorClick}
+        @focusout=${this._focusLeave.onFocusOut}
       >
         <gui-range-date-time
+          .deferFocusLeave=${true}
           id="date-input"
           class=${classMap(datePickerIcon.widgetClasses)}
           .uid=${this.uid}
@@ -317,8 +353,38 @@ export class GuiRangeDateTimePicker extends LitElement {
     this.commitValue(event.detail.value);
   }
 
-  private onDateBlur() {
-    this.dispatchEvent(new CustomEvent('blur'));
+  /**
+   * The input's per-part blur stays inside the widget: moving from a segment
+   * into the popover is not leaving the control, so it must not be reported
+   * as a blur (which the form layer reads as "validate now"). The picker
+   * reports blur from its own focus-leave check instead.
+   */
+  private onDateBlur(event: Event) {
+    event.stopPropagation();
+  }
+
+  /** The calendar's in-progress selection, held here across the popover. */
+  /**
+   * The calendar's in-progress selection, held here so it survives the
+   * popover, and painted into the fields so every piece picked in the
+   * calendar reads back as a date-time — the reverse of typed parts moving
+   * the calendar. Until the span completes the anchor is the start day; once
+   * the range commits every piece arrives null and the fields empty.
+   */
+  private onCalendarPartsChange(event: CustomEvent) {
+    event.stopPropagation();
+    this._workingAnchor = (event.detail.anchor as string | null) ?? undefined;
+    this._workingStartDate = (event.detail.startDate as string | null) ?? undefined;
+    this._workingEndDate = (event.detail.endDate as string | null) ?? undefined;
+    this._workingStartTime = (event.detail.startTime as string | null) ?? undefined;
+    this._workingEndTime = (event.detail.endTime as string | null) ?? undefined;
+
+    const input = this._dateRef;
+    if (!input) return;
+    input.fillDate('start', this._workingStartDate ?? this._workingAnchor ?? null);
+    input.fillDate('end', this._workingEndDate ?? null);
+    input.fillTime('start', this._workingStartTime ?? null);
+    input.fillTime('end', this._workingEndTime ?? null);
   }
 
   private onCalendarChange(event: CustomEvent) {
@@ -360,7 +426,13 @@ export class GuiRangeDateTimePicker extends LitElement {
     );
   }
 
-  private onCalendarBlur() {
+  /**
+   * Focus leaving the calendar closes the popover, but it is not necessarily
+   * leaving the picker (focus often returns to the fields), so the calendar's
+   * bubbling blur is stopped here and never reaches the form layer.
+   */
+  private onCalendarBlur(event: Event) {
+    event.stopPropagation();
     this._popup.closeOnFocusLeave();
   }
 

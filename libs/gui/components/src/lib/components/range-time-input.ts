@@ -4,6 +4,7 @@ import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { styleMap } from 'lit-html/directives/style-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
+import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
 import { GUIPartsController } from '../controllers/parts.controller';
 import { renderGroupParts, type GUIPartsTemplateData } from '../utils/part-templates';
 import {
@@ -34,6 +35,7 @@ import { addErrors, addLabel, type ControlTemplateData } from '../utils/template
 import './pills';
 import type { GuiPillEventDetail, GuiPillItem } from './pills';
 import {
+  INCOMPLETE_TIME_MESSAGE,
   INVALID_DISABLED_TIME_RANGE_MESSAGE,
   INVALID_TIME_RANGE_ORDER_MESSAGE,
 } from '../utils/messages';
@@ -82,9 +84,22 @@ export class GuiRangeTimeInput extends LitElement {
   @property({ type: String, attribute: 'disabled-range-message' }) disabledRangeMessage:
     | string
     | undefined = undefined;
+  @property({ type: String, attribute: 'incomplete-message' }) incompleteMessage:
+    | string
+    | undefined = undefined;
+  /**
+   * Set by host pickers that run their own whole-widget focus-leave check:
+   * moving focus from this input into the picker's popup must not count as
+   * leaving, so the embedded input skips its incomplete-on-leave handling.
+   */
+  @property({ type: Boolean, attribute: 'defer-focus-leave' }) deferFocusLeave:
+    | boolean
+    | undefined = false;
 
   private readonly inputBlockClass = 'gui-range-time-input';
   private readonly groups = ['start', 'end'] as const;
+
+  private readonly timePartTypes: readonly DateTimePartType[] = ['hour', 'minute'];
 
   /**
    * Set on the first commit attempt (Enter). While set, every part change
@@ -123,6 +138,21 @@ export class GuiRangeTimeInput extends LitElement {
     },
     getHourFormat: () => this.timeLocaleData.effectiveHourFormat,
     getDayPeriodLabels: () => this.timeLocaleData.dayPeriodLabels,
+  });
+
+  /**
+   * The single point where the input reports focus leaving the control: it
+   * blurs (which the form layer reads as "validate now"), so hopping between
+   * segments never validates a half-typed entry, then surfaces a half-entered
+   * range left behind.
+   */
+  private _focusLeave = new GUIFocusLeaveController(this, {
+    onLeave: () => {
+      // Embedded in a picker: that host owns focus reporting for the subtree.
+      if (this.deferFocusLeave) return;
+      this.dispatchEvent(new CustomEvent('blur'));
+      this.reportIncompleteOnLeave();
+    },
   });
 
   protected ariaController: GUIAriaController<unknown, any> = new GUIAriaController(this, {
@@ -210,7 +240,7 @@ export class GuiRangeTimeInput extends LitElement {
     return html`
       ${this.label ? addLabel(this.uid as string, templateData, false, undefined, false) : nothing}
 
-      <div class="gui-widget">
+      <div class="gui-widget" @focusout=${this._focusLeave.onFocusOut}>
         <div
           class="gui-widget-input gui-parts-ring gui-range-time-input ${this.icon
             ? 'gui-range-time-input--icon'
@@ -373,6 +403,37 @@ export class GuiRangeTimeInput extends LitElement {
     );
 
     return { start, end };
+  }
+
+  /**
+   * A range left half-entered when focus leaves is abandoned work: some parts
+   * of one endpoint typed, or one endpoint filled and the other still empty
+   * (a start picked from the list with no end lands here too). Both surface
+   * the incomplete message — or the endpoint's own message when one is
+   * outright invalid, which is more useful than "incomplete".
+   * `_validationTriggered` makes the next edit re-evaluate, so the message
+   * clears as soon as the user comes back and continues (or empties the
+   * fields). Public so a host picker can call it from its own whole-widget
+   * focus-leave check.
+   */
+  reportIncompleteOnLeave(): void {
+    const endpoints = this.groups.map((group) => ({
+      result: this.validateTimeParts(group),
+      empty: this._parts.isGroupEmpty(group, this.timePartTypes),
+    }));
+
+    // Nothing entered, or a complete range the commit path already owns.
+    if (endpoints.every((endpoint) => endpoint.empty)) return;
+    if (endpoints.every((endpoint) => endpoint.result.kind === 'valid')) return;
+
+    const invalidMessage = endpoints
+      .map((endpoint) => (endpoint.result.kind === 'invalid' ? endpoint.result.message : undefined))
+      .find(Boolean);
+
+    this._validationTriggered = true;
+    this._parts.surfaceInputError(
+      invalidMessage ?? this.incompleteMessage ?? INCOMPLETE_TIME_MESSAGE,
+    );
   }
 
   /**

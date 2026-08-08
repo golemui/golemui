@@ -5,6 +5,7 @@ import type { DateRange } from '@golemui/gui-shared/internals';
 import './range-date-input';
 import type { GuiRangeDateInput } from './range-date-input';
 import './range-calendar';
+import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
 import { GUIPopupController } from '../controllers/popup.controller';
 import { dateBoundsError, rangeSpansDisabledDay } from '../utils/date';
 import { addErrors, addIcon, addLabel } from '../utils/templates';
@@ -86,9 +87,14 @@ export class GuiRangeDatePicker extends LitElement {
     | string
     | undefined = undefined;
 
-  @query('#date-input') private _dateRef?: HTMLElement;
+  @query('#date-input') private _dateRef?: GuiRangeDateInput;
 
   @state() private _focusDate: string | undefined = undefined;
+  /**
+   * The calendar's in-progress span anchor. It lives here — the picker stays
+   * mounted — so a half-picked span survives closing and reopening the popover.
+   */
+  @state() private _workingAnchor: string | undefined = undefined;
   @state() private _invalidRange: { start: string; end: string } | null = null;
 
   private _popup = new GUIPopupController(this, {
@@ -104,6 +110,18 @@ export class GuiRangeDatePicker extends LitElement {
       const dropdownWasOpen = !!this.querySelector('.gui-pills__dropdown');
       if (dropdownWasOpen) popup.suppressNextFocusOut();
       this.closePillsDropdown();
+    },
+  });
+
+  /**
+   * The single point where the picker reports focus leaving the control: it
+   * blurs (which the form layer reads as "validate now") and lets the input
+   * surface a half-typed endpoint left behind.
+   */
+  private _focusLeave = new GUIFocusLeaveController(this, {
+    onLeave: () => {
+      this.dispatchEvent(new CustomEvent('blur'));
+      this._dateRef?.reportIncompleteOnLeave();
     },
   });
 
@@ -145,6 +163,7 @@ export class GuiRangeDatePicker extends LitElement {
           ?readonly=${this.readOnly}
           .value=${this.value}
           .focusDate=${this._focusDate}
+          .workingAnchor=${this._workingAnchor}
           .prevMonthIcon=${this.prevMonthIcon}
           .nextMonthIcon=${this.nextMonthIcon}
           .prevMonthAriaLabel=${this.prevMonthAriaLabel}
@@ -164,6 +183,7 @@ export class GuiRangeDatePicker extends LitElement {
           .invalidRange=${this._invalidRange}
           @blur=${this.onCalendarBlur}
           @change=${this.onCalendarChange}
+          @partsChange=${this.onCalendarPartsChange}
           @inputError=${this.onCalendarInputError}
         ></gui-range-calendar>`
       : nothing;
@@ -185,9 +205,11 @@ export class GuiRangeDatePicker extends LitElement {
         class="gui-widget"
         @keydown=${this._popup.onAnchorKeyDown}
         @click=${this._popup.onAnchorClick}
+        @focusout=${this._focusLeave.onFocusOut}
       >
         <gui-range-date
           id="date-input"
+          .deferFocusLeave=${true}
           class=${classMap(datePickerIcon.widgetClasses)}
           .uid=${this.uid}
           .hint=${this.hint}
@@ -292,7 +314,7 @@ export class GuiRangeDatePicker extends LitElement {
     const start = range.start;
     const end = range.end ?? range.start;
     this._invalidRange = { start, end };
-    const input = this._dateRef as GuiRangeDateInput | undefined;
+    const input = this._dateRef;
     if (input) {
       input.value = this.value ?? [];
       input.showRange(start, end);
@@ -306,21 +328,47 @@ export class GuiRangeDatePicker extends LitElement {
     );
   }
 
-  private onDateBlur() {
-    this.dispatchEvent(new CustomEvent('blur'));
+  /**
+   * The input's per-part blur stays inside the widget: moving from a segment
+   * into the popover is not leaving the control, so it must not be reported
+   * as a blur (which the form layer reads as "validate now"). The picker
+   * reports blur from its own focus-leave check instead.
+   */
+  private onDateBlur(event: Event) {
+    event.stopPropagation();
   }
 
   private onCalendarChange(event: CustomEvent) {
     event.stopPropagation();
-    (this._dateRef as GuiRangeDateInput | undefined)?.clearRangeInputs();
+    this._dateRef?.clearRangeInputs();
+    this._workingAnchor = undefined;
     this.commitValue(event.detail.value);
+  }
+
+  /**
+   * The calendar's in-progress anchor, held here so it survives the popover,
+   * and painted into the start field so the day just picked is readable as a
+   * date — the reverse of typed parts moving the calendar's selection. An
+   * anchor dropped for a completed or restarted span empties the fields.
+   */
+  private onCalendarPartsChange(event: CustomEvent<{ anchor: string | null }>) {
+    event.stopPropagation();
+    const anchor = event.detail.anchor;
+    this._workingAnchor = anchor ?? undefined;
+
+    if (anchor) {
+      this._dateRef?.fillGroup('start', anchor);
+      this._dateRef?.fillGroup('end', null);
+      return;
+    }
+    this._dateRef?.clearRangeInputs();
   }
 
   private onCalendarInputError(event: CustomEvent) {
     const range = event.detail?.range as { start: string; end: string } | undefined;
     if (!range) return;
     this._invalidRange = range;
-    (this._dateRef as GuiRangeDateInput | undefined)?.showRange(range.start, range.end);
+    this._dateRef?.showRange(range.start, range.end);
   }
 
   private commitValue(value: DateRange[] | null | undefined) {
@@ -335,7 +383,13 @@ export class GuiRangeDatePicker extends LitElement {
     );
   }
 
-  private onCalendarBlur() {
+  /**
+   * Focus leaving the calendar closes the popover, but it is not necessarily
+   * leaving the picker (focus often returns to the fields), so the calendar's
+   * bubbling blur is stopped here and never reaches the form layer.
+   */
+  private onCalendarBlur(event: Event) {
+    event.stopPropagation();
     this._popup.closeOnFocusLeave();
   }
 

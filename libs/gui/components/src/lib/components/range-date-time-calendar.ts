@@ -135,6 +135,18 @@ export class GuiRangeDateTimeCalendar extends LitElement {
     | undefined = undefined;
   @property({ type: String, attribute: 'disabled-day-count-aria-label' })
   disabledDayCountAriaLabel: string | undefined = undefined;
+  @property({ type: String, attribute: 'working-anchor' }) workingAnchor: string | undefined =
+    undefined;
+  @property({ type: String, attribute: 'working-start-date' }) workingStartDate:
+    | string
+    | undefined = undefined;
+  @property({ type: String, attribute: 'working-end-date' }) workingEndDate: string | undefined =
+    undefined;
+  @property({ type: String, attribute: 'working-start-time' }) workingStartTime:
+    | string
+    | undefined = undefined;
+  @property({ type: String, attribute: 'working-end-time' }) workingEndTime: string | undefined =
+    undefined;
 
   @state() protected _selection: RangeSelectionState = idleRangeSelection();
   @state() protected _invalidRange: { start: Date; end: Date } | null = null;
@@ -253,6 +265,7 @@ export class GuiRangeDateTimeCalendar extends LitElement {
   }
 
   override willUpdate(changedProperties: PropertyValues): void {
+    this.adoptWorkingSelection(changedProperties);
     if (
       !this.hasUpdated ||
       changedProperties.has('minDateTime') ||
@@ -335,8 +348,8 @@ export class GuiRangeDateTimeCalendar extends LitElement {
   protected renderBelowHeader(offset: number): TemplateResult | typeof nothing {
     if (offset !== 0) return nothing;
 
-    const startEnabled = !this.disabled && !!this._workingDateStart;
-    const endEnabled = !this.disabled && !!this._workingTimeIn;
+    const startEnabled = !this.disabled;
+    const endEnabled = !this.disabled;
     const startBounds = this.startListBounds;
     const endBounds = this.endListBounds;
 
@@ -573,10 +586,13 @@ export class GuiRangeDateTimeCalendar extends LitElement {
     });
     this._selection = state;
 
-    // Start selection
+    // Starting a new span drops the previous days but keeps the chosen times:
+    // a time of day is independent of which days the range covers.
     if (!commit) {
-      this.resetWorking();
+      this._workingDateStart = undefined;
+      this._workingDateEnd = undefined;
       this._invalidRange = null;
+      this.emitPartsChange();
       return;
     }
 
@@ -590,8 +606,8 @@ export class GuiRangeDateTimeCalendar extends LitElement {
     this._invalidRange = null;
     this._workingDateStart = toISODateString(commit.start);
     this._workingDateEnd = toISODateString(commit.end);
-    this._workingTimeIn = undefined;
-    this._workingTimeOut = undefined;
+    this.emitPartsChange();
+    this.tryCommitWorkingRange();
   }
 
   private spanCoversBlockedDay(startDate: Date, endDate: Date): boolean {
@@ -616,55 +632,61 @@ export class GuiRangeDateTimeCalendar extends LitElement {
   }
 
   private onStartTimeChange(event: CustomEvent) {
-    event.stopPropagation();
-    // Only a deliberate selection (list pick or Enter) advances the flow
-    if (event.detail.commit !== true) return;
-
-    const time = event.detail.value as string | null;
-    if (!time || !this._workingDateStart) {
-      this._workingTimeIn = undefined;
-      this._workingTimeOut = undefined;
-      return;
-    }
-    const error = this.timeError(time, this._workingDateStart, this.resolvedStartTimeRanges);
-    if (error) {
-      // Keep the end picker disabled until the start is valid.
-      this._workingTimeIn = undefined;
-      this._workingTimeOut = undefined;
-      this.emitInputError(error);
-      return;
-    }
-    this._workingTimeIn = time;
-    this._workingTimeOut = undefined;
+    this.onTimeChange(event, 'start');
   }
 
   private onEndTimeChange(event: CustomEvent) {
-    event.stopPropagation();
-    // Only a deliberate selection creates the pill; typing a custom time must
-    // not, or it would commit an unintended pill.
-    if (event.detail.commit !== true) return;
+    this.onTimeChange(event, 'end');
+  }
 
-    const time = event.detail.value as string | null;
-    if (!time) {
-      this._workingTimeOut = undefined;
+  /**
+   * Both endpoints follow one rule: the value is always kept as working state
+   * (so it survives and syncs), but only a deliberate selection — a list pick
+   * or Enter — attempts the commit. Typing a custom time must never create an
+   * unintended pill.
+   */
+  private onTimeChange(event: CustomEvent, endpoint: 'start' | 'end') {
+    event.stopPropagation();
+
+    const time = (event.detail.value as string | null) ?? undefined;
+    if (endpoint === 'start') {
+      this._workingTimeIn = time;
+    } else {
+      this._workingTimeOut = time;
+    }
+    this.emitPartsChange();
+
+    if (event.detail.commit !== true) return;
+    this.tryCommitWorkingRange();
+  }
+
+  /**
+   * Commits once all four pieces are present, in whichever order they were
+   * chosen. A rejected endpoint or span keeps every working value on show
+   * next to its error, so the user corrects one piece instead of restarting.
+   */
+  private tryCommitWorkingRange(): void {
+    const startDate = this._workingDateStart;
+    const endDate = this._workingDateEnd;
+    const timeIn = this._workingTimeIn;
+    const timeOut = this._workingTimeOut;
+    if (!startDate || !endDate || !timeIn || !timeOut) return;
+
+    const startError = this.timeError(timeIn, startDate, this.resolvedStartTimeRanges);
+    if (startError) {
+      this.emitInputError(startError);
       return;
     }
-    if (!this._workingTimeIn || !this._workingDateStart || !this._workingDateEnd) return;
 
-    const endError = this.timeError(time, this._workingDateEnd, this.resolvedEndTimeRanges);
+    const endError = this.timeError(timeOut, endDate, this.resolvedEndTimeRanges);
     if (endError) {
-      this._workingTimeOut = time;
       this.emitInputError(endError);
       return;
     }
 
-    const ordered = orderDateTimeRange(
-      `${this._workingDateStart}T${this._workingTimeIn}`,
-      `${this._workingDateEnd}T${time}`,
-    );
+    const ordered = orderDateTimeRange(`${startDate}T${timeIn}`, `${endDate}T${timeOut}`);
 
     if (dateTimeRangeOverlaps(ordered, this.disabledRanges)) {
-      this._workingTimeOut = time;
       this.emitInputError(this.disabledRangeMessage ?? DISABLED_DATE_RANGE_MESSAGE);
       return;
     }
@@ -672,9 +694,57 @@ export class GuiRangeDateTimeCalendar extends LitElement {
     this._skipValueNavigation = true;
     this.value = mergeDateTimeRanges([...(this.value ?? []), ordered]);
     this.resetWorking();
+    this.emitPartsChange();
     this.dispatchEvent(
       new CustomEvent('change', { detail: { value: this.value }, bubbles: true, composed: true }),
     );
+  }
+
+  /**
+   * Live-syncs the in-progress selection to a host picker, which holds it
+   * across the popover's unmount/remount cycle. Never wired by the form
+   * layer, so it can't trigger validation.
+   */
+  private emitPartsChange(): void {
+    this.dispatchEvent(
+      new CustomEvent('partsChange', {
+        detail: {
+          anchor: this._selection.anchor ? toISODateString(this._selection.anchor) : null,
+          startDate: this._workingDateStart ?? null,
+          endDate: this._workingDateEnd ?? null,
+          startTime: this._workingTimeIn ?? null,
+          endTime: this._workingTimeOut ?? null,
+        },
+        bubbles: true,
+        composed: true,
+      }),
+    );
+  }
+
+  /**
+   * Takes over the host picker's working selection on the mount that follows
+   * a popover reopen. Only empty fields are adopted, so the picker echoing
+   * back what this calendar just reported can never overwrite live state.
+   */
+  private adoptWorkingSelection(changedProperties: PropertyValues): void {
+    if (changedProperties.has('workingAnchor') && !this._selection.anchor && this.workingAnchor) {
+      const anchor = parseISODateString(this.workingAnchor);
+      if (!isNaN(anchor.getTime())) {
+        this._selection = { anchor, hover: null, selecting: true };
+      }
+    }
+    if (changedProperties.has('workingStartDate') && !this._workingDateStart) {
+      this._workingDateStart = this.workingStartDate || undefined;
+    }
+    if (changedProperties.has('workingEndDate') && !this._workingDateEnd) {
+      this._workingDateEnd = this.workingEndDate || undefined;
+    }
+    if (changedProperties.has('workingStartTime') && !this._workingTimeIn) {
+      this._workingTimeIn = this.workingStartTime || undefined;
+    }
+    if (changedProperties.has('workingEndTime') && !this._workingTimeOut) {
+      this._workingTimeOut = this.workingEndTime || undefined;
+    }
   }
 
   /**
