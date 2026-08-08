@@ -3,12 +3,14 @@ import { customElement, property, query } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import './time-input';
 import './time-list';
+import type { GuiTime } from './time-input';
 import type { GuiTimeList } from './time-list';
+import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
 import { GUIPopupController } from '../controllers/popup.controller';
 import { buildTimeOptions, isTimeDisabled, type HourFormat, type TimeRange } from '../utils/time';
 import { timeBoundsError } from '../utils/parts';
 import { addErrors, addIcon, addLabel } from '../utils/templates';
-import { INVALID_DISABLED_TIME_RANGE_MESSAGE } from '../utils/messages';
+import { INCOMPLETE_TIME_MESSAGE, INVALID_DISABLED_TIME_RANGE_MESSAGE } from '../utils/messages';
 
 @customElement('gui-time-picker')
 export class GuiTimePicker extends LitElement {
@@ -52,8 +54,28 @@ export class GuiTimePicker extends LitElement {
   @property({ type: String, attribute: 'no-available-times-message' }) noAvailableTimesMessage:
     | string
     | undefined = undefined;
+  @property({ type: String, attribute: 'incomplete-message' }) incompleteMessage:
+    | string
+    | undefined = undefined;
+  /**
+   * Set by hosts (the date-time calendars) that run their own focus-leave
+   * check over a subtree containing this picker: skips the picker's own
+   * incomplete-on-leave handling.
+   */
+  @property({ type: Boolean, attribute: 'defer-focus-leave' }) deferFocusLeave:
+    | boolean
+    | undefined = false;
 
   @query('gui-time-list') private _listRef?: GuiTimeList;
+
+  private _focusLeave = new GUIFocusLeaveController(this, {
+    onLeave: () => {
+      // Embedded in a calendar: that host owns focus reporting for the subtree.
+      if (this.deferFocusLeave) return;
+      this.dispatchEvent(new CustomEvent('blur'));
+      this.reportIncompleteOnLeave();
+    },
+  });
 
   private _popup = new GUIPopupController(this, {
     focusRestoreSelector: 'gui-time input, gui-time button',
@@ -98,13 +120,19 @@ export class GuiTimePicker extends LitElement {
         false,
       )}
 
-      <div class="gui-widget" @keydown=${this.onKeyDown} @click=${this._popup.onAnchorClick}>
+      <div
+        class="gui-widget"
+        @keydown=${this.onKeyDown}
+        @click=${this._popup.onAnchorClick}
+        @focusout=${this._focusLeave.onFocusOut}
+      >
         <gui-time
           id="time-input"
           class=${classMap(timePickerIcon.widgetClasses)}
           .uid=${this.uid}
           .hint=${this.hint}
           .showErrors=${false}
+          .deferFocusLeave=${true}
           .errors=${this.errors}
           ?touched=${this.touched}
           ?required=${this.required}
@@ -193,8 +221,14 @@ export class GuiTimePicker extends LitElement {
     this.commitValue(event.detail.value);
   }
 
-  private onTimeBlur() {
-    this.dispatchEvent(new CustomEvent('blur'));
+  /**
+   * The field's per-part blur stays inside the widget: moving from a segment
+   * into the time list is not leaving the control, so it must not be reported
+   * as a blur (which the form layer reads as "validate now"). The picker
+   * reports blur from its own focus-leave check instead.
+   */
+  private onTimeBlur(event: Event) {
+    event.stopPropagation();
   }
 
   private onListChange(event: CustomEvent) {
@@ -300,6 +334,25 @@ export class GuiTimePicker extends LitElement {
    * embedded time-picker's list imperatively. */
   closeList() {
     this._popup.close();
+  }
+
+  /**
+   * A partially typed time left behind flips the value to null — so
+   * validators report it — and surfaces the incomplete message. Complete or
+   * empty input reports nothing new.
+   */
+  private reportIncompleteOnLeave(): void {
+    const input = this.querySelector<GuiTime>('gui-time');
+    if (!input || input.groupCompleteness() !== 'partial') return;
+
+    this.commitValue(null);
+    this.dispatchEvent(
+      new CustomEvent('inputError', {
+        detail: { message: this.incompleteMessage ?? INCOMPLETE_TIME_MESSAGE },
+        bubbles: true,
+        composed: true,
+      }),
+    );
   }
 
   private dispatchListToggle(open: boolean) {

@@ -246,9 +246,10 @@ export const runTimePickerComponentTests = (mountFn: MountComponentFn) => {
         cy.get(sel.items).eq(2).click({ force: true });
         cy.get(sel.hour).should('have.value', '');
 
-        // Clicking away from the empty hour part emits the empty-part null
+        // The ignored click commits nothing: the value stays undefined (an
+        // empty part blur no longer emits null for a never-committed value)
         submitAndGetData('@formSubmitHandler').then((data) => {
-          expect(data).to.deep.equal({ myTime: null });
+          expect(data.myTime).to.equal(undefined);
         });
       });
 

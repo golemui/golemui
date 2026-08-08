@@ -3,18 +3,30 @@ import { html, LitElement, nothing, type PropertyValues } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
+import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
 import { GUIPartsController } from '../controllers/parts.controller';
 import { dateBoundsError } from '../utils/date';
+import { INCOMPLETE_DATE_TIME_MESSAGE } from '../utils/messages';
 import { renderGroupParts, type GUIPartsTemplateData } from '../utils/part-templates';
 import {
   getTimeLocaleData,
   parseDateTimeGroup,
+  parseDateTimeSubGroups,
   PART_DEFAULT_ARIA_LABELS,
   timeBoundsError,
   type DateTimePartDescriptor,
   type DateTimePartType,
+  type GroupCompleteness,
   type TimeLocaleData,
 } from '../utils/parts';
+
+const DATE_TIME_PART_TYPES: readonly DateTimePartType[] = [
+  'day',
+  'month',
+  'year',
+  'hour',
+  'minute',
+];
 import { getDateTimeFormatParts, toISOTimeString, type HourFormat } from '../utils/time';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 
@@ -59,6 +71,17 @@ export class GuiDateTime extends LitElement {
     undefined;
   @property({ type: String, attribute: 'max-time-message' }) maxTimeMessage: string | undefined =
     undefined;
+  @property({ type: String, attribute: 'incomplete-message' }) incompleteMessage:
+    | string
+    | undefined = undefined;
+  /**
+   * Set by host pickers that run their own whole-widget focus-leave check:
+   * moving focus from this input into the picker's popover must not count as
+   * leaving, so the embedded input skips its incomplete-on-leave handling.
+   */
+  @property({ type: Boolean, attribute: 'defer-focus-leave' }) deferFocusLeave:
+    | boolean
+    | undefined = false;
 
   private readonly inputBlockClass = 'gui-date-time-input';
   private readonly groups = ['default'] as const;
@@ -70,11 +93,36 @@ export class GuiDateTime extends LitElement {
     commitGroup: (group) => this.validateAndEmit(group),
     isReadonly: () => !!this.readOnly,
     isDisabled: () => !!this.disabled,
-    onEmptyPartBlur: () =>
-      this.dispatchEvent(new CustomEvent('change', { detail: { value: null }, bubbles: true })),
+    onEmptyPartBlur: (group, type) => {
+      // A raw 0 counts as emptying the part, so clear it in state (the clamp
+      // write-back would otherwise leave a phantom value behind).
+      this._parts.setPart(group, type, '');
+
+      if (!this.value) return;
+
+      this._internalNullReport = true;
+      this.value = undefined;
+      this.dispatchEvent(new CustomEvent('change', { detail: { value: null }, bubbles: true }));
+      this._parts.resetSurfacedInputError();
+    },
+    onInputErrorSurfaced: (message) =>
+      this.dispatchEvent(new CustomEvent('inputError', { detail: { message }, bubbles: true })),
+    onSurfacedErrorCleared: (value) =>
+      this.dispatchEvent(new CustomEvent('change', { detail: { value }, bubbles: true })),
     getHourFormat: () => this.localeData.effectiveHourFormat,
     getDayPeriodLabels: () => this.localeData.dayPeriodLabels,
   });
+
+  private _focusLeave = new GUIFocusLeaveController(this, {
+    onLeave: () => this.onFocusLeave(),
+  });
+
+  /**
+   * Marks a value clear that the widget itself reported (an emptied part or
+   * an abandoned partial). The surviving segments must not be wiped when the
+   * clear — or its null echo from the form — lands back on the value prop.
+   */
+  private _internalNullReport = false;
 
   protected ariaController: GUIAriaController<unknown, any> = new GUIAriaController(this, {
     getTargets: () => this.querySelectorAll(`.${this.inputBlockClass}`),
@@ -129,19 +177,22 @@ export class GuiDateTime extends LitElement {
 
   override willUpdate(changedProperties: PropertyValues): void {
     // !hasUpdated: parse on first render even when no value was ever set,
-    if (
-      !this.hasUpdated ||
-      changedProperties.has('value') ||
-      changedProperties.has('hourFormat') ||
-      changedProperties.has('localeId')
-    ) {
-      this._parts.setGroupFromISO(
-        'default',
-        this.value ?? '',
-        'dateTime',
-        this.localeData.effectiveHourFormat,
-      );
-    }
+    const localeChanged =
+      !this.hasUpdated || changedProperties.has('hourFormat') || changedProperties.has('localeId');
+    if (!localeChanged && !changedProperties.has('value')) return;
+
+    const internalNull = this._internalNullReport;
+    this._internalNullReport = false;
+    const prev = changedProperties.get('value') as string | null | undefined;
+
+    if (!localeChanged && !this.value && (internalNull || !prev)) return;
+
+    this._parts.setGroupFromISO(
+      'default',
+      this.value ?? '',
+      'dateTime',
+      this.localeData.effectiveHourFormat,
+    );
   }
 
   override render() {
@@ -187,7 +238,7 @@ export class GuiDateTime extends LitElement {
     return html`
       ${this.label ? addLabel(this.uid as string, templateData, false, undefined, false) : nothing}
 
-      <div class="gui-widget">
+      <div class="gui-widget" @focusout=${this.onWidgetFocusOut}>
         <div
           id=${this.uid}
           class="gui-widget-input gui-parts gui-parts-ring gui-date-time-input ${this.icon
@@ -224,6 +275,8 @@ export class GuiDateTime extends LitElement {
     });
     this._parts.applyWriteBacks(group, writeBacks);
 
+    this.emitPartsChange();
+
     if (result.kind === 'incomplete') {
       this.requestUpdate();
       return;
@@ -231,9 +284,7 @@ export class GuiDateTime extends LitElement {
 
     // Impossible date (e.g. Feb 31): surface the error, nothing to advance to.
     if (result.kind === 'invalid') {
-      this.dispatchEvent(
-        new CustomEvent('inputError', { detail: { message: result.message }, bubbles: true }),
-      );
+      this._parts.surfaceInputError(result.message);
       this.requestUpdate();
       return;
     }
@@ -245,16 +296,99 @@ export class GuiDateTime extends LitElement {
       this.dispatchEvent(
         new CustomEvent('change', { detail: { value: result.iso }, bubbles: true }),
       );
-      this.dispatchEvent(
-        new CustomEvent('inputError', { detail: { message: boundsError }, bubbles: true }),
-      );
+      this._parts.surfaceInputError(boundsError);
       this.requestUpdate();
       return;
     }
 
     this.value = result.iso;
+    this._parts.resetSurfacedInputError();
     this.dispatchEvent(new CustomEvent('change', { detail: { value: this.value }, bubbles: true }));
     this.requestUpdate();
+  }
+
+  /**
+   * Live-syncs the date and time halves to a host picker: each half carries
+   * its ISO value once structurally complete, else null.
+   */
+  private emitPartsChange(): void {
+    const { effectiveHourFormat, descriptors } = this.localeData;
+    const { date, time } = parseDateTimeSubGroups(this._parts.values['default'] ?? {}, {
+      hourFormat: effectiveHourFormat,
+      descriptors,
+      invalidDateMessage: this.invalidDateMessage,
+    });
+    this.dispatchEvent(
+      new CustomEvent('partsChange', {
+        detail: {
+          date: date.kind === 'valid' ? date.iso : null,
+          time: time.kind === 'valid' ? time.iso : null,
+        },
+        bubbles: true,
+        composed: true,
+      }),
+    );
+  }
+
+  /**
+   * Paints only the date parts from an ISO date (null clears them), leaving
+   * the time parts untouched. Host pickers call this when their calendar's
+   * working date changes, so a picked day lands in the visible segments
+   * without committing anything.
+   */
+  fillDate(iso: string | null): void {
+    this._parts.setGroupFromISO('default', iso, 'date');
+    this.requestUpdate();
+  }
+
+  /**
+   * Paints only the time parts from an ISO time (null clears them), leaving
+   * the date parts untouched. The counterpart of {@link fillDate} for the
+   * picker's working time.
+   */
+  fillTime(iso: string | null): void {
+    this._parts.setGroupFromISO('default', iso, 'time', this.localeData.effectiveHourFormat);
+    this.requestUpdate();
+  }
+
+  /** The group's fill state, for host pickers' own focus-leave checks. */
+  groupCompleteness(): GroupCompleteness {
+    const { effectiveHourFormat, descriptors } = this.localeData;
+    const { result } = parseDateTimeGroup(this._parts.values['default'] ?? {}, {
+      hourFormat: effectiveHourFormat,
+      descriptors,
+      invalidDateMessage: this.invalidDateMessage,
+    });
+    if (result.kind !== 'incomplete') return 'complete';
+    return this._parts.isGroupEmpty('default', DATE_TIME_PART_TYPES) ? 'empty' : 'partial';
+  }
+
+  private onWidgetFocusOut = (event: FocusEvent): void => {
+    if (this.deferFocusLeave) return;
+    this._focusLeave.handleFocusOut(event);
+  };
+
+  /**
+   * A partial group left behind flips the value to null — so validators
+   * report it even on non-required fields — and surfaces the incomplete
+   * message. An emptied group instead clears any surfaced error. A complete
+   * group already reported through the commit pipeline.
+   */
+  private onFocusLeave(): void {
+    const completeness = this.groupCompleteness();
+    if (completeness === 'complete') return;
+
+    if (completeness === 'empty') {
+      this._parts.clearSurfacedInputError(null);
+      return;
+    }
+
+    if (this.value) {
+      this._internalNullReport = true;
+      this.value = undefined;
+    }
+    this.dispatchEvent(new CustomEvent('change', { detail: { value: null }, bubbles: true }));
+    this._parts.surfaceInputError(this.incompleteMessage ?? INCOMPLETE_DATE_TIME_MESSAGE);
   }
 }
 

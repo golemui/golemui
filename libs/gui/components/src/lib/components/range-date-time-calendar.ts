@@ -358,6 +358,7 @@ export class GuiRangeDateTimeCalendar extends LitElement {
             .uid=${this.uid ? `${this.uid}-start-time` : undefined}
             .label=${this.startTimeLabel ?? 'Start time'}
             .showErrors=${false}
+            .deferFocusLeave=${true}
             ?required=${this.required}
             ?disabled=${!startEnabled}
             ?readonly=${this.readOnly}
@@ -388,6 +389,7 @@ export class GuiRangeDateTimeCalendar extends LitElement {
             .uid=${this.uid ? `${this.uid}-end-time` : undefined}
             .label=${this.endTimeLabel ?? 'End time'}
             .showErrors=${false}
+            .deferFocusLeave=${true}
             ?required=${this.required}
             ?disabled=${!endEnabled}
             ?readonly=${this.readOnly}

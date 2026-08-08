@@ -277,19 +277,27 @@ export const runDateTimeInputComponentTests = (mountFn: MountComponentFn) => {
     });
 
     describe('blur', () => {
-      it('should emit a null value when a part is emptied and blurred', () => {
-        const formSubmitHandler = cy.stub().as('formSubmitHandler');
-        mountDateTimeInput({
-          data: { myDateTime: '2026-06-15T14:30:00' },
-          formSubmit: formSubmitHandler,
+      it('should emit a null value and keep the other parts when one part is emptied', () => {
+        mountDateTimeInput({ data: { myDateTime: '2026-06-15T14:30:00' } });
+
+        const changeSpy = cy.spy().as('changeSpy');
+        cy.get('gui-date-time').then(($el) => {
+          $el[0].addEventListener('change', changeSpy as unknown as EventListener);
         });
 
         cy.get(sel.day).type('{selectAll}{backspace}');
         cy.get(sel.day).blur();
 
-        submitAndGetData('@formSubmitHandler').then((data) => {
-          expect(data).to.deep.equal({ myDateTime: null });
+        cy.get('@changeSpy').then((spy: any) => {
+          expect(spy.getCall(0).args[0].detail.value).to.equal(null);
         });
+
+        // Only the emptied part clears: the rest of the entry is not wiped
+        cy.get(sel.day).should('have.value', '');
+        cy.get(sel.month).should('have.value', '06');
+        cy.get(sel.year).should('have.value', '2026');
+        cy.get(sel.hour).should('have.value', '02');
+        cy.get(sel.minute).should('have.value', '30');
       });
 
       it('should keep a minute of 00 on blur', () => {
@@ -305,6 +313,64 @@ export const runDateTimeInputComponentTests = (mountFn: MountComponentFn) => {
         submitAndGetData('@formSubmitHandler').then((data) => {
           expect(data).to.deep.equal({ myDateTime: '2026-06-15T14:00:00' });
         });
+      });
+    });
+
+    describe('incomplete input on focus leave', () => {
+      it('should flip a date-only entry to null with an incomplete error when focus leaves', () => {
+        mountDateTimeInput();
+
+        const changeSpy = cy.spy().as('changeSpy');
+        cy.get('gui-date-time').then(($el) => {
+          $el[0].addEventListener('change', changeSpy as unknown as EventListener);
+        });
+
+        // en-US orders the parts month/day/year, then the time run
+        cy.get(sel.month).click();
+        cy.focused().type('06');
+        cy.focused().type('15');
+        cy.focused().type('2026');
+        cy.get('[data-cy="submitBtn_button"]').focus();
+
+        cy.get('[data-cy="testSubject_validator-error"]').should(
+          'contain.text',
+          'Incomplete date-time',
+        );
+        cy.get('@changeSpy').then((spy: any) => {
+          expect(spy.getCall(0).args[0].detail.value).to.equal(null);
+        });
+      });
+
+      it('should show the incomplete error for a committed value left with an emptied part', () => {
+        mountDateTimeInput({ data: { myDateTime: '2026-06-15T14:30:00' } });
+
+        cy.get(sel.day).type('{selectAll}{backspace}');
+        cy.get('[data-cy="submitBtn_button"]').focus();
+
+        cy.get('[data-cy="testSubject_validator-error"]').should(
+          'contain.text',
+          'Incomplete date-time',
+        );
+        cy.get(sel.month).should('have.value', '06');
+        cy.get(sel.hour).should('have.value', '02');
+      });
+
+      it('should clear the incomplete error once the date-time is completed', () => {
+        mountDateTimeInput({ props: { hourFormat: '24' } });
+
+        cy.get(sel.month).click();
+        cy.focused().type('06');
+        cy.focused().type('15');
+        cy.focused().type('2026');
+        cy.get('[data-cy="submitBtn_button"]').focus();
+        cy.get('[data-cy="testSubject_validator-error"]').should(
+          'contain.text',
+          'Incomplete date-time',
+        );
+
+        cy.get(sel.hour).type('10');
+        cy.focused().type('30', { force: true });
+        cy.get('[data-cy="testSubject_validator-error"]').should('not.exist');
       });
     });
 

@@ -4,8 +4,11 @@ import { classMap } from 'lit/directives/class-map.js';
 import type { DateRange } from '@golemui/gui-shared/internals';
 import './date-input';
 import './calendar';
+import type { GuiDate } from './date-input';
+import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
 import { GUIPopupController } from '../controllers/popup.controller';
 import { dateBoundsError } from '../utils/date';
+import { INCOMPLETE_DATE_MESSAGE } from '../utils/messages';
 import { addErrors, addIcon, addLabel } from '../utils/templates';
 
 @customElement('gui-date-picker')
@@ -73,6 +76,13 @@ export class GuiDatePicker extends LitElement {
   @property({ type: String, attribute: 'disabled-date-range-message' }) disabledDateRangeMessage:
     | string
     | undefined = undefined;
+  @property({ type: String, attribute: 'incomplete-message' }) incompleteMessage:
+    | string
+    | undefined = undefined;
+
+  private _focusLeave = new GUIFocusLeaveController(this, {
+    onLeave: () => this.onFocusLeave(),
+  });
 
   private _popup = new GUIPopupController(this, {
     focusRestoreSelector: 'gui-date input',
@@ -142,6 +152,7 @@ export class GuiDatePicker extends LitElement {
         class="gui-widget"
         @keydown=${this._popup.onAnchorKeyDown}
         @click=${this._popup.onAnchorClick}
+        @focusout=${this._focusLeave.onFocusOut}
       >
         <gui-date
           id="date-input"
@@ -149,6 +160,7 @@ export class GuiDatePicker extends LitElement {
           .uid=${this.uid}
           .hint=${this.hint}
           .showErrors=${false}
+          .deferFocusLeave=${true}
           .errors=${this.errors}
           ?touched=${this.touched}
           ?required=${this.required}
@@ -211,8 +223,14 @@ export class GuiDatePicker extends LitElement {
     this.commitValue(event.detail.value);
   }
 
-  private onDateBlur() {
-    this.dispatchEvent(new CustomEvent('blur'));
+  /**
+   * The field's per-part blur stays inside the widget: moving from a segment
+   * into the popover is not leaving the control, so it must not be reported
+   * as a blur (which the form layer reads as "validate now"). The picker
+   * reports blur from its own focus-leave check instead.
+   */
+  private onDateBlur(event: Event) {
+    event.stopPropagation();
   }
 
   private onCalendarChange(event: CustomEvent) {
@@ -251,8 +269,36 @@ export class GuiDatePicker extends LitElement {
     });
   }
 
-  private onCalendarBlur() {
+  /**
+   * Focus leaving the calendar closes the popover, but it is not necessarily
+   * leaving the picker (focus often returns to the field), so the calendar's
+   * bubbling blur is stopped here and never reaches the form layer.
+   */
+  private onCalendarBlur(event: Event) {
+    event.stopPropagation();
     this._popup.closeOnFocusLeave();
+  }
+
+  /**
+   * The single point where the picker reports focus leaving the control: it
+   * blurs (which the form layer reads as "validate now"), and a partially
+   * typed date left behind flips the value to null — so validators report it
+   * even on non-required fields — and surfaces the incomplete message.
+   */
+  private onFocusLeave(): void {
+    this.dispatchEvent(new CustomEvent('blur'));
+
+    const input = this.querySelector<GuiDate>('gui-date');
+    if (!input || input.groupCompleteness() !== 'partial') return;
+
+    this.commitValue(null);
+    this.dispatchEvent(
+      new CustomEvent('inputError', {
+        detail: { message: this.incompleteMessage ?? INCOMPLETE_DATE_MESSAGE },
+        bubbles: true,
+        composed: true,
+      }),
+    );
   }
 }
 
