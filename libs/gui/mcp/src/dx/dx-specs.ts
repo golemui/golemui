@@ -445,8 +445,11 @@ const INPUTS: DxSpec[] = [
       'An INLINE calendar with an embedded time picker: a segmented time input between the header and the days ' +
         'grid opens a time grid in place of the days (like the year selector).',
       'Emits a local ISO date-time (`YYYY-MM-DDTHH:mm:ss`) only when BOTH day and time are selected — pair with a ' +
-        "`{ type: 'string', format: 'date-time' }` validator. Picking a different day clears the time and resets " +
-        'the value to null.',
+        "`{ type: 'string', format: 'date-time' }` validator. The time picker is usable before a day is picked, " +
+        'and picking a different day KEEPS the chosen time (re-emitting the full value), so the two halves can be ' +
+        'chosen in either order.',
+      'Half-finished entries never emit: the value goes to null — flagging the field even when it is optional — ' +
+        'only once focus leaves the widget with one half missing, which surfaces an "incomplete" message.',
       '`disabledTimeRanges` entries take `start`/`end` ISO times plus optional `date` (ISO date) and/or `weekdays` ' +
         '(getDay() numbering: 0=Sunday … 6=Saturday) to scope the range to specific days.',
     ],
@@ -566,7 +569,7 @@ const INPUTS: DxSpec[] = [
     example:
       "gui.inputs.rangeDateTimeCalendar('stay', { label: 'Stay', startTimeLabel: 'Check-in', endTimeLabel: 'Check-out' })",
     notes: [
-      'INLINE range calendar with TWO embedded time pickers (start/end); value is `DateTimeRange[]`, rendered as pills. Pick a date range, then a start time (enables the end time), then an end time to commit a pill. A day holding more than one range shows a count badge.',
+      'INLINE range calendar with TWO embedded time pickers (start/end); value is `DateTimeRange[]`, rendered as pills. A day span and the two times can be chosen in ANY order — both time pickers are usable from the start — and the pill is committed once all four pieces are present. Starting a new day span keeps the times already chosen. A day holding more than one range shows a count badge.',
       'Everything is in instant-space: bounds are **`minDateTime`** / **`maxDateTime`** and **`disabledRanges`** are `DateTimeRange[]` instant spans (block a whole day with `00:00:00`–`23:59:59`). There is no `minDate`/`maxDate`/`minTime`/`maxTime`/`disabledTimeRanges` — a time-of-day constraint cannot bound a multi-day span.',
     ],
   },
@@ -578,7 +581,7 @@ const INPUTS: DxSpec[] = [
     example:
       "gui.inputs.rangeDateTimePicker('stay', { label: 'Stay', startTimeLabel: 'Check-in', endTimeLabel: 'Check-out' })",
     notes: [
-      'POPOVER date-time range picker: the typed `rangeDateTimeInput` as the trigger (pills live there) with the `rangeDateTimeCalendar` in a dropdown. Value is `DateTimeRange[]`. Committing a pill keeps the popover open so several ranges can be added; it closes on outside-click, blur or Escape.',
+      'POPOVER date-time range picker: the typed `rangeDateTimeInput` as the trigger (pills live there) with the `rangeDateTimeCalendar` in a dropdown. Value is `DateTimeRange[]`. Committing a pill keeps the popover open so several ranges can be added; it closes on outside-click, blur or Escape. A half-finished selection is held by the picker, so it survives closing and reopening the popover.',
       'Everything is in instant-space: bounds are **`minDateTime`** / **`maxDateTime`** and **`disabledRanges`** are `DateTimeRange[]` instant spans (block a whole day with `00:00:00`–`23:59:59`). There is no `minDate`/`maxDate`/`minTime`/`maxTime`/`disabledTimeRanges`.',
     ],
   },
@@ -588,7 +591,10 @@ const INPUTS: DxSpec[] = [
     docSlug: 'range-date-picker',
     call: 'gui.inputs.rangeDatePicker(path, { label? })',
     example: "gui.inputs.rangeDatePicker('stayDates', { label: 'Stay dates' })",
-    notes: ['Popover calendar for a start–end date **range** (the range sibling of `datePicker`).'],
+    notes: [
+      'Popover calendar for a start–end date **range** (the range sibling of `datePicker`). A span with only its ' +
+        'first day picked is held by the picker, so it survives closing and reopening the popover.',
+    ],
   },
   {
     factory: 'rangeTimePicker',
@@ -598,7 +604,7 @@ const INPUTS: DxSpec[] = [
     example:
       "gui.inputs.rangeTimePicker('shift', { label: 'Shift', minTime: '06:00:00', maxTime: '22:00:00' })",
     notes: [
-      'Two-list popover for a start–end time **range** (the range sibling of `timePicker`); value is `TimeRange[]`. The out list floors one slot after the chosen in so end is strictly after start.',
+      'Two-list popover for a start–end time **range** (the range sibling of `timePicker`); value is `TimeRange[]`. Either list can be used first — an end picked before a start simply waits — and the range commits once both are set. Once an in is chosen the out list floors one slot after it so end is strictly after start.',
     ],
   },
 ];
