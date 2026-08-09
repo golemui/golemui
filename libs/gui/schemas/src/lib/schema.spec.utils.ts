@@ -1,7 +1,7 @@
 import { type ErrorObject } from 'ajv/dist/2020';
 import type Ajv2020 from 'ajv/dist/2020';
 import commonSchema from './core/common.schema.json';
-import formSchema, { $id } from './form.schema.json';
+import formSchema from './form.schema.json';
 import layoutWidgetSchema from './layout-widget.schema.json';
 import validatorsSchema from './core/validators.schema.json';
 import widgetsSchema from './widgets.schema.json';
@@ -25,20 +25,29 @@ export function specValidationErrorsLogger(validate: any, data: any) {
   }
 }
 
+// Registers only when the id is new. `ajv.schemas` is the plain id-to-schema registry, while
+// `ajv.getSchema` compiles as a side effect, which fails while ref targets are still being
+// registered. The uniform guard also makes registerGolemSchemas safe to call twice on one
+// Ajv instance.
+function addSchemaOnce(ajv: Ajv2020, schema: any, key?: string): void {
+  const id = key ?? (schema?.$id as string | undefined);
+  if (id && !ajv.schemas[id]) {
+    ajv.addSchema(schema, key);
+  }
+}
+
 export function registerGolemSchemas(ajv: Ajv2020) {
-  // The vendored core copies register under their canonical core/ $ids.
-  ajv.addSchema(commonSchema);
-  ajv.addSchema(validatorsSchema);
   // Component refs like `../core/common.schema.json` resolve against the
-  // component $id to the gui/core/ retrieval URIs, registered here as
+  // component $id to the gui/core/ retrieval URIs, registered first as
   // $id-stripped clones (see core-registrations.ts).
   for (const { key, schema } of guiCoreRegistrations()) {
-    if (!ajv.getSchema(key)) {
-      ajv.addSchema(schema, key);
-    }
+    addSchemaOnce(ajv, schema, key);
   }
-  ajv.addSchema(layoutWidgetSchema);
-  ajv.addSchema(widgetsSchema);
+  // The vendored core copies register under their canonical core/ $ids.
+  addSchemaOnce(ajv, commonSchema);
+  addSchemaOnce(ajv, validatorsSchema);
+  addSchemaOnce(ajv, layoutWidgetSchema);
+  addSchemaOnce(ajv, widgetsSchema);
 
   // @ts-expect-error The 'import.meta' meta-property is only allowed when the '--module' option is 'es2020', 'es2022', 'esnext', 'system', 'node16', 'node18', 'node20', or 'nodenext'.ts(1343)
   // Automatically assemble all component schemas in this folder. The glob must
@@ -51,13 +60,8 @@ export function registerGolemSchemas(ajv: Ajv2020) {
   });
 
   for (const path in componentSchemas) {
-    const schema = componentSchemas[path];
-    if (schema && schema.$id && !ajv.getSchema(schema.$id)) {
-      ajv.addSchema(schema);
-    }
+    addSchemaOnce(ajv, componentSchemas[path]);
   }
 
-  if (!ajv.getSchema($id)) {
-    ajv.addSchema(formSchema);
-  }
+  addSchemaOnce(ajv, formSchema);
 }
