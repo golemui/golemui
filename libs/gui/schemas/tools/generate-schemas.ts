@@ -12,7 +12,7 @@
  * Every output is formatted through the prettier API so `nx format:write`
  * never changes generated files. Run with `npm run generate:schemas`.
  */
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { format, resolveConfig } from 'prettier';
 import {
@@ -29,7 +29,12 @@ const REPO_ROOT = process.cwd();
 const PACKAGE_ROOT = join(REPO_ROOT, 'libs', 'gui', 'schemas');
 const LIB_DIR = join(PACKAGE_ROOT, 'src', 'lib');
 const CORE_SOURCE_DIR = join(REPO_ROOT, 'libs', 'schemas', 'src', 'lib', 'core');
-const CORE_FILES = ['common.schema.json', 'validators.schema.json'];
+
+function coreSchemaFileNames(directory: string): string[] {
+  return readdirSync(directory)
+    .filter((file) => file.endsWith('.schema.json'))
+    .sort();
+}
 
 async function formatWithRepoConfig(content: string, filePath: string): Promise<string> {
   const options = (await resolveConfig(filePath)) ?? {};
@@ -50,8 +55,11 @@ async function main(): Promise<void> {
     buildLayoutWidgetSchema(guiSchemaConfig),
   );
   // Vendored copies are verbatim byte copies of the @golemui/schemas sources,
-  // never re-serialized, so the drift test can require byte identity.
-  for (const coreFile of CORE_FILES) {
+  // never re-serialized, so the drift test can require byte identity. The file
+  // list comes from the source directory so a newly added core file cannot be
+  // silently skipped.
+  const coreFiles = coreSchemaFileNames(CORE_SOURCE_DIR);
+  for (const coreFile of coreFiles) {
     outputs.push({
       path: join(LIB_DIR, 'core', coreFile),
       content: readFileSync(join(CORE_SOURCE_DIR, coreFile), 'utf-8'),
@@ -68,6 +76,19 @@ async function main(): Promise<void> {
     writeFileSync(output.path, output.content, 'utf-8');
     console.log(`Wrote ${relative(REPO_ROOT, output.path)} (${output.content.length} bytes)`);
   }
+
+  // A core file removed from @golemui/schemas is not deleted here automatically. Fail so the
+  // stale vendored copy cannot keep shipping (and keep being registered by the spec utilities).
+  const orphanedVendoredFiles = coreSchemaFileNames(join(LIB_DIR, 'core')).filter(
+    (file) => !coreFiles.includes(file),
+  );
+  if (orphanedVendoredFiles.length > 0) {
+    throw new Error(
+      `Vendored core files without a @golemui/schemas source: ${orphanedVendoredFiles.join(', ')}. ` +
+        `Delete them from ${relative(REPO_ROOT, join(LIB_DIR, 'core'))}.`,
+    );
+  }
+
   console.log(
     `Generated ${outputs.length} files from ${guiSchemaConfig.manifest.length} manifest entries.`,
   );
