@@ -5,6 +5,7 @@ export type GUIFocusLeaveHost = ReactiveControllerHost & HTMLElement;
 export interface GUIFocusLeaveControllerOptions {
   /** Called when focus has effectively left the watched subtree. */
   onLeave(): void;
+  resolveSyncOnRelatedTarget?: boolean;
 }
 
 // TODO: Improve this? maybe with a data-focusable attribute?
@@ -66,7 +67,14 @@ export class GUIFocusLeaveController implements ReactiveController {
 
   /** Runs the leave detection for a focusout event. */
   handleFocusOut(event: FocusEvent) {
-    if (this.isInside(event.relatedTarget as Element | null)) {
+    const related = event.relatedTarget as Element | null;
+    if (this.isInside(related)) {
+      return;
+    }
+
+    if (this.options.resolveSyncOnRelatedTarget && related) {
+      this.cancelPendingLeave();
+      this.options.onLeave();
       return;
     }
 

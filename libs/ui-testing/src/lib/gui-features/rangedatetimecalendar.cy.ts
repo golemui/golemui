@@ -318,6 +318,26 @@ export const runRangeDateTimeCalendarComponentTests = (mountFn: MountComponentFn
         cy.get(sel.error).should('be.visible').and('contain', 'Range unavailable');
       });
 
+      it('should commit a range finished with a typed end time when focus leaves', () => {
+        mountCalendar({ props: { allowCustomTime: true } });
+
+        day(13).click();
+        day(15).click();
+        startHour().click();
+        startOption('09:00:00').click();
+
+        // A typed custom time never commits as it is typed — only a list pick
+        // or Enter does — so the fourth piece lands here unclaimed.
+        cy.get(`${sel.endPicker} gui-time input[data-type="hour"]`).click().type('11');
+        cy.get(`${sel.endPicker} gui-time input[data-type="minute"]`).type('30');
+        cy.get(sel.pillText).should('not.exist');
+
+        // Leaving is as deliberate as Enter, and the selection is complete.
+        cy.get('[data-cy="submitBtn_button"]').focus();
+        cy.get(sel.pillText).should('have.length', 1);
+        startHour().should('have.value', '');
+      });
+
       it('should disable a fully-blocked day and reject a range stepping over it', () => {
         mountCalendar({
           props: {

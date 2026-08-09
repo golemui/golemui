@@ -118,12 +118,12 @@ export const runRangeTimeInputComponentTests = (mountFn: MountComponentFn) => {
       );
     });
 
-    it('should not create a pill until Enter is pressed', () => {
+    it('should not create a pill while the user is still in the fields', () => {
       mountRangeTimeInput();
 
-      // Completing both endpoints is deliberately not enough: the range is only
-      // committed by an explicit Enter, which is what frees the user to correct
-      // the trailing AM/PM toggle first.
+      // Completing both endpoints is deliberately not enough on its own: the
+      // commit waits for Enter or for focus to leave, which is what frees the
+      // user to correct the trailing AM/PM toggle first.
       typeRange(['09', '00'], ['11', '30'], false);
 
       cy.get(sel.pillText).should('have.length', 0);
@@ -323,6 +323,29 @@ export const runRangeTimeInputComponentTests = (mountFn: MountComponentFn) => {
 
       cy.get('[data-cy="testSubject_validator-error"]').should('contain.text', 'Incomplete time');
       cy.get(sel.pillText).should('not.exist');
+    });
+
+    it('should commit a complete range when focus leaves, without Enter', () => {
+      mountRangeTimeInput();
+
+      typeRange(['09', '00'], ['11', '30'], false);
+      cy.get(sel.pillText).should('have.length', 0);
+
+      // Leaving acts as Enter: a range the user finished is not abandoned work,
+      // and making them press a key to keep it loses it silently.
+      cy.get('[data-cy="submitBtn_button"]').focus();
+      cy.get(sel.pillText).should('have.length', 1).and('contain', '09:00');
+      cy.get(sel.start.hour).should('have.value', '');
+    });
+
+    it('should leave no error standing over a range the leave just committed', () => {
+      mountRangeTimeInput({ validator: { type: 'array', required: true } });
+
+      typeRange(['09', '00'], ['11', '30'], false);
+      cy.get('[data-cy="submitBtn_button"]').focus();
+
+      cy.get(sel.pillText).should('have.length', 1);
+      cy.get('[data-cy="testSubject_validator-errors"]').should('not.exist');
     });
 
     it('should render disabled inputs when disabled', () => {

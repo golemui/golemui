@@ -359,7 +359,48 @@ export const runRangeDateInputComponentTests = (mountFn: MountComponentFn) => {
       });
     });
 
-    describe('incomplete input on focus leave', () => {
+    describe('focus leave', () => {
+      it('should commit a complete typed range when focus leaves, without Enter', () => {
+        mountRangeDateInput();
+
+        typeDate('start', '06', '10', '2026');
+        typeDate('end', '06', '16', '2026');
+        cy.get(sel.pillText).should('not.exist');
+
+        // Leaving acts as Enter: a range the user finished is not abandoned
+        // work, and making them press a key to keep it loses it silently.
+        cy.get('[data-cy="submitBtn_button"]').focus();
+        cy.get(sel.pillText).should('have.length', 1).and('contain', '06/10/2026');
+        cy.get(sel.start.month).should('have.value', '');
+      });
+
+      it('should not steal focus back when the leave creates the pill', () => {
+        mountRangeDateInput();
+
+        typeDate('start', '06', '10', '2026');
+        typeDate('end', '06', '16', '2026');
+        cy.get('[data-cy="submitBtn_button"]').focus();
+
+        // Enter refocuses the start field, ready for the next range. Leaving
+        // must not — that would drag the user back into the control.
+        cy.get(sel.pillText).should('have.length', 1);
+        cy.focused().should('have.attr', 'data-cy', 'submitBtn_button');
+      });
+
+      it('should include a range committed by the click that submits the form', () => {
+        const formSubmitHandler = cy.stub().as('formSubmitHandler');
+        mountRangeDateInput({ formSubmit: formSubmitHandler });
+
+        typeDate('start', '06', '10', '2026');
+        typeDate('end', '06', '16', '2026');
+
+        // One click both leaves the widget and submits. The leave has to settle
+        // before the form reads its data, or the range is missing from it.
+        submitAndGetData('@formSubmitHandler').then((data: any) => {
+          expect(data).to.deep.equal({ myRanges: [{ start: '2026-06-10', end: '2026-06-16' }] });
+        });
+      });
+
       it('should not validate while moving between the parts of one endpoint', () => {
         // Filling a part auto-advances to the next one. That hop is not
         // leaving the widget, so the form must not judge a half-typed entry:

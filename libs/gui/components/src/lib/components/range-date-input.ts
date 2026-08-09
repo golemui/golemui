@@ -123,17 +123,20 @@ export class GuiRangeDateInput extends LitElement {
   });
 
   /**
-   * The single point where the input reports focus leaving the control: it
-   * blurs (which the form layer reads as "validate now"), so hopping between
-   * segments never validates a half-typed entry, then surfaces a half-entered
-   * range left behind.
+   * The single point where the input reports focus leaving the control. It
+   * settles what is in the fields FIRST, then blurs — the form layer reads a
+   * blur as "validate now", and storing a value runs no validator, so blurring
+   * first would validate the value the commit is about to replace and leave a
+   * `required` error standing over a range the user did finish. Hopping
+   * between segments is not a departure and never reaches here.
    */
   private _focusLeave = new GUIFocusLeaveController(this, {
+    resolveSyncOnRelatedTarget: true,
     onLeave: () => {
       // Embedded in a picker: that host owns focus reporting for the subtree.
       if (this.deferFocusLeave) return;
+      this.finalizeOnLeave();
       this.dispatchEvent(new CustomEvent('blur'));
-      this.reportIncompleteOnLeave();
     },
   });
 
@@ -354,24 +357,34 @@ export class GuiRangeDateInput extends LitElement {
   }
 
   /**
-   * A range left half-entered when focus leaves is abandoned work: some parts
-   * of one endpoint typed, or one endpoint filled and the other still empty
-   * (a picked start with no end lands here too). Both surface the incomplete
-   * message — or the endpoint's own message when one is outright invalid,
-   * which is more useful than "incomplete". `_validationTriggered` makes the
-   * next edit re-evaluate, so the message clears as soon as the user comes
-   * back and continues (or empties the fields). Public so a host picker can
-   * call it from its own whole-widget focus-leave check.
+   * What leaving does with whatever is in the fields. Public so a host picker
+   * can call it from its own whole-widget focus-leave check.
+   *
+   * A complete range is finished work, so leaving commits it exactly as Enter
+   * does — a user who typed a whole range and moved on gets the pill they
+   * plainly meant, and the same validation decides whether it is allowed.
+   *
+   * A half-entered one is abandoned work: some parts of one endpoint typed, or
+   * one endpoint filled and the other still empty (a picked start with no end
+   * lands here too). Both surface the incomplete message — or the endpoint's
+   * own message when one is outright invalid, which is more useful than
+   * "incomplete". `_validationTriggered` makes the next edit re-evaluate, so
+   * the message clears as soon as the user comes back and continues (or
+   * empties the fields).
    */
-  reportIncompleteOnLeave(): void {
+  finalizeOnLeave(): void {
     const endpoints = this.groups.map((group) => ({
       result: this.validateDateParts(group),
       empty: this._parts.isGroupEmpty(group, this.datePartTypes),
     }));
 
-    // Nothing entered, or a complete range the commit path already owns.
+    // Nothing entered: nothing to settle.
     if (endpoints.every((endpoint) => endpoint.empty)) return;
-    if (endpoints.every((endpoint) => endpoint.result.kind === 'valid')) return;
+
+    if (endpoints.every((endpoint) => endpoint.result.kind === 'valid')) {
+      this.tryCreatePill({ refocus: false });
+      return;
+    }
 
     const invalidMessage = endpoints
       .map((endpoint) => (endpoint.result.kind === 'invalid' ? endpoint.result.message : undefined))
@@ -429,7 +442,7 @@ export class GuiRangeDateInput extends LitElement {
     }
   }
 
-  private tryCreatePill() {
+  private tryCreatePill({ refocus = true }: { refocus?: boolean } = {}) {
     this._validationTriggered = true;
 
     const outcome = this.evaluateRange();
@@ -453,7 +466,7 @@ export class GuiRangeDateInput extends LitElement {
     );
 
     // Focus the first start date input
-    this._parts.focusFirst('start');
+    if (refocus) this._parts.focusFirst('start');
 
     this.requestUpdate();
   }

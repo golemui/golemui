@@ -34,6 +34,8 @@ export const runRangeTimePickerComponentTests = (mountFn: MountComponentFn) => {
       data?: Record<string, any>;
       lang?: string;
       props?: Record<string, any>;
+      validator?: Record<string, any>;
+      validateOn?: 'blur' | 'change' | 'submit' | 'eager';
       formSubmit?: (event: any) => void;
       readonly?: boolean;
       disabled?: boolean;
@@ -41,6 +43,7 @@ export const runRangeTimePickerComponentTests = (mountFn: MountComponentFn) => {
       mountFn({
         localization: identityTranslator(options?.lang ?? 'en-GB'),
         data: options?.data,
+        ...(options?.validateOn ? { validateOn: options.validateOn } : {}),
         formDef: defineForm({
           form: [
             {
@@ -49,6 +52,7 @@ export const runRangeTimePickerComponentTests = (mountFn: MountComponentFn) => {
               type: 'rangeTimePicker',
               path: 'myRanges',
               ...(options?.props ? { props: options.props } : {}),
+              ...(options?.validator ? { validator: options.validator as any } : {}),
               ...(options?.readonly !== undefined ? { readonly: options.readonly } : {}),
               ...(options?.disabled !== undefined ? { disabled: options.disabled } : {}),
             },
@@ -341,6 +345,52 @@ export const runRangeTimePickerComponentTests = (mountFn: MountComponentFn) => {
       cy.get('[data-cy="submitBtn_button"]').focus();
       cy.get(`[data-cy="${uid}_validator-error"]`).should('contain.text', 'Incomplete time');
       cy.get(sel.pillText).should('have.length', 0);
+    });
+
+    it('should commit a complete typed range when focus leaves, without Enter', () => {
+      const formSubmit = cy.stub().as('formSubmit');
+      mountRangeTimePicker({
+        props: { ...officeProps, allowCustomTime: true },
+        formSubmit,
+      });
+
+      cy.get(sel.startHour).click();
+      cy.focused().type('09');
+      cy.focused().type('30');
+      cy.get(sel.endHour).click();
+      cy.focused().type('11');
+      cy.focused().type('00');
+      cy.get(sel.pillText).should('have.length', 0);
+
+      // One click leaves the widget and submits: leaving commits the finished
+      // range, and it has to settle before the form reads its data.
+      submitAndGetData('@formSubmit').then((data: any) => {
+        expect(data).to.deep.equal({ myRanges: [{ start: '09:30:00', end: '11:00:00' }] });
+      });
+      cy.get(sel.pillText).should('have.length', 1);
+    });
+
+    it('should not raise a required error over the range the leave just committed', () => {
+      // Under validateOn: 'blur' the blur IS the only validation pass, and
+      // storing a value runs none. So the leave has to commit BEFORE it blurs,
+      // or the pass judges the empty value the commit is about to replace and
+      // `required` ends up standing over a range that is now there.
+      mountRangeTimePicker({
+        props: { ...officeProps, allowCustomTime: true },
+        validator: { type: 'array', required: true },
+        validateOn: 'blur',
+      });
+
+      cy.get(sel.startHour).click();
+      cy.focused().type('09');
+      cy.focused().type('30');
+      cy.get(sel.endHour).click();
+      cy.focused().type('11');
+      cy.focused().type('00');
+
+      cy.get('[data-cy="submitBtn_button"]').focus();
+      cy.get(sel.pillText).should('have.length', 1);
+      cy.get(`[data-cy="${uid}_validator-errors"]`).should('not.exist');
     });
 
     it('should not commit a range that spans a disabled block, keeping the values and showing the error', () => {

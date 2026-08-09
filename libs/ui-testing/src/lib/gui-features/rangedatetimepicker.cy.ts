@@ -421,6 +421,35 @@ export const runRangeDateTimePickerComponentTests = (mountFn: MountComponentFn) 
         cy.get(sel.pillText).should('not.exist');
       });
 
+      it('should commit a typed range with the click that leaves and submits', () => {
+        const formSubmit = cy.stub().as('formSubmit');
+        mountPicker({ formSubmit });
+
+        const typeGroup = (group: 'start' | 'end', day: string, hour: string) => {
+          cy.get(sel.triggerPart(group, 'month')).click();
+          cy.focused().type(mm);
+          cy.focused().type(day);
+          cy.focused().type(String(y));
+          cy.focused().type(hour);
+          cy.focused().type('00');
+        };
+
+        typeGroup('start', '13', '09');
+        typeGroup('end', '13', '11');
+        cy.get(sel.pillText).should('not.exist');
+
+        // One click leaves the widget and submits. Leaving commits the finished
+        // range, and it has to settle before the form reads its data —
+        // otherwise the range the user typed is silently missing from it.
+        cy.get('[data-cy="submitBtn_button"]').click({ force: true });
+        cy.get('@formSubmit').then((stub: any) => {
+          expect(stub.getCall(0).args[0].data.myRanges).to.deep.equal([
+            { start: dt(13, '09:00:00'), end: dt(13, '11:00:00') },
+          ]);
+        });
+        cy.get(sel.pillText).should('have.length', 1);
+      });
+
       it('should keep a half-finished range when the popover is closed and reopened', () => {
         mountPicker();
 

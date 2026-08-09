@@ -170,14 +170,17 @@ export class GuiRangeDateTimePicker extends LitElement {
   });
 
   /**
-   * The single point where the picker reports focus leaving the control: it
-   * blurs (which the form layer reads as "validate now") and lets the input
-   * surface a half-typed endpoint left behind.
+   * The single point where the picker reports focus leaving the control: the
+   * input settles what is in its fields — committing a complete range,
+   * surfacing a half-typed one — and only then does the picker blur, which the
+   * form layer reads as "validate now". Blurring first would validate the
+   * value the commit is about to replace.
    */
   private _focusLeave = new GUIFocusLeaveController(this, {
+    resolveSyncOnRelatedTarget: true,
     onLeave: () => {
+      this._dateRef?.finalizeOnLeave();
       this.dispatchEvent(new CustomEvent('blur'));
-      this._dateRef?.reportIncompleteOnLeave();
     },
   });
 
@@ -249,6 +252,7 @@ export class GuiRangeDateTimePicker extends LitElement {
           .workingEnd=${this._workingEnd}
           .workingStartTime=${this._workingStartTime}
           .workingEndTime=${this._workingEndTime}
+          .deferFocusLeave=${true}
           @blur=${this.onCalendarBlur}
           @change=${this.onCalendarChange}
           @partsChange=${this.onCalendarPartsChange}

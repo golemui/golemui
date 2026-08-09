@@ -220,6 +220,27 @@ export const runRangeDatePickerComponentTests = (mountFn: MountComponentFn) => {
       cy.get(sel.dayButton('2026-09-10')).should('exist').and('have.class', 'is-anchor');
     });
 
+    it('should commit a typed range with the click that leaves and submits', () => {
+      const formSubmitHandler = cy.stub().as('formSubmitHandler');
+      mountRangeDatePicker({ data: { myRanges: [juneRange] }, formSubmit: formSubmitHandler });
+
+      typeStart('06', '18', '2026');
+      typeEnd('06', '22', '2026');
+      cy.get(sel.pillText).should('have.length', 1);
+
+      // One click leaves the widget and submits the form. Leaving commits the
+      // finished range, and it has to settle before the form reads its data —
+      // otherwise the range the user typed is silently missing from it.
+      cy.get('[data-cy="submitBtn_button"]').click({ force: true });
+      cy.get('@formSubmitHandler').then((stub: any) => {
+        expect(stub.getCall(0).args[0].data.myRanges).to.deep.equal([
+          juneRange,
+          { start: '2026-06-18', end: '2026-06-22' },
+        ]);
+      });
+      cy.get(sel.pillText).should('have.length', 2);
+    });
+
     it('should report an incomplete range when only the span anchor was picked', () => {
       mountRangeDatePicker({ data: { myRanges: [juneRange] } });
 

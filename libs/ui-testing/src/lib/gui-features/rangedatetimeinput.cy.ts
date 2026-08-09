@@ -316,6 +316,25 @@ export const runRangeDateTimeInputComponentTests = (mountFn: MountComponentFn) =
       cy.get(sel.pillText).should('not.exist');
     });
 
+    it('should commit a complete range when focus leaves, without Enter', () => {
+      const formSubmitHandler = cy.stub().as('formSubmitHandler');
+      mountRangeDateTimeInput({ formSubmit: formSubmitHandler });
+
+      typeGroup('start', ['22', '11', '2026', '09', '00']);
+      typeGroup('end', ['22', '11', '2026', '11', '30']);
+      cy.get(sel.pillText).should('not.exist');
+
+      // Leaving acts as Enter: a range the user finished is not abandoned work,
+      // and the click that leaves is the same one that submits, so the commit
+      // has to settle before the form reads its data.
+      submitAndGetData('@formSubmitHandler').then((data: any) => {
+        expect(data).to.deep.equal({
+          myRanges: [{ start: '2026-11-22T09:00:00', end: '2026-11-22T11:30:00' }],
+        });
+      });
+      cy.get(sel.pillText).should('have.length', 1);
+    });
+
     it('should render disabled inputs when disabled', () => {
       mountRangeDateTimeInput({
         data: { myRanges: [{ start: '2026-11-22T09:00:00', end: '2026-11-22T10:00:00' }] },

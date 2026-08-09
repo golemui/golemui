@@ -154,6 +154,14 @@ export class GuiRangeDateTimeCalendar extends LitElement {
     | undefined = undefined;
   @property({ type: String, attribute: 'working-end-time' }) workingEndTime: string | undefined =
     undefined;
+  /**
+   * Set by host pickers that run their own whole-widget focus-leave check:
+   * moving from this calendar into the picker's trigger is not leaving the
+   * control, so the calendar leaves the commit to the host.
+   */
+  @property({ type: Boolean, attribute: 'defer-focus-leave' }) deferFocusLeave:
+    | boolean
+    | undefined = false;
 
   @state() protected _selection: RangeSelectionState = idleRangeSelection();
   @state() protected _invalidRange: { start: Date; end: Date } | null = null;
@@ -223,8 +231,16 @@ export class GuiRangeDateTimeCalendar extends LitElement {
     isYearGridOpen: () => this._nav.yearSelectorOpen,
   });
 
+  /**
+   * Leaving settles the working selection before blurring. Only a deliberate
+   * pick attempts a commit as it happens, so four pieces completed by typing a
+   * custom time sit here uncommitted — and leaving is as deliberate as Enter.
+   */
   private _focusLeave = new GUIFocusLeaveController(this, {
-    onLeave: () => this.dispatchEvent(new CustomEvent('blur', { bubbles: true, composed: true })),
+    onLeave: () => {
+      if (!this.deferFocusLeave) this.tryCommitWorkingRange();
+      this.dispatchEvent(new CustomEvent('blur', { bubbles: true, composed: true }));
+    },
   });
 
   /**
