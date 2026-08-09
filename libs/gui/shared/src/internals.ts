@@ -325,6 +325,7 @@ export type {
 } from './lib/widget.props';
 
 export type { GolemWidget } from './lib/widgets';
+export { actionWidgets, displayWidgets, inputWidgets, layoutWidgets } from './lib/widgets';
 
 // ─── golem-form (JSON form builder — currently used only by test libs) ───
 
