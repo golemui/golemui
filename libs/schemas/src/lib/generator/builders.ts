@@ -23,8 +23,7 @@ function schemaBearingEntries(
 
 /**
  * Builds the implementation's `widgets.schema.json`: the `formWidget` union and
- * the `knownWidgetTypes` enum, both derived from the same manifest so the two
- * lists can never disagree.
+ * the `knownWidgetTypes` enum, derived from one manifest so they cannot disagree.
  * @param config - The implementation's schema configuration.
  * @returns The schema object, ready to be serialized.
  */
@@ -102,8 +101,7 @@ export function buildFormEnvelope(config: ImplementationSchemaConfig): SchemaObj
 
 /**
  * Builds the implementation's `layout-widget.schema.json`: the union of the
- * manifest entries with kind `layout`. Used as the standalone `$schema` of
- * chunk files and as the repeater template type.
+ * layout-kind manifest entries, used by chunk files and repeater templates.
  * @param config - The implementation's schema configuration.
  * @returns The schema object, ready to be serialized.
  */
@@ -125,10 +123,8 @@ function importNameForSchemaFile(schemaFile: string): string {
 }
 
 /**
- * Builds the full TypeScript source of the implementation schema package's
- * `src/index.ts`: JSON imports for every component schema, the aggregate and
- * core re-exports, and the `COMPONENT_SCHEMAS_BY_TYPE` map keyed by widget
- * `type`.
+ * Builds the source of the implementation schema package's `src/index.ts`:
+ * schema imports, re-exports, and the `COMPONENT_SCHEMAS_BY_TYPE` map.
  * @param config - The implementation's schema configuration.
  * @returns The TypeScript source text (unformatted, run it through prettier).
  */
@@ -162,11 +158,7 @@ export function buildSchemasPackageIndex(config: ImplementationSchemaConfig): st
     `export { ${config.implementation}CoreRegistrations } from './lib/core-registrations';`,
     `export { ${componentExportNames.join(', ')} };`,
     '',
-    '/**',
-    ' * Component schemas keyed by widget `type`. Excludes the custom-widget',
-    ' * fallback schema (it has no single `type` const) and widget types that',
-    ' * have no JSON schema.',
-    ' */',
+    '/** Component schemas keyed by widget `type`. Excludes the custom fallback and schema-less types. */',
     'export const COMPONENT_SCHEMAS_BY_TYPE = {',
     ...mapEntries,
     '} as const;',

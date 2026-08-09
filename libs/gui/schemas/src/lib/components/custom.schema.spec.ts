@@ -236,9 +236,8 @@ describe('Custom widget schema validation', () => {
           expectedTypes.add(typeConst);
         }
       }
-      // Widget types without a component schema (not expressible in JSON) are
-      // listed in the enum so they are rejected instead of matching the custom
-      // fallback.
+      // Schema-less widget types are listed in the enum so they are rejected
+      // instead of matching the custom fallback.
       for (const entry of guiWidgetManifest) {
         if (entry.schemaFile === undefined) {
           expectedTypes.add(entry.type);

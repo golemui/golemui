@@ -33,10 +33,8 @@ const STRING_FORMATS = [
 ];
 const WIDGET_TYPES = Object.keys(COMPONENT_SCHEMAS);
 
-// Widget `type` values the schema lists as built-in but that have no component schema (for
-// example `renderer`, whose props hold a render function JSON cannot express). The published
-// schema rejects them entirely, so they must produce a hard error here instead of the
-// custom-widget warning or a fuzzy "did you mean" match.
+// Built-in types with no component schema (e.g. `renderer`). The published schema
+// rejects them, so they must get a hard error, not a warning or a fuzzy match.
 const SCHEMALESS_WIDGET_TYPES: ReadonlySet<string> = new Set(
   (
     ((WIDGETS_SCHEMA['$defs'] as Record<string, { enum?: unknown[] } | undefined> | undefined)?.[
@@ -103,8 +101,7 @@ function suggestForAdditional(propertyName: string, instancePath: string): strin
       'exclusiveMaximum',
     ];
     const guess = nearest(propertyName, validatorKeys);
-    // Don't suggest the same property name back - that means the property is valid for *some*
-    // validator type but not the one in use. The error message itself already conveys this.
+    // Don't suggest the same name back (valid for another validator type, the message says so).
     if (guess && guess !== propertyName) return `Did you mean \`${guess}\`?`;
     return undefined;
   }
@@ -154,12 +151,9 @@ function describe(value: unknown): string {
 }
 
 /**
- * Formats ajv error objects into AI-friendly messages with concrete fix suggestions.
- * Designed for the case where an LLM produced the form and needs to self-correct on next turn.
- *
- * When `dataRoot` is provided, `oneOf` branches at widget positions are collapsed to just the
- * closest-matching branch - without this, a single `type: 'buton'` typo emits ~30 errors (one per
- * non-matching branch + a summary), most of which are noise.
+ * Formats ajv errors into messages with concrete fix suggestions, aimed at an LLM
+ * self-correcting the form it produced. With `dataRoot`, widget `oneOf` branches
+ * collapse to the closest-matching one (a single typo otherwise emits ~30 errors).
  */
 export function formatAjvErrors(
   errors: ErrorObject[] | null | undefined,
@@ -292,19 +286,10 @@ function pickIntendedBranch(widget: unknown): { $id: string; type: string } | nu
 }
 
 /**
- * Replaces the `oneOf` error explosion with clean per-widget errors. The form schema is a `oneOf`
- * over 26 widget types - ajv with `allErrors: true` emits errors for *every* non-matching branch,
- * so a single typo produces ~30 errors, only one of which is useful. The intended branch is
- * additionally "silent" (no `$id` or const signal in the error stream) when its deep errors are
- * the only failure, which defeats any heuristic that tries to identify it from the error stream.
- *
- * Instead, we re-validate each widget against its intended branch's schema directly - picked from
- * the widget's actual `kind`+`type` data via {@link pickIntendedBranch}. Children/templates are
- * loosened in those schemas (see {@link getShallowWidgetValidator}) so we can recurse into them
- * one widget at a time, never triggering the global oneOf again.
- *
- * Top-level errors (form-level required, unknown root props, state expressions) are preserved
- * from the original validation pass.
+ * Replaces the `oneOf` error explosion (ajv emits errors for every non-matching
+ * branch) with per-widget errors: each widget is re-validated against the branch
+ * picked by {@link pickIntendedBranch}, using shallow schemas so recursion never
+ * triggers the global oneOf. Top-level errors are kept from the original pass.
  */
 function collapseOneOfErrors(
   errors: ErrorObject[],
@@ -328,14 +313,10 @@ function collapseOneOfErrors(
 }
 
 /**
- * Recursively validates a single widget against its intended branch's shallow schema, then
- * descends into its `children` / `props.template`. Errors are returned with full instance paths
- * (rooted at the form definition, not the widget).
- *
- * When the widget's `type` is set to something that doesn't match (even fuzzily) any built-in
- * widget, we treat it as a custom widget and emit a `warning` instead of a hard error - devs
- * who extend GolemUI with their own widget types shouldn't fail validation just because we
- * can't introspect their props.
+ * Validates one widget against its intended branch's shallow schema, then descends
+ * into `children` / `props.template`, emitting full instance paths. A `type` that
+ * matches no built-in (even fuzzily) is treated as a custom widget and produces a
+ * warning, not an error.
  */
 function collectWidgetErrors(
   widget: unknown,
@@ -343,9 +324,8 @@ function collectWidgetErrors(
   out: ErrorObject[],
   warnings: FormattedError[],
 ): void {
-  // A built-in type without a component schema (e.g. `renderer`) fails the published schema,
-  // so it must be a hard error. Checked before the fuzzy match, which could otherwise resolve
-  // it to a lookalike built-in (`renderer` is within edit distance of `repeater`).
+  // Schema-less built-ins (e.g. `renderer`) must fail hard. Checked before the fuzzy
+  // match, which could otherwise resolve `renderer` to `repeater` (within edit distance).
   const declaredType = (widget as { type?: unknown } | undefined)?.type;
   if (typeof declaredType === 'string' && SCHEMALESS_WIDGET_TYPES.has(declaredType)) {
     out.push({

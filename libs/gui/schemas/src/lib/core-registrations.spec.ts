@@ -15,8 +15,7 @@ describe('guiCoreRegistrations', () => {
     ]);
   });
 
-  // The base URL is hardcoded in core-registrations.ts, so assert it equals the config value the
-  // generated aggregates resolve their refs against.
+  // The base URL is hardcoded in core-registrations.ts, assert it matches the config.
   it('derives every retrieval URI from the schema config idBase', () => {
     for (const { key } of guiCoreRegistrations()) {
       expect(key.startsWith(`${guiSchemaConfig.idBase}core/`)).toBe(true);

@@ -22,17 +22,14 @@ export const LAYOUT_WIDGET_SCHEMA = layoutWidgetSchema as WidgetSchema;
 export const VALIDATORS_SCHEMA = validatorsSchema as WidgetSchema;
 
 /**
- * Fallback schema for user-registered custom components (any `type` not in COMPONENT_SCHEMAS).
- * Referenced by `widgets.schema.json`'s `formWidget` oneOf, so it must be registered for the form
- * validator to compile. Kept out of COMPONENT_SCHEMAS because it has no single `type` const.
+ * Fallback schema for custom components (any `type` not in COMPONENT_SCHEMAS, it has
+ * no single `type` const). The `formWidget` oneOf refs it, so it must be registered.
  */
 export const CUSTOM_SCHEMA = customSchema as WidgetSchema;
 
 /**
- * Component schemas, keyed by their widget `type` constant (the value of `properties.type.const`
- * in each schema). These keys match the literal string a user puts in `type: '...'`.
- * Re-exported from the generated `COMPONENT_SCHEMAS_BY_TYPE` map in `@golemui/gui-schemas`,
- * which is derived from the gui widget manifest.
+ * Component schemas keyed by the widget `type` const, re-exported from the
+ * generated `COMPONENT_SCHEMAS_BY_TYPE` map in `@golemui/gui-schemas`.
  */
 export const COMPONENT_SCHEMAS: Record<string, WidgetSchema> =
   COMPONENT_SCHEMAS_BY_TYPE as unknown as Record<string, WidgetSchema>;

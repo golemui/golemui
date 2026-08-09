@@ -73,9 +73,8 @@ describe('json_validate_form_definition', () => {
     expect(typoError?.suggestion).toMatch(/textinput/);
   });
 
-  // `renderer` is listed in knownWidgetTypes without a component schema, so the published
-  // schema rejects it. The validator must report a hard error (not the custom-widget warning,
-  // and not a fuzzy match to `repeater`, which is within edit distance).
+  // `renderer` is a schema-less built-in, so it must get a hard error (not the
+  // custom-widget warning, and not a fuzzy match to the nearby `repeater`).
   it('rejects the schema-less built-in type renderer with kind present', () => {
     const result = validateFormDefinition({
       formDefinition: {
@@ -359,10 +358,7 @@ describe('json_validate_form_definition', () => {
     expect(result.expressionWarnings.some((w) => /Unclosed/.test(w.message))).toBe(true);
   });
 
-  // ---------------------------------------------------------------------------
-  // Defensive-coding rules (R1-R4). Each has a positive case (must flag) and a
-  // negative case (must NOT flag).
-  // ---------------------------------------------------------------------------
+  // Defensive-coding rules (R1-R4), each with a positive (must flag) and a negative case.
 
   const formWith = (when: string) => ({
     formDefinition: {

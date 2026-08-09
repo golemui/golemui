@@ -31,9 +31,8 @@ describe('widget manifest to components directory parity', () => {
     }
   });
 
-  // The component $ids are handwritten while the generated aggregates derive their refs from
-  // guiSchemaConfig.idBase. A mismatch surfaces as opaque Ajv "can't resolve reference"
-  // failures, so this test asserts the convention directly.
+  // Component $ids are handwritten while generated refs derive from guiSchemaConfig.idBase,
+  // and a mismatch only surfaces as opaque Ajv resolve failures. Assert the convention.
   it('gives every component schema the $id derived from the config idBase', () => {
     for (const entry of guiWidgetManifest) {
       if (entry.schemaFile === undefined) {

@@ -85,11 +85,7 @@ export {
   customSchema,
 };
 
-/**
- * Component schemas keyed by widget `type`. Excludes the custom-widget
- * fallback schema (it has no single `type` const) and widget types that
- * have no JSON schema.
- */
+/** Component schemas keyed by widget `type`. Excludes the custom fallback and schema-less types. */
 export const COMPONENT_SCHEMAS_BY_TYPE = {
   calendar: calendarSchema,
   dateTimeCalendar: datetimecalendarSchema,

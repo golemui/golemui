@@ -1,11 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-// The vendored copies in this directory are generated verbatim from the
-// @golemui/schemas sources by `npm run generate:schemas`. The generator copies
-// bytes, so byte identity is the contract and the comparison runs on raw file
-// text. This spec fails when a source edit was not followed by regeneration,
-// when a new core file was added but never vendored, or when a vendored copy
-// no longer has a source.
+// Vendored copies are verbatim byte copies of the @golemui/schemas sources, so raw
+// file text must match. Fails on missed regeneration, unvendored or orphaned files.
 
 // @ts-expect-error import.meta.glob is provided by Vite/Vitest at runtime
 const vendoredFiles: Record<string, string> = import.meta.glob('./*.schema.json', {

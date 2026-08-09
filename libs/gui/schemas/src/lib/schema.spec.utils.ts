@@ -25,10 +25,8 @@ export function specValidationErrorsLogger(validate: any, data: any) {
   }
 }
 
-// Registers only when the id is new. `ajv.schemas` is the plain id-to-schema registry, while
-// `ajv.getSchema` compiles as a side effect, which fails while ref targets are still being
-// registered. The uniform guard also makes registerGolemSchemas safe to call twice on one
-// Ajv instance.
+// `ajv.getSchema` compiles on lookup and fails while ref targets are still missing,
+// so check the plain `ajv.schemas` registry. Also makes repeated registration safe.
 function addSchemaOnce(ajv: Ajv2020, schema: any, key?: string): void {
   const id = key ?? (schema?.$id as string | undefined);
   if (id && !ajv.schemas[id]) {
@@ -37,9 +35,8 @@ function addSchemaOnce(ajv: Ajv2020, schema: any, key?: string): void {
 }
 
 export function registerGolemSchemas(ajv: Ajv2020) {
-  // Component refs like `../core/common.schema.json` resolve against the
-  // component $id to the gui/core/ retrieval URIs, registered first as
-  // $id-stripped clones (see core-registrations.ts).
+  // Register the $id-stripped clones first so component refs resolve to the
+  // gui/core/ retrieval URIs (see core-registrations.ts).
   for (const { key, schema } of guiCoreRegistrations()) {
     addSchemaOnce(ajv, schema, key);
   }
@@ -50,9 +47,8 @@ export function registerGolemSchemas(ajv: Ajv2020) {
   addSchemaOnce(ajv, widgetsSchema);
 
   // @ts-expect-error The 'import.meta' meta-property is only allowed when the '--module' option is 'es2020', 'es2022', 'esnext', 'system', 'node16', 'node18', 'node20', or 'nodenext'.ts(1343)
-  // Automatically assemble all component schemas in this folder. The glob must
-  // stay scoped to components/ and never descend into core/, which is already
-  // registered above under two URI sets.
+  // Register every component schema in this folder. The glob must not descend
+  // into core/, which is already registered above under two URI sets.
   const componentSchemas: Record<string, any> = import.meta.glob('./components/*.schema.json', {
     // { eager: true, import: 'default' } resolves the JSON objects directly
     eager: true,

@@ -4,27 +4,15 @@ import validatorsSchema from './core/validators.schema.json';
 const GUI_CORE_BASE = 'https://golemui.com/schemas/gui/core/';
 
 /**
- * Extra Ajv registrations for the vendored core schemas.
- *
- * Component schemas reference the vendored copies with relative refs like
- * `../core/common.schema.json`. Resolved against a component `$id`
- * (`https://golemui.com/schemas/gui/components/...`) that yields the retrieval
- * URI `https://golemui.com/schemas/gui/core/common.schema.json`, while the
- * vendored files declare the canonical core `$id`
- * (`https://golemui.com/schemas/core/common.schema.json`, byte-identical to the
- * `@golemui/schemas` source). Ajv resolves refs by registered id only, and
- * registering the same `$id` twice throws, so each vendored schema is
- * registered a second time as an `$id`-stripped clone under its gui-tree
- * retrieval URI. A keyed schema without `$id` uses its key as base URI, which
- * also resolves the validators-to-common ref between the two clones.
- *
- * @returns One `{key, schema}` pair per vendored core schema, for
- * `ajv.addSchema(schema, key)`.
+ * Extra Ajv registrations for the vendored core schemas. Component refs like
+ * `../core/common.schema.json` resolve to gui/core/ retrieval URIs, while the
+ * vendored files carry the canonical core `$id`. Ajv throws on a duplicate
+ * `$id`, so each schema is also provided as an `$id`-stripped clone keyed by
+ * its gui-tree retrieval URI.
+ * @returns One `{key, schema}` pair per vendored core schema, for `ajv.addSchema(schema, key)`.
  * @example
  * for (const { key, schema } of guiCoreRegistrations()) {
- *   if (!ajv.getSchema(key)) {
- *     ajv.addSchema(schema, key);
- *   }
+ *   ajv.addSchema(schema, key);
  * }
  */
 export function guiCoreRegistrations(): Array<{ key: string; schema: Record<string, unknown> }> {

@@ -116,9 +116,7 @@ describe('buildSchemasPackageIndex', () => {
     expect(source.startsWith('// GENERATED')).toBe(true);
   });
 
-  // The core registrations re-export is named after the implementation, and the target file is
-  // handwritten in each implementation package. Assert the interpolation so a config for a second
-  // implementation emits the matching name.
+  // The re-export name derives from the implementation, assert it with a non-gui config.
   it('names the core registrations re-export after the implementation', () => {
     const source = buildSchemasPackageIndex({ ...testConfig, implementation: 'kendo' });
     expect(source).toContain(`export { kendoCoreRegistrations } from './lib/core-registrations';`);

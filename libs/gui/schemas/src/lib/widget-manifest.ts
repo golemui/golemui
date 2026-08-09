@@ -1,10 +1,9 @@
 import type { ImplementationSchemaConfig, WidgetManifestEntry } from '@golemui/schemas';
 
 /**
- * The gui widget manifest: the single source of truth for the generated gui
- * schema files. Mirrors the four widget arrays in
- * `libs/gui/shared/src/lib/widgets.ts` (a spec keeps them in sync). Schema
- * file names are the widget type lowercased with no separators.
+ * The gui widget manifest, the single source of truth for the generated gui
+ * schema files. A spec keeps it in sync with the widget arrays in
+ * `libs/gui/shared/src/lib/widgets.ts`.
  */
 export const guiWidgetManifest: readonly WidgetManifestEntry[] = [
   { type: 'calendar', schemaFile: 'calendar.schema.json', kind: 'input' },
@@ -50,8 +49,8 @@ export const guiWidgetManifest: readonly WidgetManifestEntry[] = [
 ];
 
 /**
- * The gui implementation's schema generation configuration, consumed by
- * `tools/generate-schemas.ts` (run with `npm run generate:schemas`).
+ * The gui schema generation config, consumed by `tools/generate-schemas.ts`
+ * (run with `npm run generate:schemas`).
  */
 export const guiSchemaConfig: ImplementationSchemaConfig = {
   implementation: 'gui',

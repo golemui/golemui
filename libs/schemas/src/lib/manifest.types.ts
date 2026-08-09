@@ -1,14 +1,9 @@
-/**
- * The widget categories shared by every implementation. Matches the `kind`
- * field of the widgets an implementation produces at runtime.
- */
+/** The widget categories shared by every implementation, matching the runtime widget `kind` field. */
 export type WidgetKind = 'input' | 'layout' | 'display' | 'action';
 
 /**
- * One widget type of an implementation, as declared in its widget manifest.
- * The manifest is the single source of truth from which the implementation's
- * aggregate schema files are generated.
- *
+ * One widget type in an implementation's manifest, the single source of truth
+ * for the generated aggregate schema files.
  * @example
  * const entry: WidgetManifestEntry = {
  *   type: 'dateTimeCalendar',
@@ -20,9 +15,8 @@ export interface WidgetManifestEntry {
   /** The widget `type` const used in JSON form definitions, e.g. `dateTimeCalendar`. */
   readonly type: string;
   /**
-   * File name of the component schema inside the implementation's `components/`
-   * directory. Absent for widget types that cannot be expressed in JSON (for
-   * example a widget whose props contain a function).
+   * Component schema file name inside the implementation's `components/` directory.
+   * Absent for widget types that JSON cannot express (e.g. props holding a function).
    */
   readonly schemaFile?: string;
   /** The widget category. Entries with kind `layout` form the layout-widget union. */
@@ -32,7 +26,6 @@ export interface WidgetManifestEntry {
 /**
  * Everything the schema builders need to generate one implementation's
  * aggregate schema files.
- *
  * @example
  * const config: ImplementationSchemaConfig = {
  *   implementation: 'gui',
@@ -49,9 +42,8 @@ export interface ImplementationSchemaConfig {
   /** The implementation's widget manifest. */
   readonly manifest: readonly WidgetManifestEntry[];
   /**
-   * When true, widget types without a `schemaFile` are still listed in the
-   * generated `knownWidgetTypes` enum. Their `type` then fails validation
-   * entirely instead of matching the custom-widget fallback.
+   * When true, schema-less widget types are still listed in `knownWidgetTypes`,
+   * so their `type` fails validation instead of matching the custom fallback.
    */
   readonly includeSchemalessTypesInKnownWidgetTypes: boolean;
 }

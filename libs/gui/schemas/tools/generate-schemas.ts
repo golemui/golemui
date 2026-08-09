@@ -1,16 +1,12 @@
 /**
- * Generates the gui schema tree from the widget manifest
- * (src/lib/widget-manifest.ts) using the builders exported by @golemui/schemas.
- *
- * Emits, all committed and checked for staleness in CI:
- * - src/lib/widgets.schema.json         the formWidget union + knownWidgetTypes enum
- * - src/lib/form.schema.json            the form envelope
- * - src/lib/layout-widget.schema.json   the layout widget union
- * - src/lib/core/*.schema.json          vendored copies of the @golemui/schemas core files
- * - src/index.ts                        the package entry point + COMPONENT_SCHEMAS_BY_TYPE
- *
- * Every output is formatted through the prettier API so `nx format:write`
- * never changes generated files. Run with `npm run generate:schemas`.
+ * Generates the gui schema tree from the widget manifest using the
+ * @golemui/schemas builders. Emits, all committed and staleness-checked in CI:
+ * - src/lib/widgets.schema.json         formWidget union + knownWidgetTypes enum
+ * - src/lib/form.schema.json            form envelope
+ * - src/lib/layout-widget.schema.json   layout widget union
+ * - src/lib/core/*.schema.json          vendored @golemui/schemas core copies
+ * - src/index.ts                        package entry point + COMPONENT_SCHEMAS_BY_TYPE
+ * Outputs are prettier-formatted. Run with `npm run generate:schemas`.
  */
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
@@ -23,8 +19,7 @@ import {
 } from '@golemui/schemas';
 import { guiSchemaConfig } from '../src/lib/widget-manifest';
 
-// npm scripts always run at the repo root. import.meta is not available here
-// because this project's tsconfig compiles with module commonjs.
+// cwd is the repo root for npm scripts (import.meta is unavailable under module commonjs).
 const REPO_ROOT = process.cwd();
 const PACKAGE_ROOT = join(REPO_ROOT, 'libs', 'gui', 'schemas');
 const LIB_DIR = join(PACKAGE_ROOT, 'src', 'lib');
@@ -54,10 +49,8 @@ async function main(): Promise<void> {
     join(LIB_DIR, 'layout-widget.schema.json'),
     buildLayoutWidgetSchema(guiSchemaConfig),
   );
-  // Vendored copies are verbatim byte copies of the @golemui/schemas sources,
-  // never re-serialized, so the drift test can require byte identity. The file
-  // list comes from the source directory so a newly added core file cannot be
-  // silently skipped.
+  // Copy core files verbatim so the drift test can require byte identity. Listing
+  // the source directory means a newly added core file cannot be skipped.
   const coreFiles = coreSchemaFileNames(CORE_SOURCE_DIR);
   for (const coreFile of coreFiles) {
     outputs.push({
@@ -77,8 +70,7 @@ async function main(): Promise<void> {
     console.log(`Wrote ${relative(REPO_ROOT, output.path)} (${output.content.length} bytes)`);
   }
 
-  // A core file removed from @golemui/schemas is not deleted here automatically. Fail so the
-  // stale vendored copy cannot keep shipping (and keep being registered by the spec utilities).
+  // Removed core sources are not auto-deleted here. Fail so a stale vendored copy cannot ship.
   const orphanedVendoredFiles = coreSchemaFileNames(join(LIB_DIR, 'core')).filter(
     (file) => !coreFiles.includes(file),
   );
