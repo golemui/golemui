@@ -15,17 +15,23 @@ function buildAjv(): AjvInstance {
     verbose: true,
   });
   addFormats(ajv);
-  for (const schema of ALL_SCHEMAS) {
-    if (typeof schema.$id === 'string' && !ajv.getSchema(schema.$id)) {
-      ajv.addSchema(schema);
+  // Dedupe with a plain set of seen keys. `ajv.getSchema` is not a safe guard here because it
+  // compiles an already-registered schema, and compiling before every ref target is registered
+  // crashes with MissingRefError. For the same reason the gui/core/ clones are registered
+  // first: component refs like `../core/common.schema.json` resolve against the component $id
+  // to the gui/core/ retrieval URIs, which the clones provide (the vendored files themselves
+  // carry the canonical core $id).
+  const registeredKeys = new Set<string>();
+  for (const { key, schema } of guiCoreRegistrations()) {
+    if (!registeredKeys.has(key)) {
+      registeredKeys.add(key);
+      ajv.addSchema(schema, key);
     }
   }
-  // Component refs like `../core/common.schema.json` resolve against the
-  // component $id to the gui/core/ retrieval URIs, registered here as
-  // $id-stripped clones of the vendored core schemas.
-  for (const { key, schema } of guiCoreRegistrations()) {
-    if (!ajv.getSchema(key)) {
-      ajv.addSchema(schema, key);
+  for (const schema of ALL_SCHEMAS) {
+    if (typeof schema.$id === 'string' && !registeredKeys.has(schema.$id)) {
+      registeredKeys.add(schema.$id);
+      ajv.addSchema(schema);
     }
   }
   return ajv;
