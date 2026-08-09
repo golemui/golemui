@@ -1,5 +1,6 @@
 export { default as commonSchema } from './lib/core/common.schema.json';
 export { default as validatorsSchema } from './lib/core/validators.schema.json';
+export { default as legacyFormAliasSchema } from './lib/form.schema.json';
 export type {
   ImplementationSchemaConfig,
   WidgetKind,
