@@ -210,13 +210,19 @@ export type CalendarProps = {
   numberOfMonths?: number;
 };
 
+/** Shared by every typed date/time widget that can be left half-filled. */
+export type IncompleteMessageProps = {
+  incompleteMessage?: Localizable;
+};
+
 /**
  * Calendar with an embedded time picker. The value is a local ISO date-time
  * (YYYY-MM-DDTHH:mm:ss), emitted only when both the day and the time are
  * selected; picking a different day clears the time and emits null. With
  * numberOfMonths > 1 the time row and grid render on the first panel only.
  */
-export type DateTimeCalendarProps = CalendarProps & {
+export type DateTimeCalendarProps = CalendarProps &
+  IncompleteMessageProps & {
   /** '12' or '24'. Defaults to the locale's hour cycle. */
   hourFormat?: '12' | '24';
   /** Minutes between selectable slots. Defaults to 30. */
@@ -340,7 +346,7 @@ export type RangeCalendarProps = {
   removePillAriaLabel?: string;
 };
 
-export type DateinputProps = {
+export type DateinputProps = IncompleteMessageProps & {
   hint?: string;
   icon?: string;
   dayAriaLabel?: string;
@@ -355,7 +361,7 @@ export type DateinputProps = {
   maxDateMessage?: Localizable;
 };
 
-export type DateTimeInputProps = {
+export type DateTimeInputProps = IncompleteMessageProps & {
   hint?: string;
   icon?: string;
   dayAriaLabel?: string;
@@ -381,7 +387,7 @@ export type DateTimeInputProps = {
   maxTimeMessage?: Localizable;
 };
 
-export type TimeInputProps = {
+export type TimeInputProps = IncompleteMessageProps & {
   hint?: string;
   icon?: string;
   hourAriaLabel?: string;
@@ -424,7 +430,7 @@ export type TimePickerProps = TimeInputProps &
     noAvailableTimesMessage?: Localizable;
   };
 
-export type RangeDateInputProps = {
+export type RangeDateInputProps = IncompleteMessageProps & {
   hint?: string;
   icon?: string;
   separator?: string;
@@ -500,7 +506,7 @@ export type RangeDateTimeCalendarProps = Omit<
   disabledDayCountAriaLabel?: Localizable;
 };
 
-export type RangeTimeInputProps = {
+export type RangeTimeInputProps = IncompleteMessageProps & {
   hint?: string;
   icon?: string;
   separator?: string;
@@ -522,7 +528,7 @@ export type RangeTimeInputProps = {
   rangeOrderMessage?: Localizable;
 };
 
-export type RangeDateTimeInputProps = {
+export type RangeDateTimeInputProps = IncompleteMessageProps & {
   hint?: string;
   icon?: string;
   separator?: string;
