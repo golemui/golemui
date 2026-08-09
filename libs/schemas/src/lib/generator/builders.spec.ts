@@ -17,6 +17,7 @@ const testConfig: ImplementationSchemaConfig = {
     { type: 'renderer', kind: 'display' },
     { type: 'button', schemaFile: 'button.schema.json', kind: 'action' },
   ],
+  libRootSchemaFiles: ['ranges.schema.json', 'validators.schema.json'],
   includeSchemalessTypesInKnownWidgetTypes: true,
 };
 
@@ -105,6 +106,10 @@ describe('buildSchemasPackageIndex', () => {
     expect(source).toContain(`import customSchema from './lib/components/custom.schema.json';`);
     expect(source).toContain(
       `export { default as commonSchema } from './lib/core/common.schema.json';`,
+    );
+    expect(source).toContain(`export { default as rangesSchema } from './lib/ranges.schema.json';`);
+    expect(source).toContain(
+      `export { default as validatorsSchema } from './lib/validators.schema.json';`,
     );
     expect(source).toContain(
       `export { default as widgetsSchema } from './lib/widgets.schema.json';`,

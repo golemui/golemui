@@ -31,6 +31,7 @@ export interface WidgetManifestEntry {
  *   implementation: 'gui',
  *   idBase: 'https://golemui.com/schemas/gui/',
  *   manifest: guiWidgetManifest,
+ *   libRootSchemaFiles: ['ranges.schema.json', 'validators.schema.json'],
  *   includeSchemalessTypesInKnownWidgetTypes: true,
  * };
  */
@@ -41,6 +42,12 @@ export interface ImplementationSchemaConfig {
   readonly idBase: string;
   /** The implementation's widget manifest. */
   readonly manifest: readonly WidgetManifestEntry[];
+  /**
+   * Handwritten schema files at the implementation package's `src/lib/` root,
+   * e.g. `validators.schema.json`. Each is re-exported from the generated index
+   * under its derived name (`validators.schema.json` exports `validatorsSchema`).
+   */
+  readonly libRootSchemaFiles: readonly string[];
   /**
    * When true, schema-less widget types are still listed in `knownWidgetTypes`,
    * so their `type` fails validation instead of matching the custom fallback.

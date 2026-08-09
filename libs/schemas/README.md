@@ -9,18 +9,23 @@ manifest.
 ```text
 schemas/
   core/common.schema.json        shared structural $defs (baseWidget, localizable, chunkRef, ...)
-  core/validators.schema.json    the standard validator set
   form.schema.json               legacy alias for the published site tree (see below)
 ```
 
-The published tree at `https://golemui.com/schemas/` layers these core resources with one
+Core publishes exactly one `$defs` resource: `common.schema.json`. Validation vocabulary is
+implementation-owned, not core contract. Each implementation publishes its own validators
+schema exposing a `#/$defs/validator` entry pointer (the gui set lives at
+`schemas/gui/validators.schema.json` in the published tree).
+
+The published tree at `https://golemui.com/schemas/` layers this core resource with one
 directory per implementation:
 
 ```text
 schemas/
   core/                          from this package
   form.schema.json               legacy alias, from this package
-  gui/                           from @golemui/gui-schemas (generated aggregates + vendored core/)
+  gui/                           from @golemui/gui-schemas (generated aggregates, gui-owned
+                                 validators and ranges defs, vendored core/)
 ```
 
 ## The legacy alias
@@ -41,6 +46,6 @@ envelope, its `layout-widget.schema.json`, its vendored copy of `schemas/core/`,
 package index source. The gui implementation does this in
 `libs/gui/schemas/tools/generate-schemas.ts`, run with `npm run generate:schemas`.
 
-Editing workflow for the core files: change them here, then run `npm run generate:schemas`
+Editing workflow for the core file: change it here, then run `npm run generate:schemas`
 so every vendored copy is regenerated. A drift test keeps vendored copies byte-identical to
-the sources, and CI fails when generated files are stale.
+the source, and CI fails when generated files are stale.
