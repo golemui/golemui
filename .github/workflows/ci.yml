@@ -30,6 +30,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Check generated schemas are up to date
+        run: |
+          npm run generate:schemas
+          git diff --exit-code -- libs/schemas libs/gui/schemas
+
       - name: Build affected
         run: npx nx affected --target=build
 
