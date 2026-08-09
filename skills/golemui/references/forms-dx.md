@@ -171,11 +171,16 @@ Reference: https://golemui.com/dx/widgets-reference/input-fields/currency.md
 Call: `gui.inputs.dateInput(path, { label, minDate?, maxDate?, validator? })`
 
 ```ts
-gui.inputs.dateInput('startDate', { label: 'Start date', validator: { required: true } });
+gui.inputs.dateInput('startDate', {
+  label: 'Start date',
+  incompleteMessage: 'Incomplete date!',
+  validator: { required: true },
+});
 ```
 
 - Typed date entry, NO calendar UI — use only when keyboard-first entry is wanted. For most dates use `datePicker` (popover calendar) instead. Accepts the loose `{ required: true }`.
 - `minDate` / `maxDate` (ISO `YYYY-MM-DD` strings) constrain the accepted range — see `datePicker`.
+- `incompleteMessage` overrides the "incomplete" error surfaced when focus leaves a partial entry — see `datePicker`.
 
 Reference: https://golemui.com/dx/widgets-reference/input-fields/dateinput.md
 
@@ -193,6 +198,7 @@ gui.inputs.datePicker('startDate', {
 
 - THE DEFAULT single-date field: a text field with a popover calendar (click to open). Prefer this for most dates. (`calendar` = always-visible inline calendar; `dateInput` = typed entry, no calendar UI.) Accepts the loose `{ required: true }` validator.
 - Bound the selectable range with **`minDate`** / **`maxDate`** — ISO `YYYY-MM-DD` strings. For "today or later" set `minDate` to today’s date; for "not in the future" set `maxDate` to today. Same `minDate`/`maxDate` on `calendar`, `dateInput`, and the range date widgets.
+- A partially typed date abandoned on focus leave flips the value to null — flagging the field even when optional — and surfaces an "incomplete" error; **`incompleteMessage`** overrides its wording. The same prop exists on every typed date/time widget (the inputs, the pickers, `dateTimeCalendar` and the range inputs/pickers), and an emptied widget clears the error on the next focus leave.
 
 Reference: https://golemui.com/dx/widgets-reference/input-fields/date-picker.md
 
@@ -210,7 +216,7 @@ gui.inputs.dateTimeCalendar('appointmentAt', {
 
 - An INLINE calendar with an embedded time picker: a segmented time input between the header and the days grid opens a time grid in place of the days (like the year selector).
 - Emits a local ISO date-time (`YYYY-MM-DDTHH:mm:ss`) only when BOTH day and time are selected — pair with a `{ type: 'string', format: 'date-time' }` validator. The time picker is usable before a day is picked, and picking a different day KEEPS the chosen time (re-emitting the full value), so the two halves can be chosen in either order.
-- Half-finished entries never emit: the value goes to null — flagging the field even when it is optional — only once focus leaves the widget with one half missing, which surfaces an "incomplete" message.
+- Half-finished entries never emit: the value goes to null — flagging the field even when it is optional — only once focus leaves the widget with one half missing, which surfaces an "incomplete" message (`incompleteMessage` overrides its wording).
 - `disabledTimeRanges` entries take `start`/`end` ISO times plus optional `date` (ISO date) and/or `weekdays` (getDay() numbering: 0=Sunday … 6=Saturday) to scope the range to specific days.
 
 Reference: https://golemui.com/dx/widgets-reference/input-fields/datetimecalendar.md
@@ -224,6 +230,7 @@ gui.inputs.dateTimeInput('meetingAt', { label: 'Meeting at' });
 ```
 
 - Typed date+time entry in one locale-ordered row. Emits a local ISO date-time (`YYYY-MM-DDTHH:mm:ss`) — pair with the `{ format: 'date-time' }` validator. `hourFormat`/`minuteStep` as in `timeInput`.
+- `incompleteMessage` overrides the "incomplete" error surfaced when focus leaves a partial entry — see `datePicker`.
 
 Reference: https://golemui.com/dx/widgets-reference/input-fields/datetimeinput.md
 
@@ -241,7 +248,7 @@ gui.inputs.dateTimePicker('appointmentAt', {
 
 - A compact date-time FIELD that opens a `dateTimeCalendar` POPOVER on focus — the space-saving counterpart to the inline `dateTimeCalendar`, like `datePicker` is to `calendar`.
 - Emits a local ISO date-time (`YYYY-MM-DDTHH:mm:ss`); the popover closes only when BOTH day and time are selected. Pair with a `{ type: 'string', format: 'date-time' }` validator.
-- Takes the same time props as `dateTimeCalendar` (`minTime`/`maxTime`/`minuteStep`/`disabledTimeRanges` with per-date/weekday scoping/`allowCustomTime`) plus `icon` and `invalidDateMessage` for the typed input.
+- Takes the same time props as `dateTimeCalendar` (`minTime`/`maxTime`/`minuteStep`/`disabledTimeRanges` with per-date/weekday scoping/`allowCustomTime`) plus `icon`, `invalidDateMessage` and `incompleteMessage` for the typed input.
 
 Reference: https://golemui.com/dx/widgets-reference/input-fields/datetimepicker.md
 
@@ -437,6 +444,7 @@ gui.inputs.rangeDateInput('stayDates', { label: 'Stay dates' });
 ```
 
 - Typed start–end date **range** entry (the range sibling of `dateInput`).
+- `incompleteMessage` overrides the "incomplete" error surfaced when focus leaves with only one endpoint filled — see `datePicker`.
 
 Reference: https://golemui.com/dx/widgets-reference/input-fields/range-date-input.md
 
@@ -448,7 +456,7 @@ Call: `gui.inputs.rangeDatePicker(path, { label? })`
 gui.inputs.rangeDatePicker('stayDates', { label: 'Stay dates' });
 ```
 
-- Popover calendar for a start–end date **range** (the range sibling of `datePicker`). A span with only its first day picked is held by the picker, so it survives closing and reopening the popover.
+- Popover calendar for a start–end date **range** (the range sibling of `datePicker`). A span with only its first day picked is held by the picker, so it survives closing and reopening the popover. Leaving it that way surfaces an "incomplete" error (`incompleteMessage` overrides its wording).
 
 Reference: https://golemui.com/dx/widgets-reference/input-fields/range-date-picker.md
 
@@ -483,6 +491,7 @@ gui.inputs.rangeDateTimeInput('window', {
 
 - Typed start–end date-time **range** entry (the range sibling of `dateTimeInput`); value is `DateTimeRange[]`. A backward selection reorders (swaps) instead of erroring.
 - Each endpoint is an instant, so it is bounded by instants: use **`minDateTime`** / **`maxDateTime`** (ISO `YYYY-MM-DDTHH:mm:ss`), not `minDate`/`maxDate`. There is no `minTime`/`maxTime` here — a per-day time window is a different constraint from an instant bound.
+- `incompleteMessage` overrides the "incomplete" error surfaced when focus leaves with only one endpoint filled — see `datePicker`.
 
 Reference: https://golemui.com/dx/widgets-reference/input-fields/range-datetime-input.md
 
@@ -498,7 +507,7 @@ gui.inputs.rangeDateTimePicker('stay', {
 });
 ```
 
-- POPOVER date-time range picker: the typed `rangeDateTimeInput` as the trigger (pills live there) with the `rangeDateTimeCalendar` in a dropdown. Value is `DateTimeRange[]`. Committing a pill keeps the popover open so several ranges can be added; it closes on outside-click, blur or Escape. A half-finished selection is held by the picker, so it survives closing and reopening the popover.
+- POPOVER date-time range picker: the typed `rangeDateTimeInput` as the trigger (pills live there) with the `rangeDateTimeCalendar` in a dropdown. Value is `DateTimeRange[]`. Committing a pill keeps the popover open so several ranges can be added; it closes on outside-click, blur or Escape. A half-finished selection is held by the picker, so it survives closing and reopening the popover. Leaving it that way surfaces an "incomplete" error (`incompleteMessage` overrides its wording).
 - Everything is in instant-space: bounds are **`minDateTime`** / **`maxDateTime`** and **`disabledRanges`** are `DateTimeRange[]` instant spans (block a whole day with `00:00:00`–`23:59:59`). There is no `minDate`/`maxDate`/`minTime`/`maxTime`/`disabledTimeRanges`.
 
 Reference: https://golemui.com/dx/widgets-reference/input-fields/range-datetime-picker.md
@@ -512,6 +521,7 @@ gui.inputs.rangeTimeInput('shift', { label: 'Shift', minTime: '06:00:00', maxTim
 ```
 
 - Typed start–end time **range** entry (the range sibling of `timeInput`); value is `TimeRange[]`. End time must be after start time.
+- `incompleteMessage` overrides the "incomplete" error surfaced when focus leaves with only one endpoint filled — see `datePicker`.
 
 Reference: https://golemui.com/dx/widgets-reference/input-fields/range-time-input.md
 
@@ -524,6 +534,7 @@ gui.inputs.rangeTimePicker('shift', { label: 'Shift', minTime: '06:00:00', maxTi
 ```
 
 - Two-list popover for a start–end time **range** (the range sibling of `timePicker`); value is `TimeRange[]`. Either list can be used first — an end picked before a start simply waits — and the range commits once both are set. Once an in is chosen the out list floors one slot after it so end is strictly after start.
+- `incompleteMessage` overrides the "incomplete" error surfaced when focus leaves with only one endpoint set — see `datePicker`.
 
 Reference: https://golemui.com/dx/widgets-reference/input-fields/range-time-picker.md
 
@@ -629,6 +640,7 @@ gui.inputs.timeInput('meetingTime', { label: 'Meeting time', minuteStep: 15 });
 ```
 
 - Typed time entry (hh:mm segments). Emits an ISO time string (`HH:mm:ss`) — pair with the `{ format: 'time' }` validator. `hourFormat` forces '12'/'24' (default: locale); `minuteStep` sets the arrow-key minute increment.
+- `incompleteMessage` overrides the "incomplete" error surfaced when focus leaves a partial entry — see `datePicker`.
 
 Reference: https://golemui.com/dx/widgets-reference/input-fields/timeinput.md
 
@@ -646,6 +658,7 @@ gui.inputs.timePicker('meetingTime', {
 ```
 
 - Time field with a popover list of slots built from `minTime`..`maxTime` stepping `minuteStep` (default 30). `disabledRanges` (`{ start, end }[]`, inclusive) greys slots out. Typing is off unless `allowCustomTime: true`. Emits `HH:mm:ss` — pair with the `{ format: 'time' }` validator.
+- `incompleteMessage` overrides the "incomplete" error surfaced when focus leaves a partial typed entry — see `datePicker`.
 
 Reference: https://golemui.com/dx/widgets-reference/input-fields/timepicker.md
 
