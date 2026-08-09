@@ -1,5 +1,5 @@
 import type { ErrorObject } from 'ajv';
-import { COMPONENT_SCHEMAS } from './schemas/index';
+import { COMPONENT_SCHEMAS, WIDGETS_SCHEMA } from './schemas/index';
 import {
   getShallowWidgetValidator,
   getValidatorBranchValidator,
@@ -33,11 +33,23 @@ const STRING_FORMATS = [
 ];
 const WIDGET_TYPES = Object.keys(COMPONENT_SCHEMAS);
 
+// Widget `type` values the schema lists as built-in but that have no component schema (for
+// example `renderer`, whose props hold a render function JSON cannot express). The published
+// schema rejects them entirely, so they must produce a hard error here instead of the
+// custom-widget warning or a fuzzy "did you mean" match.
+const SCHEMALESS_WIDGET_TYPES: ReadonlySet<string> = new Set(
+  (
+    ((WIDGETS_SCHEMA['$defs'] as Record<string, { enum?: unknown[] } | undefined> | undefined)?.[
+      'knownWidgetTypes'
+    ]?.enum ?? []) as string[]
+  ).filter((type) => !COMPONENT_SCHEMAS[type]),
+);
+
 function levenshtein(a: string, b: string): number {
   if (a === b) return 0;
   if (!a.length) return b.length;
   if (!b.length) return a.length;
-  // One-row dynamic programming — O(min(a,b)) memory, no nested arrays to defensively assert on.
+  // One-row dynamic programming - O(min(a,b)) memory, no nested arrays to defensively assert on.
   let prev = new Array<number>(b.length + 1);
   let curr = new Array<number>(b.length + 1);
   for (let j = 0; j <= b.length; j++) prev[j] = j;
@@ -65,7 +77,7 @@ function nearest(target: string, candidates: string[]): string | undefined {
       best = c;
     }
   }
-  // Only suggest if the typo is close (≤ half the length of the target).
+  // Only suggest if the typo is close (at most half the length of the target).
   return bestDist <= Math.max(2, Math.floor(target.length / 2)) ? best : undefined;
 }
 
@@ -91,7 +103,7 @@ function suggestForAdditional(propertyName: string, instancePath: string): strin
       'exclusiveMaximum',
     ];
     const guess = nearest(propertyName, validatorKeys);
-    // Don't suggest the same property name back — that means the property is valid for *some*
+    // Don't suggest the same property name back - that means the property is valid for *some*
     // validator type but not the one in use. The error message itself already conveys this.
     if (guess && guess !== propertyName) return `Did you mean \`${guess}\`?`;
     return undefined;
@@ -146,7 +158,7 @@ function describe(value: unknown): string {
  * Designed for the case where an LLM produced the form and needs to self-correct on next turn.
  *
  * When `dataRoot` is provided, `oneOf` branches at widget positions are collapsed to just the
- * closest-matching branch — without this, a single `type: 'buton'` typo emits ~30 errors (one per
+ * closest-matching branch - without this, a single `type: 'buton'` typo emits ~30 errors (one per
  * non-matching branch + a summary), most of which are noise.
  */
 export function formatAjvErrors(
@@ -202,6 +214,12 @@ export function formatAjvErrors(
       case 'type': {
         const expected = (err.params as { type?: string | string[] }).type;
         message = `Expected type ${Array.isArray(expected) ? expected.join('|') : expected} at \`${path}\`, got ${describe(err.data)}`;
+        break;
+      }
+      case 'schemalessType': {
+        const type = (err.params as { type?: string }).type;
+        message = `Widget type \`${type}\` at \`${path}\` is a built-in with no JSON representation, so it cannot appear in a JSON form definition`;
+        suggestion = `Add this widget through the TS DX API instead (for example \`gui.displays.display(render)\`), or remove it from the JSON.`;
         break;
       }
       case 'oneOf':
@@ -275,12 +293,12 @@ function pickIntendedBranch(widget: unknown): { $id: string; type: string } | nu
 
 /**
  * Replaces the `oneOf` error explosion with clean per-widget errors. The form schema is a `oneOf`
- * over 26 widget types — ajv with `allErrors: true` emits errors for *every* non-matching branch,
+ * over 26 widget types - ajv with `allErrors: true` emits errors for *every* non-matching branch,
  * so a single typo produces ~30 errors, only one of which is useful. The intended branch is
  * additionally "silent" (no `$id` or const signal in the error stream) when its deep errors are
  * the only failure, which defeats any heuristic that tries to identify it from the error stream.
  *
- * Instead, we re-validate each widget against its intended branch's schema directly — picked from
+ * Instead, we re-validate each widget against its intended branch's schema directly - picked from
  * the widget's actual `kind`+`type` data via {@link pickIntendedBranch}. Children/templates are
  * loosened in those schemas (see {@link getShallowWidgetValidator}) so we can recurse into them
  * one widget at a time, never triggering the global oneOf again.
@@ -315,7 +333,7 @@ function collapseOneOfErrors(
  * (rooted at the form definition, not the widget).
  *
  * When the widget's `type` is set to something that doesn't match (even fuzzily) any built-in
- * widget, we treat it as a custom widget and emit a `warning` instead of a hard error — devs
+ * widget, we treat it as a custom widget and emit a `warning` instead of a hard error - devs
  * who extend GolemUI with their own widget types shouldn't fail validation just because we
  * can't introspect their props.
  */
@@ -325,11 +343,27 @@ function collectWidgetErrors(
   out: ErrorObject[],
   warnings: FormattedError[],
 ): void {
+  // A built-in type without a component schema (e.g. `renderer`) fails the published schema,
+  // so it must be a hard error. Checked before the fuzzy match, which could otherwise resolve
+  // it to a lookalike built-in (`renderer` is within edit distance of `repeater`).
+  const declaredType = (widget as { type?: unknown } | undefined)?.type;
+  if (typeof declaredType === 'string' && SCHEMALESS_WIDGET_TYPES.has(declaredType)) {
+    out.push({
+      keyword: 'schemalessType',
+      instancePath: `${widgetPath}/type`,
+      schemaPath: '',
+      params: { type: declaredType },
+      message: `Widget type \`${declaredType}\` has no JSON representation`,
+    } as unknown as ErrorObject);
+    recurseIntoChildren(widget, widgetPath, out, warnings);
+    return;
+  }
+
   const intended = pickIntendedBranch(widget);
   if (!intended) {
     const widgetType = (widget as { type?: unknown } | undefined)?.type;
     if (typeof widgetType !== 'string' || !widgetType) {
-      // No usable `type` at all — that's a hard error.
+      // No usable `type` at all - that's a hard error.
       out.push({
         keyword: 'required',
         instancePath: widgetPath,
@@ -338,11 +372,11 @@ function collectWidgetErrors(
         message: `Widget at ${widgetPath} is missing or has an invalid \`type\``,
       } as unknown as ErrorObject);
     } else {
-      // Type is set but doesn't match any built-in — assume custom widget and warn.
+      // Type is set but doesn't match any built-in - assume custom widget and warn.
       warnings.push({
         path: `${widgetPath}/type`,
         keyword: 'customWidget',
-        message: `Widget type \`${widgetType}\` at \`${widgetPath}\` is not a built-in GolemUI widget — assumed custom. Its props were not validated.`,
+        message: `Widget type \`${widgetType}\` at \`${widgetPath}\` is not a built-in GolemUI widget - assumed custom. Its props were not validated.`,
         suggestion:
           'Built-in widget types: ' +
           Object.keys(COMPONENT_SCHEMAS).join(', ') +

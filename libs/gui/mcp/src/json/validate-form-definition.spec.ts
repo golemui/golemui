@@ -73,6 +73,34 @@ describe('json_validate_form_definition', () => {
     expect(typoError?.suggestion).toMatch(/textinput/);
   });
 
+  // `renderer` is listed in knownWidgetTypes without a component schema, so the published
+  // schema rejects it. The validator must report a hard error (not the custom-widget warning,
+  // and not a fuzzy match to `repeater`, which is within edit distance).
+  it('rejects the schema-less built-in type renderer with kind present', () => {
+    const result = validateFormDefinition({
+      formDefinition: {
+        form: [{ kind: 'display', type: 'renderer' }],
+      },
+    });
+    expect(result.valid).toBe(false);
+    const rendererError = result.errors.find((e) => e.path === '/form/0/type');
+    expect(rendererError?.message).toMatch(/no JSON representation/);
+    expect(rendererError?.suggestion).toMatch(/gui\.displays\.display/);
+    expect(result.warnings.filter((w) => w.keyword === 'customWidget')).toEqual([]);
+  });
+
+  it('rejects the schema-less built-in type renderer with kind omitted', () => {
+    const result = validateFormDefinition({
+      formDefinition: {
+        form: [{ type: 'renderer' }],
+      },
+    });
+    expect(result.valid).toBe(false);
+    const rendererError = result.errors.find((e) => e.path === '/form/0/type');
+    expect(rendererError?.message).toMatch(/no JSON representation/);
+    expect(result.errors.filter((e) => /repeater/.test(e.message ?? ''))).toEqual([]);
+  });
+
   it('rejects an invalid validator format', () => {
     const result = validateFormDefinition({
       formDefinition: {
@@ -164,7 +192,7 @@ describe('json_validate_form_definition', () => {
     const result = validateFormDefinition({
       formDefinition: {
         form: [
-          // `heading` isn't a built-in widget and isn't close to one — must be a custom widget.
+          // `heading` isn't a built-in widget and isn't close to one - must be a custom widget.
           { kind: 'display', type: 'heading', props: { text: 'Hi', level: 2 } } as never,
           // Real built-in alongside it to prove normal validation still runs.
           { kind: 'input', type: 'textinput', path: 'name' },
@@ -332,7 +360,7 @@ describe('json_validate_form_definition', () => {
   });
 
   // ---------------------------------------------------------------------------
-  // Defensive-coding rules (R1–R4). Each has a positive case (must flag) and a
+  // Defensive-coding rules (R1-R4). Each has a positive case (must flag) and a
   // negative case (must NOT flag).
   // ---------------------------------------------------------------------------
 
@@ -344,7 +372,7 @@ describe('json_validate_form_definition', () => {
   const has = (result: { expressionWarnings: Array<{ message: string }> }, pattern: RegExp) =>
     result.expressionWarnings.some((w) => pattern.test(w.message));
 
-  describe('R1 — loose equality', () => {
+  describe('R1 - loose equality', () => {
     it('flags loose `==`', () => {
       const r = validateFormDefinition(formWith('$form.x == "y"'));
       expect(has(r, /loose equality/)).toBe(true);
@@ -359,7 +387,7 @@ describe('json_validate_form_definition', () => {
     });
   });
 
-  describe('R2 — negation of reference', () => {
+  describe('R2 - negation of reference', () => {
     it('flags `!$form.x`', () => {
       const r = validateFormDefinition(formWith('!$form.x'));
       expect(has(r, /negates a `\$form/)).toBe(true);
@@ -374,7 +402,7 @@ describe('json_validate_form_definition', () => {
     });
   });
 
-  describe('R3 — chained access without optional chaining', () => {
+  describe('R3 - chained access without optional chaining', () => {
     it('flags `$form.user.name`', () => {
       const r = validateFormDefinition(formWith('$form.user.name === "Joan"'));
       expect(has(r, /optional chaining/)).toBe(true);
@@ -393,7 +421,7 @@ describe('json_validate_form_definition', () => {
     });
   });
 
-  describe('R4 — reference as truthy/falsy boolean', () => {
+  describe('R4 - reference as truthy/falsy boolean', () => {
     it('flags a bare reference `$form.x`', () => {
       const r = validateFormDefinition(formWith('$form.x'));
       expect(has(r, /directly as a boolean/)).toBe(true);
@@ -428,7 +456,7 @@ describe('json_validate_form_definition', () => {
     });
   });
 
-  describe('R5 — comparison/arithmetic on possibly-undefined leaf', () => {
+  describe('R5 - comparison/arithmetic on possibly-undefined leaf', () => {
     it('flags `$form.x > 180`', () => {
       const r = validateFormDefinition(formWith('$form.size > 180'));
       expect(has(r, /comparison or arithmetic/)).toBe(true);
@@ -621,7 +649,7 @@ describe('json_validate_form_definition', () => {
     const booleanWarnings = (r: ReturnType<typeof validateFormDefinition>) =>
       r.warnings.filter((w) => w.keyword === 'booleanValidator');
 
-    it('warns on `required: true` without `const` — it does not force the box checked', () => {
+    it('warns on `required: true` without `const` - it does not force the box checked', () => {
       const r = validateFormDefinition({
         formDefinition: {
           form: [
@@ -635,7 +663,7 @@ describe('json_validate_form_definition', () => {
           ],
         },
       });
-      // Advisory — half a recipe is legal, just rarely intended.
+      // Advisory - half a recipe is legal, just rarely intended.
       expect(r.valid).toBe(true);
       const warnings = booleanWarnings(r);
       expect(warnings).toHaveLength(1);
@@ -644,7 +672,7 @@ describe('json_validate_form_definition', () => {
       expect(warnings[0].suggestion).toMatch(/`const: true`/);
     });
 
-    it('warns on `const: true` without `required` — the pristine undefined passes', () => {
+    it('warns on `const: true` without `required` - the pristine undefined passes', () => {
       const r = validateFormDefinition({
         formDefinition: {
           form: [
