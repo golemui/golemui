@@ -27,12 +27,11 @@
     "index.umd.cjs",
     "*.md"
   ],
-  "dependencies": {
-    "@golemui/schemas": "*"
-  },
+  "dependencies": {},
   "devDependencies": {
     "vitest": "^4.0.0",
     "ajv": "^8.0.0",
+    "@golemui/schemas": "*",
     "@golemui/gui-shared": "*"
   },
   "repository": {
