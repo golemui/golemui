@@ -64,6 +64,7 @@ describe('RangeDateInput schema validation', () => {
               removePillAriaLabel: 'Remove date',
               startDateAriaLabel: 'Start date',
               endDateAriaLabel: 'End date',
+              incompleteMessage: 'Incomplete date',
             },
           },
         ],

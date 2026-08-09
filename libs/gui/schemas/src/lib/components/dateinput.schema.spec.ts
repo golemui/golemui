@@ -60,6 +60,7 @@ describe('Dateinput schema validation', () => {
               yearAriaLabel: 'Year',
               hint: 'Enter your birthday',
               icon: 'calendar',
+              incompleteMessage: 'Incomplete date',
             },
           },
         ],

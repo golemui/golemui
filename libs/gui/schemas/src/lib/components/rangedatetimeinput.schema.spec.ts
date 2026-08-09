@@ -75,6 +75,7 @@ describe('RangeDateTimeInput schema validation', () => {
               maxDateTime: '2026-12-31T18:00:00',
               minDateTimeMessage: 'Too early',
               maxDateTimeMessage: 'Too late',
+              incompleteMessage: 'Incomplete date-time',
             },
           },
         ],

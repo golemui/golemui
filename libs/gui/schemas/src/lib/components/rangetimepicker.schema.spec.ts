@@ -78,6 +78,7 @@ describe('RangeTimePicker schema validation', () => {
               itemHeight: 36,
               disabledRangeMessage: 'That slot is unavailable',
               noAvailableTimesMessage: 'No times available',
+              incompleteMessage: 'Incomplete time',
             },
           },
         ],
