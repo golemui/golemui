@@ -359,6 +359,54 @@ export const runRangeDateTimeCalendarComponentTests = (mountFn: MountComponentFn
       });
     });
 
+    describe('incomplete selection on focus leave', () => {
+      it('should report a half-typed time as incomplete when focus leaves', () => {
+        // A partial time never emits, so it lives only in the input's parts:
+        // the leave check must still count it as something left behind.
+        mountCalendar({ props: { hourFormat: '24', allowCustomTime: true } });
+
+        startHour().click().type('10');
+        cy.get('[data-cy="submitBtn_button"]').focus();
+
+        cy.get(sel.error).should('contain.text', 'Incomplete date-time');
+      });
+
+      it('should report a lone anchor day as incomplete and keep the pills', () => {
+        mountCalendar({
+          data: { myRanges: [{ start: dt(10, '09:00:00'), end: dt(10, '10:00:00') }] },
+        });
+
+        day(13).click();
+        cy.get('[data-cy="submitBtn_button"]').focus();
+
+        // The committed pill is untouched: only the injected issue flags the field
+        cy.get(sel.error).should('contain.text', 'Incomplete date-time');
+        cy.get(sel.pillText).should('have.length', 1);
+      });
+
+      it('should clear the incomplete error when the emptied selection is left again', () => {
+        mountCalendar({ props: { hourFormat: '24', allowCustomTime: true } });
+
+        startHour().click().type('10');
+        cy.get('[data-cy="submitBtn_button"]').focus();
+        cy.get(sel.error).should('contain.text', 'Incomplete date-time');
+
+        startHour().type('{selectAll}{backspace}', { force: true });
+        cy.get('[data-cy="submitBtn_button"]').focus();
+        cy.get('[data-cy="testSubject_validator-errors"]').should('not.exist');
+      });
+
+      it('should honor the incompleteMessage prop', () => {
+        mountCalendar({ props: { incompleteMessage: 'Half-finished range!' } });
+
+        startHour().click();
+        startOption('09:00:00').click();
+        cy.get('[data-cy="submitBtn_button"]').focus();
+
+        cy.get(sel.error).should('contain.text', 'Half-finished range!');
+      });
+    });
+
     describe('hydration and states', () => {
       it('should hydrate a DateTimeRange[] value into pills and day highlights', () => {
         mountCalendar({

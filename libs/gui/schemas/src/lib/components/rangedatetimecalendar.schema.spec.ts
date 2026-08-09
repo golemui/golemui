@@ -73,6 +73,7 @@ describe('RangeDateTimeCalendar schema validation', () => {
               disabledRanges: [{ start: '2026-02-17T10:00:00', end: '2026-02-17T12:00:00' }],
               disabledRangeMessage: 'Overlaps a closed period',
               noAvailableTimesMessage: 'No slots',
+              incompleteMessage: 'Incomplete date-time range',
               dayCountAriaLabel: '{count} ranges',
               disabledDayCountAriaLabel: '{count} disabled ranges',
             },

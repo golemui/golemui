@@ -198,7 +198,7 @@ gui.inputs.datePicker('startDate', {
 
 - THE DEFAULT single-date field: a text field with a popover calendar (click to open). Prefer this for most dates. (`calendar` = always-visible inline calendar; `dateInput` = typed entry, no calendar UI.) Accepts the loose `{ required: true }` validator.
 - Bound the selectable range with **`minDate`** / **`maxDate`** — ISO `YYYY-MM-DD` strings. For "today or later" set `minDate` to today’s date; for "not in the future" set `maxDate` to today. Same `minDate`/`maxDate` on `calendar`, `dateInput`, and the range date widgets.
-- A partially typed date abandoned on focus leave flips the value to null — flagging the field even when optional — and surfaces an "incomplete" error; **`incompleteMessage`** overrides its wording. The same prop exists on every typed date/time widget (the inputs, the pickers, `dateTimeCalendar` and the range inputs/pickers), and an emptied widget clears the error on the next focus leave.
+- A partially typed date abandoned on focus leave flips the value to null — flagging the field even when optional — and surfaces an "incomplete" error; **`incompleteMessage`** overrides its wording. The same prop exists on every typed date/time widget (the inputs, the pickers, the range inputs/pickers, and the inline `dateTimeCalendar`/`rangeDateTimeCalendar`), and an emptied widget clears the error on the next focus leave.
 
 Reference: https://golemui.com/dx/widgets-reference/input-fields/date-picker.md
 
@@ -472,7 +472,7 @@ gui.inputs.rangeDateTimeCalendar('stay', {
 });
 ```
 
-- INLINE range calendar with TWO embedded time pickers (start/end); value is `DateTimeRange[]`, rendered as pills. A day span and the two times can be chosen in ANY order — both time pickers are usable from the start — and the pill is committed once all four pieces are present. Starting a new day span keeps the times already chosen. A day holding more than one range shows a count badge.
+- INLINE range calendar with TWO embedded time pickers (start/end); value is `DateTimeRange[]`, rendered as pills. A day span and the two times can be chosen in ANY order — both time pickers are usable from the start — and the pill is committed once all four pieces are present. Starting a new day span keeps the times already chosen. A day holding more than one range shows a count badge. Leaving the widget with a half-finished selection surfaces an "incomplete" error over the untouched pills (`incompleteMessage` overrides its wording); leaving it emptied clears the error.
 - Everything is in instant-space: bounds are **`minDateTime`** / **`maxDateTime`** and **`disabledRanges`** are `DateTimeRange[]` instant spans (block a whole day with `00:00:00`–`23:59:59`). There is no `minDate`/`maxDate`/`minTime`/`maxTime`/`disabledTimeRanges` — a time-of-day constraint cannot bound a multi-day span.
 
 Reference: https://golemui.com/dx/widgets-reference/input-fields/range-datetime-calendar.md

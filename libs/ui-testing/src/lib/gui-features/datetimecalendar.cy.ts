@@ -394,6 +394,41 @@ export const runDateTimeCalendarComponentTests = (mountFn: MountComponentFn) => 
           expect(spy.getCall(0).args[0].detail.message).to.equal('Office opens at 9');
         });
       });
+
+      it('should report a half-typed time with no day as incomplete when focus leaves', () => {
+        // A partial time never emits, so it lives only in the input's parts:
+        // the leave check must still count it as something left behind.
+        mountCalendar({
+          data: { myAppointment: null },
+          props: { ...officeProps, hourFormat: '24', allowCustomTime: true },
+        });
+
+        cy.get(sel.hour).type('10');
+        cy.get('[data-cy="submitBtn_button"]').focus();
+
+        cy.get('[data-cy="testSubject_validator-error"]').should(
+          'contain.text',
+          'Incomplete date-time',
+        );
+      });
+
+      it('should clear the incomplete error when the emptied time is left again', () => {
+        mountCalendar({
+          data: { myAppointment: null },
+          props: { ...officeProps, hourFormat: '24', allowCustomTime: true },
+        });
+
+        cy.get(sel.hour).type('10');
+        cy.get('[data-cy="submitBtn_button"]').focus();
+        cy.get('[data-cy="testSubject_validator-error"]').should(
+          'contain.text',
+          'Incomplete date-time',
+        );
+
+        cy.get(sel.hour).type('{selectAll}{backspace}', { force: true });
+        cy.get('[data-cy="submitBtn_button"]').focus();
+        cy.get('[data-cy="testSubject_validator-errors"]').should('not.exist');
+      });
     });
 
     describe('empty time window', () => {

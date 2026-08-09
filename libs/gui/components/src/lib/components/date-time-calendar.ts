@@ -3,6 +3,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import type { DateRange, DisabledTimeRange } from '@golemui/gui-shared/internals';
 import './time-picker';
+import type { GuiTime } from './time-input';
 import type { GuiTimePicker } from './time-picker';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { GUICalendarKeyboardController } from '../controllers/calendar-keyboard.controller';
@@ -375,17 +376,25 @@ export class GuiDateTimeCalendar extends LitElement {
   }
 
   /**
-   * A partial selection (day without time, or time without day) left behind
-   * flips the value to null — so validators report it — and surfaces the
-   * incomplete message. A selection emptied again instead clears a message
-   * surfaced earlier; complete selections report nothing new.
+   * With no committed value, ANY selection state left behind — a day without
+   * a time, a time without a day, or a half-typed time — is incomplete: the
+   * value flips to null (so validators report it) and the incomplete message
+   * surfaces. A widget emptied again instead clears a message surfaced
+   * earlier; a committed value reports nothing new.
+   *
+   * A half-typed time never reaches `_selectedTime` (partials never emit),
+   * so the embedded input's parts are consulted directly — otherwise an
+   * hour typed with no day picked would read as an empty widget.
    */
   private reportIncompleteOnLeave(): void {
     if (this.value) return;
-    const hasDate = !!this._selectedDate;
-    const hasTime = !!this._selectedTime;
-    if (hasDate === hasTime) {
-      if (!hasDate && this._surfacedError) this.emitChange(null);
+    const leftBehind =
+      !!this._selectedDate ||
+      !!this._selectedTime ||
+      this.querySelector<GuiTime>('gui-time')?.groupCompleteness() === 'partial';
+
+    if (!leftBehind) {
+      if (this._surfacedError) this.emitChange(null);
       return;
     }
 

@@ -472,7 +472,8 @@ export type RangeDatePickerProps = RangeCalendarProps &
 export type RangeDateTimeCalendarProps = Omit<
   RangeCalendarProps,
   'minDate' | 'maxDate' | 'disabledRanges' | 'disabledDateRangeMessage'
-> & {
+> &
+  IncompleteMessageProps & {
   hourFormat?: '12' | '24';
   minuteStep?: number;
   /** Allows typing a time in each picker; when false (default) times come only from the grid. */

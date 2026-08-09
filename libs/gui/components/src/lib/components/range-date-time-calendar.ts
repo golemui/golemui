@@ -10,6 +10,7 @@ import type { RangeCalendarDay } from './range-calendar';
 import './pills';
 import type { GuiPillEventDetail, GuiPillItem } from './pills';
 import './time-picker';
+import type { GuiTime } from './time-input';
 import type { GuiTimePicker } from './time-picker';
 import {
   getFullDateLabel,
@@ -57,7 +58,10 @@ import {
   type HourFormat,
   type TimeRange,
 } from '../utils/time';
-import { DISABLED_DATE_RANGE_MESSAGE } from '../utils/messages';
+import {
+  DISABLED_DATE_RANGE_MESSAGE,
+  INCOMPLETE_DATE_TIME_MESSAGE,
+} from '../utils/messages';
 
 @customElement('gui-range-date-time-calendar')
 export class GuiRangeDateTimeCalendar extends LitElement {
@@ -134,6 +138,9 @@ export class GuiRangeDateTimeCalendar extends LitElement {
     | string
     | undefined = undefined;
   @property({ type: String, attribute: 'no-available-times-message' }) noAvailableTimesMessage:
+    | string
+    | undefined = undefined;
+  @property({ type: String, attribute: 'incomplete-message' }) incompleteMessage:
     | string
     | undefined = undefined;
   @property({ type: String, attribute: 'day-count-aria-label' }) dayCountAriaLabel:
@@ -238,10 +245,46 @@ export class GuiRangeDateTimeCalendar extends LitElement {
    */
   private _focusLeave = new GUIFocusLeaveController(this, {
     onLeave: () => {
-      if (!this.deferFocusLeave) this.tryCommitWorkingRange();
+      if (!this.deferFocusLeave) this.settleOnLeave();
       this.dispatchEvent(new CustomEvent('blur', { bubbles: true, composed: true }));
     },
   });
+
+  /**
+   * A completed working range commits (or surfaces its own rejection). A
+   * half-finished one — any piece left behind: a span, a lone anchor day, a
+   * parked time, or a half-typed time that never emitted — surfaces the
+   * incomplete message; the committed pills are untouched, the injected
+   * issue alone flags the field. An emptied selection instead clears a
+   * message surfaced earlier.
+   */
+  private settleOnLeave(): void {
+    if (this.tryCommitWorkingRange()) return;
+
+    const leftBehind =
+      !!this.anchorISO() ||
+      !!this._workingStart ||
+      !!this._workingEnd ||
+      !!this._workingStartTime ||
+      !!this._workingEndTime ||
+      this.typedTimeCompleteness(this.startPicker) === 'partial' ||
+      this.typedTimeCompleteness(this.endPicker) === 'partial';
+
+    if (!leftBehind) {
+      if (this._surfacedError) this.emitChange(this.value ?? []);
+      return;
+    }
+
+    this.emitInputError(this.incompleteMessage ?? INCOMPLETE_DATE_TIME_MESSAGE);
+  }
+
+  /**
+   * The fill state of an embedded picker's typed time input. A half-typed
+   * time never emits, so it is visible only in the input's parts.
+   */
+  private typedTimeCompleteness(picker: GuiTimePicker | null) {
+    return picker?.querySelector<GuiTime>('gui-time')?.groupCompleteness() ?? 'empty';
+  }
 
   /**
    * Full instant of an endpoint, used to order the pills — endpoints carry a
@@ -687,39 +730,55 @@ export class GuiRangeDateTimeCalendar extends LitElement {
    * Commits once all four pieces are present, in whichever order they were
    * chosen. A rejected endpoint or span keeps every working value on show
    * next to its error, so the user corrects one piece instead of restarting.
+   *
+   * @return {boolean} Whether the attempt reported — a commit or a rejection
+   *   error. False with pieces missing, where the caller decides what an
+   *   unfinished selection means.
    */
-  private tryCommitWorkingRange(): void {
+  private tryCommitWorkingRange(): boolean {
     const startDate = this._workingStart;
     const endDate = this._workingEnd;
     const timeIn = this._workingStartTime;
     const timeOut = this._workingEndTime;
-    if (!startDate || !endDate || !timeIn || !timeOut) return;
+    if (!startDate || !endDate || !timeIn || !timeOut) return false;
 
     const startError = this.timeError(timeIn, startDate, this.resolvedStartTimeRanges);
     if (startError) {
       this.emitInputError(startError);
-      return;
+      return true;
     }
 
     const endError = this.timeError(timeOut, endDate, this.resolvedEndTimeRanges);
     if (endError) {
       this.emitInputError(endError);
-      return;
+      return true;
     }
 
     const ordered = orderDateTimeRange(`${startDate}T${timeIn}`, `${endDate}T${timeOut}`);
 
     if (dateTimeRangeOverlaps(ordered, this.disabledRanges)) {
       this.emitInputError(this.disabledRangeMessage ?? DISABLED_DATE_RANGE_MESSAGE);
-      return;
+      return true;
     }
 
     this._skipValueNavigation = true;
-    this.value = mergeDateTimeRanges([...(this.value ?? []), ordered]);
+    const next = mergeDateTimeRanges([...(this.value ?? []), ordered]);
+    this.value = next;
     this.resetWorking();
     this.emitPartsChange();
+    this.emitChange(next);
+    return true;
+  }
+
+  /** Whether an inputError has been emitted and not yet cleared by a change. */
+  private _surfacedError = false;
+
+  private emitChange(value: DateTimeRange[]): void {
+    // The form layer clears injected issues on every change, so the mirror
+    // flag resets with it.
+    this._surfacedError = false;
     this.dispatchEvent(
-      new CustomEvent('change', { detail: { value: this.value }, bubbles: true, composed: true }),
+      new CustomEvent('change', { detail: { value }, bubbles: true, composed: true }),
     );
   }
 
@@ -848,6 +907,7 @@ export class GuiRangeDateTimeCalendar extends LitElement {
   };
 
   private emitInputError(message: string) {
+    this._surfacedError = true;
     this.dispatchEvent(
       new CustomEvent('inputError', { detail: { message }, bubbles: true, composed: true }),
     );
@@ -1026,13 +1086,7 @@ export class GuiRangeDateTimeCalendar extends LitElement {
     const removal = removeRangeByKey(this.value, e.detail.key);
     if (!removal) return;
     this.value = removal.next;
-    this.dispatchEvent(
-      new CustomEvent('change', {
-        detail: { value: this.value },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    this.emitChange(removal.next);
   };
 
   private onPillClickEvent = (e: CustomEvent<GuiPillEventDetail>) => {
