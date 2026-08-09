@@ -5,6 +5,7 @@ import type { TimeRange } from '@golemui/gui-shared/internals';
 import './range-time-input';
 import type { GuiRangeTimeInput } from './range-time-input';
 import './time-list';
+import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
 import { GUIPopupController } from '../controllers/popup.controller';
 import {
   compareISOTimes,
@@ -77,6 +78,9 @@ export class GuiRangeTimePicker extends LitElement {
   @property({ type: String, attribute: 'no-available-times-message' }) noAvailableTimesMessage:
     | string
     | undefined = undefined;
+  @property({ type: String, attribute: 'incomplete-message' }) incompleteMessage:
+    | string
+    | undefined = undefined;
 
   @query('#time-input') private _inputRef?: GuiRangeTimeInput;
 
@@ -100,11 +104,22 @@ export class GuiRangeTimePicker extends LitElement {
       if (dropdownWasOpen) popup.suppressNextFocusOut();
       this.closePillsDropdown();
     },
-    onOpenChanged: (open) => {
-      if (!open) {
-        this._workingIn = undefined;
-        this._workingOut = undefined;
-      }
+    // Closing the panel keeps the working endpoints: a half-picked range is
+    // restored when the user reopens it.
+  });
+
+  /**
+   * The single point where the picker reports focus leaving the control: the
+   * input settles what is in its fields — committing a complete range,
+   * surfacing a half-typed one — and only then does the picker blur, which the
+   * form layer reads as "validate now". Blurring first would validate the
+   * value the commit is about to replace.
+   */
+  private _focusLeave = new GUIFocusLeaveController(this, {
+    resolveSyncOnRelatedTarget: true,
+    onLeave: () => {
+      this._inputRef?.finalizeOnLeave();
+      this.dispatchEvent(new CustomEvent('blur'));
     },
   });
 
@@ -191,7 +206,6 @@ export class GuiRangeTimePicker extends LitElement {
               .height=${this.height}
               .itemHeight=${this.itemHeight}
               .noAvailableTimesMessage=${this.noAvailableTimesMessage}
-              ?disabled=${!this._workingIn}
               ?readonly=${this.readOnly}
               @change=${this.onOutListChange}
             ></gui-time-list>
@@ -216,6 +230,7 @@ export class GuiRangeTimePicker extends LitElement {
         class="gui-widget"
         @keydown=${this._popup.onAnchorKeyDown}
         @click=${this._popup.onAnchorClick}
+        @focusout=${this._focusLeave.onFocusOut}
       >
         <gui-range-time
           id="time-input"
@@ -223,6 +238,7 @@ export class GuiRangeTimePicker extends LitElement {
           .uid=${this.uid}
           .hint=${this.hint}
           .showErrors=${false}
+          .deferFocusLeave=${true}
           .errors=${this.errors}
           ?touched=${this.touched}
           ?required=${this.required}
@@ -242,6 +258,7 @@ export class GuiRangeTimePicker extends LitElement {
           .maxTimeMessage=${this.maxTimeMessage}
           .rangeOrderMessage=${this.rangeOrderMessage}
           .disabledRangeMessage=${this.disabledRangeMessage}
+          .incompleteMessage=${this.incompleteMessage}
           .removePillAriaLabel=${this.removePillAriaLabel}
           .startTimeAriaLabel=${this.startTimeAriaLabel}
           .endTimeAriaLabel=${this.endTimeAriaLabel}
@@ -298,12 +315,7 @@ export class GuiRangeTimePicker extends LitElement {
 
   private onInputChange(event: CustomEvent) {
     event.stopPropagation();
-    // A successful commit turns the entry into a pill and empties the fields, so
-    // the two lists must drop their working selection: the start list deselects
-    // and the end list disables again, ready for the next range.
-    this._workingIn = undefined;
-    this._workingOut = undefined;
-    this.commitValue(event.detail.value);
+    this.commitValue(event.detail.value, event.detail.commit !== false);
   }
 
   /**
@@ -317,36 +329,50 @@ export class GuiRangeTimePicker extends LitElement {
     this._workingOut = event.detail.end ?? undefined;
   }
 
-  private onInputBlur() {
-    this.dispatchEvent(new CustomEvent('blur'));
+  /**
+   * The input's per-part blur stays inside the widget: moving from a segment
+   * into the panel is not leaving the control, so it must not be reported as
+   * a blur (which the form layer reads as "validate now"). The picker reports
+   * blur from its own focus-leave check instead.
+   */
+  private onInputBlur(event: Event) {
+    event.stopPropagation();
   }
 
   private onInListChange(event: CustomEvent) {
     event.stopPropagation();
     const start = event.detail.value as string | undefined;
     this._workingIn = start ?? undefined;
-    this._workingOut = undefined;
     if (start) this._inputRef?.fillGroup('start', start);
+    this.tryCommitWorkingRange();
   }
 
   private onOutListChange(event: CustomEvent) {
     event.stopPropagation();
     const end = event.detail.value as string | undefined;
-    if (!this._workingIn || !end || !this._inputRef) return;
+    this._workingOut = end ?? undefined;
+    if (end) this._inputRef?.fillGroup('end', end);
+    this.tryCommitWorkingRange();
+  }
 
-    this._inputRef.fillGroup('end', end);
-    const committed = this._inputRef.commitFromParts();
+  /**
+   * Commits once both endpoints are present, whichever order they were picked
+   * in — an end chosen before a start simply waits in the fields. A rejected
+   * range (reversed, out of bounds, spanning a disabled block) keeps both
+   * values on show and closes the panel so its error is visible.
+   */
+  private tryCommitWorkingRange(): void {
+    if (!this._workingIn || !this._workingOut || !this._inputRef) return;
 
-    if (committed) {
-      this._workingIn = undefined;
-      this._workingOut = undefined;
+    if (this._inputRef.commitFromParts()) {
       this.updateComplete.then(() => {
         this._inListRef()?.scrollToSelectedValue?.();
       });
-    } else {
-      this._popup.close();
-      this.dispatchEvent(new CustomEvent('blur'));
+      return;
     }
+
+    this._popup.close();
+    this.dispatchEvent(new CustomEvent('blur'));
   }
 
   private _inListRef() {
@@ -355,8 +381,19 @@ export class GuiRangeTimePicker extends LitElement {
     );
   }
 
-  private commitValue(value: TimeRange[] | null | undefined) {
+  /**
+   * The single funnel every commit passes through — a list pick, a typed Enter
+   * — so the working selection is torn down once: the start list deselects and
+   * the end list unfloors, ready for the next range. `committed` is false for
+   * the input's error-clearing echo, which carries no new pill and must leave
+   * a half-entered range alone.
+   */
+  private commitValue(value: TimeRange[] | null | undefined, committed = true) {
     this.value = value ?? undefined;
+    if (committed) {
+      this._workingIn = undefined;
+      this._workingOut = undefined;
+    }
     const error = this.validateBounds(this.value);
     this.dispatchEvent(
       new CustomEvent('change', {

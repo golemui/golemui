@@ -88,6 +88,7 @@ export class RangeTimePickerElement extends LitElement implements WithWidget {
         .rangeOrderMessage=${templateData.rangeOrderMessage as string}
         .disabledRangeMessage=${templateData.disabledRangeMessage as string}
         .noAvailableTimesMessage=${templateData.noAvailableTimesMessage as string}
+        .incompleteMessage=${templateData.incompleteMessage as string}
         @inputError=${this.onInputError}
         @blur=${() => this.adapter.onBlur()}
         @change=${this.valueChanged}

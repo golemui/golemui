@@ -71,6 +71,7 @@ describe('RangeTimeInput schema validation', () => {
               minTimeMessage: 'Too early',
               maxTimeMessage: 'Too late',
               rangeOrderMessage: 'End time must be after start time',
+              incompleteMessage: 'Incomplete time',
             },
           },
         ],

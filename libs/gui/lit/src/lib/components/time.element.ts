@@ -78,6 +78,7 @@ export class TimeElement extends LitElement implements WithWidget {
         .maxTime=${this.adapter.templateData.maxTime}
         .minTimeMessage=${this.adapter.templateData.minTimeMessage as string}
         .maxTimeMessage=${this.adapter.templateData.maxTimeMessage as string}
+        .incompleteMessage=${this.adapter.templateData.incompleteMessage as string}
         @inputError=${this.onInputError}
         @blur=${() => this.adapter.onBlur()}
         @change=${this.valueChanged}

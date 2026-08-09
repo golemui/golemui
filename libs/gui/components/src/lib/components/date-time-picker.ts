@@ -1,9 +1,11 @@
-import { html, LitElement, nothing } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { html, LitElement, nothing, type PropertyValues } from 'lit';
+import { customElement, property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import type { DateRange, DisabledTimeRange } from '@golemui/gui-shared/internals';
 import './date-time-input';
 import './date-time-calendar';
+import type { GuiDateTime } from './date-time-input';
+import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
 import { GUIPopupController } from '../controllers/popup.controller';
 import { dateBoundsError, toISODateString } from '../utils/date';
 import {
@@ -105,6 +107,23 @@ export class GuiDateTimePicker extends LitElement {
   @property({ type: String, attribute: 'no-available-times-message' }) noAvailableTimesMessage:
     | string
     | undefined = undefined;
+  @property({ type: String, attribute: 'incomplete-message' }) incompleteMessage:
+    | string
+    | undefined = undefined;
+
+  /**
+   * The uncommitted date/time halves of an in-progress selection. They live
+   * on the picker — which stays mounted — so a partial selection survives the
+   * popover unmount/remount cycle and reseeds the calendar on reopen.
+   */
+  @state() private _workingDate: string | undefined = undefined;
+  @state() private _workingTime: string | undefined = undefined;
+
+  private _internalValueChange = false;
+
+  private _focusLeave = new GUIFocusLeaveController(this, {
+    onLeave: () => this.onFocusLeave(),
+  });
 
   private _popup = new GUIPopupController(this, {
     focusRestoreSelector: 'gui-date-time input',
@@ -125,6 +144,22 @@ export class GuiDateTimePicker extends LitElement {
     return this;
   }
 
+  override willUpdate(changedProperties: PropertyValues): void {
+    if (!changedProperties.has('value')) return;
+    if (this._internalValueChange) {
+      this._internalValueChange = false;
+      return;
+    }
+
+    const prev = changedProperties.get('value') as string | null | undefined;
+    if (!prev && !this.value) return;
+
+    // External value change (form write/reset): the form is authoritative,
+    // any in-progress working selection is dropped.
+    this._workingDate = undefined;
+    this._workingTime = undefined;
+  }
+
   override render() {
     const datePickerIcon = addIcon('datePicker', { icon: this.icon });
 
@@ -140,6 +175,9 @@ export class GuiDateTimePicker extends LitElement {
           ?disabled=${this.disabled}
           ?readonly=${this.readOnly}
           .value=${this.value}
+          .workingDate=${this._workingDate}
+          .workingTime=${this._workingTime}
+          .deferFocusLeave=${true}
           .prevMonthIcon=${this.prevMonthIcon}
           .nextMonthIcon=${this.nextMonthIcon}
           .prevMonthAriaLabel=${this.prevMonthAriaLabel}
@@ -166,6 +204,7 @@ export class GuiDateTimePicker extends LitElement {
           .noAvailableTimesMessage=${this.noAvailableTimesMessage}
           @blur=${this.onCalendarBlur}
           @change=${this.onCalendarChange}
+          @partsChange=${this.onCalendarPartsChange}
         ></gui-date-time-calendar>`
       : nothing;
 
@@ -186,6 +225,7 @@ export class GuiDateTimePicker extends LitElement {
         class="gui-widget"
         @keydown=${this._popup.onAnchorKeyDown}
         @click=${this._popup.onAnchorClick}
+        @focusout=${this._focusLeave.onFocusOut}
       >
         <gui-date-time
           id="date-input"
@@ -193,6 +233,7 @@ export class GuiDateTimePicker extends LitElement {
           .uid=${this.uid}
           .hint=${this.hint}
           .showErrors=${false}
+          .deferFocusLeave=${true}
           .errors=${this.errors}
           ?touched=${this.touched}
           ?required=${this.required}
@@ -214,9 +255,11 @@ export class GuiDateTimePicker extends LitElement {
           .invalidDateMessage=${this.invalidDateMessage}
           .minTimeMessage=${this.minTimeMessage}
           .maxTimeMessage=${this.maxTimeMessage}
+          .incompleteMessage=${this.incompleteMessage}
           @blur=${this.onDateBlur}
           @focus=${this._popup.show}
           @change=${this.onDateChange}
+          @partsChange=${this.onInputPartsChange}
         ></gui-date-time>
         <button
           type="button"
@@ -265,8 +308,14 @@ export class GuiDateTimePicker extends LitElement {
     this.commitValue(event.detail.value);
   }
 
-  private onDateBlur() {
-    this.dispatchEvent(new CustomEvent('blur'));
+  /**
+   * The field's per-part blur stays inside the widget: moving from a segment
+   * into the popover is not leaving the control, so it must not be reported
+   * as a blur (which the form layer reads as "validate now"). The picker
+   * reports blur from its own focus-leave check instead.
+   */
+  private onDateBlur(event: Event) {
+    event.stopPropagation();
   }
 
   private onCalendarChange(event: CustomEvent) {
@@ -282,8 +331,38 @@ export class GuiDateTimePicker extends LitElement {
     }
   }
 
+  /** The typed halves of the input feed the working state; the calendar follows via its props. */
+  private onInputPartsChange(event: CustomEvent) {
+    event.stopPropagation();
+    this._workingDate = (event.detail.date as string | null) ?? undefined;
+    this._workingTime = (event.detail.time as string | null) ?? undefined;
+  }
+
+  /** A calendar pick feeds the working state and paints the input's segments. */
+  private onCalendarPartsChange(event: CustomEvent) {
+    event.stopPropagation();
+    const date = event.detail.date as string | null;
+    const time = event.detail.time as string | null;
+    this._workingDate = date ?? undefined;
+    this._workingTime = time ?? undefined;
+
+    // Paint only the halves the calendar actually holds: a null half must not
+    // wipe partially typed segments the calendar never saw.
+    const input = this.querySelector<GuiDateTime>('gui-date-time');
+    if (date) input?.fillDate(date);
+    if (time) input?.fillTime(time);
+  }
+
   private commitValue(value: string | null | undefined) {
-    this.value = value ?? undefined;
+    const next = value ?? undefined;
+    if (next !== this.value) this._internalValueChange = true;
+    this.value = next;
+
+    if (this.value) {
+      this._workingDate = undefined;
+      this._workingTime = undefined;
+    }
+
     const error = this.validateBounds(this.value);
     this.dispatchEvent(
       new CustomEvent('change', {
@@ -301,6 +380,20 @@ export class GuiDateTimePicker extends LitElement {
         }),
       );
     }
+  }
+
+  /**
+   * The single point where the picker reports focus leaving the control: it
+   * blurs (which the form layer reads as "validate now"), then hands the
+   * embedded input its deferred settlement — a partial selection left behind
+   * surfaces the incomplete message, an emptied one clears a message it
+   * surfaced earlier. The input's resulting change bubbles back through the
+   * picker, so its value follows. The working state survives, so reopening
+   * the popover restores the partial.
+   */
+  private onFocusLeave(): void {
+    this.dispatchEvent(new CustomEvent('blur'));
+    this.querySelector<GuiDateTime>('gui-date-time')?.settleOnFocusLeave();
   }
 
   private validateBounds(value: string | undefined): string | null {
@@ -324,8 +417,13 @@ export class GuiDateTimePicker extends LitElement {
     return null;
   }
 
-  // The calendar's blur already bubbles up to the host, so only close here.
-  private onCalendarBlur() {
+  /**
+   * Focus leaving the calendar closes the popover, but it is not necessarily
+   * leaving the picker (focus often returns to the field), so the calendar's
+   * bubbling blur is stopped here and never reaches the form layer.
+   */
+  private onCalendarBlur(event: Event) {
+    event.stopPropagation();
     this._popup.closeOnFocusLeave();
   }
 }

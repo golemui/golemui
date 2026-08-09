@@ -4,6 +4,7 @@ import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { styleMap } from 'lit-html/directives/style-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
+import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
 import { GUIPartsController } from '../controllers/parts.controller';
 import { renderGroupParts, type GUIPartsTemplateData } from '../utils/part-templates';
 import {
@@ -34,6 +35,7 @@ import { addErrors, addLabel, type ControlTemplateData } from '../utils/template
 import './pills';
 import type { GuiPillEventDetail, GuiPillItem } from './pills';
 import {
+  INCOMPLETE_TIME_MESSAGE,
   INVALID_DISABLED_TIME_RANGE_MESSAGE,
   INVALID_TIME_RANGE_ORDER_MESSAGE,
 } from '../utils/messages';
@@ -82,9 +84,22 @@ export class GuiRangeTimeInput extends LitElement {
   @property({ type: String, attribute: 'disabled-range-message' }) disabledRangeMessage:
     | string
     | undefined = undefined;
+  @property({ type: String, attribute: 'incomplete-message' }) incompleteMessage:
+    | string
+    | undefined = undefined;
+  /**
+   * Set by host pickers that run their own whole-widget focus-leave check:
+   * moving focus from this input into the picker's popup must not count as
+   * leaving, so the embedded input skips its incomplete-on-leave handling.
+   */
+  @property({ type: Boolean, attribute: 'defer-focus-leave' }) deferFocusLeave:
+    | boolean
+    | undefined = false;
 
   private readonly inputBlockClass = 'gui-range-time-input';
   private readonly groups = ['start', 'end'] as const;
+
+  private readonly timePartTypes: readonly DateTimePartType[] = ['hour', 'minute'];
 
   /**
    * Set on the first commit attempt (Enter). While set, every part change
@@ -108,7 +123,11 @@ export class GuiRangeTimeInput extends LitElement {
       this.dispatchEvent(new CustomEvent('inputError', { detail: { message }, bubbles: true })),
     onSurfacedErrorCleared: (value) =>
       this.dispatchEvent(
-        new CustomEvent('change', { detail: { value }, bubbles: true, composed: true }),
+        new CustomEvent('change', {
+          detail: { value, commit: false },
+          bubbles: true,
+          composed: true,
+        }),
       ),
     isReadonly: () => !!this.readOnly || this.allowCustomTime === false,
     isDisabled: () => !!this.disabled,
@@ -123,6 +142,24 @@ export class GuiRangeTimeInput extends LitElement {
     },
     getHourFormat: () => this.timeLocaleData.effectiveHourFormat,
     getDayPeriodLabels: () => this.timeLocaleData.dayPeriodLabels,
+  });
+
+  /**
+   * The single point where the input reports focus leaving the control. It
+   * settles what is in the fields FIRST, then blurs — the form layer reads a
+   * blur as "validate now", and storing a value runs no validator, so blurring
+   * first would validate the value the commit is about to replace and leave a
+   * `required` error standing over a range the user did finish. Hopping
+   * between segments is not a departure and never reaches here.
+   */
+  private _focusLeave = new GUIFocusLeaveController(this, {
+    resolveSyncOnRelatedTarget: true,
+    onLeave: () => {
+      // Embedded in a picker: that host owns focus reporting for the subtree.
+      if (this.deferFocusLeave) return;
+      this.finalizeOnLeave();
+      this.dispatchEvent(new CustomEvent('blur'));
+    },
   });
 
   protected ariaController: GUIAriaController<unknown, any> = new GUIAriaController(this, {
@@ -210,7 +247,7 @@ export class GuiRangeTimeInput extends LitElement {
     return html`
       ${this.label ? addLabel(this.uid as string, templateData, false, undefined, false) : nothing}
 
-      <div class="gui-widget">
+      <div class="gui-widget" @focusout=${this._focusLeave.onFocusOut}>
         <div
           class="gui-widget-input gui-parts-ring gui-range-time-input ${this.icon
             ? 'gui-range-time-input--icon'
@@ -376,6 +413,48 @@ export class GuiRangeTimeInput extends LitElement {
   }
 
   /**
+   * What leaving does with whatever is in the fields. Public so a host picker
+   * can call it from its own whole-widget focus-leave check.
+   *
+   * A complete range is finished work, so leaving commits it exactly as Enter
+   * does — a user who typed a whole range and moved on gets the pill they
+   * plainly meant, and the same validation decides whether it is allowed.
+   *
+   * A half-entered one is abandoned work: some parts of one endpoint typed, or
+   * one endpoint filled and the other still empty (a start picked from the
+   * list with no end lands here too). Both surface the incomplete message — or
+   * the endpoint's own message when one is outright invalid, which is more
+   * useful than "incomplete". `_validationTriggered` makes the next edit
+   * re-evaluate, so the message clears as soon as the user comes back and
+   * continues (or empties the fields).
+   */
+  finalizeOnLeave(): void {
+    const endpoints = this.groups.map((group) => ({
+      result: this.validateTimeParts(group),
+      empty: this._parts.isGroupEmpty(group, this.timePartTypes),
+    }));
+
+    if (endpoints.every((endpoint) => endpoint.empty)) {
+      this._parts.clearSurfacedInputError(this.value ?? []);
+      return;
+    }
+
+    if (endpoints.every((endpoint) => endpoint.result.kind === 'valid')) {
+      this.tryCreatePill({ refocus: false });
+      return;
+    }
+
+    const invalidMessage = endpoints
+      .map((endpoint) => (endpoint.result.kind === 'invalid' ? endpoint.result.message : undefined))
+      .find(Boolean);
+
+    this._validationTriggered = true;
+    this._parts.surfaceInputError(
+      invalidMessage ?? this.incompleteMessage ?? INCOMPLETE_TIME_MESSAGE,
+    );
+  }
+
+  /**
    * Parses the range and updates the error state, without ever committing.
    * Shared by the Enter commit and by {@link revalidate}.
    */
@@ -418,7 +497,7 @@ export class GuiRangeTimeInput extends LitElement {
     }
   }
 
-  private tryCreatePill(): boolean {
+  private tryCreatePill({ refocus = true }: { refocus?: boolean } = {}): boolean {
     this._validationTriggered = true;
 
     const outcome = this.evaluateRange();
@@ -431,11 +510,13 @@ export class GuiRangeTimeInput extends LitElement {
     this._parts.clearGroup('end');
     this._parts.seedDayPeriods();
 
+    // The commit's own change clears any injected error downstream.
+    this._parts.resetSurfacedInputError();
     this.dispatchEvent(
       new CustomEvent('change', { detail: { value: this.value }, bubbles: true, composed: true }),
     );
 
-    this._parts.focusFirst('start');
+    if (refocus) this._parts.focusFirst('start');
     this.requestUpdate();
     return true;
   }

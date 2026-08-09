@@ -3,7 +3,9 @@ import { customElement, property, query } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import './time-input';
 import './time-list';
+import type { GuiTime } from './time-input';
 import type { GuiTimeList } from './time-list';
+import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
 import { GUIPopupController } from '../controllers/popup.controller';
 import { buildTimeOptions, isTimeDisabled, type HourFormat, type TimeRange } from '../utils/time';
 import { timeBoundsError } from '../utils/parts';
@@ -52,8 +54,28 @@ export class GuiTimePicker extends LitElement {
   @property({ type: String, attribute: 'no-available-times-message' }) noAvailableTimesMessage:
     | string
     | undefined = undefined;
+  @property({ type: String, attribute: 'incomplete-message' }) incompleteMessage:
+    | string
+    | undefined = undefined;
+  /**
+   * Set by hosts (the date-time calendars) that run their own focus-leave
+   * check over a subtree containing this picker: skips the picker's own
+   * incomplete-on-leave handling.
+   */
+  @property({ type: Boolean, attribute: 'defer-focus-leave' }) deferFocusLeave:
+    | boolean
+    | undefined = false;
 
   @query('gui-time-list') private _listRef?: GuiTimeList;
+
+  private _focusLeave = new GUIFocusLeaveController(this, {
+    onLeave: () => {
+      // Embedded in a calendar: that host owns focus reporting for the subtree.
+      if (this.deferFocusLeave) return;
+      this.dispatchEvent(new CustomEvent('blur'));
+      this.reportIncompleteOnLeave();
+    },
+  });
 
   private _popup = new GUIPopupController(this, {
     focusRestoreSelector: 'gui-time input, gui-time button',
@@ -98,13 +120,19 @@ export class GuiTimePicker extends LitElement {
         false,
       )}
 
-      <div class="gui-widget" @keydown=${this.onKeyDown} @click=${this._popup.onAnchorClick}>
+      <div
+        class="gui-widget"
+        @keydown=${this.onKeyDown}
+        @click=${this._popup.onAnchorClick}
+        @focusout=${this._focusLeave.onFocusOut}
+      >
         <gui-time
           id="time-input"
           class=${classMap(timePickerIcon.widgetClasses)}
           .uid=${this.uid}
           .hint=${this.hint}
           .showErrors=${false}
+          .deferFocusLeave=${true}
           .errors=${this.errors}
           ?touched=${this.touched}
           ?required=${this.required}
@@ -122,6 +150,7 @@ export class GuiTimePicker extends LitElement {
           .dayPeriodAriaLabel=${this.dayPeriodAriaLabel}
           .minTimeMessage=${this.minTimeMessage}
           .maxTimeMessage=${this.maxTimeMessage}
+          .incompleteMessage=${this.incompleteMessage}
           @blur=${this.onTimeBlur}
           @focus=${this._popup.show}
           @change=${this.onTimeChange}
@@ -193,8 +222,14 @@ export class GuiTimePicker extends LitElement {
     this.commitValue(event.detail.value);
   }
 
-  private onTimeBlur() {
-    this.dispatchEvent(new CustomEvent('blur'));
+  /**
+   * The field's per-part blur stays inside the widget: moving from a segment
+   * into the time list is not leaving the control, so it must not be reported
+   * as a blur (which the form layer reads as "validate now"). The picker
+   * reports blur from its own focus-leave check instead.
+   */
+  private onTimeBlur(event: Event) {
+    event.stopPropagation();
   }
 
   private onListChange(event: CustomEvent) {
@@ -300,6 +335,16 @@ export class GuiTimePicker extends LitElement {
    * embedded time-picker's list imperatively. */
   closeList() {
     this._popup.close();
+  }
+
+  /**
+   * Hands the embedded input its deferred settlement: a partially typed time
+   * left behind surfaces the incomplete message, an emptied one clears a
+   * message it surfaced earlier. The input's resulting change bubbles back
+   * through {@link onTimeChange}, so the picker's value follows.
+   */
+  private reportIncompleteOnLeave(): void {
+    this.querySelector<GuiTime>('gui-time')?.settleOnFocusLeave();
   }
 
   private dispatchListToggle(open: boolean) {

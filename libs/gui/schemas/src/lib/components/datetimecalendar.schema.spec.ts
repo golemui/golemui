@@ -82,6 +82,7 @@ describe('DateTimeCalendar schema validation', () => {
               maxTimeMessage: { key: 'dtc.max', default: 'Too late' },
               disabledTimeRangeMessage: 'Unavailable slot',
               noAvailableTimesMessage: 'No slots today',
+              incompleteMessage: 'Incomplete date-time',
             },
           },
         ],

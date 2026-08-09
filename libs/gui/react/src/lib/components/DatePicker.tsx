@@ -70,6 +70,7 @@ export function DatePicker(widgetInstance: WithWidget) {
         minDateMessage={templateData.minDateMessage as string}
         maxDateMessage={templateData.maxDateMessage as string}
         disabledDateRangeMessage={templateData.disabledDateRangeMessage as string}
+        incompleteMessage={templateData.incompleteMessage as string}
         onChange={handleChange}
         onBlur={onBlur}
         onInputError={handleInputError}

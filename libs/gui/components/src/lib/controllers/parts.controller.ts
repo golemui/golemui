@@ -46,10 +46,11 @@ export interface GUIPartsControllerOptions {
    * Called from {@link GUIPartsController.handleBlur} when a numeric part is
    * blurred while empty/invalid (NaN, or 0 on a part whose minimum is not 0).
    * REQUIRED so each host states its policy explicitly:
-   * - In scalar inputs dispatch a change carrying null.
+   * - In scalar inputs clear the part (a raw 0 counts as emptied) and
+   *   dispatch a change carrying null when a committed value existed.
    * - In range inputs an empty part never commits a null value.
    */
-  onEmptyPartBlur(): void;
+  onEmptyPartBlur(group: string, type: DateTimePartType): void;
   /** Enter keyup hook. Omitted: no-op. */
   onEnter?(event: KeyboardEvent, group: string): void;
   /** Accessor for the effective hour format. */
@@ -107,6 +108,18 @@ export class GUIPartsController implements ReactiveController {
     this.host.requestUpdate();
   }
 
+  /**
+   * Whether none of the given numeric parts hold user input. The dayPeriod
+   * toggle is excluded by the caller (it is always seeded in 12h formats).
+   *
+   * @param {string} group - The group to inspect.
+   * @param {readonly DateTimePartType[]} types - The numeric part types the host renders.
+   * @return {boolean} True when every given part is unset.
+   */
+  isGroupEmpty(group: string, types: readonly DateTimePartType[]): boolean {
+    return types.every((type) => this.getPart(group, type) === '');
+  }
+
   /** Writes clamp corrections back into the state. */
   applyWriteBacks(group: string, writeBacks: GroupWriteBacks): void {
     for (const [type, value] of Object.entries(writeBacks)) {
@@ -134,9 +147,12 @@ export class GUIPartsController implements ReactiveController {
   }
 
   /**
-   * Seeds a group's parts from an ISO value; a null/empty value clears the
-   * group (re-seeding its day period for time-aware shapes) and an
-   * unparseable one leaves the state untouched.
+   * Seeds a group's parts from an ISO value; a null/empty value clears only
+   * the shape's parts (re-seeding the day period for time-aware shapes) and
+   * an unparseable one leaves the state untouched.
+   *
+   * Shape-scoped clearing lets a date-time group drop just its date or time
+   * half while the other keeps the user's input.
    *
    * @param {string} group - The group to seed.
    * @param {string | null} iso - The ISO value, or null/'' to clear.
@@ -153,7 +169,13 @@ export class GUIPartsController implements ReactiveController {
     const format = hourFormat ?? this.options.getHourFormat?.() ?? '24';
 
     if (!iso) {
-      this.clearGroup(group);
+      if (shape === 'dateTime') {
+        this.clearGroup(group);
+      } else {
+        const types: DateTimePartType[] =
+          shape === 'date' ? ['day', 'month', 'year'] : ['hour', 'minute', 'second', 'dayPeriod'];
+        for (const type of types) this.setPart(group, type, '');
+      }
       if (shape !== 'date') this.seedWith([group], format);
       return;
     }
@@ -300,10 +322,11 @@ export class GUIPartsController implements ReactiveController {
       input.value.length === input.maxLength &&
       isDigitKey(event.key)
     ) {
-      if (index === inputs.length - 1) {
-        this.autoAdvanceFromGroupEnd(group);
-      } else {
+      if (index !== inputs.length - 1) {
         inputs[index + 1].focus();
+      } else if (!this.autoAdvanceFromGroupEnd(group)) {
+        this.setPart(group, type, input.value.replace(/[^0-9]/g, ''));
+        this.options.commitGroup(group);
       }
     }
 
@@ -370,9 +393,8 @@ export class GUIPartsController implements ReactiveController {
    * Blur handling:
    * - zero-pads a valid numeric part in the DOM
    * - routes an empty/invalid part to `onEmptyPartBlur`
-   * - always dispatches the host's `blur` CustomEvent.
    */
-  handleBlur = (event: FocusEvent, _group: string, type: DateTimePartType): void => {
+  handleBlur = (event: FocusEvent, group: string, type: DateTimePartType): void => {
     const descriptor = this.options.getDescriptor(type);
 
     if (descriptor?.kind !== 'dayPeriod') {
@@ -384,11 +406,9 @@ export class GUIPartsController implements ReactiveController {
       if (!isNaN(val) && (val > 0 || descriptor?.min === 0)) {
         input.value = val.toString().padStart(descriptor?.maxLength ?? 2, '0');
       } else {
-        this.options.onEmptyPartBlur();
+        this.options.onEmptyPartBlur(group, type);
       }
     }
-
-    this.host.dispatchEvent(new CustomEvent('blur'));
   };
 
   /**
@@ -405,17 +425,21 @@ export class GUIPartsController implements ReactiveController {
   /**
    * Auto-advance past the last input of a group, or into the next
    * group's first input, if it has more than one group (like ranged inputs).
+   *
+   * @param {string} group - The group whose last input was just filled.
+   * @return {boolean} Whether focus moved — false past the last group, where
+   *   there is nothing left to advance into and the caller commits instead.
    */
-  private autoAdvanceFromGroupEnd(group: string): void {
+  private autoAdvanceFromGroupEnd(group: string): boolean {
     const groups = this.options.groups;
     if (groups.length > 1) {
       const nextGroup = groups[groups.indexOf(group) + 1];
-      if (nextGroup !== undefined) {
-        this.getGroupInputs(nextGroup)[0]?.focus();
-      }
-      return;
+      if (nextGroup === undefined) return false;
+      this.getGroupInputs(nextGroup)[0]?.focus();
+      return true;
     }
     this.getGroupInputs(group)[0]?.focus();
+    return true;
   }
 
   /**

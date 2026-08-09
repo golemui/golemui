@@ -105,6 +105,7 @@ onUnmounted(() => {
       :maxTimeMessage="templateData.maxTimeMessage"
       :disabledTimeRangeMessage="templateData.disabledTimeRangeMessage"
       :noAvailableTimesMessage="templateData.noAvailableTimesMessage"
+      :incompleteMessage="templateData.incompleteMessage"
     />
   </div>
 </template>

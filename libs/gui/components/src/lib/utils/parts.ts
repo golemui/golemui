@@ -389,6 +389,67 @@ export function parseDateTimeGroup(
   return { result: { kind: 'valid', iso: toISODateTimeString(instant), instant }, writeBacks };
 }
 
+/**
+ * How much of a group the user has filled in. 'complete' covers any fully
+ * filled group, including one whose combination is invalid (e.g. Feb 31) —
+ * completeness is about fill state, not validity.
+ */
+export type GroupCompleteness = 'empty' | 'partial' | 'complete';
+
+/** The date and time halves of a date-time group, judged independently. */
+export interface DateTimeSubGroupResults {
+  date: GroupParseResult;
+  time: GroupParseResult;
+}
+
+/**
+ * Parses the date and time halves of a date-time group separately, so a
+ * complete half can live-sync (via `partsChange`) while the other is still
+ * empty. Write-backs are NOT applied here — the combined
+ * {@link parseDateTimeGroup} the host runs first already produced them.
+ *
+ * @param {GroupPartValues} parts - The group's raw part values.
+ * @param {object} options - Parse configuration.
+ * @param {HourFormat} options.hourFormat - The effective hour format.
+ * @param {PartDescriptorMap} options.descriptors - Merged date+time descriptors.
+ * @param {string} [options.invalidDateMessage] - Override for the impossible-date message.
+ * @return {DateTimeSubGroupResults} The two independent parse outcomes.
+ */
+export function parseDateTimeSubGroups(
+  parts: GroupPartValues,
+  options: {
+    hourFormat: HourFormat;
+    descriptors: PartDescriptorMap;
+    invalidDateMessage?: string;
+  },
+): DateTimeSubGroupResults {
+  const { result: date } = parseDateGroup(parts, {
+    descriptors: options.descriptors,
+    invalidDateMessage: options.invalidDateMessage,
+  });
+  const { result: time } = parseTimeGroup(parts, {
+    hourFormat: options.hourFormat,
+    descriptors: options.descriptors,
+  });
+  return { date, time };
+}
+
+/** `partsChange` detail of `gui-date`. */
+export interface DatePartsChangeDetail {
+  date: string | null;
+}
+
+/** `partsChange` detail of `gui-time`. */
+export interface TimePartsChangeDetail {
+  time: string | null;
+}
+
+/** `partsChange` detail of `gui-date-time` and `gui-date-time-calendar`. */
+export interface DateTimePartsChangeDetail {
+  date: string | null;
+  time: string | null;
+}
+
 /** Bounds configuration for {@link timeBoundsError}. */
 export interface TimeBounds {
   minTime?: string;

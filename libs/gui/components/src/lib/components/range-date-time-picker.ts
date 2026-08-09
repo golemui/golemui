@@ -1,12 +1,22 @@
 import { html, LitElement, nothing } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
+import { customElement, property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import type { DateTimeRange } from '@golemui/gui-shared/internals';
 import './range-date-time-input';
 import './range-date-time-calendar';
+import type { GuiRangeDateTimeInput } from './range-date-time-input';
+import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
 import { GUIPopupController } from '../controllers/popup.controller';
 import { type HourFormat } from '../utils/time';
 import { addErrors, addIcon, addLabel } from '../utils/templates';
+
+/** The four pieces of an in-progress range, each absent until chosen. */
+interface WorkingRange {
+  start?: string;
+  end?: string;
+  startTime?: string;
+  endTime?: string;
+}
 
 @customElement('gui-range-date-time-picker')
 export class GuiRangeDateTimePicker extends LitElement {
@@ -112,13 +122,29 @@ export class GuiRangeDateTimePicker extends LitElement {
   @property({ type: String, attribute: 'no-available-times-message' }) noAvailableTimesMessage:
     | string
     | undefined = undefined;
+  @property({ type: String, attribute: 'incomplete-message' }) incompleteMessage:
+    | string
+    | undefined = undefined;
   @property({ type: String, attribute: 'day-count-aria-label' }) dayCountAriaLabel:
     | string
     | undefined = undefined;
   @property({ type: String, attribute: 'disabled-day-count-aria-label' })
   disabledDayCountAriaLabel: string | undefined = undefined;
 
+  @query('#date-input') private _dateRef?: GuiRangeDateTimeInput;
+
   @state() private _focusDate: string | undefined = undefined;
+  /**
+   * The in-progress range, from either half of the widget: days and times
+   * picked in the calendar, or endpoints typed into the input. It lives here —
+   * the picker stays mounted — so a half-finished range survives closing and
+   * reopening the popover, and it is what the calendar and the input each
+   * render.
+   */
+  @state() private _workingStart: string | undefined = undefined;
+  @state() private _workingEnd: string | undefined = undefined;
+  @state() private _workingStartTime: string | undefined = undefined;
+  @state() private _workingEndTime: string | undefined = undefined;
 
   private _popup = new GUIPopupController(this, {
     focusRestoreSelector: 'gui-range-date-time input',
@@ -140,7 +166,24 @@ export class GuiRangeDateTimePicker extends LitElement {
       this.closePillsDropdown();
     },
     onOpenChanged: (open) => {
+      // The working selection deliberately survives a close: only the
+      // transient focus target is dropped.
       if (!open) this._focusDate = undefined;
+    },
+  });
+
+  /**
+   * The single point where the picker reports focus leaving the control: the
+   * input settles what is in its fields — committing a complete range,
+   * surfacing a half-typed one — and only then does the picker blur, which the
+   * form layer reads as "validate now". Blurring first would validate the
+   * value the commit is about to replace.
+   */
+  private _focusLeave = new GUIFocusLeaveController(this, {
+    resolveSyncOnRelatedTarget: true,
+    onLeave: () => {
+      this._dateRef?.finalizeOnLeave();
+      this.dispatchEvent(new CustomEvent('blur'));
     },
   });
 
@@ -208,8 +251,14 @@ export class GuiRangeDateTimePicker extends LitElement {
           .noAvailableTimesMessage=${this.noAvailableTimesMessage}
           .dayCountAriaLabel=${this.dayCountAriaLabel}
           .disabledDayCountAriaLabel=${this.disabledDayCountAriaLabel}
+          .workingStart=${this._workingStart}
+          .workingEnd=${this._workingEnd}
+          .workingStartTime=${this._workingStartTime}
+          .workingEndTime=${this._workingEndTime}
+          .deferFocusLeave=${true}
           @blur=${this.onCalendarBlur}
           @change=${this.onCalendarChange}
+          @partsChange=${this.onCalendarPartsChange}
           @inputError=${this.onCalendarInputError}
         ></gui-range-date-time-calendar>`
       : nothing;
@@ -231,8 +280,10 @@ export class GuiRangeDateTimePicker extends LitElement {
         class="gui-widget"
         @keydown=${this._popup.onAnchorKeyDown}
         @click=${this._popup.onAnchorClick}
+        @focusout=${this._focusLeave.onFocusOut}
       >
         <gui-range-date-time
+          .deferFocusLeave=${true}
           id="date-input"
           class=${classMap(datePickerIcon.widgetClasses)}
           .uid=${this.uid}
@@ -265,9 +316,11 @@ export class GuiRangeDateTimePicker extends LitElement {
           .maxDateTimeMessage=${this.maxDateTimeMessage}
           .disabledRanges=${this.disabledRanges}
           .disabledRangeMessage=${this.disabledRangeMessage}
+          .incompleteMessage=${this.incompleteMessage}
           @blur=${this.onDateBlur}
           @focus=${this._popup.show}
           @change=${this.onDateChange}
+          @partsChange=${this.onInputPartsChange}
           @pillClick=${this.onPillClick}
         ></gui-range-date-time>
         <button
@@ -314,11 +367,91 @@ export class GuiRangeDateTimePicker extends LitElement {
 
   private onDateChange(event: CustomEvent) {
     event.stopPropagation();
-    this.commitValue(event.detail.value);
+    this.commitValue(event.detail.value, event.detail.commit !== false);
   }
 
-  private onDateBlur() {
-    this.dispatchEvent(new CustomEvent('blur'));
+  /**
+   * The input's per-part blur stays inside the widget: moving from a segment
+   * into the popover is not leaving the control, so it must not be reported
+   * as a blur (which the form layer reads as "validate now"). The picker
+   * reports blur from its own focus-leave check instead.
+   */
+  private onDateBlur(event: Event) {
+    event.stopPropagation();
+  }
+
+  /**
+   * Applies a new working range, repainting only the pieces that actually
+   * changed. Repainting every reported piece would wipe half-typed segments
+   * the other half of the widget never saw — a `11:3` in the start time is
+   * lost the moment the calendar reports it has no start time at all.
+   */
+  private setWorking(next: WorkingRange, paint = false): void {
+    const changed = {
+      start: next.start !== this._workingStart,
+      end: next.end !== this._workingEnd,
+      startTime: next.startTime !== this._workingStartTime,
+      endTime: next.endTime !== this._workingEndTime,
+    };
+    this._workingStart = next.start;
+    this._workingEnd = next.end;
+    this._workingStartTime = next.startTime;
+    this._workingEndTime = next.endTime;
+
+    const input = this._dateRef;
+    if (!paint || !input) return;
+    if (changed.start) input.fillDate('start', next.start ?? null);
+    if (changed.end) input.fillDate('end', next.end ?? null);
+    if (changed.startTime) input.fillTime('start', next.startTime ?? null);
+    if (changed.endTime) input.fillTime('end', next.endTime ?? null);
+  }
+
+  /** Typed endpoints feed the working range; the calendar follows them. */
+  private onInputPartsChange(
+    event: CustomEvent<{
+      start: { date: string | null; time: string | null };
+      end: { date: string | null; time: string | null };
+    }>,
+  ) {
+    event.stopPropagation();
+    const { start, end } = event.detail;
+    this.setWorking({
+      start: start.date ?? undefined,
+      end: end.date ?? undefined,
+      startTime: start.time ?? undefined,
+      endTime: end.time ?? undefined,
+    });
+  }
+
+  /**
+   * The calendar's in-progress selection, held here so it survives the
+   * popover, and painted into the fields so every piece picked in the calendar
+   * reads back as a date-time — the reverse of typed parts moving the
+   * calendar. Until the span completes its anchor stands in for the start day;
+   * once the range commits every piece arrives null and the fields empty.
+   */
+  private onCalendarPartsChange(event: CustomEvent) {
+    event.stopPropagation();
+    const anchor = (event.detail.anchor as string | null) ?? undefined;
+    const start = (event.detail.start as string | null) ?? undefined;
+    const end = (event.detail.end as string | null) ?? undefined;
+    const times = {
+      startTime: (event.detail.startTime as string | null) ?? undefined,
+      endTime: (event.detail.endTime as string | null) ?? undefined,
+    };
+
+    if (start || end) {
+      this.setWorking({ start, end, ...times }, true);
+      return;
+    }
+
+    const keepEnd = !!anchor && !this._workingStart && this._workingEnd === anchor;
+    this.setWorking(
+      keepEnd
+        ? { start: undefined, end: anchor, ...times }
+        : { start: anchor, end: undefined, ...times },
+      true,
+    );
   }
 
   private onCalendarChange(event: CustomEvent) {
@@ -349,8 +482,16 @@ export class GuiRangeDateTimePicker extends LitElement {
     );
   }
 
-  private commitValue(value: DateTimeRange[] | null | undefined) {
+  /**
+   * The single funnel every commit passes through — a calendar pick, a typed
+   * Enter — so the working selection is torn down once, and the calendar
+   * (which follows the cleared props, down to its two time pickers) with it.
+   * `committed` is false for the input's error-clearing echo, which carries no
+   * new pill and must leave a half-entered range alone.
+   */
+  private commitValue(value: DateTimeRange[] | null | undefined, committed = true) {
     this.value = value ?? undefined;
+    if (committed) this.setWorking({});
     this.dispatchEvent(
       new CustomEvent('change', {
         detail: { value: value ?? null },
@@ -360,7 +501,13 @@ export class GuiRangeDateTimePicker extends LitElement {
     );
   }
 
-  private onCalendarBlur() {
+  /**
+   * Focus leaving the calendar closes the popover, but it is not necessarily
+   * leaving the picker (focus often returns to the fields), so the calendar's
+   * bubbling blur is stopped here and never reaches the form layer.
+   */
+  private onCalendarBlur(event: Event) {
+    event.stopPropagation();
     this._popup.closeOnFocusLeave();
   }
 

@@ -106,6 +106,7 @@ onUnmounted(() => {
       :maxDateTimeMessage="templateData.maxDateTimeMessage"
       :disabledRangeMessage="templateData.disabledRangeMessage"
       :noAvailableTimesMessage="templateData.noAvailableTimesMessage"
+      :incompleteMessage="templateData.incompleteMessage"
       :dayCountAriaLabel="templateData.dayCountAriaLabel"
       :disabledDayCountAriaLabel="templateData.disabledDayCountAriaLabel"
     />

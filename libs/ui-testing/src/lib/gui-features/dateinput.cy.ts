@@ -17,6 +17,7 @@ export const runDateInputComponentTests = (mountFn: MountComponentFn) => {
       data?: Record<string, any>;
       lang?: string;
       props?: Record<string, any>;
+      validator?: Record<string, any>;
       formSubmit?: (event: any) => void;
       readonly?: boolean;
       disabled?: boolean;
@@ -32,6 +33,7 @@ export const runDateInputComponentTests = (mountFn: MountComponentFn) => {
               type: 'dateInput',
               path: 'myDate',
               ...(options?.props ? { props: options.props } : {}),
+              ...(options?.validator ? { validator: options.validator as any } : {}),
               ...(options?.readonly !== undefined ? { readonly: options.readonly } : {}),
               ...(options?.disabled !== undefined ? { disabled: options.disabled } : {}),
             },
@@ -123,9 +125,10 @@ export const runDateInputComponentTests = (mountFn: MountComponentFn) => {
         cy.get(sel.month).should('have.value', '12');
       });
 
-      it('should clear all parts when 00 is typed (zero commits as an empty value)', () => {
-        // Typing 00 clamps to 01 in state, but the blur handler sees the raw 0,
-        // emits change {value: null}, and the null value resets every part.
+      it('should clear the part when 00 is typed without emitting a value', () => {
+        // Typing 00 clamps to 01 in state, but the blur handler sees the raw 0
+        // and clears the part. With no previously committed value nothing is
+        // emitted: the value stays undefined ("not filled in yet").
         const formSubmitHandler = cy.stub().as('formSubmitHandler');
         mountDateInput({ formSubmit: formSubmitHandler });
 
@@ -133,7 +136,7 @@ export const runDateInputComponentTests = (mountFn: MountComponentFn) => {
         cy.get(sel.month).should('have.value', '');
 
         submitAndGetData('@formSubmitHandler').then((data) => {
-          expect(data).to.deep.equal({ myDate: null });
+          expect(data.myDate).to.equal(undefined);
         });
       });
 
@@ -156,6 +159,8 @@ export const runDateInputComponentTests = (mountFn: MountComponentFn) => {
         cy.focused().type('31');
         cy.focused().type('2026');
 
+        // The widget's own verdict shows without waiting for focus to leave:
+        // it is feedback on a complete entry the user just typed
         cy.get(`[data-cy="${uid}_validator-error"]`).should('contain.text', 'Invalid date');
         cy.get('@changeSpy').should('not.have.been.called');
       });
@@ -261,16 +266,123 @@ export const runDateInputComponentTests = (mountFn: MountComponentFn) => {
         cy.get(sel.day).invoke('val').should('match', /^0?9$/);
       });
 
-      it('should emit a null value when a part is emptied and blurred', () => {
-        const formSubmitHandler = cy.stub().as('formSubmitHandler');
-        mountDateInput({ data: { myDate: '2026-06-15' }, formSubmit: formSubmitHandler });
+      it('should emit a null value and keep the other parts when one part is emptied', () => {
+        mountDateInput({ data: { myDate: '2026-06-15' } });
+
+        const changeSpy = cy.spy().as('changeSpy');
+        cy.get('gui-date').then(($el) => {
+          $el[0].addEventListener('change', changeSpy as unknown as EventListener);
+        });
 
         cy.get(sel.day).type('{selectAll}{backspace}');
         cy.get(sel.day).blur();
 
-        submitAndGetData('@formSubmitHandler').then((data) => {
-          expect(data).to.deep.equal({ myDate: null });
+        cy.get('@changeSpy').then((spy: any) => {
+          expect(spy.getCall(0).args[0].detail.value).to.equal(null);
         });
+
+        // Only the emptied part clears: the rest of the entry is not wiped
+        cy.get(sel.day).should('have.value', '');
+        cy.get(sel.month).should('have.value', '06');
+        cy.get(sel.year).should('have.value', '2026');
+      });
+    });
+
+    describe('incomplete input on focus leave', () => {
+      it('should not validate while moving between the parts of one entry', () => {
+        // Filling a part auto-advances to the next one. That hop is not
+        // leaving the widget, so the form must not judge a half-typed entry:
+        // a required field lighting up after the first part is the bug.
+        mountDateInput({ validator: { type: 'string', required: true } });
+
+        cy.get(sel.month).type('06');
+        cy.get(`[data-cy="${uid}_validator-errors"]`).should('not.exist');
+        cy.focused().type('15');
+        cy.get(`[data-cy="${uid}_validator-errors"]`).should('not.exist');
+
+        // Leaving the widget is the one moment the entry is judged
+        cy.get('[data-cy="submitBtn_button"]').focus();
+        cy.get(`[data-cy="${uid}_validator-errors"]`).should('exist');
+      });
+
+      it('should flip a partial date to null with an incomplete error when focus leaves', () => {
+        mountDateInput();
+
+        const changeSpy = cy.spy().as('changeSpy');
+        cy.get('gui-date').then(($el) => {
+          $el[0].addEventListener('change', changeSpy as unknown as EventListener);
+        });
+
+        cy.get(sel.month).type('06');
+        cy.get('[data-cy="submitBtn_button"]').focus();
+
+        // The null report marks the field invalid, so validators catch a
+        // lingering partial even on non-required fields
+        cy.get(`[data-cy="${uid}_validator-error"]`).should('contain.text', 'Incomplete date');
+        cy.get('@changeSpy').then((spy: any) => {
+          expect(spy.getCall(0).args[0].detail.value).to.equal(null);
+        });
+      });
+
+      it('should clear the incomplete error once the date is completed', () => {
+        mountDateInput();
+
+        cy.get(sel.month).type('06');
+        cy.get('[data-cy="submitBtn_button"]').focus();
+        cy.get(`[data-cy="${uid}_validator-error"]`).should('contain.text', 'Incomplete date');
+
+        cy.get(sel.day).type('15');
+        cy.focused().type('2026');
+        cy.get(`[data-cy="${uid}_validator-error"]`).should('not.exist');
+      });
+
+      it('should show the incomplete error for a committed value left with an emptied part', () => {
+        mountDateInput({ data: { myDate: '2026-06-15' } });
+
+        cy.get(sel.day).type('{selectAll}{backspace}');
+        cy.get('[data-cy="submitBtn_button"]').focus();
+
+        cy.get(`[data-cy="${uid}_validator-error"]`).should('contain.text', 'Incomplete date');
+        cy.get(sel.month).should('have.value', '06');
+        cy.get(sel.year).should('have.value', '2026');
+      });
+
+      it('should not report an emptied widget as incomplete on focus leave', () => {
+        const formSubmitHandler = cy.stub().as('formSubmitHandler');
+        mountDateInput({ formSubmit: formSubmitHandler });
+
+        cy.get(sel.month).type('06');
+        cy.get(sel.month).type('{selectAll}{backspace}');
+        cy.get('[data-cy="submitBtn_button"]').focus();
+
+        cy.get(`[data-cy="${uid}_validator-error"]`).should('not.exist');
+        submitAndGetData('@formSubmitHandler').then((data) => {
+          expect(data.myDate ?? null).to.equal(null);
+        });
+      });
+
+      it('should clear the incomplete error when the emptied widget is left again', () => {
+        // Regression: leave a partial behind (incomplete error), come back,
+        // empty the field and leave again — the error must not outlive
+        // fields that no longer hold anything.
+        mountDateInput();
+
+        cy.get(sel.month).type('06');
+        cy.get('[data-cy="submitBtn_button"]').focus();
+        cy.get(`[data-cy="${uid}_validator-error"]`).should('contain.text', 'Incomplete date');
+
+        cy.get(sel.month).type('{selectAll}{backspace}');
+        cy.get('[data-cy="submitBtn_button"]').focus();
+        cy.get(`[data-cy="${uid}_validator-errors"]`).should('not.exist');
+      });
+
+      it('should honor the incompleteMessage prop', () => {
+        mountDateInput({ props: { incompleteMessage: 'Incomplete date!' } });
+
+        cy.get(sel.month).type('06');
+        cy.get('[data-cy="submitBtn_button"]').focus();
+
+        cy.get(`[data-cy="${uid}_validator-error"]`).should('contain.text', 'Incomplete date!');
       });
     });
 

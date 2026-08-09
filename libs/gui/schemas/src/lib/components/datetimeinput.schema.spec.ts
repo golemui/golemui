@@ -65,6 +65,7 @@ describe('Datetimeinput schema validation', () => {
               icon: 'schedule',
               hourFormat: '24',
               minuteStep: 15,
+              incompleteMessage: 'Incomplete date-time',
             },
           },
         ],

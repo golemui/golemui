@@ -33,3 +33,13 @@ export const INVALID_MIN_DATE_TIME_MESSAGE =
 /** Default inputError message for a date-time before the maxDateTime bound. **/
 export const INVALID_MAX_DATE_TIME_MESSAGE =
   'Invalid date-time: date-time is after the maximum allowed date-time.';
+
+/** Default inputError message for a partially filled date left behind on focus leave. **/
+export const INCOMPLETE_DATE_MESSAGE = 'Incomplete date: fill in all date parts.';
+
+/** Default inputError message for a partially filled time left behind on focus leave. **/
+export const INCOMPLETE_TIME_MESSAGE = 'Incomplete time: fill in all time parts.';
+
+/** Default inputError message for a partially filled date-time left behind on focus leave. **/
+export const INCOMPLETE_DATE_TIME_MESSAGE =
+  'Incomplete date-time: fill in all date and time parts.';

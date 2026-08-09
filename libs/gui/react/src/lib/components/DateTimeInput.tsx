@@ -85,6 +85,7 @@ export function DateTimeInput(widgetInstance: WithWidget) {
         maxDateMessage={templateData.maxDateMessage as string}
         minTimeMessage={templateData.minTimeMessage as string}
         maxTimeMessage={templateData.maxTimeMessage as string}
+        incompleteMessage={templateData.incompleteMessage as string}
         hourFormat={hourFormat}
         minuteStep={minuteStep}
       />

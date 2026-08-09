@@ -26,6 +26,7 @@ export const runRangeTimeInputComponentTests = (mountFn: MountComponentFn) => {
       data?: Record<string, any>;
       lang?: string;
       props?: Record<string, any>;
+      validator?: Record<string, any>;
       formSubmit?: (event: any) => void;
       readonly?: boolean;
       disabled?: boolean;
@@ -41,6 +42,7 @@ export const runRangeTimeInputComponentTests = (mountFn: MountComponentFn) => {
               type: 'rangeTimeInput',
               path: 'myRanges',
               ...(options?.props ? { props: options.props } : {}),
+              ...(options?.validator ? { validator: options.validator as any } : {}),
               ...(options?.readonly !== undefined ? { readonly: options.readonly } : {}),
               ...(options?.disabled !== undefined ? { disabled: options.disabled } : {}),
             },
@@ -116,12 +118,12 @@ export const runRangeTimeInputComponentTests = (mountFn: MountComponentFn) => {
       );
     });
 
-    it('should not create a pill until Enter is pressed', () => {
+    it('should not create a pill while the user is still in the fields', () => {
       mountRangeTimeInput();
 
-      // Completing both endpoints is deliberately not enough: the range is only
-      // committed by an explicit Enter, which is what frees the user to correct
-      // the trailing AM/PM toggle first.
+      // Completing both endpoints is deliberately not enough on its own: the
+      // commit waits for Enter or for focus to leave, which is what frees the
+      // user to correct the trailing AM/PM toggle first.
       typeRange(['09', '00'], ['11', '30'], false);
 
       cy.get(sel.pillText).should('have.length', 0);
@@ -292,6 +294,76 @@ export const runRangeTimeInputComponentTests = (mountFn: MountComponentFn) => {
       cy.get('@inputErrorSpy').then((spy: any) => {
         expect(spy.getCall(0).args[0].detail.message).to.equal('Too late');
       });
+    });
+
+    it('should not validate while moving between the parts of one endpoint', () => {
+      // Filling a part auto-advances to the next one. That hop is not leaving
+      // the widget, so the form must not judge a half-typed entry: a required
+      // field lighting up after the first part is the bug.
+      mountRangeTimeInput({ validator: { type: 'array', required: true } });
+
+      cy.get(sel.start.hour).click();
+      cy.focused().type('09');
+      cy.get('[data-cy="testSubject_validator-errors"]').should('not.exist');
+
+      // Leaving the widget is the one moment the entry is judged
+      cy.get('[data-cy="submitBtn_button"]').focus();
+      cy.get('[data-cy="testSubject_validator-errors"]').should('exist');
+    });
+
+    it('should report an incomplete range when only one endpoint was filled', () => {
+      // A whole endpoint typed with the other left empty is as unfinished as a
+      // half-typed one: the range never became a pill.
+      mountRangeTimeInput();
+
+      cy.get(sel.start.hour).click();
+      cy.focused().type('09');
+      cy.focused().type('00');
+      cy.get('[data-cy="submitBtn_button"]').focus();
+
+      cy.get('[data-cy="testSubject_validator-error"]').should('contain.text', 'Incomplete time');
+      cy.get(sel.pillText).should('not.exist');
+    });
+
+    it('should clear the incomplete error when the emptied endpoint is left again', () => {
+      // Regression: leave one endpoint behind (incomplete error), come back,
+      // empty its fields and leave again — the error must not outlive fields
+      // that no longer hold anything.
+      mountRangeTimeInput();
+
+      cy.get(sel.start.hour).click();
+      cy.focused().type('09');
+      cy.focused().type('00');
+      cy.get('[data-cy="submitBtn_button"]').focus();
+      cy.get('[data-cy="testSubject_validator-error"]').should('contain.text', 'Incomplete time');
+
+      cy.get(sel.start.hour).type('{selectAll}{backspace}');
+      cy.get(sel.start.minute).type('{selectAll}{backspace}');
+      cy.get('[data-cy="submitBtn_button"]').focus();
+      cy.get('[data-cy="testSubject_validator-errors"]').should('not.exist');
+    });
+
+    it('should commit a complete range when focus leaves, without Enter', () => {
+      mountRangeTimeInput();
+
+      typeRange(['09', '00'], ['11', '30'], false);
+      cy.get(sel.pillText).should('have.length', 0);
+
+      // Leaving acts as Enter: a range the user finished is not abandoned work,
+      // and making them press a key to keep it loses it silently.
+      cy.get('[data-cy="submitBtn_button"]').focus();
+      cy.get(sel.pillText).should('have.length', 1).and('contain', '09:00');
+      cy.get(sel.start.hour).should('have.value', '');
+    });
+
+    it('should leave no error standing over a range the leave just committed', () => {
+      mountRangeTimeInput({ validator: { type: 'array', required: true } });
+
+      typeRange(['09', '00'], ['11', '30'], false);
+      cy.get('[data-cy="submitBtn_button"]').focus();
+
+      cy.get(sel.pillText).should('have.length', 1);
+      cy.get('[data-cy="testSubject_validator-errors"]').should('not.exist');
     });
 
     it('should render disabled inputs when disabled', () => {

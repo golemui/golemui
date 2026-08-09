@@ -75,6 +75,7 @@ export function DateInput(widgetInstance: WithWidget) {
         maxDate={templateData.maxDate}
         minDateMessage={templateData.minDateMessage as string}
         maxDateMessage={templateData.maxDateMessage as string}
+        incompleteMessage={templateData.incompleteMessage as string}
       />
     </div>
   );

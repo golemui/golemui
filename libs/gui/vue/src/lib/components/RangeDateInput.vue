@@ -71,6 +71,7 @@ onUnmounted(() => {
       :monthAriaLabel="templateData.monthAriaLabel"
       :yearAriaLabel="templateData.yearAriaLabel"
       :invalidDateMessage="templateData.invalidDateMessage"
+      :incompleteMessage="templateData.incompleteMessage"
       :separator="templateData.separator"
       :removePillAriaLabel="templateData.removePillAriaLabel"
       :startDateAriaLabel="templateData.startDateAriaLabel"

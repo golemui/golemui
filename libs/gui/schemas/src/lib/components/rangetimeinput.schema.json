@@ -124,6 +124,10 @@
         "rangeOrderMessage": {
           "$ref": "../common.schema.json#/$defs/localizable"
         },
+        "incompleteMessage": {
+          "$ref": "../common.schema.json#/$defs/localizable",
+          "description": "Error surfaced when focus leaves the widget with a partially filled entry behind; the value goes to null so validators report it even on non-required fields."
+        },
         "hourAriaLabel": {
           "$ref": "#/$defs/hourAriaLabelProp"
         },
@@ -172,6 +176,9 @@
           "$ref": "../common.schema.json#/$defs/localizable"
         },
         "^rangeOrderMessage\\.[^.]+$": {
+          "$ref": "../common.schema.json#/$defs/localizable"
+        },
+        "^incompleteMessage\\.[^.]+$": {
           "$ref": "../common.schema.json#/$defs/localizable"
         },
         "^hourAriaLabel\\.[^.]+$": {

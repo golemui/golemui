@@ -3,8 +3,9 @@ import { type MountComponentFn } from '../utils';
 
 // Behavior tests for the gui-date-time-picker web component: a gui-date-time
 // input opening a gui-date-time-calendar popover. The popover closes only on
-// a COMPLETE day+time commit — picking a day emits null (time cleared) and
-// must keep it open for the second step.
+// a deliberate commit (a list pick or Enter) — picking a day keeps any
+// previously chosen time (committing the new full value) or, with no time
+// yet, parks a working partial that survives closing the popover.
 export const runDateTimePickerComponentTests = (mountFn: MountComponentFn) => {
   describe('DateTimePicker Component', () => {
     const sel = {
@@ -36,6 +37,7 @@ export const runDateTimePickerComponentTests = (mountFn: MountComponentFn) => {
     const mountPicker = (options?: {
       data?: Record<string, any>;
       props?: Record<string, any>;
+      validator?: Record<string, any>;
       formSubmit?: (event: any) => void;
       readonly?: boolean;
       disabled?: boolean;
@@ -51,6 +53,7 @@ export const runDateTimePickerComponentTests = (mountFn: MountComponentFn) => {
               type: 'dateTimePicker',
               path: 'myAppointment',
               ...(options?.props ? { props: options.props } : {}),
+              ...(options?.validator ? { validator: options.validator as any } : {}),
               ...(options?.readonly !== undefined ? { readonly: options.readonly } : {}),
               ...(options?.disabled !== undefined ? { disabled: options.disabled } : {}),
             },
@@ -124,10 +127,12 @@ export const runDateTimePickerComponentTests = (mountFn: MountComponentFn) => {
 
       cy.get(sel.day).click();
 
-      // Day step: emits null (time cleared) and the popover must stay open
+      // Day step: the kept time commits the new full value immediately, and
+      // the popover must stay open (not a deliberate list-pick/Enter commit)
       cy.get(sel.dayButton('2026-02-16')).click();
       cy.get(sel.calendar).should('exist');
-      cy.get(sel.day).should('have.value', '');
+      cy.get(sel.day).should('have.value', '16');
+      cy.get(sel.hour).should('have.value', '09');
 
       // Time step: the commit closes the popover and fills the field
       cy.get(sel.popoverHour).click();
@@ -142,6 +147,209 @@ export const runDateTimePickerComponentTests = (mountFn: MountComponentFn) => {
       submitAndGetData('@formSubmitHandler').then((data) => {
         expect(data).to.deep.equal({ myAppointment: '2026-02-16T10:00:00' });
       });
+    });
+
+    it('should fill the date segments and keep the value null after a day-only pick', () => {
+      const formSubmitHandler = cy.stub().as('formSubmitHandler');
+      mountPicker({
+        data: { myAppointment: null },
+        props: officeProps,
+        formSubmit: formSubmitHandler,
+      });
+
+      cy.get(sel.day).click();
+      cy.get('gui-date-time-calendar .gui-calendar__day-button:not(.other-month):not(:disabled)')
+        .first()
+        .then(($btn) => {
+          const isoDate = $btn.attr('data-date') as string;
+
+          cy.wrap($btn).click();
+          cy.get(sel.calendar).should('exist');
+          cy.get(sel.day).should('have.value', isoDate.slice(8, 10));
+          cy.get(sel.month).should('have.value', isoDate.slice(5, 7));
+          cy.get(sel.hour).should('have.value', '');
+
+          submitAndGetData('@formSubmitHandler').then((data) => {
+            expect(data).to.deep.equal({ myAppointment: null });
+          });
+        });
+    });
+
+    it('should select the typed day in the calendar as the date half completes', () => {
+      mountPicker({ props: { ...officeProps, hourFormat: '24' } });
+
+      cy.get(sel.month).click();
+      cy.focused().type('02');
+      cy.focused().type('13');
+      cy.focused().type('2026');
+
+      cy.get(sel.dayButton('2026-02-13')).should('have.attr', 'aria-selected', 'true');
+    });
+
+    it('should keep a time picked before any day and commit once a day is picked', () => {
+      const formSubmitHandler = cy.stub().as('formSubmitHandler');
+      mountPicker({
+        data: { myAppointment: null },
+        props: officeProps,
+        formSubmit: formSubmitHandler,
+      });
+
+      cy.get(sel.day).click();
+      cy.get(sel.popoverHour).click();
+      cy.get(sel.option('10:00:00')).click();
+
+      // No day yet: the pick is parked, the popover stays open, the field
+      // time segments fill
+      cy.get(sel.calendar).should('exist');
+      cy.get(sel.hour).should('have.value', '10');
+
+      cy.get('gui-date-time-calendar .gui-calendar__day-button:not(.other-month):not(:disabled)')
+        .first()
+        .then(($btn) => {
+          const isoDate = $btn.attr('data-date') as string;
+
+          cy.wrap($btn).click();
+          cy.get(sel.day).should('have.value', isoDate.slice(8, 10));
+
+          submitAndGetData('@formSubmitHandler').then((data) => {
+            expect(data).to.deep.equal({ myAppointment: `${isoDate}T10:00:00` });
+          });
+        });
+    });
+
+    it('should keep a day-only pick across popover close and reopen', () => {
+      mountPicker({ data: { myAppointment: null }, props: officeProps });
+
+      cy.get(sel.day).click();
+      cy.get('gui-date-time-calendar .gui-calendar__day-button:not(.other-month):not(:disabled)')
+        .first()
+        .then(($btn) => {
+          const isoDate = $btn.attr('data-date') as string;
+
+          cy.wrap($btn).click();
+          // Escape closes the popover; the working selection must survive
+          cy.focused().type('{esc}');
+          cy.get(sel.calendar).should('not.exist');
+
+          cy.get(sel.day).click();
+          cy.get(sel.calendar).should('exist');
+          cy.get(sel.dayButton(isoDate)).should('have.attr', 'aria-selected', 'true');
+        });
+    });
+
+    it('should not show an error while a selection is still in progress in the popover', () => {
+      // Completing a selection step by step must stay quiet: no error until
+      // the user actually abandons the widget with a partial value.
+      mountPicker({
+        data: { myAppointment: null },
+        props: officeProps,
+        validator: { type: 'string', format: 'date-time', required: true },
+      });
+
+      cy.get(sel.day).click();
+      cy.get('gui-date-time-calendar .gui-calendar__day-button:not(.other-month):not(:disabled)')
+        .first()
+        .click();
+      cy.get('[data-cy="testSubject_validator-errors"]').should('not.exist');
+
+      // Moving on to the time step must not flag the field either
+      cy.get(sel.popoverHour).click();
+      cy.get('[data-cy="testSubject_validator-errors"]').should('not.exist');
+
+      cy.get(sel.option('10:00:00')).click();
+      cy.get('[data-cy="testSubject_validator-errors"]').should('not.exist');
+    });
+
+    it('should not show an error when clicking a non-focusable area of the popover', () => {
+      // Clicking widget chrome (the time input's group wrapper, padding...)
+      // must not read as leaving the control just because the clicked
+      // element cannot hold focus.
+      mountPicker({
+        data: { myAppointment: null },
+        props: officeProps,
+        validator: { type: 'string', format: 'date-time', required: true },
+      });
+
+      cy.get(sel.day).click();
+      cy.get('gui-date-time-calendar .gui-calendar__day-button:not(.other-month):not(:disabled)')
+        .first()
+        .click();
+
+      cy.get('gui-date-time-calendar gui-time [role="group"]').click('right');
+
+      cy.get(sel.calendar).should('exist');
+      cy.get('[data-cy="testSubject_validator-errors"]').should('not.exist');
+    });
+
+    it('should keep the other parts and show the incomplete error when a part is emptied', () => {
+      mountPicker({ data: { myAppointment: '2026-02-13T09:30:00' }, props: officeProps });
+
+      cy.get(sel.day).type('{selectAll}{backspace}');
+      cy.get('[data-cy="submitBtn_button"]').focus();
+
+      // The field keeps what the user still has: only the emptied part clears
+      cy.get(sel.day).should('have.value', '');
+      cy.get(sel.month).should('have.value', '02');
+      cy.get(sel.year).should('have.value', '2026');
+      cy.get(sel.hour).should('have.value', '09');
+      cy.get('[data-cy="testSubject_validator-error"]').should(
+        'contain.text',
+        'Incomplete date-time',
+      );
+    });
+
+    it('should report an abandoned partial when clicking away onto the page background', () => {
+      // The counterpart of the chrome-click case: a click outside that lands
+      // on a non-focusable area is still leaving the widget.
+      mountPicker({ data: { myAppointment: null }, props: officeProps });
+
+      cy.get(sel.day).click();
+      cy.get('gui-date-time-calendar .gui-calendar__day-button:not(.other-month):not(:disabled)')
+        .first()
+        .click();
+
+      cy.get('body').click(0, 0);
+
+      cy.get(sel.calendar).should('not.exist');
+      cy.get('[data-cy="testSubject_validator-error"]').should(
+        'contain.text',
+        'Incomplete date-time',
+      );
+    });
+
+    it('should flip a day-only pick to null with an incomplete error when focus leaves', () => {
+      mountPicker({ data: { myAppointment: null }, props: officeProps });
+
+      cy.get(sel.day).click();
+      cy.get('gui-date-time-calendar .gui-calendar__day-button:not(.other-month):not(:disabled)')
+        .first()
+        .click();
+
+      cy.get('[data-cy="submitBtn_button"]').focus();
+      cy.get(sel.calendar).should('not.exist');
+      cy.get('[data-cy="testSubject_validator-error"]').should(
+        'contain.text',
+        'Incomplete date-time',
+      );
+    });
+
+    it('should clear the incomplete error when the emptied picker is left again', () => {
+      // Regression: leave a typed partial behind (incomplete error), come
+      // back, empty the field and leave again — the error must not outlive
+      // fields that no longer hold anything.
+      mountPicker({ props: officeProps });
+
+      cy.get(sel.month).click();
+      cy.focused().type('02');
+      cy.get('[data-cy="submitBtn_button"]').focus();
+      cy.get('[data-cy="testSubject_validator-error"]').should(
+        'contain.text',
+        'Incomplete date-time',
+      );
+
+      cy.get(sel.month).type('{selectAll}{backspace}');
+      cy.get('[data-cy="submitBtn_button"]').focus();
+      cy.get('[data-cy="testSubject_validator-errors"]').should('not.exist');
     });
 
     it('should commit a fully typed date-time from the field', () => {

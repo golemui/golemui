@@ -137,6 +137,10 @@
         "maxDateTimeMessage": {
           "$ref": "../common.schema.json#/$defs/localizable"
         },
+        "incompleteMessage": {
+          "$ref": "../common.schema.json#/$defs/localizable",
+          "description": "Error surfaced when focus leaves the widget with a partially filled entry behind; the value goes to null so validators report it even on non-required fields."
+        },
         "dayAriaLabel": {
           "$ref": "#/$defs/dayAriaLabelProp"
         },
@@ -194,6 +198,9 @@
           "$ref": "../common.schema.json#/$defs/localizable"
         },
         "^maxDateTimeMessage\\.[^.]+$": {
+          "$ref": "../common.schema.json#/$defs/localizable"
+        },
+        "^incompleteMessage\\.[^.]+$": {
           "$ref": "../common.schema.json#/$defs/localizable"
         },
         "^dayAriaLabel\\.[^.]+$": {

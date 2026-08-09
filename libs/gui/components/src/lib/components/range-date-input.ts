@@ -3,6 +3,7 @@ import { html, LitElement, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
+import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
 import { GUIPartsController } from '../controllers/parts.controller';
 import {
   getDateFormatParts,
@@ -10,6 +11,7 @@ import {
   parseISODateString,
   toISODateString,
 } from '../utils/date';
+import { INCOMPLETE_DATE_MESSAGE } from '../utils/messages';
 import { renderGroupParts, type GUIPartsTemplateData } from '../utils/part-templates';
 import {
   dateInputPartDescriptors,
@@ -59,11 +61,24 @@ export class GuiRangeDateInput extends LitElement {
   @property({ type: String }) startDateAriaLabel: string | undefined = undefined;
   @property({ type: String }) endDateAriaLabel: string | undefined = undefined;
   @property({ type: String }) separator: string | undefined = undefined;
+  @property({ type: String, attribute: 'incomplete-message' }) incompleteMessage:
+    | string
+    | undefined = undefined;
+  /**
+   * Set by host pickers that run their own whole-widget focus-leave check:
+   * moving focus from this input into the picker's popover must not count as
+   * leaving, so the embedded input skips its incomplete-on-leave handling.
+   */
+  @property({ type: Boolean, attribute: 'defer-focus-leave' }) deferFocusLeave:
+    | boolean
+    | undefined = false;
 
   private readonly inputBlockClass = 'gui-range-date-input';
   private readonly groups = ['start', 'end'] as const;
 
   private readonly partDescriptors = dateInputPartDescriptors();
+
+  private readonly datePartTypes: readonly DateTimePartType[] = ['day', 'month', 'year'];
 
   /**
    * Set on the first commit attempt (Enter). While set, every part change
@@ -99,8 +114,30 @@ export class GuiRangeDateInput extends LitElement {
       this.dispatchEvent(new CustomEvent('inputError', { detail: { message }, bubbles: true })),
     onSurfacedErrorCleared: (value) =>
       this.dispatchEvent(
-        new CustomEvent('change', { detail: { value }, bubbles: true, composed: true }),
+        new CustomEvent('change', {
+          detail: { value, commit: false },
+          bubbles: true,
+          composed: true,
+        }),
       ),
+  });
+
+  /**
+   * The single point where the input reports focus leaving the control. It
+   * settles what is in the fields FIRST, then blurs — the form layer reads a
+   * blur as "validate now", and storing a value runs no validator, so blurring
+   * first would validate the value the commit is about to replace and leave a
+   * `required` error standing over a range the user did finish. Hopping
+   * between segments is not a departure and never reaches here.
+   */
+  private _focusLeave = new GUIFocusLeaveController(this, {
+    resolveSyncOnRelatedTarget: true,
+    onLeave: () => {
+      // Embedded in a picker: that host owns focus reporting for the subtree.
+      if (this.deferFocusLeave) return;
+      this.finalizeOnLeave();
+      this.dispatchEvent(new CustomEvent('blur'));
+    },
   });
 
   protected ariaController: GUIAriaController<unknown, any> = new GUIAriaController(this, {
@@ -174,7 +211,7 @@ export class GuiRangeDateInput extends LitElement {
     return html`
       ${this.label ? addLabel(this.uid as string, templateData, false, undefined, false) : nothing}
 
-      <div class="gui-widget">
+      <div class="gui-widget" @focusout=${this._focusLeave.onFocusOut}>
         <div
           class="gui-widget-input gui-parts-ring gui-range-date-input ${this.icon
             ? 'gui-range-date-input--icon'
@@ -297,13 +334,70 @@ export class GuiRangeDateInput extends LitElement {
 
   /**
    * Re-parses both endpoints so per-endpoint problems (impossible date, out of
-   * bounds) surface while the user types. Runs on every part change.
+   * bounds) surface while the user types, and notifies the host picker via
+   * `partsChange` so its calendar follows the typed endpoints. Runs on every
+   * part change.
    */
   private syncParts() {
-    return {
-      start: this.validateDateParts('start'),
-      end: this.validateDateParts('end'),
-    };
+    const start = this.validateDateParts('start');
+    const end = this.validateDateParts('end');
+
+    const iso = (endpoint: RangeEndpoint<Date>) =>
+      endpoint.kind === 'valid' ? toISODateString(endpoint.value) : null;
+
+    this.dispatchEvent(
+      new CustomEvent('partsChange', {
+        detail: { start: iso(start), end: iso(end) },
+        bubbles: true,
+        composed: true,
+      }),
+    );
+
+    return { start, end };
+  }
+
+  /**
+   * What leaving does with whatever is in the fields. Public so a host picker
+   * can call it from its own whole-widget focus-leave check.
+   *
+   * A complete range is finished work, so leaving commits it exactly as Enter
+   * does — a user who typed a whole range and moved on gets the pill they
+   * plainly meant, and the same validation decides whether it is allowed.
+   *
+   * A half-entered one is abandoned work: some parts of one endpoint typed, or
+   * one endpoint filled and the other still empty (a picked start with no end
+   * lands here too). Both surface the incomplete message — or the endpoint's
+   * own message when one is outright invalid, which is more useful than
+   * "incomplete". `_validationTriggered` makes the next edit re-evaluate, so
+   * the message clears as soon as the user comes back and continues (or
+   * empties the fields).
+   */
+  finalizeOnLeave(): void {
+    const endpoints = this.groups.map((group) => ({
+      result: this.validateDateParts(group),
+      empty: this._parts.isGroupEmpty(group, this.datePartTypes),
+    }));
+
+    // Nothing entered: nothing to settle, but a message surfaced over fields
+    // the user has since emptied must not outlive them.
+    if (endpoints.every((endpoint) => endpoint.empty)) {
+      this._parts.clearSurfacedInputError(this.value ?? []);
+      return;
+    }
+
+    if (endpoints.every((endpoint) => endpoint.result.kind === 'valid')) {
+      this.tryCreatePill({ refocus: false });
+      return;
+    }
+
+    const invalidMessage = endpoints
+      .map((endpoint) => (endpoint.result.kind === 'invalid' ? endpoint.result.message : undefined))
+      .find(Boolean);
+
+    this._validationTriggered = true;
+    this._parts.surfaceInputError(
+      invalidMessage ?? this.incompleteMessage ?? INCOMPLETE_DATE_MESSAGE,
+    );
   }
 
   /**
@@ -352,7 +446,7 @@ export class GuiRangeDateInput extends LitElement {
     }
   }
 
-  private tryCreatePill() {
+  private tryCreatePill({ refocus = true }: { refocus?: boolean } = {}) {
     this._validationTriggered = true;
 
     const outcome = this.evaluateRange();
@@ -376,7 +470,7 @@ export class GuiRangeDateInput extends LitElement {
     );
 
     // Focus the first start date input
-    this._parts.focusFirst('start');
+    if (refocus) this._parts.focusFirst('start');
 
     this.requestUpdate();
   }
@@ -388,6 +482,21 @@ export class GuiRangeDateInput extends LitElement {
   public showRange(startISO: string, endISO: string): void {
     this._parts.setGroupFromISO('start', startISO, 'date');
     this._parts.setGroupFromISO('end', endISO, 'date');
+  }
+
+  public surfaceHostError(message: string): void {
+    this._parts.surfaceInputError(message);
+  }
+
+  /**
+   * Fills one endpoint's parts from an ISO date, or clears them when given
+   * null. The range date picker calls this so a day picked in the calendar
+   * lands in the visible field straight away — the reverse of typed parts
+   * moving the calendar's selection.
+   */
+  fillGroup(group: 'start' | 'end', iso: string | null): void {
+    this._parts.setGroupFromISO(group, iso, 'date');
+    this.requestUpdate();
   }
 
   /** Clear both groups' parts (e.g. once a valid range is committed). */

@@ -79,6 +79,7 @@ export function TimeInput(widgetInstance: WithWidget) {
         maxTime={templateData.maxTime}
         minTimeMessage={templateData.minTimeMessage as string}
         maxTimeMessage={templateData.maxTimeMessage as string}
+        incompleteMessage={templateData.incompleteMessage as string}
       />
     </div>
   );

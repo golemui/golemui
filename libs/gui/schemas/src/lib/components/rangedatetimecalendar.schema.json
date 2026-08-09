@@ -184,6 +184,10 @@
         "noAvailableTimesMessage": {
           "$ref": "../common.schema.json#/$defs/localizable"
         },
+        "incompleteMessage": {
+          "$ref": "../common.schema.json#/$defs/localizable",
+          "description": "Error surfaced when focus leaves the widget with a half-finished range selection behind; the committed pills are untouched, the injected issue alone flags the field."
+        },
         "dayCountAriaLabel": {
           "$ref": "../common.schema.json#/$defs/localizable"
         },
@@ -262,6 +266,9 @@
           "$ref": "../common.schema.json#/$defs/localizable"
         },
         "^noAvailableTimesMessage\\.[^.]+$": {
+          "$ref": "../common.schema.json#/$defs/localizable"
+        },
+        "^incompleteMessage\\.[^.]+$": {
           "$ref": "../common.schema.json#/$defs/localizable"
         },
         "^dayCountAriaLabel\\.[^.]+$": {

@@ -84,6 +84,7 @@ export class DateTimeElement extends LitElement implements WithWidget {
         .maxDateMessage=${this.adapter.templateData.maxDateMessage as string}
         .minTimeMessage=${this.adapter.templateData.minTimeMessage as string}
         .maxTimeMessage=${this.adapter.templateData.maxTimeMessage as string}
+        .incompleteMessage=${this.adapter.templateData.incompleteMessage as string}
         .hourFormat=${this.adapter.templateData.hourFormat}
         .minuteStep=${this.adapter.templateData.minuteStep}
         @inputError=${this.onInputError}

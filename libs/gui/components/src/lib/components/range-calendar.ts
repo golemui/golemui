@@ -18,7 +18,12 @@ import {
   renderCalendarMonthPanel,
   renderCalendarPanelBody,
 } from '../utils/calendar-templates';
-import { buildMonthDays, computeDayStatus } from '../utils/day-status';
+import {
+  buildMonthDays,
+  computeDayStatus,
+  orderedDaySpan,
+  type DaySpan,
+} from '../utils/day-status';
 import {
   buildPillItems,
   findRangeByKey,
@@ -31,6 +36,7 @@ import {
   idleRangeSelection,
   reduceRangeSelection,
   selectionPreviewSpan,
+  workingPhase,
   type RangeSelectionState,
 } from '../utils/range-selection';
 import './pills';
@@ -98,6 +104,14 @@ export class GuiRangeCalendar extends LitElement {
 
   @property({ type: Array }) value: DateRange[] | undefined = [];
   @property({ type: String }) focusDate: string | undefined = undefined;
+  /**
+   * The host picker's working endpoints — typed into its input, or picked here
+   * and held there across the popover's unmount/remount cycle. One endpoint
+   * renders as an in-progress anchor, both as a parked span.
+   */
+  @property({ type: String, attribute: 'working-start' }) workingStart: string | undefined =
+    undefined;
+  @property({ type: String, attribute: 'working-end' }) workingEnd: string | undefined = undefined;
   @property({ type: Boolean }) hidePills = false;
   @property({ type: String }) removePillAriaLabel: string | undefined = undefined;
   @property({ type: String, attribute: 'disabled-date-range-message' }) disabledDateRangeMessage:
@@ -107,6 +121,8 @@ export class GuiRangeCalendar extends LitElement {
 
   @state() protected _selection: RangeSelectionState = idleRangeSelection();
   @state() protected _invalidRange: { start: Date; end: Date } | null = null;
+  @state() protected _workingStart: string | undefined = undefined;
+  @state() protected _workingEnd: string | undefined = undefined;
 
   protected _skipValueNavigation = false;
 
@@ -162,6 +178,63 @@ export class GuiRangeCalendar extends LitElement {
     onLeave: () => this.dispatchEvent(new CustomEvent('blur', { bubbles: true, composed: true })),
   });
 
+  /** ISO day of the in-progress anchor, or undefined while idle. */
+  protected anchorISO(): string | undefined {
+    return this._selection.anchor ? toISODateString(this._selection.anchor) : undefined;
+  }
+
+  /**
+   * Live-syncs the in-progress selection to a host picker, which holds it
+   * across the popover's unmount/remount cycle and mirrors it into its input.
+   * Never wired by the form layer, so it can't trigger validation.
+   */
+  protected emitWorkingChange(): void {
+    this.dispatchEvent(
+      new CustomEvent('partsChange', {
+        detail: {
+          anchor: this.anchorISO() ?? null,
+          start: this._workingStart ?? null,
+          end: this._workingEnd ?? null,
+        },
+        bubbles: true,
+        composed: true,
+      }),
+    );
+  }
+
+  protected get workingSpan(): DaySpan | undefined {
+    if (!this._workingStart || !this._workingEnd) return undefined;
+    return orderedDaySpan(this.endpointDay(this._workingStart), this.endpointDay(this._workingEnd));
+  }
+
+  protected adoptWorkingEndpoints(): void {
+    const phase = workingPhase(this.workingStart, this.workingEnd);
+
+    if (phase.kind === 'span') {
+      if (this._workingStart === phase.start && this._workingEnd === phase.end) return;
+      this._workingStart = phase.start;
+      this._workingEnd = phase.end;
+      this._selection = idleRangeSelection();
+      this._nav.navigateToDate(this.workingSpan?.start ?? this.endpointDay(phase.start));
+      return;
+    }
+
+    this._workingStart = undefined;
+    this._workingEnd = undefined;
+
+    if (phase.kind === 'idle') {
+      if (this._selection.anchor) this._selection = idleRangeSelection();
+      return;
+    }
+
+    if (this.anchorISO() === phase.iso) return;
+
+    const anchor = this.endpointDay(phase.iso);
+    if (isNaN(anchor.getTime())) return;
+    this._selection = { anchor, hover: null, selecting: true };
+    this._nav.navigateToDate(anchor);
+  }
+
   /**
    * Full instant of an endpoint, used to order the pills. Date-only here; a
    * subclass whose endpoints carry a time overrides it so two ranges on the
@@ -199,6 +272,9 @@ export class GuiRangeCalendar extends LitElement {
   }
 
   override willUpdate(changedProperties: PropertyValues): void {
+    if (changedProperties.has('workingStart') || changedProperties.has('workingEnd')) {
+      this.adoptWorkingEndpoints();
+    }
     if (changedProperties.has('invalidRange')) {
       if (this.invalidRange) {
         const start = this.endpointDay(this.invalidRange.start);
@@ -381,7 +457,7 @@ export class GuiRangeCalendar extends LitElement {
       start: this.endpointDay(range.start),
       end: range.end ? this.endpointDay(range.end) : undefined,
     }));
-    const selectingSpan = selectionPreviewSpan(this._selection);
+    const selectingSpan = selectionPreviewSpan(this._selection) ?? this.workingSpan ?? null;
 
     return buildMonthDays({
       currentDate: this._currentDate,
@@ -430,6 +506,9 @@ export class GuiRangeCalendar extends LitElement {
       date: day.date,
     });
     this._selection = state;
+    this._workingStart = undefined;
+    this._workingEnd = undefined;
+    this.emitWorkingChange();
 
     // Start selection
     if (!commit) {

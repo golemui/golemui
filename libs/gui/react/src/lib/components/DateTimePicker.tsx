@@ -83,6 +83,7 @@ export function DateTimePicker(widgetInstance: WithWidget) {
         maxTimeMessage={templateData.maxTimeMessage as string}
         disabledTimeRangeMessage={templateData.disabledTimeRangeMessage as string}
         noAvailableTimesMessage={templateData.noAvailableTimesMessage as string}
+        incompleteMessage={templateData.incompleteMessage as string}
         onChange={handleChange}
         onBlur={onBlur}
         onInputError={handleInputError}

@@ -99,6 +99,7 @@ export class RangeDateTimePickerElement extends LitElement implements WithWidget
         .maxDateTimeMessage=${templateData.maxDateTimeMessage as string}
         .disabledRangeMessage=${templateData.disabledRangeMessage as string}
         .noAvailableTimesMessage=${templateData.noAvailableTimesMessage as string}
+        .incompleteMessage=${templateData.incompleteMessage as string}
         .dayCountAriaLabel=${templateData.dayCountAriaLabel as string}
         .disabledDayCountAriaLabel=${templateData.disabledDayCountAriaLabel as string}
         @change=${this.valueChanged}

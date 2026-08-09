@@ -3,6 +3,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import type { DateRange, DisabledTimeRange } from '@golemui/gui-shared/internals';
 import './time-picker';
+import type { GuiTime } from './time-input';
 import type { GuiTimePicker } from './time-picker';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { GUICalendarKeyboardController } from '../controllers/calendar-keyboard.controller';
@@ -23,6 +24,12 @@ import {
 } from '../utils/date';
 import { buildMonthDays, computeDayStatus } from '../utils/day-status';
 import {
+  INCOMPLETE_DATE_TIME_MESSAGE,
+  INVALID_DISABLED_TIME_RANGE_MESSAGE,
+} from '../utils/messages';
+import { timeBoundsError } from '../utils/parts';
+import {
+  isTimeDisabled,
   parseISODateTimeString,
   resolveDisabledTimeRangesForDate,
   toISOTimeString,
@@ -103,6 +110,28 @@ export class GuiDateTimeCalendar extends LitElement {
   @property({ type: Boolean, attribute: 'allow-custom-time' }) allowCustomTime:
     | boolean
     | undefined = false;
+  @property({ type: String, attribute: 'incomplete-message' }) incompleteMessage:
+    | string
+    | undefined = undefined;
+  /**
+   * Host picker's working (uncommitted) date/time halves. They seed the
+   * internal selection whenever no committed value exists, so a partial
+   * selection survives the popover unmount/remount cycle. A committed `value`
+   * always takes precedence.
+   */
+  @property({ type: String, attribute: 'working-date' }) workingDate: string | undefined =
+    undefined;
+  @property({ type: String, attribute: 'working-time' }) workingTime: string | undefined =
+    undefined;
+  /**
+   * Set by host pickers that run their own whole-widget focus-leave check:
+   * moving focus from this calendar into the picker's input must not count as
+   * leaving, so the embedded calendar skips its incomplete-on-leave handling
+   * (the `blur` re-dispatch still fires — hosts close the popover with it).
+   */
+  @property({ type: Boolean, attribute: 'defer-focus-leave' }) deferFocusLeave:
+    | boolean
+    | undefined = false;
 
   @state() private _selectedDate: string | undefined = undefined;
   @state() private _selectedTime: string | undefined = undefined;
@@ -162,6 +191,8 @@ export class GuiDateTimeCalendar extends LitElement {
   private _focusLeave = new GUIFocusLeaveController(this, {
     onLeave: () => {
       this.dispatchEvent(new CustomEvent('blur', { bubbles: true, composed: true }));
+      if (this.deferFocusLeave) return;
+      this.reportIncompleteOnLeave();
     },
   });
 
@@ -185,8 +216,18 @@ export class GuiDateTimeCalendar extends LitElement {
     this.classList.add('gui-field');
   }
 
+  /**
+   * Derives the internal selection with a strict precedence: a committed
+   * `value` wins, else the host's working halves, else cleared. Running the
+   * same rule on every external change (value or working props) keeps a
+   * remounted popover consistent and prevents a stale day surviving an
+   * external value clear.
+   */
   override willUpdate(changedProperties: PropertyValues): void {
-    if (!changedProperties.has('value')) return;
+    const valueChanged = changedProperties.has('value');
+    const workingChanged =
+      changedProperties.has('workingDate') || changedProperties.has('workingTime');
+    if (!valueChanged && !workingChanged) return;
     if (this._internalValueChange) {
       this._internalValueChange = false;
       return;
@@ -197,13 +238,26 @@ export class GuiDateTimeCalendar extends LitElement {
       if (!isNaN(date.getTime())) {
         this._selectedDate = toISODateString(date);
         this._selectedTime = toISOTimeString(date);
-        if (!isDateInVisibleMonths(date, this._nav.currentDate, this.numberOfMonths ?? 1)) {
-          this._nav.currentDate = date;
-        }
+        this.navigateToDate(date);
       }
-    } else if (this._selectedTime) {
-      this._selectedDate = undefined;
-      this._selectedTime = undefined;
+      return;
+    }
+
+    const prev = changedProperties.get('value') as string | null | undefined;
+    const clearedFromCommitted = valueChanged && !!prev;
+    if (!clearedFromCommitted && !workingChanged) return;
+
+    this._selectedDate = this.workingDate || undefined;
+    this._selectedTime = this.workingTime || undefined;
+    if (this._selectedDate) {
+      const date = parseISODateString(this._selectedDate);
+      if (!isNaN(date.getTime())) this.navigateToDate(date);
+    }
+  }
+
+  private navigateToDate(date: Date): void {
+    if (!isDateInVisibleMonths(date, this._nav.currentDate, this.numberOfMonths ?? 1)) {
+      this._nav.currentDate = date;
     }
   }
 
@@ -213,6 +267,7 @@ export class GuiDateTimeCalendar extends LitElement {
   }
 
   private emitChange(value: string | null, commit = false) {
+    this._surfacedError = false;
     this.dispatchEvent(
       new CustomEvent('change', {
         detail: { value, commit },
@@ -229,21 +284,28 @@ export class GuiDateTimeCalendar extends LitElement {
     if (isoDate === this._selectedDate) return;
 
     this._selectedDate = isoDate;
-    this._selectedTime = undefined;
 
-    if (this.value) {
-      this.setValueInternal(undefined);
-      this.emitChange(null);
+    if (this._selectedTime) {
+      const isoTime = this._selectedTime;
+      this.setValueInternal(`${isoDate}T${isoTime}`);
+      this.emitChange(this.value as string);
+      const error = this.timeErrorForDay(isoTime, isoDate);
+      if (error) this.emitInputError(error);
+      return;
     }
+
+    this.emitPartsChange();
   }
 
   private commitTime(isoTime: string, commit = false) {
-    if (!this._selectedDate) return;
-
     this._selectedTime = isoTime;
     this.setValueInternal(`${this._selectedDate}T${isoTime}`);
     this.emitChange(this.value as string, commit);
   }
+
+  private stopInnerPartsChange = (event: Event) => {
+    event.stopPropagation();
+  };
 
   private onTimePickerChange(event: CustomEvent) {
     event.stopPropagation();
@@ -256,10 +318,88 @@ export class GuiDateTimeCalendar extends LitElement {
         this.setValueInternal(undefined);
         this.emitChange(null);
       }
+      this.emitPartsChange();
+      return;
+    }
+
+    // No day chosen yet: park the time as working state and live-sync it —
+    // the pick is kept, not lost, and commits once a day arrives.
+    if (!this._selectedDate) {
+      this._selectedTime = time;
+      this.emitPartsChange();
       return;
     }
 
     this.commitTime(time, commit);
+  }
+
+  /** Live-syncs the working halves to a host picker (never wired by forms). */
+  private emitPartsChange(): void {
+    this.dispatchEvent(
+      new CustomEvent('partsChange', {
+        detail: { date: this._selectedDate ?? null, time: this._selectedTime ?? null },
+        bubbles: true,
+        composed: true,
+      }),
+    );
+  }
+
+  /** Whether an inputError has been emitted and not yet cleared by a change. */
+  private _surfacedError = false;
+
+  private emitInputError(message: string): void {
+    this._surfacedError = true;
+    this.dispatchEvent(
+      new CustomEvent('inputError', {
+        detail: { message },
+        bubbles: true,
+        composed: true,
+      }),
+    );
+  }
+
+  /** The kept time checked against a day's bounds and disabled ranges. */
+  private timeErrorForDay(isoTime: string, isoDate: string): string | null {
+    const boundsError = timeBoundsError(isoTime, {
+      minTime: this.minTime,
+      maxTime: this.maxTime,
+      minTimeMessage: this.minTimeMessage,
+      maxTimeMessage: this.maxTimeMessage,
+    });
+    if (boundsError) return boundsError;
+
+    const ranges = resolveDisabledTimeRangesForDate(this.disabledTimeRanges, isoDate);
+    if (isTimeDisabled(isoTime, ranges)) {
+      return this.disabledTimeRangeMessage ?? INVALID_DISABLED_TIME_RANGE_MESSAGE;
+    }
+    return null;
+  }
+
+  /**
+   * With no committed value, ANY selection state left behind — a day without
+   * a time, a time without a day, or a half-typed time — is incomplete: the
+   * value flips to null (so validators report it) and the incomplete message
+   * surfaces. A widget emptied again instead clears a message surfaced
+   * earlier; a committed value reports nothing new.
+   *
+   * A half-typed time never reaches `_selectedTime` (partials never emit),
+   * so the embedded input's parts are consulted directly — otherwise an
+   * hour typed with no day picked would read as an empty widget.
+   */
+  private reportIncompleteOnLeave(): void {
+    if (this.value) return;
+    const leftBehind =
+      !!this._selectedDate ||
+      !!this._selectedTime ||
+      this.querySelector<GuiTime>('gui-time')?.groupCompleteness() === 'partial';
+
+    if (!leftBehind) {
+      if (this._surfacedError) this.emitChange(null);
+      return;
+    }
+
+    this.emitChange(null);
+    this.emitInputError(this.incompleteMessage ?? INCOMPLETE_DATE_TIME_MESSAGE);
   }
 
   private onListToggle(event: CustomEvent<{ open: boolean }>) {
@@ -328,8 +468,9 @@ export class GuiDateTimeCalendar extends LitElement {
           class="gui-time-picker gui-field"
           .uid=${this.uid ? `${this.uid}-time` : undefined}
           .showErrors=${false}
+          .deferFocusLeave=${true}
           ?required=${this.required}
-          ?disabled=${this.disabled || !this._selectedDate}
+          ?disabled=${this.disabled}
           ?readonly=${this.readOnly}
           .allowCustomTime=${this.allowCustomTime}
           .value=${this._selectedTime}
@@ -345,6 +486,7 @@ export class GuiDateTimeCalendar extends LitElement {
           .disabledRangeMessage=${this.disabledTimeRangeMessage}
           .noAvailableTimesMessage=${this.noAvailableTimesMessage}
           @change=${this.onTimePickerChange}
+          @partsChange=${this.stopInnerPartsChange}
           @listtoggle=${this.onListToggle}
         ></gui-time-picker>
       </div>

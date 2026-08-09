@@ -92,6 +92,7 @@ describe('DateTimePicker schema validation', () => {
               maxTimeMessage: { key: 'dtp.max', default: 'Too late' },
               disabledTimeRangeMessage: 'Unavailable slot',
               noAvailableTimesMessage: 'No slots today',
+              incompleteMessage: 'Incomplete date-time',
             },
           },
         ],

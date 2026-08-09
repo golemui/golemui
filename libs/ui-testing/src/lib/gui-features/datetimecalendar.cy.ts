@@ -74,11 +74,11 @@ export const runDateTimeCalendarComponentTests = (mountFn: MountComponentFn) => 
     const option = (isoTime: string) => cy.get(`${sel.options}[data-value="${isoTime}"]`);
 
     describe('rendering and hydration', () => {
-      it('should render the days grid and a disabled time input when empty', () => {
+      it('should render the days grid and an enabled time input when empty', () => {
         mountCalendar({ props: officeProps });
 
         cy.get(sel.daysGrid).should('exist');
-        cy.get(sel.hour).should('be.disabled');
+        cy.get(sel.hour).should('not.be.disabled');
         cy.get(sel.timeGrid).should('have.attr', 'hidden');
       });
 
@@ -93,7 +93,7 @@ export const runDateTimeCalendarComponentTests = (mountFn: MountComponentFn) => 
     });
 
     describe('day and time selection flow', () => {
-      it('should enable the time input on day selection and keep the value null', () => {
+      it('should keep the value null after a day-only selection', () => {
         const formSubmitHandler = cy.stub().as('formSubmitHandler');
         mountCalendar({
           data: { myAppointment: null },
@@ -107,6 +107,41 @@ export const runDateTimeCalendarComponentTests = (mountFn: MountComponentFn) => 
         submitAndGetData('@formSubmitHandler').then((data) => {
           expect(data).to.deep.equal({ myAppointment: null });
         });
+      });
+
+      it('should keep a time picked before any day and commit once a day is selected', () => {
+        const formSubmitHandler = cy.stub().as('formSubmitHandler');
+        mountCalendar({
+          data: { myAppointment: null },
+          props: officeProps,
+          formSubmit: formSubmitHandler,
+        });
+
+        // The time input is enabled with no day selected: the pick is parked
+        cy.get(sel.hour).click();
+        option('10:00:00').click();
+        cy.get(sel.hour).should('have.value', '10');
+
+        firstAvailableDay().then(($btn) => {
+          const isoDate = $btn.attr('data-date') as string;
+          cy.wrap($btn).click();
+
+          submitAndGetData('@formSubmitHandler').then((data) => {
+            expect(data).to.deep.equal({ myAppointment: `${isoDate}T10:00:00` });
+          });
+        });
+      });
+
+      it('should flip a day-only selection to null with an incomplete error when focus leaves', () => {
+        mountCalendar({ data: { myAppointment: null }, props: officeProps });
+
+        firstAvailableDay().click();
+        cy.get('[data-cy="submitBtn_button"]').focus();
+
+        cy.get('[data-cy="testSubject_validator-error"]').should(
+          'contain.text',
+          'Incomplete date-time',
+        );
       });
 
       it('should open the time grid in place of the days grid when the time input is focused', () => {
@@ -145,7 +180,7 @@ export const runDateTimeCalendarComponentTests = (mountFn: MountComponentFn) => 
         });
       });
 
-      it('should clear the time and emit null when a different day is selected', () => {
+      it('should keep the time and commit the new full value when a different day is selected', () => {
         const formSubmitHandler = cy.stub().as('formSubmitHandler');
         mountCalendar({
           data: { myAppointment: '2026-02-13T09:30:00' },
@@ -155,11 +190,11 @@ export const runDateTimeCalendarComponentTests = (mountFn: MountComponentFn) => 
 
         day('2026-02-16').click();
 
-        cy.get(sel.hour).should('have.value', '');
-        cy.get(sel.minute).should('have.value', '');
+        cy.get(sel.hour).should('have.value', '09');
+        cy.get(sel.minute).should('have.value', '30');
 
         submitAndGetData('@formSubmitHandler').then((data) => {
-          expect(data).to.deep.equal({ myAppointment: null });
+          expect(data).to.deep.equal({ myAppointment: '2026-02-16T09:30:00' });
         });
       });
 
@@ -227,7 +262,7 @@ export const runDateTimeCalendarComponentTests = (mountFn: MountComponentFn) => 
 
       it('should reject a typed time inside a day-scoped range with inputError', () => {
         // Hydrate a Monday so the view shows February, then move to the
-        // scoped 13th (clearing the time) and type into the empty parts
+        // scoped 13th — the 11:00 time is kept and stays in the parts
         mountCalendar({
           data: { myAppointment: '2026-02-16T11:00:00' },
           props: {
@@ -239,15 +274,15 @@ export const runDateTimeCalendarComponentTests = (mountFn: MountComponentFn) => 
         });
 
         day('2026-02-13').click();
-        cy.get(sel.hour).should('have.value', '');
+        cy.get(sel.hour).should('have.value', '11');
 
         const inputErrorSpy = cy.spy().as('inputErrorSpy');
         cy.get('gui-date-time-calendar').then(($el) => {
           $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
         });
 
-        cy.get(sel.hour).type('09');
-        cy.focused().type('30', { force: true });
+        cy.get(sel.hour).type('{selectAll}09');
+        cy.focused().type('{selectAll}30', { force: true });
 
         cy.get('@inputErrorSpy').then((spy: any) => {
           expect(spy.getCall(0).args[0].detail.message).to.contain('disabled range');
@@ -264,7 +299,8 @@ export const runDateTimeCalendarComponentTests = (mountFn: MountComponentFn) => 
 
       it('should close the open grid with Enter after typing a custom time', () => {
         const formSubmitHandler = cy.stub().as('formSubmitHandler');
-        // Move to a different day first so the parts are empty for typing
+        // Moving to a different day keeps the 09:30 time, so the typed time
+        // overwrites the kept parts
         mountCalendar({
           data: { myAppointment: '2026-02-16T09:30:00' },
           props: { ...officeProps, hourFormat: '24', allowCustomTime: true },
@@ -275,8 +311,8 @@ export const runDateTimeCalendarComponentTests = (mountFn: MountComponentFn) => 
         cy.get(sel.hour).click();
         cy.get(sel.openTimeGrid).should('exist');
 
-        cy.get(sel.hour).type('10');
-        cy.focused().type('30', { force: true });
+        cy.get(sel.hour).type('{selectAll}10');
+        cy.focused().type('{selectAll}30', { force: true });
         cy.focused().type('{enter}', { force: true });
 
         cy.get(sel.timeGrid).should('have.attr', 'hidden');
@@ -357,6 +393,41 @@ export const runDateTimeCalendarComponentTests = (mountFn: MountComponentFn) => 
         cy.get('@inputErrorSpy').then((spy: any) => {
           expect(spy.getCall(0).args[0].detail.message).to.equal('Office opens at 9');
         });
+      });
+
+      it('should report a half-typed time with no day as incomplete when focus leaves', () => {
+        // A partial time never emits, so it lives only in the input's parts:
+        // the leave check must still count it as something left behind.
+        mountCalendar({
+          data: { myAppointment: null },
+          props: { ...officeProps, hourFormat: '24', allowCustomTime: true },
+        });
+
+        cy.get(sel.hour).type('10');
+        cy.get('[data-cy="submitBtn_button"]').focus();
+
+        cy.get('[data-cy="testSubject_validator-error"]').should(
+          'contain.text',
+          'Incomplete date-time',
+        );
+      });
+
+      it('should clear the incomplete error when the emptied time is left again', () => {
+        mountCalendar({
+          data: { myAppointment: null },
+          props: { ...officeProps, hourFormat: '24', allowCustomTime: true },
+        });
+
+        cy.get(sel.hour).type('10');
+        cy.get('[data-cy="submitBtn_button"]').focus();
+        cy.get('[data-cy="testSubject_validator-error"]').should(
+          'contain.text',
+          'Incomplete date-time',
+        );
+
+        cy.get(sel.hour).type('{selectAll}{backspace}', { force: true });
+        cy.get('[data-cy="submitBtn_button"]').focus();
+        cy.get('[data-cy="testSubject_validator-errors"]').should('not.exist');
       });
     });
 

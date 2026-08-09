@@ -14,6 +14,7 @@ export const runTimeInputComponentTests = (mountFn: MountComponentFn) => {
       lang?: string;
       translator?: MutableI18nTranslator;
       props?: Record<string, any>;
+      validator?: Record<string, any>;
       formSubmit?: (event: any) => void;
       readonly?: boolean;
       disabled?: boolean;
@@ -29,6 +30,7 @@ export const runTimeInputComponentTests = (mountFn: MountComponentFn) => {
               type: 'timeInput',
               path: 'myTime',
               ...(options?.props ? { props: options.props } : {}),
+              ...(options?.validator ? { validator: options.validator as any } : {}),
               ...(options?.readonly !== undefined ? { readonly: options.readonly } : {}),
               ...(options?.disabled !== undefined ? { disabled: options.disabled } : {}),
             },
@@ -415,16 +417,94 @@ export const runTimeInputComponentTests = (mountFn: MountComponentFn) => {
     });
 
     describe('blur', () => {
-      it('should emit a null value when a part is emptied and blurred', () => {
-        const formSubmitHandler = cy.stub().as('formSubmitHandler');
-        mountTimeInput({ data: { myTime: '14:30:00' }, formSubmit: formSubmitHandler });
+      it('should emit a null value and keep the other parts when one part is emptied', () => {
+        mountTimeInput({ data: { myTime: '14:30:00' } });
+
+        const changeSpy = cy.spy().as('changeSpy');
+        cy.get('gui-time').then(($el) => {
+          $el[0].addEventListener('change', changeSpy as unknown as EventListener);
+        });
 
         cy.get(sel.minute).type('{selectAll}{backspace}');
         cy.get(sel.minute).blur();
 
-        submitAndGetData('@formSubmitHandler').then((data) => {
-          expect(data).to.deep.equal({ myTime: null });
+        cy.get('@changeSpy').then((spy: any) => {
+          expect(spy.getCall(0).args[0].detail.value).to.equal(null);
         });
+
+        // Only the emptied part clears: the rest of the entry is not wiped
+        cy.get(sel.minute).should('have.value', '');
+        cy.get(sel.hour).should('have.value', '02');
+        expectDayPeriod('PM');
+      });
+    });
+
+    describe('incomplete input on focus leave', () => {
+      it('should not validate while moving between the parts of one entry', () => {
+        // Filling a part auto-advances to the next one. That hop is not
+        // leaving the widget, so the form must not judge a half-typed entry:
+        // a required field lighting up after the first part is the bug.
+        mountTimeInput({ validator: { type: 'string', required: true } });
+
+        cy.get(sel.hour).type('09');
+        cy.get('[data-cy="testSubject_validator-errors"]').should('not.exist');
+
+        // Leaving the widget is the one moment the entry is judged
+        cy.get('[data-cy="submitBtn_button"]').focus();
+        cy.get('[data-cy="testSubject_validator-errors"]').should('exist');
+      });
+
+      it('should flip a partial time to null with an incomplete error when focus leaves', () => {
+        mountTimeInput();
+
+        const changeSpy = cy.spy().as('changeSpy');
+        cy.get('gui-time').then(($el) => {
+          $el[0].addEventListener('change', changeSpy as unknown as EventListener);
+        });
+
+        cy.get(sel.hour).type('09');
+        cy.get('[data-cy="submitBtn_button"]').focus();
+
+        cy.get('[data-cy="testSubject_validator-error"]').should('contain.text', 'Incomplete time');
+        cy.get('@changeSpy').then((spy: any) => {
+          expect(spy.getCall(0).args[0].detail.value).to.equal(null);
+        });
+      });
+
+      it('should show the incomplete error for a committed value left with an emptied part', () => {
+        mountTimeInput({ data: { myTime: '14:30:00' } });
+
+        cy.get(sel.minute).type('{selectAll}{backspace}');
+        cy.get('[data-cy="submitBtn_button"]').focus();
+
+        cy.get('[data-cy="testSubject_validator-error"]').should('contain.text', 'Incomplete time');
+        cy.get(sel.hour).should('have.value', '02');
+      });
+
+      it('should clear the incomplete error once the time is completed', () => {
+        mountTimeInput();
+
+        cy.get(sel.hour).type('09');
+        cy.get('[data-cy="submitBtn_button"]').focus();
+        cy.get('[data-cy="testSubject_validator-error"]').should('contain.text', 'Incomplete time');
+
+        cy.get(sel.minute).type('30');
+        cy.get('[data-cy="testSubject_validator-error"]').should('not.exist');
+      });
+
+      it('should clear the incomplete error when the emptied widget is left again', () => {
+        // Regression: leave a partial behind (incomplete error), come back,
+        // empty the field and leave again — the error must not outlive
+        // fields that no longer hold anything.
+        mountTimeInput();
+
+        cy.get(sel.hour).type('09');
+        cy.get('[data-cy="submitBtn_button"]').focus();
+        cy.get('[data-cy="testSubject_validator-error"]').should('contain.text', 'Incomplete time');
+
+        cy.get(sel.hour).type('{selectAll}{backspace}');
+        cy.get('[data-cy="submitBtn_button"]').focus();
+        cy.get('[data-cy="testSubject_validator-errors"]').should('not.exist');
       });
     });
 

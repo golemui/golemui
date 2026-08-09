@@ -10,6 +10,7 @@ import type { RangeCalendarDay } from './range-calendar';
 import './pills';
 import type { GuiPillEventDetail, GuiPillItem } from './pills';
 import './time-picker';
+import type { GuiTime } from './time-input';
 import type { GuiTimePicker } from './time-picker';
 import {
   getFullDateLabel,
@@ -22,7 +23,12 @@ import {
   renderCalendarMonthPanel,
   renderCalendarPanelBody,
 } from '../utils/calendar-templates';
-import { buildMonthDays, computeDayStatus, type DaySpan } from '../utils/day-status';
+import {
+  buildMonthDays,
+  computeDayStatus,
+  orderedDaySpan,
+  type DaySpan,
+} from '../utils/day-status';
 import {
   buildPillItems,
   findRangeByKey,
@@ -33,6 +39,7 @@ import {
   idleRangeSelection,
   reduceRangeSelection,
   selectionPreviewSpan,
+  workingPhase,
   type RangeSelectionState,
 } from '../utils/range-selection';
 import {
@@ -51,7 +58,10 @@ import {
   type HourFormat,
   type TimeRange,
 } from '../utils/time';
-import { DISABLED_DATE_RANGE_MESSAGE } from '../utils/messages';
+import {
+  DISABLED_DATE_RANGE_MESSAGE,
+  INCOMPLETE_DATE_TIME_MESSAGE,
+} from '../utils/messages';
 
 @customElement('gui-range-date-time-calendar')
 export class GuiRangeDateTimeCalendar extends LitElement {
@@ -130,19 +140,43 @@ export class GuiRangeDateTimeCalendar extends LitElement {
   @property({ type: String, attribute: 'no-available-times-message' }) noAvailableTimesMessage:
     | string
     | undefined = undefined;
+  @property({ type: String, attribute: 'incomplete-message' }) incompleteMessage:
+    | string
+    | undefined = undefined;
   @property({ type: String, attribute: 'day-count-aria-label' }) dayCountAriaLabel:
     | string
     | undefined = undefined;
   @property({ type: String, attribute: 'disabled-day-count-aria-label' })
   disabledDayCountAriaLabel: string | undefined = undefined;
+  /**
+   * The host picker's working selection — typed into its input, or picked here
+   * and held there across the popover's unmount/remount cycle. One date
+   * renders as an in-progress anchor, both as a parked span.
+   */
+  @property({ type: String, attribute: 'working-start' }) workingStart: string | undefined =
+    undefined;
+  @property({ type: String, attribute: 'working-end' }) workingEnd: string | undefined = undefined;
+  @property({ type: String, attribute: 'working-start-time' }) workingStartTime:
+    | string
+    | undefined = undefined;
+  @property({ type: String, attribute: 'working-end-time' }) workingEndTime: string | undefined =
+    undefined;
+  /**
+   * Set by host pickers that run their own whole-widget focus-leave check:
+   * moving from this calendar into the picker's trigger is not leaving the
+   * control, so the calendar leaves the commit to the host.
+   */
+  @property({ type: Boolean, attribute: 'defer-focus-leave' }) deferFocusLeave:
+    | boolean
+    | undefined = false;
 
   @state() protected _selection: RangeSelectionState = idleRangeSelection();
   @state() protected _invalidRange: { start: Date; end: Date } | null = null;
 
-  @state() private _workingDateStart: string | undefined = undefined;
-  @state() private _workingDateEnd: string | undefined = undefined;
-  @state() private _workingTimeIn: string | undefined = undefined;
-  @state() private _workingTimeOut: string | undefined = undefined;
+  @state() private _workingStart: string | undefined = undefined;
+  @state() private _workingEnd: string | undefined = undefined;
+  @state() private _workingStartTime: string | undefined = undefined;
+  @state() private _workingEndTime: string | undefined = undefined;
   @state() private _openList: 'start' | 'end' | null = null;
 
   protected _skipValueNavigation = false;
@@ -204,9 +238,53 @@ export class GuiRangeDateTimeCalendar extends LitElement {
     isYearGridOpen: () => this._nav.yearSelectorOpen,
   });
 
+  /**
+   * Leaving settles the working selection before blurring. Only a deliberate
+   * pick attempts a commit as it happens, so four pieces completed by typing a
+   * custom time sit here uncommitted — and leaving is as deliberate as Enter.
+   */
   private _focusLeave = new GUIFocusLeaveController(this, {
-    onLeave: () => this.dispatchEvent(new CustomEvent('blur', { bubbles: true, composed: true })),
+    onLeave: () => {
+      if (!this.deferFocusLeave) this.settleOnLeave();
+      this.dispatchEvent(new CustomEvent('blur', { bubbles: true, composed: true }));
+    },
   });
+
+  /**
+   * A completed working range commits (or surfaces its own rejection). A
+   * half-finished one — any piece left behind: a span, a lone anchor day, a
+   * parked time, or a half-typed time that never emitted — surfaces the
+   * incomplete message; the committed pills are untouched, the injected
+   * issue alone flags the field. An emptied selection instead clears a
+   * message surfaced earlier.
+   */
+  private settleOnLeave(): void {
+    if (this.tryCommitWorkingRange()) return;
+
+    const leftBehind =
+      !!this.anchorISO() ||
+      !!this._workingStart ||
+      !!this._workingEnd ||
+      !!this._workingStartTime ||
+      !!this._workingEndTime ||
+      this.typedTimeCompleteness(this.startPicker) === 'partial' ||
+      this.typedTimeCompleteness(this.endPicker) === 'partial';
+
+    if (!leftBehind) {
+      if (this._surfacedError) this.emitChange(this.value ?? []);
+      return;
+    }
+
+    this.emitInputError(this.incompleteMessage ?? INCOMPLETE_DATE_TIME_MESSAGE);
+  }
+
+  /**
+   * The fill state of an embedded picker's typed time input. A half-typed
+   * time never emits, so it is visible only in the input's parts.
+   */
+  private typedTimeCompleteness(picker: GuiTimePicker | null) {
+    return picker?.querySelector<GuiTime>('gui-time')?.groupCompleteness() ?? 'empty';
+  }
 
   /**
    * Full instant of an endpoint, used to order the pills — endpoints carry a
@@ -234,13 +312,12 @@ export class GuiRangeDateTimeCalendar extends LitElement {
     return `${start} - ${end}`;
   }
 
-  /** Highlights the parked working date range like a committed one. */
-  protected get workingRange(): DaySpan | undefined {
-    if (!this._workingDateStart || !this._workingDateEnd) return undefined;
-    return {
-      start: parseISODateString(this._workingDateStart),
-      end: parseISODateString(this._workingDateEnd),
-    };
+  protected get workingSpan(): DaySpan | undefined {
+    if (!this._workingStart || !this._workingEnd) return undefined;
+    return orderedDaySpan(
+      parseISODateString(this._workingStart),
+      parseISODateString(this._workingEnd),
+    );
   }
 
   override createRenderRoot() {
@@ -253,6 +330,7 @@ export class GuiRangeDateTimeCalendar extends LitElement {
   }
 
   override willUpdate(changedProperties: PropertyValues): void {
+    this.adoptWorkingSelection(changedProperties);
     if (
       !this.hasUpdated ||
       changedProperties.has('minDateTime') ||
@@ -335,8 +413,8 @@ export class GuiRangeDateTimeCalendar extends LitElement {
   protected renderBelowHeader(offset: number): TemplateResult | typeof nothing {
     if (offset !== 0) return nothing;
 
-    const startEnabled = !this.disabled && !!this._workingDateStart;
-    const endEnabled = !this.disabled && !!this._workingTimeIn;
+    const startEnabled = !this.disabled;
+    const endEnabled = !this.disabled;
     const startBounds = this.startListBounds;
     const endBounds = this.endListBounds;
 
@@ -358,11 +436,12 @@ export class GuiRangeDateTimeCalendar extends LitElement {
             .uid=${this.uid ? `${this.uid}-start-time` : undefined}
             .label=${this.startTimeLabel ?? 'Start time'}
             .showErrors=${false}
+            .deferFocusLeave=${true}
             ?required=${this.required}
             ?disabled=${!startEnabled}
             ?readonly=${this.readOnly}
             .allowCustomTime=${this.allowCustomTime}
-            .value=${this._workingTimeIn}
+            .value=${this._workingStartTime}
             .localeId=${this.localeId}
             .hourFormat=${this.hourFormat}
             .minuteStep=${this.minuteStep}
@@ -373,6 +452,7 @@ export class GuiRangeDateTimeCalendar extends LitElement {
             .disabledRangeMessage=${this.disabledRangeMessage}
             .noAvailableTimesMessage=${this.noAvailableTimesMessage}
             @change=${this.onStartTimeChange}
+            @partsChange=${this.stopInnerPartsChange}
             @listtoggle=${(e: CustomEvent<{ open: boolean }>) => this.onListToggle(e, 'start')}
           ></gui-time-picker>
         </div>
@@ -388,11 +468,12 @@ export class GuiRangeDateTimeCalendar extends LitElement {
             .uid=${this.uid ? `${this.uid}-end-time` : undefined}
             .label=${this.endTimeLabel ?? 'End time'}
             .showErrors=${false}
+            .deferFocusLeave=${true}
             ?required=${this.required}
             ?disabled=${!endEnabled}
             ?readonly=${this.readOnly}
             .allowCustomTime=${this.allowCustomTime}
-            .value=${this._workingTimeOut}
+            .value=${this._workingEndTime}
             .localeId=${this.localeId}
             .hourFormat=${this.hourFormat}
             .minuteStep=${this.minuteStep}
@@ -403,6 +484,7 @@ export class GuiRangeDateTimeCalendar extends LitElement {
             .disabledRangeMessage=${this.disabledRangeMessage}
             .noAvailableTimesMessage=${this.noAvailableTimesMessage}
             @change=${this.onEndTimeChange}
+            @partsChange=${this.stopInnerPartsChange}
             @listtoggle=${(e: CustomEvent<{ open: boolean }>) => this.onListToggle(e, 'end')}
           ></gui-time-picker>
         </div>
@@ -520,7 +602,7 @@ export class GuiRangeDateTimeCalendar extends LitElement {
       start: this.endpointDay(range.start),
       end: range.end ? this.endpointDay(range.end) : undefined,
     }));
-    const selectingSpan = selectionPreviewSpan(this._selection);
+    const selectingSpan = selectionPreviewSpan(this._selection) ?? this.workingSpan ?? null;
 
     return buildMonthDays({
       currentDate: this._currentDate,
@@ -531,7 +613,6 @@ export class GuiRangeDateTimeCalendar extends LitElement {
       toDay: (base) => {
         const status = computeDayStatus(base.date, {
           ranges,
-          workingRange: this.workingRange,
           anchor: this._selection.anchor,
           selectingSpan,
           invalidRange: this._invalidRange,
@@ -571,10 +652,13 @@ export class GuiRangeDateTimeCalendar extends LitElement {
     });
     this._selection = state;
 
-    // Start selection
+    // Starting a new span drops the previous days but keeps the chosen times:
+    // a time of day is independent of which days the range covers.
     if (!commit) {
-      this.resetWorking();
+      this._workingStart = undefined;
+      this._workingEnd = undefined;
       this._invalidRange = null;
+      this.emitPartsChange();
       return;
     }
 
@@ -586,10 +670,10 @@ export class GuiRangeDateTimeCalendar extends LitElement {
     }
 
     this._invalidRange = null;
-    this._workingDateStart = toISODateString(commit.start);
-    this._workingDateEnd = toISODateString(commit.end);
-    this._workingTimeIn = undefined;
-    this._workingTimeOut = undefined;
+    this._workingStart = toISODateString(commit.start);
+    this._workingEnd = toISODateString(commit.end);
+    this.emitPartsChange();
+    this.tryCommitWorkingRange();
   }
 
   private spanCoversBlockedDay(startDate: Date, endDate: Date): boolean {
@@ -614,65 +698,168 @@ export class GuiRangeDateTimeCalendar extends LitElement {
   }
 
   private onStartTimeChange(event: CustomEvent) {
-    event.stopPropagation();
-    // Only a deliberate selection (list pick or Enter) advances the flow
-    if (event.detail.commit !== true) return;
-
-    const time = event.detail.value as string | null;
-    if (!time || !this._workingDateStart) {
-      this._workingTimeIn = undefined;
-      this._workingTimeOut = undefined;
-      return;
-    }
-    const error = this.timeError(time, this._workingDateStart, this.resolvedStartTimeRanges);
-    if (error) {
-      // Keep the end picker disabled until the start is valid.
-      this._workingTimeIn = undefined;
-      this._workingTimeOut = undefined;
-      this.emitInputError(error);
-      return;
-    }
-    this._workingTimeIn = time;
-    this._workingTimeOut = undefined;
+    this.onTimeChange(event, 'start');
   }
 
   private onEndTimeChange(event: CustomEvent) {
+    this.onTimeChange(event, 'end');
+  }
+
+  /**
+   * Both endpoints follow one rule: the value is always kept as working state
+   * (so it survives and syncs), but only a deliberate selection — a list pick
+   * or Enter — attempts the commit. Typing a custom time must never create an
+   * unintended pill.
+   */
+  private onTimeChange(event: CustomEvent, endpoint: 'start' | 'end') {
     event.stopPropagation();
-    // Only a deliberate selection creates the pill; typing a custom time must
-    // not, or it would commit an unintended pill.
+
+    const time = (event.detail.value as string | null) ?? undefined;
+    if (endpoint === 'start') {
+      this._workingStartTime = time;
+    } else {
+      this._workingEndTime = time;
+    }
+    this.emitPartsChange();
+
     if (event.detail.commit !== true) return;
+    this.tryCommitWorkingRange();
+  }
 
-    const time = event.detail.value as string | null;
-    if (!time) {
-      this._workingTimeOut = undefined;
-      return;
+  /**
+   * Commits once all four pieces are present, in whichever order they were
+   * chosen. A rejected endpoint or span keeps every working value on show
+   * next to its error, so the user corrects one piece instead of restarting.
+   *
+   * @return {boolean} Whether the attempt reported — a commit or a rejection
+   *   error. False with pieces missing, where the caller decides what an
+   *   unfinished selection means.
+   */
+  private tryCommitWorkingRange(): boolean {
+    const startDate = this._workingStart;
+    const endDate = this._workingEnd;
+    const timeIn = this._workingStartTime;
+    const timeOut = this._workingEndTime;
+    if (!startDate || !endDate || !timeIn || !timeOut) return false;
+
+    const startError = this.timeError(timeIn, startDate, this.resolvedStartTimeRanges);
+    if (startError) {
+      this.emitInputError(startError);
+      return true;
     }
-    if (!this._workingTimeIn || !this._workingDateStart || !this._workingDateEnd) return;
 
-    const endError = this.timeError(time, this._workingDateEnd, this.resolvedEndTimeRanges);
+    const endError = this.timeError(timeOut, endDate, this.resolvedEndTimeRanges);
     if (endError) {
-      this._workingTimeOut = time;
       this.emitInputError(endError);
-      return;
+      return true;
     }
 
-    const ordered = orderDateTimeRange(
-      `${this._workingDateStart}T${this._workingTimeIn}`,
-      `${this._workingDateEnd}T${time}`,
-    );
+    const ordered = orderDateTimeRange(`${startDate}T${timeIn}`, `${endDate}T${timeOut}`);
 
     if (dateTimeRangeOverlaps(ordered, this.disabledRanges)) {
-      this._workingTimeOut = time;
       this.emitInputError(this.disabledRangeMessage ?? DISABLED_DATE_RANGE_MESSAGE);
-      return;
+      return true;
     }
 
     this._skipValueNavigation = true;
-    this.value = mergeDateTimeRanges([...(this.value ?? []), ordered]);
+    const next = mergeDateTimeRanges([...(this.value ?? []), ordered]);
+    this.value = next;
     this.resetWorking();
+    this.emitPartsChange();
+    this.emitChange(next);
+    return true;
+  }
+
+  /** Whether an inputError has been emitted and not yet cleared by a change. */
+  private _surfacedError = false;
+
+  private emitChange(value: DateTimeRange[]): void {
+    // The form layer clears injected issues on every change, so the mirror
+    // flag resets with it.
+    this._surfacedError = false;
     this.dispatchEvent(
-      new CustomEvent('change', { detail: { value: this.value }, bubbles: true, composed: true }),
+      new CustomEvent('change', { detail: { value }, bubbles: true, composed: true }),
     );
+  }
+
+  /**
+   * Live-syncs the in-progress selection to a host picker, which holds it
+   * across the popover's unmount/remount cycle. Never wired by the form
+   * layer, so it can't trigger validation.
+   */
+  private emitPartsChange(): void {
+    this.dispatchEvent(
+      new CustomEvent('partsChange', {
+        detail: {
+          anchor: this.anchorISO() ?? null,
+          start: this._workingStart ?? null,
+          end: this._workingEnd ?? null,
+          startTime: this._workingStartTime ?? null,
+          endTime: this._workingEndTime ?? null,
+        },
+        bubbles: true,
+        composed: true,
+      }),
+    );
+  }
+
+  /**
+   * Takes over the host picker's working selection: on the mount that follows
+   * a popover reopen, and on every later change, so a value typed into the
+   * picker's input reaches the days grid and the two time pickers. Adoption
+   * compares values and never emits, so the picker echoing back what this
+   * calendar just reported settles as a no-op instead of looping.
+   */
+  private adoptWorkingSelection(changedProperties: PropertyValues): void {
+    if (changedProperties.has('workingStart') || changedProperties.has('workingEnd')) {
+      this.adoptWorkingDates();
+    }
+    if (changedProperties.has('workingStartTime')) {
+      this._workingStartTime = this.workingStartTime || undefined;
+    }
+    if (changedProperties.has('workingEndTime')) {
+      this._workingEndTime = this.workingEndTime || undefined;
+    }
+  }
+
+  /**
+   * One date is an in-progress anchor the next click completes; both are the
+   * parked span that waits for the times. Navigates to a span or anchor that
+   * falls outside the visible months.
+   */
+  private adoptWorkingDates(): void {
+    const phase = workingPhase(this.workingStart, this.workingEnd);
+
+    if (phase.kind === 'span') {
+      if (this._workingStart === phase.start && this._workingEnd === phase.end) return;
+      this._workingStart = phase.start;
+      this._workingEnd = phase.end;
+      this._selection = idleRangeSelection();
+      // The earliest endpoint, so a pair entered end-first still opens on the
+      // beginning of its span.
+      this._nav.navigateToDate(this.workingSpan?.start ?? this.endpointDay(phase.start));
+      return;
+    }
+
+    this._workingStart = undefined;
+    this._workingEnd = undefined;
+
+    if (phase.kind === 'idle') {
+      if (this._selection.anchor) this._selection = idleRangeSelection();
+      return;
+    }
+
+    if (this.anchorISO() === phase.iso) return;
+
+    const anchor = this.endpointDay(phase.iso);
+    if (isNaN(anchor.getTime())) return;
+    this._selection = { anchor, hover: null, selecting: true };
+    this._nav.navigateToDate(anchor);
+  }
+
+  /** ISO day of the in-progress anchor, or undefined while idle. */
+  private anchorISO(): string | undefined {
+    return this._selection.anchor ? toISODateString(this._selection.anchor) : undefined;
   }
 
   /**
@@ -692,10 +879,11 @@ export class GuiRangeDateTimeCalendar extends LitElement {
   }
 
   private resetWorking() {
-    this._workingDateStart = undefined;
-    this._workingDateEnd = undefined;
-    this._workingTimeIn = undefined;
-    this._workingTimeOut = undefined;
+    this._workingStart = undefined;
+    this._workingEnd = undefined;
+    this._workingStartTime = undefined;
+    this._workingEndTime = undefined;
+    this._selection = idleRangeSelection();
     this._openList = null;
     this.resetPicker(this.startPicker);
     this.resetPicker(this.endPicker);
@@ -707,7 +895,19 @@ export class GuiRangeDateTimeCalendar extends LitElement {
     picker.closeList();
   }
 
+  /**
+   * The embedded time pickers' own segmented inputs broadcast a bubbling,
+   * composed `partsChange` carrying only `{time}`. Left alone it reaches the
+   * host picker's listener looking like this calendar's report, whose missing
+   * keys read as "every piece is gone" and blank the working selection. The
+   * times this calendar holds already flow out through `@change`.
+   */
+  private stopInnerPartsChange = (event: Event) => {
+    event.stopPropagation();
+  };
+
   private emitInputError(message: string) {
+    this._surfacedError = true;
     this.dispatchEvent(
       new CustomEvent('inputError', { detail: { message }, bubbles: true, composed: true }),
     );
@@ -742,14 +942,14 @@ export class GuiRangeDateTimeCalendar extends LitElement {
   }
 
   private get resolvedStartTimeRanges() {
-    return this._workingDateStart
-      ? resolveDisabledTimesForDate(this.disabledRanges, this._workingDateStart)
+    return this._workingStart
+      ? resolveDisabledTimesForDate(this.disabledRanges, this._workingStart)
       : [];
   }
 
   private get resolvedEndTimeRanges() {
-    return this._workingDateEnd
-      ? resolveDisabledTimesForDate(this.disabledRanges, this._workingDateEnd)
+    return this._workingEnd
+      ? resolveDisabledTimesForDate(this.disabledRanges, this._workingEnd)
       : [];
   }
 
@@ -766,14 +966,14 @@ export class GuiRangeDateTimeCalendar extends LitElement {
   }
 
   private get startListBounds(): { minTime?: string; maxTime?: string } {
-    return this._workingDateStart ? this.dayClampedBounds(this._workingDateStart) : {};
+    return this._workingStart ? this.dayClampedBounds(this._workingStart) : {};
   }
 
   private get endListBounds(): { minTime?: string; maxTime?: string } {
-    if (!this._workingDateEnd) return {};
-    const base = this.dayClampedBounds(this._workingDateEnd);
-    if (this._workingDateEnd !== this._workingDateStart || !this._workingTimeIn) return base;
-    const floor = oneStepAfterISOTime(this._workingTimeIn, this.minuteStep);
+    if (!this._workingEnd) return {};
+    const base = this.dayClampedBounds(this._workingEnd);
+    if (this._workingEnd !== this._workingStart || !this._workingStartTime) return base;
+    const floor = oneStepAfterISOTime(this._workingStartTime, this.minuteStep);
     if (!floor) return { minTime: '23:59:59', maxTime: '00:00:00' };
     return { minTime: floor, maxTime: base.maxTime };
   }
@@ -886,13 +1086,7 @@ export class GuiRangeDateTimeCalendar extends LitElement {
     const removal = removeRangeByKey(this.value, e.detail.key);
     if (!removal) return;
     this.value = removal.next;
-    this.dispatchEvent(
-      new CustomEvent('change', {
-        detail: { value: this.value },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    this.emitChange(removal.next);
   };
 
   private onPillClickEvent = (e: CustomEvent<GuiPillEventDetail>) => {

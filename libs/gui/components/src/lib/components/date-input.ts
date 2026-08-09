@@ -3,8 +3,10 @@ import { html, LitElement, nothing, type PropertyValues } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
+import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
 import { GUIPartsController } from '../controllers/parts.controller';
 import { dateBoundsError, getDateFormatParts } from '../utils/date';
+import { INCOMPLETE_DATE_MESSAGE } from '../utils/messages';
 import { renderGroupParts, type GUIPartsTemplateData } from '../utils/part-templates';
 import {
   dateInputPartDescriptors,
@@ -12,8 +14,11 @@ import {
   PART_DEFAULT_ARIA_LABELS,
   type DateTimePartDescriptor,
   type DateTimePartType,
+  type GroupCompleteness,
 } from '../utils/parts';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
+
+const DATE_PART_TYPES: readonly DateTimePartType[] = ['day', 'month', 'year'];
 
 @customElement('gui-date')
 export class GuiDate extends LitElement {
@@ -37,6 +42,17 @@ export class GuiDate extends LitElement {
   @property({ type: String, attribute: 'invalid-date-message' }) invalidDateMessage:
     | string
     | undefined = undefined;
+  @property({ type: String, attribute: 'incomplete-message' }) incompleteMessage:
+    | string
+    | undefined = undefined;
+  /**
+   * Set by host pickers that run their own whole-widget focus-leave check:
+   * moving focus from this input into the picker's popover must not count as
+   * leaving, so the embedded input skips its incomplete-on-leave handling.
+   */
+  @property({ type: Boolean, attribute: 'defer-focus-leave' }) deferFocusLeave:
+    | boolean
+    | undefined = false;
   @property({ type: String, attribute: 'min-date' }) minDate: string | undefined = undefined;
   @property({ type: String, attribute: 'max-date' }) maxDate: string | undefined = undefined;
   @property({ type: String, attribute: 'min-date-message' }) minDateMessage: string | undefined =
@@ -56,9 +72,34 @@ export class GuiDate extends LitElement {
     commitGroup: (group) => this.validateAndEmit(group),
     isReadonly: () => !!this.readOnly,
     isDisabled: () => !!this.disabled,
-    onEmptyPartBlur: () =>
-      this.dispatchEvent(new CustomEvent('change', { detail: { value: null }, bubbles: true })),
+    onEmptyPartBlur: (group, type) => {
+      // A raw 0 counts as emptying the part, so clear it in state (the clamp
+      // write-back would otherwise leave a phantom value behind).
+      this._parts.setPart(group, type, '');
+
+      if (!this.value) return;
+
+      this._internalNullReport = true;
+      this.value = undefined;
+      this.dispatchEvent(new CustomEvent('change', { detail: { value: null }, bubbles: true }));
+      this._parts.resetSurfacedInputError();
+    },
+    onInputErrorSurfaced: (message) =>
+      this.dispatchEvent(new CustomEvent('inputError', { detail: { message }, bubbles: true })),
+    onSurfacedErrorCleared: (value) =>
+      this.dispatchEvent(new CustomEvent('change', { detail: { value }, bubbles: true })),
   });
+
+  private _focusLeave = new GUIFocusLeaveController(this, {
+    onLeave: () => this.onFocusLeave(),
+  });
+
+  /**
+   * Marks a value clear that the widget itself reported (an emptied part or
+   * an abandoned partial). The surviving segments must not be wiped when the
+   * clear — or its null echo from the form — lands back on the value prop.
+   */
+  private _internalNullReport = false;
 
   protected ariaController: GUIAriaController<unknown, any> = new GUIAriaController(this, {
     getTargets: () => this.querySelectorAll(`.${this.inputBlockClass}`),
@@ -90,6 +131,12 @@ export class GuiDate extends LitElement {
 
   override willUpdate(changedProperties: PropertyValues): void {
     if (changedProperties.has('value')) {
+      const internalNull = this._internalNullReport;
+      this._internalNullReport = false;
+      const prev = changedProperties.get('value') as string | null | undefined;
+
+      if (!this.value && (internalNull || !prev)) return;
+
       this._parts.setGroupFromISO('default', this.value ?? '', 'date');
     }
   }
@@ -134,7 +181,7 @@ export class GuiDate extends LitElement {
     return html`
       ${this.label ? addLabel(this.uid as string, templateData, false, undefined, false) : nothing}
 
-      <div class="gui-widget">
+      <div class="gui-widget" @focusout=${this.onWidgetFocusOut}>
         <div
           id=${this.uid}
           class="gui-widget-input gui-parts gui-parts-ring gui-date-input ${this.icon
@@ -169,14 +216,17 @@ export class GuiDate extends LitElement {
     });
     this._parts.applyWriteBacks(group, writeBacks);
 
+    this.dispatchEvent(
+      new CustomEvent('partsChange', {
+        detail: { date: result.kind === 'valid' ? result.iso : null },
+        bubbles: true,
+        composed: true,
+      }),
+    );
+
     if (result.kind === 'invalid') {
       // Date is complete but invalid
-      this.dispatchEvent(
-        new CustomEvent('inputError', {
-          detail: { message: result.message },
-          bubbles: true,
-        }),
-      );
+      this._parts.surfaceInputError(result.message);
     } else if (result.kind === 'valid') {
       const boundsError = dateBoundsError(result.iso, this.minDate, this.maxDate, undefined, {
         minDateMessage: this.minDateMessage,
@@ -190,17 +240,13 @@ export class GuiDate extends LitElement {
             bubbles: true,
           }),
         );
-        this.dispatchEvent(
-          new CustomEvent('inputError', {
-            detail: { message: boundsError },
-            bubbles: true,
-          }),
-        );
+        this._parts.surfaceInputError(boundsError);
         this.requestUpdate();
         return;
       }
 
       this.value = result.iso;
+      this._parts.resetSurfacedInputError();
 
       this.dispatchEvent(
         new CustomEvent('change', {
@@ -211,6 +257,48 @@ export class GuiDate extends LitElement {
     }
 
     this.requestUpdate();
+  }
+
+  /** The group's fill state, for host pickers' own focus-leave checks. */
+  groupCompleteness(): GroupCompleteness {
+    const { result } = parseDateGroup(this._parts.values['default'] ?? {}, {
+      descriptors: this.partDescriptors,
+      invalidDateMessage: this.invalidDateMessage,
+    });
+    if (result.kind !== 'incomplete') return 'complete';
+    return this._parts.isGroupEmpty('default', DATE_PART_TYPES) ? 'empty' : 'partial';
+  }
+
+  private onWidgetFocusOut = (event: FocusEvent): void => {
+    if (this.deferFocusLeave) return;
+    this._focusLeave.handleFocusOut(event);
+  };
+
+  /**
+   * The single point where the input reports focus leaving the control: it
+   * blurs (which the form layer reads as "validate now"), so hopping between
+   * segments never validates a half-typed entry.
+   */
+  private onFocusLeave(): void {
+    this.dispatchEvent(new CustomEvent('blur'));
+    this.settleOnFocusLeave();
+  }
+
+  settleOnFocusLeave(): void {
+    const completeness = this.groupCompleteness();
+    if (completeness === 'complete') return;
+
+    if (completeness === 'empty') {
+      this._parts.clearSurfacedInputError(null);
+      return;
+    }
+
+    if (this.value) {
+      this._internalNullReport = true;
+      this.value = undefined;
+    }
+    this.dispatchEvent(new CustomEvent('change', { detail: { value: null }, bubbles: true }));
+    this._parts.surfaceInputError(this.incompleteMessage ?? INCOMPLETE_DATE_MESSAGE);
   }
 }
 

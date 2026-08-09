@@ -54,6 +54,18 @@ export const runRangeDatePickerComponentTests = (mountFn: MountComponentFn) => {
     const juneRange = { start: '2026-06-10', end: '2026-06-12' };
     const marchRange = { start: '2026-03-05', end: '2026-03-07' };
 
+    // en-US orders the parts month/day/year, and each fill auto-advances.
+    const typeGroup = (group: 'start' | 'end', month: string, day: string, year: string) => {
+      cy.get(`gui-range-date input[data-group="${group}"][data-type="month"]`).click();
+      cy.focused().type(month);
+      cy.focused().type(day);
+      cy.focused().type(year);
+    };
+    const typeStart = (month: string, day: string, year: string) =>
+      typeGroup('start', month, day, year);
+    const typeEnd = (month: string, day: string, year: string) =>
+      typeGroup('end', month, day, year);
+
     it('should not render the calendar initially', () => {
       mountRangeDatePicker({ data: { myRanges: [juneRange] } });
 
@@ -93,6 +105,170 @@ export const runRangeDatePickerComponentTests = (mountFn: MountComponentFn) => {
           myRanges: [juneRange, { start: '2026-06-18', end: '2026-06-20' }],
         });
       });
+    });
+
+    it('should fill the date fields with the days picked in the calendar', () => {
+      mountRangeDatePicker({ data: { myRanges: [juneRange] } });
+
+      cy.get(sel.startMonth).click();
+
+      // The anchor lands in the start field straight away, so a half-picked
+      // span reads back as a date instead of only a calendar highlight
+      cy.get(sel.dayButton('2026-06-18')).click();
+      cy.get(sel.startMonth).should('have.value', '06');
+      cy.get(sel.startDay).should('have.value', '18');
+      cy.get(sel.endDay).should('have.value', '');
+
+      // Completing the span turns it into a pill and empties the fields again
+      cy.get(sel.dayButton('2026-06-20')).click();
+      cy.get(sel.pillText).should('have.length', 2);
+      cy.get(sel.startDay).should('have.value', '');
+    });
+
+    it('should start a calendar selection from a typed start date and complete it with a click', () => {
+      const formSubmitHandler = cy.stub().as('formSubmitHandler');
+      mountRangeDatePicker({ data: { myRanges: [juneRange] }, formSubmit: formSubmitHandler });
+
+      // Typing a whole endpoint is the same first step as clicking a day: the
+      // calendar picks it up as the in-progress anchor.
+      typeStart('06', '18', '2026');
+      cy.get(sel.calendar).should('exist');
+      cy.get(sel.dayButton('2026-06-18')).should('have.class', 'is-anchor');
+
+      // ...so one click completes the span
+      cy.get(sel.dayButton('2026-06-22')).click();
+      cy.get(sel.pillText).should('have.length', 2);
+      cy.get(sel.startDay).should('have.value', '');
+
+      cy.get('body').click(0, 0);
+      cy.get('[data-cy="submitBtn_button"]').click();
+      cy.get('@formSubmitHandler').then((stub: any) => {
+        expect(stub.getCall(0).args[0].data.myRanges).to.deep.equal([
+          juneRange,
+          { start: '2026-06-18', end: '2026-06-22' },
+        ]);
+      });
+    });
+
+    it('should complete the start date with a click when the end was typed first', () => {
+      const formSubmitHandler = cy.stub().as('formSubmitHandler');
+      mountRangeDatePicker({ data: { myRanges: [juneRange] }, formSubmit: formSubmitHandler });
+
+      // The endpoint keeps the field it was typed into, and the calendar takes
+      // it as the anchor either way — so an EARLIER click completes the start,
+      // ordered by the same reducer that orders a backward two-click pick.
+      // The end year is the last field of the last group, with nothing to
+      // auto-advance into — so the digit that completes it has to commit it.
+      typeEnd('06', '22', '2026');
+      cy.get(sel.dayButton('2026-06-22')).should('have.class', 'is-anchor');
+      cy.get(sel.startDay).should('have.value', '');
+
+      cy.get(sel.dayButton('2026-06-18')).click();
+      cy.get(sel.pillText).should('have.length', 2);
+
+      cy.get('body').click(0, 0);
+      cy.get('[data-cy="submitBtn_button"]').click();
+      cy.get('@formSubmitHandler').then((stub: any) => {
+        expect(stub.getCall(0).args[0].data.myRanges).to.deep.equal([
+          juneRange,
+          { start: '2026-06-18', end: '2026-06-22' },
+        ]);
+      });
+    });
+
+    it('should render a fully typed range as an in-progress selection', () => {
+      mountRangeDatePicker({ data: { myRanges: [juneRange] } });
+
+      typeStart('06', '18', '2026');
+      typeEnd('06', '22', '2026');
+
+      // Both endpoints entered: the whole span highlights, dashed like a hover
+      // preview. It is not a pill until Enter, so it must not wear the solid
+      // committed look of the range beside it.
+      cy.get(sel.dayButton('2026-06-18'))
+        .should('have.class', 'is-selecting')
+        .and('not.have.class', 'range-start');
+      cy.get(sel.dayButton('2026-06-20'))
+        .should('have.class', 'is-selecting')
+        .and('not.have.class', 'in-range');
+      cy.get(sel.dayButton('2026-06-22'))
+        .should('have.class', 'is-selecting')
+        .and('not.have.class', 'range-end');
+      cy.get(sel.pillText).should('have.length', 1);
+    });
+
+    it('should highlight a typed range whose end comes before its start', () => {
+      mountRangeDatePicker({ data: { myRanges: [juneRange] } });
+
+      // Reversed: the commit will reject it, but while it is being entered the
+      // days between the two endpoints still have to show what was typed.
+      typeStart('06', '22', '2026');
+      typeEnd('06', '18', '2026');
+
+      cy.get(sel.dayButton('2026-06-18')).should('have.class', 'is-selecting');
+      cy.get(sel.dayButton('2026-06-20')).should('have.class', 'is-selecting');
+      cy.get(sel.dayButton('2026-06-22')).should('have.class', 'is-selecting');
+    });
+
+    it('should navigate the calendar to a typed date in another month', () => {
+      mountRangeDatePicker({ data: { myRanges: [juneRange] } });
+
+      cy.get(sel.startMonth).click();
+      cy.get(sel.dayButton('2026-06-18')).should('exist');
+
+      typeStart('09', '10', '2026');
+      cy.get(sel.dayButton('2026-09-10')).should('exist').and('have.class', 'is-anchor');
+    });
+
+    it('should commit a typed range with the click that leaves and submits', () => {
+      const formSubmitHandler = cy.stub().as('formSubmitHandler');
+      mountRangeDatePicker({ data: { myRanges: [juneRange] }, formSubmit: formSubmitHandler });
+
+      typeStart('06', '18', '2026');
+      typeEnd('06', '22', '2026');
+      cy.get(sel.pillText).should('have.length', 1);
+
+      // One click leaves the widget and submits the form. Leaving commits the
+      // finished range, and it has to settle before the form reads its data —
+      // otherwise the range the user typed is silently missing from it.
+      cy.get('[data-cy="submitBtn_button"]').click({ force: true });
+      cy.get('@formSubmitHandler').then((stub: any) => {
+        expect(stub.getCall(0).args[0].data.myRanges).to.deep.equal([
+          juneRange,
+          { start: '2026-06-18', end: '2026-06-22' },
+        ]);
+      });
+      cy.get(sel.pillText).should('have.length', 2);
+    });
+
+    it('should report an incomplete range when only the span anchor was picked', () => {
+      mountRangeDatePicker({ data: { myRanges: [juneRange] } });
+
+      cy.get(sel.startMonth).click();
+      cy.get(sel.dayButton('2026-06-18')).click();
+
+      cy.get('[data-cy="submitBtn_button"]').focus();
+      cy.get(`[data-cy="${uid}_validator-error"]`).should('contain.text', 'Incomplete date');
+    });
+
+    it('should clear the incomplete error when the emptied field is left again', () => {
+      // Regression: leave a span anchor behind (incomplete error), come
+      // back, empty the fields it filled and leave again — the error must
+      // not outlive fields that no longer hold anything.
+      mountRangeDatePicker({ data: { myRanges: [juneRange] } });
+
+      cy.get(sel.startMonth).click();
+      cy.get(sel.dayButton('2026-06-18')).click();
+      cy.get('[data-cy="submitBtn_button"]').focus();
+      cy.get(`[data-cy="${uid}_validator-error"]`).should('contain.text', 'Incomplete date');
+
+      cy.get(sel.startMonth).type('{selectAll}{backspace}');
+      cy.get(sel.startDay).type('{selectAll}{backspace}');
+      cy.get('gui-range-date input[data-group="start"][data-type="year"]').type(
+        '{selectAll}{backspace}',
+      );
+      cy.get('[data-cy="submitBtn_button"]').focus();
+      cy.get(`[data-cy="${uid}_validator-errors"]`).should('not.exist');
     });
 
     it('should keep the calendar open when keyboard navigation crosses a month boundary', () => {
