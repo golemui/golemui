@@ -316,6 +316,26 @@ export const runRangeDateTimeInputComponentTests = (mountFn: MountComponentFn) =
       cy.get(sel.pillText).should('not.exist');
     });
 
+    it('should clear the incomplete error when the emptied endpoint is left again', () => {
+      // Regression: leave one endpoint behind (incomplete error), come back,
+      // empty its fields and leave again — the error must not outlive fields
+      // that no longer hold anything.
+      mountRangeDateTimeInput();
+
+      typeGroup('start', ['22', '11', '2026', '09', '00']);
+      cy.get('[data-cy="submitBtn_button"]').focus();
+      cy.get('[data-cy="testSubject_validator-error"]').should(
+        'contain.text',
+        'Incomplete date-time',
+      );
+
+      for (const type of ['day', 'month', 'year', 'hour', 'minute']) {
+        cy.get(partSel('start', type)).type('{selectAll}{backspace}');
+      }
+      cy.get('[data-cy="submitBtn_button"]').focus();
+      cy.get('[data-cy="testSubject_validator-errors"]').should('not.exist');
+    });
+
     it('should commit a complete range when focus leaves, without Enter', () => {
       const formSubmitHandler = cy.stub().as('formSubmitHandler');
       mountRangeDateTimeInput({ formSubmit: formSubmitHandler });

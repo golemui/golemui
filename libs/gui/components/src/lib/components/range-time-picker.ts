@@ -78,6 +78,9 @@ export class GuiRangeTimePicker extends LitElement {
   @property({ type: String, attribute: 'no-available-times-message' }) noAvailableTimesMessage:
     | string
     | undefined = undefined;
+  @property({ type: String, attribute: 'incomplete-message' }) incompleteMessage:
+    | string
+    | undefined = undefined;
 
   @query('#time-input') private _inputRef?: GuiRangeTimeInput;
 
@@ -255,6 +258,7 @@ export class GuiRangeTimePicker extends LitElement {
           .maxTimeMessage=${this.maxTimeMessage}
           .rangeOrderMessage=${this.rangeOrderMessage}
           .disabledRangeMessage=${this.disabledRangeMessage}
+          .incompleteMessage=${this.incompleteMessage}
           .removePillAriaLabel=${this.removePillAriaLabel}
           .startTimeAriaLabel=${this.startTimeAriaLabel}
           .endTimeAriaLabel=${this.endTimeAriaLabel}

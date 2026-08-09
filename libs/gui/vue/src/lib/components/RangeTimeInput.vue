@@ -81,6 +81,7 @@ onUnmounted(() => {
       :minTimeMessage="templateData.minTimeMessage"
       :maxTimeMessage="templateData.maxTimeMessage"
       :rangeOrderMessage="templateData.rangeOrderMessage"
+      :incompleteMessage="templateData.incompleteMessage"
     />
   </div>
 </template>

@@ -266,6 +266,7 @@ export class GuiDateTimeCalendar extends LitElement {
   }
 
   private emitChange(value: string | null, commit = false) {
+    this._surfacedError = false;
     this.dispatchEvent(
       new CustomEvent('change', {
         detail: { value, commit },
@@ -342,7 +343,11 @@ export class GuiDateTimeCalendar extends LitElement {
     );
   }
 
+  /** Whether an inputError has been emitted and not yet cleared by a change. */
+  private _surfacedError = false;
+
   private emitInputError(message: string): void {
+    this._surfacedError = true;
     this.dispatchEvent(
       new CustomEvent('inputError', {
         detail: { message },
@@ -372,13 +377,17 @@ export class GuiDateTimeCalendar extends LitElement {
   /**
    * A partial selection (day without time, or time without day) left behind
    * flips the value to null — so validators report it — and surfaces the
-   * incomplete message. Complete or empty selections report nothing new.
+   * incomplete message. A selection emptied again instead clears a message
+   * surfaced earlier; complete selections report nothing new.
    */
   private reportIncompleteOnLeave(): void {
     if (this.value) return;
     const hasDate = !!this._selectedDate;
     const hasTime = !!this._selectedTime;
-    if (hasDate === hasTime) return;
+    if (hasDate === hasTime) {
+      if (!hasDate && this._surfacedError) this.emitChange(null);
+      return;
+    }
 
     this.emitChange(null);
     this.emitInputError(this.incompleteMessage ?? INCOMPLETE_DATE_TIME_MESSAGE);

@@ -77,6 +77,7 @@ export class DateElement extends LitElement implements WithWidget {
         .maxDate=${this.adapter.templateData.maxDate}
         .minDateMessage=${this.adapter.templateData.minDateMessage as string}
         .maxDateMessage=${this.adapter.templateData.maxDateMessage as string}
+        .incompleteMessage=${this.adapter.templateData.incompleteMessage as string}
         @inputError=${this.onInputError}
         @blur=${() => this.adapter.onBlur()}
         @change=${this.valueChanged}

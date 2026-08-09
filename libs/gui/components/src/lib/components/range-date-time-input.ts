@@ -457,8 +457,10 @@ export class GuiRangeDateTimeInput extends LitElement {
       empty: this._parts.isGroupEmpty(group, this.dateTimePartTypes),
     }));
 
-    // Nothing entered: nothing to settle.
-    if (endpoints.every((endpoint) => endpoint.empty)) return;
+    if (endpoints.every((endpoint) => endpoint.empty)) {
+      this._parts.clearSurfacedInputError(this.value ?? []);
+      return;
+    }
 
     if (endpoints.every((endpoint) => endpoint.result.kind === 'valid')) {
       this.tryCreatePill({ refocus: false });

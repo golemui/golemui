@@ -91,6 +91,7 @@ export function RangeDateTimeInput(widgetInstance: WithWidget) {
         invalidDateMessage={templateData.invalidDateMessage as string}
         minDateTimeMessage={templateData.minDateTimeMessage as string}
         maxDateTimeMessage={templateData.maxDateTimeMessage as string}
+        incompleteMessage={templateData.incompleteMessage as string}
       />
     </div>
   );

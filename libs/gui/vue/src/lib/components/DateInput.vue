@@ -74,6 +74,7 @@ onUnmounted(() => {
       :maxDate="templateData.maxDate"
       :minDateMessage="templateData.minDateMessage"
       :maxDateMessage="templateData.maxDateMessage"
+      :incompleteMessage="templateData.incompleteMessage"
     />
   </div>
 </template>

@@ -88,6 +88,7 @@ export function RangeTimeInput(widgetInstance: WithWidget) {
         minTimeMessage={templateData.minTimeMessage as string}
         maxTimeMessage={templateData.maxTimeMessage as string}
         rangeOrderMessage={templateData.rangeOrderMessage as string}
+        incompleteMessage={templateData.incompleteMessage as string}
       />
     </div>
   );

@@ -65,6 +65,7 @@ export function TimePicker(widgetInstance: WithWidget) {
         maxTimeMessage={templateData.maxTimeMessage as string}
         disabledRangeMessage={templateData.disabledRangeMessage as string}
         noAvailableTimesMessage={templateData.noAvailableTimesMessage as string}
+        incompleteMessage={templateData.incompleteMessage as string}
         onChange={handleChange}
         onBlur={onBlur}
         onInputError={handleInputError}

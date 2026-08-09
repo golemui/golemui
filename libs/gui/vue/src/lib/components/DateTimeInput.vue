@@ -81,6 +81,7 @@ onUnmounted(() => {
       :maxDateMessage="templateData.maxDateMessage"
       :minTimeMessage="templateData.minTimeMessage"
       :maxTimeMessage="templateData.maxTimeMessage"
+      :incompleteMessage="templateData.incompleteMessage"
       :hourFormat="templateData.hourFormat"
       :minuteStep="templateData.minuteStep ?? 1"
     />

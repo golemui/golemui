@@ -481,6 +481,52 @@ export const runTimePickerComponentTests = (mountFn: MountComponentFn) => {
           expect(spy.getCall(0).args[0].detail.message).to.equal('err.tooEarly');
         });
       });
+
+      it('should flip a partial typed time to null with an incomplete error when focus leaves', () => {
+        // Non-required field: the null report still marks it invalid, so the
+        // lingering partial is caught without a required validator
+        mountTimePicker({ props: { ...officeProps, allowCustomTime: true } });
+
+        cy.get(sel.hour).type('09');
+        cy.get('[data-cy="submitBtn_button"]').focus();
+
+        cy.get('[data-cy="testSubject_validator-error"]').should(
+          'contain.text',
+          'Incomplete time',
+        );
+      });
+
+      it('should clear the incomplete error when the emptied picker is left again', () => {
+        // Regression: leave a partial behind (incomplete error), come back,
+        // empty the field and leave again — the error must not outlive
+        // fields that no longer hold anything.
+        mountTimePicker({ props: { ...officeProps, allowCustomTime: true } });
+
+        cy.get(sel.hour).type('09');
+        cy.get('[data-cy="submitBtn_button"]').focus();
+        cy.get('[data-cy="testSubject_validator-error"]').should(
+          'contain.text',
+          'Incomplete time',
+        );
+
+        cy.get(sel.hour).type('{selectAll}{backspace}', { force: true });
+        cy.get('[data-cy="submitBtn_button"]').focus();
+        cy.get('[data-cy="testSubject_validator-errors"]').should('not.exist');
+      });
+
+      it('should honor the incompleteMessage prop', () => {
+        mountTimePicker({
+          props: { ...officeProps, allowCustomTime: true, incompleteMessage: 'Incomplete time!' },
+        });
+
+        cy.get(sel.hour).type('09');
+        cy.get('[data-cy="submitBtn_button"]').focus();
+
+        cy.get('[data-cy="testSubject_validator-error"]').should(
+          'contain.text',
+          'Incomplete time!',
+        );
+      });
     });
 
     describe('readonly and disabled', () => {

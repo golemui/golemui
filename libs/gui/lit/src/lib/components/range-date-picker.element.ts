@@ -90,6 +90,7 @@ export class RangeDatePickerElement extends LitElement implements WithWidget {
         .minDateMessage=${templateData.minDateMessage as string}
         .maxDateMessage=${templateData.maxDateMessage as string}
         .disabledDateRangeMessage=${templateData.disabledDateRangeMessage as string}
+        .incompleteMessage=${templateData.incompleteMessage as string}
         @inputError=${this.onInputError}
         @blur=${() => this.adapter.onBlur()}
         @change=${this.valueChanged}

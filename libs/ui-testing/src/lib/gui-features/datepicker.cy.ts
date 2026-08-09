@@ -196,6 +196,55 @@ export const runDatePickerComponentTests = (mountFn: MountComponentFn) => {
       });
     });
 
+    describe('incomplete input on focus leave', () => {
+      it('should flip a partial typed date to null with an incomplete error when focus leaves', () => {
+        // Non-required field: the null report still marks it invalid, so the
+        // lingering partial is caught without a required validator
+        mountWithProps({});
+
+        cy.get('gui-date input[data-type="month"]').click();
+        cy.focused().type('06');
+        cy.get('[data-cy="submitBtn_button"]').focus();
+
+        cy.get('[data-cy="testSubject_validator-error"]').should(
+          'contain.text',
+          'Incomplete date',
+        );
+      });
+
+      it('should clear the incomplete error when the emptied picker is left again', () => {
+        // Regression: leave a partial behind (incomplete error), come back,
+        // empty the field and leave again — the error must not outlive
+        // fields that no longer hold anything.
+        mountWithProps({});
+
+        cy.get('gui-date input[data-type="month"]').click();
+        cy.focused().type('06');
+        cy.get('[data-cy="submitBtn_button"]').focus();
+        cy.get('[data-cy="testSubject_validator-error"]').should(
+          'contain.text',
+          'Incomplete date',
+        );
+
+        cy.get('gui-date input[data-type="month"]').type('{selectAll}{backspace}');
+        cy.get('[data-cy="submitBtn_button"]').focus();
+        cy.get('[data-cy="testSubject_validator-errors"]').should('not.exist');
+      });
+
+      it('should honor the incompleteMessage prop', () => {
+        mountWithProps({ props: { incompleteMessage: 'Incomplete date!' } });
+
+        cy.get('gui-date input[data-type="month"]').click();
+        cy.focused().type('06');
+        cy.get('[data-cy="submitBtn_button"]').focus();
+
+        cy.get('[data-cy="testSubject_validator-error"]').should(
+          'contain.text',
+          'Incomplete date!',
+        );
+      });
+    });
+
     describe('accessibility', () => {
       const toggleSel = 'button.gui-date-picker__arrow';
 

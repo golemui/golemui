@@ -8,7 +8,6 @@ import type { GuiDate } from './date-input';
 import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
 import { GUIPopupController } from '../controllers/popup.controller';
 import { dateBoundsError } from '../utils/date';
-import { INCOMPLETE_DATE_MESSAGE } from '../utils/messages';
 import { addErrors, addIcon, addLabel } from '../utils/templates';
 
 @customElement('gui-date-picker')
@@ -173,6 +172,7 @@ export class GuiDatePicker extends LitElement {
           .monthAriaLabel=${this.monthAriaLabel}
           .yearAriaLabel=${this.yearAriaLabel}
           .invalidDateMessage=${this.invalidDateMessage}
+          .incompleteMessage=${this.incompleteMessage}
           @blur=${this.onDateBlur}
           @focus=${this._popup.show}
           @change=${this.onDateChange}
@@ -281,24 +281,15 @@ export class GuiDatePicker extends LitElement {
 
   /**
    * The single point where the picker reports focus leaving the control: it
-   * blurs (which the form layer reads as "validate now"), and a partially
-   * typed date left behind flips the value to null — so validators report it
-   * even on non-required fields — and surfaces the incomplete message.
+   * blurs (which the form layer reads as "validate now"), then hands the
+   * embedded input its deferred settlement — a partial date left behind
+   * surfaces the incomplete message, an emptied one clears a message it
+   * surfaced earlier. The input's resulting change bubbles back through
+   * {@link onDateChange}, so the picker's value follows.
    */
   private onFocusLeave(): void {
     this.dispatchEvent(new CustomEvent('blur'));
-
-    const input = this.querySelector<GuiDate>('gui-date');
-    if (!input || input.groupCompleteness() !== 'partial') return;
-
-    this.commitValue(null);
-    this.dispatchEvent(
-      new CustomEvent('inputError', {
-        detail: { message: this.incompleteMessage ?? INCOMPLETE_DATE_MESSAGE },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    this.querySelector<GuiDate>('gui-date')?.settleOnFocusLeave();
   }
 }
 

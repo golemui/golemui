@@ -251,6 +251,26 @@ export const runRangeDatePickerComponentTests = (mountFn: MountComponentFn) => {
       cy.get(`[data-cy="${uid}_validator-error"]`).should('contain.text', 'Incomplete date');
     });
 
+    it('should clear the incomplete error when the emptied field is left again', () => {
+      // Regression: leave a span anchor behind (incomplete error), come
+      // back, empty the fields it filled and leave again — the error must
+      // not outlive fields that no longer hold anything.
+      mountRangeDatePicker({ data: { myRanges: [juneRange] } });
+
+      cy.get(sel.startMonth).click();
+      cy.get(sel.dayButton('2026-06-18')).click();
+      cy.get('[data-cy="submitBtn_button"]').focus();
+      cy.get(`[data-cy="${uid}_validator-error"]`).should('contain.text', 'Incomplete date');
+
+      cy.get(sel.startMonth).type('{selectAll}{backspace}');
+      cy.get(sel.startDay).type('{selectAll}{backspace}');
+      cy.get('gui-range-date input[data-group="start"][data-type="year"]').type(
+        '{selectAll}{backspace}',
+      );
+      cy.get('[data-cy="submitBtn_button"]').focus();
+      cy.get(`[data-cy="${uid}_validator-errors"]`).should('not.exist');
+    });
+
     it('should keep the calendar open when keyboard navigation crosses a month boundary', () => {
       mountRangeDatePicker({ data: { myRanges: [juneRange] } });
 

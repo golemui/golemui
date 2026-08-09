@@ -122,6 +122,9 @@ export class GuiRangeDateTimePicker extends LitElement {
   @property({ type: String, attribute: 'no-available-times-message' }) noAvailableTimesMessage:
     | string
     | undefined = undefined;
+  @property({ type: String, attribute: 'incomplete-message' }) incompleteMessage:
+    | string
+    | undefined = undefined;
   @property({ type: String, attribute: 'day-count-aria-label' }) dayCountAriaLabel:
     | string
     | undefined = undefined;
@@ -313,6 +316,7 @@ export class GuiRangeDateTimePicker extends LitElement {
           .maxDateTimeMessage=${this.maxDateTimeMessage}
           .disabledRanges=${this.disabledRanges}
           .disabledRangeMessage=${this.disabledRangeMessage}
+          .incompleteMessage=${this.incompleteMessage}
           @blur=${this.onDateBlur}
           @focus=${this._popup.show}
           @change=${this.onDateChange}

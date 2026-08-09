@@ -72,6 +72,7 @@ export function RangeTimePicker(widgetInstance: WithWidget) {
         rangeOrderMessage={templateData.rangeOrderMessage as string}
         disabledRangeMessage={templateData.disabledRangeMessage as string}
         noAvailableTimesMessage={templateData.noAvailableTimesMessage as string}
+        incompleteMessage={templateData.incompleteMessage as string}
         onChange={handleChange}
         onBlur={onBlur}
         onInputError={handleInputError}

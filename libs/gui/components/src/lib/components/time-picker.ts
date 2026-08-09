@@ -10,7 +10,7 @@ import { GUIPopupController } from '../controllers/popup.controller';
 import { buildTimeOptions, isTimeDisabled, type HourFormat, type TimeRange } from '../utils/time';
 import { timeBoundsError } from '../utils/parts';
 import { addErrors, addIcon, addLabel } from '../utils/templates';
-import { INCOMPLETE_TIME_MESSAGE, INVALID_DISABLED_TIME_RANGE_MESSAGE } from '../utils/messages';
+import { INVALID_DISABLED_TIME_RANGE_MESSAGE } from '../utils/messages';
 
 @customElement('gui-time-picker')
 export class GuiTimePicker extends LitElement {
@@ -150,6 +150,7 @@ export class GuiTimePicker extends LitElement {
           .dayPeriodAriaLabel=${this.dayPeriodAriaLabel}
           .minTimeMessage=${this.minTimeMessage}
           .maxTimeMessage=${this.maxTimeMessage}
+          .incompleteMessage=${this.incompleteMessage}
           @blur=${this.onTimeBlur}
           @focus=${this._popup.show}
           @change=${this.onTimeChange}
@@ -337,22 +338,13 @@ export class GuiTimePicker extends LitElement {
   }
 
   /**
-   * A partially typed time left behind flips the value to null — so
-   * validators report it — and surfaces the incomplete message. Complete or
-   * empty input reports nothing new.
+   * Hands the embedded input its deferred settlement: a partially typed time
+   * left behind surfaces the incomplete message, an emptied one clears a
+   * message it surfaced earlier. The input's resulting change bubbles back
+   * through {@link onTimeChange}, so the picker's value follows.
    */
   private reportIncompleteOnLeave(): void {
-    const input = this.querySelector<GuiTime>('gui-time');
-    if (!input || input.groupCompleteness() !== 'partial') return;
-
-    this.commitValue(null);
-    this.dispatchEvent(
-      new CustomEvent('inputError', {
-        detail: { message: this.incompleteMessage ?? INCOMPLETE_TIME_MESSAGE },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    this.querySelector<GuiTime>('gui-time')?.settleOnFocusLeave();
   }
 
   private dispatchListToggle(open: boolean) {

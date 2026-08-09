@@ -491,6 +491,21 @@ export const runTimeInputComponentTests = (mountFn: MountComponentFn) => {
         cy.get(sel.minute).type('30');
         cy.get('[data-cy="testSubject_validator-error"]').should('not.exist');
       });
+
+      it('should clear the incomplete error when the emptied widget is left again', () => {
+        // Regression: leave a partial behind (incomplete error), come back,
+        // empty the field and leave again — the error must not outlive
+        // fields that no longer hold anything.
+        mountTimeInput();
+
+        cy.get(sel.hour).type('09');
+        cy.get('[data-cy="submitBtn_button"]').focus();
+        cy.get('[data-cy="testSubject_validator-error"]').should('contain.text', 'Incomplete time');
+
+        cy.get(sel.hour).type('{selectAll}{backspace}');
+        cy.get('[data-cy="submitBtn_button"]').focus();
+        cy.get('[data-cy="testSubject_validator-errors"]').should('not.exist');
+      });
     });
 
     describe('readonly and disabled', () => {

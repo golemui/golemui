@@ -86,6 +86,9 @@ export class GuiRangeDatePicker extends LitElement {
   @property({ type: String, attribute: 'disabled-date-range-message' }) disabledDateRangeMessage:
     | string
     | undefined = undefined;
+  @property({ type: String, attribute: 'incomplete-message' }) incompleteMessage:
+    | string
+    | undefined = undefined;
 
   @query('#date-input') private _dateRef?: GuiRangeDateInput;
 
@@ -237,6 +240,7 @@ export class GuiRangeDatePicker extends LitElement {
           .monthAriaLabel=${this.monthAriaLabel}
           .yearAriaLabel=${this.yearAriaLabel}
           .invalidDateMessage=${this.invalidDateMessage}
+          .incompleteMessage=${this.incompleteMessage}
           @blur=${this.onDateBlur}
           @focus=${this._popup.show}
           @change=${this.onDateChange}
@@ -324,17 +328,11 @@ export class GuiRangeDatePicker extends LitElement {
     this._invalidRange = { start, end };
     this.setWorking(undefined, undefined);
     const input = this._dateRef;
-    if (input) {
-      input.value = this.value ?? [];
-      input.showRange(start, end);
-    }
-    this.dispatchEvent(
-      new CustomEvent('inputError', {
-        detail: { message },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    if (!input) return;
+
+    input.value = this.value ?? [];
+    input.showRange(start, end);
+    input.surfaceHostError(message);
   }
 
   /**

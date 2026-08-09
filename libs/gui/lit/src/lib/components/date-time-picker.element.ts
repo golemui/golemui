@@ -99,6 +99,7 @@ export class DateTimePickerElement extends LitElement implements WithWidget {
         .maxTimeMessage=${templateData.maxTimeMessage as string}
         .disabledTimeRangeMessage=${templateData.disabledTimeRangeMessage as string}
         .noAvailableTimesMessage=${templateData.noAvailableTimesMessage as string}
+        .incompleteMessage=${templateData.incompleteMessage as string}
         @inputError=${this.onInputError}
         @blur=${() => this.adapter.onBlur()}
         @change=${this.valueChanged}

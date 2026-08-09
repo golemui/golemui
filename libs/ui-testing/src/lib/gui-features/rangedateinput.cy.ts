@@ -440,6 +440,23 @@ export const runRangeDateInputComponentTests = (mountFn: MountComponentFn) => {
         cy.get(`[data-cy="${uid}_validator-error"]`).should('not.exist');
         cy.get(sel.pillText).should('have.length', 1);
       });
+
+      it('should clear the incomplete error when the emptied endpoint is left again', () => {
+        // Regression: leave one endpoint behind (incomplete error), come
+        // back, empty its fields and leave again — the error must not
+        // outlive fields that no longer hold anything.
+        mountRangeDateInput();
+
+        typeDate('start', '06', '10', '2026');
+        cy.get('[data-cy="submitBtn_button"]').focus();
+        cy.get(`[data-cy="${uid}_validator-error"]`).should('contain.text', 'Incomplete date');
+
+        cy.get(sel.start.month).type('{selectAll}{backspace}');
+        cy.get(sel.start.day).type('{selectAll}{backspace}');
+        cy.get(sel.start.year).type('{selectAll}{backspace}');
+        cy.get('[data-cy="submitBtn_button"]').focus();
+        cy.get(`[data-cy="${uid}_validator-errors"]`).should('not.exist');
+      });
     });
 
     describe('readonly and disabled', () => {

@@ -325,6 +325,24 @@ export const runRangeTimeInputComponentTests = (mountFn: MountComponentFn) => {
       cy.get(sel.pillText).should('not.exist');
     });
 
+    it('should clear the incomplete error when the emptied endpoint is left again', () => {
+      // Regression: leave one endpoint behind (incomplete error), come back,
+      // empty its fields and leave again — the error must not outlive fields
+      // that no longer hold anything.
+      mountRangeTimeInput();
+
+      cy.get(sel.start.hour).click();
+      cy.focused().type('09');
+      cy.focused().type('00');
+      cy.get('[data-cy="submitBtn_button"]').focus();
+      cy.get('[data-cy="testSubject_validator-error"]').should('contain.text', 'Incomplete time');
+
+      cy.get(sel.start.hour).type('{selectAll}{backspace}');
+      cy.get(sel.start.minute).type('{selectAll}{backspace}');
+      cy.get('[data-cy="submitBtn_button"]').focus();
+      cy.get('[data-cy="testSubject_validator-errors"]').should('not.exist');
+    });
+
     it('should commit a complete range when focus leaves, without Enter', () => {
       mountRangeTimeInput();
 

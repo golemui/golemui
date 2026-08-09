@@ -378,8 +378,12 @@ export class GuiRangeDateInput extends LitElement {
       empty: this._parts.isGroupEmpty(group, this.datePartTypes),
     }));
 
-    // Nothing entered: nothing to settle.
-    if (endpoints.every((endpoint) => endpoint.empty)) return;
+    // Nothing entered: nothing to settle, but a message surfaced over fields
+    // the user has since emptied must not outlive them.
+    if (endpoints.every((endpoint) => endpoint.empty)) {
+      this._parts.clearSurfacedInputError(this.value ?? []);
+      return;
+    }
 
     if (endpoints.every((endpoint) => endpoint.result.kind === 'valid')) {
       this.tryCreatePill({ refocus: false });
@@ -478,6 +482,10 @@ export class GuiRangeDateInput extends LitElement {
   public showRange(startISO: string, endISO: string): void {
     this._parts.setGroupFromISO('start', startISO, 'date');
     this._parts.setGroupFromISO('end', endISO, 'date');
+  }
+
+  public surfaceHostError(message: string): void {
+    this._parts.surfaceInputError(message);
   }
 
   /**

@@ -16,10 +16,7 @@ import {
   type HourFormat,
 } from '../utils/time';
 import { addErrors, addIcon, addLabel } from '../utils/templates';
-import {
-  INCOMPLETE_DATE_TIME_MESSAGE,
-  INVALID_DISABLED_TIME_RANGE_MESSAGE,
-} from '../utils/messages';
+import { INVALID_DISABLED_TIME_RANGE_MESSAGE } from '../utils/messages';
 
 @customElement('gui-date-time-picker')
 export class GuiDateTimePicker extends LitElement {
@@ -258,6 +255,7 @@ export class GuiDateTimePicker extends LitElement {
           .invalidDateMessage=${this.invalidDateMessage}
           .minTimeMessage=${this.minTimeMessage}
           .maxTimeMessage=${this.maxTimeMessage}
+          .incompleteMessage=${this.incompleteMessage}
           @blur=${this.onDateBlur}
           @focus=${this._popup.show}
           @change=${this.onDateChange}
@@ -386,25 +384,16 @@ export class GuiDateTimePicker extends LitElement {
 
   /**
    * The single point where the picker reports focus leaving the control: it
-   * blurs (which the form layer reads as "validate now"), and a partial
-   * selection left behind flips the value to null — so validators report it
-   * even on non-required fields — and surfaces the incomplete message. The
-   * working state survives, so reopening the popover restores the partial.
+   * blurs (which the form layer reads as "validate now"), then hands the
+   * embedded input its deferred settlement — a partial selection left behind
+   * surfaces the incomplete message, an emptied one clears a message it
+   * surfaced earlier. The input's resulting change bubbles back through the
+   * picker, so its value follows. The working state survives, so reopening
+   * the popover restores the partial.
    */
   private onFocusLeave(): void {
     this.dispatchEvent(new CustomEvent('blur'));
-
-    const input = this.querySelector<GuiDateTime>('gui-date-time');
-    if (!input || input.groupCompleteness() !== 'partial') return;
-
-    this.commitValue(null);
-    this.dispatchEvent(
-      new CustomEvent('inputError', {
-        detail: { message: this.incompleteMessage ?? INCOMPLETE_DATE_TIME_MESSAGE },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    this.querySelector<GuiDateTime>('gui-date-time')?.settleOnFocusLeave();
   }
 
   private validateBounds(value: string | undefined): string | null {

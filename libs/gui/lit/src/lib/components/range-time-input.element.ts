@@ -77,6 +77,7 @@ export class RangeTimeInputElement extends LitElement implements WithWidget {
         .minTimeMessage=${this.adapter.templateData.minTimeMessage as string}
         .maxTimeMessage=${this.adapter.templateData.maxTimeMessage as string}
         .rangeOrderMessage=${this.adapter.templateData.rangeOrderMessage as string}
+        .incompleteMessage=${this.adapter.templateData.incompleteMessage as string}
         @change=${this.valueChanged}
         @inputError=${this.onInputError}
       ></gui-range-time>

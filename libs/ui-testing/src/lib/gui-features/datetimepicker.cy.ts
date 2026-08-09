@@ -333,6 +333,25 @@ export const runDateTimePickerComponentTests = (mountFn: MountComponentFn) => {
       );
     });
 
+    it('should clear the incomplete error when the emptied picker is left again', () => {
+      // Regression: leave a typed partial behind (incomplete error), come
+      // back, empty the field and leave again — the error must not outlive
+      // fields that no longer hold anything.
+      mountPicker({ props: officeProps });
+
+      cy.get(sel.month).click();
+      cy.focused().type('02');
+      cy.get('[data-cy="submitBtn_button"]').focus();
+      cy.get('[data-cy="testSubject_validator-error"]').should(
+        'contain.text',
+        'Incomplete date-time',
+      );
+
+      cy.get(sel.month).type('{selectAll}{backspace}');
+      cy.get('[data-cy="submitBtn_button"]').focus();
+      cy.get('[data-cy="testSubject_validator-errors"]').should('not.exist');
+    });
+
     it('should commit a fully typed date-time from the field', () => {
       const formSubmitHandler = cy.stub().as('formSubmitHandler');
       mountPicker({

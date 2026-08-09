@@ -360,6 +360,30 @@ export const runDateInputComponentTests = (mountFn: MountComponentFn) => {
           expect(data.myDate ?? null).to.equal(null);
         });
       });
+
+      it('should clear the incomplete error when the emptied widget is left again', () => {
+        // Regression: leave a partial behind (incomplete error), come back,
+        // empty the field and leave again — the error must not outlive
+        // fields that no longer hold anything.
+        mountDateInput();
+
+        cy.get(sel.month).type('06');
+        cy.get('[data-cy="submitBtn_button"]').focus();
+        cy.get(`[data-cy="${uid}_validator-error"]`).should('contain.text', 'Incomplete date');
+
+        cy.get(sel.month).type('{selectAll}{backspace}');
+        cy.get('[data-cy="submitBtn_button"]').focus();
+        cy.get(`[data-cy="${uid}_validator-errors"]`).should('not.exist');
+      });
+
+      it('should honor the incompleteMessage prop', () => {
+        mountDateInput({ props: { incompleteMessage: 'Incomplete date!' } });
+
+        cy.get(sel.month).type('06');
+        cy.get('[data-cy="submitBtn_button"]').focus();
+
+        cy.get(`[data-cy="${uid}_validator-error"]`).should('contain.text', 'Incomplete date!');
+      });
     });
 
     describe('readonly and disabled', () => {
