@@ -1,5 +1,6 @@
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
+import { guiCoreRegistrations } from '@golemui/gui-schemas';
 import { ALL_SCHEMAS, FORM_SCHEMA } from './index';
 
 export type AjvInstance = Ajv2020;
@@ -17,6 +18,14 @@ function buildAjv(): AjvInstance {
   for (const schema of ALL_SCHEMAS) {
     if (typeof schema.$id === 'string' && !ajv.getSchema(schema.$id)) {
       ajv.addSchema(schema);
+    }
+  }
+  // Component refs like `../core/common.schema.json` resolve against the
+  // component $id to the gui/core/ retrieval URIs, registered here as
+  // $id-stripped clones of the vendored core schemas.
+  for (const { key, schema } of guiCoreRegistrations()) {
+    if (!ajv.getSchema(key)) {
+      ajv.addSchema(schema, key);
     }
   }
   return ajv;
