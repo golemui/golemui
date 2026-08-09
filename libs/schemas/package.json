@@ -1,0 +1,38 @@
+{
+  "name": "@golemui/schemas",
+  "version": "0.0.0",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "type": "module",
+  "main": "./index.umd.cjs",
+  "module": "./index.js",
+  "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./index.js",
+      "require": "./index.umd.cjs"
+    },
+    "./schemas/*.schema.json": "./schemas/*.schema.json",
+    "./schemas/core/*.schema.json": "./schemas/core/*.schema.json"
+  },
+  "files": [
+    "lib",
+    "schemas",
+    "index.d.ts",
+    "index.js",
+    "index.umd.cjs",
+    "*.md"
+  ],
+  "dependencies": {},
+  "devDependencies": {
+    "vitest": "^4.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/golemui/golemui.git",
+    "directory": "libs/schemas"
+  }
+}

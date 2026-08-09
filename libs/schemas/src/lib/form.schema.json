@@ -1,0 +1,6 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://golemui.com/schemas/form.schema.json",
+  "$comment": "Legacy alias. Keeps the original schema URL working forever by forwarding to the gui implementation tree. The ref target exists in the published site tree only.",
+  "$ref": "./gui/form.schema.json"
+}
