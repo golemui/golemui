@@ -56,5 +56,6 @@ export const guiSchemaConfig: ImplementationSchemaConfig = {
   implementation: 'gui',
   idBase: 'https://golemui.com/schemas/gui/',
   manifest: guiWidgetManifest,
+  libRootSchemaFiles: ['ranges.schema.json', 'validators.schema.json'],
   includeSchemalessTypesInKnownWidgetTypes: true,
 };

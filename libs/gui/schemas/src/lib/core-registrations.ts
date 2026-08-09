@@ -1,5 +1,4 @@
 import commonSchema from './core/common.schema.json';
-import validatorsSchema from './core/validators.schema.json';
 
 const GUI_CORE_BASE = 'https://golemui.com/schemas/gui/core/';
 
@@ -16,7 +15,7 @@ const GUI_CORE_BASE = 'https://golemui.com/schemas/gui/core/';
  * }
  */
 export function guiCoreRegistrations(): Array<{ key: string; schema: Record<string, unknown> }> {
-  return [commonSchema, validatorsSchema].map((source) => {
+  return [commonSchema].map((source) => {
     const schema = structuredClone(source) as Record<string, unknown>;
     const sourceId = String((source as Record<string, unknown>)['$id']);
     const file = sourceId.split('/').pop() as string;

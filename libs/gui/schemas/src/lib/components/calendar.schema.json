@@ -62,7 +62,7 @@
       "type": "array",
       "description": "Date ranges that are shown but cannot be selected",
       "items": {
-        "$ref": "../core/common.schema.json#/$defs/dateRange"
+        "$ref": "../ranges.schema.json#/$defs/dateRange"
       }
     }
   },
@@ -94,7 +94,7 @@
       "$ref": "../core/common.schema.json#/$defs/on"
     },
     "validator": {
-      "$ref": "../core/validators.schema.json#/$defs/validator"
+      "$ref": "../validators.schema.json#/$defs/validator"
     },
     "props": {
       "type": "object",
@@ -200,7 +200,7 @@
       "$ref": "#/$defs/readonlyDef"
     },
     "^validator\\.[^.]+$": {
-      "$ref": "../core/validators.schema.json#/$defs/validator"
+      "$ref": "../validators.schema.json#/$defs/validator"
     }
   },
   "required": ["kind", "type", "path"],

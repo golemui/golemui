@@ -3,7 +3,8 @@ import type Ajv2020 from 'ajv/dist/2020';
 import commonSchema from './core/common.schema.json';
 import formSchema from './form.schema.json';
 import layoutWidgetSchema from './layout-widget.schema.json';
-import validatorsSchema from './core/validators.schema.json';
+import rangesSchema from './ranges.schema.json';
+import validatorsSchema from './validators.schema.json';
 import widgetsSchema from './widgets.schema.json';
 import { guiCoreRegistrations } from './core-registrations';
 
@@ -40,9 +41,11 @@ export function registerGolemSchemas(ajv: Ajv2020) {
   for (const { key, schema } of guiCoreRegistrations()) {
     addSchemaOnce(ajv, schema, key);
   }
-  // The vendored core copies register under their canonical core/ $ids.
+  // The vendored core copy registers under its canonical core/ $id. The
+  // gui-owned validators and ranges files register under their gui/ $ids.
   addSchemaOnce(ajv, commonSchema);
   addSchemaOnce(ajv, validatorsSchema);
+  addSchemaOnce(ajv, rangesSchema);
   addSchemaOnce(ajv, layoutWidgetSchema);
   addSchemaOnce(ajv, widgetsSchema);
 

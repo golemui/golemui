@@ -35,7 +35,7 @@
         "disabled": { "$ref": "../core/common.schema.json#/$defs/boolOrWhen" },
         "readonly": { "$ref": "../core/common.schema.json#/$defs/boolOrWhen" },
         "on": { "$ref": "../core/common.schema.json#/$defs/on" },
-        "validator": { "$ref": "../core/validators.schema.json#/$defs/validator" },
+        "validator": { "$ref": "../validators.schema.json#/$defs/validator" },
         "defaultValue": true,
         "props": { "type": "object" }
       },
@@ -43,7 +43,7 @@
         "^label\\.[^.]+$": { "$ref": "../core/common.schema.json#/$defs/localizable" },
         "^disabled\\.[^.]+$": { "$ref": "../core/common.schema.json#/$defs/boolOrWhen" },
         "^readonly\\.[^.]+$": { "$ref": "../core/common.schema.json#/$defs/boolOrWhen" },
-        "^validator\\.[^.]+$": { "$ref": "../core/validators.schema.json#/$defs/validator" }
+        "^validator\\.[^.]+$": { "$ref": "../validators.schema.json#/$defs/validator" }
       },
       "required": ["kind", "type", "path"]
     },

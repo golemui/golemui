@@ -75,7 +75,7 @@
       "type": "array",
       "description": "Disabled instant spans (in this widget's DateTimeRange coordinate system). Blocking a whole day is a span of 00:00:00–23:59:59.",
       "items": {
-        "$ref": "../core/common.schema.json#/$defs/dateTimeRange"
+        "$ref": "../ranges.schema.json#/$defs/dateTimeRange"
       }
     }
   },
@@ -107,7 +107,7 @@
       "$ref": "../core/common.schema.json#/$defs/on"
     },
     "validator": {
-      "$ref": "../core/validators.schema.json#/$defs/validator"
+      "$ref": "../validators.schema.json#/$defs/validator"
     },
     "props": {
       "type": "object",
@@ -292,7 +292,7 @@
       "$ref": "#/$defs/readonlyDef"
     },
     "^validator\\.[^.]+$": {
-      "$ref": "../core/validators.schema.json#/$defs/validator"
+      "$ref": "../validators.schema.json#/$defs/validator"
     }
   },
   "required": ["kind", "type", "path"],

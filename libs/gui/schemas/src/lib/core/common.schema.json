@@ -12,38 +12,6 @@
       "type": "string",
       "description": "A dot-separated path to a property in the form data"
     },
-    "dateRange": {
-      "type": "object",
-      "description": "A single date range used by calendar/date-picker widgets to mark days as disabled.",
-      "properties": {
-        "start": {
-          "type": "string",
-          "description": "ISO-8601 date string for the start of the disabled range (inclusive)"
-        },
-        "end": {
-          "type": "string",
-          "description": "ISO-8601 date string for the end of the disabled range (inclusive). Omit to disable a single day."
-        }
-      },
-      "required": ["start"],
-      "additionalProperties": false
-    },
-    "dateTimeRange": {
-      "type": "object",
-      "description": "A single date-time range (two ISO date-times) used by the range date-time calendar for the value and for disabled instant spans.",
-      "properties": {
-        "start": {
-          "type": "string",
-          "description": "ISO-8601 date-time string for the start of the range (inclusive)"
-        },
-        "end": {
-          "type": "string",
-          "description": "ISO-8601 date-time string for the end of the range (inclusive)"
-        }
-      },
-      "required": ["start"],
-      "additionalProperties": false
-    },
     "uid": {
       "type": "string",
       "description": "Unique identifier for the widget"

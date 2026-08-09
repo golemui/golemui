@@ -70,7 +70,7 @@
       "$ref": "../core/common.schema.json#/$defs/on"
     },
     "validator": {
-      "$ref": "../core/validators.schema.json#/$defs/validator"
+      "$ref": "../validators.schema.json#/$defs/validator"
     },
     "props": {
       "type": "object",
@@ -165,7 +165,7 @@
       "$ref": "#/$defs/readonlyDef"
     },
     "^validator\\.[^.]+$": {
-      "$ref": "../core/validators.schema.json#/$defs/validator"
+      "$ref": "../validators.schema.json#/$defs/validator"
     }
   },
   "required": ["kind", "type", "path"],

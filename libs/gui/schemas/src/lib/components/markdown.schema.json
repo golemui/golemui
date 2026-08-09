@@ -102,7 +102,7 @@
       "$ref": "../core/common.schema.json#/$defs/on"
     },
     "validator": {
-      "$ref": "../core/validators.schema.json#/$defs/validator"
+      "$ref": "../validators.schema.json#/$defs/validator"
     },
     "defaultValue": {
       "type": "string"
@@ -241,7 +241,7 @@
       "$ref": "#/$defs/readonlyDef"
     },
     "^validator\\.[^.]+$": {
-      "$ref": "../core/validators.schema.json#/$defs/validator"
+      "$ref": "../validators.schema.json#/$defs/validator"
     }
   },
   "required": ["kind", "type", "path"],
