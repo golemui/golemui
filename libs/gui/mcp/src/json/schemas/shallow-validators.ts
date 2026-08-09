@@ -36,8 +36,8 @@ export function getValidatorBranches(): readonly string[] {
 
 /**
  * Returns a validator that checks a GolemUI `validator` field against the branch corresponding
- * to its `type` value (e.g. `type: 'string'` → stringValidator branch). Returns null if the
- * validator's type isn't a known branch.
+ * to its `type` value (e.g. `type: 'string'` selects the stringValidator branch). Returns null
+ * if the validator's type isn't a known branch.
  */
 export function getValidatorBranchValidator(validatorType: string): ValidateFunction | null {
   const defKey = VALIDATOR_TYPE_TO_DEF[validatorType];
@@ -47,8 +47,8 @@ export function getValidatorBranchValidator(validatorType: string): ValidateFunc
   const branch = defs[defKey];
   if (!branch) return null;
   // Bundle the whole `$defs` map alongside the branch so its internal `#/$defs/...` refs still
-  // resolve when compiled standalone. Cross-file refs (`./common.schema.json#/...`) are rewritten
-  // to absolute URLs that match the registered common schema.
+  // resolve when compiled standalone. Cross-file refs (`./core/common.schema.json#/...`) are
+  // rewritten to absolute URLs that match the registered common schema clone.
   const cloned = {
     ...(JSON.parse(JSON.stringify(branch)) as Record<string, unknown>),
     $defs: JSON.parse(JSON.stringify(defs)) as Record<string, unknown>,

@@ -3,6 +3,7 @@ import {
   customSchema,
   formSchema,
   layoutWidgetSchema,
+  rangesSchema,
   validatorsSchema,
   widgetsSchema,
   COMPONENT_SCHEMAS_BY_TYPE,
@@ -20,6 +21,7 @@ export const FORM_SCHEMA = formSchema as WidgetSchema;
 export const WIDGETS_SCHEMA = widgetsSchema as WidgetSchema;
 export const LAYOUT_WIDGET_SCHEMA = layoutWidgetSchema as WidgetSchema;
 export const VALIDATORS_SCHEMA = validatorsSchema as WidgetSchema;
+export const RANGES_SCHEMA = rangesSchema as WidgetSchema;
 
 /**
  * Fallback schema for custom components (any `type` not in COMPONENT_SCHEMAS, it has
@@ -37,6 +39,7 @@ export const COMPONENT_SCHEMAS: Record<string, WidgetSchema> =
 export const ALL_SCHEMAS: WidgetSchema[] = [
   COMMON_SCHEMA,
   VALIDATORS_SCHEMA,
+  RANGES_SCHEMA,
   WIDGETS_SCHEMA,
   LAYOUT_WIDGET_SCHEMA,
   ...Object.values(COMPONENT_SCHEMAS),
