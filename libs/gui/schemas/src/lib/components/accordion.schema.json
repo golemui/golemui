@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://golemui.com/schemas/components/accordion.schema.json",
+  "$id": "https://golemui.com/schemas/gui/components/accordion.schema.json",
   "title": "Accordion Widget",
   "type": "object",
   "$defs": {
@@ -28,7 +28,7 @@
         "type": "object",
         "properties": {
           "label": {
-            "$ref": "../common.schema.json#/$defs/localizable"
+            "$ref": "../core/common.schema.json#/$defs/localizable"
           },
           "uid": {
             "type": "string",
@@ -42,7 +42,7 @@
   },
   "allOf": [
     {
-      "$ref": "../common.schema.json#/$defs/baseWidget"
+      "$ref": "../core/common.schema.json#/$defs/baseWidget"
     }
   ],
   "properties": {
@@ -53,14 +53,14 @@
       "const": "accordion"
     },
     "on": {
-      "$ref": "../common.schema.json#/$defs/on"
+      "$ref": "../core/common.schema.json#/$defs/on"
     },
     "children": {
       "type": "array",
       "description": "Flat list of widgets belonging to all sections. Each widget must have a `uid` matching one of the section UIDs in `props.sections`.",
       "minItems": 1,
       "items": {
-        "$ref": "../form.schema.json#/$defs/formWidget"
+        "$ref": "../widgets.schema.json#/$defs/formWidget"
       }
     },
     "props": {

@@ -1,17 +1,17 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://golemui.com/schemas/components/custom.schema.json",
+  "$id": "https://golemui.com/schemas/gui/components/custom.schema.json",
   "title": "Custom Widget",
   "description": "Fallback for user-registered custom components. Matches any widget whose `type` is NOT a built-in. Structural fields required by the widget's `kind` are validated (input -> path, layout -> children); `props` is an open object validated at runtime by the custom component itself.",
   "type": "object",
   "allOf": [
     {
-      "$ref": "../common.schema.json#/$defs/baseWidget"
+      "$ref": "../core/common.schema.json#/$defs/baseWidget"
     },
     {
       "properties": {
         "type": {
-          "not": { "$ref": "../common.schema.json#/$defs/knownWidgetTypes" }
+          "not": { "$ref": "../widgets.schema.json#/$defs/knownWidgetTypes" }
         }
       }
     }
@@ -30,20 +30,20 @@
       "properties": {
         "kind": { "const": "input" },
         "type": { "type": "string" },
-        "path": { "$ref": "../common.schema.json#/$defs/dotPath" },
-        "label": { "$ref": "../common.schema.json#/$defs/localizable" },
-        "disabled": { "$ref": "../common.schema.json#/$defs/boolOrWhen" },
-        "readonly": { "$ref": "../common.schema.json#/$defs/boolOrWhen" },
-        "on": { "$ref": "../common.schema.json#/$defs/on" },
-        "validator": { "$ref": "../validators.schema.json#/$defs/validator" },
+        "path": { "$ref": "../core/common.schema.json#/$defs/dotPath" },
+        "label": { "$ref": "../core/common.schema.json#/$defs/localizable" },
+        "disabled": { "$ref": "../core/common.schema.json#/$defs/boolOrWhen" },
+        "readonly": { "$ref": "../core/common.schema.json#/$defs/boolOrWhen" },
+        "on": { "$ref": "../core/common.schema.json#/$defs/on" },
+        "validator": { "$ref": "../core/validators.schema.json#/$defs/validator" },
         "defaultValue": true,
         "props": { "type": "object" }
       },
       "patternProperties": {
-        "^label\\.[^.]+$": { "$ref": "../common.schema.json#/$defs/localizable" },
-        "^disabled\\.[^.]+$": { "$ref": "../common.schema.json#/$defs/boolOrWhen" },
-        "^readonly\\.[^.]+$": { "$ref": "../common.schema.json#/$defs/boolOrWhen" },
-        "^validator\\.[^.]+$": { "$ref": "../validators.schema.json#/$defs/validator" }
+        "^label\\.[^.]+$": { "$ref": "../core/common.schema.json#/$defs/localizable" },
+        "^disabled\\.[^.]+$": { "$ref": "../core/common.schema.json#/$defs/boolOrWhen" },
+        "^readonly\\.[^.]+$": { "$ref": "../core/common.schema.json#/$defs/boolOrWhen" },
+        "^validator\\.[^.]+$": { "$ref": "../core/validators.schema.json#/$defs/validator" }
       },
       "required": ["kind", "type", "path"]
     },
@@ -63,14 +63,14 @@
       "properties": {
         "kind": { "const": "action" },
         "type": { "type": "string" },
-        "label": { "$ref": "../common.schema.json#/$defs/localizable" },
-        "disabled": { "$ref": "../common.schema.json#/$defs/boolOrWhen" },
-        "on": { "$ref": "../common.schema.json#/$defs/on" },
+        "label": { "$ref": "../core/common.schema.json#/$defs/localizable" },
+        "disabled": { "$ref": "../core/common.schema.json#/$defs/boolOrWhen" },
+        "on": { "$ref": "../core/common.schema.json#/$defs/on" },
         "props": { "type": "object" }
       },
       "patternProperties": {
-        "^label\\.[^.]+$": { "$ref": "../common.schema.json#/$defs/localizable" },
-        "^disabled\\.[^.]+$": { "$ref": "../common.schema.json#/$defs/boolOrWhen" }
+        "^label\\.[^.]+$": { "$ref": "../core/common.schema.json#/$defs/localizable" },
+        "^disabled\\.[^.]+$": { "$ref": "../core/common.schema.json#/$defs/boolOrWhen" }
       },
       "required": ["kind", "type"]
     },
@@ -83,7 +83,7 @@
         "children": {
           "type": "array",
           "minItems": 1,
-          "items": { "$ref": "../form.schema.json#/$defs/formWidget" }
+          "items": { "$ref": "../widgets.schema.json#/$defs/formWidget" }
         },
         "props": { "type": "object" }
       },

@@ -1,14 +1,14 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://golemui.com/schemas/components/button.schema.json",
+  "$id": "https://golemui.com/schemas/gui/components/button.schema.json",
   "title": "Button Widget",
   "type": "object",
   "$defs": {
     "labelDef": {
-      "$ref": "../common.schema.json#/$defs/localizable"
+      "$ref": "../core/common.schema.json#/$defs/localizable"
     },
     "disabledDef": {
-      "$ref": "../common.schema.json#/$defs/boolOrWhen"
+      "$ref": "../core/common.schema.json#/$defs/boolOrWhen"
     },
     "variantProp": {
       "enum": ["filled", "outlined", "link"]
@@ -22,7 +22,7 @@
   },
   "allOf": [
     {
-      "$ref": "../common.schema.json#/$defs/baseWidget"
+      "$ref": "../core/common.schema.json#/$defs/baseWidget"
     }
   ],
   "properties": {
@@ -42,7 +42,7 @@
       "$ref": "#/$defs/disabledDef"
     },
     "on": {
-      "$ref": "../common.schema.json#/$defs/on"
+      "$ref": "../core/common.schema.json#/$defs/on"
     },
     "props": {
       "type": "object",

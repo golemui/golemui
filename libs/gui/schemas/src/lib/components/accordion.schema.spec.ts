@@ -7,7 +7,7 @@ import {
 } from '../schema.spec.utils';
 import { golemForm } from '@golemui/gui-shared/internals';
 
-const SCHEMA_ID_UNDER_TEST = 'https://golemui.com/schemas/components/accordion.schema.json';
+const SCHEMA_ID_UNDER_TEST = 'https://golemui.com/schemas/gui/components/accordion.schema.json';
 
 describe('Accordion schema validation', () => {
   let ajv: Ajv2020;

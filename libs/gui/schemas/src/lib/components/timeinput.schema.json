@@ -1,20 +1,20 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://golemui.com/schemas/components/timeinput.schema.json",
+  "$id": "https://golemui.com/schemas/gui/components/timeinput.schema.json",
   "title": "TimeInput Widget",
   "type": "object",
   "$defs": {
     "labelDef": {
-      "$ref": "../common.schema.json#/$defs/localizable"
+      "$ref": "../core/common.schema.json#/$defs/localizable"
     },
     "disabledDef": {
-      "$ref": "../common.schema.json#/$defs/boolOrWhen"
+      "$ref": "../core/common.schema.json#/$defs/boolOrWhen"
     },
     "readonlyDef": {
-      "$ref": "../common.schema.json#/$defs/boolOrWhen"
+      "$ref": "../core/common.schema.json#/$defs/boolOrWhen"
     },
     "hintProp": {
-      "$ref": "../common.schema.json#/$defs/localizable"
+      "$ref": "../core/common.schema.json#/$defs/localizable"
     },
     "iconProp": {
       "type": "string"
@@ -33,18 +33,18 @@
       "type": "string"
     },
     "hourAriaLabelProp": {
-      "$ref": "../common.schema.json#/$defs/localizable"
+      "$ref": "../core/common.schema.json#/$defs/localizable"
     },
     "minuteAriaLabelProp": {
-      "$ref": "../common.schema.json#/$defs/localizable"
+      "$ref": "../core/common.schema.json#/$defs/localizable"
     },
     "dayPeriodAriaLabelProp": {
-      "$ref": "../common.schema.json#/$defs/localizable"
+      "$ref": "../core/common.schema.json#/$defs/localizable"
     }
   },
   "allOf": [
     {
-      "$ref": "../common.schema.json#/$defs/baseWidget"
+      "$ref": "../core/common.schema.json#/$defs/baseWidget"
     }
   ],
   "properties": {
@@ -55,7 +55,7 @@
       "const": "timeInput"
     },
     "path": {
-      "$ref": "../common.schema.json#/$defs/dotPath"
+      "$ref": "../core/common.schema.json#/$defs/dotPath"
     },
     "label": {
       "$ref": "#/$defs/labelDef"
@@ -67,10 +67,10 @@
       "$ref": "#/$defs/readonlyDef"
     },
     "on": {
-      "$ref": "../common.schema.json#/$defs/on"
+      "$ref": "../core/common.schema.json#/$defs/on"
     },
     "validator": {
-      "$ref": "../validators.schema.json#/$defs/validator"
+      "$ref": "../core/validators.schema.json#/$defs/validator"
     },
     "props": {
       "type": "object",
@@ -94,13 +94,13 @@
           "$ref": "#/$defs/maxTimeProp"
         },
         "minTimeMessage": {
-          "$ref": "../common.schema.json#/$defs/localizable"
+          "$ref": "../core/common.schema.json#/$defs/localizable"
         },
         "maxTimeMessage": {
-          "$ref": "../common.schema.json#/$defs/localizable"
+          "$ref": "../core/common.schema.json#/$defs/localizable"
         },
         "incompleteMessage": {
-          "$ref": "../common.schema.json#/$defs/localizable",
+          "$ref": "../core/common.schema.json#/$defs/localizable",
           "description": "Error surfaced when focus leaves the widget with a partially filled entry behind; the value goes to null so validators report it even on non-required fields."
         },
         "hourAriaLabel": {
@@ -133,13 +133,13 @@
           "$ref": "#/$defs/maxTimeProp"
         },
         "^minTimeMessage\\.[^.]+$": {
-          "$ref": "../common.schema.json#/$defs/localizable"
+          "$ref": "../core/common.schema.json#/$defs/localizable"
         },
         "^maxTimeMessage\\.[^.]+$": {
-          "$ref": "../common.schema.json#/$defs/localizable"
+          "$ref": "../core/common.schema.json#/$defs/localizable"
         },
         "^incompleteMessage\\.[^.]+$": {
-          "$ref": "../common.schema.json#/$defs/localizable"
+          "$ref": "../core/common.schema.json#/$defs/localizable"
         },
         "^hourAriaLabel\\.[^.]+$": {
           "$ref": "#/$defs/hourAriaLabelProp"
@@ -165,7 +165,7 @@
       "$ref": "#/$defs/readonlyDef"
     },
     "^validator\\.[^.]+$": {
-      "$ref": "../validators.schema.json#/$defs/validator"
+      "$ref": "../core/validators.schema.json#/$defs/validator"
     }
   },
   "required": ["kind", "type", "path"],

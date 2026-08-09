@@ -1,11 +1,11 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://golemui.com/schemas/components/alert.schema.json",
+  "$id": "https://golemui.com/schemas/gui/components/alert.schema.json",
   "title": "Alert Widget",
   "type": "object",
   "$defs": {
     "textProp": {
-      "$ref": "../common.schema.json#/$defs/localizable"
+      "$ref": "../core/common.schema.json#/$defs/localizable"
     },
     "levelProp": {
       "enum": ["default", "info", "success", "warning", "error"]
@@ -13,7 +13,7 @@
   },
   "allOf": [
     {
-      "$ref": "../common.schema.json#/$defs/baseWidget"
+      "$ref": "../core/common.schema.json#/$defs/baseWidget"
     }
   ],
   "properties": {

@@ -1,20 +1,20 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://golemui.com/schemas/components/dateinput.schema.json",
+  "$id": "https://golemui.com/schemas/gui/components/dateinput.schema.json",
   "title": "DateInput Widget",
   "type": "object",
   "$defs": {
     "labelDef": {
-      "$ref": "../common.schema.json#/$defs/localizable"
+      "$ref": "../core/common.schema.json#/$defs/localizable"
     },
     "disabledDef": {
-      "$ref": "../common.schema.json#/$defs/boolOrWhen"
+      "$ref": "../core/common.schema.json#/$defs/boolOrWhen"
     },
     "readonlyDef": {
-      "$ref": "../common.schema.json#/$defs/boolOrWhen"
+      "$ref": "../core/common.schema.json#/$defs/boolOrWhen"
     },
     "hintProp": {
-      "$ref": "../common.schema.json#/$defs/localizable"
+      "$ref": "../core/common.schema.json#/$defs/localizable"
     },
     "iconProp": {
       "type": "string"
@@ -26,18 +26,18 @@
       "type": "string"
     },
     "dayAriaLabelProp": {
-      "$ref": "../common.schema.json#/$defs/localizable"
+      "$ref": "../core/common.schema.json#/$defs/localizable"
     },
     "monthAriaLabelProp": {
-      "$ref": "../common.schema.json#/$defs/localizable"
+      "$ref": "../core/common.schema.json#/$defs/localizable"
     },
     "yearAriaLabelProp": {
-      "$ref": "../common.schema.json#/$defs/localizable"
+      "$ref": "../core/common.schema.json#/$defs/localizable"
     }
   },
   "allOf": [
     {
-      "$ref": "../common.schema.json#/$defs/baseWidget"
+      "$ref": "../core/common.schema.json#/$defs/baseWidget"
     }
   ],
   "properties": {
@@ -48,7 +48,7 @@
       "const": "dateInput"
     },
     "path": {
-      "$ref": "../common.schema.json#/$defs/dotPath"
+      "$ref": "../core/common.schema.json#/$defs/dotPath"
     },
     "label": {
       "$ref": "#/$defs/labelDef"
@@ -60,16 +60,16 @@
       "$ref": "#/$defs/readonlyDef"
     },
     "on": {
-      "$ref": "../common.schema.json#/$defs/on"
+      "$ref": "../core/common.schema.json#/$defs/on"
     },
     "validator": {
-      "$ref": "../validators.schema.json#/$defs/validator"
+      "$ref": "../core/validators.schema.json#/$defs/validator"
     },
     "props": {
       "type": "object",
       "properties": {
         "invalidDateMessage": {
-          "$ref": "../common.schema.json#/$defs/localizable"
+          "$ref": "../core/common.schema.json#/$defs/localizable"
         },
         "minDate": {
           "$ref": "#/$defs/minDateProp"
@@ -78,13 +78,13 @@
           "$ref": "#/$defs/maxDateProp"
         },
         "minDateMessage": {
-          "$ref": "../common.schema.json#/$defs/localizable"
+          "$ref": "../core/common.schema.json#/$defs/localizable"
         },
         "maxDateMessage": {
-          "$ref": "../common.schema.json#/$defs/localizable"
+          "$ref": "../core/common.schema.json#/$defs/localizable"
         },
         "incompleteMessage": {
-          "$ref": "../common.schema.json#/$defs/localizable",
+          "$ref": "../core/common.schema.json#/$defs/localizable",
           "description": "Error surfaced when focus leaves the widget with a partially filled entry behind; the value goes to null so validators report it even on non-required fields."
         },
         "hint": {
@@ -105,7 +105,7 @@
       },
       "patternProperties": {
         "^invalidDateMessage\\.[^.]+$": {
-          "$ref": "../common.schema.json#/$defs/localizable"
+          "$ref": "../core/common.schema.json#/$defs/localizable"
         },
         "^minDate\\.[^.]+$": {
           "$ref": "#/$defs/minDateProp"
@@ -114,13 +114,13 @@
           "$ref": "#/$defs/maxDateProp"
         },
         "^minDateMessage\\.[^.]+$": {
-          "$ref": "../common.schema.json#/$defs/localizable"
+          "$ref": "../core/common.schema.json#/$defs/localizable"
         },
         "^maxDateMessage\\.[^.]+$": {
-          "$ref": "../common.schema.json#/$defs/localizable"
+          "$ref": "../core/common.schema.json#/$defs/localizable"
         },
         "^incompleteMessage\\.[^.]+$": {
-          "$ref": "../common.schema.json#/$defs/localizable"
+          "$ref": "../core/common.schema.json#/$defs/localizable"
         },
         "^hint\\.[^.]+$": {
           "$ref": "#/$defs/hintProp"
@@ -152,7 +152,7 @@
       "$ref": "#/$defs/readonlyDef"
     },
     "^validator\\.[^.]+$": {
-      "$ref": "../validators.schema.json#/$defs/validator"
+      "$ref": "../core/validators.schema.json#/$defs/validator"
     }
   },
   "required": ["kind", "type", "path"],

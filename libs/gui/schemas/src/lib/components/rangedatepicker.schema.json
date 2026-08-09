@@ -1,35 +1,35 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://golemui.com/schemas/components/rangedatepicker.schema.json",
+  "$id": "https://golemui.com/schemas/gui/components/rangedatepicker.schema.json",
   "title": "RangeDatePicker Widget",
   "type": "object",
   "$defs": {
     "labelDef": {
-      "$ref": "../common.schema.json#/$defs/localizable"
+      "$ref": "../core/common.schema.json#/$defs/localizable"
     },
     "disabledDef": {
-      "$ref": "../common.schema.json#/$defs/boolOrWhen"
+      "$ref": "../core/common.schema.json#/$defs/boolOrWhen"
     },
     "readonlyDef": {
-      "$ref": "../common.schema.json#/$defs/boolOrWhen"
+      "$ref": "../core/common.schema.json#/$defs/boolOrWhen"
     },
     "hintProp": {
-      "$ref": "../common.schema.json#/$defs/localizable"
+      "$ref": "../core/common.schema.json#/$defs/localizable"
     },
     "iconProp": {
       "type": "string"
     },
     "separatorProp": {
-      "$ref": "../common.schema.json#/$defs/localizable"
+      "$ref": "../core/common.schema.json#/$defs/localizable"
     },
     "removePillAriaLabelProp": {
-      "$ref": "../common.schema.json#/$defs/localizable"
+      "$ref": "../core/common.schema.json#/$defs/localizable"
     },
     "startDateAriaLabelProp": {
-      "$ref": "../common.schema.json#/$defs/localizable"
+      "$ref": "../core/common.schema.json#/$defs/localizable"
     },
     "endDateAriaLabelProp": {
-      "$ref": "../common.schema.json#/$defs/localizable"
+      "$ref": "../core/common.schema.json#/$defs/localizable"
     },
     "prevMonthIconProp": {
       "type": "string"
@@ -38,28 +38,28 @@
       "type": "string"
     },
     "prevMonthAriaLabelProp": {
-      "$ref": "../common.schema.json#/$defs/localizable"
+      "$ref": "../core/common.schema.json#/$defs/localizable"
     },
     "nextMonthAriaLabelProp": {
-      "$ref": "../common.schema.json#/$defs/localizable"
+      "$ref": "../core/common.schema.json#/$defs/localizable"
     },
     "toggleAriaLabelProp": {
-      "$ref": "../common.schema.json#/$defs/localizable"
+      "$ref": "../core/common.schema.json#/$defs/localizable"
     },
     "selectYearAriaLabelProp": {
-      "$ref": "../common.schema.json#/$defs/localizable"
+      "$ref": "../core/common.schema.json#/$defs/localizable"
     },
     "yearGridAriaLabelProp": {
-      "$ref": "../common.schema.json#/$defs/localizable"
+      "$ref": "../core/common.schema.json#/$defs/localizable"
     },
     "dayAriaLabelProp": {
-      "$ref": "../common.schema.json#/$defs/localizable"
+      "$ref": "../core/common.schema.json#/$defs/localizable"
     },
     "monthAriaLabelProp": {
-      "$ref": "../common.schema.json#/$defs/localizable"
+      "$ref": "../core/common.schema.json#/$defs/localizable"
     },
     "yearAriaLabelProp": {
-      "$ref": "../common.schema.json#/$defs/localizable"
+      "$ref": "../core/common.schema.json#/$defs/localizable"
     },
     "dayFormatProp": {
       "enum": ["numeric", "2-digit"]
@@ -82,13 +82,13 @@
     "disabledRangesProp": {
       "type": "array",
       "items": {
-        "$ref": "../common.schema.json#/$defs/dateRange"
+        "$ref": "../core/common.schema.json#/$defs/dateRange"
       }
     }
   },
   "allOf": [
     {
-      "$ref": "../common.schema.json#/$defs/baseWidget"
+      "$ref": "../core/common.schema.json#/$defs/baseWidget"
     }
   ],
   "properties": {
@@ -99,7 +99,7 @@
       "const": "rangeDatePicker"
     },
     "path": {
-      "$ref": "../common.schema.json#/$defs/dotPath"
+      "$ref": "../core/common.schema.json#/$defs/dotPath"
     },
     "label": {
       "$ref": "#/$defs/labelDef"
@@ -111,28 +111,28 @@
       "$ref": "#/$defs/readonlyDef"
     },
     "on": {
-      "$ref": "../common.schema.json#/$defs/on"
+      "$ref": "../core/common.schema.json#/$defs/on"
     },
     "validator": {
-      "$ref": "../validators.schema.json#/$defs/validator"
+      "$ref": "../core/validators.schema.json#/$defs/validator"
     },
     "props": {
       "type": "object",
       "properties": {
         "invalidDateMessage": {
-          "$ref": "../common.schema.json#/$defs/localizable"
+          "$ref": "../core/common.schema.json#/$defs/localizable"
         },
         "minDateMessage": {
-          "$ref": "../common.schema.json#/$defs/localizable"
+          "$ref": "../core/common.schema.json#/$defs/localizable"
         },
         "maxDateMessage": {
-          "$ref": "../common.schema.json#/$defs/localizable"
+          "$ref": "../core/common.schema.json#/$defs/localizable"
         },
         "disabledDateRangeMessage": {
-          "$ref": "../common.schema.json#/$defs/localizable"
+          "$ref": "../core/common.schema.json#/$defs/localizable"
         },
         "incompleteMessage": {
-          "$ref": "../common.schema.json#/$defs/localizable",
+          "$ref": "../core/common.schema.json#/$defs/localizable",
           "description": "Error surfaced when focus leaves the widget with a partially filled entry behind; the value goes to null so validators report it even on non-required fields."
         },
         "hint": {
@@ -207,19 +207,19 @@
       },
       "patternProperties": {
         "^invalidDateMessage\\.[^.]+$": {
-          "$ref": "../common.schema.json#/$defs/localizable"
+          "$ref": "../core/common.schema.json#/$defs/localizable"
         },
         "^minDateMessage\\.[^.]+$": {
-          "$ref": "../common.schema.json#/$defs/localizable"
+          "$ref": "../core/common.schema.json#/$defs/localizable"
         },
         "^maxDateMessage\\.[^.]+$": {
-          "$ref": "../common.schema.json#/$defs/localizable"
+          "$ref": "../core/common.schema.json#/$defs/localizable"
         },
         "^disabledDateRangeMessage\\.[^.]+$": {
-          "$ref": "../common.schema.json#/$defs/localizable"
+          "$ref": "../core/common.schema.json#/$defs/localizable"
         },
         "^incompleteMessage\\.[^.]+$": {
-          "$ref": "../common.schema.json#/$defs/localizable"
+          "$ref": "../core/common.schema.json#/$defs/localizable"
         },
         "^hint\\.[^.]+$": {
           "$ref": "#/$defs/hintProp"
@@ -305,7 +305,7 @@
       "$ref": "#/$defs/readonlyDef"
     },
     "^validator\\.[^.]+$": {
-      "$ref": "../validators.schema.json#/$defs/validator"
+      "$ref": "../core/validators.schema.json#/$defs/validator"
     }
   },
   "required": ["kind", "type", "path"],

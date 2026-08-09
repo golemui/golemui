@@ -1,23 +1,23 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://golemui.com/schemas/components/tags.schema.json",
+  "$id": "https://golemui.com/schemas/gui/components/tags.schema.json",
   "title": "Tags Widget",
   "type": "object",
   "$defs": {
     "disabledDef": {
-      "$ref": "../common.schema.json#/$defs/boolOrWhen"
+      "$ref": "../core/common.schema.json#/$defs/boolOrWhen"
     },
     "readonlyDef": {
-      "$ref": "../common.schema.json#/$defs/boolOrWhen"
+      "$ref": "../core/common.schema.json#/$defs/boolOrWhen"
     },
     "labelDef": {
-      "$ref": "../common.schema.json#/$defs/localizable"
+      "$ref": "../core/common.schema.json#/$defs/localizable"
     },
     "hintProp": {
-      "$ref": "../common.schema.json#/$defs/localizable"
+      "$ref": "../core/common.schema.json#/$defs/localizable"
     },
     "placeholderProp": {
-      "$ref": "../common.schema.json#/$defs/localizable"
+      "$ref": "../core/common.schema.json#/$defs/localizable"
     },
     "iconProp": {
       "type": "string"
@@ -42,7 +42,7 @@
       "description": "Maximum number of tags the user can add. No limit when omitted."
     },
     "removeAriaLabelProp": {
-      "$ref": "../common.schema.json#/$defs/localizable"
+      "$ref": "../core/common.schema.json#/$defs/localizable"
     },
     "removeIconProp": {
       "type": "string"
@@ -50,7 +50,7 @@
   },
   "allOf": [
     {
-      "$ref": "../common.schema.json#/$defs/baseWidget"
+      "$ref": "../core/common.schema.json#/$defs/baseWidget"
     }
   ],
   "properties": {
@@ -61,7 +61,7 @@
       "const": "tags"
     },
     "path": {
-      "$ref": "../common.schema.json#/$defs/dotPath"
+      "$ref": "../core/common.schema.json#/$defs/dotPath"
     },
     "label": {
       "$ref": "#/$defs/labelDef"
@@ -73,10 +73,10 @@
       "$ref": "#/$defs/readonlyDef"
     },
     "on": {
-      "$ref": "../common.schema.json#/$defs/on"
+      "$ref": "../core/common.schema.json#/$defs/on"
     },
     "validator": {
-      "$ref": "../validators.schema.json#/$defs/validator"
+      "$ref": "../core/validators.schema.json#/$defs/validator"
     },
     "defaultValue": {
       "type": "array",
@@ -158,7 +158,7 @@
       "$ref": "#/$defs/labelDef"
     },
     "^validator\\.[^.]+$": {
-      "$ref": "../validators.schema.json#/$defs/validator"
+      "$ref": "../core/validators.schema.json#/$defs/validator"
     }
   },
   "required": ["kind", "type", "path"],

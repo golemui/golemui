@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://golemui.com/schemas/components/grid.schema.json",
+  "$id": "https://golemui.com/schemas/gui/components/grid.schema.json",
   "title": "Grid Widget",
   "type": "object",
   "$defs": {
@@ -25,7 +25,7 @@
   },
   "allOf": [
     {
-      "$ref": "../common.schema.json#/$defs/baseWidget"
+      "$ref": "../core/common.schema.json#/$defs/baseWidget"
     }
   ],
   "properties": {
@@ -39,7 +39,7 @@
       "type": "array",
       "minItems": 1,
       "items": {
-        "$ref": "../form.schema.json#/$defs/formWidget"
+        "$ref": "../widgets.schema.json#/$defs/formWidget"
       }
     },
     "props": {

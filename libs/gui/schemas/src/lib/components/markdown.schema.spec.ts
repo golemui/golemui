@@ -7,7 +7,7 @@ import {
   specValidationErrorsLogger,
 } from '../schema.spec.utils';
 
-const SCHEMA_ID_UNDER_TEST = 'https://golemui.com/schemas/components/markdown.schema.json';
+const SCHEMA_ID_UNDER_TEST = 'https://golemui.com/schemas/gui/components/markdown.schema.json';
 
 describe('Markdown schema validation', () => {
   let ajv: Ajv2020;

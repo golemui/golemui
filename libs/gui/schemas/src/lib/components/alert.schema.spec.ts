@@ -7,7 +7,7 @@ import {
 } from '../schema.spec.utils';
 import { golemForm } from '@golemui/gui-shared/internals';
 
-const SCHEMA_ID_UNDER_TEST = 'https://golemui.com/schemas/components/alert.schema.json';
+const SCHEMA_ID_UNDER_TEST = 'https://golemui.com/schemas/gui/components/alert.schema.json';
 
 describe('Alert schema validation', () => {
   let ajv: Ajv2020;

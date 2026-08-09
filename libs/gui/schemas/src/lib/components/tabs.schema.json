@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://golemui.com/schemas/components/tabs.schema.json",
+  "$id": "https://golemui.com/schemas/gui/components/tabs.schema.json",
   "title": "Tabs Widget",
   "type": "object",
   "$defs": {
@@ -20,7 +20,7 @@
         "type": "object",
         "properties": {
           "label": {
-            "$ref": "../common.schema.json#/$defs/localizable"
+            "$ref": "../core/common.schema.json#/$defs/localizable"
           },
           "uid": {
             "type": "string",
@@ -34,7 +34,7 @@
   },
   "allOf": [
     {
-      "$ref": "../common.schema.json#/$defs/baseWidget"
+      "$ref": "../core/common.schema.json#/$defs/baseWidget"
     }
   ],
   "properties": {
@@ -45,14 +45,14 @@
       "const": "tabs"
     },
     "on": {
-      "$ref": "../common.schema.json#/$defs/on"
+      "$ref": "../core/common.schema.json#/$defs/on"
     },
     "children": {
       "type": "array",
       "description": "Flat list of widgets belonging to all tabs. Each widget must have a `uid` matching one of the tab UIDs in `props.tabs`.",
       "minItems": 1,
       "items": {
-        "$ref": "../form.schema.json#/$defs/formWidget"
+        "$ref": "../widgets.schema.json#/$defs/formWidget"
       }
     },
     "props": {

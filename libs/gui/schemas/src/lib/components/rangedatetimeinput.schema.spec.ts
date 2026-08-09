@@ -8,7 +8,7 @@ import {
 import { golemForm } from '@golemui/gui-shared/internals';
 
 const SCHEMA_ID_UNDER_TEST =
-  'https://golemui.com/schemas/components/rangedatetimeinput.schema.json';
+  'https://golemui.com/schemas/gui/components/rangedatetimeinput.schema.json';
 
 describe('RangeDateTimeInput schema validation', () => {
   let ajv: Ajv2020;

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://golemui.com/schemas/components/flex.schema.json",
+  "$id": "https://golemui.com/schemas/gui/components/flex.schema.json",
   "title": "Flex Widget",
   "type": "object",
   "$defs": {
@@ -19,7 +19,7 @@
   },
   "allOf": [
     {
-      "$ref": "../common.schema.json#/$defs/baseWidget"
+      "$ref": "../core/common.schema.json#/$defs/baseWidget"
     }
   ],
   "properties": {
@@ -33,7 +33,7 @@
       "type": "array",
       "minItems": 1,
       "items": {
-        "$ref": "../form.schema.json#/$defs/formWidget"
+        "$ref": "../widgets.schema.json#/$defs/formWidget"
       }
     },
     "props": {

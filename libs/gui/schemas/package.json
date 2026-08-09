@@ -16,7 +16,8 @@
       "require": "./index.umd.cjs"
     },
     "./schemas/*.schema.json": "./schemas/*.schema.json",
-    "./schemas/components/*.schema.json": "./schemas/components/*.schema.json"
+    "./schemas/components/*.schema.json": "./schemas/components/*.schema.json",
+    "./schemas/core/*.schema.json": "./schemas/core/*.schema.json"
   },
   "files": [
     "lib",
@@ -26,7 +27,9 @@
     "index.umd.cjs",
     "*.md"
   ],
-  "dependencies": {},
+  "dependencies": {
+    "@golemui/schemas": "*"
+  },
   "devDependencies": {
     "vitest": "^4.0.0",
     "ajv": "^8.0.0",
