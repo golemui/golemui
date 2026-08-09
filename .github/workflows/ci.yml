@@ -33,6 +33,9 @@ jobs:
       - name: Check generated schemas are up to date
         run: |
           npm run generate:schemas
+          # Intent-to-add so brand-new generated files also show up in the diff
+          # (git diff ignores untracked files).
+          git add -AN -- libs/schemas libs/gui/schemas
           git diff --exit-code -- libs/schemas libs/gui/schemas
 
       - name: Build affected
