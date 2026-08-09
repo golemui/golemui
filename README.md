@@ -167,7 +167,7 @@ For vanilla JS, import `@golemui/gui-lit` to register the `<gui-form>` custom el
 | `@golemui/gui-components`                           | Default widget components and the stylesheet (`index.css`)                   |
 | `@golemui/core`                                     | Framework-agnostic form runtime and shared types (`FormEvent`, `ValidateOn`) |
 | `@golemui/gui-validators`                           | Validation schemas (`@standard-schema/spec`)                                 |
-| `@golemui/schemas`                                  | Shared core JSON Schemas and the schema tree generator                       |
+| `@golemui/schemas`                                  | The shared core JSON Schema (common defs) and the schema tree generator      |
 | `@golemui/gui-schemas`                              | JSON Schemas for gui form definitions, generated from the widget manifest    |
 | `@golemui/gui-mcp`                                  | MCP server for coding assistants                                             |
 
