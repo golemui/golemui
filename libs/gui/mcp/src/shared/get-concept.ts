@@ -1,3 +1,5 @@
+import { FORM_SCHEMA_URL } from './form-schema-url';
+
 export type GetConceptInput = {
   concept: string;
 };
@@ -40,7 +42,7 @@ const STATES_CONCEPT: GetConceptResult = {
         'State names can contain letters, numbers, hyphens, and underscores. ' +
         'Colons enable hierarchical composition — see the "Composed sub-states (colon notation)" pattern below.',
       example: {
-        $schema: 'https://golemui.com/schemas/form.schema.json',
+        $schema: FORM_SCHEMA_URL,
         states: {
           termsAccepted: '$form.terms === true',
           hasDiscount: '$form.hasDiscountCode === true',
@@ -81,7 +83,7 @@ const STATES_CONCEPT: GetConceptResult = {
         'Use `"exclude": { "from": ["stateName"] }` to render it only when the state is NOT active. ' +
         'Both `in` and `from` are arrays — a widget can be gated on multiple states simultaneously.',
       example: {
-        $schema: 'https://golemui.com/schemas/form.schema.json',
+        $schema: FORM_SCHEMA_URL,
         states: {
           hasDiscount: '$form.hasDiscountCode === true',
         },
@@ -120,7 +122,7 @@ const STATES_CONCEPT: GetConceptResult = {
         'Use this form when the condition is not shared with any other widget; use the named-state ' +
         'form (`in`/`from`) when the same condition gates two or more widgets.',
       example: {
-        $schema: 'https://golemui.com/schemas/form.schema.json',
+        $schema: FORM_SCHEMA_URL,
         form: [
           {
             kind: 'input',
@@ -159,7 +161,7 @@ const STATES_CONCEPT: GetConceptResult = {
         'Multiple suffixes can coexist on the same property; when more than one state is active, ' +
         'the last matching suffix in document order wins.',
       example: {
-        $schema: 'https://golemui.com/schemas/form.schema.json',
+        $schema: FORM_SCHEMA_URL,
         states: {
           termsAccepted: '$form.terms === true',
           busy: '$meta.submitting === true',
@@ -257,7 +259,7 @@ const STRING_INTERPOLATION_CONCEPT: GetConceptResult = {
         'Use optional chaining (`?.`) when accessing nested fields that may not yet exist. ' +
         'Multiple slots can appear in a single string.',
       example: {
-        $schema: 'https://golemui.com/schemas/form.schema.json',
+        $schema: FORM_SCHEMA_URL,
         form: [
           {
             uid: 'userName',
@@ -304,7 +306,7 @@ const STRING_INTERPOLATION_CONCEPT: GetConceptResult = {
         'same scope object (`$form`, `$meta`, `$errors`, `$formIsInvalid`, `$fn`). ' +
         'If the expression evaluates to `null` or `undefined`, the slot renders as an empty string.',
       example: {
-        $schema: 'https://golemui.com/schemas/form.schema.json',
+        $schema: FORM_SCHEMA_URL,
         data: { firstName: 'Jane', lastName: 'Doe', count: 4, role: 'admin' },
         form: [
           {
@@ -342,7 +344,7 @@ const STRING_INTERPOLATION_CONCEPT: GetConceptResult = {
         'Params that start with a `$` scope prefix are evaluated; others are passed as static strings. ' +
         'The expression has access to `$form`, `$meta`, `$errors`, `$formIsInvalid`, and `$fn`.',
       example: {
-        $schema: 'https://golemui.com/schemas/form.schema.json',
+        $schema: FORM_SCHEMA_URL,
         data: { firstName: 'Jane', lastName: 'Doe', count: 4 },
         meta: { connectionStatus: 'online' },
         form: [
@@ -455,7 +457,7 @@ const REACTIVE_SCOPE_CONCEPT: GetConceptResult = {
         'Note: a widget must have an explicit `uid` value set for its errors to appear in `$errors`; ' +
         'auto-generated uids are not predictable.',
       example: {
-        $schema: 'https://golemui.com/schemas/form.schema.json',
+        $schema: FORM_SCHEMA_URL,
         form: [
           {
             uid: 'emailField',
@@ -491,7 +493,7 @@ const REACTIVE_SCOPE_CONCEPT: GetConceptResult = {
         'It is NOT a property of `$form` — use it as a bare identifier. ' +
         'Do NOT chain properties onto it: `$formIsInvalid.something` is invalid.',
       example: {
-        $schema: 'https://golemui.com/schemas/form.schema.json',
+        $schema: FORM_SCHEMA_URL,
         form: [
           {
             kind: 'input',
@@ -534,7 +536,7 @@ const REACTIVE_SCOPE_CONCEPT: GetConceptResult = {
         'expression as `false`. ' +
         'Host functions MUST be pure: derive the result only from the arguments, no side effects.',
       example: {
-        $schema: 'https://golemui.com/schemas/form.schema.json',
+        $schema: FORM_SCHEMA_URL,
         form: [
           {
             kind: 'display',
@@ -561,7 +563,7 @@ const REACTIVE_SCOPE_CONCEPT: GetConceptResult = {
         '`$item` leaf values may be `undefined` while the user fills in the row, so guard them; ' +
         '`$index` is always a defined number.',
       example: {
-        $schema: 'https://golemui.com/schemas/form.schema.json',
+        $schema: FORM_SCHEMA_URL,
         form: [
           {
             kind: 'input',
@@ -651,7 +653,7 @@ const VALIDATION_CONCEPT: GetConceptResult = {
         'set custom messages for every rule they use, and ALWAYS set `invalid` whenever ' +
         '`required: true` is set (see the next patterns for why).',
       example: {
-        $schema: 'https://golemui.com/schemas/form.schema.json',
+        $schema: FORM_SCHEMA_URL,
         form: [
           {
             kind: 'input',
@@ -687,7 +689,7 @@ const VALIDATION_CONCEPT: GetConceptResult = {
         'checked-then-unchecked checkbox fails the `const` rule (`const` message) — set both keys ' +
         'to the same user-facing text.',
       example: {
-        $schema: 'https://golemui.com/schemas/form.schema.json',
+        $schema: FORM_SCHEMA_URL,
         form: [
           {
             kind: 'input',
@@ -723,7 +725,7 @@ const VALIDATION_CONCEPT: GetConceptResult = {
         'Note `null` is never valid: even on a non-required field, `null` fails the type check and ' +
         'shows the `invalid` message (only `undefined` is treated as "not filled in yet").',
       example: {
-        $schema: 'https://golemui.com/schemas/form.schema.json',
+        $schema: FORM_SCHEMA_URL,
         form: [
           {
             kind: 'input',
@@ -759,7 +761,7 @@ const VALIDATION_CONCEPT: GetConceptResult = {
         'needs a compound expression that also checks the data directly, because `$formIsInvalid` ' +
         'only reflects validations that have already run.',
       example: {
-        $schema: 'https://golemui.com/schemas/form.schema.json',
+        $schema: FORM_SCHEMA_URL,
         form: [
           {
             kind: 'input',
@@ -826,7 +828,7 @@ const ICONS_CONCEPT: GetConceptResult = {
         'The `button` widget additionally accepts `props.iconPosition` to control where the icon appears relative to the label. ' +
         'All other icon-capable widgets render the icon at a default position determined by the component.',
       example: {
-        $schema: 'https://golemui.com/schemas/form.schema.json',
+        $schema: FORM_SCHEMA_URL,
         form: [
           {
             kind: 'action',
@@ -873,7 +875,7 @@ const ICONS_CONCEPT: GetConceptResult = {
         'This is useful for toggling between a default and a confirmation icon, or for indicating ' +
         'a loading state on a button.',
       example: {
-        $schema: 'https://golemui.com/schemas/form.schema.json',
+        $schema: FORM_SCHEMA_URL,
         states: {
           submitted: '$meta.submitting === true',
         },

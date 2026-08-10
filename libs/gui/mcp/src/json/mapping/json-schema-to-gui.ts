@@ -11,6 +11,7 @@
  * so the caller (and any LLM) can surface a partial form rather than a hard failure.
  */
 
+import { FORM_SCHEMA_URL } from '../../shared/form-schema-url';
 import type { Validator } from './validator';
 import { buildStringValidator, buildNumberValidator, buildBooleanValidator } from './validator';
 
@@ -109,7 +110,7 @@ export function jsonSchemaToGui(schema: JsonSchemaLike, opts: MapOptions = {}): 
       : fields;
 
   return {
-    formDefinition: { $schema: 'https://golemui.com/schemas/form.schema.json', form: wrapped },
+    formDefinition: { $schema: FORM_SCHEMA_URL, form: wrapped },
     unmapped,
   };
 }
