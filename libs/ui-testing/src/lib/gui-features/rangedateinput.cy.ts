@@ -504,6 +504,10 @@ export const runRangeDateInputComponentTests = (mountFn: MountComponentFn) => {
           .should('have.attr', 'aria-label', '06/10/2026 - 06/16/2026')
           .should('have.attr', 'aria-description', 'Remove date');
         cy.get('.gui-pills__pill-remove').should('have.attr', 'aria-hidden', 'true');
+
+        // The widget is a single tab stop: pills are reachable via ArrowLeft
+        // from the segments, not via Tab
+        cy.get('button.gui-pills__pill').should('have.attr', 'tabindex', '-1');
       });
 
       it('should wire the count bubble to the dropdown toolbar', () => {
@@ -524,6 +528,145 @@ export const runRangeDateInputComponentTests = (mountFn: MountComponentFn) => {
       it('should natively disable pill buttons when the widget is disabled', () => {
         mountRangeDateInput({ data: { myRanges: [juneRange] }, disabled: true });
         cy.get('button.gui-pills__pill').should('be.disabled');
+      });
+    });
+
+    describe('pill keyboard navigation', () => {
+      // Given unsorted, displayed sorted by start: March first, June last
+      const juneRange = { start: '2026-06-10', end: '2026-06-16' };
+      const marchRange = { start: '2026-03-05', end: '2026-03-08' };
+      const juneLabel = '06/10/2026 - 06/16/2026';
+      const marchLabel = '03/05/2026 - 03/08/2026';
+
+      const mountWithRanges = () =>
+        mountRangeDateInput({ data: { myRanges: [juneRange, marchRange] } });
+
+      it('should enter the strip at the LAST pill on ArrowLeft from the first segment', () => {
+        mountWithRanges();
+
+        cy.get(sel.start.month).focus();
+        cy.focused().type('{leftArrow}');
+        cy.focused()
+          .should('have.class', 'gui-pills__pill')
+          .should('have.attr', 'aria-label', juneLabel);
+      });
+
+      it('should walk pills with arrows and jump with Home/End, stopping at the first pill', () => {
+        mountWithRanges();
+
+        cy.get(sel.start.month).focus();
+        cy.focused().type('{leftArrow}');
+        cy.focused().type('{leftArrow}');
+        cy.focused().should('have.attr', 'aria-label', marchLabel);
+
+        // ArrowLeft at the first pill parks: focus stays put
+        cy.focused().type('{leftArrow}');
+        cy.focused().should('have.attr', 'aria-label', marchLabel);
+
+        cy.focused().type('{end}');
+        cy.focused().should('have.attr', 'aria-label', juneLabel);
+        cy.focused().type('{home}');
+        cy.focused().should('have.attr', 'aria-label', marchLabel);
+      });
+
+      it('should return focus to the first start segment on ArrowRight past the last pill', () => {
+        mountWithRanges();
+
+        cy.get(sel.start.month).focus();
+        cy.focused().type('{leftArrow}');
+        cy.focused().should('have.attr', 'aria-label', juneLabel);
+
+        cy.focused().type('{rightArrow}');
+        cy.focused()
+          .should('have.attr', 'data-group', 'start')
+          .should('have.attr', 'data-type', 'month');
+      });
+
+      it('should ignore the stray keyup that lands on the segment after the pill handoff', () => {
+        // Pills hand focus over on keydown while segments navigate on keyup:
+        // the released ArrowRight must not advance a second segment.
+        mountWithRanges();
+
+        cy.get(sel.start.month).focus();
+        cy.focused().type('{leftArrow}');
+        cy.focused().should('have.attr', 'aria-label', juneLabel);
+
+        cy.focused().trigger('keydown', {
+          key: 'ArrowRight',
+          eventConstructor: 'KeyboardEvent',
+        });
+        cy.focused().should('have.attr', 'data-type', 'month');
+        cy.focused().trigger('keyup', { key: 'ArrowRight', eventConstructor: 'KeyboardEvent' });
+        cy.focused().should('have.attr', 'data-type', 'month');
+      });
+
+      it('should hand focus to the next pill on Delete, then to the segments when emptied', () => {
+        mountWithRanges();
+
+        cy.get(sel.start.month).focus();
+        cy.focused().type('{leftArrow}');
+        cy.focused().should('have.attr', 'aria-label', juneLabel);
+
+        // Deleting the last pill slides focus onto the pill that took its place
+        cy.focused().type('{del}');
+        cy.get(sel.pillText).should('have.length', 1);
+        cy.focused().should('have.attr', 'aria-label', marchLabel);
+
+        // Deleting the final pill returns focus to the segments
+        cy.focused().type('{del}');
+        cy.get(sel.pillText).should('have.length', 0);
+        cy.focused().should('have.attr', 'data-group', 'start');
+      });
+
+      it('should emit pillClick on Enter now that pills are keyboard-only reachable', () => {
+        mountWithRanges();
+
+        cy.get('gui-range-date').then(($el) => {
+          $el[0].addEventListener('pillClick', cy.stub().as('pillClickHandler'));
+        });
+
+        cy.get(sel.start.month).focus();
+        cy.focused().type('{leftArrow}');
+        cy.focused().type('{enter}');
+        cy.get('@pillClickHandler').should('have.been.called');
+      });
+
+      it('should close the dropdown on Escape and return focus to the segments', () => {
+        mountWithRanges();
+
+        cy.get('.gui-pills__count').click({ force: true });
+        cy.get('.gui-pills__dropdown button.gui-pills__pill').first().focus();
+        cy.focused().type('{downArrow}');
+        cy.focused().should('have.attr', 'aria-label', juneLabel);
+
+        cy.focused().type('{esc}');
+        cy.get('.gui-pills__dropdown').should('not.exist');
+        cy.focused()
+          .should('have.attr', 'data-group', 'start')
+          .should('have.attr', 'data-type', 'month');
+      });
+
+      it('should focus (not delete) the last pill on Backspace when the segments are empty', () => {
+        mountWithRanges();
+
+        cy.get(sel.start.month).focus();
+        cy.focused().type('{backspace}');
+        cy.focused()
+          .should('have.class', 'gui-pills__pill')
+          .should('have.attr', 'aria-label', juneLabel);
+        cy.get(sel.pillText).should('have.length', 2);
+      });
+
+      it('should keep Backspace editing while any segment holds content', () => {
+        mountWithRanges();
+
+        // Month fills and auto-advances to the empty day; Backspace there
+        // must not jump into the pills while the range is half-typed.
+        cy.get(sel.start.month).type('06');
+        cy.focused().should('have.attr', 'data-type', 'day');
+        cy.focused().type('{backspace}');
+        cy.focused().should('have.attr', 'data-type', 'day');
+        cy.get(sel.pillText).should('have.length', 2);
       });
     });
   });

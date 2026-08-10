@@ -636,5 +636,50 @@ export const runRangeDatePickerComponentTests = (mountFn: MountComponentFn) => {
         cy.get(sel.calendar).should('exist');
       });
     });
+
+    describe('pill keyboard navigation', () => {
+      it('should keep the calendar open while arrowing into the pills and back', () => {
+        mountRangeDatePicker({ data: { myRanges: [juneRange, marchRange] } });
+
+        cy.get(sel.startMonth).click();
+        cy.get(sel.calendar).should('exist');
+
+        // Focus hops from the segments into the strip; that is not a departure
+        cy.focused().type('{leftArrow}');
+        cy.focused().should('have.class', 'gui-pills__pill');
+        cy.get(sel.calendar).should('exist');
+
+        cy.focused().type('{rightArrow}');
+        cy.focused().should('have.attr', 'data-type', 'month');
+        cy.get(sel.calendar).should('exist');
+      });
+
+      it('should close the calendar when the pills dropdown opens', () => {
+        mountRangeDatePicker({ data: { myRanges: [juneRange, marchRange] } });
+
+        cy.get(sel.startMonth).click();
+        cy.get(sel.calendar).should('exist');
+
+        // The dropdown and the calendar are mutually exclusive overlays
+        cy.get('.gui-pills__count').click({ force: true });
+        cy.get('.gui-pills__dropdown').should('exist');
+        cy.get(sel.calendar).should('not.exist');
+      });
+
+      it('should re-open the calendar after Escape closes the pills dropdown', () => {
+        // Characterization: Escape returns focus to the segments, and focusing
+        // the trigger opens the popover. Dropdown-Escape therefore lands the
+        // user back on the segments with the calendar showing.
+        mountRangeDatePicker({ data: { myRanges: [juneRange, marchRange] } });
+
+        cy.get('.gui-pills__count').click({ force: true });
+        cy.get('.gui-pills__dropdown button.gui-pills__pill').first().focus();
+        cy.focused().type('{esc}');
+
+        cy.get('.gui-pills__dropdown').should('not.exist');
+        cy.focused().should('have.attr', 'data-group', 'start');
+        cy.get(sel.calendar).should('exist');
+      });
+    });
   });
 };

@@ -53,6 +53,19 @@ export interface GUIPartsControllerOptions {
   onEmptyPartBlur(group: string, type: DateTimePartType): void;
   /** Enter keyup hook. Omitted: no-op. */
   onEnter?(event: KeyboardEvent, group: string): void;
+  /**
+   * ArrowLeft while the visually-first segment of the whole input is focused,
+   * where navigation would otherwise stop. Opt-in: hosts with a leading pills
+   * strip use it to move focus into the pills. Omitted: no-op.
+   */
+  onNavigatePastStart?(): void;
+  /**
+   * Backspace/Delete on a part that was already empty at keydown time, where
+   * the key has nothing left to edit. Opt-in: hosts with a leading pills strip
+   * use it to move focus into the pills, mirroring the tags input's
+   * Backspace-on-empty-draft. Omitted: no-op.
+   */
+  onEmptyPartDelete?(group: string, type: DateTimePartType): void;
   /** Accessor for the effective hour format. */
   getHourFormat?(): HourFormat;
   /** Locale day-period labels. */
@@ -78,6 +91,7 @@ export class GUIPartsController implements ReactiveController {
 
   private _values: PartValues = {};
   private _hasSurfacedInputError = false;
+  private _keydownTarget: EventTarget | null = null;
 
   constructor(host: GUIPartsHost, options: GUIPartsControllerOptions) {
     this.host = host;
@@ -249,9 +263,12 @@ export class GUIPartsController implements ReactiveController {
     if (el instanceof HTMLInputElement) el.select();
   }
 
-  focusFirst(group: string): void {
+  focusFirst(group: string, select = false): void {
     requestAnimationFrame(() => {
-      this.getGroupInputs(group)[0]?.focus();
+      const first = this.getGroupInputs(group)[0];
+      if (!first) return;
+      first.focus();
+      if (select) this.selectPart(first);
     });
   }
 
@@ -260,6 +277,19 @@ export class GUIPartsController implements ReactiveController {
    * pass through; any other non-digit key is prevented.
    */
   handleKeyDown = (event: KeyboardEvent, group: string, type: DateTimePartType): void => {
+    this._keydownTarget = event.target;
+
+    // Checked at keydown time so only a press on an ALREADY empty part fires:
+    // the press that empties the last character keeps focus where the user is
+    // editing.
+    if (
+      (event.key === 'Backspace' || event.key === 'Delete') &&
+      event.target instanceof HTMLInputElement &&
+      event.target.value === ''
+    ) {
+      this.options.onEmptyPartDelete?.(group, type);
+    }
+
     if (event.key === 'Enter' && this.options.onEnter) {
       event.preventDefault();
 
@@ -285,6 +315,8 @@ export class GUIPartsController implements ReactiveController {
    *   toggle itself happens on keyup, so holding the key does not rapid-cycle.
    */
   handleDayPeriodKeyDown = (event: KeyboardEvent): void => {
+    this._keydownTarget = event.target;
+
     if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
       event.preventDefault();
     }
@@ -306,9 +338,14 @@ export class GUIPartsController implements ReactiveController {
    * - Enter -> onEnter
    * - ArrowUp/Down increment via `incrementPartValue`, re-select and commit
    * - ArrowLeft/Right move by VISUAL position, handles the LTR/RTL
+   *
+   * Readonly gates only the value-mutating branches: moving focus is not
+   * mutation, so ArrowLeft/Right navigation (including the pills handoff via
+   * `onNavigatePastStart`) keeps working when the parts are readonly, e.g.
+   * a time input with `allowCustomTime` off.
    */
   handleKeyUp = (event: KeyboardEvent, group: string, type: DateTimePartType): void => {
-    if (this.options.isReadonly()) return;
+    const isReadonly = this.options.isReadonly();
 
     const isRTL = window.getComputedStyle(this.host).direction === 'rtl';
     const target = event.target as HTMLElement;
@@ -319,6 +356,7 @@ export class GUIPartsController implements ReactiveController {
 
     // Jump to the next part when an input is filled, but only into an empty one
     if (
+      !isReadonly &&
       target instanceof HTMLInputElement &&
       input.value.length === input.maxLength &&
       isDigitKey(event.key)
@@ -332,13 +370,24 @@ export class GUIPartsController implements ReactiveController {
       }
     }
 
+    const isArrowKey =
+      event.key === 'ArrowUp' ||
+      event.key === 'ArrowDown' ||
+      event.key === 'ArrowLeft' ||
+      event.key === 'ArrowRight';
+    if (isArrowKey) {
+      if (event.target !== this._keydownTarget) return;
+      this._keydownTarget = null;
+    }
+
     switch (event.key) {
       case 'Enter': {
-        this.options.onEnter?.(event, group);
+        if (!isReadonly) this.options.onEnter?.(event, group);
         break;
       }
       case 'ArrowUp':
       case 'ArrowDown': {
+        if (isReadonly) break;
         if (descriptor?.kind === 'dayPeriod') {
           this.toggleDayPeriod(group, type);
           break;
@@ -466,7 +515,10 @@ export class GUIPartsController implements ReactiveController {
     isRTL: boolean,
   ): void {
     const groups = this.options.groups;
-    if (groups.length <= 1) return;
+    if (groups.length <= 1) {
+      if (key === 'ArrowLeft') this.options.onNavigatePastStart?.();
+      return;
+    }
 
     const firstGroup = groups[0];
     const lastGroup = groups[groups.length - 1];
@@ -480,6 +532,8 @@ export class GUIPartsController implements ReactiveController {
           target.focus();
           this.selectPart(target);
         }
+      } else {
+        this.options.onNavigatePastStart?.();
       }
     } else {
       const otherGroup = isRTL ? firstGroup : lastGroup;

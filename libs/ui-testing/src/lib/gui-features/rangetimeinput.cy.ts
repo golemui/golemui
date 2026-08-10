@@ -374,5 +374,70 @@ export const runRangeTimeInputComponentTests = (mountFn: MountComponentFn) => {
       cy.get(sel.start.hour).should('be.disabled');
       cy.get(sel.end.hour).should('be.disabled');
     });
+
+    describe('pill keyboard navigation', () => {
+      // Given unsorted, displayed sorted by start: morning first, evening last
+      const morning = { start: '09:00:00', end: '11:00:00' };
+      const evening = { start: '14:00:00', end: '16:00:00' };
+
+      const mountWithRanges = () => mountRangeTimeInput({ data: { myRanges: [evening, morning] } });
+
+      it('should keep pills out of the tab order', () => {
+        mountWithRanges();
+        cy.get('button.gui-pills__pill').should('have.attr', 'tabindex', '-1');
+      });
+
+      it('should enter the strip at the LAST pill on ArrowLeft from the first segment', () => {
+        mountWithRanges();
+
+        cy.get(sel.start.hour).focus();
+        cy.focused().type('{leftArrow}');
+        cy.focused().should('have.class', 'gui-pills__pill').should('contain.text', '14:00');
+      });
+
+      it('should return focus to the first start segment on ArrowRight past the last pill', () => {
+        mountWithRanges();
+
+        cy.get(sel.start.hour).focus();
+        cy.focused().type('{leftArrow}');
+        cy.focused().should('have.class', 'gui-pills__pill');
+
+        cy.focused().type('{rightArrow}');
+        cy.focused()
+          .should('have.attr', 'data-group', 'start')
+          .should('have.attr', 'data-type', 'hour');
+      });
+
+      it('should close the dropdown on Escape and return focus to the segments', () => {
+        mountWithRanges();
+
+        cy.get('.gui-pills__count').click({ force: true });
+        cy.get('.gui-pills__dropdown button.gui-pills__pill').first().focus();
+        cy.focused().type('{esc}');
+        cy.get('.gui-pills__dropdown').should('not.exist');
+        cy.focused().should('have.attr', 'data-group', 'start');
+      });
+
+      it('should focus (not delete) the last pill on Delete when the segments are empty', () => {
+        mountWithRanges();
+
+        cy.get(sel.start.hour).focus();
+        cy.focused().type('{del}');
+        cy.focused().should('have.class', 'gui-pills__pill').should('contain.text', '14:00');
+        cy.get(sel.pillText).should('have.length', 2);
+      });
+
+      it('should keep Backspace editing while any segment holds content', () => {
+        mountWithRanges();
+
+        // Hour fills and auto-advances to the empty minute; Backspace there
+        // must not jump into the pills while the range is half-typed.
+        cy.get(sel.start.hour).type('09');
+        cy.focused().should('have.attr', 'data-type', 'minute');
+        cy.focused().type('{backspace}');
+        cy.focused().should('have.attr', 'data-type', 'minute');
+        cy.get(sel.pillText).should('have.length', 2);
+      });
+    });
   });
 };
