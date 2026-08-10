@@ -70,7 +70,7 @@ export function dateInputPartDescriptors(): PartDescriptorMap {
       type: 'year',
       kind: 'numeric',
       maxLength: 4,
-      min: 1000, // TODO: Add a prop to set the default minimum year, like 1979 or 2000
+      min: 1900, // TODO: Add a prop to set the default minimum year, like 1979 or 2000
       max: 9999,
       placeholder: 'yyyy',
     },
