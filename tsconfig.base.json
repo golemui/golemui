@@ -27,6 +27,7 @@
       "@golemui/core/internals": ["libs/core/src/internals.ts"],
       "@golemui/dx": ["libs/dx/src/index.ts"],
       "@golemui/schemas": ["libs/schemas/src/index.ts"],
+      "@golemui/schemas/generator": ["libs/schemas/tools/generate-implementation-schemas.ts"],
       "@golemui/gui-angular": ["libs/gui/angular/src/index.ts"],
       "@golemui/gui-lit": ["libs/gui/lit/src/index.ts"],
       "@golemui/gui-react": ["libs/gui/react/src/index.ts"],
