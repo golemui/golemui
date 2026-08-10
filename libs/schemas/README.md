@@ -40,9 +40,13 @@ ajv.addSchema(commonSchema);
 const widgets = buildWidgetsSchema({
   implementation: 'gui',
   idBase: 'https://golemui.com/schemas/gui/',
+  generatorPath: 'libs/gui/schemas/tools/generate-schemas.ts',
+  formTitle: 'Golem Form DSL',
+  statesDescription: 'Named boolean conditions keyed by state name.',
   manifest: [{ type: 'textinput', schemaFile: 'textinput.schema.json', kind: 'input' }],
   libRootSchemaFiles: ['validators.schema.json'],
   includeSchemalessTypesInKnownWidgetTypes: true,
+  includeCustomWidgetFallback: true,
 });
 ```
 
@@ -83,10 +87,12 @@ both respond with `application/json`.
 ## Generating an implementation tree
 
 An implementation declares a widget manifest (`WidgetManifestEntry[]`) and an
-`ImplementationSchemaConfig`, then runs the builders exported here to produce its
+`ImplementationSchemaConfig`, then calls the shared workspace generator
+(`generateImplementationSchemas` in `libs/schemas/tools/generate-implementation-schemas.ts`,
+aliased as `@golemui/schemas/generator`, dev-only and not published) to produce its
 `widgets.schema.json` (widget union plus `knownWidgetTypes` enum), its `form.schema.json`
 envelope, its `layout-widget.schema.json`, its vendored copy of `schemas/core/`, and its
-package index source. The gui implementation does this in
+package index source. The gui implementation's entry point is
 `libs/gui/schemas/tools/generate-schemas.ts`, run with `npm run generate:schemas`.
 
 Editing workflow for the core file: change it here, then run `npm run generate:schemas`
