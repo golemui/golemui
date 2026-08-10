@@ -1,6 +1,5 @@
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
-import { guiCoreRegistrations } from '@golemui/gui-schemas';
 import { ALL_SCHEMAS, FORM_SCHEMA } from './index';
 
 export type AjvInstance = Ajv2020;
@@ -16,14 +15,8 @@ function buildAjv(): AjvInstance {
   });
   addFormats(ajv);
   // `ajv.getSchema` compiles on lookup and crashes while refs are unregistered, so dedupe
-  // with a plain set. The gui/core/ clones go first so component refs resolve to them.
+  // with a plain set.
   const registeredKeys = new Set<string>();
-  for (const { key, schema } of guiCoreRegistrations()) {
-    if (!registeredKeys.has(key)) {
-      registeredKeys.add(key);
-      ajv.addSchema(schema, key);
-    }
-  }
   for (const schema of ALL_SCHEMAS) {
     if (typeof schema.$id === 'string' && !registeredKeys.has(schema.$id)) {
       registeredKeys.add(schema.$id);
