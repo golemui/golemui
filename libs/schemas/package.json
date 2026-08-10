@@ -27,9 +27,6 @@
     "*.md"
   ],
   "dependencies": {},
-  "devDependencies": {
-    "vitest": "^4.0.0"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/golemui/golemui.git",
