@@ -59,10 +59,7 @@ import {
   type HourFormat,
   type TimeRange,
 } from '../utils/time';
-import {
-  DISABLED_DATE_RANGE_MESSAGE,
-  INCOMPLETE_DATE_TIME_MESSAGE,
-} from '../utils/messages';
+import { DISABLED_DATE_RANGE_MESSAGE, INCOMPLETE_DATE_TIME_MESSAGE } from '../utils/messages';
 
 export class GuiRangeDateTimeCalendar extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
