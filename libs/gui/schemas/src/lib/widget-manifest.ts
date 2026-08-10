@@ -55,7 +55,12 @@ export const guiWidgetManifest: readonly WidgetManifestEntry[] = [
 export const guiSchemaConfig: ImplementationSchemaConfig = {
   implementation: 'gui',
   idBase: 'https://golemui.com/schemas/gui/',
+  generatorPath: 'libs/gui/schemas/tools/generate-schemas.ts',
+  formTitle: 'Golem Form DSL',
+  statesDescription:
+    'Named boolean conditions keyed by state name, each mapping to a reactive expression. States serve two purposes: (1) gating widget visibility via `include.in` / `exclude.from`; (2) overriding individual widget properties when a state is active by appending `".<stateName>"` to any property key - e.g. `"label.myState": "Active label"` or `"props.hint.myState": "Active hint"`. Root-level suffixable props: `label`, `disabled`, `readonly`, `validator`, `size`. Any key inside `props` can also be suffixed.',
   manifest: guiWidgetManifest,
   libRootSchemaFiles: ['ranges.schema.json', 'validators.schema.json'],
   includeSchemalessTypesInKnownWidgetTypes: true,
+  includeCustomWidgetFallback: true,
 };

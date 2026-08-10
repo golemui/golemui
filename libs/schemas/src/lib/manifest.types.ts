@@ -30,16 +30,26 @@ export interface WidgetManifestEntry {
  * const config: ImplementationSchemaConfig = {
  *   implementation: 'gui',
  *   idBase: 'https://golemui.com/schemas/gui/',
+ *   generatorPath: 'libs/gui/schemas/tools/generate-schemas.ts',
+ *   formTitle: 'Golem Form DSL',
+ *   statesDescription: 'Named boolean conditions keyed by state name, ...',
  *   manifest: guiWidgetManifest,
  *   libRootSchemaFiles: ['ranges.schema.json', 'validators.schema.json'],
  *   includeSchemalessTypesInKnownWidgetTypes: true,
+ *   includeCustomWidgetFallback: true,
  * };
  */
 export interface ImplementationSchemaConfig {
-  /** Implementation name, e.g. `gui`. Used in generated titles and file markers. */
+  /** Implementation name, e.g. `gui`. Used in generated titles. */
   readonly implementation: string;
   /** Absolute base URL of the implementation's published schema tree, with a trailing slash. */
   readonly idBase: string;
+  /** Repo-relative path of the implementation's generator entry point, used in the generated-file markers. */
+  readonly generatorPath: string;
+  /** `title` of the generated form envelope. */
+  readonly formTitle: string;
+  /** Description of the form envelope's `states` property, naming the implementation's suffixable root props. */
+  readonly statesDescription: string;
   /** The implementation's widget manifest. */
   readonly manifest: readonly WidgetManifestEntry[];
   /**
@@ -53,4 +63,10 @@ export interface ImplementationSchemaConfig {
    * so their `type` fails validation instead of matching the custom fallback.
    */
   readonly includeSchemalessTypesInKnownWidgetTypes: boolean;
+  /**
+   * When true, the `formWidget` union includes `components/custom.schema.json`
+   * and the generated index exports it as `customSchema`. Turn off for an
+   * implementation without a custom-widget fallback.
+   */
+  readonly includeCustomWidgetFallback: boolean;
 }
