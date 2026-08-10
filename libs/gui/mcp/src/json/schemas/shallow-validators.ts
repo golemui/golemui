@@ -11,11 +11,13 @@
 
 import type Ajv2020 from 'ajv/dist/2020.js';
 import type { ValidateFunction } from 'ajv';
-import { COMPONENT_SCHEMAS, VALIDATORS_SCHEMA } from './index';
+import { COMMON_SCHEMA, COMPONENT_SCHEMAS, CUSTOM_SCHEMA, VALIDATORS_SCHEMA } from './index';
 import { getAjv } from './ajv';
 
 const cache = new Map<string, ValidateFunction>();
 const validatorBranchCache = new Map<string, ValidateFunction>();
+const customKindCache = new Map<string, ValidateFunction>();
+let chunkRefValidator: ValidateFunction | null = null;
 
 /**
  * Map from a validator's `type` field value to its `$defs` key in validators.schema.json.
@@ -58,6 +60,83 @@ export function getValidatorBranchValidator(validatorType: string): ValidateFunc
   const v = ajv.compile(cloned);
   validatorBranchCache.set(defKey, v);
   return v;
+}
+
+/**
+ * Returns a validator for a chunk reference (`{ "$ref": "./x.form-chunk.json" }`), which the
+ * `formWidget` oneOf accepts anywhere a widget can appear.
+ */
+export function getChunkRefValidator(): ValidateFunction {
+  if (!chunkRefValidator) {
+    const ajv: Ajv2020 = getAjv();
+    chunkRefValidator = ajv.compile({ $ref: `${COMMON_SCHEMA.$id}#/$defs/chunkRef` });
+  }
+  return chunkRefValidator;
+}
+
+/** Map from a custom widget's `kind` value to its `$defs` key in custom.schema.json. */
+const CUSTOM_KIND_TO_DEF: Record<string, string> = {
+  input: 'customInput',
+  display: 'customDisplay',
+  action: 'customAction',
+  layout: 'customLayout',
+};
+
+export function getCustomWidgetKinds(): readonly string[] {
+  return Object.keys(CUSTOM_KIND_TO_DEF);
+}
+
+/**
+ * Returns a validator that checks a custom widget against the `custom.schema.json` branch
+ * matching its `kind`, with nested content loosened the same way {@link getShallowWidgetValidator}
+ * loosens it. Returns null if the kind is not one of the four allowed values.
+ */
+export function getCustomWidgetValidator(kind: string): ValidateFunction | null {
+  const defKey = CUSTOM_KIND_TO_DEF[kind];
+  if (!defKey) return null;
+  if (customKindCache.has(defKey)) return customKindCache.get(defKey)!;
+  const cloned = JSON.parse(JSON.stringify(CUSTOM_SCHEMA)) as Record<string, unknown>;
+  rewriteRefs(cloned, CUSTOM_SCHEMA.$id);
+  delete cloned['$id'];
+  // Keep the `allOf` (baseWidget + the built-in type exclusion) and `unevaluatedProperties`, but
+  // replace the kind oneOf with the single matching branch, moved into the allOf so a failure
+  // reports the branch's own error instead of a bare "does not match any allowed variant".
+  delete cloned['oneOf'];
+  cloned['allOf'] = [
+    ...((cloned['allOf'] as unknown[] | undefined) ?? []),
+    { $ref: `#/$defs/${defKey}` },
+  ];
+  loosenNestedContent(cloned['$defs'] as Record<string, unknown> | undefined);
+  const ajv: Ajv2020 = getAjv();
+  const validator = ajv.compile(cloned);
+  customKindCache.set(defKey, validator);
+  return validator;
+}
+
+/**
+ * Replaces `children` and `validator` in the custom branches with permissive primitives. Both
+ * get their own targeted pass (children by recursion, validators by branch).
+ */
+function loosenNestedContent(defs: Record<string, unknown> | undefined): void {
+  const layoutProps = (defs?.['customLayout'] as { properties?: Record<string, unknown> })
+    ?.properties;
+  if (layoutProps?.['children']) {
+    layoutProps['children'] = { type: 'array' };
+  }
+  const customInput = defs?.['customInput'] as
+    | { properties?: Record<string, unknown>; patternProperties?: Record<string, unknown> }
+    | undefined;
+  if (customInput?.properties?.['validator']) {
+    customInput.properties['validator'] = { type: 'object' };
+  }
+  const patternProps = customInput?.patternProperties;
+  if (patternProps) {
+    for (const key of Object.keys(patternProps)) {
+      if (key.startsWith('^validator\\.')) {
+        patternProps[key] = { type: 'object' };
+      }
+    }
+  }
 }
 
 /**

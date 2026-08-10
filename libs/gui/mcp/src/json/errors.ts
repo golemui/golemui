@@ -1,6 +1,9 @@
 import type { ErrorObject } from 'ajv';
 import { COMPONENT_SCHEMAS, WIDGETS_SCHEMA } from './schemas/index';
 import {
+  getChunkRefValidator,
+  getCustomWidgetKinds,
+  getCustomWidgetValidator,
   getShallowWidgetValidator,
   getValidatorBranchValidator,
   getValidatorBranches,
@@ -65,7 +68,11 @@ function levenshtein(a: string, b: string): number {
   return prev[b.length] ?? 0;
 }
 
-function nearest(target: string, candidates: string[]): string | undefined {
+/**
+ * Finds the candidate closest to `target`, or undefined when none is close enough.
+ * @param maxDistance - Edit distance budget. Defaults to half the target's length.
+ */
+function nearest(target: string, candidates: string[], maxDistance?: number): string | undefined {
   let best: string | undefined;
   let bestDist = Infinity;
   for (const c of candidates) {
@@ -75,8 +82,17 @@ function nearest(target: string, candidates: string[]): string | undefined {
       best = c;
     }
   }
-  // Only suggest if the typo is close (at most half the length of the target).
-  return bestDist <= Math.max(2, Math.floor(target.length / 2)) ? best : undefined;
+  const budget = maxDistance ?? Math.max(2, Math.floor(target.length / 2));
+  return bestDist <= budget ? best : undefined;
+}
+
+/**
+ * Edit distance budget for widget types. Tighter than the default: a type name is a custom widget
+ * unless it is a near-miss of a built-in, and half the length is loose enough to turn distinct
+ * names into false typos (`custom` is 3 edits from `button`).
+ */
+function widgetTypeDistance(widgetType: string): number {
+  return Math.max(1, Math.floor(widgetType.length / 3));
 }
 
 function suggestForAdditional(propertyName: string, instancePath: string): string | undefined {
@@ -127,9 +143,10 @@ function suggestForConst(
 ): string | undefined {
   if (typeof value !== 'string' || typeof allowed !== 'string') return undefined;
   // Common: a widget has wrong `type` value. Match only widget-level `/type` paths, NOT nested
-  // type fields like `/validator/type` or `/props/items/type`.
-  if (/^\/form\/\d+(?:\/children\/\d+)*(?:\/props\/template)?\/type$/.test(instancePath)) {
-    const guess = nearest(value, WIDGET_TYPES);
+  // type fields like `/validator/type` or `/props/items/type`. `children` and `props/template`
+  // segments can alternate any number of times (a template holds children that hold templates).
+  if (/^\/form\/\d+(?:\/children\/\d+|\/props\/template)*\/type$/.test(instancePath)) {
+    const guess = nearest(value, WIDGET_TYPES, widgetTypeDistance(value));
     return guess
       ? `Did you mean \`type: '${guess}'\`?`
       : `Valid widget types: ${WIDGET_TYPES.map((v) => `\`${v}\``).join(', ')}.`;
@@ -178,7 +195,12 @@ export function formatAjvErrors(
     switch (err.keyword) {
       case 'additionalProperties':
       case 'unevaluatedProperties': {
-        const prop = (err.params as { additionalProperty?: string }).additionalProperty;
+        // Ajv names the offending key differently per keyword.
+        const params = err.params as {
+          additionalProperty?: string;
+          unevaluatedProperty?: string;
+        };
+        const prop = params.additionalProperty ?? params.unevaluatedProperty;
         if (prop) {
           message = `Unknown property \`${prop}\` at \`${path}\``;
           suggestion = suggestForAdditional(prop, path);
@@ -280,7 +302,7 @@ function pickIntendedBranch(widget: unknown): { $id: string; type: string } | nu
   const pool = kindMatched.length ? kindMatched : Object.entries(COMPONENT_SCHEMAS);
 
   const candidateTypes = pool.map(([t]) => t);
-  const match = nearest(widgetType, candidateTypes);
+  const match = nearest(widgetType, candidateTypes, widgetTypeDistance(widgetType));
   if (!match) return null;
   return { $id: COMPONENT_SCHEMAS[match]!.$id, type: match };
 }
@@ -312,11 +334,18 @@ function collapseOneOfErrors(
   return { errors: [...topLevel, ...widgetErrors], warnings };
 }
 
+/** True for `{ "$ref": "./x.form-chunk.json" }` style entries, which stand in for a widget. */
+function isChunkRef(widget: unknown): boolean {
+  return (
+    typeof widget === 'object' && widget !== null && !Array.isArray(widget) && '$ref' in widget
+  );
+}
+
 /**
  * Validates one widget against its intended branch's shallow schema, then descends
  * into `children` / `props.template`, emitting full instance paths. A `type` that
- * matches no built-in (even fuzzily) is treated as a custom widget and produces a
- * warning, not an error.
+ * matches no built-in (even fuzzily) is validated against the custom-widget schema
+ * and produces a warning on top of any structural errors it has.
  */
 function collectWidgetErrors(
   widget: unknown,
@@ -324,6 +353,17 @@ function collectWidgetErrors(
   out: ErrorObject[],
   warnings: FormattedError[],
 ): void {
+  // A chunk reference is a legal formWidget member with no `type`, so it has to be handled
+  // before everything below, all of which assumes the widget declares a type.
+  if (isChunkRef(widget)) {
+    const chunkRefValidator = getChunkRefValidator();
+    chunkRefValidator(widget);
+    for (const e of chunkRefValidator.errors ?? []) {
+      out.push({ ...e, instancePath: widgetPath + e.instancePath });
+    }
+    return;
+  }
+
   // Schema-less built-ins (e.g. `renderer`) must fail hard. Checked before the fuzzy
   // match, which could otherwise resolve `renderer` to `repeater` (within edit distance).
   const declaredType = (widget as { type?: unknown } | undefined)?.type;
@@ -363,6 +403,9 @@ function collectWidgetErrors(
           '. If this is intentional (a custom widget registered via the framework loader), you can ignore this warning.',
         params: { type: widgetType },
       });
+      // `props` stays open, but the structure the widget's `kind` requires is still checked -
+      // otherwise a custom widget missing e.g. `path` would come back valid.
+      collectCustomWidgetErrors(widget, widgetPath, out);
     }
     // Even for an unknown widget, recurse into nested standard widgets so we don't miss errors
     // in their content (a custom layout may wrap normal form widgets in its `children`).
@@ -381,33 +424,87 @@ function collectWidgetErrors(
     }
   }
 
-  const w = widget as
-    | { type?: unknown; validator?: unknown; children?: unknown; props?: { template?: unknown } }
-    | undefined;
-
-  // Validate the widget's `validator` field (skipped by the shallow widget schema). Its own oneOf
-  // would otherwise produce 5 branches of noise; we pick the matching branch from `validator.type`.
-  if (w?.validator && typeof w.validator === 'object') {
-    collectValidatorErrors(w.validator, `${widgetPath}/validator`, out);
-  }
-  // State-scoped validator variants (e.g. `validator.register: {...}`). Same shallow-loosening
-  // applies in the widget schema, so we revalidate each variant against its own branch.
-  if (widget && typeof widget === 'object' && !Array.isArray(widget)) {
-    for (const [key, value] of Object.entries(widget as Record<string, unknown>)) {
-      if (key.startsWith('validator.') && value && typeof value === 'object') {
-        collectValidatorErrors(value, `${widgetPath}/${key}`, out);
-      }
-    }
-  }
-
-  recurseIntoChildren(widget, widgetPath, out, warnings);
+  collectValidatorFieldErrors(widget, widgetPath, out);
+  recurseIntoChildren(widget, widgetPath, out, warnings, intended.type);
 }
 
+/**
+ * Validates a custom widget against the `custom.schema.json` branch matching its `kind`. The
+ * type itself is already known to be non-built-in, so only the structure is checked here.
+ */
+function collectCustomWidgetErrors(widget: unknown, widgetPath: string, out: ErrorObject[]): void {
+  const kind = (widget as { kind?: unknown } | undefined)?.kind;
+  if (typeof kind !== 'string') {
+    out.push({
+      keyword: 'required',
+      instancePath: widgetPath,
+      schemaPath: '',
+      params: { missingProperty: 'kind' },
+      message: `Widget at ${widgetPath} is missing or has an invalid \`kind\``,
+    } as unknown as ErrorObject);
+    return;
+  }
+  const validator = getCustomWidgetValidator(kind);
+  if (!validator) {
+    out.push({
+      keyword: 'enum',
+      instancePath: `${widgetPath}/kind`,
+      schemaPath: '',
+      params: { allowedValues: getCustomWidgetKinds() },
+      message: `Widget kind is not one of ${getCustomWidgetKinds().join(', ')}`,
+      data: kind,
+    } as unknown as ErrorObject);
+    return;
+  }
+  validator(widget);
+  const branchErrors = validator.errors ?? [];
+  // A failing branch leaves its own properties unevaluated, so `unevaluatedProperties` fires as a
+  // consequence of the real error. Report it only when it is the only thing wrong.
+  const hasSpecificError = branchErrors.some((e) => e.keyword !== 'unevaluatedProperties');
+  for (const e of branchErrors) {
+    if (hasSpecificError && e.keyword === 'unevaluatedProperties') continue;
+    out.push({ ...e, instancePath: widgetPath + e.instancePath });
+  }
+  // Only the input branch accepts a `validator` field, and only there is it loosened to a plain
+  // object by getCustomWidgetValidator, so only there does it need its own pass.
+  if (kind === 'input') {
+    collectValidatorFieldErrors(widget, widgetPath, out);
+  }
+}
+
+/**
+ * Validates the widget's `validator` field and its state-scoped variants (e.g.
+ * `validator.register`). Both are loosened to plain objects by the shallow widget schemas,
+ * because the validator's own oneOf would otherwise produce 5 branches of noise. Here the
+ * matching branch is picked from `validator.type` instead.
+ */
+function collectValidatorFieldErrors(
+  widget: unknown,
+  widgetPath: string,
+  out: ErrorObject[],
+): void {
+  if (!widget || typeof widget !== 'object' || Array.isArray(widget)) return;
+  const w = widget as Record<string, unknown>;
+  if (w['validator'] && typeof w['validator'] === 'object') {
+    collectValidatorErrors(w['validator'], `${widgetPath}/validator`, out);
+  }
+  for (const [key, value] of Object.entries(w)) {
+    if (key.startsWith('validator.') && value && typeof value === 'object') {
+      collectValidatorErrors(value, `${widgetPath}/${key}`, out);
+    }
+  }
+}
+
+/**
+ * Descends into nested widgets. `resolvedType` is the type the fuzzy match settled on, so a
+ * repeater with a typo'd type still gets its template checked.
+ */
 function recurseIntoChildren(
   widget: unknown,
   widgetPath: string,
   out: ErrorObject[],
   warnings: FormattedError[],
+  resolvedType?: string,
 ): void {
   const w = widget as
     | { type?: unknown; children?: unknown; props?: { template?: unknown } }
@@ -417,7 +514,7 @@ function recurseIntoChildren(
       collectWidgetErrors(child, `${widgetPath}/children/${i}`, out, warnings);
     });
   }
-  if (w?.type === 'repeater' && w.props?.template) {
+  if ((resolvedType ?? w?.type) === 'repeater' && w?.props?.template) {
     collectWidgetErrors(w.props.template, `${widgetPath}/props/template`, out, warnings);
   }
 }
