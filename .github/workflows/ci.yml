@@ -32,6 +32,9 @@ jobs:
 
       - name: Check generated schemas are up to date
         run: |
+          # Fail fast on a crashing generator instead of relying on the runner's
+          # undeclared `bash -e` default, which a shell: change would drop.
+          set -euo pipefail
           npm run generate:schemas
           # Intent-to-add so brand-new generated files also show up in the diff
           # (git diff ignores untracked files).
