@@ -30,7 +30,7 @@
         },
         "end": {
           "type": "string",
-          "description": "ISO-8601 date-time string for the end of the range (inclusive)"
+          "description": "ISO-8601 date-time string for the end of the range (inclusive). Omit to disable the single instant at start."
         }
       },
       "required": ["start"],
