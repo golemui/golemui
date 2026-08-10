@@ -17,16 +17,30 @@ const sourceFiles: Record<string, Record<string, unknown>> = import.meta.glob(
   { import: 'default', eager: true },
 );
 
+// Raw variants of the same globs: identity below is asserted on bytes, because the
+// generator copies bytes verbatim apart from the rebased `$id`.
+// @ts-expect-error import.meta.glob is provided by Vite/Vitest at runtime
+const vendoredRawFiles: Record<string, string> = import.meta.glob('./*.schema.json', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+});
+
+// @ts-expect-error import.meta.glob is provided by Vite/Vitest at runtime
+const sourceRawFiles: Record<string, string> = import.meta.glob(
+  '../../../../../schemas/src/lib/core/*.schema.json',
+  { query: '?raw', import: 'default', eager: true },
+);
+
 function fileNames(globResult: Record<string, unknown>): string[] {
   return Object.keys(globResult)
     .map((path) => path.split('/').pop() as string)
     .sort();
 }
 
-function withoutId(schema: Record<string, unknown>): Record<string, unknown> {
-  const copy = { ...schema };
-  delete copy['$id'];
-  return copy;
+// Same single-$id shape the generator's rebase step relies on.
+function withNormalizedId(schemaText: string): string {
+  return schemaText.replace(/"\$id":\s*"[^"]*"/g, '"$id": "<normalized>"');
 }
 
 describe('vendored core schemas stay in step with the @golemui/schemas sources', () => {
@@ -35,15 +49,13 @@ describe('vendored core schemas stay in step with the @golemui/schemas sources',
     expect(fileNames(vendoredFiles)).toEqual(fileNames(sourceFiles));
   });
 
-  it('keeps every vendored copy identical to its source apart from $id', () => {
+  it('keeps every vendored copy byte-identical to its source apart from $id', () => {
     const sourceByName = new Map(
-      Object.entries(sourceFiles).map(([path, schema]) => [path.split('/').pop(), schema]),
+      Object.entries(sourceRawFiles).map(([path, text]) => [path.split('/').pop(), text]),
     );
-    for (const [path, schema] of Object.entries(vendoredFiles)) {
+    for (const [path, text] of Object.entries(vendoredRawFiles)) {
       const name = path.split('/').pop() as string;
-      expect(withoutId(schema), name).toEqual(
-        withoutId(sourceByName.get(name) as Record<string, unknown>),
-      );
+      expect(withNormalizedId(text), name).toBe(withNormalizedId(sourceByName.get(name) as string));
     }
   });
 
