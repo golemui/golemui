@@ -16,7 +16,7 @@
       "require": "./index.umd.cjs"
     },
     "./schemas/*.schema.json": "./schemas/*.schema.json",
-    "./schemas/core/*.schema.json": "./schemas/core/*.schema.json"
+    "./package.json": "./package.json"
   },
   "files": [
     "lib",
