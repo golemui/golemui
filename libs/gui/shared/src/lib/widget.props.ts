@@ -223,24 +223,24 @@ export type IncompleteMessageProps = {
  */
 export type DateTimeCalendarProps = CalendarProps &
   IncompleteMessageProps & {
-  /** '12' or '24'. Defaults to the locale's hour cycle. */
-  hourFormat?: '12' | '24';
-  /** Minutes between selectable slots. Defaults to 30. */
-  minuteStep?: number;
-  /** First selectable time (ISO time, inclusive). Defaults to '00:00:00'. */
-  minTime?: string;
-  /** Last selectable time (ISO time, inclusive). Defaults to '23:59:59'. */
-  maxTime?: string;
-  /** Times inside these ranges render disabled; entries can scope per day. */
-  disabledTimeRanges?: DisabledTimeRange[];
-  /** Allows typing a time in the input; when false (default) times come only from the grid. */
-  allowCustomTime?: boolean;
-  minTimeMessage?: Localizable;
-  maxTimeMessage?: Localizable;
-  disabledTimeRangeMessage?: Localizable;
-  /** Shown in the time grid when the bounds yield no slots. Defaults to 'No available times'. */
-  noAvailableTimesMessage?: Localizable;
-};
+    /** '12' or '24'. Defaults to the locale's hour cycle. */
+    hourFormat?: '12' | '24';
+    /** Minutes between selectable slots. Defaults to 30. */
+    minuteStep?: number;
+    /** First selectable time (ISO time, inclusive). Defaults to '00:00:00'. */
+    minTime?: string;
+    /** Last selectable time (ISO time, inclusive). Defaults to '23:59:59'. */
+    maxTime?: string;
+    /** Times inside these ranges render disabled; entries can scope per day. */
+    disabledTimeRanges?: DisabledTimeRange[];
+    /** Allows typing a time in the input; when false (default) times come only from the grid. */
+    allowCustomTime?: boolean;
+    minTimeMessage?: Localizable;
+    maxTimeMessage?: Localizable;
+    disabledTimeRangeMessage?: Localizable;
+    /** Shown in the time grid when the bounds yield no slots. Defaults to 'No available times'. */
+    noAvailableTimesMessage?: Localizable;
+  };
 
 export type RangeCalendarProps = {
   /**
@@ -474,38 +474,38 @@ export type RangeDateTimeCalendarProps = Omit<
   'minDate' | 'maxDate' | 'disabledRanges' | 'disabledDateRangeMessage'
 > &
   IncompleteMessageProps & {
-  hourFormat?: '12' | '24';
-  minuteStep?: number;
-  /** Allows typing a time in each picker; when false (default) times come only from the grid. */
-  allowCustomTime?: boolean;
-  /** Visible heading on the start time picker. Defaults to "Start time". */
-  startTimeLabel?: Localizable;
-  /** Visible heading on the end time picker. Defaults to "End time". */
-  endTimeLabel?: Localizable;
-  /** Earliest allowed instant (ISO date-time, inclusive). */
-  minDateTime?: string;
-  /** Latest allowed instant (ISO date-time, inclusive). */
-  maxDateTime?: string;
-  minDateTimeMessage?: Localizable;
-  maxDateTimeMessage?: Localizable;
-  /** Disabled instant spans. Blocking a whole day is a span of 00:00:00–23:59:59. */
-  disabledRanges?: DateTimeRange[];
-  /** Error surfaced when a selected range steps over, or overlaps, a disabled span. */
-  disabledRangeMessage?: Localizable;
-  /** Shown in a time grid when the bounds yield no slots. Defaults to 'No available times'. */
-  noAvailableTimesMessage?: Localizable;
-  /**
-   * ARIA label template for the per-day count badge; a `{count}` token is
-   * substituted with the number of ranges on that day. Defaults to '{count} ranges'.
-   */
-  dayCountAriaLabel?: Localizable;
-  /**
-   * ARIA label template for the grey per-day disabled-spans badge shown on
-   * partially-blocked days; a `{count}` token is substituted with the number of
-   * disabled spans on that day. Defaults to '{count} disabled ranges'.
-   */
-  disabledDayCountAriaLabel?: Localizable;
-};
+    hourFormat?: '12' | '24';
+    minuteStep?: number;
+    /** Allows typing a time in each picker; when false (default) times come only from the grid. */
+    allowCustomTime?: boolean;
+    /** Visible heading on the start time picker. Defaults to "Start time". */
+    startTimeLabel?: Localizable;
+    /** Visible heading on the end time picker. Defaults to "End time". */
+    endTimeLabel?: Localizable;
+    /** Earliest allowed instant (ISO date-time, inclusive). */
+    minDateTime?: string;
+    /** Latest allowed instant (ISO date-time, inclusive). */
+    maxDateTime?: string;
+    minDateTimeMessage?: Localizable;
+    maxDateTimeMessage?: Localizable;
+    /** Disabled instant spans. Blocking a whole day is a span of 00:00:00–23:59:59. */
+    disabledRanges?: DateTimeRange[];
+    /** Error surfaced when a selected range steps over, or overlaps, a disabled span. */
+    disabledRangeMessage?: Localizable;
+    /** Shown in a time grid when the bounds yield no slots. Defaults to 'No available times'. */
+    noAvailableTimesMessage?: Localizable;
+    /**
+     * ARIA label template for the per-day count badge; a `{count}` token is
+     * substituted with the number of ranges on that day. Defaults to '{count} ranges'.
+     */
+    dayCountAriaLabel?: Localizable;
+    /**
+     * ARIA label template for the grey per-day disabled-spans badge shown on
+     * partially-blocked days; a `{count}` token is substituted with the number of
+     * disabled spans on that day. Defaults to '{count} disabled ranges'.
+     */
+    disabledDayCountAriaLabel?: Localizable;
+  };
 
 export type RangeTimeInputProps = IncompleteMessageProps & {
   hint?: string;

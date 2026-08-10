@@ -490,10 +490,7 @@ export const runTimePickerComponentTests = (mountFn: MountComponentFn) => {
         cy.get(sel.hour).type('09');
         cy.get('[data-cy="submitBtn_button"]').focus();
 
-        cy.get('[data-cy="testSubject_validator-error"]').should(
-          'contain.text',
-          'Incomplete time',
-        );
+        cy.get('[data-cy="testSubject_validator-error"]').should('contain.text', 'Incomplete time');
       });
 
       it('should clear the incomplete error when the emptied picker is left again', () => {
@@ -504,10 +501,7 @@ export const runTimePickerComponentTests = (mountFn: MountComponentFn) => {
 
         cy.get(sel.hour).type('09');
         cy.get('[data-cy="submitBtn_button"]').focus();
-        cy.get('[data-cy="testSubject_validator-error"]').should(
-          'contain.text',
-          'Incomplete time',
-        );
+        cy.get('[data-cy="testSubject_validator-error"]').should('contain.text', 'Incomplete time');
 
         cy.get(sel.hour).type('{selectAll}{backspace}', { force: true });
         cy.get('[data-cy="submitBtn_button"]').focus();
