@@ -126,7 +126,5 @@ export async function generateImplementationSchemas(
     console.log(`Wrote ${relative(packageRoot, output.path)} (${output.content.length} bytes)`);
   }
 
-  console.log(
-    `Generated ${outputs.length} files from ${config.manifest.length} manifest entries.`,
-  );
+  console.log(`Generated ${outputs.length} files from ${config.manifest.length} manifest entries.`);
 }
