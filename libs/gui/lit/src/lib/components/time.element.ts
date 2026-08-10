@@ -1,15 +1,15 @@
 import type { InputWidget, WithWidget } from '@golemui/core';
 import { InputWidgetAdapter, type LitFormContext, formContext, inputContext } from '@golemui/lit';
 import { addIcon } from '@golemui/gui-components/internals';
+import { safeDefine } from '@golemui/lit/internals';
 import type { TimeInputProps } from '@golemui/gui-shared/internals';
 import '@golemui/gui-components/time-input';
 import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
 import { type Subscription } from 'rxjs';
 import { classMap } from 'lit/directives/class-map.js';
 
-@customElement('gui-time-input')
 export class TimeElement extends LitElement implements WithWidget {
   widget!: InputWidget<string>;
 
@@ -101,3 +101,5 @@ export class TimeElement extends LitElement implements WithWidget {
     this.subscriptions.forEach((s) => s.unsubscribe());
   }
 }
+
+safeDefine('gui-time-input', TimeElement);

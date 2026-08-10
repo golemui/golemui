@@ -4,10 +4,10 @@ import type { RadiogroupProps } from '@golemui/gui-shared/internals';
 import '@golemui/gui-components/radiogroup';
 import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
+import { safeDefine } from '@golemui/lit/internals';
 import { type Subscription } from 'rxjs';
 
-@customElement('gui-radiogroup-input')
 export class RadiogroupElement extends LitElement implements WithWidget {
   widget!: InputWidget<string>;
 
@@ -82,3 +82,5 @@ export class RadiogroupElement extends LitElement implements WithWidget {
     this.subscriptions.forEach((s) => s.unsubscribe());
   }
 }
+
+safeDefine('gui-radiogroup-input', RadiogroupElement);

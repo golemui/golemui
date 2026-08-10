@@ -214,6 +214,7 @@
     "*.md"
   ],
   "peerDependencies": {
+    "@golemui/lit": "*",
     "@golemui/core": "*",
     "@golemui/gui-shared": "*",
     "lit-html": "^3.3.1",

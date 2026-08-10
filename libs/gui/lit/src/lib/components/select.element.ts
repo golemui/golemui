@@ -4,10 +4,10 @@ import type { SelectProps } from '@golemui/gui-shared/internals';
 import '@golemui/gui-components/select';
 import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
+import { safeDefine } from '@golemui/lit/internals';
 import { type Subscription } from 'rxjs';
 
-@customElement('gui-select-input')
 export class SelectElement extends LitElement implements WithWidget {
   widget!: InputWidget<string>;
 
@@ -90,3 +90,5 @@ export class SelectElement extends LitElement implements WithWidget {
     this.subscriptions.forEach((s) => s.unsubscribe());
   }
 }
+
+safeDefine('gui-select-input', SelectElement);

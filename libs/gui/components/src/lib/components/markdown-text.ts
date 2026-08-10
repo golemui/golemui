@@ -1,9 +1,9 @@
 import { html, LitElement } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
+import { safeDefine } from '@golemui/lit/internals';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { type Dependencies } from '@golemui/gui-shared';
 
-@customElement('gui-markdown-text')
 export class GuiMarkdownText extends LitElement {
   @property({ type: String }) md: string | undefined = undefined;
   @property({ type: Object }) dependencies: Dependencies | undefined = undefined;
@@ -23,6 +23,4 @@ declare global {
   }
 }
 
-if (typeof customElements !== 'undefined' && !customElements.get('gui-markdown-text')) {
-  customElements.define('gui-markdown-text', GuiMarkdownText);
-}
+safeDefine('gui-markdown-text', GuiMarkdownText);

@@ -4,10 +4,10 @@ import type { DateTimeRange, RangeDateTimeCalendarProps } from '@golemui/gui-sha
 import '@golemui/gui-components/range-date-time-calendar';
 import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
+import { safeDefine } from '@golemui/lit/internals';
 import { type Subscription } from 'rxjs';
 
-@customElement('gui-range-date-time-calendar-input')
 export class RangeDateTimeCalendarElement extends LitElement implements WithWidget {
   widget!: InputWidget<DateTimeRange[]>;
 
@@ -115,3 +115,5 @@ export class RangeDateTimeCalendarElement extends LitElement implements WithWidg
     this.subscriptions.forEach((s) => s.unsubscribe());
   }
 }
+
+safeDefine('gui-range-date-time-calendar-input', RangeDateTimeCalendarElement);

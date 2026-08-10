@@ -8,10 +8,10 @@ import {
 import type { RendererProps } from '@golemui/gui-shared/internals';
 import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
+import { safeDefine } from '@golemui/lit/internals';
 import { type Subscription } from 'rxjs';
 
-@customElement('gui-renderer-component')
 export class RendererElement extends LitElement implements WithWidget {
   widget!: DisplayWidget;
 
@@ -63,3 +63,5 @@ export class RendererElement extends LitElement implements WithWidget {
     this.subscriptions.forEach((s) => s.unsubscribe());
   }
 }
+
+safeDefine('gui-renderer-component', RendererElement);

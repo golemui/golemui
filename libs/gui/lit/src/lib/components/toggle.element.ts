@@ -4,10 +4,10 @@ import type { ToggleProps } from '@golemui/gui-shared/internals';
 import '@golemui/gui-components/toggle';
 import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
+import { safeDefine } from '@golemui/lit/internals';
 import { type Subscription } from 'rxjs';
 
-@customElement('gui-toggle-input')
 export class ToggleElement extends LitElement implements WithWidget {
   widget!: InputWidget<boolean>;
 
@@ -79,3 +79,5 @@ export class ToggleElement extends LitElement implements WithWidget {
     this.subscriptions.forEach((s) => s.unsubscribe());
   }
 }
+
+safeDefine('gui-toggle-input', ToggleElement);

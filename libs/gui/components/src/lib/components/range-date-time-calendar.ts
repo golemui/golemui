@@ -1,5 +1,6 @@
 import { html, LitElement, nothing, type PropertyValues, type TemplateResult } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
+import { property, state } from 'lit/decorators.js';
+import { safeDefine } from '@golemui/lit/internals';
 import { classMap } from 'lit/directives/class-map.js';
 import type { DateTimeRange } from '@golemui/gui-shared/internals';
 import { GUIAriaController } from '../controllers/aria.controller';
@@ -63,7 +64,6 @@ import {
   INCOMPLETE_DATE_TIME_MESSAGE,
 } from '../utils/messages';
 
-@customElement('gui-range-date-time-calendar')
 export class GuiRangeDateTimeCalendar extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
@@ -1112,6 +1112,4 @@ declare global {
   }
 }
 
-if (typeof customElements !== 'undefined' && !customElements.get('gui-range-date-time-calendar')) {
-  customElements.define('gui-range-date-time-calendar', GuiRangeDateTimeCalendar);
-}
+safeDefine('gui-range-date-time-calendar', GuiRangeDateTimeCalendar);

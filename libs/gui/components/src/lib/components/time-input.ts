@@ -1,6 +1,7 @@
 import type { TimeInputProps } from '@golemui/gui-shared/internals';
 import { html, LitElement, nothing, type PropertyValues } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
+import { safeDefine } from '@golemui/lit/internals';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
@@ -22,7 +23,6 @@ const TIME_PART_TYPES: readonly DateTimePartType[] = ['hour', 'minute'];
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 import { getTimeFormatParts, type HourFormat } from '../utils/time';
 
-@customElement('gui-time')
 export class GuiTime extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
@@ -315,6 +315,4 @@ declare global {
   }
 }
 
-if (typeof customElements !== 'undefined' && !customElements.get('gui-time')) {
-  customElements.define('gui-time', GuiTime);
-}
+safeDefine('gui-time', GuiTime);

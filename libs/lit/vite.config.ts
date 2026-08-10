@@ -22,9 +22,14 @@ export default defineConfig(() => ({
     emptyOutDir: true,
     reportCompressedSize: true,
     lib: {
-      entry: 'src/index.ts',
+      entry: {
+        index: 'src/index.ts',
+        internals: 'src/internals.ts',
+      },
       name: 'lit',
-      fileName: 'index',
+      formats: ['es', 'cjs'],
+      fileName: (format: string, entryName: string) =>
+        format === 'cjs' ? `${entryName}.umd.cjs` : `${entryName}.js`,
     },
     rollupOptions: {
       external: ['@golemui/core', '@golemui/dx', 'rxjs', /^@?lit(-\w+)?($|\/.+)/],

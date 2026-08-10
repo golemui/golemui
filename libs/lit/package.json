@@ -14,6 +14,11 @@
       "types": "./index.d.ts",
       "import": "./index.js",
       "require": "./index.umd.cjs"
+    },
+    "./internals": {
+      "types": "./internals.d.ts",
+      "import": "./internals.js",
+      "require": "./internals.umd.cjs"
     }
   },
   "files": [
@@ -21,6 +26,11 @@
     "index.d.ts",
     "index.js",
     "index.umd.cjs",
+    "internals.d.ts",
+    "internals.js",
+    "internals.umd.cjs",
+    "*.js",
+    "*.cjs",
     "*.md"
   ],
   "dependencies": {

@@ -4,10 +4,10 @@ import type { TimeRange, RangeTimeInputProps } from '@golemui/gui-shared/interna
 import '@golemui/gui-components/range-time-input';
 import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
+import { safeDefine } from '@golemui/lit/internals';
 import { type Subscription } from 'rxjs';
 
-@customElement('gui-range-time-input')
 export class RangeTimeInputElement extends LitElement implements WithWidget {
   widget!: InputWidget<TimeRange[]>;
 
@@ -99,3 +99,5 @@ export class RangeTimeInputElement extends LitElement implements WithWidget {
     this.subscriptions.forEach((s) => s.unsubscribe());
   }
 }
+
+safeDefine('gui-range-time-input', RangeTimeInputElement);
