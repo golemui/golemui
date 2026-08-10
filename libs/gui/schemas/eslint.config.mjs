@@ -13,8 +13,9 @@ export default [
             '{projectRoot}/vite.config.{js,ts,mjs,mts}',
             '{projectRoot}/src/**/*.spec*.ts',
             '{projectRoot}/tools/**/*.ts',
-            // Type-only import of @golemui/schemas, excluded from the lib build output, so it
-            // must not force a runtime dependency in package.json.
+            // Type-only import of @golemui/schemas. The rule reports it as a runtime
+            // dependency either way, so the ignore stays and the build asserts instead:
+            // see failOnForeignWorkspaceModules in vite.config.ts.
             '{projectRoot}/src/lib/widget-manifest.ts',
           ],
         },
