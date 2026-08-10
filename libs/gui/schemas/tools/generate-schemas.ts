@@ -36,6 +36,16 @@ async function formatWithRepoConfig(content: string, filePath: string): Promise<
   return format(content, { ...options, filepath: filePath });
 }
 
+/** Replaces the single `$id` value in a schema file's raw text, leaving the rest untouched. */
+function withRebasedId(schemaText: string, id: string, fileName: string): string {
+  const idPattern = /"\$id":\s*"[^"]*"/g;
+  const matches = schemaText.match(idPattern);
+  if (matches?.length !== 1) {
+    throw new Error(`Expected exactly one $id in ${fileName}, found ${matches?.length ?? 0}.`);
+  }
+  return schemaText.replace(idPattern, () => `"$id": "${id}"`);
+}
+
 async function main(): Promise<void> {
   const outputs: Array<{ path: string; content: string }> = [];
 
@@ -49,13 +59,20 @@ async function main(): Promise<void> {
     join(LIB_DIR, 'layout-widget.schema.json'),
     buildLayoutWidgetSchema(guiSchemaConfig),
   );
-  // Copy core files verbatim so the drift test can require byte identity. Listing
-  // the source directory means a newly added core file cannot be skipped.
+  // Vendor the core files under the gui tree. The `$id` is rebased onto that tree so it
+  // matches the retrieval URI sibling refs like `../core/common.schema.json` resolve to,
+  // which is what lets the published JSON tree be loaded by `$id` alone. Everything else
+  // is copied verbatim. Listing the source directory means a newly added core file cannot
+  // be skipped.
   const coreFiles = coreSchemaFileNames(CORE_SOURCE_DIR);
   for (const coreFile of coreFiles) {
     outputs.push({
       path: join(LIB_DIR, 'core', coreFile),
-      content: readFileSync(join(CORE_SOURCE_DIR, coreFile), 'utf-8'),
+      content: withRebasedId(
+        readFileSync(join(CORE_SOURCE_DIR, coreFile), 'utf-8'),
+        `${guiSchemaConfig.idBase}core/${coreFile}`,
+        coreFile,
+      ),
     });
   }
   const indexPath = join(PACKAGE_ROOT, 'src', 'index.ts');

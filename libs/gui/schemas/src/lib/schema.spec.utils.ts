@@ -6,7 +6,6 @@ import layoutWidgetSchema from './layout-widget.schema.json';
 import rangesSchema from './ranges.schema.json';
 import validatorsSchema from './validators.schema.json';
 import widgetsSchema from './widgets.schema.json';
-import { guiCoreRegistrations } from './core-registrations';
 
 export type GetSchema = NonNullable<ReturnType<Ajv2020['getSchema']>>;
 
@@ -36,13 +35,8 @@ function addSchemaOnce(ajv: Ajv2020, schema: any, key?: string): void {
 }
 
 export function registerGolemSchemas(ajv: Ajv2020) {
-  // Register the $id-stripped clones first so component refs resolve to the
-  // gui/core/ retrieval URIs (see core-registrations.ts).
-  for (const { key, schema } of guiCoreRegistrations()) {
-    addSchemaOnce(ajv, schema, key);
-  }
-  // The vendored core copy registers under its canonical core/ $id. The
-  // gui-owned validators and ranges files register under their gui/ $ids.
+  // Every file registers under its own $id, which for the vendored core copy is the
+  // gui/core/ retrieval URI that component refs resolve to.
   addSchemaOnce(ajv, commonSchema);
   addSchemaOnce(ajv, validatorsSchema);
   addSchemaOnce(ajv, rangesSchema);
