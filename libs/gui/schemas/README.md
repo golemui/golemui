@@ -21,6 +21,10 @@ schemas/
   core/*.schema.json         vendored copy of the @golemui/schemas core file (generated)
 ```
 
+Every file under `schemas/` is reachable as a raw asset, for example
+`@golemui/gui-schemas/schemas/components/textinput.schema.json`. The package also
+has a JavaScript entry point that exports the same files as objects.
+
 The generated files derive from the widget manifest
 (`src/lib/widget-manifest.ts`). Do not edit them, run `npm run generate:schemas`
 after changing the manifest or the `@golemui/schemas` core sources. CI fails
@@ -29,51 +33,47 @@ when generated files are stale.
 The shared `common.schema.json` moved to the `@golemui/schemas` package and is
 vendored here under `schemas/core/`. Raw-asset imports of
 `@golemui/gui-schemas/schemas/common.schema.json` must switch to
-`schemas/core/common.schema.json`. `validators.schema.json` stays at the
-`schemas/` root and is owned by this package: validation vocabulary is
+`schemas/core/common.schema.json`. The vendored copy is identical to the core
+source apart from its `$id`, which is rebased onto this tree
+(`https://golemui.com/schemas/gui/core/common.schema.json`) so it matches the
+retrieval URI that sibling refs resolve to. `validators.schema.json` stays at
+the `schemas/` root and is owned by this package: validation vocabulary is
 implementation-specific, so it is not part of the core layer, and its `$id` is
 now `https://golemui.com/schemas/gui/validators.schema.json`. The package
 entry-point export names (`commonSchema`, `validatorsSchema`, and every
 component schema export) are unchanged, but the `$id` values and `$ref` layout
-are not, which changes how they register into Ajv (next section).
+are not.
+
+These `$id` values are identifiers, not download URLs. The matching tree under
+`https://golemui.com/schemas/` is not published yet, so nothing dereferences
+them today.
 
 ## Validating with Ajv
 
-Component schemas reference the vendored core file with relative refs like
-`../core/common.schema.json`. Resolved against a component `$id`
-(`https://golemui.com/schemas/gui/components/...`) those refs resolve to the
-`gui/core/` retrieval URIs, while the vendored core file carries the canonical
-core `$id` (`https://golemui.com/schemas/core/...`). Registering the exported
-schemas alone therefore fails with a `MissingRefError`. Register the
-`guiCoreRegistrations()` clones as well. The gui-owned `validators.schema.json`
-and `ranges.schema.json` need no clones: their `$id`s are exactly what the
-component refs (`../validators.schema.json`, `../ranges.schema.json`) resolve
-to, so plain `addSchema` is enough.
+Every shipped file declares the `$id` that its siblings reference, so registering
+the files is all that is needed. A component ref like
+`../core/common.schema.json` resolves to the vendored core copy's own `$id`.
 
 ```ts
 import Ajv2020 from 'ajv/dist/2020';
 import {
   commonSchema,
-  guiCoreRegistrations,
   rangesSchema,
   textinputSchema,
   validatorsSchema,
 } from '@golemui/gui-schemas';
 
 const ajv = new Ajv2020();
-for (const { key, schema } of guiCoreRegistrations()) {
-  ajv.addSchema(schema, key);
-}
 ajv.addSchema(commonSchema);
 ajv.addSchema(validatorsSchema);
 ajv.addSchema(rangesSchema);
 const validate = ajv.compile(textinputSchema);
 ```
 
-Do not load the core `common.schema.json` of both `@golemui/schemas` and
-`@golemui/gui-schemas` into the same Ajv instance. The vendored copy is
-byte-identical to the source, including the `$id`, so Ajv rejects the second
-registration as a duplicate id.
+The raw `schemas/` files behave the same way: registering each one by its own
+`$id` resolves the whole tree, with no JavaScript from this package involved.
+The core `common.schema.json` of `@golemui/schemas` keeps its own `$id`, so both
+packages can be loaded into one Ajv instance.
 
 ## Documentation
 
