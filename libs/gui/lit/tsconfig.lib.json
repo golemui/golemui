@@ -28,5 +28,6 @@
     "cypress.config.ts",
     "**/*.cy.ts",
     "**/*.cy.js"
-  ]
+  ],
+  "exclude": ["src/**/*.spec.ts", "src/**/*.test.ts"]
 }

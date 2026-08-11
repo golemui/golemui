@@ -29,7 +29,7 @@ export default defineConfig(() => ({
       name: 'lit',
       formats: ['es', 'cjs'],
       fileName: (format: string, entryName: string) =>
-        format === 'cjs' ? `${entryName}.umd.cjs` : `${entryName}.js`,
+        format === 'cjs' ? `${entryName}.cjs` : `${entryName}.js`,
     },
     rollupOptions: {
       external: ['@golemui/core', '@golemui/dx', 'rxjs', /^@?lit(-\w+)?($|\/.+)/],
