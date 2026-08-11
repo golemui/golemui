@@ -94,5 +94,40 @@ export const runValidatorInjectionTests = (mountFn: MountComponentFn) => {
         .contains('Too small: expected string to have >=10 characters');
       cy.get('[data-cy="testSubject_validator-errors"] li').eq(1).contains('Invalid date format');
     });
+
+    it(`Should mark the control as touched when injecting validation issues`, () => {
+      mountFn({
+        withCustomComponent: true,
+        formDef: defineForm({
+          form: [
+            {
+              uid: 'testSubject',
+              kind: 'input',
+              type: 'customdate',
+              path: 'myField',
+              validator: {
+                type: 'string',
+                minLength: 20,
+              },
+            },
+          ],
+        }),
+      });
+
+      // The control is never blurred, so the injected issue can only surface
+      // if the injection itself marks the control as touched
+      cy.get('[data-cy="testSubject_customdate"]').type('1-2-3');
+      cy.get('[data-cy="testSubject_validator-errors"]').should('exist');
+      cy.get('[data-cy="testSubject_validator-error"]').contains('Invalid date format');
+
+      // The control stays touched after the injected issue is cleared, so the
+      // managed validation remains visible
+      cy.get('[data-cy="testSubject_customdate"]').type('{selectall}{backspace}');
+      cy.get('[data-cy="testSubject_customdate"]').type('28-02-2026');
+      cy.get('[data-cy="testSubject_validator-errors"] li').should('have.length', 1);
+      cy.get('[data-cy="testSubject_validator-error"]').contains(
+        'Too small: expected string to have >=20 characters',
+      );
+    });
   });
 };
