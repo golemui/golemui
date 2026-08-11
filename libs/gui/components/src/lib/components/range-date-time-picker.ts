@@ -1,5 +1,6 @@
 import { html, LitElement, nothing } from 'lit';
-import { customElement, property, query, state } from 'lit/decorators.js';
+import { property, query, state } from 'lit/decorators.js';
+import { safeDefine } from '@golemui/lit/internals';
 import { classMap } from 'lit/directives/class-map.js';
 import type { DateTimeRange } from '@golemui/gui-shared/internals';
 import './range-date-time-input';
@@ -18,7 +19,6 @@ interface WorkingRange {
   endTime?: string;
 }
 
-@customElement('gui-range-date-time-picker')
 export class GuiRangeDateTimePicker extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
@@ -530,6 +530,4 @@ declare global {
   }
 }
 
-if (typeof customElements !== 'undefined' && !customElements.get('gui-range-date-time-picker')) {
-  customElements.define('gui-range-date-time-picker', GuiRangeDateTimePicker);
-}
+safeDefine('gui-range-date-time-picker', GuiRangeDateTimePicker);

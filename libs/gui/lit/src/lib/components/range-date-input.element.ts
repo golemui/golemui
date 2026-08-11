@@ -4,10 +4,10 @@ import type { DateRange, RangeDateInputProps } from '@golemui/gui-shared/interna
 import '@golemui/gui-components/range-date-input';
 import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
+import { safeDefine } from '@golemui/lit/internals';
 import { type Subscription } from 'rxjs';
 
-@customElement('gui-range-date-input')
 export class RangeDateInputElement extends LitElement implements WithWidget {
   widget!: InputWidget<DateRange[]>;
 
@@ -93,3 +93,5 @@ export class RangeDateInputElement extends LitElement implements WithWidget {
     this.subscriptions.forEach((s) => s.unsubscribe());
   }
 }
+
+safeDefine('gui-range-date-input', RangeDateInputElement);

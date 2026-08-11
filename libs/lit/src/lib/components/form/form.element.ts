@@ -14,14 +14,14 @@ import {
 } from '@golemui/core';
 import { provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
+import { property, state } from 'lit/decorators.js';
 import { when } from 'lit/directives/when.js';
 import { type Subscription } from 'rxjs';
 import { formContext, LitFormContext } from '../../context/form.context';
+import { safeDefine } from '../../utils/define';
 import '../widget/widget-element';
 import { defaultFormHealthBoundary, type FormHealthBoundary } from './form-health-boundary';
 
-@customElement('gui-core-form')
 export class FormElement extends LitElement {
   @provide({ context: formContext })
   context = new LitFormContext();
@@ -191,3 +191,5 @@ export class FormElement extends LitElement {
     this.unsubscribeI18n();
   }
 }
+
+safeDefine('gui-core-form', FormElement);

@@ -1,6 +1,7 @@
 import type { DateTimeRange, RangeDateTimeInputProps } from '@golemui/gui-shared/internals';
 import { html, LitElement, nothing, type PropertyValues } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
+import { safeDefine } from '@golemui/lit/internals';
 import { classMap } from 'lit/directives/class-map.js';
 import { styleMap } from 'lit-html/directives/style-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
@@ -38,7 +39,6 @@ import './pills';
 import type { GuiPillEventDetail, GuiPillItem } from './pills';
 import { DISABLED_DATE_RANGE_MESSAGE, INCOMPLETE_DATE_TIME_MESSAGE } from '../utils/messages';
 
-@customElement('gui-range-date-time')
 export class GuiRangeDateTimeInput extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
@@ -575,6 +575,4 @@ declare global {
   }
 }
 
-if (typeof customElements !== 'undefined' && !customElements.get('gui-range-date-time')) {
-  customElements.define('gui-range-date-time', GuiRangeDateTimeInput);
-}
+safeDefine('gui-range-date-time', GuiRangeDateTimeInput);

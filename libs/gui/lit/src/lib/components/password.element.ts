@@ -4,10 +4,10 @@ import type { PasswordProps } from '@golemui/gui-shared/internals';
 import '@golemui/gui-components/password';
 import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
+import { safeDefine } from '@golemui/lit/internals';
 import { type Subscription } from 'rxjs';
 
-@customElement('gui-password-input')
 export class PasswordElement extends LitElement implements WithWidget {
   widget!: InputWidget<string>;
 
@@ -85,3 +85,5 @@ export class PasswordElement extends LitElement implements WithWidget {
     this.subscriptions.forEach((s) => s.unsubscribe());
   }
 }
+
+safeDefine('gui-password-input', PasswordElement);

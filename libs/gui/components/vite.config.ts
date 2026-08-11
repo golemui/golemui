@@ -66,7 +66,7 @@ export default defineConfig(() => ({
     },
     rollupOptions: {
       // External packages that should not be bundled into your library.
-      external: ['@golemui/core', '@golemui/gui-shared'],
+      external: ['@golemui/core', '@golemui/gui-shared', '@golemui/lit', /^@golemui\/lit\/.+/],
     },
   },
   test: {

@@ -1,5 +1,6 @@
 import { html, LitElement, nothing } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
+import { safeDefine } from '@golemui/lit/internals';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
@@ -12,7 +13,6 @@ type TagsSeparator = 'Enter' | ',' | 'Tab' | 'blur' | string;
 
 const DEFAULT_SEPARATORS: TagsSeparator[] = ['Enter', ',', 'Tab', 'blur'];
 
-@customElement('gui-tags')
 export class GuiTags extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
@@ -368,6 +368,4 @@ declare global {
   }
 }
 
-if (typeof customElements !== 'undefined' && !customElements.get('gui-tags')) {
-  customElements.define('gui-tags', GuiTags);
-}
+safeDefine('gui-tags', GuiTags);

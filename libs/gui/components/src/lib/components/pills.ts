@@ -1,5 +1,6 @@
 import { html, LitElement, nothing } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
+import { property, state } from 'lit/decorators.js';
+import { safeDefine } from '@golemui/lit/internals';
 import { classMap } from 'lit/directives/class-map.js';
 import { repeat } from 'lit/directives/repeat.js';
 import { createIntersectionObserver } from './tabs';
@@ -48,7 +49,6 @@ export interface GuiPillsDropdownEventDetail {
  *                                              boundaries; host can intercept (e.g. to
  *                                              focus its own input on ArrowRight-past-end)
  */
-@customElement('gui-pills')
 export class GuiPills extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: Array }) items: GuiPillItem[] = [];
@@ -484,6 +484,4 @@ declare global {
   }
 }
 
-if (typeof customElements !== 'undefined' && !customElements.get('gui-pills')) {
-  customElements.define('gui-pills', GuiPills);
-}
+safeDefine('gui-pills', GuiPills);

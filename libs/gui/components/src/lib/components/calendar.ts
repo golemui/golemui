@@ -1,5 +1,6 @@
 import { html, LitElement, nothing, type PropertyValues, type TemplateResult } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
+import { safeDefine } from '@golemui/lit/internals';
 import { classMap } from 'lit/directives/class-map.js';
 import type { DateRange } from '@golemui/gui-shared/internals';
 import { GUIAriaController } from '../controllers/aria.controller';
@@ -30,7 +31,6 @@ export interface CalendarDay {
   isDisabled: boolean;
 }
 
-@customElement('gui-calendar')
 export class GuiCalendar extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
@@ -293,6 +293,4 @@ declare global {
   }
 }
 
-if (typeof customElements !== 'undefined' && !customElements.get('gui-calendar')) {
-  customElements.define('gui-calendar', GuiCalendar);
-}
+safeDefine('gui-calendar', GuiCalendar);

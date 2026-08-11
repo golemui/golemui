@@ -1,9 +1,9 @@
 import { html, LitElement, type PropertyValues } from 'lit';
-import { customElement, property, query, state } from 'lit/decorators.js';
+import { property, query, state } from 'lit/decorators.js';
+import { safeDefine } from '@golemui/lit/internals';
 import { updateListItems } from './list-items';
 import type { ListItem, ListProps, OptionValue } from '@golemui/gui-shared/internals';
 
-@customElement('gui-list')
 export class GuiList extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: Boolean }) touched: boolean | undefined = false;
@@ -318,6 +318,4 @@ declare global {
   }
 }
 
-if (typeof customElements !== 'undefined' && !customElements.get('gui-list')) {
-  customElements.define('gui-list', GuiList);
-}
+safeDefine('gui-list', GuiList);

@@ -1,10 +1,10 @@
 import { GUIAriaController } from '../controllers/aria.controller';
 import { html, LitElement, nothing } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
+import { safeDefine } from '@golemui/lit/internals';
 import { addErrors, requiredMarker, type ControlTemplateData } from '../utils/templates';
 import type { ToggleProps } from '@golemui/gui-shared/internals';
 
-@customElement('gui-toggle')
 export class GuiToggle extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
@@ -133,6 +133,4 @@ declare global {
   }
 }
 
-if (typeof customElements !== 'undefined' && !customElements.get('gui-toggle')) {
-  customElements.define('gui-toggle', GuiToggle);
-}
+safeDefine('gui-toggle', GuiToggle);

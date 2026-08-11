@@ -3,13 +3,13 @@ import { LayoutWidgetAdapter, type LitFormContext, formContext, layoutContext } 
 import type { AccordionProps } from '@golemui/gui-shared/internals';
 import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
+import { safeDefine } from '@golemui/lit/internals';
 import { type Subscription } from 'rxjs';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { classMap } from 'lit/directives/class-map.js';
 import type { AccordionEventDetail } from '@golemui/gui-components/internals';
 
-@customElement('gui-accordion-layout')
 export class AccordionElement extends LitElement implements WithWidget {
   widget!: LayoutWidget;
   activeSections: { [key: string]: boolean } = {};
@@ -136,3 +136,5 @@ export class AccordionElement extends LitElement implements WithWidget {
     this.subscriptions.forEach((s) => s.unsubscribe());
   }
 }
+
+safeDefine('gui-accordion-layout', AccordionElement);

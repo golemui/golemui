@@ -1,8 +1,8 @@
 import { html, LitElement } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
+import { safeDefine } from '@golemui/lit/internals';
 import { addErrors } from '../utils/templates';
 
-@customElement('gui-errors')
 export class GuiErrors extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: Array }) errors: string[] | undefined = [];
@@ -28,6 +28,4 @@ declare global {
   }
 }
 
-if (typeof customElements !== 'undefined' && !customElements.get('gui-errors')) {
-  customElements.define('gui-errors', GuiErrors);
-}
+safeDefine('gui-errors', GuiErrors);

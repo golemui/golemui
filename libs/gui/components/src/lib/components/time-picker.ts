@@ -1,5 +1,6 @@
 import { html, LitElement, type PropertyValues } from 'lit';
-import { customElement, property, query } from 'lit/decorators.js';
+import { property, query } from 'lit/decorators.js';
+import { safeDefine } from '@golemui/lit/internals';
 import { classMap } from 'lit/directives/class-map.js';
 import './time-input';
 import './time-list';
@@ -12,7 +13,6 @@ import { timeBoundsError } from '../utils/parts';
 import { addErrors, addIcon, addLabel } from '../utils/templates';
 import { INVALID_DISABLED_TIME_RANGE_MESSAGE } from '../utils/messages';
 
-@customElement('gui-time-picker')
 export class GuiTimePicker extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
@@ -364,6 +364,4 @@ declare global {
   }
 }
 
-if (typeof customElements !== 'undefined' && !customElements.get('gui-time-picker')) {
-  customElements.define('gui-time-picker', GuiTimePicker);
-}
+safeDefine('gui-time-picker', GuiTimePicker);

@@ -4,10 +4,10 @@ import type { TimeRange, RangeTimePickerProps } from '@golemui/gui-shared/intern
 import '@golemui/gui-components/range-time-picker';
 import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
+import { safeDefine } from '@golemui/lit/internals';
 import { type Subscription } from 'rxjs';
 
-@customElement('gui-range-time-picker-input')
 export class RangeTimePickerElement extends LitElement implements WithWidget {
   widget!: InputWidget<TimeRange[]>;
 
@@ -111,3 +111,5 @@ export class RangeTimePickerElement extends LitElement implements WithWidget {
     this.subscriptions.forEach((s) => s.unsubscribe());
   }
 }
+
+safeDefine('gui-range-time-picker-input', RangeTimePickerElement);

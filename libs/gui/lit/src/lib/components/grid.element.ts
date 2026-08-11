@@ -3,12 +3,12 @@ import { LayoutWidgetAdapter, type LitFormContext, formContext, layoutContext } 
 import type { GridProps } from '@golemui/gui-shared/internals';
 import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
+import { safeDefine } from '@golemui/lit/internals';
 import { type Subscription } from 'rxjs';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { classMap } from 'lit/directives/class-map.js';
 
-@customElement('gui-grid-layout')
 export class GridElement extends LitElement implements WithWidget {
   widget!: LayoutWidget;
 
@@ -99,3 +99,5 @@ export class GridElement extends LitElement implements WithWidget {
     this.subscriptions.forEach((s) => s.unsubscribe());
   }
 }
+
+safeDefine('gui-grid-layout', GridElement);

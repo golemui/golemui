@@ -4,10 +4,10 @@ import type { TextareaProps } from '@golemui/gui-shared/internals';
 import '@golemui/gui-components/textarea';
 import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
+import { safeDefine } from '@golemui/lit/internals';
 import { type Subscription } from 'rxjs';
 
-@customElement('gui-textarea-input')
 export class TextareaElement extends LitElement implements WithWidget {
   widget!: InputWidget<string>;
 
@@ -84,3 +84,5 @@ export class TextareaElement extends LitElement implements WithWidget {
     this.subscriptions.forEach((s) => s.unsubscribe());
   }
 }
+
+safeDefine('gui-textarea-input', TextareaElement);

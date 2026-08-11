@@ -1,11 +1,11 @@
 import { html, LitElement, nothing } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
+import { safeDefine } from '@golemui/lit/internals';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addIcon, addLabel, type ControlTemplateData } from '../utils/templates';
 import type { TextinputProps } from '@golemui/gui-shared/internals';
 
-@customElement('gui-textinput')
 export class GuiTextinput extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
@@ -128,6 +128,4 @@ declare global {
   }
 }
 
-if (typeof customElements !== 'undefined' && !customElements.get('gui-textinput')) {
-  customElements.define('gui-textinput', GuiTextinput);
-}
+safeDefine('gui-textinput', GuiTextinput);

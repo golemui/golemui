@@ -1,5 +1,6 @@
 import { html, LitElement } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
+import { safeDefine } from '@golemui/lit/internals';
 import type { DisplayWidget, WithWidget } from '@golemui/core';
 import { consume, provide } from '@lit/context';
 import {
@@ -11,7 +12,6 @@ import {
 import type { AlertProps } from '@golemui/gui-shared/internals';
 import { type Subscription } from 'rxjs';
 
-@customElement('gui-alert-display')
 export class AlertElement extends LitElement implements WithWidget {
   widget!: DisplayWidget;
 
@@ -71,3 +71,5 @@ export class AlertElement extends LitElement implements WithWidget {
     this.subscriptions.forEach((s) => s.unsubscribe());
   }
 }
+
+safeDefine('gui-alert-display', AlertElement);

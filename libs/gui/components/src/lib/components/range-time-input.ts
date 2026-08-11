@@ -1,6 +1,7 @@
 import type { RangeTimeInputProps, TimeRange } from '@golemui/gui-shared/internals';
 import { html, LitElement, nothing, type PropertyValues } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
+import { safeDefine } from '@golemui/lit/internals';
 import { classMap } from 'lit/directives/class-map.js';
 import { styleMap } from 'lit-html/directives/style-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
@@ -40,7 +41,6 @@ import {
   INVALID_TIME_RANGE_ORDER_MESSAGE,
 } from '../utils/messages';
 
-@customElement('gui-range-time')
 export class GuiRangeTimeInput extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
@@ -528,6 +528,4 @@ declare global {
   }
 }
 
-if (typeof customElements !== 'undefined' && !customElements.get('gui-range-time')) {
-  customElements.define('gui-range-time', GuiRangeTimeInput);
-}
+safeDefine('gui-range-time', GuiRangeTimeInput);

@@ -1,12 +1,12 @@
 import type { CurrencyProps } from '@golemui/gui-shared/internals';
 import { html, LitElement, nothing, type PropertyValues } from 'lit';
-import { customElement, property, query, state } from 'lit/decorators.js';
+import { property, query, state } from 'lit/decorators.js';
+import { safeDefine } from '@golemui/lit/internals';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addIcon, addLabel, type ControlTemplateData } from '../utils/templates';
 import { blockNonNumericInput, blockNonNumericKeys } from '../utils/numeric';
 
-@customElement('gui-currency')
 export class GuiCurrency extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
@@ -207,6 +207,4 @@ declare global {
   }
 }
 
-if (typeof customElements !== 'undefined' && !customElements.get('gui-currency')) {
-  customElements.define('gui-currency', GuiCurrency);
-}
+safeDefine('gui-currency', GuiCurrency);

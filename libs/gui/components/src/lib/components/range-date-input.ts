@@ -1,6 +1,7 @@
 import type { DateRange, RangeDateInputProps } from '@golemui/gui-shared/internals';
 import { html, LitElement, nothing } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
+import { safeDefine } from '@golemui/lit/internals';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
@@ -34,7 +35,6 @@ import './pills';
 import type { GuiPillEventDetail, GuiPillItem } from './pills';
 import { styleMap } from 'lit-html/directives/style-map.js';
 
-@customElement('gui-range-date')
 export class GuiRangeDateInput extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
@@ -512,6 +512,4 @@ declare global {
   }
 }
 
-if (typeof customElements !== 'undefined' && !customElements.get('gui-range-date')) {
-  customElements.define('gui-range-date', GuiRangeDateInput);
-}
+safeDefine('gui-range-date', GuiRangeDateInput);

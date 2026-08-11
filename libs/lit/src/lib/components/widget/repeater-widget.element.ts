@@ -1,6 +1,7 @@
 import { LitElement } from 'lit';
-import { customElement } from 'lit/decorators.js';
 import { RepeaterWidgetMixin } from '../../mixins/repeater-widget.mixin';
+import { safeDefine } from '../../utils/define';
 
-@customElement('gui-repeater-widget')
 export class RepeaterWidgetElement extends RepeaterWidgetMixin(LitElement) {}
+
+safeDefine('gui-repeater-widget', RepeaterWidgetElement);

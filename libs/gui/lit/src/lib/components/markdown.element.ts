@@ -4,10 +4,10 @@ import type { MarkdownProps } from '@golemui/gui-shared/internals';
 import '@golemui/gui-components/markdown';
 import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
+import { safeDefine } from '@golemui/lit/internals';
 import { type Subscription } from 'rxjs';
 
-@customElement('gui-markdown-input')
 export class MarkdownElement extends LitElement implements WithWidget {
   widget!: InputWidget<string>;
 
@@ -97,3 +97,5 @@ export class MarkdownElement extends LitElement implements WithWidget {
     this.subscriptions.forEach((s) => s.unsubscribe());
   }
 }
+
+safeDefine('gui-markdown-input', MarkdownElement);
