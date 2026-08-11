@@ -1,5 +1,10 @@
 import { defineForm, identityTranslator } from '@golemui/core';
-import { type MountComponentFn } from '../utils';
+import {
+  clearPillsWidthOverride,
+  forcePillsCompactMode,
+  forcePillsStripMode,
+  type MountComponentFn,
+} from '../utils';
 
 // Behavior tests for the gui-range-time web component: two segmented time inputs
 // (start/end) accumulating a TimeRange[] value as pills. Pins the pill
@@ -373,6 +378,78 @@ export const runRangeTimeInputComponentTests = (mountFn: MountComponentFn) => {
       });
       cy.get(sel.start.hour).should('be.disabled');
       cy.get(sel.end.hour).should('be.disabled');
+    });
+
+    describe('pill keyboard navigation', () => {
+      // Given unsorted, displayed sorted by start: morning first, evening last
+      const morning = { start: '09:00:00', end: '11:00:00' };
+      const evening = { start: '14:00:00', end: '16:00:00' };
+
+      const mountWithRanges = () => mountRangeTimeInput({ data: { myRanges: [evening, morning] } });
+
+      // These pin the strip-mode model, so hold the wrapper above the compact
+      // threshold; the harness would otherwise collapse it to the bubble.
+      // The dropdown test below re-pins it to compact explicitly.
+      beforeEach(() => forcePillsStripMode('.gui-range-time-input'));
+      afterEach(clearPillsWidthOverride);
+
+      it('should keep pills out of the tab order', () => {
+        mountWithRanges();
+        cy.get('button.gui-pills__pill').should('have.attr', 'tabindex', '-1');
+      });
+
+      it('should enter the strip at the LAST pill on ArrowLeft from the first segment', () => {
+        mountWithRanges();
+
+        cy.get(sel.start.hour).focus();
+        cy.focused().type('{leftArrow}');
+        cy.focused().should('have.class', 'gui-pills__pill').should('contain.text', '14:00');
+      });
+
+      it('should return focus to the first start segment on ArrowRight past the last pill', () => {
+        mountWithRanges();
+
+        cy.get(sel.start.hour).focus();
+        cy.focused().type('{leftArrow}');
+        cy.focused().should('have.class', 'gui-pills__pill');
+
+        cy.focused().type('{rightArrow}');
+        cy.focused()
+          .should('have.attr', 'data-group', 'start')
+          .should('have.attr', 'data-type', 'hour');
+      });
+
+      it('should close the dropdown on Escape and return focus to the segments', () => {
+        forcePillsCompactMode('.gui-range-time-input');
+        mountWithRanges();
+
+        cy.get('.gui-pills__count').click();
+        cy.get('.gui-pills__dropdown button.gui-pills__pill').first().focus();
+        cy.focused().type('{esc}');
+        cy.get('.gui-pills__dropdown').should('not.exist');
+        cy.focused().should('have.attr', 'data-group', 'start');
+      });
+
+      it('should focus (not delete) the last pill on Delete when the segments are empty', () => {
+        mountWithRanges();
+
+        cy.get(sel.start.hour).focus();
+        cy.focused().type('{del}');
+        cy.focused().should('have.class', 'gui-pills__pill').should('contain.text', '14:00');
+        cy.get(sel.pillText).should('have.length', 2);
+      });
+
+      it('should keep Backspace editing while any segment holds content', () => {
+        mountWithRanges();
+
+        // Hour fills and auto-advances to the empty minute; Backspace there
+        // must not jump into the pills while the range is half-typed.
+        cy.get(sel.start.hour).type('09');
+        cy.focused().should('have.attr', 'data-type', 'minute');
+        cy.focused().type('{backspace}');
+        cy.focused().should('have.attr', 'data-type', 'minute');
+        cy.get(sel.pillText).should('have.length', 2);
+      });
     });
   });
 };

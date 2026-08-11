@@ -1,5 +1,6 @@
 import { html, LitElement, nothing } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
+import { safeDefine } from '@golemui/lit/internals';
 import { classMap } from 'lit/directives/class-map.js';
 import type { DateRange } from '@golemui/gui-shared/internals';
 import './date-input';
@@ -10,7 +11,6 @@ import { GUIPopupController } from '../controllers/popup.controller';
 import { dateBoundsError } from '../utils/date';
 import { addErrors, addIcon, addLabel } from '../utils/templates';
 
-@customElement('gui-date-picker')
 export class GuiDatePicker extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
@@ -299,6 +299,4 @@ declare global {
   }
 }
 
-if (typeof customElements !== 'undefined' && !customElements.get('gui-date-picker')) {
-  customElements.define('gui-date-picker', GuiDatePicker);
-}
+safeDefine('gui-date-picker', GuiDatePicker);

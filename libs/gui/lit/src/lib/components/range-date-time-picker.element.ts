@@ -4,10 +4,10 @@ import type { DateTimeRange, RangeDateTimePickerProps } from '@golemui/gui-share
 import '@golemui/gui-components/range-date-time-picker';
 import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
+import { safeDefine } from '@golemui/lit/internals';
 import { type Subscription } from 'rxjs';
 
-@customElement('gui-range-date-time-picker-input')
 export class RangeDateTimePickerElement extends LitElement implements WithWidget {
   widget!: InputWidget<DateTimeRange[]>;
 
@@ -127,3 +127,5 @@ export class RangeDateTimePickerElement extends LitElement implements WithWidget
     this.subscriptions.forEach((s) => s.unsubscribe());
   }
 }
+
+safeDefine('gui-range-date-time-picker-input', RangeDateTimePickerElement);

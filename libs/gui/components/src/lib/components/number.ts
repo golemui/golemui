@@ -1,12 +1,12 @@
 import { html, LitElement, nothing } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
+import { safeDefine } from '@golemui/lit/internals';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 import { blockNonNumericInput, blockNonNumericKeys } from '../utils/numeric';
 import type { NumberinputProps } from '@golemui/gui-shared/internals';
 import { styleMap } from 'lit-html/directives/style-map.js';
 
-@customElement('gui-number')
 export class GuiNumber extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
@@ -240,6 +240,4 @@ declare global {
   }
 }
 
-if (typeof customElements !== 'undefined' && !customElements.get('gui-number')) {
-  customElements.define('gui-number', GuiNumber);
-}
+safeDefine('gui-number', GuiNumber);

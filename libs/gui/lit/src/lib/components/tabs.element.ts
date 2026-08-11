@@ -4,15 +4,15 @@ import {
   createIntersectionObserver,
   type TabsEventDetail,
 } from '@golemui/gui-components/internals';
+import { safeDefine } from '@golemui/lit/internals';
 import type { TabsProps } from '@golemui/gui-shared/internals';
 import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing, type PropertyValues } from 'lit';
 import { repeat } from 'lit-html/directives/repeat.js';
-import { customElement, property, query, queryAll, state } from 'lit/decorators.js';
+import { property, query, queryAll, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { type Subscription } from 'rxjs';
 
-@customElement('gui-tabs-layout')
 export class TabsElement extends LitElement implements WithWidget {
   widget!: LayoutWidget;
 
@@ -205,3 +205,5 @@ export class TabsElement extends LitElement implements WithWidget {
     }
   }
 }
+
+safeDefine('gui-tabs-layout', TabsElement);

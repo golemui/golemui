@@ -3,14 +3,14 @@ import { InputWidgetAdapter, type LitFormContext, formContext, inputContext } fr
 import type { DropdownProps, ListItem } from '@golemui/gui-shared/internals';
 import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';
-import { customElement, property, query, state } from 'lit/decorators.js';
+import { property, query, state } from 'lit/decorators.js';
+import { safeDefine } from '@golemui/lit/internals';
 import { debounceTime, Subject, type Subscription } from 'rxjs';
 import { defaultListItemRenderer } from './default-list-item-renderer';
 import '@golemui/gui-components/label';
 import '@golemui/gui-components/list';
 import '@golemui/gui-components/errors';
 
-@customElement('gui-dropdown-input')
 export class DropdownElement extends LitElement implements WithWidget {
   widget!: InputWidget<string>;
 
@@ -394,3 +394,5 @@ export class DropdownElement extends LitElement implements WithWidget {
     `;
   }
 }
+
+safeDefine('gui-dropdown-input', DropdownElement);

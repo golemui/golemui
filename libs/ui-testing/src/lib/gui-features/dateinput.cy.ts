@@ -89,11 +89,29 @@ export const runDateInputComponentTests = (mountFn: MountComponentFn) => {
         cy.focused().should('have.attr', 'data-type', 'year');
       });
 
-      it('should wrap auto-advance from the last part to the first', () => {
+      it('should keep focus on the last part once the date is complete', () => {
         mountDateInput();
 
         cy.get(sel.year).type('2026');
+        cy.focused().should('have.attr', 'data-type', 'year');
+      });
+
+      it('should not advance into an already-filled part (backwards entry)', () => {
+        const formSubmitHandler = cy.stub().as('formSubmitHandler');
+        mountDateInput({ formSubmit: formSubmitHandler });
+
+        cy.get(sel.year).type('2026');
+        cy.focused().should('have.attr', 'data-type', 'year');
+
+        cy.get(sel.day).type('15');
+        cy.focused().should('have.attr', 'data-type', 'day');
+
+        cy.get(sel.month).type('06');
         cy.focused().should('have.attr', 'data-type', 'month');
+
+        submitAndGetData('@formSubmitHandler').then((data) => {
+          expect(data).to.deep.equal({ myDate: '2026-06-15' });
+        });
       });
 
       it('should submit the typed date as an ISO date string', () => {
@@ -140,11 +158,11 @@ export const runDateInputComponentTests = (mountFn: MountComponentFn) => {
         });
       });
 
-      it('should clamp a year below 1000 up to 1000', () => {
+      it('should clamp a year below 1900 up to 1900', () => {
         mountDateInput();
 
         cy.get(sel.year).type('0500');
-        cy.get(sel.year).should('have.value', '1000');
+        cy.get(sel.year).should('have.value', '1900');
       });
 
       it('should show an error and not emit for a complete but invalid date (Feb 31)', () => {
@@ -197,10 +215,10 @@ export const runDateInputComponentTests = (mountFn: MountComponentFn) => {
       });
 
       it('should stop at the min year limit instead of wrapping', () => {
-        mountDateInput({ data: { myDate: '1000-06-15' } });
+        mountDateInput({ data: { myDate: '1900-06-15' } });
 
         cy.get(sel.year).type('{downArrow}');
-        cy.get(sel.year).should('have.value', '1000');
+        cy.get(sel.year).should('have.value', '1900');
       });
     });
 
@@ -444,7 +462,7 @@ export const runDateInputComponentTests = (mountFn: MountComponentFn) => {
           .should('have.attr', 'aria-valuemax', '12');
         cy.get(sel.year)
           .should('have.attr', 'aria-label', 'Year')
-          .should('have.attr', 'aria-valuemin', '1000')
+          .should('have.attr', 'aria-valuemin', '1900')
           .should('have.attr', 'aria-valuemax', '9999');
       });
 

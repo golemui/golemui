@@ -1,5 +1,10 @@
 import { defineForm, identityTranslator } from '@golemui/core';
-import { type MountComponentFn } from '../utils';
+import {
+  clearPillsWidthOverride,
+  forcePillsCompactMode,
+  forcePillsStripMode,
+  type MountComponentFn,
+} from '../utils';
 
 // Behavior tests for the gui-range-date-time web component: two segmented
 // date-time inputs (start/end) accumulating a DateTimeRange[] value as pills.
@@ -362,6 +367,67 @@ export const runRangeDateTimeInputComponentTests = (mountFn: MountComponentFn) =
       });
       cy.get(sel.startDay).should('be.disabled');
       cy.get(sel.endDay).should('be.disabled');
+    });
+
+    describe('pill keyboard navigation', () => {
+      // Given unsorted, displayed sorted by start: May first, November last
+      const november = { start: '2026-11-22T09:00:00', end: '2026-11-22T11:00:00' };
+      const may = { start: '2026-05-10T09:00:00', end: '2026-05-10T10:00:00' };
+
+      const mountWithRanges = () =>
+        mountRangeDateTimeInput({ data: { myRanges: [november, may] } });
+
+      // These pin the strip-mode model, so hold the wrapper above the compact
+      // threshold; the harness would otherwise collapse it to the bubble.
+      // The dropdown test below re-pins it to compact explicitly.
+      beforeEach(() => forcePillsStripMode('.gui-range-date-time-input'));
+      afterEach(clearPillsWidthOverride);
+
+      it('should keep pills out of the tab order', () => {
+        mountWithRanges();
+        cy.get('button.gui-pills__pill').should('have.attr', 'tabindex', '-1');
+      });
+
+      it('should enter the strip at the LAST pill on ArrowLeft from the first segment', () => {
+        mountWithRanges();
+
+        cy.get(sel.startDay).focus();
+        cy.focused().type('{leftArrow}');
+        cy.focused().should('have.class', 'gui-pills__pill').should('contain.text', '22/11/2026');
+      });
+
+      it('should return focus to the first start segment on ArrowRight past the last pill', () => {
+        mountWithRanges();
+
+        cy.get(sel.startDay).focus();
+        cy.focused().type('{leftArrow}');
+        cy.focused().should('have.class', 'gui-pills__pill');
+
+        cy.focused().type('{rightArrow}');
+        cy.focused()
+          .should('have.attr', 'data-group', 'start')
+          .should('have.attr', 'data-type', 'day');
+      });
+
+      it('should close the dropdown on Escape and return focus to the segments', () => {
+        forcePillsCompactMode('.gui-range-date-time-input');
+        mountWithRanges();
+
+        cy.get('.gui-pills__count').click();
+        cy.get('.gui-pills__dropdown button.gui-pills__pill').first().focus();
+        cy.focused().type('{esc}');
+        cy.get('.gui-pills__dropdown').should('not.exist');
+        cy.focused().should('have.attr', 'data-group', 'start');
+      });
+
+      it('should focus (not delete) the last pill on Delete when the segments are empty', () => {
+        mountWithRanges();
+
+        cy.get(sel.startDay).focus();
+        cy.focused().type('{del}');
+        cy.focused().should('have.class', 'gui-pills__pill').should('contain.text', '22/11/2026');
+        cy.get(sel.pillText).should('have.length', 2);
+      });
     });
   });
 };

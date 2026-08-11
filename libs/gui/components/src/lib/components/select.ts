@@ -1,13 +1,13 @@
 import type { OneOfProps, Option, OptionValue, SelectProps } from '@golemui/gui-shared/internals';
 import { html, LitElement, nothing } from 'lit';
 import { repeat } from 'lit-html/directives/repeat.js';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
+import { safeDefine } from '@golemui/lit/internals';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addIcon, addLabel, type ControlTemplateData } from '../utils/templates';
 import { inferOptionValue, updateOptions } from './one-of';
 
-@customElement('gui-select')
 export class GuiSelect extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
@@ -192,6 +192,4 @@ declare global {
   }
 }
 
-if (typeof customElements !== 'undefined' && !customElements.get('gui-select')) {
-  customElements.define('gui-select', GuiSelect);
-}
+safeDefine('gui-select', GuiSelect);

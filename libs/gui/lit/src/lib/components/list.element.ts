@@ -3,14 +3,14 @@ import { InputWidgetAdapter, type LitFormContext, formContext, inputContext } fr
 import type { ListItem, ListProps } from '@golemui/gui-shared/internals';
 import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';
-import { customElement, property, query, state } from 'lit/decorators.js';
+import { property, query, state } from 'lit/decorators.js';
+import { safeDefine } from '@golemui/lit/internals';
 import { type Subscription } from 'rxjs';
 import { defaultListItemRenderer } from './default-list-item-renderer';
 import '@golemui/gui-components/label';
 import '@golemui/gui-components/list';
 import '@golemui/gui-components/errors';
 
-@customElement('gui-list-input')
 export class ListElement extends LitElement implements WithWidget {
   widget!: InputWidget<string>;
 
@@ -189,3 +189,5 @@ export class ListElement extends LitElement implements WithWidget {
     }
   }
 }
+
+safeDefine('gui-list-input', ListElement);

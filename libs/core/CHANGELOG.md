@@ -1,3 +1,27 @@
+## 1.2.1 (2026-08-11)
+
+### 🩹 Fixes
+
+- date time intermediate states and commit on blur ([#265](https://github.com/golemui/golemui/pull/265))
+- **core:** inputs added after form interaction no longer show errors before being touched ([#263](https://github.com/golemui/golemui/pull/263))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
+## 1.2.1-rc.0 (2026-08-11)
+
+### 🩹 Fixes
+
+- date time intermediate states and commit on blur ([#265](https://github.com/golemui/golemui/pull/265))
+- **core:** inputs added after form interaction no longer show errors before being touched ([#263](https://github.com/golemui/golemui/pull/263))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
 ## 1.2.0 (2026-08-04)
 
 ### 🩹 Fixes

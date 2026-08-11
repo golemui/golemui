@@ -206,10 +206,7 @@ export const runDatePickerComponentTests = (mountFn: MountComponentFn) => {
         cy.focused().type('06');
         cy.get('[data-cy="submitBtn_button"]').focus();
 
-        cy.get('[data-cy="testSubject_validator-error"]').should(
-          'contain.text',
-          'Incomplete date',
-        );
+        cy.get('[data-cy="testSubject_validator-error"]').should('contain.text', 'Incomplete date');
       });
 
       it('should clear the incomplete error when the emptied picker is left again', () => {
@@ -221,10 +218,7 @@ export const runDatePickerComponentTests = (mountFn: MountComponentFn) => {
         cy.get('gui-date input[data-type="month"]').click();
         cy.focused().type('06');
         cy.get('[data-cy="submitBtn_button"]').focus();
-        cy.get('[data-cy="testSubject_validator-error"]').should(
-          'contain.text',
-          'Incomplete date',
-        );
+        cy.get('[data-cy="testSubject_validator-error"]').should('contain.text', 'Incomplete date');
 
         cy.get('gui-date input[data-type="month"]').type('{selectAll}{backspace}');
         cy.get('[data-cy="submitBtn_button"]').focus();

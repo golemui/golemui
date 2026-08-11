@@ -108,6 +108,14 @@ export const runDateTimeInputComponentTests = (mountFn: MountComponentFn) => {
         cy.focused().should('have.attr', 'data-type', 'hour');
       });
 
+      it('should keep focus on the last part once the entry is complete', () => {
+        // 24h locale: minute is the last part (no day-period button after it)
+        mountDateTimeInput({ lang: 'en-GB' });
+
+        cy.get(sel.minute).type('30');
+        cy.focused().should('have.attr', 'data-type', 'minute');
+      });
+
       it('should submit the typed date and time as a local ISO date-time (default AM)', () => {
         const formSubmitHandler = cy.stub().as('formSubmitHandler');
         mountDateTimeInput({ formSubmit: formSubmitHandler });
@@ -152,7 +160,7 @@ export const runDateTimeInputComponentTests = (mountFn: MountComponentFn) => {
         cy.get(sel.month).type('02', { force: true });
         cy.get(sel.year).type('2026', { force: true });
         cy.get(sel.hour).type('09', { force: true });
-        // Filling the last part wraps focus, committing the value
+        // Filling the last part commits the value in place
         cy.get(sel.minute).type('30', { force: true });
 
         cy.get('@inputErrorSpy').should('have.been.called');

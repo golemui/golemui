@@ -1,9 +1,9 @@
 import { html, LitElement } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
+import { safeDefine } from '@golemui/lit/internals';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addLabel } from '../utils/templates';
 
-@customElement('gui-label')
 export class GuiLabel extends LitElement {
   @property({ type: Object }) targetElement: HTMLElement[] | HTMLElement | undefined = undefined;
   @property({ type: String }) uid: string | undefined = undefined;
@@ -63,6 +63,4 @@ declare global {
   }
 }
 
-if (typeof customElements !== 'undefined' && !customElements.get('gui-label')) {
-  customElements.define('gui-label', GuiLabel);
-}
+safeDefine('gui-label', GuiLabel);

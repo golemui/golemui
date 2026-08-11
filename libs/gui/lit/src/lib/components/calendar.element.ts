@@ -4,10 +4,10 @@ import type { CalendarProps } from '@golemui/gui-shared/internals';
 import '@golemui/gui-components/calendar';
 import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
+import { safeDefine } from '@golemui/lit/internals';
 import { type Subscription } from 'rxjs';
 
-@customElement('gui-calendar-input')
 export class CalendarElement extends LitElement implements WithWidget {
   widget!: InputWidget<string>;
 
@@ -92,3 +92,5 @@ export class CalendarElement extends LitElement implements WithWidget {
     this.subscriptions.forEach((s) => s.unsubscribe());
   }
 }
+
+safeDefine('gui-calendar-input', CalendarElement);

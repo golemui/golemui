@@ -1,5 +1,6 @@
 import { html, LitElement, nothing } from 'lit';
-import { customElement, property, query, state } from 'lit/decorators.js';
+import { property, query, state } from 'lit/decorators.js';
+import { safeDefine } from '@golemui/lit/internals';
 import { classMap } from 'lit/directives/class-map.js';
 import type { DateRange } from '@golemui/gui-shared/internals';
 import './range-date-input';
@@ -11,7 +12,6 @@ import { dateBoundsError, rangeSpansDisabledDay } from '../utils/date';
 import { addErrors, addIcon, addLabel } from '../utils/templates';
 import { DISABLED_DATE_RANGE_MESSAGE } from '../utils/messages';
 
-@customElement('gui-range-date-picker')
 export class GuiRangeDatePicker extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
@@ -455,6 +455,4 @@ declare global {
   }
 }
 
-if (typeof customElements !== 'undefined' && !customElements.get('gui-range-date-picker')) {
-  customElements.define('gui-range-date-picker', GuiRangeDatePicker);
-}
+safeDefine('gui-range-date-picker', GuiRangeDatePicker);

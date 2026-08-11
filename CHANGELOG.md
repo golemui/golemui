@@ -1,3 +1,41 @@
+## 1.2.1 (2026-08-11)
+
+### 🩹 Fixes
+
+- date time intermediate states and commit on blur ([#265](https://github.com/golemui/golemui/pull/265))
+- avoid double registration warnings via shared safeDefine ([#278](https://github.com/golemui/golemui/pull/278))
+- **core:** inputs added after form interaction no longer show errors before being touched ([#263](https://github.com/golemui/golemui/pull/263))
+- **gui-components:** mark rollup chunks as side-effectful ([#261](https://github.com/golemui/golemui/pull/261))
+- **gui-components:** fix dropdown caret arrow position ([#264](https://github.com/golemui/golemui/pull/264))
+- **gui-components:** Set default min year to 1900 instead of 1000 ([#277](https://github.com/golemui/golemui/pull/277))
+- **gui-components:** avoid auto-advance input part when date/time is completed ([#279](https://github.com/golemui/golemui/pull/279))
+- **gui-components:** consistent arrow key navigation in widgets with pills ([#280](https://github.com/golemui/golemui/pull/280))
+- **gui-mcp:** warn on half-configured boolean validators; document validation traps ([#262](https://github.com/golemui/golemui/pull/262))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
+## 1.2.1-rc.0 (2026-08-11)
+
+### 🩹 Fixes
+
+- date time intermediate states and commit on blur ([#265](https://github.com/golemui/golemui/pull/265))
+- avoid double registration warnings via shared safeDefine ([#278](https://github.com/golemui/golemui/pull/278))
+- **core:** inputs added after form interaction no longer show errors before being touched ([#263](https://github.com/golemui/golemui/pull/263))
+- **gui-components:** mark rollup chunks as side-effectful ([#261](https://github.com/golemui/golemui/pull/261))
+- **gui-components:** fix dropdown caret arrow position ([#264](https://github.com/golemui/golemui/pull/264))
+- **gui-components:** Set default min year to 1900 instead of 1000 ([#277](https://github.com/golemui/golemui/pull/277))
+- **gui-components:** avoid auto-advance input part when date/time is completed ([#279](https://github.com/golemui/golemui/pull/279))
+- **gui-components:** consistent arrow key navigation in widgets with pills ([#280](https://github.com/golemui/golemui/pull/280))
+- **gui-mcp:** warn on half-configured boolean validators; document validation traps ([#262](https://github.com/golemui/golemui/pull/262))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
 ## 1.2.0 (2026-08-04)
 
 ### 🚀 Features

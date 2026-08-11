@@ -1,5 +1,5 @@
 import { defineForm, identityTranslator } from '@golemui/core';
-import { type MountComponentFn } from '../utils';
+import { clearPillsWidthOverride, forcePillsStripMode, type MountComponentFn } from '../utils';
 
 // Behavior tests for the gui-range-time-picker: the gui-range-time typed input
 // plus a two-list popover (time-in left, time-out right). Both lists are usable
@@ -476,6 +476,45 @@ export const runRangeTimePickerComponentTests = (mountFn: MountComponentFn) => {
           .should('have.attr', 'role', 'dialog')
           .should('have.id', 'testSubject_popup');
         cy.focused().should('have.class', 'gui-time-list__option');
+      });
+    });
+
+    describe('pill keyboard navigation', () => {
+      // The picker defaults to allowCustomTime=false, making the segments
+      // readonly. Readonly gates editing, not navigation: the pills must stay
+      // keyboard-reachable or they cannot be removed without a pointer.
+      const ranges = [
+        { start: '14:00:00', end: '16:00:00' },
+        { start: '09:00:00', end: '11:00:00' },
+      ];
+
+      // These pin the strip-mode model, so hold the wrapper above the compact
+      // threshold; the harness would otherwise collapse it to the bubble.
+      beforeEach(() => forcePillsStripMode('.gui-range-time-input'));
+      afterEach(clearPillsWidthOverride);
+
+      it('should enter the pills with ArrowLeft despite the readonly segments', () => {
+        mountRangeTimePicker({ data: { myRanges: ranges } });
+
+        cy.get(sel.startHour).should('have.attr', 'readonly');
+        cy.get(sel.startHour).focus();
+        cy.focused().type('{leftArrow}', { force: true });
+        cy.focused().should('have.class', 'gui-pills__pill').should('contain.text', '14:00');
+
+        cy.focused().type('{rightArrow}');
+        cy.focused().should('have.attr', 'data-group', 'start');
+      });
+
+      it('should focus the last pill on Delete over the empty readonly segments and remove it', () => {
+        mountRangeTimePicker({ data: { myRanges: ranges } });
+
+        cy.get(sel.startHour).focus();
+        cy.focused().type('{del}', { force: true });
+        cy.focused().should('have.class', 'gui-pills__pill').should('contain.text', '14:00');
+        cy.get(sel.pillText).should('have.length', 2);
+
+        cy.focused().type('{del}');
+        cy.get(sel.pillText).should('have.length', 1);
       });
     });
   });

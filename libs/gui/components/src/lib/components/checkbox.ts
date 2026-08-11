@@ -1,10 +1,10 @@
 import { GUIAriaController } from '../controllers/aria.controller';
 import { html, LitElement, nothing } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
+import { safeDefine } from '@golemui/lit/internals';
 import { addErrors, requiredMarker, type ControlTemplateData } from '../utils/templates';
 import type { CheckboxProps } from '@golemui/gui-shared/internals';
 
-@customElement('gui-checkbox')
 export class GuiCheckbox extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
@@ -130,6 +130,4 @@ declare global {
   }
 }
 
-if (typeof customElements !== 'undefined' && !customElements.get('gui-checkbox')) {
-  customElements.define('gui-checkbox', GuiCheckbox);
-}
+safeDefine('gui-checkbox', GuiCheckbox);

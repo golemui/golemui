@@ -1,5 +1,6 @@
 import { html, LitElement, nothing } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
+import { property, state } from 'lit/decorators.js';
+import { safeDefine } from '@golemui/lit/internals';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
@@ -9,7 +10,6 @@ import { styleMap } from 'lit-html/directives/style-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import './markdown-text';
 
-@customElement('gui-markdown')
 export class GuiMarkdown extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
@@ -664,6 +664,4 @@ declare global {
   }
 }
 
-if (typeof customElements !== 'undefined' && !customElements.get('gui-markdown')) {
-  customElements.define('gui-markdown', GuiMarkdown);
-}
+safeDefine('gui-markdown', GuiMarkdown);

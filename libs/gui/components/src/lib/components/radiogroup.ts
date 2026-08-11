@@ -6,12 +6,12 @@ import type {
 } from '@golemui/gui-shared/internals';
 import { html, LitElement, nothing } from 'lit';
 import { repeat } from 'lit-html/directives/repeat.js';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
+import { safeDefine } from '@golemui/lit/internals';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 import { inferOptionValue, updateOptions } from './one-of';
 
-@customElement('gui-radiogroup')
 export class GuiRadiogroup extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
@@ -166,6 +166,4 @@ declare global {
   }
 }
 
-if (typeof customElements !== 'undefined' && !customElements.get('gui-radiogroup')) {
-  customElements.define('gui-radiogroup', GuiRadiogroup);
-}
+safeDefine('gui-radiogroup', GuiRadiogroup);

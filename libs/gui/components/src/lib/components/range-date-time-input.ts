@@ -1,11 +1,13 @@
 import type { DateTimeRange, RangeDateTimeInputProps } from '@golemui/gui-shared/internals';
 import { html, LitElement, nothing, type PropertyValues } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
+import { safeDefine } from '@golemui/lit/internals';
 import { classMap } from 'lit/directives/class-map.js';
 import { styleMap } from 'lit-html/directives/style-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
 import { GUIPartsController } from '../controllers/parts.controller';
+import { GUIPillsNavigationController } from '../controllers/pills-navigation.controller';
 import {
   dateTimeBoundsError,
   dateTimeRangeOverlaps,
@@ -38,7 +40,6 @@ import './pills';
 import type { GuiPillEventDetail, GuiPillItem } from './pills';
 import { DISABLED_DATE_RANGE_MESSAGE, INCOMPLETE_DATE_TIME_MESSAGE } from '../utils/messages';
 
-@customElement('gui-range-date-time')
 export class GuiRangeDateTimeInput extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
@@ -139,6 +140,14 @@ export class GuiRangeDateTimeInput extends LitElement {
     onEmptyPartBlur: () => {
       // Unlike gui-date-time, an empty part never commits a null value
     },
+    onNavigatePastStart: () => this._pillsNav.enterPillList(),
+    onEmptyPartDelete: () => {
+      if (this.disabled || this.readOnly) return;
+      const allEmpty =
+        this._parts.isGroupEmpty('start', this.dateTimePartTypes) &&
+        this._parts.isGroupEmpty('end', this.dateTimePartTypes);
+      if (allEmpty) this._pillsNav.enterPillList();
+    },
     onEnter: () => {
       this.tryCreatePill();
       if (this.value && this.value.length > 0) {
@@ -157,6 +166,12 @@ export class GuiRangeDateTimeInput extends LitElement {
           composed: true,
         }),
       ),
+  });
+
+  private _pillsNav = new GUIPillsNavigationController(this, {
+    getPills: () => this.querySelector('gui-pills'),
+    getPillCount: () => this.value?.length ?? 0,
+    focusLinkedInput: () => this._parts.focusFirst('start', true),
   });
 
   /**
@@ -290,12 +305,15 @@ export class GuiRangeDateTimeInput extends LitElement {
             .removable=${true}
             .clickable=${true}
             .bubble=${true}
+            .tabbable=${false}
             ?disabled=${this.disabled}
             ?readonly=${this.readOnly}
             .removeAriaLabel=${this.removePillAriaLabel ?? 'Remove date-time'}
             .compactAriaLabel=${`${pillItems.length} date-time ranges`}
             @pillremove=${this.onPillRemoveEvent}
             @pillclick=${this.onPillClickEvent}
+            @pillkeydown=${this._pillsNav.onPillKeydown}
+            @pillexit=${this._pillsNav.onPillExit}
           ></gui-pills>
 
           <div class="gui-range-date-time-input__inputs">
@@ -336,9 +354,8 @@ export class GuiRangeDateTimeInput extends LitElement {
     );
 
     if (removal.next.length === 0) {
-      requestAnimationFrame(() => {
-        this.querySelector<HTMLInputElement>('.gui-range-date-time-input__field input')?.focus();
-      });
+      // Strip is gone; return focus to the segments.
+      this._pillsNav.focusLinkedInputDeferred();
     }
   };
 
@@ -575,6 +592,4 @@ declare global {
   }
 }
 
-if (typeof customElements !== 'undefined' && !customElements.get('gui-range-date-time')) {
-  customElements.define('gui-range-date-time', GuiRangeDateTimeInput);
-}
+safeDefine('gui-range-date-time', GuiRangeDateTimeInput);

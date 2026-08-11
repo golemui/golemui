@@ -4,7 +4,8 @@ import { formContext, inputContext, InputWidgetAdapter, type LitFormContext } fr
 import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';
 import { repeat } from 'lit-html/directives/repeat.js';
-import { customElement, property, query, state } from 'lit/decorators.js';
+import { property, query, state } from 'lit/decorators.js';
+import { safeDefine } from '@golemui/lit/internals';
 import { type Subscription } from 'rxjs';
 import '@golemui/gui-components/label';
 import '@golemui/gui-components/errors';
@@ -15,7 +16,6 @@ import '@golemui/gui-components/errors';
 let nextRepeaterItemId = 0;
 const idIncrementer = () => nextRepeaterItemId++;
 
-@customElement('gui-repeater-input')
 export class RepeaterElement extends LitElement implements WithWidget {
   widget!: InputWidget<Record<string, unknown>[]>;
 
@@ -176,3 +176,5 @@ export class RepeaterElement extends LitElement implements WithWidget {
     this.requestUpdate();
   }
 }
+
+safeDefine('gui-repeater-input', RepeaterElement);

@@ -1,5 +1,6 @@
 import { html, LitElement, nothing } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
+import { safeDefine } from '@golemui/lit/internals';
 import { classMap } from 'lit/directives/class-map.js';
 import { chunk, gridKeyStep, listPageSize, nextEnabledIndex } from '../utils/grid-nav';
 import {
@@ -13,7 +14,6 @@ import {
   type TimeRange,
 } from '../utils/time';
 
-@customElement('gui-time-list')
 export class GuiTimeList extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) value: string | undefined = undefined;
@@ -257,6 +257,4 @@ declare global {
   }
 }
 
-if (typeof customElements !== 'undefined' && !customElements.get('gui-time-list')) {
-  customElements.define('gui-time-list', GuiTimeList);
-}
+safeDefine('gui-time-list', GuiTimeList);

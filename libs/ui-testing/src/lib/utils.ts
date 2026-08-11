@@ -37,6 +37,30 @@ export type MountComponentFn<StateKeys extends UiState = string> = (
   options: MountOptions<StateKeys>,
 ) => void;
 
+const PILLS_WIDTH_STYLE_ID = 'ui-testing-pills-width-override';
+
+const setPillsWidth = (wrapperSelector: string, width: string) => {
+  cy.document().then((doc) => {
+    let style = doc.getElementById(PILLS_WIDTH_STYLE_ID);
+    if (!style) {
+      style = doc.createElement('style');
+      style.id = PILLS_WIDTH_STYLE_ID;
+      doc.head.appendChild(style);
+    }
+    style.textContent = `${wrapperSelector} { width: ${width} !important; max-width: none !important; }`;
+  });
+};
+
+export const forcePillsStripMode = (wrapperSelector: string) =>
+  setPillsWidth(wrapperSelector, '700px');
+
+export const forcePillsCompactMode = (wrapperSelector: string) =>
+  setPillsWidth(wrapperSelector, '400px');
+
+export const clearPillsWidthOverride = () => {
+  cy.document().then((doc) => doc.getElementById(PILLS_WIDTH_STYLE_ID)?.remove());
+};
+
 // This command forces the Chrome V8 engine to clear memory immediately after every single test.
 // Without this, the heap size could grow linearly with every test in the spec file until the GitHub Runner hits its 7GB limit and kills the process.
 export const memoryCleaner = () => {

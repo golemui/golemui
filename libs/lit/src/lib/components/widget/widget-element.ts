@@ -1,6 +1,7 @@
 import { LitElement } from 'lit';
-import { customElement } from 'lit/decorators.js';
 import { WidgetMixin } from '../../mixins/widget-mixin';
+import { safeDefine } from '../../utils/define';
 
-@customElement('gui-widget')
 export class WidgetElement extends WidgetMixin(LitElement) {}
+
+safeDefine('gui-widget', WidgetElement);

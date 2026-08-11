@@ -1,5 +1,6 @@
 import { html, LitElement } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
+import { safeDefine } from '@golemui/lit/internals';
 import type { DisplayWidget, WithWidget } from '@golemui/core';
 import { consume, provide } from '@lit/context';
 import {
@@ -12,7 +13,6 @@ import type { MarkdownTextProps } from '@golemui/gui-shared/internals';
 import '@golemui/gui-components/markdown-text';
 import { type Subscription } from 'rxjs';
 
-@customElement('gui-markdown-text-display')
 export class MarkdownTextElement extends LitElement implements WithWidget {
   widget!: DisplayWidget;
 
@@ -69,3 +69,5 @@ export class MarkdownTextElement extends LitElement implements WithWidget {
     this.subscriptions.forEach((s) => s.unsubscribe());
   }
 }
+
+safeDefine('gui-markdown-text-display', MarkdownTextElement);
