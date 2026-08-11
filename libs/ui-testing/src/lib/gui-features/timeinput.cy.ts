@@ -144,10 +144,10 @@ export const runTimeInputComponentTests = (mountFn: MountComponentFn) => {
         const formSubmitHandler = cy.stub().as('formSubmitHandler');
         mountTimeInput({ lang: 'en-GB', formSubmit: formSubmitHandler });
 
-        // Filling the last part wraps focus to the first one, committing the value
+        // Filling the last part commits the value; focus stays on it
         cy.get(sel.hour).type('21');
         cy.focused().type('45');
-        cy.focused().should('have.attr', 'data-type', 'hour');
+        cy.focused().should('have.attr', 'data-type', 'minute');
 
         submitAndGetData('@formSubmitHandler').then((data) => {
           expect(data).to.deep.equal({ myTime: '21:45:00' });

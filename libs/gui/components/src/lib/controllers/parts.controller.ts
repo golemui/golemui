@@ -301,7 +301,8 @@ export class GUIPartsController implements ReactiveController {
 
   /**
    * The keyup pipeline:
-   * - auto-advance when a digit fills a segment to its maxlength
+   * - auto-advance to the next empty part when a digit fills a segment to its
+   *   maxlength; commit in place when there is nothing empty to advance into
    * - Enter -> onEnter
    * - ArrowUp/Down increment via `incrementPartValue`, re-select and commit
    * - ArrowLeft/Right move by VISUAL position, handles the LTR/RTL
@@ -316,15 +317,16 @@ export class GUIPartsController implements ReactiveController {
     const index = inputs.indexOf(target);
     const descriptor = this.options.getDescriptor(type);
 
-    // Jump to the next part when an input is filled
+    // Jump to the next part when an input is filled, but only into an empty one
     if (
       target instanceof HTMLInputElement &&
       input.value.length === input.maxLength &&
       isDigitKey(event.key)
     ) {
-      if (index !== inputs.length - 1) {
-        inputs[index + 1].focus();
-      } else if (!this.autoAdvanceFromGroupEnd(group)) {
+      const next = index !== inputs.length - 1 ? inputs[index + 1] : null;
+      if (next && this.isPartEmpty(next, group)) {
+        next.focus();
+      } else if (next || !this.autoAdvanceFromGroupEnd(group)) {
         this.setPart(group, type, input.value.replace(/[^0-9]/g, ''));
         this.options.commitGroup(group);
       }
@@ -423,23 +425,36 @@ export class GUIPartsController implements ReactiveController {
   };
 
   /**
-   * Auto-advance past the last input of a group, or into the next
-   * group's first input, if it has more than one group (like ranged inputs).
+   * Whether a part element holds no entered value yet: an input with no text,
+   * or a dayPeriod toggle whose part state is unset.
+   */
+  private isPartEmpty(el: HTMLElement, group: string): boolean {
+    if (el instanceof HTMLInputElement) return el.value === '';
+    const type = el.dataset['type'] as DateTimePartType | undefined;
+    return type !== undefined && this.getPart(group, type) === '';
+  }
+
+  /**
+   * Auto-advance from the last input of a group into the next group's first
+   * part, if it has more than one group (like ranged inputs) and that part is
+   * still empty.
    *
    * @param {string} group - The group whose last input was just filled.
-   * @return {boolean} Whether focus moved — false past the last group, where
-   *   there is nothing left to advance into and the caller commits instead.
+   * @return {boolean} Whether focus moved — false when the value is fully
+   *   entered (single group, past the last group, or a filled next group),
+   *   where focus stays put and the caller commits instead.
    */
   private autoAdvanceFromGroupEnd(group: string): boolean {
     const groups = this.options.groups;
     if (groups.length > 1) {
       const nextGroup = groups[groups.indexOf(group) + 1];
       if (nextGroup === undefined) return false;
-      this.getGroupInputs(nextGroup)[0]?.focus();
+      const first = this.getGroupInputs(nextGroup)[0];
+      if (!first || !this.isPartEmpty(first, nextGroup)) return false;
+      first.focus();
       return true;
     }
-    this.getGroupInputs(group)[0]?.focus();
-    return true;
+    return false;
   }
 
   /**

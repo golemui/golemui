@@ -114,6 +114,15 @@ export const runRangeDateInputComponentTests = (mountFn: MountComponentFn) => {
         cy.focused().should('have.attr', 'data-group', 'end');
         cy.focused().should('have.attr', 'data-type', 'year');
       });
+
+      it('should NOT advance into the end group when its first part is filled', () => {
+        mountRangeDateInput();
+
+        cy.get(sel.end.month).type('07');
+        cy.get(sel.start.year).type('2026');
+        cy.focused().should('have.attr', 'data-group', 'start');
+        cy.focused().should('have.attr', 'data-type', 'year');
+      });
     });
 
     describe('pill creation', () => {

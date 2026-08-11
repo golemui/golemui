@@ -89,11 +89,29 @@ export const runDateInputComponentTests = (mountFn: MountComponentFn) => {
         cy.focused().should('have.attr', 'data-type', 'year');
       });
 
-      it('should wrap auto-advance from the last part to the first', () => {
+      it('should keep focus on the last part once the date is complete', () => {
         mountDateInput();
 
         cy.get(sel.year).type('2026');
+        cy.focused().should('have.attr', 'data-type', 'year');
+      });
+
+      it('should not advance into an already-filled part (backwards entry)', () => {
+        const formSubmitHandler = cy.stub().as('formSubmitHandler');
+        mountDateInput({ formSubmit: formSubmitHandler });
+
+        cy.get(sel.year).type('2026');
+        cy.focused().should('have.attr', 'data-type', 'year');
+
+        cy.get(sel.day).type('15');
+        cy.focused().should('have.attr', 'data-type', 'day');
+
+        cy.get(sel.month).type('06');
         cy.focused().should('have.attr', 'data-type', 'month');
+
+        submitAndGetData('@formSubmitHandler').then((data) => {
+          expect(data).to.deep.equal({ myDate: '2026-06-15' });
+        });
       });
 
       it('should submit the typed date as an ISO date string', () => {
