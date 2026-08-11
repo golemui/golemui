@@ -1,3 +1,13 @@
+## 1.2.1-rc.0 (2026-08-11)
+
+### 🩹 Fixes
+
+- avoid double registration warnings via shared safeDefine ([#278](https://github.com/golemui/golemui/pull/278))
+
+### ❤️ Thank You
+
+- Raúl Jiménez @Elecash
+
 ## 1.2.0 (2026-08-04)
 
 ### 🚀 Features

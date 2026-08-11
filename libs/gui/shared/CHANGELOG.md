@@ -1,3 +1,14 @@
+## 1.2.1-rc.0 (2026-08-11)
+
+### 🩹 Fixes
+
+- **gui-components:** Set default min year to 1900 instead of 1000 ([#277](https://github.com/golemui/golemui/pull/277))
+- date time intermediate states and commit on blur ([#265](https://github.com/golemui/golemui/pull/265))
+
+### ❤️ Thank You
+
+- Raúl Jiménez @Elecash
+
 ## 1.2.0 (2026-08-04)
 
 ### 🩹 Fixes
