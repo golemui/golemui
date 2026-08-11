@@ -116,6 +116,12 @@
     "validator": {
       "$ref": "../validators.schema.json#/$defs/validator"
     },
+    "defaultValue": {
+      "type": "array",
+      "items": {
+        "$ref": "../ranges.schema.json#/$defs/dateRange"
+      }
+    },
     "props": {
       "type": "object",
       "properties": {

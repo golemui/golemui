@@ -65,6 +65,9 @@
     "validator": {
       "$ref": "../validators.schema.json#/$defs/validator"
     },
+    "defaultValue": {
+      "type": "string"
+    },
     "props": {
       "type": "object",
       "properties": {

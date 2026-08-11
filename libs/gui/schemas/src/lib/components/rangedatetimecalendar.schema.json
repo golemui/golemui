@@ -38,7 +38,7 @@
       "$ref": "../core/common.schema.json#/$defs/localizable"
     },
     "dayFormatProp": {
-      "description": "Formatting of day numbers in the calendar grid (`numeric` = 1–31, `2-digit` = 01–31)",
+      "description": "Formatting of day numbers in the calendar grid (`numeric` = 1-31, `2-digit` = 01-31)",
       "enum": ["numeric", "2-digit"]
     },
     "weekdayFormatProp": {
@@ -73,7 +73,7 @@
     },
     "disabledRangesProp": {
       "type": "array",
-      "description": "Disabled instant spans (in this widget's DateTimeRange coordinate system). Blocking a whole day is a span of 00:00:00–23:59:59.",
+      "description": "Disabled instant spans (in this widget's DateTimeRange coordinate system). Blocking a whole day is a span of 00:00:00-23:59:59.",
       "items": {
         "$ref": "../ranges.schema.json#/$defs/dateTimeRange"
       }
@@ -108,6 +108,12 @@
     },
     "validator": {
       "$ref": "../validators.schema.json#/$defs/validator"
+    },
+    "defaultValue": {
+      "type": "array",
+      "items": {
+        "$ref": "../ranges.schema.json#/$defs/dateTimeRange"
+      }
     },
     "props": {
       "type": "object",

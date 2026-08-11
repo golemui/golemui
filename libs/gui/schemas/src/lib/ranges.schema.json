@@ -6,15 +6,15 @@
   "$defs": {
     "dateRange": {
       "type": "object",
-      "description": "A single date range used by calendar/date-picker widgets to mark days as disabled.",
+      "description": "A single date range. Used as the value of the range calendar and range date widgets, and by calendar/date-picker widgets to mark days as disabled.",
       "properties": {
         "start": {
           "type": "string",
-          "description": "ISO-8601 date string for the start of the disabled range (inclusive)"
+          "description": "ISO-8601 date string for the start of the range (inclusive)"
         },
         "end": {
           "type": "string",
-          "description": "ISO-8601 date string for the end of the disabled range (inclusive). Omit to disable a single day."
+          "description": "ISO-8601 date string for the end of the range (inclusive). Omit to cover a single day."
         }
       },
       "required": ["start"],
@@ -22,7 +22,7 @@
     },
     "dateTimeRange": {
       "type": "object",
-      "description": "A single date-time range (two ISO date-times) used by range date-time widgets for disabled instant spans.",
+      "description": "A single date-time range (two ISO date-times). Used as the value of the range date-time widgets, and by those widgets for disabled instant spans.",
       "properties": {
         "start": {
           "type": "string",
@@ -30,7 +30,7 @@
         },
         "end": {
           "type": "string",
-          "description": "ISO-8601 date-time string for the end of the range (inclusive). Omit to disable the single instant at start."
+          "description": "ISO-8601 date-time string for the end of the range (inclusive). Omit to cover the single instant at start."
         }
       },
       "required": ["start"],
@@ -43,7 +43,7 @@
     },
     "timeRange": {
       "type": "object",
-      "description": "A single time-of-day range used by time-picker widgets to mark times as disabled.",
+      "description": "A single time-of-day range. Used as the value of the range time widgets, and by time-picker widgets to mark times as disabled.",
       "properties": {
         "start": {
           "$ref": "#/$defs/isoTime"

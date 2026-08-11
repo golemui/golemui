@@ -35,7 +35,7 @@
       "$ref": "../core/common.schema.json#/$defs/localizable"
     },
     "dayFormatProp": {
-      "description": "Formatting of day numbers in the calendar grid (`numeric` = 1–31, `2-digit` = 01–31)",
+      "description": "Formatting of day numbers in the calendar grid (`numeric` = 1-31, `2-digit` = 01-31)",
       "enum": ["numeric", "2-digit"]
     },
     "weekdayFormatProp": {
@@ -95,6 +95,9 @@
     },
     "validator": {
       "$ref": "../validators.schema.json#/$defs/validator"
+    },
+    "defaultValue": {
+      "type": "string"
     },
     "props": {
       "type": "object",
