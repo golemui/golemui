@@ -1,5 +1,10 @@
 import { defineForm, identityTranslator } from '@golemui/core';
-import { type MountComponentFn } from '../utils';
+import {
+  clearPillsWidthOverride,
+  forcePillsCompactMode,
+  forcePillsStripMode,
+  type MountComponentFn,
+} from '../utils';
 
 // Behavior tests for the gui-range-date-picker web component. They pin the
 // open/close model that used to be hand-rolled per framework (open on input
@@ -633,6 +638,59 @@ export const runRangeDatePickerComponentTests = (mountFn: MountComponentFn) => {
         cy.get(sel.dayButton('2026-06-15')).click();
         cy.get(sel.dayButton('2026-06-15')).should('not.have.class', 'is-anchor');
         cy.get(sel.dayButton('2026-06-15')).should('not.have.class', 'selected');
+        cy.get(sel.calendar).should('exist');
+      });
+    });
+
+    describe('pill keyboard navigation', () => {
+      // The harness lays the trigger out below the compact threshold, so each
+      // test pins the mode it exercises: strip for arrowing along the pills,
+      // compact for the bubble/dropdown interplay with the calendar.
+      afterEach(clearPillsWidthOverride);
+
+      it('should keep the calendar open while arrowing into the pills and back', () => {
+        forcePillsStripMode('.gui-range-date-input');
+        mountRangeDatePicker({ data: { myRanges: [juneRange, marchRange] } });
+
+        cy.get(sel.startMonth).click();
+        cy.get(sel.calendar).should('exist');
+
+        // Focus hops from the segments into the strip; that is not a departure
+        cy.focused().type('{leftArrow}');
+        cy.focused().should('have.class', 'gui-pills__pill');
+        cy.get(sel.calendar).should('exist');
+
+        cy.focused().type('{rightArrow}');
+        cy.focused().should('have.attr', 'data-type', 'month');
+        cy.get(sel.calendar).should('exist');
+      });
+
+      it('should close the calendar when the pills dropdown opens', () => {
+        forcePillsCompactMode('.gui-range-date-input');
+        mountRangeDatePicker({ data: { myRanges: [juneRange, marchRange] } });
+
+        cy.get(sel.startMonth).click();
+        cy.get(sel.calendar).should('exist');
+
+        // The dropdown and the calendar are mutually exclusive overlays
+        cy.get('.gui-pills__count').click();
+        cy.get('.gui-pills__dropdown').should('exist');
+        cy.get(sel.calendar).should('not.exist');
+      });
+
+      it('should re-open the calendar after Escape closes the pills dropdown', () => {
+        // Characterization: Escape returns focus to the segments, and focusing
+        // the trigger opens the popover. Dropdown-Escape therefore lands the
+        // user back on the segments with the calendar showing.
+        forcePillsCompactMode('.gui-range-date-input');
+        mountRangeDatePicker({ data: { myRanges: [juneRange, marchRange] } });
+
+        cy.get('.gui-pills__count').click();
+        cy.get('.gui-pills__dropdown button.gui-pills__pill').first().focus();
+        cy.focused().type('{esc}');
+
+        cy.get('.gui-pills__dropdown').should('not.exist');
+        cy.focused().should('have.attr', 'data-group', 'start');
         cy.get(sel.calendar).should('exist');
       });
     });

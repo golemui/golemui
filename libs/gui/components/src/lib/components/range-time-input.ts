@@ -7,6 +7,7 @@ import { styleMap } from 'lit-html/directives/style-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
 import { GUIPartsController } from '../controllers/parts.controller';
+import { GUIPillsNavigationController } from '../controllers/pills-navigation.controller';
 import { renderGroupParts, type GUIPartsTemplateData } from '../utils/part-templates';
 import {
   getTimeLocaleData,
@@ -134,6 +135,14 @@ export class GuiRangeTimeInput extends LitElement {
     onEmptyPartBlur: () => {
       // Unlike gui-time, an empty part never commits a null value
     },
+    onNavigatePastStart: () => this._pillsNav.enterPillList(),
+    onEmptyPartDelete: () => {
+      if (this.disabled || this.readOnly) return;
+      const allEmpty =
+        this._parts.isGroupEmpty('start', this.timePartTypes) &&
+        this._parts.isGroupEmpty('end', this.timePartTypes);
+      if (allEmpty) this._pillsNav.enterPillList();
+    },
     onEnter: () => {
       this.tryCreatePill();
       if (this.value && this.value.length > 0) {
@@ -142,6 +151,12 @@ export class GuiRangeTimeInput extends LitElement {
     },
     getHourFormat: () => this.timeLocaleData.effectiveHourFormat,
     getDayPeriodLabels: () => this.timeLocaleData.dayPeriodLabels,
+  });
+
+  private _pillsNav = new GUIPillsNavigationController(this, {
+    getPills: () => this.querySelector('gui-pills'),
+    getPillCount: () => this.value?.length ?? 0,
+    focusLinkedInput: () => this._parts.focusFirst('start', true),
   });
 
   /**
@@ -272,12 +287,15 @@ export class GuiRangeTimeInput extends LitElement {
             .removable=${true}
             .clickable=${true}
             .bubble=${true}
+            .tabbable=${false}
             ?disabled=${this.disabled}
             ?readonly=${this.readOnly}
             .removeAriaLabel=${this.removePillAriaLabel ?? 'Remove time'}
             .compactAriaLabel=${`${pillItems.length} time ranges`}
             @pillremove=${this.onPillRemoveEvent}
             @pillclick=${this.onPillClickEvent}
+            @pillkeydown=${this._pillsNav.onPillKeydown}
+            @pillexit=${this._pillsNav.onPillExit}
           ></gui-pills>
 
           <div class="gui-range-time-input__inputs">
@@ -318,9 +336,8 @@ export class GuiRangeTimeInput extends LitElement {
     );
 
     if (removal.next.length === 0) {
-      requestAnimationFrame(() => {
-        this.querySelector<HTMLInputElement>('.gui-range-time-input__field input')?.focus();
-      });
+      // Strip is gone; return focus to the segments.
+      this._pillsNav.focusLinkedInputDeferred();
     }
   };
 

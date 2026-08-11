@@ -39,6 +39,7 @@ export * from './lib/gui-features/rangedatepicker.cy';
 export * from './lib/gui-features/rangetimepicker.cy';
 export * from './lib/gui-features/repeater.cy';
 export * from './lib/gui-features/select.cy';
+export * from './lib/gui-features/tags.cy';
 export * from './lib/gui-features/timeinput.cy';
 export * from './lib/gui-features/datetimecalendar.cy';
 export * from './lib/gui-features/datetimepicker.cy';

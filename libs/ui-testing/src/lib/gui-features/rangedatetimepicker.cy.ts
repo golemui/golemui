@@ -552,6 +552,64 @@ export const runRangeDateTimePickerComponentTests = (mountFn: MountComponentFn) 
       });
     });
 
+    describe('pill keyboard navigation', () => {
+      // Two current-month ranges, displayed sorted by start: the 3rd first,
+      // the 10th last.
+      const ranges = [
+        { start: dt(10, '09:00:00'), end: dt(12, '17:00:00') },
+        { start: dt(3, '09:00:00'), end: dt(4, '10:00:00') },
+      ];
+
+      it('should open the dropdown at the first pill on ArrowLeft when the strip is collapsed', () => {
+        mountPicker({ data: { myRanges: ranges } });
+
+        // Date-time pills are long: in this harness the widget sits below the
+        // 540px gui-pills-widget container threshold, so the strip is collapsed
+        // to the count bubble and keyboard entry goes through the dropdown —
+        // landing on the FIRST pill (top of the vertical list), not the last.
+        cy.get('.gui-pills__count').should('be.visible');
+
+        cy.get(sel.triggerPart('start', 'month')).click();
+        cy.get(sel.calendar).should('exist');
+
+        cy.focused().type('{leftArrow}');
+        cy.get('.gui-pills__dropdown').should('exist');
+        cy.focused()
+          .should('have.class', 'gui-pills__pill')
+          .should('contain.text', `${mm}/03/${y}`);
+
+        // The dropdown displaced the calendar: mutually exclusive overlays.
+        cy.get(sel.calendar).should('not.exist');
+      });
+
+      it('should close the calendar when the pills dropdown opens', () => {
+        mountPicker({ data: { myRanges: ranges } });
+
+        cy.get(sel.triggerPart('start', 'month')).click();
+        cy.get(sel.calendar).should('exist');
+
+        // The dropdown and the calendar are mutually exclusive overlays
+        cy.get('.gui-pills__count').click({ force: true });
+        cy.get('.gui-pills__dropdown').should('exist');
+        cy.get(sel.calendar).should('not.exist');
+      });
+
+      it('should re-open the calendar after Escape closes the pills dropdown', () => {
+        // Characterization: Escape returns focus to the segments, and focusing
+        // the trigger opens the popover. Dropdown-Escape therefore lands the
+        // user back on the segments with the calendar showing.
+        mountPicker({ data: { myRanges: ranges } });
+
+        cy.get('.gui-pills__count').click({ force: true });
+        cy.get('.gui-pills__dropdown button.gui-pills__pill').first().focus();
+        cy.focused().type('{esc}');
+
+        cy.get('.gui-pills__dropdown').should('not.exist');
+        cy.focused().should('have.attr', 'data-group', 'start');
+        cy.get(sel.calendar).should('exist');
+      });
+    });
+
     describe('delegated validation', () => {
       it('should reject a range overlapping a disabled span with an error and no pill', () => {
         mountPicker({

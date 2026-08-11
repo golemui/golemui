@@ -27,6 +27,11 @@ export interface GuiPillsDropdownEventDetail {
   open: boolean;
 }
 
+export interface GuiPillExitEventDetail {
+  key: string;
+  reason: 'escape';
+}
+
 /**
  * `<gui-pills>` — a scrollable strip of dismissable / clickable chips with an
  * optional count-bubble fallback that opens a dropdown listing every item when
@@ -48,6 +53,9 @@ export interface GuiPillsDropdownEventDetail {
  *   - `pillkeydown`   { key, event }         — re-emitted for unhandled keys and at strip
  *                                              boundaries; host can intercept (e.g. to
  *                                              focus its own input on ArrowRight-past-end)
+ *   - `pillexit`      { key, reason }        — focus left the pills involuntarily (Escape
+ *                                              closed the dropdown); host should restore
+ *                                              focus to its anchor element
  */
 export class GuiPills extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
@@ -332,6 +340,7 @@ export class GuiPills extends LitElement {
       e.preventDefault();
       e.stopPropagation();
       this.closeDropdown();
+      this.emitExit(item.key, 'escape');
       return;
     }
 
@@ -343,6 +352,16 @@ export class GuiPills extends LitElement {
     this.dispatchEvent(
       new CustomEvent<GuiPillEventDetail>('pillremove', {
         detail: { key },
+        bubbles: true,
+        composed: true,
+      }),
+    );
+  }
+
+  private emitExit(key: string, reason: GuiPillExitEventDetail['reason']) {
+    this.dispatchEvent(
+      new CustomEvent<GuiPillExitEventDetail>('pillexit', {
+        detail: { key, reason },
         bubbles: true,
         composed: true,
       }),

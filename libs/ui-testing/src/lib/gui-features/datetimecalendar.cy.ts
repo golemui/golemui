@@ -311,8 +311,10 @@ export const runDateTimeCalendarComponentTests = (mountFn: MountComponentFn) => 
         cy.get(sel.hour).click();
         cy.get(sel.openTimeGrid).should('exist');
 
+        // The kept 09:30 makes the time complete, and a completed time no
+        // longer auto-advances — target the minute part explicitly.
         cy.get(sel.hour).type('{selectAll}10');
-        cy.focused().type('{selectAll}30', { force: true });
+        cy.get(sel.minute).type('{selectAll}30', { force: true });
         cy.focused().type('{enter}', { force: true });
 
         cy.get(sel.timeGrid).should('have.attr', 'hidden');

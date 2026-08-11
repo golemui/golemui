@@ -6,6 +6,7 @@ import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
 import { GUIPartsController } from '../controllers/parts.controller';
+import { GUIPillsNavigationController } from '../controllers/pills-navigation.controller';
 import {
   getDateFormatParts,
   mergeDateRanges,
@@ -103,6 +104,14 @@ export class GuiRangeDateInput extends LitElement {
     onEmptyPartBlur: () => {
       // Unlike gui-date, an empty part never commits a null value
     },
+    onNavigatePastStart: () => this._pillsNav.enterPillList(),
+    onEmptyPartDelete: () => {
+      if (this.disabled || this.readOnly) return;
+      const allEmpty =
+        this._parts.isGroupEmpty('start', this.datePartTypes) &&
+        this._parts.isGroupEmpty('end', this.datePartTypes);
+      if (allEmpty) this._pillsNav.enterPillList();
+    },
     onEnter: () => {
       this.tryCreatePill();
       if (this.value && this.value.length > 0) {
@@ -120,6 +129,12 @@ export class GuiRangeDateInput extends LitElement {
           composed: true,
         }),
       ),
+  });
+
+  private _pillsNav = new GUIPillsNavigationController(this, {
+    getPills: () => this.querySelector('gui-pills'),
+    getPillCount: () => this.value?.length ?? 0,
+    focusLinkedInput: () => this._parts.focusFirst('start', true),
   });
 
   /**
@@ -236,12 +251,15 @@ export class GuiRangeDateInput extends LitElement {
             .removable=${true}
             .clickable=${true}
             .bubble=${true}
+            .tabbable=${false}
             ?disabled=${this.disabled}
             ?readonly=${this.readOnly}
             .removeAriaLabel=${this.removePillAriaLabel ?? 'Remove date'}
             .compactAriaLabel=${`${pillItems.length} date ranges`}
             @pillremove=${this.onPillRemoveEvent}
             @pillclick=${this.onPillClickEvent}
+            @pillkeydown=${this._pillsNav.onPillKeydown}
+            @pillexit=${this._pillsNav.onPillExit}
           ></gui-pills>
 
           <div class="gui-range-date-input__inputs">
@@ -287,12 +305,8 @@ export class GuiRangeDateInput extends LitElement {
     );
 
     if (removal.next.length === 0) {
-      requestAnimationFrame(() => {
-        const firstInput = this.querySelector<HTMLInputElement>(
-          '.gui-range-date-input__field input',
-        );
-        firstInput?.focus();
-      });
+      // Strip is gone; return focus to the segments.
+      this._pillsNav.focusLinkedInputDeferred();
     }
   };
 
