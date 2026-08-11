@@ -1,5 +1,5 @@
 import { defineForm, identityTranslator } from '@golemui/core';
-import { type MountComponentFn } from '../utils';
+import { clearPillsWidthOverride, forcePillsStripMode, type MountComponentFn } from '../utils';
 
 // Behavior tests for the gui-range-time-picker: the gui-range-time typed input
 // plus a two-list popover (time-in left, time-out right). Both lists are usable
@@ -487,6 +487,11 @@ export const runRangeTimePickerComponentTests = (mountFn: MountComponentFn) => {
         { start: '14:00:00', end: '16:00:00' },
         { start: '09:00:00', end: '11:00:00' },
       ];
+
+      // These pin the strip-mode model, so hold the wrapper above the compact
+      // threshold; the harness would otherwise collapse it to the bubble.
+      beforeEach(() => forcePillsStripMode('.gui-range-time-input'));
+      afterEach(clearPillsWidthOverride);
 
       it('should enter the pills with ArrowLeft despite the readonly segments', () => {
         mountRangeTimePicker({ data: { myRanges: ranges } });

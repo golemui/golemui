@@ -1,5 +1,10 @@
 import { defineForm, identityTranslator } from '@golemui/core';
-import { type MountComponentFn } from '../utils';
+import {
+  clearPillsWidthOverride,
+  forcePillsCompactMode,
+  forcePillsStripMode,
+  type MountComponentFn,
+} from '../utils';
 
 // Behavior tests for the gui-range-date-picker web component. They pin the
 // open/close model that used to be hand-rolled per framework (open on input
@@ -638,7 +643,13 @@ export const runRangeDatePickerComponentTests = (mountFn: MountComponentFn) => {
     });
 
     describe('pill keyboard navigation', () => {
+      // The harness lays the trigger out below the compact threshold, so each
+      // test pins the mode it exercises: strip for arrowing along the pills,
+      // compact for the bubble/dropdown interplay with the calendar.
+      afterEach(clearPillsWidthOverride);
+
       it('should keep the calendar open while arrowing into the pills and back', () => {
+        forcePillsStripMode('.gui-range-date-input');
         mountRangeDatePicker({ data: { myRanges: [juneRange, marchRange] } });
 
         cy.get(sel.startMonth).click();
@@ -655,13 +666,14 @@ export const runRangeDatePickerComponentTests = (mountFn: MountComponentFn) => {
       });
 
       it('should close the calendar when the pills dropdown opens', () => {
+        forcePillsCompactMode('.gui-range-date-input');
         mountRangeDatePicker({ data: { myRanges: [juneRange, marchRange] } });
 
         cy.get(sel.startMonth).click();
         cy.get(sel.calendar).should('exist');
 
         // The dropdown and the calendar are mutually exclusive overlays
-        cy.get('.gui-pills__count').click({ force: true });
+        cy.get('.gui-pills__count').click();
         cy.get('.gui-pills__dropdown').should('exist');
         cy.get(sel.calendar).should('not.exist');
       });
@@ -670,9 +682,10 @@ export const runRangeDatePickerComponentTests = (mountFn: MountComponentFn) => {
         // Characterization: Escape returns focus to the segments, and focusing
         // the trigger opens the popover. Dropdown-Escape therefore lands the
         // user back on the segments with the calendar showing.
+        forcePillsCompactMode('.gui-range-date-input');
         mountRangeDatePicker({ data: { myRanges: [juneRange, marchRange] } });
 
-        cy.get('.gui-pills__count').click({ force: true });
+        cy.get('.gui-pills__count').click();
         cy.get('.gui-pills__dropdown button.gui-pills__pill').first().focus();
         cy.focused().type('{esc}');
 

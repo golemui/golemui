@@ -1,5 +1,10 @@
 import { defineForm, identityTranslator } from '@golemui/core';
-import { type MountComponentFn } from '../utils';
+import {
+  clearPillsWidthOverride,
+  forcePillsCompactMode,
+  forcePillsStripMode,
+  type MountComponentFn,
+} from '../utils';
 
 // Behavior tests for the gui-range-time web component: two segmented time inputs
 // (start/end) accumulating a TimeRange[] value as pills. Pins the pill
@@ -382,6 +387,12 @@ export const runRangeTimeInputComponentTests = (mountFn: MountComponentFn) => {
 
       const mountWithRanges = () => mountRangeTimeInput({ data: { myRanges: [evening, morning] } });
 
+      // These pin the strip-mode model, so hold the wrapper above the compact
+      // threshold; the harness would otherwise collapse it to the bubble.
+      // The dropdown test below re-pins it to compact explicitly.
+      beforeEach(() => forcePillsStripMode('.gui-range-time-input'));
+      afterEach(clearPillsWidthOverride);
+
       it('should keep pills out of the tab order', () => {
         mountWithRanges();
         cy.get('button.gui-pills__pill').should('have.attr', 'tabindex', '-1');
@@ -409,9 +420,10 @@ export const runRangeTimeInputComponentTests = (mountFn: MountComponentFn) => {
       });
 
       it('should close the dropdown on Escape and return focus to the segments', () => {
+        forcePillsCompactMode('.gui-range-time-input');
         mountWithRanges();
 
-        cy.get('.gui-pills__count').click({ force: true });
+        cy.get('.gui-pills__count').click();
         cy.get('.gui-pills__dropdown button.gui-pills__pill').first().focus();
         cy.focused().type('{esc}');
         cy.get('.gui-pills__dropdown').should('not.exist');

@@ -1,5 +1,10 @@
 import { defineForm, identityTranslator } from '@golemui/core';
-import { type MountComponentFn } from '../utils';
+import {
+  clearPillsWidthOverride,
+  forcePillsCompactMode,
+  forcePillsStripMode,
+  type MountComponentFn,
+} from '../utils';
 
 // Characterization tests for the current gui-range-date behavior. They pin the
 // exact interaction model (cross-group auto-advance and arrow navigation,
@@ -541,6 +546,12 @@ export const runRangeDateInputComponentTests = (mountFn: MountComponentFn) => {
       const mountWithRanges = () =>
         mountRangeDateInput({ data: { myRanges: [juneRange, marchRange] } });
 
+      // These pin the strip-mode model, so hold the wrapper above the compact
+      // threshold; the harness would otherwise collapse it to the bubble.
+      // Dropdown tests below re-pin it to compact explicitly.
+      beforeEach(() => forcePillsStripMode('.gui-range-date-input'));
+      afterEach(clearPillsWidthOverride);
+
       it('should enter the strip at the LAST pill on ArrowLeft from the first segment', () => {
         mountWithRanges();
 
@@ -632,9 +643,10 @@ export const runRangeDateInputComponentTests = (mountFn: MountComponentFn) => {
       });
 
       it('should close the dropdown on Escape and return focus to the segments', () => {
+        forcePillsCompactMode('.gui-range-date-input');
         mountWithRanges();
 
-        cy.get('.gui-pills__count').click({ force: true });
+        cy.get('.gui-pills__count').click();
         cy.get('.gui-pills__dropdown button.gui-pills__pill').first().focus();
         cy.focused().type('{downArrow}');
         cy.focused().should('have.attr', 'aria-label', juneLabel);

@@ -1,5 +1,10 @@
 import { defineForm, identityTranslator } from '@golemui/core';
-import { type MountComponentFn } from '../utils';
+import {
+  clearPillsWidthOverride,
+  forcePillsCompactMode,
+  forcePillsStripMode,
+  type MountComponentFn,
+} from '../utils';
 
 // Behavior tests for the gui-tags chip input. Pins the documented keyboard
 // model (widgets-reference/input-fields/tags.mdx): the text input is the
@@ -68,6 +73,11 @@ export const runTagsComponentTests = (mountFn: MountComponentFn) => {
     describe('pill keyboard navigation', () => {
       const mountWithTags = () => mountTags({ data: { myTags: ['alpha', 'beta'] } });
 
+      // These pin the strip-mode model, so hold the wrapper above the compact
+      // threshold; the harness would otherwise collapse it to the bubble.
+      beforeEach(() => forcePillsStripMode('.gui-tags-input'));
+      afterEach(clearPillsWidthOverride);
+
       it('should keep pills out of the tab order (input is the single tab stop)', () => {
         mountWithTags();
         cy.get(sel.pill).should('have.attr', 'tabindex', '-1');
@@ -135,11 +145,39 @@ export const runTagsComponentTests = (mountFn: MountComponentFn) => {
         cy.get(sel.pillText).should('have.length', 0);
         cy.focused().should('have.attr', 'data-cy', `${uid}_tags-input`);
       });
+    });
+
+    describe('pill keyboard navigation (compact)', () => {
+      const mountWithTags = () => mountTags({ data: { myTags: ['alpha', 'beta'] } });
+
+      // Below the threshold the strip is hidden behind the count bubble, so
+      // the dropdown is the pill surface: ArrowDown enters it (top of the
+      // vertical list) and ArrowLeft stays in the draft.
+      beforeEach(() => forcePillsCompactMode('.gui-tags-input'));
+      afterEach(clearPillsWidthOverride);
+
+      it('should open the dropdown at the FIRST pill on ArrowDown', () => {
+        mountWithTags();
+
+        cy.get(sel.input).focus();
+        cy.focused().type('{downArrow}');
+        cy.get('.gui-pills__dropdown').should('exist');
+        cy.focused().should('have.class', 'gui-pills__pill').should('contain.text', 'alpha');
+      });
+
+      it('should keep ArrowLeft in the input instead of entering the hidden strip', () => {
+        mountWithTags();
+
+        cy.get(sel.input).focus();
+        cy.focused().type('{leftArrow}');
+        cy.focused().should('have.attr', 'data-cy', `${uid}_tags-input`);
+        cy.get('.gui-pills__dropdown').should('not.exist');
+      });
 
       it('should close the dropdown on Escape and return focus to the input', () => {
         mountWithTags();
 
-        cy.get('.gui-pills__count').click({ force: true });
+        cy.get('.gui-pills__count').click();
         cy.get('.gui-pills__dropdown button.gui-pills__pill').first().focus();
         cy.focused().type('{esc}');
         cy.get('.gui-pills__dropdown').should('not.exist');
