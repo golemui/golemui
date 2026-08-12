@@ -46,6 +46,16 @@ export interface ImplementationSchemaConfig {
   readonly idBase: string;
   /** Repo-relative path of the implementation's generator entry point, used in the generated-file markers. */
   readonly generatorPath: string;
+  /**
+   * Path of the file holding the manifest, named in the generated-file markers.
+   * Defaults to `src/lib/widget-manifest.ts`, where the in-repo implementations keep it.
+   */
+  readonly manifestPath?: string;
+  /**
+   * Command that regenerates the tree, named in the generated-file markers.
+   * Defaults to `npm run generate:schemas`.
+   */
+  readonly regenerateCommand?: string;
   /** `title` of the generated form envelope. */
   readonly formTitle: string;
   /** Description of the form envelope's `states` property, naming the implementation's suffixable root props. */
@@ -69,4 +79,10 @@ export interface ImplementationSchemaConfig {
    * implementation without a custom-widget fallback.
    */
   readonly includeCustomWidgetFallback: boolean;
+  /**
+   * When true, also emit `src/lib/form.editor.schema.json`, a self-contained copy of
+   * the tree for editors, which cannot resolve the published `$id`s offline. Point a
+   * form file's `$schema` at it. Off by default.
+   */
+  readonly emitEditorBundle?: boolean;
 }
