@@ -1,0 +1,22 @@
+{
+  "$schema": "../src/lib/form.editor.schema.json",
+  "form": [
+    {
+      "kind": "layout",
+      "type": "flex",
+      "uid": "#root",
+      "props": { "direction": "column", "gap": 16 },
+      "children": [
+        {
+          "kind": "input",
+          "type": "__IMPLEMENTATION__-input",
+          "uid": "email",
+          "path": "email",
+          "label": "Email address",
+          "validator": { "type": "string", "required": true, "format": "email" },
+          "props": { "placeholder": "you@example.com" }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "__ID_BASE__components/example-input.schema.json",
+  "$comment": "STARTER TEMPLATE, owned by you. One component schema per widget type. Copy this file for each widget, then list it in schemas.config.mjs. The pattern to keep: allOf the baseWidget, `kind` and `type` consts, one `$defs` entry per prop, a `.state` suffixed pattern for every suffixable key, `additionalProperties: false` inside `props`, and `unevaluatedProperties: false` at the root.",
+  "title": "__IMPLEMENTATION__ example input widget",
+  "type": "object",
+  "$defs": {
+    "labelDef": { "$ref": "../core/common.schema.json#/$defs/localizable" },
+    "disabledDef": { "$ref": "../core/common.schema.json#/$defs/boolOrWhen" },
+    "readonlyDef": { "$ref": "../core/common.schema.json#/$defs/boolOrWhen" },
+    "hintProp": { "type": "string" },
+    "placeholderProp": { "type": "string" },
+    "maxlengthProp": { "type": "number" }
+  },
+  "allOf": [{ "$ref": "../core/common.schema.json#/$defs/baseWidget" }],
+  "properties": {
+    "kind": { "const": "input" },
+    "type": { "const": "__IMPLEMENTATION__-input" },
+    "path": { "$ref": "../core/common.schema.json#/$defs/dotPath" },
+    "label": { "$ref": "#/$defs/labelDef" },
+    "disabled": { "$ref": "#/$defs/disabledDef" },
+    "readonly": { "$ref": "#/$defs/readonlyDef" },
+    "on": { "$ref": "../core/common.schema.json#/$defs/on" },
+    "validator": { "$ref": "../validators.schema.json#/$defs/validator" },
+    "defaultValue": { "type": "string" },
+    "props": {
+      "type": "object",
+      "properties": {
+        "hint": { "$ref": "#/$defs/hintProp" },
+        "placeholder": { "$ref": "#/$defs/placeholderProp" },
+        "maxlength": { "$ref": "#/$defs/maxlengthProp" }
+      },
+      "patternProperties": {
+        "^hint\\.[^.]+$": { "$ref": "#/$defs/hintProp" },
+        "^placeholder\\.[^.]+$": { "$ref": "#/$defs/placeholderProp" },
+        "^maxlength\\.[^.]+$": { "$ref": "#/$defs/maxlengthProp" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "patternProperties": {
+    "^label\\.[^.]+$": { "$ref": "#/$defs/labelDef" },
+    "^disabled\\.[^.]+$": { "$ref": "#/$defs/disabledDef" },
+    "^readonly\\.[^.]+$": { "$ref": "#/$defs/readonlyDef" },
+    "^validator\\.[^.]+$": { "$ref": "../validators.schema.json#/$defs/validator" }
+  },
+  "required": ["kind", "type", "path"],
+  "unevaluatedProperties": false
+}

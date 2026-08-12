@@ -12,8 +12,6 @@ export default [
             '{projectRoot}/eslint.config.{js,cjs,mjs,ts,cts,mts}',
             '{projectRoot}/vite.config.{js,ts,mjs,mts}',
             '{projectRoot}/src/**/*.spec*.ts',
-            // Dev-only generator run via tsx, prettier is a root devDependency.
-            '{projectRoot}/tools/**/*.ts',
           ],
         },
       ],

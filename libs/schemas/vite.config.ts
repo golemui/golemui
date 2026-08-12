@@ -21,9 +21,24 @@ export default defineConfig(() => ({
     emptyOutDir: true,
     reportCompressedSize: true,
     lib: {
-      entry: 'src/index.ts',
-      name: 'schemas',
-      fileName: 'index',
+      entry: {
+        index: 'src/index.ts',
+        generator: 'src/generator.ts',
+        cli: 'src/cli/index.ts',
+      },
+      // Multiple entries rule out umd. The generator and the CLI are node build-time
+      // tools, and nothing loads this package through a script tag.
+      formats: ['es', 'cjs'],
+      fileName: (format, entryName) => `${entryName}.${format === 'es' ? 'js' : 'cjs'}`,
+    },
+    rollupOptions: {
+      // Prettier is an optional peer dependency the generator imports at run time.
+      external: [/^node:/, 'prettier'],
+      output: {
+        // Only the bin is executed directly, and a shebang in the shared chunks would
+        // land in the middle of a file.
+        banner: (chunk) => (chunk.name === 'cli' ? '#!/usr/bin/env node' : ''),
+      },
     },
   },
   test: {

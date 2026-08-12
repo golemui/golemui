@@ -18,3 +18,8 @@ export {
   buildWidgetsSchema,
 } from './lib/generator/builders.js';
 export type { SchemaObject } from './lib/generator/builders.js';
+export {
+  buildEditorBundle,
+  EDITOR_BUNDLE_ENTRY_FILE,
+  EDITOR_BUNDLE_FILE,
+} from './lib/generator/editor-bundle.js';

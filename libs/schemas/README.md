@@ -15,7 +15,9 @@ npm install @golemui/schemas
 ```text
 schemas/
   core/common.schema.json        shared structural $defs (baseWidget, localizable, chunkRef, ...)
-index.js / index.umd.cjs         the JavaScript entry point
+index.js / index.cjs             the JavaScript entry point
+generator.js / generator.cjs     the file-writing generator, `@golemui/schemas/generator`
+cli.js                           the `golemui-schemas` command
 index.d.ts, lib/*.d.ts           type declarations
 ```
 
@@ -26,9 +28,11 @@ schema exposing a `#/$defs/validator` entry pointer (the gui set lives at
 
 ## Entry point
 
-The entry point exports the core schema as an object, the four builder functions, and their
-types (`ImplementationSchemaConfig`, `WidgetManifestEntry`, `WidgetKind`, `SchemaObject`). The
-raw file is also reachable as `@golemui/schemas/schemas/core/common.schema.json`.
+The entry point exports the core schema as an object, the builder functions
+(`buildWidgetsSchema`, `buildFormEnvelope`, `buildLayoutWidgetSchema`,
+`buildSchemasPackageIndex`, `buildEditorBundle`), and their types
+(`ImplementationSchemaConfig`, `WidgetManifestEntry`, `WidgetKind`, `SchemaObject`). The raw
+file is also reachable as `@golemui/schemas/schemas/core/common.schema.json`.
 
 ```ts
 import Ajv2020 from 'ajv/dist/2020';
@@ -87,13 +91,43 @@ both respond with `application/json`.
 ## Generating an implementation tree
 
 An implementation declares a widget manifest (`WidgetManifestEntry[]`) and an
-`ImplementationSchemaConfig`, then calls the shared workspace generator
-(`generateImplementationSchemas` in `libs/schemas/tools/generate-implementation-schemas.ts`,
-aliased as `@golemui/schemas/generator`, dev-only and not published) to produce its
-`widgets.schema.json` (widget union plus `knownWidgetTypes` enum), its `form.schema.json`
-envelope, its `layout-widget.schema.json`, its vendored copy of `schemas/core/`, and its
-package index source. The gui implementation's entry point is
-`libs/gui/schemas/tools/generate-schemas.ts`, run with `npm run generate:schemas`.
+`ImplementationSchemaConfig`, then calls `generateImplementationSchemas` from
+`@golemui/schemas/generator` to produce its `widgets.schema.json` (widget union plus
+`knownWidgetTypes` enum), its `form.schema.json` envelope, its `layout-widget.schema.json`,
+its vendored copy of `schemas/core/`, and its package index source. Set
+`emitEditorBundle: true` to also get `form.editor.schema.json` (see below). The gui
+implementation's entry point is `libs/gui/schemas/tools/generate-schemas.ts`, run with
+`npm run generate:schemas`.
+
+Generated files are prettier-formatted when prettier and a prettier config are both
+resolvable, and plainly indented otherwise. Prettier is an optional peer dependency.
+
+## Scaffolding a new implementation
+
+The `golemui-schemas` command scaffolds and regenerates a schema tree, so an implementation
+needs no generator script of its own:
+
+```bash
+npx @golemui/schemas init --name kendo --id-base https://example.com/schemas/kendo/
+npx @golemui/schemas generate
+```
+
+`init` writes `schemas.config.mjs` (the manifest and config), a starter validators schema, a
+starter `flex` and example input component schema, an example form and a test skeleton, then
+runs `generate`. Run it with no flags for prompts.
+
+`schemas.config.mjs` and the component schemas are the implementer's to edit. Everything
+else, including the vendored core, is rewritten by `generate` from the installed
+`@golemui/schemas`, so updating core means bumping the dependency and rerunning it. A CI step
+that runs `generate` and then `git diff --exit-code` catches a stale tree.
+
+## Two entry points: Ajv and editors
+
+Ajv registers the per-file tree by `$id`, and resolution works because every file is added up
+front. An editor instead resolves each relative `$ref` against the file's absolute `$id`,
+computes a URL and tries to download it, which fails offline, in untrusted workspaces and
+wherever the `idBase` is not hosted. `form.editor.schema.json` is the same tree inlined into
+one self-contained document with no `$id`s: point a form file's `$schema` at it.
 
 Editing workflow for the core file: change it here, then run `npm run generate:schemas`
 so every vendored copy is regenerated. A vendored copy is identical to its source apart from
