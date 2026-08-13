@@ -121,7 +121,7 @@
     "vitest": "4.1.9",
     "vue-eslint-parser": "^9.4.3",
     "vue-router": "^4.5.0",
-    "vue-tsc": "^2.1.0"
+    "vue-tsc": "^3.3.9"
   },
   "nx": {
     "includedScripts": []
