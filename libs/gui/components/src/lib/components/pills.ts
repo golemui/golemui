@@ -398,15 +398,21 @@ export class GuiPills extends LitElement {
    * (e.g. tags' ArrowLeft from the input).
    */
   focusPillAt(index: number) {
+    if (this.tryFocusPillAt(index)) return;
     requestAnimationFrame(() => {
-      const selector = this._showDropdown
-        ? '.gui-pills__dropdown .gui-pills__pill'
-        : '.gui-pills__strip .gui-pills__pill';
-      const pills = this.querySelectorAll<HTMLElement>(selector);
-      if (pills.length === 0) return;
-      const safe = Math.max(0, Math.min(index, pills.length - 1));
-      pills[safe].focus();
+      this.tryFocusPillAt(index);
     });
+  }
+
+  private tryFocusPillAt(index: number): boolean {
+    const selector = this._showDropdown
+      ? '.gui-pills__dropdown .gui-pills__pill'
+      : '.gui-pills__strip .gui-pills__pill';
+    const pills = this.querySelectorAll<HTMLElement>(selector);
+    if (pills.length === 0) return false;
+    const safe = Math.max(0, Math.min(index, pills.length - 1));
+    pills[safe].focus();
+    return true;
   }
 
   /** Open the dropdown and focus its first pill. No-op if `bubble` is false. */
