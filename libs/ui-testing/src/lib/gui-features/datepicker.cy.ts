@@ -294,5 +294,57 @@ export const runDatePickerComponentTests = (mountFn: MountComponentFn) => {
         cy.get('[id="testSubject_calendar"]').should('have.length', 1);
       });
     });
+
+    describe('panel chrome and in-panel errors', () => {
+      const toggleSel = 'button.gui-date-picker__arrow';
+      const panelSel = 'gui-date-picker > .gui-widget > .gui-picker__panel';
+
+      it('should wrap the calendar in a panel that squares the joined corners while open', () => {
+        mountWithDate();
+        cy.get(panelSel).should('not.exist');
+
+        cy.get(toggleSel).click();
+        cy.get(panelSel).should('be.visible');
+        // Continuation: the trigger and the panel meet with square corners
+        cy.get('gui-date .gui-parts-ring').should('have.css', 'border-bottom-left-radius', '0px');
+        cy.get(panelSel)
+          .should('have.css', 'border-top-left-radius', '0px')
+          .and('have.css', 'border-top-right-radius', '0px');
+      });
+
+      it('should repeat the field error inside the open panel with the red border', () => {
+        mountWithProps({});
+
+        cy.get('gui-date input[data-type="month"]').click();
+        cy.focused().type('06');
+        cy.get('[data-cy="submitBtn_button"]').focus();
+        cy.get('[data-cy="testSubject_validator-error"]').should('contain.text', 'Incomplete date');
+
+        cy.get(toggleSel).click();
+        cy.get('[data-cy="testSubject_panel-validator-error"]')
+          .should('be.visible')
+          .and('contain.text', 'Incomplete date');
+
+        // The panel copy is decorative: hidden from AT with its own id; the
+        // field copy below the widget stays the aria-errormessage target
+        cy.get('#testSubject_panel_errors')
+          .should('have.attr', 'aria-hidden', 'true')
+          .and('not.have.attr', 'role');
+        cy.get('[data-cy="testSubject_validator-errors"]').should('exist');
+        cy.get('[id="testSubject_errors"]').should('have.length', 1);
+
+        // Invalid field → the panel shares the red border
+        cy.get('[data-cy="testSubject_validator-error"]').then(($li) => {
+          cy.get(panelSel).should('have.css', 'border-top-color', $li.css('color'));
+        });
+      });
+
+      it('should not render the panel error copy when the value is valid', () => {
+        mountWithDate();
+        cy.get(toggleSel).click();
+        cy.get(panelSel).should('be.visible');
+        cy.get('[data-cy="testSubject_panel-validator-errors"]').should('not.exist');
+      });
+    });
   });
 };

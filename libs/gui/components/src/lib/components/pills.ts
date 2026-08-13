@@ -4,6 +4,7 @@ import { safeDefine } from '@golemui/lit/internals';
 import { classMap } from 'lit/directives/class-map.js';
 import { repeat } from 'lit/directives/repeat.js';
 import { createIntersectionObserver } from './tabs';
+import { addErrors } from '../utils/templates';
 
 export interface GuiPillItem {
   /** Stable identity used for `repeat()` keys and event payloads. */
@@ -73,6 +74,9 @@ export class GuiPills extends LitElement {
   @property({ type: String, attribute: 'remove-icon' }) removeIcon: string | undefined;
   @property({ type: String, attribute: 'compact-aria-label' }) compactAriaLabel: string | undefined;
   @property({ type: String, attribute: 'toolbar-aria-label' }) toolbarAriaLabel = 'Selected items';
+
+  @property({ type: Array }) errors: string[] | undefined = undefined;
+  @property({ type: Boolean }) touched = false;
 
   @state() private _isStartVisible = true;
   @state() private _isEndVisible = true;
@@ -182,10 +186,17 @@ export class GuiPills extends LitElement {
         aria-orientation="vertical"
         aria-label=${this.toolbarAriaLabel}
       >
-        ${repeat(
-          this.items,
-          (item) => `dd-${item.key}`,
-          (item, index) => this.renderPill(item, index, true),
+        <div class="gui-pills__dropdown-list">
+          ${repeat(
+            this.items,
+            (item) => `dd-${item.key}`,
+            (item, index) => this.renderPill(item, index, true),
+          )}
+        </div>
+        ${addErrors(
+          this.uid ?? '',
+          { errors: this.errors, touched: this.touched },
+          { variant: 'pills' },
         )}
       </div>
     `;

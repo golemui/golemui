@@ -451,5 +451,39 @@ export const runRangeTimeInputComponentTests = (mountFn: MountComponentFn) => {
         cy.get(sel.pillText).should('have.length', 2);
       });
     });
+
+    describe('pills dropdown errors and error border', () => {
+      it('should repeat the field error inside the open pills dropdown with the red border', () => {
+        mountRangeTimeInput({ data: { myRanges: [{ start: '09:00:00', end: '10:00:00' }] } });
+
+        // Leave a lone start endpoint behind → incomplete error, pill kept
+        cy.get(sel.start.hour).click();
+        cy.focused().type('11');
+        cy.focused().type('00');
+        cy.get('[data-cy="submitBtn_button"]').focus();
+        cy.get(`[data-cy="${uid}_validator-error"]`).should('contain.text', 'Incomplete time');
+
+        cy.get('.gui-pills__count').click({ force: true });
+        cy.get(`[data-cy="${uid}_pills-validator-error"]`)
+          .should('be.visible')
+          .and('contain.text', 'Incomplete time');
+        cy.get(`#${uid}_pills_errors`)
+          .should('have.attr', 'aria-hidden', 'true')
+          .and('not.have.attr', 'role');
+        cy.get(`[id="${uid}_errors"]`).should('have.length', 1);
+
+        cy.get(`[data-cy="${uid}_validator-error"]`).then(($li) => {
+          cy.get('.gui-pills__dropdown').should('have.css', 'border-top-color', $li.css('color'));
+        });
+      });
+
+      it('should not render the dropdown error copy when the value is valid', () => {
+        mountRangeTimeInput({ data: { myRanges: [{ start: '09:00:00', end: '10:00:00' }] } });
+
+        cy.get('.gui-pills__count').click({ force: true });
+        cy.get('.gui-pills__dropdown').should('exist');
+        cy.get(`[data-cy="${uid}_pills-validator-errors"]`).should('not.exist');
+      });
+    });
   });
 };

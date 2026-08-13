@@ -1,3 +1,5 @@
+@use 'panel' as *;
+
 .gui-dropdown {
   display: block;
   position: relative;
@@ -25,16 +27,29 @@
     &:has(> input[aria-expanded='true']) .gui-dropdown__arrow {
       transform: rotate(180deg);
     }
+
+    > .gui-picker__panel {
+      @include gui-picker-panel-chrome;
+      width: calc(100% - (var(--gui-space-2) * 2) - 2px);
+
+      gui-list {
+        position: static;
+        width: 100%;
+
+        &[hidden] {
+          display: none;
+        }
+      }
+    }
   }
 
-  gui-list {
-    position: absolute;
-    width: 100%;
-    top: 42px;
-    z-index: 10;
+  // Invalid field → the open panel shares the red border.
+  &:has(.gui-widget > .gui-widget-input[aria-invalid='true']) .gui-widget > .gui-picker__panel {
+    border-color: var(--gui-intent-error);
+  }
 
-    &[hidden] {
-      display: none;
-    }
+  // Parity with the pickers: an open dropdown stacks above later fields.
+  &:has(.gui-widget > input[aria-expanded='true']) {
+    z-index: 20;
   }
 }

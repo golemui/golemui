@@ -610,5 +610,69 @@ export const runDateTimePickerComponentTests = (mountFn: MountComponentFn) => {
         cy.focused().should('have.class', 'gui-calendar__day-button');
       });
     });
+
+    describe('panel chrome and in-panel errors', () => {
+      const toggleSel = 'button.gui-date-time-picker__arrow';
+      const panelSel = 'gui-date-time-picker > .gui-widget > .gui-picker__panel';
+
+      it('should wrap the calendar in a panel that squares the joined corners while open', () => {
+        mountPicker({ props: officeProps });
+        cy.get(panelSel).should('not.exist');
+
+        cy.get(toggleSel).click();
+        cy.get(panelSel).should('be.visible');
+        cy.get('gui-date-time-picker > .gui-widget > gui-date-time .gui-parts-ring').should(
+          'have.css',
+          'border-bottom-left-radius',
+          '0px',
+        );
+        cy.get(panelSel)
+          .should('have.css', 'border-top-left-radius', '0px')
+          .and('have.css', 'border-top-right-radius', '0px');
+      });
+
+      it('should repeat the field error inside the open panel with the red border', () => {
+        mountPicker({ props: officeProps });
+
+        cy.get(sel.month).click();
+        cy.focused().type('02');
+        cy.get('[data-cy="submitBtn_button"]').focus();
+        cy.get('[data-cy="testSubject_validator-error"]').should(
+          'contain.text',
+          'Incomplete date-time',
+        );
+
+        cy.get(toggleSel).click();
+        cy.get('[data-cy="testSubject_panel-validator-error"]')
+          .should('be.visible')
+          .and('contain.text', 'Incomplete date-time');
+        cy.get('#testSubject_panel_errors')
+          .should('have.attr', 'aria-hidden', 'true')
+          .and('not.have.attr', 'role');
+        cy.get('[id="testSubject_errors"]').should('have.length', 1);
+
+        cy.get('[data-cy="testSubject_validator-error"]').then(($li) => {
+          cy.get(panelSel).should('have.css', 'border-top-color', $li.css('color'));
+        });
+      });
+
+      it('should keep the nested time picker panel chrome-free inside the calendar', () => {
+        mountPicker({ props: officeProps });
+        cy.get(toggleSel).click();
+        cy.get(sel.calendar).should('exist');
+
+        cy.get('gui-date-time-calendar .gui-picker__panel')
+          .should('have.css', 'position', 'static')
+          .and('have.css', 'box-shadow', 'none');
+        cy.get('gui-date-time-calendar [data-cy*="panel-validator"]').should('not.exist');
+      });
+
+      it('should not render the panel error copy when the value is valid', () => {
+        mountPicker({ props: officeProps });
+        cy.get(toggleSel).click();
+        cy.get(panelSel).should('be.visible');
+        cy.get('[data-cy="testSubject_panel-validator-errors"]').should('not.exist');
+      });
+    });
   });
 };

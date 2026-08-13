@@ -111,6 +111,12 @@ export class DropdownComponent implements OnInit, OnDestroy, WithWidget {
     }
   }
 
+  protected onPanelMouseDown(event: MouseEvent) {
+    const target = event.target as Node;
+    if (this.listRef()?.nativeElement?.contains(target)) return;
+    event.preventDefault();
+  }
+
   protected onInputFocus() {
     if (this.ignoreNextFocus) return;
     this.isListVisible.set(true);

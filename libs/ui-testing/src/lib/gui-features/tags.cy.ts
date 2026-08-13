@@ -22,6 +22,7 @@ export const runTagsComponentTests = (mountFn: MountComponentFn) => {
     const mountTags = (options?: {
       data?: Record<string, any>;
       props?: Record<string, any>;
+      validator?: Record<string, any>;
       readonly?: boolean;
       disabled?: boolean;
     }) => {
@@ -36,6 +37,7 @@ export const runTagsComponentTests = (mountFn: MountComponentFn) => {
               type: 'tags',
               path: 'myTags',
               ...(options?.props ? { props: options.props } : {}),
+              ...(options?.validator ? { validator: options.validator as any } : {}),
               ...(options?.readonly !== undefined ? { readonly: options.readonly } : {}),
               ...(options?.disabled !== undefined ? { disabled: options.disabled } : {}),
             },
@@ -182,6 +184,39 @@ export const runTagsComponentTests = (mountFn: MountComponentFn) => {
         cy.focused().type('{esc}');
         cy.get('.gui-pills__dropdown').should('not.exist');
         cy.focused().should('have.attr', 'data-cy', `${uid}_tags-input`);
+      });
+    });
+
+    describe('pills dropdown errors and error border', () => {
+      it('should repeat the field error inside the open pills dropdown with the red border', () => {
+        mountTags({
+          data: { myTags: ['alpha'] },
+          validator: { type: 'array', minItems: 2 },
+        });
+
+        // Touch and leave → the minItems error shows below the field
+        cy.get(sel.input).focus();
+        cy.get(sel.input).blur();
+        cy.get(`[data-cy="${uid}_validator-error"]`).should('be.visible');
+
+        cy.get('.gui-pills__count').click({ force: true });
+        cy.get(`[data-cy="${uid}_pills-validator-error"]`).should('be.visible');
+        cy.get(`#${uid}_pills_errors`)
+          .should('have.attr', 'aria-hidden', 'true')
+          .and('not.have.attr', 'role');
+        cy.get(`[id="${uid}_errors"]`).should('have.length', 1);
+
+        cy.get(`[data-cy="${uid}_validator-error"]`).then(($li) => {
+          cy.get('.gui-pills__dropdown').should('have.css', 'border-top-color', $li.css('color'));
+        });
+      });
+
+      it('should not render the dropdown error copy when the value is valid', () => {
+        mountTags({ data: { myTags: ['alpha', 'beta'] } });
+
+        cy.get('.gui-pills__count').click({ force: true });
+        cy.get('.gui-pills__dropdown').should('exist');
+        cy.get(`[data-cy="${uid}_pills-validator-errors"]`).should('not.exist');
       });
     });
   });

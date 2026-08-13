@@ -284,6 +284,8 @@ export class GuiRangeTimeInput extends LitElement {
             .uid=${this.uid}
             .toolbarAriaLabel=${'Selected time ranges'}
             .items=${pillItems}
+            .errors=${this.errors}
+            .touched=${!!this.touched}
             .removable=${true}
             .clickable=${true}
             .bubble=${true}
