@@ -61,7 +61,7 @@
     "@angular-devkit/schematics": "21.2.19",
     "@angular/build": "21.2.19",
     "@angular/cli": "21.2.19",
-    "@angular/compiler-cli": "21.2.19",
+    "@angular/compiler-cli": "22.1.1",
     "@angular/language-service": "21.2.19",
     "@angular/platform-browser-dynamic": "21.2.19",
     "@nx/angular": "22.7.8",
