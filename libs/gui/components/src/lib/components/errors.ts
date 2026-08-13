@@ -7,6 +7,7 @@ export class GuiErrors extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: Array }) errors: string[] | undefined = [];
   @property({ type: Boolean }) touched: boolean | undefined = false;
+  @property({ type: Boolean }) panel = false;
 
   override createRenderRoot() {
     return this;
@@ -15,10 +16,14 @@ export class GuiErrors extends LitElement {
   override render() {
     super.render();
 
-    return html`${addErrors(this.uid as string, {
-      touched: this.touched,
-      errors: this.errors,
-    })}`;
+    return html`${addErrors(
+      this.uid as string,
+      {
+        touched: this.touched,
+        errors: this.errors,
+      },
+      this.panel ? { variant: 'panel' } : undefined,
+    )}`;
   }
 }
 

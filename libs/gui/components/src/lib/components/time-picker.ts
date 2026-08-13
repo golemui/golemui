@@ -10,7 +10,7 @@ import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
 import { GUIPopupController } from '../controllers/popup.controller';
 import { buildTimeOptions, isTimeDisabled, type HourFormat, type TimeRange } from '../utils/time';
 import { timeBoundsError } from '../utils/parts';
-import { addErrors, addIcon, addLabel } from '../utils/templates';
+import { addErrors, addIcon, addLabel, addPickerPanel } from '../utils/templates';
 import { INVALID_DISABLED_TIME_RANGE_MESSAGE } from '../utils/messages';
 
 export class GuiTimePicker extends LitElement {
@@ -83,7 +83,7 @@ export class GuiTimePicker extends LitElement {
     isDisabled: () => !!this.disabled,
     clickIntent: (target) => {
       if (target.closest('.gui-time-list__option')) return 'ignore';
-      return target.closest('gui-time') || target.closest('gui-time-list') ? 'open' : 'toggle';
+      return target.closest('gui-time') || target.closest('.gui-picker__panel') ? 'open' : 'toggle';
     },
     keyToggleMode: 'openClose',
     onOpenChanged: (open) => {
@@ -178,27 +178,34 @@ export class GuiTimePicker extends LitElement {
           </svg>
         </button>
 
-        <gui-time-list
-          id=${`${this.uid}_popup`}
-          role="dialog"
-          aria-label=${this.label ?? 'Time list'}
-          .uid=${this.uid}
-          .value=${this.value}
-          .label=${this.label}
-          .localeId=${this.localeId}
-          .hourFormat=${this.hourFormat}
-          .minuteStep=${this.minuteStep}
-          .minTime=${this.minTime}
-          .maxTime=${this.maxTime}
-          .disabledRanges=${this.disabledRanges}
-          .height=${this.height}
-          .itemHeight=${this.itemHeight}
-          .columns=${this.columns}
-          .noAvailableTimesMessage=${this.noAvailableTimesMessage}
-          ?readonly=${this.readOnly}
-          ?hidden=${!this._popup.open}
-          @change=${this.onListChange}
-        ></gui-time-list>
+        ${addPickerPanel(
+          this.uid ?? '',
+          { errors: this.errors, touched: this.touched, showErrors: this.showErrors },
+          // Dual hidden: tests select the inner list's [hidden]; the panel's
+          // own [hidden] removes the card chrome. Both bind to the same state.
+          html`<gui-time-list
+            id=${`${this.uid}_popup`}
+            role="dialog"
+            aria-label=${this.label ?? 'Time list'}
+            .uid=${this.uid}
+            .value=${this.value}
+            .label=${this.label}
+            .localeId=${this.localeId}
+            .hourFormat=${this.hourFormat}
+            .minuteStep=${this.minuteStep}
+            .minTime=${this.minTime}
+            .maxTime=${this.maxTime}
+            .disabledRanges=${this.disabledRanges}
+            .height=${this.height}
+            .itemHeight=${this.itemHeight}
+            .columns=${this.columns}
+            .noAvailableTimesMessage=${this.noAvailableTimesMessage}
+            ?readonly=${this.readOnly}
+            ?hidden=${!this._popup.open}
+            @change=${this.onListChange}
+          ></gui-time-list>`,
+          { hidden: !this._popup.open },
+        )}
       </div>
 
       ${this.showErrors

@@ -9,7 +9,7 @@ import './range-calendar';
 import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
 import { GUIPopupController } from '../controllers/popup.controller';
 import { dateBoundsError, rangeSpansDisabledDay } from '../utils/date';
-import { addErrors, addIcon, addLabel } from '../utils/templates';
+import { addErrors, addIcon, addLabel, addPickerPanel } from '../utils/templates';
 import { DISABLED_DATE_RANGE_MESSAGE } from '../utils/messages';
 
 export class GuiRangeDatePicker extends LitElement {
@@ -108,7 +108,7 @@ export class GuiRangeDatePicker extends LitElement {
     focusPopupSelector: '.gui-calendar__day-button[tabindex="0"]',
     isDisabled: () => !!this.disabled,
     clickIntent: (target) =>
-      target.closest('.gui-range-date-input__part') || target.closest('gui-range-calendar')
+      target.closest('.gui-range-date-input__part') || target.closest('.gui-picker__panel')
         ? 'open'
         : 'toggle',
     keyToggleMode: 'openClose',
@@ -160,42 +160,46 @@ export class GuiRangeDatePicker extends LitElement {
     const datePickerIcon = addIcon('datePicker', { icon: this.icon });
 
     const calendar = this._popup.open
-      ? html`<gui-range-calendar
-          id=${`${this.uid}_popup`}
-          role="dialog"
-          aria-label=${this.label ?? 'Calendar'}
-          .uid=${this.uid}
-          .hint=${this.hint}
-          ?touched=${this.touched}
-          ?required=${this.required}
-          ?disabled=${this.disabled}
-          ?readonly=${this.readOnly}
-          .value=${this.value}
-          .focusDate=${this._focusDate}
-          .workingStart=${this._workingStart}
-          .workingEnd=${this._workingEnd}
-          .prevMonthIcon=${this.prevMonthIcon}
-          .nextMonthIcon=${this.nextMonthIcon}
-          .prevMonthAriaLabel=${this.prevMonthAriaLabel}
-          .nextMonthAriaLabel=${this.nextMonthAriaLabel}
-          .selectYearAriaLabel=${this.selectYearAriaLabel}
-          .yearGridAriaLabel=${this.yearGridAriaLabel}
-          .dayFormat=${this.dayFormat}
-          .weekdayFormat=${this.weekdayFormat}
-          .monthFormat=${this.monthFormat}
-          .minDate=${this.minDate}
-          .maxDate=${this.maxDate}
-          .disabledRanges=${this.disabledRanges}
-          .disabledDateRangeMessage=${this.disabledDateRangeMessage}
-          .numberOfMonths=${this.numberOfMonths}
-          .localeId=${this.localeId}
-          .hidePills=${true}
-          .invalidRange=${this._invalidRange}
-          @blur=${this.onCalendarBlur}
-          @change=${this.onCalendarChange}
-          @partsChange=${this.onCalendarPartsChange}
-          @inputError=${this.onCalendarInputError}
-        ></gui-range-calendar>`
+      ? addPickerPanel(
+          this.uid ?? '',
+          { errors: this.errors, touched: this.touched, showErrors: this.showErrors },
+          html`<gui-range-calendar
+            id=${`${this.uid}_popup`}
+            role="dialog"
+            aria-label=${this.label ?? 'Calendar'}
+            .uid=${this.uid}
+            .hint=${this.hint}
+            ?touched=${this.touched}
+            ?required=${this.required}
+            ?disabled=${this.disabled}
+            ?readonly=${this.readOnly}
+            .value=${this.value}
+            .focusDate=${this._focusDate}
+            .workingStart=${this._workingStart}
+            .workingEnd=${this._workingEnd}
+            .prevMonthIcon=${this.prevMonthIcon}
+            .nextMonthIcon=${this.nextMonthIcon}
+            .prevMonthAriaLabel=${this.prevMonthAriaLabel}
+            .nextMonthAriaLabel=${this.nextMonthAriaLabel}
+            .selectYearAriaLabel=${this.selectYearAriaLabel}
+            .yearGridAriaLabel=${this.yearGridAriaLabel}
+            .dayFormat=${this.dayFormat}
+            .weekdayFormat=${this.weekdayFormat}
+            .monthFormat=${this.monthFormat}
+            .minDate=${this.minDate}
+            .maxDate=${this.maxDate}
+            .disabledRanges=${this.disabledRanges}
+            .disabledDateRangeMessage=${this.disabledDateRangeMessage}
+            .numberOfMonths=${this.numberOfMonths}
+            .localeId=${this.localeId}
+            .hidePills=${true}
+            .invalidRange=${this._invalidRange}
+            @blur=${this.onCalendarBlur}
+            @change=${this.onCalendarChange}
+            @partsChange=${this.onCalendarPartsChange}
+            @inputError=${this.onCalendarInputError}
+          ></gui-range-calendar>`,
+        )
       : nothing;
 
     return html`

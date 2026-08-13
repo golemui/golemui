@@ -4,11 +4,8 @@ gui-time-picker {
 
 .gui-form {
   .gui-time-picker.gui-field {
-    .gui-widget gui-time-list {
-      position: absolute;
+    .gui-widget > .gui-picker__panel {
       width: 100%;
-      top: 100%;
-      z-index: 10;
     }
   }
 }

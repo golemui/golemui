@@ -694,5 +694,64 @@ export const runRangeDatePickerComponentTests = (mountFn: MountComponentFn) => {
         cy.get(sel.calendar).should('exist');
       });
     });
+
+    describe('panel chrome and in-panel errors', () => {
+      const toggleSel = 'button.gui-range-date-picker__arrow';
+      const panelSel = 'gui-range-date-picker > .gui-widget > .gui-picker__panel';
+
+      it('should wrap the calendar in a panel that exists only while open', () => {
+        mountRangeDatePicker({ data: { myRanges: [juneRange] } });
+        cy.get(panelSel).should('not.exist');
+
+        cy.get(toggleSel).click();
+        cy.get(panelSel).should('be.visible');
+      });
+
+      it('should repeat the field error inside the open panel with the red border', () => {
+        mountRangeDatePicker({ data: { myRanges: [juneRange] } });
+
+        // A span anchor with no end never became a pill → incomplete error
+        cy.get(sel.startMonth).click();
+        cy.get(sel.dayButton('2026-06-18')).click();
+        cy.get('[data-cy="submitBtn_button"]').focus();
+        cy.get(`[data-cy="${uid}_validator-error"]`).should('contain.text', 'Incomplete date');
+
+        cy.get(toggleSel).click();
+        cy.get(`[data-cy="${uid}_panel-validator-error"]`)
+          .should('be.visible')
+          .and('contain.text', 'Incomplete date');
+        cy.get(`#${uid}_panel_errors`)
+          .should('have.attr', 'aria-hidden', 'true')
+          .and('not.have.attr', 'role');
+        cy.get(`[id="${uid}_errors"]`).should('have.length', 1);
+
+        cy.get(`[data-cy="${uid}_validator-error"]`).then(($li) => {
+          cy.get(panelSel).should('have.css', 'border-top-color', $li.css('color'));
+        });
+      });
+
+      it('should not render the panel error copy when the value is valid', () => {
+        mountRangeDatePicker({ data: { myRanges: [juneRange] } });
+        cy.get(toggleSel).click();
+        cy.get(panelSel).should('be.visible');
+        cy.get(`[data-cy="${uid}_panel-validator-errors"]`).should('not.exist');
+      });
+
+      it('should repeat the field error inside the pills dropdown too', () => {
+        // Inside a picker the inner input has showErrors=false (the picker
+        // owns the field copy), but the pills dropdown copy must still show
+        mountRangeDatePicker({ data: { myRanges: [juneRange] } });
+
+        cy.get(sel.startMonth).click();
+        cy.get(sel.dayButton('2026-06-18')).click();
+        cy.get('[data-cy="submitBtn_button"]').focus();
+        cy.get(`[data-cy="${uid}_validator-error"]`).should('contain.text', 'Incomplete date');
+
+        cy.get('.gui-pills__count').click({ force: true });
+        cy.get(`[data-cy="${uid}_pills-validator-error"]`)
+          .should('be.visible')
+          .and('contain.text', 'Incomplete date');
+      });
+    });
   });
 };

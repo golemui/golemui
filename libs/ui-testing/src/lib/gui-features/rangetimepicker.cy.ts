@@ -517,5 +517,50 @@ export const runRangeTimePickerComponentTests = (mountFn: MountComponentFn) => {
         cy.get(sel.pillText).should('have.length', 1);
       });
     });
+
+    describe('panel chrome and in-panel errors', () => {
+      const toggleSel = 'button.gui-range-time-picker__arrow';
+
+      it('should show the panel with both list columns while open', () => {
+        mountRangeTimePicker({ props: officeProps });
+        cy.get(sel.panel).should('not.exist');
+
+        cy.get(toggleSel).click();
+        cy.get(sel.panel).should('be.visible');
+        // The two list columns still render inside the panel
+        cy.get(sel.inList).should('exist');
+        cy.get(sel.outList).should('exist');
+      });
+
+      it('should repeat the field error inside the open panel with the red border', () => {
+        mountRangeTimePicker({ props: officeProps });
+
+        // A start with no end never became a pill → incomplete error
+        cy.get(sel.startHour).click();
+        cy.get(sel.inItems).filter('[data-value="09:00:00"]').click();
+        cy.get('[data-cy="submitBtn_button"]').focus();
+        cy.get(`[data-cy="${uid}_validator-error"]`).should('contain.text', 'Incomplete time');
+
+        cy.get(toggleSel).click();
+        cy.get(`[data-cy="${uid}_panel-validator-error"]`)
+          .should('be.visible')
+          .and('contain.text', 'Incomplete time');
+        cy.get(`#${uid}_panel_errors`)
+          .should('have.attr', 'aria-hidden', 'true')
+          .and('not.have.attr', 'role');
+        cy.get(`[id="${uid}_errors"]`).should('have.length', 1);
+
+        cy.get(`[data-cy="${uid}_validator-error"]`).then(($li) => {
+          cy.get(sel.panel).should('have.css', 'border-top-color', $li.css('color'));
+        });
+      });
+
+      it('should not render the panel error copy when the value is valid', () => {
+        mountRangeTimePicker({ props: officeProps });
+        cy.get(toggleSel).click();
+        cy.get(sel.panel).should('be.visible');
+        cy.get(`[data-cy="${uid}_panel-validator-errors"]`).should('not.exist');
+      });
+    });
   });
 };

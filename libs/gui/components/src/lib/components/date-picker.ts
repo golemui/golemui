@@ -9,7 +9,7 @@ import type { GuiDate } from './date-input';
 import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
 import { GUIPopupController } from '../controllers/popup.controller';
 import { dateBoundsError } from '../utils/date';
-import { addErrors, addIcon, addLabel } from '../utils/templates';
+import { addErrors, addIcon, addLabel, addPickerPanel } from '../utils/templates';
 
 export class GuiDatePicker extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
@@ -89,7 +89,7 @@ export class GuiDatePicker extends LitElement {
     isDisabled: () => !!this.disabled,
     clickIntent: (target) => {
       if (target.closest('.gui-calendar__day-button')) return 'ignore';
-      return target.closest('.gui-date-input__part') || target.closest('gui-calendar')
+      return target.closest('.gui-date-input__part') || target.closest('.gui-picker__panel')
         ? 'open'
         : 'toggle';
     },
@@ -104,34 +104,38 @@ export class GuiDatePicker extends LitElement {
     const datePickerIcon = addIcon('datePicker', { icon: this.icon });
 
     const calendar = this._popup.open
-      ? html`<gui-calendar
-          id=${`${this.uid}_popup`}
-          role="dialog"
-          aria-label=${this.label ?? 'Calendar'}
-          .uid=${this.uid}
-          .hint=${this.hint}
-          ?touched=${this.touched}
-          ?required=${this.required}
-          ?disabled=${this.disabled}
-          ?readonly=${this.readOnly}
-          .value=${this.value}
-          .prevMonthIcon=${this.prevMonthIcon}
-          .nextMonthIcon=${this.nextMonthIcon}
-          .prevMonthAriaLabel=${this.prevMonthAriaLabel}
-          .nextMonthAriaLabel=${this.nextMonthAriaLabel}
-          .selectYearAriaLabel=${this.selectYearAriaLabel}
-          .yearGridAriaLabel=${this.yearGridAriaLabel}
-          .dayFormat=${this.dayFormat}
-          .weekdayFormat=${this.weekdayFormat}
-          .monthFormat=${this.monthFormat}
-          .minDate=${this.minDate}
-          .maxDate=${this.maxDate}
-          .disabledRanges=${this.disabledRanges}
-          .numberOfMonths=${this.numberOfMonths}
-          .localeId=${this.localeId}
-          @blur=${this.onCalendarBlur}
-          @change=${this.onCalendarChange}
-        ></gui-calendar>`
+      ? addPickerPanel(
+          this.uid ?? '',
+          { errors: this.errors, touched: this.touched, showErrors: this.showErrors },
+          html`<gui-calendar
+            id=${`${this.uid}_popup`}
+            role="dialog"
+            aria-label=${this.label ?? 'Calendar'}
+            .uid=${this.uid}
+            .hint=${this.hint}
+            ?touched=${this.touched}
+            ?required=${this.required}
+            ?disabled=${this.disabled}
+            ?readonly=${this.readOnly}
+            .value=${this.value}
+            .prevMonthIcon=${this.prevMonthIcon}
+            .nextMonthIcon=${this.nextMonthIcon}
+            .prevMonthAriaLabel=${this.prevMonthAriaLabel}
+            .nextMonthAriaLabel=${this.nextMonthAriaLabel}
+            .selectYearAriaLabel=${this.selectYearAriaLabel}
+            .yearGridAriaLabel=${this.yearGridAriaLabel}
+            .dayFormat=${this.dayFormat}
+            .weekdayFormat=${this.weekdayFormat}
+            .monthFormat=${this.monthFormat}
+            .minDate=${this.minDate}
+            .maxDate=${this.maxDate}
+            .disabledRanges=${this.disabledRanges}
+            .numberOfMonths=${this.numberOfMonths}
+            .localeId=${this.localeId}
+            @blur=${this.onCalendarBlur}
+            @change=${this.onCalendarChange}
+          ></gui-calendar>`,
+        )
       : nothing;
 
     return html`

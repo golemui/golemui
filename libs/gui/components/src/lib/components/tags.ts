@@ -135,6 +135,8 @@ export class GuiTags extends LitElement {
             .uid=${this.uid}
             .toolbarAriaLabel=${'Selected tags'}
             .items=${pillItems}
+            .errors=${this.errors}
+            .touched=${!!this.touched}
             .removable=${true}
             .clickable=${false}
             .bubble=${true}

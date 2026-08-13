@@ -681,5 +681,44 @@ export const runRangeDateInputComponentTests = (mountFn: MountComponentFn) => {
         cy.get(sel.pillText).should('have.length', 2);
       });
     });
+
+    describe('pills dropdown errors and error border', () => {
+      const juneRange = { start: '2026-06-10', end: '2026-06-16' };
+
+      it('should repeat the field error inside the open pills dropdown with the red border', () => {
+        mountRangeDateInput({ data: { myRanges: [juneRange] } });
+
+        // Leave a half-typed second range behind → incomplete error, pill kept
+        cy.get(sel.start.month).click();
+        cy.focused().type('06');
+        cy.get('[data-cy="submitBtn_button"]').focus();
+        cy.get(`[data-cy="${uid}_validator-error"]`).should('contain.text', 'Incomplete date');
+
+        cy.get('.gui-pills__count').click({ force: true });
+        cy.get(`[data-cy="${uid}_pills-validator-error"]`)
+          .should('be.visible')
+          .and('contain.text', 'Incomplete date');
+
+        // The dropdown copy is decorative: hidden from AT with its own id;
+        // the field copy stays the aria-errormessage target
+        cy.get(`#${uid}_pills_errors`)
+          .should('have.attr', 'aria-hidden', 'true')
+          .and('not.have.attr', 'role');
+        cy.get(`[id="${uid}_errors"]`).should('have.length', 1);
+
+        // Invalid field → the dropdown shares the red border
+        cy.get(`[data-cy="${uid}_validator-error"]`).then(($li) => {
+          cy.get('.gui-pills__dropdown').should('have.css', 'border-top-color', $li.css('color'));
+        });
+      });
+
+      it('should not render the dropdown error copy when the value is valid', () => {
+        mountRangeDateInput({ data: { myRanges: [juneRange] } });
+
+        cy.get('.gui-pills__count').click({ force: true });
+        cy.get('.gui-pills__dropdown').should('exist');
+        cy.get(`[data-cy="${uid}_pills-validator-errors"]`).should('not.exist');
+      });
+    });
   });
 };

@@ -95,30 +95,55 @@ export const addIcon = <T, ExtraProps extends { icon?: string }>(
   }
 };
 
+export type AddErrorsVariant = 'field' | 'panel' | 'pills';
+
 export const addErrors = <T, ExtraProps extends { hint?: string }>(
   uid: string,
   templateData: ControlTemplateData<T> & ExtraProps,
+  options?: { variant?: AddErrorsVariant },
 ) => {
+  const variant = options?.variant ?? 'field';
   const showErrors = templateData.touched && templateData.errors && templateData.errors.length > 0;
+
+  if (variant !== 'field' && !showErrors) return nothing;
 
   const classes = {
     'gui-validator': true,
+    'gui-validator--panel': variant !== 'field',
     'gui-validator--empty': !showErrors,
   };
 
+  const id = variant === 'field' ? `${uid}_errors` : `${uid}_${variant}_errors`;
+  const dataCyPrefix = variant === 'field' ? `${uid}_validator` : `${uid}_${variant}-validator`;
+
   return html`<ul
     class=${classMap(classes)}
-    id=${`${uid}_errors`}
-    role="alert"
-    data-cy=${showErrors ? `${uid}_validator-errors` : nothing}
+    id=${id}
+    role=${variant === 'field' ? 'alert' : nothing}
+    aria-hidden=${variant === 'field' ? nothing : 'true'}
+    data-cy=${showErrors ? `${dataCyPrefix}-errors` : nothing}
   >
     ${showErrors
       ? templateData.errors?.map(
           (error: any) =>
-            html`<li class="gui-validator__error" data-cy=${`${uid}_validator-error`}>
-              ${error}
-            </li>`,
+            html`<li class="gui-validator__error" data-cy=${`${dataCyPrefix}-error`}>${error}</li>`,
         )
       : nothing}
   </ul>`;
 };
+
+/**
+ * Floating panel shared by the picker widgets: wraps the popup layout in a
+ * card and repeats the field errors at its bottom, so an open panel never
+ * hides what's wrong with the current selection.
+ */
+export const addPickerPanel = (
+  uid: string,
+  templateData: { errors?: string[]; touched?: boolean; showErrors?: boolean },
+  content: unknown,
+  options?: { hidden?: boolean },
+) =>
+  html`<div class="gui-picker__panel" ?hidden=${options?.hidden ?? false}>
+    ${content}
+    ${templateData.showErrors ? addErrors(uid, templateData, { variant: 'panel' }) : nothing}
+  </div>`;

@@ -31,6 +31,7 @@ const isListVisible = ref(false);
 const selectedItem = ref<ListItem<never> | undefined>(undefined);
 
 const listRef = ref<GuiListElement | null>(null);
+const panelRef = ref<HTMLDivElement | null>(null);
 const inputRef = ref<HTMLInputElement | null>(null);
 const labelRef = ref<GuiLabelElement | null>(null);
 
@@ -125,12 +126,18 @@ watch(listRef, (el) => {
   }
 });
 
+const handlePanelMouseDown = (event: MouseEvent) => {
+  const target = event.target as Node;
+  if (listRef.value && listRef.value.contains(target)) return;
+  event.preventDefault();
+};
+
 const handleDocumentClick = (event: MouseEvent) => {
   if (!isListVisible.value) return;
   const target = event.target as Node;
   const clickedInput = inputRef.value && inputRef.value.contains(target);
-  const clickedList = listRef.value && listRef.value.contains(target);
-  if (!clickedInput && !clickedList) closeList();
+  const clickedPanel = panelRef.value && panelRef.value.contains(target);
+  if (!clickedInput && !clickedPanel) closeList();
 };
 
 onMounted(() => {
@@ -308,54 +315,68 @@ const ItemRenderer = computed<Component>(() => {
         </svg>
       </span>
 
-      <gui-list
-        ref="listRef"
-        :id="`${uid}-list`"
-        :uid="uid"
-        :value="value ?? ''"
-        :valueField="templateData.valueField"
-        :items="isFiltering && !asyncFiltering ? filteredItems : templateData.items"
-        :itemHeight="templateData.itemHeight"
-        :height="templateData.height"
-        :required="required"
-        :touched="isTouched"
-        :disabled="isDisabled || isReadOnly"
-        :readOnly="isReadOnly"
+      <div
+        class="gui-picker__panel"
         :hidden="!isListVisible"
-        @focus="handleInputFocus"
-        @blur="handleFocusOut"
+        ref="panelRef"
+        @mousedown="handlePanelMouseDown"
       >
-        <div
-          v-for="(item, idx) in visibleItems"
-          :key="rangeStart + idx"
-          role="option"
-          tabindex="-1"
-          class="gui-list__item-wrapper"
-          :id="`${uid}-item-${rangeStart + idx}`"
-          :style="{ height: `${templateData.itemHeight || 40}px` }"
-          :aria-selected="value === item.value"
-          :aria-disabled="isDisabled || item.disabled ? 'true' : 'false'"
-          @click="handleClickItem(item, rangeStart + idx)"
+        <gui-list
+          ref="listRef"
+          :id="`${uid}-list`"
+          :uid="uid"
+          :value="value ?? ''"
+          :valueField="templateData.valueField"
+          :items="isFiltering && !asyncFiltering ? filteredItems : templateData.items"
+          :itemHeight="templateData.itemHeight"
+          :height="templateData.height"
+          :required="required"
+          :touched="isTouched"
+          :disabled="isDisabled || isReadOnly"
+          :readOnly="isReadOnly"
+          :hidden="!isListVisible"
+          @focus="handleInputFocus"
+          @blur="handleFocusOut"
         >
-          <component
-            :is="ItemRenderer"
-            :template="
-              (() => {
-                const labelField = templateData.labelField ?? 'label';
-                const isObject = item.template !== null && typeof item.template === 'object';
-                return isObject && labelField && !templateData.itemRenderer
-                  ? (item.template as any)[labelField]
-                  : item.template;
-              })()
-            "
-            :value="item.value"
-            :index="rangeStart + idx"
-            :selected="value === item.value"
-            :disabled="isDisabled || isReadOnly || !!item.disabled"
-            :focused="focusedIndex === rangeStart + idx"
-          />
-        </div>
-      </gui-list>
+          <div
+            v-for="(item, idx) in visibleItems"
+            :key="rangeStart + idx"
+            role="option"
+            tabindex="-1"
+            class="gui-list__item-wrapper"
+            :id="`${uid}-item-${rangeStart + idx}`"
+            :style="{ height: `${templateData.itemHeight || 40}px` }"
+            :aria-selected="value === item.value"
+            :aria-disabled="isDisabled || item.disabled ? 'true' : 'false'"
+            @click="handleClickItem(item, rangeStart + idx)"
+          >
+            <component
+              :is="ItemRenderer"
+              :template="
+                (() => {
+                  const labelField = templateData.labelField ?? 'label';
+                  const isObject = item.template !== null && typeof item.template === 'object';
+                  return isObject && labelField && !templateData.itemRenderer
+                    ? (item.template as any)[labelField]
+                    : item.template;
+                })()
+              "
+              :value="item.value"
+              :index="rangeStart + idx"
+              :selected="value === item.value"
+              :disabled="isDisabled || isReadOnly || !!item.disabled"
+              :focused="focusedIndex === rangeStart + idx"
+            />
+          </div>
+        </gui-list>
+        <gui-errors
+          v-if="showErrors"
+          :panel.prop="true"
+          :uid="uid"
+          :errors="errors"
+          :touched="isTouched"
+        ></gui-errors>
+      </div>
     </div>
 
     <gui-errors v-if="showErrors" :uid="uid" :errors="errors" :touched="isTouched"></gui-errors>
