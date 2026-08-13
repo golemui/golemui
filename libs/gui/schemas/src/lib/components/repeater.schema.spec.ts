@@ -7,7 +7,7 @@ import {
 } from '../schema.spec.utils';
 import { golemForm } from '@golemui/gui-shared/internals';
 
-const SCHEMA_ID_UNDER_TEST = 'https://golemui.com/schemas/components/repeater.schema.json';
+const SCHEMA_ID_UNDER_TEST = 'https://golemui.com/schemas/gui/components/repeater.schema.json';
 
 describe('Repeater schema validation', () => {
   let ajv: Ajv2020;

@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "__ID_BASE__components/flex.schema.json",
+  "$comment": "STARTER TEMPLATE, owned by you. `flex` is a reserved widget type: keep the name and the `children` array, change the props to match your layout widget.",
+  "title": "__IMPLEMENTATION__ flex widget",
+  "type": "object",
+  "$defs": {
+    "directionProp": { "enum": ["row", "row-reverse", "column", "column-reverse"] },
+    "justifyProp": {
+      "enum": ["start", "center", "end", "stretch", "space-between", "space-around"]
+    },
+    "alignProp": { "enum": ["start", "center", "end", "stretch", "baseline"] },
+    "wrapProp": { "type": "boolean" },
+    "gapProp": { "type": "number" },
+    "paddingProp": { "type": "number" }
+  },
+  "allOf": [{ "$ref": "../core/common.schema.json#/$defs/baseWidget" }],
+  "properties": {
+    "kind": { "const": "layout" },
+    "type": { "const": "flex" },
+    "children": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "../widgets.schema.json#/$defs/formWidget" }
+    },
+    "props": {
+      "type": "object",
+      "properties": {
+        "direction": { "$ref": "#/$defs/directionProp" },
+        "justify": { "$ref": "#/$defs/justifyProp" },
+        "align": { "$ref": "#/$defs/alignProp" },
+        "wrap": { "$ref": "#/$defs/wrapProp" },
+        "gap": { "$ref": "#/$defs/gapProp" },
+        "padding": { "$ref": "#/$defs/paddingProp" }
+      },
+      "patternProperties": {
+        "^direction\\.[^.]+$": { "$ref": "#/$defs/directionProp" },
+        "^justify\\.[^.]+$": { "$ref": "#/$defs/justifyProp" },
+        "^align\\.[^.]+$": { "$ref": "#/$defs/alignProp" },
+        "^wrap\\.[^.]+$": { "$ref": "#/$defs/wrapProp" },
+        "^gap\\.[^.]+$": { "$ref": "#/$defs/gapProp" },
+        "^padding\\.[^.]+$": { "$ref": "#/$defs/paddingProp" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": ["kind", "type", "children"],
+  "unevaluatedProperties": false
+}

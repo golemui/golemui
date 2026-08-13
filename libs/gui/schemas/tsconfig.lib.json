@@ -17,6 +17,8 @@
     "vite.config.mts",
     "vitest.config.ts",
     "vitest.config.mts",
+    "src/lib/widget-manifest.ts",
+    "src/lib/schema.spec.utils.ts",
     "src/**/*.test.ts",
     "src/**/*.spec.ts",
     "src/**/*.test.tsx",

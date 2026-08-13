@@ -1,14 +1,15 @@
 import Ajv2020 from 'ajv/dist/2020';
 import { beforeEach, describe, expect, it } from 'vitest';
-import commonSchema from '../common.schema.json';
+import widgetsSchema from '../widgets.schema.json';
+import { guiWidgetManifest } from '../widget-manifest';
 import {
   type GetSchema,
   registerGolemSchemas,
   specValidationErrorsLogger,
 } from '../schema.spec.utils';
 
-const SCHEMA_ID_UNDER_TEST = 'https://golemui.com/schemas/components/custom.schema.json';
-const FORM_WIDGET_REF = 'https://golemui.com/schemas/form.schema.json#/$defs/formWidget';
+const SCHEMA_ID_UNDER_TEST = 'https://golemui.com/schemas/gui/components/custom.schema.json';
+const FORM_WIDGET_REF = 'https://golemui.com/schemas/gui/widgets.schema.json#/$defs/formWidget';
 
 describe('Custom widget schema validation', () => {
   let ajv: Ajv2020;
@@ -221,24 +222,31 @@ describe('Custom widget schema validation', () => {
   });
 
   describe('knownWidgetTypes enum stays in sync with built-in component schemas', () => {
-    it('should match every built-in component schema type const', () => {
+    it('should match every component schema type const plus the schema-less manifest types', () => {
       // @ts-expect-error import.meta.glob is provided by Vite/Vitest at runtime
       const componentSchemas: Record<string, any> = import.meta.glob('./*.schema.json', {
         eager: true,
         import: 'default',
       });
 
-      const builtInTypes = new Set<string>();
+      const expectedTypes = new Set<string>();
       for (const path in componentSchemas) {
         const typeConst = componentSchemas[path]?.properties?.type?.const;
         if (typeof typeConst === 'string') {
-          builtInTypes.add(typeConst);
+          expectedTypes.add(typeConst);
+        }
+      }
+      // Schema-less widget types are listed in the enum so they are rejected
+      // instead of matching the custom fallback.
+      for (const entry of guiWidgetManifest) {
+        if (entry.schemaFile === undefined) {
+          expectedTypes.add(entry.type);
         }
       }
 
-      const enumTypes = new Set<string>(commonSchema.$defs.knownWidgetTypes.enum as string[]);
+      const enumTypes = new Set<string>(widgetsSchema.$defs.knownWidgetTypes.enum as string[]);
 
-      expect([...enumTypes].sort()).toEqual([...builtInTypes].sort());
+      expect([...enumTypes].sort()).toEqual([...expectedTypes].sort());
     });
   });
 });

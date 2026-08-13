@@ -7,7 +7,7 @@ import {
   specValidationErrorsLogger,
 } from '../schema.spec.utils';
 
-const SCHEMA_ID_UNDER_TEST = 'https://golemui.com/schemas/components/datepicker.schema.json';
+const SCHEMA_ID_UNDER_TEST = 'https://golemui.com/schemas/gui/components/datepicker.schema.json';
 
 describe('Datepicker schema validation', () => {
   let ajv: Ajv2020;

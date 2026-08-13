@@ -1,20 +1,20 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://golemui.com/schemas/components/calendar.schema.json",
+  "$id": "https://golemui.com/schemas/gui/components/calendar.schema.json",
   "title": "Calendar Widget",
   "type": "object",
   "$defs": {
     "labelDef": {
-      "$ref": "../common.schema.json#/$defs/localizable"
+      "$ref": "../core/common.schema.json#/$defs/localizable"
     },
     "disabledDef": {
-      "$ref": "../common.schema.json#/$defs/boolOrWhen"
+      "$ref": "../core/common.schema.json#/$defs/boolOrWhen"
     },
     "readonlyDef": {
-      "$ref": "../common.schema.json#/$defs/boolOrWhen"
+      "$ref": "../core/common.schema.json#/$defs/boolOrWhen"
     },
     "hintProp": {
-      "$ref": "../common.schema.json#/$defs/localizable"
+      "$ref": "../core/common.schema.json#/$defs/localizable"
     },
     "prevMonthIconProp": {
       "type": "string"
@@ -23,19 +23,19 @@
       "type": "string"
     },
     "prevMonthAriaLabelProp": {
-      "$ref": "../common.schema.json#/$defs/localizable"
+      "$ref": "../core/common.schema.json#/$defs/localizable"
     },
     "nextMonthAriaLabelProp": {
-      "$ref": "../common.schema.json#/$defs/localizable"
+      "$ref": "../core/common.schema.json#/$defs/localizable"
     },
     "selectYearAriaLabelProp": {
-      "$ref": "../common.schema.json#/$defs/localizable"
+      "$ref": "../core/common.schema.json#/$defs/localizable"
     },
     "yearGridAriaLabelProp": {
-      "$ref": "../common.schema.json#/$defs/localizable"
+      "$ref": "../core/common.schema.json#/$defs/localizable"
     },
     "dayFormatProp": {
-      "description": "Formatting of day numbers in the calendar grid (`numeric` = 1–31, `2-digit` = 01–31)",
+      "description": "Formatting of day numbers in the calendar grid (`numeric` = 1-31, `2-digit` = 01-31)",
       "enum": ["numeric", "2-digit"]
     },
     "weekdayFormatProp": {
@@ -62,13 +62,13 @@
       "type": "array",
       "description": "Date ranges that are shown but cannot be selected",
       "items": {
-        "$ref": "../common.schema.json#/$defs/dateRange"
+        "$ref": "../ranges.schema.json#/$defs/dateRange"
       }
     }
   },
   "allOf": [
     {
-      "$ref": "../common.schema.json#/$defs/baseWidget"
+      "$ref": "../core/common.schema.json#/$defs/baseWidget"
     }
   ],
   "properties": {
@@ -79,7 +79,7 @@
       "const": "calendar"
     },
     "path": {
-      "$ref": "../common.schema.json#/$defs/dotPath"
+      "$ref": "../core/common.schema.json#/$defs/dotPath"
     },
     "label": {
       "$ref": "#/$defs/labelDef"
@@ -91,10 +91,13 @@
       "$ref": "#/$defs/readonlyDef"
     },
     "on": {
-      "$ref": "../common.schema.json#/$defs/on"
+      "$ref": "../core/common.schema.json#/$defs/on"
     },
     "validator": {
       "$ref": "../validators.schema.json#/$defs/validator"
+    },
+    "defaultValue": {
+      "type": "string"
     },
     "props": {
       "type": "object",

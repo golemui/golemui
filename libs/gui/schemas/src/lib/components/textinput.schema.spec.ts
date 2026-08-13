@@ -7,7 +7,7 @@ import {
   specValidationErrorsLogger,
 } from '../schema.spec.utils';
 
-const SCHEMA_ID_UNDER_TEST = 'https://golemui.com/schemas/components/textinput.schema.json';
+const SCHEMA_ID_UNDER_TEST = 'https://golemui.com/schemas/gui/components/textinput.schema.json';
 
 describe('Textinput schema validation', () => {
   let ajv: Ajv2020;

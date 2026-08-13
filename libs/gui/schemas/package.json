@@ -16,10 +16,9 @@
       "require": "./index.umd.cjs"
     },
     "./schemas/*.schema.json": "./schemas/*.schema.json",
-    "./schemas/components/*.schema.json": "./schemas/components/*.schema.json"
+    "./package.json": "./package.json"
   },
   "files": [
-    "lib",
     "schemas",
     "index.d.ts",
     "index.js",
@@ -27,11 +26,6 @@
     "*.md"
   ],
   "dependencies": {},
-  "devDependencies": {
-    "vitest": "^4.0.0",
-    "ajv": "^8.0.0",
-    "@golemui/gui-shared": "*"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/golemui/golemui.git",

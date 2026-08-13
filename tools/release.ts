@@ -9,6 +9,7 @@ process.setMaxListeners(20);
 const PUBLISHABLE_PACKAGES = [
   '@golemui/core',
   '@golemui/dx',
+  '@golemui/schemas',
   '@golemui/angular',
   '@golemui/gui-angular',
   '@golemui/react',

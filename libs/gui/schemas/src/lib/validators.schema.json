@@ -1,10 +1,11 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://golemui.com/schemas/validators.schema.json",
+  "$id": "https://golemui.com/schemas/gui/validators.schema.json",
+  "$comment": "Owned by @golemui/gui-schemas (libs/gui/schemas/src/lib/). Handwritten, edit directly. Each implementation publishes its own validators schema exposing the #/$defs/validator entry pointer.",
   "title": "GolemUI Validator Definitions",
   "$defs": {
     "localizable": {
-      "$ref": "./common.schema.json#/$defs/localizable"
+      "$ref": "./core/common.schema.json#/$defs/localizable"
     },
     "stringValidator": {
       "type": "object",
@@ -14,7 +15,7 @@
         },
         "required": {
           "type": "boolean",
-          "description": "Makes the field mandatory — validation fails if the value is empty or absent"
+          "description": "Makes the field mandatory - validation fails if the value is empty or absent"
         },
         "minLength": {
           "type": "number",
@@ -103,7 +104,7 @@
         },
         "required": {
           "type": "boolean",
-          "description": "Makes the field mandatory — validation fails if the value is absent"
+          "description": "Makes the field mandatory - validation fails if the value is absent"
         },
         "minimum": {
           "type": "number",
@@ -183,7 +184,7 @@
         },
         "required": {
           "type": "boolean",
-          "description": "Makes the field mandatory — validation fails if the value is absent or false (e.g. an unchecked required checkbox)"
+          "description": "Makes the field mandatory - validation fails if the value is absent or false (e.g. an unchecked required checkbox)"
         },
         "const": {
           "description": "The value must equal exactly this boolean (e.g. `true` to require acceptance)"
@@ -215,7 +216,7 @@
         },
         "required": {
           "type": "boolean",
-          "description": "Makes the field mandatory — validation fails if the array is empty or absent"
+          "description": "Makes the field mandatory - validation fails if the array is empty or absent"
         },
         "minItems": {
           "type": "number",
@@ -258,14 +259,14 @@
     },
     "customValidator": {
       "type": "object",
-      "description": "A custom validator that delegates validation to application code. The registered validator function receives these constraint keys and must return a Standard Schema V1-compliant schema object (https://standardschema.dev). Add arbitrary constraint keys alongside `type` — they are passed as-is to the registered validator function.",
+      "description": "A custom validator that delegates validation to application code. The registered validator function receives these constraint keys and must return a Standard Schema V1-compliant schema object (https://standardschema.dev). Add arbitrary constraint keys alongside `type` - they are passed as-is to the registered validator function.",
       "properties": {
         "type": {
           "const": "custom"
         },
         "required": {
           "type": "boolean",
-          "description": "Makes the field mandatory — evaluation is still delegated to the custom validator"
+          "description": "Makes the field mandatory - evaluation is still delegated to the custom validator"
         }
       },
       "required": ["type"],

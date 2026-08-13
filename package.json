@@ -28,7 +28,8 @@
     "build:styles": "sh ./tools/build-sass.sh",
     "cz:breaking": "npm run precz && czg break",
     "release": "npm run build:libs && npm run build:styles && tsx tools/release.ts",
-    "generate:skill": "tsx --tsconfig ./libs/gui/mcp/tsconfig.json libs/gui/mcp/tools/generate-skill-refs.ts"
+    "generate:skill": "tsx --tsconfig ./libs/gui/mcp/tsconfig.json libs/gui/mcp/tools/generate-skill-refs.ts",
+    "generate:schemas": "tsx --tsconfig ./libs/gui/schemas/tsconfig.json libs/gui/schemas/tools/generate-schemas.ts"
   },
   "private": true,
   "dependencies": {
@@ -103,7 +104,7 @@
     "ng-packagr": "21.2.5",
     "nx": "22.7.8",
     "postcss": "^8.4.5",
-    "prettier": "~3.6.2",
+    "prettier": "3.6.2",
     "react-router": "^7.9.3",
     "react18": "npm:react@18.3.1",
     "react18-dom": "npm:react-dom@18.3.1",

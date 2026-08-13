@@ -1,35 +1,35 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://golemui.com/schemas/components/rangedatetimeinput.schema.json",
+  "$id": "https://golemui.com/schemas/gui/components/rangedatetimeinput.schema.json",
   "title": "RangeDateTimeInput Widget",
   "type": "object",
   "$defs": {
     "labelDef": {
-      "$ref": "../common.schema.json#/$defs/localizable"
+      "$ref": "../core/common.schema.json#/$defs/localizable"
     },
     "disabledDef": {
-      "$ref": "../common.schema.json#/$defs/boolOrWhen"
+      "$ref": "../core/common.schema.json#/$defs/boolOrWhen"
     },
     "readonlyDef": {
-      "$ref": "../common.schema.json#/$defs/boolOrWhen"
+      "$ref": "../core/common.schema.json#/$defs/boolOrWhen"
     },
     "hintProp": {
-      "$ref": "../common.schema.json#/$defs/localizable"
+      "$ref": "../core/common.schema.json#/$defs/localizable"
     },
     "iconProp": {
       "type": "string"
     },
     "separatorProp": {
-      "$ref": "../common.schema.json#/$defs/localizable"
+      "$ref": "../core/common.schema.json#/$defs/localizable"
     },
     "removePillAriaLabelProp": {
-      "$ref": "../common.schema.json#/$defs/localizable"
+      "$ref": "../core/common.schema.json#/$defs/localizable"
     },
     "startDateTimeAriaLabelProp": {
-      "$ref": "../common.schema.json#/$defs/localizable"
+      "$ref": "../core/common.schema.json#/$defs/localizable"
     },
     "endDateTimeAriaLabelProp": {
-      "$ref": "../common.schema.json#/$defs/localizable"
+      "$ref": "../core/common.schema.json#/$defs/localizable"
     },
     "hourFormatProp": {
       "enum": ["12", "24"]
@@ -47,27 +47,27 @@
       "description": "ISO-8601 date-time string for the latest selectable date-time (inclusive)"
     },
     "dayAriaLabelProp": {
-      "$ref": "../common.schema.json#/$defs/localizable"
+      "$ref": "../core/common.schema.json#/$defs/localizable"
     },
     "monthAriaLabelProp": {
-      "$ref": "../common.schema.json#/$defs/localizable"
+      "$ref": "../core/common.schema.json#/$defs/localizable"
     },
     "yearAriaLabelProp": {
-      "$ref": "../common.schema.json#/$defs/localizable"
+      "$ref": "../core/common.schema.json#/$defs/localizable"
     },
     "hourAriaLabelProp": {
-      "$ref": "../common.schema.json#/$defs/localizable"
+      "$ref": "../core/common.schema.json#/$defs/localizable"
     },
     "minuteAriaLabelProp": {
-      "$ref": "../common.schema.json#/$defs/localizable"
+      "$ref": "../core/common.schema.json#/$defs/localizable"
     },
     "dayPeriodAriaLabelProp": {
-      "$ref": "../common.schema.json#/$defs/localizable"
+      "$ref": "../core/common.schema.json#/$defs/localizable"
     }
   },
   "allOf": [
     {
-      "$ref": "../common.schema.json#/$defs/baseWidget"
+      "$ref": "../core/common.schema.json#/$defs/baseWidget"
     }
   ],
   "properties": {
@@ -78,7 +78,7 @@
       "const": "rangeDateTimeInput"
     },
     "path": {
-      "$ref": "../common.schema.json#/$defs/dotPath"
+      "$ref": "../core/common.schema.json#/$defs/dotPath"
     },
     "label": {
       "$ref": "#/$defs/labelDef"
@@ -90,10 +90,16 @@
       "$ref": "#/$defs/readonlyDef"
     },
     "on": {
-      "$ref": "../common.schema.json#/$defs/on"
+      "$ref": "../core/common.schema.json#/$defs/on"
     },
     "validator": {
       "$ref": "../validators.schema.json#/$defs/validator"
+    },
+    "defaultValue": {
+      "type": "array",
+      "items": {
+        "$ref": "../ranges.schema.json#/$defs/dateTimeRange"
+      }
     },
     "props": {
       "type": "object",
@@ -123,7 +129,7 @@
           "$ref": "#/$defs/minuteStepProp"
         },
         "invalidDateMessage": {
-          "$ref": "../common.schema.json#/$defs/localizable"
+          "$ref": "../core/common.schema.json#/$defs/localizable"
         },
         "minDateTime": {
           "$ref": "#/$defs/minDateTimeProp"
@@ -132,13 +138,13 @@
           "$ref": "#/$defs/maxDateTimeProp"
         },
         "minDateTimeMessage": {
-          "$ref": "../common.schema.json#/$defs/localizable"
+          "$ref": "../core/common.schema.json#/$defs/localizable"
         },
         "maxDateTimeMessage": {
-          "$ref": "../common.schema.json#/$defs/localizable"
+          "$ref": "../core/common.schema.json#/$defs/localizable"
         },
         "incompleteMessage": {
-          "$ref": "../common.schema.json#/$defs/localizable",
+          "$ref": "../core/common.schema.json#/$defs/localizable",
           "description": "Error surfaced when focus leaves the widget with a partially filled entry behind; the value goes to null so validators report it even on non-required fields."
         },
         "dayAriaLabel": {
@@ -186,7 +192,7 @@
           "$ref": "#/$defs/minuteStepProp"
         },
         "^invalidDateMessage\\.[^.]+$": {
-          "$ref": "../common.schema.json#/$defs/localizable"
+          "$ref": "../core/common.schema.json#/$defs/localizable"
         },
         "^minDateTime\\.[^.]+$": {
           "$ref": "#/$defs/minDateTimeProp"
@@ -195,13 +201,13 @@
           "$ref": "#/$defs/maxDateTimeProp"
         },
         "^minDateTimeMessage\\.[^.]+$": {
-          "$ref": "../common.schema.json#/$defs/localizable"
+          "$ref": "../core/common.schema.json#/$defs/localizable"
         },
         "^maxDateTimeMessage\\.[^.]+$": {
-          "$ref": "../common.schema.json#/$defs/localizable"
+          "$ref": "../core/common.schema.json#/$defs/localizable"
         },
         "^incompleteMessage\\.[^.]+$": {
-          "$ref": "../common.schema.json#/$defs/localizable"
+          "$ref": "../core/common.schema.json#/$defs/localizable"
         },
         "^dayAriaLabel\\.[^.]+$": {
           "$ref": "#/$defs/dayAriaLabelProp"

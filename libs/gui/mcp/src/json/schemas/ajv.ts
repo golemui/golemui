@@ -14,8 +14,12 @@ function buildAjv(): AjvInstance {
     verbose: true,
   });
   addFormats(ajv);
+  // `ajv.getSchema` compiles on lookup and crashes while refs are unregistered, so dedupe
+  // with a plain set.
+  const registeredKeys = new Set<string>();
   for (const schema of ALL_SCHEMAS) {
-    if (typeof schema.$id === 'string' && !ajv.getSchema(schema.$id)) {
+    if (typeof schema.$id === 'string' && !registeredKeys.has(schema.$id)) {
+      registeredKeys.add(schema.$id);
       ajv.addSchema(schema);
     }
   }

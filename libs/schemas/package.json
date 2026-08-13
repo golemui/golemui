@@ -1,0 +1,51 @@
+{
+  "name": "@golemui/schemas",
+  "version": "0.0.0",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "type": "module",
+  "bin": {
+    "golemui-schemas": "./cli.js"
+  },
+  "main": "./index.cjs",
+  "module": "./index.js",
+  "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./index.js",
+      "require": "./index.cjs"
+    },
+    "./generator": {
+      "types": "./generator.d.ts",
+      "import": "./generator.js",
+      "require": "./generator.cjs"
+    },
+    "./schemas/*.schema.json": "./schemas/*.schema.json",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "schemas",
+    "*.js",
+    "*.cjs",
+    "*.d.ts",
+    "*.md"
+  ],
+  "dependencies": {},
+  "peerDependencies": {
+    "prettier": "^3.0.0"
+  },
+  "peerDependenciesMeta": {
+    "prettier": {
+      "optional": true
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/golemui/golemui.git",
+    "directory": "libs/schemas"
+  }
+}

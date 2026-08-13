@@ -7,7 +7,8 @@ import {
 } from '../schema.spec.utils';
 import { golemForm } from '@golemui/gui-shared/internals';
 
-const SCHEMA_ID_UNDER_TEST = 'https://golemui.com/schemas/components/rangetimepicker.schema.json';
+const SCHEMA_ID_UNDER_TEST =
+  'https://golemui.com/schemas/gui/components/rangetimepicker.schema.json';
 
 describe('RangeTimePicker schema validation', () => {
   let ajv: Ajv2020;

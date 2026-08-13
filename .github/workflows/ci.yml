@@ -30,6 +30,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Check generated schemas are up to date
+        run: |
+          # Fail fast on a crashing generator instead of relying on the runner's
+          # undeclared `bash -e` default, which a shell: change would drop.
+          set -euo pipefail
+          npm run generate:schemas
+          # Intent-to-add so brand-new generated files also show up in the diff
+          # (git diff ignores untracked files).
+          git add -AN -- libs/schemas libs/gui/schemas
+          git diff --exit-code -- libs/schemas libs/gui/schemas
+
       - name: Build affected
         run: npx nx affected --target=build
 
