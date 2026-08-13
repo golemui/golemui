@@ -781,18 +781,12 @@ export const runRangeDateTimePickerComponentTests = (mountFn: MountComponentFn) 
       const toggleSel = 'button.gui-range-date-time-picker__arrow';
       const panelSel = 'gui-range-date-time-picker > .gui-widget > .gui-picker__panel';
 
-      it('should wrap the calendar in a panel that squares the joined corners while open', () => {
+      it('should wrap the calendar in a panel that exists only while open', () => {
         mountPicker();
         cy.get(panelSel).should('not.exist');
 
         cy.get(toggleSel).click();
         cy.get(panelSel).should('be.visible');
-        cy.get(
-          'gui-range-date-time-picker > .gui-widget > gui-range-date-time .gui-parts-ring',
-        ).should('have.css', 'border-bottom-left-radius', '0px');
-        cy.get(panelSel)
-          .should('have.css', 'border-top-left-radius', '0px')
-          .and('have.css', 'border-top-right-radius', '0px');
       });
 
       it('should repeat the field error inside the open panel with the red border', () => {

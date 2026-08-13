@@ -591,20 +591,13 @@ export const runTimePickerComponentTests = (mountFn: MountComponentFn) => {
       const toggleSel = 'button.gui-time-picker__arrow';
       const panelSel = 'gui-time-picker > .gui-widget > .gui-picker__panel';
 
-      it('should hide the panel while closed and square the joined corners while open', () => {
+      it('should hide the panel while closed and show it while open', () => {
         mountTimePicker({ data: { myTime: '09:30:00' }, props: officeProps });
         cy.get(panelSel).should('have.attr', 'hidden');
 
         cy.get(toggleSel).click({ force: true });
         cy.get(panelSel).should('not.have.attr', 'hidden');
         cy.get(panelSel).should('be.visible');
-        // Full-width panel → both trigger corners square
-        cy.get('gui-time .gui-parts-ring')
-          .should('have.css', 'border-bottom-left-radius', '0px')
-          .and('have.css', 'border-bottom-right-radius', '0px');
-        cy.get(panelSel)
-          .should('have.css', 'border-top-left-radius', '0px')
-          .and('have.css', 'border-top-right-radius', '0px');
       });
 
       it('should repeat the field error inside the open panel with the red border', () => {

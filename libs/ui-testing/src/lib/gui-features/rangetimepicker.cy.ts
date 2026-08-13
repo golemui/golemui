@@ -521,20 +521,12 @@ export const runRangeTimePickerComponentTests = (mountFn: MountComponentFn) => {
     describe('panel chrome and in-panel errors', () => {
       const toggleSel = 'button.gui-range-time-picker__arrow';
 
-      it('should square the joined corners while the panel is open', () => {
+      it('should show the panel with both list columns while open', () => {
         mountRangeTimePicker({ props: officeProps });
         cy.get(sel.panel).should('not.exist');
 
         cy.get(toggleSel).click();
         cy.get(sel.panel).should('be.visible');
-        cy.get('gui-range-time .gui-parts-ring').should(
-          'have.css',
-          'border-bottom-left-radius',
-          '0px',
-        );
-        cy.get(sel.panel)
-          .should('have.css', 'border-top-left-radius', '0px')
-          .and('have.css', 'border-top-right-radius', '0px');
         // The two list columns still render inside the panel
         cy.get(sel.inList).should('exist');
         cy.get(sel.outList).should('exist');

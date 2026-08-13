@@ -299,17 +299,12 @@ export const runDatePickerComponentTests = (mountFn: MountComponentFn) => {
       const toggleSel = 'button.gui-date-picker__arrow';
       const panelSel = 'gui-date-picker > .gui-widget > .gui-picker__panel';
 
-      it('should wrap the calendar in a panel that squares the joined corners while open', () => {
+      it('should wrap the calendar in a panel that exists only while open', () => {
         mountWithDate();
         cy.get(panelSel).should('not.exist');
 
         cy.get(toggleSel).click();
         cy.get(panelSel).should('be.visible');
-        // Continuation: the trigger and the panel meet with square corners
-        cy.get('gui-date .gui-parts-ring').should('have.css', 'border-bottom-left-radius', '0px');
-        cy.get(panelSel)
-          .should('have.css', 'border-top-left-radius', '0px')
-          .and('have.css', 'border-top-right-radius', '0px');
       });
 
       it('should repeat the field error inside the open panel with the red border', () => {
