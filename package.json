@@ -81,7 +81,7 @@
     "@types/node": "20.19.9",
     "@types/react": "19.0.0",
     "@types/react-dom": "19.0.0",
-    "@vitejs/plugin-react": "^4.2.0",
+    "@vitejs/plugin-react": "^6.0.5",
     "@vitejs/plugin-vue": "^5.0.0",
     "@vitest/coverage-v8": "4.1.9",
     "@vitest/ui": "4.1.9",
