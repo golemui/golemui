@@ -34,6 +34,7 @@ export class DropdownElement extends LitElement implements WithWidget {
 
   @query('input') private _inputRef!: any;
   @query('gui-list') private _listRef!: any;
+  @query('.gui-picker__panel') private _panelRef!: any;
 
   private _ignoreNextFocus = false;
 
@@ -42,9 +43,9 @@ export class DropdownElement extends LitElement implements WithWidget {
 
     const path = event.composedPath();
     const clickedInsideInput = this._inputRef && path.includes(this._inputRef);
-    const clickedInsideList = this._listRef && path.includes(this._listRef);
+    const clickedInsidePanel = this._panelRef && path.includes(this._panelRef);
 
-    if (!clickedInsideInput && !clickedInsideList) {
+    if (!clickedInsideInput && !clickedInsidePanel) {
       this._isListVisible = false;
     }
   };
@@ -238,6 +239,12 @@ export class DropdownElement extends LitElement implements WithWidget {
     this._listRef.scrollToSelectedIndex();
   }
 
+  private _onPanelMouseDown(event: MouseEvent) {
+    const target = event.target as Node;
+    if (this._listRef && this._listRef.contains(target)) return;
+    event.preventDefault();
+  }
+
   private _onFocusOutInput(event: FocusEvent) {
     const newFocusTarget = event.relatedTarget as Node;
 
@@ -326,62 +333,78 @@ export class DropdownElement extends LitElement implements WithWidget {
             ></path></svg
         ></span>
 
-        <gui-list
-          id=${`${this.widget.uid}-list`}
-          .uid=${this.widget.uid}
-          .value=${templateData.value ?? ''}
-          .valueField=${templateData.valueField! as string}
-          .items=${this._isFiltering && !asyncFiltering ? this._filteredItems : templateData.items}
-          .itemHeight=${templateData.itemHeight}
-          .height=${templateData.height}
-          ?required=${templateData.validator?.required}
-          ?touched=${templateData.touched}
-          ?disabled=${templateData.disabled}
-          ?readonly=${templateData.readonly}
+        <div
+          class="gui-picker__panel"
           ?hidden=${!this._isListVisible}
-          @gui-range-change=${this._onRangeChange}
-          @gui-update-items=${this._onUpdateItems}
-          @gui-focus-change=${this._onFocusChange}
-          @focus=${this._onFocus}
-          @blur=${this._onBlur}
-          @change=${this._onValueChange}
+          @mousedown=${this._onPanelMouseDown}
         >
-          ${visibleItems.map((item, index) => {
-            const absoluteIndex = this._range.start + index;
-            const isSelected = templateData.value === item.value;
-            const isFocused = this._focusedIndex === absoluteIndex;
-            const isDisabled = !!templateData.disabled || !!item.disabled;
+          <gui-list
+            id=${`${this.widget.uid}-list`}
+            .uid=${this.widget.uid}
+            .value=${templateData.value ?? ''}
+            .valueField=${templateData.valueField! as string}
+            .items=${this._isFiltering && !asyncFiltering
+              ? this._filteredItems
+              : templateData.items}
+            .itemHeight=${templateData.itemHeight}
+            .height=${templateData.height}
+            ?required=${templateData.validator?.required}
+            ?touched=${templateData.touched}
+            ?disabled=${templateData.disabled}
+            ?readonly=${templateData.readonly}
+            ?hidden=${!this._isListVisible}
+            @gui-range-change=${this._onRangeChange}
+            @gui-update-items=${this._onUpdateItems}
+            @gui-focus-change=${this._onFocusChange}
+            @focus=${this._onFocus}
+            @blur=${this._onBlur}
+            @change=${this._onValueChange}
+          >
+            ${visibleItems.map((item, index) => {
+              const absoluteIndex = this._range.start + index;
+              const isSelected = templateData.value === item.value;
+              const isFocused = this._focusedIndex === absoluteIndex;
+              const isDisabled = !!templateData.disabled || !!item.disabled;
 
-            const labelField = templateData.labelField ?? 'label';
-            const isObject = item.template !== null && typeof item.template === 'object';
-            const template =
-              isObject && labelField && !templateData.itemRenderer
-                ? item.template[labelField]
-                : item.template;
+              const labelField = templateData.labelField ?? 'label';
+              const isObject = item.template !== null && typeof item.template === 'object';
+              const template =
+                isObject && labelField && !templateData.itemRenderer
+                  ? item.template[labelField]
+                  : item.template;
 
-            return html`
-              <div
-                role="option"
-                tabindex="-1"
-                class="gui-list__item-wrapper"
-                id="${this.widget.uid}-item-${absoluteIndex}"
-                style="height: ${templateData.itemHeight || 40}px"
-                aria-selected=${isSelected ? 'true' : 'false'}
-                aria-disabled=${isDisabled ? 'true' : 'false'}
-                @click=${() => this._onClickItem(item, absoluteIndex)}
-              >
-                ${itemRenderer({
-                  template: template as string,
-                  value: item.value,
-                  index: absoluteIndex,
-                  selected: isSelected,
-                  disabled: isDisabled,
-                  focused: isFocused,
-                })}
-              </div>
-            `;
-          })}
-        </gui-list>
+              return html`
+                <div
+                  role="option"
+                  tabindex="-1"
+                  class="gui-list__item-wrapper"
+                  id="${this.widget.uid}-item-${absoluteIndex}"
+                  style="height: ${templateData.itemHeight || 40}px"
+                  aria-selected=${isSelected ? 'true' : 'false'}
+                  aria-disabled=${isDisabled ? 'true' : 'false'}
+                  @click=${() => this._onClickItem(item, absoluteIndex)}
+                >
+                  ${itemRenderer({
+                    template: template as string,
+                    value: item.value,
+                    index: absoluteIndex,
+                    selected: isSelected,
+                    disabled: isDisabled,
+                    focused: isFocused,
+                  })}
+                </div>
+              `;
+            })}
+          </gui-list>
+          ${showErrors
+            ? html`<gui-errors
+                panel
+                .uid=${this.widget.uid}
+                .errors=${templateData.errors}
+                .touched=${templateData.touched}
+              ></gui-errors>`
+            : nothing}
+        </div>
       </div>
 
       ${showErrors

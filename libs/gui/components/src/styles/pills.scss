@@ -119,13 +119,19 @@ gui-pills {
     box-shadow: var(--gui-shadow-md);
     padding: var(--gui-space-2);
     gap: var(--gui-space-2);
-    max-height: 200px;
-    overflow-y: auto;
     margin-top: var(--gui-space-1);
 
     .gui-pills__pill {
       justify-content: space-between;
     }
+  }
+
+  .gui-pills__dropdown-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gui-space-2);
+    max-height: 200px;
+    overflow-y: auto;
   }
 
   @container gui-pills-widget (max-width: 540px) {
@@ -140,4 +146,8 @@ gui-pills {
       justify-content: center;
     }
   }
+}
+
+.gui-widget-input[aria-invalid='true'] .gui-pills__dropdown {
+  border-color: var(--gui-intent-error);
 }

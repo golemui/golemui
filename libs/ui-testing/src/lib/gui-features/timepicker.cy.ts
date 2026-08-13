@@ -586,5 +586,47 @@ export const runTimePickerComponentTests = (mountFn: MountComponentFn) => {
         cy.focused().should('have.class', 'gui-time-list__option');
       });
     });
+
+    describe('panel chrome and in-panel errors', () => {
+      const toggleSel = 'button.gui-time-picker__arrow';
+      const panelSel = 'gui-time-picker > .gui-widget > .gui-picker__panel';
+
+      it('should hide the panel while closed and show it while open', () => {
+        mountTimePicker({ data: { myTime: '09:30:00' }, props: officeProps });
+        cy.get(panelSel).should('have.attr', 'hidden');
+
+        cy.get(toggleSel).click({ force: true });
+        cy.get(panelSel).should('not.have.attr', 'hidden');
+        cy.get(panelSel).should('be.visible');
+      });
+
+      it('should repeat the field error inside the open panel with the red border', () => {
+        mountTimePicker({ props: { ...officeProps, allowCustomTime: true } });
+
+        cy.get(sel.hour).type('09');
+        cy.get('[data-cy="submitBtn_button"]').focus();
+        cy.get('[data-cy="testSubject_validator-error"]').should('contain.text', 'Incomplete time');
+
+        cy.get(toggleSel).click({ force: true });
+        cy.get('[data-cy="testSubject_panel-validator-error"]')
+          .should('be.visible')
+          .and('contain.text', 'Incomplete time');
+        cy.get('#testSubject_panel_errors')
+          .should('have.attr', 'aria-hidden', 'true')
+          .and('not.have.attr', 'role');
+        cy.get('[id="testSubject_errors"]').should('have.length', 1);
+
+        cy.get('[data-cy="testSubject_validator-error"]').then(($li) => {
+          cy.get(panelSel).should('have.css', 'border-top-color', $li.css('color'));
+        });
+      });
+
+      it('should not render the panel error copy when the value is valid', () => {
+        mountTimePicker({ data: { myTime: '09:30:00' }, props: officeProps });
+        cy.get(toggleSel).click({ force: true });
+        cy.get(sel.openList).should('exist');
+        cy.get('[data-cy="testSubject_panel-validator-errors"]').should('not.exist');
+      });
+    });
   });
 };

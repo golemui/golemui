@@ -248,6 +248,8 @@ export class GuiRangeDateInput extends LitElement {
             .uid=${this.uid}
             .toolbarAriaLabel=${'Selected date ranges'}
             .items=${pillItems}
+            .errors=${this.errors}
+            .touched=${!!this.touched}
             .removable=${true}
             .clickable=${true}
             .bubble=${true}

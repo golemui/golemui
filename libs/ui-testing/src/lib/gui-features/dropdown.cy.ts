@@ -156,5 +156,78 @@ export const runDropdownComponentTests = (mountFn: MountComponentFn) => {
           });
       });
     });
+
+    describe('panel chrome and in-panel errors', () => {
+      const inputSel = '[data-cy="testSubject_textinput"]';
+      const panelSel = '.gui-dropdown .gui-widget > .gui-picker__panel';
+
+      const mountWithValidator = (items: unknown[]) => {
+        mountFn({
+          formDef: defineForm({
+            form: [
+              {
+                uid: 'testSubject',
+                kind: 'input',
+                type: 'dropdown',
+                path: 'myField',
+                validator: { type: 'string', required: true } as any,
+                props: { items, inputDebounce: 0 },
+              },
+            ],
+          }),
+        });
+      };
+
+      it('should hide the panel while closed and show it while open', () => {
+        mountWithItems(['React', 'Angular', 'Vue']);
+        cy.get(panelSel).should('have.attr', 'hidden');
+
+        cy.get(inputSel).click();
+        cy.get(panelSel).should('not.have.attr', 'hidden');
+        cy.get(panelSel).should('be.visible');
+      });
+
+      it('should repeat the field error inside the open panel with the red border', () => {
+        mountWithValidator(['React', 'Angular', 'Vue']);
+
+        // Touch and leave → the required error shows below the field
+        cy.get(inputSel).focus();
+        cy.get(inputSel).blur();
+        cy.get('[data-cy="testSubject_validator-error"]').should('be.visible');
+
+        cy.get(inputSel).click();
+        cy.get('[data-cy="testSubject_panel-validator-error"]').should('be.visible');
+        cy.get('#testSubject_panel_errors')
+          .should('have.attr', 'aria-hidden', 'true')
+          .and('not.have.attr', 'role');
+        cy.get('[id="testSubject_errors"]').should('have.length', 1);
+
+        // Invalid field → input and panel share the red border
+        cy.get(inputSel).should('have.attr', 'aria-invalid', 'true');
+        cy.get('[data-cy="testSubject_validator-error"]').then(($li) => {
+          cy.get(panelSel).should('have.css', 'border-top-color', $li.css('color'));
+        });
+      });
+
+      it('should keep the list open when the panel error text is clicked', () => {
+        mountWithValidator(['React', 'Angular', 'Vue']);
+
+        cy.get(inputSel).focus();
+        cy.get(inputSel).blur();
+        cy.get('[data-cy="testSubject_validator-error"]').should('be.visible');
+
+        cy.get(inputSel).click();
+        cy.get('[data-cy="testSubject_panel-validator-error"]').should('be.visible');
+        cy.get('[data-cy="testSubject_panel-validator-error"]').click();
+        cy.get('gui-list:not([hidden])').should('exist');
+      });
+
+      it('should not render the panel error copy when the value is valid', () => {
+        mountWithItems(['React', 'Angular', 'Vue']);
+        cy.get(inputSel).click();
+        cy.get(panelSel).should('be.visible');
+        cy.get('[data-cy="testSubject_panel-validator-errors"]').should('not.exist');
+      });
+    });
   });
 };

@@ -23,6 +23,7 @@ export function Dropdown(widgetInstance: WithWidget) {
   const [selectedItem, setSelectedItem] = useState<ListItem<never> | undefined>(undefined);
 
   const listRef = useRef<GuiList>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const labelRef = useRef<GuiLabel>(null);
   const ignoreNextFocusRef = useRef(false);
@@ -134,9 +135,9 @@ export function Dropdown(widgetInstance: WithWidget) {
 
       const target = event.target as Node;
       const clickedInput = inputRef.current && inputRef.current.contains(target);
-      const clickedList = listRef.current && listRef.current.contains(target);
+      const clickedPanel = panelRef.current && panelRef.current.contains(target);
 
-      if (!clickedInput && !clickedList) {
+      if (!clickedInput && !clickedPanel) {
         closeList();
       }
     };
@@ -341,60 +342,74 @@ export function Dropdown(widgetInstance: WithWidget) {
           </svg>
         </span>
 
-        <GuiListReact
-          ref={listRef}
-          id={`${uid}-list`}
-          uid={uid}
-          value={value ?? ''}
-          valueField={templateData.valueField! as string}
-          items={isFiltering && !asyncFiltering ? filteredItems : templateData.items}
-          itemHeight={templateData.itemHeight}
-          height={templateData.height}
-          required={isRequired}
-          touched={isTouched}
-          disabled={isDisabled || isReadOnly}
-          readOnly={isReadOnly}
+        <div
+          className="gui-picker__panel"
           hidden={!isListVisible}
-          onFocus={handleInputFocus}
-          onBlur={handleFocusOut}
+          ref={panelRef}
+          onMouseDown={(event) => {
+            const target = event.target as Node;
+            if (listRef.current && listRef.current.contains(target)) return;
+            event.preventDefault();
+          }}
         >
-          {visibleItems.map((item, index) => {
-            const absoluteIndex = range.start + index;
-            const isSelected = value === item.value;
-            const isFocused = focusedIndex === absoluteIndex;
-            const isItemDisabled = isDisabled || !!item.disabled;
+          <GuiListReact
+            ref={listRef}
+            id={`${uid}-list`}
+            uid={uid}
+            value={value ?? ''}
+            valueField={templateData.valueField! as string}
+            items={isFiltering && !asyncFiltering ? filteredItems : templateData.items}
+            itemHeight={templateData.itemHeight}
+            height={templateData.height}
+            required={isRequired}
+            touched={isTouched}
+            disabled={isDisabled || isReadOnly}
+            readOnly={isReadOnly}
+            hidden={!isListVisible}
+            onFocus={handleInputFocus}
+            onBlur={handleFocusOut}
+          >
+            {visibleItems.map((item, index) => {
+              const absoluteIndex = range.start + index;
+              const isSelected = value === item.value;
+              const isFocused = focusedIndex === absoluteIndex;
+              const isItemDisabled = isDisabled || !!item.disabled;
 
-            const labelField = templateData.labelField ?? 'label';
-            const isObject = item.template !== null && typeof item.template === 'object';
-            const template =
-              isObject && labelField && !templateData.itemRenderer
-                ? item.template[labelField]
-                : item.template;
+              const labelField = templateData.labelField ?? 'label';
+              const isObject = item.template !== null && typeof item.template === 'object';
+              const template =
+                isObject && labelField && !templateData.itemRenderer
+                  ? item.template[labelField]
+                  : item.template;
 
-            return (
-              <div
-                key={absoluteIndex}
-                role="option"
-                tabIndex={-1}
-                className="gui-list__item-wrapper"
-                id={`${uid}-item-${absoluteIndex}`}
-                style={{ height: `${templateData.itemHeight || 40}px` }}
-                aria-selected={isSelected}
-                aria-disabled={isItemDisabled ? 'true' : 'false'}
-                onClick={() => handleClickItem(item, absoluteIndex)}
-              >
-                <ItemRenderer
-                  template={template}
-                  value={item.value}
-                  index={absoluteIndex}
-                  selected={isSelected}
-                  disabled={isItemDisabled || isReadOnly}
-                  focused={isFocused}
-                />
-              </div>
-            );
-          })}
-        </GuiListReact>
+              return (
+                <div
+                  key={absoluteIndex}
+                  role="option"
+                  tabIndex={-1}
+                  className="gui-list__item-wrapper"
+                  id={`${uid}-item-${absoluteIndex}`}
+                  style={{ height: `${templateData.itemHeight || 40}px` }}
+                  aria-selected={isSelected}
+                  aria-disabled={isItemDisabled ? 'true' : 'false'}
+                  onClick={() => handleClickItem(item, absoluteIndex)}
+                >
+                  <ItemRenderer
+                    template={template}
+                    value={item.value}
+                    index={absoluteIndex}
+                    selected={isSelected}
+                    disabled={isItemDisabled || isReadOnly}
+                    focused={isFocused}
+                  />
+                </div>
+              );
+            })}
+          </GuiListReact>
+          {showErrors && (
+            <GuiErrorsReact panel uid={uid} errors={errors} touched={isTouched}></GuiErrorsReact>
+          )}
+        </div>
       </div>
 
       {showErrors && (

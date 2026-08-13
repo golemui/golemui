@@ -164,52 +164,61 @@ export class GuiRangeTimePicker extends LitElement {
 
     const panel = this._popup.open
       ? html`<div
-          class="gui-range-time-picker__panel"
+          class="gui-picker__panel gui-range-time-picker__panel"
           id=${`${this.uid}_popup`}
           role="dialog"
           aria-label=${this.label ?? 'Time list'}
         >
-          <div class="gui-range-time-picker__column">
-            <span class="gui-range-time-picker__column-label">${startLabel}</span>
-            <gui-time-list
-              class="gui-range-time-picker__list"
-              .uid=${this.uid}
-              .label=${startLabel}
-              .value=${this._workingIn}
-              .localeId=${this.localeId}
-              .hourFormat=${this.hourFormat}
-              .minuteStep=${this.minuteStep}
-              .minTime=${this.minTime}
-              .maxTime=${this.maxTime}
-              .disabledRanges=${this.disabledRanges}
-              .height=${this.height}
-              .itemHeight=${this.itemHeight}
-              .noAvailableTimesMessage=${this.noAvailableTimesMessage}
-              ?readonly=${this.readOnly}
-              @change=${this.onInListChange}
-            ></gui-time-list>
-          </div>
+          <div class="gui-range-time-picker__columns">
+            <div class="gui-range-time-picker__column">
+              <span class="gui-range-time-picker__column-label">${startLabel}</span>
+              <gui-time-list
+                class="gui-range-time-picker__list"
+                .uid=${this.uid}
+                .label=${startLabel}
+                .value=${this._workingIn}
+                .localeId=${this.localeId}
+                .hourFormat=${this.hourFormat}
+                .minuteStep=${this.minuteStep}
+                .minTime=${this.minTime}
+                .maxTime=${this.maxTime}
+                .disabledRanges=${this.disabledRanges}
+                .height=${this.height}
+                .itemHeight=${this.itemHeight}
+                .noAvailableTimesMessage=${this.noAvailableTimesMessage}
+                ?readonly=${this.readOnly}
+                @change=${this.onInListChange}
+              ></gui-time-list>
+            </div>
 
-          <div class="gui-range-time-picker__column">
-            <span class="gui-range-time-picker__column-label">${endLabel}</span>
-            <gui-time-list
-              class="gui-range-time-picker__list"
-              .uid=${this.uid}
-              .label=${endLabel}
-              .value=${this._workingOut}
-              .localeId=${this.localeId}
-              .hourFormat=${this.hourFormat}
-              .minuteStep=${this.minuteStep}
-              .minTime=${out.minTime}
-              .maxTime=${out.maxTime}
-              .disabledRanges=${this.disabledRanges}
-              .height=${this.height}
-              .itemHeight=${this.itemHeight}
-              .noAvailableTimesMessage=${this.noAvailableTimesMessage}
-              ?readonly=${this.readOnly}
-              @change=${this.onOutListChange}
-            ></gui-time-list>
+            <div class="gui-range-time-picker__column">
+              <span class="gui-range-time-picker__column-label">${endLabel}</span>
+              <gui-time-list
+                class="gui-range-time-picker__list"
+                .uid=${this.uid}
+                .label=${endLabel}
+                .value=${this._workingOut}
+                .localeId=${this.localeId}
+                .hourFormat=${this.hourFormat}
+                .minuteStep=${this.minuteStep}
+                .minTime=${out.minTime}
+                .maxTime=${out.maxTime}
+                .disabledRanges=${this.disabledRanges}
+                .height=${this.height}
+                .itemHeight=${this.itemHeight}
+                .noAvailableTimesMessage=${this.noAvailableTimesMessage}
+                ?readonly=${this.readOnly}
+                @change=${this.onOutListChange}
+              ></gui-time-list>
+            </div>
           </div>
+          ${this.showErrors
+            ? addErrors(
+                this.uid ?? '',
+                { errors: this.errors, touched: this.touched },
+                { variant: 'panel' },
+              )
+            : nothing}
         </div>`
       : nothing;
 

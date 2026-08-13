@@ -9,7 +9,7 @@ import type { GuiRangeDateTimeInput } from './range-date-time-input';
 import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
 import { GUIPopupController } from '../controllers/popup.controller';
 import { type HourFormat } from '../utils/time';
-import { addErrors, addIcon, addLabel } from '../utils/templates';
+import { addErrors, addIcon, addLabel, addPickerPanel } from '../utils/templates';
 
 /** The four pieces of an in-progress range, each absent until chosen. */
 interface WorkingRange {
@@ -155,7 +155,7 @@ export class GuiRangeDateTimePicker extends LitElement {
       if (target.closest('.gui-time-list__option')) return 'ignore';
       if (target.closest('gui-time-picker')) return 'ignore';
       return target.closest('.gui-range-date-time-input__field') ||
-        target.closest('gui-range-date-time-calendar')
+        target.closest('.gui-picker__panel')
         ? 'open'
         : 'toggle';
     },
@@ -213,54 +213,58 @@ export class GuiRangeDateTimePicker extends LitElement {
     const datePickerIcon = addIcon('datePicker', { icon: this.icon });
 
     const calendar = this._popup.open
-      ? html`<gui-range-date-time-calendar
-          id=${`${this.uid}_popup`}
-          role="dialog"
-          aria-label=${this.label ?? 'Calendar'}
-          .uid=${this.uid}
-          .hint=${this.hint}
-          ?touched=${this.touched}
-          ?required=${this.required}
-          ?disabled=${this.disabled}
-          ?readonly=${this.readOnly}
-          .value=${this.value}
-          .focusDate=${this._focusDate}
-          .hidePills=${true}
-          .localeId=${this.localeId}
-          .prevMonthIcon=${this.prevMonthIcon}
-          .nextMonthIcon=${this.nextMonthIcon}
-          .prevMonthAriaLabel=${this.prevMonthAriaLabel}
-          .nextMonthAriaLabel=${this.nextMonthAriaLabel}
-          .selectYearAriaLabel=${this.selectYearAriaLabel}
-          .yearGridAriaLabel=${this.yearGridAriaLabel}
-          .dayFormat=${this.dayFormat}
-          .weekdayFormat=${this.weekdayFormat}
-          .monthFormat=${this.monthFormat}
-          .numberOfMonths=${this.numberOfMonths}
-          .hourFormat=${this.hourFormat}
-          .minuteStep=${this.minuteStep}
-          .allowCustomTime=${this.allowCustomTime}
-          .startTimeLabel=${this.startTimeLabel}
-          .endTimeLabel=${this.endTimeLabel}
-          .minDateTime=${this.minDateTime}
-          .maxDateTime=${this.maxDateTime}
-          .minDateTimeMessage=${this.minDateTimeMessage}
-          .maxDateTimeMessage=${this.maxDateTimeMessage}
-          .disabledRanges=${this.disabledRanges}
-          .disabledRangeMessage=${this.disabledRangeMessage}
-          .noAvailableTimesMessage=${this.noAvailableTimesMessage}
-          .dayCountAriaLabel=${this.dayCountAriaLabel}
-          .disabledDayCountAriaLabel=${this.disabledDayCountAriaLabel}
-          .workingStart=${this._workingStart}
-          .workingEnd=${this._workingEnd}
-          .workingStartTime=${this._workingStartTime}
-          .workingEndTime=${this._workingEndTime}
-          .deferFocusLeave=${true}
-          @blur=${this.onCalendarBlur}
-          @change=${this.onCalendarChange}
-          @partsChange=${this.onCalendarPartsChange}
-          @inputError=${this.onCalendarInputError}
-        ></gui-range-date-time-calendar>`
+      ? addPickerPanel(
+          this.uid ?? '',
+          { errors: this.errors, touched: this.touched, showErrors: this.showErrors },
+          html`<gui-range-date-time-calendar
+            id=${`${this.uid}_popup`}
+            role="dialog"
+            aria-label=${this.label ?? 'Calendar'}
+            .uid=${this.uid}
+            .hint=${this.hint}
+            ?touched=${this.touched}
+            ?required=${this.required}
+            ?disabled=${this.disabled}
+            ?readonly=${this.readOnly}
+            .value=${this.value}
+            .focusDate=${this._focusDate}
+            .hidePills=${true}
+            .localeId=${this.localeId}
+            .prevMonthIcon=${this.prevMonthIcon}
+            .nextMonthIcon=${this.nextMonthIcon}
+            .prevMonthAriaLabel=${this.prevMonthAriaLabel}
+            .nextMonthAriaLabel=${this.nextMonthAriaLabel}
+            .selectYearAriaLabel=${this.selectYearAriaLabel}
+            .yearGridAriaLabel=${this.yearGridAriaLabel}
+            .dayFormat=${this.dayFormat}
+            .weekdayFormat=${this.weekdayFormat}
+            .monthFormat=${this.monthFormat}
+            .numberOfMonths=${this.numberOfMonths}
+            .hourFormat=${this.hourFormat}
+            .minuteStep=${this.minuteStep}
+            .allowCustomTime=${this.allowCustomTime}
+            .startTimeLabel=${this.startTimeLabel}
+            .endTimeLabel=${this.endTimeLabel}
+            .minDateTime=${this.minDateTime}
+            .maxDateTime=${this.maxDateTime}
+            .minDateTimeMessage=${this.minDateTimeMessage}
+            .maxDateTimeMessage=${this.maxDateTimeMessage}
+            .disabledRanges=${this.disabledRanges}
+            .disabledRangeMessage=${this.disabledRangeMessage}
+            .noAvailableTimesMessage=${this.noAvailableTimesMessage}
+            .dayCountAriaLabel=${this.dayCountAriaLabel}
+            .disabledDayCountAriaLabel=${this.disabledDayCountAriaLabel}
+            .workingStart=${this._workingStart}
+            .workingEnd=${this._workingEnd}
+            .workingStartTime=${this._workingStartTime}
+            .workingEndTime=${this._workingEndTime}
+            .deferFocusLeave=${true}
+            @blur=${this.onCalendarBlur}
+            @change=${this.onCalendarChange}
+            @partsChange=${this.onCalendarPartsChange}
+            @inputError=${this.onCalendarInputError}
+          ></gui-range-date-time-calendar>`,
+        )
       : nothing;
 
     return html`

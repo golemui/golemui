@@ -16,7 +16,7 @@ import {
   toISOTimeString,
   type HourFormat,
 } from '../utils/time';
-import { addErrors, addIcon, addLabel } from '../utils/templates';
+import { addErrors, addIcon, addLabel, addPickerPanel } from '../utils/templates';
 import { INVALID_DISABLED_TIME_RANGE_MESSAGE } from '../utils/messages';
 
 export class GuiDateTimePicker extends LitElement {
@@ -132,8 +132,7 @@ export class GuiDateTimePicker extends LitElement {
     clickIntent: (target) => {
       if (target.closest('.gui-calendar__day-button')) return 'ignore';
       if (target.closest('.gui-time-list__option')) return 'ignore';
-      return target.closest('.gui-date-time-input__part') ||
-        target.closest('gui-date-time-calendar')
+      return target.closest('.gui-date-time-input__part') || target.closest('.gui-picker__panel')
         ? 'open'
         : 'toggle';
     },
@@ -164,48 +163,52 @@ export class GuiDateTimePicker extends LitElement {
     const datePickerIcon = addIcon('datePicker', { icon: this.icon });
 
     const calendar = this._popup.open
-      ? html`<gui-date-time-calendar
-          id=${`${this.uid}_popup`}
-          role="dialog"
-          aria-label=${this.label ?? 'Calendar'}
-          .uid=${this.uid}
-          .hint=${this.hint}
-          ?touched=${this.touched}
-          ?required=${this.required}
-          ?disabled=${this.disabled}
-          ?readonly=${this.readOnly}
-          .value=${this.value}
-          .workingDate=${this._workingDate}
-          .workingTime=${this._workingTime}
-          .deferFocusLeave=${true}
-          .prevMonthIcon=${this.prevMonthIcon}
-          .nextMonthIcon=${this.nextMonthIcon}
-          .prevMonthAriaLabel=${this.prevMonthAriaLabel}
-          .nextMonthAriaLabel=${this.nextMonthAriaLabel}
-          .selectYearAriaLabel=${this.selectYearAriaLabel}
-          .yearGridAriaLabel=${this.yearGridAriaLabel}
-          .dayFormat=${this.dayFormat}
-          .weekdayFormat=${this.weekdayFormat}
-          .monthFormat=${this.monthFormat}
-          .minDate=${this.minDate}
-          .maxDate=${this.maxDate}
-          .disabledRanges=${this.disabledRanges}
-          .numberOfMonths=${this.numberOfMonths}
-          .localeId=${this.localeId}
-          .hourFormat=${this.hourFormat}
-          .minuteStep=${this.minuteStep}
-          .minTime=${this.minTime}
-          .maxTime=${this.maxTime}
-          .disabledTimeRanges=${this.disabledTimeRanges}
-          .allowCustomTime=${this.allowCustomTime}
-          .minTimeMessage=${this.minTimeMessage}
-          .maxTimeMessage=${this.maxTimeMessage}
-          .disabledTimeRangeMessage=${this.disabledTimeRangeMessage}
-          .noAvailableTimesMessage=${this.noAvailableTimesMessage}
-          @blur=${this.onCalendarBlur}
-          @change=${this.onCalendarChange}
-          @partsChange=${this.onCalendarPartsChange}
-        ></gui-date-time-calendar>`
+      ? addPickerPanel(
+          this.uid ?? '',
+          { errors: this.errors, touched: this.touched, showErrors: this.showErrors },
+          html`<gui-date-time-calendar
+            id=${`${this.uid}_popup`}
+            role="dialog"
+            aria-label=${this.label ?? 'Calendar'}
+            .uid=${this.uid}
+            .hint=${this.hint}
+            ?touched=${this.touched}
+            ?required=${this.required}
+            ?disabled=${this.disabled}
+            ?readonly=${this.readOnly}
+            .value=${this.value}
+            .workingDate=${this._workingDate}
+            .workingTime=${this._workingTime}
+            .deferFocusLeave=${true}
+            .prevMonthIcon=${this.prevMonthIcon}
+            .nextMonthIcon=${this.nextMonthIcon}
+            .prevMonthAriaLabel=${this.prevMonthAriaLabel}
+            .nextMonthAriaLabel=${this.nextMonthAriaLabel}
+            .selectYearAriaLabel=${this.selectYearAriaLabel}
+            .yearGridAriaLabel=${this.yearGridAriaLabel}
+            .dayFormat=${this.dayFormat}
+            .weekdayFormat=${this.weekdayFormat}
+            .monthFormat=${this.monthFormat}
+            .minDate=${this.minDate}
+            .maxDate=${this.maxDate}
+            .disabledRanges=${this.disabledRanges}
+            .numberOfMonths=${this.numberOfMonths}
+            .localeId=${this.localeId}
+            .hourFormat=${this.hourFormat}
+            .minuteStep=${this.minuteStep}
+            .minTime=${this.minTime}
+            .maxTime=${this.maxTime}
+            .disabledTimeRanges=${this.disabledTimeRanges}
+            .allowCustomTime=${this.allowCustomTime}
+            .minTimeMessage=${this.minTimeMessage}
+            .maxTimeMessage=${this.maxTimeMessage}
+            .disabledTimeRangeMessage=${this.disabledTimeRangeMessage}
+            .noAvailableTimesMessage=${this.noAvailableTimesMessage}
+            @blur=${this.onCalendarBlur}
+            @change=${this.onCalendarChange}
+            @partsChange=${this.onCalendarPartsChange}
+          ></gui-date-time-calendar>`,
+        )
       : nothing;
 
     return html`
