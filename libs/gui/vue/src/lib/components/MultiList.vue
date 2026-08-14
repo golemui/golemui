@@ -4,13 +4,10 @@ import { useInputWidget, useVueFormContext } from '@golemui/vue';
 import type { ListItem, MultiListProps, OptionValue } from '@golemui/gui-shared/internals';
 import { computed, onUnmounted, ref, watch, type Component } from 'vue';
 import DefaultMultiListItemRenderer from './item-renderers/DefaultMultiListItemRenderer.vue';
+import type { GuiMultiList } from '@golemui/gui-components/multi-list';
 import '@golemui/gui-components/label';
 import '@golemui/gui-components/multi-list';
 import '@golemui/gui-components/errors';
-
-interface GuiMultiListElement extends HTMLElement {
-  focusItemAtIndex(index: number): void;
-}
 
 const props = defineProps<WithWidget>();
 const widget = props.widget as InputWidget<OptionValue[]>;
@@ -23,7 +20,7 @@ const rangeStart = ref(0);
 const rangeEnd = ref(10);
 const listItems = ref<ListItem<any>[]>([]);
 const focusedIndex = ref<number>(-1);
-const listRef = ref<GuiMultiListElement | null>(null);
+const listRef = ref<GuiMultiList | null>(null);
 
 const currentValues = computed(() => (Array.isArray(value.value) ? value.value : []));
 
@@ -65,7 +62,7 @@ const handleChange = (e: Event) => {
   toggleValue((e as CustomEvent).detail.value);
 };
 
-let currentList: GuiMultiListElement | null = null;
+let currentList: GuiMultiList | null = null;
 watch(listRef, (el) => {
   if (currentList) {
     currentList.removeEventListener('change', handleChange);

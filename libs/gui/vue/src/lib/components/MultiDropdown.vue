@@ -4,23 +4,13 @@ import { useDebounceCallback, useInputWidget, useVueFormContext } from '@golemui
 import type { ListItem, MultiDropdownProps, OptionValue } from '@golemui/gui-shared/internals';
 import { computed, onMounted, onUnmounted, ref, watch, type Component } from 'vue';
 import DefaultMultiListItemRenderer from './item-renderers/DefaultMultiListItemRenderer.vue';
+import type { GuiLabel } from '@golemui/gui-components/label';
+import type { GuiMultiList } from '@golemui/gui-components/multi-list';
+import type { GuiMultiSelectTrigger } from '@golemui/gui-components/multi-select-trigger';
 import '@golemui/gui-components/label';
 import '@golemui/gui-components/multi-list';
 import '@golemui/gui-components/multi-select-trigger';
 import '@golemui/gui-components/errors';
-
-interface GuiMultiListElement extends HTMLElement {
-  focusItemAtIndex(index: number): void;
-  scrollToSelectedIndex(): void;
-}
-interface GuiMultiSelectTriggerElement extends HTMLElement {
-  input: HTMLInputElement | null;
-  focusInput(): void;
-  closePillsDropdown(): void;
-}
-interface GuiLabelElement extends HTMLElement {
-  targetElement?: HTMLElement | HTMLElement[];
-}
 
 const props = defineProps<WithWidget>();
 const widget = props.widget as InputWidget<OptionValue[]>;
@@ -35,10 +25,10 @@ const focusedIndex = ref<number>(-1);
 const isFiltering = ref(false);
 const isListVisible = ref(false);
 
-const listRef = ref<GuiMultiListElement | null>(null);
+const listRef = ref<GuiMultiList | null>(null);
 const panelRef = ref<HTMLDivElement | null>(null);
-const triggerRef = ref<GuiMultiSelectTriggerElement | null>(null);
-const labelRef = ref<GuiLabelElement | null>(null);
+const triggerRef = ref<GuiMultiSelectTrigger | null>(null);
+const labelRef = ref<GuiLabel | null>(null);
 
 const currentValues = computed(() => (Array.isArray(value.value) ? value.value : []));
 
@@ -115,7 +105,7 @@ const handleListChange = (e: Event) => {
   toggleValue((e as CustomEvent).detail.value);
 };
 
-let currentList: GuiMultiListElement | null = null;
+let currentList: GuiMultiList | null = null;
 watch(listRef, (el) => {
   if (currentList) {
     currentList.removeEventListener('gui-range-change', handleRangeChange);
