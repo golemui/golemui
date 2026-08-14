@@ -26,10 +26,10 @@ export const multiListTab = gui.layouts.flex([
   }),
   gui.inputs.multiList('multiLists.limited', {
     label: 'Limited to 2 selections',
-    hint: 'The third toggle is ignored',
+    hint: 'A maxItems validator flags a third selection instead of blocking it',
     height: 150,
-    limit: 2,
     items: frameworks,
+    validator: { type: 'array', maxItems: 2 },
   }),
   gui.inputs.multiList('multiLists.disabled', {
     label: 'Disabled multi list',

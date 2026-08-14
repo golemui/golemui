@@ -46,8 +46,8 @@ Every `gui.*` factory and its calling convention. Look up the detail below for t
 - `gui.layouts.horizontalGrid(children, props?)`
 - `gui.inputs.list(path, { label, items, height?, itemHeight? })`
 - `gui.inputs.markdown(path, { label })`
-- `gui.inputs.multiDropdown(path, { label, items, limit?, validator? })`
-- `gui.inputs.multiList(path, { label, items, height?, itemHeight?, limit? })`
+- `gui.inputs.multiDropdown(path, { label, items, validator? })`
+- `gui.inputs.multiList(path, { label, items, height?, itemHeight?, validator? })`
 - `gui.inputs.numberInput(path, { label, defaultValue?, validator? })`
 - `gui.inputs.password(path, { label, validator? })`
 - `gui.inputs.radiogroup(path, { label, options, defaultValue?, validator? })`
@@ -380,7 +380,7 @@ Reference: https://golemui.com/dx/widgets-reference/input-fields/markdown.md
 
 ## gui.inputs.multiDropdown
 
-Call: `gui.inputs.multiDropdown(path, { label, items, limit?, validator? })`
+Call: `gui.inputs.multiDropdown(path, { label, items, validator? })`
 
 ```ts
 gui.inputs.multiDropdown('countries', {
@@ -394,14 +394,13 @@ gui.inputs.multiDropdown('countries', {
 ```
 
 - Multi-select dropdown: the value is an **array** of the selected item values; selections render as removable pills to the left of the filter input and the panel stays open while toggling.
-- The validator must be array-typed — `{ type: 'array', required: true, minItems? }`.
-- `limit` caps the number of selections; extra toggles are ignored.
+- The validator must be array-typed — `{ type: 'array', required: true, minItems?, maxItems? }`. Selection is never silently blocked; cap it with `maxItems` so the user is told why.
 
 Reference: https://golemui.com/dx/widgets-reference/input-fields/multi-dropdown.md
 
 ## gui.inputs.multiList
 
-Call: `gui.inputs.multiList(path, { label, items, height?, itemHeight?, limit? })`
+Call: `gui.inputs.multiList(path, { label, items, height?, itemHeight?, validator? })`
 
 ```ts
 gui.inputs.multiList('toppings', {
@@ -412,7 +411,7 @@ gui.inputs.multiList('toppings', {
 ```
 
 - Multi-select scrolling list: the value is an **array** of the selected item values; Enter/Space and clicks toggle rows on and off.
-- `limit` caps the number of selections; extra toggles are ignored.
+- Selection is never silently blocked; cap it with an array validator — `{ type: 'array', maxItems }` — so the user is told why.
 
 Reference: https://golemui.com/dx/widgets-reference/input-fields/multi-list.md
 

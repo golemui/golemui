@@ -61,10 +61,6 @@
       "type": "string",
       "description": "HTML `autocomplete` attribute applied to the underlying input element"
     },
-    "limitProp": {
-      "type": "number",
-      "description": "Maximum number of selected options. No limit when omitted."
-    },
     "removeAriaLabelProp": {
       "$ref": "../core/common.schema.json#/$defs/localizable"
     },
@@ -145,9 +141,6 @@
         "autocomplete": {
           "$ref": "#/$defs/autocompleteProp"
         },
-        "limit": {
-          "$ref": "#/$defs/limitProp"
-        },
         "removeAriaLabel": {
           "$ref": "#/$defs/removeAriaLabelProp"
         },
@@ -188,9 +181,6 @@
         },
         "^autocomplete\\.[^.]+$": {
           "$ref": "#/$defs/autocompleteProp"
-        },
-        "^limit\\.[^.]+$": {
-          "$ref": "#/$defs/limitProp"
         },
         "^removeAriaLabel\\.[^.]+$": {
           "$ref": "#/$defs/removeAriaLabelProp"

@@ -134,7 +134,6 @@ export class MultiDropdownElement extends LitElement implements WithWidget {
       this.adapter.valueChanged(current.filter((v) => v !== value));
       return;
     }
-    if (templateData.limit !== undefined && current.length >= templateData.limit) return;
     this.adapter.valueChanged([...current, value]);
   }
 

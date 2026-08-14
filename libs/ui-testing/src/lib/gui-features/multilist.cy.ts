@@ -64,15 +64,6 @@ export const runMultiListComponentTests = (mountFn: MountComponentFn) => {
         cy.get(sel.row).first().should('have.attr', 'aria-selected', 'false');
       });
 
-      it('should not add beyond the limit', () => {
-        mountMultiList({ props: { limit: 1 } });
-
-        cy.get(sel.row).first().click();
-        cy.get(sel.row).eq(1).click();
-        cy.get(sel.row).first().should('have.attr', 'aria-selected', 'true');
-        cy.get(sel.row).eq(1).should('have.attr', 'aria-selected', 'false');
-      });
-
       it('should mark preselected values resolved through valueField', () => {
         mountMultiList({
           items: [

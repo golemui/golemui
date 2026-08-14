@@ -24,7 +24,6 @@ export function Tags(widgetInstance: WithWidget) {
   const separators = templateData.separators;
   const allowDuplicates = templateData.allowDuplicates ?? true;
   const trim = templateData.trim ?? true;
-  const limit = templateData.limit;
   const removeAriaLabel = templateData.removeAriaLabel;
   const removeIcon = templateData.removeIcon;
   const isDisabled = templateData.disabled as boolean;
@@ -48,7 +47,6 @@ export function Tags(widgetInstance: WithWidget) {
         separators={separators}
         allowDuplicates={allowDuplicates}
         trim={trim}
-        limit={limit}
         removeAriaLabel={removeAriaLabel}
         removeIcon={removeIcon}
         onChange={handleChange}

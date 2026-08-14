@@ -28,9 +28,9 @@ export const multiDropdownTab = gui.layouts.flex([
   gui.inputs.multiDropdown('multiDropdowns.limited', {
     label: 'Limited to 3 selections',
     placeholder: 'Pick up to three…',
-    hint: 'The fourth toggle is ignored',
-    limit: 3,
+    hint: 'A maxItems validator flags a fourth selection instead of blocking it',
     items: frameworks,
+    validator: { type: 'array', maxItems: 3 },
   }),
   gui.inputs.multiDropdown('multiDropdowns.disabled', {
     label: 'Disabled multi dropdown',

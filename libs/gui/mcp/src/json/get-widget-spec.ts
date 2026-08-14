@@ -53,7 +53,6 @@ const EXAMPLES: Record<string, Record<string, unknown>> = {
       separators: ['Enter', ','],
       trim: true,
       allowDuplicates: false,
-      limit: 10,
     },
     validator: {
       type: 'array',
@@ -275,8 +274,8 @@ const NOTES: Record<string, string[]> = {
   ],
   tags: [
     'Use `tags` for free-form arrays of primitive values (typically `string[]`) — e.g. keywords, email lists, hashtags. Backing data is `string[]`. For arrays of structured objects, use `repeater` instead.',
-    '`props.separators` controls which keys/characters commit a new tag. Defaults emit on `Enter` and `,`; you can also include `"Tab"` or `"blur"`. `props.trim` strips whitespace from each tag; `props.allowDuplicates: false` rejects repeats; `props.limit` caps the array length.',
-    'Validate with an `arrayValidator`: `{ type: "array", minItems, maxItems, uniqueItems }`. The `tags` widget complements that with UI-level enforcement (`allowDuplicates`, `limit`) but the validator is still authoritative for form-level required/min/max constraints.',
+    '`props.separators` controls which keys/characters commit a new tag. Defaults emit on `Enter` and `,`; you can also include `"Tab"` or `"blur"`. `props.trim` strips whitespace from each tag; `props.allowDuplicates: false` rejects repeats.',
+    'Validate with an `arrayValidator`: `{ type: "array", minItems, maxItems, uniqueItems }`. Entry is never silently blocked — cap the tag count with `maxItems` so the user is told why.',
   ],
   dropdown: [
     'PREFER `select` for plain label/value lists (countries, plans, sizes). `dropdown` is for richer item shapes: when each item has extra fields (icons, flags, metadata) that an `itemRenderer` or `labelField`/`valueField` can use.',

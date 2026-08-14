@@ -46,7 +46,6 @@ export type TagsProps = {
   separators?: TagsSeparator[];
   allowDuplicates?: boolean;
   trim?: boolean;
-  limit?: number;
   removeAriaLabel?: string;
   removeIcon?: string;
 };
@@ -701,16 +700,11 @@ export type ListProps<T> = {
 };
 
 export type MultiDropdownProps<T> = DropdownProps<T> & {
-  /** Maximum number of selected options */
-  limit?: number;
   removeAriaLabel?: string;
   removeIcon?: string;
 };
 
-export type MultiListProps<T> = ListProps<T> & {
-  /** Maximum number of selected options */
-  limit?: number;
-};
+export type MultiListProps<T> = ListProps<T>;
 
 export type RadiogroupProps = {
   hint?: string;

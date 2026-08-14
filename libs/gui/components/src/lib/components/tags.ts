@@ -31,7 +31,6 @@ export class GuiTags extends LitElement {
   @property({ type: Array }) separators: TagsSeparator[] | undefined = undefined;
   @property({ type: Boolean }) allowDuplicates: boolean | undefined = true;
   @property({ type: Boolean }) trim: boolean | undefined = true;
-  @property({ type: Number }) limit: number | undefined = undefined;
   @property({ type: String, attribute: 'remove-aria-label' }) removeAriaLabel: string | undefined =
     undefined;
   @property({ type: String, attribute: 'remove-icon' }) removeIcon: string | undefined = undefined;
@@ -293,7 +292,6 @@ export class GuiTags extends LitElement {
 
     const tags = this.getValue();
     if (this.allowDuplicates === false && tags.includes(cleaned)) return true;
-    if (this.limit !== undefined && tags.length >= this.limit) return false;
 
     this.emitChange([...tags, cleaned]);
     return true;
@@ -306,7 +304,6 @@ export class GuiTags extends LitElement {
       const cleaned = this.trim ? raw.trim() : raw;
       if (cleaned.length === 0) continue;
       if (this.allowDuplicates === false && next.includes(cleaned)) continue;
-      if (this.limit !== undefined && next.length >= this.limit) break;
       next.push(cleaned);
     }
     if (next.length === tags.length) return false;

@@ -70,6 +70,18 @@ export const runTagsComponentTests = (mountFn: MountComponentFn) => {
         cy.get(sel.pillText).should('have.length', 0);
         cy.get(sel.input).should('have.value', '');
       });
+
+      it('should commit tags past a maxItems validator and flag the error instead of blocking', () => {
+        mountTags({ validator: { type: 'array', maxItems: 2 } });
+
+        // Entry is never silently blocked — the third tag commits and the
+        // validator tells the user the field is over the cap.
+        cy.get(sel.input).type('one{enter}two{enter}three{enter}');
+        cy.get(sel.pillText).should('have.length', 3);
+
+        cy.get(sel.input).blur();
+        cy.get(`[data-cy="${uid}_validator-error"]`).should('be.visible');
+      });
     });
 
     describe('pill keyboard navigation', () => {

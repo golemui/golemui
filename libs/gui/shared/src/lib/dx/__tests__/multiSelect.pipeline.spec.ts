@@ -42,20 +42,18 @@ describe('DX Pipeline — MultiDropdown', () => {
     expect(w.props?.placeholder).toBe('visitedCountries');
   });
 
-  it('passes limit, removeAriaLabel and removeIcon through', () => {
+  it('passes removeAriaLabel and removeIcon through', () => {
     const result = processDx(
       _guiMultiDropdown('countries', {
         items: sampleItems,
-        limit: 3,
         removeAriaLabel: 'Remove country',
         removeIcon: 'icon-close',
       }),
     );
     const w = getStaticChild(result, 0) as {
-      props?: { limit?: number; removeAriaLabel?: string; removeIcon?: string };
+      props?: { removeAriaLabel?: string; removeIcon?: string };
     };
 
-    expect(w.props?.limit).toBe(3);
     expect(w.props?.removeAriaLabel).toBe('Remove country');
     expect(w.props?.removeIcon).toBe('icon-close');
   });
@@ -126,20 +124,6 @@ describe('DX Pipeline — MultiList', () => {
     const w = getStaticChild(result, 0) as { label?: string };
 
     expect(w.label).toBe('Pizza Toppings');
-  });
-
-  it('passes limit through', () => {
-    const result = processDx(
-      _guiMultiList('toppings', {
-        items: sampleItems,
-        limit: 2,
-      }),
-    );
-    const w = getStaticChild(result, 0) as {
-      props?: { limit?: number };
-    };
-
-    expect(w.props?.limit).toBe(2);
   });
 
   it('applies GSL broad and byId selector overrides', () => {

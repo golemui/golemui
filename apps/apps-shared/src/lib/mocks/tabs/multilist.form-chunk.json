@@ -39,10 +39,10 @@
       "type": "multiList",
       "path": "multiLists.limited",
       "label": "Limited to 2 selections",
+      "validator": { "type": "array", "maxItems": 2 },
       "props": {
-        "hint": "The third toggle is ignored",
+        "hint": "A maxItems validator flags a third selection instead of blocking it",
         "height": 150,
-        "limit": 2,
         "items": ["React", "Angular", "Vue", "Lit", "Svelte", "Solid"]
       }
     },

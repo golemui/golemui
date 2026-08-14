@@ -39,10 +39,10 @@
       "type": "tags",
       "path": "tags.limited",
       "label": "Tags with limited number of tags",
+      "validator": { "type": "array", "maxItems": 5 },
       "props": {
-        "hint": "Up to 5 tags",
-        "placeholder": "Add a tag…",
-        "limit": 5
+        "hint": "A maxItems validator flags a sixth tag instead of blocking it",
+        "placeholder": "Add a tag…"
       }
     },
     {

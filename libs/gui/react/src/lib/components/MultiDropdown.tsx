@@ -78,16 +78,9 @@ export function MultiDropdown(widgetInstance: WithWidget) {
         onValueChanged(currentValues.filter((v) => v !== val));
         return;
       }
-      if (templateData.limit !== undefined && currentValues.length >= templateData.limit) return;
       onValueChanged([...currentValues, val]);
     },
-    [
-      currentValues,
-      onValueChanged,
-      templateData.disabled,
-      templateData.readonly,
-      templateData.limit,
-    ],
+    [currentValues, onValueChanged, templateData.disabled, templateData.readonly],
   );
 
   const handleClickItem = useCallback(

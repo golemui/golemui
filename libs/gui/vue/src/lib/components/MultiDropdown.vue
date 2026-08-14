@@ -75,7 +75,6 @@ const toggleValue = (val: OptionValue) => {
     onValueChanged(current.filter((v) => v !== val));
     return;
   }
-  if (templateData.value.limit !== undefined && current.length >= templateData.value.limit) return;
   onValueChanged([...current, val]);
 };
 

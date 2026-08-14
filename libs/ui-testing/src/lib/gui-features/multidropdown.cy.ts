@@ -91,17 +91,6 @@ export const runMultiDropdownComponentTests = (mountFn: MountComponentFn) => {
         visibleItems().should('have.length', 2);
       });
 
-      it('should not add beyond the limit', () => {
-        mountMultiDropdown({ props: { limit: 1 } });
-
-        cy.get(sel.input).click();
-        visibleItems().first().click();
-        cy.get(sel.pillText).should('have.length', 1);
-
-        visibleItems().eq(1).click();
-        cy.get(sel.pillText).should('have.length', 1);
-      });
-
       it('should render pill labels from labelField for object items', () => {
         mountMultiDropdown({
           items: [

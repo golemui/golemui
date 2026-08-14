@@ -37,10 +37,6 @@
     },
     "itemRendererProp": {
       "type": "string"
-    },
-    "limitProp": {
-      "type": "number",
-      "description": "Maximum number of selected options. No limit when omitted."
     }
   },
   "allOf": [
@@ -102,9 +98,6 @@
         },
         "itemRenderer": {
           "$ref": "#/$defs/itemRendererProp"
-        },
-        "limit": {
-          "$ref": "#/$defs/limitProp"
         }
       },
       "patternProperties": {
@@ -128,9 +121,6 @@
         },
         "^itemRenderer\\.[^.]+$": {
           "$ref": "#/$defs/itemRendererProp"
-        },
-        "^limit\\.[^.]+$": {
-          "$ref": "#/$defs/limitProp"
         }
       },
       "additionalProperties": false

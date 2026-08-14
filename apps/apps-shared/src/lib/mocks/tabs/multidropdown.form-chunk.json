@@ -40,10 +40,10 @@
       "type": "multiDropdown",
       "path": "multiDropdowns.limited",
       "label": "Limited to 3 selections",
+      "validator": { "type": "array", "maxItems": 3 },
       "props": {
         "placeholder": "Pick up to three…",
-        "hint": "The fourth toggle is ignored",
-        "limit": 3,
+        "hint": "A maxItems validator flags a fourth selection instead of blocking it",
         "items": ["React", "Angular", "Vue", "Lit", "Svelte", "Solid"]
       }
     },

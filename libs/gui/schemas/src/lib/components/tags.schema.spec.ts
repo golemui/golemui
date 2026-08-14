@@ -59,7 +59,6 @@ describe('Tags schema validation', () => {
               separators: ['Enter', ','],
               allowDuplicates: false,
               trim: true,
-              limit: 5,
               removeAriaLabel: 'Remove tag',
               removeIcon: 'mdi-close',
             },
@@ -82,8 +81,8 @@ describe('Tags schema validation', () => {
             kind: 'input',
             type: 'tags',
             props: {
-              limit: 5,
-              'limit.isFreePlan': 3,
+              trim: true,
+              'trim.isFreePlan': false,
             },
           },
         ],
@@ -171,17 +170,17 @@ describe('Tags schema validation', () => {
   });
 
   describe('Invalid configurations', () => {
-    it('should fail on invalid type for limit', () => {
+    it('should fail on invalid type for trim', () => {
       const formDef = golemForm().create({
         form: [
-          // @ts-expect-error Expected, invalid type for limit
+          // @ts-expect-error Expected, invalid type for trim
           {
             uid: 'tags-1',
             path: 'keywords',
             kind: 'input',
             type: 'tags',
             props: {
-              limit: 'five',
+              trim: 'yes',
             },
           },
         ],
@@ -191,7 +190,7 @@ describe('Tags schema validation', () => {
       const isValid = validate(widget);
       expect(isValid).toBe(false);
       expect(
-        validate.errors?.some((e) => e.keyword === 'type' && e.instancePath === '/props/limit'),
+        validate.errors?.some((e) => e.keyword === 'type' && e.instancePath === '/props/trim'),
       ).toBe(true);
     });
 

@@ -66,7 +66,6 @@ export class TagsElement extends LitElement implements WithWidget {
         .separators=${this.adapter.templateData.separators}
         .allowDuplicates=${this.adapter.templateData.allowDuplicates ?? true}
         .trim=${this.adapter.templateData.trim ?? true}
-        .limit=${this.adapter.templateData.limit}
         .removeAriaLabel=${this.adapter.templateData.removeAriaLabel}
         .removeIcon=${this.adapter.templateData.removeIcon}
         @change=${this.valueChanged}
