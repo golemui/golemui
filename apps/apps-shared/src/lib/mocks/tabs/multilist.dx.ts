@@ -13,7 +13,7 @@ const objectItems = [
 export const multiListTab = gui.layouts.flex([
   gui.inputs.multiList('multiLists.frameworks', {
     label: 'Frameworks',
-    hint: 'Click or press Enter/Space to toggle — pills render above the list',
+    hint: 'Click or press Enter/Space to toggle options on and off',
     height: 150,
     items: frameworks,
   }),

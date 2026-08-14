@@ -60,8 +60,6 @@ export function MultiDropdown(widgetInstance: WithWidget) {
   }, [onBlur]);
 
   const openPanel = useCallback(() => {
-    // The pills dropdown and the option panel share the space below the
-    // field; only one may be open.
     triggerRef.current?.closePillsDropdown();
     setIsListVisible(true);
 
@@ -99,8 +97,6 @@ export function MultiDropdown(widgetInstance: WithWidget) {
       toggleValue(item.value);
       setFocusedIndex(index);
 
-      // Multiselect: the panel stays open after a toggle and the filter text
-      // is kept — flip here if that UX decision changes.
       if (listRef.current) {
         listRef.current.focusItemAtIndex(index);
       }
@@ -130,7 +126,6 @@ export function MultiDropdown(widgetInstance: WithWidget) {
     const handleChange = (e: Event) => {
       const val = (e as CustomEvent).detail.value;
       toggleValue(val);
-      // Multiselect: the panel stays open after a toggle — see handleClickItem.
     };
 
     element.addEventListener('gui-range-change', handleRangeChange);
@@ -186,8 +181,6 @@ export function MultiDropdown(widgetInstance: WithWidget) {
     (filterValue: string) => {
       const asyncFiltering = !!widget.on?.filter;
 
-      // onFilter is typed with the widget's value type, but filter payloads
-      // are always the typed text.
       onFilter(filterValue as unknown as OptionValue[]);
 
       if (filterValue && !asyncFiltering) {
@@ -252,8 +245,6 @@ export function MultiDropdown(widgetInstance: WithWidget) {
       if (ignoreNextFocusRef.current) return;
       if (isListVisible) return;
 
-      // Only the combobox input opens the panel — moving focus onto a pill
-      // must not, so the pills dropdown can open instead.
       if (e.target !== triggerRef.current?.input) return;
 
       openPanel();

@@ -139,8 +139,6 @@ export class MultiDropdownElement extends LitElement implements WithWidget {
   }
 
   private async _openPanel() {
-    // The pills dropdown and the option panel share the space below the
-    // field; only one may be open.
     this._triggerRef?.closePillsDropdown();
     this._isListVisible = true;
     await this.updateComplete;
@@ -165,8 +163,6 @@ export class MultiDropdownElement extends LitElement implements WithWidget {
     this._toggleValue(item.value);
     this._focusedIndex = index;
 
-    // Multiselect: the panel stays open after a toggle and the filter text is
-    // kept — flip here if that UX decision changes.
     if (this._listRef) {
       this._listRef.focusItemAtIndex(index);
     }
@@ -175,7 +171,6 @@ export class MultiDropdownElement extends LitElement implements WithWidget {
   private _onValueChange(e: CustomEvent) {
     if (this.adapter.templateData.readonly) return;
     this._toggleValue(e.detail.value);
-    // Multiselect: the panel stays open after a toggle — see _onClickItem.
   }
 
   private _onPillRemove(e: CustomEvent<GuiPillEventDetail>) {
@@ -263,8 +258,6 @@ export class MultiDropdownElement extends LitElement implements WithWidget {
   private async _onFocusIn(e: FocusEvent) {
     if (this._ignoreNextFocus) return;
 
-    // Only the combobox input (or the option list) opens the panel — moving
-    // focus onto a pill must not, so the pills dropdown can open instead.
     const input = this._triggerRef?.input;
     const isListTarget = this._listRef && e.target === this._listRef;
     if (e.target !== input && !isListTarget) return;
@@ -281,12 +274,10 @@ export class MultiDropdownElement extends LitElement implements WithWidget {
   private _onFocusOutInput(event: FocusEvent) {
     const newFocusTarget = event.relatedTarget as Node;
 
-    // We're focusing on an element inside this component
     if (newFocusTarget && this.contains(newFocusTarget)) {
       return;
     }
 
-    // We're focusing outside this component
     this.adapter.onBlur();
     this._isListVisible = false;
     this._isFiltering = false;

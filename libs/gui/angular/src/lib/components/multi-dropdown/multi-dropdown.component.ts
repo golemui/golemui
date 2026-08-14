@@ -136,8 +136,6 @@ export class MultiDropdownComponent implements OnInit, OnDestroy, WithWidget {
   }
 
   protected openPanel() {
-    // The pills dropdown and the option panel share the space below the
-    // field; only one may be open.
     this.triggerRef()?.nativeElement?.closePillsDropdown();
     this.isListVisible.set(true);
 
@@ -158,8 +156,6 @@ export class MultiDropdownComponent implements OnInit, OnDestroy, WithWidget {
     if (this.ignoreNextFocus) return;
     if (this.isListVisible()) return;
 
-    // Only the combobox input opens the panel — moving focus onto a pill
-    // must not, so the pills dropdown can open instead.
     const input = this.triggerRef()?.nativeElement?.input;
     if (event.target !== input) return;
 
@@ -253,8 +249,6 @@ export class MultiDropdownComponent implements OnInit, OnDestroy, WithWidget {
     this.toggleValue(item.value);
     this.focusedIndex.set(index);
 
-    // Multiselect: the panel stays open after a toggle and the filter text is
-    // kept — flip here if that UX decision changes.
     if (this.listRef()?.nativeElement) {
       this.listRef().nativeElement.focusItemAtIndex(index);
     }
@@ -263,7 +257,6 @@ export class MultiDropdownComponent implements OnInit, OnDestroy, WithWidget {
   protected onValueChange(event: Event) {
     const value = (event as CustomEvent).detail.value;
     this.toggleValue(value);
-    // Multiselect: the panel stays open after a toggle — see onClickItem.
   }
 
   protected onPillRemove(event: Event) {

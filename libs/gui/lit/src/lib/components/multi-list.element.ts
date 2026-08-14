@@ -1,7 +1,6 @@
 import type { InputWidget, WithWidget } from '@golemui/core';
 import { InputWidgetAdapter, type LitFormContext, formContext, inputContext } from '@golemui/lit';
 import type { ListItem, MultiListProps, OptionValue } from '@golemui/gui-shared/internals';
-import type { GuiPillEventDetail, GuiPillItem } from '@golemui/gui-components';
 import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';
 import { property, query, state } from 'lit/decorators.js';
@@ -10,7 +9,6 @@ import { type Subscription } from 'rxjs';
 import { defaultMultiListItemRenderer } from './default-multi-list-item-renderer';
 import '@golemui/gui-components/label';
 import '@golemui/gui-components/multi-list';
-import '@golemui/gui-components/pills';
 import '@golemui/gui-components/errors';
 
 export class MultiListElement extends LitElement implements WithWidget {
@@ -76,7 +74,6 @@ export class MultiListElement extends LitElement implements WithWidget {
       templateData.touched && templateData.errors && templateData.errors.length > 0;
     const visibleItems = this._listItems.slice(this._range.start, this._range.end);
     const values = this._currentValues();
-    const pillItems = this._pillItems(values);
 
     const itemRenderer = this.adapter.getItemRenderer(
       templateData.itemRenderer,
@@ -96,24 +93,6 @@ export class MultiListElement extends LitElement implements WithWidget {
       ></gui-label>
 
       <div class="gui-widget">
-        ${pillItems.length
-          ? html`<gui-pills
-              class="gui-multi-list__pills"
-              .uid=${this.widget.uid}
-              .toolbarAriaLabel=${'Selected options'}
-              .items=${pillItems}
-              .removable=${true}
-              .clickable=${true}
-              .bubble=${false}
-              ?disabled=${templateData.disabled}
-              ?readonly=${templateData.readonly}
-              .removeAriaLabel=${templateData.removeAriaLabel ?? 'Remove option'}
-              .removeIcon=${templateData.removeIcon}
-              @pillremove=${this._onPillRemove}
-              @pillclick=${this._onPillClick}
-            ></gui-pills>`
-          : nothing}
-
         <gui-multi-list
           .uid=${this.widget.uid}
           .values=${values}
@@ -186,21 +165,6 @@ export class MultiListElement extends LitElement implements WithWidget {
     return Array.isArray(value) ? value : [];
   }
 
-  private _pillItems(values: OptionValue[]): GuiPillItem[] {
-    const labelField = (this.adapter.templateData.labelField as string) ?? 'label';
-    return values.map((value) => {
-      const item = this._listItems.find((i) => i.value === value);
-      const isObject = item != null && item.template !== null && typeof item.template === 'object';
-      const label =
-        item == null
-          ? String(value)
-          : isObject
-            ? String((item.template as any)[labelField])
-            : String(item.template);
-      return { key: String(value), label };
-    });
-  }
-
   private _toggleValue(value: OptionValue) {
     const templateData = this.adapter.templateData;
     if (templateData.disabled || templateData.readonly) return;
@@ -212,20 +176,6 @@ export class MultiListElement extends LitElement implements WithWidget {
     }
     if (templateData.limit !== undefined && current.length >= templateData.limit) return;
     this.adapter.valueChanged([...current, value]);
-  }
-
-  private _onPillRemove(e: CustomEvent<GuiPillEventDetail>) {
-    const value = this._currentValues().find((v) => String(v) === e.detail.key);
-    if (value === undefined) return;
-    this._toggleValue(value);
-  }
-
-  private _onPillClick(e: CustomEvent<GuiPillEventDetail>) {
-    const index = this._listItems.findIndex((i) => String(i.value) === e.detail.key);
-    if (index < 0 || !this._guiListRef) return;
-    this._guiListRef.focusItemAtIndex(index);
-    this._guiListRef.scrollToIndex(index);
-    this._focusedIndex = index;
   }
 
   private _onRangeChange(e: CustomEvent) {

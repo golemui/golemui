@@ -1,16 +1,13 @@
 import { defineForm, identityTranslator } from '@golemui/core';
 import { type MountComponentFn } from '../utils';
 
-// Behavior tests for the multiList widget: a multiselectable listbox with the
-// selected values rendered as pills above it (the range calendar model —
-// pills are ordinary tab stops, removable and clickable).
+// Behavior tests for the multiList widget: a multiselectable listbox whose
+// value is the array of toggled item values. Selection state lives on the
+// rows themselves (aria-selected + the default renderer's check square).
 export const runMultiListComponentTests = (mountFn: MountComponentFn) => {
   describe('MultiList Component', () => {
     const uid = 'testSubject';
     const sel = {
-      pill: '.gui-multi-list-widget button.gui-pills__pill',
-      pillText: '.gui-multi-list-widget .gui-pills__pill-text',
-      pillRemove: '.gui-multi-list-widget .gui-pills__pill-remove',
       row: 'gui-multi-list .gui-list__item-wrapper',
     };
 
@@ -40,20 +37,19 @@ export const runMultiListComponentTests = (mountFn: MountComponentFn) => {
     };
 
     describe('toggle semantics', () => {
-      it('should toggle values on click and render their pills above the list', () => {
+      it('should toggle values on click, and back off on a second click', () => {
         mountMultiList();
 
         cy.get(sel.row).first().click();
-        cy.get(sel.pillText).should('have.length', 1).and('contain', 'React');
+        cy.get(sel.row).first().should('have.attr', 'aria-selected', 'true');
         cy.get(sel.row).eq(2).click();
-        cy.get(sel.pillText).should('have.length', 2);
-
-        // The pills strip renders before the listbox
-        cy.get('.gui-multi-list-widget .gui-widget > gui-pills + gui-multi-list').should('exist');
+        cy.get(sel.row).eq(2).should('have.attr', 'aria-selected', 'true');
+        cy.get(sel.row).eq(1).should('have.attr', 'aria-selected', 'false');
 
         // Toggling a selected row removes it
         cy.get(sel.row).first().click();
-        cy.get(sel.pillText).should('have.length', 1).and('contain', 'Vue');
+        cy.get(sel.row).first().should('have.attr', 'aria-selected', 'false');
+        cy.get(sel.row).eq(2).should('have.attr', 'aria-selected', 'true');
       });
 
       it('should toggle the focused option with Enter and Space', () => {
@@ -62,10 +58,10 @@ export const runMultiListComponentTests = (mountFn: MountComponentFn) => {
         cy.get('gui-multi-list').focus();
         cy.get('gui-multi-list').trigger('keydown', { key: 'ArrowDown' });
         cy.get('gui-multi-list').trigger('keydown', { key: 'Enter' });
-        cy.get(sel.pillText).should('have.length', 1).and('contain', 'React');
+        cy.get(sel.row).first().should('have.attr', 'aria-selected', 'true');
 
         cy.get('gui-multi-list').trigger('keydown', { key: ' ' });
-        cy.get(sel.pillText).should('have.length', 0);
+        cy.get(sel.row).first().should('have.attr', 'aria-selected', 'false');
       });
 
       it('should not add beyond the limit', () => {
@@ -73,12 +69,11 @@ export const runMultiListComponentTests = (mountFn: MountComponentFn) => {
 
         cy.get(sel.row).first().click();
         cy.get(sel.row).eq(1).click();
-        cy.get(sel.pillText).should('have.length', 1);
+        cy.get(sel.row).first().should('have.attr', 'aria-selected', 'true');
+        cy.get(sel.row).eq(1).should('have.attr', 'aria-selected', 'false');
       });
-    });
 
-    describe('pills', () => {
-      it('should render pills for preselected values with labels from labelField', () => {
+      it('should mark preselected values resolved through valueField', () => {
         mountMultiList({
           items: [
             { label: 'React', value: 'react' },
@@ -89,28 +84,9 @@ export const runMultiListComponentTests = (mountFn: MountComponentFn) => {
           data: { myField: ['react', 'vue'] },
         });
 
-        cy.get(sel.pillText).should('have.length', 2);
-        cy.get(sel.pillText).first().should('contain', 'React');
-        cy.get(sel.pillText).eq(1).should('contain', 'Vue');
-      });
-
-      it('should remove the value when its pill is removed', () => {
-        mountMultiList({ data: { myField: ['React', 'Vue'] } });
-
-        cy.get(sel.pillRemove).first().click();
-        cy.get(sel.pillText).should('have.length', 1).and('contain', 'Vue');
-        cy.get(sel.row).first().should('have.attr', 'aria-selected', 'false');
-      });
-
-      it('should focus its option when a pill is clicked', () => {
-        mountMultiList({ data: { myField: ['Vue'] } });
-
-        cy.get(sel.pill).first().click();
-        cy.get('gui-multi-list')
-          .should('have.attr', 'aria-activedescendant')
-          .then((activeId) => {
-            cy.get(`#${activeId}`).should('contain.text', 'Vue');
-          });
+        cy.get(sel.row).first().should('have.attr', 'aria-selected', 'true');
+        cy.get(sel.row).eq(1).should('have.attr', 'aria-selected', 'false');
+        cy.get(sel.row).eq(2).should('have.attr', 'aria-selected', 'true');
       });
     });
 

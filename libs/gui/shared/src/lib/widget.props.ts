@@ -710,8 +710,6 @@ export type MultiDropdownProps<T> = DropdownProps<T> & {
 export type MultiListProps<T> = ListProps<T> & {
   /** Maximum number of selected options */
   limit?: number;
-  removeAriaLabel?: string;
-  removeIcon?: string;
 };
 
 export type RadiogroupProps = {

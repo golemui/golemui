@@ -1,18 +1,10 @@
 @use 'panel' as *;
 
-// The trigger half of the multi-select combobox: pills to the left of the
-// filter input. The field wrapper carries `.gui-widget-input` for the base
-// chrome; the wrapper (not the inner input) wears the focus ring, and it is
-// the gui-pills host, so it declares the container contract pills.scss
-// documents (container name + position for the compact bubble/dropdown).
 gui-multi-select-trigger {
   display: block;
   flex: 1;
   min-width: 0;
 
-  // Block-level (width-driven) so the container query threshold follows the
-  // trigger's width; the trigger itself is the flex-growing child of
-  // .gui-widget.
   .gui-multi-select__field {
     display: flex;
     align-items: center;
@@ -74,9 +66,6 @@ gui-multi-select-trigger {
   }
 }
 
-// Multi-dropdown widget chrome: same shape as .gui-dropdown (dropdown.scss),
-// with the combobox input nested inside gui-multi-select-trigger instead of
-// being a direct .gui-widget child.
 .gui-multi-dropdown {
   display: block;
   position: relative;
@@ -123,7 +112,6 @@ gui-multi-select-trigger {
     }
   }
 
-  // Invalid field → the open panel shares the red border.
   &:has(.gui-widget .gui-multi-select__field[aria-invalid='true'])
     .gui-widget
     > .gui-picker__panel {
@@ -136,15 +124,6 @@ gui-multi-select-trigger {
   }
 }
 
-// Multi-list widget: pills above the listbox, mirroring the range calendar.
-.gui-multi-list__pills {
-  display: block;
-  margin-bottom: var(--gui-space-2);
-}
-
-// Check square of the default multi item renderer. Purely decorative (the
-// option row exposes aria-selected); currentColor keeps it legible on the
-// default, hover, selected and disabled row backgrounds alike.
 .gui-list__item-check {
   flex-shrink: 0;
   display: inline-flex;

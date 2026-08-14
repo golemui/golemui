@@ -41,12 +41,6 @@
     "limitProp": {
       "type": "number",
       "description": "Maximum number of selected options. No limit when omitted."
-    },
-    "removeAriaLabelProp": {
-      "$ref": "../core/common.schema.json#/$defs/localizable"
-    },
-    "removeIconProp": {
-      "type": "string"
     }
   },
   "allOf": [
@@ -111,12 +105,6 @@
         },
         "limit": {
           "$ref": "#/$defs/limitProp"
-        },
-        "removeAriaLabel": {
-          "$ref": "#/$defs/removeAriaLabelProp"
-        },
-        "removeIcon": {
-          "$ref": "#/$defs/removeIconProp"
         }
       },
       "patternProperties": {
@@ -143,12 +131,6 @@
         },
         "^limit\\.[^.]+$": {
           "$ref": "#/$defs/limitProp"
-        },
-        "^removeAriaLabel\\.[^.]+$": {
-          "$ref": "#/$defs/removeAriaLabelProp"
-        },
-        "^removeIcon\\.[^.]+$": {
-          "$ref": "#/$defs/removeIconProp"
         }
       },
       "additionalProperties": false

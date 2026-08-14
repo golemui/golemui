@@ -552,7 +552,7 @@ const INPUTS: DxSpec[] = [
     example:
       "gui.inputs.multiList('toppings', { label: 'Toppings', items: ['Cheese', 'Bacon', 'Mushrooms'], height: 200 })",
     notes: [
-      'Multi-select scrolling list: the value is an **array** of the selected item values; selections render as removable pills above the list.',
+      'Multi-select scrolling list: the value is an **array** of the selected item values; Enter/Space and clicks toggle rows on and off.',
       '`limit` caps the number of selections; extra toggles are ignored.',
     ],
   },

@@ -17,7 +17,6 @@ import { GuiMarkdownText } from '@golemui/gui-components/markdown-text';
 import { GuiMultiList } from '@golemui/gui-components/multi-list';
 import { GuiMultiSelectTrigger } from '@golemui/gui-components/multi-select-trigger';
 import { GuiNumber } from '@golemui/gui-components/number';
-import { GuiPills } from '@golemui/gui-components/pills';
 import { GuiPassword } from '@golemui/gui-components/password';
 import { GuiRadiogroup } from '@golemui/gui-components/radiogroup';
 import { GuiRangeCalendar } from '@golemui/gui-components/range-calendar';
@@ -144,10 +143,6 @@ export const GuiMultiListReact = wrap('gui-multi-list', GuiMultiList);
 export const GuiMultiSelectTriggerReact = wrap('gui-multi-select-trigger', GuiMultiSelectTrigger, {
   onPillremove: 'pillremove',
   onDropdowntoggle: 'dropdowntoggle',
-});
-export const GuiPillsReact = wrap('gui-pills', GuiPills, {
-  onPillremove: 'pillremove',
-  onPillclick: 'pillclick',
 });
 export const GuiLabelReact = wrap('gui-label', GuiLabel);
 export const GuiErrorsReact = wrap('gui-errors', GuiErrors);

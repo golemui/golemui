@@ -128,22 +128,18 @@ describe('DX Pipeline — MultiList', () => {
     expect(w.label).toBe('Pizza Toppings');
   });
 
-  it('passes limit, removeAriaLabel and removeIcon through', () => {
+  it('passes limit through', () => {
     const result = processDx(
       _guiMultiList('toppings', {
         items: sampleItems,
         limit: 2,
-        removeAriaLabel: 'Remove topping',
-        removeIcon: 'icon-close',
       }),
     );
     const w = getStaticChild(result, 0) as {
-      props?: { limit?: number; removeAriaLabel?: string; removeIcon?: string };
+      props?: { limit?: number };
     };
 
     expect(w.props?.limit).toBe(2);
-    expect(w.props?.removeAriaLabel).toBe('Remove topping');
-    expect(w.props?.removeIcon).toBe('icon-close');
   });
 
   it('applies GSL broad and byId selector overrides', () => {

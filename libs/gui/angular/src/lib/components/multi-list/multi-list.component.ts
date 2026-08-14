@@ -16,7 +16,6 @@ import type { ListItem, MultiListProps, OptionValue } from '@golemui/gui-shared/
 import { DefaultMultiListItemRenderer } from './default-multi-list.item-renderer';
 import '@golemui/gui-components/label';
 import '@golemui/gui-components/multi-list';
-import '@golemui/gui-components/pills';
 import '@golemui/gui-components/errors';
 
 @Component({
@@ -57,22 +56,6 @@ export class MultiListComponent implements OnInit, OnDestroy, WithWidget {
     return Array.isArray(value) ? value : [];
   });
 
-  protected pillItems = computed(() => {
-    const labelField = (this.adapter.templateData().labelField as string) ?? 'label';
-    const items = this.listItems();
-    return this.currentValues().map((value) => {
-      const item = items.find((i) => i.value === value);
-      const isObject = item != null && item.template !== null && typeof item.template === 'object';
-      const label =
-        item == null
-          ? String(value)
-          : isObject
-            ? String((item.template as any)[labelField])
-            : String(item.template);
-      return { key: String(value), label };
-    });
-  });
-
   ngOnInit(): void {
     this.adapter.init(this.widget);
   }
@@ -105,24 +88,6 @@ export class MultiListComponent implements OnInit, OnDestroy, WithWidget {
   protected valueChanged(event: Event) {
     const value = (event as CustomEvent).detail.value;
     this.toggleValue(value);
-  }
-
-  protected onPillRemove(event: Event) {
-    const key = (event as CustomEvent).detail?.key;
-    const value = this.currentValues().find((v) => String(v) === key);
-    if (value === undefined) return;
-    this.toggleValue(value);
-  }
-
-  protected onPillClick(event: Event) {
-    const key = (event as CustomEvent).detail?.key;
-    const index = this.listItems().findIndex((i) => String(i.value) === key);
-    if (index < 0) return;
-    const listElement = this.listElementRef()?.nativeElement;
-    if (!listElement) return;
-    listElement.focusItemAtIndex(index);
-    listElement.scrollToIndex(index);
-    this.focusedIndex.set(index);
   }
 
   protected onFocusChange(event: Event) {

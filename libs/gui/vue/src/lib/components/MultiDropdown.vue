@@ -72,8 +72,6 @@ const closeList = () => {
 };
 
 const openPanel = () => {
-  // The pills dropdown and the option panel share the space below the field;
-  // only one may be open.
   triggerRef.value?.closePillsDropdown();
   isListVisible.value = true;
   setTimeout(() => listRef.value?.scrollToSelectedIndex(), 0);
@@ -95,8 +93,6 @@ const handleClickItem = (item: ListItem<any>, index: number) => {
   if (templateData.value.readonly || item.disabled) return;
   toggleValue(item.value);
   focusedIndex.value = index;
-  // Multiselect: the panel stays open after a toggle and the filter text is
-  // kept — flip here if that UX decision changes.
   listRef.value?.focusItemAtIndex(index);
 };
 
@@ -117,7 +113,6 @@ const handleFocusChange = (e: Event) => {
 
 const handleListChange = (e: Event) => {
   toggleValue((e as CustomEvent).detail.value);
-  // Multiselect: the panel stays open after a toggle — see handleClickItem.
 };
 
 let currentList: GuiMultiListElement | null = null;
@@ -223,8 +218,6 @@ let ignoreNextFocus = false;
 const handleFocusIn = (e: FocusEvent) => {
   if (ignoreNextFocus) return;
   if (isListVisible.value) return;
-  // Only the combobox input opens the panel — moving focus onto a pill must
-  // not, so the pills dropdown can open instead.
   if (e.target !== triggerRef.value?.input) return;
   openPanel();
 };

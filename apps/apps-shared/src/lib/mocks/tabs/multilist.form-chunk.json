@@ -10,7 +10,7 @@
       "path": "multiLists.frameworks",
       "label": "Frameworks",
       "props": {
-        "hint": "Click or press Enter/Space to toggle — pills render above the list",
+        "hint": "Click or press Enter/Space to toggle options on and off",
         "height": 150,
         "items": ["React", "Angular", "Vue", "Lit", "Svelte", "Solid"]
       }

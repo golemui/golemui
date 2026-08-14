@@ -14,24 +14,6 @@
 ></gui-label>
 
 <div class="gui-widget">
-  @if (pillItems().length > 0) {
-    <gui-pills
-      class="gui-multi-list__pills"
-      [uid]="widget.uid"
-      [toolbarAriaLabel]="'Selected options'"
-      [items]="pillItems()"
-      [removable]="true"
-      [clickable]="true"
-      [bubble]="false"
-      [disabled]="templateData.disabled"
-      [readOnly]="templateData.readonly"
-      [removeAriaLabel]="templateData.removeAriaLabel ?? 'Remove option'"
-      [removeIcon]="templateData.removeIcon"
-      (pillremove)="onPillRemove($event)"
-      (pillclick)="onPillClick($event)"
-    ></gui-pills>
-  }
-
   <gui-multi-list
     #listRef
     [uid]="widget.uid"

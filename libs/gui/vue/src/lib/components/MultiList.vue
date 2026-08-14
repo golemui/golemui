@@ -6,12 +6,10 @@ import { computed, onUnmounted, ref, watch, type Component } from 'vue';
 import DefaultMultiListItemRenderer from './item-renderers/DefaultMultiListItemRenderer.vue';
 import '@golemui/gui-components/label';
 import '@golemui/gui-components/multi-list';
-import '@golemui/gui-components/pills';
 import '@golemui/gui-components/errors';
 
 interface GuiMultiListElement extends HTMLElement {
   focusItemAtIndex(index: number): void;
-  scrollToIndex(index: number): void;
 }
 
 const props = defineProps<WithWidget>();
@@ -32,21 +30,6 @@ const currentValues = computed(() => (Array.isArray(value.value) ? value.value :
 const visibleItems = computed(() => {
   const items = listItems.value.length > 0 ? listItems.value : templateData.value.items || [];
   return items.slice(rangeStart.value, rangeEnd.value);
-});
-
-const pillItems = computed(() => {
-  const labelField = (templateData.value.labelField as string) ?? 'label';
-  return currentValues.value.map((val) => {
-    const item = listItems.value.find((i) => i.value === val);
-    const isObject = item != null && item.template !== null && typeof item.template === 'object';
-    const label =
-      item == null
-        ? String(val)
-        : isObject
-          ? String((item.template as any)[labelField])
-          : String(item.template);
-    return { key: String(val), label };
-  });
 });
 
 const required = computed(() => (templateData.value.validator as Validator)?.required);
@@ -118,22 +101,6 @@ const handleClickItem = (item: ListItem<any>, index: number) => {
   listRef.value?.focusItemAtIndex(index);
 };
 
-const handlePillRemove = (e: Event) => {
-  const key = (e as CustomEvent).detail?.key;
-  const val = currentValues.value.find((v) => String(v) === key);
-  if (val === undefined) return;
-  toggleValue(val);
-};
-
-const handlePillClick = (e: Event) => {
-  const key = (e as CustomEvent).detail?.key;
-  const index = listItems.value.findIndex((i) => String(i.value) === key);
-  if (index < 0 || !listRef.value) return;
-  listRef.value.focusItemAtIndex(index);
-  listRef.value.scrollToIndex(index);
-  focusedIndex.value = index;
-};
-
 const formContext = useVueFormContext();
 const ItemRenderer = computed<Component>(() => {
   const renderers = formContext.itemRenderers as Record<string, Component>;
@@ -157,23 +124,6 @@ const ItemRenderer = computed<Component>(() => {
     ></gui-label>
 
     <div class="gui-widget">
-      <gui-pills
-        v-if="pillItems.length > 0"
-        class="gui-multi-list__pills"
-        :uid="uid"
-        :toolbarAriaLabel="'Selected options'"
-        :items="pillItems"
-        :removable="true"
-        :clickable="true"
-        :bubble="false"
-        :disabled="isDisabled"
-        :readOnly="isReadOnly"
-        :removeAriaLabel="templateData.removeAriaLabel ?? 'Remove option'"
-        :removeIcon="templateData.removeIcon"
-        @pillremove="handlePillRemove"
-        @pillclick="handlePillClick"
-      ></gui-pills>
-
       <gui-multi-list
         ref="listRef"
         :id="uid"

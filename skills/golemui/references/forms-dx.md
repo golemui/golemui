@@ -411,7 +411,7 @@ gui.inputs.multiList('toppings', {
 });
 ```
 
-- Multi-select scrolling list: the value is an **array** of the selected item values; selections render as removable pills above the list.
+- Multi-select scrolling list: the value is an **array** of the selected item values; Enter/Space and clicks toggle rows on and off.
 - `limit` caps the number of selections; extra toggles are ignored.
 
 Reference: https://golemui.com/dx/widgets-reference/input-fields/multi-list.md

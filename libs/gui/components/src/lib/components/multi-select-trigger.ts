@@ -7,23 +7,6 @@ import { GUIPillsNavigationController } from '../controllers/pills-navigation.co
 import './pills';
 import type { GuiPillItem } from './pills';
 
-/**
- * The trigger half of a multi-select combobox: selected-value pills to the
- * left of a filter input, sharing the pill keyboard model of `gui-tags` and
- * the range inputs. The host widget owns the option panel, the value array
- * and all toggle semantics; this element only renders the field and handles
- * the pills ↔ input focus handoffs.
- *
- * Unlike `gui-tags`, ArrowDown is NOT claimed for the compact pills dropdown —
- * the input is a combobox and ArrowDown must open the option panel (it bubbles
- * to the host untouched). The pill list is entered with ArrowLeft at caret 0
- * or Backspace on an empty input, in both strip and compact mode.
- *
- * Host contract:
- *   - `@pillremove` (bubbling from gui-pills) → toggle the value out
- *   - `@dropdowntoggle` with `open: true` → close the option panel
- *   - call `closePillsDropdown()` before opening the option panel
- */
 export class GuiMultiSelectTrigger extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: Boolean }) touched: boolean | undefined = false;
@@ -83,7 +66,6 @@ export class GuiMultiSelectTrigger extends LitElement {
     super.updated(changedProperties);
     if (!changedProperties.has('pills')) return;
     if (this._pendingEmptyFocus && (this.pills?.length ?? 0) === 0) {
-      // The removal emptied the strip; gui-pills can no longer restore focus.
       this._pillsNav.focusLinkedInputDeferred();
     }
     this._pendingEmptyFocus = false;
@@ -159,8 +141,6 @@ export class GuiMultiSelectTrigger extends LitElement {
   }
 
   private onPillRemove = () => {
-    // The host owns the array; just note whether this removal empties the
-    // strip so `updated()` can hand focus back to the input.
     if ((this.pills?.length ?? 0) <= 1) {
       this._pendingEmptyFocus = true;
     }
@@ -175,8 +155,6 @@ export class GuiMultiSelectTrigger extends LitElement {
 
     const caretAtStart = input.selectionStart === 0 && input.selectionEnd === 0;
 
-    // ArrowLeft at caret 0 enters the pill list: last pill in strip mode, the
-    // pills dropdown's first pill in compact mode (enterPillList branches).
     if (e.key === 'ArrowLeft' && caretAtStart) {
       e.preventDefault();
       e.stopPropagation();
@@ -184,7 +162,6 @@ export class GuiMultiSelectTrigger extends LitElement {
       return;
     }
 
-    // Backspace on an empty draft focuses the last pill (does not delete it).
     if (e.key === 'Backspace' && input.value === '') {
       e.preventDefault();
       e.stopPropagation();
