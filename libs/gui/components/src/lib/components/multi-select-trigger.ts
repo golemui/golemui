@@ -3,6 +3,7 @@ import { property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { styleMap } from 'lit-html/directives/style-map.js';
 import { safeDefine } from '@golemui/lit/internals';
+import { GUIAriaController } from '../controllers/aria.controller';
 import { GUIPillsNavigationController } from '../controllers/pills-navigation.controller';
 import './pills';
 import type { GuiPillItem } from './pills';
@@ -34,6 +35,25 @@ export class GuiMultiSelectTrigger extends LitElement {
     | undefined = undefined;
 
   private _pendingEmptyFocus = false;
+
+  private _aria = new GUIAriaController(this, {
+    getTargets: () => {
+      const field = this.querySelector<HTMLElement>('.gui-multi-select__field');
+      const input = this.input;
+      return [field, input].filter((el): el is HTMLElement => !!el);
+    },
+    getState: () => ({
+      uid: this.uid as string,
+      templateData: {
+        hint: this.hasHint ? `${this.uid}_hint` : undefined,
+        errors: this.errors,
+        readonly: this.readOnly,
+        disabled: this.disabled,
+        touched: this.touched,
+        required: this.required,
+      },
+    }),
+  });
 
   private _pillsNav = new GUIPillsNavigationController(this, {
     getPills: () => this.querySelector('gui-pills'),

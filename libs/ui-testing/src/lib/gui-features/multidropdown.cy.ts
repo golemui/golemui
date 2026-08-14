@@ -290,6 +290,67 @@ export const runMultiDropdownComponentTests = (mountFn: MountComponentFn) => {
       });
     });
 
+    describe('validation and error chrome', () => {
+      const mountWithValidator = (items: unknown[]) => {
+        mountFn({
+          localization: identityTranslator('en-US'),
+          formDef: defineForm({
+            form: [
+              {
+                uid,
+                kind: 'input',
+                type: 'multiDropdown',
+                path: 'myField',
+                validator: { type: 'array', required: true } as any,
+                props: { items, inputDebounce: 0 },
+              },
+            ],
+          }),
+        });
+      };
+
+      it('should mark the field invalid with the red border after touch', () => {
+        mountWithValidator(['React', 'Angular', 'Vue']);
+
+        // Touch and leave → the required error shows below the field
+        cy.get(sel.input).focus();
+        cy.get(sel.input).blur();
+        cy.get(`[data-cy="${uid}_validator-error"]`).should('be.visible');
+
+        // The field wrapper and the combobox input carry aria-invalid; the
+        // wrapper paints the error border
+        cy.get(sel.field).should('have.attr', 'aria-invalid', 'true');
+        cy.get(sel.input).should('have.attr', 'aria-invalid', 'true');
+        cy.get(`[data-cy="${uid}_validator-error"]`).then(($li) => {
+          cy.get(sel.field).should('have.css', 'border-top-color', $li.css('color'));
+        });
+      });
+
+      it('should repeat the field error inside the open panel with the red border', () => {
+        mountWithValidator(['React', 'Angular', 'Vue']);
+
+        cy.get(sel.input).focus();
+        cy.get(sel.input).blur();
+        cy.get(`[data-cy="${uid}_validator-error"]`).should('be.visible');
+
+        cy.get(sel.input).click();
+        cy.get(`[data-cy="${uid}_panel-validator-error"]`).should('be.visible');
+
+        // Invalid field → the panel shares the red border
+        cy.get(`[data-cy="${uid}_validator-error"]`).then(($li) => {
+          cy.get(sel.panel).should('have.css', 'border-top-color', $li.css('color'));
+        });
+      });
+
+      it('should not render the panel error copy when the value is valid', () => {
+        mountMultiDropdown();
+        cy.get(sel.input).click();
+        cy.get(sel.panel).should('be.visible');
+        cy.get(`[data-cy="${uid}_panel-validator-errors"]`).should('not.exist');
+        cy.get(sel.field).should('not.have.attr', 'aria-invalid');
+      });
+    });
+
     describe('accessibility', () => {
       it('should expose the input as a combobox controlling a multiselectable listbox', () => {
         mountMultiDropdown();

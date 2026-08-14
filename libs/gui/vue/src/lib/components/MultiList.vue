@@ -4,6 +4,7 @@ import { useInputWidget, useVueFormContext } from '@golemui/vue';
 import type { ListItem, MultiListProps, OptionValue } from '@golemui/gui-shared/internals';
 import { computed, onUnmounted, ref, watch, type Component } from 'vue';
 import DefaultMultiListItemRenderer from './item-renderers/DefaultMultiListItemRenderer.vue';
+import type { GuiLabel } from '@golemui/gui-components/label';
 import type { GuiMultiList } from '@golemui/gui-components/multi-list';
 import '@golemui/gui-components/label';
 import '@golemui/gui-components/multi-list';
@@ -21,6 +22,7 @@ const rangeEnd = ref(10);
 const listItems = ref<ListItem<any>[]>([]);
 const focusedIndex = ref<number>(-1);
 const listRef = ref<GuiMultiList | null>(null);
+const labelRef = ref<GuiLabel | null>(null);
 
 const currentValues = computed(() => (Array.isArray(value.value) ? value.value : []));
 
@@ -77,6 +79,9 @@ watch(listRef, (el) => {
     el.addEventListener('gui-range-change', handleRangeChange);
     el.addEventListener('gui-focus-change', handleFocusChange);
   }
+  if (labelRef.value) {
+    labelRef.value.targetElement = el ?? undefined;
+  }
 });
 
 onUnmounted(() => {
@@ -111,6 +116,7 @@ const ItemRenderer = computed<Component>(() => {
 <template>
   <div class="gui-multi-list-widget gui-field" :style="{ flex: templateData.size }">
     <gui-label
+      ref="labelRef"
       :uid="uid"
       :label="templateData.label"
       :hint="templateData.hint"

@@ -22,6 +22,7 @@ export const multiListTab = gui.layouts.flex([
     hint: 'Object items resolved through labelField/valueField',
     height: 150,
     items: objectItems,
+    validator: { type: 'array', required: true, minItems: 2 },
   }),
   gui.inputs.multiList('multiLists.limited', {
     label: 'Limited to 2 selections',

@@ -102,6 +102,35 @@ export const runMultiListComponentTests = (mountFn: MountComponentFn) => {
       });
     });
 
+    describe('validation', () => {
+      it('should mark the listbox invalid with the red border after touch', () => {
+        mountFn({
+          localization: identityTranslator('en-US'),
+          formDef: defineForm({
+            form: [
+              {
+                uid,
+                kind: 'input',
+                type: 'multiList',
+                path: 'myField',
+                validator: { type: 'array', required: true } as any,
+                props: { items: ['React', 'Angular', 'Vue'] },
+              },
+            ],
+          }),
+        });
+
+        cy.get('gui-multi-list').focus();
+        cy.get('gui-multi-list').blur();
+        cy.get(`[data-cy="${uid}_validator-error"]`).should('be.visible');
+
+        cy.get('gui-multi-list').should('have.attr', 'aria-invalid', 'true');
+        cy.get(`[data-cy="${uid}_validator-error"]`).then(($li) => {
+          cy.get('gui-multi-list').should('have.css', 'border-top-color', $li.css('color'));
+        });
+      });
+    });
+
     describe('accessibility', () => {
       it('should expose a multiselectable listbox with aria-selected rows', () => {
         mountMultiList({ data: { myField: ['React'] } });
