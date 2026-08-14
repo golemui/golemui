@@ -62,6 +62,12 @@
       "@golemui/gui-components/markdown-text": [
         "libs/gui/components/src/lib/components/markdown-text.ts"
       ],
+      "@golemui/gui-components/multi-list": [
+        "libs/gui/components/src/lib/components/multi-list.ts"
+      ],
+      "@golemui/gui-components/multi-select-trigger": [
+        "libs/gui/components/src/lib/components/multi-select-trigger.ts"
+      ],
       "@golemui/gui-components/number": ["libs/gui/components/src/lib/components/number.ts"],
       "@golemui/gui-components/password": ["libs/gui/components/src/lib/components/password.ts"],
       "@golemui/gui-components/pills": ["libs/gui/components/src/lib/components/pills.ts"],

@@ -34,6 +34,9 @@ export const widgetLoaders: WidgetLoaders<Type<WithWidget>, GolemWidget> = {
   dropdown: async () => (await import('./components/dropdown.element')).DropdownElement,
   list: async () => (await import('./components/list.element')).ListElement,
   markdown: async () => (await import('./components/markdown.element')).MarkdownElement,
+  multiDropdown: async () =>
+    (await import('./components/multi-dropdown.element')).MultiDropdownElement,
+  multiList: async () => (await import('./components/multi-list.element')).MultiListElement,
   password: async () => (await import('./components/password.element')).PasswordElement,
   textinput: async () => (await import('./components/textinput.element')).TextinputElement,
   timeInput: async () => (await import('./components/time.element')).TimeElement,

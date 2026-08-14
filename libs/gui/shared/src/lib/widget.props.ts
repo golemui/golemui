@@ -700,6 +700,20 @@ export type ListProps<T> = {
   itemRenderer?: string;
 };
 
+export type MultiDropdownProps<T> = DropdownProps<T> & {
+  /** Maximum number of selected options */
+  limit?: number;
+  removeAriaLabel?: string;
+  removeIcon?: string;
+};
+
+export type MultiListProps<T> = ListProps<T> & {
+  /** Maximum number of selected options */
+  limit?: number;
+  removeAriaLabel?: string;
+  removeIcon?: string;
+};
+
 export type RadiogroupProps = {
   hint?: string;
   options: Option[];

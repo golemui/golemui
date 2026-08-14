@@ -1,0 +1,165 @@
+@use 'panel' as *;
+
+// The trigger half of the multi-select combobox: pills to the left of the
+// filter input. The field wrapper carries `.gui-widget-input` for the base
+// chrome; the wrapper (not the inner input) wears the focus ring, and it is
+// the gui-pills host, so it declares the container contract pills.scss
+// documents (container name + position for the compact bubble/dropdown).
+gui-multi-select-trigger {
+  display: block;
+  flex: 1;
+  min-width: 0;
+
+  // Block-level (width-driven) so the container query threshold follows the
+  // trigger's width; the trigger itself is the flex-growing child of
+  // .gui-widget.
+  .gui-multi-select__field {
+    display: flex;
+    align-items: center;
+    position: relative;
+    container-type: inline-size;
+    container-name: gui-pills-widget;
+    padding: 0;
+
+    &--icon {
+      & > .gui-widget-icon {
+        flex-shrink: 0;
+        border-inline-end: 1px solid var(--gui-border-default);
+      }
+
+      & > gui-pills {
+        margin-inline-start: 2.5rem;
+      }
+    }
+
+    &:has(.gui-multi-select__input:focus),
+    &:has(.gui-pills__pill:focus),
+    &:has(.gui-pills__count:focus) {
+      outline: 0;
+      border-color: var(--gui-border-focus);
+      box-shadow: var(--gui-shadow-focus);
+    }
+
+    &[aria-invalid='true'] {
+      border-color: var(--gui-intent-error);
+
+      &:has(.gui-multi-select__input:focus),
+      &:has(.gui-pills__pill:focus),
+      &:has(.gui-pills__count:focus) {
+        border-color: var(--gui-intent-error);
+        box-shadow: var(--gui-shadow-focus-error);
+      }
+    }
+  }
+
+  .gui-multi-select__pills {
+    border-inline-end: 1px solid var(--gui-border-default);
+  }
+
+  .gui-multi-select__input {
+    flex: 1;
+    min-width: 4rem;
+    height: 100%;
+    padding: 0 0.75rem;
+    border: 0;
+    background: transparent;
+    color: var(--gui-text-default);
+    font-family: var(--gui-font-family);
+    font-size: var(--gui-font-sm);
+
+    &:focus {
+      outline: 0;
+      box-shadow: none;
+    }
+  }
+}
+
+// Multi-dropdown widget chrome: same shape as .gui-dropdown (dropdown.scss),
+// with the combobox input nested inside gui-multi-select-trigger instead of
+// being a direct .gui-widget child.
+.gui-multi-dropdown {
+  display: block;
+  position: relative;
+
+  gui-label {
+    grid-row: 1;
+  }
+
+  gui-errors {
+    grid-row: 3;
+  }
+
+  .gui-widget {
+    display: flex;
+
+    .gui-dropdown__arrow {
+      fill: var(--gui-text-default);
+      transform: rotate(0deg);
+      transition: transform 0.3s;
+      position: absolute;
+      inset-inline-end: var(--gui-space-3);
+      align-self: center;
+      transform-origin: 50% 40%;
+      pointer-events: none;
+      display: flex;
+    }
+
+    &:has(input[aria-expanded='true']) .gui-dropdown__arrow {
+      transform: rotate(180deg);
+    }
+
+    > .gui-picker__panel {
+      @include gui-picker-panel-chrome;
+      width: calc(100% - (var(--gui-space-2) * 2) - 2px);
+
+      gui-multi-list {
+        position: static;
+        width: 100%;
+
+        &[hidden] {
+          display: none;
+        }
+      }
+    }
+  }
+
+  // Invalid field → the open panel shares the red border.
+  &:has(.gui-widget .gui-multi-select__field[aria-invalid='true']) .gui-widget > .gui-picker__panel {
+    border-color: var(--gui-intent-error);
+  }
+
+  // Parity with the pickers: an open multi-dropdown stacks above later fields.
+  &:has(.gui-widget input[aria-expanded='true']) {
+    z-index: 20;
+  }
+}
+
+// Multi-list widget: pills above the listbox, mirroring the range calendar.
+.gui-multi-list__pills {
+  display: block;
+  margin-bottom: var(--gui-space-2);
+}
+
+// Check square of the default multi item renderer. Purely decorative (the
+// option row exposes aria-selected); currentColor keeps it legible on the
+// default, hover, selected and disabled row backgrounds alike.
+.gui-list__item-check {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1rem;
+  height: 1rem;
+  margin-inline-end: var(--gui-space-2);
+  border: 1px solid currentColor;
+  border-radius: var(--gui-radius-md);
+
+  svg {
+    display: none;
+    fill: currentColor;
+  }
+}
+
+.gui-list__item-selected .gui-list__item-check svg {
+  display: block;
+}

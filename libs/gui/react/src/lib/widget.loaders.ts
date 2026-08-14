@@ -14,6 +14,8 @@ export const widgetLoaders: WidgetLoaders<React.ComponentType<WithWidget>, Golem
   dateTimePicker: async () => (await import('./components/DateTimePicker')).DateTimePicker,
   dropdown: async () => (await import('./components/Dropdown')).Dropdown,
   list: async () => (await import('./components/List')).List,
+  multiDropdown: async () => (await import('./components/MultiDropdown')).MultiDropdown,
+  multiList: async () => (await import('./components/MultiList')).MultiList,
   password: async () => (await import('./components/Password')).Password,
   textinput: async () => (await import('./components/TextInput')).TextInput,
   timeInput: async () => (await import('./components/TimeInput')).TimeInput,

@@ -1,0 +1,61 @@
+{
+  "$schema": "../../../../../../libs/gui/schemas/src/lib/layout-widget.schema.json",
+  "uid": "tabMultiList",
+  "kind": "layout",
+  "type": "flex",
+  "children": [
+    {
+      "kind": "input",
+      "type": "multiList",
+      "path": "multiLists.frameworks",
+      "label": "Frameworks",
+      "props": {
+        "hint": "Click or press Enter/Space to toggle — pills render above the list",
+        "height": 150,
+        "items": ["React", "Angular", "Vue", "Lit", "Svelte", "Solid"]
+      }
+    },
+    {
+      "kind": "input",
+      "type": "multiList",
+      "path": "multiLists.objectItems",
+      "label": "Object items",
+      "props": {
+        "hint": "Object items resolved through labelField/valueField",
+        "height": 150,
+        "items": [
+          { "label": "Item 0", "value": 0 },
+          { "label": "Item 1", "value": 1 },
+          { "label": "Item 2", "value": 2 },
+          { "label": "Item 3", "value": 3 },
+          { "label": "Item 4", "value": 4 },
+          { "label": "Item 5", "value": 5 }
+        ]
+      }
+    },
+    {
+      "kind": "input",
+      "type": "multiList",
+      "path": "multiLists.limited",
+      "label": "Limited to 2 selections",
+      "props": {
+        "hint": "The third toggle is ignored",
+        "height": 150,
+        "limit": 2,
+        "items": ["React", "Angular", "Vue", "Lit", "Svelte", "Solid"]
+      }
+    },
+    {
+      "kind": "input",
+      "type": "multiList",
+      "path": "multiLists.disabled",
+      "label": "Disabled multi list",
+      "disabled": true,
+      "readonly": true,
+      "props": {
+        "height": 150,
+        "items": ["React", "Angular", "Vue", "Lit", "Svelte", "Solid"]
+      }
+    }
+  ]
+}

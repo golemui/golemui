@@ -98,6 +98,16 @@
       "import": "./lib/components/markdown-text.js",
       "require": "./lib/components/markdown-text.umd.cjs"
     },
+    "./multi-list": {
+      "types": "./lib/components/multi-list.d.ts",
+      "import": "./lib/components/multi-list.js",
+      "require": "./lib/components/multi-list.umd.cjs"
+    },
+    "./multi-select-trigger": {
+      "types": "./lib/components/multi-select-trigger.d.ts",
+      "import": "./lib/components/multi-select-trigger.js",
+      "require": "./lib/components/multi-select-trigger.umd.cjs"
+    },
     "./number": {
       "types": "./lib/components/number.d.ts",
       "import": "./lib/components/number.js",

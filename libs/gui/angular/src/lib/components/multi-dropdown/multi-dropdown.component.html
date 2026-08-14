@@ -1,0 +1,130 @@
+@let templateData = adapter.templateData();
+@let itemRenderer = adapter.getItemRenderer(templateData.itemRenderer, defaultListItemRenderer);
+@let showErrors = templateData.touched && templateData.errors && templateData.errors.length > 0;
+
+<gui-label
+  [targetElement]="[triggerRef, listRef]"
+  [uid]="widget.uid"
+  [label]="templateData.label"
+  [hint]="templateData.hint"
+  [errors]="templateData.errors"
+  [touched]="templateData.touched"
+  [required]="templateData.validator?.required"
+  [native]="false"
+></gui-label>
+
+<div class="gui-widget" tabindex="-1" (keydown)="onWidgetKeyDown($event)">
+  <gui-multi-select-trigger
+    #triggerRef
+    [uid]="widget.uid"
+    [pills]="pillItems()"
+    [errors]="templateData.errors"
+    [touched]="templateData.touched"
+    [required]="templateData.validator?.required"
+    [disabled]="templateData.disabled"
+    [readOnly]="templateData.readonly"
+    [placeholder]="templateData.placeholder ?? ''"
+    [autocomplete]="templateData.autocomplete"
+    [hasLabel]="!!templateData.label"
+    [hasHint]="!!templateData.hint"
+    [panelOpen]="isListVisible()"
+    [panelId]="widget.uid + '-list'"
+    [removeAriaLabel]="templateData.removeAriaLabel"
+    [removeIcon]="templateData.removeIcon"
+    [compactAriaLabel]="pillItems().length + ' selected'"
+    (keydown)="onTriggerKeyDown($event)"
+    (input)="onInput($event)"
+    (focusin)="onTriggerFocusIn($event)"
+    (focusout)="onFocusOutInput($event)"
+    (pillremove)="onPillRemove($event)"
+    (dropdowntoggle)="onPillsDropdownToggle($event)"
+  ></gui-multi-select-trigger>
+  <span class="gui-dropdown__arrow"
+    ><svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      viewBox="0 0 256 256"
+      aria-hidden="true"
+    >
+      <path
+        d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"
+      ></path></svg
+  ></span>
+  <div class="gui-picker__panel" [hidden]="!isListVisible()" (mousedown)="onPanelMouseDown($event)">
+    <gui-multi-list
+      #listRef
+      [id]="widget.uid + '-list'"
+      [uid]="widget.uid"
+      [values]="currentValues()"
+      [valueField]="templateData.valueField"
+      [items]="displayItems()"
+      [itemHeight]="templateData.itemHeight"
+      [height]="templateData.height"
+      [required]="templateData.validator?.required"
+      [touched]="templateData.touched"
+      [disabled]="templateData.disabled"
+      [readonly]="templateData.readonly"
+      [hidden]="!isListVisible()"
+      (gui-update-items)="onUpdateItems($event)"
+      (gui-range-change)="onRangeChange($event)"
+      (gui-focus-change)="onFocusChange($event)"
+      (blur)="onListBlur()"
+      (focusout)="onFocusOutInput($event)"
+      (change)="onValueChange($event)"
+    >
+      @for (item of visibleItems(); track $index) {
+        @let absoluteIndex = currentRange().start + $index;
+        @let labelField = templateData.labelField ?? 'label';
+        @let isObject = item.template !== null && typeof item.template === 'object';
+        @let template =
+          isObject && labelField && !templateData.itemRenderer
+            ? item.template[labelField]
+            : item.template;
+
+        <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events -->
+        <div
+          role="option"
+          tabindex="-1"
+          class="gui-list__item-wrapper"
+          [id]="widget.uid + '-item-' + absoluteIndex"
+          [style.height.px]="templateData.itemHeight || 40"
+          [attr.aria-selected]="currentValues().includes(item.value)"
+          [attr.aria-disabled]="templateData.disabled || !!item.disabled"
+          (click)="onClickItem(item, absoluteIndex)"
+        >
+          <ng-container
+            *ngComponentOutlet="
+              itemRenderer;
+              inputs: {
+                template: template,
+                value: item.value,
+                disabled: templateData.disabled || !!item.disabled,
+                selected: currentValues().includes(item.value),
+                focused: focusedIndex() === absoluteIndex,
+                index: absoluteIndex,
+              }
+            "
+          >
+          </ng-container>
+        </div>
+      }
+    </gui-multi-list>
+    @if (showErrors) {
+      <gui-errors
+        [panel]="true"
+        [uid]="widget.uid"
+        [errors]="templateData.errors"
+        [touched]="templateData.touched"
+      ></gui-errors>
+    }
+  </div>
+</div>
+
+@if (showErrors) {
+  <gui-errors
+    [uid]="widget.uid"
+    [errors]="templateData.errors"
+    [touched]="templateData.touched"
+  ></gui-errors>
+}

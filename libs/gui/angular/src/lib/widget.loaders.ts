@@ -65,6 +65,10 @@ export const widgetLoaders: WidgetLoaders<Type<WithWidget>, GolemWidget> = {
   list: async () => (await import('./components/list/list.component')).ListComponent,
   markdown: async () =>
     (await import('./components/markdown/markdown.component')).MarkdownComponent,
+  multiDropdown: async () =>
+    (await import('./components/multi-dropdown/multi-dropdown.component')).MultiDropdownComponent,
+  multiList: async () =>
+    (await import('./components/multi-list/multi-list.component')).MultiListComponent,
   tags: async () => (await import('./components/tags/tags.component')).TagsComponent,
 
   // LAYOUT WIDGETS

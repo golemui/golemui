@@ -22,6 +22,8 @@ import type {
   DateRange,
   DateinputProps,
   DropdownProps,
+  MultiDropdownProps,
+  MultiListProps,
   FlexProps,
   GridProps,
   ListProps,
@@ -211,6 +213,8 @@ type GolemWidget<
   | GuiList<FormType, States, V>
   | GuiMarkdown<FormType, States, V>
   | GuiMarkdownText<FormType, States>
+  | GuiMultiDropdown<FormType, States, V>
+  | GuiMultiList<FormType, States, V>
   | GuiNumberinput<FormType, States, V>
   | GuiPassword<FormType, States, V>
   | GuiRadiogroup<FormType, States, V>
@@ -353,6 +357,22 @@ type GuiMarkdownText<FormType extends Record<string, any>, States extends string
   FormType,
   MarkdownTextProps
 > & { type: 'markdownText' };
+
+type GuiMultiDropdown<FormType extends Record<string, any>, States extends string, V> = InputWidget<
+  OptionValue[],
+  States,
+  FormType,
+  MultiDropdownProps<unknown>,
+  V
+> & { type: 'multiDropdown' };
+
+type GuiMultiList<FormType extends Record<string, any>, States extends string, V> = InputWidget<
+  OptionValue[],
+  States,
+  FormType,
+  MultiListProps<unknown>,
+  V
+> & { type: 'multiList' };
 
 type GuiNumberinput<FormType extends Record<string, any>, States extends string, V> = InputWidget<
   number,

@@ -1,0 +1,101 @@
+@let templateData = adapter.templateData();
+@let itemRenderer = adapter.getItemRenderer(templateData.itemRenderer, defaultListItemRenderer);
+@let showErrors = templateData.touched && templateData.errors && templateData.errors.length > 0;
+
+<gui-label
+  [targetElement]="listElementRef().nativeElement"
+  [uid]="widget.uid"
+  [label]="templateData.label"
+  [hint]="templateData.hint"
+  [errors]="templateData.errors"
+  [touched]="templateData.touched"
+  [required]="templateData.validator?.required"
+  [native]="false"
+></gui-label>
+
+<div class="gui-widget">
+  @if (pillItems().length > 0) {
+    <gui-pills
+      class="gui-multi-list__pills"
+      [uid]="widget.uid"
+      [toolbarAriaLabel]="'Selected options'"
+      [items]="pillItems()"
+      [removable]="true"
+      [clickable]="true"
+      [bubble]="false"
+      [disabled]="templateData.disabled"
+      [readOnly]="templateData.readonly"
+      [removeAriaLabel]="templateData.removeAriaLabel ?? 'Remove option'"
+      [removeIcon]="templateData.removeIcon"
+      (pillremove)="onPillRemove($event)"
+      (pillclick)="onPillClick($event)"
+    ></gui-pills>
+  }
+
+  <gui-multi-list
+    #listRef
+    [uid]="widget.uid"
+    [errors]="templateData.errors"
+    [touched]="templateData.touched"
+    [required]="templateData.validator?.required"
+    [disabled]="templateData.disabled"
+    [readonly]="templateData.readonly"
+    [values]="currentValues()"
+    [valueField]="templateData.valueField"
+    [items]="templateData.items"
+    [itemHeight]="templateData.itemHeight"
+    [height]="templateData.height"
+    [label]="templateData.label"
+    [hint]="templateData.hint"
+    (blur)="adapter.onBlur()"
+    (change)="valueChanged($event)"
+    (gui-update-items)="onUpdateItems($event)"
+    (gui-range-change)="onRangeChange($event)"
+    (gui-focus-change)="onFocusChange($event)"
+  >
+    @for (item of visibleItems(); track $index) {
+      @let absoluteIndex = currentRange().start + $index;
+      @let labelField = templateData.labelField ?? 'label';
+      @let isObject = item.template !== null && typeof item.template === 'object';
+      @let template =
+        isObject && labelField && !templateData.itemRenderer
+          ? item.template[labelField]
+          : item.template;
+
+      <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events -->
+      <div
+        role="option"
+        tabindex="-1"
+        class="gui-list__item-wrapper"
+        [id]="widget.uid + '-item-' + absoluteIndex"
+        [style.height.px]="templateData.itemHeight || 40"
+        [attr.aria-selected]="currentValues().includes(item.value)"
+        [attr.aria-disabled]="templateData.disabled || !!item.disabled"
+        (click)="onClickItem(item, absoluteIndex, listRef)"
+      >
+        <ng-container
+          *ngComponentOutlet="
+            itemRenderer;
+            inputs: {
+              template: template,
+              value: item.value,
+              disabled: templateData.disabled || !!item.disabled,
+              selected: currentValues().includes(item.value),
+              focused: focusedIndex() === absoluteIndex,
+              index: $index,
+            }
+          "
+        >
+        </ng-container>
+      </div>
+    }
+  </gui-multi-list>
+</div>
+
+@if (showErrors) {
+  <gui-errors
+    [uid]="widget.uid"
+    [errors]="templateData.errors"
+    [touched]="templateData.touched"
+  ></gui-errors>
+}
