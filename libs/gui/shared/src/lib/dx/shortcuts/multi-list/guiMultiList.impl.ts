@@ -1,9 +1,5 @@
 import { type DxRuntimeParams } from '@golemui/dx';
-import type {
-  GuiMultiListShortcut,
-  MultiListDecorator,
-  MultiListEntry,
-} from './multi-list.domain';
+import type { GuiMultiListShortcut, MultiListDecorator, MultiListEntry } from './multi-list.domain';
 
 type MultiListFactoryProps = Omit<MultiListDecorator, 'type'>;
 

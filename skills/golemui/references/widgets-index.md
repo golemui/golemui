@@ -19,6 +19,8 @@ Every widget’s exhaustive reference page (props, per-prop examples, CSS variab
 - `gui.inputs.dropdown` — https://golemui.com/dx/widgets-reference/input-fields/dropdown.md (json: https://golemui.com/json/widgets-reference/input-fields/dropdown.md)
 - `gui.inputs.list` — https://golemui.com/dx/widgets-reference/input-fields/list.md (json: https://golemui.com/json/widgets-reference/input-fields/list.md)
 - `gui.inputs.markdown` — https://golemui.com/dx/widgets-reference/input-fields/markdown.md (json: https://golemui.com/json/widgets-reference/input-fields/markdown.md)
+- `gui.inputs.multiDropdown` — https://golemui.com/dx/widgets-reference/input-fields/multi-dropdown.md (json: https://golemui.com/json/widgets-reference/input-fields/multi-dropdown.md)
+- `gui.inputs.multiList` — https://golemui.com/dx/widgets-reference/input-fields/multi-list.md (json: https://golemui.com/json/widgets-reference/input-fields/multi-list.md)
 - `gui.inputs.numberInput` — https://golemui.com/dx/widgets-reference/input-fields/number.md (json: https://golemui.com/json/widgets-reference/input-fields/number.md)
 - `gui.inputs.password` — https://golemui.com/dx/widgets-reference/input-fields/password.md (json: https://golemui.com/json/widgets-reference/input-fields/password.md)
 - `gui.inputs.radiogroup` — https://golemui.com/dx/widgets-reference/input-fields/radiogroup.md (json: https://golemui.com/json/widgets-reference/input-fields/radiogroup.md)

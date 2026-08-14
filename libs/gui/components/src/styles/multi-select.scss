@@ -124,7 +124,9 @@ gui-multi-select-trigger {
   }
 
   // Invalid field → the open panel shares the red border.
-  &:has(.gui-widget .gui-multi-select__field[aria-invalid='true']) .gui-widget > .gui-picker__panel {
+  &:has(.gui-widget .gui-multi-select__field[aria-invalid='true'])
+    .gui-widget
+    > .gui-picker__panel {
     border-color: var(--gui-intent-error);
   }
 

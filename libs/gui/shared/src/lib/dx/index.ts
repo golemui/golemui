@@ -92,10 +92,7 @@ export {
 export { _gslInputByUid, _gslInputs } from './shortcuts/inputs/register';
 export { _gslLayoutByUid, _gslLayouts } from './shortcuts/layouts/register';
 export { _gslListByUid, _gslLists } from './shortcuts/list/register';
-export {
-  _gslMultiDropdownByUid,
-  _gslMultiDropdowns,
-} from './shortcuts/multi-dropdown/register';
+export { _gslMultiDropdownByUid, _gslMultiDropdowns } from './shortcuts/multi-dropdown/register';
 export { _gslMultiListByUid, _gslMultiLists } from './shortcuts/multi-list/register';
 export { _gslMarkdownByUid, _gslMarkdowns } from './shortcuts/markdown/register';
 export { _gslMarkdownTextByUid, _gslMarkdownTexts } from './shortcuts/markdown-text/register';
@@ -227,7 +224,10 @@ export type {
   GslMultiDropdownConfig,
   MultiDropdownDecorator,
 } from './shortcuts/multi-dropdown/multi-dropdown.domain';
-export type { GslMultiListConfig, MultiListDecorator } from './shortcuts/multi-list/multi-list.domain';
+export type {
+  GslMultiListConfig,
+  MultiListDecorator,
+} from './shortcuts/multi-list/multi-list.domain';
 export type { GslMarkdownConfig, MarkdownDecorator } from './shortcuts/markdown/markdown.domain';
 export type { GslPasswordConfig, PasswordDecorator } from './shortcuts/password/password.domain';
 export type {

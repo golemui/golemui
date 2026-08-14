@@ -211,10 +211,7 @@ const filterItems = (filterValue: string) => {
   }
 };
 
-const debouncedFilter = useDebounceCallback(
-  filterItems,
-  templateData.value.inputDebounce ?? 500,
-);
+const debouncedFilter = useDebounceCallback(filterItems, templateData.value.inputDebounce ?? 500);
 
 const handleInputFilter = (event: Event) => {
   const target = event.target as HTMLInputElement;

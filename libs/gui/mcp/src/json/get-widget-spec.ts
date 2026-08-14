@@ -117,6 +117,30 @@ const EXAMPLES: Record<string, Record<string, unknown>> = {
       ],
     },
   },
+  multiDropdown: {
+    kind: 'input',
+    type: 'multiDropdown',
+    path: 'countries',
+    label: 'Countries',
+    defaultValue: ['us'],
+    props: {
+      labelField: 'label',
+      valueField: 'value',
+      items: [
+        { label: 'United States', value: 'us', flag: '🇺🇸' },
+        { label: 'Canada', value: 'ca', flag: '🇨🇦' },
+      ],
+    },
+  },
+  multiList: {
+    kind: 'input',
+    type: 'multiList',
+    path: 'toppings',
+    label: 'Toppings',
+    props: {
+      items: ['Cheese', 'Bacon', 'Mushrooms'],
+    },
+  },
   select: {
     kind: 'input',
     type: 'select',

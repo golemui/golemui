@@ -98,10 +98,7 @@ import { _gslPasswords, _gslPasswordByUid } from './shortcuts/password/register'
 import { _gslCurrencies, _gslCurrencyByUid } from './shortcuts/currency/register';
 import { _gslMarkdowns, _gslMarkdownByUid } from './shortcuts/markdown/register';
 import { _gslLists, _gslListByUid } from './shortcuts/list/register';
-import {
-  _gslMultiDropdowns,
-  _gslMultiDropdownByUid,
-} from './shortcuts/multi-dropdown/register';
+import { _gslMultiDropdowns, _gslMultiDropdownByUid } from './shortcuts/multi-dropdown/register';
 import { _gslMultiLists, _gslMultiListByUid } from './shortcuts/multi-list/register';
 import { _gslCalendars, _gslCalendarByUid } from './shortcuts/calendar/register';
 import {
