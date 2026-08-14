@@ -1,3 +1,7 @@
+## 1.3.0-rc.0 (2026-08-14)
+
+This was a version bump only for gui-validators to align it with other projects, there were no code changes.
+
 ## 1.2.1 (2026-08-11)
 
 This was a version bump only for gui-validators to align it with other projects, there were no code changes.
