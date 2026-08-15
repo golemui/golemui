@@ -325,6 +325,7 @@ export class MultiDropdownElement extends LitElement implements WithWidget {
           ?disabled=${templateData.disabled}
           ?readonly=${templateData.readonly}
           .placeholder=${templateData.placeholder ?? ''}
+          .icon=${templateData.icon}
           .autocomplete=${templateData.autocomplete as string}
           .hasLabel=${!!templateData.label}
           .hasHint=${!!templateData.hint}

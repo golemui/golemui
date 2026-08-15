@@ -307,13 +307,20 @@ export function Dropdown(widgetInstance: WithWidget) {
       ></GuiLabelReact>
 
       <div className="gui-widget" onKeyDown={handleWidgetKeyDown}>
+        {templateData.icon && (
+          <span
+            className={`gui-widget-icon ${templateData.icon}`}
+            data-icon={templateData.icon}
+            aria-hidden="true"
+          ></span>
+        )}
         <input
           ref={inputRef}
           type="text"
           role="combobox"
           id={uid}
           data-cy={`${uid}_textinput`}
-          className="gui-widget-input"
+          className={`gui-widget-input${templateData.icon ? ' gui-dropdown--icon' : ''}`}
           defaultValue={value ?? ''}
           required={isRequired}
           disabled={isDisabled}

@@ -279,6 +279,13 @@ const ItemRenderer = computed<Component>(() => {
     ></gui-label>
 
     <div class="gui-widget" @keydown="handleWidgetKeyDown">
+      <span
+        v-if="templateData.icon"
+        class="gui-widget-icon"
+        :class="templateData.icon"
+        :data-icon="templateData.icon"
+        aria-hidden="true"
+      ></span>
       <input
         ref="inputRef"
         type="text"
@@ -286,6 +293,7 @@ const ItemRenderer = computed<Component>(() => {
         :id="uid"
         :data-cy="`${uid}_textinput`"
         class="gui-widget-input"
+        :class="{ 'gui-dropdown--icon': !!templateData.icon }"
         :required="required"
         :disabled="isDisabled"
         :readonly="isReadOnly"

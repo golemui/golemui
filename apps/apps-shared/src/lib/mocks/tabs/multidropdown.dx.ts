@@ -18,6 +18,13 @@ export const multiDropdownTab = gui.layouts.flex([
     inputDebounce: 0,
     items: frameworks,
   }),
+  gui.inputs.multiDropdown('multiDropdowns.withIcon', {
+    label: 'Multi dropdown with icon',
+    placeholder: 'Search frameworks…',
+    icon: 'checklist',
+    hint: 'The icon sits to the left of the pills and filter input',
+    items: frameworks,
+  }),
   gui.inputs.multiDropdown('multiDropdowns.objectItems', {
     label: 'Object items',
     placeholder: 'Search items…',

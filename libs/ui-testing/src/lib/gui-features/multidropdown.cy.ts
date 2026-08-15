@@ -123,6 +123,29 @@ export const runMultiDropdownComponentTests = (mountFn: MountComponentFn) => {
       });
     });
 
+    describe('field chrome and icon', () => {
+      it('should zero the field padding so the left inset matches tags', () => {
+        mountMultiDropdown({ data: { myField: ['React'] } });
+
+        cy.get(sel.field).should('have.css', 'padding-left', '0px');
+      });
+
+      it('should render the icon and shift the pills clear of it', () => {
+        mountMultiDropdown({ data: { myField: ['React'] }, props: { icon: 'checklist' } });
+
+        cy.get('.gui-multi-dropdown .gui-widget-icon')
+          .should('have.attr', 'data-icon', 'checklist')
+          .and('have.attr', 'aria-hidden', 'true');
+        cy.get(sel.field).should('have.class', 'gui-multi-select__field--icon');
+        cy.get(`${sel.field} > gui-pills`).should('have.css', 'margin-left', '40px'); // 2.5rem
+      });
+
+      it('should not render the icon span without the icon prop', () => {
+        mountMultiDropdown();
+        cy.get('.gui-multi-dropdown .gui-widget-icon').should('not.exist');
+      });
+    });
+
     describe('pills and pill removal', () => {
       beforeEach(() => forcePillsStripMode(sel.field));
       afterEach(clearPillsWidthOverride);

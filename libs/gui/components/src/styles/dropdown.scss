@@ -13,6 +13,10 @@
   }
 
   .gui-widget {
+    input.gui-dropdown--icon {
+      padding-inline-start: 2.5rem;
+    }
+
     .gui-dropdown__arrow {
       fill: var(--gui-text-default);
       transform: rotate(0deg);

@@ -19,6 +19,18 @@
     {
       "kind": "input",
       "type": "multiDropdown",
+      "path": "multiDropdowns.withIcon",
+      "label": "Multi dropdown with icon",
+      "props": {
+        "placeholder": "Search frameworks…",
+        "icon": "checklist",
+        "hint": "The icon sits to the left of the pills and filter input",
+        "items": ["React", "Angular", "Vue", "Lit", "Svelte", "Solid"]
+      }
+    },
+    {
+      "kind": "input",
+      "type": "multiDropdown",
       "path": "multiDropdowns.objectItems",
       "label": "Object items",
       "props": {

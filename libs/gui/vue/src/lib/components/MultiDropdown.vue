@@ -280,6 +280,7 @@ const ItemRenderer = computed<Component>(() => {
         :disabled="isDisabled"
         :readOnly="isReadOnly"
         :placeholder="templateData.placeholder ?? ''"
+        :icon="templateData.icon"
         :autocomplete="templateData.autocomplete"
         :hasLabel="!!templateData.label"
         :hasHint="!!templateData.hint"

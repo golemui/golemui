@@ -119,6 +119,24 @@ export const runDropdownComponentTests = (mountFn: MountComponentFn) => {
       visibleItems().first().should('contain.text', 'React');
     });
 
+    describe('field icon', () => {
+      it('should render the icon and pad the input clear of it', () => {
+        mountWithItems(['one', 'two'], { icon: 'search' });
+
+        cy.get('.gui-dropdown .gui-widget-icon')
+          .should('have.attr', 'data-icon', 'search')
+          .and('have.attr', 'aria-hidden', 'true');
+        cy.get('[data-cy="testSubject_textinput"]')
+          .should('have.class', 'gui-dropdown--icon')
+          .and('have.css', 'padding-left', '40px'); // 2.5rem clears the icon
+      });
+
+      it('should not render the icon span without the icon prop', () => {
+        mountWithItems(['one', 'two']);
+        cy.get('.gui-dropdown .gui-widget-icon').should('not.exist');
+      });
+    });
+
     describe('accessibility', () => {
       const inputSel = '[data-cy="testSubject_textinput"]';
 

@@ -666,6 +666,7 @@ type ItemKeys<T> = T extends Record<string, any> ? keyof T : string;
 export type DropdownProps<T> = {
   placeholder?: string;
   hint?: string;
+  icon?: string;
   autocomplete?: Autocomplete;
   items: ListItem<T>[];
   /**

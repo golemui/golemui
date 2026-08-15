@@ -3,6 +3,7 @@ import { InputWidgetAdapter, type LitFormContext, formContext, inputContext } fr
 import type { DropdownProps, ListItem } from '@golemui/gui-shared/internals';
 import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';
+import { classMap } from 'lit/directives/class-map.js';
 import { property, query, state } from 'lit/decorators.js';
 import { safeDefine } from '@golemui/lit/internals';
 import { debounceTime, Subject, type Subscription } from 'rxjs';
@@ -298,12 +299,22 @@ export class DropdownElement extends LitElement implements WithWidget {
       ></gui-label>
 
       <div class="gui-widget" @keydown=${this._onWidgetKeyDown}>
+        ${templateData.icon
+          ? html`<span
+              class=${classMap({ 'gui-widget-icon': true, [templateData.icon]: true })}
+              data-icon=${templateData.icon}
+              aria-hidden="true"
+            ></span>`
+          : nothing}
         <input
           type="text"
           role="combobox"
           id=${this.widget.uid}
           data-cy=${`${this.widget.uid}_textinput`}
-          class="gui-widget-input"
+          class=${classMap({
+            'gui-widget-input': true,
+            'gui-dropdown--icon': !!templateData.icon,
+          })}
           .value=${selectedItemValue ?? templateData.value ?? ''}
           ?required=${templateData.validator?.required}
           ?disabled=${templateData.disabled}

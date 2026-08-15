@@ -101,6 +101,7 @@ const data: Record<string, unknown> = {
     customItemRenderer: 'one',
   },
   multiDropdowns: {
+    withIcon: ['React', 'Vue'],
     objectItems: [1, 3],
     disabled: ['React', 'Vue'],
   },

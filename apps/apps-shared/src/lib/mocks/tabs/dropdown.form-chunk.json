@@ -70,6 +70,18 @@
     {
       "kind": "input",
       "type": "dropdown",
+      "path": "dropdowns.withIcon",
+      "label": "Dropdown with icon",
+      "props": {
+        "icon": "search",
+        "height": 100,
+        "hint": "The icon sits to the left of the filter input",
+        "items": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+      }
+    },
+    {
+      "kind": "input",
+      "type": "dropdown",
       "path": "dropdowns.defaultRenderer20",
       "label": "Default Renderer with 20px item height",
       "props": {

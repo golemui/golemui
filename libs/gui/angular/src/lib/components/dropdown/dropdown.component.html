@@ -14,11 +14,19 @@
 ></gui-label>
 
 <div class="gui-widget" tabindex="-1" (keydown)="onWidgetKeyDown($event)">
+  @if (templateData.icon) {
+    <span
+      class="gui-widget-icon {{ templateData.icon }}"
+      [attr.data-icon]="templateData.icon"
+      aria-hidden="true"
+    ></span>
+  }
   <input
     #inputRef
     type="text"
     role="combobox"
     class="gui-widget-input"
+    [class.gui-dropdown--icon]="templateData.icon"
     [id]="widget.uid"
     [attr.data-cy]="widget.uid + '_textinput'"
     [required]="templateData.validator?.required"
