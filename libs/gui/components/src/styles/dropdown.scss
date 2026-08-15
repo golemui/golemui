@@ -45,6 +45,15 @@
         position: static;
         width: 100%;
 
+        &[aria-invalid='true'] {
+          border-color: var(--gui-border-default);
+
+          &:focus {
+            border-color: var(--gui-border-focus);
+            box-shadow: var(--gui-shadow-focus);
+          }
+        }
+
         &[hidden] {
           display: none;
         }

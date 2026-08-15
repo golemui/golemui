@@ -405,9 +405,14 @@ export const runMultiDropdownComponentTests = (mountFn: MountComponentFn) => {
         cy.get(sel.input).click();
         cy.get(`[data-cy="${uid}_panel-validator-error"]`).should('be.visible');
 
-        // Invalid field → the panel shares the red border
+        // Invalid field → the panel shares the red border; the inner listbox
+        // keeps its default border (the panel owns the invalid chrome,
+        // parity with the pickers)
         cy.get(`[data-cy="${uid}_validator-error"]`).then(($li) => {
           cy.get(sel.panel).should('have.css', 'border-top-color', $li.css('color'));
+          cy.get('gui-multi-list')
+            .should('have.attr', 'aria-invalid', 'true')
+            .and('not.have.css', 'border-top-color', $li.css('color'));
         });
       });
 
@@ -435,6 +440,18 @@ export const runMultiDropdownComponentTests = (mountFn: MountComponentFn) => {
 
         cy.get(sel.input).click();
         cy.get(sel.input).should('have.attr', 'aria-expanded', 'true');
+      });
+
+      it('should keep the listbox host as the single tab stop', () => {
+        mountMultiDropdown();
+
+        // The scroll viewport opts out of Chrome's implicit scrollable-region
+        // focusability — otherwise a scrollable list gets a second tab stop.
+        cy.get('gui-multi-list').should('have.attr', 'tabindex', '0');
+        cy.get('gui-multi-list')
+          .shadow()
+          .find('.gui-list__scroll-viewport')
+          .should('have.attr', 'tabindex', '-1');
       });
 
       it('should mark toggled rows with aria-selected', () => {

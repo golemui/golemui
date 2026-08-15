@@ -132,6 +132,18 @@ export const runMultiListComponentTests = (mountFn: MountComponentFn) => {
         cy.get(sel.row).first().should('have.attr', 'aria-selected', 'true');
         cy.get(sel.row).eq(1).should('have.attr', 'aria-selected', 'false');
       });
+
+      it('should keep the listbox host as the single tab stop', () => {
+        mountMultiList();
+
+        // The scroll viewport opts out of Chrome's implicit scrollable-region
+        // focusability — otherwise a scrollable list gets a second tab stop.
+        cy.get('gui-multi-list').should('have.attr', 'tabindex', '0');
+        cy.get('gui-multi-list')
+          .shadow()
+          .find('.gui-list__scroll-viewport')
+          .should('have.attr', 'tabindex', '-1');
+      });
     });
   });
 };

@@ -153,10 +153,12 @@ export function MultiDropdown(widgetInstance: WithWidget) {
   }, [closeList, isListVisible]);
 
   useEffect(() => {
-    if (labelRef.current && triggerRef.current?.input && listRef.current) {
-      labelRef.current.targetElement = [triggerRef.current.input, listRef.current];
+    if (!labelRef.current) return;
+    const targets = [triggerRef.current?.input, listRef.current].filter(Boolean) as HTMLElement[];
+    if (targets.length) {
+      labelRef.current.targetElement = targets;
     }
-  }, []);
+  });
 
   const handleTriggerKeyDown = async (event: React.KeyboardEvent) => {
     if (event.key === 'ArrowDown') {

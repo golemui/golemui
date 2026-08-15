@@ -138,8 +138,13 @@ const handleDocumentClick = (event: MouseEvent) => {
 
 onMounted(() => {
   document.addEventListener('click', handleDocumentClick);
-  if (labelRef.value && triggerRef.value?.input && listRef.value) {
-    labelRef.value.targetElement = [triggerRef.value.input, listRef.value];
+});
+
+watch(listRef, (el) => {
+  if (!labelRef.value) return;
+  const targets = [triggerRef.value?.input, el].filter(Boolean) as HTMLElement[];
+  if (targets.length) {
+    labelRef.value.targetElement = targets;
   }
 });
 

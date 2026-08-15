@@ -4,6 +4,7 @@ import { useInputWidget, useVueFormContext } from '@golemui/vue';
 import type { ListItem, ListProps, OptionValue } from '@golemui/gui-shared/internals';
 import { computed, onUnmounted, ref, watch, type Component } from 'vue';
 import DefaultListItemRenderer from './item-renderers/DefaultListItemRenderer.vue';
+import type { GuiLabel } from '@golemui/gui-components/label';
 import '@golemui/gui-components/label';
 import '@golemui/gui-components/list';
 import '@golemui/gui-components/errors';
@@ -24,6 +25,7 @@ const rangeEnd = ref(10);
 const listItems = ref<ListItem<any>[]>([]);
 const focusedIndex = ref<number>(-1);
 const listRef = ref<GuiListElement | null>(null);
+const labelRef = ref<GuiLabel | null>(null);
 
 const visibleItems = computed(() => {
   const items = listItems.value.length > 0 ? listItems.value : templateData.value.items || [];
@@ -66,6 +68,9 @@ watch(listRef, (el) => {
     el.addEventListener('gui-range-change', handleRangeChange);
     el.addEventListener('gui-focus-change', handleFocusChange);
   }
+  if (labelRef.value) {
+    labelRef.value.targetElement = el ?? undefined;
+  }
 });
 
 onUnmounted(() => {
@@ -99,6 +104,7 @@ const ItemRenderer = computed<Component>(() => {
 <template>
   <div class="gui-list gui-field" :style="{ flex: templateData.size }">
     <gui-label
+      ref="labelRef"
       :uid="uid"
       :label="templateData.label"
       :hint="templateData.hint"

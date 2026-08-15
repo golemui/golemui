@@ -212,6 +212,18 @@ export const runDropdownComponentTests = (mountFn: MountComponentFn) => {
         cy.get(inputSel).should('have.attr', 'aria-expanded', 'true');
       });
 
+      it('should keep the listbox host as the single tab stop', () => {
+        mountWithItems(['React', 'Angular', 'Vue']);
+
+        // The scroll viewport opts out of Chrome's implicit scrollable-region
+        // focusability — otherwise a scrollable list gets a second tab stop.
+        cy.get('gui-list').should('have.attr', 'tabindex', '0');
+        cy.get('gui-list')
+          .shadow()
+          .find('.gui-list__scroll-viewport')
+          .should('have.attr', 'tabindex', '-1');
+      });
+
       it('should not render duplicate ids for the input and the list', () => {
         mountWithItems(['React', 'Angular', 'Vue']);
         cy.get('[id="testSubject"]').should('have.length', 1);
@@ -278,10 +290,15 @@ export const runDropdownComponentTests = (mountFn: MountComponentFn) => {
           .and('not.have.attr', 'role');
         cy.get('[id="testSubject_errors"]').should('have.length', 1);
 
-        // Invalid field → input and panel share the red border
+        // Invalid field → input and panel share the red border; the inner
+        // listbox keeps its default border (the panel owns the invalid
+        // chrome, parity with the pickers)
         cy.get(inputSel).should('have.attr', 'aria-invalid', 'true');
         cy.get('[data-cy="testSubject_validator-error"]').then(($li) => {
           cy.get(panelSel).should('have.css', 'border-top-color', $li.css('color'));
+          cy.get('gui-list')
+            .should('have.attr', 'aria-invalid', 'true')
+            .and('not.have.css', 'border-top-color', $li.css('color'));
         });
       });
 

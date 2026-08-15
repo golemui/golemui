@@ -87,6 +87,7 @@ export class GuiList extends LitElement {
       <div
         class="gui-list__scroll-viewport"
         style="max-height: ${height}px; min-height: 40px; overflow-y: auto; position: relative; display: block;"
+        tabindex="-1"
         @scroll="${this.onScroll}"
       >
         <div
