@@ -68,6 +68,7 @@ describe('Dropdown schema validation', () => {
               itemRenderer: 'countryRenderer',
               inputDebounce: 300,
               icon: 'flag',
+              toggleAriaLabel: 'Show countries',
             },
           },
         ],

@@ -448,7 +448,7 @@ export type DateBoundsMessageProps = {
   disabledDateRangeMessage?: Localizable;
 };
 
-/** The popup toggle button shared by the six pickers. */
+/** The popup toggle button shared by the six pickers and the two dropdowns. */
 export type PickerToggleProps = {
   toggleAriaLabel?: string;
 };
@@ -663,7 +663,7 @@ export type ListItem<T> = {
 };
 
 type ItemKeys<T> = T extends Record<string, any> ? keyof T : string;
-export type DropdownProps<T> = {
+export type DropdownProps<T> = PickerToggleProps & {
   placeholder?: string;
   hint?: string;
   icon?: string;

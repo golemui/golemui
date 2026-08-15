@@ -68,6 +68,7 @@ describe('MultiDropdown schema validation', () => {
               itemRenderer: 'countryRenderer',
               inputDebounce: 300,
               icon: 'flag',
+              toggleAriaLabel: 'Show countries',
               removeAriaLabel: 'Remove country',
               removeIcon: 'icon-close',
             },

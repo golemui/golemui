@@ -64,6 +64,9 @@
     "iconProp": {
       "type": "string"
     },
+    "toggleAriaLabelProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable"
+    },
     "removeAriaLabelProp": {
       "$ref": "../core/common.schema.json#/$defs/localizable"
     },
@@ -147,6 +150,9 @@
         "icon": {
           "$ref": "#/$defs/iconProp"
         },
+        "toggleAriaLabel": {
+          "$ref": "#/$defs/toggleAriaLabelProp"
+        },
         "removeAriaLabel": {
           "$ref": "#/$defs/removeAriaLabelProp"
         },
@@ -190,6 +196,9 @@
         },
         "^icon\\.[^.]+$": {
           "$ref": "#/$defs/iconProp"
+        },
+        "^toggleAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/toggleAriaLabelProp"
         },
         "^removeAriaLabel\\.[^.]+$": {
           "$ref": "#/$defs/removeAriaLabelProp"

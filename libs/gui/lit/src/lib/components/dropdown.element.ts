@@ -240,27 +240,39 @@ export class DropdownElement extends LitElement implements WithWidget {
     this._listRef.scrollToSelectedIndex();
   }
 
+  private _onToggleMouseDown = (event: MouseEvent) => {
+    event.preventDefault();
+  };
+
+  private _onToggleClick = (event: Event) => {
+    event.stopPropagation();
+    if (this._isListVisible) {
+      this._isListVisible = false;
+      this._isFiltering = false;
+      this._ignoreNextFocus = true;
+      this._inputRef?.focus();
+      setTimeout(() => {
+        this._ignoreNextFocus = false;
+      });
+    } else {
+      this._inputRef?.focus();
+      this._onFocus();
+    }
+  };
+
   private _onPanelMouseDown(event: MouseEvent) {
     const target = event.target as Node;
     if (this._listRef && this._listRef.contains(target)) return;
     event.preventDefault();
   }
 
-  private _onFocusOutInput(event: FocusEvent) {
+  private _onFocusOut(event: FocusEvent) {
     const newFocusTarget = event.relatedTarget as Node;
 
-    // We're focusing on an element inside this component
     if (newFocusTarget && this.contains(newFocusTarget)) {
       return;
     }
 
-    // We're focusing outside this component
-    this.adapter.onBlur();
-    this._isListVisible = false;
-    this._isFiltering = false;
-  }
-
-  private _onBlur() {
     this.adapter.onBlur();
     this._isListVisible = false;
     this._isFiltering = false;
@@ -298,7 +310,7 @@ export class DropdownElement extends LitElement implements WithWidget {
         .native=${false}
       ></gui-label>
 
-      <div class="gui-widget" @keydown=${this._onWidgetKeyDown}>
+      <div class="gui-widget" @keydown=${this._onWidgetKeyDown} @focusout=${this._onFocusOut}>
         ${templateData.icon
           ? html`<span
               class=${classMap({ 'gui-widget-icon': true, [templateData.icon]: true })}
@@ -323,7 +335,6 @@ export class DropdownElement extends LitElement implements WithWidget {
           autocomplete=${(templateData.autocomplete as any) || nothing}
           @keydown=${this._onKeyDown}
           @input=${this._onInput}
-          @focusout=${this._onFocusOutInput}
           @focus=${this._onFocus}
           aria-expanded=${this._isListVisible ? 'true' : 'false'}
           aria-controls=${`${this.widget.uid}-list`}
@@ -331,8 +342,18 @@ export class DropdownElement extends LitElement implements WithWidget {
           aria-labelledby=${templateData.label ? `${this.widget.uid}_label` : nothing}
           aria-describedby=${templateData.hint ? `${this.widget.uid}_hint` : nothing}
         />
-        <span class="gui-dropdown__arrow"
-          ><svg
+        <button
+          type="button"
+          class="gui-dropdown__arrow"
+          aria-label=${templateData.toggleAriaLabel ?? 'Show options'}
+          aria-haspopup="listbox"
+          aria-expanded=${this._isListVisible ? 'true' : 'false'}
+          aria-controls=${`${this.widget.uid}-list`}
+          ?disabled=${templateData.disabled}
+          @mousedown=${this._onToggleMouseDown}
+          @click=${this._onToggleClick}
+        >
+          <svg
             xmlns="http://www.w3.org/2000/svg"
             width="16"
             height="16"
@@ -341,8 +362,9 @@ export class DropdownElement extends LitElement implements WithWidget {
           >
             <path
               d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"
-            ></path></svg
-        ></span>
+            ></path>
+          </svg>
+        </button>
 
         <div
           class="gui-picker__panel"
@@ -368,7 +390,6 @@ export class DropdownElement extends LitElement implements WithWidget {
             @gui-update-items=${this._onUpdateItems}
             @gui-focus-change=${this._onFocusChange}
             @focus=${this._onFocus}
-            @blur=${this._onBlur}
             @change=${this._onValueChange}
           >
             ${visibleItems.map((item, index) => {

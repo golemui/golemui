@@ -146,6 +146,63 @@ export const runMultiDropdownComponentTests = (mountFn: MountComponentFn) => {
       });
     });
 
+    describe('panel toggle button', () => {
+      const toggleSel = '.gui-multi-dropdown button.gui-dropdown__arrow';
+
+      it('should expose a named toggle button wired to the listbox', () => {
+        mountMultiDropdown();
+
+        cy.get(toggleSel)
+          .should('have.attr', 'aria-label', 'Show options')
+          .should('have.attr', 'aria-haspopup', 'listbox')
+          .should('have.attr', 'aria-expanded', 'false')
+          .should('have.attr', 'aria-controls', `${uid}-list`);
+        cy.get(toggleSel).then(($btn) => {
+          cy.get(`[id="${$btn.attr('aria-controls')}"]`).should('exist');
+        });
+      });
+
+      it('should open and close the panel from the toggle button, keeping focus in the input', () => {
+        mountMultiDropdown();
+
+        cy.get(toggleSel).click();
+        cy.get(sel.panel).should('be.visible');
+        cy.get(toggleSel).should('have.attr', 'aria-expanded', 'true');
+        cy.focused().should('have.attr', 'data-cy', `${uid}_textinput`);
+
+        cy.get(toggleSel).click();
+        cy.get(sel.panel).should('not.be.visible');
+        cy.get(toggleSel).should('have.attr', 'aria-expanded', 'false');
+        cy.focused().should('have.attr', 'data-cy', `${uid}_textinput`);
+      });
+
+      it('should respect a custom toggleAriaLabel', () => {
+        mountMultiDropdown({ props: { toggleAriaLabel: 'Abrir opciones' } });
+        cy.get(toggleSel).should('have.attr', 'aria-label', 'Abrir opciones');
+      });
+
+      // The whole widget is one focus scope, like the pickers: moving focus
+      // between its parts keeps the panel open; leaving the widget closes it.
+      it('should keep the panel open when focus moves from the input to the toggle button', () => {
+        mountMultiDropdown();
+
+        cy.get(sel.input).focus();
+        cy.get(sel.panel).should('be.visible');
+
+        cy.get(toggleSel).focus();
+        cy.get(sel.panel).should('be.visible');
+      });
+
+      it('should close the panel when focus leaves the widget from the toggle button', () => {
+        mountMultiDropdown();
+
+        cy.get(sel.input).focus();
+        cy.get(toggleSel).focus();
+        cy.get(toggleSel).blur();
+        cy.get(sel.panel).should('not.be.visible');
+      });
+    });
+
     describe('pills and pill removal', () => {
       beforeEach(() => forcePillsStripMode(sel.field));
       afterEach(clearPillsWidthOverride);

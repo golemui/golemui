@@ -30,6 +30,7 @@ export function MultiDropdown(widgetInstance: WithWidget) {
 
   const listRef = useRef<GuiMultiList>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+  const widgetRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<GuiMultiSelectTrigger>(null);
   const labelRef = useRef<GuiLabel>(null);
   const ignoreNextFocusRef = useRef(false);
@@ -258,13 +259,30 @@ export function MultiDropdown(widgetInstance: WithWidget) {
     });
   };
 
+  const handleToggleMouseDown = (event: React.MouseEvent) => {
+    event.preventDefault();
+  };
+
+  const handleToggleClick = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    if (isListVisible) {
+      setIsListVisible(false);
+      setIsFiltering(false);
+      ignoreNextFocusRef.current = true;
+      triggerRef.current?.focusInput();
+      setTimeout(() => {
+        ignoreNextFocusRef.current = false;
+      });
+    } else {
+      triggerRef.current?.focusInput();
+      openPanel();
+    }
+  };
+
   const handleFocusOut = (e: React.FocusEvent) => {
     const newFocusTarget = e.relatedTarget as Node;
-    const isGoingToTrigger = triggerRef.current && triggerRef.current.contains(newFocusTarget);
-    const isGoingToList = listRef.current && listRef.current.contains(newFocusTarget);
-    const isGoingToPanel = panelRef.current && panelRef.current.contains(newFocusTarget);
 
-    if (isGoingToTrigger || isGoingToList || isGoingToPanel) {
+    if (newFocusTarget && widgetRef.current?.contains(newFocusTarget)) {
       return;
     }
 
@@ -312,7 +330,12 @@ export function MultiDropdown(widgetInstance: WithWidget) {
         native={false}
       ></GuiLabelReact>
 
-      <div className="gui-widget" onKeyDown={handleWidgetKeyDown}>
+      <div
+        ref={widgetRef}
+        className="gui-widget"
+        onKeyDown={handleWidgetKeyDown}
+        onBlur={handleFocusOut}
+      >
         <GuiMultiSelectTriggerReact
           ref={triggerRef}
           uid={uid}
@@ -335,11 +358,20 @@ export function MultiDropdown(widgetInstance: WithWidget) {
           onKeyDown={handleTriggerKeyDown}
           onInput={handleInputFilter}
           onFocus={handleFocusIn}
-          onBlur={handleFocusOut}
           onPillremove={handlePillRemove}
           onDropdowntoggle={handlePillsDropdownToggle}
         ></GuiMultiSelectTriggerReact>
-        <span className="gui-dropdown__arrow">
+        <button
+          type="button"
+          className="gui-dropdown__arrow"
+          aria-label={templateData.toggleAriaLabel ?? 'Show options'}
+          aria-haspopup="listbox"
+          aria-expanded={isListVisible ? 'true' : 'false'}
+          aria-controls={`${uid}-list`}
+          disabled={isDisabled}
+          onMouseDown={handleToggleMouseDown}
+          onClick={handleToggleClick}
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="16"
@@ -349,7 +381,7 @@ export function MultiDropdown(widgetInstance: WithWidget) {
           >
             <path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"></path>
           </svg>
-        </span>
+        </button>
 
         <div
           className="gui-picker__panel"
@@ -375,7 +407,6 @@ export function MultiDropdown(widgetInstance: WithWidget) {
             disabled={isDisabled || isReadOnly}
             readOnly={isReadOnly}
             hidden={!isListVisible}
-            onBlur={handleFocusOut}
           >
             {visibleItems.map((item, index) => {
               const absoluteIndex = range.start + index;

@@ -13,7 +13,12 @@
   [native]="false"
 ></gui-label>
 
-<div class="gui-widget" tabindex="-1" (keydown)="onWidgetKeyDown($event)">
+<div
+  class="gui-widget"
+  tabindex="-1"
+  (keydown)="onWidgetKeyDown($event)"
+  (focusout)="onFocusOut($event)"
+>
   <gui-multi-select-trigger
     #triggerRef
     [uid]="widget.uid"
@@ -36,12 +41,21 @@
     (keydown)="onTriggerKeyDown($event)"
     (input)="onInput($event)"
     (focusin)="onTriggerFocusIn($event)"
-    (focusout)="onFocusOutInput($event)"
     (pillremove)="onPillRemove($event)"
     (dropdowntoggle)="onPillsDropdownToggle($event)"
   ></gui-multi-select-trigger>
-  <span class="gui-dropdown__arrow"
-    ><svg
+  <button
+    type="button"
+    class="gui-dropdown__arrow"
+    [attr.aria-label]="templateData.toggleAriaLabel ?? 'Show options'"
+    aria-haspopup="listbox"
+    [attr.aria-expanded]="isListVisible() ? 'true' : 'false'"
+    [attr.aria-controls]="widget.uid + '-list'"
+    [disabled]="templateData.disabled"
+    (mousedown)="onToggleMouseDown($event)"
+    (click)="onToggleClick($event)"
+  >
+    <svg
       xmlns="http://www.w3.org/2000/svg"
       width="16"
       height="16"
@@ -50,8 +64,9 @@
     >
       <path
         d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"
-      ></path></svg
-  ></span>
+      ></path>
+    </svg>
+  </button>
   <div class="gui-picker__panel" [hidden]="!isListVisible()" (mousedown)="onPanelMouseDown($event)">
     <gui-multi-list
       #listRef
@@ -70,8 +85,6 @@
       (gui-update-items)="onUpdateItems($event)"
       (gui-range-change)="onRangeChange($event)"
       (gui-focus-change)="onFocusChange($event)"
-      (blur)="onListBlur()"
-      (focusout)="onFocusOutInput($event)"
       (change)="onValueChange($event)"
     >
       @for (item of visibleItems(); track $index) {

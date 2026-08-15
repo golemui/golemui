@@ -137,6 +137,64 @@ export const runDropdownComponentTests = (mountFn: MountComponentFn) => {
       });
     });
 
+    describe('panel toggle button', () => {
+      const toggleSel = 'button.gui-dropdown__arrow';
+      const panelSel = '.gui-dropdown .gui-widget > .gui-picker__panel';
+
+      it('should expose a named toggle button wired to the listbox', () => {
+        mountWithItems(['one', 'two']);
+
+        cy.get(toggleSel)
+          .should('have.attr', 'aria-label', 'Show options')
+          .should('have.attr', 'aria-haspopup', 'listbox')
+          .should('have.attr', 'aria-expanded', 'false')
+          .should('have.attr', 'aria-controls', 'testSubject-list');
+        cy.get(toggleSel).then(($btn) => {
+          cy.get(`[id="${$btn.attr('aria-controls')}"]`).should('exist');
+        });
+      });
+
+      it('should open and close the panel from the toggle button, keeping focus in the input', () => {
+        mountWithItems(['one', 'two']);
+
+        cy.get(toggleSel).click();
+        cy.get(panelSel).should('be.visible');
+        cy.get(toggleSel).should('have.attr', 'aria-expanded', 'true');
+        cy.focused().should('have.attr', 'data-cy', 'testSubject_textinput');
+
+        cy.get(toggleSel).click();
+        cy.get(panelSel).should('not.be.visible');
+        cy.get(toggleSel).should('have.attr', 'aria-expanded', 'false');
+        cy.focused().should('have.attr', 'data-cy', 'testSubject_textinput');
+      });
+
+      it('should respect a custom toggleAriaLabel', () => {
+        mountWithItems(['one'], { toggleAriaLabel: 'Abrir opciones' });
+        cy.get(toggleSel).should('have.attr', 'aria-label', 'Abrir opciones');
+      });
+
+      // The whole widget is one focus scope, like the pickers: moving focus
+      // between its parts keeps the panel open; leaving the widget closes it.
+      it('should keep the panel open when focus moves from the input to the toggle button', () => {
+        mountWithItems(['one', 'two']);
+
+        cy.get('[data-cy="testSubject_textinput"]').focus();
+        cy.get(panelSel).should('be.visible');
+
+        cy.get(toggleSel).focus();
+        cy.get(panelSel).should('be.visible');
+      });
+
+      it('should close the panel when focus leaves the widget from the toggle button', () => {
+        mountWithItems(['one', 'two']);
+
+        cy.get('[data-cy="testSubject_textinput"]').focus();
+        cy.get(toggleSel).focus();
+        cy.get(toggleSel).blur();
+        cy.get(panelSel).should('not.be.visible');
+      });
+    });
+
     describe('accessibility', () => {
       const inputSel = '[data-cy="testSubject_textinput"]';
 

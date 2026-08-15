@@ -29,6 +29,7 @@ const listRef = ref<GuiMultiList | null>(null);
 const panelRef = ref<HTMLDivElement | null>(null);
 const triggerRef = ref<GuiMultiSelectTrigger | null>(null);
 const labelRef = ref<GuiLabel | null>(null);
+const widgetRef = ref<HTMLDivElement | null>(null);
 
 const currentValues = computed(() => (Array.isArray(value.value) ? value.value : []));
 
@@ -226,11 +227,28 @@ const handleWidgetKeyDown = (event: KeyboardEvent) => {
 
 const handleFocusOut = (e: FocusEvent) => {
   const newFocus = e.relatedTarget as Node;
-  const toTrigger = triggerRef.value && triggerRef.value.contains(newFocus);
-  const toList = listRef.value && listRef.value.contains(newFocus);
-  const toPanel = panelRef.value && panelRef.value.contains(newFocus);
-  if (toTrigger || toList || toPanel) return;
+  if (newFocus && widgetRef.value?.contains(newFocus)) return;
   closeList();
+};
+
+const handleToggleMouseDown = (event: MouseEvent) => {
+  event.preventDefault();
+};
+
+const handleToggleClick = (event: MouseEvent) => {
+  event.stopPropagation();
+  if (isListVisible.value) {
+    isListVisible.value = false;
+    isFiltering.value = false;
+    ignoreNextFocus = true;
+    triggerRef.value?.focusInput();
+    setTimeout(() => {
+      ignoreNextFocus = false;
+    });
+  } else {
+    triggerRef.value?.focusInput();
+    openPanel();
+  }
 };
 
 const handlePillRemove = (e: Event) => {
@@ -269,7 +287,12 @@ const ItemRenderer = computed<Component>(() => {
       :native="false"
     ></gui-label>
 
-    <div class="gui-widget" @keydown="handleWidgetKeyDown">
+    <div
+      ref="widgetRef"
+      class="gui-widget"
+      @keydown="handleWidgetKeyDown"
+      @focusout="handleFocusOut"
+    >
       <gui-multi-select-trigger
         ref="triggerRef"
         :uid="uid"
@@ -292,11 +315,20 @@ const ItemRenderer = computed<Component>(() => {
         @keydown="handleTriggerKeyDown"
         @input="handleInputFilter"
         @focusin="handleFocusIn"
-        @focusout="handleFocusOut"
         @pillremove="handlePillRemove"
         @dropdowntoggle="handlePillsDropdownToggle"
       ></gui-multi-select-trigger>
-      <span class="gui-dropdown__arrow">
+      <button
+        type="button"
+        class="gui-dropdown__arrow"
+        :aria-label="templateData.toggleAriaLabel ?? 'Show options'"
+        aria-haspopup="listbox"
+        :aria-expanded="isListVisible ? 'true' : 'false'"
+        :aria-controls="`${uid}-list`"
+        :disabled="isDisabled"
+        @mousedown="handleToggleMouseDown"
+        @click="handleToggleClick"
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="16"
@@ -308,7 +340,7 @@ const ItemRenderer = computed<Component>(() => {
             d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"
           ></path>
         </svg>
-      </span>
+      </button>
 
       <div
         class="gui-picker__panel"
@@ -330,7 +362,6 @@ const ItemRenderer = computed<Component>(() => {
           :disabled="isDisabled || isReadOnly"
           :readOnly="isReadOnly"
           :hidden="!isListVisible"
-          @blur="handleFocusOut"
         >
           <div
             v-for="(item, idx) in visibleItems"

@@ -174,6 +174,26 @@ export class MultiDropdownComponent implements OnInit, OnDestroy, WithWidget {
     });
   }
 
+  protected onToggleMouseDown(event: MouseEvent) {
+    event.preventDefault();
+  }
+
+  protected onToggleClick(event: MouseEvent) {
+    event.stopPropagation();
+    if (this.isListVisible()) {
+      this.isListVisible.set(false);
+      this.isFiltering.set(false);
+      this.ignoreNextFocus = true;
+      this.triggerRef()?.nativeElement?.focusInput();
+      setTimeout(() => {
+        this.ignoreNextFocus = false;
+      });
+    } else {
+      this.triggerRef()?.nativeElement?.focusInput();
+      this.openPanel();
+    }
+  }
+
   protected onTriggerKeyDown(event: KeyboardEvent) {
     if (event.key === 'ArrowDown') {
       event.preventDefault();
@@ -230,7 +250,7 @@ export class MultiDropdownComponent implements OnInit, OnDestroy, WithWidget {
     }
   }
 
-  protected onFocusOutInput(event: FocusEvent) {
+  protected onFocusOut(event: FocusEvent) {
     const newFocusTarget = event.relatedTarget as Node;
 
     if (newFocusTarget && this.el.nativeElement.contains(newFocusTarget)) {
@@ -284,10 +304,6 @@ export class MultiDropdownComponent implements OnInit, OnDestroy, WithWidget {
   protected onRangeChange(event: Event) {
     const { startIndex, endIndex } = (event as CustomEvent).detail;
     this.currentRange.set({ start: startIndex, end: endIndex });
-  }
-
-  protected onListBlur() {
-    this.closeList();
   }
 
   private closeList() {

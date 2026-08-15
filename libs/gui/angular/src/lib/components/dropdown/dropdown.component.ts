@@ -141,6 +141,26 @@ export class DropdownComponent implements OnInit, OnDestroy, WithWidget {
     });
   }
 
+  protected onToggleMouseDown(event: MouseEvent) {
+    event.preventDefault();
+  }
+
+  protected onToggleClick(event: MouseEvent) {
+    event.stopPropagation();
+    if (this.isListVisible()) {
+      this.isListVisible.set(false);
+      this.isFiltering.set(false);
+      this.ignoreNextFocus = true;
+      this.inputRef().nativeElement.focus();
+      setTimeout(() => {
+        this.ignoreNextFocus = false;
+      });
+    } else {
+      this.inputRef().nativeElement.focus();
+      this.onInputFocus();
+    }
+  }
+
   protected onInputKeyDown(event: KeyboardEvent) {
     const key = event.key;
 
@@ -211,7 +231,7 @@ export class DropdownComponent implements OnInit, OnDestroy, WithWidget {
     }
   }
 
-  protected onFocusOutInput(event: FocusEvent) {
+  protected onFocusOut(event: FocusEvent) {
     const newFocusTarget = event.relatedTarget as Node;
 
     if (newFocusTarget && this.el.nativeElement.contains(newFocusTarget)) {
@@ -262,10 +282,6 @@ export class DropdownComponent implements OnInit, OnDestroy, WithWidget {
   protected onRangeChange(event: Event) {
     const { startIndex, endIndex } = (event as CustomEvent).detail;
     this.currentRange.set({ start: startIndex, end: endIndex });
-  }
-
-  protected onListBlur() {
-    this.closeList();
   }
 
   protected onValueChange(event: Event) {
