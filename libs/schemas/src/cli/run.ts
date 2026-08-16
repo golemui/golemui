@@ -11,7 +11,7 @@ import { createInterface } from 'node:readline/promises';
 import { pathToFileURL } from 'node:url';
 import { generateImplementationSchemas } from '../lib/generator/generate-implementation-schemas.js';
 import type { ImplementationSchemaConfig } from '../lib/manifest.types.js';
-import { starterFiles } from './templates.js';
+import { exampleInputWidgetType, starterFiles } from './templates.js';
 
 const CONFIG_FILE = 'schemas.config.mjs';
 
@@ -153,6 +153,8 @@ Next:
   1. Add @golemui/schemas to the project's dependencies.
   2. Write one component schema per widget under src/lib/components/, and list each one
      in ${CONFIG_FILE}. src/lib/components/example-input.schema.json is the pattern to copy.
+     examples/example.form.json uses the starter type ${exampleInputWidgetType(name)}, so
+     replace it together with the manifest or test/schemas.spec.ts fails.
   3. Rerun \`npx @golemui/schemas generate\` after every edit to a component schema, to
      ${CONFIG_FILE} or to validators.schema.json. A CI step that regenerates and then runs
      \`git diff --exit-code\` catches a forgotten rerun.
