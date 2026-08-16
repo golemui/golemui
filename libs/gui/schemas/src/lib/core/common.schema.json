@@ -192,7 +192,7 @@
         },
         "size": {
           "type": "number",
-          "description": "Column span in the form grid (1-12). Defaults to full width when omitted.",
+          "description": "Relative width of the widget inside its layout, from 1 to 12, where 12 is the full width. Defaults to full width when omitted. gui maps it to a 12-column grid, other widget sets may map it to a flex ratio.",
           "minimum": 1,
           "maximum": 12
         },
