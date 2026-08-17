@@ -189,6 +189,7 @@ export class GuiPills extends LitElement {
             e.stopPropagation();
             this.toggleDropdown();
           }}
+          @keydown=${this.onCountKeydown}
         >
           ${count}
         </button>
@@ -335,6 +336,7 @@ export class GuiPills extends LitElement {
     const nextKey = isDropdown ? 'ArrowDown' : 'ArrowRight';
 
     if (e.key === prevKey) {
+      e.stopPropagation();
       if (index > 0) {
         e.preventDefault();
         this.focusPillAt(index - 1);
@@ -345,6 +347,7 @@ export class GuiPills extends LitElement {
     }
 
     if (e.key === nextKey) {
+      e.stopPropagation();
       if (index < this.items.length - 1) {
         e.preventDefault();
         this.focusPillAt(index + 1);
@@ -356,12 +359,14 @@ export class GuiPills extends LitElement {
 
     if (e.key === 'Home') {
       e.preventDefault();
+      e.stopPropagation();
       this.focusPillAt(0);
       return;
     }
 
     if (e.key === 'End') {
       e.preventDefault();
+      e.stopPropagation();
       this.focusPillAt(this.items.length - 1);
       return;
     }
@@ -447,6 +452,23 @@ export class GuiPills extends LitElement {
   private toggleDropdown = () => {
     if (this._showDropdown) {
       this.closeDropdown();
+    } else {
+      this.openDropdown();
+    }
+  };
+
+  /**
+   * ArrowDown on the count bubble opens the popup the button's aria-haspopup
+   * advertises. stopPropagation keeps the key from reaching hosts whose
+   * trigger-level ArrowDown opens a different popup (multiDropdown's panel
+   * would otherwise open and force this dropdown closed).
+   */
+  private onCountKeydown = (e: KeyboardEvent) => {
+    if (e.key !== 'ArrowDown') return;
+    e.preventDefault();
+    e.stopPropagation();
+    if (this._showDropdown) {
+      this.focusPillAt(0);
     } else {
       this.openDropdown();
     }
