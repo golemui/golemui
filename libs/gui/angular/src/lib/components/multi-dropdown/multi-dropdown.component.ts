@@ -13,7 +13,13 @@ import {
 } from '@angular/core';
 import { type AngularItemRenderer, InputWidgetAdapter } from '@golemui/angular';
 import type { InputWidget, WithWidget } from '@golemui/core';
-import type { ListItem, MultiDropdownProps, OptionValue } from '@golemui/gui-shared/internals';
+import type {
+  ListItem,
+  ListProps,
+  MultiDropdownProps,
+  OptionValue,
+} from '@golemui/gui-shared/internals';
+import { updateListItems } from '@golemui/gui-components/internals';
 import { debounceTime, Subject, type Subscription } from 'rxjs';
 import { DefaultMultiListItemRenderer } from '../multi-list/default-multi-list.item-renderer';
 import '@golemui/gui-components/label';
@@ -78,10 +84,15 @@ export class MultiDropdownComponent implements OnInit, OnDestroy, WithWidget {
   });
 
   protected pillItems = computed(() => {
-    const labelField = (this.adapter.templateData().labelField as string) ?? 'label';
+    const templateData = this.adapter.templateData();
+    const labelField = (templateData.labelField as string) ?? 'label';
     const items = this.listItems();
+    const source = updateListItems(
+      (templateData.items ?? []) as ListItem<any>[],
+      templateData as unknown as ListProps<any>,
+    );
     return this.currentValues().map((value) => {
-      const item = items.find((i) => i.value === value);
+      const item = source.find((i) => i.value === value) ?? items.find((i) => i.value === value);
       const isObject = item != null && item.template !== null && typeof item.template === 'object';
       const label =
         item == null

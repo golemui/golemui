@@ -1,6 +1,12 @@
 import type { InputWidget, WithWidget } from '@golemui/core';
 import { InputWidgetAdapter, type LitFormContext, formContext, inputContext } from '@golemui/lit';
-import type { ListItem, MultiDropdownProps, OptionValue } from '@golemui/gui-shared/internals';
+import type {
+  ListItem,
+  ListProps,
+  MultiDropdownProps,
+  OptionValue,
+} from '@golemui/gui-shared/internals';
+import { updateListItems } from '@golemui/gui-components/internals';
 import type {
   GuiMultiSelectTrigger,
   GuiPillEventDetail,
@@ -111,9 +117,15 @@ export class MultiDropdownElement extends LitElement implements WithWidget {
   }
 
   private _pillItems(values: OptionValue[]): GuiPillItem[] {
-    const labelField = (this.adapter.templateData.labelField as string) ?? 'label';
+    const templateData = this.adapter.templateData;
+    const labelField = (templateData.labelField as string) ?? 'label';
+    const source = updateListItems(
+      (templateData.items ?? []) as ListItem<any>[],
+      templateData as unknown as ListProps<any>,
+    );
     return values.map((value) => {
-      const item = this._listItems.find((i) => i.value === value);
+      const item =
+        source.find((i) => i.value === value) ?? this._listItems.find((i) => i.value === value);
       const isObject = item != null && item.template !== null && typeof item.template === 'object';
       const label =
         item == null
