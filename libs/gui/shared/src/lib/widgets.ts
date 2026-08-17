@@ -10,6 +10,8 @@ export const inputWidgets = [
   'dropdown',
   'list',
   'markdown',
+  'multiDropdown',
+  'multiList',
   'number',
   'password',
   'radiogroup',

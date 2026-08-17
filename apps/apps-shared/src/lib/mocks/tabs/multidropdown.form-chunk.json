@@ -1,0 +1,87 @@
+{
+  "$schema": "../../../../../../libs/gui/schemas/src/lib/layout-widget.schema.json",
+  "uid": "tabMultiDropdown",
+  "kind": "layout",
+  "type": "flex",
+  "children": [
+    {
+      "kind": "input",
+      "type": "multiDropdown",
+      "path": "multiDropdowns.frameworks",
+      "label": "Frameworks",
+      "props": {
+        "placeholder": "Search frameworks…",
+        "hint": "Toggle options — the panel stays open while you pick",
+        "inputDebounce": 0,
+        "items": ["React", "Angular", "Vue", "Lit", "Svelte", "Solid"]
+      }
+    },
+    {
+      "kind": "input",
+      "type": "multiDropdown",
+      "path": "multiDropdowns.withIcon",
+      "label": "Multi dropdown with icon",
+      "props": {
+        "placeholder": "Search frameworks…",
+        "icon": "checklist",
+        "hint": "The icon sits to the left of the pills and filter input",
+        "items": ["React", "Angular", "Vue", "Lit", "Svelte", "Solid"]
+      }
+    },
+    {
+      "kind": "input",
+      "type": "multiDropdown",
+      "path": "multiDropdowns.objectItems",
+      "label": "Object items",
+      "props": {
+        "placeholder": "Search items…",
+        "hint": "Object items resolved through labelField/valueField",
+        "height": 150,
+        "items": [
+          { "label": "Item 0", "value": 0 },
+          { "label": "Item 1", "value": 1 },
+          { "label": "Item 2", "value": 2 },
+          { "label": "Item 3", "value": 3 },
+          { "label": "Item 4", "value": 4 },
+          { "label": "Item 5", "value": 5 }
+        ]
+      }
+    },
+    {
+      "kind": "input",
+      "type": "multiDropdown",
+      "path": "multiDropdowns.limited",
+      "label": "Limited to 3 selections",
+      "validator": { "type": "array", "maxItems": 3 },
+      "props": {
+        "placeholder": "Pick up to three…",
+        "hint": "A maxItems validator flags a fourth selection instead of blocking it",
+        "items": ["React", "Angular", "Vue", "Lit", "Svelte", "Solid"]
+      }
+    },
+    {
+      "kind": "input",
+      "type": "multiDropdown",
+      "path": "multiDropdowns.disabled",
+      "label": "Disabled multi dropdown",
+      "disabled": true,
+      "readonly": true,
+      "props": {
+        "placeholder": "Disabled",
+        "items": ["React", "Angular", "Vue", "Lit", "Svelte", "Solid"]
+      }
+    },
+    {
+      "kind": "input",
+      "type": "multiDropdown",
+      "path": "multiDropdowns.required",
+      "label": "Required multi dropdown",
+      "validator": { "type": "array", "required": true, "minItems": 2 },
+      "props": {
+        "placeholder": "Pick at least two…",
+        "hint": "Select at least two frameworks",
+        "items": ["React", "Angular", "Vue", "Lit", "Svelte", "Solid"]
+      }
+    }
+  ]
+}

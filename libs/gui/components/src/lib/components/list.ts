@@ -43,7 +43,7 @@ export class GuiList extends LitElement {
     this.syncHostAria();
   }
 
-  private syncHostAria() {
+  protected syncHostAria() {
     this.setAttribute('role', 'listbox');
     this.tabIndex = this.disabled ? -1 : 0;
 
@@ -87,6 +87,7 @@ export class GuiList extends LitElement {
       <div
         class="gui-list__scroll-viewport"
         style="max-height: ${height}px; min-height: 40px; overflow-y: auto; position: relative; display: block;"
+        tabindex="-1"
         @scroll="${this.onScroll}"
       >
         <div
@@ -109,8 +110,20 @@ export class GuiList extends LitElement {
   }
 
   public scrollToSelectedIndex() {
-    const selectedIndex = this._items.findIndex((item) => item.value === this.value);
-    this.scrollToIndex(selectedIndex);
+    this.scrollToIndex(this.findSelectedIndex());
+  }
+
+  protected hasSelection(): boolean {
+    return !!this.value;
+  }
+
+  protected isSelected(value: OptionValue): boolean {
+    return value === this.value;
+  }
+
+  /** Index of the (first) selected item, or -1 when nothing is selected */
+  protected findSelectedIndex(): number {
+    return this._items.findIndex((item) => this.isSelected(item.value));
   }
 
   private onKeyDown = (e: KeyboardEvent) => {
@@ -167,9 +180,9 @@ export class GuiList extends LitElement {
   };
 
   private onFocus = () => {
-    if (!this.value || !this.items.length) return;
+    if (!this.hasSelection() || !this.items.length) return;
 
-    const selectedIndex = this._items.findIndex((item) => item.value === this.value);
+    const selectedIndex = this.findSelectedIndex();
 
     this._focusedIndex = selectedIndex;
     this.scrollToIndex(selectedIndex);
@@ -201,7 +214,7 @@ export class GuiList extends LitElement {
     this.dispatchEvent(new CustomEvent('blur', { bubbles: true, composed: true }));
   };
 
-  private scrollToIndex(index: number) {
+  public scrollToIndex(index: number) {
     const itemHeight = this.itemHeight ?? 40;
     const viewportHeight = this.height ?? 300;
 

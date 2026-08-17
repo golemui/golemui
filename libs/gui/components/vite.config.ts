@@ -39,6 +39,8 @@ export default defineConfig(() => ({
         'lib/components/list': 'src/lib/components/list.ts',
         'lib/components/markdown': 'src/lib/components/markdown.ts',
         'lib/components/markdown-text': 'src/lib/components/markdown-text.ts',
+        'lib/components/multi-list': 'src/lib/components/multi-list.ts',
+        'lib/components/multi-select-trigger': 'src/lib/components/multi-select-trigger.ts',
         'lib/components/number': 'src/lib/components/number.ts',
         'lib/components/password': 'src/lib/components/password.ts',
         'lib/components/pills': 'src/lib/components/pills.ts',

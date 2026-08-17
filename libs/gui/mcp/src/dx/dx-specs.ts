@@ -324,6 +324,18 @@ const INPUTS: DxSpec[] = [
     ],
   },
   {
+    factory: 'multiDropdown',
+    namespace: 'inputs',
+    docSlug: 'multi-dropdown',
+    call: 'gui.inputs.multiDropdown(path, { label, items, validator? })',
+    example:
+      "gui.inputs.multiDropdown('countries', { label: 'Countries', items: [{ value: 'us', label: 'United States' }, { value: 'ca', label: 'Canada' }], validator: { type: 'array', required: true } })",
+    notes: [
+      'Multi-select dropdown: the value is an **array** of the selected item values; selections render as removable pills to the left of the filter input and the panel stays open while toggling.',
+      "The validator must be array-typed — `{ type: 'array', required: true, minItems?, maxItems? }`. Selection is never silently blocked; cap it with `maxItems` so the user is told why.",
+    ],
+  },
+  {
     factory: 'radiogroup',
     namespace: 'inputs',
     docSlug: 'radiogroup',
@@ -529,6 +541,18 @@ const INPUTS: DxSpec[] = [
     notes: [
       'A scrolling selection list. `items` is a string array (or `{ value, label }[]`).',
       '`height` / `itemHeight` size the scroll viewport (pixels).',
+    ],
+  },
+  {
+    factory: 'multiList',
+    namespace: 'inputs',
+    docSlug: 'multi-list',
+    call: 'gui.inputs.multiList(path, { label, items, height?, itemHeight?, validator? })',
+    example:
+      "gui.inputs.multiList('toppings', { label: 'Toppings', items: ['Cheese', 'Bacon', 'Mushrooms'], height: 200 })",
+    notes: [
+      'Multi-select scrolling list: the value is an **array** of the selected item values; Enter/Space and clicks toggle rows on and off.',
+      "Selection is never silently blocked; cap it with an array validator — `{ type: 'array', maxItems }` — so the user is told why.",
     ],
   },
   {

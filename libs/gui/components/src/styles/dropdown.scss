@@ -13,6 +13,10 @@
   }
 
   .gui-widget {
+    input.gui-dropdown--icon {
+      padding-inline-start: 2.5rem;
+    }
+
     .gui-dropdown__arrow {
       fill: var(--gui-text-default);
       transform: rotate(0deg);
@@ -20,11 +24,16 @@
       position: absolute;
       inset-inline-end: var(--gui-space-3);
       transform-origin: 50% 40%;
-      pointer-events: none;
       display: flex;
+      background: none;
+      border: 0;
+      padding: 0;
+      margin: 0;
+      line-height: 0;
+      cursor: pointer;
     }
 
-    &:has(> input[aria-expanded='true']) .gui-dropdown__arrow {
+    .gui-dropdown__arrow[aria-expanded='true'] {
       transform: rotate(180deg);
     }
 
@@ -35,6 +44,15 @@
       gui-list {
         position: static;
         width: 100%;
+
+        &[aria-invalid='true'] {
+          border-color: var(--gui-border-default);
+
+          &:focus {
+            border-color: var(--gui-border-focus);
+            box-shadow: var(--gui-shadow-focus);
+          }
+        }
 
         &[hidden] {
           display: none;

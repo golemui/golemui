@@ -24,6 +24,7 @@ export function Dropdown(widgetInstance: WithWidget) {
 
   const listRef = useRef<GuiList>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+  const widgetRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const labelRef = useRef<GuiLabel>(null);
   const ignoreNextFocusRef = useRef(false);
@@ -272,12 +273,30 @@ export function Dropdown(widgetInstance: WithWidget) {
     });
   };
 
+  const handleToggleMouseDown = (event: React.MouseEvent) => {
+    event.preventDefault();
+  };
+
+  const handleToggleClick = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    if (isListVisible) {
+      setIsListVisible(false);
+      setIsFiltering(false);
+      ignoreNextFocusRef.current = true;
+      inputRef.current?.focus();
+      setTimeout(() => {
+        ignoreNextFocusRef.current = false;
+      });
+    } else {
+      inputRef.current?.focus();
+      handleInputFocus();
+    }
+  };
+
   const handleFocusOut = (e: React.FocusEvent) => {
     const newFocusTarget = e.relatedTarget as Node;
-    const isGoingToInput = inputRef.current && inputRef.current.contains(newFocusTarget);
-    const isGoingToList = listRef.current && listRef.current.contains(newFocusTarget);
 
-    if (isGoingToInput || isGoingToList) {
+    if (newFocusTarget && widgetRef.current?.contains(newFocusTarget)) {
       return;
     }
 
@@ -306,14 +325,26 @@ export function Dropdown(widgetInstance: WithWidget) {
         native={false}
       ></GuiLabelReact>
 
-      <div className="gui-widget" onKeyDown={handleWidgetKeyDown}>
+      <div
+        ref={widgetRef}
+        className="gui-widget"
+        onKeyDown={handleWidgetKeyDown}
+        onBlur={handleFocusOut}
+      >
+        {templateData.icon && (
+          <span
+            className={`gui-widget-icon ${templateData.icon}`}
+            data-icon={templateData.icon}
+            aria-hidden="true"
+          ></span>
+        )}
         <input
           ref={inputRef}
           type="text"
           role="combobox"
           id={uid}
           data-cy={`${uid}_textinput`}
-          className="gui-widget-input"
+          className={`gui-widget-input${templateData.icon ? ' gui-dropdown--icon' : ''}`}
           defaultValue={value ?? ''}
           required={isRequired}
           disabled={isDisabled}
@@ -323,14 +354,23 @@ export function Dropdown(widgetInstance: WithWidget) {
           onKeyDown={handleInputKeyDown}
           onInput={handleInputFilter}
           onFocus={handleInputFocus}
-          onBlur={handleFocusOut}
           aria-expanded={isListVisible ? 'true' : 'false'}
           aria-controls={`${uid}-list`}
           aria-autocomplete="list"
           aria-labelledby={templateData.label ? `${uid}_label` : undefined}
           aria-describedby={templateData.hint ? `${uid}_hint` : undefined}
         />
-        <span className="gui-dropdown__arrow">
+        <button
+          type="button"
+          className="gui-dropdown__arrow"
+          aria-label={templateData.toggleAriaLabel ?? 'Show options'}
+          aria-haspopup="listbox"
+          aria-expanded={isListVisible ? 'true' : 'false'}
+          aria-controls={`${uid}-list`}
+          disabled={isDisabled}
+          onMouseDown={handleToggleMouseDown}
+          onClick={handleToggleClick}
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="16"
@@ -340,7 +380,7 @@ export function Dropdown(widgetInstance: WithWidget) {
           >
             <path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"></path>
           </svg>
-        </span>
+        </button>
 
         <div
           className="gui-picker__panel"
@@ -367,7 +407,6 @@ export function Dropdown(widgetInstance: WithWidget) {
             readOnly={isReadOnly}
             hidden={!isListVisible}
             onFocus={handleInputFocus}
-            onBlur={handleFocusOut}
           >
             {visibleItems.map((item, index) => {
               const absoluteIndex = range.start + index;

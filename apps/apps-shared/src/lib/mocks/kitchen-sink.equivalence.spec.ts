@@ -68,6 +68,10 @@ import jsonSelectTab from './tabs/select.form-chunk.json';
 import { selectTab as dxSelectTab } from './tabs/select.dx';
 import jsonTagsTab from './tabs/tags.form-chunk.json';
 import { tagsTab as dxTagsTab } from './tabs/tags.dx';
+import jsonMultidropdownTab from './tabs/multidropdown.form-chunk.json';
+import { multiDropdownTab as dxMultidropdownTab } from './tabs/multidropdown.dx';
+import jsonMultilistTab from './tabs/multilist.form-chunk.json';
+import { multiListTab as dxMultilistTab } from './tabs/multilist.dx';
 import jsonTextareaTab from './tabs/textarea.form-chunk.json';
 import { textareaTab as dxTextareaTab } from './tabs/textarea.dx';
 import jsonTextinputTab from './tabs/textinput.form-chunk.json';
@@ -257,6 +261,18 @@ describe('Kitchen Sink — JSON ↔ DX equivalence', () => {
   it('list tab', () => {
     const json = buildJsonTab(jsonListTab).form;
     const dx = buildDxTab(dxListTab);
+    expect(normalise(dx)).toEqual(normalise(json));
+  });
+
+  it('multidropdown tab', () => {
+    const json = buildJsonTab(jsonMultidropdownTab).form;
+    const dx = buildDxTab(dxMultidropdownTab);
+    expect(normalise(dx)).toEqual(normalise(json));
+  });
+
+  it('multilist tab', () => {
+    const json = buildJsonTab(jsonMultilistTab).form;
+    const dx = buildDxTab(dxMultilistTab);
     expect(normalise(dx)).toEqual(normalise(json));
   });
 

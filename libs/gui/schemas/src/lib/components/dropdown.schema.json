@@ -60,6 +60,12 @@
     "autocompleteProp": {
       "type": "string",
       "description": "HTML `autocomplete` attribute applied to the underlying input element"
+    },
+    "iconProp": {
+      "type": "string"
+    },
+    "toggleAriaLabelProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable"
     }
   },
   "allOf": [
@@ -131,6 +137,12 @@
         },
         "autocomplete": {
           "$ref": "#/$defs/autocompleteProp"
+        },
+        "icon": {
+          "$ref": "#/$defs/iconProp"
+        },
+        "toggleAriaLabel": {
+          "$ref": "#/$defs/toggleAriaLabelProp"
         }
       },
       "patternProperties": {
@@ -166,6 +178,12 @@
         },
         "^autocomplete\\.[^.]+$": {
           "$ref": "#/$defs/autocompleteProp"
+        },
+        "^icon\\.[^.]+$": {
+          "$ref": "#/$defs/iconProp"
+        },
+        "^toggleAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/toggleAriaLabelProp"
         }
       },
       "additionalProperties": false

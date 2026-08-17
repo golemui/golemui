@@ -119,6 +119,82 @@ export const runDropdownComponentTests = (mountFn: MountComponentFn) => {
       visibleItems().first().should('contain.text', 'React');
     });
 
+    describe('field icon', () => {
+      it('should render the icon and pad the input clear of it', () => {
+        mountWithItems(['one', 'two'], { icon: 'search' });
+
+        cy.get('.gui-dropdown .gui-widget-icon')
+          .should('have.attr', 'data-icon', 'search')
+          .and('have.attr', 'aria-hidden', 'true');
+        cy.get('[data-cy="testSubject_textinput"]')
+          .should('have.class', 'gui-dropdown--icon')
+          .and('have.css', 'padding-left', '40px'); // 2.5rem clears the icon
+      });
+
+      it('should not render the icon span without the icon prop', () => {
+        mountWithItems(['one', 'two']);
+        cy.get('.gui-dropdown .gui-widget-icon').should('not.exist');
+      });
+    });
+
+    describe('panel toggle button', () => {
+      const toggleSel = 'button.gui-dropdown__arrow';
+      const panelSel = '.gui-dropdown .gui-widget > .gui-picker__panel';
+
+      it('should expose a named toggle button wired to the listbox', () => {
+        mountWithItems(['one', 'two']);
+
+        cy.get(toggleSel)
+          .should('have.attr', 'aria-label', 'Show options')
+          .should('have.attr', 'aria-haspopup', 'listbox')
+          .should('have.attr', 'aria-expanded', 'false')
+          .should('have.attr', 'aria-controls', 'testSubject-list');
+        cy.get(toggleSel).then(($btn) => {
+          cy.get(`[id="${$btn.attr('aria-controls')}"]`).should('exist');
+        });
+      });
+
+      it('should open and close the panel from the toggle button, keeping focus in the input', () => {
+        mountWithItems(['one', 'two']);
+
+        cy.get(toggleSel).click();
+        cy.get(panelSel).should('be.visible');
+        cy.get(toggleSel).should('have.attr', 'aria-expanded', 'true');
+        cy.focused().should('have.attr', 'data-cy', 'testSubject_textinput');
+
+        cy.get(toggleSel).click();
+        cy.get(panelSel).should('not.be.visible');
+        cy.get(toggleSel).should('have.attr', 'aria-expanded', 'false');
+        cy.focused().should('have.attr', 'data-cy', 'testSubject_textinput');
+      });
+
+      it('should respect a custom toggleAriaLabel', () => {
+        mountWithItems(['one'], { toggleAriaLabel: 'Abrir opciones' });
+        cy.get(toggleSel).should('have.attr', 'aria-label', 'Abrir opciones');
+      });
+
+      // The whole widget is one focus scope, like the pickers: moving focus
+      // between its parts keeps the panel open; leaving the widget closes it.
+      it('should keep the panel open when focus moves from the input to the toggle button', () => {
+        mountWithItems(['one', 'two']);
+
+        cy.get('[data-cy="testSubject_textinput"]').focus();
+        cy.get(panelSel).should('be.visible');
+
+        cy.get(toggleSel).focus();
+        cy.get(panelSel).should('be.visible');
+      });
+
+      it('should close the panel when focus leaves the widget from the toggle button', () => {
+        mountWithItems(['one', 'two']);
+
+        cy.get('[data-cy="testSubject_textinput"]').focus();
+        cy.get(toggleSel).focus();
+        cy.get(toggleSel).blur();
+        cy.get(panelSel).should('not.be.visible');
+      });
+    });
+
     describe('accessibility', () => {
       const inputSel = '[data-cy="testSubject_textinput"]';
 
@@ -134,6 +210,18 @@ export const runDropdownComponentTests = (mountFn: MountComponentFn) => {
 
         cy.get(inputSel).click();
         cy.get(inputSel).should('have.attr', 'aria-expanded', 'true');
+      });
+
+      it('should keep the listbox host as the single tab stop', () => {
+        mountWithItems(['React', 'Angular', 'Vue']);
+
+        // The scroll viewport opts out of Chrome's implicit scrollable-region
+        // focusability — otherwise a scrollable list gets a second tab stop.
+        cy.get('gui-list').should('have.attr', 'tabindex', '0');
+        cy.get('gui-list')
+          .shadow()
+          .find('.gui-list__scroll-viewport')
+          .should('have.attr', 'tabindex', '-1');
       });
 
       it('should not render duplicate ids for the input and the list', () => {
@@ -202,10 +290,15 @@ export const runDropdownComponentTests = (mountFn: MountComponentFn) => {
           .and('not.have.attr', 'role');
         cy.get('[id="testSubject_errors"]').should('have.length', 1);
 
-        // Invalid field → input and panel share the red border
+        // Invalid field → input and panel share the red border; the inner
+        // listbox keeps its default border (the panel owns the invalid
+        // chrome, parity with the pickers)
         cy.get(inputSel).should('have.attr', 'aria-invalid', 'true');
         cy.get('[data-cy="testSubject_validator-error"]').then(($li) => {
           cy.get(panelSel).should('have.css', 'border-top-color', $li.css('color'));
+          cy.get('gui-list')
+            .should('have.attr', 'aria-invalid', 'true')
+            .and('not.have.css', 'border-top-color', $li.css('color'));
         });
       });
 

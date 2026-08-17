@@ -46,7 +46,6 @@ export type TagsProps = {
   separators?: TagsSeparator[];
   allowDuplicates?: boolean;
   trim?: boolean;
-  limit?: number;
   removeAriaLabel?: string;
   removeIcon?: string;
 };
@@ -449,7 +448,7 @@ export type DateBoundsMessageProps = {
   disabledDateRangeMessage?: Localizable;
 };
 
-/** The popup toggle button shared by the six pickers. */
+/** The popup toggle button shared by the six pickers and the two dropdowns. */
 export type PickerToggleProps = {
   toggleAriaLabel?: string;
 };
@@ -664,9 +663,10 @@ export type ListItem<T> = {
 };
 
 type ItemKeys<T> = T extends Record<string, any> ? keyof T : string;
-export type DropdownProps<T> = {
+export type DropdownProps<T> = PickerToggleProps & {
   placeholder?: string;
   hint?: string;
+  icon?: string;
   autocomplete?: Autocomplete;
   items: ListItem<T>[];
   /**
@@ -699,6 +699,13 @@ export type ListProps<T> = {
    */
   itemRenderer?: string;
 };
+
+export type MultiDropdownProps<T> = DropdownProps<T> & {
+  removeAriaLabel?: string;
+  removeIcon?: string;
+};
+
+export type MultiListProps<T> = ListProps<T>;
 
 export type RadiogroupProps = {
   hint?: string;

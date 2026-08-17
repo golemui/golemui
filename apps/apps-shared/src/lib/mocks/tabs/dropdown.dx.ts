@@ -32,6 +32,13 @@ export const dropdownTab = gui.layouts.flex([
     hint: 'Virtual scroll list with 1000 items. Default Item height.',
     items: thousandsOfItems,
   }),
+  gui.inputs.dropdown('dropdowns.withIcon', {
+    label: 'Dropdown with icon',
+    icon: 'search',
+    height: 100,
+    hint: 'The icon sits to the left of the filter input',
+    items: thousandsOfItems,
+  }),
   gui.inputs.dropdown('dropdowns.defaultRenderer20', {
     label: 'Default Renderer with 20px item height',
     height: 100,

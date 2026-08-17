@@ -17,6 +17,8 @@ import datetimepickerSchemaJson from './lib/components/datetimepicker.schema.jso
 import dropdownSchemaJson from './lib/components/dropdown.schema.json';
 import listSchemaJson from './lib/components/list.schema.json';
 import markdownSchemaJson from './lib/components/markdown.schema.json';
+import multidropdownSchemaJson from './lib/components/multidropdown.schema.json';
+import multilistSchemaJson from './lib/components/multilist.schema.json';
 import numberSchemaJson from './lib/components/number.schema.json';
 import passwordSchemaJson from './lib/components/password.schema.json';
 import radiogroupSchemaJson from './lib/components/radiogroup.schema.json';
@@ -62,6 +64,8 @@ export const datetimepickerSchema: Record<string, unknown> = datetimepickerSchem
 export const dropdownSchema: Record<string, unknown> = dropdownSchemaJson;
 export const listSchema: Record<string, unknown> = listSchemaJson;
 export const markdownSchema: Record<string, unknown> = markdownSchemaJson;
+export const multidropdownSchema: Record<string, unknown> = multidropdownSchemaJson;
+export const multilistSchema: Record<string, unknown> = multilistSchemaJson;
 export const numberSchema: Record<string, unknown> = numberSchemaJson;
 export const passwordSchema: Record<string, unknown> = passwordSchemaJson;
 export const radiogroupSchema: Record<string, unknown> = radiogroupSchemaJson;
@@ -103,6 +107,8 @@ export const COMPONENT_SCHEMAS_BY_TYPE = {
   dropdown: dropdownSchema,
   list: listSchema,
   markdown: markdownSchema,
+  multiDropdown: multidropdownSchema,
+  multiList: multilistSchema,
   number: numberSchema,
   password: passwordSchema,
   radiogroup: radiogroupSchema,

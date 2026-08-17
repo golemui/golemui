@@ -35,6 +35,8 @@ import { gridTab } from './tabs/grid.dx';
 import { listTab } from './tabs/list.dx';
 import { markdownTextTab } from './tabs/markdown-text.dx';
 import { markdownTab } from './tabs/markdown.dx';
+import { multiDropdownTab } from './tabs/multidropdown.dx';
+import { multiListTab } from './tabs/multilist.dx';
 import { numberTab } from './tabs/number.dx';
 import { passwordTab } from './tabs/password.dx';
 import { radiogroupTab } from './tabs/radiogroup.dx';
@@ -97,6 +99,15 @@ const data: Record<string, unknown> = {
     defaultListRenderer: 0,
     disabledList: 0,
     customItemRenderer: 'one',
+  },
+  multiDropdowns: {
+    withIcon: ['React', 'Vue'],
+    objectItems: [1, 3],
+    disabled: ['React', 'Vue'],
+  },
+  multiLists: {
+    frameworks: ['Vue'],
+    disabled: ['React'],
   },
   selects: {
     greeting: 'bye',
@@ -224,6 +235,12 @@ export const buildKitchenSinkDx = (options: KitchenSinkDxOptions = {}): KitchenS
         { label: 'Select Component', uid: 'tabSelect', children: [selectTab] },
         { label: 'Dropdown Component', uid: 'tabDropdown', children: [dropdownTab] },
         { label: 'List Component', uid: 'tabList', children: [listTab] },
+        {
+          label: 'Multi Dropdown Component',
+          uid: 'tabMultiDropdown',
+          children: [multiDropdownTab],
+        },
+        { label: 'Multi List Component', uid: 'tabMultiList', children: [multiListTab] },
         { label: 'Repeater Component', uid: 'tabRepeater', children: [repeaterTab] },
         { label: 'Tags Component', uid: 'tabTags', children: [tagsTab] },
         ...(options.rendererExample !== undefined

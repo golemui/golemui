@@ -14,6 +14,8 @@ import { GuiLabel } from '@golemui/gui-components/label';
 import { GuiList } from '@golemui/gui-components/list';
 import { GuiMarkdown } from '@golemui/gui-components/markdown';
 import { GuiMarkdownText } from '@golemui/gui-components/markdown-text';
+import { GuiMultiList } from '@golemui/gui-components/multi-list';
+import { GuiMultiSelectTrigger } from '@golemui/gui-components/multi-select-trigger';
 import { GuiNumber } from '@golemui/gui-components/number';
 import { GuiPassword } from '@golemui/gui-components/password';
 import { GuiRadiogroup } from '@golemui/gui-components/radiogroup';
@@ -137,6 +139,11 @@ export const GuiDateTimePickerReact = wrap('gui-date-time-picker', GuiDateTimePi
 });
 
 export const GuiListReact = wrap('gui-list', GuiList);
+export const GuiMultiListReact = wrap('gui-multi-list', GuiMultiList);
+export const GuiMultiSelectTriggerReact = wrap('gui-multi-select-trigger', GuiMultiSelectTrigger, {
+  onPillremove: 'pillremove',
+  onDropdowntoggle: 'dropdowntoggle',
+});
 export const GuiLabelReact = wrap('gui-label', GuiLabel);
 export const GuiErrorsReact = wrap('gui-errors', GuiErrors);
 export const GuiMarkdownTextReact = wrap('gui-markdown-text', GuiMarkdownText);

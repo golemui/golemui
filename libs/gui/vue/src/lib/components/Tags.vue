@@ -34,7 +34,6 @@ const required = computed(() => (templateData.value.validator as Validator)?.req
       :separators="templateData.separators"
       :allowDuplicates="templateData.allowDuplicates ?? true"
       :trim="templateData.trim ?? true"
-      :limit="templateData.limit"
       :removeAriaLabel="templateData.removeAriaLabel"
       :removeIcon="templateData.removeIcon"
       @change="handleChange"

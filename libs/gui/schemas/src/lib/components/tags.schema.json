@@ -37,10 +37,6 @@
       "type": "boolean",
       "description": "When true, whitespace is trimmed from each tag before it is added. Defaults to true."
     },
-    "limitProp": {
-      "type": "number",
-      "description": "Maximum number of tags the user can add. No limit when omitted."
-    },
     "removeAriaLabelProp": {
       "$ref": "../core/common.schema.json#/$defs/localizable"
     },
@@ -105,9 +101,6 @@
         "trim": {
           "$ref": "#/$defs/trimProp"
         },
-        "limit": {
-          "$ref": "#/$defs/limitProp"
-        },
         "removeAriaLabel": {
           "$ref": "#/$defs/removeAriaLabelProp"
         },
@@ -133,9 +126,6 @@
         },
         "^trim\\.[^.]+$": {
           "$ref": "#/$defs/trimProp"
-        },
-        "^limit\\.[^.]+$": {
-          "$ref": "#/$defs/limitProp"
         },
         "^removeAriaLabel\\.[^.]+$": {
           "$ref": "#/$defs/removeAriaLabelProp"

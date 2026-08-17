@@ -32,6 +32,8 @@ import { _guiPassword } from './shortcuts/password/guiPassword.impl';
 import { _guiCurrency } from './shortcuts/currency/guiCurrency.impl';
 import { _guiMarkdown } from './shortcuts/markdown/guiMarkdown.impl';
 import { _guiList } from './shortcuts/list/guiList.impl';
+import { _guiMultiDropdown } from './shortcuts/multi-dropdown/guiMultiDropdown.impl';
+import { _guiMultiList } from './shortcuts/multi-list/guiMultiList.impl';
 import { _guiCalendar } from './shortcuts/calendar/guiCalendar.impl';
 import { _guiDateTimeCalendar } from './shortcuts/date-time-calendar/guiDateTimeCalendar.impl';
 import { _guiDateInput } from './shortcuts/date-input/guiDateInput.impl';
@@ -96,6 +98,8 @@ import { _gslPasswords, _gslPasswordByUid } from './shortcuts/password/register'
 import { _gslCurrencies, _gslCurrencyByUid } from './shortcuts/currency/register';
 import { _gslMarkdowns, _gslMarkdownByUid } from './shortcuts/markdown/register';
 import { _gslLists, _gslListByUid } from './shortcuts/list/register';
+import { _gslMultiDropdowns, _gslMultiDropdownByUid } from './shortcuts/multi-dropdown/register';
+import { _gslMultiLists, _gslMultiListByUid } from './shortcuts/multi-list/register';
 import { _gslCalendars, _gslCalendarByUid } from './shortcuts/calendar/register';
 import {
   _gslDateTimeCalendars,
@@ -181,6 +185,10 @@ const guiSelectors = createSelectors({
   markdownByUid: _gslMarkdownByUid,
   lists: _gslLists,
   listByUid: _gslListByUid,
+  multiDropdowns: _gslMultiDropdowns,
+  multiDropdownByUid: _gslMultiDropdownByUid,
+  multiLists: _gslMultiLists,
+  multiListByUid: _gslMultiListByUid,
   calendars: _gslCalendars,
   calendarByUid: _gslCalendarByUid,
   dateTimeCalendars: _gslDateTimeCalendars,
@@ -272,6 +280,8 @@ const guiFacade = {
     currency: _guiCurrency,
     markdown: _guiMarkdown,
     list: _guiList,
+    multiDropdown: _guiMultiDropdown,
+    multiList: _guiMultiList,
     calendar: _guiCalendar,
     dateTimeCalendar: _guiDateTimeCalendar,
     dateInput: _guiDateInput,

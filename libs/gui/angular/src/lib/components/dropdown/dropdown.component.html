@@ -13,12 +13,25 @@
   [native]="false"
 ></gui-label>
 
-<div class="gui-widget" tabindex="-1" (keydown)="onWidgetKeyDown($event)">
+<div
+  class="gui-widget"
+  tabindex="-1"
+  (keydown)="onWidgetKeyDown($event)"
+  (focusout)="onFocusOut($event)"
+>
+  @if (templateData.icon) {
+    <span
+      class="gui-widget-icon {{ templateData.icon }}"
+      [attr.data-icon]="templateData.icon"
+      aria-hidden="true"
+    ></span>
+  }
   <input
     #inputRef
     type="text"
     role="combobox"
     class="gui-widget-input"
+    [class.gui-dropdown--icon]="templateData.icon"
     [id]="widget.uid"
     [attr.data-cy]="widget.uid + '_textinput'"
     [required]="templateData.validator?.required"
@@ -30,15 +43,24 @@
     (keydown)="onInputKeyDown($event)"
     (input)="onInput($event)"
     (focus)="onInputFocus()"
-    (focusout)="onFocusOutInput($event)"
     [attr.aria-expanded]="isListVisible() ? 'true' : 'false'"
     [attr.aria-controls]="widget.uid + '-list'"
     aria-autocomplete="list"
     [attr.aria-labelledby]="templateData.label ? widget.uid + '_label' : null"
     [attr.aria-describedby]="templateData.hint ? widget.uid + '_hint' : null"
   />
-  <span class="gui-dropdown__arrow"
-    ><svg
+  <button
+    type="button"
+    class="gui-dropdown__arrow"
+    [attr.aria-label]="templateData.toggleAriaLabel ?? 'Show options'"
+    aria-haspopup="listbox"
+    [attr.aria-expanded]="isListVisible() ? 'true' : 'false'"
+    [attr.aria-controls]="widget.uid + '-list'"
+    [disabled]="templateData.disabled"
+    (mousedown)="onToggleMouseDown($event)"
+    (click)="onToggleClick($event)"
+  >
+    <svg
       xmlns="http://www.w3.org/2000/svg"
       width="16"
       height="16"
@@ -47,8 +69,9 @@
     >
       <path
         d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"
-      ></path></svg
-  ></span>
+      ></path>
+    </svg>
+  </button>
   <div class="gui-picker__panel" [hidden]="!isListVisible()" (mousedown)="onPanelMouseDown($event)">
     <gui-list
       #listRef
@@ -67,9 +90,7 @@
       (gui-update-items)="onUpdateItems($event)"
       (gui-range-change)="onRangeChange($event)"
       (gui-focus-change)="onFocusChange($event)"
-      (blur)="onListBlur()"
       (focus)="onInputFocus()"
-      (focusout)="onFocusOutInput($event)"
       (change)="onValueChange($event)"
     >
       @for (item of visibleItems(); track $index) {

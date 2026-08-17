@@ -17,6 +17,8 @@ export const guiWidgetManifest: readonly WidgetManifestEntry[] = [
   { type: 'dropdown', schemaFile: 'dropdown.schema.json', kind: 'input' },
   { type: 'list', schemaFile: 'list.schema.json', kind: 'input' },
   { type: 'markdown', schemaFile: 'markdown.schema.json', kind: 'input' },
+  { type: 'multiDropdown', schemaFile: 'multidropdown.schema.json', kind: 'input' },
+  { type: 'multiList', schemaFile: 'multilist.schema.json', kind: 'input' },
   { type: 'number', schemaFile: 'number.schema.json', kind: 'input' },
   { type: 'password', schemaFile: 'password.schema.json', kind: 'input' },
   { type: 'radiogroup', schemaFile: 'radiogroup.schema.json', kind: 'input' },
