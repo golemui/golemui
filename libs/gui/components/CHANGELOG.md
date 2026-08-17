@@ -1,3 +1,13 @@
+## 1.3.0 (2026-08-16)
+
+### 🩹 Fixes
+
+- **gui-components:** show errors inside pickers ([#282](https://github.com/golemui/golemui/pull/282))
+
+### ❤️ Thank You
+
+- Raúl Jiménez @Elecash
+
 ## 1.3.0-rc.0 (2026-08-14)
 
 ### 🩹 Fixes
