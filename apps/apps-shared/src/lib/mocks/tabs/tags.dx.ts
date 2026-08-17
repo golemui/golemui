@@ -18,7 +18,7 @@ export const tagsTab = gui.layouts.flex([
     label: 'Tags with limited number of tags',
     hint: 'A maxItems validator flags a sixth tag instead of blocking it',
     placeholder: 'Add a tag…',
-    validator: { type: 'array', maxItems: 5 },
+    validator: { maxItems: 5 },
   }),
   gui.inputs.tags('tags.scrollable', {
     label: 'Tags with scrollable container',
