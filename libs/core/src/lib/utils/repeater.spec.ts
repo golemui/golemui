@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { isInputWidget, type FunctionWidget, type NonFunctionWidget } from '../form-widget';
 import {
+  extractRepeaterIndexes,
   makeRepeaterItemConfig,
   transformRepeaterItemWhenExpression,
   transformWidgetWhenExpressions,
@@ -247,5 +248,16 @@ describe('transformWidgetWhenExpressions', () => {
 
     expect(result).toEqual(widget);
     expect(result).not.toBe(widget);
+  });
+});
+
+describe('extractRepeaterIndexes', () => {
+  it.each([
+    ['abc[0][1]', [0, 1]],
+    ['abc', []],
+    ['#0.2.t.1[3]', [3]],
+    ['a[12]', [12]],
+  ])('%s -> %j', (uid, expected) => {
+    expect(extractRepeaterIndexes(uid)).toEqual(expected);
   });
 });
