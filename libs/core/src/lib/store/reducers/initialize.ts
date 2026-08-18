@@ -71,7 +71,7 @@ export const initialize = ({ lang }: State, action: INITIALIZE): State => {
 
     warnUndeclaredStateReferences(flatForm, result.value.states);
 
-    // No data yet, so this seeds the static widgets only. SET_DATA expands the repeater rows.
+    // No data yet, so this adds the static widgets only. SET_DATA expands the repeater rows.
     return {
       ...initialState,
       formDef: result.value as Form,

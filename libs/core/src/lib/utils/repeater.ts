@@ -41,8 +41,8 @@ export type ExpandedSources = {
  * Walks the flat form and the current data and returns every widget that exists for that data.
  *
  * `resolvedSources` holds the `flatForm` widgets by reference plus, for every repeater row, one entry
- * per template widget (the row layout node included) with the row indexes stamped into `uid` and `path`.
- * Nested repeater containers are entries too and are recursed with their stamped path. Function widgets
+ * per template widget (the row layout node included) with the row indexes written into `uid` and `path`.
+ * Nested repeater containers are entries too and are recursed with their concrete path. Function widgets
  * stay callable (see {@link makeRepeaterItemConfig}), `when` expressions are not rewritten here.
  *
  * `repeaterItemScopes` maps every row widget uid to the innermost item that owns it.
@@ -103,7 +103,7 @@ function expandRepeaterRows(
 }
 
 /**
- * Returns the stamped nested repeater when a template widget is one, otherwise undefined.
+ * Returns the nested repeater with concrete uid and path when a template widget is one, otherwise undefined.
  * A function widget is called once here only to find out whether it produces a repeater.
  */
 function asNestedRepeater(

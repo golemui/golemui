@@ -103,7 +103,7 @@ describe('expandSources: repeater rows', () => {
     expect(repeaterItemScopes['lineItems']).toBeUndefined();
   });
 
-  it('stamps the row index into uid and input path', () => {
+  it('writes the row index into uid and input path', () => {
     const lineItems = repeater('lineItems', 'lineItems', [
       inputChild('row-qty', 'lineItems.items.quantity'),
     ]);
@@ -164,7 +164,7 @@ describe('expandSources: repeater rows', () => {
     });
   });
 
-  it('keeps a row function widget callable with stamped uid and path', () => {
+  it('keeps a row function widget callable with concrete uid and path', () => {
     const rowName: FunctionWidget<string> = (api) =>
       ({
         kind: 'input',
@@ -197,7 +197,7 @@ describe('expandSources: repeater rows', () => {
     expect(resolved.props?.['seen']).toBe('1:Linus');
   });
 
-  it('stamps position uids the same way as authored uids', () => {
+  it('indexes position uids the same way as authored uids', () => {
     const lineItems = repeater('#0.2', 'lineItems', [displayChild('#0.2.t.1')], '#0.2.t');
 
     const { resolvedSources, repeaterItemScopes } = expandSources(flatFormOf(lineItems), {
@@ -217,7 +217,7 @@ describe('expandSources: nested repeaters', () => {
     teams: [{ devs: [] }, { devs: [{}] }, { devs: [{ name: 'Alice' }, { name: 'Bob' }] }],
   };
 
-  it('adds the nested container with a stamped path and the outer item scope', () => {
+  it('adds the nested container with a concrete path and the outer item scope', () => {
     const { resolvedSources, repeaterItemScopes } = expandSources(flatFormOf(teams), data);
 
     expect(resolvedSources['devs[2]']).toMatchObject({ uid: 'devs[2]', type: 'repeater' });

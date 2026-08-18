@@ -727,7 +727,7 @@ describe('reducer end-to-end baseline', () => {
       expect(state.widgetFlags['firstRowBadge[1]']).toEqual({ hidden: true });
     });
 
-    it('stamps uid and path per row and keeps a row function widget callable with $item / $index', () => {
+    it('indexes uid and path per row and keeps a row function widget callable with $item / $index', () => {
       const state = drive([
         init(makeRowFunctionFormDef()),
         setData({ users: [{ name: 'Ada' }, { name: 'Linus' }] }),
@@ -736,8 +736,8 @@ describe('reducer end-to-end baseline', () => {
       const firstRow = state.resolvedSources['rowName[0]'] as FunctionWidget<string>;
       const secondRow = state.resolvedSources['rowName[1]'] as FunctionWidget<string>;
 
-      // The row entry is a callable wrapper carrying a STAMPED path (not the `users.items.name`
-      // template path). It is resolved where it is read, with the row in scope.
+      // The row entry is a callable wrapper whose path holds the row index (not the
+      // `users.items.name` template path). It is resolved where it is read, with the row in scope.
       expect(typeof firstRow).toBe('function');
       expect(firstRow.path).toBe('users.0.name');
       expect(secondRow.path).toBe('users.1.name');
@@ -1152,7 +1152,7 @@ describe('reducer end-to-end baseline', () => {
 
       expect(rows.widgetFlags['quantity[1]']).toEqual({ hidden: true });
       // `pruneHiddenData` looks the flagged uid up in `resolvedSources`, which holds row widgets
-      // with their stamped path, so the hidden row value is removed.
+      // with their concrete path, so the hidden row value is removed.
       const pruned = pruneHiddenData(rows);
       expect(pruned['lineItems'][1]).not.toHaveProperty('quantity');
       expect(pruned['lineItems'][0]).toEqual(rowScopeData.lineItems[0]);
@@ -1507,7 +1507,7 @@ describe('reducer end-to-end baseline', () => {
         index: 0,
       });
 
-      // The inner repeater container is an entry of its own with a stamped path.
+      // The inner repeater container is an entry of its own with a concrete path.
       expect((state.resolvedSources['devs[0]'] as InputWidget<any, string>).path).toBe(
         'teams.0.devs',
       );
