@@ -1,22 +1,23 @@
+import { errorCodes } from '../errors';
 import { type ValidatorFn } from '../form-validator';
 import { type InputWidget, isFunctionWidget, isInputWidget } from '../form-widget';
 import { type I18nTranslator } from '../i18n';
-import { type ExpressionFunctions, type ValidateOn } from '../shared';
+import { type ExpressionFunctions, type Uid, type ValidateOn } from '../shared';
 import { assertNever } from '../utils/assert-never';
-import { pipe } from '../utils/function';
+import { calculateValidationVariables } from '../utils/form';
 import { get } from '../utils/object';
-import { type Action } from './actions';
+import { type Action, type ATTEMPT_VALIDATION, type OVERRIDE_WIDGET_PROP } from './actions';
 import { type State } from './model';
 import {
-  addWidget,
-  applyExpandSources,
+  applyDefaultValues,
   calculateCurrentState,
   calculateWidgetFlags,
   calculateWidgetProps,
+  dropRemovedWidgetEntries,
+  fillCalculatedWidgets,
   initialize,
   injectValidationIssues,
   overrideWidgetProp,
-  removeWidget,
   setData,
   setFormHealth,
   setLanguage,
@@ -24,7 +25,6 @@ import {
   setWidgetData,
   validateAll,
 } from './reducers';
-import { reduceIf } from './reducers/utils';
 
 export const reducer = ({
   validators,
@@ -37,210 +37,270 @@ export const reducer = ({
   localization: I18nTranslator;
   functions: ExpressionFunctions;
 }) => {
-  const applyCurrentState = calculateCurrentState(functions);
-  const applyWidgetFlags = calculateWidgetFlags(functions);
+  const derive = makeDerive(localization, functions);
+  const validate = validateAll(validators, localization);
   const applyWidgetProps = calculateWidgetProps(localization, functions);
+  // Every action that changes a derive input goes through this wrapper.
+  const deriveAndValidateAppearingInputs = (state: State): State =>
+    validateInputsAppearingAfterSubmit(state, derive, validate);
 
   return (state: State, action: Action): State => {
     switch (action.type) {
       case 'INITIALIZE':
+        // Decode only. The SET_DATA every binding dispatches next runs the first derive.
         return initialize(state, action);
 
       case 'SET_DATA':
-        return pipe(
-          setData(state, action),
-          applyCurrentState,
-          applyExpandSources,
-          applyWidgetFlags,
-          applyWidgetProps,
-        );
+        return deriveAndValidateAppearingInputs(setData(state, action));
 
       case 'SET_META':
-        return pipe(
-          setMeta(state, action),
-          applyCurrentState,
-          applyExpandSources,
-          applyWidgetFlags,
-          applyWidgetProps,
-        );
+        return deriveAndValidateAppearingInputs(setMeta(state, action));
+
+      case 'SET_WIDGET_DATA':
+        return deriveAndValidateAppearingInputs(setWidgetData(state, action));
 
       case 'SET_LANGUAGE':
-        return pipe(setLanguage(state, action), applyWidgetProps);
+        // A language change only re-resolves translated props.
+        return applyWidgetProps(setLanguage(state, action));
 
-      case 'ADD_WIDGET': {
-        const stateAfterAdd = pipe(
-          addWidget(state, action),
-          reduceIf(formIsHealthy, applyCurrentState),
-          reduceIf(formIsHealthy, applyExpandSources),
-          reduceIf(formIsHealthy, applyWidgetFlags),
-          reduceIf(formIsHealthy, applyWidgetProps),
-        );
-        // After a VALIDATE_ALL pass, a widget added later is touched but never validated, so validate
-        // here or its errors stay hidden until the next validation event.
-        // Must run after applyWidgetProps because validateAll reads the calculated `current` widget,
-        // which is empty until then.
-        if (formIsHealthy(stateAfterAdd) && stateAfterAdd.allControlsValidated) {
-          return pipe(
-            stateAfterAdd,
-            validateAll(validators, localization),
-            applyCurrentState,
-            applyExpandSources,
-            applyWidgetFlags,
-            applyWidgetProps,
-            calculateIsFormValid,
-          );
+      case 'OVERRIDE_WIDGET_PROP': {
+        const overridden = overrideWidgetProp(state, action);
+        // An unknown target was already warned about, there is nothing to derive.
+        if (overridden === state) {
+          return state;
         }
-        return stateAfterAdd;
+        const next = deriveAndValidateAppearingInputs(overridden);
+        // An override dispatched from an event handler can change an input, so a touched input is re-validated.
+        return overrideTargetsTouchedInput(next, action) ? validate(next) : next;
       }
-
-      case 'REMOVE_WIDGET':
-        return pipe(
-          removeWidget(state, action),
-          applyCurrentState,
-          applyExpandSources,
-          applyWidgetFlags,
-          applyWidgetProps,
-        );
-
-      case 'SET_WIDGET_INITIAL_DATA':
-      case 'SET_WIDGET_DATA':
-        return pipe(
-          setWidgetData(state, action),
-          applyCurrentState,
-          applyExpandSources,
-          applyWidgetFlags,
-          applyWidgetProps,
-        );
-
-      case 'OVERRIDE_WIDGET_PROP':
-        return pipe(
-          overrideWidgetProp(state, action),
-          applyCurrentState,
-          applyExpandSources,
-          applyWidgetFlags,
-          applyWidgetProps,
-          // Apply validation here because this action can be dispatched from the form's event handlers callback
-          // Apply only when the action is related to an input
-          reduceIf(
-            (state: State): boolean => {
-              let isInput = false;
-              let path = '';
-              if ('path' in action.payload) {
-                isInput = true;
-                path = action.payload.path;
-              } else {
-                if (isInputWidget(state.calculatedWidgets[action.payload.uid].current)) {
-                  isInput = true;
-                  path = (state.calculatedWidgets[action.payload.uid].current as InputWidget<any>)
-                    .path;
-                }
-              }
-              const touched = isInput && state.touchedControls[path];
-              return state.touched && touched;
-            },
-            validateAll(validators, localization),
-          ),
-        );
 
       case 'SET_FORM_HEALTH':
         return setFormHealth(state, action);
 
-      case 'VALIDATE_ALL': {
-        return pipe(
-          {
-            ...state,
-            touched: true,
-            allControlsValidated: true,
-            touchedControls: Object.keys(state.calculatedWidgets).reduce(
-              (touchedControls, key) => {
-                const widget = state.calculatedWidgets[key].source;
-                if (isInputWidget(widget)) {
-                  touchedControls[widget.path] = true;
-                }
-                return touchedControls;
-              },
-              {} as State['touchedControls'],
-            ),
-          },
-          validateAll(validators, localization),
-          // This handles $errors and $formIsValid expressions variables
-          applyCurrentState,
-          applyExpandSources,
-          applyWidgetFlags,
-          applyWidgetProps,
-          calculateIsFormValid,
+      case 'VALIDATE_ALL':
+        return calculateIsFormValid(
+          deriveAndValidateAppearingInputs(validate(touchAllInputs(state))),
         );
-      }
 
       case 'ATTEMPT_VALIDATION': {
-        const reason = action.payload.reason;
-        const path = action.payload.path;
-        const shouldValidate =
-          validateOn === 'eager' ||
-          reason === validateOn ||
-          (validateOn as string[]).includes(reason);
-        if (shouldValidate) {
-          return pipe(
-            {
-              ...state,
-              touched: true,
-              touchedControls: { ...state.touchedControls, [path]: true },
-            },
-            validateAll(validators, localization),
-            // This handles $errors and $formIsValid expressions variables
-            applyCurrentState,
-            applyExpandSources,
-            applyWidgetFlags,
-            applyWidgetProps,
-            // TODO: extract this into a separate function
-            // When the widget is a Widget Function, we propagate the validation result immediately
-            (state) => {
-              const uid = action.payload.uid;
-              const originalDerivedWidget = state.calculatedWidgets[uid];
-              const originalSource = originalDerivedWidget.source;
-              if (isFunctionWidget(originalSource)) {
-                const itemScope = state.repeaterItemScopes[uid];
-                // TODO: prev vs current validation comparison to avoid change detection here
-                const current = originalSource({
-                  $form: state.data,
-                  errors: state.validations[path],
-                  touched: true,
-                  translate: localization.translate,
-                  $item: itemScope ? get(state.data, itemScope.itemPath) : undefined,
-                  $index: itemScope?.index,
-                });
-                return {
-                  ...state,
-                  calculatedWidgets: {
-                    ...state.calculatedWidgets,
-                    [uid]: {
-                      source: originalDerivedWidget.source,
-                      current,
-                    },
-                  },
-                };
-              }
-              return state;
-            },
-            calculateIsFormValid,
-          );
+        if (!shouldValidate(validateOn, action.payload.reason)) {
+          return state;
         }
-
-        return state;
+        const touched: State = {
+          ...state,
+          touched: true,
+          touchedControls: { ...state.touchedControls, [action.payload.path]: true },
+        };
+        const next = deriveAndValidateAppearingInputs(validate(touched));
+        return calculateIsFormValid(reresolveBlurredFunctionWidget(next, action, localization));
       }
 
-      case 'INJECT_VALIDATION_ISSUES': {
+      case 'INJECT_VALIDATION_ISSUES':
         return injectValidationIssues(state, action);
-      }
 
-      default: {
+      // The widget set is computed from the data, so mounting and unmounting components changes
+      // nothing. The three actions stay until the framework bindings stop dispatching them.
+      case 'ADD_WIDGET':
+      case 'REMOVE_WIDGET':
+      case 'SET_WIDGET_INITIAL_DATA':
+        return state;
+
+      default:
         return assertNever(action);
-      }
     }
   };
 };
 
-const formIsHealthy = (state: State) => state.formHealth.status === 'ok';
+// -----------------------------------------------------------------------------
+// The derive: everything computed from (formDef, data, meta, overrides, validations, ...)
+// -----------------------------------------------------------------------------
+
+/**
+ * Error codes the derive itself produces. A form errored with one of them is computed again on the
+ * next derive, so it recovers as soon as the data allows. Any other code (decode errors, a widget
+ * that could not be loaded) freezes the derive until `SET_FORM_HEALTH` or `INITIALIZE` clears it.
+ */
+const deriveOwnedErrorCodes = new Set<number>([
+  errorCodes.calculateCurrentStateError,
+  errorCodes.calculateWidgetFlagsError,
+  errorCodes.calculateWidgetPropsError,
+  errorCodes.resolveStringInterpolationError,
+]);
+
+const erroredOutsideDerive = (state: State): boolean =>
+  state.formHealth.status === 'errored' && !deriveOwnedErrorCodes.has(state.formHealth.code);
+
+function makeDerive(localization: I18nTranslator, functions: ExpressionFunctions) {
+  const applyCurrentState = calculateCurrentState(functions);
+  const applyWidgetFlags = calculateWidgetFlags(functions);
+  const applyWidgetProps = calculateWidgetProps(localization, functions);
+
+  return function derive(state: State): State {
+    if (erroredOutsideDerive(state)) {
+      return state;
+    }
+    try {
+      let next: State =
+        state.formHealth.status === 'ok' ? state : { ...state, formHealth: { status: 'ok' } };
+      next = applyDefaultValues(next);
+      next = dropRemovedWidgetEntries(next);
+      const validationVariables = calculateValidationVariables(next);
+      next = applyCurrentState(next, validationVariables);
+      if (next.formHealth.status !== 'ok') {
+        return next;
+      }
+      next = applyWidgetFlags(next, validationVariables);
+      next = fillCalculatedWidgets(next);
+      return applyWidgetProps(next, validationVariables);
+    } catch (err) {
+      // Nothing from this pass is applied, so the last good widgets stay in place.
+      const code = errorCodes.calculateWidgetFlagsError;
+      return {
+        ...state,
+        formHealth: { status: 'errored', code, message: `[${code}] ${(err as Error).message}` },
+      };
+    }
+  };
+}
+
+// -----------------------------------------------------------------------------
+// Inputs that appear after a submit attempt
+// -----------------------------------------------------------------------------
+
+/**
+ * Runs the derive. When a submit attempt already validated everything (`allControlsValidated`),
+ * an input that this derive makes appear (a new repeater row, a revealed field) is touched and
+ * validated right away so its errors show without interaction, then the derive runs once more so
+ * `$errors`, `$formIsInvalid` and function widgets see the new validation result.
+ */
+function validateInputsAppearingAfterSubmit(
+  state: State,
+  derive: (state: State) => State,
+  validate: (state: State) => State,
+): State {
+  const previousSources = state.resolvedSources;
+  const previousFlags = state.widgetFlags;
+  let next = derive(state);
+  if (!next.allControlsValidated || next.formHealth.status !== 'ok') {
+    return next;
+  }
+
+  const appearing = inputsAppearingIn(next, previousSources, previousFlags);
+  if (appearing.length === 0) {
+    return next;
+  }
+
+  const touchedControls = { ...next.touchedControls };
+  for (const uid of appearing) {
+    touchedControls[(next.resolvedSources[uid] as InputWidget<unknown, string>).path] = true;
+  }
+  next = { ...next, touchedControls };
+  return calculateIsFormValid(derive(validate(next)));
+}
+
+/** The uids of the visible, untouched inputs that are new or were hidden before this derive. */
+function inputsAppearingIn(
+  next: State,
+  previousSources: State['resolvedSources'],
+  previousFlags: State['widgetFlags'],
+): Uid[] {
+  const appearing: Uid[] = [];
+  for (const [uid, widget] of Object.entries(next.resolvedSources)) {
+    if (!isInputWidget(widget)) {
+      continue;
+    }
+    if (next.widgetFlags[uid]?.hidden === true) {
+      continue;
+    }
+    if (next.touchedControls[widget.path] === true) {
+      continue;
+    }
+    const isNew = previousSources[uid] === undefined;
+    const becameVisible = previousFlags[uid]?.hidden === true;
+    if (isNew || becameVisible) {
+      appearing.push(uid);
+    }
+  }
+  return appearing;
+}
+
+// -----------------------------------------------------------------------------
+// Validation helpers
+// -----------------------------------------------------------------------------
+
+/** Marks the form submitted and replaces the touched set with every visible input path. */
+function touchAllInputs(state: State): State {
+  const touchedControls: State['touchedControls'] = {};
+  for (const { source } of Object.values(state.calculatedWidgets)) {
+    if (isInputWidget(source)) {
+      touchedControls[source.path] = true;
+    }
+  }
+  return { ...state, touched: true, allControlsValidated: true, touchedControls };
+}
+
+function shouldValidate(
+  validateOn: ValidateOn,
+  reason: ATTEMPT_VALIDATION['payload']['reason'],
+): boolean {
+  return (
+    validateOn === 'eager' || reason === validateOn || (validateOn as string[]).includes(reason)
+  );
+}
+
+/** True when the override targets an input the user already touched on a touched form. */
+function overrideTargetsTouchedInput(state: State, action: OVERRIDE_WIDGET_PROP): boolean {
+  if (!state.touched) {
+    return false;
+  }
+  let path: string | undefined;
+  if ('path' in action.payload) {
+    path = action.payload.path;
+  } else {
+    const current = state.calculatedWidgets[action.payload.uid]?.current;
+    if (current && isInputWidget(current)) {
+      path = current.path;
+    }
+  }
+  return path !== undefined && state.touchedControls[path] === true;
+}
+
+/**
+ * Re-resolves a blurred function widget with the validation outcome in scope.
+ *
+ * REFACTOR-NOTE: the props pass already resolves function widgets with `errors` and `touched`
+ * from the store, so this only repeats that work. It is deleted together with the mount actions.
+ */
+function reresolveBlurredFunctionWidget(
+  state: State,
+  action: ATTEMPT_VALIDATION,
+  localization: I18nTranslator,
+): State {
+  const uid = action.payload.uid;
+  const derivedWidget = state.calculatedWidgets[uid];
+  const source = derivedWidget?.source;
+  if (!derivedWidget || !isFunctionWidget(source)) {
+    return state;
+  }
+  const itemScope = state.repeaterItemScopes[uid];
+  const current = source({
+    $form: state.data,
+    errors: state.validations[action.payload.path],
+    touched: true,
+    translate: localization.translate,
+    $item: itemScope ? get(state.data, itemScope.itemPath) : undefined,
+    $index: itemScope?.index,
+  });
+  // Keep the uid and path the props pass stamped.
+  current.uid = uid;
+  if (source.path !== undefined) {
+    (current as InputWidget<unknown, string>).path = source.path;
+  }
+  return {
+    ...state,
+    calculatedWidgets: { ...state.calculatedWidgets, [uid]: { source, current } },
+  };
+}
 
 // TODO: dedupe this. we already have $formIsInvalid (although it doesnt take into account injected validations)
 function calculateIsFormValid(state: State): State {

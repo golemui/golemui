@@ -39,8 +39,8 @@ export type State = {
   currentStates: string[];
 
   /**
-   * Tracks widgets whose components have been rendered.
-   * A widget is added when its component mounts and removed when it unmounts.
+   * The resolved widget for every visible widget in `resolvedSources`, recomputed from the data on
+   * every derive. Independent of which components are mounted. Hidden widgets have no entry.
    */
   calculatedWidgets: Record<Uid, DerivedWidget<FormWidget<string>>>;
 
