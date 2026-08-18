@@ -53,46 +53,6 @@ gui-tags {
     }
   }
 
-  .gui-tags__pills-wrapper {
-    display: flex;
-    min-height: var(--gui-widget-size);
-    border-inline-end: 1px solid var(--gui-border-default);
-    border-inline-start: 1px solid var(--gui-border-default);
-    position: relative;
-    overflow: hidden;
-    min-width: 0;
-
-    &::before,
-    &::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      width: 60px;
-      z-index: 2;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
-      opacity: 0;
-    }
-
-    &::before {
-      left: 0;
-      background: linear-gradient(to right, var(--gui-bg-default) 20%, transparent);
-    }
-
-    &::after {
-      right: 0;
-      background: linear-gradient(to left, var(--gui-bg-default) 20%, transparent);
-    }
-
-    &.gui-tags--start-shadow::before {
-      opacity: 1;
-    }
-    &.gui-tags--end-shadow::after {
-      opacity: 1;
-    }
-  }
-
   .gui-tags__pills {
     display: flex;
     align-items: center;
@@ -102,21 +62,6 @@ gui-tags {
     overflow-x: auto;
     overflow-y: hidden;
     scrollbar-width: none;
-  }
-
-  .gui-sentinel {
-    width: 0;
-    height: 0;
-    flex-shrink: 0;
-    opacity: 0;
-    pointer-events: none;
-
-    &__start {
-      margin-inline-end: 0;
-    }
-    &__end {
-      margin-inline-start: -1px;
-    }
   }
 
   .gui-tags__chip {

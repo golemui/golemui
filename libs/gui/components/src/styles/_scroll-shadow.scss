@@ -1,0 +1,48 @@
+@mixin gui-sentinels {
+  .gui-sentinel {
+    width: 1px;
+    height: 1px;
+    flex-shrink: 0;
+    opacity: 0;
+    pointer-events: none;
+
+    &__start {
+      margin-inline-end: -1px;
+    }
+    &__end {
+      margin-inline-start: -1px;
+    }
+  }
+}
+
+@mixin gui-scroll-shadows($block) {
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 60px;
+    z-index: 2;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    opacity: 0;
+  }
+
+  &::before {
+    left: 0;
+    background: linear-gradient(to right, var(--gui-bg-default) 20%, transparent);
+  }
+
+  &::after {
+    right: 0;
+    background: linear-gradient(to left, var(--gui-bg-default) 20%, transparent);
+  }
+
+  &.#{$block}--start-shadow::before {
+    opacity: 1;
+  }
+  &.#{$block}--end-shadow::after {
+    opacity: 1;
+  }
+}
