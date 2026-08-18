@@ -21,6 +21,22 @@ export const rangeTimeInputTab = gui.layouts.flex([
     icon: 'schedule',
     separator: 'to',
   }),
+  gui.inputs.rangeTimeInput('rangeTimeInputEditable', {
+    label: 'Editable',
+    allowEdit: true,
+    defaultValue: [
+      {
+        start: '09:00:00',
+        end: '11:00:00',
+      },
+      {
+        start: '14:00:00',
+        end: '14:30:00',
+      },
+    ],
+    icon: 'schedule',
+    separator: 'to',
+  }),
   gui.inputs.rangeTimeInput('rangeTimeInputConstraints', {
     label: 'With min/max time',
     minTime: '09:00:00',

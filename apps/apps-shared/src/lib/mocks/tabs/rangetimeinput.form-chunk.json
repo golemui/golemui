@@ -37,6 +37,27 @@
     {
       "kind": "input",
       "type": "rangeTimeInput",
+      "path": "rangeTimeInputEditable",
+      "defaultValue": [
+        {
+          "start": "09:00:00",
+          "end": "11:00:00"
+        },
+        {
+          "start": "14:00:00",
+          "end": "14:30:00"
+        }
+      ],
+      "label": "Editable",
+      "props": {
+        "allowEdit": true,
+        "icon": "schedule",
+        "separator": "to"
+      }
+    },
+    {
+      "kind": "input",
+      "type": "rangeTimeInput",
       "path": "rangeTimeInputConstraints",
       "label": "With min/max time",
       "props": {

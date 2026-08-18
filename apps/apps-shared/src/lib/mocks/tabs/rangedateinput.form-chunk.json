@@ -36,6 +36,26 @@
     {
       "kind": "input",
       "type": "rangeDateInput",
+      "path": "rangeDateInputEditable",
+      "defaultValue": [
+        {
+          "start": "2026-02-13",
+          "end": "2026-02-16"
+        },
+        {
+          "start": "2026-02-20"
+        }
+      ],
+      "label": "Editable",
+      "props": {
+        "allowEdit": true,
+        "icon": "calendar_month",
+        "separator": "to"
+      }
+    },
+    {
+      "kind": "input",
+      "type": "rangeDateInput",
       "path": "rangeDateInputDisabled",
       "defaultValue": [
         {

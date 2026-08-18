@@ -82,6 +82,14 @@ onUnmounted(() => {
       :maxTimeMessage="templateData.maxTimeMessage"
       :rangeOrderMessage="templateData.rangeOrderMessage"
       :incompleteMessage="templateData.incompleteMessage"
+      :allowEdit="templateData.allowEdit"
+      :editLabel="templateData.editLabel"
+      :editAriaLabel="templateData.editAriaLabel"
+      :confirmEditLabel="templateData.confirmEditLabel"
+      :cancelEditLabel="templateData.cancelEditLabel"
+      :editStartedMessage="templateData.editStartedMessage"
+      :editCommittedMessage="templateData.editCommittedMessage"
+      :editCancelledMessage="templateData.editCancelledMessage"
     />
   </div>
 </template>

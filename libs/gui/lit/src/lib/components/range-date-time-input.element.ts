@@ -81,6 +81,14 @@ export class RangeDateTimeInputElement extends LitElement implements WithWidget 
         .minDateTimeMessage=${this.adapter.templateData.minDateTimeMessage as string}
         .maxDateTimeMessage=${this.adapter.templateData.maxDateTimeMessage as string}
         .incompleteMessage=${this.adapter.templateData.incompleteMessage as string}
+        ?allow-edit=${this.adapter.templateData.allowEdit}
+        .editLabel=${this.adapter.templateData.editLabel as string}
+        .editAriaLabel=${this.adapter.templateData.editAriaLabel as string}
+        .confirmEditLabel=${this.adapter.templateData.confirmEditLabel as string}
+        .cancelEditLabel=${this.adapter.templateData.cancelEditLabel as string}
+        .editStartedMessage=${this.adapter.templateData.editStartedMessage as string}
+        .editCommittedMessage=${this.adapter.templateData.editCommittedMessage as string}
+        .editCancelledMessage=${this.adapter.templateData.editCancelledMessage as string}
         @change=${this.valueChanged}
         @inputError=${this.onInputError}
       ></gui-range-date-time>

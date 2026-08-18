@@ -46,6 +46,14 @@ gui-pills {
     &--clickable {
       cursor: pointer;
     }
+
+    &--selected {
+      // No-op
+    }
+
+    &--editing {
+      @include gui-pill-editing;
+    }
   }
 
   .gui-pills__pill-text {
@@ -56,6 +64,19 @@ gui-pills {
     @include gui-pill-remove;
   }
 
+  .gui-pills__pill-action {
+    @include gui-pill-action;
+  }
+
+  .gui-pills__pill-action--edit {
+    display: none;
+  }
+
+  .gui-pills__pill--selected .gui-pills__pill-action--edit,
+  .gui-pills__pill:focus .gui-pills__pill-action--edit {
+    display: inline-flex;
+  }
+
   .gui-pills__compact {
     display: none;
     align-items: center;
@@ -63,6 +84,14 @@ gui-pills {
 
   .gui-pills__count {
     @include gui-pill-count;
+
+    &--has-selection {
+      // No-op
+    }
+
+    &--editing {
+      @include gui-pill-editing;
+    }
   }
 
   .gui-pills__dropdown {

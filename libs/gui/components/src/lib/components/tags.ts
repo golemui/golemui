@@ -164,9 +164,9 @@ export class GuiTags extends LitElement {
             @change=${(e: Event) => e.stopPropagation()}
           />
         </div>
-
-        ${addErrors(this.uid as string, templateData)}
       </div>
+
+      ${addErrors(this.uid as string, templateData)}
     `;
   }
 

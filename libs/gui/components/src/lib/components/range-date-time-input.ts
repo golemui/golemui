@@ -5,6 +5,7 @@ import { safeDefine } from '@golemui/lit/internals';
 import { classMap } from 'lit/directives/class-map.js';
 import { styleMap } from 'lit-html/directives/style-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
+import { GUIEditSessionController } from '../controllers/edit-session.controller';
 import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
 import { GUIPartsController } from '../controllers/parts.controller';
 import { GUIPillsNavigationController } from '../controllers/pills-navigation.controller';
@@ -33,12 +34,24 @@ import {
   findRangeByKey,
   formatRangeLabel,
   removeRangeByKey,
+  sameRanges,
   sortRangesByStart,
 } from '../utils/pill-ranges';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 import './pills';
 import type { GuiPillEventDetail, GuiPillItem } from './pills';
-import { DISABLED_DATE_RANGE_MESSAGE, INCOMPLETE_DATE_TIME_MESSAGE } from '../utils/messages';
+import {
+  CANCEL_EDIT_RANGE_LABEL,
+  CONFIRM_EDIT_RANGE_LABEL,
+  DISABLED_DATE_RANGE_MESSAGE,
+  EDIT_RANGE_ARIA_LABEL,
+  EDIT_RANGE_CANCELLED_MESSAGE,
+  EDIT_RANGE_COMMITTED_MESSAGE,
+  EDIT_RANGE_LABEL,
+  EDIT_RANGE_STARTED_MESSAGE,
+  formatEditMessage,
+  INCOMPLETE_DATE_TIME_MESSAGE,
+} from '../utils/messages';
 
 export class GuiRangeDateTimeInput extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
@@ -97,6 +110,25 @@ export class GuiRangeDateTimeInput extends LitElement {
   @property({ type: String, attribute: 'incomplete-message' }) incompleteMessage:
     | string
     | undefined = undefined;
+  /** Opt-in select → edit → confirm flow on the pills. */
+  @property({ type: Boolean, attribute: 'allow-edit' }) allowEdit: boolean | undefined = false;
+  @property({ type: String, attribute: 'edit-label' }) editLabel: string | undefined = undefined;
+  @property({ type: String, attribute: 'edit-aria-label' }) editAriaLabel: string | undefined =
+    undefined;
+  @property({ type: String, attribute: 'confirm-edit-label' }) confirmEditLabel:
+    | string
+    | undefined = undefined;
+  @property({ type: String, attribute: 'cancel-edit-label' }) cancelEditLabel: string | undefined =
+    undefined;
+  @property({ type: String, attribute: 'edit-started-message' }) editStartedMessage:
+    | string
+    | undefined = undefined;
+  @property({ type: String, attribute: 'edit-committed-message' }) editCommittedMessage:
+    | string
+    | undefined = undefined;
+  @property({ type: String, attribute: 'edit-cancelled-message' }) editCancelledMessage:
+    | string
+    | undefined = undefined;
   /**
    * Set by host pickers that run their own whole-widget focus-leave check:
    * moving focus from this input into the picker's popover must not count as
@@ -149,8 +181,9 @@ export class GuiRangeDateTimeInput extends LitElement {
       if (allEmpty) this._pillsNav.enterPillList();
     },
     onEnter: () => {
+      const wasEditing = !!this._edit.editing;
       this.tryCreatePill();
-      if (this.value && this.value.length > 0) {
+      if (!wasEditing && this.value && this.value.length > 0) {
         this.onPillClick(this.value[this.value.length - 1]);
       }
     },
@@ -173,6 +206,32 @@ export class GuiRangeDateTimeInput extends LitElement {
     getPillCount: () => this.value?.length ?? 0,
     focusLinkedInput: () => this._parts.focusFirst('start', true),
   });
+
+  /** Ordered start of the last composed range; read back after a commit. */
+  private _lastComposedStart: string | null = null;
+  /** Last synced endpoints — the editing pill's live label. */
+  private _workingISO: { start: string | null; end: string | null } = { start: null, end: null };
+
+  private _edit = new GUIEditSessionController<DateTimeRange>(this, {
+    isEnabled: () => this.editEnabled,
+    getRanges: () => this.value,
+    compareStarts: (a, b) =>
+      parseISODateTimeString(a).getTime() - parseISODateTimeString(b).getTime(),
+    formatLabel: (range) => this.formatPillLabel(range),
+    loadRange: (range) => this.loadRangeForEdit(range),
+    clearCompose: () => this.clearCompose(),
+    onStateChanged: () => this.emitEditState(),
+    getPills: () => this.querySelector('gui-pills'),
+    getMessages: () => ({
+      started: this.editStartedMessage ?? EDIT_RANGE_STARTED_MESSAGE,
+      committed: this.editCommittedMessage ?? EDIT_RANGE_COMMITTED_MESSAGE,
+      cancelled: this.editCancelledMessage ?? EDIT_RANGE_CANCELLED_MESSAGE,
+    }),
+  });
+
+  private get editEnabled(): boolean {
+    return !!this.allowEdit && !this.disabled && !this.readOnly;
+  }
 
   /**
    * The single point where the input reports focus leaving the control. It
@@ -232,6 +291,7 @@ export class GuiRangeDateTimeInput extends LitElement {
     ) {
       this._parts.seedDayPeriods();
     }
+    this._edit.reconcileValue(this.value);
   }
 
   override render() {
@@ -268,8 +328,8 @@ export class GuiRangeDateTimeInput extends LitElement {
       partsReadonly: !!this.readOnly,
     };
 
-    const pillItems: GuiPillItem[] = buildPillItems(this.getSortedPills(), (range) =>
-      formatRangeLabel(range, (iso) => this.formatDateTimeForDisplay(iso)),
+    const pillItems: GuiPillItem[] = this.decoratePillItems(
+      buildPillItems(this.getSortedPills(), (range) => this.formatPillLabel(range)),
     );
 
     const iconClassMap = {
@@ -280,7 +340,11 @@ export class GuiRangeDateTimeInput extends LitElement {
     return html`
       ${this.label ? addLabel(this.uid as string, templateData, false, undefined, false) : nothing}
 
-      <div class="gui-widget" @focusout=${this._focusLeave.onFocusOut}>
+      <div
+        class="gui-widget"
+        @focusout=${this._focusLeave.onFocusOut}
+        @keydown=${this.onWidgetKeyDown}
+      >
         <div
           class="gui-widget-input gui-parts-ring gui-range-date-time-input ${this.icon
             ? 'gui-range-date-time-input--icon'
@@ -312,8 +376,18 @@ export class GuiRangeDateTimeInput extends LitElement {
             ?readonly=${this.readOnly}
             .removeAriaLabel=${this.removePillAriaLabel ?? 'Remove date-time'}
             .compactAriaLabel=${`${pillItems.length} date-time ranges`}
+            .editable=${this.editEnabled}
+            .selectedKey=${this._edit.selectedKey ?? undefined}
+            .editingKey=${this._edit.editing?.key ?? undefined}
+            .editLabel=${this.editLabel ?? EDIT_RANGE_LABEL}
+            .confirmEditLabel=${this.confirmEditLabel ?? CONFIRM_EDIT_RANGE_LABEL}
+            .cancelEditLabel=${this.cancelEditLabel ?? CANCEL_EDIT_RANGE_LABEL}
             @pillremove=${this.onPillRemoveEvent}
             @pillclick=${this.onPillClickEvent}
+            @pillfocus=${this.onPillFocusEvent}
+            @pilledit=${this.onPillEditEvent}
+            @pilleditconfirm=${this.onPillEditConfirm}
+            @pilleditcancel=${this.onPillEditCancel}
             @pillkeydown=${this._pillsNav.onPillKeydown}
             @pillexit=${this._pillsNav.onPillExit}
           ></gui-pills>
@@ -339,11 +413,109 @@ export class GuiRangeDateTimeInput extends LitElement {
           </div>
         </div>
 
-        ${this.showErrors && this.errors?.length
-          ? addErrors(this.uid as string, templateData)
+        ${this.allowEdit
+          ? html`<div class="gui-visually-hidden" aria-live="polite">
+              ${this._edit.announcement}
+            </div>`
           : nothing}
       </div>
+
+      ${this.showErrors && this.errors?.length
+        ? addErrors(this.uid as string, templateData)
+        : nothing}
     `;
+  }
+
+  private formatPillLabel(range: DateTimeRange): string {
+    return formatRangeLabel(range, (iso) => this.formatDateTimeForDisplay(iso));
+  }
+
+  /**
+   * allowEdit decoration on the pill items: the editing pill's label
+   * live-previews the working value, and every pill carries the interpolated
+   * edit hint for its `aria-description`.
+   */
+  private decoratePillItems(items: GuiPillItem[]): GuiPillItem[] {
+    if (!this.editEnabled) return items;
+    const editingKey = this._edit.editing?.key;
+    return items.map((item) => {
+      const label = item.key === editingKey ? this.workingLabel() : item.label;
+      return {
+        ...item,
+        label,
+        ariaLabel: label,
+        editAriaLabel: formatEditMessage(this.editAriaLabel ?? EDIT_RANGE_ARIA_LABEL, item.label),
+      };
+    });
+  }
+
+  /** The live label of the range being composed, one `…` per empty endpoint. */
+  private workingLabel(): string {
+    const format = (iso: string | null) => (iso ? this.formatDateTimeForDisplay(iso) : '…');
+    return `${format(this._workingISO.start)} - ${format(this._workingISO.end)}`;
+  }
+
+  private onWidgetKeyDown = (e: KeyboardEvent) => {
+    // Embedded in a picker: the picker owns the Escape layering.
+    if (this.deferFocusLeave) return;
+    this._edit.handleEscape(e);
+  };
+
+  private emitEditState() {
+    this.dispatchEvent(
+      new CustomEvent('editStateChange', {
+        detail: { selected: this._edit.selectedRange, editing: !!this._edit.editing },
+      }),
+    );
+  }
+
+  private loadRangeForEdit(range: DateTimeRange) {
+    this._parts.clearSurfacedInputError(this.value ?? []);
+    const [startDate, startTime] = range.start.split('T');
+    const [endDate, endTime] = range.end.split('T');
+    this.fillDate('start', startDate);
+    this.fillTime('start', startTime ?? null);
+    this.fillDate('end', endDate);
+    this.fillTime('end', endTime ?? null);
+    this._validationTriggered = true;
+    this.syncParts();
+    this._parts.focusFirst('start', true);
+  }
+
+  private clearCompose() {
+    this._parts.clearGroup('start');
+    this._parts.clearGroup('end');
+    this._parts.seedDayPeriods();
+    this._validationTriggered = false;
+    this._parts.clearSurfacedInputError(this.value ?? []);
+    this.syncParts();
+  }
+
+  /** Starts editing the selected pill; the host picker's Edit action. */
+  startEdit(): boolean {
+    return this._edit.startEdit();
+  }
+
+  /** Cancels an open edit session; the host picker's Cancel action. */
+  cancelEdit(): void {
+    this._edit.cancel();
+  }
+
+  get isEditing(): boolean {
+    return !!this._edit.editing;
+  }
+
+  get selectedEditRange(): DateTimeRange | null {
+    return this._edit.selectedRange;
+  }
+
+  /**
+   * Attempts to commit the currently-entered parts as a pill, returning
+   * whether one was created — the picker's confirm path onto the same
+   * {@link tryCreatePill} pipeline typed entry uses.
+   */
+  commitFromParts(): boolean {
+    return this.tryCreatePill();
   }
 
   private onPillRemoveEvent = (e: CustomEvent<GuiPillEventDetail>) => {
@@ -363,7 +535,41 @@ export class GuiRangeDateTimeInput extends LitElement {
 
   private onPillClickEvent = (e: CustomEvent<GuiPillEventDetail>) => {
     const range = findRangeByKey(this.getSortedPills(), e.detail.key);
-    if (range) this.onPillClick(range);
+    if (!range) return;
+    const outcome = this._edit.handlePillClick(e.detail.key);
+    if (outcome === 'deselected' || outcome === 'cancelled') return;
+    // 'ignored' (allowEdit off) and 'selected' both keep the navigate event.
+    this.onPillClick(range);
+  };
+
+  /**
+   * Keyboard navigation landed on another pill: the selection follows focus
+   * away, so only the focused pill offers the edit affordance. An open
+   * session is left alone (its pill keeps focus semantics of its own).
+   */
+  private onPillFocusEvent = (e: CustomEvent<GuiPillEventDetail>) => {
+    if (!this.editEnabled || this._edit.editing) return;
+    if (this._edit.selectedKey && this._edit.selectedKey !== e.detail.key) {
+      this._edit.clearSelection();
+    }
+  };
+
+  /** Edit icon or F2 / E on a pill: select it (if needed) and start editing. */
+  private onPillEditEvent = (e: CustomEvent<GuiPillEventDetail>) => {
+    if (!this.editEnabled || this._edit.editing?.key === e.detail.key) return;
+    if (this._edit.selectedKey !== e.detail.key) this._edit.handlePillClick(e.detail.key);
+    this._edit.startEdit();
+  };
+
+  private onPillEditConfirm = () => {
+    if (!this._edit.editing) return;
+    this.commitFromParts();
+  };
+
+  private onPillEditCancel = () => {
+    if (!this._edit.editing) return;
+    this._edit.cancel();
+    this._edit.focusSelectedPill();
   };
 
   private onPillClick(range: DateTimeRange) {
@@ -429,6 +635,12 @@ export class GuiRangeDateTimeInput extends LitElement {
     const start = this.validateDateTimeParts('start');
     const end = this.validateDateTimeParts('end');
 
+    this._workingISO = {
+      start: start.kind === 'valid' ? start.value : null,
+      end: end.kind === 'valid' ? end.value : null,
+    };
+    if (this._edit.editing) this.requestUpdate();
+
     this.dispatchEvent(
       new CustomEvent('partsChange', {
         detail: { start: this.subGroupISO('start'), end: this.subGroupISO('end') },
@@ -471,6 +683,19 @@ export class GuiRangeDateTimeInput extends LitElement {
    * back and continues (or empties the fields).
    */
   finalizeOnLeave(): void {
+    if (this._edit.editing) {
+      const results = this.groups.map((group) => this.validateDateTimeParts(group));
+      if (results.every((result) => result.kind === 'valid')) {
+        this.tryCreatePill({ refocus: false });
+      }
+      if (this._edit.editing) this._edit.cancel();
+      this._edit.handleFocusLeave();
+      return;
+    }
+
+    // Focus left the widget: drop the selection so the pill actions hide.
+    this._edit.handleFocusLeave();
+
     const endpoints = this.groups.map((group) => ({
       result: this.validateDateTimeParts(group),
       empty: this._parts.isGroupEmpty(group, this.dateTimePartTypes),
@@ -503,7 +728,7 @@ export class GuiRangeDateTimeInput extends LitElement {
   private evaluateRange() {
     const { start, end } = this.syncParts();
 
-    const result = commitRange(start, end, this.value, {
+    const result = commitRange(start, end, this._edit.baseRanges(this.value), {
       // Date-time ranges are two instants: a backward selection reorders (swap)
       // rather than erroring — mirroring the range calendar's date swap.
       order: (s, e) => {
@@ -514,7 +739,10 @@ export class GuiRangeDateTimeInput extends LitElement {
         dateTimeRangeOverlaps({ start: ordered.start, end: ordered.end }, this.disabledRanges)
           ? (this.disabledRangeMessage ?? DISABLED_DATE_RANGE_MESSAGE)
           : null,
-      toRange: (ordered) => ({ start: ordered.start, end: ordered.end }),
+      toRange: (ordered) => {
+        this._lastComposedStart = ordered.start;
+        return { start: ordered.start, end: ordered.end };
+      },
       merge: mergeDateTimeRanges,
     });
 
@@ -547,11 +775,20 @@ export class GuiRangeDateTimeInput extends LitElement {
     }
   }
 
-  private tryCreatePill({ refocus = true }: { refocus?: boolean } = {}) {
+  private tryCreatePill({ refocus = true }: { refocus?: boolean } = {}): boolean {
+    const wasEditing = !!this._edit.editing;
     this._validationTriggered = true;
 
     const result = this.evaluateRange();
-    if (result.kind !== 'commit') return;
+    if (result.kind !== 'commit') return false;
+
+    if (
+      wasEditing &&
+      sameRanges(this.getSortedPills(), sortRangesByStart(result.value, this.compareStarts))
+    ) {
+      this._edit.cancel();
+      return false;
+    }
 
     this.value = result.value;
     this._validationTriggered = false;
@@ -566,9 +803,18 @@ export class GuiRangeDateTimeInput extends LitElement {
       new CustomEvent('change', { detail: { value: this.value }, bubbles: true, composed: true }),
     );
 
-    if (refocus) this._parts.focusFirst('start');
+    if (wasEditing) {
+      // Selection and focus move to the committed (possibly merged) pill.
+      this._edit.completed(this._lastComposedStart ?? '', { focus: refocus });
+    } else if (refocus) {
+      this._parts.focusFirst('start');
+    }
     this.requestUpdate();
+    return true;
   }
+
+  private compareStarts = (a: string, b: string): number =>
+    parseISODateTimeString(a).getTime() - parseISODateTimeString(b).getTime();
 
   /**
    * Paints only one endpoint's date parts from an ISO date (null clears
