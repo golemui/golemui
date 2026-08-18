@@ -769,17 +769,15 @@ export const runRangeDateInputComponentTests = (mountFn: MountComponentFn) => {
         });
       });
 
-      it('should deselect on a second click, and clear the selection with Escape', () => {
+      it('should keep the selection on a second click, and clear it with Escape', () => {
         mountEditable();
 
         cy.get(editSel.pill).first().click();
         cy.get(editSel.pill).first().should('have.attr', 'aria-pressed', 'true');
+        // A repeated click never toggles the selection away.
         cy.get(editSel.pill).first().click();
-        cy.get(editSel.pill).first().should('have.attr', 'aria-pressed', 'false');
-        // The pill is still focused, so the Edit preview stays visible.
-        cy.get(editSel.pill).first().find(editSel.editIcon).should('be.visible');
+        cy.get(editSel.pill).first().should('have.attr', 'aria-pressed', 'true');
 
-        cy.get(editSel.pill).first().click();
         cy.get(editSel.pill).first().type('{esc}');
         cy.get(editSel.pill).first().should('have.attr', 'aria-pressed', 'false');
       });
@@ -790,12 +788,23 @@ export const runRangeDateInputComponentTests = (mountFn: MountComponentFn) => {
         cy.get(editSel.pill).first().click();
         cy.get(editSel.pill).first().type('{rightarrow}');
 
-        // The selection follows focus away: only the focused pill offers
-        // Edit, so a single pencil is ever visible.
-        cy.get(editSel.pill).eq(1).should('have.attr', 'aria-pressed', 'false');
+        // The selection follows focus: the focused pill takes it over, so a
+        // single pencil is ever visible and hosts can mirror the selection.
+        cy.get(editSel.pill).eq(1).should('have.attr', 'aria-pressed', 'true');
         cy.get(editSel.pill).eq(1).find(editSel.editIcon).should('be.visible');
         cy.get(editSel.pill).first().should('have.attr', 'aria-pressed', 'false');
         cy.get(editSel.pill).first().find(editSel.editIcon).should('not.be.visible');
+      });
+
+      it('should drop the selection when focus moves from the pills into the segments', () => {
+        mountEditable();
+
+        cy.get(editSel.pill).first().click();
+        cy.get(editSel.pill).first().should('have.attr', 'aria-pressed', 'true');
+
+        cy.get(sel.start.month).click();
+        cy.get(editSel.pill).first().should('have.attr', 'aria-pressed', 'false');
+        cy.get(editSel.editIcon).should('not.be.visible');
       });
 
       it('should hide the pill actions when focus leaves the widget', () => {

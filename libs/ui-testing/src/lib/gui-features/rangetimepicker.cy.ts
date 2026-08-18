@@ -562,5 +562,51 @@ export const runRangeTimePickerComponentTests = (mountFn: MountComponentFn) => {
         cy.get(`[data-cy="${uid}_panel-validator-errors"]`).should('not.exist');
       });
     });
+
+    describe('allowEdit pill editing', () => {
+      const editableRanges = [
+        { start: '09:00:00', end: '10:00:00' },
+        { start: '11:00:00', end: '12:00:00' },
+      ];
+      const editSel = {
+        pill: 'gui-range-time .gui-pills__pill',
+        selectedEditIcon: `.gui-pills__pill--selected [data-cy="${uid}_pill-edit"]`,
+        confirmIcon: `[data-cy="${uid}_pill-edit-confirm"]`,
+      };
+
+      beforeEach(() => forcePillsStripMode('.gui-range-time-input'));
+      afterEach(clearPillsWidthOverride);
+
+      it('should defer list picks to the session and commit the replacement on confirm', () => {
+        const formSubmitHandler = cy.stub().as('formSubmitHandler');
+        mountRangeTimePicker({
+          data: { myRanges: editableRanges },
+          props: { ...officeProps, allowEdit: true },
+          formSubmit: formSubmitHandler,
+        });
+
+        cy.get(editSel.pill).first().click();
+        cy.get(editSel.selectedEditIcon).click();
+        cy.get(sel.startHour).should('have.value', '09');
+        cy.get(sel.panel).should('exist');
+
+        // A list pick reshapes the end without committing.
+        cy.get(sel.outItems).filter('[data-value="10:30:00"]').click();
+        cy.get(editSel.pill).should('have.length', 2);
+        cy.get(editSel.pill).first().should('have.class', 'gui-pills__pill--editing');
+        cy.get(editSel.pill).first().should('contain.text', '09:00 - 10:30');
+
+        cy.get(editSel.confirmIcon).click();
+        cy.get(editSel.pill).should('have.length', 2);
+        submitAndGetData('@formSubmitHandler').then((data) => {
+          expect(data).to.deep.equal({
+            myRanges: [
+              { start: '09:00:00', end: '10:30:00' },
+              { start: '11:00:00', end: '12:00:00' },
+            ],
+          });
+        });
+      });
+    });
   });
 };

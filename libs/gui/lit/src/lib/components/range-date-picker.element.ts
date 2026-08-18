@@ -91,6 +91,14 @@ export class RangeDatePickerElement extends LitElement implements WithWidget {
         .maxDateMessage=${templateData.maxDateMessage as string}
         .disabledDateRangeMessage=${templateData.disabledDateRangeMessage as string}
         .incompleteMessage=${templateData.incompleteMessage as string}
+        ?allow-edit=${templateData.allowEdit}
+        .editLabel=${templateData.editLabel as string}
+        .editAriaLabel=${templateData.editAriaLabel as string}
+        .confirmEditLabel=${templateData.confirmEditLabel as string}
+        .cancelEditLabel=${templateData.cancelEditLabel as string}
+        .editStartedMessage=${templateData.editStartedMessage as string}
+        .editCommittedMessage=${templateData.editCommittedMessage as string}
+        .editCancelledMessage=${templateData.editCancelledMessage as string}
         @inputError=${this.onInputError}
         @blur=${() => this.adapter.onBlur()}
         @change=${this.valueChanged}

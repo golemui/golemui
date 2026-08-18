@@ -88,10 +88,12 @@ describe('GUIEditSessionController', () => {
       expect(h.options.onStateChanged).toHaveBeenCalledTimes(1);
     });
 
-    it('deselects when the selected pill is clicked again', () => {
+    it('keeps the selection when the selected pill is clicked again', () => {
       h.controller.handlePillClick(firstKey);
-      expect(h.controller.handlePillClick(firstKey)).toBe('deselected');
-      expect(h.controller.selectedKey).toBeNull();
+      expect(h.controller.handlePillClick(firstKey)).toBe('selected');
+      expect(h.controller.selectedKey).toBe(firstKey);
+      // No state changed, so no extra notification fires.
+      expect(h.options.onStateChanged).toHaveBeenCalledTimes(1);
     });
 
     it('moves the selection when another pill is clicked', () => {

@@ -81,11 +81,35 @@ export class GuiRangeTimePicker extends LitElement {
   @property({ type: String, attribute: 'incomplete-message' }) incompleteMessage:
     | string
     | undefined = undefined;
+  @property({ type: Boolean, attribute: 'allow-edit' }) allowEdit: boolean | undefined = false;
+  @property({ type: String, attribute: 'edit-label' }) editLabel: string | undefined = undefined;
+  @property({ type: String, attribute: 'edit-aria-label' }) editAriaLabel: string | undefined =
+    undefined;
+  @property({ type: String, attribute: 'confirm-edit-label' }) confirmEditLabel:
+    | string
+    | undefined = undefined;
+  @property({ type: String, attribute: 'cancel-edit-label' }) cancelEditLabel: string | undefined =
+    undefined;
+  @property({ type: String, attribute: 'edit-started-message' }) editStartedMessage:
+    | string
+    | undefined = undefined;
+  @property({ type: String, attribute: 'edit-committed-message' }) editCommittedMessage:
+    | string
+    | undefined = undefined;
+  @property({ type: String, attribute: 'edit-cancelled-message' }) editCancelledMessage:
+    | string
+    | undefined = undefined;
 
   @query('#time-input') private _inputRef?: GuiRangeTimeInput;
 
   @state() private _workingIn: string | undefined = undefined;
   @state() private _workingOut: string | undefined = undefined;
+  /**
+   * Mirror of the embedded input's edit session, fed by its non-bubbling
+   * `editStateChange`: while a session is open, list picks reshape the
+   * working range but never auto-commit — the session's Confirm owns that.
+   */
+  @state() private _editing = false;
 
   private _popup = new GUIPopupController(this, {
     focusRestoreSelector: 'gui-range-time input, gui-range-time button',
@@ -237,7 +261,7 @@ export class GuiRangeTimePicker extends LitElement {
 
       <div
         class="gui-widget"
-        @keydown=${this._popup.onAnchorKeyDown}
+        @keydown=${this.onWidgetKeyDown}
         @click=${this._popup.onAnchorClick}
         @focusout=${this._focusLeave.onFocusOut}
       >
@@ -274,11 +298,20 @@ export class GuiRangeTimePicker extends LitElement {
           .hourAriaLabel=${this.hourAriaLabel}
           .minuteAriaLabel=${this.minuteAriaLabel}
           .dayPeriodAriaLabel=${this.dayPeriodAriaLabel}
+          .allowEdit=${this.allowEdit ?? false}
+          .editLabel=${this.editLabel}
+          .editAriaLabel=${this.editAriaLabel}
+          .confirmEditLabel=${this.confirmEditLabel}
+          .cancelEditLabel=${this.cancelEditLabel}
+          .editStartedMessage=${this.editStartedMessage}
+          .editCommittedMessage=${this.editCommittedMessage}
+          .editCancelledMessage=${this.editCancelledMessage}
           @blur=${this.onInputBlur}
           @focus=${this._popup.show}
           @change=${this.onInputChange}
           @partsChange=${this.onPartsChange}
           @pillClick=${this.onPillClick}
+          @editStateChange=${this.onEditStateChange}
         ></gui-range-time>
         <button
           type="button"
@@ -371,6 +404,7 @@ export class GuiRangeTimePicker extends LitElement {
    * values on show and closes the panel so its error is visible.
    */
   private tryCommitWorkingRange(): void {
+    if (this._editing) return;
     if (!this._workingIn || !this._workingOut || !this._inputRef) return;
 
     if (this._inputRef.commitFromParts()) {
@@ -444,6 +478,22 @@ export class GuiRangeTimePicker extends LitElement {
   private onPillClick() {
     this._popup.show();
   }
+
+  private onEditStateChange = (
+    event: CustomEvent<{ selected: TimeRange | null; editing: boolean }>,
+  ) => {
+    this._editing = event.detail.editing;
+  };
+
+  /**
+   * Escape layering: an open panel consumes the key first (closing it), then
+   * the embedded input's edit session gets its turn — cancel an open session,
+   * then clear the selection.
+   */
+  private onWidgetKeyDown = (e: KeyboardEvent) => {
+    if (this._popup.onAnchorKeyDown(e)) return;
+    this._inputRef?.handleSessionEscape(e);
+  };
 
   private closePillsDropdown() {
     const pills = this.querySelector('gui-pills') as

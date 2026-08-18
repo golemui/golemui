@@ -166,6 +166,17 @@ export class GuiRangeDateTimeCalendar extends LitElement {
   @property({ type: Boolean, attribute: 'defer-focus-leave' }) deferFocusLeave:
     | boolean
     | undefined = false;
+  /**
+   * The host picker's allowEdit-selected range: its days are marked so the
+   * range being inspected or edited stands out among its neighbors.
+   */
+  @property({ attribute: false }) selectedRange: DateTimeRange | null = null;
+  /**
+   * Set by a host picker while an edit session is open: completed pieces park
+   * as working state instead of committing — the session's explicit Confirm
+   * owns the commit.
+   */
+  @property({ type: Boolean, attribute: 'defer-commit' }) deferCommit = false;
 
   @state() protected _selection: RangeSelectionState = idleRangeSelection();
   @state() protected _invalidRange: { start: Date; end: Date } | null = null;
@@ -550,6 +561,8 @@ export class GuiRangeDateTimeCalendar extends LitElement {
       isInvalidStart: false,
       isInvalidEnd: false,
       isInvalidInRange: false,
+      isEditSelected: false,
+      isEditMuted: false,
     };
   }
 
@@ -569,6 +582,8 @@ export class GuiRangeDateTimeCalendar extends LitElement {
       'invalid-in-range': day.isInvalidInRange,
       'is-anchor': day.isAnchor,
       'is-selecting': day.isSelecting,
+      'edit-selected': day.isEditSelected,
+      'range-muted': day.isEditMuted,
       disabled: day.isDisabled,
     };
 
@@ -600,6 +615,12 @@ export class GuiRangeDateTimeCalendar extends LitElement {
       end: range.end ? this.endpointDay(range.end) : undefined,
     }));
     const selectingSpan = selectionPreviewSpan(this._selection) ?? this.workingSpan ?? null;
+    const editSelectedSpan = this.selectedRange
+      ? orderedDaySpan(
+          this.endpointDay(this.selectedRange.start),
+          this.endpointDay(this.selectedRange.end ?? this.selectedRange.start),
+        )
+      : null;
 
     return buildMonthDays({
       currentDate: this._currentDate,
@@ -613,6 +634,7 @@ export class GuiRangeDateTimeCalendar extends LitElement {
           anchor: this._selection.anchor,
           selectingSpan,
           invalidRange: this._invalidRange,
+          editSelectedSpan,
         });
 
         return {
@@ -631,6 +653,8 @@ export class GuiRangeDateTimeCalendar extends LitElement {
           isAnchor: status.isAnchor,
           isFocusable: base.isToday || status.isRangeStart,
           isSelecting: status.isSelecting && base.isCurrentMonth,
+          isEditSelected: status.isEditSelected && base.isCurrentMonth,
+          isEditMuted: status.isEditMuted && base.isCurrentMonth,
         };
       },
       focusFallbackDates: [
@@ -733,6 +757,8 @@ export class GuiRangeDateTimeCalendar extends LitElement {
    *   unfinished selection means.
    */
   private tryCommitWorkingRange(): boolean {
+    if (this.deferCommit) return false;
+
     const startDate = this._workingStart;
     const endDate = this._workingEnd;
     const timeIn = this._workingStartTime;

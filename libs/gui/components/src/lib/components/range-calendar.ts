@@ -61,6 +61,8 @@ export interface RangeCalendarDay {
   isInvalidStart: boolean;
   isInvalidEnd: boolean;
   isInvalidInRange: boolean;
+  isEditSelected: boolean;
+  isEditMuted: boolean;
 }
 
 export class GuiRangeCalendar extends LitElement {
@@ -118,6 +120,17 @@ export class GuiRangeCalendar extends LitElement {
     | string
     | undefined = undefined;
   @property({ attribute: false }) invalidRange: { start: string; end: string } | null = null;
+  /**
+   * The host picker's allowEdit-selected range: its days are marked so the
+   * range being inspected or edited stands out among its neighbors.
+   */
+  @property({ attribute: false }) selectedRange: DateRange | null = null;
+  /**
+   * Set by a host picker while an edit session is open: a completed two-click
+   * span parks as the working selection (dotted preview) instead of merging
+   * into the value — the session's explicit Confirm owns the commit.
+   */
+  @property({ type: Boolean, attribute: 'defer-commit' }) deferCommit = false;
 
   @state() protected _selection: RangeSelectionState = idleRangeSelection();
   @state() protected _invalidRange: { start: Date; end: Date } | null = null;
@@ -408,6 +421,8 @@ export class GuiRangeCalendar extends LitElement {
       isInvalidStart: false,
       isInvalidEnd: false,
       isInvalidInRange: false,
+      isEditSelected: false,
+      isEditMuted: false,
     };
   }
 
@@ -427,6 +442,8 @@ export class GuiRangeCalendar extends LitElement {
       'invalid-in-range': day.isInvalidInRange,
       'is-anchor': day.isAnchor,
       'is-selecting': day.isSelecting,
+      'edit-selected': day.isEditSelected,
+      'range-muted': day.isEditMuted,
       disabled: day.isDisabled,
     };
 
@@ -458,6 +475,12 @@ export class GuiRangeCalendar extends LitElement {
       end: range.end ? this.endpointDay(range.end) : undefined,
     }));
     const selectingSpan = selectionPreviewSpan(this._selection) ?? this.workingSpan ?? null;
+    const editSelectedSpan = this.selectedRange
+      ? orderedDaySpan(
+          this.endpointDay(this.selectedRange.start),
+          this.endpointDay(this.selectedRange.end ?? this.selectedRange.start),
+        )
+      : null;
 
     return buildMonthDays({
       currentDate: this._currentDate,
@@ -471,6 +494,7 @@ export class GuiRangeCalendar extends LitElement {
           anchor: this._selection.anchor,
           selectingSpan,
           invalidRange: this._invalidRange,
+          editSelectedSpan,
         });
 
         return {
@@ -489,6 +513,8 @@ export class GuiRangeCalendar extends LitElement {
           isAnchor: status.isAnchor,
           isFocusable: base.isToday || status.isRangeStart,
           isSelecting: status.isSelecting && base.isCurrentMonth,
+          isEditSelected: status.isEditSelected && base.isCurrentMonth,
+          isEditMuted: status.isEditMuted && base.isCurrentMonth,
         };
       },
       focusFallbackDates: [
@@ -539,6 +565,15 @@ export class GuiRangeCalendar extends LitElement {
         }),
       );
       this.requestUpdate();
+      return;
+    }
+
+    if (this.deferCommit) {
+      this._invalidRange = null;
+      this._workingStart = toISODateString(commit.start);
+      this._workingEnd = toISODateString(commit.end);
+      this._selection = idleRangeSelection();
+      this.emitWorkingChange();
       return;
     }
 

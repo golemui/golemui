@@ -90,6 +90,14 @@ onUnmounted(() => {
       :disabledRangeMessage="templateData.disabledRangeMessage"
       :noAvailableTimesMessage="templateData.noAvailableTimesMessage"
       :incompleteMessage="templateData.incompleteMessage"
+      :allowEdit="templateData.allowEdit"
+      :editLabel="templateData.editLabel"
+      :editAriaLabel="templateData.editAriaLabel"
+      :confirmEditLabel="templateData.confirmEditLabel"
+      :cancelEditLabel="templateData.cancelEditLabel"
+      :editStartedMessage="templateData.editStartedMessage"
+      :editCommittedMessage="templateData.editCommittedMessage"
+      :editCancelledMessage="templateData.editCancelledMessage"
     />
   </div>
 </template>

@@ -75,6 +75,9 @@ const CHECK_SQUARE_PATH =
  *                                              focus to its anchor element
  *   - `pillfocus`     { key }                — a pill received focus (`editable` hosts
  *                                              only); hosts follow it with their selection
+ *   - `pillsblur`                            — focus left the pills subtree (`editable`
+ *                                              hosts only); hosts drop the selection
+ *                                              unless an edit session owns it
  *   - `pilledit`      { key }                — edit icon pressed, or F2 / E on a focused
  *                                              pill (`editable` hosts only)
  *   - `pilleditconfirm` { key }              — confirm icon pressed on the editing pill
@@ -162,10 +165,28 @@ export class GuiPills extends LitElement {
     }
   }
 
+  override connectedCallback() {
+    super.connectedCallback();
+    this.addEventListener('focusout', this.onPillsFocusOut);
+  }
+
   override disconnectedCallback() {
     super.disconnectedCallback();
+    this.removeEventListener('focusout', this.onPillsFocusOut);
     this.disconnectObservers();
   }
+
+  /**
+   * Focus left the pills subtree for somewhere else (a segment, the calendar,
+   * outside the widget): editable hosts move their selection with focus, so
+   * they get a chance to drop it. Moves between pills stay silent.
+   */
+  private onPillsFocusOut = (e: FocusEvent) => {
+    if (!this.editable) return;
+    const related = e.relatedTarget as Node | null;
+    if (related && this.contains(related)) return;
+    this.dispatchEvent(new CustomEvent('pillsblur', { bubbles: true, composed: true }));
+  };
 
   override render() {
     const total = this.items.length;

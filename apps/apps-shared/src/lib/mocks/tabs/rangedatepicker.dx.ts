@@ -30,6 +30,21 @@ export const rangeDatePickerTab = gui.layouts.flex([
     icon: 'calendar_month',
     separator: 'to',
   }),
+  gui.inputs.rangeDatePicker('rangeDatePickerEditable', {
+    label: 'Editable',
+    allowEdit: true,
+    defaultValue: [
+      {
+        start: '2026-02-13',
+        end: '2026-02-16',
+      },
+      {
+        start: '2026-02-20',
+      },
+    ],
+    icon: 'calendar_month',
+    separator: 'to',
+  }),
   gui.inputs.rangeDatePicker('rangeDatePickerDisabled', {
     label: 'Disabled',
     defaultValue: [

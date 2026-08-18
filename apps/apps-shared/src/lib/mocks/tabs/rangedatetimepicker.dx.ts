@@ -26,6 +26,21 @@ export const rangeDateTimePickerTab = gui.layouts.flex([
     ],
     minuteStep: 30,
   }),
+  gui.inputs.rangeDateTimePicker('rangeDateTimePickerEditable', {
+    label: 'Editable',
+    allowEdit: true,
+    defaultValue: [
+      {
+        start: '2026-02-13T09:00:00',
+        end: '2026-02-13T11:00:00',
+      },
+      {
+        start: '2026-02-16T14:00:00',
+        end: '2026-02-18T09:30:00',
+      },
+    ],
+    minuteStep: 30,
+  }),
   gui.inputs.rangeDateTimePicker('rangeDateTimePickerDisabled', {
     label: 'Disabled',
     defaultValue: [

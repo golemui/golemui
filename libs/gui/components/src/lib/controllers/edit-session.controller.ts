@@ -15,13 +15,12 @@ export type GUIEditSessionHost = ReactiveControllerHost & HTMLElement;
 /**
  * How a pill click was routed through the session:
  *   - 'ignored'    — allowEdit is off; the host keeps its legacy behavior
- *   - 'selected'   — the pill became the selection (the host should still run
- *                    its navigate-on-click behavior)
- *   - 'deselected' — the already-selected pill was clicked again
+ *   - 'selected'   — the pill is (or stays) the selection (the host should
+ *                    still run its navigate-on-click behavior)
  *   - 'cancelled'  — the editing pill was clicked: the session was cancelled,
  *                    the selection kept
  */
-export type GUIEditSessionPillClick = 'ignored' | 'selected' | 'deselected' | 'cancelled';
+export type GUIEditSessionPillClick = 'ignored' | 'selected' | 'cancelled';
 
 /** Resolved announcement templates; `{label}` is interpolated per event. */
 export interface GUIEditSessionMessages {
@@ -113,11 +112,7 @@ export class GUIEditSessionController<R extends RangeLike> implements ReactiveCo
       this.notify();
       return 'selected';
     }
-    if (this._selectedKey === key) {
-      this._selectedKey = null;
-      this.notify();
-      return 'deselected';
-    }
+    if (this._selectedKey === key) return 'selected';
     this._selectedKey = key;
     this.notify();
     return 'selected';
@@ -179,9 +174,9 @@ export class GUIEditSessionController<R extends RangeLike> implements ReactiveCo
 
   /**
    * Drops the selection silently — no announcement, no focus move. The
-   * selection is a transient affordance, so it follows the user away: focus
-   * leaving the widget ({@link handleFocusLeave}) and keyboard navigation onto
-   * another pill both route here.
+   * selection is a transient affordance, so it clears when the user leaves
+   * the widget ({@link handleFocusLeave}); keyboard navigation between pills
+   * instead moves it along via {@link handlePillClick}.
    */
   clearSelection(): void {
     if (!this._selectedKey) return;

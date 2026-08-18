@@ -385,6 +385,7 @@ export class GuiRangeDateTimeInput extends LitElement {
             @pillremove=${this.onPillRemoveEvent}
             @pillclick=${this.onPillClickEvent}
             @pillfocus=${this.onPillFocusEvent}
+            @pillsblur=${this.onPillsBlurEvent}
             @pilledit=${this.onPillEditEvent}
             @pilleditconfirm=${this.onPillEditConfirm}
             @pilleditcancel=${this.onPillEditCancel}
@@ -501,6 +502,14 @@ export class GuiRangeDateTimeInput extends LitElement {
     this._edit.cancel();
   }
 
+  /**
+   * The host picker's Escape layering routes here once its popup declined
+   * the key: cancels an open session first, then clears the selection.
+   */
+  handleSessionEscape(event: KeyboardEvent): boolean {
+    return this._edit.handleEscape(event);
+  }
+
   get isEditing(): boolean {
     return !!this._edit.editing;
   }
@@ -537,21 +546,31 @@ export class GuiRangeDateTimeInput extends LitElement {
     const range = findRangeByKey(this.getSortedPills(), e.detail.key);
     if (!range) return;
     const outcome = this._edit.handlePillClick(e.detail.key);
-    if (outcome === 'deselected' || outcome === 'cancelled') return;
+    // 'cancelled' ends the session without navigating; 'ignored' (allowEdit
+    // off) and 'selected' both keep the navigate event.
+    if (outcome === 'cancelled') return;
     // 'ignored' (allowEdit off) and 'selected' both keep the navigate event.
     this.onPillClick(range);
   };
 
   /**
-   * Keyboard navigation landed on another pill: the selection follows focus
-   * away, so only the focused pill offers the edit affordance. An open
-   * session is left alone (its pill keeps focus semantics of its own).
+   * Keyboard navigation landed on a pill: the selection follows focus, so the
+   * focused pill offers the edit affordance and drives the calendar marking.
+   * An open session is left alone (its pill keeps focus semantics of its own).
    */
   private onPillFocusEvent = (e: CustomEvent<GuiPillEventDetail>) => {
     if (!this.editEnabled || this._edit.editing) return;
-    if (this._edit.selectedKey && this._edit.selectedKey !== e.detail.key) {
-      this._edit.clearSelection();
-    }
+    if (this._edit.selectedKey !== e.detail.key) this._edit.handlePillClick(e.detail.key);
+  };
+
+  /**
+   * Focus left the pills for elsewhere: the selection follows it away, so the
+   * edit affordance and any calendar marking disappear. An open session keeps
+   * its selection — its focus legitimately lives in the compose surface.
+   */
+  private onPillsBlurEvent = () => {
+    if (this._edit.editing) return;
+    this._edit.clearSelection();
   };
 
   /** Edit icon or F2 / E on a pill: select it (if needed) and start editing. */
@@ -824,12 +843,14 @@ export class GuiRangeDateTimeInput extends LitElement {
    */
   fillDate(group: 'start' | 'end', iso: string | null): void {
     this._parts.setGroupFromISO(group, iso, 'date');
+    if (this._edit.editing) this.syncParts();
     this.requestUpdate();
   }
 
   /** The counterpart of {@link fillDate} for an endpoint's time parts. */
   fillTime(group: 'start' | 'end', iso: string | null): void {
     this._parts.setGroupFromISO(group, iso, 'time', this.localeData.effectiveHourFormat);
+    if (this._edit.editing) this.syncParts();
     this.requestUpdate();
   }
 }
