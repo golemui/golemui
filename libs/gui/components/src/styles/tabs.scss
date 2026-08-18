@@ -1,23 +1,12 @@
+@use 'scroll-shadow' as *;
+
 .gui-form {
   .gui-tabs {
     display: block;
     width: 100%;
     margin: var(--gui-space-3) 0;
 
-    .gui-sentinel {
-      width: 0;
-      height: 0;
-      flex-shrink: 0;
-      opacity: 0;
-      pointer-events: none;
-
-      &__start {
-        margin-inline-end: 0;
-      }
-      &__end {
-        margin-inline-start: -1px;
-      }
-    }
+    @include gui-sentinels;
 
     > nav {
       position: relative;
@@ -26,35 +15,11 @@
       margin-bottom: -1px;
       justify-content: start;
 
+      @include gui-scroll-shadows(gui-tabs);
+
       &::before,
       &::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        width: 60px;
         height: var(--gui-widget-size);
-        z-index: 2;
-        pointer-events: none;
-        transition: opacity 0.3s ease;
-        opacity: 0;
-      }
-
-      &::before {
-        left: 0;
-        background: linear-gradient(to right, var(--gui-bg-default) 20%, transparent);
-      }
-
-      &::after {
-        right: 0;
-        background: linear-gradient(to left, var(--gui-bg-default) 20%, transparent);
-      }
-
-      &.gui-tabs--start-shadow::before {
-        opacity: 1;
-      }
-      &.gui-tabs--end-shadow::after {
-        opacity: 1;
       }
 
       ul[role='tablist'] {

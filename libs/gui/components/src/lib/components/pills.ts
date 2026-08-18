@@ -3,6 +3,7 @@ import { property, state } from 'lit/decorators.js';
 import { safeDefine } from '@golemui/lit/internals';
 import { classMap } from 'lit/directives/class-map.js';
 import { repeat } from 'lit/directives/repeat.js';
+import { GUIPopupController } from '../controllers/popup.controller';
 import { createIntersectionObserver } from './tabs';
 import { addErrors } from '../utils/templates';
 
@@ -80,7 +81,26 @@ export class GuiPills extends LitElement {
 
   @state() private _isStartVisible = true;
   @state() private _isEndVisible = true;
-  @state() private _showDropdown = false;
+
+  private _popup = new GUIPopupController(this, {
+    isDisabled: () => this.disabled || this.readOnly,
+    clickIntent: () => 'ignore',
+    keyToggleMode: 'openClose',
+    focusPopupSelector: '.gui-pills__dropdown .gui-pills__pill',
+    onOpenChanged: (open) => {
+      this.dispatchEvent(
+        new CustomEvent<GuiPillsDropdownEventDetail>('dropdowntoggle', {
+          detail: { open },
+          bubbles: true,
+          composed: true,
+        }),
+      );
+    },
+  });
+
+  private get _showDropdown(): boolean {
+    return this._popup.open;
+  }
 
   private startObserver: IntersectionObserver | undefined;
   private endObserver: IntersectionObserver | undefined;
@@ -111,7 +131,6 @@ export class GuiPills extends LitElement {
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.disconnectObservers();
-    this.removeOutsideListeners();
   }
 
   override render() {
@@ -170,6 +189,7 @@ export class GuiPills extends LitElement {
             e.stopPropagation();
             this.toggleDropdown();
           }}
+          @keydown=${this.onCountKeydown}
         >
           ${count}
         </button>
@@ -316,6 +336,7 @@ export class GuiPills extends LitElement {
     const nextKey = isDropdown ? 'ArrowDown' : 'ArrowRight';
 
     if (e.key === prevKey) {
+      e.stopPropagation();
       if (index > 0) {
         e.preventDefault();
         this.focusPillAt(index - 1);
@@ -326,6 +347,7 @@ export class GuiPills extends LitElement {
     }
 
     if (e.key === nextKey) {
+      e.stopPropagation();
       if (index < this.items.length - 1) {
         e.preventDefault();
         this.focusPillAt(index + 1);
@@ -337,12 +359,14 @@ export class GuiPills extends LitElement {
 
     if (e.key === 'Home') {
       e.preventDefault();
+      e.stopPropagation();
       this.focusPillAt(0);
       return;
     }
 
     if (e.key === 'End') {
       e.preventDefault();
+      e.stopPropagation();
       this.focusPillAt(this.items.length - 1);
       return;
     }
@@ -417,34 +441,12 @@ export class GuiPills extends LitElement {
 
   /** Open the dropdown and focus its first pill. No-op if `bubble` is false. */
   openDropdown() {
-    if (!this.bubble || this.disabled || this.readOnly) return;
-    if (this._showDropdown) return;
-    this._showDropdown = true;
-    this.dispatchEvent(
-      new CustomEvent<GuiPillsDropdownEventDetail>('dropdowntoggle', {
-        detail: { open: true },
-        bubbles: true,
-        composed: true,
-      }),
-    );
-    requestAnimationFrame(() => {
-      this.addOutsideListeners();
-      const firstPill = this.querySelector<HTMLElement>('.gui-pills__dropdown .gui-pills__pill');
-      firstPill?.focus();
-    });
+    if (!this.bubble || this._showDropdown) return;
+    this._popup.openAndFocus();
   }
 
   closeDropdown() {
-    if (!this._showDropdown) return;
-    this._showDropdown = false;
-    this.removeOutsideListeners();
-    this.dispatchEvent(
-      new CustomEvent<GuiPillsDropdownEventDetail>('dropdowntoggle', {
-        detail: { open: false },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    this._popup.close();
   }
 
   private toggleDropdown = () => {
@@ -455,22 +457,20 @@ export class GuiPills extends LitElement {
     }
   };
 
-  private addOutsideListeners() {
-    document.addEventListener('pointerdown', this.handleOutsideInteraction);
-    document.addEventListener('focusin', this.handleOutsideInteraction);
-  }
-
-  private removeOutsideListeners() {
-    document.removeEventListener('pointerdown', this.handleOutsideInteraction);
-    document.removeEventListener('focusin', this.handleOutsideInteraction);
-  }
-
-  private handleOutsideInteraction = (e: Event) => {
-    const compact = this.querySelector('.gui-pills__compact');
-    const dropdown = this.querySelector('.gui-pills__dropdown');
-    const target = e.composedPath()[0] as Node;
-    if (!compact?.contains(target) && !dropdown?.contains(target)) {
-      this.closeDropdown();
+  /**
+   * ArrowDown on the count bubble opens the popup the button's aria-haspopup
+   * advertises. stopPropagation keeps the key from reaching hosts whose
+   * trigger-level ArrowDown opens a different popup (multiDropdown's panel
+   * would otherwise open and force this dropdown closed).
+   */
+  private onCountKeydown = (e: KeyboardEvent) => {
+    if (e.key !== 'ArrowDown') return;
+    e.preventDefault();
+    e.stopPropagation();
+    if (this._showDropdown) {
+      this.focusPillAt(0);
+    } else {
+      this.openDropdown();
     }
   };
 

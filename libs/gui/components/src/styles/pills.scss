@@ -1,4 +1,5 @@
 @use 'pill' as *;
+@use 'scroll-shadow' as *;
 
 // `<gui-pills>` does NOT own its own container or position context. The
 // compact-mode threshold compares against the *host wrapper's* width — hosts
@@ -21,35 +22,7 @@ gui-pills {
     min-width: 0;
     flex-shrink: 1;
 
-    &::before,
-    &::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      width: 60px;
-      z-index: 2;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
-      opacity: 0;
-    }
-
-    &::before {
-      left: 0;
-      background: linear-gradient(to right, var(--gui-bg-default) 20%, transparent);
-    }
-
-    &::after {
-      right: 0;
-      background: linear-gradient(to left, var(--gui-bg-default) 20%, transparent);
-    }
-
-    &.gui-pills--start-shadow::before {
-      opacity: 1;
-    }
-    &.gui-pills--end-shadow::after {
-      opacity: 1;
-    }
+    @include gui-scroll-shadows(gui-pills);
   }
 
   .gui-pills__strip {
@@ -63,20 +36,7 @@ gui-pills {
     scrollbar-width: none;
   }
 
-  .gui-sentinel {
-    width: 0;
-    height: 0;
-    flex-shrink: 0;
-    opacity: 0;
-    pointer-events: none;
-
-    &__start {
-      margin-inline-end: 0;
-    }
-    &__end {
-      margin-inline-start: -1px;
-    }
-  }
+  @include gui-sentinels;
 
   .gui-pills__pill {
     @include gui-pill;
@@ -131,7 +91,6 @@ gui-pills {
     flex-direction: column;
     gap: var(--gui-space-2);
     max-height: 200px;
-    overflow-y: auto;
   }
 
   @container gui-pills-widget (max-width: 540px) {

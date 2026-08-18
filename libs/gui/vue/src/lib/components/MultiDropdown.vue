@@ -1,7 +1,13 @@
 <script setup lang="ts">
 import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useDebounceCallback, useInputWidget, useVueFormContext } from '@golemui/vue';
-import type { ListItem, MultiDropdownProps, OptionValue } from '@golemui/gui-shared/internals';
+import type {
+  ListItem,
+  ListProps,
+  MultiDropdownProps,
+  OptionValue,
+} from '@golemui/gui-shared/internals';
+import { updateListItems } from '@golemui/gui-components/internals';
 import { computed, onMounted, onUnmounted, ref, watch, type Component } from 'vue';
 import DefaultMultiListItemRenderer from './item-renderers/DefaultMultiListItemRenderer.vue';
 import type { GuiLabel } from '@golemui/gui-components/label';
@@ -36,9 +42,15 @@ const currentValues = computed(() => (Array.isArray(value.value) ? value.value :
 const visibleItems = computed(() => listItems.value.slice(rangeStart.value, rangeEnd.value));
 
 const pillItems = computed(() => {
-  const labelField = (templateData.value.labelField as string) ?? 'label';
+  const data = templateData.value;
+  const labelField = (data.labelField as string) ?? 'label';
+  const source = updateListItems(
+    (data.items ?? []) as ListItem<any>[],
+    data as unknown as ListProps<any>,
+  );
   return currentValues.value.map((val) => {
-    const item = listItems.value.find((i) => i.value === val);
+    const item =
+      source.find((i) => i.value === val) ?? listItems.value.find((i) => i.value === val);
     const isObject = item != null && item.template !== null && typeof item.template === 'object';
     const label =
       item == null
