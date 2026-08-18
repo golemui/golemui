@@ -135,8 +135,7 @@ describe('calculateWidgetProps', () => {
       expect(current.disabled).toBe(false);
       expect(current.readonly).toBe(false);
       expect(current.defaultValue).toBe('initial');
-      // validator is a function on source — it gets invoked by resolvePropValue,
-      // returning its result.
+      // validator is a function on source, so it gets invoked by resolvePropValue, returning its result
       expect(current.validator).toBeUndefined();
     });
 
@@ -181,7 +180,7 @@ describe('calculateWidgetProps', () => {
     });
 
     it('does not set a core field absent from source', () => {
-      // Input widget without `label` — `current.label` should be entirely absent.
+      // Input widget without `label`: `current.label` should be entirely absent.
       const source = {
         kind: 'input',
         uid: 'i2',
@@ -212,7 +211,7 @@ describe('calculateWidgetProps', () => {
         'label.register:adult': 'REGISTER_ADULT',
       }) satisfies ActionWidget<string>;
 
-    it('no matching state → uses base', () => {
+    it('no matching state -> uses base', () => {
       seed(state, 'a', baseSource());
       state.currentStates = [];
 
@@ -221,7 +220,7 @@ describe('calculateWidgetProps', () => {
       expect((next.calculatedWidgets['a'].current as ActionWidget<string>).label).toBe('BASE');
     });
 
-    it('one matching state → uses that state suffix', () => {
+    it('one matching state -> uses that state suffix', () => {
       seed(state, 'a', baseSource());
       state.currentStates = ['register'];
 
@@ -230,7 +229,7 @@ describe('calculateWidgetProps', () => {
       expect((next.calculatedWidgets['a'].current as ActionWidget<string>).label).toBe('REGISTER');
     });
 
-    it('non-matching state → falls back to base', () => {
+    it('non-matching state -> falls back to base', () => {
       seed(state, 'a', baseSource());
       state.currentStates = ['unknown'];
 
@@ -543,7 +542,7 @@ describe('calculateWidgetProps', () => {
       const next = run(state);
 
       const text = (next.calculatedWidgets['d'].current as DisplayWidget<string>).props?.['text'];
-      // Errors serialize via String() inside the template replace → "[object Object]"-ish
+      // Errors serialize via String() inside the template replace -> "[object Object]"-ish
       // but that's the current behavior; we just assert resolution happened.
       expect(text.startsWith('Err: ')).toBe(true);
       expect(text).not.toContain('{{');
@@ -702,7 +701,7 @@ describe('calculateWidgetProps', () => {
   // ---------------------------------------------------------------------------
 
   describe('FunctionWidget', () => {
-    it('is invoked on each call, current is fresh, source ref is preserved, uid is set', () => {
+    it('is invoked on each call, source ref is preserved, uid is set', () => {
       const source: FunctionWidget<string> = Object.assign(
         () =>
           ({
@@ -720,8 +719,29 @@ describe('calculateWidgetProps', () => {
 
       expect(first.calculatedWidgets['f'].source).toBe(source);
       expect(first.calculatedWidgets['f'].current.uid).toBe('f');
-      // FunctionWidget always yields a fresh `current` — no ref preservation.
+      // An equal config keeps the reference, see the ref preservation section.
+      expect(second.calculatedWidgets['f']).toBe(first.calculatedWidgets['f']);
+    });
+
+    it('a config that differs from the previous one yields a new DerivedWidget ref', () => {
+      const source: FunctionWidget<string> = Object.assign(
+        (api: { $form: any } | undefined) =>
+          ({
+            kind: 'display',
+            uid: 'ignored',
+            type: 'heading',
+            props: { text: api?.$form.title },
+          }) satisfies DisplayWidget<string>,
+        { uid: 'f', type: 'heading' },
+      );
+      seed(state, 'f', source);
+      state.data = { title: 'first' };
+
+      const first = run(state);
+      const second = run({ ...first, data: { title: 'second' } });
+
       expect(second.calculatedWidgets['f']).not.toBe(first.calculatedWidgets['f']);
+      expect(second.calculatedWidgets['f'].current.props?.['text']).toBe('second');
     });
   });
 
@@ -850,7 +870,7 @@ describe('calculateWidgetProps', () => {
       ).toEqual(['b', 'a']);
     });
 
-    it('core-field change on a layout with structurally stable children → new DerivedWidget ref', () => {
+    it('core-field change on a layout with structurally stable children -> new DerivedWidget ref', () => {
       // Source has size=1 but previous.current has no size. Core loop marks
       // changed=true; children are structurally stable (both empty), so the
       // children branch must NOT clobber that signal - change detection ORs.
@@ -901,7 +921,7 @@ describe('calculateWidgetProps', () => {
   // ---------------------------------------------------------------------------
 
   describe('ref preservation', () => {
-    it('widget with identical resolved values across calls → same DerivedWidget ref', () => {
+    it('widget with identical resolved values across calls -> same DerivedWidget ref', () => {
       const source = {
         kind: 'action',
         uid: 'a',
@@ -917,7 +937,48 @@ describe('calculateWidgetProps', () => {
       expect(second.calculatedWidgets['a']).toBe(first.calculatedWidgets['a']);
     });
 
-    it('layout with stable structure → same DerivedWidget ref across calls', () => {
+    it('a prop function returning a fresh but equal array keeps the DerivedWidget ref', () => {
+      const source = {
+        kind: 'input',
+        uid: 'i',
+        type: 'select',
+        path: 'choice',
+        props: {
+          options: ({ $form }: { $form: any }) => [{ label: $form.name, value: 1 }],
+        },
+      } satisfies InputWidget<any, string>;
+      seed(state, 'i', source);
+      state.data = { name: 'joan' };
+
+      const first = run(state);
+      const second = run(first);
+
+      expect(second.calculatedWidgets['i']).toBe(first.calculatedWidgets['i']);
+    });
+
+    it('a prop function returning a different array yields a new DerivedWidget ref', () => {
+      const source = {
+        kind: 'input',
+        uid: 'i',
+        type: 'select',
+        path: 'choice',
+        props: {
+          options: ({ $form }: { $form: any }) => [{ label: $form.name, value: 1 }],
+        },
+      } satisfies InputWidget<any, string>;
+      seed(state, 'i', source);
+      state.data = { name: 'joan' };
+
+      const first = run(state);
+      const second = run({ ...first, data: { name: 'ada' } });
+
+      expect(second.calculatedWidgets['i']).not.toBe(first.calculatedWidgets['i']);
+      expect(
+        (second.calculatedWidgets['i'].current as InputWidget<any, string>).props?.['options'],
+      ).toEqual([{ label: 'ada', value: 1 }]);
+    });
+
+    it('layout with stable structure -> same DerivedWidget ref across calls', () => {
       const child = { kind: 'display', uid: 'c', type: 'heading' } satisfies DisplayWidget<string>;
       const source = {
         kind: 'layout',
