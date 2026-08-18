@@ -1,4 +1,5 @@
 export { createIntersectionObserver } from './lib/components/tabs';
+export { updateListItems } from './lib/components/list-items';
 export {
   createDateRange,
   getDateFormatParts,

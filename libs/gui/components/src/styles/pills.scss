@@ -131,7 +131,6 @@ gui-pills {
     flex-direction: column;
     gap: var(--gui-space-2);
     max-height: 200px;
-    overflow-y: auto;
   }
 
   @container gui-pills-widget (max-width: 540px) {

@@ -6,7 +6,13 @@ import {
 } from '../web-components';
 import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useDebounceCallback, useInputWidget, useItemRenderer } from '@golemui/react';
-import type { ListItem, MultiDropdownProps, OptionValue } from '@golemui/gui-shared/internals';
+import type {
+  ListItem,
+  ListProps,
+  MultiDropdownProps,
+  OptionValue,
+} from '@golemui/gui-shared/internals';
+import { updateListItems } from '@golemui/gui-components/internals';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DefaultMultiListItemRenderer } from './item-renderers/DefaultMultiListItemRenderer';
 import { type ListItemRendererProps } from './item-renderers/props';
@@ -41,8 +47,12 @@ export function MultiDropdown(widgetInstance: WithWidget) {
 
   const pillItems = useMemo<GuiPillItem[]>(() => {
     const labelField = (templateData.labelField as string) ?? 'label';
+    const source = updateListItems(
+      (templateData.items ?? []) as ListItem<any>[],
+      templateData as unknown as ListProps<any>,
+    );
     return currentValues.map((val) => {
-      const item = listItems.find((i) => i.value === val);
+      const item = source.find((i) => i.value === val) ?? listItems.find((i) => i.value === val);
       const isObject = item != null && item.template !== null && typeof item.template === 'object';
       const label =
         item == null
@@ -52,7 +62,7 @@ export function MultiDropdown(widgetInstance: WithWidget) {
             : String(item.template);
       return { key: String(val), label };
     });
-  }, [currentValues, listItems, templateData.labelField]);
+  }, [currentValues, listItems, templateData]);
 
   const closeList = useCallback(() => {
     onBlur();

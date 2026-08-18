@@ -16,9 +16,11 @@ export type GUIPopupClickIntent = 'open' | 'toggle' | 'ignore';
 export interface GUIPopupControllerOptions {
   /**
    * Selector (scoped to the host, light DOM) for the element to focus when
-   * Escape closes the popup, e.g. `'gui-date input'`.
+   * Escape closes the popup, e.g. `'gui-date input'`. Hosts that delegate
+   * focus restoration to their own host (gui-pills' `pillexit`) omit it,
+   * making `restoreFocusToInput()` a no-op.
    */
-  focusRestoreSelector: string;
+  focusRestoreSelector?: string;
   focusPopupSelector?: string;
   isDisabled(): boolean;
   /** Classifies a click on the anchor. See {@link GUIPopupClickIntent}. */
@@ -220,6 +222,7 @@ export class GUIPopupController implements ReactiveController {
    * re-open the popup through show().
    */
   restoreFocusToInput() {
+    if (!this.options.focusRestoreSelector) return;
     const part = this.host.querySelector<HTMLElement>(this.options.focusRestoreSelector);
     if (!part) return;
     this._restoringFocus = true;

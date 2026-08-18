@@ -75,7 +75,9 @@ Every `gui.*` factory and its calling convention. Look up the detail below for t
 Call: `gui.layouts.accordion(sections)`
 
 ```ts
-gui.layouts.accordion([ { label: 'Billing', children: [ gui.inputs.textInput('card', { label: 'Card' }) ] } ])
+gui.layouts.accordion([
+  { label: 'Billing', children: [gui.inputs.textInput('card', { label: 'Card' })] },
+]);
 ```
 
 - Takes `sections: { label, children, uid? }[]` — same shape as `tabs`, rendered as collapsible panels.
@@ -87,7 +89,7 @@ Reference: https://golemui.com/dx/widgets-reference/layout-fields/accordion.md
 Call: `gui.displays.alert({ text })`
 
 ```ts
-gui.displays.alert({ text: 'Please review your details before submitting.' })
+gui.displays.alert({ text: 'Please review your details before submitting.' });
 ```
 
 - Static, non-input callout. Uses **`text`** (not `content`). Displays do not take a `path`.
@@ -99,7 +101,7 @@ Reference: https://golemui.com/dx/widgets-reference/display-fields/alert.md
 Call: `gui.inputs.booleanInput(path, { label, defaultValue? })`
 
 ```ts
-gui.inputs.booleanInput('newsletter', { label: 'Subscribe to newsletter', defaultValue: false })
+gui.inputs.booleanInput('newsletter', { label: 'Subscribe to newsletter', defaultValue: false });
 ```
 
 - The on/off toggle for a single boolean. Use `checkbox` for a checkbox presentation.
@@ -111,7 +113,7 @@ Reference: https://golemui.com/dx/widgets-reference/input-fields/toggle.md
 Call: `gui.actions.button({ label, actionType?: 'submit', onClick? })`
 
 ```ts
-gui.actions.button({ label: 'Sign up', actionType: 'submit' })
+gui.actions.button({ label: 'Sign up', actionType: 'submit' });
 ```
 
 - Submit button: `gui.actions.button({ label, actionType: 'submit' })`.
@@ -125,7 +127,7 @@ Reference: https://golemui.com/dx/widgets-reference/interactive-fields/button.md
 Call: `gui.inputs.calendar(path, { label, minDate?, maxDate? })`
 
 ```ts
-gui.inputs.calendar('day', { label: 'Pick a day', minDate: '2025-01-01' })
+gui.inputs.calendar('day', { label: 'Pick a day', minDate: '2025-01-01' });
 ```
 
 - An always-visible INLINE calendar (no popover) — use when the calendar should be shown on the page. For a compact single-date field use `datePicker` instead.
@@ -138,7 +140,14 @@ Reference: https://golemui.com/dx/widgets-reference/input-fields/calendar.md
 Call: `gui.inputs.checkbox(path, { label, defaultValue?, validator? })`
 
 ```ts
-gui.inputs.checkbox('terms', { label: 'I accept the terms', validator: { required: true, const: true, messages: { invalid: 'You must accept the terms', const: 'You must accept the terms' } } })
+gui.inputs.checkbox('terms', {
+  label: 'I accept the terms',
+  validator: {
+    required: true,
+    const: true,
+    messages: { invalid: 'You must accept the terms', const: 'You must accept the terms' },
+  },
+});
 ```
 
 - A single boolean rendered as a checkbox.
@@ -152,7 +161,7 @@ Reference: https://golemui.com/dx/widgets-reference/input-fields/checkbox.md
 Call: `gui.inputs.currency(path, { label, validator? })`
 
 ```ts
-gui.inputs.currency('price', { label: 'Price', validator: { required: true, minimum: 0 } })
+gui.inputs.currency('price', { label: 'Price', validator: { required: true, minimum: 0 } });
 ```
 
 - Numeric money input; number-style validator.
@@ -164,7 +173,11 @@ Reference: https://golemui.com/dx/widgets-reference/input-fields/currency.md
 Call: `gui.inputs.dateInput(path, { label, minDate?, maxDate?, validator? })`
 
 ```ts
-gui.inputs.dateInput('startDate', { label: 'Start date', incompleteMessage: 'Incomplete date!', validator: { required: true } })
+gui.inputs.dateInput('startDate', {
+  label: 'Start date',
+  incompleteMessage: 'Incomplete date!',
+  validator: { required: true },
+});
 ```
 
 - Typed date entry, NO calendar UI — use only when keyboard-first entry is wanted. For most dates use `datePicker` (popover calendar) instead. Accepts the loose `{ required: true }`.
@@ -178,7 +191,11 @@ Reference: https://golemui.com/dx/widgets-reference/input-fields/dateinput.md
 Call: `gui.inputs.datePicker(path, { label, minDate?, maxDate?, validator? })`
 
 ```ts
-gui.inputs.datePicker('startDate', { label: 'Coverage start', minDate: '2025-01-01', validator: { required: true } })
+gui.inputs.datePicker('startDate', {
+  label: 'Coverage start',
+  minDate: '2025-01-01',
+  validator: { required: true },
+});
 ```
 
 - THE DEFAULT single-date field: a text field with a popover calendar (click to open). Prefer this for most dates. (`calendar` = always-visible inline calendar; `dateInput` = typed entry, no calendar UI.) Accepts the loose `{ required: true }` validator.
@@ -192,7 +209,11 @@ Reference: https://golemui.com/dx/widgets-reference/input-fields/date-picker.md
 Call: `gui.inputs.dateTimeCalendar(path, { label, minDate?, maxDate?, minTime?, maxTime?, minuteStep?, disabledTimeRanges?, allowCustomTime? })`
 
 ```ts
-gui.inputs.dateTimeCalendar('appointmentAt', { label: 'Appointment', minTime: '09:00', maxTime: '18:00' })
+gui.inputs.dateTimeCalendar('appointmentAt', {
+  label: 'Appointment',
+  minTime: '09:00',
+  maxTime: '18:00',
+});
 ```
 
 - An INLINE calendar with an embedded time picker: a segmented time input between the header and the days grid opens a time grid in place of the days (like the year selector).
@@ -207,7 +228,7 @@ Reference: https://golemui.com/dx/widgets-reference/input-fields/datetimecalenda
 Call: `gui.inputs.dateTimeInput(path, { label, hourFormat?, minuteStep?, validator? })`
 
 ```ts
-gui.inputs.dateTimeInput('meetingAt', { label: 'Meeting at' })
+gui.inputs.dateTimeInput('meetingAt', { label: 'Meeting at' });
 ```
 
 - Typed date+time entry in one locale-ordered row. Emits a local ISO date-time (`YYYY-MM-DDTHH:mm:ss`) — pair with the `{ format: 'date-time' }` validator. `hourFormat`/`minuteStep` as in `timeInput`.
@@ -220,7 +241,11 @@ Reference: https://golemui.com/dx/widgets-reference/input-fields/datetimeinput.m
 Call: `gui.inputs.dateTimePicker(path, { label, minDate?, maxDate?, minTime?, maxTime?, minuteStep?, disabledTimeRanges?, allowCustomTime? })`
 
 ```ts
-gui.inputs.dateTimePicker('appointmentAt', { label: 'Appointment', minTime: '09:00', maxTime: '18:00' })
+gui.inputs.dateTimePicker('appointmentAt', {
+  label: 'Appointment',
+  minTime: '09:00',
+  maxTime: '18:00',
+});
 ```
 
 - A compact date-time FIELD that opens a `dateTimeCalendar` POPOVER on focus — the space-saving counterpart to the inline `dateTimeCalendar`, like `datePicker` is to `calendar`.
@@ -234,7 +259,7 @@ Reference: https://golemui.com/dx/widgets-reference/input-fields/datetimepicker.
 Call: `gui.displays.display(render)`
 
 ```ts
-gui.displays.display(() => 'Order summary')
+gui.displays.display(() => 'Order summary');
 ```
 
 - **The go-to for a static heading or any standalone/formatted block.** Return your framework’s own content from the render function — React: `gui.displays.display(() => <h2>Member enrollment</h2>)`; Vue/Angular/Lit: return that framework’s node. It renders immediately with **zero registration and no parser dependency** — this is how you put a heading or any static block in a form (GolemUI itself never renders content for display).
@@ -247,7 +272,14 @@ Reference: https://golemui.com/dx/widgets-reference/display-fields/renderer.md
 Call: `gui.inputs.dropdown(path, { label, items, validator? })`
 
 ```ts
-gui.inputs.dropdown('country', { label: 'Country', items: [{ value: 'us', label: 'United States' }, { value: 'ca', label: 'Canada' }], validator: { type: 'string', required: true } })
+gui.inputs.dropdown('country', {
+  label: 'Country',
+  items: [
+    { value: 'us', label: 'United States' },
+    { value: 'ca', label: 'Canada' },
+  ],
+  validator: { type: 'string', required: true },
+});
 ```
 
 - Choice list uses **`items`** (`{ value, label }[]`).
@@ -260,7 +292,10 @@ Reference: https://golemui.com/dx/widgets-reference/input-fields/dropdown.md
 Call: `gui.layouts.flex(children, props?)`
 
 ```ts
-gui.layouts.flex([ gui.inputs.textInput('firstName', { label: 'First name' }), gui.inputs.textInput('lastName', { label: 'Last name' }) ])
+gui.layouts.flex([
+  gui.inputs.textInput('firstName', { label: 'First name' }),
+  gui.inputs.textInput('lastName', { label: 'Last name' }),
+]);
 ```
 
 - Layouts take the **children array first**, then optional props — unlike inputs (path first).
@@ -273,7 +308,10 @@ Reference: https://golemui.com/dx/widgets-reference/layout-fields/flex.md
 Call: `gui.layouts.grid(children, props?)`
 
 ```ts
-gui.layouts.grid([ gui.inputs.textInput('a', { label: 'A' }), gui.inputs.textInput('b', { label: 'B' }) ])
+gui.layouts.grid([
+  gui.inputs.textInput('a', { label: 'A' }),
+  gui.inputs.textInput('b', { label: 'B' }),
+]);
 ```
 
 - Grid layout; `horizontalGrid` / `verticalGrid` lock the direction.
@@ -285,7 +323,10 @@ Reference: https://golemui.com/dx/widgets-reference/layout-fields/grid.md
 Call: `gui.layouts.horizontalFlex(children, props?)`
 
 ```ts
-gui.layouts.horizontalFlex([ gui.inputs.textInput('a', { label: 'A' }), gui.inputs.textInput('b', { label: 'B' }) ])
+gui.layouts.horizontalFlex([
+  gui.inputs.textInput('a', { label: 'A' }),
+  gui.inputs.textInput('b', { label: 'B' }),
+]);
 ```
 
 - A `flex` with direction fixed to horizontal.
@@ -297,7 +338,10 @@ Reference: https://golemui.com/dx/widgets-reference/layout-fields/flex.md
 Call: `gui.layouts.horizontalGrid(children, props?)`
 
 ```ts
-gui.layouts.horizontalGrid([ gui.inputs.textInput('a', { label: 'A' }), gui.inputs.textInput('b', { label: 'B' }) ])
+gui.layouts.horizontalGrid([
+  gui.inputs.textInput('a', { label: 'A' }),
+  gui.inputs.textInput('b', { label: 'B' }),
+]);
 ```
 
 - A `grid` with direction fixed to horizontal.
@@ -309,7 +353,12 @@ Reference: https://golemui.com/dx/widgets-reference/layout-fields/grid.md
 Call: `gui.inputs.list(path, { label, items, height?, itemHeight? })`
 
 ```ts
-gui.inputs.list('selection', { label: 'Pick an option', items: ['Option 1', 'Option 2', 'Option 3'], height: 200, itemHeight: 40 })
+gui.inputs.list('selection', {
+  label: 'Pick an option',
+  items: ['Option 1', 'Option 2', 'Option 3'],
+  height: 200,
+  itemHeight: 40,
+});
 ```
 
 - A scrolling selection list. `items` is a string array (or `{ value, label }[]`).
@@ -322,10 +371,10 @@ Reference: https://golemui.com/dx/widgets-reference/input-fields/list.md
 Call: `gui.inputs.markdown(path, { label })`
 
 ```ts
-gui.inputs.markdown('notes', { label: 'Notes (markdown)' })
+gui.inputs.markdown('notes', { label: 'Notes (markdown)' });
 ```
 
-- A markdown *editor input* — the user types markdown and the value IS that markdown string. This is the ONLY use of markdown in GolemUI: there is no markdown-for-display. For a heading or static block, use `gui.displays.display(() => <node>)` (your host renders it), never a markdown widget.
+- A markdown _editor input_ — the user types markdown and the value IS that markdown string. This is the ONLY use of markdown in GolemUI: there is no markdown-for-display. For a heading or static block, use `gui.displays.display(() => <node>)` (your host renders it), never a markdown widget.
 
 Reference: https://golemui.com/dx/widgets-reference/input-fields/markdown.md
 
@@ -371,7 +420,10 @@ Reference: https://golemui.com/dx/widgets-reference/input-fields/multi-list.md
 Call: `gui.inputs.numberInput(path, { label, defaultValue?, validator? })`
 
 ```ts
-gui.inputs.numberInput('age', { label: 'Age', validator: { required: true, minimum: 0, maximum: 120 } })
+gui.inputs.numberInput('age', {
+  label: 'Age',
+  validator: { required: true, minimum: 0, maximum: 120 },
+});
 ```
 
 - Number validator: `{ required, minimum, maximum, exclusiveMinimum, exclusiveMaximum, multipleOf }`.
@@ -383,7 +435,7 @@ Reference: https://golemui.com/dx/widgets-reference/input-fields/number.md
 Call: `gui.inputs.password(path, { label, validator? })`
 
 ```ts
-gui.inputs.password('password', { label: 'Password', validator: { required: true, minLength: 8 } })
+gui.inputs.password('password', { label: 'Password', validator: { required: true, minLength: 8 } });
 ```
 
 - Masked text input; loose string validator.
@@ -395,7 +447,14 @@ Reference: https://golemui.com/dx/widgets-reference/input-fields/password.md
 Call: `gui.inputs.radiogroup(path, { label, options, defaultValue?, validator? })`
 
 ```ts
-gui.inputs.radiogroup('accountType', { label: 'Account type', defaultValue: 'personal', options: [{ value: 'personal', label: 'Personal' }, { value: 'business', label: 'Business' }] })
+gui.inputs.radiogroup('accountType', {
+  label: 'Account type',
+  defaultValue: 'personal',
+  options: [
+    { value: 'personal', label: 'Personal' },
+    { value: 'business', label: 'Business' },
+  ],
+});
 ```
 
 - Radio group uses **`options`** (`{ value, label }[]`) — note the asymmetry: `dropdown` uses `items`, `radiogroup` uses `options`.
@@ -408,7 +467,7 @@ Reference: https://golemui.com/dx/widgets-reference/input-fields/radiogroup.md
 Call: `gui.inputs.rangeCalendar(path, { label? })`
 
 ```ts
-gui.inputs.rangeCalendar('stayDates', { label: 'Stay dates' })
+gui.inputs.rangeCalendar('stayDates', { label: 'Stay dates' });
 ```
 
 - Inline calendar for a start–end date **range** (the value is a date range). For a single date use `calendar`.
@@ -420,7 +479,7 @@ Reference: https://golemui.com/dx/widgets-reference/input-fields/range-calendar.
 Call: `gui.inputs.rangeDateInput(path, { label? })`
 
 ```ts
-gui.inputs.rangeDateInput('stayDates', { label: 'Stay dates' })
+gui.inputs.rangeDateInput('stayDates', { label: 'Stay dates' });
 ```
 
 - Typed start–end date **range** entry (the range sibling of `dateInput`).
@@ -433,7 +492,7 @@ Reference: https://golemui.com/dx/widgets-reference/input-fields/range-date-inpu
 Call: `gui.inputs.rangeDatePicker(path, { label? })`
 
 ```ts
-gui.inputs.rangeDatePicker('stayDates', { label: 'Stay dates' })
+gui.inputs.rangeDatePicker('stayDates', { label: 'Stay dates' });
 ```
 
 - Popover calendar for a start–end date **range** (the range sibling of `datePicker`). A span with only its first day picked is held by the picker, so it survives closing and reopening the popover. Leaving it that way surfaces an "incomplete" error (`incompleteMessage` overrides its wording).
@@ -445,7 +504,11 @@ Reference: https://golemui.com/dx/widgets-reference/input-fields/range-date-pick
 Call: `gui.inputs.rangeDateTimeCalendar(path, { label?, minDateTime?, maxDateTime?, disabledRanges?, startTimeLabel?, endTimeLabel? })`
 
 ```ts
-gui.inputs.rangeDateTimeCalendar('stay', { label: 'Stay', startTimeLabel: 'Check-in', endTimeLabel: 'Check-out' })
+gui.inputs.rangeDateTimeCalendar('stay', {
+  label: 'Stay',
+  startTimeLabel: 'Check-in',
+  endTimeLabel: 'Check-out',
+});
 ```
 
 - INLINE range calendar with TWO embedded time pickers (start/end); value is `DateTimeRange[]`, rendered as pills. A day span and the two times can be chosen in ANY order — both time pickers are usable from the start — and the pill is committed once all four pieces are present. Starting a new day span keeps the times already chosen. A day holding more than one range shows a count badge. Leaving the widget with a half-finished selection surfaces an "incomplete" error over the untouched pills (`incompleteMessage` overrides its wording); leaving it emptied clears the error.
@@ -458,7 +521,11 @@ Reference: https://golemui.com/dx/widgets-reference/input-fields/range-datetime-
 Call: `gui.inputs.rangeDateTimeInput(path, { label?, minDateTime?, maxDateTime? })`
 
 ```ts
-gui.inputs.rangeDateTimeInput('window', { label: 'Window', minDateTime: '2026-03-01T06:00:00', maxDateTime: '2026-03-31T22:00:00' })
+gui.inputs.rangeDateTimeInput('window', {
+  label: 'Window',
+  minDateTime: '2026-03-01T06:00:00',
+  maxDateTime: '2026-03-31T22:00:00',
+});
 ```
 
 - Typed start–end date-time **range** entry (the range sibling of `dateTimeInput`); value is `DateTimeRange[]`. A backward selection reorders (swaps) instead of erroring.
@@ -472,7 +539,11 @@ Reference: https://golemui.com/dx/widgets-reference/input-fields/range-datetime-
 Call: `gui.inputs.rangeDateTimePicker(path, { label?, minDateTime?, maxDateTime?, disabledRanges?, startTimeLabel?, endTimeLabel? })`
 
 ```ts
-gui.inputs.rangeDateTimePicker('stay', { label: 'Stay', startTimeLabel: 'Check-in', endTimeLabel: 'Check-out' })
+gui.inputs.rangeDateTimePicker('stay', {
+  label: 'Stay',
+  startTimeLabel: 'Check-in',
+  endTimeLabel: 'Check-out',
+});
 ```
 
 - POPOVER date-time range picker: the typed `rangeDateTimeInput` as the trigger (pills live there) with the `rangeDateTimeCalendar` in a dropdown. Value is `DateTimeRange[]`. Committing a pill keeps the popover open so several ranges can be added; it closes on outside-click, blur or Escape. A half-finished selection is held by the picker, so it survives closing and reopening the popover. Leaving it that way surfaces an "incomplete" error (`incompleteMessage` overrides its wording).
@@ -485,7 +556,7 @@ Reference: https://golemui.com/dx/widgets-reference/input-fields/range-datetime-
 Call: `gui.inputs.rangeTimeInput(path, { label?, minTime?, maxTime? })`
 
 ```ts
-gui.inputs.rangeTimeInput('shift', { label: 'Shift', minTime: '06:00:00', maxTime: '22:00:00' })
+gui.inputs.rangeTimeInput('shift', { label: 'Shift', minTime: '06:00:00', maxTime: '22:00:00' });
 ```
 
 - Typed start–end time **range** entry (the range sibling of `timeInput`); value is `TimeRange[]`. End time must be after start time.
@@ -498,7 +569,7 @@ Reference: https://golemui.com/dx/widgets-reference/input-fields/range-time-inpu
 Call: `gui.inputs.rangeTimePicker(path, { label?, minTime?, maxTime? })`
 
 ```ts
-gui.inputs.rangeTimePicker('shift', { label: 'Shift', minTime: '06:00:00', maxTime: '22:00:00' })
+gui.inputs.rangeTimePicker('shift', { label: 'Shift', minTime: '06:00:00', maxTime: '22:00:00' });
 ```
 
 - Two-list popover for a start–end time **range** (the range sibling of `timePicker`); value is `TimeRange[]`. Either list can be used first — an end picked before a start simply waits — and the range commits once both are set. Once an in is chosen the out list floors one slot after it so end is strictly after start.
@@ -511,7 +582,11 @@ Reference: https://golemui.com/dx/widgets-reference/input-fields/range-time-pick
 Call: `gui.inputs.repeater(path, { label?, addLabel?, removeLabel?, limit?, template })`
 
 ```ts
-gui.inputs.repeater('attendees', { label: 'Attendees', addLabel: 'Add attendee', template: [ gui.inputs.textInput('attendees.items.name', { label: 'Name' }) ] })
+gui.inputs.repeater('attendees', {
+  label: 'Attendees',
+  addLabel: 'Add attendee',
+  template: [gui.inputs.textInput('attendees.items.name', { label: 'Name' })],
+});
 ```
 
 - The variable-length array field: the user adds/removes rows at runtime, each rendering the `template`. This is the idiomatic way to collect an UNKNOWN number of items — do NOT hand-roll N pre-generated copies gated by `include.when` (a common but wrong workaround).
@@ -525,7 +600,14 @@ Reference: https://golemui.com/dx/widgets-reference/input-fields/repeater.md
 Call: `gui.inputs.select(path, { label, options, validator? })`
 
 ```ts
-gui.inputs.select('plan', { label: 'Plan', options: [{ value: 'free', label: 'Free' }, { value: 'pro', label: 'Pro' }], validator: { type: 'string', required: true } })
+gui.inputs.select('plan', {
+  label: 'Plan',
+  options: [
+    { value: 'free', label: 'Free' },
+    { value: 'pro', label: 'Pro' },
+  ],
+  validator: { type: 'string', required: true },
+});
 ```
 
 - Choice widget that uses **`options`** (like `radiogroup`) — NOT `items` (which `dropdown` uses).
@@ -538,7 +620,10 @@ Reference: https://golemui.com/dx/widgets-reference/input-fields/select.md
 Call: `gui.layouts.tabs(sections)`
 
 ```ts
-gui.layouts.tabs([ { label: 'Account', children: [ gui.inputs.textInput('email', { label: 'Email' }) ] }, { label: 'Profile', children: [ gui.inputs.textInput('name', { label: 'Name' }) ] } ])
+gui.layouts.tabs([
+  { label: 'Account', children: [gui.inputs.textInput('email', { label: 'Email' })] },
+  { label: 'Profile', children: [gui.inputs.textInput('name', { label: 'Name' })] },
+]);
 ```
 
 - Takes `sections: { label, children, uid? }[]` — each section is a tab with its own children.
@@ -550,7 +635,7 @@ Reference: https://golemui.com/dx/widgets-reference/layout-fields/tabs.md
 Call: `gui.inputs.tags(path, { label })`
 
 ```ts
-gui.inputs.tags('skills', { label: 'Skills' })
+gui.inputs.tags('skills', { label: 'Skills' });
 ```
 
 - Free-form multi-value tag input; the value is a string array.
@@ -562,7 +647,10 @@ Reference: https://golemui.com/dx/widgets-reference/input-fields/tags.md
 Call: `gui.inputs.textInput(path, { label, placeholder?, defaultValue?, validator? })`
 
 ```ts
-gui.inputs.textInput('fullName', { label: 'Full name', validator: { required: true, minLength: 2 } })
+gui.inputs.textInput('fullName', {
+  label: 'Full name',
+  validator: { required: true, minLength: 2 },
+});
 ```
 
 - Text fields accept a loose validator: `{ required, minLength, maxLength, pattern, format }` (no `type` needed).
@@ -575,7 +663,7 @@ Reference: https://golemui.com/dx/widgets-reference/input-fields/textinput.md
 Call: `gui.inputs.textarea(path, { label, placeholder?, validator? })`
 
 ```ts
-gui.inputs.textarea('bio', { label: 'Bio', validator: { maxLength: 500 } })
+gui.inputs.textarea('bio', { label: 'Bio', validator: { maxLength: 500 } });
 ```
 
 - Multi-line text; same loose string validator as `textInput`.
@@ -587,7 +675,7 @@ Reference: https://golemui.com/dx/widgets-reference/input-fields/textarea.md
 Call: `gui.inputs.timeInput(path, { label, hourFormat?, minuteStep?, validator? })`
 
 ```ts
-gui.inputs.timeInput('meetingTime', { label: 'Meeting time', minuteStep: 15 })
+gui.inputs.timeInput('meetingTime', { label: 'Meeting time', minuteStep: 15 });
 ```
 
 - Typed time entry (hh:mm segments). Emits an ISO time string (`HH:mm:ss`) — pair with the `{ format: 'time' }` validator. `hourFormat` forces '12'/'24' (default: locale); `minuteStep` sets the arrow-key minute increment.
@@ -600,7 +688,12 @@ Reference: https://golemui.com/dx/widgets-reference/input-fields/timeinput.md
 Call: `gui.inputs.timePicker(path, { label, minTime?, maxTime?, minuteStep?, disabledRanges?, allowCustomTime?, validator? })`
 
 ```ts
-gui.inputs.timePicker('meetingTime', { label: 'Meeting time', minTime: '09:00', maxTime: '18:00', minuteStep: 30 })
+gui.inputs.timePicker('meetingTime', {
+  label: 'Meeting time',
+  minTime: '09:00',
+  maxTime: '18:00',
+  minuteStep: 30,
+});
 ```
 
 - Time field with a popover list of slots built from `minTime`..`maxTime` stepping `minuteStep` (default 30). `disabledRanges` (`{ start, end }[]`, inclusive) greys slots out. Typing is off unless `allowCustomTime: true`. Emits `HH:mm:ss` — pair with the `{ format: 'time' }` validator.
@@ -613,7 +706,10 @@ Reference: https://golemui.com/dx/widgets-reference/input-fields/timepicker.md
 Call: `gui.layouts.verticalFlex(children, props?)`
 
 ```ts
-gui.layouts.verticalFlex([ gui.inputs.textInput('a', { label: 'A' }), gui.inputs.textInput('b', { label: 'B' }) ])
+gui.layouts.verticalFlex([
+  gui.inputs.textInput('a', { label: 'A' }),
+  gui.inputs.textInput('b', { label: 'B' }),
+]);
 ```
 
 - A `flex` with direction fixed to vertical.
@@ -625,7 +721,10 @@ Reference: https://golemui.com/dx/widgets-reference/layout-fields/flex.md
 Call: `gui.layouts.verticalGrid(children, props?)`
 
 ```ts
-gui.layouts.verticalGrid([ gui.inputs.textInput('a', { label: 'A' }), gui.inputs.textInput('b', { label: 'B' }) ])
+gui.layouts.verticalGrid([
+  gui.inputs.textInput('a', { label: 'A' }),
+  gui.inputs.textInput('b', { label: 'B' }),
+]);
 ```
 
 - A `grid` with direction fixed to vertical.
@@ -639,7 +738,10 @@ Cross-cutting patterns that apply to every factory (not a factory themselves).
 ## Show or hide a field conditionally (hide-when)
 
 ```ts
-gui.inputs.textInput('promoCode', { label: 'Promo code', include: { when: '$form.hasPromoCode === true' } })
+gui.inputs.textInput('promoCode', {
+  label: 'Promo code',
+  include: { when: '$form.hasPromoCode === true' },
+});
 ```
 
 - `include` and `exclude` are common config fields on EVERY `gui.*` item — pass them inside the factory's config argument (the same object as `label`): `gui.inputs.textInput('promoCode', { label, include: { when: '$form.hasPromoCode === true' } })`. `include` shows the field only while the expression is true; `exclude` hides it while true.
@@ -649,7 +751,7 @@ gui.inputs.textInput('promoCode', { label: 'Promo code', include: { when: '$form
 ## Declare named form-level states (and gate fields by them)
 
 ```ts
-gui.inputs.textInput('spouseName', { label: 'Spouse name', include: { in: ['familyCoverage'] } })
+gui.inputs.textInput('spouseName', { label: 'Spouse name', include: { in: ['familyCoverage'] } });
 ```
 
 - Named states are form-level: declare them in `formConfig.states`, a sibling of `formDef` on the `<GuiForm>` config — NOT a wrapper around the array. `formConfig.states` maps each state name to a `ReactiveExpression` string, e.g. `{ familyCoverage: '$form.coverageType === \'family\'' }`. Then any item references it by name: `include: { in: ['familyCoverage'] }` (show while true) / `exclude: { from: ['familyCoverage'] }` (hide while true).
@@ -659,7 +761,11 @@ gui.inputs.textInput('spouseName', { label: 'Spouse name', include: { in: ['fami
 ## Conditional & state-driven props (enable/disable, show/hide, readonly)
 
 ```ts
-gui.actions.button({ label: 'Submit', actionType: 'submit', disabled: { when: '$formIsInvalid || $form.email === undefined' } })
+gui.actions.button({
+  label: 'Submit',
+  actionType: 'submit',
+  disabled: { when: '$formIsInvalid || $form.email === undefined' },
+});
 ```
 
 - ENABLE/DISABLE & READONLY: `disabled` and `readonly` are typed `boolean | { when: <expr> }`. `$formIsInvalid` is a built-in validity flag — do not declare it as a state.
@@ -670,11 +776,21 @@ gui.actions.button({ label: 'Submit', actionType: 'submit', disabled: { when: '$
 ## Validation rules & custom error messages (required, const, messages)
 
 ```ts
-gui.inputs.textInput('email', { label: 'Email', validator: { required: true, format: 'email', messages: { invalid: 'Email is required', required: 'Email is required', format: 'Enter a valid email address' } } })
+gui.inputs.textInput('email', {
+  label: 'Email',
+  validator: {
+    required: true,
+    format: 'email',
+    messages: {
+      invalid: 'Email is required',
+      required: 'Email is required',
+      format: 'Enter a valid email address',
+    },
+  },
+});
 ```
 
 - Every validator accepts a `messages` map from rule name to custom error text (string or i18n `{ key, params?, default? }`). Keys per type — string: `invalid`, `required`, `minLength`, `maxLength`, `pattern`, `format`, `enum`, `const`; number: `invalid`, `minimum`, `maximum`, `exclusiveMinimum`, `exclusiveMaximum`, `multipleOf`, `enum`, `const`; boolean: `invalid`, `const`; array: `invalid`, `required`, `minItems`, `maxItems`. The special key `invalid` customizes the base type check. Set custom messages for every rule you use — the library defaults (e.g. "Invalid input: expected string, received undefined") are developer-facing, not user-facing.
 - ALWAYS pair `messages.required` with `messages.invalid` (same text): an `undefined`/`null` value — the pristine or cleared field, the most common empty state — fails the base TYPE check and shows the `invalid` message; the `required` rule only fires on present-but-empty values (`""`, `[]`). That is also why number/boolean validators have NO `required` message key — for them `messages.invalid` is the only way to word the missing-value error. `null` is never valid, even on non-required fields.
 - MANDATORY CHECKBOX: boolean `required: true` does NOT force it checked (`false` is a valid boolean) and `const: true` alone lets the pristine `undefined` pass. Use both plus paired messages — see the `gui.inputs.checkbox` entry for the full recipe.
 - WHEN VALIDATION RUNS: only on user interaction, per `formConfig.validateOn` — `"eager"` (default: first change or blur anywhere validates the whole form), `"change"`, `"blur"`, `"submit"`, or an array. NOTHING validates at mount, which is why `$formIsInvalid` starts `false` — see the conditional-and-state-props pattern for gating the submit button correctly. Submit clicks always re-validate everything and the runtime blocks the submit event while invalid.
-

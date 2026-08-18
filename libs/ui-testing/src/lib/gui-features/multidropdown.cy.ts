@@ -10,8 +10,9 @@ import {
 // values render as pills to the left of the filter input. Pins the keyboard
 // model shared with tags/range inputs (ArrowLeft at caret 0 / Backspace on an
 // empty draft enter the pill list, ArrowRight past the last pill returns to
-// the input) with one deliberate divergence: ArrowDown ALWAYS opens the
-// option panel — never the pills bubble — because the input is a combobox.
+// the input) with one deliberate divergence: ArrowDown from the INPUT always
+// opens the option panel — the input is a combobox. ArrowDown from the count
+// bubble opens the popup that button advertises: the pills dropdown.
 export const runMultiDropdownComponentTests = (mountFn: MountComponentFn) => {
   describe('MultiDropdown Component', () => {
     const uid = 'testSubject';
@@ -333,6 +334,71 @@ export const runMultiDropdownComponentTests = (mountFn: MountComponentFn) => {
         cy.focused().type('{esc}');
         cy.get(sel.pillsDropdown).should('not.exist');
         cy.focused().should('have.attr', 'data-cy', `${uid}_textinput`);
+      });
+
+      it('should open the pills dropdown on ArrowDown from the count bubble, not the panel', () => {
+        mountMultiDropdown({ data: { myField: ['React', 'Vue'] } });
+
+        cy.get('.gui-pills__count').focus();
+        cy.focused().type('{downArrow}');
+
+        cy.get(sel.pillsDropdown).should('exist');
+        cy.get(sel.panel).should('have.attr', 'hidden');
+        cy.focused().should('have.class', 'gui-pills__pill').should('contain.text', 'React');
+      });
+
+      it('should keep the pills dropdown open while navigating pills with ArrowDown', () => {
+        mountMultiDropdown({ data: { myField: ['React', 'Vue'] } });
+
+        cy.get('.gui-pills__count').click();
+        cy.get('.gui-pills__dropdown button.gui-pills__pill').first().focus();
+
+        cy.focused().type('{downArrow}');
+        cy.focused().should('have.class', 'gui-pills__pill').should('contain.text', 'Vue');
+        cy.get(sel.pillsDropdown).should('exist');
+        cy.get(sel.panel).should('have.attr', 'hidden');
+
+        // ArrowDown on the LAST pill stays put — the dropdown must not close.
+        cy.focused().type('{downArrow}');
+        cy.focused().should('have.class', 'gui-pills__pill').should('contain.text', 'Vue');
+        cy.get(sel.pillsDropdown).should('exist');
+      });
+
+      it('should close the pills dropdown on an outside click', () => {
+        mountMultiDropdown({ data: { myField: ['React', 'Vue'] } });
+
+        cy.get('.gui-pills__count').click();
+        cy.get(sel.pillsDropdown).should('exist');
+
+        cy.get('body').click('bottomRight');
+        cy.get(sel.pillsDropdown).should('not.exist');
+      });
+
+      it('should keep pill labels for selections hidden by an active filter', () => {
+        mountMultiDropdown({
+          items: [
+            { label: 'React', value: 'react' },
+            { label: 'Angular', value: 'angular' },
+            { label: 'Vue', value: 'vue' },
+          ],
+          props: { labelField: 'label', valueField: 'value' },
+          data: { myField: ['react', 'angular'] },
+        });
+
+        // Filter down to an item outside the current selection and toggle it:
+        // the earlier selections are now filtered OUT of the displayed list,
+        // but their pills must keep resolving labels from the full source.
+        cy.get(sel.input).type('Vue');
+        visibleItems().should('have.length', 1);
+        visibleItems().first().click();
+
+        cy.get('.gui-pills__count').click();
+        cy.get(`${sel.pillsDropdown} .gui-pills__pill-text`).should('have.length', 3);
+        cy.get(`${sel.pillsDropdown} .gui-pills__pill-text`).eq(0).should('contain.text', 'React');
+        cy.get(`${sel.pillsDropdown} .gui-pills__pill-text`)
+          .eq(1)
+          .should('contain.text', 'Angular');
+        cy.get(`${sel.pillsDropdown} .gui-pills__pill-text`).eq(2).should('contain.text', 'Vue');
       });
     });
 

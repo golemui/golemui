@@ -49,6 +49,76 @@ export const runListComponentTests = (mountFn: MountComponentFn) => {
       });
     });
 
+    describe('keyboard navigation', () => {
+      const objectItems = (disabledIndex?: number) =>
+        ['React', 'Angular', 'Vue'].map((label, i) => ({
+          label,
+          value: label.toLowerCase(),
+          ...(i === disabledIndex ? { disabled: true } : {}),
+        }));
+
+      it('should move aria-activedescendant with ArrowDown/ArrowUp', () => {
+        mountList();
+
+        cy.get('gui-list').focus();
+        cy.focused().type('{downarrow}');
+        cy.get('gui-list').should('have.attr', 'aria-activedescendant', `${uid}-item-0`);
+
+        cy.focused().type('{downarrow}');
+        cy.get('gui-list').should('have.attr', 'aria-activedescendant', `${uid}-item-1`);
+
+        cy.focused().type('{uparrow}');
+        cy.get('gui-list').should('have.attr', 'aria-activedescendant', `${uid}-item-0`);
+      });
+
+      it('should skip disabled items when stepping', () => {
+        mountList({
+          items: objectItems(1),
+          props: { labelField: 'label', valueField: 'value' },
+        });
+
+        cy.get('gui-list').focus();
+        cy.focused().type('{downarrow}');
+        cy.get('gui-list').should('have.attr', 'aria-activedescendant', `${uid}-item-0`);
+
+        cy.focused().type('{downarrow}');
+        cy.get('gui-list').should('have.attr', 'aria-activedescendant', `${uid}-item-2`);
+      });
+
+      it('should land on the first/last enabled item on Home/End', () => {
+        mountList({
+          items: objectItems(2),
+          props: { labelField: 'label', valueField: 'value' },
+        });
+
+        cy.get('gui-list').focus();
+        // The last item is disabled — End lands on the last enabled one.
+        cy.focused().type('{end}');
+        cy.get('gui-list').should('have.attr', 'aria-activedescendant', `${uid}-item-1`);
+
+        cy.focused().type('{home}');
+        cy.get('gui-list').should('have.attr', 'aria-activedescendant', `${uid}-item-0`);
+      });
+
+      it('should page by floor(height / itemHeight) rows on PageDown/PageUp', () => {
+        mountList({
+          items: Array.from({ length: 10 }, (_, i) => `Item ${i}`),
+          props: { height: 120, itemHeight: 40 },
+        });
+
+        cy.get('gui-list').focus();
+        cy.focused().type('{downarrow}');
+        cy.get('gui-list').should('have.attr', 'aria-activedescendant', `${uid}-item-0`);
+
+        // 120px viewport / 40px rows = a 3-row page (floor semantics, grid-nav)
+        cy.focused().type('{pagedown}');
+        cy.get('gui-list').should('have.attr', 'aria-activedescendant', `${uid}-item-3`);
+
+        cy.focused().type('{pageup}');
+        cy.get('gui-list').should('have.attr', 'aria-activedescendant', `${uid}-item-0`);
+      });
+    });
+
     describe('validation', () => {
       it('should mark the listbox invalid with the red border after touch', () => {
         mountList({ validator: { type: 'string', required: true } });

@@ -1,6 +1,7 @@
 import { html, LitElement, type PropertyValues } from 'lit';
 import { property, query, state } from 'lit/decorators.js';
 import { safeDefine } from '@golemui/lit/internals';
+import { gridKeyStep, listPageSize, nextEnabledIndex } from '../utils/grid-nav';
 import { updateListItems } from './list-items';
 import type { ListItem, ListProps, OptionValue } from '@golemui/gui-shared/internals';
 
@@ -129,54 +130,46 @@ export class GuiList extends LitElement {
   private onKeyDown = (e: KeyboardEvent) => {
     if (this.disabled || this.readOnly) return;
 
-    const itemHeight = this.itemHeight ?? 40;
-    const visibleCount = Math.ceil(this._viewportHeight / itemHeight);
-    const maxIndex = this.items.length - 1;
-    let handled = false;
-
-    switch (e.key) {
-      case 'ArrowDown':
-        this.setFocusedIndex(this.findEnabledIndex(Math.min(this._focusedIndex + 1, maxIndex), 1));
-        handled = true;
-        break;
-      case 'ArrowUp':
-        this.setFocusedIndex(this.findEnabledIndex(Math.max(this._focusedIndex - 1, 0), -1));
-        handled = true;
-        break;
-      case 'PageDown':
-        this.setFocusedIndex(
-          this.findEnabledIndex(Math.min(this._focusedIndex + visibleCount, maxIndex), 1),
-        );
-        handled = true;
-        break;
-      case 'PageUp':
-        this.setFocusedIndex(
-          this.findEnabledIndex(Math.max(this._focusedIndex - visibleCount, 0), -1),
-        );
-        handled = true;
-        break;
-      case 'Home':
-        this.setFocusedIndex(this.findEnabledIndex(0, 1));
-        handled = true;
-        break;
-      case 'End':
-        this.setFocusedIndex(this.findEnabledIndex(maxIndex, -1));
-        handled = true;
-        break;
-      case 'Enter':
-      case ' ': {
-        const item = this._items[this._focusedIndex];
-        if (this._focusedIndex >= 0 && item != null && !item.disabled) {
-          this.selectItem(item);
-        }
-        handled = true;
-        break;
+    if (e.key === 'Enter' || e.key === ' ') {
+      const item = this._items[this._focusedIndex];
+      if (this._focusedIndex >= 0 && item != null && !item.disabled) {
+        this.selectItem(item);
       }
+      e.preventDefault();
+      return;
     }
 
-    if (handled) {
-      e.preventDefault();
+    const intent = gridKeyStep(e.key, {
+      columns: 1,
+      isRTL: false,
+      pageSize: listPageSize(this._viewportHeight || this.height, this.itemHeight, 1),
+    });
+    if (intent.kind === 'none') return;
+
+    e.preventDefault();
+
+    const length = this._items.length;
+    const isDisabled = (i: number) => !!this._items[i]?.disabled;
+
+    if (intent.kind === 'edge') {
+      const start = intent.edge === 'first' ? 0 : length - 1;
+      const step = intent.edge === 'first' ? 1 : -1;
+      this.setFocusedIndex(
+        nextEnabledIndex(start, step, length, isDisabled, {
+          includeStart: true,
+          outOfBounds: 'none',
+        }),
+      );
+      return;
     }
+
+    const landing = Math.max(0, Math.min(this._focusedIndex + intent.delta, length - 1));
+    this.setFocusedIndex(
+      nextEnabledIndex(landing, intent.delta > 0 ? 1 : -1, length, isDisabled, {
+        includeStart: true,
+        outOfBounds: 'none',
+      }),
+    );
   };
 
   private onFocus = () => {
@@ -241,19 +234,8 @@ export class GuiList extends LitElement {
     );
   }
 
-  /**
-   * First enabled item index walking from `from` in `direction`, or -1 when
-   * every item that way is disabled — keyboard navigation skips disabled rows.
-   */
-  private findEnabledIndex(from: number, direction: 1 | -1): number {
-    for (let i = from; i >= 0 && i < this._items.length; i += direction) {
-      if (!this._items[i]?.disabled) return i;
-    }
-    return -1;
-  }
-
   private setFocusedIndex(index: number) {
-    if (index < 0 || index >= this.items.length) return;
+    if (index < 0 || index >= this._items.length) return;
 
     this._focusedIndex = index;
     this.scrollToIndex(index);
