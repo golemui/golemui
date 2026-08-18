@@ -1852,4 +1852,110 @@ describe('reducer end-to-end baseline', () => {
       ).toThrow(TypeError);
     });
   });
+
+  // ---------------------------------------------------------------------------
+  // 20. Reference stability across recomputes
+  // ---------------------------------------------------------------------------
+
+  describe('reference stability across recomputes', () => {
+    /** A row display widget whose only prop is rebuilt from the row on every recompute. */
+    const makeRowTagsWidget = () => ({
+      uid: 'rowTags',
+      kind: 'display',
+      type: 'heading',
+      props: { tags: ({ $item }: { $item: any }) => [$item.name] },
+    });
+
+    const makeRefFormDef = (rowTags: ReturnType<typeof makeRowTagsWidget>) => ({
+      form: [
+        {
+          uid: 'firstName',
+          kind: 'input',
+          type: 'textinput',
+          path: 'firstName',
+          props: { hint: 'Hi {{$form.firstName}}' },
+        },
+        {
+          uid: 'users',
+          kind: 'input',
+          type: 'repeater',
+          path: 'users',
+          props: {
+            template: { uid: 'usersRow', kind: 'layout', type: 'flex', children: [rowTags] },
+          },
+        },
+      ],
+    });
+
+    it('keeps a row widget reference when an unrelated input changes', () => {
+      const rowTags = makeRowTagsWidget();
+      const formDef = makeRefFormDef(rowTags);
+      const initialized = drive([init(formDef)]);
+
+      const mounted = drive([
+        init(formDef),
+        setData({ firstName: 'Joan', users: [{ name: 'Ada' }, { name: 'Linus' }] }),
+        addWidget(initialized.flatForm['firstName']),
+        mountRow(rowTags as unknown as FormWidget<string>, [0]),
+        mountRow(rowTags as unknown as FormWidget<string>, [1]),
+      ]);
+
+      const reduce = makeReducer();
+      const state = reduce(
+        mounted,
+        setData({ firstName: 'Grace', users: [{ name: 'Ada' }, { name: 'Linus' }] }),
+      );
+
+      // The prop function returns a new array every run, so only its content can decide this.
+      expect(propsOf(state, 'rowTags[0]')['tags']).toEqual(['Ada']);
+      expect(state.calculatedWidgets['rowTags[0]']).toBe(mounted.calculatedWidgets['rowTags[0]']);
+      expect(state.calculatedWidgets['rowTags[1]']).toBe(mounted.calculatedWidgets['rowTags[1]']);
+
+      // The widget that does depend on the changed value gets a new reference.
+      expect(state.calculatedWidgets['firstName']).not.toBe(mounted.calculatedWidgets['firstName']);
+      expect(propsOf(state, 'firstName')['hint']).toBe('Hi Grace');
+    });
+
+    it('gives a row widget a new reference when its own row data changes', () => {
+      const rowTags = makeRowTagsWidget();
+      const formDef = makeRefFormDef(rowTags);
+
+      const mounted = drive([
+        init(formDef),
+        setData({ firstName: 'Joan', users: [{ name: 'Ada' }] }),
+        mountRow(rowTags as unknown as FormWidget<string>, [0]),
+      ]);
+
+      const reduce = makeReducer();
+      const state = reduce(mounted, setData({ firstName: 'Joan', users: [{ name: 'Grace' }] }));
+
+      expect(state.calculatedWidgets['rowTags[0]']).not.toBe(
+        mounted.calculatedWidgets['rowTags[0]'],
+      );
+      expect(propsOf(state, 'rowTags[0]')['tags']).toEqual(['Grace']);
+    });
+
+    it('keeps a row function widget reference when it returns an equal config', () => {
+      const rowName = makeRowNameFunctionWidget();
+      const formDef = makeRowFunctionFormDef();
+
+      const mounted = drive([
+        init(formDef),
+        setData({ users: [{ name: 'Ada' }] }),
+        mountRow(rowName, [0]),
+      ]);
+
+      const reduce = makeReducer();
+      const unchanged = reduce(mounted, setData({ users: [{ name: 'Ada' }] }));
+      const changed = reduce(unchanged, setData({ users: [{ name: 'Grace' }] }));
+
+      expect(unchanged.calculatedWidgets['rowName[0]']).toBe(
+        mounted.calculatedWidgets['rowName[0]'],
+      );
+      expect(changed.calculatedWidgets['rowName[0]']).not.toBe(
+        unchanged.calculatedWidgets['rowName[0]'],
+      );
+      expect(propsOf(changed, 'rowName[0]')['seenItemName']).toBe('Grace');
+    });
+  });
 });
