@@ -22,6 +22,7 @@ import { type $Errors, type ExpressionFunctions } from '../../shared';
 import { calculateValidationVariables } from '../../utils/form';
 import { normalizeArrayIndexes } from '../../utils/justin';
 import { get, set } from '../../utils/object';
+import { extractRepeaterIndexes } from '../../utils/repeater';
 import { type DerivedWidget, type RepeaterItemScope, type State } from '../model';
 import { hasWhen } from './utils';
 import { errorCodes } from '../../errors';
@@ -582,10 +583,6 @@ function resolveVisibleChildren<C extends { uid?: string }>(
     return !flags || flags.hidden !== true;
   });
 }
-
-/** `"abc[0][1]"` -> `[0, 1]`, `"abc"` -> `[]`. */
-const extractRepeaterIndexes = (uid: string): number[] =>
-  [...uid.matchAll(/\[(\d+)\]/g)].map((m) => parseInt(m[1], 10));
 
 // -----------------------------------------------------------------------------
 // Custom errors

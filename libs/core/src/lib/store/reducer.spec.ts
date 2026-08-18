@@ -30,8 +30,9 @@ import { reducer } from './reducer';
  *
  * Three kinds of tags appear below:
  * - `BASELINE (flips in step NN)` marks an assertion that step NN deliberately changes. Step 02
- *   replaces the repeater row walk, step 05 replaces the mount-driven pipeline with a single
- *   derive. When the step lands, the flipped assertion documents exactly what changed.
+ *   replaced the repeater row walk (its two pins are flipped already), step 05 replaces the
+ *   mount-driven pipeline with a single derive. When the step lands, the flipped assertion
+ *   documents exactly what changed.
  * - `REFACTOR-NOTE` marks a mount-driven mechanic that disappears entirely when the mount actions
  *   (`ADD_WIDGET`, `REMOVE_WIDGET`, `SET_WIDGET_INITIAL_DATA`) are removed in step 12.
  * - `FINDING` marks behavior that is recorded because it is what happens today, not because it is
@@ -562,6 +563,11 @@ describe('reducer end-to-end baseline', () => {
       expect(state.flatForm).not.toHaveProperty('usersRow');
       expect(state.flatForm).not.toHaveProperty('name');
 
+      // Without data there are no rows, so `resolvedSources` holds exactly the flatForm widgets.
+      expect(Object.keys(state.resolvedSources).sort()).toEqual(Object.keys(state.flatForm).sort());
+      expect(state.resolvedSources['users']).toBe(state.flatForm['users']);
+      expect(state.repeaterItemScopes).toEqual({});
+
       // BASELINE (flips in step 05): INITIALIZE runs no calculation today.
       expect(state.calculatedWidgets).toEqual({});
       expect(state.currentStates).toEqual([]);
@@ -583,14 +589,14 @@ describe('reducer end-to-end baseline', () => {
       expect(state.currentStates).toEqual([]);
       expect(state.widgetFlags['bio']).toEqual({ hidden: true });
 
-      // Every repeater row is materialized from the array data, whether or not it is mounted.
-      // The template's own layout widget is materialized per row as well.
-      expect(Object.keys(state.materializedRepeaterWidgets).sort()).toEqual([
-        'name[0]',
-        'name[1]',
-        'usersRow[0]',
-        'usersRow[1]',
-      ]);
+      // Every repeater row is expanded from the array data, whether or not it is mounted, next to
+      // the static widgets. The template's own layout widget is expanded per row as well.
+      expect(Object.keys(state.resolvedSources).sort()).toEqual(
+        [...Object.keys(state.flatForm), 'name[0]', 'name[1]', 'usersRow[0]', 'usersRow[1]'].sort(),
+      );
+      expect((state.resolvedSources['name[1]'] as InputWidget<any, string>).path).toBe(
+        'users.1.name',
+      );
       expect(state.repeaterItemScopes['name[0]']).toEqual({ itemPath: 'users.0', index: 0 });
       expect(state.repeaterItemScopes['name[1]']).toEqual({ itemPath: 'users.1', index: 1 });
 
@@ -721,24 +727,33 @@ describe('reducer end-to-end baseline', () => {
       expect(state.widgetFlags['firstRowBadge[1]']).toEqual({ hidden: true });
     });
 
-    it('materializes uid and path per row, and resolves a row function widget with $item / $index', () => {
+    it('indexes uid and path per row and keeps a row function widget callable with $item / $index', () => {
       const state = drive([
         init(makeRowFunctionFormDef()),
         setData({ users: [{ name: 'Ada' }, { name: 'Linus' }] }),
       ]);
 
-      const firstRow = state.materializedRepeaterWidgets['rowName[0]'] as InputWidget<any, string>;
-      const secondRow = state.materializedRepeaterWidgets['rowName[1]'] as InputWidget<any, string>;
+      const firstRow = state.resolvedSources['rowName[0]'] as FunctionWidget<string>;
+      const secondRow = state.resolvedSources['rowName[1]'] as FunctionWidget<string>;
 
-      // The function widget was resolved with the row in scope, and the resulting config carries
-      // a MATERIALIZED path (not the `users.items.name` template path).
+      // The row entry is a callable wrapper whose path holds the row index (not the
+      // `users.items.name` template path). It is resolved where it is read, with the row in scope.
+      expect(typeof firstRow).toBe('function');
       expect(firstRow.path).toBe('users.0.name');
-      expect(firstRow.props?.['seenItemName']).toBe('Ada');
-      expect(firstRow.props?.['seenIndex']).toBe(0);
-
       expect(secondRow.path).toBe('users.1.name');
-      expect(secondRow.props?.['seenItemName']).toBe('Linus');
-      expect(secondRow.props?.['seenIndex']).toBe(1);
+
+      const scope = state.repeaterItemScopes['rowName[1]'];
+      expect(scope).toEqual({ itemPath: 'users.1', index: 1 });
+      const resolved = secondRow({
+        $form: state.data,
+        $item: state.data['users'][1],
+        $index: scope.index,
+        errors: undefined,
+        touched: undefined,
+        translate: undefined,
+      });
+      expect(resolved.props?.['seenItemName']).toBe('Linus');
+      expect(resolved.props?.['seenIndex']).toBe(1);
     });
 
     // REFACTOR-NOTE: the row widget has to be mounted for its props to be computed at all.
@@ -815,11 +830,10 @@ describe('reducer end-to-end baseline', () => {
       expect(state.widgetFlags['legacyGate[0]']).toEqual({ hidden: false });
       expect(state.widgetFlags['legacyGate[1]']).toEqual({ hidden: true });
 
-      // The rewrite happens on the materialized copy only; the flags stage is what consumes it.
-      const materialized = state.materializedRepeaterWidgets[
-        'legacyGate[1]'
-      ] as DisplayWidget<string>;
-      expect(materialized.include).toEqual({ when: '$form.lineItems.1.active === true' });
+      // The row entry keeps the template expression. The flags stage rewrites it for the row
+      // when it evaluates the condition.
+      const rowEntry = state.resolvedSources['legacyGate[1]'] as DisplayWidget<string>;
+      expect(rowEntry.include).toEqual({ when: '$form.lineItems.items.active === true' });
     });
   });
 
@@ -969,7 +983,7 @@ describe('reducer end-to-end baseline', () => {
       // No stage of the pipeline ran, so every derived map keeps its identity.
       expect(after.calculatedWidgets).toBe(before.calculatedWidgets);
       expect(after.widgetFlags).toBe(before.widgetFlags);
-      expect(after.materializedRepeaterWidgets).toBe(before.materializedRepeaterWidgets);
+      expect(after.resolvedSources).toBe(before.resolvedSources);
       expect(after.repeaterItemScopes).toBe(before.repeaterItemScopes);
       expect(after.validations).toBe(before.validations);
     });
@@ -1128,7 +1142,7 @@ describe('reducer end-to-end baseline', () => {
       expect(validated.isFormValid).toBe(true);
     });
 
-    it('BASELINE (flips in step 02): prunes a hidden plain input but not a hidden repeater row input', () => {
+    it('prunes a hidden plain input and a hidden repeater row input', () => {
       const plain = drive([init(makeGatedInputFormDef()), setData({ age: 10, secret: 'shh' })]);
 
       expect(plain.widgetFlags['secret']).toEqual({ hidden: true });
@@ -1137,9 +1151,11 @@ describe('reducer end-to-end baseline', () => {
       const rows = drive([init(makeRowScopeFormDef()), setData(rowScopeData)]);
 
       expect(rows.widgetFlags['quantity[1]']).toEqual({ hidden: true });
-      // `pruneHiddenData` looks the flagged uid up in `flatForm`, which never holds row widgets,
-      // so the hidden row value is submitted. Step 02 makes the lookup read `resolvedSources`.
-      expect(pruneHiddenData(rows)).toEqual(rowScopeData);
+      // `pruneHiddenData` looks the flagged uid up in `resolvedSources`, which holds row widgets
+      // with their concrete path, so the hidden row value is removed.
+      const pruned = pruneHiddenData(rows);
+      expect(pruned['lineItems'][1]).not.toHaveProperty('quantity');
+      expect(pruned['lineItems'][0]).toEqual(rowScopeData.lineItems[0]);
     });
   });
 
@@ -1400,12 +1416,12 @@ describe('reducer end-to-end baseline', () => {
       const reduce = makeReducer();
       const oneRow = reduce(twoRows, setData({ lineItems: [{ quantity: 9, active: true }] }));
 
-      // The scopes and the materialized widgets are rebuilt from the data, so row 1 is gone
-      // from both.
+      // The scopes and the resolved sources are rebuilt from the data, so row 1 is gone from
+      // both.
       expect(Object.keys(oneRow.repeaterItemScopes).filter((uid) => uid.includes('[1]'))).toEqual(
         [],
       );
-      expect(oneRow.materializedRepeaterWidgets).not.toHaveProperty('rowTotal[1]');
+      expect(oneRow.resolvedSources).not.toHaveProperty('rowTotal[1]');
 
       // The surviving row is recomputed against the new data.
       expect(propsOf(oneRow, 'rowTotal[0]')['text']).toBe('Row 1: 9');
@@ -1491,11 +1507,13 @@ describe('reducer end-to-end baseline', () => {
         index: 0,
       });
 
-      // The inner repeater container is a scope owner, not a materialized widget.
-      expect(state.materializedRepeaterWidgets).not.toHaveProperty('devs[0]');
-      expect(
-        (state.materializedRepeaterWidgets['devName[0][1]'] as InputWidget<any, string>).path,
-      ).toBe('teams.0.devs.1.name');
+      // The inner repeater container is an entry of its own with a concrete path.
+      expect((state.resolvedSources['devs[0]'] as InputWidget<any, string>).path).toBe(
+        'teams.0.devs',
+      );
+      expect((state.resolvedSources['devName[0][1]'] as InputWidget<any, string>).path).toBe(
+        'teams.0.devs.1.name',
+      );
 
       // `$item` resolves against the inner item at both levels.
       expect(state.widgetFlags['devName[0][0]']).toEqual({ hidden: false });
@@ -1520,26 +1538,34 @@ describe('reducer end-to-end baseline', () => {
       expect(propsOf(state, 'devLabel[1][0]')['text']).toBe('dev 0: Grace');
     });
 
-    it('BASELINE (flips in step 02): flags the outer repeater but never the nested one', () => {
+    it('flags the outer repeater and the nested one', () => {
       const state = drive([
         init(makeGatedNestedRepeaterFormDef()),
-        setData({ showTeams: true, teams: [{ showDevs: false, devs: [{ name: 'Ada' }] }] }),
+        setData({
+          showTeams: true,
+          teams: [
+            { showDevs: false, devs: [{ name: 'Ada' }] },
+            { showDevs: true, devs: [{ name: 'Grace' }] },
+          ],
+        }),
       ]);
 
       // The outer repeater is in flatForm, so its `include.when` is evaluated.
       expect(state.widgetFlags['teams']).toEqual({ hidden: false });
 
-      // The nested repeater only gets a scope entry, never a materialized widget
-      // (`materialize-repeater-items.ts:88`), and the flags stage reads that map, so its
-      // `include.when` is silently ignored.
+      // The nested repeater container is an entry of `resolvedSources` (scoped to the outer
+      // item), so the flags stage evaluates its `include.when` against `$item` per outer row.
       expect(state.repeaterItemScopes['devs[0]']).toEqual({ itemPath: 'teams.0', index: 0 });
-      expect(state.materializedRepeaterWidgets).not.toHaveProperty('devs[0]');
-      expect(state.widgetFlags).not.toHaveProperty('devs[0]');
+      expect((state.resolvedSources['devs[0]'] as InputWidget<any, string>).path).toBe(
+        'teams.0.devs',
+      );
+      expect(state.widgetFlags['devs[0]']).toEqual({ hidden: true });
+      expect(state.widgetFlags['devs[1]']).toEqual({ hidden: false });
 
-      // Its rows are materialized regardless of the gate.
-      expect(
-        (state.materializedRepeaterWidgets['devName[0][0]'] as InputWidget<any, string>).path,
-      ).toBe('teams.0.devs.0.name');
+      // Its rows are expanded regardless of the gate.
+      expect((state.resolvedSources['devName[0][0]'] as InputWidget<any, string>).path).toBe(
+        'teams.0.devs.0.name',
+      );
     });
   });
 
@@ -1586,7 +1612,7 @@ describe('reducer end-to-end baseline', () => {
       expect(after.lang).toBe('fr-FR');
       expect(after.currentStates).toBe(before.currentStates);
       expect(after.widgetFlags).toBe(before.widgetFlags);
-      expect(after.materializedRepeaterWidgets).toBe(before.materializedRepeaterWidgets);
+      expect(after.resolvedSources).toBe(before.resolvedSources);
       expect(after.repeaterItemScopes).toBe(before.repeaterItemScopes);
       // Nothing a prop depends on changed, so the widget entry keeps its reference.
       expect(after.calculatedWidgets['firstName']).toBe(before.calculatedWidgets['firstName']);
@@ -1654,7 +1680,7 @@ describe('reducer end-to-end baseline', () => {
       expect(state.calculatedWidgets).toEqual({});
       expect(state.widgetFlags).toEqual({});
       expect(state.repeaterItemScopes).toEqual({});
-      expect(state.materializedRepeaterWidgets).toEqual({});
+      expect(Object.keys(state.resolvedSources).sort()).toEqual(Object.keys(state.flatForm).sort());
       expect(state.currentStates).toEqual([]);
       expect(state.validations).toEqual({});
       expect(state.touched).toBe(false);

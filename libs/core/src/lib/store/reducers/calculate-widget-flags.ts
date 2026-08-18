@@ -1,8 +1,15 @@
-import { isActionWidget, isFunctionWidget, isInputWidget } from '../../form-widget';
-import { type $Errors, type ExpressionFunctions } from '../../shared';
+import {
+  type FormWidget,
+  isActionWidget,
+  isFunctionWidget,
+  isInputWidget,
+  type NonFunctionWidget,
+} from '../../form-widget';
+import { type $Errors, type ExpressionFunctions, type Uid } from '../../shared';
 import { calculateValidationVariables } from '../../utils/form';
 import { expressionIsTrue } from '../../utils/justin';
 import { get } from '../../utils/object';
+import { extractRepeaterIndexes, transformWidgetWhenExpressions } from '../../utils/repeater';
 import { type State } from '../model';
 import { hasWhen } from './utils';
 
@@ -24,24 +31,11 @@ function calculateFlags(
   $formIsInvalid: boolean,
   functions: ExpressionFunctions,
 ): State['widgetFlags'] {
-  const plainWidgets = Object.values(state.flatForm).map((widget) => {
-    if (isFunctionWidget(widget)) {
-      const resolved = widget({
-        $form: state.data,
-        errors: undefined,
-        touched: undefined,
-        translate: undefined,
-      });
-      resolved.uid = widget.uid as string;
-      return resolved;
-    }
-    return widget;
-  });
+  const widgets = Object.entries(state.resolvedSources).map(([uid, source]) =>
+    resolveForFlags(uid as Uid, source, state),
+  );
 
-  // Repeater item widgets come from the materialization stage: their uid is concrete, their `when` expressions are already rewritten for their item, and function widgets are already resolved
-  const repeaterItemWidgets = Object.values(state.materializedRepeaterWidgets);
-
-  return [...plainWidgets, ...repeaterItemWidgets]
+  return widgets
     .filter((widget) => {
       if (widget.include && ('in' in widget.include || 'when' in widget.include)) {
         return true;
@@ -132,4 +126,36 @@ function calculateFlags(
       },
       {} as State['widgetFlags'],
     );
+}
+
+/**
+ * Turns a `resolvedSources` entry into the plain widget the flag conditions are read from:
+ * a function widget is called with its item in scope, and a row widget gets its legacy `.items.`
+ * when tokens rewritten for its row.
+ */
+function resolveForFlags(
+  uid: Uid,
+  source: FormWidget<string>,
+  state: State,
+): NonFunctionWidget<string> {
+  const itemScope = state.repeaterItemScopes[uid];
+  let widget: NonFunctionWidget<string>;
+  if (isFunctionWidget(source)) {
+    widget = source({
+      $form: state.data,
+      $item: itemScope ? get(state.data, itemScope.itemPath) : undefined,
+      $index: itemScope?.index,
+      errors: undefined,
+      touched: undefined,
+      translate: undefined,
+    });
+    widget.uid = uid;
+  } else {
+    widget = source;
+  }
+  const repeaterIndexes = extractRepeaterIndexes(uid);
+  if (repeaterIndexes.length > 0) {
+    widget = transformWidgetWhenExpressions(widget, repeaterIndexes);
+  }
+  return widget;
 }

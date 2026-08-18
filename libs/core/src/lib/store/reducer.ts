@@ -9,12 +9,12 @@ import { type Action } from './actions';
 import { type State } from './model';
 import {
   addWidget,
+  applyExpandSources,
   calculateCurrentState,
   calculateWidgetFlags,
   calculateWidgetProps,
   initialize,
   injectValidationIssues,
-  materializeRepeaterItems,
   overrideWidgetProp,
   removeWidget,
   setData,
@@ -50,7 +50,7 @@ export const reducer = ({
         return pipe(
           setData(state, action),
           applyCurrentState,
-          materializeRepeaterItems,
+          applyExpandSources,
           applyWidgetFlags,
           applyWidgetProps,
         );
@@ -59,7 +59,7 @@ export const reducer = ({
         return pipe(
           setMeta(state, action),
           applyCurrentState,
-          materializeRepeaterItems,
+          applyExpandSources,
           applyWidgetFlags,
           applyWidgetProps,
         );
@@ -71,7 +71,7 @@ export const reducer = ({
         const stateAfterAdd = pipe(
           addWidget(state, action),
           reduceIf(formIsHealthy, applyCurrentState),
-          reduceIf(formIsHealthy, materializeRepeaterItems),
+          reduceIf(formIsHealthy, applyExpandSources),
           reduceIf(formIsHealthy, applyWidgetFlags),
           reduceIf(formIsHealthy, applyWidgetProps),
         );
@@ -84,7 +84,7 @@ export const reducer = ({
             stateAfterAdd,
             validateAll(validators, localization),
             applyCurrentState,
-            materializeRepeaterItems,
+            applyExpandSources,
             applyWidgetFlags,
             applyWidgetProps,
             calculateIsFormValid,
@@ -97,7 +97,7 @@ export const reducer = ({
         return pipe(
           removeWidget(state, action),
           applyCurrentState,
-          materializeRepeaterItems,
+          applyExpandSources,
           applyWidgetFlags,
           applyWidgetProps,
         );
@@ -107,7 +107,7 @@ export const reducer = ({
         return pipe(
           setWidgetData(state, action),
           applyCurrentState,
-          materializeRepeaterItems,
+          applyExpandSources,
           applyWidgetFlags,
           applyWidgetProps,
         );
@@ -116,7 +116,7 @@ export const reducer = ({
         return pipe(
           overrideWidgetProp(state, action),
           applyCurrentState,
-          materializeRepeaterItems,
+          applyExpandSources,
           applyWidgetFlags,
           applyWidgetProps,
           // Apply validation here because this action can be dispatched from the form's event handlers callback
@@ -165,7 +165,7 @@ export const reducer = ({
           validateAll(validators, localization),
           // This handles $errors and $formIsValid expressions variables
           applyCurrentState,
-          materializeRepeaterItems,
+          applyExpandSources,
           applyWidgetFlags,
           applyWidgetProps,
           calculateIsFormValid,
@@ -189,7 +189,7 @@ export const reducer = ({
             validateAll(validators, localization),
             // This handles $errors and $formIsValid expressions variables
             applyCurrentState,
-            materializeRepeaterItems,
+            applyExpandSources,
             applyWidgetFlags,
             applyWidgetProps,
             // TODO: extract this into a separate function
