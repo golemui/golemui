@@ -3,6 +3,8 @@
  */
 export const errorCodes = {
   calculateCurrentStateError: 10,
+  calculateWidgetFlagsError: 11,
+  calculateWidgetPropsError: 12,
   initializeParseError: 20,
   initializeUidCollisionError: 21,
   initializeUnknownError: 22,
