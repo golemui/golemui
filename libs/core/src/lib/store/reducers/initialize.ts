@@ -3,6 +3,7 @@ import { errorCodes } from '../../errors';
 import { type Form, formDefDecoder } from '../../form';
 import { type FormWidget, isInputWidget, isLayoutWidget } from '../../form-widget';
 import { flattenForm } from '../../utils/form';
+import { expandSources } from '../../utils/repeater';
 import type { INITIALIZE } from '../actions';
 import { createInitialState, type FormHealth, type State } from '../model';
 
@@ -70,10 +71,12 @@ export const initialize = ({ lang }: State, action: INITIALIZE): State => {
 
     warnUndeclaredStateReferences(flatForm, result.value.states);
 
+    // No data yet, so this seeds the static widgets only. SET_DATA expands the repeater rows.
     return {
       ...initialState,
       formDef: result.value as Form,
       flatForm,
+      ...expandSources(flatForm, {}),
       formHealth,
     };
   }

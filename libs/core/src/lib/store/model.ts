@@ -1,5 +1,5 @@
 import { type Form, formDefDecoder } from '../form';
-import type { FormWidget, FunctionWidget, NonFunctionWidget } from '../form-widget';
+import type { FormWidget, FunctionWidget } from '../form-widget';
 import { type DotPath, type Uid, type ValidationStatus } from '../shared';
 
 // ------------------------------
@@ -21,6 +21,17 @@ export type State = {
    * Enables more efficient lookup and processing in downstream operations.
    */
   flatForm: Record<Uid, FormWidget<string>>;
+
+  /**
+   * `flatForm` plus one entry per repeater row widget, keyed by concrete uid.
+   * Row entries carry the row indexes in `uid` and (for inputs) `path`, and include the row layout node
+   * and nested repeater containers. Function widgets stay callable, `when` expressions are not rewritten.
+   * Pure function of `(flatForm, data)`, built by `expandSources` on every reducer pipeline run.
+   * Read by `calculateWidgetFlags` and `pruneHiddenData`.
+   *
+   * @example { 'quantity-number[0]': { uid: 'quantity-number[0]', path: 'lineItems.0.quantity', ... } }
+   */
+  resolvedSources: Record<Uid, FormWidget<string>>;
 
   /**
    * List of states computed for the current form state.
@@ -67,10 +78,10 @@ export type State = {
   widgetFlags: Record<Uid, { hidden?: boolean; readonly?: boolean; disabled?: boolean }>;
 
   /**
-   * Maps every widget rendered inside a repeater item (by its materialized uid) to the repeater item that owns it.
+   * Maps every widget produced by a repeater item (by its concrete uid) to the repeater item that owns it.
    * Used to bind the `$item` and `$index` expression scope variables.
    * For nested repeaters the entry points to the innermost enclosing item.
-   * Built by `materializeRepeaterItems` on every reducer pipeline run.
+   * Built by `expandSources` together with `resolvedSources`.
    *
    * @example { 'quantity-number[0]': { itemPath: 'lineItems.0', index: 0 } }
    * @example Nested repeater, keyed by the innermost item: { 'dev-name[2][0]': { itemPath: 'teams.2.devs.0', index: 0 } }
@@ -78,19 +89,7 @@ export type State = {
   repeaterItemScopes: Record<Uid, RepeaterItemScope>;
 
   /**
-   * State-managed copies of the repeater template widgets, one per repeater item, keyed by materialized uid.
-   * Each entry mirrors the widget the renderer mounts for that item:
-   * - the uid and data path carry the concrete indexes,
-   * - `when` expressions are rewritten for the item's row,
-   * - and function widgets are already resolved to plain configs.
-   * Built by `materializeRepeaterItems` on every reducer pipeline run and consumed by `calculateWidgetFlags`.
-   *
-   * @example { 'quantity-number[0]': { uid: 'quantity-number[0]', path: 'lineItems.0.quantity', ... } }
-   */
-  materializedRepeaterWidgets: Record<Uid, NonFunctionWidget<string>>;
-
-  /**
-   * Allows overriding a widget’s `prop` properties externally via its event handler mechanism.
+   * Allows overriding a widget's `prop` properties externally via its event handler mechanism.
    * For example, this can be used to load options for a select widget asynchronously.
    */
   widgetPropOverrides: Record<Uid, Record<string, any>>;
@@ -142,6 +141,7 @@ export const createInitialState = (lang: string): State => ({
     },
   }) as Form,
   flatForm: {},
+  resolvedSources: {},
   currentStates: [],
   calculatedWidgets: {},
   validations: {},
@@ -150,7 +150,6 @@ export const createInitialState = (lang: string): State => ({
   isFormValid: true,
   widgetFlags: {},
   repeaterItemScopes: {},
-  materializedRepeaterWidgets: {},
   widgetPropOverrides: {},
   data: {},
   meta: {},
