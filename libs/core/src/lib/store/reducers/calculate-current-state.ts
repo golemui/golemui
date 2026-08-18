@@ -1,12 +1,17 @@
 import { errorCodes } from '../../errors';
 import { type ExpressionFunctions } from '../../shared';
-import { calculateValidationVariables } from '../../utils/form';
+import { calculateValidationVariables, type ValidationVariables } from '../../utils/form';
 import { expressionIsTrue } from '../../utils/justin';
 import { type FormHealth, type State } from '../model';
 
+/**
+ * Evaluates the declared state expressions and writes the active state names to `currentStates`.
+ *
+ * @param validationVariables - Pass them when already computed for this pass, otherwise they are computed here.
+ */
 export const calculateCurrentState =
   (functions: ExpressionFunctions) =>
-  (state: State): State => {
+  (state: State, validationVariables?: ValidationVariables): State => {
     let stateExpressions = state.formDef.states;
     if (!stateExpressions || Object.keys(stateExpressions).length === 0) {
       return state;
@@ -16,8 +21,7 @@ export const calculateCurrentState =
       return state;
     }
 
-    // Precalculate the validation variables for all the following steps
-    const { $formIsInvalid, $errors } = calculateValidationVariables(state);
+    const { $formIsInvalid, $errors } = validationVariables ?? calculateValidationVariables(state);
 
     stateExpressions = expandStateExpressions(stateExpressions);
 
