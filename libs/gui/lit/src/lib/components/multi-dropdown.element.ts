@@ -1,6 +1,5 @@
 import type { InputWidget, WithWidget } from '@golemui/core';
 import { InputWidgetAdapter, type LitFormContext, formContext, inputContext } from '@golemui/lit';
-import type { ListItem, MultiDropdownProps, OptionValue } from '@golemui/gui-shared/internals';
 import type {
   ListItem,
   ListProps,
