@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { cloneObject, get, set, unset } from './object';
+import { cloneObject, get, pathExists, set, unset } from './object';
 
 describe('object.set', () => {
   it('sets dot notation paths', () => {
@@ -255,6 +255,40 @@ describe('object.get', () => {
       expect(get(numericPropObj, '1.nested')).toBe('value');
       expect(get(numericPropObj, 'normal')).toBe('property');
     });
+  });
+});
+
+describe('object.pathExists', () => {
+  it('finds a leaf that holds a value', () => {
+    expect(pathExists({ user: { name: 'Alice' } }, 'user.name')).toBe(true);
+  });
+
+  it('finds a leaf that is present but undefined', () => {
+    expect(pathExists({ user: { name: undefined } }, 'user.name')).toBe(true);
+    expect(pathExists({ user: { name: null } }, 'user.name')).toBe(true);
+  });
+
+  it('does not find a missing segment', () => {
+    expect(pathExists({ user: {} }, 'user.name')).toBe(false);
+    expect(pathExists({}, 'user.name')).toBe(false);
+  });
+
+  it('reads array indexes, including the holes a sparse set leaves', () => {
+    const sparse: any[] = [];
+    sparse[1] = { name: 'Bob' };
+    expect(pathExists({ users: sparse }, 'users.1.name')).toBe(true);
+    expect(pathExists({ users: sparse }, 'users.0')).toBe(false);
+    expect(pathExists({ users: sparse }, 'users.2')).toBe(false);
+    expect(pathExists({ users: sparse }, 'users.name')).toBe(false);
+  });
+
+  it('stops at a value that cannot hold the rest of the path', () => {
+    expect(pathExists({ user: 'Alice' }, 'user.name')).toBe(false);
+    expect(pathExists({ user: null }, 'user.name')).toBe(false);
+  });
+
+  it('returns false for an empty path', () => {
+    expect(pathExists({ user: {} }, '')).toBe(false);
   });
 });
 
