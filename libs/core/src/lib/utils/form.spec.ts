@@ -89,11 +89,11 @@ describe('utils.form', () => {
     const makeState = (
       data: State['data'],
       widgetFlags: State['widgetFlags'],
-      flatForm: State['flatForm'],
+      resolvedSources: State['resolvedSources'],
     ) =>
-      ({ data, widgetFlags, flatForm }) satisfies Pick<
+      ({ data, widgetFlags, resolvedSources }) satisfies Pick<
         State,
-        'data' | 'widgetFlags' | 'flatForm'
+        'data' | 'widgetFlags' | 'resolvedSources'
       > as unknown as State;
 
     it('returns data unchanged when no widgets are hidden', () => {
@@ -170,13 +170,22 @@ describe('utils.form', () => {
       expect(pruneHiddenData(state)).toEqual({ name: 'Alice' });
     });
 
-    it('skips uid entries absent from flatForm (e.g. indexed repeater items)', () => {
+    it('skips uid entries absent from resolvedSources', () => {
       const state = makeState(
         { items: [{ name: 'Alice' }] },
         { 'itemName[0]': { hidden: true } },
         {},
       );
       expect(pruneHiddenData(state)).toEqual({ items: [{ name: 'Alice' }] });
+    });
+
+    it('removes the path of a hidden repeater row input', () => {
+      const state = makeState(
+        { users: [{ name: 'Alice' }, { name: 'Bob' }] },
+        { 'name[1]': { hidden: true } },
+        { 'name[0]': inputWidget('users.0.name'), 'name[1]': inputWidget('users.1.name') },
+      );
+      expect(pruneHiddenData(state)).toEqual({ users: [{ name: 'Alice' }, {}] });
     });
   });
 });

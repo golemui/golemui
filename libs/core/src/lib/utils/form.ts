@@ -53,15 +53,15 @@ export function calculateValidationVariables(state: State): {
 
 /**
  * Returns a copy of the form data with values for currently-hidden input widgets removed.
- * Paths are derived from the flat form widget map so this works even though hidden widgets
- * are absent from calculatedWidgets.
+ * Paths come from `resolvedSources`, so hidden repeater row inputs are pruned too and hidden
+ * widgets absent from calculatedWidgets are still covered.
  */
 export function pruneHiddenData(state: State): Record<string, any> {
   const pruned = cloneObject(state.data);
 
   for (const [uid, flags] of Object.entries(state.widgetFlags)) {
     if (flags.hidden === true) {
-      const widget = state.flatForm[uid];
+      const widget = state.resolvedSources[uid];
       if (widget && isInputWidget(widget)) {
         unset(pruned, widget.path);
       }

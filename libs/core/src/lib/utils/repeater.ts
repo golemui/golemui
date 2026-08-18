@@ -1,11 +1,139 @@
 import {
   type FormWidget,
   type FunctionWidget,
+  type InputWidget,
   isFunctionWidget,
   isInputWidget,
+  type LayoutWidget,
   type NonFunctionWidget,
 } from '../form-widget';
 import { type DotPath, type Uid } from '../shared';
+import { type RepeaterItemScope, type State } from '../store/model';
+import { flattenForm } from './form';
+import { get } from './object';
+
+/**
+ * A repeater input widget as the core reads it: an input with a layout template under `props.template`.
+ */
+export type RepeaterTemplateWidget = InputWidget<string> & {
+  type: 'repeater';
+  props: {
+    template: LayoutWidget<string>;
+  };
+};
+
+export const isRepeaterWidget = (widget: FormWidget<string>): widget is RepeaterTemplateWidget =>
+  !isFunctionWidget(widget) && widget.type === 'repeater';
+
+/** `"abc[0][1]"` -> `[0, 1]`, `"abc"` -> `[]`. */
+export const extractRepeaterIndexes = (uid: string): number[] =>
+  [...uid.matchAll(/\[(\d+)\]/g)].map((m) => parseInt(m[1], 10));
+
+/**
+ * The two maps `expandSources` builds from the form and the data.
+ */
+export type ExpandedSources = {
+  resolvedSources: Record<Uid, FormWidget<string>>;
+  repeaterItemScopes: Record<Uid, RepeaterItemScope>;
+};
+
+/**
+ * Walks the flat form and the current data and returns every widget that exists for that data.
+ *
+ * `resolvedSources` holds the `flatForm` widgets by reference plus, for every repeater row, one entry
+ * per template widget (the row layout node included) with the row indexes written into `uid` and `path`.
+ * Nested repeater containers are entries too and are recursed with their concrete path. Function widgets
+ * stay callable (see {@link makeRepeaterItemConfig}), `when` expressions are not rewritten here.
+ *
+ * `repeaterItemScopes` maps every row widget uid to the innermost item that owns it.
+ *
+ * @param flatForm - The flattened form definition keyed by uid.
+ * @param data - The current form data the repeater arrays are read from.
+ * @returns Both maps, rebuilt from scratch.
+ *
+ * @example
+ * const { resolvedSources, repeaterItemScopes } = expandSources(flatForm, { users: [{}, {}] });
+ * resolvedSources['name[1]'].path;      // 'users.1.name'
+ * repeaterItemScopes['name[1]'];        // { itemPath: 'users.1', index: 1 }
+ */
+export function expandSources(
+  flatForm: State['flatForm'],
+  data: Record<string, any>,
+): ExpandedSources {
+  const expanded: ExpandedSources = { resolvedSources: {}, repeaterItemScopes: {} };
+  for (const widget of Object.values(flatForm)) {
+    expanded.resolvedSources[widget.uid as Uid] = widget;
+    if (isRepeaterWidget(widget)) {
+      expandRepeaterRows(widget, [], data, expanded);
+    }
+  }
+  return expanded;
+}
+
+function expandRepeaterRows(
+  repeater: RepeaterTemplateWidget,
+  outerIndexes: number[],
+  data: Record<string, any>,
+  expanded: ExpandedSources,
+): void {
+  const rows = get(data, repeater.path);
+  if (!Array.isArray(rows)) {
+    return;
+  }
+  const templateWidgets = flattenForm([repeater.props.template as FormWidget<never>]);
+
+  rows.forEach((row, rowIndex) => {
+    const indexes = [...outerIndexes, rowIndex];
+    const itemScope: RepeaterItemScope = {
+      itemPath: `${repeater.path}.${rowIndex}`,
+      index: rowIndex,
+    };
+
+    for (const templateWidget of templateWidgets) {
+      const item = makeRepeaterItemConfig(templateWidget, indexes);
+      expanded.resolvedSources[item.uid as Uid] = item;
+      expanded.repeaterItemScopes[item.uid as Uid] = itemScope;
+
+      const nestedRepeater = asNestedRepeater(templateWidget, item, indexes, data, row, rowIndex);
+      if (nestedRepeater) {
+        expandRepeaterRows(nestedRepeater, indexes, data, expanded);
+      }
+    }
+  });
+}
+
+/**
+ * Returns the nested repeater with concrete uid and path when a template widget is one, otherwise undefined.
+ * A function widget is called once here only to find out whether it produces a repeater.
+ */
+function asNestedRepeater(
+  templateWidget: FormWidget<string>,
+  item: FormWidget<string>,
+  indexes: number[],
+  data: Record<string, any>,
+  row: unknown,
+  rowIndex: number,
+): RepeaterTemplateWidget | undefined {
+  if (isRepeaterWidget(item)) {
+    return item;
+  }
+  if (!isFunctionWidget(templateWidget)) {
+    return undefined;
+  }
+  const resolved = templateWidget({
+    $form: data,
+    $item: row,
+    $index: rowIndex,
+    errors: undefined,
+    touched: undefined,
+    translate: undefined,
+  });
+  if (resolved.type !== 'repeater') {
+    return undefined;
+  }
+  resolved.uid = templateWidget.uid as string;
+  return makeRepeaterItemConfig(resolved, indexes) as RepeaterTemplateWidget;
+}
 
 /**
  * Derives a concrete widget config for a specific repeater item by materializing the provided indexes into the

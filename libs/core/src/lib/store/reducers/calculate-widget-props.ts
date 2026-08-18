@@ -22,8 +22,9 @@ import { type $Errors, type ExpressionFunctions } from '../../shared';
 import { calculateValidationVariables } from '../../utils/form';
 import { normalizeArrayIndexes } from '../../utils/justin';
 import { get, set } from '../../utils/object';
+import { extractRepeaterIndexes } from '../../utils/repeater';
 import { type DerivedWidget, type RepeaterItemScope, type State } from '../model';
-import { hasWhen } from './utils';
+import { deepEqual, hasWhen } from './utils';
 import { errorCodes } from '../../errors';
 
 // -----------------------------------------------------------------------------
@@ -78,7 +79,7 @@ function calculateAll(
     }
 
     if (isFunctionWidget(source)) {
-      result[uid] = computeFunctionWidget(uid, source, state, localization, itemScope);
+      result[uid] = computeFunctionWidget(prev, uid, source, state, localization, itemScope);
       continue;
     }
 
@@ -103,6 +104,7 @@ function calculateAll(
 // -----------------------------------------------------------------------------
 
 function computeFunctionWidget(
+  prev: DerivedWidget<FormWidget<string>>,
   uid: string,
   source: FunctionWidget<string>,
   state: State,
@@ -118,7 +120,13 @@ function computeFunctionWidget(
     $index: itemScope?.index,
   });
   current.uid = uid;
-  // TODO: structural comparison to preserve ref when equal?
+
+  // A function widget builds a new config object on every call, so compare the content
+  // to avoid handing subscribers a new reference for an unchanged widget.
+  if (prev.current && deepEqual(prev.current, current)) {
+    return prev;
+  }
+
   return { source, current };
 }
 
@@ -505,13 +513,17 @@ class ChangeTracker<F extends NonFunctionWidget<string> = NonFunctionWidget<stri
   }
 
   write(dotPath: string, value: unknown): void {
-    set(this.current as Record<string, unknown>, dotPath, value);
-    // TODO: only primitive-level reference equality; structurally equivalent
-    // objects/arrays will still trip `changed`.
     const prev = get(this.previous as Record<string, unknown>, dotPath);
-    if (prev !== value) {
-      this._changed = true;
+
+    // An expression that rebuilds an equal object or array must not count as a change,
+    // so keep the previous reference and leave `changed` alone.
+    if (deepEqual(prev, value)) {
+      set(this.current as Record<string, unknown>, dotPath, prev);
+      return;
     }
+
+    set(this.current as Record<string, unknown>, dotPath, value);
+    this._changed = true;
   }
 }
 
@@ -582,10 +594,6 @@ function resolveVisibleChildren<C extends { uid?: string }>(
     return !flags || flags.hidden !== true;
   });
 }
-
-/** `"abc[0][1]"` -> `[0, 1]`, `"abc"` -> `[]`. */
-const extractRepeaterIndexes = (uid: string): number[] =>
-  [...uid.matchAll(/\[(\d+)\]/g)].map((m) => parseInt(m[1], 10));
 
 // -----------------------------------------------------------------------------
 // Custom errors
