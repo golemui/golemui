@@ -73,6 +73,13 @@ export {
   validationByPath$,
 } from './lib/store/selectors';
 
+export {
+  createWidgetViewModelReader,
+  widgetViewModel,
+  widgetViewModel$,
+} from './lib/store/view-model';
+export type { WidgetViewModel } from './lib/store/view-model';
+
 export { filterTap } from './lib/utils/array';
 export { assertNoPropCollisions } from './lib/utils/assert-no-prop-collisions';
 export { enableDevMode } from './lib/utils/dev-mode';
