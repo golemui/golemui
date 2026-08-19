@@ -753,5 +753,125 @@ export const runRangeDatePickerComponentTests = (mountFn: MountComponentFn) => {
           .and('contain.text', 'Incomplete date');
       });
     });
+
+    describe('allowEdit pill editing', () => {
+      const editableRanges = [juneRange, { start: '2026-06-20', end: '2026-06-22' }];
+      const editSel = {
+        pill: 'gui-range-date .gui-pills__pill',
+        selectedEditIcon: `.gui-pills__pill--selected [data-cy="${uid}_pill-edit"]`,
+        confirmIcon: `[data-cy="${uid}_pill-edit-confirm"]`,
+      };
+
+      beforeEach(() => forcePillsStripMode('.gui-range-date-input'));
+      afterEach(clearPillsWidthOverride);
+
+      const mountEditable = (formSubmit?: (event: any) => void) =>
+        mountRangeDatePicker({
+          data: { myRanges: editableRanges },
+          props: { allowEdit: true },
+          formSubmit,
+        });
+
+      it('should mark the selected range by dimming the competing ranges', () => {
+        mountEditable();
+
+        // No selection: nothing is dimmed.
+        cy.get(sel.startMonth).click();
+        cy.get(sel.calendar).should('exist');
+        cy.get(sel.dayButton('2026-06-20')).should('not.have.class', 'range-muted');
+
+        cy.get(editSel.pill).first().click();
+        cy.get(editSel.pill).first().should('have.attr', 'aria-pressed', 'true');
+        cy.get(sel.dayButton('2026-06-10')).should('have.class', 'edit-selected');
+        cy.get(sel.dayButton('2026-06-12')).should('have.class', 'edit-selected');
+        // The selected range keeps its full treatment; the other recedes.
+        cy.get(sel.dayButton('2026-06-10')).should('not.have.class', 'range-muted');
+        cy.get(sel.dayButton('2026-06-20')).should('have.class', 'range-muted');
+        cy.get(sel.dayButton('2026-06-22')).should('have.class', 'range-muted');
+
+        // Keyboard navigation moves the selection, and the marking with it.
+        cy.get(editSel.pill).first().type('{rightarrow}');
+        cy.get(editSel.pill).eq(1).should('have.attr', 'aria-pressed', 'true');
+        cy.get(sel.dayButton('2026-06-20')).should('not.have.class', 'range-muted');
+        cy.get(sel.dayButton('2026-06-10')).should('have.class', 'range-muted');
+
+        // Focus leaving the pills clears the selection and the marking.
+        cy.get(sel.startMonth).click();
+        cy.get('.gui-pills__pill--selected').should('not.exist');
+        cy.get('.gui-calendar__day-button.range-muted').should('not.exist');
+      });
+
+      it('should defer calendar picks to the session and commit the replacement on confirm', () => {
+        const formSubmitHandler = cy.stub().as('formSubmitHandler');
+        mountEditable(formSubmitHandler);
+
+        cy.get(editSel.pill).first().click();
+        cy.get(editSel.selectedEditIcon).click();
+        cy.get(sel.startMonth).should('have.value', '06');
+        cy.get(sel.calendar).should('exist');
+
+        // Two picks reshape the working span; nothing commits yet.
+        cy.get(sel.dayButton('2026-06-08')).click();
+        cy.get(sel.dayButton('2026-06-09')).click();
+        cy.get(editSel.pill).should('have.length', 2);
+        cy.get(editSel.pill).first().should('have.class', 'gui-pills__pill--editing');
+        cy.get(editSel.pill).first().should('contain.text', '06/08/2026 - 06/09/2026');
+        cy.get(sel.startDay).should('have.value', '08');
+
+        cy.get(editSel.confirmIcon).click();
+        cy.get(editSel.pill).should('have.length', 2);
+        cy.get(editSel.pill).first().should('contain.text', '06/08/2026 - 06/09/2026');
+
+        // force: the still-open popover panel overlays the submit button.
+        cy.get('[data-cy="submitBtn_button"]').click({ force: true });
+        cy.get('@formSubmitHandler').then((stub: any) => {
+          expect(stub.getCall(0).args[0].data).to.deep.equal({
+            myRanges: [
+              { start: '2026-06-08', end: '2026-06-09' },
+              { start: '2026-06-20', end: '2026-06-22' },
+            ],
+          });
+        });
+      });
+
+      it('should layer Escape below the open popover', () => {
+        mountEditable();
+
+        cy.get(editSel.pill).first().click();
+        cy.get(editSel.selectedEditIcon).click();
+        cy.get(sel.calendar).should('exist');
+
+        // First Escape only closes the popover; the session survives.
+        cy.focused().type('{esc}');
+        cy.get(sel.calendar).should('not.exist');
+        cy.get('.gui-pills__pill--editing').should('exist');
+
+        // Second Escape cancels the session, keeping the selection.
+        cy.focused().type('{esc}');
+        cy.get('.gui-pills__pill--editing').should('not.exist');
+        cy.get(editSel.pill).first().should('have.attr', 'aria-pressed', 'true');
+
+        // Third Escape clears the selection.
+        cy.focused().type('{esc}');
+        cy.get(editSel.pill).first().should('have.attr', 'aria-pressed', 'false');
+      });
+
+      it('should reject a confirmed edit that violates picker constraints, keeping the value', () => {
+        mountRangeDatePicker({
+          data: { myRanges: editableRanges },
+          props: { allowEdit: true, disabledRanges: [{ start: '2026-06-05' }] },
+        });
+
+        cy.get(editSel.pill).first().click();
+        cy.get(editSel.selectedEditIcon).click();
+        // Retype the start over the disabled day and confirm.
+        cy.get(sel.startDay).type('{selectall}05');
+        cy.get(editSel.confirmIcon).click();
+
+        // The picker rejects the replacement; the original pills stand.
+        cy.get(editSel.pill).should('have.length', 2);
+        cy.get(editSel.pill).first().should('contain.text', '06/10/2026 - 06/12/2026');
+      });
+    });
   });
 };

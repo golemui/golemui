@@ -431,5 +431,140 @@ export const runRangeDateTimeCalendarComponentTests = (mountFn: MountComponentFn
         cy.get(sel.pillText).should('have.length', 1);
       });
     });
+
+    describe('allowEdit pill editing', () => {
+      const uid = 'testSubject';
+      const editableRanges = () => [
+        { start: dt(10, '09:00:00'), end: dt(12, '17:00:00') },
+        { start: dt(20, '09:00:00'), end: dt(22, '17:00:00') },
+      ];
+      const editSel = {
+        pill: `${cal} .gui-pills__pill`,
+        selectedEditIcon: `.gui-pills__pill--selected [data-cy="${uid}_pill-edit"]`,
+        confirmIcon: `[data-cy="${uid}_pill-edit-confirm"]`,
+      };
+
+      const mountEditable = (formSubmit?: (event: any) => void) =>
+        mountCalendar({
+          data: { myRanges: editableRanges() },
+          props: { allowEdit: true },
+          formSubmit,
+        });
+
+      it('should mark the selected range by dimming the competing ranges', () => {
+        mountEditable();
+
+        // No selection: nothing is dimmed.
+        day(20).should('not.have.class', 'range-muted');
+
+        cy.get(editSel.pill).first().click();
+        cy.get(editSel.pill).first().should('have.attr', 'aria-pressed', 'true');
+        day(10).should('have.class', 'edit-selected').and('not.have.class', 'range-muted');
+        day(20).should('have.class', 'range-muted');
+        day(22).should('have.class', 'range-muted');
+
+        // Keyboard navigation moves the selection, and the marking with it.
+        cy.get(editSel.pill).first().type('{rightarrow}');
+        cy.get(editSel.pill).eq(1).should('have.attr', 'aria-pressed', 'true');
+        day(20).should('not.have.class', 'range-muted');
+        day(10).should('have.class', 'range-muted');
+
+        // Focus leaving the pills clears the selection and the marking.
+        day(16).focus();
+        cy.get('.gui-pills__pill--selected').should('not.exist');
+        cy.get('.gui-calendar__day-button.range-muted').should('not.exist');
+      });
+
+      it('should park re-picked days without committing and replace on confirm', () => {
+        const formSubmit = cy.stub().as('formSubmit');
+        mountEditable(formSubmit);
+
+        cy.get(editSel.pill).first().click();
+        cy.get(editSel.selectedEditIcon).click();
+        // Editing starts on the range's start day, ready for re-picking.
+        cy.focused().should('have.attr', 'data-date', iso(10));
+        cy.get(editSel.pill).first().should('have.class', 'gui-pills__pill--editing');
+
+        // Two picks reshape the working span; the chosen times survive, the
+        // editing pill live-previews the reshaped range, nothing commits yet.
+        day(8).click();
+        day(9).click();
+        cy.get(editSel.pill).should('have.length', 2);
+        cy.get(editSel.pill).first().should('have.class', 'gui-pills__pill--editing');
+        cy.get(editSel.pill).first().should('contain.text', '9:00 AM');
+
+        cy.get(editSel.confirmIcon).click();
+        cy.get(editSel.pill).should('have.length', 2);
+        cy.get('.gui-pills__pill--editing').should('not.exist');
+
+        submitAndGetData('@formSubmit').then((data) => {
+          expect(data.myRanges).to.deep.equal([
+            { start: dt(8, '09:00:00'), end: dt(9, '17:00:00') },
+            { start: dt(20, '09:00:00'), end: dt(22, '17:00:00') },
+          ]);
+        });
+      });
+
+      it('should park a re-picked time instead of auto-committing it', () => {
+        const formSubmit = cy.stub().as('formSubmit');
+        mountEditable(formSubmit);
+
+        cy.get(editSel.pill).first().click();
+        cy.get(editSel.selectedEditIcon).click();
+
+        // In the add flow a list pick with all four pieces commits; during an
+        // edit every piece is pre-filled, so the pick must park instead.
+        startHour().click();
+        startOption('10:00:00').click();
+        cy.get(editSel.pill).should('have.length', 2);
+        cy.get(editSel.pill).first().should('have.class', 'gui-pills__pill--editing');
+        cy.get(editSel.pill).first().should('contain.text', '10:00 AM');
+
+        cy.get(editSel.confirmIcon).click();
+        submitAndGetData('@formSubmit').then((data) => {
+          expect(data.myRanges).to.deep.equal([
+            { start: dt(10, '10:00:00'), end: dt(12, '17:00:00') },
+            { start: dt(20, '09:00:00'), end: dt(22, '17:00:00') },
+          ]);
+        });
+      });
+
+      it('should start editing with E and layer Escape: cancel, then deselect', () => {
+        mountEditable();
+
+        cy.get(editSel.pill).first().click();
+        cy.get(editSel.pill).first().type('e');
+        cy.get(editSel.pill).first().should('have.class', 'gui-pills__pill--editing');
+
+        startHour().click();
+        startOption('11:00:00').click();
+        cy.get(editSel.pill).first().should('contain.text', '11:00 AM');
+
+        // First Escape cancels the session; the label reverts, selection kept.
+        // force: focus sits on the picker's readonly time input after the pick.
+        cy.focused().type('{esc}', { force: true });
+        cy.get('.gui-pills__pill--editing').should('not.exist');
+        cy.get(editSel.pill).first().should('contain.text', '9:00 AM');
+        cy.get(editSel.pill).first().should('have.attr', 'aria-pressed', 'true');
+
+        // Second Escape clears the selection.
+        cy.focused().type('{esc}');
+        cy.get(editSel.pill).first().should('have.attr', 'aria-pressed', 'false');
+      });
+
+      it('should surface the incomplete message on a half re-picked confirm', () => {
+        mountEditable();
+
+        cy.get(editSel.pill).first().click();
+        cy.get(editSel.selectedEditIcon).click();
+        // A single pick restarts the span: only the anchor remains.
+        day(8).click();
+
+        cy.get(editSel.confirmIcon).click();
+        cy.get(sel.error).should('be.visible').and('contain', 'Incomplete date-time');
+        cy.get(editSel.pill).first().should('have.class', 'gui-pills__pill--editing');
+        cy.get(editSel.pill).should('have.length', 2);
+      });
+    });
   });
 };

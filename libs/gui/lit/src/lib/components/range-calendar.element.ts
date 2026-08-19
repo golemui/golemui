@@ -77,6 +77,14 @@ export class RangeCalendarElement extends LitElement implements WithWidget {
         .numberOfMonths=${this.adapter.templateData.numberOfMonths}
         .hidePills=${false}
         .removePillAriaLabel=${this.adapter.templateData.removePillAriaLabel}
+        ?allow-edit=${this.adapter.templateData.allowEdit}
+        .editLabel=${this.adapter.templateData.editLabel as string}
+        .editAriaLabel=${this.adapter.templateData.editAriaLabel as string}
+        .confirmEditLabel=${this.adapter.templateData.confirmEditLabel as string}
+        .cancelEditLabel=${this.adapter.templateData.cancelEditLabel as string}
+        .editStartedMessage=${this.adapter.templateData.editStartedMessage as string}
+        .editCommittedMessage=${this.adapter.templateData.editCommittedMessage as string}
+        .editCancelledMessage=${this.adapter.templateData.editCancelledMessage as string}
         .localeId=${this.adapter.templateData.lang}
         @change=${this.valueChanged}
         @inputError=${this.onInputError}

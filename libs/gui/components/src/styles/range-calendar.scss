@@ -67,6 +67,10 @@ gui-range-date-time-calendar {
       border: 1px dashed #2196f3;
     }
 
+    &.range-muted:not(.other-month) {
+      opacity: 0.4;
+    }
+
     &.invalid-in-range:not([disabled]):not([aria-disabled='true']) {
       background-color: var(--gui-range-error-bg);
       color: var(--gui-color-white);

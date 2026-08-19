@@ -64,6 +64,30 @@
     },
     "dayPeriodAriaLabelProp": {
       "$ref": "../core/common.schema.json#/$defs/localizable"
+    },
+    "allowEditProp": {
+      "type": "boolean"
+    },
+    "editLabelProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable"
+    },
+    "editAriaLabelProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable"
+    },
+    "confirmEditLabelProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable"
+    },
+    "cancelEditLabelProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable"
+    },
+    "editStartedMessageProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable"
+    },
+    "editCommittedMessageProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable"
+    },
+    "editCancelledMessageProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable"
     }
   },
   "allOf": [
@@ -183,6 +207,34 @@
         },
         "dayPeriodAriaLabel": {
           "$ref": "#/$defs/dayPeriodAriaLabelProp"
+        },
+        "allowEdit": {
+          "$ref": "#/$defs/allowEditProp",
+          "description": "Enables the select → edit → confirm flow on the pills: clicking a pill selects it and reveals its action icons; Edit (icon, or F2/E on the focused pill) loads it back into the input, Confirm commits the replacement (Escape cancels). Defaults to false."
+        },
+        "editLabel": {
+          "$ref": "#/$defs/editLabelProp"
+        },
+        "editAriaLabel": {
+          "$ref": "#/$defs/editAriaLabelProp",
+          "description": "Edit hint joined into the pill's aria-description (the edit icon itself is decorative); a `{label}` token is substituted with the range's display label. Defaults to 'Edit range {label}'."
+        },
+        "confirmEditLabel": {
+          "$ref": "#/$defs/confirmEditLabelProp"
+        },
+        "cancelEditLabel": {
+          "$ref": "#/$defs/cancelEditLabelProp"
+        },
+        "editStartedMessage": {
+          "$ref": "#/$defs/editStartedMessageProp",
+          "description": "Screen-reader announcement when an edit session starts; `{label}` carries the range. Defaults to 'Editing range {label}.'."
+        },
+        "editCommittedMessage": {
+          "$ref": "#/$defs/editCommittedMessageProp",
+          "description": "Screen-reader announcement when an edit commits its replacement; `{label}` carries the resulting range. Defaults to 'Range updated to {label}.'."
+        },
+        "editCancelledMessage": {
+          "$ref": "#/$defs/editCancelledMessageProp"
         }
       },
       "patternProperties": {
@@ -263,6 +315,30 @@
         },
         "^dayPeriodAriaLabel\\.[^.]+$": {
           "$ref": "#/$defs/dayPeriodAriaLabelProp"
+        },
+        "^allowEdit\\.[^.]+$": {
+          "$ref": "#/$defs/allowEditProp"
+        },
+        "^editLabel\\.[^.]+$": {
+          "$ref": "#/$defs/editLabelProp"
+        },
+        "^editAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/editAriaLabelProp"
+        },
+        "^confirmEditLabel\\.[^.]+$": {
+          "$ref": "#/$defs/confirmEditLabelProp"
+        },
+        "^cancelEditLabel\\.[^.]+$": {
+          "$ref": "#/$defs/cancelEditLabelProp"
+        },
+        "^editStartedMessage\\.[^.]+$": {
+          "$ref": "#/$defs/editStartedMessageProp"
+        },
+        "^editCommittedMessage\\.[^.]+$": {
+          "$ref": "#/$defs/editCommittedMessageProp"
+        },
+        "^editCancelledMessage\\.[^.]+$": {
+          "$ref": "#/$defs/editCancelledMessageProp"
         }
       },
       "additionalProperties": false

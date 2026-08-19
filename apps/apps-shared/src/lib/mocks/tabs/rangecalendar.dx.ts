@@ -16,6 +16,19 @@ export const rangeCalendarTab = gui.layouts.flex([
       },
     ],
   }),
+  gui.inputs.rangeCalendar('rangeCalendarEditable', {
+    label: 'Editable',
+    allowEdit: true,
+    defaultValue: [
+      {
+        start: '2026-02-13',
+        end: '2026-02-16',
+      },
+      {
+        start: '2026-02-20',
+      },
+    ],
+  }),
   gui.inputs.rangeCalendar('rangeCalendarDisabled', {
     label: 'Disabled',
     defaultValue: [

@@ -80,6 +80,66 @@ export function removeRangeByKey<R extends RangeLike>(
 }
 
 /**
+ * The list minus the range whose pill key matches — the base an in-place edit
+ * commits against (replace = exclude the original, then append-and-merge).
+ * Always a fresh copy; when no range matches, a copy of the input.
+ *
+ * @param {readonly R[] | undefined} ranges - The current ranges (`value ?? []`).
+ * @param {string} key - The pill key of the range being replaced.
+ * @return {R[]} The remaining ranges.
+ */
+export function excludeRangeByKey<R extends RangeLike>(
+  ranges: readonly R[] | undefined,
+  key: string,
+): R[] {
+  return removeRangeByKey(ranges, key)?.next ?? [...(ranges ?? [])];
+}
+
+/**
+ * Whether two range lists hold the same spans in the same order. An edit
+ * whose commit reproduces the current value is treated as a cancellation
+ * (no `change` event), which is what this decides.
+ *
+ * @param {readonly R[] | undefined} a - One list (`value ?? []`).
+ * @param {readonly R[] | undefined} b - The other list.
+ * @return {boolean} True when both hold identical spans.
+ */
+export function sameRanges<R extends RangeLike>(
+  a: readonly R[] | undefined,
+  b: readonly R[] | undefined,
+): boolean {
+  const listA = a ?? [];
+  const listB = b ?? [];
+  return (
+    listA.length === listB.length &&
+    listA.every(
+      (range, index) =>
+        range.start === listB[index].start && (range.end ?? null) === (listB[index].end ?? null),
+    )
+  );
+}
+
+/**
+ * Index (in the given order) of the first range whose `[start, end ?? start]`
+ * span contains the endpoint, or -1. Used to find the pill that resulted from
+ * an edit commit, whose range may have merged into a neighbor.
+ *
+ * @param {readonly R[]} sortedRanges - The ranges, already display-sorted.
+ * @param {string} iso - The committed start endpoint.
+ * @param {(a: string, b: string) => number} compare - Endpoint comparator.
+ * @return {number} The containing range's index, or -1.
+ */
+export function indexOfRangeContaining<R extends RangeLike>(
+  sortedRanges: readonly R[],
+  iso: string,
+  compare: (a: string, b: string) => number,
+): number {
+  return sortedRanges.findIndex(
+    (range) => compare(iso, range.start) >= 0 && compare(iso, range.end ?? range.start) <= 0,
+  );
+}
+
+/**
  * Formats an ISO date for pill display: numeric year with 2-digit month and
  * day in the locale's order.
  *

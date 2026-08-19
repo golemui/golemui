@@ -215,6 +215,33 @@ export type IncompleteMessageProps = {
 };
 
 /**
+ * The opt-in select → edit → confirm flow on the range widgets' pills:
+ * clicking a pill selects it and reveals in-pill action icons; Edit (icon, or
+ * F2/E on the focused pill) loads it back into the compose surface, and
+ * Confirm commits the replacement (Escape cancels) while the pill's label
+ * live-previews the working value. `{label}` tokens are interpolated with the
+ * range's display label at interaction time.
+ */
+export type RangeEditProps = {
+  /** Enables selecting and editing pills in place. Defaults to false. */
+  allowEdit?: boolean;
+  /** Tooltip label of the pill's Edit icon. Defaults to 'Edit'. */
+  editLabel?: Localizable;
+  /** Edit hint joined into the pill's aria-description; `{label}` carries the range. Defaults to 'Edit range {label}'. */
+  editAriaLabel?: Localizable;
+  /** Tooltip label of the pill's Confirm icon. Defaults to 'Confirm'. */
+  confirmEditLabel?: Localizable;
+  /** Tooltip label of the pill's Cancel icon. Defaults to 'Cancel'. */
+  cancelEditLabel?: Localizable;
+  /** aria-live announcement when an edit starts. Defaults to 'Editing range {label}.'. */
+  editStartedMessage?: Localizable;
+  /** aria-live announcement when an edit commits. Defaults to 'Range updated to {label}.'. */
+  editCommittedMessage?: Localizable;
+  /** aria-live announcement when an edit is cancelled. Defaults to 'Edit cancelled.'. */
+  editCancelledMessage?: Localizable;
+};
+
+/**
  * Calendar with an embedded time picker. The value is a local ISO date-time
  * (YYYY-MM-DDTHH:mm:ss), emitted only when both the day and the time are
  * selected; picking a different day clears the time and emits null. With
@@ -241,7 +268,7 @@ export type DateTimeCalendarProps = CalendarProps &
     noAvailableTimesMessage?: Localizable;
   };
 
-export type RangeCalendarProps = {
+export type RangeCalendarProps = RangeEditProps & {
   /**
    * An optional descriptive text providing guidance or information about the associated widget or functionality.
    */
@@ -429,18 +456,19 @@ export type TimePickerProps = TimeInputProps &
     noAvailableTimesMessage?: Localizable;
   };
 
-export type RangeDateInputProps = IncompleteMessageProps & {
-  hint?: string;
-  icon?: string;
-  separator?: string;
-  removePillAriaLabel?: string;
-  startDateAriaLabel?: string;
-  endDateAriaLabel?: string;
-  dayAriaLabel?: string;
-  monthAriaLabel?: string;
-  yearAriaLabel?: string;
-  invalidDateMessage?: Localizable;
-};
+export type RangeDateInputProps = IncompleteMessageProps &
+  RangeEditProps & {
+    hint?: string;
+    icon?: string;
+    separator?: string;
+    removePillAriaLabel?: string;
+    startDateAriaLabel?: string;
+    endDateAriaLabel?: string;
+    dayAriaLabel?: string;
+    monthAriaLabel?: string;
+    yearAriaLabel?: string;
+    invalidDateMessage?: Localizable;
+  };
 
 export type DateBoundsMessageProps = {
   minDateMessage?: Localizable;
@@ -506,55 +534,57 @@ export type RangeDateTimeCalendarProps = Omit<
     disabledDayCountAriaLabel?: Localizable;
   };
 
-export type RangeTimeInputProps = IncompleteMessageProps & {
-  hint?: string;
-  icon?: string;
-  separator?: string;
-  removePillAriaLabel?: string;
-  startTimeAriaLabel?: string;
-  endTimeAriaLabel?: string;
-  hourAriaLabel?: string;
-  minuteAriaLabel?: string;
-  dayPeriodAriaLabel?: string;
-  hourFormat?: '12' | '24';
-  minuteStep?: number;
-  /** First allowed time (ISO time, inclusive). */
-  minTime?: string;
-  /** Last allowed time (ISO time, inclusive). */
-  maxTime?: string;
-  minTimeMessage?: Localizable;
-  maxTimeMessage?: Localizable;
-  /** Shown when the entered "time out" is not strictly after "time in". */
-  rangeOrderMessage?: Localizable;
-};
+export type RangeTimeInputProps = IncompleteMessageProps &
+  RangeEditProps & {
+    hint?: string;
+    icon?: string;
+    separator?: string;
+    removePillAriaLabel?: string;
+    startTimeAriaLabel?: string;
+    endTimeAriaLabel?: string;
+    hourAriaLabel?: string;
+    minuteAriaLabel?: string;
+    dayPeriodAriaLabel?: string;
+    hourFormat?: '12' | '24';
+    minuteStep?: number;
+    /** First allowed time (ISO time, inclusive). */
+    minTime?: string;
+    /** Last allowed time (ISO time, inclusive). */
+    maxTime?: string;
+    minTimeMessage?: Localizable;
+    maxTimeMessage?: Localizable;
+    /** Shown when the entered "time out" is not strictly after "time in". */
+    rangeOrderMessage?: Localizable;
+  };
 
-export type RangeDateTimeInputProps = IncompleteMessageProps & {
-  hint?: string;
-  icon?: string;
-  separator?: string;
-  removePillAriaLabel?: string;
-  startDateTimeAriaLabel?: string;
-  endDateTimeAriaLabel?: string;
-  dayAriaLabel?: string;
-  monthAriaLabel?: string;
-  yearAriaLabel?: string;
-  hourAriaLabel?: string;
-  minuteAriaLabel?: string;
-  dayPeriodAriaLabel?: string;
-  hourFormat?: '12' | '24';
-  minuteStep?: number;
-  invalidDateMessage?: Localizable;
-  /**
-   * Earliest allowed date-time (ISO date-time, inclusive). Each endpoint of the
-   * value is an instant, so the bound is an instant too: a date-only bound
-   * cannot say whether its last day is allowed until 00:00 or 23:59.
-   */
-  minDateTime?: string;
-  /** Latest allowed date-time (ISO date-time, inclusive). */
-  maxDateTime?: string;
-  minDateTimeMessage?: Localizable;
-  maxDateTimeMessage?: Localizable;
-};
+export type RangeDateTimeInputProps = IncompleteMessageProps &
+  RangeEditProps & {
+    hint?: string;
+    icon?: string;
+    separator?: string;
+    removePillAriaLabel?: string;
+    startDateTimeAriaLabel?: string;
+    endDateTimeAriaLabel?: string;
+    dayAriaLabel?: string;
+    monthAriaLabel?: string;
+    yearAriaLabel?: string;
+    hourAriaLabel?: string;
+    minuteAriaLabel?: string;
+    dayPeriodAriaLabel?: string;
+    hourFormat?: '12' | '24';
+    minuteStep?: number;
+    invalidDateMessage?: Localizable;
+    /**
+     * Earliest allowed date-time (ISO date-time, inclusive). Each endpoint of the
+     * value is an instant, so the bound is an instant too: a date-only bound
+     * cannot say whether its last day is allowed until 00:00 or 23:59.
+     */
+    minDateTime?: string;
+    /** Latest allowed date-time (ISO date-time, inclusive). */
+    maxDateTime?: string;
+    minDateTimeMessage?: Localizable;
+    maxDateTimeMessage?: Localizable;
+  };
 
 /**
  * The date-time range picker is the calendar (instant-space bounds, disabled

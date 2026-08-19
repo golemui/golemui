@@ -8,7 +8,6 @@
   align-items: center;
   flex-wrap: nowrap;
   flex-shrink: 0;
-  gap: var(--gui-space-3);
   color: var(--gui-color-white);
   background-color: var(--gui-intent-primary);
   border: 0;
@@ -25,11 +24,25 @@
   }
 }
 
-@mixin gui-pill-text {
-  font-size: var(--gui-font-xs);
+// In-flight edit session: dashed outline; the pill's label live-previews the
+// working value until Confirm commits or Cancel/Escape restores the original.
+@mixin gui-pill-editing {
+  outline: 2px dashed var(--gui-intent-primary);
+  outline-offset: 2px;
+
+  &:focus {
+    outline: 2px dashed var(--gui-intent-primary);
+  }
 }
 
-@mixin gui-pill-remove {
+@mixin gui-pill-text {
+  font-size: var(--gui-font-xs);
+  margin-inline-end: var(--gui-space-1);
+}
+
+// In-pill action icon (edit / confirm / cancel / remove) — an aria-hidden
+// span, since buttons cannot nest inside the pill button.
+@mixin gui-pill-action {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -40,6 +53,10 @@
   width: 16px;
   height: 16px;
   cursor: pointer;
+}
+
+@mixin gui-pill-remove {
+  @include gui-pill-action;
 }
 
 // Pill-count badge (the "+N" bubble shown in compact-width fallback layouts).

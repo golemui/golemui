@@ -471,6 +471,7 @@ gui.inputs.rangeCalendar('stayDates', { label: 'Stay dates' });
 ```
 
 - Inline calendar for a start–end date **range** (the value is a date range). For a single date use `calendar`.
+- **`allowEdit: true`** enables in-place pill editing — see `rangeDateInput`. Here the calendar itself is the edit surface: selecting a pill dims the competing ranges in the day grid, editing parks the pill's span as the in-progress preview, and two-click re-picks reshape it without committing until the pill's check icon confirms (leaving the widget with a complete changed span also commits it).
 
 Reference: https://golemui.com/dx/widgets-reference/input-fields/range-calendar.md
 
@@ -484,6 +485,7 @@ gui.inputs.rangeDateInput('stayDates', { label: 'Stay dates' });
 
 - Typed start–end date **range** entry (the range sibling of `dateInput`).
 - `incompleteMessage` overrides the "incomplete" error surfaced when focus leaves with only one endpoint filled — see `datePicker`.
+- **`allowEdit: true`** (default false, shared by all 8 range widgets) enables in-place pill editing: clicking or arrowing onto a pill selects it, revealing a pencil icon; the pencil — or F2 / E on the focused pill — loads the range back into the widget, where the pill's label live-previews the change and its check / cross icons (or Enter / Escape) commit or cancel the replacement. A confirmed range that overlaps a neighbor merges into it, and an unchanged confirm is a cancel. Tooltip labels and screen-reader announcements are localizable via `editLabel`, `editAriaLabel`, `confirmEditLabel`, `cancelEditLabel`, `editStartedMessage`, `editCommittedMessage`, `editCancelledMessage`.
 
 Reference: https://golemui.com/dx/widgets-reference/input-fields/range-date-input.md
 
@@ -496,6 +498,7 @@ gui.inputs.rangeDatePicker('stayDates', { label: 'Stay dates' });
 ```
 
 - Popover calendar for a start–end date **range** (the range sibling of `datePicker`). A span with only its first day picked is held by the picker, so it survives closing and reopening the popover. Leaving it that way surfaces an "incomplete" error (`incompleteMessage` overrides its wording).
+- **`allowEdit: true`** enables in-place pill editing — see `rangeDateInput`. Selecting a pill dims the competing ranges in the panel calendar; during an edit, day picks reshape the range without committing — Enter in the segments or the pill's check icon confirms the replacement.
 
 Reference: https://golemui.com/dx/widgets-reference/input-fields/range-date-picker.md
 
@@ -513,6 +516,7 @@ gui.inputs.rangeDateTimeCalendar('stay', {
 
 - INLINE range calendar with TWO embedded time pickers (start/end); value is `DateTimeRange[]`, rendered as pills. A day span and the two times can be chosen in ANY order — both time pickers are usable from the start — and the pill is committed once all four pieces are present. Starting a new day span keeps the times already chosen. A day holding more than one range shows a count badge. Leaving the widget with a half-finished selection surfaces an "incomplete" error over the untouched pills (`incompleteMessage` overrides its wording); leaving it emptied clears the error.
 - Everything is in instant-space: bounds are **`minDateTime`** / **`maxDateTime`** and **`disabledRanges`** are `DateTimeRange[]` instant spans (block a whole day with `00:00:00`–`23:59:59`). There is no `minDate`/`maxDate`/`minTime`/`maxTime`/`disabledTimeRanges` — a time-of-day constraint cannot bound a multi-day span.
+- **`allowEdit: true`** enables in-place pill editing — see `rangeDateInput`. Here the calendar itself is the edit surface: selecting a pill dims the competing ranges in the day grid, editing loads all four pieces (span + times) as the working selection, and day or time re-picks reshape it without the add flow's auto-commit — the pill's check icon confirms (leaving the widget with a complete changed selection also commits it).
 
 Reference: https://golemui.com/dx/widgets-reference/input-fields/range-datetime-calendar.md
 
@@ -531,6 +535,7 @@ gui.inputs.rangeDateTimeInput('window', {
 - Typed start–end date-time **range** entry (the range sibling of `dateTimeInput`); value is `DateTimeRange[]`. A backward selection reorders (swaps) instead of erroring.
 - Each endpoint is an instant, so it is bounded by instants: use **`minDateTime`** / **`maxDateTime`** (ISO `YYYY-MM-DDTHH:mm:ss`), not `minDate`/`maxDate`. There is no `minTime`/`maxTime` here — a per-day time window is a different constraint from an instant bound.
 - `incompleteMessage` overrides the "incomplete" error surfaced when focus leaves with only one endpoint filled — see `datePicker`.
+- **`allowEdit: true`** enables in-place pill editing — see `rangeDateInput`.
 
 Reference: https://golemui.com/dx/widgets-reference/input-fields/range-datetime-input.md
 
@@ -548,6 +553,7 @@ gui.inputs.rangeDateTimePicker('stay', {
 
 - POPOVER date-time range picker: the typed `rangeDateTimeInput` as the trigger (pills live there) with the `rangeDateTimeCalendar` in a dropdown. Value is `DateTimeRange[]`. Committing a pill keeps the popover open so several ranges can be added; it closes on outside-click, blur or Escape. A half-finished selection is held by the picker, so it survives closing and reopening the popover. Leaving it that way surfaces an "incomplete" error (`incompleteMessage` overrides its wording).
 - Everything is in instant-space: bounds are **`minDateTime`** / **`maxDateTime`** and **`disabledRanges`** are `DateTimeRange[]` instant spans (block a whole day with `00:00:00`–`23:59:59`). There is no `minDate`/`maxDate`/`minTime`/`maxTime`/`disabledTimeRanges`.
+- **`allowEdit: true`** enables in-place pill editing — see `rangeDateInput`. Selecting a pill dims the competing ranges in the panel calendar; during an edit, panel picks reshape the range without committing — Enter in the segments or the pill's check icon confirms the replacement.
 
 Reference: https://golemui.com/dx/widgets-reference/input-fields/range-datetime-picker.md
 
@@ -561,6 +567,7 @@ gui.inputs.rangeTimeInput('shift', { label: 'Shift', minTime: '06:00:00', maxTim
 
 - Typed start–end time **range** entry (the range sibling of `timeInput`); value is `TimeRange[]`. End time must be after start time.
 - `incompleteMessage` overrides the "incomplete" error surfaced when focus leaves with only one endpoint filled — see `datePicker`.
+- **`allowEdit: true`** enables in-place pill editing — see `rangeDateInput`.
 
 Reference: https://golemui.com/dx/widgets-reference/input-fields/range-time-input.md
 
@@ -574,6 +581,7 @@ gui.inputs.rangeTimePicker('shift', { label: 'Shift', minTime: '06:00:00', maxTi
 
 - Two-list popover for a start–end time **range** (the range sibling of `timePicker`); value is `TimeRange[]`. Either list can be used first — an end picked before a start simply waits — and the range commits once both are set. Once an in is chosen the out list floors one slot after it so end is strictly after start.
 - `incompleteMessage` overrides the "incomplete" error surfaced when focus leaves with only one endpoint set — see `datePicker`.
+- **`allowEdit: true`** enables in-place pill editing — see `rangeDateInput`. During an edit, list picks reshape the range without committing — Enter in the segments or the pill's check icon confirms the replacement.
 
 Reference: https://golemui.com/dx/widgets-reference/input-fields/range-time-picker.md
 

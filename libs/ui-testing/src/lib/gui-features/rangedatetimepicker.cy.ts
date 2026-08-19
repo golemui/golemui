@@ -1,5 +1,5 @@
 import { defineForm, identityTranslator } from '@golemui/core';
-import { type MountComponentFn } from '../utils';
+import { clearPillsWidthOverride, forcePillsStripMode, type MountComponentFn } from '../utils';
 
 // Behavior tests for the gui-range-date-time-picker web component: the typed
 // gui-range-date-time input as the trigger (holding the pills) with the
@@ -830,6 +830,65 @@ export const runRangeDateTimePickerComponentTests = (mountFn: MountComponentFn) 
         cy.get(toggleSel).click();
         cy.get(panelSel).should('be.visible');
         cy.get('[data-cy="testSubject_panel-validator-errors"]').should('not.exist');
+      });
+    });
+
+    describe('allowEdit pill editing', () => {
+      beforeEach(() => forcePillsStripMode('.gui-range-date-time-input'));
+      afterEach(clearPillsWidthOverride);
+
+      const editSel = {
+        pill: 'gui-range-date-time .gui-pills__pill',
+        selectedEditIcon: '.gui-pills__pill--selected [data-cy="testSubject_pill-edit"]',
+        confirmIcon: '[data-cy="testSubject_pill-edit-confirm"]',
+      };
+      const editableRanges = () => [
+        { start: dt(10, '09:00:00'), end: dt(10, '11:00:00') },
+        { start: dt(20, '14:00:00'), end: dt(20, '15:00:00') },
+      ];
+
+      it('should edit via the trigger segments and commit a replacement', () => {
+        const formSubmitHandler = cy.stub().as('formSubmitHandler');
+        mountPicker({
+          data: { myRanges: editableRanges() },
+          props: { allowEdit: true },
+          formSubmit: formSubmitHandler,
+        });
+
+        cy.get(editSel.pill).first().click();
+        cy.get(editSel.selectedEditIcon).click();
+        cy.get(sel.triggerPart('start', 'hour')).should('have.value', '09');
+
+        // 12h locale: retype the minutes, not the hour (12 would read as 12 AM).
+        cy.get(sel.triggerPart('end', 'minute')).type('{selectall}30');
+        cy.get(editSel.pill).first().should('contain.text', '11:30');
+
+        cy.get(editSel.confirmIcon).click();
+        cy.get(editSel.pill).should('have.length', 2);
+        // force: the still-open popover panel overlays the submit button.
+        cy.get('[data-cy="submitBtn_button"]').click({ force: true });
+        cy.get('@formSubmitHandler').then((stub: any) => {
+          expect(stub.getCall(0).args[0].data).to.deep.equal({
+            myRanges: [
+              { start: dt(10, '09:00:00'), end: dt(10, '11:30:00') },
+              { start: dt(20, '14:00:00'), end: dt(20, '15:00:00') },
+            ],
+          });
+        });
+      });
+
+      it('should not auto-commit calendar picks while a session is open', () => {
+        mountPicker({ data: { myRanges: editableRanges() }, props: { allowEdit: true } });
+
+        cy.get(editSel.pill).first().click();
+        cy.get(editSel.selectedEditIcon).click();
+
+        // New days for the working span; all four pieces are now present,
+        // but the session defers the commit to its explicit confirm.
+        cy.get(sel.dayButton(iso(12))).click();
+        cy.get(sel.dayButton(iso(13))).click();
+        cy.get(editSel.pill).should('have.length', 2);
+        cy.get(editSel.pill).first().should('have.class', 'gui-pills__pill--editing');
       });
     });
   });

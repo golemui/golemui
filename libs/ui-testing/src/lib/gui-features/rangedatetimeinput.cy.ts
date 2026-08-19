@@ -466,5 +466,95 @@ export const runRangeDateTimeInputComponentTests = (mountFn: MountComponentFn) =
         cy.get(`[data-cy="${uid}_pills-validator-errors"]`).should('not.exist');
       });
     });
+
+    describe('allowEdit pill editing', () => {
+      const editableRanges = [
+        { start: '2026-11-22T09:00:00', end: '2026-11-22T11:00:00' },
+        { start: '2026-11-25T14:00:00', end: '2026-11-25T15:00:00' },
+      ];
+      const editSel = {
+        pill: 'gui-range-date-time .gui-pills__pill',
+        editIcon: `[data-cy="${uid}_pill-edit"]`,
+        selectedEditIcon: `.gui-pills__pill--selected [data-cy="${uid}_pill-edit"]`,
+        confirmIcon: `[data-cy="${uid}_pill-edit-confirm"]`,
+        liveRegion: 'gui-range-date-time .gui-visually-hidden[aria-live="polite"]',
+      };
+
+      beforeEach(() => forcePillsStripMode('.gui-range-date-time-input'));
+      afterEach(clearPillsWidthOverride);
+
+      const mountEditable = (formSubmit?: (event: any) => void) =>
+        mountRangeDateTimeInput({
+          data: { myRanges: editableRanges },
+          props: { allowEdit: true },
+          formSubmit,
+        });
+
+      it('should select, edit with live preview and confirm a replacement', () => {
+        const formSubmitHandler = cy.stub().as('formSubmitHandler');
+        mountEditable(formSubmitHandler);
+
+        cy.get(editSel.pill).first().click();
+        cy.get(editSel.pill).first().should('have.attr', 'aria-pressed', 'true');
+        cy.get(editSel.pill)
+          .first()
+          .should(($el) => {
+            const description = $el.attr('aria-description') ?? '';
+            expect(description).to.contain('Edit range');
+            expect(description).to.contain('22/11/2026');
+          });
+        cy.get(editSel.selectedEditIcon).click();
+
+        cy.get(sel.startDay).should('have.value', '22');
+        cy.get(sel.endHour).should('have.value', '11');
+        cy.get(editSel.liveRegion).should('contain.text', 'Editing range');
+        cy.get(editSel.pill).first().should('have.class', 'gui-pills__pill--editing');
+
+        // The editing pill's label previews the modified range live.
+        // Parts are pre-filled, so edits retype the segment over its selection.
+        cy.get(sel.endHour).type('{selectall}12');
+        cy.get(editSel.pill).first().should('contain.text', '12:00');
+
+        cy.get(editSel.confirmIcon).click();
+        cy.get(editSel.pill).should('have.length', 2);
+        cy.get(editSel.pill).first().should('contain.text', '12:00');
+
+        submitAndGetData('@formSubmitHandler').then((data) => {
+          expect(data).to.deep.equal({
+            myRanges: [
+              { start: '2026-11-22T09:00:00', end: '2026-11-22T12:00:00' },
+              { start: '2026-11-25T14:00:00', end: '2026-11-25T15:00:00' },
+            ],
+          });
+        });
+      });
+
+      it('should cancel with Escape, leaving the value untouched', () => {
+        const formSubmitHandler = cy.stub().as('formSubmitHandler');
+        mountEditable(formSubmitHandler);
+
+        cy.get(editSel.pill).first().click();
+        cy.get(editSel.selectedEditIcon).click();
+        cy.get(sel.endHour).type('{selectall}12');
+        cy.focused().type('{esc}');
+
+        cy.get(editSel.liveRegion).should('contain.text', 'Edit cancelled.');
+        cy.get(editSel.editIcon).should('exist');
+        cy.get(editSel.pill).first().should('contain.text', '11:00');
+        cy.get(sel.startDay).should('have.value', '');
+
+        submitAndGetData('@formSubmitHandler').then((data) => {
+          expect(data).to.deep.equal({ myRanges: editableRanges });
+        });
+      });
+
+      it('should keep plain pill semantics when allowEdit is off', () => {
+        mountRangeDateTimeInput({ data: { myRanges: editableRanges } });
+
+        cy.get(editSel.pill).first().click({ force: true });
+        cy.get(editSel.pill).first().should('not.have.attr', 'aria-pressed');
+        cy.get(editSel.editIcon).should('not.exist');
+      });
+    });
   });
 };
