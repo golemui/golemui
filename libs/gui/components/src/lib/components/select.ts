@@ -2,6 +2,7 @@ import type { OneOfProps, Option, OptionValue, SelectProps } from '@golemui/gui-
 import { html, LitElement, nothing } from 'lit';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { property } from 'lit/decorators.js';
+import { live } from 'lit/directives/live.js';
 import { safeDefine } from '@golemui/lit/internals';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
@@ -93,7 +94,7 @@ export class GuiSelect extends LitElement {
     const options = this.optionsLoading
       ? html`<span>Loading...</span>`
       : html`
-          <option value="" disabled selected=${this.hasMatchingValue ? nothing : ''}>
+          <option value="" disabled .selected=${live(!this.hasMatchingValue)}>
             ${this.placeholder ?? 'Select an option'}
           </option>
           ${repeat(
@@ -102,7 +103,7 @@ export class GuiSelect extends LitElement {
             (opt: any) =>
               html`<option
                 value=${opt.value}
-                selected=${this.hasMatchingValue && opt.value === this.value ? '' : nothing}
+                .selected=${live(this.hasMatchingValue && opt.value === this.value)}
               >
                 ${opt.label}
               </option>`,

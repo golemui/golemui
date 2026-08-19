@@ -1,5 +1,6 @@
 import { html, LitElement, nothing } from 'lit';
 import { property, state } from 'lit/decorators.js';
+import { live } from 'lit/directives/live.js';
 import { safeDefine } from '@golemui/lit/internals';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
@@ -91,7 +92,7 @@ export class GuiPassword extends LitElement {
           id=${this.uid}
           data-cy=${`${this.uid}_password`}
           class=${classMap(fieldClasses)}
-          value=${this.value}
+          .value=${live(this.value ?? '')}
           ?required=${this.required}
           ?disabled=${this.disabled}
           ?readonly=${this.readOnly}

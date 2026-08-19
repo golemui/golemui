@@ -7,6 +7,7 @@ import type {
 import { html, LitElement, nothing } from 'lit';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { property } from 'lit/decorators.js';
+import { live } from 'lit/directives/live.js';
 import { safeDefine } from '@golemui/lit/internals';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
@@ -103,7 +104,7 @@ export class GuiRadiogroup extends LitElement {
                   data-cy=${`${this.uid}_radiogroup_${index}`}
                   name=${this.uid!}
                   value=${opt.value}
-                  ?checked=${isChecked}
+                  .checked=${live(isChecked)}
                   ?required=${templateData.required}
                   ?disabled=${templateData.disabled || templateData.readonly}
                   @change=${this.valueChanged}

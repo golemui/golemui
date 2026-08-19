@@ -98,7 +98,6 @@ export class GuiNumber extends LitElement {
           data-cy=${`${this.uid}_number`}
           class="gui-widget-input"
           style=${styleMap(inputStyles)}
-          value=${this.value}
           ?required=${this.required}
           ?disabled=${this.disabled}
           ?readonly=${this.readOnly}
@@ -140,6 +139,35 @@ export class GuiNumber extends LitElement {
 
       ${addErrors(this.uid as string, templateData)}
     `;
+  }
+
+  /**
+   * Owns the native input value instead of a template binding. An attribute binding is
+   * ignored once the user typed, and the Number converter turns the `''` some frameworks
+   * assign into a phantom 0. The comparison is numeric so a draft like `1.` that already
+   * parses to the store value survives, and a focused input is left alone while typing.
+   */
+  protected override updated(): void {
+    const input = this.querySelector(`input[id="${this.uid}"]`) as HTMLInputElement | null;
+    if (input === null) {
+      return;
+    }
+    if (document.activeElement === input) {
+      return;
+    }
+    const storeValue =
+      typeof this.value === 'number' && !Number.isNaN(this.value) ? this.value : undefined;
+    const shownValue = input.valueAsNumber;
+    const bothEmpty = Number.isNaN(shownValue) && storeValue === undefined;
+    const sameNumber = !Number.isNaN(shownValue) && shownValue === storeValue;
+    if (bothEmpty || sameNumber) {
+      return;
+    }
+    if (storeValue === undefined) {
+      input.value = '';
+    } else {
+      input.valueAsNumber = storeValue;
+    }
   }
 
   keyDown(event: KeyboardEvent) {

@@ -1,6 +1,7 @@
 import { GUIAriaController } from '../controllers/aria.controller';
 import { html, LitElement, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
+import { live } from 'lit/directives/live.js';
 import { safeDefine } from '@golemui/lit/internals';
 import { addErrors, requiredMarker, type ControlTemplateData } from '../utils/templates';
 import type { ToggleProps } from '@golemui/gui-shared/internals';
@@ -79,7 +80,7 @@ export class GuiToggle extends LitElement {
             role="switch"
             id=${this.uid}
             data-cy=${`${this.uid}_toggle`}
-            ?checked=${templateData.value}
+            .checked=${live(templateData.value ?? false)}
             ?required=${templateData.required}
             ?disabled=${templateData.disabled || templateData.readonly}
             @change=${this.valueChanged}
