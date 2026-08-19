@@ -799,5 +799,134 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
         cy.get('[id="firstNameAlert[0][1]"]').should('not.exist');
       });
     });
+
+    describe('layouts nested in a repeater row', () => {
+      const NESTED_ROWS_PATH = 'nestedRows';
+      const nestedRowsData = {
+        nestedRows: [
+          { first: 'Alice', second: 'Ann' },
+          { first: 'Bob', second: 'Bea' },
+        ],
+      };
+
+      it('renders the active panel of a tabs layout in every repeater row', () => {
+        mountFn({
+          localization: identityTranslator('en-US'),
+          data: nestedRowsData,
+          formDef: defineForm({
+            form: [
+              {
+                uid: 'nestedRowsRepeater',
+                kind: 'input',
+                type: 'repeater',
+                path: NESTED_ROWS_PATH,
+                props: {
+                  addLabel: 'Add row',
+                  removeLabel: 'Remove row',
+                  template: {
+                    uid: 'rowTabs',
+                    kind: 'layout',
+                    type: 'tabs',
+                    props: {
+                      renderMode: 'activeOnly',
+                      tabs: [
+                        { uid: 'firstPanel', label: 'First' },
+                        { uid: 'secondPanel', label: 'Second' },
+                      ],
+                    },
+                    children: [
+                      {
+                        uid: 'firstPanel',
+                        kind: 'input',
+                        type: 'textinput',
+                        path: `${NESTED_ROWS_PATH}.items.first`,
+                        label: 'First',
+                      },
+                      {
+                        uid: 'secondPanel',
+                        kind: 'input',
+                        type: 'textinput',
+                        path: `${NESTED_ROWS_PATH}.items.second`,
+                        label: 'Second',
+                      },
+                    ],
+                  },
+                },
+              },
+            ],
+          }),
+        });
+
+        // Every row shows its own value in the tab that is open by default
+        cy.get('[data-cy="firstPanel[0]_textinput"]').should('have.value', 'Alice');
+        cy.get('[data-cy="firstPanel[1]_textinput"]').should('have.value', 'Bob');
+        cy.get('[data-cy="secondPanel[0]_textinput"]').should('not.exist');
+
+        // Switching a tab in the second row opens that row's panel only
+        cy.get('[data-cy="tab_rowTabs[1]_1"]').click();
+        cy.get('[data-cy="secondPanel[1]_textinput"]').should('have.value', 'Bea');
+        cy.get('[data-cy="secondPanel[0]_textinput"]').should('not.exist');
+      });
+
+      it('renders the open section of an accordion in every repeater row', () => {
+        mountFn({
+          localization: identityTranslator('en-US'),
+          data: nestedRowsData,
+          formDef: defineForm({
+            form: [
+              {
+                uid: 'nestedRowsRepeater',
+                kind: 'input',
+                type: 'repeater',
+                path: NESTED_ROWS_PATH,
+                props: {
+                  addLabel: 'Add row',
+                  removeLabel: 'Remove row',
+                  template: {
+                    uid: 'rowAccordion',
+                    kind: 'layout',
+                    type: 'accordion',
+                    props: {
+                      renderMode: 'activeOnly',
+                      defaultOpen: { firstSection: true },
+                      sections: [
+                        { uid: 'firstSection', label: 'First' },
+                        { uid: 'secondSection', label: 'Second' },
+                      ],
+                    },
+                    children: [
+                      {
+                        uid: 'firstSection',
+                        kind: 'input',
+                        type: 'textinput',
+                        path: `${NESTED_ROWS_PATH}.items.first`,
+                        label: 'First',
+                      },
+                      {
+                        uid: 'secondSection',
+                        kind: 'input',
+                        type: 'textinput',
+                        path: `${NESTED_ROWS_PATH}.items.second`,
+                        label: 'Second',
+                      },
+                    ],
+                  },
+                },
+              },
+            ],
+          }),
+        });
+
+        // Every row shows its own value in the section that is open by default
+        cy.get('[data-cy="firstSection[0]_textinput"]').should('have.value', 'Alice');
+        cy.get('[data-cy="firstSection[1]_textinput"]').should('have.value', 'Bob');
+        cy.get('[data-cy="secondSection[1]_textinput"]').should('not.exist');
+
+        // The section buttons carry the template uid, so pick the one of the second row
+        cy.get('[id="accordion_button_secondSection"]').eq(1).click();
+        cy.get('[data-cy="secondSection[1]_textinput"]').should('have.value', 'Bea');
+        cy.get('[data-cy="secondSection[0]_textinput"]').should('not.exist');
+      });
+    });
   });
 };
