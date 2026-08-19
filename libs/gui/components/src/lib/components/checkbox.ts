@@ -1,6 +1,7 @@
 import { GUIAriaController } from '../controllers/aria.controller';
 import { html, LitElement, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
+import { live } from 'lit/directives/live.js';
 import { safeDefine } from '@golemui/lit/internals';
 import { addErrors, requiredMarker, type ControlTemplateData } from '../utils/templates';
 import type { CheckboxProps } from '@golemui/gui-shared/internals';
@@ -78,7 +79,7 @@ export class GuiCheckbox extends LitElement {
             type="checkbox"
             id=${this.uid}
             data-cy=${`${this.uid}_checkbox`}
-            ?checked=${this.value}
+            .checked=${live(this.value ?? false)}
             ?required=${this.required}
             ?disabled=${this.disabled || this.readOnly}
             @change=${this.valueChanged}

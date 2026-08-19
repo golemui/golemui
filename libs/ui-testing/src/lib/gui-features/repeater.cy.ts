@@ -1,4 +1,4 @@
-import { defineForm } from '@golemui/core';
+import { defineForm, identityTranslator } from '@golemui/core';
 import { type MountComponentFn } from '../utils';
 
 export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
@@ -259,6 +259,108 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
       cy.get('[data-cy="firstName[0][0]_textinput"]').should('have.value', 'Second');
       cy.get('[data-cy="firstName[0][1]_textinput"]').should('have.value', 'Third');
       cy.get('[data-cy="firstName[0][2]_textinput"]').should('not.exist');
+    });
+
+    it('removing the first row shifts the remaining values into the reused rows', () => {
+      const ROWS_PATH = 'rows';
+      const item = (field: string) => `${ROWS_PATH}.items.${field}`;
+      mountFn({
+        localization: identityTranslator('en-US'),
+        data: {
+          rows: [
+            {
+              name: 'Alice',
+              age: 30,
+              active: true,
+              color: 'red',
+              day: '2026-06-10',
+              pick: '2026-06-11',
+            },
+            {
+              name: 'Bob',
+              age: 40,
+              active: false,
+              color: 'green',
+              day: '2026-06-12',
+              pick: '2026-06-13',
+            },
+            {
+              name: 'Carol',
+              age: 50,
+              active: true,
+              color: 'blue',
+              day: '2026-06-14',
+              pick: '2026-06-15',
+            },
+          ],
+        },
+        formDef: defineForm({
+          form: [
+            {
+              uid: 'rowsRepeater',
+              kind: 'input',
+              type: 'repeater',
+              path: ROWS_PATH,
+              props: {
+                addLabel: 'Add row',
+                removeLabel: 'Remove row',
+                template: {
+                  kind: 'layout',
+                  type: 'flex',
+                  children: [
+                    { uid: 'name', kind: 'input', type: 'textinput', path: item('name') },
+                    { uid: 'age', kind: 'input', type: 'number', path: item('age') },
+                    { uid: 'active', kind: 'input', type: 'checkbox', path: item('active') },
+                    {
+                      uid: 'color',
+                      kind: 'input',
+                      type: 'select',
+                      path: item('color'),
+                      props: { options: ['red', 'green', 'blue'] },
+                    },
+                    { uid: 'day', kind: 'input', type: 'dateInput', path: item('day') },
+                    { uid: 'pick', kind: 'input', type: 'datePicker', path: item('pick') },
+                  ],
+                },
+              },
+            },
+          ],
+        }),
+      });
+
+      // The picker renders its own gui-date, so keep the two families apart
+      const plainDateDay = 'gui-date:not(gui-date-picker gui-date) input[data-type="day"]';
+      const pickerDateDay = 'gui-date-picker gui-date input[data-type="day"]';
+
+      // Make every control in rows 1 and 2 dirty so a reused DOM node has to follow the store
+      cy.get('[data-cy="name[1]_textinput"]').clear().type('Bob typed');
+      cy.get('[data-cy="name[2]_textinput"]').clear().type('Carol typed');
+      cy.get('[data-cy="age[1]_number"]').clear().type('41');
+      cy.get('[data-cy="age[2]_number"]').clear().type('51').blur();
+      cy.get('[data-cy="active[1]_checkbox"]').click();
+      cy.get('[data-cy="active[2]_checkbox"]').click();
+      cy.get('[data-cy="color[1]_select"]').select('blue');
+      cy.get('[data-cy="color[2]_select"]').select('red');
+      cy.get(plainDateDay).eq(1).clear().type('20');
+      cy.get(plainDateDay).eq(2).clear().type('21');
+      cy.get(pickerDateDay).eq(1).clear().type('22');
+      cy.get(pickerDateDay).eq(2).clear().type('23').blur();
+
+      cy.get('.gui-button').contains('Remove row').first().click();
+
+      cy.get('[data-cy="name[0]_textinput"]').should('have.value', 'Bob typed');
+      cy.get('[data-cy="name[1]_textinput"]').should('have.value', 'Carol typed');
+      cy.get('[data-cy="name[2]_textinput"]').should('not.exist');
+      cy.get('[data-cy="age[0]_number"]').should('have.value', '41');
+      cy.get('[data-cy="age[1]_number"]').should('have.value', '51');
+      cy.get('[data-cy="active[0]_checkbox"]').should('be.checked');
+      cy.get('[data-cy="active[1]_checkbox"]').should('not.be.checked');
+      cy.get('[data-cy="color[0]_select"]').should('have.value', 'blue');
+      cy.get('[data-cy="color[1]_select"]').should('have.value', 'red');
+      cy.get(plainDateDay).eq(0).should('have.value', '20');
+      cy.get(plainDateDay).eq(1).should('have.value', '21');
+      cy.get(pickerDateDay).eq(0).should('have.value', '22');
+      cy.get(pickerDateDay).eq(1).should('have.value', '23');
     });
 
     it('should expose $formIsInvalid as true when a repeater item field has a validation error', () => {

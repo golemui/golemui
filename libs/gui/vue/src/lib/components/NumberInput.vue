@@ -14,6 +14,9 @@ const { uid, errors, value, isTouched, templateData, onValueChanged, onBlur } = 
 
 const handleInput = (e: Event) => onValueChanged((e as CustomEvent).detail.value);
 const required = computed(() => (templateData.value.validator as Validator)?.required);
+// Vue writes 0 into a custom element property that currently holds a number when the bound
+// value is undefined. gui-number reads NaN as "no value", so pass that instead.
+const elementValue = computed(() => value.value ?? Number.NaN);
 </script>
 
 <template>
@@ -27,7 +30,7 @@ const required = computed(() => (templateData.value.validator as Validator)?.req
       :required="required"
       :disabled="templateData.disabled"
       :readOnly="templateData.readonly"
-      :value="value"
+      :value="elementValue"
       :step="templateData.step"
       :minimum="templateData.minimum"
       :maximum="templateData.maximum"
