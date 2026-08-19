@@ -3,7 +3,7 @@ import { Component, inject, type OnDestroy, type OnInit } from '@angular/core';
 import { LayoutWidgetAdapter, WidgetDirective } from '@golemui/angular';
 import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
 import type { AccordionEventDetail } from '@golemui/gui-components/internals';
-import type { AccordionProps } from '@golemui/gui-shared/internals';
+import { type AccordionProps, repeaterIndexSuffix } from '@golemui/gui-shared/internals';
 
 @Component({
   standalone: true,
@@ -21,11 +21,14 @@ export class AccordionComponent implements OnInit, OnDestroy, WithWidget {
   activeSections: { [key: string]: boolean } = {};
 
   protected adapter: LayoutWidgetAdapter<AccordionProps> = inject(LayoutWidgetAdapter);
+  private rowIndexSuffix = '';
 
   ngOnInit(): void {
     const props: AccordionProps = this.widget.props as AccordionProps;
     this.adapter.init(this.widget);
-    this.activeSections = props.defaultOpen ?? {};
+    // Repeater rows share one props object, so never write into `defaultOpen` itself.
+    this.activeSections = { ...(props.defaultOpen ?? {}) };
+    this.rowIndexSuffix = repeaterIndexSuffix(this.widget.uid);
   }
 
   onClickButton(uid: string) {
@@ -43,8 +46,14 @@ export class AccordionComponent implements OnInit, OnDestroy, WithWidget {
     this.adapter.change<AccordionEventDetail>(this.activeSections);
   }
 
-  getChild(uid: string) {
-    return this.widget.children.find((section) => section.uid === uid) as NonFunctionWidget<string>;
+  /**
+   * The section uids come from the props and carry no repeater row indexes, the children come
+   * from the store with the indexes already applied, so the lookup adds this accordion's own.
+   * Returns `undefined` when the section's child is hidden, the children only hold visible ones.
+   */
+  getChild(uid: string): NonFunctionWidget<string> | undefined {
+    const childUid = `${uid}${this.rowIndexSuffix}`;
+    return this.adapter.templateData().children.find((section) => section.uid === childUid);
   }
 
   ngOnDestroy(): void {

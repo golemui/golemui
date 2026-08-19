@@ -6,7 +6,7 @@ import {
   type OnDestroy,
   type OnInit,
 } from '@angular/core';
-import { InputWidgetAdapter, RepeaterWidgetDirective } from '@golemui/angular';
+import { InputWidgetAdapter, WidgetDirective } from '@golemui/angular';
 import type { InputWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
 import type { RepeaterProps } from '@golemui/gui-shared/internals';
 import '@golemui/gui-components/label';
@@ -15,8 +15,8 @@ import '@golemui/gui-components/errors';
 @Component({
   standalone: true,
   selector: 'gui-repeater-control',
-  imports: [CommonModule, RepeaterWidgetDirective],
-  providers: [InputWidgetAdapter, RepeaterWidgetDirective],
+  imports: [CommonModule, WidgetDirective],
+  providers: [InputWidgetAdapter],
   templateUrl: './repeater.component.html',
   host: {
     class: 'gui-repeater gui-field',

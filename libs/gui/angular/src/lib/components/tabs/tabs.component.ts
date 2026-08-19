@@ -16,7 +16,7 @@ import {
   createIntersectionObserver,
   type TabsEventDetail,
 } from '@golemui/gui-components/internals';
-import type { TabsProps } from '@golemui/gui-shared/internals';
+import { repeaterIndexSuffix, type TabsProps } from '@golemui/gui-shared/internals';
 
 @Component({
   standalone: true,
@@ -43,11 +43,13 @@ export class TabsComponent implements OnInit, AfterViewInit, OnDestroy, WithWidg
   protected adapter: LayoutWidgetAdapter<TabsProps> = inject(LayoutWidgetAdapter);
   private startObserver: IntersectionObserver | undefined;
   private endObserver: IntersectionObserver | undefined;
+  private rowIndexSuffix = '';
 
   ngOnInit(): void {
     const props: TabsProps = this.widget.props as TabsProps;
     this.adapter.init(this.widget);
     this.activeTab.set(props.defaultOpen ?? props.tabs[0].uid);
+    this.rowIndexSuffix = repeaterIndexSuffix(this.widget.uid);
 
     this.startObserver = createIntersectionObserver(
       this.startSentinel().nativeElement,
@@ -67,6 +69,14 @@ export class TabsComponent implements OnInit, AfterViewInit, OnDestroy, WithWidg
       block: 'nearest',
       inline: 'nearest',
     });
+  }
+
+  /**
+   * The tab uids come from the props and carry no repeater row indexes, the panel children come
+   * from the store with the indexes already applied, so the comparison adds this tabs layout's own.
+   */
+  isActiveTab(child: { uid: string }) {
+    return child.uid === `${this.activeTab()}${this.rowIndexSuffix}`;
   }
 
   onClickTab(uid: string) {
