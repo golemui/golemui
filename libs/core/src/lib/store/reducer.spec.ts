@@ -13,32 +13,22 @@ import {
 import { identityTranslator } from '../i18n';
 import { type ExpressionFunctions, type ValidateOn } from '../shared';
 import { pruneHiddenData } from '../utils/form';
-import { makeRepeaterItemConfig } from '../utils/repeater';
 import { type Action } from './actions';
 import { createInitialState, type State } from './model';
 import { reducer } from './reducer';
 
 /**
- * End-to-end reducer baseline. Unlike the per-reducer specs, which place widgets into
+ * End-to-end reducer spec. Unlike the per-reducer specs, which place widgets into
  * `state.calculatedWidgets` by hand, this drives the REAL reducer through realistic action
  * sequences and asserts the resulting state.
  *
- * It is a characterization suite: it records how the pipeline behaves TODAY, so that the work that
- * moves the form store to a data-driven pipeline has an executable description of what it must not
- * break. That work is done in numbered steps, and the tags below name the step that changes an
- * assertion.
+ * The store computes the whole widget set from the data on every input-changing action (one
+ * derive), so nothing here mounts a component: `calculatedWidgets` holds every visible widget as
+ * soon as `SET_DATA` runs.
  *
- * Three kinds of tags appear below:
- * - `BASELINE (flips in step NN)` marks an assertion that step NN deliberately changes. Step 02
- *   replaced the repeater row walk (its two pins are flipped already), step 05 replaces the
- *   mount-driven pipeline with a single derive. When the step lands, the flipped assertion
- *   documents exactly what changed.
- * - `REFACTOR-NOTE` marks a mount-driven mechanic that disappears entirely when the mount actions
- *   (`ADD_WIDGET`, `REMOVE_WIDGET`, `SET_WIDGET_INITIAL_DATA`) are removed in step 12.
- * - `FINDING` marks behavior that is recorded because it is what happens today, not because it is
- *   what should happen. Fixing one of these should turn its pin red on purpose.
- *
- * Everything else is a plain assertion: behavior that must survive the whole change.
+ * `REFACTOR-NOTE` marks a mechanic that disappears when the no-op mount actions (`ADD_WIDGET`,
+ * `REMOVE_WIDGET`, `SET_WIDGET_INITIAL_DATA`) and the blur-time function-widget re-resolve are
+ * removed. Everything else is a plain assertion: behavior that must survive.
  *
  * Run: npx vitest run --config libs/core/vite.config.ts src/lib/store/reducer.spec.ts
  */
@@ -101,38 +91,27 @@ const setData = (data: Record<string, any>): Action => ({
   payload: { data },
 });
 
+const setWidgetData = (path: string, data: unknown): Action => ({
+  type: 'SET_WIDGET_DATA',
+  payload: { path, data },
+});
+
+const blur = (path: string, uid: string): Action => ({
+  type: 'ATTEMPT_VALIDATION',
+  payload: { reason: 'blur', path, uid },
+});
+
+const validateAllAction: Action = { type: 'VALIDATE_ALL' };
+
 const addWidget = (widget: FormWidget<string>): Action => ({
   type: 'ADD_WIDGET',
   payload: { widget },
 });
 
-/** Reads a repeater's decoded `props.template`, the layout widget the renderer mounts per row. */
-const repeaterTemplate = (state: State, repeaterUid: string): LayoutWidget<string> => {
-  const repeater = state.flatForm[repeaterUid] as InputWidget<any, string>;
-  return (repeater.props as { template: LayoutWidget<string> }).template;
-};
-
-/**
- * Reads a widget out of a repeater's decoded `props.template`. Template descendants never reach
- * `flatForm`, so this is how a test gets hold of the exact object the renderer materializes.
- */
-const templateChild = (state: State, repeaterUid: string, childUid: string): FormWidget<string> => {
-  const template = repeaterTemplate(state, repeaterUid);
-  const child = template.children.find((candidate) => candidate.uid === childUid);
-  if (!child) {
-    throw new Error(`Template child "${childUid}" not found in repeater "${repeaterUid}"`);
-  }
-  return child as FormWidget<string>;
-};
-
-/** Mounts a repeater template widget for one concrete row, exactly like the renderers do. */
-const mountRow = (widget: FormWidget<string>, repeaterIndexes: number[]): Action =>
-  addWidget(makeRepeaterItemConfig(widget, repeaterIndexes));
-
 const propsOf = (state: State, uid: string): Record<string, any> =>
   (state.calculatedWidgets[uid].current as NonFunctionWidget<string>).props ?? {};
 
-/** The uids a mounted layout reports as its children, in order. */
+/** The uids a layout reports as its children, in order. */
 const childUidsOf = (state: State, uid: string): (string | undefined)[] =>
   (state.calculatedWidgets[uid].current as LayoutWidget<string>).children.map(
     (child) => child.uid as string | undefined,
@@ -172,6 +151,55 @@ const makeBaseFormDef = () => ({
           kind: 'layout',
           type: 'flex',
           children: [{ uid: 'name', kind: 'input', type: 'textinput', path: 'users.items.name' }],
+        },
+      },
+    },
+  ],
+});
+
+/**
+ * Inputs with and without defaults, one of them hidden, one on a nested path, plus a repeater
+ * whose own default creates a row whose input has a default of its own.
+ */
+const makeDefaultsFormDef = () => ({
+  states: { adult: '$form.age >= 18' },
+  form: [
+    {
+      uid: 'firstName',
+      kind: 'input',
+      type: 'textinput',
+      path: 'firstName',
+      defaultValue: 'Anon',
+    },
+    { uid: 'street', kind: 'input', type: 'textinput', path: 'address.street' },
+    {
+      uid: 'secret',
+      kind: 'input',
+      type: 'textinput',
+      path: 'secret',
+      defaultValue: 'shh',
+      include: { in: ['adult'] },
+    },
+    {
+      uid: 'users',
+      kind: 'input',
+      type: 'repeater',
+      path: 'users',
+      defaultValue: [{}],
+      props: {
+        template: {
+          uid: 'usersRow',
+          kind: 'layout',
+          type: 'flex',
+          children: [
+            {
+              uid: 'name',
+              kind: 'input',
+              type: 'textinput',
+              path: 'users.items.name',
+              defaultValue: 'New user',
+            },
+          ],
         },
       },
     },
@@ -274,6 +302,7 @@ const makeRowNameFunctionWidget = (): FunctionWidget<string> => {
         seenIndex: api?.$index,
         seenErrors: api?.errors,
         seenTouched: api?.touched,
+        seenTranslate: typeof api?.translate,
       },
     }) as InputWidget<any, string>;
   rowName.uid = 'rowName';
@@ -293,6 +322,34 @@ const makeRowFunctionFormDef = () => ({
           kind: 'layout',
           type: 'flex',
           children: [makeRowNameFunctionWidget()],
+        },
+      },
+    },
+  ],
+});
+
+/** A repeater whose row input is required. */
+const makeRequiredRowsFormDef = () => ({
+  form: [
+    {
+      uid: 'users',
+      kind: 'input',
+      type: 'repeater',
+      path: 'users',
+      props: {
+        template: {
+          uid: 'usersRow',
+          kind: 'layout',
+          type: 'flex',
+          children: [
+            {
+              uid: 'name',
+              kind: 'input',
+              type: 'textinput',
+              path: 'users.items.name',
+              validator: { required: true },
+            },
+          ],
         },
       },
     },
@@ -340,8 +397,8 @@ const makeGatedInputFormDef = () => ({
 });
 
 /**
- * The same gated required input plus an always-visible sibling, so a test can blur a registered
- * widget before the gated one mounts.
+ * The same gated required input plus an always-visible sibling, so a test can blur another
+ * input before the gated one is revealed.
  */
 const makeGatedInputWithSiblingFormDef = () => ({
   states: { adult: '$form.age >= 18' },
@@ -383,6 +440,27 @@ const makeValidationDrivenFormDef = () => ({
   ],
 });
 
+/** A required input that only appears once the form is invalid, next to a required input. */
+const makeSubmitRevealFormDef = () => ({
+  form: [
+    {
+      uid: 'firstName',
+      kind: 'input',
+      type: 'textinput',
+      path: 'firstName',
+      validator: { required: true },
+    },
+    {
+      uid: 'afterSubmitOnly',
+      kind: 'input',
+      type: 'textinput',
+      path: 'afterSubmitOnly',
+      validator: { required: true },
+      include: { when: '$formIsInvalid' },
+    },
+  ],
+});
+
 /**
  * An interpolation that reads through a missing object. It throws while resolving props, which is
  * how a test drives the form into an errored `formHealth`.
@@ -391,6 +469,19 @@ const makeBrokenInterpolationFormDef = () => ({
   states: { adult: '$form.age >= 18' },
   form: [
     { uid: 'oops', kind: 'display', type: 'heading', props: { text: 'Hi {{$form.missing.deep}}' } },
+    { uid: 'fine', kind: 'display', type: 'heading', props: { text: 'plain' } },
+  ],
+});
+
+/** A `when` condition that reads through a missing object, so the flags pass throws. */
+const makeBrokenWhenFormDef = () => ({
+  form: [
+    {
+      uid: 'gate',
+      kind: 'display',
+      type: 'heading',
+      include: { when: '$form.missing.deep === 1' },
+    },
     { uid: 'fine', kind: 'display', type: 'heading', props: { text: 'plain' } },
   ],
 });
@@ -542,12 +633,12 @@ const makePositionUidFormDef = () => ({
 // Tests
 // -----------------------------------------------------------------------------
 
-describe('reducer end-to-end baseline', () => {
+describe('reducer end-to-end', () => {
   // ---------------------------------------------------------------------------
-  // 1. Mount-driven widget registry
+  // 1. Data-driven widget set
   // ---------------------------------------------------------------------------
 
-  describe('mount-driven widget registry', () => {
+  describe('data-driven widget set', () => {
     it('INITIALIZE decodes the form and builds flatForm without computing any widget', () => {
       const state = drive([init(makeBaseFormDef())]);
 
@@ -568,7 +659,8 @@ describe('reducer end-to-end baseline', () => {
       expect(state.resolvedSources['users']).toBe(state.flatForm['users']);
       expect(state.repeaterItemScopes).toEqual({});
 
-      // BASELINE (flips in step 05): INITIALIZE runs no calculation today.
+      // The first derive runs on the SET_DATA every binding dispatches next, so an interpolation
+      // that reads through data which is not there yet cannot error the form here.
       expect(state.calculatedWidgets).toEqual({});
       expect(state.currentStates).toEqual([]);
       expect(state.widgetFlags).toEqual({});
@@ -576,7 +668,7 @@ describe('reducer end-to-end baseline', () => {
       expect(state.data).toEqual({});
     });
 
-    it('SET_DATA computes states, flags and repeater rows but leaves calculatedWidgets empty', () => {
+    it('SET_DATA computes states, flags, repeater rows and every visible widget', () => {
       const state = drive([
         init(makeBaseFormDef()),
         setData({ firstName: 'Joan', users: [{}, {}] }),
@@ -589,8 +681,8 @@ describe('reducer end-to-end baseline', () => {
       expect(state.currentStates).toEqual([]);
       expect(state.widgetFlags['bio']).toEqual({ hidden: true });
 
-      // Every repeater row is expanded from the array data, whether or not it is mounted, next to
-      // the static widgets. The template's own layout widget is expanded per row as well.
+      // Every repeater row is expanded from the array data next to the static widgets. The
+      // template's own layout widget is expanded per row as well.
       expect(Object.keys(state.resolvedSources).sort()).toEqual(
         [...Object.keys(state.flatForm), 'name[0]', 'name[1]', 'usersRow[0]', 'usersRow[1]'].sort(),
       );
@@ -605,9 +697,20 @@ describe('reducer end-to-end baseline', () => {
       expect(state.widgetFlags).not.toHaveProperty('name[0]');
       expect(state.widgetFlags).not.toHaveProperty('name[1]');
 
-      // BASELINE (flips in step 05): calculatedWidgets only ever covers widgets whose component
-      // has mounted; none have, so it stays empty even though the data is set.
-      expect(state.calculatedWidgets).toEqual({});
+      // Every visible widget is computed, rows and row layout nodes included, without any
+      // component having mounted. The root layout is `#0`. The hidden `bio` has no entry.
+      expect(Object.keys(state.calculatedWidgets).sort()).toEqual(
+        ['#0', 'firstName', 'users', 'usersRow[0]', 'usersRow[1]', 'name[0]', 'name[1]'].sort(),
+      );
+      const firstName = state.calculatedWidgets['firstName'].current as InputWidget<any, string>;
+      expect(firstName.uid).toBe('firstName');
+      expect(firstName.kind).toBe('input');
+      expect(firstName.type).toBe('textinput');
+      expect(firstName.path).toBe('firstName');
+      const rowName = state.calculatedWidgets['name[1]'].current as InputWidget<any, string>;
+      expect(rowName.uid).toBe('name[1]');
+      expect(rowName.path).toBe('users.1.name');
+      expect(state.calculatedWidgets['usersRow[1]'].current.uid).toBe('usersRow[1]');
     });
 
     it('activates a declared state when its expression becomes true', () => {
@@ -617,90 +720,96 @@ describe('reducer end-to-end baseline', () => {
       expect(state.widgetFlags['bio']).toEqual({ hidden: false });
     });
 
-    // REFACTOR-NOTE: ADD_WIDGET / REMOVE_WIDGET disappear in step 12. Until then they are the
-    // only way a widget enters or leaves calculatedWidgets.
-    it('ADD_WIDGET computes exactly the widget that mounted, and nothing else', () => {
-      const initialized = drive([init(makeBaseFormDef()), setData({ firstName: 'Joan' })]);
-
-      // BASELINE (flips in step 05): nothing is calculated before a component mounts.
-      expect(initialized.calculatedWidgets).toEqual({});
-
+    it('SET_DATA resolves a row function widget with the row and the store in scope', () => {
       const state = drive([
-        init(makeBaseFormDef()),
-        setData({ firstName: 'Joan' }),
-        addWidget(initialized.flatForm['firstName']),
+        init(makeRowFunctionFormDef()),
+        setData({ users: [{ name: 'Ada' }, { name: 'Linus' }] }),
       ]);
 
-      expect(Object.keys(state.calculatedWidgets)).toEqual(['firstName']);
-      const current = state.calculatedWidgets['firstName'].current as InputWidget<any, string>;
-      expect(current.uid).toBe('firstName');
-      expect(current.kind).toBe('input');
-      expect(current.type).toBe('textinput');
-      expect(current.path).toBe('firstName');
-
-      expect(state.calculatedWidgets).not.toHaveProperty('bio');
-      expect(state.calculatedWidgets).not.toHaveProperty('users');
+      const current = state.calculatedWidgets['rowName[1]'].current as InputWidget<any, string>;
+      expect(current.uid).toBe('rowName[1]');
+      // The function returns the template path, the derive stamps the row path on.
+      expect(current.path).toBe('users.1.name');
+      expect(current.props?.['seenItemName']).toBe('Linus');
+      expect(current.props?.['seenIndex']).toBe(1);
+      expect(current.props?.['seenErrors']).toBeUndefined();
+      expect(current.props?.['seenTouched']).toBeUndefined();
+      expect(current.props?.['seenTranslate']).toBe('function');
     });
 
-    // REFACTOR-NOTE: unmount-driven cleanup, deleted in step 12.
-    it('REMOVE_WIDGET drops the uid again', () => {
-      const initialized = drive([init(makeBaseFormDef())]);
+    // REFACTOR-NOTE: the three mount actions are no-ops and go away with their dispatch sites.
+    it('ADD_WIDGET, REMOVE_WIDGET and SET_WIDGET_INITIAL_DATA return the same state object', () => {
+      const state = drive([init(makeBaseFormDef()), setData({ firstName: 'Joan' })]);
+      const reduce = makeReducer();
 
-      const state = drive([
-        init(makeBaseFormDef()),
-        setData({ firstName: 'Joan' }),
-        addWidget(initialized.flatForm['firstName']),
-        { type: 'REMOVE_WIDGET', payload: { uid: 'firstName' } },
-      ]);
-
-      expect(state.calculatedWidgets).not.toHaveProperty('firstName');
-      expect(state.calculatedWidgets).toEqual({});
+      expect(reduce(state, addWidget(state.flatForm['bio']))).toBe(state);
+      expect(reduce(state, { type: 'REMOVE_WIDGET', payload: { uid: 'firstName' } })).toBe(state);
+      expect(
+        reduce(state, {
+          type: 'SET_WIDGET_INITIAL_DATA',
+          payload: { path: 'firstName', data: 'default' },
+        }),
+      ).toBe(state);
     });
   });
 
   // ---------------------------------------------------------------------------
-  // 2. Initial data
+  // 2. Default values
   // ---------------------------------------------------------------------------
 
-  describe('initial data defaulting', () => {
-    // REFACTOR-NOTE: SET_WIDGET_INITIAL_DATA is dispatched on mount and disappears in step 12.
-    it('BASELINE (flips in step 05: cleared stays cleared): writes the default when the value is undefined', () => {
-      const state = drive([
-        init(makeBaseFormDef()),
-        setData({}),
-        { type: 'SET_WIDGET_INITIAL_DATA', payload: { path: 'firstName', data: 'default' } },
-      ]);
+  describe('default values', () => {
+    it('writes every missing default on SET_DATA, hidden inputs and repeater rows included', () => {
+      const state = drive([init(makeDefaultsFormDef()), setData({})]);
 
-      expect(state.data['firstName']).toBe('default');
+      expect(state.data['firstName']).toBe('Anon');
+      // An input without a default still gets its path created, so expressions can read through it.
+      expect('street' in state.data['address']).toBe(true);
+      expect(state.data['address']['street']).toBeUndefined();
+      // The hidden input's default lands in the data too.
+      expect(state.widgetFlags['secret']).toEqual({ hidden: true });
+      expect(state.data['secret']).toBe('shh');
+      // The repeater default creates a row, and the row input's default lands in that row.
+      expect(state.data['users']).toEqual([{ name: 'New user' }]);
+      expect(state.calculatedWidgets).toHaveProperty('name[0]');
+
+      // A hidden input's default is stripped from the submit payload.
+      expect(pruneHiddenData(state)).not.toHaveProperty('secret');
     });
 
-    it('BASELINE (flips in step 05: cleared stays cleared): re-defaults a path that exists with an explicit undefined', () => {
-      const state = drive([
-        init(makeBaseFormDef()),
-        setData({ firstName: undefined }),
-        { type: 'SET_WIDGET_INITIAL_DATA', payload: { path: 'firstName', data: 'default' } },
+    it('does not re-default a cleared value', () => {
+      const cleared = drive([
+        init(makeDefaultsFormDef()),
+        setData({ firstName: '', secret: null, users: [], address: { street: undefined } }),
       ]);
 
-      expect('firstName' in state.data).toBe(true);
-      expect(state.data['firstName']).toBe('default');
+      expect(cleared.data['firstName']).toBe('');
+      expect(cleared.data['secret']).toBeNull();
+      expect(cleared.data['users']).toEqual([]);
+      expect('street' in cleared.data['address']).toBe(true);
+
+      const explicitUndefined = drive([
+        init(makeDefaultsFormDef()),
+        setData({ firstName: undefined }),
+      ]);
+      expect('firstName' in explicitUndefined.data).toBe(true);
+      expect(explicitUndefined.data['firstName']).toBeUndefined();
+
+      const clearedByEdit = drive([
+        init(makeDefaultsFormDef()),
+        setData({}),
+        setWidgetData('firstName', ''),
+      ]);
+      expect(clearedByEdit.data['firstName']).toBe('');
     });
 
     it('leaves an existing value alone', () => {
-      const state = drive([
-        init(makeBaseFormDef()),
-        setData({ firstName: 'Joan' }),
-        { type: 'SET_WIDGET_INITIAL_DATA', payload: { path: 'firstName', data: 'default' } },
-      ]);
+      const state = drive([init(makeDefaultsFormDef()), setData({ firstName: 'Joan' })]);
 
       expect(state.data['firstName']).toBe('Joan');
     });
 
-    it('never marks the defaulted field touched', () => {
-      const state = drive([
-        init(makeBaseFormDef()),
-        setData({}),
-        { type: 'SET_WIDGET_INITIAL_DATA', payload: { path: 'firstName', data: 'default' } },
-      ]);
+    it('never marks a defaulted input touched or validated', () => {
+      const state = drive([init(makeDefaultsFormDef()), setData({})]);
 
       expect(state.touched).toBe(false);
       expect(state.touchedControls).toEqual({});
@@ -756,30 +865,17 @@ describe('reducer end-to-end baseline', () => {
       expect(resolved.props?.['seenIndex']).toBe(1);
     });
 
-    // REFACTOR-NOTE: the row widget has to be mounted for its props to be computed at all.
-    it('resolves an interpolated row prop per row once the row is mounted', () => {
-      const initialized = drive([init(makeRowScopeFormDef())]);
-      const rowTotal = templateChild(initialized, 'lineItems', 'rowTotal');
-
-      const state = drive([
-        init(makeRowScopeFormDef()),
-        setData(rowScopeData),
-        mountRow(rowTotal, [0]),
-        mountRow(rowTotal, [1]),
-      ]);
+    it('resolves an interpolated row prop per row', () => {
+      const state = drive([init(makeRowScopeFormDef()), setData(rowScopeData)]);
 
       expect(propsOf(state, 'rowTotal[0]')['text']).toBe('Row 1: 2');
       expect(propsOf(state, 'rowTotal[1]')['text']).toBe('Row 2: 5');
     });
 
     it('recomputes row props and flags when the row data changes', () => {
-      const initialized = drive([init(makeRowScopeFormDef())]);
-      const rowTotal = templateChild(initialized, 'lineItems', 'rowTotal');
-
       const state = drive([
         init(makeRowScopeFormDef()),
         setData(rowScopeData),
-        mountRow(rowTotal, [0]),
         setData({ lineItems: [{ quantity: 9, active: false }] }),
       ]);
 
@@ -794,13 +890,7 @@ describe('reducer end-to-end baseline', () => {
 
   describe('$fn host functions', () => {
     it('resolves $fn in a state expression, a flag when and an interpolation, and recomputes on SET_DATA', () => {
-      const initialized = drive([init(makeHostFunctionsFormDef())]);
-
-      const adult = drive([
-        init(makeHostFunctionsFormDef()),
-        addWidget(initialized.flatForm['doubled']),
-        setData({ age: 21, count: 4 }),
-      ]);
+      const adult = drive([init(makeHostFunctionsFormDef()), setData({ age: 21, count: 4 })]);
 
       expect(adult.currentStates).toEqual(['adult']);
       expect(adult.widgetFlags['adultsOnly']).toEqual({ hidden: false });
@@ -808,7 +898,6 @@ describe('reducer end-to-end baseline', () => {
 
       const minor = drive([
         init(makeHostFunctionsFormDef()),
-        addWidget(initialized.flatForm['doubled']),
         setData({ age: 21, count: 4 }),
         setData({ age: 10, count: 5 }),
       ]);
@@ -842,68 +931,43 @@ describe('reducer end-to-end baseline', () => {
   // ---------------------------------------------------------------------------
 
   describe('blur recompute for a row function widget', () => {
-    // REFACTOR-NOTE: exercises the inline function-widget block in `reducer.ts` (ATTEMPT_VALIDATION),
-    // which survives until step 12.
-    it('recomputes the mounted row function widget with touched, errors and $item / $index in scope', () => {
-      const rowName = makeRowNameFunctionWidget();
-      const formDef = {
-        form: [
-          {
-            uid: 'users',
-            kind: 'input',
-            type: 'repeater',
-            path: 'users',
-            props: {
-              template: {
-                uid: 'usersRow',
-                kind: 'layout',
-                type: 'flex',
-                children: [rowName],
-              },
-            },
-          },
-        ],
-      };
-
-      const mounted = drive([
-        init(formDef),
-        setData({ users: [{ name: 'Ada' }, { name: 'Linus' }] }),
-        mountRow(rowName, [1]),
+    it('re-resolves the row function widget with touched, errors and $item / $index in scope', () => {
+      const initial = drive([
+        init(makeRowFunctionFormDef()),
+        setData({ users: [{ name: 'Ada' }, { name: '' }] }),
       ]);
-
-      // On mount the regular pipeline stamps the materialized uid back onto the computed widget.
-      expect(mounted.calculatedWidgets['rowName[1]'].current.uid).toBe('rowName[1]');
+      expect(initial.calculatedWidgets['rowName[1]'].current.uid).toBe('rowName[1]');
 
       const reduce = makeReducer();
-      const state = reduce(mounted, {
-        type: 'ATTEMPT_VALIDATION',
-        payload: { reason: 'blur', path: 'users.1.name', uid: 'rowName[1]' },
-      });
+      const state = reduce(initial, blur('users.1.name', 'rowName[1]'));
 
       const current = state.calculatedWidgets['rowName[1]'].current as InputWidget<any, string>;
 
       // The row is recomputed with the blur outcome and its own item in scope.
       expect(current.props?.['seenTouched']).toBe(true);
-      expect(current.props?.['seenItemName']).toBe('Linus');
+      expect(current.props?.['seenItemName']).toBe('');
       expect(current.props?.['seenIndex']).toBe(1);
 
       expect(state.touched).toBe(true);
       expect(state.touchedControls['users.1.name']).toBe(true);
 
-      // REFACTOR-NOTE: the inline block writes the raw function result straight into
-      // calculatedWidgets, so unlike the regular pipeline it does not stamp the materialized uid
-      // back on. The map key stays `rowName[1]` while the widget claims to be `rowName`.
-      expect(current.uid).toBe('rowName');
+      // The stamped uid and path survive the recompute.
+      expect(current.uid).toBe('rowName[1]');
+      expect(current.path).toBe('users.1.name');
 
-      // REFACTOR-NOTE: a row function widget is validated under the TEMPLATE path, because
-      // `current.path` comes from what the function returned and is never materialized, while
-      // touchedControls and the blur payload use the row path. The two never meet, so the row
-      // never receives its own errors.
-      // FINDING: step 05 flips this on purpose. The derive stamps `current.path` from
-      // `source.path`, so the row is validated under `users.1.name` and gets its own errors.
-      expect(state.validations).toEqual({ 'users.items.name': ['required'] });
-      expect(state.validations['users.1.name']).toBeUndefined();
-      expect(current.props?.['seenErrors']).toBeUndefined();
+      // The row is validated under its own path, so it receives its own errors.
+      expect(state.validations).toEqual({
+        users: null,
+        'users.0.name': null,
+        'users.1.name': ['required'],
+      });
+      expect(current.props?.['seenErrors']).toEqual(['required']);
+
+      // REFACTOR-NOTE: the blur-time re-resolve writes a fresh object into calculatedWidgets even
+      // though the props pass produced an equal one. Goes away with the mount actions.
+      expect(state.calculatedWidgets['rowName[1]']).not.toBe(
+        initial.calculatedWidgets['rowName[1]'],
+      );
     });
   });
 
@@ -918,14 +982,7 @@ describe('reducer end-to-end baseline', () => {
     });
 
     it('stores the override without validating when the form is untouched', () => {
-      const initialized = drive([init(makeBaseFormDef())]);
-
-      const state = drive([
-        init(makeBaseFormDef()),
-        setData({}),
-        addWidget(initialized.flatForm['firstName']),
-        override(),
-      ]);
+      const state = drive([init(makeBaseFormDef()), setData({}), override()]);
 
       expect(state.widgetPropOverrides['firstName']).toEqual({ placeholder: 'Your name' });
       expect(propsOf(state, 'firstName')['placeholder']).toBe('Your name');
@@ -933,18 +990,12 @@ describe('reducer end-to-end baseline', () => {
     });
 
     it('re-runs validation when it targets a touched input on a touched form', () => {
-      const initialized = drive([init(makeBaseFormDef())]);
-
       const blurred = drive([
         init(makeBaseFormDef()),
         setData({}),
-        addWidget(initialized.flatForm['firstName']),
-        {
-          type: 'ATTEMPT_VALIDATION',
-          payload: { reason: 'blur', path: 'firstName', uid: 'firstName' },
-        },
+        blur('firstName', 'firstName'),
         // A plain data write does NOT re-validate, so the failure below is stale on purpose.
-        { type: 'SET_WIDGET_DATA', payload: { path: 'firstName', data: 'Joan' } },
+        setWidgetData('firstName', 'Joan'),
       ]);
 
       expect(blurred.touched).toBe(true);
@@ -963,14 +1014,8 @@ describe('reducer end-to-end baseline', () => {
   // ---------------------------------------------------------------------------
 
   describe('INJECT_VALIDATION_ISSUES', () => {
-    it('updates injectedValidations and runs no recompute pipeline', () => {
-      const initialized = drive([init(makeBaseFormDef())]);
-
-      const before = drive([
-        init(makeBaseFormDef()),
-        setData({ firstName: 'Joan', users: [{}] }),
-        addWidget(initialized.flatForm['firstName']),
-      ]);
+    it('updates injectedValidations and runs no derive', () => {
+      const before = drive([init(makeBaseFormDef()), setData({ firstName: 'Joan', users: [{}] })]);
 
       const reduce = makeReducer();
       const after = reduce(before, {
@@ -980,7 +1025,7 @@ describe('reducer end-to-end baseline', () => {
 
       expect(after.injectedValidations['firstName']).toEqual(['taken']);
 
-      // No stage of the pipeline ran, so every derived map keeps its identity.
+      // No derive ran, so every derived map keeps its identity.
       expect(after.calculatedWidgets).toBe(before.calculatedWidgets);
       expect(after.widgetFlags).toBe(before.widgetFlags);
       expect(after.resolvedSources).toBe(before.resolvedSources);
@@ -998,8 +1043,8 @@ describe('reducer end-to-end baseline', () => {
       expect(state.injectedValidations['firstName']).toBeNull();
     });
 
-    // Landed in #265 (`214b7f28`), after this spec was first written. The issues have to be
-    // visible right away, and an untouched control shows nothing.
+    // Landed in #265 (`214b7f28`). The issues have to be visible right away, and an untouched
+    // control shows nothing.
     it('marks the path touched when the issues are not empty', () => {
       const state = drive([
         init(makeBaseFormDef()),
@@ -1032,16 +1077,10 @@ describe('reducer end-to-end baseline', () => {
     });
 
     it('leaves the already touched controls in place', () => {
-      const initialized = drive([init(makeBaseFormDef())]);
-
       const state = drive([
         init(makeBaseFormDef()),
         setData({}),
-        addWidget(initialized.flatForm['firstName']),
-        {
-          type: 'ATTEMPT_VALIDATION',
-          payload: { reason: 'blur', path: 'firstName', uid: 'firstName' },
-        },
+        blur('firstName', 'firstName'),
         { type: 'INJECT_VALIDATION_ISSUES', payload: { path: 'users.0.name', issues: ['taken'] } },
       ]);
 
@@ -1055,23 +1094,11 @@ describe('reducer end-to-end baseline', () => {
 
   describe('deterministic position uids', () => {
     it('derives row uids from the template position uid and keeps them round-trippable', () => {
-      const initialized = drive([init(makePositionUidFormDef())]);
+      const state = drive([init(makePositionUidFormDef()), setData({ rows: [{}, {}] })]);
 
       // Inputs are keyed `<path>-<type>` by the decoder; everything else gets a position uid.
-      expect(initialized.flatForm).toHaveProperty('#0.0');
-      expect(initialized.flatForm).toHaveProperty('rows-repeater');
-
-      const rowLabel = templateChild(initialized, 'rows-repeater', '#0.1.t.0');
-      const rowBadge = templateChild(initialized, 'rows-repeater', '#0.1.t.1');
-      expect(rowLabel).toBeDefined();
-      expect(rowBadge).toBeDefined();
-
-      const state = drive([
-        init(makePositionUidFormDef()),
-        setData({ rows: [{}, {}] }),
-        mountRow(rowLabel, [0]),
-        mountRow(rowLabel, [1]),
-      ]);
+      expect(state.flatForm).toHaveProperty('#0.0');
+      expect(state.flatForm).toHaveProperty('rows-repeater');
 
       expect(Object.keys(state.repeaterItemScopes).sort()).toEqual([
         '#0.1.t.0[0]',
@@ -1097,15 +1124,9 @@ describe('reducer end-to-end baseline', () => {
   // ---------------------------------------------------------------------------
 
   describe('hidden widgets', () => {
-    it('drops a mounted widget from calculatedWidgets as soon as it becomes hidden', () => {
-      const initialized = drive([init(makeBaseFormDef())]);
-
-      const visible = drive([
-        init(makeBaseFormDef()),
-        setData({ age: 21 }),
-        addWidget(initialized.flatForm['bio']),
-      ]);
-      expect(Object.keys(visible.calculatedWidgets)).toEqual(['bio']);
+    it('leaves calculatedWidgets while hidden and re-enters when visible again', () => {
+      const visible = drive([init(makeBaseFormDef()), setData({ age: 21 })]);
+      expect(visible.calculatedWidgets).toHaveProperty('bio');
 
       const reduce = makeReducer();
       const hidden = reduce(visible, setData({ age: 10 }));
@@ -1113,29 +1134,20 @@ describe('reducer end-to-end baseline', () => {
       expect(hidden.widgetFlags['bio']).toEqual({ hidden: true });
       expect(hidden.calculatedWidgets).not.toHaveProperty('bio');
 
-      // BASELINE (flips in step 05): the props stage iterates the registry, so a widget it drops
-      // can never re-enter it. Only a re-mount brings it back, which is exactly what the
-      // renderers do today.
       const visibleAgain = reduce(hidden, setData({ age: 30 }));
       expect(visibleAgain.widgetFlags['bio']).toEqual({ hidden: false });
-      expect(visibleAgain.calculatedWidgets).not.toHaveProperty('bio');
+      expect(visibleAgain.calculatedWidgets['bio'].current.uid).toBe('bio');
     });
 
     it('never validates a hidden input, even when it is required and empty', () => {
-      const initialized = drive([init(makeGatedInputFormDef())]);
+      const state = drive([init(makeGatedInputFormDef()), setData({ age: 10 })]);
 
-      const mounted = drive([
-        init(makeGatedInputFormDef()),
-        setData({ age: 10 }),
-        addWidget(initialized.flatForm['secret']),
-      ]);
-
-      // Mounted, but hidden: it never reaches calculatedWidgets, which is what validateAll reads.
-      expect(mounted.widgetFlags['secret']).toEqual({ hidden: true });
-      expect(mounted.calculatedWidgets).toEqual({});
+      // Hidden: it never reaches calculatedWidgets, which is what validateAll reads.
+      expect(state.widgetFlags['secret']).toEqual({ hidden: true });
+      expect(state.calculatedWidgets).not.toHaveProperty('secret');
 
       const reduce = makeReducer();
-      const validated = reduce(mounted, { type: 'VALIDATE_ALL' });
+      const validated = reduce(state, validateAllAction);
 
       expect(validated.validations).toEqual({});
       expect(validated.touchedControls).toEqual({});
@@ -1164,48 +1176,38 @@ describe('reducer end-to-end baseline', () => {
   // ---------------------------------------------------------------------------
 
   describe('VALIDATE_ALL', () => {
-    it('touches and validates every mounted input, and recomputes isFormValid', () => {
-      const initialized = drive([init(makeBaseFormDef())]);
-
-      const mounted = drive([
-        init(makeBaseFormDef()),
-        setData({ age: 21 }),
-        addWidget(initialized.flatForm['firstName']),
-        addWidget(initialized.flatForm['bio']),
-      ]);
-
-      const reduce = makeReducer();
-      const state = reduce(mounted, { type: 'VALIDATE_ALL' });
+    it('touches and validates every visible input, rendered or not, and recomputes isFormValid', () => {
+      const state = drive([init(makeBaseFormDef()), setData({ age: 21 }), validateAllAction]);
 
       expect(state.touched).toBe(true);
-      expect(state.validations).toEqual({ firstName: ['required'] });
+      expect(state.allControlsValidated).toBe(true);
+      // The repeater is an input too. `bio` is a display widget and is never touched.
+      expect(state.touchedControls).toEqual({ firstName: true, users: true });
+      expect(state.validations).toEqual({ firstName: ['required'], users: null });
       expect(state.isFormValid).toBe(false);
-
-      // BASELINE (flips in step 05): the touched set is rebuilt from the MOUNTED inputs, so an
-      // input whose component has not mounted is neither touched nor validated by a submit.
-      expect(state.touchedControls).toEqual({ firstName: true });
     });
 
-    it('replaces the touched set instead of merging into it', () => {
-      const initialized = drive([init(makeBaseFormDef())]);
-
-      const blurred = drive([
-        init(makeBaseFormDef()),
-        setData({}),
-        addWidget(initialized.flatForm['firstName']),
-        // A blur can touch any path, including one no mounted widget owns.
-        {
-          type: 'ATTEMPT_VALIDATION',
-          payload: { reason: 'blur', path: 'ghost', uid: 'firstName' },
-        },
-      ]);
-      expect(blurred.touchedControls).toEqual({ ghost: true });
+    it('drops a touched path no input owns and rebuilds the touched set from the visible inputs', () => {
+      // A blur can carry any path. One that no input owns is dropped by the derive right away.
+      const blurred = drive([init(makeBaseFormDef()), setData({}), blur('ghost', 'firstName')]);
+      expect(blurred.touched).toBe(true);
+      expect(blurred.touchedControls).toEqual({});
 
       const reduce = makeReducer();
-      const state = reduce(blurred, { type: 'VALIDATE_ALL' });
+      const state = reduce(blurred, validateAllAction);
 
-      // BASELINE (flips in step 05): everything not owned by a mounted input is dropped.
-      expect(state.touchedControls).toEqual({ firstName: true });
+      expect(state.touchedControls).toEqual({ firstName: true, users: true });
+    });
+
+    it('touches and validates an input the validation itself reveals, in the same dispatch', () => {
+      const state = drive([init(makeSubmitRevealFormDef()), setData({}), validateAllAction]);
+
+      // `afterSubmitOnly` was hidden until `$formIsInvalid` became true.
+      expect(state.widgetFlags['afterSubmitOnly']).toEqual({ hidden: false });
+      expect(state.calculatedWidgets).toHaveProperty('afterSubmitOnly');
+      expect(state.touchedControls).toEqual({ firstName: true, afterSubmitOnly: true });
+      expect(state.validations).toEqual({ firstName: ['required'], afterSubmitOnly: ['required'] });
+      expect(state.isFormValid).toBe(false);
     });
   });
 
@@ -1215,47 +1217,30 @@ describe('reducer end-to-end baseline', () => {
 
   describe('validation-driven expressions', () => {
     it('feeds $errors and $formIsInvalid into states, flags and props', () => {
-      const initialized = drive([init(makeValidationDrivenFormDef())]);
+      const initial = drive([init(makeValidationDrivenFormDef()), setData({})]);
 
-      const mounted = drive([
-        init(makeValidationDrivenFormDef()),
-        setData({}),
-        addWidget(initialized.flatForm['firstName']),
-        addWidget(initialized.flatForm['submit']),
-      ]);
-
-      expect(mounted.currentStates).toEqual([]);
-      expect(mounted.widgetFlags['nameHint']).toEqual({ hidden: true });
-      expect(mounted.widgetFlags['submit']).toEqual({ disabled: false });
+      expect(initial.currentStates).toEqual([]);
+      expect(initial.widgetFlags['nameHint']).toEqual({ hidden: true });
+      expect(initial.widgetFlags['submit']).toEqual({ disabled: false });
 
       const reduce = makeReducer();
-      const blurred = reduce(mounted, {
-        type: 'ATTEMPT_VALIDATION',
-        payload: { reason: 'blur', path: 'firstName', uid: 'firstName' },
-      });
+      const blurred = reduce(initial, blur('firstName', 'firstName'));
 
       expect(blurred.validations).toEqual({ firstName: ['required'] });
       expect(blurred.currentStates).toEqual(['broken']);
       expect(blurred.widgetFlags['nameHint']).toEqual({ hidden: false });
       expect(blurred.widgetFlags['submit']).toEqual({ disabled: true });
-      // The `disabled: { when }` field of a mounted widget mirrors its flag.
+      // The `disabled: { when }` field of a computed widget mirrors its flag.
       const submit = blurred.calculatedWidgets['submit'].current as ActionWidget<string>;
       expect(submit.disabled).toBe(true);
       expect(blurred.isFormValid).toBe(false);
     });
 
     it('does not validate on a data change: the errors stay until the next trigger', () => {
-      const initialized = drive([init(makeValidationDrivenFormDef())]);
-
       const blurred = drive([
         init(makeValidationDrivenFormDef()),
         setData({}),
-        addWidget(initialized.flatForm['firstName']),
-        addWidget(initialized.flatForm['submit']),
-        {
-          type: 'ATTEMPT_VALIDATION',
-          payload: { reason: 'blur', path: 'firstName', uid: 'firstName' },
-        },
+        blur('firstName', 'firstName'),
       ]);
 
       const reduce = makeReducer();
@@ -1279,14 +1264,28 @@ describe('reducer end-to-end baseline', () => {
       expect(revalidated.isFormValid).toBe(true);
     });
 
-    it('counts injected issues in isFormValid but not in $errors / $formIsInvalid', () => {
-      const initialized = drive([init(makeValidationDrivenFormDef())]);
+    it('runs no validation until a validation action, whatever the data does', () => {
+      const state = drive(
+        [
+          init(makeBaseFormDef()),
+          setData({ firstName: 'J' }),
+          setWidgetData('firstName', 'Jo'),
+          {
+            type: 'ATTEMPT_VALIDATION',
+            payload: { reason: 'change', path: 'firstName', uid: 'firstName' },
+          },
+        ],
+        'blur',
+      );
 
+      expect(state.validations).toEqual({});
+      expect(state.touched).toBe(false);
+    });
+
+    it('counts injected issues in isFormValid but not in $errors / $formIsInvalid', () => {
       const injected = drive([
         init(makeValidationDrivenFormDef()),
         setData({ firstName: 'Joan' }),
-        addWidget(initialized.flatForm['firstName']),
-        addWidget(initialized.flatForm['submit']),
         { type: 'INJECT_VALIDATION_ISSUES', payload: { path: 'firstName', issues: ['taken'] } },
       ]);
 
@@ -1294,7 +1293,7 @@ describe('reducer end-to-end baseline', () => {
       expect(injected.isFormValid).toBe(true);
 
       const reduce = makeReducer();
-      const state = reduce(injected, { type: 'VALIDATE_ALL' });
+      const state = reduce(injected, validateAllAction);
 
       // The schema validators pass, so the only failure is the injected one: isFormValid sees it,
       // the expression variables do not (they are built from `validations` only).
@@ -1311,14 +1310,8 @@ describe('reducer end-to-end baseline', () => {
   // ---------------------------------------------------------------------------
 
   describe('form health', () => {
-    it('reports an errored form when a prop interpolation throws, and computes nothing', () => {
-      const initialized = drive([init(makeBrokenInterpolationFormDef())]);
-
-      const state = drive([
-        init(makeBrokenInterpolationFormDef()),
-        setData({ age: 21 }),
-        addWidget(initialized.flatForm['oops']),
-      ]);
+    it('reports an errored form when a prop interpolation throws, and computes no props', () => {
+      const state = drive([init(makeBrokenInterpolationFormDef()), setData({ age: 21 })]);
 
       expect(state.formHealth).toEqual({
         status: 'errored',
@@ -1327,59 +1320,89 @@ describe('reducer end-to-end baseline', () => {
         code: 40,
       });
 
-      // The props stage threw before writing anything, so the widget stays as ADD_WIDGET
-      // registered it: known, but never computed.
+      // States and flags ran, the props pass threw before writing anything.
+      expect(state.currentStates).toEqual(['adult']);
       expect(state.calculatedWidgets['oops'].current).toEqual({});
+      expect(state.calculatedWidgets['fine'].current).toEqual({});
     });
 
-    it('BASELINE (flips in step 05: the derive self-heals): stays errored after the data is fixed', () => {
-      const initialized = drive([init(makeBrokenInterpolationFormDef())]);
-
-      const errored = drive([
-        init(makeBrokenInterpolationFormDef()),
-        setData({ age: 21 }),
-        addWidget(initialized.flatForm['oops']),
-      ]);
-      expect(errored.currentStates).toEqual(['adult']);
+    it('recovers from an interpolation error as soon as the data computes again', () => {
+      const errored = drive([init(makeBrokenInterpolationFormDef()), setData({ age: 21 })]);
+      expect(errored.formHealth.status).toBe('errored');
 
       const reduce = makeReducer();
       const state = reduce(errored, setData({ age: 10, missing: { deep: 'there' } }));
 
-      // The props stage succeeds and writes the fixed text...
+      expect(state.formHealth).toEqual({ status: 'ok' });
       expect(propsOf(state, 'oops')['text']).toBe('Hi there');
-      // ...but nothing clears formHealth, so the form stays errored for good.
-      expect(state.formHealth.status).toBe('errored');
-      // And calculateCurrentState bails out while errored, so the states are frozen at the
-      // values they had when the form broke.
+      expect(propsOf(state, 'fine')['text']).toBe('plain');
+      // The states are computed again too, they are not frozen at the errored values.
+      expect(state.currentStates).toEqual([]);
+    });
+
+    it('reports code 11 when a when condition throws, keeps the last good widgets, and recovers', () => {
+      const ok = drive([init(makeBrokenWhenFormDef()), setData({ missing: { deep: 1 } })]);
+      expect(ok.formHealth).toEqual({ status: 'ok' });
+      expect(ok.widgetFlags['gate']).toEqual({ hidden: false });
+      expect(propsOf(ok, 'fine')['text']).toBe('plain');
+
+      const reduce = makeReducer();
+      const errored = reduce(ok, setData({}));
+
+      expect(errored.formHealth.status).toBe('errored');
+      if (errored.formHealth.status === 'errored') {
+        expect(errored.formHealth.code).toBe(11);
+        expect(errored.formHealth.message.startsWith('[11] ')).toBe(true);
+      }
+      // The data change is applied, nothing computed from it is.
+      expect(errored.data).toEqual({});
+      expect(errored.calculatedWidgets).toBe(ok.calculatedWidgets);
+      expect(errored.widgetFlags).toBe(ok.widgetFlags);
+
+      const healed = reduce(errored, setData({ missing: { deep: 2 } }));
+      expect(healed.formHealth).toEqual({ status: 'ok' });
+      expect(healed.widgetFlags['gate']).toEqual({ hidden: true });
+    });
+
+    it('recovers from a state error set through SET_FORM_HEALTH on the next derive', () => {
+      const state = drive([
+        init(makeBaseFormDef()),
+        setData({ age: 21 }),
+        {
+          type: 'SET_FORM_HEALTH',
+          payload: { formHealth: { status: 'errored', code: 10, message: '[10] boom' } },
+        },
+        setData({ age: 22 }),
+      ]);
+
+      expect(state.formHealth).toEqual({ status: 'ok' });
       expect(state.currentStates).toEqual(['adult']);
     });
 
-    it('skips the whole pipeline for a widget that mounts while the form is errored', () => {
-      const initialized = drive([init(makeBrokenInterpolationFormDef())]);
-
-      const errored = drive([
-        init(makeBrokenInterpolationFormDef()),
-        setData({}),
-        addWidget(initialized.flatForm['oops']),
+    it('freezes the derive while an error set outside of it stands', () => {
+      const frozen = drive([
+        init(makeBaseFormDef()),
+        setData({ age: 21 }),
+        {
+          type: 'SET_FORM_HEALTH',
+          payload: { formHealth: { status: 'errored', code: 30, message: '[30] no widget' } },
+        },
       ]);
 
       const reduce = makeReducer();
-      const state = reduce(errored, addWidget(initialized.flatForm['fine']));
+      const state = reduce(frozen, setData({ age: 10 }));
 
-      // REFACTOR-NOTE: the ADD_WIDGET pipeline is the only one gated on form health, so the
-      // widget is registered but left uncomputed until something clears the error.
-      expect(state.calculatedWidgets['fine'].current).toEqual({});
-      expect(state.formHealth.status).toBe('errored');
+      // The data change is stored, nothing is computed from it.
+      expect(state.formHealth).toEqual({ status: 'errored', code: 30, message: '[30] no widget' });
+      expect(state.data).toEqual({ age: 10 });
+      expect(state.calculatedWidgets).toBe(frozen.calculatedWidgets);
+      expect(state.widgetFlags).toBe(frozen.widgetFlags);
+      expect(state.currentStates).toEqual(['adult']);
     });
 
     it('SET_FORM_HEALTH sets the status without running any stage', () => {
-      const initialized = drive([init(makeBrokenInterpolationFormDef())]);
-
-      const errored = drive([
-        init(makeBrokenInterpolationFormDef()),
-        setData({}),
-        addWidget(initialized.flatForm['oops']),
-      ]);
+      const errored = drive([init(makeBrokenInterpolationFormDef()), setData({})]);
+      expect(errored.formHealth.status).toBe('errored');
 
       const reduce = makeReducer();
       const state = reduce(errored, {
@@ -1394,44 +1417,43 @@ describe('reducer end-to-end baseline', () => {
   });
 
   // ---------------------------------------------------------------------------
-  // 14. Repeater rows that outlive their data
+  // 14. Removed repeater rows
   // ---------------------------------------------------------------------------
 
-  describe('repeater rows that outlive their data', () => {
-    // REFACTOR-NOTE: a row keeps its calculatedWidgets entry until its component unmounts, which
-    // happens after the data is already gone. Step 05 derives the registry from the data, so this
-    // window (and the guard that covers it) disappears.
-    it('keeps the last computation of a row whose item no longer exists', () => {
-      const initialized = drive([init(makeRowScopeFormDef())]);
-      const rowTotal = templateChild(initialized, 'lineItems', 'rowTotal');
-
+  describe('removed repeater rows', () => {
+    it('drops everything a removed row owned and keeps the surviving rows', () => {
       const twoRows = drive([
-        init(makeRowScopeFormDef()),
-        setData(rowScopeData),
-        mountRow(rowTotal, [0]),
-        mountRow(rowTotal, [1]),
+        init(makeBaseFormDef()),
+        setData({ users: [{}, {}] }),
+        validateAllAction,
+        {
+          type: 'OVERRIDE_WIDGET_PROP',
+          payload: { uid: 'name[1]', prop: 'placeholder', value: 'Second' },
+        },
+        { type: 'INJECT_VALIDATION_ISSUES', payload: { path: 'users.1.name', issues: ['taken'] } },
       ]);
-      expect(propsOf(twoRows, 'rowTotal[1]')['text']).toBe('Row 2: 5');
+      expect(twoRows.touchedControls['users.1.name']).toBe(true);
+      expect(twoRows.validations['users.1.name']).toBeNull();
+      expect(twoRows.widgetPropOverrides['name[1]']).toEqual({ placeholder: 'Second' });
+      expect(twoRows.injectedValidations['users.1.name']).toEqual(['taken']);
 
       const reduce = makeReducer();
-      const oneRow = reduce(twoRows, setData({ lineItems: [{ quantity: 9, active: true }] }));
+      const oneRow = reduce(twoRows, setData({ users: [{}] }));
 
-      // The scopes and the resolved sources are rebuilt from the data, so row 1 is gone from
-      // both.
-      expect(Object.keys(oneRow.repeaterItemScopes).filter((uid) => uid.includes('[1]'))).toEqual(
-        [],
-      );
-      expect(oneRow.resolvedSources).not.toHaveProperty('rowTotal[1]');
+      expect(oneRow.resolvedSources).not.toHaveProperty('name[1]');
+      expect(oneRow.resolvedSources).not.toHaveProperty('usersRow[1]');
+      expect(oneRow.repeaterItemScopes).not.toHaveProperty('name[1]');
+      expect(oneRow.calculatedWidgets).not.toHaveProperty('name[1]');
+      expect(oneRow.calculatedWidgets).not.toHaveProperty('usersRow[1]');
+      expect(oneRow.widgetPropOverrides).not.toHaveProperty('name[1]');
+      expect(oneRow.touchedControls).not.toHaveProperty('users.1.name');
+      expect(oneRow.validations).not.toHaveProperty('users.1.name');
+      expect(oneRow.injectedValidations).not.toHaveProperty('users.1.name');
 
-      // The surviving row is recomputed against the new data.
-      expect(propsOf(oneRow, 'rowTotal[0]')['text']).toBe('Row 1: 9');
-
-      // The orphaned row is not recomputed against missing data: its previous entry is carried
-      // over untouched, reference included.
-      expect(propsOf(oneRow, 'rowTotal[1]')['text']).toBe('Row 2: 5');
-      expect(oneRow.calculatedWidgets['rowTotal[1]']).toBe(
-        twoRows.calculatedWidgets['rowTotal[1]'],
-      );
+      expect(oneRow.calculatedWidgets).toHaveProperty('name[0]');
+      expect(oneRow.calculatedWidgets).toHaveProperty('usersRow[0]');
+      expect(oneRow.touchedControls['users.0.name']).toBe(true);
+      expect(oneRow.validations['users.0.name']).toBeNull();
     });
   });
 
@@ -1440,34 +1462,16 @@ describe('reducer end-to-end baseline', () => {
   // ---------------------------------------------------------------------------
 
   describe('layout children', () => {
-    it('reports only the visible children of a mounted layout', () => {
-      const initialized = drive([init(makeLayoutFormDef())]);
-
-      const minor = drive([
-        init(makeLayoutFormDef()),
-        setData({ age: 10 }),
-        addWidget(initialized.flatForm['card']),
-      ]);
+    it('reports only the visible children of a layout', () => {
+      const minor = drive([init(makeLayoutFormDef()), setData({ age: 10 })]);
       expect(childUidsOf(minor, 'card')).toEqual(['firstName']);
 
-      const adult = drive([
-        init(makeLayoutFormDef()),
-        setData({ age: 21 }),
-        addWidget(initialized.flatForm['card']),
-      ]);
+      const adult = drive([init(makeLayoutFormDef()), setData({ age: 21 })]);
       expect(childUidsOf(adult, 'card')).toEqual(['firstName', 'bio']);
     });
 
     it('filters a row layout by the row flags but leaves the child uids unstamped', () => {
-      const initialized = drive([init(makeRowScopeFormDef())]);
-      const template = repeaterTemplate(initialized, 'lineItems');
-
-      const state = drive([
-        init(makeRowScopeFormDef()),
-        setData(rowScopeData),
-        mountRow(template, [0]),
-        mountRow(template, [1]),
-      ]);
+      const state = drive([init(makeRowScopeFormDef()), setData(rowScopeData)]);
 
       // The layout's own uid carries the row index...
       expect((state.calculatedWidgets['lineItemsRow[0]'].current as LayoutWidget<string>).uid).toBe(
@@ -1521,18 +1525,8 @@ describe('reducer end-to-end baseline', () => {
       expect(state.widgetFlags['devName[1][0]']).toEqual({ hidden: false });
     });
 
-    it('resolves an interpolated prop of a mounted inner row', () => {
-      const initialized = drive([init(makeNestedRepeaterFormDef())]);
-      const innerRepeater = templateChild(initialized, 'teams', 'devs') as InputWidget<any, string>;
-      const devLabel = (innerRepeater.props as { template: LayoutWidget<string> }).template
-        .children[1];
-
-      const state = drive([
-        init(makeNestedRepeaterFormDef()),
-        setData(nestedRepeaterData),
-        mountRow(devLabel, [0, 1]),
-        mountRow(devLabel, [1, 0]),
-      ]);
+    it('resolves an interpolated prop of an inner row', () => {
+      const state = drive([init(makeNestedRepeaterFormDef()), setData(nestedRepeaterData)]);
 
       expect(propsOf(state, 'devLabel[0][1]')['text']).toBe('dev 1: Linus');
       expect(propsOf(state, 'devLabel[1][0]')['text']).toBe('dev 0: Grace');
@@ -1575,11 +1569,8 @@ describe('reducer end-to-end baseline', () => {
 
   describe('action routing', () => {
     it('SET_META replaces meta wholesale and reruns states, flags and props', () => {
-      const initialized = drive([init(makeMetaFormDef())]);
-
       const dev = drive([
         init(makeMetaFormDef()),
-        addWidget(initialized.flatForm['banner']),
         { type: 'SET_META', payload: { meta: { debug: true, mode: 'dev' } } },
       ]);
 
@@ -1597,35 +1588,28 @@ describe('reducer end-to-end baseline', () => {
       expect(propsOf(prod, 'banner')['text']).toBe('Mode prod');
     });
 
-    it('SET_LANGUAGE recomputes props only, leaving every other derived map untouched', () => {
-      const initialized = drive([init(makeBaseFormDef())]);
-
+    it('SET_LANGUAGE recomputes props only, leaving every other map untouched', () => {
       const before = drive([
         init(makeBaseFormDef()),
         setData({ age: 21, users: [{ name: 'Ada' }] }),
-        addWidget(initialized.flatForm['firstName']),
       ]);
 
       const reduce = makeReducer();
       const after = reduce(before, { type: 'SET_LANGUAGE', payload: { lang: 'fr-FR' } });
 
       expect(after.lang).toBe('fr-FR');
+      expect(after.data).toBe(before.data);
       expect(after.currentStates).toBe(before.currentStates);
       expect(after.widgetFlags).toBe(before.widgetFlags);
       expect(after.resolvedSources).toBe(before.resolvedSources);
       expect(after.repeaterItemScopes).toBe(before.repeaterItemScopes);
+      expect(after.validations).toBe(before.validations);
       // Nothing a prop depends on changed, so the widget entry keeps its reference.
       expect(after.calculatedWidgets['firstName']).toBe(before.calculatedWidgets['firstName']);
     });
 
     it('SET_LANGUAGE does run the props stage', () => {
-      const initialized = drive([init(makeHostFunctionsFormDef())]);
-
-      const before = drive([
-        init(makeHostFunctionsFormDef()),
-        addWidget(initialized.flatForm['doubled']),
-        setData({ count: 4 }),
-      ]);
+      const before = drive([init(makeHostFunctionsFormDef()), setData({ count: 4 })]);
       expect(propsOf(before, 'doubled')['text']).toBe('Double: 8');
 
       // Swapping the data without going through a reducer isolates the props stage: only a rerun
@@ -1640,39 +1624,28 @@ describe('reducer end-to-end baseline', () => {
     });
 
     it('ATTEMPT_VALIDATION ignores a reason the form does not validate on', () => {
-      const initialized = drive([init(makeBaseFormDef())]);
-
-      const mounted = drive(
-        [init(makeBaseFormDef()), setData({}), addWidget(initialized.flatForm['firstName'])],
-        'blur',
-      );
+      const initial = drive([init(makeBaseFormDef()), setData({})], 'blur');
 
       const reduce = makeReducer('blur');
-      const onChange = reduce(mounted, {
+      const onChange = reduce(initial, {
         type: 'ATTEMPT_VALIDATION',
         payload: { reason: 'change', path: 'firstName', uid: 'firstName' },
       });
 
       // Not merely equivalent: the reducer returns the very same state.
-      expect(onChange).toBe(mounted);
+      expect(onChange).toBe(initial);
 
-      const onBlur = reduce(mounted, {
-        type: 'ATTEMPT_VALIDATION',
-        payload: { reason: 'blur', path: 'firstName', uid: 'firstName' },
-      });
+      const onBlur = reduce(initial, blur('firstName', 'firstName'));
 
       expect(onBlur.touched).toBe(true);
-      expect(onBlur.validations).toEqual({ firstName: ['required'] });
+      expect(onBlur.validations).toEqual({ firstName: ['required'], users: null });
     });
 
     it('INITIALIZE starts over: data and every derived map are reset', () => {
-      const initialized = drive([init(makeBaseFormDef())]);
-
       const state = drive([
         init(makeBaseFormDef()),
         setData({ age: 21, firstName: 'Joan', users: [{ name: 'Ada' }] }),
-        addWidget(initialized.flatForm['firstName']),
-        { type: 'VALIDATE_ALL' },
+        validateAllAction,
         init(makeBaseFormDef()),
       ]);
 
@@ -1689,81 +1662,45 @@ describe('reducer end-to-end baseline', () => {
   });
 
   // ---------------------------------------------------------------------------
-  // 18. Mount and unmount side effects
+  // 18. Inputs that appear after a submit attempt (#263)
   // ---------------------------------------------------------------------------
 
-  describe('mount and unmount side effects', () => {
-    // REFACTOR-NOTE: both mechanics below exist only because the registry is mount-driven.
-    // Step 12 deletes the actions that carry them.
-    it('ADD_WIDGET touches the input it registers when the form is already touched', () => {
-      const initialized = drive([init(makeBaseFormDef())]);
-
-      const touchedForm = drive([
-        init(makeBaseFormDef()),
-        setData({}),
-        addWidget(initialized.flatForm['bio']),
-        { type: 'VALIDATE_ALL' },
-      ]);
-      expect(touchedForm.touched).toBe(true);
-      expect(touchedForm.touchedControls).toEqual({});
-
-      const reduce = makeReducer();
-      const state = reduce(touchedForm, addWidget(initialized.flatForm['firstName']));
-
-      // A widget that mounts into an already-submitted form shows its errors right away.
-      expect(state.touchedControls).toEqual({ firstName: true });
-    });
-
-    // Landed in #263 (`88c51949`), after this spec was first written. The gate is
-    // `allControlsValidated` (a VALIDATE_ALL pass ran), not `touched` (any blur happened).
-    // The shared Cypress describe "Error visibility of inputs revealed after form interaction"
-    // in `libs/ui-testing/src/lib/core-features/include-exclude.cy.ts` covers the same rule.
-    // Survives the flip: step 05 keeps the rule and only changes the trigger from ADD_WIDGET to
-    // the input appearing in a derive.
-    it('ADD_WIDGET does not touch the input it registers when only a blur elsewhere happened', () => {
-      const initialized = drive([init(makeGatedInputWithSiblingFormDef())]);
-
+  describe('inputs that appear after a submit attempt', () => {
+    // The gate is `allControlsValidated` (a VALIDATE_ALL pass ran), not `touched` (any blur
+    // happened). The shared Cypress describe "Error visibility of inputs revealed after form
+    // interaction" in `libs/ui-testing/src/lib/core-features/include-exclude.cy.ts` covers the
+    // same rule from the DOM side.
+    it('does not touch a revealed input when only a blur elsewhere happened', () => {
       const blurredElsewhere = drive([
         init(makeGatedInputWithSiblingFormDef()),
         setData({ age: 10 }),
-        addWidget(initialized.flatForm['nickname']),
-        {
-          type: 'ATTEMPT_VALIDATION',
-          payload: { reason: 'blur', path: 'nickname', uid: 'nickname' },
-        },
+        blur('nickname', 'nickname'),
       ]);
       expect(blurredElsewhere.touched).toBe(true);
       expect(blurredElsewhere.allControlsValidated).toBe(false);
 
       const reduce = makeReducer();
-      const state = reduce(
-        { ...blurredElsewhere, data: { age: 21 } },
-        addWidget(initialized.flatForm['secret']),
-      );
+      const state = reduce(blurredElsewhere, setData({ age: 21 }));
 
       // The input is now visible and empty, but nothing submitted yet, so it stays untouched and
       // shows no error.
       expect(state.widgetFlags['secret']).toEqual({ hidden: false });
+      expect(state.calculatedWidgets).toHaveProperty('secret');
       expect(state.touchedControls).toEqual({ nickname: true });
       expect(state.validations['secret']).toBeUndefined();
     });
 
-    it('ADD_WIDGET touches AND validates a required input registered after VALIDATE_ALL', () => {
-      const initialized = drive([init(makeGatedInputFormDef())]);
-
+    it('touches AND validates a required input revealed after VALIDATE_ALL', () => {
       const validated = drive([
         init(makeGatedInputFormDef()),
         setData({ age: 10 }),
-        { type: 'VALIDATE_ALL' },
+        validateAllAction,
       ]);
       expect(validated.allControlsValidated).toBe(true);
       expect(validated.isFormValid).toBe(true);
 
       const reduce = makeReducer();
-      const state = reduce(
-        { ...validated, data: { age: 21 } },
-        addWidget(initialized.flatForm['secret']),
-      );
+      const state = reduce(validated, setData({ age: 21 }));
 
       // Touched, validated and counted against the form, all in the same dispatch.
       expect(state.touchedControls).toEqual({ secret: true });
@@ -1771,85 +1708,76 @@ describe('reducer end-to-end baseline', () => {
       expect(state.isFormValid).toBe(false);
     });
 
-    it('REMOVE_WIDGET clears the touched flag and the overrides but leaves the validation behind', () => {
-      const initialized = drive([init(makeBaseFormDef())]);
-
-      const mounted = drive([
-        init(makeBaseFormDef()),
-        setData({}),
-        addWidget(initialized.flatForm['firstName']),
-        { type: 'VALIDATE_ALL' },
-        {
-          type: 'OVERRIDE_WIDGET_PROP',
-          payload: { uid: 'firstName', prop: 'placeholder', value: 'Your name' },
-        },
+    it('touches AND validates the required input of a repeater row added after VALIDATE_ALL', () => {
+      const validated = drive([
+        init(makeRequiredRowsFormDef()),
+        setData({ users: [{ name: 'Ada' }] }),
+        validateAllAction,
       ]);
-      expect(mounted.touchedControls).toEqual({ firstName: true });
-      expect(mounted.validations).toEqual({ firstName: ['required'] });
+      expect(validated.isFormValid).toBe(true);
+      expect(validated.touchedControls).toEqual({ users: true, 'users.0.name': true });
 
       const reduce = makeReducer();
-      const state = reduce(mounted, { type: 'REMOVE_WIDGET', payload: { uid: 'firstName' } });
+      const state = reduce(validated, setWidgetData('users', [{ name: 'Ada' }, {}]));
 
+      expect(state.touchedControls['users.1.name']).toBe(true);
+      expect(state.validations['users.1.name']).toEqual(['required']);
+      expect(state.isFormValid).toBe(false);
+    });
+
+    it('touches nothing while the form is untouched', () => {
+      const state = drive([
+        init(makeRequiredRowsFormDef()),
+        setData({ users: [{}] }),
+        setWidgetData('users', [{}, {}]),
+      ]);
+
+      expect(state.touched).toBe(false);
       expect(state.touchedControls).toEqual({});
-      expect(state.widgetPropOverrides).toEqual({});
-      // Nothing re-runs the validators on unmount, so the entry of a widget that is no longer
-      // there keeps counting against the form.
-      expect(state.validations).toEqual({ firstName: ['required'] });
+      expect(state.validations).toEqual({});
     });
   });
 
   // ---------------------------------------------------------------------------
-  // 19. Actions that address a widget the registry does not hold
+  // 19. Actions that address a widget calculatedWidgets does not hold
   // ---------------------------------------------------------------------------
 
-  describe('actions that address a widget the registry does not hold', () => {
-    // FINDING: both actions carry a uid and both read `calculatedWidgets[uid]` without checking
-    // it is there, so they throw instead of doing nothing. Reachable today for any widget that is
-    // hidden or not mounted yet: OVERRIDE_WIDGET_PROP is a public API called from event handlers,
-    // and ATTEMPT_VALIDATION rides on DOM events that can outlive a mount.
-    // These pins record the crash, they do not endorse it.
-    it('OVERRIDE_WIDGET_PROP throws on a uid that is not registered', () => {
-      const initialized = drive([init(makeBaseFormDef())]);
-
-      const mounted = drive([
-        init(makeBaseFormDef()),
-        setData({}),
-        addWidget(initialized.flatForm['firstName']),
-      ]);
+  describe('actions that address a widget calculatedWidgets does not hold', () => {
+    // Both actions carry a uid. A hidden widget or one that is not in the form has no entry, and
+    // neither action may throw for it: OVERRIDE_WIDGET_PROP is a public API called from event
+    // handlers, and ATTEMPT_VALIDATION rides on DOM events that can outlive a mount.
+    it('OVERRIDE_WIDGET_PROP warns and returns the same state for an unknown uid', () => {
+      const initial = drive([init(makeBaseFormDef()), setData({})]);
+      expect(initial.calculatedWidgets).not.toHaveProperty('bio');
 
       const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
       const reduce = makeReducer();
 
-      expect(() =>
-        reduce(mounted, {
-          type: 'OVERRIDE_WIDGET_PROP',
-          payload: { uid: 'bio', prop: 'text', value: 'hello' },
-        }),
-      ).toThrow(TypeError);
-
-      // The override reducer itself does handle it: it warns and returns the state unchanged.
-      // The re-validation gate that runs after it is what throws.
+      const hidden = reduce(initial, {
+        type: 'OVERRIDE_WIDGET_PROP',
+        payload: { uid: 'bio', prop: 'text', value: 'hello' },
+      });
+      expect(hidden).toBe(initial);
       expect(warn).toHaveBeenCalledWith('Widget with uid "bio" not found');
+
+      const unknown = reduce(initial, {
+        type: 'OVERRIDE_WIDGET_PROP',
+        payload: { uid: 'ghost', prop: 'text', value: 'hello' },
+      });
+      expect(unknown).toBe(initial);
+      expect(warn).toHaveBeenCalledWith('Widget with uid "ghost" not found');
       warn.mockRestore();
     });
 
-    it('ATTEMPT_VALIDATION throws on a uid that is not registered', () => {
-      const initialized = drive([init(makeBaseFormDef())]);
-
-      const mounted = drive([
-        init(makeBaseFormDef()),
-        setData({}),
-        addWidget(initialized.flatForm['firstName']),
-      ]);
+    it('ATTEMPT_VALIDATION with an unknown uid still touches and validates the path', () => {
+      const initial = drive([init(makeBaseFormDef()), setData({})]);
 
       const reduce = makeReducer();
+      const state = reduce(initial, blur('firstName', 'bio'));
 
-      expect(() =>
-        reduce(mounted, {
-          type: 'ATTEMPT_VALIDATION',
-          payload: { reason: 'blur', path: 'firstName', uid: 'bio' },
-        }),
-      ).toThrow(TypeError);
+      expect(state.touched).toBe(true);
+      expect(state.touchedControls).toEqual({ firstName: true });
+      expect(state.validations['firstName']).toEqual(['required']);
     });
   });
 
@@ -1866,7 +1794,7 @@ describe('reducer end-to-end baseline', () => {
       props: { tags: ({ $item }: { $item: any }) => [$item.name] },
     });
 
-    const makeRefFormDef = (rowTags: ReturnType<typeof makeRowTagsWidget>) => ({
+    const makeRefFormDef = () => ({
       form: [
         {
           uid: 'firstName',
@@ -1881,76 +1809,68 @@ describe('reducer end-to-end baseline', () => {
           type: 'repeater',
           path: 'users',
           props: {
-            template: { uid: 'usersRow', kind: 'layout', type: 'flex', children: [rowTags] },
+            template: {
+              uid: 'usersRow',
+              kind: 'layout',
+              type: 'flex',
+              children: [makeRowTagsWidget()],
+            },
           },
         },
       ],
     });
 
-    it('keeps a row widget reference when an unrelated input changes', () => {
-      const rowTags = makeRowTagsWidget();
-      const formDef = makeRefFormDef(rowTags);
-      const initialized = drive([init(formDef)]);
-
-      const mounted = drive([
-        init(formDef),
+    it('keeps the widget references an unrelated input change does not affect', () => {
+      const initial = drive([
+        init(makeRefFormDef()),
         setData({ firstName: 'Joan', users: [{ name: 'Ada' }, { name: 'Linus' }] }),
-        addWidget(initialized.flatForm['firstName']),
-        mountRow(rowTags as unknown as FormWidget<string>, [0]),
-        mountRow(rowTags as unknown as FormWidget<string>, [1]),
       ]);
 
       const reduce = makeReducer();
       const state = reduce(
-        mounted,
+        initial,
         setData({ firstName: 'Grace', users: [{ name: 'Ada' }, { name: 'Linus' }] }),
       );
 
       // The prop function returns a new array every run, so only its content can decide this.
       expect(propsOf(state, 'rowTags[0]')['tags']).toEqual(['Ada']);
-      expect(state.calculatedWidgets['rowTags[0]']).toBe(mounted.calculatedWidgets['rowTags[0]']);
-      expect(state.calculatedWidgets['rowTags[1]']).toBe(mounted.calculatedWidgets['rowTags[1]']);
+      expect(state.calculatedWidgets['rowTags[0]']).toBe(initial.calculatedWidgets['rowTags[0]']);
+      expect(state.calculatedWidgets['rowTags[1]']).toBe(initial.calculatedWidgets['rowTags[1]']);
+      expect(state.calculatedWidgets['usersRow[0]']).toBe(initial.calculatedWidgets['usersRow[0]']);
+      expect(state.calculatedWidgets['users']).toBe(initial.calculatedWidgets['users']);
 
       // The widget that does depend on the changed value gets a new reference.
-      expect(state.calculatedWidgets['firstName']).not.toBe(mounted.calculatedWidgets['firstName']);
+      expect(state.calculatedWidgets['firstName']).not.toBe(initial.calculatedWidgets['firstName']);
       expect(propsOf(state, 'firstName')['hint']).toBe('Hi Grace');
     });
 
     it('gives a row widget a new reference when its own row data changes', () => {
-      const rowTags = makeRowTagsWidget();
-      const formDef = makeRefFormDef(rowTags);
-
-      const mounted = drive([
-        init(formDef),
+      const initial = drive([
+        init(makeRefFormDef()),
         setData({ firstName: 'Joan', users: [{ name: 'Ada' }] }),
-        mountRow(rowTags as unknown as FormWidget<string>, [0]),
       ]);
 
       const reduce = makeReducer();
-      const state = reduce(mounted, setData({ firstName: 'Joan', users: [{ name: 'Grace' }] }));
+      const state = reduce(initial, setData({ firstName: 'Joan', users: [{ name: 'Grace' }] }));
 
       expect(state.calculatedWidgets['rowTags[0]']).not.toBe(
-        mounted.calculatedWidgets['rowTags[0]'],
+        initial.calculatedWidgets['rowTags[0]'],
       );
       expect(propsOf(state, 'rowTags[0]')['tags']).toEqual(['Grace']);
     });
 
     it('keeps a row function widget reference when it returns an equal config', () => {
-      const rowName = makeRowNameFunctionWidget();
-      const formDef = makeRowFunctionFormDef();
-
-      const mounted = drive([
-        init(formDef),
+      const initial = drive([
+        init(makeRowFunctionFormDef()),
         setData({ users: [{ name: 'Ada' }] }),
-        mountRow(rowName, [0]),
       ]);
 
       const reduce = makeReducer();
-      const unchanged = reduce(mounted, setData({ users: [{ name: 'Ada' }] }));
+      const unchanged = reduce(initial, setData({ users: [{ name: 'Ada' }] }));
       const changed = reduce(unchanged, setData({ users: [{ name: 'Grace' }] }));
 
       expect(unchanged.calculatedWidgets['rowName[0]']).toBe(
-        mounted.calculatedWidgets['rowName[0]'],
+        initial.calculatedWidgets['rowName[0]'],
       );
       expect(changed.calculatedWidgets['rowName[0]']).not.toBe(
         unchanged.calculatedWidgets['rowName[0]'],

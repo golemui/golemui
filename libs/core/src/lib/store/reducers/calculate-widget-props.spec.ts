@@ -743,6 +743,50 @@ describe('calculateWidgetProps', () => {
       expect(second.calculatedWidgets['f']).not.toBe(first.calculatedWidgets['f']);
       expect(second.calculatedWidgets['f'].current.props?.['text']).toBe('second');
     });
+
+    it('stamps current.path from source.path and keeps the reference on a recompute', () => {
+      // A row function widget returns the template path while its source carries the row path.
+      const source: FunctionWidget<string> = Object.assign(
+        () =>
+          ({
+            kind: 'input',
+            uid: 'ignored',
+            type: 'textinput',
+            path: 'users.items.name',
+          }) satisfies InputWidget<unknown, string>,
+        { uid: 'name[1]', type: 'textinput', path: 'users.1.name' },
+      );
+      seed(state, 'name[1]', source);
+
+      const first = run(state);
+      const second = run(first);
+
+      const current = first.calculatedWidgets['name[1]'].current as InputWidget<unknown, string>;
+      expect(current.uid).toBe('name[1]');
+      expect(current.path).toBe('users.1.name');
+      // The stamp happens before the comparison, so an equal recompute keeps the reference.
+      expect(second.calculatedWidgets['name[1]']).toBe(first.calculatedWidgets['name[1]']);
+    });
+
+    it('leaves current.path alone when the source has no path', () => {
+      const source: FunctionWidget<string> = Object.assign(
+        () =>
+          ({
+            kind: 'input',
+            uid: 'ignored',
+            type: 'textinput',
+            path: 'email',
+          }) satisfies InputWidget<unknown, string>,
+        { uid: 'f', type: 'textinput' },
+      );
+      seed(state, 'f', source);
+
+      const next = run(state);
+
+      expect((next.calculatedWidgets['f'].current as InputWidget<unknown, string>).path).toBe(
+        'email',
+      );
+    });
   });
 
   // ---------------------------------------------------------------------------
@@ -1099,6 +1143,23 @@ describe('calculateWidgetProps', () => {
         expect(next.formHealth.code).toBe(40);
       }
     });
+
+    it('sets formHealth to errored with code 12 when a prop function throws a plain error', () => {
+      const source = {
+        kind: 'display',
+        uid: 'd',
+        type: 'heading',
+        props: {
+          text: () => {
+            throw new Error('boom');
+          },
+        },
+      } as unknown as DisplayWidget<string>;
+      seed(state, 'd', source);
+
+      const next = run(state);
+      expect(next.formHealth).toEqual({ status: 'errored', code: 12, message: '[12] boom' });
+    });
   });
 
   // ---------------------------------------------------------------------------
@@ -1360,25 +1421,6 @@ describe('calculateWidgetProps', () => {
       expect(
         (next.calculatedWidgets['row-total[0]'].current as DisplayWidget<string>).props?.['text'],
       ).toBe('Row 0: 10');
-    });
-
-    it('keeps the previous computation for a materialized uid whose item was removed', () => {
-      seedLineItems();
-      // Only item 0 remains registered in the scope map, simulating a removed row 1 whose component has not unmounted yet
-      delete state.repeaterItemScopes['row-total[1]'];
-      const source = {
-        kind: 'display',
-        uid: 'row-total[1]',
-        type: 'heading',
-        props: { text: '{{$item.quantity}}' },
-      } satisfies DisplayWidget<string>;
-      const previous = { source: source as any, current: { stale: true } as any };
-      state.calculatedWidgets['row-total[1]'] = previous;
-
-      const next = run(state);
-
-      expect(next.formHealth.status).toBe('ok');
-      expect(next.calculatedWidgets['row-total[1]']).toBe(previous);
     });
 
     it('leaves $item undefined for widgets outside any repeater', () => {

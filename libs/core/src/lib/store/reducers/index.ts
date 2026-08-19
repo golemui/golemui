@@ -1,12 +1,12 @@
-export { addWidget } from './add-widget';
-export { applyExpandSources } from './expand-sources';
+export { applyDefaultValues } from './apply-default-values';
 export { calculateCurrentState } from './calculate-current-state';
 export { calculateWidgetFlags } from './calculate-widget-flags';
 export { calculateWidgetProps } from './calculate-widget-props';
+export { dropRemovedWidgetEntries } from './drop-removed-widget-entries';
+export { fillCalculatedWidgets } from './fill-calculated-widgets';
 export { initialize } from './initialize';
 export { injectValidationIssues } from './inject-validation-issues';
 export { overrideWidgetProp } from './override-widget-prop';
-export { removeWidget } from './remove-widget';
 export { setData } from './set-data';
 export { setFormHealth } from './set-form-health';
 export { setLanguage } from './set-language';

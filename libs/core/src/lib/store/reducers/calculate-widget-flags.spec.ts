@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { type FormWidget, type FunctionWidget } from '../../form-widget';
 import { type ExpressionFunctions } from '../../shared';
+import { expandSources } from '../../utils/repeater';
 import { createInitialState, type State } from '../model';
 import { calculateWidgetFlags } from './calculate-widget-flags';
-import { applyExpandSources } from './expand-sources';
 
 // -----------------------------------------------------------------------------
 // Test helpers
@@ -34,9 +34,9 @@ const repeater = (uid: string, path: string, children: unknown[]) =>
     },
   }) as unknown as FormWidget<string>;
 
-// Flags read the maps built by the expand step, so run both, in pipeline order
+// Flags read the maps `expandSources` builds, so expand first, in derive order
 const runFlagsPipeline = (state: State, functions: ExpressionFunctions = {}) =>
-  calculateWidgetFlags(functions)(applyExpandSources(state));
+  calculateWidgetFlags(functions)({ ...state, ...expandSources(state.flatForm, state.data) });
 
 describe('calculateWidgetFlags: $item / $index in item when conditions', () => {
   let state: State;

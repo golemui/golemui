@@ -29,13 +29,18 @@ export function flattenForm(widgets: FormWidget[]): FormWidget[] {
 }
 
 /**
+ * The validation variables reactive expressions can read.
+ */
+export type ValidationVariables = {
+  $formIsInvalid: boolean;
+  $errors: $Errors;
+};
+
+/**
  * Calculates validation variables to be used in reactive expressions
  * e.g. `{ invalidAge: '!!$errors.age' }` or { disabled { when: '$formIsInvalid' } }
  */
-export function calculateValidationVariables(state: State): {
-  $formIsInvalid: boolean;
-  $errors: $Errors;
-} {
+export function calculateValidationVariables(state: State): ValidationVariables {
   const result = Object.entries(state.validations).reduce(
     (acc, [dotPath, errors]) => {
       if (errors !== null) {
