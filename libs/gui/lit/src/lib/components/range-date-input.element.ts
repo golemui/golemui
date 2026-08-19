@@ -68,6 +68,14 @@ export class RangeDateInputElement extends LitElement implements WithWidget {
         .yearAriaLabel=${this.adapter.templateData.yearAriaLabel}
         .invalidDateMessage=${this.adapter.templateData.invalidDateMessage as string}
         .incompleteMessage=${this.adapter.templateData.incompleteMessage as string}
+        ?allow-edit=${this.adapter.templateData.allowEdit}
+        .editLabel=${this.adapter.templateData.editLabel as string}
+        .editAriaLabel=${this.adapter.templateData.editAriaLabel as string}
+        .confirmEditLabel=${this.adapter.templateData.confirmEditLabel as string}
+        .cancelEditLabel=${this.adapter.templateData.cancelEditLabel as string}
+        .editStartedMessage=${this.adapter.templateData.editStartedMessage as string}
+        .editCommittedMessage=${this.adapter.templateData.editCommittedMessage as string}
+        .editCancelledMessage=${this.adapter.templateData.editCancelledMessage as string}
         .separator=${this.adapter.templateData.separator}
         .removePillAriaLabel=${this.adapter.templateData.removePillAriaLabel}
         .startDateAriaLabel=${this.adapter.templateData.startDateAriaLabel}

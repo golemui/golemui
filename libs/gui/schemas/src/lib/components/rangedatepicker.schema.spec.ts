@@ -209,4 +209,58 @@ describe('RangeDatePicker schema validation', () => {
       ).toBe(true);
     });
   });
+  describe('allowEdit editing props', () => {
+    it('should validate the editing props, plain, scoped and localizable', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            path: 'dateRanges',
+            kind: 'input',
+            type: 'rangeDatePicker',
+            props: {
+              allowEdit: true,
+              editLabel: 'Edit',
+              editAriaLabel: { key: 'range.editRange', default: 'Edit range {label}' },
+              confirmEditLabel: 'Confirm',
+              cancelEditLabel: 'Cancel',
+              editStartedMessage: 'Editing range {label}.',
+              editCommittedMessage: 'Range updated to {label}.',
+              editCancelledMessage: 'Edit cancelled.',
+              'allowEdit.isDesktop': true,
+              'editLabel.hasError': 'Edit',
+            },
+          },
+        ],
+      });
+
+      const widget = formDef.form.children[0];
+      const isValid = validate(widget);
+      if (!isValid) {
+        specValidationErrorsLogger(validate, widget);
+      }
+      expect(isValid).toBe(true);
+    });
+
+    it('should fail on a non-boolean allowEdit', () => {
+      const formDef = golemForm().create({
+        form: [
+          // @ts-expect-error Expected, allowEdit should be a boolean
+          {
+            path: 'dateRanges',
+            kind: 'input',
+            type: 'rangeDatePicker',
+            props: {
+              allowEdit: 'yes',
+            },
+          },
+        ],
+      });
+
+      const widget = formDef.form.children[0];
+      expect(validate(widget)).toBe(false);
+      expect(
+        validate.errors?.some((e) => e.keyword === 'type' && e.instancePath === '/props/allowEdit'),
+      ).toBe(true);
+    });
+  });
 });

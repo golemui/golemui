@@ -57,6 +57,11 @@ export interface DayStatusContext {
   selectingSpan?: DaySpan | null;
   /** The rejected range currently highlighted in red. */
   invalidRange?: DaySpan | null;
+  /**
+   * Day span of the allowEdit-selected range, so it stands out from its
+   * neighbors while a pill is selected or being edited.
+   */
+  editSelectedSpan?: DaySpan | null;
 }
 
 /** Every highlight flag any of the three calendars' `renderDay` bindings consume. */
@@ -75,6 +80,13 @@ export interface DayStatus {
   isInvalidEnd: boolean;
   /** Strictly between the invalid endpoints (exclusive). */
   isInvalidInRange: boolean;
+  /** Inside the allowEdit-selected range (endpoints inclusive). */
+  isEditSelected: boolean;
+  /**
+   * Belongs to a committed range while a DIFFERENT range is selected for
+   * editing — rendered dimmed so the selected range stands out by contrast.
+   */
+  isEditMuted: boolean;
 }
 
 /**
@@ -115,6 +127,13 @@ export function computeDayStatus(date: Date, ctx: DayStatusContext): DayStatus {
       dateTime >= ctx.selectingSpan.start.getTime() && dateTime <= ctx.selectingSpan.end.getTime();
   }
 
+  let isEditSelected = false;
+  if (ctx.editSelectedSpan) {
+    isEditSelected =
+      dateTime >= ctx.editSelectedSpan.start.getTime() &&
+      dateTime <= ctx.editSelectedSpan.end.getTime();
+  }
+
   if (ctx.ranges) {
     for (const range of ctx.ranges) {
       if (isSameDay(date, range.start)) {
@@ -145,6 +164,9 @@ export function computeDayStatus(date: Date, ctx: DayStatusContext): DayStatus {
     isInvalidStart,
     isInvalidEnd,
     isInvalidInRange,
+    isEditSelected,
+    isEditMuted:
+      !!ctx.editSelectedSpan && !isEditSelected && (isRangeStart || isRangeEnd || isInRange),
   };
 }
 

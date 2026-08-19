@@ -36,6 +36,27 @@
     {
       "kind": "input",
       "type": "rangeDateTimeInput",
+      "path": "rangeDateTimeInputEditable",
+      "defaultValue": [
+        {
+          "start": "2026-11-22T09:00:00",
+          "end": "2026-11-22T11:00:00"
+        },
+        {
+          "start": "2026-11-23T14:00:00",
+          "end": "2026-11-24T09:30:00"
+        }
+      ],
+      "label": "Editable",
+      "props": {
+        "allowEdit": true,
+        "icon": "schedule",
+        "separator": "to"
+      }
+    },
+    {
+      "kind": "input",
+      "type": "rangeDateTimeInput",
       "path": "rangeDateTimeInputConstraints",
       "label": "With min/max date-time",
       "props": {

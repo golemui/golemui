@@ -79,6 +79,14 @@ export function RangeDateInput(widgetInstance: WithWidget) {
         yearAriaLabel={templateData.yearAriaLabel}
         invalidDateMessage={templateData.invalidDateMessage as string}
         incompleteMessage={templateData.incompleteMessage as string}
+        allowEdit={templateData.allowEdit}
+        editLabel={templateData.editLabel as string}
+        editAriaLabel={templateData.editAriaLabel as string}
+        confirmEditLabel={templateData.confirmEditLabel as string}
+        cancelEditLabel={templateData.cancelEditLabel as string}
+        editStartedMessage={templateData.editStartedMessage as string}
+        editCommittedMessage={templateData.editCommittedMessage as string}
+        editCancelledMessage={templateData.editCancelledMessage as string}
         separator={separator}
         removePillAriaLabel={removePillAriaLabel}
         startDateAriaLabel={startDateAriaLabel}

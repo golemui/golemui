@@ -20,6 +20,22 @@ export const rangeDateTimeInputTab = gui.layouts.flex([
     icon: 'schedule',
     separator: 'to',
   }),
+  gui.inputs.rangeDateTimeInput('rangeDateTimeInputEditable', {
+    label: 'Editable',
+    allowEdit: true,
+    defaultValue: [
+      {
+        start: '2026-11-22T09:00:00',
+        end: '2026-11-22T11:00:00',
+      },
+      {
+        start: '2026-11-23T14:00:00',
+        end: '2026-11-24T09:30:00',
+      },
+    ],
+    icon: 'schedule',
+    separator: 'to',
+  }),
   gui.inputs.rangeDateTimeInput('rangeDateTimeInputConstraints', {
     label: 'With min/max date-time',
     minDateTime: '2026-01-01T09:00:00',

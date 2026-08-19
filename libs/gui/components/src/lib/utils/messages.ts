@@ -43,3 +43,40 @@ export const INCOMPLETE_TIME_MESSAGE = 'Incomplete time: fill in all time parts.
 /** Default inputError message for a partially filled date-time left behind on focus leave. **/
 export const INCOMPLETE_DATE_TIME_MESSAGE =
   'Incomplete date-time: fill in all date and time parts.';
+
+// ─── allowEdit (in-place pill editing) strings ─────────────────────────────
+// `{label}` is the range's display label, interpolated at interaction time
+// via formatEditMessage — single braces on purpose, so the form layer's
+// `{{…}}` localization interpolation cannot consume the token.
+
+/** Default tooltip label of the pill's Edit action. **/
+export const EDIT_RANGE_LABEL = 'Edit';
+
+/** Default tooltip label of the pill's Confirm action. **/
+export const CONFIRM_EDIT_RANGE_LABEL = 'Confirm';
+
+/** Default tooltip label of the pill's Cancel action. **/
+export const CANCEL_EDIT_RANGE_LABEL = 'Cancel';
+
+/** Default edit hint joined into the pill's aria-description. **/
+export const EDIT_RANGE_ARIA_LABEL = 'Edit range {label}';
+
+/** Default aria-live announcement when an edit session starts. **/
+export const EDIT_RANGE_STARTED_MESSAGE = 'Editing range {label}.';
+
+/** Default aria-live announcement when an edit commits its replacement. **/
+export const EDIT_RANGE_COMMITTED_MESSAGE = 'Range updated to {label}.';
+
+/** Default aria-live announcement when an edit session is cancelled. **/
+export const EDIT_RANGE_CANCELLED_MESSAGE = 'Edit cancelled.';
+
+/**
+ * Interpolates the runtime `{label}` token of the allowEdit strings.
+ *
+ * @param {string} template - The message or aria-label template.
+ * @param {string} label - The range's display label.
+ * @return {string} The interpolated text.
+ */
+export function formatEditMessage(template: string, label: string): string {
+  return template.split('{label}').join(label);
+}

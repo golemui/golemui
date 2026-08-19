@@ -39,6 +39,25 @@ export const rangeTimePickerTab = gui.layouts.flex([
     maxTime: '22:00:00',
     minuteStep: 30,
   }),
+  gui.inputs.rangeTimePicker('rangeTimePickerEditable', {
+    label: 'Editable',
+    allowEdit: true,
+    defaultValue: [
+      {
+        start: '09:00:00',
+        end: '12:00:00',
+      },
+      {
+        start: '14:00:00',
+        end: '17:00:00',
+      },
+    ],
+    allowCustomTime: true,
+    icon: 'schedule',
+    separator: 'to',
+    hourFormat: '24',
+    minuteStep: 30,
+  }),
   gui.inputs.rangeTimePicker('rangeTimePickerConstraints', {
     label: 'Booking with lunch break',
     icon: 'schedule',

@@ -720,5 +720,322 @@ export const runRangeDateInputComponentTests = (mountFn: MountComponentFn) => {
         cy.get(`[data-cy="${uid}_pills-validator-errors"]`).should('not.exist');
       });
     });
+
+    describe('allowEdit pill editing', () => {
+      const editableRanges = [
+        { start: '2026-06-01', end: '2026-06-05' },
+        { start: '2026-06-10', end: '2026-06-12' },
+      ];
+      const editSel = {
+        pill: 'gui-range-date .gui-pills__pill',
+        editIcon: `[data-cy="${uid}_pill-edit"]`,
+        selectedEditIcon: `.gui-pills__pill--selected [data-cy="${uid}_pill-edit"]`,
+        confirmIcon: `[data-cy="${uid}_pill-edit-confirm"]`,
+        cancelIcon: `[data-cy="${uid}_pill-edit-cancel"]`,
+        removeIcon: '.gui-pills__pill-remove',
+        liveRegion: 'gui-range-date .gui-visually-hidden[aria-live="polite"]',
+      };
+
+      beforeEach(() => forcePillsStripMode('.gui-range-date-input'));
+      afterEach(clearPillsWidthOverride);
+
+      const mountEditable = (formSubmit?: (event: any) => void) =>
+        mountRangeDateInput({
+          data: { myRanges: editableRanges },
+          props: { allowEdit: true },
+          formSubmit,
+        });
+
+      it('should select a pill on click and reveal the edit action, without committing', () => {
+        const formSubmitHandler = cy.stub().as('formSubmitHandler');
+        mountEditable(formSubmitHandler);
+
+        cy.get(editSel.pill).first().should('have.attr', 'aria-pressed', 'false');
+        cy.get(editSel.editIcon).should('not.be.visible');
+        cy.get(editSel.pill).first().click();
+        cy.get(editSel.pill).first().should('have.attr', 'aria-pressed', 'true');
+        cy.get(editSel.pill).first().should('have.class', 'gui-pills__pill--selected');
+        cy.get(editSel.pill).first().find(editSel.editIcon).should('have.attr', 'title', 'Edit');
+        cy.get(editSel.pill).first().find(editSel.removeIcon).should('exist');
+        // The icon is aria-hidden; the pill's description carries the hint.
+        cy.get(editSel.pill)
+          .first()
+          .should('have.attr', 'aria-description')
+          .and('contain', 'Edit range 06/01/2026 - 06/05/2026');
+
+        // Selecting is not a commit: the submitted value is untouched.
+        submitAndGetData('@formSubmitHandler').then((data) => {
+          expect(data).to.deep.equal({ myRanges: editableRanges });
+        });
+      });
+
+      it('should keep the selection on a second click, and clear it with Escape', () => {
+        mountEditable();
+
+        cy.get(editSel.pill).first().click();
+        cy.get(editSel.pill).first().should('have.attr', 'aria-pressed', 'true');
+        // A repeated click never toggles the selection away.
+        cy.get(editSel.pill).first().click();
+        cy.get(editSel.pill).first().should('have.attr', 'aria-pressed', 'true');
+
+        cy.get(editSel.pill).first().type('{esc}');
+        cy.get(editSel.pill).first().should('have.attr', 'aria-pressed', 'false');
+      });
+
+      it('should preview the edit icon on the focused pill during keyboard navigation', () => {
+        mountEditable();
+
+        cy.get(editSel.pill).first().click();
+        cy.get(editSel.pill).first().type('{rightarrow}');
+
+        // The selection follows focus: the focused pill takes it over, so a
+        // single pencil is ever visible and hosts can mirror the selection.
+        cy.get(editSel.pill).eq(1).should('have.attr', 'aria-pressed', 'true');
+        cy.get(editSel.pill).eq(1).find(editSel.editIcon).should('be.visible');
+        cy.get(editSel.pill).first().should('have.attr', 'aria-pressed', 'false');
+        cy.get(editSel.pill).first().find(editSel.editIcon).should('not.be.visible');
+      });
+
+      it('should drop the selection when focus moves from the pills into the segments', () => {
+        mountEditable();
+
+        cy.get(editSel.pill).first().click();
+        cy.get(editSel.pill).first().should('have.attr', 'aria-pressed', 'true');
+
+        cy.get(sel.start.month).click();
+        cy.get(editSel.pill).first().should('have.attr', 'aria-pressed', 'false');
+        cy.get(editSel.editIcon).should('not.be.visible');
+      });
+
+      it('should hide the pill actions when focus leaves the widget', () => {
+        mountEditable();
+
+        cy.get(editSel.pill).first().click();
+        cy.get(editSel.selectedEditIcon).should('be.visible');
+        cy.get('[data-cy="submitBtn_button"]').focus();
+        cy.get(editSel.editIcon).should('not.be.visible');
+        cy.get('.gui-pills__pill--selected').should('not.exist');
+      });
+
+      it('should load the range for editing, preview live on the pill and confirm a replacement', () => {
+        const formSubmitHandler = cy.stub().as('formSubmitHandler');
+        mountEditable(formSubmitHandler);
+
+        cy.get(editSel.pill).first().click();
+        cy.get(editSel.selectedEditIcon).click();
+
+        cy.get(sel.start.month).should('have.value', '06');
+        cy.get(sel.end.day).should('have.value', '05');
+        cy.focused().should('have.attr', 'data-group', 'start');
+        cy.get(editSel.pill).first().should('have.class', 'gui-pills__pill--editing');
+        cy.get(editSel.liveRegion).should('contain.text', 'Editing range 06/01/2026 - 06/05/2026.');
+
+        // Editing swaps the pill actions: cancel/confirm in, edit/remove out.
+        cy.get(editSel.confirmIcon).should('have.attr', 'title', 'Confirm');
+        cy.get(editSel.cancelIcon).should('have.attr', 'title', 'Cancel');
+        cy.get(editSel.pill).first().find(editSel.editIcon).should('not.exist');
+        cy.get(editSel.pill).first().find(editSel.removeIcon).should('not.exist');
+
+        // The editing pill's label previews the modified range live.
+        // Parts are pre-filled, so edits retype the segment over its selection.
+        cy.get(sel.end.day).type('{selectall}07');
+        cy.get(editSel.pill).first().should('contain.text', '06/01/2026 - 06/07/2026');
+
+        cy.get(editSel.confirmIcon).click();
+        cy.get(editSel.liveRegion).should(
+          'contain.text',
+          'Range updated to 06/01/2026 - 06/07/2026.',
+        );
+        cy.get(editSel.pill).should('have.length', 2);
+        cy.get(editSel.pill).first().should('contain.text', '06/01/2026 - 06/07/2026');
+
+        submitAndGetData('@formSubmitHandler').then((data) => {
+          expect(data).to.deep.equal({
+            myRanges: [
+              { start: '2026-06-01', end: '2026-06-07' },
+              { start: '2026-06-10', end: '2026-06-12' },
+            ],
+          });
+        });
+      });
+
+      it('should commit the edit with Enter, replacing instead of appending', () => {
+        const formSubmitHandler = cy.stub().as('formSubmitHandler');
+        mountEditable(formSubmitHandler);
+
+        cy.get(editSel.pill).first().click();
+        cy.get(editSel.selectedEditIcon).click();
+        cy.get(sel.end.day).type('{selectall}08');
+        cy.focused().type('{enter}');
+
+        cy.get(editSel.pill).should('have.length', 2);
+        submitAndGetData('@formSubmitHandler').then((data) => {
+          expect(data).to.deep.equal({
+            myRanges: [
+              { start: '2026-06-01', end: '2026-06-08' },
+              { start: '2026-06-10', end: '2026-06-12' },
+            ],
+          });
+        });
+      });
+
+      it('should start editing with E or F2 on a focused pill', () => {
+        mountEditable();
+
+        // Plain E: the pill is a button, so a bare letter key is safe.
+        cy.get(editSel.pill).first().click();
+        cy.get(editSel.pill).first().type('e');
+        cy.get(editSel.pill).first().should('have.class', 'gui-pills__pill--editing');
+        cy.get(sel.start.month).should('have.value', '06');
+
+        // F2 selects and edits in one go, no prior selection needed.
+        cy.focused().type('{esc}');
+        cy.get('.gui-pills__pill--editing').should('not.exist');
+        cy.get(editSel.pill).eq(1).focus().trigger('keydown', { key: 'F2' });
+        cy.get(editSel.pill).eq(1).should('have.class', 'gui-pills__pill--editing');
+        cy.get(sel.start.day).should('have.value', '10');
+      });
+
+      it('should cancel with Escape, leaving the value untouched and the pill selected', () => {
+        const formSubmitHandler = cy.stub().as('formSubmitHandler');
+        mountEditable(formSubmitHandler);
+
+        cy.get(editSel.pill).first().click();
+        cy.get(editSel.selectedEditIcon).click();
+        cy.get(sel.end.day).type('{selectall}20');
+        cy.focused().type('{esc}');
+
+        cy.get(editSel.liveRegion).should('contain.text', 'Edit cancelled.');
+        cy.get(editSel.editIcon).should('exist');
+        cy.get(editSel.confirmIcon).should('not.exist');
+        cy.get(sel.start.month).should('have.value', '');
+        cy.get(editSel.pill).first().should('not.have.class', 'gui-pills__pill--editing');
+        cy.get(editSel.pill).first().should('have.class', 'gui-pills__pill--selected');
+        // The live preview is discarded with the session.
+        cy.get(editSel.pill).first().should('contain.text', '06/01/2026 - 06/05/2026');
+        cy.focused().should('have.class', 'gui-pills__pill');
+
+        submitAndGetData('@formSubmitHandler').then((data) => {
+          expect(data).to.deep.equal({ myRanges: editableRanges });
+        });
+      });
+
+      it('should cancel from the pill cancel icon, restoring the original label', () => {
+        const formSubmitHandler = cy.stub().as('formSubmitHandler');
+        mountEditable(formSubmitHandler);
+
+        cy.get(editSel.pill).first().click();
+        cy.get(editSel.selectedEditIcon).click();
+        cy.get(sel.end.day).type('{selectall}20');
+        cy.get(editSel.pill).first().should('contain.text', '06/01/2026 - 06/20/2026');
+        cy.get(editSel.cancelIcon).click();
+
+        cy.get(editSel.liveRegion).should('contain.text', 'Edit cancelled.');
+        cy.get(editSel.pill).first().should('contain.text', '06/01/2026 - 06/05/2026');
+        cy.get(editSel.pill).first().should('have.class', 'gui-pills__pill--selected');
+        cy.get(editSel.editIcon).should('exist');
+        cy.focused().should('have.class', 'gui-pills__pill');
+
+        submitAndGetData('@formSubmitHandler').then((data) => {
+          expect(data).to.deep.equal({ myRanges: editableRanges });
+        });
+      });
+
+      it('should treat confirming an unchanged range as a cancellation', () => {
+        const formSubmitHandler = cy.stub().as('formSubmitHandler');
+        mountEditable(formSubmitHandler);
+
+        cy.get(editSel.pill).first().click();
+        cy.get(editSel.selectedEditIcon).click();
+        cy.get(editSel.confirmIcon).click();
+
+        cy.get(editSel.liveRegion).should('contain.text', 'Edit cancelled.');
+        cy.get(editSel.editIcon).should('exist');
+        submitAndGetData('@formSubmitHandler').then((data) => {
+          expect(data).to.deep.equal({ myRanges: editableRanges });
+        });
+      });
+
+      it('should cancel the session and only select when another pill is clicked mid-edit', () => {
+        mountEditable();
+
+        cy.get(editSel.pill).first().click();
+        cy.get(editSel.selectedEditIcon).click();
+        cy.get(editSel.pill).eq(1).click();
+
+        cy.get(editSel.liveRegion).should('contain.text', 'Edit cancelled.');
+        cy.get(editSel.pill).eq(1).should('have.attr', 'aria-pressed', 'true');
+        cy.get(editSel.pill).first().should('have.attr', 'aria-pressed', 'false');
+        cy.get('.gui-pills__pill--editing').should('not.exist');
+        cy.get(editSel.pill).eq(1).find(editSel.editIcon).should('exist');
+      });
+
+      it('should merge into a neighbor when the edited range overlaps it', () => {
+        const formSubmitHandler = cy.stub().as('formSubmitHandler');
+        mountEditable(formSubmitHandler);
+
+        cy.get(editSel.pill).first().click();
+        cy.get(editSel.selectedEditIcon).click();
+        cy.get(sel.end.day).type('{selectall}10');
+        cy.get(editSel.confirmIcon).click();
+
+        cy.get(editSel.pill).should('have.length', 1);
+        cy.get(editSel.pill).first().should('contain.text', '06/01/2026 - 06/12/2026');
+        cy.get(editSel.liveRegion).should(
+          'contain.text',
+          'Range updated to 06/01/2026 - 06/12/2026.',
+        );
+        submitAndGetData('@formSubmitHandler').then((data) => {
+          expect(data).to.deep.equal({
+            myRanges: [{ start: '2026-06-01', end: '2026-06-12' }],
+          });
+        });
+      });
+
+      it('should discard a half-entered add partial when an edit starts', () => {
+        mountEditable();
+
+        cy.get(sel.start.month).type('07');
+        cy.get(editSel.pill).first().click();
+        cy.get(editSel.selectedEditIcon).click();
+
+        cy.get(sel.start.month).should('have.value', '06');
+        cy.get(sel.start.day).should('have.value', '01');
+        cy.get(sel.end.day).should('have.value', '05');
+      });
+
+      it('should keep plain pill semantics when allowEdit is off', () => {
+        mountRangeDateInput({ data: { myRanges: editableRanges } });
+
+        cy.get(editSel.pill).first().click({ force: true });
+        cy.get(editSel.pill).first().should('not.have.attr', 'aria-pressed');
+        cy.get(editSel.editIcon).should('not.exist');
+      });
+
+      it('should support the flow from the compact-mode dropdown', () => {
+        mountEditable();
+        forcePillsCompactMode('.gui-range-date-input');
+
+        const inDropdown = (selector: string) => `gui-range-date .gui-pills__dropdown ${selector}`;
+
+        cy.get('gui-range-date .gui-pills__count').click();
+        cy.get(inDropdown('.gui-pills__pill')).first().click();
+        cy.get('gui-range-date .gui-pills__count').should(
+          'have.class',
+          'gui-pills__count--has-selection',
+        );
+        cy.get(inDropdown(editSel.selectedEditIcon)).click();
+        cy.get('gui-range-date .gui-pills__count').should(
+          'have.class',
+          'gui-pills__count--editing',
+        );
+        cy.get(inDropdown(editSel.confirmIcon)).should('exist');
+        cy.get(inDropdown(editSel.cancelIcon)).click();
+        cy.get('gui-range-date .gui-pills__count').should(
+          'not.have.class',
+          'gui-pills__count--editing',
+        );
+      });
+    });
   });
 };

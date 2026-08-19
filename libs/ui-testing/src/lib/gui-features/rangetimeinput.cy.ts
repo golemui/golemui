@@ -485,5 +485,98 @@ export const runRangeTimeInputComponentTests = (mountFn: MountComponentFn) => {
         cy.get(`[data-cy="${uid}_pills-validator-errors"]`).should('not.exist');
       });
     });
+
+    describe('allowEdit pill editing', () => {
+      const editableRanges = [
+        { start: '09:00:00', end: '11:00:00' },
+        { start: '14:00:00', end: '15:00:00' },
+      ];
+      const editSel = {
+        pill: 'gui-range-time .gui-pills__pill',
+        editIcon: `[data-cy="${uid}_pill-edit"]`,
+        selectedEditIcon: `.gui-pills__pill--selected [data-cy="${uid}_pill-edit"]`,
+        confirmIcon: `[data-cy="${uid}_pill-edit-confirm"]`,
+        liveRegion: 'gui-range-time .gui-visually-hidden[aria-live="polite"]',
+      };
+
+      beforeEach(() => forcePillsStripMode('.gui-range-time-input'));
+      afterEach(clearPillsWidthOverride);
+
+      const mountEditable = (formSubmit?: (event: any) => void) =>
+        mountRangeTimeInput({
+          data: { myRanges: editableRanges },
+          props: { allowEdit: true },
+          formSubmit,
+        });
+
+      it('should select, edit with live preview and confirm a replacement', () => {
+        const formSubmitHandler = cy.stub().as('formSubmitHandler');
+        mountEditable(formSubmitHandler);
+
+        cy.get(editSel.pill).first().click();
+        cy.get(editSel.pill).first().should('have.attr', 'aria-pressed', 'true');
+        cy.get(editSel.pill)
+          .first()
+          .should('have.attr', 'aria-description')
+          .and('contain', 'Edit range 09:00 - 11:00');
+        cy.get(editSel.selectedEditIcon).click();
+
+        cy.get(sel.start.hour).should('have.value', '09');
+        cy.get(sel.end.hour).should('have.value', '11');
+        cy.get(editSel.liveRegion).should('contain.text', 'Editing range 09:00 - 11:00.');
+
+        // The editing pill's label previews the modified range live.
+        // Parts are pre-filled, so edits retype each segment over its selection.
+        cy.get(sel.end.hour).type('{selectall}12');
+        cy.get(sel.end.minute).type('{selectall}30');
+        cy.get(editSel.pill).first().should('contain.text', '09:00 - 12:30');
+
+        cy.get(editSel.confirmIcon).click();
+        cy.get(editSel.pill).should('have.length', 2);
+        cy.get(editSel.pill).first().should('contain.text', '09:00 - 12:30');
+
+        submitAndGetData('@formSubmitHandler').then((data) => {
+          expect(data).to.deep.equal({
+            myRanges: [
+              { start: '09:00:00', end: '12:30:00' },
+              { start: '14:00:00', end: '15:00:00' },
+            ],
+          });
+        });
+      });
+
+      it('should keep the session open on a reversed range and cancel with Escape', () => {
+        const formSubmitHandler = cy.stub().as('formSubmitHandler');
+        mountEditable(formSubmitHandler);
+
+        cy.get(editSel.pill).first().click();
+        cy.get(editSel.selectedEditIcon).click();
+
+        // End before start: the time family rejects instead of swapping.
+        cy.get(sel.end.hour).type('{selectall}08');
+        cy.get(editSel.confirmIcon).click();
+        cy.get(editSel.confirmIcon).should('exist');
+        cy.get(editSel.pill).first().should('have.class', 'gui-pills__pill--editing');
+
+        cy.get(sel.end.minute).click();
+        cy.get(sel.end.minute).type('{esc}');
+        cy.get(editSel.confirmIcon).should('not.exist');
+        cy.get(editSel.editIcon).should('exist');
+        cy.get(editSel.pill).first().should('contain.text', '09:00 - 11:00');
+        cy.get(sel.start.hour).should('have.value', '');
+
+        submitAndGetData('@formSubmitHandler').then((data) => {
+          expect(data).to.deep.equal({ myRanges: editableRanges });
+        });
+      });
+
+      it('should keep plain pill semantics when allowEdit is off', () => {
+        mountRangeTimeInput({ data: { myRanges: editableRanges } });
+
+        cy.get(editSel.pill).first().click({ force: true });
+        cy.get(editSel.pill).first().should('not.have.attr', 'aria-pressed');
+        cy.get(editSel.editIcon).should('not.exist');
+      });
+    });
   });
 };

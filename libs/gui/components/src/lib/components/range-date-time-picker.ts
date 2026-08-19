@@ -130,8 +130,34 @@ export class GuiRangeDateTimePicker extends LitElement {
     | undefined = undefined;
   @property({ type: String, attribute: 'disabled-day-count-aria-label' })
   disabledDayCountAriaLabel: string | undefined = undefined;
+  @property({ type: Boolean, attribute: 'allow-edit' }) allowEdit: boolean | undefined = false;
+  @property({ type: String, attribute: 'edit-label' }) editLabel: string | undefined = undefined;
+  @property({ type: String, attribute: 'edit-aria-label' }) editAriaLabel: string | undefined =
+    undefined;
+  @property({ type: String, attribute: 'confirm-edit-label' }) confirmEditLabel:
+    | string
+    | undefined = undefined;
+  @property({ type: String, attribute: 'cancel-edit-label' }) cancelEditLabel: string | undefined =
+    undefined;
+  @property({ type: String, attribute: 'edit-started-message' }) editStartedMessage:
+    | string
+    | undefined = undefined;
+  @property({ type: String, attribute: 'edit-committed-message' }) editCommittedMessage:
+    | string
+    | undefined = undefined;
+  @property({ type: String, attribute: 'edit-cancelled-message' }) editCancelledMessage:
+    | string
+    | undefined = undefined;
 
   @query('#date-input') private _dateRef?: GuiRangeDateTimeInput;
+
+  /**
+   * Mirror of the embedded input's edit session, fed by its non-bubbling
+   * `editStateChange`: while a session is open the calendar defers commits to
+   * the session's Confirm, and the selected range's days are marked.
+   */
+  @state() private _editing = false;
+  @state() private _selectedEditRange: DateTimeRange | null = null;
 
   @state() private _focusDate: string | undefined = undefined;
   /**
@@ -259,6 +285,8 @@ export class GuiRangeDateTimePicker extends LitElement {
             .workingStartTime=${this._workingStartTime}
             .workingEndTime=${this._workingEndTime}
             .deferFocusLeave=${true}
+            .selectedRange=${this._selectedEditRange}
+            .deferCommit=${this._editing}
             @blur=${this.onCalendarBlur}
             @change=${this.onCalendarChange}
             @partsChange=${this.onCalendarPartsChange}
@@ -282,7 +310,7 @@ export class GuiRangeDateTimePicker extends LitElement {
 
       <div
         class="gui-widget"
-        @keydown=${this._popup.onAnchorKeyDown}
+        @keydown=${this.onWidgetKeyDown}
         @click=${this._popup.onAnchorClick}
         @focusout=${this._focusLeave.onFocusOut}
       >
@@ -321,11 +349,20 @@ export class GuiRangeDateTimePicker extends LitElement {
           .disabledRanges=${this.disabledRanges}
           .disabledRangeMessage=${this.disabledRangeMessage}
           .incompleteMessage=${this.incompleteMessage}
+          .allowEdit=${this.allowEdit ?? false}
+          .editLabel=${this.editLabel}
+          .editAriaLabel=${this.editAriaLabel}
+          .confirmEditLabel=${this.confirmEditLabel}
+          .cancelEditLabel=${this.cancelEditLabel}
+          .editStartedMessage=${this.editStartedMessage}
+          .editCommittedMessage=${this.editCommittedMessage}
+          .editCancelledMessage=${this.editCancelledMessage}
           @blur=${this.onDateBlur}
           @focus=${this._popup.show}
           @change=${this.onDateChange}
           @partsChange=${this.onInputPartsChange}
           @pillClick=${this.onPillClick}
+          @editStateChange=${this.onEditStateChange}
         ></gui-range-date-time>
         <button
           type="button"
@@ -519,6 +556,23 @@ export class GuiRangeDateTimePicker extends LitElement {
     this._focusDate = event.detail.range.start;
     this._popup.show();
   }
+
+  private onEditStateChange = (
+    event: CustomEvent<{ selected: DateTimeRange | null; editing: boolean }>,
+  ) => {
+    this._selectedEditRange = event.detail.selected;
+    this._editing = event.detail.editing;
+  };
+
+  /**
+   * Escape layering: an open popup consumes the key first (closing the
+   * popover), then the embedded input's edit session gets its turn — cancel
+   * an open session, then clear the selection.
+   */
+  private onWidgetKeyDown = (e: KeyboardEvent) => {
+    if (this._popup.onAnchorKeyDown(e)) return;
+    this._dateRef?.handleSessionEscape(e);
+  };
 
   private closePillsDropdown() {
     const pills = this.querySelector('gui-pills') as

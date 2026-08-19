@@ -9,6 +9,7 @@ import './time-list';
 import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
 import { GUIPopupController } from '../controllers/popup.controller';
 import {
+  buildTimeOptions,
   compareISOTimes,
   isTimeRangeDisabled,
   oneStepAfterISOTime,
@@ -81,11 +82,35 @@ export class GuiRangeTimePicker extends LitElement {
   @property({ type: String, attribute: 'incomplete-message' }) incompleteMessage:
     | string
     | undefined = undefined;
+  @property({ type: Boolean, attribute: 'allow-edit' }) allowEdit: boolean | undefined = false;
+  @property({ type: String, attribute: 'edit-label' }) editLabel: string | undefined = undefined;
+  @property({ type: String, attribute: 'edit-aria-label' }) editAriaLabel: string | undefined =
+    undefined;
+  @property({ type: String, attribute: 'confirm-edit-label' }) confirmEditLabel:
+    | string
+    | undefined = undefined;
+  @property({ type: String, attribute: 'cancel-edit-label' }) cancelEditLabel: string | undefined =
+    undefined;
+  @property({ type: String, attribute: 'edit-started-message' }) editStartedMessage:
+    | string
+    | undefined = undefined;
+  @property({ type: String, attribute: 'edit-committed-message' }) editCommittedMessage:
+    | string
+    | undefined = undefined;
+  @property({ type: String, attribute: 'edit-cancelled-message' }) editCancelledMessage:
+    | string
+    | undefined = undefined;
 
   @query('#time-input') private _inputRef?: GuiRangeTimeInput;
 
   @state() private _workingIn: string | undefined = undefined;
   @state() private _workingOut: string | undefined = undefined;
+  /**
+   * Mirror of the embedded input's edit session, fed by its non-bubbling
+   * `editStateChange`: while a session is open, list picks reshape the
+   * working range but never auto-commit — the session's Confirm owns that.
+   */
+  @state() private _editing = false;
 
   private _popup = new GUIPopupController(this, {
     focusRestoreSelector: 'gui-range-time input, gui-range-time button',
@@ -237,7 +262,7 @@ export class GuiRangeTimePicker extends LitElement {
 
       <div
         class="gui-widget"
-        @keydown=${this._popup.onAnchorKeyDown}
+        @keydown=${this.onWidgetKeyDown}
         @click=${this._popup.onAnchorClick}
         @focusout=${this._focusLeave.onFocusOut}
       >
@@ -274,11 +299,20 @@ export class GuiRangeTimePicker extends LitElement {
           .hourAriaLabel=${this.hourAriaLabel}
           .minuteAriaLabel=${this.minuteAriaLabel}
           .dayPeriodAriaLabel=${this.dayPeriodAriaLabel}
+          .allowEdit=${this.allowEdit ?? false}
+          .editLabel=${this.editLabel}
+          .editAriaLabel=${this.editAriaLabel}
+          .confirmEditLabel=${this.confirmEditLabel}
+          .cancelEditLabel=${this.cancelEditLabel}
+          .editStartedMessage=${this.editStartedMessage}
+          .editCommittedMessage=${this.editCommittedMessage}
+          .editCancelledMessage=${this.editCancelledMessage}
           @blur=${this.onInputBlur}
           @focus=${this._popup.show}
           @change=${this.onInputChange}
           @partsChange=${this.onPartsChange}
           @pillClick=${this.onPillClick}
+          @editStateChange=${this.onEditStateChange}
         ></gui-range-time>
         <button
           type="button"
@@ -371,6 +405,7 @@ export class GuiRangeTimePicker extends LitElement {
    * values on show and closes the panel so its error is visible.
    */
   private tryCommitWorkingRange(): void {
+    if (this._editing) return;
     if (!this._workingIn || !this._workingOut || !this._inputRef) return;
 
     if (this._inputRef.commitFromParts()) {
@@ -385,8 +420,13 @@ export class GuiRangeTimePicker extends LitElement {
   }
 
   private _inListRef() {
+    return this.listRefFor('start');
+  }
+
+  private listRefFor(group: 'start' | 'end') {
+    const column = group === 'start' ? 'first-child' : 'last-child';
     return this.querySelector<HTMLElement & { scrollToSelectedValue?: () => void }>(
-      '.gui-range-time-picker__column:first-child gui-time-list',
+      `.gui-range-time-picker__column:${column} gui-time-list`,
     );
   }
 
@@ -443,6 +483,73 @@ export class GuiRangeTimePicker extends LitElement {
 
   private onPillClick() {
     this._popup.show();
+  }
+
+  private onEditStateChange = (
+    event: CustomEvent<{ selected: TimeRange | null; editing: boolean }>,
+  ) => {
+    this._editing = event.detail.editing;
+  };
+
+  /**
+   * Escape layering: an open panel consumes the key first (closing it), then
+   * the select-like keyboard behavior gets its turn, then the embedded
+   * input's edit session — cancel an open session, then clear the selection.
+   */
+  private onWidgetKeyDown = (e: KeyboardEvent) => {
+    if (this._popup.onAnchorKeyDown(e)) return;
+    if (this.onSelectLikeKeyDown(e)) return;
+    this._inputRef?.handleSessionEscape(e);
+  };
+
+  private onSelectLikeKeyDown(e: KeyboardEvent): boolean {
+    if (this.allowCustomTime || this.readOnly || this.disabled) return false;
+
+    const target = e.target as HTMLElement;
+    const group = target.closest('[data-group]')?.getAttribute('data-group');
+    if (group !== 'start' && group !== 'end') return false;
+
+    if (e.key === 'Enter') {
+      this._inputRef?.commitFromParts();
+      return true;
+    }
+
+    if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return false;
+    e.preventDefault();
+    this.stepEndpoint(group, e.key === 'ArrowDown' ? 1 : -1);
+    return true;
+  }
+
+  /** Moves one endpoint to the adjacent enabled slot of its list. */
+  private stepEndpoint(group: 'start' | 'end', direction: 1 | -1) {
+    const bounds =
+      group === 'start' ? { minTime: this.minTime, maxTime: this.maxTime } : this.outListBounds;
+    const options = buildTimeOptions({
+      minTime: bounds.minTime,
+      maxTime: bounds.maxTime,
+      minuteStep: this.minuteStep,
+      disabledRanges: this.disabledRanges,
+    });
+    if (!options.length) return;
+
+    const current = group === 'start' ? this._workingIn : this._workingOut;
+    const currentIndex = options.findIndex((option) => option.value === current);
+    let index =
+      currentIndex === -1 ? (direction === 1 ? 0 : options.length - 1) : currentIndex + direction;
+    while (index >= 0 && index < options.length && options[index].disabled) {
+      index += direction;
+    }
+    if (index < 0 || index >= options.length) return;
+
+    const value = options[index].value;
+    if (group === 'start') {
+      this._workingIn = value;
+    } else {
+      this._workingOut = value;
+    }
+    this._inputRef?.fillGroup(group, value);
+    this._popup.show();
+    this.updateComplete.then(() => this.listRefFor(group)?.scrollToSelectedValue?.());
   }
 
   private closePillsDropdown() {
