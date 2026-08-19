@@ -9,6 +9,7 @@ import './time-list';
 import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
 import { GUIPopupController } from '../controllers/popup.controller';
 import {
+  buildTimeOptions,
   compareISOTimes,
   isTimeRangeDisabled,
   oneStepAfterISOTime,
@@ -419,8 +420,13 @@ export class GuiRangeTimePicker extends LitElement {
   }
 
   private _inListRef() {
+    return this.listRefFor('start');
+  }
+
+  private listRefFor(group: 'start' | 'end') {
+    const column = group === 'start' ? 'first-child' : 'last-child';
     return this.querySelector<HTMLElement & { scrollToSelectedValue?: () => void }>(
-      '.gui-range-time-picker__column:first-child gui-time-list',
+      `.gui-range-time-picker__column:${column} gui-time-list`,
     );
   }
 
@@ -487,13 +493,64 @@ export class GuiRangeTimePicker extends LitElement {
 
   /**
    * Escape layering: an open panel consumes the key first (closing it), then
-   * the embedded input's edit session gets its turn — cancel an open session,
-   * then clear the selection.
+   * the select-like keyboard behavior gets its turn, then the embedded
+   * input's edit session — cancel an open session, then clear the selection.
    */
   private onWidgetKeyDown = (e: KeyboardEvent) => {
     if (this._popup.onAnchorKeyDown(e)) return;
+    if (this.onSelectLikeKeyDown(e)) return;
     this._inputRef?.handleSessionEscape(e);
   };
+
+  private onSelectLikeKeyDown(e: KeyboardEvent): boolean {
+    if (this.allowCustomTime || this.readOnly || this.disabled) return false;
+
+    const target = e.target as HTMLElement;
+    const group = target.closest('[data-group]')?.getAttribute('data-group');
+    if (group !== 'start' && group !== 'end') return false;
+
+    if (e.key === 'Enter') {
+      this._inputRef?.commitFromParts();
+      return true;
+    }
+
+    if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return false;
+    e.preventDefault();
+    this.stepEndpoint(group, e.key === 'ArrowDown' ? 1 : -1);
+    return true;
+  }
+
+  /** Moves one endpoint to the adjacent enabled slot of its list. */
+  private stepEndpoint(group: 'start' | 'end', direction: 1 | -1) {
+    const bounds =
+      group === 'start' ? { minTime: this.minTime, maxTime: this.maxTime } : this.outListBounds;
+    const options = buildTimeOptions({
+      minTime: bounds.minTime,
+      maxTime: bounds.maxTime,
+      minuteStep: this.minuteStep,
+      disabledRanges: this.disabledRanges,
+    });
+    if (!options.length) return;
+
+    const current = group === 'start' ? this._workingIn : this._workingOut;
+    const currentIndex = options.findIndex((option) => option.value === current);
+    let index =
+      currentIndex === -1 ? (direction === 1 ? 0 : options.length - 1) : currentIndex + direction;
+    while (index >= 0 && index < options.length && options[index].disabled) {
+      index += direction;
+    }
+    if (index < 0 || index >= options.length) return;
+
+    const value = options[index].value;
+    if (group === 'start') {
+      this._workingIn = value;
+    } else {
+      this._workingOut = value;
+    }
+    this._inputRef?.fillGroup(group, value);
+    this._popup.show();
+    this.updateComplete.then(() => this.listRefFor(group)?.scrollToSelectedValue?.());
+  }
 
   private closePillsDropdown() {
     const pills = this.querySelector('gui-pills') as
