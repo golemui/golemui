@@ -608,5 +608,97 @@ export const runRangeTimePickerComponentTests = (mountFn: MountComponentFn) => {
         });
       });
     });
+
+    describe('select-like keyboard entry (allowCustomTime off)', () => {
+      // The segments are readonly (typed digits are rejected), but arrows step
+      // each endpoint through its list's enabled slots and Enter commits, like
+      // the single time picker. force: Cypress refuses typing into readonly
+      // inputs, and the keys must still reach the picker's keydown handler.
+      const key = (selector: string, stroke: string) =>
+        cy.get(selector).type(stroke, { force: true });
+
+      it('should step the endpoints with arrows and commit with Enter, rejecting digits', () => {
+        const formSubmitHandler = cy.stub().as('formSubmitHandler');
+        mountRangeTimePicker({ props: officeProps, formSubmit: formSubmitHandler });
+
+        // The segments are natively readonly — typed digits bounce off. (A
+        // forced Cypress .type() would bypass the readonly attribute, so the
+        // attribute itself is the honest assertion here.)
+        cy.get(sel.startHour).should('have.attr', 'readonly');
+        cy.get(sel.endMinute).should('have.attr', 'readonly');
+
+        // First ArrowDown lands on the first slot; the panel opens on it.
+        key(sel.startHour, '{downarrow}');
+        cy.get(sel.panel).should('exist');
+        cy.get(sel.startHour).should('have.value', '09');
+        cy.get(sel.startMinute).should('have.value', '00');
+        cy.get(sel.inItems)
+          .filter('[data-value="09:00:00"]')
+          .should('have.class', 'gui-time-list__option--selected');
+
+        // Arrowing is continuous editing: step down, step back up, no commit.
+        key(sel.startHour, '{downarrow}');
+        cy.get(sel.startMinute).should('have.value', '30');
+        key(sel.startHour, '{uparrow}');
+        cy.get(sel.startMinute).should('have.value', '00');
+        cy.get(sel.pillText).should('have.length', 0);
+
+        // The end endpoint steps through its own floored list (> start).
+        key(sel.endHour, '{downarrow}');
+        cy.get(sel.endHour).should('have.value', '09');
+        cy.get(sel.endMinute).should('have.value', '30');
+        cy.get(sel.pillText).should('have.length', 0);
+
+        // Enter commits the completed range exactly like a typed entry.
+        key(sel.endHour, '{enter}');
+        cy.get(sel.pillText).should('have.length', 1).and('contain', '09:00 - 09:30');
+        submitAndGetData('@formSubmitHandler').then((data) => {
+          expect(data.myRanges).to.deep.equal([{ start: '09:00:00', end: '09:30:00' }]);
+        });
+      });
+
+      it('should skip disabled slots when stepping', () => {
+        mountRangeTimePicker({
+          props: {
+            ...officeProps,
+            disabledRanges: [{ start: '09:30:00', end: '09:59:59' }],
+          },
+        });
+
+        key(sel.startHour, '{downarrow}');
+        cy.get(sel.startMinute).should('have.value', '00');
+        // 09:30 is disabled → the next enabled slot is 10:00.
+        key(sel.startHour, '{downarrow}');
+        cy.get(sel.startHour).should('have.value', '10');
+        cy.get(sel.startMinute).should('have.value', '00');
+      });
+
+      it('should reshape an edit session with arrows and confirm it with Enter', () => {
+        forcePillsStripMode('.gui-range-time-input');
+        const formSubmitHandler = cy.stub().as('formSubmitHandler');
+        mountRangeTimePicker({
+          data: { myRanges: [{ start: '09:00:00', end: '11:00:00' }] },
+          props: { ...officeProps, allowEdit: true },
+          formSubmit: formSubmitHandler,
+        });
+
+        cy.get('gui-range-time .gui-pills__pill').first().click();
+        cy.get(`.gui-pills__pill--selected [data-cy="${uid}_pill-edit"]`).click();
+
+        // Arrows reshape the loaded range; the pill's label follows live.
+        key(sel.startHour, '{downarrow}');
+        cy.get('gui-range-time .gui-pills__pill')
+          .first()
+          .should('have.class', 'gui-pills__pill--editing')
+          .and('contain.text', '09:30 - 11:00');
+
+        key(sel.startHour, '{enter}');
+        cy.get('.gui-pills__pill--editing').should('not.exist');
+        submitAndGetData('@formSubmitHandler').then((data) => {
+          expect(data.myRanges).to.deep.equal([{ start: '09:30:00', end: '11:00:00' }]);
+        });
+        clearPillsWidthOverride();
+      });
+    });
   });
 };
