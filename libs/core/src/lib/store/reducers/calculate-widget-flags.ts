@@ -6,18 +6,22 @@ import {
   type NonFunctionWidget,
 } from '../../form-widget';
 import { type $Errors, type ExpressionFunctions, type Uid } from '../../shared';
-import { calculateValidationVariables } from '../../utils/form';
+import { calculateValidationVariables, type ValidationVariables } from '../../utils/form';
 import { expressionIsTrue } from '../../utils/justin';
 import { get } from '../../utils/object';
 import { extractRepeaterIndexes, transformWidgetWhenExpressions } from '../../utils/repeater';
 import { type State } from '../model';
 import { hasWhen } from './utils';
 
+/**
+ * Evaluates the include / exclude / disabled / readonly conditions of every widget in `resolvedSources`.
+ *
+ * @param validationVariables - Pass them when already computed for this pass, otherwise they are computed here.
+ */
 export const calculateWidgetFlags =
   (functions: ExpressionFunctions) =>
-  (state: State): State => {
-    // Precalculate the validation variables for all the following steps
-    const { $formIsInvalid, $errors } = calculateValidationVariables(state);
+  (state: State, validationVariables?: ValidationVariables): State => {
+    const { $formIsInvalid, $errors } = validationVariables ?? calculateValidationVariables(state);
 
     return {
       ...state,

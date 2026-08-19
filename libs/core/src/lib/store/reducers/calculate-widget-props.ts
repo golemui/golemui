@@ -19,7 +19,7 @@ import {
 } from '../../i18n';
 import { compile, parse } from 'subscript/justin';
 import { type $Errors, type ExpressionFunctions } from '../../shared';
-import { calculateValidationVariables } from '../../utils/form';
+import { calculateValidationVariables, type ValidationVariables } from '../../utils/form';
 import { normalizeArrayIndexes } from '../../utils/justin';
 import { get, set } from '../../utils/object';
 import { extractRepeaterIndexes } from '../../utils/repeater';
@@ -31,19 +31,29 @@ import { errorCodes } from '../../errors';
 // Entry point
 // -----------------------------------------------------------------------------
 
+/**
+ * Resolves the props of every visible entry in `calculatedWidgets`.
+ *
+ * @param validationVariables - Pass them when already computed for this pass, otherwise they are computed here.
+ */
 export const calculateWidgetProps =
   (localization: I18nTranslator, functions: ExpressionFunctions) =>
-  (state: State): State => {
+  (state: State, validationVariables?: ValidationVariables): State => {
     try {
-      return { ...state, calculatedWidgets: calculateAll(state, localization, functions) };
+      const variables = validationVariables ?? calculateValidationVariables(state);
+      return {
+        ...state,
+        calculatedWidgets: calculateAll(state, localization, functions, variables),
+      };
     } catch (err) {
-      const error = err as Error & { code: number };
+      const error = err as Error & { code?: number };
+      const code = error.code ?? errorCodes.calculateWidgetPropsError;
       return {
         ...state,
         formHealth: {
           status: 'errored',
-          message: `[${error.code}] ${error.message}`,
-          code: error.code,
+          message: `[${code}] ${error.message}`,
+          code,
         },
       };
     }
@@ -57,8 +67,8 @@ function calculateAll(
   state: State,
   localization: I18nTranslator,
   functions: ExpressionFunctions,
+  { $formIsInvalid, $errors }: ValidationVariables,
 ): State['calculatedWidgets'] {
-  const { $formIsInvalid, $errors } = calculateValidationVariables(state);
   const ctx = makeResolverCtx(state, localization, $formIsInvalid, $errors, functions);
   const result: State['calculatedWidgets'] = {};
 
@@ -70,13 +80,6 @@ function calculateAll(
     const prev = state.calculatedWidgets[uid];
     const source = prev.source;
     const itemScope = state.repeaterItemScopes[uid];
-
-    // A removed repeater item leaves its widgets registered until their components unmount.
-    // Their item data is already gone, so keep the previous computation instead of evaluating expressions against it.
-    if (!itemScope && extractRepeaterIndexes(uid).length > 0) {
-      result[uid] = prev;
-      continue;
-    }
 
     if (isFunctionWidget(source)) {
       result[uid] = computeFunctionWidget(prev, uid, source, state, localization, itemScope);
@@ -120,6 +123,10 @@ function computeFunctionWidget(
     $index: itemScope?.index,
   });
   current.uid = uid;
+  // A row function widget returns the template path, the source carries the row path.
+  if (source.path !== undefined) {
+    (current as InputWidget<unknown, string>).path = source.path;
+  }
 
   // A function widget builds a new config object on every call, so compare the content
   // to avoid handing subscribers a new reference for an unchanged widget.

@@ -22,7 +22,6 @@ export class FormContext<ComponentType> {
   store: FormStore = {} as FormStore;
   events$ = new Subject<FormEvent>();
   submit$ = new Subject<FormSubmitEvent>();
-  uuid = crypto.randomUUID();
   itemRenderers: Record<string, ItemRenderer> = {};
   localization!: I18nTranslator;
   /**

@@ -71,6 +71,50 @@ export const get = <T = any>(obj: Record<string, any>, path: DotPath): T => {
 };
 
 /**
+ * Tells whether every segment of a dot-separated path is present in the object.
+ *
+ * Unlike `get`, a leaf that is present but holds `undefined` counts as existing, which is
+ * what distinguishes "the value was never written" from "the value was cleared".
+ *
+ * @param object - The object to look the path up in
+ * @param path - A dot-separated path (e.g. "user.profile.name" or "users.0.name").
+ *   An empty path returns false.
+ * @returns True when every segment exists, false otherwise
+ *
+ * @example
+ * ```typescript
+ * pathExists({ user: { name: undefined } }, 'user.name'); // true
+ * pathExists({ user: {} }, 'user.name');                  // false
+ * pathExists({ users: [{ name: 'Alice' }] }, 'users.1');  // false
+ * ```
+ */
+export const pathExists = (object: Record<string, any>, path: DotPath): boolean => {
+  if (path === '') {
+    return false;
+  }
+
+  let current: any = object;
+  for (const segment of path.split('.')) {
+    if (current === null || typeof current !== 'object') {
+      return false;
+    }
+    if (Array.isArray(current)) {
+      const index = parseInt(segment, 10);
+      if (!(index in current)) {
+        return false;
+      }
+      current = current[index];
+    } else {
+      if (!(segment in current)) {
+        return false;
+      }
+      current = current[segment];
+    }
+  }
+  return true;
+};
+
+/**
  * Sets the value at path of object by mutation.
  * If a portion of path doesn't exist, it's created.
  * Arrays are created for missing index properties while objects are created for all other missing properties.
@@ -177,7 +221,7 @@ export const set = (object: Record<string, any>, path: DotPath, value: any) => {
 /**
  * Removes the property at the given dot-path from object by mutation.
  * After deletion, any ancestor plain objects that become empty are also removed.
- * Ancestor arrays that become empty are left in place — upward pruning stops as
+ * Ancestor arrays that become empty are left in place, upward pruning stops as
  * soon as an array boundary is encountered.
  *
  * @param object - The object to modify
@@ -199,7 +243,7 @@ export const set = (object: Record<string, any>, path: DotPath, value: any) => {
  * ```typescript
  * const obj = { a: { b: { c: 1 } } };
  * unset(obj, 'a.b.c');
- * // Result: {} — 'b' and 'a' are pruned because they became empty objects
+ * // Result: {} ('b' and 'a' are pruned because they became empty objects)
  * ```
  *
  * @example
@@ -207,7 +251,7 @@ export const set = (object: Record<string, any>, path: DotPath, value: any) => {
  * ```typescript
  * const obj = { items: [{ name: 'Alice' }] };
  * unset(obj, 'items.0.name');
- * // Result: { items: [{}] } — the empty object is kept inside the array
+ * // Result: { items: [{}] } (the empty object is kept inside the array)
  * ```
  */
 export const unset = <T extends Record<string, any>>(object: T, path: DotPath): T => {

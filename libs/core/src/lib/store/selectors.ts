@@ -118,24 +118,6 @@ export const calculatedLayoutChildrenByUid$ = (uid: Uid) =>
 
 // --------------------------------
 //
-// WIDGET FLAGS
-//
-// --------------------------------
-
-export const selectWidgetFlags = pipe(
-  map((store: State) => store.widgetFlags),
-  distinctUntilChanged(),
-);
-
-export const widgetFlagsByUid$ = (uid: Uid) =>
-  pipe(
-    selectWidgetFlags,
-    map((widgetFlags) => widgetFlags[uid]),
-    distinctUntilChanged(),
-  );
-
-// --------------------------------
-//
 // TOUCHED CONTROLS
 //
 // --------------------------------
