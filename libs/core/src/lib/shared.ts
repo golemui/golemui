@@ -178,6 +178,11 @@ export type ControlTemplateData<T, V = any> = {
   disabled?: boolean;
   readonly?: boolean;
   touched?: boolean;
+  /**
+   * A repeater's rows: one row layout node per entry of its array value, with the row indexes
+   * already applied to every uid and path. Only set for repeater inputs.
+   */
+  rows?: NonFunctionWidget<string>[];
 };
 
 /**
