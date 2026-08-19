@@ -5,6 +5,7 @@ import { classMap } from 'lit/directives/class-map.js';
 import type { DateTimeRange } from '@golemui/gui-shared/internals';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { GUICalendarKeyboardController } from '../controllers/calendar-keyboard.controller';
+import { GUIEditSessionController } from '../controllers/edit-session.controller';
 import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
 import { GUIMonthNavigationController } from '../controllers/month-navigation.controller';
 import type { RangeCalendarDay } from './range-calendar';
@@ -34,6 +35,7 @@ import {
   buildPillItems,
   findRangeByKey,
   removeRangeByKey,
+  sameRanges,
   sortRangesByStart,
 } from '../utils/pill-ranges';
 import {
@@ -59,7 +61,18 @@ import {
   type HourFormat,
   type TimeRange,
 } from '../utils/time';
-import { DISABLED_DATE_RANGE_MESSAGE, INCOMPLETE_DATE_TIME_MESSAGE } from '../utils/messages';
+import {
+  CANCEL_EDIT_RANGE_LABEL,
+  CONFIRM_EDIT_RANGE_LABEL,
+  DISABLED_DATE_RANGE_MESSAGE,
+  EDIT_RANGE_ARIA_LABEL,
+  EDIT_RANGE_CANCELLED_MESSAGE,
+  EDIT_RANGE_COMMITTED_MESSAGE,
+  EDIT_RANGE_LABEL,
+  EDIT_RANGE_STARTED_MESSAGE,
+  formatEditMessage,
+  INCOMPLETE_DATE_TIME_MESSAGE,
+} from '../utils/messages';
 
 export class GuiRangeDateTimeCalendar extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
@@ -178,6 +191,25 @@ export class GuiRangeDateTimeCalendar extends LitElement {
    */
   @property({ type: Boolean, attribute: 'defer-commit' }) deferCommit = false;
 
+  @property({ type: Boolean, attribute: 'allow-edit' }) allowEdit: boolean | undefined = false;
+  @property({ type: String, attribute: 'edit-label' }) editLabel: string | undefined = undefined;
+  @property({ type: String, attribute: 'edit-aria-label' }) editAriaLabel: string | undefined =
+    undefined;
+  @property({ type: String, attribute: 'confirm-edit-label' }) confirmEditLabel:
+    | string
+    | undefined = undefined;
+  @property({ type: String, attribute: 'cancel-edit-label' }) cancelEditLabel: string | undefined =
+    undefined;
+  @property({ type: String, attribute: 'edit-started-message' }) editStartedMessage:
+    | string
+    | undefined = undefined;
+  @property({ type: String, attribute: 'edit-committed-message' }) editCommittedMessage:
+    | string
+    | undefined = undefined;
+  @property({ type: String, attribute: 'edit-cancelled-message' }) editCancelledMessage:
+    | string
+    | undefined = undefined;
+
   @state() protected _selection: RangeSelectionState = idleRangeSelection();
   @state() protected _invalidRange: { start: Date; end: Date } | null = null;
 
@@ -258,6 +290,47 @@ export class GuiRangeDateTimeCalendar extends LitElement {
     },
   });
 
+  private _edit = new GUIEditSessionController<DateTimeRange>(this, {
+    isEnabled: () => this.editEnabled,
+    getRanges: () => this.value,
+    compareStarts: (a, b) => this.parseEndpoint(a).getTime() - this.parseEndpoint(b).getTime(),
+    formatLabel: (range) => this.formatPillLabel(range),
+    loadRange: (range) => this.loadRangeForEdit(range),
+    clearCompose: () => this.clearCompose(),
+    getPills: () => this.querySelector('gui-pills'),
+    getMessages: () => ({
+      started: this.editStartedMessage ?? EDIT_RANGE_STARTED_MESSAGE,
+      committed: this.editCommittedMessage ?? EDIT_RANGE_COMMITTED_MESSAGE,
+      cancelled: this.editCancelledMessage ?? EDIT_RANGE_CANCELLED_MESSAGE,
+    }),
+  });
+
+  private get editEnabled(): boolean {
+    return !!this.allowEdit && !this.disabled && !this.readOnly;
+  }
+  private loadRangeForEdit(range: DateTimeRange): void {
+    const [startDay, startTime] = range.start.split('T');
+    const [endDay, endTime] = (range.end ?? range.start).split('T');
+    this._invalidRange = null;
+    this._selection = idleRangeSelection();
+    this._workingStart = startDay;
+    this._workingEnd = endDay;
+    this._workingStartTime = startTime;
+    this._workingEndTime = endTime;
+    this._nav.navigateToDate(this.endpointDay(range.start));
+    this.emitPartsChange();
+    void this.updateComplete.then(() => {
+      this.querySelector<HTMLButtonElement>(
+        `.gui-calendar__day-button[data-date="${startDay}"]`,
+      )?.focus();
+    });
+  }
+
+  private clearCompose(): void {
+    this.resetWorking();
+    this.emitPartsChange();
+  }
+
   /**
    * A completed working range commits (or surfaces its own rejection). A
    * half-finished one — any piece left behind: a span, a lone anchor day, a
@@ -267,6 +340,17 @@ export class GuiRangeDateTimeCalendar extends LitElement {
    * message surfaced earlier.
    */
   private settleOnLeave(): void {
+    if (this._edit.editing) {
+      const outcome = this.commitWorking(this._edit.baseRanges(this.value));
+      if (outcome.kind === 'committed') {
+        this._edit.completed(outcome.start, { focus: false });
+      }
+      if (this._edit.editing) this._edit.cancel();
+      this._edit.handleFocusLeave();
+      return;
+    }
+    this._edit.handleFocusLeave();
+
     if (this.tryCommitWorkingRange()) return;
 
     const leftBehind =
@@ -335,9 +419,25 @@ export class GuiRangeDateTimeCalendar extends LitElement {
   override connectedCallback() {
     super.connectedCallback();
     this.classList.add('gui-field');
+    this.addEventListener('keydown', this.onHostKeyDown);
   }
 
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    this.removeEventListener('keydown', this.onHostKeyDown);
+  }
+
+  /**
+   * Escape layering below the year grid and the time-picker lists (which
+   * consume their own Escape while open): first cancels an open edit session,
+   * then clears the selection.
+   */
+  private onHostKeyDown = (e: KeyboardEvent) => {
+    this._edit.handleEscape(e);
+  };
+
   override willUpdate(changedProperties: PropertyValues): void {
+    this._edit.reconcileValue(this.value);
     this.adoptWorkingSelection(changedProperties);
     if (
       !this.hasUpdated ||
@@ -615,10 +715,11 @@ export class GuiRangeDateTimeCalendar extends LitElement {
       end: range.end ? this.endpointDay(range.end) : undefined,
     }));
     const selectingSpan = selectionPreviewSpan(this._selection) ?? this.workingSpan ?? null;
-    const editSelectedSpan = this.selectedRange
+    const markedRange = this.selectedRange ?? this._edit.selectedRange;
+    const editSelectedSpan = markedRange
       ? orderedDaySpan(
-          this.endpointDay(this.selectedRange.start),
-          this.endpointDay(this.selectedRange.end ?? this.selectedRange.start),
+          this.endpointDay(markedRange.start),
+          this.endpointDay(markedRange.end ?? markedRange.start),
         )
       : null;
 
@@ -757,40 +858,58 @@ export class GuiRangeDateTimeCalendar extends LitElement {
    *   unfinished selection means.
    */
   private tryCommitWorkingRange(): boolean {
-    if (this.deferCommit) return false;
+    if (this.deferCommit || this._edit.editing) return false;
+    return this.commitWorking(this.value ?? []).kind !== 'incomplete';
+  }
 
+  private commitWorking(
+    base: DateTimeRange[],
+  ): { kind: 'committed'; start: string } | { kind: 'incomplete' | 'rejected' | 'unchanged' } {
     const startDate = this._workingStart;
     const endDate = this._workingEnd;
     const timeIn = this._workingStartTime;
     const timeOut = this._workingEndTime;
-    if (!startDate || !endDate || !timeIn || !timeOut) return false;
+    if (!startDate || !endDate || !timeIn || !timeOut) return { kind: 'incomplete' };
 
     const startError = this.timeError(timeIn, startDate, this.resolvedStartTimeRanges);
     if (startError) {
       this.emitInputError(startError);
-      return true;
+      return { kind: 'rejected' };
     }
 
     const endError = this.timeError(timeOut, endDate, this.resolvedEndTimeRanges);
     if (endError) {
       this.emitInputError(endError);
-      return true;
+      return { kind: 'rejected' };
     }
 
     const ordered = orderDateTimeRange(`${startDate}T${timeIn}`, `${endDate}T${timeOut}`);
 
     if (dateTimeRangeOverlaps(ordered, this.disabledRanges)) {
       this.emitInputError(this.disabledRangeMessage ?? DISABLED_DATE_RANGE_MESSAGE);
-      return true;
+      return { kind: 'rejected' };
+    }
+
+    const next = mergeDateTimeRanges([...base, ordered]);
+    if (
+      this._edit.editing &&
+      sameRanges(
+        this.getSortedPills(),
+        sortRangesByStart(
+          next,
+          (a, b) => this.parseEndpoint(a).getTime() - this.parseEndpoint(b).getTime(),
+        ),
+      )
+    ) {
+      return { kind: 'unchanged' };
     }
 
     this._skipValueNavigation = true;
-    const next = mergeDateTimeRanges([...(this.value ?? []), ordered]);
     this.value = next;
     this.resetWorking();
     this.emitPartsChange();
     this.emitChange(next);
-    return true;
+    return { kind: 'committed', start: ordered.start };
   }
 
   /** Whether an inputError has been emitted and not yet cleared by a change. */
@@ -1079,14 +1198,21 @@ export class GuiRangeDateTimeCalendar extends LitElement {
   // --- Pills ---
 
   renderAboveCalendar(): TemplateResult | typeof nothing {
-    if (this.hidePills) return nothing;
+    const liveRegion = this.allowEdit
+      ? html`<div class="gui-visually-hidden" aria-live="polite">${this._edit.announcement}</div>`
+      : nothing;
+
+    if (this.hidePills) return liveRegion;
 
     const pills = this.getSortedPills();
-    if (pills.length === 0) return nothing;
+    if (pills.length === 0) return liveRegion;
 
-    const pillItems: GuiPillItem[] = buildPillItems(pills, (pill) => this.formatPillLabel(pill));
+    const pillItems: GuiPillItem[] = this.decoratePillItems(
+      buildPillItems(pills, (pill) => this.formatPillLabel(pill)),
+    );
 
     return html`
+      ${liveRegion}
       <gui-pills
         class="gui-range-calendar__pills"
         .uid=${this.uid}
@@ -1098,10 +1224,51 @@ export class GuiRangeDateTimeCalendar extends LitElement {
         ?disabled=${this.disabled}
         ?readonly=${this.readOnly}
         .removeAriaLabel=${this.removePillAriaLabel ?? 'Remove date'}
+        .editable=${this.editEnabled}
+        .selectedKey=${this._edit.selectedKey ?? undefined}
+        .editingKey=${this._edit.editing?.key ?? undefined}
+        .editLabel=${this.editLabel ?? EDIT_RANGE_LABEL}
+        .confirmEditLabel=${this.confirmEditLabel ?? CONFIRM_EDIT_RANGE_LABEL}
+        .cancelEditLabel=${this.cancelEditLabel ?? CANCEL_EDIT_RANGE_LABEL}
         @pillremove=${this.onPillRemoveEvent}
         @pillclick=${this.onPillClickEvent}
+        @pillfocus=${this.onPillFocusEvent}
+        @pillsblur=${this.onPillsBlurEvent}
+        @pilledit=${this.onPillEditEvent}
+        @pilleditconfirm=${this.onPillEditConfirm}
+        @pilleditcancel=${this.onPillEditCancel}
       ></gui-pills>
     `;
+  }
+
+  /**
+   * allowEdit decoration on the pill items: the editing pill's label
+   * live-previews the working pieces, and every pill carries the interpolated
+   * edit hint for its `aria-description`.
+   */
+  private decoratePillItems(items: GuiPillItem[]): GuiPillItem[] {
+    if (!this.editEnabled) return items;
+    const editingKey = this._edit.editing?.key;
+    return items.map((item) => {
+      const label = item.key === editingKey ? this.workingLabel() : item.label;
+      return {
+        ...item,
+        label,
+        ariaLabel: label,
+        editAriaLabel: formatEditMessage(this.editAriaLabel ?? EDIT_RANGE_ARIA_LABEL, item.label),
+      };
+    });
+  }
+
+  /** The live label of the range being reshaped, one `…` per incomplete endpoint. */
+  private workingLabel(): string {
+    const hourFormat = resolveHourFormat(this.localeId, this.hourFormat);
+    const format = (day: string | undefined, time: string | undefined) =>
+      day && time ? formatISODateTimeForLocale(`${day}T${time}`, this.localeId, hourFormat) : '…';
+    return `${format(this._workingStart, this._workingStartTime)} - ${format(
+      this._workingEnd,
+      this._workingEndTime,
+    )}`;
   }
 
   private onPillRemoveEvent = (e: CustomEvent<GuiPillEventDetail>) => {
@@ -1114,7 +1281,59 @@ export class GuiRangeDateTimeCalendar extends LitElement {
 
   private onPillClickEvent = (e: CustomEvent<GuiPillEventDetail>) => {
     const range = findRangeByKey(this.getSortedPills(), e.detail.key);
-    if (range) this.navigateToDate(range.start);
+    if (!range) return;
+    const outcome = this._edit.handlePillClick(e.detail.key);
+    if (outcome === 'cancelled') return;
+    this.navigateToDate(range.start);
+  };
+
+  /**
+   * Keyboard navigation landed on a pill: the selection follows focus, so the
+   * focused pill offers the edit affordance and drives the day marking.
+   */
+  private onPillFocusEvent = (e: CustomEvent<GuiPillEventDetail>) => {
+    if (!this.editEnabled || this._edit.editing) return;
+    if (this._edit.selectedKey !== e.detail.key) this._edit.handlePillClick(e.detail.key);
+  };
+
+  /**
+   * Focus left the pills for elsewhere: the selection follows it away. An open
+   * session keeps its selection — its focus legitimately lives in the day grid
+   * or the time pickers.
+   */
+  private onPillsBlurEvent = () => {
+    if (this._edit.editing) return;
+    this._edit.clearSelection();
+  };
+
+  /** Edit icon or F2 / E on a pill: select it (if needed) and start editing. */
+  private onPillEditEvent = (e: CustomEvent<GuiPillEventDetail>) => {
+    if (!this.editEnabled || this._edit.editing?.key === e.detail.key) return;
+    if (this._edit.selectedKey !== e.detail.key) this._edit.handlePillClick(e.detail.key);
+    this._edit.startEdit();
+  };
+
+  private onPillEditConfirm = () => {
+    if (!this._edit.editing) return;
+    const outcome = this.commitWorking(this._edit.baseRanges(this.value));
+    if (outcome.kind === 'committed') {
+      this._edit.completed(outcome.start);
+      return;
+    }
+    if (outcome.kind === 'unchanged') {
+      this._edit.cancel();
+      this._edit.focusSelectedPill();
+      return;
+    }
+    if (outcome.kind === 'incomplete') {
+      this.emitInputError(this.incompleteMessage ?? INCOMPLETE_DATE_TIME_MESSAGE);
+    }
+  };
+
+  private onPillEditCancel = () => {
+    if (!this._edit.editing) return;
+    this._edit.cancel();
+    this._edit.focusSelectedPill();
   };
 
   protected getSortedPills(): DateTimeRange[] {

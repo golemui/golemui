@@ -268,7 +268,7 @@ export type DateTimeCalendarProps = CalendarProps &
     noAvailableTimesMessage?: Localizable;
   };
 
-export type RangeCalendarProps = {
+export type RangeCalendarProps = RangeEditProps & {
   /**
    * An optional descriptive text providing guidance or information about the associated widget or functionality.
    */

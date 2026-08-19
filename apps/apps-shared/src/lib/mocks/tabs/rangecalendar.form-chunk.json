@@ -28,6 +28,24 @@
     {
       "kind": "input",
       "type": "rangeCalendar",
+      "path": "rangeCalendarEditable",
+      "defaultValue": [
+        {
+          "start": "2026-02-13",
+          "end": "2026-02-16"
+        },
+        {
+          "start": "2026-02-20"
+        }
+      ],
+      "label": "Editable",
+      "props": {
+        "allowEdit": true
+      }
+    },
+    {
+      "kind": "input",
+      "type": "rangeCalendar",
       "path": "rangeCalendarDisabled",
       "defaultValue": [
         {

@@ -42,8 +42,12 @@ export interface GUIEditSessionOptions<R extends RangeLike> {
   loadRange(range: R): void;
   /** Clears the compose surface and its surfaced errors. */
   clearCompose(): void;
-  /** Selection or session changed: dispatch internal events, sync mirrors. */
-  onStateChanged(): void;
+  /**
+   * Selection or session changed: dispatch internal events, sync mirrors.
+   * Optional — hosts with no mirror to keep in step (the standalone
+   * calendars) rely on the controller's own host update request.
+   */
+  onStateChanged?(): void;
   /** The strip, for post-commit / post-cancel focus restoration. */
   getPills(): GuiPills | null;
   getMessages(): GUIEditSessionMessages;
@@ -253,7 +257,7 @@ export class GUIEditSessionController<R extends RangeLike> implements ReactiveCo
   }
 
   private notify(): void {
-    this.options.onStateChanged();
+    this.options.onStateChanged?.();
     this.host.requestUpdate();
   }
 }
