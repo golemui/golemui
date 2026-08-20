@@ -1,6 +1,6 @@
 import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
 import { useLayoutWidget, WidgetRenderer } from '@golemui/react';
-import type { AccordionProps } from '@golemui/gui-shared/internals';
+import { type AccordionProps, repeaterIndexSuffix } from '@golemui/gui-shared/internals';
 import { useCallback, useEffect, useState } from 'react';
 
 const empty = {};
@@ -37,9 +37,15 @@ export function Accordion(widgetInstance: WithWidget) {
     [activeSections, templateData.singleOpen, onChange],
   );
 
+  // Section uids come from the props without row indexes, the children come from the store with
+  // them, so the lookup adds this accordion's own suffix.
+  const rowIndexSuffix = repeaterIndexSuffix(widget.uid);
+
   const renderContent = useCallback(
     (uid: string) => {
-      const child = children.find((section) => section.uid === uid) as NonFunctionWidget<string>;
+      const child = children.find(
+        (section) => section.uid === `${uid}${rowIndexSuffix}`,
+      ) as NonFunctionWidget<string>;
       const isActiveSection = activeSections[uid];
       return (isActiveSection || templateData.renderMode !== 'activeOnly') && child ? (
         <section
