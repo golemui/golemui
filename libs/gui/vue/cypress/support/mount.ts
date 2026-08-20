@@ -1,7 +1,7 @@
 import type { FormSubmitEvent, WidgetLoaders, WithWidget } from '@golemui/core';
 import type { Dependencies, GuiFormInitConfig } from '@golemui/gui-shared';
 import type { MountOptions } from '@golemui/ui-testing';
-import { h, ref, type Component } from 'vue';
+import { h, ref, shallowRef, type Component } from 'vue';
 import GuiForm from '../../src/lib/components/Form';
 import type { GuiFormHandle } from '../../src/lib/components/Form.types';
 
@@ -34,13 +34,16 @@ export const mountFramework = (options: MountOptions) => {
   };
 
   const formRef = ref<GuiFormHandle | null>(null);
+  // `shallowRef` so the config object is handed to the form as it is, not wrapped in a
+  // deep reactive proxy. Replacing `.value` is what triggers the re-render.
+  const configRef = shallowRef<GuiFormInitConfig>(config);
 
   // Use the render-function variant of cy.mount so we can attach a template ref
   // (defineExpose) to the GuiForm instance for setData / setMeta access.
   cy.mount(() =>
     h(GuiForm as Component, {
       ref: formRef,
-      config,
+      config: configRef.value,
       'onForm-event': handleFormEvent,
       'onForm-health': handleFormHealth,
       'onForm-submit': handleFormSubmit,
@@ -60,6 +63,14 @@ export const mountFramework = (options: MountOptions) => {
         onFormReady({
           setData: (data) => handle.setData(data),
           setMeta: (meta) => handle.setMeta(meta),
+          setConfig: (next) => {
+            configRef.value = {
+              ...configRef.value,
+              formDef: next.formDef,
+              data: next.data,
+              meta: next.meta,
+            };
+          },
         });
       });
   }

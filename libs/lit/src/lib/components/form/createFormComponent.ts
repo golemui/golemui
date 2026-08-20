@@ -4,7 +4,7 @@ import {
   type WidgetSetDefinition,
   type WidgetSetFormInitConfig,
 } from '@golemui/dx';
-import { html, LitElement } from 'lit';
+import { html, LitElement, type PropertyValues } from 'lit';
 import type { Type } from '../../utils/type';
 import type { FormElement as CoreFormElement } from './form.element';
 import './form.element';
@@ -88,8 +88,20 @@ export function createFormComponent<
       return this;
     }
 
+    // Rebuilt only when the config property changes. Building it in render() would hand
+    // the core form a new config identity on every re-render, and each one would
+    // reinitialize the store and reset the form data.
+    private bundle!: ReturnType<typeof buildWidgetSetForm>;
+
+    override willUpdate(changed: PropertyValues) {
+      super.willUpdate(changed);
+      if (changed.has('config')) {
+        this.bundle = buildWidgetSetForm(widgetSet, this.config);
+      }
+    }
+
     override render() {
-      const { initConfig, validators, resolved } = buildWidgetSetForm(widgetSet, this.config);
+      const { initConfig, validators, resolved } = this.bundle;
 
       // The bundle is built with untyped loaders. This widget set's loaders
       // resolve to Lit element classes, so the config is a Lit init config.

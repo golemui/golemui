@@ -24,7 +24,7 @@ import {
   type ValidatorFn,
   type WithWidget,
 } from '@golemui/core';
-import { share, switchMap, tap } from 'rxjs';
+import { combineLatest, share, switchMap, tap } from 'rxjs';
 import { AngularFormContext } from '../../context/form.context';
 import { WidgetDirective } from '../../directives/widget.directive';
 import { DefaultFormHealthBoundaryComponent } from './default-form-health-boundary.component';
@@ -68,22 +68,26 @@ export class FormCoreComponent implements OnInit, OnDestroy {
   private destroyRef = inject(DestroyRef);
   private unsubscribeI18n: () => void = () => undefined;
   protected readonly _defaultFormName = shortUUID();
+  // Keys the widget tree in the template. Every initialization bumps it, so the whole tree
+  // is destroyed and recreated and every widget subscribes to the store INITIALIZE ran on.
+  protected storeGeneration = signal(0);
 
   // `tap()` runs synchronously before `switchMap` accesses the new store, ensuring
   // that `context.initialize()` always fires before we resubscribe to `formHealth`
-  private config$ = toObservable(this.config).pipe(
-    tap((c) => {
+  private config$ = combineLatest([toObservable(this.config), toObservable(this.validators)]).pipe(
+    tap(([c, validators]) => {
       this.unsubscribeI18n();
       this.context.initialize(
         c.widgetLoaders,
         c.middlewares ?? [],
-        this.validators(),
+        validators,
         c.validateOn ?? 'eager',
         c.itemRenderers ?? {},
         c.localization,
         c.dependencies ?? {},
         c.functions ?? {},
       );
+      this.storeGeneration.update((generation) => generation + 1);
       this.context.store.dispatch({
         type: 'INITIALIZE',
         payload: {

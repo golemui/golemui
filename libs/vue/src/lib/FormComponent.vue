@@ -29,6 +29,9 @@ const formLayoutField = ref<LayoutWidget<string> | null>(null);
 const health = ref<FormHealth>({ status: 'ok' });
 const direction = ref<'ltr' | 'rtl'>('ltr');
 const storeVersion = ref(0);
+// Keys the widget tree. Every INITIALIZE bumps it, so the whole tree is destroyed and
+// recreated and every widget subscribes to the store that INITIALIZE ran on.
+const treeGeneration = ref(0);
 
 provideFormContext(formContext);
 
@@ -48,17 +51,16 @@ const reinit = () => {
 
 reinit();
 
+// This watcher is created before the ones below, so on a config replacement it runs first
+// in the same flush: the store is already the new one when they dispatch into it.
 watch(
   () => [props.config, props.validators],
   () => reinit(),
-  { flush: 'post' },
 );
 
 // INITIALIZE resets the store and derives nothing. A new store gets its data and meta from the
 // watchers below, but a formDef replaced on the same config object does not bump storeVersion,
-// so this watcher dispatches them itself. A replaced config object is not that case: reinit()
-// runs after this watcher and builds a new store, so the follow-up would only feed a store that
-// is about to be dropped.
+// so this watcher dispatches them itself.
 let initializedStoreVersion = -1;
 let initializedConfig: FormComponentProps['config'] | null = null;
 watch(
@@ -68,6 +70,7 @@ watch(
     const configIsNew = props.config !== initializedConfig;
     initializedStoreVersion = storeVersion.value;
     initializedConfig = props.config;
+    treeGeneration.value += 1;
     formContext.store.dispatch({
       type: 'INITIALIZE',
       payload: {
@@ -189,7 +192,7 @@ const onFormSubmit = (event: SubmitEvent) => {
         :autocomplete="autocomplete"
         @submit.stop="onFormSubmit"
       >
-        <WidgetErrorBoundary v-if="formLayoutField" :widget="formLayoutField">
+        <WidgetErrorBoundary v-if="formLayoutField" :key="treeGeneration" :widget="formLayoutField">
           <WidgetRenderer :widget="formLayoutField" />
         </WidgetErrorBoundary>
       </form>

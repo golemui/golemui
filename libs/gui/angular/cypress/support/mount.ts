@@ -78,9 +78,23 @@ export const mountFramework = (options: MountOptions) => {
     // made by mount(). A second call flushes it so config$ emits and the store is initialized
     // before onFormReady exposes the handle to the test.
     fixture.detectChanges();
+    let currentConfig = config;
     options.onFormReady?.({
       setData: (data) => fixture.componentRef.instance.setData(data),
       setMeta: (meta) => fixture.componentRef.instance.setMeta(meta),
+      setConfig: (next) => {
+        currentConfig = {
+          ...currentConfig,
+          formDef: next.formDef,
+          data: next.data,
+          meta: next.meta,
+        };
+        fixture.componentRef.setInput('config', currentConfig);
+        // Two runs for the same reason as above: the first schedules the toObservable effect,
+        // the second flushes it.
+        fixture.detectChanges();
+        fixture.detectChanges();
+      },
     });
   });
 };
