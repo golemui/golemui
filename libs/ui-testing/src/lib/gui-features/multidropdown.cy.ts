@@ -224,6 +224,7 @@ export const runMultiDropdownComponentTests = (mountFn: MountComponentFn) => {
 
       it('should remove pills on Delete with focus handoff, ending at the input', () => {
         mountMultiDropdown({ data: { myField: ['React', 'Vue'] } });
+        cy.get(sel.pill).should('have.length', 2);
 
         cy.get(sel.input).focus();
         cy.focused().type('{leftArrow}');
@@ -245,6 +246,7 @@ export const runMultiDropdownComponentTests = (mountFn: MountComponentFn) => {
 
       it('should enter the strip at the LAST pill on ArrowLeft at caret 0', () => {
         mountMultiDropdown({ data: { myField: ['React', 'Vue'] } });
+        cy.get(sel.pill).should('have.length', 2);
 
         cy.get(sel.input).focus();
         cy.focused().type('{leftArrow}');
@@ -253,6 +255,7 @@ export const runMultiDropdownComponentTests = (mountFn: MountComponentFn) => {
 
       it('should NOT enter the strip while the caret is inside the draft', () => {
         mountMultiDropdown({ data: { myField: ['React'] } });
+        cy.get(sel.pill).should('have.length', 1);
 
         cy.get(sel.input).type('x');
         cy.focused().type('{leftArrow}');
@@ -261,6 +264,7 @@ export const runMultiDropdownComponentTests = (mountFn: MountComponentFn) => {
 
       it('should focus (not delete) the last pill on Backspace with an empty draft', () => {
         mountMultiDropdown({ data: { myField: ['React', 'Vue'] } });
+        cy.get(sel.pill).should('have.length', 2);
 
         cy.get(sel.input).focus();
         cy.focused().type('{backspace}');
@@ -270,6 +274,7 @@ export const runMultiDropdownComponentTests = (mountFn: MountComponentFn) => {
 
       it('should return focus to the input on ArrowRight past the last pill', () => {
         mountMultiDropdown({ data: { myField: ['React', 'Vue'] } });
+        cy.get(sel.pill).should('have.length', 2);
 
         cy.get(sel.input).focus();
         cy.focused().type('{leftArrow}');
@@ -304,6 +309,7 @@ export const runMultiDropdownComponentTests = (mountFn: MountComponentFn) => {
 
       it('should enter the pills dropdown on ArrowLeft at caret 0 and close the panel', () => {
         mountMultiDropdown({ data: { myField: ['React', 'Vue'] } });
+        cy.get(sel.pill).should('have.length', 2);
 
         // Focusing the input opens the panel first
         cy.get(sel.input).focus();
