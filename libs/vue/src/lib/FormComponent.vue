@@ -54,15 +54,32 @@ watch(
   { flush: 'post' },
 );
 
+// INITIALIZE resets the store and derives nothing. A new store gets its data and meta from the
+// watchers below, but a formDef replaced on the same config object does not bump storeVersion,
+// so this watcher dispatches them itself.
+let initializedStoreVersion = -1;
 watch(
   () => [props.config.formDef, storeVersion.value],
   () => {
+    const storeIsNew = storeVersion.value !== initializedStoreVersion;
+    initializedStoreVersion = storeVersion.value;
     formContext.store.dispatch({
       type: 'INITIALIZE',
       payload: {
         formName: formName.value,
         formDef: props.config.formDef,
       },
+    });
+    if (storeIsNew) {
+      return;
+    }
+    formContext.store.dispatch({
+      type: 'SET_DATA',
+      payload: { data: props.config.data || {} },
+    });
+    formContext.store.dispatch({
+      type: 'SET_META',
+      payload: { meta: props.config.meta || {} },
     });
   },
   { immediate: true },
