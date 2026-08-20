@@ -1,36 +1,29 @@
-import type { DisplayWidget } from '@golemui/core';
+import { type DisplayWidget, widgetViewModel$ } from '@golemui/core';
 import { useEffect, useState } from 'react';
 import { useReactFormContext } from '../ReactFormContext';
-import { useTemplateData } from './internal/useExtraProps';
+import { mergeViewModelIntoTemplateData, type WithFlattenedProps } from './internal/template-data';
 
 export function useDisplayWidget<ExtraProps extends Record<string, any>>(
   widget: DisplayWidget<string>,
 ) {
   const { formContext } = useReactFormContext();
-  const [uid, setUid] = useState('');
-  const templateData = useTemplateData<DisplayWidget<string>, ExtraProps>(widget);
+  const [templateData, setTemplateData] = useState(
+    {} as WithFlattenedProps<DisplayWidget<string>, ExtraProps>,
+  );
 
   useEffect(() => {
-    setUid(widget.uid);
-  }, [widget]);
-
-  useEffect(() => {
-    formContext.store.dispatch({
-      type: 'ADD_WIDGET',
-      payload: { widget: widget },
-    });
-  }, [widget, formContext.store]);
-
-  useEffect(() => {
-    return () => {
-      formContext.store.dispatch({
-        type: 'REMOVE_WIDGET',
-        payload: { uid: widget.uid },
+    const sub = formContext.store.state$
+      .pipe(widgetViewModel$(widget.uid))
+      .subscribe((viewModel) => {
+        setTemplateData((current) =>
+          mergeViewModelIntoTemplateData(current, viewModel, formContext.dependencies),
+        );
       });
-    };
-  }, [formContext, widget]);
+    return () => sub.unsubscribe();
+  }, [widget, formContext]);
+
   return {
-    uid,
+    uid: widget.uid,
     templateData,
   };
 }

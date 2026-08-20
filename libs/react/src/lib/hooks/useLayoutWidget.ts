@@ -1,43 +1,31 @@
-import { type FormWidget, type LayoutWidget, calculatedLayoutChildrenByUid$ } from '@golemui/core';
+import { type FormWidget, type LayoutWidget, widgetViewModel$ } from '@golemui/core';
 import { useCallback, useEffect, useState } from 'react';
 import { useReactFormContext } from '../ReactFormContext';
-import { useTemplateData } from './internal/useExtraProps';
+import { mergeViewModelIntoTemplateData, type WithFlattenedProps } from './internal/template-data';
 
 export function useLayoutWidget<ExtraProps extends Record<string, any>>(
   widget: LayoutWidget<string>,
 ) {
   const { formContext } = useReactFormContext();
-  const [uid, setUid] = useState('');
   const [children, setChildren] = useState<FormWidget<string>[]>([]);
-  const templateData = useTemplateData<LayoutWidget<string>, ExtraProps>(widget);
+  const [templateData, setTemplateData] = useState(
+    {} as WithFlattenedProps<LayoutWidget<string>, ExtraProps>,
+  );
 
-  useEffect(() => {
-    setUid(widget.uid);
-  }, [widget]);
-
-  useEffect(() => {
-    formContext.store.dispatch({
-      type: 'ADD_WIDGET',
-      payload: { widget: widget },
-    });
-  }, [widget, formContext.store]);
-
-  // Listen to the layout's `hidden`-flag-filtered children stream
   useEffect(() => {
     const sub = formContext.store.state$
-      .pipe(calculatedLayoutChildrenByUid$(widget.uid))
-      .subscribe(setChildren);
-    return () => sub.unsubscribe();
-  }, [formContext.store, widget]);
-
-  useEffect(() => {
-    return () => {
-      formContext.store.dispatch({
-        type: 'REMOVE_WIDGET',
-        payload: { uid: widget.uid },
+      .pipe(widgetViewModel$(widget.uid))
+      .subscribe((viewModel) => {
+        // Keep the last children while hidden, otherwise the layout renders empty
+        if (viewModel.widget !== undefined) {
+          setChildren(viewModel.children);
+        }
+        setTemplateData((current) =>
+          mergeViewModelIntoTemplateData(current, viewModel, formContext.dependencies),
+        );
       });
-    };
-  }, [formContext, widget]);
+    return () => sub.unsubscribe();
+  }, [widget, formContext]);
 
   const onChange = useCallback(
     (detail: any) => {
@@ -47,7 +35,7 @@ export function useLayoutWidget<ExtraProps extends Record<string, any>>(
   );
 
   return {
-    uid,
+    uid: widget.uid,
     children,
     templateData,
     onChange,

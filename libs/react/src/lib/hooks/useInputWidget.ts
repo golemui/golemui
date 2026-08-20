@@ -1,82 +1,44 @@
-import {
-  type InputWidget,
-  dataByPath$,
-  injectedValidationByPath$,
-  touchedControlsByPath$,
-  validationByPath$,
-} from '@golemui/core';
+import { type InputWidget, type NonFunctionWidget, widgetViewModel$ } from '@golemui/core';
 import { useCallback, useEffect, useState } from 'react';
-import { combineLatest } from 'rxjs';
 import { useReactFormContext } from '../ReactFormContext';
-import { useTemplateData } from './internal/useExtraProps';
+import { mergeViewModelIntoTemplateData, type WithFlattenedProps } from './internal/template-data';
 
 export function useInputWidget<T, ExtraProps extends Record<string, any>>(
   widget: InputWidget<T, string>,
 ) {
   const { formContext } = useReactFormContext();
-  const [uid, setUid] = useState('');
   const [value, setValue] = useState<T | undefined>(undefined);
   const [errors, setErrors] = useState<string[]>([]);
   const [isTouched, setIsTouched] = useState<boolean | undefined>(undefined);
+  const [templateData, setTemplateData] = useState(
+    {} as WithFlattenedProps<InputWidget<T, string>, ExtraProps> & {
+      /**
+       * Repeater inputs only: one row layout node per row of the array value, uid and path already indexed
+       */
+      rows?: NonFunctionWidget<string>[];
+    },
+  );
 
-  const templateData = useTemplateData<InputWidget<T, string>, ExtraProps>(widget);
-
-  useEffect(() => {
-    formContext.store.dispatch({
-      type: 'ADD_WIDGET',
-      payload: { widget: widget },
-    });
-    formContext.store.dispatch({
-      type: 'SET_WIDGET_INITIAL_DATA',
-      payload: { data: widget.defaultValue, path: widget.path },
-    });
-    setUid(widget.uid);
-  }, [widget, formContext.store]);
-
-  // Set the initial templateData, including the controls's data value
   useEffect(() => {
     const sub = formContext.store.state$
-      .pipe(dataByPath$<T>(widget.path))
-      .subscribe((data) => setValue(data));
-    return () => sub.unsubscribe();
-  }, [widget.path, formContext.store.state$]);
-
-  // Listen to the validation stream for this control
-  useEffect(() => {
-    const validation$ = formContext.store.state$.pipe(validationByPath$(widget.path));
-    const injectedValidation$ = formContext.store.state$.pipe(
-      injectedValidationByPath$(widget.path),
-    );
-
-    const sub = combineLatest([validation$, injectedValidation$]).subscribe(
-      ([validation, injectedValidation]) => {
-        setErrors([...(validation ?? []), ...(injectedValidation ?? [])]);
-      },
-    );
-    return () => sub.unsubscribe();
-  }, [widget, formContext.store]);
-
-  // Listen to the touchedControls stream for this control
-  useEffect(() => {
-    const sub = formContext.store.state$
-      .pipe(touchedControlsByPath$(widget.path))
-      .subscribe((touched) => {
-        setIsTouched(touched);
+      .pipe(widgetViewModel$<T>(widget.uid))
+      .subscribe((viewModel) => {
+        setValue(viewModel.value);
+        // `errors` is shared between widgets while the form is untouched, so never write into it.
+        setErrors(viewModel.errors);
+        setIsTouched(viewModel.touched);
+        setTemplateData((current) =>
+          mergeViewModelIntoTemplateData(current, viewModel, formContext.dependencies, (vm) =>
+            // Keep the last rows while hidden, the view model empties them.
+            vm.widget !== undefined ? { rows: vm.rows } : {},
+          ),
+        );
       });
     return () => sub.unsubscribe();
-  }, [widget, formContext.store]);
+  }, [widget, formContext]);
 
   useEffect(() => {
     formContext.emitEvent('load', widget);
-  }, [formContext, widget]);
-
-  useEffect(() => {
-    return () => {
-      formContext.store.dispatch({
-        type: 'REMOVE_WIDGET',
-        payload: { uid: widget.uid },
-      });
-    };
   }, [formContext, widget]);
 
   const onValueChanged = useCallback(
@@ -116,7 +78,7 @@ export function useInputWidget<T, ExtraProps extends Record<string, any>>(
   }, [formContext, widget]);
 
   return {
-    uid,
+    uid: widget.uid,
     value,
     templateData,
     errors,
