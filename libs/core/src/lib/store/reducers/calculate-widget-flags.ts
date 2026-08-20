@@ -3,13 +3,19 @@ import {
   isActionWidget,
   isFunctionWidget,
   isInputWidget,
+  isLayoutWidget,
   type NonFunctionWidget,
 } from '../../form-widget';
 import { type $Errors, type ExpressionFunctions, type Uid } from '../../shared';
 import { calculateValidationVariables, type ValidationVariables } from '../../utils/form';
 import { expressionIsTrue } from '../../utils/justin';
 import { get } from '../../utils/object';
-import { extractRepeaterIndexes, transformWidgetWhenExpressions } from '../../utils/repeater';
+import {
+  extractRepeaterIndexes,
+  isRepeaterWidget,
+  toRepeaterItemUid,
+  transformWidgetWhenExpressions,
+} from '../../utils/repeater';
 import { type State } from '../model';
 import { hasWhen } from './utils';
 
@@ -39,7 +45,7 @@ function calculateFlags(
     resolveForFlags(uid as Uid, source, state),
   );
 
-  return widgets
+  const flags = widgets
     .filter((widget) => {
       if (widget.include && ('in' in widget.include || 'when' in widget.include)) {
         return true;
@@ -130,6 +136,64 @@ function calculateFlags(
       },
       {} as State['widgetFlags'],
     );
+
+  propagateHiddenToDescendants(state, flags);
+  return flags;
+}
+
+/**
+ * Marks every widget below a hidden widget hidden, so a hidden subtree leaves validation,
+ * touch-all, `isFormValid` and data pruning together with its root.
+ */
+function propagateHiddenToDescendants(state: State, flags: State['widgetFlags']): void {
+  const hiddenRoots = Object.keys(flags).filter((uid) => flags[uid].hidden === true);
+  for (const uid of hiddenRoots) {
+    markDescendantsHidden(uid as Uid, state, flags);
+  }
+}
+
+function markDescendantsHidden(uid: Uid, state: State, flags: State['widgetFlags']): void {
+  const source = state.resolvedSources[uid];
+  if (source === undefined) {
+    return;
+  }
+
+  // Every widget a repeater row produces has a scope whose item path sits under the
+  // repeater's path, nested rows included, so one scan covers the whole row forest.
+  if (isRepeaterWidget(source) || (isFunctionWidget(source) && source.path !== undefined)) {
+    const rowPrefix = `${source.path}.`;
+    for (const [rowUid, scope] of Object.entries(state.repeaterItemScopes)) {
+      if (scope.itemPath.startsWith(rowPrefix)) {
+        markHidden(rowUid as Uid, flags);
+      }
+    }
+  }
+
+  // A layout's children live in resolvedSources under the layout's own row index suffix.
+  if (isLayoutWidget(source)) {
+    const repeaterIndexes = extractRepeaterIndexes(uid);
+    for (const child of source.children) {
+      const childUid = (
+        repeaterIndexes.length > 0
+          ? toRepeaterItemUid(child.uid as Uid, repeaterIndexes)
+          : child.uid
+      ) as Uid;
+      if (state.resolvedSources[childUid] === undefined) {
+        continue;
+      }
+      // A child that is already hidden had its subtree handled by its own iteration.
+      const alreadyHidden = flags[childUid]?.hidden === true;
+      markHidden(childUid, flags);
+      if (!alreadyHidden) {
+        markDescendantsHidden(childUid, state, flags);
+      }
+    }
+  }
+}
+
+function markHidden(uid: Uid, flags: State['widgetFlags']): void {
+  flags[uid] = flags[uid] || {};
+  flags[uid].hidden = true;
 }
 
 /**
