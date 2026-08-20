@@ -1,26 +1,15 @@
 import { GuiErrorsReact, GuiLabelReact } from '../web-components';
-import type { InputWidget, Validator, WithWidget } from '@golemui/core';
-import { getItemKey, type RepeaterProps } from '@golemui/gui-shared/internals';
-import {
-  RepeaterIndexesContext,
-  useInputWidget,
-  useRepeaterIndexes,
-  WidgetRenderer,
-} from '@golemui/react';
+import type { InputWidget, NonFunctionWidget, Validator, WithWidget } from '@golemui/core';
+import { type RepeaterProps } from '@golemui/gui-shared/internals';
+import { useInputWidget, WidgetRenderer } from '@golemui/react';
 import React, { useCallback, useRef, useState } from 'react';
 import '../styles.scss';
-
-/**
- * Monotonically increasing counter for generating unique repeater item IDs.
- */
-let nextRepeaterItemId = 0;
-const idIncrementer = () => nextRepeaterItemId++;
 
 export function Repeater(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<Record<string, unknown>[]>;
   const { uid, value, onValueChanged, templateData, errors, isTouched, onBlur } = useInputWidget<
     Record<string, unknown>[],
-    RepeaterProps<any>
+    RepeaterProps<NonFunctionWidget<string>>
   >(widget);
 
   const repeaterRef = useRef<HTMLDivElement>(null);
@@ -34,7 +23,7 @@ export function Repeater(widgetInstance: WithWidget) {
   );
 
   const removeItem = useCallback(
-    (value: Record<string, unknown>[], index: number) => {
+    (value: Record<string, unknown>[] | undefined, index: number) => {
       const items = (value ?? []).filter((_, i) => index !== i);
       // Make sure we don't keep object references
       if ('structuredClone' in window) {
@@ -59,42 +48,32 @@ export function Repeater(widgetInstance: WithWidget) {
     setIsFocused(false);
   }, []);
 
-  const repeaterIndexesFromContext = useRepeaterIndexes();
-
   const renderWidgets = useCallback(() => {
-    return value?.map((item, index) => {
-      const itemKey = getItemKey(item, idIncrementer);
-      return (
-        <RepeaterIndexesContext.Provider
-          value={[...repeaterIndexesFromContext, index]}
-          key={`${uid}-${itemKey}`}
-        >
-          <div className="gui-repeater__card">
-            <div className="gui-repeater__card-header">
-              {templateData.title && (
-                <span className="gui-repeater__card-title">{`${templateData.title} ${index + 1}`}</span>
-              )}
-              <button
-                type="button"
-                tabIndex={0}
-                className="gui-button gui-button--sm gui-repeater__remove-btn"
-                onClick={() => removeItem(value, index)}
-              >
-                {templateData.removeButtonIcon && (
-                  <span
-                    className={`gui-widget-icon gui-button-icon ${templateData.removeButtonIcon}`}
-                    data-icon={templateData.removeButtonIcon}
-                  ></span>
-                )}
-                {templateData.removeLabel ?? 'Remove'}
-              </button>
-            </div>
-            <WidgetRenderer key={`${uid}-${itemKey}`} widget={templateData.template} />
-          </div>
-        </RepeaterIndexesContext.Provider>
-      );
-    });
-  }, [templateData, value, uid, removeItem, repeaterIndexesFromContext]);
+    return (templateData.rows ?? []).map((row, index) => (
+      <div key={row.uid} className="gui-repeater__card">
+        <div className="gui-repeater__card-header">
+          {templateData.title && (
+            <span className="gui-repeater__card-title">{`${templateData.title} ${index + 1}`}</span>
+          )}
+          <button
+            type="button"
+            tabIndex={0}
+            className="gui-button gui-button--sm gui-repeater__remove-btn"
+            onClick={() => removeItem(value, index)}
+          >
+            {templateData.removeButtonIcon && (
+              <span
+                className={`gui-widget-icon gui-button-icon ${templateData.removeButtonIcon}`}
+                data-icon={templateData.removeButtonIcon}
+              ></span>
+            )}
+            {templateData.removeLabel ?? 'Remove'}
+          </button>
+        </div>
+        <WidgetRenderer widget={row} />
+      </div>
+    ));
+  }, [templateData, value, removeItem]);
 
   const isRequired = (templateData.validator as Validator)?.required;
   const showErrors = isTouched && errors && errors.length > 0;
