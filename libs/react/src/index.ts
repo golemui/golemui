@@ -16,8 +16,6 @@ export { useInputWidget } from './lib/hooks/useInputWidget';
 export { useItemRenderer } from './lib/hooks/useItemRenderer';
 export { useLayoutWidget } from './lib/hooks/useLayoutWidget';
 
-export { RepeaterIndexesContext, useRepeaterIndexes } from './lib/RepeaterIndexesContext';
-
 export { cn } from './lib/utils/cn';
 export type { Cn, CnArray, CnRecord, CnValue } from './lib/utils/cn';
 

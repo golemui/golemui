@@ -1,35 +1,19 @@
-import {
-  type NonFunctionWidget,
-  type WithWidget,
-  cloneObject,
-  errorCodes,
-  makeRepeaterItemConfig,
-} from '@golemui/core';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { type NonFunctionWidget, type WithWidget, errorCodes } from '@golemui/core';
+import { useEffect, useRef, useState } from 'react';
 import WidgetErrorBoundary from './WidgetErrorBoundary';
 import { useReactFormContext } from './ReactFormContext';
-import { useRepeaterIndexes } from './RepeaterIndexesContext';
 
 type Props = {
   widget: NonFunctionWidget<string>;
-  repeaterIndex?: number;
 };
 
 type WidgetComponent = React.ComponentType<WithWidget>;
 
+// Repeater rows and layout children arrive from the store with their row indexes already applied to `uid` and `path`, so the renderer takes the widget as it is
 function WidgetRenderer(props: Props) {
   const { formContext } = useReactFormContext();
   const [Component, setComponent] = useState<WidgetComponent | null>(null);
-  // We have to `() => props.widget` because when `props.widget` is a Widget Function we don't want React interprets it as a lazy initializer e.g. `useState(() => initialState)`
-  const [widget, setWidget] = useState(() => props.widget);
   const isMounted = useRef(true);
-  const repeaterIndexesFromContext = useRepeaterIndexes();
-  const repeaterIndexes = useMemo(() => {
-    if (props.repeaterIndex === undefined) {
-      return repeaterIndexesFromContext;
-    }
-    return [...repeaterIndexesFromContext, props.repeaterIndex];
-  }, [repeaterIndexesFromContext, props.repeaterIndex]);
 
   useEffect(() => {
     isMounted.current = true;
@@ -37,14 +21,6 @@ function WidgetRenderer(props: Props) {
       try {
         const loadedComponent = await formContext.widgetRegistry.loadWidget(props.widget.type);
         if (isMounted.current) {
-          if (repeaterIndexes.length > 0) {
-            const materializedWidget = makeRepeaterItemConfig(
-              cloneObject(props.widget),
-              repeaterIndexes,
-            );
-            // Wrapped in a closure to avoid being treated as a setState updater function!
-            setWidget(() => materializedWidget);
-          }
           setComponent(() => loadedComponent);
         }
       } catch {
@@ -66,15 +42,15 @@ function WidgetRenderer(props: Props) {
     return () => {
       isMounted.current = false;
     };
-  }, [props.widget, repeaterIndexes, formContext.widgetRegistry, formContext.store]);
+  }, [props.widget, formContext.widgetRegistry, formContext.store]);
 
   if (!Component) {
     return null;
   }
 
   return (
-    <WidgetErrorBoundary widget={widget}>
-      <Component widget={widget} />
+    <WidgetErrorBoundary widget={props.widget}>
+      <Component widget={props.widget} />
     </WidgetErrorBoundary>
   );
 }
