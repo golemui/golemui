@@ -4,7 +4,6 @@ import { type ValidatorFn } from '../form-validator';
 import {
   type ActionWidget,
   type DisplayWidget,
-  type FormWidget,
   type FunctionWidget,
   type InputWidget,
   type LayoutWidget,
@@ -25,10 +24,6 @@ import { reducer } from './reducer';
  * The store computes the whole widget set from the data on every input-changing action (one
  * derive), so nothing here mounts a component: `calculatedWidgets` holds every visible widget as
  * soon as `SET_DATA` runs.
- *
- * `REFACTOR-NOTE` marks a mechanic that disappears when the no-op mount actions (`ADD_WIDGET`,
- * `REMOVE_WIDGET`, `SET_WIDGET_INITIAL_DATA`) and the blur-time function-widget re-resolve are
- * removed. Everything else is a plain assertion: behavior that must survive.
  *
  * Run: npx vitest run --config libs/core/vite.config.ts src/lib/store/reducer.spec.ts
  */
@@ -102,11 +97,6 @@ const blur = (path: string, uid: string): Action => ({
 });
 
 const validateAllAction: Action = { type: 'VALIDATE_ALL' };
-
-const addWidget = (widget: FormWidget<string>): Action => ({
-  type: 'ADD_WIDGET',
-  payload: { widget },
-});
 
 const propsOf = (state: State, uid: string): Record<string, any> =>
   (state.calculatedWidgets[uid].current as NonFunctionWidget<string>).props ?? {};
@@ -309,8 +299,48 @@ const makeRowNameFunctionWidget = (): FunctionWidget<string> => {
   return rowName;
 };
 
+/** The same echoing function widget, at the top level of the form. */
+const makeTopLevelFunctionWidget = (): FunctionWidget<string> => {
+  const firstName: FunctionWidget<string> = (api) =>
+    ({
+      uid: 'firstName',
+      kind: 'input',
+      type: 'textinput',
+      path: 'firstName',
+      validator: { required: true },
+      props: {
+        seenErrors: api?.errors,
+        seenTouched: api?.touched,
+        seenTranslate: typeof api?.translate,
+      },
+    }) as InputWidget<any, string>;
+  firstName.uid = 'firstName';
+  return firstName;
+};
+
 const makeRowFunctionFormDef = () => ({
   form: [
+    {
+      uid: 'users',
+      kind: 'input',
+      type: 'repeater',
+      path: 'users',
+      props: {
+        template: {
+          uid: 'usersRow',
+          kind: 'layout',
+          type: 'flex',
+          children: [makeRowNameFunctionWidget()],
+        },
+      },
+    },
+  ],
+});
+
+/** A function widget at the top level and another inside a repeater row, both required. */
+const makeFunctionWidgetsFormDef = () => ({
+  form: [
+    makeTopLevelFunctionWidget(),
     {
       uid: 'users',
       kind: 'input',
@@ -736,21 +766,6 @@ describe('reducer end-to-end', () => {
       expect(current.props?.['seenTouched']).toBeUndefined();
       expect(current.props?.['seenTranslate']).toBe('function');
     });
-
-    // REFACTOR-NOTE: the three mount actions are no-ops and go away with their dispatch sites.
-    it('ADD_WIDGET, REMOVE_WIDGET and SET_WIDGET_INITIAL_DATA return the same state object', () => {
-      const state = drive([init(makeBaseFormDef()), setData({ firstName: 'Joan' })]);
-      const reduce = makeReducer();
-
-      expect(reduce(state, addWidget(state.flatForm['bio']))).toBe(state);
-      expect(reduce(state, { type: 'REMOVE_WIDGET', payload: { uid: 'firstName' } })).toBe(state);
-      expect(
-        reduce(state, {
-          type: 'SET_WIDGET_INITIAL_DATA',
-          payload: { path: 'firstName', data: 'default' },
-        }),
-      ).toBe(state);
-    });
   });
 
   // ---------------------------------------------------------------------------
@@ -927,10 +942,10 @@ describe('reducer end-to-end', () => {
   });
 
   // ---------------------------------------------------------------------------
-  // 6. Blur recompute for a row function widget
+  // 6. Function widgets after a blur
   // ---------------------------------------------------------------------------
 
-  describe('blur recompute for a row function widget', () => {
+  describe('function widgets after a blur', () => {
     it('re-resolves the row function widget with touched, errors and $item / $index in scope', () => {
       const initial = drive([
         init(makeRowFunctionFormDef()),
@@ -963,10 +978,49 @@ describe('reducer end-to-end', () => {
       });
       expect(current.props?.['seenErrors']).toEqual(['required']);
 
-      // REFACTOR-NOTE: the blur-time re-resolve writes a fresh object into calculatedWidgets even
-      // though the props pass produced an equal one. Goes away with the mount actions.
+      // The blur changed what the widget sees, so it gets a new reference.
       expect(state.calculatedWidgets['rowName[1]']).not.toBe(
         initial.calculatedWidgets['rowName[1]'],
+      );
+    });
+
+    it('re-resolves a top-level function widget with touched and errors in scope', () => {
+      const initial = drive([
+        init(makeFunctionWidgetsFormDef()),
+        setData({ firstName: '', users: [{ name: 'Ada' }] }),
+      ]);
+
+      const reduce = makeReducer();
+      const state = reduce(initial, blur('firstName', 'firstName'));
+
+      const current = state.calculatedWidgets['firstName'].current as InputWidget<any, string>;
+
+      expect(current.props?.['seenTouched']).toBe(true);
+      expect(current.props?.['seenErrors']).toEqual(['required']);
+      expect(current.props?.['seenTranslate']).toBe('function');
+      expect(current.uid).toBe('firstName');
+      expect(current.path).toBe('firstName');
+      expect(state.validations['firstName']).toEqual(['required']);
+      expect(state.touchedControls['firstName']).toBe(true);
+    });
+
+    it('keeps the calculated entry by reference when the same blur is dispatched twice', () => {
+      const initial = drive([
+        init(makeFunctionWidgetsFormDef()),
+        setData({ firstName: '', users: [{ name: '' }] }),
+      ]);
+
+      const reduce = makeReducer();
+      const first = reduce(initial, blur('firstName', 'firstName'));
+      const second = reduce(first, blur('firstName', 'firstName'));
+
+      expect(second.calculatedWidgets['firstName']).toBe(first.calculatedWidgets['firstName']);
+
+      const rowFirst = reduce(second, blur('users.0.name', 'rowName[0]'));
+      const rowSecond = reduce(rowFirst, blur('users.0.name', 'rowName[0]'));
+
+      expect(rowSecond.calculatedWidgets['rowName[0]']).toBe(
+        rowFirst.calculatedWidgets['rowName[0]'],
       );
     });
   });
