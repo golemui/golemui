@@ -63,6 +63,23 @@ export const runNumberComponentTests = (mountFn: MountComponentFn) => {
         input().should('not.have.attr', 'min');
         input().should('not.have.attr', 'max');
       });
+
+      it('should surface a minimum or maximum of 0', () => {
+        mountNumber({ minimum: 0, maximum: 0 });
+        input().should('have.attr', 'min', '0');
+        input().should('have.attr', 'max', '0');
+      });
+    });
+
+    describe('keyboard stepping', () => {
+      it('should clamp ArrowDown at a minimum of 0', () => {
+        mountNumber({ minimum: 0 });
+        input().type('1');
+        input().type('{downArrow}');
+        input().should('have.value', '0');
+        input().type('{downArrow}');
+        input().should('have.value', '0');
+      });
     });
   });
 };

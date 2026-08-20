@@ -5,7 +5,7 @@ import { safeDefine } from '@golemui/lit/internals';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addIcon, addLabel, type ControlTemplateData } from '../utils/templates';
-import { blockNonNumericInput, blockNonNumericKeys } from '../utils/numeric';
+import { blockNonNumericInput, blockNonNumericKeys, isRealNumber } from '../utils/numeric';
 
 export class GuiCurrency extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
@@ -55,12 +55,60 @@ export class GuiCurrency extends LitElement {
     this.classList.add('gui-field');
   }
 
-  override willUpdate(changedProperties: PropertyValues) {
-    if (changedProperties.has('value')) {
-      if (document.activeElement !== this.inputElement) {
-        this.displayValue = this.formatCurrency(this.value);
-      }
+  /**
+   * The value as an actual number, or undefined. Property bindings bypass the
+   * Lit converter, so consumers can hand us '', NaN or null; the String
+   * converter additionally makes numeric strings legitimate on the attribute
+   * path.
+   */
+  private get normalizedValue(): number | undefined {
+    if (isRealNumber(this.value)) return this.value;
+    if (typeof this.value === 'string' && this.value !== '') {
+      const parsed = Number(this.value);
+      return Number.isNaN(parsed) ? undefined : parsed;
     }
+    return undefined;
+  }
+
+  override willUpdate(changedProperties: PropertyValues) {
+    const affectsFormat = [
+      'value',
+      'currency',
+      'localeId',
+      'maximumFractionDigits',
+      'minimumFractionDigits',
+    ].some((prop) => changedProperties.has(prop));
+    if (affectsFormat && !this.inputElement?.matches(':focus')) {
+      this.displayValue = this.formatCurrency(this.value);
+    }
+  }
+
+  /**
+   * Owns the native input value instead of a template binding, mirroring
+   * gui-number: the comparison is numeric so a focused draft that parses to
+   * the store value survives, and a focused input is left alone while typing.
+   */
+  private syncNativeInput(): void {
+    const input = this.inputElement;
+    if (!input || input.matches(':focus')) {
+      return;
+    }
+    const storeValue = this.normalizedValue;
+    const shownValue = input.valueAsNumber;
+    const bothEmpty = Number.isNaN(shownValue) && storeValue === undefined;
+    const sameNumber = !Number.isNaN(shownValue) && shownValue === storeValue;
+    if (bothEmpty || sameNumber) {
+      return;
+    }
+    if (storeValue === undefined) {
+      input.value = '';
+    } else {
+      input.valueAsNumber = storeValue;
+    }
+  }
+
+  protected override updated(): void {
+    this.syncNativeInput();
   }
 
   override render() {
@@ -75,7 +123,7 @@ export class GuiCurrency extends LitElement {
       required: this.required,
       disabled: this.disabled,
       readonly: this.readOnly,
-      value: this.value as number,
+      value: this.normalizedValue as number,
       currency: this.currency,
       maximumFractionDigits: this.maximumFractionDigits,
       minimumFractionDigits: this.minimumFractionDigits,
@@ -83,13 +131,6 @@ export class GuiCurrency extends LitElement {
       placeholder: this.placeholder,
       autocomplete: this.autocomplete,
     };
-
-    this.displayValue = this.formatCurrency(this.value);
-
-    // NaN means "no value": the Vue binding sends it because Vue turns an undefined binding
-    // into 0 on a number-valued property (same convention as gui-number).
-    const nativeValue =
-      this.value === null || this.value === undefined || Number.isNaN(this.value) ? '' : this.value;
 
     // Icon
     const currencyIcon = addIcon('currency', templateData);
@@ -110,7 +151,6 @@ export class GuiCurrency extends LitElement {
           data-cy=${`${this.uid}_currency`}
           class=${classMap(fieldClasses)}
           step=${this.step && this.step > 0 ? this.step : nothing}
-          .value=${nativeValue}
           ?required=${this.required}
           ?disabled=${this.disabled}
           ?readonly=${this.readOnly}
@@ -161,6 +201,9 @@ export class GuiCurrency extends LitElement {
   }
 
   private handleBlur() {
+    // Land any programmatic value the focus guard deferred while the user was
+    // typing, before downstream listeners read the input.
+    this.syncNativeInput();
     this.displayValue = this.formatCurrency(this.value);
 
     this.dispatchEvent(

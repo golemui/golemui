@@ -1,5 +1,6 @@
 import { html, LitElement, nothing } from 'lit';
 import { property, state } from 'lit/decorators.js';
+import { live } from 'lit/directives/live.js';
 import { safeDefine } from '@golemui/lit/internals';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
@@ -205,7 +206,7 @@ export class GuiMarkdown extends LitElement {
             ?readonly=${templateData.readonly}
             placeholder=${ifDefined(templateData.placeholder)}
             autocomplete=${this.autocomplete || nothing}
-            .value=${this.value || ''}
+            .value=${live(this.value ?? '')}
             @input=${this.valueChanged}
             @keyup=${this.detectFormats}
             @mouseup=${this.detectFormats}
