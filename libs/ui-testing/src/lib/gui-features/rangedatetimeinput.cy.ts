@@ -374,8 +374,10 @@ export const runRangeDateTimeInputComponentTests = (mountFn: MountComponentFn) =
       const november = { start: '2026-11-22T09:00:00', end: '2026-11-22T11:00:00' };
       const may = { start: '2026-05-10T09:00:00', end: '2026-05-10T10:00:00' };
 
-      const mountWithRanges = () =>
+      const mountWithRanges = () => {
         mountRangeDateTimeInput({ data: { myRanges: [november, may] } });
+        cy.get('button.gui-pills__pill').should('have.length', 2);
+      };
 
       // These pin the strip-mode model, so hold the wrapper above the compact
       // threshold; the harness would otherwise collapse it to the bubble.
@@ -420,7 +422,7 @@ export const runRangeDateTimeInputComponentTests = (mountFn: MountComponentFn) =
         cy.focused().should('have.attr', 'data-group', 'start');
       });
 
-      it.skip('should focus (not delete) the last pill on Delete when the segments are empty', () => {
+      it('should focus (not delete) the last pill on Delete when the segments are empty', () => {
         mountWithRanges();
 
         cy.get(sel.startDay).focus();

@@ -385,7 +385,10 @@ export const runRangeTimeInputComponentTests = (mountFn: MountComponentFn) => {
       const morning = { start: '09:00:00', end: '11:00:00' };
       const evening = { start: '14:00:00', end: '16:00:00' };
 
-      const mountWithRanges = () => mountRangeTimeInput({ data: { myRanges: [evening, morning] } });
+      const mountWithRanges = () => {
+        mountRangeTimeInput({ data: { myRanges: [evening, morning] } });
+        cy.get('button.gui-pills__pill').should('have.length', 2);
+      };
 
       // These pin the strip-mode model, so hold the wrapper above the compact
       // threshold; the harness would otherwise collapse it to the bubble.
@@ -430,7 +433,7 @@ export const runRangeTimeInputComponentTests = (mountFn: MountComponentFn) => {
         cy.focused().should('have.attr', 'data-group', 'start');
       });
 
-      it.skip('should focus (not delete) the last pill on Delete when the segments are empty', () => {
+      it('should focus (not delete) the last pill on Delete when the segments are empty', () => {
         mountWithRanges();
 
         cy.get(sel.start.hour).focus();

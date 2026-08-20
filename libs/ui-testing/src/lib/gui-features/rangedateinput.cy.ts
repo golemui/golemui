@@ -543,8 +543,10 @@ export const runRangeDateInputComponentTests = (mountFn: MountComponentFn) => {
       const juneLabel = '06/10/2026 - 06/16/2026';
       const marchLabel = '03/05/2026 - 03/08/2026';
 
-      const mountWithRanges = () =>
+      const mountWithRanges = () => {
         mountRangeDateInput({ data: { myRanges: [juneRange, marchRange] } });
+        cy.get('button.gui-pills__pill').should('have.length', 2);
+      };
 
       // These pin the strip-mode model, so hold the wrapper above the compact
       // threshold; the harness would otherwise collapse it to the bubble.
