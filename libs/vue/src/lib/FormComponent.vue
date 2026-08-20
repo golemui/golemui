@@ -56,13 +56,18 @@ watch(
 
 // INITIALIZE resets the store and derives nothing. A new store gets its data and meta from the
 // watchers below, but a formDef replaced on the same config object does not bump storeVersion,
-// so this watcher dispatches them itself.
+// so this watcher dispatches them itself. A replaced config object is not that case: reinit()
+// runs after this watcher and builds a new store, so the follow-up would only feed a store that
+// is about to be dropped.
 let initializedStoreVersion = -1;
+let initializedConfig: FormComponentProps['config'] | null = null;
 watch(
   () => [props.config.formDef, storeVersion.value],
   () => {
     const storeIsNew = storeVersion.value !== initializedStoreVersion;
+    const configIsNew = props.config !== initializedConfig;
     initializedStoreVersion = storeVersion.value;
+    initializedConfig = props.config;
     formContext.store.dispatch({
       type: 'INITIALIZE',
       payload: {
@@ -70,7 +75,7 @@ watch(
         formDef: props.config.formDef,
       },
     });
-    if (storeIsNew) {
+    if (storeIsNew || configIsNew) {
       return;
     }
     formContext.store.dispatch({

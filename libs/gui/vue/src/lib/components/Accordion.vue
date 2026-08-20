@@ -11,10 +11,10 @@ const { uid, children, templateData, onChange } = useLayoutWidget<AccordionProps
 const activeSections = ref<NonNullable<AccordionProps['defaultOpen']>>({});
 let initialized = false;
 
-// Seed `activeSections` from `defaultOpen` exactly once, when templateData first
-// arrives populated (RxJS pushes an empty {} synchronously, then the real value).
-// We can't use reference-equality against a sentinel like React does because
-// `ref({})` wraps the object in a reactive proxy, breaking identity checks.
+// Seed `activeSections` from `defaultOpen` the first time templateData carries it. The view model
+// emits on subscribe, so templateData is already filled here unless the accordion starts hidden.
+// Reference-equality against a sentinel like React does is not possible because `ref({})` wraps
+// the object in a reactive proxy, breaking identity checks.
 watch(
   templateData,
   (td) => {
