@@ -108,7 +108,7 @@
 
     @container gui-picker-widget (max-width: 540px) {
       .gui-widget > .gui-picker__panel:not(#{$nested-in-calendar}) {
-        width: 100%;
+        width: calc(100% - var(--gui-space-2) * 2 - 2px);
 
         > :is(
           gui-calendar,
