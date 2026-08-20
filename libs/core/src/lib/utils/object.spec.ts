@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { cloneObject, get, pathExists, set, unset } from './object';
+import { cloneObject, copyOnWriteSet, get, pathExists, set, unset } from './object';
 
 describe('object.set', () => {
   it('sets dot notation paths', () => {
@@ -113,6 +113,54 @@ describe('object.set', () => {
         items: ['a', 'b', undefined, undefined, undefined, 'f'],
       });
     });
+  });
+});
+
+describe('object.copyOnWriteSet', () => {
+  it('sets the value without modifying the input', () => {
+    const obj = { a: { b: 'old' } };
+    const next = copyOnWriteSet(obj, 'a.b', 'new');
+    expect(next).toEqual({ a: { b: 'new' } });
+    expect(obj).toEqual({ a: { b: 'old' } });
+  });
+
+  it('copies the containers along the path and keeps siblings by reference', () => {
+    const obj = { a: { b: 1 }, c: { d: 2 } };
+    const next = copyOnWriteSet(obj, 'a.b', 3);
+    expect(next).not.toBe(obj);
+    expect(next['a']).not.toBe(obj.a);
+    expect(next['c']).toBe(obj.c);
+  });
+
+  it('copies an array container and keeps the untouched entries by reference', () => {
+    const obj = { items: [{ name: 'a' }, { name: 'b' }] };
+    const next = copyOnWriteSet(obj, 'items.1.name', 'c');
+    expect(next['items']).not.toBe(obj.items);
+    expect(next['items'][0]).toBe(obj.items[0]);
+    expect(next['items'][1]).toEqual({ name: 'c' });
+    expect(obj.items[1]).toEqual({ name: 'b' });
+  });
+
+  it('creates missing containers like set does', () => {
+    expect(copyOnWriteSet({}, 'a.b.c', 'value')).toEqual({ a: { b: { c: 'value' } } });
+    expect(copyOnWriteSet({}, 'items.0.name', 'test')).toEqual({ items: [{ name: 'test' }] });
+    expect(copyOnWriteSet({ a: 'string' }, 'a.b.c', 'nested')).toEqual({
+      a: { b: { c: 'nested' } },
+    });
+  });
+
+  it('keeps array holes as holes, so pathExists still reports them as absent', () => {
+    const obj: Record<string, any> = { items: [] };
+    obj['items'][2] = 'c';
+    const next = copyOnWriteSet(obj, 'items.2', 'x');
+    expect(pathExists(next, 'items.0')).toBe(false);
+    expect(next['items'][2]).toBe('x');
+  });
+
+  it('throws like set on a null object, an undefined object and an empty path', () => {
+    expect(() => copyOnWriteSet(null as any, 'a', 'value')).toThrow();
+    expect(() => copyOnWriteSet(undefined as any, 'a', 'value')).toThrow();
+    expect(() => copyOnWriteSet({}, '', 'value')).toThrow();
   });
 });
 

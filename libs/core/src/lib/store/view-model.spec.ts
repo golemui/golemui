@@ -420,6 +420,21 @@ describe('createWidgetViewModelReader', () => {
     expect(read(state, 'users')).toBe(before);
   });
 
+  it('rebuilds the rows when a row is appended through a container path write', () => {
+    const reduce = makeReducer();
+    let state = drive([init(makeBaseFormDef()), setData({ users: [{ name: 'Ada' }] })]);
+    const read = createWidgetViewModelReader();
+
+    const before = read(state, 'users');
+    expect(uidsOf(before.rows)).toEqual(['usersRow[0]']);
+
+    state = reduce(state, setWidgetData('users.1', { name: 'Grace' }));
+    const after = read(state, 'users');
+
+    expect(after).not.toBe(before);
+    expect(uidsOf(after.rows)).toEqual(['usersRow[0]', 'usersRow[1]']);
+  });
+
   it('reuses the rows array when only the form-invalid flag changed', () => {
     const reduce = makeReducer();
     let state = drive([

@@ -2139,4 +2139,90 @@ describe('reducer end-to-end', () => {
       expect(revealed.isFormValid).toBe(false);
     });
   });
+
+  // ---------------------------------------------------------------------------
+  // 22. Data copy-on-write
+  // ---------------------------------------------------------------------------
+
+  describe('data copy-on-write', () => {
+    /** Two inputs under one parent object, a repeater, and an input with a default. */
+    const makeNestedPathsFormDef = () => ({
+      form: [
+        { uid: 'street', kind: 'input', type: 'textinput', path: 'address.street' },
+        { uid: 'city', kind: 'input', type: 'textinput', path: 'address.city' },
+        {
+          uid: 'theme',
+          kind: 'input',
+          type: 'textinput',
+          path: 'settings.theme',
+          defaultValue: 'dark',
+        },
+        {
+          uid: 'users',
+          kind: 'input',
+          type: 'repeater',
+          path: 'users',
+          props: {
+            template: {
+              uid: 'usersRow',
+              kind: 'layout',
+              type: 'flex',
+              children: [
+                { uid: 'name', kind: 'input', type: 'textinput', path: 'users.items.name' },
+              ],
+            },
+          },
+        },
+      ],
+    });
+
+    const driveNestedPaths = (): State =>
+      drive([
+        init(makeNestedPathsFormDef()),
+        setData({ address: { street: 'a', city: 'b' }, users: [{ name: 'Ada' }] }),
+      ]);
+
+    it('SET_WIDGET_DATA copies the containers along the path and keeps the rest by reference', () => {
+      const initial = driveNestedPaths();
+
+      const reduce = makeReducer();
+      const state = reduce(initial, setWidgetData('address.street', 'x'));
+
+      expect(state.data['address']['street']).toBe('x');
+      expect(state.data).not.toBe(initial.data);
+      expect(state.data['address']).not.toBe(initial.data['address']);
+      expect(state.data['users']).toBe(initial.data['users']);
+
+      // The previous state keeps its content: nothing wrote into it.
+      expect(initial.data['address']['street']).toBe('a');
+    });
+
+    it('SET_WIDGET_DATA on a row path gives the repeater array a new identity', () => {
+      const initial = drive([
+        init(makeNestedPathsFormDef()),
+        setData({
+          address: { street: 'a', city: 'b' },
+          users: [{ name: 'Ada' }, { name: 'Linus' }],
+        }),
+      ]);
+
+      const reduce = makeReducer();
+      const state = reduce(initial, setWidgetData('users.1.name', 'Torvalds'));
+
+      expect(state.data['users']).not.toBe(initial.data['users']);
+      expect(state.data['users'][0]).toBe(initial.data['users'][0]);
+      expect(state.data['users'][1]).not.toBe(initial.data['users'][1]);
+      expect(initial.data['users'][1]['name']).toBe('Linus');
+    });
+
+    it('a written default keeps the references of the subtrees it does not touch', () => {
+      const payload = { address: { street: 'a', city: 'b' }, users: [{ name: 'Ada' }] };
+      const state = drive([init(makeNestedPathsFormDef()), setData(payload)]);
+
+      expect(state.data['settings']['theme']).toBe('dark');
+      expect(state.data['address']).toBe(payload.address);
+      expect(state.data['users']).toBe(payload.users);
+      expect(payload).not.toHaveProperty('settings');
+    });
+  });
 });
