@@ -927,6 +927,69 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
         cy.get('[data-cy="secondSection[1]_textinput"]').should('have.value', 'Bea');
         cy.get('[data-cy="secondSection[0]_textinput"]').should('not.exist');
       });
+
+      it('a hidden section child renders no section', () => {
+        mountFn({
+          localization: identityTranslator('en-US'),
+          data: {
+            nestedRows: [
+              { first: 'Alice', second: 'Ann' },
+              { first: 'Bob', second: '' },
+            ],
+          },
+          formDef: defineForm({
+            form: [
+              {
+                uid: 'nestedRowsRepeater',
+                kind: 'input',
+                type: 'repeater',
+                path: NESTED_ROWS_PATH,
+                props: {
+                  addLabel: 'Add row',
+                  removeLabel: 'Remove row',
+                  template: {
+                    uid: 'rowAccordion',
+                    kind: 'layout',
+                    type: 'accordion',
+                    props: {
+                      defaultOpen: { firstSection: true, secondSection: true },
+                      sections: [
+                        { uid: 'firstSection', label: 'First' },
+                        { uid: 'secondSection', label: 'Second' },
+                      ],
+                    },
+                    children: [
+                      {
+                        uid: 'firstSection',
+                        kind: 'input',
+                        type: 'textinput',
+                        path: `${NESTED_ROWS_PATH}.items.first`,
+                        label: 'First',
+                      },
+                      {
+                        uid: 'secondSection',
+                        kind: 'input',
+                        type: 'textinput',
+                        path: `${NESTED_ROWS_PATH}.items.second`,
+                        label: 'Second',
+                        include: { when: '$item.second?.length > 0' },
+                      },
+                    ],
+                  },
+                },
+              },
+            ],
+          }),
+        });
+
+        // The second row's `second` value is empty, so its section child is hidden
+        cy.get('[data-cy="secondSection[0]_textinput"]').should('have.value', 'Ann');
+        cy.get('[data-cy="secondSection[1]_textinput"]').should('not.exist');
+
+        // The header button still renders in both rows, the region only where the child exists
+        cy.get('[id="accordion_button_secondSection"]').should('have.length', 2);
+        cy.get('[id="accordion_section_secondSection"]').should('have.length', 1);
+      });
     });
   });
 };
