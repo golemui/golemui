@@ -176,7 +176,7 @@ export const runTimePickerComponentTests = (mountFn: MountComponentFn) => {
 
         cy.get(sel.hour).click();
         cy.get(sel.items).should('have.length', 5);
-        expectItemLabel(0, /^9:00\sAM$/);
+        expectItemLabel(0, /^09:00\sAM$/);
         expectItemLabel(4, /^11:00\sAM$/);
       });
 
@@ -198,7 +198,7 @@ export const runTimePickerComponentTests = (mountFn: MountComponentFn) => {
         // 09:00:00 falls before minTime, so the grid starts at 09:30
         cy.get(sel.hour).click();
         cy.get(sel.items).should('have.length', 3);
-        expectItemLabel(0, /^9:30\sAM$/);
+        expectItemLabel(0, /^09:30\sAM$/);
         expectItemLabel(2, /^10:30\sAM$/);
 
         cy.get(sel.items).eq(2).click();

@@ -111,6 +111,20 @@ export const runSetDataSetMetaTests = (mountFn: MountComponentFn) => {
         cy.get('[data-cy="field_number"]').should('have.value', '5');
       });
 
+      it('number syncs a deferred value on a blur that changes no form state', () => {
+        let handle!: FormHandle;
+        mountControl({ type: 'number', data: { value: 3 }, onFormReady: (h) => (handle = h) });
+        // First blur marks the field touched so the next blur is a store no-op:
+        // the sync must not depend on the blur coincidentally causing a
+        // store change and re-render.
+        cy.get('[data-cy="field_number"]').clear().type('12').blur();
+        cy.get('[data-cy="field_number"]').focus().clear().type('99');
+        cy.then(() => handle.setData({ value: 7 }));
+        cy.get('[data-cy="field_number"]').should('have.value', '99');
+        cy.get('[data-cy="field_number"]').blur();
+        cy.get('[data-cy="field_number"]').should('have.value', '7');
+      });
+
       it('number clears when the store value is removed', () => {
         let handle!: FormHandle;
         mountControl({ type: 'number', data: { value: 1 }, onFormReady: (h) => (handle = h) });
@@ -184,6 +198,36 @@ export const runSetDataSetMetaTests = (mountFn: MountComponentFn) => {
         cy.get('[data-cy="field_currency"]').clear().type('12').blur();
         cy.then(() => handle.setData({ value: 5 }));
         cy.get('[data-cy="field_currency"]').should('have.value', '5');
+      });
+
+      it('currency leaves a focused draft alone and syncs it on blur', () => {
+        let handle!: FormHandle;
+        mountControl({ type: 'currency', data: { value: 3 }, onFormReady: (h) => (handle = h) });
+        cy.get('[data-cy="field_currency"]').clear().type('12');
+        cy.then(() => handle.setData({ value: 5 }));
+        cy.get('[data-cy="field_currency"]').should('have.value', '12');
+        cy.get('[data-cy="field_currency"]').blur();
+        cy.get('[data-cy="field_currency"]').should('have.value', '5');
+      });
+
+      it('currency clears when the store value is removed', () => {
+        let handle!: FormHandle;
+        mountControl({ type: 'currency', data: { value: 1 }, onFormReady: (h) => (handle = h) });
+        cy.get('[data-cy="field_currency"]').clear().type('12').blur();
+        cy.then(() => handle.setData({}));
+        cy.get('[data-cy="field_currency"]').should('have.value', '');
+      });
+
+      it('markdown', () => {
+        let handle!: FormHandle;
+        mountControl({
+          type: 'markdown',
+          data: { value: 'initial' },
+          onFormReady: (h) => (handle = h),
+        });
+        cy.get('textarea[id="field"]').clear().type('abc');
+        cy.then(() => handle.setData({ value: 'from store' }));
+        cy.get('textarea[id="field"]').should('have.value', 'from store');
       });
 
       it('tags', () => {
@@ -278,6 +322,41 @@ export const runSetDataSetMetaTests = (mountFn: MountComponentFn) => {
           .and('contain.text', '01/02/2025 - 01/05/2025');
       });
 
+      it('rangeTimeInput', () => {
+        let handle!: FormHandle;
+        mountControl({
+          type: 'rangeTimeInput',
+          data: { value: [{ start: '09:00:00', end: '11:00:00' }] },
+          onFormReady: (h) => (handle = h),
+        });
+        cy.get('gui-range-time input[data-group="start"][data-type="hour"]').type('10');
+        cy.get('gui-range-time .gui-pills__pill-text').should('have.length', 1);
+        cy.then(() => handle.setData({ value: [{ start: '02:00:00', end: '03:30:00' }] }));
+        cy.get('gui-range-time .gui-pills__pill-text')
+          .should('have.length', 1)
+          .and('contain.text', '02:00')
+          .and('contain.text', '03:30');
+      });
+
+      it('rangeDateTimeInput', () => {
+        let handle!: FormHandle;
+        mountControl({
+          type: 'rangeDateTimeInput',
+          data: { value: [{ start: '2026-06-15T09:00:00', end: '2026-06-15T11:00:00' }] },
+          onFormReady: (h) => (handle = h),
+        });
+        cy.get('gui-range-date-time input[data-group="start"][data-type="month"]').type('07');
+        cy.get('gui-range-date-time .gui-pills__pill-text').should('have.length', 1);
+        cy.then(() =>
+          handle.setData({
+            value: [{ start: '2025-01-02T09:30:00', end: '2025-01-02T11:00:00' }],
+          }),
+        );
+        cy.get('gui-range-date-time .gui-pills__pill-text')
+          .should('have.length', 1)
+          .and('contain.text', '01/02/2025');
+      });
+
       it('datePicker', () => {
         let handle!: FormHandle;
         mountControl({
@@ -327,6 +406,21 @@ export const runSetDataSetMetaTests = (mountFn: MountComponentFn) => {
         );
       });
 
+      it('timePicker', () => {
+        let handle!: FormHandle;
+        mountControl({
+          type: 'timePicker',
+          data: { value: '09:30:00' },
+          props: { allowCustomTime: true },
+          onFormReady: (h) => (handle = h),
+        });
+        cy.get('gui-time-picker gui-time input[data-type="hour"]').clear().type('10');
+        cy.get('gui-time-picker gui-time input[data-type="hour"]').blur();
+        cy.then(() => handle.setData({ value: '11:45:00' }));
+        cy.get('gui-time-picker gui-time input[data-type="hour"]').should('have.value', '11');
+        cy.get('gui-time-picker gui-time input[data-type="minute"]').should('have.value', '45');
+      });
+
       it('rangeDatePicker', () => {
         let handle!: FormHandle;
         mountControl({
@@ -342,6 +436,44 @@ export const runSetDataSetMetaTests = (mountFn: MountComponentFn) => {
         cy.get('gui-range-date .gui-pills__pill-text')
           .should('have.length', 1)
           .and('contain.text', '01/02/2025 - 01/05/2025');
+      });
+
+      it('rangeTimePicker', () => {
+        let handle!: FormHandle;
+        mountControl({
+          type: 'rangeTimePicker',
+          data: { value: [{ start: '09:00:00', end: '11:00:00' }] },
+          props: { allowCustomTime: true },
+          onFormReady: (h) => (handle = h),
+        });
+        cy.get('gui-range-time-picker input[data-group="start"][data-type="hour"]').type('10');
+        cy.get('gui-range-time-picker .gui-pills__pill-text').should('have.length', 1);
+        cy.then(() => handle.setData({ value: [{ start: '02:00:00', end: '03:30:00' }] }));
+        cy.get('gui-range-time-picker .gui-pills__pill-text')
+          .should('have.length', 1)
+          .and('contain.text', '02:00')
+          .and('contain.text', '03:30');
+      });
+
+      it('rangeDateTimePicker', () => {
+        let handle!: FormHandle;
+        mountControl({
+          type: 'rangeDateTimePicker',
+          data: { value: [{ start: '2026-06-15T09:00:00', end: '2026-06-15T11:00:00' }] },
+          onFormReady: (h) => (handle = h),
+        });
+        cy.get('gui-range-date-time-picker input[data-group="start"][data-type="month"]').type(
+          '07',
+        );
+        cy.get('gui-range-date-time-picker .gui-pills__pill-text').should('have.length', 1);
+        cy.then(() =>
+          handle.setData({
+            value: [{ start: '2025-01-02T09:30:00', end: '2025-01-02T11:00:00' }],
+          }),
+        );
+        cy.get('gui-range-date-time-picker .gui-pills__pill-text')
+          .should('have.length', 1)
+          .and('contain.text', '01/02/2025');
       });
 
       it('calendar', () => {

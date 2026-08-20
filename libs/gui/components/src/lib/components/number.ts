@@ -3,7 +3,7 @@ import { property } from 'lit/decorators.js';
 import { safeDefine } from '@golemui/lit/internals';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
-import { blockNonNumericInput, blockNonNumericKeys } from '../utils/numeric';
+import { blockNonNumericInput, blockNonNumericKeys, isRealNumber } from '../utils/numeric';
 import type { NumberinputProps } from '@golemui/gui-shared/internals';
 import { styleMap } from 'lit-html/directives/style-map.js';
 
@@ -81,7 +81,7 @@ export class GuiNumber extends LitElement {
       required: this.required,
       disabled: this.disabled,
       readonly: this.readOnly,
-      value: this.value,
+      value: this.normalizedValue,
       step: this.step,
       placeholder: this.placeholder,
       autocomplete: this.autocomplete,
@@ -102,8 +102,8 @@ export class GuiNumber extends LitElement {
           ?disabled=${this.disabled}
           ?readonly=${this.readOnly}
           step=${typeof this.step === 'number' ? this.step : nothing}
-          min=${Number(this.minimum) ? this.minimum : nothing}
-          max=${Number(this.maximum) ? this.maximum : nothing}
+          min=${isRealNumber(this.minimum) ? this.minimum : nothing}
+          max=${isRealNumber(this.maximum) ? this.maximum : nothing}
           placeholder=${this.placeholder || nothing}
           autocomplete=${this.autocomplete || nothing}
           @input=${this.valueChanged}
@@ -142,21 +142,27 @@ export class GuiNumber extends LitElement {
   }
 
   /**
-   * Owns the native input value instead of a template binding. An attribute binding is
-   * ignored once the user typed, and the Number converter turns the `''` some frameworks
-   * assign into a phantom 0. The comparison is numeric so a draft like `1.` that already
-   * parses to the store value survives, and a focused input is left alone while typing.
+   * The value as an actual number, or undefined. Property bindings bypass the
+   * Lit converter, so arbitrary consumers can hand us '' (Angular-style ?? ''
+   * templates), NaN (the Vue undefined workaround) or null.
    */
-  protected override updated(): void {
+  private get normalizedValue(): number | undefined {
+    return isRealNumber(this.value) ? this.value : undefined;
+  }
+
+  /**
+   * Owns the native input value instead of a template binding. An attribute binding is
+   * ignored once the user typed, and a string live() binding cannot express "equal as
+   * numbers", so a draft like `1.` that already parses to the store value would be
+   * clobbered mid-typing. The comparison is numeric so such a draft survives, and a
+   * focused input is left alone while typing.
+   */
+  private syncNativeInput(): void {
     const input = this.querySelector(`input[id="${this.uid}"]`) as HTMLInputElement | null;
-    if (input === null) {
+    if (input === null || input.matches(':focus')) {
       return;
     }
-    if (document.activeElement === input) {
-      return;
-    }
-    const storeValue =
-      typeof this.value === 'number' && !Number.isNaN(this.value) ? this.value : undefined;
+    const storeValue = this.normalizedValue;
     const shownValue = input.valueAsNumber;
     const bothEmpty = Number.isNaN(shownValue) && storeValue === undefined;
     const sameNumber = !Number.isNaN(shownValue) && shownValue === storeValue;
@@ -168,6 +174,10 @@ export class GuiNumber extends LitElement {
     } else {
       input.valueAsNumber = storeValue;
     }
+  }
+
+  protected override updated(): void {
+    this.syncNativeInput();
   }
 
   keyDown(event: KeyboardEvent) {
@@ -195,8 +205,8 @@ export class GuiNumber extends LitElement {
           ? target.valueAsNumber - step
           : 1;
 
-      value = Number(this.maximum) ? Math.min(value, this.maximum!) : value;
-      value = Number(this.minimum) ? Math.max(value, this.minimum!) : value;
+      value = isRealNumber(this.maximum) ? Math.min(value, this.maximum) : value;
+      value = isRealNumber(this.minimum) ? Math.max(value, this.minimum) : value;
 
       target.valueAsNumber = value;
       this.value = value;
@@ -220,8 +230,8 @@ export class GuiNumber extends LitElement {
           ? target.valueAsNumber + step
           : 1;
 
-      value = Number(this.maximum) ? Math.min(value, this.maximum!) : value;
-      value = Number(this.minimum) ? Math.max(value, this.minimum!) : value;
+      value = isRealNumber(this.maximum) ? Math.min(value, this.maximum) : value;
+      value = isRealNumber(this.minimum) ? Math.max(value, this.minimum) : value;
 
       target.valueAsNumber = value;
       this.value = value;
@@ -253,6 +263,10 @@ export class GuiNumber extends LitElement {
   }
 
   onBlur() {
+    // The focus guard in syncNativeInput() defers programmatic values while the
+    // user is typing; land them now instead of relying on the blur dispatch to
+    // coincidentally cause a store change and re-render.
+    this.syncNativeInput();
     this.dispatchEvent(
       new CustomEvent('blur', {
         bubbles: true,

@@ -498,9 +498,11 @@ export function formatISOTimeForLocale(
   const time = parseISOTimeString(isoTime);
   if (!time) return isoTime;
 
+  // 2-digit like formatISODateTimeForLocale, so pill and list labels match the
+  // zero-padded segment inputs ('02:00 AM', not the locale's bare '2:00 AM').
   return new Intl.DateTimeFormat(localeId ?? 'en', {
-    hour: 'numeric',
-    minute: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
     hourCycle: hourFormat === '12' ? 'h12' : 'h23',
   }).format(new Date(2025, 0, 15, time.hours, time.minutes, time.seconds));
 }

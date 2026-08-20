@@ -271,17 +271,12 @@ export const runDateInputComponentTests = (mountFn: MountComponentFn) => {
     });
 
     describe('blur', () => {
-      it('should keep a single digit part on blur (optionally padded)', () => {
-        // The blur handler pads the raw input value ('9' -> '09'), but the pad
-        // is cosmetic: a framework re-render triggered by the blur (touched
-        // state) can restore the unpadded state value. Angular re-renders after
-        // the blur, the other frameworks before, so both outcomes are current
-        // behavior. We pin that the digit is never lost or corrupted.
+      it('should pad a single digit part on blur', () => {
         mountDateInput();
 
         cy.get(sel.day).type('9');
         cy.get(sel.day).blur();
-        cy.get(sel.day).invoke('val').should('match', /^0?9$/);
+        cy.get(sel.day).should('have.value', '09');
       });
 
       it('should emit a null value and keep the other parts when one part is emptied', () => {

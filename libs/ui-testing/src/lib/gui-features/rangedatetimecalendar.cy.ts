@@ -202,8 +202,8 @@ export const runRangeDateTimeCalendarComponentTests = (mountFn: MountComponentFn
         // The selection bubble's hover label lists the committed ranges.
         day(13)
           .find('.gui-range-date-time-calendar__badge-tooltip')
-          .should('contain', '9:00 AM')
-          .and('contain', '3:00 PM')
+          .should('contain', '09:00 AM')
+          .and('contain', '03:00 PM')
           .and('not.be.visible');
       });
 
@@ -236,7 +236,7 @@ export const runRangeDateTimeCalendarComponentTests = (mountFn: MountComponentFn
         day(17)
           .find('.gui-range-date-time-calendar__badge-tooltip')
           .should('contain', '10:00 AM – 11:00 AM')
-          .and('contain', '1:00 PM – 2:00 PM')
+          .and('contain', '01:00 PM – 02:00 PM')
           .and('not.be.visible');
 
         // A fully-blocked day greys out as a whole — no bubble; free days none.
@@ -491,7 +491,7 @@ export const runRangeDateTimeCalendarComponentTests = (mountFn: MountComponentFn
         day(9).click();
         cy.get(editSel.pill).should('have.length', 2);
         cy.get(editSel.pill).first().should('have.class', 'gui-pills__pill--editing');
-        cy.get(editSel.pill).first().should('contain.text', '9:00 AM');
+        cy.get(editSel.pill).first().should('contain.text', '09:00 AM');
 
         cy.get(editSel.confirmIcon).click();
         cy.get(editSel.pill).should('have.length', 2);
@@ -544,7 +544,7 @@ export const runRangeDateTimeCalendarComponentTests = (mountFn: MountComponentFn
         // force: focus sits on the picker's readonly time input after the pick.
         cy.focused().type('{esc}', { force: true });
         cy.get('.gui-pills__pill--editing').should('not.exist');
-        cy.get(editSel.pill).first().should('contain.text', '9:00 AM');
+        cy.get(editSel.pill).first().should('contain.text', '09:00 AM');
         cy.get(editSel.pill).first().should('have.attr', 'aria-pressed', 'true');
 
         // Second Escape clears the selection.

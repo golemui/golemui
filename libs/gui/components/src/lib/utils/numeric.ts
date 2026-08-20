@@ -5,6 +5,17 @@
 const VALID_NUMBER_INPUT_CHARS = /^[0-9.,eE+-]+$/;
 
 /**
+ * Whether a value is an actual number, including 0. Property bindings bypass
+ * the Lit converters, so number-typed properties can end up holding '', NaN or
+ * null at runtime; truthiness checks additionally drop a legitimate 0.
+ *
+ * @param {unknown} value - The value to test.
+ * @return {boolean} True only for a number that is not NaN.
+ */
+export const isRealNumber = (value: unknown): value is number =>
+  typeof value === 'number' && !Number.isNaN(value);
+
+/**
  * Prevents text that is not valid inside an `<input type="number">` from being
  * inserted. Chrome filters these characters natively but Firefox does not, so
  * without this guard letters can be typed (or pasted) into number inputs.
