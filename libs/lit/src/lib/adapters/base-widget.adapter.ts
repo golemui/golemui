@@ -1,13 +1,14 @@
 import {
-  type FormWidget,
+  type NonFunctionWidget,
+  type WidgetViewModel,
   type WithWidget,
   assertNoPropCollisions,
-  calculatedWidgetsByUid$,
+  widgetViewModel$,
 } from '@golemui/core';
 import { Subject, takeUntil } from 'rxjs';
 import { type LitFormContext } from '../context/form.context';
 
-export abstract class BaseWidgetAdapter<F extends FormWidget> {
+export abstract class BaseWidgetAdapter<F extends NonFunctionWidget> {
   context!: LitFormContext<WithWidget>;
   templateData: any = {};
   protected destroy$ = new Subject<void>();
@@ -20,36 +21,39 @@ export abstract class BaseWidgetAdapter<F extends FormWidget> {
     this.templateDataChanged$.next();
   }
 
-  protected addWidgetToTheStore(widget: F) {
-    this.context.store.dispatch({
-      type: 'ADD_WIDGET',
-      payload: { widget: widget },
-    });
-  }
-
-  // Listen to the calculated props stream and keep all widget props merged in a flattened object
-  protected templateDataUpdater() {
+  /**
+   * Merges each view model emission into templateData: the calculated widget and its props
+   * flattened into one object, plus the extra fields the concrete adapter reads from the
+   * view model.
+   *
+   * A hidden widget's view model has no calculated widget, so that part is skipped and the
+   * last visible values stay until the parent removes the element.
+   */
+  protected templateDataUpdater(
+    extraFields?: (viewModel: WidgetViewModel) => Record<string, unknown>,
+  ) {
     this.context.store.state$
-      .pipe(takeUntil(this.destroy$), calculatedWidgetsByUid$(this.widget.uid!))
-      .subscribe((calculatedWidget) => {
-        const obj = {
-          ...calculatedWidget,
-          lang: this.context.store.getState().lang,
-          deps: this.context.dependencies,
-        };
-        assertNoPropCollisions(calculatedWidget['uid'], calculatedWidget.props, obj);
-        this.setTemplateData({
-          ...obj,
-          ...calculatedWidget.props,
-        });
+      .pipe(takeUntil(this.destroy$), widgetViewModel$(this.widget.uid))
+      .subscribe((viewModel) => {
+        const patch: Record<string, any> = {};
+        const calculatedWidget = viewModel.widget;
+        if (calculatedWidget !== undefined) {
+          const obj = {
+            ...calculatedWidget,
+            lang: viewModel.lang,
+            deps: this.context.dependencies,
+          };
+          assertNoPropCollisions(calculatedWidget.uid, calculatedWidget.props, obj);
+          Object.assign(patch, obj, calculatedWidget.props);
+        }
+        if (extraFields) {
+          Object.assign(patch, extraFields(viewModel));
+        }
+        this.setTemplateData(patch);
       });
   }
 
   destroy() {
-    this.context.store.dispatch({
-      type: 'REMOVE_WIDGET',
-      payload: { uid: this.widget.uid! },
-    });
     this.destroy$.next();
   }
 }
