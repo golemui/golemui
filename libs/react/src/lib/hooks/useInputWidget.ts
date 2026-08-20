@@ -1,5 +1,5 @@
 import { type InputWidget, type NonFunctionWidget, widgetViewModel$ } from '@golemui/core';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useReactFormContext } from '../ReactFormContext';
 import { mergeViewModelIntoTemplateData, type WithFlattenedProps } from './internal/template-data';
 
@@ -37,7 +37,14 @@ export function useInputWidget<T, ExtraProps extends Record<string, any>>(
     return () => sub.unsubscribe();
   }, [widget, formContext]);
 
+  // A repeater row widget arrives as a new object whenever the row set changes, so emit
+  // `load` once per uid and store, not once per widget object identity.
+  const lastLoad = useRef<{ store: unknown; uid: string } | undefined>(undefined);
   useEffect(() => {
+    if (lastLoad.current?.store === formContext.store && lastLoad.current?.uid === widget.uid) {
+      return;
+    }
+    lastLoad.current = { store: formContext.store, uid: widget.uid };
     formContext.emitEvent('load', widget);
   }, [formContext, widget]);
 
