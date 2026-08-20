@@ -1,6 +1,6 @@
-import type { FormWidget, LayoutWidget, WithWidget } from '@golemui/core';
+import type { LayoutWidget, WithWidget } from '@golemui/core';
 import { LayoutWidgetAdapter, type LitFormContext, formContext, layoutContext } from '@golemui/lit';
-import type { AccordionProps } from '@golemui/gui-shared/internals';
+import { type AccordionProps, repeaterIndexSuffix } from '@golemui/gui-shared/internals';
 import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
@@ -22,6 +22,9 @@ export class AccordionElement extends LitElement implements WithWidget {
   adapter = new LayoutWidgetAdapter<AccordionProps>();
 
   subscriptions: Subscription[] = [];
+
+  // Section uids come from raw props, children arrive from the store with row indexes applied.
+  private rowIndexSuffix = '';
 
   override createRenderRoot() {
     return this;
@@ -45,7 +48,9 @@ export class AccordionElement extends LitElement implements WithWidget {
     const props: AccordionProps = this.widget.props as AccordionProps;
     this.adapter.context = this.formContext;
     this.adapter.init(this.widget);
-    this.activeSections = props.defaultOpen ?? {};
+    // Copy: repeater rows share one props object, a direct write would open the section in every row.
+    this.activeSections = { ...(props.defaultOpen ?? {}) };
+    this.rowIndexSuffix = repeaterIndexSuffix(this.widget.uid);
 
     this.subscriptions.push(
       this.adapter.templateDataChanged$.subscribe(() => this.requestUpdate()),
@@ -68,7 +73,8 @@ export class AccordionElement extends LitElement implements WithWidget {
   }
 
   getChild(uid: string) {
-    return this.widget.children.find((section) => section.uid === uid) as FormWidget<string>;
+    const children = this.adapter.templateData.children ?? [];
+    return children.find((section) => section.uid === `${uid}${this.rowIndexSuffix}`);
   }
 
   override render() {
@@ -81,9 +87,12 @@ export class AccordionElement extends LitElement implements WithWidget {
               this.adapter.templateData.sections,
               (section: any) => section.uid,
               (section: any) => {
+                // A `when`-hidden child is absent from the store's children: no section region.
+                const child = this.getChild(section.uid);
                 const sectionContent =
-                  this.activeSections[section.uid] ||
-                  this.adapter.templateData.renderMode !== 'activeOnly'
+                  child !== undefined &&
+                  (this.activeSections[section.uid] ||
+                    this.adapter.templateData.renderMode !== 'activeOnly')
                     ? html`<section
                         class="gui-widget"
                         role="region"
@@ -92,7 +101,7 @@ export class AccordionElement extends LitElement implements WithWidget {
                         this.adapter.templateData.renderMode !== 'activeOnly'}
                         aria-labelledby=${`accordion_button_${section.uid}`}
                       >
-                        <gui-widget .widget=${this.getChild(section.uid)}></gui-widget>
+                        <gui-widget .widget=${child}></gui-widget>
                       </section>`
                     : nothing;
 
