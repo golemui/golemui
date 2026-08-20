@@ -186,6 +186,14 @@ export const runSetDataSetMetaTests = (mountFn: MountComponentFn) => {
         cy.get('[data-cy="field_currency"]').should('have.value', '5');
       });
 
+      it('currency clears when the store value is removed', () => {
+        let handle!: FormHandle;
+        mountControl({ type: 'currency', data: { value: 1 }, onFormReady: (h) => (handle = h) });
+        cy.get('[data-cy="field_currency"]').clear().type('12').blur();
+        cy.then(() => handle.setData({}));
+        cy.get('[data-cy="field_currency"]').should('have.value', '');
+      });
+
       it('tags', () => {
         let handle!: FormHandle;
         mountControl({ type: 'tags', data: { value: ['one'] }, onFormReady: (h) => (handle = h) });
