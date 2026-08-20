@@ -320,25 +320,6 @@ function isEmptyPlainObject(value: any): boolean {
 }
 
 /**
- * Deletes a key from an object and returns the same mutated object.
- *
- * @param object - The object to remove the key from.
- * @param key - The property name to delete.
- * @returns The same object, with the specified key removed.
- *
- * @example
- * ```ts
- * const obj = { a: 1, b: 2, c: 3 };
- * deleteKey(obj, "b");
- * console.log(obj); // { a: 1, c: 3 }
- * ```
- */
-export const deleteKey = (object: Record<string, any>, key: string) => {
-  delete object[key];
-  return object;
-};
-
-/**
  * Deep-clones plain objects and arrays while preserving function references
  * (and other non-plain values) by reference. Functions are stateless widget
  * resolvers and only need to survive the trip into repeater item configs.
