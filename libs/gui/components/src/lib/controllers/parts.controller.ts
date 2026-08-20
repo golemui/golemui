@@ -113,8 +113,20 @@ export class GUIPartsController implements ReactiveController {
   }
 
   setPart(group: string, type: DateTimePartType, value: string): void {
-    this._values = setPartValue(this._values, group, type, value);
+    this._values = setPartValue(this._values, group, type, this.padValue(type, value));
     this.host.requestUpdate();
+  }
+
+  /**
+   * Zero-pads a numeric part for storage, so the state and the live() binding
+   * always agree on the padded form ('09', never '9'). The pad used to be a
+   * DOM-only write in the blur handler, and whichever of that pad or a
+   * framework re-render wrote last won — a documented flake source.
+   */
+  private padValue(type: DateTimePartType, value: string): string {
+    const descriptor = this.options.getDescriptor(type);
+    if (value === '' || descriptor?.kind === 'dayPeriod') return value;
+    return value.padStart(descriptor?.maxLength ?? 2, '0');
   }
 
   clearGroup(group: string): void {
@@ -441,9 +453,10 @@ export class GUIPartsController implements ReactiveController {
   };
 
   /**
-   * Blur handling:
-   * - zero-pads a valid numeric part in the DOM
-   * - routes an empty/invalid part to `onEmptyPartBlur`
+   * Routes an empty/invalid part blur to `onEmptyPartBlur`. The zero-pad that
+   * used to be written into the DOM here happens in {@link setPart} now, so
+   * the state and the live() binding agree on the padded form regardless of
+   * which render order the host framework produces.
    */
   handleBlur = (event: FocusEvent, group: string, type: DateTimePartType): void => {
     const descriptor = this.options.getDescriptor(type);
@@ -454,9 +467,7 @@ export class GUIPartsController implements ReactiveController {
 
       // 0 is a valid value for zero-based parts (minute, 24h hour) but marks
       // an empty/cleared part everywhere else (day, month, year, 12h hour)
-      if (!isNaN(val) && (val > 0 || descriptor?.min === 0)) {
-        input.value = val.toString().padStart(descriptor?.maxLength ?? 2, '0');
-      } else {
+      if (isNaN(val) || (val <= 0 && descriptor?.min !== 0)) {
         this.options.onEmptyPartBlur(group, type);
       }
     }

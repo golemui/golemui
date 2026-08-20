@@ -1,5 +1,6 @@
 import { html, LitElement, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
+import { live } from 'lit/directives/live.js';
 import { safeDefine } from '@golemui/lit/internals';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
@@ -127,7 +128,7 @@ export class GuiTextarea extends LitElement {
           ?readonly=${templateData.readonly}
           placeholder=${templateData.placeholder || nothing}
           autocomplete=${this.autocomplete || nothing}
-          .value=${this.value || ''}
+          .value=${live(this.value ?? '')}
           @input=${this.valueChanged}
           @blur=${this.onBlur}
         ></textarea>
