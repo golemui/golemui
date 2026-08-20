@@ -1,10 +1,5 @@
-import {
-  type LayoutTemplateData,
-  type LayoutWidget,
-  calculatedLayoutChildrenByUid$,
-} from '@golemui/core';
+import { type LayoutTemplateData, type LayoutWidget } from '@golemui/core';
 import { createContext } from '@lit/context';
-import { takeUntil } from 'rxjs';
 import { BaseWidgetAdapter } from './base-widget.adapter';
 
 export const layoutContext = createContext<LayoutWidgetAdapter<any>>('guiLayoutWidgetAdapter');
@@ -17,23 +12,15 @@ export class LayoutWidgetAdapter<
   init(widget: LayoutWidget) {
     this.widget = widget;
 
-    // Set initial templateData
+    // Raw props seed: a widget hidden at init renders these until its first visible emission.
     this.setTemplateData({
       ...this.widget.props,
     });
 
-    // Listen to the layout's `hidden`-flag-filtered children stream
-    this.context.store.state$
-      .pipe(calculatedLayoutChildrenByUid$(this.widget.uid))
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((children) => {
-        this.setTemplateData({
-          children,
-        });
-      });
-
-    this.addWidgetToTheStore(widget);
-    this.templateDataUpdater();
+    this.templateDataUpdater((viewModel) =>
+      // A hidden widget's view model has empty children, keep the last visible ones.
+      viewModel.widget !== undefined ? { children: viewModel.children } : {},
+    );
   }
 
   change<T>(detail?: T) {

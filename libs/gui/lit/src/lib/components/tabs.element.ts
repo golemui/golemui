@@ -5,7 +5,7 @@ import {
   type TabsEventDetail,
 } from '@golemui/gui-components/internals';
 import { safeDefine } from '@golemui/lit/internals';
-import type { TabsProps } from '@golemui/gui-shared/internals';
+import { repeaterIndexSuffix, type TabsProps } from '@golemui/gui-shared/internals';
 import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing, type PropertyValues } from 'lit';
 import { repeat } from 'lit-html/directives/repeat.js';
@@ -36,8 +36,15 @@ export class TabsElement extends LitElement implements WithWidget {
 
   subscriptions: Subscription[] = [];
 
+  // `activeTab` holds the raw props uid, children arrive from the store with row indexes applied.
+  private rowIndexSuffix = '';
+
   private startObserver?: IntersectionObserver;
   private endObserver?: IntersectionObserver;
+
+  private get activeChildUid() {
+    return `${this.activeTab}${this.rowIndexSuffix}`;
+  }
 
   override createRenderRoot() {
     return this;
@@ -62,6 +69,7 @@ export class TabsElement extends LitElement implements WithWidget {
     this.adapter.context = this.formContext;
     this.adapter.init(this.widget);
     this.activeTab = props.defaultOpen ?? props.tabs[0].uid;
+    this.rowIndexSuffix = repeaterIndexSuffix(this.widget.uid);
 
     this.subscriptions.push(
       this.adapter.templateDataChanged$.subscribe(() => {
@@ -89,9 +97,10 @@ export class TabsElement extends LitElement implements WithWidget {
   override render() {
     if (!this.adapter.templateData) return html``;
 
-    const activeSections = this.widget.children.filter(
+    const activeSections = (this.adapter.templateData.children ?? []).filter(
       (section: any) =>
-        section.uid === this.activeTab || this.adapter.templateData.renderMode !== 'activeOnly',
+        section.uid === this.activeChildUid ||
+        this.adapter.templateData.renderMode !== 'activeOnly',
     );
 
     const navClasses = {
@@ -144,7 +153,7 @@ export class TabsElement extends LitElement implements WithWidget {
             tabindex="0"
             data-cy=${`tabpanel_${this.widget.uid}_${index}`}
             id=${`tabpanel_${this.widget.uid}_${index}`}
-            ?hidden=${section.uid !== this.activeTab &&
+            ?hidden=${section.uid !== this.activeChildUid &&
             this.adapter.templateData.renderMode !== 'activeOnly'}
             aria-labelledby=${`tab_${this.widget.uid}_${index}`}
           >

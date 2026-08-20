@@ -16,9 +16,7 @@ export {
   type FormHealthBoundaryParams,
 } from './lib/components/form/form-health-boundary';
 export type { LitItemRenderer } from './lib/components/item-renderers/item-renderer';
-export { RepeaterWidgetElement } from './lib/components/widget/repeater-widget.element';
 export { WidgetElement } from './lib/components/widget/widget-element';
 export { formContext, LitFormContext } from './lib/context/form.context';
-export { repeaterIndexesContext } from './lib/context/repeater-index-token.context';
 
 export type { Type } from './lib/utils/type';

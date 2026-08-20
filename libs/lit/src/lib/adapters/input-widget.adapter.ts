@@ -1,14 +1,5 @@
-import {
-  type ControlTemplateData,
-  type InputWidget,
-  type ItemRenderItemData,
-  dataByPath$,
-  injectedValidationByPath$,
-  touchedControlsByPath$,
-  validationByPath$,
-} from '@golemui/core';
+import { type ControlTemplateData, type InputWidget, type ItemRenderItemData } from '@golemui/core';
 import { createContext } from '@lit/context';
-import { combineLatest, takeUntil } from 'rxjs';
 import { type LitItemRenderer } from '../components/item-renderers/item-renderer';
 import { BaseWidgetAdapter } from './base-widget.adapter';
 
@@ -23,42 +14,13 @@ export class InputWidgetAdapter<
   init(widget: InputWidget<T>) {
     this.widget = widget;
 
-    this.addWidgetToTheStore(widget);
-    this.templateDataUpdater();
-
-    // Set widget data
-    this.context.store.dispatch({
-      type: 'SET_WIDGET_INITIAL_DATA',
-      payload: { data: widget.defaultValue, path: widget.path },
-    });
-
-    // Set the initial templateData, including the control's data value
-    this.context.store.state$
-      .pipe(takeUntil(this.destroy$), dataByPath$(widget.path))
-      .subscribe((data) => this.setTemplateData({ value: data }));
-
-    // Listen to the validation stream for this control
-    const validation$ = this.context.store.state$.pipe(
-      takeUntil(this.destroy$),
-      validationByPath$(widget.path),
-    );
-    const injectedValidation$ = this.context.store.state$.pipe(
-      takeUntil(this.destroy$),
-      injectedValidationByPath$(widget.path),
-    );
-
-    combineLatest([validation$, injectedValidation$]).subscribe(
-      ([validation, injectedValidation]) => {
-        this.setTemplateData({
-          errors: [...(validation ?? []), ...(injectedValidation ?? [])],
-        });
-      },
-    );
-
-    // Listen to the touchedControls stream for this control
-    this.context.store.state$
-      .pipe(takeUntil(this.destroy$), touchedControlsByPath$(widget.path))
-      .subscribe((touched) => this.setTemplateData({ touched }));
+    this.templateDataUpdater((viewModel) => ({
+      value: viewModel.value,
+      errors: viewModel.errors,
+      touched: viewModel.touched,
+      // A hidden widget's view model has empty rows, keep the last visible ones.
+      ...(viewModel.widget !== undefined ? { rows: viewModel.rows } : {}),
+    }));
 
     this.context.emitEvent('load', this.widget);
   }

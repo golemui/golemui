@@ -1,5 +1,5 @@
 import type { InputWidget, WithWidget } from '@golemui/core';
-import { getItemKey, type RepeaterProps } from '@golemui/gui-shared/internals';
+import { type RepeaterProps } from '@golemui/gui-shared/internals';
 import { formContext, inputContext, InputWidgetAdapter, type LitFormContext } from '@golemui/lit';
 import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';
@@ -9,12 +9,6 @@ import { safeDefine } from '@golemui/lit/internals';
 import { type Subscription } from 'rxjs';
 import '@golemui/gui-components/label';
 import '@golemui/gui-components/errors';
-
-/**
- * Monotonically increasing counter for generating unique repeater item IDs.
- */
-let nextRepeaterItemId = 0;
-const idIncrementer = () => nextRepeaterItemId++;
 
 export class RepeaterElement extends LitElement implements WithWidget {
   widget!: InputWidget<Record<string, unknown>[]>;
@@ -91,41 +85,36 @@ export class RepeaterElement extends LitElement implements WithWidget {
           .required=${templateData.validator?.required}
           .native=${false}
         ></gui-label>
-        ${templateData.value
-          ? repeat(
-              templateData.value,
-              (widget) => getItemKey(widget, idIncrementer),
-              (_, index) => html`
-                <div class="gui-repeater__card">
-                  <div class="gui-repeater__card-header">
-                    ${templateData.title
-                      ? html`<span class="gui-repeater__card-title"
-                          >${templateData.title} ${index + 1}</span
-                        >`
-                      : nothing}
-                    <button
-                      type="button"
-                      tabindex="0"
-                      class="gui-button gui-button--sm gui-repeater__remove-btn"
-                      @click=${() => this.removeItem(index)}
-                    >
-                      ${templateData.removeButtonIcon
-                        ? html`<span
-                            class="gui-widget-icon gui-button-icon ${templateData.removeButtonIcon}"
-                            data-icon=${templateData.removeButtonIcon}
-                          ></span>`
-                        : nothing}
-                      ${templateData.removeLabel ?? 'Remove'}
-                    </button>
-                  </div>
-                  <gui-repeater-widget
-                    .repeaterIndex=${index}
-                    .widget=${templateData.template}
-                  ></gui-repeater-widget>
-                </div>
-              `,
-            )
-          : nothing}
+        ${repeat(
+          templateData.rows ?? [],
+          (row) => row.uid,
+          (row, index) => html`
+            <div class="gui-repeater__card">
+              <div class="gui-repeater__card-header">
+                ${templateData.title
+                  ? html`<span class="gui-repeater__card-title"
+                      >${templateData.title} ${index + 1}</span
+                    >`
+                  : nothing}
+                <button
+                  type="button"
+                  tabindex="0"
+                  class="gui-button gui-button--sm gui-repeater__remove-btn"
+                  @click=${() => this.removeItem(index)}
+                >
+                  ${templateData.removeButtonIcon
+                    ? html`<span
+                        class="gui-widget-icon gui-button-icon ${templateData.removeButtonIcon}"
+                        data-icon=${templateData.removeButtonIcon}
+                      ></span>`
+                    : nothing}
+                  ${templateData.removeLabel ?? 'Remove'}
+                </button>
+              </div>
+              <gui-widget .widget=${row}></gui-widget>
+            </div>
+          `,
+        )}
 
         <button
           type="button"

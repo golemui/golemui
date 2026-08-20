@@ -13,12 +13,11 @@ export class DisplayWidgetAdapter<
   init(widget: DisplayWidget) {
     this.widget = widget;
 
-    // Set initial templateData
+    // Raw props seed: a widget hidden at init renders these until its first visible emission.
     this.setTemplateData({
       ...this.widget.props,
     });
 
-    this.addWidgetToTheStore(widget);
     this.templateDataUpdater();
   }
 }
