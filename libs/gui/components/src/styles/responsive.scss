@@ -30,3 +30,16 @@
     --gui-font-3xl: 1.5rem; /* 32→24 */
   }
 }
+
+/* ── Touch Token Overrides ──
+   `pointer: coarse` = the primary input is imprecise (phones, tablets).
+   Deliberately not `any-pointer`, so touchscreen laptops keep the
+   mouse-first density. */
+@media (pointer: coarse) {
+  :root {
+    --gui-pill-height: 32px;
+    --gui-pill-action-size: 24px;
+    --gui-pill-action-hit: 32px;
+    --gui-pill-font-size: var(--gui-font-sm);
+  }
+}
