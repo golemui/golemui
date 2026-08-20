@@ -86,6 +86,11 @@ export class GuiCurrency extends LitElement {
 
     this.displayValue = this.formatCurrency(this.value);
 
+    // NaN means "no value": the Vue binding sends it because Vue turns an undefined binding
+    // into 0 on a number-valued property (same convention as gui-number).
+    const nativeValue =
+      this.value === null || this.value === undefined || Number.isNaN(this.value) ? '' : this.value;
+
     // Icon
     const currencyIcon = addIcon('currency', templateData);
 
@@ -105,7 +110,7 @@ export class GuiCurrency extends LitElement {
           data-cy=${`${this.uid}_currency`}
           class=${classMap(fieldClasses)}
           step=${this.step && this.step > 0 ? this.step : nothing}
-          .value=${this.value ?? ''}
+          .value=${nativeValue}
           ?required=${this.required}
           ?disabled=${this.disabled}
           ?readonly=${this.readOnly}
@@ -170,7 +175,7 @@ export class GuiCurrency extends LitElement {
     if (value === '' || value === undefined || value === null || isNaN(value as number)) return '';
 
     try {
-      // Resolve max first, then clamp min so it never exceeds max — otherwise
+      // Resolve max first, then clamp min so it never exceeds max, otherwise
       // e.g. `maximumFractionDigits: 0` with the default min of 2 would make
       // Intl.NumberFormat throw "maximumFractionDigits value is out of range".
       const maximumFractionDigits =
