@@ -21,7 +21,8 @@
         ></span>
       </button>
 
-      @if (activeSections[section.uid] || templateData.renderMode !== 'activeOnly') {
+      @let child = getChild(section.uid);
+      @if (child && (activeSections[section.uid] || templateData.renderMode !== 'activeOnly')) {
         <section
           class="gui-widget"
           role="region"
@@ -29,7 +30,7 @@
           [id]="'accordion_section_' + section.uid"
           [attr.aria-labelledby]="'accordion_button_' + section.uid"
         >
-          <ng-container guiWidget [widget]="getChild(section.uid)" />
+          <ng-container guiWidget [widget]="child" />
         </section>
       }
     </div>

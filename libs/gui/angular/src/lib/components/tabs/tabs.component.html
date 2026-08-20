@@ -33,11 +33,11 @@
 </nav>
 
 @for (child of templateData.children; track child.uid; let i = $index) {
-  @if (child.uid === activeTab() || templateData.renderMode !== 'activeOnly') {
+  @if (isActiveTab(child) || templateData.renderMode !== 'activeOnly') {
     <section
       role="tabpanel"
       tabindex="0"
-      [hidden]="child.uid !== activeTab() && templateData.renderMode !== 'activeOnly'"
+      [hidden]="!isActiveTab(child) && templateData.renderMode !== 'activeOnly'"
       [attr.data-cy]="'tabpanel_' + widget.uid + '_' + i"
       [id]="'tabpanel_' + widget.uid + '_' + i"
       [attr.aria-labelledby]="'tab_' + widget.uid + '_' + i"

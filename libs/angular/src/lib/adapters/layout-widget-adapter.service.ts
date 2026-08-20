@@ -1,11 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-import {
-  type FormWidget,
-  type LayoutTemplateData,
-  type LayoutWidget,
-  calculatedLayoutChildrenByUid$,
-} from '@golemui/core';
-import { takeUntil } from 'rxjs';
+import { type FormWidget, type LayoutTemplateData, type LayoutWidget } from '@golemui/core';
 import { BaseWidgetAdapter } from './base-widget.adapter';
 
 @Injectable()
@@ -25,19 +19,10 @@ export class LayoutWidgetAdapter<
       ...this.widget.props,
     }));
 
-    // Listen to the layout's `hidden`-flag-filtered children stream
-    this.context.store.state$
-      .pipe(calculatedLayoutChildrenByUid$(this.widget.uid))
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((children) => {
-        this.templateData.update((current) => ({
-          ...current,
-          children,
-        }));
-      });
-
-    this.addWidgetToTheStore(widget);
-    this.templateDataUpdater(this.templateData);
+    this.templateDataUpdater(this.templateData, (viewModel) =>
+      // Keep the last children while hidden, an empty flash would be visible otherwise.
+      viewModel.widget !== undefined ? { children: viewModel.children } : {},
+    );
   }
 
   change<T>(detail?: T) {

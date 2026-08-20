@@ -18,31 +18,29 @@
     [required]="templateData.validator?.required"
     [native]="false"
   ></gui-label>
-  @if (templateData.template && templateData.value) {
-    @for (item of templateData.value; track item) {
-      <div class="gui-repeater__card">
-        <div class="gui-repeater__card-header">
-          @if (templateData.title) {
-            <span class="gui-repeater__card-title">{{ templateData.title }} {{ $index + 1 }}</span>
+  @for (row of templateData.rows ?? []; track row.uid) {
+    <div class="gui-repeater__card">
+      <div class="gui-repeater__card-header">
+        @if (templateData.title) {
+          <span class="gui-repeater__card-title">{{ templateData.title }} {{ $index + 1 }}</span>
+        }
+        <button
+          type="button"
+          tabindex="0"
+          class="gui-button gui-button--sm gui-repeater__remove-btn"
+          (click)="removeItem($index)"
+        >
+          @if (templateData.removeButtonIcon) {
+            <span
+              class="gui-widget-icon gui-button-icon {{ templateData.removeButtonIcon }}"
+              [attr.data-icon]="templateData.removeButtonIcon"
+            ></span>
           }
-          <button
-            type="button"
-            tabindex="0"
-            class="gui-button gui-button--sm gui-repeater__remove-btn"
-            (click)="removeItem($index)"
-          >
-            @if (templateData.removeButtonIcon) {
-              <span
-                class="gui-widget-icon gui-button-icon {{ templateData.removeButtonIcon }}"
-                [attr.data-icon]="templateData.removeButtonIcon"
-              ></span>
-            }
-            {{ templateData.removeLabel ?? 'Remove' }}
-          </button>
-        </div>
-        <ng-container guiRepeaterWidget [repeaterIndex]="$index" [widget]="templateData.template" />
+          {{ templateData.removeLabel ?? 'Remove' }}
+        </button>
       </div>
-    }
+      <ng-container guiWidget [widget]="row" />
+    </div>
   }
   <button
     type="button"

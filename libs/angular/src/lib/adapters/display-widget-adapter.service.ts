@@ -19,7 +19,6 @@ export class DisplayWidgetAdapter<
       ...this.widget.props,
     }));
 
-    this.addWidgetToTheStore(widget);
     this.templateDataUpdater(this.templateData);
   }
 }

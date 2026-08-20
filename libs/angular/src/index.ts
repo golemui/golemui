@@ -16,5 +16,4 @@ export type {
   AngularItemRenderer,
 } from './lib/components/item-renderers/item-renderer';
 export { AngularFormContext } from './lib/context/form.context';
-export { RepeaterWidgetDirective } from './lib/directives/repeater-widget.directive';
 export { WidgetDirective } from './lib/directives/widget.directive';

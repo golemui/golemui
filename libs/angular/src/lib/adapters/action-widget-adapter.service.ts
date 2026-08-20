@@ -1,6 +1,5 @@
 import { Injectable, signal } from '@angular/core';
 import type { ActionWidget, ActionWidgetTemplateData } from '@golemui/core';
-import { distinctUntilChanged, map, takeUntil } from 'rxjs';
 import { BaseWidgetAdapter } from './base-widget.adapter';
 
 @Injectable()
@@ -18,18 +17,9 @@ export class ActionWidgetAdapter<
       label: this.widget.label as string,
     }));
 
-    this.addWidgetToTheStore(widget);
-    this.templateDataUpdater(this.templateData);
-
-    this.context.store.state$
-      .pipe(
-        takeUntil(this.destroy$),
-        map((state) => state.touched && !state.isFormValid),
-        distinctUntilChanged(),
-      )
-      .subscribe((invalid) => {
-        this.templateData.update((current) => ({ ...current, invalid }));
-      });
+    this.templateDataUpdater(this.templateData, (viewModel) => ({
+      invalid: viewModel.formInvalid,
+    }));
 
     this.context.emitEvent('load', this.widget);
   }

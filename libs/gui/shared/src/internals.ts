@@ -346,4 +346,4 @@ export { golemForm } from './lib/golem-form';
 // ─── Utils ───
 
 export { isOption } from './lib/utils/one-of';
-export { getItemKey } from './lib/utils/repeater';
+export { getItemKey, repeaterIndexSuffix } from './lib/utils/repeater';
