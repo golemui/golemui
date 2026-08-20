@@ -1,17 +1,8 @@
-import {
-  type FormHealth,
-  type FormWidget,
-  type NonFunctionWidget,
-  cloneObject,
-  errorCodes,
-  formEventNames,
-  makeRepeaterItemConfig,
-} from '@golemui/core';
+import { type FormHealth, type FormWidget, errorCodes, formEventNames } from '@golemui/core';
 import { consume } from '@lit/context';
 import { type LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
 import { formContext, type LitFormContext } from '../context/form.context';
-import { repeaterIndexesContext } from '../context/repeater-index-token.context';
 
 export const WidgetMixin = <T extends new (...args: any[]) => LitElement>(superClass: T) => {
   class WidgetElement extends superClass {
@@ -20,11 +11,6 @@ export const WidgetMixin = <T extends new (...args: any[]) => LitElement>(superC
     formContext!: LitFormContext<any>;
 
     @property({ type: Object }) widget!: FormWidget<string> | undefined;
-    @property({ type: Number }) repeaterIndex: number | undefined;
-
-    @consume({ context: repeaterIndexesContext, subscribe: true })
-    @property({ attribute: false })
-    repeaterIndexes: number[] = [];
 
     override connectedCallback() {
       super.connectedCallback?.();
@@ -38,19 +24,7 @@ export const WidgetMixin = <T extends new (...args: any[]) => LitElement>(superC
         const component = await this.formContext.widgetRegistry.loadWidget(this.widget.type!);
         const element = new component();
 
-        const repeaterIndexesFromContext = this.repeaterIndexes ?? [];
-        let indexes: number[];
-        if (this.repeaterIndex !== undefined) {
-          indexes = [...repeaterIndexesFromContext, this.repeaterIndex];
-        } else {
-          indexes = repeaterIndexesFromContext;
-        }
-
-        element.widget =
-          indexes.length > 0
-            ? makeRepeaterItemConfig(cloneObject(this.widget as NonFunctionWidget<string>), indexes)
-            : this.widget;
-
+        element.widget = this.widget;
         element.id = `host-${this.widget.uid}`;
 
         this.replaceWith(element);
