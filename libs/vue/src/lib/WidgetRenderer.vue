@@ -1,43 +1,23 @@
 <script setup lang="ts">
-import {
-  type NonFunctionWidget,
-  cloneObject,
-  errorCodes,
-  makeRepeaterItemConfig,
-} from '@golemui/core';
-import { computed, onMounted, onUnmounted, provide, ref, shallowRef, type Component } from 'vue';
+import { type NonFunctionWidget, errorCodes } from '@golemui/core';
+import { onMounted, onUnmounted, ref, shallowRef, type Component } from 'vue';
 import WidgetErrorBoundary from './WidgetErrorBoundary.vue';
 import { useVueFormContext } from './provideFormContext';
-import { repeaterIndexesInjectionKey, useRepeaterIndexes } from './repeaterIndexes';
 
+// Repeater rows arrive from the store with their indexes already applied to `uid` and `path`,
+// so there is no index handling here.
 const props = defineProps<{
   widget: NonFunctionWidget<string>;
-  repeaterIndex?: number;
 }>();
 
 const formContext = useVueFormContext();
 const LoadedComponent = shallowRef<Component | null>(null);
-const resolvedWidget = ref<NonFunctionWidget<string>>(props.widget);
 const isMounted = ref(true);
-
-const parentRepeaterIndexes = useRepeaterIndexes();
-const repeaterIndexes = computed(() =>
-  props.repeaterIndex === undefined
-    ? parentRepeaterIndexes
-    : [...parentRepeaterIndexes, props.repeaterIndex],
-);
-provide(repeaterIndexesInjectionKey, repeaterIndexes.value);
 
 onMounted(async () => {
   try {
     const loaded = await formContext.widgetRegistry.loadWidget(props.widget.type);
     if (!isMounted.value) return;
-    if (repeaterIndexes.value.length > 0) {
-      resolvedWidget.value = makeRepeaterItemConfig(
-        cloneObject(props.widget),
-        repeaterIndexes.value,
-      );
-    }
     LoadedComponent.value = loaded;
   } catch {
     const code = errorCodes.widgetCouldNotBeLoaded;
@@ -60,7 +40,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <WidgetErrorBoundary v-if="LoadedComponent" :widget="resolvedWidget">
-    <component :is="LoadedComponent" :widget="resolvedWidget" />
+  <WidgetErrorBoundary v-if="LoadedComponent" :widget="props.widget">
+    <component :is="LoadedComponent" :widget="props.widget" />
   </WidgetErrorBoundary>
 </template>

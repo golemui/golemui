@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
 import { useLayoutWidget, WidgetRenderer } from '@golemui/vue';
-import type { AccordionProps } from '@golemui/gui-shared/internals';
+import { type AccordionProps, repeaterIndexSuffix } from '@golemui/gui-shared/internals';
 import { computed, ref, watch } from 'vue';
 
 const props = defineProps<WithWidget>();
@@ -11,10 +11,10 @@ const { uid, children, templateData, onChange } = useLayoutWidget<AccordionProps
 const activeSections = ref<NonNullable<AccordionProps['defaultOpen']>>({});
 let initialized = false;
 
-// Seed `activeSections` from `defaultOpen` exactly once — when templateData first
-// arrives populated (RxJS pushes an empty {} synchronously, then the real value).
-// We can't use reference-equality against a sentinel like React does because
-// `ref({})` wraps the object in a reactive proxy, breaking identity checks.
+// Seed `activeSections` from `defaultOpen` the first time templateData carries it. The view model
+// emits on subscribe, so templateData is already filled here unless the accordion starts hidden.
+// Reference-equality against a sentinel like React does is not possible because `ref({})` wraps
+// the object in a reactive proxy, breaking identity checks.
 watch(
   templateData,
   (td) => {
@@ -40,8 +40,13 @@ const onClickButton = (sectionUid: string) => {
   onChange(newState);
 };
 
+// Section uids come from the props without row indexes, the children come from the store with
+// them, so the lookup adds this accordion's own suffix. Undefined when the child is hidden.
+const rowIndexSuffix = repeaterIndexSuffix(widget.uid);
 const sectionForUid = (sectionUid: string) =>
-  (children.value as NonFunctionWidget<string>[]).find((s) => s.uid === sectionUid);
+  (children.value as NonFunctionWidget<string>[]).find(
+    (s) => s.uid === `${sectionUid}${rowIndexSuffix}`,
+  );
 
 const isActive = (sectionUid: string) => Boolean(activeSections.value[sectionUid]);
 

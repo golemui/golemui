@@ -218,7 +218,7 @@ export class GuiCurrency extends LitElement {
     if (value === '' || value === undefined || value === null || isNaN(value as number)) return '';
 
     try {
-      // Resolve max first, then clamp min so it never exceeds max — otherwise
+      // Resolve max first, then clamp min so it never exceeds max, otherwise
       // e.g. `maximumFractionDigits: 0` with the default min of 2 would make
       // Intl.NumberFormat throw "maximumFractionDigits value is out of range".
       const maximumFractionDigits =

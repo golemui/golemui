@@ -2,7 +2,7 @@
 import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
 import { useLayoutWidget, WidgetRenderer } from '@golemui/vue';
 import { createIntersectionObserver } from '@golemui/gui-components/internals';
-import type { TabsProps } from '@golemui/gui-shared/internals';
+import { repeaterIndexSuffix, type TabsProps } from '@golemui/gui-shared/internals';
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 
 const props = defineProps<WithWidget>();
@@ -16,6 +16,10 @@ const endSentinelRef = ref<HTMLLIElement | null>(null);
 const isStartVisible = ref(false);
 const isEndVisible = ref(false);
 const activeTab = ref<string | undefined>(templateData.value.defaultOpen);
+// Tab uids come from the props without row indexes, the panel children come from the store with
+// them, so the comparison adds this layout's own suffix.
+const rowIndexSuffix = repeaterIndexSuffix(widget.uid);
+const activeChildUid = computed(() => `${activeTab.value ?? ''}${rowIndexSuffix}`);
 
 let startObserver: { disconnect(): void } | null = null;
 let endObserver: { disconnect(): void } | null = null;
@@ -104,7 +108,7 @@ const setTabRef = (idx: number) => (el: any) => {
 const visibleSections = computed(() => {
   const renderMode = templateData.value.renderMode;
   return (children.value as NonFunctionWidget<string>[]).filter(
-    (section) => section.uid === activeTab.value || renderMode !== 'activeOnly',
+    (section) => section.uid === activeChildUid.value || renderMode !== 'activeOnly',
   );
 });
 </script>
@@ -161,7 +165,7 @@ const visibleSections = computed(() => {
       tabindex="0"
       :data-cy="`tabpanel_${widget.uid}_${idx}`"
       :id="`tabpanel_${widget.uid}_${idx}`"
-      :hidden="section.uid !== activeTab && templateData.renderMode !== 'activeOnly'"
+      :hidden="section.uid !== activeChildUid && templateData.renderMode !== 'activeOnly'"
       :aria-labelledby="`tab_${widget.uid}_${idx}`"
     >
       <WidgetRenderer :widget="section" />

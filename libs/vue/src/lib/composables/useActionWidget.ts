@@ -1,8 +1,7 @@
-import type { ActionWidget } from '@golemui/core';
+import { type ActionWidget, widgetViewModel$ } from '@golemui/core';
 import { onScopeDispose, ref, type Ref } from 'vue';
-import { distinctUntilChanged, map, Subject, takeUntil } from 'rxjs';
 import { useVueFormContext } from '../provideFormContext';
-import { useTemplateData, type WithFlattenedProps } from './useTemplateData';
+import { mergeViewModelIntoTemplateData, type WithFlattenedProps } from './template-data';
 
 export interface UseActionWidgetReturn<ExtraProps extends Record<string, any>> {
   uid: Ref<string>;
@@ -15,34 +14,25 @@ export function useActionWidget<ExtraProps extends Record<string, any> = Record<
   widget: ActionWidget<string>,
 ): UseActionWidgetReturn<ExtraProps> {
   const formContext = useVueFormContext();
-  const uid = ref('');
-  const templateData = useTemplateData<ActionWidget<string>, ExtraProps>(widget);
+  const uid = ref(widget.uid);
+  const templateData = ref({}) as Ref<WithFlattenedProps<ActionWidget<string>, ExtraProps>>;
   const invalid = ref(false);
 
-  uid.value = widget.uid;
-  formContext.store.dispatch({ type: 'ADD_WIDGET', payload: { widget } });
-  formContext.emitEvent('load', widget);
-
-  const destroy$ = new Subject<void>();
-
-  formContext.store.state$
-    .pipe(
-      takeUntil(destroy$),
-      map((state) => state.touched && !state.isFormValid),
-      distinctUntilChanged(),
-    )
-    .subscribe((isInvalid) => {
-      invalid.value = isInvalid;
+  const viewModelSub = formContext.store.state$
+    .pipe(widgetViewModel$(widget.uid))
+    .subscribe((viewModel) => {
+      invalid.value = viewModel.formInvalid;
+      mergeViewModelIntoTemplateData(templateData, viewModel, formContext.dependencies);
     });
 
-  // See `useInputWidget` for the rationale — same teardown race applies here.
+  formContext.emitEvent('load', widget);
+
+  // Same teardown race as `useInputWidget`.
   let disposed = false;
 
   onScopeDispose(() => {
     disposed = true;
-    destroy$.next();
-    destroy$.complete();
-    formContext.store.dispatch({ type: 'REMOVE_WIDGET', payload: { uid: widget.uid } });
+    viewModelSub.unsubscribe();
   });
 
   const onClick = () => {
