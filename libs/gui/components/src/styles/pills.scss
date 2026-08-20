@@ -77,6 +77,10 @@ gui-pills {
     display: inline-flex;
   }
 
+  .gui-pills__dropdown .gui-pills__pill-action--edit {
+    display: inline-flex;
+  }
+
   .gui-pills__compact {
     display: none;
     align-items: center;
@@ -84,6 +88,16 @@ gui-pills {
 
   .gui-pills__count {
     @include gui-pill-count;
+
+    // Invisible hit extender to the 40x40 compact cell; the 20px visual
+    // bubble and its focus ring are unchanged.
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: calc((20px - var(--gui-widget-size)) / 2);
+    }
 
     &--has-selection {
       // No-op
@@ -110,8 +124,10 @@ gui-pills {
     gap: var(--gui-space-2);
     margin-top: var(--gui-space-1);
 
-    .gui-pills__pill {
-      justify-content: space-between;
+    // Text left, action icons grouped right: the auto end-margin absorbs the
+    // free space, so the icons stay adjacent instead of being distributed.
+    .gui-pills__pill .gui-pills__pill-text {
+      margin-inline-end: auto;
     }
   }
 
@@ -120,6 +136,14 @@ gui-pills {
     flex-direction: column;
     gap: var(--gui-space-2);
     max-height: 200px;
+  }
+
+  // Touch: keep the enlarged edit/remove hit boxes from overlapping when
+  // both are visible.
+  @media (pointer: coarse) {
+    .gui-pills__pill {
+      gap: var(--gui-space-1);
+    }
   }
 
   @container gui-pills-widget (max-width: 540px) {

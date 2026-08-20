@@ -14,7 +14,9 @@
   font: inherit;
   text-align: start;
   border-radius: var(--gui-radius-md);
-  padding: var(--gui-space-1);
+  padding-block: 0;
+  padding-inline-end: 0;
+  height: var(--gui-pill-height, 24px);
   cursor: pointer;
 
   &:focus {
@@ -36,7 +38,7 @@
 }
 
 @mixin gui-pill-text {
-  font-size: var(--gui-font-xs);
+  font-size: var(--gui-pill-font-size, var(--gui-font-xs));
   margin-inline-end: var(--gui-space-1);
 }
 
@@ -46,13 +48,20 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  align-self: stretch;
   background: transparent;
   border: 0;
   color: white;
   padding: 0;
-  width: 16px;
-  height: 16px;
+  width: var(--gui-pill-action-hit, 24px);
+  position: relative; // hit box wins over the unpositioned pill text
+  z-index: 1;
   cursor: pointer;
+
+  svg {
+    width: var(--gui-pill-action-size, 16px);
+    height: var(--gui-pill-action-size, 16px);
+  }
 }
 
 @mixin gui-pill-remove {
