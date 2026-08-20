@@ -1932,4 +1932,211 @@ describe('reducer end-to-end', () => {
       expect(propsOf(changed, 'rowName[0]')['seenItemName']).toBe('Grace');
     });
   });
+
+  // ---------------------------------------------------------------------------
+  // 21. Hidden layout descendants
+  // ---------------------------------------------------------------------------
+
+  describe('hidden layout descendants', () => {
+    /** A gated section holding a required input directly and another through an inner layout. */
+    const makeGatedSectionFormDef = () => ({
+      states: { business: "$form.mode === 'business'" },
+      form: [
+        { uid: 'mode', kind: 'input', type: 'textinput', path: 'mode' },
+        {
+          uid: 'section',
+          kind: 'layout',
+          type: 'flex',
+          include: { in: ['business'] },
+          children: [
+            {
+              uid: 'vatNumber',
+              kind: 'input',
+              type: 'textinput',
+              path: 'vatNumber',
+              validator: { required: true },
+            },
+            {
+              uid: 'bankDetails',
+              kind: 'layout',
+              type: 'flex',
+              children: [
+                {
+                  uid: 'iban',
+                  kind: 'input',
+                  type: 'textinput',
+                  path: 'iban',
+                  validator: { required: true },
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    });
+
+    /** The gated section holds a repeater, so hiding must reach the expanded rows. */
+    const makeGatedSectionWithRepeaterFormDef = () => ({
+      states: { business: "$form.mode === 'business'" },
+      form: [
+        { uid: 'mode', kind: 'input', type: 'textinput', path: 'mode' },
+        {
+          uid: 'section',
+          kind: 'layout',
+          type: 'flex',
+          include: { in: ['business'] },
+          children: [
+            {
+              uid: 'branches',
+              kind: 'input',
+              type: 'repeater',
+              path: 'branches',
+              props: {
+                template: {
+                  uid: 'branchRow',
+                  kind: 'layout',
+                  type: 'flex',
+                  children: [
+                    {
+                      uid: 'branchName',
+                      kind: 'input',
+                      type: 'textinput',
+                      path: 'branches.items.name',
+                      validator: { required: true },
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+        },
+      ],
+    });
+
+    /** A repeater whose rows hold a per-row gated inner layout with a required input. */
+    const makeGatedRowSectionFormDef = () => ({
+      form: [
+        {
+          uid: 'users',
+          kind: 'input',
+          type: 'repeater',
+          path: 'users',
+          props: {
+            template: {
+              uid: 'usersRow',
+              kind: 'layout',
+              type: 'flex',
+              children: [
+                {
+                  uid: 'extra',
+                  kind: 'layout',
+                  type: 'flex',
+                  include: { when: '$item.showExtra === true' },
+                  children: [
+                    {
+                      uid: 'extraNote',
+                      kind: 'input',
+                      type: 'textinput',
+                      path: 'users.items.note',
+                      validator: { required: true },
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        },
+      ],
+    });
+
+    it('hides every widget below a hidden layout, transitively', () => {
+      const state = drive([init(makeGatedSectionFormDef()), setData({ mode: 'personal' })]);
+
+      expect(state.widgetFlags['section']).toEqual({ hidden: true });
+      expect(state.widgetFlags['vatNumber']).toEqual({ hidden: true });
+      expect(state.widgetFlags['bankDetails']).toEqual({ hidden: true });
+      expect(state.widgetFlags['iban']).toEqual({ hidden: true });
+      expect(state.calculatedWidgets).not.toHaveProperty('vatNumber');
+      expect(state.calculatedWidgets).not.toHaveProperty('bankDetails');
+      expect(state.calculatedWidgets).not.toHaveProperty('iban');
+    });
+
+    it('leaves the descendants unflagged while the layout is visible', () => {
+      const state = drive([init(makeGatedSectionFormDef()), setData({ mode: 'business' })]);
+
+      expect(state.widgetFlags['section']).toEqual({ hidden: false });
+      expect(state.widgetFlags).not.toHaveProperty('vatNumber');
+      expect(state.calculatedWidgets['vatNumber'].current.uid).toBe('vatNumber');
+      expect(state.calculatedWidgets['iban'].current.uid).toBe('iban');
+    });
+
+    it('a submit with a hidden section ignores its required inputs', () => {
+      const state = drive([
+        init(makeGatedSectionFormDef()),
+        setData({ mode: 'personal' }),
+        validateAllAction,
+      ]);
+
+      expect(state.isFormValid).toBe(true);
+      expect(state.validations).not.toHaveProperty('vatNumber');
+      expect(state.validations).not.toHaveProperty('iban');
+      expect(state.touchedControls).toEqual({ mode: true });
+    });
+
+    it('prunes the hidden section values from the submit payload', () => {
+      const state = drive([
+        init(makeGatedSectionFormDef()),
+        setData({ mode: 'personal', vatNumber: 'DE123', iban: 'DE00' }),
+      ]);
+
+      expect(pruneHiddenData(state)).toEqual({ mode: 'personal' });
+    });
+
+    it('hides the rows of a repeater inside a hidden section', () => {
+      const state = drive([
+        init(makeGatedSectionWithRepeaterFormDef()),
+        setData({ mode: 'personal', branches: [{ name: '' }] }),
+        validateAllAction,
+      ]);
+
+      expect(state.widgetFlags['branches']).toEqual({ hidden: true });
+      expect(state.widgetFlags['branchName[0]']).toEqual({ hidden: true });
+      expect(state.calculatedWidgets).not.toHaveProperty('branchName[0]');
+      expect(state.isFormValid).toBe(true);
+      expect(pruneHiddenData(state)).toEqual({ mode: 'personal' });
+    });
+
+    it('hides only the gated row subtree, not the other rows', () => {
+      const state = drive([
+        init(makeGatedRowSectionFormDef()),
+        setData({
+          users: [
+            { showExtra: true, note: '' },
+            { showExtra: false, note: 'x' },
+          ],
+        }),
+      ]);
+
+      expect(state.widgetFlags['extra[0]']).toEqual({ hidden: false });
+      expect(state.widgetFlags['extra[1]']).toEqual({ hidden: true });
+      expect(state.widgetFlags['extraNote[1]']).toEqual({ hidden: true });
+      expect(state.calculatedWidgets['extraNote[0]'].current.uid).toBe('extraNote[0]');
+      expect(state.calculatedWidgets).not.toHaveProperty('extraNote[1]');
+    });
+
+    it('touches and validates a revealed section immediately after a submit attempt', () => {
+      const submitted = drive([
+        init(makeGatedSectionFormDef()),
+        setData({ mode: 'personal' }),
+        validateAllAction,
+      ]);
+
+      const reduce = makeReducer();
+      const revealed = reduce(submitted, setData({ mode: 'business' }));
+
+      expect(revealed.validations['vatNumber']).toEqual(['required']);
+      expect(revealed.touchedControls['vatNumber']).toBe(true);
+      expect(revealed.isFormValid).toBe(false);
+    });
+  });
 });

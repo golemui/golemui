@@ -554,4 +554,65 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
       cy.get('[data-cy="details_validator-errors"]').should('exist');
     });
   });
+
+  describe('Inputs inside a hidden layout', () => {
+    const hiddenSectionFormDef = () =>
+      defineForm({
+        form: [
+          {
+            uid: 'business',
+            kind: 'input',
+            type: 'checkbox',
+            path: 'business',
+            label: 'Business account',
+          },
+          {
+            uid: 'section',
+            kind: 'layout',
+            type: 'flex',
+            include: { when: '$form.business === true' },
+            children: [
+              {
+                uid: 'vatNumber',
+                kind: 'input',
+                type: 'textinput',
+                path: 'vatNumber',
+                label: 'VAT number',
+                validator: { type: 'string', required: true },
+              },
+            ],
+          },
+          {
+            uid: 'submitBtn',
+            kind: 'action',
+            type: 'button',
+            label: 'Submit',
+            actionType: 'submit',
+          },
+        ],
+      });
+
+    it('submits when the only invalid input sits inside a hidden layout, without its value', () => {
+      const formSubmit = cy.stub().as('formSubmit');
+
+      mountFn({ formDef: hiddenSectionFormDef(), data: { vatNumber: 'DE123' }, formSubmit });
+
+      cy.get('[data-cy="vatNumber_textinput"]').should('not.exist');
+      cy.get('[data-cy="submitBtn_button"]').click();
+
+      cy.get('@formSubmit').should('have.been.calledOnce');
+      cy.get('@formSubmit').its('firstCall.args.0.data').should('not.have.property', 'vatNumber');
+      cy.get('[data-cy="submitBtn_button"]').should('not.have.class', 'gui-button--invalid');
+    });
+
+    it('shows the revealed section errors right away after a submit attempt', () => {
+      mountFn({ formDef: hiddenSectionFormDef() });
+
+      cy.get('[data-cy="submitBtn_button"]').click();
+      cy.get('[data-cy="business_checkbox"]').click();
+
+      cy.get('[data-cy="vatNumber_textinput"]').should('exist');
+      cy.get('[data-cy="vatNumber_validator-errors"]').should('exist');
+    });
+  });
 };
