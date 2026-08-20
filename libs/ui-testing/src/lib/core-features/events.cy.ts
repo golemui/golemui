@@ -68,6 +68,61 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
       cy.get('[data-cy="eventSelect_select"] option').should('have.length', 4);
     });
 
+    it('Should emit load once per row widget across row changes', () => {
+      const formEventHandler = cy.stub().as('formEventHandler');
+
+      mountFn({
+        formDef: defineForm({
+          form: [
+            {
+              uid: 'users',
+              kind: 'input',
+              type: 'repeater',
+              path: 'users',
+              props: {
+                addLabel: 'Add user',
+                removeLabel: 'Remove user',
+                template: {
+                  kind: 'layout',
+                  type: 'flex',
+                  children: [
+                    {
+                      uid: 'name',
+                      kind: 'input',
+                      type: 'textinput',
+                      label: 'Name',
+                      path: 'users.items.name',
+                      on: { load: 'rowInputLoaded' },
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+        }),
+        data: { users: [{ name: 'Ada' }, { name: 'Linus' }] },
+        formEvent: formEventHandler,
+      });
+
+      const loadCallCount = () =>
+        formEventHandler.getCalls().filter((call) => call.args[0].name === 'rowInputLoaded').length;
+
+      // One load per row input on mount.
+      cy.get('[data-cy="name[1]_textinput"]').should('exist');
+      cy.get('@formEventHandler').should(() => expect(loadCallCount()).to.equal(2));
+
+      // A new row loads once, the surviving rows do not load again.
+      cy.get('.gui-button').contains('Add user').click();
+      cy.get('[data-cy="name[2]_textinput"]').should('exist');
+      cy.get('@formEventHandler').should(() => expect(loadCallCount()).to.equal(3));
+
+      // Removing a row reuses the remaining row components, so nothing loads again.
+      cy.get('.gui-button').contains('Remove user').first().click();
+      cy.get('[data-cy="name[2]_textinput"]').should('not.exist');
+      cy.get('[data-cy="name[0]_textinput"]').should('have.value', 'Linus');
+      cy.get('@formEventHandler').should(() => expect(loadCallCount()).to.equal(3));
+    });
+
     it('Should execute form events on change', () => {
       const mockCountries: any = {
         europe: ['Spain', 'France', 'Italy'],
