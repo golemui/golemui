@@ -1,19 +1,20 @@
-import {
-  type InputWidget,
-  dataByPath$,
-  injectedValidationByPath$,
-  touchedControlsByPath$,
-  validationByPath$,
-} from '@golemui/core';
+import { type InputWidget, type NonFunctionWidget, widgetViewModel$ } from '@golemui/core';
 import { onScopeDispose, ref, type Ref } from 'vue';
-import { combineLatest } from 'rxjs';
 import { useVueFormContext } from '../provideFormContext';
-import { useTemplateData, type WithFlattenedProps } from './useTemplateData';
+import { mergeViewModelIntoTemplateData, type WithFlattenedProps } from './template-data';
 
 export interface UseInputWidgetReturn<T, ExtraProps extends Record<string, any>> {
   uid: Ref<string>;
   value: Ref<T | undefined>;
-  templateData: Ref<WithFlattenedProps<InputWidget<T, string>, ExtraProps>>;
+  templateData: Ref<
+    WithFlattenedProps<InputWidget<T, string>, ExtraProps> & {
+      /**
+       * Repeater inputs only: one row layout node per row of the array value, uid and path
+       * already indexed.
+       */
+      rows?: NonFunctionWidget<string>[];
+    }
+  >;
   errors: Ref<string[]>;
   isTouched: Ref<boolean | undefined>;
   onValueChanged: (newValue: T) => void;
@@ -26,52 +27,36 @@ export function useInputWidget<T, ExtraProps extends Record<string, any> = Recor
   widget: InputWidget<T, string>,
 ): UseInputWidgetReturn<T, ExtraProps> {
   const formContext = useVueFormContext();
-  const uid = ref('');
+  const uid = ref(widget.uid);
   const value = ref<T | undefined>(undefined) as Ref<T | undefined>;
   const errors = ref<string[]>([]);
   const isTouched = ref<boolean | undefined>(undefined);
+  const templateData = ref({}) as UseInputWidgetReturn<T, ExtraProps>['templateData'];
 
-  const templateData = useTemplateData<InputWidget<T, string>, ExtraProps>(widget);
-
-  formContext.store.dispatch({ type: 'ADD_WIDGET', payload: { widget } });
-  formContext.store.dispatch({
-    type: 'SET_WIDGET_INITIAL_DATA',
-    payload: { data: widget.defaultValue, path: widget.path },
-  });
-  uid.value = widget.uid;
-
-  const dataSub = formContext.store.state$
-    .pipe(dataByPath$<T>(widget.path))
-    .subscribe((next) => (value.value = next));
-
-  const validation$ = formContext.store.state$.pipe(validationByPath$(widget.path));
-  const injected$ = formContext.store.state$.pipe(injectedValidationByPath$(widget.path));
-  const validationSub = combineLatest([validation$, injected$]).subscribe(
-    ([validation, injectedValidation]) => {
-      errors.value = [...(validation ?? []), ...(injectedValidation ?? [])];
-    },
-  );
-
-  const touchedSub = formContext.store.state$
-    .pipe(touchedControlsByPath$(widget.path))
-    .subscribe((touched) => (isTouched.value = touched));
+  const viewModelSub = formContext.store.state$
+    .pipe(widgetViewModel$<T>(widget.uid))
+    .subscribe((viewModel) => {
+      value.value = viewModel.value;
+      // `errors` is shared between widgets while the form is untouched, so never write into it.
+      errors.value = viewModel.errors;
+      isTouched.value = viewModel.touched;
+      mergeViewModelIntoTemplateData(templateData, viewModel, formContext.dependencies, (vm) =>
+        // Keep the last rows while hidden, the view model empties them.
+        vm.widget !== undefined ? { rows: vm.rows } : {},
+      );
+    });
 
   formContext.emitEvent('load', widget);
 
-  // Vue keeps native DOM event listeners (e.g. @blur on <input>) bound until DOM
-  // removal, so a focused input losing focus during unmount (browser back-nav,
-  // route change, modal close…) can fire a `blur` after REMOVE_WIDGET ran. Any
-  // dispatch on a removed widget crashes the reducer (state.calculatedWidgets[uid]
-  // is undefined). React escapes this via its synthetic event teardown; Vue
-  // doesn't, so we gate every dispatcher behind this flag.
+  // Vue keeps DOM listeners bound until the node is removed, so a blur during unmount can fire
+  // after this scope was disposed. A late SET_WIDGET_DATA would re-create a removed row's data
+  // containers through set() and bring the row back, and a late ATTEMPT_VALIDATION would mark
+  // the whole form touched.
   let disposed = false;
 
   onScopeDispose(() => {
     disposed = true;
-    dataSub.unsubscribe();
-    validationSub.unsubscribe();
-    touchedSub.unsubscribe();
-    formContext.store.dispatch({ type: 'REMOVE_WIDGET', payload: { uid: widget.uid } });
+    viewModelSub.unsubscribe();
   });
 
   const onValueChanged = (newValue: T) => {

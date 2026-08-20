@@ -1,7 +1,7 @@
-import type { DisplayWidget } from '@golemui/core';
+import { type DisplayWidget, widgetViewModel$ } from '@golemui/core';
 import { onScopeDispose, ref, type Ref } from 'vue';
 import { useVueFormContext } from '../provideFormContext';
-import { useTemplateData, type WithFlattenedProps } from './useTemplateData';
+import { mergeViewModelIntoTemplateData, type WithFlattenedProps } from './template-data';
 
 export interface UseDisplayWidgetReturn<ExtraProps extends Record<string, any>> {
   uid: Ref<string>;
@@ -12,14 +12,17 @@ export function useDisplayWidget<ExtraProps extends Record<string, any> = Record
   widget: DisplayWidget<string>,
 ): UseDisplayWidgetReturn<ExtraProps> {
   const formContext = useVueFormContext();
-  const uid = ref('');
-  const templateData = useTemplateData<DisplayWidget<string>, ExtraProps>(widget);
+  const uid = ref(widget.uid);
+  const templateData = ref({}) as Ref<WithFlattenedProps<DisplayWidget<string>, ExtraProps>>;
 
-  uid.value = widget.uid;
-  formContext.store.dispatch({ type: 'ADD_WIDGET', payload: { widget } });
+  const viewModelSub = formContext.store.state$
+    .pipe(widgetViewModel$(widget.uid))
+    .subscribe((viewModel) => {
+      mergeViewModelIntoTemplateData(templateData, viewModel, formContext.dependencies);
+    });
 
   onScopeDispose(() => {
-    formContext.store.dispatch({ type: 'REMOVE_WIDGET', payload: { uid: widget.uid } });
+    viewModelSub.unsubscribe();
   });
 
   return { uid, templateData };

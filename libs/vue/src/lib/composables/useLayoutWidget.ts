@@ -1,7 +1,7 @@
-import { type FormWidget, type LayoutWidget, calculatedLayoutChildrenByUid$ } from '@golemui/core';
+import { type FormWidget, type LayoutWidget, widgetViewModel$ } from '@golemui/core';
 import { onScopeDispose, ref, type Ref } from 'vue';
 import { useVueFormContext } from '../provideFormContext';
-import { useTemplateData, type WithFlattenedProps } from './useTemplateData';
+import { mergeViewModelIntoTemplateData, type WithFlattenedProps } from './template-data';
 
 export interface UseLayoutWidgetReturn<ExtraProps extends Record<string, any>> {
   uid: Ref<string>;
@@ -14,24 +14,26 @@ export function useLayoutWidget<ExtraProps extends Record<string, any> = Record<
   widget: LayoutWidget<string>,
 ): UseLayoutWidgetReturn<ExtraProps> {
   const formContext = useVueFormContext();
-  const uid = ref('');
+  const uid = ref(widget.uid);
   const children = ref<FormWidget<string>[]>([]) as Ref<FormWidget<string>[]>;
-  const templateData = useTemplateData<LayoutWidget<string>, ExtraProps>(widget);
+  const templateData = ref({}) as Ref<WithFlattenedProps<LayoutWidget<string>, ExtraProps>>;
 
-  uid.value = widget.uid;
-  formContext.store.dispatch({ type: 'ADD_WIDGET', payload: { widget } });
+  const viewModelSub = formContext.store.state$
+    .pipe(widgetViewModel$(widget.uid))
+    .subscribe((viewModel) => {
+      // Keep the last children while hidden, otherwise the layout renders empty.
+      if (viewModel.widget !== undefined) {
+        children.value = viewModel.children;
+      }
+      mergeViewModelIntoTemplateData(templateData, viewModel, formContext.dependencies);
+    });
 
-  const childrenSub = formContext.store.state$
-    .pipe(calculatedLayoutChildrenByUid$(widget.uid))
-    .subscribe((next) => (children.value = next));
-
-  // See `useInputWidget` for the rationale — same teardown race applies here.
+  // Same teardown race as `useInputWidget`.
   let disposed = false;
 
   onScopeDispose(() => {
     disposed = true;
-    childrenSub.unsubscribe();
-    formContext.store.dispatch({ type: 'REMOVE_WIDGET', payload: { uid: widget.uid } });
+    viewModelSub.unsubscribe();
   });
 
   const onChange = (detail: any) => {

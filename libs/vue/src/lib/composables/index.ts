@@ -1,5 +1,5 @@
 export * from './useObservable';
-export * from './useTemplateData';
+export type { WithFlattenedProps } from './template-data';
 export * from './useInputWidget';
 export * from './useActionWidget';
 export * from './useDisplayWidget';
