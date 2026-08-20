@@ -1,5 +1,5 @@
 import { isInputWidget } from '../../form-widget';
-import { cloneObject, pathExists, set } from '../../utils/object';
+import { cloneObject, copyOnWriteSet, pathExists } from '../../utils/object';
 import { expandSources } from '../../utils/repeater';
 import { type State } from '../model';
 
@@ -30,10 +30,8 @@ export const applyDefaultValues = (state: State): State => {
       if (!isInputWidget(widget) || pathExists(data, widget.path)) {
         continue;
       }
-      if (data === state.data) {
-        data = cloneObject(state.data);
-      }
-      set(data, widget.path, cloneObject(widget.defaultValue));
+      // The default is cloned so an edit can never write back into the widget definition.
+      data = copyOnWriteSet(data, widget.path, cloneObject(widget.defaultValue));
       if (widget.defaultValue !== undefined) {
         wroteDefinedValue = true;
       }

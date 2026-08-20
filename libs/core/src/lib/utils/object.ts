@@ -219,6 +219,61 @@ export const set = (object: Record<string, any>, path: DotPath, value: any) => {
 };
 
 /**
+ * Returns a copy of `object` with `value` set at `path`, copying only the containers along
+ * the path. Untouched siblings keep their references and `object` is never modified, so the
+ * result can be compared to the input by reference at any level. Missing containers are
+ * created like {@link set}: an array when the next key is an index, an object otherwise.
+ * @param object - The object to copy and write into.
+ * @param path - Dot-separated path, array indexes as numeric segments.
+ * @param value - The value to set at the path.
+ * @returns A new root object with the value set.
+ * @example
+ * const next = copyOnWriteSet({ a: { b: 1 }, c: { d: 2 } }, 'a.b', 3);
+ * next.a.b;           // 3
+ * next.c;             // the input's c, by reference
+ */
+export const copyOnWriteSet = (
+  object: Record<string, any>,
+  path: DotPath,
+  value: any,
+): Record<string, any> => {
+  if (object === null) {
+    throw new Error('object is null');
+  }
+  if (object === undefined) {
+    throw new Error('object is undefined');
+  }
+  if (path === '') {
+    throw new Error('path cannot be empty');
+  }
+
+  const pathArray = path.split('.');
+  const root = copyContainer(object);
+
+  let current = root;
+  for (let i = 0; i < pathArray.length - 1; i++) {
+    const key = pathArray[i];
+    const nextKey = pathArray[i + 1];
+
+    if (current[key] == null || typeof current[key] !== 'object') {
+      current[key] = isIndex(nextKey) ? [] : {};
+    } else {
+      current[key] = copyContainer(current[key]);
+    }
+
+    current = current[key];
+  }
+
+  current[pathArray[pathArray.length - 1]] = value;
+  return root;
+};
+
+// `slice` keeps array holes, a spread would turn them into own `undefined` entries and
+// `pathExists` would then report a hole as an existing path.
+const copyContainer = (container: any): any =>
+  Array.isArray(container) ? container.slice() : { ...container };
+
+/**
  * Removes the property at the given dot-path from object by mutation.
  * After deletion, any ancestor plain objects that become empty are also removed.
  * Ancestor arrays that become empty are left in place, upward pruning stops as
