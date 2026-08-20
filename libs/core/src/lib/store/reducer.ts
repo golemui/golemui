@@ -1,11 +1,10 @@
 import { errorCodes } from '../errors';
 import { type ValidatorFn } from '../form-validator';
-import { type InputWidget, isFunctionWidget, isInputWidget } from '../form-widget';
+import { type InputWidget, isInputWidget } from '../form-widget';
 import { type I18nTranslator } from '../i18n';
 import { type ExpressionFunctions, type Uid, type ValidateOn } from '../shared';
 import { assertNever } from '../utils/assert-never';
 import { calculateValidationVariables } from '../utils/form';
-import { get } from '../utils/object';
 import { type Action, type ATTEMPT_VALIDATION, type OVERRIDE_WIDGET_PROP } from './actions';
 import { type State } from './model';
 import {
@@ -91,19 +90,11 @@ export const reducer = ({
           touched: true,
           touchedControls: { ...state.touchedControls, [action.payload.path]: true },
         };
-        const next = deriveAndValidateAppearingInputs(validate(touched));
-        return calculateIsFormValid(reresolveBlurredFunctionWidget(next, action, localization));
+        return calculateIsFormValid(deriveAndValidateAppearingInputs(validate(touched)));
       }
 
       case 'INJECT_VALIDATION_ISSUES':
         return injectValidationIssues(state, action);
-
-      // The widget set is computed from the data, so mounting and unmounting components changes
-      // nothing. The three actions stay until the framework bindings stop dispatching them.
-      case 'ADD_WIDGET':
-      case 'REMOVE_WIDGET':
-      case 'SET_WIDGET_INITIAL_DATA':
-        return state;
 
       default:
         return assertNever(action);
@@ -263,43 +254,6 @@ function overrideTargetsTouchedInput(state: State, action: OVERRIDE_WIDGET_PROP)
     }
   }
   return path !== undefined && state.touchedControls[path] === true;
-}
-
-/**
- * Re-resolves a blurred function widget with the validation outcome in scope.
- *
- * REFACTOR-NOTE: the props pass already resolves function widgets with `errors` and `touched`
- * from the store, so this only repeats that work. It is deleted together with the mount actions.
- */
-function reresolveBlurredFunctionWidget(
-  state: State,
-  action: ATTEMPT_VALIDATION,
-  localization: I18nTranslator,
-): State {
-  const uid = action.payload.uid;
-  const derivedWidget = state.calculatedWidgets[uid];
-  const source = derivedWidget?.source;
-  if (!derivedWidget || !isFunctionWidget(source)) {
-    return state;
-  }
-  const itemScope = state.repeaterItemScopes[uid];
-  const current = source({
-    $form: state.data,
-    errors: state.validations[action.payload.path],
-    touched: true,
-    translate: localization.translate,
-    $item: itemScope ? get(state.data, itemScope.itemPath) : undefined,
-    $index: itemScope?.index,
-  });
-  // Keep the uid and path the props pass stamped.
-  current.uid = uid;
-  if (source.path !== undefined) {
-    (current as InputWidget<unknown, string>).path = source.path;
-  }
-  return {
-    ...state,
-    calculatedWidgets: { ...state.calculatedWidgets, [uid]: { source, current } },
-  };
 }
 
 // TODO: dedupe this. we already have $formIsInvalid (although it doesnt take into account injected validations)

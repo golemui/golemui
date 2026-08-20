@@ -1,4 +1,3 @@
-import { type FormWidget } from '../form-widget';
 import { type DotPath, type Uid, type ValidateOn } from '../shared';
 import { type FormHealth } from './model';
 
@@ -38,34 +37,7 @@ export type SET_LANGUAGE = {
   };
 };
 
-/**
- * Does nothing. The widget set is computed from the data. Kept because the framework bindings
- * still dispatch it, removed together with those dispatch sites.
- */
-export type ADD_WIDGET = {
-  type: 'ADD_WIDGET';
-  payload: { widget: FormWidget<string> };
-};
-
-/**
- * Does nothing. The widget set is computed from the data. Kept because the framework bindings
- * still dispatch it, removed together with those dispatch sites.
- */
-export type REMOVE_WIDGET = {
-  type: 'REMOVE_WIDGET';
-  payload: { uid: Uid };
-};
-
 // TODO: rename all _WIDGET_ to _INPUT_ when the widget has a path (it's an input)
-/**
- * Does nothing. Default values are written when the form data is derived. Kept because the
- * framework bindings still dispatch it, removed together with those dispatch sites.
- */
-export type SET_WIDGET_INITIAL_DATA = {
-  type: 'SET_WIDGET_INITIAL_DATA';
-  payload: { path: DotPath; data: any };
-};
-
 /**
  * Sets the data for a single form widget.
  */
@@ -129,9 +101,6 @@ export type Action =
   | SET_LANGUAGE
   | SET_DATA
   | SET_META
-  | ADD_WIDGET
-  | REMOVE_WIDGET
-  | SET_WIDGET_INITIAL_DATA
   | SET_WIDGET_DATA
   | OVERRIDE_WIDGET_PROP
   | SET_FORM_HEALTH
