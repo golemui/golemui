@@ -128,6 +128,13 @@ function computeFunctionWidget(
     (current as InputWidget<unknown, string>).path = source.path;
   }
 
+  // An override wins over the value the function returned, the same precedence `applyPropsField`
+  // gives it for every other widget.
+  const overrides = state.widgetPropOverrides[uid];
+  if (overrides !== undefined) {
+    current.props = { ...current.props, ...overrides };
+  }
+
   // A function widget builds a new config object on every call, so compare the content
   // to avoid handing subscribers a new reference for an unchanged widget.
   if (prev.current && deepEqual(prev.current, current)) {

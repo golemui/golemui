@@ -1,10 +1,10 @@
 import { errorCodes } from '../errors';
 import { type ValidatorFn } from '../form-validator';
-import { type InputWidget, isInputWidget } from '../form-widget';
+import { isInputWidget } from '../form-widget';
 import { type I18nTranslator } from '../i18n';
-import { type ExpressionFunctions, type Uid, type ValidateOn } from '../shared';
+import { type DotPath, type ExpressionFunctions, type ValidateOn } from '../shared';
 import { assertNever } from '../utils/assert-never';
-import { calculateValidationVariables } from '../utils/form';
+import { calculateValidationVariables, inputPath } from '../utils/form';
 import { type Action, type ATTEMPT_VALIDATION, type OVERRIDE_WIDGET_PROP } from './actions';
 import { type State } from './model';
 import {
@@ -176,40 +176,41 @@ function validateInputsAppearingAfterSubmit(
     return next;
   }
 
-  const appearing = inputsAppearingIn(next, previousSources, previousFlags);
+  const appearing = pathsOfInputsAppearingIn(next, previousSources, previousFlags);
   if (appearing.length === 0) {
     return next;
   }
 
   const touchedControls = { ...next.touchedControls };
-  for (const uid of appearing) {
-    touchedControls[(next.resolvedSources[uid] as InputWidget<unknown, string>).path] = true;
+  for (const path of appearing) {
+    touchedControls[path] = true;
   }
   next = { ...next, touchedControls };
   return calculateIsFormValid(derive(validate(next)));
 }
 
-/** The uids of the visible, untouched inputs that are new or were hidden before this derive. */
-function inputsAppearingIn(
+/** The paths of the visible, untouched inputs that are new or were hidden before this derive. */
+function pathsOfInputsAppearingIn(
   next: State,
   previousSources: State['resolvedSources'],
   previousFlags: State['widgetFlags'],
-): Uid[] {
-  const appearing: Uid[] = [];
+): DotPath[] {
+  const appearing: DotPath[] = [];
   for (const [uid, widget] of Object.entries(next.resolvedSources)) {
-    if (!isInputWidget(widget)) {
+    const path = inputPath(widget);
+    if (path === undefined) {
       continue;
     }
     if (next.widgetFlags[uid]?.hidden === true) {
       continue;
     }
-    if (next.touchedControls[widget.path] === true) {
+    if (next.touchedControls[path] === true) {
       continue;
     }
     const isNew = previousSources[uid] === undefined;
     const becameVisible = previousFlags[uid]?.hidden === true;
     if (isNew || becameVisible) {
-      appearing.push(uid);
+      appearing.push(path);
     }
   }
   return appearing;
@@ -219,12 +220,19 @@ function inputsAppearingIn(
 // Validation helpers
 // -----------------------------------------------------------------------------
 
-/** Marks the form submitted and replaces the touched set with every visible input path. */
+/**
+ * Marks the form submitted and replaces the touched set with every visible input path.
+ *
+ * `current` is what `validateAll` keys the validations by, so it is read first and the touched
+ * key always matches the validation key. `source` covers an entry the props pass has not filled
+ * in yet.
+ */
 function touchAllInputs(state: State): State {
   const touchedControls: State['touchedControls'] = {};
-  for (const { source } of Object.values(state.calculatedWidgets)) {
-    if (isInputWidget(source)) {
-      touchedControls[source.path] = true;
+  for (const { source, current } of Object.values(state.calculatedWidgets)) {
+    const path = inputPath(current) ?? inputPath(source);
+    if (path !== undefined) {
+      touchedControls[path] = true;
     }
   }
   return { ...state, touched: true, allControlsValidated: true, touchedControls };

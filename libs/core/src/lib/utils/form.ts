@@ -1,5 +1,5 @@
-import { type FormWidget, isInputWidget, isLayoutWidget } from '../form-widget';
-import { type $Errors } from '../shared';
+import { type FormWidget, isFunctionWidget, isInputWidget, isLayoutWidget } from '../form-widget';
+import { type $Errors, type DotPath } from '../shared';
 import { type State } from '../store/model';
 import { cloneObject, set, unset } from './object';
 
@@ -57,6 +57,21 @@ export function calculateValidationVariables(state: State): ValidationVariables 
 }
 
 /**
+ * The data path a widget owns: an input widget's `path`, or a function widget's `path` when it
+ * returns a control. A function widget is stored as the callable itself, so `isInputWidget` is
+ * false for it and its path is the one the decoder stamped on the function object.
+ *
+ * @param widget - A `resolvedSources` entry, or a `calculatedWidgets` `current` / `source`.
+ * @returns The path, or `undefined` for a widget that owns none.
+ */
+export function inputPath(widget: FormWidget<string> | undefined): DotPath | undefined {
+  if (widget === undefined) {
+    return undefined;
+  }
+  return isInputWidget(widget) || isFunctionWidget(widget) ? widget.path : undefined;
+}
+
+/**
  * Returns a copy of the form data with values for currently-hidden input widgets removed.
  * Paths come from `resolvedSources`, so hidden repeater row inputs are pruned too and hidden
  * widgets absent from calculatedWidgets are still covered.
@@ -66,9 +81,9 @@ export function pruneHiddenData(state: State): Record<string, any> {
 
   for (const [uid, flags] of Object.entries(state.widgetFlags)) {
     if (flags.hidden === true) {
-      const widget = state.resolvedSources[uid];
-      if (widget && isInputWidget(widget)) {
-        unset(pruned, widget.path);
+      const path = inputPath(state.resolvedSources[uid]);
+      if (path !== undefined) {
+        unset(pruned, path);
       }
     }
   }

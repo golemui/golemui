@@ -1,5 +1,5 @@
-import { isFunctionWidget, isInputWidget } from '../../form-widget';
 import { type DotPath } from '../../shared';
+import { inputPath } from '../../utils/form';
 import { type State } from '../model';
 
 /**
@@ -42,10 +42,9 @@ export const dropRemovedWidgetEntries = (state: State): State => {
 function collectLivePaths(resolvedSources: State['resolvedSources']): Set<DotPath> {
   const paths = new Set<DotPath>();
   for (const widget of Object.values(resolvedSources)) {
-    if (isInputWidget(widget)) {
-      paths.add(widget.path);
-    } else if (isFunctionWidget(widget) && widget.path !== undefined) {
-      paths.add(widget.path);
+    const path = inputPath(widget);
+    if (path !== undefined) {
+      paths.add(path);
     }
   }
   return paths;

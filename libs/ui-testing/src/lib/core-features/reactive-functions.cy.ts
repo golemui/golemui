@@ -131,5 +131,36 @@ export const runReactiveFunctionsComponentTests = (mountFn: MountComponentFn) =>
       // No more errors because validation passes
       cy.get('[data-cy="inputUid_label"]').contains('Ohmmm');
     });
+
+    it('Should show the errors of a required field function after a submit attempt', () => {
+      mountFn({
+        data: {},
+        formDef: defineForm<TestData>({
+          form: [
+            () => ({
+              uid: 'inputUid',
+              kind: 'input',
+              type: 'textinput',
+              path: 'myInput',
+              label: 'My input',
+              validator: { type: 'string', required: true },
+            }),
+            {
+              uid: 'submitBtn',
+              kind: 'action',
+              type: 'button',
+              label: 'Submit',
+              actionType: 'submit',
+            },
+          ],
+        }),
+      });
+
+      cy.get('[data-cy="inputUid_validator-errors"]').should('not.exist');
+
+      // The submit touches every input, so the error shows without interacting with the field.
+      cy.get('[data-cy="submitBtn_button"]').click();
+      cy.get('[data-cy="inputUid_validator-errors"]').should('exist');
+    });
   });
 };

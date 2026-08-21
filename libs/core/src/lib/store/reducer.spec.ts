@@ -445,6 +445,21 @@ const makeGatedInputWithSiblingFormDef = () => ({
   ],
 });
 
+/** The same gated required input, produced by a function widget instead of a JSON object. */
+const makeGatedFunctionWidgetFormDef = () => {
+  const secret: FunctionWidget<string> = () =>
+    ({
+      uid: 'secret',
+      kind: 'input',
+      type: 'textinput',
+      path: 'secret',
+      validator: { required: true },
+      include: { in: ['adult'] },
+    }) as InputWidget<any, string>;
+  secret.uid = 'secret';
+  return { states: { adult: '$form.age >= 18' }, form: [secret] };
+};
+
 /**
  * A form whose state, flags and props all read the validation variables: `$errors` for one
  * widget's `when`, `$formIsInvalid` for a state and for a button's `disabled`.
@@ -1222,6 +1237,16 @@ describe('reducer end-to-end', () => {
       const pruned = pruneHiddenData(rows);
       expect(pruned['lineItems'][1]).not.toHaveProperty('quantity');
       expect(pruned['lineItems'][0]).toEqual(rowScopeData.lineItems[0]);
+    });
+
+    it('prunes a hidden function widget control', () => {
+      const state = drive([
+        init(makeGatedFunctionWidgetFormDef()),
+        setData({ age: 10, secret: 'shh' }),
+      ]);
+
+      expect(state.widgetFlags['secret']).toEqual({ hidden: true });
+      expect(pruneHiddenData(state)).toEqual({ age: 10 });
     });
   });
 
@@ -2223,6 +2248,96 @@ describe('reducer end-to-end', () => {
       expect(state.data['address']).toBe(payload.address);
       expect(state.data['users']).toBe(payload.users);
       expect(payload).not.toHaveProperty('settings');
+    });
+  });
+
+  // ---------------------------------------------------------------------------
+  // 23. Function widget controls
+  // ---------------------------------------------------------------------------
+
+  // A function widget is stored as the callable itself, so its input shape only exists in
+  // `current`. Every pass keyed by the input path has to find it there or on the stamped
+  // `source.path`, exactly like a plain input.
+  describe('function widget controls', () => {
+    const overrideByPath = (path: string, value: string): Action => ({
+      type: 'OVERRIDE_WIDGET_PROP',
+      payload: { path, prop: 'placeholder', value },
+    });
+
+    const overrideByUid = (uid: string, value: string): Action => ({
+      type: 'OVERRIDE_WIDGET_PROP',
+      payload: { uid, prop: 'placeholder', value },
+    });
+
+    it('VALIDATE_ALL touches the path of a top-level and of a row function widget', () => {
+      const state = drive([
+        init(makeFunctionWidgetsFormDef()),
+        setData({ users: [{ name: '' }] }),
+        validateAllAction,
+      ]);
+
+      expect(state.touchedControls).toEqual({
+        firstName: true,
+        users: true,
+        'users.0.name': true,
+      });
+      expect(state.validations).toEqual({
+        firstName: ['required'],
+        users: null,
+        'users.0.name': ['required'],
+      });
+      expect(state.isFormValid).toBe(false);
+    });
+
+    it('touches AND validates a function widget row added after VALIDATE_ALL', () => {
+      const validated = drive([
+        init(makeFunctionWidgetsFormDef()),
+        setData({ firstName: 'Ada', users: [{ name: 'Ada' }] }),
+        validateAllAction,
+      ]);
+      expect(validated.isFormValid).toBe(true);
+
+      const reduce = makeReducer();
+      const state = reduce(validated, setWidgetData('users', [{ name: 'Ada' }, {}]));
+
+      expect(state.touchedControls['users.1.name']).toBe(true);
+      expect(state.validations['users.1.name']).toEqual(['required']);
+      expect(state.isFormValid).toBe(false);
+    });
+
+    it('OVERRIDE_WIDGET_PROP by path finds a function widget control and applies the value', () => {
+      const initial = drive([
+        init(makeFunctionWidgetsFormDef()),
+        setData({ firstName: 'Ada', users: [{ name: 'Ada' }] }),
+      ]);
+
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+      const reduce = makeReducer();
+
+      const state = reduce(initial, overrideByPath('firstName', 'Your name'));
+      const rowState = reduce(state, overrideByPath('users.0.name', 'Row name'));
+
+      expect(warn).not.toHaveBeenCalled();
+      warn.mockRestore();
+
+      expect(rowState.widgetPropOverrides['firstName']).toEqual({ placeholder: 'Your name' });
+      expect(rowState.widgetPropOverrides['rowName[0]']).toEqual({ placeholder: 'Row name' });
+      expect(propsOf(rowState, 'firstName')['placeholder']).toBe('Your name');
+      expect(propsOf(rowState, 'rowName[0]')['placeholder']).toBe('Row name');
+    });
+
+    it('OVERRIDE_WIDGET_PROP by uid reaches the props of a function widget', () => {
+      const initial = drive([
+        init(makeFunctionWidgetsFormDef()),
+        setData({ firstName: 'Ada', users: [] }),
+      ]);
+
+      const reduce = makeReducer();
+      const state = reduce(initial, overrideByUid('firstName', 'Your name'));
+
+      expect(propsOf(state, 'firstName')['placeholder']).toBe('Your name');
+      // The function still owns every other prop it returns.
+      expect(propsOf(state, 'firstName')['seenTranslate']).toBe('function');
     });
   });
 });
