@@ -1,4 +1,5 @@
-import { type FormWidget, isInputWidget } from '../../form-widget';
+import { type FormWidget } from '../../form-widget';
+import { inputPath } from '../../utils/form';
 import type { OVERRIDE_WIDGET_PROP } from '../actions';
 import { type DerivedWidget, type State } from '../model';
 
@@ -7,7 +8,7 @@ export const overrideWidgetProp = (state: State, { payload }: OVERRIDE_WIDGET_PR
 
   if ('path' in payload) {
     widget = Object.values(state.calculatedWidgets).find(
-      ({ source }) => isInputWidget(source) && source.path === payload.path,
+      ({ source, current }) => (inputPath(current) ?? inputPath(source)) === payload.path,
     );
     if (!widget) {
       console.warn(`Input with path "${payload.path}" not found`);
