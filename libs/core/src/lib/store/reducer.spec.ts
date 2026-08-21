@@ -531,6 +531,39 @@ const makeBrokenWhenFormDef = () => ({
   ],
 });
 
+/**
+ * A repeater whose row template interpolates a host function that does not exist. With no rows
+ * the props pass has nothing to resolve, so the first derive succeeds and adding a row throws a
+ * code 40 while the rows are being resolved.
+ */
+const makeBrokenRowPropFormDef = () => ({
+  form: [
+    { uid: 'title', kind: 'display', type: 'heading', props: { text: 'Users' } },
+    {
+      uid: 'users',
+      kind: 'input',
+      type: 'repeater',
+      path: 'users',
+      props: {
+        template: {
+          uid: 'usersRow',
+          kind: 'layout',
+          type: 'flex',
+          children: [
+            {
+              uid: 'greeting',
+              kind: 'display',
+              type: 'heading',
+              props: { text: 'Hi {{$fn.missing()}}' },
+            },
+            { uid: 'name', kind: 'input', type: 'textinput', path: 'users.items.name' },
+          ],
+        },
+      },
+    },
+  ],
+});
+
 /** A form driven entirely by `$meta`: one state, one flag and one interpolated prop. */
 const makeMetaFormDef = () => ({
   states: { debug: '$meta.debug === true' },
@@ -1389,7 +1422,7 @@ describe('reducer end-to-end', () => {
   // ---------------------------------------------------------------------------
 
   describe('form health', () => {
-    it('reports an errored form when a prop interpolation throws, and computes no props', () => {
+    it('reports an errored form when a prop interpolation throws, and publishes no widgets', () => {
       const state = drive([init(makeBrokenInterpolationFormDef()), setData({ age: 21 })]);
 
       expect(state.formHealth).toEqual({
@@ -1399,10 +1432,11 @@ describe('reducer end-to-end', () => {
         code: 40,
       });
 
-      // States and flags ran, the props pass threw before writing anything.
-      expect(state.currentStates).toEqual(['adult']);
-      expect(state.calculatedWidgets['oops'].current).toEqual({});
-      expect(state.calculatedWidgets['fine'].current).toEqual({});
+      // The failed derive publishes nothing, so this first one leaves the form with no widgets
+      // and no states rather than with the placeholder entries the props pass was filling.
+      expect(state.currentStates).toEqual([]);
+      expect(state.calculatedWidgets).toEqual({});
+      expect(state.data).toEqual({ age: 21 });
     });
 
     it('recovers from an interpolation error as soon as the data computes again', () => {
@@ -2338,6 +2372,53 @@ describe('reducer end-to-end', () => {
       expect(propsOf(state, 'firstName')['placeholder']).toBe('Your name');
       // The function still owns every other prop it returns.
       expect(propsOf(state, 'firstName')['seenTranslate']).toBe('function');
+    });
+  });
+
+  // ---------------------------------------------------------------------------
+  // 24. A derive-owned error discards the whole pass
+  // ---------------------------------------------------------------------------
+
+  // A pass that catches its own error must not publish what the passes before it produced:
+  // `fillCalculatedWidgets` seeds new entries with an empty `current`, and a state carrying
+  // those placeholders renders widgets with no type and no props.
+  describe('a derive-owned error discards the whole pass', () => {
+    it('publishes no half-computed widgets when the props pass fails on a new row', () => {
+      const ok = drive([init(makeBrokenRowPropFormDef()), setData({ users: [] })]);
+      expect(ok.formHealth).toEqual({ status: 'ok' });
+
+      const reduce = makeReducer();
+      const errored = reduce(ok, setData({ users: [{ name: 'Ada' }] }));
+
+      expect(errored.formHealth.status).toBe('errored');
+      if (errored.formHealth.status === 'errored') {
+        expect(errored.formHealth.code).toBe(40);
+      }
+      // The data change is stored, nothing computed from it is.
+      expect(errored.data).toEqual({ users: [{ name: 'Ada' }] });
+      expect(errored.calculatedWidgets).toBe(ok.calculatedWidgets);
+      expect(errored.resolvedSources).toBe(ok.resolvedSources);
+      expect(errored.widgetFlags).toBe(ok.widgetFlags);
+      // No entry for the row the failed pass was resolving, and no empty placeholder anywhere.
+      expect(errored.calculatedWidgets['greeting[0]']).toBeUndefined();
+      const currents = Object.values(errored.calculatedWidgets).map((entry) => entry.current);
+      expect(currents.every((current) => Object.keys(current).length > 0)).toBe(true);
+    });
+
+    it('recovers the row on the next derive once the props resolve', () => {
+      const errored = drive([
+        init(makeBrokenRowPropFormDef()),
+        setData({ users: [] }),
+        setData({ users: [{ name: 'Ada' }] }),
+      ]);
+      expect(errored.formHealth.status).toBe('errored');
+
+      const reduce = makeReducer();
+      const healed = reduce(errored, setData({ users: [] }));
+
+      expect(healed.formHealth).toEqual({ status: 'ok' });
+      expect(healed.calculatedWidgets['greeting[0]']).toBeUndefined();
+      expect(propsOf(healed, 'title')['text']).toBe('Users');
     });
   });
 });

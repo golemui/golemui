@@ -130,6 +130,11 @@ function makeDerive(localization: I18nTranslator, functions: ExpressionFunctions
     if (erroredOutsideDerive(state)) {
       return state;
     }
+    // A failed pass publishes the input state with only the new health, so an entry whose
+    // `current` is still the empty placeholder never reaches a renderer. The next derive
+    // computes everything again.
+    const discardPass = (formHealth: State['formHealth']): State => ({ ...state, formHealth });
+
     try {
       let next: State =
         state.formHealth.status === 'ok' ? state : { ...state, formHealth: { status: 'ok' } };
@@ -138,18 +143,19 @@ function makeDerive(localization: I18nTranslator, functions: ExpressionFunctions
       const validationVariables = calculateValidationVariables(next);
       next = applyCurrentState(next, validationVariables);
       if (next.formHealth.status !== 'ok') {
-        return next;
+        return discardPass(next.formHealth);
       }
       next = applyWidgetFlags(next, validationVariables);
       next = fillCalculatedWidgets(next);
-      return applyWidgetProps(next, validationVariables);
+      next = applyWidgetProps(next, validationVariables);
+      return next.formHealth.status === 'ok' ? next : discardPass(next.formHealth);
     } catch (err) {
-      // Nothing from this pass is applied, so the last good widgets stay in place.
       const code = errorCodes.calculateWidgetFlagsError;
-      return {
-        ...state,
-        formHealth: { status: 'errored', code, message: `[${code}] ${(err as Error).message}` },
-      };
+      return discardPass({
+        status: 'errored',
+        code,
+        message: `[${code}] ${(err as Error).message}`,
+      });
     }
   };
 }
