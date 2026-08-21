@@ -15,6 +15,7 @@ import {
 import { provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';
 import { property, state } from 'lit/decorators.js';
+import { keyed } from 'lit/directives/keyed.js';
 import { when } from 'lit/directives/when.js';
 import { type Subscription } from 'rxjs';
 import { formContext, LitFormContext } from '../../context/form.context';
@@ -43,6 +44,9 @@ export class FormElement extends LitElement {
   // Subscriptions replaced on each config change (store is recreated on init).
   private stateSub: Subscription | undefined;
   private healthSub: Subscription | undefined;
+  // Keys the widget tree. Every initialization bumps it, so the whole tree is destroyed
+  // and recreated and every widget subscribes to the store INITIALIZE ran on.
+  private storeGeneration = 0;
   // Subscriptions stable for the element lifetime.
   private eventSub: Subscription[] = [];
   private unsubscribeI18n: () => void = () => undefined;
@@ -85,7 +89,7 @@ export class FormElement extends LitElement {
 
   override updated(changed: Map<string, unknown>) {
     super.updated(changed);
-    if (changed.has('config') && this.config) {
+    if ((changed.has('config') || changed.has('validators')) && this.config) {
       this._reinitialize(this.config);
     }
   }
@@ -95,6 +99,7 @@ export class FormElement extends LitElement {
     this.unsubscribeI18n();
     this.stateSub?.unsubscribe();
     this.healthSub?.unsubscribe();
+    this.storeGeneration += 1;
 
     this.context.initialize(
       c.widgetLoaders as WidgetLoaders<WithWidget>,
@@ -160,7 +165,11 @@ export class FormElement extends LitElement {
       >
         ${when(
           ready,
-          () => html` <gui-widget .widget=${this.formState?.formDef.form}></gui-widget>`,
+          () =>
+            keyed(
+              this.storeGeneration,
+              html` <gui-widget .widget=${this.formState?.formDef.form}></gui-widget>`,
+            ),
           () => (isErrored ? nothing : html` <div>Loading form...</div>`),
         )}
       </form>

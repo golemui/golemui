@@ -66,10 +66,17 @@ export const mountFramework = (options: MountOptions) => {
       @formSubmit=${handleFormSubmit}
     ></gui-form>`,
   ).then(() => {
-    const el = document.querySelector('gui-form') as HTMLElement & FormHandle;
+    const el = document.querySelector('gui-form') as HTMLElement & {
+      config: GuiFormInitConfig;
+      setData: FormHandle['setData'];
+      setMeta: FormHandle['setMeta'];
+    };
     options.onFormReady?.({
       setData: (data) => el.setData(data),
       setMeta: (meta) => el.setMeta(meta),
+      setConfig: (next) => {
+        el.config = { ...el.config, formDef: next.formDef, data: next.data, meta: next.meta };
+      },
     });
   });
 };

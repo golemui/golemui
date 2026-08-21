@@ -43,6 +43,9 @@ export const FormComponent = forwardRef<FormComponentHandle, FormComponentProps>
     const [formLayoutField, setFormLayoutField] = useState<LayoutWidget<string> | null>(null);
     const [healthError, setHealthError] = useState<FormHealth | null>(null);
     const [direction, setDirection] = useState<'ltr' | 'rtl'>('ltr');
+    // Keys the widget tree. Every initialization bumps it, so the whole tree is destroyed
+    // and recreated and every widget subscribes to the store INITIALIZE ran on.
+    const [treeGeneration, setTreeGeneration] = useState(0);
 
     const callbacksRef = useRef({ formHealth, formEvent, formSubmit });
     callbacksRef.current = { formHealth, formEvent, formSubmit };
@@ -65,6 +68,7 @@ export const FormComponent = forwardRef<FormComponentHandle, FormComponentProps>
       });
       context.store.dispatch({ type: 'SET_DATA', payload: { data: config.data ?? {} } });
       context.store.dispatch({ type: 'SET_META', payload: { meta: config.meta ?? {} } });
+      setTreeGeneration((generation) => generation + 1);
       setDirection(getDirectionFromLanguage(context.localization.lang));
 
       const stateSub = context.store.state$.subscribe((state) => {
@@ -137,7 +141,7 @@ export const FormComponent = forwardRef<FormComponentHandle, FormComponentProps>
               onSubmit={onFormSubmit}
             >
               {formLayoutField && (
-                <WidgetErrorBoundary widget={formLayoutField}>
+                <WidgetErrorBoundary key={treeGeneration} widget={formLayoutField}>
                   <WidgetRenderer widget={formLayoutField} />
                 </WidgetErrorBoundary>
               )}

@@ -11,7 +11,11 @@
   (submit)="onFormSubmit($event)"
 >
   @if (formState && formState.formDef && context.widgetRegistry.ready) {
-    <ng-container guiWidget [widget]="formState.formDef.form" />
+    <!-- Tracking the generation destroys and recreates the widget tree on every
+         initialization, so every widget subscribes to the store INITIALIZE ran on. -->
+    @for (generation of [storeGeneration()]; track generation) {
+      <ng-container guiWidget [widget]="formState.formDef.form" />
+    }
   } @else if (health().status !== 'errored') {
     <div>Loading form...</div>
   }
