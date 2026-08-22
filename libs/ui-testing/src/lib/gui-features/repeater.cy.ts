@@ -1,5 +1,5 @@
 import { defineForm, identityTranslator } from '@golemui/core';
-import { type MountComponentFn } from '../utils';
+import { expectNoDuplicateIds, type MountComponentFn } from '../utils';
 
 export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
   describe('Repeater Component', () => {
@@ -863,9 +863,22 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
         cy.get('[data-cy="secondPanel[0]_textinput"]').should('not.exist');
 
         // Switching a tab in the second row opens that row's panel only
-        cy.get('[data-cy="tab_rowTabs[1]_1"]').click();
+        cy.get('[data-cy="tab_rowTabs[1]_secondPanel"]').click();
         cy.get('[data-cy="secondPanel[1]_textinput"]').should('have.value', 'Bea');
         cy.get('[data-cy="secondPanel[0]_textinput"]').should('not.exist');
+
+        // Each row's tabs address their own panel, the layout uid carries the row index
+        cy.get('[data-cy="tab_rowTabs[0]_firstPanel"]').should(
+          'have.attr',
+          'aria-controls',
+          'tabpanel_rowTabs[0]_firstPanel',
+        );
+        cy.get('[data-cy="tab_rowTabs[1]_secondPanel"]').should(
+          'have.attr',
+          'aria-controls',
+          'tabpanel_rowTabs[1]_secondPanel',
+        );
+        expectNoDuplicateIds();
       });
 
       it('renders the open section of an accordion in every repeater row', () => {
@@ -922,10 +935,23 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
         cy.get('[data-cy="firstSection[1]_textinput"]').should('have.value', 'Bob');
         cy.get('[data-cy="secondSection[1]_textinput"]').should('not.exist');
 
-        // The section buttons carry the template uid, so pick the one of the second row
-        cy.get('[id="accordion_button_secondSection"]').eq(1).click();
+        // The section buttons carry the layout uid with its row index, so address the second row
+        cy.get('[id="accordion_button_rowAccordion[1]_secondSection"]').click();
         cy.get('[data-cy="secondSection[1]_textinput"]').should('have.value', 'Bea');
         cy.get('[data-cy="secondSection[0]_textinput"]').should('not.exist');
+
+        // Each row's button controls its own region
+        cy.get('[id="accordion_button_rowAccordion[0]_firstSection"]').should(
+          'have.attr',
+          'aria-controls',
+          'accordion_section_rowAccordion[0]_firstSection',
+        );
+        cy.get('[id="accordion_button_rowAccordion[1]_secondSection"]').should(
+          'have.attr',
+          'aria-controls',
+          'accordion_section_rowAccordion[1]_secondSection',
+        );
+        expectNoDuplicateIds();
       });
 
       it('a hidden section child renders no section', () => {
@@ -987,8 +1013,10 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
         cy.get('[data-cy="secondSection[1]_textinput"]').should('not.exist');
 
         // The header button still renders in both rows, the region only where the child exists
-        cy.get('[id="accordion_button_secondSection"]').should('have.length', 2);
-        cy.get('[id="accordion_section_secondSection"]').should('have.length', 1);
+        cy.get('[id="accordion_button_rowAccordion[0]_secondSection"]').should('exist');
+        cy.get('[id="accordion_button_rowAccordion[1]_secondSection"]').should('exist');
+        cy.get('[id="accordion_section_rowAccordion[0]_secondSection"]').should('exist');
+        cy.get('[id="accordion_section_rowAccordion[1]_secondSection"]').should('not.exist');
       });
     });
   });
