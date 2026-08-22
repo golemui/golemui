@@ -1,6 +1,11 @@
 import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
 import { useLayoutWidget, WidgetRenderer } from '@golemui/react';
-import { type AccordionProps, repeaterIndexSuffix } from '@golemui/gui-shared/internals';
+import {
+  accordionButtonId,
+  accordionSectionId,
+  type AccordionProps,
+  repeaterIndexSuffix,
+} from '@golemui/gui-shared/internals';
 import { useCallback, useEffect, useState } from 'react';
 
 const empty = {};
@@ -42,35 +47,35 @@ export function Accordion(widgetInstance: WithWidget) {
   const rowIndexSuffix = repeaterIndexSuffix(widget.uid);
 
   const renderContent = useCallback(
-    (uid: string) => {
+    (sectionUid: string) => {
       const child = children.find(
-        (section) => section.uid === `${uid}${rowIndexSuffix}`,
+        (section) => section.uid === `${sectionUid}${rowIndexSuffix}`,
       ) as NonFunctionWidget<string>;
-      const isActiveSection = activeSections[uid];
+      const isActiveSection = activeSections[sectionUid];
       return (isActiveSection || templateData.renderMode !== 'activeOnly') && child ? (
         <section
           className="gui-widget"
           role="region"
-          id={`accordion_section_${uid}`}
+          id={accordionSectionId(widget.uid, sectionUid)}
           hidden={!isActiveSection && templateData.renderMode !== 'activeOnly'}
-          aria-labelledby={`accordion_button_${uid}`}
+          aria-labelledby={accordionButtonId(widget.uid, sectionUid)}
         >
           <WidgetRenderer widget={child} />
         </section>
       ) : null;
     },
-    [children, activeSections, templateData.renderMode],
+    [children, activeSections, templateData.renderMode, widget, rowIndexSuffix],
   );
 
   const renderAccordion = useCallback(() => {
     const sections = templateData.sections || [];
-    return sections.map((section, index) => (
-      <div className="gui-accordion__section" key={`${'accordion_section_' + section.uid}`}>
+    return sections.map((section) => (
+      <div className="gui-accordion__section" key={accordionSectionId(widget.uid, section.uid)}>
         <button
           type="button"
           tabIndex={0}
-          id={`accordion_button_${section.uid}`}
-          aria-controls={`accordion_section_${section.uid}`}
+          id={accordionButtonId(widget.uid, section.uid)}
+          aria-controls={accordionSectionId(widget.uid, section.uid)}
           aria-expanded={activeSections[section.uid] ? 'true' : 'false'}
           className={activeSections[section.uid] ? 'active' : ''}
           onClick={() => onClickButton(section.uid)}
@@ -86,7 +91,7 @@ export function Accordion(widgetInstance: WithWidget) {
         {renderContent(section.uid)}
       </div>
     ));
-  }, [templateData.sections, activeSections, renderContent, onClickButton]);
+  }, [templateData.sections, activeSections, renderContent, onClickButton, widget]);
 
   return (
     <div className="gui-accordion gui-field" style={{ flex: templateData.size }}>
