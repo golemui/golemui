@@ -242,6 +242,24 @@ describe('expandSources: nested repeaters', () => {
     expect(pathOf(resolvedSources['dev-name[1][0]'])).toBe('teams.1.devs.0.name');
   });
 
+  it('does not write uid into a repeater object a row function widget returns from a cache', () => {
+    // A memoized function returns the same object for every row. The uid write then modifies
+    // an object the user owns.
+    const cached = repeater('cached-devs', 'teams.items.devs', [
+      inputChild('dev-name', 'teams.items.devs.items.name'),
+    ]);
+    const devsFn: FunctionWidget<string> = () => cached as never;
+    devsFn.uid = 'devs' as never;
+
+    const { resolvedSources } = expandSources(
+      flatFormOf(repeater('teams', 'teams', [devsFn])),
+      data,
+    );
+
+    expect(cached.uid).toBe('cached-devs');
+    expect(pathOf(resolvedSources['dev-name[2][1]'])).toBe('teams.2.devs.1.name');
+  });
+
   it('recurses into a nested repeater produced by a row function widget', () => {
     const devsFn: FunctionWidget<string> = () =>
       repeater('devs', 'teams.items.devs', [

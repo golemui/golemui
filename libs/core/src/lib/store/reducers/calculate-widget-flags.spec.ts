@@ -173,6 +173,29 @@ describe('calculateWidgetFlags: $item / $index in item when conditions', () => {
   });
 });
 
+describe('calculateWidgetFlags: function widget results', () => {
+  let state: State;
+
+  beforeEach(() => {
+    state = createInitialState('en-US');
+  });
+
+  it('does not write uid into an object the function returns from a cache', () => {
+    // A memoized function returns the same object on every call. The uid write then modifies
+    // an object the user owns.
+    const cached = displayChild('cached-note', { include: { when: '$form.show === true' } });
+    const note: FunctionWidget<string> = () => cached as never;
+    note.uid = 'note' as never;
+    state.flatForm = { note: note as unknown as FormWidget<string> };
+    state.data = { show: true };
+
+    const next = runFlagsPipeline(state);
+
+    expect(cached.uid).toBe('cached-note');
+    expect(next.widgetFlags['note'].hidden).toBe(false);
+  });
+});
+
 describe('calculateWidgetFlags: $fn in when conditions', () => {
   let state: State;
 

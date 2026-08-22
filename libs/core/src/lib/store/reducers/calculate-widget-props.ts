@@ -114,14 +114,18 @@ function computeFunctionWidget(
   localization: I18nTranslator,
   itemScope?: RepeaterItemScope,
 ): DerivedWidget<FormWidget<string>> {
-  const current = source({
-    $form: state.data,
-    errors: source.path ? state.validations[source.path] : undefined,
-    touched: source.path ? state.touchedControls[source.path] : undefined,
-    translate: localization.translate,
-    $item: itemScope ? get(state.data, itemScope.itemPath) : undefined,
-    $index: itemScope?.index,
-  });
+  // The function may return a cached object. Copy it before writing uid and path,
+  // so the write never reaches the object the function owns.
+  const current = {
+    ...source({
+      $form: state.data,
+      errors: source.path ? state.validations[source.path] : undefined,
+      touched: source.path ? state.touchedControls[source.path] : undefined,
+      translate: localization.translate,
+      $item: itemScope ? get(state.data, itemScope.itemPath) : undefined,
+      $index: itemScope?.index,
+    }),
+  };
   current.uid = uid;
   // A row function widget returns the template path, the source carries the row path.
   if (source.path !== undefined) {
