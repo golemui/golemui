@@ -1,7 +1,12 @@
 import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
 import { cn, useLayoutWidget, WidgetRenderer } from '@golemui/react';
 import { createIntersectionObserver } from '@golemui/gui-components/internals';
-import { repeaterIndexSuffix, type TabsProps } from '@golemui/gui-shared/internals';
+import {
+  repeaterIndexSuffix,
+  tabButtonId,
+  tabPanelId,
+  type TabsProps,
+} from '@golemui/gui-shared/internals';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 export function Tabs(widgetInstance: WithWidget) {
@@ -110,7 +115,7 @@ export function Tabs(widgetInstance: WithWidget) {
     const tabs = templateData.tabs || [];
     return tabs.map((tab, index) => {
       return (
-        <li role="presentation" key={`tab_${widget.uid}_${tab.uid}`}>
+        <li role="presentation" key={tabButtonId(widget.uid, tab.uid)}>
           <button
             ref={(el) => {
               tabRefs.current[index] = el!;
@@ -118,9 +123,9 @@ export function Tabs(widgetInstance: WithWidget) {
             type="button"
             role="tab"
             tabIndex={tab.uid === activeTab ? 0 : -1}
-            data-cy={`tab_${widget.uid}_${index}`}
-            id={`tab_${widget.uid}_${index}`}
-            aria-controls={`tabpanel_${widget.uid}_${index}`}
+            data-cy={tabButtonId(widget.uid, tab.uid)}
+            id={tabButtonId(widget.uid, tab.uid)}
+            aria-controls={tabPanelId(widget.uid, tab.uid)}
             aria-selected={tab.uid === activeTab ? 'true' : 'false'}
             className={`${tab.uid === activeTab ? 'active' : ''}`}
             onClick={() => handleTabChange(tab.uid)}
@@ -136,25 +141,34 @@ export function Tabs(widgetInstance: WithWidget) {
     });
   }, [templateData, activeTab, widget, tabRefs, handleTabChange, onKeyDown]);
 
+  // Panels are built from the tab list, not from the children, so a tab and its panel always
+  // carry the same uid. A tab whose child is hidden by a `when` keeps its header and gets no panel.
   const renderWidgets = useCallback(() => {
-    const activeSectionIndex = children.findIndex((section: any) => section.uid === activeChildUid);
+    const tabs = templateData.tabs || [];
 
-    return children
-      .filter((widget) => widget.uid === activeChildUid || templateData.renderMode !== 'activeOnly')
-      .map((section) => (
+    return tabs.map((tab) => {
+      const child = children.find((section) => section.uid === `${tab.uid}${rowIndexSuffix}`);
+      const isActive = child?.uid === activeChildUid;
+
+      if (!child || (!isActive && templateData.renderMode === 'activeOnly')) {
+        return null;
+      }
+
+      return (
         <section
-          key={`tabpanel_${widget.uid}_${section.uid}`}
+          key={tabPanelId(widget.uid, tab.uid)}
           role="tabpanel"
           tabIndex={0}
-          data-cy={`tabpanel_${widget.uid}_${activeSectionIndex}`}
-          id={`tabpanel_${widget.uid}_${activeSectionIndex}`}
-          hidden={section.uid !== activeChildUid && templateData.renderMode !== 'activeOnly'}
-          aria-labelledby={`tab_${widget.uid}_${activeSectionIndex}`}
+          data-cy={tabPanelId(widget.uid, tab.uid)}
+          id={tabPanelId(widget.uid, tab.uid)}
+          hidden={!isActive}
+          aria-labelledby={tabButtonId(widget.uid, tab.uid)}
         >
-          <WidgetRenderer key={section.uid} widget={section as NonFunctionWidget<string>} />
+          <WidgetRenderer key={child.uid} widget={child as NonFunctionWidget<string>} />
         </section>
-      ));
-  }, [children, activeChildUid, widget]);
+      );
+    });
+  }, [children, activeChildUid, widget, templateData, rowIndexSuffix]);
 
   return (
     <div className="gui-tabs gui-field" style={{ flex: templateData.size }}>

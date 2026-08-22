@@ -346,4 +346,10 @@ export { golemForm } from './lib/golem-form';
 // ─── Utils ───
 
 export { isOption } from './lib/utils/one-of';
+export {
+  accordionButtonId,
+  accordionSectionId,
+  tabButtonId,
+  tabPanelId,
+} from './lib/utils/layout-ids';
 export { getItemKey, repeaterIndexSuffix } from './lib/utils/repeater';

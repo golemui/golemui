@@ -1,6 +1,11 @@
 import type { LayoutWidget, WithWidget } from '@golemui/core';
 import { LayoutWidgetAdapter, type LitFormContext, formContext, layoutContext } from '@golemui/lit';
-import { type AccordionProps, repeaterIndexSuffix } from '@golemui/gui-shared/internals';
+import {
+  accordionButtonId,
+  accordionSectionId,
+  type AccordionProps,
+  repeaterIndexSuffix,
+} from '@golemui/gui-shared/internals';
 import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
@@ -96,10 +101,10 @@ export class AccordionElement extends LitElement implements WithWidget {
                     ? html`<section
                         class="gui-widget"
                         role="region"
-                        id=${`accordion_section_${section.uid}`}
+                        id=${accordionSectionId(this.widget.uid, section.uid)}
                         ?hidden=${!this.activeSections[section.uid] &&
                         this.adapter.templateData.renderMode !== 'activeOnly'}
-                        aria-labelledby=${`accordion_button_${section.uid}`}
+                        aria-labelledby=${accordionButtonId(this.widget.uid, section.uid)}
                       >
                         <gui-widget .widget=${child}></gui-widget>
                       </section>`
@@ -112,8 +117,8 @@ export class AccordionElement extends LitElement implements WithWidget {
                     class=${classMap({
                       active: this.activeSections[section.uid],
                     })}
-                    id=${`accordion_button_${section.uid}`}
-                    aria-controls=${`accordion_section_${section.uid}`}
+                    id=${accordionButtonId(this.widget.uid, section.uid)}
+                    aria-controls=${accordionSectionId(this.widget.uid, section.uid)}
                     aria-expanded=${this.activeSections[section.uid] ? 'true' : 'false'}
                     @click=${() => this.onClickButton(section.uid)}
                   >

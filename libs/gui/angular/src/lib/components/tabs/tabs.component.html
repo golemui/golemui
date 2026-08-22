@@ -8,18 +8,18 @@
 >
   <ul role="tablist">
     <li role="presentation" #startSentinel class="gui-sentinel gui-sentinel__start"></li>
-    @for (tab of templateData.tabs; track tab.uid; let i = $index) {
+    @for (tab of templateData.tabs; track tab.uid) {
       <li role="presentation">
         <button
           #tabButtonRef
           type="button"
           role="tab"
-          [attr.data-cy]="'tab_' + widget.uid + '_' + i"
-          [tabindex]="tab.uid === activeTab() ? 0 : -1"
-          [id]="'tab_' + widget.uid + '_' + i"
-          [attr.aria-controls]="'tabpanel_' + widget.uid + '_' + i"
-          [attr.aria-selected]="tab.uid === activeTab() ? 'true' : 'false'"
-          [class.active]="tab.uid === activeTab()"
+          [attr.data-cy]="tabId(tab.uid)"
+          [tabindex]="isActiveTab(tab.uid) ? 0 : -1"
+          [id]="tabId(tab.uid)"
+          [attr.aria-controls]="panelId(tab.uid)"
+          [attr.aria-selected]="isActiveTab(tab.uid) ? 'true' : 'false'"
+          [class.active]="isActiveTab(tab.uid)"
           (click)="onClickTab(tab.uid)"
           (keydown)="onKeyDown($event)"
           (focus)="onFocus($event)"
@@ -32,15 +32,18 @@
   </ul>
 </nav>
 
-@for (child of templateData.children; track child.uid; let i = $index) {
-  @if (isActiveTab(child) || templateData.renderMode !== 'activeOnly') {
+<!-- Panels come from the tab list, so a tab and its panel always carry the same uid. A tab whose
+     child is hidden by a `when` keeps its header and gets no panel. -->
+@for (tab of templateData.tabs; track tab.uid) {
+  @let child = getChild(tab.uid);
+  @if (child && (isActiveTab(tab.uid) || templateData.renderMode !== 'activeOnly')) {
     <section
       role="tabpanel"
       tabindex="0"
-      [hidden]="!isActiveTab(child) && templateData.renderMode !== 'activeOnly'"
-      [attr.data-cy]="'tabpanel_' + widget.uid + '_' + i"
-      [id]="'tabpanel_' + widget.uid + '_' + i"
-      [attr.aria-labelledby]="'tab_' + widget.uid + '_' + i"
+      [hidden]="!isActiveTab(tab.uid)"
+      [attr.data-cy]="panelId(tab.uid)"
+      [id]="panelId(tab.uid)"
+      [attr.aria-labelledby]="tabId(tab.uid)"
     >
       <ng-container guiWidget [widget]="child" />
     </section>

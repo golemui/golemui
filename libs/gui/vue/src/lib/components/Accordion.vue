@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
 import { useLayoutWidget, WidgetRenderer } from '@golemui/vue';
-import { type AccordionProps, repeaterIndexSuffix } from '@golemui/gui-shared/internals';
+import {
+  accordionButtonId,
+  accordionSectionId,
+  type AccordionProps,
+  repeaterIndexSuffix,
+} from '@golemui/gui-shared/internals';
 import { computed, ref, watch } from 'vue';
 
 const props = defineProps<WithWidget>();
@@ -61,14 +66,14 @@ const sections = computed(() => templateData.value.sections || []);
     <div class="gui-widget" :id="uid">
       <div
         v-for="section in sections"
-        :key="`accordion_section_${section.uid}`"
+        :key="accordionSectionId(widget.uid, section.uid)"
         class="gui-accordion__section"
       >
         <button
           type="button"
           tabindex="0"
-          :id="`accordion_button_${section.uid}`"
-          :aria-controls="`accordion_section_${section.uid}`"
+          :id="accordionButtonId(widget.uid, section.uid)"
+          :aria-controls="accordionSectionId(widget.uid, section.uid)"
           :aria-expanded="isActive(section.uid) ? 'true' : 'false'"
           :class="isActive(section.uid) ? 'active' : ''"
           @click="onClickButton(section.uid)"
@@ -86,9 +91,9 @@ const sections = computed(() => templateData.value.sections || []);
           v-if="shouldRenderContent(section.uid) && sectionForUid(section.uid)"
           class="gui-widget"
           role="region"
-          :id="`accordion_section_${section.uid}`"
+          :id="accordionSectionId(widget.uid, section.uid)"
           :hidden="!isActive(section.uid) && templateData.renderMode !== 'activeOnly'"
-          :aria-labelledby="`accordion_button_${section.uid}`"
+          :aria-labelledby="accordionButtonId(widget.uid, section.uid)"
         >
           <WidgetRenderer :widget="sectionForUid(section.uid)!" />
         </section>

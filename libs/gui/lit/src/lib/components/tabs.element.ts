@@ -5,7 +5,12 @@ import {
   type TabsEventDetail,
 } from '@golemui/gui-components/internals';
 import { safeDefine } from '@golemui/lit/internals';
-import { repeaterIndexSuffix, type TabsProps } from '@golemui/gui-shared/internals';
+import {
+  repeaterIndexSuffix,
+  tabButtonId,
+  tabPanelId,
+  type TabsProps,
+} from '@golemui/gui-shared/internals';
 import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing, type PropertyValues } from 'lit';
 import { repeat } from 'lit-html/directives/repeat.js';
@@ -16,8 +21,10 @@ import { type Subscription } from 'rxjs';
 export class TabsElement extends LitElement implements WithWidget {
   widget!: LayoutWidget;
 
-  @query('#start-sentinel') startSentinel!: HTMLElement;
-  @query('#end-sentinel') endSentinel!: HTMLElement;
+  // Queried by class: this element renders into the light DOM, so a fixed id would be duplicated
+  // across every tabs instance on the page.
+  @query('.gui-sentinel__start') startSentinel!: HTMLElement;
+  @query('.gui-sentinel__end') endSentinel!: HTMLElement;
 
   @state() isStartVisible!: boolean;
   @state() isEndVisible!: boolean;
@@ -43,7 +50,11 @@ export class TabsElement extends LitElement implements WithWidget {
   private endObserver?: IntersectionObserver;
 
   private get activeChildUid() {
-    return `${this.activeTab}${this.rowIndexSuffix}`;
+    return this.childUid(this.activeTab);
+  }
+
+  private childUid(tabUid: string) {
+    return `${tabUid}${this.rowIndexSuffix}`;
   }
 
   override createRenderRoot() {
@@ -97,11 +108,19 @@ export class TabsElement extends LitElement implements WithWidget {
   override render() {
     if (!this.adapter.templateData) return html``;
 
-    const activeSections = (this.adapter.templateData.children ?? []).filter(
-      (section: any) =>
-        section.uid === this.activeChildUid ||
-        this.adapter.templateData.renderMode !== 'activeOnly',
-    );
+    // Panels come from the tab list, so a tab and its panel always carry the same uid. A tab whose
+    // child is hidden by a `when` keeps its header and gets no panel.
+    const children = this.adapter.templateData.children ?? [];
+    const panels = (this.adapter.templateData.tabs ?? [])
+      .map((tab) => {
+        const child = children.find((section: any) => section.uid === this.childUid(tab.uid));
+        return { tab, child, isActive: child?.uid === this.activeChildUid };
+      })
+      .filter(
+        ({ child, isActive }) =>
+          child !== undefined &&
+          (isActive || this.adapter.templateData.renderMode !== 'activeOnly'),
+      );
 
     const navClasses = {
       'gui-widget': true,
@@ -112,19 +131,19 @@ export class TabsElement extends LitElement implements WithWidget {
 
     return html`<nav class=${classMap(navClasses)} id=${this.widget.uid}>
         <ul role="tablist">
-          <li role="presentation" id="start-sentinel" class="gui-sentinel"></li>
+          <li role="presentation" class="gui-sentinel gui-sentinel__start"></li>
           ${this.adapter.templateData.tabs
             ? repeat(
                 this.adapter.templateData.tabs,
-                (tab, index) => html`
+                (tab) => html`
                   <li role="presentation">
                     <button
                       type="button"
                       role="tab"
                       tabindex=${tab.uid === this.activeTab ? '0' : '-1'}
-                      data-cy=${`tab_${this.widget.uid}_${index}`}
-                      id=${`tab_${this.widget.uid}_${index}`}
-                      aria-controls=${`tabpanel_${this.widget.uid}_${index}`}
+                      data-cy=${tabButtonId(this.widget.uid, tab.uid)}
+                      id=${tabButtonId(this.widget.uid, tab.uid)}
+                      aria-controls=${tabPanelId(this.widget.uid, tab.uid)}
                       aria-selected=${tab.uid === this.activeTab ? 'true' : 'false'}
                       class=${classMap({ active: tab.uid === this.activeTab })}
                       @click=${() => this.onClickTab(tab.uid)}
@@ -141,23 +160,22 @@ export class TabsElement extends LitElement implements WithWidget {
                 `,
               )
             : nothing}
-          <li role="presentation" id="end-sentinel" class="gui-sentinel gui-sentinel__end"></li>
+          <li role="presentation" class="gui-sentinel gui-sentinel__end"></li>
         </ul>
       </nav>
       ${repeat(
-        activeSections,
-        (section) => section?.uid,
-        (section, index) =>
+        panels,
+        ({ tab }) => tab.uid,
+        ({ tab, child, isActive }) =>
           html`<section
             role="tabpanel"
             tabindex="0"
-            data-cy=${`tabpanel_${this.widget.uid}_${index}`}
-            id=${`tabpanel_${this.widget.uid}_${index}`}
-            ?hidden=${section.uid !== this.activeChildUid &&
-            this.adapter.templateData.renderMode !== 'activeOnly'}
-            aria-labelledby=${`tab_${this.widget.uid}_${index}`}
+            data-cy=${tabPanelId(this.widget.uid, tab.uid)}
+            id=${tabPanelId(this.widget.uid, tab.uid)}
+            ?hidden=${!isActive}
+            aria-labelledby=${tabButtonId(this.widget.uid, tab.uid)}
           >
-            <gui-widget .widget=${section}></gui-widget>
+            <gui-widget .widget=${child}></gui-widget>
           </section>`,
       )}`;
   }

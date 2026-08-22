@@ -6,8 +6,8 @@
       <button
         type="button"
         tabindex="0"
-        [id]="'accordion_button_' + section.uid"
-        [attr.aria-controls]="'accordion_section_' + section.uid"
+        [id]="buttonId(section.uid)"
+        [attr.aria-controls]="sectionId(section.uid)"
         [attr.aria-expanded]="activeSections[section.uid] ? 'true' : 'false'"
         [class.active]="activeSections[section.uid]"
         (click)="onClickButton(section.uid)"
@@ -27,8 +27,8 @@
           class="gui-widget"
           role="region"
           [hidden]="!activeSections[section.uid] && templateData.renderMode !== 'activeOnly'"
-          [id]="'accordion_section_' + section.uid"
-          [attr.aria-labelledby]="'accordion_button_' + section.uid"
+          [id]="sectionId(section.uid)"
+          [attr.aria-labelledby]="buttonId(section.uid)"
         >
           <ng-container guiWidget [widget]="child" />
         </section>

@@ -11,12 +11,17 @@ import {
   viewChildren,
 } from '@angular/core';
 import { LayoutWidgetAdapter, WidgetDirective } from '@golemui/angular';
-import type { LayoutWidget, WithWidget } from '@golemui/core';
+import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
 import {
   createIntersectionObserver,
   type TabsEventDetail,
 } from '@golemui/gui-components/internals';
-import { repeaterIndexSuffix, type TabsProps } from '@golemui/gui-shared/internals';
+import {
+  repeaterIndexSuffix,
+  tabButtonId,
+  tabPanelId,
+  type TabsProps,
+} from '@golemui/gui-shared/internals';
 
 @Component({
   standalone: true,
@@ -73,10 +78,24 @@ export class TabsComponent implements OnInit, AfterViewInit, OnDestroy, WithWidg
 
   /**
    * The tab uids come from the props and carry no repeater row indexes, the panel children come
-   * from the store with the indexes already applied, so the comparison adds this tabs layout's own.
+   * from the store with the indexes already applied, so the lookup adds this tabs layout's own.
+   * Returns `undefined` when the tab's child is hidden, the children only hold visible ones.
    */
-  isActiveTab(child: { uid: string }) {
-    return child.uid === `${this.activeTab()}${this.rowIndexSuffix}`;
+  getChild(tabUid: string): NonFunctionWidget<string> | undefined {
+    const childUid = `${tabUid}${this.rowIndexSuffix}`;
+    return this.adapter.templateData().children.find((child) => child.uid === childUid);
+  }
+
+  isActiveTab(tabUid: string) {
+    return tabUid === this.activeTab();
+  }
+
+  tabId(tabUid: string) {
+    return tabButtonId(this.widget.uid, tabUid);
+  }
+
+  panelId(tabUid: string) {
+    return tabPanelId(this.widget.uid, tabUid);
   }
 
   onClickTab(uid: string) {

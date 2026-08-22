@@ -48,6 +48,30 @@ export type MountComponentFn<StateKeys extends UiState = string> = (
 
 const PILLS_WIDTH_STYLE_ID = 'ui-testing-pills-width-override';
 
+/**
+ * Fails when an id appears more than once in the document, which also breaks every `aria-controls`
+ * and `aria-labelledby` that names it. The style element this file injects is excluded.
+ */
+export const expectNoDuplicateIds = () => {
+  cy.document().then((doc) => {
+    const seen = new Set<string>();
+    const duplicates = new Set<string>();
+
+    doc.querySelectorAll('[id]').forEach((element) => {
+      const id = element.id;
+      if (!id || id === PILLS_WIDTH_STYLE_ID) {
+        return;
+      }
+      if (seen.has(id)) {
+        duplicates.add(id);
+      }
+      seen.add(id);
+    });
+
+    expect(Array.from(duplicates), 'duplicate DOM ids').to.deep.equal([]);
+  });
+};
+
 const setPillsWidth = (wrapperSelector: string, width: string) => {
   cy.document().then((doc) => {
     let style = doc.getElementById(PILLS_WIDTH_STYLE_ID);

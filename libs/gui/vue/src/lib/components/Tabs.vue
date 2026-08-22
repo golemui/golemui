@@ -2,7 +2,12 @@
 import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
 import { useLayoutWidget, WidgetRenderer } from '@golemui/vue';
 import { createIntersectionObserver } from '@golemui/gui-components/internals';
-import { repeaterIndexSuffix, type TabsProps } from '@golemui/gui-shared/internals';
+import {
+  repeaterIndexSuffix,
+  tabButtonId,
+  tabPanelId,
+  type TabsProps,
+} from '@golemui/gui-shared/internals';
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 
 const props = defineProps<WithWidget>();
@@ -105,11 +110,20 @@ const setTabRef = (idx: number) => (el: any) => {
   if (el) tabRefs.value[idx] = el as HTMLButtonElement;
 };
 
-const visibleSections = computed(() => {
+// Panels are built from the tab list, not from the children, so a tab and its panel always carry
+// the same uid. A tab whose child is hidden by a `when` keeps its header and gets no panel.
+const visiblePanels = computed(() => {
   const renderMode = templateData.value.renderMode;
-  return (children.value as NonFunctionWidget<string>[]).filter(
-    (section) => section.uid === activeChildUid.value || renderMode !== 'activeOnly',
-  );
+  const sections = children.value as NonFunctionWidget<string>[];
+
+  return (templateData.value.tabs || [])
+    .map((tab) => {
+      const child = sections.find((section) => section.uid === `${tab.uid}${rowIndexSuffix}`);
+      return { tab, child, isActive: child?.uid === activeChildUid.value };
+    })
+    .filter(
+      ({ child, isActive }) => child !== undefined && (isActive || renderMode !== 'activeOnly'),
+    );
 });
 </script>
 
@@ -132,7 +146,7 @@ const visibleSections = computed(() => {
         ></li>
         <li
           v-for="(tab, index) in templateData.tabs"
-          :key="`tab_${widget.uid}_${tab.uid}`"
+          :key="tabButtonId(widget.uid, tab.uid)"
           role="presentation"
         >
           <button
@@ -140,9 +154,9 @@ const visibleSections = computed(() => {
             type="button"
             role="tab"
             :tabindex="tab.uid === activeTab ? 0 : -1"
-            :data-cy="`tab_${widget.uid}_${index}`"
-            :id="`tab_${widget.uid}_${index}`"
-            :aria-controls="`tabpanel_${widget.uid}_${index}`"
+            :data-cy="tabButtonId(widget.uid, tab.uid)"
+            :id="tabButtonId(widget.uid, tab.uid)"
+            :aria-controls="tabPanelId(widget.uid, tab.uid)"
             :aria-selected="tab.uid === activeTab ? 'true' : 'false'"
             :class="tab.uid === activeTab ? 'active' : ''"
             @click="handleTabChange(tab.uid)"
@@ -159,16 +173,16 @@ const visibleSections = computed(() => {
       </ul>
     </nav>
     <section
-      v-for="(section, idx) in visibleSections"
-      :key="`tabpanel_${widget.uid}_${section.uid}`"
+      v-for="panel in visiblePanels"
+      :key="tabPanelId(widget.uid, panel.tab.uid)"
       role="tabpanel"
       tabindex="0"
-      :data-cy="`tabpanel_${widget.uid}_${idx}`"
-      :id="`tabpanel_${widget.uid}_${idx}`"
-      :hidden="section.uid !== activeChildUid && templateData.renderMode !== 'activeOnly'"
-      :aria-labelledby="`tab_${widget.uid}_${idx}`"
+      :data-cy="tabPanelId(widget.uid, panel.tab.uid)"
+      :id="tabPanelId(widget.uid, panel.tab.uid)"
+      :hidden="!panel.isActive"
+      :aria-labelledby="tabButtonId(widget.uid, panel.tab.uid)"
     >
-      <WidgetRenderer :widget="section" />
+      <WidgetRenderer :widget="panel.child!" />
     </section>
   </div>
 </template>
