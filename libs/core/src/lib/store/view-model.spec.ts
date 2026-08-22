@@ -177,6 +177,36 @@ const makeRowScopeFormDef = () => ({
   ],
 });
 
+/**
+ * A repeater whose row prop throws when the row has no `name`. Adding such a row fails the props
+ * pass, and the errored state then carries a `users` array longer than `resolvedSources` knows.
+ */
+const makeThrowingRowPropFormDef = () => ({
+  form: [
+    {
+      uid: 'users',
+      kind: 'input',
+      type: 'repeater',
+      path: 'users',
+      props: {
+        template: {
+          uid: 'usersRow',
+          kind: 'layout',
+          type: 'flex',
+          children: [
+            {
+              uid: 'greeting',
+              kind: 'display',
+              type: 'heading',
+              props: { text: 'Hi {{$item.name.toUpperCase()}}' },
+            },
+          ],
+        },
+      },
+    },
+  ],
+});
+
 /** A repeater inside a repeater template, so row index chains can be asserted. */
 const makeNestedRepeaterFormDef = () => ({
   form: [
@@ -363,6 +393,26 @@ describe('widgetViewModel', () => {
       const innerRow = widgetViewModel(state, 'devRow[2][0]');
       expect(uidsOf(innerRow.children as { uid?: string }[])).toEqual(['devName[2][0]']);
       expect((innerRow.children[0] as { path?: string }).path).toBe('teams.2.devs.0.devName');
+    });
+
+    // A derive-owned error publishes the new `data` with the previous derive's `resolvedSources`,
+    // so the value array can be longer than the rows the store knows. A row renderer reads `.uid`
+    // off every entry, so an `undefined` entry crashes the binding.
+    it('skips the rows an errored derive never resolved', () => {
+      const reduce = makeReducer();
+      const ok = drive([init(makeThrowingRowPropFormDef()), setData({ users: [{ name: 'Ada' }] })]);
+      expect(ok.formHealth).toEqual({ status: 'ok' });
+      expect(uidsOf(widgetViewModel(ok, 'users').rows)).toEqual(['usersRow[0]']);
+
+      const errored = reduce(ok, setData({ users: [{ name: 'Ada' }, {}] }));
+
+      expect(errored.formHealth.status).toBe('errored');
+      expect(errored.data['users']).toHaveLength(2);
+      expect(errored.resolvedSources).toBe(ok.resolvedSources);
+
+      const vm = widgetViewModel(errored, 'users');
+      expect(vm.rows).not.toContain(undefined);
+      expect(uidsOf(vm.rows)).toEqual(['usersRow[0]']);
     });
   });
 });
