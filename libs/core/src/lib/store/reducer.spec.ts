@@ -1,5 +1,5 @@
 import { type StandardSchemaV1 } from '@standard-schema/spec';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { type ValidatorFn } from '../form-validator';
 import {
   type ActionWidget,
@@ -1891,27 +1891,21 @@ describe('reducer end-to-end', () => {
   // ---------------------------------------------------------------------------
 
   describe('actions that address a widget calculatedWidgets does not hold', () => {
-    // Both actions carry a uid. A hidden widget or one that is not in the form has no entry, and
-    // neither action may throw for it: OVERRIDE_WIDGET_PROP is a public API called from event
-    // handlers, and ATTEMPT_VALIDATION rides on DOM events that can outlive a mount.
-    it('OVERRIDE_WIDGET_PROP warns and returns the same state for an unknown uid', () => {
+    // Both actions carry a uid. A widget that is not in the form has no entry, and neither action
+    // may throw for it: OVERRIDE_WIDGET_PROP is a public API called from event handlers, and
+    // ATTEMPT_VALIDATION rides on DOM events that can outlive a mount. A HIDDEN widget is a
+    // different case, it is still in `resolvedSources` and both actions reach it (section 26).
+    it('OVERRIDE_WIDGET_PROP warns and returns the same state for a uid no form produces', () => {
       const initial = drive([init(makeBaseFormDef()), setData({})]);
-      expect(initial.calculatedWidgets).not.toHaveProperty('bio');
 
       const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
       const reduce = makeReducer();
-
-      const hidden = reduce(initial, {
-        type: 'OVERRIDE_WIDGET_PROP',
-        payload: { uid: 'bio', prop: 'text', value: 'hello' },
-      });
-      expect(hidden).toBe(initial);
-      expect(warn).toHaveBeenCalledWith('Widget with uid "bio" not found');
 
       const unknown = reduce(initial, {
         type: 'OVERRIDE_WIDGET_PROP',
         payload: { uid: 'ghost', prop: 'text', value: 'hello' },
       });
+
       expect(unknown).toBe(initial);
       expect(warn).toHaveBeenCalledWith('Widget with uid "ghost" not found');
       warn.mockRestore();
@@ -2456,6 +2450,7 @@ describe('reducer end-to-end', () => {
       expect(propsOf(healed, 'title')['text']).toBe('Users');
     });
   });
+
   // ---------------------------------------------------------------------------
   // 25. A function widget that returns a cached object
   // ---------------------------------------------------------------------------
@@ -2477,6 +2472,79 @@ describe('reducer end-to-end', () => {
       expect(second.path).toBe('users.1.name');
       expect(cached.uid).toBe('cachedRow');
       expect(cached.path).toBe('users.items.name');
+    });
+  });
+
+  // ---------------------------------------------------------------------------
+  // 26. Overrides on a hidden widget
+  // ---------------------------------------------------------------------------
+
+  // A hidden widget has no `calculatedWidgets` entry, but it is still in `resolvedSources` and an
+  // override stored while it was visible is deliberately kept. Accepting a new one is the same
+  // contract. An override only reaches `props`, so it can never reveal the widget by itself.
+  describe('overrides on a hidden widget', () => {
+    // A test that fails before its own `mockRestore` would otherwise leak the spy into the next one.
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    it('stores an override by uid and applies it when the widget is revealed', () => {
+      const hidden = drive([init(makeBaseFormDef()), setData({ age: 10 })]);
+      expect(hidden.widgetFlags['bio']).toEqual({ hidden: true });
+      expect(hidden.calculatedWidgets).not.toHaveProperty('bio');
+
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+      const reduce = makeReducer();
+
+      const overridden = reduce(hidden, {
+        type: 'OVERRIDE_WIDGET_PROP',
+        payload: { uid: 'bio', prop: 'text', value: 'About you' },
+      });
+
+      expect(warn).not.toHaveBeenCalled();
+      expect(overridden.widgetPropOverrides['bio']).toEqual({ text: 'About you' });
+      expect(overridden.widgetFlags['bio']).toEqual({ hidden: true });
+      expect(overridden.calculatedWidgets).not.toHaveProperty('bio');
+
+      const revealed = reduce(overridden, setData({ age: 21 }));
+
+      expect(propsOf(revealed, 'bio')['text']).toBe('About you');
+    });
+
+    it('stores an override by path and applies it when the input is revealed', () => {
+      const hidden = drive([init(makeGatedInputFormDef()), setData({ age: 10 })]);
+      expect(hidden.widgetFlags['secret']).toEqual({ hidden: true });
+      expect(hidden.calculatedWidgets).not.toHaveProperty('secret');
+
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+      const reduce = makeReducer();
+
+      const overridden = reduce(hidden, {
+        type: 'OVERRIDE_WIDGET_PROP',
+        payload: { path: 'secret', prop: 'placeholder', value: 'Say it' },
+      });
+
+      expect(warn).not.toHaveBeenCalled();
+      expect(overridden.widgetPropOverrides['secret']).toEqual({ placeholder: 'Say it' });
+
+      const revealed = reduce(overridden, setData({ age: 21 }));
+
+      expect(propsOf(revealed, 'secret')['placeholder']).toBe('Say it');
+    });
+
+    it('still warns for a path no widget in the form owns', () => {
+      const hidden = drive([init(makeGatedInputFormDef()), setData({ age: 10 })]);
+
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+      const reduce = makeReducer();
+
+      const same = reduce(hidden, {
+        type: 'OVERRIDE_WIDGET_PROP',
+        payload: { path: 'ghost', prop: 'placeholder', value: 'Say it' },
+      });
+
+      expect(same).toBe(hidden);
+      expect(warn).toHaveBeenCalledWith('Input with path "ghost" not found');
     });
   });
 });

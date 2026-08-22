@@ -33,7 +33,8 @@ export type WidgetViewModel<T = unknown> = {
   /**
    * For a repeater input, one fully indexed row layout node per row of its array value, ready to
    * render. Empty for non-repeater widgets and while hidden. Row order matches the data array, so
-   * a row's position in this list is also its index in the value.
+   * a row's position in this list is also its index in the value. The one exception is an errored
+   * derive, where a row the failed derive never resolved is left out until the form recovers.
    */
   rows: NonFunctionWidget<string>[];
 
@@ -257,6 +258,10 @@ function stampedChildren(
  * looked up in `resolvedSources` by the template uid plus the full row index chain. A nested
  * repeater's own row indexes are read back from its uid, which is what makes the chain line up
  * with the keys `expandSources` writes.
+ *
+ * A row with no node is dropped. That happens on an errored derive, which publishes the new `data`
+ * with the previous derive's `resolvedSources`, so the value array can be longer than the rows the
+ * store knows. The next successful derive lists them all again.
  */
 function repeaterRows(
   state: State,
@@ -273,10 +278,12 @@ function repeaterRows(
   }
   const templateUid = source.props.template.uid as Uid;
   const ownIndexes = extractRepeaterIndexes(uid);
-  return value.map((_, rowIndex) => {
-    const rowUid = toRepeaterItemUid(templateUid, [...ownIndexes, rowIndex]);
-    return state.resolvedSources[rowUid] as NonFunctionWidget<string>;
-  });
+  return value
+    .map((_, rowIndex) => {
+      const rowUid = toRepeaterItemUid(templateUid, [...ownIndexes, rowIndex]);
+      return state.resolvedSources[rowUid];
+    })
+    .filter((row): row is NonFunctionWidget<string> => row !== undefined);
 }
 
 function mergedErrors(
