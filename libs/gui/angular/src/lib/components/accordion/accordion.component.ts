@@ -3,7 +3,12 @@ import { Component, inject, type OnDestroy, type OnInit } from '@angular/core';
 import { LayoutWidgetAdapter, WidgetDirective } from '@golemui/angular';
 import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
 import type { AccordionEventDetail } from '@golemui/gui-components/internals';
-import { type AccordionProps, repeaterIndexSuffix } from '@golemui/gui-shared/internals';
+import {
+  accordionButtonId,
+  accordionSectionId,
+  type AccordionProps,
+  repeaterIndexSuffix,
+} from '@golemui/gui-shared/internals';
 
 @Component({
   standalone: true,
@@ -54,6 +59,14 @@ export class AccordionComponent implements OnInit, OnDestroy, WithWidget {
   getChild(uid: string): NonFunctionWidget<string> | undefined {
     const childUid = `${uid}${this.rowIndexSuffix}`;
     return this.adapter.templateData().children.find((section) => section.uid === childUid);
+  }
+
+  buttonId(sectionUid: string) {
+    return accordionButtonId(this.widget.uid, sectionUid);
+  }
+
+  sectionId(sectionUid: string) {
+    return accordionSectionId(this.widget.uid, sectionUid);
   }
 
   ngOnDestroy(): void {
