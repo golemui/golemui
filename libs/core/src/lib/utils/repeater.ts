@@ -131,8 +131,10 @@ function asNestedRepeater(
   if (resolved.type !== 'repeater') {
     return undefined;
   }
-  resolved.uid = templateWidget.uid as string;
-  return makeRepeaterItemConfig(resolved, indexes) as RepeaterTemplateWidget;
+  // The function may return a cached object. Copy it before writing the uid,
+  // so the write never reaches the object the function owns.
+  const resolvedWithUid = { ...resolved, uid: templateWidget.uid as string };
+  return makeRepeaterItemConfig(resolvedWithUid, indexes) as RepeaterTemplateWidget;
 }
 
 /**

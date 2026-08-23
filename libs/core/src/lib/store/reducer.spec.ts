@@ -337,6 +337,41 @@ const makeRowFunctionFormDef = () => ({
   ],
 });
 
+/**
+ * A repeater whose row function widget returns ONE cached object for every row, which is what a
+ * memoizing widget author writes.
+ */
+const makeCachedRowWidgetFormDef = () => {
+  const cached = {
+    uid: 'cachedRow',
+    kind: 'input',
+    type: 'textinput',
+    path: 'users.items.name',
+    props: { label: 'Name' },
+  } as unknown as InputWidget<any, string>;
+  const rowName: FunctionWidget<string> = () => cached;
+  rowName.uid = 'rowName';
+  const formDef = {
+    form: [
+      {
+        uid: 'users',
+        kind: 'input',
+        type: 'repeater',
+        path: 'users',
+        props: {
+          template: {
+            uid: 'usersRow',
+            kind: 'layout',
+            type: 'flex',
+            children: [rowName],
+          },
+        },
+      },
+    ],
+  };
+  return { cached, formDef };
+};
+
 /** A function widget at the top level and another inside a repeater row, both required. */
 const makeFunctionWidgetsFormDef = () => ({
   form: [
@@ -2413,6 +2448,30 @@ describe('reducer end-to-end', () => {
       expect(healed.formHealth).toEqual({ status: 'ok' });
       expect(healed.calculatedWidgets['greeting[0]']).toBeUndefined();
       expect(propsOf(healed, 'title')['text']).toBe('Users');
+    });
+  });
+
+  // ---------------------------------------------------------------------------
+  // 25. A function widget that returns a cached object
+  // ---------------------------------------------------------------------------
+
+  // The store writes `uid` and `path` into the widget a function returns. Writing them into the
+  // returned object itself corrupts a cached object: two rows overwrite each other, and the
+  // object the user owns is modified.
+  describe('a function widget that returns a cached object', () => {
+    it('gives each row its own uid and path and does not modify the cached object', () => {
+      const { cached, formDef } = makeCachedRowWidgetFormDef();
+
+      const state = drive([init(formDef), setData({ users: [{ name: 'Ada' }, { name: 'Bob' }] })]);
+
+      const first = state.calculatedWidgets['rowName[0]'].current as InputWidget<any, string>;
+      const second = state.calculatedWidgets['rowName[1]'].current as InputWidget<any, string>;
+      expect(first.uid).toBe('rowName[0]');
+      expect(first.path).toBe('users.0.name');
+      expect(second.uid).toBe('rowName[1]');
+      expect(second.path).toBe('users.1.name');
+      expect(cached.uid).toBe('cachedRow');
+      expect(cached.path).toBe('users.items.name');
     });
   });
 

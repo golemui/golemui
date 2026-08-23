@@ -209,14 +209,18 @@ function resolveForFlags(
   const itemScope = state.repeaterItemScopes[uid];
   let widget: NonFunctionWidget<string>;
   if (isFunctionWidget(source)) {
-    widget = source({
-      $form: state.data,
-      $item: itemScope ? get(state.data, itemScope.itemPath) : undefined,
-      $index: itemScope?.index,
-      errors: undefined,
-      touched: undefined,
-      translate: undefined,
-    });
+    // The function may return a cached object. Copy it before writing the uid,
+    // so the write never reaches the object the function owns.
+    widget = {
+      ...source({
+        $form: state.data,
+        $item: itemScope ? get(state.data, itemScope.itemPath) : undefined,
+        $index: itemScope?.index,
+        errors: undefined,
+        touched: undefined,
+        translate: undefined,
+      }),
+    };
     widget.uid = uid;
   } else {
     widget = source;

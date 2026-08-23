@@ -768,6 +768,55 @@ describe('calculateWidgetProps', () => {
       expect(second.calculatedWidgets['name[1]']).toBe(first.calculatedWidgets['name[1]']);
     });
 
+    it('does not write uid or path into an object the function returns from a cache', () => {
+      // A memoized function returns the same object for every row. The uid and path writes then
+      // modify an object the user owns, and two rows overwrite each other.
+      const cached = {
+        kind: 'input',
+        uid: 'cached',
+        type: 'textinput',
+        path: 'users.items.name',
+      } as InputWidget<unknown, string>;
+      const makeSource = (uid: string, path: string): FunctionWidget<string> =>
+        Object.assign(() => cached, { uid, type: 'textinput', path });
+      seed(state, 'name[0]', makeSource('name[0]', 'users.0.name'));
+      seed(state, 'name[1]', makeSource('name[1]', 'users.1.name'));
+
+      const next = run(state);
+
+      expect(cached.uid).toBe('cached');
+      expect(cached.path).toBe('users.items.name');
+      const first = next.calculatedWidgets['name[0]'].current as InputWidget<unknown, string>;
+      const second = next.calculatedWidgets['name[1]'].current as InputWidget<unknown, string>;
+      expect(first.uid).toBe('name[0]');
+      expect(first.path).toBe('users.0.name');
+      expect(second.uid).toBe('name[1]');
+      expect(second.path).toBe('users.1.name');
+    });
+
+    it('detects a prop change on an object the function returns from a cache', () => {
+      const cached = {
+        kind: 'display',
+        uid: 'cached',
+        type: 'heading',
+        props: { text: 'first' },
+      } as unknown as DisplayWidget<string>;
+      const source: FunctionWidget<string> = Object.assign(() => cached, {
+        uid: 'f',
+        type: 'heading',
+      });
+      seed(state, 'f', source);
+
+      const first = run(state);
+      cached.props = { text: 'second' };
+      const second = run(first);
+
+      // Without a copy the stored entry is the cached object itself. The comparison then compares
+      // that object with itself, so subscribers keep the old reference for a widget that changed.
+      expect(second.calculatedWidgets['f']).not.toBe(first.calculatedWidgets['f']);
+      expect(second.calculatedWidgets['f'].current.props?.['text']).toBe('second');
+    });
+
     it('leaves current.path alone when the source has no path', () => {
       const source: FunctionWidget<string> = Object.assign(
         () =>
