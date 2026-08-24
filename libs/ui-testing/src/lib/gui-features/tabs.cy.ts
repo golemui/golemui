@@ -83,6 +83,50 @@ export const runTabsComponentTests = (mountFn: MountComponentFn) => {
         .and('have.attr', 'aria-labelledby', `tab_${TABS_UID}_secondPanel`);
     });
 
+    it('reads the tabs from the calculated props when a property function produces them', () => {
+      // The raw prop value is the function itself, only the calculated props hold the array
+      mountFn({
+        formDef: getFormDefinition({
+          tabs: () => [
+            { uid: 'firstPanel', label: 'First' },
+            { uid: 'secondPanel', label: 'Second' },
+            { uid: 'thirdPanel', label: 'Third' },
+          ],
+        }),
+      });
+
+      cy.get('button[role="tab"]').should('have.length', 3);
+      cy.get(`[data-cy="tab_${TABS_UID}_firstPanel"]`).should('have.attr', 'aria-selected', 'true');
+      cy.get(`[data-cy="tabpanel_${TABS_UID}_firstPanel"]`).should('not.have.attr', 'hidden');
+    });
+
+    it('renders no tab headers and does not throw when the tabs array is empty', () => {
+      mountFn({
+        formDef: defineForm({
+          form: [
+            {
+              uid: TABS_UID,
+              kind: 'layout',
+              type: 'tabs',
+              props: { tabs: [] },
+              children: [],
+            },
+            {
+              uid: 'outsideTabs',
+              kind: 'input',
+              type: 'textinput',
+              path: 'outside',
+              label: 'Outside',
+            },
+          ],
+        }),
+      });
+
+      cy.get('[data-cy="outsideTabs_textinput"]').should('be.visible');
+      cy.get('button[role="tab"]').should('have.length', 0);
+      cy.get('section[role="tabpanel"]').should('not.exist');
+    });
+
     it('keeps the remaining panels wired to their own tab when a child is hidden', () => {
       mountFn({
         data: { tabs: { first: 'Alice' } },

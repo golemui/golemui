@@ -74,4 +74,59 @@ export const runAccordionComponentTests = (mountFn: MountComponentFn) => {
       cy.get('[data-cy="secondSection_textinput"]').should('be.visible');
     });
   });
+
+  describe('Accordion Component with calculated props', () => {
+    const ACCORDION_UID = 'calculatedAccordion';
+
+    it('reads singleOpen from the calculated props when a property function produces it', () => {
+      // The raw prop value is the function itself (truthy), only the calculated props hold `false`
+      mountFn({
+        formDef: defineForm({
+          form: [
+            {
+              uid: ACCORDION_UID,
+              kind: 'layout',
+              type: 'accordion',
+              props: {
+                singleOpen: () => false,
+                defaultOpen: { firstSection: true },
+                sections: [
+                  { uid: 'firstSection', label: 'First' },
+                  { uid: 'secondSection', label: 'Second' },
+                ],
+              },
+              children: [
+                {
+                  uid: 'firstSection',
+                  kind: 'input',
+                  type: 'textinput',
+                  path: 'accordion.first',
+                  label: 'First',
+                },
+                {
+                  uid: 'secondSection',
+                  kind: 'input',
+                  type: 'textinput',
+                  path: 'accordion.second',
+                  label: 'Second',
+                },
+              ],
+            },
+          ],
+        }),
+      });
+
+      cy.get(`[id="accordion_button_${ACCORDION_UID}_secondSection"]`).click();
+
+      // singleOpen is false, so opening the second section keeps the first one open
+      cy.get(`[id="accordion_section_${ACCORDION_UID}_secondSection"]`).should(
+        'not.have.attr',
+        'hidden',
+      );
+      cy.get(`[id="accordion_section_${ACCORDION_UID}_firstSection"]`).should(
+        'not.have.attr',
+        'hidden',
+      );
+    });
+  });
 };
