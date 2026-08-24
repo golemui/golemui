@@ -96,7 +96,7 @@
     "eslint-plugin-jsx-a11y": "6.10.1",
     "eslint-plugin-react": "7.35.0",
     "eslint-plugin-react-hooks": "5.0.0",
-    "eslint-plugin-vue": "^9.30.0",
+    "eslint-plugin-vue": "^10.10.0",
     "i18next": "^25.7.4",
     "jiti": "2.4.2",
     "jsdom": "~22.1.0",
