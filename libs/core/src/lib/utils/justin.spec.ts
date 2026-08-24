@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { expressionIsTrue, normalizeArrayIndexes } from './justin';
+import {
+  COMPILED_EXPRESSION_CACHE_LIMIT,
+  compileExpression,
+  expressionIsTrue,
+  normalizeArrayIndexes,
+} from './justin';
 
 describe('justin', () => {
   const $form = {
@@ -245,6 +250,30 @@ describe('justin', () => {
 
     it('returns false when $formIsInvalid does not match expected value', () => {
       expect(expressionIsTrue('$formIsInvalid === true', {}, {}, {}, false)).toBe(false);
+    });
+  });
+
+  describe('compileExpression cache', () => {
+    it('returns the same evaluator for the same expression string', () => {
+      const first = compileExpression('$form.total * 2');
+      const second = compileExpression('$form.total * 2');
+      expect(second).toBe(first);
+    });
+
+    it('re-evaluates a cached expression against new scope values', () => {
+      expect(expressionIsTrue('$form.age >= 18', { age: 21 }, {}, {}, false)).toBe(true);
+      expect(expressionIsTrue('$form.age >= 18', { age: 12 }, {}, {}, false)).toBe(false);
+    });
+
+    it('clears the cache at the limit and recompiles a working evaluator', () => {
+      const before = compileExpression('$form.a');
+      // Enough distinct expressions to reach the limit at least once from any starting size
+      for (let index = 0; index <= COMPILED_EXPRESSION_CACHE_LIMIT; index++) {
+        compileExpression(`$form.a + ${index}`);
+      }
+      const after = compileExpression('$form.a');
+      expect(after).not.toBe(before);
+      expect(after({ $form: { a: 7 } })).toBe(7);
     });
   });
 });

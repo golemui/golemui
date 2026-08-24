@@ -41,7 +41,10 @@ export const reducer = ({
   const applyWidgetProps = calculateWidgetProps(localization, functions);
   // Every action that changes a derive input goes through this wrapper.
   const deriveAndValidateAppearingInputs = (state: State): State =>
-    validateInputsAppearingAfterSubmit(state, derive, validate);
+    validateInputsAppearingAfterSubmit(state, derive, validate, false);
+  // Validation actions recompute isFormValid exactly once, on whichever path the helper exits through.
+  const deriveAfterValidationAction = (state: State): State =>
+    validateInputsAppearingAfterSubmit(state, derive, validate, true);
 
   return (state: State, action: Action): State => {
     switch (action.type) {
@@ -77,9 +80,7 @@ export const reducer = ({
         return setFormHealth(state, action);
 
       case 'VALIDATE_ALL':
-        return calculateIsFormValid(
-          deriveAndValidateAppearingInputs(validate(touchAllInputs(state))),
-        );
+        return deriveAfterValidationAction(validate(touchAllInputs(state)));
 
       case 'ATTEMPT_VALIDATION': {
         if (!shouldValidate(validateOn, action.payload.reason)) {
@@ -90,7 +91,7 @@ export const reducer = ({
           touched: true,
           touchedControls: { ...state.touchedControls, [action.payload.path]: true },
         };
-        return calculateIsFormValid(deriveAndValidateAppearingInputs(validate(touched)));
+        return deriveAfterValidationAction(validate(touched));
       }
 
       case 'INJECT_VALIDATION_ISSUES':
@@ -169,22 +170,29 @@ function makeDerive(localization: I18nTranslator, functions: ExpressionFunctions
  * an input that this derive makes appear (a new repeater row, a revealed field) is touched and
  * validated right away so its errors show without interaction, then the derive runs once more so
  * `$errors`, `$formIsInvalid` and function widgets see the new validation result.
+ *
+ * When `recalculateIsFormValidOnEveryPath` is true, the exit paths that skip the appearing-input
+ * validation also recompute `isFormValid`, so a validation action computes it exactly once here
+ * instead of repeating it on the returned state.
  */
 function validateInputsAppearingAfterSubmit(
   state: State,
   derive: (state: State) => State,
   validate: (state: State) => State,
+  recalculateIsFormValidOnEveryPath: boolean,
 ): State {
+  const finishPass = (result: State): State =>
+    recalculateIsFormValidOnEveryPath ? calculateIsFormValid(result) : result;
   const previousSources = state.resolvedSources;
   const previousFlags = state.widgetFlags;
   let next = derive(state);
   if (!next.allControlsValidated || next.formHealth.status !== 'ok') {
-    return next;
+    return finishPass(next);
   }
 
   const appearing = pathsOfInputsAppearingIn(next, previousSources, previousFlags);
   if (appearing.length === 0) {
-    return next;
+    return finishPass(next);
   }
 
   const touchedControls = { ...next.touchedControls };

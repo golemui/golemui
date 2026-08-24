@@ -264,7 +264,8 @@ const WHEN_FIELDS = ['include', 'exclude', 'disabled', 'readonly'] as const;
  *
  * @param widget - A widget already materialized for a repeater item (see {@link makeRepeaterItemConfig}).
  * @param repeaterIndexes - Ordered list of indexes for each nesting level.
- * @returns A new widget config with item-concrete `when` expressions. The original is not mutated.
+ * @returns A new widget config with item-concrete `when` expressions, or the input widget by
+ * reference when no flag field has a `when` expression. The original is never mutated.
  *
  * @example
  * // repeaterIndexes = [1]
@@ -275,6 +276,13 @@ export function transformWidgetWhenExpressions(
   widget: NonFunctionWidget<string>,
   repeaterIndexes: number[],
 ): NonFunctionWidget<string> {
+  const hasAnyWhenExpression = WHEN_FIELDS.some((field) =>
+    hasWhenExpression((widget as Record<string, unknown>)[field]),
+  );
+  if (!hasAnyWhenExpression) {
+    return widget;
+  }
+
   const transformed = { ...widget } as Record<string, unknown>;
 
   for (const field of WHEN_FIELDS) {
