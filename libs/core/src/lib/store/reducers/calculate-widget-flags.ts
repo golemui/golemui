@@ -41,104 +41,115 @@ function calculateFlags(
   $formIsInvalid: boolean,
   functions: ExpressionFunctions,
 ): State['widgetFlags'] {
-  const widgets = Object.entries(state.resolvedSources).map(([uid, source]) =>
-    resolveForFlags(uid as Uid, source, state),
-  );
+  // A function widget resolves first because its flag fields are impossible to know before the call.
+  // Other widgets are checked on the source directly: the when-transform never adds or removes fields.
+  const widgets: NonFunctionWidget<string>[] = [];
+  for (const [uid, source] of Object.entries(state.resolvedSources)) {
+    if (isFunctionWidget(source)) {
+      const resolved = resolveForFlags(uid as Uid, source, state);
+      if (hasReactiveFlagFields(resolved)) {
+        widgets.push(resolved);
+      }
+    } else if (hasReactiveFlagFields(source)) {
+      widgets.push(resolveForFlags(uid as Uid, source, state));
+    }
+  }
 
-  const flags = widgets
-    .filter((widget) => {
-      if (widget.include && ('in' in widget.include || 'when' in widget.include)) {
-        return true;
+  const flags = widgets.reduce(
+    (flags, widget) => {
+      flags[widget.uid] = flags[widget.uid] || {};
+
+      // Widgets inside a repeater item see that item through $item / $index
+      const itemScope = state.repeaterItemScopes[widget.uid];
+      const extraScope = itemScope
+        ? { $item: get(state.data, itemScope.itemPath), $index: itemScope.index, $fn: functions }
+        : { $fn: functions };
+
+      // show
+      if (widget.include && 'in' in widget.include) {
+        flags[widget.uid].hidden = !widget.include.in.some((widgetState) =>
+          state.currentStates.includes(widgetState),
+        );
+      } else if (widget.include && 'when' in widget.include) {
+        flags[widget.uid].hidden = !expressionIsTrue(
+          widget.include.when,
+          state.data,
+          state.meta,
+          $errors,
+          $formIsInvalid,
+          extraScope,
+        );
       }
-      if (widget.exclude && ('from' in widget.exclude || 'when' in widget.exclude)) {
-        return true;
+
+      // hide
+      if (widget.exclude && 'from' in widget.exclude) {
+        flags[widget.uid].hidden = widget.exclude.from.some((widgetState) =>
+          state.currentStates.includes(widgetState),
+        );
+      } else if (widget.exclude && 'when' in widget.exclude) {
+        flags[widget.uid].hidden = expressionIsTrue(
+          widget.exclude.when,
+          state.data,
+          state.meta,
+          $errors,
+          $formIsInvalid,
+          extraScope,
+        );
       }
-      if ((isInputWidget(widget) || isActionWidget(widget)) && hasWhen(widget.disabled)) {
-        return true;
+
+      // TODO: We have to document that (disabled|readonly).when is NOT compatible with states e.g. `{'disabled.register': {when: '...'}}`
+      //       It's either boolean, states + boolean or when.
+
+      // disabled
+      if (isInputWidget(widget) || isActionWidget(widget)) {
+        if (hasWhen(widget.disabled)) {
+          flags[widget.uid].disabled = expressionIsTrue(
+            (widget.disabled as { when: string }).when,
+            state.data,
+            state.meta,
+            $errors,
+            $formIsInvalid,
+            extraScope,
+          );
+        }
       }
+
+      // readonly
       if (isInputWidget(widget) && hasWhen(widget.readonly)) {
-        return true;
+        flags[widget.uid].readonly = expressionIsTrue(
+          (widget.readonly as { when: string }).when,
+          state.data,
+          state.meta,
+          $errors,
+          $formIsInvalid,
+          extraScope,
+        );
       }
-      return false;
-    })
-    .reduce(
-      (flags, widget) => {
-        flags[widget.uid] = flags[widget.uid] || {};
 
-        // Widgets inside a repeater item see that item through $item / $index
-        const itemScope = state.repeaterItemScopes[widget.uid];
-        const extraScope = itemScope
-          ? { $item: get(state.data, itemScope.itemPath), $index: itemScope.index, $fn: functions }
-          : { $fn: functions };
-
-        // show
-        if (widget.include && 'in' in widget.include) {
-          flags[widget.uid].hidden = !widget.include.in.some((widgetState) =>
-            state.currentStates.includes(widgetState),
-          );
-        } else if (widget.include && 'when' in widget.include) {
-          flags[widget.uid].hidden = !expressionIsTrue(
-            widget.include.when,
-            state.data,
-            state.meta,
-            $errors,
-            $formIsInvalid,
-            extraScope,
-          );
-        }
-
-        // hide
-        if (widget.exclude && 'from' in widget.exclude) {
-          flags[widget.uid].hidden = widget.exclude.from.some((widgetState) =>
-            state.currentStates.includes(widgetState),
-          );
-        } else if (widget.exclude && 'when' in widget.exclude) {
-          flags[widget.uid].hidden = expressionIsTrue(
-            widget.exclude.when,
-            state.data,
-            state.meta,
-            $errors,
-            $formIsInvalid,
-            extraScope,
-          );
-        }
-
-        // TODO: We have to document that (disabled|readonly).when is NOT compatible with states e.g. `{'disabled.register': {when: '...'}}`
-        //       It's either boolean, states + boolean or when.
-
-        // disabled
-        if (isInputWidget(widget) || isActionWidget(widget)) {
-          if (hasWhen(widget.disabled)) {
-            flags[widget.uid].disabled = expressionIsTrue(
-              (widget.disabled as { when: string }).when,
-              state.data,
-              state.meta,
-              $errors,
-              $formIsInvalid,
-              extraScope,
-            );
-          }
-        }
-
-        // readonly
-        if (isInputWidget(widget) && hasWhen(widget.readonly)) {
-          flags[widget.uid].readonly = expressionIsTrue(
-            (widget.readonly as { when: string }).when,
-            state.data,
-            state.meta,
-            $errors,
-            $formIsInvalid,
-            extraScope,
-          );
-        }
-
-        return flags;
-      },
-      {} as State['widgetFlags'],
-    );
+      return flags;
+    },
+    {} as State['widgetFlags'],
+  );
 
   propagateHiddenToDescendants(state, flags);
   return flags;
+}
+
+/** True when the widget has at least one include / exclude / disabled / readonly condition to evaluate. */
+function hasReactiveFlagFields(widget: NonFunctionWidget<string>): boolean {
+  if (widget.include && ('in' in widget.include || 'when' in widget.include)) {
+    return true;
+  }
+  if (widget.exclude && ('from' in widget.exclude || 'when' in widget.exclude)) {
+    return true;
+  }
+  if ((isInputWidget(widget) || isActionWidget(widget)) && hasWhen(widget.disabled)) {
+    return true;
+  }
+  if (isInputWidget(widget) && hasWhen(widget.readonly)) {
+    return true;
+  }
+  return false;
 }
 
 /**

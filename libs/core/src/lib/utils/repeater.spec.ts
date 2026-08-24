@@ -236,9 +236,11 @@ describe('transformWidgetWhenExpressions', () => {
       exclude: { from: ['summary'] },
       disabled: true,
     });
+    // No when expression anywhere, so the input is returned by reference
+    expect(result).toBe(widget);
   });
 
-  it('should return an equivalent widget when no flag field is present', () => {
+  it('should return the same widget reference when no flag field is present', () => {
     const widget = {
       uid: 'row-note[0]',
       props: { md: 'hello' },
@@ -246,8 +248,7 @@ describe('transformWidgetWhenExpressions', () => {
 
     const result = transformWidgetWhenExpressions(widget, [0]);
 
-    expect(result).toEqual(widget);
-    expect(result).not.toBe(widget);
+    expect(result).toBe(widget);
   });
 });
 

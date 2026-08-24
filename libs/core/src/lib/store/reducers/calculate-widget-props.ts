@@ -17,10 +17,9 @@ import {
   isTranslationConfig,
   type TranslationConfig,
 } from '../../i18n';
-import { compile, parse } from 'subscript/justin';
 import { type $Errors, type ExpressionFunctions } from '../../shared';
 import { calculateValidationVariables, type ValidationVariables } from '../../utils/form';
-import { normalizeArrayIndexes } from '../../utils/justin';
+import { compileExpression } from '../../utils/justin';
 import { get, set } from '../../utils/object';
 import { extractRepeaterIndexes } from '../../utils/repeater';
 import { type DerivedWidget, type RepeaterItemScope, type State } from '../model';
@@ -365,9 +364,8 @@ function resolveString(input: string, ctx: ResolverCtx): string {
   }
 
   return input.replace(STRING_INTERPOLATION_REGEX, (_match, rawExpr: string) => {
-    const expr = normalizeArrayIndexes(rawExpr.trim());
     try {
-      const result = compile(parse(expr))({
+      const result = compileExpression(rawExpr.trim())({
         $form: ctx.$form,
         $meta: ctx.$meta,
         $errors: ctx.$errors,
@@ -485,7 +483,7 @@ function resolveI18nParams(
     const param = String(params[key]);
     if (isPotentialExpression(param)) {
       try {
-        const result = compile(parse(normalizeArrayIndexes(param)))({
+        const result = compileExpression(param)({
           $form: ctx.$form,
           $meta: ctx.$meta,
           $errors: ctx.$errors,
