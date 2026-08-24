@@ -76,10 +76,10 @@ export class TabsElement extends LitElement implements WithWidget {
   override connectedCallback() {
     super.connectedCallback();
     this.classList.add('gui-tabs', 'gui-field');
-    const props: TabsProps = this.widget.props as TabsProps;
     this.adapter.context = this.formContext;
     this.adapter.init(this.widget);
-    this.activeTab = props.defaultOpen ?? props.tabs[0].uid;
+    const templateData = this.adapter.templateData;
+    this.activeTab = templateData.defaultOpen ?? templateData.tabs?.[0]?.uid ?? '';
     this.rowIndexSuffix = repeaterIndexSuffix(this.widget.uid);
 
     this.subscriptions.push(
@@ -100,9 +100,11 @@ export class TabsElement extends LitElement implements WithWidget {
     );
 
     // Scroll into view the active tab, just in case it's out of view
-    const tabs = (this.widget.props as TabsProps).tabs;
+    const tabs = this.adapter.templateData.tabs ?? [];
     const currentIndex = tabs.findIndex((tab) => tab.uid === this.activeTab);
-    this.tabButtons[currentIndex].scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    if (currentIndex > -1) {
+      this.tabButtons[currentIndex].scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    }
   }
 
   override render() {
@@ -195,7 +197,7 @@ export class TabsElement extends LitElement implements WithWidget {
   }
 
   private onKeyDown(event: KeyboardEvent) {
-    const tabs = (this.widget.props as TabsProps).tabs;
+    const tabs = this.adapter.templateData.tabs ?? [];
     const currentIndex = tabs.findIndex((tab) => tab.uid === this.activeTab);
     const tabButtons = Array.from(this.tabButtons);
     const isRTL = window.getComputedStyle(this).direction === 'rtl';

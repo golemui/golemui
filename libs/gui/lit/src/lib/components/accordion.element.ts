@@ -50,11 +50,10 @@ export class AccordionElement extends LitElement implements WithWidget {
   override connectedCallback() {
     super.connectedCallback();
     this.classList.add('gui-accordion', 'gui-field');
-    const props: AccordionProps = this.widget.props as AccordionProps;
     this.adapter.context = this.formContext;
     this.adapter.init(this.widget);
-    // Copy: repeater rows share one props object, a direct write would open the section in every row.
-    this.activeSections = { ...(props.defaultOpen ?? {}) };
+    // Copy: repeater rows share one `defaultOpen` object, a direct write would open the section in every row
+    this.activeSections = { ...(this.adapter.templateData.defaultOpen ?? {}) };
     this.rowIndexSuffix = repeaterIndexSuffix(this.widget.uid);
 
     this.subscriptions.push(
@@ -63,8 +62,7 @@ export class AccordionElement extends LitElement implements WithWidget {
   }
 
   onClickButton(uid: string) {
-    const props: AccordionProps = this.widget.props as AccordionProps;
-    if (props.singleOpen) {
+    if (this.adapter.templateData.singleOpen) {
       Object.keys(this.activeSections)
         .filter((sectionUid) => sectionUid !== uid)
         .forEach((key) => {
