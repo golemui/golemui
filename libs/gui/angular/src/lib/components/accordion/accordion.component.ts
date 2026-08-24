@@ -29,16 +29,14 @@ export class AccordionComponent implements OnInit, OnDestroy, WithWidget {
   private rowIndexSuffix = '';
 
   ngOnInit(): void {
-    const props: AccordionProps = this.widget.props as AccordionProps;
     this.adapter.init(this.widget);
-    // Repeater rows share one props object, so never write into `defaultOpen` itself.
-    this.activeSections = { ...(props.defaultOpen ?? {}) };
+    // Repeater rows share one `defaultOpen` object, so never write into it, copy it
+    this.activeSections = { ...(this.adapter.templateData().defaultOpen ?? {}) };
     this.rowIndexSuffix = repeaterIndexSuffix(this.widget.uid);
   }
 
   onClickButton(uid: string) {
-    const props: AccordionProps = this.widget.props as AccordionProps;
-    if (props.singleOpen) {
+    if (this.adapter.templateData().singleOpen) {
       Object.keys(this.activeSections)
         .filter((sectionUid) => sectionUid !== uid)
         .forEach((key) => {

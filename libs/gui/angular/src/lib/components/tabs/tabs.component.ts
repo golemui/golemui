@@ -51,9 +51,9 @@ export class TabsComponent implements OnInit, AfterViewInit, OnDestroy, WithWidg
   private rowIndexSuffix = '';
 
   ngOnInit(): void {
-    const props: TabsProps = this.widget.props as TabsProps;
     this.adapter.init(this.widget);
-    this.activeTab.set(props.defaultOpen ?? props.tabs[0].uid);
+    const templateData = this.adapter.templateData();
+    this.activeTab.set(templateData.defaultOpen ?? templateData.tabs?.[0]?.uid ?? '');
     this.rowIndexSuffix = repeaterIndexSuffix(this.widget.uid);
 
     this.startObserver = createIntersectionObserver(
@@ -68,12 +68,14 @@ export class TabsComponent implements OnInit, AfterViewInit, OnDestroy, WithWidg
 
   ngAfterViewInit() {
     // Scroll into view the active tab, just in case it's out of view
-    const tabs = (this.widget.props as TabsProps).tabs;
+    const tabs = this.adapter.templateData().tabs ?? [];
     const currentIndex = tabs.findIndex((tab) => tab.uid === this.activeTab());
-    this.tabButtons()[currentIndex].nativeElement.scrollIntoView({
-      block: 'nearest',
-      inline: 'nearest',
-    });
+    if (currentIndex > -1) {
+      this.tabButtons()[currentIndex].nativeElement.scrollIntoView({
+        block: 'nearest',
+        inline: 'nearest',
+      });
+    }
   }
 
   /**
@@ -108,7 +110,7 @@ export class TabsComponent implements OnInit, AfterViewInit, OnDestroy, WithWidg
   }
 
   onKeyDown($event: KeyboardEvent) {
-    const tabs = (this.widget.props as TabsProps).tabs;
+    const tabs = this.adapter.templateData().tabs ?? [];
     const currentIndex = tabs.findIndex((tab) => tab.uid === this.activeTab());
     const isRTL = window.getComputedStyle(this.elementRef.nativeElement).direction === 'rtl';
 
