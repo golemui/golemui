@@ -1,4 +1,4 @@
-import { compile, parse } from 'subscript/justin';
+import { compile, type Evaluator, parse } from 'subscript/justin';
 import { type $Errors, type ExpressionFunctions, type ReactiveExpression } from '../shared';
 import { type State } from '../store/model';
 import { Debug } from './debug';
@@ -18,7 +18,29 @@ export type ExpressionExtraScope = RepeaterItemExpressionScope & {
   $fn?: ExpressionFunctions;
 };
 
-// TODO: caching or memoization
+export const COMPILED_EXPRESSION_CACHE_LIMIT = 2000;
+const compiledExpressionCache = new Map<string, Evaluator>();
+
+/**
+ * Returns the compiled evaluator for an expression, compiling on the first call.
+ *
+ * Row-rewritten `when` expressions are distinct per row, so the cache grows with the row
+ * count and is cleared when it reaches the limit. The next call recompiles. A failed parse
+ * is never cached, so an invalid expression throws the same error on every call.
+ */
+export function compileExpression(expression: string): Evaluator {
+  const cached = compiledExpressionCache.get(expression);
+  if (cached !== undefined) {
+    return cached;
+  }
+  const evaluate = compile(parse(normalizeArrayIndexes(expression)));
+  if (compiledExpressionCache.size >= COMPILED_EXPRESSION_CACHE_LIMIT) {
+    compiledExpressionCache.clear();
+  }
+  compiledExpressionCache.set(expression, evaluate);
+  return evaluate;
+}
+
 export function expressionIsTrue(
   expression: ReactiveExpression,
   $form: State['data'],
@@ -27,8 +49,7 @@ export function expressionIsTrue(
   $formIsInvalid: boolean,
   extraScope?: ExpressionExtraScope,
 ): boolean {
-  const ast = parse(normalizeArrayIndexes(expression));
-  const evaluate = compile(ast);
+  const evaluate = compileExpression(expression);
   const result = evaluate({
     $form,
     $meta,

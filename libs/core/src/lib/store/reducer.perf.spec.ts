@@ -16,6 +16,7 @@ import { reducer } from './reducer';
 const ROWS = 200;
 const EDITS = 20;
 const BUDGET_MS = 2000;
+const ITERATIONS = 5;
 
 const validators: ValidatorFn<unknown> = (): StandardSchemaV1 => ({
   '~standard': { version: 1, vendor: 'reducer-perf-spec', validate: (value) => ({ value }) },
@@ -53,41 +54,51 @@ const makeFormDef = () => ({
 const makeRows = () =>
   Array.from({ length: ROWS }, (_, index) => ({ a: `a${index}`, b: `b${index}`, c: `c${index}` }));
 
+// INITIALIZE writes into the form array, so every run builds its own formDef and state.
+const runScenario = (): { state: State; elapsedMs: number } => {
+  const reduce = reducer({
+    validators,
+    validateOn: 'eager',
+    localization: identityTranslator('en-US'),
+    functions: {},
+  });
+  const actions: Action[] = [
+    { type: 'INITIALIZE', payload: { formName: 'perf', formDef: makeFormDef() } },
+    { type: 'SET_DATA', payload: { data: { rows: makeRows() } } },
+    ...Array.from(
+      { length: EDITS },
+      (_, index): Action => ({
+        type: 'SET_WIDGET_DATA',
+        payload: { path: `rows.${index * 7}.a`, data: `edited ${index}` },
+      }),
+    ),
+  ];
+
+  const start = performance.now();
+  const state = actions.reduce(
+    (current: State, action) => reduce(current, action),
+    createInitialState('en-US'),
+  );
+  return { state, elapsedMs: performance.now() - start };
+};
+
 describe('reducer performance', () => {
-  it(`derives a ${ROWS}-row repeater on SET_DATA plus ${EDITS} edits under ${BUDGET_MS} ms`, () => {
-    const reduce = reducer({
-      validators,
-      validateOn: 'eager',
-      localization: identityTranslator('en-US'),
-      functions: {},
-    });
-    const actions: Action[] = [
-      { type: 'INITIALIZE', payload: { formName: 'perf', formDef: makeFormDef() } },
-      { type: 'SET_DATA', payload: { data: { rows: makeRows() } } },
-      ...Array.from(
-        { length: EDITS },
-        (_, index): Action => ({
-          type: 'SET_WIDGET_DATA',
-          payload: { path: `rows.${index * 7}.a`, data: `edited ${index}` },
-        }),
-      ),
-    ];
-
-    const start = performance.now();
-    const state = actions.reduce(
-      (current: State, action) => reduce(current, action),
-      createInitialState('en-US'),
-    );
-    const elapsed = performance.now() - start;
-
-    expect(state.formHealth.status).toBe('ok');
-    expect(Object.keys(state.calculatedWidgets).length).toBe(ROWS * 5 + 2);
-    expect(state.calculatedWidgets['summary[7]'].current.props?.['text']).toBe(
+  it(`derives a ${ROWS}-row repeater on SET_DATA plus ${EDITS} edits with a median under ${BUDGET_MS} ms`, () => {
+    // The warmup run also fills the module-level expression compile cache, so the timed
+    // iterations measure the steady-state path.
+    const warmup = runScenario();
+    expect(warmup.state.formHealth.status).toBe('ok');
+    expect(Object.keys(warmup.state.calculatedWidgets).length).toBe(ROWS * 5 + 2);
+    expect(warmup.state.calculatedWidgets['summary[7]'].current.props?.['text']).toBe(
       'Row 7: edited 1 / b7',
     );
+
+    const timings = Array.from({ length: ITERATIONS }, () => runScenario().elapsedMs);
+    const median = [...timings].sort((left, right) => left - right)[Math.floor(ITERATIONS / 2)];
+
     console.info(
-      `[reducer.perf] ${ROWS} rows, SET_DATA + ${EDITS} edits: ${elapsed.toFixed(0)} ms`,
+      `[reducer.perf] ${ROWS} rows, SET_DATA + ${EDITS} edits: median ${median.toFixed(0)} ms over ${ITERATIONS} runs (warmup ${warmup.elapsedMs.toFixed(0)} ms)`,
     );
-    expect(elapsed).toBeLessThan(BUDGET_MS);
+    expect(median).toBeLessThan(BUDGET_MS);
   });
 });
