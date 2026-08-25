@@ -100,7 +100,7 @@ export class GUIPartsController implements ReactiveController {
   }
 
   hostConnected(): void {
-    // no-op: the controller attaches no listeners of its own — the host's
+    // no-op: the controller attaches no listeners of its own. The host's
     // templates bind the handlers per part input.
   }
 
@@ -121,7 +121,7 @@ export class GUIPartsController implements ReactiveController {
    * Zero-pads a numeric part for storage, so the state and the live() binding
    * always agree on the padded form ('09', never '9'). The pad used to be a
    * DOM-only write in the blur handler, and whichever of that pad or a
-   * framework re-render wrote last won — a documented flake source.
+   * framework re-render wrote last won, a documented flake source.
    */
   private padValue(type: DateTimePartType, value: string): string {
     const descriptor = this.options.getDescriptor(type);
@@ -500,7 +500,7 @@ export class GUIPartsController implements ReactiveController {
    * still empty.
    *
    * @param {string} group - The group whose last input was just filled.
-   * @return {boolean} Whether focus moved — false when the value is fully
+   * @return {boolean} Whether focus moved. False when the value is fully
    *   entered (single group, past the last group, or a filled next group),
    *   where focus stays put and the caller commits instead.
    */
