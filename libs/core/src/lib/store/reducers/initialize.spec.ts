@@ -198,4 +198,16 @@ describe('initialize - function widget decode probe', () => {
     expect(result.formHealth.status).toBe('ok');
     expect(result.flatForm['agreed']).toBeDefined();
   });
+
+  it('leaves the dispatched formDef object untouched when it converts the array form', () => {
+    const widget = { uid: 'name', kind: 'input' as const, type: 'text', path: 'name' };
+    const formDef = { form: [widget] };
+
+    const result = init(formDef);
+
+    expect(result.formHealth.status).toBe('ok');
+    // The caller keeps using the object it dispatched, so INITIALIZE must not rewrite it.
+    expect(Array.isArray(formDef.form)).toBe(true);
+    expect(formDef.form).toEqual([widget]);
+  });
 });

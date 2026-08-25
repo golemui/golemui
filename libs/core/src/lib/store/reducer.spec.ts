@@ -110,8 +110,8 @@ const childUidsOf = (state: State, uid: string): (string | undefined)[] =>
 // -----------------------------------------------------------------------------
 // Fixtures
 //
-// Each fixture is a factory: `initialize` rewrites a `form` array in place, so a shared object
-// would be mutated by the first INITIALIZE and reused in a different shape by the next test.
+// Each fixture is a factory, so every test starts from its own object and no test can be
+// affected by what a previous one did to a shared one.
 // -----------------------------------------------------------------------------
 
 /**
@@ -2545,6 +2545,36 @@ describe('reducer end-to-end', () => {
 
       expect(same).toBe(hidden);
       expect(warn).toHaveBeenCalledWith('Input with path "ghost" not found');
+    });
+  });
+
+  // ---------------------------------------------------------------------------
+  // 27. An empty injected issues array is not a failure
+  // ---------------------------------------------------------------------------
+
+  describe('empty injected issues', () => {
+    it('keeps the form valid when the injected array is empty', () => {
+      const state = drive([
+        init(makeBaseFormDef()),
+        setData({ firstName: 'Joan', age: 20, users: [] }),
+        { type: 'INJECT_VALIDATION_ISSUES', payload: { path: 'firstName', issues: [] } },
+        validateAllAction,
+      ]);
+
+      // An empty array displays nothing and touches nothing, so it must not block submit.
+      expect(state.injectedValidations['firstName']).toEqual([]);
+      expect(state.isFormValid).toBe(true);
+    });
+
+    it('still marks the form invalid when the injected array has an issue', () => {
+      const state = drive([
+        init(makeBaseFormDef()),
+        setData({ firstName: 'Joan', age: 20, users: [] }),
+        { type: 'INJECT_VALIDATION_ISSUES', payload: { path: 'firstName', issues: ['taken'] } },
+        validateAllAction,
+      ]);
+
+      expect(state.isFormValid).toBe(false);
     });
   });
 });

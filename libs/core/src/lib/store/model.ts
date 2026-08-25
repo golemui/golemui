@@ -27,7 +27,8 @@ export type State = {
    * Row entries carry the row indexes in `uid` and (for inputs) `path`, and include the row layout node
    * and nested repeater containers. Function widgets stay callable, `when` expressions are not rewritten.
    * Pure function of `(flatForm, data)`, built by `expandSources` on every reducer pipeline run.
-   * Read by `calculateWidgetFlags` and `pruneHiddenData`.
+   * Read by the derive passes, the view model, `dropRemovedWidgetEntries`, `overrideWidgetProp`
+   * and `pruneHiddenData`.
    *
    * @example { 'quantity-number[0]': { uid: 'quantity-number[0]', path: 'lineItems.0.quantity', ... } }
    */
@@ -72,8 +73,8 @@ export type State = {
   isFormValid: boolean;
 
   /**
-   * Tracks widgets with state expressions.
-   * When data changes, these widgets are updated and their flags recalculated.
+   * The hidden, readonly and disabled flags for every widget in `resolvedSources`, recomputed on
+   * every derive. A hidden layout propagates its flag to its descendants.
    */
   widgetFlags: Record<Uid, { hidden?: boolean; readonly?: boolean; disabled?: boolean }>;
 
@@ -95,8 +96,8 @@ export type State = {
   widgetPropOverrides: Record<Uid, Record<string, any>>;
 
   /**
-   * Key-value pairs representing the current state of the form's input fields.
-   * The keys correspond to the control names.
+   * The form's data tree. Input widgets address it by dot path, so a key can hold a nested
+   * object or an array as well as a leaf value.
    */
   data: Record<string, any>;
 

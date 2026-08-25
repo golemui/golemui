@@ -35,19 +35,22 @@ export const initialize = ({ lang }: State, action: INITIALIZE): State => {
   // defineForm() converts the form array into a layout (the formDef.form entry point).
   // When the form declaration originates from JSON (i.e., not via defineForm()),
   // the layout must be generated here instead.
+  let decodeInput = formDef;
   if (Array.isArray((formDef as Record<string, any>)['form'])) {
-    const formDef_ = formDef as Record<string, any>;
-    const widgets: any[] = formDef_['form'];
-    // mutate
-    formDef_['form'] = {
-      uid: '',
-      type: 'flex',
-      kind: 'layout',
-      children: widgets,
-    };
+    const widgets: any[] = (formDef as Record<string, any>)['form'];
+    // A copy, because the caller keeps using the object it dispatched.
+    decodeInput = {
+      ...(formDef as Record<string, any>),
+      form: {
+        uid: '',
+        type: 'flex',
+        kind: 'layout',
+        children: widgets,
+      },
+    } as typeof formDef;
   }
 
-  const result = formDefDecoder.decode(formDef);
+  const result = formDefDecoder.decode(decodeInput);
 
   if (result.isOk()) {
     formHealth = { status: 'ok' };

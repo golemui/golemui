@@ -41,12 +41,20 @@ export type ValidationVariables = {
  * e.g. `{ invalidAge: '!!$errors.age' }` or { disabled { when: '$formIsInvalid' } }
  */
 export function calculateValidationVariables(state: State): ValidationVariables {
-  const result = Object.entries(state.validations).reduce(
+  // Shallow paths first, so a container written before its descendants makes the collision below
+  // deterministic instead of dependent on widget order.
+  const byDepth = Object.entries(state.validations).sort(
+    ([a], [b]) => a.split('.').length - b.split('.').length,
+  );
+  const result = byDepth.reduce(
     (acc, [dotPath, errors]) => {
       if (errors !== null) {
         acc.$formIsInvalid = true;
         // Copy the array so `set` can't mutate the entry shared with state.validations
         // when a nested path (e.g. `users.1.firstName`) walks through this one (`users`).
+        // Known limit: when both `users` and `users.1.firstName` have errors, the nested write
+        // replaces element 1 of the container's array. One slot cannot hold both a message and a
+        // child object, so fixing it means changing the public `$errors` shape.
         set(acc.$errors, dotPath, [...errors]);
       }
       return acc;

@@ -70,7 +70,6 @@ export type SET_FORM_HEALTH = {
  *
  * The actual validation behavior is determined by the form's configuration and
  * may not execute immediately upon dispatch.
- * ```
  */
 export type ATTEMPT_VALIDATION = {
   type: 'ATTEMPT_VALIDATION';

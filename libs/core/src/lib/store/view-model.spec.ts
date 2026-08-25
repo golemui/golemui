@@ -9,13 +9,6 @@ import { type Action } from './actions';
 import { createInitialState, type State } from './model';
 import { reducer } from './reducer';
 import {
-  calculatedLayoutChildrenByUid$,
-  calculatedWidgetsByUid$,
-  dataByPath$,
-  touchedControlsByPath$,
-  validationByPath$,
-} from './selectors';
-import {
   createWidgetViewModelReader,
   widgetViewModel,
   widgetViewModel$,
@@ -89,16 +82,6 @@ const injectIssues = (path: string, issues: string[] | null): Action => ({
   type: 'INJECT_VALIDATION_ISSUES',
   payload: { path, issues },
 });
-
-/** Reads the first (synchronous) emission of a selector over a single state snapshot. */
-const readSelector = <T>(state: State, operator: (state$: BehaviorSubject<State>) => any): T => {
-  let emitted: T = undefined as T;
-  const subscription = operator(new BehaviorSubject(state)).subscribe((value: T) => {
-    emitted = value;
-  });
-  subscription.unsubscribe();
-  return emitted;
-};
 
 const uidsOf = (widgets: { uid?: string }[]): (string | undefined)[] =>
   widgets.map((widget) => widget.uid);
@@ -317,17 +300,19 @@ describe('widgetViewModel', () => {
     expect(vm.touched).toBe(false);
   });
 
-  it('reports the same values as the individual selectors', () => {
+  it('reports the same values the state holds for each slice', () => {
     // A submit attempt with the required input empty, so every slice carries a real value.
     const state = drive([init(makeBaseFormDef()), setData({ users: [] }), validateAllAction]);
     const vm = widgetViewModel<string>(state, 'firstName');
     const box = widgetViewModel(state, 'box');
 
-    expect(vm.widget).toBe(readSelector(state, calculatedWidgetsByUid$('firstName')));
-    expect(vm.value).toBe(readSelector(state, dataByPath$('firstName')));
-    expect(vm.errors).toEqual(readSelector(state, validationByPath$('firstName')));
-    expect(vm.touched).toBe(readSelector(state, touchedControlsByPath$('firstName')));
-    expect(box.children).toBe(readSelector(state, calculatedLayoutChildrenByUid$('box')));
+    expect(vm.widget).toBe(state.calculatedWidgets['firstName'].current);
+    expect(vm.value).toBe(state.data['firstName']);
+    expect(vm.errors).toEqual(state.validations['firstName']);
+    expect(vm.touched).toBe(state.touchedControls['firstName']);
+    expect(box.children).toBe(
+      (state.calculatedWidgets['box'].current as LayoutWidget<string>).children,
+    );
   });
 
   describe('layout children', () => {
