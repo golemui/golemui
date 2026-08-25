@@ -16,7 +16,7 @@ import type {
 import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';
 import { property, query, state } from 'lit/decorators.js';
-import { safeDefine } from '@golemui/lit/internals';
+import { safeDefine, unsubscribeAll } from '@golemui/lit/internals';
 import { debounceTime, Subject, type Subscription } from 'rxjs';
 import { defaultMultiListItemRenderer } from './default-multi-list-item-renderer';
 import '@golemui/gui-components/label';
@@ -108,7 +108,7 @@ export class MultiDropdownElement extends LitElement implements WithWidget {
     super.disconnectedCallback();
     document.removeEventListener('click', this.onDocumentClick);
     this.adapter.destroy();
-    this.subscriptions.forEach((s) => s.unsubscribe());
+    unsubscribeAll(this.subscriptions);
   }
 
   private _currentValues(): OptionValue[] {

@@ -3,7 +3,7 @@ import { ActionWidgetAdapter, type LitFormContext, actionContext, formContext } 
 import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
-import { safeDefine } from '@golemui/lit/internals';
+import { safeDefine, unsubscribeAll } from '@golemui/lit/internals';
 import { type Subscription } from 'rxjs';
 import type { ButtonProps } from '@golemui/gui-shared/internals';
 import '@golemui/gui-components/button';
@@ -66,7 +66,7 @@ export class ButtonElement extends LitElement implements WithWidget {
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.adapter.destroy();
-    this.subscriptions.forEach((s) => s.unsubscribe());
+    unsubscribeAll(this.subscriptions);
   }
 }
 

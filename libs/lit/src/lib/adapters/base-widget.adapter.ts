@@ -16,6 +16,20 @@ export abstract class BaseWidgetAdapter<F extends NonFunctionWidget> {
 
   templateDataChanged$ = new Subject<void>();
 
+  private loadEmittedForUid: string | undefined;
+
+  /**
+   * True the first time only. A DOM move disconnects and reconnects the element, which re-runs
+   * `init`, and the subscription must be recreated there but `load` must not fire again.
+   */
+  protected shouldEmitLoad(): boolean {
+    if (this.loadEmittedForUid === this.widget.uid) {
+      return false;
+    }
+    this.loadEmittedForUid = this.widget.uid as string;
+    return true;
+  }
+
   protected setTemplateData(patch: any) {
     this.templateData = { ...this.templateData, ...patch };
     this.templateDataChanged$.next();
