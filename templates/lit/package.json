@@ -10,10 +10,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@golemui/core": "1.3.0",
-    "@golemui/lit": "1.3.0",
-    "@golemui/gui-lit": "1.3.0",
-    "@golemui/gui-shared": "1.3.0",
+    "@golemui/core": "1.4.0",
+    "@golemui/lit": "1.4.0",
+    "@golemui/gui-lit": "1.4.0",
+    "@golemui/gui-shared": "1.4.0",
     "lit": "^3.3.1"
   },
   "devDependencies": {
