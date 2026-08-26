@@ -1,3 +1,18 @@
+## 1.4.0 (2026-08-26)
+
+### 🚀 Features
+
+- **react:** read the store through one widgetViewModel$ subscription per widget ([#300](https://github.com/golemui/golemui/pull/300))
+
+### 🩹 Fixes
+
+- recreate the widget tree when the form reinitializes ([#307](https://github.com/golemui/golemui/pull/307))
+- **react:** emit the load event once per widget across row changes ([#306](https://github.com/golemui/golemui/pull/306))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+
 ## 1.4.0-rc.0 (2026-08-26)
 
 ### 🚀 Features

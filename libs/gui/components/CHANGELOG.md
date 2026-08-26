@@ -1,3 +1,24 @@
+## 1.4.0 (2026-08-26)
+
+### 🚀 Features
+
+- **vue:** read the store through one widgetViewModel$ subscription per widget ([#299](https://github.com/golemui/golemui/pull/299))
+- **gui-components:** in-place pill editing for range inputs ([#291](https://github.com/golemui/golemui/pull/291))
+- **gui-components:** add MultiList and MultiDropdown ([#284](https://github.com/golemui/golemui/pull/284))
+
+### 🩹 Fixes
+
+- **gui-components:** always show the pill edit action in mobile ([#301](https://github.com/golemui/golemui/pull/301))
+- **gui-components:** follow programmatic value changes on missing inputs ([#298](https://github.com/golemui/golemui/pull/298))
+- **gui-components:** follow programmatic value changes on dirty inputs ([#295](https://github.com/golemui/golemui/pull/295))
+- **gui-components:** use arrow-key and Enter commit in rangeTimePicker ([#293](https://github.com/golemui/golemui/pull/293))
+- **gui-components:** sticking end scroll shadow; share scroll-shadow styles via one partial ([#287](https://github.com/golemui/golemui/pull/287))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
 ## 1.4.0-rc.0 (2026-08-26)
 
 ### 🚀 Features

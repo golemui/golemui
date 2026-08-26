@@ -1,3 +1,50 @@
+## 1.4.0 (2026-08-26)
+
+### 🚀 Features
+
+- **angular:** read the store through one widgetViewModel$ subscription per widget ([#296](https://github.com/golemui/golemui/pull/296))
+- **core:** compute the widget set from data on every action ([#290](https://github.com/golemui/golemui/pull/290))
+- **core:** add WidgetViewModel and the rows templateData field ([#294](https://github.com/golemui/golemui/pull/294))
+- **core:** remove the no-op mount actions and the blur-time function widget re-resolve ([#303](https://github.com/golemui/golemui/pull/303))
+- **gui-components:** add MultiList and MultiDropdown ([#284](https://github.com/golemui/golemui/pull/284))
+- **gui-components:** in-place pill editing for range inputs ([#291](https://github.com/golemui/golemui/pull/291))
+- **lit:** read the store through one widgetViewModel$ subscription per widget ([#302](https://github.com/golemui/golemui/pull/302))
+- **react:** read the store through one widgetViewModel$ subscription per widget ([#300](https://github.com/golemui/golemui/pull/300))
+- **vue:** read the store through one widgetViewModel$ subscription per widget ([#299](https://github.com/golemui/golemui/pull/299))
+
+### 🩹 Fixes
+
+- recreate the widget tree when the form reinitializes ([#307](https://github.com/golemui/golemui/pull/307))
+- make tabs and accordion DOM ids unique and keep their aria pairs correct ([#310](https://github.com/golemui/golemui/pull/310))
+- read calculated props in the Angular and Lit tabs and accordion ([#325](https://github.com/golemui/golemui/pull/325))
+- **core:** exclude the widgets inside a hidden layout from validation, touch and submit data ([#304](https://github.com/golemui/golemui/pull/304))
+- **core:** copy data containers on write instead of mutating the previous state ([#305](https://github.com/golemui/golemui/pull/305))
+- **core:** find function widget controls by the path they own ([#308](https://github.com/golemui/golemui/pull/308))
+- **core:** discard the whole derive when one of its passes fails ([#309](https://github.com/golemui/golemui/pull/309))
+- **core:** omit repeater rows an errored derive never resolved ([#312](https://github.com/golemui/golemui/pull/312))
+- **core:** find override targets in resolvedSources so hidden widgets are reachable ([#313](https://github.com/golemui/golemui/pull/313))
+- **core:** copy a function widget result before writing uid and path ([#311](https://github.com/golemui/golemui/pull/311))
+- **gui-components:** sticking end scroll shadow; share scroll-shadow styles via one partial ([#287](https://github.com/golemui/golemui/pull/287))
+- **gui-components:** use arrow-key and Enter commit in rangeTimePicker ([#293](https://github.com/golemui/golemui/pull/293))
+- **gui-components:** follow programmatic value changes on dirty inputs ([#295](https://github.com/golemui/golemui/pull/295))
+- **gui-components:** follow programmatic value changes on missing inputs ([#298](https://github.com/golemui/golemui/pull/298))
+- **gui-components:** always show the pill edit action in mobile ([#301](https://github.com/golemui/golemui/pull/301))
+- **gui-lit,gui-react,gui-vue:** Clear select errors on pick a valid option ([#326](https://github.com/golemui/golemui/pull/326))
+- **react:** emit the load event once per widget across row changes ([#306](https://github.com/golemui/golemui/pull/306))
+
+### 🔥 Performance
+
+- **core:** reuse widget references when a recompute produces equal content ([#289](https://github.com/golemui/golemui/pull/289))
+- **core:** skip the row widget copy when it has no when expression ([af259461](https://github.com/golemui/golemui/commit/af259461))
+- **core:** check flag fields before resolving widgets in the flags pass ([95e8c029](https://github.com/golemui/golemui/commit/95e8c029))
+- **core:** compute isFormValid once per validation action ([d831e98c](https://github.com/golemui/golemui/commit/d831e98c))
+- **core:** cache compiled expressions by their source string ([437ee072](https://github.com/golemui/golemui/commit/437ee072))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
 ## 1.4.0-rc.0 (2026-08-26)
 
 ### 🚀 Features

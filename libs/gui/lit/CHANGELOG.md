@@ -1,3 +1,23 @@
+## 1.4.0 (2026-08-26)
+
+### 🚀 Features
+
+- **lit:** read the store through one widgetViewModel$ subscription per widget ([#302](https://github.com/golemui/golemui/pull/302))
+- **gui-components:** in-place pill editing for range inputs ([#291](https://github.com/golemui/golemui/pull/291))
+- **gui-components:** add MultiList and MultiDropdown ([#284](https://github.com/golemui/golemui/pull/284))
+
+### 🩹 Fixes
+
+- **gui-lit,gui-react,gui-vue:** Clear select errors on pick a valid option ([#326](https://github.com/golemui/golemui/pull/326))
+- read calculated props in the Angular and Lit tabs and accordion ([#325](https://github.com/golemui/golemui/pull/325))
+- make tabs and accordion DOM ids unique and keep their aria pairs correct ([#310](https://github.com/golemui/golemui/pull/310))
+- recreate the widget tree when the form reinitializes ([#307](https://github.com/golemui/golemui/pull/307))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
 ## 1.4.0-rc.0 (2026-08-26)
 
 ### 🚀 Features

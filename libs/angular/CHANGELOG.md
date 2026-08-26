@@ -1,3 +1,17 @@
+## 1.4.0 (2026-08-26)
+
+### 🚀 Features
+
+- **angular:** read the store through one widgetViewModel$ subscription per widget ([#296](https://github.com/golemui/golemui/pull/296))
+
+### 🩹 Fixes
+
+- recreate the widget tree when the form reinitializes ([#307](https://github.com/golemui/golemui/pull/307))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+
 ## 1.4.0-rc.0 (2026-08-26)
 
 ### 🚀 Features

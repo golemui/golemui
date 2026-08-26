@@ -1,3 +1,20 @@
+## 1.4.0 (2026-08-26)
+
+### 🚀 Features
+
+- **angular:** read the store through one widgetViewModel$ subscription per widget ([#296](https://github.com/golemui/golemui/pull/296))
+- **gui-components:** in-place pill editing for range inputs ([#291](https://github.com/golemui/golemui/pull/291))
+- **gui-components:** add MultiList and MultiDropdown ([#284](https://github.com/golemui/golemui/pull/284))
+
+### 🩹 Fixes
+
+- make tabs and accordion DOM ids unique and keep their aria pairs correct ([#310](https://github.com/golemui/golemui/pull/310))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
 ## 1.4.0-rc.0 (2026-08-26)
 
 ### 🚀 Features
