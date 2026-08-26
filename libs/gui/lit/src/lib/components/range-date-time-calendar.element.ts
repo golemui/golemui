@@ -5,7 +5,7 @@ import '@golemui/gui-components/range-date-time-calendar';
 import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
-import { safeDefine } from '@golemui/lit/internals';
+import { safeDefine, unsubscribeAll } from '@golemui/lit/internals';
 import { type Subscription } from 'rxjs';
 
 export class RangeDateTimeCalendarElement extends LitElement implements WithWidget {
@@ -120,7 +120,7 @@ export class RangeDateTimeCalendarElement extends LitElement implements WithWidg
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.adapter.destroy();
-    this.subscriptions.forEach((s) => s.unsubscribe());
+    unsubscribeAll(this.subscriptions);
   }
 }
 

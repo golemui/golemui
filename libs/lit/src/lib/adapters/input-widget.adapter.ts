@@ -22,7 +22,9 @@ export class InputWidgetAdapter<
       ...(viewModel.widget !== undefined ? { rows: viewModel.rows } : {}),
     }));
 
-    this.context.emitEvent('load', this.widget);
+    if (this.shouldEmitLoad()) {
+      this.context.emitEvent('load', this.widget);
+    }
   }
 
   valueChanged<T>(value: T) {

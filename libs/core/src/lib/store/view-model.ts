@@ -11,7 +11,7 @@ import { type State } from './model';
  * subscription per store slice.
  *
  * Hidden widgets are reported as they are: `widget` is `undefined` and `hidden` is `true`. This
- * differs from the `calculatedWidgetsByUid$` selector, which never emits for a hidden widget and
+ * differs from the calculated-widget lookup, which holds no entry for a hidden widget and
  * therefore leaves subscribers holding the last visible value.
  */
 export type WidgetViewModel<T = unknown> = {
@@ -232,7 +232,7 @@ function widgetPath(state: State, uid: Uid): DotPath | undefined {
  * indexes. Widgets inside a repeater row need the indexed nodes, which `expandSources` already
  * produced into `resolvedSources`, so this looks them up by appending the layout's own row indexes
  * to each child uid. Outside a repeater the suffix is empty and the calculated children pass
- * through unchanged (the same array reference the `calculatedLayoutChildrenByUid$` selector emits).
+ * through unchanged (the same array reference the calculated layout widget holds).
  */
 function stampedChildren(
   state: State,

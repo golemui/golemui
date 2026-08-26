@@ -3,6 +3,9 @@ import vue from '@vitejs/plugin-vue';
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 
 export default defineConfig({
+  // The Electron renderer runs out of memory partway through this suite and dies. CI never
+  // hits it because it runs chrome and firefox with a 4 GB Node heap, one runner per project.
+  experimentalMemoryManagement: true,
   component: {
     devServer: {
       framework: 'vue',

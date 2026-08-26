@@ -46,7 +46,8 @@ export class AccordionComponent implements OnInit, OnDestroy, WithWidget {
 
     this.activeSections[uid] = !this.activeSections[uid];
 
-    this.adapter.change<AccordionEventDetail>(this.activeSections);
+    // A copy, because the next click writes into `this.activeSections` again.
+    this.adapter.change<AccordionEventDetail>({ ...this.activeSections });
   }
 
   /**

@@ -904,7 +904,7 @@ describe('calculateWidgetProps', () => {
         children: [c1, c2],
       } satisfies LayoutWidget<string>;
       seed(state, 'row[0]', source);
-      // Live materialized widgets always carry a scope entry (built by materializeRepeaterItems)
+      // Live row widgets always carry a scope entry (built by expandSources)
       state.repeaterItemScopes['row[0]'] = { itemPath: 'rows.0', index: 0 };
       state.widgetFlags['cell1[0]'] = { hidden: true };
 
@@ -925,7 +925,7 @@ describe('calculateWidgetProps', () => {
         children: [c1, c2],
       } satisfies LayoutWidget<string>;
       seed(state, 'grid[2][3]', source);
-      // Live materialized widgets always carry a scope entry (built by materializeRepeaterItems)
+      // Live row widgets always carry a scope entry (built by expandSources)
       state.repeaterItemScopes['grid[2][3]'] = { itemPath: 'grid.2.rows.3', index: 3 };
       state.widgetFlags['leaf1[2][3]'] = { hidden: true };
 

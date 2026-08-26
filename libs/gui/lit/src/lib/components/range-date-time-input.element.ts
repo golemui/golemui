@@ -5,7 +5,7 @@ import '@golemui/gui-components/range-date-time-input';
 import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
-import { safeDefine } from '@golemui/lit/internals';
+import { safeDefine, unsubscribeAll } from '@golemui/lit/internals';
 import { type Subscription } from 'rxjs';
 
 export class RangeDateTimeInputElement extends LitElement implements WithWidget {
@@ -107,7 +107,7 @@ export class RangeDateTimeInputElement extends LitElement implements WithWidget 
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.adapter.destroy();
-    this.subscriptions.forEach((s) => s.unsubscribe());
+    unsubscribeAll(this.subscriptions);
   }
 }
 

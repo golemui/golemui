@@ -1,10 +1,10 @@
 import { errorCodes } from '../errors';
 import { type ValidatorFn } from '../form-validator';
-import { isInputWidget } from '../form-widget';
 import { type I18nTranslator } from '../i18n';
 import { type DotPath, type ExpressionFunctions, type ValidateOn } from '../shared';
 import { assertNever } from '../utils/assert-never';
 import { calculateValidationVariables, inputPath } from '../utils/form';
+import { isInputWidget } from '../form-widget';
 import { type Action, type ATTEMPT_VALIDATION, type OVERRIDE_WIDGET_PROP } from './actions';
 import { type State } from './model';
 import {
@@ -39,7 +39,7 @@ export const reducer = ({
   const derive = makeDerive(localization, functions);
   const validate = validateAll(validators, localization);
   const applyWidgetProps = calculateWidgetProps(localization, functions);
-  // Every action that changes a derive input goes through this wrapper.
+  // Data, meta and override actions go through this wrapper. SET_LANGUAGE runs the props pass alone.
   const deriveAndValidateAppearingInputs = (state: State): State =>
     validateInputsAppearingAfterSubmit(state, derive, validate, false);
   // Validation actions recompute isFormValid exactly once, on whichever path the helper exits through.
@@ -72,7 +72,7 @@ export const reducer = ({
           return state;
         }
         const next = deriveAndValidateAppearingInputs(overridden);
-        // An override dispatched from an event handler can change an input, so a touched input is re-validated.
+        // A data write does not re-validate a touched input, so its validation can be stale here.
         return overrideTargetsTouchedInput(next, action) ? validate(next) : next;
       }
 
@@ -151,6 +151,8 @@ function makeDerive(localization: I18nTranslator, functions: ExpressionFunctions
       next = applyWidgetProps(next, validationVariables);
       return next.formHealth.status === 'ok' ? next : discardPass(next.formHealth);
     } catch (err) {
+      // This catch covers every pass, so defaults, expand and validation variables report the
+      // flags code too. All four derive codes self-heal identically, so only the label is off.
       const code = errorCodes.calculateWidgetFlagsError;
       return discardPass({
         status: 'errored',
@@ -257,7 +259,9 @@ function shouldValidate(
   reason: ATTEMPT_VALIDATION['payload']['reason'],
 ): boolean {
   return (
-    validateOn === 'eager' || reason === validateOn || (validateOn as string[]).includes(reason)
+    validateOn === 'eager' ||
+    reason === validateOn ||
+    (Array.isArray(validateOn) && validateOn.includes(reason))
   );
 }
 
@@ -287,17 +291,18 @@ function calculateIsFormValid(state: State): State {
     return { ...state, isFormValid: true };
   }
 
-  let issues = injectedValidationsKeys.find(
-    (key) =>
-      state.injectedValidations[key] !== null && Array.isArray(state.injectedValidations[key]),
-  );
+  let issues = injectedValidationsKeys.find((key) => {
+    const injected = state.injectedValidations[key];
+    return Array.isArray(injected) && injected.length > 0;
+  });
   if (issues !== undefined) {
     return { ...state, isFormValid: false };
   }
 
-  issues = validationsKeys.find(
-    (key) => state.validations[key] !== null && Array.isArray(state.validations[key]),
-  );
+  issues = validationsKeys.find((key) => {
+    const validation = state.validations[key];
+    return Array.isArray(validation) && validation.length > 0;
+  });
   if (issues !== undefined) {
     return { ...state, isFormValid: false };
   }

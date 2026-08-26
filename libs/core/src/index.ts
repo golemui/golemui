@@ -63,15 +63,7 @@ export type { Action } from './lib/store/actions';
 
 export type { FormHealth, Middleware, State } from './lib/store/model';
 
-export {
-  calculatedLayoutChildrenByUid$,
-  calculatedWidgetsByUid$,
-  dataByPath$,
-  formHealth,
-  injectedValidationByPath$,
-  touchedControlsByPath$,
-  validationByPath$,
-} from './lib/store/selectors';
+export { formHealth } from './lib/store/selectors';
 
 export {
   createWidgetViewModelReader,

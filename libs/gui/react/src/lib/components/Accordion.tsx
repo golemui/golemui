@@ -30,7 +30,7 @@ export function Accordion(widgetInstance: WithWidget) {
         Object.keys(newState)
           .filter((sectionUid) => sectionUid !== uid)
           .forEach((sectionUid) => {
-            newState[sectionUid] = sectionUid === uid ? !newState[sectionUid] : false;
+            newState[sectionUid] = false;
           });
       }
 

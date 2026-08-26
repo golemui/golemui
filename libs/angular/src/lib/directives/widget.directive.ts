@@ -3,6 +3,7 @@ import {
   Directive,
   inject,
   input,
+  type OnDestroy,
   type OnInit,
   type Type,
   ViewContainerRef,
@@ -19,18 +20,24 @@ import { AngularFormContext } from '../context/form.context';
   selector: '[guiWidget]',
   standalone: true,
 })
-export class WidgetDirective implements OnInit {
+export class WidgetDirective implements OnInit, OnDestroy {
   widget = input.required<NonFunctionWidget<string>>();
 
   private formContext: AngularFormContext<Type<WithWidget>> = inject(AngularFormContext);
   private viewContainerRef = inject(ViewContainerRef);
   private componentRef!: ComponentRef<WithWidget>;
+  private destroyed = false;
 
   async ngOnInit() {
     // Read the input once so a bad binding fails inside the try, not again in the catch.
     const widget = this.widget();
     try {
-      this.createComponent(await this.formContext.widgetRegistry.loadWidget(widget.type));
+      const component = await this.formContext.widgetRegistry.loadWidget(widget.type);
+      // The directive can be destroyed while the loader is still running.
+      if (this.destroyed) {
+        return;
+      }
+      this.createComponent(component);
     } catch {
       const code = errorCodes.widgetCouldNotBeLoaded;
       this.formContext.store.dispatch({
@@ -44,6 +51,10 @@ export class WidgetDirective implements OnInit {
         },
       });
     }
+  }
+
+  ngOnDestroy() {
+    this.destroyed = true;
   }
 
   private createComponent(component: Type<WithWidget>) {
