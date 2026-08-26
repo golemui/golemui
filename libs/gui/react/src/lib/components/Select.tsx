@@ -19,8 +19,11 @@ export function Select(widgetInstance: WithWidget) {
   } = useInputWidget<OptionValue, SelectProps>(widget);
 
   const handleChange = useCallback(
-    (e: Event) => onValueChanged((e as CustomEvent).detail.value),
-    [onValueChanged],
+    (e: Event) => {
+      injectValidationIssues(null);
+      onValueChanged((e as CustomEvent).detail.value);
+    },
+    [injectValidationIssues, onValueChanged],
   );
 
   const handleInputError = useCallback(

@@ -18,7 +18,10 @@ const {
   injectValidationIssues,
 } = useInputWidget<OptionValue, SelectProps>(widget);
 
-const handleChange = (e: Event) => onValueChanged((e as CustomEvent).detail.value);
+const handleChange = (e: Event) => {
+  injectValidationIssues(null);
+  onValueChanged((e as CustomEvent).detail.value);
+};
 const required = computed(() => (templateData.value.validator as Validator)?.required);
 
 const selectRef = ref<HTMLElement | null>(null);

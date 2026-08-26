@@ -36,5 +36,37 @@ export const runSelectComponentTests = (mountFn: MountComponentFn) => {
         `Invalid selection: 'd' is not a valid option.`,
       );
     });
+
+    it('should clear the invalid-option error when a valid option is selected', () => {
+      mountFn({
+        data: { myField: 'd' },
+        formDef: defineForm({
+          form: [
+            {
+              uid: 'testSubject',
+              kind: 'input',
+              type: 'select',
+              path: 'myField',
+              props: {
+                options: ['a', 'b', 'c'],
+              },
+            },
+            {
+              uid: 'testButton',
+              kind: 'action',
+              type: 'button',
+              label: 'Test',
+              actionType: 'submit',
+            },
+          ],
+        }),
+      });
+
+      cy.get('[data-cy="testButton_button"]').click();
+      cy.get('[data-cy="testSubject_validator-error"]').should('be.visible');
+      cy.get('[data-cy="testSubject_select"]').select('b');
+      cy.get('[data-cy="testSubject_validator-errors"]').should('not.exist');
+      cy.get('[data-cy="testSubject_select"]').should('have.value', 'b');
+    });
   });
 };

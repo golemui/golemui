@@ -76,6 +76,7 @@ export class SelectElement extends LitElement implements WithWidget {
   }
 
   valueChanged(event: CustomEvent) {
+    this.adapter.injectValidationIssues(null);
     const value = event.detail.value;
     this.adapter.valueChanged(value);
   }
