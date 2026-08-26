@@ -20,6 +20,7 @@ import { when } from 'lit/directives/when.js';
 import { type Subscription } from 'rxjs';
 import { formContext, LitFormContext } from '../../context/form.context';
 import { safeDefine } from '../../utils/define';
+import { unsubscribeAll } from '../../utils/subscriptions';
 import '../widget/widget-element';
 import { defaultFormHealthBoundary, type FormHealthBoundary } from './form-health-boundary';
 
@@ -196,7 +197,8 @@ export class FormElement extends LitElement {
     super.disconnectedCallback();
     this.stateSub?.unsubscribe();
     this.healthSub?.unsubscribe();
-    this.eventSub.map((sub) => sub.unsubscribe());
+    // `connectedCallback` refills the array on a reconnect, so it must be emptied here.
+    unsubscribeAll(this.eventSub);
     this.unsubscribeI18n();
   }
 }

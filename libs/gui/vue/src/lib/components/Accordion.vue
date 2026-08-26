@@ -7,7 +7,7 @@ import {
   type AccordionProps,
   repeaterIndexSuffix,
 } from '@golemui/gui-shared/internals';
-import { computed, ref, watch } from 'vue';
+import { computed, ref, watch, type WatchStopHandle } from 'vue';
 
 const props = defineProps<WithWidget>();
 const widget = props.widget as LayoutWidget;
@@ -20,16 +20,24 @@ let initialized = false;
 // emits on subscribe, so templateData is already filled here unless the accordion starts hidden.
 // Reference-equality against a sentinel like React does is not possible because `ref({})` wraps
 // the object in a reactive proxy, breaking identity checks.
-watch(
+// `let`, because `immediate: true` runs the callback synchronously before `watch` returns, so the
+// handle is still undefined on that first run. The synchronous case is stopped right after.
+let stopSeedWatch: WatchStopHandle | undefined;
+stopSeedWatch = watch(
   templateData,
   (td) => {
     if (!initialized && td.defaultOpen) {
       activeSections.value = { ...td.defaultOpen };
       initialized = true;
+      // Nothing left to seed, so stop deep-watching all of templateData.
+      stopSeedWatch?.();
     }
   },
   { immediate: true, deep: true },
 );
+if (initialized) {
+  stopSeedWatch();
+}
 
 const onClickButton = (sectionUid: string) => {
   const newState: typeof activeSections.value = { ...activeSections.value };

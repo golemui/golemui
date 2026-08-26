@@ -57,11 +57,14 @@ export class FormContext<ComponentType> {
       return widget.on?.[`${eventType}.${currentState}`] !== undefined;
     });
 
+    // Once per event, not once per matched state: N matching handlers used to run N full
+    // validate-and-derive passes for one change.
+    this.attemptValidation(eventType, widget);
+
     // More than one event can be emitted if more than one currentstate matches
     if (matchedStates.length > 0) {
       matchedStates.forEach((currentState) => {
         const eventName = widget.on?.[`${eventType}.${currentState}`] as EventName | undefined;
-        this.attemptValidation(eventType, widget);
         if (eventName) {
           this.events$.next({
             name: eventName,
@@ -75,7 +78,6 @@ export class FormContext<ComponentType> {
       });
     } else {
       const eventName = widget.on?.[eventType] as EventName | undefined;
-      this.attemptValidation(eventType, widget);
       if (eventName) {
         this.events$.next({
           name: eventName,

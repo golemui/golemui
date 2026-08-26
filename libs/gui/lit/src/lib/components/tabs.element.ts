@@ -4,7 +4,7 @@ import {
   createIntersectionObserver,
   type TabsEventDetail,
 } from '@golemui/gui-components/internals';
-import { safeDefine } from '@golemui/lit/internals';
+import { safeDefine, unsubscribeAll } from '@golemui/lit/internals';
 import {
   repeaterIndexSuffix,
   tabButtonId,
@@ -185,7 +185,7 @@ export class TabsElement extends LitElement implements WithWidget {
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.adapter.destroy();
-    this.subscriptions.forEach((s) => s.unsubscribe());
+    unsubscribeAll(this.subscriptions);
     this.startObserver?.disconnect();
     this.endObserver?.disconnect();
   }

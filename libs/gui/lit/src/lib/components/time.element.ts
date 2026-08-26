@@ -1,7 +1,7 @@
 import type { InputWidget, WithWidget } from '@golemui/core';
 import { InputWidgetAdapter, type LitFormContext, formContext, inputContext } from '@golemui/lit';
 import { addIcon } from '@golemui/gui-components/internals';
-import { safeDefine } from '@golemui/lit/internals';
+import { safeDefine, unsubscribeAll } from '@golemui/lit/internals';
 import type { TimeInputProps } from '@golemui/gui-shared/internals';
 import '@golemui/gui-components/time-input';
 import { consume, provide } from '@lit/context';
@@ -98,7 +98,7 @@ export class TimeElement extends LitElement implements WithWidget {
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.adapter.destroy();
-    this.subscriptions.forEach((s) => s.unsubscribe());
+    unsubscribeAll(this.subscriptions);
   }
 }
 

@@ -5,7 +5,7 @@ import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';
 import { classMap } from 'lit/directives/class-map.js';
 import { property, query, state } from 'lit/decorators.js';
-import { safeDefine } from '@golemui/lit/internals';
+import { safeDefine, unsubscribeAll } from '@golemui/lit/internals';
 import { debounceTime, Subject, type Subscription } from 'rxjs';
 import { defaultListItemRenderer } from './default-list-item-renderer';
 import '@golemui/gui-components/label';
@@ -96,7 +96,7 @@ export class DropdownElement extends LitElement implements WithWidget {
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.adapter.destroy();
-    this.subscriptions.forEach((s) => s.unsubscribe());
+    unsubscribeAll(this.subscriptions);
   }
 
   private _onRangeChange(e: CustomEvent) {

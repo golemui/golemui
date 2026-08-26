@@ -482,7 +482,7 @@ export function buildTimeOptions(options: {
 }
 
 /**
- * Formats an ISO time string as the locale's display label (e.g. '9:30 AM'
+ * Formats an ISO time string as the locale's display label (e.g. '09:30 AM'
  * for 'en-US', '09:30' for 'en-GB').
  *
  * @param {string} isoTime - The ISO time string (HH:mm or HH:mm:ss).
