@@ -1,3 +1,17 @@
+## 1.4.0-rc.0 (2026-08-26)
+
+### 🚀 Features
+
+- **vue:** read the store through one widgetViewModel$ subscription per widget ([#299](https://github.com/golemui/golemui/pull/299))
+
+### 🩹 Fixes
+
+- recreate the widget tree when the form reinitializes ([#307](https://github.com/golemui/golemui/pull/307))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+
 ## 1.3.0 (2026-08-16)
 
 This was a version bump only for vue to align it with other projects, there were no code changes.

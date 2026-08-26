@@ -1,3 +1,34 @@
+## 1.4.0-rc.0 (2026-08-26)
+
+### 🚀 Features
+
+- **core:** remove the no-op mount actions and the blur-time function widget re-resolve ([#303](https://github.com/golemui/golemui/pull/303))
+- **core:** add WidgetViewModel and the rows templateData field ([#294](https://github.com/golemui/golemui/pull/294))
+- **core:** compute the widget set from data on every action ([#290](https://github.com/golemui/golemui/pull/290))
+
+### 🩹 Fixes
+
+- **core:** copy a function widget result before writing uid and path ([#311](https://github.com/golemui/golemui/pull/311))
+- **core:** find override targets in resolvedSources so hidden widgets are reachable ([#313](https://github.com/golemui/golemui/pull/313))
+- **core:** omit repeater rows an errored derive never resolved ([#312](https://github.com/golemui/golemui/pull/312))
+- **core:** discard the whole derive when one of its passes fails ([#309](https://github.com/golemui/golemui/pull/309))
+- **core:** find function widget controls by the path they own ([#308](https://github.com/golemui/golemui/pull/308))
+- **core:** copy data containers on write instead of mutating the previous state ([#305](https://github.com/golemui/golemui/pull/305))
+- **core:** exclude the widgets inside a hidden layout from validation, touch and submit data ([#304](https://github.com/golemui/golemui/pull/304))
+
+### 🔥 Performance
+
+- **core:** cache compiled expressions by their source string ([437ee072](https://github.com/golemui/golemui/commit/437ee072))
+- **core:** compute isFormValid once per validation action ([d831e98c](https://github.com/golemui/golemui/commit/d831e98c))
+- **core:** check flag fields before resolving widgets in the flags pass ([95e8c029](https://github.com/golemui/golemui/commit/95e8c029))
+- **core:** skip the row widget copy when it has no when expression ([af259461](https://github.com/golemui/golemui/commit/af259461))
+- **core:** reuse widget references when a recompute produces equal content ([#289](https://github.com/golemui/golemui/pull/289))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
 ## 1.3.0 (2026-08-16)
 
 This was a version bump only for core to align it with other projects, there were no code changes.

@@ -1,3 +1,7 @@
+## 1.4.0-rc.0 (2026-08-26)
+
+This was a version bump only for schemas to align it with other projects, there were no code changes.
+
 ## 1.3.0 (2026-08-16)
 
 ### 🚀 Features
