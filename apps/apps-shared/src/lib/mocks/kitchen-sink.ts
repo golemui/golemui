@@ -40,8 +40,8 @@ import repeaterChunk from './tabs/repeater.form-chunk.json';
 import tagsChunk from './tabs/tags.form-chunk.json';
 
 // Chunk modules keyed by the exact $ref strings used in kitchen-sink.form.json.
-// The resolver throws on a ref with no entry here, and the mocks node-load spec
-// runs it, so a new tab chunk without a map entry fails that spec.
+// The resolver throws on a ref with no entry here, and kitchen-sink.equivalence.spec.ts
+// imports this file, so a new tab chunk without a map entry fails that spec.
 const chunks: Record<string, unknown> = {
   './tabs/alert.form-chunk.json': alertChunk,
   './tabs/button.form-chunk.json': buttonChunk,
