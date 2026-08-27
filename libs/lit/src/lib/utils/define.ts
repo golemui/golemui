@@ -1,11 +1,10 @@
 /**
- * Defines a custom element only if the tag is not already registered.
- * First definition wins; never throws on re-registration (duplicate package
- * copies, HMR, or host apps that pre-register gui-* tags).
- * No-ops where customElements is unavailable (SSR / node).
+ * Single registration point for every GolemUI element, exposed to the gui-* packages
+ * via @golemui/lit/internals. First definition wins and re-registration never throws
+ * (duplicate package copies, HMR, pre-registered gui-* tags).
  *
- * Single source of truth for every GolemUI element registration; exposed to
- * the gui-* packages via @golemui/lit/internals.
+ * In Node with lit loaded, `customElements` is the @lit-labs/ssr-dom-shim registry,
+ * so registration is real there too.
  */
 export function safeDefine(tag: string, ctor: CustomElementConstructor): void {
   if (typeof customElements === 'undefined' || customElements.get(tag)) {
