@@ -92,3 +92,58 @@ describe('formDefDecoder - deterministic uids', () => {
     expect(raw).toEqual(makeRawFormDef());
   });
 });
+
+// A function widget's uid is stored on the function object. It must be position-based, never random,
+// so that two processes decoding the same definition (a server render and the client hydrating it)
+// agree on it without sharing the function object
+describe('formDefDecoder - deterministic function widget uids', () => {
+  // Fresh function objects on every call, like a second process decoding the same source
+  const makeRawFormDefWithFunction = (): Record<string, any> => ({
+    form: {
+      kind: 'layout',
+      type: 'flex',
+      children: [
+        { kind: 'input', type: 'text', path: 'name' },
+        () => ({ kind: 'display', type: 'text', props: { text: 'from a function' } }),
+      ],
+    },
+  });
+
+  it('assigns the same position uid across decodes of fresh function objects', () => {
+    const firstDecode = formDefDecoder.parse(makeRawFormDefWithFunction());
+    const secondDecode = formDefDecoder.parse(makeRawFormDefWithFunction());
+
+    expect(firstDecode.form.children[1].uid).toBe(secondDecode.form.children[1].uid);
+  });
+
+  it("marks the function widget uid with a final 'f' segment", () => {
+    const decoded = formDefDecoder.parse(makeRawFormDefWithFunction());
+    expect(decoded.form.children[1].uid).toBe('#0.1.f');
+  });
+
+  it('keeps the first uid when the same function object is decoded again at another position', () => {
+    const raw = makeRawFormDefWithFunction();
+    const sharedFunction = raw['form'].children[1];
+    formDefDecoder.parse(raw);
+
+    const rawWithFunctionFirst: Record<string, any> = {
+      form: { kind: 'layout', type: 'flex', children: [sharedFunction] },
+    };
+    const decoded = formDefDecoder.parse(rawWithFunctionFirst);
+
+    expect(decoded.form.children[0].uid).toBe('#0.1.f');
+  });
+
+  it('keeps a uid supplied by the widget the function returns', () => {
+    const raw: Record<string, any> = {
+      form: {
+        kind: 'layout',
+        type: 'flex',
+        children: [() => ({ kind: 'display', type: 'text', uid: 'explicitUid', props: {} })],
+      },
+    };
+    const decoded = formDefDecoder.parse(raw);
+
+    expect(decoded.form.children[0].uid).toBe('explicitUid');
+  });
+});

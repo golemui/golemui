@@ -25,7 +25,6 @@ import {
   type WidgetPropertyFunction,
 } from './shared';
 import { objectWithSuffix } from './utils/decoder';
-import { shortUUID } from './utils/random';
 import { type AllSuffixable, type SomeSuffixable } from './utils/suffixable';
 
 // --------------------------------
@@ -345,8 +344,9 @@ const functionWidgetDecoder: Decoder<FunctionWidget<string>> = new Decoder((json
       touched: undefined,
       translate: undefined,
     });
-    // The uid is stored on the function object itself so re-decoding the same function keeps the same uid
-    fnWidget.uid = fnWidget.uid || widget.uid || shortUUID();
+    // The uid is stored on the function object itself so re-decoding the same function keeps the same uid.
+    // An empty uid gets a position uid later (see assignDeterministicUids), so a server and a client process decoding the same definition agree on it.
+    fnWidget.uid = fnWidget.uid || widget.uid;
     fnWidget.type = widget.type;
     fnWidget.path = (widget as InputWidget<unknown>).path; // this could be undefined, and it's ok.
     return ok(fnWidget);
