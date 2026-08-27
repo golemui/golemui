@@ -2,10 +2,11 @@ import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 
-// Client build config of the harness. The server build config is vite.config.server.mts.
-// index.html is the build input. The emitted index.html already contains the hashed
-// script and style links, so the production server uses it as its template.
-export default defineConfig(() => ({
+// One config for both builds of the harness.
+// `vite build` emits the client bundle plus an index.html that already links the hashed
+// script and style, which is what the production server uses as its template.
+// `vite build --ssr src/entry-server.ts` emits the server bundle. Vite sets isSsrBuild for it.
+export default defineConfig(({ isSsrBuild }) => ({
   root: __dirname,
   cacheDir: '../../node_modules/.vite/apps/vue-ssr-harness',
   plugins: [
@@ -15,9 +16,11 @@ export default defineConfig(() => ({
     nxViteTsPaths(),
   ],
   build: {
-    outDir: '../../dist/apps/vue-ssr-harness/client',
+    outDir: isSsrBuild
+      ? '../../dist/apps/vue-ssr-harness/server'
+      : '../../dist/apps/vue-ssr-harness/client',
     emptyOutDir: true,
-    reportCompressedSize: true,
+    reportCompressedSize: !isSsrBuild,
     commonjsOptions: { transformMixedEsModules: true },
   },
 }));

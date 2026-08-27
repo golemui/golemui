@@ -16,7 +16,7 @@
       "dependsOn": ["^build"],
       "options": {
         "cwd": "apps/vue-ssr-harness",
-        "command": "npx vite build --config vite.config.server.mts"
+        "command": "npx vite build --ssr src/entry-server.ts"
       }
     },
     "serve-ssr": {
