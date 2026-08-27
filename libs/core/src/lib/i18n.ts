@@ -115,18 +115,16 @@ export function getDirectionFromLanguage(lang: string): 'ltr' | 'rtl' {
 }
 
 /**
- * Default no-op translator.
+ * Default translator used when no i18n system is configured. Returns every
+ * translation key unchanged, but still supports `setLang` and subscriber
+ * notifications.
  *
- * This implementation performs no localization and simply returns the
- * translation key unchanged. It is intended for use as a safe default
- * when no i18n system is configured while still supporting runtime language
- * changes and subscriber notifications.
- *
- * Call `setLang` to change the active language and notify any subscribed listeners.
- *
- * @param lang The initial BCP 47 language tag; defaults to `navigator.language || 'en-US'`.
+ * @param lang The initial BCP 47 language tag. Defaults to `navigator.language`
+ * when a navigator global exists, otherwise to 'en-US' (e.g. server runtimes)
  */
-export const identityTranslator = (lang = navigator.language || 'en-US'): MutableI18nTranslator => {
+export const identityTranslator = (
+  lang = typeof navigator !== 'undefined' ? navigator.language || 'en-US' : 'en-US',
+): MutableI18nTranslator => {
   const listeners = new Set<(lang: string) => void>();
 
   const translator: MutableI18nTranslator = {
