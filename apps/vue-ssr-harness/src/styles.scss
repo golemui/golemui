@@ -1,0 +1,19 @@
+@use '../../../libs/gui/components/src/styles/index';
+
+html,
+body {
+  background-color: var(--gui-bg-default);
+  font-family: system-ui, sans-serif;
+  margin: 0;
+}
+
+.harness {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.harness__title {
+  font-size: 1.25rem;
+  margin: 0 0 1.5rem 0;
+}
