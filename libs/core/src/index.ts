@@ -4,7 +4,7 @@ import type * as justin from './types/subscript__justin';
 type _ = justin;
 
 export { FormContext } from './lib/context/form.context';
-export type { WidgetLoaders } from './lib/context/widget-registry';
+export { preloadFormWidgets, type WidgetLoaders } from './lib/context/widget-registry';
 export type { WithWidget } from './lib/context/with-widget.type';
 
 export { errorCodes } from './lib/errors';

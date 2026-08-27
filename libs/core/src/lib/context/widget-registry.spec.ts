@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { WidgetRegistry } from './widget-registry';
+import { preloadFormWidgets, WidgetRegistry } from './widget-registry';
 
 type FakeComponent = { name: string };
 
@@ -7,6 +7,7 @@ const makeLoader = (component: FakeComponent) => vi.fn(() => Promise.resolve(com
 
 function clearWidgetRegistryCache() {
   WidgetRegistry['sharedCache'].clear();
+  WidgetRegistry['resolvedCache'].clear();
 }
 
 describe('WidgetRegistry', () => {
@@ -121,5 +122,82 @@ describe('WidgetRegistry', () => {
     expect(registry.ready).toBe(false);
     registry.setWidgetLoaders({ text: makeLoader({ name: 'T' }) } as any);
     expect(registry.ready).toBe(true);
+  });
+
+  describe('preloading', () => {
+    it('getIfLoaded returns undefined before preloadWidgets, and the component after', async () => {
+      const component = { name: 'TextWidget' };
+      const registry = new WidgetRegistry<FakeComponent>();
+      registry.setWidgetLoaders({ text: makeLoader(component) } as any);
+
+      expect(registry.getIfLoaded('text')).toBeUndefined();
+      await registry.preloadWidgets();
+      expect(registry.getIfLoaded('text')).toBe(component);
+    });
+
+    it('getIfLoaded returns undefined for a widget type with no configured loader', () => {
+      const registry = new WidgetRegistry<FakeComponent>();
+      registry.setWidgetLoaders({ text: makeLoader({ name: 'T' }) } as any);
+
+      expect(registry.getIfLoaded('unknown')).toBeUndefined();
+    });
+
+    it('preloadWidgets with a subset loads only the given types', async () => {
+      const textLoader = makeLoader({ name: 'Text' });
+      const numberLoader = makeLoader({ name: 'Number' });
+      const registry = new WidgetRegistry<FakeComponent>();
+      registry.setWidgetLoaders({ text: textLoader, number: numberLoader } as any);
+
+      await registry.preloadWidgets(['text']);
+
+      expect(registry.getIfLoaded('text')).toEqual({ name: 'Text' });
+      expect(registry.getIfLoaded('number')).toBeUndefined();
+      expect(numberLoader).not.toHaveBeenCalled();
+    });
+
+    it('a failed loader rejects preloadWidgets, stores nothing, and stays retryable', async () => {
+      const component = { name: 'TextWidget' };
+      const loader = vi
+        .fn()
+        .mockRejectedValueOnce(new Error('network error'))
+        .mockResolvedValueOnce(component);
+      const registry = new WidgetRegistry<FakeComponent>();
+      registry.setWidgetLoaders({ text: loader } as any);
+
+      await expect(registry.preloadWidgets()).rejects.toThrow('network error');
+      expect(registry.getIfLoaded('text')).toBeUndefined();
+
+      await registry.preloadWidgets();
+      expect(registry.getIfLoaded('text')).toBe(component);
+    });
+
+    it('preloading through one instance makes the component available to another instance with the same loader functions', async () => {
+      const component = { name: 'TextWidget' };
+      const loader = makeLoader(component);
+
+      const first = new WidgetRegistry<FakeComponent>();
+      first.setWidgetLoaders({ text: loader } as any);
+      await first.preloadWidgets();
+
+      const second = new WidgetRegistry<FakeComponent>();
+      second.setWidgetLoaders({ text: loader } as any);
+
+      expect(second.getIfLoaded('text')).toBe(component);
+      expect(loader).toHaveBeenCalledTimes(1);
+    });
+
+    it('preloadFormWidgets loads every configured widget for registries created later', async () => {
+      const textLoader = makeLoader({ name: 'Text' });
+      const numberLoader = makeLoader({ name: 'Number' });
+      const widgetLoaders = { text: textLoader, number: numberLoader } as any;
+
+      await preloadFormWidgets({ widgetLoaders });
+
+      const registry = new WidgetRegistry<FakeComponent>();
+      registry.setWidgetLoaders(widgetLoaders);
+
+      expect(registry.getIfLoaded('text')).toEqual({ name: 'Text' });
+      expect(registry.getIfLoaded('number')).toEqual({ name: 'Number' });
+    });
   });
 });
