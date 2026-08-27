@@ -44,12 +44,10 @@ export class FormElement extends LitElement {
       label: `${flag} ${label}`,
     }));
 
-  override async connectedCallback() {
+  override connectedCallback() {
     super.connectedCallback();
-    const { form } = mock;
-    const formDef = typeof form === 'function' ? await form() : form;
     this.config = {
-      formDef,
+      formDef: mock.form,
       data: mock.data,
       meta: mock.meta || {},
       localization: initializeI18n(mock.resources),

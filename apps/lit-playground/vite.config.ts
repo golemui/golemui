@@ -2,7 +2,6 @@
 import { defineConfig } from 'vite';
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 import { nxCopyAssetsPlugin } from '@nx/vite/plugins/nx-copy-assets.plugin';
-import { sharedMocksPlugin } from '../apps-shared/src/lib/utils/vite-mocks-plugin';
 
 export default defineConfig(() => ({
   root: __dirname,
@@ -15,14 +14,7 @@ export default defineConfig(() => ({
     port: 4300,
     host: 'localhost',
   },
-  plugins: [
-    nxViteTsPaths(),
-    nxCopyAssetsPlugin([
-      '*.md',
-      { glob: '**/*.json', input: '../../apps/apps-shared/src/lib/mocks', output: 'assets/mocks' },
-    ]),
-    sharedMocksPlugin(),
-  ],
+  plugins: [nxViteTsPaths(), nxCopyAssetsPlugin(['*.md'])],
   // Uncomment this if you are using workers.
   // worker: {
   //  plugins: [ nxViteTsPaths() ],

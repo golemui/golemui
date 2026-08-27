@@ -7,7 +7,6 @@ import {
   onFormEvent,
 } from '@golemui/apps-shared';
 import {
-  type Form,
   type FormEvent,
   type FormHealth,
   type FormSubmitEvent,
@@ -19,7 +18,6 @@ import type { Dependencies, GuiFormInitConfig } from '@golemui/gui-shared';
 import type { CustomValidatorSchemas } from '@golemui/gui-validators';
 import type { VueItemRenderer } from '@golemui/vue';
 import i18next from 'i18next';
-import { computed, onMounted, ref } from 'vue';
 import snarkdown from 'snarkdown';
 import AirportItemRenderer from '../../item-renderers/AirportItemRenderer.vue';
 import ComplexListItemRenderer from '../../item-renderers/ComplexListItemRenderer.vue';
@@ -64,34 +62,19 @@ function formSubmitHandler(event: FormSubmitEvent) {
   console.log('👉 onFormSubmit', event.data);
 }
 
-const formDef = ref<Form<string> | undefined>(undefined);
-
-onMounted(async () => {
-  const form = mock.form;
-  if (typeof form === 'function') {
-    formDef.value = await form();
-  } else {
-    formDef.value = form;
-  }
-});
-
-const config = computed<GuiFormInitConfig | undefined>(() =>
-  formDef.value
-    ? {
-        formDef: formDef.value,
-        data: formData,
-        meta: formMeta,
-        customValidators,
-        middlewares,
-        itemRenderers,
-        localization,
-        dependencies: deps,
-        functions: mock.functions,
-        customWidgetLoaders,
-        validateOn,
-      }
-    : undefined,
-);
+const config: GuiFormInitConfig = {
+  formDef: mock.form,
+  data: formData,
+  meta: formMeta,
+  customValidators,
+  middlewares,
+  itemRenderers,
+  localization,
+  dependencies: deps,
+  functions: mock.functions,
+  customWidgetLoaders,
+  validateOn,
+};
 
 const onFormHealth = (formHealth: FormHealth) => {
   if (formHealth.status === 'errored') {
@@ -117,7 +100,6 @@ const onLanguageChanged = (event: Event) => {
       ></gui-select>
     </div>
     <GuiForm
-      v-if="config"
       :config="config"
       autocomplete="off"
       :form-health-boundary="CustomFormHealthBoundary"
