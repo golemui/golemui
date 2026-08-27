@@ -8,6 +8,7 @@ import {
   getDirectionFromLanguage,
   shortUUID,
 } from '@golemui/core';
+import * as vueRuntime from 'vue';
 import { onMounted, onUnmounted, ref, watch } from 'vue';
 import DefaultFormHealthBoundary from './DefaultFormHealthBoundary.vue';
 import WidgetErrorBoundary from './WidgetErrorBoundary.vue';
@@ -23,8 +24,12 @@ const emit = defineEmits<{
   'form-health': [health: FormHealth];
 }>();
 
+// `useId` exists from Vue 3.5 and gives the same id on the server and the client.
+// Vue versions before 3.5 keep the random fallback and need an explicit formName to server-render.
+const useStableId = (vueRuntime as { useId?: () => string }).useId;
+
 const formContext = new VueFormContext();
-const formName = ref<string>(props.config.formName ?? shortUUID());
+const formName = ref<string>(props.config.formName ?? useStableId?.() ?? shortUUID());
 const formLayoutField = ref<LayoutWidget<string> | null>(null);
 const health = ref<FormHealth>({ status: 'ok' });
 const direction = ref<'ltr' | 'rtl'>('ltr');
