@@ -88,8 +88,11 @@ export class FormElement extends LitElement {
     );
   }
 
-  override updated(changed: Map<string, unknown>) {
-    super.updated(changed);
+  // Runs before render (not in updated()) so a server render, which never reaches
+  // updated(), computes the form in the same pass. On the client the first render
+  // then shows the form instead of the loading fallback.
+  override willUpdate(changed: Map<string, unknown>) {
+    super.willUpdate(changed);
     if ((changed.has('config') || changed.has('validators')) && this.config) {
       this._reinitialize(this.config);
     }

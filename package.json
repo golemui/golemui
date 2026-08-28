@@ -66,6 +66,8 @@
     "@angular/compiler-cli": "21.2.19",
     "@angular/language-service": "21.2.19",
     "@angular/platform-browser-dynamic": "21.2.19",
+    "@lit-labs/ssr": "^4.1.0",
+    "@lit-labs/ssr-client": "^1.1.8",
     "@nx/angular": "22.7.8",
     "@nx/cypress": "22.7.8",
     "@nx/eslint": "22.7.8",

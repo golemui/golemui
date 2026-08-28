@@ -12,6 +12,18 @@ export function safeDefine(tag: string, ctor: CustomElementConstructor): void {
   }
   supportDeferHydrationAttribute(ctor);
   customElements.define(tag, ctor);
+  tagByConstructor.set(ctor, tag);
+}
+
+const tagByConstructor = new Map<CustomElementConstructor, string>();
+
+/**
+ * Returns the tag a constructor was registered with through {@link safeDefine}, or
+ * undefined for a constructor that was never registered with it. Works in every
+ * runtime, including registries without `customElements.getName`.
+ */
+export function tagNameOf(ctor: CustomElementConstructor): string | undefined {
+  return tagByConstructor.get(ctor);
 }
 
 const deferHydrationPatched = new WeakSet<CustomElementConstructor>();
