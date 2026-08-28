@@ -16,6 +16,7 @@ import { updateListItems } from '@golemui/gui-components/internals';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DefaultMultiListItemRenderer } from './item-renderers/DefaultMultiListItemRenderer';
 import { type ListItemRendererProps } from './item-renderers/props';
+import { useBrowserLayoutEffect } from './shared/use-browser-layout-effect';
 import type { GuiMultiList } from '@golemui/gui-components/multi-list';
 import type { GuiMultiSelectTrigger } from '@golemui/gui-components/multi-select-trigger';
 import type { GuiPillItem } from '@golemui/gui-components/pills';
@@ -108,7 +109,9 @@ export function MultiDropdown(widgetInstance: WithWidget) {
     [templateData.readonly, toggleValue],
   );
 
-  useEffect(() => {
+  // A layout effect so these listeners exist before first paint. A passive effect
+  // attaches them after paint, and an early click then fires 'change' with no listener.
+  useBrowserLayoutEffect(() => {
     const element = listRef.current;
     if (!element) return;
 

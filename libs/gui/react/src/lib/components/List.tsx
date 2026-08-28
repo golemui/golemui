@@ -1,10 +1,11 @@
 import { GuiErrorsReact, GuiLabelReact, GuiListReact } from '../web-components';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useInputWidget, useItemRenderer } from '@golemui/react';
 import type { ListItem, ListProps, OptionValue } from '@golemui/gui-shared/internals';
 import { DefaultListItemRenderer } from './item-renderers/DefaultListItemRenderer';
 import { type ListItemRendererProps } from './item-renderers/props';
+import { useBrowserLayoutEffect } from './shared/use-browser-layout-effect';
 import type { GuiList } from '@golemui/gui-components/list';
 
 export function List(widgetInstance: WithWidget) {
@@ -38,7 +39,9 @@ export function List(widgetInstance: WithWidget) {
     return items.slice(range.start, range.end);
   }, [listItems, templateData.items, range]);
 
-  useEffect(() => {
+  // A layout effect so these listeners exist before first paint. A passive effect
+  // attaches them after paint, and an early click then fires 'change' with no listener.
+  useBrowserLayoutEffect(() => {
     const element = listRef.current;
     if (!element) return;
 
