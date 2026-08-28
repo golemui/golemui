@@ -1,5 +1,6 @@
 import { type Form } from '@golemui/core';
 import { type Example } from './types';
+import demoI18nForm from './demo-i18n.form.json';
 
 const data = {
   details: {
@@ -117,10 +118,6 @@ const resources = {
 
 export const i18nDemo: Example = {
   data,
-  form: async () => {
-    const baseUrl = new URL('/assets/mocks/demo-i18n.form.json', window.location.href).href;
-    const json = await fetch(baseUrl).then((r) => r.json());
-    return json as unknown as Form<string>;
-  },
+  form: demoI18nForm as unknown as Form<string>,
   resources,
 };

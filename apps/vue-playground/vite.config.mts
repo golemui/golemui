@@ -3,7 +3,6 @@ import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 import { nxCopyAssetsPlugin } from '@nx/vite/plugins/nx-copy-assets.plugin';
-import { sharedMocksPlugin } from '../apps-shared/src/lib/utils/vite-mocks-plugin';
 
 export default defineConfig(() => ({
   root: __dirname,
@@ -25,11 +24,7 @@ export default defineConfig(() => ({
       },
     }),
     nxViteTsPaths(),
-    nxCopyAssetsPlugin([
-      '*.md',
-      { glob: '**/*.json', input: '../../apps/apps-shared/src/lib/mocks', output: 'assets/mocks' },
-    ]),
-    sharedMocksPlugin(),
+    nxCopyAssetsPlugin(['*.md']),
   ],
   build: {
     outDir: '../../dist/apps/vue-playground',

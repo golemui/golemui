@@ -36,6 +36,10 @@ export default defineConfig(() => ({
     },
     rollupOptions: {
       external: ['vue', '@golemui/core', '@golemui/dx'],
+      // Set explicitly so the UMD global names do not follow the local import identifiers.
+      output: {
+        globals: { vue: 'vue', '@golemui/core': 'core', '@golemui/dx': 'dx' },
+      },
     },
   },
   test: {

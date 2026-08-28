@@ -14,7 +14,19 @@ const formContext = useVueFormContext();
 const LoadedComponent = shallowRef<Component | null>(null);
 const isMounted = ref(true);
 
+// Read here so the very first render already shows the widget. A server render never
+// reaches onMounted and cannot await the dynamic import, so this read must happen in setup.
+// `preloaded` is kept in a local because testing LoadedComponent.value below would
+// narrow the ref type and reject the assignment in the async path.
+const preloaded = formContext.widgetRegistry.getIfLoaded(props.widget.type);
+if (preloaded) {
+  LoadedComponent.value = preloaded;
+}
+
 onMounted(async () => {
+  if (preloaded) {
+    return;
+  }
   try {
     const loaded = await formContext.widgetRegistry.loadWidget(props.widget.type);
     if (!isMounted.value) return;
