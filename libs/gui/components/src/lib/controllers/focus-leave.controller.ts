@@ -35,6 +35,10 @@ export class GUIFocusLeaveController implements ReactiveController {
   }
 
   hostConnected() {
+    // A server render runs connectedCallback without a document.
+    if (typeof document === 'undefined') {
+      return;
+    }
     this.host.addEventListener('mousedown', this.onHostMouseDown);
     document.addEventListener('mousedown', this.onDocumentMouseDown, true);
   }

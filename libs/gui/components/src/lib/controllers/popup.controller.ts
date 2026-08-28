@@ -239,6 +239,10 @@ export class GUIPopupController implements ReactiveController {
   }
 
   hostConnected() {
+    // A server render runs connectedCallback without a document.
+    if (typeof document === 'undefined') {
+      return;
+    }
     document.addEventListener('click', this.onDocumentClick);
     document.addEventListener('pointerdown', this.onDocumentPointerDown, true);
     document.addEventListener('keydown', this.onDocumentKeyDown, true);
