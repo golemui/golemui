@@ -79,8 +79,8 @@ const onFormSubmit = (event: FormSubmitEvent) => {
       {{ hydrated ? 'Hydrated on the client' : 'Server HTML, not yet hydrated' }}
     </p>
     <p class="harness__note">
-      The Vue layer is server rendered. The widget internals are not, so every gui-* element
-      arrives empty and Lit fills it in when the browser upgrades it. View source to see it.
+      The Vue layer is server rendered. The widget internals are not, so every gui-* element arrives
+      empty and Lit fills it in when the browser upgrades it. View source to see it.
     </p>
     <GuiForm :config="config" @form-submit="onFormSubmit" />
   </div>

@@ -6,4 +6,6 @@
 /.nx/cache
 /.nx/workspace-data
 .angular
+.nuxt
+.output
 CHANGELOG.md
