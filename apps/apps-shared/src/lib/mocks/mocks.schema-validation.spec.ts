@@ -179,8 +179,10 @@ describe('mocks validate against the schema they declare', () => {
     expect(entries.some(([key]) => key.startsWith('./tabs/'))).toBe(true);
   });
 
+  // The first mock reaching a schema pays its ajv compile, which can take several
+  // seconds on a loaded CI runner - hence the raised timeout.
   for (const [mockKey, mock] of entries) {
-    it(`${mockKey} validates`, () => {
+    it(`${mockKey} validates`, { timeout: 30_000 }, () => {
       const resolved = resolveSchemaId(mockKey, (mock as Record<string, unknown>)['$schema']);
       if ('error' in resolved) {
         expect.fail(resolved.error);
