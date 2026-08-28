@@ -1,5 +1,6 @@
 import { type Form, type FunctionWidgetParams } from '@golemui/core';
 import { type Example } from './types';
+import softwareIssueManagementForm from './software-issue-management.form.json';
 
 const data = {
   projects: [
@@ -630,13 +631,6 @@ const resources = {
 
 export const softwareIssueManagement: Example = {
   data,
-  form: async () => {
-    const baseUrl = new URL(
-      '/assets/mocks/software-issue-management.form.json',
-      window.location.href,
-    ).href;
-    const json = await fetch(baseUrl).then((r) => r.json());
-    return json as unknown as Form<string>;
-  },
+  form: softwareIssueManagementForm as unknown as Form<string>,
   resources,
 };

@@ -2,6 +2,8 @@ import { formDefs } from '@golemui/gui-shared/internals';
 import { describe, expect, it } from 'vitest';
 
 import { buildKitchenSinkDx } from './kitchen-sink.dx';
+import { kitchenSink } from './kitchen-sink';
+import kitchenSinkJson from './kitchen-sink.form.json';
 import jsonAccordionTab from './tabs/accordion.form-chunk.json';
 import { accordionTab as dxAccordionTab } from './tabs/accordion.dx';
 import jsonAlertTab from './tabs/alert.form-chunk.json';
@@ -414,5 +416,25 @@ describe('Kitchen Sink — JSON ↔ DX equivalence', () => {
     const json = buildJsonTab(jsonTagsTab).form;
     const dx = buildDxTab(dxTagsTab);
     expect(normalise(dx)).toEqual(normalise(json));
+  });
+});
+
+// Importing `./kitchen-sink` runs `resolveChunkRefsSync`, which throws on a $ref that has no
+// entry in that file's chunk map. This spec is the only one that imports it, so a new tab chunk
+// added to the JSON without a map entry fails here.
+describe('Kitchen Sink chunk refs', () => {
+  it('replaces every $ref in the JSON form with its chunk', () => {
+    const rawTabs = (kitchenSinkJson as any).form.find((widget: any) => widget.type === 'tabs');
+    const refCount = rawTabs.children.filter((child: any) => '$ref' in child).length;
+    expect(refCount).toBeGreaterThan(0);
+
+    const resolvedWidgets = (kitchenSink.form as any).form as any[];
+    const resolvedTabs = resolvedWidgets.find((widget) => widget.type === 'tabs');
+    expect(resolvedTabs.children.length).toBe(refCount);
+
+    const serialized = JSON.stringify(resolvedTabs);
+    expect(serialized).not.toContain('"$ref"');
+    // The resolver removes the editor-only $schema key from each chunk.
+    expect(serialized).not.toContain('"$schema"');
   });
 });

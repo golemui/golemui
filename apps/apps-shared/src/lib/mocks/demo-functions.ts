@@ -1,5 +1,6 @@
 import { type ExpressionFunctions, type Form } from '@golemui/core';
 import { type Example } from './types';
+import demoFunctionsForm from './demo-functions.form.json';
 
 const data = {
   currency: 'USD',
@@ -45,11 +46,7 @@ const resources = {};
 
 export const demoFunctions: Example = {
   data,
-  form: async () => {
-    const baseUrl = new URL('/assets/mocks/demo-functions.form.json', window.location.href).href;
-    const json = await fetch(baseUrl).then((r) => r.json());
-    return json as unknown as Form<string>;
-  },
+  form: demoFunctionsForm as unknown as Form<string>,
   resources,
   functions,
 };

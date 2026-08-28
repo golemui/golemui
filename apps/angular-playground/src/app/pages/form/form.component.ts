@@ -51,15 +51,13 @@ export class AppFormPage {
     this.loadFormDef();
   }
 
-  private async loadFormDef() {
-    const { form } = mock;
-    const formDef = typeof form === 'function' ? await form() : form;
+  private loadFormDef() {
     const deps: Dependencies = {
       markdown: { parse: (md: string) => snarkdown(md) },
       uploadService: mockUploadService,
     };
     this.config = {
-      formDef,
+      formDef: mock.form,
       data: mock.data,
       meta: mock.meta || {},
       dependencies: deps,

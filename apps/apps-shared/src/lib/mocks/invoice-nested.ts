@@ -1,5 +1,6 @@
 import { type Form } from '@golemui/core';
 import { type Example } from './types';
+import invoiceNestedForm from './invoice-nested.form.json';
 
 const data = {
   projects: [
@@ -24,10 +25,6 @@ const resources = {};
 
 export const invoiceNested: Example = {
   data,
-  form: async () => {
-    const baseUrl = new URL('/assets/mocks/invoice-nested.form.json', window.location.href).href;
-    const json = await fetch(baseUrl).then((r) => r.json());
-    return json as unknown as Form<string>;
-  },
+  form: invoiceNestedForm as unknown as Form<string>,
   resources,
 };

@@ -70,7 +70,18 @@ export default defineConfig(() => ({
     },
     rollupOptions: {
       // External packages that should not be bundled into your library.
-      external: ['@golemui/core', '@golemui/gui-shared', '@golemui/lit', /^@golemui\/lit\/.+/],
+      // `lit` must stay external so Node resolves lit's own `node` export condition.
+      // Bundling it inlines the browser build, which reads `HTMLElement` at module scope.
+      external: [
+        '@golemui/core',
+        '@golemui/gui-shared',
+        '@golemui/lit',
+        /^@golemui\/lit\/.+/,
+        'lit',
+        /^lit\/.+/,
+        'lit-html',
+        /^lit-html\/.+/,
+      ],
     },
   },
   test: {

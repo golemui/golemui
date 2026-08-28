@@ -7,7 +7,6 @@ import {
   onFormEvent,
 } from '@golemui/apps-shared';
 import {
-  type Form,
   type FormEvent,
   type FormHealth,
   type FormSubmitEvent,
@@ -19,7 +18,6 @@ import { type Dependencies, type GuiFormInitConfig } from '@golemui/gui-shared';
 import type { CustomValidatorSchemas } from '@golemui/gui-validators';
 import { type FormHealthBoundary, type ReactItemRenderer } from '@golemui/react';
 import i18next from 'i18next';
-import { useEffect, useMemo, useState } from 'react';
 import snarkdown from 'snarkdown';
 import { AirportItemRenderer } from '../../item-renderers/AirportItemRenderer';
 import { ComplexListItemRenderer } from '../../item-renderers/ComplexListItemRenderer';
@@ -89,38 +87,21 @@ const CustomFormHealthBoundary: FormHealthBoundary = ({ health, children }) => (
   </>
 );
 
+const config: GuiFormInitConfig = {
+  formDef: mock.form,
+  data: formData,
+  meta: formMeta,
+  customValidators,
+  middlewares,
+  itemRenderers,
+  localization,
+  dependencies: deps,
+  functions: mock.functions,
+  customWidgetLoaders,
+  validateOn,
+};
+
 export function FormPage() {
-  const [formDef, setFormDef] = useState<Form<string> | undefined>(undefined);
-
-  useEffect(() => {
-    const { form } = mock;
-    if (typeof form === 'function') {
-      form().then(setFormDef);
-    } else {
-      setFormDef(form);
-    }
-  }, []);
-
-  const config = useMemo<GuiFormInitConfig | undefined>(
-    () =>
-      formDef
-        ? {
-            formDef,
-            data: formData,
-            meta: formMeta,
-            customValidators,
-            middlewares,
-            itemRenderers,
-            localization,
-            dependencies: deps,
-            functions: mock.functions,
-            customWidgetLoaders,
-            validateOn,
-          }
-        : undefined,
-    [formDef],
-  );
-
   function onFormHealth(formHealth: FormHealth) {
     if (formHealth.status === 'errored') {
       console.log('GolemUI form health error:', formHealth.message);
@@ -130,16 +111,14 @@ export function FormPage() {
   return (
     <div>
       {languages.length > 0 ? <LanguagePicker /> : null}
-      {config && (
-        <GuiForm
-          config={config}
-          autocomplete="off"
-          formHealthBoundary={CustomFormHealthBoundary}
-          formHealth={onFormHealth}
-          formEvent={formEventHandler}
-          formSubmit={formSubmitHandler}
-        />
-      )}
+      <GuiForm
+        config={config}
+        autocomplete="off"
+        formHealthBoundary={CustomFormHealthBoundary}
+        formHealth={onFormHealth}
+        formEvent={formEventHandler}
+        formSubmit={formSubmitHandler}
+      />
     </div>
   );
 }
