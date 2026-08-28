@@ -15,6 +15,7 @@
     "start:angular": "nx run angular-playground:serve",
     "start:lit": "nx run lit-playground:serve",
     "start:react": "nx run react-playground:serve",
+    "start:react-ssr": "nx run react-ssr-harness:serve-ssr",
     "start:vue": "nx run vue-playground:serve",
     "start:vue-ssr": "nx run vue-ssr-harness:serve-ssr",
     "start:mcp": "npx nx run gui-mcp:build && npx @modelcontextprotocol/inspector node dist/libs/gui/mcp/cli.js",
