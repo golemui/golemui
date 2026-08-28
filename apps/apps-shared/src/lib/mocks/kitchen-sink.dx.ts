@@ -30,6 +30,7 @@ import { dateTimePickerTab } from './tabs/datetimepicker.dx';
 import { checkboxTab } from './tabs/checkbox.dx';
 import { currencyTab } from './tabs/currency.dx';
 import { dropdownTab } from './tabs/dropdown.dx';
+import { fileUploadTab } from './tabs/fileupload.dx';
 import { flexTab } from './tabs/flex.dx';
 import { gridTab } from './tabs/grid.dx';
 import { listTab } from './tabs/list.dx';
@@ -108,6 +109,45 @@ const data: Record<string, unknown> = {
   multiLists: {
     frameworks: ['Vue'],
     disabled: ['React'],
+  },
+  fileUploads: {
+    title: '',
+    preloaded: {
+      id: 'srv-contract',
+      name: 'contract.pdf',
+      size: 204800,
+      type: 'application/pdf',
+      status: 'uploaded',
+      data: { url: 'https://cdn.example.com/uploads/contract.pdf' },
+    },
+    multiPreloaded: [
+      {
+        id: 'srv-photo-1',
+        name: 'front.jpg',
+        size: 512000,
+        type: 'image/jpeg',
+        status: 'uploaded',
+        data: { url: 'https://cdn.example.com/uploads/front.jpg' },
+      },
+      {
+        id: 'srv-photo-2',
+        name: 'back.jpg',
+        size: 498000,
+        type: 'image/jpeg',
+        status: 'uploaded',
+        data: { url: 'https://cdn.example.com/uploads/back.jpg' },
+      },
+    ],
+    readonly: [
+      {
+        id: 'srv-frozen',
+        name: 'frozen.txt',
+        size: 12,
+        type: 'text/plain',
+        status: 'uploaded',
+        data: { url: 'https://cdn.example.com/uploads/frozen.txt' },
+      },
+    ],
   },
   selects: {
     greeting: 'bye',
@@ -234,6 +274,7 @@ export const buildKitchenSinkDx = (options: KitchenSinkDxOptions = {}): KitchenS
         { label: 'Radiogroup Component', uid: 'tabRadiogroup', children: [radiogroupTab] },
         { label: 'Select Component', uid: 'tabSelect', children: [selectTab] },
         { label: 'Dropdown Component', uid: 'tabDropdown', children: [dropdownTab] },
+        { label: 'File Upload Component', uid: 'tabFileUpload', children: [fileUploadTab] },
         { label: 'List Component', uid: 'tabList', children: [listTab] },
         {
           label: 'Multi Dropdown Component',

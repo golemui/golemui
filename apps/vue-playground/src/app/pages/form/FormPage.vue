@@ -4,6 +4,7 @@ import {
   commonLanguages,
   initializeI18n,
   kitchenSink,
+  mockUploadService,
   onFormEvent,
 } from '@golemui/apps-shared';
 import {
@@ -41,6 +42,7 @@ const deps: Dependencies = {
   markdown: {
     parse: (md: string) => snarkdown(md),
   },
+  uploadService: mockUploadService,
 };
 const customWidgetLoaders = {
   heading: async () => (await import('../../custom-fields/heading/HeadingComponent.vue')).default,

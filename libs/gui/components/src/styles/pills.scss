@@ -1,5 +1,6 @@
 @use 'pill' as *;
 @use 'scroll-shadow' as *;
+@use 'spinner' as *;
 
 // `<gui-pills>` does NOT own its own container or position context. The
 // compact-mode threshold compares against the *host wrapper's* width — hosts
@@ -62,6 +63,18 @@ gui-pills {
 
   .gui-pills__pill-remove {
     @include gui-pill-remove;
+  }
+
+  // Takes the × slot while `item.busy` — same hit box, no pointer affordance.
+  .gui-pills__pill-busy {
+    @include gui-pill-action;
+    @include gui-spinner;
+
+    cursor: progress;
+  }
+
+  .gui-pills__pill--busy {
+    cursor: progress;
   }
 
   .gui-pills__pill-action {

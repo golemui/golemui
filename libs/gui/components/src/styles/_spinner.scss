@@ -1,0 +1,25 @@
+// Indeterminate spinner: the `circle-notch` glyph from utils/icons.ts rotated
+// by CSS. Apply `gui-spinner` to the element wrapping the `<svg>`; the host
+// element carries `aria-busy`, the glyph stays aria-hidden.
+
+@keyframes gui-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@mixin gui-spinner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  .gui-spinner__glyph {
+    animation: gui-spin 0.8s linear infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gui-spinner__glyph {
+      animation-duration: 2.4s;
+    }
+  }
+}

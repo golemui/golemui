@@ -1,6 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
-import { buildKitchenSinkDx, initializeI18n, onFormEvent } from '@golemui/apps-shared';
+import {
+  buildKitchenSinkDx,
+  initializeI18n,
+  mockUploadService,
+  onFormEvent,
+} from '@golemui/apps-shared';
 import type { FormEvent, FormHealth, FormSubmitEvent } from '@golemui/core';
 import { FormComponent } from '@golemui/gui-angular';
 import type { GuiFormInitConfig } from '@golemui/gui-shared';
@@ -28,6 +33,7 @@ const ks = buildKitchenSinkDx({
     markdown: {
       parse: (md: string) => snarkdown(md),
     },
+    uploadService: mockUploadService,
   },
   // Angular-flavored Renderer example — returns `{ component, api }`. The
   // engine calls this fn on every form-data change with the live form API and

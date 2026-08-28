@@ -15,6 +15,45 @@ const data = {
     disabledList: 0,
     customItemRenderer: 'one',
   },
+  fileUploads: {
+    title: '',
+    preloaded: {
+      id: 'srv-contract',
+      name: 'contract.pdf',
+      size: 204800,
+      type: 'application/pdf',
+      status: 'uploaded',
+      data: { url: 'https://cdn.example.com/uploads/contract.pdf' },
+    },
+    multiPreloaded: [
+      {
+        id: 'srv-photo-1',
+        name: 'front.jpg',
+        size: 512000,
+        type: 'image/jpeg',
+        status: 'uploaded',
+        data: { url: 'https://cdn.example.com/uploads/front.jpg' },
+      },
+      {
+        id: 'srv-photo-2',
+        name: 'back.jpg',
+        size: 498000,
+        type: 'image/jpeg',
+        status: 'uploaded',
+        data: { url: 'https://cdn.example.com/uploads/back.jpg' },
+      },
+    ],
+    readonly: [
+      {
+        id: 'srv-frozen',
+        name: 'frozen.txt',
+        size: 12,
+        type: 'text/plain',
+        status: 'uploaded',
+        data: { url: 'https://cdn.example.com/uploads/frozen.txt' },
+      },
+    ],
+  },
   selects: {
     greeting: 'bye',
     wrongGreeting: 'aaaaaa',

@@ -62,6 +62,12 @@
       "@golemui/gui-components/markdown-text": [
         "libs/gui/components/src/lib/components/markdown-text.ts"
       ],
+      "@golemui/gui-components/file-upload": [
+        "libs/gui/components/src/lib/components/file-upload.ts"
+      ],
+      "@golemui/gui-components/multi-file-upload": [
+        "libs/gui/components/src/lib/components/multi-file-upload.ts"
+      ],
       "@golemui/gui-components/multi-list": [
         "libs/gui/components/src/lib/components/multi-list.ts"
       ],

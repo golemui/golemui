@@ -21,8 +21,11 @@ export {
   updateListItems,
 } from './lib/components/list-items';
 export type { ListItemValue } from './lib/components/list-items';
+export { GuiFileUpload } from './lib/components/file-upload';
+export { matchesAccept } from './lib/utils/file-upload';
 export { GuiMarkdown } from './lib/components/markdown';
 export { GuiMarkdownText } from './lib/components/markdown-text';
+export { GuiMultiFileUpload } from './lib/components/multi-file-upload';
 export { GuiMultiList } from './lib/components/multi-list';
 export { GuiMultiSelectTrigger } from './lib/components/multi-select-trigger';
 export { GuiNumber } from './lib/components/number';

@@ -29,9 +29,11 @@ export * from './lib/gui-features/dateinput.cy';
 export * from './lib/gui-features/datetimeinput.cy';
 export * from './lib/gui-features/datepicker.cy';
 export * from './lib/gui-features/dropdown.cy';
+export * from './lib/gui-features/fileupload.cy';
 export * from './lib/gui-features/markdown.cy';
 export * from './lib/gui-features/list.cy';
 export * from './lib/gui-features/multidropdown.cy';
+export * from './lib/gui-features/multifileupload.cy';
 export * from './lib/gui-features/multilist.cy';
 export * from './lib/gui-features/number.cy';
 export * from './lib/gui-features/password.cy';
@@ -54,5 +56,6 @@ export * from './lib/gui-features/timepicker.cy';
 export * from './lib/gui-features/validators.cy';
 
 // Utils
+export * from './lib/mocks/upload-service.mock';
 export * from './lib/test-form';
 export * from './lib/utils';

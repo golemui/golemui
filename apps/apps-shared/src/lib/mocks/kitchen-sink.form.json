@@ -99,6 +99,7 @@
         { "$ref": "./tabs/radiogroup.form-chunk.json" },
         { "$ref": "./tabs/select.form-chunk.json" },
         { "$ref": "./tabs/dropdown.form-chunk.json" },
+        { "$ref": "./tabs/fileupload.form-chunk.json" },
         { "$ref": "./tabs/list.form-chunk.json" },
         { "$ref": "./tabs/repeater.form-chunk.json" },
         { "$ref": "./tabs/tags.form-chunk.json" }

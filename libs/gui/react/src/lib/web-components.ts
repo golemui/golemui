@@ -10,10 +10,12 @@ import { GuiDatePicker } from '@golemui/gui-components/date-picker';
 import { GuiDateTime } from '@golemui/gui-components/date-time-input';
 import { GuiDateTimePicker } from '@golemui/gui-components/date-time-picker';
 import { GuiErrors } from '@golemui/gui-components/errors';
+import { GuiFileUpload } from '@golemui/gui-components/file-upload';
 import { GuiLabel } from '@golemui/gui-components/label';
 import { GuiList } from '@golemui/gui-components/list';
 import { GuiMarkdown } from '@golemui/gui-components/markdown';
 import { GuiMarkdownText } from '@golemui/gui-components/markdown-text';
+import { GuiMultiFileUpload } from '@golemui/gui-components/multi-file-upload';
 import { GuiMultiList } from '@golemui/gui-components/multi-list';
 import { GuiMultiSelectTrigger } from '@golemui/gui-components/multi-select-trigger';
 import { GuiNumber } from '@golemui/gui-components/number';
@@ -75,6 +77,14 @@ export const GuiCheckboxReact = wrap('gui-checkbox', GuiCheckbox, {
   onBlur: 'blur',
 });
 export const GuiTagsReact = wrap('gui-tags', GuiTags, { onChange: 'change', onBlur: 'blur' });
+export const GuiFileUploadReact = wrap('gui-file-upload', GuiFileUpload, {
+  onChange: 'change',
+  onBlur: 'blur',
+});
+export const GuiMultiFileUploadReact = wrap('gui-multi-file-upload', GuiMultiFileUpload, {
+  onChange: 'change',
+  onBlur: 'blur',
+});
 export const GuiSelectReact = wrap('gui-select', GuiSelect, {
   onChange: 'change',
   onBlur: 'blur',

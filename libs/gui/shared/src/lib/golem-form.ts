@@ -22,7 +22,9 @@ import type {
   DateRange,
   DateinputProps,
   DropdownProps,
+  FileUploadProps,
   MultiDropdownProps,
+  MultiFileUploadProps,
   MultiListProps,
   FlexProps,
   GridProps,
@@ -53,6 +55,7 @@ import type {
   TimePickerProps,
   ToggleProps,
 } from './widget.props';
+import type { FileItem } from './shared';
 
 // -------------------
 //
@@ -209,11 +212,13 @@ type GolemWidget<
   | GuiDateTimeInput<FormType, States, V>
   | GuiDateTimePicker<FormType, States, V>
   | GuiDropdown<FormType, States, V>
+  | GuiFileUpload<FormType, States, V>
   | GuiFunctionWidget<FormType, States, V, CustomWidget>
   | GuiList<FormType, States, V>
   | GuiMarkdown<FormType, States, V>
   | GuiMarkdownText<FormType, States>
   | GuiMultiDropdown<FormType, States, V>
+  | GuiMultiFileUpload<FormType, States, V>
   | GuiMultiList<FormType, States, V>
   | GuiNumberinput<FormType, States, V>
   | GuiPassword<FormType, States, V>
@@ -327,6 +332,14 @@ type GuiDropdown<FormType extends Record<string, any>, States extends string, V>
   V
 > & { type: 'dropdown' };
 
+type GuiFileUpload<FormType extends Record<string, any>, States extends string, V> = InputWidget<
+  FileItem | null,
+  States,
+  FormType,
+  FileUploadProps,
+  V
+> & { type: 'fileUpload' };
+
 type GuiFunctionWidget<
   FormType extends Record<string, any>,
   States extends string,
@@ -365,6 +378,14 @@ type GuiMultiDropdown<FormType extends Record<string, any>, States extends strin
   MultiDropdownProps<unknown>,
   V
 > & { type: 'multiDropdown' };
+
+type GuiMultiFileUpload<
+  FormType extends Record<string, any>,
+  States extends string,
+  V,
+> = InputWidget<FileItem[], States, FormType, MultiFileUploadProps, V> & {
+  type: 'multiFileUpload';
+};
 
 type GuiMultiList<FormType extends Record<string, any>, States extends string, V> = InputWidget<
   OptionValue[],

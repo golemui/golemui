@@ -17,9 +17,11 @@ Every widget’s exhaustive reference page (props, per-prop examples, CSS variab
 - `gui.inputs.dateTimeInput` — https://golemui.com/dx/widgets-reference/input-fields/datetimeinput.md (json: https://golemui.com/json/widgets-reference/input-fields/datetimeinput.md)
 - `gui.inputs.dateTimePicker` — https://golemui.com/dx/widgets-reference/input-fields/datetimepicker.md (json: https://golemui.com/json/widgets-reference/input-fields/datetimepicker.md)
 - `gui.inputs.dropdown` — https://golemui.com/dx/widgets-reference/input-fields/dropdown.md (json: https://golemui.com/json/widgets-reference/input-fields/dropdown.md)
+- `gui.inputs.fileUpload` — https://golemui.com/dx/widgets-reference/input-fields/file-upload.md (json: https://golemui.com/json/widgets-reference/input-fields/file-upload.md)
 - `gui.inputs.list` — https://golemui.com/dx/widgets-reference/input-fields/list.md (json: https://golemui.com/json/widgets-reference/input-fields/list.md)
 - `gui.inputs.markdown` — https://golemui.com/dx/widgets-reference/input-fields/markdown.md (json: https://golemui.com/json/widgets-reference/input-fields/markdown.md)
 - `gui.inputs.multiDropdown` — https://golemui.com/dx/widgets-reference/input-fields/multi-dropdown.md (json: https://golemui.com/json/widgets-reference/input-fields/multi-dropdown.md)
+- `gui.inputs.multiFileUpload` — https://golemui.com/dx/widgets-reference/input-fields/multi-file-upload.md (json: https://golemui.com/json/widgets-reference/input-fields/multi-file-upload.md)
 - `gui.inputs.multiList` — https://golemui.com/dx/widgets-reference/input-fields/multi-list.md (json: https://golemui.com/json/widgets-reference/input-fields/multi-list.md)
 - `gui.inputs.numberInput` — https://golemui.com/dx/widgets-reference/input-fields/number.md (json: https://golemui.com/json/widgets-reference/input-fields/number.md)
 - `gui.inputs.password` — https://golemui.com/dx/widgets-reference/input-fields/password.md (json: https://golemui.com/json/widgets-reference/input-fields/password.md)
@@ -60,4 +62,3 @@ Every widget’s exhaustive reference page (props, per-prop examples, CSS variab
 - `gui.layouts.grid`, `gui.layouts.horizontalGrid`, `gui.layouts.verticalGrid` — https://golemui.com/dx/widgets-reference/layout-fields/grid.md (json: https://golemui.com/json/widgets-reference/layout-fields/grid.md)
 - `gui.layouts.tabs` — https://golemui.com/dx/widgets-reference/layout-fields/tabs.md (json: https://golemui.com/json/widgets-reference/layout-fields/tabs.md)
 - Category overview — https://golemui.com/dx/widgets-reference/layout-fields/overview.md
-

@@ -4,6 +4,8 @@ import {
   type ArrayValidator,
   type BooleanValidator,
   type CustomValidatorSchemas,
+  type FilesValidator,
+  type FileValidator,
   initValidators,
   type NumberValidator,
   type StringValidator,
@@ -110,6 +112,151 @@ describe('Golem validators', () => {
         expect(isValid(schema, [1])).toBe(true);
         expect(isValid(schema, [1, 2])).toBe(true);
         expect(isValid(schema, [1, 2, 3])).toBe(true);
+      });
+    });
+  });
+
+  const uploaded = {
+    id: 'f1',
+    name: 'cv.pdf',
+    size: 1024,
+    type: 'application/pdf',
+    status: 'uploaded',
+    data: { url: 'https://cdn.example.com/cv.pdf' },
+  };
+  const uploading = {
+    id: 'f2',
+    name: 'photo.png',
+    size: 2048,
+    type: 'image/png',
+    status: 'uploading',
+  };
+  const failed = { ...uploading, id: 'f3', status: 'error', error: 'Network error' };
+
+  describe('FileValidator', () => {
+    describe('optional (required not set)', () => {
+      const schema = validate({ type: 'file' } satisfies FileValidator);
+
+      it('accepts undefined and null (the widget writes null on removal)', () => {
+        expect(isValid(schema, undefined)).toBe(true);
+        expect(isValid(schema, null)).toBe(true);
+      });
+
+      it('accepts an uploaded item', () => {
+        expect(isValid(schema, uploaded)).toBe(true);
+      });
+
+      it('rejects a value that is not a file item', () => {
+        expect(isValid(schema, 'cv.pdf')).toBe(false);
+        expect(isValid(schema, { name: 'cv.pdf' })).toBe(false);
+        expect(isValid(schema, { ...uploaded, status: 'done' })).toBe(false);
+        expect(getErrors(schema, 'cv.pdf')).toEqual(['Invalid file']);
+      });
+    });
+
+    describe('required', () => {
+      const schema = validate({ type: 'file', required: true } satisfies FileValidator);
+
+      it('rejects undefined and null', () => {
+        expect(getErrors(schema, undefined)).toEqual(['This field is required']);
+        expect(getErrors(schema, null)).toEqual(['This field is required']);
+      });
+
+      it('accepts an uploaded item', () => {
+        expect(isValid(schema, uploaded)).toBe(true);
+      });
+    });
+
+    describe('blockPendingUploads', () => {
+      it('blocks uploading and failed items by default', () => {
+        const schema = validate({ type: 'file' } satisfies FileValidator);
+        expect(getErrors(schema, uploading)).toEqual(['Wait for the upload to finish']);
+        expect(isValid(schema, failed)).toBe(false);
+      });
+
+      it('lets pending items through when disabled', () => {
+        const schema = validate({
+          type: 'file',
+          blockPendingUploads: false,
+        } satisfies FileValidator);
+        expect(isValid(schema, uploading)).toBe(true);
+        expect(isValid(schema, failed)).toBe(true);
+      });
+
+      it('uses the custom message', () => {
+        const schema = validate({
+          type: 'file',
+          messages: { pendingUploads: 'Still uploading' },
+        } satisfies FileValidator);
+        expect(getErrors(schema, uploading)).toEqual(['Still uploading']);
+      });
+    });
+  });
+
+  describe('FilesValidator', () => {
+    describe('optional (required not set)', () => {
+      const schema = validate({ type: 'files' } satisfies FilesValidator);
+
+      it('accepts undefined and an empty array', () => {
+        expect(isValid(schema, undefined)).toBe(true);
+        expect(isValid(schema, [])).toBe(true);
+      });
+
+      it('accepts uploaded items', () => {
+        expect(isValid(schema, [uploaded, { ...uploaded, id: 'f9' }])).toBe(true);
+      });
+
+      it('rejects non-arrays and arrays with foreign items', () => {
+        expect(isValid(schema, uploaded)).toBe(false);
+        expect(isValid(schema, ['cv.pdf'])).toBe(false);
+        expect(getErrors(schema, [uploaded, 'cv.pdf'])).toEqual(['Invalid file']);
+      });
+    });
+
+    describe('required', () => {
+      const schema = validate({ type: 'files', required: true } satisfies FilesValidator);
+
+      it('rejects an empty array', () => {
+        expect(getErrors(schema, [])).toEqual(['This field is required']);
+      });
+
+      it('accepts a non-empty array', () => {
+        expect(isValid(schema, [uploaded])).toBe(true);
+      });
+    });
+
+    describe('minItems / maxItems', () => {
+      const schema = validate({
+        type: 'files',
+        minItems: 1,
+        maxItems: 2,
+        messages: { maxItems: 'Too many files' },
+      } satisfies FilesValidator);
+
+      it('rejects arrays outside the range', () => {
+        expect(isValid(schema, [])).toBe(false);
+        expect(getErrors(schema, [uploaded, uploaded, uploaded])).toEqual(['Too many files']);
+      });
+
+      it('accepts arrays within the range', () => {
+        expect(isValid(schema, [uploaded])).toBe(true);
+        expect(isValid(schema, [uploaded, uploaded])).toBe(true);
+      });
+    });
+
+    describe('blockPendingUploads', () => {
+      it('blocks the array while any item is not uploaded', () => {
+        const schema = validate({ type: 'files' } satisfies FilesValidator);
+        expect(getErrors(schema, [uploaded, uploading])).toEqual(['Wait for the upload to finish']);
+        expect(isValid(schema, [uploaded, failed])).toBe(false);
+      });
+
+      it('lets pending items through when disabled', () => {
+        const schema = validate({
+          type: 'files',
+          blockPendingUploads: false,
+        } satisfies FilesValidator);
+        expect(isValid(schema, [uploaded, uploading, failed])).toBe(true);
       });
     });
   });

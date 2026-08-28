@@ -29,6 +29,8 @@ const VALIDATOR_TYPE_TO_DEF: Record<string, string> = {
   integer: 'numberValidator',
   boolean: 'booleanValidator',
   array: 'arrayValidator',
+  file: 'fileValidator',
+  files: 'filesValidator',
   custom: 'customValidator',
 };
 

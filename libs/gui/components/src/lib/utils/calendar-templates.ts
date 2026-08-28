@@ -3,6 +3,7 @@ import { repeat } from 'lit-html/directives/repeat.js';
 import { getMonthYearLabel, getMonthYearParts, getWeekdayLabels } from './date';
 import { chunk } from './grid-nav';
 import { addErrors, addLabel } from './templates';
+import { CARET_DOWN_PATH, CARET_LEFT_PATH, CARET_RIGHT_PATH } from './icons';
 
 /**
  * The month a panel shows: the nav cursor normalized to day 1, shifted by the
@@ -157,9 +158,7 @@ export function renderMonthNavButton(
               viewBox="0 0 256 256"
               aria-hidden="true"
             >
-              <path
-                d="M165.66,202.34a8,8,0,0,1-11.32,11.32l-80-80a8,8,0,0,1,0-11.32l80-80a8,8,0,0,1,11.32,11.32L91.31,128Z"
-              ></path>
+              <path d=${CARET_LEFT_PATH}></path>
             </svg>`}
       </button>
     `;
@@ -186,9 +185,7 @@ export function renderMonthNavButton(
             viewBox="0 0 256 256"
             aria-hidden="true"
           >
-            <path
-              d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"
-            ></path>
+            <path d=${CARET_RIGHT_PATH}></path>
           </svg>`}
     </button>
   `;
@@ -346,9 +343,7 @@ export function renderMonthHeader(panelDate: Date, data: MonthHeaderData): Templ
                     height="16"
                     viewBox="0 0 256 256"
                   >
-                    <path
-                      d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"
-                    ></path>
+                    <path d=${CARET_DOWN_PATH}></path>
                   </svg>
                 </span>
               </button>`
