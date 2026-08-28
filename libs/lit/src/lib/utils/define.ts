@@ -33,6 +33,39 @@ type PatchablePrototype = HTMLElement & {
   attributeChangedCallback?(name: string, oldValue: string | null, value: string | null): void;
 };
 
+type ObservedAttributesGetter = (this: CustomElementConstructor) => string[] | undefined;
+
+const installedObservedAttributesGetters = new WeakSet<ObservedAttributesGetter>();
+
+/**
+ * Returns the `observedAttributes` implementation of the class or the first ancestor
+ * that this file did not install itself.
+ *
+ * A subclass inherits the getter installed on its base class. Reading that inherited
+ * getter returns the base class attributes and skips `ReactiveElement.finalize()`,
+ * which Lit only runs from its own getter.
+ */
+function originalObservedAttributesOf(
+  ctor: CustomElementConstructor,
+): ObservedAttributesGetter | undefined {
+  for (let current: object | null = ctor; current; current = Object.getPrototypeOf(current)) {
+    const descriptor = Object.getOwnPropertyDescriptor(current, 'observedAttributes');
+    if (!descriptor) {
+      continue;
+    }
+    if (descriptor.get) {
+      const getter = descriptor.get as ObservedAttributesGetter;
+      if (!installedObservedAttributesGetters.has(getter)) {
+        return getter;
+      }
+      continue;
+    }
+    const value = descriptor.value as string[] | undefined;
+    return () => value;
+  }
+  return undefined;
+}
+
 /**
  * Implements the `defer-hydration` community protocol: an element that connects with a
  * `defer-hydration` attribute does not render until the attribute is removed.
@@ -53,12 +86,16 @@ function supportDeferHydrationAttribute(ctor: CustomElementConstructor): void {
   }
   deferHydrationPatched.add(ctor);
 
-  // `observedAttributes` is read once by `customElements.define`, right after this runs.
-  const staticSide = ctor as CustomElementConstructor & { observedAttributes?: string[] };
-  const observedAttributes = [...(staticSide.observedAttributes ?? [])];
+  // Calls through with the receiving class, so Lit finalizes that class and reports its
+  // own attributes. A snapshot taken here would freeze a subclass to its base class list.
+  const originalObservedAttributes = originalObservedAttributesOf(ctor);
+  const observedAttributes: ObservedAttributesGetter = function (this: CustomElementConstructor) {
+    return [...(originalObservedAttributes?.call(this) ?? []), 'defer-hydration'];
+  };
+  installedObservedAttributesGetters.add(observedAttributes);
   Object.defineProperty(ctor, 'observedAttributes', {
     configurable: true,
-    get: () => [...observedAttributes, 'defer-hydration'],
+    get: observedAttributes,
   });
 
   const prototype = ctor.prototype as PatchablePrototype;
