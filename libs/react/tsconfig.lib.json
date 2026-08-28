@@ -14,6 +14,8 @@
     ]
   },
   "exclude": [
+    "src/**/*.fixture.ts",
+    "src/**/*.fixture.tsx",
     "**/*.spec.ts",
     "**/*.test.ts",
     "**/*.spec.tsx",

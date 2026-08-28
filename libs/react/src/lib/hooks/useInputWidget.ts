@@ -1,41 +1,40 @@
-import { type InputWidget, type NonFunctionWidget, widgetViewModel$ } from '@golemui/core';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { type InputWidget, type NonFunctionWidget } from '@golemui/core';
+import { useCallback, useEffect, useRef } from 'react';
 import { useReactFormContext } from '../ReactFormContext';
 import { mergeViewModelIntoTemplateData, type WithFlattenedProps } from './internal/template-data';
+import { useViewModelAccumulator, useWidgetViewModel } from './internal/use-widget-view-model';
+
+type InputTemplateData<T, ExtraProps extends Record<string, any>> = WithFlattenedProps<
+  InputWidget<T, string>,
+  ExtraProps
+> & {
+  /**
+   * Repeater inputs only: one row layout node per row of the array value, uid and path already indexed
+   */
+  rows?: NonFunctionWidget<string>[];
+};
 
 export function useInputWidget<T, ExtraProps extends Record<string, any>>(
   widget: InputWidget<T, string>,
 ) {
   const { formContext } = useReactFormContext();
-  const [value, setValue] = useState<T | undefined>(undefined);
-  const [errors, setErrors] = useState<string[]>([]);
-  const [isTouched, setIsTouched] = useState<boolean | undefined>(undefined);
-  const [templateData, setTemplateData] = useState(
-    {} as WithFlattenedProps<InputWidget<T, string>, ExtraProps> & {
-      /**
-       * Repeater inputs only: one row layout node per row of the array value, uid and path already indexed
-       */
-      rows?: NonFunctionWidget<string>[];
-    },
+
+  const viewModel = useWidgetViewModel<T>(formContext.store, widget.uid);
+  const templateData = useViewModelAccumulator<InputTemplateData<T, ExtraProps>>(
+    viewModel,
+    (previous, currentViewModel) =>
+      mergeViewModelIntoTemplateData(
+        previous ?? ({} as InputTemplateData<T, ExtraProps>),
+        currentViewModel,
+        formContext.dependencies,
+        (vm) =>
+          // Keep the last rows while hidden, the view model empties them.
+          vm.widget !== undefined ? { rows: vm.rows } : {},
+      ),
   );
 
-  useEffect(() => {
-    const sub = formContext.store.state$
-      .pipe(widgetViewModel$<T>(widget.uid))
-      .subscribe((viewModel) => {
-        setValue(viewModel.value);
-        // `errors` is shared between widgets while the form is untouched, so never write into it.
-        setErrors(viewModel.errors);
-        setIsTouched(viewModel.touched);
-        setTemplateData((current) =>
-          mergeViewModelIntoTemplateData(current, viewModel, formContext.dependencies, (vm) =>
-            // Keep the last rows while hidden, the view model empties them.
-            vm.widget !== undefined ? { rows: vm.rows } : {},
-          ),
-        );
-      });
-    return () => sub.unsubscribe();
-  }, [widget, formContext]);
+  // `errors` is shared between widgets while the form is untouched, so never write into it.
+  const { value, errors, touched: isTouched } = viewModel;
 
   // A repeater row widget arrives as a new object whenever the row set changes, so emit
   // `load` once per uid and store, not once per widget object identity.
