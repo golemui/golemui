@@ -1,0 +1,41 @@
+@use '../../../libs/gui/components/src/styles/index';
+
+html,
+body {
+  background-color: var(--gui-bg-default);
+  font-family: system-ui, sans-serif;
+  margin: 0;
+}
+
+.harness {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.harness__title {
+  font-size: 1.25rem;
+  margin: 0 0 1rem 0;
+}
+
+.harness__status {
+  font-family: ui-monospace, monospace;
+  font-size: var(--gui-font-sm);
+  margin: 0 0 0.5rem 0;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--gui-border-default);
+  border-radius: var(--gui-radius-md);
+  background-color: var(--gui-bg-surface);
+  color: var(--gui-text-default);
+}
+
+.harness__status[data-resumed='true'] {
+  border-color: var(--gui-intent-primary);
+  color: var(--gui-intent-primary);
+}
+
+.harness__note {
+  font-size: var(--gui-font-sm);
+  color: var(--gui-text-muted);
+  margin: 0 0 1.5rem 0;
+}
