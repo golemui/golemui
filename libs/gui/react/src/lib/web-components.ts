@@ -44,7 +44,29 @@ const wrap = <
   tagName: string,
   elementClass: { new (): I },
   events?: E,
-) => createComponent({ react: React, tagName, elementClass, events });
+) => {
+  const LitComponent = createComponent({ react: React, tagName, elementClass, events });
+  type LitComponentProps = React.ComponentProps<typeof LitComponent>;
+
+  // The `defer-hydration` attribute keeps a server-rendered element empty until React has
+  // hydrated it (the element renders into light DOM, so an early Lit render would add
+  // children the server markup does not have and hydration would fail on them). It is an
+  // unknown non-event prop, so it reaches the markup as an attribute on the server and
+  // the client alike, and the @lit/react wrapper removes it right after mount. In a
+  // client-only app the removal happens in the same commit the element connects in, so
+  // the first Lit render stays on its usual schedule.
+  const WithDeferredHydration = React.forwardRef<I, LitComponentProps>(
+    function WithDeferredHydration(props, ref) {
+      return React.createElement(LitComponent, {
+        ...props,
+        ref,
+        'defer-hydration': '',
+      } as LitComponentProps);
+    },
+  );
+  WithDeferredHydration.displayName = `WithDeferredHydration(${tagName})`;
+  return WithDeferredHydration;
+};
 
 export const GuiTextinputReact = wrap('gui-textinput', GuiTextinput, {
   onInput: 'input',

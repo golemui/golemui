@@ -1,28 +1,30 @@
-import { type ActionWidget, widgetViewModel$ } from '@golemui/core';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { type ActionWidget } from '@golemui/core';
+import { useCallback, useEffect, useRef } from 'react';
 import { useReactFormContext } from '../ReactFormContext';
 import { mergeViewModelIntoTemplateData, type WithFlattenedProps } from './internal/template-data';
+import { useViewModelAccumulator, useWidgetViewModel } from './internal/use-widget-view-model';
+
+type ActionTemplateData<ExtraProps extends Record<string, any>> = WithFlattenedProps<
+  ActionWidget<string>,
+  ExtraProps
+> & { invalid?: boolean };
 
 export function useActionWidget<ExtraProps extends Record<string, any>>(
   widget: ActionWidget<string>,
 ) {
   const { formContext } = useReactFormContext();
-  const [templateData, setTemplateData] = useState(
-    {} as WithFlattenedProps<ActionWidget<string>, ExtraProps> & { invalid?: boolean },
-  );
 
-  useEffect(() => {
-    const sub = formContext.store.state$
-      .pipe(widgetViewModel$(widget.uid))
-      .subscribe((viewModel) => {
-        setTemplateData((current) =>
-          mergeViewModelIntoTemplateData(current, viewModel, formContext.dependencies, (vm) => ({
-            invalid: vm.formInvalid,
-          })),
-        );
-      });
-    return () => sub.unsubscribe();
-  }, [widget, formContext]);
+  const viewModel = useWidgetViewModel(formContext.store, widget.uid);
+  const templateData = useViewModelAccumulator<ActionTemplateData<ExtraProps>>(
+    viewModel,
+    (previous, currentViewModel) =>
+      mergeViewModelIntoTemplateData(
+        previous ?? ({} as ActionTemplateData<ExtraProps>),
+        currentViewModel,
+        formContext.dependencies,
+        (vm) => ({ invalid: vm.formInvalid }),
+      ),
+  );
 
   // A repeater row widget arrives as a new object whenever the row set changes, so emit
   // `load` once per uid and store, not once per widget object identity.

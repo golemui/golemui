@@ -25,6 +25,7 @@ export default defineConfig(() => ({
       entry: {
         index: 'src/index.ts',
         internals: 'src/internals.ts',
+        ssr: 'src/ssr.ts',
       },
       name: 'lit',
       formats: ['es', 'cjs'],

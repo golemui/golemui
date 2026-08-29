@@ -54,7 +54,12 @@ export class GuiNumber extends LitElement {
   override render() {
     super.render();
 
-    const inputElement = this.querySelector(`input[id="${this.uid}"]`) as HTMLInputElement;
+    // A server render has no querySelector on the element shim. The first client render
+    // finds no input either, so both fall back to the same default width.
+    const inputElement =
+      typeof document === 'undefined'
+        ? null
+        : (this.querySelector(`input[id="${this.uid}"]`) as HTMLInputElement | null);
 
     // TODO: Try to calculate this better, too many magic numbers
     const inputStyles: any = {
