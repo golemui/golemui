@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import {
   type AfterViewInit,
   Component,
@@ -6,6 +6,7 @@ import {
   inject,
   type OnDestroy,
   type OnInit,
+  PLATFORM_ID,
   signal,
   viewChild,
   viewChildren,
@@ -46,6 +47,8 @@ export class TabsComponent implements OnInit, AfterViewInit, OnDestroy, WithWidg
   isEndVisible = signal(false);
 
   protected adapter: LayoutWidgetAdapter<TabsProps> = inject(LayoutWidgetAdapter);
+  // Server renders run ngOnInit and ngAfterViewInit too, so browser-only APIs need this guard.
+  private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   private startObserver: IntersectionObserver | undefined;
   private endObserver: IntersectionObserver | undefined;
   private rowIndexSuffix = '';
@@ -56,17 +59,22 @@ export class TabsComponent implements OnInit, AfterViewInit, OnDestroy, WithWidg
     this.activeTab.set(templateData.defaultOpen ?? templateData.tabs?.[0]?.uid ?? '');
     this.rowIndexSuffix = repeaterIndexSuffix(this.widget.uid);
 
-    this.startObserver = createIntersectionObserver(
-      this.startSentinel().nativeElement,
-      (isIntersecting: boolean) => this.isStartVisible.set(isIntersecting),
-    );
-    this.endObserver = createIntersectionObserver(
-      this.endSentinel().nativeElement,
-      (isIntersecting: boolean) => this.isEndVisible.set(isIntersecting),
-    );
+    if (this.isBrowser) {
+      this.startObserver = createIntersectionObserver(
+        this.startSentinel().nativeElement,
+        (isIntersecting: boolean) => this.isStartVisible.set(isIntersecting),
+      );
+      this.endObserver = createIntersectionObserver(
+        this.endSentinel().nativeElement,
+        (isIntersecting: boolean) => this.isEndVisible.set(isIntersecting),
+      );
+    }
   }
 
   ngAfterViewInit() {
+    if (!this.isBrowser) {
+      return;
+    }
     // Scroll into view the active tab, just in case it's out of view
     const tabs = this.adapter.templateData().tabs ?? [];
     const currentIndex = tabs.findIndex((tab) => tab.uid === this.activeTab());

@@ -10,6 +10,7 @@
   (focusout)="onFocusOut($event)"
 >
   <gui-label
+    [attr.defer-hydration]="deferHydration"
     [targetElement]="[repeaterRef]"
     [uid]="widget.uid"
     [label]="templateData.label"
@@ -63,6 +64,7 @@
 
 @if (showErrors) {
   <gui-errors
+    [attr.defer-hydration]="deferHydration"
     [uid]="widget.uid"
     [errors]="templateData.errors"
     [touched]="templateData.touched"

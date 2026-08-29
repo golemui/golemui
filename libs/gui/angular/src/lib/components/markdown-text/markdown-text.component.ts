@@ -10,6 +10,7 @@ import { DisplayWidgetAdapter } from '@golemui/angular';
 import type { DisplayWidget, WithWidget } from '@golemui/core';
 import type { MarkdownTextProps } from '@golemui/gui-shared/internals';
 import '@golemui/gui-components/markdown-text';
+import { deferHydrationAttr } from '../../utils/defer-hydration';
 
 @Component({
   standalone: true,
@@ -27,6 +28,7 @@ export class MarkdownTextComponent implements OnInit, OnDestroy, WithWidget {
   widget!: DisplayWidget;
 
   protected adapter: DisplayWidgetAdapter<MarkdownTextProps> = inject(DisplayWidgetAdapter);
+  protected readonly deferHydration = deferHydrationAttr();
 
   ngOnInit(): void {
     this.adapter.init(this.widget);

@@ -19,6 +19,7 @@ import { DefaultListItemRenderer } from '../list/default-list.item-renderer';
 import '@golemui/gui-components/label';
 import '@golemui/gui-components/list';
 import '@golemui/gui-components/errors';
+import { deferHydrationAttr } from '../../utils/defer-hydration';
 
 @Component({
   standalone: true,
@@ -36,6 +37,7 @@ export class DropdownComponent implements OnInit, OnDestroy, WithWidget {
   widget!: InputWidget<string>;
 
   protected adapter: InputWidgetAdapter<string, DropdownProps<never>> = inject(InputWidgetAdapter);
+  protected readonly deferHydration = deferHydrationAttr();
   private el = inject(ElementRef);
 
   inputRef = viewChild.required<ElementRef>('inputRef');

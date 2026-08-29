@@ -10,6 +10,7 @@ import { InputWidgetAdapter } from '@golemui/angular';
 import type { InputWidget, WithWidget } from '@golemui/core';
 import type { TextinputProps } from '@golemui/gui-shared/internals';
 import '@golemui/gui-components/textinput';
+import { deferHydrationAttr } from '../../utils/defer-hydration';
 
 @Component({
   standalone: true,
@@ -26,6 +27,7 @@ import '@golemui/gui-components/textinput';
 export class TextinputComponent implements OnInit, OnDestroy, WithWidget {
   widget!: InputWidget<string>;
   protected adapter: InputWidgetAdapter<string, TextinputProps> = inject(InputWidgetAdapter);
+  protected readonly deferHydration = deferHydrationAttr();
 
   ngOnInit(): void {
     this.adapter.init(this.widget);

@@ -10,6 +10,7 @@ import { InputWidgetAdapter } from '@golemui/angular';
 import type { InputWidget, WithWidget } from '@golemui/core';
 import type { PasswordProps } from '@golemui/gui-shared/internals';
 import '@golemui/gui-components/password';
+import { deferHydrationAttr } from '../../utils/defer-hydration';
 
 @Component({
   standalone: true,
@@ -26,6 +27,7 @@ import '@golemui/gui-components/password';
 export class PasswordComponent implements OnInit, OnDestroy, WithWidget {
   widget!: InputWidget<string>;
   protected adapter: InputWidgetAdapter<string, PasswordProps> = inject(InputWidgetAdapter);
+  protected readonly deferHydration = deferHydrationAttr();
 
   ngOnInit(): void {
     this.adapter.init(this.widget);

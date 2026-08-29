@@ -3,6 +3,7 @@
 @let showErrors = templateData.touched && templateData.errors && templateData.errors.length > 0;
 
 <gui-label
+  [attr.defer-hydration]="deferHydration"
   [targetElement]="listElementRef().nativeElement"
   [uid]="widget.uid"
   [label]="templateData.label"
@@ -15,6 +16,7 @@
 
 <div class="gui-widget">
   <gui-multi-list
+    [attr.defer-hydration]="deferHydration"
     #listRef
     [uid]="widget.uid"
     [errors]="templateData.errors"
@@ -76,6 +78,7 @@
 
 @if (showErrors) {
   <gui-errors
+    [attr.defer-hydration]="deferHydration"
     [uid]="widget.uid"
     [errors]="templateData.errors"
     [touched]="templateData.touched"

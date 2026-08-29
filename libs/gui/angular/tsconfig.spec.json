@@ -2,6 +2,10 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "../../../dist/out-tsc",
+    // Real consumer builds never emit decorator metadata, and the emitted type
+    // references (for example HTMLInputElement on lit @query fields) crash in a node
+    // test environment.
+    "emitDecoratorMetadata": false,
     "types": ["vitest/globals", "vitest/importMeta", "vite/client", "node", "vitest"]
   },
   "include": [

@@ -10,6 +10,7 @@ import { InputWidgetAdapter } from '@golemui/angular';
 import type { InputWidget, WithWidget } from '@golemui/core';
 import type { DateRange, RangeDatePickerProps } from '@golemui/gui-shared/internals';
 import '@golemui/gui-components/range-date-picker';
+import { deferHydrationAttr } from '../../utils/defer-hydration';
 
 @Component({
   standalone: true,
@@ -27,6 +28,7 @@ export class RangeDatePickerComponent implements OnInit, OnDestroy, WithWidget {
   widget!: InputWidget<DateRange[]>;
   protected adapter: InputWidgetAdapter<DateRange[], RangeDatePickerProps> =
     inject(InputWidgetAdapter);
+  protected readonly deferHydration = deferHydrationAttr();
 
   ngOnInit(): void {
     this.adapter.init(this.widget);
