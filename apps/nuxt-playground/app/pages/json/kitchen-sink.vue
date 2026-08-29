@@ -4,6 +4,7 @@ import {
   commonLanguages,
   initializeI18n,
   kitchenSink,
+  mockUploadService,
   onFormEvent,
 } from '@golemui/apps-shared';
 import {
@@ -42,6 +43,7 @@ const deps: Dependencies = {
   markdown: {
     parse: (md: string) => snarkdown(md),
   },
+  uploadService: mockUploadService,
 };
 const middlewares = [devToolsMiddleware()];
 const customValidators: CustomValidatorSchemas = {
