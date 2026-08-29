@@ -69,7 +69,10 @@ export class DropdownElement extends LitElement implements WithWidget {
 
   override connectedCallback() {
     super.connectedCallback();
-    document.addEventListener('click', this.onDocumentClick);
+    // A server render runs connectedCallback without a document.
+    if (typeof document !== 'undefined') {
+      document.addEventListener('click', this.onDocumentClick);
+    }
     this.classList.add('gui-dropdown', 'gui-field');
     this.adapter.context = this.formContext;
     this.adapter.init(this.widget);

@@ -12,16 +12,23 @@ type WidgetComponent = React.ComponentType<WithWidget>;
 // Repeater rows and layout children arrive from the store with their row indexes already applied to `uid` and `path`, so the renderer takes the widget as it is
 function WidgetRenderer(props: Props) {
   const { formContext } = useReactFormContext();
-  const [Component, setComponent] = useState<WidgetComponent | null>(null);
+  const [asyncLoadedComponent, setAsyncLoadedComponent] = useState<WidgetComponent | null>(null);
   const isMounted = useRef(true);
 
+  // Read synchronously so the very first render already shows the widget. A server render
+  // never runs effects and cannot await the dynamic import.
+  const preloadedComponent = formContext.widgetRegistry.getIfLoaded(props.widget.type) ?? null;
+
   useEffect(() => {
+    if (formContext.widgetRegistry.getIfLoaded(props.widget.type)) {
+      return;
+    }
     isMounted.current = true;
     const loadComponent = async () => {
       try {
         const loadedComponent = await formContext.widgetRegistry.loadWidget(props.widget.type);
         if (isMounted.current) {
-          setComponent(() => loadedComponent);
+          setAsyncLoadedComponent(() => loadedComponent);
         }
       } catch {
         const code = errorCodes.widgetCouldNotBeLoaded;
@@ -44,6 +51,7 @@ function WidgetRenderer(props: Props) {
     };
   }, [props.widget, formContext.widgetRegistry, formContext.store]);
 
+  const Component = preloadedComponent ?? asyncLoadedComponent;
   if (!Component) {
     return null;
   }

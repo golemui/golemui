@@ -48,6 +48,12 @@ export default defineConfig(() => ({
       fileName: 'index',
     },
     rollupOptions: {
+      output: {
+        // Marks the published ES entry as a client module for React Server Component
+        // bundlers (Next.js App Router). Has no effect anywhere else. Minification
+        // removes it from the UMD file, which no RSC bundler reads.
+        banner: '"use client";',
+      },
       external: [
         'react',
         'react-dom',

@@ -5,6 +5,7 @@ import type { DropdownProps, ListItem, OptionValue } from '@golemui/gui-shared/i
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DefaultListItemRenderer } from './item-renderers/DefaultListItemRenderer';
 import { type ListItemRendererProps } from './item-renderers/props';
+import { useBrowserLayoutEffect } from './shared/use-browser-layout-effect';
 import type { GuiList } from '@golemui/gui-components/list';
 import type { GuiLabel } from '@golemui/gui-components/label';
 
@@ -82,7 +83,9 @@ export function Dropdown(widgetInstance: WithWidget) {
     [handleValueChange, onFilter, templateData.readonly],
   );
 
-  useEffect(() => {
+  // A layout effect so these listeners exist before first paint. A passive effect
+  // attaches them after paint, and an early click then fires 'change' with no listener.
+  useBrowserLayoutEffect(() => {
     const element = listRef.current;
     if (!element) return;
 
