@@ -31,6 +31,13 @@ export class WidgetDirective implements OnInit, OnDestroy {
   async ngOnInit() {
     // Read the input once so a bad binding fails inside the try, not again in the catch.
     const widget = this.widget();
+    // When the component is already preloaded, create it synchronously so it renders in
+    // the same change detection pass. Server renders and hydration both depend on this.
+    const preloaded = this.formContext.widgetRegistry.getIfLoaded(widget.type);
+    if (preloaded) {
+      this.createComponent(preloaded);
+      return;
+    }
     try {
       const component = await this.formContext.widgetRegistry.loadWidget(widget.type);
       // The directive can be destroyed while the loader is still running.
