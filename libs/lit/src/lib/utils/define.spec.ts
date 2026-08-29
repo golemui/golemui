@@ -79,4 +79,39 @@ describe('safeDefine defer-hydration support', () => {
 
     expect(element?.childElementCount).toBe(0);
   });
+
+  it('finalizes a subclass of a registered element, so its own properties work', async () => {
+    class DeferSpecRegisteredBase extends DeferSpecBase {}
+    safeDefine('x-defer-base', DeferSpecRegisteredBase);
+
+    // `static properties` is only read by Lit during finalization, which the
+    // `observedAttributes` override has to keep reachable for a subclass.
+    class DeferSpecSubclass extends DeferSpecRegisteredBase {
+      static override properties = { badge: {} };
+      declare badge: string;
+
+      override render() {
+        return html`<span>${this.label}</span><b>${this.badge}</b>`;
+      }
+    }
+    safeDefine('x-defer-sub', DeferSpecSubclass);
+
+    expect(DeferSpecSubclass.observedAttributes).toContain('badge');
+    expect(DeferSpecSubclass.observedAttributes.filter((a) => a === 'defer-hydration')).toHaveLength(
+      1,
+    );
+
+    const element = document.createElement('x-defer-sub') as DeferSpecSubclass;
+    element.setAttribute('defer-hydration', '');
+    document.body.appendChild(element);
+    element.setAttribute('badge', 'set before the removal');
+
+    await afterLitRenderSchedule();
+    expect(element.childElementCount).toBe(0);
+
+    element.removeAttribute('defer-hydration');
+    await afterLitRenderSchedule();
+
+    expect(element.querySelector('b')?.textContent).toBe('set before the removal');
+  });
 });

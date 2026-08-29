@@ -1,10 +1,11 @@
 import { GuiErrorsReact, GuiLabelReact, GuiMultiListReact } from '../web-components';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useInputWidget, useItemRenderer } from '@golemui/react';
 import type { ListItem, MultiListProps, OptionValue } from '@golemui/gui-shared/internals';
 import { DefaultMultiListItemRenderer } from './item-renderers/DefaultMultiListItemRenderer';
 import { type ListItemRendererProps } from './item-renderers/props';
+import { useBrowserLayoutEffect } from './shared/use-browser-layout-effect';
 import type { GuiMultiList } from '@golemui/gui-components/multi-list';
 
 export function MultiList(widgetInstance: WithWidget) {
@@ -52,7 +53,9 @@ export function MultiList(widgetInstance: WithWidget) {
     [currentValues, onValueChanged, templateData.disabled, templateData.readonly],
   );
 
-  useEffect(() => {
+  // A layout effect so these listeners exist before first paint. A passive effect
+  // attaches them after paint, and an early click then fires 'change' with no listener.
+  useBrowserLayoutEffect(() => {
     const element = listRef.current;
     if (!element) return;
 

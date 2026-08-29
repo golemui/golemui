@@ -19,6 +19,11 @@
       "types": "./internals.d.ts",
       "import": "./internals.js",
       "require": "./internals.cjs"
+    },
+    "./ssr": {
+      "types": "./ssr.d.ts",
+      "import": "./ssr.js",
+      "require": "./ssr.cjs"
     }
   },
   "files": [
@@ -29,6 +34,9 @@
     "internals.d.ts",
     "internals.js",
     "internals.cjs",
+    "ssr.d.ts",
+    "ssr.js",
+    "ssr.cjs",
     "*.js",
     "*.cjs",
     "*.md"
@@ -39,8 +47,14 @@
   "peerDependencies": {
     "@golemui/core": "*",
     "@lit/context": "^1.1.6",
+    "@lit-labs/ssr": "^4.1.0",
     "lit": "^3.3.1",
     "rxjs": "^7.8.0"
+  },
+  "peerDependenciesMeta": {
+    "@lit-labs/ssr": {
+      "optional": true
+    }
   },
   "repository": {
     "type": "git",
