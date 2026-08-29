@@ -50,6 +50,8 @@ import { datePickerShortcutType } from './shortcuts/date-picker/register';
 import { dropdownShortcutType } from './shortcuts/dropdown/register';
 import { multiDropdownShortcutType } from './shortcuts/multi-dropdown/register';
 import { multiListShortcutType } from './shortcuts/multi-list/register';
+import { fileUploadShortcutType } from './shortcuts/file-upload/register';
+import { multiFileUploadShortcutType } from './shortcuts/multi-file-upload/register';
 import { accordionShortcutType } from './shortcuts/accordion/register';
 import { repeaterShortcutType } from './shortcuts/repeater/register';
 import { markdownShortcutType } from './shortcuts/markdown/register';
@@ -93,6 +95,8 @@ const guiShortcutTypes: ShortcutTypeDefinition<any, any, any>[] = [
   dropdownShortcutType,
   multiDropdownShortcutType,
   multiListShortcutType,
+  fileUploadShortcutType,
+  multiFileUploadShortcutType,
   accordionShortcutType,
   repeaterShortcutType,
   markdownShortcutType,

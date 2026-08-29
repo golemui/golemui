@@ -34,6 +34,8 @@ import { _guiMarkdown } from './shortcuts/markdown/guiMarkdown.impl';
 import { _guiList } from './shortcuts/list/guiList.impl';
 import { _guiMultiDropdown } from './shortcuts/multi-dropdown/guiMultiDropdown.impl';
 import { _guiMultiList } from './shortcuts/multi-list/guiMultiList.impl';
+import { _guiFileUpload } from './shortcuts/file-upload/guiFileUpload.impl';
+import { _guiMultiFileUpload } from './shortcuts/multi-file-upload/guiMultiFileUpload.impl';
 import { _guiCalendar } from './shortcuts/calendar/guiCalendar.impl';
 import { _guiDateTimeCalendar } from './shortcuts/date-time-calendar/guiDateTimeCalendar.impl';
 import { _guiDateInput } from './shortcuts/date-input/guiDateInput.impl';
@@ -100,6 +102,11 @@ import { _gslMarkdowns, _gslMarkdownByUid } from './shortcuts/markdown/register'
 import { _gslLists, _gslListByUid } from './shortcuts/list/register';
 import { _gslMultiDropdowns, _gslMultiDropdownByUid } from './shortcuts/multi-dropdown/register';
 import { _gslMultiLists, _gslMultiListByUid } from './shortcuts/multi-list/register';
+import { _gslFileUploads, _gslFileUploadByUid } from './shortcuts/file-upload/register';
+import {
+  _gslMultiFileUploads,
+  _gslMultiFileUploadByUid,
+} from './shortcuts/multi-file-upload/register';
 import { _gslCalendars, _gslCalendarByUid } from './shortcuts/calendar/register';
 import {
   _gslDateTimeCalendars,
@@ -189,6 +196,10 @@ const guiSelectors = createSelectors({
   multiDropdownByUid: _gslMultiDropdownByUid,
   multiLists: _gslMultiLists,
   multiListByUid: _gslMultiListByUid,
+  fileUploads: _gslFileUploads,
+  fileUploadByUid: _gslFileUploadByUid,
+  multiFileUploads: _gslMultiFileUploads,
+  multiFileUploadByUid: _gslMultiFileUploadByUid,
   calendars: _gslCalendars,
   calendarByUid: _gslCalendarByUid,
   dateTimeCalendars: _gslDateTimeCalendars,
@@ -282,6 +293,8 @@ const guiFacade = {
     list: _guiList,
     multiDropdown: _guiMultiDropdown,
     multiList: _guiMultiList,
+    fileUpload: _guiFileUpload,
+    multiFileUpload: _guiMultiFileUpload,
     calendar: _guiCalendar,
     dateTimeCalendar: _guiDateTimeCalendar,
     dateInput: _guiDateInput,

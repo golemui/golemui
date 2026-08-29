@@ -257,6 +257,98 @@
       "required": ["type"],
       "additionalProperties": false
     },
+    "fileValidator": {
+      "type": "object",
+      "description": "Validates the file envelope stored by the `fileUpload` widget (`{ id, name, size, type, status, error?, data? }` or `null`).",
+      "properties": {
+        "type": {
+          "const": "file"
+        },
+        "required": {
+          "type": "boolean",
+          "description": "Makes the field mandatory - validation fails if no file is set"
+        },
+        "blockPendingUploads": {
+          "type": "boolean",
+          "description": "When true (the default), validation fails while the file's status is `uploading` or `error`, so an unfinished upload cannot be submitted"
+        },
+        "messages": {
+          "type": "object",
+          "description": "Custom error messages that override the default text for each constraint violation",
+          "properties": {
+            "invalid": {
+              "$ref": "#/$defs/localizable",
+              "description": "Shown when the value is not a file envelope"
+            },
+            "required": {
+              "$ref": "#/$defs/localizable",
+              "description": "Shown when a required field has no file"
+            },
+            "pendingUploads": {
+              "$ref": "#/$defs/localizable",
+              "description": "Shown while the file is still uploading or failed to upload"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": ["type"],
+      "additionalProperties": false
+    },
+    "filesValidator": {
+      "type": "object",
+      "description": "Validates the array of file envelopes stored by the `multiFileUpload` widget.",
+      "properties": {
+        "type": {
+          "const": "files"
+        },
+        "required": {
+          "type": "boolean",
+          "description": "Makes the field mandatory - validation fails if the array is empty or absent"
+        },
+        "minItems": {
+          "type": "number",
+          "description": "The array must contain at least this many files"
+        },
+        "maxItems": {
+          "type": "number",
+          "description": "The array must contain no more than this many files"
+        },
+        "blockPendingUploads": {
+          "type": "boolean",
+          "description": "When true (the default), validation fails while any file's status is `uploading` or `error`, so an unfinished upload cannot be submitted"
+        },
+        "messages": {
+          "type": "object",
+          "description": "Custom error messages that override the default text for each constraint violation",
+          "properties": {
+            "invalid": {
+              "$ref": "#/$defs/localizable",
+              "description": "Shown when the value is not an array of file envelopes"
+            },
+            "required": {
+              "$ref": "#/$defs/localizable",
+              "description": "Shown when a required array is empty or absent"
+            },
+            "minItems": {
+              "$ref": "#/$defs/localizable",
+              "description": "Shown when the array has fewer files than `minItems`"
+            },
+            "maxItems": {
+              "$ref": "#/$defs/localizable",
+              "description": "Shown when the array has more files than `maxItems`"
+            },
+            "pendingUploads": {
+              "$ref": "#/$defs/localizable",
+              "description": "Shown while any file is still uploading or failed to upload"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": ["type"],
+      "additionalProperties": false
+    },
     "customValidator": {
       "type": "object",
       "description": "A custom validator that delegates validation to application code. The registered validator function receives these constraint keys and must return a Standard Schema V1-compliant schema object (https://standardschema.dev). Add arbitrary constraint keys alongside `type` - they are passed as-is to the registered validator function.",
@@ -273,7 +365,7 @@
       "additionalProperties": true
     },
     "validator": {
-      "description": "Validation rules for this field. The `type` discriminant selects the validator: `string`, `number`, `integer`, `boolean`, `array`, or `custom`.",
+      "description": "Validation rules for this field. The `type` discriminant selects the validator: `string`, `number`, `integer`, `boolean`, `array`, `file`, `files`, or `custom`.",
       "oneOf": [
         {
           "$ref": "#/$defs/stringValidator"
@@ -286,6 +378,12 @@
         },
         {
           "$ref": "#/$defs/arrayValidator"
+        },
+        {
+          "$ref": "#/$defs/fileValidator"
+        },
+        {
+          "$ref": "#/$defs/filesValidator"
         },
         {
           "$ref": "#/$defs/customValidator"

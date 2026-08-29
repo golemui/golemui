@@ -8,7 +8,7 @@ GolemUI forms are **data, not markup**: a form is an array of field items built 
 
 HOW TO USE THIS REFERENCE: read it **once** and write the whole form from it — it is self-sufficient for almost every form, so you should rarely need another fetch. For a widget’s exhaustive options beyond what is here, follow the **Reference:** link printed under that factory below — each is a full absolute URL on https://golemui.com. The complete page index is at https://golemui.com/llms.txt. These docs are the authoritative source — do NOT read the `@golemui` TypeScript declarations in `node_modules` or search the filesystem; everything you need is here or one Reference link away. VERIFY when done: write the form to a file and run `npx -y @golemui/gui-mcp check-dx <file.ts>` (exit 0 = compiles against the real `@golemui` types; exit 1 = fix the reported diagnostics and re-run).
 
-General: GolemUI builds FORMS — data collection and validation. It is NOT a general-purpose UI toolkit: it never renders documents, page content, or markdown for display. A form is just an array of these items: `export const form = [ /* items */ ];`. RENDER (React) — `import { gui } from '@golemui/gui-shared'; import { GuiForm } from '@golemui/gui-react'; import type { FormSubmitEvent } from '@golemui/core';`, then render `<GuiForm config={{ formDef: form }} formSubmit={(e: FormSubmitEvent) => { /* e.data is the form data */ }} />`. A `gui.displays.display(() => <h2>…</h2>)` returns React JSX. Import the component stylesheet ONCE — `@golemui/gui-components/index.css` — or the form renders unstyled. To RECEIVE A SUBMIT: add a `gui.actions.button({ label, actionType: 'submit' })` to the form and listen for the submit on the host component (the RENDER line above shows how for your framework) — the handler gets a `FormSubmitEvent` whose `.data` is the collected form data. To DISABLE submit until the form is valid, add `disabled: { when: '$formIsInvalid || $form.<requiredField> === undefined' }` to that button. `$formIsInvalid` is a built-in validity flag, but validation NEVER runs at mount, so on the pristine form it is `false` and `$formIsInvalid` ALONE leaves the button ENABLED while required fields are still empty — the extra data check covers that gap. See the conditional-and-state-props pattern. The SAME `formDef` renders in every framework (React/Angular/Vue/Lit/vanilla) — only the host wrapper changes. FORM-LEVEL CONFIG — `formDef` is ALWAYS the bare array. Anything form-wide (named `states`, `validateOn`) goes in a sibling `formConfig` on the config (`config={{ formDef: form, formConfig: { states, validateOn } }}`), NEVER inside `formDef`. Do NOT wrap the array as `{ states, form: [...] }` and pass THAT as `formDef` — `formDef` is typed `Record<string, any>` so it COMPILES, but the `gui.*` items are never resolved and the form renders BLANK with no error. See the form-level-states pattern. Common fields like `include`/`exclude` (conditional visibility) go INSIDE a factory’s config argument — never spread them onto the result (`{ ...gui.inputs.x(...), include }` compiles but silently does nothing). See the conditional-visibility pattern. STATIC CONTENT — a section heading or any non-input text/block is the HOST’s job, not GolemUI’s: use `gui.displays.display(() => <h2>…</h2>)` returning your framework’s own node (React JSX, Vue/Angular/Lit node) — it needs no dependency and always renders. MARKDOWN has exactly ONE use: `gui.inputs.markdown`, an INPUT where the user EDITS markdown (its value is their markdown string). There is NO markdown-for-display widget — never use markdown to render a heading or content; use `display` for that. VALIDATOR `type` — one rule, three cases (so you never have to guess): (1) choice widgets (`dropdown`, `radiogroup`, `select`) REQUIRE an explicit `type`: `validator: { type: 'string', required: true }`. (2) `repeater` (array) validators auto-supply `type: 'array'` — supply only the rules, e.g. `validator: { required: true, minItems: 1 }`, never `type`. (3) everything else (text, number, date) takes the loose validator with NO `type`: `validator: { required: true }`. EVENT HANDLERS — `onChange`/`onLoad`/`onFilter`/`onBlur` (inputs/layouts) and `onClick` (actions) are FUNCTIONS, never bare strings: return a string to dispatch a host event by that name (`onChange: () => 'languageChanged'`), or take the event to push live changes (`onChange: (event) => event.update({ path: 'city', options: [...] })`).
+General: GolemUI builds FORMS — data collection and validation. It is NOT a general-purpose UI toolkit: it never renders documents, page content, or markdown for display. A form is just an array of these items: `export const form = [ /* items */ ];`. RENDER (React) — `import { gui } from '@golemui/gui-shared'; import { GuiForm } from '@golemui/gui-react'; import type { FormSubmitEvent } from '@golemui/core';`, then render `<GuiForm config={{ formDef: form }} formSubmit={(e: FormSubmitEvent) => { /* e.data is the form data */ }} />`. A `gui.displays.display(() => <h2>…</h2>)` returns React JSX. Import the component stylesheet ONCE — `@golemui/gui-components/index.css` — or the form renders unstyled. To RECEIVE A SUBMIT: add a `gui.actions.button({ label, actionType: 'submit' })` to the form and listen for the submit on the host component (the RENDER line above shows how for your framework) — the handler gets a `FormSubmitEvent` whose `.data` is the collected form data. To DISABLE submit until the form is valid, add `disabled: { when: '$formIsInvalid || $form.<requiredField> === undefined' }` to that button. `$formIsInvalid` is a built-in validity flag, but validation NEVER runs at mount, so on the pristine form it is `false` and `$formIsInvalid` ALONE leaves the button ENABLED while required fields are still empty — the extra data check covers that gap. See the conditional-and-state-props pattern. The SAME `formDef` renders in every framework (React/Angular/Vue/Lit/vanilla) — only the host wrapper changes. FORM-LEVEL CONFIG — `formDef` is ALWAYS the bare array. Anything form-wide (named `states`, `validateOn`) goes in a sibling `formConfig` on the config (`config={{ formDef: form, formConfig: { states, validateOn } }}`), NEVER inside `formDef`. Do NOT wrap the array as `{ states, form: [...] }` and pass THAT as `formDef` — `formDef` is typed `Record<string, any>` so it COMPILES, but the `gui.*` items are never resolved and the form renders BLANK with no error. See the form-level-states pattern. Common fields like `include`/`exclude` (conditional visibility) go INSIDE a factory’s config argument — never spread them onto the result (`{ ...gui.inputs.x(...), include }` compiles but silently does nothing). See the conditional-visibility pattern. STATIC CONTENT — a section heading or any non-input text/block is the HOST’s job, not GolemUI’s: use `gui.displays.display(() => <h2>…</h2>)` returning your framework’s own node (React JSX, Vue/Angular/Lit node) — it needs no dependency and always renders. MARKDOWN has exactly ONE use: `gui.inputs.markdown`, an INPUT where the user EDITS markdown (its value is their markdown string). There is NO markdown-for-display widget — never use markdown to render a heading or content; use `display` for that. VALIDATOR `type` — one rule, three cases (so you never have to guess): (1) choice widgets (`dropdown`, `radiogroup`, `select`) REQUIRE an explicit `type`: `validator: { type: 'string', required: true }`. (2) `repeater` (array), `tags` (array), `fileUpload` (file) and `multiFileUpload` (files) validators auto-supply their `type` — supply only the rules, e.g. `validator: { required: true, minItems: 1 }`, never `type`. (3) everything else (text, number, date) takes the loose validator with NO `type`: `validator: { required: true }`. EVENT HANDLERS — `onChange`/`onLoad`/`onFilter`/`onBlur` (inputs/layouts) and `onClick` (actions) are FUNCTIONS, never bare strings: return a string to dispatch a host event by that name (`onChange: () => 'languageChanged'`), or take the event to push live changes (`onChange: (event) => event.update({ path: 'city', options: [...] })`).
 
 ## Host wiring per framework
 
@@ -40,6 +40,7 @@ Every `gui.*` factory and its calling convention. Look up the detail below for t
 - `gui.inputs.dateTimePicker(path, { label, minDate?, maxDate?, minTime?, maxTime?, minuteStep?, disabledTimeRanges?, allowCustomTime? })`
 - `gui.displays.display(render)`
 - `gui.inputs.dropdown(path, { label, items, validator? })`
+- `gui.inputs.fileUpload(path, { label?, accept?, maxSize?, buttonLabel?, validator? })`
 - `gui.layouts.flex(children, props?)`
 - `gui.layouts.grid(children, props?)`
 - `gui.layouts.horizontalFlex(children, props?)`
@@ -47,6 +48,7 @@ Every `gui.*` factory and its calling convention. Look up the detail below for t
 - `gui.inputs.list(path, { label, items, height?, itemHeight? })`
 - `gui.inputs.markdown(path, { label })`
 - `gui.inputs.multiDropdown(path, { label, items, validator? })`
+- `gui.inputs.multiFileUpload(path, { label?, accept?, maxSize?, buttonLabel?, validator? })`
 - `gui.inputs.multiList(path, { label, items, height?, itemHeight?, validator? })`
 - `gui.inputs.numberInput(path, { label, defaultValue?, validator? })`
 - `gui.inputs.password(path, { label, validator? })`
@@ -287,6 +289,27 @@ gui.inputs.dropdown('country', {
 
 Reference: https://golemui.com/dx/widgets-reference/input-fields/dropdown.md
 
+## gui.inputs.fileUpload
+
+Call: `gui.inputs.fileUpload(path, { label?, accept?, maxSize?, buttonLabel?, validator? })`
+
+```ts
+gui.inputs.fileUpload('cv', {
+  label: 'CV',
+  accept: ['application/pdf', '.docx'],
+  maxSize: 5 * 1024 * 1024,
+  validator: { required: true },
+});
+```
+
+- Single-file upload rendered as a one-line input: the box is the drop target and holds the upload button; while the file uploads the box itself becomes the progress bar, and once done it shows the file name with a remove button.
+- REQUIRES a host transport: pass `dependencies: { uploadService: { upload(file, { id, path, onProgress, signal }) => Promise<unknown>, remove?(item) => Promise<void> } }` in the init config (next to `markdown`). Keep the object reference stable (module level) — a new `config` identity re-initializes the form. Without it the widget renders disabled with an inline error.
+- The value is a plain envelope, never the `File`: `{ id, name, size, type, status: "uploading" | "uploaded" | "error", error?, data? }` where `data` is exactly what `upload` resolved with. Preload a value from the server with `status: "uploaded"`. Removing awaits `uploadService.remove(item)` (when provided) before clearing.
+- The validator auto-supplies `type: 'file'`. `blockPendingUploads` (default true) fails while the file is still uploading or failed, so a half-finished upload can never be submitted; message keys: `invalid`, `required`, `pendingUploads`.
+- `accept` (`[".pdf", "image/*", "application/pdf"]`) and `maxSize` (bytes) are checked BEFORE uploading; a refused or failed file stays in the box with the reason, a retry and a remove button — it is never dropped silently. Messages: `acceptMessage`, `maxSizeMessage`; accessible names: `removeAriaLabel`, `cancelAriaLabel`, `retryLabel` (`{name}` token).
+
+Reference: https://golemui.com/dx/widgets-reference/input-fields/file-upload.md
+
 ## gui.layouts.flex
 
 Call: `gui.layouts.flex(children, props?)`
@@ -397,6 +420,24 @@ gui.inputs.multiDropdown('countries', {
 - The validator must be array-typed — `{ type: 'array', required: true, minItems?, maxItems? }`. Selection is never silently blocked; cap it with `maxItems` so the user is told why.
 
 Reference: https://golemui.com/dx/widgets-reference/input-fields/multi-dropdown.md
+
+## gui.inputs.multiFileUpload
+
+Call: `gui.inputs.multiFileUpload(path, { label?, accept?, maxSize?, buttonLabel?, validator? })`
+
+```ts
+gui.inputs.multiFileUpload('attachments', {
+  label: 'Attachments',
+  accept: ['image/*'],
+  validator: { required: true, maxItems: 3 },
+});
+```
+
+- The array variant of `fileUpload` (same box, button, progress bar and `uploadService`). Files upload ONE AT A TIME; every finished file becomes a pill inside the box and the value is an array of envelopes.
+- A failed file pauses the queue until it is retried or removed. The count is never silently blocked: cap it with `maxItems` so the user is told why.
+- The validator auto-supplies `type: 'files'`; rules: `required` (non-empty), `minItems`, `maxItems`, `blockPendingUploads` (default true); message keys: `invalid`, `required`, `minItems`, `maxItems`, `pendingUploads`.
+
+Reference: https://golemui.com/dx/widgets-reference/input-fields/multi-file-upload.md
 
 ## gui.inputs.multiList
 

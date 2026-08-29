@@ -1,4 +1,9 @@
-import { buildKitchenSinkDx, initializeI18n, onFormEvent } from '@golemui/apps-shared';
+import {
+  buildKitchenSinkDx,
+  initializeI18n,
+  mockUploadService,
+  onFormEvent,
+} from '@golemui/apps-shared';
 import type { FormHealth } from '@golemui/core';
 import { GuiForm } from '@golemui/gui-react';
 import { useCallback, useState } from 'react';
@@ -25,6 +30,7 @@ const ks = buildKitchenSinkDx({
     markdown: {
       parse: (md: string) => snarkdown(md),
     },
+    uploadService: mockUploadService,
   },
   // React-flavored Renderer example — the `render` function is called with the
   // form API and returns a ReactNode (JSX).

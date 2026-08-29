@@ -16,7 +16,7 @@ export type {
 } from './lib/dx';
 
 // ─── shared (external libs dependency injection) ───
-export type { Dependencies } from './lib/shared';
+export type { Dependencies, FileItem, FileStatus, UploadService } from './lib/shared';
 export type { ExpressionFunction, ExpressionFunctions } from '@golemui/core';
 
 // ─── utils (form composition) ───

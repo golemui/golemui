@@ -737,6 +737,51 @@ export type MultiDropdownProps<T> = DropdownProps<T> & {
 
 export type MultiListProps<T> = ListProps<T>;
 
+/**
+ * Shared by `fileUpload` and `multiFileUpload`. The widget is a one-line input:
+ * the box is the drop target and holds the upload button; while a file uploads
+ * the box itself becomes the progress bar. Message props accept a `{name}`
+ * token that is replaced with the file name.
+ */
+export type FileUploadBaseProps = {
+  hint?: string;
+  icon?: string;
+  /**
+   * Accepted file types, e.g. `['image/*', '.pdf']`. Matched by the widget
+   * before uploading (drag & drop bypasses the picker's own filter) and also
+   * passed to the file picker as a hint.
+   */
+  accept?: string[];
+  /** Maximum size per file, in bytes. Larger files are refused before uploading. */
+  maxSize?: number;
+  /** Text of the upload button inside the box. Defaults to 'Upload file' / 'Upload files'. */
+  buttonLabel?: Localizable;
+  /** Accessible name of the remove button. Defaults to 'Remove {name}'. */
+  removeAriaLabel?: Localizable;
+  /** Accessible name of the cancel button shown while uploading. Defaults to 'Cancel {name}'. */
+  cancelAriaLabel?: Localizable;
+  /** Text of the retry button shown on a failed file. Defaults to 'Retry'. */
+  retryLabel?: Localizable;
+  /** Icon class for the remove/cancel button; falls back to the built-in icon. */
+  removeIcon?: string;
+  /** Error shown when a file exceeds `maxSize`. Defaults to 'File exceeds the maximum size'. */
+  maxSizeMessage?: Localizable;
+  /** Error shown when a file does not match `accept`. Defaults to 'File type not accepted'. */
+  acceptMessage?: Localizable;
+  /** Shown inside the disabled box when the host provided no `uploadService`. */
+  missingServiceMessage?: Localizable;
+  /** aria-live announcement after a successful upload. Defaults to '{name} uploaded.'. */
+  uploadedMessage?: Localizable;
+  /** aria-live announcement after a removal. Defaults to '{name} removed.'. */
+  removedMessage?: Localizable;
+  /** aria-live announcement after a failed upload. Defaults to '{name} failed to upload.'. */
+  failedMessage?: Localizable;
+};
+
+export type FileUploadProps = FileUploadBaseProps;
+
+export type MultiFileUploadProps = FileUploadBaseProps;
+
 export type RadiogroupProps = {
   hint?: string;
   options: Option[];

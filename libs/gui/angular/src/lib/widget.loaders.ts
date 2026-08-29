@@ -69,6 +69,11 @@ export const widgetLoaders: WidgetLoaders<Type<WithWidget>, GolemWidget> = {
     (await import('./components/multi-dropdown/multi-dropdown.component')).MultiDropdownComponent,
   multiList: async () =>
     (await import('./components/multi-list/multi-list.component')).MultiListComponent,
+  fileUpload: async () =>
+    (await import('./components/file-upload/file-upload.component')).FileUploadComponent,
+  multiFileUpload: async () =>
+    (await import('./components/multi-file-upload/multi-file-upload.component'))
+      .MultiFileUploadComponent,
   tags: async () => (await import('./components/tags/tags.component')).TagsComponent,
 
   // LAYOUT WIDGETS
