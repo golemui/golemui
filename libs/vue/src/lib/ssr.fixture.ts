@@ -76,7 +76,15 @@ export const formDef = {
     kind: 'layout',
     type: 'flex',
     children: [
-      { kind: 'input', type: 'textinput', path: 'firstName', label: 'First name' },
+      // The `load` handler lets the specs pin down when the event fires: never on the server,
+      // once the client has mounted.
+      {
+        kind: 'input',
+        type: 'textinput',
+        path: 'firstName',
+        label: 'First name',
+        on: { load: 'stubLoaded' },
+      },
       { kind: 'input', type: 'textinput', path: 'lastName', label: 'Last name' },
     ],
   },

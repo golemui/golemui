@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { preloadFormWidgets } from '@golemui/core';
-import { createSSRApp, h } from 'vue';
+import { createSSRApp, h, nextTick } from 'vue';
 import { renderToString } from 'vue/server-renderer';
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import FormComponent from './FormComponent.vue';
@@ -78,5 +78,29 @@ describe('hydrating server-rendered markup', () => {
     app.mount(container);
 
     expect(container.querySelector('input')).toBe(firstInputBeforeHydration);
+  });
+
+  it('runs load handlers once the client has mounted, and only then', async () => {
+    const onFormEvent = vi.fn();
+    const root = () => ({
+      render: () =>
+        h(FormComponent, { config: buildConfig(), validators: noopValidators, onFormEvent }),
+    });
+
+    const serverHtml = await renderToString(createSSRApp(root()));
+    expect(onFormEvent).not.toHaveBeenCalled();
+
+    const container = document.createElement('div');
+    container.innerHTML = serverHtml;
+    document.body.appendChild(container);
+
+    const app = createSSRApp(root());
+    app.config.warnHandler = (message) => warnings.push(message);
+    app.mount(container);
+    await nextTick();
+
+    expect(onFormEvent).toHaveBeenCalledTimes(1);
+    expect(onFormEvent).toHaveBeenCalledWith(expect.objectContaining({ name: 'stubLoaded' }));
+    expect(warnings).toEqual([]);
   });
 });

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { buildKitchenSinkDx, initializeI18n, onFormEvent } from '@golemui/apps-shared';
-import type { FormEvent, FormHealth } from '@golemui/core';
+import type { FormHealth } from '@golemui/core';
 import type { GuiFormInitConfig } from '@golemui/gui-shared';
 import { GuiForm } from '@golemui/gui-vue';
 import snarkdown from 'snarkdown';
@@ -44,12 +44,6 @@ const config: GuiFormInitConfig = {
 
 const errors = ref<string[]>([]);
 
-function formEventHandler(event: FormEvent) {
-  // `load` events fire during the server render; the shared handlers are browser-only.
-  if (import.meta.server) return;
-  onFormEvent(event);
-}
-
 function onFormHealth(event: FormHealth) {
   if (event.status === 'errored') {
     errors.value = [...errors.value, event.message];
@@ -67,6 +61,6 @@ function onFormHealth(event: FormHealth) {
         <li v-for="(error, i) in errors" :key="i">{{ error }}</li>
       </ul>
     </div>
-    <GuiForm :config="config" @form-event="formEventHandler" @form-health="onFormHealth" />
+    <GuiForm :config="config" @form-event="onFormEvent" @form-health="onFormHealth" />
   </div>
 </template>

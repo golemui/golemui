@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { modularDx, onFormEvent } from '@golemui/apps-shared';
-import type { FormEvent, FormHealth, FormSubmitEvent } from '@golemui/core';
+import type { FormHealth, FormSubmitEvent } from '@golemui/core';
 import { GuiForm } from '@golemui/gui-vue';
 import type { Dependencies, GuiFormInitConfig } from '@golemui/gui-shared';
 import { ref } from 'vue';
@@ -20,12 +20,6 @@ const config: GuiFormInitConfig = {
 };
 
 const errors = ref<string[]>([]);
-
-const formEventHandler = (event: FormEvent) => {
-  // `load` events fire during the server render; the shared handlers are browser-only.
-  if (import.meta.server) return;
-  onFormEvent(event);
-};
 
 const onFormSubmit = (event: FormSubmitEvent) => {
   console.log('👉 onFormSubmit', event.data);
@@ -50,7 +44,7 @@ const onFormHealth = (event: FormHealth) => {
     </div>
     <GuiForm
       :config="config"
-      @form-event="formEventHandler"
+      @form-event="onFormEvent"
       @form-health="onFormHealth"
       @form-submit="onFormSubmit"
     />

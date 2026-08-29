@@ -1,5 +1,5 @@
 import { type ActionWidget, widgetViewModel$ } from '@golemui/core';
-import { onScopeDispose, ref, type Ref } from 'vue';
+import { onMounted, onScopeDispose, ref, type Ref } from 'vue';
 import { useVueFormContext } from '../provideFormContext';
 import { mergeViewModelIntoTemplateData, type WithFlattenedProps } from './template-data';
 
@@ -30,7 +30,7 @@ export function useActionWidget<ExtraProps extends Record<string, any> = Record<
       }));
     });
 
-  formContext.emitEvent('load', widget);
+  onMounted(() => formContext.emitEvent('load', widget));
 
   // Same teardown race as `useInputWidget`.
   let disposed = false;

@@ -36,7 +36,8 @@ export default defineNuxtConfig({
     },
   },
   css: ['~/assets/styles.scss'],
-  // Widgets render Lit custom elements; Vue must leave gui-* tags alone.
+  // Needed here because the workspace compiles the gui-vue SFCs from source and the JSON page uses
+  // a raw <gui-select>; an app on the published packages only needs this for its own gui-* tags.
   vue: { compilerOptions: { isCustomElement: (tag) => tag.startsWith('gui-') } },
   vite: {
     plugins: [nxViteTsPaths()],

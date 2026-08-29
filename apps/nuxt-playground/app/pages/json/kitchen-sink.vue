@@ -55,10 +55,6 @@ const itemRenderers: Record<string, VueItemRenderer<any>> = {
 };
 const validateOn: ValidateOn = 'eager';
 function formEventHandler(event: FormEvent) {
-  // Widgets emit `load` while they are set up, so this also runs during the server render.
-  // The shared handlers fetch relative `/data/*.json` URLs and open windows, both of which
-  // only make sense in the browser.
-  if (import.meta.server) return;
   if (mock.onFormEvent) mock.onFormEvent(event);
   onFormEvent(event);
 }
