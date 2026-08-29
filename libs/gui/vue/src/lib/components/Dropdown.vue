@@ -110,7 +110,6 @@ const handleListChange = (e: Event) => {
   isListVisible.value = false;
 };
 
-
 const handlePanelMouseDown = (event: MouseEvent) => {
   const target = event.target as Node;
   if (listRef.value && listRef.value.contains(target)) return;

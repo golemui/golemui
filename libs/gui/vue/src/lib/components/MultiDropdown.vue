@@ -117,7 +117,6 @@ const handleListChange = (e: Event) => {
   toggleValue((e as CustomEvent).detail.value);
 };
 
-
 const handlePanelMouseDown = (event: MouseEvent) => {
   const target = event.target as Node;
   if (listRef.value && listRef.value.contains(target)) return;

@@ -83,7 +83,9 @@ const FRAMEWORK_SETUP: Record<DxFramework, string> = {
   vue:
     "RENDER (Vue) — `import { gui } from '@golemui/gui-shared'; import { GuiForm } from '@golemui/gui-vue';`, " +
     'then `<GuiForm :config="{ formDef: form }" @form-submit="onSubmit" />` — the handler receives a ' +
-    '`FormSubmitEvent` (`.data` is the form data). The event is `form-submit` (kebab-case), not `formSubmit`.',
+    '`FormSubmitEvent` (`.data` is the form data). The event is `form-submit` (kebab-case), not `formSubmit`. ' +
+    'For SSR (Nuxt) await `preloadFormWidgets({ widgetLoaders })` from `@golemui/core` before the first render ' +
+    'on both server and client (a Nuxt plugin); `widgetLoaders` comes from `@golemui/gui-vue`.',
   lit:
     "RENDER (Lit) — `import { gui } from '@golemui/gui-shared'; import '@golemui/gui-lit';` (registers the " +
     '`<gui-form>` custom element), then `<gui-form .config=${{ formDef: form }} @' +
