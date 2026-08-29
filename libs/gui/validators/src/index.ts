@@ -5,6 +5,8 @@ export type {
   CustomValidator,
   CustomValidatorSchemaFn,
   CustomValidatorSchemas,
+  FileValidator,
+  FilesValidator,
   NumberValidator,
   StringValidator,
   Validator,

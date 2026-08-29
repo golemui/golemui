@@ -6,6 +6,13 @@ import { repeat } from 'lit/directives/repeat.js';
 import { GUIPopupController } from '../controllers/popup.controller';
 import { createIntersectionObserver } from './tabs';
 import { addErrors } from '../utils/templates';
+import {
+  CHECK_SQUARE_PATH,
+  NOTE_PENCIL_PATH,
+  X_CIRCLE_PATH,
+  X_SQUARE_PATH,
+  spinnerIcon,
+} from '../utils/icons';
 
 export interface GuiPillItem {
   /** Stable identity used for `repeat()` keys and event payloads. */
@@ -21,6 +28,13 @@ export interface GuiPillItem {
    * remove icon's pattern.
    */
   editAriaLabel?: string;
+  /**
+   * The host is doing async work on this item (e.g. awaiting a server-side
+   * removal). The × is replaced by an indeterminate spinner, the pill gets
+   * `aria-busy`, and Delete/Backspace and the × no longer emit `pillremove`
+   * — so a removal cannot be requested twice while one is in flight.
+   */
+  busy?: boolean;
 }
 
 export interface GuiPillEventDetail {
@@ -41,14 +55,6 @@ export interface GuiPillExitEventDetail {
   reason: 'escape';
 }
 
-// Phosphor icons (regular weight), matching the built-in remove icon.
-const NOTE_PENCIL_PATH =
-  'M229.66,58.34l-32-32a8,8,0,0,0-11.32,0l-96,96A8,8,0,0,0,88,128v32a8,8,0,0,0,8,8h32a8,8,0,0,0,5.66-2.34l96-96A8,8,0,0,0,229.66,58.34ZM124.69,152H104V131.31l64-64L188.69,88ZM200,76.69,179.31,56,192,43.31,212.69,64ZM224,128v80a16,16,0,0,1-16,16H48a16,16,0,0,1-16-16V48A16,16,0,0,1,48,32h80a8,8,0,0,1,0,16H48V208H208V128a8,8,0,0,1,16,0Z';
-const X_SQUARE_PATH =
-  'M208,32H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32Zm0,176H48V48H208V208ZM165.66,101.66,139.31,128l26.35,26.34a8,8,0,0,1-11.32,11.32L128,139.31l-26.34,26.35a8,8,0,0,1-11.32-11.32L116.69,128,90.34,101.66a8,8,0,0,1,11.32-11.32L128,116.69l26.34-26.35a8,8,0,0,1,11.32,11.32Z';
-const CHECK_SQUARE_PATH =
-  'M173.66,98.34a8,8,0,0,1,0,11.32l-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35A8,8,0,0,1,173.66,98.34ZM224,48V208a16,16,0,0,1-16,16H48a16,16,0,0,1-16-16V48A16,16,0,0,1,48,32H208A16,16,0,0,1,224,48ZM208,208V48H48V208H208Z';
-
 /**
  * `<gui-pills>` — a scrollable strip of dismissable / clickable chips with an
  * optional count-bubble fallback that opens a dropdown listing every item when
@@ -58,6 +64,7 @@ const CHECK_SQUARE_PATH =
  *   - horizontal scroll + start/end shadow gradients (via sentinel observers)
  *   - keyboard nav between pills (ArrowLeft/Right, Home/End)
  *   - Delete/Backspace → emits `pillremove`; host owns the array mutation
+ *   - `item.busy` → spinner in the × slot, `aria-busy`, no `pillremove` until cleared
  *   - count-bubble + dropdown + outside-click-to-close
  *
  * The host is responsible for placing focus when the strip becomes empty
@@ -285,10 +292,11 @@ export class GuiPills extends LitElement {
     const isClickable = this.clickable && !this.disabled && !this.readOnly;
     const isSelected = item.key === this.selectedKey;
     const isEditing = item.key === this.editingKey;
+    const isBusy = !!item.busy;
     const showEditActions = this.editable && isClickable;
     const descriptionHints = [
       showEditActions && !isEditing ? item.editAriaLabel : undefined,
-      this.removable && !this.disabled && !this.readOnly && !isEditing
+      this.removable && !this.disabled && !this.readOnly && !isEditing && !isBusy
         ? this.removeAriaLabel
         : undefined,
     ].filter(Boolean);
@@ -300,6 +308,7 @@ export class GuiPills extends LitElement {
           'gui-pills__pill--clickable': isClickable,
           'gui-pills__pill--selected': isSelected,
           'gui-pills__pill--editing': isEditing,
+          'gui-pills__pill--busy': isBusy,
         })}
         data-key=${item.key}
         data-index=${index}
@@ -307,6 +316,7 @@ export class GuiPills extends LitElement {
         tabindex=${this.tabbable && !this.disabled && !this.readOnly ? 0 : -1}
         ?disabled=${this.disabled || this.readOnly}
         aria-pressed=${this.editable && isClickable ? String(isSelected) : nothing}
+        aria-busy=${isBusy ? 'true' : nothing}
         aria-label=${item.ariaLabel ?? item.label}
         aria-description=${descriptionHints.length ? descriptionHints.join('. ') : nothing}
         @click=${(e: Event) => this.onPillClick(e, item)}
@@ -332,8 +342,34 @@ export class GuiPills extends LitElement {
               this.emitEditAction('pilledit', item.key),
             )
           : nothing}
-        ${this.removable && !isEditing ? this.renderRemoveButton(item) : nothing}
+        ${this.removable && !isEditing
+          ? isBusy
+            ? this.renderBusy()
+            : this.renderRemoveButton(item)
+          : nothing}
       </button>
+    `;
+  }
+
+  /**
+   * The spinner that takes the × slot while `item.busy`. Same aria-hidden span
+   * shape as the action icons; it has no click handler, so the only way to
+   * request another removal is for the host to clear `busy` first.
+   */
+  private renderBusy() {
+    return html`
+      <span
+        class="gui-pills__pill-busy gui-spinner"
+        data-cy=${this.uid ? `${this.uid}_pill-busy` : nothing}
+        aria-hidden="true"
+        @mousedown=${(e: Event) => {
+          e.stopPropagation();
+          e.preventDefault();
+        }}
+        @click=${(e: Event) => e.stopPropagation()}
+      >
+        ${spinnerIcon()}
+      </span>
     `;
   }
 
@@ -400,9 +436,7 @@ export class GuiPills extends LitElement {
               fill="currentColor"
               aria-hidden="true"
             >
-              <path
-                d="M165.66,101.66,139.31,128l26.35,26.34a8,8,0,0,1-11.32,11.32L128,139.31l-26.34,26.35a8,8,0,0,1-11.32-11.32L116.69,128,90.34,101.66a8,8,0,0,1,11.32-11.32L128,116.69l26.34-26.35a8,8,0,0,1,11.32,11.32ZM232,128A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z"
-              ></path>
+              <path d=${X_CIRCLE_PATH}></path>
             </svg>`}
       </span>
     `;
@@ -448,7 +482,8 @@ export class GuiPills extends LitElement {
     if (this.removable && (e.key === 'Delete' || e.key === 'Backspace')) {
       e.preventDefault();
       e.stopPropagation();
-      this.emitRemove(item.key, index);
+      // A busy pill swallows the key: its removal is already in flight.
+      if (!item.busy) this.emitRemove(item.key, index);
       return;
     }
 

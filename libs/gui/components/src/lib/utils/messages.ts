@@ -80,3 +80,57 @@ export const EDIT_RANGE_CANCELLED_MESSAGE = 'Edit cancelled.';
 export function formatEditMessage(template: string, label: string): string {
   return template.split('{label}').join(label);
 }
+
+// ─── fileUpload / multiFileUpload strings ──────────────────────────────────
+// `{name}` is the file name, interpolated at interaction time via
+// formatFileMessage — single braces on purpose, same reasoning as `{label}`.
+
+/** Default text of the single file upload button. **/
+export const FILE_UPLOAD_BUTTON_LABEL = 'Upload file';
+
+/** Default text of the multi file upload button. **/
+export const MULTI_FILE_UPLOAD_BUTTON_LABEL = 'Upload files';
+
+/** Default accessible name of the remove button of an uploaded or failed file. **/
+export const FILE_REMOVE_ARIA_LABEL = 'Remove {name}';
+
+/** Default accessible name of the cancel button of an in-progress upload. **/
+export const FILE_CANCEL_ARIA_LABEL = 'Cancel {name}';
+
+/** Default text of the retry button of a failed file. **/
+export const FILE_RETRY_LABEL = 'Retry';
+
+/** Default per-file error when the file exceeds `maxSize`. **/
+export const FILE_TOO_LARGE_MESSAGE = 'File exceeds the maximum size';
+
+/** Default per-file error when the file does not match `accept`. **/
+export const FILE_TYPE_NOT_ACCEPTED_MESSAGE = 'File type not accepted';
+
+/** Default per-file error when the upload rejected without a message. **/
+export const FILE_UPLOAD_FAILED_MESSAGE = 'Upload failed';
+
+/** Default per-file error when `uploadService.remove` rejected without a message. **/
+export const FILE_REMOVE_FAILED_MESSAGE = 'Could not remove the file';
+
+/** Shown inside the disabled box when the host provided no `uploadService`. **/
+export const MISSING_UPLOAD_SERVICE_MESSAGE = 'File uploads are not configured';
+
+/** Default aria-live announcement after a successful upload. **/
+export const FILE_UPLOADED_MESSAGE = '{name} uploaded.';
+
+/** Default aria-live announcement after a removal. **/
+export const FILE_REMOVED_MESSAGE = '{name} removed.';
+
+/** Default aria-live announcement after a failed upload. **/
+export const FILE_FAILED_MESSAGE = '{name} failed to upload.';
+
+/**
+ * Interpolates the runtime `{name}` token of the file upload strings.
+ *
+ * @param {string} template - The message or aria-label template.
+ * @param {string} name - The file name.
+ * @return {string} The interpolated text.
+ */
+export function formatFileMessage(template: string, name: string): string {
+  return template.split('{name}').join(name);
+}

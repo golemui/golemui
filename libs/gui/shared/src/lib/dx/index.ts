@@ -39,6 +39,8 @@ export {
 export { _guiList } from './shortcuts/list/guiList.impl';
 export { _guiMultiDropdown } from './shortcuts/multi-dropdown/guiMultiDropdown.impl';
 export { _guiMultiList } from './shortcuts/multi-list/guiMultiList.impl';
+export { _guiFileUpload } from './shortcuts/file-upload/guiFileUpload.impl';
+export { _guiMultiFileUpload } from './shortcuts/multi-file-upload/guiMultiFileUpload.impl';
 export { _guiMarkdown } from './shortcuts/markdown/guiMarkdown.impl';
 export { _guiMarkdownText } from './shortcuts/markdown-text/guiMarkdownText.impl';
 export { _guiPassword } from './shortcuts/password/guiPassword.impl';
@@ -94,6 +96,11 @@ export { _gslLayoutByUid, _gslLayouts } from './shortcuts/layouts/register';
 export { _gslListByUid, _gslLists } from './shortcuts/list/register';
 export { _gslMultiDropdownByUid, _gslMultiDropdowns } from './shortcuts/multi-dropdown/register';
 export { _gslMultiListByUid, _gslMultiLists } from './shortcuts/multi-list/register';
+export { _gslFileUploadByUid, _gslFileUploads } from './shortcuts/file-upload/register';
+export {
+  _gslMultiFileUploadByUid,
+  _gslMultiFileUploads,
+} from './shortcuts/multi-file-upload/register';
 export { _gslMarkdownByUid, _gslMarkdowns } from './shortcuts/markdown/register';
 export { _gslMarkdownTextByUid, _gslMarkdownTexts } from './shortcuts/markdown-text/register';
 export { _gslPasswordByUid, _gslPasswords } from './shortcuts/password/register';
@@ -228,6 +235,14 @@ export type {
   GslMultiListConfig,
   MultiListDecorator,
 } from './shortcuts/multi-list/multi-list.domain';
+export type {
+  FileUploadDecorator,
+  GslFileUploadConfig,
+} from './shortcuts/file-upload/file-upload.domain';
+export type {
+  GslMultiFileUploadConfig,
+  MultiFileUploadDecorator,
+} from './shortcuts/multi-file-upload/multi-file-upload.domain';
 export type { GslMarkdownConfig, MarkdownDecorator } from './shortcuts/markdown/markdown.domain';
 export type { GslPasswordConfig, PasswordDecorator } from './shortcuts/password/password.domain';
 export type {

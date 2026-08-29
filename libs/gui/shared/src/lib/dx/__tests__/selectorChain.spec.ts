@@ -44,6 +44,10 @@ const SELECTOR_TYPE_BY_METHOD: Record<string, string> = {
   multiDropdownByUid: 'MULTI_DROPDOWN',
   multiLists: 'MULTI_LIST',
   multiListByUid: 'MULTI_LIST',
+  fileUploads: 'FILE_UPLOAD',
+  fileUploadByUid: 'FILE_UPLOAD',
+  multiFileUploads: 'MULTI_FILE_UPLOAD',
+  multiFileUploadByUid: 'MULTI_FILE_UPLOAD',
   calendars: 'CALENDAR',
   calendarByUid: 'CALENDAR',
   dateTimeCalendars: 'DATE_TIME_CALENDAR',
@@ -130,7 +134,7 @@ describe('gui.selectors method surface', () => {
     const byUidNames = Object.keys(SELECTOR_TYPE_BY_METHOD).filter((name) =>
       name.endsWith('ByUid'),
     );
-    expect(byUidNames.length).toBe(39 + 1); // 39 widget pairs plus inputByUid
+    expect(byUidNames.length).toBe(41 + 1); // 41 widget pairs plus inputByUid
     for (const methodName of byUidNames) {
       const leaf = buildLeaf(gui.selectors, methodName);
       expect(leaf.matcher({ uid: 'probe-uid' }), methodName).toBe(true);

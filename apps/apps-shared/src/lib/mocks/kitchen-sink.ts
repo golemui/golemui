@@ -38,6 +38,7 @@ import dropdownChunk from './tabs/dropdown.form-chunk.json';
 import listChunk from './tabs/list.form-chunk.json';
 import repeaterChunk from './tabs/repeater.form-chunk.json';
 import tagsChunk from './tabs/tags.form-chunk.json';
+import fileuploadChunk from './tabs/fileupload.form-chunk.json';
 
 // Chunk modules keyed by the exact $ref strings used in kitchen-sink.form.json.
 // The resolver throws on a ref with no entry here, and kitchen-sink.equivalence.spec.ts
@@ -78,6 +79,7 @@ const chunks: Record<string, unknown> = {
   './tabs/dropdown.form-chunk.json': dropdownChunk,
   './tabs/list.form-chunk.json': listChunk,
   './tabs/repeater.form-chunk.json': repeaterChunk,
+  './tabs/fileupload.form-chunk.json': fileuploadChunk,
   './tabs/tags.form-chunk.json': tagsChunk,
 };
 
@@ -93,6 +95,45 @@ const data = {
     defaultListRenderer: 0,
     disabledList: 0,
     customItemRenderer: 'one',
+  },
+  fileUploads: {
+    title: '',
+    preloaded: {
+      id: 'srv-contract',
+      name: 'contract.pdf',
+      size: 204800,
+      type: 'application/pdf',
+      status: 'uploaded',
+      data: { url: 'https://cdn.example.com/uploads/contract.pdf' },
+    },
+    multiPreloaded: [
+      {
+        id: 'srv-photo-1',
+        name: 'front.jpg',
+        size: 512000,
+        type: 'image/jpeg',
+        status: 'uploaded',
+        data: { url: 'https://cdn.example.com/uploads/front.jpg' },
+      },
+      {
+        id: 'srv-photo-2',
+        name: 'back.jpg',
+        size: 498000,
+        type: 'image/jpeg',
+        status: 'uploaded',
+        data: { url: 'https://cdn.example.com/uploads/back.jpg' },
+      },
+    ],
+    readonly: [
+      {
+        id: 'srv-frozen',
+        name: 'frozen.txt',
+        size: 12,
+        type: 'text/plain',
+        status: 'uploaded',
+        data: { url: 'https://cdn.example.com/uploads/frozen.txt' },
+      },
+    ],
   },
   selects: {
     greeting: 'bye',

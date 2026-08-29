@@ -91,6 +91,29 @@ export interface ArrayValidator extends BaseValidator {
   items?: Validator;
 }
 
+const fileStatuses = ['uploading', 'uploaded', 'error'] as const;
+
+/**
+ * Validates the envelope stored by the `fileUpload` widget (`FileItem | null`).
+ * `blockPendingUploads` (default `true`) fails while the item's status is not
+ * `uploaded`, so an in-progress or failed upload cannot be submitted.
+ */
+export interface FileValidator extends BaseValidator {
+  type: 'file';
+  blockPendingUploads?: boolean;
+}
+
+/**
+ * Validates the envelope array stored by the `multiFileUpload` widget
+ * (`FileItem[]`). `required` means non-empty, like `array`.
+ */
+export interface FilesValidator extends BaseValidator {
+  type: 'files';
+  minItems?: number;
+  maxItems?: number;
+  blockPendingUploads?: boolean;
+}
+
 export interface CustomValidator {
   type: 'custom';
   required?: boolean;
@@ -107,6 +130,8 @@ export type Validator =
   | NumberValidator
   | BooleanValidator
   | ArrayValidator
+  | FileValidator
+  | FilesValidator
   | CustomValidator;
 
 // --------------------------------
@@ -132,6 +157,12 @@ export const initValidators =
       case 'array':
         return fromArrayValidator(validator, localization);
 
+      case 'file':
+        return fromFileValidator(validator, localization);
+
+      case 'files':
+        return fromFilesValidator(validator, localization);
+
       case 'custom': {
         if (!customValidators) {
           throw new Error(
@@ -144,7 +175,7 @@ export const initValidators =
       default: {
         const unknownValidator: never = validator;
         throw new Error(
-          `Unknown validator config: ${JSON.stringify(unknownValidator)}. The "type" property must be one of: "string", "number", "integer", "boolean", "array", "custom".`,
+          `Unknown validator config: ${JSON.stringify(unknownValidator)}. The "type" property must be one of: "string", "number", "integer", "boolean", "array", "file", "files", "custom".`,
         );
       }
     }
@@ -351,6 +382,112 @@ function fromArrayValidator(v: ArrayValidator, localization?: I18nTranslator) {
         msg
           ? refine((val) => (val as unknown[]).length <= threshold, { error: msg })
           : maxLength(threshold),
+      );
+    }
+
+    return schema;
+  });
+}
+
+const DEFAULT_REQUIRED_MESSAGE = 'This field is required';
+const DEFAULT_INVALID_FILE_MESSAGE = 'Invalid file';
+const DEFAULT_PENDING_UPLOADS_MESSAGE = 'Wait for the upload to finish';
+
+/**
+ * Structural check of one `FileItem` envelope (see `@golemui/gui-shared`). The
+ * validators lib sits below gui-shared, so the shape is mirrored here rather
+ * than imported.
+ */
+function isFileItem(val: unknown): val is { status: (typeof fileStatuses)[number] } {
+  if (val === null || typeof val !== 'object') {
+    return false;
+  }
+  const item = val as Record<string, unknown>;
+  return (
+    typeof item['id'] === 'string' &&
+    typeof item['name'] === 'string' &&
+    typeof item['size'] === 'number' &&
+    typeof item['type'] === 'string' &&
+    typeof item['status'] === 'string' &&
+    (fileStatuses as readonly string[]).includes(item['status'])
+  );
+}
+
+// Deliberately not wrapped in `withOptional`: the widget writes `null` when the
+// file is removed and zod's `optional()` only admits `undefined`.
+function fromFileValidator(v: FileValidator, localization?: I18nTranslator) {
+  const invalidMsg =
+    resolveMessage(v.messages?.['invalid'], localization) ?? DEFAULT_INVALID_FILE_MESSAGE;
+  const requiredMsg =
+    resolveMessage(v.messages?.['required'], localization) ?? DEFAULT_REQUIRED_MESSAGE;
+  const pendingMsg =
+    resolveMessage(v.messages?.['pendingUploads'], localization) ?? DEFAULT_PENDING_UPLOADS_MESSAGE;
+  const blockPending = v.blockPendingUploads !== false;
+
+  return any().check(
+    superRefine((val, ctx) => {
+      if (val === null || val === undefined) {
+        if (v.required === true) {
+          ctx.addIssue({ code: 'custom', message: requiredMsg });
+        }
+        return;
+      }
+      if (!isFileItem(val)) {
+        ctx.addIssue({ code: 'custom', message: invalidMsg });
+        return;
+      }
+      if (blockPending && val.status !== 'uploaded') {
+        ctx.addIssue({ code: 'custom', message: pendingMsg });
+      }
+    }),
+  );
+}
+
+function fromFilesValidator(v: FilesValidator, localization?: I18nTranslator) {
+  return withOptional(v, (v) => {
+    const invalidMsg =
+      resolveMessage(v.messages?.['invalid'], localization) ?? DEFAULT_INVALID_FILE_MESSAGE;
+    let schema = array(any(), invalidMsg).check(
+      refine((val) => (val as unknown[]).every(isFileItem), { error: invalidMsg }),
+    );
+
+    if (v.required === true) {
+      const msg =
+        resolveMessage(v.messages?.['required'], localization) ?? DEFAULT_REQUIRED_MESSAGE;
+      schema = schema.check(refine((val) => (val as unknown[]).length > 0, { error: msg }));
+    }
+
+    if (typeof v.minItems === 'number') {
+      const msg = resolveMessage(v.messages?.['minItems'], localization);
+      const threshold = v.minItems;
+      schema = schema.check(
+        msg
+          ? refine((val) => (val as unknown[]).length >= threshold, { error: msg })
+          : minLength(threshold),
+      );
+    }
+
+    if (typeof v.maxItems === 'number') {
+      const msg = resolveMessage(v.messages?.['maxItems'], localization);
+      const threshold = v.maxItems;
+      schema = schema.check(
+        msg
+          ? refine((val) => (val as unknown[]).length <= threshold, { error: msg })
+          : maxLength(threshold),
+      );
+    }
+
+    if (v.blockPendingUploads !== false) {
+      const msg =
+        resolveMessage(v.messages?.['pendingUploads'], localization) ??
+        DEFAULT_PENDING_UPLOADS_MESSAGE;
+      // Foreign items are already reported by the `invalid` refinement above.
+      schema = schema.check(
+        refine(
+          (val) =>
+            (val as unknown[]).every((item) => !isFileItem(item) || item.status === 'uploaded'),
+          { error: msg },
+        ),
       );
     }
 

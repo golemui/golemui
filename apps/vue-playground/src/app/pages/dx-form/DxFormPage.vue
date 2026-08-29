@@ -1,5 +1,10 @@
 <script setup lang="ts">
-import { buildKitchenSinkDx, initializeI18n, onFormEvent } from '@golemui/apps-shared';
+import {
+  buildKitchenSinkDx,
+  initializeI18n,
+  mockUploadService,
+  onFormEvent,
+} from '@golemui/apps-shared';
 import type { FormHealth } from '@golemui/core';
 import type { GuiFormInitConfig } from '@golemui/gui-shared';
 import { GuiForm } from '@golemui/gui-vue';
@@ -26,6 +31,7 @@ const ks = buildKitchenSinkDx({
     markdown: {
       parse: (md: string) => snarkdown(md),
     },
+    uploadService: mockUploadService,
   },
   // Vue-flavored Renderer example — the `render` function is called with the
   // form API and returns a VNode produced by Vue's `h()`.

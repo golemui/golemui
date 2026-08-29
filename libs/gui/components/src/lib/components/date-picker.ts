@@ -10,6 +10,7 @@ import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
 import { GUIPopupController } from '../controllers/popup.controller';
 import { dateBoundsError } from '../utils/date';
 import { addErrors, addIcon, addLabel, addPickerPanel } from '../utils/templates';
+import { CARET_DOWN_PATH } from '../utils/icons';
 
 export class GuiDatePicker extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
@@ -198,9 +199,7 @@ export class GuiDatePicker extends LitElement {
             viewBox="0 0 256 256"
             aria-hidden="true"
           >
-            <path
-              d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"
-            ></path>
+            <path d=${CARET_DOWN_PATH}></path>
           </svg>
         </button>
 

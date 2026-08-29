@@ -98,6 +98,16 @@
       "import": "./lib/components/markdown-text.js",
       "require": "./lib/components/markdown-text.umd.cjs"
     },
+    "./file-upload": {
+      "types": "./lib/components/file-upload.d.ts",
+      "import": "./lib/components/file-upload.js",
+      "require": "./lib/components/file-upload.umd.cjs"
+    },
+    "./multi-file-upload": {
+      "types": "./lib/components/multi-file-upload.d.ts",
+      "import": "./lib/components/multi-file-upload.js",
+      "require": "./lib/components/multi-file-upload.umd.cjs"
+    },
     "./multi-list": {
       "types": "./lib/components/multi-list.d.ts",
       "import": "./lib/components/multi-list.js",

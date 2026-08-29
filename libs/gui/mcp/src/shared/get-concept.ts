@@ -642,7 +642,9 @@ const VALIDATION_CONCEPT: GetConceptResult = {
         'The allowed keys depend on the validator type — string: `invalid`, `required`, `minLength`, ' +
         '`maxLength`, `pattern`, `format`, `enum`, `const`; number/integer: `invalid`, `minimum`, ' +
         '`maximum`, `exclusiveMinimum`, `exclusiveMaximum`, `multipleOf`, `enum`, `const`; ' +
-        'boolean: `invalid`, `const`; array: `invalid`, `required`, `minItems`, `maxItems`. ' +
+        'boolean: `invalid`, `const`; array: `invalid`, `required`, `minItems`, `maxItems`; ' +
+        'file (the `fileUpload` envelope): `invalid`, `required`, `pendingUploads`; files (the ' +
+        '`multiFileUpload` array): `invalid`, `required`, `minItems`, `maxItems`, `pendingUploads`. ' +
         'The special key `invalid` customizes the base type check (wrong type, or `undefined`/`null` ' +
         'on a required field). Note that only string and array validators have a `required` message ' +
         'key — they are the only types with a present-but-empty state (`""` / `[]`); for ' +
@@ -908,6 +910,72 @@ const ICONS_CONCEPT: GetConceptResult = {
 };
 
 // ---------------------------------------------------------------------------
+// Host services concept
+// ---------------------------------------------------------------------------
+
+const HOST_SERVICES_CONCEPT: GetConceptResult = {
+  concept: 'host-services',
+  summary:
+    'Some widgets need a service the library deliberately does not ship: a markdown parser, or an ' +
+    'HTTP transport for file uploads. The host application injects them through the `dependencies` ' +
+    'entry of the form init config (a sibling of `functions`). The object is passed by reference to ' +
+    'the widgets that read it and never enters the form state — so it may hold async functions and ' +
+    'closures over tokens. Known keys: `markdown` (`{ parse(markdown) => html }`, read by the ' +
+    '`markdown` and `markdownText` widgets) and `uploadService` (read by `fileUpload` and ' +
+    '`multiFileUpload`). This is unrelated to the "dependencies between fields" feature (a field ' +
+    "reacting to another field's value), which is expressed with reactive expressions.",
+
+  patterns: [
+    {
+      name: 'Inject an upload transport for the file upload widgets',
+      description:
+        '`uploadService.upload(file, ctx)` is called as soon as a file is picked; whatever it ' +
+        'resolves with is stored verbatim in the field value as `item.data` (a URL, an id, an ' +
+        'object). `ctx` carries the item `id`, the form `path`, an `onProgress(percentage)` ' +
+        'callback for the progress bar, and an `AbortSignal` that fires when the user cancels. ' +
+        'The optional `remove(item)` is awaited when the user removes an uploaded file, before the ' +
+        'value is cleared; if it rejects the file stays with the error and a retry. ' +
+        'Rejecting `upload` marks the file as failed (the message becomes `item.error`).',
+      example: {
+        // Host side (TypeScript), not part of the form definition:
+        // const uploadService = {
+        //   async upload(file, { id, path, onProgress, signal }) {
+        //     const body = new FormData(); body.append('file', file);
+        //     const res = await fetch(`/api/uploads?field=${path}`, { method: 'POST', body, signal });
+        //     if (!res.ok) throw new Error('Upload rejected'); return res.json(); // → item.data
+        //   },
+        //   async remove(item) { await fetch(`/api/uploads/${item.data.key}`, { method: 'DELETE' }); },
+        // };
+        // <gui-form .config=${{ formDef, dependencies: { uploadService, markdown } }}>
+        $schema: FORM_SCHEMA_URL,
+        form: [
+          {
+            kind: 'input',
+            type: 'fileUpload',
+            path: 'cv',
+            label: 'CV',
+            validator: { type: 'file', required: true },
+          },
+        ],
+      },
+    },
+  ],
+
+  rules: [
+    'Keep the `dependencies` object reference stable (module level or memoized): the form ' +
+      're-initializes whenever its `config` identity changes, and an inline object literal in ' +
+      'JSX or a template is a new identity on every render.',
+    'A widget that needs a missing service does not break the form: `fileUpload` renders disabled ' +
+      'with an inline "not configured" error and logs to the console; `markdown` renders blank.',
+    'Never put a `File` object in the form value — the value is the plain envelope the widget ' +
+      'builds from the `upload` result; form events and submit payloads deep-clone data, which ' +
+      'turns non-plain objects into `{}`.',
+    '`dependencies` is merged shallowly: widget-set defaults, then the DX `formConfig.dependencies`, ' +
+      'then the init config `dependencies`; the last one wins per key.',
+  ],
+};
+
+// ---------------------------------------------------------------------------
 // Concept registry
 // ---------------------------------------------------------------------------
 
@@ -917,6 +985,7 @@ const CONCEPTS: Record<string, GetConceptResult> = {
   'reactive-scope': REACTIVE_SCOPE_CONCEPT,
   validation: VALIDATION_CONCEPT,
   icons: ICONS_CONCEPT,
+  'host-services': HOST_SERVICES_CONCEPT,
 };
 
 export function getConcept(input: GetConceptInput): GetConceptResult {

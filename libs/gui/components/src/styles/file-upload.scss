@@ -1,0 +1,273 @@
+@use 'spinner' as *;
+
+gui-file-upload,
+gui-multi-file-upload {
+  display: block;
+
+  .gui-widget .gui-file-upload__box {
+    display: flex;
+    align-items: center;
+    position: relative;
+    gap: var(--gui-space-2);
+    overflow: hidden;
+    container-type: inline-size;
+    container-name: gui-pills-widget;
+
+    &--icon {
+      padding-inline-start: 2.5rem;
+
+      & > .gui-widget-icon {
+        inset-inline-start: 0;
+        border-inline-end: 1px solid var(--gui-border-default);
+      }
+    }
+
+    &--dragover {
+      border-color: var(--gui-border-focus);
+      border-style: dashed;
+      box-shadow: var(--gui-shadow-focus);
+    }
+
+    &--disabled {
+      background-color: var(--gui-bg-disabled);
+      color: var(--gui-text-disabled);
+      pointer-events: none;
+    }
+
+    &:has(.gui-file-upload__button:focus-visible),
+    &:has(.gui-file-upload__action:focus-visible),
+    &:has(.gui-file-upload__retry:focus-visible),
+    &:has(.gui-pills__pill:focus),
+    &:has(.gui-pills__count:focus) {
+      outline: 0;
+      border-color: var(--gui-border-focus);
+      box-shadow: var(--gui-shadow-focus);
+    }
+
+    &[aria-invalid='true'] {
+      border-color: var(--gui-intent-error);
+
+      &:has(.gui-file-upload__button:focus-visible),
+      &:has(.gui-file-upload__action:focus-visible),
+      &:has(.gui-file-upload__retry:focus-visible),
+      &:has(.gui-pills__pill:focus),
+      &:has(.gui-pills__count:focus) {
+        outline: 0;
+        border-color: var(--gui-intent-error);
+        box-shadow: var(--gui-shadow-focus-error);
+      }
+    }
+  }
+
+  .gui-file-upload__button {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--gui-space-2);
+    flex-shrink: 0;
+    height: calc(var(--gui-widget-size) - 0.75rem);
+    margin-inline-start: var(--gui-space-1);
+    padding: 0 var(--gui-space-3);
+    border: 1px dashed var(--gui-border-default);
+    border-radius: var(--gui-radius);
+    background: transparent;
+    color: var(--gui-text-default);
+    font: inherit;
+    font-size: var(--gui-font-sm);
+    white-space: nowrap;
+    cursor: pointer;
+
+    &:hover {
+      background: var(--gui-bg-default);
+      border-color: var(--gui-border-focus);
+    }
+
+    &:focus-visible {
+      outline: 0;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+    }
+  }
+
+  .gui-file-upload__pills {
+    display: flex;
+    align-items: center;
+    flex: 0 1 auto;
+    min-width: 0;
+    gap: var(--gui-space-2);
+    border-inline-end: 1px solid var(--gui-border-default);
+  }
+
+  .gui-file-upload__bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex: 1 1 auto;
+    min-width: 0;
+    height: 100%;
+    gap: var(--gui-space-2);
+    padding: 0 var(--gui-space-2);
+  }
+
+  .gui-file-upload__fill {
+    position: absolute;
+    inset: 0;
+    width: var(--gui-upload-pct, 0%);
+    background: var(--gui-intent-primary);
+    transition: width var(--gui-transition-normal, 0.2s) linear;
+    pointer-events: none;
+  }
+
+  .gui-file-upload__text {
+    position: relative;
+    flex: 1 1 auto;
+    min-width: 0;
+    height: 100%;
+  }
+
+  .gui-file-upload__text-base,
+  .gui-file-upload__text-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--gui-space-2);
+    min-width: 0;
+  }
+
+  .gui-file-upload__text-overlay {
+    color: var(--gui-intent-primary-text);
+    clip-path: inset(0 calc(100% - var(--gui-upload-pct, 0%)) 0 0);
+    pointer-events: none;
+  }
+
+  .gui-file-upload__name {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .gui-file-upload__pct,
+  .gui-file-upload__error {
+    flex-shrink: 0;
+    font-size: var(--gui-font-xs);
+    white-space: nowrap;
+  }
+
+  .gui-file-upload__error {
+    color: var(--gui-intent-error);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 50%;
+  }
+
+  .gui-file-upload__text-overlay .gui-file-upload__error {
+    color: inherit;
+  }
+
+  .gui-file-upload__bar--removing {
+    opacity: 0.6;
+  }
+
+  .gui-file-upload__retry {
+    position: relative;
+    flex-shrink: 0;
+    padding: 0 var(--gui-space-2);
+    height: calc(var(--gui-widget-size) - 1rem);
+    border: 1px solid var(--gui-border-default);
+    border-radius: var(--gui-radius);
+    background: var(--gui-bg-surface);
+    color: var(--gui-text-default);
+    font: inherit;
+    font-size: var(--gui-font-xs);
+    cursor: pointer;
+
+    &:hover {
+      background: var(--gui-bg-default);
+    }
+
+    &:focus-visible {
+      outline: 0;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  .gui-file-upload__action {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 1.5rem;
+    height: 1.5rem;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: var(--gui-bg-surface);
+    color: var(--gui-text-default);
+    cursor: pointer;
+
+    &:hover {
+      color: var(--gui-intent-error);
+    }
+
+    &:focus-visible {
+      outline: 0;
+      box-shadow: var(--gui-shadow-focus);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    // Removal in flight: the spinner replaces the icon and the button is
+    // disabled, but it should read as "working", not as "unavailable".
+    &--busy:disabled {
+      opacity: 1;
+      cursor: progress;
+    }
+  }
+
+  .gui-file-upload__spinner {
+    @include gui-spinner;
+  }
+
+  .gui-file-upload__service-error {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 0 var(--gui-space-2);
+    color: var(--gui-intent-error);
+    font-size: var(--gui-font-xs);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  gui-file-upload .gui-file-upload__fill,
+  gui-multi-file-upload .gui-file-upload__fill {
+    transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  gui-file-upload .gui-file-upload__fill,
+  gui-multi-file-upload .gui-file-upload__fill {
+    background: Highlight;
+  }
+
+  gui-file-upload .gui-file-upload__text-overlay,
+  gui-multi-file-upload .gui-file-upload__text-overlay {
+    color: HighlightText;
+  }
+}
