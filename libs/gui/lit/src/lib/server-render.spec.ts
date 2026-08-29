@@ -35,12 +35,13 @@ const config: FormInitConfig<Type<WithWidget>> = {
       children: [
         { kind: 'input', type: 'textinput', path: 'firstName', label: 'First name' },
         { kind: 'input', type: 'textinput', path: 'lastName', label: 'Last name' },
+        { kind: 'input', type: 'number', path: 'seats', label: 'Seats' },
         { kind: 'action', type: 'button', label: 'Create account', action: 'submit' },
       ],
     },
   },
   widgetLoaders,
-  data: { firstName: 'Ada', lastName: 'Lovelace' },
+  data: { firstName: 'Ada', lastName: 'Lovelace', seats: 3 },
 };
 
 describe('server rendering the gui widget set in plain node', () => {
@@ -69,6 +70,14 @@ describe('server rendering the gui widget set in plain node', () => {
     expect(markup).toMatch(/<input[^>]*id="lastName-textinput"[^>]*value="Lovelace"/);
     expect(markup).toContain('Create account');
     expect(markup).toContain('gui-flex__widget');
+  });
+
+  it('renders the number widget, which reads the DOM in render()', () => {
+    // It looks the input up with querySelector to measure it, which the element shim on
+    // the server does not implement.
+    expect(markup).toMatch(/<gui-number-input[^>]*class="[^"]*gui-number[^"]*gui-field/);
+    expect(markup).toContain('Seats');
+    expect(markup).toMatch(/<input[^>]*type="number"[^>]*id="seats-number"/);
   });
 
   it('emits inert light DOM: defer-hydration everywhere, no shadow root wrappers', () => {
