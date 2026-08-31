@@ -140,6 +140,45 @@ const EXAMPLES: Record<string, Record<string, unknown>> = {
       items: ['Cheese', 'Bacon', 'Mushrooms'],
     },
   },
+  fileUpload: {
+    kind: 'input',
+    type: 'fileUpload',
+    path: 'cv',
+    label: 'CV',
+    props: {
+      accept: ['application/pdf', '.docx'],
+      maxSize: 5242880,
+      buttonLabel: 'Upload CV',
+      hint: 'PDF or Word, 5 MB max',
+    },
+    validator: {
+      type: 'file',
+      required: true,
+      messages: {
+        required: 'Please upload your CV',
+        pendingUploads: 'Wait for the upload to finish',
+      },
+    },
+  },
+  multiFileUpload: {
+    kind: 'input',
+    type: 'multiFileUpload',
+    path: 'attachments',
+    label: 'Attachments',
+    props: {
+      accept: ['image/*'],
+      buttonLabel: 'Upload images',
+    },
+    validator: {
+      type: 'files',
+      required: true,
+      maxItems: 3,
+      messages: {
+        required: 'Add at least one image',
+        maxItems: 'No more than 3 images',
+      },
+    },
+  },
   select: {
     kind: 'input',
     type: 'select',
@@ -276,6 +315,18 @@ const NOTES: Record<string, string[]> = {
     'Use `tags` for free-form arrays of primitive values (typically `string[]`) — e.g. keywords, email lists, hashtags. Backing data is `string[]`. For arrays of structured objects, use `repeater` instead.',
     '`props.separators` controls which keys/characters commit a new tag. Defaults emit on `Enter` and `,`; you can also include `"Tab"` or `"blur"`. `props.trim` strips whitespace from each tag; `props.allowDuplicates: false` rejects repeats.',
     'Validate with an `arrayValidator`: `{ type: "array", minItems, maxItems, uniqueItems }`. Entry is never silently blocked — cap the tag count with `maxItems` so the user is told why.',
+  ],
+  fileUpload: [
+    'Single-file upload rendered as a one-line input: the box is the drop target and holds the upload button; while the file uploads the box itself becomes the progress bar; once done it shows the file name with a remove button.',
+    'REQUIRES a host transport in the form init config: `dependencies: { uploadService: { upload(file, { id, path, onProgress, signal }) => Promise<unknown>, remove?(item) => Promise<void> } }` (a sibling of `dependencies.markdown`). Keep the object reference stable — a new config identity re-initializes the form. Without it the widget renders disabled with an inline error. Call `get_concept({ concept: "host-services" })`.',
+    'The value is a plain envelope, never the `File`: `{ id, name, size, type, status: "uploading" | "uploaded" | "error", error?, data? }` where `data` is exactly what `upload` resolved with. Preload from the server with `status: "uploaded"`. Removing awaits `uploadService.remove(item)` (when provided) before clearing.',
+    'Validate with a `fileValidator`: `{ type: "file", required, blockPendingUploads }`. `blockPendingUploads` defaults to true and fails while the file is uploading or failed, so an unfinished upload cannot be submitted. Message keys: `invalid`, `required`, `pendingUploads`.',
+    '`props.accept` (`[".pdf", "image/*"]`) and `props.maxSize` (bytes) are checked BEFORE uploading; a refused or failed file stays in the box with the reason plus retry/remove buttons — never dropped silently. Text props: `buttonLabel`, `acceptMessage`, `maxSizeMessage`, `missingServiceMessage`, `removeAriaLabel`, `cancelAriaLabel`, `retryLabel`, `uploadedMessage`, `removedMessage`, `failedMessage` (`{name}` token).',
+  ],
+  multiFileUpload: [
+    'The array variant of `fileUpload`: same box, button, progress bar and `uploadService`. Files upload ONE AT A TIME; every finished file becomes a pill inside the box and the value is an array of envelopes.',
+    'A failed file pauses the queue until it is retried or removed. The count is never silently blocked — cap it with `maxItems` so the user is told why.',
+    'Validate with a `filesValidator`: `{ type: "files", required, minItems, maxItems, blockPendingUploads }`. Message keys: `invalid`, `required`, `minItems`, `maxItems`, `pendingUploads`.',
   ],
   dropdown: [
     'PREFER `select` for plain label/value lists (countries, plans, sizes). `dropdown` is for richer item shapes: when each item has extra fields (icons, flags, metadata) that an `itemRenderer` or `labelField`/`valueField` can use.',

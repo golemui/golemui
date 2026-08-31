@@ -9,10 +9,12 @@ import type { GuiDate } from '@golemui/gui-components/date-input';
 import type { GuiDatePicker } from '@golemui/gui-components/date-picker';
 import type { GuiDateTimePicker } from '@golemui/gui-components/date-time-picker';
 import type { GuiErrors } from '@golemui/gui-components/errors';
+import type { GuiFileUpload } from '@golemui/gui-components/file-upload';
 import type { GuiLabel } from '@golemui/gui-components/label';
 import type { GuiList } from '@golemui/gui-components/list';
 import type { GuiMarkdown } from '@golemui/gui-components/markdown';
 import type { GuiMarkdownText } from '@golemui/gui-components/markdown-text';
+import type { GuiMultiFileUpload } from '@golemui/gui-components/multi-file-upload';
 import type { GuiNumber } from '@golemui/gui-components/number';
 import type { GuiPassword } from '@golemui/gui-components/password';
 import type { GuiPills } from '@golemui/gui-components/pills';
@@ -68,6 +70,15 @@ declare module 'react' {
         Partial<GuiLabel>;
       'gui-list': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<Omit<GuiList, 'children'>>;
+
+      'gui-file-upload': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
+        Partial<GuiFileUpload>;
+
+      'gui-multi-file-upload': React.DetailedHTMLProps<
+        React.HTMLAttributes<HTMLElement>,
+        HTMLElement
+      > &
+        Partial<GuiMultiFileUpload>;
 
       'gui-markdown': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiMarkdown>;

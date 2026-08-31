@@ -138,7 +138,7 @@ function commonNote(fw: DxFramework = 'react'): string {
     'content; use `display` for that. ' +
     'VALIDATOR `type` — one rule, three cases (so you never have to guess): (1) choice widgets ' +
     "(`dropdown`, `radiogroup`, `select`) REQUIRE an explicit `type`: `validator: { type: 'string', required: true }`. " +
-    "(2) `repeater` (array) validators auto-supply `type: 'array'` — supply only the rules, e.g. " +
+    '(2) `repeater` (array), `tags` (array), `fileUpload` (file) and `multiFileUpload` (files) validators auto-supply their `type` — supply only the rules, e.g. ' +
     '`validator: { required: true, minItems: 1 }`, never `type`. (3) everything else (text, number, date) takes the ' +
     'loose validator with NO `type`: `validator: { required: true }`. ' +
     'EVENT HANDLERS — `onChange`/`onLoad`/`onFilter`/`onBlur` (inputs/layouts) and `onClick` (actions) are ' +
@@ -553,6 +553,34 @@ const INPUTS: DxSpec[] = [
     notes: [
       'Multi-select scrolling list: the value is an **array** of the selected item values; Enter/Space and clicks toggle rows on and off.',
       "Selection is never silently blocked; cap it with an array validator — `{ type: 'array', maxItems }` — so the user is told why.",
+    ],
+  },
+  {
+    factory: 'fileUpload',
+    namespace: 'inputs',
+    docSlug: 'file-upload',
+    call: 'gui.inputs.fileUpload(path, { label?, accept?, maxSize?, buttonLabel?, validator? })',
+    example:
+      "gui.inputs.fileUpload('cv', { label: 'CV', accept: ['application/pdf', '.docx'], maxSize: 5 * 1024 * 1024, validator: { required: true } })",
+    notes: [
+      'Single-file upload rendered as a one-line input: the box is the drop target and holds the upload button; while the file uploads the box itself becomes the progress bar, and once done it shows the file name with a remove button.',
+      'REQUIRES a host transport: pass `dependencies: { uploadService: { upload(file, { id, path, onProgress, signal }) => Promise<unknown>, remove?(item) => Promise<void> } }` in the init config (next to `markdown`). Keep the object reference stable (module level) — a new `config` identity re-initializes the form. Without it the widget renders disabled with an inline error.',
+      'The value is a plain envelope, never the `File`: `{ id, name, size, type, status: "uploading" | "uploaded" | "error", error?, data? }` where `data` is exactly what `upload` resolved with. Preload a value from the server with `status: "uploaded"`. Removing awaits `uploadService.remove(item)` (when provided) before clearing.',
+      "The validator auto-supplies `type: 'file'`. `blockPendingUploads` (default true) fails while the file is still uploading or failed, so a half-finished upload can never be submitted; message keys: `invalid`, `required`, `pendingUploads`.",
+      '`accept` (`[".pdf", "image/*", "application/pdf"]`) and `maxSize` (bytes) are checked BEFORE uploading; a refused or failed file stays in the box with the reason, a retry and a remove button — it is never dropped silently. Messages: `acceptMessage`, `maxSizeMessage`; accessible names: `removeAriaLabel`, `cancelAriaLabel`, `retryLabel` (`{name}` token).',
+    ],
+  },
+  {
+    factory: 'multiFileUpload',
+    namespace: 'inputs',
+    docSlug: 'multi-file-upload',
+    call: 'gui.inputs.multiFileUpload(path, { label?, accept?, maxSize?, buttonLabel?, validator? })',
+    example:
+      "gui.inputs.multiFileUpload('attachments', { label: 'Attachments', accept: ['image/*'], validator: { required: true, maxItems: 3 } })",
+    notes: [
+      'The array variant of `fileUpload` (same box, button, progress bar and `uploadService`). Files upload ONE AT A TIME; every finished file becomes a pill inside the box and the value is an array of envelopes.',
+      'A failed file pauses the queue until it is retried or removed. The count is never silently blocked: cap it with `maxItems` so the user is told why.',
+      "The validator auto-supplies `type: 'files'`; rules: `required` (non-empty), `minItems`, `maxItems`, `blockPendingUploads` (default true); message keys: `invalid`, `required`, `minItems`, `maxItems`, `pendingUploads`.",
     ],
   },
   {

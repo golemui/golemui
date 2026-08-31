@@ -6,6 +6,7 @@ import {
   commonLanguages,
   initializeI18n,
   kitchenSink,
+  mockUploadService,
   onFormEvent,
 } from '@golemui/apps-shared';
 import {
@@ -51,7 +52,10 @@ export class AppFormPage {
   }
 
   private loadFormDef() {
-    const deps: Dependencies = { markdown: { parse: (md: string) => snarkdown(md) } };
+    const deps: Dependencies = {
+      markdown: { parse: (md: string) => snarkdown(md) },
+      uploadService: mockUploadService,
+    };
     this.config = {
       formDef: mock.form,
       data: mock.data,

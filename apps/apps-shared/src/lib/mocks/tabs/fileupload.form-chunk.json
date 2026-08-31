@@ -1,0 +1,90 @@
+{
+  "$schema": "../../../../../../libs/gui/schemas/src/lib/layout-widget.schema.json",
+  "uid": "tabFileUpload",
+  "kind": "layout",
+  "type": "flex",
+  "children": [
+    {
+      "kind": "layout",
+      "type": "grid",
+      "props": {
+        "direction": "row"
+      },
+      "children": [
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "fileUploads.title",
+          "label": "Title",
+          "props": {
+            "placeholder": "A text input sharing the row with the upload"
+          }
+        },
+        {
+          "kind": "input",
+          "type": "fileUpload",
+          "path": "fileUploads.basic",
+          "label": "Single file",
+          "props": {
+            "hint": "Names containing \"fail\" fail to upload, so you can try the retry button"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "input",
+      "type": "fileUpload",
+      "path": "fileUploads.pdfOnly",
+      "label": "PDF or Word, 5 MB max",
+      "validator": { "type": "file", "required": true },
+      "props": {
+        "hint": "Other types and bigger files are refused before uploading",
+        "icon": "attach_file",
+        "accept": ["application/pdf", ".doc", ".docx"],
+        "maxSize": 5242880,
+        "buttonLabel": "Upload document"
+      }
+    },
+    {
+      "kind": "input",
+      "type": "fileUpload",
+      "path": "fileUploads.preloaded",
+      "label": "Preloaded file",
+      "props": {
+        "hint": "Restored from the server: only the envelope is in the form data"
+      }
+    },
+    {
+      "kind": "input",
+      "type": "multiFileUpload",
+      "path": "fileUploads.images",
+      "label": "Images, up to 3",
+      "validator": { "type": "files", "required": true, "maxItems": 3 },
+      "props": {
+        "hint": "Files upload one at a time; a fourth file is flagged by the validator, not blocked",
+        "accept": ["image/*"],
+        "buttonLabel": "Upload images"
+      }
+    },
+    {
+      "kind": "input",
+      "type": "multiFileUpload",
+      "path": "fileUploads.multiPreloaded",
+      "label": "Preloaded files"
+    },
+    {
+      "kind": "input",
+      "type": "fileUpload",
+      "path": "fileUploads.disabled",
+      "label": "Disabled upload",
+      "disabled": true
+    },
+    {
+      "kind": "input",
+      "type": "multiFileUpload",
+      "path": "fileUploads.readonly",
+      "label": "Readonly files",
+      "readonly": true
+    }
+  ]
+}

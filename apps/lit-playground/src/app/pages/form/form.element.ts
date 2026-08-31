@@ -3,6 +3,7 @@ import {
   commonLanguages,
   initializeI18n,
   kitchenSink,
+  mockUploadService,
   onFormEvent,
 } from '@golemui/apps-shared';
 import { type FormEvent, type FormHealth, devToolsMiddleware } from '@golemui/core';
@@ -55,6 +56,7 @@ export class FormElement extends LitElement {
         markdown: {
           parse: (md: string) => snarkdown(md),
         },
+        uploadService: mockUploadService,
       },
       functions: mock.functions,
       customWidgetLoaders: {

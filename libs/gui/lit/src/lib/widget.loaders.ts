@@ -32,10 +32,13 @@ export const widgetLoaders: WidgetLoaders<Type<WithWidget>, GolemWidget> = {
   dateTimePicker: async () =>
     (await import('./components/date-time-picker.element')).DateTimePickerElement,
   dropdown: async () => (await import('./components/dropdown.element')).DropdownElement,
+  fileUpload: async () => (await import('./components/file-upload.element')).FileUploadElement,
   list: async () => (await import('./components/list.element')).ListElement,
   markdown: async () => (await import('./components/markdown.element')).MarkdownElement,
   multiDropdown: async () =>
     (await import('./components/multi-dropdown.element')).MultiDropdownElement,
+  multiFileUpload: async () =>
+    (await import('./components/multi-file-upload.element')).MultiFileUploadElement,
   multiList: async () => (await import('./components/multi-list.element')).MultiListElement,
   password: async () => (await import('./components/password.element')).PasswordElement,
   textinput: async () => (await import('./components/textinput.element')).TextinputElement,

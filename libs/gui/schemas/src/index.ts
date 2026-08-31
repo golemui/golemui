@@ -15,9 +15,11 @@ import datepickerSchemaJson from './lib/components/datepicker.schema.json';
 import datetimeinputSchemaJson from './lib/components/datetimeinput.schema.json';
 import datetimepickerSchemaJson from './lib/components/datetimepicker.schema.json';
 import dropdownSchemaJson from './lib/components/dropdown.schema.json';
+import fileuploadSchemaJson from './lib/components/fileupload.schema.json';
 import listSchemaJson from './lib/components/list.schema.json';
 import markdownSchemaJson from './lib/components/markdown.schema.json';
 import multidropdownSchemaJson from './lib/components/multidropdown.schema.json';
+import multifileuploadSchemaJson from './lib/components/multifileupload.schema.json';
 import multilistSchemaJson from './lib/components/multilist.schema.json';
 import numberSchemaJson from './lib/components/number.schema.json';
 import passwordSchemaJson from './lib/components/password.schema.json';
@@ -62,9 +64,11 @@ export const datepickerSchema: Record<string, unknown> = datepickerSchemaJson;
 export const datetimeinputSchema: Record<string, unknown> = datetimeinputSchemaJson;
 export const datetimepickerSchema: Record<string, unknown> = datetimepickerSchemaJson;
 export const dropdownSchema: Record<string, unknown> = dropdownSchemaJson;
+export const fileuploadSchema: Record<string, unknown> = fileuploadSchemaJson;
 export const listSchema: Record<string, unknown> = listSchemaJson;
 export const markdownSchema: Record<string, unknown> = markdownSchemaJson;
 export const multidropdownSchema: Record<string, unknown> = multidropdownSchemaJson;
+export const multifileuploadSchema: Record<string, unknown> = multifileuploadSchemaJson;
 export const multilistSchema: Record<string, unknown> = multilistSchemaJson;
 export const numberSchema: Record<string, unknown> = numberSchemaJson;
 export const passwordSchema: Record<string, unknown> = passwordSchemaJson;
@@ -105,9 +109,11 @@ export const COMPONENT_SCHEMAS_BY_TYPE = {
   dateTimeInput: datetimeinputSchema,
   dateTimePicker: datetimepickerSchema,
   dropdown: dropdownSchema,
+  fileUpload: fileuploadSchema,
   list: listSchema,
   markdown: markdownSchema,
   multiDropdown: multidropdownSchema,
+  multiFileUpload: multifileuploadSchema,
   multiList: multilistSchema,
   number: numberSchema,
   password: passwordSchema,

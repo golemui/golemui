@@ -19,3 +19,4 @@ export * from './software-issue-management';
 export * from './template';
 export * from './tiny';
 export * from './translations';
+export * from './upload-service.mock';

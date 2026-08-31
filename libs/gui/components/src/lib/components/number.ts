@@ -6,6 +6,7 @@ import { addErrors, addLabel, type ControlTemplateData } from '../utils/template
 import { blockNonNumericInput, blockNonNumericKeys, isRealNumber } from '../utils/numeric';
 import type { NumberinputProps } from '@golemui/gui-shared/internals';
 import { styleMap } from 'lit-html/directives/style-map.js';
+import { CARET_DOWN_PATH, CARET_UP_PATH } from '../utils/icons';
 
 export class GuiNumber extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
@@ -124,9 +125,7 @@ export class GuiNumber extends LitElement {
             viewBox="0 0 256 256"
             aria-hidden="true"
           >
-            <path
-              d="M213.66,165.66a8,8,0,0,1-11.32,0L128,91.31,53.66,165.66a8,8,0,0,1-11.32-11.32l80-80a8,8,0,0,1,11.32,0l80,80A8,8,0,0,1,213.66,165.66Z"
-            ></path>
+            <path d=${CARET_UP_PATH}></path>
           </svg>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -135,9 +134,7 @@ export class GuiNumber extends LitElement {
             viewBox="0 0 256 256"
             aria-hidden="true"
           >
-            <path
-              d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"
-            ></path>
+            <path d=${CARET_DOWN_PATH}></path>
           </svg>
         </span>
       </div>

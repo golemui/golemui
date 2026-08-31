@@ -6,7 +6,8 @@ the form component accepts: https://golemui.com/dx/features/overview.md
 
 - **Validators** — declarative rules on a widget (`required`, `minLength`, `format: 'email'`,
   `minimum`, `minItems`, …) with per-rule custom `messages`. Remember the three-case `type`
-  rule (choice widgets need `type`; repeater forbids it; the rest omit it).
+  rule (choice widgets need `type`; repeater/tags/fileUpload/multiFileUpload auto-supply it;
+  the rest omit it).
   https://golemui.com/dx/features/validators.md
 - **States** — named reactive conditions (`states: { family: "$form.type === 'family'" }`)
   gating visibility (`include: { in: [...] }` / `exclude: { from: [...] }`) and per-state prop
@@ -38,6 +39,11 @@ the form component accepts: https://golemui.com/dx/features/overview.md
 - **Host functions** — functions registered on the host component and referenced by name from
   the definition (loaders, filters, event handlers in JSON).
   https://golemui.com/dx/features/host-functions.md
+- **Host services** — services the library does not ship, injected by the host through the
+  `dependencies` entry of the init config: `markdown` (`{ parse }` for the markdown widgets) and
+  `uploadService` (`{ upload, remove? }` for `fileUpload`/`multiFileUpload`). Passed by reference,
+  never stored in form data; keep the object identity stable. Not the field-to-field
+  "Dependencies" feature above. MCP: `get_concept({ concept: "host-services" })`.
 
 ## Form Definition API (TS `gui.*` deep-dives)
 

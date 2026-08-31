@@ -1,0 +1,251 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://golemui.com/schemas/gui/components/multifileupload.schema.json",
+  "title": "Multi File Upload Widget",
+  "type": "object",
+  "$defs": {
+    "disabledDef": {
+      "$ref": "../core/common.schema.json#/$defs/boolOrWhen"
+    },
+    "readonlyDef": {
+      "$ref": "../core/common.schema.json#/$defs/boolOrWhen"
+    },
+    "labelDef": {
+      "$ref": "../core/common.schema.json#/$defs/localizable"
+    },
+    "fileItem": {
+      "type": "object",
+      "description": "One uploaded file as stored in the form value. `data` is whatever the host's `uploadService.upload` resolved with, verbatim. Preloaded values should carry `status: \"uploaded\"`.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Synthetic id, stable for the life of the item"
+        },
+        "name": {
+          "type": "string"
+        },
+        "size": {
+          "type": "number",
+          "description": "Size in bytes"
+        },
+        "type": {
+          "type": "string",
+          "description": "MIME type"
+        },
+        "status": {
+          "enum": ["uploading", "uploaded", "error"]
+        },
+        "error": {
+          "type": "string",
+          "description": "Human-readable reason when `status` is `error`"
+        },
+        "data": {
+          "description": "The server response, verbatim"
+        }
+      },
+      "required": ["id", "name", "size", "type", "status"],
+      "additionalProperties": false
+    },
+    "hintProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable"
+    },
+    "iconProp": {
+      "type": "string"
+    },
+    "acceptProp": {
+      "type": "array",
+      "description": "Accepted file types, e.g. `[\"image/*\", \".pdf\"]`. Files that do not match are refused before uploading.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "maxSizeProp": {
+      "type": "number",
+      "description": "Maximum size per file, in bytes. Larger files are refused before uploading."
+    },
+    "buttonLabelProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable"
+    },
+    "removeAriaLabelProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable"
+    },
+    "cancelAriaLabelProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable"
+    },
+    "retryLabelProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable"
+    },
+    "removeIconProp": {
+      "type": "string"
+    },
+    "maxSizeMessageProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable"
+    },
+    "acceptMessageProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable"
+    },
+    "missingServiceMessageProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable"
+    },
+    "uploadedMessageProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable"
+    },
+    "removedMessageProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable"
+    },
+    "failedMessageProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable"
+    }
+  },
+  "allOf": [
+    {
+      "$ref": "../core/common.schema.json#/$defs/baseWidget"
+    }
+  ],
+  "properties": {
+    "kind": {
+      "const": "input"
+    },
+    "type": {
+      "const": "multiFileUpload"
+    },
+    "path": {
+      "$ref": "../core/common.schema.json#/$defs/dotPath"
+    },
+    "label": {
+      "$ref": "#/$defs/labelDef"
+    },
+    "disabled": {
+      "$ref": "#/$defs/disabledDef"
+    },
+    "readonly": {
+      "$ref": "#/$defs/readonlyDef"
+    },
+    "on": {
+      "$ref": "../core/common.schema.json#/$defs/on"
+    },
+    "validator": {
+      "$ref": "../validators.schema.json#/$defs/validator"
+    },
+    "defaultValue": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/fileItem"
+      }
+    },
+    "props": {
+      "type": "object",
+      "properties": {
+        "hint": {
+          "$ref": "#/$defs/hintProp"
+        },
+        "icon": {
+          "$ref": "#/$defs/iconProp"
+        },
+        "accept": {
+          "$ref": "#/$defs/acceptProp"
+        },
+        "maxSize": {
+          "$ref": "#/$defs/maxSizeProp"
+        },
+        "buttonLabel": {
+          "$ref": "#/$defs/buttonLabelProp"
+        },
+        "removeAriaLabel": {
+          "$ref": "#/$defs/removeAriaLabelProp"
+        },
+        "cancelAriaLabel": {
+          "$ref": "#/$defs/cancelAriaLabelProp"
+        },
+        "retryLabel": {
+          "$ref": "#/$defs/retryLabelProp"
+        },
+        "removeIcon": {
+          "$ref": "#/$defs/removeIconProp"
+        },
+        "maxSizeMessage": {
+          "$ref": "#/$defs/maxSizeMessageProp"
+        },
+        "acceptMessage": {
+          "$ref": "#/$defs/acceptMessageProp"
+        },
+        "missingServiceMessage": {
+          "$ref": "#/$defs/missingServiceMessageProp"
+        },
+        "uploadedMessage": {
+          "$ref": "#/$defs/uploadedMessageProp"
+        },
+        "removedMessage": {
+          "$ref": "#/$defs/removedMessageProp"
+        },
+        "failedMessage": {
+          "$ref": "#/$defs/failedMessageProp"
+        }
+      },
+      "patternProperties": {
+        "^hint\\.[^.]+$": {
+          "$ref": "#/$defs/hintProp"
+        },
+        "^icon\\.[^.]+$": {
+          "$ref": "#/$defs/iconProp"
+        },
+        "^accept\\.[^.]+$": {
+          "$ref": "#/$defs/acceptProp"
+        },
+        "^maxSize\\.[^.]+$": {
+          "$ref": "#/$defs/maxSizeProp"
+        },
+        "^buttonLabel\\.[^.]+$": {
+          "$ref": "#/$defs/buttonLabelProp"
+        },
+        "^removeAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/removeAriaLabelProp"
+        },
+        "^cancelAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/cancelAriaLabelProp"
+        },
+        "^retryLabel\\.[^.]+$": {
+          "$ref": "#/$defs/retryLabelProp"
+        },
+        "^removeIcon\\.[^.]+$": {
+          "$ref": "#/$defs/removeIconProp"
+        },
+        "^maxSizeMessage\\.[^.]+$": {
+          "$ref": "#/$defs/maxSizeMessageProp"
+        },
+        "^acceptMessage\\.[^.]+$": {
+          "$ref": "#/$defs/acceptMessageProp"
+        },
+        "^missingServiceMessage\\.[^.]+$": {
+          "$ref": "#/$defs/missingServiceMessageProp"
+        },
+        "^uploadedMessage\\.[^.]+$": {
+          "$ref": "#/$defs/uploadedMessageProp"
+        },
+        "^removedMessage\\.[^.]+$": {
+          "$ref": "#/$defs/removedMessageProp"
+        },
+        "^failedMessage\\.[^.]+$": {
+          "$ref": "#/$defs/failedMessageProp"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "patternProperties": {
+    "^disabled\\.[^.]+$": {
+      "$ref": "#/$defs/disabledDef"
+    },
+    "^readonly\\.[^.]+$": {
+      "$ref": "#/$defs/readonlyDef"
+    },
+    "^label\\.[^.]+$": {
+      "$ref": "#/$defs/labelDef"
+    },
+    "^validator\\.[^.]+$": {
+      "$ref": "../validators.schema.json#/$defs/validator"
+    }
+  },
+  "required": ["kind", "type", "path"],
+  "unevaluatedProperties": false
+}
