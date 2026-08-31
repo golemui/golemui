@@ -8,7 +8,12 @@ import {
 import { provideServerRendering, renderApplication } from '@angular/platform-server';
 import { preloadFormWidgets } from '@golemui/core';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
-import { SsrHostComponent, stubWidgetLoaders } from './ssr.fixture';
+import {
+  recordedFormEvents,
+  SsrEventRecordingHostComponent,
+  SsrHostComponent,
+  stubWidgetLoaders,
+} from './ssr.fixture';
 
 const hostDocument = '<html><head></head><body><gui-ssr-host></gui-ssr-host></body></html>';
 
@@ -70,7 +75,7 @@ describe('hydrating server markup in a browser-like environment', () => {
   });
 
   it('keeps the server values after hydration', () => {
-    const inputs = [...document.querySelectorAll('input')];
+    const inputs = Array.from(document.querySelectorAll('input'));
 
     expect(inputs).toHaveLength(2);
     expect((inputs[0] as HTMLInputElement).value).toBe('Ada');
@@ -78,6 +83,64 @@ describe('hydrating server markup in a browser-like environment', () => {
   });
 
   it('logs no hydration warnings', () => {
+    const hydrationMessages = consoleMessages.filter(
+      (message) => message.includes('NG05') || message.toLowerCase().includes('hydration'),
+    );
+
+    expect(hydrationMessages).toEqual([]);
+  });
+});
+
+describe('load handlers around hydration', () => {
+  let appRef: ApplicationRef;
+  let eventCountAfterServerRender: number;
+  const consoleMessages: string[] = [];
+
+  beforeAll(async () => {
+    await preloadFormWidgets({ widgetLoaders: stubWidgetLoaders });
+    recordedFormEvents.length = 0;
+
+    const html = await renderApplication(
+      (context: BootstrapContext) =>
+        bootstrapApplication(
+          SsrEventRecordingHostComponent,
+          { providers: [provideServerRendering(), provideClientHydration()] },
+          context,
+        ),
+      { document: hostDocument },
+    );
+    eventCountAfterServerRender = recordedFormEvents.length;
+
+    const body = html.match(/<body[^>]*>([\s\S]*)<\/body>/)?.[1];
+    if (!body) {
+      throw new Error('server render produced no body');
+    }
+    document.body.innerHTML = body;
+
+    const record = (...args: unknown[]) => {
+      consoleMessages.push(args.map(String).join(' '));
+    };
+    vi.spyOn(console, 'error').mockImplementation(record);
+    vi.spyOn(console, 'warn').mockImplementation(record);
+
+    appRef = await bootstrapApplication(SsrEventRecordingHostComponent, {
+      providers: [provideClientHydration()],
+    });
+    await appRef.whenStable();
+  });
+
+  afterAll(() => {
+    appRef?.destroy();
+    vi.restoreAllMocks();
+  });
+
+  it('runs load handlers once the client has rendered, and only then', () => {
+    expect(eventCountAfterServerRender).toBe(0);
+    expect(recordedFormEvents).toHaveLength(1);
+    expect(recordedFormEvents[0]).toEqual(expect.objectContaining({ name: 'stubLoaded' }));
+  });
+
+  it('hydrates cleanly with the load listener attached', () => {
     const hydrationMessages = consoleMessages.filter(
       (message) => message.includes('NG05') || message.toLowerCase().includes('hydration'),
     );

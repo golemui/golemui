@@ -1,4 +1,5 @@
 // @vitest-environment node
+import type { Type } from '@angular/core';
 import {
   type BootstrapContext,
   bootstrapApplication,
@@ -6,8 +7,14 @@ import {
 } from '@angular/platform-browser';
 import { provideServerRendering, renderApplication } from '@angular/platform-server';
 import { preloadFormWidgets } from '@golemui/core';
-import { beforeAll, describe, expect, it } from 'vitest';
-import { SsrHostComponent, stubWidgetLoaders } from './ssr.fixture';
+import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import {
+  recordedFormEvents,
+  SsrEventRecordingHostComponent,
+  SsrHostComponent,
+  SsrNotPreloadedHostComponent,
+  stubWidgetLoaders,
+} from './ssr.fixture';
 
 // Dev-mode style handling reads the global document for the base href. A Node process has
 // none, so this stub provides a document with an empty head.
@@ -21,16 +28,18 @@ const hostDocument = '<html><head></head><body><gui-ssr-host></gui-ssr-host></bo
 // The providers are built inside the bootstrap callback: provideServerRendering sets the
 // global server-mode flag at call time, and destroying the platform clears the flag only
 // when the flag was set after the platform was created.
-const renderForm = () =>
+const renderHost = (host: Type<unknown>) =>
   renderApplication(
     (context: BootstrapContext) =>
       bootstrapApplication(
-        SsrHostComponent,
+        host,
         { providers: [provideServerRendering(), provideClientHydration()] },
         context,
       ),
     { document: hostDocument },
   );
+
+const renderForm = () => renderHost(SsrHostComponent);
 
 describe('server rendering a form in a plain node environment', () => {
   beforeAll(async () => {
@@ -69,6 +78,35 @@ describe('server rendering a form in a plain node environment', () => {
     const html = await renderForm();
 
     expect(html).toContain(' ngh=');
+  });
+
+  it('does not run load handlers, because load is a client lifecycle event', async () => {
+    recordedFormEvents.length = 0;
+
+    const html = await renderHost(SsrEventRecordingHostComponent);
+
+    expect(recordedFormEvents).toEqual([]);
+    // Listening for form events must not change the emitted markup either.
+    expect(html).toBe(await renderForm());
+  });
+});
+
+describe('server rendering without preloaded widgets', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('warns per widget and leaves the markup empty where the widget would render', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+
+    const html = await renderHost(SsrNotPreloadedHostComponent);
+
+    expect(warn).toHaveBeenCalledWith(
+      '[GolemUI] Widget "flex" was not preloaded; its server markup will be empty. ' +
+        'Call preloadFormWidgets() before rendering.',
+    );
+    expect(html).toContain('<form');
+    expect(html).not.toContain('<input');
   });
 });
 

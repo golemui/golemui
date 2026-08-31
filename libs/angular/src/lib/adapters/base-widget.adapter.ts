@@ -1,4 +1,5 @@
-import { inject, type WritableSignal } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { inject, PLATFORM_ID, type WritableSignal } from '@angular/core';
 import {
   type NonFunctionWidget,
   type WidgetViewModel,
@@ -10,6 +11,8 @@ import { AngularFormContext } from '../context/form.context';
 
 export abstract class BaseWidgetAdapter<F extends NonFunctionWidget> {
   protected context = inject(AngularFormContext);
+  // Field initializer: `init()` runs outside the injection context.
+  protected isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   protected destroy$ = new Subject<void>();
   protected widget!: F;
 

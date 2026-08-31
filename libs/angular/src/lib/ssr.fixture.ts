@@ -1,9 +1,9 @@
 import { Component, inject, type OnDestroy, type OnInit, type Type } from '@angular/core';
 import type {
+  FormEvent,
   FormInitConfig,
   InputWidget,
   LayoutWidget,
-  StandardSchemaV1,
   ValidatorFn,
   WithWidget,
 } from '@golemui/core';
@@ -82,7 +82,7 @@ export const noopValidators: ValidatorFn<any> = () =>
       vendor: 'golemui-ssr-fixture',
       validate: (value: unknown) => ({ value }),
     },
-  }) as StandardSchemaV1;
+  }) as ReturnType<ValidatorFn<any>>;
 
 export const formDef = {
   form: {
@@ -90,7 +90,15 @@ export const formDef = {
     kind: 'layout',
     type: 'flex',
     children: [
-      { kind: 'input', type: 'textinput', path: 'firstName', label: 'First name' },
+      // The `load` handler lets the specs pin down when the event fires: never on the server,
+      // once the client has rendered.
+      {
+        kind: 'input',
+        type: 'textinput',
+        path: 'firstName',
+        label: 'First name',
+        on: { load: 'stubLoaded' },
+      },
       { kind: 'input', type: 'textinput', path: 'lastName', label: 'Last name' },
     ],
   },
@@ -108,7 +116,12 @@ export function buildConfig(): FormInitConfig<Type<WithWidget>> {
   };
 }
 
-/** The root component that the specs pass to `renderApplication` and `bootstrapApplication`. */
+/**
+ * The root component that the specs pass to `renderApplication` and `bootstrapApplication`.
+ *
+ * Every host below reuses this selector, so all specs share one host document and can compare
+ * the markup of two hosts byte for byte.
+ */
 @Component({
   standalone: true,
   selector: 'gui-ssr-host',
@@ -117,5 +130,50 @@ export function buildConfig(): FormInitConfig<Type<WithWidget>> {
 })
 export class SsrHostComponent {
   config = buildConfig();
+  validators = noopValidators;
+}
+
+/** Events the recording host received. Specs reset it with `recordedFormEvents.length = 0`. */
+export const recordedFormEvents: FormEvent[] = [];
+
+/** Same form as `SsrHostComponent`, plus a `formEvent` listener feeding `recordedFormEvents`. */
+@Component({
+  standalone: true,
+  selector: 'gui-ssr-host',
+  imports: [FormCoreComponent],
+  template: `<gui-core-form
+    [config]="config"
+    [validators]="validators"
+    (formEvent)="onFormEvent($event)"
+  />`,
+})
+export class SsrEventRecordingHostComponent {
+  config = buildConfig();
+  validators = noopValidators;
+
+  onFormEvent(event: FormEvent) {
+    recordedFormEvents.push(event);
+  }
+}
+
+/**
+ * Loader functions with fresh identities, so no preload call has ever resolved them. They
+ * never resolve, which keeps a server render deterministic: the widgets stay absent instead
+ * of racing the serializer.
+ */
+export const notPreloadedWidgetLoaders = {
+  textinput: (): Promise<Type<WithWidget>> => new Promise(() => undefined),
+  flex: (): Promise<Type<WithWidget>> => new Promise(() => undefined),
+};
+
+/** Same form as `SsrHostComponent`, but none of its widgets can be read synchronously. */
+@Component({
+  standalone: true,
+  selector: 'gui-ssr-host',
+  imports: [FormCoreComponent],
+  template: `<gui-core-form [config]="config" [validators]="validators" />`,
+})
+export class SsrNotPreloadedHostComponent {
+  config = { ...buildConfig(), widgetLoaders: notPreloadedWidgetLoaders };
   validators = noopValidators;
 }
