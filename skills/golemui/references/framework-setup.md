@@ -49,12 +49,58 @@ import type { FormSubmitEvent } from '@golemui/core';
 <GuiForm config={{ formDef: form }} formSubmit={(e: FormSubmitEvent) => console.log(e.data)} />;
 ```
 
+**React SSR** - same packages and component. Widgets load through dynamic imports, which a
+server render cannot wait for, so preload them before the render on BOTH the server and the
+client:
+
+```tsx
+import { preloadFormWidgets } from '@golemui/core';
+import { widgetLoaders } from '@golemui/gui-react';
+
+await preloadFormWidgets({ widgetLoaders });
+// Server: renderToString(<App />). Client: hydrateRoot(container, <App />).
+```
+
+- Set an explicit `formName`. The default id comes from React's `useId`, which matches across
+  server and client but is not predictable in the markup.
+- Handlers (`onLoad`, `formSubmit`, ...) run in the browser only - never during a server render.
+- The server renders the form structure and bare `gui-*` tags carrying `defer-hydration`. The
+  attribute holds the elements empty until React hydrates and removes it, so the page stays
+  identical to the server response. Widget internals and values appear when the elements
+  upgrade on the client.
+- Next.js App Router: run the preload in the client component module that renders the form. A
+  preload awaited in a Server Component fills a different module graph than the one the client
+  component's server render reads.
+
 **Angular** — add `FormComponent` (from `@golemui/gui-angular`) to the standalone component's
 `imports`, then:
 
 ```html
 <gui-form [config]="{ formDef: form }" (formSubmit)="onSubmit($event)"></gui-form>
 ```
+
+**Angular SSR** - standard `@angular/platform-server`, no GolemUI-specific server entry.
+Preload before bootstrap on BOTH the server and the client, and pass
+`provideClientHydration()` on both sides (the server needs it to emit the hydration
+annotations):
+
+```ts
+import { preloadFormWidgets } from '@golemui/core';
+import { widgetLoaders } from '@golemui/gui-angular';
+
+await preloadFormWidgets({ widgetLoaders });
+// Server: renderApplication(bootstrap, { document }) with provideServerRendering() and
+// provideClientHydration() in the providers.
+// Client: bootstrapApplication(AppComponent, { providers: [provideClientHydration()] }).
+```
+
+- Set an explicit `formName` - required for SSR. Without one the server and the client mint
+  different random ids (hydration still succeeds, but the markup id is not predictable).
+- Handlers run in the browser only - never during a server render.
+- The server renders the form structure and the native Angular widget internals (tabs, flex,
+  grid). `gui-*` element internals stay empty until the browser upgrades them. Each `gui-*`
+  element carries `defer-hydration`, removed by the first client change detection pass.
+- A widget that was not preloaded logs a warning during a server render and renders empty.
 
 **Vue**
 
@@ -101,6 +147,34 @@ html`<gui-form
 ></gui-form>`;
 ```
 
+**Lit SSR (experimental)** - the server renders the COMPLETE widget markup (internals,
+labels, and values included) through `@lit-labs/ssr` (install it yourself, >= 4.1.0, an
+optional peer of `@golemui/lit`). The client does not hydrate that markup: it stays inert
+under `defer-hydration` until `resumeServerRenderedForm` replaces it with one live render
+before the next paint.
+
+```ts
+// Server (after preloadFormWidgets with the gui-lit widgetLoaders)
+import { renderGuiFormHtml } from '@golemui/lit/ssr';
+const html = await renderGuiFormHtml({ config, validators });
+
+// Client (after the same preload)
+import { resumeServerRenderedForm, type FormElement } from '@golemui/lit';
+const form = document.querySelector('gui-form') as unknown as FormElement;
+resumeServerRenderedForm(form, { config, validators });
+```
+
+- `formName` is required: `renderGuiFormHtml` throws without it.
+- `renderGuiHtml` (same entry) renders a whole lit template around the form instead of just
+  the form. Driving `@lit-labs/ssr`'s own `render()` directly requires `GuiSsrElementRenderer`
+  (from `@golemui/lit/ssr`) in `elementRenderers`, or the form context never reaches the
+  widgets.
+- Handlers run in the browser only - `load` fires after the resume.
+- Known limitations of the experimental tier: a false boolean property serializes as
+  `selected="false"`, which HTML reads as true until the resume corrects it. A widget that
+  assigns its input value imperatively (the number widget) renders without its value. Calendar
+  widgets read the server clock, so their markup depends on when the server rendered.
+
 **Vanilla JS**
 
 ```ts
@@ -122,6 +196,20 @@ In every case `formDef` is the bare array; form-wide config goes in the sibling
 `formConfig` (`config={{ formDef, formConfig: { states, validateOn } }}`). `validateOn` is one
 of `eager` | `change` | `blur` | `submit`. There is also a `formHealth` callback/event
 (validity reporting) and a `formEvent` event for host-dispatched widget events.
+
+## SSR rules shared by every framework
+
+- Keep custom widget loaders in ONE module-scope object, reused by the preload call and the
+  form config. The registry caches by loader function identity, so an object literal recreated
+  per component misses the cache.
+- The registry cache is process-global and shared across requests. That is safe (the entries
+  are widget modules), and it means one preload warms every later render in the process.
+- Anything passed as `dependencies` (for example a markdown parser) must work in Node and
+  produce the same output on the server and the client.
+- Validation runs on triggers and error display waits for `touched`, so a server render of an
+  untouched form never contains error markup.
+- Server runtime: Node 20 or newer (CI tests on Node 22). Runtimes with standard `crypto` and
+  `Intl` are expected to work but are not tested.
 
 ## Full component reference
 
