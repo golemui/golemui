@@ -1,6 +1,10 @@
-import { preloadFormWidgets } from '@golemui/core';
-import { beforeAll, describe, expect, it } from 'vitest';
+import { type InputWidget, preloadFormWidgets } from '@golemui/core';
+import { Subject } from 'rxjs';
+import { beforeAll, describe, expect, it, vi } from 'vitest';
 import { renderGuiFormHtml } from '../ssr';
+import { ActionWidgetAdapter } from './adapters/action-widget.adapter';
+import { InputWidgetAdapter } from './adapters/input-widget.adapter';
+import { type LitFormContext } from './context/form.context';
 import {
   buildConfig,
   canonicalServerMarkup,
@@ -86,5 +90,39 @@ describe('server rendering a form in plain node', () => {
   it('renders an untouched form without validation errors', () => {
     expect(formData.firstName).toBe('Ada'); // the data is set, yet no error markup exists
     expect(markup).not.toMatch(/error/i);
+  });
+
+  it('does not run load handlers, because load is a client lifecycle event', () => {
+    // Adapter level: the node environment has no document global, so `init` must not emit.
+    // The resume spec proves the client-side emission after resume.
+    const emitEvent = vi.fn();
+    const stubContext = {
+      emitEvent,
+      store: { state$: new Subject() },
+      dependencies: {},
+    } as unknown as LitFormContext<any>;
+    const widget = {
+      kind: 'input',
+      type: 'textinput',
+      path: 'firstName',
+      uid: 'firstName-textinput',
+      on: { load: 'stubLoaded' },
+    } as unknown as InputWidget<string>;
+
+    const inputAdapter = new InputWidgetAdapter<string, Record<string, never>>();
+    inputAdapter.context = stubContext;
+    inputAdapter.init(widget);
+
+    const actionAdapter = new ActionWidgetAdapter<Record<string, never>>();
+    actionAdapter.context = stubContext;
+    actionAdapter.init({
+      kind: 'action',
+      type: 'button',
+      uid: 'submit-button',
+      label: 'Send',
+      on: { load: 'stubLoaded' },
+    } as any);
+
+    expect(emitEvent).not.toHaveBeenCalled();
   });
 });

@@ -66,6 +66,23 @@ describe('resuming a server rendered form', () => {
     errorSpy.mockRestore();
   });
 
+  it('runs load handlers once the client has resumed, and only then', async () => {
+    const onFormEvent = vi.fn();
+    const form = document.querySelector('gui-core-form') as FormElement;
+    form.addEventListener('formEvent', (event) => onFormEvent((event as CustomEvent).detail));
+
+    // The markup upgrade alone emits nothing: load waits for the resume.
+    await afterLitRenderSchedule();
+    expect(onFormEvent).not.toHaveBeenCalled();
+
+    resumeServerRenderedForm(form, { config: buildConfig(), validators: noopValidators });
+    await afterLitRenderSchedule();
+    await afterLitRenderSchedule();
+
+    expect(onFormEvent).toHaveBeenCalledTimes(1);
+    expect(onFormEvent).toHaveBeenCalledWith(expect.objectContaining({ name: 'stubLoaded' }));
+  });
+
   it('accepts user input after the resume', async () => {
     const form = document.querySelector('gui-core-form') as FormElement;
     resumeServerRenderedForm(form, { config: buildConfig(), validators: noopValidators });
