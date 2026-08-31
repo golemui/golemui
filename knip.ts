@@ -11,6 +11,9 @@ const config = {
     'apps/*/app/app.vue',
     'apps/*/app/pages/**/*.vue',
     'apps/*/app/plugins/*.ts',
+    // Next.js app (file-based entry points, no main.ts)
+    'apps/*/next.config.ts',
+    'apps/nextjs-playground/src/app/**/*.tsx',
     // Publishable libs (public and cross-package entry points)
     'libs/**/src/index.ts',
     'libs/**/src/internals.ts',

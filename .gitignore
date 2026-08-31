@@ -53,6 +53,10 @@ Thumbs.db
 .nitro
 .data
 
+# Next.js
+.next
+*.tsbuildinfo
+
 vite.config.*.timestamp*
 vitest.config.*.timestamp*
 
