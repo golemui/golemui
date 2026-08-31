@@ -1,7 +1,7 @@
 import { preloadFormWidgets } from '@golemui/core';
 import { createSSRApp, h } from 'vue';
 import { renderToString } from 'vue/server-renderer';
-import { beforeAll, describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it, vi } from 'vitest';
 import FormComponent from './FormComponent.vue';
 import { buildConfig, noopValidators, stubWidgetLoaders } from './ssr.fixture';
 
@@ -43,6 +43,20 @@ describe('server rendering a form in a plain node environment', () => {
 
     expect(html.toLowerCase()).not.toContain('failed with');
     expect(html.toLowerCase()).not.toContain('gui-form-health');
+  });
+
+  it('does not run load handlers, because load is a client lifecycle event', async () => {
+    const onFormEvent = vi.fn();
+
+    const html = await renderToString(
+      createSSRApp({
+        render: () =>
+          h(FormComponent, { config: buildConfig(), validators: noopValidators, onFormEvent }),
+      }),
+    );
+
+    expect(onFormEvent).not.toHaveBeenCalled();
+    expect(html).toBe(await renderForm());
   });
 });
 

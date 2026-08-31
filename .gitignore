@@ -47,6 +47,12 @@ Thumbs.db
 
 .angular
 
+# Nuxt
+.nuxt
+.output
+.nitro
+.data
+
 vite.config.*.timestamp*
 vitest.config.*.timestamp*
 

@@ -1,9 +1,16 @@
 // Knip config `npx knip --dependencies`
+import baseTsconfig from './tsconfig.base.json';
+
 const config = {
   entry: [
     // Apps (playgrounds)
     'apps/*/src/main.{ts,tsx}',
     'apps/apps-shared/src/index.ts',
+    // Nuxt app (file-based entry points, no main.ts)
+    'apps/*/nuxt.config.ts',
+    'apps/*/app/app.vue',
+    'apps/*/app/pages/**/*.vue',
+    'apps/*/app/plugins/*.ts',
     // Publishable libs (public and cross-package entry points)
     'libs/**/src/index.ts',
     'libs/**/src/internals.ts',
@@ -23,6 +30,13 @@ const config = {
     'vitest.workspace.ts',
   ],
   project: ['apps/**/*.{ts,tsx,js,vue,html}', 'libs/**/*.{ts,tsx,js,vue,html}', 'tools/**/*.ts'],
+  // Knip only learns tsconfig `paths` from the vite configs it finds, scoped to each config's
+  // directory. Files without a vite config next to them (the Nuxt app, Cypress support files)
+  // need the workspace aliases handed over directly, plus Nuxt's `~` (srcDir) alias.
+  paths: {
+    ...baseTsconfig.compilerOptions.paths,
+    '~/*': ['apps/nuxt-playground/app/*'],
+  },
   // Knip does not parse .vue files by default: extract the <script> blocks
   compilers: {
     vue: (text: string) =>

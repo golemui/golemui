@@ -62,6 +62,36 @@ import type { FormSubmitEvent } from '@golemui/core';
 <GuiForm :config="{ formDef: form }" @form-submit="onSubmit" />
 ```
 
+**Vue SSR (Nuxt)** — same packages and component. Widgets load through dynamic imports, which a
+server render cannot wait for, so preload them before the first render on BOTH the server and
+the client. In Nuxt that is a plugin (`app/plugins/golemui.ts`):
+
+```ts
+import { preloadFormWidgets } from '@golemui/core';
+import { widgetLoaders } from '@golemui/gui-vue';
+
+export default defineNuxtPlugin(async () => {
+  await preloadFormWidgets({ widgetLoaders });
+});
+```
+
+Load the stylesheet through `css: ['@golemui/gui-components/index.css']` in `nuxt.config.ts`
+(nothing is injected). Rules that follow from the preload:
+
+- Custom widgets: keep their loaders in ONE module-scope object, spread it into the preload call
+  and pass the same object as `customWidgetLoaders` — the registry caches by loader function
+  identity, so an object literal recreated per component misses the cache.
+- `formName` is optional on Vue ≥ 3.5 (the adapter derives a stable id on both sides); set it
+  when the id in the markup must be predictable.
+- `<GuiForm>` needs no compiler config. Only a component of your own that places a `gui-*` tag
+  in its template needs `vue: { compilerOptions: { isCustomElement: (tag) => tag.startsWith('gui-') } }`,
+  and object props on such a tag must be bound with `.prop` (an attribute would stringify them).
+- `onLoad`, like every handler, runs in the browser only — never during the server render.
+- The server renders the Vue layer (`<form>`, layouts, `gui-*` tags with their attributes and
+  values); the Lit `gui-*` elements render their internals once the browser upgrades them.
+
+Starter: `templates/nuxt` in the GolemUI repo.
+
 **Lit** — `import '@golemui/gui-lit'` registers the `<gui-form>` custom element:
 
 ```ts

@@ -97,9 +97,9 @@ describe('safeDefine defer-hydration support', () => {
     safeDefine('x-defer-sub', DeferSpecSubclass);
 
     expect(DeferSpecSubclass.observedAttributes).toContain('badge');
-    expect(DeferSpecSubclass.observedAttributes.filter((a) => a === 'defer-hydration')).toHaveLength(
-      1,
-    );
+    expect(
+      DeferSpecSubclass.observedAttributes.filter((a) => a === 'defer-hydration'),
+    ).toHaveLength(1);
 
     const element = document.createElement('x-defer-sub') as DeferSpecSubclass;
     element.setAttribute('defer-hydration', '');

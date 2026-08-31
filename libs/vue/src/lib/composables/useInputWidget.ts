@@ -1,5 +1,5 @@
 import { type InputWidget, type NonFunctionWidget, widgetViewModel$ } from '@golemui/core';
-import { onScopeDispose, ref, type Ref } from 'vue';
+import { onMounted, onScopeDispose, ref, type Ref } from 'vue';
 import { useVueFormContext } from '../provideFormContext';
 import { mergeViewModelIntoTemplateData, type WithFlattenedProps } from './template-data';
 
@@ -46,7 +46,7 @@ export function useInputWidget<T, ExtraProps extends Record<string, any> = Recor
       );
     });
 
-  formContext.emitEvent('load', widget);
+  onMounted(() => formContext.emitEvent('load', widget));
 
   // Vue keeps DOM listeners bound until the node is removed, so a blur during unmount can fire
   // after this scope was disposed. A late SET_WIDGET_DATA would re-create a removed row's data
