@@ -110,23 +110,6 @@ const handleListChange = (e: Event) => {
   isListVisible.value = false;
 };
 
-let currentList: GuiListElement | null = null;
-watch(listRef, (el) => {
-  if (currentList) {
-    currentList.removeEventListener('gui-range-change', handleRangeChange);
-    currentList.removeEventListener('gui-update-items', handleUpdateItems);
-    currentList.removeEventListener('gui-focus-change', handleFocusChange);
-    currentList.removeEventListener('change', handleListChange);
-  }
-  currentList = el;
-  if (el) {
-    el.addEventListener('gui-range-change', handleRangeChange);
-    el.addEventListener('gui-update-items', handleUpdateItems);
-    el.addEventListener('gui-focus-change', handleFocusChange);
-    el.addEventListener('change', handleListChange);
-  }
-});
-
 const handlePanelMouseDown = (event: MouseEvent) => {
   const target = event.target as Node;
   if (listRef.value && listRef.value.contains(target)) return;
@@ -153,10 +136,6 @@ onMounted(() => {
 
 onUnmounted(() => {
   document.removeEventListener('click', handleDocumentClick);
-  currentList?.removeEventListener('gui-range-change', handleRangeChange);
-  currentList?.removeEventListener('gui-update-items', handleUpdateItems);
-  currentList?.removeEventListener('gui-focus-change', handleFocusChange);
-  currentList?.removeEventListener('change', handleListChange);
 });
 
 watch([selectedItem, () => templateData.value.labelField], () => {
@@ -377,6 +356,10 @@ const ItemRenderer = computed<Component>(() => {
           :readOnly="isReadOnly"
           :hidden="!isListVisible"
           @focus="handleInputFocus"
+          @change="handleListChange"
+          @gui-update-items="handleUpdateItems"
+          @gui-range-change="handleRangeChange"
+          @gui-focus-change="handleFocusChange"
         >
           <div
             v-for="(item, idx) in visibleItems"

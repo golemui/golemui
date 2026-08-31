@@ -2,7 +2,7 @@
 import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useInputWidget, useVueFormContext } from '@golemui/vue';
 import type { ListItem, MultiListProps, OptionValue } from '@golemui/gui-shared/internals';
-import { computed, onUnmounted, ref, watch, type Component } from 'vue';
+import { computed, ref, watch, type Component } from 'vue';
 import DefaultMultiListItemRenderer from './item-renderers/DefaultMultiListItemRenderer.vue';
 import type { GuiLabel } from '@golemui/gui-components/label';
 import type { GuiMultiList } from '@golemui/gui-components/multi-list';
@@ -63,31 +63,10 @@ const handleChange = (e: Event) => {
   toggleValue((e as CustomEvent).detail.value);
 };
 
-let currentList: GuiMultiList | null = null;
 watch(listRef, (el) => {
-  if (currentList) {
-    currentList.removeEventListener('change', handleChange);
-    currentList.removeEventListener('gui-update-items', handleUpdateItems);
-    currentList.removeEventListener('gui-range-change', handleRangeChange);
-    currentList.removeEventListener('gui-focus-change', handleFocusChange);
-  }
-  currentList = el;
-  if (el) {
-    el.addEventListener('change', handleChange);
-    el.addEventListener('gui-update-items', handleUpdateItems);
-    el.addEventListener('gui-range-change', handleRangeChange);
-    el.addEventListener('gui-focus-change', handleFocusChange);
-  }
   if (labelRef.value) {
     labelRef.value.targetElement = el ?? undefined;
   }
-});
-
-onUnmounted(() => {
-  currentList?.removeEventListener('change', handleChange);
-  currentList?.removeEventListener('gui-update-items', handleUpdateItems);
-  currentList?.removeEventListener('gui-range-change', handleRangeChange);
-  currentList?.removeEventListener('gui-focus-change', handleFocusChange);
 });
 
 const handleBlur = (e: FocusEvent) => {
@@ -140,6 +119,10 @@ const ItemRenderer = computed<Component>(() => {
         :disabled="isDisabled"
         :readOnly="isReadOnly"
         @blur="handleBlur"
+        @change="handleChange"
+        @gui-update-items="handleUpdateItems"
+        @gui-range-change="handleRangeChange"
+        @gui-focus-change="handleFocusChange"
       >
         <div
           v-for="(item, idx) in visibleItems"

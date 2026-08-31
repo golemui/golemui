@@ -111,6 +111,8 @@ GolemUI is an Nx monorepo with packages for each supported framework (React, Ang
 npx nx run angular-playground:serve
 npx nx run react-playground:serve
 npx nx run lit-playground:serve
+npx nx run vue-playground:serve
+npx nx run nuxt-playground:serve   # server-rendered (Nuxt)
 ```
 
 ### Running Cypress Tests

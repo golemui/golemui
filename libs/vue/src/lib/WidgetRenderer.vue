@@ -21,6 +21,12 @@ const isMounted = ref(true);
 const preloaded = formContext.widgetRegistry.getIfLoaded(props.widget.type);
 if (preloaded) {
   LoadedComponent.value = preloaded;
+} else if (typeof window === 'undefined') {
+  // A server render cannot wait for the dynamic import in onMounted, so the widget stays empty.
+  console.warn(
+    `[GolemUI] Widget "${props.widget.type}" was not preloaded; its server markup will be empty. ` +
+      'Call preloadFormWidgets() before rendering.',
+  );
 }
 
 onMounted(async () => {

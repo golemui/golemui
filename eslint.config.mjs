@@ -8,6 +8,8 @@ export default [
   {
     ignores: [
       '**/dist',
+      '**/.nuxt',
+      '**/.output',
       '**/vite.config.*.timestamp*',
       '**/vitest.config.*.timestamp*',
       '**/docs/src/examples/**',
