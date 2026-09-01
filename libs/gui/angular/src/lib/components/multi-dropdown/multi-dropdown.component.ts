@@ -26,6 +26,7 @@ import '@golemui/gui-components/label';
 import '@golemui/gui-components/multi-list';
 import '@golemui/gui-components/multi-select-trigger';
 import '@golemui/gui-components/errors';
+import { deferHydrationAttr } from '../../utils/defer-hydration';
 
 @Component({
   standalone: true,
@@ -44,6 +45,7 @@ export class MultiDropdownComponent implements OnInit, OnDestroy, WithWidget {
 
   protected adapter: InputWidgetAdapter<OptionValue[], MultiDropdownProps<any>> =
     inject(InputWidgetAdapter);
+  protected readonly deferHydration = deferHydrationAttr();
   private el = inject(ElementRef);
 
   triggerRef = viewChild.required<ElementRef>('triggerRef');

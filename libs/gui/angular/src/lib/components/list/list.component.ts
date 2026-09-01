@@ -17,6 +17,7 @@ import { DefaultListItemRenderer } from './default-list.item-renderer';
 import '@golemui/gui-components/label';
 import '@golemui/gui-components/list';
 import '@golemui/gui-components/errors';
+import { deferHydrationAttr } from '../../utils/defer-hydration';
 
 @Component({
   standalone: true,
@@ -35,6 +36,7 @@ export class ListComponent implements OnInit, OnDestroy, WithWidget {
 
   protected adapter: InputWidgetAdapter<OptionValue, ListProps<unknown>> =
     inject(InputWidgetAdapter);
+  protected readonly deferHydration = deferHydrationAttr();
 
   protected defaultListItemRenderer: AngularItemRenderer<string> = DefaultListItemRenderer;
 

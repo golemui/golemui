@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en" data-theme="auto">
+  <head>
+    <meta charset="utf-8" />
+    <title>GolemUI Angular server rendering harness</title>
+    <base href="/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/src/styles.scss" />
+  </head>
+  <body>
+    <!-- renderApplication returns the whole document, so there is no placeholder here.
+         The server passes this file to Angular as the document to render into. -->
+    <app-root></app-root>
+    <script type="module" src="/src/entry-client.ts"></script>
+  </body>
+</html>

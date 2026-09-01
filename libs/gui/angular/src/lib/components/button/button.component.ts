@@ -9,6 +9,7 @@ import { ActionWidgetAdapter } from '@golemui/angular';
 import type { ActionWidget, WithWidget } from '@golemui/core';
 import type { ButtonProps } from '@golemui/gui-shared/internals';
 import '@golemui/gui-components/button';
+import { deferHydrationAttr } from '../../utils/defer-hydration';
 
 @Component({
   standalone: true,
@@ -24,6 +25,7 @@ import '@golemui/gui-components/button';
 export class ButtonComponent implements OnInit, OnDestroy, WithWidget {
   widget!: ActionWidget;
   protected adapter: ActionWidgetAdapter<ButtonProps> = inject(ActionWidgetAdapter);
+  protected readonly deferHydration = deferHydrationAttr();
 
   ngOnInit(): void {
     this.adapter.init(this.widget);

@@ -10,6 +10,7 @@ import { InputWidgetAdapter } from '@golemui/angular';
 import type { InputWidget, WithWidget } from '@golemui/core';
 import type { NumberinputProps } from '@golemui/gui-shared/internals';
 import '@golemui/gui-components/number';
+import { deferHydrationAttr } from '../../utils/defer-hydration';
 
 @Component({
   standalone: true,
@@ -26,6 +27,7 @@ import '@golemui/gui-components/number';
 export class NumberComponent implements OnInit, OnDestroy, WithWidget {
   widget!: InputWidget<number>;
   protected adapter: InputWidgetAdapter<number, NumberinputProps> = inject(InputWidgetAdapter);
+  protected readonly deferHydration = deferHydrationAttr();
 
   ngOnInit(): void {
     this.adapter.init(this.widget);

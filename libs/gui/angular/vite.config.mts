@@ -12,6 +12,16 @@ export default defineConfig(() => ({
   // worker: {
   //  plugins: [ nxViteTsPaths() ],
   // },
+  // The angular plugin forces browser resolve conditions onto every environment. The
+  // node-environment server specs must resolve the node builds of lit instead, like a
+  // real Node server does.
+  environments: {
+    ssr: {
+      resolve: {
+        conditions: ['node', 'module', 'import', 'default'],
+      },
+    },
+  },
   test: {
     name: 'gui-angular',
     watch: false,
