@@ -3,7 +3,7 @@
 import { mockUploadService, modularDx, onFormEvent } from '@golemui/apps-shared';
 import type { FormHealth, FormSubmitEvent } from '@golemui/core';
 import { GuiForm } from '@golemui/gui-react';
-import type { Dependencies } from '@golemui/gui-shared';
+import type { Dependencies, GuiFormInitConfig } from '@golemui/gui-shared';
 import { useCallback, useState } from 'react';
 import snarkdown from 'snarkdown';
 
@@ -12,7 +12,7 @@ const dependencies: Dependencies = {
   markdown: { parse: (markdown: string) => snarkdown(markdown) },
   uploadService: mockUploadService,
 };
-const config = {
+const config: GuiFormInitConfig = {
   // Stable id: with SSR the server and client must agree on the form id.
   formName: 'nextjs-dx-modular',
   formDef: md.formDef,
