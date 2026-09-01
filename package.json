@@ -28,6 +28,7 @@
     "test:vue": "nx run gui-vue:component-test --watch",
     "test:all": "nx run-many --target=component-test",
     "test:affected": "nx affected --target=component-test",
+    "test:ssr-parity": "tsx tools/ssr-parity.ts",
     "lint:affected": "nx affected -t lint test --no-cloud",
     "build:libs": "npx nx run-many --target=build --projects=libs/**/*",
     "build:styles": "sh ./tools/build-sass.sh",

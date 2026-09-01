@@ -74,12 +74,19 @@ const FRAMEWORK_SETUP: Record<DxFramework, string> = {
     "RENDER (React) — `import { gui } from '@golemui/gui-shared'; import { GuiForm } from " +
     "'@golemui/gui-react'; import type { FormSubmitEvent } from '@golemui/core';`, then render " +
     '`<GuiForm config={{ formDef: form }} formSubmit={(e: FormSubmitEvent) => { /* e.data is the form data */ }} />`. ' +
-    'A `gui.displays.display(() => <h2>…</h2>)` returns React JSX.',
+    'A `gui.displays.display(() => <h2>…</h2>)` returns React JSX. ' +
+    'For SSR (Next.js) await `preloadFormWidgets({ widgetLoaders })` from `@golemui/core` before rendering ' +
+    'on both server and client; `widgetLoaders` comes from `@golemui/gui-react`. In the App Router the preload ' +
+    'belongs in the client component module that renders the form. Set an explicit `formName` and expect ' +
+    'handlers to run in the browser only.',
   angular:
     "RENDER (Angular) — `import { gui } from '@golemui/gui-shared'; import { FormComponent } from " +
     "'@golemui/gui-angular';`, add `FormComponent` to the standalone component's `imports`, then in the " +
     'template `<gui-form [config]="{ formDef: form }" (formSubmit)="onSubmit($event)"></gui-form>` — `$event` is ' +
-    'a `FormSubmitEvent` (type from `@golemui/core`), `$event.data` is the form data.',
+    'a `FormSubmitEvent` (type from `@golemui/core`), `$event.data` is the form data. ' +
+    'For SSR (`@angular/platform-server`) await `preloadFormWidgets({ widgetLoaders })` from `@golemui/core` ' +
+    'before bootstrap on both server and client; `widgetLoaders` comes from `@golemui/gui-angular`. An explicit ' +
+    '`formName` is required and handlers run in the browser only.',
   vue:
     "RENDER (Vue) — `import { gui } from '@golemui/gui-shared'; import { GuiForm } from '@golemui/gui-vue';`, " +
     'then `<GuiForm :config="{ formDef: form }" @form-submit="onSubmit" />` — the handler receives a ' +
@@ -94,7 +101,10 @@ const FRAMEWORK_SETUP: Record<DxFramework, string> = {
     '=> { /* e.detail is the FormSubmitEvent; e.detail.data */ }}></gui-form>`. The event name is ' +
     '`' +
     formEventNames.submit +
-    '` (camelCase) — Lit dispatches a raw CustomEvent, so there is no kebab-case alias.',
+    '` (camelCase) — Lit dispatches a raw CustomEvent, so there is no kebab-case alias. ' +
+    'For SSR (experimental) render with `renderGuiFormHtml` from `@golemui/lit/ssr` (needs `@lit-labs/ssr` >= 4.1 ' +
+    'installed and an explicit `formName`), then resume on the client with `resumeServerRenderedForm` from ' +
+    '`@golemui/lit` after `preloadFormWidgets({ widgetLoaders })` (`widgetLoaders` from `@golemui/gui-lit`).',
   vanilla:
     "RENDER (vanilla JS) — `import { gui } from '@golemui/gui-shared'; import '@golemui/gui-lit';` (registers " +
     "`<gui-form>`), then `const el = document.querySelector('gui-form'); el.config = { formDef: form }; " +
