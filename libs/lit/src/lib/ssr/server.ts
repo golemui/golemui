@@ -51,18 +51,22 @@ let supportInstalled = false;
  * by {@link renderGuiHtml} and {@link renderGuiFormHtml}, so calling it directly is
  * only needed when calling @lit-labs/ssr's `render` yourself.
  *
- * It installs a `classList` accessor on the DOM shim (the elements set host classes in
- * connectedCallback, and the shim only implements attributes), and it registers a
- * render option so every safeDefine-registered element runs connectedCallback on the
- * server. That call is what attaches the form context and creates the store
- * subscriptions, and without it the widgets render empty.
+ * It extends the DOM shim element (the shim only implements attributes) with a
+ * `classList` accessor, because the elements set host classes in connectedCallback, and
+ * with `querySelector`/`querySelectorAll` that find nothing, because the elements read
+ * their own children through `@query` accessors in willUpdate and render, and the shim
+ * has no children to query. Finding nothing is what the first client render sees too, so
+ * the widgets already take that branch. It also registers a render option so every
+ * safeDefine-registered element runs connectedCallback on the server. That call is what
+ * attaches the form context and creates the store subscriptions, and without it the
+ * widgets render empty.
  */
 export function installLitSsrSupport(): void {
   if (supportInstalled) {
     return;
   }
   supportInstalled = true;
-  installClassListShim();
+  installElementShim();
   LitElementRenderer.renderOptions.push((element) =>
     tagNameOf(element.constructor as CustomElementConstructor)
       ? { connectedCallback: true }
@@ -70,21 +74,37 @@ export function installLitSsrSupport(): void {
   );
 }
 
-function installClassListShim(): void {
+function installElementShim(): void {
   // Find the prototype that owns setAttribute: in Node with lit loaded that is the
   // @lit-labs/ssr-dom-shim element prototype. Reached through a registered element so
   // this module never imports the shim package itself.
   let proto: object | null = FormElement.prototype;
   while (proto && proto !== Object.prototype) {
-    if ('classList' in proto) {
-      return; // A real DOM is present, nothing to install.
-    }
     if (Object.getOwnPropertyDescriptor(proto, 'setAttribute')) {
       break;
     }
     proto = Object.getPrototypeOf(proto);
   }
   if (!proto || proto === Object.prototype) {
+    return;
+  }
+  // Each member is checked on its own: a real DOM (Element.prototype owns setAttribute)
+  // has all of them, and a second evaluation of this module finds the ones it installed.
+  if (!('querySelector' in proto)) {
+    Object.defineProperty(proto, 'querySelector', {
+      configurable: true,
+      writable: true,
+      value: () => null,
+    });
+  }
+  if (!('querySelectorAll' in proto)) {
+    Object.defineProperty(proto, 'querySelectorAll', {
+      configurable: true,
+      writable: true,
+      value: () => [],
+    });
+  }
+  if ('classList' in proto) {
     return;
   }
   Object.defineProperty(proto, 'classList', {
