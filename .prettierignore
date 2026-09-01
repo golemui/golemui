@@ -9,4 +9,5 @@
 .nuxt
 .next
 .output
+.astro
 CHANGELOG.md

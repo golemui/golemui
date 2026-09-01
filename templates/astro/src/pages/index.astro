@@ -1,0 +1,63 @@
+---
+import { preloadFormWidgets } from '@golemui/core';
+import { widgetLoaders } from '@golemui/gui-lit';
+import { renderGuiHtml } from '@golemui/lit/ssr';
+import { html } from 'lit';
+import { config } from '../form';
+// GolemUI never injects its stylesheet. Load it once here and override the design tokens in
+// your own CSS.
+import '@golemui/gui-components/index.css';
+import '../styles.css';
+
+// The frontmatter runs on the server only. The widgets load through dynamic imports, which
+// the render cannot wait for while it produces the string, so they are preloaded first.
+// renderGuiHtml returns the complete form markup, widget internals included, with every
+// element held inert through the `defer-hydration` attribute.
+await preloadFormWidgets({ widgetLoaders });
+const formHtml = await renderGuiHtml(html`<gui-form .config=${config}></gui-form>`);
+---
+
+<!doctype html>
+<!-- data-theme is the GolemUI theme hook: `auto` follows the OS color scheme. -->
+<html lang="en" data-theme="auto">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GolemUI Astro Template</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+  </head>
+  <body>
+    <main>
+      <h1>GolemUI Astro Template</h1>
+      <Fragment set:html={formHtml} />
+    </main>
+  </body>
+</html>
+
+<script>
+  import { preloadFormWidgets, type FormEvent } from '@golemui/core';
+  import { widgetLoaders, type FormElement } from '@golemui/gui-lit';
+  import { initValidators } from '@golemui/gui-validators';
+  import { resumeServerRenderedForm, type FormElement as CoreFormElement } from '@golemui/lit';
+  import { config } from '../form';
+
+  // Same preload on the client, so the first client render resolves every widget.
+  await preloadFormWidgets({ widgetLoaders });
+
+  const form = document.querySelector<FormElement>('gui-form')!;
+  form.addEventListener('formEvent', (event) => {
+    const { name, data } = (event as CustomEvent<FormEvent>).detail;
+    if (name === 'handleSubmit') {
+      console.log('Submitted:', data);
+      alert(`Submitted:\n${JSON.stringify(data, null, 2)}`);
+    }
+  });
+
+  // Replaces the server markup with one live render before the next paint and removes the
+  // `defer-hydration` hold. The call is typed for the core form element; `<gui-form>` follows
+  // the same contract with the widget set config, and builds its own validators.
+  resumeServerRenderedForm(form as unknown as CoreFormElement, {
+    config: config as never,
+    validators: initValidators(),
+  });
+</script>

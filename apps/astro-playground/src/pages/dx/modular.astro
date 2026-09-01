@@ -1,0 +1,29 @@
+---
+import { config } from '../../forms/modular-dx';
+import Layout from '../../layouts/Layout.astro';
+import { renderForm } from '../../lib/render-form';
+
+// Opt this route out of per-request rendering so `astro build` exercises the Lit render at
+// build time (the other form pages validate request-time SSR).
+export const prerender = true;
+
+const formHtml = await renderForm(config);
+---
+
+<Layout title="Modular DX · Astro Playground">
+  <div class="form-errors" hidden><ul id="form-errors"></ul></div>
+  <Fragment set:html={formHtml} />
+</Layout>
+
+<script>
+  import { onFormEvent } from '@golemui/apps-shared';
+  import type { FormSubmitEvent } from '@golemui/core';
+  import { config } from '../../forms/modular-dx';
+  import { collectFormErrors, resumeForm } from '../../lib/resume-form';
+
+  resumeForm(config, {
+    formEvent: onFormEvent,
+    formSubmit: (event: FormSubmitEvent) => console.log('👉 onFormSubmit', event.data),
+    formHealth: collectFormErrors(document.getElementById('form-errors')),
+  });
+</script>

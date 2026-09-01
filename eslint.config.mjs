@@ -11,6 +11,7 @@ export default [
       '**/.next',
       '**/.nuxt',
       '**/.output',
+      '**/.astro',
       '**/vite.config.*.timestamp*',
       '**/vitest.config.*.timestamp*',
       '**/docs/src/examples/**',

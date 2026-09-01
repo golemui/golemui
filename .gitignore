@@ -57,6 +57,9 @@ Thumbs.db
 .next
 *.tsbuildinfo
 
+# Astro
+.astro
+
 vite.config.*.timestamp*
 vitest.config.*.timestamp*
 

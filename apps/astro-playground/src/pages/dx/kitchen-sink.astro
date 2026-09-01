@@ -1,0 +1,25 @@
+---
+import { config } from '../../forms/dx-kitchen-sink';
+import Layout from '../../layouts/Layout.astro';
+import { renderForm } from '../../lib/render-form';
+
+// Rendered on every request (output: 'server'), with the full widget set: the markup below
+// is the same string the lit-ssr-harness produces, form internals included.
+const formHtml = await renderForm(config);
+---
+
+<Layout title="DX kitchen sink · Astro Playground">
+  <div class="form-errors" hidden><ul id="form-errors"></ul></div>
+  <Fragment set:html={formHtml} />
+</Layout>
+
+<script>
+  import { onFormEvent } from '@golemui/apps-shared';
+  import { config } from '../../forms/dx-kitchen-sink';
+  import { collectFormErrors, resumeForm } from '../../lib/resume-form';
+
+  resumeForm(config, {
+    formEvent: onFormEvent,
+    formHealth: collectFormErrors(document.getElementById('form-errors')),
+  });
+</script>
