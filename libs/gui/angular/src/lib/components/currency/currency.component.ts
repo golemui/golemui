@@ -10,6 +10,7 @@ import { InputWidgetAdapter } from '@golemui/angular';
 import type { InputWidget, WithWidget } from '@golemui/core';
 import type { CurrencyProps } from '@golemui/gui-shared/internals';
 import '@golemui/gui-components/currency';
+import { deferHydrationAttr } from '../../utils/defer-hydration';
 
 @Component({
   standalone: true,
@@ -26,6 +27,7 @@ import '@golemui/gui-components/currency';
 export class CurrencyComponent implements OnInit, OnDestroy, WithWidget {
   widget!: InputWidget<number>;
   protected adapter: InputWidgetAdapter<number, CurrencyProps> = inject(InputWidgetAdapter);
+  protected readonly deferHydration = deferHydrationAttr();
 
   ngOnInit(): void {
     this.adapter.init(this.widget);

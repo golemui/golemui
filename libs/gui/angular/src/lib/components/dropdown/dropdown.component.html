@@ -3,6 +3,7 @@
 @let showErrors = templateData.touched && templateData.errors && templateData.errors.length > 0;
 
 <gui-label
+  [attr.defer-hydration]="deferHydration"
   [targetElement]="[inputRef, listRef]"
   [uid]="widget.uid"
   [label]="templateData.label"
@@ -74,6 +75,7 @@
   </button>
   <div class="gui-picker__panel" [hidden]="!isListVisible()" (mousedown)="onPanelMouseDown($event)">
     <gui-list
+      [attr.defer-hydration]="deferHydration"
       #listRef
       [id]="widget.uid + '-list'"
       [uid]="widget.uid"
@@ -132,6 +134,7 @@
     </gui-list>
     @if (showErrors) {
       <gui-errors
+        [attr.defer-hydration]="deferHydration"
         [panel]="true"
         [uid]="widget.uid"
         [errors]="templateData.errors"
@@ -143,6 +146,7 @@
 
 @if (showErrors) {
   <gui-errors
+    [attr.defer-hydration]="deferHydration"
     [uid]="widget.uid"
     [errors]="templateData.errors"
     [touched]="templateData.touched"

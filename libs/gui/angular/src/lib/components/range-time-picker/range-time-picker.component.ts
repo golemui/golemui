@@ -10,6 +10,7 @@ import { InputWidgetAdapter } from '@golemui/angular';
 import type { InputWidget, WithWidget } from '@golemui/core';
 import type { TimeRange, RangeTimePickerProps } from '@golemui/gui-shared/internals';
 import '@golemui/gui-components/range-time-picker';
+import { deferHydrationAttr } from '../../utils/defer-hydration';
 
 @Component({
   standalone: true,
@@ -27,6 +28,7 @@ export class RangeTimePickerComponent implements OnInit, OnDestroy, WithWidget {
   widget!: InputWidget<TimeRange[]>;
   protected adapter: InputWidgetAdapter<TimeRange[], RangeTimePickerProps> =
     inject(InputWidgetAdapter);
+  protected readonly deferHydration = deferHydrationAttr();
 
   ngOnInit(): void {
     this.adapter.init(this.widget);

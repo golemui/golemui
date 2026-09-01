@@ -1,6 +1,7 @@
 @let templateData = adapter.templateData();
 
 <gui-range-calendar
+  [attr.defer-hydration]="deferHydration"
   [uid]="widget.uid"
   [label]="templateData.label"
   [hint]="templateData.hint"

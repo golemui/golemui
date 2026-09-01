@@ -11,6 +11,7 @@ import type { InputWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
 import type { RepeaterProps } from '@golemui/gui-shared/internals';
 import '@golemui/gui-components/label';
 import '@golemui/gui-components/errors';
+import { deferHydrationAttr } from '../../utils/defer-hydration';
 
 @Component({
   standalone: true,
@@ -30,6 +31,7 @@ export class RepeaterComponent implements OnInit, OnDestroy, WithWidget {
     Record<string, unknown>[],
     RepeaterProps<NonFunctionWidget>
   > = inject(InputWidgetAdapter);
+  protected readonly deferHydration = deferHydrationAttr();
 
   isFocused = false;
 

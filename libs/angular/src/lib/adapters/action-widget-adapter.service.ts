@@ -21,7 +21,9 @@ export class ActionWidgetAdapter<
       invalid: viewModel.formInvalid,
     }));
 
-    this.context.emitEvent('load', this.widget);
+    if (this.isBrowser) {
+      this.context.emitEvent('load', this.widget);
+    }
   }
 
   click() {

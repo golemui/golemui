@@ -1,3 +1,4 @@
+import { isPlatformServer } from '@angular/common';
 import {
   type ComponentRef,
   Directive,
@@ -5,6 +6,7 @@ import {
   input,
   type OnDestroy,
   type OnInit,
+  PLATFORM_ID,
   type Type,
   ViewContainerRef,
 } from '@angular/core';
@@ -24,6 +26,7 @@ export class WidgetDirective implements OnInit, OnDestroy {
   widget = input.required<NonFunctionWidget<string>>();
 
   private formContext: AngularFormContext<Type<WithWidget>> = inject(AngularFormContext);
+  private platformId = inject(PLATFORM_ID);
   private viewContainerRef = inject(ViewContainerRef);
   private componentRef!: ComponentRef<WithWidget>;
   private destroyed = false;
@@ -31,6 +34,19 @@ export class WidgetDirective implements OnInit, OnDestroy {
   async ngOnInit() {
     // Read the input once so a bad binding fails inside the try, not again in the catch.
     const widget = this.widget();
+    // When the component is already preloaded, create it synchronously so it renders in
+    // the same change detection pass. Server renders and hydration both depend on this.
+    const preloaded = this.formContext.widgetRegistry.getIfLoaded(widget.type);
+    if (preloaded) {
+      this.createComponent(preloaded);
+      return;
+    }
+    if (isPlatformServer(this.platformId)) {
+      console.warn(
+        `[GolemUI] Widget "${widget.type}" was not preloaded; its server markup will be empty. ` +
+          'Call preloadFormWidgets() before rendering.',
+      );
+    }
     try {
       const component = await this.formContext.widgetRegistry.loadWidget(widget.type);
       // The directive can be destroyed while the loader is still running.
