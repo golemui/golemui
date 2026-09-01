@@ -13,6 +13,8 @@ npm i @golemui/core @golemui/angular @golemui/gui-angular @golemui/gui-shared
 npm i @golemui/core @golemui/vue @golemui/gui-vue @golemui/gui-shared
 # Lit AND vanilla JS (web component)
 npm i @golemui/core @golemui/lit @golemui/gui-lit @golemui/gui-shared
+# Lit server rendering (Astro, plain Node) additionally needs the optional peer:
+npm i @lit-labs/ssr
 ```
 
 Then import the component styles ONCE in the app entry (mandatory — without it the form
@@ -48,6 +50,40 @@ import type { FormSubmitEvent } from '@golemui/core';
 
 <GuiForm config={{ formDef: form }} formSubmit={(e: FormSubmitEvent) => console.log(e.data)} />;
 ```
+
+**React SSR (Next.js App Router)** — same packages and component. Widgets load through dynamic
+imports, which a server render cannot wait for, so preload them before the first render on BOTH
+the server and the client. In Next.js that is a client component that suspends on a module-scope
+promise (`src/app/golemui-provider.tsx`), wrapped around `{children}` in the root layout:
+
+```tsx
+'use client';
+import { preloadFormWidgets } from '@golemui/core';
+import { widgetLoaders } from '@golemui/gui-react';
+import { use, type ReactNode } from 'react';
+
+const preloadPromise = preloadFormWidgets({ widgetLoaders }); // one per environment
+
+export function GolemuiProvider({ children }: { children: ReactNode }) {
+  use(preloadPromise); // server: waits before emitting HTML; client: waits before hydrating
+  return <>{children}</>;
+}
+```
+
+Rules that follow from it:
+
+- Pages that render `<GuiForm>` are client components (`'use client'`): the config holds functions.
+  Keep `config` at module scope (a new identity per render re-initializes the form).
+- Set `formName` — the server and the client must produce the same form id.
+- Custom widgets: ONE module-scope loaders object, spread into the preload call and passed as
+  `customWidgetLoaders` in every form config (the registry caches by loader function identity).
+- Import `@golemui/gui-components/index.css` once in the root layout; nothing is injected.
+- A `gui-*` tag placed directly in JSX takes object props as properties in React 19
+  (`<gui-select options={list} onChange={…} />`).
+- The server renders the React layer (`<form>`, layouts, `gui-*` tags with their attributes and
+  values); the Lit `gui-*` elements render their internals once the browser upgrades them.
+
+Starter: `templates/nextjs` in the GolemUI repo.
 
 **Angular** — add `FormComponent` (from `@golemui/gui-angular`) to the standalone component's
 `imports`, then:
@@ -101,6 +137,59 @@ html`<gui-form
 ></gui-form>`;
 ```
 
+**Lit SSR (Astro, or any Node server)** — unlike the Vue and React hosts, this renders the WHOLE
+form on the server, widget internals included (inputs, labels, values are in the HTML), through
+the server-only subpath `@golemui/lit/ssr` (needs `@lit-labs/ssr`). The client does not hydrate
+that markup: it replaces it with one live render before the next paint. Keep the form config in a
+module both sides import; nothing in it may touch the DOM.
+
+Server (Astro frontmatter, or a request handler):
+
+```ts
+import { preloadFormWidgets } from '@golemui/core';
+import { widgetLoaders } from '@golemui/gui-lit'; // also registers <gui-form>
+import { renderGuiHtml } from '@golemui/lit/ssr';
+import { html } from 'lit';
+import { config } from './form'; // MUST set formName
+
+await preloadFormWidgets({ widgetLoaders }); // the render is synchronous: no awaiting loaders
+const formHtml = await renderGuiHtml(html`<gui-form .config=${config}></gui-form>`);
+// Astro: <Fragment set:html={formHtml} />. Every element carries `defer-hydration` and stays inert.
+```
+
+Client (Astro `<script>`, or the page's module):
+
+```ts
+import { preloadFormWidgets } from '@golemui/core';
+import { widgetLoaders, type FormElement } from '@golemui/gui-lit';
+import { initValidators } from '@golemui/gui-validators';
+import { resumeServerRenderedForm, type FormElement as CoreFormElement } from '@golemui/lit';
+import { config } from './form';
+
+await preloadFormWidgets({ widgetLoaders }); // same preload, or the first render resolves no widgets
+const form = document.querySelector<FormElement>('gui-form')!;
+form.addEventListener('formSubmit', (e) => console.log((e as CustomEvent).detail.data)); // BEFORE the resume
+resumeServerRenderedForm(form as unknown as CoreFormElement, {
+  config: config as never, // typed for the core element; <gui-form> follows the same contract
+  validators: initValidators(), // <gui-form> builds its own; the value is ignored
+});
+```
+
+Rules that follow from it:
+
+- `formName` is mandatory (the server render throws without it).
+- Listeners and properties (`formHealthBoundary`, `autocomplete`) go on the element BEFORE
+  `resumeServerRenderedForm`; the resume removes `defer-hydration`, which triggers the render.
+- Custom widgets must be registered with `safeDefine('my-tag', MyElement)` from `@golemui/lit`,
+  NOT `@customElement`/`customElements.define`: only safeDefine-registered elements run
+  `connectedCallback` on the server and honor `defer-hydration` on the client. Their loaders: ONE
+  module-scope object, spread into both preload calls and passed as `customWidgetLoaders`.
+- `@golemui/lit/ssr` has no browser build; import it only in server code.
+- `onLoad`, `onChange` and every other handler run in the browser only.
+
+Starter: `templates/astro` in the GolemUI repo (`output: 'server'` + `@astrojs/node`; the same
+code prerenders at build time under Astro's default static output).
+
 **Vanilla JS**
 
 ```ts
@@ -132,3 +221,6 @@ the single biggest API page:
 - JSON: https://golemui.com/json/integration/configuration.md
 
 Per-framework guides: `https://golemui.com/dx/integration/{react|angular|vue|lit|vanilla}.md`
+
+SSR starters in the GolemUI repo: `templates/nextjs` (React), `templates/nuxt` (Vue),
+`templates/astro` (Lit).
