@@ -4,7 +4,6 @@ import type {
   InputWidget,
   LayoutWidget,
   NonFunctionWidget,
-  StandardSchemaV1,
   ValidatorFn,
   WithWidget,
 } from '@golemui/core';
@@ -68,7 +67,7 @@ export const noopValidators: ValidatorFn<any> = () =>
       vendor: 'golemui-ssr-fixture',
       validate: (value: unknown) => ({ value }),
     },
-  }) as StandardSchemaV1;
+  }) as ReturnType<ValidatorFn<any>>;
 
 export const formDef = {
   form: {
