@@ -14,6 +14,11 @@ const config = {
     // Next.js app (file-based entry points, no main.ts)
     'apps/*/next.config.ts',
     'apps/nextjs-playground/src/app/**/*.tsx',
+    // Astro app (file-based entry points, no main.ts; knip does not parse .astro files, so the
+    // modules the pages import are listed as entries too)
+    'apps/*/astro.config.mjs',
+    'apps/astro-playground/src/forms/*.ts',
+    'apps/astro-playground/src/lib/*.ts',
     // Publishable libs (public and cross-package entry points)
     'libs/**/src/index.ts',
     'libs/**/src/internals.ts',
@@ -68,6 +73,8 @@ const config = {
     '@angular/platform-browser-dynamic',
     // Invoked by name by the Vue tooling (typecheck/build), no direct import:
     'vue-tsc',
+    // Loaded by name by `astro check` (astro-playground typecheck target), no direct import:
+    '@astrojs/check',
     // Peer dependency of angular-eslint (^8.0.0), must live in the root:
     'typescript-eslint',
     'czg',

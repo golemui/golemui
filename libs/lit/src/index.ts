@@ -19,5 +19,6 @@ export type { LitItemRenderer } from './lib/components/item-renderers/item-rende
 export { WidgetElement } from './lib/components/widget/widget-element';
 export { formContext, LitFormContext } from './lib/context/form.context';
 export { resumeServerRenderedForm } from './lib/ssr/resume';
+export { safeDefine } from './lib/utils/define';
 
 export type { Type } from './lib/utils/type';

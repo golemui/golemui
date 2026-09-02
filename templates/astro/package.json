@@ -1,0 +1,28 @@
+{
+  "name": "golemui-astro-template",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "typecheck": "astro check"
+  },
+  "dependencies": {
+    "@astrojs/node": "^11.1.5",
+    "@golemui/core": "1.4.0",
+    "@golemui/lit": "1.4.0",
+    "@golemui/gui-lit": "1.4.0",
+    "@golemui/gui-shared": "1.4.0",
+    "@golemui/gui-validators": "1.4.0",
+    "@lit-labs/ssr": "^4.1.0",
+    "astro": "^7.2.10",
+    "lit": "^3.3.1"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.0",
+    "typescript": "~5.9.0"
+  }
+}

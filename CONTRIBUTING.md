@@ -113,6 +113,8 @@ npx nx run react-playground:serve
 npx nx run lit-playground:serve
 npx nx run vue-playground:serve
 npx nx run nuxt-playground:serve   # server-rendered (Nuxt)
+npx nx run nextjs-playground:serve # server-rendered (Next.js)
+npx nx run astro-playground:serve  # server-rendered (Astro, pure Lit)
 ```
 
 ### Running Cypress Tests

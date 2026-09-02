@@ -75,10 +75,9 @@ const FRAMEWORK_SETUP: Record<DxFramework, string> = {
     "'@golemui/gui-react'; import type { FormSubmitEvent } from '@golemui/core';`, then render " +
     '`<GuiForm config={{ formDef: form }} formSubmit={(e: FormSubmitEvent) => { /* e.data is the form data */ }} />`. ' +
     'A `gui.displays.display(() => <h2>…</h2>)` returns React JSX. ' +
-    'For SSR (Next.js) await `preloadFormWidgets({ widgetLoaders })` from `@golemui/core` before rendering ' +
-    'on both server and client; `widgetLoaders` comes from `@golemui/gui-react`. In the App Router the preload ' +
-    'belongs in the client component module that renders the form. Set an explicit `formName` and expect ' +
-    'handlers to run in the browser only.',
+    'For SSR (Next.js App Router) await `preloadFormWidgets({ widgetLoaders })` from `@golemui/core` before the ' +
+    "first render on both server and client (a `'use client'` provider that `use()`s a module-scope promise); " +
+    '`widgetLoaders` comes from `@golemui/gui-react`. Set `formName`.',
   angular:
     "RENDER (Angular) — `import { gui } from '@golemui/gui-shared'; import { FormComponent } from " +
     "'@golemui/gui-angular';`, add `FormComponent` to the standalone component's `imports`, then in the " +
@@ -102,9 +101,10 @@ const FRAMEWORK_SETUP: Record<DxFramework, string> = {
     '`' +
     formEventNames.submit +
     '` (camelCase) — Lit dispatches a raw CustomEvent, so there is no kebab-case alias. ' +
-    'For SSR (experimental) render with `renderGuiFormHtml` from `@golemui/lit/ssr` (needs `@lit-labs/ssr` >= 4.1 ' +
-    'installed and an explicit `formName`), then resume on the client with `resumeServerRenderedForm` from ' +
-    '`@golemui/lit` after `preloadFormWidgets({ widgetLoaders })` (`widgetLoaders` from `@golemui/gui-lit`).',
+    'For SSR (Astro, plain Node) the server renders the whole form with `renderGuiHtml` from `@golemui/lit/ssr` ' +
+    '(needs `@lit-labs/ssr`) after `preloadFormWidgets({ widgetLoaders })`; the client preloads again and calls ' +
+    '`resumeServerRenderedForm` from `@golemui/lit`. `formName` is mandatory; custom widgets register with ' +
+    '`safeDefine` from `@golemui/lit`, not `@customElement`.',
   vanilla:
     "RENDER (vanilla JS) — `import { gui } from '@golemui/gui-shared'; import '@golemui/gui-lit';` (registers " +
     "`<gui-form>`), then `const el = document.querySelector('gui-form'); el.config = { formDef: form }; " +

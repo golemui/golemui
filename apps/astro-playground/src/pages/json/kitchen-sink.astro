@@ -1,0 +1,61 @@
+---
+import { config, customFormHealthBoundary, languages } from '../../forms/json-kitchen-sink';
+import Layout from '../../layouts/Layout.astro';
+import { renderForm } from '../../lib/render-form';
+
+// Rendered on every request (output: 'server').
+const formHtml = await renderForm(config, {
+  autocomplete: 'off',
+  formHealthBoundary: customFormHealthBoundary,
+});
+---
+
+<Layout title="JSON kitchen sink · Astro Playground">
+  {
+    languages.length > 0 && (
+      <div>
+        {/* Astro emits the tag as is; the element renders its internals once the browser
+            upgrades it, and the page script hands it the options. */}
+        <gui-select label="Language picker" uid="language" value="en" />
+      </div>
+    )
+  }
+  <Fragment set:html={formHtml} />
+</Layout>
+
+<script>
+  import { onFormEvent } from '@golemui/apps-shared';
+  import type { FormEvent, FormHealth, FormSubmitEvent } from '@golemui/core';
+  import i18next from 'i18next';
+  import {
+    config,
+    customFormHealthBoundary,
+    languages,
+    mock,
+  } from '../../forms/json-kitchen-sink';
+  import { resumeForm } from '../../lib/resume-form';
+
+  const languagePicker = document.querySelector<HTMLElement & { options: unknown }>(
+    'gui-select[uid="language"]',
+  );
+  if (languagePicker) {
+    languagePicker.options = languages;
+    languagePicker.addEventListener('change', (event) => {
+      i18next.changeLanguage((event as CustomEvent<{ value: string }>).detail.value);
+    });
+  }
+
+  resumeForm(config, {
+    formHealthBoundary: customFormHealthBoundary,
+    formHealth: (health: FormHealth) => {
+      if (health.status === 'errored') {
+        console.log('GolemUI form health error:', health.message);
+      }
+    },
+    formEvent: (event: FormEvent) => {
+      mock.onFormEvent?.(event);
+      onFormEvent(event);
+    },
+    formSubmit: (event: FormSubmitEvent) => console.log('👉 onFormSubmit', event.data),
+  });
+</script>
