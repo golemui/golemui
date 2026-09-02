@@ -75,7 +75,7 @@
     "@lit-labs/ssr": "^4.1.0",
     "@lit-labs/ssr-client": "^1.1.8",
     "@nx/angular": "22.7.8",
-    "@nx/cypress": "22.7.8",
+    "@nx/cypress": "23.1.2",
     "@nx/eslint": "22.7.8",
     "@nx/eslint-plugin": "22.7.8",
     "@nx/js": "22.7.8",
