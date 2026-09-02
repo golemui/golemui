@@ -7,5 +7,6 @@
 /.nx/workspace-data
 .angular
 .nuxt
+.next
 .output
 CHANGELOG.md

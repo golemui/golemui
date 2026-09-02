@@ -1,0 +1,29 @@
+@use '../../../libs/gui/components/src/styles/index';
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+
+html,
+body {
+  background-color: var(--gui-bg-default);
+  font-family: system-ui, sans-serif;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+}
+
+.container {
+  width: 100%;
+  padding: 1rem;
+}
+
+// Custom icons
+.gui-widget-icon[data-icon]::before {
+  content: attr(data-icon);
+  font-family: 'Material Icons';
+  font-size: var(--gui-font-lg);
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+}
