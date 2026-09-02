@@ -115,6 +115,7 @@ npx nx run vue-playground:serve
 npx nx run nuxt-playground:serve   # server-rendered (Nuxt)
 npx nx run nextjs-playground:serve # server-rendered (Next.js)
 npx nx run astro-playground:serve  # server-rendered (Astro, pure Lit)
+npx nx run analog-playground:serve # server-rendered (Analog, Angular)
 ```
 
 ### Running Cypress Tests

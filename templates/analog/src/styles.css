@@ -1,0 +1,32 @@
+/* GolemUI never injects its stylesheet. Load it once here and override the design tokens
+   in your own CSS. */
+@import '@golemui/gui-components/index.css';
+
+html,
+body {
+  background-color: var(--gui-bg-default);
+  color: var(--gui-text-default);
+  font-family: system-ui, sans-serif;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+app-root {
+  display: block;
+  max-width: 480px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.gui-widget-icon[data-icon]::before {
+  content: attr(data-icon);
+  font-family: 'Material Icons';
+  font-size: var(--gui-font-lg);
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+}
