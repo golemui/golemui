@@ -82,7 +82,10 @@ const FRAMEWORK_SETUP: Record<DxFramework, string> = {
     "RENDER (Angular) — `import { gui } from '@golemui/gui-shared'; import { FormComponent } from " +
     "'@golemui/gui-angular';`, add `FormComponent` to the standalone component's `imports`, then in the " +
     'template `<gui-form [config]="{ formDef: form }" (formSubmit)="onSubmit($event)"></gui-form>` — `$event` is ' +
-    'a `FormSubmitEvent` (type from `@golemui/core`), `$event.data` is the form data.',
+    'a `FormSubmitEvent` (type from `@golemui/core`), `$event.data` is the form data. ' +
+    'For SSR (`@angular/platform-server`) await `preloadFormWidgets({ widgetLoaders })` from `@golemui/core` ' +
+    'before bootstrap on both server and client; `widgetLoaders` comes from `@golemui/gui-angular`. An explicit ' +
+    '`formName` is required and handlers run in the browser only.',
   vue:
     "RENDER (Vue) — `import { gui } from '@golemui/gui-shared'; import { GuiForm } from '@golemui/gui-vue';`, " +
     'then `<GuiForm :config="{ formDef: form }" @form-submit="onSubmit" />` — the handler receives a ' +

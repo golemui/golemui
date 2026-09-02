@@ -21,7 +21,9 @@ export class ActionWidgetAdapter<
       invalid: viewModel.formInvalid,
     }));
 
-    if (this.shouldEmitLoad()) {
+    // A server render must not run consumer event handlers. The guard checks the document
+    // global, not lit's isServer: the jsdom specs load the node build, where isServer is true.
+    if (typeof document !== 'undefined' && this.shouldEmitLoad()) {
       this.context.emitEvent('load', this.widget);
     }
   }

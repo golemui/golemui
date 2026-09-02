@@ -92,6 +92,29 @@ Starter: `templates/nextjs` in the GolemUI repo.
 <gui-form [config]="{ formDef: form }" (formSubmit)="onSubmit($event)"></gui-form>
 ```
 
+**Angular SSR** - standard `@angular/platform-server`, no GolemUI-specific server entry.
+Preload before bootstrap on BOTH the server and the client, and pass
+`provideClientHydration()` on both sides (the server needs it to emit the hydration
+annotations):
+
+```ts
+import { preloadFormWidgets } from '@golemui/core';
+import { widgetLoaders } from '@golemui/gui-angular';
+
+await preloadFormWidgets({ widgetLoaders });
+// Server: renderApplication(bootstrap, { document }) with provideServerRendering() and
+// provideClientHydration() in the providers.
+// Client: bootstrapApplication(AppComponent, { providers: [provideClientHydration()] }).
+```
+
+- Set an explicit `formName` - required for SSR. Without one the server and the client mint
+  different random ids (hydration still succeeds, but the markup id is not predictable).
+- Handlers run in the browser only - never during a server render.
+- The server renders the form structure and the native Angular widget internals (tabs, flex,
+  grid). `gui-*` element internals stay empty until the browser upgrades them. Each `gui-*`
+  element carries `defer-hydration`, removed by the first client change detection pass.
+- A widget that was not preloaded logs a warning during a server render and renders empty.
+
 **Vue**
 
 ```vue
@@ -211,6 +234,20 @@ In every case `formDef` is the bare array; form-wide config goes in the sibling
 `formConfig` (`config={{ formDef, formConfig: { states, validateOn } }}`). `validateOn` is one
 of `eager` | `change` | `blur` | `submit`. There is also a `formHealth` callback/event
 (validity reporting) and a `formEvent` event for host-dispatched widget events.
+
+## SSR rules shared by every framework
+
+- Keep custom widget loaders in ONE module-scope object, reused by the preload call and the
+  form config. The registry caches by loader function identity, so an object literal recreated
+  per component misses the cache.
+- The registry cache is process-global and shared across requests. That is safe (the entries
+  are widget modules), and it means one preload warms every later render in the process.
+- Anything passed as `dependencies` (for example a markdown parser) must work in Node and
+  produce the same output on the server and the client.
+- Validation runs on triggers and error display waits for `touched`, so a server render of an
+  untouched form never contains error markup.
+- Server runtime: Node 20 or newer (CI tests on Node 22). Runtimes with standard `crypto` and
+  `Intl` are expected to work but are not tested.
 
 ## Full component reference
 

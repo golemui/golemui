@@ -15,6 +15,7 @@ import { AirportItemRenderer } from '../../../components/item-renderers/AirportI
 import { ComplexListItemRenderer } from '../../../components/item-renderers/ComplexListItemRenderer';
 import { CountryItemRenderer } from '../../../components/item-renderers/CountryItemRenderer';
 import { ProductItemRenderer } from '../../../components/item-renderers/ProductItemRenderer';
+import type { GuiFormInitConfig } from '@golemui/gui-shared';
 
 const localization = initializeI18n({});
 
@@ -41,7 +42,7 @@ const ks = buildKitchenSinkDx({
   ),
 });
 
-const config = {
+const config: GuiFormInitConfig = {
   // Stable id: with SSR the server and client must agree on the form id.
   formName: 'nextjs-dx-kitchen-sink',
   formDef: ks.formDef,
