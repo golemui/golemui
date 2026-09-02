@@ -44,7 +44,18 @@ const config: GuiFormInitConfig = {
         ],
       },
       children: [
-        { uid: 'tab1', kind: 'input', type: 'textinput', path: 'firstName', label: 'First name' },
+        {
+          uid: 'tab1',
+          kind: 'layout',
+          type: 'flex',
+          children: [
+            { kind: 'input', type: 'textinput', path: 'firstName', label: 'First name' },
+            // The upload widgets read their service on their first update, so they must stay
+            // inert until the client has bound `dependencies` (see the defer-hydration test).
+            { kind: 'input', type: 'fileUpload', path: 'avatar', label: 'Avatar' },
+            { kind: 'input', type: 'multiFileUpload', path: 'documents', label: 'Documents' },
+          ],
+        },
         { uid: 'tab2', kind: 'input', type: 'textinput', path: 'lastName', label: 'Last name' },
       ],
     },
@@ -101,6 +112,31 @@ describe('server rendering the gui widget set in plain node', () => {
 
   it('keeps the custom elements inert until the client removes the attribute', () => {
     expect(markup).toMatch(/<gui-textinput[^>]*defer-hydration=""/);
+    expect(markup).toMatch(/<gui-file-upload[^>]*defer-hydration=""/);
+    expect(markup).toMatch(/<gui-multi-file-upload[^>]*defer-hydration=""/);
+  });
+
+  it('marks every rendered custom element, not only the ones this spec names', () => {
+    // Angular hosts wrap each widget as gui-<type>-{control,interactive,display,layout}; the
+    // form shell has its own hosts. Everything else with a gui- prefix is a lit element that
+    // would upgrade before its bindings arrive if the attribute were missing.
+    const hostTags = new Set([
+      'gui-ssr-host',
+      'gui-form',
+      'gui-widget-set-form',
+      'gui-core-form',
+      'gui-default-form-health-boundary',
+    ]);
+    const customElements = [...markup.matchAll(/<(gui-[a-z-]+)([^>]*)>/g)].filter(
+      ([, tag]) => !hostTags.has(tag) && !/-(control|interactive|display|layout)$/.test(tag),
+    );
+
+    expect(customElements.map(([, tag]) => tag)).toEqual(
+      expect.arrayContaining(['gui-textinput', 'gui-file-upload', 'gui-multi-file-upload']),
+    );
+    for (const [, tag, attributes] of customElements) {
+      expect(attributes, tag).toContain('defer-hydration=""');
+    }
   });
 
   it('is deterministic across renders', async () => {

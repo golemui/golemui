@@ -10,6 +10,7 @@ import { InputWidgetAdapter } from '@golemui/angular';
 import type { InputWidget, WithWidget } from '@golemui/core';
 import type { FileItem, FileUploadProps } from '@golemui/gui-shared/internals';
 import '@golemui/gui-components/file-upload';
+import { deferHydrationAttr } from '../../utils/defer-hydration';
 
 @Component({
   standalone: true,
@@ -27,6 +28,7 @@ export class FileUploadComponent implements OnInit, OnDestroy, WithWidget {
   widget!: InputWidget<FileItem | null>;
   protected adapter: InputWidgetAdapter<FileItem | null, FileUploadProps> =
     inject(InputWidgetAdapter);
+  protected readonly deferHydration = deferHydrationAttr();
 
   ngOnInit(): void {
     this.adapter.init(this.widget);
