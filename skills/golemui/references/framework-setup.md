@@ -115,6 +115,10 @@ await preloadFormWidgets({ widgetLoaders });
   element carries `defer-hydration`, removed by the first client change detection pass.
 - A widget that was not preloaded logs a warning during a server render and renders empty.
 
+Starter: `templates/analog` in the GolemUI repo (AnalogJS: Vite + Nitro, file-based routes; its
+`main.server.ts` awaits the widget preload before delegating to Analog's `render()`, and
+`main.ts` awaits it before `bootstrapApplication`).
+
 **Vue**
 
 ```vue

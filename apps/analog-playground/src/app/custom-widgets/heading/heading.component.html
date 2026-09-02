@@ -1,0 +1,24 @@
+@let templateData = adapter.templateData();
+
+<div class="gui-widget">
+  @switch (templateData.level) {
+    @case (2) {
+      <h2 class="heading">{{ templateData.text }}</h2>
+    }
+    @case (3) {
+      <h3 class="heading">{{ templateData.text }}</h3>
+    }
+    @case (4) {
+      <h4 class="heading">{{ templateData.text }}</h4>
+    }
+    @case (5) {
+      <h5 class="heading">{{ templateData.text }}</h5>
+    }
+    @case (6) {
+      <h6 class="heading">{{ templateData.text }}</h6>
+    }
+    @default {
+      <h1 class="heading">{{ templateData.text }}</h1>
+    }
+  }
+</div>

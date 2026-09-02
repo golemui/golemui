@@ -19,6 +19,9 @@ const config = {
     'apps/*/astro.config.mjs',
     'apps/astro-playground/src/forms/*.ts',
     'apps/astro-playground/src/lib/*.ts',
+    // Analog app (file-based routes; main.ts is covered by the apps glob above)
+    'apps/*/src/main.server.ts',
+    'apps/analog-playground/src/app/pages/**/*.page.ts',
     // Publishable libs (public and cross-package entry points)
     'libs/**/src/index.ts',
     'libs/**/src/internals.ts',
@@ -75,6 +78,9 @@ const config = {
     'vue-tsc',
     // Loaded by name by `astro check` (astro-playground typecheck target), no direct import:
     '@astrojs/check',
+    // Dependency of @analogjs/platform, pinned so it cannot drift from the other @analogjs/*
+    // packages (the platform declares a caret range on it):
+    '@analogjs/vite-plugin-nitro',
     // Peer dependency of angular-eslint (^8.0.0), must live in the root:
     'typescript-eslint',
     'czg',
