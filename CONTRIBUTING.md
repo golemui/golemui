@@ -81,7 +81,7 @@ One PR should address one concern. If you find unrelated bugs along the way, ple
 
 ### Prerequisites
 
-- **Node.js** ≥ 20 (LTS recommended)
+- **Node.js** 24.11 or newer, see `.nvmrc`. Node 22.12 or newer also works. Nuxt 4.4 requires one of these ranges.
 - **npm** ≥ 10 (or the package manager configured for the repo)
 - **Git**
 
