@@ -1,3 +1,13 @@
+## 1.5.0-rc.0 (2026-09-04)
+
+### 🚀 Features
+
+- **react:** support server-side rendering of forms ([b4dae8fb](https://github.com/golemui/golemui/commit/b4dae8fb))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+
 ## 1.4.0 (2026-08-26)
 
 ### 🚀 Features

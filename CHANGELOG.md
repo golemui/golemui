@@ -1,3 +1,28 @@
+## 1.5.0-rc.0 (2026-09-04)
+
+### 🚀 Features
+
+- **angular:** support server-side rendering and hydration of forms ([#348](https://github.com/golemui/golemui/pull/348))
+- **core:** add widget preloading for synchronous component access ([#330](https://github.com/golemui/golemui/pull/330))
+- **gui-components:** add file upload widgets ([#332](https://github.com/golemui/golemui/pull/332))
+- **gui-react:** support server-side rendering and hydration ([0ea08cde](https://github.com/golemui/golemui/commit/0ea08cde))
+- **lit:** support the defer-hydration attribute in safeDefine ([55646c98](https://github.com/golemui/golemui/commit/55646c98))
+- **lit:** shim querySelector and export safeDefine for SSR ([#351](https://github.com/golemui/golemui/pull/351))
+- **lit,gui-lit,gui-components:** support server-side rendering of forms ([#334](https://github.com/golemui/golemui/pull/334))
+- **react:** support server-side rendering of forms ([b4dae8fb](https://github.com/golemui/golemui/commit/b4dae8fb))
+- **vue:** support server-side rendering of forms ([#331](https://github.com/golemui/golemui/pull/331))
+- **vue:** nuxt support ([#335](https://github.com/golemui/golemui/pull/335))
+
+### 🩹 Fixes
+
+- **core:** deterministic function widget uids and default language ([#329](https://github.com/golemui/golemui/pull/329))
+- **gui-angular:** defer hydration of the file upload widgets ([#352](https://github.com/golemui/golemui/pull/352))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
 ## 1.4.0 (2026-08-26)
 
 ### 🚀 Features

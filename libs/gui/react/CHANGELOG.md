@@ -1,3 +1,17 @@
+## 1.5.0-rc.0 (2026-09-04)
+
+### 🚀 Features
+
+- **vue:** nuxt support ([#335](https://github.com/golemui/golemui/pull/335))
+- **gui-components:** add file upload widgets ([#332](https://github.com/golemui/golemui/pull/332))
+- **lit,gui-lit,gui-components:** support server-side rendering of forms ([#334](https://github.com/golemui/golemui/pull/334))
+- **gui-react:** support server-side rendering and hydration ([0ea08cde](https://github.com/golemui/golemui/commit/0ea08cde))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
 ## 1.4.0 (2026-08-26)
 
 ### 🚀 Features
