@@ -1,3 +1,13 @@
+## 1.5.0-rc.0 (2026-09-04)
+
+### 🚀 Features
+
+- **gui-components:** add file upload widgets ([#332](https://github.com/golemui/golemui/pull/332))
+
+### ❤️ Thank You
+
+- Raúl Jiménez @Elecash
+
 ## 1.4.0 (2026-08-26)
 
 This was a version bump only for gui-validators to align it with other projects, there were no code changes.

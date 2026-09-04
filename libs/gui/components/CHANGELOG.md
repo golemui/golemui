@@ -1,3 +1,16 @@
+## 1.5.0-rc.0 (2026-09-04)
+
+### 🚀 Features
+
+- **gui-components:** add file upload widgets ([#332](https://github.com/golemui/golemui/pull/332))
+- **lit,gui-lit,gui-components:** support server-side rendering of forms ([#334](https://github.com/golemui/golemui/pull/334))
+- **vue:** support server-side rendering of forms ([#331](https://github.com/golemui/golemui/pull/331))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
 ## 1.4.0 (2026-08-26)
 
 ### 🚀 Features

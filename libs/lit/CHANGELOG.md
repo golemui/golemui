@@ -1,3 +1,21 @@
+## 1.5.0-rc.0 (2026-09-04)
+
+### 🚀 Features
+
+- **lit:** shim querySelector and export safeDefine for SSR ([#351](https://github.com/golemui/golemui/pull/351))
+- **vue:** nuxt support ([#335](https://github.com/golemui/golemui/pull/335))
+- **lit,gui-lit,gui-components:** support server-side rendering of forms ([#334](https://github.com/golemui/golemui/pull/334))
+- **lit:** support the defer-hydration attribute in safeDefine ([55646c98](https://github.com/golemui/golemui/commit/55646c98))
+
+### 🩹 Fixes
+
+- **core:** deterministic function widget uids and default language ([#329](https://github.com/golemui/golemui/pull/329))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
 ## 1.4.0 (2026-08-26)
 
 ### 🚀 Features

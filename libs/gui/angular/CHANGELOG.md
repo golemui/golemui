@@ -1,3 +1,19 @@
+## 1.5.0-rc.0 (2026-09-04)
+
+### 🚀 Features
+
+- **angular:** support server-side rendering and hydration of forms ([#348](https://github.com/golemui/golemui/pull/348))
+- **gui-components:** add file upload widgets ([#332](https://github.com/golemui/golemui/pull/332))
+
+### 🩹 Fixes
+
+- **gui-angular:** defer hydration of the file upload widgets ([#352](https://github.com/golemui/golemui/pull/352))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
 ## 1.4.0 (2026-08-26)
 
 ### 🚀 Features
