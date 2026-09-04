@@ -105,7 +105,8 @@ export interface FileValidator extends BaseValidator {
 
 /**
  * Validates the envelope array stored by the `multiFileUpload` widget
- * (`FileItem[]`). `required` means non-empty, like `array`.
+ * (`FileItem[]`). `required` means non-empty, like `array`. An absent value
+ * (`undefined` or `null`) counts as empty.
  */
 export interface FilesValidator extends BaseValidator {
   type: 'files';
@@ -443,56 +444,88 @@ function fromFileValidator(v: FileValidator, localization?: I18nTranslator) {
   );
 }
 
+// Not wrapped in `withOptional`: the absent value is checked here, before the array
+// type check, so a required empty field reports the required message and not "Invalid file".
 function fromFilesValidator(v: FilesValidator, localization?: I18nTranslator) {
-  return withOptional(v, (v) => {
-    const invalidMsg =
-      resolveMessage(v.messages?.['invalid'], localization) ?? DEFAULT_INVALID_FILE_MESSAGE;
-    let schema = array(any(), invalidMsg).check(
-      refine((val) => (val as unknown[]).every(isFileItem), { error: invalidMsg }),
+  const requiredMsg =
+    resolveMessage(v.messages?.['required'], localization) ?? DEFAULT_REQUIRED_MESSAGE;
+  const arraySchema = fromFilesArrayValidator(v, localization, requiredMsg);
+
+  return any().check(
+    superRefine((val, ctx) => {
+      if (val === null || val === undefined) {
+        if (v.required === true) {
+          ctx.addIssue({ code: 'custom', message: requiredMsg });
+        }
+        return;
+      }
+      // Typed as the standard interface so the result type is the generic result and not the array.
+      const result = standardValidate<StandardSchemaV1>(
+        arraySchema,
+        val,
+      ) as StandardSchemaV1.Result<unknown>;
+      if (isStandardValidateSuccess(result)) {
+        return;
+      }
+      for (const issue of result.issues) {
+        ctx.addIssue({ code: 'custom', message: issue.message });
+      }
+    }),
+  );
+}
+
+// The checks for a present value. The caller resolves `requiredMsg`, so the absent
+// value and the empty array report the same message.
+function fromFilesArrayValidator(
+  v: FilesValidator,
+  localization: I18nTranslator | undefined,
+  requiredMsg: string,
+) {
+  const invalidMsg =
+    resolveMessage(v.messages?.['invalid'], localization) ?? DEFAULT_INVALID_FILE_MESSAGE;
+  let schema = array(any(), invalidMsg).check(
+    refine((val) => (val as unknown[]).every(isFileItem), { error: invalidMsg }),
+  );
+
+  if (v.required === true) {
+    schema = schema.check(refine((val) => (val as unknown[]).length > 0, { error: requiredMsg }));
+  }
+
+  if (typeof v.minItems === 'number') {
+    const msg = resolveMessage(v.messages?.['minItems'], localization);
+    const threshold = v.minItems;
+    schema = schema.check(
+      msg
+        ? refine((val) => (val as unknown[]).length >= threshold, { error: msg })
+        : minLength(threshold),
     );
+  }
 
-    if (v.required === true) {
-      const msg =
-        resolveMessage(v.messages?.['required'], localization) ?? DEFAULT_REQUIRED_MESSAGE;
-      schema = schema.check(refine((val) => (val as unknown[]).length > 0, { error: msg }));
-    }
+  if (typeof v.maxItems === 'number') {
+    const msg = resolveMessage(v.messages?.['maxItems'], localization);
+    const threshold = v.maxItems;
+    schema = schema.check(
+      msg
+        ? refine((val) => (val as unknown[]).length <= threshold, { error: msg })
+        : maxLength(threshold),
+    );
+  }
 
-    if (typeof v.minItems === 'number') {
-      const msg = resolveMessage(v.messages?.['minItems'], localization);
-      const threshold = v.minItems;
-      schema = schema.check(
-        msg
-          ? refine((val) => (val as unknown[]).length >= threshold, { error: msg })
-          : minLength(threshold),
-      );
-    }
+  if (v.blockPendingUploads !== false) {
+    const msg =
+      resolveMessage(v.messages?.['pendingUploads'], localization) ??
+      DEFAULT_PENDING_UPLOADS_MESSAGE;
+    // Foreign items are already reported by the `invalid` refinement above.
+    schema = schema.check(
+      refine(
+        (val) =>
+          (val as unknown[]).every((item) => !isFileItem(item) || item.status === 'uploaded'),
+        { error: msg },
+      ),
+    );
+  }
 
-    if (typeof v.maxItems === 'number') {
-      const msg = resolveMessage(v.messages?.['maxItems'], localization);
-      const threshold = v.maxItems;
-      schema = schema.check(
-        msg
-          ? refine((val) => (val as unknown[]).length <= threshold, { error: msg })
-          : maxLength(threshold),
-      );
-    }
-
-    if (v.blockPendingUploads !== false) {
-      const msg =
-        resolveMessage(v.messages?.['pendingUploads'], localization) ??
-        DEFAULT_PENDING_UPLOADS_MESSAGE;
-      // Foreign items are already reported by the `invalid` refinement above.
-      schema = schema.check(
-        refine(
-          (val) =>
-            (val as unknown[]).every((item) => !isFileItem(item) || item.status === 'uploaded'),
-          { error: msg },
-        ),
-      );
-    }
-
-    return schema;
-  });
+  return schema;
 }
 
 function fromCustomValidator(v: CustomValidator, customValidators: CustomValidatorSchemas) {

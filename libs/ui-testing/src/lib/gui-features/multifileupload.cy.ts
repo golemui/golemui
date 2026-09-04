@@ -234,5 +234,24 @@ export const runMultiFileUploadComponentTests = (mountFn: MountComponentFn) => {
       cy.get(sel.submit).click();
       cy.get('@formSubmitHandler').should('have.been.calledOnce');
     });
+
+    it('reports the required message when a required field is submitted empty', () => {
+      const mock = createMockUploadService();
+      const formSubmitHandler = cy.stub().as('formSubmitHandler');
+      mountMultiFileUpload({
+        service: mock.service,
+        validator: { type: 'files', required: true },
+        formSubmit: formSubmitHandler,
+      });
+
+      cy.get(sel.submit).click();
+      cy.get('@formSubmitHandler').should('not.have.been.called');
+      cy.get(sel.validatorError).should('contain', 'This field is required');
+
+      pick([a]);
+      cy.get(sel.pill).should('have.length', 1);
+      cy.get(sel.submit).click();
+      cy.get('@formSubmitHandler').should('have.been.calledOnce');
+    });
   });
 };

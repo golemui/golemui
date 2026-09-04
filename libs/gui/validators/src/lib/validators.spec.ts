@@ -202,6 +202,10 @@ describe('Golem validators', () => {
         expect(isValid(schema, [])).toBe(true);
       });
 
+      it('accepts null (a host may persist it in place of an empty array)', () => {
+        expect(isValid(schema, null)).toBe(true);
+      });
+
       it('accepts uploaded items', () => {
         expect(isValid(schema, [uploaded, { ...uploaded, id: 'f9' }])).toBe(true);
       });
@@ -218,6 +222,25 @@ describe('Golem validators', () => {
 
       it('rejects an empty array', () => {
         expect(getErrors(schema, [])).toEqual(['This field is required']);
+      });
+
+      it('rejects undefined and null with the required message', () => {
+        expect(getErrors(schema, undefined)).toEqual(['This field is required']);
+        expect(getErrors(schema, null)).toEqual(['This field is required']);
+      });
+
+      it('uses the custom required message for an absent value', () => {
+        const customSchema = validate({
+          type: 'files',
+          required: true,
+          messages: { required: 'Add at least one file' },
+        } satisfies FilesValidator);
+        expect(getErrors(customSchema, undefined)).toEqual(['Add at least one file']);
+      });
+
+      it('keeps the invalid and pending messages for a present value', () => {
+        expect(getErrors(schema, uploaded)).toEqual(['Invalid file']);
+        expect(getErrors(schema, [uploaded, uploading])).toEqual(['Wait for the upload to finish']);
       });
 
       it('accepts a non-empty array', () => {
