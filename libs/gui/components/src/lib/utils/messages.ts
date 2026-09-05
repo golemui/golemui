@@ -97,8 +97,8 @@ export const FILE_REMOVE_ARIA_LABEL = 'Remove {name}';
 /** Default accessible name of the cancel button of an in-progress upload. **/
 export const FILE_CANCEL_ARIA_LABEL = 'Cancel {name}';
 
-/** Default text of the retry button of a failed file. **/
-export const FILE_RETRY_LABEL = 'Retry';
+/** Default accessible name of the retry button of a failed file. **/
+export const FILE_RETRY_ARIA_LABEL = 'Retry {name}';
 
 /** Default per-file error when the file exceeds `maxSize`. **/
 export const FILE_TOO_LARGE_MESSAGE = 'File exceeds the maximum size';

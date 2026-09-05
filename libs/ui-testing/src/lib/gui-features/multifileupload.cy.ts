@@ -17,7 +17,6 @@ export const runMultiFileUploadComponentTests = (mountFn: MountComponentFn) => {
       bar: `[data-cy="${uid}_file-bar"]`,
       name: `[data-cy="${uid}_file-name"]`,
       pct: `[data-cy="${uid}_file-pct"]`,
-      error: `[data-cy="${uid}_file-error"]`,
       retry: `[data-cy="${uid}_file-retry"]`,
       action: `[data-cy="${uid}_file-remove"]`,
       pill: 'gui-multi-file-upload gui-pills .gui-pills__pill',
@@ -131,7 +130,7 @@ export const runMultiFileUploadComponentTests = (mountFn: MountComponentFn) => {
       pick([a, b]);
       cy.get(sel.bar).should('have.attr', 'data-status', 'error');
       cy.get(sel.name).should('contain', 'a.png');
-      cy.get(sel.error).first().should('contain', 'Boom');
+      cy.get(sel.validatorError).should('contain', 'Boom');
       cy.then(() => {
         expect(mock.uploads.map((f) => f.name)).to.deep.equal(['a.png']);
       });
@@ -141,6 +140,24 @@ export const runMultiFileUploadComponentTests = (mountFn: MountComponentFn) => {
       cy.then(() => {
         expect(mock.uploads.map((f) => f.name)).to.deep.equal(['a.png', 'b.png']);
       });
+    });
+
+    it('keeps the failed file message while an unrelated pill is removed', () => {
+      const mock = createMockUploadService({
+        failFor: (file) => (file.name === 'a.png' ? 'Boom' : undefined),
+      });
+      mountMultiFileUpload({ service: mock.service, data: { myField: preloaded } });
+
+      pick([a]);
+      cy.get(sel.bar).should('have.attr', 'data-status', 'error');
+      cy.get(sel.validatorError).should('contain', 'Boom');
+
+      // Removing a pill emits a change; the injected message must survive it
+      // because the failed file is still in the bar.
+      cy.get(sel.pillRemove).first().click({ force: true });
+      cy.get(sel.pill).should('have.length', 1);
+      cy.get(sel.bar).should('have.attr', 'data-status', 'error');
+      cy.get(sel.validatorError).should('contain', 'Boom');
     });
 
     it('renders preloaded files as pills and removes one on the server before dropping it', () => {

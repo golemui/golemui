@@ -19,8 +19,9 @@
   [buttonLabel]="templateData.buttonLabel"
   [removeAriaLabel]="templateData.removeAriaLabel"
   [cancelAriaLabel]="templateData.cancelAriaLabel"
-  [retryLabel]="templateData.retryLabel"
+  [retryAriaLabel]="templateData.retryAriaLabel"
   [removeIcon]="templateData.removeIcon"
+  [retryIcon]="templateData.retryIcon"
   [maxSizeMessage]="templateData.maxSizeMessage"
   [acceptMessage]="templateData.acceptMessage"
   [missingServiceMessage]="templateData.missingServiceMessage"
@@ -29,4 +30,5 @@
   [failedMessage]="templateData.failedMessage"
   (change)="valueChanged($event)"
   (blur)="adapter.onBlur()"
+  (inputError)="onInputError($event)"
 ></gui-multi-file-upload>

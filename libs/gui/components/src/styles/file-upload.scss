@@ -36,7 +36,6 @@ gui-multi-file-upload {
 
     &:has(.gui-file-upload__button:focus-visible),
     &:has(.gui-file-upload__action:focus-visible),
-    &:has(.gui-file-upload__retry:focus-visible),
     &:has(.gui-pills__pill:focus),
     &:has(.gui-pills__count:focus) {
       outline: 0;
@@ -49,7 +48,6 @@ gui-multi-file-upload {
 
       &:has(.gui-file-upload__button:focus-visible),
       &:has(.gui-file-upload__action:focus-visible),
-      &:has(.gui-file-upload__retry:focus-visible),
       &:has(.gui-pills__pill:focus),
       &:has(.gui-pills__count:focus) {
         outline: 0;
@@ -151,53 +149,14 @@ gui-multi-file-upload {
     white-space: nowrap;
   }
 
-  .gui-file-upload__pct,
-  .gui-file-upload__error {
+  .gui-file-upload__pct {
     flex-shrink: 0;
     font-size: var(--gui-font-xs);
     white-space: nowrap;
   }
 
-  .gui-file-upload__error {
-    color: var(--gui-intent-error);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 50%;
-  }
-
-  .gui-file-upload__text-overlay .gui-file-upload__error {
-    color: inherit;
-  }
-
   .gui-file-upload__bar--removing {
     opacity: 0.6;
-  }
-
-  .gui-file-upload__retry {
-    position: relative;
-    flex-shrink: 0;
-    padding: 0 var(--gui-space-2);
-    height: calc(var(--gui-widget-size) - 1rem);
-    border: 1px solid var(--gui-border-default);
-    border-radius: var(--gui-radius);
-    background: var(--gui-bg-surface);
-    color: var(--gui-text-default);
-    font: inherit;
-    font-size: var(--gui-font-xs);
-    cursor: pointer;
-
-    &:hover {
-      background: var(--gui-bg-default);
-    }
-
-    &:focus-visible {
-      outline: 0;
-    }
-
-    &:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
   }
 
   .gui-file-upload__action {
@@ -217,6 +176,10 @@ gui-multi-file-upload {
 
     &:hover {
       color: var(--gui-intent-error);
+    }
+
+    &--retry:hover {
+      color: var(--gui-border-focus);
     }
 
     &:focus-visible {

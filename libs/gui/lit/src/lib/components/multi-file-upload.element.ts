@@ -70,8 +70,9 @@ export class MultiFileUploadElement extends LitElement implements WithWidget {
         .buttonLabel=${templateData.buttonLabel}
         .removeAriaLabel=${templateData.removeAriaLabel}
         .cancelAriaLabel=${templateData.cancelAriaLabel}
-        .retryLabel=${templateData.retryLabel}
+        .retryAriaLabel=${templateData.retryAriaLabel}
         .removeIcon=${templateData.removeIcon}
+        .retryIcon=${templateData.retryIcon}
         .maxSizeMessage=${templateData.maxSizeMessage}
         .acceptMessage=${templateData.acceptMessage}
         .missingServiceMessage=${templateData.missingServiceMessage}
@@ -80,6 +81,7 @@ export class MultiFileUploadElement extends LitElement implements WithWidget {
         .failedMessage=${templateData.failedMessage}
         @change=${this.valueChanged}
         @blur=${() => this.adapter.onBlur()}
+        @inputError=${this.onInputError}
       ></gui-multi-file-upload>
     `;
   }
@@ -87,6 +89,11 @@ export class MultiFileUploadElement extends LitElement implements WithWidget {
   valueChanged(event: CustomEvent) {
     const value = event.detail.value as FileItem[];
     this.adapter.valueChanged(value);
+  }
+
+  onInputError(event: CustomEvent) {
+    const message = event.detail.message as string | null;
+    this.adapter.injectValidationIssues(message ? [message] : null);
   }
 
   override disconnectedCallback() {

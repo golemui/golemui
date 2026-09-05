@@ -760,10 +760,12 @@ export type FileUploadBaseProps = {
   removeAriaLabel?: Localizable;
   /** Accessible name of the cancel button shown while uploading. Defaults to 'Cancel {name}'. */
   cancelAriaLabel?: Localizable;
-  /** Text of the retry button shown on a failed file. Defaults to 'Retry'. */
-  retryLabel?: Localizable;
+  /** Accessible name of the retry button shown on a failed file. Defaults to 'Retry {name}'. */
+  retryAriaLabel?: Localizable;
   /** Icon class for the remove/cancel button; falls back to the built-in icon. */
   removeIcon?: string;
+  /** Icon class for the retry button; falls back to the built-in icon. */
+  retryIcon?: string;
   /** Error shown when a file exceeds `maxSize`. Defaults to 'File exceeds the maximum size'. */
   maxSizeMessage?: Localizable;
   /** Error shown when a file does not match `accept`. Defaults to 'File type not accepted'. */
