@@ -6,7 +6,7 @@ import { safeDefine } from '@golemui/lit/internals';
 import type { Dependencies, FileItem, FileUploadProps } from '@golemui/gui-shared/internals';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
-import { UPLOAD_PATH, X_CIRCLE_PATH, spinnerIcon } from '../utils/icons';
+import { ARROW_CLOCKWISE_PATH, UPLOAD_PATH, X_CIRCLE_PATH, spinnerIcon } from '../utils/icons';
 import { clampPct, errorMessage, matchesAccept, newId } from '../utils/file-upload';
 import {
   FILE_CANCEL_ARIA_LABEL,
@@ -14,7 +14,7 @@ import {
   FILE_REMOVE_ARIA_LABEL,
   FILE_REMOVE_FAILED_MESSAGE,
   FILE_REMOVED_MESSAGE,
-  FILE_RETRY_LABEL,
+  FILE_RETRY_ARIA_LABEL,
   FILE_TOO_LARGE_MESSAGE,
   FILE_TYPE_NOT_ACCEPTED_MESSAGE,
   FILE_UPLOAD_BUTTON_LABEL,
@@ -47,8 +47,10 @@ export class GuiFileUpload extends LitElement {
     undefined;
   @property({ type: String, attribute: 'cancel-aria-label' }) cancelAriaLabel: string | undefined =
     undefined;
-  @property({ type: String, attribute: 'retry-label' }) retryLabel: string | undefined = undefined;
+  @property({ type: String, attribute: 'retry-aria-label' }) retryAriaLabel: string | undefined =
+    undefined;
   @property({ type: String, attribute: 'remove-icon' }) removeIcon: string | undefined = undefined;
+  @property({ type: String, attribute: 'retry-icon' }) retryIcon: string | undefined = undefined;
   @property({ type: String, attribute: 'max-size-message' }) maxSizeMessage: string | undefined =
     undefined;
   @property({ type: String, attribute: 'accept-message' }) acceptMessage: string | undefined =
@@ -195,6 +197,21 @@ export class GuiFileUpload extends LitElement {
   protected override updated(changed: PropertyValues) {
     super.updated(changed);
     this.pumpQueue();
+    this.syncInputError();
+  }
+
+  private _lastInputError: string | null = null;
+
+  private syncInputError() {
+    const item = this.getBarItem();
+    const message =
+      this._removeError?.message ??
+      (item?.status === 'error' ? (item.error ?? FILE_UPLOAD_FAILED_MESSAGE) : null);
+    if (message === this._lastInputError) return;
+    this._lastInputError = message;
+    this.dispatchEvent(
+      new CustomEvent('inputError', { detail: { message }, bubbles: true, composed: true }),
+    );
   }
 
   /**
@@ -355,6 +372,14 @@ export class GuiFileUpload extends LitElement {
       type: current.type,
       status: 'uploading',
     }));
+    void this.focusBarAction();
+  }
+
+  private async focusBarAction() {
+    await this.updateComplete;
+    this.querySelector<HTMLElement>(
+      '.gui-file-upload__bar .gui-file-upload__action:not(.gui-file-upload__action--retry)',
+    )?.focus();
   }
 
   protected canRetry(item: FileItem): boolean {
@@ -562,14 +587,10 @@ export class GuiFileUpload extends LitElement {
     const pending = item.status === 'uploading' && !uploading;
     const removing = this._removingIds.has(item.id);
     const removeFailed = this._removeError?.id === item.id;
-    const error = removeFailed ? this._removeError?.message : item.error;
     const showError = item.status === 'error' || removeFailed;
     const pct = uploading ? this._pct : 0;
-    const meta = showError
-      ? html`<span class="gui-file-upload__error" data-cy=${`${this.uid}_file-error`}
-          >${error}</span
-        >`
-      : uploading || pending
+    const meta =
+      uploading || pending
         ? html`<span class="gui-file-upload__pct" data-cy=${`${this.uid}_file-pct`}>
             ${uploading ? this.renderCounter(item) : nothing}
           </span>`
@@ -607,12 +628,28 @@ export class GuiFileUpload extends LitElement {
       ${showError && this.canRetry(item) && !this.readOnly
         ? html`<button
             type="button"
-            class="gui-file-upload__retry"
+            class="gui-file-upload__action gui-file-upload__action--retry"
             data-cy=${`${this.uid}_file-retry`}
+            aria-label=${formatFileMessage(this.retryAriaLabel ?? FILE_RETRY_ARIA_LABEL, item.name)}
             ?disabled=${this.disabled || removing}
             @click=${() => this.retry(item)}
           >
-            ${this.retryLabel ?? FILE_RETRY_LABEL}
+            ${this.retryIcon
+              ? html`<span
+                  class=${`gui-widget-icon ${this.retryIcon}`}
+                  data-icon=${this.retryIcon}
+                  aria-hidden="true"
+                ></span>`
+              : html`<svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 256 256"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path d=${ARROW_CLOCKWISE_PATH}></path>
+                </svg>`}
           </button>`
         : nothing}
       ${!this.readOnly
