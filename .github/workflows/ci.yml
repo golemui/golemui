@@ -44,6 +44,13 @@ jobs:
           git add -AN -- libs/schemas libs/gui/schemas
           git diff --exit-code -- libs/schemas libs/gui/schemas
 
+      - name: Check generated skill references are up to date
+        run: |
+          set -euo pipefail
+          npm run generate:skill
+          git add -AN -- skills
+          git diff --exit-code -- skills
+
       - name: Build affected
         run: npx nx affected --target=build
 
