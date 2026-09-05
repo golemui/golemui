@@ -102,10 +102,12 @@ export const GuiTagsReact = wrap('gui-tags', GuiTags, { onChange: 'change', onBl
 export const GuiFileUploadReact = wrap('gui-file-upload', GuiFileUpload, {
   onChange: 'change',
   onBlur: 'blur',
+  onInputError: 'inputError',
 });
 export const GuiMultiFileUploadReact = wrap('gui-multi-file-upload', GuiMultiFileUpload, {
   onChange: 'change',
   onBlur: 'blur',
+  onInputError: 'inputError',
 });
 export const GuiSelectReact = wrap('gui-select', GuiSelect, {
   onChange: 'change',

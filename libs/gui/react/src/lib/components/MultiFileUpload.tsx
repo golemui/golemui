@@ -7,14 +7,28 @@ import '../styles.scss';
 
 export function MultiFileUpload(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<FileItem[]>;
-  const { uid, errors, value, isTouched, templateData, onValueChanged, onBlur } = useInputWidget<
-    FileItem[],
-    MultiFileUploadProps
-  >(widget);
+  const {
+    uid,
+    errors,
+    value,
+    isTouched,
+    templateData,
+    onValueChanged,
+    onBlur,
+    injectValidationIssues,
+  } = useInputWidget<FileItem[], MultiFileUploadProps>(widget);
 
   const handleChange = useCallback(
     (e: Event) => onValueChanged((e as CustomEvent).detail.value as FileItem[]),
     [onValueChanged],
+  );
+
+  const handleInputError = useCallback(
+    (e: Event) => {
+      const message = (e as CustomEvent).detail.message as string | null;
+      injectValidationIssues(message ? [message] : null);
+    },
+    [injectValidationIssues],
   );
 
   const label = templateData.label as string;
@@ -42,8 +56,9 @@ export function MultiFileUpload(widgetInstance: WithWidget) {
         buttonLabel={templateData.buttonLabel as string | undefined}
         removeAriaLabel={templateData.removeAriaLabel as string | undefined}
         cancelAriaLabel={templateData.cancelAriaLabel as string | undefined}
-        retryLabel={templateData.retryLabel as string | undefined}
+        retryAriaLabel={templateData.retryAriaLabel as string | undefined}
         removeIcon={templateData.removeIcon}
+        retryIcon={templateData.retryIcon}
         maxSizeMessage={templateData.maxSizeMessage as string | undefined}
         acceptMessage={templateData.acceptMessage as string | undefined}
         missingServiceMessage={templateData.missingServiceMessage as string | undefined}
@@ -52,6 +67,7 @@ export function MultiFileUpload(widgetInstance: WithWidget) {
         failedMessage={templateData.failedMessage as string | undefined}
         onChange={handleChange}
         onBlur={onBlur}
+        onInputError={handleInputError}
       ></GuiMultiFileUploadReact>
     </div>
   );

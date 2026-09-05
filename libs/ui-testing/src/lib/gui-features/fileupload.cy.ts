@@ -17,7 +17,6 @@ export const runFileUploadComponentTests = (mountFn: MountComponentFn) => {
       bar: `[data-cy="${uid}_file-bar"]`,
       name: `[data-cy="${uid}_file-name"]`,
       pct: `[data-cy="${uid}_file-pct"]`,
-      error: `[data-cy="${uid}_file-error"]`,
       retry: `[data-cy="${uid}_file-retry"]`,
       action: `[data-cy="${uid}_file-remove"]`,
       busy: `[data-cy="${uid}_file-busy"]`,
@@ -225,7 +224,9 @@ export const runFileUploadComponentTests = (mountFn: MountComponentFn) => {
         pick(pdf);
         cy.get(sel.bar).should('have.attr', 'data-status', 'error');
         cy.get(sel.name).should('contain', 'cv.pdf');
-        cy.get(sel.error).first().should('contain', 'File type not accepted');
+        // The reason renders in the standard error area below the input.
+        cy.get(sel.validatorError).should('contain', 'File type not accepted');
+        cy.get(sel.box).should('have.attr', 'aria-invalid', 'true');
         cy.get(sel.retry).should('not.exist');
         cy.then(() => {
           expect(mock.uploads).to.have.length(0);
@@ -244,7 +245,7 @@ export const runFileUploadComponentTests = (mountFn: MountComponentFn) => {
 
         pick(pdf);
         cy.get(sel.bar).should('have.attr', 'data-status', 'error');
-        cy.get(sel.error).first().should('contain', 'Max 4 bytes');
+        cy.get(sel.validatorError).should('contain', 'Max 4 bytes');
         cy.then(() => {
           expect(mock.uploads).to.have.length(0);
         });
@@ -252,7 +253,7 @@ export const runFileUploadComponentTests = (mountFn: MountComponentFn) => {
     });
 
     describe('failures', () => {
-      it('shows the failure in the bar and retries with the same file', () => {
+      it('injects the server message below the input and retries with the same file', () => {
         const mock = createMockUploadService({
           failFor: (_file, attempt) => (attempt === 1 ? 'Network down' : undefined),
         });
@@ -260,14 +261,47 @@ export const runFileUploadComponentTests = (mountFn: MountComponentFn) => {
 
         pick(pdf);
         cy.get(sel.bar).should('have.attr', 'data-status', 'error');
-        cy.get(sel.error).first().should('contain', 'Network down');
+        // The server's rejection message lands in the standard error area, not the bar.
+        cy.get(sel.validatorError).should('contain', 'Network down');
+        cy.get(sel.box).should('have.attr', 'aria-invalid', 'true');
         cy.get(sel.status).should('contain', 'cv.pdf failed to upload.');
+
+        // The retry control is a keyboard-focusable icon button named after the file.
+        cy.get(sel.retry)
+          .should('have.attr', 'aria-label', 'Retry cv.pdf')
+          .and('have.class', 'gui-file-upload__action');
+        cy.get(sel.retry).focus();
+        cy.get(sel.retry).should('have.focus').find('svg').should('exist');
 
         cy.get(sel.retry).click();
         cy.get(sel.bar).should('have.attr', 'data-status', 'uploaded');
+        // The injected message clears once the retry recovers.
+        cy.get(sel.validatorError).should('not.exist');
         cy.then(() => {
           expect(mock.uploads).to.have.length(2);
         });
+      });
+
+      it('supports retryAriaLabel and retryIcon, and hands focus to the cancel button on retry', () => {
+        const mock = createMockUploadService({ manual: true });
+        mountFileUpload({
+          service: mock.service,
+          props: { retryAriaLabel: 'Try {name} again', retryIcon: 'mdi-refresh' },
+        });
+
+        pick(pdf);
+        cy.get(sel.bar).should('have.attr', 'role', 'progressbar');
+        cy.then(() => mock.fail('Boom'));
+
+        cy.get(sel.validatorError).should('contain', 'Boom');
+        cy.get(sel.retry).should('have.attr', 'aria-label', 'Try cv.pdf again');
+        cy.get(sel.retry).find('.gui-widget-icon.mdi-refresh').should('exist');
+
+        cy.get(sel.retry).click();
+        // The retry button unrenders; focus lands on the bar's cancel button.
+        cy.get(sel.bar).should('have.attr', 'role', 'progressbar');
+        cy.get(sel.action).should('have.focus');
+        cy.get(sel.validatorError).should('not.exist');
       });
     });
 
@@ -312,7 +346,7 @@ export const runFileUploadComponentTests = (mountFn: MountComponentFn) => {
 
         cy.get(sel.action).click();
         cy.get(sel.bar).should('have.attr', 'data-status', 'error');
-        cy.get(sel.error).first().should('contain', 'Server refused');
+        cy.get(sel.validatorError).should('contain', 'Server refused');
         // The spinner is gone and the remove button is usable again.
         cy.get(sel.busy).should('not.exist');
         cy.get(sel.action).should('not.be.disabled');

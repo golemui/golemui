@@ -72,10 +72,13 @@
     "cancelAriaLabelProp": {
       "$ref": "../core/common.schema.json#/$defs/localizable"
     },
-    "retryLabelProp": {
+    "retryAriaLabelProp": {
       "$ref": "../core/common.schema.json#/$defs/localizable"
     },
     "removeIconProp": {
+      "type": "string"
+    },
+    "retryIconProp": {
       "type": "string"
     },
     "maxSizeMessageProp": {
@@ -161,11 +164,14 @@
         "cancelAriaLabel": {
           "$ref": "#/$defs/cancelAriaLabelProp"
         },
-        "retryLabel": {
-          "$ref": "#/$defs/retryLabelProp"
+        "retryAriaLabel": {
+          "$ref": "#/$defs/retryAriaLabelProp"
         },
         "removeIcon": {
           "$ref": "#/$defs/removeIconProp"
+        },
+        "retryIcon": {
+          "$ref": "#/$defs/retryIconProp"
         },
         "maxSizeMessage": {
           "$ref": "#/$defs/maxSizeMessageProp"
@@ -208,11 +214,14 @@
         "^cancelAriaLabel\\.[^.]+$": {
           "$ref": "#/$defs/cancelAriaLabelProp"
         },
-        "^retryLabel\\.[^.]+$": {
-          "$ref": "#/$defs/retryLabelProp"
+        "^retryAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/retryAriaLabelProp"
         },
         "^removeIcon\\.[^.]+$": {
           "$ref": "#/$defs/removeIconProp"
+        },
+        "^retryIcon\\.[^.]+$": {
+          "$ref": "#/$defs/retryIconProp"
         },
         "^maxSizeMessage\\.[^.]+$": {
           "$ref": "#/$defs/maxSizeMessageProp"

@@ -42,4 +42,9 @@ export class FileUploadComponent implements OnInit, OnDestroy, WithWidget {
     const value = (event as CustomEvent).detail.value as FileItem | null;
     this.adapter.valueChanged(value);
   }
+
+  onInputError(event: Event) {
+    const message = (event as CustomEvent).detail.message as string | null;
+    this.adapter.injectValidationIssues(message ? [message] : null);
+  }
 }
