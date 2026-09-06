@@ -6,6 +6,7 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { format, resolveConfig } from 'prettier';
 import {
   DX_SPECS,
   dxCommonNote,
@@ -170,14 +171,29 @@ export function buildWidgetsIndex(): string {
 const REFS = join(REPO, 'skills', 'golemui', 'references');
 const DIST = join(REPO, 'dist', 'libs', 'gui', 'mcp');
 
-const dxReference = buildDxReference();
-const widgetsIndex = buildWidgetsIndex();
+/**
+ * Formats a generated file with the repository prettier config. The committed files are
+ * prettier-formatted, so the CI check that regenerates them only passes when the
+ * generator writes the same formatting.
+ */
+async function formatMarkdown(content: string, filePath: string): Promise<string> {
+  const options = await resolveConfig(filePath);
+  if (options === null) {
+    throw new Error(`No prettier config found for ${filePath}`);
+  }
+  return format(content, { ...options, filepath: filePath });
+}
+
+const formsDxPath = join(REFS, 'forms-dx.md');
+const widgetsIndexPath = join(REFS, 'widgets-index.md');
+const dxReference = await formatMarkdown(buildDxReference() + '\n', formsDxPath);
+const widgetsIndex = await formatMarkdown(buildWidgetsIndex() + '\n', widgetsIndexPath);
 
 mkdirSync(REFS, { recursive: true });
 mkdirSync(DIST, { recursive: true });
-writeFileSync(join(REFS, 'forms-dx.md'), dxReference + '\n', 'utf-8');
-writeFileSync(join(REFS, 'widgets-index.md'), widgetsIndex + '\n', 'utf-8');
-writeFileSync(join(DIST, 'llms-gui-dx.txt'), dxReference + '\n', 'utf-8');
+writeFileSync(formsDxPath, dxReference, 'utf-8');
+writeFileSync(widgetsIndexPath, widgetsIndex, 'utf-8');
+writeFileSync(join(DIST, 'llms-gui-dx.txt'), dxReference, 'utf-8');
 
 console.log(
   `Wrote forms-dx.md (${dxReference.length} bytes), widgets-index.md (${widgetsIndex.length} bytes), ` +
