@@ -75,6 +75,7 @@ export class FileUploadElement extends LitElement implements WithWidget {
         .retryIcon=${templateData.retryIcon}
         .maxSizeMessage=${templateData.maxSizeMessage}
         .acceptMessage=${templateData.acceptMessage}
+        .interruptedMessage=${templateData.interruptedMessage}
         .missingServiceMessage=${templateData.missingServiceMessage}
         .uploadedMessage=${templateData.uploadedMessage}
         .removedMessage=${templateData.removedMessage}

@@ -19,6 +19,7 @@ import {
   FILE_TYPE_NOT_ACCEPTED_MESSAGE,
   FILE_UPLOAD_BUTTON_LABEL,
   FILE_UPLOAD_FAILED_MESSAGE,
+  FILE_UPLOAD_INTERRUPTED_MESSAGE,
   FILE_UPLOADED_MESSAGE,
   MISSING_UPLOAD_SERVICE_MESSAGE,
   formatFileMessage,
@@ -55,6 +56,9 @@ export class GuiFileUpload extends LitElement {
     undefined;
   @property({ type: String, attribute: 'accept-message' }) acceptMessage: string | undefined =
     undefined;
+  @property({ type: String, attribute: 'interrupted-message' }) interruptedMessage:
+    | string
+    | undefined = undefined;
   @property({ type: String, attribute: 'missing-service-message' }) missingServiceMessage:
     | string
     | undefined = undefined;
@@ -465,12 +469,34 @@ export class GuiFileUpload extends LitElement {
 
   protected override willUpdate(changed: PropertyValues) {
     super.willUpdate(changed);
+    this.reconcileRestoredItems();
     if (!this.getService() && !this._serviceErrorLogged) {
       this._serviceErrorLogged = true;
       console.error(
         `[gui-file-upload] widget "${this.uid ?? ''}" has no uploadService. Provide one through the form's dependencies: { uploadService: { upload, remove? } }.`,
       );
     }
+  }
+
+  private reconcileRestoredItems() {
+    const items = this.getItems();
+    const isOrphaned = (item: FileItem) =>
+      item.status === 'uploading' && item.id !== this._activeId && !this._files.has(item.id);
+    if (!items.some(isOrphaned)) return;
+    this.commit(
+      items.map((item) =>
+        isOrphaned(item)
+          ? {
+              ...item,
+              status: 'error' as const,
+              error: formatFileMessage(
+                this.interruptedMessage ?? FILE_UPLOAD_INTERRUPTED_MESSAGE,
+                item.name,
+              ),
+            }
+          : item,
+      ),
+    );
   }
 
   override render() {

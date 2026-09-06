@@ -66,6 +66,7 @@ describe('FileUpload schema validation', () => {
               removeIcon: 'mdi-close',
               maxSizeMessage: 'Max 5 MB',
               acceptMessage: 'PDF or Word only',
+              interruptedMessage: 'Pick {name} again',
               missingServiceMessage: 'Uploads are not configured',
               uploadedMessage: '{name} uploaded',
               removedMessage: '{name} removed',

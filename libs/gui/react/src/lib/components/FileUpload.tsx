@@ -61,6 +61,7 @@ export function FileUpload(widgetInstance: WithWidget) {
         retryIcon={templateData.retryIcon}
         maxSizeMessage={templateData.maxSizeMessage as string | undefined}
         acceptMessage={templateData.acceptMessage as string | undefined}
+        interruptedMessage={templateData.interruptedMessage as string | undefined}
         missingServiceMessage={templateData.missingServiceMessage as string | undefined}
         uploadedMessage={templateData.uploadedMessage as string | undefined}
         removedMessage={templateData.removedMessage as string | undefined}
