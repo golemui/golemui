@@ -770,6 +770,8 @@ export type FileUploadBaseProps = {
   maxSizeMessage?: Localizable;
   /** Error shown when a file does not match `accept`. Defaults to 'File type not accepted'. */
   acceptMessage?: Localizable;
+  /** Default per-file error for a restored item whose upload never finished **/
+  interruptedMessage?: Localizable;
   /** Shown inside the disabled box when the host provided no `uploadService`. */
   missingServiceMessage?: Localizable;
   /** aria-live announcement after a successful upload. Defaults to '{name} uploaded.'. */
