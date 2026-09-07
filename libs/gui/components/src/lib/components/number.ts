@@ -54,8 +54,8 @@ export class GuiNumber extends LitElement {
   override render() {
     super.render();
 
-    // A server render has no querySelector on the element shim. The first client render
-    // finds no input either, so both fall back to the same default width.
+    // A server render has no rendered input to measure. The first client render finds no
+    // input either, so both fall back to the same default width.
     const inputElement =
       typeof document === 'undefined'
         ? null
