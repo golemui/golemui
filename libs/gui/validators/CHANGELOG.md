@@ -1,3 +1,13 @@
+## 1.5.0-rc.1 (2026-09-07)
+
+### 🩹 Fixes
+
+- **gui-validators:** report the required message when a required files value is absent ([#355](https://github.com/golemui/golemui/pull/355))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+
 ## 1.5.0-rc.0 (2026-09-04)
 
 ### 🚀 Features

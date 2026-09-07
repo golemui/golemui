@@ -1,3 +1,19 @@
+## 1.5.0-rc.1 (2026-09-07)
+
+### 🚀 Features
+
+- **gui-components:** surface upload errors via validation injection and icon retry button ([#357](https://github.com/golemui/golemui/pull/357))
+
+### 🩹 Fixes
+
+- **gui-components:** add interrupted message and reconcile file upload queue ([#359](https://github.com/golemui/golemui/pull/359))
+- **gui-validators:** report the required message when a required files value is absent ([#355](https://github.com/golemui/golemui/pull/355))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
 ## 1.5.0-rc.0 (2026-09-04)
 
 ### 🚀 Features
