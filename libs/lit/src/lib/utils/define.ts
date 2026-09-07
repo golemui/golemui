@@ -1,10 +1,19 @@
 /**
- * Single registration point for every GolemUI element, exposed to the gui-* packages
- * via @golemui/lit/internals. First definition wins and re-registration never throws
- * (duplicate package copies, HMR, pre-registered gui-* tags).
+ * Registers a custom element for GolemUI. Every GolemUI element and every custom widget
+ * that must server-render goes through it. Only elements registered here run
+ * `connectedCallback` on the server and stay inert under `defer-hydration` on the client.
  *
- * In Node with lit loaded, `customElements` is the @lit-labs/ssr-dom-shim registry,
- * so registration is real there too.
+ * The first definition wins and a repeated registration never throws (duplicate package
+ * copies, HMR, pre-registered gui-* tags). In Node with lit loaded, `customElements` is
+ * the @lit-labs/ssr-dom-shim registry, so the registration is real there too.
+ *
+ * @param tag - The custom element tag name.
+ * @param ctor - The element class to register under `tag`.
+ * @example
+ * import { safeDefine } from '@golemui/lit';
+ *
+ * // Not @customElement and not customElements.define, or the widget will not server-render.
+ * safeDefine('app-heading', HeadingElement);
  */
 export function safeDefine(tag: string, ctor: CustomElementConstructor): void {
   if (typeof customElements === 'undefined' || customElements.get(tag)) {
