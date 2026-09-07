@@ -75,7 +75,7 @@
     "@angular/build": "21.2.19",
     "@angular/cli": "21.2.19",
     "@angular/compiler-cli": "21.2.19",
-    "@angular/language-service": "21.2.19",
+    "@angular/language-service": "22.1.5",
     "@angular/platform-browser-dynamic": "21.2.19",
     "@angular/platform-server": "21.2.19",
     "@astrojs/check": "^0.9.10",
