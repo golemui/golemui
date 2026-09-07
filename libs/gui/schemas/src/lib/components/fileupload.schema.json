@@ -87,6 +87,9 @@
     "acceptMessageProp": {
       "$ref": "../core/common.schema.json#/$defs/localizable"
     },
+    "interruptedMessageProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable"
+    },
     "missingServiceMessageProp": {
       "$ref": "../core/common.schema.json#/$defs/localizable"
     },
@@ -179,6 +182,9 @@
         "acceptMessage": {
           "$ref": "#/$defs/acceptMessageProp"
         },
+        "interruptedMessage": {
+          "$ref": "#/$defs/interruptedMessageProp"
+        },
         "missingServiceMessage": {
           "$ref": "#/$defs/missingServiceMessageProp"
         },
@@ -228,6 +234,9 @@
         },
         "^acceptMessage\\.[^.]+$": {
           "$ref": "#/$defs/acceptMessageProp"
+        },
+        "^interruptedMessage\\.[^.]+$": {
+          "$ref": "#/$defs/interruptedMessageProp"
         },
         "^missingServiceMessage\\.[^.]+$": {
           "$ref": "#/$defs/missingServiceMessageProp"

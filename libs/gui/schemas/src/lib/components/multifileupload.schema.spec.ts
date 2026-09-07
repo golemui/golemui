@@ -67,6 +67,7 @@ describe('MultiFileUpload schema validation', () => {
               removeIcon: 'mdi-close',
               maxSizeMessage: 'Max 2 MB',
               acceptMessage: 'Images only',
+              interruptedMessage: 'Pick {name} again',
               missingServiceMessage: 'Uploads are not configured',
               uploadedMessage: '{name} uploaded',
               removedMessage: '{name} removed',
