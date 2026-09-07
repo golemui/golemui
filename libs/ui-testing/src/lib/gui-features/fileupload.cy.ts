@@ -366,6 +366,60 @@ export const runFileUploadComponentTests = (mountFn: MountComponentFn) => {
       });
     });
 
+    describe('restored values', () => {
+      it('turns a restored mid-upload item into an error with the interrupted message', () => {
+        const mock = createMockUploadService();
+        mountFileUpload({
+          service: mock.service,
+          data: {
+            myField: {
+              id: 'restored-1',
+              name: 'report.pdf',
+              size: 2048,
+              type: 'application/pdf',
+              status: 'uploading',
+            },
+          },
+        });
+
+        // The `File` only existed in the session that picked it: the item is
+        // committed back as failed, with the reason below the input.
+        cy.get(sel.bar).should('have.attr', 'data-status', 'error');
+        cy.get(sel.validatorError).should(
+          'contain',
+          'report.pdf was not uploaded. Remove it and pick the file again.',
+        );
+        cy.get(sel.retry).should('not.exist');
+        cy.then(() => expect(mock.uploads).to.have.length(0));
+
+        // Remove is the way out; a fresh pick then works normally.
+        cy.get(sel.action).click();
+        cy.get(sel.button).should('be.visible');
+        cy.get(sel.validatorError).should('not.exist');
+        pick(pdf);
+        cy.get(sel.bar).should('have.attr', 'data-status', 'uploaded');
+      });
+
+      it('uses a custom interruptedMessage with the {name} token', () => {
+        const mock = createMockUploadService();
+        mountFileUpload({
+          service: mock.service,
+          props: { interruptedMessage: 'Pick {name} again' },
+          data: {
+            myField: {
+              id: 'r1',
+              name: 'cv.pdf',
+              size: 1,
+              type: 'application/pdf',
+              status: 'uploading',
+            },
+          },
+        });
+
+        cy.get(sel.validatorError).should('contain', 'Pick cv.pdf again');
+      });
+    });
+
     describe('validation', () => {
       it('shows the required error after blur and marks the box invalid', () => {
         const mock = createMockUploadService();

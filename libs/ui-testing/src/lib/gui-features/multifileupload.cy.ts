@@ -160,6 +160,40 @@ export const runMultiFileUploadComponentTests = (mountFn: MountComponentFn) => {
       cy.get(sel.validatorError).should('contain', 'Boom');
     });
 
+    it('reconciles a restored mid-upload item so it no longer jams the queue silently', () => {
+      const mock = createMockUploadService();
+      mountMultiFileUpload({
+        service: mock.service,
+        data: {
+          myField: [
+            {
+              id: 'restored-1',
+              name: 'stuck.pdf',
+              size: 1024,
+              type: 'application/pdf',
+              status: 'uploading',
+            },
+            preloaded[0],
+          ],
+        },
+      });
+
+      // The orphan is committed back as failed and explained; the uploaded
+      // file still renders as a pill.
+      cy.get(sel.bar).should('have.attr', 'data-status', 'error');
+      cy.get(sel.validatorError).should('contain', 'stuck.pdf was not uploaded');
+      cy.get(sel.retry).should('not.exist');
+      cy.get(sel.pill).should('have.length', 1).first().should('contain', 'contract.pdf');
+      cy.then(() => expect(mock.uploads).to.have.length(0));
+
+      // Removing it unblocks the widget: the button returns and new picks upload.
+      cy.get(sel.action).click();
+      cy.get(sel.button).should('be.visible');
+      pick([a]);
+      cy.get(sel.pill).should('have.length', 2);
+      cy.then(() => expect(mock.uploads.map((f) => f.name)).to.deep.equal(['a.png']));
+    });
+
     it('renders preloaded files as pills and removes one on the server before dropping it', () => {
       const mock = createMockUploadService();
       mountMultiFileUpload({ service: mock.service, data: { myField: preloaded } });

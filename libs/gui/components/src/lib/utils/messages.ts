@@ -109,6 +109,10 @@ export const FILE_TYPE_NOT_ACCEPTED_MESSAGE = 'File type not accepted';
 /** Default per-file error when the upload rejected without a message. **/
 export const FILE_UPLOAD_FAILED_MESSAGE = 'Upload failed';
 
+/** Default per-file error for a restored item whose upload never finished **/
+export const FILE_UPLOAD_INTERRUPTED_MESSAGE =
+  '{name} was not uploaded. Remove it and pick the file again.';
+
 /** Default per-file error when `uploadService.remove` rejected without a message. **/
 export const FILE_REMOVE_FAILED_MESSAGE = 'Could not remove the file';
 

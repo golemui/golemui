@@ -1,3 +1,7 @@
+## 1.5.0-rc.1 (2026-09-07)
+
+This was a version bump only for react to align it with other projects, there were no code changes.
+
 ## 1.5.0-rc.0 (2026-09-04)
 
 ### 🚀 Features
