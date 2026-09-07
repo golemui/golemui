@@ -100,7 +100,7 @@
     "@types/react": "19.0.0",
     "@types/react-dom": "19.0.0",
     "@vitejs/plugin-react": "^4.2.0",
-    "@vitejs/plugin-vue": "^5.0.0",
+    "@vitejs/plugin-vue": "^6.0.8",
     "@vitest/coverage-v8": "4.1.9",
     "@vitest/ui": "4.1.9",
     "ajv": "^8.0.0",
