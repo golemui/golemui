@@ -2,11 +2,13 @@ import type {
   Action,
   ExpressionFunctions,
   FormInitConfig,
+  FormPlugin,
   I18nTranslator,
   Middleware,
   State,
   ValidateOn,
   ValidatorFn,
+  ValueSchemaResolver,
   WidgetLoaders,
 } from '@golemui/core';
 import type { DxFormConfig, GslSelectorsInput } from './core/dx.domain';
@@ -59,6 +61,11 @@ export interface WidgetSetFormInitConfig<TDependencies extends Dependencies = De
    */
   functions?: ExpressionFunctions;
   formName?: string;
+  /**
+   * Runtime extensions of this form, attached once it is live on the client and
+   * detached on teardown or re-initialization (see `FormInitConfig.plugins`).
+   */
+  plugins?: FormPlugin[];
 }
 
 /**
@@ -103,6 +110,12 @@ export interface WidgetSetDefinition<
    * precedence: DX-provided and per-form dependencies override these.
    */
   dependencies?: NonNullable<TConfig['dependencies']>;
+  /**
+   * The widget set's description of the values its input widgets hold. Handed
+   * to the core form config untouched (`FormInitConfig.valueSchemas`), where
+   * plugins that describe the form to the outside read it.
+   */
+  valueSchemas?: ValueSchemaResolver;
 }
 
 /**
@@ -156,6 +169,8 @@ export function buildWidgetSetForm<TConfig extends WidgetSetFormInitConfig<any>>
     } as NonNullable<FormInitConfig<unknown>['itemRenderers']>,
     localization: config.localization,
     middlewares: config.middlewares ?? [],
+    plugins: config.plugins ?? [],
+    valueSchemas: widgetSet.valueSchemas,
     data: config.data,
     meta: config.meta,
     formName: config.formName,

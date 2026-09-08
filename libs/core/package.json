@@ -29,6 +29,8 @@
     "internals.d.ts",
     "internals.js",
     "internals.umd.cjs",
+    "*.js",
+    "*.cjs",
     "*.md"
   ],
   "dependencies": {

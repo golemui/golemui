@@ -1,0 +1,93 @@
+import type { ListItem, ListProps } from '../widget.props';
+
+export type ListItemValue = string | number;
+
+/**
+ * Checks whether a value is a fully compliant ListItem (with template and value fields)
+ */
+export const isListItem = (opt: unknown): opt is ListItem<any> =>
+  opt !== null &&
+  typeof opt === 'object' &&
+  Object.prototype.hasOwnProperty.call(opt, 'template') &&
+  Object.prototype.hasOwnProperty.call(opt, 'value');
+
+/**
+ * Checks whether a value is a valid option value
+ */
+export function isListItemValue(value: unknown): value is ListItemValue {
+  const t = typeof value;
+  return t === 'string' || t === 'number';
+}
+
+/** Checks if an object can be converted into an actual ListItem */
+export const isProtoListItem = (
+  opt: unknown,
+  { valueField }: ListProps<any>,
+): opt is Record<string, unknown> => {
+  if (opt === null || typeof opt !== 'object') {
+    return false;
+  }
+  const obj = opt as Record<string, unknown>;
+  const field = valueField ?? 'value';
+  const hasValue = Object.prototype.hasOwnProperty.call(obj, field);
+
+  if (!hasValue) {
+    return false;
+  }
+  return true;
+};
+
+/** Returns a mapper function that converts objects into { template, value } */
+export function createListItemMapper(opt: unknown, { valueField }: ListProps<any>) {
+  if (opt === null || typeof opt !== 'object') {
+    throw new Error('Provided value is not an object');
+  }
+
+  const obj = opt as Record<string, unknown>;
+
+  // Resolve fields: default to 'value' if not provided
+  const field = valueField ?? 'value';
+  const resolvedValueField = Object.prototype.hasOwnProperty.call(obj, field) ? field : undefined;
+
+  if (!resolvedValueField) {
+    throw new Error('No valueField exists on the object');
+  }
+
+  // Return the mapping function
+  return (item: unknown): ListItem<any> => {
+    if (item === null || typeof item !== 'object') {
+      throw new Error('Item is not an object');
+    }
+    const o = item as any;
+    return {
+      template: item,
+      value: resolvedValueField ? o[resolvedValueField] : '',
+      ...(typeof o.disabled === 'boolean' ? { disabled: o.disabled } : {}),
+    };
+  };
+}
+
+/**
+ * Returns an array of normalized ListItems. The one normalization the list widgets
+ * (`dropdown`, `list`, and their multi variants) apply to their `items` prop: plain values
+ * become their own template, objects are read through `valueField`.
+ */
+export const updateListItems = (opts: ListItem<any>[], props: ListProps<any>): ListItem<any>[] => {
+  if (Array.isArray(opts) && opts.length > 0) {
+    if (isListItem(opts[0])) {
+      // nothing to do
+    } else if (isListItemValue(opts[0])) {
+      return (opts as unknown as ListItemValue[]).map((opt) => ({
+        template: opt,
+        value: opt,
+      }));
+    } else if (isProtoListItem(opts[0], props)) {
+      const optionMapper = createListItemMapper(opts[0], props as ListProps<any>);
+      return opts.map(optionMapper);
+    } else {
+      throw new Error('Invalid list item shape');
+    }
+  }
+
+  return opts;
+};

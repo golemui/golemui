@@ -103,4 +103,35 @@ describe('hydrating server-rendered markup', () => {
     expect(onFormEvent).toHaveBeenCalledWith(expect.objectContaining({ name: 'stubLoaded' }));
     expect(warnings).toEqual([]);
   });
+
+  it('attaches plugins exactly once, after mounting, and detaches them on unmount', async () => {
+    const teardown = vi.fn();
+    const plugin = vi.fn(() => teardown);
+    const root = () => ({
+      render: () =>
+        h(FormComponent, {
+          config: { ...buildConfig(), plugins: [plugin] },
+          validators: noopValidators,
+        }),
+    });
+
+    const serverHtml = await renderToString(createSSRApp(root()));
+    expect(plugin).not.toHaveBeenCalled();
+
+    const container = document.createElement('div');
+    container.innerHTML = serverHtml;
+    document.body.appendChild(container);
+
+    const app = createSSRApp(root());
+    app.config.warnHandler = (message) => warnings.push(message);
+    app.mount(container);
+    await nextTick();
+
+    expect(plugin).toHaveBeenCalledTimes(1);
+    expect(teardown).not.toHaveBeenCalled();
+    expect(warnings).toEqual([]);
+
+    app.unmount();
+    expect(teardown).toHaveBeenCalledTimes(1);
+  });
 });

@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -9,6 +9,7 @@ import {
   type OnDestroy,
   type OnInit,
   output,
+  PLATFORM_ID,
   signal,
   type Type,
 } from '@angular/core';
@@ -24,7 +25,7 @@ import {
   type ValidatorFn,
   type WithWidget,
 } from '@golemui/core';
-import { combineLatest, share, switchMap, tap } from 'rxjs';
+import { share, switchMap, tap } from 'rxjs';
 import { AngularFormContext } from '../../context/form.context';
 import { WidgetDirective } from '../../directives/widget.directive';
 import { DefaultFormHealthBoundaryComponent } from './default-form-health-boundary.component';
@@ -66,17 +67,25 @@ export class FormCoreComponent implements OnInit, OnDestroy {
 
   // PRIVATE
   private destroyRef = inject(DestroyRef);
+  // Plugins are a client concern: the initialization below also runs during a server render.
+  private isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   private unsubscribeI18n: () => void = () => undefined;
   protected readonly _defaultFormName = shortUUID();
   // Keys the widget tree in the template. Every initialization bumps it, so the whole tree
   // is destroyed and recreated and every widget subscribes to the store INITIALIZE ran on.
   protected storeGeneration = signal(0);
 
+  // One computed over both inputs, so a change-detection pass that replaces the config and the
+  // validators together (the widget-set wrapper derives both from one bundle) emits once and
+  // initializes one store, where two separate toObservable() streams emitted twice.
+  private configAndValidators = computed(() => [this.config(), this.validators()] as const);
+
   // `tap()` runs synchronously before `switchMap` accesses the new store, ensuring
   // that `context.initialize()` always fires before we resubscribe to `formHealth`
-  private config$ = combineLatest([toObservable(this.config), toObservable(this.validators)]).pipe(
+  private config$ = toObservable(this.configAndValidators).pipe(
     tap(([c, validators]) => {
       this.unsubscribeI18n();
+      this.context.detachPlugins();
       this.context.initialize(
         c.widgetLoaders,
         c.middlewares ?? [],
@@ -86,6 +95,7 @@ export class FormCoreComponent implements OnInit, OnDestroy {
         c.localization,
         c.dependencies ?? {},
         c.functions ?? {},
+        c.valueSchemas,
       );
       this.storeGeneration.update((generation) => generation + 1);
       this.context.store.dispatch({
@@ -103,6 +113,9 @@ export class FormCoreComponent implements OnInit, OnDestroy {
         type: 'SET_META',
         payload: { meta: c.meta ?? {} },
       });
+      if (this.isBrowser) {
+        this.context.attachPlugins(c.plugins ?? []);
+      }
       this.direction.set(getDirectionFromLanguage(this.context.localization.lang));
       this.unsubscribeI18n = this.context.localization.subscribe((lang) => {
         this.direction.set(getDirectionFromLanguage(lang));
@@ -148,6 +161,7 @@ export class FormCoreComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.context.detachPlugins();
     this.unsubscribeI18n();
   }
 

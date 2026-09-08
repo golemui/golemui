@@ -79,6 +79,7 @@ function createFormInstance(
     config.localization,
     config.dependencies ?? {},
     config.functions ?? {},
+    config.valueSchemas,
   );
   // Dispatching during render is safe here: the store was created one line above and has
   // no subscribers yet, so these stay private to this instance. Running init in render
@@ -181,7 +182,12 @@ export const FormComponent = forwardRef<FormComponentHandle, FormComponentProps>
         }
         callbacksRef.current.formHealth?.(health);
       });
+      // Plugins attach in an effect, never in the render-time initializer: effects do not run
+      // on the server, and StrictMode's discarded initializer run would leak an attachment
+      // that has no cleanup. The cleanup below detaches them before the instance goes away.
+      instance.context.attachPlugins(instance.config.plugins ?? []);
       return () => {
+        instance.context.detachPlugins();
         eventSub.unsubscribe();
         submitSub.unsubscribe();
         healthSub.unsubscribe();

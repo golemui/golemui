@@ -33,7 +33,12 @@ export default defineConfig(() => ({
     },
     rollupOptions: {
       // External packages that should not be bundled into your library.
-      external: ['@golemui/core', '@golemui/dx', '@golemui/gui-validators'],
+      external: [
+        '@golemui/core',
+        '@golemui/core/internals',
+        '@golemui/dx',
+        '@golemui/gui-validators',
+      ],
     },
   },
   test: {

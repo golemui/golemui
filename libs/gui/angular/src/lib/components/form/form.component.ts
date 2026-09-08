@@ -3,16 +3,18 @@ import { Component, input, output, type Type, viewChild } from '@angular/core';
 import { type AngularWidgetSet, provideWidgetSet, WidgetSetFormComponent } from '@golemui/angular';
 import type { FormEvent, FormHealth, FormSubmitEvent } from '@golemui/core';
 import { type GuiFormInitConfig } from '@golemui/gui-shared';
-import { resolveFormInput } from '@golemui/gui-shared/internals';
+import { guiValueSchemas, resolveFormInput } from '@golemui/gui-shared/internals';
 import { initValidators } from '@golemui/gui-validators';
 import { widgetLoaders } from '../../widget.loaders';
 
-// The gui widget set: loaders, validators, and the implementation-bound form
-// input resolver. The generic WidgetSetFormComponent reads it through
-// dependency injection and applies the shared merge precedence rules.
+// The gui widget set: loaders, validators, value schemas, and the
+// implementation-bound form input resolver. The generic WidgetSetFormComponent
+// reads it through dependency injection and applies the shared merge
+// precedence rules.
 const guiWidgetSet: AngularWidgetSet<GuiFormInitConfig> = {
   widgetLoaders,
   validators: initValidators,
+  valueSchemas: guiValueSchemas,
   resolveFormInput,
 };
 

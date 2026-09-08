@@ -15,6 +15,8 @@ npm i @golemui/core @golemui/vue @golemui/gui-vue @golemui/gui-shared
 npm i @golemui/core @golemui/lit @golemui/gui-lit @golemui/gui-shared
 # Lit server rendering (Astro, plain Node) additionally needs the optional peer:
 npm i @lit-labs/ssr
+# Optional, any framework: expose forms to the browser's AI agent through WebMCP
+npm i @golemui/webmcp
 ```
 
 Then import the component styles ONCE in the app entry (mandatory — without it the form

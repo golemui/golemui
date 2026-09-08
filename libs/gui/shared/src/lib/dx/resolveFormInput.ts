@@ -1,4 +1,4 @@
-import type { ExpressionFunctions, ValidateOn } from '@golemui/core';
+import type { ExpressionFunctions, FormPlugin, ValidateOn } from '@golemui/core';
 import type { Action, I18nTranslator, Middleware, State } from '@golemui/core';
 import type { CustomValidatorSchemas } from '@golemui/gui-validators';
 import type { GslSelectorsInput, FormInput } from '@golemui/dx';
@@ -40,6 +40,11 @@ export interface GuiFormInitConfig {
    */
   functions?: ExpressionFunctions;
   formName?: string;
+  /**
+   * Runtime extensions of this form, attached once it is live on the client and detached on
+   * teardown or re-initialization. `@golemui/webmcp` is one implementation.
+   */
+  plugins?: FormPlugin[];
 }
 
 /**

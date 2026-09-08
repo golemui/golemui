@@ -92,6 +92,18 @@ describe('server rendering a form in plain node', () => {
     expect(markup).not.toMatch(/error/i);
   });
 
+  it('does not attach plugins, because they are a client lifecycle concern', async () => {
+    const plugin = vi.fn();
+
+    const html = await renderGuiFormHtml({
+      config: { ...buildConfig(), plugins: [plugin] },
+      validators: noopValidators,
+    });
+
+    expect(plugin).not.toHaveBeenCalled();
+    expect(html).toBe(markup);
+  });
+
   it('does not run load handlers, because load is a client lifecycle event', () => {
     // Adapter level: the node environment has no document global, so `init` must not emit.
     // The resume spec proves the client-side emission after resume.

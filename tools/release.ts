@@ -18,6 +18,7 @@ const PUBLISHABLE_PACKAGES = [
   '@golemui/gui-lit',
   '@golemui/vue',
   '@golemui/gui-vue',
+  '@golemui/webmcp',
   '@golemui/gui-components',
   '@golemui/gui-validators',
   '@golemui/gui-schemas',

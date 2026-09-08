@@ -358,9 +358,28 @@ export { actionWidgets, displayWidgets, inputWidgets, layoutWidgets } from './li
 
 export { golemForm } from './lib/golem-form';
 
+// ─── Value schemas (the core ValueSchemaResolver contract for the gui widget set) ───
+
+export { guiValueSchemas } from './lib/value-schemas';
+
 // ─── Utils ───
 
-export { isOption } from './lib/utils/one-of';
+export {
+  createOptionMapper,
+  inferOptionValue,
+  isOption,
+  isOptionValue,
+  isProtoOption,
+  updateOptions,
+} from './lib/utils/one-of';
+export {
+  createListItemMapper,
+  isListItem,
+  isListItemValue,
+  isProtoListItem,
+  updateListItems,
+} from './lib/utils/list-items';
+export type { ListItemValue } from './lib/utils/list-items';
 export {
   accordionButtonId,
   accordionSectionId,

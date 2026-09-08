@@ -976,6 +976,90 @@ const HOST_SERVICES_CONCEPT: GetConceptResult = {
 };
 
 // ---------------------------------------------------------------------------
+// WebMCP concept
+// ---------------------------------------------------------------------------
+
+const WEBMCP_CONCEPT: GetConceptResult = {
+  concept: 'webmcp',
+  summary:
+    'WebMCP (`document.modelContext`, a W3C draft implemented behind a flag in Chrome) lets a page ' +
+    'expose tools to the AI agent driving the browser. `@golemui/webmcp` exposes one GolemUI form as ' +
+    'such tools through the form plugin hook: add `plugins: [webmcp({ name, description })]` to the ' +
+    'init config (a sibling of `formDef`, `dependencies` and `middlewares`, NOT inside `formConfig`). ' +
+    'The plugin registers `<name>-fill` (sets fields, validates, does not submit) and `<name>-submit` ' +
+    '(sets fields, validates, submits through the normal `formSubmit` path when valid); `<name>-read` ' +
+    'is opt-in. The input schema mirrors the form data (nested paths become nested objects), typed ' +
+    'from the gui widget set: choices from `options`/`items`, JSON Schema keywords from the validator, ' +
+    'descriptions from labels, hints and visibility conditions. Password values are never exposed or ' +
+    'echoed; upload widgets are described but not fillable. Where `document.modelContext` is missing ' +
+    '(server renders, other browsers) the plugin is a no-op, so it is safe to leave in place.',
+
+  patterns: [
+    {
+      name: 'Expose a form to the browser agent',
+      description:
+        'The `name` is the tool name prefix (`^[A-Za-z0-9_.-]{1,100}$`); the `description` tells the ' +
+        'agent what the form is for. Both are required. The agent then calls `signup-fill` or ' +
+        '`signup-submit` with an object shaped like the form data. Results are returned as data, ' +
+        'never thrown: `status` is `filled`, `submitted`, `invalid`, `read` or `error`, with the ' +
+        'values (hidden fields pruned, sensitive ones redacted) and the validation `errors` by path.',
+      example: {
+        // Host side (TypeScript), not part of the form definition:
+        // import { webmcp } from '@golemui/webmcp';
+        // <GuiForm config={{ formDef, plugins: [webmcp({
+        //   name: 'signup',
+        //   description: 'Create a new account with an email address and a plan.',
+        //   tools: ['fill', 'submit'],          // default; add 'read' to expose the current values
+        //   exclude: ['marketing.consent'],     // paths the agent must never set
+        // })] }} formSubmit={handleSubmit} />
+        $schema: FORM_SCHEMA_URL,
+        form: [
+          {
+            kind: 'input',
+            type: 'textinput',
+            path: 'user.email',
+            label: 'Email',
+            validator: { type: 'string', required: true, format: 'email' },
+          },
+          {
+            kind: 'input',
+            type: 'select',
+            path: 'plan',
+            label: 'Plan',
+            props: {
+              options: [
+                { label: 'Free', value: 'free' },
+                { label: 'Team', value: 'team' },
+              ],
+            },
+            validator: { type: 'string', required: true },
+          },
+          { kind: 'action', type: 'button', actionType: 'submit', label: 'Sign up' },
+        ],
+      },
+    },
+  ],
+
+  rules: [
+    '`plugins` belongs to the init config next to `formDef`, never inside `formConfig`; the form ' +
+      'binding attaches the plugins once the form is live on the client and detaches them when the ' +
+      'config identity changes or the component unmounts.',
+    'Give every form on a page its own `name`: a second form claiming the same name is registered ' +
+      'with a numeric suffix and a console warning.',
+    "The submit tool goes through the same `formSubmit` handler the user's submit button uses; the " +
+      'host does not need a second code path. It is marked consequential, so agents confirm it.',
+    "A fill writes every given field in one update and then emits the widgets' `change` events, so " +
+      '`on.change` handlers (dependent options) and `validateOn` behave as for a typing user. It never ' +
+      'runs the form-wide validation pass, so untouched required fields do not turn red until submit.',
+    'Custom widgets the gui set cannot describe fall back to the validator `type` or the current ' +
+      'value; describe them precisely with the `fields` option (`{ customdate: { schema: { type: ' +
+      "'string', format: 'date' } } }`).",
+    "Testing without Chrome's flag: pass a fake through the `modelContext` option, or install the " +
+      'polyfill; the plugin resolves `document.modelContext`, then the deprecated `navigator.modelContext`.',
+  ],
+};
+
+// ---------------------------------------------------------------------------
 // Concept registry
 // ---------------------------------------------------------------------------
 
@@ -986,6 +1070,7 @@ const CONCEPTS: Record<string, GetConceptResult> = {
   validation: VALIDATION_CONCEPT,
   icons: ICONS_CONCEPT,
   'host-services': HOST_SERVICES_CONCEPT,
+  webmcp: WEBMCP_CONCEPT,
 };
 
 export function getConcept(input: GetConceptInput): GetConceptResult {
@@ -1010,8 +1095,10 @@ export const GET_CONCEPT_TOOL = {
     '(2) change a widget\'s props based on form state (state-suffixed props like `"label.stateName": "…"`); ' +
     '(3) understand what `$form`, `$meta`, `$errors`, `$formIsInvalid`, and `$fn` are and how to reference form data in reactive expressions — use the `reactive-scope` concept; ' +
     '(4) write validators with custom error messages, make a checkbox mandatory, or gate a submit button on validity — use the `validation` concept (it covers three non-obvious traps: no validation at mount, boolean `required` vs `const`, and the `invalid` message); ' +
-    '(5) add icons to widgets — use the `icons` concept. ' +
-    'Currently supported concepts: `states`, `string-interpolation`, `reactive-scope`, `validation`, `icons`.',
+    '(5) add icons to widgets — use the `icons` concept; ' +
+    '(6) inject a markdown parser or an upload transport — use the `host-services` concept; ' +
+    "(7) expose a form to the browser's AI agent through WebMCP (`@golemui/webmcp`) — use the `webmcp` concept. " +
+    'Currently supported concepts: `states`, `string-interpolation`, `reactive-scope`, `validation`, `icons`, `host-services`, `webmcp`.',
   inputSchema: {
     type: 'object' as const,
     properties: {
@@ -1019,7 +1106,7 @@ export const GET_CONCEPT_TOOL = {
         type: 'string' as const,
         description:
           'The concept to explain. Currently supported: `"states"`, `"string-interpolation"`, ' +
-          '`"reactive-scope"`, `"validation"`, `"icons"`.',
+          '`"reactive-scope"`, `"validation"`, `"icons"`, `"host-services"`, `"webmcp"`.',
         enum: Object.keys(CONCEPTS),
       },
     },

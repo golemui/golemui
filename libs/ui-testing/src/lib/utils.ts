@@ -3,6 +3,7 @@ import type {
   Form,
   FormEvent,
   FormHealth,
+  FormPlugin,
   FormSubmitEvent,
   I18nTranslator,
   UiState,
@@ -39,6 +40,7 @@ export interface MountOptions<StateKeys extends UiState = string> {
   localization?: I18nTranslator;
   dependencies?: Dependencies;
   functions?: ExpressionFunctions;
+  plugins?: FormPlugin[];
   onFormReady?: (handle: FormHandle) => void;
 }
 

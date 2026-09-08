@@ -283,7 +283,11 @@ function overrideTargetsTouchedInput(state: State, action: OVERRIDE_WIDGET_PROP)
 }
 
 // TODO: dedupe this. we already have $formIsInvalid (although it doesnt take into account injected validations)
-function calculateIsFormValid(state: State): State {
+/**
+ * Recomputes `isFormValid` from `validations` and `injectedValidations`. Exported for
+ * `FormContext.validate`, which runs the validators outside the reducer.
+ */
+export function calculateIsFormValid(state: State): State {
   const injectedValidationsKeys = Object.keys(state.injectedValidations);
   const validationsKeys = Object.keys(state.validations);
 

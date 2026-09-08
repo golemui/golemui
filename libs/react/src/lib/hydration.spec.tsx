@@ -105,4 +105,34 @@ describe('hydrating server-rendered markup', () => {
     expect(warnings).toEqual([]);
     expect(hydrationContainer.querySelector('input')).toBe(firstInputBeforeHydration);
   });
+
+  it('attaches plugins exactly once, after hydration, and detaches them on unmount', async () => {
+    const teardown = vi.fn();
+    const plugin = vi.fn(() => teardown);
+    const element = () => (
+      <FormComponent config={{ ...buildConfig(), plugins: [plugin] }} validators={noopValidators} />
+    );
+
+    const serverHtml = renderToString(element());
+    expect(plugin).not.toHaveBeenCalled();
+
+    container = document.createElement('div');
+    container.innerHTML = serverHtml;
+    document.body.appendChild(container);
+    const hydrationContainer = container;
+    await act(async () => {
+      root = hydrateRoot(hydrationContainer, element(), {
+        onRecoverableError: (error) => warnings.push(String(error)),
+      });
+    });
+
+    expect(plugin).toHaveBeenCalledTimes(1);
+    expect(teardown).not.toHaveBeenCalled();
+    expect(warnings).toEqual([]);
+
+    const mountedRoot = root as Root;
+    await act(async () => mountedRoot.unmount());
+    root = null;
+    expect(teardown).toHaveBeenCalledTimes(1);
+  });
 });

@@ -150,6 +150,24 @@ export function Dropdown(widgetInstance: WithWidget) {
     return () => document.removeEventListener('click', handleDocumentClick);
   }, [closeList, isListVisible]);
 
+  // A value written from outside the widget (setData, a plugin) arrives after the initial
+  // resolution in handleUpdateItems, and a cleared value must clear the label: keep the
+  // displayed item in step with the store value. The user's own pick already matches.
+  useEffect(() => {
+    if (value == null) {
+      if (selectedItem !== undefined && !isFiltering) {
+        setSelectedItem(undefined);
+      }
+      return;
+    }
+    if (selectedItem?.value !== value) {
+      const match = listItems.find((item) => item.value === value);
+      if (match) {
+        setSelectedItem(match);
+      }
+    }
+  }, [value, listItems, selectedItem, isFiltering]);
+
   useEffect(() => {
     const isObject = selectedItem?.template !== null && typeof selectedItem?.template === 'object';
     const referenceField = isObject ? (templateData.labelField ?? 'label') : null;

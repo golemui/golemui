@@ -61,6 +61,11 @@ export class FormElement extends LitElement {
     super.connectedCallback();
     this.classList.add('gui-form');
     this.configureLongLivedEvents();
+    // A DOM move runs disconnectedCallback (which detaches the plugins) and then this again
+    // without another update, so the plugins are attached here again on a reconnect.
+    if (this.hasUpdated && this.config) {
+      this.context.attachPlugins(this.config.plugins ?? []);
+    }
   }
 
   /**
@@ -103,6 +108,7 @@ export class FormElement extends LitElement {
     this.unsubscribeI18n();
     this.stateSub?.unsubscribe();
     this.healthSub?.unsubscribe();
+    this.context.detachPlugins();
     this.storeGeneration += 1;
 
     this.context.initialize(
@@ -114,6 +120,7 @@ export class FormElement extends LitElement {
       c.localization,
       c.dependencies ?? {},
       c.functions ?? {},
+      c.valueSchemas,
     );
 
     this.direction = getDirectionFromLanguage(this.context.localization.lang);
@@ -147,6 +154,16 @@ export class FormElement extends LitElement {
       this.direction = getDirectionFromLanguage(lang);
       this.context.store.dispatch({ type: 'SET_LANGUAGE', payload: { lang } });
     });
+  }
+
+  // Runs on the client only: a server render never reaches updated(). Plugins attach here, on
+  // the same condition willUpdate re-initializes on, so they always see the store INITIALIZE
+  // ran on and never run during a server render.
+  override updated(changed: Map<string, unknown>) {
+    super.updated(changed);
+    if ((changed.has('config') || changed.has('validators')) && this.config) {
+      this.context.attachPlugins(this.config.plugins ?? []);
+    }
   }
 
   override createRenderRoot() {
@@ -198,6 +215,7 @@ export class FormElement extends LitElement {
 
   override disconnectedCallback() {
     super.disconnectedCallback();
+    this.context.detachPlugins();
     this.stateSub?.unsubscribe();
     this.healthSub?.unsubscribe();
     // `connectedCallback` refills the array on a reconnect, so it must be emptied here.

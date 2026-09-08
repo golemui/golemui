@@ -4,6 +4,7 @@ import './app.element.scss';
 import './pages/form/form.element';
 import './pages/dx-form/dx-form.element';
 import './pages/modular-dx/modular-dx.element';
+import './pages/webmcp/webmcp.element';
 
 const LANDING_STYLES = `
 .kx-landing {
@@ -18,6 +19,7 @@ const LANDING_STYLES = `
   --kx-accent-json: #6366f1;
   --kx-accent-dx: #0ea5e9;
   --kx-accent-modular: #8b5cf6;
+  --kx-accent-webmcp: #10b981;
   --kx-code-bg: rgba(15, 23, 42, 0.06);
   background: var(--kx-bg);
   color: var(--kx-fg);
@@ -37,6 +39,7 @@ const LANDING_STYLES = `
     --kx-accent-json: #818cf8;
     --kx-accent-dx: #38bdf8;
     --kx-accent-modular: #a78bfa;
+    --kx-accent-webmcp: #34d399;
     --kx-code-bg: rgba(255, 255, 255, 0.08);
   }
 }
@@ -87,6 +90,7 @@ const LANDING_STYLES = `
 .kx-card--json { --kx-card-accent: var(--kx-accent-json); }
 .kx-card--dx { --kx-card-accent: var(--kx-accent-dx); }
 .kx-card--modular { --kx-card-accent: var(--kx-accent-modular); }
+.kx-card--webmcp { --kx-card-accent: var(--kx-accent-webmcp); }
 .kx-card__head { display: flex; align-items: center; gap: 0.75rem; }
 .kx-card__badge {
   font-size: 0.7rem;
@@ -190,6 +194,28 @@ const LANDING_HTML = `
           <span class="kx-card__cta__arrow">→</span>
         </span>
       </a>
+
+      <a href="#/webmcp" class="kx-card kx-card--webmcp">
+        <div class="kx-card__head">
+          <span class="kx-card__badge">WebMCP</span>
+        </div>
+        <h2 class="kx-card__title">A form as agent tools</h2>
+        <p class="kx-card__desc">
+          <code>@golemui/webmcp</code> registers a sign-up form as <code>fill</code>,
+          <code>submit</code> and <code>read</code> tools on the browser's
+          <code>document.modelContext</code>. An inspector panel lists the tools, their generated
+          JSON Schema, and runs them against the live form.
+        </p>
+        <ul class="kx-card__list">
+          <li>Schema mirrors the form data, choices and validators</li>
+          <li>Real widgets update; submit goes through <code>formSubmit</code></li>
+          <li>Works with Chrome's WebMCP flag or an in-page stand-in</li>
+        </ul>
+        <span class="kx-card__cta">
+          Open WebMCP demo
+          <span class="kx-card__cta__arrow">→</span>
+        </span>
+      </a>
     </div>
   </div>
 </div>
@@ -222,6 +248,8 @@ export class AppElement extends LitElement {
       this.innerHTML = `<main class="container"><lit-dx-form></lit-dx-form></main>`;
     } else if (hash === 'dx/modular') {
       this.innerHTML = `<main class="container"><lit-modular-dx></lit-modular-dx></main>`;
+    } else if (hash === 'webmcp') {
+      this.innerHTML = `<main class="container"><lit-webmcp></lit-webmcp></main>`;
     } else {
       this.innerHTML = LANDING_HTML;
     }

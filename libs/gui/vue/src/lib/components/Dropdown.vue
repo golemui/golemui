@@ -138,6 +138,23 @@ onUnmounted(() => {
   document.removeEventListener('click', handleDocumentClick);
 });
 
+// A value written from outside the widget (setData, a plugin) arrives after the initial
+// resolution in handleUpdateItems, and a cleared value must clear the label: keep the displayed
+// item in step with the store value. The user's own pick already matches.
+watch([value, listItems], () => {
+  const current = value.value;
+  if (current == null) {
+    if (selectedItem.value !== undefined && !isFiltering.value) {
+      selectedItem.value = undefined;
+    }
+    return;
+  }
+  if (selectedItem.value?.value !== current) {
+    const match = listItems.value.find((item) => item.value === current);
+    if (match) selectedItem.value = match;
+  }
+});
+
 watch([selectedItem, () => templateData.value.labelField], () => {
   const item = selectedItem.value;
   const isObject = item?.template !== null && typeof item?.template === 'object';

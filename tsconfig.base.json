@@ -121,6 +121,7 @@
       "@golemui/lit/ssr": ["libs/lit/src/ssr.ts"],
       "@golemui/react": ["libs/react/src/index.ts"],
       "@golemui/vue": ["libs/vue/src/index.ts"],
+      "@golemui/webmcp": ["libs/webmcp/src/index.ts"],
       "@golemui/gui-validators": ["libs/gui/validators/src/index.ts"],
       "@golemui/ui-testing": ["libs/ui-testing/src/index.ts"],
       "@golemui/ui-testing/core-features": ["libs/ui-testing/src/core-features.ts"],

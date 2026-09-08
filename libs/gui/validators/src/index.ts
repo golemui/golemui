@@ -11,3 +11,4 @@ export type {
   StringValidator,
   Validator,
 } from './lib/validators';
+export { validatorToJsonSchema } from './lib/json-schema';

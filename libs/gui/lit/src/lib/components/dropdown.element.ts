@@ -86,6 +86,7 @@ export class DropdownElement extends LitElement implements WithWidget {
           this._filteredItems = data.items;
           this._listItems = data.items;
         }
+        this._syncSelectedItem(data.value);
         this.requestUpdate();
       }),
       this.debouncer
@@ -115,6 +116,26 @@ export class DropdownElement extends LitElement implements WithWidget {
       const match = items.find(
         (item: ListItem<never>) => item.value === this.adapter.templateData.value,
       );
+      if (match) {
+        this._selectedItem = match;
+      }
+    }
+  }
+
+  /**
+   * Keeps the displayed item in step with the store value. A value written from outside the
+   * widget (setData, a plugin) arrives after the initial resolution above, and a cleared value
+   * must clear the label; the user's own pick already updated both sides, so it is a no-op here.
+   */
+  private _syncSelectedItem(value: unknown) {
+    if (value == null) {
+      if (this._selectedItem !== undefined && !this._isFiltering) {
+        this._selectedItem = undefined;
+      }
+      return;
+    }
+    if (this._selectedItem?.value !== value) {
+      const match = this._listItems.find((item) => item.value === value);
       if (match) {
         this._selectedItem = match;
       }

@@ -44,6 +44,11 @@ the form component accepts: https://golemui.com/dx/features/overview.md
   `uploadService` (`{ upload, remove? }` for `fileUpload`/`multiFileUpload`). Passed by reference,
   never stored in form data; keep the object identity stable. Not the field-to-field
   "Dependencies" feature above. MCP: `get_concept({ concept: "host-services" })`.
+- **Plugins** — runtime extensions attached once the form is live on the client and detached on
+  teardown, declared as `plugins: [...]` in the init config (a sibling of `formDef`). A plugin
+  receives the store, the translator, `validate()`, `submit()` and `emitEvent()`. The shipped one
+  is **WebMCP** (`@golemui/webmcp`): exposes the form as `fill`/`submit` tools to the browser's AI
+  agent. See [webmcp.md](webmcp.md). MCP: `get_concept({ concept: "webmcp" })`.
 
 ## Form Definition API (TS `gui.*` deep-dives)
 

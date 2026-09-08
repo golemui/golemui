@@ -1,6 +1,6 @@
 import { preloadFormWidgets } from '@golemui/core';
 import { renderToString } from 'react-dom/server';
-import { beforeAll, describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it, vi } from 'vitest';
 import { FormComponent } from './FormComponent';
 import { buildConfig, noopValidators, stubWidgetLoaders } from './ssr.fixture';
 
@@ -38,6 +38,20 @@ describe('server rendering a form in a plain node environment', () => {
 
     expect(html.toLowerCase()).not.toContain('failed with');
     expect(html.toLowerCase()).not.toContain('gui-form-health');
+  });
+
+  it('does not attach plugins, because they are a client lifecycle concern', () => {
+    const plugin = vi.fn();
+
+    const html = renderToString(
+      <FormComponent
+        config={{ ...buildConfig(), plugins: [plugin] }}
+        validators={noopValidators}
+      />,
+    );
+
+    expect(plugin).not.toHaveBeenCalled();
+    expect(html).toBe(renderForm());
   });
 });
 

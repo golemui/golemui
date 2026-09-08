@@ -3,12 +3,14 @@ import {
   Component,
   computed,
   CUSTOM_ELEMENTS_SCHEMA,
+  effect,
   ElementRef,
   HostListener,
   inject,
   type OnDestroy,
   type OnInit,
   signal,
+  untracked,
   viewChild,
 } from '@angular/core';
 import { type AngularItemRenderer, InputWidgetAdapter } from '@golemui/angular';
@@ -86,6 +88,29 @@ export class DropdownComponent implements OnInit, OnDestroy, WithWidget {
 
   protected debouncer = new Subject<string>();
   protected subscriptions: Subscription[] = [];
+
+  // A value written from outside the widget (setData, a plugin) arrives after the initial
+  // resolution in onUpdateItems, and a cleared value must clear the label: keep the displayed
+  // item in step with the store value. The user's own pick already matches.
+  private readonly syncSelectedItem = effect(() => {
+    const value = this.adapter.templateData().value;
+    const items = this.listItems();
+    untracked(() => {
+      const selected = this.selectedItem();
+      if (value == null) {
+        if (selected !== undefined && !this.isFiltering()) {
+          this.selectedItem.set(undefined);
+        }
+        return;
+      }
+      if (selected?.value !== value) {
+        const match = items.find((item) => item.value === value);
+        if (match) {
+          this.selectedItem.set(match);
+        }
+      }
+    });
+  });
 
   ngOnInit(): void {
     this.adapter.init(this.widget);

@@ -58,6 +58,23 @@ describe('server rendering a form in a plain node environment', () => {
     expect(onFormEvent).not.toHaveBeenCalled();
     expect(html).toBe(await renderForm());
   });
+
+  it('does not attach plugins, because they are a client lifecycle concern', async () => {
+    const plugin = vi.fn();
+
+    const html = await renderToString(
+      createSSRApp({
+        render: () =>
+          h(FormComponent, {
+            config: { ...buildConfig(), plugins: [plugin] },
+            validators: noopValidators,
+          }),
+      }),
+    );
+
+    expect(plugin).not.toHaveBeenCalled();
+    expect(html).toBe(await renderForm());
+  });
 });
 
 describe('server rendering determinism', () => {

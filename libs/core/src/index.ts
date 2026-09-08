@@ -38,6 +38,20 @@ export type { ItemRenderContext, ItemRenderItemData } from './lib/item-renderer'
 
 export { devToolsMiddleware } from './lib/middleware/devtools/devtools.middleware';
 
+export type {
+  FormPlugin,
+  FormPluginContext,
+  FormPluginTeardown,
+  FormValidationReport,
+} from './lib/plugin';
+
+export type {
+  JsonSchemaFragment,
+  ValidatorSchema,
+  ValueSchemaResolver,
+  WidgetValueSchema,
+} from './lib/value-schema';
+
 export { formEventNames } from './lib/shared';
 export type {
   ActionWidgetTemplateData,

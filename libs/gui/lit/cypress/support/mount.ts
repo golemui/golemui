@@ -55,6 +55,7 @@ export const mountFramework = (options: MountOptions) => {
     // The conformance MountOptions declare the open dependency record. The gui suites pass gui dependencies.
     dependencies: options.dependencies as Dependencies | undefined,
     functions: options.functions,
+    plugins: options.plugins,
     customWidgetLoaders,
   };
 

@@ -1,6 +1,6 @@
 # GolemUI — extending
 
-Four extension points. All are registered on the host side and referenced from the form
+Five extension points. All are registered on the host side and referenced from the form
 definition; the definition itself stays plain data. Fetch the linked page before writing any
 extension — the registration contracts are precise and not guessable.
 
@@ -38,6 +38,28 @@ https://golemui.com/dx/extending/validators.md
 
 Hook into the form pipeline (transform data, intercept events) with your own middleware.
 https://golemui.com/dx/extending/middlewares.md
+
+## Form plugins
+
+A plugin is a runtime extension with a lifecycle: `(context) => teardown | void`, declared as
+`plugins: [...]` in the init config (a sibling of `formDef`). The binding attaches it once the
+form is live on the client (never during a server render) and detaches it when the config
+identity changes or the component unmounts. The `FormPluginContext` (type from `@golemui/core`)
+exposes `store` (`getState`, `dispatch`, `state$`), `localization`, `events$`, `submit$`,
+`validate()` (a pure preview), `submit()` (the normal submit path, returns whether it fired),
+`emitEvent()` (a widget event as a user would trigger it) and the widget set's `valueSchemas`.
+
+```ts
+const autosave: FormPlugin = ({ store }) => {
+  const sub = store.state$.subscribe((s) => localStorage.setItem('draft', JSON.stringify(s.data)));
+  return () => sub.unsubscribe();
+};
+```
+
+The shipped plugin is `@golemui/webmcp`, see [webmcp.md](webmcp.md). A custom widget set that
+wants its values described to such plugins implements the `ValueSchemaResolver` contract from
+`@golemui/core` and passes it as `valueSchemas` to its form component factory, next to
+`widgetLoaders` and `validators`.
 
 Note: `@golemui/gui-shared` deliberately exposes only the public builder surface; adapter
 contracts live in `@golemui/gui-shared/internals` and are documented as unstable. Prefer the

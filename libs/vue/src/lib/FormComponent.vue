@@ -41,6 +41,8 @@ const treeGeneration = ref(0);
 provideFormContext(formContext);
 
 const reinit = () => {
+  // The plugins hold the previous store; detach them before it is replaced.
+  formContext.detachPlugins();
   formContext.initialize(
     props.config.widgetLoaders,
     props.config.middlewares ?? [],
@@ -50,6 +52,7 @@ const reinit = () => {
     props.config.localization,
     props.config.dependencies ?? {},
     props.config.functions ?? {},
+    props.config.valueSchemas,
   );
   storeVersion.value += 1;
 };
@@ -156,8 +159,23 @@ watch(
 const eventSub = formContext.events$.subscribe((event) => emit('form-event', event));
 const submitSub = formContext.submit$.subscribe((event) => emit('form-submit', event));
 
+// Plugins are a client concern: attached once mounted (never during a server render), and
+// attached again to the new store after every re-initialization while mounted.
+let mounted = false;
+const attachPlugins = () => formContext.attachPlugins(props.config.plugins ?? []);
+watch(
+  () => storeVersion.value,
+  () => {
+    if (mounted) {
+      attachPlugins();
+    }
+  },
+);
+
 let unsubscribeLang: (() => void) | null = null;
 onMounted(() => {
+  mounted = true;
+  attachPlugins();
   unsubscribeLang = formContext.localization.subscribe((lang) => {
     direction.value = getDirectionFromLanguage(lang);
     formContext.store.dispatch({
@@ -168,6 +186,8 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
+  mounted = false;
+  formContext.detachPlugins();
   entrySub?.unsubscribe();
   healthSub?.unsubscribe();
   eventSub.unsubscribe();

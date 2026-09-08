@@ -156,6 +156,7 @@ For vanilla JS, import `@golemui/gui-lit` to register the `<gui-form>` custom el
 - **Accessibility.** Native form elements with ARIA wiring managed for you: `aria-describedby` for hints, `aria-invalid` and `aria-errormessage` on errors, plus keyboard navigation on interactive widgets.
 - **Theming.** Styling is driven by CSS custom properties (design tokens) from a single stylesheet. Override tokens, or supply your own widget components through `customWidgetLoaders`. [Docs](https://golemui.com/styling/theming/)
 - **AI assistants (MCP).** `@golemui/gui-mcp` ships a `golemui-mcp` Model Context Protocol server with tools to validate form definitions, generate them from JSON Schema or OpenAPI, and type-check `gui.*` code.
+- **AI agents in the browser (WebMCP).** `@golemui/webmcp` exposes a form to the agent driving the browser through [WebMCP](https://github.com/webmachinelearning/webmcp) (`document.modelContext`): add `plugins: [webmcp({ name, description })]` to the form config and the agent gets `fill`/`submit` tools whose schema mirrors the form, driven by the real widgets and gated by the form's validation.
 - **AI assistants (skill).** An installable [agent skill](./skills/golemui/SKILL.md) grounds coding agents in the real GolemUI API even without the MCP connected - `npx skills add golemui/golemui` (works with Claude Code, Cursor, and other [skills.sh](https://skills.sh)-compatible agents). Its API reference is generated from the same compile-verified registry the MCP serves, so the two never disagree.
 
 ## Packages
@@ -170,6 +171,7 @@ For vanilla JS, import `@golemui/gui-lit` to register the `<gui-form>` custom el
 | `@golemui/schemas`                                  | The shared core JSON Schema (common defs) and the schema tree generator      |
 | `@golemui/gui-schemas`                              | JSON Schemas for gui form definitions, generated from the widget manifest    |
 | `@golemui/gui-mcp`                                  | MCP server for coding assistants                                             |
+| `@golemui/webmcp`                                   | Form plugin exposing a form to the browser's AI agent through WebMCP         |
 
 Import only from a package's public entry points. The `@golemui/*/internals` paths are internal and unstable.
 

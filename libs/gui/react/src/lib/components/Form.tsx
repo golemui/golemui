@@ -1,6 +1,6 @@
 import type { FormEvent, FormHealth, FormSubmitEvent } from '@golemui/core';
 import { type GuiFormInitConfig } from '@golemui/gui-shared';
-import { resolveFormInput } from '@golemui/gui-shared/internals';
+import { guiValueSchemas, resolveFormInput } from '@golemui/gui-shared/internals';
 import { initValidators } from '@golemui/gui-validators';
 import {
   createFormComponent,
@@ -28,6 +28,7 @@ export const GuiForm: ForwardRefExoticComponent<
 > = createFormComponent<GuiFormInitConfig>({
   widgetLoaders,
   validators: initValidators,
+  valueSchemas: guiValueSchemas,
   resolveFormInput,
 });
 

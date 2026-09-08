@@ -83,6 +83,29 @@ describe('resuming a server rendered form', () => {
     expect(onFormEvent).toHaveBeenCalledWith(expect.objectContaining({ name: 'stubLoaded' }));
   });
 
+  it('attaches plugins exactly once, after the resume, and detaches them on removal', async () => {
+    const teardown = vi.fn();
+    const plugin = vi.fn(() => teardown);
+    const form = document.querySelector('gui-core-form') as FormElement;
+
+    // The markup upgrade alone attaches nothing: plugins wait for the resume.
+    await afterLitRenderSchedule();
+    expect(plugin).not.toHaveBeenCalled();
+
+    resumeServerRenderedForm(form, {
+      config: { ...buildConfig(), plugins: [plugin] },
+      validators: noopValidators,
+    });
+    await afterLitRenderSchedule();
+    await afterLitRenderSchedule();
+
+    expect(plugin).toHaveBeenCalledTimes(1);
+    expect(teardown).not.toHaveBeenCalled();
+
+    form.remove();
+    expect(teardown).toHaveBeenCalledTimes(1);
+  });
+
   it('accepts user input after the resume', async () => {
     const form = document.querySelector('gui-core-form') as FormElement;
     resumeServerRenderedForm(form, { config: buildConfig(), validators: noopValidators });
