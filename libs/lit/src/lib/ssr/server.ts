@@ -186,6 +186,50 @@ export function stripShadowRootTemplates(markup: string): string {
   return output;
 }
 
+// The HTML boolean attributes in the @lit-labs/ssr reflected-attributes table. The enumerated
+// attributes of that table (`draggable`, `spellcheck`, `contenteditable`, `translate`) are not
+// listed, because "false" is a real value for them.
+const BOOLEAN_ATTRIBUTES = [
+  'async',
+  'autofocus',
+  'autoplay',
+  'checked',
+  'controls',
+  'default',
+  'defer',
+  'disabled',
+  'formnovalidate',
+  'hidden',
+  'ismap',
+  'loop',
+  'multiple',
+  'muted',
+  'novalidate',
+  'open',
+  'readonly',
+  'required',
+  'reversed',
+  'selected',
+];
+
+// The name must follow whitespace, so `aria-selected="false"` and `data-x="false"` never match.
+const falseBooleanAttribute = new RegExp(
+  `\\s+(?:${BOOLEAN_ATTRIBUTES.join('|')})="false"(?=[\\s/>])`,
+  'gi',
+);
+
+/**
+ * Removes the false-valued boolean attributes that @lit-labs/ssr writes for a property
+ * binding, such as `selected="false"` and `checked="false"`. It serializes a reflected
+ * property as `name="String(value)"`, and HTML reads any present boolean attribute as
+ * true, so until the client resumes an unchecked checkbox renders ticked and a browser
+ * selects the last option. Only start tags are scanned. Bound text and attribute values
+ * are escaped by @lit-labs/ssr, so they cannot contain a `"` or a `>` and are never touched.
+ */
+export function stripFalseBooleanAttributes(markup: string): string {
+  return markup.replace(/<[a-zA-Z][^>]*>/g, (tag) => tag.replace(falseBooleanAttribute, ''));
+}
+
 /** Removes the lit hydration marker comments. The resume entry point does not read them. */
 function stripHydrationMarkers(markup: string): string {
   return markup
@@ -199,7 +243,9 @@ function stripHydrationMarkers(markup: string): string {
  *
  * The output is complete light-DOM markup: shadow root wrappers are removed and every
  * GolemUI element has the `defer-hydration` attribute, so on the client the
- * elements stay inert until a resume entry point removes the attribute.
+ * elements stay inert until a resume entry point removes the attribute. False-valued
+ * boolean attributes such as `selected="false"` are removed too, because HTML reads them
+ * as true.
  *
  * @param template - A lit `html` template. Widgets must be preloaded first.
  * @param options - `keepMarkers` keeps the lit hydration marker comments (default false).
@@ -214,7 +260,8 @@ export async function renderGuiHtml(
     deferHydration: true,
     elementRenderers: [GuiSsrElementRenderer, LitElementRenderer],
   });
-  const markup = stripShadowRootTemplates(await collectResult(result));
+  const lightDom = stripShadowRootTemplates(await collectResult(result));
+  const markup = stripFalseBooleanAttributes(lightDom);
   return options?.keepMarkers ? markup : stripHydrationMarkers(markup);
 }
 
