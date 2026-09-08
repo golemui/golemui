@@ -32,6 +32,7 @@ export default defineConfig(() => ({
         '@golemui/core',
         '@golemui/gui-components',
         '@golemui/gui-shared',
+        '@golemui/gui-validators',
         'rxjs',
         /^@?lit(-\w+)?($|\/.+)/,
         /^@golemui\/lit\/.+/,
