@@ -8,6 +8,9 @@ import {
 import { provideServerRendering, renderApplication } from '@angular/platform-server';
 import { preloadFormWidgets } from '@golemui/core';
 import type { GuiFormInitConfig } from '@golemui/gui-shared';
+import { readdirSync, readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { FormComponent } from './components/form/form.component';
 import { widgetLoaders } from './widget.loaders';
@@ -116,7 +119,7 @@ describe('server rendering the gui widget set in plain node', () => {
     expect(markup).toMatch(/<gui-multi-file-upload[^>]*defer-hydration=""/);
   });
 
-  it('marks every rendered custom element, not only the ones this spec names', () => {
+  it('marks every custom element this fixture renders', () => {
     // Angular hosts wrap each widget as gui-<type>-{control,interactive,display,layout}; the
     // form shell has its own hosts. Everything else with a gui- prefix is a lit element that
     // would upgrade before its bindings arrive if the attribute were missing.
@@ -137,6 +140,31 @@ describe('server rendering the gui widget set in plain node', () => {
     for (const [, tag, attributes] of customElements) {
       expect(attributes, tag).toContain('defer-hydration=""');
     }
+  });
+
+  it('binds defer-hydration on every lit element in every component template', () => {
+    // The rendered markup contains only the widgets this fixture declares, so the test above
+    // cannot check a template the fixture never renders. This one reads the template sources.
+    const templateDirectory = join(dirname(fileURLToPath(import.meta.url)), 'components');
+    const templates = readdirSync(templateDirectory, { encoding: 'utf8', recursive: true }).filter(
+      (file) => file.endsWith('.html'),
+    );
+    // gui-widget-set-form is an angular component selector, not a lit element.
+    const angularSelectors = new Set(['gui-widget-set-form']);
+    const litElements = templates.flatMap((file) => {
+      const template = readFileSync(join(templateDirectory, file), 'utf8');
+      return [...template.matchAll(/<(gui-[a-z0-9-]+)([^>]*)>/g)]
+        .filter(([, tag]) => !angularSelectors.has(tag))
+        .map(([, tag, attributes]) => ({
+          file,
+          tag,
+          bindsDeferHydration: attributes.includes('[attr.defer-hydration]'),
+        }));
+    });
+
+    // A wrong directory would leave the assertion below with nothing to check.
+    expect(litElements.length).toBeGreaterThan(30);
+    expect(litElements.filter((element) => !element.bindsDeferHydration)).toEqual([]);
   });
 
   it('is deterministic across renders', async () => {
