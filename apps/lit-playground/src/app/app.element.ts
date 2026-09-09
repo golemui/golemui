@@ -203,13 +203,13 @@ const LANDING_HTML = `
         <p class="kx-card__desc">
           <code>@golemui/webmcp</code> registers a sign-up form as <code>fill</code>,
           <code>submit</code> and <code>read</code> tools on the browser's
-          <code>document.modelContext</code>. An inspector panel lists the tools, their generated
-          JSON Schema, and runs them against the live form.
+          <code>document.modelContext</code>. Drive it from the Model Context Tool Inspector
+          extension, by hand or from a prompt.
         </p>
         <ul class="kx-card__list">
           <li>Schema mirrors the form data, choices and validators</li>
           <li>Real widgets update; submit goes through <code>formSubmit</code></li>
-          <li>Works with Chrome's WebMCP flag or an in-page stand-in</li>
+          <li>Needs Chrome with <code>chrome://flags/#enable-webmcp-testing</code></li>
         </ul>
         <span class="kx-card__cta">
           Open WebMCP demo

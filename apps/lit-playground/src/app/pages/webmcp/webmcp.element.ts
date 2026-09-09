@@ -1,178 +1,75 @@
 import { type FormSubmitEvent } from '@golemui/core';
 import '@golemui/gui-lit';
 import { gui, type GuiFormInitConfig } from '@golemui/gui-shared';
-import { type ModelContextLike, type ModelContextTool, webmcp } from '@golemui/webmcp';
+import { webmcp } from '@golemui/webmcp';
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
 
 /**
- * WebMCP demo: the form below registers `signup-fill`, `signup-submit` and `signup-read` on the
- * browser's model context. With Chrome's `chrome://flags/#enable-webmcp-testing` flag the real
- * `document.modelContext` is used and an agent (or the Model Context Tool Inspector extension)
- * can drive the form. Everywhere else a small in-page fake stands in, so the inspector panel
- * works in any browser.
+ * WebMCP demo. The `webmcp` plugin registers `signup-read`, `signup-fill` and `signup-submit` on
+ * `document.modelContext`, so an agent can drive the form through the widgets, with GolemUI
+ * validation as the gate and the page's `formSubmit` handler as the sink.
+ *
+ * To try it: enable `chrome://flags/#enable-webmcp-testing`, install the "WebMCP - Model Context
+ * Tool Inspector" extension and open its panel on this page. It lists the tools, runs them by hand
+ * or from a natural-language prompt, and the form updates live.
  */
-
-type RegisteredTool = ModelContextTool & { execute: ModelContextTool['execute'] };
-
-/**
- * The page sits between the plugin and the model context, so it sees every registration and,
- * through the abort signal, every unregistration. `changes` fires a `change` event after each,
- * which is what the inspector listens to instead of polling.
- */
-type InspectableContext = ModelContextLike & {
-  changes: EventTarget;
-  listTools(): Promise<RegisteredTool[]>;
-  run(tool: RegisteredTool, input: unknown): Promise<unknown>;
-};
-
-function notifyingRegisterTool(
-  register: ModelContextLike['registerTool'],
-  changes: EventTarget,
-): ModelContextLike['registerTool'] {
-  return async (tool, options) => {
-    await register(tool, options);
-    changes.dispatchEvent(new Event('change'));
-    options?.signal?.addEventListener('abort', () => changes.dispatchEvent(new Event('change')));
-  };
-}
-
-function createInPageModelContext(): InspectableContext {
-  const tools = new Map<string, RegisteredTool>();
-  const changes = new EventTarget();
-  return {
-    changes,
-    registerTool: notifyingRegisterTool(async (tool, options) => {
-      tools.set(tool.name, tool);
-      options?.signal?.addEventListener('abort', () => {
-        if (tools.get(tool.name) === tool) {
-          tools.delete(tool.name);
-        }
-      });
-    }, changes),
-    listTools: async () => [...tools.values()],
-    run: (tool, input) => tool.execute(input, { signal: new AbortController().signal }),
-  };
-}
-
-type NativeModelContext = ModelContextLike & {
-  getTools?(): Promise<RegisteredTool[]>;
-  /** Chrome's build takes the arguments as a JSON string and answers with a JSON string. */
-  executeTool?(tool: RegisteredTool, input: string): Promise<string>;
-};
-
-/** Chrome answers with a JSON string; a build that already returns a value is passed through. */
-function parseToolResult(result: unknown): unknown {
-  if (typeof result !== 'string') {
-    return result;
-  }
-  try {
-    return JSON.parse(result);
-  } catch {
-    return result;
-  }
-}
-
-function resolveInspectableContext(): { context: InspectableContext; native: boolean } {
-  const native = (document as unknown as { modelContext?: NativeModelContext }).modelContext;
-  if (native && typeof native.registerTool === 'function') {
-    const changes = new EventTarget();
-    return {
-      native: true,
-      context: {
-        changes,
-        registerTool: notifyingRegisterTool(
-          (tool, options) => native.registerTool(tool, options),
-          changes,
-        ),
-        listTools: async () => (await native.getTools?.()) ?? [],
-        run: async (tool, input) =>
-          native.executeTool
-            ? parseToolResult(await native.executeTool(tool, JSON.stringify(input)))
-            : tool.execute(input, { signal: new AbortController().signal }),
-      },
-    };
-  }
-  return { native: false, context: createInPageModelContext() };
-}
-
-const { context: modelContext, native } = resolveInspectableContext();
-
-const formDef = [
-  gui.inputs.textInput('user.name', { label: 'Full name', validator: { required: true } }),
-  gui.inputs.textInput('user.email', {
-    label: 'Email',
-    placeholder: 'name@example.com',
-    validator: { required: true, format: 'email' },
-  }),
-  gui.inputs.select('plan', {
-    label: 'Plan',
-    options: [
-      { label: 'Free', value: 'free' },
-      { label: 'Team', value: 'team' },
-      { label: 'Enterprise', value: 'enterprise' },
-    ],
-    validator: { type: 'string', required: true },
-  }),
-  gui.inputs.numberInput('seats', {
-    label: 'Seats',
-    include: { when: "$form.plan === 'team' || $form.plan === 'enterprise'" },
-    validator: { minimum: 1 },
-  }),
-  gui.inputs.checkbox('newsletter', { label: 'Send me the newsletter' }),
-  gui.inputs.password('password', {
-    label: 'Password',
-    validator: { required: true, minLength: 8 },
-  }),
-  gui.actions.button({
-    label: 'Sign up',
-    actionType: 'submit',
-    disabled: { when: '$formIsInvalid' },
-  }),
-];
 
 const config: GuiFormInitConfig = {
-  formDef,
+  formDef: [
+    gui.inputs.textInput('user.name', { label: 'Full name', validator: { required: true } }),
+    gui.inputs.textInput('user.email', {
+      label: 'Email',
+      placeholder: 'name@example.com',
+      validator: { required: true, format: 'email' },
+    }),
+    gui.inputs.select('plan', {
+      label: 'Plan',
+      options: [
+        { label: 'Free', value: 'free' },
+        { label: 'Team', value: 'team' },
+        { label: 'Enterprise', value: 'enterprise' },
+      ],
+      validator: { type: 'string', required: true },
+    }),
+    gui.inputs.numberInput('seats', {
+      label: 'Seats',
+      include: { when: "$form.plan === 'team' || $form.plan === 'enterprise'" },
+      validator: { minimum: 1 },
+    }),
+    gui.inputs.checkbox('newsletter', { label: 'Send me the newsletter' }),
+    // Passwords are sensitive: the agent can neither fill nor read them. Type it yourself.
+    gui.inputs.password('password', {
+      label: 'Password',
+      validator: { required: true, minLength: 8 },
+    }),
+    gui.actions.button({
+      label: 'Sign up',
+      actionType: 'submit',
+      disabled: { when: '$formIsInvalid' },
+    }),
+  ],
   plugins: [
     webmcp({
       name: 'signup',
       description: 'Create a new account: name, email, plan, optional seats, and a password.',
       tools: ['read', 'fill', 'submit'],
-      modelContext,
     }),
   ],
 };
 
-const SAMPLE_INPUT = JSON.stringify(
-  { user: { name: 'Ada Lovelace', email: 'ada@example.com' }, plan: 'Team', seats: 3 },
-  null,
-  2,
-);
+const hasWebmcp = 'modelContext' in document;
 
 @customElement('lit-webmcp')
 export class WebmcpElement extends LitElement {
-  // The playground compiles with `useDefineForClassFields`, so decorated class fields would
-  // shadow Lit's reactive accessors. Declare the reactive state the way the form factory does.
-  static override properties = {
-    tools: { state: true },
-    input: { state: true },
-    output: { state: true },
-    submitted: { state: true },
-  };
+  // The playground compiles with `useDefineForClassFields`, so a decorated class field would
+  // shadow Lit's reactive accessor. Declare the reactive state the way the form factory does.
+  static override properties = { submitted: { state: true } };
 
-  declare private tools: RegisteredTool[];
-  declare private input: string;
-  declare private output: string;
   declare private submitted: string[];
-  private readonly refreshTools = () => {
-    void modelContext.listTools().then((tools) => (this.tools = tools));
-  };
 
   constructor() {
     super();
-    this.tools = [];
-    this.input = SAMPLE_INPUT;
-    this.output = '';
     this.submitted = [];
   }
 
@@ -180,48 +77,16 @@ export class WebmcpElement extends LitElement {
     return this;
   }
 
-  override connectedCallback() {
-    super.connectedCallback();
-    modelContext.changes.addEventListener('change', this.refreshTools);
-    this.refreshTools();
-  }
-
-  override disconnectedCallback() {
-    super.disconnectedCallback();
-    modelContext.changes.removeEventListener('change', this.refreshTools);
-  }
-
-  private async run(tool: RegisteredTool) {
-    let input: unknown = {};
-    try {
-      input = this.input.trim() === '' ? {} : JSON.parse(this.input);
-    } catch (err) {
-      this.output = `Input is not valid JSON: ${(err as Error).message}`;
-      return;
-    }
-    try {
-      const result = await modelContext.run(tool, input);
-      this.output = JSON.stringify(result, null, 2);
-    } catch (err) {
-      this.output = `The model context rejected the call: ${(err as Error).message}`;
-    }
-  }
-
   private onFormSubmit(event: CustomEvent<FormSubmitEvent>) {
-    this.submitted = [...this.submitted, JSON.stringify(event.detail.data)];
+    this.submitted = [...this.submitted, JSON.stringify(event.detail.data, null, 2)];
   }
 
   override render() {
     return html`
       <style>
-        lit-webmcp {
-          color: var(--gui-text-default);
-        }
         lit-webmcp .webmcp-code {
-          display: block;
-          box-sizing: border-box;
           overflow: auto;
-          margin: 0;
+          margin: 0 0 0.75rem;
           padding: 0.75rem;
           border: 1px solid var(--gui-border-default);
           border-radius: 6px;
@@ -230,70 +95,23 @@ export class WebmcpElement extends LitElement {
           font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
           font-size: 0.8rem;
           line-height: 1.45;
-          white-space: pre;
-        }
-        lit-webmcp textarea.webmcp-code {
-          white-space: pre-wrap;
-        }
-        lit-webmcp details summary {
-          cursor: pointer;
         }
       </style>
-      <div style="display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2rem">
-        <section>
-          <h2 style="margin-top: 0">Sign up</h2>
-          <gui-form .config=${config} @formSubmit=${this.onFormSubmit}></gui-form>
-          ${this.submitted.length > 0
-            ? html`<h3>Host received submits</h3>
-                <ol>
-                  ${this.submitted.map((entry) => html`<li><code>${entry}</code></li>`)}
-                </ol>`
-            : ''}
-        </section>
-        <section>
-          <h2 style="margin-top: 0">Model context inspector</h2>
-          <p style="color: var(--gui-text-muted)">
-            ${native
-              ? html`Using the browser's <code>document.modelContext</code>.`
-              : html`This browser has no WebMCP; an in-page stand-in records the registrations.
-                  Enable <code>chrome://flags/#enable-webmcp-testing</code> to use the real API.`}
-          </p>
-          <h3>Registered tools</h3>
-          ${this.tools.length === 0
-            ? html`<p><em>No tools yet.</em></p>`
-            : this.tools.map(
-                (tool) => html`
-                  <details style="margin-bottom: 0.75rem">
-                    <summary>
-                      <strong>${tool.name}</strong>
-                      <button
-                        type="button"
-                        style="margin-left: 0.5rem"
-                        @click=${() => this.run(tool)}
-                      >
-                        Run
-                      </button>
-                    </summary>
-                    <p>${tool.description}</p>
-                    <pre class="webmcp-code" style="max-height: 20rem">
-${JSON.stringify(tool.inputSchema, null, 2)}</pre
-                    >
-                  </details>
-                `,
-              )}
-          <h3>Tool input (JSON)</h3>
-          <textarea
-            class="webmcp-code"
-            rows="8"
-            style="width: 100%; resize: vertical"
-            .value=${this.input}
-            @input=${(event: Event) => (this.input = (event.target as HTMLTextAreaElement).value)}
-          ></textarea>
-          <h3>Result</h3>
-          <pre class="webmcp-code" style="max-height: 24rem">
-${this.output || 'Run a tool to see its result.'}</pre
-          >
-        </section>
+      <div style="max-width: 40rem; color: var(--gui-text-default)">
+        <h2 style="margin-top: 0">Sign up</h2>
+        <p style="color: var(--gui-text-muted)">
+          ${hasWebmcp
+            ? html`This form is registered on <code>document.modelContext</code> as
+                <code>signup-read</code>, <code>signup-fill</code> and <code>signup-submit</code>.
+                Open the Model Context Tool Inspector extension to drive it.`
+            : html`This browser has no WebMCP, so the plugin registered nothing. Enable
+                <code>chrome://flags/#enable-webmcp-testing</code> and reload.`}
+        </p>
+        <gui-form .config=${config} @formSubmit=${this.onFormSubmit}></gui-form>
+        ${this.submitted.length > 0
+          ? html`<h3>Submitted log:</h3>
+              ${this.submitted.map((entry) => html`<pre class="webmcp-code">${entry}</pre>`)}`
+          : ''}
       </div>
     `;
   }
