@@ -61,9 +61,7 @@ describe('fill', () => {
   it('rejects an unknown choice with the accepted labels and leaves the field alone', () => {
     const { pluginContext, schema, context } = setup({ plan: 'free' });
     const result = runFill(pluginContext, schema, { plan: 'gold' }, false);
-    expect(result.errors?.['plan']).toEqual([
-      'Unknown option "gold". Accepted: Free, Team plan',
-    ]);
+    expect(result.errors?.['plan']).toEqual(['Unknown option "gold". Accepted: Free, Team plan']);
     expect(result.isValid).toBe(false);
     expect(context.store.getState().data['plan']).toBe('free');
   });
@@ -91,7 +89,13 @@ describe('fill', () => {
     expect(data['user']).toEqual({ email: 'a@b.co' });
     expect(data['avatar']).toBeUndefined();
     expect(({} as Record<string, unknown>)['polluted']).toBeUndefined();
-    expect(result.ignored).toEqual(['user.password', 'user.nickname', 'avatar', '__proto__', 'extra']);
+    expect(result.ignored).toEqual([
+      'user.password',
+      'user.nickname',
+      'avatar',
+      '__proto__',
+      'extra',
+    ]);
   });
 
   it('writes repeater rows through the template fields', () => {

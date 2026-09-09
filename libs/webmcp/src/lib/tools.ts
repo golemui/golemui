@@ -10,6 +10,22 @@ const DEFAULT_TOOLS: WebmcpToolKind[] = ['fill', 'submit'];
 const EMPTY_INPUT = { type: 'object', properties: {} };
 
 /**
+ * The spec hands `execute` the parsed arguments, but Chrome's preview moves them around as JSON
+ * strings, so a string that parses as JSON is accepted too. Anything else reaches `runFill`
+ * unchanged and is refused there with a readable message.
+ */
+function parseInput(input: unknown): unknown {
+  if (typeof input !== 'string') {
+    return input;
+  }
+  try {
+    return JSON.parse(input);
+  } catch {
+    return input;
+  }
+}
+
+/**
  * The tool descriptors for one form: one per requested kind, closing over the schema built for
  * the current form state. A tool never rejects: every outcome, including an internal failure,
  * is returned as a {@link WebmcpResult}.
@@ -48,7 +64,10 @@ export function buildTools(
     return {
       name,
       title: override.title ?? texts[kind].title,
-      description: truncate(override.description ?? texts[kind].description, TOOL_DESCRIPTION_LIMIT),
+      description: truncate(
+        override.description ?? texts[kind].description,
+        TOOL_DESCRIPTION_LIMIT,
+      ),
       inputSchema: kind === 'read' ? EMPTY_INPUT : schema.inputSchema,
       annotations: {
         readOnlyHint: kind === 'read',
@@ -63,7 +82,7 @@ export function buildTools(
         try {
           return kind === 'read'
             ? runRead(context, schema)
-            : runFill(context, schema, input, kind === 'submit');
+            : runFill(context, schema, parseInput(input), kind === 'submit');
         } catch (err) {
           return {
             status: 'error',

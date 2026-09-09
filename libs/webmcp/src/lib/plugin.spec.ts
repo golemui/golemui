@@ -259,6 +259,22 @@ describe('executing through the model context', () => {
     expect(read['isValid']).toBe(true);
   });
 
+  it("accepts the arguments as a JSON string, the way Chrome's preview passes them", async () => {
+    const fake = createFakeModelContext();
+    const { context } = createHarness(signupForm);
+    attach(context, baseOptions(fake));
+    await settle();
+
+    const result = (await fake.tools
+      .get('signup-fill')!
+      .tool.execute('{"seats": 4}', { signal: new AbortController().signal })) as Record<
+      string,
+      unknown
+    >;
+    expect(result['status']).toBe('filled');
+    expect(context.store.getState().data['seats']).toBe(4);
+  });
+
   it('answers a cancelled call with an error result instead of rejecting', async () => {
     const fake = createFakeModelContext();
     const { context } = createHarness(signupForm);
