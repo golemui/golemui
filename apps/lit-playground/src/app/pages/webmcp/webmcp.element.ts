@@ -15,22 +15,41 @@ import { customElement } from 'lit/decorators.js';
 
 type RegisteredTool = ModelContextTool & { execute: ModelContextTool['execute'] };
 
+/**
+ * The page sits between the plugin and the model context, so it sees every registration and,
+ * through the abort signal, every unregistration. `changes` fires a `change` event after each,
+ * which is what the inspector listens to instead of polling.
+ */
 type InspectableContext = ModelContextLike & {
+  changes: EventTarget;
   listTools(): Promise<RegisteredTool[]>;
   run(tool: RegisteredTool, input: unknown): Promise<unknown>;
 };
 
+function notifyingRegisterTool(
+  register: ModelContextLike['registerTool'],
+  changes: EventTarget,
+): ModelContextLike['registerTool'] {
+  return async (tool, options) => {
+    await register(tool, options);
+    changes.dispatchEvent(new Event('change'));
+    options?.signal?.addEventListener('abort', () => changes.dispatchEvent(new Event('change')));
+  };
+}
+
 function createInPageModelContext(): InspectableContext {
   const tools = new Map<string, RegisteredTool>();
+  const changes = new EventTarget();
   return {
-    async registerTool(tool, options) {
+    changes,
+    registerTool: notifyingRegisterTool(async (tool, options) => {
       tools.set(tool.name, tool);
       options?.signal?.addEventListener('abort', () => {
         if (tools.get(tool.name) === tool) {
           tools.delete(tool.name);
         }
       });
-    },
+    }, changes),
     listTools: async () => [...tools.values()],
     run: (tool, input) => tool.execute(input, { signal: new AbortController().signal }),
   };
@@ -57,10 +76,15 @@ function parseToolResult(result: unknown): unknown {
 function resolveInspectableContext(): { context: InspectableContext; native: boolean } {
   const native = (document as unknown as { modelContext?: NativeModelContext }).modelContext;
   if (native && typeof native.registerTool === 'function') {
+    const changes = new EventTarget();
     return {
       native: true,
       context: {
-        registerTool: (tool, options) => native.registerTool(tool, options),
+        changes,
+        registerTool: notifyingRegisterTool(
+          (tool, options) => native.registerTool(tool, options),
+          changes,
+        ),
         listTools: async () => (await native.getTools?.()) ?? [],
         run: async (tool, input) =>
           native.executeTool
@@ -140,7 +164,9 @@ export class WebmcpElement extends LitElement {
   declare private input: string;
   declare private output: string;
   declare private submitted: string[];
-  private refreshTimer: ReturnType<typeof setInterval> | undefined;
+  private readonly refreshTools = () => {
+    void modelContext.listTools().then((tools) => (this.tools = tools));
+  };
 
   constructor() {
     super();
@@ -156,21 +182,13 @@ export class WebmcpElement extends LitElement {
 
   override connectedCallback() {
     super.connectedCallback();
-    void this.refreshTools();
-    // Registration is debounced by the plugin; poll the context until the tools show up.
-    this.refreshTimer = setInterval(() => void this.refreshTools(), 500);
+    modelContext.changes.addEventListener('change', this.refreshTools);
+    this.refreshTools();
   }
 
   override disconnectedCallback() {
     super.disconnectedCallback();
-    clearInterval(this.refreshTimer);
-  }
-
-  private async refreshTools() {
-    const tools = await modelContext.listTools();
-    if (tools.map((t) => t.name).join() !== this.tools.map((t) => t.name).join()) {
-      this.tools = tools;
-    }
+    modelContext.changes.removeEventListener('change', this.refreshTools);
   }
 
   private async run(tool: RegisteredTool) {
