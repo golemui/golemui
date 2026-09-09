@@ -36,12 +36,58 @@ const config: FormInitConfig<Type<WithWidget>> = {
         { kind: 'input', type: 'textinput', path: 'firstName', label: 'First name' },
         { kind: 'input', type: 'textinput', path: 'lastName', label: 'Last name' },
         { kind: 'input', type: 'number', path: 'seats', label: 'Seats' },
+        // The data values sit in the middle of each option list, so a render that marks the
+        // last option or the last radio as selected is distinguishable from a correct one.
+        {
+          kind: 'input',
+          type: 'select',
+          path: 'plan',
+          label: 'Plan',
+          props: {
+            options: [
+              { value: 'free', label: 'Free' },
+              { value: 'pro', label: 'Pro' },
+              { value: 'enterprise', label: 'Enterprise' },
+            ],
+          },
+        },
+        {
+          kind: 'input',
+          type: 'radiogroup',
+          path: 'size',
+          label: 'Size',
+          props: {
+            options: [
+              { value: 's', label: 'S' },
+              { value: 'm', label: 'M' },
+              { value: 'l', label: 'L' },
+            ],
+          },
+        },
+        { kind: 'input', type: 'checkbox', path: 'acceptTerms', label: 'I accept the terms' },
+        { kind: 'input', type: 'toggle', path: 'newsletter', label: 'Newsletter' },
+        {
+          kind: 'input',
+          type: 'currency',
+          path: 'budget',
+          label: 'Budget',
+          props: { currency: 'USD' },
+        },
         { kind: 'action', type: 'button', label: 'Create account', action: 'submit' },
       ],
     },
   },
   widgetLoaders,
-  data: { firstName: 'Ada', lastName: 'Lovelace', seats: 3 },
+  data: {
+    firstName: 'Ada',
+    lastName: 'Lovelace',
+    seats: 3,
+    plan: 'pro',
+    size: 'm',
+    acceptTerms: false,
+    newsletter: false,
+    budget: 1234.5,
+  },
 };
 
 describe('server rendering the gui widget set in plain node', () => {
@@ -78,6 +124,34 @@ describe('server rendering the gui widget set in plain node', () => {
     expect(markup).toMatch(/<gui-number-input[^>]*class="[^"]*gui-number[^"]*gui-field/);
     expect(markup).toContain('Seats');
     expect(markup).toMatch(/<input[^>]*type="number"[^>]*id="seats-number"/);
+  });
+
+  it('renders the currency widget, which reads its own children in willUpdate()', () => {
+    // It formats the value unless its own input has focus, so it calls querySelector on the
+    // element itself. Without the element shim the server render throws here.
+    expect(markup).toMatch(/<gui-currency-input[^>]*class="[^"]*gui-currency[^"]*gui-field/);
+    expect(markup).toContain('Budget');
+    expect(markup).toMatch(/<input[^>]*type="number"[^>]*id="budget-currency"/);
+    expect(markup).toContain('$1,234.50');
+  });
+
+  // @lit-labs/ssr serializes a false `.selected` or `.checked` property as `name="false"`,
+  // and HTML reads any present boolean attribute as true. renderGuiHtml removes those.
+  it('renders exactly one selected option and no false-valued selected attribute', () => {
+    expect(markup).not.toMatch(/\sselected="false"/);
+    const selectedOptions = markup.match(/<option[^>]*\sselected=[^>]*>/g) ?? [];
+    expect(selectedOptions).toHaveLength(1);
+    expect(selectedOptions[0]).toMatch(/value="pro"/);
+  });
+
+  it('renders the unchecked checkbox, toggle and radios without a checked attribute', () => {
+    expect(markup).not.toMatch(/\schecked="false"/);
+    expect(markup).toMatch(/<input[^>]*type="checkbox"[^>]*id="acceptTerms-checkbox"/);
+    expect(markup).not.toMatch(/<input[^>]*id="acceptTerms-checkbox"[^>]*\schecked=/);
+    expect(markup).not.toMatch(/<input[^>]*id="newsletter-toggle"[^>]*\schecked=/);
+    const checkedRadios = markup.match(/<input[^>]*type="radio"[^>]*\schecked=[^>]*>/g) ?? [];
+    expect(checkedRadios).toHaveLength(1);
+    expect(checkedRadios[0]).toMatch(/value="m"/);
   });
 
   it('emits inert light DOM: defer-hydration everywhere, no shadow root wrappers', () => {
