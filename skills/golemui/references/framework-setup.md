@@ -216,11 +216,9 @@ Rules that follow from it:
   module-scope object, spread into both preload calls and passed as `customWidgetLoaders`.
 - `@golemui/lit/ssr` has no browser build; import it only in server code.
 - `onLoad`, `onChange` and every other handler run in the browser only.
-- Known limitations: a false boolean property serializes as `selected="false"`, which HTML reads
-  as true until the resume corrects it (visible only with JavaScript off, or before the client
-  entry runs). A widget that assigns its input value imperatively (the number widget) renders
-  without its value. Calendar widgets read the server clock, so their markup depends on when the
-  server rendered.
+- Known limitations: a widget that assigns its input value imperatively (the number widget)
+  renders without its value. Calendar widgets read the server clock, so their markup depends on
+  when the server rendered.
 
 Starter: `templates/astro` in the GolemUI repo (`output: 'server'` + `@astrojs/node`; the same
 code prerenders at build time under Astro's default static output).
