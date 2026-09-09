@@ -66,6 +66,13 @@ const config: FormInitConfig<Type<WithWidget>> = {
         },
         { kind: 'input', type: 'checkbox', path: 'acceptTerms', label: 'I accept the terms' },
         { kind: 'input', type: 'toggle', path: 'newsletter', label: 'Newsletter' },
+        {
+          kind: 'input',
+          type: 'currency',
+          path: 'budget',
+          label: 'Budget',
+          props: { currency: 'USD' },
+        },
         { kind: 'action', type: 'button', label: 'Create account', action: 'submit' },
       ],
     },
@@ -79,6 +86,7 @@ const config: FormInitConfig<Type<WithWidget>> = {
     size: 'm',
     acceptTerms: false,
     newsletter: false,
+    budget: 1234.5,
   },
 };
 
@@ -116,6 +124,15 @@ describe('server rendering the gui widget set in plain node', () => {
     expect(markup).toMatch(/<gui-number-input[^>]*class="[^"]*gui-number[^"]*gui-field/);
     expect(markup).toContain('Seats');
     expect(markup).toMatch(/<input[^>]*type="number"[^>]*id="seats-number"/);
+  });
+
+  it('renders the currency widget, which reads its own children in willUpdate()', () => {
+    // It formats the value unless its own input has focus, so it calls querySelector on the
+    // element itself. Without the element shim the server render throws here.
+    expect(markup).toMatch(/<gui-currency-input[^>]*class="[^"]*gui-currency[^"]*gui-field/);
+    expect(markup).toContain('Budget');
+    expect(markup).toMatch(/<input[^>]*type="number"[^>]*id="budget-currency"/);
+    expect(markup).toContain('$1,234.50');
   });
 
   // @lit-labs/ssr serializes a false `.selected` or `.checked` property as `name="false"`,
