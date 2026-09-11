@@ -2,7 +2,7 @@
 
 import { enableDevMode, preloadFormWidgets } from '@golemui/core';
 import { widgetLoaders } from '@golemui/gui-react';
-import { use, useEffect, type ReactNode } from 'react';
+import { use, type ReactNode } from 'react';
 import { customWidgetLoaders } from './custom-widget-loaders';
 
 // One promise per module graph: the server's SSR layer and the browser bundle each
@@ -15,15 +15,15 @@ const preloadPromise = preloadFormWidgets({
   widgetLoaders: { ...widgetLoaders, ...customWidgetLoaders },
 });
 
+// Module scope, so dev mode is on before the first form is processed. A `useEffect` in the
+// provider runs after the child renders, which skips the dev assertions for the initial form.
+if (typeof window !== 'undefined' && process.env.NODE_ENV !== 'production') {
+  console.log('[GolemUI] DEV mode is enabled');
+  enableDevMode();
+}
+
 export function GolemuiProvider({ children }: { children: ReactNode }) {
   use(preloadPromise);
-
-  useEffect(() => {
-    if (process.env.NODE_ENV !== 'production') {
-      console.log('[GolemUI] DEV mode is enabled');
-      enableDevMode();
-    }
-  }, []);
 
   return <>{children}</>;
 }

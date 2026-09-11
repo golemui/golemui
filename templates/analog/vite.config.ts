@@ -23,11 +23,20 @@ function disposeSassCompilerAfterBuild(): Plugin {
   };
 }
 
+// Analog derives `ngServerMode` from the top-level `build.ssr`, which is unset. So the server
+// bundle gets `false`, and Angular runs browser-only code such as `afterNextRender` on the server.
+function defineServerModeForSsrBuild(): Plugin {
+  return {
+    name: 'define-ng-server-mode-for-ssr-build',
+    config: () => ({ environments: { ssr: { define: { ngServerMode: 'true' } } } }),
+  };
+}
+
 export default defineConfig({
   build: {
     target: ['es2022'],
   },
   // Server-side rendering is on by default: every page renders on request, and `/` is
   // prerendered at build time.
-  plugins: [analog(), disposeSassCompilerAfterBuild()],
+  plugins: [analog(), disposeSassCompilerAfterBuild(), defineServerModeForSsrBuild()],
 });
