@@ -25,6 +25,15 @@ function disposeSassCompilerAfterBuild(): Plugin {
   };
 }
 
+// Analog derives `ngServerMode` from the top-level `build.ssr`, which is unset. So the server
+// bundle gets `false`, and Angular runs browser-only code such as `afterNextRender` on the server.
+function defineServerModeForSsrBuild(): Plugin {
+  return {
+    name: 'define-ng-server-mode-for-ssr-build',
+    config: () => ({ environments: { ssr: { define: { ngServerMode: 'true' } } } }),
+  };
+}
+
 // The Analog platform plugin compiles the components and must come before the path plugin.
 // Playground ports: 3300 lit, 3500 vue, 3700 nuxt, 3800 nextjs, 3900 astro, 4200 angular.
 export default defineConfig(() => ({
@@ -48,5 +57,6 @@ export default defineConfig(() => ({
     }),
     nxViteTsPaths(),
     disposeSassCompilerAfterBuild(),
+    defineServerModeForSsrBuild(),
   ],
 }));
