@@ -13,8 +13,8 @@ npm i @golemui/core @golemui/angular @golemui/gui-angular @golemui/gui-shared
 npm i @golemui/core @golemui/vue @golemui/gui-vue @golemui/gui-shared
 # Lit AND vanilla JS (web component)
 npm i @golemui/core @golemui/lit @golemui/gui-lit @golemui/gui-shared
-# Lit server rendering (Astro, plain Node) additionally needs the optional peer:
-npm i @lit-labs/ssr
+# Lit server rendering (Astro, plain Node) additionally needs the optional peer, 4.1.0 or later:
+npm i @lit-labs/ssr@^4.1.0
 ```
 
 Then import the component styles ONCE in the app entry (mandatory — without it the form
@@ -75,6 +75,7 @@ Rules that follow from it:
 - Pages that render `<GuiForm>` are client components (`'use client'`): the config holds functions.
   Keep `config` at module scope (a new identity per render re-initializes the form).
 - Set `formName` — the server and the client must produce the same form id.
+- `formSubmit`, `onLoad`, `onChange` and every other handler run in the browser only.
 - Custom widgets: ONE module-scope loaders object, spread into the preload call and passed as
   `customWidgetLoaders` in every form config (the registry caches by loader function identity).
 - Import `@golemui/gui-components/index.css` once in the root layout; nothing is injected.
@@ -166,7 +167,7 @@ html`<gui-form
 
 **Lit SSR (Astro, or any Node server)** — unlike the Vue and React hosts, this renders the WHOLE
 form on the server, widget internals included (inputs, labels, values are in the HTML), through
-the server-only subpath `@golemui/lit/ssr` (needs `@lit-labs/ssr`). The client does not hydrate
+the server-only subpath `@golemui/lit/ssr` (needs `@lit-labs/ssr` >= 4.1.0). The client does not hydrate
 that markup: it replaces it with one live render before the next paint. Keep the form config in a
 module both sides import; nothing in it may touch the DOM.
 
@@ -205,6 +206,8 @@ resumeServerRenderedForm(form as unknown as CoreFormElement, {
 Rules that follow from it:
 
 - `formName` is mandatory (the server render throws without it).
+- `renderGuiFormHtml({ config, validators })` from the same entry renders one form without a
+  surrounding template. `renderGuiHtml` is the general entry point.
 - Listeners and properties (`formHealthBoundary`, `autocomplete`) go on the element BEFORE
   `resumeServerRenderedForm`; the resume removes `defer-hydration`, which triggers the render.
 - Custom widgets must be registered with `safeDefine('my-tag', MyElement)` from `@golemui/lit`,
@@ -213,6 +216,9 @@ Rules that follow from it:
   module-scope object, spread into both preload calls and passed as `customWidgetLoaders`.
 - `@golemui/lit/ssr` has no browser build; import it only in server code.
 - `onLoad`, `onChange` and every other handler run in the browser only.
+- Known limitations: a widget that assigns its input value imperatively (the number widget)
+  renders without its value. Calendar widgets read the server clock, so their markup depends on
+  when the server rendered.
 
 Starter: `templates/astro` in the GolemUI repo (`output: 'server'` + `@astrojs/node`; the same
 code prerenders at build time under Astro's default static output).
