@@ -70,3 +70,7 @@ lit-test-app
 .ai-lore-golem-ui/
 .obsidian/
 /ai_readme.md
+
+# Template lock files. A template records its versions in package.json only, which the
+# release tool rewrites. Every template README says npm install.
+templates/*/package-lock.json
