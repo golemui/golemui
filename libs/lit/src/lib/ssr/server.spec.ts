@@ -1,5 +1,7 @@
-import { describe, expect, it } from 'vitest';
-import { stripFalseBooleanAttributes } from './server';
+import { LitElement } from 'lit';
+import { beforeAll, describe, expect, it } from 'vitest';
+import { safeDefine } from '../utils/define';
+import { installLitSsrSupport, stripFalseBooleanAttributes } from './server';
 
 describe('stripFalseBooleanAttributes', () => {
   it('removes a false-valued selected attribute and a false-valued checked attribute', () => {
@@ -53,5 +55,38 @@ describe('stripFalseBooleanAttributes', () => {
     const markup =
       '<gui-core-form class="gui-form" defer-hydration><form id="f"><input value="Ada"></form></gui-core-form>';
     expect(stripFalseBooleanAttributes(markup)).toBe(markup);
+  });
+});
+
+class RegisteredBeforeInstall extends LitElement {}
+class RegisteredAfterInstall extends LitElement {}
+class NeverRegistered extends LitElement {}
+
+describe('installLitSsrSupport element shim scope', () => {
+  beforeAll(() => {
+    safeDefine('x-shim-before-install', RegisteredBeforeInstall);
+    installLitSsrSupport();
+    safeDefine('x-shim-after-install', RegisteredAfterInstall);
+  });
+
+  it('defines the query methods on a class registered before the install', () => {
+    const element = new RegisteredBeforeInstall() as unknown as Element;
+    expect(element.querySelector('input')).toBeNull();
+    expect(element.querySelectorAll('input')).toHaveLength(0);
+  });
+
+  it('defines the query methods on a class registered after the install', () => {
+    const element = new RegisteredAfterInstall() as unknown as Element;
+    expect(element.querySelector('input')).toBeNull();
+    expect(element.querySelectorAll('input')).toHaveLength(0);
+  });
+
+  it('leaves a Lit element that safeDefine never registered without the query methods', () => {
+    expect('querySelector' in NeverRegistered.prototype).toBe(false);
+    expect('querySelectorAll' in NeverRegistered.prototype).toBe(false);
+  });
+
+  it('installs classList on the prototype shared with every Lit element', () => {
+    expect('classList' in NeverRegistered.prototype).toBe(true);
   });
 });
