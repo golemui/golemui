@@ -22,9 +22,29 @@ export function safeDefine(tag: string, ctor: CustomElementConstructor): void {
   supportDeferHydrationAttribute(ctor);
   customElements.define(tag, ctor);
   tagByConstructor.set(ctor, tag);
+  for (const listener of registrationListeners) {
+    listener(ctor);
+  }
 }
 
 const tagByConstructor = new Map<CustomElementConstructor, string>();
+
+const registrationListeners = new Set<(ctor: CustomElementConstructor) => void>();
+
+/**
+ * Registers a listener for {@link safeDefine} registrations. It runs once for every
+ * constructor already registered, then once per later registration.
+ *
+ * Not exported from the package entry point. The server entry point uses it to add the
+ * server-only query methods to the GolemUI element classes only, instead of to the
+ * element prototype that the DOM shim shares with every other Lit element.
+ */
+export function onElementRegistered(listener: (ctor: CustomElementConstructor) => void): void {
+  for (const ctor of tagByConstructor.keys()) {
+    listener(ctor);
+  }
+  registrationListeners.add(listener);
+}
 
 /**
  * Returns the tag a constructor was registered with through {@link safeDefine}, or
