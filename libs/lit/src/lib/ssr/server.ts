@@ -60,10 +60,10 @@ let supportInstalled = false;
  * It also defines `querySelector` and `querySelectorAll` that find nothing, because the
  * elements read their own children through `@query` accessors in willUpdate and render,
  * and the shim has no children to query. Finding nothing is what the first client render
- * sees too, so the widgets already take that branch. These two are defined on the
- * safeDefine-registered classes only, including the ones registered later. Any other Lit
- * element in the process keeps the shim behavior, which is a TypeError, so a missing
- * query never turns into markup that is silently incomplete.
+ * sees too, so the widgets already take that branch. Both methods are defined on the
+ * safeDefine-registered classes only, including the classes registered after this call.
+ * Any other Lit element in the process keeps the shim behavior, which is a TypeError.
+ * That reports the failed query instead of rendering incomplete markup with no error.
  *
  * It also registers a render option so every safeDefine-registered element runs
  * connectedCallback on the server. That call is what attaches the form context and
@@ -83,8 +83,8 @@ export function installLitSsrSupport(): void {
   );
 }
 
-// Defines the two query methods on one registered element class. A real DOM and a class
-// that inherits them from an already-extended base class are both left untouched.
+// Defines the two query methods on one registered element class. The `in` check skips a
+// real DOM, and skips a class that inherits the methods from a registered base class.
 function installQueryMethods(ctor: CustomElementConstructor): void {
   const prototype = ctor.prototype as object;
   if (!('querySelector' in prototype)) {

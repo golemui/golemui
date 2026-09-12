@@ -35,9 +35,9 @@ const registrationListeners = new Set<(ctor: CustomElementConstructor) => void>(
  * Registers a listener for {@link safeDefine} registrations. It runs once for every
  * constructor already registered, then once per later registration.
  *
- * Not exported from the package entry point. The server entry point uses it to extend
- * the GolemUI element classes only, instead of the element prototype the DOM shim
- * shares with every other Lit element in the process.
+ * Not exported from the package entry point. The server entry point uses it to add the
+ * server-only query methods to the GolemUI element classes only, instead of to the
+ * element prototype that the DOM shim shares with every other Lit element.
  */
 export function onElementRegistered(listener: (ctor: CustomElementConstructor) => void): void {
   for (const ctor of tagByConstructor.keys()) {

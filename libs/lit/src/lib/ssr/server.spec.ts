@@ -81,12 +81,12 @@ describe('installLitSsrSupport element shim scope', () => {
     expect(element.querySelectorAll('input')).toHaveLength(0);
   });
 
-  it('leaves a Lit element that safeDefine never registered without the query methods', () => {
+  it('does not define the query methods on a Lit element that safeDefine never registered', () => {
     expect('querySelector' in NeverRegistered.prototype).toBe(false);
     expect('querySelectorAll' in NeverRegistered.prototype).toBe(false);
   });
 
-  it('installs classList on the prototype shared with every Lit element', () => {
+  it('installs classList on the prototype shared with every Lit element in the process', () => {
     expect('classList' in NeverRegistered.prototype).toBe(true);
   });
 });
