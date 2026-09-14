@@ -14,7 +14,7 @@ export default defineConfig({
   output: 'server',
   adapter: node({ mode: 'standalone' }),
   outDir: '../../dist/apps/astro-playground',
-  // Other playgrounds: 3300 lit, 3500 vue, 3602 lit-ssr-harness, 3700 nuxt, 3800 nextjs.
+  // Port registry for every app: CONTRIBUTING.md, "Playground and harness ports".
   server: { port: 3900 },
   // The toolbar injects its own scripts and styles into every page; keep the served markup
   // limited to what the Lit render produced.

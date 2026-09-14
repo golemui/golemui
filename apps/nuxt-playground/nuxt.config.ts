@@ -17,7 +17,7 @@ export default defineNuxtConfig({
   compatibilityDate: '2026-08-28',
   ssr: true,
   telemetry: false,
-  // Other playgrounds: 3300 lit, 3500 vue, 3600 vue-ssr-harness, 8080 react.
+  // Port registry for every app: CONTRIBUTING.md, "Playground and harness ports".
   devServer: { port: 3700 },
   app: {
     head: {

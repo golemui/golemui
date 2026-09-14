@@ -85,6 +85,10 @@ One PR should address one concern. If you find unrelated bugs along the way, ple
 - **npm** ≥ 10 (or the package manager configured for the repo)
 - **Git**
 
+`package-lock.json` is maintained with npm 11. An older npm rewrites the `libc` fields of
+the optional platform packages on every install, which produces a large unrelated diff in
+the lock file.
+
 ### Getting Started
 
 ```bash
@@ -117,6 +121,31 @@ npx nx run nextjs-playground:serve # server-rendered (Next.js)
 npx nx run astro-playground:serve  # server-rendered (Astro, pure Lit)
 npx nx run analog-playground:serve # server-rendered (Analog, Angular)
 ```
+
+### Playground and harness ports
+
+Each app binds a fixed port, so several can run at the same time. This table is the only
+copy of the registry. Add a row here when you add an app.
+
+| Port | App                   | Dev server command                    |
+| ---- | --------------------- | ------------------------------------- |
+| 3300 | `lit-playground`      | `npx nx run lit-playground:serve`     |
+| 3500 | `vue-playground`      | `npx nx run vue-playground:serve`     |
+| 3600 | `vue-ssr-harness`     | `npm run start:vue-ssr`               |
+| 3601 | `react-ssr-harness`   | `npm run start:react-ssr`             |
+| 3602 | `lit-ssr-harness`     | `npm run start:lit-ssr`               |
+| 3603 | `angular-ssr-harness` | `npm run start:angular-ssr`           |
+| 3700 | `nuxt-playground`     | `npx nx run nuxt-playground:serve`    |
+| 3800 | `nextjs-playground`   | `npx nx run nextjs-playground:serve`  |
+| 3900 | `astro-playground`    | `npx nx run astro-playground:serve`   |
+| 4000 | `analog-playground`   | `npx nx run analog-playground:serve`  |
+| 4200 | `angular-playground`  | `npx nx run angular-playground:serve` |
+| 8080 | `react-playground`    | `npx nx run react-playground:serve`   |
+
+The `preview` target of a playground reuses its dev server port, except `lit-playground`
+(4300) and `vue-playground` (4500), which serve the vite preview build on their own port.
+
+A harness reads `PORT` from the environment, so `PORT=3610 npm run start:lit-ssr` moves it.
 
 ### Running Cypress Tests
 
