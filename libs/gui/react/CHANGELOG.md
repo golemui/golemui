@@ -1,3 +1,13 @@
+## 1.5.0-rc.2 (2026-09-14)
+
+### 🩹 Fixes
+
+- **gui-react, gui-lit:** stop bundling the validators package into the builds ([#373](https://github.com/golemui/golemui/pull/373))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+
 ## 1.5.0-rc.1 (2026-09-07)
 
 ### 🚀 Features
