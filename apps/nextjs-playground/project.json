@@ -28,6 +28,7 @@
     },
     "preview": {
       "executor": "nx:run-commands",
+      "continuous": true,
       "dependsOn": ["build"],
       "options": {
         "cwd": "apps/nextjs-playground",

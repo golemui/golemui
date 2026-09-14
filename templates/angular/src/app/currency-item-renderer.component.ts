@@ -23,7 +23,7 @@ export type CurrencyItem = { code: string; symbol: string; name: string };
       text-align: center;
     }
     .currency-item__code {
-      font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
       font-size: 0.85em;
       color: var(--gui-text-default);
       font-weight: 600;

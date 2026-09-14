@@ -13,6 +13,8 @@ const config = {
     'apps/*/app/plugins/*.ts',
     // Next.js app (file-based entry points, no main.ts)
     'apps/*/next.config.ts',
+    // Not a glob: 'apps/*/src/app/**/*.tsx' would also match react-playground/src/app, which is
+    // a normal source directory and not a route tree.
     'apps/nextjs-playground/src/app/**/*.tsx',
     // Astro app (file-based entry points, no main.ts; knip does not parse .astro files, so the
     // modules the pages import are listed as entries too)
@@ -20,7 +22,7 @@ const config = {
     'apps/astro-playground/src/forms/*.ts',
     'apps/astro-playground/src/lib/*.ts',
     // Analog app (file-based routes; main.ts is covered by the apps glob above)
-    'apps/*/src/main.server.ts',
+    'apps/analog-playground/src/main.server.ts',
     'apps/analog-playground/src/app/pages/**/*.page.ts',
     // Publishable libs (public and cross-package entry points)
     'libs/**/src/index.ts',

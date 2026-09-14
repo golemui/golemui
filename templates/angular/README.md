@@ -1,8 +1,8 @@
-# GolemUI · Angular Template
+# GolemUI - Angular Template
 
 A starter for [GolemUI](https://golemui.com) using [Angular](https://angular.dev) 20 and the Angular CLI.
 
-It renders a 5-field signup form (country → city → currency → pets → date) that demonstrates conditional fields, cascading options, and a custom item renderer.
+It renders a 5-field signup form (country -> city -> currency -> pets -> date) that demonstrates conditional fields, cascading options, and a custom item renderer.
 
 ## Quick start
 
@@ -21,9 +21,9 @@ Open <http://localhost:4200>.
 
 ## What's in here
 
-- [src/app/app.ts](src/app/app.ts) — the form definition and root standalone component.
-- [src/app/currency-item-renderer.component.ts](src/app/currency-item-renderer.component.ts) — the custom Angular currency renderer.
-- [src/main.ts](src/main.ts) — Angular bootstrap entry.
+- [src/app/app.ts](src/app/app.ts) - the form definition and root standalone component.
+- [src/app/currency-item-renderer.component.ts](src/app/currency-item-renderer.component.ts) - the custom Angular currency renderer.
+- [src/main.ts](src/main.ts) - Angular bootstrap entry.
 
 ## Learn more
 

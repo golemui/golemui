@@ -21,12 +21,14 @@
     },
     "serve-ssr": {
       "executor": "nx:run-commands",
+      "continuous": true,
       "options": {
         "command": "node apps/vue-ssr-harness/server.mjs"
       }
     },
     "serve-ssr-prod": {
       "executor": "nx:run-commands",
+      "continuous": true,
       "dependsOn": ["build"],
       "options": {
         "command": "node apps/vue-ssr-harness/server.mjs --production"

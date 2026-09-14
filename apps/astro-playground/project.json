@@ -27,6 +27,7 @@
     },
     "preview": {
       "executor": "nx:run-commands",
+      "continuous": true,
       "dependsOn": ["build"],
       "options": {
         "command": "PORT=3900 node dist/apps/astro-playground/server/entry.mjs"

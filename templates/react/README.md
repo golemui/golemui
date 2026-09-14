@@ -1,8 +1,8 @@
-# GolemUI · React Template
+# GolemUI - React Template
 
 A starter for [GolemUI](https://golemui.com) using [React](https://react.dev) 19 and [Vite](https://vitejs.dev).
 
-It renders a 5-field signup form (country → city → currency → pets → date) that demonstrates conditional fields, cascading options, and a custom item renderer.
+It renders a 5-field signup form (country -> city -> currency -> pets -> date) that demonstrates conditional fields, cascading options, and a custom item renderer.
 
 ## Quick start
 
@@ -21,9 +21,9 @@ Open <http://localhost:5173>.
 
 ## What's in here
 
-- [src/App.tsx](src/App.tsx) — the form definition and the `CurrencyItemRenderer` React component.
-- [src/main.tsx](src/main.tsx) — React entry point.
-- [index.html](index.html) — Vite entry point.
+- [src/App.tsx](src/App.tsx) - the form definition and the `CurrencyItemRenderer` React component.
+- [src/main.tsx](src/main.tsx) - React entry point.
+- [index.html](index.html) - Vite entry point.
 
 ## Learn more
 
