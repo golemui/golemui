@@ -1,3 +1,18 @@
+## 1.5.0 (2026-09-14)
+
+### 🚀 Features
+
+- **gui-components:** surface upload errors via validation injection and icon retry button ([#357](https://github.com/golemui/golemui/pull/357))
+- **gui-components:** add file upload widgets ([#332](https://github.com/golemui/golemui/pull/332))
+
+### 🩹 Fixes
+
+- **gui-components:** add interrupted message and reconcile file upload queue ([#359](https://github.com/golemui/golemui/pull/359))
+
+### ❤️ Thank You
+
+- Raúl Jiménez @Elecash
+
 ## 1.5.0-rc.2 (2026-09-14)
 
 This was a version bump only for gui-schemas to align it with other projects, there were no code changes.

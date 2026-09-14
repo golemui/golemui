@@ -1,3 +1,13 @@
+## 1.5.0 (2026-09-14)
+
+### 🚀 Features
+
+- **angular:** support server-side rendering and hydration of forms ([#348](https://github.com/golemui/golemui/pull/348))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+
 ## 1.5.0-rc.2 (2026-09-14)
 
 This was a version bump only for angular to align it with other projects, there were no code changes.

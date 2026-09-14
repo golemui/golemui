@@ -1,3 +1,15 @@
+## 1.5.0 (2026-09-14)
+
+### 🚀 Features
+
+- **vue:** nuxt support ([#335](https://github.com/golemui/golemui/pull/335))
+- **vue:** support server-side rendering of forms ([#331](https://github.com/golemui/golemui/pull/331))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
 ## 1.5.0-rc.2 (2026-09-14)
 
 This was a version bump only for vue to align it with other projects, there were no code changes.
