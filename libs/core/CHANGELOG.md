@@ -1,3 +1,17 @@
+## 1.5.0 (2026-09-14)
+
+### 🚀 Features
+
+- **core:** add widget preloading for synchronous component access ([#330](https://github.com/golemui/golemui/pull/330))
+
+### 🩹 Fixes
+
+- **core:** deterministic function widget uids and default language ([#329](https://github.com/golemui/golemui/pull/329))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+
 ## 1.5.0-rc.2 (2026-09-14)
 
 This was a version bump only for core to align it with other projects, there were no code changes.

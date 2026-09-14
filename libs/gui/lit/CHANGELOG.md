@@ -1,3 +1,23 @@
+## 1.5.0 (2026-09-14)
+
+### 🚀 Features
+
+- **gui-components:** surface upload errors via validation injection and icon retry button ([#357](https://github.com/golemui/golemui/pull/357))
+- **vue:** nuxt support ([#335](https://github.com/golemui/golemui/pull/335))
+- **gui-components:** add file upload widgets ([#332](https://github.com/golemui/golemui/pull/332))
+- **lit,gui-lit,gui-components:** support server-side rendering of forms ([#334](https://github.com/golemui/golemui/pull/334))
+
+### 🩹 Fixes
+
+- **gui-react, gui-lit:** stop bundling the validators package into the builds ([#373](https://github.com/golemui/golemui/pull/373))
+- **lit:** remove false-valued boolean attributes from the server markup ([#372](https://github.com/golemui/golemui/pull/372))
+- **gui-components:** add interrupted message and reconcile file upload queue ([#359](https://github.com/golemui/golemui/pull/359))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
 ## 1.5.0-rc.2 (2026-09-14)
 
 ### 🩹 Fixes

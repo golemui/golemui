@@ -1,3 +1,21 @@
+## 1.5.0 (2026-09-14)
+
+### 🚀 Features
+
+- **gui-components:** surface upload errors via validation injection and icon retry button ([#357](https://github.com/golemui/golemui/pull/357))
+- **angular:** support server-side rendering and hydration of forms ([#348](https://github.com/golemui/golemui/pull/348))
+- **gui-components:** add file upload widgets ([#332](https://github.com/golemui/golemui/pull/332))
+
+### 🩹 Fixes
+
+- **gui-components:** add interrupted message and reconcile file upload queue ([#359](https://github.com/golemui/golemui/pull/359))
+- **gui-angular:** defer hydration of the file upload widgets ([#352](https://github.com/golemui/golemui/pull/352))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
 ## 1.5.0-rc.2 (2026-09-14)
 
 This was a version bump only for gui-angular to align it with other projects, there were no code changes.

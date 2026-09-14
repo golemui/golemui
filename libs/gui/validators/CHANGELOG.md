@@ -1,3 +1,18 @@
+## 1.5.0 (2026-09-14)
+
+### 🚀 Features
+
+- **gui-components:** add file upload widgets ([#332](https://github.com/golemui/golemui/pull/332))
+
+### 🩹 Fixes
+
+- **gui-validators:** report the required message when a required files value is absent ([#355](https://github.com/golemui/golemui/pull/355))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
 ## 1.5.0-rc.2 (2026-09-14)
 
 This was a version bump only for gui-validators to align it with other projects, there were no code changes.
