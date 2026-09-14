@@ -27,6 +27,7 @@
     },
     "preview": {
       "executor": "nx:run-commands",
+      "continuous": true,
       "dependsOn": ["build"],
       "options": {
         "command": "PORT=3700 node dist/apps/nuxt-playground/server/index.mjs"

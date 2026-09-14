@@ -27,6 +27,7 @@
     },
     "preview": {
       "executor": "nx:run-commands",
+      "continuous": true,
       "dependsOn": ["build"],
       "options": {
         "command": "PORT=4000 node dist/apps/analog-playground/analog/server/index.mjs"
