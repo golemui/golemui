@@ -140,7 +140,7 @@ export default function LandingPage() {
           <p className="kx-landing__subtitle">
             Two ways to build the same form, server-rendered by Next.js. Both pipelines render
             through the unified
-            <code style={{ padding: '0 0.25rem' }}>&lt;Form&gt;</code> component and produce
+            <code style={{ padding: '0 0.25rem' }}>&lt;GuiForm&gt;</code> component and produce
             identical output — pick the path that fits how you author forms.
           </p>
 
@@ -173,7 +173,7 @@ export default function LandingPage() {
               <h2 className="kx-card__title">Type-safe builder API</h2>
               <p className="kx-card__desc">
                 Compose forms with the <code>gui.*</code> builders and GSL selectors. The unified
-                <code style={{ padding: '0 0.25rem' }}>&lt;Form&gt;</code> runs
+                <code style={{ padding: '0 0.25rem' }}>&lt;GuiForm&gt;</code> runs
                 <code style={{ padding: '0 0.25rem' }}>processDxFacade</code> internally, with
                 memoization so the tree only walks once per definition.
               </p>
@@ -195,7 +195,7 @@ export default function LandingPage() {
               <h2 className="kx-card__title">Multi-module tabbed form</h2>
               <p className="kx-card__desc">
                 Combine independent <code>DxModule</code> slices into a single tabbed
-                <code style={{ padding: '0 0.25rem' }}>&lt;Form&gt;</code> via{' '}
+                <code style={{ padding: '0 0.25rem' }}>&lt;GuiForm&gt;</code> via{' '}
                 <code>buildModularDx()</code>. Each module owns its layout, data, and reactive
                 states — merged at the boundary.
               </p>
