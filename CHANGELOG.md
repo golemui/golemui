@@ -1,3 +1,16 @@
+## 1.5.0-rc.2 (2026-09-14)
+
+### 🩹 Fixes
+
+- server-side rendering defects in the Analog and Next.js playgrounds ([#375](https://github.com/golemui/golemui/pull/375))
+- **gui-react, gui-lit:** stop bundling the validators package into the builds ([#373](https://github.com/golemui/golemui/pull/373))
+- **lit:** remove false-valued boolean attributes from the server markup ([#372](https://github.com/golemui/golemui/pull/372))
+- **lit:** define the server query methods on the registered elements only ([#378](https://github.com/golemui/golemui/pull/378))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+
 ## 1.5.0-rc.1 (2026-09-07)
 
 ### 🚀 Features
