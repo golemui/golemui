@@ -25,6 +25,14 @@ function bumpGolemuiDeps(
   return { changed, deps: next };
 }
 
+/**
+ * Rewrites every `@golemui/*` dependency of each template `package.json` to the given
+ * version, then commits `templates/`. Templates carry no `package-lock.json`, so this
+ * rewrite is the complete version update.
+ * @param version - The version to write, without a range prefix.
+ * @param dryRun - When true, log the changes and write nothing.
+ * @returns The `package.json` paths that changed, in both modes.
+ */
 export function updateTemplateVersions(version: string, dryRun: boolean): string[] {
   console.log(`\nTemplate version bump for v${version}${dryRun ? ' (dry-run)' : ''}...`);
   const updated: string[] = [];

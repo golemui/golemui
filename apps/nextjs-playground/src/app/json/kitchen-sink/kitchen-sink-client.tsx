@@ -20,7 +20,7 @@ import { type Dependencies, type GuiFormInitConfig } from '@golemui/gui-shared';
 import type { CustomValidatorSchemas } from '@golemui/gui-validators';
 import { type FormHealthBoundary, type ReactItemRenderer } from '@golemui/react';
 import i18next from 'i18next';
-import type { ChangeEvent } from 'react';
+import { type ChangeEvent, useEffect, useState } from 'react';
 import snarkdown from 'snarkdown';
 import { customWidgetLoaders } from '../../../components/custom-widget-loaders';
 import { AirportItemRenderer } from '../../../components/item-renderers/AirportItemRenderer';
@@ -104,6 +104,13 @@ const config: GuiFormInitConfig = {
 };
 
 export default function KitchenSinkJsonClient() {
+  // The picker is a hand-written `gui-select` with no `defer-hydration`, so it must stay out of
+  // the server markup. It is rendered after mount, when the widget registry is already filled.
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   function onFormHealth(formHealth: FormHealth) {
     if (formHealth.status === 'errored') {
       console.log('GolemUI form health error:', formHealth.message);
@@ -112,7 +119,7 @@ export default function KitchenSinkJsonClient() {
 
   return (
     <div>
-      {languages.length > 0 ? <LanguagePicker /> : null}
+      {isMounted && languages.length > 0 ? <LanguagePicker /> : null}
       <GuiForm
         config={config}
         autocomplete="off"

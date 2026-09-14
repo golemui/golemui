@@ -8,7 +8,7 @@ import { html } from 'lit';
 import { LitElementRenderer, render } from '@lit-labs/ssr';
 import { collectResult } from '@lit-labs/ssr/lib/render-result.js';
 import { FormElement } from '../components/form/form.element';
-import { tagNameOf } from '../utils/define';
+import { onElementRegistered, tagNameOf } from '../utils/define';
 import type { Type } from '../utils/type';
 
 /**
@@ -52,21 +52,30 @@ let supportInstalled = false;
  * only needed when calling @lit-labs/ssr's `render` yourself.
  *
  * It extends the DOM shim element (the shim only implements attributes) with a
- * `classList` accessor, because the elements set host classes in connectedCallback, and
- * with `querySelector`/`querySelectorAll` that find nothing, because the elements read
- * their own children through `@query` accessors in willUpdate and render, and the shim
- * has no children to query. Finding nothing is what the first client render sees too, so
- * the widgets already take that branch. It also registers a render option so every
- * safeDefine-registered element runs connectedCallback on the server. That call is what
- * attaches the form context and creates the store subscriptions, and without it the
- * widgets render empty.
+ * `classList` accessor, because the elements set host classes in connectedCallback. That
+ * prototype is shared with every other Lit element rendered in the same Node process, so
+ * the accessor is process-wide. It adds a missing member, so it changes no existing
+ * behavior.
+ *
+ * It also defines `querySelector` and `querySelectorAll` that find nothing, because the
+ * elements read their own children through `@query` accessors in willUpdate and render,
+ * and the shim has no children to query. Finding nothing is what the first client render
+ * sees too, so the widgets already take that branch. Both methods are defined on the
+ * safeDefine-registered classes only, including the classes registered after this call.
+ * Any other Lit element in the process keeps the shim behavior, which is a TypeError.
+ * That reports the failed query instead of rendering incomplete markup with no error.
+ *
+ * It also registers a render option so every safeDefine-registered element runs
+ * connectedCallback on the server. That call is what attaches the form context and
+ * creates the store subscriptions, and without it the widgets render empty.
  */
 export function installLitSsrSupport(): void {
   if (supportInstalled) {
     return;
   }
   supportInstalled = true;
-  installElementShim();
+  installClassListShim();
+  onElementRegistered(installQueryMethods);
   LitElementRenderer.renderOptions.push((element) =>
     tagNameOf(element.constructor as CustomElementConstructor)
       ? { connectedCallback: true }
@@ -74,7 +83,27 @@ export function installLitSsrSupport(): void {
   );
 }
 
-function installElementShim(): void {
+// Defines the two query methods on one registered element class. The `in` check skips a
+// real DOM, and skips a class that inherits the methods from a registered base class.
+function installQueryMethods(ctor: CustomElementConstructor): void {
+  const prototype = ctor.prototype as object;
+  if (!('querySelector' in prototype)) {
+    Object.defineProperty(prototype, 'querySelector', {
+      configurable: true,
+      writable: true,
+      value: () => null,
+    });
+  }
+  if (!('querySelectorAll' in prototype)) {
+    Object.defineProperty(prototype, 'querySelectorAll', {
+      configurable: true,
+      writable: true,
+      value: () => [],
+    });
+  }
+}
+
+function installClassListShim(): void {
   // Find the prototype that owns setAttribute: in Node with lit loaded that is the
   // @lit-labs/ssr-dom-shim element prototype. Reached through a registered element so
   // this module never imports the shim package itself.
@@ -88,22 +117,8 @@ function installElementShim(): void {
   if (!proto || proto === Object.prototype) {
     return;
   }
-  // Each member is checked on its own: a real DOM (Element.prototype owns setAttribute)
-  // has all of them, and a second evaluation of this module finds the ones it installed.
-  if (!('querySelector' in proto)) {
-    Object.defineProperty(proto, 'querySelector', {
-      configurable: true,
-      writable: true,
-      value: () => null,
-    });
-  }
-  if (!('querySelectorAll' in proto)) {
-    Object.defineProperty(proto, 'querySelectorAll', {
-      configurable: true,
-      writable: true,
-      value: () => [],
-    });
-  }
+  // A real DOM (Element.prototype owns setAttribute) already has classList, and a second
+  // evaluation of this module finds the accessor it installed.
   if ('classList' in proto) {
     return;
   }

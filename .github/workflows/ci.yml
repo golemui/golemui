@@ -57,4 +57,7 @@ jobs:
       - name: Test affected
         run: npx nx affected --target=vite:test
 
+      - name: Typecheck affected
+        run: npx nx affected --target=typecheck
+
       - run: npm run lint:affected

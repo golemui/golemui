@@ -1,4 +1,5 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { isPlatformServer } from '@angular/common';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, inject, PLATFORM_ID } from '@angular/core';
 import { type AngularItemRenderer } from '@golemui/angular';
 import {
   allowedNames,
@@ -42,6 +43,7 @@ const dependencies: Dependencies = {
       @if (languages.length > 0) {
         <div>
           <gui-select
+            [attr.defer-hydration]="deferHydration"
             label="Choose Language"
             uid="language"
             value="en"
@@ -65,6 +67,10 @@ const dependencies: Dependencies = {
   `,
 })
 export default class JsonKitchenSinkPage {
+  // The picker is a hand-written `gui-select`, so it binds `defer-hydration` itself, the same
+  // way the gui-angular templates do: the server emits the attribute and the element stays
+  // empty, the first client change detection pass removes it and the element renders.
+  protected readonly deferHydration = isPlatformServer(inject(PLATFORM_ID)) ? '' : null;
   protected readonly languages = commonLanguages
     .filter(({ code }) => Object.keys(mock.resources).includes(code))
     .map(({ code, label, flag }) => ({
