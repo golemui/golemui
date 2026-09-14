@@ -12,10 +12,10 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "@golemui/core": "1.4.0",
-    "@golemui/vue": "1.4.0",
-    "@golemui/gui-vue": "1.4.0",
-    "@golemui/gui-shared": "1.4.0",
+    "@golemui/core": "1.5.0",
+    "@golemui/vue": "1.5.0",
+    "@golemui/gui-vue": "1.5.0",
+    "@golemui/gui-shared": "1.5.0",
     "nuxt": "^4.4.8",
     "vue": "^3.5.0"
   },
