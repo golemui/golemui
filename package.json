@@ -121,7 +121,7 @@
     "jsdom": "~22.1.0",
     "jsonc-eslint-parser": "^2.1.0",
     "next": "~15.5.0",
-    "ng-packagr": "21.2.5",
+    "ng-packagr": "22.1.1",
     "nuxt": "~4.4.8",
     "nx": "22.7.8",
     "postcss": "^8.4.5",
