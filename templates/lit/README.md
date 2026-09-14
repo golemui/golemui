@@ -1,8 +1,8 @@
-# GolemUI · Lit Template
+# GolemUI - Lit Template
 
 A starter for [GolemUI](https://golemui.com) using [Lit](https://lit.dev) and [Vite](https://vitejs.dev).
 
-It renders a 5-field signup form (country → city → currency → pets → date) that demonstrates conditional fields, cascading options, and a custom item renderer.
+It renders a 5-field signup form (country -> city -> currency -> pets -> date) that demonstrates conditional fields, cascading options, and a custom item renderer.
 
 ## Quick start
 
@@ -21,8 +21,8 @@ Open <http://localhost:5173>.
 
 ## What's in here
 
-- [src/my-form.ts](src/my-form.ts) — the form definition, the custom currency renderer, and a `<my-form>` Lit element wrapping `<gui-form>`.
-- [index.html](index.html) — Vite entry point.
+- [src/my-form.ts](src/my-form.ts) - the form definition, the custom currency renderer, and a `<my-form>` Lit element wrapping `<gui-form>`.
+- [index.html](index.html) - Vite entry point.
 
 ## Learn more
 
