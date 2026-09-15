@@ -12,7 +12,8 @@ export default [
             '{projectRoot}/eslint.config.{js,cjs,mjs,ts,cts,mts}',
             '{projectRoot}/vite.config.{js,ts,mjs,mts}',
           ],
-          ignoredDependencies: ['vitest'],
+          // `subscript` is bundled into the build output, so it is not a runtime dependency
+          ignoredDependencies: ['vitest', 'subscript'],
         },
       ],
     },

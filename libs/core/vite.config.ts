@@ -32,7 +32,7 @@ export default defineConfig(() => ({
     },
     rollupOptions: {
       // External packages that should not be bundled into your library.
-      external: ['subscript', 'rxjs', '@standard-schema/spec'],
+      external: ['rxjs', '@standard-schema/spec', 'ts.data.json'],
     },
   },
   test: {
