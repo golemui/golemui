@@ -11,6 +11,6 @@ if (import.meta.env.DEV) {
 
 // The preload has to finish before the bootstrap, so hydration creates every widget
 // synchronously and reuses the server DOM (same as apps/angular-ssr-harness/src/entry-client.ts).
-preloadFormWidgets({ widgetLoaders: allWidgetLoaders }).then(() => {
-  bootstrapApplication(App, appConfig).catch((error) => console.error(error));
-});
+preloadFormWidgets({ widgetLoaders: allWidgetLoaders })
+  .then(() => bootstrapApplication(App, appConfig))
+  .catch((error) => console.error(error));
