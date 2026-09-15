@@ -20,12 +20,12 @@ import { type Dependencies, type GuiFormInitConfig } from '@golemui/gui-shared';
 import type { CustomValidatorSchemas } from '@golemui/gui-validators';
 import i18next from 'i18next';
 import snarkdown from 'snarkdown';
+import { CustomFormHealthBoundaryComponent } from '../../custom-form-health-boundary/custom-form-health-boundary.component';
 import { customWidgetLoaders } from '../../custom-widget-loaders';
 import { AirportItemRenderer } from '../../item-renderers/airport.item-renderer';
 import { ComplexListItemRenderer } from '../../item-renderers/complex-list.item-renderer';
 import { CountryItemRenderer } from '../../item-renderers/country.item-renderer';
 import { ProductItemRenderer } from '../../item-renderers/product.item-renderer';
-import { CustomFormHealthBoundaryComponent } from './custom-form-health-boundary.component';
 
 const mock = kitchenSink;
 

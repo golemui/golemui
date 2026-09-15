@@ -54,6 +54,11 @@ export default defineConfig(() => ({
       // Same split as the Astro playground: the landing page and the modular form are
       // rendered once at build time, the two kitchen sinks render on every request.
       prerender: { routes: ['/', '/dx/modular'], discover: false },
+      // Nitro copies the traced `tslib/tslib.es6.mjs` only, and Node resolves `tslib` at run
+      // time through the `import` + `node` condition to `tslib/modules/index.js`, which is not
+      // copied. So the server helper imports have to be bundled. The starter outside the
+      // workspace inlines tslib on its own.
+      nitro: { externals: { inline: ['tslib'] } },
     }),
     nxViteTsPaths(),
     disposeSassCompilerAfterBuild(),
