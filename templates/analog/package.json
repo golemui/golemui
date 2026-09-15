@@ -22,6 +22,7 @@
     "@golemui/core": "1.5.0",
     "@golemui/angular": "1.5.0",
     "@golemui/gui-angular": "1.5.0",
+    "@golemui/gui-components": "1.5.0",
     "@golemui/gui-shared": "1.5.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"

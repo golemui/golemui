@@ -2,17 +2,17 @@
 
 The form definition is identical in every framework; only the host wiring changes.
 
-## Install (4 packages, versions in lockstep)
+## Install (5 packages, versions in lockstep)
 
 ```bash
 # React
-npm i @golemui/core @golemui/react @golemui/gui-react @golemui/gui-shared
+npm i @golemui/core @golemui/react @golemui/gui-react @golemui/gui-components @golemui/gui-shared
 # Angular
-npm i @golemui/core @golemui/angular @golemui/gui-angular @golemui/gui-shared
+npm i @golemui/core @golemui/angular @golemui/gui-angular @golemui/gui-components @golemui/gui-shared
 # Vue
-npm i @golemui/core @golemui/vue @golemui/gui-vue @golemui/gui-shared
+npm i @golemui/core @golemui/vue @golemui/gui-vue @golemui/gui-components @golemui/gui-shared
 # Lit AND vanilla JS (web component)
-npm i @golemui/core @golemui/lit @golemui/gui-lit @golemui/gui-shared
+npm i @golemui/core @golemui/lit @golemui/gui-lit @golemui/gui-components @golemui/gui-shared
 # Lit server rendering (Astro, plain Node) additionally needs the optional peer, 4.1.0 or later:
 npm i @lit-labs/ssr@^4.1.0
 ```

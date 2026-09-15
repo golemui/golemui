@@ -6,6 +6,6 @@ import { appConfig } from './app/app.config';
 
 // Preload the widgets before bootstrapping: hydration then creates every widget
 // synchronously and reuses the server-rendered DOM instead of re-rendering it.
-preloadFormWidgets({ widgetLoaders }).then(() => {
-  bootstrapApplication(App, appConfig).catch((err) => console.error(err));
-});
+preloadFormWidgets({ widgetLoaders })
+  .then(() => bootstrapApplication(App, appConfig))
+  .catch((err) => console.error(err));

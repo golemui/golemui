@@ -1,6 +1,6 @@
 import type { FormEvent, ItemRenderContext, ValidateOn } from '@golemui/core';
 import '@golemui/gui-lit';
-import { gui } from '@golemui/gui-shared';
+import { gui, type GuiFormInitConfig } from '@golemui/gui-shared';
 import { html, LitElement, type TemplateResult } from 'lit';
 import { customElement } from 'lit/decorators.js';
 
@@ -87,7 +87,7 @@ const formDef = [
 
 @customElement('my-form')
 export class MyForm extends LitElement {
-  protected config = {
+  protected config: GuiFormInitConfig = {
     formDef,
     formConfig: {
       validateOn: 'submit' as ValidateOn,
