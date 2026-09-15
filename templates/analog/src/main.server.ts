@@ -7,6 +7,8 @@ import { config } from './app/app.config.server';
 
 // Preload the widgets once per server process. The form then creates every widget
 // synchronously during the render, so the server markup is complete.
+// No document stub is needed here. Analog passes the document to renderApplication as an HTML
+// string, so nothing reads a document global.
 const widgetsReady = preloadFormWidgets({ widgetLoaders });
 
 const renderPage = render(App, config);
