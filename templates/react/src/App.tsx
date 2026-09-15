@@ -1,6 +1,6 @@
 import type { FormEvent, ValidateOn } from '@golemui/core';
 import { GuiForm, type ListItemRendererProps } from '@golemui/gui-react';
-import { gui } from '@golemui/gui-shared';
+import { gui, type GuiFormInitConfig } from '@golemui/gui-shared';
 import { type ReactItemRenderer } from '@golemui/react';
 
 type FormShape = {
@@ -95,7 +95,7 @@ const formDef = [
   }),
 ];
 
-const config = {
+const config: GuiFormInitConfig = {
   formDef,
   formConfig: {
     validateOn: 'submit' as ValidateOn,

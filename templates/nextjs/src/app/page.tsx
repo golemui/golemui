@@ -2,7 +2,7 @@
 
 import type { FormEvent, ValidateOn } from '@golemui/core';
 import { GuiForm, type ListItemRendererProps } from '@golemui/gui-react';
-import { gui } from '@golemui/gui-shared';
+import { gui, type GuiFormInitConfig } from '@golemui/gui-shared';
 import { type ReactItemRenderer } from '@golemui/react';
 
 type FormShape = {
@@ -98,7 +98,7 @@ const formDef = [
   }),
 ];
 
-const config = {
+const config: GuiFormInitConfig = {
   // The server and the client must produce the same ids. A fixed form name keeps the id
   // predictable in the markup.
   formName: 'signup',
