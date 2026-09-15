@@ -15,6 +15,8 @@ import { allWidgetLoaders } from './app/widget-loaders';
 // modules use the browser code path when a document global is present while they load.
 // platform-server/init only installs the DOM classes, not a document instance, so the
 // preload resolves the node builds (see apps/angular-ssr-harness/src/entry-server.ts).
+// No stub is installed later either. Analog passes the document to renderApplication as an
+// HTML string, so nothing reads a document global.
 const widgetsReady = preloadFormWidgets({ widgetLoaders: allWidgetLoaders });
 
 const renderPage = render(App, config);
