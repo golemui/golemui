@@ -35,7 +35,6 @@
     "ts.data.json": "^4.1.0"
   },
   "peerDependencies": {
-    "subscript": "^10.1.8",
     "rxjs": "^7.8.0",
     "@standard-schema/spec": "^1.0.0"
   },
