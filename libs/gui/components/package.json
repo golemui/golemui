@@ -218,7 +218,8 @@
       "import": "./lib/components/toggle.js",
       "require": "./lib/components/toggle.umd.cjs"
     },
-    "./index.css": "./lib/styles/index.css"
+    "./index.css": "./lib/styles/index.css",
+    "./themes/clay.css": "./lib/styles/themes/clay.css"
   },
   "files": [
     "lib",
