@@ -935,7 +935,16 @@ const HOST_SERVICES_CONCEPT: GetConceptResult = {
         'callback for the progress bar, and an `AbortSignal` that fires when the user cancels. ' +
         'The optional `remove(item)` is awaited when the user removes an uploaded file, before the ' +
         'value is cleared; if it rejects the file stays with the error and a retry. ' +
-        'Rejecting `upload` marks the file as failed (the message becomes `item.error`).',
+        'Rejecting `upload` marks the file as failed (the message becomes `item.error`). ' +
+        "Server file cleanup is the host's job, not the widget's: `remove` runs on exactly two " +
+        'paths — the explicit user removal above, and the single-file widget replacing its file ' +
+        'with a new pick (not awaited, a failure is only logged). Every other way a value ' +
+        'disappears leaves the file on the server: a deleted repeater row, a field pruned because ' +
+        'its state hid it, `setData` or a config replacement, and a form the user abandons without ' +
+        'submitting. The widget cannot tell which of those makes the file unwanted, so treat every ' +
+        '`upload` result as provisional and reconcile server files against the submitted value ' +
+        '(promote what the payload references, sweep the rest, e.g. with a TTL on unreferenced ' +
+        'uploads). `remove` is a courtesy on the two paths above, not the cleanup mechanism.',
       example: {
         // Host side (TypeScript), not part of the form definition:
         // const uploadService = {
@@ -972,6 +981,11 @@ const HOST_SERVICES_CONCEPT: GetConceptResult = {
       'turns non-plain objects into `{}`.',
     '`dependencies` is merged shallowly: widget-set defaults, then the DX `formConfig.dependencies`, ' +
       'then the init config `dependencies`; the last one wins per key.',
+    'The host owns server file cleanup. `uploadService.remove` is called only on an explicit user ' +
+      'removal and when the single-file widget replaces its file; a deleted repeater row, a ' +
+      'hidden-field prune, `setData`, a config replacement or an abandoned form all leave the ' +
+      'file on the server. Treat uploads as provisional and reconcile them against the submitted ' +
+      'value.',
   ],
 };
 

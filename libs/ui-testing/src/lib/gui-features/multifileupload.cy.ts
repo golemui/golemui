@@ -55,12 +55,14 @@ export const runMultiFileUploadComponentTests = (mountFn: MountComponentFn) => {
       validator?: Record<string, unknown>;
       service: UploadService;
       formSubmit?: (event: any) => void;
+      formEvent?: (event: any) => void;
     }) => {
       mountFn({
         localization: identityTranslator('en-US'),
         data: options?.data,
         dependencies: { uploadService: options?.service },
         formSubmit: options?.formSubmit,
+        formEvent: options?.formEvent,
         formDef: defineForm({
           form: [
             {
@@ -70,6 +72,7 @@ export const runMultiFileUploadComponentTests = (mountFn: MountComponentFn) => {
               path: 'myField',
               label: 'Attachments',
               ...(options?.validator ? { validator: options.validator as any } : {}),
+              ...(options?.formEvent ? { on: { change: 'fileChanged' } } : {}),
               props: { ...options?.props },
             },
             {
@@ -160,10 +163,12 @@ export const runMultiFileUploadComponentTests = (mountFn: MountComponentFn) => {
       cy.get(sel.validatorError).should('contain', 'Boom');
     });
 
-    it('reconciles a restored mid-upload item so it no longer jams the queue silently', () => {
+    it('shows a restored mid-upload item as failed without emitting a change at mount', () => {
       const mock = createMockUploadService();
+      const formEventHandler = cy.stub().as('formEventHandler');
       mountMultiFileUpload({
         service: mock.service,
+        formEvent: formEventHandler,
         data: {
           myField: [
             {
@@ -178,17 +183,25 @@ export const runMultiFileUploadComponentTests = (mountFn: MountComponentFn) => {
         },
       });
 
-      // The orphan is committed back as failed and explained; the uploaded
-      // file still renders as a pill.
+      // The orphan reads as failed and is explained, the uploaded file still
+      // renders as a pill, and the stored array is untouched: the host sees
+      // no `change` it did not cause.
       cy.get(sel.bar).should('have.attr', 'data-status', 'error');
       cy.get(sel.validatorError).should('contain', 'stuck.pdf was not uploaded');
       cy.get(sel.retry).should('not.exist');
       cy.get(sel.pill).should('have.length', 1).first().should('contain', 'contract.pdf');
       cy.then(() => expect(mock.uploads).to.have.length(0));
+      cy.get('@formEventHandler').should('not.have.been.called');
 
-      // Removing it unblocks the widget: the button returns and new picks upload.
+      // Removing it is the first change the host hears about, and it unblocks
+      // the widget: the button returns and new picks upload.
       cy.get(sel.action).click();
       cy.get(sel.button).should('be.visible');
+      cy.get('@formEventHandler').should('have.been.calledOnce');
+      cy.get('@formEventHandler').should('have.been.calledWithMatch', {
+        name: 'fileChanged',
+        data: { myField: [preloaded[0]] },
+      });
       pick([a]);
       cy.get(sel.pill).should('have.length', 2);
       cy.then(() => expect(mock.uploads.map((f) => f.name)).to.deep.equal(['a.png']));
@@ -246,6 +259,33 @@ export const runMultiFileUploadComponentTests = (mountFn: MountComponentFn) => {
       cy.get(sel.pillBusy).should('not.exist');
     });
 
+    it('drops a failed removal from the bar when a new file is picked', () => {
+      const mock = createMockUploadService({
+        manual: true,
+        remove: () => Promise.reject(new Error('Server refused')),
+      });
+      mountMultiFileUpload({ service: mock.service, data: { myField: preloaded } });
+
+      // A rejected remove parks the pill in the bar with the failure message.
+      cy.get(sel.pillRemove).first().click({ force: true });
+      cy.get(sel.bar).should('have.attr', 'data-status', 'error');
+      cy.get(sel.name).should('contain', 'contract.pdf');
+      cy.get(sel.validatorError).should('contain', 'Server refused');
+
+      // Picking a new file must hand the bar to that upload: the failed
+      // removal goes back to being a plain pill and the progress is visible.
+      pick([a]);
+      cy.get(sel.bar).should('have.attr', 'data-status', 'uploading');
+      cy.get(sel.name).should('contain', 'a.png');
+      cy.get(sel.pct).first().should('contain', '3/3');
+      cy.get(sel.validatorError).should('not.exist');
+      cy.get(sel.pill).should('have.length', 2).first().should('contain', 'contract.pdf');
+
+      cy.then(() => mock.release());
+      cy.get(sel.pill).should('have.length', 3);
+      cy.get(sel.bar).should('not.exist');
+    });
+
     it('submits the array of envelopes', () => {
       const mock = createMockUploadService();
       const formSubmitHandler = cy.stub().as('formSubmitHandler');
@@ -262,6 +302,31 @@ export const runMultiFileUploadComponentTests = (mountFn: MountComponentFn) => {
         expect(submitted.map((item: FileItem) => item.name)).to.deep.equal(['a.png', 'b.png']);
         expect(submitted.every((item: FileItem) => item.status === 'uploaded')).to.equal(true);
         expect(submitted[0].data).to.deep.equal({ url: 'https://cdn.test/a.png' });
+      });
+    });
+
+    it('submits preloaded files untouched, without calling the service', () => {
+      const mock = createMockUploadService();
+      const formSubmitHandler = cy.stub().as('formSubmitHandler');
+      mountMultiFileUpload({
+        service: mock.service,
+        validator: { type: 'files', required: true },
+        formSubmit: formSubmitHandler,
+        data: { myField: preloaded },
+      });
+
+      // The most common path: load a saved form and submit it as is.
+      cy.get(sel.pill).should('have.length', 2);
+      cy.get(sel.bar).should('not.exist');
+      cy.get(sel.submit).click();
+
+      cy.get('@formSubmitHandler').should('have.been.calledOnce');
+      cy.get('@formSubmitHandler').then((stub: any) => {
+        expect(stub.getCall(0).args[0].data.myField).to.deep.equal(preloaded);
+      });
+      cy.then(() => {
+        expect(mock.uploads).to.have.length(0);
+        expect(mock.removes).to.have.length(0);
       });
     });
 
