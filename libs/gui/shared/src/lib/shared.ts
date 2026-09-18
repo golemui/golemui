@@ -33,6 +33,14 @@ export type FileItem<TData = unknown> = {
  * `FileItem.data`; `remove` (optional) is awaited when the user removes an
  * uploaded file so the server can delete it.
  *
+ * Server file cleanup is the host's job. `remove` runs only on that explicit
+ * user removal and when the single-file widget replaces its file with a new
+ * pick (not awaited, a failure is only logged). A deleted repeater row, a
+ * field pruned by a state, `setData`, a config replacement or an abandoned
+ * form all leave the file on the server: the widget cannot know which of
+ * those makes it unwanted. Treat every `upload` result as provisional and
+ * reconcile server files against the submitted value.
+ *
  * Keep the object reference stable (module level or memoized): a new form
  * `config` identity re-initializes the form.
  */

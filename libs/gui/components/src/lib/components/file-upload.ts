@@ -32,6 +32,10 @@ import {
  * The widget only renders it as failed with `interruptedMessage`. The value
  * is left as is and no `change` fires, so the host never sees an untouched
  * form as edited. The value changes when the user removes the item.
+ *
+ * Server file cleanup belongs to the host; `uploadService.remove` is only a
+ * courtesy on explicit user removals and single-file replacement. See the
+ * `UploadService` doc in `@golemui/gui-shared`.
  */
 export class GuiFileUpload extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
