@@ -246,6 +246,33 @@ export const runMultiFileUploadComponentTests = (mountFn: MountComponentFn) => {
       cy.get(sel.pillBusy).should('not.exist');
     });
 
+    it('drops a failed removal from the bar when a new file is picked', () => {
+      const mock = createMockUploadService({
+        manual: true,
+        remove: () => Promise.reject(new Error('Server refused')),
+      });
+      mountMultiFileUpload({ service: mock.service, data: { myField: preloaded } });
+
+      // A rejected remove parks the pill in the bar with the failure message.
+      cy.get(sel.pillRemove).first().click({ force: true });
+      cy.get(sel.bar).should('have.attr', 'data-status', 'error');
+      cy.get(sel.name).should('contain', 'contract.pdf');
+      cy.get(sel.validatorError).should('contain', 'Server refused');
+
+      // Picking a new file must hand the bar to that upload: the failed
+      // removal goes back to being a plain pill and the progress is visible.
+      pick([a]);
+      cy.get(sel.bar).should('have.attr', 'data-status', 'uploading');
+      cy.get(sel.name).should('contain', 'a.png');
+      cy.get(sel.pct).first().should('contain', '3/3');
+      cy.get(sel.validatorError).should('not.exist');
+      cy.get(sel.pill).should('have.length', 2).first().should('contain', 'contract.pdf');
+
+      cy.then(() => mock.release());
+      cy.get(sel.pill).should('have.length', 3);
+      cy.get(sel.bar).should('not.exist');
+    });
+
     it('submits the array of envelopes', () => {
       const mock = createMockUploadService();
       const formSubmitHandler = cy.stub().as('formSubmitHandler');

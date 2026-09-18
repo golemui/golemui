@@ -26,6 +26,7 @@ export class GuiMultiFileUpload extends GuiFileUpload {
 
   protected override acceptFiles(files: File[]) {
     if (files.length === 0) return;
+    this._removeError = null;
     this.commit([...this.getItems(), ...files.map((file) => this.createItem(file))]);
   }
 
