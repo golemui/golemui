@@ -177,6 +177,31 @@ export const runFileUploadComponentTests = (mountFn: MountComponentFn) => {
         });
       });
 
+      it('submits a preloaded value untouched, without calling the service', () => {
+        const mock = createMockUploadService();
+        const formSubmitHandler = cy.stub().as('formSubmitHandler');
+        mountFileUpload({
+          service: mock.service,
+          validator: { type: 'file', required: true },
+          formSubmit: formSubmitHandler,
+          data: { myField: preloaded },
+        });
+
+        // The most common path: load a saved form and submit it as is.
+        cy.get(sel.bar).should('have.attr', 'data-status', 'uploaded');
+        cy.get(sel.name).should('contain', 'contract.pdf');
+        cy.get(sel.submit).click();
+
+        cy.get('@formSubmitHandler').should('have.been.calledOnce');
+        cy.get('@formSubmitHandler').then((stub: any) => {
+          expect(stub.getCall(0).args[0].data.myField).to.deep.equal(preloaded);
+        });
+        cy.then(() => {
+          expect(mock.uploads).to.have.length(0);
+          expect(mock.removes).to.have.length(0);
+        });
+      });
+
       it('uploads a file dropped onto the box', () => {
         const mock = createMockUploadService();
         mountFileUpload({ service: mock.service });

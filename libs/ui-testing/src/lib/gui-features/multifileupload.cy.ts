@@ -305,6 +305,31 @@ export const runMultiFileUploadComponentTests = (mountFn: MountComponentFn) => {
       });
     });
 
+    it('submits preloaded files untouched, without calling the service', () => {
+      const mock = createMockUploadService();
+      const formSubmitHandler = cy.stub().as('formSubmitHandler');
+      mountMultiFileUpload({
+        service: mock.service,
+        validator: { type: 'files', required: true },
+        formSubmit: formSubmitHandler,
+        data: { myField: preloaded },
+      });
+
+      // The most common path: load a saved form and submit it as is.
+      cy.get(sel.pill).should('have.length', 2);
+      cy.get(sel.bar).should('not.exist');
+      cy.get(sel.submit).click();
+
+      cy.get('@formSubmitHandler').should('have.been.calledOnce');
+      cy.get('@formSubmitHandler').then((stub: any) => {
+        expect(stub.getCall(0).args[0].data.myField).to.deep.equal(preloaded);
+      });
+      cy.then(() => {
+        expect(mock.uploads).to.have.length(0);
+        expect(mock.removes).to.have.length(0);
+      });
+    });
+
     it('flags the extra file through the validator instead of blocking the pick', () => {
       const mock = createMockUploadService();
       const formSubmitHandler = cy.stub().as('formSubmitHandler');

@@ -1,4 +1,5 @@
 import { defineForm, identityTranslator } from '@golemui/core';
+import { createMockUploadService } from '../mocks/upload-service.mock';
 import { type FormHandle, type MountComponentFn } from '../utils';
 
 export const runSetDataSetMetaTests = (mountFn: MountComponentFn) => {
@@ -49,11 +50,13 @@ export const runSetDataSetMetaTests = (mountFn: MountComponentFn) => {
         type: string;
         data: Record<string, any>;
         props?: Record<string, any>;
+        dependencies?: Record<string, unknown>;
         onFormReady: (handle: FormHandle) => void;
       }) => {
         mountFn({
           localization: identityTranslator('en-US'),
           data: options.data,
+          dependencies: options.dependencies,
           formDef: defineForm({
             form: [
               {
@@ -474,6 +477,71 @@ export const runSetDataSetMetaTests = (mountFn: MountComponentFn) => {
         cy.get('gui-range-date-time-picker .gui-pills__pill-text')
           .should('have.length', 1)
           .and('contain.text', '01/02/2025');
+      });
+
+      const contract = {
+        id: 'srv-1',
+        name: 'contract.pdf',
+        size: 1024,
+        type: 'application/pdf',
+        status: 'uploaded',
+        data: 'https://cdn.test/contract.pdf',
+      };
+      const invoice = {
+        id: 'srv-2',
+        name: 'invoice.pdf',
+        size: 2048,
+        type: 'application/pdf',
+        status: 'uploaded',
+        data: 'https://cdn.test/invoice.pdf',
+      };
+      const cv = {
+        contents: Cypress.Buffer.from('%PDF-1.4 test'),
+        fileName: 'cv.pdf',
+        mimeType: 'application/pdf',
+      };
+
+      it('fileUpload', () => {
+        const mock = createMockUploadService();
+        let handle!: FormHandle;
+        mountControl({
+          type: 'fileUpload',
+          data: { value: contract },
+          dependencies: { uploadService: mock.service },
+          onFormReady: (h) => (handle = h),
+        });
+        // Pick a file so the widget holds an upload of its own, then let the
+        // store replace it with a server item.
+        cy.get('[data-cy="field_file-input"]').selectFile(cv as any, { force: true });
+        cy.get('[data-cy="field_file-name"]').should('contain', 'cv.pdf');
+        cy.get('[data-cy="field_file-bar"]').should('have.attr', 'data-status', 'uploaded');
+        cy.then(() => handle.setData({ value: invoice }));
+        cy.get('[data-cy="field_file-name"]').should('contain', 'invoice.pdf');
+        cy.get('[data-cy="field_file-bar"]').should('have.attr', 'data-status', 'uploaded');
+        cy.then(() => handle.setData({}));
+        cy.get('[data-cy="field_file-bar"]').should('not.exist');
+        cy.get('[data-cy="field_file-button"]').should('be.visible');
+      });
+
+      it('multiFileUpload', () => {
+        const mock = createMockUploadService();
+        let handle!: FormHandle;
+        mountControl({
+          type: 'multiFileUpload',
+          data: { value: [contract] },
+          dependencies: { uploadService: mock.service },
+          onFormReady: (h) => (handle = h),
+        });
+        cy.get('[data-cy="field_file-input"]').selectFile(cv as any, { force: true });
+        cy.get('gui-multi-file-upload gui-pills .gui-pills__pill').should('have.length', 2);
+        cy.then(() => handle.setData({ value: [invoice] }));
+        cy.get('gui-multi-file-upload gui-pills .gui-pills__pill')
+          .should('have.length', 1)
+          .first()
+          .should('contain', 'invoice.pdf');
+        cy.then(() => handle.setData({}));
+        cy.get('gui-multi-file-upload gui-pills .gui-pills__pill').should('have.length', 0);
+        cy.get('[data-cy="field_file-button"]').should('be.visible');
       });
 
       it('calendar', () => {
