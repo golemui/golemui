@@ -54,6 +54,7 @@ export const runFileUploadComponentTests = (mountFn: MountComponentFn) => {
       readonly?: boolean;
       service?: UploadService | null;
       formSubmit?: (event: any) => void;
+      formEvent?: (event: any) => void;
     }) => {
       const dependencies =
         options?.service === null ? undefined : { uploadService: options?.service };
@@ -62,6 +63,7 @@ export const runFileUploadComponentTests = (mountFn: MountComponentFn) => {
         data: options?.data,
         dependencies,
         formSubmit: options?.formSubmit,
+        formEvent: options?.formEvent,
         formDef: defineForm({
           form: [
             {
@@ -73,6 +75,7 @@ export const runFileUploadComponentTests = (mountFn: MountComponentFn) => {
               ...(options?.disabled ? { disabled: true } : {}),
               ...(options?.readonly ? { readonly: true } : {}),
               ...(options?.validator ? { validator: options.validator as any } : {}),
+              ...(options?.formEvent ? { on: { change: 'fileChanged' } } : {}),
               props: { ...options?.props },
             },
             {
@@ -367,10 +370,12 @@ export const runFileUploadComponentTests = (mountFn: MountComponentFn) => {
     });
 
     describe('restored values', () => {
-      it('turns a restored mid-upload item into an error with the interrupted message', () => {
+      it('shows a restored mid-upload item as failed without emitting a change at mount', () => {
         const mock = createMockUploadService();
+        const formEventHandler = cy.stub().as('formEventHandler');
         mountFileUpload({
           service: mock.service,
+          formEvent: formEventHandler,
           data: {
             myField: {
               id: 'restored-1',
@@ -382,8 +387,9 @@ export const runFileUploadComponentTests = (mountFn: MountComponentFn) => {
           },
         });
 
-        // The `File` only existed in the session that picked it: the item is
-        // committed back as failed, with the reason below the input.
+        // The `File` only existed in the session that picked it: the item
+        // reads as failed, with the reason below the input, but the stored
+        // value is untouched and the host sees no `change` it did not cause.
         cy.get(sel.bar).should('have.attr', 'data-status', 'error');
         cy.get(sel.validatorError).should(
           'contain',
@@ -391,11 +397,18 @@ export const runFileUploadComponentTests = (mountFn: MountComponentFn) => {
         );
         cy.get(sel.retry).should('not.exist');
         cy.then(() => expect(mock.uploads).to.have.length(0));
+        cy.get('@formEventHandler').should('not.have.been.called');
 
-        // Remove is the way out; a fresh pick then works normally.
+        // Remove is the way out and the first change the host hears about;
+        // a fresh pick then works normally.
         cy.get(sel.action).click();
         cy.get(sel.button).should('be.visible');
         cy.get(sel.validatorError).should('not.exist');
+        cy.get('@formEventHandler').should('have.been.calledOnce');
+        cy.get('@formEventHandler').should('have.been.calledWithMatch', {
+          name: 'fileChanged',
+          data: { myField: null },
+        });
         pick(pdf);
         cy.get(sel.bar).should('have.attr', 'data-status', 'uploaded');
       });

@@ -25,6 +25,14 @@ import {
   formatFileMessage,
 } from '../utils/messages';
 
+/**
+ * The single file upload widget; `GuiMultiFileUpload` extends it for arrays.
+ *
+ * A restored item with status `uploading` cannot resume: its `File` is gone.
+ * The widget only renders it as failed with `interruptedMessage`. The value
+ * is left as is and no `change` fires, so the host never sees an untouched
+ * form as edited. The value changes when the user removes the item.
+ */
 export class GuiFileUpload extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   /** The form data path, forwarded to `uploadService.upload` as `ctx.path`. */
@@ -207,7 +215,8 @@ export class GuiFileUpload extends LitElement {
   private _lastInputError: string | null = null;
 
   private syncInputError() {
-    const item = this.getBarItem();
+    const barItem = this.getBarItem();
+    const item = barItem && this.presentItem(barItem);
     const message =
       this._removeError?.message ??
       (item?.status === 'error' ? (item.error ?? FILE_UPLOAD_FAILED_MESSAGE) : null);
@@ -469,7 +478,6 @@ export class GuiFileUpload extends LitElement {
 
   protected override willUpdate(changed: PropertyValues) {
     super.willUpdate(changed);
-    this.reconcileRestoredItems();
     if (!this.getService() && !this._serviceErrorLogged) {
       this._serviceErrorLogged = true;
       console.error(
@@ -478,25 +486,25 @@ export class GuiFileUpload extends LitElement {
     }
   }
 
-  private reconcileRestoredItems() {
-    const items = this.getItems();
-    const isOrphaned = (item: FileItem) =>
-      item.status === 'uploading' && item.id !== this._activeId && !this._files.has(item.id);
-    if (!items.some(isOrphaned)) return;
-    this.commit(
-      items.map((item) =>
-        isOrphaned(item)
-          ? {
-              ...item,
-              status: 'error' as const,
-              error: formatFileMessage(
-                this.interruptedMessage ?? FILE_UPLOAD_INTERRUPTED_MESSAGE,
-                item.name,
-              ),
-            }
-          : item,
+  /** A restored item that was mid-upload when its session ended; it can never resume. */
+  protected isOrphaned(item: FileItem): boolean {
+    return item.status === 'uploading' && item.id !== this._activeId && !this._files.has(item.id);
+  }
+
+  /**
+   * The item as displayed. An orphaned item reads as failed with the
+   * interrupted message while the value keeps `uploading` (see the class doc).
+   */
+  protected presentItem(item: FileItem): FileItem {
+    if (!this.isOrphaned(item)) return item;
+    return {
+      ...item,
+      status: 'error',
+      error: formatFileMessage(
+        this.interruptedMessage ?? FILE_UPLOAD_INTERRUPTED_MESSAGE,
+        item.name,
       ),
-    );
+    };
   }
 
   override render() {
@@ -547,7 +555,8 @@ export class GuiFileUpload extends LitElement {
                 aria-hidden="true"
               ></span>`
             : nothing}
-          ${this.renderUploaded(uploaded)} ${barItem ? this.renderBar(barItem) : nothing}
+          ${this.renderUploaded(uploaded)}
+          ${barItem ? this.renderBar(this.presentItem(barItem)) : nothing}
           ${showButton ? this.renderButton() : nothing}
           ${!hasService
             ? html`<div

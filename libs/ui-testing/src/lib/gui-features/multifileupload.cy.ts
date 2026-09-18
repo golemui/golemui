@@ -55,12 +55,14 @@ export const runMultiFileUploadComponentTests = (mountFn: MountComponentFn) => {
       validator?: Record<string, unknown>;
       service: UploadService;
       formSubmit?: (event: any) => void;
+      formEvent?: (event: any) => void;
     }) => {
       mountFn({
         localization: identityTranslator('en-US'),
         data: options?.data,
         dependencies: { uploadService: options?.service },
         formSubmit: options?.formSubmit,
+        formEvent: options?.formEvent,
         formDef: defineForm({
           form: [
             {
@@ -70,6 +72,7 @@ export const runMultiFileUploadComponentTests = (mountFn: MountComponentFn) => {
               path: 'myField',
               label: 'Attachments',
               ...(options?.validator ? { validator: options.validator as any } : {}),
+              ...(options?.formEvent ? { on: { change: 'fileChanged' } } : {}),
               props: { ...options?.props },
             },
             {
@@ -160,10 +163,12 @@ export const runMultiFileUploadComponentTests = (mountFn: MountComponentFn) => {
       cy.get(sel.validatorError).should('contain', 'Boom');
     });
 
-    it('reconciles a restored mid-upload item so it no longer jams the queue silently', () => {
+    it('shows a restored mid-upload item as failed without emitting a change at mount', () => {
       const mock = createMockUploadService();
+      const formEventHandler = cy.stub().as('formEventHandler');
       mountMultiFileUpload({
         service: mock.service,
+        formEvent: formEventHandler,
         data: {
           myField: [
             {
@@ -178,17 +183,25 @@ export const runMultiFileUploadComponentTests = (mountFn: MountComponentFn) => {
         },
       });
 
-      // The orphan is committed back as failed and explained; the uploaded
-      // file still renders as a pill.
+      // The orphan reads as failed and is explained, the uploaded file still
+      // renders as a pill, and the stored array is untouched: the host sees
+      // no `change` it did not cause.
       cy.get(sel.bar).should('have.attr', 'data-status', 'error');
       cy.get(sel.validatorError).should('contain', 'stuck.pdf was not uploaded');
       cy.get(sel.retry).should('not.exist');
       cy.get(sel.pill).should('have.length', 1).first().should('contain', 'contract.pdf');
       cy.then(() => expect(mock.uploads).to.have.length(0));
+      cy.get('@formEventHandler').should('not.have.been.called');
 
-      // Removing it unblocks the widget: the button returns and new picks upload.
+      // Removing it is the first change the host hears about, and it unblocks
+      // the widget: the button returns and new picks upload.
       cy.get(sel.action).click();
       cy.get(sel.button).should('be.visible');
+      cy.get('@formEventHandler').should('have.been.calledOnce');
+      cy.get('@formEventHandler').should('have.been.calledWithMatch', {
+        name: 'fileChanged',
+        data: { myField: [preloaded[0]] },
+      });
       pick([a]);
       cy.get(sel.pill).should('have.length', 2);
       cy.then(() => expect(mock.uploads.map((f) => f.name)).to.deep.equal(['a.png']));
