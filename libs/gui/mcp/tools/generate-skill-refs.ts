@@ -169,7 +169,6 @@ export function buildWidgetsIndex(): string {
 }
 
 const REFS = join(REPO, 'skills', 'golemui', 'references');
-const DIST = join(REPO, 'dist', 'libs', 'gui', 'mcp');
 
 /**
  * Formats a generated file with the repository prettier config. The committed files are
@@ -190,12 +189,10 @@ const dxReference = await formatMarkdown(buildDxReference() + '\n', formsDxPath)
 const widgetsIndex = await formatMarkdown(buildWidgetsIndex() + '\n', widgetsIndexPath);
 
 mkdirSync(REFS, { recursive: true });
-mkdirSync(DIST, { recursive: true });
 writeFileSync(formsDxPath, dxReference, 'utf-8');
 writeFileSync(widgetsIndexPath, widgetsIndex, 'utf-8');
-writeFileSync(join(DIST, 'llms-gui-dx.txt'), dxReference, 'utf-8');
 
 console.log(
-  `Wrote forms-dx.md (${dxReference.length} bytes), widgets-index.md (${widgetsIndex.length} bytes), ` +
-    `llms-gui-dx.txt — ${listDxFactories().length} factories.`,
+  `Wrote forms-dx.md (${dxReference.length} bytes), widgets-index.md (${widgetsIndex.length} bytes) — ` +
+    `${listDxFactories().length} factories.`,
 );
