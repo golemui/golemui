@@ -46,6 +46,7 @@
     "@golemui/gui-schemas": "*",
     "@golemui/gui-shared": "*",
     "@golemui/gui-validators": "*",
+    "@golemui/dx": "*",
     "@golemui/core": "*",
     "@modelcontextprotocol/sdk": "^1.0.0",
     "zod": "^4.0.0",

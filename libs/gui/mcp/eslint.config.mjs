@@ -21,6 +21,7 @@ export default [
             '@golemui/core',
             '@golemui/gui-shared',
             '@golemui/gui-validators',
+            '@golemui/dx',
             'zod',
             '@standard-schema/spec',
           ],
