@@ -5,7 +5,7 @@ import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';
 import { classMap } from 'lit/directives/class-map.js';
 import { property, query, state } from 'lit/decorators.js';
-import { safeDefine, unsubscribeAll } from '@golemui/lit/internals';
+import { cspStyleMap, safeDefine, unsubscribeAll } from '@golemui/lit/internals';
 import { debounceTime, Subject, type Subscription } from 'rxjs';
 import { defaultListItemRenderer } from './default-list-item-renderer';
 import '@golemui/gui-components/label';
@@ -414,7 +414,7 @@ export class DropdownElement extends LitElement implements WithWidget {
                   tabindex="-1"
                   class="gui-list__item-wrapper"
                   id="${this.widget.uid}-item-${absoluteIndex}"
-                  style="height: ${templateData.itemHeight || 40}px"
+                  style=${cspStyleMap({ height: `${templateData.itemHeight || 40}px` })}
                   aria-selected=${isSelected ? 'true' : 'false'}
                   aria-disabled=${isDisabled ? 'true' : 'false'}
                   @click=${() => this._onClickItem(item, absoluteIndex)}

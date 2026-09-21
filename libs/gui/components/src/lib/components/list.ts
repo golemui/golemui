@@ -1,11 +1,35 @@
-import { html, LitElement, type PropertyValues } from 'lit';
+import { css, html, LitElement, type PropertyValues } from 'lit';
 import { property, query, state } from 'lit/decorators.js';
-import { safeDefine } from '@golemui/lit/internals';
+import { cspStyleMap, safeDefine } from '@golemui/lit/internals';
 import { gridKeyStep, listPageSize, nextEnabledIndex } from '../utils/grid-nav';
 import { updateListItems } from './list-items';
 import type { ListItem, ListProps, OptionValue } from '@golemui/gui-shared/internals';
 
 export class GuiList extends LitElement {
+  // Inline `style` attributes are blocked by a strict `style-src` CSP: static rules
+  // live here (adopted stylesheet) and dynamic values go through `cspStyleMap` (CSSOM)
+  static override styles = css`
+    .gui-list__scroll-viewport {
+      display: block;
+      position: relative;
+      min-height: 40px;
+      overflow-y: auto;
+    }
+
+    .gui-list__spacer {
+      width: 1px;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .gui-list__content {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+    }
+  `;
+
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: Boolean }) touched: boolean | undefined = false;
   @property({ type: Boolean }) required: boolean | undefined = false;
@@ -87,18 +111,15 @@ export class GuiList extends LitElement {
     return html`
       <div
         class="gui-list__scroll-viewport"
-        style="max-height: ${height}px; min-height: 40px; overflow-y: auto; position: relative; display: block;"
+        style=${cspStyleMap({ 'max-height': `${height}px` })}
         tabindex="-1"
         @scroll="${this.onScroll}"
       >
-        <div
-          class="gui-list__spacer"
-          style="height: ${totalHeight}px; width: 1px; opacity: 0; pointer-events: none;"
-        ></div>
+        <div class="gui-list__spacer" style=${cspStyleMap({ height: `${totalHeight}px` })}></div>
 
         <div
           class="gui-list__content"
-          style="transform: translateY(${offsetY}px); position: absolute; top: 0; left: 0; width: 100%;"
+          style=${cspStyleMap({ transform: `translateY(${offsetY}px)` })}
         >
           <slot></slot>
         </div>

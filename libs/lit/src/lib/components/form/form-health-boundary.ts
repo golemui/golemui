@@ -1,5 +1,6 @@
 import type { FormHealth } from '@golemui/core';
 import { html, nothing, type TemplateResult } from 'lit';
+import { cspStyleMap } from '../../utils/csp-style-map';
 
 /**
  * Params for a FormHealth boundary. `health` is the form's current health; `form` is the rendered
@@ -28,10 +29,15 @@ export const defaultFormHealthBoundary: FormHealthBoundary = ({ health, form }) 
     ? html`<div
         class="gui-form-health-error"
         role="alert"
-        style="border: 2px solid red; border-radius: 4px; padding: 12px; margin-bottom: 8px;"
+        style=${cspStyleMap({
+          border: '2px solid red',
+          'border-radius': '4px',
+          padding: '12px',
+          'margin-bottom': '8px',
+        })}
       >
-        <strong style="color: red;">GolemUI form error</strong>
-        <p style="margin-top: 4px;"><code>${health.message}</code></p>
+        <strong style=${cspStyleMap({ color: 'red' })}>GolemUI form error</strong>
+        <p style=${cspStyleMap({ 'margin-top': '4px' })}><code>${health.message}</code></p>
       </div>`
     : nothing}
   ${form}

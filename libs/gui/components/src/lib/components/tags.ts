@@ -1,6 +1,6 @@
 import { html, LitElement, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
-import { safeDefine } from '@golemui/lit/internals';
+import { cspStyleMap, safeDefine } from '@golemui/lit/internals';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { GUIPillsNavigationController } from '../controllers/pills-navigation.controller';
@@ -8,7 +8,6 @@ import { addErrors, addLabel, type ControlTemplateData } from '../utils/template
 import type { TagsProps } from '@golemui/gui-shared/internals';
 import './pills';
 import type { GuiPillEventDetail, GuiPillItem } from './pills';
-import { styleMap } from 'lit-html/directives/style-map.js';
 
 type TagsSeparator = 'Enter' | ',' | 'Tab' | 'blur' | string;
 
@@ -130,7 +129,7 @@ export class GuiTags extends LitElement {
 
           <gui-pills
             class="gui-tags__pills"
-            style=${styleMap(pillItems.length ? {} : { 'min-width': 0 })}
+            style=${cspStyleMap(pillItems.length ? {} : { 'min-width': 0 })}
             .uid=${this.uid}
             .toolbarAriaLabel=${'Selected tags'}
             .items=${pillItems}

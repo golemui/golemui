@@ -35,7 +35,13 @@ export const WidgetMixin = <T extends new (...args: any[]) => LitElement>(superC
       if (this.resolvePreloadedTag()) {
         // On the preloaded path this element stays in the DOM as the widget's parent,
         // so it must not become a flex or grid item of the surrounding layout.
-        this.setAttribute('style', 'display:contents');
+        // The CSSOM write passes a strict `style-src` CSP, a `style` attribute does not.
+        // The server DOM shim has no CSSOM, so the attribute is only emitted there.
+        if (this.style) {
+          this.style.display = 'contents';
+        } else {
+          this.setAttribute('style', 'display:contents');
+        }
       } else {
         this.loadWidgetComponent();
       }

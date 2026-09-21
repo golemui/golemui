@@ -1,7 +1,7 @@
 import type { DateRange, RangeDateInputProps } from '@golemui/gui-shared/internals';
 import { html, LitElement, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
-import { safeDefine } from '@golemui/lit/internals';
+import { cspStyleMap, safeDefine } from '@golemui/lit/internals';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { GUIEditSessionController } from '../controllers/edit-session.controller';
@@ -46,7 +46,6 @@ import { commitRange, orderEndpoints, type RangeEndpoint } from '../utils/range-
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 import './pills';
 import type { GuiPillEventDetail, GuiPillItem } from './pills';
-import { styleMap } from 'lit-html/directives/style-map.js';
 
 export class GuiRangeDateInput extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
@@ -314,7 +313,7 @@ export class GuiRangeDateInput extends LitElement {
 
           <gui-pills
             class="gui-range-date-input__pills"
-            style=${styleMap(pillItems.length ? {} : { 'min-width': 0 })}
+            style=${cspStyleMap(pillItems.length ? {} : { 'min-width': 0 })}
             .uid=${this.uid}
             .toolbarAriaLabel=${'Selected date ranges'}
             .items=${pillItems}

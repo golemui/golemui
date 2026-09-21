@@ -1,13 +1,12 @@
 import { html, LitElement, nothing } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import { live } from 'lit/directives/live.js';
-import { safeDefine } from '@golemui/lit/internals';
+import { cspStyleMap, safeDefine } from '@golemui/lit/internals';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 import type { Dependencies } from '@golemui/gui-shared';
 import type { MarkdownProps } from '@golemui/gui-shared/internals';
-import { styleMap } from 'lit-html/directives/style-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import './markdown-text';
 import {
@@ -210,7 +209,7 @@ export class GuiMarkdown extends LitElement {
           <textarea
             id=${ifDefined(this.uid)}
             class=${classMap(fieldClasses)}
-            style=${styleMap(autoGrowStyles)}
+            style=${cspStyleMap(autoGrowStyles)}
             ?required=${templateData.required}
             ?disabled=${templateData.disabled}
             ?readonly=${templateData.readonly}
@@ -228,7 +227,7 @@ export class GuiMarkdown extends LitElement {
                 <section
                   data-cy=${ifDefined(this.uid ? `${this.uid}_markdown` : nothing)}
                   class="gui-markdown__preview"
-                  style=${styleMap(autoGrowStyles)}
+                  style=${cspStyleMap(autoGrowStyles)}
                 >
                   <gui-markdown-text
                     .md=${this.value || ''}

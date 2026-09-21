@@ -4,7 +4,7 @@ import type { GridProps } from '@golemui/gui-shared/internals';
 import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
-import { safeDefine, unsubscribeAll } from '@golemui/lit/internals';
+import { cspStyleMap, safeDefine, unsubscribeAll } from '@golemui/lit/internals';
 import { type Subscription } from 'rxjs';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { classMap } from 'lit/directives/class-map.js';
@@ -71,21 +71,24 @@ export class GridElement extends LitElement implements WithWidget {
       'gui-grid__widget--justify-stretch': this.adapter.templateData.justify === 'stretch',
     };
 
-    const styles: string[] = [];
+    const styles: Record<string, string> = {};
     if (this.adapter.templateData.columnGap !== undefined) {
-      styles.push(`column-gap: ${this.adapter.templateData.columnGap}px`);
+      styles['column-gap'] = `${this.adapter.templateData.columnGap}px`;
     }
     if (this.adapter.templateData.rowGap !== undefined) {
-      styles.push(`row-gap: ${this.adapter.templateData.rowGap}px`);
+      styles['row-gap'] = `${this.adapter.templateData.rowGap}px`;
     }
 
     return html`
-      <div class=${classMap(classes)} id=${this.widget?.uid} style=${styles.join('; ')}>
+      <div class=${classMap(classes)} id=${this.widget?.uid} style=${cspStyleMap(styles)}>
         ${repeat(
           this.adapter.templateData.children || [],
           (child: any) => child?.uid,
           (child: any) =>
-            html`<div class="gui-grid__cell" style="grid-column: span ${child.size || 1}">
+            html`<div
+              class="gui-grid__cell"
+              style=${cspStyleMap({ 'grid-column': `span ${child.size || 1}` })}
+            >
               <gui-widget .widget=${child}></gui-widget>
             </div>`,
         )}

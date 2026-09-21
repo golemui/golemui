@@ -16,7 +16,7 @@ import type {
 import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';
 import { property, query, state } from 'lit/decorators.js';
-import { safeDefine, unsubscribeAll } from '@golemui/lit/internals';
+import { cspStyleMap, safeDefine, unsubscribeAll } from '@golemui/lit/internals';
 import { debounceTime, Subject, type Subscription } from 'rxjs';
 import { defaultMultiListItemRenderer } from './default-multi-list-item-renderer';
 import '@golemui/gui-components/label';
@@ -437,7 +437,7 @@ export class MultiDropdownElement extends LitElement implements WithWidget {
                   tabindex="-1"
                   class="gui-list__item-wrapper"
                   id="${this.widget.uid}-item-${absoluteIndex}"
-                  style="height: ${templateData.itemHeight || 40}px"
+                  style=${cspStyleMap({ height: `${templateData.itemHeight || 40}px` })}
                   aria-selected=${isSelected ? 'true' : 'false'}
                   aria-disabled=${isDisabled ? 'true' : 'false'}
                   @click=${() => this._onClickItem(item, absoluteIndex)}

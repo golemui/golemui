@@ -4,7 +4,7 @@ import type { FlexProps } from '@golemui/gui-shared/internals';
 import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
-import { safeDefine, unsubscribeAll } from '@golemui/lit/internals';
+import { cspStyleMap, safeDefine, unsubscribeAll } from '@golemui/lit/internals';
 import { type Subscription } from 'rxjs';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { classMap } from 'lit/directives/class-map.js';
@@ -74,7 +74,9 @@ export class FlexElement extends LitElement implements WithWidget {
       <div
         class=${classMap(classes)}
         id=${this.widget?.uid}
-        style=${this.adapter.templateData.gap ? `gap: ${this.adapter.templateData.gap}px` : ''}
+        style=${cspStyleMap(
+          this.adapter.templateData.gap ? { gap: `${this.adapter.templateData.gap}px` } : {},
+        )}
       >
         ${repeat(
           this.adapter.templateData.children || [],

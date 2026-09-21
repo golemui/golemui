@@ -1,8 +1,7 @@
 import { html, LitElement, nothing, type PropertyValues } from 'lit';
 import { property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
-import { styleMap } from 'lit-html/directives/style-map.js';
-import { safeDefine } from '@golemui/lit/internals';
+import { cspStyleMap, safeDefine } from '@golemui/lit/internals';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { GUIPillsNavigationController } from '../controllers/pills-navigation.controller';
 import './pills';
@@ -118,7 +117,7 @@ export class GuiMultiSelectTrigger extends LitElement {
 
         <gui-pills
           class="gui-multi-select__pills"
-          style=${styleMap(pillItems.length ? {} : { 'min-width': 0 })}
+          style=${cspStyleMap(pillItems.length ? {} : { 'min-width': 0 })}
           .uid=${this.uid}
           .toolbarAriaLabel=${this.toolbarAriaLabel ?? 'Selected options'}
           .items=${pillItems}

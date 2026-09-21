@@ -1,6 +1,6 @@
 import { html, LitElement, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
-import { safeDefine } from '@golemui/lit/internals';
+import { cspStyleMap, safeDefine } from '@golemui/lit/internals';
 import { classMap } from 'lit/directives/class-map.js';
 import { chunk, gridKeyStep, listPageSize, nextEnabledIndex } from '../utils/grid-nav';
 import {
@@ -209,9 +209,11 @@ export class GuiTimeList extends LitElement {
     }
 
     const columns = this.effectiveColumns;
-    const sizeVars = `--gui-time-list-height: ${this.height ?? 300}px; --gui-time-list-item-height: ${
-      this.itemHeight || 40
-    }px; --gui-time-list-columns: ${columns};`;
+    const sizeVars = cspStyleMap({
+      '--gui-time-list-height': `${this.height ?? 300}px`,
+      '--gui-time-list-item-height': `${this.itemHeight || 40}px`,
+      '--gui-time-list-columns': `${columns}`,
+    });
 
     if (columns === 1) {
       return html`
