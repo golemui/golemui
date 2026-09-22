@@ -1,12 +1,11 @@
 import { html, LitElement, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
 import { live } from 'lit/directives/live.js';
-import { safeDefine } from '@golemui/lit/internals';
+import { cspStyleMap, safeDefine } from '@golemui/lit/internals';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 import type { TextareaProps } from '@golemui/gui-shared/internals';
-import { styleMap } from 'lit-html/directives/style-map.js';
 
 export class GuiTextarea extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
@@ -122,7 +121,7 @@ export class GuiTextarea extends LitElement {
           id=${this.uid}
           data-cy=${`${this.uid}_textarea`}
           class="gui-widget-input"
-          style=${styleMap(autoGrowStyles)}
+          style=${cspStyleMap(autoGrowStyles)}
           ?required=${templateData.required}
           ?disabled=${templateData.disabled}
           ?readonly=${templateData.readonly}

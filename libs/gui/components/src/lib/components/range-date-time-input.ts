@@ -1,9 +1,8 @@
 import type { DateTimeRange, RangeDateTimeInputProps } from '@golemui/gui-shared/internals';
 import { html, LitElement, nothing, type PropertyValues } from 'lit';
 import { property } from 'lit/decorators.js';
-import { safeDefine } from '@golemui/lit/internals';
+import { cspStyleMap, safeDefine } from '@golemui/lit/internals';
 import { classMap } from 'lit/directives/class-map.js';
-import { styleMap } from 'lit-html/directives/style-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { GUIEditSessionController } from '../controllers/edit-session.controller';
 import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
@@ -362,7 +361,7 @@ export class GuiRangeDateTimeInput extends LitElement {
 
           <gui-pills
             class="gui-range-date-time-input__pills"
-            style=${styleMap(pillItems.length ? {} : { 'min-width': 0 })}
+            style=${cspStyleMap(pillItems.length ? {} : { 'min-width': 0 })}
             .uid=${this.uid}
             .toolbarAriaLabel=${'Selected date-time ranges'}
             .items=${pillItems}

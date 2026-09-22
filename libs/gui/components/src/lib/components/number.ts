@@ -1,11 +1,10 @@
 import { html, LitElement, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
-import { safeDefine } from '@golemui/lit/internals';
+import { cspStyleMap, safeDefine } from '@golemui/lit/internals';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 import { blockNonNumericInput, blockNonNumericKeys, isRealNumber } from '../utils/numeric';
 import type { NumberinputProps } from '@golemui/gui-shared/internals';
-import { styleMap } from 'lit-html/directives/style-map.js';
 import { CARET_DOWN_PATH, CARET_UP_PATH } from '../utils/icons';
 
 export class GuiNumber extends LitElement {
@@ -103,7 +102,7 @@ export class GuiNumber extends LitElement {
           id=${this.uid}
           data-cy=${`${this.uid}_number`}
           class="gui-widget-input"
-          style=${styleMap(inputStyles)}
+          style=${cspStyleMap(inputStyles)}
           ?required=${this.required}
           ?disabled=${this.disabled}
           ?readonly=${this.readOnly}

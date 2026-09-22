@@ -122,6 +122,24 @@ export default [
     },
   },
   {
+    // The published packages must work under a strict `style-src 'self'` CSP
+    files: ['libs/**/*.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['lit/directives/style-map.js', 'lit-html/directives/style-map.js'],
+              message:
+                "lit's styleMap writes a `style` attribute on its first render, which a strict CSP blocks. Use `cspStyleMap` from '@golemui/lit/internals'.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
     // vite/vitest legitimately reference sibling workspace packages by relative path and don't need module-boundary enforcement
     files: ['**/vite.config.*', '**/vitest.config.*'],
     rules: {

@@ -69,15 +69,35 @@ gui-checkbox {
       width: 0.75rem;
       height: 0.75rem;
       background-color: var(--gui-intent-primary);
-      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cpath d='M232.49,80.49l-128,128a12,12,0,0,1-17,0l-56-56a12,12,0,1,1,17-17L96,183,215.51,63.51a12,12,0,0,1,17,17Z'/%3E%3C/svg%3E")
-        center / contain no-repeat;
-      -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cpath d='M232.49,80.49l-128,128a12,12,0,0,1-17,0l-56-56a12,12,0,1,1,17-17L96,183,215.51,63.51a12,12,0,0,1,17,17Z'/%3E%3C/svg%3E")
-        center / contain no-repeat;
+      // The tick is a polygon rather than an svg image: a `data:` uri needs `img-src data:` in the
+      // host's CSP, and a separate file gets inlined back into one by the consumer's bundler.
+      clip-path: polygon(
+        84.2% 24.8%,
+        86.3% 23.6%,
+        88.7% 23.6%,
+        90.8% 24.8%,
+        92% 26.9%,
+        92% 29.3%,
+        90.8% 31.4%,
+        40.8% 81.4%,
+        39.3% 82.5%,
+        37.5% 82.8%,
+        35.7% 82.5%,
+        34.2% 81.4%,
+        12.3% 59.6%,
+        11.1% 57.5%,
+        11.1% 55%,
+        12.3% 52.9%,
+        14.4% 51.7%,
+        16.8% 51.7%,
+        18.9% 52.9%,
+        37.5% 71.5%
+      );
       transform: scale(0);
       transform-origin: center center;
       transition: 150ms transform cubic-bezier(0.4, 0, 0.2, 1);
 
-      /* Windows High Contrast Mode: masks drop out under forced colors,
+      /* Windows High Contrast Mode: the theme color is dropped under forced colors,
          so fall back to a system color that stays visible. */
       @media (forced-colors: active) {
         background-color: CanvasText;

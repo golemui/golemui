@@ -1,8 +1,7 @@
 import { html, LitElement, nothing, type PropertyValues, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
-import { styleMap } from 'lit/directives/style-map.js';
-import { safeDefine } from '@golemui/lit/internals';
+import { cspStyleMap, safeDefine } from '@golemui/lit/internals';
 import type { Dependencies, FileItem, FileUploadProps } from '@golemui/gui-shared/internals';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
@@ -651,7 +650,7 @@ export class GuiFileUpload extends LitElement {
       })}
       data-cy=${`${this.uid}_file-bar`}
       data-status=${showError ? 'error' : item.status}
-      style=${styleMap({ '--gui-upload-pct': `${pct}%` })}
+      style=${cspStyleMap({ '--gui-upload-pct': `${pct}%` })}
       role=${uploading ? 'progressbar' : nothing}
       aria-valuemin=${uploading ? '0' : nothing}
       aria-valuemax=${uploading ? '100' : nothing}
