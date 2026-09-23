@@ -1,3 +1,13 @@
+## 1.5.1-rc.0 (2026-09-23)
+
+### 🩹 Fixes
+
+- **core:** only declare the packages the bundle loads ([#393](https://github.com/golemui/golemui/pull/393))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+
 ## 1.5.0 (2026-09-14)
 
 ### 🚀 Features

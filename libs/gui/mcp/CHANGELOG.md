@@ -1,3 +1,14 @@
+## 1.5.1-rc.0 (2026-09-23)
+
+### 🩹 Fixes
+
+- **gui-mcp:** declare @golemui/dx as a dependency ([5d43a4f0](https://github.com/golemui/golemui/commit/5d43a4f0))
+- **gui-components:** show a restored mid-upload file as failed without emitting a change at mount ([f3597275](https://github.com/golemui/golemui/commit/f3597275))
+
+### ❤️ Thank You
+
+- Raúl Jiménez @Elecash
+
 ## 1.5.0 (2026-09-14)
 
 ### 🚀 Features

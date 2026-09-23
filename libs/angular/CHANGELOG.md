@@ -1,3 +1,7 @@
+## 1.5.1-rc.0 (2026-09-23)
+
+This was a version bump only for angular to align it with other projects, there were no code changes.
+
 ## 1.5.0 (2026-09-14)
 
 ### 🚀 Features
