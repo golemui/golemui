@@ -1,3 +1,17 @@
+## 1.5.1 (2026-09-23)
+
+### 🩹 Fixes
+
+- support strict CSP for client-side rendering ([#400](https://github.com/golemui/golemui/pull/400))
+- **gui-components:** export themes/clay.css ([ed815cc1](https://github.com/golemui/golemui/commit/ed815cc1))
+- **gui-components:** show a restored mid-upload file as failed without emitting a change at mount ([f3597275](https://github.com/golemui/golemui/commit/f3597275))
+- **gui-components:** multi file upload with a failed removal was persisting errors ([03405039](https://github.com/golemui/golemui/commit/03405039))
+
+### ❤️ Thank You
+
+- Raúl Jiménez @Elecash
+- Raúl Jiménez @Elecash
+
 ## 1.5.1-rc.0 (2026-09-23)
 
 ### 🩹 Fixes

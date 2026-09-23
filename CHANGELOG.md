@@ -1,3 +1,24 @@
+## 1.5.1 (2026-09-23)
+
+### 🩹 Fixes
+
+- support strict CSP for client-side rendering ([#400](https://github.com/golemui/golemui/pull/400))
+- **analog-playground:** bundle tslib into the nitro server output and keep pages for routes only ([#391](https://github.com/golemui/golemui/pull/391))
+- **core:** only declare the packages the bundle loads ([#393](https://github.com/golemui/golemui/pull/393))
+- **gui-components:** multi file upload with a failed removal was persisting errors ([03405039](https://github.com/golemui/golemui/commit/03405039))
+- **gui-components:** show a restored mid-upload file as failed without emitting a change at mount ([f3597275](https://github.com/golemui/golemui/commit/f3597275))
+- **gui-components:** export themes/clay.css ([ed815cc1](https://github.com/golemui/golemui/commit/ed815cc1))
+- **gui-mcp:** declare @golemui/dx as a dependency ([5d43a4f0](https://github.com/golemui/golemui/commit/5d43a4f0))
+- **gui-mcp:** Fix choosing API decission tree in skills ([#401](https://github.com/golemui/golemui/pull/401))
+- **gui-react,react:** run @nx/dependency-checks on the React packages ([40e23566](https://github.com/golemui/golemui/commit/40e23566))
+- **templates:** fix some defects in the starter templates ([#392](https://github.com/golemui/golemui/pull/392))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+- Raúl Jiménez @Elecash
+
 ## 1.5.1-rc.0 (2026-09-23)
 
 ### 🩹 Fixes

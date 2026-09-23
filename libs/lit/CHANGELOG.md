@@ -1,3 +1,13 @@
+## 1.5.1 (2026-09-23)
+
+### 🩹 Fixes
+
+- support strict CSP for client-side rendering ([#400](https://github.com/golemui/golemui/pull/400))
+
+### ❤️ Thank You
+
+- Raúl Jiménez @Elecash
+
 ## 1.5.1-rc.0 (2026-09-23)
 
 ### 🩹 Fixes

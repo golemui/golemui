@@ -1,3 +1,13 @@
+## 1.5.1 (2026-09-23)
+
+### 🩹 Fixes
+
+- **gui-react,react:** run @nx/dependency-checks on the React packages ([40e23566](https://github.com/golemui/golemui/commit/40e23566))
+
+### ❤️ Thank You
+
+- Raúl Jiménez @Elecash
+
 ## 1.5.1-rc.0 (2026-09-23)
 
 ### 🩹 Fixes
