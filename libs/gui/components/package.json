@@ -9,6 +9,7 @@
   "main": "./index.umd.cjs",
   "module": "./index.js",
   "types": "./index.d.ts",
+  "customElements": "custom-elements.json",
   "sideEffects": [
     "./*.js",
     "./*.cjs",
@@ -234,11 +235,10 @@
     "*.cjs",
     "*.md"
   ],
+  "dependencies": {
+    "@golemui/lit-utils": "*"
+  },
   "peerDependencies": {
-    "@golemui/lit": "*",
-    "@golemui/core": "*",
-    "@golemui/gui-shared": "*",
-    "lit-html": "^3.3.1",
     "lit": "^3.3.1"
   },
   "repository": {

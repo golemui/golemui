@@ -1,11 +1,18 @@
 import { html, LitElement, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
 import { live } from 'lit/directives/live.js';
-import { safeDefine } from '@golemui/lit/internals';
+import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addIcon, addLabel, type ControlTemplateData } from '../utils/templates';
-import type { TextinputProps } from '@golemui/gui-shared/internals';
+
+/** What <gui-textinput> renders besides the control state: its presentation props. */
+export type GuiTextinputProps = {
+  hint?: string;
+  icon?: string;
+  placeholder?: string;
+  autocomplete?: string;
+};
 
 export class GuiTextinput extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
@@ -50,7 +57,7 @@ export class GuiTextinput extends LitElement {
   override render() {
     super.render();
 
-    const templateData: ControlTemplateData<string> & TextinputProps = {
+    const templateData: ControlTemplateData<string> & GuiTextinputProps = {
       uid: this.uid,
       label: this.label,
       hint: this.hint,

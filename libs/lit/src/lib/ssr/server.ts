@@ -8,7 +8,7 @@ import { html } from 'lit';
 import { LitElementRenderer, render } from '@lit-labs/ssr';
 import { collectResult } from '@lit-labs/ssr/lib/render-result.js';
 import { FormElement } from '../components/form/form.element';
-import { onElementRegistered, tagNameOf } from '../utils/define';
+import { onElementRegistered, tagNameOf } from '@golemui/lit-utils';
 import type { Type } from '../utils/type';
 
 /**

@@ -1,7 +1,7 @@
-import type { DateRange, RangeDateInputProps } from '@golemui/gui-shared/internals';
 import { html, LitElement, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
-import { cspStyleMap, safeDefine } from '@golemui/lit/internals';
+import { cspStyleMap } from '@golemui/lit-utils';
+import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { GUIEditSessionController } from '../controllers/edit-session.controller';
@@ -46,6 +46,12 @@ import { commitRange, orderEndpoints, type RangeEndpoint } from '../utils/range-
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 import './pills';
 import type { GuiPillEventDetail, GuiPillItem } from './pills';
+import type { DateRange } from '../types';
+
+/** What <gui-range-date-input> renders besides the control state: its presentation props. */
+export type GuiRangeDateInputProps = {
+  hint?: string;
+};
 
 export class GuiRangeDateInput extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
@@ -243,7 +249,7 @@ export class GuiRangeDateInput extends LitElement {
   }
 
   override render() {
-    const templateData: ControlTemplateData<DateRange[]> & RangeDateInputProps = {
+    const templateData: ControlTemplateData<DateRange[]> & GuiRangeDateInputProps = {
       uid: this.uid,
       label: this.label,
       errors: this.errors,

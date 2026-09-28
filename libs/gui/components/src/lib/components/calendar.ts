@@ -1,8 +1,7 @@
 import { html, LitElement, nothing, type PropertyValues, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
-import { safeDefine } from '@golemui/lit/internals';
+import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
-import type { DateRange } from '@golemui/gui-shared/internals';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { GUICalendarKeyboardController } from '../controllers/calendar-keyboard.controller';
 import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
@@ -20,6 +19,7 @@ import {
   toISODateString,
 } from '../utils/date';
 import { buildMonthDays, computeDayStatus } from '../utils/day-status';
+import type { DateRange } from '../types';
 
 export interface CalendarDay {
   date: Date;

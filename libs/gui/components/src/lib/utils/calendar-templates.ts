@@ -1,5 +1,5 @@
 import { html, nothing, type TemplateResult } from 'lit';
-import { repeat } from 'lit-html/directives/repeat.js';
+import { repeat } from 'lit/directives/repeat.js';
 import { getMonthYearLabel, getMonthYearParts, getWeekdayLabels } from './date';
 import { chunk } from './grid-nav';
 import { addErrors, addLabel } from './templates';

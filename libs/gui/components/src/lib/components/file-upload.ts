@@ -1,8 +1,8 @@
 import { html, LitElement, nothing, type PropertyValues, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
-import { cspStyleMap, safeDefine } from '@golemui/lit/internals';
-import type { Dependencies, FileItem, FileUploadProps } from '@golemui/gui-shared/internals';
+import { cspStyleMap } from '@golemui/lit-utils';
+import { safeDefine } from '@golemui/lit-utils';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 import { ARROW_CLOCKWISE_PATH, UPLOAD_PATH, X_CIRCLE_PATH, spinnerIcon } from '../utils/icons';
@@ -23,6 +23,12 @@ import {
   MISSING_UPLOAD_SERVICE_MESSAGE,
   formatFileMessage,
 } from '../utils/messages';
+import type { FileItem, UploadService } from '../types';
+
+/** What <gui-file-upload> renders besides the control state: its presentation props. */
+export type GuiFileUploadProps = {
+  hint?: string;
+};
 
 /**
  * The single file upload widget; `GuiMultiFileUpload` extends it for arrays.
@@ -34,7 +40,7 @@ import {
  *
  * Server file cleanup belongs to the host; `uploadService.remove` is only a
  * courtesy on explicit user removals and single-file replacement. See the
- * `UploadService` doc in `@golemui/gui-shared`.
+ * `UploadService` doc in `../types.ts`.
  */
 export class GuiFileUpload extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
@@ -47,7 +53,8 @@ export class GuiFileUpload extends LitElement {
   @property({ type: Boolean }) disabled: boolean | undefined = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
   @property({ type: Object }) value: FileItem | null | undefined = null;
-  @property({ type: Object }) dependencies: Dependencies | undefined = undefined;
+  @property({ type: Object }) dependencies: { uploadService?: UploadService } | undefined =
+    undefined;
 
   @property({ type: String }) hint: string | undefined = undefined;
   @property({ type: String }) icon: string | undefined = undefined;
@@ -518,7 +525,7 @@ export class GuiFileUpload extends LitElement {
     const showButton =
       hasService && !this.readOnly && !barItem && (this.isMultiple() || items.length === 0);
 
-    const templateData: ControlTemplateData<FileItem[]> & FileUploadProps = {
+    const templateData: ControlTemplateData<FileItem[]> & GuiFileUploadProps = {
       uid: this.uid,
       label: this.label,
       hint: this.hint,

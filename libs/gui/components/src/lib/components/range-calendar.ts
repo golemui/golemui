@@ -1,6 +1,6 @@
 import { html, LitElement, nothing, type PropertyValues, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
-import { safeDefine } from '@golemui/lit/internals';
+import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { GUICalendarKeyboardController } from '../controllers/calendar-keyboard.controller';
@@ -44,7 +44,6 @@ import {
 } from '../utils/range-selection';
 import './pills';
 import type { GuiPillEventDetail, GuiPillItem } from './pills';
-import type { DateRange } from '@golemui/gui-shared/internals';
 import {
   CANCEL_EDIT_RANGE_LABEL,
   CONFIRM_EDIT_RANGE_LABEL,
@@ -56,6 +55,7 @@ import {
   EDIT_RANGE_STARTED_MESSAGE,
   formatEditMessage,
 } from '../utils/messages';
+import type { DateRange } from '../types';
 
 export interface RangeCalendarDay {
   date: Date;

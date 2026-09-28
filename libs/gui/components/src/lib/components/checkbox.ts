@@ -2,9 +2,14 @@ import { GUIAriaController } from '../controllers/aria.controller';
 import { html, LitElement, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
 import { live } from 'lit/directives/live.js';
-import { safeDefine } from '@golemui/lit/internals';
+import { safeDefine } from '@golemui/lit-utils';
 import { addErrors, requiredMarker, type ControlTemplateData } from '../utils/templates';
-import type { CheckboxProps } from '@golemui/gui-shared/internals';
+
+/** What <gui-checkbox> renders besides the control state: its presentation props. */
+export type GuiCheckboxProps = {
+  hint?: string;
+  checkboxPosition?: 'left' | 'right';
+};
 
 export class GuiCheckbox extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
@@ -48,7 +53,7 @@ export class GuiCheckbox extends LitElement {
   override render() {
     super.render();
 
-    const templateData: ControlTemplateData<boolean> & CheckboxProps = {
+    const templateData: ControlTemplateData<boolean> & GuiCheckboxProps = {
       uid: this.uid,
       label: this.label,
       hint: this.hint,

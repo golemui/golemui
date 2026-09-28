@@ -1,8 +1,7 @@
 import { html, LitElement, nothing, type PropertyValues, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
-import { safeDefine } from '@golemui/lit/internals';
+import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
-import type { DateRange, DisabledTimeRange } from '@golemui/gui-shared/internals';
 import './time-picker';
 import type { GuiTime } from './time-input';
 import type { GuiTimePicker } from './time-picker';
@@ -37,6 +36,7 @@ import {
   type HourFormat,
   type TimeRange,
 } from '../utils/time';
+import type { DateRange, DisabledTimeRange } from '../types';
 
 export interface DateTimeCalendarDay {
   date: Date;

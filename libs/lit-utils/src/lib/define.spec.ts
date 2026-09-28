@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { html, LitElement } from 'lit';
-import { describe, expect, it } from 'vitest';
-import { safeDefine } from './define';
+import { describe, expect, it, vi } from 'vitest';
+import { safeDefine, tagNameOf } from './define';
 
 describe('safeDefine', () => {
   it('defines the element when the tag is free', () => {
@@ -113,5 +113,44 @@ describe('safeDefine defer-hydration support', () => {
     await afterLitRenderSchedule();
 
     expect(element.querySelector('b')?.textContent).toBe('set before the removal');
+  });
+});
+
+// Two installed versions of this package each load their own module instance. A second
+// instance of this module stands in for the other install.
+describe('duplicate installs of safeDefine', () => {
+  const loadOtherInstall = async () => {
+    vi.resetModules();
+    const otherInstall = await import('./define');
+    expect(otherInstall.safeDefine).not.toBe(safeDefine);
+    return otherInstall;
+  };
+
+  it('shares registrations, so tagNameOf knows elements the other install registered', async () => {
+    const otherInstall = await loadOtherInstall();
+    class RegisteredByOtherInstall extends HTMLElement {}
+    otherInstall.safeDefine('x-safe-define-other-install', RegisteredByOtherInstall);
+
+    expect(tagNameOf(RegisteredByOtherInstall)).toBe('x-safe-define-other-install');
+  });
+
+  it('finalizes a subclass of an element the other install registered', async () => {
+    const otherInstall = await loadOtherInstall();
+    class CrossInstallBase extends LitElement {
+      static override properties = { label: {} };
+      declare label: string;
+    }
+    otherInstall.safeDefine('x-cross-install-base', CrossInstallBase);
+
+    class CrossInstallSubclass extends CrossInstallBase {
+      static override properties = { badge: {} };
+      declare badge: string;
+    }
+    safeDefine('x-cross-install-sub', CrossInstallSubclass);
+
+    expect(CrossInstallSubclass.observedAttributes).toContain('badge');
+    expect(
+      CrossInstallSubclass.observedAttributes.filter((a) => a === 'defer-hydration'),
+    ).toHaveLength(1);
   });
 });

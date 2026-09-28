@@ -1,11 +1,21 @@
-import type { CurrencyProps } from '@golemui/gui-shared/internals';
 import { html, LitElement, nothing, type PropertyValues } from 'lit';
 import { property, query, state } from 'lit/decorators.js';
-import { safeDefine } from '@golemui/lit/internals';
+import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addIcon, addLabel, type ControlTemplateData } from '../utils/templates';
 import { blockNonNumericInput, blockNonNumericKeys, isRealNumber } from '../utils/numeric';
+
+/** What <gui-currency> renders besides the control state: its presentation props. */
+export type GuiCurrencyProps = {
+  hint?: string;
+  currency?: string;
+  maximumFractionDigits?: number;
+  minimumFractionDigits?: number;
+  icon?: string;
+  placeholder?: string;
+  autocomplete?: string;
+};
 
 export class GuiCurrency extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
@@ -114,7 +124,7 @@ export class GuiCurrency extends LitElement {
   override render() {
     super.render();
 
-    const templateData: ControlTemplateData<number> & CurrencyProps = {
+    const templateData: ControlTemplateData<number> & GuiCurrencyProps = {
       uid: this.uid,
       label: this.label,
       hint: this.hint,

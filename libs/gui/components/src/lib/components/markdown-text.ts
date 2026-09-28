@@ -1,12 +1,12 @@
 import { html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
-import { safeDefine } from '@golemui/lit/internals';
+import { safeDefine } from '@golemui/lit-utils';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
-import { type Dependencies } from '@golemui/gui-shared';
+import type { MarkdownParser } from '../types';
 
 export class GuiMarkdownText extends LitElement {
   @property({ type: String }) md: string | undefined = undefined;
-  @property({ type: Object }) dependencies: Dependencies | undefined = undefined;
+  @property({ type: Object }) dependencies: { markdown?: MarkdownParser } | undefined = undefined;
 
   override createRenderRoot() {
     return this;

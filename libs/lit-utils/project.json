@@ -1,7 +1,7 @@
 {
-  "name": "gui-components",
-  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/gui/components/src",
+  "name": "lit-utils",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/lit-utils/src",
   "projectType": "library",
   "release": {
     "version": {
@@ -9,14 +9,14 @@
       "currentVersionResolver": "git-tag"
     }
   },
-  "tags": ["scope:impl", "impl:gui", "scope:components", "type:lib"],
+  "tags": ["scope:core", "scope:components", "type:lib"],
   "targets": {
     "build": {
       "executor": "@nx/vite:build",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/libs/gui/components",
-        "configFile": "libs/gui/components/vite.config.ts"
+        "outputPath": "dist/libs/lit-utils",
+        "configFile": "libs/lit-utils/vite.config.ts"
       }
     },
     "nx-release-publish": {

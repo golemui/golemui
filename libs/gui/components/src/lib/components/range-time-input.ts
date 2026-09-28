@@ -1,7 +1,7 @@
-import type { RangeTimeInputProps, TimeRange } from '@golemui/gui-shared/internals';
 import { html, LitElement, nothing, type PropertyValues } from 'lit';
 import { property } from 'lit/decorators.js';
-import { cspStyleMap, safeDefine } from '@golemui/lit/internals';
+import { cspStyleMap } from '@golemui/lit-utils';
+import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { GUIEditSessionController } from '../controllers/edit-session.controller';
@@ -50,6 +50,12 @@ import {
   INVALID_DISABLED_TIME_RANGE_MESSAGE,
   INVALID_TIME_RANGE_ORDER_MESSAGE,
 } from '../utils/messages';
+import type { TimeRange } from '../types';
+
+/** What <gui-range-time-input> renders besides the control state: its presentation props. */
+export type GuiRangeTimeInputProps = {
+  hint?: string;
+};
 
 export class GuiRangeTimeInput extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
@@ -275,7 +281,7 @@ export class GuiRangeTimeInput extends LitElement {
   }
 
   override render() {
-    const templateData: ControlTemplateData<TimeRange[]> & RangeTimeInputProps = {
+    const templateData: ControlTemplateData<TimeRange[]> & GuiRangeTimeInputProps = {
       uid: this.uid,
       label: this.label,
       errors: this.errors,

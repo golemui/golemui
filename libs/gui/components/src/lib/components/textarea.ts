@@ -1,11 +1,22 @@
 import { html, LitElement, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
 import { live } from 'lit/directives/live.js';
-import { cspStyleMap, safeDefine } from '@golemui/lit/internals';
+import { cspStyleMap } from '@golemui/lit-utils';
+import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
-import type { TextareaProps } from '@golemui/gui-shared/internals';
+
+/** What <gui-textarea> renders besides the control state: its presentation props. */
+export type GuiTextareaProps = {
+  hint?: string;
+  placeholder?: string;
+  autocomplete?: string;
+  counterMode?: 'remaining' | 'current';
+  minimumHeight?: number;
+  autoGrow?: boolean;
+  maxLength?: number;
+};
 
 export class GuiTextarea extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
@@ -57,7 +68,7 @@ export class GuiTextarea extends LitElement {
   override render() {
     super.render();
 
-    const templateData: ControlTemplateData<string> & TextareaProps = {
+    const templateData: ControlTemplateData<string> & GuiTextareaProps = {
       uid: this.uid,
       label: this.label,
       errors: this.errors,

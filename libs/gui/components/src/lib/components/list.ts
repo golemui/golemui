@@ -1,9 +1,10 @@
 import { css, html, LitElement, type PropertyValues } from 'lit';
 import { property, query, state } from 'lit/decorators.js';
-import { cspStyleMap, safeDefine } from '@golemui/lit/internals';
+import { cspStyleMap } from '@golemui/lit-utils';
+import { safeDefine } from '@golemui/lit-utils';
 import { gridKeyStep, listPageSize, nextEnabledIndex } from '../utils/grid-nav';
 import { updateListItems } from './list-items';
-import type { ListItem, ListProps, OptionValue } from '@golemui/gui-shared/internals';
+import type { ListItem, OptionValue } from '../types';
 
 export class GuiList extends LitElement {
   // Inline `style` attributes are blocked by a strict `style-src` CSP: static rules
@@ -271,7 +272,7 @@ export class GuiList extends LitElement {
   }
 
   private updateItems() {
-    this._items = updateListItems(this.items, { valueField: this.valueField } as ListProps<any>);
+    this._items = updateListItems(this.items, { valueField: this.valueField });
 
     this.dispatchEvent(
       new CustomEvent('gui-update-items', {

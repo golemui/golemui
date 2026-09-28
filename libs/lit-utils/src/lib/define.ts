@@ -1,3 +1,29 @@
+// The registration state lives on globalThis rather than in this module, so a duplicate install
+// of this package (two versions in one bundle, or a copy nested under another package) shares
+// it: every copy then knows every GolemUI element.
+
+type ObservedAttributesGetter = (this: CustomElementConstructor) => string[] | undefined;
+
+interface ElementRegistry {
+  /** The tag each constructor was registered with through safeDefine. */
+  tagByConstructor: Map<CustomElementConstructor, string>;
+  /** Called once per registration, see onElementRegistered. */
+  listeners: Set<(ctor: CustomElementConstructor) => void>;
+  deferHydrationPatched: WeakSet<CustomElementConstructor>;
+  installedObservedAttributesGetters: WeakSet<ObservedAttributesGetter>;
+}
+
+const REGISTRY_KEY = Symbol.for('golemui.element-registry');
+
+const registry: ElementRegistry = ((globalThis as Record<symbol, ElementRegistry | undefined>)[
+  REGISTRY_KEY
+] ??= {
+  tagByConstructor: new Map(),
+  listeners: new Set(),
+  deferHydrationPatched: new WeakSet(),
+  installedObservedAttributesGetters: new WeakSet(),
+});
+
 /**
  * Registers a custom element for GolemUI. Every GolemUI element and every custom widget
  * that must server-render goes through it. Only elements registered here run
@@ -21,54 +47,20 @@ export function safeDefine(tag: string, ctor: CustomElementConstructor): void {
   }
   supportDeferHydrationAttribute(ctor);
   customElements.define(tag, ctor);
-  tagByConstructor.set(ctor, tag);
-  for (const listener of registrationListeners) {
+  registry.tagByConstructor.set(ctor, tag);
+  for (const listener of registry.listeners) {
     listener(ctor);
   }
 }
-
-const tagByConstructor = new Map<CustomElementConstructor, string>();
-
-const registrationListeners = new Set<(ctor: CustomElementConstructor) => void>();
-
-/**
- * Registers a listener for {@link safeDefine} registrations. It runs once for every
- * constructor already registered, then once per later registration.
- *
- * Not exported from the package entry point. The server entry point uses it to add the
- * server-only query methods to the GolemUI element classes only, instead of to the
- * element prototype that the DOM shim shares with every other Lit element.
- */
-export function onElementRegistered(listener: (ctor: CustomElementConstructor) => void): void {
-  for (const ctor of tagByConstructor.keys()) {
-    listener(ctor);
-  }
-  registrationListeners.add(listener);
-}
-
-/**
- * Returns the tag a constructor was registered with through {@link safeDefine}, or
- * undefined for a constructor that was never registered with it. Works in every
- * runtime, including registries without `customElements.getName`.
- */
-export function tagNameOf(ctor: CustomElementConstructor): string | undefined {
-  return tagByConstructor.get(ctor);
-}
-
-const deferHydrationPatched = new WeakSet<CustomElementConstructor>();
 
 type PatchablePrototype = HTMLElement & {
   connectedCallback?(): void;
   attributeChangedCallback?(name: string, oldValue: string | null, value: string | null): void;
 };
 
-type ObservedAttributesGetter = (this: CustomElementConstructor) => string[] | undefined;
-
-const installedObservedAttributesGetters = new WeakSet<ObservedAttributesGetter>();
-
 /**
  * Returns the `observedAttributes` implementation of the class or the first ancestor
- * that this file did not install itself.
+ * that safeDefine did not install itself.
  *
  * A subclass inherits the getter installed on its base class. Reading that inherited
  * getter returns the base class attributes and skips `ReactiveElement.finalize()`,
@@ -84,7 +76,7 @@ function originalObservedAttributesOf(
     }
     if (descriptor.get) {
       const getter = descriptor.get as ObservedAttributesGetter;
-      if (!installedObservedAttributesGetters.has(getter)) {
+      if (!registry.installedObservedAttributesGetters.has(getter)) {
         return getter;
       }
       continue;
@@ -110,10 +102,10 @@ function originalObservedAttributesOf(
  * `customElements.define`, so a later patch would miss the first connection.
  */
 function supportDeferHydrationAttribute(ctor: CustomElementConstructor): void {
-  if (deferHydrationPatched.has(ctor)) {
+  if (registry.deferHydrationPatched.has(ctor)) {
     return;
   }
-  deferHydrationPatched.add(ctor);
+  registry.deferHydrationPatched.add(ctor);
 
   // Calls through with the receiving class, so Lit finalizes that class and reports its
   // own attributes. A snapshot taken here would freeze a subclass to its base class list.
@@ -121,7 +113,7 @@ function supportDeferHydrationAttribute(ctor: CustomElementConstructor): void {
   const observedAttributes: ObservedAttributesGetter = function (this: CustomElementConstructor) {
     return [...(originalObservedAttributes?.call(this) ?? []), 'defer-hydration'];
   };
-  installedObservedAttributesGetters.add(observedAttributes);
+  registry.installedObservedAttributesGetters.add(observedAttributes);
   Object.defineProperty(ctor, 'observedAttributes', {
     configurable: true,
     get: observedAttributes,
@@ -152,4 +144,30 @@ function supportDeferHydrationAttribute(ctor: CustomElementConstructor): void {
     }
     originalAttributeChangedCallback?.call(this, name, oldValue, value);
   };
+}
+
+// ─── Registry readers ───
+
+/**
+ * Registers a listener for {@link safeDefine} registrations. It runs once for every
+ * constructor already registered, then once per later registration.
+ *
+ * The @golemui/lit server entry point uses it to add the server-only query methods to the
+ * GolemUI element classes only, instead of to the element prototype that the DOM shim shares
+ * with every other Lit element.
+ */
+export function onElementRegistered(listener: (ctor: CustomElementConstructor) => void): void {
+  for (const ctor of registry.tagByConstructor.keys()) {
+    listener(ctor);
+  }
+  registry.listeners.add(listener);
+}
+
+/**
+ * Returns the tag a constructor was registered with through {@link safeDefine}, or
+ * undefined for a constructor that was never registered with it. Works in every
+ * runtime, including registries without `customElements.getName`.
+ */
+export function tagNameOf(ctor: CustomElementConstructor): string | undefined {
+  return registry.tagByConstructor.get(ctor);
 }

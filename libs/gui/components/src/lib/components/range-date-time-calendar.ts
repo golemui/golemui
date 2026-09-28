@@ -1,8 +1,7 @@
 import { html, LitElement, nothing, type PropertyValues, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
-import { safeDefine } from '@golemui/lit/internals';
+import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
-import type { DateTimeRange } from '@golemui/gui-shared/internals';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { GUICalendarKeyboardController } from '../controllers/calendar-keyboard.controller';
 import { GUIEditSessionController } from '../controllers/edit-session.controller';
@@ -73,6 +72,7 @@ import {
   formatEditMessage,
   INCOMPLETE_DATE_TIME_MESSAGE,
 } from '../utils/messages';
+import type { DateTimeRange } from '../types';
 
 export class GuiRangeDateTimeCalendar extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;

@@ -1,18 +1,23 @@
 import { type Localizable, type WidgetPropertyFunctionParams } from '@golemui/core';
+import type {
+  DateRange,
+  DateTimeRange,
+  DisabledTimeRange,
+  ListItem,
+  Option,
+  TimeRange,
+} from '@golemui/gui-components';
 
-export interface DateRange {
-  start: string;
-  end?: string;
-}
-
-/**
- * A selected date-time range value. Both ends are local ISO date-time strings
- * (`YYYY-MM-DDTHH:mm:ss`).
- */
-export interface DateTimeRange {
-  start: string;
-  end: string;
-}
+// The value types belong to the gui-* elements; form definitions use them through this module.
+export type {
+  DateRange,
+  DateTimeRange,
+  DisabledTimeRange,
+  ListItem,
+  Option,
+  OptionValue,
+  TimeRange,
+} from '@golemui/gui-components';
 
 export type AccordionProps = {
   singleOpen?: boolean;
@@ -429,21 +434,6 @@ export type TimeInputProps = IncompleteMessageProps & {
   maxTimeMessage?: Localizable;
 };
 
-/**
- * A time range value (also the base of {@link DisabledTimeRange}).
- */
-export type TimeRange = {
-  start: string;
-  end: string;
-};
-
-export type DisabledTimeRange = TimeRange & {
-  /** ISO date (YYYY-MM-DD): the range only applies on that date. */
-  date?: string;
-  /** Weekday numbers as returned by Date.prototype.getDay(): 0=Sunday … 6=Saturday. */
-  weekdays?: number[];
-};
-
 export type TimePickerProps = TimeInputProps &
   PickerToggleProps & {
     /** Times inside these ranges (both ends inclusive) render disabled. */
@@ -667,13 +657,6 @@ export type RepeaterProps<Template> = {
   removeButtonIcon?: string;
 };
 
-export type OptionValue = string | number;
-
-export type Option = {
-  label: string;
-  value: OptionValue;
-};
-
 export type SelectProps = {
   hint?: string;
   icon?: string;
@@ -683,13 +666,6 @@ export type SelectProps = {
   labelField?: string;
   valueField?: string;
   invalidOptionMessage?: Localizable;
-};
-
-export type ListItem<T> = {
-  template: T;
-  value: OptionValue;
-  /** Disabled items render greyed out, are skipped by keyboard navigation and cannot be selected */
-  disabled?: boolean;
 };
 
 type ItemKeys<T> = T extends Record<string, any> ? keyof T : string;

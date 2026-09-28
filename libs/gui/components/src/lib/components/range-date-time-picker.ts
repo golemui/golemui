@@ -1,8 +1,7 @@
 import { html, LitElement, nothing } from 'lit';
 import { property, query, state } from 'lit/decorators.js';
-import { safeDefine } from '@golemui/lit/internals';
+import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
-import type { DateTimeRange } from '@golemui/gui-shared/internals';
 import './range-date-time-input';
 import './range-date-time-calendar';
 import type { GuiRangeDateTimeInput } from './range-date-time-input';
@@ -11,6 +10,7 @@ import { GUIPopupController } from '../controllers/popup.controller';
 import { type HourFormat } from '../utils/time';
 import { addErrors, addIcon, addLabel, addPickerPanel } from '../utils/templates';
 import { CARET_DOWN_PATH } from '../utils/icons';
+import type { DateTimeRange } from '../types';
 
 /** The four pieces of an in-progress range, each absent until chosen. */
 interface WorkingRange {

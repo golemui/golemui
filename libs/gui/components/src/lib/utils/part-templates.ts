@@ -1,6 +1,6 @@
 import { html, nothing, type TemplateResult } from 'lit';
 import { live } from 'lit/directives/live.js';
-import { repeat } from 'lit-html/directives/repeat.js';
+import { repeat } from 'lit/directives/repeat.js';
 import type { GUIPartsController } from '../controllers/parts.controller';
 import {
   PART_DEFAULT_ARIA_LABELS,

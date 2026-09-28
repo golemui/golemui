@@ -1,14 +1,25 @@
-import type { OneOfProps, Option, OptionValue, SelectProps } from '@golemui/gui-shared/internals';
 import { html, LitElement, nothing } from 'lit';
-import { repeat } from 'lit-html/directives/repeat.js';
+import { repeat } from 'lit/directives/repeat.js';
 import { property } from 'lit/decorators.js';
 import { live } from 'lit/directives/live.js';
-import { safeDefine } from '@golemui/lit/internals';
+import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addIcon, addLabel, type ControlTemplateData } from '../utils/templates';
 import { inferOptionValue, updateOptions } from './one-of';
 import { CARET_DOWN_PATH } from '../utils/icons';
+import type { Option, OptionValue } from '../types';
+
+/** What <gui-select> renders besides the control state: its presentation props. */
+export type GuiSelectProps = {
+  hint?: string;
+  icon?: string;
+  autocomplete?: string;
+  options?: Option[];
+  placeholder?: string;
+  labelField?: string;
+  valueField?: string;
+};
 
 export class GuiSelect extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
@@ -62,7 +73,7 @@ export class GuiSelect extends LitElement {
   override render() {
     super.render();
 
-    const templateData: ControlTemplateData<OptionValue> & SelectProps = {
+    const templateData: ControlTemplateData<OptionValue> & GuiSelectProps = {
       uid: this.uid,
       label: this.label,
       errors: this.errors,
@@ -86,7 +97,7 @@ export class GuiSelect extends LitElement {
     this.options = updateOptions(this.options, {
       labelField: this.labelField,
       valueField: this.valueField,
-    } as OneOfProps);
+    });
 
     this.hasMatchingValue = this.options?.length
       ? this.options.find(({ value }) => value === this.value) !== undefined

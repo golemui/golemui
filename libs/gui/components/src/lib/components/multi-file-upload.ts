@@ -1,12 +1,12 @@
 import { html, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
-import { safeDefine } from '@golemui/lit/internals';
-import type { FileItem } from '@golemui/gui-shared/internals';
+import { safeDefine } from '@golemui/lit-utils';
 import { GuiFileUpload } from './file-upload';
 import { MULTI_FILE_UPLOAD_BUTTON_LABEL, formatFileMessage } from '../utils/messages';
 import { FILE_REMOVE_ARIA_LABEL } from '../utils/messages';
 import './pills';
 import type { GuiPillEventDetail, GuiPillItem } from './pills';
+import type { FileItem } from '../types';
 
 export class GuiMultiFileUpload extends GuiFileUpload {
   @property({ type: Array }) values: FileItem[] | undefined = [];

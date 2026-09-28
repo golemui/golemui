@@ -32,6 +32,7 @@
     "test:all": "nx run-many --target=component-test",
     "test:affected": "nx affected --target=component-test",
     "test:ssr-parity": "tsx tools/ssr-parity.ts",
+    "test:components-isolation": "tsx tools/check-components-isolation.ts",
     "lint:affected": "nx affected -t lint test --no-cloud",
     "build:libs": "npx nx run-many --target=build --projects=libs/**/*",
     "cz:breaking": "npm run precz && czg break",

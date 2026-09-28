@@ -1,8 +1,7 @@
 import { html, LitElement, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
-import { safeDefine } from '@golemui/lit/internals';
+import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
-import type { DateRange } from '@golemui/gui-shared/internals';
 import './date-input';
 import './calendar';
 import type { GuiDate } from './date-input';
@@ -11,6 +10,7 @@ import { GUIPopupController } from '../controllers/popup.controller';
 import { dateBoundsError } from '../utils/date';
 import { addErrors, addIcon, addLabel, addPickerPanel } from '../utils/templates';
 import { CARET_DOWN_PATH } from '../utils/icons';
+import type { DateRange } from '../types';
 
 export class GuiDatePicker extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;

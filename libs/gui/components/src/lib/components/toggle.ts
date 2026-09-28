@@ -2,9 +2,14 @@ import { GUIAriaController } from '../controllers/aria.controller';
 import { html, LitElement, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
 import { live } from 'lit/directives/live.js';
-import { safeDefine } from '@golemui/lit/internals';
+import { safeDefine } from '@golemui/lit-utils';
 import { addErrors, requiredMarker, type ControlTemplateData } from '../utils/templates';
-import type { ToggleProps } from '@golemui/gui-shared/internals';
+
+/** What <gui-toggle> renders besides the control state: its presentation props. */
+export type GuiToggleProps = {
+  hint?: string;
+  togglePosition?: 'left' | 'right';
+};
 
 export class GuiToggle extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
@@ -48,7 +53,7 @@ export class GuiToggle extends LitElement {
   override render() {
     super.render();
 
-    const templateData: ControlTemplateData<boolean> & ToggleProps = {
+    const templateData: ControlTemplateData<boolean> & GuiToggleProps = {
       uid: this.uid,
       label: this.label,
       hint: this.hint,

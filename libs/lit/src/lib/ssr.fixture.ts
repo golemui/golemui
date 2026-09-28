@@ -13,7 +13,7 @@ import { type Subscription } from 'rxjs';
 import { InputWidgetAdapter } from './adapters/input-widget.adapter';
 import { LayoutWidgetAdapter } from './adapters/layout-widget.adapter';
 import { formContext, type LitFormContext } from './context/form.context';
-import { safeDefine } from './utils/define';
+import { safeDefine } from '@golemui/lit-utils';
 import type { Type } from './utils/type';
 import './components/form/form.element';
 

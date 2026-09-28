@@ -1,5 +1,5 @@
 {
-  "name": "@golemui/gui-shared",
+  "name": "@golemui/lit-utils",
   "version": "0.0.0",
   "license": "MIT",
   "publishConfig": {
@@ -14,11 +14,6 @@
       "types": "./index.d.ts",
       "import": "./index.js",
       "require": "./index.umd.cjs"
-    },
-    "./internals": {
-      "types": "./internals.d.ts",
-      "import": "./internals.js",
-      "require": "./internals.umd.cjs"
     }
   },
   "files": [
@@ -26,22 +21,14 @@
     "index.d.ts",
     "index.js",
     "index.umd.cjs",
-    "internals.d.ts",
-    "internals.js",
-    "internals.umd.cjs",
-    "*.js",
-    "*.cjs",
     "*.md"
   ],
-  "dependencies": {
-    "@golemui/core": "*",
-    "@golemui/dx": "*",
-    "@golemui/gui-validators": "*",
-    "@golemui/gui-components": "*"
+  "peerDependencies": {
+    "lit": "^3.3.1"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/golemui/golemui.git",
-    "directory": "libs/gui/shared"
+    "directory": "libs/lit-utils"
   }
 }

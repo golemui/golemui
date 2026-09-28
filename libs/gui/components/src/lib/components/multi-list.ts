@@ -1,7 +1,7 @@
 import { property } from 'lit/decorators.js';
-import { safeDefine } from '@golemui/lit/internals';
+import { safeDefine } from '@golemui/lit-utils';
 import { GuiList } from './list';
-import type { OptionValue } from '@golemui/gui-shared/internals';
+import type { OptionValue } from '../types';
 
 /**
  * Multi-select listbox. Same virtualization, keyboard navigation and focus

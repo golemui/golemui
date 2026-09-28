@@ -1,11 +1,19 @@
 import { html, LitElement, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
-import { cspStyleMap, safeDefine } from '@golemui/lit/internals';
+import { cspStyleMap } from '@golemui/lit-utils';
+import { safeDefine } from '@golemui/lit-utils';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 import { blockNonNumericInput, blockNonNumericKeys, isRealNumber } from '../utils/numeric';
-import type { NumberinputProps } from '@golemui/gui-shared/internals';
 import { CARET_DOWN_PATH, CARET_UP_PATH } from '../utils/icons';
+
+/** What <gui-number> renders besides the control state: its presentation props. */
+export type GuiNumberProps = {
+  hint?: string;
+  step?: number;
+  placeholder?: string;
+  autocomplete?: string;
+};
 
 export class GuiNumber extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
@@ -77,7 +85,7 @@ export class GuiNumber extends LitElement {
       }
     }
 
-    const templateData: ControlTemplateData<number> & NumberinputProps = {
+    const templateData: ControlTemplateData<number> & GuiNumberProps = {
       uid: this.uid,
       label: this.label,
       hint: this.hint,

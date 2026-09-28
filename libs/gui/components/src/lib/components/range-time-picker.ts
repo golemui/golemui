@@ -1,8 +1,7 @@
 import { html, LitElement, nothing } from 'lit';
 import { property, query, state } from 'lit/decorators.js';
-import { safeDefine } from '@golemui/lit/internals';
+import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
-import type { TimeRange } from '@golemui/gui-shared/internals';
 import './range-time-input';
 import type { GuiRangeTimeInput } from './range-time-input';
 import './time-list';
@@ -22,6 +21,7 @@ import {
   INVALID_MIN_TIME_MESSAGE,
 } from '../utils/messages';
 import { CARET_DOWN_PATH } from '../utils/icons';
+import type { TimeRange } from '../types';
 
 export class GuiRangeTimePicker extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;

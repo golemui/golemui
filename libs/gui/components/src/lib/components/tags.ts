@@ -1,17 +1,24 @@
 import { html, LitElement, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
-import { cspStyleMap, safeDefine } from '@golemui/lit/internals';
+import { cspStyleMap } from '@golemui/lit-utils';
+import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { GUIPillsNavigationController } from '../controllers/pills-navigation.controller';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
-import type { TagsProps } from '@golemui/gui-shared/internals';
 import './pills';
 import type { GuiPillEventDetail, GuiPillItem } from './pills';
 
 type TagsSeparator = 'Enter' | ',' | 'Tab' | 'blur' | string;
 
 const DEFAULT_SEPARATORS: TagsSeparator[] = ['Enter', ',', 'Tab', 'blur'];
+
+/** What <gui-tags> renders besides the control state: its presentation props. */
+export type GuiTagsProps = {
+  hint?: string;
+  placeholder?: string;
+  icon?: string;
+};
 
 export class GuiTags extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
@@ -82,7 +89,7 @@ export class GuiTags extends LitElement {
 
   override render() {
     const tags = this.getValue();
-    const templateData: ControlTemplateData<string[]> & TagsProps = {
+    const templateData: ControlTemplateData<string[]> & GuiTagsProps = {
       uid: this.uid,
       label: this.label,
       hint: this.hint,

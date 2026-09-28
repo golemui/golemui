@@ -1,5 +1,5 @@
-import { type ControlTemplateData, filterTap } from '@golemui/core';
 import { type ReactiveController, type ReactiveControllerHost } from 'lit';
+import { type ControlTemplateData } from '../utils/templates';
 
 export class GUIAriaController<T, ExtraProps extends { hint?: string; required?: boolean }>
   implements ReactiveController
@@ -47,25 +47,23 @@ export class GUIAriaController<T, ExtraProps extends { hint?: string; required?:
     const { touched, errors, readonly, disabled, hint, required } = templateData;
     const showErrors = touched && errors && errors.length > 0;
 
-    filterTap(
-      elements,
-      (e) => !!e,
-      (element) => {
-        const toggleAttr = (attr: string, value: string | null) => {
-          if (value) {
-            element.setAttribute(attr, value);
-          } else {
-            element.removeAttribute(attr);
-          }
-        };
+    for (const element of elements) {
+      if (!element) continue;
 
-        toggleAttr('aria-describedby', hint ? `${uid}_hint` : null);
-        toggleAttr('aria-invalid', showErrors ? 'true' : null);
-        toggleAttr('aria-errormessage', showErrors ? `${uid}_errors` : null);
-        toggleAttr('aria-readonly', readonly ? 'true' : null);
-        toggleAttr('aria-disabled', disabled ? 'true' : null);
-        toggleAttr('aria-required', required ? 'true' : null);
-      },
-    );
+      const toggleAttr = (attr: string, value: string | null) => {
+        if (value) {
+          element.setAttribute(attr, value);
+        } else {
+          element.removeAttribute(attr);
+        }
+      };
+
+      toggleAttr('aria-describedby', hint ? `${uid}_hint` : null);
+      toggleAttr('aria-invalid', showErrors ? 'true' : null);
+      toggleAttr('aria-errormessage', showErrors ? `${uid}_errors` : null);
+      toggleAttr('aria-readonly', readonly ? 'true' : null);
+      toggleAttr('aria-disabled', disabled ? 'true' : null);
+      toggleAttr('aria-required', required ? 'true' : null);
+    }
   }
 }

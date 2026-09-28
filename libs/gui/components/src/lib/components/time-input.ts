@@ -1,7 +1,6 @@
-import type { TimeInputProps } from '@golemui/gui-shared/internals';
 import { html, LitElement, nothing, type PropertyValues } from 'lit';
 import { property } from 'lit/decorators.js';
-import { safeDefine } from '@golemui/lit/internals';
+import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
@@ -22,6 +21,12 @@ import {
 const TIME_PART_TYPES: readonly DateTimePartType[] = ['hour', 'minute'];
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 import { getTimeFormatParts, type HourFormat } from '../utils/time';
+
+/** What <gui-time-input> renders besides the control state: its presentation props. */
+export type GuiTimeProps = {
+  icon?: string;
+  hint?: string;
+};
 
 export class GuiTime extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
@@ -155,7 +160,7 @@ export class GuiTime extends LitElement {
   }
 
   override render() {
-    const templateData: ControlTemplateData<string> & TimeInputProps = {
+    const templateData: ControlTemplateData<string> & GuiTimeProps = {
       uid: this.uid,
       label: this.label,
       errors: this.errors,

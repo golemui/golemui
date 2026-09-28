@@ -6,7 +6,7 @@ import { join } from 'path';
 
 export default defineConfig(() => ({
   root: __dirname,
-  cacheDir: '../../node_modules/.vite/libs/lit',
+  cacheDir: '../../node_modules/.vite/libs/lit-utils',
   plugins: [
     nxViteTsPaths(),
     nxCopyAssetsPlugin(['*.md']),
@@ -18,40 +18,28 @@ export default defineConfig(() => ({
   ],
   // Configuration for building your library.
   build: {
-    outDir: '../../dist/libs/lit',
+    outDir: '../../dist/libs/lit-utils',
     emptyOutDir: true,
     reportCompressedSize: true,
     lib: {
-      entry: {
-        index: 'src/index.ts',
-        internals: 'src/internals.ts',
-        ssr: 'src/ssr.ts',
-      },
-      name: 'lit',
-      formats: ['es', 'cjs'],
-      fileName: (format: string, entryName: string) =>
-        format === 'cjs' ? `${entryName}.cjs` : `${entryName}.js`,
+      entry: 'src/index.ts',
+      name: 'lit-utils',
+      fileName: 'index',
     },
     rollupOptions: {
-      external: [
-        '@golemui/core',
-        '@golemui/dx',
-        '@golemui/lit-utils',
-        'rxjs',
-        /^@?lit(-\w+)?($|\/.+)/,
-      ],
+      // External packages that should not be bundled into your library.
+      external: ['lit', /^lit\//],
     },
   },
   test: {
-    name: 'lit',
+    name: 'lit-utils',
     watch: false,
-    passWithNoTests: true,
     globals: true,
     environment: 'node',
     include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     reporters: ['default'],
     coverage: {
-      reportsDirectory: '../../coverage/libs/lit',
+      reportsDirectory: '../../coverage/libs/lit-utils',
       provider: 'v8' as const,
     },
   },

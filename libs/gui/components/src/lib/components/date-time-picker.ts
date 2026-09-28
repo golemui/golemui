@@ -1,8 +1,7 @@
 import { html, LitElement, nothing, type PropertyValues } from 'lit';
 import { property, state } from 'lit/decorators.js';
-import { safeDefine } from '@golemui/lit/internals';
+import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
-import type { DateRange, DisabledTimeRange } from '@golemui/gui-shared/internals';
 import './date-time-input';
 import './date-time-calendar';
 import type { GuiDateTime } from './date-time-input';
@@ -19,6 +18,7 @@ import {
 import { addErrors, addIcon, addLabel, addPickerPanel } from '../utils/templates';
 import { INVALID_DISABLED_TIME_RANGE_MESSAGE } from '../utils/messages';
 import { CARET_DOWN_PATH } from '../utils/icons';
+import type { DateRange, DisabledTimeRange } from '../types';
 
 export class GuiDateTimePicker extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;

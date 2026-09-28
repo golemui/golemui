@@ -1,9 +1,19 @@
-import {
-  isOption,
-  type OneOfProps,
-  type Option,
-  type OptionValue,
-} from '@golemui/gui-shared/internals';
+import type { Option, OptionValue } from '../types';
+
+/** The fields that map an object's properties to an option's label and value. */
+export type OptionFields = {
+  labelField?: string;
+  valueField?: string;
+};
+
+/**
+ * Checks whether a value is a fully compliant Option (with label and value fields)
+ */
+const isOption = (opt: unknown): opt is Option =>
+  opt !== null &&
+  typeof opt === 'object' &&
+  Object.prototype.hasOwnProperty.call(opt, 'label') &&
+  Object.prototype.hasOwnProperty.call(opt, 'value');
 
 /**
  * Checks whether a value is a valid option value
@@ -20,7 +30,7 @@ export function inferOptionValue(value: string, options: Option[]): OptionValue 
 /**
  * Returns an array of normalized Options
  */
-export const updateOptions = (opts: Option[], props: OneOfProps): Option[] => {
+export const updateOptions = (opts: Option[], props: OptionFields): Option[] => {
   if (Array.isArray(opts) && opts.length > 0) {
     if (isOption(opts[0])) {
       // nothing to do
@@ -43,7 +53,7 @@ export const updateOptions = (opts: Option[], props: OneOfProps): Option[] => {
 /** Checks if an object can be converted into an actual Option */
 export const isProtoOption = (
   opt: unknown,
-  { labelField, valueField }: OneOfProps,
+  { labelField, valueField }: OptionFields,
 ): opt is Record<string, unknown> => {
   if (opt === null || typeof opt !== 'object') {
     return false;
@@ -64,7 +74,7 @@ export const isProtoOption = (
 };
 
 /** Returns a mapper function that converts objects into { label, value } */
-export function createOptionMapper(opt: unknown, { labelField, valueField }: OneOfProps) {
+export function createOptionMapper(opt: unknown, { labelField, valueField }: OptionFields) {
   if (opt === null || typeof opt !== 'object') {
     throw new Error('Provided value is not an object');
   }

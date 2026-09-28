@@ -1,7 +1,7 @@
-import type { DateTimeRange, RangeDateTimeInputProps } from '@golemui/gui-shared/internals';
 import { html, LitElement, nothing, type PropertyValues } from 'lit';
 import { property } from 'lit/decorators.js';
-import { cspStyleMap, safeDefine } from '@golemui/lit/internals';
+import { cspStyleMap } from '@golemui/lit-utils';
+import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { GUIEditSessionController } from '../controllers/edit-session.controller';
@@ -51,6 +51,12 @@ import {
   formatEditMessage,
   INCOMPLETE_DATE_TIME_MESSAGE,
 } from '../utils/messages';
+import type { DateTimeRange } from '../types';
+
+/** What <gui-range-date-time-input> renders besides the control state: its presentation props. */
+export type GuiRangeDateTimeInputProps = {
+  hint?: string;
+};
 
 export class GuiRangeDateTimeInput extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
@@ -294,7 +300,7 @@ export class GuiRangeDateTimeInput extends LitElement {
   }
 
   override render() {
-    const templateData: ControlTemplateData<DateTimeRange[]> & RangeDateTimeInputProps = {
+    const templateData: ControlTemplateData<DateTimeRange[]> & GuiRangeDateTimeInputProps = {
       uid: this.uid,
       label: this.label,
       errors: this.errors,

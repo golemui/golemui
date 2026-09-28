@@ -1,12 +1,12 @@
 import { html, LitElement, nothing } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import { live } from 'lit/directives/live.js';
-import { cspStyleMap, safeDefine } from '@golemui/lit/internals';
+import { cspStyleMap } from '@golemui/lit-utils';
+import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
-import type { Dependencies } from '@golemui/gui-shared';
-import type { MarkdownProps } from '@golemui/gui-shared/internals';
+import type { MarkdownParser } from '../types';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import './markdown-text';
 import {
@@ -21,6 +21,18 @@ import {
   TEXT_ITALIC_BOLD_PATH,
   TEXT_STRIKETHROUGH_PATH,
 } from '../utils/icons';
+
+/** What <gui-markdown> renders besides the control state: its presentation props. */
+export type GuiMarkdownProps = {
+  hint?: string;
+  placeholder?: string;
+  counterMode?: 'remaining' | 'current';
+  minimumHeight?: number;
+  autoGrow?: boolean;
+  defaultOpenPreview?: boolean;
+  maxLength?: number;
+  dependencies?: { markdown?: MarkdownParser };
+};
 
 export class GuiMarkdown extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
@@ -64,7 +76,7 @@ export class GuiMarkdown extends LitElement {
     | undefined = undefined;
 
   // Deps
-  @property({ type: Object }) dependencies: Dependencies | undefined = undefined;
+  @property({ type: Object }) dependencies: { markdown?: MarkdownParser } | undefined = undefined;
 
   @state() private splitViewActive = false;
   @state() private activeFormats: Record<string, boolean> = {};
@@ -109,8 +121,7 @@ export class GuiMarkdown extends LitElement {
   override render() {
     super.render();
 
-    const templateData: ControlTemplateData<string> &
-      MarkdownProps & { dependencies?: Dependencies } = {
+    const templateData: ControlTemplateData<string> & GuiMarkdownProps = {
       uid: this.uid,
       label: this.label,
       errors: this.errors,

@@ -1,7 +1,6 @@
-import type { DateinputProps } from '@golemui/gui-shared/internals';
 import { html, LitElement, nothing, type PropertyValues } from 'lit';
 import { property } from 'lit/decorators.js';
-import { safeDefine } from '@golemui/lit/internals';
+import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
@@ -20,6 +19,12 @@ import {
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 
 const DATE_PART_TYPES: readonly DateTimePartType[] = ['day', 'month', 'year'];
+
+/** What <gui-date-input> renders besides the control state: its presentation props. */
+export type GuiDateProps = {
+  icon?: string;
+  hint?: string;
+};
 
 export class GuiDate extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
@@ -142,7 +147,7 @@ export class GuiDate extends LitElement {
   }
 
   override render() {
-    const templateData: ControlTemplateData<string> & DateinputProps = {
+    const templateData: ControlTemplateData<string> & GuiDateProps = {
       uid: this.uid,
       label: this.label,
       errors: this.errors,

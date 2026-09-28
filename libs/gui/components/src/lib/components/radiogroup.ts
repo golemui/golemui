@@ -1,17 +1,21 @@
-import type {
-  OneOfProps,
-  Option,
-  OptionValue,
-  RadiogroupProps,
-} from '@golemui/gui-shared/internals';
 import { html, LitElement, nothing } from 'lit';
-import { repeat } from 'lit-html/directives/repeat.js';
+import { repeat } from 'lit/directives/repeat.js';
 import { property } from 'lit/decorators.js';
 import { live } from 'lit/directives/live.js';
-import { safeDefine } from '@golemui/lit/internals';
+import { safeDefine } from '@golemui/lit-utils';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 import { inferOptionValue, updateOptions } from './one-of';
+import type { Option, OptionValue } from '../types';
+
+/** What <gui-radiogroup> renders besides the control state: its presentation props. */
+export type GuiRadiogroupProps = {
+  hint?: string;
+  options?: Option[];
+  labelField?: string;
+  valueField?: string;
+  direction?: 'row' | 'column';
+};
 
 export class GuiRadiogroup extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
@@ -61,7 +65,7 @@ export class GuiRadiogroup extends LitElement {
   override render() {
     super.render();
 
-    const templateData: ControlTemplateData<OptionValue> & RadiogroupProps = {
+    const templateData: ControlTemplateData<OptionValue> & GuiRadiogroupProps = {
       uid: this.uid,
       label: this.label,
       errors: this.errors,
@@ -80,7 +84,7 @@ export class GuiRadiogroup extends LitElement {
     this.options = updateOptions(this.options, {
       labelField: this.labelField,
       valueField: this.valueField,
-    } as OneOfProps);
+    });
     const selection = this.value;
     this.hasMatchingValue = this.options?.length
       ? this.options.find(({ value }) => value === selection) !== undefined
