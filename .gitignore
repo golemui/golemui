@@ -74,3 +74,9 @@ lit-test-app
 # Template lock files. A template records its versions in package.json only, which the
 # release tool rewrites. Every template README says npm install.
 templates/*/package-lock.json
+
+# Local-only visual regression harness for the v2 refactor. See visual-regression/README.md.
+/visual-regression/
+/libs/gui/*/cypress.visual.config.ts
+/libs/gui/*/cypress-image-diff.config.cjs
+/libs/gui/*/cypress-visual/

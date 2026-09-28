@@ -44,6 +44,12 @@ describe('server rendering a form in plain node', () => {
     expect(markup).not.toContain('Loading form...');
   });
 
+  // Native constraint validation stays off: the engine owns validation, and the form-associated
+  // gui-* elements planned for v2 would otherwise trigger the browser's own validation UI.
+  it('turns off native form validation', () => {
+    expect(markup).toMatch(/<form[^>]*\snovalidate/);
+  });
+
   it('renders every widget of the definition', () => {
     expect(markup.match(/<gui-stub-input/g)).toHaveLength(2);
     expect(markup).toMatch(/<div[^>]*class="stub-flex"[^>]*id="root"/);
