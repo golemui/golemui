@@ -20,7 +20,20 @@ export class GuiMultiList extends GuiList {
     return !!this.values?.includes(value);
   }
 
+  protected override get controlValue(): unknown {
+    return this.values;
+  }
+
+  protected override set controlValue(values: unknown) {
+    this.values = values as OptionValue[] | undefined;
+  }
+
   protected override selectItem(item: ListItem<unknown>) {
+    const values = this.values ?? [];
+    const value = item.value as OptionValue;
+    this.values = values.includes(value)
+      ? values.filter((current) => current !== value)
+      : [...values, value];
     this.dispatchEvent(
       new CustomEvent('gui-item-toggle', {
         detail: { value: item.value },

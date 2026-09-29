@@ -24,7 +24,7 @@ import {
   formatFileMessage,
 } from '../utils/messages';
 import type { FileItem, UploadService } from '../types';
-import { GuiElement } from '../gui-element';
+import { GuiFormControl } from '../gui-form-control';
 import { dispatchValue } from '../utils/events';
 
 /** What <gui-file-upload> renders besides the control state: its presentation props. */
@@ -44,14 +44,13 @@ export type GuiFileUploadProps = {
  * courtesy on explicit user removals and single-file replacement. See the
  * `UploadService` doc in `../types.ts`.
  */
-export class GuiFileUpload extends GuiElement {
+export class GuiFileUpload extends GuiFormControl {
   /** The form data path, forwarded to `uploadService.upload` as `ctx.path`. */
   @property({ type: String }) path: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: Array }) errors: string[] | undefined = [];
   @property({ type: Boolean }) touched: boolean | undefined = undefined;
   @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean }) disabled: boolean | undefined = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
   @property({ type: Object }) value: FileItem | null | undefined = null;
   @property({ type: Object }) dependencies: { uploadService?: UploadService } | undefined =

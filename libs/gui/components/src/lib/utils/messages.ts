@@ -2,6 +2,15 @@
  * Shared user-facing validation messages for the segmented date/time inputs.
  */
 
+/** Default message the browser shows for a required element without a value. **/
+export const VALUE_MISSING_MESSAGE = 'Please fill out this field.';
+
+/** Default message the browser shows for a number below `minimum`. `{min}` is the bound. **/
+export const RANGE_UNDERFLOW_MESSAGE = 'Value must be greater than or equal to {min}.';
+
+/** Default message the browser shows for a number above `maximum`. `{max}` is the bound. **/
+export const RANGE_OVERFLOW_MESSAGE = 'Value must be less than or equal to {max}.';
+
 /** Default `gui-input-error` message for a complete but impossible date (e.g. Feb 31). **/
 export const INVALID_DATE_MESSAGE =
   'Invalid date: day is greater than the maximum valid day for the month and year.';

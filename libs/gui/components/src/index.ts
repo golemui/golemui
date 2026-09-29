@@ -100,6 +100,10 @@ export type {
   UploadService,
 } from './lib/types';
 
+// ─── Events ───
+
+export type { GuiValueEventDetail } from './lib/utils/events';
+
 // ─── Controllers ───
 
 export { GUIAriaController } from './lib/controllers/aria.controller';

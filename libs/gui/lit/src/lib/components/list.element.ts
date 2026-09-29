@@ -10,6 +10,7 @@ import { defaultListItemRenderer } from './default-list-item-renderer';
 import '@golemui/gui-components/label';
 import '@golemui/gui-components/list';
 import '@golemui/gui-components/errors';
+import { live } from 'lit/directives/live.js';
 
 export class ListElement extends LitElement implements WithWidget {
   widget!: InputWidget<string>;
@@ -94,7 +95,7 @@ export class ListElement extends LitElement implements WithWidget {
       <div class="gui-widget">
         <gui-list
           .uid=${this.widget.uid}
-          .value=${templateData.value ?? ''}
+          .value=${live(templateData.value ?? '')}
           .valueField=${templateData.valueField as string}
           .items=${templateData.items}
           .itemHeight=${templateData.itemHeight}

@@ -10,6 +10,7 @@ import { defaultMultiListItemRenderer } from './default-multi-list-item-renderer
 import '@golemui/gui-components/label';
 import '@golemui/gui-components/multi-list';
 import '@golemui/gui-components/errors';
+import { live } from 'lit/directives/live.js';
 
 export class MultiListElement extends LitElement implements WithWidget {
   widget!: InputWidget<OptionValue[]>;
@@ -95,7 +96,7 @@ export class MultiListElement extends LitElement implements WithWidget {
       <div class="gui-widget">
         <gui-multi-list
           .uid=${this.widget.uid}
-          .values=${values}
+          .values=${live(values)}
           .valueField=${templateData.valueField as string}
           .items=${templateData.items}
           .itemHeight=${templateData.itemHeight}

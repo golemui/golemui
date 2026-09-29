@@ -21,7 +21,7 @@ import {
   TEXT_ITALIC_BOLD_PATH,
   TEXT_STRIKETHROUGH_PATH,
 } from '../utils/icons';
-import { GuiElement } from '../gui-element';
+import { GuiFormControl } from '../gui-form-control';
 import { dispatchChange, dispatchValue } from '../utils/events';
 
 /** What <gui-markdown> renders besides the control state: its presentation props. */
@@ -36,13 +36,12 @@ export type GuiMarkdownProps = {
   dependencies?: { markdown?: MarkdownParser };
 };
 
-export class GuiMarkdown extends GuiElement {
+export class GuiMarkdown extends GuiFormControl {
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
   @property({ type: Array }) errors: string[] | undefined = [];
   @property({ type: Boolean }) touched: boolean | undefined = undefined;
   @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean }) disabled: boolean | undefined = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
   @property({ type: String }) value: string | undefined = undefined;
 
@@ -648,7 +647,8 @@ export class GuiMarkdown extends GuiElement {
 
     if (!this.readOnly) {
       const target = event.target as HTMLInputElement;
-      dispatchValue(this, target.value, { commit: false });
+      this.value = target.value;
+      dispatchValue(this, this.value, { commit: false });
     }
   }
 

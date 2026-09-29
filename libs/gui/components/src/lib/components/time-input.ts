@@ -21,7 +21,7 @@ import {
 const TIME_PART_TYPES: readonly DateTimePartType[] = ['hour', 'minute'];
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 import { getTimeFormatParts, type HourFormat } from '../utils/time';
-import { GuiElement } from '../gui-element';
+import { boundsValidity, GuiFormControl, type GuiValidity } from '../gui-form-control';
 import { dispatchValue } from '../utils/events';
 
 /** What <gui-time-input> renders besides the control state: its presentation props. */
@@ -30,14 +30,13 @@ export type GuiTimeProps = {
   hint?: string;
 };
 
-export class GuiTime extends GuiElement {
+export class GuiTime extends GuiFormControl {
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
   @property({ type: Array }) errors: string[] | undefined = [];
   @property({ type: Boolean }) showErrors: boolean | undefined = true;
   @property({ type: Boolean }) touched: boolean | undefined = undefined;
   @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean }) disabled: boolean | undefined = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
 
   @property({ type: String }) icon: string | undefined = '';
@@ -256,7 +255,8 @@ export class GuiTime extends GuiElement {
     });
 
     if (boundsError) {
-      dispatchValue(this, result.iso);
+      this.value = result.iso;
+      dispatchValue(this, this.value);
       this._parts.surfaceInputError(boundsError);
       this.requestUpdate();
       return;
@@ -266,6 +266,25 @@ export class GuiTime extends GuiElement {
     this._parts.resetSurfacedInputError();
     dispatchValue(this, this.value);
     this.requestUpdate();
+  }
+
+  /** An out-of-bounds time, then a typed time the element rejected, then `required`. */
+  protected override validate(): GuiValidity | null {
+    const boundsError = this.value
+      ? timeBoundsError(this.value, {
+          minTime: this.minTime,
+          maxTime: this.maxTime,
+          minTimeMessage: this.minTimeMessage,
+          maxTimeMessage: this.maxTimeMessage,
+        })
+      : null;
+    return (
+      boundsValidity(boundsError, this.value, this.minTime, this.maxTime) ??
+      (this._parts.surfacedInputError
+        ? { flags: { badInput: true }, message: this._parts.surfacedInputError }
+        : null) ??
+      super.validate()
+    );
   }
 
   /** The group's fill state, for host pickers' own focus-leave checks. */

@@ -20,7 +20,7 @@ import {
 } from '../utils/date';
 import { buildMonthDays, computeDayStatus } from '../utils/day-status';
 import type { DateRange } from '../types';
-import { GuiElement } from '../gui-element';
+import { GuiFormControl } from '../gui-form-control';
 import { dispatchValue } from '../utils/events';
 
 export interface CalendarDay {
@@ -33,14 +33,13 @@ export interface CalendarDay {
   isDisabled: boolean;
 }
 
-export class GuiCalendar extends GuiElement {
+export class GuiCalendar extends GuiFormControl {
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String }) hint: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
   @property({ type: Array }) errors: string[] | undefined = [];
   @property({ type: Boolean }) touched: boolean | undefined = undefined;
   @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean }) disabled: boolean | undefined = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
 
   @property({ type: String, attribute: 'prev-month-icon' }) prevMonthIcon: string | undefined = '';

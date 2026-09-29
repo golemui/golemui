@@ -5,7 +5,7 @@ import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addIcon, addLabel, type ControlTemplateData } from '../utils/templates';
 import { blockNonNumericInput, blockNonNumericKeys, isRealNumber } from '../utils/numeric';
-import { GuiElement } from '../gui-element';
+import { GuiFormControl } from '../gui-form-control';
 import { dispatchChange, dispatchValue } from '../utils/events';
 
 /** What <gui-currency> renders besides the control state: its presentation props. */
@@ -19,13 +19,12 @@ export type GuiCurrencyProps = {
   autocomplete?: string;
 };
 
-export class GuiCurrency extends GuiElement {
+export class GuiCurrency extends GuiFormControl {
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
   @property({ type: Array }) errors: string[] | undefined = [];
   @property({ type: Boolean }) touched: boolean | undefined = undefined;
   @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean }) disabled: boolean | undefined = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
   @property({ type: String }) value: number | null | undefined = undefined;
 
@@ -198,7 +197,8 @@ export class GuiCurrency extends GuiElement {
       this.displayValue = this.formatCurrency(target.valueAsNumber);
 
       const value = target.valueAsNumber;
-      dispatchValue(this, Number.isNaN(value) ? undefined : value, { commit: false });
+      this.value = Number.isNaN(value) ? undefined : value;
+      dispatchValue(this, this.value, { commit: false });
     }
   }
 

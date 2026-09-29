@@ -11,10 +11,10 @@ import { dateBoundsError } from '../utils/date';
 import { addErrors, addIcon, addLabel, addPickerPanel } from '../utils/templates';
 import { CARET_DOWN_PATH } from '../utils/icons';
 import type { DateRange } from '../types';
-import { GuiElement } from '../gui-element';
+import { boundsValidity, GuiFormControl, type GuiValidity } from '../gui-form-control';
 import { dispatchChange, dispatchValue } from '../utils/events';
 
-export class GuiDatePicker extends GuiElement {
+export class GuiDatePicker extends GuiFormControl {
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String }) hint: string | undefined = undefined;
   @property({ type: String }) icon: string | undefined = '';
@@ -27,7 +27,6 @@ export class GuiDatePicker extends GuiElement {
   @property({ type: Boolean }) showErrors: boolean | undefined = true;
   @property({ type: Boolean }) touched: boolean | undefined = undefined;
   @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean }) disabled: boolean | undefined = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
   @property({ type: String }) value: string | undefined = undefined;
@@ -266,6 +265,13 @@ export class GuiDatePicker extends GuiElement {
         }),
       );
     }
+  }
+
+  protected override validate(): GuiValidity | null {
+    return (
+      boundsValidity(this.validateBounds(this.value), this.value, this.minDate, this.maxDate) ??
+      super.validate()
+    );
   }
 
   private validateBounds(value: string | undefined): string | null {

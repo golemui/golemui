@@ -11,6 +11,7 @@ import { defaultListItemRenderer } from './default-list-item-renderer';
 import '@golemui/gui-components/label';
 import '@golemui/gui-components/list';
 import '@golemui/gui-components/errors';
+import { live } from 'lit/directives/live.js';
 
 export class DropdownElement extends LitElement implements WithWidget {
   widget!: InputWidget<string>;
@@ -377,7 +378,7 @@ export class DropdownElement extends LitElement implements WithWidget {
           <gui-list
             id=${`${this.widget.uid}-list`}
             .uid=${this.widget.uid}
-            .value=${templateData.value ?? ''}
+            .value=${live(templateData.value ?? '')}
             .valueField=${templateData.valueField! as string}
             .items=${this._isFiltering && !asyncFiltering
               ? this._filteredItems

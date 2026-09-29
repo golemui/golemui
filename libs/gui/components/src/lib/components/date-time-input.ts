@@ -27,9 +27,14 @@ const DATE_TIME_PART_TYPES: readonly DateTimePartType[] = [
   'hour',
   'minute',
 ];
-import { getDateTimeFormatParts, toISOTimeString, type HourFormat } from '../utils/time';
+import {
+  getDateTimeFormatParts,
+  parseISODateTimeString,
+  toISOTimeString,
+  type HourFormat,
+} from '../utils/time';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
-import { GuiElement } from '../gui-element';
+import { boundsValidity, GuiFormControl, type GuiValidity } from '../gui-form-control';
 import { dispatchValue } from '../utils/events';
 
 /** What <gui-date-time-input> renders besides the control state: its presentation props. */
@@ -38,14 +43,13 @@ export type GuiDateTimeProps = {
   hint?: string;
 };
 
-export class GuiDateTime extends GuiElement {
+export class GuiDateTime extends GuiFormControl {
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
   @property({ type: Array }) errors: string[] | undefined = [];
   @property({ type: Boolean }) showErrors: boolean | undefined = true;
   @property({ type: Boolean }) touched: boolean | undefined = undefined;
   @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean }) disabled: boolean | undefined = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
 
   @property({ type: String }) icon: string | undefined = '';
@@ -167,6 +171,23 @@ export class GuiDateTime extends GuiElement {
    * Constrains the date and time axes independently: `minDate`/`maxDate` bound
    * the day, `minTime`/`maxTime` bound the time-of-day on every allowed day.
    */
+  /**
+   * An out-of-bounds date-time, then a typed one the element rejected, then `required`. The
+   * bounds are days: a time outside the allowed times reports as a custom error.
+   */
+  protected override validate(): GuiValidity | null {
+    const boundsError = this.value
+      ? this.boundsError(this.value, parseISODateTimeString(this.value))
+      : null;
+    return (
+      boundsValidity(boundsError, this.value?.slice(0, 10), this.minDate, this.maxDate) ??
+      (this._parts.surfacedInputError
+        ? { flags: { badInput: true }, message: this._parts.surfacedInputError }
+        : null) ??
+      super.validate()
+    );
+  }
+
   private boundsError(iso: string, instant: Date): string | null {
     return (
       dateBoundsError(iso, this.minDate, this.maxDate, undefined, {
@@ -298,7 +319,8 @@ export class GuiDateTime extends GuiElement {
 
     // Out of bounds: advance the value (so a host popover reflects it) then error.
     if (boundsError) {
-      dispatchValue(this, result.iso);
+      this.value = result.iso;
+      dispatchValue(this, this.value);
       this._parts.surfaceInputError(boundsError);
       this.requestUpdate();
       return;

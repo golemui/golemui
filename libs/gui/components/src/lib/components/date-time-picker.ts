@@ -19,10 +19,10 @@ import { addErrors, addIcon, addLabel, addPickerPanel } from '../utils/templates
 import { INVALID_DISABLED_TIME_RANGE_MESSAGE } from '../utils/messages';
 import { CARET_DOWN_PATH } from '../utils/icons';
 import type { DateRange, DisabledTimeRange } from '../types';
-import { GuiElement } from '../gui-element';
+import { boundsValidity, GuiFormControl, type GuiValidity } from '../gui-form-control';
 import { dispatchValue, stopPropagation } from '../utils/events';
 
-export class GuiDateTimePicker extends GuiElement {
+export class GuiDateTimePicker extends GuiFormControl {
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String }) hint: string | undefined = undefined;
   @property({ type: String }) icon: string | undefined = '';
@@ -38,7 +38,6 @@ export class GuiDateTimePicker extends GuiElement {
   @property({ type: Boolean }) showErrors: boolean | undefined = true;
   @property({ type: Boolean }) touched: boolean | undefined = undefined;
   @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean }) disabled: boolean | undefined = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
   @property({ type: String }) value: string | undefined = undefined;
@@ -392,6 +391,15 @@ export class GuiDateTimePicker extends GuiElement {
   private onFocusLeave(): void {
     this.dispatchEvent(new CustomEvent('gui-blur'));
     this.querySelector<GuiDateTime>('gui-date-time')?.settleOnFocusLeave();
+  }
+
+  protected override validate(): GuiValidity | null {
+    // The bounds are days: a time outside a day's allowed times reports as a custom error.
+    const day = this.value?.slice(0, 10);
+    return (
+      boundsValidity(this.validateBounds(this.value), day, this.minDate, this.maxDate) ??
+      super.validate()
+    );
   }
 
   private validateBounds(value: string | undefined): string | null {

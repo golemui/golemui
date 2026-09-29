@@ -17,7 +17,7 @@ import {
   type GroupCompleteness,
 } from '../utils/parts';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
-import { GuiElement } from '../gui-element';
+import { boundsValidity, GuiFormControl, type GuiValidity } from '../gui-form-control';
 import { dispatchValue } from '../utils/events';
 
 const DATE_PART_TYPES: readonly DateTimePartType[] = ['day', 'month', 'year'];
@@ -28,14 +28,13 @@ export type GuiDateProps = {
   hint?: string;
 };
 
-export class GuiDate extends GuiElement {
+export class GuiDate extends GuiFormControl {
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
   @property({ type: Array }) errors: string[] | undefined = [];
   @property({ type: Boolean }) showErrors: boolean | undefined = true;
   @property({ type: Boolean }) touched: boolean | undefined = undefined;
   @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean }) disabled: boolean | undefined = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
 
   @property({ type: String }) icon: string | undefined = '';
@@ -239,7 +238,8 @@ export class GuiDate extends GuiElement {
       });
 
       if (boundsError) {
-        dispatchValue(this, result.iso);
+        this.value = result.iso;
+        dispatchValue(this, this.value);
         this._parts.surfaceInputError(boundsError);
         this.requestUpdate();
         return;
@@ -252,6 +252,23 @@ export class GuiDate extends GuiElement {
     }
 
     this.requestUpdate();
+  }
+
+  /** An out-of-bounds date, then a typed date the element rejected, then `required`. */
+  protected override validate(): GuiValidity | null {
+    const boundsError = this.value
+      ? dateBoundsError(this.value, this.minDate, this.maxDate, undefined, {
+          minDateMessage: this.minDateMessage,
+          maxDateMessage: this.maxDateMessage,
+        })
+      : null;
+    return (
+      boundsValidity(boundsError, this.value, this.minDate, this.maxDate) ??
+      (this._parts.surfacedInputError
+        ? { flags: { badInput: true }, message: this._parts.surfacedInputError }
+        : null) ??
+      super.validate()
+    );
   }
 
   /** The group's fill state, for host pickers' own focus-leave checks. */

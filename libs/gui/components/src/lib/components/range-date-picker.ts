@@ -12,10 +12,10 @@ import { addErrors, addIcon, addLabel, addPickerPanel } from '../utils/templates
 import { DISABLED_DATE_RANGE_MESSAGE } from '../utils/messages';
 import { CARET_DOWN_PATH } from '../utils/icons';
 import type { DateRange } from '../types';
-import { GuiElement } from '../gui-element';
+import { GuiFormControl } from '../gui-form-control';
 import { dispatchChange, dispatchValue, stopPropagation } from '../utils/events';
 
-export class GuiRangeDatePicker extends GuiElement {
+export class GuiRangeDatePicker extends GuiFormControl {
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String }) hint: string | undefined = undefined;
   @property({ type: String }) icon: string | undefined = '';
@@ -28,7 +28,6 @@ export class GuiRangeDatePicker extends GuiElement {
   @property({ type: Boolean }) showErrors: boolean | undefined = true;
   @property({ type: Boolean }) touched: boolean | undefined = undefined;
   @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean }) disabled: boolean | undefined = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
   @property({ type: Array }) value: DateRange[] | undefined = [];

@@ -13,10 +13,10 @@ import { timeBoundsError } from '../utils/parts';
 import { addErrors, addIcon, addLabel, addPickerPanel } from '../utils/templates';
 import { INVALID_DISABLED_TIME_RANGE_MESSAGE } from '../utils/messages';
 import { CARET_DOWN_PATH } from '../utils/icons';
-import { GuiElement } from '../gui-element';
+import { boundsValidity, GuiFormControl, type GuiValidity } from '../gui-form-control';
 import { dispatchValue, stopPropagation } from '../utils/events';
 
-export class GuiTimePicker extends GuiElement {
+export class GuiTimePicker extends GuiFormControl {
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String }) hint: string | undefined = undefined;
   @property({ type: String }) icon: string | undefined = '';
@@ -29,7 +29,6 @@ export class GuiTimePicker extends GuiElement {
   @property({ type: Boolean }) showErrors: boolean | undefined = true;
   @property({ type: Boolean }) touched: boolean | undefined = undefined;
   @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean }) disabled: boolean | undefined = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
   @property({ type: String }) value: string | undefined = undefined;
@@ -267,6 +266,13 @@ export class GuiTimePicker extends GuiElement {
         }),
       );
     }
+  }
+
+  protected override validate(): GuiValidity | null {
+    return (
+      boundsValidity(this.validateBounds(this.value), this.value, this.minTime, this.maxTime) ??
+      super.validate()
+    );
   }
 
   private validateBounds(value: string | undefined): string | null {

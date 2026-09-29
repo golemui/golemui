@@ -6,7 +6,8 @@ import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 import { blockNonNumericInput, blockNonNumericKeys, isRealNumber } from '../utils/numeric';
 import { CARET_DOWN_PATH, CARET_UP_PATH } from '../utils/icons';
-import { GuiElement } from '../gui-element';
+import { GuiFormControl, type GuiValidity } from '../gui-form-control';
+import { RANGE_OVERFLOW_MESSAGE, RANGE_UNDERFLOW_MESSAGE } from '../utils/messages';
 import { dispatchChange, dispatchValue } from '../utils/events';
 
 /** What <gui-number> renders besides the control state: its presentation props. */
@@ -17,14 +18,13 @@ export type GuiNumberProps = {
   autocomplete?: string;
 };
 
-export class GuiNumber extends GuiElement {
+export class GuiNumber extends GuiFormControl {
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String }) hint: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
   @property({ type: Array }) errors: string[] | undefined = [];
   @property({ type: Boolean }) touched: boolean | undefined = undefined;
   @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean }) disabled: boolean | undefined = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
   @property({ type: Number }) value: number | undefined = undefined;
 
@@ -246,13 +246,31 @@ export class GuiNumber extends GuiElement {
     }
   }
 
+  protected override validate(): GuiValidity | null {
+    const value = this.normalizedValue;
+    if (value !== undefined && isRealNumber(this.minimum) && value < this.minimum) {
+      return {
+        flags: { rangeUnderflow: true },
+        message: RANGE_UNDERFLOW_MESSAGE.replace('{min}', String(this.minimum)),
+      };
+    }
+    if (value !== undefined && isRealNumber(this.maximum) && value > this.maximum) {
+      return {
+        flags: { rangeOverflow: true },
+        message: RANGE_OVERFLOW_MESSAGE.replace('{max}', String(this.maximum)),
+      };
+    }
+    return super.validate();
+  }
+
   valueChanged(event: InputEvent) {
     event.stopPropagation();
 
     if (!this.readOnly) {
       const target = event.target as HTMLInputElement;
       const value = target.valueAsNumber;
-      dispatchValue(this, Number.isNaN(value) ? undefined : value, { commit: false });
+      this.value = Number.isNaN(value) ? undefined : value;
+      dispatchValue(this, this.value, { commit: false });
     }
   }
 

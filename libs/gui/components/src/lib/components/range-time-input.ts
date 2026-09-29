@@ -51,7 +51,7 @@ import {
   INVALID_TIME_RANGE_ORDER_MESSAGE,
 } from '../utils/messages';
 import type { TimeRange } from '../types';
-import { GuiElement } from '../gui-element';
+import { GuiFormControl } from '../gui-form-control';
 import { dispatchValue } from '../utils/events';
 
 /** What <gui-range-time-input> renders besides the control state: its presentation props. */
@@ -59,14 +59,13 @@ export type GuiRangeTimeInputProps = {
   hint?: string;
 };
 
-export class GuiRangeTimeInput extends GuiElement {
+export class GuiRangeTimeInput extends GuiFormControl {
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
   @property({ type: Array }) errors: string[] | undefined = [];
   @property({ type: Boolean }) showErrors: boolean | undefined = true;
   @property({ type: Boolean }) touched: boolean | undefined = undefined;
   @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean }) disabled: boolean | undefined = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
 
   @property({ type: String }) icon: string | undefined = '';

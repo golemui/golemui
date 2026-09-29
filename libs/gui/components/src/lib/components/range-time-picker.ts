@@ -22,10 +22,10 @@ import {
 } from '../utils/messages';
 import { CARET_DOWN_PATH } from '../utils/icons';
 import type { TimeRange } from '../types';
-import { GuiElement } from '../gui-element';
+import { GuiFormControl, type GuiValidity } from '../gui-form-control';
 import { dispatchChange, dispatchValue, stopPropagation } from '../utils/events';
 
-export class GuiRangeTimePicker extends GuiElement {
+export class GuiRangeTimePicker extends GuiFormControl {
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String }) hint: string | undefined = undefined;
   @property({ type: String }) icon: string | undefined = '';
@@ -38,7 +38,6 @@ export class GuiRangeTimePicker extends GuiElement {
   @property({ type: Boolean }) showErrors: boolean | undefined = true;
   @property({ type: Boolean }) touched: boolean | undefined = undefined;
   @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean }) disabled: boolean | undefined = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
   @property({ type: Array }) value: TimeRange[] | undefined = [];
@@ -464,6 +463,11 @@ export class GuiRangeTimePicker extends GuiElement {
         }),
       );
     }
+  }
+
+  protected override validate(): GuiValidity | null {
+    const boundsError = this.validateBounds(this.value);
+    return boundsError ? { flags: { customError: true }, message: boundsError } : super.validate();
   }
 
   private validateBounds(value: TimeRange[] | undefined): string | null {

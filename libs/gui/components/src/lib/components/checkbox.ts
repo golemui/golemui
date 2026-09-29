@@ -4,7 +4,7 @@ import { property } from 'lit/decorators.js';
 import { live } from 'lit/directives/live.js';
 import { safeDefine } from '@golemui/lit-utils';
 import { addErrors, requiredMarker, type ControlTemplateData } from '../utils/templates';
-import { GuiElement } from '../gui-element';
+import { GuiFormControl } from '../gui-form-control';
 import { dispatchValue } from '../utils/events';
 
 /** What <gui-checkbox> renders besides the control state: its presentation props. */
@@ -13,13 +13,12 @@ export type GuiCheckboxProps = {
   checkboxPosition?: 'left' | 'right';
 };
 
-export class GuiCheckbox extends GuiElement {
+export class GuiCheckbox extends GuiFormControl {
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
   @property({ type: Array }) errors: string[] | undefined = [];
   @property({ type: Boolean }) touched: boolean | undefined = undefined;
   @property({ type: Boolean }) required: boolean | undefined = undefined;
-  @property({ type: Boolean }) disabled: boolean | undefined = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
   @property({ type: String }) value: boolean | undefined = undefined;
 
@@ -111,7 +110,8 @@ export class GuiCheckbox extends GuiElement {
 
     if (!this.readOnly) {
       const target = event.target as HTMLInputElement;
-      dispatchValue(this, target.checked);
+      this.value = target.checked;
+      dispatchValue(this, this.value);
     }
   }
 

@@ -5,10 +5,10 @@ import { safeDefine } from '@golemui/lit-utils';
 import { gridKeyStep, listPageSize, nextEnabledIndex } from '../utils/grid-nav';
 import { updateListItems } from './list-items';
 import type { ListItem, OptionValue } from '../types';
-import { GuiElement } from '../gui-element';
+import { GuiFormControl } from '../gui-form-control';
 import { dispatchValue } from '../utils/events';
 
-export class GuiList extends GuiElement {
+export class GuiList extends GuiFormControl {
   // Inline `style` attributes are blocked by a strict `style-src` CSP: static rules
   // live here (adopted stylesheet) and dynamic values go through `cspStyleMap` (CSSOM)
   static override styles = css`
@@ -35,7 +35,6 @@ export class GuiList extends GuiElement {
 
   @property({ type: Boolean }) touched: boolean | undefined = undefined;
   @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean }) disabled: boolean | undefined = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
   @property({ type: String }) value: OptionValue | undefined = undefined;
   @property({ type: String }) valueField: string | undefined = undefined;
@@ -249,6 +248,7 @@ export class GuiList extends GuiElement {
 
   /** The user picked an item: the list reports it as its new value. */
   protected selectItem(item: ListItem<any>) {
+    this.value = item.value;
     dispatchValue(this, item.value);
   }
 

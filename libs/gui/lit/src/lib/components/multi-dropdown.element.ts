@@ -23,6 +23,7 @@ import '@golemui/gui-components/label';
 import '@golemui/gui-components/multi-list';
 import '@golemui/gui-components/multi-select-trigger';
 import '@golemui/gui-components/errors';
+import { live } from 'lit/directives/live.js';
 
 export class MultiDropdownElement extends LitElement implements WithWidget {
   widget!: InputWidget<OptionValue[]>;
@@ -401,7 +402,7 @@ export class MultiDropdownElement extends LitElement implements WithWidget {
           <gui-multi-list
             id=${`${this.widget.uid}-list`}
             .uid=${this.widget.uid}
-            .values=${values}
+            .values=${live(values)}
             .valueField=${templateData.valueField! as string}
             .items=${this._isFiltering && !asyncFiltering
               ? this._filteredItems

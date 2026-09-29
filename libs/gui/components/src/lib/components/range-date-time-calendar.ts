@@ -73,17 +73,16 @@ import {
   INCOMPLETE_DATE_TIME_MESSAGE,
 } from '../utils/messages';
 import type { DateTimeRange } from '../types';
-import { GuiElement } from '../gui-element';
+import { GuiFormControl } from '../gui-form-control';
 import { dispatchValue } from '../utils/events';
 
-export class GuiRangeDateTimeCalendar extends GuiElement {
+export class GuiRangeDateTimeCalendar extends GuiFormControl {
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String }) hint: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
   @property({ type: Array }) errors: string[] | undefined = [];
   @property({ type: Boolean }) touched: boolean | undefined = undefined;
   @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean }) disabled: boolean | undefined = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
 
   @property({ type: String, attribute: 'prev-month-icon' }) prevMonthIcon: string | undefined = '';

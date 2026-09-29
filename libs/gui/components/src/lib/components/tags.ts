@@ -8,7 +8,7 @@ import { GUIPillsNavigationController } from '../controllers/pills-navigation.co
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 import './pills';
 import type { GuiPillEventDetail, GuiPillItem } from './pills';
-import { GuiElement } from '../gui-element';
+import { GuiFormControl } from '../gui-form-control';
 import { dispatchValue } from '../utils/events';
 
 type TagsSeparator = 'Enter' | ',' | 'Tab' | 'blur' | string;
@@ -22,13 +22,12 @@ export type GuiTagsProps = {
   icon?: string;
 };
 
-export class GuiTags extends GuiElement {
+export class GuiTags extends GuiFormControl {
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
   @property({ type: Array }) errors: string[] | undefined = [];
   @property({ type: Boolean }) touched: boolean | undefined = undefined;
   @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean }) disabled: boolean | undefined = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
   @property({ type: Array }) value: string[] | undefined = [];
 

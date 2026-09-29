@@ -37,7 +37,7 @@ import {
   type TimeRange,
 } from '../utils/time';
 import type { DateRange, DisabledTimeRange } from '../types';
-import { GuiElement } from '../gui-element';
+import { GuiFormControl } from '../gui-form-control';
 import { dispatchChange, dispatchValue } from '../utils/events';
 
 export interface DateTimeCalendarDay {
@@ -50,14 +50,13 @@ export interface DateTimeCalendarDay {
   isDisabled: boolean;
 }
 
-export class GuiDateTimeCalendar extends GuiElement {
+export class GuiDateTimeCalendar extends GuiFormControl {
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String }) hint: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
   @property({ type: Array }) errors: string[] | undefined = [];
   @property({ type: Boolean }) touched: boolean | undefined = undefined;
   @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean }) disabled: boolean | undefined = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
 
   @property({ type: String, attribute: 'prev-month-icon' }) prevMonthIcon: string | undefined = '';

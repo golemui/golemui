@@ -90,7 +90,7 @@ export class GUIPartsController implements ReactiveController {
   private options: GUIPartsControllerOptions;
 
   private _values: PartValues = {};
-  private _hasSurfacedInputError = false;
+  private _surfacedInputError: string | null = null;
   private _keydownTarget: EventTarget | null = null;
 
   constructor(host: GUIPartsHost, options: GUIPartsControllerOptions) {
@@ -560,7 +560,12 @@ export class GUIPartsController implements ReactiveController {
 
   /** Whether a `gui-input-error` has been surfaced and not yet cleared. */
   get hasSurfacedInputError(): boolean {
-    return this._hasSurfacedInputError;
+    return this._surfacedInputError !== null;
+  }
+
+  /** The message of the surfaced `gui-input-error`, or null when none is. */
+  get surfacedInputError(): string | null {
+    return this._surfacedInputError;
   }
 
   /**
@@ -568,7 +573,7 @@ export class GUIPartsController implements ReactiveController {
    * it can later be cleared.
    */
   surfaceInputError(message: string): void {
-    this._hasSurfacedInputError = true;
+    this._surfacedInputError = message;
     this.options.onInputErrorSurfaced?.(message);
   }
 
@@ -577,12 +582,12 @@ export class GUIPartsController implements ReactiveController {
    * value through `onSurfacedErrorCleared`; a no-op when nothing is surfaced.
    */
   clearSurfacedInputError(value: unknown): void {
-    if (!this._hasSurfacedInputError) return;
-    this._hasSurfacedInputError = false;
+    if (this._surfacedInputError === null) return;
+    this._surfacedInputError = null;
     this.options.onSurfacedErrorCleared?.(value);
   }
 
   resetSurfacedInputError(): void {
-    this._hasSurfacedInputError = false;
+    this._surfacedInputError = null;
   }
 }

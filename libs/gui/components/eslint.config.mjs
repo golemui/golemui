@@ -29,6 +29,8 @@ export default [
           ignoredFiles: [
             '{projectRoot}/eslint.config.{js,cjs,mjs,ts,cts,mts}',
             '{projectRoot}/src/**/*.spec*.ts',
+            '{projectRoot}/cypress/**/*',
+            '{projectRoot}/cypress.config.ts',
           ],
           ignoredDependencies: [
             '@nx/vite',
@@ -36,6 +38,8 @@ export default [
             'vite-plugin-dts',
             'sass',
             '@nx/dependency-checks',
+            'cypress',
+            'cypress-ct-lit',
           ],
         },
       ],

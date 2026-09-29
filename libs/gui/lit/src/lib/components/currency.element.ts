@@ -7,6 +7,7 @@ import { html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
 import { safeDefine, unsubscribeAll } from '@golemui/lit/internals';
 import { type Subscription } from 'rxjs';
+import { live } from 'lit/directives/live.js';
 
 export class CurrencyElement extends LitElement implements WithWidget {
   widget!: InputWidget<number>;
@@ -60,7 +61,7 @@ export class CurrencyElement extends LitElement implements WithWidget {
         ?required=${this.adapter.templateData.validator?.required}
         ?disabled=${this.adapter.templateData.disabled}
         ?readonly=${this.adapter.templateData.readonly}
-        .value=${this.adapter.templateData.value}
+        .value=${live(this.adapter.templateData.value)}
         .currency=${this.adapter.templateData.currency}
         .step=${this.adapter.templateData.step}
         .maximumFractionDigits=${this.adapter.templateData.maximumFractionDigits}
