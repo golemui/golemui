@@ -1,0 +1,65 @@
+// Every component's rules, without the tokens. Load tokens.css (or your own tokens) with it.
+@use 'sass:meta';
+@use 'layer-order';
+
+@layer golemui.base {
+  @include meta.load-css('base');
+}
+
+// One layer in source order: the component rules rely on it, and on specificity, among themselves.
+@layer golemui.components {
+  @include meta.load-css('rtl');
+
+  // Global widget styles
+  @include meta.load-css('widget');
+
+  // Input Widgets
+  @include meta.load-css('calendar');
+  @include meta.load-css('checkbox');
+  @include meta.load-css('currency');
+  @include meta.load-css('date');
+  @include meta.load-css('date-picker');
+  @include meta.load-css('date-time');
+  @include meta.load-css('date-time-calendar');
+  @include meta.load-css('date-time-parts');
+  @include meta.load-css('dropdown');
+  @include meta.load-css('file-upload');
+  @include meta.load-css('list');
+  @include meta.load-css('markdown');
+  @include meta.load-css('multi-select');
+  @include meta.load-css('number');
+  @include meta.load-css('password');
+  @include meta.load-css('picker');
+  @include meta.load-css('pills');
+  @include meta.load-css('radiogroup');
+  @include meta.load-css('range-calendar');
+  @include meta.load-css('range-date');
+  @include meta.load-css('range-date-time');
+  @include meta.load-css('range-date-time-calendar');
+  @include meta.load-css('range-time');
+  @include meta.load-css('range-time-picker');
+  @include meta.load-css('select');
+  @include meta.load-css('tags');
+  @include meta.load-css('textarea');
+  @include meta.load-css('textinput');
+  @include meta.load-css('time');
+  @include meta.load-css('time-list');
+  @include meta.load-css('time-picker');
+  @include meta.load-css('toggle');
+
+  // Layout Widgets
+  @include meta.load-css('flex');
+  @include meta.load-css('grid');
+  @include meta.load-css('tabs');
+  @include meta.load-css('accordion');
+
+  // Action Widgets
+  @include meta.load-css('button');
+
+  // Display Widgets
+  @include meta.load-css('alert');
+  @include meta.load-css('markdown-text');
+
+  // Validators
+  @include meta.load-css('validator');
+}

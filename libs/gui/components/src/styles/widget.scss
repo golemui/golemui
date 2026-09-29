@@ -138,7 +138,7 @@
   min-height: var(--gui-widget-size);
 }
 
-@container gui-form (max-width: 480px) {
+@container gui-container (max-width: 480px) {
   .gui-widget.gui-widget--horizontal {
     flex-direction: column;
   }

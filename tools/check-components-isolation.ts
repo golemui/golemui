@@ -10,7 +10,7 @@ import { fileURLToPath } from 'node:url';
  * GolemUI Components must work without the form engine: it needs `lit` and its own
  * @golemui/lit-utils helpers, nothing else. This script packs both built packages, installs
  * them in an empty project next to `lit`, then imports the package root, one component entry
- * point and the stylesheet. An import of any other @golemui package fails there, because
+ * point and resolves the stylesheets. An import of any other @golemui package fails there, because
  * none is installed.
  *
  * Run with `npm run test:components-isolation`. Pass `--skip-build` to reuse the existing
@@ -39,7 +39,10 @@ await import('@golemui/gui-components/textinput');
 if (!customElements.get('gui-textinput')) {
   throw new Error('gui-textinput was not registered');
 }
-createRequire(import.meta.url).resolve('@golemui/gui-components/index.css');
+const require = createRequire(import.meta.url);
+for (const stylesheet of ['index.css', 'tokens.css', 'components.css', 'themes/clay.css']) {
+  require.resolve(\`@golemui/gui-components/\${stylesheet}\`);
+}
 `;
 
 function main() {

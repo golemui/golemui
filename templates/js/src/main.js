@@ -1,4 +1,5 @@
 import '@golemui/gui-components/index.css';
+import '@golemui/gui-shared/forms.css';
 import '@golemui/gui-lit';
 import { gui } from '@golemui/gui-shared';
 import './styles.css';

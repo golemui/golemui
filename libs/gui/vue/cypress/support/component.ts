@@ -1,5 +1,6 @@
 import { mount } from 'cypress/vue';
 import '../../../components/src/styles/index.scss';
+import '../../../shared/src/styles/forms.scss';
 import { memoryCleaner } from '@golemui/ui-testing';
 import './commands';
 

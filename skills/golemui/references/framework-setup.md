@@ -17,11 +17,12 @@ npm i @golemui/core @golemui/lit @golemui/gui-lit @golemui/gui-components @golem
 npm i @lit-labs/ssr@^4.1.0
 ```
 
-Then import the component styles ONCE in the app entry (mandatory — without it the form
-renders unstyled):
+Then import the two stylesheets ONCE in the app entry, in this order (mandatory — without them the
+form renders unstyled):
 
 ```ts
 import '@golemui/gui-components/index.css';
+import '@golemui/gui-shared/forms.css';
 ```
 
 ## Submit event — per-framework matrix
@@ -44,6 +45,7 @@ collected form data. **Vue is the ONLY kebab-case event.**
 
 ```tsx
 import '@golemui/gui-components/index.css';
+import '@golemui/gui-shared/forms.css';
 import { gui } from '@golemui/gui-shared';
 import { GuiForm } from '@golemui/gui-react';
 import type { FormSubmitEvent } from '@golemui/core';
@@ -78,7 +80,8 @@ Rules that follow from it:
 - `formSubmit`, `onLoad`, `onChange` and every other handler run in the browser only.
 - Custom widgets: ONE module-scope loaders object, spread into the preload call and passed as
   `customWidgetLoaders` in every form config (the registry caches by loader function identity).
-- Import `@golemui/gui-components/index.css` once in the root layout; nothing is injected.
+- Import `@golemui/gui-components/index.css` and then `@golemui/gui-shared/forms.css` once in the
+  root layout; nothing is injected.
 - A `gui-*` tag placed directly in JSX takes object props as properties in React 19
   (`<gui-select options={list} onChange={…} />`).
 - The server renders the React layer (`<form>`, layouts, `gui-*` tags with their attributes and
@@ -139,7 +142,8 @@ export default defineNuxtPlugin(async () => {
 });
 ```
 
-Load the stylesheet through `css: ['@golemui/gui-components/index.css']` in `nuxt.config.ts`
+Load the stylesheets through
+`css: ['@golemui/gui-components/index.css', '@golemui/gui-shared/forms.css']` in `nuxt.config.ts`
 (nothing is injected). Rules that follow from the preload:
 
 - Custom widgets: keep their loaders in ONE module-scope object, spread it into the preload call

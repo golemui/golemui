@@ -24,6 +24,7 @@
         ],
         "styles": [
           "libs/gui/components/src/styles/index.scss",
+          "libs/gui/shared/src/styles/forms.scss",
           "apps/angular-playground/src/styles.scss"
         ]
       },

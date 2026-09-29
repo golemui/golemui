@@ -64,10 +64,11 @@ npm i @golemui/core @golemui/vue @golemui/gui-vue @golemui/gui-shared
 npm i @golemui/core @golemui/lit @golemui/gui-lit @golemui/gui-shared
 ```
 
-Import the component styles once, anywhere in your app entry:
+Import the two stylesheets once, in this order, anywhere in your app entry:
 
 ```scss
 @import '@golemui/gui-components/index.css';
+@import '@golemui/gui-shared/forms.css';
 ```
 
 Full walkthrough at [golemui.com/getting-started/installation](https://golemui.com/getting-started/installation/).
@@ -78,6 +79,7 @@ Define a form as an array of `gui` builders and pass it to the framework compone
 
 ```tsx
 import '@golemui/gui-components/index.css';
+import '@golemui/gui-shared/forms.css';
 import type { FormSubmitEvent } from '@golemui/core';
 import { GuiForm } from '@golemui/gui-react';
 import { gui } from '@golemui/gui-shared';
@@ -160,16 +162,16 @@ For vanilla JS, import `@golemui/gui-lit` to register the `<gui-form>` custom el
 
 ## Packages
 
-| Package                                             | Description                                                                  |
-| --------------------------------------------------- | ---------------------------------------------------------------------------- |
-| `@golemui/gui-react` / `-angular` / `-lit` / `-vue` | Framework form component and bindings                                        |
-| `@golemui/gui-shared`                               | The `gui` builder and form definition types (`GuiFormInitConfig`)            |
-| `@golemui/gui-components`                           | Default widget components and the stylesheet (`index.css`)                   |
-| `@golemui/core`                                     | Framework-agnostic form runtime and shared types (`FormEvent`, `ValidateOn`) |
-| `@golemui/gui-validators`                           | Validation schemas (`@standard-schema/spec`)                                 |
-| `@golemui/schemas`                                  | The shared core JSON Schema (common defs) and the schema tree generator      |
-| `@golemui/gui-schemas`                              | JSON Schemas for gui form definitions, generated from the widget manifest    |
-| `@golemui/gui-mcp`                                  | MCP server for coding assistants                                             |
+| Package                                             | Description                                                                    |
+| --------------------------------------------------- | ------------------------------------------------------------------------------ |
+| `@golemui/gui-react` / `-angular` / `-lit` / `-vue` | Framework form component and bindings                                          |
+| `@golemui/gui-shared`                               | The `gui` builder, form definition types (`GuiFormInitConfig`) and `forms.css` |
+| `@golemui/gui-components`                           | Default widget components and the stylesheet (`index.css`)                     |
+| `@golemui/core`                                     | Framework-agnostic form runtime and shared types (`FormEvent`, `ValidateOn`)   |
+| `@golemui/gui-validators`                           | Validation schemas (`@standard-schema/spec`)                                   |
+| `@golemui/schemas`                                  | The shared core JSON Schema (common defs) and the schema tree generator        |
+| `@golemui/gui-schemas`                              | JSON Schemas for gui form definitions, generated from the widget manifest      |
+| `@golemui/gui-mcp`                                  | MCP server for coding assistants                                               |
 
 Import only from a package's public entry points. The `@golemui/*/internals` paths are internal and unstable.
 

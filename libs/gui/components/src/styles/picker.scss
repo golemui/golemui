@@ -1,26 +1,50 @@
 @use 'panel' as *;
 
 // Shared picker styles, emitted once.
-.gui-form {
-  :is(
-    .gui-date-picker,
-    .gui-range-date-picker,
-    .gui-range-time-picker,
-    .gui-time-picker,
-    .gui-date-time-picker,
-    .gui-range-date-time-picker
-  ).gui-field {
-    display: block;
-    container-type: inline-size;
-    container-name: gui-picker-widget;
+:is(
+  // The form adapters' host elements, and the picker elements themselves when used without a form.
+  .gui-date-picker.gui-field,
+  .gui-range-date-picker.gui-field,
+  .gui-range-time-picker.gui-field,
+  .gui-time-picker.gui-field,
+  .gui-date-time-picker.gui-field,
+  .gui-range-date-time-picker.gui-field,
+  gui-date-picker,
+  gui-range-date-picker,
+  gui-range-time-picker,
+  gui-time-picker,
+  gui-date-time-picker,
+  gui-range-date-time-picker
+) {
+  display: block;
+  container-type: inline-size;
+  container-name: gui-picker-widget;
 
-    &:has(.gui-widget > button[aria-expanded='true']) {
-      position: relative;
-      z-index: 20;
+  &:has(.gui-widget > button[aria-expanded='true']) {
+    position: relative;
+    z-index: 20;
+  }
+
+  .gui-widget {
+    :is(
+      .gui-date-picker__arrow,
+      .gui-range-date-picker__arrow,
+      .gui-range-time-picker__arrow,
+      .gui-time-picker__arrow,
+      .gui-date-time-picker__arrow,
+      .gui-range-date-time-picker__arrow
+    ) {
+      fill: var(--gui-text-default);
+      transform: rotate(0deg);
+      transition: transform 0.3s;
+      position: absolute;
+      inset-inline-end: var(--gui-space-3);
+      transform-origin: 50% 40%;
+      pointer-events: none;
+      top: 14px;
     }
 
-    .gui-widget {
-      :is(
+    > button[aria-expanded='true']:is(
         .gui-date-picker__arrow,
         .gui-range-date-picker__arrow,
         .gui-range-time-picker__arrow,
@@ -28,96 +52,84 @@
         .gui-date-time-picker__arrow,
         .gui-range-date-time-picker__arrow
       ) {
-        fill: var(--gui-text-default);
-        transform: rotate(0deg);
-        transition: transform 0.3s;
-        position: absolute;
-        inset-inline-end: var(--gui-space-3);
-        transform-origin: 50% 40%;
-        pointer-events: none;
-        top: 14px;
-      }
+      transform: rotate(180deg);
+    }
 
-      > button[aria-expanded='true']:is(
-          .gui-date-picker__arrow,
-          .gui-range-date-picker__arrow,
-          .gui-range-time-picker__arrow,
-          .gui-time-picker__arrow,
-          .gui-date-time-picker__arrow,
-          .gui-range-date-time-picker__arrow
-        ) {
-        transform: rotate(180deg);
-      }
+    // The picker toggle: a real button that keeps the arrow's visual box.
+    > button:is(
+        .gui-date-picker__arrow,
+        .gui-range-date-picker__arrow,
+        .gui-range-time-picker__arrow,
+        .gui-time-picker__arrow,
+        .gui-date-time-picker__arrow,
+        .gui-range-date-time-picker__arrow
+      ) {
+      pointer-events: auto;
+      background: none;
+      border: 0;
+      padding: 0;
+      margin: 0;
+      line-height: 0;
+      cursor: pointer;
+    }
 
-      // The picker toggle: a real button that keeps the arrow's visual box.
-      > button:is(
-          .gui-date-picker__arrow,
-          .gui-range-date-picker__arrow,
-          .gui-range-time-picker__arrow,
-          .gui-time-picker__arrow,
-          .gui-date-time-picker__arrow,
-          .gui-range-date-time-picker__arrow
-        ) {
-        pointer-events: auto;
-        background: none;
-        border: 0;
-        padding: 0;
-        margin: 0;
-        line-height: 0;
-        cursor: pointer;
-      }
-
-      :is(gui-date, gui-range-date, gui-time, gui-date-time, gui-range-date-time).gui-field {
-        gap: 0;
-      }
+    :is(gui-date, gui-range-date, gui-time, gui-date-time, gui-range-date-time).gui-field {
+      gap: 0;
     }
   }
+}
 
-  $nested-in-calendar: ':is(gui-date-time-calendar, gui-range-date-time-calendar) *';
+$nested-in-calendar: ':is(gui-date-time-calendar, gui-range-date-time-calendar) *';
 
-  :is(
-    .gui-date-picker,
-    .gui-range-date-picker,
-    .gui-range-time-picker,
-    .gui-time-picker,
-    .gui-date-time-picker,
-    .gui-range-date-time-picker
-  ).gui-field {
-    .gui-widget > .gui-picker__panel:not(#{$nested-in-calendar}) {
-      @include gui-picker-panel-chrome;
-    }
+:is(
+  // The form adapters' host elements, and the picker elements themselves when used without a form.
+  .gui-date-picker.gui-field,
+  .gui-range-date-picker.gui-field,
+  .gui-range-time-picker.gui-field,
+  .gui-time-picker.gui-field,
+  .gui-date-time-picker.gui-field,
+  .gui-range-date-time-picker.gui-field,
+  gui-date-picker,
+  gui-range-date-picker,
+  gui-range-time-picker,
+  gui-time-picker,
+  gui-date-time-picker,
+  gui-range-date-time-picker
+) {
+  .gui-widget > .gui-picker__panel:not(#{$nested-in-calendar}) {
+    @include gui-picker-panel-chrome;
+  }
 
-    // Invalid field → the open panel shares the red border.
-    &:has(
-        .gui-widget
-          > :is(
-            gui-date,
-            gui-time,
-            gui-range-date,
-            gui-range-time,
-            gui-date-time,
-            gui-range-date-time
-          )
-          > .gui-widget
-          > .gui-parts-ring[aria-invalid='true']
-      )
+  // Invalid field → the open panel shares the red border.
+  &:has(
       .gui-widget
-      > .gui-picker__panel:not(#{$nested-in-calendar}) {
-      border-color: var(--gui-intent-error);
-    }
-
-    @container gui-picker-widget (max-width: 540px) {
-      .gui-widget > .gui-picker__panel:not(#{$nested-in-calendar}) {
-        width: calc(100% - var(--gui-space-2) * 2 - 2px);
-
         > :is(
-          gui-calendar,
-          gui-range-calendar,
-          gui-date-time-calendar,
-          gui-range-date-time-calendar
-        ) {
-          width: 100%;
-        }
+          gui-date,
+          gui-time,
+          gui-range-date,
+          gui-range-time,
+          gui-date-time,
+          gui-range-date-time
+        )
+        > .gui-widget
+        > .gui-parts-ring[aria-invalid='true']
+    )
+    .gui-widget
+    > .gui-picker__panel:not(#{$nested-in-calendar}) {
+    border-color: var(--gui-intent-error);
+  }
+
+  @container gui-picker-widget (max-width: 540px) {
+    .gui-widget > .gui-picker__panel:not(#{$nested-in-calendar}) {
+      width: calc(100% - var(--gui-space-2) * 2 - 2px);
+
+      > :is(
+        gui-calendar,
+        gui-range-calendar,
+        gui-date-time-calendar,
+        gui-range-date-time-calendar
+      ) {
+        width: 100%;
       }
     }
   }

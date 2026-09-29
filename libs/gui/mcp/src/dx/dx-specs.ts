@@ -123,7 +123,8 @@ function commonNote(fw: DxFramework = 'react'): string {
     'A form is just an array of these items: `export const form = [ /* items */ ];`. ' +
     FRAMEWORK_SETUP[fw] +
     ' ' +
-    'Import the component stylesheet ONCE — `@golemui/gui-components/index.css` — or the form renders unstyled. ' +
+    'Import the two stylesheets ONCE, in this order — `@golemui/gui-components/index.css`, then ' +
+    '`@golemui/gui-shared/forms.css` — or the form renders unstyled. ' +
     "To RECEIVE A SUBMIT: add a `gui.actions.button({ label, actionType: 'submit' })` to the form and listen for " +
     'the submit on the host component (the RENDER line above shows how for your framework) — the handler gets a ' +
     '`FormSubmitEvent` whose `.data` is the collected form data. ' +

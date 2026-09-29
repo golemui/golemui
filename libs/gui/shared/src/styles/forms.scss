@@ -1,0 +1,15 @@
+// Styles of the form engine's own markup: the form container and the repeater. Load it after
+// @golemui/gui-components/index.css.
+@use 'sass:meta';
+@use '../../../components/src/styles/layer-order';
+
+// The form container is a base reset (fonts, colors, the narrow-layout container): the component
+// rules must win over it, as they did before layers.
+@layer golemui.base {
+  @include meta.load-css('form');
+}
+
+// The repeater restyles the component buttons it renders, so it ranks above the components.
+@layer golemui.forms {
+  @include meta.load-css('repeater');
+}

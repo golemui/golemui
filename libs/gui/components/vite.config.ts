@@ -1,36 +1,17 @@
 import { nxCopyAssetsPlugin } from '@nx/vite/plugins/nx-copy-assets.plugin';
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
-import { defineConfig, type Plugin } from 'vite';
+import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
-import { mkdirSync, writeFileSync } from 'fs';
-import { dirname, join, resolve } from 'path';
-import { compile } from 'sass';
+import { join } from 'path';
+import { compileStyles } from '../../../tools/vite/compile-styles';
 
+// The public stylesheets. index.css is tokens.css plus components.css.
 const STYLES: Record<string, string> = {
+  'src/styles/tokens.scss': 'lib/styles/tokens.css',
+  'src/styles/components.scss': 'lib/styles/components.css',
   'src/styles/index.scss': 'lib/styles/index.css',
   'src/styles/themes/clay.scss': 'lib/styles/themes/clay.css',
 };
-
-// Compiles the public stylesheets into the package. It runs on `closeBundle` because
-// `emptyOutDir` wipes the output directory at the start of every Vite build.
-function compileStyles(): Plugin {
-  let outDir: string;
-
-  return {
-    name: 'gui-components:compile-styles',
-    apply: 'build',
-    configResolved(config) {
-      outDir = resolve(config.root, config.build.outDir);
-    },
-    closeBundle() {
-      for (const [source, target] of Object.entries(STYLES)) {
-        const file = join(outDir, target);
-        mkdirSync(dirname(file), { recursive: true });
-        writeFileSync(file, compile(join(__dirname, source)).css + '\n');
-      }
-    },
-  };
-}
 
 export default defineConfig(() => ({
   root: __dirname,
@@ -43,7 +24,7 @@ export default defineConfig(() => ({
       tsconfigPath: join(__dirname, 'tsconfig.lib.json'),
       pathsToAliases: false,
     }),
-    compileStyles(),
+    compileStyles(__dirname, STYLES),
   ],
   // Configuration for building your library.
   build: {

@@ -1,50 +1,48 @@
-.gui-form {
-  .gui-alert {
-    .gui-alert-notification {
-      padding: 0 var(--gui-space-4);
-      margin: 0;
-      display: flex;
-      min-height: var(--gui-widget-size);
-      border-radius: var(--gui-radius-md);
-      border: 1px solid;
-      font-size: var(--gui-font-sm);
-      line-height: 1.4;
-      align-items: center;
+.gui-alert {
+  .gui-alert-notification {
+    padding: 0 var(--gui-space-4);
+    margin: 0;
+    display: flex;
+    min-height: var(--gui-widget-size);
+    border-radius: var(--gui-radius-md);
+    border: 1px solid;
+    font-size: var(--gui-font-sm);
+    line-height: 1.4;
+    align-items: center;
 
-      /* Default level */
-      &.gui-alert-notification--default {
-        background-color: var(--gui-bg-surface-hover);
-        border-color: var(--gui-border-default);
-        color: var(--gui-text-default);
-      }
+    /* Default level */
+    &.gui-alert-notification--default {
+      background-color: var(--gui-bg-surface-hover);
+      border-color: var(--gui-border-default);
+      color: var(--gui-text-default);
+    }
 
-      /* Info level */
-      &.gui-alert-notification--info {
-        background-color: var(--gui-intent-info-bg);
-        border-color: var(--gui-intent-info);
-        color: var(--gui-intent-info-text);
-      }
+    /* Info level */
+    &.gui-alert-notification--info {
+      background-color: var(--gui-intent-info-bg);
+      border-color: var(--gui-intent-info);
+      color: var(--gui-intent-info-text);
+    }
 
-      /* Success level */
-      &.gui-alert-notification--success {
-        background-color: var(--gui-intent-success-bg);
-        border-color: var(--gui-intent-success);
-        color: var(--gui-intent-success-text);
-      }
+    /* Success level */
+    &.gui-alert-notification--success {
+      background-color: var(--gui-intent-success-bg);
+      border-color: var(--gui-intent-success);
+      color: var(--gui-intent-success-text);
+    }
 
-      /* Warning level */
-      &.gui-alert-notification--warning {
-        background-color: var(--gui-intent-warning-bg);
-        border-color: var(--gui-intent-warning);
-        color: var(--gui-intent-warning-text);
-      }
+    /* Warning level */
+    &.gui-alert-notification--warning {
+      background-color: var(--gui-intent-warning-bg);
+      border-color: var(--gui-intent-warning);
+      color: var(--gui-intent-warning-text);
+    }
 
-      /* Error level */
-      &.gui-alert-notification--error {
-        background-color: var(--gui-intent-error-bg);
-        border-color: var(--gui-intent-error);
-        color: var(--gui-intent-error-text);
-      }
+    /* Error level */
+    &.gui-alert-notification--error {
+      background-color: var(--gui-intent-error-bg);
+      border-color: var(--gui-intent-error);
+      color: var(--gui-intent-error-text);
     }
   }
 }

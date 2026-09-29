@@ -4,6 +4,7 @@ import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 import { nxCopyAssetsPlugin } from '@nx/vite/plugins/nx-copy-assets.plugin';
 import dts from 'vite-plugin-dts';
 import { join } from 'path';
+import { compileStyles } from '../../../tools/vite/compile-styles';
 
 export default defineConfig(() => ({
   root: __dirname,
@@ -16,6 +17,7 @@ export default defineConfig(() => ({
       tsconfigPath: join(__dirname, 'tsconfig.lib.json'),
       pathsToAliases: false,
     }),
+    compileStyles(__dirname, { 'src/styles/forms.scss': 'forms.css' }),
   ],
   // Configuration for building your library.
   build: {

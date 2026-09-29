@@ -256,7 +256,7 @@ gui-range-date-time-calendar {
   }
 }
 
-@container gui-form (max-width: 480px) {
+@container gui-container (max-width: 480px) {
   gui-range-calendar,
   gui-calendar,
   gui-date-time-calendar,

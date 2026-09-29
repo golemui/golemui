@@ -219,6 +219,8 @@
       "import": "./lib/components/toggle.js",
       "require": "./lib/components/toggle.umd.cjs"
     },
+    "./tokens.css": "./lib/styles/tokens.css",
+    "./components.css": "./lib/styles/components.css",
     "./index.css": "./lib/styles/index.css",
     "./themes/clay.css": "./lib/styles/themes/clay.css"
   },
