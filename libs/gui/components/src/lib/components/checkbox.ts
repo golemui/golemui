@@ -13,16 +13,20 @@ export type GuiCheckboxProps = {
   checkboxPosition?: 'left' | 'right';
 };
 
+/**
+ * A checkbox. Its value is `true` or `false`.
+ *
+ * @fires gui-input - The user changed the value. `detail.value` is the new value.
+ * @fires gui-change - The user committed the value. `detail.value` is the committed value.
+ * @fires gui-blur - Focus left the control.
+ */
 export class GuiCheckbox extends GuiFormControl {
-  @property({ type: String }) label: string | undefined = undefined;
+  /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
-  @property({ type: Array }) errors: string[] | undefined = [];
-  @property({ type: Boolean }) touched: boolean | undefined = undefined;
-  @property({ type: Boolean }) required: boolean | undefined = undefined;
-  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
+  /** Whether it is checked. */
   @property({ type: String }) value: boolean | undefined = undefined;
 
-  @property({ type: String }) hint: string | undefined = undefined;
+  /** Side of the label the checkbox is on. */
   @property({ type: String }) checkboxPosition: 'left' | 'right' | undefined = 'left';
 
   private ariaController = new GUIAriaController(this, {
@@ -105,6 +109,7 @@ export class GuiCheckbox extends GuiFormControl {
     `;
   }
 
+  /** @internal */
   valueChanged(event: Event) {
     event.stopPropagation();
 
@@ -115,6 +120,7 @@ export class GuiCheckbox extends GuiFormControl {
     }
   }
 
+  /** @internal */
   onBlur() {
     this.dispatchEvent(
       new CustomEvent('gui-blur', {

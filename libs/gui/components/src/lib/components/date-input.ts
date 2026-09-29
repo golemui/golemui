@@ -27,25 +27,43 @@ export type GuiDateProps = {
   hint?: string;
 };
 
+/**
+ * A date field typed part by part (day, month, year) in the locale's order.
+ *
+ * @fires gui-input - The user changed the value. `detail.value` is the new value.
+ * @fires gui-change - The user committed the value. `detail.value` is the committed value.
+ * @fires gui-blur - Focus left the control.
+ * @fires gui-focus - One of the parts of the field received focus.
+ * @fires gui-input-error - The element rejected what the user entered, such as an impossible date
+ *   or a value out of bounds. `detail.message` is the error; show it through `errors`.
+ * @fires gui-parts-change - The typed parts changed before they form a complete value, for a host
+ *   that mirrors them.
+ */
 export class GuiDate extends GuiFormControl {
-  @property({ type: String }) label: string | undefined = undefined;
+  /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
-  @property({ type: Array }) errors: string[] | undefined = [];
+  /**
+   * Whether the element renders its own error list. Elements that embed it turn it off and show the
+   * errors themselves.
+   */
   @property({ type: Boolean }) showErrors: boolean | undefined = true;
-  @property({ type: Boolean }) touched: boolean | undefined = undefined;
-  @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
 
+  /** Icon class name shown inside the control, for example from an icon font. */
   @property({ type: String }) icon: string | undefined = '';
-  @property({ type: String }) hint: string | undefined = undefined;
+  /** Accessible name of the day part. */
   @property({ type: String }) dayAriaLabel: string | undefined = undefined;
+  /** Accessible name of the month part. */
   @property({ type: String }) monthAriaLabel: string | undefined = undefined;
+  /** Accessible name of the year part. */
   @property({ type: String }) yearAriaLabel: string | undefined = undefined;
 
+  /** The date, as an ISO date (`YYYY-MM-DD`). */
   @property({ type: String }) value: string | undefined = undefined;
+  /** Error for a complete but impossible date, such as February 31. */
   @property({ type: String, attribute: 'invalid-date-message' }) invalidDateMessage:
     | string
     | undefined = undefined;
+  /** Error when focus leaves a partly filled value. */
   @property({ type: String, attribute: 'incomplete-message' }) incompleteMessage:
     | string
     | undefined = undefined;
@@ -57,10 +75,14 @@ export class GuiDate extends GuiFormControl {
   @property({ type: Boolean, attribute: 'defer-focus-leave' }) deferFocusLeave:
     | boolean
     | undefined = false;
+  /** Earliest selectable date, as an ISO date (`YYYY-MM-DD`). */
   @property({ type: String, attribute: 'min-date' }) minDate: string | undefined = undefined;
+  /** Latest selectable date, as an ISO date (`YYYY-MM-DD`). */
   @property({ type: String, attribute: 'max-date' }) maxDate: string | undefined = undefined;
+  /** Error for a date before `minDate`. */
   @property({ type: String, attribute: 'min-date-message' }) minDateMessage: string | undefined =
     undefined;
+  /** Error for a date after `maxDate`. */
   @property({ type: String, attribute: 'max-date-message' }) maxDateMessage: string | undefined =
     undefined;
 
@@ -270,7 +292,11 @@ export class GuiDate extends GuiFormControl {
     );
   }
 
-  /** The group's fill state, for host pickers' own focus-leave checks. */
+  /**
+   * The group's fill state, for host pickers' own focus-leave checks.
+   *
+   * @internal
+   */
   groupCompleteness(): GroupCompleteness {
     const { result } = parseDateGroup(this._parts.values['default'] ?? {}, {
       descriptors: this.partDescriptors,
@@ -295,6 +321,7 @@ export class GuiDate extends GuiFormControl {
     this.settleOnFocusLeave();
   }
 
+  /** @internal */
   settleOnFocusLeave(): void {
     const completeness = this.groupCompleteness();
     if (completeness === 'complete') return;

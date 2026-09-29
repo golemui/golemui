@@ -8,6 +8,17 @@ import type { ListItem, OptionValue } from '../types';
 import { GuiFormControl } from '../gui-form-control';
 import { dispatchValue } from '../utils/events';
 
+/**
+ * A virtualized listbox to pick one item, with keyboard navigation.
+ *
+ * @fires gui-input - The user changed the value. `detail.value` is the new value.
+ * @fires gui-change - The user committed the value. `detail.value` is the committed value.
+ * @fires gui-blur - Focus left the control.
+ * @fires gui-focus-change - The focused item changed. `detail.index` is its index, or -1.
+ * @fires gui-range-change - The rendered items changed while scrolling. `detail` has the
+ *   `startIndex` and `endIndex`.
+ * @fires gui-update-items - The items were normalized. `detail` is the list of items.
+ */
 export class GuiList extends GuiFormControl {
   // Inline `style` attributes are blocked by a strict `style-src` CSP: static rules
   // live here (adopted stylesheet) and dynamic values go through `cspStyleMap` (CSSOM)
@@ -33,16 +44,16 @@ export class GuiList extends GuiFormControl {
     }
   `;
 
-  @property({ type: Boolean }) touched: boolean | undefined = undefined;
-  @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
+  /** The value of the selected item. */
   @property({ type: String }) value: OptionValue | undefined = undefined;
+  /** For items given as objects, the key of the value. */
   @property({ type: String }) valueField: string | undefined = undefined;
-  @property({ type: String }) label: string | undefined = undefined;
-  @property({ type: String }) hint: string | undefined = undefined;
+  /** The items of the list. */
   @property({ type: Array }) items: ListItem<unknown>[] = [];
 
+  /** Height of each item, in pixels. Needed to virtualize the list. */
   @property({ type: Number }) itemHeight: number | undefined = undefined;
+  /** Height of the scrollable list, in pixels. */
   @property({ type: Number }) height: number | undefined = undefined;
 
   @state() private _items: ListItem<any>[] = [];
@@ -128,10 +139,12 @@ export class GuiList extends GuiFormControl {
     `;
   }
 
+  /** @internal */
   public focusItemAtIndex(index: number) {
     this._focusedIndex = index;
   }
 
+  /** @internal */
   public scrollToSelectedIndex() {
     this.scrollToIndex(this.findSelectedIndex());
   }
@@ -229,6 +242,7 @@ export class GuiList extends GuiFormControl {
     this.dispatchEvent(new CustomEvent('gui-blur', { bubbles: true, composed: true }));
   };
 
+  /** @internal */
   public scrollToIndex(index: number) {
     const itemHeight = this.itemHeight ?? 40;
     const viewportHeight = this.height ?? 300;

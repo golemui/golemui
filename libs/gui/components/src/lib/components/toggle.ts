@@ -13,16 +13,25 @@ export type GuiToggleProps = {
   togglePosition?: 'left' | 'right';
 };
 
+/**
+ * An on/off switch. Its value is `true` or `false`.
+ *
+ * @fires gui-input - The user changed the value. `detail.value` is the new value.
+ * @fires gui-change - The user committed the value. `detail.value` is the committed value.
+ * @fires gui-blur - Focus left the control.
+ * @cssprop --gui-toggle-width - Width of the switch.
+ * @cssprop --gui-toggle-height - Height of the switch.
+ * @cssprop --gui-toggle-slider-width - Width of the knob.
+ * @cssprop --gui-toggle-slider-height - Height of the knob.
+ * @cssprop --gui-toggle-slider-transform - Distance the knob moves when on.
+ */
 export class GuiToggle extends GuiFormControl {
-  @property({ type: String }) label: string | undefined = undefined;
+  /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
-  @property({ type: Array }) errors: string[] | undefined = [];
-  @property({ type: Boolean }) touched: boolean | undefined = undefined;
-  @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
+  /** Whether it is on. */
   @property({ type: String }) value: boolean | undefined = undefined;
 
-  @property({ type: String }) hint: string | undefined = undefined;
+  /** Side of the label the switch is on. */
   @property({ type: String }) togglePosition: 'left' | 'right' | undefined = 'left';
 
   private ariaController = new GUIAriaController(this, {
@@ -108,6 +117,7 @@ export class GuiToggle extends GuiFormControl {
     `;
   }
 
+  /** @internal */
   valueChanged(event: Event | undefined) {
     event?.stopPropagation();
 
@@ -118,6 +128,7 @@ export class GuiToggle extends GuiFormControl {
     }
   }
 
+  /** @internal */
   onBlur() {
     this.dispatchEvent(
       new CustomEvent('gui-blur', {

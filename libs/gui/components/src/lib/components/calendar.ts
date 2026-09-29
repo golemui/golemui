@@ -33,31 +33,51 @@ export interface CalendarDay {
   isDisabled: boolean;
 }
 
+/**
+ * A month calendar to pick a date.
+ *
+ * @fires gui-input - The user changed the value. `detail.value` is the new value.
+ * @fires gui-change - The user committed the value. `detail.value` is the committed value.
+ * @fires gui-blur - Focus left the control.
+ * @cssprop --gui-calendar-width - Width of one month.
+ * @cssprop --gui-calendar-day-button-size - Size of each day.
+ * @cssprop --gui-calendar-change-month-button-width - Width of the previous- and next-month
+ *   buttons.
+ * @cssprop --gui-calendar-change-month-button-height - Height of the previous- and next-month
+ *   buttons.
+ * @cssprop --gui-calendar-year-button-width - Width of each year in the year grid.
+ * @cssprop --gui-calendar-year-button-height - Height of each year in the year grid.
+ * @cssprop --gui-calendar-year-grid-height - Height of the year grid.
+ */
 export class GuiCalendar extends GuiFormControl {
-  @property({ type: String }) label: string | undefined = undefined;
-  @property({ type: String }) hint: string | undefined = undefined;
+  /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
-  @property({ type: Array }) errors: string[] | undefined = [];
-  @property({ type: Boolean }) touched: boolean | undefined = undefined;
-  @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
 
+  /** Icon class name of the previous-month button. */
   @property({ type: String, attribute: 'prev-month-icon' }) prevMonthIcon: string | undefined = '';
+  /** Icon class name of the next-month button. */
   @property({ type: String, attribute: 'next-month-icon' }) nextMonthIcon: string | undefined = '';
+  /** Accessible name of the previous-month button. */
   @property({ type: String, attribute: 'prev-month-aria-label' }) prevMonthAriaLabel:
     | string
     | undefined = '';
+  /** Accessible name of the next-month button. */
   @property({ type: String, attribute: 'next-month-aria-label' }) nextMonthAriaLabel:
     | string
     | undefined = '';
+  /** Accessible name of the button that opens the year grid. */
   @property({ type: String, attribute: 'select-year-aria-label' }) selectYearAriaLabel:
     | string
     | undefined = undefined;
+  /** Accessible name of the year grid. */
   @property({ type: String, attribute: 'year-grid-aria-label' }) yearGridAriaLabel:
     | string
     | undefined = undefined;
+  /** How day numbers are written. */
   @property({ type: String }) dayFormat: 'numeric' | '2-digit' | undefined = 'numeric';
+  /** How weekday names are written in the header. */
   @property({ type: String }) weekdayFormat: 'short' | 'long' | 'narrow' | undefined = 'narrow';
+  /** How the month is written in the header. */
   @property({ type: String }) monthFormat:
     | 'numeric'
     | '2-digit'
@@ -65,11 +85,16 @@ export class GuiCalendar extends GuiFormControl {
     | 'short'
     | 'narrow'
     | undefined = 'long';
+  /** Earliest selectable date, as an ISO date (`YYYY-MM-DD`). */
   @property({ type: String }) minDate: string | undefined = undefined;
+  /** Latest selectable date, as an ISO date (`YYYY-MM-DD`). */
   @property({ type: String }) maxDate: string | undefined = undefined;
+  /** Dates that cannot be picked, as `{ start, end }` ISO date ranges. */
   @property({ type: Array }) disabledRanges: DateRange[] | undefined = undefined;
+  /** Number of months shown side by side. */
   @property({ type: Number }) numberOfMonths: number | undefined = 1;
 
+  /** The selected date, as an ISO date (`YYYY-MM-DD`). */
   @property({ type: String }) value: string | undefined = undefined;
 
   /**
@@ -211,6 +236,7 @@ export class GuiCalendar extends GuiFormControl {
     });
   }
 
+  /** @internal */
   renderDay(day: CalendarDay) {
     const classes = {
       'gui-calendar__day-button': true,
@@ -240,6 +266,7 @@ export class GuiCalendar extends GuiFormControl {
     `;
   }
 
+  /** @internal */
   getDaysInMonth(offset: number): CalendarDay[] {
     const selectedDate = this.value;
 
@@ -266,6 +293,7 @@ export class GuiCalendar extends GuiFormControl {
     });
   }
 
+  /** @internal */
   selectDate(day: CalendarDay) {
     if (!day.isCurrentMonth || day.isDisabled || this.disabled || this.readOnly) return;
 

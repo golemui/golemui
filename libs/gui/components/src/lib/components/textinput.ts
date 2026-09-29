@@ -16,18 +16,24 @@ export type GuiTextinputProps = {
   autocomplete?: string;
 };
 
+/**
+ * A single-line text field.
+ *
+ * @fires gui-input - The user changed the value. `detail.value` is the new value.
+ * @fires gui-change - The user committed the text, on blur or Enter. `detail.value` is the value.
+ * @fires gui-blur - Focus left the control.
+ */
 export class GuiTextinput extends GuiFormControl {
-  @property({ type: String }) label: string | undefined = undefined;
+  /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
-  @property({ type: Array }) errors: string[] | undefined = [];
-  @property({ type: Boolean }) touched: boolean | undefined = undefined;
-  @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
+  /** The text. */
   @property({ type: String }) value: string | undefined = undefined;
 
-  @property({ type: String }) hint: string | undefined = undefined;
+  /** Icon class name shown inside the control, for example from an icon font. */
   @property({ type: String }) icon: string | undefined = undefined;
+  /** Text shown while the control is empty. */
   @property({ type: String }) placeholder: string | undefined = undefined;
+  /** The `autocomplete` hint passed to the inner native control. */
   @property({ type: String }) autocomplete: string | undefined = undefined;
 
   private ariaController = new GUIAriaController(this, {
@@ -106,6 +112,7 @@ export class GuiTextinput extends GuiFormControl {
     `;
   }
 
+  /** @internal */
   valueChanged(event: InputEvent) {
     event.stopPropagation();
 
@@ -116,11 +123,16 @@ export class GuiTextinput extends GuiFormControl {
     }
   }
 
-  /** The native `change`: the user committed the edit (blur or Enter). */
+  /**
+   * The native `change`: the user committed the edit (blur or Enter).
+   *
+   * @internal
+   */
   valueCommitted(event: Event) {
     dispatchChange(this, (event.target as HTMLInputElement).value);
   }
 
+  /** @internal */
   onBlur() {
     this.dispatchEvent(
       new CustomEvent('gui-blur', {

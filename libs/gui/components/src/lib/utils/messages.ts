@@ -73,6 +73,8 @@ export const DEFAULT_MESSAGES = {
   dateRangeCount: '{count} date ranges',
   timeRangeCount: '{count} time ranges',
   dateTimeRangeCount: '{count} date-time ranges',
+  dayRangeCount: '{count} ranges',
+  disabledTimeRangeCount: '{count} disabled ranges',
 
   // ─── In-place range editing: `{label}` is the range's display label ───
   editRange: 'Edit',

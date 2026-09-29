@@ -19,19 +19,26 @@ export type GuiRadiogroupProps = {
   direction?: 'row' | 'column';
 };
 
+/**
+ * A group of radio buttons to pick one option.
+ *
+ * @fires gui-input - The user changed the value. `detail.value` is the new value.
+ * @fires gui-change - The user committed the value. `detail.value` is the committed value.
+ * @fires gui-blur - Focus left the control.
+ */
 export class GuiRadiogroup extends GuiFormControl {
-  @property({ type: String }) label: string | undefined = undefined;
+  /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
-  @property({ type: Array }) errors: string[] | undefined = [];
-  @property({ type: Boolean }) touched: boolean | undefined = undefined;
-  @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
+  /** The value of the selected option. */
   @property({ type: String }) value: OptionValue | undefined = undefined;
 
-  @property({ type: String }) hint: string | undefined = undefined;
+  /** The options, as values or `{ label, value }` objects. */
   @property({ type: Array }) options: Option[] = [];
+  /** For options given as objects, the key of the text to show. */
   @property({ type: String }) labelField: string | undefined = undefined;
+  /** For options given as objects, the key of the value. */
   @property({ type: String }) valueField: string | undefined = undefined;
+  /** Lays the options out in a row or a column. */
   @property({ type: String }) direction: 'row' | 'column' | undefined = 'column';
 
   protected optionsLoading = false;
@@ -140,6 +147,7 @@ export class GuiRadiogroup extends GuiFormControl {
     `;
   }
 
+  /** @internal */
   valueChanged(event: Event) {
     event.stopPropagation();
 
@@ -150,6 +158,7 @@ export class GuiRadiogroup extends GuiFormControl {
     }
   }
 
+  /** @internal */
   onBlur() {
     this.dispatchEvent(
       new CustomEvent('gui-blur', {

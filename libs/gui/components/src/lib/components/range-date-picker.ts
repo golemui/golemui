@@ -15,55 +15,98 @@ import { GuiFormControl } from '../gui-form-control';
 import { dispatchChange, dispatchValue, stopPropagation } from '../utils/events';
 import { message } from '../utils/messages';
 
+/**
+ * A date range field with a calendar popup.
+ *
+ * @fires gui-input - The user changed the value. `detail.value` is the new value.
+ * @fires gui-change - The user added, removed or finished editing a range. `detail.value` is the
+ *   list of ranges.
+ * @fires gui-blur - Focus left the control.
+ * @fires gui-input-error - The element rejected what the user entered, such as an impossible date
+ *   or a value out of bounds. `detail.message` is the error; show it through `errors`.
+ * @cssprop --gui-calendar-width - Width of one month.
+ * @cssprop --gui-calendar-day-button-size - Size of each day.
+ * @cssprop --gui-calendar-change-month-button-width - Width of the previous- and next-month
+ *   buttons.
+ * @cssprop --gui-calendar-change-month-button-height - Height of the previous- and next-month
+ *   buttons.
+ * @cssprop --gui-calendar-year-button-width - Width of each year in the year grid.
+ * @cssprop --gui-calendar-year-button-height - Height of each year in the year grid.
+ * @cssprop --gui-calendar-year-grid-height - Height of the year grid.
+ * @cssprop --gui-range-bg - Background of the days inside a selected range.
+ * @cssprop --gui-range-error-bg - Background of the days inside a rejected range.
+ * @cssprop --gui-pill-height - Height of each pill.
+ * @cssprop --gui-pill-font-size - Font size of the pill text.
+ * @cssprop --gui-pill-action-size - Size of the icons inside a pill.
+ * @cssprop --gui-pill-action-hit - Clickable area of the buttons inside a pill.
+ */
 export class GuiRangeDatePicker extends GuiFormControl {
-  @property({ type: String }) label: string | undefined = undefined;
-  @property({ type: String }) hint: string | undefined = undefined;
+  /** Icon class name shown inside the control, for example from an icon font. */
   @property({ type: String }) icon: string | undefined = '';
+  /** Accessible name of the button that opens the popup. */
   @property({ type: String, attribute: 'toggle-aria-label' }) toggleAriaLabel: string | undefined =
     undefined;
+  /** Accessible name of the day part. */
   @property({ type: String }) dayAriaLabel: string | undefined = undefined;
+  /** Accessible name of the month part. */
   @property({ type: String }) monthAriaLabel: string | undefined = undefined;
+  /** Accessible name of the year part. */
   @property({ type: String }) yearAriaLabel: string | undefined = undefined;
-  @property({ type: Array }) errors: string[] | undefined = [];
+  /**
+   * Whether the element renders its own error list. Elements that embed it turn it off and show the
+   * errors themselves.
+   */
   @property({ type: Boolean }) showErrors: boolean | undefined = true;
-  @property({ type: Boolean }) touched: boolean | undefined = undefined;
-  @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
+  /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
+  /** The date ranges, as `{ start, end }` ISO dates. */
   @property({ type: Array }) value: DateRange[] | undefined = [];
+  /** Text shown between the start and end of a range. */
   @property({ type: String }) separator: string | undefined = undefined;
+  /** Accessible name of the remove button of each range pill. */
   @property({ type: String, attribute: 'remove-pill-aria-label' }) removePillAriaLabel:
     | string
     | undefined = undefined;
+  /** Accessible name of the start date field. */
   @property({ type: String, attribute: 'start-date-aria-label' }) startDateAriaLabel:
     | string
     | undefined = undefined;
+  /** Accessible name of the end date field. */
   @property({ type: String, attribute: 'end-date-aria-label' }) endDateAriaLabel:
     | string
     | undefined = undefined;
+  /** Icon class name of the previous-month button. */
   @property({ type: String, attribute: 'prev-month-icon' }) prevMonthIcon: string | undefined = '';
+  /** Icon class name of the next-month button. */
   @property({ type: String, attribute: 'next-month-icon' }) nextMonthIcon: string | undefined = '';
+  /** Accessible name of the previous-month button. */
   @property({ type: String, attribute: 'prev-month-aria-label' }) prevMonthAriaLabel:
     | string
     | undefined = undefined;
+  /** Accessible name of the next-month button. */
   @property({ type: String, attribute: 'next-month-aria-label' }) nextMonthAriaLabel:
     | string
     | undefined = undefined;
+  /** Accessible name of the button that opens the year grid. */
   @property({ type: String, attribute: 'select-year-aria-label' }) selectYearAriaLabel:
     | string
     | undefined = undefined;
+  /** Accessible name of the year grid. */
   @property({ type: String, attribute: 'year-grid-aria-label' }) yearGridAriaLabel:
     | string
     | undefined = undefined;
+  /** How day numbers are written. */
   @property({ type: String, attribute: 'day-format' }) dayFormat:
     | 'numeric'
     | '2-digit'
     | undefined = undefined;
+  /** How weekday names are written in the header. */
   @property({ type: String, attribute: 'weekday-format' }) weekdayFormat:
     | 'short'
     | 'long'
     | 'narrow'
     | undefined = undefined;
+  /** How the month is written in the header. */
   @property({ type: String, attribute: 'month-format' }) monthFormat:
     | 'numeric'
     | '2-digit'
@@ -71,40 +114,57 @@ export class GuiRangeDatePicker extends GuiFormControl {
     | 'short'
     | 'narrow'
     | undefined = undefined;
+  /** Earliest selectable date, as an ISO date (`YYYY-MM-DD`). */
   @property({ type: String, attribute: 'min-date' }) minDate: string | undefined = undefined;
+  /** Latest selectable date, as an ISO date (`YYYY-MM-DD`). */
   @property({ type: String, attribute: 'max-date' }) maxDate: string | undefined = undefined;
+  /** Dates that cannot be picked, as `{ start, end }` ISO date ranges. */
   @property({ type: Array, attribute: 'disabled-ranges' }) disabledRanges: DateRange[] | undefined =
     undefined;
+  /** Number of months shown side by side. */
   @property({ type: Number, attribute: 'number-of-months' }) numberOfMonths: number | undefined =
     undefined;
+  /** Error for a complete but impossible date, such as February 31. */
   @property({ type: String, attribute: 'invalid-date-message' }) invalidDateMessage:
     | string
     | undefined = undefined;
+  /** Error for a date before `minDate`. */
   @property({ type: String, attribute: 'min-date-message' }) minDateMessage: string | undefined =
     undefined;
+  /** Error for a date after `maxDate`. */
   @property({ type: String, attribute: 'max-date-message' }) maxDateMessage: string | undefined =
     undefined;
+  /** Error for a date inside `disabledRanges`. */
   @property({ type: String, attribute: 'disabled-date-range-message' }) disabledDateRangeMessage:
     | string
     | undefined = undefined;
+  /** Error when focus leaves a partly filled value. */
   @property({ type: String, attribute: 'incomplete-message' }) incompleteMessage:
     | string
     | undefined = undefined;
+  /** Lets the user edit a range in place from its pill. */
   @property({ type: Boolean, attribute: 'allow-edit' }) allowEdit: boolean | undefined = false;
+  /** Tooltip of the edit button of a range pill. */
   @property({ type: String, attribute: 'edit-label' }) editLabel: string | undefined = undefined;
+  /** Hint that a range pill can be edited. `{label}` is the range. */
   @property({ type: String, attribute: 'edit-aria-label' }) editAriaLabel: string | undefined =
     undefined;
+  /** Tooltip of the confirm button of a range being edited. */
   @property({ type: String, attribute: 'confirm-edit-label' }) confirmEditLabel:
     | string
     | undefined = undefined;
+  /** Tooltip of the cancel button of a range being edited. */
   @property({ type: String, attribute: 'cancel-edit-label' }) cancelEditLabel: string | undefined =
     undefined;
+  /** Announcement when editing a range starts. `{label}` is the range. */
   @property({ type: String, attribute: 'edit-started-message' }) editStartedMessage:
     | string
     | undefined = undefined;
+  /** Announcement when an edited range is saved. `{label}` is the new range. */
   @property({ type: String, attribute: 'edit-committed-message' }) editCommittedMessage:
     | string
     | undefined = undefined;
+  /** Announcement when editing a range is cancelled. */
   @property({ type: String, attribute: 'edit-cancelled-message' }) editCancelledMessage:
     | string
     | undefined = undefined;
@@ -162,6 +222,7 @@ export class GuiRangeDatePicker extends GuiFormControl {
   });
 
   // Pills dropdown and the calendar are mutually exclusive, opening one closes the other
+  /** @internal */
   onDropdownToggle = (event: Event) => {
     const detail = (event as CustomEvent<{ open: boolean }>).detail;
     if (detail?.open && this._popup.open) {

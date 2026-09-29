@@ -7,7 +7,16 @@ import './pills';
 import type { GuiPillEventDetail, GuiPillItem } from './pills';
 import type { FileItem } from '../types';
 
+/**
+ * A file upload that accepts several files, shown as pills.
+ *
+ * @cssprop --gui-pill-height - Height of each pill.
+ * @cssprop --gui-pill-font-size - Font size of the pill text.
+ * @cssprop --gui-pill-action-size - Size of the icons inside a pill.
+ * @cssprop --gui-pill-action-hit - Clickable area of the buttons inside a pill.
+ */
 export class GuiMultiFileUpload extends GuiFileUpload {
+  /** The files, when several can be uploaded. */
   @property({ type: Array }) values: FileItem[] | undefined = [];
 
   protected override isMultiple(): boolean {

@@ -17,22 +17,44 @@ import { GuiElement } from '../gui-element';
 import { dispatchValue } from '../utils/events';
 import { message } from '../utils/messages';
 
+/**
+ * A grid of times to pick from.
+ *
+ * @fires gui-input - The user changed the value. `detail.value` is the new value.
+ * @fires gui-change - The user committed the value. `detail.value` is the committed value.
+ * @cssprop --gui-calendar-time-grid-height - Height of the time grid.
+ * @cssprop --gui-calendar-time-button-height - Height of each time in the grid.
+ */
 export class GuiTimeList extends GuiElement {
+  /** The selected time, as an ISO time (`HH:mm`). */
   @property({ type: String }) value: string | undefined = undefined;
+  /** Accessible name of the list. */
   @property({ type: String }) label: string | undefined = undefined;
+  /** Earliest selectable time, as an ISO time (`HH:mm`). */
   @property({ type: String, attribute: 'min-time' }) minTime: string | undefined = undefined;
+  /** Latest selectable time, as an ISO time (`HH:mm`). */
   @property({ type: String, attribute: 'max-time' }) maxTime: string | undefined = undefined;
+  /** Minutes between the times offered in the list. */
   @property({ type: Number, attribute: 'minute-step' }) minuteStep: number | undefined = undefined;
+  /** Times that cannot be picked, as `{ start, end }` ISO time ranges. */
   @property({ type: Array, attribute: 'disabled-ranges' }) disabledRanges: TimeRange[] | undefined =
     undefined;
+  /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
+  /** 12- or 24-hour clock. Defaults to the locale's. */
   @property({ type: String, attribute: 'hour-format' }) hourFormat: HourFormat | undefined =
     undefined;
+  /** Disables the list. */
   @property({ type: Boolean }) disabled = false;
+  /** Shows the times without letting the user pick one. */
   @property({ type: Boolean, attribute: 'readonly' }) readOnly = false;
+  /** Height of the scrollable list, in pixels. */
   @property({ type: Number }) height: number | undefined = undefined;
+  /** Height of each item, in pixels. Needed to virtualize the list. */
   @property({ type: Number, attribute: 'item-height' }) itemHeight: number | undefined = undefined;
+  /** Number of columns of the time grid. */
   @property({ type: Number }) columns: number | undefined = undefined;
+  /** Text shown when no time can be picked. */
   @property({ type: String, attribute: 'no-available-times-message' }) noAvailableTimesMessage:
     | string
     | undefined = undefined;
@@ -90,6 +112,7 @@ export class GuiTimeList extends GuiElement {
     return options.findIndex((option) => !option.disabled);
   }
 
+  /** @internal */
   scrollToSelectedValue() {
     const viewport = this.querySelector('.gui-time-list__viewport');
     const target = (this.querySelector('.gui-time-list__option--selected') ??
@@ -106,6 +129,7 @@ export class GuiTimeList extends GuiElement {
     }
   }
 
+  /** @internal */
   focusSelectedOption() {
     const target = this.querySelector<HTMLButtonElement>('.gui-time-list__option[tabindex="0"]');
     target?.focus();

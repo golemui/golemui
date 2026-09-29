@@ -80,6 +80,7 @@
     "@angular/platform-server": "21.2.19",
     "@astrojs/check": "^0.9.10",
     "@astrojs/node": "^11.1.5",
+    "@custom-elements-manifest/analyzer": "^0.11.0",
     "@lit-labs/ssr": "^4.1.0",
     "@lit-labs/ssr-client": "^1.1.8",
     "@nx/angular": "22.7.8",

@@ -58,7 +58,7 @@ export interface GuiPillExitEventDetail {
 }
 
 /**
- * `<gui-pills>` — a scrollable strip of dismissable / clickable chips with an
+ * A scrollable strip of dismissable / clickable chips with an
  * optional count-bubble fallback that opens a dropdown listing every item when
  * the host shrinks below the compact threshold.
  *
@@ -72,35 +72,45 @@ export interface GuiPillExitEventDetail {
  * The host is responsible for placing focus when the strip becomes empty
  * (listen to `gui-pill-remove` and call `.focus()` on the host's anchor element).
  *
- * Events (all bubble + composed):
- *   - `gui-pill-click`        { key }        — fired when `clickable` and a pill body is clicked
- *   - `gui-pill-remove`       { key }        — × pressed or Delete/Backspace on a focused pill
- *   - `gui-dropdown-toggle`   { open }       — bubble opened/closed the dropdown
- *   - `gui-pill-keydown`      { key, event } — re-emitted for unhandled keys and at strip
- *                                              boundaries; host can intercept (e.g. to
- *                                              focus its own input on ArrowRight-past-end)
- *   - `gui-pill-exit`         { key, reason } — focus left the pills involuntarily (Escape
- *                                              closed the dropdown); host should restore
- *                                              focus to its anchor element
- *   - `gui-pill-focus`        { key }        — a pill received focus (`editable` hosts
- *                                              only); hosts follow it with their selection
- *   - `gui-pills-blur`                       — focus left the pills subtree (`editable`
- *                                              hosts only); hosts drop the selection
- *                                              unless an edit session owns it
- *   - `gui-pill-edit`         { key }        — edit icon pressed, or F2 / E on a focused
- *                                              pill (`editable` hosts only)
- *   - `gui-pill-edit-confirm` { key }        — confirm icon pressed on the editing pill
- *   - `gui-pill-edit-cancel`  { key }        — cancel icon pressed on the editing pill
+ * @fires gui-pill-click - A pill body was clicked (`clickable` only). `detail.key` is the pill's
+ *   key.
+ * @fires gui-pill-remove - The × was pressed, or Delete/Backspace on a focused pill. `detail.key`
+ *   is the pill's key.
+ * @fires gui-dropdown-toggle - The count bubble opened or closed its dropdown. `detail.open` is
+ *   the new state.
+ * @fires gui-pill-keydown - A key the strip does not handle, or one at its boundaries, so the host
+ *   can intercept it (for example to focus its own input on ArrowRight past the end). `detail`
+ *   has the pill `key` and the keyboard `event`.
+ * @fires gui-pill-exit - Focus left the pills involuntarily (Escape closed the dropdown); the host
+ *   should restore focus to its anchor element. `detail` has the `key` and the `reason`.
+ * @fires gui-pill-focus - A pill received focus (`editable` hosts only). `detail.key` is its key.
+ * @fires gui-pills-blur - Focus left the pills (`editable` hosts only).
+ * @fires gui-pill-edit - The edit icon was pressed, or F2 or E on a focused pill (`editable` hosts
+ *   only). `detail.key` is the pill's key.
+ * @fires gui-pill-edit-confirm - The confirm icon was pressed on the pill being edited.
+ *   `detail.key` is its key.
+ * @fires gui-pill-edit-cancel - The cancel icon was pressed on the pill being edited. `detail.key`
+ *   is its key.
+ * @cssprop --gui-pill-height - Height of each pill.
+ * @cssprop --gui-pill-font-size - Font size of the pill text.
+ * @cssprop --gui-pill-action-size - Size of the icons inside a pill.
+ * @cssprop --gui-pill-action-hit - Clickable area of the buttons inside a pill.
  */
 export class GuiPills extends GuiElement {
+  /** The pills. */
   @property({ type: Array }) items: GuiPillItem[] = [];
 
+  /** Makes the pill bodies clickable, firing `gui-pill-click`. */
   @property({ type: Boolean }) clickable = false;
+  /** Adds a remove button to each pill. */
   @property({ type: Boolean }) removable = true;
+  /** Collapses the pills into a count with a dropdown when they do not fit. */
   @property({ type: Boolean }) bubble = true;
   /** When false, pills are not in the tab cycle (entered via ArrowLeft instead). */
   @property({ type: Boolean }) tabbable = true;
+  /** Disables the pills. */
   @property({ type: Boolean }) disabled = false;
+  /** Shows the pills without remove buttons or editing. */
   @property({ type: Boolean, attribute: 'readonly' }) readOnly = false;
 
   /** When true, clickable pills expose selection as toggle-button semantics (aria-pressed). */
@@ -113,15 +123,25 @@ export class GuiPills extends GuiElement {
 
   /** Tooltip labels for the `editable` action icons rendered inside the pills. */
   @property({ type: String, attribute: 'edit-label' }) editLabel: string | undefined;
+  /** Tooltip of the confirm button of the pill being edited. */
   @property({ type: String, attribute: 'confirm-edit-label' }) confirmEditLabel: string | undefined;
+  /** Tooltip of the cancel button of the pill being edited. */
   @property({ type: String, attribute: 'cancel-edit-label' }) cancelEditLabel: string | undefined;
 
+  /** Accessible name of each remove button. */
   @property({ type: String, attribute: 'remove-aria-label' }) removeAriaLabel: string | undefined;
+  /** Icon class name of the remove button, replacing the default ×. */
   @property({ type: String, attribute: 'remove-icon' }) removeIcon: string | undefined;
+  /**
+   * Accessible name of the count shown when the items do not fit. `{count}` is the number of items.
+   */
   @property({ type: String, attribute: 'compact-aria-label' }) compactAriaLabel: string | undefined;
+  /** Accessible name of the pill strip. */
   @property({ type: String, attribute: 'toolbar-aria-label' }) toolbarAriaLabel: string | undefined;
 
+  /** Errors repeated inside the dropdown. */
   @property({ type: Array }) errors: string[] | undefined = undefined;
+  /** Whether the field was touched: errors wait for it unless unset. */
   @property({ type: Boolean }) touched = false;
 
   @state() private _isStartVisible = true;
@@ -620,6 +640,8 @@ export class GuiPills extends GuiElement {
    * focuses the corresponding pill in the dropdown overlay; otherwise in the
    * strip. Useful for hosts that want to "enter" the pill list from outside
    * (e.g. tags' ArrowLeft from the input).
+   *
+   * @internal
    */
   focusPillAt(index: number) {
     if (this.tryFocusPillAt(index)) return;
@@ -639,12 +661,17 @@ export class GuiPills extends GuiElement {
     return true;
   }
 
-  /** Open the dropdown and focus its first pill. No-op if `bubble` is false. */
+  /**
+   * Open the dropdown and focus its first pill. No-op if `bubble` is false.
+   *
+   * @internal
+   */
   openDropdown() {
     if (!this.bubble || this._showDropdown) return;
     this._popup.openAndFocus();
   }
 
+  /** @internal */
   closeDropdown() {
     this._popup.close();
   }

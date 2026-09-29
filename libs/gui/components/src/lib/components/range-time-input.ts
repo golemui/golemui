@@ -46,66 +46,112 @@ export type GuiRangeTimeInputProps = {
   hint?: string;
 };
 
+/**
+ * A field to type one or more time ranges, shown as pills.
+ *
+ * @fires gui-input - The user changed the value. `detail.value` is the new value.
+ * @fires gui-change - The user added, removed or finished editing a range. `detail.value` is the
+ *   list of ranges.
+ * @fires gui-blur - Focus left the control.
+ * @fires gui-focus - One of the parts of the field received focus.
+ * @fires gui-input-error - The element rejected what the user entered, such as an impossible date
+ *   or a value out of bounds. `detail.message` is the error; show it through `errors`.
+ * @fires gui-parts-change - The typed parts changed before they form a complete value, for a host
+ *   that mirrors them.
+ * @fires gui-edit-state-change - Editing a range in place started, changed selection or ended.
+ *   `detail` has the `selected` range and whether it is `editing`.
+ * @fires gui-range-click - The user clicked a range pill. `detail.range` is the range.
+ * @cssprop --gui-pill-height - Height of each pill.
+ * @cssprop --gui-pill-font-size - Font size of the pill text.
+ * @cssprop --gui-pill-action-size - Size of the icons inside a pill.
+ * @cssprop --gui-pill-action-hit - Clickable area of the buttons inside a pill.
+ */
 export class GuiRangeTimeInput extends GuiFormControl {
-  @property({ type: String }) label: string | undefined = undefined;
+  /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
-  @property({ type: Array }) errors: string[] | undefined = [];
+  /**
+   * Whether the element renders its own error list. Elements that embed it turn it off and show the
+   * errors themselves.
+   */
   @property({ type: Boolean }) showErrors: boolean | undefined = true;
-  @property({ type: Boolean }) touched: boolean | undefined = undefined;
-  @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
 
+  /** Icon class name shown inside the control, for example from an icon font. */
   @property({ type: String }) icon: string | undefined = '';
-  @property({ type: String }) hint: string | undefined = undefined;
+  /** Accessible name of the hour part. */
   @property({ type: String }) hourAriaLabel: string | undefined = undefined;
+  /** Accessible name of the minute part. */
   @property({ type: String }) minuteAriaLabel: string | undefined = undefined;
+  /** Accessible name of the AM/PM part. */
   @property({ type: String }) dayPeriodAriaLabel: string | undefined = undefined;
 
+  /** 12- or 24-hour clock. Defaults to the locale's. */
   @property({ type: String, attribute: 'hour-format' }) hourFormat: HourFormat | undefined =
     undefined;
+  /** Minutes between the times offered in the list. */
   @property({ type: Number, attribute: 'minute-step' }) minuteStep: number | undefined = 1;
+  /** Earliest selectable time, as an ISO time (`HH:mm`). */
   @property({ type: String, attribute: 'min-time' }) minTime: string | undefined = undefined;
+  /** Latest selectable time, as an ISO time (`HH:mm`). */
   @property({ type: String, attribute: 'max-time' }) maxTime: string | undefined = undefined;
+  /** Error for a time before `minTime`. */
   @property({ type: String, attribute: 'min-time-message' }) minTimeMessage: string | undefined =
     undefined;
+  /** Error for a time after `maxTime`. */
   @property({ type: String, attribute: 'max-time-message' }) maxTimeMessage: string | undefined =
     undefined;
 
+  /** The time ranges, as `{ start, end }` ISO times. */
   @property({ type: Array }) value: TimeRange[] | undefined = [];
+  /** Error when the end time is not after the start time. */
   @property({ type: String, attribute: 'range-order-message' }) rangeOrderMessage:
     | string
     | undefined = undefined;
+  /** Accessible name of the remove button of each range pill. */
   @property({ type: String }) removePillAriaLabel: string | undefined = undefined;
+  /** Accessible name of the start time field. */
   @property({ type: String }) startTimeAriaLabel: string | undefined = undefined;
+  /** Accessible name of the end time field. */
   @property({ type: String }) endTimeAriaLabel: string | undefined = undefined;
+  /** Text shown between the start and end of a range. */
   @property({ type: String }) separator: string | undefined = undefined;
+  /** Allows typing any time, not only picking one from the list. */
   @property({ type: Boolean, attribute: 'allow-custom-time' }) allowCustomTime:
     | boolean
     | undefined = undefined;
+  /** Times that cannot be picked, as `{ start, end }` ISO time ranges. */
   @property({ type: Array, attribute: 'disabled-ranges' }) disabledRanges: TimeRange[] | undefined =
     undefined;
+  /** Error for a time inside `disabledRanges`. */
   @property({ type: String, attribute: 'disabled-range-message' }) disabledRangeMessage:
     | string
     | undefined = undefined;
+  /** Error when focus leaves a partly filled value. */
   @property({ type: String, attribute: 'incomplete-message' }) incompleteMessage:
     | string
     | undefined = undefined;
   /** Opt-in select → edit → confirm flow on the pills. */
   @property({ type: Boolean, attribute: 'allow-edit' }) allowEdit: boolean | undefined = false;
+  /** Tooltip of the edit button of a range pill. */
   @property({ type: String, attribute: 'edit-label' }) editLabel: string | undefined = undefined;
+  /** Hint that a range pill can be edited. `{label}` is the range. */
   @property({ type: String, attribute: 'edit-aria-label' }) editAriaLabel: string | undefined =
     undefined;
+  /** Tooltip of the confirm button of a range being edited. */
   @property({ type: String, attribute: 'confirm-edit-label' }) confirmEditLabel:
     | string
     | undefined = undefined;
+  /** Tooltip of the cancel button of a range being edited. */
   @property({ type: String, attribute: 'cancel-edit-label' }) cancelEditLabel: string | undefined =
     undefined;
+  /** Announcement when editing a range starts. `{label}` is the range. */
   @property({ type: String, attribute: 'edit-started-message' }) editStartedMessage:
     | string
     | undefined = undefined;
+  /** Announcement when an edited range is saved. `{label}` is the new range. */
   @property({ type: String, attribute: 'edit-committed-message' }) editCommittedMessage:
     | string
     | undefined = undefined;
+  /** Announcement when editing a range is cancelled. */
   @property({ type: String, attribute: 'edit-cancelled-message' }) editCancelledMessage:
     | string
     | undefined = undefined;
@@ -455,12 +501,20 @@ export class GuiRangeTimeInput extends GuiFormControl {
     this.syncParts();
   }
 
-  /** Starts editing the selected pill; the host picker's Edit action. */
+  /**
+   * Starts editing the selected pill; the host picker's Edit action.
+   *
+   * @internal
+   */
   startEdit(): boolean {
     return this._edit.startEdit();
   }
 
-  /** Cancels an open edit session; the host picker's Cancel action. */
+  /**
+   * Cancels an open edit session; the host picker's Cancel action.
+   *
+   * @internal
+   */
   cancelEdit(): void {
     this._edit.cancel();
   }
@@ -468,15 +522,19 @@ export class GuiRangeTimeInput extends GuiFormControl {
   /**
    * The host picker's Escape layering routes here once its popup declined
    * the key: cancels an open session first, then clears the selection.
+   *
+   * @internal
    */
   handleSessionEscape(event: KeyboardEvent): boolean {
     return this._edit.handleEscape(event);
   }
 
+  /** @internal */
   get isEditing(): boolean {
     return !!this._edit.editing;
   }
 
+  /** @internal */
   get selectedEditRange(): TimeRange | null {
     return this._edit.selectedRange;
   }
@@ -586,6 +644,8 @@ export class GuiRangeTimeInput extends GuiFormControl {
    * Fills a group's segmented parts from an ISO time. The range time picker
    * calls this so a list pick lands in the visible input (start/end field)
    * before it attempts to commit — see {@link commitFromParts}.
+   *
+   * @internal
    */
   fillGroup(group: 'start' | 'end', iso: string): void {
     this._parts.setGroupFromISO(group, iso, 'time', this.timeLocaleData.effectiveHourFormat);
@@ -598,6 +658,8 @@ export class GuiRangeTimeInput extends GuiFormControl {
    * one was created. A public entry point onto the same {@link tryCreatePill}
    * pipeline typed entry uses, so the picker's list-driven commits validate
    * (order + bounds + disabled ranges) through one path.
+   *
+   * @internal
    */
   commitFromParts(): boolean {
     return this.tryCreatePill();
@@ -644,6 +706,8 @@ export class GuiRangeTimeInput extends GuiFormControl {
    * useful than "incomplete". `_validationTriggered` makes the next edit
    * re-evaluate, so the message clears as soon as the user comes back and
    * continues (or empties the fields).
+   *
+   * @internal
    */
   finalizeOnLeave(): void {
     if (this._edit.editing) {

@@ -42,44 +42,75 @@ export type GuiDateTimeProps = {
   hint?: string;
 };
 
+/**
+ * A date and time field typed part by part.
+ *
+ * @fires gui-input - The user changed the value. `detail.value` is the new value.
+ * @fires gui-change - The user committed the value. `detail.value` is the committed value.
+ * @fires gui-blur - Focus left the control.
+ * @fires gui-focus - One of the parts of the field received focus.
+ * @fires gui-input-error - The element rejected what the user entered, such as an impossible date
+ *   or a value out of bounds. `detail.message` is the error; show it through `errors`.
+ * @fires gui-parts-change - The typed parts changed before they form a complete value, for a host
+ *   that mirrors them.
+ */
 export class GuiDateTime extends GuiFormControl {
-  @property({ type: String }) label: string | undefined = undefined;
+  /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
-  @property({ type: Array }) errors: string[] | undefined = [];
+  /**
+   * Whether the element renders its own error list. Elements that embed it turn it off and show the
+   * errors themselves.
+   */
   @property({ type: Boolean }) showErrors: boolean | undefined = true;
-  @property({ type: Boolean }) touched: boolean | undefined = undefined;
-  @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
 
+  /** Icon class name shown inside the control, for example from an icon font. */
   @property({ type: String }) icon: string | undefined = '';
-  @property({ type: String }) hint: string | undefined = undefined;
+  /** Accessible name of the day part. */
   @property({ type: String }) dayAriaLabel: string | undefined = undefined;
+  /** Accessible name of the month part. */
   @property({ type: String }) monthAriaLabel: string | undefined = undefined;
+  /** Accessible name of the year part. */
   @property({ type: String }) yearAriaLabel: string | undefined = undefined;
+  /** Accessible name of the hour part. */
   @property({ type: String }) hourAriaLabel: string | undefined = undefined;
+  /** Accessible name of the minute part. */
   @property({ type: String }) minuteAriaLabel: string | undefined = undefined;
+  /** Accessible name of the AM/PM part. */
   @property({ type: String }) dayPeriodAriaLabel: string | undefined = undefined;
 
+  /** 12- or 24-hour clock. Defaults to the locale's. */
   @property({ type: String, attribute: 'hour-format' }) hourFormat: HourFormat | undefined =
     undefined;
+  /** Minutes between the times offered in the list. */
   @property({ type: Number, attribute: 'minute-step' }) minuteStep: number | undefined = 1;
+  /** Error for a complete but impossible date, such as February 31. */
   @property({ type: String, attribute: 'invalid-date-message' }) invalidDateMessage:
     | string
     | undefined = undefined;
 
+  /** The date and time, as an ISO date-time (`YYYY-MM-DDTHH:mm`). */
   @property({ type: String }) value: string | undefined = undefined;
+  /** Earliest selectable date, as an ISO date (`YYYY-MM-DD`). */
   @property({ type: String, attribute: 'min-date' }) minDate: string | undefined = undefined;
+  /** Latest selectable date, as an ISO date (`YYYY-MM-DD`). */
   @property({ type: String, attribute: 'max-date' }) maxDate: string | undefined = undefined;
+  /** Earliest selectable time, as an ISO time (`HH:mm`). */
   @property({ type: String, attribute: 'min-time' }) minTime: string | undefined = undefined;
+  /** Latest selectable time, as an ISO time (`HH:mm`). */
   @property({ type: String, attribute: 'max-time' }) maxTime: string | undefined = undefined;
+  /** Error for a date before `minDate`. */
   @property({ type: String, attribute: 'min-date-message' }) minDateMessage: string | undefined =
     undefined;
+  /** Error for a date after `maxDate`. */
   @property({ type: String, attribute: 'max-date-message' }) maxDateMessage: string | undefined =
     undefined;
+  /** Error for a time before `minTime`. */
   @property({ type: String, attribute: 'min-time-message' }) minTimeMessage: string | undefined =
     undefined;
+  /** Error for a time after `maxTime`. */
   @property({ type: String, attribute: 'max-time-message' }) maxTimeMessage: string | undefined =
     undefined;
+  /** Error when focus leaves a partly filled value. */
   @property({ type: String, attribute: 'incomplete-message' }) incompleteMessage:
     | string
     | undefined = undefined;
@@ -359,6 +390,8 @@ export class GuiDateTime extends GuiFormControl {
    * the time parts untouched. Host pickers call this when their calendar's
    * working date changes, so a picked day lands in the visible segments
    * without committing anything.
+   *
+   * @internal
    */
   fillDate(iso: string | null): void {
     this._parts.setGroupFromISO('default', iso, 'date');
@@ -369,13 +402,19 @@ export class GuiDateTime extends GuiFormControl {
    * Paints only the time parts from an ISO time (null clears them), leaving
    * the date parts untouched. The counterpart of {@link fillDate} for the
    * picker's working time.
+   *
+   * @internal
    */
   fillTime(iso: string | null): void {
     this._parts.setGroupFromISO('default', iso, 'time', this.localeData.effectiveHourFormat);
     this.requestUpdate();
   }
 
-  /** The group's fill state, for host pickers' own focus-leave checks. */
+  /**
+   * The group's fill state, for host pickers' own focus-leave checks.
+   *
+   * @internal
+   */
   groupCompleteness(): GroupCompleteness {
     const { effectiveHourFormat, descriptors } = this.localeData;
     const { result } = parseDateTimeGroup(this._parts.values['default'] ?? {}, {
@@ -402,6 +441,7 @@ export class GuiDateTime extends GuiFormControl {
     this.settleOnFocusLeave();
   }
 
+  /** @internal */
   settleOnFocusLeave(): void {
     const completeness = this.groupCompleteness();
     if (completeness === 'complete') return;

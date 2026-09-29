@@ -20,25 +20,37 @@ export type GuiTextareaProps = {
   maxLength?: number;
 };
 
+/**
+ * A multi-line text field, with an optional character counter.
+ *
+ * @fires gui-input - The user changed the value. `detail.value` is the new value.
+ * @fires gui-change - The user committed the text, on blur or Enter. `detail.value` is the value.
+ * @fires gui-blur - Focus left the control.
+ */
 export class GuiTextarea extends GuiFormControl {
-  @property({ type: String }) label: string | undefined = undefined;
+  /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
-  @property({ type: Array }) errors: string[] | undefined = [];
-  @property({ type: Boolean }) touched: boolean | undefined = undefined;
-  @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
+  /** The text. */
   @property({ type: String }) value: string | undefined = undefined;
 
-  @property({ type: String }) hint: string | undefined = undefined;
+  /** Text shown while the control is empty. */
   @property({ type: String }) placeholder: string | undefined = undefined;
+  /** The `autocomplete` hint passed to the inner native control. */
   @property({ type: String }) autocomplete: string | undefined = undefined;
+  /**
+   * With `maxLength`, whether the counter shows the characters left (`remaining`) or used
+   * (`current`).
+   */
   @property({ type: String, attribute: 'countermode' }) counterMode:
     | 'remaining'
     | 'current'
     | undefined;
+  /** Minimum height of the field, in pixels. */
   @property({ type: Number, attribute: 'minimumheight' }) minimumHeight: number | undefined =
     undefined;
+  /** Grows the field with its content instead of scrolling. */
   @property({ type: Boolean, attribute: 'autogrow' }) autoGrow: boolean | undefined = false;
+  /** Maximum number of characters. */
   @property({ type: Number, attribute: 'maxlength' }) maxLength: number | undefined = undefined;
 
   private ariaController = new GUIAriaController(this, {
@@ -152,6 +164,7 @@ export class GuiTextarea extends GuiFormControl {
     `;
   }
 
+  /** @internal */
   valueChanged(event: InputEvent) {
     event.stopPropagation();
 
@@ -162,11 +175,16 @@ export class GuiTextarea extends GuiFormControl {
     }
   }
 
-  /** The native `change`: the user committed the edit (blur or Enter). */
+  /**
+   * The native `change`: the user committed the edit (blur or Enter).
+   *
+   * @internal
+   */
   valueCommitted(event: Event) {
     dispatchChange(this, (event.target as HTMLInputElement).value);
   }
 
+  /** @internal */
   onBlur() {
     this.dispatchEvent(
       new CustomEvent('gui-blur', {

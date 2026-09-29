@@ -18,21 +18,31 @@ export type GuiNumberProps = {
   autocomplete?: string;
 };
 
+/**
+ * A number field. ArrowUp and ArrowDown step the value.
+ *
+ * @fires gui-input - The user changed the value. `detail.value` is the new value.
+ * @fires gui-change - The user committed the number: on blur or Enter, or at once with a step.
+ *   `detail.value` is the number.
+ * @fires gui-blur - Focus left the control.
+ */
 export class GuiNumber extends GuiFormControl {
-  @property({ type: String }) label: string | undefined = undefined;
-  @property({ type: String }) hint: string | undefined = undefined;
+  /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
-  @property({ type: Array }) errors: string[] | undefined = [];
-  @property({ type: Boolean }) touched: boolean | undefined = undefined;
-  @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
+  /** The number, or `undefined` when empty. */
   @property({ type: Number }) value: number | undefined = undefined;
 
+  /** The step of the ArrowUp and ArrowDown keys. Defaults to 1. */
   @property({ type: Number }) step: number | undefined = undefined;
+  /** Text shown while the control is empty. */
   @property({ type: String }) placeholder: string | undefined = undefined;
+  /** The `autocomplete` hint passed to the inner native control. */
   @property({ type: String }) autocomplete: string | undefined = undefined;
+  /** Smallest allowed number. */
   @property({ type: Number }) minimum: number | undefined = undefined;
+  /** Largest allowed number. */
   @property({ type: Number }) maximum: number | undefined = undefined;
+  /** Grows the field with its content instead of scrolling. */
   @property({ type: Number }) autoGrow: boolean | undefined = false;
 
   private ariaController = new GUIAriaController(this, {
@@ -191,6 +201,7 @@ export class GuiNumber extends GuiFormControl {
     this.syncNativeInput();
   }
 
+  /** @internal */
   keyDown(event: KeyboardEvent) {
     event.stopPropagation();
     blockNonNumericKeys(event);
@@ -207,6 +218,7 @@ export class GuiNumber extends GuiFormControl {
     }
   }
 
+  /** @internal */
   minus() {
     if (!this.readOnly) {
       const target = this.querySelector(`input[id="${this.uid}"]`) as HTMLInputElement;
@@ -227,6 +239,7 @@ export class GuiNumber extends GuiFormControl {
     }
   }
 
+  /** @internal */
   plus() {
     if (!this.readOnly) {
       const target = this.querySelector(`input[id="${this.uid}"]`) as HTMLInputElement;
@@ -263,6 +276,7 @@ export class GuiNumber extends GuiFormControl {
     return super.validate();
   }
 
+  /** @internal */
   valueChanged(event: InputEvent) {
     event.stopPropagation();
 
@@ -274,12 +288,17 @@ export class GuiNumber extends GuiFormControl {
     }
   }
 
-  /** The native `change`: the user committed the typed number (blur or Enter). */
+  /**
+   * The native `change`: the user committed the typed number (blur or Enter).
+   *
+   * @internal
+   */
   valueCommitted(event: Event) {
     const value = (event.target as HTMLInputElement).valueAsNumber;
     dispatchChange(this, Number.isNaN(value) ? undefined : value);
   }
 
+  /** @internal */
   onBlur() {
     // The focus guard in syncNativeInput() defers programmatic values while the
     // user is typing; land them now instead of relying on the blur dispatch to

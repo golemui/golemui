@@ -28,47 +28,66 @@ export type GuiFileUploadProps = {
  * Server file cleanup belongs to the host; `uploadService.remove` is only a
  * courtesy on explicit user removals and single-file replacement. See the
  * `UploadService` doc in `../types.ts`.
+ *
+ * @fires gui-input - The user changed the value. `detail.value` is the new value.
+ * @fires gui-change - The files changed: one was added, uploaded or removed. `detail.value` is the
+ *   list of files.
+ * @fires gui-blur - Focus left the control.
+ * @fires gui-input-error - The element rejected what the user entered, such as an impossible date
+ *   or a value out of bounds. `detail.message` is the error; show it through `errors`.
  */
 export class GuiFileUpload extends GuiFormControl {
   /** The form data path, forwarded to `uploadService.upload` as `ctx.path`. */
   @property({ type: String }) path: string | undefined = undefined;
-  @property({ type: String }) label: string | undefined = undefined;
-  @property({ type: Array }) errors: string[] | undefined = [];
-  @property({ type: Boolean }) touched: boolean | undefined = undefined;
-  @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
+  /** The files, with their upload status. */
   @property({ type: Object }) value: FileItem | null | undefined = null;
+  /** Provides the `uploadService` that uploads and removes files. */
   @property({ type: Object }) dependencies: { uploadService?: UploadService } | undefined =
     undefined;
 
-  @property({ type: String }) hint: string | undefined = undefined;
+  /** Icon class name of the upload button. */
   @property({ type: String }) icon: string | undefined = undefined;
+  /** Accepted file types, as MIME types (`image/*`) or extensions (`.pdf`). */
   @property({ type: Array }) accept: string[] | undefined = undefined;
+  /** Largest accepted file, in bytes. */
   @property({ type: Number }) maxSize: number | undefined = undefined;
+  /** Text of the upload button. */
   @property({ type: String, attribute: 'button-label' }) buttonLabel: string | undefined =
     undefined;
+  /** Accessible name of the remove button. `{name}` is the file name. */
   @property({ type: String, attribute: 'remove-aria-label' }) removeAriaLabel: string | undefined =
     undefined;
+  /** Accessible name of the cancel button of an upload in progress. `{name}` is the file name. */
   @property({ type: String, attribute: 'cancel-aria-label' }) cancelAriaLabel: string | undefined =
     undefined;
+  /** Accessible name of the retry button. `{name}` is the file name. */
   @property({ type: String, attribute: 'retry-aria-label' }) retryAriaLabel: string | undefined =
     undefined;
+  /** Icon class name of the remove button, replacing the default ×. */
   @property({ type: String, attribute: 'remove-icon' }) removeIcon: string | undefined = undefined;
+  /** Icon class name of the retry button. */
   @property({ type: String, attribute: 'retry-icon' }) retryIcon: string | undefined = undefined;
+  /** Error for a file larger than `maxSize`. */
   @property({ type: String, attribute: 'max-size-message' }) maxSizeMessage: string | undefined =
     undefined;
+  /** Error for a file whose type is not in `accept`. */
   @property({ type: String, attribute: 'accept-message' }) acceptMessage: string | undefined =
     undefined;
+  /** Error for a file whose upload never finished. `{name}` is the file name. */
   @property({ type: String, attribute: 'interrupted-message' }) interruptedMessage:
     | string
     | undefined = undefined;
+  /** Text shown when no `uploadService` is provided. */
   @property({ type: String, attribute: 'missing-service-message' }) missingServiceMessage:
     | string
     | undefined = undefined;
+  /** Announcement after a file uploads. `{name}` is the file name. */
   @property({ type: String, attribute: 'uploaded-message' }) uploadedMessage: string | undefined =
     undefined;
+  /** Announcement after a file is removed. `{name}` is the file name. */
   @property({ type: String, attribute: 'removed-message' }) removedMessage: string | undefined =
     undefined;
+  /** Announcement after an upload fails. `{name}` is the file name. */
   @property({ type: String, attribute: 'failed-message' }) failedMessage: string | undefined =
     undefined;
 

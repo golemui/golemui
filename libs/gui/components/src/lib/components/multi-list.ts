@@ -8,8 +8,12 @@ import type { ListItem, OptionValue } from '../types';
  * model as `gui-list`, but selection is an array (`values`) and every
  * Enter/Space/click dispatches `gui-item-toggle` with the toggled item's
  * value — the host owns the array toggle semantics.
+ *
+ * @fires gui-item-toggle - The user toggled an item. `detail.value` is its value; the host adds or
+ *   removes it from `values`.
  */
 export class GuiMultiList extends GuiList {
+  /** The selected values. */
   @property({ type: Array }) values: OptionValue[] | undefined = [];
 
   protected override hasSelection(): boolean {

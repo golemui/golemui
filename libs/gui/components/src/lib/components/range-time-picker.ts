@@ -21,79 +21,128 @@ import { GuiFormControl, type GuiValidity } from '../gui-form-control';
 import { dispatchChange, dispatchValue, stopPropagation } from '../utils/events';
 import { message } from '../utils/messages';
 
+/**
+ * A time range field with start and end time lists in a popup.
+ *
+ * @fires gui-input - The user changed the value. `detail.value` is the new value.
+ * @fires gui-change - The user added, removed or finished editing a range. `detail.value` is the
+ *   list of ranges.
+ * @fires gui-blur - Focus left the control.
+ * @fires gui-input-error - The element rejected what the user entered, such as an impossible date
+ *   or a value out of bounds. `detail.message` is the error; show it through `errors`.
+ * @cssprop --gui-calendar-time-grid-height - Height of the time grid.
+ * @cssprop --gui-calendar-time-button-height - Height of each time in the grid.
+ * @cssprop --gui-pill-height - Height of each pill.
+ * @cssprop --gui-pill-font-size - Font size of the pill text.
+ * @cssprop --gui-pill-action-size - Size of the icons inside a pill.
+ * @cssprop --gui-pill-action-hit - Clickable area of the buttons inside a pill.
+ */
 export class GuiRangeTimePicker extends GuiFormControl {
-  @property({ type: String }) label: string | undefined = undefined;
-  @property({ type: String }) hint: string | undefined = undefined;
+  /** Icon class name shown inside the control, for example from an icon font. */
   @property({ type: String }) icon: string | undefined = '';
+  /** Accessible name of the button that opens the popup. */
   @property({ type: String, attribute: 'toggle-aria-label' }) toggleAriaLabel: string | undefined =
     undefined;
+  /** Accessible name of the hour part. */
   @property({ type: String }) hourAriaLabel: string | undefined = undefined;
+  /** Accessible name of the minute part. */
   @property({ type: String }) minuteAriaLabel: string | undefined = undefined;
+  /** Accessible name of the AM/PM part. */
   @property({ type: String }) dayPeriodAriaLabel: string | undefined = undefined;
-  @property({ type: Array }) errors: string[] | undefined = [];
+  /**
+   * Whether the element renders its own error list. Elements that embed it turn it off and show the
+   * errors themselves.
+   */
   @property({ type: Boolean }) showErrors: boolean | undefined = true;
-  @property({ type: Boolean }) touched: boolean | undefined = undefined;
-  @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
+  /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
+  /** The time ranges, as `{ start, end }` ISO times. */
   @property({ type: Array }) value: TimeRange[] | undefined = [];
+  /** Text shown between the start and end of a range. */
   @property({ type: String }) separator: string | undefined = undefined;
+  /** Accessible name of the remove button of each range pill. */
   @property({ type: String, attribute: 'remove-pill-aria-label' }) removePillAriaLabel:
     | string
     | undefined = undefined;
+  /** Accessible name of the start time field. */
   @property({ type: String, attribute: 'start-time-aria-label' }) startTimeAriaLabel:
     | string
     | undefined = undefined;
+  /** Accessible name of the end time field. */
   @property({ type: String, attribute: 'end-time-aria-label' }) endTimeAriaLabel:
     | string
     | undefined = undefined;
+  /** Label of the start time. */
   @property({ type: String, attribute: 'start-time-label' }) startTimeLabel: string | undefined =
     undefined;
+  /** Label of the end time. */
   @property({ type: String, attribute: 'end-time-label' }) endTimeLabel: string | undefined =
     undefined;
+  /** 12- or 24-hour clock. Defaults to the locale's. */
   @property({ type: String, attribute: 'hour-format' }) hourFormat: HourFormat | undefined =
     undefined;
+  /** Minutes between the times offered in the list. */
   @property({ type: Number, attribute: 'minute-step' }) minuteStep: number | undefined = undefined;
+  /** Earliest selectable time, as an ISO time (`HH:mm`). */
   @property({ type: String, attribute: 'min-time' }) minTime: string | undefined = undefined;
+  /** Latest selectable time, as an ISO time (`HH:mm`). */
   @property({ type: String, attribute: 'max-time' }) maxTime: string | undefined = undefined;
+  /** Times that cannot be picked, as `{ start, end }` ISO time ranges. */
   @property({ type: Array, attribute: 'disabled-ranges' }) disabledRanges: TimeRange[] | undefined =
     undefined;
+  /** Allows typing any time, not only picking one from the list. */
   @property({ type: Boolean, attribute: 'allow-custom-time' }) allowCustomTime:
     | boolean
     | undefined = false;
+  /** Height of each time list, in pixels. */
   @property({ type: Number }) height: number | undefined = undefined;
+  /** Height of each time in the lists, in pixels. */
   @property({ type: Number, attribute: 'item-height' }) itemHeight: number | undefined = undefined;
+  /** Error for a time before `minTime`. */
   @property({ type: String, attribute: 'min-time-message' }) minTimeMessage: string | undefined =
     undefined;
+  /** Error for a time after `maxTime`. */
   @property({ type: String, attribute: 'max-time-message' }) maxTimeMessage: string | undefined =
     undefined;
+  /** Error when the end time is not after the start time. */
   @property({ type: String, attribute: 'range-order-message' }) rangeOrderMessage:
     | string
     | undefined = undefined;
+  /** Error for a time inside `disabledRanges`. */
   @property({ type: String, attribute: 'disabled-range-message' }) disabledRangeMessage:
     | string
     | undefined = undefined;
+  /** Text shown when no time can be picked. */
   @property({ type: String, attribute: 'no-available-times-message' }) noAvailableTimesMessage:
     | string
     | undefined = undefined;
+  /** Error when focus leaves a partly filled value. */
   @property({ type: String, attribute: 'incomplete-message' }) incompleteMessage:
     | string
     | undefined = undefined;
+  /** Lets the user edit a range in place from its pill. */
   @property({ type: Boolean, attribute: 'allow-edit' }) allowEdit: boolean | undefined = false;
+  /** Tooltip of the edit button of a range pill. */
   @property({ type: String, attribute: 'edit-label' }) editLabel: string | undefined = undefined;
+  /** Hint that a range pill can be edited. `{label}` is the range. */
   @property({ type: String, attribute: 'edit-aria-label' }) editAriaLabel: string | undefined =
     undefined;
+  /** Tooltip of the confirm button of a range being edited. */
   @property({ type: String, attribute: 'confirm-edit-label' }) confirmEditLabel:
     | string
     | undefined = undefined;
+  /** Tooltip of the cancel button of a range being edited. */
   @property({ type: String, attribute: 'cancel-edit-label' }) cancelEditLabel: string | undefined =
     undefined;
+  /** Announcement when editing a range starts. `{label}` is the range. */
   @property({ type: String, attribute: 'edit-started-message' }) editStartedMessage:
     | string
     | undefined = undefined;
+  /** Announcement when an edited range is saved. `{label}` is the new range. */
   @property({ type: String, attribute: 'edit-committed-message' }) editCommittedMessage:
     | string
     | undefined = undefined;
+  /** Announcement when editing a range is cancelled. */
   @property({ type: String, attribute: 'edit-cancelled-message' }) editCancelledMessage:
     | string
     | undefined = undefined;
@@ -146,6 +195,7 @@ export class GuiRangeTimePicker extends GuiFormControl {
   });
 
   // The pills dropdown and the list panel are mutually exclusive.
+  /** @internal */
   onDropdownToggle = (event: Event) => {
     const detail = (event as CustomEvent<{ open: boolean }>).detail;
     if (detail?.open && this._popup.open) this._popup.close();

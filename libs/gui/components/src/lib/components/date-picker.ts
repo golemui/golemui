@@ -15,45 +15,77 @@ import { boundsValidity, GuiFormControl, type GuiValidity } from '../gui-form-co
 import { dispatchChange, dispatchValue } from '../utils/events';
 import { message } from '../utils/messages';
 
+/**
+ * A date field with a calendar popup.
+ *
+ * @fires gui-input - The user changed the value. `detail.value` is the new value.
+ * @fires gui-change - The user committed the value. `detail.value` is the committed value.
+ * @fires gui-blur - Focus left the control.
+ * @fires gui-input-error - The element rejected what the user entered, such as an impossible date
+ *   or a value out of bounds. `detail.message` is the error; show it through `errors`.
+ * @cssprop --gui-calendar-width - Width of one month.
+ * @cssprop --gui-calendar-day-button-size - Size of each day.
+ * @cssprop --gui-calendar-change-month-button-width - Width of the previous- and next-month
+ *   buttons.
+ * @cssprop --gui-calendar-change-month-button-height - Height of the previous- and next-month
+ *   buttons.
+ * @cssprop --gui-calendar-year-button-width - Width of each year in the year grid.
+ * @cssprop --gui-calendar-year-button-height - Height of each year in the year grid.
+ * @cssprop --gui-calendar-year-grid-height - Height of the year grid.
+ */
 export class GuiDatePicker extends GuiFormControl {
-  @property({ type: String }) label: string | undefined = undefined;
-  @property({ type: String }) hint: string | undefined = undefined;
+  /** Icon class name shown inside the control, for example from an icon font. */
   @property({ type: String }) icon: string | undefined = '';
+  /** Accessible name of the button that opens the popup. */
   @property({ type: String, attribute: 'toggle-aria-label' }) toggleAriaLabel: string | undefined =
     undefined;
+  /** Accessible name of the day part. */
   @property({ type: String }) dayAriaLabel: string | undefined = undefined;
+  /** Accessible name of the month part. */
   @property({ type: String }) monthAriaLabel: string | undefined = undefined;
+  /** Accessible name of the year part. */
   @property({ type: String }) yearAriaLabel: string | undefined = undefined;
-  @property({ type: Array }) errors: string[] | undefined = [];
+  /**
+   * Whether the element renders its own error list. Elements that embed it turn it off and show the
+   * errors themselves.
+   */
   @property({ type: Boolean }) showErrors: boolean | undefined = true;
-  @property({ type: Boolean }) touched: boolean | undefined = undefined;
-  @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
+  /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
+  /** The date, as an ISO date (`YYYY-MM-DD`). */
   @property({ type: String }) value: string | undefined = undefined;
+  /** Icon class name of the previous-month button. */
   @property({ type: String, attribute: 'prev-month-icon' }) prevMonthIcon: string | undefined = '';
+  /** Icon class name of the next-month button. */
   @property({ type: String, attribute: 'next-month-icon' }) nextMonthIcon: string | undefined = '';
+  /** Accessible name of the previous-month button. */
   @property({ type: String, attribute: 'prev-month-aria-label' }) prevMonthAriaLabel:
     | string
     | undefined = undefined;
+  /** Accessible name of the next-month button. */
   @property({ type: String, attribute: 'next-month-aria-label' }) nextMonthAriaLabel:
     | string
     | undefined = undefined;
+  /** Accessible name of the button that opens the year grid. */
   @property({ type: String, attribute: 'select-year-aria-label' }) selectYearAriaLabel:
     | string
     | undefined = undefined;
+  /** Accessible name of the year grid. */
   @property({ type: String, attribute: 'year-grid-aria-label' }) yearGridAriaLabel:
     | string
     | undefined = undefined;
+  /** How day numbers are written. */
   @property({ type: String, attribute: 'day-format' }) dayFormat:
     | 'numeric'
     | '2-digit'
     | undefined = undefined;
+  /** How weekday names are written in the header. */
   @property({ type: String, attribute: 'weekday-format' }) weekdayFormat:
     | 'short'
     | 'long'
     | 'narrow'
     | undefined = undefined;
+  /** How the month is written in the header. */
   @property({ type: String, attribute: 'month-format' }) monthFormat:
     | 'numeric'
     | '2-digit'
@@ -61,22 +93,31 @@ export class GuiDatePicker extends GuiFormControl {
     | 'short'
     | 'narrow'
     | undefined = undefined;
+  /** Earliest selectable date, as an ISO date (`YYYY-MM-DD`). */
   @property({ type: String, attribute: 'min-date' }) minDate: string | undefined = undefined;
+  /** Latest selectable date, as an ISO date (`YYYY-MM-DD`). */
   @property({ type: String, attribute: 'max-date' }) maxDate: string | undefined = undefined;
+  /** Dates that cannot be picked, as `{ start, end }` ISO date ranges. */
   @property({ type: Array, attribute: 'disabled-ranges' }) disabledRanges: DateRange[] | undefined =
     undefined;
+  /** Number of months shown side by side. */
   @property({ type: Number, attribute: 'number-of-months' }) numberOfMonths: number | undefined =
     undefined;
+  /** Error for a complete but impossible date, such as February 31. */
   @property({ type: String, attribute: 'invalid-date-message' }) invalidDateMessage:
     | string
     | undefined = undefined;
+  /** Error for a date before `minDate`. */
   @property({ type: String, attribute: 'min-date-message' }) minDateMessage: string | undefined =
     undefined;
+  /** Error for a date after `maxDate`. */
   @property({ type: String, attribute: 'max-date-message' }) maxDateMessage: string | undefined =
     undefined;
+  /** Error for a date inside `disabledRanges`. */
   @property({ type: String, attribute: 'disabled-date-range-message' }) disabledDateRangeMessage:
     | string
     | undefined = undefined;
+  /** Error when focus leaves a partly filled value. */
   @property({ type: String, attribute: 'incomplete-message' }) incompleteMessage:
     | string
     | undefined = undefined;

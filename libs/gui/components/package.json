@@ -233,6 +233,7 @@
     "internals.d.ts",
     "internals.js",
     "internals.umd.cjs",
+    "custom-elements.json",
     "*.js",
     "*.cjs",
     "*.md"

@@ -19,26 +19,37 @@ export type GuiCurrencyProps = {
   autocomplete?: string;
 };
 
+/**
+ * A money amount field, formatted in the given currency while not focused.
+ *
+ * @fires gui-input - The user changed the value. `detail.value` is the new value.
+ * @fires gui-change - The user committed the text, on blur or Enter. `detail.value` is the value.
+ * @fires gui-blur - Focus left the control.
+ */
 export class GuiCurrency extends GuiFormControl {
-  @property({ type: String }) label: string | undefined = undefined;
+  /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
-  @property({ type: Array }) errors: string[] | undefined = [];
-  @property({ type: Boolean }) touched: boolean | undefined = undefined;
-  @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
+  /** The amount, or `undefined` when empty. */
   @property({ type: String }) value: number | null | undefined = undefined;
 
+  /** ISO 4217 currency code, such as `USD` or `EUR`. */
   @property({ type: String }) currency: string | undefined = undefined;
+  /** The step of the ArrowUp and ArrowDown keys. */
   @property({ type: String }) step: number | undefined = undefined;
+  /** Maximum number of decimals shown. */
   @property({ type: String }) maximumFractionDigits: number | undefined = undefined;
+  /** Minimum number of decimals shown. */
   @property({ type: String }) minimumFractionDigits: number | undefined = undefined;
-  @property({ type: String }) hint: string | undefined = undefined;
+  /** Icon class name shown inside the control, for example from an icon font. */
   @property({ type: String }) icon: string | undefined = undefined;
+  /** Text shown while the control is empty. */
   @property({ type: String }) placeholder: string | undefined = undefined;
+  /** The `autocomplete` hint passed to the inner native control. */
   @property({ type: String }) autocomplete: string | undefined = undefined;
 
   @state() private displayValue: string | undefined;
 
+  /** @internal */
   @query('input') inputElement!: HTMLInputElement;
 
   private ariaController = new GUIAriaController(this, {

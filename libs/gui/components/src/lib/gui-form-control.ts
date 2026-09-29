@@ -52,9 +52,32 @@ export abstract class GuiFormControl extends GuiElement {
   /** The name the value is submitted under. Without it the element stays out of its form. */
   @property({ type: String }) name: string | undefined = undefined;
 
+  /** The element's value. Its type depends on the element. */
   abstract value: unknown;
-  abstract required: boolean | undefined;
-  abstract readOnly: boolean | undefined;
+
+  /** The visible label, which also names the control for assistive technology. */
+  @property({ type: String }) label: string | undefined = undefined;
+
+  /** Help text shown under the label and announced as the control's description. */
+  @property({ type: String }) hint: string | undefined = undefined;
+
+  /**
+   * Error messages to show, typically from your own validation. They show as soon as they are set,
+   * unless `touched` is `false`.
+   */
+  @property({ type: Array }) errors: string[] | undefined = [];
+
+  /**
+   * Whether the user has interacted with the control. Leave it unset unless you validate on
+   * interaction: `false` holds `errors` back until it becomes `true`.
+   */
+  @property({ type: Boolean }) touched: boolean | undefined = undefined;
+
+  /** The control needs a value: it is marked as required and, with a `name`, blocks submission. */
+  @property({ type: Boolean }) required: boolean | undefined = false;
+
+  /** The value can be read and focused but not changed. */
+  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
 
   private ownDisabled: boolean | undefined = false;
   private formDisabled = false;

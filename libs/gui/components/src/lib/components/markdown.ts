@@ -37,46 +37,88 @@ export type GuiMarkdownProps = {
   dependencies?: { markdown?: MarkdownParser };
 };
 
+/**
+ * A Markdown editor with a formatting toolbar and an optional preview.
+ *
+ * @fires gui-input - The user changed the value. `detail.value` is the new value.
+ * @fires gui-change - The user committed the text, on blur or with a toolbar command.
+ *   `detail.value` is the Markdown.
+ * @fires gui-blur - Focus left the control.
+ * @cssprop --gui-md-text-color - Text color.
+ * @cssprop --gui-md-line-height - Line height.
+ * @cssprop --gui-md-heading-color - Heading color.
+ * @cssprop --gui-md-heading-weight - Heading font weight.
+ * @cssprop --gui-md-link-color - Link color.
+ * @cssprop --gui-md-link-hover-color - Link color on hover.
+ * @cssprop --gui-md-blockquote-bg - Quote background.
+ * @cssprop --gui-md-blockquote-border-color - Quote border color.
+ * @cssprop --gui-md-blockquote-color - Quote text color.
+ * @cssprop --gui-md-code-bg - Code background.
+ * @cssprop --gui-md-code-color - Code text color.
+ * @cssprop --gui-md-code-radius - Code corner radius.
+ * @cssprop --gui-md-hr-color - Horizontal rule color.
+ */
 export class GuiMarkdown extends GuiFormControl {
-  @property({ type: String }) label: string | undefined = undefined;
+  /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
-  @property({ type: Array }) errors: string[] | undefined = [];
-  @property({ type: Boolean }) touched: boolean | undefined = undefined;
-  @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
+  /** The Markdown text. */
   @property({ type: String }) value: string | undefined = undefined;
 
-  @property({ type: String }) hint: string | undefined = undefined;
+  /**
+   * Toolbar buttons, in order: `H` heading, `B` bold, `I` italic, `S` strikethrough, `Q` quote, `L`
+   * link, `OL` and `UL` lists, and `|` for a separator. All by default.
+   */
   @property({ type: Array }) tools: string[] | undefined = undefined;
+  /** Text shown while the control is empty. */
   @property({ type: String }) placeholder: string | undefined = undefined;
+  /** The `autocomplete` hint passed to the inner native control. */
   @property({ type: String }) autocomplete: string | undefined = undefined;
+  /**
+   * With `maxLength`, whether the counter shows the characters left (`remaining`) or used
+   * (`current`).
+   */
   @property({ type: String, attribute: 'countermode' }) counterMode:
     | 'remaining'
     | 'current'
     | undefined;
+  /** Minimum height of the field, in pixels. */
   @property({ type: Number, attribute: 'minimumheight' }) minimumHeight: number | undefined =
     undefined;
+  /** Grows the field with its content instead of scrolling. */
   @property({ type: Boolean, attribute: 'autogrow' }) autoGrow: boolean | undefined = false;
+  /** Opens with the preview shown. */
   @property({ type: Boolean, attribute: 'defaultopenpreview' }) defaultOpenPreview:
     | boolean
     | undefined = undefined;
+  /** Maximum number of characters. */
   @property({ type: Number, attribute: 'maxlength' }) maxLength: number | undefined = undefined;
 
   // Button titles
+  /** Tooltip and accessible name of the heading button. */
   @property({ type: String }) headingTitle: string | undefined = undefined;
+  /** Tooltip and accessible name of the bold button. */
   @property({ type: String }) boldTitle: string | undefined = undefined;
+  /** Tooltip and accessible name of the italic button. */
   @property({ type: String }) italicTitle: string | undefined = undefined;
+  /** Tooltip and accessible name of the strikethrough button. */
   @property({ type: String }) strikethroughTitle: string | undefined = undefined;
+  /** Tooltip and accessible name of the quote button. */
   @property({ type: String }) quoteTitle: string | undefined = undefined;
+  /** Tooltip and accessible name of the link button. */
   @property({ type: String }) linkTitle: string | undefined = undefined;
+  /** Tooltip and accessible name of the numbered list button. */
   @property({ type: String }) orderedListTitle: string | undefined = undefined;
+  /** Tooltip and accessible name of the bulleted list button. */
   @property({ type: String }) unorderedListTitle: string | undefined = undefined;
+  /** Tooltip and accessible name of the preview button. */
   @property({ type: String }) splitViewTitle: string | undefined = undefined;
+  /** Accessible name of the toolbar. */
   @property({ type: String, attribute: 'toolbar-aria-label' }) toolbarAriaLabel:
     | string
     | undefined = undefined;
 
   // Deps
+  /** Provides the `markdown` parser used by the preview. */
   @property({ type: Object }) dependencies: { markdown?: MarkdownParser } | undefined = undefined;
 
   @state() private splitViewActive = false;
@@ -273,6 +315,7 @@ export class GuiMarkdown extends GuiFormControl {
     textarea.style.height = `${Math.max(this.minimumHeight ?? 120, textarea.scrollHeight - totalVerticalPadding)}px`;
   }
 
+  /** @internal */
   splitView() {
     if (this.disabled) return;
     this.splitViewActive = !this.splitViewActive;
@@ -546,6 +589,7 @@ export class GuiMarkdown extends GuiFormControl {
     return false;
   }
 
+  /** @internal */
   applyFormat(formatStart: string, formatEnd = '', formatKey = '') {
     return () => {
       // The buttons are natively disabled too; this guards programmatic calls
@@ -643,6 +687,7 @@ export class GuiMarkdown extends GuiFormControl {
     }
   }
 
+  /** @internal */
   valueChanged(event: InputEvent) {
     event.stopPropagation();
 
@@ -653,11 +698,16 @@ export class GuiMarkdown extends GuiFormControl {
     }
   }
 
-  /** The native `change`: the user committed the edit (blur or Enter). */
+  /**
+   * The native `change`: the user committed the edit (blur or Enter).
+   *
+   * @internal
+   */
   valueCommitted(event: Event) {
     dispatchChange(this, (event.target as HTMLInputElement).value);
   }
 
+  /** @internal */
   onBlur() {
     this.dispatchEvent(
       new CustomEvent('gui-blur', {

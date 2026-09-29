@@ -24,24 +24,36 @@ export type GuiSelectProps = {
   valueField?: string;
 };
 
+/**
+ * A native select to pick one option.
+ *
+ * @fires gui-input - The user changed the value. `detail.value` is the new value.
+ * @fires gui-change - The user committed the value. `detail.value` is the committed value.
+ * @fires gui-blur - Focus left the control.
+ * @fires gui-input-error - The element rejected what the user entered, such as an impossible date
+ *   or a value out of bounds. `detail.message` is the error; show it through `errors`.
+ */
 export class GuiSelect extends GuiFormControl {
-  @property({ type: String }) label: string | undefined = undefined;
+  /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
-  @property({ type: Array }) errors: string[] | undefined = [];
-  @property({ type: Boolean }) touched: boolean | undefined = undefined;
-  @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
+  /** The value of the selected option. */
   @property({ type: String }) value: OptionValue | undefined = undefined;
 
-  @property({ type: String }) hint: string | undefined = undefined;
+  /** Icon class name shown inside the control, for example from an icon font. */
   @property({ type: String }) icon: string | undefined = undefined;
+  /** The `autocomplete` hint passed to the inner native control. */
   @property({ type: String }) autocomplete: string | undefined = undefined;
+  /** The options, as values or `{ label, value }` objects. */
   @property({ type: Array }) options: Option[] = [];
+  /** Text shown while the control is empty. */
   @property({ type: String }) placeholder: string | undefined = undefined;
+  /** Error when `value` matches no option. `{value}` is the value. */
   @property({ type: String, attribute: 'invalid-option-message' }) invalidOptionMessage:
     | string
     | undefined = undefined;
+  /** For options given as objects, the key of the text to show. */
   @property({ type: String }) labelField: string | undefined = undefined;
+  /** For options given as objects, the key of the value. */
   @property({ type: String }) valueField: string | undefined = undefined;
 
   protected optionsLoading = false;
@@ -173,6 +185,7 @@ export class GuiSelect extends GuiFormControl {
     }
   }
 
+  /** @internal */
   valueChanged(event: Event) {
     event.stopPropagation();
 
@@ -183,6 +196,7 @@ export class GuiSelect extends GuiFormControl {
     }
   }
 
+  /** @internal */
   onBlur() {
     this.dispatchEvent(
       new CustomEvent('gui-blur', {

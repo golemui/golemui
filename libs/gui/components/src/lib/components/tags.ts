@@ -23,23 +23,37 @@ export type GuiTagsProps = {
   icon?: string;
 };
 
+/**
+ * A field that turns typed text into a list of tags.
+ *
+ * @fires gui-input - The user changed the value. `detail.value` is the new value.
+ * @fires gui-change - The user committed the value. `detail.value` is the committed value.
+ * @fires gui-blur - Focus left the control.
+ * @cssprop --gui-pill-height - Height of each pill.
+ * @cssprop --gui-pill-font-size - Font size of the pill text.
+ * @cssprop --gui-pill-action-size - Size of the icons inside a pill.
+ * @cssprop --gui-pill-action-hit - Clickable area of the buttons inside a pill.
+ */
 export class GuiTags extends GuiFormControl {
-  @property({ type: String }) label: string | undefined = undefined;
+  /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
-  @property({ type: Array }) errors: string[] | undefined = [];
-  @property({ type: Boolean }) touched: boolean | undefined = undefined;
-  @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
+  /** The tags. */
   @property({ type: Array }) value: string[] | undefined = [];
 
-  @property({ type: String }) hint: string | undefined = undefined;
+  /** Text shown while the control is empty. */
   @property({ type: String }) placeholder: string | undefined = undefined;
+  /** Icon class name shown inside the control, for example from an icon font. */
   @property({ type: String }) icon: string | undefined = undefined;
+  /** Keys that turn the typed text into a tag. `blur` adds it when focus leaves. */
   @property({ type: Array }) separators: TagsSeparator[] | undefined = undefined;
+  /** Allows the same tag more than once. */
   @property({ type: Boolean }) allowDuplicates: boolean | undefined = true;
+  /** Removes spaces around each tag. */
   @property({ type: Boolean }) trim: boolean | undefined = true;
+  /** Accessible name of the remove button of each tag. */
   @property({ type: String, attribute: 'remove-aria-label' }) removeAriaLabel: string | undefined =
     undefined;
+  /** Icon class name of the remove button, replacing the default ×. */
   @property({ type: String, attribute: 'remove-icon' }) removeIcon: string | undefined = undefined;
 
   private ariaController = new GUIAriaController(this, {

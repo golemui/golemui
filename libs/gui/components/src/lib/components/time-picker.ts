@@ -16,45 +16,77 @@ import { boundsValidity, GuiFormControl, type GuiValidity } from '../gui-form-co
 import { dispatchValue, stopPropagation } from '../utils/events';
 import { message } from '../utils/messages';
 
+/**
+ * A time field with a list of times in a popup.
+ *
+ * @fires gui-input - The user changed the value. `detail.value` is the new value.
+ * @fires gui-change - The user picked a time from the list or pressed Enter. `detail.value` is the
+ *   time.
+ * @fires gui-blur - Focus left the control.
+ * @fires gui-input-error - The element rejected what the user entered, such as an impossible date
+ *   or a value out of bounds. `detail.message` is the error; show it through `errors`.
+ * @fires gui-list-toggle - The time list opened or closed. `detail.open` is its new state.
+ * @cssprop --gui-calendar-time-grid-height - Height of the time grid.
+ * @cssprop --gui-calendar-time-button-height - Height of each time in the grid.
+ */
 export class GuiTimePicker extends GuiFormControl {
-  @property({ type: String }) label: string | undefined = undefined;
-  @property({ type: String }) hint: string | undefined = undefined;
+  /** Icon class name shown inside the control, for example from an icon font. */
   @property({ type: String }) icon: string | undefined = '';
+  /** Accessible name of the button that opens the popup. */
   @property({ type: String, attribute: 'toggle-aria-label' }) toggleAriaLabel: string | undefined =
     undefined;
+  /** Accessible name of the hour part. */
   @property({ type: String }) hourAriaLabel: string | undefined = undefined;
+  /** Accessible name of the minute part. */
   @property({ type: String }) minuteAriaLabel: string | undefined = undefined;
+  /** Accessible name of the AM/PM part. */
   @property({ type: String }) dayPeriodAriaLabel: string | undefined = undefined;
-  @property({ type: Array }) errors: string[] | undefined = [];
+  /**
+   * Whether the element renders its own error list. Elements that embed it turn it off and show the
+   * errors themselves.
+   */
   @property({ type: Boolean }) showErrors: boolean | undefined = true;
-  @property({ type: Boolean }) touched: boolean | undefined = undefined;
-  @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
+  /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
+  /** The time, as an ISO time (`HH:mm`). */
   @property({ type: String }) value: string | undefined = undefined;
+  /** 12- or 24-hour clock. Defaults to the locale's. */
   @property({ type: String, attribute: 'hour-format' }) hourFormat: HourFormat | undefined =
     undefined;
+  /** Minutes between the times offered in the list. */
   @property({ type: Number, attribute: 'minute-step' }) minuteStep: number | undefined = undefined;
+  /** Earliest selectable time, as an ISO time (`HH:mm`). */
   @property({ type: String, attribute: 'min-time' }) minTime: string | undefined = undefined;
+  /** Latest selectable time, as an ISO time (`HH:mm`). */
   @property({ type: String, attribute: 'max-time' }) maxTime: string | undefined = undefined;
+  /** Times that cannot be picked, as `{ start, end }` ISO time ranges. */
   @property({ type: Array, attribute: 'disabled-ranges' }) disabledRanges: TimeRange[] | undefined =
     undefined;
+  /** Allows typing any time, not only picking one from the list. */
   @property({ type: Boolean, attribute: 'allow-custom-time' }) allowCustomTime:
     | boolean
     | undefined = false;
+  /** Height of the time list, in pixels. */
   @property({ type: Number }) height: number | undefined = undefined;
+  /** Height of each time in the list, in pixels. */
   @property({ type: Number, attribute: 'item-height' }) itemHeight: number | undefined = undefined;
+  /** Number of columns of the time grid. */
   @property({ type: Number }) columns: number | undefined = undefined;
+  /** Error for a time before `minTime`. */
   @property({ type: String, attribute: 'min-time-message' }) minTimeMessage: string | undefined =
     undefined;
+  /** Error for a time after `maxTime`. */
   @property({ type: String, attribute: 'max-time-message' }) maxTimeMessage: string | undefined =
     undefined;
+  /** Error for a time inside `disabledRanges`. */
   @property({ type: String, attribute: 'disabled-range-message' }) disabledRangeMessage:
     | string
     | undefined = undefined;
+  /** Text shown when no time can be picked. */
   @property({ type: String, attribute: 'no-available-times-message' }) noAvailableTimesMessage:
     | string
     | undefined = undefined;
+  /** Error when focus leaves a partly filled value. */
   @property({ type: String, attribute: 'incomplete-message' }) incompleteMessage:
     | string
     | undefined = undefined;
@@ -340,6 +372,8 @@ export class GuiTimePicker extends GuiFormControl {
   }
 
   /** Public close hook kept for the date-time calendars, which close the
+   *
+   * @internal
    * embedded time-picker's list imperatively. */
   closeList() {
     this._popup.close();

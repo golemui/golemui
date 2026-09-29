@@ -4,6 +4,7 @@ import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 import { join } from 'path';
 import { compileStyles } from '../../../tools/vite/compile-styles';
+import { customElementsManifest } from '../../../tools/vite/custom-elements-manifest';
 
 // The public stylesheets. index.css is tokens.css plus components.css.
 const STYLES: Record<string, string> = {
@@ -25,6 +26,7 @@ export default defineConfig(() => ({
       pathsToAliases: false,
     }),
     compileStyles(__dirname, STYLES),
+    customElementsManifest(__dirname),
   ],
   // Configuration for building your library.
   build: {

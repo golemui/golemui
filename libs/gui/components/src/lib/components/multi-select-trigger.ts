@@ -10,27 +10,56 @@ import type { GuiPillItem } from './pills';
 import { GuiElement } from '../gui-element';
 import { message } from '../utils/messages';
 
+/**
+ * The field of a multi-select dropdown: the selected options as pills and a search input. A
+ * building block of GolemUI Forms.
+ *
+ * @cssprop --gui-pill-height - Height of each pill.
+ * @cssprop --gui-pill-font-size - Font size of the pill text.
+ * @cssprop --gui-pill-action-size - Size of the icons inside a pill.
+ * @cssprop --gui-pill-action-hit - Clickable area of the buttons inside a pill.
+ */
 export class GuiMultiSelectTrigger extends GuiElement {
+  /** Whether that field was touched. */
   @property({ type: Boolean }) touched: boolean | undefined = undefined;
+  /** Whether that field is required. */
   @property({ type: Boolean }) required: boolean | undefined = false;
+  /** Disables the trigger. */
   @property({ type: Boolean }) disabled: boolean | undefined = false;
+  /** Shows the selection without letting the user change it. */
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
+  /** Errors of the field the trigger belongs to. */
   @property({ type: Array }) errors: string[] | undefined = [];
+  /** @internal */
   @property({ type: Array }) pills: GuiPillItem[] = [];
 
+  /** Text shown while nothing is selected. */
   @property({ type: String }) placeholder: string | undefined = undefined;
+  /** Icon class name shown inside the trigger. */
   @property({ type: String }) icon: string | undefined = undefined;
+  /** The `autocomplete` hint of the search field. */
   @property({ type: String }) autocomplete: string | undefined = undefined;
+  /** @internal */
   @property({ type: Boolean, attribute: 'has-label' }) hasLabel = false;
+  /** @internal */
   @property({ type: Boolean, attribute: 'has-hint' }) hasHint = false;
+  /** @internal */
   @property({ type: Boolean, attribute: 'panel-open' }) panelOpen = false;
+  /** @internal */
   @property({ type: String, attribute: 'panel-id' }) panelId: string | undefined = undefined;
+  /** Accessible name of each remove button. */
   @property({ type: String, attribute: 'remove-aria-label' }) removeAriaLabel: string | undefined =
     undefined;
+  /** Icon class name of the remove buttons. */
   @property({ type: String, attribute: 'remove-icon' }) removeIcon: string | undefined = undefined;
+  /**
+   * Accessible name of the count shown when the options do not fit. `{count}` is the number
+   * selected.
+   */
   @property({ type: String, attribute: 'compact-aria-label' }) compactAriaLabel:
     | string
     | undefined = undefined;
+  /** Accessible name of the selected options. */
   @property({ type: String, attribute: 'toolbar-aria-label' }) toolbarAriaLabel:
     | string
     | undefined = undefined;
@@ -66,19 +95,23 @@ export class GuiMultiSelectTrigger extends GuiElement {
     return this;
   }
 
+  /** @internal */
   get input(): HTMLInputElement | null {
     return this.querySelector<HTMLInputElement>('input[role="combobox"]');
   }
 
+  /** @internal */
   public focusInput() {
     this.input?.focus();
   }
 
+  /** @internal */
   public clearInput() {
     const input = this.input;
     if (input) input.value = '';
   }
 
+  /** @internal */
   public closePillsDropdown() {
     this.querySelector('gui-pills')?.closeDropdown();
   }

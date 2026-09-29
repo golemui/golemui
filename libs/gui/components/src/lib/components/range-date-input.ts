@@ -44,48 +44,86 @@ export type GuiRangeDateInputProps = {
   hint?: string;
 };
 
+/**
+ * A field to type one or more date ranges, shown as pills.
+ *
+ * @fires gui-input - The user changed the value. `detail.value` is the new value.
+ * @fires gui-change - The user added, removed or finished editing a range. `detail.value` is the
+ *   list of ranges.
+ * @fires gui-blur - Focus left the control.
+ * @fires gui-focus - One of the parts of the field received focus.
+ * @fires gui-input-error - The element rejected what the user entered, such as an impossible date
+ *   or a value out of bounds. `detail.message` is the error; show it through `errors`.
+ * @fires gui-parts-change - The typed parts changed before they form a complete value, for a host
+ *   that mirrors them.
+ * @fires gui-edit-state-change - Editing a range in place started, changed selection or ended.
+ *   `detail` has the `selected` range and whether it is `editing`.
+ * @fires gui-range-click - The user clicked a range pill. `detail.range` is the range.
+ * @cssprop --gui-pill-height - Height of each pill.
+ * @cssprop --gui-pill-font-size - Font size of the pill text.
+ * @cssprop --gui-pill-action-size - Size of the icons inside a pill.
+ * @cssprop --gui-pill-action-hit - Clickable area of the buttons inside a pill.
+ */
 export class GuiRangeDateInput extends GuiFormControl {
-  @property({ type: String }) label: string | undefined = undefined;
+  /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
-  @property({ type: Array }) errors: string[] | undefined = [];
+  /**
+   * Whether the element renders its own error list. Elements that embed it turn it off and show the
+   * errors themselves.
+   */
   @property({ type: Boolean }) showErrors: boolean | undefined = true;
-  @property({ type: Boolean }) touched: boolean | undefined = undefined;
-  @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
 
+  /** Icon class name shown inside the control, for example from an icon font. */
   @property({ type: String }) icon: string | undefined = '';
-  @property({ type: String }) hint: string | undefined = undefined;
+  /** Accessible name of the day part. */
   @property({ type: String }) dayAriaLabel: string | undefined = undefined;
+  /** Accessible name of the month part. */
   @property({ type: String }) monthAriaLabel: string | undefined = undefined;
+  /** Accessible name of the year part. */
   @property({ type: String }) yearAriaLabel: string | undefined = undefined;
 
+  /** The date ranges, as `{ start, end }` ISO dates. */
   @property({ type: Array }) value: DateRange[] | undefined = [];
+  /** Error for a complete but impossible date, such as February 31. */
   @property({ type: String, attribute: 'invalid-date-message' }) invalidDateMessage:
     | string
     | undefined = undefined;
 
+  /** Accessible name of the remove button of each range pill. */
   @property({ type: String }) removePillAriaLabel: string | undefined = undefined;
+  /** Accessible name of the start date field. */
   @property({ type: String }) startDateAriaLabel: string | undefined = undefined;
+  /** Accessible name of the end date field. */
   @property({ type: String }) endDateAriaLabel: string | undefined = undefined;
+  /** Text shown between the start and end of a range. */
   @property({ type: String }) separator: string | undefined = undefined;
+  /** Error when focus leaves a partly filled value. */
   @property({ type: String, attribute: 'incomplete-message' }) incompleteMessage:
     | string
     | undefined = undefined;
+  /** Lets the user edit a range in place from its pill. */
   @property({ type: Boolean, attribute: 'allow-edit' }) allowEdit: boolean | undefined = false;
+  /** Tooltip of the edit button of a range pill. */
   @property({ type: String, attribute: 'edit-label' }) editLabel: string | undefined = undefined;
+  /** Hint that a range pill can be edited. `{label}` is the range. */
   @property({ type: String, attribute: 'edit-aria-label' }) editAriaLabel: string | undefined =
     undefined;
+  /** Tooltip of the confirm button of a range being edited. */
   @property({ type: String, attribute: 'confirm-edit-label' }) confirmEditLabel:
     | string
     | undefined = undefined;
+  /** Tooltip of the cancel button of a range being edited. */
   @property({ type: String, attribute: 'cancel-edit-label' }) cancelEditLabel: string | undefined =
     undefined;
+  /** Announcement when editing a range starts. `{label}` is the range. */
   @property({ type: String, attribute: 'edit-started-message' }) editStartedMessage:
     | string
     | undefined = undefined;
+  /** Announcement when an edited range is saved. `{label}` is the new range. */
   @property({ type: String, attribute: 'edit-committed-message' }) editCommittedMessage:
     | string
     | undefined = undefined;
+  /** Announcement when editing a range is cancelled. */
   @property({ type: String, attribute: 'edit-cancelled-message' }) editCancelledMessage:
     | string
     | undefined = undefined;
@@ -420,12 +458,20 @@ export class GuiRangeDateInput extends GuiFormControl {
     this.syncParts();
   }
 
-  /** Starts editing the selected pill; the host picker's Edit action. */
+  /**
+   * Starts editing the selected pill; the host picker's Edit action.
+   *
+   * @internal
+   */
   startEdit(): boolean {
     return this._edit.startEdit();
   }
 
-  /** Cancels an open edit session; the host picker's Cancel action. */
+  /**
+   * Cancels an open edit session; the host picker's Cancel action.
+   *
+   * @internal
+   */
   cancelEdit(): void {
     this._edit.cancel();
   }
@@ -433,15 +479,19 @@ export class GuiRangeDateInput extends GuiFormControl {
   /**
    * The host picker's Escape layering routes here once its popup declined
    * the key: cancels an open session first, then clears the selection.
+   *
+   * @internal
    */
   handleSessionEscape(event: KeyboardEvent): boolean {
     return this._edit.handleEscape(event);
   }
 
+  /** @internal */
   get isEditing(): boolean {
     return !!this._edit.editing;
   }
 
+  /** @internal */
   get selectedEditRange(): DateRange | null {
     return this._edit.selectedRange;
   }
@@ -450,6 +500,8 @@ export class GuiRangeDateInput extends GuiFormControl {
    * Attempts to commit the currently-entered parts as a pill, returning
    * whether one was created — the picker's confirm path onto the same
    * {@link tryCreatePill} pipeline typed entry uses.
+   *
+   * @internal
    */
   commitFromParts(): boolean {
     return this.tryCreatePill();
@@ -590,6 +642,8 @@ export class GuiRangeDateInput extends GuiFormControl {
    * "incomplete". `_validationTriggered` makes the next edit re-evaluate, so
    * the message clears as soon as the user comes back and continues (or
    * empties the fields).
+   *
+   * @internal
    */
   finalizeOnLeave(): void {
     if (this._edit.editing) {
@@ -723,12 +777,15 @@ export class GuiRangeDateInput extends GuiFormControl {
   /**
    * Echo a range into the input parts without committing it (no pill, no change
    * event). Used by the picker to show a range the calendar rejected.
+   *
+   * @internal
    */
   public showRange(startISO: string, endISO: string): void {
     this._parts.setGroupFromISO('start', startISO, 'date');
     this._parts.setGroupFromISO('end', endISO, 'date');
   }
 
+  /** @internal */
   public surfaceHostError(message: string): void {
     this._parts.surfaceInputError(message);
   }
@@ -738,6 +795,8 @@ export class GuiRangeDateInput extends GuiFormControl {
    * null. The range date picker calls this so a day picked in the calendar
    * lands in the visible field straight away — the reverse of typed parts
    * moving the calendar's selection.
+   *
+   * @internal
    */
   fillGroup(group: 'start' | 'end', iso: string | null): void {
     this._parts.setGroupFromISO(group, iso, 'date');
@@ -745,7 +804,11 @@ export class GuiRangeDateInput extends GuiFormControl {
     this.requestUpdate();
   }
 
-  /** Clear both groups' parts (e.g. once a valid range is committed). */
+  /**
+   * Clear both groups' parts (e.g. once a valid range is committed).
+   *
+   * @internal
+   */
   public clearRangeInputs(): void {
     this._parts.clearGroup('start');
     this._parts.clearGroup('end');

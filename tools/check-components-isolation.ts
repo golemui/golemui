@@ -43,6 +43,17 @@ const require = createRequire(import.meta.url);
 for (const stylesheet of ['index.css', 'tokens.css', 'components.css', 'themes/clay.css']) {
   require.resolve(\`@golemui/gui-components/\${stylesheet}\`);
 }
+
+// The Custom Elements Manifest that the package.json \`customElements\` field points to.
+const { readFileSync } = await import('node:fs');
+const { join } = await import('node:path');
+const packageDir = join('node_modules', '@golemui', 'gui-components');
+const { customElements: manifestPath } = JSON.parse(readFileSync(join(packageDir, 'package.json'), 'utf8'));
+const manifest = JSON.parse(readFileSync(join(packageDir, manifestPath), 'utf8'));
+const tags = manifest.modules.flatMap((module) => module.declarations ?? []).map((d) => d.tagName);
+if (!tags.includes('gui-textinput')) {
+  throw new Error('custom-elements.json does not describe gui-textinput');
+}
 `;
 
 function main() {

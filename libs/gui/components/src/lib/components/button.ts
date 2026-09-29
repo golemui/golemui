@@ -4,13 +4,21 @@ import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
 import { GuiElement } from '../gui-element';
 
+/** A button, with an optional icon. */
 export class GuiButton extends GuiElement {
+  /** Text of the button. */
   @property({ type: String }) label: string | undefined = undefined;
+  /** Disables the button. */
   @property({ type: Boolean }) disabled: boolean | undefined = false;
+  /** Icon class name shown next to the text. */
   @property({ type: String }) icon: string | undefined = undefined;
+  /** Visual style of the button. */
   @property({ type: String }) variant: 'filled' | 'outlined' | 'link' | undefined = 'filled';
+  /** Side of the text the icon is on. */
   @property({ type: String }) iconPosition: 'left' | 'right' | undefined = 'left';
+  /** The native button type: `submit` submits the surrounding form. */
   @property({ type: String }) actionType: 'submit' | 'button' | undefined = 'button';
+  /** Styles a submit button as blocked by an invalid form. */
   @property({ type: Boolean }) invalid = false;
 
   override createRenderRoot() {
