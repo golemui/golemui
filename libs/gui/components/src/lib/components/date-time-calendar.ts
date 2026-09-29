@@ -23,10 +23,6 @@ import {
   toISODateString,
 } from '../utils/date';
 import { buildMonthDays, computeDayStatus } from '../utils/day-status';
-import {
-  INCOMPLETE_DATE_TIME_MESSAGE,
-  INVALID_DISABLED_TIME_RANGE_MESSAGE,
-} from '../utils/messages';
 import { timeBoundsError } from '../utils/parts';
 import {
   isTimeDisabled,
@@ -39,6 +35,7 @@ import {
 import type { DateRange, DisabledTimeRange } from '../types';
 import { GuiFormControl } from '../gui-form-control';
 import { dispatchChange, dispatchValue } from '../utils/events';
+import { message } from '../utils/messages';
 
 export interface DateTimeCalendarDay {
   date: Date;
@@ -378,7 +375,7 @@ export class GuiDateTimeCalendar extends GuiFormControl {
 
     const ranges = resolveDisabledTimeRangesForDate(this.disabledTimeRanges, isoDate);
     if (isTimeDisabled(isoTime, ranges)) {
-      return this.disabledTimeRangeMessage ?? INVALID_DISABLED_TIME_RANGE_MESSAGE;
+      return message('disabledTimeRange', this.disabledTimeRangeMessage);
     }
     return null;
   }
@@ -407,7 +404,7 @@ export class GuiDateTimeCalendar extends GuiFormControl {
     }
 
     this.emitValue(null);
-    this.emitInputError(this.incompleteMessage ?? INCOMPLETE_DATE_TIME_MESSAGE);
+    this.emitInputError(message('incompleteDateTime', this.incompleteMessage));
   }
 
   private onListToggle(event: CustomEvent<{ open: boolean }>) {

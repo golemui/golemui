@@ -6,12 +6,10 @@ import { GUIAriaController } from '../controllers/aria.controller';
 import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
 import { GUIPartsController } from '../controllers/parts.controller';
 import { dateBoundsError, getDateFormatParts } from '../utils/date';
-import { INCOMPLETE_DATE_MESSAGE } from '../utils/messages';
 import { renderGroupParts, type GUIPartsTemplateData } from '../utils/part-templates';
 import {
   dateInputPartDescriptors,
   parseDateGroup,
-  PART_DEFAULT_ARIA_LABELS,
   type DateTimePartDescriptor,
   type DateTimePartType,
   type GroupCompleteness,
@@ -19,6 +17,7 @@ import {
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 import { boundsValidity, GuiFormControl, type GuiValidity } from '../gui-form-control';
 import { dispatchValue } from '../utils/events';
+import { message } from '../utils/messages';
 
 const DATE_PART_TYPES: readonly DateTimePartType[] = ['day', 'month', 'year'];
 
@@ -173,7 +172,7 @@ export class GuiDate extends GuiFormControl {
           month: this.monthAriaLabel,
           year: this.yearAriaLabel,
         };
-        return overrides[type] ?? PART_DEFAULT_ARIA_LABELS[type];
+        return message(type, overrides[type]);
       },
       disabled: this.disabled,
       partsReadonly: !!this.readOnly,
@@ -310,7 +309,7 @@ export class GuiDate extends GuiFormControl {
       this.value = undefined;
     }
     dispatchValue(this, null);
-    this._parts.surfaceInputError(this.incompleteMessage ?? INCOMPLETE_DATE_MESSAGE);
+    this._parts.surfaceInputError(message('incompleteDate', this.incompleteMessage));
   }
 }
 

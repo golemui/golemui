@@ -8,6 +8,7 @@ import { GUIPillsNavigationController } from '../controllers/pills-navigation.co
 import './pills';
 import type { GuiPillItem } from './pills';
 import { GuiElement } from '../gui-element';
+import { message } from '../utils/messages';
 
 export class GuiMultiSelectTrigger extends GuiElement {
   @property({ type: Boolean }) touched: boolean | undefined = undefined;
@@ -120,7 +121,7 @@ export class GuiMultiSelectTrigger extends GuiElement {
           class="gui-multi-select__pills"
           style=${cspStyleMap(pillItems.length ? {} : { 'min-width': 0 })}
           .uid=${this.uid}
-          .toolbarAriaLabel=${this.toolbarAriaLabel ?? 'Selected options'}
+          .toolbarAriaLabel=${message('selectedOptions', this.toolbarAriaLabel)}
           .items=${pillItems}
           .errors=${this.errors}
           .touched=${!!this.touched}
@@ -130,9 +131,11 @@ export class GuiMultiSelectTrigger extends GuiElement {
           .tabbable=${false}
           ?disabled=${this.disabled}
           ?readonly=${this.readOnly}
-          .removeAriaLabel=${this.removeAriaLabel ?? 'Remove option'}
+          .removeAriaLabel=${message('removeOption', this.removeAriaLabel)}
           .removeIcon=${this.removeIcon}
-          .compactAriaLabel=${this.compactAriaLabel ?? `${pillItems.length} selected`}
+          .compactAriaLabel=${message('selectedCount', this.compactAriaLabel, {
+            count: pillItems.length,
+          })}
           @gui-pill-remove=${this.onPillRemove}
           @gui-pill-keydown=${this._pillsNav.onPillKeydown}
           @gui-pill-exit=${this._pillsNav.onPillExit}

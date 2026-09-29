@@ -11,6 +11,7 @@ import { CARET_DOWN_PATH } from '../utils/icons';
 import type { Option, OptionValue } from '../types';
 import { GuiFormControl } from '../gui-form-control';
 import { dispatchValue } from '../utils/events';
+import { message } from '../utils/messages';
 
 /** What <gui-select> renders besides the control state: its presentation props. */
 export type GuiSelectProps = {
@@ -107,7 +108,7 @@ export class GuiSelect extends GuiFormControl {
       ? html`<span>Loading...</span>`
       : html`
           <option value="" disabled .selected=${live(!this.hasMatchingValue)}>
-            ${this.placeholder ?? 'Select an option'}
+            ${message('selectAnOption', this.placeholder)}
           </option>
           ${repeat(
             this.options || [],
@@ -161,9 +162,9 @@ export class GuiSelect extends GuiFormControl {
         this.dispatchEvent(
           new CustomEvent('gui-input-error', {
             detail: {
-              message: (
-                this.invalidOptionMessage ?? `Invalid selection: '{value}' is not a valid option.`
-              ).replace('{value}', String(this.value)),
+              message: message('invalidOption', this.invalidOptionMessage, {
+                value: String(this.value),
+              }),
             },
             bubbles: true,
           }),

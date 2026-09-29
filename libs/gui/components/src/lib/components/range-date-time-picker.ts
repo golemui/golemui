@@ -13,6 +13,7 @@ import { CARET_DOWN_PATH } from '../utils/icons';
 import type { DateTimeRange } from '../types';
 import { GuiFormControl } from '../gui-form-control';
 import { dispatchChange, dispatchValue, stopPropagation } from '../utils/events';
+import { message } from '../utils/messages';
 
 /** The four pieces of an in-progress range, each absent until chosen. */
 interface WorkingRange {
@@ -246,7 +247,7 @@ export class GuiRangeDateTimePicker extends GuiFormControl {
           html`<gui-range-date-time-calendar
             id=${`${this.uid}_popup`}
             role="dialog"
-            aria-label=${this.label ?? 'Calendar'}
+            aria-label=${message('calendar', this.label)}
             .uid=${this.uid}
             .hint=${this.hint}
             .touched=${this.touched}
@@ -370,7 +371,7 @@ export class GuiRangeDateTimePicker extends GuiFormControl {
         <button
           type="button"
           class="gui-range-date-time-picker__arrow"
-          aria-label=${this.toggleAriaLabel ?? 'Show calendar'}
+          aria-label=${message('showCalendar', this.toggleAriaLabel)}
           aria-haspopup="dialog"
           aria-expanded=${this._popup.open ? 'true' : 'false'}
           aria-controls=${`${this.uid}_popup`}

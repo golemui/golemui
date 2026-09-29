@@ -7,8 +7,8 @@ import { addErrors, addLabel, type ControlTemplateData } from '../utils/template
 import { blockNonNumericInput, blockNonNumericKeys, isRealNumber } from '../utils/numeric';
 import { CARET_DOWN_PATH, CARET_UP_PATH } from '../utils/icons';
 import { GuiFormControl, type GuiValidity } from '../gui-form-control';
-import { RANGE_OVERFLOW_MESSAGE, RANGE_UNDERFLOW_MESSAGE } from '../utils/messages';
 import { dispatchChange, dispatchValue } from '../utils/events';
+import { message } from '../utils/messages';
 
 /** What <gui-number> renders besides the control state: its presentation props. */
 export type GuiNumberProps = {
@@ -251,13 +251,13 @@ export class GuiNumber extends GuiFormControl {
     if (value !== undefined && isRealNumber(this.minimum) && value < this.minimum) {
       return {
         flags: { rangeUnderflow: true },
-        message: RANGE_UNDERFLOW_MESSAGE.replace('{min}', String(this.minimum)),
+        message: message('rangeUnderflow', undefined, { min: this.minimum }),
       };
     }
     if (value !== undefined && isRealNumber(this.maximum) && value > this.maximum) {
       return {
         flags: { rangeOverflow: true },
-        message: RANGE_OVERFLOW_MESSAGE.replace('{max}', String(this.maximum)),
+        message: message('rangeOverflow', undefined, { max: this.maximum }),
       };
     }
     return super.validate();

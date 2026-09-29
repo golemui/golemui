@@ -11,10 +11,10 @@ import { GUIPopupController } from '../controllers/popup.controller';
 import { buildTimeOptions, isTimeDisabled, type HourFormat, type TimeRange } from '../utils/time';
 import { timeBoundsError } from '../utils/parts';
 import { addErrors, addIcon, addLabel, addPickerPanel } from '../utils/templates';
-import { INVALID_DISABLED_TIME_RANGE_MESSAGE } from '../utils/messages';
 import { CARET_DOWN_PATH } from '../utils/icons';
 import { boundsValidity, GuiFormControl, type GuiValidity } from '../gui-form-control';
 import { dispatchValue, stopPropagation } from '../utils/events';
+import { message } from '../utils/messages';
 
 export class GuiTimePicker extends GuiFormControl {
   @property({ type: String }) label: string | undefined = undefined;
@@ -160,7 +160,7 @@ export class GuiTimePicker extends GuiFormControl {
         <button
           type="button"
           class="gui-time-picker__arrow"
-          aria-label=${this.toggleAriaLabel ?? 'Show time list'}
+          aria-label=${message('showTimeList', this.toggleAriaLabel)}
           aria-haspopup="dialog"
           aria-expanded=${this._popup.open ? 'true' : 'false'}
           aria-controls=${`${this.uid}_popup`}
@@ -186,7 +186,7 @@ export class GuiTimePicker extends GuiFormControl {
           html`<gui-time-list
             id=${`${this.uid}_popup`}
             role="dialog"
-            aria-label=${this.label ?? 'Time list'}
+            aria-label=${message('timeList', this.label)}
             .uid=${this.uid}
             .value=${this.value}
             .label=${this.label}
@@ -285,7 +285,7 @@ export class GuiTimePicker extends GuiFormControl {
     });
     if (boundsError) return boundsError;
     if (isTimeDisabled(value, this.disabledRanges)) {
-      return this.disabledRangeMessage ?? INVALID_DISABLED_TIME_RANGE_MESSAGE;
+      return message('disabledTimeRange', this.disabledRangeMessage);
     }
     return null;
   }

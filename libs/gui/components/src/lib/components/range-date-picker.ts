@@ -9,11 +9,11 @@ import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
 import { GUIPopupController } from '../controllers/popup.controller';
 import { dateBoundsError, rangeSpansDisabledDay } from '../utils/date';
 import { addErrors, addIcon, addLabel, addPickerPanel } from '../utils/templates';
-import { DISABLED_DATE_RANGE_MESSAGE } from '../utils/messages';
 import { CARET_DOWN_PATH } from '../utils/icons';
 import type { DateRange } from '../types';
 import { GuiFormControl } from '../gui-form-control';
 import { dispatchChange, dispatchValue, stopPropagation } from '../utils/events';
+import { message } from '../utils/messages';
 
 export class GuiRangeDatePicker extends GuiFormControl {
   @property({ type: String }) label: string | undefined = undefined;
@@ -193,7 +193,7 @@ export class GuiRangeDatePicker extends GuiFormControl {
           html`<gui-range-calendar
             id=${`${this.uid}_popup`}
             role="dialog"
-            aria-label=${this.label ?? 'Calendar'}
+            aria-label=${message('calendar', this.label)}
             .uid=${this.uid}
             .hint=${this.hint}
             .touched=${this.touched}
@@ -294,7 +294,7 @@ export class GuiRangeDatePicker extends GuiFormControl {
         <button
           type="button"
           class="gui-range-date-picker__arrow"
-          aria-label=${this.toggleAriaLabel ?? 'Show calendar'}
+          aria-label=${message('showCalendar', this.toggleAriaLabel)}
           aria-haspopup="dialog"
           aria-expanded=${this._popup.open ? 'true' : 'false'}
           aria-controls=${`${this.uid}_popup`}
@@ -356,7 +356,7 @@ export class GuiRangeDatePicker extends GuiFormControl {
     const end = range.end ?? range.start;
     // A disabled day anywhere in the span — not just at the endpoints.
     if (rangeSpansDisabledDay(start, end, this.disabledRanges)) {
-      return this.disabledDateRangeMessage ?? DISABLED_DATE_RANGE_MESSAGE;
+      return message('disabledDateRange', this.disabledDateRangeMessage);
     }
     // Either endpoint outside the allowed [minDate, maxDate] window.
     const messages = {

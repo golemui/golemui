@@ -1,11 +1,13 @@
-import { LitElement } from 'lit';
+import { isServer, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
+import { trackMessages } from './utils/messages';
 
 let uidCounter = 0;
 
 /**
  * Base class of the GolemUI elements: gives every element an id to derive the ids of its
- * inner parts (the control, its label, hint and errors) from.
+ * inner parts (the control, its label, hint and errors) from, and keeps its strings in sync with
+ * `configureMessages()`.
  */
 export abstract class GuiElement extends LitElement {
   private explicitUid: string | undefined = undefined;
@@ -25,5 +27,17 @@ export abstract class GuiElement extends LitElement {
 
   set uid(value: string | undefined) {
     this.explicitUid = value;
+  }
+
+  override connectedCallback(): void {
+    super.connectedCallback();
+    // Re-renders with the new strings when the app's translate function changes. Not on the
+    // server, where elements are never disconnected and would be kept forever.
+    if (!isServer) trackMessages(this, true);
+  }
+
+  override disconnectedCallback(): void {
+    super.disconnectedCallback();
+    trackMessages(this, false);
   }
 }

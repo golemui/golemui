@@ -100,6 +100,11 @@ export type {
   UploadService,
 } from './lib/types';
 
+// ─── Messages ───
+
+export { configureMessages, DEFAULT_MESSAGES } from './lib/utils/messages';
+export type { GuiMessageKey, GuiMessageParams, GuiTranslate } from './lib/utils/messages';
+
 // ─── Events ───
 
 export type { GuiValueEventDetail } from './lib/utils/events';

@@ -5,12 +5,10 @@ import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
 import { GUIPartsController } from '../controllers/parts.controller';
-import { INCOMPLETE_TIME_MESSAGE } from '../utils/messages';
 import { renderGroupParts, type GUIPartsTemplateData } from '../utils/part-templates';
 import {
   getTimeLocaleData,
   parseTimeGroup,
-  PART_DEFAULT_ARIA_LABELS,
   timeBoundsError,
   type DateTimePartDescriptor,
   type DateTimePartType,
@@ -23,6 +21,7 @@ import { addErrors, addLabel, type ControlTemplateData } from '../utils/template
 import { getTimeFormatParts, type HourFormat } from '../utils/time';
 import { boundsValidity, GuiFormControl, type GuiValidity } from '../gui-form-control';
 import { dispatchValue } from '../utils/events';
+import { message } from '../utils/messages';
 
 /** What <gui-time-input> renders besides the control state: its presentation props. */
 export type GuiTimeProps = {
@@ -185,7 +184,7 @@ export class GuiTime extends GuiFormControl {
           hour: this.hourAriaLabel,
           minute: this.minuteAriaLabel,
         };
-        return overrides[type] ?? PART_DEFAULT_ARIA_LABELS[type];
+        return message(type, overrides[type]);
       },
       dayPeriodAriaLabel: this.dayPeriodAriaLabel,
       disabled: this.disabled,
@@ -327,7 +326,7 @@ export class GuiTime extends GuiFormControl {
       this.value = undefined;
     }
     dispatchValue(this, null);
-    this._parts.surfaceInputError(this.incompleteMessage ?? INCOMPLETE_TIME_MESSAGE);
+    this._parts.surfaceInputError(message('incompleteTime', this.incompleteMessage));
   }
 }
 

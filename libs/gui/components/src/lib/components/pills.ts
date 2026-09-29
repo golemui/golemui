@@ -14,6 +14,7 @@ import {
   spinnerIcon,
 } from '../utils/icons';
 import { GuiElement } from '../gui-element';
+import { message } from '../utils/messages';
 
 export interface GuiPillItem {
   /** Stable identity used for `repeat()` keys and event payloads. */
@@ -111,14 +112,14 @@ export class GuiPills extends GuiElement {
   @property({ type: String, attribute: 'editing-key' }) editingKey: string | undefined = undefined;
 
   /** Tooltip labels for the `editable` action icons rendered inside the pills. */
-  @property({ type: String, attribute: 'edit-label' }) editLabel = 'Edit';
-  @property({ type: String, attribute: 'confirm-edit-label' }) confirmEditLabel = 'Confirm';
-  @property({ type: String, attribute: 'cancel-edit-label' }) cancelEditLabel = 'Cancel';
+  @property({ type: String, attribute: 'edit-label' }) editLabel: string | undefined;
+  @property({ type: String, attribute: 'confirm-edit-label' }) confirmEditLabel: string | undefined;
+  @property({ type: String, attribute: 'cancel-edit-label' }) cancelEditLabel: string | undefined;
 
-  @property({ type: String, attribute: 'remove-aria-label' }) removeAriaLabel = 'Remove';
+  @property({ type: String, attribute: 'remove-aria-label' }) removeAriaLabel: string | undefined;
   @property({ type: String, attribute: 'remove-icon' }) removeIcon: string | undefined;
   @property({ type: String, attribute: 'compact-aria-label' }) compactAriaLabel: string | undefined;
-  @property({ type: String, attribute: 'toolbar-aria-label' }) toolbarAriaLabel = 'Selected items';
+  @property({ type: String, attribute: 'toolbar-aria-label' }) toolbarAriaLabel: string | undefined;
 
   @property({ type: Array }) errors: string[] | undefined = undefined;
   @property({ type: Boolean }) touched = false;
@@ -217,7 +218,7 @@ export class GuiPills extends GuiElement {
         <div
           class="gui-pills__strip"
           role="toolbar"
-          aria-label=${this.toolbarAriaLabel}
+          aria-label=${message('selectedItems', this.toolbarAriaLabel)}
           tabindex="-1"
         >
           <span class="gui-sentinel gui-sentinel__start"></span>
@@ -246,7 +247,7 @@ export class GuiPills extends GuiElement {
             'gui-pills__count--has-selection': !!this.selectedKey,
             'gui-pills__count--editing': !!this.editingKey,
           })}
-          aria-label=${this.compactAriaLabel ?? `${count} items`}
+          aria-label=${message('itemCount', this.compactAriaLabel, { count })}
           aria-haspopup="true"
           aria-expanded=${this._showDropdown}
           aria-controls=${this.dropdownId ?? nothing}
@@ -270,7 +271,7 @@ export class GuiPills extends GuiElement {
         class="gui-pills__dropdown"
         role="toolbar"
         aria-orientation="vertical"
-        aria-label=${this.toolbarAriaLabel}
+        aria-label=${message('selectedItems', this.toolbarAriaLabel)}
       >
         <div class="gui-pills__dropdown-list">
           ${repeat(
@@ -293,7 +294,7 @@ export class GuiPills extends GuiElement {
     const descriptionHints = [
       showEditActions && !isEditing ? item.editAriaLabel : undefined,
       this.removable && !this.disabled && !this.readOnly && !isEditing && !isBusy
-        ? this.removeAriaLabel
+        ? message('remove', this.removeAriaLabel)
         : undefined,
     ].filter(Boolean);
     return html`
@@ -322,20 +323,26 @@ export class GuiPills extends GuiElement {
         <span class="gui-pills__pill-text">${item.label}</span>
         ${showEditActions && isEditing
           ? html`
-              ${this.renderPillAction('edit-cancel', this.cancelEditLabel, X_SQUARE_PATH, () =>
-                this.emitEditAction('gui-pill-edit-cancel', item.key),
+              ${this.renderPillAction(
+                'edit-cancel',
+                message('cancelEditRange', this.cancelEditLabel),
+                X_SQUARE_PATH,
+                () => this.emitEditAction('gui-pill-edit-cancel', item.key),
               )}
               ${this.renderPillAction(
                 'edit-confirm',
-                this.confirmEditLabel,
+                message('confirmEditRange', this.confirmEditLabel),
                 CHECK_SQUARE_PATH,
                 () => this.emitEditAction('gui-pill-edit-confirm', item.key),
               )}
             `
           : nothing}
         ${showEditActions && !isEditing
-          ? this.renderPillAction('edit', this.editLabel, NOTE_PENCIL_PATH, () =>
-              this.emitEditAction('gui-pill-edit', item.key),
+          ? this.renderPillAction(
+              'edit',
+              message('editRange', this.editLabel),
+              NOTE_PENCIL_PATH,
+              () => this.emitEditAction('gui-pill-edit', item.key),
             )
           : nothing}
         ${this.removable && !isEditing

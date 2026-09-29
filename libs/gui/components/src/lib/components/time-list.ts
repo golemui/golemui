@@ -8,7 +8,6 @@ import {
   buildTimeOptions,
   compareISOTimes,
   formatISOTimeForLocale,
-  NO_AVAILABLE_TIMES_MESSAGE,
   resolveHourFormat,
   type HourFormat,
   type TimeOption,
@@ -16,6 +15,7 @@ import {
 } from '../utils/time';
 import { GuiElement } from '../gui-element';
 import { dispatchValue } from '../utils/events';
+import { message } from '../utils/messages';
 
 export class GuiTimeList extends GuiElement {
   @property({ type: String }) value: string | undefined = undefined;
@@ -200,7 +200,7 @@ export class GuiTimeList extends GuiElement {
 
     if (options.length === 0) {
       return html`<div class="gui-time-list__empty">
-        ${this.noAvailableTimesMessage ?? NO_AVAILABLE_TIMES_MESSAGE}
+        ${message('noAvailableTimes', this.noAvailableTimesMessage)}
       </div>`;
     }
 

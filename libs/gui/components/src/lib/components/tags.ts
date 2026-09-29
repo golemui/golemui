@@ -10,6 +10,7 @@ import './pills';
 import type { GuiPillEventDetail, GuiPillItem } from './pills';
 import { GuiFormControl } from '../gui-form-control';
 import { dispatchValue } from '../utils/events';
+import { message } from '../utils/messages';
 
 type TagsSeparator = 'Enter' | ',' | 'Tab' | 'blur' | string;
 
@@ -80,7 +81,7 @@ export class GuiTags extends GuiFormControl {
   }
 
   private getRemoveAriaLabel(): string {
-    return this.removeAriaLabel ?? 'Remove tag';
+    return message('removeTag', this.removeAriaLabel);
   }
 
   private pillKey(tag: string, index: number): string {
@@ -124,7 +125,7 @@ export class GuiTags extends GuiFormControl {
             'gui-tags-input--icon': !!this.icon,
           })}
           role="group"
-          aria-label=${this.label ?? 'Tags input'}
+          aria-label=${message('tagsInput', this.label)}
         >
           ${this.icon
             ? html`<span
@@ -138,7 +139,7 @@ export class GuiTags extends GuiFormControl {
             class="gui-tags__pills"
             style=${cspStyleMap(pillItems.length ? {} : { 'min-width': 0 })}
             .uid=${this.uid}
-            .toolbarAriaLabel=${'Selected tags'}
+            .toolbarAriaLabel=${message('selectedTags')}
             .items=${pillItems}
             .errors=${this.errors}
             .touched=${!!this.touched}
@@ -150,7 +151,7 @@ export class GuiTags extends GuiFormControl {
             ?readonly=${this.readOnly}
             .removeAriaLabel=${this.getRemoveAriaLabel()}
             .removeIcon=${this.removeIcon}
-            .compactAriaLabel=${`${tags.length} tags`}
+            .compactAriaLabel=${message('tagCount', undefined, { count: tags.length })}
             @gui-pill-remove=${this.onPillRemove}
             @gui-pill-keydown=${this._pillsNav.onPillKeydown}
             @gui-pill-exit=${this._pillsNav.onPillExit}

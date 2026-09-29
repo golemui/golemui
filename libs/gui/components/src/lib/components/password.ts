@@ -7,6 +7,7 @@ import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addIcon, addLabel, type ControlTemplateData } from '../utils/templates';
 import { GuiFormControl } from '../gui-form-control';
 import { dispatchChange, dispatchValue } from '../utils/events';
+import { message } from '../utils/messages';
 
 /** What <gui-password> renders besides the control state: its presentation props. */
 export type GuiPasswordProps = {
@@ -122,16 +123,16 @@ export class GuiPassword extends GuiFormControl {
           type="button"
           ?disabled=${this.disabled}
           aria-label=${!this.showPassword
-            ? (templateData.showPasswordLabel ?? 'Show password')
-            : (templateData.hidePasswordLabel ?? 'Hide password')}
+            ? message('showPassword', templateData.showPasswordLabel)
+            : message('hidePassword', templateData.hidePasswordLabel)}
           @click=${() => (this.showPassword = !this.showPassword)}
         >
           ${templateData.showPasswordIcon || templateData.hidePasswordIcon
             ? nothing
             : html`<span aria-hidden="true"
                 >${!this.showPassword
-                  ? (templateData.showPasswordLabel ?? 'Show')
-                  : (templateData.hidePasswordLabel ?? 'Hide')}</span
+                  ? message('show', templateData.showPasswordLabel)
+                  : message('hide', templateData.hidePasswordLabel)}</span
               >`}
         </button>
       </div>

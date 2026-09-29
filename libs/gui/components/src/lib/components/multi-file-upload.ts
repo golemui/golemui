@@ -2,8 +2,7 @@ import { html, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
 import { safeDefine } from '@golemui/lit-utils';
 import { GuiFileUpload } from './file-upload';
-import { MULTI_FILE_UPLOAD_BUTTON_LABEL, formatFileMessage } from '../utils/messages';
-import { FILE_REMOVE_ARIA_LABEL } from '../utils/messages';
+import { message } from '../utils/messages';
 import './pills';
 import type { GuiPillEventDetail, GuiPillItem } from './pills';
 import type { FileItem } from '../types';
@@ -31,7 +30,7 @@ export class GuiMultiFileUpload extends GuiFileUpload {
   }
 
   protected override getDefaultButtonLabel(): string {
-    return MULTI_FILE_UPLOAD_BUTTON_LABEL;
+    return message('uploadFiles');
   }
 
   protected override renderCounter(item: FileItem): string {
@@ -47,15 +46,12 @@ export class GuiMultiFileUpload extends GuiFileUpload {
       label: item.name,
       busy: this._removingIds.has(item.id),
     }));
-    const removeAriaLabel = formatFileMessage(
-      this.removeAriaLabel ?? FILE_REMOVE_ARIA_LABEL,
-      '',
-    ).trim();
+    const removeAriaLabel = message('removeFile', this.removeAriaLabel, { name: '' }).trim();
 
     return html`<gui-pills
       class="gui-file-upload__pills"
       .uid=${this.uid}
-      .toolbarAriaLabel=${'Uploaded files'}
+      .toolbarAriaLabel=${message('uploadedFiles')}
       .items=${pillItems}
       .errors=${this.errors}
       .touched=${!!this.touched}
@@ -67,7 +63,7 @@ export class GuiMultiFileUpload extends GuiFileUpload {
       ?readonly=${this.readOnly}
       .removeAriaLabel=${removeAriaLabel}
       .removeIcon=${this.removeIcon}
-      .compactAriaLabel=${`${items.length} files`}
+      .compactAriaLabel=${message('fileCount', undefined, { count: items.length })}
       @gui-pill-remove=${this.onPillRemove}
     ></gui-pills>`;
   }

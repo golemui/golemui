@@ -6,13 +6,11 @@ import { GUIAriaController } from '../controllers/aria.controller';
 import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
 import { GUIPartsController } from '../controllers/parts.controller';
 import { dateBoundsError } from '../utils/date';
-import { INCOMPLETE_DATE_TIME_MESSAGE } from '../utils/messages';
 import { renderGroupParts, type GUIPartsTemplateData } from '../utils/part-templates';
 import {
   getTimeLocaleData,
   parseDateTimeGroup,
   parseDateTimeSubGroups,
-  PART_DEFAULT_ARIA_LABELS,
   timeBoundsError,
   type DateTimePartDescriptor,
   type DateTimePartType,
@@ -36,6 +34,7 @@ import {
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 import { boundsValidity, GuiFormControl, type GuiValidity } from '../gui-form-control';
 import { dispatchValue } from '../utils/events';
+import { message } from '../utils/messages';
 
 /** What <gui-date-time-input> renders besides the control state: its presentation props. */
 export type GuiDateTimeProps = {
@@ -251,7 +250,7 @@ export class GuiDateTime extends GuiFormControl {
           hour: this.hourAriaLabel,
           minute: this.minuteAriaLabel,
         };
-        return overrides[type] ?? PART_DEFAULT_ARIA_LABELS[type];
+        return message(type, overrides[type]);
       },
       dayPeriodAriaLabel: this.dayPeriodAriaLabel,
       disabled: this.disabled,
@@ -417,7 +416,7 @@ export class GuiDateTime extends GuiFormControl {
       this.value = undefined;
     }
     dispatchValue(this, null);
-    this._parts.surfaceInputError(this.incompleteMessage ?? INCOMPLETE_DATE_TIME_MESSAGE);
+    this._parts.surfaceInputError(message('incompleteDateTime', this.incompleteMessage));
   }
 }
 

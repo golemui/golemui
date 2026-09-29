@@ -7,25 +7,10 @@ import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 import { ARROW_CLOCKWISE_PATH, UPLOAD_PATH, X_CIRCLE_PATH, spinnerIcon } from '../utils/icons';
 import { clampPct, errorMessage, matchesAccept, newId } from '../utils/file-upload';
-import {
-  FILE_CANCEL_ARIA_LABEL,
-  FILE_FAILED_MESSAGE,
-  FILE_REMOVE_ARIA_LABEL,
-  FILE_REMOVE_FAILED_MESSAGE,
-  FILE_REMOVED_MESSAGE,
-  FILE_RETRY_ARIA_LABEL,
-  FILE_TOO_LARGE_MESSAGE,
-  FILE_TYPE_NOT_ACCEPTED_MESSAGE,
-  FILE_UPLOAD_BUTTON_LABEL,
-  FILE_UPLOAD_FAILED_MESSAGE,
-  FILE_UPLOAD_INTERRUPTED_MESSAGE,
-  FILE_UPLOADED_MESSAGE,
-  MISSING_UPLOAD_SERVICE_MESSAGE,
-  formatFileMessage,
-} from '../utils/messages';
 import type { FileItem, UploadService } from '../types';
 import { GuiFormControl } from '../gui-form-control';
 import { dispatchValue } from '../utils/events';
+import { message } from '../utils/messages';
 
 /** What <gui-file-upload> renders besides the control state: its presentation props. */
 export type GuiFileUploadProps = {
@@ -180,7 +165,7 @@ export class GuiFileUpload extends GuiFormControl {
   }
 
   protected getDefaultButtonLabel(): string {
-    return FILE_UPLOAD_BUTTON_LABEL;
+    return message('uploadFile');
   }
 
   /** The text on the right of the bar while uploading. */
@@ -221,13 +206,17 @@ export class GuiFileUpload extends GuiFormControl {
   private syncInputError() {
     const barItem = this.getBarItem();
     const item = barItem && this.presentItem(barItem);
-    const message =
+    const errorMessage =
       this._removeError?.message ??
-      (item?.status === 'error' ? (item.error ?? FILE_UPLOAD_FAILED_MESSAGE) : null);
-    if (message === this._lastInputError) return;
-    this._lastInputError = message;
+      (item?.status === 'error' ? (item.error ?? message('uploadFailed')) : null);
+    if (errorMessage === this._lastInputError) return;
+    this._lastInputError = errorMessage;
     this.dispatchEvent(
-      new CustomEvent('gui-input-error', { detail: { message }, bubbles: true, composed: true }),
+      new CustomEvent('gui-input-error', {
+        detail: { message: errorMessage },
+        bubbles: true,
+        composed: true,
+      }),
     );
   }
 
@@ -274,16 +263,16 @@ export class GuiFileUpload extends GuiFormControl {
         status: 'uploaded',
         data,
       }));
-      this.announce(formatFileMessage(this.uploadedMessage ?? FILE_UPLOADED_MESSAGE, item.name));
+      this.announce(message('fileUploaded', this.uploadedMessage, { name: item.name }));
     } catch (err) {
       if (controller.signal.aborted) return;
       this.finishActive(item.id);
       this.updateItem(item.id, (current) => ({
         ...current,
         status: 'error',
-        error: errorMessage(err, FILE_UPLOAD_FAILED_MESSAGE),
+        error: errorMessage(err, message('uploadFailed')),
       }));
-      this.announce(formatFileMessage(this.failedMessage ?? FILE_FAILED_MESSAGE, item.name));
+      this.announce(message('fileFailed', this.failedMessage, { name: item.name }));
     }
   }
 
@@ -334,10 +323,10 @@ export class GuiFileUpload extends GuiFormControl {
   /** Pre-upload gates against the `File`; returns the reason when refused. */
   protected checkFile(file: File): string | undefined {
     if (this.accept && this.accept.length > 0 && !matchesAccept(file, this.accept)) {
-      return this.acceptMessage ?? FILE_TYPE_NOT_ACCEPTED_MESSAGE;
+      return message('fileTypeNotAccepted', this.acceptMessage);
     }
     if (typeof this.maxSize === 'number' && file.size > this.maxSize) {
-      return this.maxSizeMessage ?? FILE_TOO_LARGE_MESSAGE;
+      return message('fileTooLarge', this.maxSizeMessage);
     }
     return undefined;
   }
@@ -360,7 +349,7 @@ export class GuiFileUpload extends GuiFormControl {
       try {
         await service.remove(item);
       } catch (err) {
-        this._removeError = { id: item.id, message: errorMessage(err, FILE_REMOVE_FAILED_MESSAGE) };
+        this._removeError = { id: item.id, message: errorMessage(err, message('removeFailed')) };
         return;
       } finally {
         const next = new Set(this._removingIds);
@@ -372,7 +361,7 @@ export class GuiFileUpload extends GuiFormControl {
     this._files.delete(item.id);
     if (this._removeError?.id === item.id) this._removeError = null;
     this.commit(this.getItems().filter((current) => current.id !== item.id));
-    this.announce(formatFileMessage(this.removedMessage ?? FILE_REMOVED_MESSAGE, item.name));
+    this.announce(message('fileRemoved', this.removedMessage, { name: item.name }));
     void this.focusAfterRemoval();
   }
 
@@ -504,10 +493,7 @@ export class GuiFileUpload extends GuiFormControl {
     return {
       ...item,
       status: 'error',
-      error: formatFileMessage(
-        this.interruptedMessage ?? FILE_UPLOAD_INTERRUPTED_MESSAGE,
-        item.name,
-      ),
+      error: message('uploadInterrupted', this.interruptedMessage, { name: item.name }),
     };
   }
 
@@ -546,7 +532,7 @@ export class GuiFileUpload extends GuiFormControl {
           })}
           data-cy=${`${this.uid}_file-box`}
           role="group"
-          aria-label=${this.label ?? 'File upload'}
+          aria-label=${message('fileUpload', this.label)}
           @dragover=${this.onDragOver}
           @dragleave=${this.onDragLeave}
           @drop=${this.onDrop}
@@ -568,7 +554,7 @@ export class GuiFileUpload extends GuiFormControl {
                 role="alert"
                 data-cy=${`${this.uid}_file-service-error`}
               >
-                ${this.missingServiceMessage ?? MISSING_UPLOAD_SERVICE_MESSAGE}
+                ${message('missingUploadService', this.missingServiceMessage)}
               </div>`
             : nothing}
 
@@ -638,8 +624,8 @@ export class GuiFileUpload extends GuiFormControl {
         >${item.name}</span
       >${meta}`;
     const actionLabel = uploading
-      ? formatFileMessage(this.cancelAriaLabel ?? FILE_CANCEL_ARIA_LABEL, item.name)
-      : formatFileMessage(this.removeAriaLabel ?? FILE_REMOVE_ARIA_LABEL, item.name);
+      ? message('cancelFile', this.cancelAriaLabel, { name: item.name })
+      : message('removeFile', this.removeAriaLabel, { name: item.name });
 
     return html`<div
       class=${classMap({
@@ -669,7 +655,7 @@ export class GuiFileUpload extends GuiFormControl {
             type="button"
             class="gui-file-upload__action gui-file-upload__action--retry"
             data-cy=${`${this.uid}_file-retry`}
-            aria-label=${formatFileMessage(this.retryAriaLabel ?? FILE_RETRY_ARIA_LABEL, item.name)}
+            aria-label=${message('retryFile', this.retryAriaLabel, { name: item.name })}
             ?disabled=${this.disabled || removing}
             @click=${() => this.retry(item)}
           >

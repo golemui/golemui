@@ -44,20 +44,10 @@ import {
 } from '../utils/range-selection';
 import './pills';
 import type { GuiPillEventDetail, GuiPillItem } from './pills';
-import {
-  CANCEL_EDIT_RANGE_LABEL,
-  CONFIRM_EDIT_RANGE_LABEL,
-  DISABLED_DATE_RANGE_MESSAGE,
-  EDIT_RANGE_ARIA_LABEL,
-  EDIT_RANGE_CANCELLED_MESSAGE,
-  EDIT_RANGE_COMMITTED_MESSAGE,
-  EDIT_RANGE_LABEL,
-  EDIT_RANGE_STARTED_MESSAGE,
-  formatEditMessage,
-} from '../utils/messages';
 import type { DateRange } from '../types';
 import { GuiFormControl } from '../gui-form-control';
 import { dispatchValue } from '../utils/events';
+import { message } from '../utils/messages';
 
 export interface RangeCalendarDay {
   date: Date;
@@ -234,9 +224,9 @@ export class GuiRangeCalendar extends GuiFormControl {
     clearCompose: () => this.clearCompose(),
     getPills: () => this.querySelector('gui-pills'),
     getMessages: () => ({
-      started: this.editStartedMessage ?? EDIT_RANGE_STARTED_MESSAGE,
-      committed: this.editCommittedMessage ?? EDIT_RANGE_COMMITTED_MESSAGE,
-      cancelled: this.editCancelledMessage ?? EDIT_RANGE_CANCELLED_MESSAGE,
+      started: message('editRangeStarted', this.editStartedMessage),
+      committed: message('editRangeCommitted', this.editCommittedMessage),
+      cancelled: message('editRangeCancelled', this.editCancelledMessage),
     }),
   });
 
@@ -626,7 +616,7 @@ export class GuiRangeCalendar extends GuiFormControl {
       this.dispatchEvent(
         new CustomEvent('gui-input-error', {
           detail: {
-            message: this.disabledDateRangeMessage ?? DISABLED_DATE_RANGE_MESSAGE,
+            message: message('disabledDateRange', this.disabledDateRangeMessage),
             range: { start: toISODateString(commit.start), end: toISODateString(commit.end) },
           },
           bubbles: true,
@@ -689,20 +679,20 @@ export class GuiRangeCalendar extends GuiFormControl {
       <gui-pills
         class="gui-range-calendar__pills"
         .uid=${this.uid}
-        .toolbarAriaLabel=${'Selected date ranges'}
+        .toolbarAriaLabel=${message('selectedDateRanges')}
         .items=${pillItems}
         .removable=${true}
         .clickable=${true}
         .bubble=${false}
         ?disabled=${this.disabled}
         ?readonly=${this.readOnly}
-        .removeAriaLabel=${this.removePillAriaLabel ?? 'Remove date'}
+        .removeAriaLabel=${message('removeDate', this.removePillAriaLabel)}
         .editable=${this.editEnabled}
         .selectedKey=${this._edit.selectedKey ?? undefined}
         .editingKey=${this._edit.editing?.key ?? undefined}
-        .editLabel=${this.editLabel ?? EDIT_RANGE_LABEL}
-        .confirmEditLabel=${this.confirmEditLabel ?? CONFIRM_EDIT_RANGE_LABEL}
-        .cancelEditLabel=${this.cancelEditLabel ?? CANCEL_EDIT_RANGE_LABEL}
+        .editLabel=${message('editRange', this.editLabel)}
+        .confirmEditLabel=${message('confirmEditRange', this.confirmEditLabel)}
+        .cancelEditLabel=${message('cancelEditRange', this.cancelEditLabel)}
         @gui-pill-remove=${this.onPillRemoveEvent}
         @gui-pill-click=${this.onPillClickEvent}
         @gui-pill-focus=${this.onPillFocusEvent}
@@ -728,7 +718,7 @@ export class GuiRangeCalendar extends GuiFormControl {
         ...item,
         label,
         ariaLabel: label,
-        editAriaLabel: formatEditMessage(this.editAriaLabel ?? EDIT_RANGE_ARIA_LABEL, item.label),
+        editAriaLabel: message('editRangeHint', this.editAriaLabel, { label: item.label }),
       };
     });
   }

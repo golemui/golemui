@@ -1,10 +1,6 @@
 import { weekInfoData } from './week-info';
-import {
-  DISABLED_DATE_RANGE_MESSAGE,
-  INVALID_MAX_DATE_MESSAGE,
-  INVALID_MIN_DATE_MESSAGE,
-} from './messages';
 import type { DateRange } from '../types';
+import { message } from './messages';
 
 /**
  * Converts a Date object to a string formatted as an ISO 8601 date (YYYY-MM-DD).
@@ -107,13 +103,13 @@ export function dateBoundsError(
 ): string | null {
   const day = isoDate.split('T')[0];
   if (minDate && day < minDate.split('T')[0]) {
-    return messages?.minDateMessage ?? INVALID_MIN_DATE_MESSAGE;
+    return messages?.minDateMessage ?? message('minDate');
   }
   if (maxDate && day > maxDate.split('T')[0]) {
-    return messages?.maxDateMessage ?? INVALID_MAX_DATE_MESSAGE;
+    return messages?.maxDateMessage ?? message('maxDate');
   }
   if (isDateDisabled(day, undefined, undefined, disabledRanges)) {
-    return messages?.disabledDateRangeMessage ?? DISABLED_DATE_RANGE_MESSAGE;
+    return messages?.disabledDateRangeMessage ?? message('disabledDateRange');
   }
   return null;
 }

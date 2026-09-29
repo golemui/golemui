@@ -12,7 +12,6 @@ import { renderGroupParts, type GUIPartsTemplateData } from '../utils/part-templ
 import {
   getTimeLocaleData,
   parseTimeGroup,
-  PART_DEFAULT_ARIA_LABELS,
   timeBoundsError,
   type DateTimePartDescriptor,
   type DateTimePartType,
@@ -37,22 +36,10 @@ import {
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 import './pills';
 import type { GuiPillEventDetail, GuiPillItem } from './pills';
-import {
-  CANCEL_EDIT_RANGE_LABEL,
-  CONFIRM_EDIT_RANGE_LABEL,
-  EDIT_RANGE_ARIA_LABEL,
-  EDIT_RANGE_CANCELLED_MESSAGE,
-  EDIT_RANGE_COMMITTED_MESSAGE,
-  EDIT_RANGE_LABEL,
-  EDIT_RANGE_STARTED_MESSAGE,
-  formatEditMessage,
-  INCOMPLETE_TIME_MESSAGE,
-  INVALID_DISABLED_TIME_RANGE_MESSAGE,
-  INVALID_TIME_RANGE_ORDER_MESSAGE,
-} from '../utils/messages';
 import type { TimeRange } from '../types';
 import { GuiFormControl } from '../gui-form-control';
 import { dispatchValue } from '../utils/events';
+import { message } from '../utils/messages';
 
 /** What <gui-range-time-input> renders besides the control state: its presentation props. */
 export type GuiRangeTimeInputProps = {
@@ -204,9 +191,9 @@ export class GuiRangeTimeInput extends GuiFormControl {
     onStateChanged: () => this.emitEditState(),
     getPills: () => this.querySelector('gui-pills'),
     getMessages: () => ({
-      started: this.editStartedMessage ?? EDIT_RANGE_STARTED_MESSAGE,
-      committed: this.editCommittedMessage ?? EDIT_RANGE_COMMITTED_MESSAGE,
-      cancelled: this.editCancelledMessage ?? EDIT_RANGE_CANCELLED_MESSAGE,
+      started: message('editRangeStarted', this.editStartedMessage),
+      committed: message('editRangeCommitted', this.editCommittedMessage),
+      cancelled: message('editRangeCancelled', this.editCancelledMessage),
     }),
   });
 
@@ -299,7 +286,7 @@ export class GuiRangeTimeInput extends GuiFormControl {
           hour: this.hourAriaLabel,
           minute: this.minuteAriaLabel,
         };
-        return overrides[type] ?? PART_DEFAULT_ARIA_LABELS[type];
+        return message(type, overrides[type]);
       },
       dayPeriodAriaLabel: this.dayPeriodAriaLabel,
       disabled: this.disabled,
@@ -328,7 +315,7 @@ export class GuiRangeTimeInput extends GuiFormControl {
             ? 'gui-range-time-input--icon'
             : ''}"
           role="group"
-          aria-label=${this.label ?? 'Time range input'}
+          aria-label=${message('timeRangeInput', this.label)}
         >
           ${this.icon
             ? html`<span
@@ -342,7 +329,7 @@ export class GuiRangeTimeInput extends GuiFormControl {
             class="gui-range-time-input__pills"
             style=${cspStyleMap(pillItems.length ? {} : { 'min-width': 0 })}
             .uid=${this.uid}
-            .toolbarAriaLabel=${'Selected time ranges'}
+            .toolbarAriaLabel=${message('selectedTimeRanges')}
             .items=${pillItems}
             .errors=${this.errors}
             .touched=${!!this.touched}
@@ -352,14 +339,14 @@ export class GuiRangeTimeInput extends GuiFormControl {
             .tabbable=${false}
             ?disabled=${this.disabled}
             ?readonly=${this.readOnly}
-            .removeAriaLabel=${this.removePillAriaLabel ?? 'Remove time'}
-            .compactAriaLabel=${`${pillItems.length} time ranges`}
+            .removeAriaLabel=${message('removeTime', this.removePillAriaLabel)}
+            .compactAriaLabel=${message('timeRangeCount', undefined, { count: pillItems.length })}
             .editable=${this.editEnabled}
             .selectedKey=${this._edit.selectedKey ?? undefined}
             .editingKey=${this._edit.editing?.key ?? undefined}
-            .editLabel=${this.editLabel ?? EDIT_RANGE_LABEL}
-            .confirmEditLabel=${this.confirmEditLabel ?? CONFIRM_EDIT_RANGE_LABEL}
-            .cancelEditLabel=${this.cancelEditLabel ?? CANCEL_EDIT_RANGE_LABEL}
+            .editLabel=${message('editRange', this.editLabel)}
+            .confirmEditLabel=${message('confirmEditRange', this.confirmEditLabel)}
+            .cancelEditLabel=${message('cancelEditRange', this.cancelEditLabel)}
             @gui-pill-remove=${this.onPillRemoveEvent}
             @gui-pill-click=${this.onPillClickEvent}
             @gui-pill-focus=${this.onPillFocusEvent}
@@ -375,7 +362,7 @@ export class GuiRangeTimeInput extends GuiFormControl {
             <div
               class="gui-parts gui-range-time-input__field"
               role="group"
-              aria-label=${this.startTimeAriaLabel ?? 'Start time'}
+              aria-label=${message('startTime', this.startTimeAriaLabel)}
             >
               ${renderGroupParts('start', partsData, this._parts)}
             </div>
@@ -385,7 +372,7 @@ export class GuiRangeTimeInput extends GuiFormControl {
             <div
               class="gui-parts gui-range-time-input__field"
               role="group"
-              aria-label=${this.endTimeAriaLabel ?? 'End time'}
+              aria-label=${message('endTime', this.endTimeAriaLabel)}
             >
               ${renderGroupParts('end', partsData, this._parts)}
             </div>
@@ -421,7 +408,7 @@ export class GuiRangeTimeInput extends GuiFormControl {
         ...item,
         label,
         ariaLabel: label,
-        editAriaLabel: formatEditMessage(this.editAriaLabel ?? EDIT_RANGE_ARIA_LABEL, item.label),
+        editAriaLabel: message('editRangeHint', this.editAriaLabel, { label: item.label }),
       };
     });
   }
@@ -693,7 +680,7 @@ export class GuiRangeTimeInput extends GuiFormControl {
 
     this._validationTriggered = true;
     this._parts.surfaceInputError(
-      invalidMessage ?? this.incompleteMessage ?? INCOMPLETE_TIME_MESSAGE,
+      invalidMessage ?? message('incompleteTime', this.incompleteMessage),
     );
   }
 
@@ -707,9 +694,9 @@ export class GuiRangeTimeInput extends GuiFormControl {
     const outcome = commitRange(start, end, this._edit.baseRanges(this.value), {
       validate: (ordered) =>
         compareISOTimes(ordered.end, ordered.start) <= 0
-          ? (this.rangeOrderMessage ?? INVALID_TIME_RANGE_ORDER_MESSAGE)
+          ? message('timeRangeOrder', this.rangeOrderMessage)
           : isTimeRangeDisabled(ordered.start, ordered.end, this.disabledRanges)
-            ? (this.disabledRangeMessage ?? INVALID_DISABLED_TIME_RANGE_MESSAGE)
+            ? message('disabledTimeRange', this.disabledRangeMessage)
             : null,
       toRange: (ordered) => {
         this._lastComposedStart = ordered.start;

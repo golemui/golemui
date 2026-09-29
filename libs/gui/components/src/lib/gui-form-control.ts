@@ -1,6 +1,6 @@
 import { property } from 'lit/decorators.js';
 import { GuiElement } from './gui-element';
-import { VALUE_MISSING_MESSAGE } from './utils/messages';
+import { message } from './utils/messages';
 
 /** Why a control's value is invalid, see {@link GuiFormControl.validate}. */
 export type GuiValidity = { flags: ValidityStateFlags; message: string };
@@ -119,7 +119,7 @@ export abstract class GuiFormControl extends GuiElement {
    */
   protected validate(): GuiValidity | null {
     return this.required && isEmptyValue(this.controlValue)
-      ? { flags: { valueMissing: true }, message: VALUE_MISSING_MESSAGE }
+      ? { flags: { valueMissing: true }, message: message('valueMissing') }
       : null;
   }
 

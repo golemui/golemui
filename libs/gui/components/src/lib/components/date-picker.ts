@@ -13,6 +13,7 @@ import { CARET_DOWN_PATH } from '../utils/icons';
 import type { DateRange } from '../types';
 import { boundsValidity, GuiFormControl, type GuiValidity } from '../gui-form-control';
 import { dispatchChange, dispatchValue } from '../utils/events';
+import { message } from '../utils/messages';
 
 export class GuiDatePicker extends GuiFormControl {
   @property({ type: String }) label: string | undefined = undefined;
@@ -111,7 +112,7 @@ export class GuiDatePicker extends GuiFormControl {
           html`<gui-calendar
             id=${`${this.uid}_popup`}
             role="dialog"
-            aria-label=${this.label ?? 'Calendar'}
+            aria-label=${message('calendar', this.label)}
             .uid=${this.uid}
             .hint=${this.hint}
             .touched=${this.touched}
@@ -187,7 +188,7 @@ export class GuiDatePicker extends GuiFormControl {
         <button
           type="button"
           class="gui-date-picker__arrow"
-          aria-label=${this.toggleAriaLabel ?? 'Show calendar'}
+          aria-label=${message('showCalendar', this.toggleAriaLabel)}
           aria-haspopup="dialog"
           aria-expanded=${this._popup.open ? 'true' : 'false'}
           aria-controls=${`${this.uid}_popup`}

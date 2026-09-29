@@ -15,15 +15,11 @@ import {
   type HourFormat,
 } from '../utils/time';
 import { addErrors, addIcon, addLabel } from '../utils/templates';
-import {
-  INVALID_DISABLED_TIME_RANGE_MESSAGE,
-  INVALID_MAX_TIME_MESSAGE,
-  INVALID_MIN_TIME_MESSAGE,
-} from '../utils/messages';
 import { CARET_DOWN_PATH } from '../utils/icons';
 import type { TimeRange } from '../types';
 import { GuiFormControl, type GuiValidity } from '../gui-form-control';
 import { dispatchChange, dispatchValue, stopPropagation } from '../utils/events';
+import { message } from '../utils/messages';
 
 export class GuiRangeTimePicker extends GuiFormControl {
   @property({ type: String }) label: string | undefined = undefined;
@@ -185,15 +181,15 @@ export class GuiRangeTimePicker extends GuiFormControl {
   override render() {
     const pickerIcon = addIcon('rangeTimePicker', { icon: this.icon });
     const out = this.outListBounds;
-    const startLabel = this.startTimeLabel ?? 'Start time';
-    const endLabel = this.endTimeLabel ?? 'End time';
+    const startLabel = message('startTime', this.startTimeLabel);
+    const endLabel = message('endTime', this.endTimeLabel);
 
     const panel = this._popup.open
       ? html`<div
           class="gui-picker__panel gui-range-time-picker__panel"
           id=${`${this.uid}_popup`}
           role="dialog"
-          aria-label=${this.label ?? 'Time list'}
+          aria-label=${message('timeList', this.label)}
         >
           <div class="gui-range-time-picker__columns">
             <div class="gui-range-time-picker__column">
@@ -321,7 +317,7 @@ export class GuiRangeTimePicker extends GuiFormControl {
         <button
           type="button"
           class="gui-range-time-picker__arrow"
-          aria-label=${this.toggleAriaLabel ?? 'Show time list'}
+          aria-label=${message('showTimeList', this.toggleAriaLabel)}
           aria-haspopup="dialog"
           aria-expanded=${this._popup.open ? 'true' : 'false'}
           aria-controls=${`${this.uid}_popup`}
@@ -476,14 +472,14 @@ export class GuiRangeTimePicker extends GuiFormControl {
       for (const endpoint of [range.start, range.end]) {
         if (!endpoint) continue;
         if (this.minTime && compareISOTimes(endpoint, this.minTime) < 0) {
-          return this.minTimeMessage ?? INVALID_MIN_TIME_MESSAGE;
+          return message('minTime', this.minTimeMessage);
         }
         if (this.maxTime && compareISOTimes(endpoint, this.maxTime) > 0) {
-          return this.maxTimeMessage ?? INVALID_MAX_TIME_MESSAGE;
+          return message('maxTime', this.maxTimeMessage);
         }
       }
       if (isTimeRangeDisabled(range.start, range.end, this.disabledRanges)) {
-        return this.disabledRangeMessage ?? INVALID_DISABLED_TIME_RANGE_MESSAGE;
+        return message('disabledTimeRange', this.disabledRangeMessage);
       }
     }
     return null;

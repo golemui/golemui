@@ -23,6 +23,7 @@ import {
 } from '../utils/icons';
 import { GuiFormControl } from '../gui-form-control';
 import { dispatchChange, dispatchValue } from '../utils/events';
+import { message } from '../utils/messages';
 
 /** What <gui-markdown> renders besides the control state: its presentation props. */
 export type GuiMarkdownProps = {
@@ -183,7 +184,7 @@ export class GuiMarkdown extends GuiFormControl {
         <nav
           class="gui-markdown__toolbar"
           role="toolbar"
-          aria-label=${this.toolbarAriaLabel ?? 'Text formatting'}
+          aria-label=${message('textFormatting', this.toolbarAriaLabel)}
         >
           <ul role="presentation">
             ${(this.tools ?? ['H', 'B', 'I', 'S', 'Q', 'L', '|', 'OL', 'UL']).map((tool) =>
@@ -197,10 +198,10 @@ export class GuiMarkdown extends GuiFormControl {
                   'gui-markdown__toolbar-button--active': this.splitViewActive,
                 })}
                 ?disabled=${this.disabled}
-                aria-label=${this.splitViewTitle ?? 'Split View'}
+                aria-label=${message('splitView', this.splitViewTitle)}
                 aria-pressed=${this.splitViewActive ? 'true' : 'false'}
                 @click=${this.splitView}
-                title=${this.splitViewTitle ?? 'Split View'}
+                title=${message('splitView', this.splitViewTitle)}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -285,10 +286,10 @@ export class GuiMarkdown extends GuiFormControl {
             type="button"
             class=${this.toolbarBtnClass('heading')}
             ?disabled=${this.disabled || this.readOnly}
-            aria-label=${this.headingTitle ?? 'Heading'}
+            aria-label=${message('heading', this.headingTitle)}
             aria-pressed=${this.activeFormats['heading'] ? 'true' : 'false'}
             @click=${this.applyFormat('# ', '', 'heading')}
-            title=${this.headingTitle ?? 'Heading'}
+            title=${message('heading', this.headingTitle)}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -307,10 +308,10 @@ export class GuiMarkdown extends GuiFormControl {
             type="button"
             class=${this.toolbarBtnClass('bold')}
             ?disabled=${this.disabled || this.readOnly}
-            aria-label=${this.boldTitle ?? 'Bold'}
+            aria-label=${message('bold', this.boldTitle)}
             aria-pressed=${this.activeFormats['bold'] ? 'true' : 'false'}
             @click=${this.applyFormat('**', '**', 'bold')}
-            title=${this.boldTitle ?? 'Bold'}
+            title=${message('bold', this.boldTitle)}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -329,10 +330,10 @@ export class GuiMarkdown extends GuiFormControl {
             type="button"
             class=${this.toolbarBtnClass('italic')}
             ?disabled=${this.disabled || this.readOnly}
-            aria-label=${this.italicTitle ?? 'Italic'}
+            aria-label=${message('italic', this.italicTitle)}
             aria-pressed=${this.activeFormats['italic'] ? 'true' : 'false'}
             @click=${this.applyFormat('_', '_', 'italic')}
-            title=${this.italicTitle ?? 'Italic'}
+            title=${message('italic', this.italicTitle)}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -351,10 +352,10 @@ export class GuiMarkdown extends GuiFormControl {
             type="button"
             class=${this.toolbarBtnClass('strikethrough')}
             ?disabled=${this.disabled || this.readOnly}
-            aria-label=${this.strikethroughTitle ?? 'Strikethrough'}
+            aria-label=${message('strikethrough', this.strikethroughTitle)}
             aria-pressed=${this.activeFormats['strikethrough'] ? 'true' : 'false'}
             @click=${this.applyFormat('~~', '~~', 'strikethrough')}
-            title=${this.strikethroughTitle ?? 'Strikethrough'}
+            title=${message('strikethrough', this.strikethroughTitle)}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -373,10 +374,10 @@ export class GuiMarkdown extends GuiFormControl {
             type="button"
             class=${this.toolbarBtnClass('quote')}
             ?disabled=${this.disabled || this.readOnly}
-            aria-label=${this.quoteTitle ?? 'Quote'}
+            aria-label=${message('quote', this.quoteTitle)}
             aria-pressed=${this.activeFormats['quote'] ? 'true' : 'false'}
             @click=${this.applyFormat('> ', '', 'quote')}
-            title=${this.quoteTitle ?? 'Quote'}
+            title=${message('quote', this.quoteTitle)}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -395,10 +396,10 @@ export class GuiMarkdown extends GuiFormControl {
             type="button"
             class=${this.toolbarBtnClass('link')}
             ?disabled=${this.disabled || this.readOnly}
-            aria-label=${this.linkTitle ?? 'Link'}
+            aria-label=${message('link', this.linkTitle)}
             aria-pressed=${this.activeFormats['link'] ? 'true' : 'false'}
             @click=${this.applyFormat('[', '](url)', 'link')}
-            title=${this.linkTitle ?? 'Link'}
+            title=${message('link', this.linkTitle)}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -417,10 +418,10 @@ export class GuiMarkdown extends GuiFormControl {
             type="button"
             class=${this.toolbarBtnClass('orderedList')}
             ?disabled=${this.disabled || this.readOnly}
-            aria-label=${this.orderedListTitle ?? 'Ordered List'}
+            aria-label=${message('orderedList', this.orderedListTitle)}
             aria-pressed=${this.activeFormats['orderedList'] ? 'true' : 'false'}
             @click=${this.applyFormat('1. ', '', 'orderedList')}
-            title=${this.orderedListTitle ?? 'Ordered List'}
+            title=${message('orderedList', this.orderedListTitle)}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -439,10 +440,10 @@ export class GuiMarkdown extends GuiFormControl {
             type="button"
             class=${this.toolbarBtnClass('unorderedList')}
             ?disabled=${this.disabled || this.readOnly}
-            aria-label=${this.unorderedListTitle ?? 'Unordered List'}
+            aria-label=${message('unorderedList', this.unorderedListTitle)}
             aria-pressed=${this.activeFormats['unorderedList'] ? 'true' : 'false'}
             @click=${this.applyFormat('- ', '', 'unorderedList')}
-            title=${this.unorderedListTitle ?? 'Unordered List'}
+            title=${message('unorderedList', this.unorderedListTitle)}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

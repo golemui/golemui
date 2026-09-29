@@ -27,7 +27,6 @@ export {
   getDayPeriodLabels,
   getTimeFormatParts,
   isTimeDisabled,
-  NO_AVAILABLE_TIMES_MESSAGE,
   parseISODateTimeString,
   parseISOTimeString,
   resolveDisabledTimeRangesForDate,
@@ -40,3 +39,4 @@ export {
   type TimeRange,
 } from './lib/utils/time';
 export type { TabsEventDetail, AccordionEventDetail } from './lib/widget-event.details';
+export { interpolate, message } from './lib/utils/messages';

@@ -4,6 +4,7 @@ import { getMonthYearLabel, getMonthYearParts, getWeekdayLabels } from './date';
 import { chunk } from './grid-nav';
 import { addErrors, addLabel } from './templates';
 import { CARET_DOWN_PATH, CARET_LEFT_PATH, CARET_RIGHT_PATH } from './icons';
+import { message } from './messages';
 
 /**
  * The month a panel shows: the nav cursor normalized to day 1, shifted by the
@@ -143,7 +144,7 @@ export function renderMonthNavButton(
         class="gui-button gui-calendar__month-button gui-calendar__month-button--prev"
         ?disabled=${data.disabled}
         @click=${data.onClick}
-        aria-label=${data.ariaLabel ?? 'Previous month'}
+        aria-label=${message('previousMonth', data.ariaLabel)}
       >
         ${data.icon
           ? html`<span
@@ -170,7 +171,7 @@ export function renderMonthNavButton(
       class="gui-button gui-calendar__month-button gui-calendar__month-button--next"
       ?disabled=${data.disabled}
       @click=${data.onClick}
-      aria-label=${data.ariaLabel ?? 'Next month'}
+      aria-label=${message('nextMonth', data.ariaLabel)}
     >
       ${data.icon
         ? html`<span
@@ -333,7 +334,7 @@ export function renderMonthHeader(panelDate: Date, data: MonthHeaderData): Templ
                 class="gui-calendar__year-selector"
                 @click=${data.onToggleYearSelector}
                 aria-expanded=${data.yearSelectorOpen}
-                aria-label=${`${data.selectYearAriaLabel ?? 'Select year'}, ${part.value}`}
+                aria-label=${`${message('selectYear', data.selectYearAriaLabel)}, ${part.value}`}
               >
                 <span class="gui-calendar__year-value">${part.value}</span>
                 <span class="gui-calendar__year-arrow" aria-hidden="true">
@@ -419,7 +420,7 @@ export function renderYearGrid(data: YearGridData): TemplateResult {
     <div
       class="gui-calendar__year-grid"
       role="grid"
-      aria-label=${data.ariaLabel ?? 'Year selection'}
+      aria-label=${message('yearSelection', data.ariaLabel)}
       @keydown=${data.onKeydown}
     >
       ${chunk(data.years, 4).map(

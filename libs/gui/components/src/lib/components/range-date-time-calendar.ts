@@ -60,21 +60,10 @@ import {
   type HourFormat,
   type TimeRange,
 } from '../utils/time';
-import {
-  CANCEL_EDIT_RANGE_LABEL,
-  CONFIRM_EDIT_RANGE_LABEL,
-  DISABLED_DATE_RANGE_MESSAGE,
-  EDIT_RANGE_ARIA_LABEL,
-  EDIT_RANGE_CANCELLED_MESSAGE,
-  EDIT_RANGE_COMMITTED_MESSAGE,
-  EDIT_RANGE_LABEL,
-  EDIT_RANGE_STARTED_MESSAGE,
-  formatEditMessage,
-  INCOMPLETE_DATE_TIME_MESSAGE,
-} from '../utils/messages';
 import type { DateTimeRange } from '../types';
 import { GuiFormControl } from '../gui-form-control';
 import { dispatchValue } from '../utils/events';
+import { message } from '../utils/messages';
 
 export class GuiRangeDateTimeCalendar extends GuiFormControl {
   @property({ type: String }) label: string | undefined = undefined;
@@ -299,9 +288,9 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
     clearCompose: () => this.clearCompose(),
     getPills: () => this.querySelector('gui-pills'),
     getMessages: () => ({
-      started: this.editStartedMessage ?? EDIT_RANGE_STARTED_MESSAGE,
-      committed: this.editCommittedMessage ?? EDIT_RANGE_COMMITTED_MESSAGE,
-      cancelled: this.editCancelledMessage ?? EDIT_RANGE_CANCELLED_MESSAGE,
+      started: message('editRangeStarted', this.editStartedMessage),
+      committed: message('editRangeCommitted', this.editCommittedMessage),
+      cancelled: message('editRangeCancelled', this.editCancelledMessage),
     }),
   });
 
@@ -367,7 +356,7 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
       return;
     }
 
-    this.emitInputError(this.incompleteMessage ?? INCOMPLETE_DATE_TIME_MESSAGE);
+    this.emitInputError(message('incompleteDateTime', this.incompleteMessage));
   }
 
   /**
@@ -542,7 +531,7 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
           <gui-time-picker
             class="gui-time-picker gui-field gui-range-date-time-calendar__start"
             .uid=${`${this.uid}-start-time`}
-            .label=${this.startTimeLabel ?? 'Start time'}
+            .label=${message('startTime', this.startTimeLabel)}
             .showErrors=${false}
             .deferFocusLeave=${true}
             ?required=${this.required}
@@ -575,7 +564,7 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
           <gui-time-picker
             class="gui-time-picker gui-field gui-range-date-time-calendar__end"
             .uid=${`${this.uid}-end-time`}
-            .label=${this.endTimeLabel ?? 'End time'}
+            .label=${message('endTime', this.endTimeLabel)}
             .showErrors=${false}
             .deferFocusLeave=${true}
             ?required=${this.required}
@@ -788,7 +777,7 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
 
     if (this.spanCoversBlockedDay(commit.start, commit.end)) {
       this._invalidRange = { start: commit.start, end: commit.end };
-      this.emitInputError(this.disabledRangeMessage ?? DISABLED_DATE_RANGE_MESSAGE);
+      this.emitInputError(message('disabledDateRange', this.disabledRangeMessage));
       this.requestUpdate();
       return;
     }
@@ -891,7 +880,7 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
     const ordered = orderDateTimeRange(`${startDate}T${timeIn}`, `${endDate}T${timeOut}`);
 
     if (dateTimeRangeOverlaps(ordered, this.disabledRanges)) {
-      this.emitInputError(this.disabledRangeMessage ?? DISABLED_DATE_RANGE_MESSAGE);
+      this.emitInputError(message('disabledDateRange', this.disabledRangeMessage));
       return { kind: 'rejected' };
     }
 
@@ -1018,7 +1007,7 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
     });
     if (bound) return bound;
     if (isTimeDisabled(time, disabledSlots)) {
-      return this.disabledRangeMessage ?? DISABLED_DATE_RANGE_MESSAGE;
+      return message('disabledDateRange', this.disabledRangeMessage);
     }
     return null;
   }
@@ -1219,20 +1208,20 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
       <gui-pills
         class="gui-range-calendar__pills"
         .uid=${this.uid}
-        .toolbarAriaLabel=${'Selected date-time ranges'}
+        .toolbarAriaLabel=${message('selectedDateTimeRanges')}
         .items=${pillItems}
         .removable=${true}
         .clickable=${true}
         .bubble=${false}
         ?disabled=${this.disabled}
         ?readonly=${this.readOnly}
-        .removeAriaLabel=${this.removePillAriaLabel ?? 'Remove date'}
+        .removeAriaLabel=${message('removeDate', this.removePillAriaLabel)}
         .editable=${this.editEnabled}
         .selectedKey=${this._edit.selectedKey ?? undefined}
         .editingKey=${this._edit.editing?.key ?? undefined}
-        .editLabel=${this.editLabel ?? EDIT_RANGE_LABEL}
-        .confirmEditLabel=${this.confirmEditLabel ?? CONFIRM_EDIT_RANGE_LABEL}
-        .cancelEditLabel=${this.cancelEditLabel ?? CANCEL_EDIT_RANGE_LABEL}
+        .editLabel=${message('editRange', this.editLabel)}
+        .confirmEditLabel=${message('confirmEditRange', this.confirmEditLabel)}
+        .cancelEditLabel=${message('cancelEditRange', this.cancelEditLabel)}
         @gui-pill-remove=${this.onPillRemoveEvent}
         @gui-pill-click=${this.onPillClickEvent}
         @gui-pill-focus=${this.onPillFocusEvent}
@@ -1258,7 +1247,7 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
         ...item,
         label,
         ariaLabel: label,
-        editAriaLabel: formatEditMessage(this.editAriaLabel ?? EDIT_RANGE_ARIA_LABEL, item.label),
+        editAriaLabel: message('editRangeHint', this.editAriaLabel, { label: item.label }),
       };
     });
   }
@@ -1329,7 +1318,7 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
       return;
     }
     if (outcome.kind === 'incomplete') {
-      this.emitInputError(this.incompleteMessage ?? INCOMPLETE_DATE_TIME_MESSAGE);
+      this.emitInputError(message('incompleteDateTime', this.incompleteMessage));
     }
   };
 

@@ -14,22 +14,10 @@ import {
   parseISODateString,
   toISODateString,
 } from '../utils/date';
-import {
-  CANCEL_EDIT_RANGE_LABEL,
-  CONFIRM_EDIT_RANGE_LABEL,
-  EDIT_RANGE_ARIA_LABEL,
-  EDIT_RANGE_CANCELLED_MESSAGE,
-  EDIT_RANGE_COMMITTED_MESSAGE,
-  EDIT_RANGE_LABEL,
-  EDIT_RANGE_STARTED_MESSAGE,
-  formatEditMessage,
-  INCOMPLETE_DATE_MESSAGE,
-} from '../utils/messages';
 import { renderGroupParts, type GUIPartsTemplateData } from '../utils/part-templates';
 import {
   dateInputPartDescriptors,
   parseDateGroup,
-  PART_DEFAULT_ARIA_LABELS,
   type DateTimePartDescriptor,
   type DateTimePartType,
 } from '../utils/parts';
@@ -49,6 +37,7 @@ import type { GuiPillEventDetail, GuiPillItem } from './pills';
 import type { DateRange } from '../types';
 import { GuiFormControl } from '../gui-form-control';
 import { dispatchValue } from '../utils/events';
+import { message } from '../utils/messages';
 
 /** What <gui-range-date-input> renders besides the control state: its presentation props. */
 export type GuiRangeDateInputProps = {
@@ -183,9 +172,9 @@ export class GuiRangeDateInput extends GuiFormControl {
     onStateChanged: () => this.emitEditState(),
     getPills: () => this.querySelector('gui-pills'),
     getMessages: () => ({
-      started: this.editStartedMessage ?? EDIT_RANGE_STARTED_MESSAGE,
-      committed: this.editCommittedMessage ?? EDIT_RANGE_COMMITTED_MESSAGE,
-      cancelled: this.editCancelledMessage ?? EDIT_RANGE_CANCELLED_MESSAGE,
+      started: message('editRangeStarted', this.editStartedMessage),
+      committed: message('editRangeCommitted', this.editCommittedMessage),
+      cancelled: message('editRangeCancelled', this.editCancelledMessage),
     }),
   });
 
@@ -268,7 +257,7 @@ export class GuiRangeDateInput extends GuiFormControl {
           month: this.monthAriaLabel,
           year: this.yearAriaLabel,
         };
-        return overrides[type] ?? PART_DEFAULT_ARIA_LABELS[type];
+        return message(type, overrides[type]);
       },
       disabled: this.disabled,
       partsReadonly: !!this.readOnly,
@@ -302,7 +291,7 @@ export class GuiRangeDateInput extends GuiFormControl {
             ? 'gui-range-date-input--icon'
             : ''}"
           role="group"
-          aria-label=${this.label ?? 'Date range input'}
+          aria-label=${message('dateRangeInput', this.label)}
         >
           ${this.icon
             ? html`<span
@@ -316,7 +305,7 @@ export class GuiRangeDateInput extends GuiFormControl {
             class="gui-range-date-input__pills"
             style=${cspStyleMap(pillItems.length ? {} : { 'min-width': 0 })}
             .uid=${this.uid}
-            .toolbarAriaLabel=${'Selected date ranges'}
+            .toolbarAriaLabel=${message('selectedDateRanges')}
             .items=${pillItems}
             .errors=${this.errors}
             .touched=${!!this.touched}
@@ -326,14 +315,14 @@ export class GuiRangeDateInput extends GuiFormControl {
             .tabbable=${false}
             ?disabled=${this.disabled}
             ?readonly=${this.readOnly}
-            .removeAriaLabel=${this.removePillAriaLabel ?? 'Remove date'}
-            .compactAriaLabel=${`${pillItems.length} date ranges`}
+            .removeAriaLabel=${message('removeDate', this.removePillAriaLabel)}
+            .compactAriaLabel=${message('dateRangeCount', undefined, { count: pillItems.length })}
             .editable=${this.editEnabled}
             .selectedKey=${this._edit.selectedKey ?? undefined}
             .editingKey=${this._edit.editing?.key ?? undefined}
-            .editLabel=${this.editLabel ?? EDIT_RANGE_LABEL}
-            .confirmEditLabel=${this.confirmEditLabel ?? CONFIRM_EDIT_RANGE_LABEL}
-            .cancelEditLabel=${this.cancelEditLabel ?? CANCEL_EDIT_RANGE_LABEL}
+            .editLabel=${message('editRange', this.editLabel)}
+            .confirmEditLabel=${message('confirmEditRange', this.confirmEditLabel)}
+            .cancelEditLabel=${message('cancelEditRange', this.cancelEditLabel)}
             @gui-pill-remove=${this.onPillRemoveEvent}
             @gui-pill-click=${this.onPillClickEvent}
             @gui-pill-focus=${this.onPillFocusEvent}
@@ -349,7 +338,7 @@ export class GuiRangeDateInput extends GuiFormControl {
             <div
               class="gui-parts gui-range-date-input__field"
               role="group"
-              aria-label=${this.startDateAriaLabel ?? 'Start date'}
+              aria-label=${message('startDate', this.startDateAriaLabel)}
             >
               ${renderGroupParts('start', partsData, this._parts)}
             </div>
@@ -359,7 +348,7 @@ export class GuiRangeDateInput extends GuiFormControl {
             <div
               class="gui-parts gui-range-date-input__field"
               role="group"
-              aria-label=${this.endDateAriaLabel ?? 'End date'}
+              aria-label=${message('endDate', this.endDateAriaLabel)}
             >
               ${renderGroupParts('end', partsData, this._parts)}
             </div>
@@ -389,7 +378,7 @@ export class GuiRangeDateInput extends GuiFormControl {
         ...item,
         label,
         ariaLabel: label,
-        editAriaLabel: formatEditMessage(this.editAriaLabel ?? EDIT_RANGE_ARIA_LABEL, item.label),
+        editAriaLabel: message('editRangeHint', this.editAriaLabel, { label: item.label }),
       };
     });
   }
@@ -639,7 +628,7 @@ export class GuiRangeDateInput extends GuiFormControl {
 
     this._validationTriggered = true;
     this._parts.surfaceInputError(
-      invalidMessage ?? this.incompleteMessage ?? INCOMPLETE_DATE_MESSAGE,
+      invalidMessage ?? message('incompleteDate', this.incompleteMessage),
     );
   }
 

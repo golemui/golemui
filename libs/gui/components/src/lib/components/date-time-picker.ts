@@ -16,11 +16,11 @@ import {
   type HourFormat,
 } from '../utils/time';
 import { addErrors, addIcon, addLabel, addPickerPanel } from '../utils/templates';
-import { INVALID_DISABLED_TIME_RANGE_MESSAGE } from '../utils/messages';
 import { CARET_DOWN_PATH } from '../utils/icons';
 import type { DateRange, DisabledTimeRange } from '../types';
 import { boundsValidity, GuiFormControl, type GuiValidity } from '../gui-form-control';
 import { dispatchValue, stopPropagation } from '../utils/events';
+import { message } from '../utils/messages';
 
 export class GuiDateTimePicker extends GuiFormControl {
   @property({ type: String }) label: string | undefined = undefined;
@@ -170,7 +170,7 @@ export class GuiDateTimePicker extends GuiFormControl {
           html`<gui-date-time-calendar
             id=${`${this.uid}_popup`}
             role="dialog"
-            aria-label=${this.label ?? 'Calendar'}
+            aria-label=${message('calendar', this.label)}
             .uid=${this.uid}
             .hint=${this.hint}
             .touched=${this.touched}
@@ -270,7 +270,7 @@ export class GuiDateTimePicker extends GuiFormControl {
         <button
           type="button"
           class="gui-date-time-picker__arrow"
-          aria-label=${this.toggleAriaLabel ?? 'Show calendar'}
+          aria-label=${message('showCalendar', this.toggleAriaLabel)}
           aria-haspopup="dialog"
           aria-expanded=${this._popup.open ? 'true' : 'false'}
           aria-controls=${`${this.uid}_popup`}
@@ -418,7 +418,7 @@ export class GuiDateTimePicker extends GuiFormControl {
     // Disabled time ranges are date-scoped, so resolve them for the value's day.
     const ranges = resolveDisabledTimeRangesForDate(this.disabledTimeRanges, isoDate);
     if (isTimeDisabled(toISOTimeString(date), ranges)) {
-      return this.disabledTimeRangeMessage ?? INVALID_DISABLED_TIME_RANGE_MESSAGE;
+      return message('disabledTimeRange', this.disabledTimeRangeMessage);
     }
     return null;
   }
