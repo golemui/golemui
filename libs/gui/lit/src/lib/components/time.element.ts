@@ -62,7 +62,7 @@ export class TimeElement extends LitElement implements WithWidget {
         .label=${this.adapter.templateData.label as string}
         .hint=${this.adapter.templateData.hint}
         .errors=${this.adapter.templateData.errors}
-        ?touched=${this.adapter.templateData.touched}
+        .touched=${this.adapter.templateData.touched}
         ?required=${this.adapter.templateData.validator?.required}
         ?disabled=${this.adapter.templateData.disabled}
         ?readonly=${this.adapter.templateData.readonly}
@@ -79,9 +79,9 @@ export class TimeElement extends LitElement implements WithWidget {
         .minTimeMessage=${this.adapter.templateData.minTimeMessage as string}
         .maxTimeMessage=${this.adapter.templateData.maxTimeMessage as string}
         .incompleteMessage=${this.adapter.templateData.incompleteMessage as string}
-        @inputError=${this.onInputError}
-        @blur=${() => this.adapter.onBlur()}
-        @change=${this.valueChanged}
+        @gui-input-error=${this.onInputError}
+        @gui-blur=${() => this.adapter.onBlur()}
+        @gui-input=${this.valueChanged}
       ></gui-time>
     `;
   }

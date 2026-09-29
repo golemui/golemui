@@ -56,7 +56,7 @@ export class CurrencyElement extends LitElement implements WithWidget {
         .label=${this.adapter.templateData.label}
         .hint=${this.adapter.templateData.hint}
         .errors=${this.adapter.templateData.errors}
-        ?touched=${this.adapter.templateData.touched}
+        .touched=${this.adapter.templateData.touched}
         ?required=${this.adapter.templateData.validator?.required}
         ?disabled=${this.adapter.templateData.disabled}
         ?readonly=${this.adapter.templateData.readonly}
@@ -69,8 +69,8 @@ export class CurrencyElement extends LitElement implements WithWidget {
         .placeholder=${this.adapter.templateData.placeholder}
         .autocomplete=${this.adapter.templateData.autocomplete}
         .localeId=${this.adapter.templateData.lang}
-        @input=${this.valueChanged}
-        @blur=${() => this.adapter.onBlur()}
+        @gui-input=${this.valueChanged}
+        @gui-blur=${() => this.adapter.onBlur()}
       ></gui-currency>
     `;
   }

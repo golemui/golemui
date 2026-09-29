@@ -68,7 +68,7 @@ export class GuiMultiFileUpload extends GuiFileUpload {
       .removeAriaLabel=${removeAriaLabel}
       .removeIcon=${this.removeIcon}
       .compactAriaLabel=${`${items.length} files`}
-      @pillremove=${this.onPillRemove}
+      @gui-pill-remove=${this.onPillRemove}
     ></gui-pills>`;
   }
 

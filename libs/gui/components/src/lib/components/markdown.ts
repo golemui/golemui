@@ -1,4 +1,4 @@
-import { html, LitElement, nothing } from 'lit';
+import { html, nothing } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import { live } from 'lit/directives/live.js';
 import { cspStyleMap } from '@golemui/lit-utils';
@@ -21,6 +21,8 @@ import {
   TEXT_ITALIC_BOLD_PATH,
   TEXT_STRIKETHROUGH_PATH,
 } from '../utils/icons';
+import { GuiElement } from '../gui-element';
+import { dispatchChange, dispatchValue } from '../utils/events';
 
 /** What <gui-markdown> renders besides the control state: its presentation props. */
 export type GuiMarkdownProps = {
@@ -34,12 +36,11 @@ export type GuiMarkdownProps = {
   dependencies?: { markdown?: MarkdownParser };
 };
 
-export class GuiMarkdown extends LitElement {
-  @property({ type: String }) uid: string | undefined = undefined;
+export class GuiMarkdown extends GuiElement {
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
   @property({ type: Array }) errors: string[] | undefined = [];
-  @property({ type: Boolean }) touched: boolean | undefined = false;
+  @property({ type: Boolean }) touched: boolean | undefined = undefined;
   @property({ type: Boolean }) required: boolean | undefined = false;
   @property({ type: Boolean }) disabled: boolean | undefined = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
@@ -86,7 +87,7 @@ export class GuiMarkdown extends LitElement {
   private ariaController = new GUIAriaController(this, {
     getTargets: () => this.querySelectorAll(`textarea[id="${this.uid}"]`),
     getState: () => ({
-      uid: this.uid as string,
+      uid: this.uid,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -172,7 +173,7 @@ export class GuiMarkdown extends LitElement {
     };
 
     return html`
-      ${addLabel(this.uid as string, templateData)}
+      ${addLabel(this.uid, templateData)}
 
       <div
         class=${classMap({
@@ -218,7 +219,7 @@ export class GuiMarkdown extends LitElement {
 
         <div class="gui-markdown__container">
           <textarea
-            id=${ifDefined(this.uid)}
+            id=${this.uid}
             class=${classMap(fieldClasses)}
             style=${cspStyleMap(autoGrowStyles)}
             ?required=${templateData.required}
@@ -228,6 +229,7 @@ export class GuiMarkdown extends LitElement {
             autocomplete=${this.autocomplete || nothing}
             .value=${live(this.value ?? '')}
             @input=${this.valueChanged}
+            @change=${this.valueCommitted}
             @keyup=${this.detectFormats}
             @mouseup=${this.detectFormats}
             @blur=${this.onBlur}
@@ -236,7 +238,7 @@ export class GuiMarkdown extends LitElement {
           ${this.splitViewActive
             ? html`
                 <section
-                  data-cy=${ifDefined(this.uid ? `${this.uid}_markdown` : nothing)}
+                  data-cy=${`${this.uid}_markdown`}
                   class="gui-markdown__preview"
                   style=${cspStyleMap(autoGrowStyles)}
                 >
@@ -251,7 +253,7 @@ export class GuiMarkdown extends LitElement {
       </div>
 
       <div class="gui-markdown--validation">
-        <div>${addErrors(this.uid as string, templateData)}</div>
+        <div>${addErrors(this.uid, templateData)}</div>
         ${counter}
       </div>
     `;
@@ -567,6 +569,9 @@ export class GuiMarkdown extends LitElement {
 
       textarea.focus();
       textarea.dispatchEvent(new Event('input', { bubbles: true }));
+      // A toolbar command is a complete edit, and a programmatic value change fires no native
+      // `change` to commit it later.
+      dispatchChange(this, textarea.value);
       this.detectFormats();
     };
   }
@@ -643,19 +648,18 @@ export class GuiMarkdown extends LitElement {
 
     if (!this.readOnly) {
       const target = event.target as HTMLInputElement;
-      this.dispatchEvent(
-        new CustomEvent('input', {
-          detail: { value: target.value },
-          bubbles: true,
-          composed: true,
-        }),
-      );
+      dispatchValue(this, target.value, { commit: false });
     }
+  }
+
+  /** The native `change`: the user committed the edit (blur or Enter). */
+  valueCommitted(event: Event) {
+    dispatchChange(this, (event.target as HTMLInputElement).value);
   }
 
   onBlur() {
     this.dispatchEvent(
-      new CustomEvent('blur', {
+      new CustomEvent('gui-blur', {
         bubbles: true,
         composed: true,
       }),

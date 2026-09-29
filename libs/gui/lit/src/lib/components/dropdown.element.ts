@@ -385,7 +385,7 @@ export class DropdownElement extends LitElement implements WithWidget {
             .itemHeight=${templateData.itemHeight}
             .height=${templateData.height}
             ?required=${templateData.validator?.required}
-            ?touched=${templateData.touched}
+            .touched=${templateData.touched}
             ?disabled=${templateData.disabled}
             ?readonly=${templateData.readonly}
             ?hidden=${!this._isListVisible}
@@ -393,7 +393,7 @@ export class DropdownElement extends LitElement implements WithWidget {
             @gui-update-items=${this._onUpdateItems}
             @gui-focus-change=${this._onFocusChange}
             @focus=${this._onFocus}
-            @change=${this._onValueChange}
+            @gui-input=${this._onValueChange}
           >
             ${visibleItems.map((item, index) => {
               const absoluteIndex = this._range.start + index;

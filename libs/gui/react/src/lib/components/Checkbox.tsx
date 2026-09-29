@@ -37,8 +37,8 @@ export function Checkbox(widgetInstance: WithWidget) {
         value={value}
         hint={hint}
         checkboxPosition={checkboxPosition}
-        onChange={handleChange}
-        onBlur={onBlur}
+        onGuiInput={handleChange}
+        onGuiBlur={onBlur}
       />
     </div>
   );

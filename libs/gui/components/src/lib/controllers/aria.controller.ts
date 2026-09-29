@@ -1,5 +1,5 @@
 import { type ReactiveController, type ReactiveControllerHost } from 'lit';
-import { type ControlTemplateData } from '../utils/templates';
+import { showsErrors, type ControlTemplateData } from '../utils/templates';
 
 export class GUIAriaController<T, ExtraProps extends { hint?: string; required?: boolean }>
   implements ReactiveController
@@ -45,7 +45,7 @@ export class GUIAriaController<T, ExtraProps extends { hint?: string; required?:
 
     const { uid, templateData } = this.getState();
     const { touched, errors, readonly, disabled, hint, required } = templateData;
-    const showErrors = touched && errors && errors.length > 0;
+    const showErrors = showsErrors(touched, errors);
 
     for (const element of elements) {
       if (!element) continue;

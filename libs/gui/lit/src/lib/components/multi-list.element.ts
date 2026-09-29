@@ -101,7 +101,7 @@ export class MultiListElement extends LitElement implements WithWidget {
           .itemHeight=${templateData.itemHeight}
           .height=${templateData.height}
           ?required=${templateData.validator?.required}
-          ?touched=${templateData.touched}
+          .touched=${templateData.touched}
           ?disabled=${templateData.disabled}
           ?readonly=${templateData.readonly}
           aria-labelledby=${templateData.label ? `${this.widget.uid}_label` : nothing}
@@ -109,8 +109,8 @@ export class MultiListElement extends LitElement implements WithWidget {
           @gui-range-change=${this._onRangeChange}
           @gui-update-items=${this._onUpdateItems}
           @gui-focus-change=${this._onFocusChange}
-          @blur=${() => this.adapter.onBlur()}
-          @change=${this._valueChanged}
+          @gui-blur=${() => this.adapter.onBlur()}
+          @gui-item-toggle=${this._valueChanged}
         >
           ${visibleItems.map((item, index) => {
             const absoluteIndex = this._range.start + index;

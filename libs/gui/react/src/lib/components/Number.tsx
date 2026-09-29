@@ -47,8 +47,8 @@ export function NumberInput(widgetInstance: WithWidget) {
         autoGrow={autoGrow}
         autocomplete={autocomplete ?? undefined}
         placeholder={placeholder ?? undefined}
-        onInput={handleChange}
-        onBlur={onBlur}
+        onGuiInput={handleChange}
+        onGuiBlur={onBlur}
       ></GuiNumberReact>
     </div>
   );

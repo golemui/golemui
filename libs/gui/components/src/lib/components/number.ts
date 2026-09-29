@@ -1,4 +1,4 @@
-import { html, LitElement, nothing } from 'lit';
+import { html, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
 import { cspStyleMap } from '@golemui/lit-utils';
 import { safeDefine } from '@golemui/lit-utils';
@@ -6,6 +6,8 @@ import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 import { blockNonNumericInput, blockNonNumericKeys, isRealNumber } from '../utils/numeric';
 import { CARET_DOWN_PATH, CARET_UP_PATH } from '../utils/icons';
+import { GuiElement } from '../gui-element';
+import { dispatchChange, dispatchValue } from '../utils/events';
 
 /** What <gui-number> renders besides the control state: its presentation props. */
 export type GuiNumberProps = {
@@ -15,13 +17,12 @@ export type GuiNumberProps = {
   autocomplete?: string;
 };
 
-export class GuiNumber extends LitElement {
-  @property({ type: String }) uid: string | undefined = undefined;
+export class GuiNumber extends GuiElement {
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String }) hint: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
   @property({ type: Array }) errors: string[] | undefined = [];
-  @property({ type: Boolean }) touched: boolean | undefined = false;
+  @property({ type: Boolean }) touched: boolean | undefined = undefined;
   @property({ type: Boolean }) required: boolean | undefined = false;
   @property({ type: Boolean }) disabled: boolean | undefined = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
@@ -37,7 +38,7 @@ export class GuiNumber extends LitElement {
   private ariaController = new GUIAriaController(this, {
     getTargets: () => this.querySelectorAll(`input[id="${this.uid}"]`),
     getState: () => ({
-      uid: this.uid as string,
+      uid: this.uid,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -101,7 +102,7 @@ export class GuiNumber extends LitElement {
     };
 
     return html`
-      ${addLabel(this.uid as string, templateData)}
+      ${addLabel(this.uid, templateData)}
 
       <div class="gui-widget">
         <input
@@ -120,6 +121,7 @@ export class GuiNumber extends LitElement {
           placeholder=${this.placeholder || nothing}
           autocomplete=${this.autocomplete || nothing}
           @input=${this.valueChanged}
+          @change=${this.valueCommitted}
           @beforeinput=${blockNonNumericInput}
           @keydown=${this.keyDown}
           @blur=${this.onBlur}
@@ -146,7 +148,7 @@ export class GuiNumber extends LitElement {
         </span>
       </div>
 
-      ${addErrors(this.uid as string, templateData)}
+      ${addErrors(this.uid, templateData)}
     `;
   }
 
@@ -220,13 +222,8 @@ export class GuiNumber extends LitElement {
       target.valueAsNumber = value;
       this.value = value;
 
-      this.dispatchEvent(
-        new CustomEvent('input', {
-          detail: { value: this.value },
-          bubbles: true,
-          composed: true,
-        }),
-      );
+      // A step is a complete edit, like the native number input's arrow keys.
+      dispatchValue(this, this.value);
     }
   }
 
@@ -245,13 +242,7 @@ export class GuiNumber extends LitElement {
       target.valueAsNumber = value;
       this.value = value;
 
-      this.dispatchEvent(
-        new CustomEvent('input', {
-          detail: { value: this.value },
-          bubbles: true,
-          composed: true,
-        }),
-      );
+      dispatchValue(this, this.value);
     }
   }
 
@@ -261,14 +252,14 @@ export class GuiNumber extends LitElement {
     if (!this.readOnly) {
       const target = event.target as HTMLInputElement;
       const value = target.valueAsNumber;
-      this.dispatchEvent(
-        new CustomEvent('input', {
-          detail: { value: Number.isNaN(value) ? undefined : value },
-          bubbles: true,
-          composed: true,
-        }),
-      );
+      dispatchValue(this, Number.isNaN(value) ? undefined : value, { commit: false });
     }
+  }
+
+  /** The native `change`: the user committed the typed number (blur or Enter). */
+  valueCommitted(event: Event) {
+    const value = (event.target as HTMLInputElement).valueAsNumber;
+    dispatchChange(this, Number.isNaN(value) ? undefined : value);
   }
 
   onBlur() {
@@ -277,7 +268,7 @@ export class GuiNumber extends LitElement {
     // coincidentally cause a store change and re-render.
     this.syncNativeInput();
     this.dispatchEvent(
-      new CustomEvent('blur', {
+      new CustomEvent('gui-blur', {
         bubbles: true,
         composed: true,
       }),

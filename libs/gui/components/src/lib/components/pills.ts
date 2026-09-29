@@ -1,4 +1,4 @@
-import { html, LitElement, nothing } from 'lit';
+import { html, nothing } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
@@ -13,6 +13,7 @@ import {
   X_SQUARE_PATH,
   spinnerIcon,
 } from '../utils/icons';
+import { GuiElement } from '../gui-element';
 
 export interface GuiPillItem {
   /** Stable identity used for `repeat()` keys and event payloads. */
@@ -31,7 +32,7 @@ export interface GuiPillItem {
   /**
    * The host is doing async work on this item (e.g. awaiting a server-side
    * removal). The × is replaced by an indeterminate spinner, the pill gets
-   * `aria-busy`, and Delete/Backspace and the × no longer emit `pillremove`
+   * `aria-busy`, and Delete/Backspace and the × no longer emit `gui-pill-remove`
    * — so a removal cannot be requested twice while one is in flight.
    */
   busy?: boolean;
@@ -63,35 +64,34 @@ export interface GuiPillExitEventDetail {
  * Owned behaviors:
  *   - horizontal scroll + start/end shadow gradients (via sentinel observers)
  *   - keyboard nav between pills (ArrowLeft/Right, Home/End)
- *   - Delete/Backspace → emits `pillremove`; host owns the array mutation
- *   - `item.busy` → spinner in the × slot, `aria-busy`, no `pillremove` until cleared
+ *   - Delete/Backspace → emits `gui-pill-remove`; host owns the array mutation
+ *   - `item.busy` → spinner in the × slot, `aria-busy`, no `gui-pill-remove` until cleared
  *   - count-bubble + dropdown + outside-click-to-close
  *
  * The host is responsible for placing focus when the strip becomes empty
- * (listen to `pillremove` and call `.focus()` on the host's anchor element).
+ * (listen to `gui-pill-remove` and call `.focus()` on the host's anchor element).
  *
  * Events (all bubble + composed):
- *   - `pillclick`     { key }                — fired when `clickable` and a pill body is clicked
- *   - `pillremove`    { key }                — × pressed or Delete/Backspace on a focused pill
- *   - `dropdowntoggle`{ open }               — bubble opened/closed the dropdown
- *   - `pillkeydown`   { key, event }         — re-emitted for unhandled keys and at strip
+ *   - `gui-pill-click`        { key }        — fired when `clickable` and a pill body is clicked
+ *   - `gui-pill-remove`       { key }        — × pressed or Delete/Backspace on a focused pill
+ *   - `gui-dropdown-toggle`   { open }       — bubble opened/closed the dropdown
+ *   - `gui-pill-keydown`      { key, event } — re-emitted for unhandled keys and at strip
  *                                              boundaries; host can intercept (e.g. to
  *                                              focus its own input on ArrowRight-past-end)
- *   - `pillexit`      { key, reason }        — focus left the pills involuntarily (Escape
+ *   - `gui-pill-exit`         { key, reason } — focus left the pills involuntarily (Escape
  *                                              closed the dropdown); host should restore
  *                                              focus to its anchor element
- *   - `pillfocus`     { key }                — a pill received focus (`editable` hosts
+ *   - `gui-pill-focus`        { key }        — a pill received focus (`editable` hosts
  *                                              only); hosts follow it with their selection
- *   - `pillsblur`                            — focus left the pills subtree (`editable`
+ *   - `gui-pills-blur`                       — focus left the pills subtree (`editable`
  *                                              hosts only); hosts drop the selection
  *                                              unless an edit session owns it
- *   - `pilledit`      { key }                — edit icon pressed, or F2 / E on a focused
+ *   - `gui-pill-edit`         { key }        — edit icon pressed, or F2 / E on a focused
  *                                              pill (`editable` hosts only)
- *   - `pilleditconfirm` { key }              — confirm icon pressed on the editing pill
- *   - `pilleditcancel`  { key }              — cancel icon pressed on the editing pill
+ *   - `gui-pill-edit-confirm` { key }        — confirm icon pressed on the editing pill
+ *   - `gui-pill-edit-cancel`  { key }        — cancel icon pressed on the editing pill
  */
-export class GuiPills extends LitElement {
-  @property({ type: String }) uid: string | undefined = undefined;
+export class GuiPills extends GuiElement {
   @property({ type: Array }) items: GuiPillItem[] = [];
 
   @property({ type: Boolean }) clickable = false;
@@ -133,7 +133,7 @@ export class GuiPills extends LitElement {
     focusPopupSelector: '.gui-pills__dropdown .gui-pills__pill',
     onOpenChanged: (open) => {
       this.dispatchEvent(
-        new CustomEvent<GuiPillsDropdownEventDetail>('dropdowntoggle', {
+        new CustomEvent<GuiPillsDropdownEventDetail>('gui-dropdown-toggle', {
           detail: { open },
           bubbles: true,
           composed: true,
@@ -163,7 +163,7 @@ export class GuiPills extends LitElement {
       this._pendingFocusIndex = null;
       const total = this.items.length;
       if (total === 0) {
-        // Host is responsible for moving focus elsewhere (via pillremove).
+        // Host is responsible for moving focus elsewhere (via gui-pill-remove).
         if (this._showDropdown) this.closeDropdown();
         return;
       }
@@ -192,7 +192,7 @@ export class GuiPills extends LitElement {
     if (!this.editable) return;
     const related = e.relatedTarget as Node | null;
     if (related && this.contains(related)) return;
-    this.dispatchEvent(new CustomEvent('pillsblur', { bubbles: true, composed: true }));
+    this.dispatchEvent(new CustomEvent('gui-pills-blur', { bubbles: true, composed: true }));
   };
 
   override render() {
@@ -232,8 +232,8 @@ export class GuiPills extends LitElement {
     `;
   }
 
-  private get dropdownId(): string | undefined {
-    return this.uid ? `${this.uid}_pills_dropdown` : undefined;
+  private get dropdownId(): string {
+    return `${this.uid}_pills_dropdown`;
   }
 
   private renderCompact(count: number) {
@@ -279,11 +279,7 @@ export class GuiPills extends LitElement {
             (item, index) => this.renderPill(item, index, true),
           )}
         </div>
-        ${addErrors(
-          this.uid ?? '',
-          { errors: this.errors, touched: this.touched },
-          { variant: 'pills' },
-        )}
+        ${addErrors(this.uid, { errors: this.errors, touched: this.touched }, { variant: 'pills' })}
       </div>
     `;
   }
@@ -327,19 +323,19 @@ export class GuiPills extends LitElement {
         ${showEditActions && isEditing
           ? html`
               ${this.renderPillAction('edit-cancel', this.cancelEditLabel, X_SQUARE_PATH, () =>
-                this.emitEditAction('pilleditcancel', item.key),
+                this.emitEditAction('gui-pill-edit-cancel', item.key),
               )}
               ${this.renderPillAction(
                 'edit-confirm',
                 this.confirmEditLabel,
                 CHECK_SQUARE_PATH,
-                () => this.emitEditAction('pilleditconfirm', item.key),
+                () => this.emitEditAction('gui-pill-edit-confirm', item.key),
               )}
             `
           : nothing}
         ${showEditActions && !isEditing
           ? this.renderPillAction('edit', this.editLabel, NOTE_PENCIL_PATH, () =>
-              this.emitEditAction('pilledit', item.key),
+              this.emitEditAction('gui-pill-edit', item.key),
             )
           : nothing}
         ${this.removable && !isEditing
@@ -360,7 +356,7 @@ export class GuiPills extends LitElement {
     return html`
       <span
         class="gui-pills__pill-busy gui-spinner"
-        data-cy=${this.uid ? `${this.uid}_pill-busy` : nothing}
+        data-cy=${`${this.uid}_pill-busy`}
         aria-hidden="true"
         @mousedown=${(e: Event) => {
           e.stopPropagation();
@@ -383,7 +379,7 @@ export class GuiPills extends LitElement {
       <span
         class="gui-pills__pill-action gui-pills__pill-action--${kind}"
         title=${title}
-        data-cy=${this.uid ? `${this.uid}_pill-${kind}` : nothing}
+        data-cy=${`${this.uid}_pill-${kind}`}
         aria-hidden="true"
         @mousedown=${(e: Event) => {
           e.stopPropagation();
@@ -446,7 +442,7 @@ export class GuiPills extends LitElement {
     if (!this.clickable || this.disabled || this.readOnly) return;
     e.stopPropagation();
     this.dispatchEvent(
-      new CustomEvent<GuiPillEventDetail>('pillclick', {
+      new CustomEvent<GuiPillEventDetail>('gui-pill-click', {
         detail: { key: item.key },
         bubbles: true,
         composed: true,
@@ -464,7 +460,7 @@ export class GuiPills extends LitElement {
     const key = target.dataset['key'];
     if (this.editable && key) {
       this.dispatchEvent(
-        new CustomEvent<GuiPillEventDetail>('pillfocus', {
+        new CustomEvent<GuiPillEventDetail>('gui-pill-focus', {
           detail: { key },
           bubbles: true,
           composed: true,
@@ -498,14 +494,14 @@ export class GuiPills extends LitElement {
     ) {
       e.preventDefault();
       e.stopPropagation();
-      this.emitEditAction('pilledit', item.key);
+      this.emitEditAction('gui-pill-edit', item.key);
       return;
     }
 
     if ((e.key === 'Enter' || e.key === ' ') && this.clickable) {
       e.preventDefault();
       this.dispatchEvent(
-        new CustomEvent<GuiPillEventDetail>('pillclick', {
+        new CustomEvent<GuiPillEventDetail>('gui-pill-click', {
           detail: { key: item.key },
           bubbles: true,
           composed: true,
@@ -568,7 +564,7 @@ export class GuiPills extends LitElement {
   private emitRemove(key: string, index: number) {
     this._pendingFocusIndex = index;
     this.dispatchEvent(
-      new CustomEvent<GuiPillEventDetail>('pillremove', {
+      new CustomEvent<GuiPillEventDetail>('gui-pill-remove', {
         detail: { key },
         bubbles: true,
         composed: true,
@@ -576,8 +572,11 @@ export class GuiPills extends LitElement {
     );
   }
 
-  private emitEditAction(type: 'pilledit' | 'pilleditconfirm' | 'pilleditcancel', key: string) {
-    if (type === 'pilledit' && this._showDropdown) this._popup.suppressNextFocusOut();
+  private emitEditAction(
+    type: 'gui-pill-edit' | 'gui-pill-edit-confirm' | 'gui-pill-edit-cancel',
+    key: string,
+  ) {
+    if (type === 'gui-pill-edit' && this._showDropdown) this._popup.suppressNextFocusOut();
     this.dispatchEvent(
       new CustomEvent<GuiPillEventDetail>(type, {
         detail: { key },
@@ -589,7 +588,7 @@ export class GuiPills extends LitElement {
 
   private emitExit(key: string, reason: GuiPillExitEventDetail['reason']) {
     this.dispatchEvent(
-      new CustomEvent<GuiPillExitEventDetail>('pillexit', {
+      new CustomEvent<GuiPillExitEventDetail>('gui-pill-exit', {
         detail: { key, reason },
         bubbles: true,
         composed: true,
@@ -599,7 +598,7 @@ export class GuiPills extends LitElement {
 
   private emitKeydown(key: string, event: KeyboardEvent) {
     this.dispatchEvent(
-      new CustomEvent<GuiPillKeydownEventDetail>('pillkeydown', {
+      new CustomEvent<GuiPillKeydownEventDetail>('gui-pill-keydown', {
         detail: { key, event },
         bubbles: true,
         composed: true,

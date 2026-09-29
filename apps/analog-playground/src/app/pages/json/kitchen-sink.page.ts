@@ -50,7 +50,7 @@ const dependencies: Dependencies = {
             [options]="languages"
             labelField="label"
             valueField="code"
-            (change)="onLanguageChanged($event)"
+            (gui-change)="onLanguageChanged($event)"
           ></gui-select>
         </div>
       }

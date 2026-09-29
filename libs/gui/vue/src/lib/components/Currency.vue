@@ -39,8 +39,8 @@ const elementValue = computed(() => value.value ?? Number.NaN);
       :autocomplete="templateData.autocomplete ?? undefined"
       :placeholder="templateData.placeholder ?? undefined"
       :localeId="templateData.lang"
-      @input="handleInput"
-      @blur="onBlur"
+      @gui-input="handleInput"
+      @gui-blur="onBlur"
     ></gui-currency>
   </div>
 </template>

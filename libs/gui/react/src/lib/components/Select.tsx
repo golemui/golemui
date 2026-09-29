@@ -62,9 +62,9 @@ export function Select(widgetInstance: WithWidget) {
         labelField={labelField}
         valueField={valueField}
         invalidOptionMessage={templateData.invalidOptionMessage as string}
-        onChange={handleChange}
-        onBlur={onBlur}
-        onInputError={handleInputError}
+        onGuiInput={handleChange}
+        onGuiBlur={onBlur}
+        onGuiInputError={handleInputError}
       ></GuiSelectReact>
     </div>
   );

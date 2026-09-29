@@ -72,8 +72,8 @@ export function Markdown(widgetInstance: WithWidget) {
         splitViewTitle={splitViewTitle}
         toolbarAriaLabel={toolbarAriaLabel}
         dependencies={templateData.deps}
-        onInput={handleChange}
-        onBlur={onBlur}
+        onGuiInput={handleChange}
+        onGuiBlur={onBlur}
       ></GuiMarkdownReact>
     </div>
   );

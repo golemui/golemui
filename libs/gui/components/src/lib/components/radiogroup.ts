@@ -1,12 +1,14 @@
-import { html, LitElement, nothing } from 'lit';
+import { html, nothing } from 'lit';
 import { repeat } from 'lit/directives/repeat.js';
 import { property } from 'lit/decorators.js';
 import { live } from 'lit/directives/live.js';
 import { safeDefine } from '@golemui/lit-utils';
 import { GUIAriaController } from '../controllers/aria.controller';
-import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
+import { addErrors, addLabel, type ControlTemplateData, showsErrors } from '../utils/templates';
 import { inferOptionValue, updateOptions } from './one-of';
 import type { Option, OptionValue } from '../types';
+import { GuiElement } from '../gui-element';
+import { dispatchValue } from '../utils/events';
 
 /** What <gui-radiogroup> renders besides the control state: its presentation props. */
 export type GuiRadiogroupProps = {
@@ -17,12 +19,11 @@ export type GuiRadiogroupProps = {
   direction?: 'row' | 'column';
 };
 
-export class GuiRadiogroup extends LitElement {
-  @property({ type: String }) uid: string | undefined = undefined;
+export class GuiRadiogroup extends GuiElement {
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
   @property({ type: Array }) errors: string[] | undefined = [];
-  @property({ type: Boolean }) touched: boolean | undefined = false;
+  @property({ type: Boolean }) touched: boolean | undefined = undefined;
   @property({ type: Boolean }) required: boolean | undefined = false;
   @property({ type: Boolean }) disabled: boolean | undefined = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
@@ -40,7 +41,7 @@ export class GuiRadiogroup extends LitElement {
   private ariaController = new GUIAriaController(this, {
     getTargets: () => this.querySelectorAll(`input[name="${this.uid}"]`),
     getState: () => ({
-      uid: this.uid as string,
+      uid: this.uid,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -106,7 +107,7 @@ export class GuiRadiogroup extends LitElement {
                   tabindex=${focusable ? '0' : '-1'}
                   id=${`${this.uid}_${index}`}
                   data-cy=${`${this.uid}_radiogroup_${index}`}
-                  name=${this.uid!}
+                  name=${this.uid}
                   value=${opt.value}
                   .checked=${live(isChecked)}
                   ?required=${templateData.required}
@@ -121,22 +122,22 @@ export class GuiRadiogroup extends LitElement {
         `;
 
     return html`
-      ${addLabel(this.uid as string, templateData, false, undefined, false)}
+      ${addLabel(this.uid, templateData, false, undefined, false)}
 
       <div
         class="gui-widget${this.direction === 'row' ? ' gui-widget--horizontal' : ''}"
         role="radiogroup"
-        id=${this.uid!}
+        id=${this.uid}
         aria-labelledby=${templateData.label ? `${this.uid}_label` : nothing}
         aria-describedby=${templateData.hint ? `${this.uid}_hint` : nothing}
         aria-required=${this.required ? 'true' : nothing}
-        aria-invalid=${this.touched && this.errors?.length ? 'true' : nothing}
-        aria-errormessage=${this.touched && this.errors?.length ? `${this.uid}_errors` : nothing}
+        aria-invalid=${showsErrors(this.touched, this.errors) ? 'true' : nothing}
+        aria-errormessage=${showsErrors(this.touched, this.errors) ? `${this.uid}_errors` : nothing}
       >
         ${options}
       </div>
 
-      ${addErrors(this.uid as string, templateData)}
+      ${addErrors(this.uid, templateData)}
     `;
   }
 
@@ -145,19 +146,13 @@ export class GuiRadiogroup extends LitElement {
 
     if (!this.readOnly) {
       const target = event.target as HTMLInputElement;
-      this.dispatchEvent(
-        new CustomEvent('change', {
-          detail: { value: inferOptionValue(target.value, this.options) },
-          bubbles: true,
-          composed: true,
-        }),
-      );
+      dispatchValue(this, inferOptionValue(target.value, this.options));
     }
   }
 
   onBlur() {
     this.dispatchEvent(
-      new CustomEvent('blur', {
+      new CustomEvent('gui-blur', {
         bubbles: true,
         composed: true,
       }),

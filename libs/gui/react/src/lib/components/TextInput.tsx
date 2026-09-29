@@ -41,8 +41,8 @@ export function TextInput(widgetInstance: WithWidget) {
         icon={icon}
         placeholder={placeholder ?? undefined}
         autocomplete={autocomplete ?? undefined}
-        onInput={handleChange}
-        onBlur={onBlur}
+        onGuiInput={handleChange}
+        onGuiBlur={onBlur}
       ></GuiTextinputReact>
     </div>
   );

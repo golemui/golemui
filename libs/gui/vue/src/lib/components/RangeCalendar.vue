@@ -41,22 +41,22 @@ const errorHandler = (e: Event) => {
 let currentEl: HTMLElement | null = null;
 watch(elRef, (el) => {
   if (currentEl) {
-    currentEl.removeEventListener('blur', blurHandler);
-    currentEl.removeEventListener('change', changeHandler);
-    currentEl.removeEventListener('inputError', errorHandler);
+    currentEl.removeEventListener('gui-blur', blurHandler);
+    currentEl.removeEventListener('gui-input', changeHandler);
+    currentEl.removeEventListener('gui-input-error', errorHandler);
   }
   currentEl = el;
   if (el) {
-    el.addEventListener('blur', blurHandler);
-    el.addEventListener('change', changeHandler);
-    el.addEventListener('inputError', errorHandler);
+    el.addEventListener('gui-blur', blurHandler);
+    el.addEventListener('gui-input', changeHandler);
+    el.addEventListener('gui-input-error', errorHandler);
   }
 });
 
 onUnmounted(() => {
-  currentEl?.removeEventListener('blur', blurHandler);
-  currentEl?.removeEventListener('change', changeHandler);
-  currentEl?.removeEventListener('inputError', errorHandler);
+  currentEl?.removeEventListener('gui-blur', blurHandler);
+  currentEl?.removeEventListener('gui-input', changeHandler);
+  currentEl?.removeEventListener('gui-input-error', errorHandler);
 });
 </script>
 

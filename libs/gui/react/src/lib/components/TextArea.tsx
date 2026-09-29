@@ -47,8 +47,8 @@ export function TextArea(widgetInstance: WithWidget) {
         minimumHeight={minimumHeight}
         autoGrow={autoGrow}
         maxLength={maxLength}
-        onInput={handleChange}
-        onBlur={onBlur}
+        onGuiInput={handleChange}
+        onGuiBlur={onBlur}
       ></GuiTextareaReact>
     </div>
   );

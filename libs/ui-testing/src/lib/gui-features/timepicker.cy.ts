@@ -101,12 +101,12 @@ export const runTimePickerComponentTests = (mountFn: MountComponentFn) => {
         cy.focused().should('have.attr', 'data-type', 'hour');
       });
 
-      it('should emit listtoggle when the list opens and closes', () => {
+      it('should emit gui-list-toggle when the list opens and closes', () => {
         mountTimePicker({ props: officeProps });
 
         const toggleSpy = cy.spy().as('toggleSpy');
         cy.get('gui-time-picker').then(($el) => {
-          $el[0].addEventListener('listtoggle', toggleSpy as unknown as EventListener);
+          $el[0].addEventListener('gui-list-toggle', toggleSpy as unknown as EventListener);
         });
 
         cy.get(sel.hour).click();
@@ -356,7 +356,7 @@ export const runTimePickerComponentTests = (mountFn: MountComponentFn) => {
         });
       });
 
-      it('should advance the value and emit inputError for a typed time out of bounds', () => {
+      it('should advance the value and emit gui-input-error for a typed time out of bounds', () => {
         mountTimePicker({ props: { ...officeProps, allowCustomTime: true } });
 
         // The field owns minTime/maxTime: an out-of-bounds time advances the
@@ -364,8 +364,8 @@ export const runTimePickerComponentTests = (mountFn: MountComponentFn) => {
         const changeSpy = cy.spy().as('changeSpy');
         const inputErrorSpy = cy.spy().as('inputErrorSpy');
         cy.get('gui-time').then(($el) => {
-          $el[0].addEventListener('change', changeSpy as unknown as EventListener);
-          $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
+          $el[0].addEventListener('gui-input', changeSpy as unknown as EventListener);
+          $el[0].addEventListener('gui-input-error', inputErrorSpy as unknown as EventListener);
         });
 
         cy.get(sel.hour).type('08');
@@ -397,7 +397,7 @@ export const runTimePickerComponentTests = (mountFn: MountComponentFn) => {
         cy.get('[data-cy="testSubject_validator-error"]').should('be.visible');
       });
 
-      it('should advance the value and emit inputError for a typed time inside a disabled range', () => {
+      it('should advance the value and emit gui-input-error for a typed time inside a disabled range', () => {
         mountTimePicker({ props: { ...officeProps, allowCustomTime: true } });
 
         // The picker owns disabled-range validation now: the value advances (so
@@ -406,8 +406,8 @@ export const runTimePickerComponentTests = (mountFn: MountComponentFn) => {
         const changeSpy = cy.spy().as('changeSpy');
         const inputErrorSpy = cy.spy().as('inputErrorSpy');
         cy.get('gui-time-picker').then(($el) => {
-          $el[0].addEventListener('change', changeSpy as unknown as EventListener);
-          $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
+          $el[0].addEventListener('gui-input', changeSpy as unknown as EventListener);
+          $el[0].addEventListener('gui-input-error', inputErrorSpy as unknown as EventListener);
         });
 
         cy.get(sel.hour).type('10');
@@ -428,7 +428,7 @@ export const runTimePickerComponentTests = (mountFn: MountComponentFn) => {
 
         const inputErrorSpy = cy.spy().as('inputErrorSpy');
         cy.get('gui-time-picker').then(($el) => {
-          $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
+          $el[0].addEventListener('gui-input-error', inputErrorSpy as unknown as EventListener);
         });
 
         cy.get(sel.hour).type('10');
@@ -446,7 +446,7 @@ export const runTimePickerComponentTests = (mountFn: MountComponentFn) => {
 
         const inputErrorSpy = cy.spy().as('inputErrorSpy');
         cy.get('gui-time').then(($el) => {
-          $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
+          $el[0].addEventListener('gui-input-error', inputErrorSpy as unknown as EventListener);
         });
 
         cy.get(sel.hour).type('08');
@@ -471,7 +471,7 @@ export const runTimePickerComponentTests = (mountFn: MountComponentFn) => {
 
         const inputErrorSpy = cy.spy().as('inputErrorSpy');
         cy.get('gui-time').then(($el) => {
-          $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
+          $el[0].addEventListener('gui-input-error', inputErrorSpy as unknown as EventListener);
         });
 
         cy.get(sel.hour).type('08');

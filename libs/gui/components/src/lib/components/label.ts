@@ -1,19 +1,19 @@
-import { html, LitElement } from 'lit';
+import { html } from 'lit';
 import { property } from 'lit/decorators.js';
 import { safeDefine } from '@golemui/lit-utils';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addLabel } from '../utils/templates';
+import { GuiElement } from '../gui-element';
 
-export class GuiLabel extends LitElement {
+export class GuiLabel extends GuiElement {
   @property({ type: Object }) targetElement: HTMLElement[] | HTMLElement | undefined = undefined;
-  @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String }) hint: string | undefined = undefined;
   @property({ type: Boolean }) required: boolean | undefined = undefined;
   @property({ type: Array }) errors: string[] | undefined = [];
   @property({ type: Boolean }) disabled: boolean | undefined = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
-  @property({ type: Boolean }) touched: boolean | undefined = false;
+  @property({ type: Boolean }) touched: boolean | undefined = undefined;
   @property({ type: Boolean }) native: boolean | undefined = true;
 
   private ariaController = new GUIAriaController(this, {
@@ -22,7 +22,7 @@ export class GuiLabel extends LitElement {
         ? [...this.targetElement]
         : [this.targetElement as HTMLElement],
     getState: () => ({
-      uid: this.uid as string,
+      uid: this.uid,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -42,7 +42,7 @@ export class GuiLabel extends LitElement {
     super.render();
 
     return html`${addLabel(
-      this.uid as string,
+      this.uid,
       {
         label: this.label,
         hint: this.hint,

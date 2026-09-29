@@ -20,7 +20,7 @@ import { type Dependencies, type GuiFormInitConfig } from '@golemui/gui-shared';
 import type { CustomValidatorSchemas } from '@golemui/gui-validators';
 import { type FormHealthBoundary, type ReactItemRenderer } from '@golemui/react';
 import i18next from 'i18next';
-import { type ChangeEvent, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import snarkdown from 'snarkdown';
 import { customWidgetLoaders } from '../../../components/custom-widget-loaders';
 import { AirportItemRenderer } from '../../../components/item-renderers/AirportItemRenderer';
@@ -132,8 +132,8 @@ export default function KitchenSinkJsonClient() {
   );
 }
 
-function onLanguageChanged(event: ChangeEvent<HTMLSelectElement>) {
-  const code = (event.nativeEvent as CustomEvent<{ value: string }>).detail.value;
+function onLanguageChanged(event: Event) {
+  const code = (event as CustomEvent<{ value: string }>).detail.value;
   i18next.changeLanguage(code);
 }
 
@@ -145,7 +145,7 @@ function LanguagePicker() {
         uid="language"
         value="en"
         options={languages}
-        onChange={onLanguageChanged}
+        ongui-change={onLanguageChanged}
       ></gui-select>
     </div>
   );

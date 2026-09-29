@@ -1,4 +1,4 @@
-import { html, LitElement, nothing } from 'lit';
+import { html, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
 import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
@@ -11,9 +11,10 @@ import { dateBoundsError } from '../utils/date';
 import { addErrors, addIcon, addLabel, addPickerPanel } from '../utils/templates';
 import { CARET_DOWN_PATH } from '../utils/icons';
 import type { DateRange } from '../types';
+import { GuiElement } from '../gui-element';
+import { dispatchChange, dispatchValue } from '../utils/events';
 
-export class GuiDatePicker extends LitElement {
-  @property({ type: String }) uid: string | undefined = undefined;
+export class GuiDatePicker extends GuiElement {
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String }) hint: string | undefined = undefined;
   @property({ type: String }) icon: string | undefined = '';
@@ -24,7 +25,7 @@ export class GuiDatePicker extends LitElement {
   @property({ type: String }) yearAriaLabel: string | undefined = undefined;
   @property({ type: Array }) errors: string[] | undefined = [];
   @property({ type: Boolean }) showErrors: boolean | undefined = true;
-  @property({ type: Boolean }) touched: boolean | undefined = false;
+  @property({ type: Boolean }) touched: boolean | undefined = undefined;
   @property({ type: Boolean }) required: boolean | undefined = false;
   @property({ type: Boolean }) disabled: boolean | undefined = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
@@ -106,7 +107,7 @@ export class GuiDatePicker extends LitElement {
 
     const calendar = this._popup.open
       ? addPickerPanel(
-          this.uid ?? '',
+          this.uid,
           { errors: this.errors, touched: this.touched, showErrors: this.showErrors },
           html`<gui-calendar
             id=${`${this.uid}_popup`}
@@ -114,7 +115,7 @@ export class GuiDatePicker extends LitElement {
             aria-label=${this.label ?? 'Calendar'}
             .uid=${this.uid}
             .hint=${this.hint}
-            ?touched=${this.touched}
+            .touched=${this.touched}
             ?required=${this.required}
             ?disabled=${this.disabled}
             ?readonly=${this.readOnly}
@@ -133,15 +134,16 @@ export class GuiDatePicker extends LitElement {
             .disabledRanges=${this.disabledRanges}
             .numberOfMonths=${this.numberOfMonths}
             .localeId=${this.localeId}
-            @blur=${this.onCalendarBlur}
-            @change=${this.onCalendarChange}
+            @gui-blur=${this.onCalendarBlur}
+            @gui-input=${this.onCalendarInput}
+            @gui-change=${this.onCalendarChange}
           ></gui-calendar>`,
         )
       : nothing;
 
     return html`
       ${addLabel(
-        this.uid ?? '',
+        this.uid,
         {
           label: this.label,
           hint: this.hint,
@@ -166,7 +168,7 @@ export class GuiDatePicker extends LitElement {
           .showErrors=${false}
           .deferFocusLeave=${true}
           .errors=${this.errors}
-          ?touched=${this.touched}
+          .touched=${this.touched}
           ?required=${this.required}
           ?disabled=${this.disabled}
           ?readonly=${this.readOnly}
@@ -178,9 +180,10 @@ export class GuiDatePicker extends LitElement {
           .yearAriaLabel=${this.yearAriaLabel}
           .invalidDateMessage=${this.invalidDateMessage}
           .incompleteMessage=${this.incompleteMessage}
-          @blur=${this.onDateBlur}
-          @focus=${this._popup.show}
-          @change=${this.onDateChange}
+          @gui-blur=${this.onDateBlur}
+          @gui-focus=${this._popup.show}
+          @gui-input=${this.onDateInput}
+          @gui-change=${this.onDateChange}
         ></gui-date>
         <button
           type="button"
@@ -206,9 +209,7 @@ export class GuiDatePicker extends LitElement {
         ${calendar}
       </div>
 
-      ${this.showErrors
-        ? addErrors(this.uid ?? '', { errors: this.errors, touched: this.touched })
-        : ''}
+      ${this.showErrors ? addErrors(this.uid, { errors: this.errors, touched: this.touched }) : ''}
     `;
   }
 
@@ -221,9 +222,14 @@ export class GuiDatePicker extends LitElement {
     }
   };
 
+  private onDateInput(event: CustomEvent) {
+    event.stopPropagation();
+    this.updateValue(event.detail.value);
+  }
+
   private onDateChange(event: CustomEvent) {
     event.stopPropagation();
-    this.commitValue(event.detail.value);
+    dispatchChange(this, this.value ?? null);
   }
 
   /**
@@ -236,25 +242,24 @@ export class GuiDatePicker extends LitElement {
     event.stopPropagation();
   }
 
+  private onCalendarInput(event: CustomEvent) {
+    event.stopPropagation();
+    this.updateValue(event.detail.value);
+  }
+
   private onCalendarChange(event: CustomEvent) {
     event.stopPropagation();
-    this.commitValue(event.detail.value);
+    dispatchChange(this, this.value ?? null);
     this._popup.close();
   }
 
-  private commitValue(value: string | null | undefined) {
+  private updateValue(value: string | null | undefined) {
     this.value = value ?? undefined;
     const error = this.validateBounds(this.value);
-    this.dispatchEvent(
-      new CustomEvent('change', {
-        detail: { value: value ?? null },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatchValue(this, value ?? null, { commit: false });
     if (error) {
       this.dispatchEvent(
-        new CustomEvent('inputError', {
+        new CustomEvent('gui-input-error', {
           detail: { message: error },
           bubbles: true,
           composed: true,
@@ -288,10 +293,10 @@ export class GuiDatePicker extends LitElement {
    * embedded input its deferred settlement — a partial date left behind
    * surfaces the incomplete message, an emptied one clears a message it
    * surfaced earlier. The input's resulting change bubbles back through
-   * {@link onDateChange}, so the picker's value follows.
+   * {@link onDateInput}, so the picker's value follows.
    */
   private onFocusLeave(): void {
-    this.dispatchEvent(new CustomEvent('blur'));
+    this.dispatchEvent(new CustomEvent('gui-blur'));
     this.querySelector<GuiDate>('gui-date')?.settleOnFocusLeave();
   }
 }

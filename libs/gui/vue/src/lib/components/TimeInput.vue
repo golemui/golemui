@@ -32,22 +32,22 @@ const errorHandler = (e: Event) => {
 let currentEl: HTMLElement | null = null;
 watch(timeRef, (el) => {
   if (currentEl) {
-    currentEl.removeEventListener('change', changeHandler);
-    currentEl.removeEventListener('blur', onBlur);
-    currentEl.removeEventListener('inputError', errorHandler);
+    currentEl.removeEventListener('gui-input', changeHandler);
+    currentEl.removeEventListener('gui-blur', onBlur);
+    currentEl.removeEventListener('gui-input-error', errorHandler);
   }
   currentEl = el;
   if (el) {
-    el.addEventListener('change', changeHandler);
-    el.addEventListener('blur', onBlur);
-    el.addEventListener('inputError', errorHandler);
+    el.addEventListener('gui-input', changeHandler);
+    el.addEventListener('gui-blur', onBlur);
+    el.addEventListener('gui-input-error', errorHandler);
   }
 });
 
 onUnmounted(() => {
-  currentEl?.removeEventListener('change', changeHandler);
-  currentEl?.removeEventListener('blur', onBlur);
-  currentEl?.removeEventListener('inputError', errorHandler);
+  currentEl?.removeEventListener('gui-input', changeHandler);
+  currentEl?.removeEventListener('gui-blur', onBlur);
+  currentEl?.removeEventListener('gui-input-error', errorHandler);
 });
 </script>
 

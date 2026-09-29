@@ -56,7 +56,7 @@ export class PasswordElement extends LitElement implements WithWidget {
         .label=${this.adapter.templateData.label}
         .hint=${this.adapter.templateData.hint}
         .errors=${this.adapter.templateData.errors}
-        ?touched=${this.adapter.templateData.touched}
+        .touched=${this.adapter.templateData.touched}
         ?required=${this.adapter.templateData.validator?.required}
         ?disabled=${this.adapter.templateData.disabled}
         ?readonly=${this.adapter.templateData.readonly}
@@ -68,8 +68,8 @@ export class PasswordElement extends LitElement implements WithWidget {
         .hidePasswordIcon=${this.adapter.templateData.hidePasswordIcon}
         .showPasswordLabel=${this.adapter.templateData.showPasswordLabel}
         .hidePasswordLabel=${this.adapter.templateData.hidePasswordLabel}
-        @input=${this.valueChanged}
-        @blur=${() => this.adapter.onBlur()}
+        @gui-input=${this.valueChanged}
+        @gui-blur=${() => this.adapter.onBlur()}
       ></gui-password>
     `;
   }

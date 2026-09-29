@@ -1,4 +1,4 @@
-import { html, LitElement, nothing, type PropertyValues } from 'lit';
+import { html, nothing, type PropertyValues } from 'lit';
 import { property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { cspStyleMap } from '@golemui/lit-utils';
@@ -7,10 +7,10 @@ import { GUIAriaController } from '../controllers/aria.controller';
 import { GUIPillsNavigationController } from '../controllers/pills-navigation.controller';
 import './pills';
 import type { GuiPillItem } from './pills';
+import { GuiElement } from '../gui-element';
 
-export class GuiMultiSelectTrigger extends LitElement {
-  @property({ type: String }) uid: string | undefined = undefined;
-  @property({ type: Boolean }) touched: boolean | undefined = false;
+export class GuiMultiSelectTrigger extends GuiElement {
+  @property({ type: Boolean }) touched: boolean | undefined = undefined;
   @property({ type: Boolean }) required: boolean | undefined = false;
   @property({ type: Boolean }) disabled: boolean | undefined = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
@@ -43,7 +43,7 @@ export class GuiMultiSelectTrigger extends LitElement {
       return [field, input].filter((el): el is HTMLElement => !!el);
     },
     getState: () => ({
-      uid: this.uid as string,
+      uid: this.uid,
       templateData: {
         hint: this.hasHint ? `${this.uid}_hint` : undefined,
         errors: this.errors,
@@ -133,9 +133,9 @@ export class GuiMultiSelectTrigger extends LitElement {
           .removeAriaLabel=${this.removeAriaLabel ?? 'Remove option'}
           .removeIcon=${this.removeIcon}
           .compactAriaLabel=${this.compactAriaLabel ?? `${pillItems.length} selected`}
-          @pillremove=${this.onPillRemove}
-          @pillkeydown=${this._pillsNav.onPillKeydown}
-          @pillexit=${this._pillsNav.onPillExit}
+          @gui-pill-remove=${this.onPillRemove}
+          @gui-pill-keydown=${this._pillsNav.onPillKeydown}
+          @gui-pill-exit=${this._pillsNav.onPillExit}
         ></gui-pills>
 
         <input

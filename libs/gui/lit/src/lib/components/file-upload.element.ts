@@ -58,7 +58,7 @@ export class FileUploadElement extends LitElement implements WithWidget {
         .label=${templateData.label}
         .hint=${templateData.hint}
         .errors=${templateData.errors}
-        ?touched=${templateData.touched}
+        .touched=${templateData.touched}
         ?required=${templateData.validator?.required}
         ?disabled=${templateData.disabled}
         ?readonly=${templateData.readonly}
@@ -80,9 +80,9 @@ export class FileUploadElement extends LitElement implements WithWidget {
         .uploadedMessage=${templateData.uploadedMessage}
         .removedMessage=${templateData.removedMessage}
         .failedMessage=${templateData.failedMessage}
-        @change=${this.valueChanged}
-        @blur=${() => this.adapter.onBlur()}
-        @inputError=${this.onInputError}
+        @gui-input=${this.valueChanged}
+        @gui-blur=${() => this.adapter.onBlur()}
+        @gui-input-error=${this.onInputError}
       ></gui-file-upload>
     `;
   }

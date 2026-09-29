@@ -1,12 +1,14 @@
-import { css, html, LitElement, type PropertyValues } from 'lit';
+import { css, html, type PropertyValues } from 'lit';
 import { property, query, state } from 'lit/decorators.js';
 import { cspStyleMap } from '@golemui/lit-utils';
 import { safeDefine } from '@golemui/lit-utils';
 import { gridKeyStep, listPageSize, nextEnabledIndex } from '../utils/grid-nav';
 import { updateListItems } from './list-items';
 import type { ListItem, OptionValue } from '../types';
+import { GuiElement } from '../gui-element';
+import { dispatchValue } from '../utils/events';
 
-export class GuiList extends LitElement {
+export class GuiList extends GuiElement {
   // Inline `style` attributes are blocked by a strict `style-src` CSP: static rules
   // live here (adopted stylesheet) and dynamic values go through `cspStyleMap` (CSSOM)
   static override styles = css`
@@ -31,8 +33,7 @@ export class GuiList extends LitElement {
     }
   `;
 
-  @property({ type: String }) uid: string | undefined = undefined;
-  @property({ type: Boolean }) touched: boolean | undefined = false;
+  @property({ type: Boolean }) touched: boolean | undefined = undefined;
   @property({ type: Boolean }) required: boolean | undefined = false;
   @property({ type: Boolean }) disabled: boolean | undefined = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
@@ -226,7 +227,7 @@ export class GuiList extends LitElement {
       }),
     );
 
-    this.dispatchEvent(new CustomEvent('blur', { bubbles: true, composed: true }));
+    this.dispatchEvent(new CustomEvent('gui-blur', { bubbles: true, composed: true }));
   };
 
   public scrollToIndex(index: number) {
@@ -246,14 +247,9 @@ export class GuiList extends LitElement {
     }
   }
 
-  private selectItem(item: ListItem<any>) {
-    this.dispatchEvent(
-      new CustomEvent('change', {
-        detail: { value: item.value },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+  /** The user picked an item: the list reports it as its new value. */
+  protected selectItem(item: ListItem<any>) {
+    dispatchValue(this, item.value);
   }
 
   private setFocusedIndex(index: number) {

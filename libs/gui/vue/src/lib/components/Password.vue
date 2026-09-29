@@ -35,8 +35,8 @@ const required = computed(() => (templateData.value.validator as Validator)?.req
       :hidePasswordIcon="templateData.hidePasswordIcon"
       :showPasswordLabel="templateData.showPasswordLabel"
       :hidePasswordLabel="templateData.hidePasswordLabel"
-      @input="handleInput"
-      @blur="onBlur"
+      @gui-input="handleInput"
+      @gui-blur="onBlur"
     ></gui-password>
   </div>
 </template>

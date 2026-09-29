@@ -215,14 +215,14 @@ export const runRangeDateInputComponentTests = (mountFn: MountComponentFn) => {
         });
       });
 
-      it('should emit pillClick when a pill is clicked', () => {
+      it('should emit gui-range-click when a pill is clicked', () => {
         mountRangeDateInput({
           data: { myRanges: [{ start: '2026-06-10', end: '2026-06-16' }] },
         });
 
         const pillClickSpy = cy.spy().as('pillClickSpy');
         cy.get('gui-range-date').then(($el) => {
-          $el[0].addEventListener('pillClick', pillClickSpy as unknown as EventListener);
+          $el[0].addEventListener('gui-range-click', pillClickSpy as unknown as EventListener);
         });
 
         // force: gui-pills may collapse to compact mode in narrow harnesses
@@ -251,14 +251,14 @@ export const runRangeDateInputComponentTests = (mountFn: MountComponentFn) => {
         });
       });
 
-      it('should emit inputError and create no pill for a complete but invalid date (Feb 31)', () => {
+      it('should emit gui-input-error and create no pill for a complete but invalid date (Feb 31)', () => {
         // Unlike gui-date, the injected error is not displayed (the wrapper never
-        // marks the field touched), so we pin the inputError event itself.
+        // marks the field touched), so we pin the gui-input-error event itself.
         mountRangeDateInput();
 
         const inputErrorSpy = cy.spy().as('inputErrorSpy');
         cy.get('gui-range-date').then(($el) => {
-          $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
+          $el[0].addEventListener('gui-input-error', inputErrorSpy as unknown as EventListener);
         });
 
         typeDate('start', '02', '31', '2026');
@@ -631,11 +631,11 @@ export const runRangeDateInputComponentTests = (mountFn: MountComponentFn) => {
         cy.focused().should('have.attr', 'data-group', 'start');
       });
 
-      it('should emit pillClick on Enter now that pills are keyboard-only reachable', () => {
+      it('should emit gui-range-click on Enter now that pills are keyboard-only reachable', () => {
         mountWithRanges();
 
         cy.get('gui-range-date').then(($el) => {
-          $el[0].addEventListener('pillClick', cy.stub().as('pillClickHandler'));
+          $el[0].addEventListener('gui-range-click', cy.stub().as('pillClickHandler'));
         });
 
         cy.get(sel.start.month).focus();

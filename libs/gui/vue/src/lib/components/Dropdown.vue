@@ -356,7 +356,7 @@ const ItemRenderer = computed<Component>(() => {
           :readOnly="isReadOnly"
           :hidden="!isListVisible"
           @focus="handleInputFocus"
-          @change="handleListChange"
+          @gui-input="handleListChange"
           @gui-update-items="handleUpdateItems"
           @gui-range-change="handleRangeChange"
           @gui-focus-change="handleFocusChange"

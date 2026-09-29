@@ -55,7 +55,7 @@ export class RadiogroupElement extends LitElement implements WithWidget {
         .uid=${this.widget.uid}
         .label=${this.adapter.templateData.label}
         .errors=${this.adapter.templateData.errors}
-        ?touched=${this.adapter.templateData.touched}
+        .touched=${this.adapter.templateData.touched}
         ?required=${this.adapter.templateData.validator?.required}
         ?disabled=${this.adapter.templateData.disabled}
         ?readonly=${this.adapter.templateData.readonly}
@@ -65,8 +65,8 @@ export class RadiogroupElement extends LitElement implements WithWidget {
         .labelField=${this.adapter.templateData.labelField}
         .valueField=${this.adapter.templateData.valueField}
         .direction=${this.adapter.templateData.direction}
-        @change=${this.valueChanged}
-        @blur=${() => this.adapter.onBlur()}
+        @gui-input=${this.valueChanged}
+        @gui-blur=${() => this.adapter.onBlur()}
       ></gui-radiogroup>
     `;
   }

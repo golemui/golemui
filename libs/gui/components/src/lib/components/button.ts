@@ -1,10 +1,10 @@
-import { html, LitElement, nothing } from 'lit';
+import { html, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
 import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
+import { GuiElement } from '../gui-element';
 
-export class GuiButton extends LitElement {
-  @property({ type: String }) uid: string | undefined = undefined;
+export class GuiButton extends GuiElement {
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: Boolean }) disabled: boolean | undefined = false;
   @property({ type: String }) icon: string | undefined = undefined;
@@ -46,7 +46,7 @@ export class GuiButton extends LitElement {
       <div class="gui-widget">
         <button
           type=${this.actionType ?? 'button'}
-          id=${this.uid!}
+          id=${this.uid}
           class=${classMap(buttonClasses)}
           data-cy=${`${this.uid}_button`}
           ?disabled=${this.disabled}

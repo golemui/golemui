@@ -98,7 +98,7 @@ export function excludeRangeByKey<R extends RangeLike>(
 /**
  * Whether two range lists hold the same spans in the same order. An edit
  * whose commit reproduces the current value is treated as a cancellation
- * (no `change` event), which is what this decides.
+ * (no `gui-change` event), which is what this decides.
  *
  * @param {readonly R[] | undefined} a - One list (`value ?? []`).
  * @param {readonly R[] | undefined} b - The other list.

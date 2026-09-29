@@ -1,4 +1,4 @@
-import { html, LitElement, nothing, type PropertyValues, type TemplateResult } from 'lit';
+import { html, nothing, type PropertyValues, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
@@ -73,9 +73,10 @@ import {
   INCOMPLETE_DATE_TIME_MESSAGE,
 } from '../utils/messages';
 import type { DateTimeRange } from '../types';
+import { GuiElement } from '../gui-element';
+import { dispatchValue } from '../utils/events';
 
-export class GuiRangeDateTimeCalendar extends LitElement {
-  @property({ type: String }) uid: string | undefined = undefined;
+export class GuiRangeDateTimeCalendar extends GuiElement {
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String }) hint: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
@@ -255,7 +256,7 @@ export class GuiRangeDateTimeCalendar extends LitElement {
   protected ariaController: GUIAriaController<unknown, any> = new GUIAriaController(this, {
     getTargets: () => this.querySelectorAll(`.gui-calendar-input`),
     getState: () => ({
-      uid: this.uid as string,
+      uid: this.uid,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -286,7 +287,7 @@ export class GuiRangeDateTimeCalendar extends LitElement {
   private _focusLeave = new GUIFocusLeaveController(this, {
     onLeave: () => {
       if (!this.deferFocusLeave) this.settleOnLeave();
-      this.dispatchEvent(new CustomEvent('blur', { bubbles: true, composed: true }));
+      this.dispatchEvent(new CustomEvent('gui-blur', { bubbles: true, composed: true }));
     },
   });
 
@@ -541,7 +542,7 @@ export class GuiRangeDateTimeCalendar extends LitElement {
         >
           <gui-time-picker
             class="gui-time-picker gui-field gui-range-date-time-calendar__start"
-            .uid=${this.uid ? `${this.uid}-start-time` : undefined}
+            .uid=${`${this.uid}-start-time`}
             .label=${this.startTimeLabel ?? 'Start time'}
             .showErrors=${false}
             .deferFocusLeave=${true}
@@ -559,9 +560,10 @@ export class GuiRangeDateTimeCalendar extends LitElement {
             .columns=${4}
             .disabledRangeMessage=${this.disabledRangeMessage}
             .noAvailableTimesMessage=${this.noAvailableTimesMessage}
-            @change=${this.onStartTimeChange}
-            @partsChange=${this.stopInnerPartsChange}
-            @listtoggle=${(e: CustomEvent<{ open: boolean }>) => this.onListToggle(e, 'start')}
+            @gui-input=${this.onStartTimeInput}
+            @gui-change=${this.onTimeChange}
+            @gui-parts-change=${this.stopInnerPartsChange}
+            @gui-list-toggle=${(e: CustomEvent<{ open: boolean }>) => this.onListToggle(e, 'start')}
           ></gui-time-picker>
         </div>
 
@@ -573,7 +575,7 @@ export class GuiRangeDateTimeCalendar extends LitElement {
         >
           <gui-time-picker
             class="gui-time-picker gui-field gui-range-date-time-calendar__end"
-            .uid=${this.uid ? `${this.uid}-end-time` : undefined}
+            .uid=${`${this.uid}-end-time`}
             .label=${this.endTimeLabel ?? 'End time'}
             .showErrors=${false}
             .deferFocusLeave=${true}
@@ -591,9 +593,10 @@ export class GuiRangeDateTimeCalendar extends LitElement {
             .columns=${4}
             .disabledRangeMessage=${this.disabledRangeMessage}
             .noAvailableTimesMessage=${this.noAvailableTimesMessage}
-            @change=${this.onEndTimeChange}
-            @partsChange=${this.stopInnerPartsChange}
-            @listtoggle=${(e: CustomEvent<{ open: boolean }>) => this.onListToggle(e, 'end')}
+            @gui-input=${this.onEndTimeInput}
+            @gui-change=${this.onTimeChange}
+            @gui-parts-change=${this.stopInnerPartsChange}
+            @gui-list-toggle=${(e: CustomEvent<{ open: boolean }>) => this.onListToggle(e, 'end')}
           ></gui-time-picker>
         </div>
       </div>
@@ -819,21 +822,21 @@ export class GuiRangeDateTimeCalendar extends LitElement {
     }).state;
   }
 
-  private onStartTimeChange(event: CustomEvent) {
-    this.onTimeChange(event, 'start');
+  private onStartTimeInput(event: CustomEvent) {
+    this.onTimeInput(event, 'start');
   }
 
-  private onEndTimeChange(event: CustomEvent) {
-    this.onTimeChange(event, 'end');
+  private onEndTimeInput(event: CustomEvent) {
+    this.onTimeInput(event, 'end');
   }
 
   /**
    * Both endpoints follow one rule: the value is always kept as working state
    * (so it survives and syncs), but only a deliberate selection — a list pick
-   * or Enter — attempts the commit. Typing a custom time must never create an
-   * unintended pill.
+   * or Enter — attempts the commit, see {@link onTimeChange}. Typing a custom
+   * time must never create an unintended pill.
    */
-  private onTimeChange(event: CustomEvent, endpoint: 'start' | 'end') {
+  private onTimeInput(event: CustomEvent, endpoint: 'start' | 'end') {
     event.stopPropagation();
 
     const time = (event.detail.value as string | null) ?? undefined;
@@ -843,8 +846,11 @@ export class GuiRangeDateTimeCalendar extends LitElement {
       this._workingEndTime = time;
     }
     this.emitPartsChange();
+  }
 
-    if (event.detail.commit !== true) return;
+  /** A deliberate time pick, whose value {@link onTimeInput} already holds. */
+  private onTimeChange(event: CustomEvent) {
+    event.stopPropagation();
     this.tryCommitWorkingRange();
   }
 
@@ -912,16 +918,14 @@ export class GuiRangeDateTimeCalendar extends LitElement {
     return { kind: 'committed', start: ordered.start };
   }
 
-  /** Whether an inputError has been emitted and not yet cleared by a change. */
+  /** Whether a `gui-input-error` has been emitted and not yet cleared by a change. */
   private _surfacedError = false;
 
   private emitChange(value: DateTimeRange[]): void {
     // The form layer clears injected issues on every change, so the mirror
     // flag resets with it.
     this._surfacedError = false;
-    this.dispatchEvent(
-      new CustomEvent('change', { detail: { value }, bubbles: true, composed: true }),
-    );
+    dispatchValue(this, value);
   }
 
   /**
@@ -931,7 +935,7 @@ export class GuiRangeDateTimeCalendar extends LitElement {
    */
   private emitPartsChange(): void {
     this.dispatchEvent(
-      new CustomEvent('partsChange', {
+      new CustomEvent('gui-parts-change', {
         detail: {
           anchor: this.anchorISO() ?? null,
           start: this._workingStart ?? null,
@@ -1039,10 +1043,10 @@ export class GuiRangeDateTimeCalendar extends LitElement {
 
   /**
    * The embedded time pickers' own segmented inputs broadcast a bubbling,
-   * composed `partsChange` carrying only `{time}`. Left alone it reaches the
+   * composed `gui-parts-change` carrying only `{time}`. Left alone it reaches the
    * host picker's listener looking like this calendar's report, whose missing
    * keys read as "every piece is gone" and blank the working selection. The
-   * times this calendar holds already flow out through `@change`.
+   * times this calendar holds already flow out through `@gui-input`.
    */
   private stopInnerPartsChange = (event: Event) => {
     event.stopPropagation();
@@ -1051,7 +1055,7 @@ export class GuiRangeDateTimeCalendar extends LitElement {
   private emitInputError(message: string) {
     this._surfacedError = true;
     this.dispatchEvent(
-      new CustomEvent('inputError', { detail: { message }, bubbles: true, composed: true }),
+      new CustomEvent('gui-input-error', { detail: { message }, bubbles: true, composed: true }),
     );
   }
 
@@ -1230,13 +1234,13 @@ export class GuiRangeDateTimeCalendar extends LitElement {
         .editLabel=${this.editLabel ?? EDIT_RANGE_LABEL}
         .confirmEditLabel=${this.confirmEditLabel ?? CONFIRM_EDIT_RANGE_LABEL}
         .cancelEditLabel=${this.cancelEditLabel ?? CANCEL_EDIT_RANGE_LABEL}
-        @pillremove=${this.onPillRemoveEvent}
-        @pillclick=${this.onPillClickEvent}
-        @pillfocus=${this.onPillFocusEvent}
-        @pillsblur=${this.onPillsBlurEvent}
-        @pilledit=${this.onPillEditEvent}
-        @pilleditconfirm=${this.onPillEditConfirm}
-        @pilleditcancel=${this.onPillEditCancel}
+        @gui-pill-remove=${this.onPillRemoveEvent}
+        @gui-pill-click=${this.onPillClickEvent}
+        @gui-pill-focus=${this.onPillFocusEvent}
+        @gui-pills-blur=${this.onPillsBlurEvent}
+        @gui-pill-edit=${this.onPillEditEvent}
+        @gui-pill-edit-confirm=${this.onPillEditConfirm}
+        @gui-pill-edit-cancel=${this.onPillEditCancel}
       ></gui-pills>
     `;
   }

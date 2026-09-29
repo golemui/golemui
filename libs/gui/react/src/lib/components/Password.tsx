@@ -49,8 +49,8 @@ export function Password(widgetInstance: WithWidget) {
         hidePasswordIcon={hidePasswordIcon}
         showPasswordLabel={showPasswordLabel}
         hidePasswordLabel={hidePasswordLabel}
-        onInput={handleChange}
-        onBlur={onBlur}
+        onGuiInput={handleChange}
+        onGuiBlur={onBlur}
       ></GuiPasswordReact>
     </div>
   );

@@ -36,7 +36,7 @@
   [editStartedMessage]="templateData.editStartedMessage"
   [editCommittedMessage]="templateData.editCommittedMessage"
   [editCancelledMessage]="templateData.editCancelledMessage"
-  (blur)="adapter.onBlur()"
-  (change)="onChangeTime($event)"
-  (inputError)="onInputError($event)"
+  (gui-blur)="adapter.onBlur()"
+  (gui-input)="onChangeTime($event)"
+  (gui-input-error)="onInputError($event)"
 ></gui-range-time>

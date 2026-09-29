@@ -36,8 +36,8 @@ const required = computed(() => (templateData.value.validator as Validator)?.req
       :trim="templateData.trim ?? true"
       :removeAriaLabel="templateData.removeAriaLabel"
       :removeIcon="templateData.removeIcon"
-      @change="handleChange"
-      @blur="onBlur"
+      @gui-input="handleChange"
+      @gui-blur="onBlur"
     ></gui-tags>
   </div>
 </template>

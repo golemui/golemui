@@ -31,8 +31,8 @@ const togglePosition = computed(() => templateData.value.togglePosition || 'left
       :value="value"
       :hint="templateData.hint"
       :togglePosition.prop="togglePosition"
-      @change="handleChange"
-      @blur="onBlur"
+      @gui-input="handleChange"
+      @gui-blur="onBlur"
     ></gui-toggle>
   </div>
 </template>

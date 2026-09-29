@@ -1,4 +1,4 @@
-import { html, LitElement, nothing } from 'lit';
+import { html, nothing } from 'lit';
 import { property, query, state } from 'lit/decorators.js';
 import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
@@ -11,6 +11,8 @@ import { type HourFormat } from '../utils/time';
 import { addErrors, addIcon, addLabel, addPickerPanel } from '../utils/templates';
 import { CARET_DOWN_PATH } from '../utils/icons';
 import type { DateTimeRange } from '../types';
+import { GuiElement } from '../gui-element';
+import { dispatchChange, dispatchValue, stopPropagation } from '../utils/events';
 
 /** The four pieces of an in-progress range, each absent until chosen. */
 interface WorkingRange {
@@ -20,14 +22,13 @@ interface WorkingRange {
   endTime?: string;
 }
 
-export class GuiRangeDateTimePicker extends LitElement {
-  @property({ type: String }) uid: string | undefined = undefined;
+export class GuiRangeDateTimePicker extends GuiElement {
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String }) hint: string | undefined = undefined;
   @property({ type: String }) icon: string | undefined = '';
   @property({ type: Array }) errors: string[] | undefined = [];
   @property({ type: Boolean }) showErrors: boolean | undefined = true;
-  @property({ type: Boolean }) touched: boolean | undefined = false;
+  @property({ type: Boolean }) touched: boolean | undefined = undefined;
   @property({ type: Boolean }) required: boolean | undefined = false;
   @property({ type: Boolean }) disabled: boolean | undefined = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
@@ -154,7 +155,7 @@ export class GuiRangeDateTimePicker extends LitElement {
 
   /**
    * Mirror of the embedded input's edit session, fed by its non-bubbling
-   * `editStateChange`: while a session is open the calendar defers commits to
+   * `gui-edit-state-change`: while a session is open the calendar defers commits to
    * the session's Confirm, and the selected range's days are marked.
    */
   @state() private _editing = false;
@@ -210,7 +211,7 @@ export class GuiRangeDateTimePicker extends LitElement {
     resolveSyncOnRelatedTarget: true,
     onLeave: () => {
       this._dateRef?.finalizeOnLeave();
-      this.dispatchEvent(new CustomEvent('blur'));
+      this.dispatchEvent(new CustomEvent('gui-blur'));
     },
   });
 
@@ -228,12 +229,12 @@ export class GuiRangeDateTimePicker extends LitElement {
 
   override connectedCallback() {
     super.connectedCallback();
-    this.addEventListener('dropdowntoggle', this.onDropdownToggle);
+    this.addEventListener('gui-dropdown-toggle', this.onDropdownToggle);
   }
 
   override disconnectedCallback() {
     super.disconnectedCallback();
-    this.removeEventListener('dropdowntoggle', this.onDropdownToggle);
+    this.removeEventListener('gui-dropdown-toggle', this.onDropdownToggle);
   }
 
   override render() {
@@ -241,7 +242,7 @@ export class GuiRangeDateTimePicker extends LitElement {
 
     const calendar = this._popup.open
       ? addPickerPanel(
-          this.uid ?? '',
+          this.uid,
           { errors: this.errors, touched: this.touched, showErrors: this.showErrors },
           html`<gui-range-date-time-calendar
             id=${`${this.uid}_popup`}
@@ -249,7 +250,7 @@ export class GuiRangeDateTimePicker extends LitElement {
             aria-label=${this.label ?? 'Calendar'}
             .uid=${this.uid}
             .hint=${this.hint}
-            ?touched=${this.touched}
+            .touched=${this.touched}
             ?required=${this.required}
             ?disabled=${this.disabled}
             ?readonly=${this.readOnly}
@@ -288,17 +289,18 @@ export class GuiRangeDateTimePicker extends LitElement {
             .deferFocusLeave=${true}
             .selectedRange=${this._selectedEditRange}
             .deferCommit=${this._editing}
-            @blur=${this.onCalendarBlur}
-            @change=${this.onCalendarChange}
-            @partsChange=${this.onCalendarPartsChange}
-            @inputError=${this.onCalendarInputError}
+            @gui-blur=${this.onCalendarBlur}
+            @gui-input=${stopPropagation}
+            @gui-change=${this.onCalendarChange}
+            @gui-parts-change=${this.onCalendarPartsChange}
+            @gui-input-error=${this.onCalendarInputError}
           ></gui-range-date-time-calendar>`,
         )
       : nothing;
 
     return html`
       ${addLabel(
-        this.uid ?? '',
+        this.uid,
         {
           label: this.label,
           hint: this.hint,
@@ -323,7 +325,7 @@ export class GuiRangeDateTimePicker extends LitElement {
           .hint=${this.hint}
           .showErrors=${false}
           .errors=${this.errors}
-          ?touched=${this.touched}
+          .touched=${this.touched}
           ?required=${this.required}
           ?disabled=${this.disabled}
           ?readonly=${this.readOnly}
@@ -358,12 +360,13 @@ export class GuiRangeDateTimePicker extends LitElement {
           .editStartedMessage=${this.editStartedMessage}
           .editCommittedMessage=${this.editCommittedMessage}
           .editCancelledMessage=${this.editCancelledMessage}
-          @blur=${this.onDateBlur}
-          @focus=${this._popup.show}
-          @change=${this.onDateChange}
-          @partsChange=${this.onInputPartsChange}
-          @pillClick=${this.onPillClick}
-          @editStateChange=${this.onEditStateChange}
+          @gui-blur=${this.onDateBlur}
+          @gui-focus=${this._popup.show}
+          @gui-input=${this.onDateInput}
+          @gui-change=${this.onDateChange}
+          @gui-parts-change=${this.onInputPartsChange}
+          @gui-range-click=${this.onPillClick}
+          @gui-edit-state-change=${this.onEditStateChange}
         ></gui-range-date-time>
         <button
           type="button"
@@ -389,9 +392,7 @@ export class GuiRangeDateTimePicker extends LitElement {
         ${calendar}
       </div>
 
-      ${this.showErrors
-        ? addErrors(this.uid ?? '', { errors: this.errors, touched: this.touched })
-        : ''}
+      ${this.showErrors ? addErrors(this.uid, { errors: this.errors, touched: this.touched }) : ''}
     `;
   }
 
@@ -405,9 +406,16 @@ export class GuiRangeDateTimePicker extends LitElement {
     }
   };
 
+  private onDateInput(event: CustomEvent) {
+    event.stopPropagation();
+    this.commitValue(event.detail.value, false);
+  }
+
+  /** The input committed a typed range (Enter) or removed a pill: the working selection is done. */
   private onDateChange(event: CustomEvent) {
     event.stopPropagation();
-    this.commitValue(event.detail.value, event.detail.commit !== false);
+    this.setWorking({});
+    dispatchChange(this, this.value ?? null);
   }
 
   /**
@@ -514,7 +522,7 @@ export class GuiRangeDateTimePicker extends LitElement {
   private onCalendarInputError(event: CustomEvent) {
     event.stopPropagation();
     this.dispatchEvent(
-      new CustomEvent('inputError', {
+      new CustomEvent('gui-input-error', {
         detail: event.detail,
         bubbles: true,
         composed: true,
@@ -526,19 +534,14 @@ export class GuiRangeDateTimePicker extends LitElement {
    * The single funnel every commit passes through — a calendar pick, a typed
    * Enter — so the working selection is torn down once, and the calendar
    * (which follows the cleared props, down to its two time pickers) with it.
-   * `committed` is false for the input's error-clearing echo, which carries no
-   * new pill and must leave a half-entered range alone.
+   * `committed` is false for typed values until the input commits them (see
+   * {@link onDateChange}), and for the input's error-clearing echo, which
+   * carries no new pill and must leave a half-entered range alone.
    */
   private commitValue(value: DateTimeRange[] | null | undefined, committed = true) {
     this.value = value ?? undefined;
     if (committed) this.setWorking({});
-    this.dispatchEvent(
-      new CustomEvent('change', {
-        detail: { value: value ?? null },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatchValue(this, value ?? null, { commit: committed });
   }
 
   /**

@@ -1,4 +1,4 @@
-import { html, LitElement, nothing, type PropertyValues } from 'lit';
+import { html, nothing, type PropertyValues } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
@@ -19,9 +19,10 @@ import { addErrors, addIcon, addLabel, addPickerPanel } from '../utils/templates
 import { INVALID_DISABLED_TIME_RANGE_MESSAGE } from '../utils/messages';
 import { CARET_DOWN_PATH } from '../utils/icons';
 import type { DateRange, DisabledTimeRange } from '../types';
+import { GuiElement } from '../gui-element';
+import { dispatchValue, stopPropagation } from '../utils/events';
 
-export class GuiDateTimePicker extends LitElement {
-  @property({ type: String }) uid: string | undefined = undefined;
+export class GuiDateTimePicker extends GuiElement {
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String }) hint: string | undefined = undefined;
   @property({ type: String }) icon: string | undefined = '';
@@ -35,7 +36,7 @@ export class GuiDateTimePicker extends LitElement {
   @property({ type: String }) dayPeriodAriaLabel: string | undefined = undefined;
   @property({ type: Array }) errors: string[] | undefined = [];
   @property({ type: Boolean }) showErrors: boolean | undefined = true;
-  @property({ type: Boolean }) touched: boolean | undefined = false;
+  @property({ type: Boolean }) touched: boolean | undefined = undefined;
   @property({ type: Boolean }) required: boolean | undefined = false;
   @property({ type: Boolean }) disabled: boolean | undefined = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
@@ -165,7 +166,7 @@ export class GuiDateTimePicker extends LitElement {
 
     const calendar = this._popup.open
       ? addPickerPanel(
-          this.uid ?? '',
+          this.uid,
           { errors: this.errors, touched: this.touched, showErrors: this.showErrors },
           html`<gui-date-time-calendar
             id=${`${this.uid}_popup`}
@@ -173,7 +174,7 @@ export class GuiDateTimePicker extends LitElement {
             aria-label=${this.label ?? 'Calendar'}
             .uid=${this.uid}
             .hint=${this.hint}
-            ?touched=${this.touched}
+            .touched=${this.touched}
             ?required=${this.required}
             ?disabled=${this.disabled}
             ?readonly=${this.readOnly}
@@ -205,16 +206,17 @@ export class GuiDateTimePicker extends LitElement {
             .maxTimeMessage=${this.maxTimeMessage}
             .disabledTimeRangeMessage=${this.disabledTimeRangeMessage}
             .noAvailableTimesMessage=${this.noAvailableTimesMessage}
-            @blur=${this.onCalendarBlur}
-            @change=${this.onCalendarChange}
-            @partsChange=${this.onCalendarPartsChange}
+            @gui-blur=${this.onCalendarBlur}
+            @gui-input=${this.onCalendarInput}
+            @gui-change=${this.onCalendarChange}
+            @gui-parts-change=${this.onCalendarPartsChange}
           ></gui-date-time-calendar>`,
         )
       : nothing;
 
     return html`
       ${addLabel(
-        this.uid ?? '',
+        this.uid,
         {
           label: this.label,
           hint: this.hint,
@@ -239,7 +241,7 @@ export class GuiDateTimePicker extends LitElement {
           .showErrors=${false}
           .deferFocusLeave=${true}
           .errors=${this.errors}
-          ?touched=${this.touched}
+          .touched=${this.touched}
           ?required=${this.required}
           ?disabled=${this.disabled}
           ?readonly=${this.readOnly}
@@ -260,10 +262,11 @@ export class GuiDateTimePicker extends LitElement {
           .minTimeMessage=${this.minTimeMessage}
           .maxTimeMessage=${this.maxTimeMessage}
           .incompleteMessage=${this.incompleteMessage}
-          @blur=${this.onDateBlur}
-          @focus=${this._popup.show}
-          @change=${this.onDateChange}
-          @partsChange=${this.onInputPartsChange}
+          @gui-blur=${this.onDateBlur}
+          @gui-focus=${this._popup.show}
+          @gui-input=${this.onDateInput}
+          @gui-change=${stopPropagation}
+          @gui-parts-change=${this.onInputPartsChange}
         ></gui-date-time>
         <button
           type="button"
@@ -289,9 +292,7 @@ export class GuiDateTimePicker extends LitElement {
         ${calendar}
       </div>
 
-      ${this.showErrors
-        ? addErrors(this.uid ?? '', { errors: this.errors, touched: this.touched })
-        : ''}
+      ${this.showErrors ? addErrors(this.uid, { errors: this.errors, touched: this.touched }) : ''}
     `;
   }
 
@@ -305,7 +306,7 @@ export class GuiDateTimePicker extends LitElement {
     }
   };
 
-  private onDateChange(event: CustomEvent) {
+  private onDateInput(event: CustomEvent) {
     event.stopPropagation();
     this.commitValue(event.detail.value);
   }
@@ -320,15 +321,16 @@ export class GuiDateTimePicker extends LitElement {
     event.stopPropagation();
   }
 
-  private onCalendarChange(event: CustomEvent) {
-    if (!this._popup.open) {
-      event.stopPropagation();
-      return;
-    }
-
+  private onCalendarInput(event: CustomEvent) {
     event.stopPropagation();
+    if (!this._popup.open) return;
     this.commitValue(event.detail.value);
-    if (event.detail.value && event.detail.commit) {
+  }
+
+  /** A deliberate time pick in the calendar completes the selection and closes the popover. */
+  private onCalendarChange(event: CustomEvent) {
+    event.stopPropagation();
+    if (this._popup.open && event.detail.value) {
       this._popup.close();
     }
   }
@@ -366,16 +368,10 @@ export class GuiDateTimePicker extends LitElement {
     }
 
     const error = this.validateBounds(this.value);
-    this.dispatchEvent(
-      new CustomEvent('change', {
-        detail: { value: value ?? null },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatchValue(this, value ?? null);
     if (error) {
       this.dispatchEvent(
-        new CustomEvent('inputError', {
+        new CustomEvent('gui-input-error', {
           detail: { message: error },
           bubbles: true,
           composed: true,
@@ -394,7 +390,7 @@ export class GuiDateTimePicker extends LitElement {
    * the popover restores the partial.
    */
   private onFocusLeave(): void {
-    this.dispatchEvent(new CustomEvent('blur'));
+    this.dispatchEvent(new CustomEvent('gui-blur'));
     this.querySelector<GuiDateTime>('gui-date-time')?.settleOnFocusLeave();
   }
 

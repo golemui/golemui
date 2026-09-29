@@ -1,9 +1,11 @@
 import { GUIAriaController } from '../controllers/aria.controller';
-import { html, LitElement, nothing } from 'lit';
+import { html, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
 import { live } from 'lit/directives/live.js';
 import { safeDefine } from '@golemui/lit-utils';
 import { addErrors, requiredMarker, type ControlTemplateData } from '../utils/templates';
+import { GuiElement } from '../gui-element';
+import { dispatchValue } from '../utils/events';
 
 /** What <gui-checkbox> renders besides the control state: its presentation props. */
 export type GuiCheckboxProps = {
@@ -11,8 +13,7 @@ export type GuiCheckboxProps = {
   checkboxPosition?: 'left' | 'right';
 };
 
-export class GuiCheckbox extends LitElement {
-  @property({ type: String }) uid: string | undefined = undefined;
+export class GuiCheckbox extends GuiElement {
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
   @property({ type: Array }) errors: string[] | undefined = [];
@@ -28,7 +29,7 @@ export class GuiCheckbox extends LitElement {
   private ariaController = new GUIAriaController(this, {
     getTargets: () => this.querySelectorAll(`input[id="${this.uid}"]`),
     getState: () => ({
-      uid: this.uid as string,
+      uid: this.uid,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -100,7 +101,7 @@ export class GuiCheckbox extends LitElement {
       </label>
 
       <div class="gui-widget-hint" id=${`${templateData.uid}_hint`}>
-        ${templateData.hint ?? nothing} ${addErrors(this.uid as string, templateData)}
+        ${templateData.hint ?? nothing} ${addErrors(this.uid, templateData)}
       </div>
     `;
   }
@@ -110,19 +111,13 @@ export class GuiCheckbox extends LitElement {
 
     if (!this.readOnly) {
       const target = event.target as HTMLInputElement;
-      this.dispatchEvent(
-        new CustomEvent('change', {
-          detail: { value: target.checked },
-          bubbles: true,
-          composed: true,
-        }),
-      );
+      dispatchValue(this, target.checked);
     }
   }
 
   onBlur() {
     this.dispatchEvent(
-      new CustomEvent('blur', {
+      new CustomEvent('gui-blur', {
         bubbles: true,
         composed: true,
       }),

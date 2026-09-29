@@ -34,8 +34,8 @@ const direction = computed(() => templateData.value.direction || 'column');
       :labelField="templateData.labelField"
       :valueField="templateData.valueField"
       :direction.prop="direction"
-      @change="handleChange"
-      @blur="onBlur"
+      @gui-input="handleChange"
+      @gui-blur="onBlur"
     ></gui-radiogroup>
   </div>
 </template>

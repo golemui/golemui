@@ -20,13 +20,13 @@ export function Calendar(widgetInstance: WithWidget) {
         onBlur();
       };
       if (node) {
-        target.addEventListener('blur', blurHandler);
-        target.addEventListener('change', changeHandler);
+        target.addEventListener('gui-blur', blurHandler);
+        target.addEventListener('gui-input', changeHandler);
       }
 
       return () => {
-        target.removeEventListener('blur', blurHandler);
-        target.removeEventListener('change', changeHandler);
+        target.removeEventListener('gui-blur', blurHandler);
+        target.removeEventListener('gui-input', changeHandler);
       };
     },
     [onValueChanged, onBlur],

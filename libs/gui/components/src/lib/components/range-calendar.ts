@@ -1,4 +1,4 @@
-import { html, LitElement, nothing, type PropertyValues, type TemplateResult } from 'lit';
+import { html, nothing, type PropertyValues, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
@@ -56,6 +56,8 @@ import {
   formatEditMessage,
 } from '../utils/messages';
 import type { DateRange } from '../types';
+import { GuiElement } from '../gui-element';
+import { dispatchValue } from '../utils/events';
 
 export interface RangeCalendarDay {
   date: Date;
@@ -77,8 +79,7 @@ export interface RangeCalendarDay {
   isEditMuted: boolean;
 }
 
-export class GuiRangeCalendar extends LitElement {
-  @property({ type: String }) uid: string | undefined = undefined;
+export class GuiRangeCalendar extends GuiElement {
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String }) hint: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
@@ -195,7 +196,7 @@ export class GuiRangeCalendar extends LitElement {
   protected ariaController: GUIAriaController<unknown, any> = new GUIAriaController(this, {
     getTargets: () => this.querySelectorAll(`.gui-calendar-input`),
     getState: () => ({
-      uid: this.uid as string,
+      uid: this.uid,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -221,7 +222,7 @@ export class GuiRangeCalendar extends LitElement {
   private _focusLeave = new GUIFocusLeaveController(this, {
     onLeave: () => {
       this.settleEditOnLeave();
-      this.dispatchEvent(new CustomEvent('blur', { bubbles: true, composed: true }));
+      this.dispatchEvent(new CustomEvent('gui-blur', { bubbles: true, composed: true }));
     },
   });
 
@@ -256,7 +257,7 @@ export class GuiRangeCalendar extends LitElement {
    */
   protected emitWorkingChange(): void {
     this.dispatchEvent(
-      new CustomEvent('partsChange', {
+      new CustomEvent('gui-parts-change', {
         detail: {
           anchor: this.anchorISO() ?? null,
           start: this._workingStart ?? null,
@@ -624,7 +625,7 @@ export class GuiRangeCalendar extends LitElement {
     ) {
       this._invalidRange = { start: commit.start, end: commit.end };
       this.dispatchEvent(
-        new CustomEvent('inputError', {
+        new CustomEvent('gui-input-error', {
           detail: {
             message: this.disabledDateRangeMessage ?? DISABLED_DATE_RANGE_MESSAGE,
             range: { start: toISODateString(commit.start), end: toISODateString(commit.end) },
@@ -655,13 +656,7 @@ export class GuiRangeCalendar extends LitElement {
     this._skipValueNavigation = true;
     this.value = mergeDateRanges([...base, createDateRange(start, end)]);
 
-    this.dispatchEvent(
-      new CustomEvent('change', {
-        detail: { value: this.value },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatchValue(this, this.value);
     return this.value;
   }
 
@@ -709,13 +704,13 @@ export class GuiRangeCalendar extends LitElement {
         .editLabel=${this.editLabel ?? EDIT_RANGE_LABEL}
         .confirmEditLabel=${this.confirmEditLabel ?? CONFIRM_EDIT_RANGE_LABEL}
         .cancelEditLabel=${this.cancelEditLabel ?? CANCEL_EDIT_RANGE_LABEL}
-        @pillremove=${this.onPillRemoveEvent}
-        @pillclick=${this.onPillClickEvent}
-        @pillfocus=${this.onPillFocusEvent}
-        @pillsblur=${this.onPillsBlurEvent}
-        @pilledit=${this.onPillEditEvent}
-        @pilleditconfirm=${this.onPillEditConfirm}
-        @pilleditcancel=${this.onPillEditCancel}
+        @gui-pill-remove=${this.onPillRemoveEvent}
+        @gui-pill-click=${this.onPillClickEvent}
+        @gui-pill-focus=${this.onPillFocusEvent}
+        @gui-pills-blur=${this.onPillsBlurEvent}
+        @gui-pill-edit=${this.onPillEditEvent}
+        @gui-pill-edit-confirm=${this.onPillEditConfirm}
+        @gui-pill-edit-cancel=${this.onPillEditCancel}
       ></gui-pills>
     `;
   }
@@ -824,13 +819,7 @@ export class GuiRangeCalendar extends LitElement {
     const removal = removeRangeByKey(this.value, e.detail.key);
     if (!removal) return;
     this.value = removal.next;
-    this.dispatchEvent(
-      new CustomEvent('change', {
-        detail: { value: this.value },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatchValue(this, this.value);
   };
 
   private onPillClickEvent = (e: CustomEvent<GuiPillEventDetail>) => {

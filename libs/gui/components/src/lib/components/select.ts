@@ -1,4 +1,4 @@
-import { html, LitElement, nothing } from 'lit';
+import { html, nothing } from 'lit';
 import { repeat } from 'lit/directives/repeat.js';
 import { property } from 'lit/decorators.js';
 import { live } from 'lit/directives/live.js';
@@ -9,6 +9,8 @@ import { addErrors, addIcon, addLabel, type ControlTemplateData } from '../utils
 import { inferOptionValue, updateOptions } from './one-of';
 import { CARET_DOWN_PATH } from '../utils/icons';
 import type { Option, OptionValue } from '../types';
+import { GuiElement } from '../gui-element';
+import { dispatchValue } from '../utils/events';
 
 /** What <gui-select> renders besides the control state: its presentation props. */
 export type GuiSelectProps = {
@@ -21,12 +23,11 @@ export type GuiSelectProps = {
   valueField?: string;
 };
 
-export class GuiSelect extends LitElement {
-  @property({ type: String }) uid: string | undefined = undefined;
+export class GuiSelect extends GuiElement {
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
   @property({ type: Array }) errors: string[] | undefined = [];
-  @property({ type: Boolean }) touched: boolean | undefined = false;
+  @property({ type: Boolean }) touched: boolean | undefined = undefined;
   @property({ type: Boolean }) required: boolean | undefined = false;
   @property({ type: Boolean }) disabled: boolean | undefined = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
@@ -49,7 +50,7 @@ export class GuiSelect extends LitElement {
   private ariaController = new GUIAriaController(this, {
     getTargets: () => this.querySelectorAll(`select[id="${this.uid}"]`),
     getState: () => ({
-      uid: this.uid as string,
+      uid: this.uid,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -123,11 +124,11 @@ export class GuiSelect extends LitElement {
         `;
 
     return html`
-      ${addLabel(this.uid as string, templateData)}
+      ${addLabel(this.uid, templateData)}
 
       <div class="gui-widget">
         <select
-          id=${this.uid as string}
+          id=${this.uid}
           data-cy=${`${this.uid}_select`}
           class=${classMap({ 'gui-widget-input': true, ...selectIcon.widgetClasses })}
           ?required=${templateData.required}
@@ -151,7 +152,7 @@ export class GuiSelect extends LitElement {
         ${selectIcon.html}
       </div>
 
-      ${addErrors(this.uid as string, templateData)}
+      ${addErrors(this.uid, templateData)}
     `;
   }
 
@@ -159,7 +160,7 @@ export class GuiSelect extends LitElement {
     if (changedProperties.has('value')) {
       if (!this.hasMatchingValue && this.value) {
         this.dispatchEvent(
-          new CustomEvent('inputError', {
+          new CustomEvent('gui-input-error', {
             detail: {
               message: (
                 this.invalidOptionMessage ?? `Invalid selection: '{value}' is not a valid option.`
@@ -177,19 +178,13 @@ export class GuiSelect extends LitElement {
 
     if (!this.readOnly) {
       const target = event.target as HTMLInputElement;
-      this.dispatchEvent(
-        new CustomEvent('change', {
-          detail: { value: inferOptionValue(target.value, this.options) },
-          bubbles: true,
-          composed: true,
-        }),
-      );
+      dispatchValue(this, inferOptionValue(target.value, this.options));
     }
   }
 
   onBlur() {
     this.dispatchEvent(
-      new CustomEvent('blur', {
+      new CustomEvent('gui-blur', {
         bubbles: true,
         composed: true,
       }),

@@ -58,7 +58,7 @@ export class RangeTimePickerElement extends LitElement implements WithWidget {
         .label=${templateData.label}
         .hint=${templateData.hint}
         .errors=${templateData.errors}
-        ?touched=${templateData.touched}
+        .touched=${templateData.touched}
         ?required=${templateData.validator?.required}
         ?disabled=${templateData.disabled}
         ?readonly=${templateData.readonly}
@@ -97,9 +97,9 @@ export class RangeTimePickerElement extends LitElement implements WithWidget {
         .editStartedMessage=${templateData.editStartedMessage as string}
         .editCommittedMessage=${templateData.editCommittedMessage as string}
         .editCancelledMessage=${templateData.editCancelledMessage as string}
-        @inputError=${this.onInputError}
-        @blur=${() => this.adapter.onBlur()}
-        @change=${this.valueChanged}
+        @gui-input-error=${this.onInputError}
+        @gui-blur=${() => this.adapter.onBlur()}
+        @gui-input=${this.valueChanged}
       ></gui-range-time-picker>
     `;
   }

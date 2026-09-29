@@ -80,14 +80,14 @@ export function MultiList(widgetInstance: WithWidget) {
     };
 
     // Binding
-    element.addEventListener('change', handleChange);
+    element.addEventListener('gui-item-toggle', handleChange);
     element.addEventListener('gui-update-items', handleUpdateItems);
     element.addEventListener('gui-range-change', handleRangeChange);
     element.addEventListener('gui-focus-change', handleFocusChange);
 
     return () => {
       // Cleanup
-      element.removeEventListener('change', handleChange);
+      element.removeEventListener('gui-item-toggle', handleChange);
       element.removeEventListener('gui-update-items', handleUpdateItems);
       element.removeEventListener('gui-range-change', handleRangeChange);
       element.removeEventListener('gui-focus-change', handleFocusChange);

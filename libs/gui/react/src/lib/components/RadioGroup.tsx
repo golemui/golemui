@@ -43,8 +43,8 @@ export function RadioGroup(widgetInstance: WithWidget) {
         labelField={labelField}
         valueField={valueField}
         direction={direction}
-        onChange={handleChange}
-        onBlur={onBlur}
+        onGuiInput={handleChange}
+        onGuiBlur={onBlur}
       ></GuiRadiogroupReact>
     </div>
   );

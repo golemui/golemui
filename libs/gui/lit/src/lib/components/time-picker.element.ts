@@ -58,7 +58,7 @@ export class TimePickerElement extends LitElement implements WithWidget {
         .label=${templateData.label}
         .hint=${templateData.hint}
         .errors=${templateData.errors}
-        ?touched=${templateData.touched}
+        .touched=${templateData.touched}
         ?required=${templateData.validator?.required}
         ?disabled=${templateData.disabled}
         ?readonly=${templateData.readonly}
@@ -82,9 +82,9 @@ export class TimePickerElement extends LitElement implements WithWidget {
         .disabledRangeMessage=${templateData.disabledRangeMessage as string}
         .noAvailableTimesMessage=${templateData.noAvailableTimesMessage as string}
         .incompleteMessage=${templateData.incompleteMessage as string}
-        @inputError=${this.onInputError}
-        @blur=${() => this.adapter.onBlur()}
-        @change=${this.valueChanged}
+        @gui-input-error=${this.onInputError}
+        @gui-blur=${() => this.adapter.onBlur()}
+        @gui-input=${this.valueChanged}
       ></gui-time-picker>
     `;
   }

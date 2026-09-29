@@ -1,4 +1,4 @@
-import { html, LitElement, nothing } from 'lit';
+import { html, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
 import { live } from 'lit/directives/live.js';
 import { cspStyleMap } from '@golemui/lit-utils';
@@ -6,6 +6,8 @@ import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
+import { GuiElement } from '../gui-element';
+import { dispatchChange, dispatchValue } from '../utils/events';
 
 /** What <gui-textarea> renders besides the control state: its presentation props. */
 export type GuiTextareaProps = {
@@ -18,12 +20,11 @@ export type GuiTextareaProps = {
   maxLength?: number;
 };
 
-export class GuiTextarea extends LitElement {
-  @property({ type: String }) uid: string | undefined = undefined;
+export class GuiTextarea extends GuiElement {
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
   @property({ type: Array }) errors: string[] | undefined = [];
-  @property({ type: Boolean }) touched: boolean | undefined = false;
+  @property({ type: Boolean }) touched: boolean | undefined = undefined;
   @property({ type: Boolean }) required: boolean | undefined = false;
   @property({ type: Boolean }) disabled: boolean | undefined = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
@@ -44,7 +45,7 @@ export class GuiTextarea extends LitElement {
   private ariaController = new GUIAriaController(this, {
     getTargets: () => this.querySelectorAll(`textarea[id="${this.uid}"]`),
     getState: () => ({
-      uid: this.uid as string,
+      uid: this.uid,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -125,7 +126,7 @@ export class GuiTextarea extends LitElement {
     }
 
     return html`
-      ${addLabel(this.uid as string, templateData)}
+      ${addLabel(this.uid, templateData)}
 
       <div class="gui-widget">
         <textarea
@@ -140,12 +141,13 @@ export class GuiTextarea extends LitElement {
           autocomplete=${this.autocomplete || nothing}
           .value=${live(this.value ?? '')}
           @input=${this.valueChanged}
+          @change=${this.valueCommitted}
           @blur=${this.onBlur}
         ></textarea>
       </div>
 
       <div class="gui-textarea--validation">
-        <div>${addErrors(this.uid as string, templateData)}</div>
+        <div>${addErrors(this.uid, templateData)}</div>
         ${counter}
       </div>
     `;
@@ -156,19 +158,18 @@ export class GuiTextarea extends LitElement {
 
     if (!this.readOnly) {
       const target = event.target as HTMLInputElement;
-      this.dispatchEvent(
-        new CustomEvent('input', {
-          detail: { value: target.value },
-          bubbles: true,
-          composed: true,
-        }),
-      );
+      dispatchValue(this, target.value, { commit: false });
     }
+  }
+
+  /** The native `change`: the user committed the edit (blur or Enter). */
+  valueCommitted(event: Event) {
+    dispatchChange(this, (event.target as HTMLInputElement).value);
   }
 
   onBlur() {
     this.dispatchEvent(
-      new CustomEvent('blur', {
+      new CustomEvent('gui-blur', {
         bubbles: true,
         composed: true,
       }),

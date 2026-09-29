@@ -51,8 +51,8 @@ export function Currency(widgetInstance: WithWidget) {
         autocomplete={autocomplete ?? undefined}
         placeholder={placeholder ?? undefined}
         localeId={lang}
-        onInput={handleChange}
-        onBlur={onBlur}
+        onGuiInput={handleChange}
+        onGuiBlur={onBlur}
       ></GuiCurrencyReact>
     </div>
   );

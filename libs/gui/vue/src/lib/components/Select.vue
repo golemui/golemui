@@ -32,13 +32,13 @@ const errorHandler = (e: Event) => {
 };
 
 watch(selectRef, (el) => {
-  if (currentEl) currentEl.removeEventListener('inputError', errorHandler);
+  if (currentEl) currentEl.removeEventListener('gui-input-error', errorHandler);
   currentEl = el;
-  if (el) el.addEventListener('inputError', errorHandler);
+  if (el) el.addEventListener('gui-input-error', errorHandler);
 });
 
 onUnmounted(() => {
-  currentEl?.removeEventListener('inputError', errorHandler);
+  currentEl?.removeEventListener('gui-input-error', errorHandler);
 });
 </script>
 
@@ -62,8 +62,8 @@ onUnmounted(() => {
       :labelField="templateData.labelField"
       :valueField="templateData.valueField"
       :invalidOptionMessage="templateData.invalidOptionMessage"
-      @change="handleChange"
-      @blur="onBlur"
+      @gui-input="handleChange"
+      @gui-blur="onBlur"
     ></gui-select>
   </div>
 </template>

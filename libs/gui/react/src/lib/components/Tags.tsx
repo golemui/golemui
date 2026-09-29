@@ -49,8 +49,8 @@ export function Tags(widgetInstance: WithWidget) {
         trim={trim}
         removeAriaLabel={removeAriaLabel}
         removeIcon={removeIcon}
-        onChange={handleChange}
-        onBlur={onBlur}
+        onGuiInput={handleChange}
+        onGuiBlur={onBlur}
       ></GuiTagsReact>
     </div>
   );

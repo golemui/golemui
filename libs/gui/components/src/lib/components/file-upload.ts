@@ -1,4 +1,4 @@
-import { html, LitElement, nothing, type PropertyValues, type TemplateResult } from 'lit';
+import { html, nothing, type PropertyValues, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { cspStyleMap } from '@golemui/lit-utils';
@@ -24,6 +24,8 @@ import {
   formatFileMessage,
 } from '../utils/messages';
 import type { FileItem, UploadService } from '../types';
+import { GuiElement } from '../gui-element';
+import { dispatchValue } from '../utils/events';
 
 /** What <gui-file-upload> renders besides the control state: its presentation props. */
 export type GuiFileUploadProps = {
@@ -35,20 +37,19 @@ export type GuiFileUploadProps = {
  *
  * A restored item with status `uploading` cannot resume: its `File` is gone.
  * The widget only renders it as failed with `interruptedMessage`. The value
- * is left as is and no `change` fires, so the host never sees an untouched
+ * is left as is and no `gui-change` fires, so the host never sees an untouched
  * form as edited. The value changes when the user removes the item.
  *
  * Server file cleanup belongs to the host; `uploadService.remove` is only a
  * courtesy on explicit user removals and single-file replacement. See the
  * `UploadService` doc in `../types.ts`.
  */
-export class GuiFileUpload extends LitElement {
-  @property({ type: String }) uid: string | undefined = undefined;
+export class GuiFileUpload extends GuiElement {
   /** The form data path, forwarded to `uploadService.upload` as `ctx.path`. */
   @property({ type: String }) path: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: Array }) errors: string[] | undefined = [];
-  @property({ type: Boolean }) touched: boolean | undefined = false;
+  @property({ type: Boolean }) touched: boolean | undefined = undefined;
   @property({ type: Boolean }) required: boolean | undefined = false;
   @property({ type: Boolean }) disabled: boolean | undefined = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
@@ -106,7 +107,7 @@ export class GuiFileUpload extends LitElement {
   private ariaController = new GUIAriaController(this, {
     getTargets: () => this.querySelector('.gui-file-upload__box') as HTMLElement | null,
     getState: () => ({
-      uid: this.uid as string,
+      uid: this.uid,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -151,13 +152,7 @@ export class GuiFileUpload extends LitElement {
   }
 
   protected emitChange(value: unknown) {
-    this.dispatchEvent(
-      new CustomEvent('change', {
-        detail: { value },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatchValue(this, value);
   }
 
   /**
@@ -233,7 +228,7 @@ export class GuiFileUpload extends LitElement {
     if (message === this._lastInputError) return;
     this._lastInputError = message;
     this.dispatchEvent(
-      new CustomEvent('inputError', { detail: { message }, bubbles: true, composed: true }),
+      new CustomEvent('gui-input-error', { detail: { message }, bubbles: true, composed: true }),
     );
   }
 
@@ -481,7 +476,7 @@ export class GuiFileUpload extends LitElement {
   private onFocusOut = (e: FocusEvent) => {
     const next = e.relatedTarget as Node | null;
     if (next && this.contains(next)) return;
-    this.dispatchEvent(new CustomEvent('blur', { bubbles: true, composed: true }));
+    this.dispatchEvent(new CustomEvent('gui-blur', { bubbles: true, composed: true }));
   };
 
   // ─── Rendering ───────────────────────────────────────────────────────────
@@ -491,7 +486,7 @@ export class GuiFileUpload extends LitElement {
     if (!this.getService() && !this._serviceErrorLogged) {
       this._serviceErrorLogged = true;
       console.error(
-        `[gui-file-upload] widget "${this.uid ?? ''}" has no uploadService. Provide one through the form's dependencies: { uploadService: { upload, remove? } }.`,
+        `[gui-file-upload] widget "${this.uid}" has no uploadService. Provide one through the form's dependencies: { uploadService: { upload, remove? } }.`,
       );
     }
   }
@@ -538,7 +533,7 @@ export class GuiFileUpload extends LitElement {
     };
 
     return html`
-      ${this.label ? addLabel(this.uid as string, templateData, false, undefined, false) : nothing}
+      ${this.label ? addLabel(this.uid, templateData, false, undefined, false) : nothing}
 
       <div class="gui-widget">
         <div
@@ -581,7 +576,7 @@ export class GuiFileUpload extends LitElement {
           <input
             type="file"
             class="gui-visually-hidden gui-file-upload__input"
-            id=${this.uid ?? nothing}
+            id=${this.uid}
             data-cy=${`${this.uid}_file-input`}
             tabindex="-1"
             ?multiple=${this.isMultiple()}
@@ -601,7 +596,7 @@ export class GuiFileUpload extends LitElement {
         ${this._announcement}
       </div>
 
-      ${addErrors(this.uid as string, templateData)}
+      ${addErrors(this.uid, templateData)}
     `;
   }
 

@@ -1,10 +1,12 @@
-import { html, LitElement, nothing, type PropertyValues } from 'lit';
+import { html, nothing, type PropertyValues } from 'lit';
 import { property, query, state } from 'lit/decorators.js';
 import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addIcon, addLabel, type ControlTemplateData } from '../utils/templates';
 import { blockNonNumericInput, blockNonNumericKeys, isRealNumber } from '../utils/numeric';
+import { GuiElement } from '../gui-element';
+import { dispatchChange, dispatchValue } from '../utils/events';
 
 /** What <gui-currency> renders besides the control state: its presentation props. */
 export type GuiCurrencyProps = {
@@ -17,12 +19,11 @@ export type GuiCurrencyProps = {
   autocomplete?: string;
 };
 
-export class GuiCurrency extends LitElement {
-  @property({ type: String }) uid: string | undefined = undefined;
+export class GuiCurrency extends GuiElement {
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
   @property({ type: Array }) errors: string[] | undefined = [];
-  @property({ type: Boolean }) touched: boolean | undefined = false;
+  @property({ type: Boolean }) touched: boolean | undefined = undefined;
   @property({ type: Boolean }) required: boolean | undefined = false;
   @property({ type: Boolean }) disabled: boolean | undefined = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
@@ -44,7 +45,7 @@ export class GuiCurrency extends LitElement {
   private ariaController = new GUIAriaController(this, {
     getTargets: () => this.querySelectorAll(`input[id="${this.uid}"]`),
     getState: () => ({
-      uid: this.uid as string,
+      uid: this.uid,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -151,7 +152,7 @@ export class GuiCurrency extends LitElement {
     };
 
     return html`
-      ${addLabel(this.uid as string, templateData)}
+      ${addLabel(this.uid, templateData)}
 
       <div class="gui-widget">
         <input
@@ -167,6 +168,7 @@ export class GuiCurrency extends LitElement {
           placeholder=${this.placeholder || nothing}
           autocomplete=${this.autocomplete || nothing}
           @input=${this.handleInput}
+          @change=${this.handleChange}
           @beforeinput=${blockNonNumericInput}
           @keydown=${blockNonNumericKeys}
           @focus=${this.handleFocus}
@@ -184,7 +186,7 @@ export class GuiCurrency extends LitElement {
         ${currencyIcon.html}
       </div>
 
-      ${addErrors(this.uid as string, templateData)}
+      ${addErrors(this.uid, templateData)}
     `;
   }
 
@@ -196,14 +198,14 @@ export class GuiCurrency extends LitElement {
       this.displayValue = this.formatCurrency(target.valueAsNumber);
 
       const value = target.valueAsNumber;
-      this.dispatchEvent(
-        new CustomEvent('input', {
-          detail: { value: Number.isNaN(value) ? undefined : value },
-          bubbles: true,
-          composed: true,
-        }),
-      );
+      dispatchValue(this, Number.isNaN(value) ? undefined : value, { commit: false });
     }
+  }
+
+  /** The native `change`: the user committed the typed amount (blur or Enter). */
+  private handleChange(event: Event) {
+    const value = (event.target as HTMLInputElement).valueAsNumber;
+    dispatchChange(this, Number.isNaN(value) ? undefined : value);
   }
 
   private handleFocus() {
@@ -217,7 +219,7 @@ export class GuiCurrency extends LitElement {
     this.displayValue = this.formatCurrency(this.value);
 
     this.dispatchEvent(
-      new CustomEvent('blur', {
+      new CustomEvent('gui-blur', {
         bubbles: true,
         composed: true,
       }),

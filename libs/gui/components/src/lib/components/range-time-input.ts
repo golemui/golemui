@@ -1,4 +1,4 @@
-import { html, LitElement, nothing, type PropertyValues } from 'lit';
+import { html, nothing, type PropertyValues } from 'lit';
 import { property } from 'lit/decorators.js';
 import { cspStyleMap } from '@golemui/lit-utils';
 import { safeDefine } from '@golemui/lit-utils';
@@ -51,19 +51,20 @@ import {
   INVALID_TIME_RANGE_ORDER_MESSAGE,
 } from '../utils/messages';
 import type { TimeRange } from '../types';
+import { GuiElement } from '../gui-element';
+import { dispatchValue } from '../utils/events';
 
 /** What <gui-range-time-input> renders besides the control state: its presentation props. */
 export type GuiRangeTimeInputProps = {
   hint?: string;
 };
 
-export class GuiRangeTimeInput extends LitElement {
-  @property({ type: String }) uid: string | undefined = undefined;
+export class GuiRangeTimeInput extends GuiElement {
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
   @property({ type: Array }) errors: string[] | undefined = [];
   @property({ type: Boolean }) showErrors: boolean | undefined = true;
-  @property({ type: Boolean }) touched: boolean | undefined = false;
+  @property({ type: Boolean }) touched: boolean | undefined = undefined;
   @property({ type: Boolean }) required: boolean | undefined = false;
   @property({ type: Boolean }) disabled: boolean | undefined = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
@@ -155,15 +156,10 @@ export class GuiRangeTimeInput extends LitElement {
       }
     },
     onInputErrorSurfaced: (message) =>
-      this.dispatchEvent(new CustomEvent('inputError', { detail: { message }, bubbles: true })),
-    onSurfacedErrorCleared: (value) =>
       this.dispatchEvent(
-        new CustomEvent('change', {
-          detail: { value, commit: false },
-          bubbles: true,
-          composed: true,
-        }),
+        new CustomEvent('gui-input-error', { detail: { message }, bubbles: true }),
       ),
+    onSurfacedErrorCleared: (value) => dispatchValue(this, value, { commit: false }),
     isReadonly: () => !!this.readOnly || this.allowCustomTime === false,
     isDisabled: () => !!this.disabled,
     onEmptyPartBlur: () => {
@@ -233,14 +229,14 @@ export class GuiRangeTimeInput extends LitElement {
       // Embedded in a picker: that host owns focus reporting for the subtree.
       if (this.deferFocusLeave) return;
       this.finalizeOnLeave();
-      this.dispatchEvent(new CustomEvent('blur'));
+      this.dispatchEvent(new CustomEvent('gui-blur'));
     },
   });
 
   protected ariaController: GUIAriaController<unknown, any> = new GUIAriaController(this, {
     getTargets: () => this.querySelectorAll(`.${this.inputBlockClass}`),
     getState: () => ({
-      uid: this.uid as string,
+      uid: this.uid,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -321,7 +317,7 @@ export class GuiRangeTimeInput extends LitElement {
     };
 
     return html`
-      ${this.label ? addLabel(this.uid as string, templateData, false, undefined, false) : nothing}
+      ${this.label ? addLabel(this.uid, templateData, false, undefined, false) : nothing}
 
       <div
         class="gui-widget"
@@ -365,15 +361,15 @@ export class GuiRangeTimeInput extends LitElement {
             .editLabel=${this.editLabel ?? EDIT_RANGE_LABEL}
             .confirmEditLabel=${this.confirmEditLabel ?? CONFIRM_EDIT_RANGE_LABEL}
             .cancelEditLabel=${this.cancelEditLabel ?? CANCEL_EDIT_RANGE_LABEL}
-            @pillremove=${this.onPillRemoveEvent}
-            @pillclick=${this.onPillClickEvent}
-            @pillfocus=${this.onPillFocusEvent}
-            @pillsblur=${this.onPillsBlurEvent}
-            @pilledit=${this.onPillEditEvent}
-            @pilleditconfirm=${this.onPillEditConfirm}
-            @pilleditcancel=${this.onPillEditCancel}
-            @pillkeydown=${this._pillsNav.onPillKeydown}
-            @pillexit=${this._pillsNav.onPillExit}
+            @gui-pill-remove=${this.onPillRemoveEvent}
+            @gui-pill-click=${this.onPillClickEvent}
+            @gui-pill-focus=${this.onPillFocusEvent}
+            @gui-pills-blur=${this.onPillsBlurEvent}
+            @gui-pill-edit=${this.onPillEditEvent}
+            @gui-pill-edit-confirm=${this.onPillEditConfirm}
+            @gui-pill-edit-cancel=${this.onPillEditCancel}
+            @gui-pill-keydown=${this._pillsNav.onPillKeydown}
+            @gui-pill-exit=${this._pillsNav.onPillExit}
           ></gui-pills>
 
           <div class="gui-range-time-input__inputs">
@@ -404,9 +400,7 @@ export class GuiRangeTimeInput extends LitElement {
           : nothing}
       </div>
 
-      ${this.showErrors && this.errors?.length
-        ? addErrors(this.uid as string, templateData)
-        : nothing}
+      ${this.showErrors && this.errors?.length ? addErrors(this.uid, templateData) : nothing}
     `;
   }
 
@@ -446,7 +440,7 @@ export class GuiRangeTimeInput extends LitElement {
 
   private emitEditState() {
     this.dispatchEvent(
-      new CustomEvent('editStateChange', {
+      new CustomEvent('gui-edit-state-change', {
         detail: { selected: this._edit.selectedRange, editing: !!this._edit.editing },
       }),
     );
@@ -506,9 +500,7 @@ export class GuiRangeTimeInput extends LitElement {
     const removal = removeRangeByKey(this.value, e.detail.key);
     if (!removal) return;
     this.value = removal.next;
-    this.dispatchEvent(
-      new CustomEvent('change', { detail: { value: this.value }, bubbles: true, composed: true }),
-    );
+    dispatchValue(this, this.value);
 
     if (removal.next.length === 0) {
       // Strip is gone; return focus to the segments.
@@ -566,7 +558,7 @@ export class GuiRangeTimeInput extends LitElement {
 
   private onPillClick(range: TimeRange) {
     this.dispatchEvent(
-      new CustomEvent('pillClick', { detail: { range }, bubbles: true, composed: true }),
+      new CustomEvent('gui-range-click', { detail: { range }, bubbles: true, composed: true }),
     );
   }
 
@@ -580,7 +572,7 @@ export class GuiRangeTimeInput extends LitElement {
 
   /**
    * Parses a group's parts into an ISO time via the shared clamp/bounds
-   * pipeline, surfacing a bounds violation as an inputError. Returns null while
+   * pipeline, surfacing a bounds violation as a `gui-input-error`. Returns null while
    * the group is incomplete or out of bounds.
    */
   private validateTimeParts(group: string): RangeEndpoint<string> {
@@ -627,7 +619,7 @@ export class GuiRangeTimeInput extends LitElement {
 
   /**
    * Re-parses both endpoints (surfacing per-endpoint bounds errors as the user
-   * types) and notifies the host picker via `partsChange` so its time lists
+   * types) and notifies the host picker via `gui-parts-change` so its time lists
    * follow the typed values. Runs on every part change.
    */
   private syncParts(): { start: RangeEndpoint<string>; end: RangeEndpoint<string> } {
@@ -641,7 +633,7 @@ export class GuiRangeTimeInput extends LitElement {
     if (this._edit.editing) this.requestUpdate();
 
     this.dispatchEvent(
-      new CustomEvent('partsChange', {
+      new CustomEvent('gui-parts-change', {
         detail: { start: iso(start), end: iso(end) },
         bubbles: true,
         composed: true,
@@ -776,9 +768,7 @@ export class GuiRangeTimeInput extends LitElement {
 
     // The commit's own change clears any injected error downstream.
     this._parts.resetSurfacedInputError();
-    this.dispatchEvent(
-      new CustomEvent('change', { detail: { value: this.value }, bubbles: true, composed: true }),
-    );
+    dispatchValue(this, this.value);
 
     if (wasEditing) {
       // Selection and focus move to the committed (possibly merged) pill.

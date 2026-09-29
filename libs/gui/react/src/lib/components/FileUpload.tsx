@@ -66,9 +66,9 @@ export function FileUpload(widgetInstance: WithWidget) {
         uploadedMessage={templateData.uploadedMessage as string | undefined}
         removedMessage={templateData.removedMessage as string | undefined}
         failedMessage={templateData.failedMessage as string | undefined}
-        onChange={handleChange}
-        onBlur={onBlur}
-        onInputError={handleInputError}
+        onGuiInput={handleChange}
+        onGuiBlur={onBlur}
+        onGuiInputError={handleInputError}
       ></GuiFileUploadReact>
     </div>
   );

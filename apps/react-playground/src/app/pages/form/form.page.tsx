@@ -123,8 +123,8 @@ export function FormPage() {
   );
 }
 
-function onLanguageChanged(event: React.ChangeEvent<HTMLSelectElement>) {
-  const code = (event.nativeEvent as CustomEvent<{ value: string }>).detail.value;
+function onLanguageChanged(event: Event) {
+  const code = (event as CustomEvent<{ value: string }>).detail.value;
   i18next.changeLanguage(code);
 }
 
@@ -136,7 +136,7 @@ function LanguagePicker() {
         uid="language"
         value="en"
         options={languages}
-        onChange={onLanguageChanged}
+        ongui-change={onLanguageChanged}
       ></gui-select>
     </div>
   );

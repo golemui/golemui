@@ -1,4 +1,4 @@
-import { html, LitElement, nothing } from 'lit';
+import { html, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
 import { cspStyleMap } from '@golemui/lit-utils';
 import { safeDefine } from '@golemui/lit-utils';
@@ -8,6 +8,8 @@ import { GUIPillsNavigationController } from '../controllers/pills-navigation.co
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 import './pills';
 import type { GuiPillEventDetail, GuiPillItem } from './pills';
+import { GuiElement } from '../gui-element';
+import { dispatchValue } from '../utils/events';
 
 type TagsSeparator = 'Enter' | ',' | 'Tab' | 'blur' | string;
 
@@ -20,12 +22,11 @@ export type GuiTagsProps = {
   icon?: string;
 };
 
-export class GuiTags extends LitElement {
-  @property({ type: String }) uid: string | undefined = undefined;
+export class GuiTags extends GuiElement {
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
   @property({ type: Array }) errors: string[] | undefined = [];
-  @property({ type: Boolean }) touched: boolean | undefined = false;
+  @property({ type: Boolean }) touched: boolean | undefined = undefined;
   @property({ type: Boolean }) required: boolean | undefined = false;
   @property({ type: Boolean }) disabled: boolean | undefined = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
@@ -44,7 +45,7 @@ export class GuiTags extends LitElement {
   private ariaController = new GUIAriaController(this, {
     getTargets: () => this.querySelectorAll(`.gui-tags-input`),
     getState: () => ({
-      uid: this.uid as string,
+      uid: this.uid,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -114,7 +115,7 @@ export class GuiTags extends LitElement {
     }));
 
     return html`
-      ${this.label ? addLabel(this.uid as string, templateData, false, undefined, false) : nothing}
+      ${this.label ? addLabel(this.uid, templateData, false, undefined, false) : nothing}
 
       <div class="gui-widget">
         <div
@@ -151,9 +152,9 @@ export class GuiTags extends LitElement {
             .removeAriaLabel=${this.getRemoveAriaLabel()}
             .removeIcon=${this.removeIcon}
             .compactAriaLabel=${`${tags.length} tags`}
-            @pillremove=${this.onPillRemove}
-            @pillkeydown=${this._pillsNav.onPillKeydown}
-            @pillexit=${this._pillsNav.onPillExit}
+            @gui-pill-remove=${this.onPillRemove}
+            @gui-pill-keydown=${this._pillsNav.onPillKeydown}
+            @gui-pill-exit=${this._pillsNav.onPillExit}
           ></gui-pills>
 
           <input
@@ -172,7 +173,7 @@ export class GuiTags extends LitElement {
         </div>
       </div>
 
-      ${addErrors(this.uid as string, templateData)}
+      ${addErrors(this.uid, templateData)}
     `;
   }
 
@@ -259,7 +260,7 @@ export class GuiTags extends LitElement {
     }
 
     this.dispatchEvent(
-      new CustomEvent('blur', {
+      new CustomEvent('gui-blur', {
         bubbles: true,
         composed: true,
       }),
@@ -319,13 +320,7 @@ export class GuiTags extends LitElement {
 
   private emitChange(next: string[]) {
     this.value = next;
-    this.dispatchEvent(
-      new CustomEvent('change', {
-        detail: { value: next },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatchValue(this, next);
   }
 
   private focusInput() {

@@ -52,8 +52,8 @@ const minimumHeight = computed(() => templateData.value.minimumHeight ?? 120);
       :splitViewTitle="templateData.splitViewTitle"
       :toolbarAriaLabel="templateData.toolbarAriaLabel"
       :dependencies="templateData.deps"
-      @input="handleInput"
-      @blur="onBlur"
+      @gui-input="handleInput"
+      @gui-blur="onBlur"
     ></gui-markdown>
   </div>
 </template>

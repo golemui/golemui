@@ -55,15 +55,15 @@ export class ToggleElement extends LitElement implements WithWidget {
         .uid=${this.widget.uid}
         .label=${this.adapter.templateData.label}
         .errors=${this.adapter.templateData.errors}
-        ?touched=${this.adapter.templateData.touched}
+        .touched=${this.adapter.templateData.touched}
         ?required=${this.adapter.templateData.validator?.required}
         ?disabled=${this.adapter.templateData.disabled}
         ?readonly=${this.adapter.templateData.readonly}
         .value=${this.adapter.templateData.value}
         .hint=${this.adapter.templateData.hint}
         .togglePosition=${this.adapter.templateData.togglePosition}
-        @change=${this.valueChanged}
-        @blur=${() => this.adapter.onBlur()}
+        @gui-input=${this.valueChanged}
+        @gui-blur=${() => this.adapter.onBlur()}
       ></gui-toggle>
     `;
   }

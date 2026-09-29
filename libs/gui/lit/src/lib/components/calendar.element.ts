@@ -56,7 +56,7 @@ export class CalendarElement extends LitElement implements WithWidget {
         .label=${this.adapter.templateData.label}
         .hint=${this.adapter.templateData.hint}
         .errors=${this.adapter.templateData.errors}
-        ?touched=${this.adapter.templateData.touched}
+        .touched=${this.adapter.templateData.touched}
         ?required=${this.adapter.templateData.validator?.required}
         ?disabled=${this.adapter.templateData.disabled}
         ?readonly=${this.adapter.templateData.readonly}
@@ -75,8 +75,8 @@ export class CalendarElement extends LitElement implements WithWidget {
         .disabledRanges=${this.adapter.templateData.disabledRanges}
         .numberOfMonths=${this.adapter.templateData.numberOfMonths}
         .localeId=${this.adapter.templateData.lang}
-        @change=${this.valueChanged}
-        @blur=${() => this.adapter.onBlur()}
+        @gui-input=${this.valueChanged}
+        @gui-blur=${() => this.adapter.onBlur()}
       ></gui-calendar>
     `;
   }

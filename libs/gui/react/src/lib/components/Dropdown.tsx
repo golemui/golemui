@@ -123,13 +123,13 @@ export function Dropdown(widgetInstance: WithWidget) {
     element.addEventListener('gui-range-change', handleRangeChange);
     element.addEventListener('gui-update-items', handleUpdateItems);
     element.addEventListener('gui-focus-change', handleFocusChange);
-    element.addEventListener('change', handleChange);
+    element.addEventListener('gui-input', handleChange);
 
     return () => {
       element.removeEventListener('gui-range-change', handleRangeChange);
       element.removeEventListener('gui-update-items', handleUpdateItems);
       element.removeEventListener('gui-focus-change', handleFocusChange);
-      element.removeEventListener('change', handleChange);
+      element.removeEventListener('gui-input', handleChange);
     };
   }, [handleValueChange, listItems, onValueChanged]);
 

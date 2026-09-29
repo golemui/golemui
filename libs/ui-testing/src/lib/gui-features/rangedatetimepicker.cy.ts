@@ -645,7 +645,7 @@ export const runRangeDateTimePickerComponentTests = (mountFn: MountComponentFn) 
 
         const changeSpy = cy.spy().as('changeSpy');
         cy.get(picker).then(($el) => {
-          $el[0].addEventListener('change', changeSpy as unknown as EventListener);
+          $el[0].addEventListener('gui-input', changeSpy as unknown as EventListener);
         });
 
         // Type 17th 11:00 → 17th 15:00 into the trigger and Enter.
@@ -692,7 +692,7 @@ export const runRangeDateTimePickerComponentTests = (mountFn: MountComponentFn) 
 
         const changeSpy = cy.spy().as('changeSpy');
         cy.get(picker).then(($el) => {
-          $el[0].addEventListener('change', changeSpy as unknown as EventListener);
+          $el[0].addEventListener('gui-input', changeSpy as unknown as EventListener);
         });
 
         // Type a full range whose end (25th) is past the max (20th) and Enter.

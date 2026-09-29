@@ -37,8 +37,8 @@ export function Toggle(widgetInstance: WithWidget) {
         value={value}
         hint={hint}
         togglePosition={togglePosition}
-        onChange={handleChange}
-        onBlur={onBlur}
+        onGuiInput={handleChange}
+        onGuiBlur={onBlur}
       />
     </div>
   );

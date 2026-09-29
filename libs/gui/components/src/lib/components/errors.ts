@@ -1,12 +1,12 @@
-import { html, LitElement } from 'lit';
+import { html } from 'lit';
 import { property } from 'lit/decorators.js';
 import { safeDefine } from '@golemui/lit-utils';
 import { addErrors } from '../utils/templates';
+import { GuiElement } from '../gui-element';
 
-export class GuiErrors extends LitElement {
-  @property({ type: String }) uid: string | undefined = undefined;
+export class GuiErrors extends GuiElement {
   @property({ type: Array }) errors: string[] | undefined = [];
-  @property({ type: Boolean }) touched: boolean | undefined = false;
+  @property({ type: Boolean }) touched: boolean | undefined = undefined;
   @property({ type: Boolean }) panel = false;
 
   override createRenderRoot() {
@@ -17,7 +17,7 @@ export class GuiErrors extends LitElement {
     super.render();
 
     return html`${addErrors(
-      this.uid as string,
+      this.uid,
       {
         touched: this.touched,
         errors: this.errors,

@@ -223,7 +223,7 @@ export const runRangeTimeInputComponentTests = (mountFn: MountComponentFn) => {
 
       const inputErrorSpy = cy.spy().as('inputErrorSpy');
       cy.get('gui-range-time').then(($el) => {
-        $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
+        $el[0].addEventListener('gui-input-error', inputErrorSpy as unknown as EventListener);
       });
 
       // 11:00 → 09:00 is reversed; time ranges error (no swap)
@@ -278,12 +278,12 @@ export const runRangeTimeInputComponentTests = (mountFn: MountComponentFn) => {
       cy.get(sel.pillText).should('have.length', 1);
     });
 
-    it('should emit an inputError for a typed time past maxTime', () => {
+    it('should emit an gui-input-error for a typed time past maxTime', () => {
       mountRangeTimeInput({ props: { maxTime: '17:00:00', maxTimeMessage: 'Too late' } });
 
       const inputErrorSpy = cy.spy().as('inputErrorSpy');
       cy.get('gui-range-time').then(($el) => {
-        $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
+        $el[0].addEventListener('gui-input-error', inputErrorSpy as unknown as EventListener);
       });
 
       cy.get(sel.start.hour).click();

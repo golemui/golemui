@@ -36,7 +36,7 @@
   [disabledTimeRangeMessage]="templateData.disabledTimeRangeMessage"
   [noAvailableTimesMessage]="templateData.noAvailableTimesMessage"
   [incompleteMessage]="templateData.incompleteMessage"
-  (change)="onChangeValue($event)"
-  (inputError)="onInputError($event)"
-  (blur)="adapter.onBlur()"
+  (gui-input)="onChangeValue($event)"
+  (gui-input-error)="onInputError($event)"
+  (gui-blur)="adapter.onBlur()"
 ></gui-date-time-calendar>

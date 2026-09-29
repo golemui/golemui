@@ -1,4 +1,4 @@
-import { html, LitElement, nothing } from 'lit';
+import { html, nothing } from 'lit';
 import { property, query, state } from 'lit/decorators.js';
 import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
@@ -22,9 +22,10 @@ import {
 } from '../utils/messages';
 import { CARET_DOWN_PATH } from '../utils/icons';
 import type { TimeRange } from '../types';
+import { GuiElement } from '../gui-element';
+import { dispatchChange, dispatchValue, stopPropagation } from '../utils/events';
 
-export class GuiRangeTimePicker extends LitElement {
-  @property({ type: String }) uid: string | undefined = undefined;
+export class GuiRangeTimePicker extends GuiElement {
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String }) hint: string | undefined = undefined;
   @property({ type: String }) icon: string | undefined = '';
@@ -35,7 +36,7 @@ export class GuiRangeTimePicker extends LitElement {
   @property({ type: String }) dayPeriodAriaLabel: string | undefined = undefined;
   @property({ type: Array }) errors: string[] | undefined = [];
   @property({ type: Boolean }) showErrors: boolean | undefined = true;
-  @property({ type: Boolean }) touched: boolean | undefined = false;
+  @property({ type: Boolean }) touched: boolean | undefined = undefined;
   @property({ type: Boolean }) required: boolean | undefined = false;
   @property({ type: Boolean }) disabled: boolean | undefined = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
@@ -108,7 +109,7 @@ export class GuiRangeTimePicker extends LitElement {
   @state() private _workingOut: string | undefined = undefined;
   /**
    * Mirror of the embedded input's edit session, fed by its non-bubbling
-   * `editStateChange`: while a session is open, list picks reshape the
+   * `gui-edit-state-change`: while a session is open, list picks reshape the
    * working range but never auto-commit — the session's Confirm owns that.
    */
   @state() private _editing = false;
@@ -145,7 +146,7 @@ export class GuiRangeTimePicker extends LitElement {
     resolveSyncOnRelatedTarget: true,
     onLeave: () => {
       this._inputRef?.finalizeOnLeave();
-      this.dispatchEvent(new CustomEvent('blur'));
+      this.dispatchEvent(new CustomEvent('gui-blur'));
     },
   });
 
@@ -161,12 +162,12 @@ export class GuiRangeTimePicker extends LitElement {
 
   override connectedCallback() {
     super.connectedCallback();
-    this.addEventListener('dropdowntoggle', this.onDropdownToggle);
+    this.addEventListener('gui-dropdown-toggle', this.onDropdownToggle);
   }
 
   override disconnectedCallback() {
     super.disconnectedCallback();
-    this.removeEventListener('dropdowntoggle', this.onDropdownToggle);
+    this.removeEventListener('gui-dropdown-toggle', this.onDropdownToggle);
   }
 
   /**
@@ -213,7 +214,8 @@ export class GuiRangeTimePicker extends LitElement {
                 .itemHeight=${this.itemHeight}
                 .noAvailableTimesMessage=${this.noAvailableTimesMessage}
                 ?readonly=${this.readOnly}
-                @change=${this.onInListChange}
+                @gui-input=${stopPropagation}
+                @gui-change=${this.onInListChange}
               ></gui-time-list>
             </div>
 
@@ -234,13 +236,14 @@ export class GuiRangeTimePicker extends LitElement {
                 .itemHeight=${this.itemHeight}
                 .noAvailableTimesMessage=${this.noAvailableTimesMessage}
                 ?readonly=${this.readOnly}
-                @change=${this.onOutListChange}
+                @gui-input=${stopPropagation}
+                @gui-change=${this.onOutListChange}
               ></gui-time-list>
             </div>
           </div>
           ${this.showErrors
             ? addErrors(
-                this.uid ?? '',
+                this.uid,
                 { errors: this.errors, touched: this.touched },
                 { variant: 'panel' },
               )
@@ -250,7 +253,7 @@ export class GuiRangeTimePicker extends LitElement {
 
     return html`
       ${addLabel(
-        this.uid ?? '',
+        this.uid,
         {
           label: this.label,
           hint: this.hint,
@@ -275,7 +278,7 @@ export class GuiRangeTimePicker extends LitElement {
           .showErrors=${false}
           .deferFocusLeave=${true}
           .errors=${this.errors}
-          ?touched=${this.touched}
+          .touched=${this.touched}
           ?required=${this.required}
           ?disabled=${this.disabled}
           ?readonly=${this.readOnly}
@@ -308,12 +311,13 @@ export class GuiRangeTimePicker extends LitElement {
           .editStartedMessage=${this.editStartedMessage}
           .editCommittedMessage=${this.editCommittedMessage}
           .editCancelledMessage=${this.editCancelledMessage}
-          @blur=${this.onInputBlur}
-          @focus=${this._popup.show}
-          @change=${this.onInputChange}
-          @partsChange=${this.onPartsChange}
-          @pillClick=${this.onPillClick}
-          @editStateChange=${this.onEditStateChange}
+          @gui-blur=${this.onInputBlur}
+          @gui-focus=${this._popup.show}
+          @gui-input=${this.onRangeInput}
+          @gui-change=${this.onRangeChange}
+          @gui-parts-change=${this.onPartsChange}
+          @gui-range-click=${this.onPillClick}
+          @gui-edit-state-change=${this.onEditStateChange}
         ></gui-range-time>
         <button
           type="button"
@@ -339,9 +343,7 @@ export class GuiRangeTimePicker extends LitElement {
         ${panel}
       </div>
 
-      ${this.showErrors
-        ? addErrors(this.uid ?? '', { errors: this.errors, touched: this.touched })
-        : ''}
+      ${this.showErrors ? addErrors(this.uid, { errors: this.errors, touched: this.touched }) : ''}
     `;
   }
 
@@ -355,9 +357,17 @@ export class GuiRangeTimePicker extends LitElement {
     }
   };
 
-  private onInputChange(event: CustomEvent) {
+  private onRangeInput(event: CustomEvent) {
     event.stopPropagation();
-    this.commitValue(event.detail.value, event.detail.commit !== false);
+    this.commitValue(event.detail.value, false);
+  }
+
+  /** The input committed a range (a typed Enter, a list pick or a removed pill). */
+  private onRangeChange(event: CustomEvent) {
+    event.stopPropagation();
+    this._workingIn = undefined;
+    this._workingOut = undefined;
+    dispatchChange(this, this.value ?? null);
   }
 
   /**
@@ -415,7 +425,7 @@ export class GuiRangeTimePicker extends LitElement {
     }
 
     this._popup.close();
-    this.dispatchEvent(new CustomEvent('blur'));
+    this.dispatchEvent(new CustomEvent('gui-blur'));
   }
 
   private _inListRef() {
@@ -433,6 +443,7 @@ export class GuiRangeTimePicker extends LitElement {
    * The single funnel every commit passes through — a list pick, a typed Enter
    * — so the working selection is torn down once: the start list deselects and
    * the end list unfloors, ready for the next range. `committed` is false for
+   * values until the input commits them (see {@link onRangeChange}), and for
    * the input's error-clearing echo, which carries no new pill and must leave
    * a half-entered range alone.
    */
@@ -443,16 +454,10 @@ export class GuiRangeTimePicker extends LitElement {
       this._workingOut = undefined;
     }
     const error = this.validateBounds(this.value);
-    this.dispatchEvent(
-      new CustomEvent('change', {
-        detail: { value: value ?? null },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatchValue(this, value ?? null, { commit: committed });
     if (error) {
       this.dispatchEvent(
-        new CustomEvent('inputError', {
+        new CustomEvent('gui-input-error', {
           detail: { message: error },
           bubbles: true,
           composed: true,

@@ -366,8 +366,8 @@ export class MultiDropdownElement extends LitElement implements WithWidget {
           @keydown=${this._onKeyDown}
           @input=${this._onInput}
           @focusin=${this._onFocusIn}
-          @pillremove=${this._onPillRemove}
-          @dropdowntoggle=${this._onPillsDropdownToggle}
+          @gui-pill-remove=${this._onPillRemove}
+          @gui-dropdown-toggle=${this._onPillsDropdownToggle}
         ></gui-multi-select-trigger>
         <button
           type="button"
@@ -409,14 +409,14 @@ export class MultiDropdownElement extends LitElement implements WithWidget {
             .itemHeight=${templateData.itemHeight}
             .height=${templateData.height}
             ?required=${templateData.validator?.required}
-            ?touched=${templateData.touched}
+            .touched=${templateData.touched}
             ?disabled=${templateData.disabled}
             ?readonly=${templateData.readonly}
             ?hidden=${!this._isListVisible}
             @gui-range-change=${this._onRangeChange}
             @gui-update-items=${this._onUpdateItems}
             @gui-focus-change=${this._onFocusChange}
-            @change=${this._onValueChange}
+            @gui-item-toggle=${this._onValueChange}
           >
             ${visibleItems.map((item, index) => {
               const absoluteIndex = this._range.start + index;

@@ -98,7 +98,7 @@ const onLanguageChanged = (event: Event) => {
         uid="language"
         value="en"
         :options="languages"
-        @change="onLanguageChanged"
+        @gui-change="onLanguageChanged"
       ></gui-select>
     </div>
     <GuiForm

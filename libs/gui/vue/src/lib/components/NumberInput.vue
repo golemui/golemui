@@ -37,8 +37,8 @@ const elementValue = computed(() => value.value ?? Number.NaN);
       :autoGrow="templateData.autoGrow"
       :autocomplete="templateData.autocomplete ?? undefined"
       :placeholder="templateData.placeholder ?? undefined"
-      @input="handleInput"
-      @blur="onBlur"
+      @gui-input="handleInput"
+      @gui-blur="onBlur"
     ></gui-number>
   </div>
 </template>

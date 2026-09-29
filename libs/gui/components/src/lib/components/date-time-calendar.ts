@@ -1,4 +1,4 @@
-import { html, LitElement, nothing, type PropertyValues, type TemplateResult } from 'lit';
+import { html, nothing, type PropertyValues, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
@@ -37,6 +37,8 @@ import {
   type TimeRange,
 } from '../utils/time';
 import type { DateRange, DisabledTimeRange } from '../types';
+import { GuiElement } from '../gui-element';
+import { dispatchChange, dispatchValue } from '../utils/events';
 
 export interface DateTimeCalendarDay {
   date: Date;
@@ -48,8 +50,7 @@ export interface DateTimeCalendarDay {
   isDisabled: boolean;
 }
 
-export class GuiDateTimeCalendar extends LitElement {
-  @property({ type: String }) uid: string | undefined = undefined;
+export class GuiDateTimeCalendar extends GuiElement {
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String }) hint: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
@@ -127,7 +128,7 @@ export class GuiDateTimeCalendar extends LitElement {
    * Set by host pickers that run their own whole-widget focus-leave check:
    * moving focus from this calendar into the picker's input must not count as
    * leaving, so the embedded calendar skips its incomplete-on-leave handling
-   * (the `blur` re-dispatch still fires — hosts close the popover with it).
+   * (the `gui-blur` re-dispatch still fires — hosts close the popover with it).
    */
   @property({ type: Boolean, attribute: 'defer-focus-leave' }) deferFocusLeave:
     | boolean
@@ -154,7 +155,7 @@ export class GuiDateTimeCalendar extends LitElement {
   protected ariaController: GUIAriaController<unknown, any> = new GUIAriaController(this, {
     getTargets: () => this.querySelectorAll(`.gui-calendar-input`),
     getState: () => ({
-      uid: this.uid as string,
+      uid: this.uid,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -190,7 +191,7 @@ export class GuiDateTimeCalendar extends LitElement {
 
   private _focusLeave = new GUIFocusLeaveController(this, {
     onLeave: () => {
-      this.dispatchEvent(new CustomEvent('blur', { bubbles: true, composed: true }));
+      this.dispatchEvent(new CustomEvent('gui-blur', { bubbles: true, composed: true }));
       if (this.deferFocusLeave) return;
       this.reportIncompleteOnLeave();
     },
@@ -266,15 +267,13 @@ export class GuiDateTimeCalendar extends LitElement {
     this.value = value;
   }
 
-  private emitChange(value: string | null, commit = false) {
+  /**
+   * Reports a new value without committing it: only a deliberate time pick commits, see
+   * {@link onTimePickerChange}, so a host picker keeps its popover open while the day changes.
+   */
+  private emitValue(value: string | null) {
     this._surfacedError = false;
-    this.dispatchEvent(
-      new CustomEvent('change', {
-        detail: { value, commit },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatchValue(this, value, { commit: false });
   }
 
   selectDate(day: DateTimeCalendarDay) {
@@ -288,7 +287,7 @@ export class GuiDateTimeCalendar extends LitElement {
     if (this._selectedTime) {
       const isoTime = this._selectedTime;
       this.setValueInternal(`${isoDate}T${isoTime}`);
-      this.emitChange(this.value as string);
+      this.emitValue(this.value as string);
       const error = this.timeErrorForDay(isoTime, isoDate);
       if (error) this.emitInputError(error);
       return;
@@ -297,26 +296,25 @@ export class GuiDateTimeCalendar extends LitElement {
     this.emitPartsChange();
   }
 
-  private commitTime(isoTime: string, commit = false) {
+  private commitTime(isoTime: string) {
     this._selectedTime = isoTime;
     this.setValueInternal(`${this._selectedDate}T${isoTime}`);
-    this.emitChange(this.value as string, commit);
+    this.emitValue(this.value as string);
   }
 
   private stopInnerPartsChange = (event: Event) => {
     event.stopPropagation();
   };
 
-  private onTimePickerChange(event: CustomEvent) {
+  private onTimePickerInput(event: CustomEvent) {
     event.stopPropagation();
 
     const time = event.detail.value as string | null;
-    const commit = event.detail.commit === true;
     if (!time) {
       this._selectedTime = undefined;
       if (this.value) {
         this.setValueInternal(undefined);
-        this.emitChange(null);
+        this.emitValue(null);
       }
       this.emitPartsChange();
       return;
@@ -330,13 +328,24 @@ export class GuiDateTimeCalendar extends LitElement {
       return;
     }
 
-    this.commitTime(time, commit);
+    this.commitTime(time);
+  }
+
+  /**
+   * A deliberate time pick (list pick or Enter) commits the date-time once a day is chosen. The
+   * pick's value already arrived through {@link onTimePickerInput}.
+   */
+  private onTimePickerChange(event: CustomEvent) {
+    event.stopPropagation();
+    if (event.detail.value && this._selectedDate) {
+      dispatchChange(this, this.value ?? null);
+    }
   }
 
   /** Live-syncs the working halves to a host picker (never wired by forms). */
   private emitPartsChange(): void {
     this.dispatchEvent(
-      new CustomEvent('partsChange', {
+      new CustomEvent('gui-parts-change', {
         detail: { date: this._selectedDate ?? null, time: this._selectedTime ?? null },
         bubbles: true,
         composed: true,
@@ -344,13 +353,13 @@ export class GuiDateTimeCalendar extends LitElement {
     );
   }
 
-  /** Whether an inputError has been emitted and not yet cleared by a change. */
+  /** Whether a `gui-input-error` has been emitted and not yet cleared by a change. */
   private _surfacedError = false;
 
   private emitInputError(message: string): void {
     this._surfacedError = true;
     this.dispatchEvent(
-      new CustomEvent('inputError', {
+      new CustomEvent('gui-input-error', {
         detail: { message },
         bubbles: true,
         composed: true,
@@ -394,11 +403,11 @@ export class GuiDateTimeCalendar extends LitElement {
       this.querySelector<GuiTime>('gui-time')?.groupCompleteness() === 'partial';
 
     if (!leftBehind) {
-      if (this._surfacedError) this.emitChange(null);
+      if (this._surfacedError) this.emitValue(null);
       return;
     }
 
-    this.emitChange(null);
+    this.emitValue(null);
     this.emitInputError(this.incompleteMessage ?? INCOMPLETE_DATE_TIME_MESSAGE);
   }
 
@@ -466,7 +475,7 @@ export class GuiDateTimeCalendar extends LitElement {
       <div class="gui-calendar__time-input-row">
         <gui-time-picker
           class="gui-time-picker gui-field"
-          .uid=${this.uid ? `${this.uid}-time` : undefined}
+          .uid=${`${this.uid}-time`}
           .showErrors=${false}
           .deferFocusLeave=${true}
           ?required=${this.required}
@@ -485,9 +494,10 @@ export class GuiDateTimeCalendar extends LitElement {
           .maxTimeMessage=${this.maxTimeMessage}
           .disabledRangeMessage=${this.disabledTimeRangeMessage}
           .noAvailableTimesMessage=${this.noAvailableTimesMessage}
-          @change=${this.onTimePickerChange}
-          @partsChange=${this.stopInnerPartsChange}
-          @listtoggle=${this.onListToggle}
+          @gui-input=${this.onTimePickerInput}
+          @gui-change=${this.onTimePickerChange}
+          @gui-parts-change=${this.stopInnerPartsChange}
+          @gui-list-toggle=${this.onListToggle}
         ></gui-time-picker>
       </div>
     `;

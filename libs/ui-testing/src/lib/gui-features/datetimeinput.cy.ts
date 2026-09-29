@@ -146,14 +146,14 @@ export const runDateTimeInputComponentTests = (mountFn: MountComponentFn) => {
         cy.get(sel.minute).should('have.value', '59');
       });
 
-      it('should emit inputError and no change for a complete but invalid date (Feb 31)', () => {
+      it('should emit gui-input-error and no change for a complete but invalid date (Feb 31)', () => {
         mountDateTimeInput({ lang: 'en-GB' });
 
         const changeSpy = cy.spy().as('changeSpy');
         const inputErrorSpy = cy.spy().as('inputErrorSpy');
         cy.get('gui-date-time').then(($el) => {
-          $el[0].addEventListener('change', changeSpy as unknown as EventListener);
-          $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
+          $el[0].addEventListener('gui-input', changeSpy as unknown as EventListener);
+          $el[0].addEventListener('gui-input-error', inputErrorSpy as unknown as EventListener);
         });
 
         cy.get(sel.day).type('31');
@@ -175,7 +175,7 @@ export const runDateTimeInputComponentTests = (mountFn: MountComponentFn) => {
 
         const inputErrorSpy = cy.spy().as('inputErrorSpy');
         cy.get('gui-date-time').then(($el) => {
-          $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
+          $el[0].addEventListener('gui-input-error', inputErrorSpy as unknown as EventListener);
         });
 
         cy.get(sel.day).type('31');
@@ -292,7 +292,7 @@ export const runDateTimeInputComponentTests = (mountFn: MountComponentFn) => {
 
         const changeSpy = cy.spy().as('changeSpy');
         cy.get('gui-date-time').then(($el) => {
-          $el[0].addEventListener('change', changeSpy as unknown as EventListener);
+          $el[0].addEventListener('gui-input', changeSpy as unknown as EventListener);
         });
 
         cy.get(sel.day).type('{selectAll}{backspace}');
@@ -349,7 +349,7 @@ export const runDateTimeInputComponentTests = (mountFn: MountComponentFn) => {
 
         const changeSpy = cy.spy().as('changeSpy');
         cy.get('gui-date-time').then(($el) => {
-          $el[0].addEventListener('change', changeSpy as unknown as EventListener);
+          $el[0].addEventListener('gui-input', changeSpy as unknown as EventListener);
         });
 
         // en-US orders the parts month/day/year, then the time run
@@ -442,7 +442,7 @@ export const runDateTimeInputComponentTests = (mountFn: MountComponentFn) => {
     });
 
     describe('bounds validation', () => {
-      it('should emit change and inputError when the date is past maxDate', () => {
+      it('should emit gui-input and gui-input-error when the date is past maxDate', () => {
         mountDateTimeInput({
           lang: 'en-GB',
           props: { maxDate: '2026-06-20', maxDateMessage: 'Date too far out' },
@@ -451,8 +451,8 @@ export const runDateTimeInputComponentTests = (mountFn: MountComponentFn) => {
         const changeSpy = cy.spy().as('changeSpy');
         const inputErrorSpy = cy.spy().as('inputErrorSpy');
         cy.get('gui-date-time').then(($el) => {
-          $el[0].addEventListener('change', changeSpy as unknown as EventListener);
-          $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
+          $el[0].addEventListener('gui-input', changeSpy as unknown as EventListener);
+          $el[0].addEventListener('gui-input-error', inputErrorSpy as unknown as EventListener);
         });
 
         // en-GB orders day/month/year and renders 24h; 25/06/2026 10:30 is past maxDate
@@ -470,7 +470,7 @@ export const runDateTimeInputComponentTests = (mountFn: MountComponentFn) => {
         });
       });
 
-      it('should emit change and inputError when the time is past maxTime', () => {
+      it('should emit gui-input and gui-input-error when the time is past maxTime', () => {
         mountDateTimeInput({
           lang: 'en-GB',
           props: { maxTime: '17:00:00', maxTimeMessage: 'Time too late' },
@@ -478,7 +478,7 @@ export const runDateTimeInputComponentTests = (mountFn: MountComponentFn) => {
 
         const inputErrorSpy = cy.spy().as('inputErrorSpy');
         cy.get('gui-date-time').then(($el) => {
-          $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
+          $el[0].addEventListener('gui-input-error', inputErrorSpy as unknown as EventListener);
         });
 
         // 15/06/2026 18:00 is a valid date but past maxTime

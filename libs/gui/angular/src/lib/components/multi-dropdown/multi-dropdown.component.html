@@ -43,8 +43,8 @@
     (keydown)="onTriggerKeyDown($event)"
     (input)="onInput($event)"
     (focusin)="onTriggerFocusIn($event)"
-    (pillremove)="onPillRemove($event)"
-    (dropdowntoggle)="onPillsDropdownToggle($event)"
+    (gui-pill-remove)="onPillRemove($event)"
+    (gui-dropdown-toggle)="onPillsDropdownToggle($event)"
   ></gui-multi-select-trigger>
   <button
     type="button"
@@ -88,7 +88,7 @@
       (gui-update-items)="onUpdateItems($event)"
       (gui-range-change)="onRangeChange($event)"
       (gui-focus-change)="onFocusChange($event)"
-      (change)="onValueChange($event)"
+      (gui-item-toggle)="onValueChange($event)"
     >
       @for (item of visibleItems(); track $index) {
         @let absoluteIndex = currentRange().start + $index;

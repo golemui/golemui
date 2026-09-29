@@ -311,8 +311,8 @@ const ItemRenderer = computed<Component>(() => {
         @keydown="handleTriggerKeyDown"
         @input="handleInputFilter"
         @focusin="handleFocusIn"
-        @pillremove="handlePillRemove"
-        @dropdowntoggle="handlePillsDropdownToggle"
+        @gui-pill-remove="handlePillRemove"
+        @gui-dropdown-toggle="handlePillsDropdownToggle"
       ></gui-multi-select-trigger>
       <button
         type="button"
@@ -358,7 +358,7 @@ const ItemRenderer = computed<Component>(() => {
           :disabled="isDisabled || isReadOnly"
           :readOnly="isReadOnly"
           :hidden="!isListVisible"
-          @change="handleListChange"
+          @gui-item-toggle="handleListChange"
           @gui-update-items="handleUpdateItems"
           @gui-range-change="handleRangeChange"
           @gui-focus-change="handleFocusChange"

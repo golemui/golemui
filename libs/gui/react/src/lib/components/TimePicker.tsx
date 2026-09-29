@@ -66,9 +66,9 @@ export function TimePicker(widgetInstance: WithWidget) {
         disabledRangeMessage={templateData.disabledRangeMessage as string}
         noAvailableTimesMessage={templateData.noAvailableTimesMessage as string}
         incompleteMessage={templateData.incompleteMessage as string}
-        onChange={handleChange}
-        onBlur={onBlur}
-        onInputError={handleInputError}
+        onGuiInput={handleChange}
+        onGuiBlur={onBlur}
+        onGuiInputError={handleInputError}
       />
     </div>
   );

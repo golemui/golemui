@@ -169,7 +169,7 @@ export const runDatePickerComponentTests = (mountFn: MountComponentFn) => {
       });
     });
 
-    it('should advance the value and emit inputError when a typed date is out of bounds', () => {
+    it('should advance the value and emit gui-input-error when a typed date is out of bounds', () => {
       mountWithProps({
         props: { maxDate: '2026-06-20', maxDateMessage: 'Too far out' },
       });
@@ -177,8 +177,8 @@ export const runDatePickerComponentTests = (mountFn: MountComponentFn) => {
       const changeSpy = cy.spy().as('changeSpy');
       const inputErrorSpy = cy.spy().as('inputErrorSpy');
       cy.get('gui-date-picker').then(($el) => {
-        $el[0].addEventListener('change', changeSpy as unknown as EventListener);
-        $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
+        $el[0].addEventListener('gui-input', changeSpy as unknown as EventListener);
+        $el[0].addEventListener('gui-input-error', inputErrorSpy as unknown as EventListener);
       });
 
       // Type a full date 06/25/2026 (en-US order), past maxDate. gui-date has no

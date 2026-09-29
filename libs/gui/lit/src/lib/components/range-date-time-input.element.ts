@@ -57,7 +57,7 @@ export class RangeDateTimeInputElement extends LitElement implements WithWidget 
         .hint=${this.adapter.templateData.hint}
         .icon=${this.adapter.templateData.icon}
         .errors=${this.adapter.templateData.errors}
-        ?touched=${this.adapter.templateData.touched}
+        .touched=${this.adapter.templateData.touched}
         ?required=${this.adapter.templateData.validator?.required}
         ?disabled=${this.adapter.templateData.disabled}
         ?readonly=${this.adapter.templateData.readonly}
@@ -89,8 +89,8 @@ export class RangeDateTimeInputElement extends LitElement implements WithWidget 
         .editStartedMessage=${this.adapter.templateData.editStartedMessage as string}
         .editCommittedMessage=${this.adapter.templateData.editCommittedMessage as string}
         .editCancelledMessage=${this.adapter.templateData.editCancelledMessage as string}
-        @change=${this.valueChanged}
-        @inputError=${this.onInputError}
+        @gui-input=${this.valueChanged}
+        @gui-input-error=${this.onInputError}
       ></gui-range-date-time>
     `;
   }

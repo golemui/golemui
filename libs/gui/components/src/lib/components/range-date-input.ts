@@ -1,4 +1,4 @@
-import { html, LitElement, nothing } from 'lit';
+import { html, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
 import { cspStyleMap } from '@golemui/lit-utils';
 import { safeDefine } from '@golemui/lit-utils';
@@ -47,19 +47,20 @@ import { addErrors, addLabel, type ControlTemplateData } from '../utils/template
 import './pills';
 import type { GuiPillEventDetail, GuiPillItem } from './pills';
 import type { DateRange } from '../types';
+import { GuiElement } from '../gui-element';
+import { dispatchValue } from '../utils/events';
 
 /** What <gui-range-date-input> renders besides the control state: its presentation props. */
 export type GuiRangeDateInputProps = {
   hint?: string;
 };
 
-export class GuiRangeDateInput extends LitElement {
-  @property({ type: String }) uid: string | undefined = undefined;
+export class GuiRangeDateInput extends GuiElement {
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
   @property({ type: Array }) errors: string[] | undefined = [];
   @property({ type: Boolean }) showErrors: boolean | undefined = true;
-  @property({ type: Boolean }) touched: boolean | undefined = false;
+  @property({ type: Boolean }) touched: boolean | undefined = undefined;
   @property({ type: Boolean }) required: boolean | undefined = false;
   @property({ type: Boolean }) disabled: boolean | undefined = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
@@ -156,15 +157,10 @@ export class GuiRangeDateInput extends LitElement {
       }
     },
     onInputErrorSurfaced: (message) =>
-      this.dispatchEvent(new CustomEvent('inputError', { detail: { message }, bubbles: true })),
-    onSurfacedErrorCleared: (value) =>
       this.dispatchEvent(
-        new CustomEvent('change', {
-          detail: { value, commit: false },
-          bubbles: true,
-          composed: true,
-        }),
+        new CustomEvent('gui-input-error', { detail: { message }, bubbles: true }),
       ),
+    onSurfacedErrorCleared: (value) => dispatchValue(this, value, { commit: false }),
   });
 
   private _pillsNav = new GUIPillsNavigationController(this, {
@@ -212,14 +208,14 @@ export class GuiRangeDateInput extends LitElement {
       // Embedded in a picker: that host owns focus reporting for the subtree.
       if (this.deferFocusLeave) return;
       this.finalizeOnLeave();
-      this.dispatchEvent(new CustomEvent('blur'));
+      this.dispatchEvent(new CustomEvent('gui-blur'));
     },
   });
 
   protected ariaController: GUIAriaController<unknown, any> = new GUIAriaController(this, {
     getTargets: () => this.querySelectorAll(`.${this.inputBlockClass}`),
     getState: () => ({
-      uid: this.uid as string,
+      uid: this.uid,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -289,7 +285,7 @@ export class GuiRangeDateInput extends LitElement {
     };
 
     return html`
-      ${this.label ? addLabel(this.uid as string, templateData, false, undefined, false) : nothing}
+      ${this.label ? addLabel(this.uid, templateData, false, undefined, false) : nothing}
 
       <div
         class="gui-widget"
@@ -339,15 +335,15 @@ export class GuiRangeDateInput extends LitElement {
             .editLabel=${this.editLabel ?? EDIT_RANGE_LABEL}
             .confirmEditLabel=${this.confirmEditLabel ?? CONFIRM_EDIT_RANGE_LABEL}
             .cancelEditLabel=${this.cancelEditLabel ?? CANCEL_EDIT_RANGE_LABEL}
-            @pillremove=${this.onPillRemoveEvent}
-            @pillclick=${this.onPillClickEvent}
-            @pillfocus=${this.onPillFocusEvent}
-            @pillsblur=${this.onPillsBlurEvent}
-            @pilledit=${this.onPillEditEvent}
-            @pilleditconfirm=${this.onPillEditConfirm}
-            @pilleditcancel=${this.onPillEditCancel}
-            @pillkeydown=${this._pillsNav.onPillKeydown}
-            @pillexit=${this._pillsNav.onPillExit}
+            @gui-pill-remove=${this.onPillRemoveEvent}
+            @gui-pill-click=${this.onPillClickEvent}
+            @gui-pill-focus=${this.onPillFocusEvent}
+            @gui-pills-blur=${this.onPillsBlurEvent}
+            @gui-pill-edit=${this.onPillEditEvent}
+            @gui-pill-edit-confirm=${this.onPillEditConfirm}
+            @gui-pill-edit-cancel=${this.onPillEditCancel}
+            @gui-pill-keydown=${this._pillsNav.onPillKeydown}
+            @gui-pill-exit=${this._pillsNav.onPillExit}
           ></gui-pills>
 
           <div class="gui-range-date-input__inputs">
@@ -372,9 +368,7 @@ export class GuiRangeDateInput extends LitElement {
         </div>
       </div>
 
-      ${this.showErrors && this.errors?.length
-        ? addErrors(this.uid as string, templateData)
-        : nothing}
+      ${this.showErrors && this.errors?.length ? addErrors(this.uid, templateData) : nothing}
     `;
   }
 
@@ -415,7 +409,7 @@ export class GuiRangeDateInput extends LitElement {
 
   private emitEditState() {
     this.dispatchEvent(
-      new CustomEvent('editStateChange', {
+      new CustomEvent('gui-edit-state-change', {
         detail: { selected: this._edit.selectedRange, editing: !!this._edit.editing },
       }),
     );
@@ -479,13 +473,7 @@ export class GuiRangeDateInput extends LitElement {
     if (!removal) return;
     this.value = removal.next;
 
-    this.dispatchEvent(
-      new CustomEvent('change', {
-        detail: { value: this.value },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatchValue(this, this.value);
 
     if (removal.next.length === 0) {
       // Strip is gone; return focus to the segments.
@@ -550,7 +538,7 @@ export class GuiRangeDateInput extends LitElement {
 
   private onPillClick(range: DateRange) {
     this.dispatchEvent(
-      new CustomEvent('pillClick', {
+      new CustomEvent('gui-range-click', {
         detail: { range },
         bubbles: true,
         composed: true,
@@ -575,7 +563,7 @@ export class GuiRangeDateInput extends LitElement {
   /**
    * Re-parses both endpoints so per-endpoint problems (impossible date, out of
    * bounds) surface while the user types, and notifies the host picker via
-   * `partsChange` so its calendar follows the typed endpoints. Runs on every
+   * `gui-parts-change` so its calendar follows the typed endpoints. Runs on every
    * part change.
    */
   private syncParts() {
@@ -589,7 +577,7 @@ export class GuiRangeDateInput extends LitElement {
     if (this._edit.editing) this.requestUpdate();
 
     this.dispatchEvent(
-      new CustomEvent('partsChange', {
+      new CustomEvent('gui-parts-change', {
         detail: { start: iso(start), end: iso(end) },
         bubbles: true,
         composed: true,
@@ -727,13 +715,7 @@ export class GuiRangeDateInput extends LitElement {
 
     // The commit's own change clears any injected error downstream.
     this._parts.resetSurfacedInputError();
-    this.dispatchEvent(
-      new CustomEvent('change', {
-        detail: { value: this.value },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatchValue(this, this.value);
 
     if (wasEditing) {
       // Selection and focus move to the committed (possibly merged) pill.

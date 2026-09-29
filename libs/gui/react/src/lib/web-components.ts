@@ -69,64 +69,88 @@ const wrap = <
 };
 
 export const GuiTextinputReact = wrap('gui-textinput', GuiTextinput, {
-  onInput: 'input',
-  onBlur: 'blur',
+  onGuiInput: 'gui-input',
+  onGuiChange: 'gui-change',
+  onGuiBlur: 'gui-blur',
 });
 export const GuiTextareaReact = wrap('gui-textarea', GuiTextarea, {
-  onInput: 'input',
-  onBlur: 'blur',
+  onGuiInput: 'gui-input',
+  onGuiChange: 'gui-change',
+  onGuiBlur: 'gui-blur',
 });
-export const GuiNumberReact = wrap('gui-number', GuiNumber, { onInput: 'input', onBlur: 'blur' });
+export const GuiNumberReact = wrap('gui-number', GuiNumber, {
+  onGuiInput: 'gui-input',
+  onGuiChange: 'gui-change',
+  onGuiBlur: 'gui-blur',
+});
 export const GuiCurrencyReact = wrap('gui-currency', GuiCurrency, {
-  onInput: 'input',
-  onBlur: 'blur',
+  onGuiInput: 'gui-input',
+  onGuiChange: 'gui-change',
+  onGuiBlur: 'gui-blur',
 });
 export const GuiPasswordReact = wrap('gui-password', GuiPassword, {
-  onInput: 'input',
-  onBlur: 'blur',
+  onGuiInput: 'gui-input',
+  onGuiChange: 'gui-change',
+  onGuiBlur: 'gui-blur',
 });
 export const GuiMarkdownReact = wrap('gui-markdown', GuiMarkdown, {
-  onInput: 'input',
-  onBlur: 'blur',
+  onGuiInput: 'gui-input',
+  onGuiChange: 'gui-change',
+  onGuiBlur: 'gui-blur',
 });
 export const GuiRadiogroupReact = wrap('gui-radiogroup', GuiRadiogroup, {
-  onChange: 'change',
-  onBlur: 'blur',
+  onGuiInput: 'gui-input',
+  onGuiChange: 'gui-change',
+  onGuiBlur: 'gui-blur',
 });
-export const GuiToggleReact = wrap('gui-toggle', GuiToggle, { onChange: 'change', onBlur: 'blur' });
+export const GuiToggleReact = wrap('gui-toggle', GuiToggle, {
+  onGuiInput: 'gui-input',
+  onGuiChange: 'gui-change',
+  onGuiBlur: 'gui-blur',
+});
 export const GuiCheckboxReact = wrap('gui-checkbox', GuiCheckbox, {
-  onChange: 'change',
-  onBlur: 'blur',
+  onGuiInput: 'gui-input',
+  onGuiChange: 'gui-change',
+  onGuiBlur: 'gui-blur',
 });
-export const GuiTagsReact = wrap('gui-tags', GuiTags, { onChange: 'change', onBlur: 'blur' });
+export const GuiTagsReact = wrap('gui-tags', GuiTags, {
+  onGuiInput: 'gui-input',
+  onGuiChange: 'gui-change',
+  onGuiBlur: 'gui-blur',
+});
 export const GuiFileUploadReact = wrap('gui-file-upload', GuiFileUpload, {
-  onChange: 'change',
-  onBlur: 'blur',
-  onInputError: 'inputError',
+  onGuiInput: 'gui-input',
+  onGuiChange: 'gui-change',
+  onGuiBlur: 'gui-blur',
+  onGuiInputError: 'gui-input-error',
 });
 export const GuiMultiFileUploadReact = wrap('gui-multi-file-upload', GuiMultiFileUpload, {
-  onChange: 'change',
-  onBlur: 'blur',
-  onInputError: 'inputError',
+  onGuiInput: 'gui-input',
+  onGuiChange: 'gui-change',
+  onGuiBlur: 'gui-blur',
+  onGuiInputError: 'gui-input-error',
 });
 export const GuiSelectReact = wrap('gui-select', GuiSelect, {
-  onChange: 'change',
-  onBlur: 'blur',
-  onInputError: 'inputError',
+  onGuiInput: 'gui-input',
+  onGuiChange: 'gui-change',
+  onGuiBlur: 'gui-blur',
+  onGuiInputError: 'gui-input-error',
 });
 
 export const GuiCalendarReact = wrap('gui-calendar', GuiCalendar);
 export const GuiDateTimeCalendarReact = wrap('gui-date-time-calendar', GuiDateTimeCalendar, {
-  onChange: 'change',
-  onBlur: 'blur',
-  onInputError: 'inputError',
+  onGuiInput: 'gui-input',
+  onGuiChange: 'gui-change',
+  onGuiBlur: 'gui-blur',
+  onGuiInputError: 'gui-input-error',
 });
 export const GuiRangeCalendarReact = wrap('gui-range-calendar', GuiRangeCalendar);
 export const GuiDateReact = wrap('gui-date', GuiDate);
 export const GuiDatePickerReact = wrap('gui-date-picker', GuiDatePicker, {
-  onChange: 'change',
-  onBlur: 'blur',
-  onInputError: 'inputError',
+  onGuiInput: 'gui-input',
+  onGuiChange: 'gui-change',
+  onGuiBlur: 'gui-blur',
+  onGuiInputError: 'gui-input-error',
 });
 export const GuiRangeDateReact = wrap('gui-range-date', GuiRangeDateInput);
 export const GuiRangeDateTimeReact = wrap('gui-range-date-time', GuiRangeDateTimeInput);
@@ -134,49 +158,55 @@ export const GuiRangeDateTimeCalendarReact = wrap(
   'gui-range-date-time-calendar',
   GuiRangeDateTimeCalendar,
   {
-    onChange: 'change',
-    onBlur: 'blur',
-    onInputError: 'inputError',
+    onGuiInput: 'gui-input',
+    onGuiChange: 'gui-change',
+    onGuiBlur: 'gui-blur',
+    onGuiInputError: 'gui-input-error',
   },
 );
 export const GuiRangeDateTimePickerReact = wrap(
   'gui-range-date-time-picker',
   GuiRangeDateTimePicker,
   {
-    onChange: 'change',
-    onBlur: 'blur',
-    onInputError: 'inputError',
+    onGuiInput: 'gui-input',
+    onGuiChange: 'gui-change',
+    onGuiBlur: 'gui-blur',
+    onGuiInputError: 'gui-input-error',
   },
 );
 export const GuiRangeTimeReact = wrap('gui-range-time', GuiRangeTimeInput);
 export const GuiRangeDatePickerReact = wrap('gui-range-date-picker', GuiRangeDatePicker, {
-  onChange: 'change',
-  onBlur: 'blur',
-  onInputError: 'inputError',
+  onGuiInput: 'gui-input',
+  onGuiChange: 'gui-change',
+  onGuiBlur: 'gui-blur',
+  onGuiInputError: 'gui-input-error',
 });
 export const GuiTimeReact = wrap('gui-time', GuiTime);
 export const GuiTimePickerReact = wrap('gui-time-picker', GuiTimePicker, {
-  onChange: 'change',
-  onBlur: 'blur',
-  onInputError: 'inputError',
+  onGuiInput: 'gui-input',
+  onGuiChange: 'gui-change',
+  onGuiBlur: 'gui-blur',
+  onGuiInputError: 'gui-input-error',
 });
 export const GuiRangeTimePickerReact = wrap('gui-range-time-picker', GuiRangeTimePicker, {
-  onChange: 'change',
-  onBlur: 'blur',
-  onInputError: 'inputError',
+  onGuiInput: 'gui-input',
+  onGuiChange: 'gui-change',
+  onGuiBlur: 'gui-blur',
+  onGuiInputError: 'gui-input-error',
 });
 export const GuiDateTimeReact = wrap('gui-date-time', GuiDateTime);
 export const GuiDateTimePickerReact = wrap('gui-date-time-picker', GuiDateTimePicker, {
-  onChange: 'change',
-  onBlur: 'blur',
-  onInputError: 'inputError',
+  onGuiInput: 'gui-input',
+  onGuiChange: 'gui-change',
+  onGuiBlur: 'gui-blur',
+  onGuiInputError: 'gui-input-error',
 });
 
 export const GuiListReact = wrap('gui-list', GuiList);
 export const GuiMultiListReact = wrap('gui-multi-list', GuiMultiList);
 export const GuiMultiSelectTriggerReact = wrap('gui-multi-select-trigger', GuiMultiSelectTrigger, {
-  onPillremove: 'pillremove',
-  onDropdowntoggle: 'dropdowntoggle',
+  onGuiPillRemove: 'gui-pill-remove',
+  onGuiDropdownToggle: 'gui-dropdown-toggle',
 });
 export const GuiLabelReact = wrap('gui-label', GuiLabel);
 export const GuiErrorsReact = wrap('gui-errors', GuiErrors);

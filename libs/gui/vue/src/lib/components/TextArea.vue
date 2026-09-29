@@ -39,8 +39,8 @@ const minimumHeight = computed(() => templateData.value.minimumHeight ?? 120);
       :minimumHeight.prop="minimumHeight"
       :autoGrow="templateData.autoGrow"
       :maxLength="maxLength"
-      @input="handleInput"
-      @blur="onBlur"
+      @gui-input="handleInput"
+      @gui-blur="onBlur"
     ></gui-textarea>
   </div>
 </template>

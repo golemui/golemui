@@ -404,7 +404,7 @@ export interface DateTimeSubGroupResults {
 
 /**
  * Parses the date and time halves of a date-time group separately, so a
- * complete half can live-sync (via `partsChange`) while the other is still
+ * complete half can live-sync (via `gui-parts-change`) while the other is still
  * empty. Write-backs are NOT applied here — the combined
  * {@link parseDateTimeGroup} the host runs first already produced them.
  *
@@ -434,17 +434,17 @@ export function parseDateTimeSubGroups(
   return { date, time };
 }
 
-/** `partsChange` detail of `gui-date`. */
+/** `gui-parts-change` detail of `gui-date`. */
 export interface DatePartsChangeDetail {
   date: string | null;
 }
 
-/** `partsChange` detail of `gui-time`. */
+/** `gui-parts-change` detail of `gui-time`. */
 export interface TimePartsChangeDetail {
   time: string | null;
 }
 
-/** `partsChange` detail of `gui-date-time` and `gui-date-time-calendar`. */
+/** `gui-parts-change` detail of `gui-date-time` and `gui-date-time-calendar`. */
 export interface DateTimePartsChangeDetail {
   date: string | null;
   time: string | null;

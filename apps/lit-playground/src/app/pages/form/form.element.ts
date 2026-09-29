@@ -110,7 +110,7 @@ export class FormElement extends LitElement {
         uid="language"
         value="en"
         .options=${this.languages}
-        @change=${this.onLanguageChanged}
+        @gui-change=${this.onLanguageChanged}
       ></gui-select>
     </div>`;
   }

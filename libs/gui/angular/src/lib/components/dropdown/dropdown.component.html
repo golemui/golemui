@@ -93,7 +93,7 @@
       (gui-range-change)="onRangeChange($event)"
       (gui-focus-change)="onFocusChange($event)"
       (focus)="onInputFocus()"
-      (change)="onValueChange($event)"
+      (gui-input)="onValueChange($event)"
     >
       @for (item of visibleItems(); track $index) {
         @let absoluteIndex = currentRange().start + $index;

@@ -1,4 +1,4 @@
-import { html, LitElement, type PropertyValues } from 'lit';
+import { html, type PropertyValues } from 'lit';
 import { property, query } from 'lit/decorators.js';
 import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
@@ -13,9 +13,10 @@ import { timeBoundsError } from '../utils/parts';
 import { addErrors, addIcon, addLabel, addPickerPanel } from '../utils/templates';
 import { INVALID_DISABLED_TIME_RANGE_MESSAGE } from '../utils/messages';
 import { CARET_DOWN_PATH } from '../utils/icons';
+import { GuiElement } from '../gui-element';
+import { dispatchValue, stopPropagation } from '../utils/events';
 
-export class GuiTimePicker extends LitElement {
-  @property({ type: String }) uid: string | undefined = undefined;
+export class GuiTimePicker extends GuiElement {
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String }) hint: string | undefined = undefined;
   @property({ type: String }) icon: string | undefined = '';
@@ -26,7 +27,7 @@ export class GuiTimePicker extends LitElement {
   @property({ type: String }) dayPeriodAriaLabel: string | undefined = undefined;
   @property({ type: Array }) errors: string[] | undefined = [];
   @property({ type: Boolean }) showErrors: boolean | undefined = true;
-  @property({ type: Boolean }) touched: boolean | undefined = false;
+  @property({ type: Boolean }) touched: boolean | undefined = undefined;
   @property({ type: Boolean }) required: boolean | undefined = false;
   @property({ type: Boolean }) disabled: boolean | undefined = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
@@ -73,7 +74,7 @@ export class GuiTimePicker extends LitElement {
     onLeave: () => {
       // Embedded in a calendar: that host owns focus reporting for the subtree.
       if (this.deferFocusLeave) return;
-      this.dispatchEvent(new CustomEvent('blur'));
+      this.dispatchEvent(new CustomEvent('gui-blur'));
       this.reportIncompleteOnLeave();
     },
   });
@@ -110,7 +111,7 @@ export class GuiTimePicker extends LitElement {
 
     return html`
       ${addLabel(
-        this.uid ?? '',
+        this.uid,
         {
           label: this.label,
           hint: this.hint,
@@ -135,7 +136,7 @@ export class GuiTimePicker extends LitElement {
           .showErrors=${false}
           .deferFocusLeave=${true}
           .errors=${this.errors}
-          ?touched=${this.touched}
+          .touched=${this.touched}
           ?required=${this.required}
           ?disabled=${this.disabled}
           ?readonly=${this.readOnly || !this.allowCustomTime}
@@ -152,9 +153,10 @@ export class GuiTimePicker extends LitElement {
           .minTimeMessage=${this.minTimeMessage}
           .maxTimeMessage=${this.maxTimeMessage}
           .incompleteMessage=${this.incompleteMessage}
-          @blur=${this.onTimeBlur}
-          @focus=${this._popup.show}
-          @change=${this.onTimeChange}
+          @gui-blur=${this.onTimeBlur}
+          @gui-focus=${this._popup.show}
+          @gui-input=${this.onTimeInput}
+          @gui-change=${stopPropagation}
         ></gui-time>
         <button
           type="button"
@@ -178,7 +180,7 @@ export class GuiTimePicker extends LitElement {
         </button>
 
         ${addPickerPanel(
-          this.uid ?? '',
+          this.uid,
           { errors: this.errors, touched: this.touched, showErrors: this.showErrors },
           // Dual hidden: tests select the inner list's [hidden]; the panel's
           // own [hidden] removes the card chrome. Both bind to the same state.
@@ -201,15 +203,14 @@ export class GuiTimePicker extends LitElement {
             .noAvailableTimesMessage=${this.noAvailableTimesMessage}
             ?readonly=${this.readOnly}
             ?hidden=${!this._popup.open}
-            @change=${this.onListChange}
+            @gui-input=${stopPropagation}
+            @gui-change=${this.onListChange}
           ></gui-time-list>`,
           { hidden: !this._popup.open },
         )}
       </div>
 
-      ${this.showErrors
-        ? addErrors(this.uid ?? '', { errors: this.errors, touched: this.touched })
-        : ''}
+      ${this.showErrors ? addErrors(this.uid, { errors: this.errors, touched: this.touched }) : ''}
     `;
   }
 
@@ -223,7 +224,8 @@ export class GuiTimePicker extends LitElement {
     }
   };
 
-  private onTimeChange(event: CustomEvent) {
+  /** Typing in the field is continuous editing: the field's own commit is not the picker's. */
+  private onTimeInput(event: CustomEvent) {
     event.stopPropagation();
     this.commitValue(event.detail.value);
   }
@@ -255,16 +257,10 @@ export class GuiTimePicker extends LitElement {
   private commitValue(value: string | null | undefined, commit = false) {
     this.value = value ?? undefined;
     const error = this.validateBounds(this.value);
-    this.dispatchEvent(
-      new CustomEvent('change', {
-        detail: { value: value ?? null, commit },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatchValue(this, value ?? null, { commit });
     if (error) {
       this.dispatchEvent(
-        new CustomEvent('inputError', {
+        new CustomEvent('gui-input-error', {
           detail: { message: error },
           bubbles: true,
           composed: true,
@@ -347,7 +343,7 @@ export class GuiTimePicker extends LitElement {
    * Hands the embedded input its deferred settlement: a partially typed time
    * left behind surfaces the incomplete message, an emptied one clears a
    * message it surfaced earlier. The input's resulting change bubbles back
-   * through {@link onTimeChange}, so the picker's value follows.
+   * through {@link onTimeInput}, so the picker's value follows.
    */
   private reportIncompleteOnLeave(): void {
     this.querySelector<GuiTime>('gui-time')?.settleOnFocusLeave();
@@ -355,7 +351,7 @@ export class GuiTimePicker extends LitElement {
 
   private dispatchListToggle(open: boolean) {
     this.dispatchEvent(
-      new CustomEvent('listtoggle', {
+      new CustomEvent('gui-list-toggle', {
         detail: { open },
         bubbles: true,
         composed: true,

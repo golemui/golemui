@@ -55,7 +55,7 @@ export class MarkdownElement extends LitElement implements WithWidget {
         .uid=${this.widget.uid}
         .label=${this.adapter.templateData.label}
         .errors=${this.adapter.templateData.errors}
-        ?touched=${this.adapter.templateData.touched}
+        .touched=${this.adapter.templateData.touched}
         ?required=${this.adapter.templateData.validator?.required}
         ?disabled=${this.adapter.templateData.disabled}
         ?readonly=${this.adapter.templateData.readonly}
@@ -80,8 +80,8 @@ export class MarkdownElement extends LitElement implements WithWidget {
         .defaultOpenPreview=${this.adapter.templateData.defaultOpenPreview}
         .maxLength=${this.adapter.templateData.validator?.maxLength}
         .dependencies=${this.adapter.templateData.deps}
-        @input=${this.valueChanged}
-        @blur=${() => this.adapter.onBlur()}
+        @gui-input=${this.valueChanged}
+        @gui-blur=${() => this.adapter.onBlur()}
       ></gui-markdown>
     `;
   }

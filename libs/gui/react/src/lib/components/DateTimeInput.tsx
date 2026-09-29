@@ -31,15 +31,15 @@ export function DateTimeInput(widgetInstance: WithWidget) {
       };
 
       if (node) {
-        target.addEventListener('change', changeHandler);
-        target.addEventListener('blur', onBlur);
-        target.addEventListener('inputError', errorHandler);
+        target.addEventListener('gui-input', changeHandler);
+        target.addEventListener('gui-blur', onBlur);
+        target.addEventListener('gui-input-error', errorHandler);
       }
 
       return () => {
-        target.removeEventListener('change', changeHandler);
-        target.removeEventListener('blur', onBlur);
-        target.removeEventListener('inputError', errorHandler);
+        target.removeEventListener('gui-input', changeHandler);
+        target.removeEventListener('gui-blur', onBlur);
+        target.removeEventListener('gui-input-error', errorHandler);
       };
     },
     [onValueChanged, onBlur, injectValidationIssues],

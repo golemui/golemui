@@ -1,4 +1,4 @@
-import { html, LitElement, nothing, type PropertyValues, type TemplateResult } from 'lit';
+import { html, nothing, type PropertyValues, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
@@ -20,6 +20,8 @@ import {
 } from '../utils/date';
 import { buildMonthDays, computeDayStatus } from '../utils/day-status';
 import type { DateRange } from '../types';
+import { GuiElement } from '../gui-element';
+import { dispatchValue } from '../utils/events';
 
 export interface CalendarDay {
   date: Date;
@@ -31,8 +33,7 @@ export interface CalendarDay {
   isDisabled: boolean;
 }
 
-export class GuiCalendar extends LitElement {
-  @property({ type: String }) uid: string | undefined = undefined;
+export class GuiCalendar extends GuiElement {
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String }) hint: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
@@ -97,7 +98,7 @@ export class GuiCalendar extends LitElement {
   protected ariaController: GUIAriaController<unknown, any> = new GUIAriaController(this, {
     getTargets: () => this.querySelectorAll(`.gui-calendar-input`),
     getState: () => ({
-      uid: this.uid as string,
+      uid: this.uid,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -133,7 +134,7 @@ export class GuiCalendar extends LitElement {
 
   private _focusLeave = new GUIFocusLeaveController(this, {
     onLeave: () => {
-      this.dispatchEvent(new CustomEvent('blur', { bubbles: true, composed: true }));
+      this.dispatchEvent(new CustomEvent('gui-blur', { bubbles: true, composed: true }));
     },
   });
 
@@ -273,13 +274,7 @@ export class GuiCalendar extends LitElement {
 
     this.value = isoDate;
 
-    this.dispatchEvent(
-      new CustomEvent('change', {
-        detail: { value: isoDate },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatchValue(this, isoDate);
   }
 
   protected isDisabled(date: Date): boolean {

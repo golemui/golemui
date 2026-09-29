@@ -1,4 +1,4 @@
-import { html, LitElement, nothing, type PropertyValues } from 'lit';
+import { html, nothing, type PropertyValues } from 'lit';
 import { property } from 'lit/decorators.js';
 import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
@@ -17,6 +17,8 @@ import {
   type GroupCompleteness,
 } from '../utils/parts';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
+import { GuiElement } from '../gui-element';
+import { dispatchValue } from '../utils/events';
 
 const DATE_PART_TYPES: readonly DateTimePartType[] = ['day', 'month', 'year'];
 
@@ -26,13 +28,12 @@ export type GuiDateProps = {
   hint?: string;
 };
 
-export class GuiDate extends LitElement {
-  @property({ type: String }) uid: string | undefined = undefined;
+export class GuiDate extends GuiElement {
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
   @property({ type: Array }) errors: string[] | undefined = [];
   @property({ type: Boolean }) showErrors: boolean | undefined = true;
-  @property({ type: Boolean }) touched: boolean | undefined = false;
+  @property({ type: Boolean }) touched: boolean | undefined = undefined;
   @property({ type: Boolean }) required: boolean | undefined = false;
   @property({ type: Boolean }) disabled: boolean | undefined = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
@@ -86,13 +87,14 @@ export class GuiDate extends LitElement {
 
       this._internalNullReport = true;
       this.value = undefined;
-      this.dispatchEvent(new CustomEvent('change', { detail: { value: null }, bubbles: true }));
+      dispatchValue(this, null);
       this._parts.resetSurfacedInputError();
     },
     onInputErrorSurfaced: (message) =>
-      this.dispatchEvent(new CustomEvent('inputError', { detail: { message }, bubbles: true })),
-    onSurfacedErrorCleared: (value) =>
-      this.dispatchEvent(new CustomEvent('change', { detail: { value }, bubbles: true })),
+      this.dispatchEvent(
+        new CustomEvent('gui-input-error', { detail: { message }, bubbles: true }),
+      ),
+    onSurfacedErrorCleared: (value) => dispatchValue(this, value),
   });
 
   private _focusLeave = new GUIFocusLeaveController(this, {
@@ -109,7 +111,7 @@ export class GuiDate extends LitElement {
   protected ariaController: GUIAriaController<unknown, any> = new GUIAriaController(this, {
     getTargets: () => this.querySelectorAll(`.${this.inputBlockClass}`),
     getState: () => ({
-      uid: this.uid as string,
+      uid: this.uid,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -184,7 +186,7 @@ export class GuiDate extends LitElement {
     };
 
     return html`
-      ${this.label ? addLabel(this.uid as string, templateData, false, undefined, false) : nothing}
+      ${this.label ? addLabel(this.uid, templateData, false, undefined, false) : nothing}
 
       <div class="gui-widget" @focusout=${this.onWidgetFocusOut}>
         <div
@@ -206,9 +208,7 @@ export class GuiDate extends LitElement {
           : nothing}
       </div>
 
-      ${this.showErrors && this.errors?.length
-        ? addErrors(this.uid as string, templateData)
-        : nothing}
+      ${this.showErrors && this.errors?.length ? addErrors(this.uid, templateData) : nothing}
     `;
   }
 
@@ -222,7 +222,7 @@ export class GuiDate extends LitElement {
     this._parts.applyWriteBacks(group, writeBacks);
 
     this.dispatchEvent(
-      new CustomEvent('partsChange', {
+      new CustomEvent('gui-parts-change', {
         detail: { date: result.kind === 'valid' ? result.iso : null },
         bubbles: true,
         composed: true,
@@ -239,12 +239,7 @@ export class GuiDate extends LitElement {
       });
 
       if (boundsError) {
-        this.dispatchEvent(
-          new CustomEvent('change', {
-            detail: { value: result.iso },
-            bubbles: true,
-          }),
-        );
+        dispatchValue(this, result.iso);
         this._parts.surfaceInputError(boundsError);
         this.requestUpdate();
         return;
@@ -253,12 +248,7 @@ export class GuiDate extends LitElement {
       this.value = result.iso;
       this._parts.resetSurfacedInputError();
 
-      this.dispatchEvent(
-        new CustomEvent('change', {
-          detail: { value: this.value },
-          bubbles: true,
-        }),
-      );
+      dispatchValue(this, this.value);
     }
 
     this.requestUpdate();
@@ -285,7 +275,7 @@ export class GuiDate extends LitElement {
    * segments never validates a half-typed entry.
    */
   private onFocusLeave(): void {
-    this.dispatchEvent(new CustomEvent('blur'));
+    this.dispatchEvent(new CustomEvent('gui-blur'));
     this.settleOnFocusLeave();
   }
 
@@ -302,7 +292,7 @@ export class GuiDate extends LitElement {
       this._internalNullReport = true;
       this.value = undefined;
     }
-    this.dispatchEvent(new CustomEvent('change', { detail: { value: null }, bubbles: true }));
+    dispatchValue(this, null);
     this._parts.surfaceInputError(this.incompleteMessage ?? INCOMPLETE_DATE_MESSAGE);
   }
 }

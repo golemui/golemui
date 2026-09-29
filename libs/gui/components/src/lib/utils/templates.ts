@@ -14,6 +14,14 @@ export type ControlTemplateData<T, V = any> = {
 };
 
 /**
+ * Whether a control shows its errors. `touched` is only tracked by a host that validates on
+ * interaction, like GolemUI Forms: `undefined` means it isn't, so errors show as soon as they are
+ * set, and `false` holds them back until the user has interacted with the control.
+ */
+export const showsErrors = (touched: boolean | undefined, errors: string[] | undefined) =>
+  touched !== false && !!errors && errors.length > 0;
+
+/**
  * The visual required marker. Hidden from AT — `aria-required` on the control
  * carries the semantics, so screen readers don't announce a stray "star".
  */
@@ -103,7 +111,7 @@ export const addErrors = <T, ExtraProps extends { hint?: string }>(
   options?: { variant?: AddErrorsVariant },
 ) => {
   const variant = options?.variant ?? 'field';
-  const showErrors = templateData.touched && templateData.errors && templateData.errors.length > 0;
+  const showErrors = showsErrors(templateData.touched, templateData.errors);
 
   if (variant !== 'field' && !showErrors) return nothing;
 

@@ -1,4 +1,4 @@
-import { html, LitElement, nothing } from 'lit';
+import { html, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
 import { cspStyleMap } from '@golemui/lit-utils';
 import { safeDefine } from '@golemui/lit-utils';
@@ -14,9 +14,10 @@ import {
   type TimeOption,
   type TimeRange,
 } from '../utils/time';
+import { GuiElement } from '../gui-element';
+import { dispatchValue } from '../utils/events';
 
-export class GuiTimeList extends LitElement {
-  @property({ type: String }) uid: string | undefined = undefined;
+export class GuiTimeList extends GuiElement {
   @property({ type: String }) value: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String, attribute: 'min-time' }) minTime: string | undefined = undefined;
@@ -115,13 +116,7 @@ export class GuiTimeList extends LitElement {
     if (this.disabled || this.readOnly || option.disabled) return;
 
     this.value = option.value;
-    this.dispatchEvent(
-      new CustomEvent('change', {
-        detail: { value: option.value },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatchValue(this, option.value);
   }
 
   private onKeyDown(event: KeyboardEvent) {

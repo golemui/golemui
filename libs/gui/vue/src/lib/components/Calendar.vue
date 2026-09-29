@@ -28,19 +28,19 @@ const blurHandler = () => onBlur();
 let currentEl: HTMLElement | null = null;
 watch(calRef, (el) => {
   if (currentEl) {
-    currentEl.removeEventListener('blur', blurHandler);
-    currentEl.removeEventListener('change', changeHandler);
+    currentEl.removeEventListener('gui-blur', blurHandler);
+    currentEl.removeEventListener('gui-input', changeHandler);
   }
   currentEl = el;
   if (el) {
-    el.addEventListener('blur', blurHandler);
-    el.addEventListener('change', changeHandler);
+    el.addEventListener('gui-blur', blurHandler);
+    el.addEventListener('gui-input', changeHandler);
   }
 });
 
 onUnmounted(() => {
-  currentEl?.removeEventListener('blur', blurHandler);
-  currentEl?.removeEventListener('change', changeHandler);
+  currentEl?.removeEventListener('gui-blur', blurHandler);
+  currentEl?.removeEventListener('gui-input', changeHandler);
 });
 </script>
 

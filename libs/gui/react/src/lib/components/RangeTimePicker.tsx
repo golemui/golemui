@@ -81,9 +81,9 @@ export function RangeTimePicker(widgetInstance: WithWidget) {
         editStartedMessage={templateData.editStartedMessage as string}
         editCommittedMessage={templateData.editCommittedMessage as string}
         editCancelledMessage={templateData.editCancelledMessage as string}
-        onChange={handleChange}
-        onBlur={onBlur}
-        onInputError={handleInputError}
+        onGuiInput={handleChange}
+        onGuiBlur={onBlur}
+        onGuiInputError={handleInputError}
       />
     </div>
   );

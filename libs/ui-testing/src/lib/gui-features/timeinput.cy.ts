@@ -422,7 +422,7 @@ export const runTimeInputComponentTests = (mountFn: MountComponentFn) => {
 
         const changeSpy = cy.spy().as('changeSpy');
         cy.get('gui-time').then(($el) => {
-          $el[0].addEventListener('change', changeSpy as unknown as EventListener);
+          $el[0].addEventListener('gui-input', changeSpy as unknown as EventListener);
         });
 
         cy.get(sel.minute).type('{selectAll}{backspace}');
@@ -459,7 +459,7 @@ export const runTimeInputComponentTests = (mountFn: MountComponentFn) => {
 
         const changeSpy = cy.spy().as('changeSpy');
         cy.get('gui-time').then(($el) => {
-          $el[0].addEventListener('change', changeSpy as unknown as EventListener);
+          $el[0].addEventListener('gui-input', changeSpy as unknown as EventListener);
         });
 
         cy.get(sel.hour).type('09');
@@ -529,7 +529,7 @@ export const runTimeInputComponentTests = (mountFn: MountComponentFn) => {
     });
 
     describe('bounds validation', () => {
-      it('should emit change and inputError for a time past maxTime', () => {
+      it('should emit gui-input and gui-input-error for a time past maxTime', () => {
         // en-GB renders 24h, so the hour is typed directly without a period
         mountTimeInput({
           lang: 'en-GB',
@@ -539,8 +539,8 @@ export const runTimeInputComponentTests = (mountFn: MountComponentFn) => {
         const changeSpy = cy.spy().as('changeSpy');
         const inputErrorSpy = cy.spy().as('inputErrorSpy');
         cy.get('gui-time').then(($el) => {
-          $el[0].addEventListener('change', changeSpy as unknown as EventListener);
-          $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
+          $el[0].addEventListener('gui-input', changeSpy as unknown as EventListener);
+          $el[0].addEventListener('gui-input-error', inputErrorSpy as unknown as EventListener);
         });
 
         cy.get(sel.hour).type('18');
