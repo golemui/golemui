@@ -134,3 +134,53 @@ Editing workflow for the core file: change it here, then run `npm run generate:s
 so every vendored copy is regenerated. A vendored copy is identical to its source apart from
 an `$id` rebased onto the implementation's own tree, which is what lets that tree be loaded by
 `$id` alone. A drift test enforces this, and CI fails when generated files are stale.
+
+## Converting a JSON Schema into a form
+
+`@golemui/schemas/json-schema` exports `fromJsonSchema`, a pure function that turns a JSON
+Schema of the form data into a form definition. It runs in Node, browsers and Workers, so it
+works at runtime with a schema from an API, and at build time to write a form file.
+
+```ts
+import { fromJsonSchema } from '@golemui/schemas/json-schema';
+import { guiPreset } from '@golemui/gui-schemas/json-schema';
+
+const { formDefinition, diagnostics } = fromJsonSchema(schema, {
+  preset: guiPreset(),
+  rules: [{ match: { $type: 'string', format: 'email' }, props: { icon: 'mail' } }],
+  overrides: { 'address.street': { widget: 'textarea' } },
+});
+```
+
+The widget set provides a preset. Its rules choose a widget for each schema node, and its
+builders create the widgets. Four layers change the result. For each node, the first layer
+that names a widget builds it:
+
+1. A path override, e.g. `overrides: { 'address.street': { widget: 'textarea' } }`. Inside
+   arrays the path uses the `items` token: `lines.items.quantity`.
+2. A definition override, e.g. `overrides: { '$defs/Address': { ... } }`, for every node that
+   comes from that definition.
+3. The `x-golemui` keyword in the schema. Rename it with `vendorKeyword`, or ignore it with
+   `vendorKeyword: false`.
+4. The rules, in order: first `rules`, then the preset rules. A rule is either a predicate,
+   `{ when(node), build(node, context) }`, or plain JSON, `{ match, widget, ...fields }`.
+
+The other fields of these layers (`label`, `props`, `validator`, `defaultValue`, `readonly`,
+`size`, `uid`) are merged onto the built widget, the most specific layer last. `skip: true`
+leaves a node out. `order` sets the property order of an object, and `'*'` stands for the
+properties it does not list.
+
+A JSON rule matches schema keywords by deep equality or with `$in`, `$exists` and `$regex`. It
+matches node fields with `$type`, `$path` (a glob: `*` is one segment, `**` any number of
+segments), `$name`, `$defName`, `$required` and `$inRepeater`. A JSON rule without `widget`
+only patches what the next rule builds.
+
+Refs are resolved inside the document: `$defs`, `definitions`, and OpenAPI
+`components/schemas` through the `refRoot` option. A recursive ref stops after `maxRefDepth`
+expansions, 2 by default. `allOf` parts are merged, nullable types are unwrapped, and draft-07,
+draft-04 and OpenAPI 3.0 keywords are read in their 2020-12 form.
+
+The conversion never throws because of the schema shape. What it cannot express exactly is
+listed in `diagnostics`. Each entry has a `severity` (`error`: not rendered, `warning`:
+rendered approximately, `info`: a note), a `code`, the form data `path` and the JSON
+`pointer` into the input.

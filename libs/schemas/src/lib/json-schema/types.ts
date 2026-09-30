@@ -80,7 +80,7 @@ export interface SchemaNode {
   readonly pointer: string;
   /** True when the parent object always requires this property. */
   readonly required: boolean;
-  /** How many enclosing arrays render as repeaters. */
+  /** How many array items the node is inside, e.g. 1 for `lines.items.quantity`. */
   readonly repeaterDepth: number;
   /** The value of the vendor keyword (`x-golemui` by default) on this node, when present. */
   readonly hint?: WidgetPatch;
@@ -155,9 +155,14 @@ export interface BuildContext {
   next(node?: SchemaNode): BuildResult;
   /** Builds any node with every layer, e.g. a child node. */
   build(node: SchemaNode): BuildResult;
-  /** Builds the properties of an object node in order, compiled conditionals included. */
+  /**
+   * The child nodes in render order: the properties of an object node, or the positions of a
+   * tuple node (`prefixItems`), with paths like `point.0`.
+   */
+  children(node: SchemaNode): SchemaNode[];
+  /** Builds {@link BuildContext.children}, compiled conditionals included. */
   buildChildren(node: SchemaNode): FormWidgetJson[];
-  /** The item node of an array node. */
+  /** The item node of an array node, with the path `<array path>.items`. */
   item(node: SchemaNode): SchemaNode | undefined;
   /** The widget label: the schema `title`, otherwise the property name in readable form. */
   label(node: SchemaNode): Localizable | undefined;
@@ -174,7 +179,8 @@ export type EnumOption = { label: Localizable; value: string | number | boolean 
 
 /** Options of {@link Preset.group}. */
 export type GroupOptions = {
-  uid: string;
+  /** Set for conditional branches. Without it, the form assigns a position uid. */
+  uid?: string;
   /** Visibility condition, for conditional branches. */
   include?: { when: string };
   /** The object title, when the preset renders one. */
