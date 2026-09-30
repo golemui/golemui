@@ -75,6 +75,44 @@ The raw `schemas/` files behave the same way: registering each one by its own
 The core `common.schema.json` of `@golemui/schemas` keeps its own `$id`, so both
 packages can be loaded into one Ajv instance.
 
+## Converting a JSON Schema into a gui form
+
+`@golemui/gui-schemas/json-schema` exports `guiPreset`, the gui widget set for
+the `fromJsonSchema` converter of `@golemui/schemas/json-schema`. The converter
+and its customization layers are described in the `@golemui/schemas` README.
+
+```ts
+import { fromJsonSchema } from '@golemui/schemas/json-schema';
+import { guiPreset } from '@golemui/gui-schemas/json-schema';
+
+const { formDefinition, diagnostics } = fromJsonSchema(schema, {
+  preset: guiPreset({ submitLabel: 'Save', enumThresholds: { radio: 3 } }),
+});
+```
+
+The preset picks these widgets:
+
+- `enum`, or `oneOf`/`anyOf` of `const`: `radiogroup` up to `enumThresholds.radio`
+  options (0 by default), `select` up to `enumThresholds.select` (6 by default),
+  `dropdown` above.
+- strings: `dateInput`, `dateTimePicker` and `timeInput` by `format`, `password`
+  for `format: password`, `writeOnly` or a secret-looking name, `markdown` for
+  `contentMediaType: text/markdown`, `textarea` from `maxLength` 200, and
+  `textinput` otherwise. A `const` is a read-only input.
+- `number` and `integer`: `number`. `boolean`: `checkbox`.
+- arrays: `repeater` for objects, `multiList` or `multiDropdown` for choices,
+  `tags` for other values, and a row of inputs for a tuple.
+- objects: a `flex` column. `objectTitle: 'markdownText'` or `'alert'` shows the
+  object title above its properties.
+
+`title` is the label, `description` the hint, `examples[0]` the placeholder,
+`readOnly` makes an input read-only, and `default` is the default value.
+Constraints become the gui validator. The date-time widgets write the local time
+without a UTC offset, which the `local-datetime` diagnostic points out.
+
+The package builds ES and CommonJS modules. `require('@golemui/gui-schemas')`
+loads `index.cjs`, which replaces the earlier `index.umd.cjs`.
+
 ## Documentation
 
 - Website: https://golemui.com

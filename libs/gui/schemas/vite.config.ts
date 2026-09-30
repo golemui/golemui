@@ -5,9 +5,10 @@ import dts from 'vite-plugin-dts';
 import { join, sep } from 'path';
 
 /**
- * Fails the build if code from another workspace library reaches an emitted bundle. The only
- * @golemui import in this package is the type-only one in src/lib/widget-manifest.ts, which
- * is excluded from the lib build. Checking bundled module paths rather than import
+ * Fails the build if code from another workspace library reaches an emitted bundle. The
+ * @golemui imports in this package are type-only: the one in src/lib/widget-manifest.ts, which
+ * is excluded from the lib build, and the JSON Schema preset's imports of
+ * @golemui/schemas/json-schema. Checking bundled module paths rather than import
  * statements is what catches it: the tsconfig path aliases resolve a workspace package to
  * its source, so a value import would be inlined instead of left as a runtime import.
  */
@@ -52,9 +53,13 @@ export default defineConfig(() => ({
     emptyOutDir: true,
     reportCompressedSize: true,
     lib: {
-      entry: 'src/index.ts',
-      name: 'gui-schemas',
-      fileName: 'index',
+      entry: {
+        index: 'src/index.ts',
+        'json-schema': 'src/json-schema.ts',
+      },
+      // Multiple entries rule out umd, and nothing loads this package through a script tag.
+      formats: ['es', 'cjs'],
+      fileName: (format, entryName) => `${entryName}.${format === 'es' ? 'js' : 'cjs'}`,
     },
   },
   test: {
