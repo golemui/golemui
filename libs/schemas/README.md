@@ -209,6 +209,43 @@ not in `if.required` passes when it is absent, which the `if-vacuous` note point
 other `if` gives an `if-unsupported` warning, and its branch properties are always shown and
 optional.
 
+### From the command line
+
+`convert` writes the form definition of a JSON Schema file, to standard output or to `--out`.
+The preset comes from a module that exports `preset(options)`, such as the gui entry:
+
+```bash
+npx @golemui/schemas convert schemas/signup.schema.json \
+  --preset @golemui/gui-schemas/json-schema --out src/forms/signup.form.json
+```
+
+A generated form is often edited by hand, so an existing `--out` file is only replaced with
+`--force`. `--pointer /components/schemas/User` converts one subschema of a larger document,
+such as an OpenAPI file, and resolves its `$ref`s against the whole document. Diagnostics go to
+standard error. `--fail-on error` or `--fail-on warning` makes the command fail on them.
+
+The settings can also live in `json-schema.config.mjs` (or `.json`) in the current directory,
+or in the file `--config` names. Its paths are relative to the config file, and flags win over
+it. A `.mjs` config can pass predicate rules and the preset itself:
+
+```js
+import { guiPreset } from '@golemui/gui-schemas/json-schema';
+
+export default {
+  input: 'schemas/signup.schema.json',
+  output: 'src/forms/signup.form.json',
+  preset: guiPreset({ submitLabel: 'Sign up' }),
+  overrides: { 'address.street': { widget: 'textarea' } },
+  rules: [{ match: { format: 'email' }, props: { icon: 'mail' } }],
+};
+```
+
+A `.json` config names the preset module instead (`"preset": "@golemui/gui-schemas/json-schema"`)
+and passes its options as `presetOptions`. The other fields are `pointer`, `vendorKeyword`,
+`maxRefDepth`, `maxNodes` and, in a `.mjs` config, `transform`.
+
+### Diagnostics
+
 The conversion never throws because of the schema shape. What it cannot express exactly is
 listed in `diagnostics`. Each entry has a `severity` (`error`: not rendered, `warning`:
 rendered approximately, `info`: a note), a `code`, the form data `path` and the JSON

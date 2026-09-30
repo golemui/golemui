@@ -79,7 +79,9 @@ packages can be loaded into one Ajv instance.
 
 `@golemui/gui-schemas/json-schema` exports `guiPreset`, the gui widget set for
 the `fromJsonSchema` converter of `@golemui/schemas/json-schema`. The converter
-and its customization layers are described in the `@golemui/schemas` README.
+and its customization layers are described in the `@golemui/schemas` README. The
+same function is also exported as `preset`, the name that
+`npx @golemui/schemas convert --preset @golemui/gui-schemas/json-schema` loads.
 
 ```ts
 import { fromJsonSchema } from '@golemui/schemas/json-schema';
