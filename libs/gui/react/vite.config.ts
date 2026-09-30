@@ -58,7 +58,6 @@ export default defineConfig(() => ({
         'react',
         'react-dom',
         'react/jsx-runtime',
-        '@lit/react',
         '@golemui/core',
         '@golemui/react',
         '@golemui/gui-components',

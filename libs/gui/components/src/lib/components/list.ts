@@ -6,7 +6,7 @@ import { gridKeyStep, listPageSize, nextEnabledIndex } from '../utils/grid-nav';
 import { updateListItems } from './list-items';
 import type { ListItem, OptionValue } from '../types';
 import { GuiFormControl } from '../gui-form-control';
-import { dispatchValue } from '../utils/events';
+import { dispatchValue, fires, valueEvents } from '../utils/events';
 
 /**
  * A virtualized listbox to pick one item, with keyboard navigation.
@@ -47,12 +47,12 @@ export class GuiList extends GuiFormControl {
   /** The value of the selected item. */
   @property({ type: String }) value: OptionValue | undefined = undefined;
   /** For items given as objects, the key of the value. */
-  @property({ type: String }) valueField: string | undefined = undefined;
+  @property({ type: String, attribute: 'value-field' }) valueField: string | undefined = undefined;
   /** The items of the list. */
   @property({ type: Array }) items: ListItem<unknown>[] = [];
 
   /** Height of each item, in pixels. Needed to virtualize the list. */
-  @property({ type: Number }) itemHeight: number | undefined = undefined;
+  @property({ type: Number, attribute: 'item-height' }) itemHeight: number | undefined = undefined;
   /** Height of the scrollable list, in pixels. */
   @property({ type: Number }) height: number | undefined = undefined;
 
@@ -338,6 +338,14 @@ export class GuiList extends GuiFormControl {
     this.removeEventListener('focusout', this.onFocusOut);
   }
 }
+
+/** The events `gui-list` fires, with their types. */
+export const GuiListEvents = {
+  ...valueEvents<GuiList['value']>(),
+  'gui-focus-change': fires<CustomEvent<{ index: number }>>(),
+  'gui-range-change': fires<CustomEvent<{ startIndex: number; endIndex: number }>>(),
+  'gui-update-items': fires<CustomEvent<ListItem<unknown>[]>>(),
+};
 
 declare global {
   interface HTMLElementTagNameMap {

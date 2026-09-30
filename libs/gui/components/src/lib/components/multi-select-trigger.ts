@@ -6,14 +6,19 @@ import { safeDefine } from '@golemui/lit-utils';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { GUIPillsNavigationController } from '../controllers/pills-navigation.controller';
 import './pills';
-import type { GuiPillItem } from './pills';
+import type { GuiPillEventDetail, GuiPillItem, GuiPillsDropdownEventDetail } from './pills';
 import { GuiElement } from '../gui-element';
 import { message } from '../utils/messages';
+import { fires } from '../utils/events';
 
 /**
  * The field of a multi-select dropdown: the selected options as pills and a search input. A
  * building block of GolemUI Forms.
  *
+ * @fires gui-pill-remove - The user removed a selected option from its pill. `detail.key` is the
+ *   pill's key.
+ * @fires gui-dropdown-toggle - The count bubble opened or closed its dropdown. `detail.open` is the
+ *   new state.
  * @cssprop --gui-pill-height - Height of each pill.
  * @cssprop --gui-pill-font-size - Font size of the pill text.
  * @cssprop --gui-pill-action-size - Size of the icons inside a pill.
@@ -226,6 +231,12 @@ export class GuiMultiSelectTrigger extends GuiElement {
     }
   };
 }
+
+/** The events `gui-multi-select-trigger` fires, with their types. */
+export const GuiMultiSelectTriggerEvents = {
+  'gui-pill-remove': fires<CustomEvent<GuiPillEventDetail>>(),
+  'gui-dropdown-toggle': fires<CustomEvent<GuiPillsDropdownEventDetail>>(),
+};
 
 declare global {
   interface HTMLElementTagNameMap {

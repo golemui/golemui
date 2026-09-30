@@ -7,8 +7,9 @@ import { fileURLToPath } from 'node:url';
 /**
  * Standalone install check for @golemui/gui-components.
  *
- * GolemUI Components must work without the form engine: it needs `lit` and its own
- * @golemui/lit-utils helpers, nothing else. This script packs both built packages, installs
+ * GolemUI Components must work without the form engine: it needs `lit`, its own
+ * @golemui/lit-utils helpers and @lit/react for its React components, nothing else; react and
+ * vue are optional peers. This script packs both built packages, installs
  * them in an empty project next to `lit`, then imports the package root, one component entry
  * point and resolves the stylesheets. An import of any other @golemui package fails there, because
  * none is installed.
@@ -53,6 +54,15 @@ const manifest = JSON.parse(readFileSync(join(packageDir, manifestPath), 'utf8')
 const tags = manifest.modules.flatMap((module) => module.declarations ?? []).map((d) => d.tagName);
 if (!tags.includes('gui-textinput')) {
   throw new Error('custom-elements.json does not describe gui-textinput');
+}
+
+// The framework typings and React components, which need react or vue only when used.
+const { existsSync } = await import('node:fs');
+for (const file of ['react.js', 'react.umd.cjs', 'react.d.ts', 'vue.d.ts']) {
+  if (!existsSync(join(packageDir, file))) throw new Error(\`the package does not ship \${file}\`);
+}
+if (existsSync(join('node_modules', 'react')) || existsSync(join('node_modules', 'vue'))) {
+  throw new Error('installing gui-components pulled in react or vue');
 }
 `;
 

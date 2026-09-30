@@ -6,7 +6,7 @@ import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addIcon, addLabel, type ControlTemplateData } from '../utils/templates';
 import { GuiFormControl } from '../gui-form-control';
-import { dispatchChange, dispatchValue } from '../utils/events';
+import { dispatchChange, dispatchValue, valueEvents } from '../utils/events';
 
 /** What <gui-textinput> renders besides the control state: its presentation props. */
 export type GuiTextinputProps = {
@@ -142,6 +142,11 @@ export class GuiTextinput extends GuiFormControl {
     );
   }
 }
+
+/** The events `gui-textinput` fires, with their types. */
+export const GuiTextinputEvents = {
+  ...valueEvents<GuiTextinput['value']>(),
+};
 
 declare global {
   interface HTMLElementTagNameMap {

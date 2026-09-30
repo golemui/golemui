@@ -37,6 +37,7 @@ export default defineConfig(() => ({
       entry: {
         index: 'src/index.ts',
         internals: 'src/internals.ts',
+        react: 'src/react.ts',
         'lib/components/button': 'src/lib/components/button.ts',
         'lib/components/calendar': 'src/lib/components/calendar.ts',
         'lib/components/checkbox': 'src/lib/components/checkbox.ts',
@@ -84,7 +85,20 @@ export default defineConfig(() => ({
       // External packages that should not be bundled into your library.
       // `lit` must stay external so Node resolves lit's own `node` export condition.
       // Bundling it inlines the browser build, which reads `HTMLElement` at module scope.
-      external: ['@golemui/lit-utils', 'lit', /^lit\/.+/, 'lit-html', /^lit-html\/.+/],
+      external: [
+        '@golemui/lit-utils',
+        'lit',
+        /^lit\/.+/,
+        'lit-html',
+        /^lit-html\/.+/,
+        '@lit/react',
+        'react',
+      ],
+      output: {
+        // The React components use hooks, so React Server Components must load them on the
+        // client. The elements themselves stay usable on the server.
+        banner: (chunk) => (chunk.isEntry && chunk.name === 'react' ? '"use client";' : ''),
+      },
     },
   },
   test: {

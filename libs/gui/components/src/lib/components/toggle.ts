@@ -5,7 +5,7 @@ import { live } from 'lit/directives/live.js';
 import { safeDefine } from '@golemui/lit-utils';
 import { addErrors, requiredMarker, type ControlTemplateData } from '../utils/templates';
 import { GuiFormControl } from '../gui-form-control';
-import { dispatchValue } from '../utils/events';
+import { dispatchValue, valueEvents } from '../utils/events';
 
 /** What <gui-toggle> renders besides the control state: its presentation props. */
 export type GuiToggleProps = {
@@ -32,7 +32,10 @@ export class GuiToggle extends GuiFormControl {
   @property({ type: String }) value: boolean | undefined = undefined;
 
   /** Side of the label the switch is on. */
-  @property({ type: String }) togglePosition: 'left' | 'right' | undefined = 'left';
+  @property({ type: String, attribute: 'toggle-position' }) togglePosition:
+    | 'left'
+    | 'right'
+    | undefined = 'left';
 
   private ariaController = new GUIAriaController(this, {
     getTargets: () => this.querySelectorAll(`input[id="${this.uid}"]`),
@@ -138,6 +141,11 @@ export class GuiToggle extends GuiFormControl {
     );
   }
 }
+
+/** The events `gui-toggle` fires, with their types. */
+export const GuiToggleEvents = {
+  ...valueEvents<GuiToggle['value']>(),
+};
 
 declare global {
   interface HTMLElementTagNameMap {

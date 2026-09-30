@@ -7,7 +7,7 @@ import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 import { GuiFormControl } from '../gui-form-control';
-import { dispatchChange, dispatchValue } from '../utils/events';
+import { dispatchChange, dispatchValue, valueEvents } from '../utils/events';
 
 /** What <gui-textarea> renders besides the control state: its presentation props. */
 export type GuiTextareaProps = {
@@ -41,15 +41,15 @@ export class GuiTextarea extends GuiFormControl {
    * With `maxLength`, whether the counter shows the characters left (`remaining`) or used
    * (`current`).
    */
-  @property({ type: String, attribute: 'countermode' }) counterMode:
+  @property({ type: String, attribute: 'counter-mode' }) counterMode:
     | 'remaining'
     | 'current'
     | undefined;
   /** Minimum height of the field, in pixels. */
-  @property({ type: Number, attribute: 'minimumheight' }) minimumHeight: number | undefined =
+  @property({ type: Number, attribute: 'minimum-height' }) minimumHeight: number | undefined =
     undefined;
   /** Grows the field with its content instead of scrolling. */
-  @property({ type: Boolean, attribute: 'autogrow' }) autoGrow: boolean | undefined = false;
+  @property({ type: Boolean, attribute: 'auto-grow' }) autoGrow: boolean | undefined = false;
   /** Maximum number of characters. */
   @property({ type: Number, attribute: 'maxlength' }) maxLength: number | undefined = undefined;
 
@@ -194,6 +194,11 @@ export class GuiTextarea extends GuiFormControl {
     );
   }
 }
+
+/** The events `gui-textarea` fires, with their types. */
+export const GuiTextareaEvents = {
+  ...valueEvents<GuiTextarea['value']>(),
+};
 
 declare global {
   interface HTMLElementTagNameMap {

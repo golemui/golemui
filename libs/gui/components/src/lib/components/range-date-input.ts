@@ -36,7 +36,7 @@ import './pills';
 import type { GuiPillEventDetail, GuiPillItem } from './pills';
 import type { DateRange } from '../types';
 import { GuiFormControl } from '../gui-form-control';
-import { dispatchValue } from '../utils/events';
+import { dispatchValue, fires, valueEvents, type GuiInputErrorEventDetail } from '../utils/events';
 import { message } from '../utils/messages';
 
 /** What <gui-range-date-input> renders besides the control state: its presentation props. */
@@ -71,16 +71,19 @@ export class GuiRangeDateInput extends GuiFormControl {
    * Whether the element renders its own error list. Elements that embed it turn it off and show the
    * errors themselves.
    */
-  @property({ type: Boolean }) showErrors: boolean | undefined = true;
+  @property({ type: Boolean, attribute: 'show-errors' }) showErrors: boolean | undefined = true;
 
   /** Icon class name shown inside the control, for example from an icon font. */
   @property({ type: String }) icon: string | undefined = '';
   /** Accessible name of the day part. */
-  @property({ type: String }) dayAriaLabel: string | undefined = undefined;
+  @property({ type: String, attribute: 'day-aria-label' }) dayAriaLabel: string | undefined =
+    undefined;
   /** Accessible name of the month part. */
-  @property({ type: String }) monthAriaLabel: string | undefined = undefined;
+  @property({ type: String, attribute: 'month-aria-label' }) monthAriaLabel: string | undefined =
+    undefined;
   /** Accessible name of the year part. */
-  @property({ type: String }) yearAriaLabel: string | undefined = undefined;
+  @property({ type: String, attribute: 'year-aria-label' }) yearAriaLabel: string | undefined =
+    undefined;
 
   /** The date ranges, as `{ start, end }` ISO dates. */
   @property({ type: Array }) value: DateRange[] | undefined = [];
@@ -90,11 +93,17 @@ export class GuiRangeDateInput extends GuiFormControl {
     | undefined = undefined;
 
   /** Accessible name of the remove button of each range pill. */
-  @property({ type: String }) removePillAriaLabel: string | undefined = undefined;
+  @property({ type: String, attribute: 'remove-pill-aria-label' }) removePillAriaLabel:
+    | string
+    | undefined = undefined;
   /** Accessible name of the start date field. */
-  @property({ type: String }) startDateAriaLabel: string | undefined = undefined;
+  @property({ type: String, attribute: 'start-date-aria-label' }) startDateAriaLabel:
+    | string
+    | undefined = undefined;
   /** Accessible name of the end date field. */
-  @property({ type: String }) endDateAriaLabel: string | undefined = undefined;
+  @property({ type: String, attribute: 'end-date-aria-label' }) endDateAriaLabel:
+    | string
+    | undefined = undefined;
   /** Text shown between the start and end of a range. */
   @property({ type: String }) separator: string | undefined = undefined;
   /** Error when focus leaves a partly filled value. */
@@ -814,6 +823,16 @@ export class GuiRangeDateInput extends GuiFormControl {
     this._parts.clearGroup('end');
   }
 }
+
+/** The events `gui-range-date` fires, with their types. */
+export const GuiRangeDateInputEvents = {
+  ...valueEvents<GuiRangeDateInput['value']>(),
+  'gui-focus': fires<CustomEvent<FocusEvent>>(),
+  'gui-input-error': fires<CustomEvent<GuiInputErrorEventDetail>>(),
+  'gui-parts-change': fires<CustomEvent<{ start: string | null; end: string | null }>>(),
+  'gui-edit-state-change': fires<CustomEvent<{ selected: DateRange | null; editing: boolean }>>(),
+  'gui-range-click': fires<CustomEvent<{ range: DateRange }>>(),
+};
 
 declare global {
   interface HTMLElementTagNameMap {

@@ -18,7 +18,14 @@ import { addErrors, addIcon, addLabel } from '../utils/templates';
 import { CARET_DOWN_PATH } from '../utils/icons';
 import type { TimeRange } from '../types';
 import { GuiFormControl, type GuiValidity } from '../gui-form-control';
-import { dispatchChange, dispatchValue, stopPropagation } from '../utils/events';
+import {
+  dispatchChange,
+  dispatchValue,
+  stopPropagation,
+  fires,
+  valueEvents,
+  type GuiInputErrorEventDetail,
+} from '../utils/events';
 import { message } from '../utils/messages';
 
 /**
@@ -44,16 +51,20 @@ export class GuiRangeTimePicker extends GuiFormControl {
   @property({ type: String, attribute: 'toggle-aria-label' }) toggleAriaLabel: string | undefined =
     undefined;
   /** Accessible name of the hour part. */
-  @property({ type: String }) hourAriaLabel: string | undefined = undefined;
+  @property({ type: String, attribute: 'hour-aria-label' }) hourAriaLabel: string | undefined =
+    undefined;
   /** Accessible name of the minute part. */
-  @property({ type: String }) minuteAriaLabel: string | undefined = undefined;
+  @property({ type: String, attribute: 'minute-aria-label' }) minuteAriaLabel: string | undefined =
+    undefined;
   /** Accessible name of the AM/PM part. */
-  @property({ type: String }) dayPeriodAriaLabel: string | undefined = undefined;
+  @property({ type: String, attribute: 'day-period-aria-label' }) dayPeriodAriaLabel:
+    | string
+    | undefined = undefined;
   /**
    * Whether the element renders its own error list. Elements that embed it turn it off and show the
    * errors themselves.
    */
-  @property({ type: Boolean }) showErrors: boolean | undefined = true;
+  @property({ type: Boolean, attribute: 'show-errors' }) showErrors: boolean | undefined = true;
   /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
   /** The time ranges, as `{ start, end }` ISO times. */
@@ -613,6 +624,12 @@ export class GuiRangeTimePicker extends GuiFormControl {
     pills?.closeDropdown?.();
   }
 }
+
+/** The events `gui-range-time-picker` fires, with their types. */
+export const GuiRangeTimePickerEvents = {
+  ...valueEvents<GuiRangeTimePicker['value']>(),
+  'gui-input-error': fires<CustomEvent<GuiInputErrorEventDetail>>(),
+};
 
 declare global {
   interface HTMLElementTagNameMap {

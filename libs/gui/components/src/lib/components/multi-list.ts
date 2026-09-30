@@ -2,15 +2,16 @@ import { property } from 'lit/decorators.js';
 import { safeDefine } from '@golemui/lit-utils';
 import { GuiList } from './list';
 import type { ListItem, OptionValue } from '../types';
+import { dispatchValue, fires, valueEvents } from '../utils/events';
 
 /**
  * Multi-select listbox. Same virtualization, keyboard navigation and focus
- * model as `gui-list`, but selection is an array (`values`) and every
- * Enter/Space/click dispatches `gui-item-toggle` with the toggled item's
- * value — the host owns the array toggle semantics.
+ * model as `gui-list`, but selection is an array (`values`): every
+ * Enter/Space/click adds the item's value to `values` or removes it.
  *
- * @fires gui-item-toggle - The user toggled an item. `detail.value` is its value; the host adds or
- *   removes it from `values`.
+ * @fires gui-item-toggle - The user toggled an item. `detail.value` is its value.
+ * @fires gui-input - The user toggled an item. `detail.value` is the new `values`.
+ * @fires gui-change - The user toggled an item. `detail.value` is the new `values`.
  */
 export class GuiMultiList extends GuiList {
   /** The selected values. */
@@ -45,6 +46,7 @@ export class GuiMultiList extends GuiList {
         composed: true,
       }),
     );
+    dispatchValue(this, this.values);
   }
 
   protected override syncHostAria() {
@@ -52,6 +54,15 @@ export class GuiMultiList extends GuiList {
     this.setAttribute('aria-multiselectable', 'true');
   }
 }
+
+/** The events `gui-multi-list` fires, with their types. */
+export const GuiMultiListEvents = {
+  ...valueEvents<GuiMultiList['values']>(),
+  'gui-focus-change': fires<CustomEvent<{ index: number }>>(),
+  'gui-range-change': fires<CustomEvent<{ startIndex: number; endIndex: number }>>(),
+  'gui-update-items': fires<CustomEvent<ListItem<unknown>[]>>(),
+  'gui-item-toggle': fires<CustomEvent<{ value: OptionValue }>>(),
+};
 
 declare global {
   interface HTMLElementTagNameMap {

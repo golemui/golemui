@@ -48,8 +48,8 @@ const dependencies: Dependencies = {
             uid="language"
             value="en"
             [options]="languages"
-            labelField="label"
-            valueField="code"
+            label-field="label"
+            value-field="code"
             (gui-change)="onLanguageChanged($event)"
           ></gui-select>
         </div>

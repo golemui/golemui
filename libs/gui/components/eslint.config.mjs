@@ -40,6 +40,8 @@ export default [
             '@nx/dependency-checks',
             'cypress',
             'cypress-ct-lit',
+            // An optional peer for the generated vue.d.ts, which the build writes.
+            'vue',
           ],
         },
       ],

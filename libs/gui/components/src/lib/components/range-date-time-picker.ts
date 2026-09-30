@@ -12,7 +12,14 @@ import { addErrors, addIcon, addLabel, addPickerPanel } from '../utils/templates
 import { CARET_DOWN_PATH } from '../utils/icons';
 import type { DateTimeRange } from '../types';
 import { GuiFormControl } from '../gui-form-control';
-import { dispatchChange, dispatchValue, stopPropagation } from '../utils/events';
+import {
+  dispatchChange,
+  dispatchValue,
+  stopPropagation,
+  fires,
+  valueEvents,
+  type GuiInputErrorEventDetail,
+} from '../utils/events';
 import { message } from '../utils/messages';
 
 /** The four pieces of an in-progress range, each absent until chosen. */
@@ -57,7 +64,7 @@ export class GuiRangeDateTimePicker extends GuiFormControl {
    * Whether the element renders its own error list. Elements that embed it turn it off and show the
    * errors themselves.
    */
-  @property({ type: Boolean }) showErrors: boolean | undefined = true;
+  @property({ type: Boolean, attribute: 'show-errors' }) showErrors: boolean | undefined = true;
   /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
   /** The date-time ranges, as `{ start, end }` ISO date-times. */
@@ -68,17 +75,24 @@ export class GuiRangeDateTimePicker extends GuiFormControl {
   @property({ type: String, attribute: 'toggle-aria-label' }) toggleAriaLabel: string | undefined =
     undefined;
   /** Accessible name of the day part. */
-  @property({ type: String }) dayAriaLabel: string | undefined = undefined;
+  @property({ type: String, attribute: 'day-aria-label' }) dayAriaLabel: string | undefined =
+    undefined;
   /** Accessible name of the month part. */
-  @property({ type: String }) monthAriaLabel: string | undefined = undefined;
+  @property({ type: String, attribute: 'month-aria-label' }) monthAriaLabel: string | undefined =
+    undefined;
   /** Accessible name of the year part. */
-  @property({ type: String }) yearAriaLabel: string | undefined = undefined;
+  @property({ type: String, attribute: 'year-aria-label' }) yearAriaLabel: string | undefined =
+    undefined;
   /** Accessible name of the hour part. */
-  @property({ type: String }) hourAriaLabel: string | undefined = undefined;
+  @property({ type: String, attribute: 'hour-aria-label' }) hourAriaLabel: string | undefined =
+    undefined;
   /** Accessible name of the minute part. */
-  @property({ type: String }) minuteAriaLabel: string | undefined = undefined;
+  @property({ type: String, attribute: 'minute-aria-label' }) minuteAriaLabel: string | undefined =
+    undefined;
   /** Accessible name of the AM/PM part. */
-  @property({ type: String }) dayPeriodAriaLabel: string | undefined = undefined;
+  @property({ type: String, attribute: 'day-period-aria-label' }) dayPeriodAriaLabel:
+    | string
+    | undefined = undefined;
   /** Text shown between the start and end of a range. */
   @property({ type: String }) separator: string | undefined = undefined;
   /** Accessible name of the remove button of each range pill. */
@@ -662,6 +676,12 @@ export class GuiRangeDateTimePicker extends GuiFormControl {
     pills?.closeDropdown?.();
   }
 }
+
+/** The events `gui-range-date-time-picker` fires, with their types. */
+export const GuiRangeDateTimePickerEvents = {
+  ...valueEvents<GuiRangeDateTimePicker['value']>(),
+  'gui-input-error': fires<CustomEvent<GuiInputErrorEventDetail>>(),
+};
 
 declare global {
   interface HTMLElementTagNameMap {

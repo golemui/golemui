@@ -6,7 +6,7 @@ import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addIcon, addLabel, type ControlTemplateData } from '../utils/templates';
 import { GuiFormControl } from '../gui-form-control';
-import { dispatchChange, dispatchValue } from '../utils/events';
+import { dispatchChange, dispatchValue, valueEvents } from '../utils/events';
 import { message } from '../utils/messages';
 
 /** What <gui-password> renders besides the control state: its presentation props. */
@@ -41,13 +41,21 @@ export class GuiPassword extends GuiFormControl {
   /** The `autocomplete` hint passed to the inner native control. */
   @property({ type: String }) autocomplete: string | undefined = undefined;
   /** Icon class name of the button while it would show the password. */
-  @property({ type: String }) showPasswordIcon: string | undefined = undefined;
+  @property({ type: String, attribute: 'show-password-icon' }) showPasswordIcon:
+    | string
+    | undefined = undefined;
   /** Icon class name of the button while it would hide the password. */
-  @property({ type: String }) hidePasswordIcon: string | undefined = undefined;
+  @property({ type: String, attribute: 'hide-password-icon' }) hidePasswordIcon:
+    | string
+    | undefined = undefined;
   /** Accessible name of the button that shows the password. */
-  @property({ type: String }) showPasswordLabel: string | undefined = undefined;
+  @property({ type: String, attribute: 'show-password-label' }) showPasswordLabel:
+    | string
+    | undefined = undefined;
   /** Accessible name of the button that hides the password. */
-  @property({ type: String }) hidePasswordLabel: string | undefined = undefined;
+  @property({ type: String, attribute: 'hide-password-label' }) hidePasswordLabel:
+    | string
+    | undefined = undefined;
 
   /** @internal */
   @state() showPassword = false;
@@ -182,6 +190,11 @@ export class GuiPassword extends GuiFormControl {
     );
   }
 }
+
+/** The events `gui-password` fires, with their types. */
+export const GuiPasswordEvents = {
+  ...valueEvents<GuiPassword['value']>(),
+};
 
 declare global {
   interface HTMLElementTagNameMap {

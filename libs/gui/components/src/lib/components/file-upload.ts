@@ -9,7 +9,7 @@ import { ARROW_CLOCKWISE_PATH, UPLOAD_PATH, X_CIRCLE_PATH, spinnerIcon } from '.
 import { clampPct, errorMessage, matchesAccept, newId } from '../utils/file-upload';
 import type { FileItem, UploadService } from '../types';
 import { GuiFormControl } from '../gui-form-control';
-import { dispatchValue } from '../utils/events';
+import { dispatchValue, fires, valueEvents, type GuiInputErrorEventDetail } from '../utils/events';
 import { message } from '../utils/messages';
 
 /** What <gui-file-upload> renders besides the control state: its presentation props. */
@@ -50,7 +50,7 @@ export class GuiFileUpload extends GuiFormControl {
   /** Accepted file types, as MIME types (`image/*`) or extensions (`.pdf`). */
   @property({ type: Array }) accept: string[] | undefined = undefined;
   /** Largest accepted file, in bytes. */
-  @property({ type: Number }) maxSize: number | undefined = undefined;
+  @property({ type: Number, attribute: 'max-size' }) maxSize: number | undefined = undefined;
   /** Text of the upload button. */
   @property({ type: String, attribute: 'button-label' }) buttonLabel: string | undefined =
     undefined;
@@ -736,6 +736,12 @@ export class GuiFileUpload extends GuiFormControl {
     </div>`;
   }
 }
+
+/** The events `gui-file-upload` fires, with their types. */
+export const GuiFileUploadEvents = {
+  ...valueEvents<GuiFileUpload['value']>(),
+  'gui-input-error': fires<CustomEvent<GuiInputErrorEventDetail>>(),
+};
 
 declare global {
   interface HTMLElementTagNameMap {

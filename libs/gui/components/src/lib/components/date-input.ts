@@ -16,7 +16,7 @@ import {
 } from '../utils/parts';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 import { boundsValidity, GuiFormControl, type GuiValidity } from '../gui-form-control';
-import { dispatchValue } from '../utils/events';
+import { dispatchValue, fires, valueEvents, type GuiInputErrorEventDetail } from '../utils/events';
 import { message } from '../utils/messages';
 
 const DATE_PART_TYPES: readonly DateTimePartType[] = ['day', 'month', 'year'];
@@ -46,16 +46,19 @@ export class GuiDate extends GuiFormControl {
    * Whether the element renders its own error list. Elements that embed it turn it off and show the
    * errors themselves.
    */
-  @property({ type: Boolean }) showErrors: boolean | undefined = true;
+  @property({ type: Boolean, attribute: 'show-errors' }) showErrors: boolean | undefined = true;
 
   /** Icon class name shown inside the control, for example from an icon font. */
   @property({ type: String }) icon: string | undefined = '';
   /** Accessible name of the day part. */
-  @property({ type: String }) dayAriaLabel: string | undefined = undefined;
+  @property({ type: String, attribute: 'day-aria-label' }) dayAriaLabel: string | undefined =
+    undefined;
   /** Accessible name of the month part. */
-  @property({ type: String }) monthAriaLabel: string | undefined = undefined;
+  @property({ type: String, attribute: 'month-aria-label' }) monthAriaLabel: string | undefined =
+    undefined;
   /** Accessible name of the year part. */
-  @property({ type: String }) yearAriaLabel: string | undefined = undefined;
+  @property({ type: String, attribute: 'year-aria-label' }) yearAriaLabel: string | undefined =
+    undefined;
 
   /** The date, as an ISO date (`YYYY-MM-DD`). */
   @property({ type: String }) value: string | undefined = undefined;
@@ -339,6 +342,14 @@ export class GuiDate extends GuiFormControl {
     this._parts.surfaceInputError(message('incompleteDate', this.incompleteMessage));
   }
 }
+
+/** The events `gui-date` fires, with their types. */
+export const GuiDateEvents = {
+  ...valueEvents<GuiDate['value']>(),
+  'gui-focus': fires<CustomEvent<FocusEvent>>(),
+  'gui-input-error': fires<CustomEvent<GuiInputErrorEventDetail>>(),
+  'gui-parts-change': fires<CustomEvent<{ date: string | null }>>(),
+};
 
 declare global {
   interface HTMLElementTagNameMap {

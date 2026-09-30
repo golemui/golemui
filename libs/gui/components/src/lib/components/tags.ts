@@ -9,7 +9,7 @@ import { addErrors, addLabel, type ControlTemplateData } from '../utils/template
 import './pills';
 import type { GuiPillEventDetail, GuiPillItem } from './pills';
 import { GuiFormControl } from '../gui-form-control';
-import { dispatchValue } from '../utils/events';
+import { dispatchValue, valueEvents } from '../utils/events';
 import { message } from '../utils/messages';
 
 type TagsSeparator = 'Enter' | ',' | 'Tab' | 'blur' | string;
@@ -47,7 +47,8 @@ export class GuiTags extends GuiFormControl {
   /** Keys that turn the typed text into a tag. `blur` adds it when focus leaves. */
   @property({ type: Array }) separators: TagsSeparator[] | undefined = undefined;
   /** Allows the same tag more than once. */
-  @property({ type: Boolean }) allowDuplicates: boolean | undefined = true;
+  @property({ type: Boolean, attribute: 'allow-duplicates' }) allowDuplicates: boolean | undefined =
+    true;
   /** Removes spaces around each tag. */
   @property({ type: Boolean }) trim: boolean | undefined = true;
   /** Accessible name of the remove button of each tag. */
@@ -342,6 +343,11 @@ export class GuiTags extends GuiFormControl {
     input?.focus();
   }
 }
+
+/** The events `gui-tags` fires, with their types. */
+export const GuiTagsEvents = {
+  ...valueEvents<GuiTags['value']>(),
+};
 
 declare global {
   interface HTMLElementTagNameMap {

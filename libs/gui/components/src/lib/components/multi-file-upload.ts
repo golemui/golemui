@@ -6,6 +6,7 @@ import { message } from '../utils/messages';
 import './pills';
 import type { GuiPillEventDetail, GuiPillItem } from './pills';
 import type { FileItem } from '../types';
+import { fires, valueEvents, type GuiInputErrorEventDetail } from '../utils/events';
 
 /**
  * A file upload that accepts several files, shown as pills.
@@ -83,6 +84,12 @@ export class GuiMultiFileUpload extends GuiFileUpload {
     if (item) void this.removeItem(item);
   };
 }
+
+/** The events `gui-multi-file-upload` fires, with their types. */
+export const GuiMultiFileUploadEvents = {
+  ...valueEvents<GuiMultiFileUpload['value']>(),
+  'gui-input-error': fires<CustomEvent<GuiInputErrorEventDetail>>(),
+};
 
 declare global {
   interface HTMLElementTagNameMap {

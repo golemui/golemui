@@ -24,9 +24,7 @@
     "*.js",
     "*.md"
   ],
-  "dependencies": {
-    "@lit/react": "^1.0.8"
-  },
+  "dependencies": {},
   "peerDependencies": {
     "react": ">=18.0.0",
     "react-dom": ">=18.0.0",

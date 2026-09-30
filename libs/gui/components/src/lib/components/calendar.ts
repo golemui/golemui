@@ -21,7 +21,7 @@ import {
 import { buildMonthDays, computeDayStatus } from '../utils/day-status';
 import type { DateRange } from '../types';
 import { GuiFormControl } from '../gui-form-control';
-import { dispatchValue } from '../utils/events';
+import { dispatchValue, valueEvents } from '../utils/events';
 
 export interface CalendarDay {
   date: Date;
@@ -74,11 +74,18 @@ export class GuiCalendar extends GuiFormControl {
     | string
     | undefined = undefined;
   /** How day numbers are written. */
-  @property({ type: String }) dayFormat: 'numeric' | '2-digit' | undefined = 'numeric';
+  @property({ type: String, attribute: 'day-format' }) dayFormat:
+    | 'numeric'
+    | '2-digit'
+    | undefined = 'numeric';
   /** How weekday names are written in the header. */
-  @property({ type: String }) weekdayFormat: 'short' | 'long' | 'narrow' | undefined = 'narrow';
+  @property({ type: String, attribute: 'weekday-format' }) weekdayFormat:
+    | 'short'
+    | 'long'
+    | 'narrow'
+    | undefined = 'narrow';
   /** How the month is written in the header. */
-  @property({ type: String }) monthFormat:
+  @property({ type: String, attribute: 'month-format' }) monthFormat:
     | 'numeric'
     | '2-digit'
     | 'long'
@@ -86,13 +93,14 @@ export class GuiCalendar extends GuiFormControl {
     | 'narrow'
     | undefined = 'long';
   /** Earliest selectable date, as an ISO date (`YYYY-MM-DD`). */
-  @property({ type: String }) minDate: string | undefined = undefined;
+  @property({ type: String, attribute: 'min-date' }) minDate: string | undefined = undefined;
   /** Latest selectable date, as an ISO date (`YYYY-MM-DD`). */
-  @property({ type: String }) maxDate: string | undefined = undefined;
+  @property({ type: String, attribute: 'max-date' }) maxDate: string | undefined = undefined;
   /** Dates that cannot be picked, as `{ start, end }` ISO date ranges. */
-  @property({ type: Array }) disabledRanges: DateRange[] | undefined = undefined;
+  @property({ type: Array, attribute: 'disabled-ranges' }) disabledRanges: DateRange[] | undefined =
+    undefined;
   /** Number of months shown side by side. */
-  @property({ type: Number }) numberOfMonths: number | undefined = 1;
+  @property({ type: Number, attribute: 'number-of-months' }) numberOfMonths: number | undefined = 1;
 
   /** The selected date, as an ISO date (`YYYY-MM-DD`). */
   @property({ type: String }) value: string | undefined = undefined;
@@ -308,6 +316,11 @@ export class GuiCalendar extends GuiFormControl {
     return this._nav.isDisabled(date);
   }
 }
+
+/** The events `gui-calendar` fires, with their types. */
+export const GuiCalendarEvents = {
+  ...valueEvents<GuiCalendar['value']>(),
+};
 
 declare global {
   interface HTMLElementTagNameMap {

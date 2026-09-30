@@ -62,7 +62,7 @@ import {
 } from '../utils/time';
 import type { DateTimeRange } from '../types';
 import { GuiFormControl } from '../gui-form-control';
-import { dispatchValue } from '../utils/events';
+import { dispatchValue, fires, valueEvents, type GuiInputErrorEventDetail } from '../utils/events';
 import { message } from '../utils/messages';
 
 /**
@@ -118,11 +118,18 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
     | string
     | undefined = undefined;
   /** How day numbers are written. */
-  @property({ type: String }) dayFormat: 'numeric' | '2-digit' | undefined = 'numeric';
+  @property({ type: String, attribute: 'day-format' }) dayFormat:
+    | 'numeric'
+    | '2-digit'
+    | undefined = 'numeric';
   /** How weekday names are written in the header. */
-  @property({ type: String }) weekdayFormat: 'short' | 'long' | 'narrow' | undefined = 'narrow';
+  @property({ type: String, attribute: 'weekday-format' }) weekdayFormat:
+    | 'short'
+    | 'long'
+    | 'narrow'
+    | undefined = 'narrow';
   /** How the month is written in the header. */
-  @property({ type: String }) monthFormat:
+  @property({ type: String, attribute: 'month-format' }) monthFormat:
     | 'numeric'
     | '2-digit'
     | 'long'
@@ -130,30 +137,33 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
     | 'narrow'
     | undefined = 'long';
   /** Earliest selectable date, as an ISO date (`YYYY-MM-DD`). */
-  @property({ type: String }) minDate: string | undefined = undefined;
+  @property({ type: String, attribute: 'min-date' }) minDate: string | undefined = undefined;
   /** Latest selectable date, as an ISO date (`YYYY-MM-DD`). */
-  @property({ type: String }) maxDate: string | undefined = undefined;
+  @property({ type: String, attribute: 'max-date' }) maxDate: string | undefined = undefined;
   /** Date-times that cannot be picked, as `{ start, end }` ISO date-time ranges. */
   @property({ type: Array, attribute: 'disabled-ranges' }) disabledRanges:
     | DateTimeRange[]
     | undefined = undefined;
   /** Number of months shown side by side. */
-  @property({ type: Number }) numberOfMonths: number | undefined = 1;
+  @property({ type: Number, attribute: 'number-of-months' }) numberOfMonths: number | undefined = 1;
 
   /** The date-time ranges, as `{ start, end }` ISO date-times. */
   @property({ type: Array }) value: DateTimeRange[] | undefined = [];
   /** @internal */
-  @property({ type: String }) focusDate: string | undefined = undefined;
+  @property({ type: String, attribute: 'focus-date' }) focusDate: string | undefined = undefined;
   /** @internal */
-  @property({ type: Boolean }) hidePills = false;
+  @property({ type: Boolean, attribute: 'hide-pills' }) hidePills = false;
   /** Accessible name of the remove button of each range pill. */
-  @property({ type: String }) removePillAriaLabel: string | undefined = undefined;
+  @property({ type: String, attribute: 'remove-pill-aria-label' }) removePillAriaLabel:
+    | string
+    | undefined = undefined;
   /** Error for a date inside `disabledRanges`. */
   @property({ type: String, attribute: 'disabled-date-range-message' }) disabledDateRangeMessage:
     | string
     | undefined = undefined;
   /** @internal */
-  @property({ attribute: false }) invalidRange: { start: string; end: string } | null = null;
+  @property({ attribute: 'invalid-range' }) invalidRange: { start: string; end: string } | null =
+    null;
 
   /** 12- or 24-hour clock. Defaults to the locale's. */
   @property({ type: String, attribute: 'hour-format' }) hourFormat: HourFormat | undefined =
@@ -236,7 +246,7 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
    * The host picker's allowEdit-selected range: its days are marked so the
    * range being inspected or edited stands out among its neighbors.
    */
-  @property({ attribute: false }) selectedRange: DateTimeRange | null = null;
+  @property({ attribute: 'selected-range' }) selectedRange: DateTimeRange | null = null;
   /**
    * Set by a host picker while an edit session is open: completed pieces park
    * as working state instead of committing — the session's explicit Confirm
@@ -1413,6 +1423,21 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
     this._nav.navigateToDate(this.endpointDay(isoDate));
   }
 }
+
+/** The events `gui-range-date-time-calendar` fires, with their types. */
+export const GuiRangeDateTimeCalendarEvents = {
+  ...valueEvents<GuiRangeDateTimeCalendar['value']>(),
+  'gui-input-error': fires<CustomEvent<GuiInputErrorEventDetail>>(),
+  'gui-parts-change': fires<
+    CustomEvent<{
+      anchor: string | null;
+      start: string | null;
+      end: string | null;
+      startTime: string | null;
+      endTime: string | null;
+    }>
+  >(),
+};
 
 declare global {
   interface HTMLElementTagNameMap {

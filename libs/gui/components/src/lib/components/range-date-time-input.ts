@@ -40,7 +40,7 @@ import './pills';
 import type { GuiPillEventDetail, GuiPillItem } from './pills';
 import type { DateTimeRange } from '../types';
 import { GuiFormControl } from '../gui-form-control';
-import { dispatchValue } from '../utils/events';
+import { dispatchValue, fires, valueEvents, type GuiInputErrorEventDetail } from '../utils/events';
 import { message } from '../utils/messages';
 
 /** What <gui-range-date-time-input> renders besides the control state: its presentation props. */
@@ -75,22 +75,29 @@ export class GuiRangeDateTimeInput extends GuiFormControl {
    * Whether the element renders its own error list. Elements that embed it turn it off and show the
    * errors themselves.
    */
-  @property({ type: Boolean }) showErrors: boolean | undefined = true;
+  @property({ type: Boolean, attribute: 'show-errors' }) showErrors: boolean | undefined = true;
 
   /** Icon class name shown inside the control, for example from an icon font. */
   @property({ type: String }) icon: string | undefined = '';
   /** Accessible name of the day part. */
-  @property({ type: String }) dayAriaLabel: string | undefined = undefined;
+  @property({ type: String, attribute: 'day-aria-label' }) dayAriaLabel: string | undefined =
+    undefined;
   /** Accessible name of the month part. */
-  @property({ type: String }) monthAriaLabel: string | undefined = undefined;
+  @property({ type: String, attribute: 'month-aria-label' }) monthAriaLabel: string | undefined =
+    undefined;
   /** Accessible name of the year part. */
-  @property({ type: String }) yearAriaLabel: string | undefined = undefined;
+  @property({ type: String, attribute: 'year-aria-label' }) yearAriaLabel: string | undefined =
+    undefined;
   /** Accessible name of the hour part. */
-  @property({ type: String }) hourAriaLabel: string | undefined = undefined;
+  @property({ type: String, attribute: 'hour-aria-label' }) hourAriaLabel: string | undefined =
+    undefined;
   /** Accessible name of the minute part. */
-  @property({ type: String }) minuteAriaLabel: string | undefined = undefined;
+  @property({ type: String, attribute: 'minute-aria-label' }) minuteAriaLabel: string | undefined =
+    undefined;
   /** Accessible name of the AM/PM part. */
-  @property({ type: String }) dayPeriodAriaLabel: string | undefined = undefined;
+  @property({ type: String, attribute: 'day-period-aria-label' }) dayPeriodAriaLabel:
+    | string
+    | undefined = undefined;
 
   /** 12- or 24-hour clock. Defaults to the locale's. */
   @property({ type: String, attribute: 'hour-format' }) hourFormat: HourFormat | undefined =
@@ -105,11 +112,17 @@ export class GuiRangeDateTimeInput extends GuiFormControl {
   /** The date-time ranges, as `{ start, end }` ISO date-times. */
   @property({ type: Array }) value: DateTimeRange[] | undefined = [];
   /** Accessible name of the remove button of each range pill. */
-  @property({ type: String }) removePillAriaLabel: string | undefined = undefined;
+  @property({ type: String, attribute: 'remove-pill-aria-label' }) removePillAriaLabel:
+    | string
+    | undefined = undefined;
   /** Accessible name of the start date-time field. */
-  @property({ type: String }) startDateTimeAriaLabel: string | undefined = undefined;
+  @property({ type: String, attribute: 'start-date-time-aria-label' }) startDateTimeAriaLabel:
+    | string
+    | undefined = undefined;
   /** Accessible name of the end date-time field. */
-  @property({ type: String }) endDateTimeAriaLabel: string | undefined = undefined;
+  @property({ type: String, attribute: 'end-date-time-aria-label' }) endDateTimeAriaLabel:
+    | string
+    | undefined = undefined;
   /** Text shown between the start and end of a range. */
   @property({ type: String }) separator: string | undefined = undefined;
   /** Earliest allowed date-time, as an ISO date-time (`YYYY-MM-DDTHH:mm`). */
@@ -907,6 +920,22 @@ export class GuiRangeDateTimeInput extends GuiFormControl {
     this.requestUpdate();
   }
 }
+
+/** The events `gui-range-date-time` fires, with their types. */
+export const GuiRangeDateTimeInputEvents = {
+  ...valueEvents<GuiRangeDateTimeInput['value']>(),
+  'gui-focus': fires<CustomEvent<FocusEvent>>(),
+  'gui-input-error': fires<CustomEvent<GuiInputErrorEventDetail>>(),
+  'gui-parts-change': fires<
+    CustomEvent<{
+      start: { date: string | null; time: string | null };
+      end: { date: string | null; time: string | null };
+    }>
+  >(),
+  'gui-edit-state-change':
+    fires<CustomEvent<{ selected: DateTimeRange | null; editing: boolean }>>(),
+  'gui-range-click': fires<CustomEvent<{ range: DateTimeRange }>>(),
+};
 
 declare global {
   interface HTMLElementTagNameMap {

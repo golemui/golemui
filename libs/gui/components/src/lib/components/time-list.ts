@@ -14,7 +14,7 @@ import {
   type TimeRange,
 } from '../utils/time';
 import { GuiElement } from '../gui-element';
-import { dispatchValue } from '../utils/events';
+import { dispatchValue, fires, type GuiValueEvent } from '../utils/events';
 import { message } from '../utils/messages';
 
 /**
@@ -272,6 +272,12 @@ export class GuiTimeList extends GuiElement {
     `;
   }
 }
+
+/** The events `gui-time-list` fires, with their types. */
+export const GuiTimeListEvents = {
+  'gui-input': fires<GuiValueEvent<GuiTimeList['value']>>(),
+  'gui-change': fires<GuiValueEvent<GuiTimeList['value']>>(),
+};
 
 declare global {
   interface HTMLElementTagNameMap {

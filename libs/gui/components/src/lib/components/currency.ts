@@ -6,7 +6,7 @@ import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addIcon, addLabel, type ControlTemplateData } from '../utils/templates';
 import { blockNonNumericInput, blockNonNumericKeys, isRealNumber } from '../utils/numeric';
 import { GuiFormControl } from '../gui-form-control';
-import { dispatchChange, dispatchValue } from '../utils/events';
+import { dispatchChange, dispatchValue, valueEvents } from '../utils/events';
 
 /** What <gui-currency> renders besides the control state: its presentation props. */
 export type GuiCurrencyProps = {
@@ -37,9 +37,13 @@ export class GuiCurrency extends GuiFormControl {
   /** The step of the ArrowUp and ArrowDown keys. */
   @property({ type: String }) step: number | undefined = undefined;
   /** Maximum number of decimals shown. */
-  @property({ type: String }) maximumFractionDigits: number | undefined = undefined;
+  @property({ type: String, attribute: 'maximum-fraction-digits' }) maximumFractionDigits:
+    | number
+    | undefined = undefined;
   /** Minimum number of decimals shown. */
-  @property({ type: String }) minimumFractionDigits: number | undefined = undefined;
+  @property({ type: String, attribute: 'minimum-fraction-digits' }) minimumFractionDigits:
+    | number
+    | undefined = undefined;
   /** Icon class name shown inside the control, for example from an icon font. */
   @property({ type: String }) icon: string | undefined = undefined;
   /** Text shown while the control is empty. */
@@ -271,6 +275,11 @@ export class GuiCurrency extends GuiFormControl {
     };
   }
 }
+
+/** The events `gui-currency` fires, with their types. */
+export const GuiCurrencyEvents = {
+  ...valueEvents<GuiCurrency['value']>(),
+};
 
 declare global {
   interface HTMLElementTagNameMap {

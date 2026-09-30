@@ -15,6 +15,7 @@ import {
 } from '../utils/icons';
 import { GuiElement } from '../gui-element';
 import { message } from '../utils/messages';
+import { fires } from '../utils/events';
 
 export interface GuiPillItem {
   /** Stable identity used for `repeat()` keys and event payloads. */
@@ -740,6 +741,20 @@ export class GuiPills extends GuiElement {
     this.endObserver = undefined;
   }
 }
+
+/** The events `gui-pills` fires, with their types. */
+export const GuiPillsEvents = {
+  'gui-pill-click': fires<CustomEvent<GuiPillEventDetail>>(),
+  'gui-pill-remove': fires<CustomEvent<GuiPillEventDetail>>(),
+  'gui-pill-focus': fires<CustomEvent<GuiPillEventDetail>>(),
+  'gui-pill-edit': fires<CustomEvent<GuiPillEventDetail>>(),
+  'gui-pill-edit-confirm': fires<CustomEvent<GuiPillEventDetail>>(),
+  'gui-pill-edit-cancel': fires<CustomEvent<GuiPillEventDetail>>(),
+  'gui-pill-exit': fires<CustomEvent<GuiPillExitEventDetail>>(),
+  'gui-pill-keydown': fires<CustomEvent<GuiPillKeydownEventDetail>>(),
+  'gui-pills-blur': fires(),
+  'gui-dropdown-toggle': fires<CustomEvent<GuiPillsDropdownEventDetail>>(),
+};
 
 declare global {
   interface HTMLElementTagNameMap {

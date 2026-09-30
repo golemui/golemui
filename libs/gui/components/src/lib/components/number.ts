@@ -7,7 +7,7 @@ import { addErrors, addLabel, type ControlTemplateData } from '../utils/template
 import { blockNonNumericInput, blockNonNumericKeys, isRealNumber } from '../utils/numeric';
 import { CARET_DOWN_PATH, CARET_UP_PATH } from '../utils/icons';
 import { GuiFormControl, type GuiValidity } from '../gui-form-control';
-import { dispatchChange, dispatchValue } from '../utils/events';
+import { dispatchChange, dispatchValue, valueEvents } from '../utils/events';
 import { message } from '../utils/messages';
 
 /** What <gui-number> renders besides the control state: its presentation props. */
@@ -43,7 +43,7 @@ export class GuiNumber extends GuiFormControl {
   /** Largest allowed number. */
   @property({ type: Number }) maximum: number | undefined = undefined;
   /** Grows the field with its content instead of scrolling. */
-  @property({ type: Number }) autoGrow: boolean | undefined = false;
+  @property({ type: Boolean, attribute: 'auto-grow' }) autoGrow: boolean | undefined = false;
 
   private ariaController = new GUIAriaController(this, {
     getTargets: () => this.querySelectorAll(`input[id="${this.uid}"]`),
@@ -312,6 +312,11 @@ export class GuiNumber extends GuiFormControl {
     );
   }
 }
+
+/** The events `gui-number` fires, with their types. */
+export const GuiNumberEvents = {
+  ...valueEvents<GuiNumber['value']>(),
+};
 
 declare global {
   interface HTMLElementTagNameMap {

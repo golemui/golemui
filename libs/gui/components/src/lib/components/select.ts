@@ -10,7 +10,7 @@ import { inferOptionValue, updateOptions } from './one-of';
 import { CARET_DOWN_PATH } from '../utils/icons';
 import type { Option, OptionValue } from '../types';
 import { GuiFormControl } from '../gui-form-control';
-import { dispatchValue } from '../utils/events';
+import { dispatchValue, fires, valueEvents, type GuiInputErrorEventDetail } from '../utils/events';
 import { message } from '../utils/messages';
 
 /** What <gui-select> renders besides the control state: its presentation props. */
@@ -52,9 +52,9 @@ export class GuiSelect extends GuiFormControl {
     | string
     | undefined = undefined;
   /** For options given as objects, the key of the text to show. */
-  @property({ type: String }) labelField: string | undefined = undefined;
+  @property({ type: String, attribute: 'label-field' }) labelField: string | undefined = undefined;
   /** For options given as objects, the key of the value. */
-  @property({ type: String }) valueField: string | undefined = undefined;
+  @property({ type: String, attribute: 'value-field' }) valueField: string | undefined = undefined;
 
   protected optionsLoading = false;
   protected hasMatchingValue = false;
@@ -206,6 +206,12 @@ export class GuiSelect extends GuiFormControl {
     );
   }
 }
+
+/** The events `gui-select` fires, with their types. */
+export const GuiSelectEvents = {
+  ...valueEvents<GuiSelect['value']>(),
+  'gui-input-error': fires<CustomEvent<GuiInputErrorEventDetail>>(),
+};
 
 declare global {
   interface HTMLElementTagNameMap {

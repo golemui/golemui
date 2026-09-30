@@ -5,7 +5,7 @@ import { live } from 'lit/directives/live.js';
 import { safeDefine } from '@golemui/lit-utils';
 import { addErrors, requiredMarker, type ControlTemplateData } from '../utils/templates';
 import { GuiFormControl } from '../gui-form-control';
-import { dispatchValue } from '../utils/events';
+import { dispatchValue, valueEvents } from '../utils/events';
 
 /** What <gui-checkbox> renders besides the control state: its presentation props. */
 export type GuiCheckboxProps = {
@@ -27,7 +27,10 @@ export class GuiCheckbox extends GuiFormControl {
   @property({ type: String }) value: boolean | undefined = undefined;
 
   /** Side of the label the checkbox is on. */
-  @property({ type: String }) checkboxPosition: 'left' | 'right' | undefined = 'left';
+  @property({ type: String, attribute: 'checkbox-position' }) checkboxPosition:
+    | 'left'
+    | 'right'
+    | undefined = 'left';
 
   private ariaController = new GUIAriaController(this, {
     getTargets: () => this.querySelectorAll(`input[id="${this.uid}"]`),
@@ -130,6 +133,11 @@ export class GuiCheckbox extends GuiFormControl {
     );
   }
 }
+
+/** The events `gui-checkbox` fires, with their types. */
+export const GuiCheckboxEvents = {
+  ...valueEvents<GuiCheckbox['value']>(),
+};
 
 declare global {
   interface HTMLElementTagNameMap {

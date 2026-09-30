@@ -8,7 +8,10 @@ import { GuiElement } from '../gui-element';
 /** A label for a control built by hand. It sets the control's ARIA attributes from its state. */
 export class GuiLabel extends GuiElement {
   /** The control or controls the label describes; they receive its ARIA attributes. */
-  @property({ type: Object }) targetElement: HTMLElement[] | HTMLElement | undefined = undefined;
+  @property({ type: Object, attribute: false }) targetElement:
+    | HTMLElement[]
+    | HTMLElement
+    | undefined = undefined;
   /** Text of the label. */
   @property({ type: String }) label: string | undefined = undefined;
   /** Help text shown under the label. */

@@ -7,6 +7,8 @@
     "moduleResolution": "node",
     "outDir": "../../../dist/out-tsc",
     "declaration": true,
+    // @lit/react's declarations default-import React's types.
+    "allowSyntheticDefaultImports": true,
     "types": ["node"]
   },
   "include": ["src/**/*.ts"],

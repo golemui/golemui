@@ -46,7 +46,7 @@ import './pills';
 import type { GuiPillEventDetail, GuiPillItem } from './pills';
 import type { DateRange } from '../types';
 import { GuiFormControl } from '../gui-form-control';
-import { dispatchValue } from '../utils/events';
+import { dispatchValue, fires, valueEvents, type GuiInputErrorEventDetail } from '../utils/events';
 import { message } from '../utils/messages';
 
 export interface RangeCalendarDay {
@@ -120,11 +120,18 @@ export class GuiRangeCalendar extends GuiFormControl {
     | string
     | undefined = undefined;
   /** How day numbers are written. */
-  @property({ type: String }) dayFormat: 'numeric' | '2-digit' | undefined = 'numeric';
+  @property({ type: String, attribute: 'day-format' }) dayFormat:
+    | 'numeric'
+    | '2-digit'
+    | undefined = 'numeric';
   /** How weekday names are written in the header. */
-  @property({ type: String }) weekdayFormat: 'short' | 'long' | 'narrow' | undefined = 'narrow';
+  @property({ type: String, attribute: 'weekday-format' }) weekdayFormat:
+    | 'short'
+    | 'long'
+    | 'narrow'
+    | undefined = 'narrow';
   /** How the month is written in the header. */
-  @property({ type: String }) monthFormat:
+  @property({ type: String, attribute: 'month-format' }) monthFormat:
     | 'numeric'
     | '2-digit'
     | 'long'
@@ -132,18 +139,19 @@ export class GuiRangeCalendar extends GuiFormControl {
     | 'narrow'
     | undefined = 'long';
   /** Earliest selectable date, as an ISO date (`YYYY-MM-DD`). */
-  @property({ type: String }) minDate: string | undefined = undefined;
+  @property({ type: String, attribute: 'min-date' }) minDate: string | undefined = undefined;
   /** Latest selectable date, as an ISO date (`YYYY-MM-DD`). */
-  @property({ type: String }) maxDate: string | undefined = undefined;
+  @property({ type: String, attribute: 'max-date' }) maxDate: string | undefined = undefined;
   /** Dates that cannot be picked, as `{ start, end }` ISO date ranges. */
-  @property({ type: Array }) disabledRanges: DateRange[] | undefined = undefined;
+  @property({ type: Array, attribute: 'disabled-ranges' }) disabledRanges: DateRange[] | undefined =
+    undefined;
   /** Number of months shown side by side. */
-  @property({ type: Number }) numberOfMonths: number | undefined = 1;
+  @property({ type: Number, attribute: 'number-of-months' }) numberOfMonths: number | undefined = 1;
 
   /** The date ranges, as `{ start, end }` ISO dates. */
   @property({ type: Array }) value: DateRange[] | undefined = [];
   /** @internal */
-  @property({ type: String }) focusDate: string | undefined = undefined;
+  @property({ type: String, attribute: 'focus-date' }) focusDate: string | undefined = undefined;
   /**
    * The host picker's working endpoints — typed into its input, or picked here
    * and held there across the popover's unmount/remount cycle. One endpoint
@@ -154,20 +162,23 @@ export class GuiRangeCalendar extends GuiFormControl {
   /** @internal */
   @property({ type: String, attribute: 'working-end' }) workingEnd: string | undefined = undefined;
   /** @internal */
-  @property({ type: Boolean }) hidePills = false;
+  @property({ type: Boolean, attribute: 'hide-pills' }) hidePills = false;
   /** Accessible name of the remove button of each range pill. */
-  @property({ type: String }) removePillAriaLabel: string | undefined = undefined;
+  @property({ type: String, attribute: 'remove-pill-aria-label' }) removePillAriaLabel:
+    | string
+    | undefined = undefined;
   /** Error for a date inside `disabledRanges`. */
   @property({ type: String, attribute: 'disabled-date-range-message' }) disabledDateRangeMessage:
     | string
     | undefined = undefined;
   /** @internal */
-  @property({ attribute: false }) invalidRange: { start: string; end: string } | null = null;
+  @property({ attribute: 'invalid-range' }) invalidRange: { start: string; end: string } | null =
+    null;
   /**
    * The host picker's allowEdit-selected range: its days are marked so the
    * range being inspected or edited stands out among its neighbors.
    */
-  @property({ attribute: false }) selectedRange: DateRange | null = null;
+  @property({ attribute: 'selected-range' }) selectedRange: DateRange | null = null;
   /**
    * Set by a host picker while an edit session is open: a completed two-click
    * span parks as the working selection (dotted preview) instead of merging
@@ -919,6 +930,14 @@ export class GuiRangeCalendar extends GuiFormControl {
     this._nav.navigateToDate(this.endpointDay(isoDate));
   }
 }
+
+/** The events `gui-range-calendar` fires, with their types. */
+export const GuiRangeCalendarEvents = {
+  ...valueEvents<GuiRangeCalendar['value']>(),
+  'gui-input-error': fires<CustomEvent<GuiInputErrorEventDetail>>(),
+  'gui-parts-change':
+    fires<CustomEvent<{ anchor: string | null; start: string | null; end: string | null }>>(),
+};
 
 declare global {
   interface HTMLElementTagNameMap {

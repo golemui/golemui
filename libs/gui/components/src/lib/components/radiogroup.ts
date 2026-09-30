@@ -8,7 +8,7 @@ import { addErrors, addLabel, type ControlTemplateData, showsErrors } from '../u
 import { inferOptionValue, updateOptions } from './one-of';
 import type { Option, OptionValue } from '../types';
 import { GuiFormControl } from '../gui-form-control';
-import { dispatchValue } from '../utils/events';
+import { dispatchValue, valueEvents } from '../utils/events';
 
 /** What <gui-radiogroup> renders besides the control state: its presentation props. */
 export type GuiRadiogroupProps = {
@@ -35,9 +35,9 @@ export class GuiRadiogroup extends GuiFormControl {
   /** The options, as values or `{ label, value }` objects. */
   @property({ type: Array }) options: Option[] = [];
   /** For options given as objects, the key of the text to show. */
-  @property({ type: String }) labelField: string | undefined = undefined;
+  @property({ type: String, attribute: 'label-field' }) labelField: string | undefined = undefined;
   /** For options given as objects, the key of the value. */
-  @property({ type: String }) valueField: string | undefined = undefined;
+  @property({ type: String, attribute: 'value-field' }) valueField: string | undefined = undefined;
   /** Lays the options out in a row or a column. */
   @property({ type: String }) direction: 'row' | 'column' | undefined = 'column';
 
@@ -168,6 +168,11 @@ export class GuiRadiogroup extends GuiFormControl {
     );
   }
 }
+
+/** The events `gui-radiogroup` fires, with their types. */
+export const GuiRadiogroupEvents = {
+  ...valueEvents<GuiRadiogroup['value']>(),
+};
 
 declare global {
   interface HTMLElementTagNameMap {

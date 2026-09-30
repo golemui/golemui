@@ -22,7 +22,7 @@ import {
   TEXT_STRIKETHROUGH_PATH,
 } from '../utils/icons';
 import { GuiFormControl } from '../gui-form-control';
-import { dispatchChange, dispatchValue } from '../utils/events';
+import { dispatchChange, dispatchValue, valueEvents } from '../utils/events';
 import { message } from '../utils/messages';
 
 /** What <gui-markdown> renders besides the control state: its presentation props. */
@@ -77,17 +77,17 @@ export class GuiMarkdown extends GuiFormControl {
    * With `maxLength`, whether the counter shows the characters left (`remaining`) or used
    * (`current`).
    */
-  @property({ type: String, attribute: 'countermode' }) counterMode:
+  @property({ type: String, attribute: 'counter-mode' }) counterMode:
     | 'remaining'
     | 'current'
     | undefined;
   /** Minimum height of the field, in pixels. */
-  @property({ type: Number, attribute: 'minimumheight' }) minimumHeight: number | undefined =
+  @property({ type: Number, attribute: 'minimum-height' }) minimumHeight: number | undefined =
     undefined;
   /** Grows the field with its content instead of scrolling. */
-  @property({ type: Boolean, attribute: 'autogrow' }) autoGrow: boolean | undefined = false;
+  @property({ type: Boolean, attribute: 'auto-grow' }) autoGrow: boolean | undefined = false;
   /** Opens with the preview shown. */
-  @property({ type: Boolean, attribute: 'defaultopenpreview' }) defaultOpenPreview:
+  @property({ type: Boolean, attribute: 'default-open-preview' }) defaultOpenPreview:
     | boolean
     | undefined = undefined;
   /** Maximum number of characters. */
@@ -95,23 +95,32 @@ export class GuiMarkdown extends GuiFormControl {
 
   // Button titles
   /** Tooltip and accessible name of the heading button. */
-  @property({ type: String }) headingTitle: string | undefined = undefined;
+  @property({ type: String, attribute: 'heading-title' }) headingTitle: string | undefined =
+    undefined;
   /** Tooltip and accessible name of the bold button. */
-  @property({ type: String }) boldTitle: string | undefined = undefined;
+  @property({ type: String, attribute: 'bold-title' }) boldTitle: string | undefined = undefined;
   /** Tooltip and accessible name of the italic button. */
-  @property({ type: String }) italicTitle: string | undefined = undefined;
+  @property({ type: String, attribute: 'italic-title' }) italicTitle: string | undefined =
+    undefined;
   /** Tooltip and accessible name of the strikethrough button. */
-  @property({ type: String }) strikethroughTitle: string | undefined = undefined;
+  @property({ type: String, attribute: 'strikethrough-title' }) strikethroughTitle:
+    | string
+    | undefined = undefined;
   /** Tooltip and accessible name of the quote button. */
-  @property({ type: String }) quoteTitle: string | undefined = undefined;
+  @property({ type: String, attribute: 'quote-title' }) quoteTitle: string | undefined = undefined;
   /** Tooltip and accessible name of the link button. */
-  @property({ type: String }) linkTitle: string | undefined = undefined;
+  @property({ type: String, attribute: 'link-title' }) linkTitle: string | undefined = undefined;
   /** Tooltip and accessible name of the numbered list button. */
-  @property({ type: String }) orderedListTitle: string | undefined = undefined;
+  @property({ type: String, attribute: 'ordered-list-title' }) orderedListTitle:
+    | string
+    | undefined = undefined;
   /** Tooltip and accessible name of the bulleted list button. */
-  @property({ type: String }) unorderedListTitle: string | undefined = undefined;
+  @property({ type: String, attribute: 'unordered-list-title' }) unorderedListTitle:
+    | string
+    | undefined = undefined;
   /** Tooltip and accessible name of the preview button. */
-  @property({ type: String }) splitViewTitle: string | undefined = undefined;
+  @property({ type: String, attribute: 'split-view-title' }) splitViewTitle: string | undefined =
+    undefined;
   /** Accessible name of the toolbar. */
   @property({ type: String, attribute: 'toolbar-aria-label' }) toolbarAriaLabel:
     | string
@@ -717,6 +726,11 @@ export class GuiMarkdown extends GuiFormControl {
     );
   }
 }
+
+/** The events `gui-markdown` fires, with their types. */
+export const GuiMarkdownEvents = {
+  ...valueEvents<GuiMarkdown['value']>(),
+};
 
 declare global {
   interface HTMLElementTagNameMap {
