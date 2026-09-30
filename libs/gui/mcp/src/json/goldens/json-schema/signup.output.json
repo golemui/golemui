@@ -1,0 +1,63 @@
+{
+  "formDefinition": {
+    "$schema": "https://golemui.com/schemas/form.schema.json",
+    "form": [
+      {
+        "kind": "input",
+        "type": "textinput",
+        "path": "email",
+        "label": "Email",
+        "validator": {
+          "type": "string",
+          "required": true,
+          "format": "email"
+        }
+      },
+      {
+        "kind": "input",
+        "type": "password",
+        "path": "password",
+        "label": "Password",
+        "validator": {
+          "type": "string",
+          "required": true,
+          "minLength": 8
+        }
+      },
+      {
+        "kind": "input",
+        "type": "number",
+        "path": "age",
+        "label": "Age",
+        "validator": {
+          "type": "integer",
+          "minimum": 13,
+          "maximum": 120
+        }
+      },
+      {
+        "kind": "input",
+        "type": "checkbox",
+        "path": "newsletter",
+        "label": "Newsletter"
+      },
+      {
+        "kind": "action",
+        "type": "button",
+        "actionType": "submit",
+        "label": "Submit",
+        "props": {
+          "variant": "filled"
+        }
+      }
+    ]
+  },
+  "unmapped": [],
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": [],
+    "expressionWarnings": [],
+    "interpolationWarnings": []
+  }
+}

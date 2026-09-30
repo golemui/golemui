@@ -1,0 +1,20 @@
+{
+  "jsonSchema": {
+    "type": "object",
+    "properties": {
+      "birth": {
+        "type": "string",
+        "format": "date"
+      },
+      "startsAt": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "opensAt": {
+        "type": "string",
+        "format": "time"
+      }
+    }
+  },
+  "submitAction": false
+}

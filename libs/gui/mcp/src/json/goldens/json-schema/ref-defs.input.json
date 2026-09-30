@@ -1,0 +1,30 @@
+{
+  "jsonSchema": {
+    "type": "object",
+    "properties": {
+      "shipping": {
+        "$ref": "#/$defs/Address"
+      },
+      "billing": {
+        "$ref": "#/$defs/Address"
+      }
+    },
+    "$defs": {
+      "Address": {
+        "type": "object",
+        "properties": {
+          "street": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "street"
+        ]
+      }
+    }
+  },
+  "submitAction": false
+}

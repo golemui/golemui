@@ -1,0 +1,79 @@
+{
+  "document": {
+    "openapi": "3.0.0",
+    "components": {
+      "schemas": {
+        "NewUser": {
+          "type": "object",
+          "properties": {
+            "email": {
+              "type": "string",
+              "format": "email"
+            },
+            "name": {
+              "type": "string"
+            },
+            "role": {
+              "type": "string",
+              "enum": [
+                "admin",
+                "editor",
+                "viewer"
+              ]
+            }
+          },
+          "required": [
+            "email",
+            "name"
+          ]
+        }
+      }
+    },
+    "paths": {
+      "/users": {
+        "post": {
+          "operationId": "createUser",
+          "summary": "Create user",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewUser"
+                }
+              }
+            }
+          }
+        }
+      },
+      "/users/{id}": {
+        "get": {
+          "operationId": "getUser",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          ]
+        },
+        "put": {
+          "operationId": "updateUser",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewUser"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "operation": "PUT /users/{id}"
+}

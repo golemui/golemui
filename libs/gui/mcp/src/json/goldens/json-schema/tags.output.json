@@ -1,0 +1,43 @@
+{
+  "formDefinition": {
+    "$schema": "https://golemui.com/schemas/form.schema.json",
+    "form": [
+      {
+        "kind": "input",
+        "type": "tags",
+        "path": "keywords",
+        "label": "Keywords",
+        "validator": {
+          "type": "array",
+          "required": true,
+          "minItems": 1,
+          "maxItems": 10
+        },
+        "props": {
+          "placeholder": "Add and press Enter"
+        }
+      },
+      {
+        "kind": "input",
+        "type": "tags",
+        "path": "scores",
+        "label": "Scores",
+        "validator": {
+          "type": "array",
+          "uniqueItems": true
+        },
+        "props": {
+          "placeholder": "Add and press Enter"
+        }
+      }
+    ]
+  },
+  "unmapped": [],
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": [],
+    "expressionWarnings": [],
+    "interpolationWarnings": []
+  }
+}

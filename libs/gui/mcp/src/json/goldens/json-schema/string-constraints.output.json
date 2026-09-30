@@ -1,0 +1,64 @@
+{
+  "formDefinition": {
+    "$schema": "https://golemui.com/schemas/form.schema.json",
+    "form": [
+      {
+        "kind": "input",
+        "type": "textinput",
+        "path": "username",
+        "label": "Username",
+        "validator": {
+          "type": "string",
+          "required": true,
+          "minLength": 3,
+          "maxLength": 20,
+          "pattern": "^[a-z0-9_]+$"
+        }
+      },
+      {
+        "kind": "input",
+        "type": "textinput",
+        "path": "id",
+        "label": "Id",
+        "validator": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      {
+        "kind": "input",
+        "type": "textinput",
+        "path": "website",
+        "label": "Website"
+      },
+      {
+        "kind": "input",
+        "type": "textinput",
+        "path": "homepage",
+        "label": "Homepage",
+        "validator": {
+          "type": "string",
+          "format": "url"
+        }
+      },
+      {
+        "kind": "input",
+        "type": "textinput",
+        "path": "server",
+        "label": "Server",
+        "validator": {
+          "type": "string",
+          "format": "hostname"
+        }
+      }
+    ]
+  },
+  "unmapped": [],
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": [],
+    "expressionWarnings": [],
+    "interpolationWarnings": []
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "jsonSchema": {
+    "type": "object",
+    "properties": {
+      "matrix": {
+        "type": "array",
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        }
+      }
+    }
+  },
+  "submitAction": false
+}

@@ -1,0 +1,25 @@
+{
+  "jsonSchema": {
+    "type": "object",
+    "properties": {
+      "size": {
+        "type": "string",
+        "oneOf": [
+          {
+            "const": "sm",
+            "title": "Small"
+          },
+          {
+            "const": "md",
+            "title": "Medium"
+          },
+          {
+            "const": "lg",
+            "title": "Large"
+          }
+        ]
+      }
+    }
+  },
+  "submitAction": false
+}

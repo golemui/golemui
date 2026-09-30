@@ -1,0 +1,14 @@
+{
+  "jsonSchema": {
+    "type": "object",
+    "properties": {
+      "first": {
+        "type": "string"
+      },
+      "last": {
+        "type": "string"
+      }
+    }
+  },
+  "layout": "grid"
+}

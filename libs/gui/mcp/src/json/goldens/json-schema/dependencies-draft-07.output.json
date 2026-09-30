@@ -1,0 +1,27 @@
+{
+  "formDefinition": {
+    "$schema": "https://golemui.com/schemas/form.schema.json",
+    "form": [
+      {
+        "kind": "input",
+        "type": "textinput",
+        "path": "card",
+        "label": "Card"
+      },
+      {
+        "kind": "input",
+        "type": "textinput",
+        "path": "billingAddress",
+        "label": "Billing Address"
+      }
+    ]
+  },
+  "unmapped": [],
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": [],
+    "expressionWarnings": [],
+    "interpolationWarnings": []
+  }
+}

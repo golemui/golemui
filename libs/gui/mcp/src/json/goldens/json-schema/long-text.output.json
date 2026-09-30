@@ -1,0 +1,38 @@
+{
+  "formDefinition": {
+    "$schema": "https://golemui.com/schemas/form.schema.json",
+    "form": [
+      {
+        "kind": "input",
+        "type": "textarea",
+        "path": "bio",
+        "label": "Bio",
+        "validator": {
+          "type": "string",
+          "maxLength": 500
+        },
+        "props": {
+          "hint": "A short text about you."
+        }
+      },
+      {
+        "kind": "input",
+        "type": "textinput",
+        "path": "summary",
+        "label": "Summary",
+        "validator": {
+          "type": "string",
+          "maxLength": 199
+        }
+      }
+    ]
+  },
+  "unmapped": [],
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": [],
+    "expressionWarnings": [],
+    "interpolationWarnings": []
+  }
+}

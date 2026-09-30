@@ -1,0 +1,34 @@
+{
+  "resolvedOperation": {
+    "method": "POST",
+    "path": "/contacts",
+    "operationId": "createContact"
+  },
+  "formDefinition": {
+    "$schema": "https://golemui.com/schemas/form.schema.json",
+    "form": [
+      {
+        "kind": "action",
+        "type": "button",
+        "actionType": "submit",
+        "label": "Create",
+        "props": {
+          "variant": "filled"
+        }
+      }
+    ]
+  },
+  "unmapped": [
+    {
+      "path": "contact",
+      "reason": "Unsupported JSON Schema type `undefined`."
+    }
+  ],
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": [],
+    "expressionWarnings": [],
+    "interpolationWarnings": []
+  }
+}

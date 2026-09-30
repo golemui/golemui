@@ -1,0 +1,53 @@
+{
+  "formDefinition": {
+    "$schema": "https://golemui.com/schemas/form.schema.json",
+    "form": [
+      {
+        "kind": "layout",
+        "type": "flex",
+        "props": {
+          "direction": "column",
+          "gap": 8
+        },
+        "children": [
+          {
+            "kind": "input",
+            "type": "textinput",
+            "path": "company.name",
+            "label": "Name"
+          },
+          {
+            "kind": "layout",
+            "type": "flex",
+            "props": {
+              "direction": "column",
+              "gap": 8
+            },
+            "children": [
+              {
+                "kind": "input",
+                "type": "number",
+                "path": "company.location.latitude",
+                "label": "Latitude"
+              },
+              {
+                "kind": "input",
+                "type": "number",
+                "path": "company.location.longitude",
+                "label": "Longitude"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "unmapped": [],
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": [],
+    "expressionWarnings": [],
+    "interpolationWarnings": []
+  }
+}

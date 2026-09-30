@@ -1,0 +1,19 @@
+{
+  "formDefinition": {
+    "$schema": "https://golemui.com/schemas/form.schema.json",
+    "form": []
+  },
+  "unmapped": [
+    {
+      "path": "owner",
+      "reason": "Unsupported JSON Schema type `undefined`."
+    }
+  ],
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": [],
+    "expressionWarnings": [],
+    "interpolationWarnings": []
+  }
+}

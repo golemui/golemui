@@ -1,0 +1,21 @@
+{
+  "jsonSchema": {
+    "type": "object",
+    "properties": {
+      "address": {
+        "type": "object",
+        "properties": {
+          "street": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          }
+        },
+        "title": "Delivery address",
+        "description": "Where we send the order."
+      }
+    }
+  },
+  "submitAction": false
+}

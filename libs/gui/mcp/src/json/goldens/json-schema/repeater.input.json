@@ -1,0 +1,25 @@
+{
+  "jsonSchema": {
+    "type": "object",
+    "properties": {
+      "addresses": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "street": {
+              "type": "string"
+            },
+            "city": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "street"
+          ]
+        }
+      }
+    }
+  },
+  "submitAction": false
+}

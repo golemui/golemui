@@ -1,0 +1,42 @@
+{
+  "formDefinition": {
+    "$schema": "https://golemui.com/schemas/form.schema.json",
+    "form": [
+      {
+        "kind": "input",
+        "type": "textinput",
+        "path": "version",
+        "label": "Version",
+        "validator": {
+          "type": "string",
+          "const": "v2"
+        }
+      },
+      {
+        "kind": "input",
+        "type": "checkbox",
+        "path": "acceptTerms",
+        "label": "Accept Terms",
+        "validator": {
+          "type": "boolean",
+          "const": true
+        }
+      }
+    ]
+  },
+  "unmapped": [],
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": [
+      {
+        "path": "/form/1/validator",
+        "message": "Boolean validator has `const` but no `required: true` — the pristine value passes: a never-touched checkbox holds `undefined`, and non-required validators skip validation entirely for `undefined`.",
+        "suggestion": "Add `required: true` so the untouched state fails too, and set `messages.invalid` and `messages.const` to the same user-facing text.",
+        "keyword": "booleanValidator"
+      }
+    ],
+    "expressionWarnings": [],
+    "interpolationWarnings": []
+  }
+}

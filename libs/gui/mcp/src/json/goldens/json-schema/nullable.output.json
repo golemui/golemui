@@ -1,0 +1,33 @@
+{
+  "formDefinition": {
+    "$schema": "https://golemui.com/schemas/form.schema.json",
+    "form": [
+      {
+        "kind": "input",
+        "type": "textinput",
+        "path": "nickname",
+        "label": "Nickname"
+      },
+      {
+        "kind": "input",
+        "type": "number",
+        "path": "age",
+        "label": "Age"
+      },
+      {
+        "kind": "input",
+        "type": "textinput",
+        "path": "note",
+        "label": "Note"
+      }
+    ]
+  },
+  "unmapped": [],
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": [],
+    "expressionWarnings": [],
+    "interpolationWarnings": []
+  }
+}

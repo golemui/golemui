@@ -1,0 +1,52 @@
+{
+  "jsonSchema": {
+    "type": "object",
+    "properties": {
+      "country": {
+        "type": "string",
+        "enum": [
+          "US",
+          "NL"
+        ]
+      },
+      "zip": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "country"
+    ],
+    "if": {
+      "properties": {
+        "country": {
+          "const": "US"
+        }
+      },
+      "required": [
+        "country"
+      ]
+    },
+    "then": {
+      "properties": {
+        "zip": {
+          "pattern": "^[0-9]{5}$"
+        },
+        "state": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "zip",
+        "state"
+      ]
+    },
+    "else": {
+      "properties": {
+        "zip": {
+          "pattern": "^[0-9]{4}[A-Z]{2}$"
+        }
+      }
+    }
+  },
+  "submitAction": false
+}

@@ -1,0 +1,9 @@
+{
+  "jsonSchema": {
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "submitAction": false
+}

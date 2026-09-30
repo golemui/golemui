@@ -1,0 +1,42 @@
+{
+  "document": {
+    "openapi": "3.0.0",
+    "components": {
+      "schemas": {
+        "Contact/Input": {
+          "type": "object",
+          "properties": {
+            "phone": {
+              "type": "string"
+            }
+          }
+        },
+        "Envelope": {
+          "type": "object",
+          "properties": {
+            "contact": {
+              "$ref": "#/components/schemas/Contact~1Input"
+            }
+          }
+        }
+      }
+    },
+    "paths": {
+      "/contacts": {
+        "post": {
+          "operationId": "createContact",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "operation": "POST /contacts"
+}

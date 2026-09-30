@@ -1,0 +1,40 @@
+{
+  "formDefinition": {
+    "$schema": "https://golemui.com/schemas/form.schema.json",
+    "form": [
+      {
+        "kind": "input",
+        "type": "select",
+        "path": "plan",
+        "label": "Plan",
+        "validator": {
+          "type": "string",
+          "enum": [
+            "free",
+            "pro"
+          ]
+        },
+        "props": {
+          "options": [
+            {
+              "label": "Free",
+              "value": "free"
+            },
+            {
+              "label": "Pro",
+              "value": "pro"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "unmapped": [],
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": [],
+    "expressionWarnings": [],
+    "interpolationWarnings": []
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "formDefinition": {
+    "$schema": "https://golemui.com/schemas/form.schema.json",
+    "form": [
+      {
+        "kind": "input",
+        "type": "textinput",
+        "path": "firstName",
+        "label": "First Name"
+      },
+      {
+        "kind": "input",
+        "type": "textinput",
+        "path": "last_name",
+        "label": "Last name"
+      },
+      {
+        "kind": "input",
+        "type": "textinput",
+        "path": "zip-code",
+        "label": "Zip code"
+      },
+      {
+        "kind": "input",
+        "type": "textinput",
+        "path": "email",
+        "label": "E mail address"
+      }
+    ]
+  },
+  "unmapped": [],
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": [],
+    "expressionWarnings": [],
+    "interpolationWarnings": []
+  }
+}

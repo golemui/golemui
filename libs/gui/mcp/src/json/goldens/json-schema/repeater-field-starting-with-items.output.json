@@ -1,0 +1,47 @@
+{
+  "formDefinition": {
+    "$schema": "https://golemui.com/schemas/form.schema.json",
+    "form": [
+      {
+        "kind": "input",
+        "type": "repeater",
+        "path": "lines",
+        "label": "Lines",
+        "props": {
+          "addLabel": "Add line",
+          "removeLabel": "Remove",
+          "template": {
+            "kind": "layout",
+            "type": "flex",
+            "props": {
+              "direction": "column",
+              "gap": 8
+            },
+            "children": [
+              {
+                "kind": "input",
+                "type": "textinput",
+                "path": "lines.items.product",
+                "label": "Product"
+              },
+              {
+                "kind": "input",
+                "type": "number",
+                "path": "lines.items.itemsTotal",
+                "label": "Items Total"
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "unmapped": [],
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": [],
+    "expressionWarnings": [],
+    "interpolationWarnings": []
+  }
+}

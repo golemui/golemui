@@ -1,0 +1,37 @@
+{
+  "formDefinition": {
+    "$schema": "https://golemui.com/schemas/form.schema.json",
+    "form": [
+      {
+        "kind": "input",
+        "type": "dateInput",
+        "path": "birth",
+        "label": "Birth"
+      },
+      {
+        "kind": "input",
+        "type": "datePicker",
+        "path": "startsAt",
+        "label": "Starts At"
+      },
+      {
+        "kind": "input",
+        "type": "textinput",
+        "path": "opensAt",
+        "label": "Opens At",
+        "validator": {
+          "type": "string",
+          "format": "time"
+        }
+      }
+    ]
+  },
+  "unmapped": [],
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": [],
+    "expressionWarnings": [],
+    "interpolationWarnings": []
+  }
+}

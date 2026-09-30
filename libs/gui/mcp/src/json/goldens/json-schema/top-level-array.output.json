@@ -1,0 +1,19 @@
+{
+  "formDefinition": {
+    "$schema": "https://golemui.com/schemas/form.schema.json",
+    "form": []
+  },
+  "unmapped": [
+    {
+      "path": "",
+      "reason": "Top-level JSON Schema is not an object — only object schemas map to forms."
+    }
+  ],
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": [],
+    "expressionWarnings": [],
+    "interpolationWarnings": []
+  }
+}

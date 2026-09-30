@@ -1,0 +1,20 @@
+{
+  "jsonSchema": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string",
+        "description": "Your full name."
+      },
+      "height": {
+        "type": "number",
+        "description": "Height in centimeters."
+      },
+      "subscribed": {
+        "type": "boolean",
+        "description": "Receive the newsletter."
+      }
+    }
+  },
+  "submitAction": false
+}
