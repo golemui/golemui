@@ -30,6 +30,7 @@
       "@golemui/schemas/generator": [
         "libs/schemas/src/lib/generator/generate-implementation-schemas.ts"
       ],
+      "@golemui/schemas/json-schema": ["libs/schemas/src/json-schema.ts"],
       "@golemui/gui-angular": ["libs/gui/angular/src/index.ts"],
       "@golemui/gui-lit": ["libs/gui/lit/src/index.ts"],
       "@golemui/gui-react": ["libs/gui/react/src/index.ts"],

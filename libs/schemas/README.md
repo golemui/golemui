@@ -17,6 +17,7 @@ schemas/
   core/common.schema.json        shared structural $defs (baseWidget, localizable, chunkRef, ...)
 index.js / index.cjs             the JavaScript entry point
 generator.js / generator.cjs     the file-writing generator, `@golemui/schemas/generator`
+json-schema.js / json-schema.cjs the JSON Schema to form converter, `@golemui/schemas/json-schema`
 cli.js                           the `golemui-schemas` command
 index.d.ts, lib/*.d.ts           type declarations
 ```
