@@ -90,6 +90,18 @@ export type State = {
   repeaterItemScopes: Record<Uid, RepeaterItemScope>;
 
   /**
+   * Maps every widget produced by a repeater item (by its concrete uid) to the rows that own it,
+   * outermost first. The flags stage uses it to rewrite `items` tokens in `when` expressions.
+   * Built by `expandSources` together with `resolvedSources`.
+   *
+   * @example Nested repeater: { 'dev-name[2][0]': [
+   *   { declaredItemPath: 'teams.items', itemPath: 'teams.2', index: 2 },
+   *   { declaredItemPath: 'teams.items.devs.items', itemPath: 'teams.2.devs.0', index: 0 },
+   * ] }
+   */
+  repeaterRows: Record<Uid, RepeaterRow[]>;
+
+  /**
    * Allows overriding a widget's `prop` properties externally via its event handler mechanism.
    * For example, this can be used to load options for a select widget asynchronously.
    */
@@ -151,6 +163,7 @@ export const createInitialState = (lang: string): State => ({
   isFormValid: true,
   widgetFlags: {},
   repeaterItemScopes: {},
+  repeaterRows: {},
   widgetPropOverrides: {},
   data: {},
   meta: {},
@@ -182,6 +195,19 @@ export type RepeaterItemScope = {
   /** Data path of the owning item, e.g. `lineItems.0` */
   itemPath: DotPath;
   /** Zero-based position of the owning item in the repeater array */
+  index: number;
+};
+
+/**
+ * One repeater row, as template paths write it and as the data holds it.
+ * Both paths have the same number of segments.
+ */
+export type RepeaterRow = {
+  /** The row path with its `items` token, as template paths write it, e.g. `teams.items.devs.items`. */
+  declaredItemPath: DotPath;
+  /** The same row with every index filled in, e.g. `teams.2.devs.1`. */
+  itemPath: DotPath;
+  /** Zero-based position of the row in its repeater array. */
   index: number;
 };
 

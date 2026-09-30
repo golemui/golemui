@@ -8,7 +8,7 @@ import {
   type NonFunctionWidget,
 } from '../form-widget';
 import { type DotPath, type Uid } from '../shared';
-import { type RepeaterItemScope, type State } from '../store/model';
+import { type RepeaterItemScope, type RepeaterRow, type State } from '../store/model';
 import { flattenForm } from './form';
 import { get } from './object';
 
@@ -33,23 +33,12 @@ export const extractRepeaterIndexes = (uid: string): number[] =>
 const ITEMS_TOKEN = 'items';
 
 /**
- * The innermost repeater row a template widget is materialized for.
- */
-type RepeaterRow = {
-  /** The repeater `path` as the form declares it, outer `items` tokens included, e.g. `teams.items.devs`. */
-  declaredPath: DotPath;
-  /** The repeater `path` with every outer row index filled in, e.g. `teams.2.devs`. */
-  concretePath: DotPath;
-  /** Row indexes from the outermost repeater down to this row, e.g. `[2, 0]`. */
-  indexes: number[];
-};
-
-/**
- * The two maps `expandSources` builds from the form and the data.
+ * The three maps `expandSources` builds from the form and the data.
  */
 export type ExpandedSources = {
   resolvedSources: Record<Uid, FormWidget<string>>;
   repeaterItemScopes: Record<Uid, RepeaterItemScope>;
+  repeaterRows: Record<Uid, RepeaterRow[]>;
 };
 
 /**
@@ -60,11 +49,12 @@ export type ExpandedSources = {
  * Nested repeater containers are entries too and are recursed with their concrete path. Function widgets
  * stay callable (see {@link makeRepeaterItemConfig}), `when` expressions are not rewritten here.
  *
- * `repeaterItemScopes` maps every row widget uid to the innermost item that owns it.
+ * `repeaterItemScopes` maps every row widget uid to the innermost item that owns it, and
+ * `repeaterRows` to every row that owns it, outermost first.
  *
  * @param flatForm - The flattened form definition keyed by uid.
  * @param data - The current form data the repeater arrays are read from.
- * @returns Both maps, rebuilt from scratch.
+ * @returns The maps, rebuilt from scratch.
  *
  * @example
  * const { resolvedSources, repeaterItemScopes } = expandSources(flatForm, { users: [{}, {}] });
@@ -75,7 +65,11 @@ export function expandSources(
   flatForm: State['flatForm'],
   data: Record<string, any>,
 ): ExpandedSources {
-  const expanded: ExpandedSources = { resolvedSources: {}, repeaterItemScopes: {} };
+  const expanded: ExpandedSources = {
+    resolvedSources: {},
+    repeaterItemScopes: {},
+    repeaterRows: {},
+  };
   for (const widget of Object.values(flatForm)) {
     expanded.resolvedSources[widget.uid as Uid] = widget;
     if (isRepeaterWidget(widget)) {
@@ -88,45 +82,38 @@ export function expandSources(
 /**
  * @param repeater - The repeater with a concrete `path`.
  * @param declaredPath - The same repeater's `path` as the template declares it.
+ * @param outerRows - The rows of the enclosing repeaters, outermost first.
  */
 function expandRepeaterRows(
   repeater: RepeaterTemplateWidget,
   declaredPath: DotPath,
-  outerIndexes: number[],
+  outerRows: RepeaterRow[],
   data: Record<string, any>,
   expanded: ExpandedSources,
 ): void {
-  const rows = get(data, repeater.path);
-  if (!Array.isArray(rows)) {
+  const rowValues = get(data, repeater.path);
+  if (!Array.isArray(rowValues)) {
     return;
   }
   const templateWidgets = flattenForm([repeater.props.template as FormWidget<never>]);
 
-  rows.forEach((row, rowIndex) => {
-    const repeaterRow: RepeaterRow = {
-      declaredPath,
-      concretePath: repeater.path,
-      indexes: [...outerIndexes, rowIndex],
-    };
-    const itemScope: RepeaterItemScope = {
-      itemPath: `${repeater.path}.${rowIndex}`,
-      index: rowIndex,
-    };
+  rowValues.forEach((rowValue, rowIndex) => {
+    const itemPath = `${repeater.path}.${rowIndex}`;
+    const rows: RepeaterRow[] = [
+      ...outerRows,
+      { declaredItemPath: `${declaredPath}.${ITEMS_TOKEN}`, itemPath, index: rowIndex },
+    ];
+    const itemScope: RepeaterItemScope = { itemPath, index: rowIndex };
 
     for (const templateWidget of templateWidgets) {
-      const item = materializeRowWidget(templateWidget, repeaterRow);
+      const item = materializeRowWidget(templateWidget, rows);
       expanded.resolvedSources[item.uid as Uid] = item;
       expanded.repeaterItemScopes[item.uid as Uid] = itemScope;
+      expanded.repeaterRows[item.uid as Uid] = rows;
 
-      const nested = asNestedRepeater(templateWidget, item, repeaterRow, data, row, rowIndex);
+      const nested = asNestedRepeater(templateWidget, item, rows, data, rowValue, rowIndex);
       if (nested) {
-        expandRepeaterRows(
-          nested.repeater,
-          nested.declaredPath,
-          repeaterRow.indexes,
-          data,
-          expanded,
-        );
+        expandRepeaterRows(nested.repeater, nested.declaredPath, rows, data, expanded);
       }
     }
   });
@@ -140,9 +127,9 @@ function expandRepeaterRows(
 function asNestedRepeater(
   templateWidget: FormWidget<string>,
   item: FormWidget<string>,
-  repeaterRow: RepeaterRow,
+  rows: RepeaterRow[],
   data: Record<string, any>,
-  row: unknown,
+  rowValue: unknown,
   rowIndex: number,
 ): { repeater: RepeaterTemplateWidget; declaredPath: DotPath } | undefined {
   if (isRepeaterWidget(templateWidget) && isRepeaterWidget(item)) {
@@ -153,7 +140,7 @@ function asNestedRepeater(
   }
   const resolved = templateWidget({
     $form: data,
-    $item: row,
+    $item: rowValue,
     $index: rowIndex,
     errors: undefined,
     touched: undefined,
@@ -166,17 +153,22 @@ function asNestedRepeater(
   // so the write never reaches the object the function owns.
   const resolvedWithUid = { ...resolved, uid: templateWidget.uid as string };
   return {
-    repeater: materializeRowWidget(resolvedWithUid, repeaterRow) as RepeaterTemplateWidget,
+    repeater: materializeRowWidget(resolvedWithUid, rows) as RepeaterTemplateWidget,
     declaredPath: (resolved as RepeaterTemplateWidget).path,
   };
 }
 
-/** Like {@link makeRepeaterItemConfig}, but places the row by position, see {@link toRowItemPath}. */
-function materializeRowWidget(
-  widget: FormWidget<string>,
-  repeaterRow: RepeaterRow,
-): FormWidget<string> {
-  return materializeWidget(widget, repeaterRow.indexes, (path) => toRowItemPath(path, repeaterRow));
+/**
+ * Like {@link makeRepeaterItemConfig}, but places the row by position, see {@link toRowItemPath}.
+ * @param rows - The rows that own the widget, outermost first.
+ */
+function materializeRowWidget(widget: FormWidget<string>, rows: RepeaterRow[]): FormWidget<string> {
+  const innermostRow = rows[rows.length - 1];
+  return materializeWidget(
+    widget,
+    rows.map((row) => row.index),
+    (path) => toRowItemPath(path, innermostRow),
+  );
 }
 
 /**
@@ -281,48 +273,89 @@ function toRepeaterItemPath(path: DotPath, repeaterIndexes: number[]): string {
 }
 
 /**
- * Places a template path in its row by position: the prefix `<declared repeater path>.items` becomes
- * `<concrete repeater path>.<row index>`. Any other `items` segment is a property name and stays.
+ * Places a template path in its row by position: the prefix `row.declaredItemPath` becomes
+ * `row.itemPath`. Any other `items` segment is a property name and stays.
  *
  * @example
- * // row: { declaredPath: 'invoice.items', concretePath: 'invoice.items', indexes: [3] }
+ * // row: { declaredItemPath: 'invoice.items.items', itemPath: 'invoice.items.3', index: 3 }
  * toRowItemPath('invoice.items.items.name', row); // 'invoice.items.3.name'
  */
-function toRowItemPath(path: DotPath, repeaterRow: RepeaterRow): string {
-  const rowPrefix = `${repeaterRow.declaredPath}.${ITEMS_TOKEN}`;
+function toRowItemPath(path: DotPath, row: RepeaterRow): string {
+  const rowPrefix = row.declaredItemPath;
   if (path !== rowPrefix && !path.startsWith(`${rowPrefix}.`)) {
     throw new Error(`Path "${path}" is not inside the repeater row "${rowPrefix}".`);
   }
-  const rowIndex = repeaterRow.indexes[repeaterRow.indexes.length - 1];
-  return `${repeaterRow.concretePath}.${rowIndex}${path.slice(rowPrefix.length)}`;
+  return `${row.itemPath}${path.slice(rowPrefix.length)}`;
 }
 
 /**
- * Replaces `.items.` and `.items?.` tokens in a `when` expression with the
- * concrete repeater indexes so the expression can be evaluated.
- * Multiple `items` tokens are replaced in order, supporting nested repeaters.
+ * Rewrites the references to the widget's own rows in a `when` expression, so it can be evaluated
+ * for one concrete row. A reference is a row's full declared item path, with or without `$form.`
+ * in front. It becomes the concrete item path, and `?.` separators are kept. Any other `items`
+ * segment, such as `$item.items` or a property named `items`, stays.
+ *
+ * @param expression - The `when` expression as the template writes it.
+ * @param rows - The rows that own the widget, outermost first, see `State['repeaterRows']`.
+ * @returns The expression with every reference to those rows made concrete.
  *
  * @example
- * // repeaterIndexes = [2]
- * // "$form.reptr.items.active" -> "$form.reptr.2.active"
- * // "$form.reptr.items?.active" -> "$form.reptr.2?.active"
- *
- * @example
- * // repeaterIndexes = [1, 0]
- * // "$form.reptr.teams.items?.devs?.items?.firstName?.length > 0" -> "$form.reptr.teams.1?.devs?.0?.firstName?.length > 0"
+ * // rows: [{ declaredItemPath: 'teams.items', itemPath: 'teams.1', index: 1 },
+ * //        { declaredItemPath: 'teams.items.devs.items', itemPath: 'teams.1.devs.0', index: 0 }]
+ * transformRepeaterItemWhenExpression('$form.teams.items?.devs?.items?.name?.length > 0', rows);
+ * // '$form.teams.1?.devs?.0?.name?.length > 0'
  */
 export function transformRepeaterItemWhenExpression(
   expression: string,
-  repeaterIndexes: number[],
+  rows: RepeaterRow[],
 ): string {
-  let i = 0;
-  return expression.replace(/\.items(\??)\./g, (match, optionalChaining: string) => {
-    const index = repeaterIndexes[i++];
-    if (index === undefined) {
-      return match;
-    }
-    return `.${index}${optionalChaining}.`;
-  });
+  // Innermost first. An inner reference starts with the outer one (`teams.items.devs.items`
+  // starts with `teams.items`), so the outer pass must not run first.
+  let transformed = expression;
+  for (let level = rows.length - 1; level >= 0; level--) {
+    transformed = replaceRowReferences(transformed, rows[level]);
+  }
+  return transformed;
+}
+
+function replaceRowReferences(expression: string, row: RepeaterRow): string {
+  const declaredSegments = row.declaredItemPath.split('.');
+  const concreteSegments = row.itemPath.split('.');
+  return expression.replace(
+    rowReferencePattern(row.declaredItemPath),
+    (_match, before: string, formPrefix: string | undefined, ...groups: unknown[]) => {
+      const separators = groups.slice(0, declaredSegments.length - 1) as string[];
+      const concretePath = concreteSegments
+        .map((segment, position) => (position === 0 ? segment : separators[position - 1] + segment))
+        .join('');
+      return `${before}${formPrefix ?? ''}${concretePath}`;
+    },
+  );
+}
+
+// The same declared item path is rewritten for every row of every derive.
+const rowReferencePatterns = new Map<DotPath, RegExp>();
+
+/**
+ * Matches a declared item path as a whole reference. Group 1 is the character before it, which is
+ * never a name character, `$` or `.` (so `$item.items` and `$form.x.items` are never read as a
+ * reference). Group 2 is an optional `$form.` or `$form?.`. The next groups are the separators,
+ * `.` or `?.`. A plain group replaces a lookbehind, which older Safari versions reject.
+ */
+function rowReferencePattern(declaredItemPath: DotPath): RegExp {
+  let pattern = rowReferencePatterns.get(declaredItemPath);
+  if (pattern === undefined) {
+    const segments = declaredItemPath.split('.').map(escapeRegExp);
+    pattern = new RegExp(
+      `(^|[^\\w$.])(\\$form\\??\\.)?${segments.join('(\\??\\.)')}(?![\\w$])`,
+      'g',
+    );
+    rowReferencePatterns.set(declaredItemPath, pattern);
+  }
+  return pattern;
+}
+
+function escapeRegExp(text: string): string {
+  return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 const WHEN_FIELDS = ['include', 'exclude', 'disabled', 'readonly'] as const;
@@ -335,18 +368,18 @@ const WHEN_FIELDS = ['include', 'exclude', 'disabled', 'readonly'] as const;
  * State-based flags (`include.in`, `exclude.from`) carry no expression and are left untouched.
  *
  * @param widget - A widget already materialized for a repeater item (see {@link makeRepeaterItemConfig}).
- * @param repeaterIndexes - Ordered list of indexes for each nesting level.
+ * @param rows - The rows that own the widget, outermost first, see `State['repeaterRows']`.
  * @returns A new widget config with item-concrete `when` expressions, or the input widget by
  * reference when no flag field has a `when` expression. The original is never mutated.
  *
  * @example
- * // repeaterIndexes = [1]
+ * // rows = [{ declaredItemPath: 'lineItems.items', itemPath: 'lineItems.1', index: 1 }]
  * // { include: { when: '$form.lineItems.items.active' } }
  * //   -> { include: { when: '$form.lineItems.1.active' } }
  */
 export function transformWidgetWhenExpressions(
   widget: NonFunctionWidget<string>,
-  repeaterIndexes: number[],
+  rows: RepeaterRow[],
 ): NonFunctionWidget<string> {
   const hasAnyWhenExpression = WHEN_FIELDS.some((field) =>
     hasWhenExpression((widget as Record<string, unknown>)[field]),
@@ -362,7 +395,7 @@ export function transformWidgetWhenExpressions(
     if (hasWhenExpression(value)) {
       transformed[field] = {
         ...value,
-        when: transformRepeaterItemWhenExpression(value.when, repeaterIndexes),
+        when: transformRepeaterItemWhenExpression(value.when, rows),
       };
     }
   }

@@ -305,6 +305,20 @@ describe('expandSources: nested repeaters', () => {
     expect(pathOf(resolvedSources['dev-name[2][1]'])).toBe('teams.2.devs.1.name');
   });
 
+  it('records the rows that own every row widget, outermost first', () => {
+    const { repeaterRows } = expandSources(flatFormOf(teams), data);
+
+    expect(repeaterRows['dev-name[2][1]']).toEqual([
+      { declaredItemPath: 'teams.items', itemPath: 'teams.2', index: 2 },
+      { declaredItemPath: 'teams.items.devs.items', itemPath: 'teams.2.devs.1', index: 1 },
+    ]);
+    expect(repeaterRows['devs[2]']).toEqual([
+      { declaredItemPath: 'teams.items', itemPath: 'teams.2', index: 2 },
+    ]);
+    // The top-level repeater is not owned by any row.
+    expect(repeaterRows['teams']).toBeUndefined();
+  });
+
   it('keeps a property named items at both nesting levels', () => {
     // Each order has an `items` array, so the inner repeater is declared at `orders.items.items`.
     const orders = repeater('orders', 'orders', [

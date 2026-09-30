@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { isInputWidget, type FunctionWidget, type NonFunctionWidget } from '../form-widget';
+import { type RepeaterRow } from '../store/model';
 import {
   extractRepeaterIndexes,
   makeRepeaterItemConfig,
@@ -13,6 +14,14 @@ vi.mock('../form-widget', () => ({
   isInputWidget: vi.fn(),
   isFunctionWidget: vi.fn((widget: unknown) => typeof widget === 'function'),
 }));
+
+/** The rows `expandSources` records for a row widget, from `[declaredItemPath, itemPath]` pairs. */
+const rowsOf = (...pairs: [string, string][]): RepeaterRow[] =>
+  pairs.map(([declaredItemPath, itemPath]) => ({
+    declaredItemPath,
+    itemPath,
+    index: Number(itemPath.split('.').pop()),
+  }));
 
 describe('makeRepeaterItemConfig', () => {
   beforeEach(() => {
@@ -195,42 +204,109 @@ describe('makeRepeaterItemConfig', () => {
 });
 
 describe('transformRepeaterItemWhenExpression', () => {
-  it('should return the expression unchanged when it has no .items. token', () => {
-    expect(transformRepeaterItemWhenExpression('form.active', [0])).toBe('form.active');
+  const usersRow = rowsOf(['users.items', 'users.2']);
+  const teamsAndDevsRows = rowsOf(
+    ['teams.items', 'teams.1'],
+    ['teams.items.devs.items', 'teams.1.devs.3'],
+  );
+
+  it('should return the expression unchanged when it has no row reference', () => {
+    expect(transformRepeaterItemWhenExpression('$form.active', usersRow)).toBe('$form.active');
   });
 
-  it('should replace a single .items. token with the corresponding index', () => {
-    expect(transformRepeaterItemWhenExpression('users.items.active', [2])).toBe('users.2.active');
-  });
-
-  it('should replace multiple .items. tokens with the corresponding indexes', () => {
-    expect(transformRepeaterItemWhenExpression('users.items.addresses.items.active', [1, 3])).toBe(
-      'users.1.addresses.3.active',
+  it('should replace the row token of a reference to the row', () => {
+    expect(transformRepeaterItemWhenExpression('$form.users.items.active', usersRow)).toBe(
+      '$form.users.2.active',
     );
   });
 
-  it('should leave excess .items. tokens unreplaced when fewer indexes than tokens are provided', () => {
-    expect(transformRepeaterItemWhenExpression('users.items.addresses.items.active', [1])).toBe(
-      'users.1.addresses.items.active',
+  it('should replace a reference written without $form', () => {
+    expect(transformRepeaterItemWhenExpression('users.items.active', usersRow)).toBe(
+      'users.2.active',
     );
+  });
+
+  it('should replace every reference to the row', () => {
+    expect(
+      transformRepeaterItemWhenExpression('$form.users.items.a && !$form.users.items.b', usersRow),
+    ).toBe('$form.users.2.a && !$form.users.2.b');
+  });
+
+  it('should replace references to the inner and the outer row of a nested repeater', () => {
+    expect(
+      transformRepeaterItemWhenExpression(
+        '$form.teams.items.devs.items.active && $form.teams.items.open',
+        teamsAndDevsRows,
+      ),
+    ).toBe('$form.teams.1.devs.3.active && $form.teams.1.open');
+  });
+
+  it('should leave a reference to an inner row unchanged for a widget of the outer row', () => {
+    expect(
+      transformRepeaterItemWhenExpression('$form.users.items.addresses.items.active', usersRow),
+    ).toBe('$form.users.2.addresses.items.active');
+  });
+
+  it('should replace a reference used as an $errors key', () => {
+    expect(
+      transformRepeaterItemWhenExpression("$errors['users.items.name'] !== undefined", usersRow),
+    ).toBe("$errors['users.2.name'] !== undefined");
   });
 
   describe('items with optional chaining', () => {
-    it('should replace a .items?. token with the corresponding index', () => {
+    it('should keep the ?. separators', () => {
       expect(
-        transformRepeaterItemWhenExpression('$form.repeaters.teams.items?.teamName?.length', [2]),
-      ).toBe('$form.repeaters.teams.2?.teamName?.length');
+        transformRepeaterItemWhenExpression(
+          '$form?.repeaters?.teams.items?.teamName?.length',
+          rowsOf(['repeaters.teams.items', 'repeaters.teams.2']),
+        ),
+      ).toBe('$form?.repeaters?.teams.2?.teamName?.length');
     });
 
-    it('should handle mixed .items. and .items?. tokens', () => {
+    it('should keep the ?. separators of a nested reference', () => {
       expect(
-        transformRepeaterItemWhenExpression('users.items.addresses.items?.active', [1, 3]),
-      ).toBe('users.1.addresses.3?.active');
+        transformRepeaterItemWhenExpression(
+          '$form.teams.items?.devs?.items?.active',
+          teamsAndDevsRows,
+        ),
+      ).toBe('$form.teams.1?.devs?.3?.active');
+    });
+  });
+
+  describe('items segments that are not a row token', () => {
+    it('should keep a property named items after the row token', () => {
+      expect(
+        transformRepeaterItemWhenExpression(
+          '$form.invoice.items.items.name',
+          rowsOf(['invoice.items.items', 'invoice.items.0']),
+        ),
+      ).toBe('$form.invoice.items.0.name');
     });
 
-    it('should leave excess .items?. tokens unreplaced when fewer indexes than tokens are provided', () => {
-      expect(transformRepeaterItemWhenExpression('users.items?.addresses.items?.active', [1])).toBe(
-        'users.1?.addresses.items?.active',
+    it('should keep an items property of $item', () => {
+      expect(
+        transformRepeaterItemWhenExpression(
+          '$item.items.length > 0',
+          rowsOf(['items.items', 'items.1']),
+        ),
+      ).toBe('$item.items.length > 0');
+    });
+
+    it('should keep an unrelated property named items', () => {
+      expect(transformRepeaterItemWhenExpression('$form.cart.items.length > 0', usersRow)).toBe(
+        '$form.cart.items.length > 0',
+      );
+    });
+
+    it('should keep a segment that only starts with items', () => {
+      expect(transformRepeaterItemWhenExpression('$form.users.itemsTotal > 0', usersRow)).toBe(
+        '$form.users.itemsTotal > 0',
+      );
+    });
+
+    it('should keep a path that only ends with the row path', () => {
+      expect(transformRepeaterItemWhenExpression('$form.club.users.items.active', usersRow)).toBe(
+        '$form.club.users.items.active',
       );
     });
   });
@@ -246,7 +322,7 @@ describe('transformWidgetWhenExpressions', () => {
       readonly: { when: '$form.users.items.frozen' },
     } as unknown as NonFunctionWidget<string>;
 
-    const result = transformWidgetWhenExpressions(widget, [1]);
+    const result = transformWidgetWhenExpressions(widget, rowsOf(['users.items', 'users.1']));
 
     expect(result).toEqual({
       uid: 'row-qty[1]',
@@ -270,7 +346,7 @@ describe('transformWidgetWhenExpressions', () => {
       disabled: true,
     } as unknown as NonFunctionWidget<string>;
 
-    const result = transformWidgetWhenExpressions(widget, [0]);
+    const result = transformWidgetWhenExpressions(widget, rowsOf(['users.items', 'users.0']));
 
     expect(result).toEqual({
       uid: 'row-note[0]',
@@ -288,7 +364,7 @@ describe('transformWidgetWhenExpressions', () => {
       props: { md: 'hello' },
     } as unknown as NonFunctionWidget<string>;
 
-    const result = transformWidgetWhenExpressions(widget, [0]);
+    const result = transformWidgetWhenExpressions(widget, rowsOf(['users.items', 'users.0']));
 
     expect(result).toBe(widget);
   });

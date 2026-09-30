@@ -423,7 +423,8 @@ const makeRequiredRowsFormDef = () => ({
 
 /**
  * A repeater bound to a property named `items`, with a required row field and a row field whose
- * name starts with `items`. The second field is visible only for priced rows.
+ * name starts with `items`. The second field is visible only for priced rows. Each row also has
+ * its own `items` array, and two notes read `items` segments that are not the row token.
  */
 const makeItemsPropertyFormDef = () => ({
   form: [
@@ -452,6 +453,18 @@ const makeItemsPropertyFormDef = () => ({
               path: 'invoice.items.items.itemsTotal',
               include: { when: '$item.priced === true' },
             },
+            {
+              uid: 'pricedNote',
+              kind: 'display',
+              type: 'markdownText',
+              include: { when: '$form.invoice.items.items.priced === true' },
+            },
+            {
+              uid: 'partsNote',
+              kind: 'display',
+              type: 'markdownText',
+              include: { when: '$item.items.length > 0' },
+            },
           ],
         },
       },
@@ -462,8 +475,8 @@ const makeItemsPropertyFormDef = () => ({
 const itemsPropertyData = {
   invoice: {
     items: [
-      { name: 'Pen', priced: true, itemsTotal: 3 },
-      { priced: false, itemsTotal: 9 },
+      { name: 'Pen', priced: true, itemsTotal: 3, items: ['cap'] },
+      { priced: false, itemsTotal: 9, items: [] },
     ],
   },
 };
@@ -2659,6 +2672,18 @@ describe('reducer end-to-end', () => {
       expect(written.data['invoice'].items[1].name).toBe('Ink');
       expect(revalidated.validations['invoice.items.1.name']).toBeNull();
       expect(revalidated.isFormValid).toBe(true);
+    });
+
+    it('rewrites only the row token in when expressions', () => {
+      const state = drive([init(makeItemsPropertyFormDef()), setData(itemsPropertyData)]);
+
+      expect(state.formHealth).toEqual({ status: 'ok' });
+      // `$form.invoice.items.items.priced`: the second `items` is the row token.
+      expect(state.widgetFlags['pricedNote[0]']).toEqual({ hidden: false });
+      expect(state.widgetFlags['pricedNote[1]']).toEqual({ hidden: true });
+      // `$item.items`: the row's own `items` array, not a token.
+      expect(state.widgetFlags['partsNote[0]']).toEqual({ hidden: false });
+      expect(state.widgetFlags['partsNote[1]']).toEqual({ hidden: true });
     });
 
     it('prunes a hidden row field whose name starts with items', () => {
