@@ -75,7 +75,15 @@ const fakePreset = (overrides: Partial<Preset> = {}): Preset => {
         label: context.label(node),
       }),
     },
-    validator: (node) => (node.required ? { required: true } : undefined),
+    validator: (node) => {
+      const validator: Record<string, unknown> = node.required ? { required: true } : {};
+      for (const keyword of ['pattern', 'maxLength']) {
+        if (keyword in node.schema) {
+          validator[keyword] = node.schema[keyword];
+        }
+      }
+      return Object.keys(validator).length > 0 ? validator : undefined;
+    },
     group: (children, options) => ({
       kind: 'layout',
       type: 'group',
@@ -569,11 +577,8 @@ describe('fromJsonSchema: diagnostics', () => {
     ['additionalProperties', objectOf({}, { additionalProperties: { type: 'string' } })],
     ['oneOf', { oneOf: [{ type: 'string' }, { type: 'number' }] }],
     ['anyOf', { anyOf: [{ type: 'string', maxLength: 3 }, objectOf({})] }],
-    [
-      'if',
-      objectOf({ a: { type: 'string' } }, { if: { required: ['a'] }, then: { required: [] } }),
-    ],
-    ['dependentRequired', objectOf({ a: { type: 'string' } }, { dependentRequired: { a: ['b'] } })],
+    ['if', { type: 'string', if: { minLength: 3 }, then: { maxLength: 9 } }],
+    ['dependentRequired', { type: 'string', dependentRequired: { a: ['b'] } }],
   ])('reports %s as not supported', (keyword, field) => {
     const result = convert(objectOf({ field }));
 
@@ -845,5 +850,254 @@ describe('fromJsonSchema: discriminated unions', () => {
 
     expect(group.children?.[0].label).toBe('How to pay');
     expect(group.children?.[0].props?.['layout']).toBe('row');
+  });
+});
+
+describe('fromJsonSchema: conditionals', () => {
+  const address = {
+    type: 'object',
+    properties: {
+      country: { type: 'string', enum: ['US', 'NL'] },
+      zip: { type: 'string' },
+      city: { type: 'string' },
+    },
+    required: ['country'],
+    if: { properties: { country: { const: 'US' } }, required: ['country'] },
+    then: {
+      properties: { zip: { pattern: '^[0-9]{5}$' }, state: { type: 'string' } },
+      required: ['zip', 'state'],
+    },
+    else: { properties: { zip: { pattern: '^[0-9]{4}[A-Z]{2}$' } } },
+  };
+
+  it('compiles if/then/else into states, state validators and a conditional property', () => {
+    const result = convert(address);
+    const { states, form } = result.formDefinition;
+
+    expect(states).toEqual({ if01: '$form.country === "US"', if02: '!($form.country === "US")' });
+    expect(form.slice(0, -1)).toEqual([
+      {
+        kind: 'input',
+        type: 'choice',
+        path: 'country',
+        label: 'Country',
+        validator: { required: true },
+        props: {
+          options: [
+            { label: 'US', value: 'US' },
+            { label: 'NL', value: 'NL' },
+          ],
+        },
+      },
+      // Placed after `country`, the property the condition reads.
+      input('state', {
+        label: 'State',
+        include: { when: '$form.country === "US"' },
+        validator: { required: true },
+      }),
+      input('zip', {
+        label: 'Zip',
+        'validator.if01': { required: true, pattern: '^[0-9]{5}$' },
+        'validator.if02': { pattern: '^[0-9]{4}[A-Z]{2}$' },
+      }),
+      input('city', { label: 'City' }),
+    ]);
+    expect(result.diagnostics).toEqual([]);
+  });
+
+  it('writes the states before the form', () => {
+    expect(Object.keys(convert(address).formDefinition)).toEqual(['$schema', 'states', 'form']);
+  });
+
+  it('compiles dependentRequired into a required state', () => {
+    const result = convert(
+      objectOf(
+        { card: { type: 'string' }, billing: { type: 'string', maxLength: 50 } },
+        { dependentRequired: { card: ['billing'] } },
+      ),
+    );
+
+    expect(result.formDefinition.states).toEqual({ dep01: '$form.card !== undefined' });
+    expect(result.formDefinition.form[1]).toEqual(
+      input('billing', {
+        label: 'Billing',
+        validator: { maxLength: 50 },
+        'validator.dep01': { required: true, maxLength: 50 },
+      }),
+    );
+  });
+
+  it.each([
+    ['dependentSchemas', 'dependentSchemas'],
+    ['draft-07 dependencies', 'dependencies'],
+  ])('compiles %s: new properties become conditional', (_, keyword) => {
+    const form = formOf(
+      objectOf(
+        { card: { type: 'string' }, name: { type: 'string' } },
+        {
+          [keyword]: {
+            card: { properties: { cvc: { type: 'string' } }, required: ['cvc'] },
+          },
+        },
+      ),
+    );
+
+    expect(form.map((widget) => widget.path)).toEqual(['card', 'cvc', 'name']);
+    expect(form[1]).toEqual(
+      input('cvc', {
+        label: 'Cvc',
+        include: { when: '$form.card !== undefined' },
+        validator: { required: true },
+      }),
+    );
+  });
+
+  it('joins the conditions that make one field required into one state', () => {
+    const result = convert(
+      objectOf(
+        { a: { type: 'string' }, b: { type: 'string' }, target: { type: 'string' } },
+        {
+          allOf: [
+            { if: { required: ['a'] }, then: { required: ['target'] } },
+            { if: { required: ['b'] }, then: { required: ['target'] } },
+          ],
+        },
+      ),
+    );
+
+    expect(result.formDefinition.states).toEqual({
+      required01: '($form.a !== undefined) || ($form.b !== undefined)',
+    });
+    expect(result.formDefinition.form[2]['validator.required01']).toEqual({ required: true });
+  });
+
+  it('applies only the first condition when two add constraints to one field', () => {
+    const result = convert(
+      objectOf(
+        { a: { type: 'string' }, b: { type: 'string' }, code: { type: 'string' } },
+        {
+          allOf: [
+            { if: { required: ['a'] }, then: { properties: { code: { pattern: '^a' } } } },
+            { if: { required: ['b'] }, then: { properties: { code: { maxLength: 3 } } } },
+          ],
+        },
+      ),
+    );
+
+    expect(Object.keys(result.formDefinition.form[2])).toContain('validator.if01');
+    expect(Object.keys(result.formDefinition.form[2])).not.toContain('validator.if02');
+    expect(result.diagnostics).toEqual([
+      expect.objectContaining({ severity: 'warning', code: 'overlay-limit', path: 'code' }),
+    ]);
+  });
+
+  it('reuses one state for the same condition', () => {
+    const result = convert(
+      objectOf(
+        { card: { type: 'string' }, billing: { type: 'string' }, cvc: { type: 'string' } },
+        { dependentRequired: { card: ['billing'] }, dependencies: { card: ['cvc'] } },
+      ),
+    );
+
+    expect(result.formDefinition.states).toEqual({ dep01: '$form.card !== undefined' });
+    expect(result.formDefinition.form[1]).toHaveProperty(['validator.dep01']);
+    expect(result.formDefinition.form[2]).toHaveProperty(['validator.dep01']);
+  });
+
+  it('shows the branch properties always and optional when the if has no expression', () => {
+    const result = convert(
+      objectOf(
+        { name: { type: 'string' } },
+        {
+          if: { properties: { name: { pattern: '^A' } } },
+          then: { properties: { extra: { type: 'string' } }, required: ['extra', 'name'] },
+        },
+      ),
+    );
+
+    expect(result.formDefinition.states).toBeUndefined();
+    expect(result.formDefinition.form.slice(0, -1)).toEqual([
+      input('name', { label: 'Name' }),
+      input('extra', { label: 'Extra' }),
+    ]);
+    expect(result.diagnostics).toEqual([
+      expect.objectContaining({ severity: 'warning', code: 'if-unsupported', pointer: '/if' }),
+    ]);
+  });
+
+  it('notes an if that also holds when the tested property is absent', () => {
+    const result = convert(
+      objectOf(
+        { country: { type: 'string' } },
+        { if: { properties: { country: { const: 'US' } } }, then: { required: ['country'] } },
+      ),
+    );
+
+    expect(result.formDefinition.states).toEqual({
+      if01: '($form.country === undefined || $form.country === "US")',
+    });
+    expect(result.diagnostics).toEqual([
+      expect.objectContaining({ severity: 'info', code: 'if-vacuous' }),
+    ]);
+  });
+
+  it('shows and hides through $item in a repeater, but cannot add state validators', () => {
+    const result = convert(objectOf({ addresses: { type: 'array', items: address } }));
+    const template = result.formDefinition.form[0].props?.['template'] as FormWidgetJson;
+
+    expect(result.formDefinition.states).toBeUndefined();
+    expect(template.children?.[1]).toEqual(
+      input('addresses.items.state', {
+        label: 'State',
+        include: { when: '$item.country === "US"' },
+        validator: { required: true },
+      }),
+    );
+    expect(result.diagnostics).toEqual([
+      expect.objectContaining({
+        code: 'conditional-validator-in-repeater',
+        path: 'addresses.items.zip',
+      }),
+    ]);
+  });
+
+  it('shows a property defined by both then and else always', () => {
+    const [kind, detail] = formOf(
+      objectOf(
+        { kind: { type: 'string' } },
+        {
+          if: { properties: { kind: { const: 'a' } }, required: ['kind'] },
+          then: { properties: { detail: { type: 'string' } } },
+          else: { properties: { detail: { type: 'string' } } },
+        },
+      ),
+    );
+
+    expect(kind.path).toBe('kind');
+    expect(detail).toEqual(input('detail', { label: 'Detail' }));
+  });
+
+  it('reports a conditional inside a conditional branch', () => {
+    const result = convert(
+      objectOf(
+        { a: { type: 'string' } },
+        {
+          if: { required: ['a'] },
+          then: { if: { required: ['a'] }, then: { required: ['a'] } },
+        },
+      ),
+    );
+
+    expect(codesOf(result.diagnostics)).toEqual(['nested-conditional']);
+  });
+
+  it('compiles the conditionals of a nested object with paths below it', () => {
+    const [group] = formOf(objectOf({ shipping: address }));
+
+    expect(convert(objectOf({ shipping: address })).formDefinition.states).toEqual({
+      if01: '$form.shipping?.country === "US"',
+      if02: '!($form.shipping?.country === "US")',
+    });
+    expect(group.children?.[1].include).toEqual({ when: '$form.shipping?.country === "US"' });
   });
 });

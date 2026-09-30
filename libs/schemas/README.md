@@ -189,6 +189,26 @@ reads the row through `$item`. The form removes the data of hidden widgets on su
 the chosen branch is sent. A union with no discriminator renders every branch property,
 optional and always visible, with a `no-discriminator` warning.
 
+`if/then/else`, `dependentRequired`, `dependentSchemas` and draft-07 `dependencies` on an
+object are compiled too:
+
+- A property that only a branch defines is built once, with an `include.when` condition, right
+  after the last property the condition reads.
+- A declared property that a branch constrains gets a state validator: the branch condition
+  becomes a form state (`if01`, `dep01`, ...) and the constraints a `validator.<state>` entry.
+  One state validator applies per field at a time. So a field can become required under any
+  number of conditions (one state joins them with `||`), or take its constraints from the
+  branches of one `if`. Constraints from a second condition give an `overlay-limit` warning.
+- Inside an array, a condition can show and hide widgets through `$item`, but states cannot
+  read the row, so conditional constraints there give a `conditional-validator-in-repeater`
+  warning.
+
+An `if` compiles when it uses `properties`, `required`, `const`, `enum`, `not` with `const` or
+`enum`, numeric bounds and nested `properties`. As in JSON Schema, a tested property that is
+not in `if.required` passes when it is absent, which the `if-vacuous` note points out. Any
+other `if` gives an `if-unsupported` warning, and its branch properties are always shown and
+optional.
+
 The conversion never throws because of the schema shape. What it cannot express exactly is
 listed in `diagnostics`. Each entry has a `severity` (`error`: not rendered, `warning`:
 rendered approximately, `info`: a note), a `code`, the form data `path` and the JSON

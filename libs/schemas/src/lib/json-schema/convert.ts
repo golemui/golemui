@@ -1,6 +1,7 @@
+import { compileCondition } from './conditions.js';
 import { isDeclarativeRule, matchesDeclarativeRule } from './declarative-rules.js';
 import { enumOptionsOf, isConstUnion } from './enum-options.js';
-import { dataReference, equalsAny } from './expressions.js';
+import { dataReference, equalsAny, innermostItemNode } from './expressions.js';
 import { normalizeNode, type NormalizedNode, type NormalizeEnvironment } from './normalize.js';
 import { appendPointer } from './pointer.js';
 import { humanize } from './text.js';
@@ -103,6 +104,35 @@ type BranchProperty = {
   refTrail: readonly string[];
 };
 
+/** One branch of a compiled conditional: when it applies, and what it adds. */
+type ConditionalBranch = {
+  /** A reactive expression, `undefined` when the `if` has no expression equivalent. */
+  condition?: string;
+  /** Prefix of the state name: `if` or `dep`. */
+  statePrefix: 'if' | 'dep';
+  /** Branches of one conditional share a group. `then` and `else` never apply together. */
+  group: number;
+  side?: 'then' | 'else';
+  /** The branch schema, normalized. Undefined for `dependentRequired`. */
+  schema?: NormalizedNode;
+  schemaPointer: string;
+  /** Names the branch requires besides `schema.required`, from `dependentRequired`. */
+  requiredNames: string[];
+  /** The properties the condition reads. Branch-only widgets go after the last of them. */
+  reads: string[];
+};
+
+/** A branch that adds constraints to a declared property. `raw` is undefined for `required` only. */
+type Overlay = { branch: ConditionalBranch; raw: unknown; required: boolean };
+
+/** A property that only a conditional branch defines. */
+type BranchDefinition = {
+  branch: ConditionalBranch;
+  raw: unknown;
+  required: boolean;
+  pointer: string;
+};
+
 /** Where a child node sits, before it is normalized. */
 type Placement = {
   parent?: SchemaNode;
@@ -129,6 +159,9 @@ class Conversion {
   private readonly itemCache = new WeakMap<SchemaNode, SchemaNode | undefined>();
   // Keyed by the normalized schema. `null` means the node has no union of objects.
   private readonly objectUnions = new WeakMap<JsonSchema, ObjectUnion | null>();
+  // State expression -> state name. One state per distinct expression.
+  private readonly states = new Map<string, string>();
+  private readonly stateCounters = new Map<string, number>();
   // The node each built widget came from, to point duplicate reports at the schema.
   private readonly widgetNodes = new WeakMap<object, SchemaNode>();
   private builtNodes = 0;
@@ -196,10 +229,17 @@ class Conversion {
         pointer: node?.pointer ?? '',
       });
     });
-    const formDefinition: FormDefinitionJson = { form: form.map(cleanWidget) };
-    if (this.preset.schemaUrl !== undefined) {
-      formDefinition.$schema = this.preset.schemaUrl;
-    }
+    const formDefinition: FormDefinitionJson = {
+      ...(this.preset.schemaUrl === undefined ? {} : { $schema: this.preset.schemaUrl }),
+      ...(this.states.size === 0
+        ? {}
+        : {
+            states: Object.fromEntries(
+              [...this.states].map(([expression, name]) => [name, expression]),
+            ),
+          }),
+      form: form.map(cleanWidget),
+    };
     return {
       formDefinition: this.options.transform?.(formDefinition) ?? formDefinition,
       diagnostics: this.diagnostics,
@@ -338,10 +378,337 @@ class Conversion {
   private buildChildren(node: SchemaNode): FormWidgetJson[] {
     const children = this.childrenOf(node);
     const union = this.objectUnions.get(node.schema);
-    if (!union) {
-      return children.flatMap((child) => asWidgetList(this.buildNode(child)));
+    const widgets = union
+      ? this.buildUnionChildren(node, children, union)
+      : children.flatMap((child) => asWidgetList(this.buildNode(child)));
+    return this.applyConditionals(node, children, widgets);
+  }
+
+  /**
+   * Compiles the conditionals of an object (`if/then/else`, `dependentRequired`,
+   * `dependentSchemas`) into its widgets:
+   * - a property only a branch defines is built once, visible for the branches that define it,
+   *   and placed after the last property the condition reads;
+   * - a declared property that a branch constrains gets a `validator.<state>` for that branch.
+   */
+  private applyConditionals(
+    owner: SchemaNode,
+    children: SchemaNode[],
+    widgets: FormWidgetJson[],
+  ): FormWidgetJson[] {
+    const branches = this.compileConditionals(owner);
+    if (branches.length === 0) {
+      return widgets;
     }
-    return this.buildUnionChildren(node, children, union);
+    const declared = new Map(
+      children.flatMap((child) => (child.name === undefined ? [] : [[child.name, child] as const])),
+    );
+    const overlays = new Map<string, Overlay[]>();
+    const definitions = new Map<string, BranchDefinition[]>();
+    const add = <T>(map: Map<string, T[]>, name: string, entry: T) =>
+      map.set(name, [...(map.get(name) ?? []), entry]);
+
+    for (const branch of branches) {
+      const schema = branch.schema?.schema ?? {};
+      const properties = recordOf(schema['properties']);
+      const required = [...requiredOf(schema), ...branch.requiredNames].filter(
+        (name): name is string => typeof name === 'string',
+      );
+      for (const [name, raw] of Object.entries(properties)) {
+        if (declared.has(name)) {
+          add(overlays, name, { branch, raw, required: required.includes(name) });
+        } else {
+          add(definitions, name, {
+            branch,
+            raw,
+            required: required.includes(name),
+            pointer: this.pointerOf(raw) ?? appendPointer(branch.schemaPointer, 'properties', name),
+          });
+        }
+      }
+      for (const name of required) {
+        if (!(name in properties) && declared.has(name)) {
+          add(overlays, name, { branch, raw: undefined, required: true });
+        }
+      }
+    }
+
+    const withOverlays = this.applyOverlays(owner, declared, overlays, widgets);
+    return this.insertBranchProperties(owner, definitions, withOverlays);
+  }
+
+  private compileConditionals(owner: SchemaNode): ConditionalBranch[] {
+    const conditionals = this.normalizedNodes.get(owner)?.conditionals ?? [];
+    const reference = (segments: string[]) =>
+      dataReference(owner, joinPath(owner.path, segments.join('.')));
+    const branches: ConditionalBranch[] = [];
+    conditionals.forEach((conditional, group) => {
+      if (conditional.kind !== 'if') {
+        branches.push({
+          condition: `${reference([conditional.property])} !== undefined`,
+          statePrefix: 'dep',
+          group,
+          schema:
+            conditional.kind === 'dependentSchemas'
+              ? this.normalizeBranch(owner, conditional.schema, conditional.pointer)
+              : undefined,
+          schemaPointer: conditional.pointer,
+          requiredNames: conditional.kind === 'dependentRequired' ? conditional.required : [],
+          reads: [conditional.property],
+        });
+        return;
+      }
+
+      const compiled = compileCondition(conditional.if, reference);
+      if ('unsupported' in compiled) {
+        this.diagnostics.push({
+          severity: 'warning',
+          code: 'if-unsupported',
+          message: `The \`if\` uses \`${compiled.unsupported}\`, which has no expression equivalent. The \`then\` and \`else\` properties are always shown and optional.`,
+          path: owner.path,
+          pointer: appendPointer(conditional.pointer, 'if'),
+        });
+      } else if (compiled.vacuous) {
+        this.diagnostics.push({
+          severity: 'info',
+          code: 'if-vacuous',
+          message:
+            'The `if` also holds when a property it tests is absent, because that property is not in `if.required`. JSON Schema defines it that way.',
+          path: owner.path,
+          pointer: appendPointer(conditional.pointer, 'if'),
+        });
+      }
+      const condition = 'unsupported' in compiled ? undefined : compiled.expression;
+      for (const side of ['then', 'else'] as const) {
+        const raw = conditional[side];
+        if (raw === undefined) {
+          continue;
+        }
+        const schemaPointer = appendPointer(conditional.pointer, side);
+        branches.push({
+          condition:
+            condition === undefined ? undefined : side === 'then' ? condition : `!(${condition})`,
+          statePrefix: 'if',
+          group,
+          side,
+          schema: this.normalizeBranch(owner, raw, schemaPointer),
+          schemaPointer,
+          requiredNames: [],
+          reads: 'unsupported' in compiled ? [] : compiled.reads,
+        });
+      }
+    });
+    return branches;
+  }
+
+  private normalizeBranch(
+    owner: SchemaNode,
+    raw: unknown,
+    pointer: string,
+  ): NormalizedNode | undefined {
+    const branchPointer = this.pointerOf(raw) ?? pointer;
+    const node = normalizeNode(
+      raw,
+      branchPointer,
+      this.refTrailOf(owner),
+      this.environmentFor(owner.path),
+    );
+    if (node !== undefined && node.conditionals.length > 0) {
+      this.diagnostics.push({
+        severity: 'warning',
+        code: 'nested-conditional',
+        message:
+          'A conditional inside a conditional branch is not supported, so it is not applied.',
+        path: owner.path,
+        pointer: branchPointer,
+      });
+    }
+    return node;
+  }
+
+  /**
+   * Adds `validator.<state>` to the widget of each declared property a branch constrains. One
+   * state applies per field at a time, so only these combinations are expressible: required
+   * from any number of conditions (one state that ORs them), or the branches of one conditional
+   * (they never hold together). Anything else keeps the first conditional and warns.
+   */
+  private applyOverlays(
+    owner: SchemaNode,
+    declared: Map<string, SchemaNode>,
+    overlays: Map<string, Overlay[]>,
+    widgets: FormWidgetJson[],
+  ): FormWidgetJson[] {
+    let updated = widgets;
+    for (const [name, list] of overlays) {
+      const child = declared.get(name) as SchemaNode;
+      const compiled = list.filter((overlay) => overlay.branch.condition !== undefined);
+      if (compiled.length === 0) {
+        continue;
+      }
+      if (innermostItemNode(owner) !== undefined) {
+        this.report(child, {
+          severity: 'warning',
+          code: 'conditional-validator-in-repeater',
+          message: `Inside a repeater a condition can only show or hide widgets, so the conditional constraints of \`${name}\` are not applied.`,
+        });
+        continue;
+      }
+
+      const validators: Record<string, unknown> = {};
+      for (const selected of this.selectOverlays(child, compiled)) {
+        const state = this.stateFor(selected.prefix, selected.condition);
+        const validator = this.preset.validator(
+          this.derivedNode(child, selected.raw, selected.required || child.required),
+        );
+        if (validator !== undefined) {
+          validators[`validator.${state}`] = validator;
+        }
+      }
+      const index = updated.findIndex(
+        (widget) => widget.kind === 'input' && widget.path === child.path,
+      );
+      if (index === -1) {
+        this.report(child, {
+          severity: 'warning',
+          code: 'overlay-limit',
+          message: `\`${name}\` is not built as one input, so its conditional constraints are not applied.`,
+        });
+        continue;
+      }
+      updated = [...updated];
+      updated[index] = { ...updated[index], ...validators };
+    }
+    return updated;
+  }
+
+  private selectOverlays(
+    child: SchemaNode,
+    overlays: Overlay[],
+  ): { condition: string; raw: unknown; required: boolean; prefix: string }[] {
+    if (overlays.every((overlay) => overlay.raw === undefined)) {
+      // Only `required`, from one or several conditions: one state that holds when any does.
+      const conditions = [
+        ...new Set(overlays.map((overlay) => overlay.branch.condition as string)),
+      ];
+      return [
+        {
+          condition: orConditions(conditions),
+          raw: undefined,
+          required: true,
+          prefix: conditions.length === 1 ? overlays[0].branch.statePrefix : 'required',
+        },
+      ];
+    }
+    const firstGroup = overlays[0].branch.group;
+    const inFirstGroup = overlays.filter((overlay) => overlay.branch.group === firstGroup);
+    if (inFirstGroup.length < overlays.length) {
+      this.report(child, {
+        severity: 'warning',
+        code: 'overlay-limit',
+        message: `\`${child.name}\` gets constraints from several conditions. Only the first condition is applied.`,
+      });
+    }
+    return inFirstGroup.map((overlay) => ({
+      condition: overlay.branch.condition as string,
+      raw: overlay.raw,
+      required: overlay.required,
+      prefix: overlay.branch.statePrefix,
+    }));
+  }
+
+  /** The node with the constraints of a branch merged in, for the validator of that branch. */
+  private derivedNode(node: SchemaNode, raw: unknown, required: boolean): SchemaNode {
+    if (raw === undefined) {
+      return { ...node, required };
+    }
+    const merged = normalizeNode(
+      { allOf: [node.schema, raw] },
+      node.pointer,
+      this.refTrailOf(node),
+      this.environmentFor(node.path),
+    );
+    return merged === undefined
+      ? { ...node, required }
+      : { ...node, schema: merged.schema, type: merged.type ?? node.type, required };
+  }
+
+  /**
+   * Builds each property that only conditional branches define, once, visible when one of those
+   * branches applies. It goes after the last property its condition reads, or at the end.
+   */
+  private insertBranchProperties(
+    owner: SchemaNode,
+    definitions: Map<string, BranchDefinition[]>,
+    widgets: FormWidgetJson[],
+  ): FormWidgetJson[] {
+    const result = [...widgets];
+    const inserted = new Set<FormWidgetJson>();
+    for (const [name, list] of definitions) {
+      const [first] = list;
+      const path = joinPath(owner.path, name);
+      if (!this.isValidPropertyName(name, path, first.pointer)) {
+        continue;
+      }
+      // An `if` without an expression equivalent shows its branch properties always, optional.
+      const unconditional = list.some((definition) => definition.branch.condition === undefined);
+      const child = this.createNode(first.raw, {
+        parent: owner,
+        name,
+        path,
+        pointer: first.pointer,
+        required: !unconditional && list.every((definition) => definition.required),
+        repeaterDepth: owner.repeaterDepth,
+        refTrail: first.branch.schema?.refTrail ?? this.refTrailOf(owner),
+      });
+      if (child === undefined) {
+        continue;
+      }
+      if (
+        list.some((entry) => !jsonEqual(entry.raw, first.raw) || entry.required !== first.required)
+      ) {
+        this.report(child, {
+          severity: 'warning',
+          code: 'branch-schema-conflict',
+          message: `The branches define \`${name}\` differently. The form uses the first definition.`,
+        });
+      }
+
+      let built = this.buildNode(child);
+      if (!unconditional && !coversBothSides(list)) {
+        const conditions = [
+          ...new Set(list.map((definition) => definition.branch.condition as string)),
+        ];
+        built = withIncludeCondition(built, orConditions(conditions));
+      }
+
+      const readPaths = first.branch.reads.map((read) => joinPath(owner.path, read));
+      let position = result.reduce(
+        (last, widget, index) => (readPaths.includes(String(widget.path)) ? index + 1 : last),
+        result.length,
+      );
+      if (position < result.length || readPaths.length > 0) {
+        while (position < result.length && inserted.has(result[position])) {
+          position++;
+        }
+      }
+      const builtWidgets = asWidgetList(built);
+      builtWidgets.forEach((widget) => inserted.add(widget));
+      result.splice(position, 0, ...builtWidgets);
+    }
+    return result;
+  }
+
+  /** The name of the state for an expression. The same expression always gets the same state. */
+  private stateFor(prefix: string, expression: string): string {
+    const existing = this.states.get(expression);
+    if (existing !== undefined) {
+      return existing;
+    }
+    const count = (this.stateCounters.get(prefix) ?? 0) + 1;
+    this.stateCounters.set(prefix, count);
+    const name = `${prefix}${String(count).padStart(2, '0')}`;
+    this.states.set(expression, name);
+    return name;
   }
 
   /**
@@ -808,14 +1175,17 @@ class Conversion {
         });
       }
     }
-    for (const conditional of normalized.conditionals) {
-      this.diagnostics.push({
-        severity: 'warning',
-        code: 'unsupported-keyword',
-        message: `\`${conditional.kind}\` is not supported, so the form shows every property without the condition.`,
-        path: node.path,
-        pointer: conditional.pointer,
-      });
+    // An object compiles its conditionals when its children are built.
+    if (node.type !== 'object') {
+      for (const conditional of normalized.conditionals) {
+        this.diagnostics.push({
+          severity: 'warning',
+          code: 'unsupported-keyword',
+          message: `\`${conditional.kind}\` is only supported on objects, so it is not applied.`,
+          path: node.path,
+          pointer: conditional.pointer,
+        });
+      }
     }
   }
 
@@ -863,6 +1233,24 @@ function labelOf(node: SchemaNode): Localizable | undefined {
     return title;
   }
   return node.name !== undefined ? humanize(node.name) : undefined;
+}
+
+/** A condition that holds when any of `conditions` holds. */
+function orConditions(conditions: string[]): string {
+  return conditions.length === 1
+    ? conditions[0]
+    : conditions.map((condition) => `(${condition})`).join(' || ');
+}
+
+/** True when the definitions include both `then` and `else` of one `if`, so one always applies. */
+function coversBothSides(definitions: BranchDefinition[]): boolean {
+  return definitions.some(
+    (definition) =>
+      definition.branch.side === 'then' &&
+      definitions.some(
+        (other) => other.branch.group === definition.branch.group && other.branch.side === 'else',
+      ),
+  );
 }
 
 /** The selector label of a branch: its title, its definition name, or its value. */
