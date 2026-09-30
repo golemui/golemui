@@ -11,6 +11,8 @@
   [errors]="templateData.errors"
   [touched]="templateData.touched"
   [required]="templateData.validator?.required"
+  [disabled]="templateData.disabled"
+  [readOnly]="templateData.readonly"
   [native]="false"
 ></gui-label>
 
@@ -19,7 +21,6 @@
     [attr.defer-hydration]="deferHydration"
     #listRef
     [uid]="widget.uid"
-    [errors]="templateData.errors"
     [touched]="templateData.touched"
     [required]="templateData.validator?.required"
     [disabled]="templateData.disabled"

@@ -14,6 +14,7 @@ import './time-picker';
 import type { GuiTime } from './time-input';
 import type { GuiTimePicker } from './time-picker';
 import {
+  getDayLabel,
   getFullDateLabel,
   isDateDisabled,
   parseISODateString,
@@ -62,7 +63,16 @@ import {
 } from '../utils/time';
 import type { DateTimeRange } from '../types';
 import { GuiFormControl } from '../gui-form-control';
-import { dispatchValue, fires, valueEvents, type GuiInputErrorEventDetail } from '../utils/events';
+import {
+  dispatch,
+  dispatchBlur,
+  dispatchInputError,
+  dispatchValue,
+  fires,
+  stopPropagation,
+  valueEvents,
+  type GuiInputErrorEventDetail,
+} from '../utils/events';
 import { message } from '../utils/messages';
 
 /**
@@ -157,7 +167,7 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
   @property({ type: String, attribute: 'remove-pill-aria-label' }) removePillAriaLabel:
     | string
     | undefined = undefined;
-  /** Error for a date inside `disabledRanges`. */
+  /** Error for a range that steps over a disabled day. Defaults to `disabledRangeMessage`. */
   @property({ type: String, attribute: 'disabled-date-range-message' }) disabledDateRangeMessage:
     | string
     | undefined = undefined;
@@ -180,10 +190,10 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
   /** Label of the end time. */
   @property({ type: String, attribute: 'end-time-label' }) endTimeLabel: string | undefined =
     undefined;
-  /** Earliest allowed date-time, as an ISO date-time (`YYYY-MM-DDTHH:mm`). */
+  /** Earliest allowed date-time, as an ISO date-time (`YYYY-MM-DDTHH:mm:ss`). */
   @property({ type: String, attribute: 'min-date-time' }) minDateTime: string | undefined =
     undefined;
-  /** Latest allowed date-time, as an ISO date-time (`YYYY-MM-DDTHH:mm`). */
+  /** Latest allowed date-time, as an ISO date-time (`YYYY-MM-DDTHH:mm:ss`). */
   @property({ type: String, attribute: 'max-date-time' }) maxDateTime: string | undefined =
     undefined;
   /** Error for a date-time before `minDateTime`. */
@@ -298,8 +308,8 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
    * former `_currentDate`/`_yearSelectorOpen` reactive state.
    */
   protected _nav = new GUIMonthNavigationController(this, {
-    getMinDate: () => this.minDate,
-    getMaxDate: () => this.maxDate,
+    getMinDate: () => this.minDay,
+    getMaxDate: () => this.maxDay,
     getNumberOfMonths: () => this.numberOfMonths,
     getDisabledRanges: () => this.disabledRanges,
     onYearSelectorToggled: () => this._keyboard.onYearGridToggled(),
@@ -357,7 +367,7 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
   private _focusLeave = new GUIFocusLeaveController(this, {
     onLeave: () => {
       if (!this.deferFocusLeave) this.settleOnLeave();
-      this.dispatchEvent(new CustomEvent('gui-blur', { bubbles: true, composed: true }));
+      dispatchBlur(this);
     },
   });
 
@@ -510,14 +520,6 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
   override willUpdate(changedProperties: PropertyValues): void {
     this._edit.reconcileValue(this.value);
     this.adoptWorkingSelection(changedProperties);
-    if (
-      !this.hasUpdated ||
-      changedProperties.has('minDateTime') ||
-      changedProperties.has('maxDateTime')
-    ) {
-      this.minDate = this.minDateTime ? this.minDateTime.split('T')[0] : undefined;
-      this.maxDate = this.maxDateTime ? this.maxDateTime.split('T')[0] : undefined;
-    }
     if (changedProperties.has('invalidRange')) {
       if (this.invalidRange) {
         const start = this.endpointDay(this.invalidRange.start);
@@ -582,6 +584,7 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
           monthFormat: this.monthFormat,
           yearSelectorOpen: this._nav.yearSelectorOpen,
           selectYearAriaLabel: this.selectYearAriaLabel,
+          disabled: this.disabled,
           onToggleYearSelector: () => this.toggleYearSelector(),
           renderBelowHeader: (panelOffset) => this.renderBelowHeader(panelOffset),
           renderPanelBody: (panelOffset) => this.renderPanelBody(panelOffset),
@@ -632,7 +635,8 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
             .noAvailableTimesMessage=${this.noAvailableTimesMessage}
             @gui-input=${this.onStartTimeInput}
             @gui-change=${this.onTimeChange}
-            @gui-parts-change=${this.stopInnerPartsChange}
+            @gui-blur=${stopPropagation}
+            @gui-input-error=${this.onTimeInputError}
             @gui-list-toggle=${(e: CustomEvent<{ open: boolean }>) => this.onListToggle(e, 'start')}
           ></gui-time-picker>
         </div>
@@ -665,7 +669,8 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
             .noAvailableTimesMessage=${this.noAvailableTimesMessage}
             @gui-input=${this.onEndTimeInput}
             @gui-change=${this.onTimeChange}
-            @gui-parts-change=${this.stopInnerPartsChange}
+            @gui-blur=${stopPropagation}
+            @gui-input-error=${this.onTimeInputError}
             @gui-list-toggle=${(e: CustomEvent<{ open: boolean }>) => this.onListToggle(e, 'end')}
           ></gui-time-picker>
         </div>
@@ -689,6 +694,8 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
       localeId: this.localeId,
       currentDate: this._nav.currentDate,
       yearGridAriaLabel: this.yearGridAriaLabel,
+      weekdayFormat: this.weekdayFormat,
+      disabled: this.disabled,
       getDays: (o) => this.getDaysInMonth(o),
       renderDay: (day) => this.renderDay(day),
     });
@@ -701,12 +708,27 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
     this._nav.toggleYearSelector();
   }
 
+  /** The first selectable day: `minDate` or the day of `minDateTime`, whichever is later. */
+  private get minDay(): string | undefined {
+    return [this.minDate, this.minDateTime?.split('T')[0]]
+      .filter((day): day is string => !!day)
+      .sort()
+      .pop();
+  }
+
+  /** The last selectable day: `maxDate` or the day of `maxDateTime`, whichever is earlier. */
+  private get maxDay(): string | undefined {
+    return [this.maxDate, this.maxDateTime?.split('T')[0]]
+      .filter((day): day is string => !!day)
+      .sort()[0];
+  }
+
   /**
    * A day is unclickable only when a span covers it entirely.
    */
   protected isDisabled(date: Date): boolean {
     const day = toISODateString(date);
-    if (isDateDisabled(day, this.minDate, this.maxDate)) return true;
+    if (isDateDisabled(day, this.minDay, this.maxDay)) return true;
     return isDayFullyBlocked(day, this.disabledRanges);
   }
 
@@ -766,8 +788,8 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
         type="button"
         role="gridcell"
         class=${classMap(classes)}
-        tabindex=${day.isFocusable ? 0 : -1}
-        ?disabled=${!day.isCurrentMonth}
+        tabindex=${day.isFocusable && !this.disabled ? 0 : -1}
+        ?disabled=${!day.isCurrentMonth || this.disabled}
         aria-disabled=${day.isCurrentMonth && day.isDisabled ? 'true' : nothing}
         aria-label=${getFullDateLabel(this.localeId, day.date)}
         aria-current=${day.isToday ? 'date' : nothing}
@@ -815,7 +837,7 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
 
         return {
           date: base.date,
-          dayLabel: base.dayLabel,
+          dayLabel: getDayLabel(this.localeId, base.date, this.dayFormat),
           isCurrentMonth: base.isCurrentMonth,
           isToday: base.isToday,
           isRangeStart: status.isRangeStart,
@@ -862,7 +884,9 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
 
     if (this.spanCoversBlockedDay(commit.start, commit.end)) {
       this._invalidRange = { start: commit.start, end: commit.end };
-      this.emitInputError(message('disabledDateRange', this.disabledRangeMessage));
+      this.emitInputError(
+        message('disabledDateRange', this.disabledDateRangeMessage ?? this.disabledRangeMessage),
+      );
       this.requestUpdate();
       return;
     }
@@ -1007,19 +1031,13 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
    * layer, so it can't trigger validation.
    */
   private emitPartsChange(): void {
-    this.dispatchEvent(
-      new CustomEvent('gui-parts-change', {
-        detail: {
-          anchor: this.anchorISO() ?? null,
-          start: this._workingStart ?? null,
-          end: this._workingEnd ?? null,
-          startTime: this._workingStartTime ?? null,
-          endTime: this._workingEndTime ?? null,
-        },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatch(this, 'gui-parts-change', {
+      anchor: this.anchorISO() ?? null,
+      start: this._workingStart ?? null,
+      end: this._workingEnd ?? null,
+      startTime: this._workingStartTime ?? null,
+      endTime: this._workingEndTime ?? null,
+    });
   }
 
   /**
@@ -1115,21 +1133,18 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
   }
 
   /**
-   * The embedded time pickers' own segmented inputs broadcast a bubbling,
-   * composed `gui-parts-change` carrying only `{time}`. Left alone it reaches the
-   * host picker's listener looking like this calendar's report, whose missing
-   * keys read as "every piece is gone" and blank the working selection. The
-   * times this calendar holds already flow out through `@gui-input`.
+   * A time picker's rejection of a typed time (out of the day's bounds, on a
+   * disabled slot) is reported as this calendar's own, so it shows while the
+   * user types.
    */
-  private stopInnerPartsChange = (event: Event) => {
-    event.stopPropagation();
-  };
+  private onTimeInputError(event: CustomEvent<GuiInputErrorEventDetail>) {
+    stopPropagation(event);
+    dispatchInputError(this, event.detail.message);
+  }
 
   private emitInputError(message: string) {
     this._surfacedError = true;
-    this.dispatchEvent(
-      new CustomEvent('gui-input-error', { detail: { message }, bubbles: true, composed: true }),
-    );
+    dispatchInputError(this, message);
   }
 
   private get startPicker(): GuiTimePicker | null {
@@ -1299,7 +1314,7 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
         .bubble=${false}
         ?disabled=${this.disabled}
         ?readonly=${this.readOnly}
-        .removeAriaLabel=${message('removeDate', this.removePillAriaLabel)}
+        .removeAriaLabel=${message('removeDateTime', this.removePillAriaLabel)}
         .editable=${this.editEnabled}
         .selectedKey=${this._edit.selectedKey ?? undefined}
         .editingKey=${this._edit.editing?.key ?? undefined}
@@ -1313,6 +1328,8 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
         @gui-pill-edit=${this.onPillEditEvent}
         @gui-pill-edit-confirm=${this.onPillEditConfirm}
         @gui-pill-edit-cancel=${this.onPillEditCancel}
+        @gui-pill-keydown=${stopPropagation}
+        @gui-pill-exit=${stopPropagation}
       ></gui-pills>
     `;
   }
@@ -1348,6 +1365,7 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
   }
 
   private onPillRemoveEvent = (e: CustomEvent<GuiPillEventDetail>) => {
+    e.stopPropagation();
     if (this.disabled || this.readOnly) return;
     const removal = removeRangeByKey(this.value, e.detail.key);
     if (!removal) return;
@@ -1356,6 +1374,7 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
   };
 
   private onPillClickEvent = (e: CustomEvent<GuiPillEventDetail>) => {
+    e.stopPropagation();
     const range = findRangeByKey(this.getSortedPills(), e.detail.key);
     if (!range) return;
     const outcome = this._edit.handlePillClick(e.detail.key);
@@ -1368,6 +1387,7 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
    * focused pill offers the edit affordance and drives the day marking.
    */
   private onPillFocusEvent = (e: CustomEvent<GuiPillEventDetail>) => {
+    e.stopPropagation();
     if (!this.editEnabled || this._edit.editing) return;
     if (this._edit.selectedKey !== e.detail.key) this._edit.handlePillClick(e.detail.key);
   };
@@ -1377,19 +1397,22 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
    * session keeps its selection — its focus legitimately lives in the day grid
    * or the time pickers.
    */
-  private onPillsBlurEvent = () => {
+  private onPillsBlurEvent = (e: Event) => {
+    e.stopPropagation();
     if (this._edit.editing) return;
     this._edit.clearSelection();
   };
 
   /** Edit icon or F2 / E on a pill: select it (if needed) and start editing. */
   private onPillEditEvent = (e: CustomEvent<GuiPillEventDetail>) => {
+    e.stopPropagation();
     if (!this.editEnabled || this._edit.editing?.key === e.detail.key) return;
     if (this._edit.selectedKey !== e.detail.key) this._edit.handlePillClick(e.detail.key);
     this._edit.startEdit();
   };
 
-  private onPillEditConfirm = () => {
+  private onPillEditConfirm = (e: Event) => {
+    e.stopPropagation();
     if (!this._edit.editing) return;
     const outcome = this.commitWorking(this._edit.baseRanges(this.value));
     if (outcome.kind === 'committed') {
@@ -1406,7 +1429,8 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
     }
   };
 
-  private onPillEditCancel = () => {
+  private onPillEditCancel = (e: Event) => {
+    e.stopPropagation();
     if (!this._edit.editing) return;
     this._edit.cancel();
     this._edit.focusSelectedPill();

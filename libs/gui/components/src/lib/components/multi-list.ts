@@ -2,7 +2,7 @@ import { property } from 'lit/decorators.js';
 import { safeDefine } from '@golemui/lit-utils';
 import { GuiList } from './list';
 import type { ListItem, OptionValue } from '../types';
-import { dispatchValue, fires, valueEvents } from '../utils/events';
+import { dispatch, dispatchValue, fires, valueEvents } from '../utils/events';
 
 /**
  * Multi-select listbox. Same virtualization, keyboard navigation and focus
@@ -39,13 +39,7 @@ export class GuiMultiList extends GuiList {
     this.values = values.includes(value)
       ? values.filter((current) => current !== value)
       : [...values, value];
-    this.dispatchEvent(
-      new CustomEvent('gui-item-toggle', {
-        detail: { value: item.value },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatch(this, 'gui-item-toggle', { value: item.value });
     dispatchValue(this, this.values);
   }
 

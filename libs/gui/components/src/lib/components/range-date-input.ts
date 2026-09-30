@@ -33,10 +33,18 @@ import {
 import { commitRange, orderEndpoints, type RangeEndpoint } from '../utils/range-commit';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 import './pills';
-import type { GuiPillEventDetail, GuiPillItem } from './pills';
+import type { GuiPillEventDetail, GuiPillItem, GuiPillsDropdownEventDetail } from './pills';
 import type { DateRange } from '../types';
 import { GuiFormControl } from '../gui-form-control';
-import { dispatchValue, fires, valueEvents, type GuiInputErrorEventDetail } from '../utils/events';
+import {
+  dispatch,
+  dispatchBlur,
+  dispatchInputError,
+  dispatchValue,
+  fires,
+  valueEvents,
+  type GuiInputErrorEventDetail,
+} from '../utils/events';
 import { message } from '../utils/messages';
 
 /** What <gui-range-date-input> renders besides the control state: its presentation props. */
@@ -59,6 +67,8 @@ export type GuiRangeDateInputProps = {
  * @fires gui-edit-state-change - Editing a range in place started, changed selection or ended.
  *   `detail` has the `selected` range and whether it is `editing`.
  * @fires gui-range-click - The user clicked a range pill. `detail.range` is the range.
+ * @fires gui-dropdown-toggle - The count of ranges opened or closed its dropdown. `detail.open` is
+ *   the new state.
  * @cssprop --gui-pill-height - Height of each pill.
  * @cssprop --gui-pill-font-size - Font size of the pill text.
  * @cssprop --gui-pill-action-size - Size of the icons inside a pill.
@@ -191,10 +201,7 @@ export class GuiRangeDateInput extends GuiFormControl {
         this.onPillClick(lastRange);
       }
     },
-    onInputErrorSurfaced: (message) =>
-      this.dispatchEvent(
-        new CustomEvent('gui-input-error', { detail: { message }, bubbles: true }),
-      ),
+    onInputErrorSurfaced: (message) => dispatchInputError(this, message),
     onSurfacedErrorCleared: (value) => dispatchValue(this, value, { commit: false }),
   });
 
@@ -243,7 +250,7 @@ export class GuiRangeDateInput extends GuiFormControl {
       // Embedded in a picker: that host owns focus reporting for the subtree.
       if (this.deferFocusLeave) return;
       this.finalizeOnLeave();
-      this.dispatchEvent(new CustomEvent('gui-blur'));
+      dispatchBlur(this);
     },
   });
 
@@ -320,7 +327,7 @@ export class GuiRangeDateInput extends GuiFormControl {
     };
 
     return html`
-      ${this.label ? addLabel(this.uid, templateData, false, undefined, false) : nothing}
+      ${addLabel(this.uid, templateData, false, undefined, false)}
 
       <div
         class="gui-widget"
@@ -443,11 +450,10 @@ export class GuiRangeDateInput extends GuiFormControl {
   };
 
   private emitEditState() {
-    this.dispatchEvent(
-      new CustomEvent('gui-edit-state-change', {
-        detail: { selected: this._edit.selectedRange, editing: !!this._edit.editing },
-      }),
-    );
+    dispatch(this, 'gui-edit-state-change', {
+      selected: this._edit.selectedRange,
+      editing: !!this._edit.editing,
+    });
   }
 
   private loadRangeForEdit(range: DateRange) {
@@ -517,6 +523,7 @@ export class GuiRangeDateInput extends GuiFormControl {
   }
 
   private onPillRemoveEvent = (e: CustomEvent<GuiPillEventDetail>) => {
+    e.stopPropagation();
     if (this.disabled || this.readOnly) return;
     const removal = removeRangeByKey(this.value, e.detail.key);
     if (!removal) return;
@@ -531,6 +538,7 @@ export class GuiRangeDateInput extends GuiFormControl {
   };
 
   private onPillClickEvent = (e: CustomEvent<GuiPillEventDetail>) => {
+    e.stopPropagation();
     const range = findRangeByKey(this.getSortedPills(), e.detail.key);
     if (!range) return;
     const outcome = this._edit.handlePillClick(e.detail.key);
@@ -546,6 +554,7 @@ export class GuiRangeDateInput extends GuiFormControl {
    * An open session is left alone (its pill keeps focus semantics of its own).
    */
   private onPillFocusEvent = (e: CustomEvent<GuiPillEventDetail>) => {
+    e.stopPropagation();
     if (!this.editEnabled || this._edit.editing) return;
     if (this._edit.selectedKey !== e.detail.key) this._edit.handlePillClick(e.detail.key);
   };
@@ -555,24 +564,28 @@ export class GuiRangeDateInput extends GuiFormControl {
    * edit affordance and any calendar marking disappear. An open session keeps
    * its selection — its focus legitimately lives in the compose surface.
    */
-  private onPillsBlurEvent = () => {
+  private onPillsBlurEvent = (e: Event) => {
+    e.stopPropagation();
     if (this._edit.editing) return;
     this._edit.clearSelection();
   };
 
   /** Edit icon or F2 / E on a pill: select it (if needed) and start editing. */
   private onPillEditEvent = (e: CustomEvent<GuiPillEventDetail>) => {
+    e.stopPropagation();
     if (!this.editEnabled || this._edit.editing?.key === e.detail.key) return;
     if (this._edit.selectedKey !== e.detail.key) this._edit.handlePillClick(e.detail.key);
     this._edit.startEdit();
   };
 
-  private onPillEditConfirm = () => {
+  private onPillEditConfirm = (e: Event) => {
+    e.stopPropagation();
     if (!this._edit.editing) return;
     this.commitFromParts();
   };
 
-  private onPillEditCancel = () => {
+  private onPillEditCancel = (e: Event) => {
+    e.stopPropagation();
     if (!this._edit.editing) return;
     this._edit.cancel();
     this._edit.focusSelectedPill();
@@ -586,13 +599,7 @@ export class GuiRangeDateInput extends GuiFormControl {
   }
 
   private onPillClick(range: DateRange) {
-    this.dispatchEvent(
-      new CustomEvent('gui-range-click', {
-        detail: { range },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatch(this, 'gui-range-click', { range });
   }
 
   private validateDateParts(group: string): RangeEndpoint<Date> {
@@ -625,13 +632,7 @@ export class GuiRangeDateInput extends GuiFormControl {
     this._workingISO = { start: iso(start), end: iso(end) };
     if (this._edit.editing) this.requestUpdate();
 
-    this.dispatchEvent(
-      new CustomEvent('gui-parts-change', {
-        detail: { start: iso(start), end: iso(end) },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatch(this, 'gui-parts-change', { start: iso(start), end: iso(end) });
 
     return { start, end };
   }
@@ -826,6 +827,7 @@ export class GuiRangeDateInput extends GuiFormControl {
 
 /** The events `gui-range-date` fires, with their types. */
 export const GuiRangeDateInputEvents = {
+  'gui-dropdown-toggle': fires<CustomEvent<GuiPillsDropdownEventDetail>>(),
   ...valueEvents<GuiRangeDateInput['value']>(),
   'gui-focus': fires<CustomEvent<FocusEvent>>(),
   'gui-input-error': fires<CustomEvent<GuiInputErrorEventDetail>>(),
@@ -836,7 +838,7 @@ export const GuiRangeDateInputEvents = {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'gui-range-date-input': GuiRangeDateInput;
+    'gui-range-date': GuiRangeDateInput;
   }
 }
 

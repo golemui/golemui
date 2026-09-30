@@ -138,6 +138,9 @@ export class GuiMultiSelectTrigger extends GuiElement {
       [this.icon as string]: !!this.icon,
     };
 
+    // Of the pills' events, gui-pill-remove and gui-dropdown-toggle pass through as the trigger's
+    // own. The navigation controller stops gui-pill-keydown and gui-pill-exit, and the pills fire
+    // no other event unless clickable or editable.
     return html`
       <div
         class=${classMap({

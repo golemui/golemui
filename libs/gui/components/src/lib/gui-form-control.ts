@@ -49,8 +49,11 @@ const toFormEntry = (value: unknown): string =>
 export abstract class GuiFormControl extends GuiElement {
   static formAssociated = true;
 
-  /** The name the value is submitted under. Without it the element stays out of its form. */
-  @property({ type: String }) name: string | undefined = undefined;
+  /**
+   * The name the value is submitted under. Without it the element stays out of its form.
+   * Reflected, like a native control's: the form reads a single value's name from the attribute.
+   */
+  @property({ type: String, reflect: true }) name: string | undefined = undefined;
 
   /** The element's value. Its type depends on the element. */
   abstract value: unknown;

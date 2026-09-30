@@ -13,9 +13,12 @@ import { CARET_DOWN_PATH } from '../utils/icons';
 import type { DateRange } from '../types';
 import { boundsValidity, GuiFormControl, type GuiValidity } from '../gui-form-control';
 import {
+  dispatchBlur,
   dispatchChange,
+  dispatchInputError,
   dispatchValue,
   fires,
+  stopPropagation,
   valueEvents,
   type GuiInputErrorEventDetail,
 } from '../utils/events';
@@ -231,9 +234,11 @@ export class GuiDatePicker extends GuiFormControl {
           .invalidDateMessage=${this.invalidDateMessage}
           .incompleteMessage=${this.incompleteMessage}
           @gui-blur=${this.onDateBlur}
-          @gui-focus=${this._popup.show}
+          @gui-focus=${this.onDateFocus}
           @gui-input=${this.onDateInput}
           @gui-change=${this.onDateChange}
+          @gui-input-error=${this.onDateInputError}
+          @gui-parts-change=${stopPropagation}
         ></gui-date>
         <button
           type="button"
@@ -272,6 +277,17 @@ export class GuiDatePicker extends GuiFormControl {
     }
   };
 
+  private onDateFocus(event: Event) {
+    stopPropagation(event);
+    this._popup.show();
+  }
+
+  /** The field's error is reported as the picker's own. */
+  private onDateInputError(event: CustomEvent<GuiInputErrorEventDetail>) {
+    stopPropagation(event);
+    dispatchInputError(this, event.detail.message);
+  }
+
   private onDateInput(event: CustomEvent) {
     event.stopPropagation();
     this.updateValue(event.detail.value);
@@ -297,9 +313,11 @@ export class GuiDatePicker extends GuiFormControl {
     this.updateValue(event.detail.value);
   }
 
+  /** A pick closes the calendar and, like Escape, returns focus to the field. */
   private onCalendarChange(event: CustomEvent) {
     event.stopPropagation();
     dispatchChange(this, this.value ?? null);
+    this._popup.restoreFocusToInput();
     this._popup.close();
   }
 
@@ -307,15 +325,7 @@ export class GuiDatePicker extends GuiFormControl {
     this.value = value ?? undefined;
     const error = this.validateBounds(this.value);
     dispatchValue(this, value ?? null, { commit: false });
-    if (error) {
-      this.dispatchEvent(
-        new CustomEvent('gui-input-error', {
-          detail: { message: error },
-          bubbles: true,
-          composed: true,
-        }),
-      );
-    }
+    if (error) dispatchInputError(this, error);
   }
 
   protected override validate(): GuiValidity | null {
@@ -353,7 +363,7 @@ export class GuiDatePicker extends GuiFormControl {
    * {@link onDateInput}, so the picker's value follows.
    */
   private onFocusLeave(): void {
-    this.dispatchEvent(new CustomEvent('gui-blur'));
+    dispatchBlur(this);
     this.querySelector<GuiDate>('gui-date')?.settleOnFocusLeave();
   }
 }

@@ -112,4 +112,11 @@ gui-checkbox {
   label {
     cursor: pointer;
   }
+
+  // Read-only looks like the editable checkbox, as a read-only text field does, without the
+  // pointer that promises a change.
+  label:has(input[aria-readonly='true']),
+  input[aria-readonly='true'] {
+    cursor: default;
+  }
 }

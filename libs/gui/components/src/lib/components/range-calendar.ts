@@ -9,6 +9,7 @@ import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
 import { GUIMonthNavigationController } from '../controllers/month-navigation.controller';
 import {
   createDateRange,
+  getDayLabel,
   getFullDateLabel,
   mergeDateRanges,
   parseISODateString,
@@ -46,7 +47,15 @@ import './pills';
 import type { GuiPillEventDetail, GuiPillItem } from './pills';
 import type { DateRange } from '../types';
 import { GuiFormControl } from '../gui-form-control';
-import { dispatchValue, fires, valueEvents, type GuiInputErrorEventDetail } from '../utils/events';
+import {
+  stopPropagation,
+  dispatch,
+  dispatchBlur,
+  dispatchValue,
+  fires,
+  valueEvents,
+  type GuiInputErrorEventDetail,
+} from '../utils/events';
 import { message } from '../utils/messages';
 
 export interface RangeCalendarDay {
@@ -271,7 +280,7 @@ export class GuiRangeCalendar extends GuiFormControl {
   private _focusLeave = new GUIFocusLeaveController(this, {
     onLeave: () => {
       this.settleEditOnLeave();
-      this.dispatchEvent(new CustomEvent('gui-blur', { bubbles: true, composed: true }));
+      dispatchBlur(this);
     },
   });
 
@@ -305,17 +314,11 @@ export class GuiRangeCalendar extends GuiFormControl {
    * Never wired by the form layer, so it can't trigger validation.
    */
   protected emitWorkingChange(): void {
-    this.dispatchEvent(
-      new CustomEvent('gui-parts-change', {
-        detail: {
-          anchor: this.anchorISO() ?? null,
-          start: this._workingStart ?? null,
-          end: this._workingEnd ?? null,
-        },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatch(this, 'gui-parts-change', {
+      anchor: this.anchorISO() ?? null,
+      start: this._workingStart ?? null,
+      end: this._workingEnd ?? null,
+    });
   }
 
   protected get workingSpan(): DaySpan | undefined {
@@ -470,6 +473,7 @@ export class GuiRangeCalendar extends GuiFormControl {
           monthFormat: this.monthFormat,
           yearSelectorOpen: this._nav.yearSelectorOpen,
           selectYearAriaLabel: this.selectYearAriaLabel,
+          disabled: this.disabled,
           onToggleYearSelector: () => this.toggleYearSelector(),
           renderBelowHeader: (panelOffset) => this.renderBelowHeader(panelOffset),
           renderPanelBody: (panelOffset) => this.renderPanelBody(panelOffset),
@@ -498,6 +502,8 @@ export class GuiRangeCalendar extends GuiFormControl {
       localeId: this.localeId,
       currentDate: this._nav.currentDate,
       yearGridAriaLabel: this.yearGridAriaLabel,
+      weekdayFormat: this.weekdayFormat,
+      disabled: this.disabled,
       getDays: (o) => this.getDaysInMonth(o),
       renderDay: (day) => this.renderDay(day),
     });
@@ -571,8 +577,8 @@ export class GuiRangeCalendar extends GuiFormControl {
         type="button"
         role="gridcell"
         class=${classMap(classes)}
-        tabindex=${day.isFocusable ? 0 : -1}
-        ?disabled=${!day.isCurrentMonth}
+        tabindex=${day.isFocusable && !this.disabled ? 0 : -1}
+        ?disabled=${!day.isCurrentMonth || this.disabled}
         aria-disabled=${day.isCurrentMonth && day.isDisabled ? 'true' : nothing}
         aria-label=${getFullDateLabel(this.localeId, day.date)}
         aria-current=${day.isToday ? 'date' : nothing}
@@ -620,7 +626,7 @@ export class GuiRangeCalendar extends GuiFormControl {
 
         return {
           date: base.date,
-          dayLabel: base.dayLabel,
+          dayLabel: getDayLabel(this.localeId, base.date, this.dayFormat),
           isCurrentMonth: base.isCurrentMonth,
           isToday: base.isToday,
           isRangeStart: status.isRangeStart,
@@ -676,16 +682,11 @@ export class GuiRangeCalendar extends GuiFormControl {
       )
     ) {
       this._invalidRange = { start: commit.start, end: commit.end };
-      this.dispatchEvent(
-        new CustomEvent('gui-input-error', {
-          detail: {
-            message: message('disabledDateRange', this.disabledDateRangeMessage),
-            range: { start: toISODateString(commit.start), end: toISODateString(commit.end) },
-          },
-          bubbles: true,
-          composed: true,
-        }),
-      );
+      // The rejected span rides along so a host picker can show it in its input.
+      dispatch(this, 'gui-input-error', {
+        message: message('disabledDateRange', this.disabledDateRangeMessage),
+        range: { start: toISODateString(commit.start), end: toISODateString(commit.end) },
+      });
       this.requestUpdate();
       return;
     }
@@ -764,6 +765,8 @@ export class GuiRangeCalendar extends GuiFormControl {
         @gui-pill-edit=${this.onPillEditEvent}
         @gui-pill-edit-confirm=${this.onPillEditConfirm}
         @gui-pill-edit-cancel=${this.onPillEditCancel}
+        @gui-pill-keydown=${stopPropagation}
+        @gui-pill-exit=${stopPropagation}
       ></gui-pills>
     `;
   }
@@ -868,6 +871,7 @@ export class GuiRangeCalendar extends GuiFormControl {
   }
 
   private onPillRemoveEvent = (e: CustomEvent<GuiPillEventDetail>) => {
+    e.stopPropagation();
     if (this.disabled || this.readOnly) return;
     const removal = removeRangeByKey(this.value, e.detail.key);
     if (!removal) return;
@@ -876,6 +880,7 @@ export class GuiRangeCalendar extends GuiFormControl {
   };
 
   private onPillClickEvent = (e: CustomEvent<GuiPillEventDetail>) => {
+    e.stopPropagation();
     const range = findRangeByKey(this.getSortedPills(), e.detail.key);
     if (!range) return;
     const outcome = this._edit.handlePillClick(e.detail.key);
@@ -888,6 +893,7 @@ export class GuiRangeCalendar extends GuiFormControl {
    * focused pill offers the edit affordance and drives the day marking.
    */
   private onPillFocusEvent = (e: CustomEvent<GuiPillEventDetail>) => {
+    e.stopPropagation();
     if (!this.editEnabled || this._edit.editing) return;
     if (this._edit.selectedKey !== e.detail.key) this._edit.handlePillClick(e.detail.key);
   };
@@ -896,24 +902,28 @@ export class GuiRangeCalendar extends GuiFormControl {
    * Focus left the pills for elsewhere: the selection follows it away. An open
    * session keeps its selection — its focus legitimately lives in the day grid.
    */
-  private onPillsBlurEvent = () => {
+  private onPillsBlurEvent = (e: Event) => {
+    e.stopPropagation();
     if (this._edit.editing) return;
     this._edit.clearSelection();
   };
 
   /** Edit icon or F2 / E on a pill: select it (if needed) and start editing. */
   private onPillEditEvent = (e: CustomEvent<GuiPillEventDetail>) => {
+    e.stopPropagation();
     if (!this.editEnabled || this._edit.editing?.key === e.detail.key) return;
     if (this._edit.selectedKey !== e.detail.key) this._edit.handlePillClick(e.detail.key);
     this._edit.startEdit();
   };
 
-  private onPillEditConfirm = () => {
+  private onPillEditConfirm = (e: Event) => {
+    e.stopPropagation();
     if (!this._edit.editing) return;
     this.commitEditFromWorking();
   };
 
-  private onPillEditCancel = () => {
+  private onPillEditCancel = (e: Event) => {
+    e.stopPropagation();
     if (!this._edit.editing) return;
     this._edit.cancel();
     this._edit.focusSelectedPill();

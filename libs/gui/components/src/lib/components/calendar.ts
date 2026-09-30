@@ -21,7 +21,7 @@ import {
 import { buildMonthDays, computeDayStatus } from '../utils/day-status';
 import type { DateRange } from '../types';
 import { GuiFormControl } from '../gui-form-control';
-import { dispatchValue, valueEvents } from '../utils/events';
+import { dispatchBlur, dispatchValue, valueEvents } from '../utils/events';
 
 export interface CalendarDay {
   date: Date;
@@ -166,7 +166,7 @@ export class GuiCalendar extends GuiFormControl {
 
   private _focusLeave = new GUIFocusLeaveController(this, {
     onLeave: () => {
-      this.dispatchEvent(new CustomEvent('gui-blur', { bubbles: true, composed: true }));
+      dispatchBlur(this);
     },
   });
 
@@ -217,6 +217,7 @@ export class GuiCalendar extends GuiFormControl {
           monthFormat: this.monthFormat,
           yearSelectorOpen: this._nav.yearSelectorOpen,
           selectYearAriaLabel: this.selectYearAriaLabel,
+          disabled: this.disabled,
           onToggleYearSelector: () => this._nav.toggleYearSelector(),
           renderPanelBody: (o) => this.renderPanelBody(o),
         }),
@@ -239,6 +240,8 @@ export class GuiCalendar extends GuiFormControl {
       localeId: this.localeId,
       currentDate: this._nav.currentDate,
       yearGridAriaLabel: this.yearGridAriaLabel,
+      weekdayFormat: this.weekdayFormat,
+      disabled: this.disabled,
       getDays: (o) => this.getDaysInMonth(o),
       renderDay: (day) => this.renderDay(day),
     });
@@ -259,8 +262,8 @@ export class GuiCalendar extends GuiFormControl {
         type="button"
         role="gridcell"
         class=${classMap(classes)}
-        tabindex=${day.isFocusable ? 0 : -1}
-        ?disabled=${!day.isCurrentMonth}
+        tabindex=${day.isFocusable && !this.disabled ? 0 : -1}
+        ?disabled=${!day.isCurrentMonth || this.disabled}
         aria-disabled=${day.isCurrentMonth && day.isDisabled ? 'true' : nothing}
         aria-label=${getFullDateLabel(this.localeId, day.date)}
         aria-current=${day.isToday ? 'date' : nothing}
@@ -289,7 +292,7 @@ export class GuiCalendar extends GuiFormControl {
 
         return {
           date: base.date,
-          dayLabel: base.dayLabel,
+          dayLabel: getDayLabel(this.localeId, base.date, this.dayFormat),
           isCurrentMonth: base.isCurrentMonth,
           isToday: base.isToday,
           isDisabled: base.isDisabled,

@@ -35,10 +35,18 @@ import {
 } from '../utils/time';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 import './pills';
-import type { GuiPillEventDetail, GuiPillItem } from './pills';
+import type { GuiPillEventDetail, GuiPillItem, GuiPillsDropdownEventDetail } from './pills';
 import type { TimeRange } from '../types';
 import { GuiFormControl } from '../gui-form-control';
-import { dispatchValue, fires, valueEvents, type GuiInputErrorEventDetail } from '../utils/events';
+import {
+  dispatch,
+  dispatchBlur,
+  dispatchInputError,
+  dispatchValue,
+  fires,
+  valueEvents,
+  type GuiInputErrorEventDetail,
+} from '../utils/events';
 import { message } from '../utils/messages';
 
 /** What <gui-range-time-input> renders besides the control state: its presentation props. */
@@ -61,6 +69,8 @@ export type GuiRangeTimeInputProps = {
  * @fires gui-edit-state-change - Editing a range in place started, changed selection or ended.
  *   `detail` has the `selected` range and whether it is `editing`.
  * @fires gui-range-click - The user clicked a range pill. `detail.range` is the range.
+ * @fires gui-dropdown-toggle - The count of ranges opened or closed its dropdown. `detail.open` is
+ *   the new state.
  * @cssprop --gui-pill-height - Height of each pill.
  * @cssprop --gui-pill-font-size - Font size of the pill text.
  * @cssprop --gui-pill-action-size - Size of the icons inside a pill.
@@ -93,9 +103,9 @@ export class GuiRangeTimeInput extends GuiFormControl {
     undefined;
   /** Minutes between the times offered in the list. */
   @property({ type: Number, attribute: 'minute-step' }) minuteStep: number | undefined = 1;
-  /** Earliest selectable time, as an ISO time (`HH:mm`). */
+  /** Earliest selectable time, as an ISO time (`HH:mm:ss`). */
   @property({ type: String, attribute: 'min-time' }) minTime: string | undefined = undefined;
-  /** Latest selectable time, as an ISO time (`HH:mm`). */
+  /** Latest selectable time, as an ISO time (`HH:mm:ss`). */
   @property({ type: String, attribute: 'max-time' }) maxTime: string | undefined = undefined;
   /** Error for a time before `minTime`. */
   @property({ type: String, attribute: 'min-time-message' }) minTimeMessage: string | undefined =
@@ -197,10 +207,7 @@ export class GuiRangeTimeInput extends GuiFormControl {
         this.syncParts();
       }
     },
-    onInputErrorSurfaced: (message) =>
-      this.dispatchEvent(
-        new CustomEvent('gui-input-error', { detail: { message }, bubbles: true }),
-      ),
+    onInputErrorSurfaced: (message) => dispatchInputError(this, message),
     onSurfacedErrorCleared: (value) => dispatchValue(this, value, { commit: false }),
     isReadonly: () => !!this.readOnly || this.allowCustomTime === false,
     isDisabled: () => !!this.disabled,
@@ -271,7 +278,7 @@ export class GuiRangeTimeInput extends GuiFormControl {
       // Embedded in a picker: that host owns focus reporting for the subtree.
       if (this.deferFocusLeave) return;
       this.finalizeOnLeave();
-      this.dispatchEvent(new CustomEvent('gui-blur'));
+      dispatchBlur(this);
     },
   });
 
@@ -359,7 +366,7 @@ export class GuiRangeTimeInput extends GuiFormControl {
     };
 
     return html`
-      ${this.label ? addLabel(this.uid, templateData, false, undefined, false) : nothing}
+      ${addLabel(this.uid, templateData, false, undefined, false)}
 
       <div
         class="gui-widget"
@@ -481,11 +488,10 @@ export class GuiRangeTimeInput extends GuiFormControl {
   };
 
   private emitEditState() {
-    this.dispatchEvent(
-      new CustomEvent('gui-edit-state-change', {
-        detail: { selected: this._edit.selectedRange, editing: !!this._edit.editing },
-      }),
-    );
+    dispatch(this, 'gui-edit-state-change', {
+      selected: this._edit.selectedRange,
+      editing: !!this._edit.editing,
+    });
   }
 
   private loadRangeForEdit(range: TimeRange) {
@@ -550,6 +556,7 @@ export class GuiRangeTimeInput extends GuiFormControl {
   }
 
   private onPillRemoveEvent = (e: CustomEvent<GuiPillEventDetail>) => {
+    e.stopPropagation();
     if (this.disabled || this.readOnly) return;
     const removal = removeRangeByKey(this.value, e.detail.key);
     if (!removal) return;
@@ -563,6 +570,7 @@ export class GuiRangeTimeInput extends GuiFormControl {
   };
 
   private onPillClickEvent = (e: CustomEvent<GuiPillEventDetail>) => {
+    e.stopPropagation();
     const range = findRangeByKey(this.getSortedPills(), e.detail.key);
     if (!range) return;
     const outcome = this._edit.handlePillClick(e.detail.key);
@@ -578,6 +586,7 @@ export class GuiRangeTimeInput extends GuiFormControl {
    * An open session is left alone (its pill keeps focus semantics of its own).
    */
   private onPillFocusEvent = (e: CustomEvent<GuiPillEventDetail>) => {
+    e.stopPropagation();
     if (!this.editEnabled || this._edit.editing) return;
     if (this._edit.selectedKey !== e.detail.key) this._edit.handlePillClick(e.detail.key);
   };
@@ -587,33 +596,35 @@ export class GuiRangeTimeInput extends GuiFormControl {
    * edit affordance and any calendar marking disappear. An open session keeps
    * its selection — its focus legitimately lives in the compose surface.
    */
-  private onPillsBlurEvent = () => {
+  private onPillsBlurEvent = (e: Event) => {
+    e.stopPropagation();
     if (this._edit.editing) return;
     this._edit.clearSelection();
   };
 
   /** Edit icon or F2 / E on a pill: select it (if needed) and start editing. */
   private onPillEditEvent = (e: CustomEvent<GuiPillEventDetail>) => {
+    e.stopPropagation();
     if (!this.editEnabled || this._edit.editing?.key === e.detail.key) return;
     if (this._edit.selectedKey !== e.detail.key) this._edit.handlePillClick(e.detail.key);
     this._edit.startEdit();
   };
 
-  private onPillEditConfirm = () => {
+  private onPillEditConfirm = (e: Event) => {
+    e.stopPropagation();
     if (!this._edit.editing) return;
     this.commitFromParts();
   };
 
-  private onPillEditCancel = () => {
+  private onPillEditCancel = (e: Event) => {
+    e.stopPropagation();
     if (!this._edit.editing) return;
     this._edit.cancel();
     this._edit.focusSelectedPill();
   };
 
   private onPillClick(range: TimeRange) {
-    this.dispatchEvent(
-      new CustomEvent('gui-range-click', { detail: { range }, bubbles: true, composed: true }),
-    );
+    dispatch(this, 'gui-range-click', { range });
   }
 
   private formatTimeForDisplay(isoTime: string): string {
@@ -690,13 +701,7 @@ export class GuiRangeTimeInput extends GuiFormControl {
     this._workingISO = { start: iso(start), end: iso(end) };
     if (this._edit.editing) this.requestUpdate();
 
-    this.dispatchEvent(
-      new CustomEvent('gui-parts-change', {
-        detail: { start: iso(start), end: iso(end) },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatch(this, 'gui-parts-change', { start: iso(start), end: iso(end) });
 
     return { start, end };
   }
@@ -843,6 +848,7 @@ export class GuiRangeTimeInput extends GuiFormControl {
 
 /** The events `gui-range-time` fires, with their types. */
 export const GuiRangeTimeInputEvents = {
+  'gui-dropdown-toggle': fires<CustomEvent<GuiPillsDropdownEventDetail>>(),
   ...valueEvents<GuiRangeTimeInput['value']>(),
   'gui-focus': fires<CustomEvent<FocusEvent>>(),
   'gui-input-error': fires<CustomEvent<GuiInputErrorEventDetail>>(),

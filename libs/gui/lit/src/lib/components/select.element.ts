@@ -83,7 +83,9 @@ export class SelectElement extends LitElement implements WithWidget {
   }
 
   onInputError(event: Event) {
-    this.adapter.injectValidationIssues([(event as CustomEvent).detail.message]);
+    // An empty message withdraws the error.
+    const message = (event as CustomEvent).detail.message as string;
+    this.adapter.injectValidationIssues(message ? [message] : null);
   }
 
   override disconnectedCallback() {

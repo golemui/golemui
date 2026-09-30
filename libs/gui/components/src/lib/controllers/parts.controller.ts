@@ -13,6 +13,7 @@ import {
   type PartValues,
 } from '../utils/parts';
 import { parseISODateString } from '../utils/date';
+import { dispatch } from '../utils/events';
 import {
   from24Hour,
   parseISODateTimeString,
@@ -340,7 +341,7 @@ export class GUIPartsController implements ReactiveController {
 
   /** Re-dispatches focus as the host's `gui-focus` CustomEvent (handleFocus). */
   handleFocus = (event: FocusEvent): void => {
-    this.host.dispatchEvent(new CustomEvent('gui-focus', { detail: event }));
+    dispatch(this.host, 'gui-focus', event);
   };
 
   /**

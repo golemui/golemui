@@ -6,19 +6,39 @@ import { message } from '../utils/messages';
 import './pills';
 import type { GuiPillEventDetail, GuiPillItem } from './pills';
 import type { FileItem } from '../types';
-import { fires, valueEvents, type GuiInputErrorEventDetail } from '../utils/events';
+import {
+  stopPropagation,
+  fires,
+  valueEvents,
+  type GuiInputErrorEventDetail,
+} from '../utils/events';
 
 /**
- * A file upload that accepts several files, shown as pills.
+ * A file upload that accepts several files, shown as pills. Its value is `values`, the list of
+ * files; the inherited `value` is not used.
  *
+ * @fires gui-input - The files changed. `detail.value` is the list of files.
+ * @fires gui-change - The files changed: one was added, uploaded or removed. `detail.value` is the
+ *   list of files.
+ * @fires gui-blur - Focus left the control.
+ * @fires gui-input-error - A file was refused (its type or size), its upload failed or removing it
+ *   failed. `detail.message` is the error, or `''` when it clears; show it through `errors`.
  * @cssprop --gui-pill-height - Height of each pill.
  * @cssprop --gui-pill-font-size - Font size of the pill text.
  * @cssprop --gui-pill-action-size - Size of the icons inside a pill.
  * @cssprop --gui-pill-action-hit - Clickable area of the buttons inside a pill.
  */
 export class GuiMultiFileUpload extends GuiFileUpload {
-  /** The files, when several can be uploaded. */
+  /** The files, with their upload status. */
   @property({ type: Array }) values: FileItem[] | undefined = [];
+
+  protected override get controlValue(): unknown {
+    return this.values;
+  }
+
+  protected override set controlValue(values: unknown) {
+    this.values = values as FileItem[] | undefined;
+  }
 
   protected override isMultiple(): boolean {
     return true;
@@ -75,10 +95,14 @@ export class GuiMultiFileUpload extends GuiFileUpload {
       .removeIcon=${this.removeIcon}
       .compactAriaLabel=${message('fileCount', undefined, { count: items.length })}
       @gui-pill-remove=${this.onPillRemove}
+      @gui-pill-keydown=${stopPropagation}
+      @gui-pill-exit=${stopPropagation}
+      @gui-dropdown-toggle=${stopPropagation}
     ></gui-pills>`;
   }
 
   private onPillRemove = (e: CustomEvent<GuiPillEventDetail>) => {
+    e.stopPropagation();
     if (this.disabled || this.readOnly) return;
     const item = this.getItems().find((current) => current.id === e.detail.key);
     if (item) void this.removeItem(item);
@@ -87,7 +111,7 @@ export class GuiMultiFileUpload extends GuiFileUpload {
 
 /** The events `gui-multi-file-upload` fires, with their types. */
 export const GuiMultiFileUploadEvents = {
-  ...valueEvents<GuiMultiFileUpload['value']>(),
+  ...valueEvents<GuiMultiFileUpload['values']>(),
   'gui-input-error': fires<CustomEvent<GuiInputErrorEventDetail>>(),
 };
 

@@ -6,7 +6,7 @@ import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addIcon, addLabel, type ControlTemplateData } from '../utils/templates';
 import { GuiFormControl } from '../gui-form-control';
-import { dispatchChange, dispatchValue, valueEvents } from '../utils/events';
+import { dispatchBlur, dispatchChange, dispatchValue, valueEvents } from '../utils/events';
 
 /** What <gui-textinput> renders besides the control state: its presentation props. */
 export type GuiTextinputProps = {
@@ -134,12 +134,7 @@ export class GuiTextinput extends GuiFormControl {
 
   /** @internal */
   onBlur() {
-    this.dispatchEvent(
-      new CustomEvent('gui-blur', {
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatchBlur(this);
   }
 }
 

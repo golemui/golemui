@@ -122,7 +122,8 @@
 
   &-hint {
     font-size: var(--gui-font-xs);
-    color: var(--gui-text-muted);
+    // Secondary, not muted: a hint is content and needs AA contrast (4.5:1) in every theme.
+    color: var(--gui-text-secondary);
     width: 0;
     min-width: 100%;
   }

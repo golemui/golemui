@@ -22,8 +22,21 @@ import {
   TEXT_STRIKETHROUGH_PATH,
 } from '../utils/icons';
 import { GuiFormControl } from '../gui-form-control';
-import { dispatchChange, dispatchValue, valueEvents } from '../utils/events';
+import { dispatchBlur, dispatchChange, dispatchValue, valueEvents } from '../utils/events';
 import { message } from '../utils/messages';
+
+/** The formats that apply to whole lines, with the prefix that marks a line as formatted. */
+const LINE_FORMATS = {
+  heading: /^#{1,6}\s/,
+  quote: /^> /,
+  orderedList: /^\d+\.\s/,
+  unorderedList: /^- /,
+};
+
+type LineFormat = keyof typeof LINE_FORMATS;
+
+const isLineFormat = (format: string): format is LineFormat =>
+  Object.prototype.hasOwnProperty.call(LINE_FORMATS, format);
 
 /** What <gui-markdown> renders besides the control state: its presentation props. */
 export type GuiMarkdownProps = {
@@ -90,7 +103,10 @@ export class GuiMarkdown extends GuiFormControl {
   @property({ type: Boolean, attribute: 'default-open-preview' }) defaultOpenPreview:
     | boolean
     | undefined = undefined;
-  /** Maximum number of characters. */
+  /**
+   * The number of characters the counter counts against. It only drives the counter: longer text
+   * is not blocked, and the counter marks it as over the limit.
+   */
   @property({ type: Number, attribute: 'maxlength' }) maxLength: number | undefined = undefined;
 
   // Button titles
@@ -232,7 +248,7 @@ export class GuiMarkdown extends GuiFormControl {
           'gui-markdown--with-preview': this.splitViewActive,
         })}
       >
-        <nav
+        <div
           class="gui-markdown__toolbar"
           role="toolbar"
           aria-label=${message('textFormatting', this.toolbarAriaLabel)}
@@ -266,7 +282,7 @@ export class GuiMarkdown extends GuiFormControl {
               </button>
             </li>
           </ul>
-        </nav>
+        </div>
 
         <div class="gui-markdown__container">
           <textarea
@@ -547,14 +563,14 @@ export class GuiMarkdown extends GuiFormControl {
     const currentLine = value.substring(lineStart, lineEnd === -1 ? value.length : lineEnd);
 
     this.activeFormats = {
-      heading: /^#{1,6}\s/.test(currentLine),
+      heading: LINE_FORMATS.heading.test(currentLine),
       bold: this.isInsideInlineFormat(value, selectionStart, '**'),
       italic: this.isInsideInlineFormat(value, selectionStart, '_'),
       strikethrough: this.isInsideInlineFormat(value, selectionStart, '~~'),
-      quote: currentLine.startsWith('> '),
+      quote: LINE_FORMATS.quote.test(currentLine),
       link: this.isInsideLink(value, selectionStart),
-      orderedList: /^\d+\.\s/.test(currentLine),
-      unorderedList: currentLine.startsWith('- '),
+      orderedList: LINE_FORMATS.orderedList.test(currentLine),
+      unorderedList: LINE_FORMATS.unorderedList.test(currentLine),
     };
   }
 
@@ -607,7 +623,9 @@ export class GuiMarkdown extends GuiFormControl {
       const textarea = this.querySelector(`textarea[id="${this.uid}"]`) as HTMLTextAreaElement;
       if (!textarea) return;
 
-      if (formatKey && this.activeFormats[formatKey]) {
+      if (isLineFormat(formatKey)) {
+        this.toggleLineFormat(textarea, formatStart, formatKey);
+      } else if (formatKey && this.activeFormats[formatKey]) {
         this.removeFormat(textarea, formatStart, formatEnd, formatKey);
       } else {
         const { selectionStart, selectionEnd, value } = textarea;
@@ -629,6 +647,44 @@ export class GuiMarkdown extends GuiFormControl {
     };
   }
 
+  /**
+   * Adds a line format (heading, quote, list) at the start of the caret's line, or of every
+   * selected line, or removes it from them when the caret's line already has it.
+   */
+  private toggleLineFormat(textarea: HTMLTextAreaElement, prefix: string, formatKey: LineFormat) {
+    const { selectionStart, selectionEnd, value } = textarea;
+    const pattern = LINE_FORMATS[formatKey];
+    const remove = !!this.activeFormats[formatKey];
+
+    const blockStart = value.lastIndexOf('\n', selectionStart - 1) + 1;
+    // A selection that ends right after a line break leaves the next line alone.
+    const end =
+      selectionEnd > selectionStart && value[selectionEnd - 1] === '\n'
+        ? selectionEnd - 1
+        : selectionEnd;
+    const lineEnd = value.indexOf('\n', end);
+    const blockEnd = lineEnd === -1 ? value.length : lineEnd;
+
+    const block = value
+      .substring(blockStart, blockEnd)
+      .split('\n')
+      .map((line, index) => {
+        if (remove) return line.replace(pattern, '');
+        if (pattern.test(line)) return line;
+        return `${formatKey === 'orderedList' ? `${index + 1}. ` : prefix}${line}`;
+      })
+      .join('\n');
+    textarea.value = `${value.substring(0, blockStart)}${block}${value.substring(blockEnd)}`;
+
+    if (selectionStart === selectionEnd) {
+      // The caret stays on its character, or at the line start when its prefix is removed.
+      const caret = Math.max(blockStart, selectionStart + block.length - (blockEnd - blockStart));
+      textarea.setSelectionRange(caret, caret);
+    } else {
+      textarea.setSelectionRange(blockStart, blockStart + block.length);
+    }
+  }
+
   private removeFormat(
     textarea: HTMLTextAreaElement,
     formatStart: string,
@@ -640,24 +696,7 @@ export class GuiMarkdown extends GuiFormControl {
     const lineEnd = value.indexOf('\n', selectionStart);
     const currentLine = value.substring(lineStart, lineEnd === -1 ? value.length : lineEnd);
 
-    if (!formatEnd) {
-      // Line-prefix formats (heading, quote, orderedList, unorderedList)
-      let prefix = formatStart;
-      if (formatKey === 'heading') {
-        const match = currentLine.match(/^#{1,6}\s/);
-        if (match) prefix = match[0];
-      } else if (formatKey === 'orderedList') {
-        const match = currentLine.match(/^\d+\.\s/);
-        if (match) prefix = match[0];
-      }
-
-      const before = value.substring(0, lineStart);
-      const newLine = currentLine.substring(prefix.length);
-      const after = value.substring(lineEnd === -1 ? value.length : lineEnd);
-      textarea.value = `${before}${newLine}${after}`;
-      textarea.selectionStart = Math.max(lineStart, selectionStart - prefix.length);
-      textarea.selectionEnd = textarea.selectionStart;
-    } else if (formatKey === 'link') {
+    if (formatKey === 'link') {
       // Link: find [text](url) around cursor and replace with just text
       const cursorInLine = selectionStart - lineStart;
       const regex = /\[([^\]]*)\]\([^)]*\)/g;
@@ -708,7 +747,7 @@ export class GuiMarkdown extends GuiFormControl {
   }
 
   /**
-   * The native `change`: the user committed the edit (blur or Enter).
+   * The native `change`: the user committed the edit, on blur (Enter adds a new line).
    *
    * @internal
    */
@@ -718,12 +757,7 @@ export class GuiMarkdown extends GuiFormControl {
 
   /** @internal */
   onBlur() {
-    this.dispatchEvent(
-      new CustomEvent('gui-blur', {
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatchBlur(this);
   }
 }
 

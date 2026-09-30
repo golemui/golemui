@@ -6,7 +6,7 @@ import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addIcon, addLabel, type ControlTemplateData } from '../utils/templates';
 import { GuiFormControl } from '../gui-form-control';
-import { dispatchChange, dispatchValue, valueEvents } from '../utils/events';
+import { dispatchBlur, dispatchChange, dispatchValue, valueEvents } from '../utils/events';
 import { message } from '../utils/messages';
 
 /** What <gui-password> renders besides the control state: its presentation props. */
@@ -40,11 +40,11 @@ export class GuiPassword extends GuiFormControl {
   @property({ type: String }) placeholder: string | undefined = undefined;
   /** The `autocomplete` hint passed to the inner native control. */
   @property({ type: String }) autocomplete: string | undefined = undefined;
-  /** Icon class name of the button while it would show the password. */
+  /** Icon class name of the button that shows the password, while the password is hidden. */
   @property({ type: String, attribute: 'show-password-icon' }) showPasswordIcon:
     | string
     | undefined = undefined;
-  /** Icon class name of the button while it would hide the password. */
+  /** Icon class name of the button that hides the password, while the password is shown. */
   @property({ type: String, attribute: 'hide-password-icon' }) hidePasswordIcon:
     | string
     | undefined = undefined;
@@ -114,6 +114,11 @@ export class GuiPassword extends GuiFormControl {
       [`gui-password--icon`]: !!this.icon,
     };
 
+    // The toggle shows the icon of what it does: show the hidden password, or hide it again.
+    const toggleIcon = this.showPassword
+      ? templateData.hidePasswordIcon
+      : templateData.showPasswordIcon;
+
     return html`
       ${addLabel(this.uid, templateData)}
 
@@ -135,10 +140,8 @@ export class GuiPassword extends GuiFormControl {
         />
         ${passwordIcon.html}
         <button
-          class=${`gui-password__toggle gui-widget-icon ${this.showPassword && templateData.showPasswordIcon ? templateData.showPasswordIcon : ''} ${!this.showPassword && templateData.hidePasswordIcon ? templateData.hidePasswordIcon : ''}`}
-          data-icon=${this.showPassword
-            ? templateData.showPasswordIcon
-            : templateData.hidePasswordIcon}
+          class=${`gui-password__toggle gui-widget-icon ${toggleIcon ?? ''}`}
+          data-icon=${toggleIcon || nothing}
           type="button"
           ?disabled=${this.disabled}
           aria-label=${!this.showPassword
@@ -146,7 +149,7 @@ export class GuiPassword extends GuiFormControl {
             : message('hidePassword', templateData.hidePasswordLabel)}
           @click=${() => (this.showPassword = !this.showPassword)}
         >
-          ${templateData.showPasswordIcon || templateData.hidePasswordIcon
+          ${toggleIcon
             ? nothing
             : html`<span aria-hidden="true"
                 >${!this.showPassword
@@ -182,12 +185,7 @@ export class GuiPassword extends GuiFormControl {
 
   /** @internal */
   onBlur() {
-    this.dispatchEvent(
-      new CustomEvent('gui-blur', {
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatchBlur(this);
   }
 }
 

@@ -1,4 +1,4 @@
-import { css, html, type PropertyValues } from 'lit';
+import { css, html, render, type PropertyValues } from 'lit';
 import { property, query, state } from 'lit/decorators.js';
 import { cspStyleMap } from '@golemui/lit-utils';
 import { safeDefine } from '@golemui/lit-utils';
@@ -6,7 +6,8 @@ import { gridKeyStep, listPageSize, nextEnabledIndex } from '../utils/grid-nav';
 import { updateListItems } from './list-items';
 import type { ListItem, OptionValue } from '../types';
 import { GuiFormControl } from '../gui-form-control';
-import { dispatchValue, fires, valueEvents } from '../utils/events';
+import { dispatch, dispatchBlur, dispatchValue, fires, valueEvents } from '../utils/events';
+import { addErrors, showsErrors } from '../utils/templates';
 
 /**
  * A virtualized listbox to pick one item, with keyboard navigation.
@@ -64,6 +65,9 @@ export class GuiList extends GuiFormControl {
   @query('.gui-list__scroll-viewport') private viewportElement!: HTMLElement;
 
   private buffer = 5;
+  // Whether the list shows errors set on it, and so owns its invalid state (see syncHostAria).
+  private showsOwnErrors = false;
+  private errorsElement: HTMLElement | undefined = undefined;
 
   override willUpdate(changedProperties: PropertyValues) {
     super.willUpdate(changedProperties);
@@ -93,7 +97,19 @@ export class GuiList extends GuiFormControl {
     };
 
     toggleAttr('aria-required', this.required ? 'true' : null);
-    toggleAttr('aria-disabled', this.disabled || this.readOnly ? 'true' : null);
+    toggleAttr('aria-disabled', this.disabled ? 'true' : null);
+    toggleAttr('aria-readonly', this.readOnly ? 'true' : null);
+
+    // GolemUI Forms leaves `errors` unset: its host renders them next to the list and its
+    // <gui-label> marks the list invalid. So the list only sets, and clears, the invalid state
+    // of errors set on it, and leaves the host's alone.
+    const showErrors = showsErrors(this.touched, this.errors);
+    if (showErrors || this.showsOwnErrors) {
+      toggleAttr('aria-invalid', showErrors ? 'true' : null);
+      toggleAttr('aria-errormessage', showErrors ? `${this.uid}_errors` : null);
+    }
+    this.showsOwnErrors = showErrors;
+
     toggleAttr(
       'aria-activedescendant',
       this._focusedIndex >= 0 ? `${this.uid}-item-${this._focusedIndex}` : null,
@@ -112,6 +128,26 @@ export class GuiList extends GuiFormControl {
   override firstUpdated() {
     this.measureViewport();
     new ResizeObserver(() => this.measureViewport()).observe(this.viewportElement);
+  }
+
+  override updated() {
+    this.renderErrors();
+  }
+
+  /**
+   * Renders the errors set on the list into its light DOM, slotted under the items: that is where
+   * `aria-errormessage` can reach them, since an id reference does not cross into a shadow root.
+   * Created on the first errors, so a list whose host renders them gets none.
+   */
+  private renderErrors() {
+    if (!this.errorsElement) {
+      if (!this.showsOwnErrors) return;
+      this.errorsElement = document.createElement('div');
+      this.errorsElement.slot = 'errors';
+      this.errorsElement.className = 'gui-list__errors';
+      this.append(this.errorsElement);
+    }
+    render(addErrors(this.uid, { errors: this.errors, touched: this.touched }), this.errorsElement);
   }
 
   override render() {
@@ -136,6 +172,7 @@ export class GuiList extends GuiFormControl {
           <slot></slot>
         </div>
       </div>
+      <slot name="errors"></slot>
     `;
   }
 
@@ -163,14 +200,16 @@ export class GuiList extends GuiFormControl {
   }
 
   private onKeyDown = (e: KeyboardEvent) => {
-    if (this.disabled || this.readOnly) return;
+    if (this.disabled) return;
 
     if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      // Read-only: the items can be browsed, not picked.
+      if (this.readOnly) return;
       const item = this._items[this._focusedIndex];
       if (this._focusedIndex >= 0 && item != null && !item.disabled) {
         this.selectItem(item);
       }
-      e.preventDefault();
       return;
     }
 
@@ -215,13 +254,7 @@ export class GuiList extends GuiFormControl {
     this._focusedIndex = selectedIndex;
     this.scrollToIndex(selectedIndex);
 
-    this.dispatchEvent(
-      new CustomEvent('gui-focus-change', {
-        detail: { index: selectedIndex },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatch(this, 'gui-focus-change', { index: selectedIndex });
   };
 
   private onFocusOut = (e: FocusEvent) => {
@@ -231,15 +264,8 @@ export class GuiList extends GuiFormControl {
 
     this._focusedIndex = -1;
 
-    this.dispatchEvent(
-      new CustomEvent('gui-focus-change', {
-        detail: { index: -1 },
-        bubbles: true,
-        composed: true,
-      }),
-    );
-
-    this.dispatchEvent(new CustomEvent('gui-blur', { bubbles: true, composed: true }));
+    dispatch(this, 'gui-focus-change', { index: -1 });
+    dispatchBlur(this);
   };
 
   /** @internal */
@@ -272,37 +298,19 @@ export class GuiList extends GuiFormControl {
     this._focusedIndex = index;
     this.scrollToIndex(index);
 
-    this.dispatchEvent(
-      new CustomEvent('gui-focus-change', {
-        detail: { index },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatch(this, 'gui-focus-change', { index });
   }
 
   private updateItems() {
     this._items = updateListItems(this.items, { valueField: this.valueField });
 
-    this.dispatchEvent(
-      new CustomEvent('gui-update-items', {
-        detail: this._items,
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatch(this, 'gui-update-items', this._items);
   }
 
   private emitRangeChange() {
     const { startIndex, endIndex } = this.calculateRange();
 
-    this.dispatchEvent(
-      new CustomEvent('gui-range-change', {
-        detail: { startIndex, endIndex },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatch(this, 'gui-range-change', { startIndex, endIndex });
   }
 
   private measureViewport() {

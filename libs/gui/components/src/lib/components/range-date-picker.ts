@@ -13,7 +13,9 @@ import { CARET_DOWN_PATH } from '../utils/icons';
 import type { DateRange } from '../types';
 import { GuiFormControl } from '../gui-form-control';
 import {
+  dispatchBlur,
   dispatchChange,
+  dispatchInputError,
   dispatchValue,
   stopPropagation,
   fires,
@@ -182,7 +184,7 @@ export class GuiRangeDatePicker extends GuiFormControl {
   @query('#date-input') private _dateRef?: GuiRangeDateInput;
 
   /**
-   * Mirror of the embedded input's edit session, fed by its non-bubbling
+   * Mirror of the embedded input's edit session, fed by its
    * `gui-edit-state-change`: while a session is open the calendar defers commits to
    * the session's Confirm, and the selected range's days are marked.
    */
@@ -227,13 +229,15 @@ export class GuiRangeDatePicker extends GuiFormControl {
     resolveSyncOnRelatedTarget: true,
     onLeave: () => {
       this._dateRef?.finalizeOnLeave();
-      this.dispatchEvent(new CustomEvent('gui-blur'));
+      dispatchBlur(this);
     },
   });
 
   // Pills dropdown and the calendar are mutually exclusive, opening one closes the other
   /** @internal */
   onDropdownToggle = (event: Event) => {
+    // The range input's count bubble: the picker closes its popup, the event goes no further.
+    event.stopPropagation();
     const detail = (event as CustomEvent<{ open: boolean }>).detail;
     if (detail?.open && this._popup.open) {
       this._popup.close();
@@ -355,9 +359,10 @@ export class GuiRangeDatePicker extends GuiFormControl {
           .editCommittedMessage=${this.editCommittedMessage}
           .editCancelledMessage=${this.editCancelledMessage}
           @gui-blur=${this.onDateBlur}
-          @gui-focus=${this._popup.show}
+          @gui-focus=${this.onDateFocus}
           @gui-input=${this.onDateInput}
           @gui-change=${this.onDateChange}
+          @gui-input-error=${this.onDateInputError}
           @gui-parts-change=${this.onInputPartsChange}
           @gui-range-click=${this.onPillClick}
           @gui-edit-state-change=${this.onEditStateChange}
@@ -464,6 +469,17 @@ export class GuiRangeDatePicker extends GuiFormControl {
     event.stopPropagation();
   }
 
+  private onDateFocus(event: Event) {
+    stopPropagation(event);
+    this._popup.show();
+  }
+
+  /** The input's error is reported as the picker's own. */
+  private onDateInputError(event: CustomEvent<GuiInputErrorEventDetail>) {
+    stopPropagation(event);
+    dispatchInputError(this, event.detail.message);
+  }
+
   private onCalendarChange(event: CustomEvent) {
     event.stopPropagation();
     this._dateRef?.clearRangeInputs();
@@ -518,8 +534,11 @@ export class GuiRangeDatePicker extends GuiFormControl {
     this.setWorking(undefined, undefined, true);
   }
 
+  /** The calendar's error is reported as the picker's own, its rejected span shown in the input. */
   private onCalendarInputError(event: CustomEvent) {
-    const range = event.detail?.range as { start: string; end: string } | undefined;
+    stopPropagation(event);
+    dispatchInputError(this, event.detail.message);
+    const range = event.detail.range as { start: string; end: string } | undefined;
     if (!range) return;
     this._invalidRange = range;
     this._dateRef?.showRange(range.start, range.end);
@@ -551,6 +570,7 @@ export class GuiRangeDatePicker extends GuiFormControl {
   }
 
   private onPillClick(event: CustomEvent) {
+    stopPropagation(event);
     this._focusDate = event.detail.range.start;
     this._popup.show();
   }
@@ -558,6 +578,7 @@ export class GuiRangeDatePicker extends GuiFormControl {
   private onEditStateChange = (
     event: CustomEvent<{ selected: DateRange | null; editing: boolean }>,
   ) => {
+    stopPropagation(event);
     this._selectedEditRange = event.detail.selected;
     this._editing = event.detail.editing;
   };

@@ -35,9 +35,13 @@ import {
 import type { DateRange, DisabledTimeRange } from '../types';
 import { GuiFormControl } from '../gui-form-control';
 import {
+  dispatch,
+  dispatchBlur,
   dispatchChange,
+  dispatchInputError,
   dispatchValue,
   fires,
+  stopPropagation,
   valueEvents,
   type GuiInputErrorEventDetail,
 } from '../utils/events';
@@ -128,7 +132,7 @@ export class GuiDateTimeCalendar extends GuiFormControl {
   /** Number of months shown side by side. */
   @property({ type: Number, attribute: 'number-of-months' }) numberOfMonths: number | undefined = 1;
 
-  /** The date and time, as an ISO date-time (`YYYY-MM-DDTHH:mm`). */
+  /** The date and time, as an ISO date-time (`YYYY-MM-DDTHH:mm:ss`). */
   @property({ type: String }) value: string | undefined = undefined;
 
   /** 12- or 24-hour clock. Defaults to the locale's. */
@@ -136,9 +140,9 @@ export class GuiDateTimeCalendar extends GuiFormControl {
     undefined;
   /** Minutes between the times offered in the list. */
   @property({ type: Number, attribute: 'minute-step' }) minuteStep: number | undefined = undefined;
-  /** Earliest selectable time, as an ISO time (`HH:mm`). */
+  /** Earliest selectable time, as an ISO time (`HH:mm:ss`). */
   @property({ type: String, attribute: 'min-time' }) minTime: string | undefined = undefined;
-  /** Latest selectable time, as an ISO time (`HH:mm`). */
+  /** Latest selectable time, as an ISO time (`HH:mm:ss`). */
   @property({ type: String, attribute: 'max-time' }) maxTime: string | undefined = undefined;
   /** Times that cannot be picked, optionally only on a date or on some weekdays. */
   @property({ type: Array, attribute: 'disabled-time-ranges' }) disabledTimeRanges:
@@ -244,7 +248,7 @@ export class GuiDateTimeCalendar extends GuiFormControl {
 
   private _focusLeave = new GUIFocusLeaveController(this, {
     onLeave: () => {
-      this.dispatchEvent(new CustomEvent('gui-blur', { bubbles: true, composed: true }));
+      dispatchBlur(this);
       if (this.deferFocusLeave) return;
       this.reportIncompleteOnLeave();
     },
@@ -356,10 +360,6 @@ export class GuiDateTimeCalendar extends GuiFormControl {
     this.emitValue(this.value as string);
   }
 
-  private stopInnerPartsChange = (event: Event) => {
-    event.stopPropagation();
-  };
-
   private onTimePickerInput(event: CustomEvent) {
     event.stopPropagation();
 
@@ -396,15 +396,18 @@ export class GuiDateTimeCalendar extends GuiFormControl {
     }
   }
 
+  /** The time picker's error is reported as the calendar's own. */
+  private onTimePickerInputError(event: CustomEvent<GuiInputErrorEventDetail>) {
+    stopPropagation(event);
+    dispatchInputError(this, event.detail.message);
+  }
+
   /** Live-syncs the working halves to a host picker (never wired by forms). */
   private emitPartsChange(): void {
-    this.dispatchEvent(
-      new CustomEvent('gui-parts-change', {
-        detail: { date: this._selectedDate ?? null, time: this._selectedTime ?? null },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatch(this, 'gui-parts-change', {
+      date: this._selectedDate ?? null,
+      time: this._selectedTime ?? null,
+    });
   }
 
   /** Whether a `gui-input-error` has been emitted and not yet cleared by a change. */
@@ -412,13 +415,7 @@ export class GuiDateTimeCalendar extends GuiFormControl {
 
   private emitInputError(message: string): void {
     this._surfacedError = true;
-    this.dispatchEvent(
-      new CustomEvent('gui-input-error', {
-        detail: { message },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatchInputError(this, message);
   }
 
   /** The kept time checked against a day's bounds and disabled ranges. */
@@ -514,6 +511,7 @@ export class GuiDateTimeCalendar extends GuiFormControl {
           monthFormat: this.monthFormat,
           yearSelectorOpen: this._nav.yearSelectorOpen,
           selectYearAriaLabel: this.selectYearAriaLabel,
+          disabled: this.disabled,
           onToggleYearSelector: () => this.toggleYearSelector(),
           renderBelowHeader: (o) => this.renderBelowHeader(o),
           renderPanelBody: (o) => this.renderPanelBody(o),
@@ -550,7 +548,8 @@ export class GuiDateTimeCalendar extends GuiFormControl {
           .noAvailableTimesMessage=${this.noAvailableTimesMessage}
           @gui-input=${this.onTimePickerInput}
           @gui-change=${this.onTimePickerChange}
-          @gui-parts-change=${this.stopInnerPartsChange}
+          @gui-blur=${stopPropagation}
+          @gui-input-error=${this.onTimePickerInputError}
           @gui-list-toggle=${this.onListToggle}
         ></gui-time-picker>
       </div>
@@ -572,6 +571,8 @@ export class GuiDateTimeCalendar extends GuiFormControl {
       localeId: this.localeId,
       currentDate: this._nav.currentDate,
       yearGridAriaLabel: this.yearGridAriaLabel,
+      weekdayFormat: this.weekdayFormat,
+      disabled: this.disabled,
       getDays: (o) => this.getDaysInMonth(o),
       renderDay: (day) => this.renderDay(day),
     });
@@ -592,8 +593,8 @@ export class GuiDateTimeCalendar extends GuiFormControl {
         type="button"
         role="gridcell"
         class=${classMap(classes)}
-        tabindex=${day.isFocusable ? 0 : -1}
-        ?disabled=${!day.isCurrentMonth}
+        tabindex=${day.isFocusable && !this.disabled ? 0 : -1}
+        ?disabled=${!day.isCurrentMonth || this.disabled}
         aria-disabled=${day.isCurrentMonth && day.isDisabled ? 'true' : nothing}
         aria-label=${getFullDateLabel(this.localeId, day.date)}
         aria-current=${day.isToday ? 'date' : nothing}
@@ -622,7 +623,7 @@ export class GuiDateTimeCalendar extends GuiFormControl {
 
         return {
           date: base.date,
-          dayLabel: base.dayLabel,
+          dayLabel: getDayLabel(this.localeId, base.date, this.dayFormat),
           isCurrentMonth: base.isCurrentMonth,
           isToday: base.isToday,
           isDisabled: base.isDisabled,

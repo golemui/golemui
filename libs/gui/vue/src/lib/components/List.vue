@@ -65,7 +65,7 @@ const handleBlur = (e: FocusEvent) => {
 };
 
 const handleClickItem = (item: ListItem<any>, index: number) => {
-  if (templateData.value.disabled || item.disabled) return;
+  if (templateData.value.disabled || templateData.value.readonly || item.disabled) return;
   onValueChanged(item.value);
   focusedIndex.value = index;
   listRef.value?.focusItemAtIndex(index);
@@ -90,6 +90,8 @@ const ItemRenderer = computed<Component>(() => {
       :errors="errors"
       :touched="isTouched"
       :required="required"
+      :disabled="isDisabled"
+      :readOnly="isReadOnly"
       :native="false"
     ></gui-label>
 

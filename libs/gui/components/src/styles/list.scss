@@ -26,6 +26,11 @@ gui-multi-list {
     }
   }
 
+  // Errors set on the list itself, slotted under its items.
+  > .gui-list__errors {
+    padding: 0 var(--gui-space-3) var(--gui-space-1);
+  }
+
   ul {
     margin: 0;
     padding: 0;

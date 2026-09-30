@@ -82,7 +82,7 @@ export function List(widgetInstance: WithWidget) {
 
   const handleClickItem = useCallback(
     (item: ListItem<any>, index: number) => {
-      if (templateData.disabled || item.disabled) return;
+      if (templateData.disabled || templateData.readonly || item.disabled) return;
 
       onValueChanged(item.value);
       setFocusedIndex(index);
@@ -112,6 +112,8 @@ export function List(widgetInstance: WithWidget) {
         errors={errors}
         touched={isTouched}
         required={isRequired}
+        disabled={isDisabled}
+        readOnly={isReadOnly}
         native={false}
       ></GuiLabelReact>
 

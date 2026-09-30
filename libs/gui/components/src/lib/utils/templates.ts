@@ -35,33 +35,33 @@ export const addLabel = <T, ExtraProps extends { hint?: string }>(
   type: string | undefined = undefined,
   isNativeElement = true,
 ) => {
+  // Without a label the hint still renders, on its own: the control's aria-describedby points at
+  // it.
+  if (!templateData.label) return addHint(uid, templateData);
+
   if (isNativeElement) {
-    return templateData.label
-      ? html`<label
-          class="gui-label"
-          for=${uid}
-          data-cy=${`${uid}_label`}
-          id=${type ? `${uid}_${type}_label` : `${uid}_label`}
-        >
-          <span class="gui-label__text"
-            >${templateData.label}${requiredMarker(templateData.required)}</span
-          >
-          ${addHint(uid, templateData)} ${withErrors ? addErrors(uid, templateData) : nothing}
-        </label>`
-      : nothing;
+    return html`<label
+      class="gui-label"
+      for=${uid}
+      data-cy=${`${uid}_label`}
+      id=${type ? `${uid}_${type}_label` : `${uid}_label`}
+    >
+      <span class="gui-label__text"
+        >${templateData.label}${requiredMarker(templateData.required)}</span
+      >
+      ${addHint(uid, templateData)} ${withErrors ? addErrors(uid, templateData) : nothing}
+    </label>`;
   } else {
-    return templateData.label
-      ? html`<span
-          class="gui-label"
-          data-cy=${`${uid}_label`}
-          id=${type ? `${uid}_${type}_label` : `${uid}_label`}
-        >
-          <span class="gui-label__text"
-            >${templateData.label}${requiredMarker(templateData.required)}</span
-          >
-          ${addHint(uid, templateData)} ${withErrors ? addErrors(uid, templateData) : nothing}
-        </span>`
-      : nothing;
+    return html`<span
+      class="gui-label"
+      data-cy=${`${uid}_label`}
+      id=${type ? `${uid}_${type}_label` : `${uid}_label`}
+    >
+      <span class="gui-label__text"
+        >${templateData.label}${requiredMarker(templateData.required)}</span
+      >
+      ${addHint(uid, templateData)} ${withErrors ? addErrors(uid, templateData) : nothing}
+    </span>`;
   }
 };
 
@@ -124,7 +124,8 @@ export const addErrors = <T, ExtraProps extends { hint?: string }>(
   const id = variant === 'field' ? `${uid}_errors` : `${uid}_${variant}_errors`;
   const dataCyPrefix = variant === 'field' ? `${uid}_validator` : `${uid}_${variant}-validator`;
 
-  return html`<ul
+  // A `div`, not a list: `role="alert"` would override a list's semantics and orphan its items.
+  return html`<div
     class=${classMap(classes)}
     id=${id}
     role=${variant === 'field' ? 'alert' : nothing}
@@ -132,12 +133,12 @@ export const addErrors = <T, ExtraProps extends { hint?: string }>(
     data-cy=${showErrors ? `${dataCyPrefix}-errors` : nothing}
   >
     ${showErrors
-      ? templateData.errors?.map(
-          (error: any) =>
-            html`<li class="gui-validator__error" data-cy=${`${dataCyPrefix}-error`}>${error}</li>`,
-        )
+      ? templateData.errors?.map((error: any) => {
+          const errorCy = `${dataCyPrefix}-error`;
+          return html`<div class="gui-validator__error" data-cy=${errorCy}>${error}</div>`;
+        })
       : nothing}
-  </ul>`;
+  </div>`;
 };
 
 /**

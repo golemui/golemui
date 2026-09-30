@@ -26,8 +26,12 @@ export function Select(widgetInstance: WithWidget) {
     [injectValidationIssues, onValueChanged],
   );
 
+  // An empty message withdraws the error.
   const handleInputError = useCallback(
-    (e: Event) => injectValidationIssues([(e as CustomEvent).detail.message]),
+    (e: Event) => {
+      const message = (e as CustomEvent).detail.message as string;
+      injectValidationIssues(message ? [message] : null);
+    },
     [injectValidationIssues],
   );
 

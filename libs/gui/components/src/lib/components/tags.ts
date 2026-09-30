@@ -9,7 +9,8 @@ import { addErrors, addLabel, type ControlTemplateData } from '../utils/template
 import './pills';
 import type { GuiPillEventDetail, GuiPillItem } from './pills';
 import { GuiFormControl } from '../gui-form-control';
-import { dispatchValue, valueEvents } from '../utils/events';
+import { dispatchBlur, dispatchValue, stopPropagation, valueEvents } from '../utils/events';
+import { booleanAttribute } from '../utils/converters';
 import { message } from '../utils/messages';
 
 type TagsSeparator = 'Enter' | ',' | 'Tab' | 'blur' | string;
@@ -44,13 +45,17 @@ export class GuiTags extends GuiFormControl {
   @property({ type: String }) placeholder: string | undefined = undefined;
   /** Icon class name shown inside the control, for example from an icon font. */
   @property({ type: String }) icon: string | undefined = undefined;
-  /** Keys that turn the typed text into a tag. `blur` adds it when focus leaves. */
+  /**
+   * Keys that turn the typed text into a tag: `Enter`, `Tab` or a character such as `,` or `;`,
+   * which also splits pasted text. `blur` adds it when focus leaves.
+   */
   @property({ type: Array }) separators: TagsSeparator[] | undefined = undefined;
-  /** Allows the same tag more than once. */
-  @property({ type: Boolean, attribute: 'allow-duplicates' }) allowDuplicates: boolean | undefined =
-    true;
-  /** Removes spaces around each tag. */
-  @property({ type: Boolean }) trim: boolean | undefined = true;
+  /** Allows the same tag more than once. On by default: `allow-duplicates="false"` turns it off. */
+  @property({ attribute: 'allow-duplicates', converter: booleanAttribute }) allowDuplicates:
+    | boolean
+    | undefined = true;
+  /** Removes spaces around each tag. On by default: `trim="false"` turns it off. */
+  @property({ converter: booleanAttribute }) trim: boolean | undefined = true;
   /** Accessible name of the remove button of each tag. */
   @property({ type: String, attribute: 'remove-aria-label' }) removeAriaLabel: string | undefined =
     undefined;
@@ -130,7 +135,7 @@ export class GuiTags extends GuiFormControl {
     }));
 
     return html`
-      ${this.label ? addLabel(this.uid, templateData, false, undefined, false) : nothing}
+      ${addLabel(this.uid, templateData, false, undefined, false)}
 
       <div class="gui-widget">
         <div
@@ -170,6 +175,7 @@ export class GuiTags extends GuiFormControl {
             @gui-pill-remove=${this.onPillRemove}
             @gui-pill-keydown=${this._pillsNav.onPillKeydown}
             @gui-pill-exit=${this._pillsNav.onPillExit}
+            @gui-dropdown-toggle=${stopPropagation}
           ></gui-pills>
 
           <input
@@ -193,6 +199,8 @@ export class GuiTags extends GuiFormControl {
   }
 
   private onPillRemove = (e: CustomEvent<GuiPillEventDetail>) => {
+    // The removal reaches the host as the new value: gui-input and gui-change.
+    stopPropagation(e);
     if (this.disabled || this.readOnly) return;
     const tags = this.getValue();
     const idx = tags.findIndex((tag, i) => this.pillKey(tag, i) === e.detail.key);
@@ -213,13 +221,8 @@ export class GuiTags extends GuiFormControl {
     const draft = input.value;
     const caretAtStart = input.selectionStart === 0 && input.selectionEnd === 0;
 
-    if (e.key === 'Enter' && separators.includes('Enter')) {
-      e.preventDefault();
-      if (this.commitDraft(draft)) input.value = '';
-      return;
-    }
-
-    if (e.key === ',' && separators.includes(',')) {
+    // Enter and the character separators (`,` or custom ones like `;`) commit instead of typing.
+    if (e.key !== 'Tab' && separators.includes(e.key)) {
       e.preventDefault();
       if (this.commitDraft(draft)) input.value = '';
       return;
@@ -274,12 +277,7 @@ export class GuiTags extends GuiFormControl {
       if (this.commitDraft(draft)) input.value = '';
     }
 
-    this.dispatchEvent(
-      new CustomEvent('gui-blur', {
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatchBlur(this);
   }
 
   private onPaste(e: ClipboardEvent) {
@@ -308,8 +306,12 @@ export class GuiTags extends GuiFormControl {
     }
   }
 
+  private clean(rawDraft: string): string {
+    return this.trim !== false ? rawDraft.trim() : rawDraft;
+  }
+
   private commitDraft(rawDraft: string): boolean {
-    const cleaned = this.trim ? rawDraft.trim() : rawDraft;
+    const cleaned = this.clean(rawDraft);
     if (cleaned.length === 0) return false;
 
     const tags = this.getValue();
@@ -323,7 +325,7 @@ export class GuiTags extends GuiFormControl {
     const tags = this.getValue();
     const next = [...tags];
     for (const raw of rawDrafts) {
-      const cleaned = this.trim ? raw.trim() : raw;
+      const cleaned = this.clean(raw);
       if (cleaned.length === 0) continue;
       if (this.allowDuplicates === false && next.includes(cleaned)) continue;
       next.push(cleaned);

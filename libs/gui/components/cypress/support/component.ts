@@ -1,3 +1,4 @@
+import 'cypress-axe';
 import { mount } from 'cypress-ct-lit';
 // Components on their own: the elements and their stylesheet, without GolemUI Forms.
 import '../../src/index';

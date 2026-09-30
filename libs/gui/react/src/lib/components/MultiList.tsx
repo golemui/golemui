@@ -96,7 +96,7 @@ export function MultiList(widgetInstance: WithWidget) {
 
   const handleClickItem = useCallback(
     (item: ListItem<any>, index: number) => {
-      if (templateData.disabled || item.disabled) return;
+      if (templateData.disabled || templateData.readonly || item.disabled) return;
 
       toggleValue(item.value);
       setFocusedIndex(index);
@@ -126,6 +126,8 @@ export function MultiList(widgetInstance: WithWidget) {
         errors={errors}
         touched={isTouched}
         required={isRequired}
+        disabled={isDisabled}
+        readOnly={isReadOnly}
         native={false}
       ></GuiLabelReact>
 

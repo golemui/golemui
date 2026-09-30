@@ -20,7 +20,15 @@ const TIME_PART_TYPES: readonly DateTimePartType[] = ['hour', 'minute'];
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 import { getTimeFormatParts, type HourFormat } from '../utils/time';
 import { boundsValidity, GuiFormControl, type GuiValidity } from '../gui-form-control';
-import { dispatchValue, fires, valueEvents, type GuiInputErrorEventDetail } from '../utils/events';
+import {
+  dispatch,
+  dispatchBlur,
+  dispatchInputError,
+  dispatchValue,
+  fires,
+  valueEvents,
+  type GuiInputErrorEventDetail,
+} from '../utils/events';
 import { message } from '../utils/messages';
 
 /** What <gui-time-input> renders besides the control state: its presentation props. */
@@ -63,16 +71,16 @@ export class GuiTime extends GuiFormControl {
     | string
     | undefined = undefined;
 
-  /** The time, as an ISO time (`HH:mm`). */
+  /** The time, as an ISO time (`HH:mm:ss`). */
   @property({ type: String }) value: string | undefined = undefined;
   /** 12- or 24-hour clock. Defaults to the locale's. */
   @property({ type: String, attribute: 'hour-format' }) hourFormat: HourFormat | undefined =
     undefined;
   /** Minutes between the times offered in the list. */
   @property({ type: Number, attribute: 'minute-step' }) minuteStep: number | undefined = 1;
-  /** Earliest selectable time, as an ISO time (`HH:mm`). */
+  /** Earliest selectable time, as an ISO time (`HH:mm:ss`). */
   @property({ type: String, attribute: 'min-time' }) minTime: string | undefined = undefined;
-  /** Latest selectable time, as an ISO time (`HH:mm`). */
+  /** Latest selectable time, as an ISO time (`HH:mm:ss`). */
   @property({ type: String, attribute: 'max-time' }) maxTime: string | undefined = undefined;
   /** Error for a time before `minTime`. */
   @property({ type: String, attribute: 'min-time-message' }) minTimeMessage: string | undefined =
@@ -115,10 +123,7 @@ export class GuiTime extends GuiFormControl {
       dispatchValue(this, null);
       this._parts.resetSurfacedInputError();
     },
-    onInputErrorSurfaced: (message) =>
-      this.dispatchEvent(
-        new CustomEvent('gui-input-error', { detail: { message }, bubbles: true }),
-      ),
+    onInputErrorSurfaced: (message) => dispatchInputError(this, message),
     onSurfacedErrorCleared: (value) => dispatchValue(this, value),
     getHourFormat: () => this.timeLocaleData.effectiveHourFormat,
     getDayPeriodLabels: () => this.timeLocaleData.dayPeriodLabels,
@@ -224,7 +229,7 @@ export class GuiTime extends GuiFormControl {
     };
 
     return html`
-      ${this.label ? addLabel(this.uid, templateData, false, undefined, false) : nothing}
+      ${addLabel(this.uid, templateData, false, undefined, false)}
 
       <div class="gui-widget" @focusout=${this.onWidgetFocusOut}>
         <div
@@ -260,13 +265,7 @@ export class GuiTime extends GuiFormControl {
     });
     this._parts.applyWriteBacks(group, writeBacks);
 
-    this.dispatchEvent(
-      new CustomEvent('gui-parts-change', {
-        detail: { time: result.kind === 'valid' ? result.iso : null },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatch(this, 'gui-parts-change', { time: result.kind === 'valid' ? result.iso : null });
 
     if (result.kind !== 'valid') {
       this.requestUpdate();
@@ -339,7 +338,7 @@ export class GuiTime extends GuiFormControl {
    * segments never validates a half-typed entry.
    */
   private onFocusLeave(): void {
-    this.dispatchEvent(new CustomEvent('gui-blur'));
+    dispatchBlur(this);
     this.settleOnFocusLeave();
   }
 

@@ -8,7 +8,10 @@ export type GuiValueEventDetail<T = unknown> = { value: T };
 /** `gui-input` or `gui-change`, carrying the element's new value. */
 export type GuiValueEvent<T = unknown> = CustomEvent<GuiValueEventDetail<T>>;
 
-/** The detail of `gui-input-error`: why the element rejected what the user entered. */
+/**
+ * The detail of `gui-input-error`: why the element rejected what the user entered, or `''` when
+ * that error clears.
+ */
 export type GuiInputErrorEventDetail = { message: string };
 
 /**
@@ -38,6 +41,21 @@ export type GuiEventMap<Events> = {
 };
 
 /**
+ * Dispatches a GolemUI event from `host`. Every one bubbles and is composed, so any ancestor can
+ * listen, and an element that composes others stops their events (see {@link stopPropagation}).
+ */
+export function dispatch<T>(host: HTMLElement, type: string, detail?: T): void {
+  host.dispatchEvent(new CustomEvent<T>(type, { detail, ...eventInit }));
+}
+
+/** Reports that focus left the control: `gui-blur`. */
+export const dispatchBlur = (host: HTMLElement): void => dispatch(host, 'gui-blur');
+
+/** Reports what the user entered was rejected, or `''` when that error clears: `gui-input-error`. */
+export const dispatchInputError = (host: HTMLElement, message: string): void =>
+  dispatch<GuiInputErrorEventDetail>(host, 'gui-input-error', { message });
+
+/**
  * Reports a value the user changed: `gui-input`, then `gui-change`.
  *
  * Pass `commit: false` while the user is still editing the value (typing in a text field). The
@@ -49,9 +67,7 @@ export function dispatchValue(
   value: unknown,
   { commit = true }: { commit?: boolean } = {},
 ): void {
-  host.dispatchEvent(
-    new CustomEvent<GuiValueEventDetail>('gui-input', { detail: { value }, ...eventInit }),
-  );
+  dispatch<GuiValueEventDetail>(host, 'gui-input', { value });
   if (commit) {
     dispatchChange(host, value);
   }
@@ -59,13 +75,11 @@ export function dispatchValue(
 
 /** Reports that the user committed the value: `gui-change`. */
 export function dispatchChange(host: HTMLElement, value: unknown): void {
-  host.dispatchEvent(
-    new CustomEvent<GuiValueEventDetail>('gui-change', { detail: { value }, ...eventInit }),
-  );
+  dispatch<GuiValueEventDetail>(host, 'gui-change', { value });
 }
 
 /**
- * Stops an inner element's event at the element that composes it, which reports the change as
- * its own event.
+ * Stops an inner element's event at the element that composes it. A composite fires only the
+ * events of its own events map, so it stops every other `gui-*` event of the elements inside it.
  */
 export const stopPropagation = (event: Event): void => event.stopPropagation();

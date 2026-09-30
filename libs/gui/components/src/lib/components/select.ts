@@ -10,7 +10,14 @@ import { inferOptionValue, updateOptions } from './one-of';
 import { CARET_DOWN_PATH } from '../utils/icons';
 import type { Option, OptionValue } from '../types';
 import { GuiFormControl } from '../gui-form-control';
-import { dispatchValue, fires, valueEvents, type GuiInputErrorEventDetail } from '../utils/events';
+import {
+  dispatchBlur,
+  dispatchInputError,
+  dispatchValue,
+  fires,
+  valueEvents,
+  type GuiInputErrorEventDetail,
+} from '../utils/events';
 import { message } from '../utils/messages';
 
 /** What <gui-select> renders besides the control state: its presentation props. */
@@ -58,6 +65,8 @@ export class GuiSelect extends GuiFormControl {
 
   protected optionsLoading = false;
   protected hasMatchingValue = false;
+  // Whether the last gui-input-error about the value still stands, to withdraw it.
+  private reportedInvalidOption = false;
 
   private ariaController = new GUIAriaController(this, {
     getTargets: () => this.querySelectorAll(`select[id="${this.uid}"]`),
@@ -144,8 +153,10 @@ export class GuiSelect extends GuiFormControl {
           data-cy=${`${this.uid}_select`}
           class=${classMap({ 'gui-widget-input': true, ...selectIcon.widgetClasses })}
           ?required=${templateData.required}
-          ?disabled=${templateData.disabled || templateData.readonly}
+          ?disabled=${templateData.disabled}
           autocomplete=${this.autocomplete || nothing}
+          @mousedown=${this.onMousedown}
+          @keydown=${this.onKeydown}
           @change=${this.valueChanged}
           @blur=${this.onBlur}
         >
@@ -169,20 +180,22 @@ export class GuiSelect extends GuiFormControl {
   }
 
   override updated(changedProperties: Map<string, any>) {
-    if (changedProperties.has('value')) {
-      if (!this.hasMatchingValue && this.value) {
-        this.dispatchEvent(
-          new CustomEvent('gui-input-error', {
-            detail: {
-              message: message('invalidOption', this.invalidOptionMessage, {
-                value: String(this.value),
-              }),
-            },
-            bubbles: true,
-          }),
-        );
-      }
+    if (!changedProperties.has('value') && !changedProperties.has('options')) return;
+
+    // Options often arrive after the value (loaded from a server): no options yet is not an
+    // invalid value, and options that make it valid withdraw the error.
+    const hasValue = this.value !== undefined && this.value !== null && this.value !== '';
+    const invalid = hasValue && !!this.options?.length && !this.hasMatchingValue;
+    // Reported once per value: hosts re-render with new options arrays as they show the error.
+    if (invalid && (changedProperties.has('value') || !this.reportedInvalidOption)) {
+      dispatchInputError(
+        this,
+        message('invalidOption', this.invalidOptionMessage, { value: String(this.value) }),
+      );
+    } else if (!invalid && this.reportedInvalidOption) {
+      dispatchInputError(this, '');
     }
+    this.reportedInvalidOption = invalid;
   }
 
   /** @internal */
@@ -192,18 +205,36 @@ export class GuiSelect extends GuiFormControl {
     if (!this.readOnly) {
       const target = event.target as HTMLInputElement;
       this.value = inferOptionValue(target.value, this.options);
+      // A picked option is valid, and its gui-input already replaces the error for the host.
+      this.reportedInvalidOption = false;
       dispatchValue(this, this.value);
     }
   }
 
+  /**
+   * A read-only select stays focusable but never opens its list: the mouse only focuses it.
+   *
+   * @internal
+   */
+  onMousedown(event: MouseEvent) {
+    if (!this.readOnly) return;
+    event.preventDefault();
+    (event.currentTarget as HTMLSelectElement).focus();
+  }
+
+  /**
+   * Every key but Tab would open the list or change the option (arrows, Space, typing), so a
+   * read-only select ignores them.
+   *
+   * @internal
+   */
+  onKeydown(event: KeyboardEvent) {
+    if (this.readOnly && event.key !== 'Tab') event.preventDefault();
+  }
+
   /** @internal */
   onBlur() {
-    this.dispatchEvent(
-      new CustomEvent('gui-blur', {
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatchBlur(this);
   }
 }
 

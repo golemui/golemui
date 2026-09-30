@@ -1,6 +1,6 @@
 import { html, nothing, type TemplateResult } from 'lit';
 import { repeat } from 'lit/directives/repeat.js';
-import { getMonthYearLabel, getMonthYearParts, getWeekdayLabels } from './date';
+import { getMonthYearLabel, getMonthYearParts, getWeekdayLabels, type WeekdayFormat } from './date';
 import { chunk } from './grid-nav';
 import { addErrors, addLabel } from './templates';
 import { CARET_DOWN_PATH, CARET_LEFT_PATH, CARET_RIGHT_PATH } from './icons';
@@ -31,6 +31,7 @@ export interface CalendarChromeData {
   errors: string[] | undefined;
   touched: boolean | undefined;
   required: boolean | undefined;
+  /** Also disables the month navigation buttons. */
   disabled: boolean | undefined;
   /** Months rendered side by side (`numberOfMonths ?? 1`). */
   numberOfMonths: number | undefined;
@@ -95,7 +96,7 @@ export function renderCalendarChrome(data: CalendarChromeData): TemplateResult {
           ${renderMonthNavButton('prev', {
             icon: data.prevMonthIcon,
             ariaLabel: data.prevMonthAriaLabel,
-            disabled: !data.canGoPrev,
+            disabled: !!data.disabled || !data.canGoPrev,
             onClick: data.onPrevMonthClick,
           })}
 
@@ -106,7 +107,7 @@ export function renderCalendarChrome(data: CalendarChromeData): TemplateResult {
           ${renderMonthNavButton('next', {
             icon: data.nextMonthIcon,
             ariaLabel: data.nextMonthAriaLabel,
-            disabled: !data.canGoNext,
+            disabled: !!data.disabled || !data.canGoNext,
             onClick: data.onNextMonthClick,
           })}
         </div>
@@ -233,6 +234,8 @@ export interface CalendarMonthPanelData {
   yearSelectorOpen: boolean;
   /** `selectYearAriaLabel`; defaults to 'Select year'. */
   selectYearAriaLabel?: string;
+  /** Disables the year selector. */
+  disabled?: boolean;
   onToggleYearSelector(): void;
   renderBelowHeader?(offset: number): TemplateResult | typeof nothing;
   renderPanelBody(offset: number): TemplateResult;
@@ -254,6 +257,7 @@ export function renderCalendarMonthPanel(data: CalendarMonthPanelData): Template
         monthFormat: data.monthFormat,
         yearSelectorOpen: data.yearSelectorOpen,
         selectYearAriaLabel: data.selectYearAriaLabel,
+        disabled: data.disabled,
         onToggleYearSelector: data.onToggleYearSelector,
       }),
     renderBelowHeader: data.renderBelowHeader ?? (() => nothing),
@@ -274,6 +278,10 @@ export interface CalendarPanelBodyData<D extends { date: Date }> {
   currentDate: Date;
   /** `yearGridAriaLabel`; defaults to 'Year selection'. */
   yearGridAriaLabel?: string;
+  /** The weekday names format of the days grid header; defaults to 'narrow'. */
+  weekdayFormat?: WeekdayFormat;
+  /** Disables the year grid. */
+  disabled?: boolean;
   getDays(offset: number): D[];
   renderDay(day: D): TemplateResult;
 }
@@ -294,10 +302,11 @@ export function renderCalendarPanelBody<D extends { date: Date }>(
         onSelectYear: data.onSelectYear,
         onKeydown: data.onYearKeydown,
         ariaLabel: data.yearGridAriaLabel,
+        disabled: data.disabled,
       })
     : renderDaysGrid(
         chunk(data.getDays(data.offset), 7),
-        getWeekdayLabels(data.localeId),
+        getWeekdayLabels(data.localeId, data.weekdayFormat),
         (day) => data.renderDay(day),
         getMonthYearLabel(data.localeId, getPanelDate(data.currentDate, data.offset)),
       );
@@ -311,6 +320,7 @@ export interface MonthHeaderData {
   yearSelectorOpen: boolean;
   /** `selectYearAriaLabel`; defaults to 'Select year'. */
   selectYearAriaLabel?: string;
+  disabled?: boolean;
   onToggleYearSelector(): void;
 }
 
@@ -332,6 +342,7 @@ export function renderMonthHeader(panelDate: Date, data: MonthHeaderData): Templ
             ? html`<button
                 type="button"
                 class="gui-calendar__year-selector"
+                ?disabled=${!!data.disabled}
                 @click=${data.onToggleYearSelector}
                 aria-expanded=${data.yearSelectorOpen}
                 aria-label=${`${message('selectYear', data.selectYearAriaLabel)}, ${part.value}`}
@@ -359,7 +370,7 @@ export function renderMonthHeader(panelDate: Date, data: MonthHeaderData): Templ
  * The days grid of a panel.
  *
  * @param {D[][]} weeks - The panel's days chunked into weeks of 7.
- * @param {string[]} weekdayLabels - `getWeekdayLabels(localeId)`.
+ * @param {string[]} weekdayLabels - `getWeekdayLabels(localeId, weekdayFormat)`.
  * @param {(day: D) => TemplateResult} renderDay - The component's day renderer.
  * @param {string} [ariaLabel] - The grid's accessible name (the panel's month and year).
  * @return {TemplateResult} The days grid.
@@ -405,6 +416,7 @@ export interface YearGridData {
   onKeydown(event: KeyboardEvent): void;
   /** `yearGridAriaLabel`; defaults to 'Year selection'. */
   ariaLabel?: string;
+  disabled?: boolean;
 }
 
 /**
@@ -432,7 +444,8 @@ export function renderYearGrid(data: YearGridData): TemplateResult {
                   type="button"
                   role="gridcell"
                   class="gui-calendar__year-button ${year === currentYear ? 'current' : ''}"
-                  tabindex=${year === currentYear ? 0 : -1}
+                  tabindex=${year === currentYear && !data.disabled ? 0 : -1}
+                  ?disabled=${!!data.disabled}
                   data-year=${year}
                   @click=${(e: MouseEvent) => {
                     e.stopPropagation();

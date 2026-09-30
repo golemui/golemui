@@ -7,7 +7,7 @@ import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 import { GuiFormControl } from '../gui-form-control';
-import { dispatchChange, dispatchValue, valueEvents } from '../utils/events';
+import { dispatchBlur, dispatchChange, dispatchValue, valueEvents } from '../utils/events';
 
 /** What <gui-textarea> renders besides the control state: its presentation props. */
 export type GuiTextareaProps = {
@@ -24,7 +24,7 @@ export type GuiTextareaProps = {
  * A multi-line text field, with an optional character counter.
  *
  * @fires gui-input - The user changed the value. `detail.value` is the new value.
- * @fires gui-change - The user committed the text, on blur or Enter. `detail.value` is the value.
+ * @fires gui-change - The user committed the text, on blur. `detail.value` is the value.
  * @fires gui-blur - Focus left the control.
  */
 export class GuiTextarea extends GuiFormControl {
@@ -50,7 +50,10 @@ export class GuiTextarea extends GuiFormControl {
     undefined;
   /** Grows the field with its content instead of scrolling. */
   @property({ type: Boolean, attribute: 'auto-grow' }) autoGrow: boolean | undefined = false;
-  /** Maximum number of characters. */
+  /**
+   * The number of characters the counter counts against. It only drives the counter: longer text
+   * is not blocked, and the counter marks it as over the limit.
+   */
   @property({ type: Number, attribute: 'maxlength' }) maxLength: number | undefined = undefined;
 
   private ariaController = new GUIAriaController(this, {
@@ -176,7 +179,7 @@ export class GuiTextarea extends GuiFormControl {
   }
 
   /**
-   * The native `change`: the user committed the edit (blur or Enter).
+   * The native `change`: the user committed the edit, on blur (Enter adds a new line).
    *
    * @internal
    */
@@ -186,12 +189,7 @@ export class GuiTextarea extends GuiFormControl {
 
   /** @internal */
   onBlur() {
-    this.dispatchEvent(
-      new CustomEvent('gui-blur', {
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatchBlur(this);
   }
 }
 

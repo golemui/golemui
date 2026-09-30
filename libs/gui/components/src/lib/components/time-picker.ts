@@ -14,6 +14,9 @@ import { addErrors, addIcon, addLabel, addPickerPanel } from '../utils/templates
 import { CARET_DOWN_PATH } from '../utils/icons';
 import { boundsValidity, GuiFormControl, type GuiValidity } from '../gui-form-control';
 import {
+  dispatch,
+  dispatchBlur,
+  dispatchInputError,
   dispatchValue,
   stopPropagation,
   fires,
@@ -58,16 +61,16 @@ export class GuiTimePicker extends GuiFormControl {
   @property({ type: Boolean, attribute: 'show-errors' }) showErrors: boolean | undefined = true;
   /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
-  /** The time, as an ISO time (`HH:mm`). */
+  /** The time, as an ISO time (`HH:mm:ss`). */
   @property({ type: String }) value: string | undefined = undefined;
   /** 12- or 24-hour clock. Defaults to the locale's. */
   @property({ type: String, attribute: 'hour-format' }) hourFormat: HourFormat | undefined =
     undefined;
   /** Minutes between the times offered in the list. */
   @property({ type: Number, attribute: 'minute-step' }) minuteStep: number | undefined = undefined;
-  /** Earliest selectable time, as an ISO time (`HH:mm`). */
+  /** Earliest selectable time, as an ISO time (`HH:mm:ss`). */
   @property({ type: String, attribute: 'min-time' }) minTime: string | undefined = undefined;
-  /** Latest selectable time, as an ISO time (`HH:mm`). */
+  /** Latest selectable time, as an ISO time (`HH:mm:ss`). */
   @property({ type: String, attribute: 'max-time' }) maxTime: string | undefined = undefined;
   /** Times that cannot be picked, as `{ start, end }` ISO time ranges. */
   @property({ type: Array, attribute: 'disabled-ranges' }) disabledRanges: TimeRange[] | undefined =
@@ -115,7 +118,7 @@ export class GuiTimePicker extends GuiFormControl {
     onLeave: () => {
       // Embedded in a calendar: that host owns focus reporting for the subtree.
       if (this.deferFocusLeave) return;
-      this.dispatchEvent(new CustomEvent('gui-blur'));
+      dispatchBlur(this);
       this.reportIncompleteOnLeave();
     },
   });
@@ -195,9 +198,11 @@ export class GuiTimePicker extends GuiFormControl {
           .maxTimeMessage=${this.maxTimeMessage}
           .incompleteMessage=${this.incompleteMessage}
           @gui-blur=${this.onTimeBlur}
-          @gui-focus=${this._popup.show}
+          @gui-focus=${this.onTimeFocus}
           @gui-input=${this.onTimeInput}
           @gui-change=${stopPropagation}
+          @gui-input-error=${this.onTimeInputError}
+          @gui-parts-change=${stopPropagation}
         ></gui-time>
         <button
           type="button"
@@ -265,6 +270,17 @@ export class GuiTimePicker extends GuiFormControl {
     }
   };
 
+  private onTimeFocus(event: Event) {
+    stopPropagation(event);
+    this._popup.show();
+  }
+
+  /** The field's error is reported as the picker's own. */
+  private onTimeInputError(event: CustomEvent<GuiInputErrorEventDetail>) {
+    stopPropagation(event);
+    dispatchInputError(this, event.detail.message);
+  }
+
   /** Typing in the field is continuous editing: the field's own commit is not the picker's. */
   private onTimeInput(event: CustomEvent) {
     event.stopPropagation();
@@ -299,15 +315,7 @@ export class GuiTimePicker extends GuiFormControl {
     this.value = value ?? undefined;
     const error = this.validateBounds(this.value);
     dispatchValue(this, value ?? null, { commit });
-    if (error) {
-      this.dispatchEvent(
-        new CustomEvent('gui-input-error', {
-          detail: { message: error },
-          bubbles: true,
-          composed: true,
-        }),
-      );
-    }
+    if (error) dispatchInputError(this, error);
   }
 
   protected override validate(): GuiValidity | null {
@@ -400,13 +408,7 @@ export class GuiTimePicker extends GuiFormControl {
   }
 
   private dispatchListToggle(open: boolean) {
-    this.dispatchEvent(
-      new CustomEvent('gui-list-toggle', {
-        detail: { open },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatch(this, 'gui-list-toggle', { open });
   }
 }
 

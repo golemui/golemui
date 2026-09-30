@@ -5,7 +5,8 @@ import { live } from 'lit/directives/live.js';
 import { safeDefine } from '@golemui/lit-utils';
 import { addErrors, requiredMarker, type ControlTemplateData } from '../utils/templates';
 import { GuiFormControl } from '../gui-form-control';
-import { dispatchValue, valueEvents } from '../utils/events';
+import { dispatchBlur, dispatchValue, valueEvents } from '../utils/events';
+import { booleanAttribute } from '../utils/converters';
 
 /** What <gui-toggle> renders besides the control state: its presentation props. */
 export type GuiToggleProps = {
@@ -28,8 +29,8 @@ export type GuiToggleProps = {
 export class GuiToggle extends GuiFormControl {
   /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
-  /** Whether it is on. */
-  @property({ type: String }) value: boolean | undefined = undefined;
+  /** Whether it is on. As an attribute, `value` turns it on and `value="false"` does not. */
+  @property({ converter: booleanAttribute }) value: boolean | undefined = undefined;
 
   /** Side of the label the switch is on. */
   @property({ type: String, attribute: 'toggle-position' }) togglePosition:
@@ -45,8 +46,7 @@ export class GuiToggle extends GuiFormControl {
         hint: this.hint,
         errors: this.errors,
         touched: this.touched,
-        // Checkboxes can't have aria-readonly
-        readonly: false,
+        readonly: this.readOnly,
         disabled: false,
         required: this.required,
       },
@@ -99,7 +99,8 @@ export class GuiToggle extends GuiFormControl {
             data-cy=${`${this.uid}_toggle`}
             .checked=${live(templateData.value ?? false)}
             ?required=${templateData.required}
-            ?disabled=${templateData.disabled || templateData.readonly}
+            ?disabled=${templateData.disabled}
+            @click=${this.onClick}
             @change=${this.valueChanged}
             @blur=${this.onBlur}
           />
@@ -131,14 +132,19 @@ export class GuiToggle extends GuiFormControl {
     }
   }
 
+  /**
+   * A read-only control stays focusable, so its click is cancelled instead: the browser then
+   * restores the checked state and fires no `change`.
+   *
+   * @internal
+   */
+  onClick(event: Event) {
+    if (this.readOnly) event.preventDefault();
+  }
+
   /** @internal */
   onBlur() {
-    this.dispatchEvent(
-      new CustomEvent('gui-blur', {
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatchBlur(this);
   }
 }
 

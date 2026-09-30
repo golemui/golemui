@@ -129,8 +129,9 @@ gui-range-date-time-calendar {
         background-color: var(--gui-intent-primary);
       }
 
-      &[disabled],
-      &[aria-disabled='true'] {
+      // A day disabled on its own, such as one out of bounds. In a disabled calendar the whole
+      // panel shows it, and the days keep showing what is selected.
+      &:is([disabled], [aria-disabled='true']):not([aria-disabled='true'] *) {
         background-color: var(--gui-bg-disabled);
         color: var(--gui-text-default);
         cursor: not-allowed;

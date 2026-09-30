@@ -26,13 +26,13 @@ import { message } from '../utils/messages';
  * @cssprop --gui-calendar-time-button-height - Height of each time in the grid.
  */
 export class GuiTimeList extends GuiElement {
-  /** The selected time, as an ISO time (`HH:mm`). */
+  /** The selected time, as an ISO time (`HH:mm:ss`). */
   @property({ type: String }) value: string | undefined = undefined;
   /** Accessible name of the list. */
   @property({ type: String }) label: string | undefined = undefined;
-  /** Earliest selectable time, as an ISO time (`HH:mm`). */
+  /** Earliest selectable time, as an ISO time (`HH:mm:ss`). */
   @property({ type: String, attribute: 'min-time' }) minTime: string | undefined = undefined;
-  /** Latest selectable time, as an ISO time (`HH:mm`). */
+  /** Latest selectable time, as an ISO time (`HH:mm:ss`). */
   @property({ type: String, attribute: 'max-time' }) maxTime: string | undefined = undefined;
   /** Minutes between the times offered in the list. */
   @property({ type: Number, attribute: 'minute-step' }) minuteStep: number | undefined = undefined;

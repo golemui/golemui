@@ -6,7 +6,7 @@ import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addIcon, addLabel, type ControlTemplateData } from '../utils/templates';
 import { blockNonNumericInput, blockNonNumericKeys, isRealNumber } from '../utils/numeric';
 import { GuiFormControl } from '../gui-form-control';
-import { dispatchChange, dispatchValue, valueEvents } from '../utils/events';
+import { dispatchBlur, dispatchChange, dispatchValue, valueEvents } from '../utils/events';
 
 /** What <gui-currency> renders besides the control state: its presentation props. */
 export type GuiCurrencyProps = {
@@ -30,18 +30,18 @@ export class GuiCurrency extends GuiFormControl {
   /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
   /** The amount, or `undefined` when empty. */
-  @property({ type: String }) value: number | null | undefined = undefined;
+  @property({ type: Number }) value: number | null | undefined = undefined;
 
   /** ISO 4217 currency code, such as `USD` or `EUR`. */
   @property({ type: String }) currency: string | undefined = undefined;
   /** The step of the ArrowUp and ArrowDown keys. */
-  @property({ type: String }) step: number | undefined = undefined;
+  @property({ type: Number }) step: number | undefined = undefined;
   /** Maximum number of decimals shown. */
-  @property({ type: String, attribute: 'maximum-fraction-digits' }) maximumFractionDigits:
+  @property({ type: Number, attribute: 'maximum-fraction-digits' }) maximumFractionDigits:
     | number
     | undefined = undefined;
   /** Minimum number of decimals shown. */
-  @property({ type: String, attribute: 'minimum-fraction-digits' }) minimumFractionDigits:
+  @property({ type: Number, attribute: 'minimum-fraction-digits' }) minimumFractionDigits:
     | number
     | undefined = undefined;
   /** Icon class name shown inside the control, for example from an icon font. */
@@ -82,17 +82,10 @@ export class GuiCurrency extends GuiFormControl {
 
   /**
    * The value as an actual number, or undefined. Property bindings bypass the
-   * Lit converter, so consumers can hand us '', NaN or null; the String
-   * converter additionally makes numeric strings legitimate on the attribute
-   * path.
+   * Lit converter, so consumers can hand us '', NaN or null.
    */
   private get normalizedValue(): number | undefined {
-    if (isRealNumber(this.value)) return this.value;
-    if (typeof this.value === 'string' && this.value !== '') {
-      const parsed = Number(this.value);
-      return Number.isNaN(parsed) ? undefined : parsed;
-    }
-    return undefined;
+    return isRealNumber(this.value) ? this.value : undefined;
   }
 
   override willUpdate(changedProperties: PropertyValues) {
@@ -233,12 +226,7 @@ export class GuiCurrency extends GuiFormControl {
     this.syncNativeInput();
     this.displayValue = this.formatCurrency(this.value);
 
-    this.dispatchEvent(
-      new CustomEvent('gui-blur', {
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatchBlur(this);
   }
 
   private formatCurrency(value: string | number | undefined | null): string {

@@ -6,10 +6,17 @@ import { safeDefine } from '@golemui/lit-utils';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 import { ARROW_CLOCKWISE_PATH, UPLOAD_PATH, X_CIRCLE_PATH, spinnerIcon } from '../utils/icons';
-import { clampPct, errorMessage, matchesAccept, newId } from '../utils/file-upload';
+import { clampPct, errorMessage, matchesAccept, newId, parseAccept } from '../utils/file-upload';
 import type { FileItem, UploadService } from '../types';
 import { GuiFormControl } from '../gui-form-control';
-import { dispatchValue, fires, valueEvents, type GuiInputErrorEventDetail } from '../utils/events';
+import {
+  dispatchBlur,
+  dispatchInputError,
+  dispatchValue,
+  fires,
+  valueEvents,
+  type GuiInputErrorEventDetail,
+} from '../utils/events';
 import { message } from '../utils/messages';
 
 /** What <gui-file-upload> renders besides the control state: its presentation props. */
@@ -30,16 +37,16 @@ export type GuiFileUploadProps = {
  * `UploadService` doc in `../types.ts`.
  *
  * @fires gui-input - The user changed the value. `detail.value` is the new value.
- * @fires gui-change - The files changed: one was added, uploaded or removed. `detail.value` is the
- *   list of files.
+ * @fires gui-change - The file changed: it was added, uploaded or removed. `detail.value` is the
+ *   file, or `null`.
  * @fires gui-blur - Focus left the control.
- * @fires gui-input-error - The element rejected what the user entered, such as an impossible date
- *   or a value out of bounds. `detail.message` is the error; show it through `errors`.
+ * @fires gui-input-error - A file was refused (its type or size) or its upload failed.
+ *   `detail.message` is the error, or `''` when it clears; show it through `errors`.
  */
 export class GuiFileUpload extends GuiFormControl {
   /** The form data path, forwarded to `uploadService.upload` as `ctx.path`. */
   @property({ type: String }) path: string | undefined = undefined;
-  /** The files, with their upload status. */
+  /** The file, with its upload status, or `null`. */
   @property({ type: Object }) value: FileItem | null | undefined = null;
   /** Provides the `uploadService` that uploads and removes files. */
   @property({ type: Object }) dependencies: { uploadService?: UploadService } | undefined =
@@ -47,8 +54,13 @@ export class GuiFileUpload extends GuiFormControl {
 
   /** Icon class name of the upload button. */
   @property({ type: String }) icon: string | undefined = undefined;
-  /** Accepted file types, as MIME types (`image/*`) or extensions (`.pdf`). */
-  @property({ type: Array }) accept: string[] | undefined = undefined;
+  /**
+   * Accepted file types, as MIME types (`image/*`) or extensions (`.pdf`). The attribute takes the
+   * native comma list (`accept=".pdf,image/*"`) or a JSON array.
+   */
+  @property({ type: Array, converter: { fromAttribute: parseAccept } }) accept:
+    | string[]
+    | undefined = undefined;
   /** Largest accepted file, in bytes. */
   @property({ type: Number, attribute: 'max-size' }) maxSize: number | undefined = undefined;
   /** Text of the upload button. */
@@ -220,23 +232,17 @@ export class GuiFileUpload extends GuiFormControl {
     this.syncInputError();
   }
 
-  private _lastInputError: string | null = null;
+  private _lastInputError = '';
 
   private syncInputError() {
     const barItem = this.getBarItem();
     const item = barItem && this.presentItem(barItem);
     const errorMessage =
       this._removeError?.message ??
-      (item?.status === 'error' ? (item.error ?? message('uploadFailed')) : null);
+      (item?.status === 'error' ? (item.error ?? message('uploadFailed')) : '');
     if (errorMessage === this._lastInputError) return;
     this._lastInputError = errorMessage;
-    this.dispatchEvent(
-      new CustomEvent('gui-input-error', {
-        detail: { message: errorMessage },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatchInputError(this, errorMessage);
   }
 
   /**
@@ -483,7 +489,7 @@ export class GuiFileUpload extends GuiFormControl {
   private onFocusOut = (e: FocusEvent) => {
     const next = e.relatedTarget as Node | null;
     if (next && this.contains(next)) return;
-    this.dispatchEvent(new CustomEvent('gui-blur', { bubbles: true, composed: true }));
+    dispatchBlur(this);
   };
 
   // ─── Rendering ───────────────────────────────────────────────────────────
@@ -537,7 +543,7 @@ export class GuiFileUpload extends GuiFormControl {
     };
 
     return html`
-      ${this.label ? addLabel(this.uid, templateData, false, undefined, false) : nothing}
+      ${addLabel(this.uid, templateData, false, undefined, false)}
 
       <div class="gui-widget">
         <div

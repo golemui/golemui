@@ -20,6 +20,8 @@ import { CARET_DOWN_PATH } from '../utils/icons';
 import type { DateRange, DisabledTimeRange } from '../types';
 import { boundsValidity, GuiFormControl, type GuiValidity } from '../gui-form-control';
 import {
+  dispatchBlur,
+  dispatchInputError,
   dispatchValue,
   stopPropagation,
   fires,
@@ -80,7 +82,7 @@ export class GuiDateTimePicker extends GuiFormControl {
   @property({ type: Boolean, attribute: 'show-errors' }) showErrors: boolean | undefined = true;
   /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
-  /** The date and time, as an ISO date-time (`YYYY-MM-DDTHH:mm`). */
+  /** The date and time, as an ISO date-time (`YYYY-MM-DDTHH:mm:ss`). */
   @property({ type: String }) value: string | undefined = undefined;
   /** Icon class name of the previous-month button. */
   @property({ type: String, attribute: 'prev-month-icon' }) prevMonthIcon: string | undefined = '';
@@ -136,9 +138,9 @@ export class GuiDateTimePicker extends GuiFormControl {
     undefined;
   /** Minutes between the times offered in the list. */
   @property({ type: Number, attribute: 'minute-step' }) minuteStep: number | undefined = undefined;
-  /** Earliest selectable time, as an ISO time (`HH:mm`). */
+  /** Earliest selectable time, as an ISO time (`HH:mm:ss`). */
   @property({ type: String, attribute: 'min-time' }) minTime: string | undefined = undefined;
-  /** Latest selectable time, as an ISO time (`HH:mm`). */
+  /** Latest selectable time, as an ISO time (`HH:mm:ss`). */
   @property({ type: String, attribute: 'max-time' }) maxTime: string | undefined = undefined;
   /** Times that cannot be picked, optionally only on a date or on some weekdays. */
   @property({ type: Array, attribute: 'disabled-time-ranges' }) disabledTimeRanges:
@@ -278,6 +280,7 @@ export class GuiDateTimePicker extends GuiFormControl {
             @gui-input=${this.onCalendarInput}
             @gui-change=${this.onCalendarChange}
             @gui-parts-change=${this.onCalendarPartsChange}
+            @gui-input-error=${this.onInnerInputError}
           ></gui-date-time-calendar>`,
         )
       : nothing;
@@ -331,10 +334,11 @@ export class GuiDateTimePicker extends GuiFormControl {
           .maxTimeMessage=${this.maxTimeMessage}
           .incompleteMessage=${this.incompleteMessage}
           @gui-blur=${this.onDateBlur}
-          @gui-focus=${this._popup.show}
+          @gui-focus=${this.onDateFocus}
           @gui-input=${this.onDateInput}
           @gui-change=${stopPropagation}
           @gui-parts-change=${this.onInputPartsChange}
+          @gui-input-error=${this.onInnerInputError}
         ></gui-date-time>
         <button
           type="button"
@@ -374,6 +378,17 @@ export class GuiDateTimePicker extends GuiFormControl {
     }
   };
 
+  private onDateFocus(event: Event) {
+    stopPropagation(event);
+    this._popup.show();
+  }
+
+  /** The field's and the calendar's errors are reported as the picker's own. */
+  private onInnerInputError(event: CustomEvent<GuiInputErrorEventDetail>) {
+    stopPropagation(event);
+    dispatchInputError(this, event.detail.message);
+  }
+
   private onDateInput(event: CustomEvent) {
     event.stopPropagation();
     this.commitValue(event.detail.value);
@@ -395,11 +410,16 @@ export class GuiDateTimePicker extends GuiFormControl {
     this.commitValue(event.detail.value);
   }
 
-  /** A deliberate time pick in the calendar completes the selection and closes the popover. */
+  /**
+   * A deliberate time pick in the calendar completes the selection and closes the popover,
+   * returning focus to the field like Escape.
+   */
   private onCalendarChange(event: CustomEvent) {
     event.stopPropagation();
     if (this._popup.open && event.detail.value) {
       this._popup.close();
+      // Once the popover is gone: the calendar's time picker focuses its own field after the pick.
+      this.updateComplete.then(() => this._popup.restoreFocusToInput());
     }
   }
 
@@ -437,15 +457,7 @@ export class GuiDateTimePicker extends GuiFormControl {
 
     const error = this.validateBounds(this.value);
     dispatchValue(this, value ?? null);
-    if (error) {
-      this.dispatchEvent(
-        new CustomEvent('gui-input-error', {
-          detail: { message: error },
-          bubbles: true,
-          composed: true,
-        }),
-      );
-    }
+    if (error) dispatchInputError(this, error);
   }
 
   /**
@@ -458,7 +470,7 @@ export class GuiDateTimePicker extends GuiFormControl {
    * the popover restores the partial.
    */
   private onFocusLeave(): void {
-    this.dispatchEvent(new CustomEvent('gui-blur'));
+    dispatchBlur(this);
     this.querySelector<GuiDateTime>('gui-date-time')?.settleOnFocusLeave();
   }
 

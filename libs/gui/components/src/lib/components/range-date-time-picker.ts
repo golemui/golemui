@@ -13,7 +13,9 @@ import { CARET_DOWN_PATH } from '../utils/icons';
 import type { DateTimeRange } from '../types';
 import { GuiFormControl } from '../gui-form-control';
 import {
+  dispatchBlur,
   dispatchChange,
+  dispatchInputError,
   dispatchValue,
   stopPropagation,
   fires,
@@ -174,10 +176,10 @@ export class GuiRangeDateTimePicker extends GuiFormControl {
     undefined;
 
   // Instant-space bounds and holes
-  /** Earliest allowed date-time, as an ISO date-time (`YYYY-MM-DDTHH:mm`). */
+  /** Earliest allowed date-time, as an ISO date-time (`YYYY-MM-DDTHH:mm:ss`). */
   @property({ type: String, attribute: 'min-date-time' }) minDateTime: string | undefined =
     undefined;
-  /** Latest allowed date-time, as an ISO date-time (`YYYY-MM-DDTHH:mm`). */
+  /** Latest allowed date-time, as an ISO date-time (`YYYY-MM-DDTHH:mm:ss`). */
   @property({ type: String, attribute: 'max-date-time' }) maxDateTime: string | undefined =
     undefined;
   /** Error for a date-time before `minDateTime`. */
@@ -246,7 +248,7 @@ export class GuiRangeDateTimePicker extends GuiFormControl {
   @query('#date-input') private _dateRef?: GuiRangeDateTimeInput;
 
   /**
-   * Mirror of the embedded input's edit session, fed by its non-bubbling
+   * Mirror of the embedded input's edit session, fed by its
    * `gui-edit-state-change`: while a session is open the calendar defers commits to
    * the session's Confirm, and the selected range's days are marked.
    */
@@ -303,13 +305,15 @@ export class GuiRangeDateTimePicker extends GuiFormControl {
     resolveSyncOnRelatedTarget: true,
     onLeave: () => {
       this._dateRef?.finalizeOnLeave();
-      this.dispatchEvent(new CustomEvent('gui-blur'));
+      dispatchBlur(this);
     },
   });
 
   // Pills dropdown and the calendar are mutually exclusive; opening one closes the other.
   /** @internal */
   onDropdownToggle = (event: Event) => {
+    // The range input's count bubble: the picker closes its popup, the event goes no further.
+    event.stopPropagation();
     const detail = (event as CustomEvent<{ open: boolean }>).detail;
     if (detail?.open && this._popup.open) {
       this._popup.close();
@@ -386,7 +390,7 @@ export class GuiRangeDateTimePicker extends GuiFormControl {
             @gui-input=${stopPropagation}
             @gui-change=${this.onCalendarChange}
             @gui-parts-change=${this.onCalendarPartsChange}
-            @gui-input-error=${this.onCalendarInputError}
+            @gui-input-error=${this.onInputError}
           ></gui-range-date-time-calendar>`,
         )
       : nothing;
@@ -454,9 +458,10 @@ export class GuiRangeDateTimePicker extends GuiFormControl {
           .editCommittedMessage=${this.editCommittedMessage}
           .editCancelledMessage=${this.editCancelledMessage}
           @gui-blur=${this.onDateBlur}
-          @gui-focus=${this._popup.show}
+          @gui-focus=${this.onDateFocus}
           @gui-input=${this.onDateInput}
           @gui-change=${this.onDateChange}
+          @gui-input-error=${this.onInputError}
           @gui-parts-change=${this.onInputPartsChange}
           @gui-range-click=${this.onPillClick}
           @gui-edit-state-change=${this.onEditStateChange}
@@ -519,6 +524,11 @@ export class GuiRangeDateTimePicker extends GuiFormControl {
    */
   private onDateBlur(event: Event) {
     event.stopPropagation();
+  }
+
+  private onDateFocus(event: Event) {
+    stopPropagation(event);
+    this._popup.show();
   }
 
   /**
@@ -612,15 +622,10 @@ export class GuiRangeDateTimePicker extends GuiFormControl {
     });
   }
 
-  private onCalendarInputError(event: CustomEvent) {
-    event.stopPropagation();
-    this.dispatchEvent(
-      new CustomEvent('gui-input-error', {
-        detail: event.detail,
-        bubbles: true,
-        composed: true,
-      }),
-    );
+  /** The input's and the calendar's errors are reported as the picker's own. */
+  private onInputError(event: CustomEvent<GuiInputErrorEventDetail>) {
+    stopPropagation(event);
+    dispatchInputError(this, event.detail.message);
   }
 
   /**
@@ -648,6 +653,7 @@ export class GuiRangeDateTimePicker extends GuiFormControl {
   }
 
   private onPillClick(event: CustomEvent) {
+    stopPropagation(event);
     this._focusDate = event.detail.range.start;
     this._popup.show();
   }
@@ -655,6 +661,7 @@ export class GuiRangeDateTimePicker extends GuiFormControl {
   private onEditStateChange = (
     event: CustomEvent<{ selected: DateTimeRange | null; editing: boolean }>,
   ) => {
+    stopPropagation(event);
     this._selectedEditRange = event.detail.selected;
     this._editing = event.detail.editing;
   };

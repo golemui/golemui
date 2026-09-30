@@ -79,7 +79,8 @@ export class MultiListComponent implements OnInit, OnDestroy, WithWidget {
   }
 
   protected onClickItem(item: any, index: number, listRef: any) {
-    if (this.adapter.templateData().disabled || item.disabled) return;
+    const { disabled, readonly } = this.adapter.templateData();
+    if (disabled || readonly || item.disabled) return;
 
     this.toggleValue(item.value);
     this.focusedIndex.set(index);

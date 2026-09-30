@@ -90,6 +90,8 @@ export class MultiListElement extends LitElement implements WithWidget {
         .errors=${templateData.errors}
         .touched=${templateData.touched}
         .required=${templateData.validator?.required}
+        .disabled=${templateData.disabled}
+        .readOnly=${templateData.readonly}
         .native=${false}
       ></gui-label>
 
@@ -191,7 +193,8 @@ export class MultiListElement extends LitElement implements WithWidget {
   }
 
   private _onClickItem(item: ListItem<any>, index: number) {
-    if (this.adapter.templateData.disabled || item.disabled) return;
+    const { disabled, readonly } = this.adapter.templateData;
+    if (disabled || readonly || item.disabled) return;
 
     this._toggleValue(item.value);
 

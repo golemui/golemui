@@ -5,7 +5,8 @@ import { live } from 'lit/directives/live.js';
 import { safeDefine } from '@golemui/lit-utils';
 import { addErrors, requiredMarker, type ControlTemplateData } from '../utils/templates';
 import { GuiFormControl } from '../gui-form-control';
-import { dispatchValue, valueEvents } from '../utils/events';
+import { dispatchBlur, dispatchValue, valueEvents } from '../utils/events';
+import { booleanAttribute } from '../utils/converters';
 
 /** What <gui-checkbox> renders besides the control state: its presentation props. */
 export type GuiCheckboxProps = {
@@ -23,8 +24,8 @@ export type GuiCheckboxProps = {
 export class GuiCheckbox extends GuiFormControl {
   /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
-  /** Whether it is checked. */
-  @property({ type: String }) value: boolean | undefined = undefined;
+  /** Whether it is checked. As an attribute, `value` checks it and `value="false"` does not. */
+  @property({ converter: booleanAttribute }) value: boolean | undefined = undefined;
 
   /** Side of the label the checkbox is on. */
   @property({ type: String, attribute: 'checkbox-position' }) checkboxPosition:
@@ -40,8 +41,7 @@ export class GuiCheckbox extends GuiFormControl {
         hint: this.hint,
         errors: this.errors,
         touched: this.touched,
-        // Checkboxes can't have aria-readonly
-        readonly: false,
+        readonly: this.readOnly,
         disabled: false,
         required: this.required,
       },
@@ -93,7 +93,8 @@ export class GuiCheckbox extends GuiFormControl {
             data-cy=${`${this.uid}_checkbox`}
             .checked=${live(this.value ?? false)}
             ?required=${this.required}
-            ?disabled=${this.disabled || this.readOnly}
+            ?disabled=${this.disabled}
+            @click=${this.onClick}
             @change=${this.valueChanged}
             @blur=${this.onBlur}
           />
@@ -123,14 +124,19 @@ export class GuiCheckbox extends GuiFormControl {
     }
   }
 
+  /**
+   * A read-only control stays focusable, so its click is cancelled instead: the browser then
+   * restores the checked state and fires no `change`.
+   *
+   * @internal
+   */
+  onClick(event: Event) {
+    if (this.readOnly) event.preventDefault();
+  }
+
   /** @internal */
   onBlur() {
-    this.dispatchEvent(
-      new CustomEvent('gui-blur', {
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatchBlur(this);
   }
 }
 

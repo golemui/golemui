@@ -33,7 +33,15 @@ import {
 } from '../utils/time';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 import { boundsValidity, GuiFormControl, type GuiValidity } from '../gui-form-control';
-import { dispatchValue, fires, valueEvents, type GuiInputErrorEventDetail } from '../utils/events';
+import {
+  dispatch,
+  dispatchBlur,
+  dispatchInputError,
+  dispatchValue,
+  fires,
+  valueEvents,
+  type GuiInputErrorEventDetail,
+} from '../utils/events';
 import { message } from '../utils/messages';
 
 /** What <gui-date-time-input> renders besides the control state: its presentation props. */
@@ -95,15 +103,15 @@ export class GuiDateTime extends GuiFormControl {
     | string
     | undefined = undefined;
 
-  /** The date and time, as an ISO date-time (`YYYY-MM-DDTHH:mm`). */
+  /** The date and time, as an ISO date-time (`YYYY-MM-DDTHH:mm:ss`). */
   @property({ type: String }) value: string | undefined = undefined;
   /** Earliest selectable date, as an ISO date (`YYYY-MM-DD`). */
   @property({ type: String, attribute: 'min-date' }) minDate: string | undefined = undefined;
   /** Latest selectable date, as an ISO date (`YYYY-MM-DD`). */
   @property({ type: String, attribute: 'max-date' }) maxDate: string | undefined = undefined;
-  /** Earliest selectable time, as an ISO time (`HH:mm`). */
+  /** Earliest selectable time, as an ISO time (`HH:mm:ss`). */
   @property({ type: String, attribute: 'min-time' }) minTime: string | undefined = undefined;
-  /** Latest selectable time, as an ISO time (`HH:mm`). */
+  /** Latest selectable time, as an ISO time (`HH:mm:ss`). */
   @property({ type: String, attribute: 'max-time' }) maxTime: string | undefined = undefined;
   /** Error for a date before `minDate`. */
   @property({ type: String, attribute: 'min-date-message' }) minDateMessage: string | undefined =
@@ -152,10 +160,7 @@ export class GuiDateTime extends GuiFormControl {
       dispatchValue(this, null);
       this._parts.resetSurfacedInputError();
     },
-    onInputErrorSurfaced: (message) =>
-      this.dispatchEvent(
-        new CustomEvent('gui-input-error', { detail: { message }, bubbles: true }),
-      ),
+    onInputErrorSurfaced: (message) => dispatchInputError(this, message),
     onSurfacedErrorCleared: (value) => dispatchValue(this, value),
     getHourFormat: () => this.localeData.effectiveHourFormat,
     getDayPeriodLabels: () => this.localeData.dayPeriodLabels,
@@ -301,7 +306,7 @@ export class GuiDateTime extends GuiFormControl {
     };
 
     return html`
-      ${this.label ? addLabel(this.uid, templateData, false, undefined, false) : nothing}
+      ${addLabel(this.uid, templateData, false, undefined, false)}
 
       <div class="gui-widget" @focusout=${this.onWidgetFocusOut}>
         <div
@@ -380,16 +385,10 @@ export class GuiDateTime extends GuiFormControl {
       descriptors,
       invalidDateMessage: this.invalidDateMessage,
     });
-    this.dispatchEvent(
-      new CustomEvent('gui-parts-change', {
-        detail: {
-          date: date.kind === 'valid' ? date.iso : null,
-          time: time.kind === 'valid' ? time.iso : null,
-        },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatch(this, 'gui-parts-change', {
+      date: date.kind === 'valid' ? date.iso : null,
+      time: time.kind === 'valid' ? time.iso : null,
+    });
   }
 
   /**
@@ -444,7 +443,7 @@ export class GuiDateTime extends GuiFormControl {
    * segments never validates a half-typed entry.
    */
   private onFocusLeave(): void {
-    this.dispatchEvent(new CustomEvent('gui-blur'));
+    dispatchBlur(this);
     this.settleOnFocusLeave();
   }
 

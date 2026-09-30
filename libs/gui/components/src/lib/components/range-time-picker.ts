@@ -19,7 +19,9 @@ import { CARET_DOWN_PATH } from '../utils/icons';
 import type { TimeRange } from '../types';
 import { GuiFormControl, type GuiValidity } from '../gui-form-control';
 import {
+  dispatchBlur,
   dispatchChange,
+  dispatchInputError,
   dispatchValue,
   stopPropagation,
   fires,
@@ -94,9 +96,9 @@ export class GuiRangeTimePicker extends GuiFormControl {
     undefined;
   /** Minutes between the times offered in the list. */
   @property({ type: Number, attribute: 'minute-step' }) minuteStep: number | undefined = undefined;
-  /** Earliest selectable time, as an ISO time (`HH:mm`). */
+  /** Earliest selectable time, as an ISO time (`HH:mm:ss`). */
   @property({ type: String, attribute: 'min-time' }) minTime: string | undefined = undefined;
-  /** Latest selectable time, as an ISO time (`HH:mm`). */
+  /** Latest selectable time, as an ISO time (`HH:mm:ss`). */
   @property({ type: String, attribute: 'max-time' }) maxTime: string | undefined = undefined;
   /** Times that cannot be picked, as `{ start, end }` ISO time ranges. */
   @property({ type: Array, attribute: 'disabled-ranges' }) disabledRanges: TimeRange[] | undefined =
@@ -163,14 +165,15 @@ export class GuiRangeTimePicker extends GuiFormControl {
   @state() private _workingIn: string | undefined = undefined;
   @state() private _workingOut: string | undefined = undefined;
   /**
-   * Mirror of the embedded input's edit session, fed by its non-bubbling
+   * Mirror of the embedded input's edit session, fed by its
    * `gui-edit-state-change`: while a session is open, list picks reshape the
    * working range but never auto-commit — the session's Confirm owns that.
    */
   @state() private _editing = false;
 
   private _popup = new GUIPopupController(this, {
-    focusRestoreSelector: 'gui-range-time input, gui-range-time button',
+    // The fields' parts, not the pill buttons that come before them.
+    focusRestoreSelector: 'gui-range-time .gui-range-time-input__part',
     focusPopupSelector: '.gui-time-list__option[tabindex="0"]',
     isDisabled: () => !!this.disabled,
     clickIntent: (target) => {
@@ -201,13 +204,15 @@ export class GuiRangeTimePicker extends GuiFormControl {
     resolveSyncOnRelatedTarget: true,
     onLeave: () => {
       this._inputRef?.finalizeOnLeave();
-      this.dispatchEvent(new CustomEvent('gui-blur'));
+      dispatchBlur(this);
     },
   });
 
   // The pills dropdown and the list panel are mutually exclusive.
   /** @internal */
   onDropdownToggle = (event: Event) => {
+    // The range input's count bubble: the picker closes its popup, the event goes no further.
+    event.stopPropagation();
     const detail = (event as CustomEvent<{ open: boolean }>).detail;
     if (detail?.open && this._popup.open) this._popup.close();
   };
@@ -368,9 +373,10 @@ export class GuiRangeTimePicker extends GuiFormControl {
           .editCommittedMessage=${this.editCommittedMessage}
           .editCancelledMessage=${this.editCancelledMessage}
           @gui-blur=${this.onInputBlur}
-          @gui-focus=${this._popup.show}
+          @gui-focus=${this.onInputFocus}
           @gui-input=${this.onRangeInput}
           @gui-change=${this.onRangeChange}
+          @gui-input-error=${this.onInputError}
           @gui-parts-change=${this.onPartsChange}
           @gui-range-click=${this.onPillClick}
           @gui-edit-state-change=${this.onEditStateChange}
@@ -447,6 +453,17 @@ export class GuiRangeTimePicker extends GuiFormControl {
     event.stopPropagation();
   }
 
+  private onInputFocus(event: Event) {
+    stopPropagation(event);
+    this._popup.show();
+  }
+
+  /** The input's error is reported as the picker's own. */
+  private onInputError(event: CustomEvent<GuiInputErrorEventDetail>) {
+    stopPropagation(event);
+    dispatchInputError(this, event.detail.message);
+  }
+
   private onInListChange(event: CustomEvent) {
     event.stopPropagation();
     const start = event.detail.value as string | undefined;
@@ -467,7 +484,9 @@ export class GuiRangeTimePicker extends GuiFormControl {
    * Commits once both endpoints are present, whichever order they were picked
    * in — an end chosen before a start simply waits in the fields. A rejected
    * range (reversed, out of bounds, spanning a disabled block) keeps both
-   * values on show and closes the panel so its error is visible.
+   * values on show and closes the panel so its error is visible. Focus goes
+   * back to the fields to correct them: it never left the control, so the
+   * picker does not blur.
    */
   private tryCommitWorkingRange(): void {
     if (this._editing) return;
@@ -480,8 +499,8 @@ export class GuiRangeTimePicker extends GuiFormControl {
       return;
     }
 
+    this._popup.restoreFocusToInput();
     this._popup.close();
-    this.dispatchEvent(new CustomEvent('gui-blur'));
   }
 
   private _inListRef() {
@@ -511,15 +530,7 @@ export class GuiRangeTimePicker extends GuiFormControl {
     }
     const error = this.validateBounds(this.value);
     dispatchValue(this, value ?? null, { commit: committed });
-    if (error) {
-      this.dispatchEvent(
-        new CustomEvent('gui-input-error', {
-          detail: { message: error },
-          bubbles: true,
-          composed: true,
-        }),
-      );
-    }
+    if (error) dispatchInputError(this, error);
   }
 
   protected override validate(): GuiValidity | null {
@@ -546,13 +557,15 @@ export class GuiRangeTimePicker extends GuiFormControl {
     return null;
   }
 
-  private onPillClick() {
+  private onPillClick(event: Event) {
+    stopPropagation(event);
     this._popup.show();
   }
 
   private onEditStateChange = (
     event: CustomEvent<{ selected: TimeRange | null; editing: boolean }>,
   ) => {
+    stopPropagation(event);
     this._editing = event.detail.editing;
   };
 

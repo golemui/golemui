@@ -119,4 +119,12 @@ gui-toggle {
   label {
     cursor: pointer;
   }
+
+  // Read-only looks like the editable switch, as a read-only text field does, without the
+  // pointer that promises a change.
+  label:has(input[aria-readonly='true']),
+  input[aria-readonly='true'],
+  input[aria-readonly='true'] + .gui-toggle--slider {
+    cursor: default;
+  }
 }

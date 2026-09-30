@@ -7,7 +7,7 @@ import { addErrors, addLabel, type ControlTemplateData } from '../utils/template
 import { blockNonNumericInput, blockNonNumericKeys, isRealNumber } from '../utils/numeric';
 import { CARET_DOWN_PATH, CARET_UP_PATH } from '../utils/icons';
 import { GuiFormControl, type GuiValidity } from '../gui-form-control';
-import { dispatchChange, dispatchValue, valueEvents } from '../utils/events';
+import { dispatchBlur, dispatchChange, dispatchValue, valueEvents } from '../utils/events';
 import { message } from '../utils/messages';
 
 /** What <gui-number> renders besides the control state: its presentation props. */
@@ -32,7 +32,7 @@ export class GuiNumber extends GuiFormControl {
   /** The number, or `undefined` when empty. */
   @property({ type: Number }) value: number | undefined = undefined;
 
-  /** The step of the ArrowUp and ArrowDown keys. Defaults to 1. */
+  /** The step of the ArrowUp and ArrowDown keys. Defaults to 1. An empty field steps from 0. */
   @property({ type: Number }) step: number | undefined = undefined;
   /** Text shown while the control is empty. */
   @property({ type: String }) placeholder: string | undefined = undefined;
@@ -220,43 +220,34 @@ export class GuiNumber extends GuiFormControl {
 
   /** @internal */
   minus() {
-    if (!this.readOnly) {
-      const target = this.querySelector(`input[id="${this.uid}"]`) as HTMLInputElement;
-      const step = typeof this.step === 'number' ? this.step : 1;
-      let value =
-        Number(target.valueAsNumber) || Number(target.valueAsNumber) === 0
-          ? target.valueAsNumber - step
-          : 1;
-
-      value = isRealNumber(this.maximum) ? Math.min(value, this.maximum) : value;
-      value = isRealNumber(this.minimum) ? Math.max(value, this.minimum) : value;
-
-      target.valueAsNumber = value;
-      this.value = value;
-
-      // A step is a complete edit, like the native number input's arrow keys.
-      dispatchValue(this, this.value);
-    }
+    this.stepBy(-1);
   }
 
   /** @internal */
   plus() {
-    if (!this.readOnly) {
-      const target = this.querySelector(`input[id="${this.uid}"]`) as HTMLInputElement;
-      const step = typeof this.step === 'number' ? this.step : 1;
-      let value =
-        Number(target.valueAsNumber) || Number(target.valueAsNumber) === 0
-          ? target.valueAsNumber + step
-          : 1;
+    this.stepBy(1);
+  }
 
-      value = isRealNumber(this.maximum) ? Math.min(value, this.maximum) : value;
-      value = isRealNumber(this.minimum) ? Math.max(value, this.minimum) : value;
+  /**
+   * Steps the value up or down like a native number input: an empty field steps from 0, so
+   * ArrowDown gives -step, and the result is clamped to minimum and maximum.
+   */
+  private stepBy(direction: 1 | -1) {
+    if (this.readOnly) return;
 
-      target.valueAsNumber = value;
-      this.value = value;
+    const target = this.querySelector(`input[id="${this.uid}"]`) as HTMLInputElement;
+    const step = typeof this.step === 'number' ? this.step : 1;
+    const current = Number.isNaN(target.valueAsNumber) ? 0 : target.valueAsNumber;
+    let value = current + direction * step;
 
-      dispatchValue(this, this.value);
-    }
+    value = isRealNumber(this.maximum) ? Math.min(value, this.maximum) : value;
+    value = isRealNumber(this.minimum) ? Math.max(value, this.minimum) : value;
+
+    target.valueAsNumber = value;
+    this.value = value;
+
+    // A step is a complete edit, like the native number input's arrow keys.
+    dispatchValue(this, this.value);
   }
 
   protected override validate(): GuiValidity | null {
@@ -304,12 +295,7 @@ export class GuiNumber extends GuiFormControl {
     // user is typing; land them now instead of relying on the blur dispatch to
     // coincidentally cause a store change and re-render.
     this.syncNativeInput();
-    this.dispatchEvent(
-      new CustomEvent('gui-blur', {
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatchBlur(this);
   }
 }
 

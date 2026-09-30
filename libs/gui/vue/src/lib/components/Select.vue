@@ -28,7 +28,9 @@ const selectRef = ref<HTMLElement | null>(null);
 let currentEl: HTMLElement | null = null;
 
 const errorHandler = (e: Event) => {
-  injectValidationIssues([(e as CustomEvent).detail.message]);
+  // An empty message withdraws the error.
+  const message = (e as CustomEvent).detail.message as string;
+  injectValidationIssues(message ? [message] : null);
 };
 
 watch(selectRef, (el) => {

@@ -16,7 +16,15 @@ import {
 } from '../utils/parts';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 import { boundsValidity, GuiFormControl, type GuiValidity } from '../gui-form-control';
-import { dispatchValue, fires, valueEvents, type GuiInputErrorEventDetail } from '../utils/events';
+import {
+  dispatch,
+  dispatchBlur,
+  dispatchInputError,
+  dispatchValue,
+  fires,
+  valueEvents,
+  type GuiInputErrorEventDetail,
+} from '../utils/events';
 import { message } from '../utils/messages';
 
 const DATE_PART_TYPES: readonly DateTimePartType[] = ['day', 'month', 'year'];
@@ -113,10 +121,7 @@ export class GuiDate extends GuiFormControl {
       dispatchValue(this, null);
       this._parts.resetSurfacedInputError();
     },
-    onInputErrorSurfaced: (message) =>
-      this.dispatchEvent(
-        new CustomEvent('gui-input-error', { detail: { message }, bubbles: true }),
-      ),
+    onInputErrorSurfaced: (message) => dispatchInputError(this, message),
     onSurfacedErrorCleared: (value) => dispatchValue(this, value),
   });
 
@@ -209,7 +214,7 @@ export class GuiDate extends GuiFormControl {
     };
 
     return html`
-      ${this.label ? addLabel(this.uid, templateData, false, undefined, false) : nothing}
+      ${addLabel(this.uid, templateData, false, undefined, false)}
 
       <div class="gui-widget" @focusout=${this.onWidgetFocusOut}>
         <div
@@ -244,13 +249,7 @@ export class GuiDate extends GuiFormControl {
     });
     this._parts.applyWriteBacks(group, writeBacks);
 
-    this.dispatchEvent(
-      new CustomEvent('gui-parts-change', {
-        detail: { date: result.kind === 'valid' ? result.iso : null },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatch(this, 'gui-parts-change', { date: result.kind === 'valid' ? result.iso : null });
 
     if (result.kind === 'invalid') {
       // Date is complete but invalid
@@ -320,7 +319,7 @@ export class GuiDate extends GuiFormControl {
    * segments never validates a half-typed entry.
    */
   private onFocusLeave(): void {
-    this.dispatchEvent(new CustomEvent('gui-blur'));
+    dispatchBlur(this);
     this.settleOnFocusLeave();
   }
 

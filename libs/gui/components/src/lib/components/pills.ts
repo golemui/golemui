@@ -15,7 +15,7 @@ import {
 } from '../utils/icons';
 import { GuiElement } from '../gui-element';
 import { message } from '../utils/messages';
-import { fires } from '../utils/events';
+import { dispatch, fires } from '../utils/events';
 
 export interface GuiPillItem {
   /** Stable identity used for `repeat()` keys and event payloads. */
@@ -103,7 +103,7 @@ export class GuiPills extends GuiElement {
 
   /** Makes the pill bodies clickable, firing `gui-pill-click`. */
   @property({ type: Boolean }) clickable = false;
-  /** Adds a remove button to each pill. */
+  /** Adds a remove button to each pill, unless the pills are disabled or read-only. */
   @property({ type: Boolean }) removable = true;
   /** Collapses the pills into a count with a dropdown when they do not fit. */
   @property({ type: Boolean }) bubble = true;
@@ -153,15 +153,8 @@ export class GuiPills extends GuiElement {
     clickIntent: () => 'ignore',
     keyToggleMode: 'openClose',
     focusPopupSelector: '.gui-pills__dropdown .gui-pills__pill',
-    onOpenChanged: (open) => {
-      this.dispatchEvent(
-        new CustomEvent<GuiPillsDropdownEventDetail>('gui-dropdown-toggle', {
-          detail: { open },
-          bubbles: true,
-          composed: true,
-        }),
-      );
-    },
+    onOpenChanged: (open) =>
+      dispatch<GuiPillsDropdownEventDetail>(this, 'gui-dropdown-toggle', { open }),
   });
 
   private get _showDropdown(): boolean {
@@ -214,7 +207,7 @@ export class GuiPills extends GuiElement {
     if (!this.editable) return;
     const related = e.relatedTarget as Node | null;
     if (related && this.contains(related)) return;
-    this.dispatchEvent(new CustomEvent('gui-pills-blur', { bubbles: true, composed: true }));
+    dispatch(this, 'gui-pills-blur');
   };
 
   override render() {
@@ -306,6 +299,11 @@ export class GuiPills extends GuiElement {
     `;
   }
 
+  /** Whether the pills show their remove button: never while disabled or read-only. */
+  private get isRemovable(): boolean {
+    return this.removable && !this.disabled && !this.readOnly;
+  }
+
   private renderPill(item: GuiPillItem, index: number, inDropdown: boolean) {
     const isClickable = this.clickable && !this.disabled && !this.readOnly;
     const isSelected = item.key === this.selectedKey;
@@ -314,7 +312,7 @@ export class GuiPills extends GuiElement {
     const showEditActions = this.editable && isClickable;
     const descriptionHints = [
       showEditActions && !isEditing ? item.editAriaLabel : undefined,
-      this.removable && !this.disabled && !this.readOnly && !isEditing && !isBusy
+      this.isRemovable && !isEditing && !isBusy
         ? message('remove', this.removeAriaLabel)
         : undefined,
     ].filter(Boolean);
@@ -369,7 +367,9 @@ export class GuiPills extends GuiElement {
         ${this.removable && !isEditing
           ? isBusy
             ? this.renderBusy()
-            : this.renderRemoveButton(item)
+            : this.isRemovable
+              ? this.renderRemoveButton(item)
+              : nothing
           : nothing}
       </button>
     `;
@@ -443,7 +443,7 @@ export class GuiPills extends GuiElement {
         }}
         @click=${(e: Event) => {
           e.stopPropagation();
-          this.emitRemove(item.key, this.items.indexOf(item));
+          if (this.isRemovable) this.emitRemove(item.key, this.items.indexOf(item));
         }}
       >
         ${this.removeIcon
@@ -469,13 +469,7 @@ export class GuiPills extends GuiElement {
   private onPillClick(e: Event, item: GuiPillItem) {
     if (!this.clickable || this.disabled || this.readOnly) return;
     e.stopPropagation();
-    this.dispatchEvent(
-      new CustomEvent<GuiPillEventDetail>('gui-pill-click', {
-        detail: { key: item.key },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatch<GuiPillEventDetail>(this, 'gui-pill-click', { key: item.key });
   }
 
   private handlePillFocus = (e: FocusEvent) => {
@@ -487,13 +481,7 @@ export class GuiPills extends GuiElement {
     });
     const key = target.dataset['key'];
     if (this.editable && key) {
-      this.dispatchEvent(
-        new CustomEvent<GuiPillEventDetail>('gui-pill-focus', {
-          detail: { key },
-          bubbles: true,
-          composed: true,
-        }),
-      );
+      dispatch<GuiPillEventDetail>(this, 'gui-pill-focus', { key });
     }
   };
 
@@ -528,13 +516,7 @@ export class GuiPills extends GuiElement {
 
     if ((e.key === 'Enter' || e.key === ' ') && this.clickable) {
       e.preventDefault();
-      this.dispatchEvent(
-        new CustomEvent<GuiPillEventDetail>('gui-pill-click', {
-          detail: { key: item.key },
-          bubbles: true,
-          composed: true,
-        }),
-      );
+      dispatch<GuiPillEventDetail>(this, 'gui-pill-click', { key: item.key });
       return;
     }
 
@@ -591,13 +573,7 @@ export class GuiPills extends GuiElement {
 
   private emitRemove(key: string, index: number) {
     this._pendingFocusIndex = index;
-    this.dispatchEvent(
-      new CustomEvent<GuiPillEventDetail>('gui-pill-remove', {
-        detail: { key },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatch<GuiPillEventDetail>(this, 'gui-pill-remove', { key });
   }
 
   private emitEditAction(
@@ -605,33 +581,15 @@ export class GuiPills extends GuiElement {
     key: string,
   ) {
     if (type === 'gui-pill-edit' && this._showDropdown) this._popup.suppressNextFocusOut();
-    this.dispatchEvent(
-      new CustomEvent<GuiPillEventDetail>(type, {
-        detail: { key },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatch<GuiPillEventDetail>(this, type, { key });
   }
 
   private emitExit(key: string, reason: GuiPillExitEventDetail['reason']) {
-    this.dispatchEvent(
-      new CustomEvent<GuiPillExitEventDetail>('gui-pill-exit', {
-        detail: { key, reason },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatch<GuiPillExitEventDetail>(this, 'gui-pill-exit', { key, reason });
   }
 
   private emitKeydown(key: string, event: KeyboardEvent) {
-    this.dispatchEvent(
-      new CustomEvent<GuiPillKeydownEventDetail>('gui-pill-keydown', {
-        detail: { key, event },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatch<GuiPillKeydownEventDetail>(this, 'gui-pill-keydown', { key, event });
   }
 
   // ─── Focus ───────────────────────────────────────────────────────────────
