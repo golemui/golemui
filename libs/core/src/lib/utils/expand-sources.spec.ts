@@ -197,6 +197,51 @@ describe('expandSources: repeater rows', () => {
     expect(resolved.props?.['seen']).toBe('1:Linus');
   });
 
+  it('keeps a property named items in a repeater path', () => {
+    const lines = repeater('lines', 'invoice.items', [
+      inputChild('line-name', 'invoice.items.items.name'),
+    ]);
+
+    const { resolvedSources, repeaterItemScopes } = expandSources(flatFormOf(lines), {
+      invoice: { items: [{}, {}] },
+    });
+
+    expect(pathOf(resolvedSources['line-name[1]'])).toBe('invoice.items.1.name');
+    expect(repeaterItemScopes['line-name[1]']).toEqual({ itemPath: 'invoice.items.1', index: 1 });
+  });
+
+  it('keeps a row field whose name starts with items', () => {
+    const lines = repeater('lines', 'lines', [inputChild('line-total', 'lines.items.itemsTotal')]);
+
+    const { resolvedSources } = expandSources(flatFormOf(lines), { lines: [{}] });
+
+    expect(pathOf(resolvedSources['line-total[0]'])).toBe('lines.0.itemsTotal');
+  });
+
+  it('writes the row index into a top-level repeater named items', () => {
+    const items = repeater('items', 'items', [inputChild('item-name', 'items.items.name')]);
+
+    const { resolvedSources } = expandSources(flatFormOf(items), { items: [{}, {}] });
+
+    expect(pathOf(resolvedSources['item-name[1]'])).toBe('items.1.name');
+  });
+
+  it('writes the row index into a template input bound to the whole row', () => {
+    const tags = repeater('tags', 'tags', [inputChild('tag', 'tags.items')]);
+
+    const { resolvedSources } = expandSources(flatFormOf(tags), { tags: ['a', 'b'] });
+
+    expect(pathOf(resolvedSources['tag[1]'])).toBe('tags.1');
+  });
+
+  it('throws for a template input whose path is outside its row', () => {
+    const lines = repeater('lines', 'lines', [inputChild('stray', 'other.name')]);
+
+    expect(() => expandSources(flatFormOf(lines), { lines: [{}] })).toThrowError(
+      'Path "other.name" is not inside the repeater row "lines.items".',
+    );
+  });
+
   it('indexes position uids the same way as authored uids', () => {
     const lineItems = repeater('#0.2', 'lineItems', [displayChild('#0.2.t.1')], '#0.2.t');
 
@@ -258,6 +303,23 @@ describe('expandSources: nested repeaters', () => {
 
     expect(cached.uid).toBe('cached-devs');
     expect(pathOf(resolvedSources['dev-name[2][1]'])).toBe('teams.2.devs.1.name');
+  });
+
+  it('keeps a property named items at both nesting levels', () => {
+    // Each order has an `items` array, so the inner repeater is declared at `orders.items.items`.
+    const orders = repeater('orders', 'orders', [
+      repeater('order-lines', 'orders.items.items', [
+        inputChild('sku', 'orders.items.items.items.sku'),
+      ]),
+    ]);
+
+    const { resolvedSources, repeaterItemScopes } = expandSources(flatFormOf(orders), {
+      orders: [{ items: [] }, { items: [{}, {}] }],
+    });
+
+    expect(pathOf(resolvedSources['order-lines[1]'])).toBe('orders.1.items');
+    expect(pathOf(resolvedSources['sku[1][1]'])).toBe('orders.1.items.1.sku');
+    expect(repeaterItemScopes['sku[1][1]']).toEqual({ itemPath: 'orders.1.items.1', index: 1 });
   });
 
   it('recurses into a nested repeater produced by a row function widget', () => {

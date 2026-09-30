@@ -29,6 +29,21 @@ export const isRepeaterWidget = (widget: FormWidget<string>): widget is Repeater
 export const extractRepeaterIndexes = (uid: string): number[] =>
   [...uid.matchAll(/\[(\d+)\]/g)].map((m) => parseInt(m[1], 10));
 
+/** The path segment that stands for "the current row" in template paths, e.g. `users.items.name`. */
+const ITEMS_TOKEN = 'items';
+
+/**
+ * The innermost repeater row a template widget is materialized for.
+ */
+type RepeaterRow = {
+  /** The repeater `path` as the form declares it, outer `items` tokens included, e.g. `teams.items.devs`. */
+  declaredPath: DotPath;
+  /** The repeater `path` with every outer row index filled in, e.g. `teams.2.devs`. */
+  concretePath: DotPath;
+  /** Row indexes from the outermost repeater down to this row, e.g. `[2, 0]`. */
+  indexes: number[];
+};
+
 /**
  * The two maps `expandSources` builds from the form and the data.
  */
@@ -64,14 +79,19 @@ export function expandSources(
   for (const widget of Object.values(flatForm)) {
     expanded.resolvedSources[widget.uid as Uid] = widget;
     if (isRepeaterWidget(widget)) {
-      expandRepeaterRows(widget, [], data, expanded);
+      expandRepeaterRows(widget, widget.path, [], data, expanded);
     }
   }
   return expanded;
 }
 
+/**
+ * @param repeater - The repeater with a concrete `path`.
+ * @param declaredPath - The same repeater's `path` as the template declares it.
+ */
 function expandRepeaterRows(
   repeater: RepeaterTemplateWidget,
+  declaredPath: DotPath,
   outerIndexes: number[],
   data: Record<string, any>,
   expanded: ExpandedSources,
@@ -83,39 +103,50 @@ function expandRepeaterRows(
   const templateWidgets = flattenForm([repeater.props.template as FormWidget<never>]);
 
   rows.forEach((row, rowIndex) => {
-    const indexes = [...outerIndexes, rowIndex];
+    const repeaterRow: RepeaterRow = {
+      declaredPath,
+      concretePath: repeater.path,
+      indexes: [...outerIndexes, rowIndex],
+    };
     const itemScope: RepeaterItemScope = {
       itemPath: `${repeater.path}.${rowIndex}`,
       index: rowIndex,
     };
 
     for (const templateWidget of templateWidgets) {
-      const item = makeRepeaterItemConfig(templateWidget, indexes);
+      const item = materializeRowWidget(templateWidget, repeaterRow);
       expanded.resolvedSources[item.uid as Uid] = item;
       expanded.repeaterItemScopes[item.uid as Uid] = itemScope;
 
-      const nestedRepeater = asNestedRepeater(templateWidget, item, indexes, data, row, rowIndex);
-      if (nestedRepeater) {
-        expandRepeaterRows(nestedRepeater, indexes, data, expanded);
+      const nested = asNestedRepeater(templateWidget, item, repeaterRow, data, row, rowIndex);
+      if (nested) {
+        expandRepeaterRows(
+          nested.repeater,
+          nested.declaredPath,
+          repeaterRow.indexes,
+          data,
+          expanded,
+        );
       }
     }
   });
 }
 
 /**
- * Returns the nested repeater with concrete uid and path when a template widget is one, otherwise undefined.
+ * Returns the nested repeater with concrete uid and path, plus the path its template declares, when a
+ * template widget is one, otherwise undefined.
  * A function widget is called once here only to find out whether it produces a repeater.
  */
 function asNestedRepeater(
   templateWidget: FormWidget<string>,
   item: FormWidget<string>,
-  indexes: number[],
+  repeaterRow: RepeaterRow,
   data: Record<string, any>,
   row: unknown,
   rowIndex: number,
-): RepeaterTemplateWidget | undefined {
-  if (isRepeaterWidget(item)) {
-    return item;
+): { repeater: RepeaterTemplateWidget; declaredPath: DotPath } | undefined {
+  if (isRepeaterWidget(templateWidget) && isRepeaterWidget(item)) {
+    return { repeater: item, declaredPath: templateWidget.path };
   }
   if (!isFunctionWidget(templateWidget)) {
     return undefined;
@@ -134,7 +165,18 @@ function asNestedRepeater(
   // The function may return a cached object. Copy it before writing the uid,
   // so the write never reaches the object the function owns.
   const resolvedWithUid = { ...resolved, uid: templateWidget.uid as string };
-  return makeRepeaterItemConfig(resolvedWithUid, indexes) as RepeaterTemplateWidget;
+  return {
+    repeater: materializeRowWidget(resolvedWithUid, repeaterRow) as RepeaterTemplateWidget,
+    declaredPath: (resolved as RepeaterTemplateWidget).path,
+  };
+}
+
+/** Like {@link makeRepeaterItemConfig}, but places the row by position, see {@link toRowItemPath}. */
+function materializeRowWidget(
+  widget: FormWidget<string>,
+  repeaterRow: RepeaterRow,
+): FormWidget<string> {
+  return materializeWidget(widget, repeaterRow.indexes, (path) => toRowItemPath(path, repeaterRow));
 }
 
 /**
@@ -143,6 +185,10 @@ function asNestedRepeater(
  *
  * Function widgets are wrapped in a new function that delegates to the original, so they stay callable while
  * carrying the materialized `uid` and `path`.
+ *
+ * Every path segment named `items`, except the first, is a row token, filled in order. With indexes
+ * alone a property named `items` cannot be told apart from a token, so such a path throws.
+ * `expandSources` places rows by position and has no such limit.
  *
  * @param widget - The base widget config defined on the repeater template.
  * @param repeaterIndexes - Ordered list of indexes for each nesting level
@@ -168,13 +214,23 @@ export function makeRepeaterItemConfig(
   widget: FormWidget<string>,
   repeaterIndexes: number[],
 ): FormWidget<string> {
+  return materializeWidget(widget, repeaterIndexes, (path) =>
+    toRepeaterItemPath(path, repeaterIndexes),
+  );
+}
+
+function materializeWidget(
+  widget: FormWidget<string>,
+  repeaterIndexes: number[],
+  materializePath: (path: DotPath) => string,
+): FormWidget<string> {
   const uid = toRepeaterItemUid(widget.uid as Uid, repeaterIndexes);
   if (isFunctionWidget(widget)) {
     const materialized: FunctionWidget<string> = (api) => widget(api);
     materialized.uid = uid;
     materialized.type = widget.type;
     if (widget.path !== undefined) {
-      materialized.path = toRepeaterItemPath(widget.path, repeaterIndexes);
+      materialized.path = materializePath(widget.path);
     }
     return materialized;
   }
@@ -182,7 +238,7 @@ export function makeRepeaterItemConfig(
     return {
       ...widget,
       uid,
-      path: toRepeaterItemPath(widget.path, repeaterIndexes),
+      path: materializePath(widget.path),
     };
   } else {
     return {
@@ -206,23 +262,39 @@ function toRepeaterItemPath(path: DotPath, repeaterIndexes: number[]): string {
     throw new Error('Repeater indexes cannot be an empty array');
   }
 
-  const ITEMS_TOKEN = 'items';
-  const parts = path.split(`.${ITEMS_TOKEN}`);
-  const itemsCount = parts.length - 1;
+  const segments = path.split('.');
+  // The first segment is never a token, because a repeater path cannot be empty.
+  const tokenPositions = segments
+    .map((segment, position) => (position > 0 && segment === ITEMS_TOKEN ? position : -1))
+    .filter((position) => position !== -1);
 
-  if (itemsCount !== repeaterIndexes.length) {
+  if (tokenPositions.length !== repeaterIndexes.length) {
     throw new Error(
-      `Path contains ${itemsCount} '${ITEMS_TOKEN}' occurrences, but ${repeaterIndexes.length} indexes were provided.`,
+      `Path contains ${tokenPositions.length} '${ITEMS_TOKEN}' occurrences, but ${repeaterIndexes.length} indexes were provided.`,
     );
   }
 
-  // Reconstruct the path by joining segments with the corresponding index
-  return parts.reduce((acc, part, i) => {
-    if (i === 0) {
-      return part;
-    }
-    return `${acc}.${repeaterIndexes[i - 1]}${part}`;
+  tokenPositions.forEach((position, level) => {
+    segments[position] = String(repeaterIndexes[level]);
   });
+  return segments.join('.');
+}
+
+/**
+ * Places a template path in its row by position: the prefix `<declared repeater path>.items` becomes
+ * `<concrete repeater path>.<row index>`. Any other `items` segment is a property name and stays.
+ *
+ * @example
+ * // row: { declaredPath: 'invoice.items', concretePath: 'invoice.items', indexes: [3] }
+ * toRowItemPath('invoice.items.items.name', row); // 'invoice.items.3.name'
+ */
+function toRowItemPath(path: DotPath, repeaterRow: RepeaterRow): string {
+  const rowPrefix = `${repeaterRow.declaredPath}.${ITEMS_TOKEN}`;
+  if (path !== rowPrefix && !path.startsWith(`${rowPrefix}.`)) {
+    throw new Error(`Path "${path}" is not inside the repeater row "${rowPrefix}".`);
+  }
+  const rowIndex = repeaterRow.indexes[repeaterRow.indexes.length - 1];
+  return `${repeaterRow.concretePath}.${rowIndex}${path.slice(rowPrefix.length)}`;
 }
 
 /**

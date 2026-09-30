@@ -69,6 +69,34 @@ describe('makeRepeaterItemConfig', () => {
         path: 'users.1.addresses.3.street',
       });
     });
+
+    it('should not treat a segment that only starts with "items" as a token', () => {
+      vi.mocked(isInputWidget).mockReturnValue(true);
+
+      const mockWidget = {
+        uid: 'line-total',
+        path: 'lines.items.itemsTotal',
+      } as unknown as NonFunctionWidget<string>;
+
+      expect(makeRepeaterItemConfig(mockWidget, [4])).toEqual({
+        uid: 'line-total[4]',
+        path: 'lines.4.itemsTotal',
+      });
+    });
+
+    it('should not treat the first segment as a token', () => {
+      vi.mocked(isInputWidget).mockReturnValue(true);
+
+      const mockWidget = {
+        uid: 'item-name',
+        path: 'items.items.name',
+      } as unknown as NonFunctionWidget<string>;
+
+      expect(makeRepeaterItemConfig(mockWidget, [2])).toEqual({
+        uid: 'item-name[2]',
+        path: 'items.2.name',
+      });
+    });
   });
 
   describe('Function widgets', () => {
@@ -145,6 +173,20 @@ describe('makeRepeaterItemConfig', () => {
       } as unknown as NonFunctionWidget<string>;
 
       // Providing 1 index for 2 tokens
+      expect(() => makeRepeaterItemConfig(mockWidget, [0])).toThrowError(
+        "Path contains 2 'items' occurrences, but 1 indexes were provided.",
+      );
+    });
+
+    it('should throw for a property named "items", because indexes alone cannot place the row', () => {
+      vi.mocked(isInputWidget).mockReturnValue(true);
+
+      const mockWidget = {
+        uid: 'line-name',
+        path: 'invoice.items.items.name',
+      } as unknown as NonFunctionWidget<string>;
+
+      // expandSources resolves this path by position, see expand-sources.spec.ts.
       expect(() => makeRepeaterItemConfig(mockWidget, [0])).toThrowError(
         "Path contains 2 'items' occurrences, but 1 indexes were provided.",
       );
