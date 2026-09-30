@@ -24,11 +24,12 @@
         "kind": "input",
         "type": "textinput",
         "path": "email",
-        "label": "E mail address"
+        "label": "E-mail address"
       }
     ]
   },
   "unmapped": [],
+  "diagnostics": [],
   "validation": {
     "valid": true,
     "errors": [],

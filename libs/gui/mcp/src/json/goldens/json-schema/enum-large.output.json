@@ -22,8 +22,6 @@
           ]
         },
         "props": {
-          "labelField": "label",
-          "valueField": "value",
           "items": [
             {
               "label": "Us",
@@ -61,12 +59,15 @@
               "label": "Jp",
               "value": "jp"
             }
-          ]
+          ],
+          "labelField": "label",
+          "valueField": "value"
         }
       }
     ]
   },
   "unmapped": [],
+  "diagnostics": [],
   "validation": {
     "valid": true,
     "errors": [],

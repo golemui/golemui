@@ -1,0 +1,37 @@
+{
+  "document": {
+    "openapi": "3.0.0",
+    "components": {
+      "schemas": {
+        "Category": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "parent": {
+              "$ref": "#/components/schemas/Category"
+            }
+          }
+        }
+      }
+    },
+    "paths": {
+      "/categories": {
+        "post": {
+          "operationId": "createCategory",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Category"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "operation": "POST /categories"
+}

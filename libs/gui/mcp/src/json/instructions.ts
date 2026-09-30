@@ -10,7 +10,10 @@ export const JSON_INSTRUCTIONS =
   'call `json_generate_from_openapi`: pass `operation` as "METHOD /path" (e.g. "POST /users") or an ' +
   'exact operationId, plus the spec as a parsed `document` or a `documentUrl` to fetch — it ' +
   "resolves the operation's request body, dereferences `$ref`s, and falls back to the " +
-  "operation's parameters when there is no request body.\n" +
+  "operation's parameters when there is no request body. Both also return `diagnostics` " +
+  '(severity, code, path, pointer), and both take optional `overrides` (widget fields by data ' +
+  'path, e.g. `{ "address.street": { "widget": "textarea" } }`) and `rules` to choose other ' +
+  'widgets.\n' +
   '2. Building or editing by hand? Look up a single widget with `json_get_widget_spec` (its `kind`, ' +
   '`props`, and `validator` shape), and cross-cutting behavior that spans widgets — conditional ' +
   'rendering, per-state prop overrides, validation rules and error messages — with `get_concept`. ' +

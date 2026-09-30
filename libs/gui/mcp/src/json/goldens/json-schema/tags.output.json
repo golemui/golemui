@@ -32,7 +32,21 @@
       }
     ]
   },
-  "unmapped": [],
+  "unmapped": [
+    {
+      "path": "scores",
+      "reason": "The tags widget writes strings, and the schema expects integer items."
+    }
+  ],
+  "diagnostics": [
+    {
+      "severity": "warning",
+      "code": "item-type-mismatch",
+      "message": "The tags widget writes strings, and the schema expects integer items.",
+      "path": "scores",
+      "pointer": "/properties/scores"
+    }
+  ],
   "validation": {
     "valid": true,
     "errors": [],

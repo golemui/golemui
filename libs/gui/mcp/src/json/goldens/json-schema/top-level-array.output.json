@@ -6,7 +6,16 @@
   "unmapped": [
     {
       "path": "",
-      "reason": "Top-level JSON Schema is not an object — only object schemas map to forms."
+      "reason": "Only an object schema at the root can become a form."
+    }
+  ],
+  "diagnostics": [
+    {
+      "severity": "error",
+      "code": "root-not-object",
+      "message": "Only an object schema at the root can become a form.",
+      "path": "",
+      "pointer": ""
     }
   ],
   "validation": {

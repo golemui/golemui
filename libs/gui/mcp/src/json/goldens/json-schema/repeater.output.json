@@ -8,7 +8,7 @@
         "path": "addresses",
         "label": "Addresses",
         "props": {
-          "addLabel": "Add addresse",
+          "addLabel": "Add address",
           "removeLabel": "Remove",
           "template": {
             "kind": "layout",
@@ -41,6 +41,7 @@
     ]
   },
   "unmapped": [],
+  "diagnostics": [],
   "validation": {
     "valid": true,
     "errors": [],

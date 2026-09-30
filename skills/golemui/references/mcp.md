@@ -68,7 +68,9 @@ JSON path:
 
 - `json_generate_from_schema({ jsonSchema, ... })` — JSON Schema → validated form definition.
 - `json_generate_from_openapi({ document | documentUrl, operation, ... })` — OpenAPI 3.x
-  operation → validated form definition. Both return an `unmapped` list — surface it.
+  operation → validated form definition. Both return `diagnostics` and an `unmapped` list
+  (its errors and warnings) - surface them. Both take optional `rules` and `overrides` to
+  choose other widgets, e.g. `overrides: { "address.street": { "widget": "textarea" } }`.
 - `json_get_widget_spec({ widgetType })` — one widget's JSON shape, example, and notes.
 - `json_validate_form_definition({ formDefinition })` — **the terminal check**: fix `errors`
   and re-validate until `valid: true`; `warnings`/`expressionWarnings` are advisory.

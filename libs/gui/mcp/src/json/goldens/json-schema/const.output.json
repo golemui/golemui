@@ -7,6 +7,8 @@
         "type": "textinput",
         "path": "version",
         "label": "Version",
+        "readonly": true,
+        "defaultValue": "v2",
         "validator": {
           "type": "string",
           "const": "v2"
@@ -19,23 +21,18 @@
         "label": "Accept Terms",
         "validator": {
           "type": "boolean",
+          "required": true,
           "const": true
         }
       }
     ]
   },
   "unmapped": [],
+  "diagnostics": [],
   "validation": {
     "valid": true,
     "errors": [],
-    "warnings": [
-      {
-        "path": "/form/1/validator",
-        "message": "Boolean validator has `const` but no `required: true` — the pristine value passes: a never-touched checkbox holds `undefined`, and non-required validators skip validation entirely for `undefined`.",
-        "suggestion": "Add `required: true` so the untouched state fails too, and set `messages.invalid` and `messages.const` to the same user-facing text.",
-        "keyword": "booleanValidator"
-      }
-    ],
+    "warnings": [],
     "expressionWarnings": [],
     "interpolationWarnings": []
   }

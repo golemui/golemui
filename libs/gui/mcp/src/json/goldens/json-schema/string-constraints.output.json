@@ -29,7 +29,11 @@
         "kind": "input",
         "type": "textinput",
         "path": "website",
-        "label": "Website"
+        "label": "Website",
+        "validator": {
+          "type": "string",
+          "format": "url"
+        }
       },
       {
         "kind": "input",
@@ -54,6 +58,7 @@
     ]
   },
   "unmapped": [],
+  "diagnostics": [],
   "validation": {
     "valid": true,
     "errors": [],

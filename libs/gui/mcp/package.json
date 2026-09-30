@@ -44,6 +44,7 @@
     "ajv-formats": "^3.0.1",
     "typescript": "^5.9.2",
     "@golemui/gui-schemas": "*",
+    "@golemui/schemas": "*",
     "@golemui/gui-shared": "*",
     "@golemui/gui-validators": "*",
     "@golemui/dx": "*",

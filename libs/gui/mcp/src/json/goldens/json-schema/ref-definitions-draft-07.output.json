@@ -1,14 +1,27 @@
 {
   "formDefinition": {
     "$schema": "https://golemui.com/schemas/form.schema.json",
-    "form": []
+    "form": [
+      {
+        "kind": "layout",
+        "type": "flex",
+        "props": {
+          "direction": "column",
+          "gap": 8
+        },
+        "children": [
+          {
+            "kind": "input",
+            "type": "textinput",
+            "path": "owner.name",
+            "label": "Name"
+          }
+        ]
+      }
+    ]
   },
-  "unmapped": [
-    {
-      "path": "owner",
-      "reason": "Unsupported JSON Schema type `undefined`."
-    }
-  ],
+  "unmapped": [],
+  "diagnostics": [],
   "validation": {
     "valid": true,
     "errors": [],

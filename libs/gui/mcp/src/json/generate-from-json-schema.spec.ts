@@ -72,7 +72,7 @@ describe('json_generate_from_schema', () => {
     expect(bigEnum.validation.valid).toBe(true);
   });
 
-  it('maps a date format to dateInput, date-time to datePicker', () => {
+  it('maps a date format to dateInput, date-time to dateTimePicker', () => {
     const r = generateFromJsonSchema({
       jsonSchema: {
         type: 'object',
@@ -86,7 +86,8 @@ describe('json_generate_from_schema', () => {
     expect(r.validation.valid).toBe(true);
     const form = r.formDefinition.form as any[];
     expect(form[0].type).toBe('dateInput');
-    expect(form[1].type).toBe('datePicker');
+    // A datePicker would drop the time.
+    expect(form[1].type).toBe('dateTimePicker');
   });
 
   it('renders nested objects as flex groups', () => {
@@ -164,7 +165,8 @@ describe('json_generate_from_schema', () => {
       submitAction: false,
     });
     expect(r.validation.valid).toBe(true);
-    expect(r.unmapped).toEqual([]);
+    // The tags widget writes strings, so integer items are reported.
+    expect(r.unmapped).toEqual([{ path: 'scores', reason: expect.stringContaining('strings') }]);
 
     const form = r.formDefinition.form as any[];
     expect(form[0]).toMatchObject({

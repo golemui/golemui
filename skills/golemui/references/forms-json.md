@@ -85,8 +85,10 @@ valid, 1 = fix the reported errors; see [mcp.md](mcp.md)).
 
 With the MCP: `json_generate_from_schema` maps a JSON Schema (e.g. Zod-derived) to a validated
 form; `json_generate_from_openapi` resolves an OpenAPI 3.x operation (`"POST /users"` or an
-operationId) and builds the form from its request body. Both return an `unmapped` list —
-surface anything left over. Walkthrough:
+operationId) and builds the form from its request body. Both return `diagnostics` and an
+`unmapped` list - surface anything left over. `if/then/else`, `dependentRequired` and
+discriminated `oneOf` become `include.when` conditions and form `states`. Optional `rules` and
+`overrides` choose other widgets. Walkthrough:
 https://golemui.com/json/mcp/generating-from-a-schema.md
 
 ## Key docs (fetch as needed)

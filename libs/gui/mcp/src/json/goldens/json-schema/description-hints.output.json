@@ -24,11 +24,15 @@
         "kind": "input",
         "type": "checkbox",
         "path": "subscribed",
-        "label": "Subscribed"
+        "label": "Subscribed",
+        "props": {
+          "hint": "Receive the newsletter."
+        }
       }
     ]
   },
   "unmapped": [],
+  "diagnostics": [],
   "validation": {
     "valid": true,
     "errors": [],

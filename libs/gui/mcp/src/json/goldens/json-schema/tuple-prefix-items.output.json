@@ -1,14 +1,31 @@
 {
   "formDefinition": {
     "$schema": "https://golemui.com/schemas/form.schema.json",
-    "form": []
+    "form": [
+      {
+        "kind": "layout",
+        "type": "flex",
+        "props": {
+          "direction": "row",
+          "gap": 12
+        },
+        "children": [
+          {
+            "kind": "input",
+            "type": "number",
+            "path": "coordinates.0"
+          },
+          {
+            "kind": "input",
+            "type": "number",
+            "path": "coordinates.1"
+          }
+        ]
+      }
+    ]
   },
-  "unmapped": [
-    {
-      "path": "coordinates",
-      "reason": "Array without `items` schema cannot be mapped."
-    }
-  ],
+  "unmapped": [],
+  "diagnostics": [],
   "validation": {
     "valid": true,
     "errors": [],

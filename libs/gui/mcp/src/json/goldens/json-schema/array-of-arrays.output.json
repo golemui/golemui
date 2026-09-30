@@ -6,7 +6,16 @@
   "unmapped": [
     {
       "path": "matrix",
-      "reason": "Array shape is not mappable (only arrays of objects → repeater, or arrays of strings/numbers → tags)."
+      "reason": "No rule can build this array schema, so it is not rendered."
+    }
+  ],
+  "diagnostics": [
+    {
+      "severity": "error",
+      "code": "unsupported-shape",
+      "message": "No rule can build this array schema, so it is not rendered.",
+      "path": "matrix",
+      "pointer": "/properties/matrix"
     }
   ],
   "validation": {

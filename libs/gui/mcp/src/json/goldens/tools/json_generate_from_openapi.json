@@ -1,6 +1,6 @@
 {
   "name": "json_generate_from_openapi",
-  "description": "Generate a GolemUI form for a specific OpenAPI 3.x operation (e.g. \"POST /users\"). Resolves the operation's JSON request body, dereferences `$ref`s, then maps it to a form definition that is validated against the GolemUI JSON Schemas before being returned, so it is guaranteed syntactically correct. Falls back to operation parameters when no request body is present. Anything the mapper cannot handle is reported in `unmapped` rather than silently dropped — use that list to surface remaining work to the user. Pass either a parsed `document` or a `documentUrl` to fetch.",
+  "description": "Generate a GolemUI form for a specific OpenAPI 3.x operation (e.g. \"POST /users\"). Converts the operation's JSON request body, with its `$ref`s into the document, to a form definition that is validated against the GolemUI JSON Schemas before being returned, so it is guaranteed syntactically correct. Falls back to operation parameters when no object request body is present. Returns `diagnostics` and `unmapped` like `json_generate_from_schema`: surface them to the user. Pass either a parsed `document` or a `documentUrl` to fetch, and `rules` or `overrides` to choose other widgets.",
   "inputSchema": {
     "type": "object",
     "properties": {
@@ -24,6 +24,31 @@
       "submitLabel": {
         "type": "string",
         "description": "Label for the submit button. Defaults to the operation summary or a verb derived from the HTTP method."
+      },
+      "rules": {
+        "type": "array",
+        "description": "Optional rules that choose or change widgets, checked in order before the gui defaults. Each rule has a `match` object plus widget fields. `match` compares schema keywords by deep equality or with `{ \"$in\": [...] }`, `{ \"$exists\": true }` or `{ \"$regex\": \"...\" }`, and node fields with `$type`, `$path` (a glob: `*` is one segment, `**` any number), `$name`, `$defName`, `$required` and `$inRepeater`. The widget fields are `widget` (a GolemUI widget type), `label`, `props`, `validator`, `defaultValue`, `readonly`, `size`, `uid`, `skip` and `order`. A rule without `widget` only changes the default widget. Example: `{ \"match\": { \"format\": \"email\" }, \"props\": { \"icon\": \"mail\" } }`.",
+        "items": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "match": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "required": [
+            "match"
+          ]
+        }
+      },
+      "overrides": {
+        "type": "object",
+        "description": "Optional widget fields by form data path, e.g. `{ \"address.street\": { \"widget\": \"textarea\" } }`. Inside arrays the path uses the `items` token (`lines.items.quantity`), and `\"\"` is the root. A key `$defs/<Name>` applies to every node that comes from that definition. The fields are the same as in `rules`. A path override wins over a definition override, and both win over `rules` and over the `x-golemui` keyword in the schema.",
+        "additionalProperties": {
+          "type": "object",
+          "additionalProperties": true
+        }
       }
     },
     "required": [

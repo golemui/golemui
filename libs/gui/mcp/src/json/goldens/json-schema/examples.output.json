@@ -10,11 +10,15 @@
         "validator": {
           "type": "string",
           "format": "email"
+        },
+        "props": {
+          "placeholder": "jane@example.com"
         }
       }
     ]
   },
   "unmapped": [],
+  "diagnostics": [],
   "validation": {
     "valid": true,
     "errors": [],

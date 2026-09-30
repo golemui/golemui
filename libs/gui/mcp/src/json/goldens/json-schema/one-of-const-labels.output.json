@@ -4,13 +4,30 @@
     "form": [
       {
         "kind": "input",
-        "type": "textinput",
+        "type": "select",
         "path": "size",
-        "label": "Size"
+        "label": "Size",
+        "props": {
+          "options": [
+            {
+              "label": "Small",
+              "value": "sm"
+            },
+            {
+              "label": "Medium",
+              "value": "md"
+            },
+            {
+              "label": "Large",
+              "value": "lg"
+            }
+          ]
+        }
       }
     ]
   },
   "unmapped": [],
+  "diagnostics": [],
   "validation": {
     "valid": true,
     "errors": [],

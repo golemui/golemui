@@ -6,25 +6,29 @@
         "kind": "input",
         "type": "textinput",
         "path": "name",
-        "label": "Name"
+        "label": "Name",
+        "defaultValue": "Anonymous"
       },
       {
         "kind": "input",
         "type": "number",
         "path": "quantity",
-        "label": "Quantity"
+        "label": "Quantity",
+        "defaultValue": 1
       },
       {
         "kind": "input",
         "type": "checkbox",
         "path": "subscribed",
-        "label": "Subscribed"
+        "label": "Subscribed",
+        "defaultValue": true
       },
       {
         "kind": "input",
         "type": "select",
         "path": "plan",
         "label": "Plan",
+        "defaultValue": "free",
         "validator": {
           "type": "string",
           "enum": [
@@ -48,6 +52,7 @@
     ]
   },
   "unmapped": [],
+  "diagnostics": [],
   "validation": {
     "valid": true,
     "errors": [],

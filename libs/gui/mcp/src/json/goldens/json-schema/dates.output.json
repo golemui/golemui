@@ -10,23 +10,28 @@
       },
       {
         "kind": "input",
-        "type": "datePicker",
+        "type": "dateTimePicker",
         "path": "startsAt",
         "label": "Starts At"
       },
       {
         "kind": "input",
-        "type": "textinput",
+        "type": "timeInput",
         "path": "opensAt",
-        "label": "Opens At",
-        "validator": {
-          "type": "string",
-          "format": "time"
-        }
+        "label": "Opens At"
       }
     ]
   },
   "unmapped": [],
+  "diagnostics": [
+    {
+      "severity": "info",
+      "code": "local-datetime",
+      "message": "The date-time widget writes the local date and time without a UTC offset, which a strict `date-time` check rejects.",
+      "path": "startsAt",
+      "pointer": "/properties/startsAt"
+    }
+  ],
   "validation": {
     "valid": true,
     "errors": [],

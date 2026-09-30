@@ -6,7 +6,8 @@
         "kind": "input",
         "type": "textinput",
         "path": "id",
-        "label": "Id"
+        "label": "Id",
+        "readonly": true
       },
       {
         "kind": "input",
@@ -17,6 +18,7 @@
     ]
   },
   "unmapped": [],
+  "diagnostics": [],
   "validation": {
     "valid": true,
     "errors": [],

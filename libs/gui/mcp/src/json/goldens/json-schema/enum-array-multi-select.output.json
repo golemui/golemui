@@ -4,7 +4,7 @@
     "form": [
       {
         "kind": "input",
-        "type": "tags",
+        "type": "multiList",
         "path": "colors",
         "label": "Colors",
         "validator": {
@@ -12,12 +12,28 @@
           "uniqueItems": true
         },
         "props": {
-          "placeholder": "Add and press Enter"
+          "items": [
+            {
+              "label": "Red",
+              "value": "red"
+            },
+            {
+              "label": "Green",
+              "value": "green"
+            },
+            {
+              "label": "Blue",
+              "value": "blue"
+            }
+          ],
+          "labelField": "label",
+          "valueField": "value"
         }
       }
     ]
   },
   "unmapped": [],
+  "diagnostics": [],
   "validation": {
     "valid": true,
     "errors": [],
