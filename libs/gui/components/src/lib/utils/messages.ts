@@ -10,6 +10,9 @@
  * function receives them as params, and any token still in its result is filled in afterwards.
  * Single braces keep them clear of the `{{…}}` interpolation of most i18n libraries.
  *
+ * A string with a `{count}` has an English default per plural category: the translate function
+ * receives the one for that count, and does its own language's plurals from `params.count`.
+ *
  * The keys are public API: apps use them in their translation files.
  */
 export const DEFAULT_MESSAGES = {
@@ -57,9 +60,6 @@ export const DEFAULT_MESSAGES = {
   endTime: 'End time',
 
   // ─── Ranges ───
-  dateRangeInput: 'Date range input',
-  timeRangeInput: 'Time range input',
-  dateTimeRangeInput: 'Date-time range input',
   startDate: 'Start date',
   endDate: 'End date',
   startDateTime: 'Start date-time',
@@ -70,11 +70,11 @@ export const DEFAULT_MESSAGES = {
   selectedDateRanges: 'Selected date ranges',
   selectedTimeRanges: 'Selected time ranges',
   selectedDateTimeRanges: 'Selected date-time ranges',
-  dateRangeCount: '{count} date ranges',
-  timeRangeCount: '{count} time ranges',
-  dateTimeRangeCount: '{count} date-time ranges',
-  dayRangeCount: '{count} ranges',
-  disabledTimeRangeCount: '{count} disabled ranges',
+  dateRangeCount: { one: '{count} date range', other: '{count} date ranges' },
+  timeRangeCount: { one: '{count} time range', other: '{count} time ranges' },
+  dateTimeRangeCount: { one: '{count} date-time range', other: '{count} date-time ranges' },
+  dayRangeCount: { one: '{count} range', other: '{count} ranges' },
+  disabledTimeRangeCount: { one: '{count} disabled range', other: '{count} disabled ranges' },
 
   // ─── In-place range editing: `{label}` is the range's display label ───
   editRange: 'Edit',
@@ -87,11 +87,10 @@ export const DEFAULT_MESSAGES = {
 
   // ─── Pills, tags and multi-select ───
   selectedItems: 'Selected items',
-  itemCount: '{count} items',
+  itemCount: { one: '{count} item', other: '{count} items' },
   remove: 'Remove',
-  tagsInput: 'Tags input',
   removeTag: 'Remove tag',
-  tagCount: '{count} tags',
+  tagCount: { one: '{count} tag', other: '{count} tags' },
   selectedTags: 'Selected tags',
   selectedOptions: 'Selected options',
   removeOption: 'Remove option',
@@ -120,11 +119,10 @@ export const DEFAULT_MESSAGES = {
   splitView: 'Split View',
 
   // ─── File upload: `{name}` is the file name ───
-  fileUpload: 'File upload',
   uploadFile: 'Upload file',
   uploadFiles: 'Upload files',
   uploadedFiles: 'Uploaded files',
-  fileCount: '{count} files',
+  fileCount: { one: '{count} file', other: '{count} files' },
   removeFile: 'Remove {name}',
   cancelFile: 'Cancel {name}',
   retryFile: 'Retry {name}',
@@ -138,6 +136,18 @@ export const DEFAULT_MESSAGES = {
   fileRemoved: '{name} removed.',
   fileFailed: '{name} failed to upload.',
 } as const;
+
+/** An English default that depends on `{count}`, by `Intl.PluralRules` category. */
+type PluralDefault = { readonly one: string; readonly other: string };
+
+const englishPlurals = new Intl.PluralRules('en');
+
+/** The English default of a string, picked by `params.count` when it has plural forms. */
+function englishDefault(key: GuiMessageKey, params?: GuiMessageParams): string {
+  const text: string | PluralDefault = DEFAULT_MESSAGES[key];
+  if (typeof text === 'string') return text;
+  return englishPlurals.select(Number(params?.['count'])) === 'one' ? text.one : text.other;
+}
 
 /** The key of a GolemUI string, see {@link DEFAULT_MESSAGES}. */
 export type GuiMessageKey = keyof typeof DEFAULT_MESSAGES;
@@ -211,9 +221,36 @@ export function message(
   override?: string | null,
   params?: GuiMessageParams,
 ): string {
-  const defaultText = DEFAULT_MESSAGES[key];
+  const defaultText = englishDefault(key, params);
   const text = override ?? state.translate?.(key, defaultText, params) ?? defaultText;
   return interpolate(text, params);
+}
+
+/**
+ * Resolves the accessible name of a control that can't do without one, such as an icon button, a
+ * date part or a dialog. An empty override or translation falls back like a missing one: an
+ * unnamed control fails WCAG 4.1.2.
+ */
+export function requiredName(
+  key: GuiMessageKey,
+  override?: string | null,
+  params?: GuiMessageParams,
+): string {
+  const defaultText = englishDefault(key, params);
+  const text = override || state.translate?.(key, defaultText, params) || defaultText;
+  return interpolate(text, params);
+}
+
+/**
+ * Resolves the accessible name of a part that only adds context, such as the start of a range or a
+ * toolbar. An empty override removes it, since such a part needs no name.
+ */
+export function optionalName(
+  key: GuiMessageKey,
+  override?: string | null,
+  params?: GuiMessageParams,
+): string | undefined {
+  return override === '' ? undefined : requiredName(key, override, params);
 }
 
 /**

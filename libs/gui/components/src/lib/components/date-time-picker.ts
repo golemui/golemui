@@ -28,7 +28,7 @@ import {
   valueEvents,
   type GuiInputErrorEventDetail,
 } from '../utils/events';
-import { message } from '../utils/messages';
+import { message, requiredName } from '../utils/messages';
 
 /**
  * A date and time field with a calendar and time popup.
@@ -53,25 +53,25 @@ import { message } from '../utils/messages';
 export class GuiDateTimePicker extends GuiFormControl {
   /** Icon class name shown inside the control, for example from an icon font. */
   @property({ type: String }) icon: string | undefined = '';
-  /** Accessible name of the button that opens the popup. */
+  /** Accessible name of the button that opens the popup. An empty value keeps the default. */
   @property({ type: String, attribute: 'toggle-aria-label' }) toggleAriaLabel: string | undefined =
     undefined;
-  /** Accessible name of the day part. */
+  /** Accessible name of the day part. An empty value keeps the default. */
   @property({ type: String, attribute: 'day-aria-label' }) dayAriaLabel: string | undefined =
     undefined;
-  /** Accessible name of the month part. */
+  /** Accessible name of the month part. An empty value keeps the default. */
   @property({ type: String, attribute: 'month-aria-label' }) monthAriaLabel: string | undefined =
     undefined;
-  /** Accessible name of the year part. */
+  /** Accessible name of the year part. An empty value keeps the default. */
   @property({ type: String, attribute: 'year-aria-label' }) yearAriaLabel: string | undefined =
     undefined;
-  /** Accessible name of the hour part. */
+  /** Accessible name of the hour part. An empty value keeps the default. */
   @property({ type: String, attribute: 'hour-aria-label' }) hourAriaLabel: string | undefined =
     undefined;
-  /** Accessible name of the minute part. */
+  /** Accessible name of the minute part. An empty value keeps the default. */
   @property({ type: String, attribute: 'minute-aria-label' }) minuteAriaLabel: string | undefined =
     undefined;
-  /** Accessible name of the AM/PM part. */
+  /** Accessible name of the AM/PM part. An empty value keeps the default. */
   @property({ type: String, attribute: 'day-period-aria-label' }) dayPeriodAriaLabel:
     | string
     | undefined = undefined;
@@ -88,19 +88,19 @@ export class GuiDateTimePicker extends GuiFormControl {
   @property({ type: String, attribute: 'prev-month-icon' }) prevMonthIcon: string | undefined = '';
   /** Icon class name of the next-month button. */
   @property({ type: String, attribute: 'next-month-icon' }) nextMonthIcon: string | undefined = '';
-  /** Accessible name of the previous-month button. */
+  /** Accessible name of the previous-month button. An empty value keeps the default. */
   @property({ type: String, attribute: 'prev-month-aria-label' }) prevMonthAriaLabel:
     | string
     | undefined = undefined;
-  /** Accessible name of the next-month button. */
+  /** Accessible name of the next-month button. An empty value keeps the default. */
   @property({ type: String, attribute: 'next-month-aria-label' }) nextMonthAriaLabel:
     | string
     | undefined = undefined;
-  /** Accessible name of the button that opens the year grid. */
+  /** Accessible name of the button that opens the year grid. An empty value keeps the default. */
   @property({ type: String, attribute: 'select-year-aria-label' }) selectYearAriaLabel:
     | string
     | undefined = undefined;
-  /** Accessible name of the year grid. */
+  /** Accessible name of the year grid. An empty value keeps the default. */
   @property({ type: String, attribute: 'year-grid-aria-label' }) yearGridAriaLabel:
     | string
     | undefined = undefined;
@@ -241,7 +241,8 @@ export class GuiDateTimePicker extends GuiFormControl {
           html`<gui-date-time-calendar
             id=${`${this.uid}_popup`}
             role="dialog"
-            aria-label=${message('calendar', this.label)}
+            aria-labelledby=${this.label ? `${this.uid}_label` : nothing}
+            aria-label=${this.label ? nothing : requiredName('calendar')}
             .uid=${this.uid}
             .hint=${this.hint}
             .touched=${this.touched}
@@ -343,7 +344,7 @@ export class GuiDateTimePicker extends GuiFormControl {
         <button
           type="button"
           class="gui-date-time-picker__arrow"
-          aria-label=${message('showCalendar', this.toggleAriaLabel)}
+          aria-label=${requiredName('showCalendar', this.toggleAriaLabel)}
           aria-haspopup="dialog"
           aria-expanded=${this._popup.open ? 'true' : 'false'}
           aria-controls=${`${this.uid}_popup`}

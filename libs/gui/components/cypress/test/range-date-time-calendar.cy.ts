@@ -66,7 +66,9 @@ describe('gui-range-date-time-calendar', () => {
       day('2026-06-13')
         .find('.gui-range-date-time-calendar__day-count')
         .should('have.text', '2')
-        .and('have.attr', 'aria-label')
+        .and('have.attr', 'aria-hidden', 'true');
+      day('2026-06-13')
+        .should('have.attr', 'aria-description')
         .and('match', /^2 shifts: /);
     });
 

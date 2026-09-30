@@ -1,4 +1,4 @@
-import { html, nothing } from 'lit';
+import { html } from 'lit';
 import { property } from 'lit/decorators.js';
 import { cspStyleMap } from '@golemui/lit-utils';
 import { safeDefine } from '@golemui/lit-utils';
@@ -15,7 +15,7 @@ import {
 } from '../utils/time';
 import { GuiElement } from '../gui-element';
 import { dispatchValue, fires, type GuiValueEvent } from '../utils/events';
-import { message } from '../utils/messages';
+import { message, requiredName } from '../utils/messages';
 
 /**
  * A grid of times to pick from.
@@ -28,7 +28,7 @@ import { message } from '../utils/messages';
 export class GuiTimeList extends GuiElement {
   /** The selected time, as an ISO time (`HH:mm:ss`). */
   @property({ type: String }) value: string | undefined = undefined;
-  /** Accessible name of the list. */
+  /** Accessible name of the list. An empty value keeps the default. */
   @property({ type: String }) label: string | undefined = undefined;
   /** Earliest selectable time, as an ISO time (`HH:mm:ss`). */
   @property({ type: String, attribute: 'min-time' }) minTime: string | undefined = undefined;
@@ -241,7 +241,7 @@ export class GuiTimeList extends GuiElement {
           class="gui-time-list__viewport"
           role="listbox"
           style=${sizeVars}
-          aria-label=${this.label ?? nothing}
+          aria-label=${requiredName('timeList', this.label)}
           @keydown=${this.onKeyDown}
         >
           ${options.map((option, index) => this.renderOption(option, index, 'option'))}
@@ -256,7 +256,7 @@ export class GuiTimeList extends GuiElement {
         class="gui-time-list__viewport gui-time-list__viewport--grid"
         role="grid"
         style=${sizeVars}
-        aria-label=${this.label ?? nothing}
+        aria-label=${requiredName('timeList', this.label)}
         @keydown=${this.onKeyDown}
       >
         ${rows.map(

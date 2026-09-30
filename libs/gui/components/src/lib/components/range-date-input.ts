@@ -45,7 +45,7 @@ import {
   valueEvents,
   type GuiInputErrorEventDetail,
 } from '../utils/events';
-import { message } from '../utils/messages';
+import { message, optionalName, requiredName } from '../utils/messages';
 
 /** What <gui-range-date-input> renders besides the control state: its presentation props. */
 export type GuiRangeDateInputProps = {
@@ -85,13 +85,13 @@ export class GuiRangeDateInput extends GuiFormControl {
 
   /** Icon class name shown inside the control, for example from an icon font. */
   @property({ type: String }) icon: string | undefined = '';
-  /** Accessible name of the day part. */
+  /** Accessible name of the day part. An empty value keeps the default. */
   @property({ type: String, attribute: 'day-aria-label' }) dayAriaLabel: string | undefined =
     undefined;
-  /** Accessible name of the month part. */
+  /** Accessible name of the month part. An empty value keeps the default. */
   @property({ type: String, attribute: 'month-aria-label' }) monthAriaLabel: string | undefined =
     undefined;
-  /** Accessible name of the year part. */
+  /** Accessible name of the year part. An empty value keeps the default. */
   @property({ type: String, attribute: 'year-aria-label' }) yearAriaLabel: string | undefined =
     undefined;
 
@@ -102,15 +102,15 @@ export class GuiRangeDateInput extends GuiFormControl {
     | string
     | undefined = undefined;
 
-  /** Accessible name of the remove button of each range pill. */
+  /** Accessible name of the remove button of each range pill. An empty value keeps the default. */
   @property({ type: String, attribute: 'remove-pill-aria-label' }) removePillAriaLabel:
     | string
     | undefined = undefined;
-  /** Accessible name of the start date field. */
+  /** Accessible name of the start date field. An empty value removes it. */
   @property({ type: String, attribute: 'start-date-aria-label' }) startDateAriaLabel:
     | string
     | undefined = undefined;
-  /** Accessible name of the end date field. */
+  /** Accessible name of the end date field. An empty value removes it. */
   @property({ type: String, attribute: 'end-date-aria-label' }) endDateAriaLabel:
     | string
     | undefined = undefined;
@@ -255,6 +255,7 @@ export class GuiRangeDateInput extends GuiFormControl {
   });
 
   protected ariaController: GUIAriaController<unknown, any> = new GUIAriaController(this, {
+    requiresLabel: true,
     getTargets: () => this.querySelectorAll(`.${this.inputBlockClass}`),
     getState: () => ({
       uid: this.uid,
@@ -345,7 +346,7 @@ export class GuiRangeDateInput extends GuiFormControl {
             ? 'gui-range-date-input--icon'
             : ''}"
           role="group"
-          aria-label=${message('dateRangeInput', this.label)}
+          aria-labelledby=${`${this.uid}_label`}
         >
           ${this.icon
             ? html`<span
@@ -369,14 +370,16 @@ export class GuiRangeDateInput extends GuiFormControl {
             .tabbable=${false}
             ?disabled=${this.disabled}
             ?readonly=${this.readOnly}
-            .removeAriaLabel=${message('removeDate', this.removePillAriaLabel)}
-            .compactAriaLabel=${message('dateRangeCount', undefined, { count: pillItems.length })}
+            .removeAriaLabel=${requiredName('removeDate', this.removePillAriaLabel)}
+            .compactAriaLabel=${requiredName('dateRangeCount', undefined, {
+              count: pillItems.length,
+            })}
             .editable=${this.editEnabled}
             .selectedKey=${this._edit.selectedKey ?? undefined}
             .editingKey=${this._edit.editing?.key ?? undefined}
-            .editLabel=${message('editRange', this.editLabel)}
-            .confirmEditLabel=${message('confirmEditRange', this.confirmEditLabel)}
-            .cancelEditLabel=${message('cancelEditRange', this.cancelEditLabel)}
+            .editLabel=${requiredName('editRange', this.editLabel)}
+            .confirmEditLabel=${requiredName('confirmEditRange', this.confirmEditLabel)}
+            .cancelEditLabel=${requiredName('cancelEditRange', this.cancelEditLabel)}
             @gui-pill-remove=${this.onPillRemoveEvent}
             @gui-pill-click=${this.onPillClickEvent}
             @gui-pill-focus=${this.onPillFocusEvent}
@@ -392,17 +395,19 @@ export class GuiRangeDateInput extends GuiFormControl {
             <div
               class="gui-parts gui-range-date-input__field"
               role="group"
-              aria-label=${message('startDate', this.startDateAriaLabel)}
+              aria-label=${optionalName('startDate', this.startDateAriaLabel) ?? nothing}
             >
               ${renderGroupParts('start', partsData, this._parts)}
             </div>
 
-            <span class="gui-range-date-input__separator">${this.separator ?? '-'}</span>
+            <span class="gui-range-date-input__separator" aria-hidden="true"
+              >${this.separator ?? '-'}</span
+            >
 
             <div
               class="gui-parts gui-range-date-input__field"
               role="group"
-              aria-label=${message('endDate', this.endDateAriaLabel)}
+              aria-label=${optionalName('endDate', this.endDateAriaLabel) ?? nothing}
             >
               ${renderGroupParts('end', partsData, this._parts)}
             </div>

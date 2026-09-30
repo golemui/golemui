@@ -22,7 +22,7 @@ import {
   valueEvents,
   type GuiInputErrorEventDetail,
 } from '../utils/events';
-import { message } from '../utils/messages';
+import { requiredName } from '../utils/messages';
 
 /** The four pieces of an in-progress range, each absent until chosen. */
 interface WorkingRange {
@@ -73,39 +73,39 @@ export class GuiRangeDateTimePicker extends GuiFormControl {
   @property({ type: Array }) value: DateTimeRange[] | undefined = [];
 
   // Trigger (input) chrome
-  /** Accessible name of the button that opens the popup. */
+  /** Accessible name of the button that opens the popup. An empty value keeps the default. */
   @property({ type: String, attribute: 'toggle-aria-label' }) toggleAriaLabel: string | undefined =
     undefined;
-  /** Accessible name of the day part. */
+  /** Accessible name of the day part. An empty value keeps the default. */
   @property({ type: String, attribute: 'day-aria-label' }) dayAriaLabel: string | undefined =
     undefined;
-  /** Accessible name of the month part. */
+  /** Accessible name of the month part. An empty value keeps the default. */
   @property({ type: String, attribute: 'month-aria-label' }) monthAriaLabel: string | undefined =
     undefined;
-  /** Accessible name of the year part. */
+  /** Accessible name of the year part. An empty value keeps the default. */
   @property({ type: String, attribute: 'year-aria-label' }) yearAriaLabel: string | undefined =
     undefined;
-  /** Accessible name of the hour part. */
+  /** Accessible name of the hour part. An empty value keeps the default. */
   @property({ type: String, attribute: 'hour-aria-label' }) hourAriaLabel: string | undefined =
     undefined;
-  /** Accessible name of the minute part. */
+  /** Accessible name of the minute part. An empty value keeps the default. */
   @property({ type: String, attribute: 'minute-aria-label' }) minuteAriaLabel: string | undefined =
     undefined;
-  /** Accessible name of the AM/PM part. */
+  /** Accessible name of the AM/PM part. An empty value keeps the default. */
   @property({ type: String, attribute: 'day-period-aria-label' }) dayPeriodAriaLabel:
     | string
     | undefined = undefined;
   /** Text shown between the start and end of a range. */
   @property({ type: String }) separator: string | undefined = undefined;
-  /** Accessible name of the remove button of each range pill. */
+  /** Accessible name of the remove button of each range pill. An empty value keeps the default. */
   @property({ type: String, attribute: 'remove-pill-aria-label' }) removePillAriaLabel:
     | string
     | undefined = undefined;
-  /** Accessible name of the start date-time field. */
+  /** Accessible name of the start date-time field. An empty value removes it. */
   @property({ type: String, attribute: 'start-date-time-aria-label' }) startDateTimeAriaLabel:
     | string
     | undefined = undefined;
-  /** Accessible name of the end date-time field. */
+  /** Accessible name of the end date-time field. An empty value removes it. */
   @property({ type: String, attribute: 'end-date-time-aria-label' }) endDateTimeAriaLabel:
     | string
     | undefined = undefined;
@@ -119,19 +119,19 @@ export class GuiRangeDateTimePicker extends GuiFormControl {
   @property({ type: String, attribute: 'prev-month-icon' }) prevMonthIcon: string | undefined = '';
   /** Icon class name of the next-month button. */
   @property({ type: String, attribute: 'next-month-icon' }) nextMonthIcon: string | undefined = '';
-  /** Accessible name of the previous-month button. */
+  /** Accessible name of the previous-month button. An empty value keeps the default. */
   @property({ type: String, attribute: 'prev-month-aria-label' }) prevMonthAriaLabel:
     | string
     | undefined = undefined;
-  /** Accessible name of the next-month button. */
+  /** Accessible name of the next-month button. An empty value keeps the default. */
   @property({ type: String, attribute: 'next-month-aria-label' }) nextMonthAriaLabel:
     | string
     | undefined = undefined;
-  /** Accessible name of the button that opens the year grid. */
+  /** Accessible name of the button that opens the year grid. An empty value keeps the default. */
   @property({ type: String, attribute: 'select-year-aria-label' }) selectYearAriaLabel:
     | string
     | undefined = undefined;
-  /** Accessible name of the year grid. */
+  /** Accessible name of the year grid. An empty value keeps the default. */
   @property({ type: String, attribute: 'year-grid-aria-label' }) yearGridAriaLabel:
     | string
     | undefined = undefined;
@@ -168,10 +168,10 @@ export class GuiRangeDateTimePicker extends GuiFormControl {
   @property({ type: Boolean, attribute: 'allow-custom-time' }) allowCustomTime:
     | boolean
     | undefined = false;
-  /** Label of the start time. */
+  /** Label of the start time. An empty value keeps the default. */
   @property({ type: String, attribute: 'start-time-label' }) startTimeLabel: string | undefined =
     undefined;
-  /** Label of the end time. */
+  /** Label of the end time. An empty value keeps the default. */
   @property({ type: String, attribute: 'end-time-label' }) endTimeLabel: string | undefined =
     undefined;
 
@@ -207,14 +207,15 @@ export class GuiRangeDateTimePicker extends GuiFormControl {
     | string
     | undefined = undefined;
   /**
-   * Accessible name of the badge on a day with several ranges. `{count}` is the number of ranges.
+   * Read with a day that has several ranges, before the ranges themselves. `{count}` is the number
+   * of ranges.
    */
   @property({ type: String, attribute: 'day-count-aria-label' }) dayCountAriaLabel:
     | string
     | undefined = undefined;
   /**
-   * Accessible name of the badge on a day with disabled times. `{count}` is the number of disabled
-   * ranges.
+   * Read with a day that has disabled times, before the times themselves. `{count}` is the number
+   * of disabled ranges.
    */
   @property({ type: String, attribute: 'disabled-day-count-aria-label' })
   disabledDayCountAriaLabel: string | undefined = undefined;
@@ -344,7 +345,8 @@ export class GuiRangeDateTimePicker extends GuiFormControl {
           html`<gui-range-date-time-calendar
             id=${`${this.uid}_popup`}
             role="dialog"
-            aria-label=${message('calendar', this.label)}
+            aria-labelledby=${this.label ? `${this.uid}_label` : nothing}
+            aria-label=${this.label ? nothing : requiredName('calendar')}
             .uid=${this.uid}
             .hint=${this.hint}
             .touched=${this.touched}
@@ -469,7 +471,7 @@ export class GuiRangeDateTimePicker extends GuiFormControl {
         <button
           type="button"
           class="gui-range-date-time-picker__arrow"
-          aria-label=${message('showCalendar', this.toggleAriaLabel)}
+          aria-label=${requiredName('showCalendar', this.toggleAriaLabel)}
           aria-haspopup="dialog"
           aria-expanded=${this._popup.open ? 'true' : 'false'}
           aria-controls=${`${this.uid}_popup`}

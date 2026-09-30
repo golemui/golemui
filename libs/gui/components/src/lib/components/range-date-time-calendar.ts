@@ -73,8 +73,15 @@ import {
   valueEvents,
   type GuiInputErrorEventDetail,
 } from '../utils/events';
-import { message } from '../utils/messages';
+import { message, requiredName } from '../utils/messages';
 
+/** A count bubble on a day: `text` is what the bubble and its hover label say. */
+interface DayBadge {
+  kind: 'day-count' | 'disabled-count';
+  count: number;
+  text: string;
+  labels: string[];
+}
 /**
  * A calendar with start and end time pickers, to pick one or more date-time ranges.
  *
@@ -111,19 +118,19 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
   @property({ type: String, attribute: 'prev-month-icon' }) prevMonthIcon: string | undefined = '';
   /** Icon class name of the next-month button. */
   @property({ type: String, attribute: 'next-month-icon' }) nextMonthIcon: string | undefined = '';
-  /** Accessible name of the previous-month button. */
+  /** Accessible name of the previous-month button. An empty value keeps the default. */
   @property({ type: String, attribute: 'prev-month-aria-label' }) prevMonthAriaLabel:
     | string
-    | undefined = '';
-  /** Accessible name of the next-month button. */
+    | undefined = undefined;
+  /** Accessible name of the next-month button. An empty value keeps the default. */
   @property({ type: String, attribute: 'next-month-aria-label' }) nextMonthAriaLabel:
     | string
-    | undefined = '';
-  /** Accessible name of the button that opens the year grid. */
+    | undefined = undefined;
+  /** Accessible name of the button that opens the year grid. An empty value keeps the default. */
   @property({ type: String, attribute: 'select-year-aria-label' }) selectYearAriaLabel:
     | string
     | undefined = undefined;
-  /** Accessible name of the year grid. */
+  /** Accessible name of the year grid. An empty value keeps the default. */
   @property({ type: String, attribute: 'year-grid-aria-label' }) yearGridAriaLabel:
     | string
     | undefined = undefined;
@@ -163,7 +170,7 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
   @property({ type: String, attribute: 'focus-date' }) focusDate: string | undefined = undefined;
   /** @internal */
   @property({ type: Boolean, attribute: 'hide-pills' }) hidePills = false;
-  /** Accessible name of the remove button of each range pill. */
+  /** Accessible name of the remove button of each range pill. An empty value keeps the default. */
   @property({ type: String, attribute: 'remove-pill-aria-label' }) removePillAriaLabel:
     | string
     | undefined = undefined;
@@ -184,10 +191,10 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
   @property({ type: Boolean, attribute: 'allow-custom-time' }) allowCustomTime:
     | boolean
     | undefined = false;
-  /** Label of the start time. */
+  /** Label of the start time. An empty value keeps the default. */
   @property({ type: String, attribute: 'start-time-label' }) startTimeLabel: string | undefined =
     undefined;
-  /** Label of the end time. */
+  /** Label of the end time. An empty value keeps the default. */
   @property({ type: String, attribute: 'end-time-label' }) endTimeLabel: string | undefined =
     undefined;
   /** Earliest allowed date-time, as an ISO date-time (`YYYY-MM-DDTHH:mm:ss`). */
@@ -217,14 +224,15 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
     | string
     | undefined = undefined;
   /**
-   * Accessible name of the badge on a day with several ranges. `{count}` is the number of ranges.
+   * Read with a day that has several ranges, before the ranges themselves. `{count}` is the number
+   * of ranges.
    */
   @property({ type: String, attribute: 'day-count-aria-label' }) dayCountAriaLabel:
     | string
     | undefined = undefined;
   /**
-   * Accessible name of the badge on a day with disabled times. `{count}` is the number of disabled
-   * ranges.
+   * Read with a day that has disabled times, before the times themselves. `{count}` is the number
+   * of disabled ranges.
    */
   @property({ type: String, attribute: 'disabled-day-count-aria-label' })
   disabledDayCountAriaLabel: string | undefined = undefined;
@@ -616,7 +624,7 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
           <gui-time-picker
             class="gui-time-picker gui-field gui-range-date-time-calendar__start"
             .uid=${`${this.uid}-start-time`}
-            .label=${message('startTime', this.startTimeLabel)}
+            .label=${requiredName('startTime', this.startTimeLabel)}
             .showErrors=${false}
             .deferFocusLeave=${true}
             ?required=${this.required}
@@ -650,7 +658,7 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
           <gui-time-picker
             class="gui-time-picker gui-field gui-range-date-time-calendar__end"
             .uid=${`${this.uid}-end-time`}
-            .label=${message('endTime', this.endTimeLabel)}
+            .label=${requiredName('endTime', this.endTimeLabel)}
             .showErrors=${false}
             .deferFocusLeave=${true}
             ?required=${this.required}
@@ -764,6 +772,7 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
   /** @internal */
   renderDay(day: RangeCalendarDay): TemplateResult {
     const isInvalidSingle = day.isInvalidStart && day.isInvalidEnd;
+    const badges = this.dayBadges(day);
     const classes = {
       'gui-calendar__day-button': true,
       today: day.isToday,
@@ -792,6 +801,7 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
         ?disabled=${!day.isCurrentMonth || this.disabled}
         aria-disabled=${day.isCurrentMonth && day.isDisabled ? 'true' : nothing}
         aria-label=${getFullDateLabel(this.localeId, day.date)}
+        aria-description=${badges.length ? badges.map((badge) => badge.text).join('. ') : nothing}
         aria-current=${day.isToday ? 'date' : nothing}
         data-date=${toISODateString(day.date)}
         @click=${(e: MouseEvent) => this.selectDate(day, e)}
@@ -800,7 +810,7 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
         @keydown=${(e: KeyboardEvent) => this._keyboard.handleDayKeydown(e)}
         aria-selected=${day.isRangeStart || day.isRangeEnd || day.isInRange ? 'true' : 'false'}
       >
-        ${this.renderDayContent(day)}
+        ${this.renderDayContent(day, badges)}
       </button>
     `;
   }
@@ -1212,52 +1222,53 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
     return { minTime: floor, maxTime: base.maxTime };
   }
 
-  protected renderDayContent(day: RangeCalendarDay): TemplateResult {
-    const rangeBadge = this.renderRangeCountBadge(day);
-    const disabledBadge = this.renderDisabledSlotsBadge(day);
-    if (rangeBadge === nothing && disabledBadge === nothing) return html`${day.dayLabel}`;
+  protected renderDayContent(day: RangeCalendarDay, badges: DayBadge[]): TemplateResult {
+    if (!badges.length) return html`${day.dayLabel}`;
 
     // One shared corner row: when a day has both a selection count and a
     // disabled count, the bubbles stack side by side instead of fighting for
     // the corner.
     return html`${day.dayLabel}<span class="gui-range-date-time-calendar__badges"
-        >${rangeBadge}${disabledBadge}</span
+        >${badges.map((badge) => this.renderBadge(badge))}</span
       >`;
+  }
+
+  /** The count bubbles of a day: the day button reads their text as its description. */
+  private dayBadges(day: RangeCalendarDay): DayBadge[] {
+    return [this.rangeCountBadge(day), this.disabledSlotsBadge(day)].filter(
+      (badge): badge is DayBadge => !!badge,
+    );
   }
 
   /**
    * Renders a count bubble plus its hover label as SIBLINGS (the label must not
-   * live inside the count span — the bubble shows only the number).
+   * live inside the count span — the bubble shows only the number). Both are
+   * visual: the day button's description carries their text.
    */
-  private renderBadge(
-    kind: 'day-count' | 'disabled-count',
-    count: number,
-    aria: string,
-    labels: string[],
-  ): TemplateResult {
-    return html`<span class="gui-range-date-time-calendar__${kind}" aria-label=${aria}
-        >${count}</span
+  private renderBadge(badge: DayBadge): TemplateResult {
+    return html`<span class="gui-range-date-time-calendar__${badge.kind}" aria-hidden="true"
+        >${badge.count}</span
       ><span class="gui-range-date-time-calendar__badge-tooltip" aria-hidden="true"
-        >${labels.map((label) => html`<span>${label}</span>`)}</span
+        >${badge.labels.map((label) => html`<span>${label}</span>`)}</span
       >`;
   }
 
-  private renderRangeCountBadge(day: RangeCalendarDay): TemplateResult | typeof nothing {
-    if (!day.isCurrentMonth) return nothing;
+  private rangeCountBadge(day: RangeCalendarDay): DayBadge | null {
+    if (!day.isCurrentMonth) return null;
     const ranges = this.rangesOnDay(day.date);
-    if (ranges.length <= 1) return nothing;
+    if (ranges.length <= 1) return null;
 
     const labels = ranges.map((range) => this.formatPillLabel(range));
-    const aria = `${message('dayRangeCount', this.dayCountAriaLabel, {
+    const text = `${message('dayRangeCount', this.dayCountAriaLabel, {
       count: ranges.length,
     })}: ${labels.join(', ')}`;
-    return this.renderBadge('day-count', ranges.length, aria, labels);
+    return { kind: 'day-count', count: ranges.length, text, labels };
   }
 
-  private renderDisabledSlotsBadge(day: RangeCalendarDay): TemplateResult | typeof nothing {
-    if (!day.isCurrentMonth || day.isDisabled) return nothing;
+  private disabledSlotsBadge(day: RangeCalendarDay): DayBadge | null {
+    if (!day.isCurrentMonth || day.isDisabled) return null;
     const slots = resolveDisabledTimesForDate(this.disabledRanges, toISODateString(day.date));
-    if (!slots.length) return nothing;
+    if (!slots.length) return null;
 
     const hourFormat = resolveHourFormat(this.localeId, this.hourFormat);
     const labels = slots.map(
@@ -1268,10 +1279,10 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
           hourFormat,
         )}`,
     );
-    const aria = `${message('disabledTimeRangeCount', this.disabledDayCountAriaLabel, {
+    const text = `${message('disabledTimeRangeCount', this.disabledDayCountAriaLabel, {
       count: slots.length,
     })}: ${labels.join(', ')}`;
-    return this.renderBadge('disabled-count', slots.length, aria, labels);
+    return { kind: 'disabled-count', count: slots.length, text, labels };
   }
 
   /** Committed ranges covering `date`, a range counts on every day of its span. */
@@ -1314,13 +1325,13 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
         .bubble=${false}
         ?disabled=${this.disabled}
         ?readonly=${this.readOnly}
-        .removeAriaLabel=${message('removeDateTime', this.removePillAriaLabel)}
+        .removeAriaLabel=${requiredName('removeDateTime', this.removePillAriaLabel)}
         .editable=${this.editEnabled}
         .selectedKey=${this._edit.selectedKey ?? undefined}
         .editingKey=${this._edit.editing?.key ?? undefined}
-        .editLabel=${message('editRange', this.editLabel)}
-        .confirmEditLabel=${message('confirmEditRange', this.confirmEditLabel)}
-        .cancelEditLabel=${message('cancelEditRange', this.cancelEditLabel)}
+        .editLabel=${requiredName('editRange', this.editLabel)}
+        .confirmEditLabel=${requiredName('confirmEditRange', this.confirmEditLabel)}
+        .cancelEditLabel=${requiredName('cancelEditRange', this.cancelEditLabel)}
         @gui-pill-remove=${this.onPillRemoveEvent}
         @gui-pill-click=${this.onPillClickEvent}
         @gui-pill-focus=${this.onPillFocusEvent}

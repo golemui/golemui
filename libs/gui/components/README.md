@@ -91,6 +91,22 @@ configureMessages((key, defaultText, params) =>
 single braces (`{min}`, `{name}`, `{count}`), passed to your function as `params`. An element's own
 prop for a string, such as `toggleAriaLabel`, still takes precedence.
 
+A string with a `{count}` has an English default per plural form (`1 item`, `3 items`). Your
+function receives the one for the count, and your i18n library does the plurals of its language
+from `params.count`.
+
+## Accessible names
+
+- **Fields** are named by their `label`. There is no made-up fallback name: without a label a field
+  has no accessible name, accessibility checkers flag it, and in development builds the date, time,
+  range, tags and file fields log a warning. The hint is read as the field's description.
+- **Buttons and parts with no visible text**, such as the popup toggles, the month buttons, the date
+  and time parts, and the file and markdown buttons, always have a name. Each has a prop to change
+  it (see the element's API), and an empty value keeps the default.
+- **Popups** are named by their field's label, or by a default name without one.
+- **Parts that only add context**, such as the start and end of a range and the toolbars, have a
+  default name that an empty value removes.
+
 ## Documentation
 
 - Website: https://golemui.com

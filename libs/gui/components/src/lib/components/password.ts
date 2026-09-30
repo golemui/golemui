@@ -7,7 +7,7 @@ import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addIcon, addLabel, type ControlTemplateData } from '../utils/templates';
 import { GuiFormControl } from '../gui-form-control';
 import { dispatchBlur, dispatchChange, dispatchValue, valueEvents } from '../utils/events';
-import { message } from '../utils/messages';
+import { message, requiredName } from '../utils/messages';
 
 /** What <gui-password> renders besides the control state: its presentation props. */
 export type GuiPasswordProps = {
@@ -48,11 +48,11 @@ export class GuiPassword extends GuiFormControl {
   @property({ type: String, attribute: 'hide-password-icon' }) hidePasswordIcon:
     | string
     | undefined = undefined;
-  /** Accessible name of the button that shows the password. */
+  /** Accessible name of the button that shows the password. An empty value keeps the default. */
   @property({ type: String, attribute: 'show-password-label' }) showPasswordLabel:
     | string
     | undefined = undefined;
-  /** Accessible name of the button that hides the password. */
+  /** Accessible name of the button that hides the password. An empty value keeps the default. */
   @property({ type: String, attribute: 'hide-password-label' }) hidePasswordLabel:
     | string
     | undefined = undefined;
@@ -145,8 +145,8 @@ export class GuiPassword extends GuiFormControl {
           type="button"
           ?disabled=${this.disabled}
           aria-label=${!this.showPassword
-            ? message('showPassword', templateData.showPasswordLabel)
-            : message('hidePassword', templateData.hidePasswordLabel)}
+            ? requiredName('showPassword', templateData.showPasswordLabel)
+            : requiredName('hidePassword', templateData.hidePasswordLabel)}
           @click=${() => (this.showPassword = !this.showPassword)}
         >
           ${toggleIcon

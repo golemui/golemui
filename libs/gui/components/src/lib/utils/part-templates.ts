@@ -3,7 +3,7 @@ import { live } from 'lit/directives/live.js';
 import { repeat } from 'lit/directives/repeat.js';
 import type { GUIPartsController } from '../controllers/parts.controller';
 import { type DateTimePartDescriptor, type DateTimePartType } from './parts';
-import { message } from './messages';
+import { requiredName } from './messages';
 
 export interface GUIPartsTemplateData {
   /** BEM block class, e.g. 'gui-date-input'. */
@@ -133,7 +133,7 @@ export function renderPartInput(
         maxlength=${descriptor.maxLength}
         placeholder=${descriptor.placeholder}
         tabindex=${tabIndex}
-        aria-label=${message(type, data.getPartAriaLabel?.(group, type))}
+        aria-label=${requiredName(type, data.getPartAriaLabel?.(group, type))}
         aria-valuemin=${descriptor.min}
         aria-valuemax=${descriptor.max}
         aria-valuenow=${isNaN(numericValue) ? nothing : numericValue}
@@ -186,7 +186,7 @@ export function renderDayPeriodToggle(
         data-group=${data.groups.length > 1 ? group : nothing}
         tabindex=${tabIndex}
         ?disabled=${data.disabled}
-        aria-label=${message('dayPeriod', data.dayPeriodAriaLabel)}
+        aria-label=${requiredName('dayPeriod', data.dayPeriodAriaLabel)}
         @click=${() => controller.toggleDayPeriod(group, type)}
         @keydown=${controller.handleDayPeriodKeyDown}
         @keyup=${(e: KeyboardEvent) => controller.handleKeyUp(e, group, type)}

@@ -23,7 +23,7 @@ import {
 } from '../utils/icons';
 import { GuiFormControl } from '../gui-form-control';
 import { dispatchBlur, dispatchChange, dispatchValue, valueEvents } from '../utils/events';
-import { message } from '../utils/messages';
+import { optionalName, requiredName } from '../utils/messages';
 
 /** The formats that apply to whole lines, with the prefix that marks a line as formatted. */
 const LINE_FORMATS = {
@@ -110,34 +110,34 @@ export class GuiMarkdown extends GuiFormControl {
   @property({ type: Number, attribute: 'maxlength' }) maxLength: number | undefined = undefined;
 
   // Button titles
-  /** Tooltip and accessible name of the heading button. */
+  /** Tooltip and accessible name of the heading button. An empty value keeps the default. */
   @property({ type: String, attribute: 'heading-title' }) headingTitle: string | undefined =
     undefined;
-  /** Tooltip and accessible name of the bold button. */
+  /** Tooltip and accessible name of the bold button. An empty value keeps the default. */
   @property({ type: String, attribute: 'bold-title' }) boldTitle: string | undefined = undefined;
-  /** Tooltip and accessible name of the italic button. */
+  /** Tooltip and accessible name of the italic button. An empty value keeps the default. */
   @property({ type: String, attribute: 'italic-title' }) italicTitle: string | undefined =
     undefined;
-  /** Tooltip and accessible name of the strikethrough button. */
+  /** Tooltip and accessible name of the strikethrough button. An empty value keeps the default. */
   @property({ type: String, attribute: 'strikethrough-title' }) strikethroughTitle:
     | string
     | undefined = undefined;
-  /** Tooltip and accessible name of the quote button. */
+  /** Tooltip and accessible name of the quote button. An empty value keeps the default. */
   @property({ type: String, attribute: 'quote-title' }) quoteTitle: string | undefined = undefined;
-  /** Tooltip and accessible name of the link button. */
+  /** Tooltip and accessible name of the link button. An empty value keeps the default. */
   @property({ type: String, attribute: 'link-title' }) linkTitle: string | undefined = undefined;
-  /** Tooltip and accessible name of the numbered list button. */
+  /** Tooltip and accessible name of the numbered list button. An empty value keeps the default. */
   @property({ type: String, attribute: 'ordered-list-title' }) orderedListTitle:
     | string
     | undefined = undefined;
-  /** Tooltip and accessible name of the bulleted list button. */
+  /** Tooltip and accessible name of the bulleted list button. An empty value keeps the default. */
   @property({ type: String, attribute: 'unordered-list-title' }) unorderedListTitle:
     | string
     | undefined = undefined;
-  /** Tooltip and accessible name of the preview button. */
+  /** Tooltip and accessible name of the preview button. An empty value keeps the default. */
   @property({ type: String, attribute: 'split-view-title' }) splitViewTitle: string | undefined =
     undefined;
-  /** Accessible name of the toolbar. */
+  /** Accessible name of the toolbar. An empty value removes it. */
   @property({ type: String, attribute: 'toolbar-aria-label' }) toolbarAriaLabel:
     | string
     | undefined = undefined;
@@ -251,7 +251,7 @@ export class GuiMarkdown extends GuiFormControl {
         <div
           class="gui-markdown__toolbar"
           role="toolbar"
-          aria-label=${message('textFormatting', this.toolbarAriaLabel)}
+          aria-label=${optionalName('textFormatting', this.toolbarAriaLabel) ?? nothing}
         >
           <ul role="presentation">
             ${(this.tools ?? ['H', 'B', 'I', 'S', 'Q', 'L', '|', 'OL', 'UL']).map((tool) =>
@@ -265,10 +265,10 @@ export class GuiMarkdown extends GuiFormControl {
                   'gui-markdown__toolbar-button--active': this.splitViewActive,
                 })}
                 ?disabled=${this.disabled}
-                aria-label=${message('splitView', this.splitViewTitle)}
+                aria-label=${requiredName('splitView', this.splitViewTitle)}
                 aria-pressed=${this.splitViewActive ? 'true' : 'false'}
                 @click=${this.splitView}
-                title=${message('splitView', this.splitViewTitle)}
+                title=${requiredName('splitView', this.splitViewTitle)}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -354,10 +354,10 @@ export class GuiMarkdown extends GuiFormControl {
             type="button"
             class=${this.toolbarBtnClass('heading')}
             ?disabled=${this.disabled || this.readOnly}
-            aria-label=${message('heading', this.headingTitle)}
+            aria-label=${requiredName('heading', this.headingTitle)}
             aria-pressed=${this.activeFormats['heading'] ? 'true' : 'false'}
             @click=${this.applyFormat('# ', '', 'heading')}
-            title=${message('heading', this.headingTitle)}
+            title=${requiredName('heading', this.headingTitle)}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -376,10 +376,10 @@ export class GuiMarkdown extends GuiFormControl {
             type="button"
             class=${this.toolbarBtnClass('bold')}
             ?disabled=${this.disabled || this.readOnly}
-            aria-label=${message('bold', this.boldTitle)}
+            aria-label=${requiredName('bold', this.boldTitle)}
             aria-pressed=${this.activeFormats['bold'] ? 'true' : 'false'}
             @click=${this.applyFormat('**', '**', 'bold')}
-            title=${message('bold', this.boldTitle)}
+            title=${requiredName('bold', this.boldTitle)}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -398,10 +398,10 @@ export class GuiMarkdown extends GuiFormControl {
             type="button"
             class=${this.toolbarBtnClass('italic')}
             ?disabled=${this.disabled || this.readOnly}
-            aria-label=${message('italic', this.italicTitle)}
+            aria-label=${requiredName('italic', this.italicTitle)}
             aria-pressed=${this.activeFormats['italic'] ? 'true' : 'false'}
             @click=${this.applyFormat('_', '_', 'italic')}
-            title=${message('italic', this.italicTitle)}
+            title=${requiredName('italic', this.italicTitle)}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -420,10 +420,10 @@ export class GuiMarkdown extends GuiFormControl {
             type="button"
             class=${this.toolbarBtnClass('strikethrough')}
             ?disabled=${this.disabled || this.readOnly}
-            aria-label=${message('strikethrough', this.strikethroughTitle)}
+            aria-label=${requiredName('strikethrough', this.strikethroughTitle)}
             aria-pressed=${this.activeFormats['strikethrough'] ? 'true' : 'false'}
             @click=${this.applyFormat('~~', '~~', 'strikethrough')}
-            title=${message('strikethrough', this.strikethroughTitle)}
+            title=${requiredName('strikethrough', this.strikethroughTitle)}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -442,10 +442,10 @@ export class GuiMarkdown extends GuiFormControl {
             type="button"
             class=${this.toolbarBtnClass('quote')}
             ?disabled=${this.disabled || this.readOnly}
-            aria-label=${message('quote', this.quoteTitle)}
+            aria-label=${requiredName('quote', this.quoteTitle)}
             aria-pressed=${this.activeFormats['quote'] ? 'true' : 'false'}
             @click=${this.applyFormat('> ', '', 'quote')}
-            title=${message('quote', this.quoteTitle)}
+            title=${requiredName('quote', this.quoteTitle)}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -464,10 +464,10 @@ export class GuiMarkdown extends GuiFormControl {
             type="button"
             class=${this.toolbarBtnClass('link')}
             ?disabled=${this.disabled || this.readOnly}
-            aria-label=${message('link', this.linkTitle)}
+            aria-label=${requiredName('link', this.linkTitle)}
             aria-pressed=${this.activeFormats['link'] ? 'true' : 'false'}
             @click=${this.applyFormat('[', '](url)', 'link')}
-            title=${message('link', this.linkTitle)}
+            title=${requiredName('link', this.linkTitle)}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -486,10 +486,10 @@ export class GuiMarkdown extends GuiFormControl {
             type="button"
             class=${this.toolbarBtnClass('orderedList')}
             ?disabled=${this.disabled || this.readOnly}
-            aria-label=${message('orderedList', this.orderedListTitle)}
+            aria-label=${requiredName('orderedList', this.orderedListTitle)}
             aria-pressed=${this.activeFormats['orderedList'] ? 'true' : 'false'}
             @click=${this.applyFormat('1. ', '', 'orderedList')}
-            title=${message('orderedList', this.orderedListTitle)}
+            title=${requiredName('orderedList', this.orderedListTitle)}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -508,10 +508,10 @@ export class GuiMarkdown extends GuiFormControl {
             type="button"
             class=${this.toolbarBtnClass('unorderedList')}
             ?disabled=${this.disabled || this.readOnly}
-            aria-label=${message('unorderedList', this.unorderedListTitle)}
+            aria-label=${requiredName('unorderedList', this.unorderedListTitle)}
             aria-pressed=${this.activeFormats['unorderedList'] ? 'true' : 'false'}
             @click=${this.applyFormat('- ', '', 'unorderedList')}
-            title=${message('unorderedList', this.unorderedListTitle)}
+            title=${requiredName('unorderedList', this.unorderedListTitle)}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

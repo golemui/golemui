@@ -104,7 +104,8 @@ export const elements: ElementCase[] = [
     rules: hostRenderedOptions,
     hostRendersChildren: true,
   },
-  { tag: 'gui-multi-select-trigger', props: {} },
+  // Its name is the label its host renders, see `has-label`.
+  { tag: 'gui-multi-select-trigger', props: {}, rules: { label: { enabled: false } } },
   { tag: 'gui-number', props: { label: 'Age' }, form: { property: 'value', sample: 42 } },
   {
     tag: 'gui-password',

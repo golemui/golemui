@@ -8,7 +8,7 @@ import { GUIPillsNavigationController } from '../controllers/pills-navigation.co
 import './pills';
 import type { GuiPillEventDetail, GuiPillItem, GuiPillsDropdownEventDetail } from './pills';
 import { GuiElement } from '../gui-element';
-import { message } from '../utils/messages';
+import { message, requiredName } from '../utils/messages';
 import { fires } from '../utils/events';
 
 /**
@@ -52,19 +52,19 @@ export class GuiMultiSelectTrigger extends GuiElement {
   @property({ type: Boolean, attribute: 'panel-open' }) panelOpen = false;
   /** @internal */
   @property({ type: String, attribute: 'panel-id' }) panelId: string | undefined = undefined;
-  /** Accessible name of each remove button. */
+  /** Accessible name of each remove button. An empty value keeps the default. */
   @property({ type: String, attribute: 'remove-aria-label' }) removeAriaLabel: string | undefined =
     undefined;
   /** Icon class name of the remove buttons. */
   @property({ type: String, attribute: 'remove-icon' }) removeIcon: string | undefined = undefined;
   /**
    * Accessible name of the count shown when the options do not fit. `{count}` is the number
-   * selected.
+   * selected. An empty value keeps the default.
    */
   @property({ type: String, attribute: 'compact-aria-label' }) compactAriaLabel:
     | string
     | undefined = undefined;
-  /** Accessible name of the selected options. */
+  /** Accessible name of the selected options. An empty value removes it. */
   @property({ type: String, attribute: 'toolbar-aria-label' }) toolbarAriaLabel:
     | string
     | undefined = undefined;
@@ -172,9 +172,9 @@ export class GuiMultiSelectTrigger extends GuiElement {
           .tabbable=${false}
           ?disabled=${this.disabled}
           ?readonly=${this.readOnly}
-          .removeAriaLabel=${message('removeOption', this.removeAriaLabel)}
+          .removeAriaLabel=${requiredName('removeOption', this.removeAriaLabel)}
           .removeIcon=${this.removeIcon}
-          .compactAriaLabel=${message('selectedCount', this.compactAriaLabel, {
+          .compactAriaLabel=${requiredName('selectedCount', this.compactAriaLabel, {
             count: pillItems.length,
           })}
           @gui-pill-remove=${this.onPillRemove}

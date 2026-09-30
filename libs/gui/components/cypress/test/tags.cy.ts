@@ -20,7 +20,9 @@ describe('gui-tags', () => {
       pills().first().should('have.attr', 'aria-label', 'lit');
       pills().last().should('have.attr', 'aria-label', 'css');
       input().should('have.attr', 'placeholder', 'Add a tag');
-      group().should('have.attr', 'aria-label', 'Tags');
+      group()
+        .invoke('attr', 'aria-labelledby')
+        .then((id) => cy.get(`#${id}`).should('contain.text', 'Tags'));
       cy.get('gui-tags .gui-label').should('contain.text', 'Tags');
     });
 

@@ -73,22 +73,22 @@ export class GuiDateTime extends GuiFormControl {
 
   /** Icon class name shown inside the control, for example from an icon font. */
   @property({ type: String }) icon: string | undefined = '';
-  /** Accessible name of the day part. */
+  /** Accessible name of the day part. An empty value keeps the default. */
   @property({ type: String, attribute: 'day-aria-label' }) dayAriaLabel: string | undefined =
     undefined;
-  /** Accessible name of the month part. */
+  /** Accessible name of the month part. An empty value keeps the default. */
   @property({ type: String, attribute: 'month-aria-label' }) monthAriaLabel: string | undefined =
     undefined;
-  /** Accessible name of the year part. */
+  /** Accessible name of the year part. An empty value keeps the default. */
   @property({ type: String, attribute: 'year-aria-label' }) yearAriaLabel: string | undefined =
     undefined;
-  /** Accessible name of the hour part. */
+  /** Accessible name of the hour part. An empty value keeps the default. */
   @property({ type: String, attribute: 'hour-aria-label' }) hourAriaLabel: string | undefined =
     undefined;
-  /** Accessible name of the minute part. */
+  /** Accessible name of the minute part. An empty value keeps the default. */
   @property({ type: String, attribute: 'minute-aria-label' }) minuteAriaLabel: string | undefined =
     undefined;
-  /** Accessible name of the AM/PM part. */
+  /** Accessible name of the AM/PM part. An empty value keeps the default. */
   @property({ type: String, attribute: 'day-period-aria-label' }) dayPeriodAriaLabel:
     | string
     | undefined = undefined;
@@ -178,6 +178,7 @@ export class GuiDateTime extends GuiFormControl {
   private _internalNullReport = false;
 
   protected ariaController: GUIAriaController<unknown, any> = new GUIAriaController(this, {
+    requiresLabel: true,
     getTargets: () => this.querySelectorAll(`.${this.inputBlockClass}`),
     getState: () => ({
       uid: this.uid,

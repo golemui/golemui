@@ -17,7 +17,7 @@ import {
   valueEvents,
   type GuiInputErrorEventDetail,
 } from '../utils/events';
-import { message } from '../utils/messages';
+import { message, requiredName } from '../utils/messages';
 
 /** What <gui-file-upload> renders besides the control state: its presentation props. */
 export type GuiFileUploadProps = {
@@ -66,13 +66,22 @@ export class GuiFileUpload extends GuiFormControl {
   /** Text of the upload button. */
   @property({ type: String, attribute: 'button-label' }) buttonLabel: string | undefined =
     undefined;
-  /** Accessible name of the remove button. `{name}` is the file name. */
+  /**
+   * Accessible name of the remove button. `{name}` is the file name. An empty value keeps the
+   * default.
+   */
   @property({ type: String, attribute: 'remove-aria-label' }) removeAriaLabel: string | undefined =
     undefined;
-  /** Accessible name of the cancel button of an upload in progress. `{name}` is the file name. */
+  /**
+   * Accessible name of the cancel button of an upload in progress. `{name}` is the file name. An
+   * empty value keeps the default.
+   */
   @property({ type: String, attribute: 'cancel-aria-label' }) cancelAriaLabel: string | undefined =
     undefined;
-  /** Accessible name of the retry button. `{name}` is the file name. */
+  /**
+   * Accessible name of the retry button. `{name}` is the file name. An empty value keeps the
+   * default.
+   */
   @property({ type: String, attribute: 'retry-aria-label' }) retryAriaLabel: string | undefined =
     undefined;
   /** Icon class name of the remove button, replacing the default ×. */
@@ -120,6 +129,7 @@ export class GuiFileUpload extends GuiFormControl {
   private _serviceErrorLogged = false;
 
   private ariaController = new GUIAriaController(this, {
+    requiresLabel: true,
     getTargets: () => this.querySelector('.gui-file-upload__box') as HTMLElement | null,
     getState: () => ({
       uid: this.uid,
@@ -557,7 +567,7 @@ export class GuiFileUpload extends GuiFormControl {
           })}
           data-cy=${`${this.uid}_file-box`}
           role="group"
-          aria-label=${message('fileUpload', this.label)}
+          aria-labelledby=${`${this.uid}_label`}
           @dragover=${this.onDragOver}
           @dragleave=${this.onDragLeave}
           @drop=${this.onDrop}
@@ -583,12 +593,14 @@ export class GuiFileUpload extends GuiFormControl {
               </div>`
             : nothing}
 
+          <!-- The upload button opens it: hidden from assistive technology, which uses the button. -->
           <input
             type="file"
             class="gui-visually-hidden gui-file-upload__input"
             id=${this.uid}
             data-cy=${`${this.uid}_file-input`}
             tabindex="-1"
+            aria-hidden="true"
             ?multiple=${this.isMultiple()}
             accept=${this.accept?.length ? this.accept.join(',') : nothing}
             ?disabled=${this.disabled || this.readOnly || !hasService}
@@ -649,8 +661,8 @@ export class GuiFileUpload extends GuiFormControl {
         >${item.name}</span
       >${meta}`;
     const actionLabel = uploading
-      ? message('cancelFile', this.cancelAriaLabel, { name: item.name })
-      : message('removeFile', this.removeAriaLabel, { name: item.name });
+      ? requiredName('cancelFile', this.cancelAriaLabel, { name: item.name })
+      : requiredName('removeFile', this.removeAriaLabel, { name: item.name });
 
     return html`<div
       class=${classMap({
@@ -680,7 +692,7 @@ export class GuiFileUpload extends GuiFormControl {
             type="button"
             class="gui-file-upload__action gui-file-upload__action--retry"
             data-cy=${`${this.uid}_file-retry`}
-            aria-label=${message('retryFile', this.retryAriaLabel, { name: item.name })}
+            aria-label=${requiredName('retryFile', this.retryAriaLabel, { name: item.name })}
             ?disabled=${this.disabled || removing}
             @click=${() => this.retry(item)}
           >

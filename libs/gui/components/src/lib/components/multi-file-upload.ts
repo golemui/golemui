@@ -2,7 +2,7 @@ import { html, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
 import { safeDefine } from '@golemui/lit-utils';
 import { GuiFileUpload } from './file-upload';
-import { message } from '../utils/messages';
+import { message, requiredName } from '../utils/messages';
 import './pills';
 import type { GuiPillEventDetail, GuiPillItem } from './pills';
 import type { FileItem } from '../types';
@@ -76,7 +76,7 @@ export class GuiMultiFileUpload extends GuiFileUpload {
       label: item.name,
       busy: this._removingIds.has(item.id),
     }));
-    const removeAriaLabel = message('removeFile', this.removeAriaLabel, { name: '' }).trim();
+    const removeAriaLabel = requiredName('removeFile', this.removeAriaLabel, { name: '' }).trim();
 
     return html`<gui-pills
       class="gui-file-upload__pills"
@@ -93,7 +93,7 @@ export class GuiMultiFileUpload extends GuiFileUpload {
       ?readonly=${this.readOnly}
       .removeAriaLabel=${removeAriaLabel}
       .removeIcon=${this.removeIcon}
-      .compactAriaLabel=${message('fileCount', undefined, { count: items.length })}
+      .compactAriaLabel=${requiredName('fileCount', undefined, { count: items.length })}
       @gui-pill-remove=${this.onPillRemove}
       @gui-pill-keydown=${stopPropagation}
       @gui-pill-exit=${stopPropagation}

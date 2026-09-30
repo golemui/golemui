@@ -49,7 +49,7 @@ export const addLabel = <T, ExtraProps extends { hint?: string }>(
       <span class="gui-label__text"
         >${templateData.label}${requiredMarker(templateData.required)}</span
       >
-      ${addHint(uid, templateData)} ${withErrors ? addErrors(uid, templateData) : nothing}
+      ${addHint(uid, templateData, true)} ${withErrors ? addErrors(uid, templateData) : nothing}
     </label>`;
   } else {
     return html`<span
@@ -60,18 +60,26 @@ export const addLabel = <T, ExtraProps extends { hint?: string }>(
       <span class="gui-label__text"
         >${templateData.label}${requiredMarker(templateData.required)}</span
       >
-      ${addHint(uid, templateData)} ${withErrors ? addErrors(uid, templateData) : nothing}
+      ${addHint(uid, templateData, true)} ${withErrors ? addErrors(uid, templateData) : nothing}
     </span>`;
   }
 };
 
+/**
+ * The hint under a label. Inside the label it is hidden from assistive technology, or it would
+ * become part of the field's name: the field still reads it as its description, because
+ * `aria-describedby` reads the elements it points to even when they are hidden.
+ */
 export const addHint = <T, ExtraProps extends { hint?: string }>(
   uid: string,
   templateData: ControlTemplateData<T> & ExtraProps,
+  inLabel = false,
 ) => {
-  return templateData.hint
-    ? html`<div class="gui-widget-hint" id=${`${uid}_hint`}>${templateData.hint}</div>`
-    : html``;
+  const hint = templateData.hint;
+  if (!hint) return html``;
+  const id = `${uid}_hint`;
+  const hidden = inLabel ? 'true' : nothing;
+  return html`<div class="gui-widget-hint" id=${id} aria-hidden=${hidden}>${hint}</div>`;
 };
 
 export const addIcon = <T, ExtraProps extends { icon?: string }>(

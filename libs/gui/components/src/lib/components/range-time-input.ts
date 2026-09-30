@@ -47,7 +47,7 @@ import {
   valueEvents,
   type GuiInputErrorEventDetail,
 } from '../utils/events';
-import { message } from '../utils/messages';
+import { message, optionalName, requiredName } from '../utils/messages';
 
 /** What <gui-range-time-input> renders besides the control state: its presentation props. */
 export type GuiRangeTimeInputProps = {
@@ -87,13 +87,13 @@ export class GuiRangeTimeInput extends GuiFormControl {
 
   /** Icon class name shown inside the control, for example from an icon font. */
   @property({ type: String }) icon: string | undefined = '';
-  /** Accessible name of the hour part. */
+  /** Accessible name of the hour part. An empty value keeps the default. */
   @property({ type: String, attribute: 'hour-aria-label' }) hourAriaLabel: string | undefined =
     undefined;
-  /** Accessible name of the minute part. */
+  /** Accessible name of the minute part. An empty value keeps the default. */
   @property({ type: String, attribute: 'minute-aria-label' }) minuteAriaLabel: string | undefined =
     undefined;
-  /** Accessible name of the AM/PM part. */
+  /** Accessible name of the AM/PM part. An empty value keeps the default. */
   @property({ type: String, attribute: 'day-period-aria-label' }) dayPeriodAriaLabel:
     | string
     | undefined = undefined;
@@ -120,15 +120,15 @@ export class GuiRangeTimeInput extends GuiFormControl {
   @property({ type: String, attribute: 'range-order-message' }) rangeOrderMessage:
     | string
     | undefined = undefined;
-  /** Accessible name of the remove button of each range pill. */
+  /** Accessible name of the remove button of each range pill. An empty value keeps the default. */
   @property({ type: String, attribute: 'remove-pill-aria-label' }) removePillAriaLabel:
     | string
     | undefined = undefined;
-  /** Accessible name of the start time field. */
+  /** Accessible name of the start time field. An empty value removes it. */
   @property({ type: String, attribute: 'start-time-aria-label' }) startTimeAriaLabel:
     | string
     | undefined = undefined;
-  /** Accessible name of the end time field. */
+  /** Accessible name of the end time field. An empty value removes it. */
   @property({ type: String, attribute: 'end-time-aria-label' }) endTimeAriaLabel:
     | string
     | undefined = undefined;
@@ -283,6 +283,7 @@ export class GuiRangeTimeInput extends GuiFormControl {
   });
 
   protected ariaController: GUIAriaController<unknown, any> = new GUIAriaController(this, {
+    requiresLabel: true,
     getTargets: () => this.querySelectorAll(`.${this.inputBlockClass}`),
     getState: () => ({
       uid: this.uid,
@@ -378,7 +379,7 @@ export class GuiRangeTimeInput extends GuiFormControl {
             ? 'gui-range-time-input--icon'
             : ''}"
           role="group"
-          aria-label=${message('timeRangeInput', this.label)}
+          aria-labelledby=${`${this.uid}_label`}
         >
           ${this.icon
             ? html`<span
@@ -402,14 +403,16 @@ export class GuiRangeTimeInput extends GuiFormControl {
             .tabbable=${false}
             ?disabled=${this.disabled}
             ?readonly=${this.readOnly}
-            .removeAriaLabel=${message('removeTime', this.removePillAriaLabel)}
-            .compactAriaLabel=${message('timeRangeCount', undefined, { count: pillItems.length })}
+            .removeAriaLabel=${requiredName('removeTime', this.removePillAriaLabel)}
+            .compactAriaLabel=${requiredName('timeRangeCount', undefined, {
+              count: pillItems.length,
+            })}
             .editable=${this.editEnabled}
             .selectedKey=${this._edit.selectedKey ?? undefined}
             .editingKey=${this._edit.editing?.key ?? undefined}
-            .editLabel=${message('editRange', this.editLabel)}
-            .confirmEditLabel=${message('confirmEditRange', this.confirmEditLabel)}
-            .cancelEditLabel=${message('cancelEditRange', this.cancelEditLabel)}
+            .editLabel=${requiredName('editRange', this.editLabel)}
+            .confirmEditLabel=${requiredName('confirmEditRange', this.confirmEditLabel)}
+            .cancelEditLabel=${requiredName('cancelEditRange', this.cancelEditLabel)}
             @gui-pill-remove=${this.onPillRemoveEvent}
             @gui-pill-click=${this.onPillClickEvent}
             @gui-pill-focus=${this.onPillFocusEvent}
@@ -425,17 +428,19 @@ export class GuiRangeTimeInput extends GuiFormControl {
             <div
               class="gui-parts gui-range-time-input__field"
               role="group"
-              aria-label=${message('startTime', this.startTimeAriaLabel)}
+              aria-label=${optionalName('startTime', this.startTimeAriaLabel) ?? nothing}
             >
               ${renderGroupParts('start', partsData, this._parts)}
             </div>
 
-            <span class="gui-range-time-input__separator">${this.separator ?? '-'}</span>
+            <span class="gui-range-time-input__separator" aria-hidden="true"
+              >${this.separator ?? '-'}</span
+            >
 
             <div
               class="gui-parts gui-range-time-input__field"
               role="group"
-              aria-label=${message('endTime', this.endTimeAriaLabel)}
+              aria-label=${optionalName('endTime', this.endTimeAriaLabel) ?? nothing}
             >
               ${renderGroupParts('end', partsData, this._parts)}
             </div>

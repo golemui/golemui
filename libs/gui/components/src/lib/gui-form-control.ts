@@ -58,7 +58,11 @@ export abstract class GuiFormControl extends GuiElement {
   /** The element's value. Its type depends on the element. */
   abstract value: unknown;
 
-  /** The visible label, which also names the control for assistive technology. */
+  /**
+   * The visible label, which also names the control for assistive technology. Without one the
+   * control has no accessible name; the date, time, range, tags and file fields warn about it in
+   * development builds.
+   */
   @property({ type: String }) label: string | undefined = undefined;
 
   /** Help text shown under the label and announced as the control's description. */

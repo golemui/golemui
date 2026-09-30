@@ -11,7 +11,7 @@ import type { GuiPillEventDetail, GuiPillItem } from './pills';
 import { GuiFormControl } from '../gui-form-control';
 import { dispatchBlur, dispatchValue, stopPropagation, valueEvents } from '../utils/events';
 import { booleanAttribute } from '../utils/converters';
-import { message } from '../utils/messages';
+import { message, requiredName } from '../utils/messages';
 
 type TagsSeparator = 'Enter' | ',' | 'Tab' | 'blur' | string;
 
@@ -56,13 +56,14 @@ export class GuiTags extends GuiFormControl {
     | undefined = true;
   /** Removes spaces around each tag. On by default: `trim="false"` turns it off. */
   @property({ converter: booleanAttribute }) trim: boolean | undefined = true;
-  /** Accessible name of the remove button of each tag. */
+  /** Accessible name of the remove button of each tag. An empty value keeps the default. */
   @property({ type: String, attribute: 'remove-aria-label' }) removeAriaLabel: string | undefined =
     undefined;
   /** Icon class name of the remove button, replacing the default ×. */
   @property({ type: String, attribute: 'remove-icon' }) removeIcon: string | undefined = undefined;
 
   private ariaController = new GUIAriaController(this, {
+    requiresLabel: true,
     getTargets: () => this.querySelectorAll(`.gui-tags-input`),
     getState: () => ({
       uid: this.uid,
@@ -101,7 +102,7 @@ export class GuiTags extends GuiFormControl {
   }
 
   private getRemoveAriaLabel(): string {
-    return message('removeTag', this.removeAriaLabel);
+    return requiredName('removeTag', this.removeAriaLabel);
   }
 
   private pillKey(tag: string, index: number): string {
@@ -145,7 +146,7 @@ export class GuiTags extends GuiFormControl {
             'gui-tags-input--icon': !!this.icon,
           })}
           role="group"
-          aria-label=${message('tagsInput', this.label)}
+          aria-labelledby=${`${this.uid}_label`}
         >
           ${this.icon
             ? html`<span
@@ -171,7 +172,7 @@ export class GuiTags extends GuiFormControl {
             ?readonly=${this.readOnly}
             .removeAriaLabel=${this.getRemoveAriaLabel()}
             .removeIcon=${this.removeIcon}
-            .compactAriaLabel=${message('tagCount', undefined, { count: tags.length })}
+            .compactAriaLabel=${requiredName('tagCount', undefined, { count: tags.length })}
             @gui-pill-remove=${this.onPillRemove}
             @gui-pill-keydown=${this._pillsNav.onPillKeydown}
             @gui-pill-exit=${this._pillsNav.onPillExit}
@@ -183,6 +184,7 @@ export class GuiTags extends GuiFormControl {
             id=${this.uid}
             data-cy=${`${this.uid}_tags-input`}
             class="gui-tags__input"
+            aria-labelledby=${`${this.uid}_label`}
             ?disabled=${this.disabled}
             ?readonly=${this.readOnly}
             placeholder=${this.placeholder || nothing}

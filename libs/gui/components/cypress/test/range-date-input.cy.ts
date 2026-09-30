@@ -52,7 +52,9 @@ describe('gui-range-date', () => {
         'gui-range-date .gui-range-date-input__inputs > .gui-range-date-input__separator',
       ).should('have.text', 'to');
       cy.get('gui-range-date .gui-label').should('contain.text', 'Stay');
-      cy.get('gui-range-date .gui-range-date-input').should('have.attr', 'aria-label', 'Stay');
+      cy.get('gui-range-date .gui-range-date-input')
+        .invoke('attr', 'aria-labelledby')
+        .then((id) => cy.get(`#${id}`).should('contain.text', 'Stay'));
     });
   });
 

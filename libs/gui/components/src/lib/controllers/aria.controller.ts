@@ -1,5 +1,6 @@
 import { type ReactiveController, type ReactiveControllerHost } from 'lit';
 import { showsErrors, type ControlTemplateData } from '../utils/templates';
+import { warnIfUnlabelled } from '../utils/dev';
 
 export class GUIAriaController<T, ExtraProps extends { hint?: string; required?: boolean }>
   implements ReactiveController
@@ -9,10 +10,17 @@ export class GUIAriaController<T, ExtraProps extends { hint?: string; required?:
     uid: string;
     templateData: ControlTemplateData<T> & ExtraProps;
   };
+  private host: ReactiveControllerHost;
+  private requiresLabel: boolean;
 
   constructor(
     host: ReactiveControllerHost,
     options: {
+      /**
+       * The field takes its accessible name from the `${uid}_label` element, its own label or its
+       * host picker's, and warns in development when there is none.
+       */
+      requiresLabel?: boolean;
       getTargets: () => NodeListOf<Element> | HTMLElement[] | HTMLElement | null;
       getState: () => {
         uid: string;
@@ -21,8 +29,10 @@ export class GUIAriaController<T, ExtraProps extends { hint?: string; required?:
     },
   ) {
     host.addController(this);
+    this.host = host;
     this.getTargets = options.getTargets;
     this.getState = options.getState;
+    this.requiresLabel = options.requiresLabel ?? false;
   }
 
   hostConnected() {
@@ -44,6 +54,9 @@ export class GUIAriaController<T, ExtraProps extends { hint?: string; required?:
     }
 
     const { uid, templateData } = this.getState();
+    if (this.requiresLabel && this.host instanceof HTMLElement) {
+      warnIfUnlabelled(this.host, `${uid}_label`);
+    }
     const { touched, errors, readonly, disabled, hint, required } = templateData;
     const showErrors = showsErrors(touched, errors);
 

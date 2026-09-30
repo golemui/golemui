@@ -4,7 +4,7 @@ import { getMonthYearLabel, getMonthYearParts, getWeekdayLabels, type WeekdayFor
 import { chunk } from './grid-nav';
 import { addErrors, addLabel } from './templates';
 import { CARET_DOWN_PATH, CARET_LEFT_PATH, CARET_RIGHT_PATH } from './icons';
-import { message } from './messages';
+import { requiredName } from './messages';
 
 /**
  * The month a panel shows: the nav cursor normalized to day 1, shifted by the
@@ -145,7 +145,7 @@ export function renderMonthNavButton(
         class="gui-button gui-calendar__month-button gui-calendar__month-button--prev"
         ?disabled=${data.disabled}
         @click=${data.onClick}
-        aria-label=${message('previousMonth', data.ariaLabel)}
+        aria-label=${requiredName('previousMonth', data.ariaLabel)}
       >
         ${data.icon
           ? html`<span
@@ -172,7 +172,7 @@ export function renderMonthNavButton(
       class="gui-button gui-calendar__month-button gui-calendar__month-button--next"
       ?disabled=${data.disabled}
       @click=${data.onClick}
-      aria-label=${message('nextMonth', data.ariaLabel)}
+      aria-label=${requiredName('nextMonth', data.ariaLabel)}
     >
       ${data.icon
         ? html`<span
@@ -345,7 +345,7 @@ export function renderMonthHeader(panelDate: Date, data: MonthHeaderData): Templ
                 ?disabled=${!!data.disabled}
                 @click=${data.onToggleYearSelector}
                 aria-expanded=${data.yearSelectorOpen}
-                aria-label=${`${message('selectYear', data.selectYearAriaLabel)}, ${part.value}`}
+                aria-label=${`${requiredName('selectYear', data.selectYearAriaLabel)}, ${part.value}`}
               >
                 <span class="gui-calendar__year-value">${part.value}</span>
                 <span class="gui-calendar__year-arrow" aria-hidden="true">
@@ -432,7 +432,7 @@ export function renderYearGrid(data: YearGridData): TemplateResult {
     <div
       class="gui-calendar__year-grid"
       role="grid"
-      aria-label=${message('yearSelection', data.ariaLabel)}
+      aria-label=${requiredName('yearSelection', data.ariaLabel)}
       @keydown=${data.onKeydown}
     >
       ${chunk(data.years, 4).map(

@@ -14,7 +14,7 @@ import {
   spinnerIcon,
 } from '../utils/icons';
 import { GuiElement } from '../gui-element';
-import { message } from '../utils/messages';
+import { message, optionalName, requiredName } from '../utils/messages';
 import { dispatch, fires } from '../utils/events';
 
 export interface GuiPillItem {
@@ -135,9 +135,10 @@ export class GuiPills extends GuiElement {
   @property({ type: String, attribute: 'remove-icon' }) removeIcon: string | undefined;
   /**
    * Accessible name of the count shown when the items do not fit. `{count}` is the number of items.
+   * An empty value keeps the default.
    */
   @property({ type: String, attribute: 'compact-aria-label' }) compactAriaLabel: string | undefined;
-  /** Accessible name of the pill strip. */
+  /** Accessible name of the pill strip. An empty value removes it. */
   @property({ type: String, attribute: 'toolbar-aria-label' }) toolbarAriaLabel: string | undefined;
 
   /** Errors repeated inside the dropdown. */
@@ -232,7 +233,7 @@ export class GuiPills extends GuiElement {
         <div
           class="gui-pills__strip"
           role="toolbar"
-          aria-label=${message('selectedItems', this.toolbarAriaLabel)}
+          aria-label=${optionalName('selectedItems', this.toolbarAriaLabel) ?? nothing}
           tabindex="-1"
         >
           <span class="gui-sentinel gui-sentinel__start"></span>
@@ -261,7 +262,7 @@ export class GuiPills extends GuiElement {
             'gui-pills__count--has-selection': !!this.selectedKey,
             'gui-pills__count--editing': !!this.editingKey,
           })}
-          aria-label=${message('itemCount', this.compactAriaLabel, { count })}
+          aria-label=${requiredName('itemCount', this.compactAriaLabel, { count })}
           aria-haspopup="true"
           aria-expanded=${this._showDropdown}
           aria-controls=${this.dropdownId ?? nothing}
@@ -285,7 +286,7 @@ export class GuiPills extends GuiElement {
         class="gui-pills__dropdown"
         role="toolbar"
         aria-orientation="vertical"
-        aria-label=${message('selectedItems', this.toolbarAriaLabel)}
+        aria-label=${optionalName('selectedItems', this.toolbarAriaLabel) ?? nothing}
       >
         <div class="gui-pills__dropdown-list">
           ${repeat(
