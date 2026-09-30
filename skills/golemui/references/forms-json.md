@@ -91,6 +91,14 @@ discriminated `oneOf` become `include.when` conditions and form `states`. Option
 `overrides` choose other widgets. Walkthrough:
 https://golemui.com/json/mcp/generating-from-a-schema.md
 
+Without the MCP, the same converter runs in code or from the command line:
+
+- At runtime: `fromJsonSchema(schema, { preset: guiPreset() })` from
+  `@golemui/schemas/json-schema` and `@golemui/gui-schemas/json-schema` returns
+  `{ formDefinition, diagnostics }`.
+- As a file: `npx @golemui/schemas convert schema.json --preset @golemui/gui-schemas/json-schema --out form.json`
+  writes the form definition, and does not replace an existing file without `--force`.
+
 ## Key docs (fetch as needed)
 
 - Form Definition API overview: https://golemui.com/json/form-definition/overview.md

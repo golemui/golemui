@@ -6,6 +6,7 @@ export * from './demo-validation';
 export * from './flight-tickets';
 export * from './invoice';
 export * from './invoice-nested';
+export * from './json-schema-order';
 export * from './item-renderers';
 export * from './kitchen-sink';
 export * from './kitchen-sink.dx';

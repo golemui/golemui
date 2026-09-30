@@ -1,0 +1,270 @@
+{
+  "$schema": "https://golemui.com/schemas/form.schema.json",
+  "states": {
+    "dep01": "$form.company !== undefined",
+    "if01": "$form.country === \"US\"",
+    "if02": "!($form.country === \"US\")",
+    "if03": "$form.giftWrap === true"
+  },
+  "form": [
+    {
+      "kind": "input",
+      "type": "textinput",
+      "path": "email",
+      "label": "E-mail",
+      "validator": {
+        "type": "string",
+        "required": true,
+        "format": "email"
+      }
+    },
+    {
+      "kind": "input",
+      "type": "select",
+      "path": "country",
+      "label": "Country",
+      "validator": {
+        "type": "string",
+        "required": true
+      },
+      "props": {
+        "options": [
+          {
+            "label": "United States",
+            "value": "US"
+          },
+          {
+            "label": "Netherlands",
+            "value": "NL"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "input",
+      "type": "select",
+      "path": "state",
+      "label": "State",
+      "include": {
+        "when": "$form.country === \"US\""
+      },
+      "validator": {
+        "type": "string",
+        "required": true,
+        "enum": ["CA", "NY", "TX"]
+      },
+      "props": {
+        "options": [
+          {
+            "label": "CA",
+            "value": "CA"
+          },
+          {
+            "label": "NY",
+            "value": "NY"
+          },
+          {
+            "label": "TX",
+            "value": "TX"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "input",
+      "type": "textinput",
+      "path": "zip",
+      "label": "Postal code",
+      "validator.if01": {
+        "type": "string",
+        "required": true,
+        "pattern": "^[0-9]{5}$"
+      },
+      "validator.if02": {
+        "type": "string",
+        "pattern": "^[0-9]{4} ?[A-Z]{2}$"
+      },
+      "props": {
+        "hint": "The format depends on the country."
+      }
+    },
+    {
+      "kind": "input",
+      "type": "textinput",
+      "path": "company",
+      "label": "Company name"
+    },
+    {
+      "kind": "input",
+      "type": "textinput",
+      "path": "vatNumber",
+      "label": "VAT number",
+      "validator.dep01": {
+        "type": "string",
+        "required": true
+      }
+    },
+    {
+      "kind": "input",
+      "type": "dateInput",
+      "path": "deliveryDate",
+      "label": "Delivery date"
+    },
+    {
+      "kind": "input",
+      "type": "repeater",
+      "path": "lines",
+      "label": "Lines",
+      "validator": {
+        "type": "array",
+        "required": true,
+        "minItems": 1,
+        "maxItems": 5
+      },
+      "props": {
+        "title": "Line",
+        "addLabel": "Add line",
+        "removeLabel": "Remove",
+        "limit": 5,
+        "template": {
+          "kind": "layout",
+          "type": "flex",
+          "props": {
+            "direction": "column",
+            "gap": 8
+          },
+          "children": [
+            {
+              "kind": "input",
+              "type": "select",
+              "path": "lines.items.product",
+              "label": "Product",
+              "validator": {
+                "type": "string",
+                "required": true,
+                "enum": ["Notebook", "Pen", "Backpack"]
+              },
+              "props": {
+                "options": [
+                  {
+                    "label": "Notebook",
+                    "value": "Notebook"
+                  },
+                  {
+                    "label": "Pen",
+                    "value": "Pen"
+                  },
+                  {
+                    "label": "Backpack",
+                    "value": "Backpack"
+                  }
+                ]
+              }
+            },
+            {
+              "kind": "input",
+              "type": "number",
+              "path": "lines.items.quantity",
+              "label": "Quantity",
+              "defaultValue": 1,
+              "validator": {
+                "type": "integer",
+                "required": true,
+                "minimum": 1
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "kind": "layout",
+      "type": "flex",
+      "props": {
+        "direction": "column",
+        "gap": 8
+      },
+      "children": [
+        {
+          "kind": "input",
+          "type": "select",
+          "path": "payment.method",
+          "label": "Method",
+          "validator": {
+            "type": "string",
+            "required": true
+          },
+          "props": {
+            "options": [
+              {
+                "label": "Card",
+                "value": "card"
+              },
+              {
+                "label": "Bank transfer",
+                "value": "bank"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "payment.cardNumber",
+          "label": "Card number",
+          "include": {
+            "when": "$form.payment?.method === \"card\""
+          },
+          "validator": {
+            "type": "string",
+            "required": true,
+            "pattern": "^[0-9]{16}$"
+          }
+        },
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "payment.iban",
+          "label": "IBAN",
+          "include": {
+            "when": "$form.payment?.method === \"bank\""
+          },
+          "validator": {
+            "type": "string",
+            "required": true
+          }
+        }
+      ]
+    },
+    {
+      "kind": "input",
+      "type": "checkbox",
+      "path": "giftWrap",
+      "label": "Gift wrap"
+    },
+    {
+      "kind": "input",
+      "type": "textarea",
+      "path": "giftMessage",
+      "label": "Gift message",
+      "validator": {
+        "type": "string",
+        "maxLength": 300
+      },
+      "validator.if03": {
+        "type": "string",
+        "required": true,
+        "maxLength": 300
+      }
+    },
+    {
+      "kind": "action",
+      "type": "button",
+      "actionType": "submit",
+      "label": "Submit",
+      "props": {
+        "variant": "filled"
+      }
+    }
+  ]
+}
