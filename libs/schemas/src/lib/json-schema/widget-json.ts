@@ -41,6 +41,23 @@ export function applyPatch(result: BuildResult, patch: WidgetPatch | undefined):
 }
 
 /**
+ * Adds a visibility condition to every widget of a build result. An existing `include.when` is
+ * combined with `&&`. An `include.in` (state-based) is replaced, it cannot be combined.
+ */
+export function withIncludeCondition(result: BuildResult, when: string): BuildResult {
+  const widgets = asWidgetList(result).map((widget): FormWidgetJson => {
+    const existing = widget.include;
+    const combined =
+      existing !== undefined && 'when' in existing ? `(${existing.when}) && ${when}` : when;
+    return { ...widget, include: { when: combined } };
+  });
+  if (result === null || result === undefined) {
+    return result;
+  }
+  return Array.isArray(result) ? widgets : widgets[0];
+}
+
+/**
  * Removes every input whose `path`, and every widget whose `uid`, an earlier widget already
  * has. Two inputs on one path would both write it, and the form treats a repeated uid as an
  * error. Repeater templates are checked too.

@@ -1,8 +1,10 @@
 import { isDeclarativeRule, matchesDeclarativeRule } from './declarative-rules.js';
 import { enumOptionsOf, isConstUnion } from './enum-options.js';
+import { dataReference, equalsAny } from './expressions.js';
 import { normalizeNode, type NormalizedNode, type NormalizeEnvironment } from './normalize.js';
 import { appendPointer } from './pointer.js';
 import { humanize } from './text.js';
+import { discriminatorOf, type Discriminator } from './unions.js';
 import {
   type BuildContext,
   type BuildResult,
@@ -18,7 +20,13 @@ import {
   type SchemaNode,
   type WidgetPatch,
 } from './types.js';
-import { applyPatch, asWidgetList, cleanWidget, removeDuplicateWidgets } from './widget-json.js';
+import {
+  applyPatch,
+  asWidgetList,
+  cleanWidget,
+  removeDuplicateWidgets,
+  withIncludeCondition,
+} from './widget-json.js';
 
 const DEFAULT_VENDOR_KEYWORD = 'x-golemui';
 const DEFAULT_MAX_REF_DEPTH = 2;
@@ -75,6 +83,26 @@ type RuleEntry = {
   patch?: WidgetPatch;
 };
 
+/** One object branch of a `oneOf`/`anyOf`, normalized. */
+type UnionBranch = { raw: unknown; pointer: string; normalized: NormalizedNode };
+
+/** A `oneOf`/`anyOf` whose branches are all objects. */
+type ObjectUnion = {
+  keyword: 'oneOf' | 'anyOf';
+  branches: UnionBranch[];
+  /** Undefined when no property tells the branches apart. */
+  discriminator?: Discriminator;
+};
+
+/** Where a union property is defined: which branch, and how. */
+type BranchProperty = {
+  branchIndex: number;
+  raw: unknown;
+  required: boolean;
+  pointer: string;
+  refTrail: readonly string[];
+};
+
 /** Where a child node sits, before it is normalized. */
 type Placement = {
   parent?: SchemaNode;
@@ -99,6 +127,8 @@ class Conversion {
   private readonly normalizedNodes = new WeakMap<SchemaNode, NormalizedNode>();
   private readonly childrenCache = new WeakMap<SchemaNode, SchemaNode[]>();
   private readonly itemCache = new WeakMap<SchemaNode, SchemaNode | undefined>();
+  // Keyed by the normalized schema. `null` means the node has no union of objects.
+  private readonly objectUnions = new WeakMap<JsonSchema, ObjectUnion | null>();
   // The node each built widget came from, to point duplicate reports at the schema.
   private readonly widgetNodes = new WeakMap<object, SchemaNode>();
   private builtNodes = 0;
@@ -306,7 +336,205 @@ class Conversion {
   }
 
   private buildChildren(node: SchemaNode): FormWidgetJson[] {
-    return this.childrenOf(node).flatMap((child) => asWidgetList(this.buildNode(child)));
+    const children = this.childrenOf(node);
+    const union = this.objectUnions.get(node.schema);
+    if (!union) {
+      return children.flatMap((child) => asWidgetList(this.buildNode(child)));
+    }
+    return this.buildUnionChildren(node, children, union);
+  }
+
+  /**
+   * Builds an object whose `oneOf`/`anyOf` branches are objects. The discriminator becomes one
+   * selector, in its own place when the object declares it, after the declared properties
+   * otherwise. Then every branch property is built once, visible only for the branches that
+   * define it, so no two widgets ever share a path.
+   */
+  private buildUnionChildren(
+    owner: SchemaNode,
+    children: SchemaNode[],
+    union: ObjectUnion,
+  ): FormWidgetJson[] {
+    const { discriminator } = union;
+    const widgets: FormWidgetJson[] = [];
+    let selectorBuilt = false;
+    for (const child of children) {
+      if (discriminator !== undefined && child.name === discriminator.property) {
+        widgets.push(...this.buildSelector(owner, union, discriminator));
+        selectorBuilt = true;
+      } else {
+        widgets.push(...asWidgetList(this.buildNode(child)));
+      }
+    }
+    if (discriminator === undefined) {
+      this.report(owner, {
+        severity: 'warning',
+        code: 'no-discriminator',
+        message: `No property tells the \`${union.keyword}\` branches apart (a \`const\` in every branch, or \`discriminator.propertyName\`). Every branch property is rendered, optional and always visible.`,
+      });
+    } else if (!selectorBuilt) {
+      widgets.push(...this.buildSelector(owner, union, discriminator));
+    }
+    widgets.push(...this.buildUnionProperties(owner, union));
+    return widgets;
+  }
+
+  /**
+   * The discriminator as an enumeration of the branch values, labelled by the branch titles. A
+   * declaration next to the union keeps its annotations, e.g. its title.
+   */
+  private buildSelector(
+    owner: SchemaNode,
+    union: ObjectUnion,
+    discriminator: Discriminator,
+  ): FormWidgetJson[] {
+    const { property, values } = discriminator;
+    const declared = recordOf(owner.schema['properties'])[property];
+    const firstBranchDeclaration = recordOf(union.branches[0].normalized.schema['properties'])[
+      property
+    ];
+    const choices = {
+      oneOf: union.branches.map((branch, index) => ({
+        const: values[index],
+        title: branchTitle(branch, values[index]),
+      })),
+    };
+    const raw =
+      declared !== undefined
+        ? { allOf: [declared, choices] }
+        : { title: recordOf(firstBranchDeclaration)['title'], ...choices };
+    const node = this.createNode(raw, {
+      parent: owner,
+      name: property,
+      path: joinPath(owner.path, property),
+      pointer:
+        this.pointerOf(declared) ??
+        this.pointerOf(firstBranchDeclaration) ??
+        appendPointer(owner.pointer, 'properties', property),
+      required:
+        requiredOf(owner.schema).includes(property) ||
+        union.branches.every((branch) => requiredOf(branch.normalized.schema).includes(property)),
+      repeaterDepth: owner.repeaterDepth,
+      refTrail: this.refTrailOf(owner),
+    });
+    return node === undefined ? [] : asWidgetList(this.buildNode(node));
+  }
+
+  /** Builds each branch property once, see {@link Conversion.buildUnionChildren}. */
+  private buildUnionProperties(owner: SchemaNode, union: ObjectUnion): FormWidgetJson[] {
+    const { discriminator } = union;
+    const declared = recordOf(owner.schema['properties']);
+    const definitions = new Map<string, BranchProperty[]>();
+    union.branches.forEach((branch, branchIndex) => {
+      const required = requiredOf(branch.normalized.schema);
+      for (const [name, raw] of Object.entries(recordOf(branch.normalized.schema['properties']))) {
+        if (name === discriminator?.property) {
+          continue;
+        }
+        const pointer = this.pointerOf(raw) ?? appendPointer(branch.pointer, 'properties', name);
+        if (name in declared) {
+          if (!jsonEqual(raw, declared[name])) {
+            this.diagnostics.push({
+              severity: 'warning',
+              code: 'branch-schema-conflict',
+              message: `\`${name}\` is declared next to the union and again in a branch. The declaration next to the union is used.`,
+              path: joinPath(owner.path, name),
+              pointer,
+            });
+          }
+          continue;
+        }
+        const list = definitions.get(name) ?? [];
+        list.push({
+          branchIndex,
+          raw,
+          required: required.includes(name),
+          pointer,
+          refTrail: branch.normalized.refTrail,
+        });
+        definitions.set(name, list);
+      }
+    });
+
+    const widgets: FormWidgetJson[] = [];
+    for (const [name, list] of definitions) {
+      const [first] = list;
+      const path = joinPath(owner.path, name);
+      if (!this.isValidPropertyName(name, path, first.pointer)) {
+        continue;
+      }
+      const child = this.createNode(first.raw, {
+        parent: owner,
+        name,
+        path,
+        pointer: first.pointer,
+        // Without a discriminator no branch is known to be active, so nothing is required.
+        required: discriminator !== undefined && first.required,
+        repeaterDepth: owner.repeaterDepth,
+        refTrail: first.refTrail,
+      });
+      if (child === undefined) {
+        continue;
+      }
+      if (
+        list.some((entry) => !jsonEqual(entry.raw, first.raw) || entry.required !== first.required)
+      ) {
+        this.report(child, {
+          severity: 'warning',
+          code: 'branch-schema-conflict',
+          message: `The branches define \`${name}\` differently. The form uses the first definition.`,
+        });
+      }
+      let result = this.buildNode(child);
+      if (discriminator !== undefined && list.length < union.branches.length) {
+        const reference = dataReference(owner, joinPath(owner.path, discriminator.property));
+        const branchValues = list.map((entry) => discriminator.values[entry.branchIndex]);
+        result = withIncludeCondition(result, equalsAny(reference, branchValues));
+      }
+      widgets.push(...asWidgetList(result));
+    }
+    return widgets;
+  }
+
+  /**
+   * The union of object branches of a node, `undefined` when it has none. The branches are
+   * normalized once, here, and the result is cached.
+   */
+  private objectUnionOf(
+    normalized: NormalizedNode,
+    pointer: string,
+    path: string,
+  ): ObjectUnion | undefined {
+    const cached = this.objectUnions.get(normalized.schema);
+    if (cached !== undefined) {
+      return cached ?? undefined;
+    }
+    let union: ObjectUnion | null = null;
+    const keyword = (['oneOf', 'anyOf'] as const).find(
+      (candidate) =>
+        Array.isArray(normalized.schema[candidate]) && !isConstUnion(normalized.schema[candidate]),
+    );
+    if (keyword !== undefined) {
+      const environment = this.environmentFor(path);
+      const branches = (normalized.schema[keyword] as unknown[]).flatMap((raw, index) => {
+        const branchPointer = this.pointerOf(raw) ?? appendPointer(pointer, keyword, index);
+        const node = normalizeNode(raw, branchPointer, normalized.refTrail, environment);
+        return node === undefined ? [] : [{ raw, pointer: branchPointer, normalized: node }];
+      });
+      if (branches.length > 0 && branches.every((branch) => branch.normalized.type === 'object')) {
+        const discriminator = discriminatorOf(
+          normalized.schema,
+          branches.map((branch) => ({
+            schema: branch.normalized.schema,
+            ref: refOf(branch.raw),
+            defName: branch.normalized.defName,
+          })),
+        );
+        union = { keyword, branches, discriminator };
+      }
+    }
+    this.objectUnions.set(normalized.schema, union);
+    return union ?? undefined;
   }
 
   /** The hint, the `$defs` override and the path override of a node, least specific first. */
@@ -374,24 +602,8 @@ class Conversion {
     for (const name of this.orderedNames(node, Object.keys(properties))) {
       const path = joinPath(node.path, name);
       const pointer = appendPointer(node.pointer, 'properties', name);
-      if (name === '' || name.includes('.')) {
-        this.diagnostics.push({
-          severity: 'error',
-          code: 'invalid-property-name',
-          message: `The property name "${name}" cannot be part of a form path, so it is not rendered.`,
-          path,
-          pointer,
-        });
+      if (!this.isValidPropertyName(name, path, pointer)) {
         continue;
-      }
-      if (/^\d+$/.test(name)) {
-        this.diagnostics.push({
-          severity: 'warning',
-          code: 'numeric-property-name',
-          message: `The form writes "${name}" as an array index, so this object becomes an array.`,
-          path,
-          pointer,
-        });
       }
       const child = this.createNode((properties as Record<string, unknown>)[name], {
         parent: node,
@@ -407,6 +619,30 @@ class Conversion {
       }
     }
     return children;
+  }
+
+  /** False for a name that cannot be a path segment. Warns about a name the form reads as an index. */
+  private isValidPropertyName(name: string, path: string, pointer: string): boolean {
+    if (name === '' || name.includes('.')) {
+      this.diagnostics.push({
+        severity: 'error',
+        code: 'invalid-property-name',
+        message: `The property name "${name}" cannot be part of a form path, so it is not rendered.`,
+        path,
+        pointer,
+      });
+      return false;
+    }
+    if (/^\d+$/.test(name)) {
+      this.diagnostics.push({
+        severity: 'warning',
+        code: 'numeric-property-name',
+        message: `The form writes "${name}" as an array index, so this object becomes an array.`,
+        path,
+        pointer,
+      });
+    }
+    return true;
   }
 
   /**
@@ -487,17 +723,20 @@ class Conversion {
   }
 
   private createNode(raw: unknown, placement: Placement): SchemaNode | undefined {
-    const pointer =
-      (raw !== null && typeof raw === 'object' && this.pointers.get(raw)) || placement.pointer;
-    const environment: NormalizeEnvironment = {
-      root: this.refRoot,
-      maxRefDepth: this.maxRefDepth,
-      pointers: this.pointers,
-      report: (problem) => this.diagnostics.push({ ...problem, path: placement.path }),
-    };
-    const normalized = normalizeNode(raw, pointer, placement.refTrail, environment);
+    const pointer = this.pointerOf(raw) ?? placement.pointer;
+    const normalized = normalizeNode(
+      raw,
+      pointer,
+      placement.refTrail,
+      this.environmentFor(placement.path),
+    );
     if (normalized === undefined) {
       return undefined;
+    }
+    // A union of objects is an object, also when the schema does not say so.
+    if (this.objectUnionOf(normalized, pointer, placement.path) && normalized.type === undefined) {
+      normalized.type = 'object';
+      normalized.schema['type'] = 'object';
     }
     const node: SchemaNode = {
       schema: normalized.schema,
@@ -558,13 +797,14 @@ class Conversion {
           'No widget edits free-form keys (`additionalProperties` with a schema). Only the declared properties are rendered.',
       });
     }
+    const objectUnion = this.objectUnions.get(node.schema);
     for (const keyword of ['oneOf', 'anyOf']) {
       const branches = node.schema[keyword];
-      if (Array.isArray(branches) && !isConstUnion(branches)) {
+      if (Array.isArray(branches) && !isConstUnion(branches) && objectUnion?.keyword !== keyword) {
         this.report(node, {
           severity: 'warning',
           code: 'unsupported-keyword',
-          message: `\`${keyword}\` with schema branches is not supported, so its branches are not rendered.`,
+          message: `\`${keyword}\` is only supported with object branches, so its branches are not rendered.`,
         });
       }
     }
@@ -581,6 +821,21 @@ class Conversion {
 
   private refTrailOf(node: SchemaNode): readonly string[] {
     return this.normalizedNodes.get(node)?.refTrail ?? [];
+  }
+
+  /** The document pointer recorded for a subschema object. */
+  private pointerOf(raw: unknown): string | undefined {
+    return raw !== null && typeof raw === 'object' ? this.pointers.get(raw) : undefined;
+  }
+
+  /** Normalization problems get the form data path of the node being normalized. */
+  private environmentFor(path: string): NormalizeEnvironment {
+    return {
+      root: this.refRoot,
+      maxRefDepth: this.maxRefDepth,
+      pointers: this.pointers,
+      report: (problem) => this.diagnostics.push({ ...problem, path }),
+    };
   }
 
   /** Counts a node, false once `maxNodes` is reached. The limit is reported once. */
@@ -608,6 +863,38 @@ function labelOf(node: SchemaNode): Localizable | undefined {
     return title;
   }
   return node.name !== undefined ? humanize(node.name) : undefined;
+}
+
+/** The selector label of a branch: its title, its definition name, or its value. */
+function branchTitle(branch: UnionBranch, value: unknown): string {
+  const title = branch.normalized.schema['title'];
+  if (typeof title === 'string' && title !== '') {
+    return title;
+  }
+  if (branch.normalized.defName !== undefined) {
+    return humanize(branch.normalized.defName);
+  }
+  return typeof value === 'string' ? humanize(value) : String(value);
+}
+
+function recordOf(value: unknown): Record<string, unknown> {
+  return value !== null && typeof value === 'object' && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : {};
+}
+
+function requiredOf(schema: JsonSchema): unknown[] {
+  return Array.isArray(schema['required']) ? schema['required'] : [];
+}
+
+function refOf(raw: unknown): string | undefined {
+  const ref = recordOf(raw)['$ref'];
+  return typeof ref === 'string' ? ref : undefined;
+}
+
+// Enough for schema values: they come from JSON, so key order is the only false negative.
+function jsonEqual(first: unknown, second: unknown): boolean {
+  return first === second || JSON.stringify(first) === JSON.stringify(second);
 }
 
 function joinPath(parent: string, segment: string): string {

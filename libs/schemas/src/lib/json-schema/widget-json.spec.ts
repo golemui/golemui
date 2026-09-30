@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { type FormWidgetJson } from './types';
-import { applyPatch, asWidgetList, cleanWidget, removeDuplicateWidgets } from './widget-json';
+import {
+  applyPatch,
+  asWidgetList,
+  cleanWidget,
+  removeDuplicateWidgets,
+  withIncludeCondition,
+} from './widget-json';
 
 const input = (path: string, fields: Partial<FormWidgetJson> = {}): FormWidgetJson => ({
   kind: 'input',
@@ -57,6 +63,25 @@ describe('applyPatch', () => {
     expect(applyPatch(null, { label: 'x' })).toBeNull();
     const widget = input('a');
     expect(applyPatch(widget, undefined)).toBe(widget);
+  });
+});
+
+describe('withIncludeCondition', () => {
+  it('adds the condition to every widget of the result', () => {
+    expect(withIncludeCondition(input('a'), '$form.x === 1')).toEqual(
+      input('a', { include: { when: '$form.x === 1' } }),
+    );
+    expect(withIncludeCondition([input('a'), input('b')], 'c')).toEqual([
+      input('a', { include: { when: 'c' } }),
+      input('b', { include: { when: 'c' } }),
+    ]);
+  });
+
+  it('combines with an existing when condition and leaves null alone', () => {
+    expect(withIncludeCondition(input('a', { include: { when: 'first' } }), 'second')).toEqual(
+      input('a', { include: { when: '(first) && second' } }),
+    );
+    expect(withIncludeCondition(null, 'c')).toBeNull();
   });
 });
 

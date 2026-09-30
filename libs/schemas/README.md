@@ -180,6 +180,15 @@ Refs are resolved inside the document: `$defs`, `definitions`, and OpenAPI
 expansions, 2 by default. `allOf` parts are merged, nullable types are unwrapped, and draft-07,
 draft-04 and OpenAPI 3.0 keywords are read in their 2020-12 form.
 
+A `oneOf` or `anyOf` of objects becomes a selector plus the branch properties. The selector is
+the discriminator: OpenAPI `discriminator.propertyName` when present, otherwise the first
+property with a different `const` in every branch. Its options are labelled by the branch
+titles. Each branch property is built once, with an `include.when` condition on the branches
+that define it, for example `$form.payment?.method === "card"`. Inside an array the condition
+reads the row through `$item`. The form removes the data of hidden widgets on submit, so only
+the chosen branch is sent. A union with no discriminator renders every branch property,
+optional and always visible, with a `no-discriminator` warning.
+
 The conversion never throws because of the schema shape. What it cannot express exactly is
 listed in `diagnostics`. Each entry has a `severity` (`error`: not rendered, `warning`:
 rendered approximately, `info`: a note), a `code`, the form data `path` and the JSON

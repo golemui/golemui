@@ -18,12 +18,15 @@ const fakePreset = (overrides: Partial<Preset> = {}): Preset => {
     rules: [
       {
         name: 'enum',
-        when: (node) => Array.isArray(node.schema['enum']),
+        when: (node) =>
+          node.type !== 'object' &&
+          (Array.isArray(node.schema['enum']) || Array.isArray(node.schema['oneOf'])),
         build: (node, context) => ({
           kind: 'input',
           type: 'choice',
           path: node.path,
           label: context.label(node),
+          validator: context.validator(node),
           props: { options: context.enumOptions(node) },
         }),
       },
@@ -564,10 +567,8 @@ describe('fromJsonSchema: diagnostics', () => {
     ['contains', { type: 'array', items: { type: 'string' }, contains: { const: 'x' } }],
     ['patternProperties', objectOf({}, { patternProperties: { '^x-': { type: 'string' } } })],
     ['additionalProperties', objectOf({}, { additionalProperties: { type: 'string' } })],
-    [
-      'oneOf',
-      { oneOf: [objectOf({ a: { type: 'string' } }), objectOf({ b: { type: 'string' } })] },
-    ],
+    ['oneOf', { oneOf: [{ type: 'string' }, { type: 'number' }] }],
+    ['anyOf', { anyOf: [{ type: 'string', maxLength: 3 }, objectOf({})] }],
     [
       'if',
       objectOf({ a: { type: 'string' } }, { if: { required: ['a'] }, then: { required: [] } }),
@@ -622,5 +623,227 @@ describe('fromJsonSchema: diagnostics', () => {
     expect(result.diagnostics).toEqual([
       expect.objectContaining({ severity: 'error', code: 'max-nodes', path: 'c' }),
     ]);
+  });
+});
+
+describe('fromJsonSchema: discriminated unions', () => {
+  const paymentUnion = {
+    oneOf: [
+      {
+        title: 'Card',
+        type: 'object',
+        properties: {
+          method: { const: 'card' },
+          cardNumber: { type: 'string' },
+          note: { type: 'string' },
+        },
+        required: ['method', 'cardNumber'],
+      },
+      {
+        title: 'Bank transfer',
+        type: 'object',
+        properties: {
+          method: { const: 'bank' },
+          iban: { type: 'string' },
+          note: { type: 'string' },
+        },
+        required: ['method', 'iban'],
+      },
+      {
+        title: 'Cash',
+        type: 'object',
+        properties: { method: { const: 'cash' }, note: { type: 'string' } },
+        required: ['method'],
+      },
+    ],
+  };
+  const paymentOptions = [
+    { label: 'Card', value: 'card' },
+    { label: 'Bank transfer', value: 'bank' },
+    { label: 'Cash', value: 'cash' },
+  ];
+
+  it('builds a selector, then each branch property once with the branches that define it', () => {
+    const result = convert(objectOf({ payment: paymentUnion }));
+
+    expect(result.formDefinition.form[0]).toEqual({
+      kind: 'layout',
+      type: 'group',
+      props: { title: 'Payment' },
+      children: [
+        input('payment.method', {
+          type: 'choice',
+          label: 'Method',
+          validator: { required: true },
+          props: { options: paymentOptions },
+        }),
+        input('payment.cardNumber', {
+          label: 'Card Number',
+          include: { when: '$form.payment?.method === "card"' },
+          validator: { required: true },
+        }),
+        input('payment.note', { label: 'Note' }),
+        input('payment.iban', {
+          label: 'Iban',
+          include: { when: '$form.payment?.method === "bank"' },
+          validator: { required: true },
+        }),
+      ],
+    });
+    expect(result.diagnostics).toEqual([]);
+  });
+
+  it('shows a property of some branches for each of those branches', () => {
+    const union = structuredClone(paymentUnion);
+    delete (union.oneOf[2].properties as Record<string, unknown>)['note'];
+
+    const note = formOf(objectOf({ payment: union }))[0].children?.find(
+      (child) => child.path === 'payment.note',
+    );
+
+    expect(note?.include).toEqual({
+      when: '($form.payment?.method === "card" || $form.payment?.method === "bank")',
+    });
+  });
+
+  it('reports a property the branches define differently and uses the first definition', () => {
+    const union = structuredClone(paymentUnion);
+    union.oneOf[1].properties['note'] = { type: 'string', maxLength: 5 } as { type: string };
+
+    const result = convert(objectOf({ payment: union }));
+
+    expect(result.diagnostics).toEqual([
+      expect.objectContaining({ code: 'branch-schema-conflict', path: 'payment.note' }),
+    ]);
+  });
+
+  it('puts the selector where the object declares the discriminator, keeping its title', () => {
+    const form = formOf(
+      objectOf(
+        { amount: { type: 'number' }, method: { type: 'string', title: 'Pay with' } },
+        { required: ['method'], ...paymentUnion },
+      ),
+    );
+
+    expect(form.map((widget) => widget.path)).toEqual([
+      'amount',
+      'method',
+      'cardNumber',
+      'note',
+      'iban',
+    ]);
+    expect(form[1]).toEqual(
+      input('method', {
+        type: 'choice',
+        label: 'Pay with',
+        validator: { required: true },
+        props: { options: paymentOptions },
+      }),
+    );
+    expect(form[2].include).toEqual({ when: '$form.method === "card"' });
+  });
+
+  it('keeps a declared property instead of a branch copy and reports the difference', () => {
+    const result = convert(objectOf({ note: { type: 'string', title: 'Comment' } }, paymentUnion));
+    const union = structuredClone(paymentUnion);
+    union.oneOf[0].properties['note'] = { type: 'string', title: 'Comment' } as { type: string };
+    union.oneOf[1].properties['note'] = { type: 'string', title: 'Comment' } as { type: string };
+    union.oneOf[2].properties['note'] = { type: 'string', title: 'Comment' } as { type: string };
+    const matching = convert(objectOf({ note: { type: 'string', title: 'Comment' } }, union));
+
+    const paths = result.formDefinition.form.map((widget) => widget.path);
+    expect(paths.filter((path) => path === 'note')).toHaveLength(1);
+    expect(codesOf(result.diagnostics)).toEqual([
+      'branch-schema-conflict',
+      'branch-schema-conflict',
+      'branch-schema-conflict',
+    ]);
+    expect(matching.diagnostics).toEqual([]);
+  });
+
+  it('reads the discriminator through $item in the rows of an array', () => {
+    const [lines] = formOf(objectOf({ payments: { type: 'array', items: paymentUnion } }));
+    const template = lines.props?.['template'] as FormWidgetJson;
+
+    expect(template.children?.[1]).toEqual(
+      input('payments.items.cardNumber', {
+        label: 'Card Number',
+        include: { when: '$item.method === "card"' },
+        validator: { required: true },
+      }),
+    );
+  });
+
+  it('uses the OpenAPI discriminator, its mapping and the definition names', () => {
+    const openApi = {
+      components: {
+        schemas: {
+          Cat: objectOf({ petType: { type: 'string' }, lives: { type: 'integer' } }),
+          Dog: objectOf({ petType: { type: 'string' }, bark: { type: 'boolean' } }),
+        },
+      },
+    };
+    const pet = {
+      oneOf: [{ $ref: '#/components/schemas/Cat' }, { $ref: '#/components/schemas/Dog' }],
+      discriminator: { propertyName: 'petType', mapping: { cat: '#/components/schemas/Cat' } },
+    };
+
+    const [group] = formOf(objectOf({ pet }), { refRoot: openApi });
+
+    expect(group.children?.[0].props?.['options']).toEqual([
+      { label: 'Cat', value: 'cat' },
+      { label: 'Dog', value: 'Dog' },
+    ]);
+    expect(group.children?.[2].include).toEqual({ when: '$form.pet?.petType === "Dog"' });
+  });
+
+  it('splits a string value with a dot followed by a digit', () => {
+    const plan = {
+      oneOf: [
+        objectOf({ version: { const: 'v1.2' }, legacy: { type: 'boolean' } }),
+        objectOf({ version: { const: 'v2' }, modern: { type: 'boolean' } }),
+      ],
+    };
+
+    const [group] = formOf(objectOf({ plan }));
+
+    expect(group.children?.[1].include).toEqual({ when: '$form.plan?.version === "v1." + "2"' });
+  });
+
+  it('renders every branch property optional and visible without a discriminator', () => {
+    const result = convert(
+      objectOf({
+        contact: {
+          oneOf: [
+            objectOf({ email: { type: 'string' } }, { required: ['email'] }),
+            objectOf({ phone: { type: 'string' } }, { required: ['phone'] }),
+          ],
+        },
+      }),
+    );
+
+    expect(result.formDefinition.form[0].children).toEqual([
+      input('contact.email', { label: 'Email' }),
+      input('contact.phone', { label: 'Phone' }),
+    ]);
+    expect(result.diagnostics).toEqual([
+      expect.objectContaining({ severity: 'warning', code: 'no-discriminator', path: 'contact' }),
+    ]);
+  });
+
+  it('builds a union at the root', () => {
+    const form = formOf(paymentUnion);
+
+    expect(form.map((widget) => widget.path)).toEqual(['method', 'cardNumber', 'note', 'iban']);
+    expect(form[1].include).toEqual({ when: '$form.method === "card"' });
+  });
+
+  it('lets the layers change the selector like any other node', () => {
+    const [group] = formOf(objectOf({ payment: paymentUnion }), {
+      overrides: { 'payment.method': { label: 'How to pay', props: { layout: 'row' } } },
+    });
+
+    expect(group.children?.[0].label).toBe('How to pay');
+    expect(group.children?.[0].props?.['layout']).toBe('row');
   });
 });
