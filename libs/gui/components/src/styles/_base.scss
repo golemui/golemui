@@ -2,6 +2,7 @@
 // It sets the inherited properties a form container gives its widgets; `:where` keeps it at zero
 // specificity, so any other rule, the element's own or the page's, wins.
 :where(
+  gui-accordion,
   gui-button,
   gui-calendar,
   gui-checkbox,

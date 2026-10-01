@@ -37,6 +37,16 @@
     "./vue": {
       "types": "./vue.d.ts"
     },
+    "./accordion": {
+      "types": "./lib/components/accordion.d.ts",
+      "import": "./lib/components/accordion.js",
+      "require": "./lib/components/accordion.umd.cjs"
+    },
+    "./accordion-item": {
+      "types": "./lib/components/accordion-item.d.ts",
+      "import": "./lib/components/accordion-item.js",
+      "require": "./lib/components/accordion-item.umd.cjs"
+    },
     "./button": {
       "types": "./lib/components/button.d.ts",
       "import": "./lib/components/button.js",

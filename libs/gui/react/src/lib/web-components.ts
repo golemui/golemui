@@ -1,5 +1,7 @@
 // The React components of GolemUI Components, under the names the widgets use.
 export {
+  GuiAccordion as GuiAccordionReact,
+  GuiAccordionItem as GuiAccordionItemReact,
   GuiButton as GuiButtonReact,
   GuiCalendar as GuiCalendarReact,
   GuiCheckbox as GuiCheckboxReact,

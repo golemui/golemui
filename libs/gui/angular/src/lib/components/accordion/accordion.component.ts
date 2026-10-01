@@ -1,7 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, type OnDestroy, type OnInit } from '@angular/core';
+import {
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  inject,
+  type OnDestroy,
+  type OnInit,
+} from '@angular/core';
 import { LayoutWidgetAdapter, WidgetDirective } from '@golemui/angular';
 import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
+import type { GuiToggleEventDetail } from '@golemui/gui-components';
 import type { AccordionEventDetail } from '@golemui/gui-components/internals';
 import {
   accordionButtonId,
@@ -9,6 +16,8 @@ import {
   type AccordionProps,
   repeaterIndexSuffix,
 } from '@golemui/gui-shared/internals';
+import '@golemui/gui-components/accordion';
+import { deferHydrationAttr } from '../../utils/defer-hydration';
 
 @Component({
   standalone: true,
@@ -20,12 +29,14 @@ import {
     class: 'gui-accordion gui-field',
     '[style.flex]': 'this.adapter.templateData().size',
   },
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class AccordionComponent implements OnInit, OnDestroy, WithWidget {
   widget!: LayoutWidget;
   activeSections: { [key: string]: boolean } = {};
 
   protected adapter: LayoutWidgetAdapter<AccordionProps> = inject(LayoutWidgetAdapter);
+  protected readonly deferHydration = deferHydrationAttr();
   private rowIndexSuffix = '';
 
   ngOnInit(): void {
@@ -35,18 +46,23 @@ export class AccordionComponent implements OnInit, OnDestroy, WithWidget {
     this.rowIndexSuffix = repeaterIndexSuffix(this.widget.uid);
   }
 
-  onClickButton(uid: string) {
-    if (this.adapter.templateData().singleOpen) {
-      Object.keys(this.activeSections)
-        .filter((sectionUid) => sectionUid !== uid)
-        .forEach((key) => {
-          this.activeSections[key] = false;
-        });
+  isOpen(uid: string) {
+    return !!this.activeSections[uid];
+  }
+
+  onToggle(event: Event, uid: string) {
+    const { detail } = event as CustomEvent<GuiToggleEventDetail>;
+    // An accordion nested in a section fires its own.
+    if (event.target !== event.currentTarget || this.isOpen(uid) === detail.open) return;
+
+    if (detail.open && this.adapter.templateData().singleOpen) {
+      Object.keys(this.activeSections).forEach((key) => {
+        this.activeSections[key] = false;
+      });
     }
 
-    this.activeSections[uid] = !this.activeSections[uid];
-
-    // A copy, because the next click writes into `this.activeSections` again.
+    this.activeSections[uid] = detail.open;
+    // A copy, because the next toggle writes into `this.activeSections` again.
     this.adapter.change<AccordionEventDetail>({ ...this.activeSections });
   }
 

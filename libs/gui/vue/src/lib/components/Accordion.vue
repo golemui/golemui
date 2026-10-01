@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
 import { useLayoutWidget, WidgetRenderer } from '@golemui/vue';
+import type { GuiToggleEventDetail } from '@golemui/gui-components';
 import {
   accordionButtonId,
   accordionSectionId,
@@ -8,6 +9,7 @@ import {
   repeaterIndexSuffix,
 } from '@golemui/gui-shared/internals';
 import { computed, ref, watch, type WatchStopHandle } from 'vue';
+import '@golemui/gui-components/accordion';
 
 const props = defineProps<WithWidget>();
 const widget = props.widget as LayoutWidget;
@@ -39,18 +41,21 @@ if (initialized) {
   stopSeedWatch();
 }
 
-const onClickButton = (sectionUid: string) => {
-  const newState: typeof activeSections.value = { ...activeSections.value };
-  if (templateData.value.singleOpen) {
-    Object.keys(newState)
-      .filter((u) => u !== sectionUid)
-      .forEach((u) => {
-        newState[u] = false;
-      });
+const onToggle = (event: CustomEvent<GuiToggleEventDetail>, sectionUid: string) => {
+  // An accordion nested in a section fires its own.
+  if (event.target !== event.currentTarget) return;
+  const { open } = event.detail;
+  if (isOpen(sectionUid) === open) return;
+
+  const next: typeof activeSections.value = { ...activeSections.value };
+  if (open && templateData.value.singleOpen) {
+    Object.keys(next).forEach((key) => {
+      next[key] = false;
+    });
   }
-  newState[sectionUid] = !newState[sectionUid];
-  activeSections.value = newState;
-  onChange(newState);
+  next[sectionUid] = open;
+  activeSections.value = next;
+  onChange(next);
 };
 
 // Section uids come from the props without row indexes, the children come from the store with
@@ -61,51 +66,38 @@ const sectionForUid = (sectionUid: string) =>
     (s) => s.uid === `${sectionUid}${rowIndexSuffix}`,
   );
 
-const isActive = (sectionUid: string) => Boolean(activeSections.value[sectionUid]);
+const isOpen = (sectionUid: string) => Boolean(activeSections.value[sectionUid]);
 
 const shouldRenderContent = (sectionUid: string) =>
-  isActive(sectionUid) || templateData.value.renderMode !== 'activeOnly';
+  isOpen(sectionUid) || templateData.value.renderMode !== 'activeOnly';
 
 const sections = computed(() => templateData.value.sections || []);
 </script>
 
 <template>
   <div class="gui-accordion gui-field" :style="{ flex: templateData.size }">
-    <div class="gui-widget" :id="uid">
-      <div
+    <gui-accordion :id="uid" :multiple.prop="!templateData.singleOpen">
+      <gui-accordion-item
         v-for="section in sections"
-        :key="accordionSectionId(widget.uid, section.uid)"
-        class="gui-accordion__section"
+        :key="section.uid"
+        :open.prop="isOpen(section.uid)"
+        @gui-toggle="onToggle($event, section.uid)"
       >
-        <button
-          type="button"
-          tabindex="0"
-          :id="accordionButtonId(widget.uid, section.uid)"
-          :aria-controls="accordionSectionId(widget.uid, section.uid)"
-          :aria-expanded="isActive(section.uid) ? 'true' : 'false'"
-          :class="isActive(section.uid) ? 'active' : ''"
-          @click="onClickButton(section.uid)"
-        >
-          {{ section.label }}
-          <span class="gui-accordion__arrow">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256">
-              <path
-                d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"
-              ></path>
-            </svg>
-          </span>
-        </button>
-        <section
-          v-if="shouldRenderContent(section.uid) && sectionForUid(section.uid)"
-          class="gui-widget"
-          role="region"
-          :id="accordionSectionId(widget.uid, section.uid)"
-          :hidden="!isActive(section.uid) && templateData.renderMode !== 'activeOnly'"
-          :aria-labelledby="accordionButtonId(widget.uid, section.uid)"
-        >
-          <WidgetRenderer :widget="sectionForUid(section.uid)!" />
-        </section>
-      </div>
-    </div>
+        <details :open="isOpen(section.uid)">
+          <summary :id="accordionButtonId(widget.uid, section.uid)">
+            {{ section.label }}
+          </summary>
+          <section
+            v-if="shouldRenderContent(section.uid) && sectionForUid(section.uid)"
+            class="gui-widget"
+            role="region"
+            :id="accordionSectionId(widget.uid, section.uid)"
+            :aria-labelledby="accordionButtonId(widget.uid, section.uid)"
+          >
+            <WidgetRenderer :widget="sectionForUid(section.uid)!" />
+          </section>
+        </details>
+      </gui-accordion-item>
+    </gui-accordion>
   </div>
 </template>

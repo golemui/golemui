@@ -11,9 +11,10 @@ import { html, LitElement, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
 import { safeDefine, unsubscribeAll } from '@golemui/lit/internals';
 import { type Subscription } from 'rxjs';
-import { repeat } from 'lit-html/directives/repeat.js';
-import { classMap } from 'lit/directives/class-map.js';
+import { repeat } from 'lit/directives/repeat.js';
+import type { GuiToggleEventDetail } from '@golemui/gui-components';
 import type { AccordionEventDetail } from '@golemui/gui-components/internals';
+import '@golemui/gui-components/accordion';
 
 export class AccordionElement extends LitElement implements WithWidget {
   widget!: LayoutWidget;
@@ -61,17 +62,20 @@ export class AccordionElement extends LitElement implements WithWidget {
     );
   }
 
-  onClickButton(uid: string) {
-    if (this.adapter.templateData.singleOpen) {
-      Object.keys(this.activeSections)
-        .filter((sectionUid) => sectionUid !== uid)
-        .forEach((key) => {
-          this.activeSections[key] = false;
-        });
+  onToggle(event: CustomEvent<GuiToggleEventDetail>, uid: string) {
+    // An accordion nested in a section fires its own.
+    if (event.target !== event.currentTarget) return;
+    const { open } = event.detail;
+    if (!!this.activeSections[uid] === open) return;
+
+    if (open && this.adapter.templateData.singleOpen) {
+      Object.keys(this.activeSections).forEach((key) => {
+        this.activeSections[key] = false;
+      });
     }
 
-    this.activeSections[uid] = !this.activeSections[uid];
-    // A copy, because the next click writes into `this.activeSections` again.
+    this.activeSections[uid] = open;
+    // A copy, because the next toggle writes into `this.activeSections` again.
     this.adapter.change<AccordionEventDetail>({ ...this.activeSections });
     this.requestUpdate();
   }
@@ -83,63 +87,44 @@ export class AccordionElement extends LitElement implements WithWidget {
 
   override render() {
     if (!this.adapter.templateData) return html``;
+    const { sections = [], singleOpen, renderMode } = this.adapter.templateData;
 
     return html`
-      <div class="gui-widget" id=${this.widget.uid}>
-        ${this.adapter.templateData.sections
-          ? repeat(
-              this.adapter.templateData.sections,
-              (section: any) => section.uid,
-              (section: any) => {
-                // A `when`-hidden child is absent from the store's children: no section region.
-                const child = this.getChild(section.uid);
-                const sectionContent =
-                  child !== undefined &&
-                  (this.activeSections[section.uid] ||
-                    this.adapter.templateData.renderMode !== 'activeOnly')
-                    ? html`<section
-                        class="gui-widget"
-                        role="region"
-                        id=${accordionSectionId(this.widget.uid, section.uid)}
-                        ?hidden=${!this.activeSections[section.uid] &&
-                        this.adapter.templateData.renderMode !== 'activeOnly'}
-                        aria-labelledby=${accordionButtonId(this.widget.uid, section.uid)}
-                      >
-                        <gui-widget .widget=${child}></gui-widget>
-                      </section>`
-                    : nothing;
-
-                return html`<div class="gui-accordion__section">
-                  <button
-                    type="button"
-                    tabindex="0"
-                    class=${classMap({
-                      active: this.activeSections[section.uid],
-                    })}
-                    id=${accordionButtonId(this.widget.uid, section.uid)}
-                    aria-controls=${accordionSectionId(this.widget.uid, section.uid)}
-                    aria-expanded=${this.activeSections[section.uid] ? 'true' : 'false'}
-                    @click=${() => this.onClickButton(section.uid)}
+      <gui-accordion id=${this.widget.uid} ?multiple=${!singleOpen}>
+        ${repeat(
+          sections,
+          (section) => section.uid,
+          (section) => {
+            const isOpen = !!this.activeSections[section.uid];
+            // A `when`-hidden child is absent from the store's children: no section region.
+            const child = this.getChild(section.uid);
+            const content =
+              child !== undefined && (isOpen || renderMode !== 'activeOnly')
+                ? html`<section
+                    class="gui-widget"
+                    role="region"
+                    id=${accordionSectionId(this.widget.uid, section.uid)}
+                    aria-labelledby=${accordionButtonId(this.widget.uid, section.uid)}
                   >
-                    ${section.label}<span class="gui-accordion__arrow"
-                      ><svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        viewBox="0 0 256 256"
-                      >
-                        <path
-                          d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"
-                        ></path></svg
-                    ></span>
-                  </button>
+                    <gui-widget .widget=${child}></gui-widget>
+                  </section>`
+                : nothing;
 
-                  ${sectionContent}
-                </div>`;
-              },
-            )
-          : nothing}
-      </div>
+            return html`<gui-accordion-item
+              .open=${isOpen}
+              @gui-toggle=${(event: CustomEvent<GuiToggleEventDetail>) =>
+                this.onToggle(event, section.uid)}
+            >
+              <details ?open=${isOpen}>
+                <summary id=${accordionButtonId(this.widget.uid, section.uid)}>
+                  ${section.label}
+                </summary>
+                ${content}
+              </details>
+            </gui-accordion-item>`;
+          },
+        )}
+      </gui-accordion>
     `;
   }
 

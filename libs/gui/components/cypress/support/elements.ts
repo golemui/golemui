@@ -42,6 +42,8 @@ const hostRenderedOptions: RuleObject = { 'aria-required-children': { enabled: f
 const inactiveUpload = ['.gui-file-upload__service-error'];
 
 export const elements: ElementCase[] = [
+  // Its items are the app's children: accordion.cy.ts checks it with them.
+  { tag: 'gui-accordion', props: {}, hostRendersChildren: true },
   { tag: 'gui-button', props: { label: 'Save' } },
   {
     tag: 'gui-calendar',

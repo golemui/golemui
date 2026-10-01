@@ -940,16 +940,16 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
         cy.get('[data-cy="secondSection[1]_textinput"]').should('have.value', 'Bea');
         cy.get('[data-cy="secondSection[0]_textinput"]').should('not.exist');
 
-        // Each row's button controls its own region
-        cy.get('[id="accordion_button_rowAccordion[0]_firstSection"]').should(
+        // Each row's region is labelled by its own row's header
+        cy.get('[id="accordion_section_rowAccordion[0]_firstSection"]').should(
           'have.attr',
-          'aria-controls',
-          'accordion_section_rowAccordion[0]_firstSection',
+          'aria-labelledby',
+          'accordion_button_rowAccordion[0]_firstSection',
         );
-        cy.get('[id="accordion_button_rowAccordion[1]_secondSection"]').should(
+        cy.get('[id="accordion_section_rowAccordion[1]_secondSection"]').should(
           'have.attr',
-          'aria-controls',
-          'accordion_section_rowAccordion[1]_secondSection',
+          'aria-labelledby',
+          'accordion_button_rowAccordion[1]_secondSection',
         );
         expectNoDuplicateIds();
       });

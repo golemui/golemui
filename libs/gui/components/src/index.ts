@@ -1,5 +1,11 @@
 // ─── Web components ───
 
+export { GuiAccordion, GuiAccordionEvents } from './lib/components/accordion';
+export {
+  GuiAccordionItem,
+  GuiAccordionItemEvents,
+  type GuiToggleEventDetail,
+} from './lib/components/accordion-item';
 export { GuiButton } from './lib/components/button';
 export { GuiCalendar, GuiCalendarEvents } from './lib/components/calendar';
 export type { CalendarDay } from './lib/components/calendar';

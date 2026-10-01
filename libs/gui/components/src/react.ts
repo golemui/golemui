@@ -9,6 +9,14 @@
  */
 import { createComponent, type EventName, type ReactWebComponent } from '@lit/react';
 import React from 'react';
+import {
+  GuiAccordion as GuiAccordionElement,
+  GuiAccordionEvents,
+} from './lib/components/accordion';
+import {
+  GuiAccordionItem as GuiAccordionItemElement,
+  GuiAccordionItemEvents,
+} from './lib/components/accordion-item';
 import { GuiButton as GuiButtonElement } from './lib/components/button';
 import { GuiCalendar as GuiCalendarElement, GuiCalendarEvents } from './lib/components/calendar';
 import { GuiCheckbox as GuiCheckboxElement, GuiCheckboxEvents } from './lib/components/checkbox';
@@ -158,6 +166,12 @@ function wrap<I extends HTMLElement, Events extends object = Record<never, never
 }
 
 // The native click, so `onClick` receives the DOM event rather than React's synthetic one.
+export const GuiAccordion = wrap('gui-accordion', GuiAccordionElement, GuiAccordionEvents);
+export const GuiAccordionItem = wrap(
+  'gui-accordion-item',
+  GuiAccordionItemElement,
+  GuiAccordionItemEvents,
+);
 export const GuiButton = wrap('gui-button', GuiButtonElement, { click: fires<MouseEvent>() });
 export const GuiCalendar = wrap('gui-calendar', GuiCalendarElement, GuiCalendarEvents);
 export const GuiCheckbox = wrap('gui-checkbox', GuiCheckboxElement, GuiCheckboxEvents);
