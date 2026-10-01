@@ -602,7 +602,9 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
 
       cy.get('@formSubmit').should('have.been.calledOnce');
       cy.get('@formSubmit').its('firstCall.args.0.data').should('not.have.property', 'vatNumber');
-      cy.get('[data-cy="submitBtn_button"]').should('not.have.class', 'gui-button--invalid');
+      cy.get('[data-cy="submitBtn_button"]')
+        .closest('.gui-button')
+        .should('not.have.class', 'gui-button--invalid');
     });
 
     it('shows the revealed section errors right away after a submit attempt', () => {

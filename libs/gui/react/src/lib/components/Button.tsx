@@ -7,15 +7,18 @@ import type { ButtonProps } from '@golemui/gui-shared/internals';
 export function Button(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as ActionWidget;
   const { uid, templateData, onClick } = useActionWidget<ButtonProps>(widget);
+  const invalid = templateData.invalid === true && templateData.actionType === 'submit';
 
   return (
-    <div className="gui-button gui-field" style={{ flex: templateData.size }}>
+    <div
+      className={invalid ? 'gui-button gui-field gui-button--invalid' : 'gui-button gui-field'}
+      style={{ flex: templateData.size }}
+    >
       <GuiButtonReact
         uid={uid}
-        actionType={templateData.actionType ?? 'button'}
+        type={templateData.actionType ?? 'button'}
         label={templateData.label as string}
         disabled={templateData.disabled as boolean}
-        invalid={templateData.invalid as boolean}
         variant={templateData.variant}
         icon={templateData.icon}
         iconPosition={templateData.iconPosition}

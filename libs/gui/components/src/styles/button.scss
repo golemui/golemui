@@ -1,8 +1,10 @@
+@use 'spinner' as *;
+
 /* Buttons inside widgets */
 
 button.gui-button,
 /* Button Widget: in a form adapter's host, or a <gui-button> used without a form */
-:is(.gui-button, gui-button) button {
+:is(.gui-button, gui-button) :is(button, a) {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -15,6 +17,7 @@ button.gui-button,
   padding: 0 0.75rem;
   font-weight: 500;
   text-align: center;
+  text-decoration: none;
   transition: background-color var(--gui-transition-normal, 0.2s);
 
   &.gui-button--sm {
@@ -24,6 +27,15 @@ button.gui-button,
       width: 20px;
       height: 20px;
     }
+  }
+
+  &.gui-button--lg {
+    height: 50px;
+    padding: 0 1rem;
+  }
+
+  .gui-spinner {
+    @include gui-spinner;
   }
 
   .gui-button-icon {
@@ -49,9 +61,14 @@ button.gui-button,
     background: var(--gui-intent-primary-active);
   }
 
-  &:disabled {
+  &:disabled,
+  &[aria-disabled='true'] {
     opacity: 0.6;
     cursor: not-allowed;
+  }
+
+  &.gui-button--loading {
+    cursor: progress;
   }
 
   &.gui-button--outlined {
@@ -83,15 +100,6 @@ button.gui-button,
     &:active {
       background: transparent;
       color: var(--gui-intent-primary-active);
-    }
-  }
-
-  &.gui-button--invalid {
-    border: 2px solid var(--gui-intent-error);
-
-    &:focus {
-      outline: 0;
-      box-shadow: var(--gui-shadow-focus-error);
     }
   }
 }
