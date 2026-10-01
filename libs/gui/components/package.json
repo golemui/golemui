@@ -192,6 +192,26 @@
       "import": "./lib/components/select.js",
       "require": "./lib/components/select.umd.cjs"
     },
+    "./tab": {
+      "types": "./lib/components/tab.d.ts",
+      "import": "./lib/components/tab.js",
+      "require": "./lib/components/tab.umd.cjs"
+    },
+    "./tab-list": {
+      "types": "./lib/components/tab-list.d.ts",
+      "import": "./lib/components/tab-list.js",
+      "require": "./lib/components/tab-list.umd.cjs"
+    },
+    "./tab-panel": {
+      "types": "./lib/components/tab-panel.d.ts",
+      "import": "./lib/components/tab-panel.js",
+      "require": "./lib/components/tab-panel.umd.cjs"
+    },
+    "./tabs": {
+      "types": "./lib/components/tabs.d.ts",
+      "import": "./lib/components/tabs.js",
+      "require": "./lib/components/tabs.umd.cjs"
+    },
     "./tags": {
       "types": "./lib/components/tags.d.ts",
       "import": "./lib/components/tags.js",

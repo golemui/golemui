@@ -106,6 +106,10 @@
         "libs/gui/components/src/lib/components/range-time-picker.ts"
       ],
       "@golemui/gui-components/select": ["libs/gui/components/src/lib/components/select.ts"],
+      "@golemui/gui-components/tab": ["libs/gui/components/src/lib/components/tab.ts"],
+      "@golemui/gui-components/tab-list": ["libs/gui/components/src/lib/components/tab-list.ts"],
+      "@golemui/gui-components/tab-panel": ["libs/gui/components/src/lib/components/tab-panel.ts"],
+      "@golemui/gui-components/tabs": ["libs/gui/components/src/lib/components/tabs.ts"],
       "@golemui/gui-components/tags": ["libs/gui/components/src/lib/components/tags.ts"],
       "@golemui/gui-components/textarea": ["libs/gui/components/src/lib/components/textarea.ts"],
       "@golemui/gui-components/time-input": [

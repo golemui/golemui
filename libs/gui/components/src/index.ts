@@ -85,6 +85,10 @@ export { GuiRangeDatePicker, GuiRangeDatePickerEvents } from './lib/components/r
 export { GuiRangeTimePicker, GuiRangeTimePickerEvents } from './lib/components/range-time-picker';
 export { GuiSelect, GuiSelectEvents } from './lib/components/select';
 export type { GuiSelectProps } from './lib/components/select';
+export { GuiTab } from './lib/components/tab';
+export { GuiTabList } from './lib/components/tab-list';
+export { GuiTabPanel } from './lib/components/tab-panel';
+export { GuiTabs, GuiTabsEvents, type GuiTabChangeEventDetail } from './lib/components/tabs';
 export { GuiTags, GuiTagsEvents } from './lib/components/tags';
 export type { GuiTagsProps } from './lib/components/tags';
 export { GuiTextarea, GuiTextareaEvents } from './lib/components/textarea';

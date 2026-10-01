@@ -1,102 +1,94 @@
 @use 'scroll-shadow' as *;
 
-.gui-tabs {
+// The Forms adapters wrap the element in a host with this class.
+:is(.gui-tabs, gui-tabs) {
   display: block;
   width: 100%;
+}
+
+gui-tabs {
+  position: relative;
   margin: var(--gui-space-3) 0;
 
-  @include gui-sentinels;
+  // gui-tabs marks the sides of the strip with tabs scrolled out of view.
+  @include gui-scroll-shadow-layers;
 
-  > nav {
-    position: relative;
-    overflow: hidden;
-    padding: 0;
-    margin-bottom: -1px;
-    justify-content: start;
-
-    @include gui-scroll-shadows(gui-tabs);
-
-    &::before,
-    &::after {
-      height: var(--gui-widget-size);
-    }
-
-    ul[role='tablist'] {
-      width: 100%;
-      display: flex;
-      overflow-x: auto;
-      overflow-y: hidden;
-      white-space: nowrap;
-
-      margin: 0;
-      padding: 0;
-      list-style: none;
-      scrollbar-width: none;
-    }
-
-    li {
-      flex: 0 0 auto;
-      display: flex;
-      margin: 0;
-      padding: 0;
-    }
+  &::before,
+  &::after {
+    height: var(--gui-widget-size);
   }
 
-  button[role='tab'] {
-    flex: 0 0 auto;
-    display: inline-block;
-    padding: var(--gui-space-3);
+  &[overflow-start]::before,
+  &[overflow-end]::after {
+    opacity: 1;
+  }
+}
 
-    border: 1px solid var(--gui-border-default);
-    margin-left: -1px;
+gui-tab-list {
+  display: flex;
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  margin: 0 0 -1px;
+  padding: 0;
+  scrollbar-width: none;
+}
 
-    border-radius: var(--gui-radius-md) var(--gui-radius-md) 0 0;
-    background: var(--gui-bg-default);
-    color: var(--gui-text-default);
+gui-tab {
+  flex: 0 0 auto;
+  display: inline-block;
+  box-sizing: border-box;
+  padding: var(--gui-space-3);
 
-    position: relative;
-    z-index: 1;
+  border: 1px solid var(--gui-border-default);
+  border-radius: var(--gui-radius-md) var(--gui-radius-md) 0 0;
+  background: var(--gui-bg-default);
+  color: var(--gui-text-default);
 
-    transition:
-      border-color 0.2s,
-      box-shadow 0.2s;
-    cursor: pointer;
+  position: relative;
+  z-index: 1;
 
-    white-space: nowrap;
+  font-weight: normal;
+  line-height: normal;
+  text-align: center;
+  white-space: nowrap;
+  user-select: none;
+  cursor: pointer;
 
-    &.active {
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+
+  &[aria-selected='true'] {
+    border-bottom-color: var(--gui-bg-default);
+  }
+
+  &:focus {
+    outline: var(--gui-text-default) solid 1px;
+    border: var(--gui-text-default) solid 1px;
+
+    &[aria-selected='true'] {
       border-bottom-color: var(--gui-bg-default);
-    }
-
-    &:first-child {
-      margin-left: 0;
-    }
-
-    &:focus {
-      outline: var(--gui-text-default) solid 1px;
-      border: var(--gui-text-default) solid 1px;
-
-      &.active {
-        border-bottom-color: var(--gui-bg-default);
-      }
-    }
-  }
-
-  section[role='tabpanel'] {
-    padding: calc(var(--gui-space-3) * 2) var(--gui-space-3);
-    border: 1px solid var(--gui-border-default);
-    border-radius: 0 0 var(--gui-radius-md) var(--gui-radius-md);
-    background: var(--gui-bg-default);
-    color: var(--gui-text-default);
-
-    &[hidden] {
-      display: none;
     }
   }
 }
 
+gui-tab-panel {
+  display: block;
+  padding: calc(var(--gui-space-3) * 2) var(--gui-space-3);
+  border: 1px solid var(--gui-border-default);
+  border-radius: 0 0 var(--gui-radius-md) var(--gui-radius-md);
+  background: var(--gui-bg-default);
+  color: var(--gui-text-default);
+
+  &[hidden] {
+    display: none;
+  }
+}
+
 @container gui-container (max-width: 480px) {
-  .gui-tabs button[role='tab'] {
+  gui-tab {
     padding: var(--gui-space-2);
     font-size: var(--gui-font-xs);
   }

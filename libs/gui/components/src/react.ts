@@ -91,6 +91,10 @@ import {
   GuiRangeTimePickerEvents,
 } from './lib/components/range-time-picker';
 import { GuiSelect as GuiSelectElement, GuiSelectEvents } from './lib/components/select';
+import { GuiTab as GuiTabElement } from './lib/components/tab';
+import { GuiTabList as GuiTabListElement } from './lib/components/tab-list';
+import { GuiTabPanel as GuiTabPanelElement } from './lib/components/tab-panel';
+import { GuiTabs as GuiTabsElement, GuiTabsEvents } from './lib/components/tabs';
 import { GuiTags as GuiTagsElement, GuiTagsEvents } from './lib/components/tags';
 import { GuiTextarea as GuiTextareaElement, GuiTextareaEvents } from './lib/components/textarea';
 import {
@@ -233,6 +237,10 @@ export const GuiRangeTimePicker = wrap(
   GuiRangeTimePickerEvents,
 );
 export const GuiSelect = wrap('gui-select', GuiSelectElement, GuiSelectEvents);
+export const GuiTab = wrap('gui-tab', GuiTabElement);
+export const GuiTabList = wrap('gui-tab-list', GuiTabListElement);
+export const GuiTabPanel = wrap('gui-tab-panel', GuiTabPanelElement);
+export const GuiTabs = wrap('gui-tabs', GuiTabsElement, GuiTabsEvents);
 export const GuiTags = wrap('gui-tags', GuiTagsElement, GuiTagsEvents);
 export const GuiTextarea = wrap('gui-textarea', GuiTextareaElement, GuiTextareaEvents);
 export const GuiTextinput = wrap('gui-textinput', GuiTextinputElement, GuiTextinputEvents);

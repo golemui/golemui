@@ -172,6 +172,8 @@ export const elements: ElementCase[] = [
     props: { label: 'Color', options },
     form: { property: 'value', sample: 'red' },
   },
+  // Its parts are the app's children: tabs.cy.ts checks it with them.
+  { tag: 'gui-tabs', props: {}, hostRendersChildren: true },
   {
     tag: 'gui-tags',
     props: { label: 'Tags' },

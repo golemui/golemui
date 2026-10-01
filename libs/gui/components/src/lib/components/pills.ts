@@ -4,7 +4,7 @@ import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
 import { repeat } from 'lit/directives/repeat.js';
 import { GUIPopupController } from '../controllers/popup.controller';
-import { createIntersectionObserver } from './tabs';
+import { createIntersectionObserver } from '../utils/intersection-observer';
 import { addErrors } from '../utils/templates';
 import {
   CHECK_SQUARE_PATH,
