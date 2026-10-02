@@ -18,10 +18,29 @@
       "options": {
         "outputPath": "dist/libs/gui/mcp",
         "configFile": "libs/gui/mcp/vite.config.ts"
+      },
+      "dependsOn": ["^build", "generate-validators"]
+    },
+    "generate-validators": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/tools/**/*",
+        "{projectRoot}/src/json/schemas/index.ts",
+        "{projectRoot}/src/json/schemas/validator-schemas.ts",
+        "^production",
+        {
+          "externalDependencies": ["ajv"]
+        }
+      ],
+      "outputs": ["{projectRoot}/src/json/schemas/generated/validators.js"],
+      "options": {
+        "command": "tsx --tsconfig ./libs/gui/mcp/tsconfig.json libs/gui/mcp/tools/generate-validators.ts",
+        "cwd": "{workspaceRoot}"
       }
     },
     "vite:test": {
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build", "generate-validators"]
     },
     "nx-release-publish": {
       "options": {

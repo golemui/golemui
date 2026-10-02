@@ -37,7 +37,8 @@
     "cz:breaking": "npm run precz && czg break",
     "release": "npm run build:libs && tsx tools/release.ts",
     "generate:skill": "tsx --tsconfig ./libs/gui/mcp/tsconfig.json libs/gui/mcp/tools/generate-skill-refs.ts",
-    "generate:schemas": "tsx --tsconfig ./libs/gui/schemas/tsconfig.json libs/gui/schemas/tools/generate-schemas.ts"
+    "generate:schemas": "tsx --tsconfig ./libs/gui/schemas/tsconfig.json libs/gui/schemas/tools/generate-schemas.ts",
+    "generate:validators": "tsx --tsconfig ./libs/gui/mcp/tsconfig.json libs/gui/mcp/tools/generate-validators.ts"
   },
   "private": true,
   "dependencies": {
