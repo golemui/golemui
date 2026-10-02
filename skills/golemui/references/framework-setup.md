@@ -82,8 +82,9 @@ Rules that follow from it:
   `customWidgetLoaders` in every form config (the registry caches by loader function identity).
 - Import `@golemui/gui-components/index.css` and then `@golemui/gui-shared/forms.css` once in the
   root layout; nothing is injected.
-- A `gui-*` tag placed directly in JSX takes object props as properties in React 19
-  (`<gui-select options={list} onChange={…} />`).
+- To use a `gui-*` element directly in JSX, import its component from
+  `@golemui/gui-components/react` (`<GuiSelect options={list} onGuiChange={…} />`). The elements
+  fire `gui-*` events (`gui-input`, `gui-change`, `gui-blur`), not `change`.
 - The server renders the React layer (`<form>`, layouts, `gui-*` tags with their attributes and
   values); the Lit `gui-*` elements render their internals once the browser upgrades them.
 

@@ -101,11 +101,11 @@ Bare types: **calendar**
 
 Container types with children. No path.
 
-Example — `_guiFlex`:
+Example — `_guiGrid`:
 
 ```ts
-_guiFlex([...children], { direction: 'row' });
-// → items: [{ def: { widgetName: 'flex', direction: 'row' }, children: [...] }]
+_guiGrid([...children], { direction: 'row' });
+// → items: [{ def: { widgetName: 'grid', direction: 'row' }, children: [...] }]
 ```
 
 Compound types: **layouts**
@@ -198,8 +198,8 @@ Container with nested shortcuts. Children are structural — they're walked recu
 **Used by:** Layouts (`LayoutEntry`). Future: tabs, accordion.
 
 ```ts
-// _guiFlex([_guiInputs({...}), _guiButton({...})], { direction: 'row' })
-// Entry is { def: { direction: 'row' }, children: [...] }
+// _guiGrid([_guiInputs({...}), _guiButton({...})], { direction: 'row' })
+// Entry is { def: { widgetName: 'grid', direction: 'row' }, children: [...] }
 ```
 
 ### Why three shapes?
@@ -351,7 +351,7 @@ A `--` means the shortcut does not implement that piece.
 | **GSL config type**             | `GslInputsConfig` (decorator + 2 suppress flags)                                      | `GslActionsConfig` (decorator only)            | `GslLayoutsConfig` (decorator only)                                                                        | `GslDisplaysConfig` (decorator only)           |
 | **Sensible defaults config**    | `InputSensibleDefaultsConfig`                                                         | `ActionSensibleDefaultsConfig` (empty)         | `LayoutSensibleDefaultsConfig` (empty)                                                                     | `DisplaySensibleDefaultsConfig` (empty)        |
 | **Sensible defaults processor** | `InputSensibleDefaultsService`                                                        | --                                             | --                                                                                                         | --                                             |
-| **Mapper fn**                   | `mapToInputWidget` (text→textinput, number→number, boolean→toggle)                    | `mapToActionWidget` (always button)            | `mapToLayoutWidget` (defaults to flex)                                                                     | `mapToDisplayWidget` (renderer)                |
+| **Mapper fn**                   | `mapToInputWidget` (text→textinput, number→number, boolean→toggle)                    | `mapToActionWidget` (always button)            | `mapToLayoutWidget` (defaults to grid)                                                                     | `mapToDisplayWidget` (renderer)                |
 | **Type defaults / helpers**     | `inputDefsByKey.service`, `inputTypeDefaults.service`                                 | --                                             | --                                                                                                         | --                                             |
 | **Resolver rollup**             | `rollUpInputSensibleDefaults`                                                         | -- (empty `{}`)                                | -- (empty `{}`)                                                                                            | -- (empty `{}`)                                |
 | **Merger wiring**               | `if (itemType === 'INPUTS')` → `applyInputSensibleDefaults`                           | --                                             | --                                                                                                         | --                                             |

@@ -128,7 +128,7 @@ The same `formDef` value renders in every supported framework. See [Integrations
 | `gui.inputs`    | Field widgets                                         | `textInput`, `numberInput`, `password`, `textarea`, `checkbox`, `dropdown`, `select`, `radiogroup`, `currency`, `tags`, `datePicker`, `timeInput`, `dateTimeInput`, `calendar`, `repeater`, `list`, `custom` |
 | `gui.actions`   | Buttons and custom actions                            | `button`, `custom`                                                                                                                                                                                           |
 | `gui.displays`  | Non-input content                                     | `display`, `alert`, `markdownText`, `custom`                                                                                                                                                                 |
-| `gui.layouts`   | Containers                                            | `flex`, `grid`, `tabs`, `accordion`, `custom`                                                                                                                                                                |
+| `gui.layouts`   | Containers                                            | `grid`, `tabs`, `accordion`, `custom`                                                                                                                                                                        |
 | `gui.selectors` | Select and update widgets by type, uid, tag, or state | -                                                                                                                                                                                                            |
 
 **Conditional fields.** Widgets accept `include` / `exclude` with a reactive expression over form data:
@@ -166,7 +166,7 @@ For vanilla JS, import `@golemui/gui-lit` to register the `<gui-form>` custom el
 | --------------------------------------------------- | ------------------------------------------------------------------------------ |
 | `@golemui/gui-react` / `-angular` / `-lit` / `-vue` | Framework form component and bindings                                          |
 | `@golemui/gui-shared`                               | The `gui` builder, form definition types (`GuiFormInitConfig`) and `forms.css` |
-| `@golemui/gui-components`                           | Default widget components and the stylesheet (`index.css`)                     |
+| `@golemui/gui-components`                           | Lit web components, usable with or without forms, and their stylesheets        |
 | `@golemui/core`                                     | Framework-agnostic form runtime and shared types (`FormEvent`, `ValidateOn`)   |
 | `@golemui/gui-validators`                           | Validation schemas (`@standard-schema/spec`)                                   |
 | `@golemui/schemas`                                  | The shared core JSON Schema (common defs) and the schema tree generator        |
@@ -178,6 +178,8 @@ Import only from a package's public entry points. The `@golemui/*/internals` pat
 ## Documentation
 
 [**golemui.com**](https://golemui.com) for full docs, API reference, per-framework guides, examples, and migration paths.
+
+Upgrading from 1.x? See [MIGRATION-v2.md](MIGRATION-v2.md).
 
 ## Contributing
 

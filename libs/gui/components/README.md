@@ -1,6 +1,8 @@
 # @golemui/gui-components
 
-[Golem UI](https://golemui.com): the declarative form engine.
+The [Golem UI](https://golemui.com) web components: form controls, buttons, tabs, accordions and
+alerts built with Lit. They work in any framework or in plain HTML, with or without the Golem UI
+form engine.
 
 ## Install
 
@@ -74,6 +76,27 @@ events as usual:
 })
 ```
 
+## Styles
+
+Import the stylesheet once:
+
+```ts
+import '@golemui/gui-components/index.css';
+```
+
+`index.css` is `tokens.css`, the `--gui-*` design tokens, plus `components.css`, the element
+styles; import the two on their own if you load the tokens elsewhere. The optional Clay theme is
+`@golemui/gui-components/themes/clay.css`, applied with `data-theme="clay"`, `"clay-dark"` or
+`"clay-auto"` on an ancestor.
+
+Every rule sits in a `golemui.*` cascade layer, so your own unlayered CSS wins whatever its
+specificity. To restyle, set the tokens on `:root` or write plain selectors such as
+`gui-tab[aria-selected='true']`.
+
+Some elements change layout when there is little room, for example a grid row stacks its cells.
+They measure the nearest ancestor with the `gui-container` class, so put it on the element that
+sets their width. A GolemUI form is already one.
+
 ## Translating the built-in strings
 
 Validation messages, accessible names and announcements default to English. Plug in your app's
@@ -106,6 +129,39 @@ from `params.count`.
 - **Popups** are named by their field's label, or by a default name without one.
 - **Parts that only add context**, such as the start and end of a range and the toolbars, have a
   default name that an empty value removes.
+
+## Tabs, accordions and alerts
+
+You render the parts and their content; the elements add the behaviour: ids, ARIA, keyboard and
+which panel shows. They never create or remove your content.
+
+```html
+<gui-tabs active="address">
+  <gui-tab-list aria-label="Profile">
+    <gui-tab panel="personal">Personal</gui-tab>
+    <gui-tab panel="address">Address</gui-tab>
+  </gui-tab-list>
+  <gui-tab-panel name="personal">…</gui-tab-panel>
+  <gui-tab-panel name="address">…</gui-tab-panel>
+</gui-tabs>
+
+<gui-accordion>
+  <gui-accordion-item>
+    <details open>
+      <summary>Personal</summary>
+      <div>…</div>
+    </details>
+  </gui-accordion-item>
+</gui-accordion>
+
+<gui-alert variant="warning">Some fields need your attention.</gui-alert>
+```
+
+- `gui-tabs` fires `gui-tab-change` with the tab's `panel` in `detail.value`. Cancel it to keep
+  the current tab, or set `active` yourself to control the tabs.
+- `gui-accordion` keeps one item open unless it has `multiple`. Each item fires `gui-toggle` with
+  `detail.open`.
+- `gui-alert` has the `alert` role. Give it `role="status"` for a message that can wait.
 
 ## Layout
 
