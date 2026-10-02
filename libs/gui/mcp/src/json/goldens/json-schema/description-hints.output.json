@@ -1,0 +1,43 @@
+{
+  "formDefinition": {
+    "$schema": "https://golemui.com/schemas/form.schema.json",
+    "form": [
+      {
+        "kind": "input",
+        "type": "textinput",
+        "path": "name",
+        "label": "Name",
+        "props": {
+          "hint": "Your full name."
+        }
+      },
+      {
+        "kind": "input",
+        "type": "number",
+        "path": "height",
+        "label": "Height",
+        "props": {
+          "hint": "Height in centimeters."
+        }
+      },
+      {
+        "kind": "input",
+        "type": "checkbox",
+        "path": "subscribed",
+        "label": "Subscribed",
+        "props": {
+          "hint": "Receive the newsletter."
+        }
+      }
+    ]
+  },
+  "unmapped": [],
+  "diagnostics": [],
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": [],
+    "expressionWarnings": [],
+    "interpolationWarnings": []
+  }
+}

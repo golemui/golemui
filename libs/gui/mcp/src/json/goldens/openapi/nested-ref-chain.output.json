@@ -1,0 +1,100 @@
+{
+  "resolvedOperation": {
+    "method": "POST",
+    "path": "/orders",
+    "operationId": "createOrder"
+  },
+  "formDefinition": {
+    "$schema": "https://golemui.com/schemas/form.schema.json",
+    "form": [
+      {
+        "kind": "layout",
+        "type": "flex",
+        "props": {
+          "direction": "column",
+          "gap": 8
+        },
+        "children": [
+          {
+            "kind": "input",
+            "type": "textinput",
+            "path": "customer.name",
+            "label": "Name"
+          },
+          {
+            "kind": "layout",
+            "type": "flex",
+            "props": {
+              "direction": "column",
+              "gap": 8
+            },
+            "children": [
+              {
+                "kind": "input",
+                "type": "textinput",
+                "path": "customer.address.street",
+                "label": "Street"
+              },
+              {
+                "kind": "input",
+                "type": "textinput",
+                "path": "customer.address.city",
+                "label": "City"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "input",
+        "type": "repeater",
+        "path": "lines",
+        "label": "Lines",
+        "props": {
+          "addLabel": "Add line",
+          "removeLabel": "Remove",
+          "template": {
+            "kind": "layout",
+            "type": "flex",
+            "props": {
+              "direction": "column",
+              "gap": 8
+            },
+            "children": [
+              {
+                "kind": "input",
+                "type": "textinput",
+                "path": "lines.items.product",
+                "label": "Product"
+              },
+              {
+                "kind": "input",
+                "type": "number",
+                "path": "lines.items.quantity",
+                "label": "Quantity"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "kind": "action",
+        "type": "button",
+        "actionType": "submit",
+        "label": "Create",
+        "props": {
+          "variant": "filled"
+        }
+      }
+    ]
+  },
+  "unmapped": [],
+  "diagnostics": [],
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": [],
+    "expressionWarnings": [],
+    "interpolationWarnings": []
+  }
+}

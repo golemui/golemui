@@ -30,6 +30,7 @@
       "@golemui/schemas/generator": [
         "libs/schemas/src/lib/generator/generate-implementation-schemas.ts"
       ],
+      "@golemui/schemas/json-schema": ["libs/schemas/src/json-schema.ts"],
       "@golemui/gui-angular": ["libs/gui/angular/src/index.ts"],
       "@golemui/gui-lit": ["libs/gui/lit/src/index.ts"],
       "@golemui/gui-react": ["libs/gui/react/src/index.ts"],
@@ -125,6 +126,7 @@
       "@golemui/ui-testing": ["libs/ui-testing/src/index.ts"],
       "@golemui/ui-testing/core-features": ["libs/ui-testing/src/core-features.ts"],
       "@golemui/gui-schemas": ["libs/gui/schemas/src/index.ts"],
+      "@golemui/gui-schemas/json-schema": ["libs/gui/schemas/src/json-schema.ts"],
       "@golemui/gui-shared": ["libs/gui/shared/src/index.ts"],
       "@golemui/gui-shared/internals": ["libs/gui/shared/src/internals.ts"]
     }

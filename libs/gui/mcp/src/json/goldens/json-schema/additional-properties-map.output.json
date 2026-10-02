@@ -1,0 +1,39 @@
+{
+  "formDefinition": {
+    "$schema": "https://golemui.com/schemas/form.schema.json",
+    "form": []
+  },
+  "unmapped": [
+    {
+      "path": "labels",
+      "reason": "No widget edits free-form keys (`additionalProperties` with a schema). Only the declared properties are rendered."
+    },
+    {
+      "path": "labels",
+      "reason": "The object has no property the form can render, so it is left out."
+    }
+  ],
+  "diagnostics": [
+    {
+      "severity": "warning",
+      "code": "unsupported-keyword",
+      "message": "No widget edits free-form keys (`additionalProperties` with a schema). Only the declared properties are rendered.",
+      "path": "labels",
+      "pointer": "/properties/labels"
+    },
+    {
+      "severity": "warning",
+      "code": "empty-object",
+      "message": "The object has no property the form can render, so it is left out.",
+      "path": "labels",
+      "pointer": "/properties/labels"
+    }
+  ],
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": [],
+    "expressionWarnings": [],
+    "interpolationWarnings": []
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "formDefinition": {
+    "$schema": "https://golemui.com/schemas/form.schema.json",
+    "form": [
+      {
+        "kind": "input",
+        "type": "textinput",
+        "path": "version",
+        "label": "Version",
+        "readonly": true,
+        "defaultValue": "v2",
+        "validator": {
+          "type": "string",
+          "const": "v2"
+        }
+      },
+      {
+        "kind": "input",
+        "type": "checkbox",
+        "path": "acceptTerms",
+        "label": "Accept Terms",
+        "validator": {
+          "type": "boolean",
+          "required": true,
+          "const": true
+        }
+      }
+    ]
+  },
+  "unmapped": [],
+  "diagnostics": [],
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": [],
+    "expressionWarnings": [],
+    "interpolationWarnings": []
+  }
+}

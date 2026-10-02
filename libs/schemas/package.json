@@ -23,6 +23,11 @@
       "import": "./generator.js",
       "require": "./generator.cjs"
     },
+    "./json-schema": {
+      "types": "./json-schema.d.ts",
+      "import": "./json-schema.js",
+      "require": "./json-schema.cjs"
+    },
     "./schemas/*.schema.json": "./schemas/*.schema.json",
     "./package.json": "./package.json"
   },

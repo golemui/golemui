@@ -1,0 +1,38 @@
+{
+  "formDefinition": {
+    "$schema": "https://golemui.com/schemas/form.schema.json",
+    "form": [
+      {
+        "kind": "input",
+        "type": "number",
+        "path": "price",
+        "label": "Price",
+        "validator": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "multipleOf": 0.01
+        }
+      },
+      {
+        "kind": "input",
+        "type": "number",
+        "path": "quantity",
+        "label": "Quantity",
+        "validator": {
+          "type": "integer",
+          "minimum": 1,
+          "exclusiveMaximum": 100
+        }
+      }
+    ]
+  },
+  "unmapped": [],
+  "diagnostics": [],
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": [],
+    "expressionWarnings": [],
+    "interpolationWarnings": []
+  }
+}

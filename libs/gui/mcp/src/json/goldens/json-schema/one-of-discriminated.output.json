@@ -1,0 +1,78 @@
+{
+  "formDefinition": {
+    "$schema": "https://golemui.com/schemas/form.schema.json",
+    "form": [
+      {
+        "kind": "layout",
+        "type": "flex",
+        "props": {
+          "direction": "column",
+          "gap": 8
+        },
+        "children": [
+          {
+            "kind": "input",
+            "type": "select",
+            "path": "payment.method",
+            "label": "Method",
+            "validator": {
+              "type": "string",
+              "required": true
+            },
+            "props": {
+              "options": [
+                {
+                  "label": "Card",
+                  "value": "card"
+                },
+                {
+                  "label": "Bank transfer",
+                  "value": "bank"
+                },
+                {
+                  "label": "Cash",
+                  "value": "cash"
+                }
+              ]
+            }
+          },
+          {
+            "kind": "input",
+            "type": "textinput",
+            "path": "payment.cardNumber",
+            "label": "Card Number",
+            "include": {
+              "when": "$form.payment?.method === \"card\""
+            },
+            "validator": {
+              "type": "string",
+              "required": true
+            }
+          },
+          {
+            "kind": "input",
+            "type": "textinput",
+            "path": "payment.iban",
+            "label": "Iban",
+            "include": {
+              "when": "$form.payment?.method === \"bank\""
+            },
+            "validator": {
+              "type": "string",
+              "required": true
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "unmapped": [],
+  "diagnostics": [],
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": [],
+    "expressionWarnings": [],
+    "interpolationWarnings": []
+  }
+}

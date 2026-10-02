@@ -1,0 +1,38 @@
+{
+  "formDefinition": {
+    "$schema": "https://golemui.com/schemas/form.schema.json",
+    "form": [
+      {
+        "kind": "input",
+        "type": "select",
+        "path": "size",
+        "label": "Size",
+        "props": {
+          "options": [
+            {
+              "label": "Small",
+              "value": "sm"
+            },
+            {
+              "label": "Medium",
+              "value": "md"
+            },
+            {
+              "label": "Large",
+              "value": "lg"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "unmapped": [],
+  "diagnostics": [],
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": [],
+    "expressionWarnings": [],
+    "interpolationWarnings": []
+  }
+}

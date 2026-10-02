@@ -1,0 +1,44 @@
+{
+  "formDefinition": {
+    "$schema": "https://golemui.com/schemas/form.schema.json",
+    "form": [
+      {
+        "kind": "input",
+        "type": "multiList",
+        "path": "colors",
+        "label": "Colors",
+        "validator": {
+          "type": "array",
+          "uniqueItems": true
+        },
+        "props": {
+          "items": [
+            {
+              "label": "Red",
+              "value": "red"
+            },
+            {
+              "label": "Green",
+              "value": "green"
+            },
+            {
+              "label": "Blue",
+              "value": "blue"
+            }
+          ],
+          "labelField": "label",
+          "valueField": "value"
+        }
+      }
+    ]
+  },
+  "unmapped": [],
+  "diagnostics": [],
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": [],
+    "expressionWarnings": [],
+    "interpolationWarnings": []
+  }
+}

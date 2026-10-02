@@ -1,0 +1,42 @@
+{
+  "formDefinition": {
+    "$schema": "https://golemui.com/schemas/form.schema.json",
+    "form": [
+      {
+        "kind": "input",
+        "type": "dateInput",
+        "path": "birth",
+        "label": "Birth"
+      },
+      {
+        "kind": "input",
+        "type": "dateTimePicker",
+        "path": "startsAt",
+        "label": "Starts At"
+      },
+      {
+        "kind": "input",
+        "type": "timeInput",
+        "path": "opensAt",
+        "label": "Opens At"
+      }
+    ]
+  },
+  "unmapped": [],
+  "diagnostics": [
+    {
+      "severity": "info",
+      "code": "local-datetime",
+      "message": "The date-time widget writes the local date and time without a UTC offset, which a strict `date-time` check rejects.",
+      "path": "startsAt",
+      "pointer": "/properties/startsAt"
+    }
+  ],
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": [],
+    "expressionWarnings": [],
+    "interpolationWarnings": []
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "jsonSchema": {
+    "type": "object",
+    "properties": {
+      "payment": {
+        "oneOf": [
+          {
+            "title": "Card",
+            "type": "object",
+            "properties": {
+              "method": {
+                "const": "card"
+              },
+              "cardNumber": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "method",
+              "cardNumber"
+            ]
+          },
+          {
+            "title": "Bank transfer",
+            "type": "object",
+            "properties": {
+              "method": {
+                "const": "bank"
+              },
+              "iban": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "method",
+              "iban"
+            ]
+          },
+          {
+            "title": "Cash",
+            "type": "object",
+            "properties": {
+              "method": {
+                "const": "cash"
+              }
+            },
+            "required": [
+              "method"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "submitAction": false
+}

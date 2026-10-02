@@ -1,0 +1,18 @@
+{
+  "jsonSchema": {
+    "type": "object",
+    "properties": {
+      "price": {
+        "type": "number",
+        "exclusiveMinimum": 0,
+        "multipleOf": 0.01
+      },
+      "quantity": {
+        "type": "integer",
+        "minimum": 1,
+        "exclusiveMaximum": 100
+      }
+    }
+  },
+  "submitAction": false
+}

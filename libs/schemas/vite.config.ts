@@ -24,6 +24,7 @@ export default defineConfig(() => ({
       entry: {
         index: 'src/index.ts',
         generator: 'src/generator.ts',
+        'json-schema': 'src/json-schema.ts',
         cli: 'src/cli/index.ts',
       },
       // Multiple entries rule out umd. The generator and the CLI are node build-time

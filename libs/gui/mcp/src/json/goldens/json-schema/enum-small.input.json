@@ -1,0 +1,15 @@
+{
+  "jsonSchema": {
+    "type": "object",
+    "properties": {
+      "plan": {
+        "type": "string",
+        "enum": [
+          "free",
+          "pro"
+        ]
+      }
+    }
+  },
+  "submitAction": false
+}

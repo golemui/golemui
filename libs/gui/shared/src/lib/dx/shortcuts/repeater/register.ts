@@ -50,8 +50,8 @@ function prefixTemplatePaths(widgets: FormWidget[], prefix: string): void {
     if (typeof widget === 'function') continue;
     const w = widget as NonFunctionWidget & { path?: string };
     // Idempotent: a child path may be relative (`guest_name`) or full (`guests.items.guest_name`);
-    // only prepend when not already prefixed, so a full path isn't double-prefixed (which throws in
-    // `toRepeaterItemPath`).
+    // only prepend when not already prefixed, so a full path isn't double-prefixed (which binds the
+    // field to a wrong row path).
     if (typeof w.path === 'string' && w.path && !w.path.startsWith(prefix)) {
       w.path = prefix + w.path;
     }

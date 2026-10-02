@@ -1,0 +1,21 @@
+{
+  "jsonSchema": {
+    "type": "object",
+    "properties": {
+      "firstName": {
+        "type": "string"
+      },
+      "last_name": {
+        "type": "string"
+      },
+      "zip-code": {
+        "type": "string"
+      },
+      "email": {
+        "type": "string",
+        "title": "E-mail address"
+      }
+    }
+  },
+  "submitAction": false
+}

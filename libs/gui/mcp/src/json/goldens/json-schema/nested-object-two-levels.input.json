@@ -1,0 +1,27 @@
+{
+  "jsonSchema": {
+    "type": "object",
+    "properties": {
+      "company": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "location": {
+            "type": "object",
+            "properties": {
+              "latitude": {
+                "type": "number"
+              },
+              "longitude": {
+                "type": "number"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "submitAction": false
+}

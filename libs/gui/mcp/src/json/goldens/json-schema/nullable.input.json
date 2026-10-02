@@ -1,0 +1,34 @@
+{
+  "jsonSchema": {
+    "type": "object",
+    "properties": {
+      "nickname": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "age": {
+        "oneOf": [
+          {
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "note": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    }
+  },
+  "submitAction": false
+}

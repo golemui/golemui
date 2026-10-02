@@ -1,0 +1,47 @@
+{
+  "formDefinition": {
+    "$schema": "https://golemui.com/schemas/form.schema.json",
+    "form": [
+      {
+        "kind": "layout",
+        "type": "grid",
+        "props": {
+          "columnGap": 12,
+          "rowGap": 12
+        },
+        "children": [
+          {
+            "kind": "input",
+            "type": "textinput",
+            "path": "first",
+            "label": "First"
+          },
+          {
+            "kind": "input",
+            "type": "textinput",
+            "path": "last",
+            "label": "Last"
+          },
+          {
+            "kind": "action",
+            "type": "button",
+            "actionType": "submit",
+            "label": "Submit",
+            "props": {
+              "variant": "filled"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "unmapped": [],
+  "diagnostics": [],
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": [],
+    "expressionWarnings": [],
+    "interpolationWarnings": []
+  }
+}
