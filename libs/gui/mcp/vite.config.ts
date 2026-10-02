@@ -35,7 +35,6 @@ export default defineConfig(() => ({
       external: [
         /^@modelcontextprotocol\/sdk(\/.*)?$/,
         /^ajv(\/.*)?$/,
-        'ajv-formats',
         // `typescript` is loaded lazily by the DX type-check only — keep it external
         // so the JSON path never pulls the compiler into its bundle.
         'typescript',

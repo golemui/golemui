@@ -1,0 +1,255 @@
+{
+  "demo-a11y.form.json": {
+    "valid": true,
+    "errors": [],
+    "warnings": [
+      {
+        "path": "/form/0/children/1/children/5/validator",
+        "message": "Boolean validator has `required: true` but no `const` — this does NOT force the checkbox to be checked: `false` is a valid boolean and passes; `required` only rejects a missing value (`undefined`/`null`).",
+        "suggestion": "If this checkbox must be checked (e.g. terms acceptance), add `const: true` and set `messages.invalid` and `messages.const` to the same user-facing text. If a false value is genuinely acceptable, ignore this warning.",
+        "keyword": "booleanValidator"
+      }
+    ],
+    "expressionWarnings": [],
+    "interpolationWarnings": []
+  },
+  "demo-functions.form.json": {
+    "valid": true,
+    "errors": [],
+    "warnings": [],
+    "expressionWarnings": [],
+    "interpolationWarnings": []
+  },
+  "demo-i18n.form.json": {
+    "valid": true,
+    "errors": [],
+    "warnings": [],
+    "expressionWarnings": [],
+    "interpolationWarnings": []
+  },
+  "demo-validation.form.json": {
+    "valid": true,
+    "errors": [],
+    "warnings": [
+      {
+        "path": "/form/4/validator",
+        "message": "Boolean validator has `required: true` but no `const` — this does NOT force the checkbox to be checked: `false` is a valid boolean and passes; `required` only rejects a missing value (`undefined`/`null`).",
+        "suggestion": "If this checkbox must be checked (e.g. terms acceptance), add `const: true` and set `messages.invalid` and `messages.const` to the same user-facing text. If a false value is genuinely acceptable, ignore this warning.",
+        "keyword": "booleanValidator"
+      }
+    ],
+    "expressionWarnings": [],
+    "interpolationWarnings": []
+  },
+  "flight-tickets.form.json": {
+    "valid": true,
+    "errors": [],
+    "warnings": [],
+    "expressionWarnings": [],
+    "interpolationWarnings": []
+  },
+  "invoice-nested.form.json": {
+    "valid": true,
+    "errors": [],
+    "warnings": [],
+    "expressionWarnings": [],
+    "interpolationWarnings": []
+  },
+  "invoice.form.json": {
+    "valid": true,
+    "errors": [],
+    "warnings": [],
+    "expressionWarnings": [],
+    "interpolationWarnings": []
+  },
+  "item-renderers.form.json": {
+    "valid": true,
+    "errors": [],
+    "warnings": [],
+    "expressionWarnings": [],
+    "interpolationWarnings": []
+  },
+  "json-schema-order.form.json": {
+    "valid": true,
+    "errors": [],
+    "warnings": [],
+    "expressionWarnings": [],
+    "interpolationWarnings": []
+  },
+  "kitchen-sink.form.json": {
+    "valid": true,
+    "errors": [],
+    "warnings": [
+      {
+        "path": "/form/0/type",
+        "keyword": "customWidget",
+        "message": "Widget type `heading` at `/form/0` is not a built-in GolemUI widget - assumed custom. Its props were not validated.",
+        "suggestion": "Built-in widget types: calendar, dateTimeCalendar, checkbox, currency, dateInput, datePicker, dateTimeInput, dateTimePicker, dropdown, fileUpload, list, markdown, multiDropdown, multiFileUpload, multiList, number, password, radiogroup, rangeCalendar, rangeDateInput, rangeDatePicker, rangeDateTimeInput, rangeDateTimeCalendar, rangeDateTimePicker, rangeTimeInput, rangeTimePicker, repeater, select, tags, textarea, textinput, timeInput, timePicker, toggle, accordion, flex, grid, tabs, alert, markdownText, button. If this is intentional (a custom widget registered via the framework loader), you can ignore this warning.",
+        "params": {
+          "type": "heading"
+        }
+      }
+    ],
+    "expressionWarnings": [
+      {
+        "path": "/states/limitReached",
+        "expression": "$form.repeaters.users?.length === 5",
+        "message": "Expression chains nested property access without optional chaining (e.g. `$form.user.name`).",
+        "suggestion": "Treat every nested property as possibly `undefined`. Use `?.` between segments: `$form.user?.name` instead of `$form.user.name`. The runtime throws if `$form.user` is undefined."
+      },
+      {
+        "path": "/states/hasSubregionSelect",
+        "expression": "!!$form.selects.subregion",
+        "message": "Expression chains nested property access without optional chaining (e.g. `$form.user.name`).",
+        "suggestion": "Treat every nested property as possibly `undefined`. Use `?.` between segments: `$form.user?.name` instead of `$form.user.name`. The runtime throws if `$form.user` is undefined."
+      },
+      {
+        "path": "/states/hasSubregionRadiogroup",
+        "expression": "!!$form.radiogroups.subregion",
+        "message": "Expression chains nested property access without optional chaining (e.g. `$form.user.name`).",
+        "suggestion": "Treat every nested property as possibly `undefined`. Use `?.` between segments: `$form.user?.name` instead of `$form.user.name`. The runtime throws if `$form.user` is undefined."
+      }
+    ],
+    "interpolationWarnings": []
+  },
+  "messages.form.json": {
+    "valid": true,
+    "errors": [],
+    "warnings": [
+      {
+        "path": "/form/15/validator",
+        "message": "Boolean validator has `const` but no `required: true` — the pristine value passes: a never-touched checkbox holds `undefined`, and non-required validators skip validation entirely for `undefined`.",
+        "suggestion": "Add `required: true` so the untouched state fails too, and set `messages.invalid` and `messages.const` to the same user-facing text.",
+        "keyword": "booleanValidator"
+      }
+    ],
+    "expressionWarnings": [],
+    "interpolationWarnings": []
+  },
+  "selects.form.json": {
+    "valid": true,
+    "errors": [],
+    "warnings": [],
+    "expressionWarnings": [
+      {
+        "path": "/states/hasName",
+        "expression": "$form.name && $form.name.length > 0",
+        "message": "Expression chains nested property access without optional chaining (e.g. `$form.user.name`).",
+        "suggestion": "Treat every nested property as possibly `undefined`. Use `?.` between segments: `$form.user?.name` instead of `$form.user.name`. The runtime throws if `$form.user` is undefined."
+      },
+      {
+        "path": "/states/hasName",
+        "expression": "$form.name && $form.name.length > 0",
+        "message": "Expression uses `$form`/`$meta` directly as a boolean (relies on truthy/falsy coercion).",
+        "suggestion": "Form data values can be `undefined`. Compare explicitly: `$form.x !== undefined`, `$form.x === \"value\"`, `$form.items?.length > 0`. For default values use nullish coalescing: `$form.x ?? defaultValue`."
+      }
+    ],
+    "interpolationWarnings": []
+  },
+  "shipping-manifest.form.json": {
+    "valid": true,
+    "errors": [],
+    "warnings": [],
+    "expressionWarnings": [],
+    "interpolationWarnings": []
+  },
+  "signin.form.json": {
+    "valid": true,
+    "errors": [],
+    "warnings": [],
+    "expressionWarnings": [
+      {
+        "path": "/states/register:tall",
+        "expression": "$form.user.height > 180",
+        "message": "Expression chains nested property access without optional chaining (e.g. `$form.user.name`).",
+        "suggestion": "Treat every nested property as possibly `undefined`. Use `?.` between segments: `$form.user?.name` instead of `$form.user.name`. The runtime throws if `$form.user` is undefined."
+      },
+      {
+        "path": "/states/register:tall",
+        "expression": "$form.user.height > 180",
+        "message": "Expression applies a comparison or arithmetic operator to a `$form`/`$meta` reference whose leaf may be `undefined`.",
+        "suggestion": "Guard the value first: `$form.x !== undefined && $form.x > 180`. Or default it: `($form.x ?? 0) > 180`. Strict equality (`$form.x === 180`) is also safe since it evaluates to `false` when undefined."
+      },
+      {
+        "path": "/states/register:minor",
+        "expression": "$form.user.age < 18",
+        "message": "Expression chains nested property access without optional chaining (e.g. `$form.user.name`).",
+        "suggestion": "Treat every nested property as possibly `undefined`. Use `?.` between segments: `$form.user?.name` instead of `$form.user.name`. The runtime throws if `$form.user` is undefined."
+      },
+      {
+        "path": "/states/register:minor",
+        "expression": "$form.user.age < 18",
+        "message": "Expression applies a comparison or arithmetic operator to a `$form`/`$meta` reference whose leaf may be `undefined`.",
+        "suggestion": "Guard the value first: `$form.x !== undefined && $form.x > 180`. Or default it: `($form.x ?? 0) > 180`. Strict equality (`$form.x === 180`) is also safe since it evaluates to `false` when undefined."
+      },
+      {
+        "path": "/states/register:adult",
+        "expression": "$form.user.age >= 18",
+        "message": "Expression chains nested property access without optional chaining (e.g. `$form.user.name`).",
+        "suggestion": "Treat every nested property as possibly `undefined`. Use `?.` between segments: `$form.user?.name` instead of `$form.user.name`. The runtime throws if `$form.user` is undefined."
+      },
+      {
+        "path": "/states/register:adult",
+        "expression": "$form.user.age >= 18",
+        "message": "Expression applies a comparison or arithmetic operator to a `$form`/`$meta` reference whose leaf may be `undefined`.",
+        "suggestion": "Guard the value first: `$form.x !== undefined && $form.x > 180`. Or default it: `($form.x ?? 0) > 180`. Strict equality (`$form.x === 180`) is also safe since it evaluates to `false` when undefined."
+      }
+    ],
+    "interpolationWarnings": []
+  },
+  "simple-signin.form.json": {
+    "valid": true,
+    "errors": [],
+    "warnings": [],
+    "expressionWarnings": [],
+    "interpolationWarnings": []
+  },
+  "software-issue-management.form.json": {
+    "valid": true,
+    "errors": [],
+    "warnings": [],
+    "expressionWarnings": [],
+    "interpolationWarnings": []
+  },
+  "tiny.form.json": {
+    "valid": true,
+    "errors": [],
+    "warnings": [
+      {
+        "path": "/form/0/children/0/type",
+        "keyword": "customWidget",
+        "message": "Widget type `heading` at `/form/0/children/0` is not a built-in GolemUI widget - assumed custom. Its props were not validated.",
+        "suggestion": "Built-in widget types: calendar, dateTimeCalendar, checkbox, currency, dateInput, datePicker, dateTimeInput, dateTimePicker, dropdown, fileUpload, list, markdown, multiDropdown, multiFileUpload, multiList, number, password, radiogroup, rangeCalendar, rangeDateInput, rangeDatePicker, rangeDateTimeInput, rangeDateTimeCalendar, rangeDateTimePicker, rangeTimeInput, rangeTimePicker, repeater, select, tags, textarea, textinput, timeInput, timePicker, toggle, accordion, flex, grid, tabs, alert, markdownText, button. If this is intentional (a custom widget registered via the framework loader), you can ignore this warning.",
+        "params": {
+          "type": "heading"
+        }
+      }
+    ],
+    "expressionWarnings": [],
+    "interpolationWarnings": []
+  },
+  "translations.form.json": {
+    "valid": true,
+    "errors": [],
+    "warnings": [
+      {
+        "path": "/form/0/type",
+        "keyword": "customWidget",
+        "message": "Widget type `heading` at `/form/0` is not a built-in GolemUI widget - assumed custom. Its props were not validated.",
+        "suggestion": "Built-in widget types: calendar, dateTimeCalendar, checkbox, currency, dateInput, datePicker, dateTimeInput, dateTimePicker, dropdown, fileUpload, list, markdown, multiDropdown, multiFileUpload, multiList, number, password, radiogroup, rangeCalendar, rangeDateInput, rangeDatePicker, rangeDateTimeInput, rangeDateTimeCalendar, rangeDateTimePicker, rangeTimeInput, rangeTimePicker, repeater, select, tags, textarea, textinput, timeInput, timePicker, toggle, accordion, flex, grid, tabs, alert, markdownText, button. If this is intentional (a custom widget registered via the framework loader), you can ignore this warning.",
+        "params": {
+          "type": "heading"
+        }
+      }
+    ],
+    "expressionWarnings": [
+      {
+        "path": "/states/remote",
+        "expression": "$form.details.isRemote === true",
+        "message": "Expression chains nested property access without optional chaining (e.g. `$form.user.name`).",
+        "suggestion": "Treat every nested property as possibly `undefined`. Use `?.` between segments: `$form.user?.name` instead of `$form.user.name`. The runtime throws if `$form.user` is undefined."
+      }
+    ],
+    "interpolationWarnings": []
+  }
+}

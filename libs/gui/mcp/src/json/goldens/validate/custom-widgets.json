@@ -1,0 +1,616 @@
+{
+  "input/valid": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "myInput",
+          "path": "field"
+        }
+      ]
+    },
+    "result": {
+      "valid": true,
+      "errors": [],
+      "warnings": [
+        {
+          "path": "/form/0/type",
+          "keyword": "customWidget",
+          "message": "Widget type `myInput` at `/form/0` is not a built-in GolemUI widget - assumed custom. Its props were not validated.",
+          "suggestion": "Built-in widget types: calendar, dateTimeCalendar, checkbox, currency, dateInput, datePicker, dateTimeInput, dateTimePicker, dropdown, fileUpload, list, markdown, multiDropdown, multiFileUpload, multiList, number, password, radiogroup, rangeCalendar, rangeDateInput, rangeDatePicker, rangeDateTimeInput, rangeDateTimeCalendar, rangeDateTimePicker, rangeTimeInput, rangeTimePicker, repeater, select, tags, textarea, textinput, timeInput, timePicker, toggle, accordion, flex, grid, tabs, alert, markdownText, button. If this is intentional (a custom widget registered via the framework loader), you can ignore this warning.",
+          "params": {
+            "type": "myInput"
+          }
+        }
+      ],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "input/missing-path": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "myInput"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0",
+          "message": "Missing required property `path` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "path"
+          }
+        }
+      ],
+      "warnings": [
+        {
+          "path": "/form/0/type",
+          "keyword": "customWidget",
+          "message": "Widget type `myInput` at `/form/0` is not a built-in GolemUI widget - assumed custom. Its props were not validated.",
+          "suggestion": "Built-in widget types: calendar, dateTimeCalendar, checkbox, currency, dateInput, datePicker, dateTimeInput, dateTimePicker, dropdown, fileUpload, list, markdown, multiDropdown, multiFileUpload, multiList, number, password, radiogroup, rangeCalendar, rangeDateInput, rangeDatePicker, rangeDateTimeInput, rangeDateTimeCalendar, rangeDateTimePicker, rangeTimeInput, rangeTimePicker, repeater, select, tags, textarea, textinput, timeInput, timePicker, toggle, accordion, flex, grid, tabs, alert, markdownText, button. If this is intentional (a custom widget registered via the framework loader), you can ignore this warning.",
+          "params": {
+            "type": "myInput"
+          }
+        }
+      ],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "input/unknown-property": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "myInput",
+          "path": "field",
+          "notAProperty": true
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0",
+          "message": "Unknown property `notAProperty` at `/form/0`",
+          "keyword": "unevaluatedProperties",
+          "params": {
+            "unevaluatedProperty": "notAProperty"
+          }
+        }
+      ],
+      "warnings": [
+        {
+          "path": "/form/0/type",
+          "keyword": "customWidget",
+          "message": "Widget type `myInput` at `/form/0` is not a built-in GolemUI widget - assumed custom. Its props were not validated.",
+          "suggestion": "Built-in widget types: calendar, dateTimeCalendar, checkbox, currency, dateInput, datePicker, dateTimeInput, dateTimePicker, dropdown, fileUpload, list, markdown, multiDropdown, multiFileUpload, multiList, number, password, radiogroup, rangeCalendar, rangeDateInput, rangeDatePicker, rangeDateTimeInput, rangeDateTimeCalendar, rangeDateTimePicker, rangeTimeInput, rangeTimePicker, repeater, select, tags, textarea, textinput, timeInput, timePicker, toggle, accordion, flex, grid, tabs, alert, markdownText, button. If this is intentional (a custom widget registered via the framework loader), you can ignore this warning.",
+          "params": {
+            "type": "myInput"
+          }
+        }
+      ],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "input/bad-validator": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "myInput",
+          "path": "field",
+          "validator": {
+            "type": "string",
+            "minLength": "ten"
+          }
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/validator/minLength",
+          "message": "Expected type number at `/form/0/validator/minLength`, got \"ten\"",
+          "keyword": "type",
+          "params": {
+            "type": "number"
+          }
+        }
+      ],
+      "warnings": [
+        {
+          "path": "/form/0/type",
+          "keyword": "customWidget",
+          "message": "Widget type `myInput` at `/form/0` is not a built-in GolemUI widget - assumed custom. Its props were not validated.",
+          "suggestion": "Built-in widget types: calendar, dateTimeCalendar, checkbox, currency, dateInput, datePicker, dateTimeInput, dateTimePicker, dropdown, fileUpload, list, markdown, multiDropdown, multiFileUpload, multiList, number, password, radiogroup, rangeCalendar, rangeDateInput, rangeDatePicker, rangeDateTimeInput, rangeDateTimeCalendar, rangeDateTimePicker, rangeTimeInput, rangeTimePicker, repeater, select, tags, textarea, textinput, timeInput, timePicker, toggle, accordion, flex, grid, tabs, alert, markdownText, button. If this is intentional (a custom widget registered via the framework loader), you can ignore this warning.",
+          "params": {
+            "type": "myInput"
+          }
+        }
+      ],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "display/valid": {
+    "input": {
+      "form": [
+        {
+          "kind": "display",
+          "type": "myDisplay"
+        }
+      ]
+    },
+    "result": {
+      "valid": true,
+      "errors": [],
+      "warnings": [
+        {
+          "path": "/form/0/type",
+          "keyword": "customWidget",
+          "message": "Widget type `myDisplay` at `/form/0` is not a built-in GolemUI widget - assumed custom. Its props were not validated.",
+          "suggestion": "Built-in widget types: calendar, dateTimeCalendar, checkbox, currency, dateInput, datePicker, dateTimeInput, dateTimePicker, dropdown, fileUpload, list, markdown, multiDropdown, multiFileUpload, multiList, number, password, radiogroup, rangeCalendar, rangeDateInput, rangeDatePicker, rangeDateTimeInput, rangeDateTimeCalendar, rangeDateTimePicker, rangeTimeInput, rangeTimePicker, repeater, select, tags, textarea, textinput, timeInput, timePicker, toggle, accordion, flex, grid, tabs, alert, markdownText, button. If this is intentional (a custom widget registered via the framework loader), you can ignore this warning.",
+          "params": {
+            "type": "myDisplay"
+          }
+        }
+      ],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "display/unknown-property": {
+    "input": {
+      "form": [
+        {
+          "kind": "display",
+          "type": "myDisplay",
+          "notAProperty": true
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0",
+          "message": "Unknown property `notAProperty` at `/form/0`",
+          "keyword": "unevaluatedProperties",
+          "params": {
+            "unevaluatedProperty": "notAProperty"
+          }
+        }
+      ],
+      "warnings": [
+        {
+          "path": "/form/0/type",
+          "keyword": "customWidget",
+          "message": "Widget type `myDisplay` at `/form/0` is not a built-in GolemUI widget - assumed custom. Its props were not validated.",
+          "suggestion": "Built-in widget types: calendar, dateTimeCalendar, checkbox, currency, dateInput, datePicker, dateTimeInput, dateTimePicker, dropdown, fileUpload, list, markdown, multiDropdown, multiFileUpload, multiList, number, password, radiogroup, rangeCalendar, rangeDateInput, rangeDatePicker, rangeDateTimeInput, rangeDateTimeCalendar, rangeDateTimePicker, rangeTimeInput, rangeTimePicker, repeater, select, tags, textarea, textinput, timeInput, timePicker, toggle, accordion, flex, grid, tabs, alert, markdownText, button. If this is intentional (a custom widget registered via the framework loader), you can ignore this warning.",
+          "params": {
+            "type": "myDisplay"
+          }
+        }
+      ],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "action/valid": {
+    "input": {
+      "form": [
+        {
+          "kind": "action",
+          "type": "myAction"
+        }
+      ]
+    },
+    "result": {
+      "valid": true,
+      "errors": [],
+      "warnings": [
+        {
+          "path": "/form/0/type",
+          "keyword": "customWidget",
+          "message": "Widget type `myAction` at `/form/0` is not a built-in GolemUI widget - assumed custom. Its props were not validated.",
+          "suggestion": "Built-in widget types: calendar, dateTimeCalendar, checkbox, currency, dateInput, datePicker, dateTimeInput, dateTimePicker, dropdown, fileUpload, list, markdown, multiDropdown, multiFileUpload, multiList, number, password, radiogroup, rangeCalendar, rangeDateInput, rangeDatePicker, rangeDateTimeInput, rangeDateTimeCalendar, rangeDateTimePicker, rangeTimeInput, rangeTimePicker, repeater, select, tags, textarea, textinput, timeInput, timePicker, toggle, accordion, flex, grid, tabs, alert, markdownText, button. If this is intentional (a custom widget registered via the framework loader), you can ignore this warning.",
+          "params": {
+            "type": "myAction"
+          }
+        }
+      ],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "action/unknown-property": {
+    "input": {
+      "form": [
+        {
+          "kind": "action",
+          "type": "myAction",
+          "notAProperty": true
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0",
+          "message": "Unknown property `notAProperty` at `/form/0`",
+          "keyword": "unevaluatedProperties",
+          "params": {
+            "unevaluatedProperty": "notAProperty"
+          }
+        }
+      ],
+      "warnings": [
+        {
+          "path": "/form/0/type",
+          "keyword": "customWidget",
+          "message": "Widget type `myAction` at `/form/0` is not a built-in GolemUI widget - assumed custom. Its props were not validated.",
+          "suggestion": "Built-in widget types: calendar, dateTimeCalendar, checkbox, currency, dateInput, datePicker, dateTimeInput, dateTimePicker, dropdown, fileUpload, list, markdown, multiDropdown, multiFileUpload, multiList, number, password, radiogroup, rangeCalendar, rangeDateInput, rangeDatePicker, rangeDateTimeInput, rangeDateTimeCalendar, rangeDateTimePicker, rangeTimeInput, rangeTimePicker, repeater, select, tags, textarea, textinput, timeInput, timePicker, toggle, accordion, flex, grid, tabs, alert, markdownText, button. If this is intentional (a custom widget registered via the framework loader), you can ignore this warning.",
+          "params": {
+            "type": "myAction"
+          }
+        }
+      ],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "layout/valid": {
+    "input": {
+      "form": [
+        {
+          "kind": "layout",
+          "type": "myLayout",
+          "children": [
+            {
+              "kind": "input",
+              "type": "textinput",
+              "path": "field"
+            }
+          ]
+        }
+      ]
+    },
+    "result": {
+      "valid": true,
+      "errors": [],
+      "warnings": [
+        {
+          "path": "/form/0/type",
+          "keyword": "customWidget",
+          "message": "Widget type `myLayout` at `/form/0` is not a built-in GolemUI widget - assumed custom. Its props were not validated.",
+          "suggestion": "Built-in widget types: calendar, dateTimeCalendar, checkbox, currency, dateInput, datePicker, dateTimeInput, dateTimePicker, dropdown, fileUpload, list, markdown, multiDropdown, multiFileUpload, multiList, number, password, radiogroup, rangeCalendar, rangeDateInput, rangeDatePicker, rangeDateTimeInput, rangeDateTimeCalendar, rangeDateTimePicker, rangeTimeInput, rangeTimePicker, repeater, select, tags, textarea, textinput, timeInput, timePicker, toggle, accordion, flex, grid, tabs, alert, markdownText, button. If this is intentional (a custom widget registered via the framework loader), you can ignore this warning.",
+          "params": {
+            "type": "myLayout"
+          }
+        }
+      ],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "layout/empty-children": {
+    "input": {
+      "form": [
+        {
+          "kind": "layout",
+          "type": "myLayout",
+          "children": []
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/",
+          "keyword": "oneOf",
+          "message": "Form failed schema validation but no specific error could be localized. The form may contain a widget at a position the form schema does not allow, or a structural shape that our targeted validator missed. Verify each widget against its `json_get_widget_spec` entry."
+        }
+      ],
+      "warnings": [
+        {
+          "path": "/form/0/type",
+          "keyword": "customWidget",
+          "message": "Widget type `myLayout` at `/form/0` is not a built-in GolemUI widget - assumed custom. Its props were not validated.",
+          "suggestion": "Built-in widget types: calendar, dateTimeCalendar, checkbox, currency, dateInput, datePicker, dateTimeInput, dateTimePicker, dropdown, fileUpload, list, markdown, multiDropdown, multiFileUpload, multiList, number, password, radiogroup, rangeCalendar, rangeDateInput, rangeDatePicker, rangeDateTimeInput, rangeDateTimeCalendar, rangeDateTimePicker, rangeTimeInput, rangeTimePicker, repeater, select, tags, textarea, textinput, timeInput, timePicker, toggle, accordion, flex, grid, tabs, alert, markdownText, button. If this is intentional (a custom widget registered via the framework loader), you can ignore this warning.",
+          "params": {
+            "type": "myLayout"
+          }
+        }
+      ],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "layout/missing-children": {
+    "input": {
+      "form": [
+        {
+          "kind": "layout",
+          "type": "myLayout"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0",
+          "message": "Missing required property `children` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "children"
+          }
+        }
+      ],
+      "warnings": [
+        {
+          "path": "/form/0/type",
+          "keyword": "customWidget",
+          "message": "Widget type `myLayout` at `/form/0` is not a built-in GolemUI widget - assumed custom. Its props were not validated.",
+          "suggestion": "Built-in widget types: calendar, dateTimeCalendar, checkbox, currency, dateInput, datePicker, dateTimeInput, dateTimePicker, dropdown, fileUpload, list, markdown, multiDropdown, multiFileUpload, multiList, number, password, radiogroup, rangeCalendar, rangeDateInput, rangeDatePicker, rangeDateTimeInput, rangeDateTimeCalendar, rangeDateTimePicker, rangeTimeInput, rangeTimePicker, repeater, select, tags, textarea, textinput, timeInput, timePicker, toggle, accordion, flex, grid, tabs, alert, markdownText, button. If this is intentional (a custom widget registered via the framework loader), you can ignore this warning.",
+          "params": {
+            "type": "myLayout"
+          }
+        }
+      ],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "layout/children-not-an-array": {
+    "input": {
+      "form": [
+        {
+          "kind": "layout",
+          "type": "myLayout",
+          "children": "x"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/children",
+          "message": "Expected type array at `/form/0/children`, got \"x\"",
+          "keyword": "type",
+          "params": {
+            "type": "array"
+          }
+        }
+      ],
+      "warnings": [
+        {
+          "path": "/form/0/type",
+          "keyword": "customWidget",
+          "message": "Widget type `myLayout` at `/form/0` is not a built-in GolemUI widget - assumed custom. Its props were not validated.",
+          "suggestion": "Built-in widget types: calendar, dateTimeCalendar, checkbox, currency, dateInput, datePicker, dateTimeInput, dateTimePicker, dropdown, fileUpload, list, markdown, multiDropdown, multiFileUpload, multiList, number, password, radiogroup, rangeCalendar, rangeDateInput, rangeDatePicker, rangeDateTimeInput, rangeDateTimeCalendar, rangeDateTimePicker, rangeTimeInput, rangeTimePicker, repeater, select, tags, textarea, textinput, timeInput, timePicker, toggle, accordion, flex, grid, tabs, alert, markdownText, button. If this is intentional (a custom widget registered via the framework loader), you can ignore this warning.",
+          "params": {
+            "type": "myLayout"
+          }
+        }
+      ],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "layout/wraps-an-invalid-builtin": {
+    "input": {
+      "form": [
+        {
+          "kind": "layout",
+          "type": "myLayout",
+          "children": [
+            {
+              "kind": "input",
+              "type": "textinput",
+              "path": "field",
+              "notAProperty": true
+            }
+          ]
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/children/0",
+          "message": "Unknown property `notAProperty` at `/form/0/children/0`",
+          "keyword": "unevaluatedProperties",
+          "params": {
+            "unevaluatedProperty": "notAProperty"
+          }
+        }
+      ],
+      "warnings": [
+        {
+          "path": "/form/0/type",
+          "keyword": "customWidget",
+          "message": "Widget type `myLayout` at `/form/0` is not a built-in GolemUI widget - assumed custom. Its props were not validated.",
+          "suggestion": "Built-in widget types: calendar, dateTimeCalendar, checkbox, currency, dateInput, datePicker, dateTimeInput, dateTimePicker, dropdown, fileUpload, list, markdown, multiDropdown, multiFileUpload, multiList, number, password, radiogroup, rangeCalendar, rangeDateInput, rangeDatePicker, rangeDateTimeInput, rangeDateTimeCalendar, rangeDateTimePicker, rangeTimeInput, rangeTimePicker, repeater, select, tags, textarea, textinput, timeInput, timePicker, toggle, accordion, flex, grid, tabs, alert, markdownText, button. If this is intentional (a custom widget registered via the framework loader), you can ignore this warning.",
+          "params": {
+            "type": "myLayout"
+          }
+        }
+      ],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "kind-is-not-allowed": {
+    "input": {
+      "form": [
+        {
+          "kind": "weird",
+          "type": "myWidget"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/kind",
+          "message": "Value \"weird\" at `/form/0/kind` is not one of the allowed values",
+          "suggestion": "Allowed values: `input`, `display`, `action`, `layout`.",
+          "keyword": "enum",
+          "params": {
+            "allowedValues": [
+              "input",
+              "display",
+              "action",
+              "layout"
+            ]
+          }
+        }
+      ],
+      "warnings": [
+        {
+          "path": "/form/0/type",
+          "keyword": "customWidget",
+          "message": "Widget type `myWidget` at `/form/0` is not a built-in GolemUI widget - assumed custom. Its props were not validated.",
+          "suggestion": "Built-in widget types: calendar, dateTimeCalendar, checkbox, currency, dateInput, datePicker, dateTimeInput, dateTimePicker, dropdown, fileUpload, list, markdown, multiDropdown, multiFileUpload, multiList, number, password, radiogroup, rangeCalendar, rangeDateInput, rangeDatePicker, rangeDateTimeInput, rangeDateTimeCalendar, rangeDateTimePicker, rangeTimeInput, rangeTimePicker, repeater, select, tags, textarea, textinput, timeInput, timePicker, toggle, accordion, flex, grid, tabs, alert, markdownText, button. If this is intentional (a custom widget registered via the framework loader), you can ignore this warning.",
+          "params": {
+            "type": "myWidget"
+          }
+        }
+      ],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "kind-is-missing": {
+    "input": {
+      "form": [
+        {
+          "type": "myWidget"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0",
+          "message": "Missing required property `kind` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "kind"
+          }
+        }
+      ],
+      "warnings": [
+        {
+          "path": "/form/0/type",
+          "keyword": "customWidget",
+          "message": "Widget type `myWidget` at `/form/0` is not a built-in GolemUI widget - assumed custom. Its props were not validated.",
+          "suggestion": "Built-in widget types: calendar, dateTimeCalendar, checkbox, currency, dateInput, datePicker, dateTimeInput, dateTimePicker, dropdown, fileUpload, list, markdown, multiDropdown, multiFileUpload, multiList, number, password, radiogroup, rangeCalendar, rangeDateInput, rangeDatePicker, rangeDateTimeInput, rangeDateTimeCalendar, rangeDateTimePicker, rangeTimeInput, rangeTimePicker, repeater, select, tags, textarea, textinput, timeInput, timePicker, toggle, accordion, flex, grid, tabs, alert, markdownText, button. If this is intentional (a custom widget registered via the framework loader), you can ignore this warning.",
+          "params": {
+            "type": "myWidget"
+          }
+        }
+      ],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "type-is-missing": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "path": "field"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0",
+          "message": "Missing required property `type` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "type"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "renderer-without-a-schema": {
+    "input": {
+      "form": [
+        {
+          "kind": "display",
+          "type": "renderer"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/type",
+          "message": "Widget type `renderer` at `/form/0/type` is a built-in with no JSON representation, so it cannot appear in a JSON form definition",
+          "suggestion": "Add this widget through the TS DX API instead (for example `gui.displays.display(render)`), or remove it from the JSON.",
+          "keyword": "schemalessType",
+          "params": {
+            "type": "renderer"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "type-is-a-typo": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "textimput",
+          "path": "field"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/type",
+          "message": "Expected `\"textinput\"` at `/form/0/type`, got `\"textimput\"`",
+          "suggestion": "Did you mean `type: 'textinput'`?",
+          "keyword": "const",
+          "params": {
+            "allowedValue": "textinput"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  }
+}

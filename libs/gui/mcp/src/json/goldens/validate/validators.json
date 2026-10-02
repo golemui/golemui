@@ -1,0 +1,708 @@
+{
+  "string/unknown-keyword": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "field",
+          "validator": {
+            "type": "string",
+            "notAKeyword": 1
+          }
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/validator",
+          "message": "Unknown property `notAKeyword` at `/form/0/validator`",
+          "keyword": "additionalProperties",
+          "params": {
+            "additionalProperty": "notAKeyword"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "string/wrong-required-type": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "field",
+          "validator": {
+            "type": "string",
+            "required": "yes"
+          }
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/validator/required",
+          "message": "Expected type boolean at `/form/0/validator/required`, got \"yes\"",
+          "keyword": "type",
+          "params": {
+            "type": "boolean"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "number/unknown-keyword": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "field",
+          "validator": {
+            "type": "number",
+            "notAKeyword": 1
+          }
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/validator",
+          "message": "Unknown property `notAKeyword` at `/form/0/validator`",
+          "keyword": "additionalProperties",
+          "params": {
+            "additionalProperty": "notAKeyword"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "number/wrong-required-type": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "field",
+          "validator": {
+            "type": "number",
+            "required": "yes"
+          }
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/validator/required",
+          "message": "Expected type boolean at `/form/0/validator/required`, got \"yes\"",
+          "keyword": "type",
+          "params": {
+            "type": "boolean"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "integer/unknown-keyword": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "field",
+          "validator": {
+            "type": "integer",
+            "notAKeyword": 1
+          }
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/validator",
+          "message": "Unknown property `notAKeyword` at `/form/0/validator`",
+          "keyword": "additionalProperties",
+          "params": {
+            "additionalProperty": "notAKeyword"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "integer/wrong-required-type": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "field",
+          "validator": {
+            "type": "integer",
+            "required": "yes"
+          }
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/validator/required",
+          "message": "Expected type boolean at `/form/0/validator/required`, got \"yes\"",
+          "keyword": "type",
+          "params": {
+            "type": "boolean"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "boolean/unknown-keyword": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "field",
+          "validator": {
+            "type": "boolean",
+            "notAKeyword": 1
+          }
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/validator",
+          "message": "Unknown property `notAKeyword` at `/form/0/validator`",
+          "keyword": "additionalProperties",
+          "params": {
+            "additionalProperty": "notAKeyword"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "boolean/wrong-required-type": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "field",
+          "validator": {
+            "type": "boolean",
+            "required": "yes"
+          }
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/validator/required",
+          "message": "Expected type boolean at `/form/0/validator/required`, got \"yes\"",
+          "keyword": "type",
+          "params": {
+            "type": "boolean"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "array/unknown-keyword": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "field",
+          "validator": {
+            "type": "array",
+            "notAKeyword": 1
+          }
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/validator",
+          "message": "Unknown property `notAKeyword` at `/form/0/validator`",
+          "keyword": "additionalProperties",
+          "params": {
+            "additionalProperty": "notAKeyword"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "array/wrong-required-type": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "field",
+          "validator": {
+            "type": "array",
+            "required": "yes"
+          }
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/validator/required",
+          "message": "Expected type boolean at `/form/0/validator/required`, got \"yes\"",
+          "keyword": "type",
+          "params": {
+            "type": "boolean"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "file/unknown-keyword": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "field",
+          "validator": {
+            "type": "file",
+            "notAKeyword": 1
+          }
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/validator",
+          "message": "Unknown property `notAKeyword` at `/form/0/validator`",
+          "keyword": "additionalProperties",
+          "params": {
+            "additionalProperty": "notAKeyword"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "file/wrong-required-type": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "field",
+          "validator": {
+            "type": "file",
+            "required": "yes"
+          }
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/validator/required",
+          "message": "Expected type boolean at `/form/0/validator/required`, got \"yes\"",
+          "keyword": "type",
+          "params": {
+            "type": "boolean"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "files/unknown-keyword": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "field",
+          "validator": {
+            "type": "files",
+            "notAKeyword": 1
+          }
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/validator",
+          "message": "Unknown property `notAKeyword` at `/form/0/validator`",
+          "keyword": "additionalProperties",
+          "params": {
+            "additionalProperty": "notAKeyword"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "files/wrong-required-type": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "field",
+          "validator": {
+            "type": "files",
+            "required": "yes"
+          }
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/validator/required",
+          "message": "Expected type boolean at `/form/0/validator/required`, got \"yes\"",
+          "keyword": "type",
+          "params": {
+            "type": "boolean"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "custom/unknown-keyword": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "field",
+          "validator": {
+            "type": "custom",
+            "notAKeyword": 1
+          }
+        }
+      ]
+    },
+    "result": {
+      "valid": true,
+      "errors": [],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "custom/wrong-required-type": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "field",
+          "validator": {
+            "type": "custom",
+            "required": "yes"
+          }
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/validator/required",
+          "message": "Expected type boolean at `/form/0/validator/required`, got \"yes\"",
+          "keyword": "type",
+          "params": {
+            "type": "boolean"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "type-is-a-typo": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "field",
+          "validator": {
+            "type": "strin"
+          }
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/validator/type",
+          "message": "Expected `\"string\"` at `/form/0/validator/type`, got `\"strin\"`",
+          "suggestion": "Did you mean `type: 'string'`?",
+          "keyword": "const",
+          "params": {
+            "allowedValue": "string"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "type-is-unknown": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "field",
+          "validator": {
+            "type": "zzzzzzzz"
+          }
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/validator/type",
+          "message": "Value \"zzzzzzzz\" at `/form/0/validator/type` is not one of the allowed values",
+          "suggestion": "Allowed values: `string`, `number`, `integer`, `boolean`, `array`, `file`, `files`, `custom`.",
+          "keyword": "enum",
+          "params": {
+            "allowedValues": [
+              "string",
+              "number",
+              "integer",
+              "boolean",
+              "array",
+              "file",
+              "files",
+              "custom"
+            ]
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "format-is-a-typo": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "field",
+          "validator": {
+            "type": "string",
+            "format": "mail"
+          }
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/validator/format",
+          "message": "Value \"mail\" at `/form/0/validator/format` is not one of the allowed values",
+          "suggestion": "Allowed string formats: `email`, `hostname`, `ipv4`, `ipv6`, `url`, `uuid`, `date`, `time`, `date-time`, `duration`.",
+          "keyword": "enum",
+          "params": {
+            "allowedValues": [
+              "email",
+              "hostname",
+              "ipv4",
+              "ipv6",
+              "url",
+              "uuid",
+              "date",
+              "time",
+              "date-time",
+              "duration"
+            ]
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "bad-length": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "field",
+          "validator": {
+            "type": "string",
+            "minLength": "ten"
+          }
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/validator/minLength",
+          "message": "Expected type number at `/form/0/validator/minLength`, got \"ten\"",
+          "keyword": "type",
+          "params": {
+            "type": "number"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "state-scoped-bad-keyword": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "field",
+          "validator.register": {
+            "type": "string",
+            "minLength": "ten"
+          }
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/validator.register/minLength",
+          "message": "Expected type number at `/form/0/validator.register/minLength`, got \"ten\"",
+          "keyword": "type",
+          "params": {
+            "type": "number"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "two-validators-invalid": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "field",
+          "validator": {
+            "type": "string",
+            "maxLength": "x"
+          },
+          "validator.edit": {
+            "type": "number",
+            "minimum": "y"
+          }
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/validator/maxLength",
+          "message": "Expected type number at `/form/0/validator/maxLength`, got \"x\"",
+          "keyword": "type",
+          "params": {
+            "type": "number"
+          }
+        },
+        {
+          "path": "/form/0/validator.edit/minimum",
+          "message": "Expected type number at `/form/0/validator.edit/minimum`, got \"y\"",
+          "keyword": "type",
+          "params": {
+            "type": "number"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  }
+}
