@@ -1,6 +1,6 @@
 import { execSync } from 'node:child_process';
 import { copyFileSync, existsSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, relative } from 'node:path';
 import { releaseChangelog, releasePublish, releaseVersion } from 'nx/release';
 import { updateTemplateVersions } from './update-template-versions';
 
@@ -40,6 +40,13 @@ function distDirForPackage(packageName: string): string {
 }
 
 /**
+ * Derives the source directory of a publishable package, e.g. `@golemui/gui-mcp` => `libs/gui/mcp`.
+ */
+function sourceDirForPackage(packageName: string): string {
+  return relative('dist', distDirForPackage(packageName));
+}
+
+/**
  * Copies the root LICENSE file into every publishable package's `dist` directory
  */
 function copyLicenseToPackages(dryRun: boolean) {
@@ -64,6 +71,37 @@ function copyLicenseToPackages(dryRun: boolean) {
 
     copyFileSync(licenseFile, destination);
     console.log(`Copied LICENSE => ${destination}`);
+  });
+}
+
+/**
+ * Copies each package's CHANGELOG.md into its `dist` directory. The build copies the file before
+ * `releaseChangelog` writes the entry of this release, so without this step the published package
+ * carries the changelog of the previous release.
+ */
+function copyChangelogToPackages(dryRun: boolean) {
+  PUBLISHABLE_PACKAGES.forEach((packageName) => {
+    const changelogFile = join(process.cwd(), sourceDirForPackage(packageName), 'CHANGELOG.md');
+    const destDir = join(process.cwd(), distDirForPackage(packageName));
+    if (!existsSync(changelogFile)) {
+      console.warn(`CHANGELOG.md not found at ${changelogFile}; skipping changelog copy.`);
+      return;
+    }
+    if (!existsSync(destDir)) {
+      console.warn(
+        `Build output missing for ${packageName} (${destDir}); skipping changelog copy.`,
+      );
+      return;
+    }
+
+    const destination = join(destDir, 'CHANGELOG.md');
+    if (dryRun) {
+      console.log(`[dry-run] Would copy CHANGELOG.md => ${destination}`);
+      return;
+    }
+
+    copyFileSync(changelogFile, destination);
+    console.log(`Copied CHANGELOG.md => ${destination}`);
   });
 }
 
@@ -108,6 +146,9 @@ function updateSkillReferences(dryRun: boolean) {
     version: workspaceVersion,
     dryRun,
   });
+
+  // The build already copied the changelogs, so refresh them with this release's entry.
+  copyChangelogToPackages(dryRun);
 
   // Ensure the MIT license text ships inside every package tarball.
   copyLicenseToPackages(dryRun);

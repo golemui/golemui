@@ -3,6 +3,10 @@ import baseConfig from '../../../eslint.config.mjs';
 export default [
   ...baseConfig,
   {
+    // Built by the nx target generate-validators, not hand-written.
+    ignores: ['**/schemas/generated/validators.js'],
+  },
+  {
     files: ['**/*.json'],
     rules: {
       '@nx/dependency-checks': [
