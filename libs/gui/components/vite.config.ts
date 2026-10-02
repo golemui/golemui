@@ -40,6 +40,7 @@ export default defineConfig(() => ({
         react: 'src/react.ts',
         'lib/components/accordion': 'src/lib/components/accordion.ts',
         'lib/components/accordion-item': 'src/lib/components/accordion-item.ts',
+        'lib/components/alert': 'src/lib/components/alert.ts',
         'lib/components/button': 'src/lib/components/button.ts',
         'lib/components/calendar': 'src/lib/components/calendar.ts',
         'lib/components/checkbox': 'src/lib/components/checkbox.ts',

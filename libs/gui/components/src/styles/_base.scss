@@ -3,6 +3,7 @@
 // specificity, so any other rule, the element's own or the page's, wins.
 :where(
   gui-accordion,
+  gui-alert,
   gui-button,
   gui-calendar,
   gui-checkbox,

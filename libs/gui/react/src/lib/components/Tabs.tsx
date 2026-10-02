@@ -8,7 +8,7 @@ import {
   type TabsProps,
 } from '@golemui/gui-shared/internals';
 import { useEffect, useState } from 'react';
-import { GuiTabListReact, GuiTabPanelReact, GuiTabReact, GuiTabsReact } from '../web-components';
+import { GuiTabsReact } from '../web-components';
 
 export function Tabs(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as LayoutWidget;
@@ -32,19 +32,21 @@ export function Tabs(widgetInstance: WithWidget) {
 
   return (
     <div className="gui-tabs gui-field" style={{ flex: templateData.size }}>
+      {/* The parts are plain tags, not React wrappers: a server render then has their attributes,
+          such as the inactive panels' hidden. */}
       <GuiTabsReact id={uid} active={activeTab} onGuiTabChange={onTabChange}>
-        <GuiTabListReact>
+        <gui-tab-list>
           {tabs.map((tab) => (
-            <GuiTabReact
+            <gui-tab
               key={tab.uid}
               panel={tab.uid}
               id={tabButtonId(widget.uid, tab.uid)}
               data-cy={tabButtonId(widget.uid, tab.uid)}
             >
               {tab.label}
-            </GuiTabReact>
+            </gui-tab>
           ))}
-        </GuiTabListReact>
+        </gui-tab-list>
         {/* Panels come from the tab list, so a tab and its panel always carry the same uid. A tab
             whose child is hidden by a `when` keeps its header and gets no panel. */}
         {tabs.map((tab) => {
@@ -53,15 +55,15 @@ export function Tabs(widgetInstance: WithWidget) {
           if (!child || (!isActive && templateData.renderMode === 'activeOnly')) return null;
 
           return (
-            <GuiTabPanelReact
+            <gui-tab-panel
               key={tab.uid}
               name={tab.uid}
               id={tabPanelId(widget.uid, tab.uid)}
               data-cy={tabPanelId(widget.uid, tab.uid)}
-              hidden={!isActive}
+              hidden={isActive ? undefined : true}
             >
               <WidgetRenderer widget={child as NonFunctionWidget<string>} />
-            </GuiTabPanelReact>
+            </gui-tab-panel>
           );
         })}
       </GuiTabsReact>

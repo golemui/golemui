@@ -41,6 +41,7 @@
       "@golemui/gui-components/accordion-item": [
         "libs/gui/components/src/lib/components/accordion-item.ts"
       ],
+      "@golemui/gui-components/alert": ["libs/gui/components/src/lib/components/alert.ts"],
       "@golemui/gui-components/button": ["libs/gui/components/src/lib/components/button.ts"],
       "@golemui/gui-components/calendar": ["libs/gui/components/src/lib/components/calendar.ts"],
       "@golemui/gui-components/checkbox": ["libs/gui/components/src/lib/components/checkbox.ts"],

@@ -6,6 +6,7 @@ export {
   GuiAccordionItemEvents,
   type GuiToggleEventDetail,
 } from './lib/components/accordion-item';
+export { GuiAlert, type GuiAlertVariant } from './lib/components/alert';
 export { GuiButton } from './lib/components/button';
 export { GuiCalendar, GuiCalendarEvents } from './lib/components/calendar';
 export type { CalendarDay } from './lib/components/calendar';

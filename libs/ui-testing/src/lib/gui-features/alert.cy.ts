@@ -22,8 +22,8 @@ export const runAlertComponentTests = (mountFn: MountComponentFn) => {
     });
 
     it('should display a warning alert', () => {
-      cy.get('.gui-alert-notification--warning')
-        .should('exist')
+      cy.get('gui-alert[variant="warning"]')
+        .should('have.attr', 'role', 'alert')
         .and('contain.text', 'Some fields need your attention');
     });
   });

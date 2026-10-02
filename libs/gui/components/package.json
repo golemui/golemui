@@ -47,6 +47,11 @@
       "import": "./lib/components/accordion-item.js",
       "require": "./lib/components/accordion-item.umd.cjs"
     },
+    "./alert": {
+      "types": "./lib/components/alert.d.ts",
+      "import": "./lib/components/alert.js",
+      "require": "./lib/components/alert.umd.cjs"
+    },
     "./button": {
       "types": "./lib/components/button.d.ts",
       "import": "./lib/components/button.js",
