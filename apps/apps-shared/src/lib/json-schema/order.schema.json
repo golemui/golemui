@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Order",
+  "type": "object",
+  "required": ["email", "country", "lines", "payment"],
+  "properties": {
+    "email": { "type": "string", "format": "email", "title": "E-mail" },
+    "country": {
+      "type": "string",
+      "title": "Country",
+      "oneOf": [
+        { "const": "US", "title": "United States" },
+        { "const": "NL", "title": "Netherlands" }
+      ]
+    },
+    "zip": {
+      "type": "string",
+      "title": "Postal code",
+      "description": "The format depends on the country."
+    },
+    "company": { "type": "string", "title": "Company name" },
+    "vatNumber": { "type": "string", "title": "VAT number" },
+    "deliveryDate": { "type": "string", "format": "date", "title": "Delivery date" },
+    "lines": {
+      "type": "array",
+      "title": "Lines",
+      "minItems": 1,
+      "maxItems": 5,
+      "items": { "$ref": "#/$defs/Line" }
+    },
+    "payment": { "oneOf": [{ "$ref": "#/$defs/Card" }, { "$ref": "#/$defs/BankTransfer" }] },
+    "giftWrap": { "type": "boolean", "title": "Gift wrap" },
+    "giftMessage": { "type": "string", "title": "Gift message", "maxLength": 300 }
+  },
+  "dependentRequired": { "company": ["vatNumber"] },
+  "allOf": [
+    {
+      "if": { "properties": { "country": { "const": "US" } }, "required": ["country"] },
+      "then": {
+        "properties": {
+          "zip": { "pattern": "^[0-9]{5}$" },
+          "state": { "type": "string", "title": "State", "enum": ["CA", "NY", "TX"] }
+        },
+        "required": ["zip", "state"]
+      },
+      "else": { "properties": { "zip": { "pattern": "^[0-9]{4} ?[A-Z]{2}$" } } }
+    },
+    {
+      "if": { "properties": { "giftWrap": { "const": true } }, "required": ["giftWrap"] },
+      "then": { "required": ["giftMessage"] }
+    }
+  ],
+  "$defs": {
+    "Line": {
+      "type": "object",
+      "title": "Line",
+      "required": ["product", "quantity"],
+      "properties": {
+        "product": {
+          "type": "string",
+          "title": "Product",
+          "enum": ["Notebook", "Pen", "Backpack"]
+        },
+        "quantity": { "type": "integer", "title": "Quantity", "minimum": 1, "default": 1 }
+      }
+    },
+    "Card": {
+      "type": "object",
+      "title": "Card",
+      "required": ["method", "cardNumber"],
+      "properties": {
+        "method": { "const": "card" },
+        "cardNumber": { "type": "string", "title": "Card number", "pattern": "^[0-9]{16}$" }
+      }
+    },
+    "BankTransfer": {
+      "type": "object",
+      "title": "Bank transfer",
+      "required": ["method", "iban"],
+      "properties": {
+        "method": { "const": "bank" },
+        "iban": { "type": "string", "title": "IBAN" }
+      }
+    }
+  }
+}

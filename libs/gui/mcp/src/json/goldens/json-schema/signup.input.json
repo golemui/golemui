@@ -1,0 +1,27 @@
+{
+  "jsonSchema": {
+    "type": "object",
+    "properties": {
+      "email": {
+        "type": "string",
+        "format": "email"
+      },
+      "password": {
+        "type": "string",
+        "minLength": 8
+      },
+      "age": {
+        "type": "integer",
+        "minimum": 13,
+        "maximum": 120
+      },
+      "newsletter": {
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "email",
+      "password"
+    ]
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "jsonSchema": {
+    "type": "object",
+    "properties": {
+      "card": {
+        "type": "string"
+      },
+      "billingAddress": {
+        "type": "string"
+      }
+    },
+    "dependentRequired": {
+      "card": [
+        "billingAddress"
+      ]
+    }
+  },
+  "submitAction": false
+}

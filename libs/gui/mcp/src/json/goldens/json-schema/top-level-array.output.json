@@ -1,0 +1,28 @@
+{
+  "formDefinition": {
+    "$schema": "https://golemui.com/schemas/form.schema.json",
+    "form": []
+  },
+  "unmapped": [
+    {
+      "path": "",
+      "reason": "Only an object schema at the root can become a form."
+    }
+  ],
+  "diagnostics": [
+    {
+      "severity": "error",
+      "code": "root-not-object",
+      "message": "Only an object schema at the root can become a form.",
+      "path": "",
+      "pointer": ""
+    }
+  ],
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": [],
+    "expressionWarnings": [],
+    "interpolationWarnings": []
+  }
+}

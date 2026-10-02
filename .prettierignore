@@ -11,3 +11,5 @@
 .output
 .astro
 CHANGELOG.md
+# goldens.spec.ts compares these files byte for byte
+/libs/gui/mcp/src/json/goldens

@@ -98,21 +98,26 @@ like missing `$form.` prefixes, single `=` in equality checks, and unbalanced br
 
 ### `json_generate_from_schema`
 
-Maps a JSON Schema (the form-data shape, e.g. a Zod-derived schema) into a GolemUI
-form definition. Handles strings (with `format` → specialized widgets), numbers,
-booleans, enums, nested objects, and arrays of objects. The result is validated before
-being returned, so you get a guaranteed-correct form or an explicit list of what could
-not be mapped.
+Converts a JSON Schema (the form-data shape, e.g. a Zod-derived schema) into a GolemUI
+form definition, with `fromJsonSchema` from `@golemui/schemas/json-schema` and the gui
+preset from `@golemui/gui-schemas/json-schema`. It handles formats, enums, local `$ref`,
+`allOf`, nested objects, arrays, discriminated `oneOf`/`anyOf`, and `if/then/else` and
+`dependent*` as conditions and form states. The result is validated before it is returned.
 
-**Input:** `{ jsonSchema, submitAction?, submitLabel?, layout? }`
+`diagnostics` lists what the form cannot express exactly, each with a `severity`, a `code`,
+the data `path` and the JSON `pointer` into the input. `unmapped` repeats its errors and
+warnings as `{ path, reason }`. `rules` and `overrides` choose other widgets: see the
+`@golemui/schemas` README.
+
+**Input:** `{ jsonSchema, submitAction?, submitLabel?, layout?, rules?, overrides? }`
 
 ### `json_generate_from_openapi`
 
-Resolves an OpenAPI 3.x operation (e.g. `"POST /users"` or an `operationId`), dereferences
-its request body schema, and emits a validated GolemUI form. Falls back to operation
-parameters when no JSON request body is present.
+Resolves an OpenAPI 3.x operation (e.g. `"POST /users"` or an `operationId`) and converts
+its JSON request body, with its `$ref`s into the document, like `json_generate_from_schema`.
+Falls back to the operation parameters when there is no object request body.
 
-**Input:** `{ document | documentUrl, operation, submitAction?, submitLabel? }`
+**Input:** `{ document | documentUrl, operation, submitAction?, submitLabel?, rules?, overrides? }`
 
 ### `json_get_widget_spec`
 
@@ -184,10 +189,10 @@ const result = validateFormDefinition({ formDefinition: myForm });
 if (!result.valid) console.error(result.errors);
 
 // Generate a form from a JSON Schema
-const { form, unmapped } = generateFromJsonSchema({ jsonSchema: mySchema });
+const { formDefinition, diagnostics } = generateFromJsonSchema({ jsonSchema: mySchema });
 
 // Generate a form from an OpenAPI spec
-const { form } = await generateFromOpenapi({
+const { formDefinition: userForm } = await generateFromOpenapi({
   documentUrl: 'https://example.com/openapi.json',
   operation: 'POST /users',
 });

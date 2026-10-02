@@ -1,0 +1,17 @@
+{
+  "jsonSchema": {
+    "type": "object",
+    "properties": {
+      "bio": {
+        "type": "string",
+        "maxLength": 500,
+        "description": "A short text about you."
+      },
+      "summary": {
+        "type": "string",
+        "maxLength": 199
+      }
+    }
+  },
+  "submitAction": false
+}

@@ -1,0 +1,73 @@
+{
+  "document": {
+    "openapi": "3.0.0",
+    "components": {
+      "schemas": {
+        "NewOrder": {
+          "type": "object",
+          "properties": {
+            "customer": {
+              "$ref": "#/components/schemas/Customer"
+            },
+            "lines": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/OrderLine"
+              }
+            }
+          }
+        },
+        "Customer": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "address": {
+              "$ref": "#/components/schemas/Address"
+            }
+          }
+        },
+        "Address": {
+          "type": "object",
+          "properties": {
+            "street": {
+              "type": "string"
+            },
+            "city": {
+              "type": "string"
+            }
+          }
+        },
+        "OrderLine": {
+          "type": "object",
+          "properties": {
+            "product": {
+              "type": "string"
+            },
+            "quantity": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    },
+    "paths": {
+      "/orders": {
+        "post": {
+          "operationId": "createOrder",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewOrder"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "operation": "POST /orders"
+}

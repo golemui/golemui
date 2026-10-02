@@ -1,0 +1,22 @@
+{
+  "jsonSchema": {
+    "type": "object",
+    "properties": {
+      "lines": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "product": {
+              "type": "string"
+            },
+            "itemsTotal": {
+              "type": "number"
+            }
+          }
+        }
+      }
+    }
+  },
+  "submitAction": false
+}

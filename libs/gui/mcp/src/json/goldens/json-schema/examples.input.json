@@ -1,0 +1,15 @@
+{
+  "jsonSchema": {
+    "type": "object",
+    "properties": {
+      "email": {
+        "type": "string",
+        "format": "email",
+        "examples": [
+          "jane@example.com"
+        ]
+      }
+    }
+  },
+  "submitAction": false
+}

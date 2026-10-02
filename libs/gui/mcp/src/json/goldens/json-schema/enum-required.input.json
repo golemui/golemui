@@ -1,0 +1,19 @@
+{
+  "jsonSchema": {
+    "type": "object",
+    "properties": {
+      "size": {
+        "type": "string",
+        "enum": [
+          "small",
+          "medium",
+          "large"
+        ]
+      }
+    },
+    "required": [
+      "size"
+    ]
+  },
+  "submitAction": false
+}

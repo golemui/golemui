@@ -1,0 +1,33 @@
+{
+  "jsonSchema": {
+    "type": "object",
+    "properties": {
+      "username": {
+        "type": "string",
+        "minLength": 3,
+        "maxLength": 20,
+        "pattern": "^[a-z0-9_]+$"
+      },
+      "id": {
+        "type": "string",
+        "format": "uuid"
+      },
+      "website": {
+        "type": "string",
+        "format": "uri"
+      },
+      "homepage": {
+        "type": "string",
+        "format": "url"
+      },
+      "server": {
+        "type": "string",
+        "format": "hostname"
+      }
+    },
+    "required": [
+      "username"
+    ]
+  },
+  "submitAction": false
+}

@@ -1,4 +1,10 @@
-import { jsonSchemaToGui, type JsonSchemaLike } from './mapping/json-schema-to-gui';
+import { type DeclarativeRule, type WidgetPatch } from '@golemui/schemas/json-schema';
+import {
+  CUSTOMIZATION_INPUT_PROPERTIES,
+  jsonSchemaToGui,
+  type JsonSchemaLike,
+  type MapResult,
+} from './mapping/json-schema-to-gui';
 import { validateFormDefinition } from './validate-form-definition';
 
 type OpenAPIDoc = {
@@ -28,12 +34,12 @@ export type GenerateFromOpenapiInput = {
   operation: string;
   submitAction?: boolean;
   submitLabel?: string;
+  rules?: DeclarativeRule[];
+  overrides?: Record<string, WidgetPatch>;
 };
 
-export type GenerateFromOpenapiResult = {
+export type GenerateFromOpenapiResult = MapResult & {
   resolvedOperation: { method: string; path: string; operationId?: string };
-  formDefinition: { $schema: string; form: unknown[] };
-  unmapped: { path: string; reason: string }[];
   validation: ReturnType<typeof validateFormDefinition>;
 };
 
@@ -55,33 +61,40 @@ export async function generateFromOpenapi(
   }
 
   const { method, path, operation } = resolved;
+  const convert = (schema: JsonSchemaLike) =>
+    jsonSchemaToGui(schema, {
+      submitAction: input.submitAction ?? true,
+      submitLabel: input.submitLabel ?? defaultSubmitLabel(method, operation),
+      rules: input.rules,
+      overrides: input.overrides,
+      // `$ref`s in the operation point into the document, e.g. `#/components/schemas/User`.
+      refRoot: doc as JsonSchemaLike,
+    });
 
-  // Prefer a JSON request body. Fall back to query/path parameters if none.
-  let bodySchema = operation.requestBody?.content?.['application/json']?.schema;
-  if (bodySchema) bodySchema = derefSchema(bodySchema, doc);
-
-  let assembled: JsonSchemaLike;
-  if (bodySchema && (bodySchema.type === 'object' || bodySchema.properties)) {
-    assembled = bodySchema;
-  } else if (operation.parameters?.length) {
-    assembled = paramsToSchema(operation.parameters, doc);
-  } else {
-    throw new Error(
-      `Operation \`${method.toUpperCase()} ${path}\` has no JSON request body and no parameters — nothing to render as a form.`,
-    );
+  // Prefer a JSON request body. Fall back to query/path parameters when there is none, or when
+  // it is not an object, which the converter reports once `$ref` and `allOf` are resolved.
+  const bodySchema = operation.requestBody?.content?.['application/json']?.schema;
+  let converted = bodySchema ? convert(bodySchema) : undefined;
+  const bodyIsObject =
+    converted !== undefined &&
+    !converted.diagnostics.some((diagnostic) => diagnostic.code === 'root-not-object');
+  if (!bodyIsObject) {
+    if (!operation.parameters?.length) {
+      throw new Error(
+        `Operation \`${method.toUpperCase()} ${path}\` has no JSON request body and no parameters — nothing to render as a form.`,
+      );
+    }
+    converted = convert(paramsToSchema(operation.parameters));
   }
 
-  const { formDefinition, unmapped } = jsonSchemaToGui(assembled, {
-    submitAction: input.submitAction ?? true,
-    submitLabel: input.submitLabel ?? defaultSubmitLabel(method, operation),
-  });
-
+  const { formDefinition, unmapped, diagnostics } = converted as MapResult;
   const validation = validateFormDefinition({ formDefinition });
 
   return {
     resolvedOperation: { method: method.toUpperCase(), path, operationId: operation.operationId },
     formDefinition,
     unmapped,
+    diagnostics,
     validation,
   };
 }
@@ -131,16 +144,22 @@ function findOperation(
   return null;
 }
 
-function paramsToSchema(
-  parameters: NonNullable<OpenAPIOperation['parameters']>,
-  doc: OpenAPIDoc,
-): JsonSchemaLike {
+/**
+ * The parameters as the properties of one object. A parameter schema keeps its `$ref`, which the
+ * converter resolves, and the parameter description is written next to it.
+ */
+function paramsToSchema(parameters: NonNullable<OpenAPIOperation['parameters']>): JsonSchemaLike {
   const properties: Record<string, JsonSchemaLike> = {};
   const required: string[] = [];
-  for (const p of parameters) {
-    const s = p.schema ? derefSchema(p.schema, doc) : { type: 'string' as const };
-    properties[p.name] = { ...s, description: p.description ?? s.description };
-    if (p.required) required.push(p.name);
+  for (const parameter of parameters) {
+    const schema = parameter.schema ?? { type: 'string' };
+    properties[parameter.name] =
+      parameter.description === undefined
+        ? schema
+        : { ...schema, description: parameter.description };
+    if (parameter.required) {
+      required.push(parameter.name);
+    }
   }
   return { type: 'object', properties, required };
 }
@@ -157,53 +176,16 @@ function defaultSubmitLabel(method: string, op: OpenAPIOperation): string {
   return verbs[method.toLowerCase()] ?? 'Submit';
 }
 
-/**
- * Resolves `$ref` pointers within `#/components/schemas/...`. Bounded recursion (16 levels) to
- * avoid infinite loops on self-referential schemas. We do NOT follow external refs in v1.
- */
-function derefSchema(schema: JsonSchemaLike, doc: OpenAPIDoc, depth = 0): JsonSchemaLike {
-  if (depth > 16) return schema;
-  if (typeof schema.$ref === 'string') {
-    const target = resolveLocalRef(schema.$ref, doc);
-    if (target) return derefSchema(target, doc, depth + 1);
-    return schema;
-  }
-  const result: JsonSchemaLike = { ...schema };
-  if (result.properties) {
-    result.properties = Object.fromEntries(
-      Object.entries(result.properties).map(([k, v]) => [k, derefSchema(v, doc, depth + 1)]),
-    );
-  }
-  if (result.items) result.items = derefSchema(result.items, doc, depth + 1);
-  if (result.oneOf) result.oneOf = result.oneOf.map((s) => derefSchema(s, doc, depth + 1));
-  if (result.anyOf) result.anyOf = result.anyOf.map((s) => derefSchema(s, doc, depth + 1));
-  return result;
-}
-
-function resolveLocalRef(ref: string, doc: OpenAPIDoc): JsonSchemaLike | null {
-  if (!ref.startsWith('#/')) return null;
-  const parts = ref.slice(2).split('/');
-  let cur: unknown = doc;
-  for (const p of parts) {
-    if (cur && typeof cur === 'object') {
-      cur = (cur as Record<string, unknown>)[p];
-    } else {
-      return null;
-    }
-  }
-  return (cur as JsonSchemaLike) ?? null;
-}
-
 export const JSON_GENERATE_FROM_OPENAPI_TOOL = {
   name: 'json_generate_from_openapi',
   description:
     'Generate a GolemUI form for a specific OpenAPI 3.x operation (e.g. "POST /users"). ' +
-    "Resolves the operation's JSON request body, dereferences `$ref`s, then maps it to a " +
+    "Converts the operation's JSON request body, with its `$ref`s into the document, to a " +
     'form definition that is validated against the GolemUI JSON Schemas before being returned, ' +
     'so it is guaranteed syntactically correct. Falls back to operation parameters when no ' +
-    'request body is present. Anything the mapper cannot handle is reported in `unmapped` rather ' +
-    'than silently dropped — use that list to surface remaining work to the user. Pass either a ' +
-    'parsed `document` or a `documentUrl` to fetch.',
+    'object request body is present. Returns `diagnostics` and `unmapped` like ' +
+    '`json_generate_from_schema`: surface them to the user. Pass either a parsed `document` or a ' +
+    '`documentUrl` to fetch, and `rules` or `overrides` to choose other widgets.',
   inputSchema: {
     type: 'object' as const,
     properties: {
@@ -233,6 +215,7 @@ export const JSON_GENERATE_FROM_OPENAPI_TOOL = {
           'Label for the submit button. Defaults to the operation summary or a verb derived ' +
           'from the HTTP method.',
       },
+      ...CUSTOMIZATION_INPUT_PROPERTIES,
     },
     required: ['operation'],
   },

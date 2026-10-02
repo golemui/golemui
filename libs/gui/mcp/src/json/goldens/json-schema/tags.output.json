@@ -1,0 +1,57 @@
+{
+  "formDefinition": {
+    "$schema": "https://golemui.com/schemas/form.schema.json",
+    "form": [
+      {
+        "kind": "input",
+        "type": "tags",
+        "path": "keywords",
+        "label": "Keywords",
+        "validator": {
+          "type": "array",
+          "required": true,
+          "minItems": 1,
+          "maxItems": 10
+        },
+        "props": {
+          "placeholder": "Add and press Enter"
+        }
+      },
+      {
+        "kind": "input",
+        "type": "tags",
+        "path": "scores",
+        "label": "Scores",
+        "validator": {
+          "type": "array",
+          "uniqueItems": true
+        },
+        "props": {
+          "placeholder": "Add and press Enter"
+        }
+      }
+    ]
+  },
+  "unmapped": [
+    {
+      "path": "scores",
+      "reason": "The tags widget writes strings, and the schema expects integer items."
+    }
+  ],
+  "diagnostics": [
+    {
+      "severity": "warning",
+      "code": "item-type-mismatch",
+      "message": "The tags widget writes strings, and the schema expects integer items.",
+      "path": "scores",
+      "pointer": "/properties/scores"
+    }
+  ],
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": [],
+    "expressionWarnings": [],
+    "interpolationWarnings": []
+  }
+}

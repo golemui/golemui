@@ -422,6 +422,66 @@ const makeRequiredRowsFormDef = () => ({
 });
 
 /**
+ * A repeater bound to a property named `items`, with a required row field and a row field whose
+ * name starts with `items`. The second field is visible only for priced rows. Each row also has
+ * its own `items` array, and two notes read `items` segments that are not the row token.
+ */
+const makeItemsPropertyFormDef = () => ({
+  form: [
+    {
+      uid: 'lines',
+      kind: 'input',
+      type: 'repeater',
+      path: 'invoice.items',
+      props: {
+        template: {
+          uid: 'linesRow',
+          kind: 'layout',
+          type: 'flex',
+          children: [
+            {
+              uid: 'name',
+              kind: 'input',
+              type: 'textinput',
+              path: 'invoice.items.items.name',
+              validator: { required: true },
+            },
+            {
+              uid: 'itemsTotal',
+              kind: 'input',
+              type: 'number',
+              path: 'invoice.items.items.itemsTotal',
+              include: { when: '$item.priced === true' },
+            },
+            {
+              uid: 'pricedNote',
+              kind: 'display',
+              type: 'markdownText',
+              include: { when: '$form.invoice.items.items.priced === true' },
+            },
+            {
+              uid: 'partsNote',
+              kind: 'display',
+              type: 'markdownText',
+              include: { when: '$item.items.length > 0' },
+            },
+          ],
+        },
+      },
+    },
+  ],
+});
+
+const itemsPropertyData = {
+  invoice: {
+    items: [
+      { name: 'Pen', priced: true, itemsTotal: 3, items: ['cap'] },
+      { priced: false, itemsTotal: 9, items: [] },
+    ],
+  },
+};
+
+/**
  * The same widgets as `makeBaseFormDef` minus the repeater, wrapped in a layout, so a test can
  * watch what a parent layout reports as its visible children.
  */
@@ -2575,6 +2635,64 @@ describe('reducer end-to-end', () => {
       ]);
 
       expect(state.isFormValid).toBe(false);
+    });
+  });
+
+  // ---------------------------------------------------------------------------
+  // 28. Repeater paths that contain a property named `items`
+  // ---------------------------------------------------------------------------
+
+  describe('repeater paths that contain a property named items', () => {
+    // `items` is also the row token in template paths. Only the segment right after the
+    // repeater's own path is the token, so `invoice.items.items.name` is row 1 of `invoice.items`.
+    it('builds the rows with concrete paths', () => {
+      const state = drive([init(makeItemsPropertyFormDef()), setData(itemsPropertyData)]);
+
+      expect(state.formHealth).toEqual({ status: 'ok' });
+      const name = state.calculatedWidgets['name[1]'].current as InputWidget<any, string>;
+      const total = state.calculatedWidgets['itemsTotal[0]'].current as InputWidget<any, string>;
+      expect(name.path).toBe('invoice.items.1.name');
+      expect(total.path).toBe('invoice.items.0.itemsTotal');
+    });
+
+    it('validates each row and writes row data through the concrete path', () => {
+      const validated = drive([
+        init(makeItemsPropertyFormDef()),
+        setData(itemsPropertyData),
+        validateAllAction,
+      ]);
+
+      expect(validated.validations['invoice.items.1.name']).toEqual(['required']);
+      expect(validated.isFormValid).toBe(false);
+
+      const reduce = makeReducer();
+      const written = reduce(validated, setWidgetData('invoice.items.1.name', 'Ink'));
+      const revalidated = reduce(written, validateAllAction);
+
+      expect(written.data['invoice'].items[1].name).toBe('Ink');
+      expect(revalidated.validations['invoice.items.1.name']).toBeNull();
+      expect(revalidated.isFormValid).toBe(true);
+    });
+
+    it('rewrites only the row token in when expressions', () => {
+      const state = drive([init(makeItemsPropertyFormDef()), setData(itemsPropertyData)]);
+
+      expect(state.formHealth).toEqual({ status: 'ok' });
+      // `$form.invoice.items.items.priced`: the second `items` is the row token.
+      expect(state.widgetFlags['pricedNote[0]']).toEqual({ hidden: false });
+      expect(state.widgetFlags['pricedNote[1]']).toEqual({ hidden: true });
+      // `$item.items`: the row's own `items` array, not a token.
+      expect(state.widgetFlags['partsNote[0]']).toEqual({ hidden: false });
+      expect(state.widgetFlags['partsNote[1]']).toEqual({ hidden: true });
+    });
+
+    it('prunes a hidden row field whose name starts with items', () => {
+      const state = drive([init(makeItemsPropertyFormDef()), setData(itemsPropertyData)]);
+
+      expect(state.widgetFlags['itemsTotal[1]']).toEqual({ hidden: true });
+      const pruned = pruneHiddenData(state);
+      expect(pruned['invoice'].items[1]).not.toHaveProperty('itemsTotal');
+      expect(pruned['invoice'].items[0].itemsTotal).toBe(3);
     });
   });
 });

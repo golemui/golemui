@@ -1,0 +1,63 @@
+{
+  "formDefinition": {
+    "$schema": "https://golemui.com/schemas/form.schema.json",
+    "form": [
+      {
+        "kind": "input",
+        "type": "textinput",
+        "path": "name",
+        "label": "Name",
+        "defaultValue": "Anonymous"
+      },
+      {
+        "kind": "input",
+        "type": "number",
+        "path": "quantity",
+        "label": "Quantity",
+        "defaultValue": 1
+      },
+      {
+        "kind": "input",
+        "type": "checkbox",
+        "path": "subscribed",
+        "label": "Subscribed",
+        "defaultValue": true
+      },
+      {
+        "kind": "input",
+        "type": "select",
+        "path": "plan",
+        "label": "Plan",
+        "defaultValue": "free",
+        "validator": {
+          "type": "string",
+          "enum": [
+            "free",
+            "pro"
+          ]
+        },
+        "props": {
+          "options": [
+            {
+              "label": "Free",
+              "value": "free"
+            },
+            {
+              "label": "Pro",
+              "value": "pro"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "unmapped": [],
+  "diagnostics": [],
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": [],
+    "expressionWarnings": [],
+    "interpolationWarnings": []
+  }
+}

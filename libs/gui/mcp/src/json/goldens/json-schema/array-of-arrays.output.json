@@ -1,0 +1,28 @@
+{
+  "formDefinition": {
+    "$schema": "https://golemui.com/schemas/form.schema.json",
+    "form": []
+  },
+  "unmapped": [
+    {
+      "path": "matrix",
+      "reason": "No rule can build this array schema, so it is not rendered."
+    }
+  ],
+  "diagnostics": [
+    {
+      "severity": "error",
+      "code": "unsupported-shape",
+      "message": "No rule can build this array schema, so it is not rendered.",
+      "path": "matrix",
+      "pointer": "/properties/matrix"
+    }
+  ],
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": [],
+    "expressionWarnings": [],
+    "interpolationWarnings": []
+  }
+}

@@ -236,9 +236,9 @@ function resolveForFlags(
   } else {
     widget = source;
   }
-  const repeaterIndexes = extractRepeaterIndexes(uid);
-  if (repeaterIndexes.length > 0) {
-    widget = transformWidgetWhenExpressions(widget, repeaterIndexes);
+  const rows = state.repeaterRows[uid];
+  if (rows !== undefined) {
+    widget = transformWidgetWhenExpressions(widget, rows);
   }
   return widget;
 }

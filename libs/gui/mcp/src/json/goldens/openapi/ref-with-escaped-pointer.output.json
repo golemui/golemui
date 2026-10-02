@@ -1,0 +1,46 @@
+{
+  "resolvedOperation": {
+    "method": "POST",
+    "path": "/contacts",
+    "operationId": "createContact"
+  },
+  "formDefinition": {
+    "$schema": "https://golemui.com/schemas/form.schema.json",
+    "form": [
+      {
+        "kind": "layout",
+        "type": "flex",
+        "props": {
+          "direction": "column",
+          "gap": 8
+        },
+        "children": [
+          {
+            "kind": "input",
+            "type": "textinput",
+            "path": "contact.phone",
+            "label": "Phone"
+          }
+        ]
+      },
+      {
+        "kind": "action",
+        "type": "button",
+        "actionType": "submit",
+        "label": "Create",
+        "props": {
+          "variant": "filled"
+        }
+      }
+    ]
+  },
+  "unmapped": [],
+  "diagnostics": [],
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": [],
+    "expressionWarnings": [],
+    "interpolationWarnings": []
+  }
+}

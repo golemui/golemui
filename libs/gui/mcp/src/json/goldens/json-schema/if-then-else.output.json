@@ -1,0 +1,74 @@
+{
+  "formDefinition": {
+    "$schema": "https://golemui.com/schemas/form.schema.json",
+    "states": {
+      "if01": "$form.country === \"US\"",
+      "if02": "!($form.country === \"US\")"
+    },
+    "form": [
+      {
+        "kind": "input",
+        "type": "select",
+        "path": "country",
+        "label": "Country",
+        "validator": {
+          "type": "string",
+          "required": true,
+          "enum": [
+            "US",
+            "NL"
+          ]
+        },
+        "props": {
+          "options": [
+            {
+              "label": "US",
+              "value": "US"
+            },
+            {
+              "label": "NL",
+              "value": "NL"
+            }
+          ]
+        }
+      },
+      {
+        "kind": "input",
+        "type": "textinput",
+        "path": "state",
+        "label": "State",
+        "include": {
+          "when": "$form.country === \"US\""
+        },
+        "validator": {
+          "type": "string",
+          "required": true
+        }
+      },
+      {
+        "kind": "input",
+        "type": "textinput",
+        "path": "zip",
+        "label": "Zip",
+        "validator.if01": {
+          "type": "string",
+          "required": true,
+          "pattern": "^[0-9]{5}$"
+        },
+        "validator.if02": {
+          "type": "string",
+          "pattern": "^[0-9]{4}[A-Z]{2}$"
+        }
+      }
+    ]
+  },
+  "unmapped": [],
+  "diagnostics": [],
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": [],
+    "expressionWarnings": [],
+    "interpolationWarnings": []
+  }
+}

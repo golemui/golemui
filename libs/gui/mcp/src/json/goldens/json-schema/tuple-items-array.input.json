@@ -1,0 +1,19 @@
+{
+  "jsonSchema": {
+    "type": "object",
+    "properties": {
+      "coordinates": {
+        "type": "array",
+        "items": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "number"
+          }
+        ]
+      }
+    }
+  },
+  "submitAction": false
+}

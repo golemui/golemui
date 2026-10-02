@@ -1,0 +1,22 @@
+{
+  "jsonSchema": {
+    "type": "object",
+    "properties": {
+      "country": {
+        "type": "string",
+        "enum": [
+          "us",
+          "ca",
+          "mx",
+          "uk",
+          "fr",
+          "de",
+          "es",
+          "it",
+          "jp"
+        ]
+      }
+    }
+  },
+  "submitAction": false
+}

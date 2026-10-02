@@ -1,0 +1,28 @@
+{
+  "jsonSchema": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string",
+        "default": "Anonymous"
+      },
+      "quantity": {
+        "type": "integer",
+        "default": 1
+      },
+      "subscribed": {
+        "type": "boolean",
+        "default": true
+      },
+      "plan": {
+        "type": "string",
+        "enum": [
+          "free",
+          "pro"
+        ],
+        "default": "free"
+      }
+    }
+  },
+  "submitAction": false
+}

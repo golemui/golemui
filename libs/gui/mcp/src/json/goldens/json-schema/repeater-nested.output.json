@@ -1,0 +1,78 @@
+{
+  "formDefinition": {
+    "$schema": "https://golemui.com/schemas/form.schema.json",
+    "form": [
+      {
+        "kind": "input",
+        "type": "repeater",
+        "path": "projects",
+        "label": "Projects",
+        "props": {
+          "addLabel": "Add project",
+          "removeLabel": "Remove",
+          "template": {
+            "kind": "layout",
+            "type": "flex",
+            "props": {
+              "direction": "column",
+              "gap": 8
+            },
+            "children": [
+              {
+                "kind": "input",
+                "type": "textinput",
+                "path": "projects.items.name",
+                "label": "Name"
+              },
+              {
+                "kind": "input",
+                "type": "repeater",
+                "path": "projects.items.tasks",
+                "label": "Tasks",
+                "props": {
+                  "addLabel": "Add task",
+                  "removeLabel": "Remove",
+                  "template": {
+                    "kind": "layout",
+                    "type": "flex",
+                    "props": {
+                      "direction": "column",
+                      "gap": 8
+                    },
+                    "children": [
+                      {
+                        "kind": "input",
+                        "type": "textinput",
+                        "path": "projects.items.tasks.items.title",
+                        "label": "Title"
+                      },
+                      {
+                        "kind": "input",
+                        "type": "number",
+                        "path": "projects.items.tasks.items.hours",
+                        "label": "Hours",
+                        "validator": {
+                          "type": "number",
+                          "minimum": 0
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "unmapped": [],
+  "diagnostics": [],
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": [],
+    "expressionWarnings": [],
+    "interpolationWarnings": []
+  }
+}

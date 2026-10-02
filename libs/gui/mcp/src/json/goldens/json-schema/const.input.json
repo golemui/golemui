@@ -1,0 +1,16 @@
+{
+  "jsonSchema": {
+    "type": "object",
+    "properties": {
+      "version": {
+        "type": "string",
+        "const": "v2"
+      },
+      "acceptTerms": {
+        "type": "boolean",
+        "const": true
+      }
+    }
+  },
+  "submitAction": false
+}

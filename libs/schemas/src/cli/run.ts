@@ -1,6 +1,7 @@
 /**
  * The `golemui-schemas` command: `init` scaffolds an implementation's schema tree,
- * `generate` rebuilds the generated part of it from `schemas.config.mjs`.
+ * `generate` rebuilds the generated part of it from `schemas.config.mjs`, and `convert`
+ * turns a JSON Schema into a form definition.
  *
  * The CLI is a shell over the published builders and generator. It holds no schema
  * knowledge of its own, so it cannot drift from the library.
@@ -11,6 +12,7 @@ import { createInterface } from 'node:readline/promises';
 import { pathToFileURL } from 'node:url';
 import { generateImplementationSchemas } from '../lib/generator/generate-implementation-schemas.js';
 import type { ImplementationSchemaConfig } from '../lib/manifest.types.js';
+import { runConvert } from './convert.js';
 import { exampleInputWidgetType, starterFiles } from './templates.js';
 
 const CONFIG_FILE = 'schemas.config.mjs';
@@ -20,6 +22,8 @@ const HELP = `golemui-schemas - JSON schema trees for GolemUI implementations
 Usage:
   npx @golemui/schemas init [options]       scaffold a schema tree
   npx @golemui/schemas generate [options]   rebuild the generated files
+  npx @golemui/schemas convert <schema.json> [options]
+                                            convert a JSON Schema into a form definition
 
 Options for init:
   --name <name>       implementation name, lowercase, e.g. kendo
@@ -30,21 +34,38 @@ Options for init:
 Options for generate:
   --dir <path>        directory holding ${CONFIG_FILE} (default: the current directory)
 
-Both commands accept --help.`;
+Options for convert:
+  --preset <module>   preset module of the widget set, e.g. @golemui/gui-schemas/json-schema
+  --out <file>        file to write the form definition to (default: standard output)
+  --force             replace an existing --out file
+  --config <file>     json-schema.config.mjs or .json (default: the one in the current directory)
+  --pointer <pointer> convert the subschema at this JSON pointer, e.g. /components/schemas/User
+  --fail-on <level>   exit with 1 on an error diagnostic, or with warning on either
+  Diagnostics are written to standard error. The config holds the same settings plus
+  rules, overrides and presetOptions, see the @golemui/schemas README.
+
+Every command accepts --help.`;
 
 interface ParsedArgs {
   readonly command: string | undefined;
+  /** The bare arguments after the command, e.g. the schema file of `convert`. */
+  readonly positionals: readonly string[];
   readonly flags: ReadonlyMap<string, string | true>;
 }
 
-/** Splits argv into a command and its flags, accepting `--flag value` and `--flag=value`. */
+/** Splits argv into a command, positionals and flags, accepting `--flag value` and `--flag=value`. */
 export function parseArgs(argv: readonly string[]): ParsedArgs {
   const flags = new Map<string, string | true>();
+  const positionals: string[] = [];
   let command: string | undefined;
   for (let index = 0; index < argv.length; index += 1) {
     const argument = argv[index] as string;
     if (!argument.startsWith('--')) {
-      command ??= argument;
+      if (command === undefined) {
+        command = argument;
+      } else {
+        positionals.push(argument);
+      }
       continue;
     }
     const withoutDashes = argument.slice(2);
@@ -61,7 +82,7 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
       index += 1;
     }
   }
-  return { command, flags };
+  return { command, positionals, flags };
 }
 
 function flagValue(flags: ReadonlyMap<string, string | true>, name: string): string | undefined {
@@ -208,7 +229,7 @@ async function runGenerateIn(packageRoot: string): Promise<void> {
  * const code = await runCli(['init', '--name', 'kendo', '--dir', 'schemas']);
  */
 export async function runCli(argv: readonly string[]): Promise<number> {
-  const { command, flags } = parseArgs(argv);
+  const { command, positionals, flags } = parseArgs(argv);
   if (flags.get('help') === true || command === 'help' || command === undefined) {
     console.log(HELP);
     return command === undefined && flags.get('help') !== true ? 1 : 0;
@@ -221,6 +242,8 @@ export async function runCli(argv: readonly string[]): Promise<number> {
       case 'generate':
         await runGenerateIn(resolve(process.cwd(), flagValue(flags, 'dir') ?? '.'));
         return 0;
+      case 'convert':
+        return await runConvert(flags, positionals);
       default:
         console.error(`Unknown command "${command}".\n\n${HELP}`);
         return 1;

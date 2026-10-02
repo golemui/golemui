@@ -1,0 +1,78 @@
+{
+  "formDefinition": {
+    "$schema": "https://golemui.com/schemas/form.schema.json",
+    "form": [
+      {
+        "kind": "input",
+        "type": "dropdown",
+        "path": "country",
+        "label": "Country",
+        "validator": {
+          "type": "string",
+          "enum": [
+            "us",
+            "ca",
+            "mx",
+            "uk",
+            "fr",
+            "de",
+            "es",
+            "it",
+            "jp"
+          ]
+        },
+        "props": {
+          "items": [
+            {
+              "label": "Us",
+              "value": "us"
+            },
+            {
+              "label": "Ca",
+              "value": "ca"
+            },
+            {
+              "label": "Mx",
+              "value": "mx"
+            },
+            {
+              "label": "Uk",
+              "value": "uk"
+            },
+            {
+              "label": "Fr",
+              "value": "fr"
+            },
+            {
+              "label": "De",
+              "value": "de"
+            },
+            {
+              "label": "Es",
+              "value": "es"
+            },
+            {
+              "label": "It",
+              "value": "it"
+            },
+            {
+              "label": "Jp",
+              "value": "jp"
+            }
+          ],
+          "labelField": "label",
+          "valueField": "value"
+        }
+      }
+    ]
+  },
+  "unmapped": [],
+  "diagnostics": [],
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": [],
+    "expressionWarnings": [],
+    "interpolationWarnings": []
+  }
+}
