@@ -1,3 +1,7 @@
+## 1.6.0-rc.1 (2026-10-02)
+
+This was a version bump only for angular to align it with other projects, there were no code changes.
+
 ## 1.6.0-rc.0 (2026-10-02)
 
 This was a version bump only for angular to align it with other projects, there were no code changes.
