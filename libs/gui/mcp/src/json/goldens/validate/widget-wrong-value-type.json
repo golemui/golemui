@@ -1,0 +1,2167 @@
+{
+  "accordion": {
+    "input": {
+      "form": [
+        {
+          "kind": "layout",
+          "type": "accordion",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0",
+          "message": "Missing required property `children` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "children"
+          }
+        },
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0",
+          "message": "Unknown property `path` at `/form/0`",
+          "keyword": "unevaluatedProperties",
+          "params": {
+            "unevaluatedProperty": "path"
+          }
+        },
+        {
+          "path": "/form/0",
+          "message": "Unknown property `label` at `/form/0`",
+          "keyword": "unevaluatedProperties",
+          "params": {
+            "unevaluatedProperty": "label"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "alert": {
+    "input": {
+      "form": [
+        {
+          "kind": "display",
+          "type": "alert",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0",
+          "message": "Unknown property `path` at `/form/0`",
+          "keyword": "unevaluatedProperties",
+          "params": {
+            "unevaluatedProperty": "path"
+          }
+        },
+        {
+          "path": "/form/0",
+          "message": "Unknown property `label` at `/form/0`",
+          "keyword": "unevaluatedProperties",
+          "params": {
+            "unevaluatedProperty": "label"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "button": {
+    "input": {
+      "form": [
+        {
+          "kind": "action",
+          "type": "button",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/label",
+          "message": "Expected type string at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "string"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Expected type object at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Value at `/form/0/label` does not match any allowed variant",
+          "keyword": "oneOf",
+          "params": {
+            "passingSchemas": null
+          }
+        },
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0",
+          "message": "Unknown property `path` at `/form/0`",
+          "keyword": "unevaluatedProperties",
+          "params": {
+            "unevaluatedProperty": "path"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "calendar": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "calendar",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/label",
+          "message": "Expected type string at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "string"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Expected type object at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Value at `/form/0/label` does not match any allowed variant",
+          "keyword": "oneOf",
+          "params": {
+            "passingSchemas": null
+          }
+        },
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "checkbox": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "checkbox",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/label",
+          "message": "Expected type string at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "string"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Expected type object at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Value at `/form/0/label` does not match any allowed variant",
+          "keyword": "oneOf",
+          "params": {
+            "passingSchemas": null
+          }
+        },
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "currency": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "currency",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/label",
+          "message": "Expected type string at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "string"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Expected type object at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Value at `/form/0/label` does not match any allowed variant",
+          "keyword": "oneOf",
+          "params": {
+            "passingSchemas": null
+          }
+        },
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "dateInput": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "dateInput",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/label",
+          "message": "Expected type string at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "string"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Expected type object at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Value at `/form/0/label` does not match any allowed variant",
+          "keyword": "oneOf",
+          "params": {
+            "passingSchemas": null
+          }
+        },
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "datePicker": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "datePicker",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/label",
+          "message": "Expected type string at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "string"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Expected type object at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Value at `/form/0/label` does not match any allowed variant",
+          "keyword": "oneOf",
+          "params": {
+            "passingSchemas": null
+          }
+        },
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "dateTimeCalendar": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "dateTimeCalendar",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/label",
+          "message": "Expected type string at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "string"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Expected type object at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Value at `/form/0/label` does not match any allowed variant",
+          "keyword": "oneOf",
+          "params": {
+            "passingSchemas": null
+          }
+        },
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "dateTimeInput": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "dateTimeInput",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/label",
+          "message": "Expected type string at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "string"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Expected type object at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Value at `/form/0/label` does not match any allowed variant",
+          "keyword": "oneOf",
+          "params": {
+            "passingSchemas": null
+          }
+        },
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "dateTimePicker": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "dateTimePicker",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/label",
+          "message": "Expected type string at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "string"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Expected type object at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Value at `/form/0/label` does not match any allowed variant",
+          "keyword": "oneOf",
+          "params": {
+            "passingSchemas": null
+          }
+        },
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "dropdown": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "dropdown",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/label",
+          "message": "Expected type string at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "string"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Expected type object at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Value at `/form/0/label` does not match any allowed variant",
+          "keyword": "oneOf",
+          "params": {
+            "passingSchemas": null
+          }
+        },
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "fileUpload": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "fileUpload",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/label",
+          "message": "Expected type string at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "string"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Expected type object at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Value at `/form/0/label` does not match any allowed variant",
+          "keyword": "oneOf",
+          "params": {
+            "passingSchemas": null
+          }
+        },
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "flex": {
+    "input": {
+      "form": [
+        {
+          "kind": "layout",
+          "type": "flex",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0",
+          "message": "Missing required property `children` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "children"
+          }
+        },
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0",
+          "message": "Unknown property `path` at `/form/0`",
+          "keyword": "unevaluatedProperties",
+          "params": {
+            "unevaluatedProperty": "path"
+          }
+        },
+        {
+          "path": "/form/0",
+          "message": "Unknown property `label` at `/form/0`",
+          "keyword": "unevaluatedProperties",
+          "params": {
+            "unevaluatedProperty": "label"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "grid": {
+    "input": {
+      "form": [
+        {
+          "kind": "layout",
+          "type": "grid",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0",
+          "message": "Missing required property `children` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "children"
+          }
+        },
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0",
+          "message": "Unknown property `path` at `/form/0`",
+          "keyword": "unevaluatedProperties",
+          "params": {
+            "unevaluatedProperty": "path"
+          }
+        },
+        {
+          "path": "/form/0",
+          "message": "Unknown property `label` at `/form/0`",
+          "keyword": "unevaluatedProperties",
+          "params": {
+            "unevaluatedProperty": "label"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "list": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "list",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/label",
+          "message": "Expected type string at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "string"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Expected type object at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Value at `/form/0/label` does not match any allowed variant",
+          "keyword": "oneOf",
+          "params": {
+            "passingSchemas": null
+          }
+        },
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "markdown": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "markdown",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/label",
+          "message": "Expected type string at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "string"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Expected type object at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Value at `/form/0/label` does not match any allowed variant",
+          "keyword": "oneOf",
+          "params": {
+            "passingSchemas": null
+          }
+        },
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "markdownText": {
+    "input": {
+      "form": [
+        {
+          "kind": "display",
+          "type": "markdownText",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0",
+          "message": "Unknown property `path` at `/form/0`",
+          "keyword": "unevaluatedProperties",
+          "params": {
+            "unevaluatedProperty": "path"
+          }
+        },
+        {
+          "path": "/form/0",
+          "message": "Unknown property `label` at `/form/0`",
+          "keyword": "unevaluatedProperties",
+          "params": {
+            "unevaluatedProperty": "label"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "multiDropdown": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "multiDropdown",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/label",
+          "message": "Expected type string at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "string"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Expected type object at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Value at `/form/0/label` does not match any allowed variant",
+          "keyword": "oneOf",
+          "params": {
+            "passingSchemas": null
+          }
+        },
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "multiFileUpload": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "multiFileUpload",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/label",
+          "message": "Expected type string at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "string"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Expected type object at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Value at `/form/0/label` does not match any allowed variant",
+          "keyword": "oneOf",
+          "params": {
+            "passingSchemas": null
+          }
+        },
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "multiList": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "multiList",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/label",
+          "message": "Expected type string at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "string"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Expected type object at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Value at `/form/0/label` does not match any allowed variant",
+          "keyword": "oneOf",
+          "params": {
+            "passingSchemas": null
+          }
+        },
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "number": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "number",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/label",
+          "message": "Expected type string at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "string"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Expected type object at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Value at `/form/0/label` does not match any allowed variant",
+          "keyword": "oneOf",
+          "params": {
+            "passingSchemas": null
+          }
+        },
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "password": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "password",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/label",
+          "message": "Expected type string at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "string"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Expected type object at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Value at `/form/0/label` does not match any allowed variant",
+          "keyword": "oneOf",
+          "params": {
+            "passingSchemas": null
+          }
+        },
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "radiogroup": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "radiogroup",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/label",
+          "message": "Expected type string at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "string"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Expected type object at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Value at `/form/0/label` does not match any allowed variant",
+          "keyword": "oneOf",
+          "params": {
+            "passingSchemas": null
+          }
+        },
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "rangeCalendar": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "rangeCalendar",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/label",
+          "message": "Expected type string at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "string"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Expected type object at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Value at `/form/0/label` does not match any allowed variant",
+          "keyword": "oneOf",
+          "params": {
+            "passingSchemas": null
+          }
+        },
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "rangeDateInput": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "rangeDateInput",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/label",
+          "message": "Expected type string at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "string"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Expected type object at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Value at `/form/0/label` does not match any allowed variant",
+          "keyword": "oneOf",
+          "params": {
+            "passingSchemas": null
+          }
+        },
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "rangeDatePicker": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "rangeDatePicker",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/label",
+          "message": "Expected type string at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "string"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Expected type object at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Value at `/form/0/label` does not match any allowed variant",
+          "keyword": "oneOf",
+          "params": {
+            "passingSchemas": null
+          }
+        },
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "rangeDateTimeCalendar": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "rangeDateTimeCalendar",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/label",
+          "message": "Expected type string at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "string"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Expected type object at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Value at `/form/0/label` does not match any allowed variant",
+          "keyword": "oneOf",
+          "params": {
+            "passingSchemas": null
+          }
+        },
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "rangeDateTimeInput": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "rangeDateTimeInput",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/label",
+          "message": "Expected type string at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "string"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Expected type object at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Value at `/form/0/label` does not match any allowed variant",
+          "keyword": "oneOf",
+          "params": {
+            "passingSchemas": null
+          }
+        },
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "rangeDateTimePicker": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "rangeDateTimePicker",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/label",
+          "message": "Expected type string at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "string"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Expected type object at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Value at `/form/0/label` does not match any allowed variant",
+          "keyword": "oneOf",
+          "params": {
+            "passingSchemas": null
+          }
+        },
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "rangeTimeInput": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "rangeTimeInput",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/label",
+          "message": "Expected type string at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "string"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Expected type object at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Value at `/form/0/label` does not match any allowed variant",
+          "keyword": "oneOf",
+          "params": {
+            "passingSchemas": null
+          }
+        },
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "rangeTimePicker": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "rangeTimePicker",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/label",
+          "message": "Expected type string at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "string"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Expected type object at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Value at `/form/0/label` does not match any allowed variant",
+          "keyword": "oneOf",
+          "params": {
+            "passingSchemas": null
+          }
+        },
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "repeater": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "repeater",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/label",
+          "message": "Expected type string at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "string"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Expected type object at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Value at `/form/0/label` does not match any allowed variant",
+          "keyword": "oneOf",
+          "params": {
+            "passingSchemas": null
+          }
+        },
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "select": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "select",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/label",
+          "message": "Expected type string at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "string"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Expected type object at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Value at `/form/0/label` does not match any allowed variant",
+          "keyword": "oneOf",
+          "params": {
+            "passingSchemas": null
+          }
+        },
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "tabs": {
+    "input": {
+      "form": [
+        {
+          "kind": "layout",
+          "type": "tabs",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0",
+          "message": "Missing required property `children` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "children"
+          }
+        },
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0",
+          "message": "Unknown property `path` at `/form/0`",
+          "keyword": "unevaluatedProperties",
+          "params": {
+            "unevaluatedProperty": "path"
+          }
+        },
+        {
+          "path": "/form/0",
+          "message": "Unknown property `label` at `/form/0`",
+          "keyword": "unevaluatedProperties",
+          "params": {
+            "unevaluatedProperty": "label"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "tags": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "tags",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/label",
+          "message": "Expected type string at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "string"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Expected type object at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Value at `/form/0/label` does not match any allowed variant",
+          "keyword": "oneOf",
+          "params": {
+            "passingSchemas": null
+          }
+        },
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "textarea": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "textarea",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/label",
+          "message": "Expected type string at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "string"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Expected type object at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Value at `/form/0/label` does not match any allowed variant",
+          "keyword": "oneOf",
+          "params": {
+            "passingSchemas": null
+          }
+        },
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "textinput": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/label",
+          "message": "Expected type string at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "string"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Expected type object at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Value at `/form/0/label` does not match any allowed variant",
+          "keyword": "oneOf",
+          "params": {
+            "passingSchemas": null
+          }
+        },
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "timeInput": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "timeInput",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/label",
+          "message": "Expected type string at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "string"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Expected type object at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Value at `/form/0/label` does not match any allowed variant",
+          "keyword": "oneOf",
+          "params": {
+            "passingSchemas": null
+          }
+        },
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "timePicker": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "timePicker",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/label",
+          "message": "Expected type string at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "string"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Expected type object at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Value at `/form/0/label` does not match any allowed variant",
+          "keyword": "oneOf",
+          "params": {
+            "passingSchemas": null
+          }
+        },
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "toggle": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "toggle",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/label",
+          "message": "Expected type string at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "string"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Expected type object at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Value at `/form/0/label` does not match any allowed variant",
+          "keyword": "oneOf",
+          "params": {
+            "passingSchemas": null
+          }
+        },
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  }
+}

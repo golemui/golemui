@@ -1,0 +1,327 @@
+{
+  "chunk-ref/valid": {
+    "input": {
+      "form": [
+        {
+          "$ref": "./address.form-chunk.json"
+        }
+      ]
+    },
+    "result": {
+      "valid": true,
+      "errors": [],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "chunk-ref/not-a-string": {
+    "input": {
+      "form": [
+        {
+          "$ref": 5
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/$ref",
+          "message": "Expected type string at `/form/0/$ref`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "string"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "chunk-ref/json-extension": {
+    "input": {
+      "form": [
+        {
+          "$ref": "./address.json"
+        }
+      ]
+    },
+    "result": {
+      "valid": true,
+      "errors": [],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "chunk-ref/inside-children": {
+    "input": {
+      "form": [
+        {
+          "kind": "layout",
+          "type": "grid",
+          "children": [
+            {
+              "$ref": "./address.form-chunk.json"
+            },
+            {
+              "$ref": 5
+            }
+          ]
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/children/1/$ref",
+          "message": "Expected type string at `/form/0/children/1/$ref`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "string"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "grid/invalid-child": {
+    "input": {
+      "form": [
+        {
+          "kind": "layout",
+          "type": "grid",
+          "children": [
+            {
+              "kind": "input",
+              "type": "textinput",
+              "path": "field",
+              "notAProperty": true
+            }
+          ]
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/children/0",
+          "message": "Unknown property `notAProperty` at `/form/0/children/0`",
+          "keyword": "unevaluatedProperties",
+          "params": {
+            "unevaluatedProperty": "notAProperty"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "grid/invalid-grandchild": {
+    "input": {
+      "form": [
+        {
+          "kind": "layout",
+          "type": "grid",
+          "children": [
+            {
+              "kind": "layout",
+              "type": "flex",
+              "children": [
+                {
+                  "kind": "input",
+                  "type": "checkbox",
+                  "path": "field",
+                  "notAProperty": true
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/children/0/children/0",
+          "message": "Unknown property `notAProperty` at `/form/0/children/0/children/0`",
+          "keyword": "unevaluatedProperties",
+          "params": {
+            "unevaluatedProperty": "notAProperty"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "repeater/invalid-template": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "repeater",
+          "path": "items",
+          "props": {
+            "template": {
+              "kind": "input",
+              "type": "textinput",
+              "path": "name",
+              "notAProperty": true
+            }
+          }
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/props/template",
+          "message": "Unknown property `notAProperty` at `/form/0/props/template`",
+          "keyword": "unevaluatedProperties",
+          "params": {
+            "unevaluatedProperty": "notAProperty"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "form/is-empty-object": {
+    "input": {},
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/",
+          "message": "Missing required property `form` at `/`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "form"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "form/is-not-an-array": {
+    "input": {
+      "form": "x"
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form",
+          "message": "Expected type array at `/form`, got \"x\"",
+          "keyword": "type",
+          "params": {
+            "type": "array"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "form/states-is-not-an-object": {
+    "input": {
+      "form": [],
+      "states": 5
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/states",
+          "message": "Expected type object at `/states`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "form/entry-is-not-an-object": {
+    "input": {
+      "form": [
+        "x",
+        5,
+        null
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0",
+          "message": "Missing required property `type` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "type"
+          }
+        },
+        {
+          "path": "/form/1",
+          "message": "Missing required property `type` at `/form/1`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "type"
+          }
+        },
+        {
+          "path": "/form/2",
+          "message": "Missing required property `type` at `/form/2`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "type"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "form/valid-with-states": {
+    "input": {
+      "states": {
+        "agreed": "$form.terms === true"
+      },
+      "form": [
+        {
+          "kind": "input",
+          "type": "checkbox",
+          "path": "terms",
+          "label": "Accept"
+        }
+      ]
+    },
+    "result": {
+      "valid": true,
+      "errors": [],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  }
+}
