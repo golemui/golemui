@@ -77,9 +77,3 @@ templates/*/package-lock.json
 
 # gui-mcp validators, built by the nx target generate-validators
 /libs/gui/mcp/src/json/schemas/generated/validators.js
-
-# Local-only visual regression harness for the v2 refactor. See visual-regression/README.md.
-/visual-regression/
-/libs/gui/*/cypress.visual.config.ts
-/libs/gui/*/cypress-image-diff.config.cjs
-/libs/gui/*/cypress-visual/
