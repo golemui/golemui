@@ -41,9 +41,7 @@ Every `gui.*` factory and its calling convention. Look up the detail below for t
 - `gui.displays.display(render)`
 - `gui.inputs.dropdown(path, { label, items, validator? })`
 - `gui.inputs.fileUpload(path, { label?, accept?, maxSize?, buttonLabel?, validator? })`
-- `gui.layouts.flex(children, props?)`
 - `gui.layouts.grid(children, props?)`
-- `gui.layouts.horizontalFlex(children, props?)`
 - `gui.layouts.horizontalGrid(children, props?)`
 - `gui.inputs.list(path, { label, items, height?, itemHeight? })`
 - `gui.inputs.markdown(path, { label })`
@@ -69,7 +67,6 @@ Every `gui.*` factory and its calling convention. Look up the detail below for t
 - `gui.inputs.textarea(path, { label, placeholder?, validator? })`
 - `gui.inputs.timeInput(path, { label, hourFormat?, minuteStep?, validator? })`
 - `gui.inputs.timePicker(path, { label, minTime?, maxTime?, minuteStep?, disabledRanges?, allowCustomTime?, validator? })`
-- `gui.layouts.verticalFlex(children, props?)`
 - `gui.layouts.verticalGrid(children, props?)`
 
 ## gui.layouts.accordion
@@ -311,64 +308,45 @@ gui.inputs.fileUpload('cv', {
 
 Reference: https://golemui.com/dx/widgets-reference/input-fields/file-upload.md
 
-## gui.layouts.flex
-
-Call: `gui.layouts.flex(children, props?)`
-
-```ts
-gui.layouts.flex([
-  gui.inputs.textInput('firstName', { label: 'First name' }),
-  gui.inputs.textInput('lastName', { label: 'Last name' }),
-]);
-```
-
-- Layouts take the **children array first**, then optional props — unlike inputs (path first).
-- Direction-locked variants: `verticalFlex`, `horizontalFlex` (and `grid` / `verticalGrid` / `horizontalGrid`).
-
-Reference: https://golemui.com/dx/widgets-reference/layout-fields/flex.md
-
 ## gui.layouts.grid
 
 Call: `gui.layouts.grid(children, props?)`
 
 ```ts
-gui.layouts.grid([
-  gui.inputs.textInput('a', { label: 'A' }),
-  gui.inputs.textInput('b', { label: 'B' }),
-]);
+gui.layouts.grid(
+  [
+    gui.inputs.textInput('firstName', { label: 'First name', size: 2 }),
+    gui.inputs.textInput('initial', { label: 'Initial' }),
+  ],
+  { direction: 'row', gap: 'lg' },
+);
 ```
 
-- Grid layout; `horizontalGrid` / `verticalGrid` lock the direction.
+- Layouts take the **children array first**, then optional props — unlike inputs (path first).
+- The one layout. No `direction` stacks the children; `direction: 'row'` puts them on one line, sharing the width by each child's `size`; `columns: 3` (1–12) or `columns: 'auto'` wraps them in columns.
+- `gap`: `'none' | 'xs' | 'sm' | 'md'` (default) `| 'lg' | 'xl'` — never a number.
+- Rows only: `justify: 'start' | 'center' | 'end' | 'space-between'` keeps each child at its own width and places them, e.g. buttons on the right; the default `'stretch'` shares the width by `size`.
+- In a row or columns, labels, controls and errors line up across the fields on their own. Every grid stacks below a 480px wide container.
+- `gui.layouts.flex`, `verticalFlex` and `horizontalFlex` are deprecated: never use them.
 
 Reference: https://golemui.com/dx/widgets-reference/layout-fields/grid.md
-
-## gui.layouts.horizontalFlex
-
-Call: `gui.layouts.horizontalFlex(children, props?)`
-
-```ts
-gui.layouts.horizontalFlex([
-  gui.inputs.textInput('a', { label: 'A' }),
-  gui.inputs.textInput('b', { label: 'B' }),
-]);
-```
-
-- A `flex` with direction fixed to horizontal.
-
-Reference: https://golemui.com/dx/widgets-reference/layout-fields/flex.md
 
 ## gui.layouts.horizontalGrid
 
 Call: `gui.layouts.horizontalGrid(children, props?)`
 
 ```ts
-gui.layouts.horizontalGrid([
-  gui.inputs.textInput('a', { label: 'A' }),
-  gui.inputs.textInput('b', { label: 'B' }),
-]);
+gui.layouts.horizontalGrid(
+  [
+    gui.actions.button({ label: 'Cancel' }),
+    gui.actions.button({ label: 'Save', actionType: 'submit' }),
+  ],
+  { justify: 'end' },
+);
 ```
 
-- A `grid` with direction fixed to horizontal.
+- A `grid` row: `grid` with `direction: 'row'`.
+- With `justify: 'end'` the children keep their own width and sit on the right: the usual place for form buttons.
 
 Reference: https://golemui.com/dx/widgets-reference/layout-fields/grid.md
 
@@ -752,21 +730,6 @@ gui.inputs.timePicker('meetingTime', {
 
 Reference: https://golemui.com/dx/widgets-reference/input-fields/timepicker.md
 
-## gui.layouts.verticalFlex
-
-Call: `gui.layouts.verticalFlex(children, props?)`
-
-```ts
-gui.layouts.verticalFlex([
-  gui.inputs.textInput('a', { label: 'A' }),
-  gui.inputs.textInput('b', { label: 'B' }),
-]);
-```
-
-- A `flex` with direction fixed to vertical.
-
-Reference: https://golemui.com/dx/widgets-reference/layout-fields/flex.md
-
 ## gui.layouts.verticalGrid
 
 Call: `gui.layouts.verticalGrid(children, props?)`
@@ -778,7 +741,7 @@ gui.layouts.verticalGrid([
 ]);
 ```
 
-- A `grid` with direction fixed to vertical.
+- A `grid` stack, the same as `grid` with no direction.
 
 Reference: https://golemui.com/dx/widgets-reference/layout-fields/grid.md
 

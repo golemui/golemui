@@ -75,7 +75,7 @@ const sections = computed(() => templateData.value.sections || []);
 </script>
 
 <template>
-  <div class="gui-accordion gui-field" :style="{ flex: templateData.size }">
+  <div class="gui-accordion gui-field">
     <gui-accordion :id="uid" :multiple.prop="!templateData.singleOpen">
       <gui-accordion-item
         v-for="section in sections"

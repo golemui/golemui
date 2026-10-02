@@ -69,7 +69,7 @@ export function RangeCalendar(widgetInstance: WithWidget) {
   const isRequired = (templateData.validator as Validator)?.required;
 
   return (
-    <div className="gui-range-calendar gui-field" style={{ flex: templateData.size }}>
+    <div className="gui-range-calendar gui-field">
       <GuiRangeCalendarReact
         ref={handleRef}
         uid={uid}

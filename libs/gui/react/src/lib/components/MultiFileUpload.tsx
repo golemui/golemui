@@ -37,7 +37,7 @@ export function MultiFileUpload(widgetInstance: WithWidget) {
   const isRequired = (templateData.validator as Validator)?.required;
 
   return (
-    <div className="gui-multi-file-upload gui-field" style={{ flex: templateData.size }}>
+    <div className="gui-multi-file-upload gui-field">
       <GuiMultiFileUploadReact
         uid={uid}
         path={widget.path}

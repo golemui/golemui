@@ -141,6 +141,15 @@
   --gui-space-12: 3rem;
   /* 48px */
 
+  /* Layout: the grid's `gap` steps, and the narrowest column of an `auto` grid */
+  --gui-layout-gap-none: 0px;
+  --gui-layout-gap-xs: var(--gui-space-1);
+  --gui-layout-gap-sm: var(--gui-space-2);
+  --gui-layout-gap-md: var(--gui-space-4);
+  --gui-layout-gap-lg: var(--gui-space-6);
+  --gui-layout-gap-xl: var(--gui-space-8);
+  --gui-layout-column-min: 12rem;
+
   /* Typography Scale */
   --gui-font-family:
     ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,

@@ -79,7 +79,7 @@ export function Repeater(widgetInstance: WithWidget) {
   const showErrors = isTouched && errors && errors.length > 0;
 
   return (
-    <div className="gui-repeater gui-field" style={{ flex: templateData.size }}>
+    <div className="gui-repeater gui-field">
       <div
         ref={repeaterRef}
         id={uid}

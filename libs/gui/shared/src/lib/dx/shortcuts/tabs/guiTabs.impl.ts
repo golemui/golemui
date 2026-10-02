@@ -38,7 +38,7 @@ export function _guiTabs(
     itemType: GuiItemTypes.LAYOUTS,
     items: [
       {
-        def: { uid: s.uid ?? slugify(s.label), direction: 'column', widgetName: 'flex' },
+        def: { uid: s.uid ?? slugify(s.label), direction: 'column', widgetName: 'grid' },
         children: s.children,
       },
     ],

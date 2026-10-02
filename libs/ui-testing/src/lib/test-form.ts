@@ -18,7 +18,7 @@ export function testForm(config: {
     states: config.states,
     form: {
       uid: 'gui-root-uid',
-      type: 'flex',
+      type: 'grid',
       kind: 'layout',
       children: config.form,
     } as LayoutWidget<any>,

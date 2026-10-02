@@ -20,7 +20,6 @@ import { deferHydrationAttr } from '../../utils/defer-hydration';
   templateUrl: './date-picker.component.html',
   host: {
     class: 'gui-date-picker gui-field',
-    '[style.flex]': 'this.adapter.templateData().size',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

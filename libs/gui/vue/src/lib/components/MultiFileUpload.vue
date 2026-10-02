@@ -29,7 +29,7 @@ const required = computed(() => (templateData.value.validator as Validator)?.req
 </script>
 
 <template>
-  <div class="gui-multi-file-upload gui-field" :style="{ flex: templateData.size }">
+  <div class="gui-multi-file-upload gui-field">
     <gui-multi-file-upload
       :uid="uid"
       :path="widget.path"

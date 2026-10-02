@@ -6,7 +6,7 @@ const thousandsOfObjectItems = Array.from({ length: 20 }, (_, i) => ({
   value: i,
 }));
 
-export const listTab = gui.layouts.flex([
+export const listTab = gui.layouts.grid([
   gui.inputs.list('lists.defaultListRenderer', {
     hint: 'Virtual scroll list with 1000 items. Default Item height.',
     items: thousandsOfItems,

@@ -37,7 +37,7 @@ export function FileUpload(widgetInstance: WithWidget) {
   const isRequired = (templateData.validator as Validator)?.required;
 
   return (
-    <div className="gui-file-upload gui-field" style={{ flex: templateData.size }}>
+    <div className="gui-file-upload gui-field">
       <GuiFileUploadReact
         uid={uid}
         path={widget.path}

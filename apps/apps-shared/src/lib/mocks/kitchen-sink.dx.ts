@@ -201,7 +201,7 @@ export const buildKitchenSinkDx = (options: KitchenSinkDxOptions = {}): KitchenS
         { label: 'Button Component', uid: 'tabButton', children: [buttonTab] },
         { label: 'Markdown Text Component', uid: 'tabMarkdownText', children: [markdownTextTab] },
         { label: 'Accordion Layout', uid: 'tabAccordion', children: [accordionTab] },
-        { label: 'Flex Layout', uid: 'tabFlex', children: [flexTab] },
+        { label: 'Flex Layout (deprecated)', uid: 'tabFlex', children: [flexTab] },
         { label: 'Grid Layout', uid: 'tabGrid', children: [gridTab] },
         { label: 'Textinput Component', uid: 'tabTextinput', children: [textinputTab] },
         { label: 'Password Component', uid: 'tabPassword', children: [passwordTab] },

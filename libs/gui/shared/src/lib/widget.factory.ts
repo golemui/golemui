@@ -115,6 +115,7 @@ export const GolemWidgets = {
   //
   // Layout widgets
   //
+  /** @deprecated Use `grid`; a flex layout renders as a grid. */
   flex: <StateKeys extends UiState = string>(
     config: LayoutWidgetConfig,
     props?: FlexProps,

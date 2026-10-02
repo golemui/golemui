@@ -9,7 +9,7 @@ export function Alert(widgetInstance: WithWidget) {
 
   // The plain tag, not the React wrapper: a server render then has the variant as an attribute.
   return (
-    <div className="gui-alert gui-field" style={{ flex: templateData.size }}>
+    <div className="gui-alert gui-field">
       <gui-alert id={uid} variant={templateData.level || 'default'}>
         {templateData.text}
       </gui-alert>

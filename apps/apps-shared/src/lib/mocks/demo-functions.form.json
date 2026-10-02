@@ -37,8 +37,8 @@
         "title": "Line item",
         "template": {
           "kind": "layout",
-          "type": "flex",
-          "props": { "direction": "row", "gap": 12 },
+          "type": "grid",
+          "props": { "direction": "row", "gap": "sm" },
           "children": [
             {
               "kind": "input",
@@ -99,8 +99,8 @@
     },
     {
       "kind": "layout",
-      "type": "flex",
-      "props": { "direction": "row", "align": "end" },
+      "type": "grid",
+      "props": { "direction": "row", "justify": "end" },
       "children": [
         {
           "kind": "action",

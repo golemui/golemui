@@ -20,7 +20,6 @@ import { deferHydrationAttr } from '../../utils/defer-hydration';
   templateUrl: './password.component.html',
   host: {
     class: 'gui-password gui-field',
-    '[style.flex]': 'this.adapter.templateData().size',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

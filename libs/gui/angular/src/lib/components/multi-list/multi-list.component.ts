@@ -27,7 +27,6 @@ import { deferHydrationAttr } from '../../utils/defer-hydration';
   templateUrl: './multi-list.component.html',
   host: {
     class: 'gui-multi-list-widget gui-field',
-    '[style.flex]': 'this.adapter.templateData().size',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

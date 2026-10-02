@@ -45,7 +45,7 @@ export function Accordion(widgetInstance: WithWidget) {
   };
 
   return (
-    <div className="gui-accordion gui-field" style={{ flex: templateData.size }}>
+    <div className="gui-accordion gui-field">
       <GuiAccordionReact id={uid} multiple={!templateData.singleOpen}>
         {(templateData.sections ?? []).map((section) => {
           const isOpen = !!activeSections[section.uid];

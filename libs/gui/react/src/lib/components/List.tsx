@@ -103,7 +103,7 @@ export function List(widgetInstance: WithWidget) {
   const showErrors = isTouched && errors && errors.length > 0;
 
   return (
-    <div className="gui-list gui-field" style={{ flex: templateData.size }}>
+    <div className="gui-list gui-field">
       <GuiLabelReact
         targetElement={listRef.current || undefined}
         uid={uid}

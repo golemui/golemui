@@ -2,6 +2,8 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://golemui.com/schemas/gui/components/flex.schema.json",
   "title": "Flex Widget",
+  "description": "Deprecated: use a grid layout. A flex layout renders as a grid: `row` becomes a row, `column` a stack, `align` becomes `justify` and `gap` the nearest gap step.",
+  "deprecated": true,
   "type": "object",
   "$defs": {
     "directionProp": {

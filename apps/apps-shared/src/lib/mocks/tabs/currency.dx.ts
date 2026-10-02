@@ -1,6 +1,6 @@
 import { gui } from '@golemui/gui-shared';
 
-export const currencyTab = gui.layouts.flex([
+export const currencyTab = gui.layouts.grid([
   gui.inputs.currency('currency', { autocomplete: 'off' }),
   gui.inputs.currency('currencyDisabled', { disabled: true, readonly: true }),
   gui.inputs.currency('currencyMaximumFractionDigits', {

@@ -569,7 +569,7 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
           {
             uid: 'section',
             kind: 'layout',
-            type: 'flex',
+            type: 'grid',
             include: { when: '$form.business === true' },
             children: [
               {

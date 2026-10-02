@@ -90,7 +90,7 @@ describe('json_generate_from_schema', () => {
     expect(form[1].type).toBe('dateTimePicker');
   });
 
-  it('renders nested objects as flex groups', () => {
+  it('renders nested objects as grid stacks', () => {
     const r = generateFromJsonSchema({
       jsonSchema: {
         type: 'object',
@@ -110,7 +110,7 @@ describe('json_generate_from_schema', () => {
     expect(r.validation.valid).toBe(true);
     const group = (r.formDefinition.form as any[])[0];
     expect(group.kind).toBe('layout');
-    expect(group.type).toBe('flex');
+    expect(group.type).toBe('grid');
     expect(group.children.length).toBeGreaterThanOrEqual(2);
   });
 
@@ -138,7 +138,7 @@ describe('json_generate_from_schema', () => {
     const rep = (r.formDefinition.form as any[])[0];
     expect(rep.type).toBe('repeater');
     expect(rep.path).toBe('addresses');
-    expect(rep.props.template.type).toBe('flex');
+    expect(rep.props.template.type).toBe('grid');
     // `items` is the reserved segment the runtime expands per array entry.
     const tplChildren = rep.props.template.children as any[];
     expect(tplChildren.map((c) => c.path)).toEqual([

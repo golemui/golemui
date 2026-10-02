@@ -117,7 +117,7 @@ export function MultiList(widgetInstance: WithWidget) {
   const showErrors = isTouched && errors && errors.length > 0;
 
   return (
-    <div className="gui-multi-list-widget gui-field" style={{ flex: templateData.size }}>
+    <div className="gui-multi-list-widget gui-field">
       <GuiLabelReact
         targetElement={listRef.current || undefined}
         uid={uid}

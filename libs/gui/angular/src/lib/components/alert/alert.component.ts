@@ -18,7 +18,6 @@ import { deferHydrationAttr } from '../../utils/defer-hydration';
   templateUrl: './alert.component.html',
   host: {
     class: 'gui-alert gui-field',
-    '[style.flex]': 'this.adapter.templateData().size',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

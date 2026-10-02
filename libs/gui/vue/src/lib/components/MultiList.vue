@@ -92,7 +92,7 @@ const ItemRenderer = computed<Component>(() => {
 </script>
 
 <template>
-  <div class="gui-multi-list-widget gui-field" :style="{ flex: templateData.size }">
+  <div class="gui-multi-list-widget gui-field">
     <gui-label
       ref="labelRef"
       :uid="uid"

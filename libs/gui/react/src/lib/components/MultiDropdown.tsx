@@ -333,7 +333,7 @@ export function MultiDropdown(widgetInstance: WithWidget) {
   const showErrors = isTouched && errors && errors.length > 0;
 
   return (
-    <div className="gui-multi-dropdown gui-field" style={{ flex: templateData.size }}>
+    <div className="gui-multi-dropdown gui-field">
       <GuiLabelReact
         ref={labelRef}
         uid={uid}

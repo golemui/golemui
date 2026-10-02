@@ -36,7 +36,7 @@ export function DateTimePicker(widgetInstance: WithWidget) {
   const isRequired = (templateData.validator as Validator)?.required;
 
   return (
-    <div className="gui-date-time-picker gui-field" style={{ flex: templateData.size }}>
+    <div className="gui-date-time-picker gui-field">
       <GuiDateTimePickerReact
         uid={uid}
         label={templateData.label as string}

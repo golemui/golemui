@@ -775,6 +775,11 @@ export type OneOfProps = {
   valueField?: string;
 };
 
+/**
+ * @deprecated Use a grid (`GridProps`). A flex layout still renders, as a grid: `row` and
+ * `row-reverse` become a row, `column` and `column-reverse` a stack, `align` becomes `justify`
+ * and `gap` the nearest `GridGap`. `justify` is dropped.
+ */
 export type FlexProps = {
   direction?: 'row' | 'row-reverse' | 'column' | 'column-reverse';
   justify?: 'center' | 'start' | 'end' | 'stretch';
@@ -782,11 +787,37 @@ export type FlexProps = {
   gap?: number;
 };
 
+/** The steps of a grid's `gap`. Each one is a `--gui-layout-gap-*` CSS variable. */
+export type GridGap = 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+
+/** How a grid row's children use its width. */
+export type GridJustify = 'stretch' | 'start' | 'center' | 'end' | 'space-between';
+
 export type GridProps = {
+  /**
+   * `column`, the default, stacks the children. `row` puts them on one line, sharing the width by
+   * their `size`. Both stack below a 480px wide container.
+   */
   direction?: 'row' | 'column';
-  columnGap?: number;
-  rowGap?: number;
+  /**
+   * Wraps the children in columns, and overrides `direction`: that many equal columns, which a
+   * child spans by its `size`, or with `'auto'` as many columns as fit.
+   */
+  columns?: number | 'auto';
+  /** The space between the children. Defaults to `md`. */
+  gap?: GridGap;
+  /**
+   * How a row's children use its width. `stretch`, the default, shares it by `size`. Any other
+   * value keeps each child at its own width, ignores `size`, and places the children on the row.
+   */
+  justify?: GridJustify;
+  /** @deprecated Use `columns`. `false` is `columns: 12`; `true`, the old default, is a row. */
   autoFit?: boolean;
+  /** @deprecated Use `gap`. Pixels become the nearest `GridGap`. */
+  columnGap?: number;
+  /** @deprecated Use `gap`. Pixels become the nearest `GridGap`. */
+  rowGap?: number;
+  /** @deprecated Use `justify`, which places the children along the row as `align` did. */
   align?:
     | 'center'
     | 'start'
@@ -795,7 +826,6 @@ export type GridProps = {
     | 'space-around'
     | 'space-evenly'
     | 'stretch';
-  justify?: 'center' | 'start' | 'end' | 'stretch';
 };
 
 export type TabsProps = {

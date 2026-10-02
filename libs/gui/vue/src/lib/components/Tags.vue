@@ -18,7 +18,7 @@ const required = computed(() => (templateData.value.validator as Validator)?.req
 </script>
 
 <template>
-  <div class="gui-tags gui-field" :style="{ flex: templateData.size }">
+  <div class="gui-tags gui-field">
     <gui-tags
       :uid="uid"
       :label="templateData.label"

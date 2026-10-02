@@ -1,6 +1,6 @@
 import { gui } from '@golemui/gui-shared';
 
-export const rangeDateTimePickerTab = gui.layouts.flex([
+export const rangeDateTimePickerTab = gui.layouts.grid([
   gui.inputs.rangeDateTimePicker('rangeDateTimePickerEmpty', {
     label: 'Empty',
     minuteStep: 30,

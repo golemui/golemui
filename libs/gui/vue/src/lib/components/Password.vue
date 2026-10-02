@@ -17,7 +17,7 @@ const required = computed(() => (templateData.value.validator as Validator)?.req
 </script>
 
 <template>
-  <div class="gui-password gui-field" :style="{ flex: templateData.size }">
+  <div class="gui-password gui-field">
     <gui-password
       :uid="uid"
       :label="templateData.label"

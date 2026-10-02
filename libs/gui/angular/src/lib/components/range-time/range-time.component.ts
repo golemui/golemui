@@ -20,7 +20,6 @@ import { deferHydrationAttr } from '../../utils/defer-hydration';
   templateUrl: './range-time.component.html',
   host: {
     class: 'gui-range-time gui-field',
-    '[style.flex]': 'this.adapter.templateData().size',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

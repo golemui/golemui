@@ -27,7 +27,6 @@ import { deferHydrationAttr } from '../../utils/defer-hydration';
   templateUrl: './list.component.html',
   host: {
     class: 'gui-list gui-field',
-    '[style.flex]': 'this.adapter.templateData().size',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

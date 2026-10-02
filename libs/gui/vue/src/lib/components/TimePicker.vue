@@ -52,7 +52,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="gui-time-picker gui-field" :style="{ flex: templateData.size }">
+  <div class="gui-time-picker gui-field">
     <gui-time-picker
       ref="pickerRef"
       :uid="uid"

@@ -10,7 +10,7 @@ const { uid, templateData } = useDisplayWidget<MarkdownTextProps>(widget);
 </script>
 
 <template>
-  <div class="gui-markdown-text gui-field" :style="{ flex: templateData.size }">
+  <div class="gui-markdown-text gui-field">
     <div class="gui-widget" :id="uid">
       <gui-markdown-text :md="templateData.md" :dependencies="templateData.deps" />
     </div>

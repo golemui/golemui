@@ -3,10 +3,14 @@
   "uid": "tabGrid",
   "kind": "layout",
   "type": "grid",
-  "props": {
-    "direction": "column"
-  },
   "children": [
+    {
+      "kind": "display",
+      "type": "markdownText",
+      "props": {
+        "md": "#### Row\nThe fields share the row by `size`. Their labels, controls and errors line up, whatever the length of a label."
+      }
+    },
     {
       "kind": "layout",
       "type": "grid",
@@ -19,19 +23,39 @@
           "type": "textinput",
           "path": "listName",
           "label": "List Name",
-          "size": 4,
+          "size": 2,
           "props": {
             "hint": "This is a hint"
           },
-          "validator": { "type": "string", "required": true }
+          "validator": {
+            "type": "string",
+            "required": true
+          }
         },
         {
           "kind": "input",
           "type": "textinput",
           "path": "listOwner",
-          "label": "List Owner",
-          "size": 4,
-          "validator": { "type": "string", "required": true }
+          "label": "List owner, as it appears on the team page",
+          "validator": {
+            "type": "string",
+            "required": true
+          }
+        },
+        {
+          "kind": "input",
+          "type": "checkbox",
+          "path": "cb1",
+          "label": "Public list",
+          "props": {
+            "hint": "Visible to the whole workspace"
+          }
+        },
+        {
+          "kind": "input",
+          "type": "toggle",
+          "path": "tg1",
+          "label": "Notifications"
         }
       ]
     },
@@ -45,42 +69,137 @@
         {
           "kind": "input",
           "type": "textinput",
-          "path": "listName3",
-          "label": "List Name",
-          "size": 3,
-          "validator": { "type": "string", "required": true }
+          "path": "gridSearch",
+          "label": "Search members",
+          "size": 3
+        },
+        {
+          "kind": "action",
+          "type": "button",
+          "label": "Search"
+        }
+      ]
+    },
+    {
+      "kind": "display",
+      "type": "markdownText",
+      "props": {
+        "md": "#### Columns\nThree columns with a `lg` gap: the street spans two of them."
+      }
+    },
+    {
+      "kind": "layout",
+      "type": "grid",
+      "props": {
+        "columns": 3,
+        "gap": "lg"
+      },
+      "children": [
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "address.street",
+          "label": "Street",
+          "size": 2
         },
         {
           "kind": "input",
           "type": "textinput",
-          "path": "listOwner3",
-          "label": "List Owner",
-          "size": 3,
-          "validator": { "type": "string", "required": true }
+          "path": "address.number",
+          "label": "Number"
         },
         {
           "kind": "input",
-          "type": "toggle",
-          "label": "Toggle",
-          "path": "tg1",
-          "size": 3,
-          "props": {
-            "togglePosition": "left",
-            "hint": "Long hints are discouraged with checkboxes and toggles when these share a row with a text input"
-          },
-          "validator": { "type": "boolean", "required": true }
+          "type": "textinput",
+          "path": "address.city",
+          "label": "City"
         },
         {
           "kind": "input",
-          "type": "checkbox",
-          "label": "Checkbox",
-          "path": "cb1",
-          "size": 3,
+          "type": "textinput",
+          "path": "address.state",
+          "label": "State"
+        },
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "address.postcode",
+          "label": "Postcode",
+          "validator": {
+            "type": "string",
+            "required": true
+          }
+        }
+      ]
+    },
+    {
+      "kind": "display",
+      "type": "markdownText",
+      "props": {
+        "md": "#### Auto columns\nAs many columns as fit, at least 12rem wide each."
+      }
+    },
+    {
+      "kind": "layout",
+      "type": "grid",
+      "props": {
+        "columns": "auto"
+      },
+      "children": [
+        {
+          "kind": "input",
+          "type": "number",
+          "path": "quarters.q1",
+          "label": "Q1"
+        },
+        {
+          "kind": "input",
+          "type": "number",
+          "path": "quarters.q2",
+          "label": "Q2"
+        },
+        {
+          "kind": "input",
+          "type": "number",
+          "path": "quarters.q3",
+          "label": "Q3"
+        },
+        {
+          "kind": "input",
+          "type": "number",
+          "path": "quarters.q4",
+          "label": "Q4"
+        }
+      ]
+    },
+    {
+      "kind": "display",
+      "type": "markdownText",
+      "props": {
+        "md": "#### Justified row\nWith `justify`, the children keep their own width: here, buttons on the right."
+      }
+    },
+    {
+      "kind": "layout",
+      "type": "grid",
+      "props": {
+        "direction": "row",
+        "justify": "end",
+        "gap": "sm"
+      },
+      "children": [
+        {
+          "kind": "action",
+          "type": "button",
+          "label": "Cancel",
           "props": {
-            "checkboxPosition": "left",
-            "hint": "Long hints are discouraged with checkboxes and toggles when these share a row with a text input"
-          },
-          "validator": { "type": "boolean", "required": true }
+            "variant": "outlined"
+          }
+        },
+        {
+          "kind": "action",
+          "type": "button",
+          "label": "Save"
         }
       ]
     }

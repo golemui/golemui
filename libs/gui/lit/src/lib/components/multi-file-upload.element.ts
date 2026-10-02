@@ -24,18 +24,6 @@ export class MultiFileUploadElement extends LitElement implements WithWidget {
     return this;
   }
 
-  override updated(changedProperties: any) {
-    super.updated(changedProperties);
-
-    const size = this.adapter.templateData.size;
-
-    if (size) {
-      this.style.flex = String(size);
-    } else {
-      this.style.removeProperty('flex');
-    }
-  }
-
   override connectedCallback() {
     super.connectedCallback();
     this.classList.add('gui-multi-file-upload', 'gui-field');

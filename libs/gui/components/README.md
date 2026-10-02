@@ -107,6 +107,44 @@ from `params.count`.
 - **Parts that only add context**, such as the start and end of a range and the toolbars, have a
   default name that an empty value removes.
 
+## Layout
+
+`.gui-grid` lays out its `.gui-grid__cell` children, with no JavaScript:
+
+```html
+<div class="gui-grid gui-grid--row">
+  <div class="gui-grid__cell gui-grid__cell--span-2">
+    <gui-textinput label="Street"></gui-textinput>
+  </div>
+  <div class="gui-grid__cell"><gui-textinput label="Postcode"></gui-textinput></div>
+</div>
+```
+
+| Class                                                          | Layout                                                                        |
+| -------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| `gui-grid`                                                     | A stack, one cell below the other.                                            |
+| `gui-grid--row`                                                | One line, the cells sharing its width by span.                                |
+| `gui-grid--columns-1` … `gui-grid--columns-12`                 | That many equal columns, which the cells fill in order and span.              |
+| `gui-grid--auto`                                               | As many columns as fit, each at least `--gui-layout-column-min` (12rem) wide. |
+| `gui-grid__cell--span-2` … `gui-grid__cell--span-12`           | A cell twice, or up to twelve times, as wide, in a row or numbered columns.   |
+| `gui-grid--gap-none`, `-xs`, `-sm`, `-lg`, `-xl`               | The space between cells. It is `md` by default.                               |
+| `gui-grid--justify-start`, `-center`, `-end`, `-space-between` | In a row: the cells keep their own width and the row places them.             |
+
+The gaps are the `--gui-layout-gap-none` … `--gui-layout-gap-xl` CSS variables, so a theme can
+change each step. Every grid stacks its cells inside a `.gui-container` narrower than 480px.
+
+In a row or in columns, each cell spans three row tracks shared with the other cells of its row,
+and a field puts its parts in them:
+
+1. its `.gui-label`, with the hint;
+2. its `.gui-widget`, the control, centred in the track (a checkbox, a toggle and a `gui-button`
+   sit here too);
+3. its `.gui-validator`, the errors (a checkbox and a toggle put their hint here as well).
+
+The parts of sibling fields line up whatever the length of a label, and an error never moves the
+controls next to it. A custom field lines up the same way when its root has the `gui-field` class
+and its parts use these three classes; anything else in a cell spans the three tracks.
+
 ## Documentation
 
 - Website: https://golemui.com

@@ -330,7 +330,7 @@ describe('legacy import surface', () => {
     expect(resolved.formDef).toBeDefined();
     const rootWidget = (resolved.formDef as { form?: { kind?: string; type?: string } }).form;
     expect(rootWidget?.kind).toBe('layout');
-    expect(rootWidget?.type).toBe('flex');
+    expect(rootWidget?.type).toBe('grid');
   });
 });
 

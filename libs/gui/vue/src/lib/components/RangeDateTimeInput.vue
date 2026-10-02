@@ -53,7 +53,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="gui-range-date-time-input gui-field" :style="{ flex: templateData.size }">
+  <div class="gui-range-date-time-input gui-field">
     <gui-range-date-time
       ref="elRef"
       :uid="uid"

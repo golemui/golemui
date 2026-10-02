@@ -1,6 +1,6 @@
 import { gui } from '@golemui/gui-shared';
 
-export const textareaTab = gui.layouts.flex([
+export const textareaTab = gui.layouts.grid([
   gui.inputs.textarea('textarea', { autocomplete: 'off' }),
   gui.inputs.textarea('textareaDisabled', { disabled: true, readonly: true }),
   gui.inputs.textarea('textareaAutoGrow', {

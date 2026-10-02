@@ -28,7 +28,6 @@ import { deferHydrationAttr } from '../../utils/defer-hydration';
   templateUrl: './tabs.component.html',
   host: {
     class: 'gui-tabs gui-field',
-    '[style.flex]': 'this.adapter.templateData().size',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

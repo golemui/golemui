@@ -17,7 +17,7 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
           {
             uid: '',
             kind: 'layout',
-            type: 'flex',
+            type: 'grid',
             children: [
               {
                 uid: 'teamRepeater',
@@ -30,7 +30,7 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
                   removeLabel: 'Remove team',
                   template: {
                     kind: 'layout',
-                    type: 'flex',
+                    type: 'grid',
                     children: [
                       {
                         uid: 'teamName',
@@ -51,7 +51,7 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
                           limit: 5,
                           template: {
                             kind: 'layout',
-                            type: 'flex',
+                            type: 'grid',
                             children: [
                               {
                                 uid: 'firstName',
@@ -78,7 +78,7 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
                                   removeLabel: 'Remove skill',
                                   template: {
                                     kind: 'layout',
-                                    type: 'flex',
+                                    type: 'grid',
                                     children: [
                                       {
                                         uid: 'developerSkill',
@@ -306,7 +306,7 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
                 removeLabel: 'Remove row',
                 template: {
                   kind: 'layout',
-                  type: 'flex',
+                  type: 'grid',
                   children: [
                     { uid: 'name', kind: 'input', type: 'textinput', path: item('name') },
                     { uid: 'age', kind: 'input', type: 'number', path: item('age') },
@@ -382,7 +382,7 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
                 removeLabel: 'Remove team',
                 template: {
                   kind: 'layout',
-                  type: 'flex',
+                  type: 'grid',
                   children: [
                     {
                       uid: 'teamName',
@@ -449,7 +449,7 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
                 removeLabel: 'Remove team',
                 template: {
                   kind: 'layout',
-                  type: 'flex',
+                  type: 'grid',
                   children: [
                     {
                       uid: 'pickCompanyAlert',
@@ -495,7 +495,7 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
                         removeLabel: 'Remove developer',
                         template: {
                           kind: 'layout',
-                          type: 'flex',
+                          type: 'grid',
                           children: [
                             {
                               uid: 'firstNameAlert',
@@ -572,7 +572,7 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
                   removeLabel: 'Remove line item',
                   template: {
                     kind: 'layout',
-                    type: 'flex',
+                    type: 'grid',
                     children: [
                       {
                         uid: 'qty',
@@ -636,7 +636,7 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
                   removeLabel: 'Remove invoice line',
                   template: {
                     kind: 'layout',
-                    type: 'flex',
+                    type: 'grid',
                     children: [
                       {
                         uid: 'lineQty',
@@ -697,7 +697,7 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
                   removeLabel: 'Remove order',
                   template: {
                     kind: 'layout',
-                    type: 'flex',
+                    type: 'grid',
                     children: [
                       {
                         uid: 'customer',
@@ -716,7 +716,7 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
                           removeLabel: 'Remove line',
                           template: {
                             kind: 'layout',
-                            type: 'flex',
+                            type: 'grid',
                             children: [
                               {
                                 uid: 'qty',

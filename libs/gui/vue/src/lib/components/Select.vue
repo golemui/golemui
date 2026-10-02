@@ -45,7 +45,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="gui-select gui-field" :style="{ flex: templateData.size }">
+  <div class="gui-select gui-field">
     <gui-select
       ref="selectRef"
       :uid="uid"

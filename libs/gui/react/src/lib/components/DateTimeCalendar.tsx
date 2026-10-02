@@ -36,7 +36,7 @@ export function DateTimeCalendar(widgetInstance: WithWidget) {
   const isRequired = (templateData.validator as Validator)?.required;
 
   return (
-    <div className="gui-date-time-calendar gui-field" style={{ flex: templateData.size }}>
+    <div className="gui-date-time-calendar gui-field">
       <GuiDateTimeCalendarReact
         uid={uid}
         label={templateData.label as string}

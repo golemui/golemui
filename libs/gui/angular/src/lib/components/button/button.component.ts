@@ -18,7 +18,6 @@ import { deferHydrationAttr } from '../../utils/defer-hydration';
   templateUrl: './button.component.html',
   host: {
     class: 'gui-button gui-field',
-    '[style.flex]': 'this.adapter.templateData().size',
     '[class.gui-button--invalid]':
       "this.adapter.templateData().invalid === true && this.adapter.templateData().actionType === 'submit'",
   },

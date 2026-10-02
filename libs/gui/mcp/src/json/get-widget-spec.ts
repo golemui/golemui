@@ -254,7 +254,7 @@ const EXAMPLES: Record<string, Record<string, unknown>> = {
   grid: {
     kind: 'layout',
     type: 'grid',
-    props: { columnGap: 12, rowGap: 12 },
+    props: { direction: 'row' },
     children: [
       { kind: 'input', type: 'textinput', path: 'firstName', label: 'First name' },
       { kind: 'input', type: 'textinput', path: 'lastName', label: 'Last name' },
@@ -284,8 +284,7 @@ const EXAMPLES: Record<string, Record<string, unknown>> = {
       removeLabel: 'Remove',
       template: {
         kind: 'layout',
-        type: 'flex',
-        props: { direction: 'column' },
+        type: 'grid',
         children: [
           // Child paths inside a repeater template MUST be `<repeater.path>.items.<field>` —
           // `items` is the reserved segment that the runtime expands per array entry.
@@ -339,27 +338,18 @@ const NOTES: Record<string, string[]> = {
     'For very large lists (>50 items) consider `dropdown` for its virtualization (`height`, `itemHeight`, `searchFields`).',
   ],
   flex: [
-    'Use `flex` for page scaffolding and directional grouping: a column stack of sections, a row of side-by-side panels, a row of action buttons. ' +
-      'For field-level layout (inputs that should sit in columns with aligned labels), prefer `grid` instead.',
-    '`props.direction`: `"row"` (default) | `"column"` | `"row-reverse"` | `"column-reverse"` — controls the main axis. ' +
-      '`"column"` stacks children vertically; `"row"` places them side by side.',
-    '`props.gap`: number (pixels) — uniform spacing between all children along the main axis.',
-    '`props.justify`: `"center"` | `"start"` | `"end"` | `"stretch"` — aligns children along the cross-axis (perpendicular to `direction`).',
-    '`props.align`: `"center"` | `"start"` | `"end"` | `"space-between"` | `"space-around"` | `"space-evenly"` — distributes children along the main axis.',
-    'All `flex` props support state suffixes: `"direction.<stateName>": "column"` swaps the direction when a state is active. Call `get_concept({ concept: "states" })` for the full pattern.',
+    '**Deprecated: use `grid`.** A `flex` layout still renders, as a grid: `row` and `row-reverse` become a row, `column` and `column-reverse` a stack, `align` becomes `justify` and a pixel `gap` the nearest gap step. Never generate `flex` in new definitions.',
   ],
   grid: [
-    'Use `grid` when you want multiple form fields to sit side by side with their labels and inputs aligned across columns. ' +
-      "GolemUI's `grid` uses CSS subgrid internally: each child widget gets two implicit sub-tracks (one for its label, one for its input) " +
-      'that align to the parent grid columns, giving consistent label/input alignment across all rows without manual sizing.',
-    'For loose page scaffolding — stacking sections, wrapping a group in a header — use `flex` instead.',
-    '`props.columnGap`: number (pixels) — horizontal gap between columns.',
-    '`props.rowGap`: number (pixels) — vertical gap between rows.',
-    '`props.autoFit`: boolean — when `true`, the grid auto-fits as many columns as will fit in the available container width, using `columnGap` as the gutter. ' +
-      'Useful for responsive layouts where the number of columns should adapt to the viewport.',
-    '`props.direction`: `"row"` | `"column"` — controls how children flow into the grid tracks.',
-    '`props.align` and `props.justify` accept the same values as `flex`.',
-    'All `grid` props support state suffixes. Call `get_concept({ concept: "states" })` for the full pattern.',
+    'The one layout for everything: stacking sections, putting fields side by side, wrapping them in columns and placing a row of buttons.',
+    '`props.direction`: `"column"` (default) stacks the children; `"row"` puts them on one line, sharing the width by each child\'s `size` (a child with `size: 2` is twice as wide as one with `size: 1`).',
+    '`props.columns`: a number from 1 to 12, or `"auto"` — wraps the children in that many equal columns (a child spans `size` of them), or in as many as fit. Overrides `direction`.',
+    '`props.gap`: `"none"` | `"xs"` | `"sm"` | `"md"` (default) | `"lg"` | `"xl"` — the space between the children. Never a number.',
+    '`props.justify`, rows only: `"stretch"` (default) shares the width by `size`; `"start"` | `"center"` | `"end"` | `"space-between"` keep each child at its own width and place them. Use `{ direction: "row", justify: "end" }` for submit/cancel buttons on the right.',
+    'In a row or columns, fields line up by part: labels and hints on top, controls in the middle (checkboxes, toggles and buttons centred on them), errors below. No sizing or alignment props are needed for that.',
+    'Every grid stacks its children when its container is narrower than 480px.',
+    'Deprecated props, still accepted: `autoFit` (use `columns`), `columnGap` / `rowGap` (use `gap`), `align` (use `justify`).',
+    'All `grid` props support state suffixes: `"direction.<stateName>": "column"` swaps the direction when a state is active. Call `get_concept({ concept: "states" })` for the full pattern.',
   ],
   tabs: [
     'Children are associated with tabs by **`uid` matching**, not by array order: each direct child must have a `uid` field at the widget level (alongside `kind`/`type`) whose string value equals one of the `props.tabs[].uid` entries. There is no `tag` property — that is not a real GolemUI field.',
@@ -370,7 +360,7 @@ const NOTES: Record<string, string[]> = {
     '`props.defaultOpen` is a map of `{ <sectionUid>: boolean }` controlling which sections start expanded.',
   ],
   repeater: [
-    '`props.template` must be a layout widget (flex/grid/tabs/accordion) whose children are the per-item fields.',
+    '`props.template` must be a layout widget (grid/tabs/accordion) whose children are the per-item fields.',
     'Child paths inside the template MUST follow the form `<repeater.path>.items.<fieldName>`. The `items` segment is reserved — the runtime substitutes it with the current array index per row. For example, a repeater at `path: "users"` with a child `firstName` uses `path: "users.items.firstName"`. Plain `firstName` will NOT bind to the array.',
     'Nested repeaters chain the convention: a repeater at `path: "teams"` whose template contains a repeater at `path: "teams.items.members"` whose children use `path: "teams.items.members.items.<field>"`.',
     '`addLabel` supports state suffixes: `"addLabel.<stateName>": "Limit reached"` swaps the add-button label when a named state is active — useful for capping array length. Call `get_concept({ concept: "states" })` for the full pattern.',

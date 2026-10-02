@@ -55,7 +55,7 @@ const onTabChange = (event: CustomEvent<GuiTabChangeEventDetail>) => {
 </script>
 
 <template>
-  <div class="gui-tabs gui-field" :style="{ flex: templateData.size }">
+  <div class="gui-tabs gui-field">
     <gui-tabs :id="uid" :active.prop="activeTab" @gui-tab-change="onTabChange">
       <gui-tab-list>
         <gui-tab

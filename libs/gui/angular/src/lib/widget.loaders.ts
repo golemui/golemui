@@ -77,7 +77,7 @@ export const widgetLoaders: WidgetLoaders<Type<WithWidget>, GolemWidget> = {
   tags: async () => (await import('./components/tags/tags.component')).TagsComponent,
 
   // LAYOUT WIDGETS
-  flex: async () => (await import('./components/flex/flex.component')).FlexComponent,
+  flex: async () => (await import('./components/grid/grid.component')).GridComponent,
   grid: async () => (await import('./components/grid/grid.component')).GridComponent,
   tabs: async () => (await import('./components/tabs/tabs.component')).TabsComponent,
   accordion: async () =>

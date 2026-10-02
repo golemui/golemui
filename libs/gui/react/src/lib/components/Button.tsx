@@ -10,10 +10,7 @@ export function Button(widgetInstance: WithWidget) {
   const invalid = templateData.invalid === true && templateData.actionType === 'submit';
 
   return (
-    <div
-      className={invalid ? 'gui-button gui-field gui-button--invalid' : 'gui-button gui-field'}
-      style={{ flex: templateData.size }}
-    >
+    <div className={invalid ? 'gui-button gui-field gui-button--invalid' : 'gui-button gui-field'}>
       <GuiButtonReact
         uid={uid}
         type={templateData.actionType ?? 'button'}

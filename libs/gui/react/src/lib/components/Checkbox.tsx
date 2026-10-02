@@ -25,7 +25,7 @@ export function Checkbox(widgetInstance: WithWidget) {
   const isRequired = (templateData.validator as Validator)?.required;
 
   return (
-    <div className={`gui-checkbox gui-field`} style={{ flex: templateData.size }}>
+    <div className={`gui-checkbox gui-field`}>
       <GuiCheckboxReact
         uid={uid}
         label={label}

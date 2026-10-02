@@ -31,7 +31,7 @@ export function Tabs(widgetInstance: WithWidget) {
   };
 
   return (
-    <div className="gui-tabs gui-field" style={{ flex: templateData.size }}>
+    <div className="gui-tabs gui-field">
       {/* The parts are plain tags, not React wrappers: a server render then has their attributes,
           such as the inactive panels' hidden. */}
       <GuiTabsReact id={uid} active={activeTab} onGuiTabChange={onTabChange}>

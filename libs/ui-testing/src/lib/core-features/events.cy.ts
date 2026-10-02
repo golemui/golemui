@@ -84,7 +84,7 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
                 removeLabel: 'Remove user',
                 template: {
                   kind: 'layout',
-                  type: 'flex',
+                  type: 'grid',
                   children: [
                     {
                       uid: 'name',

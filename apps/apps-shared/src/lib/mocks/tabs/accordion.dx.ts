@@ -19,7 +19,7 @@ export const accordionTab = gui.layouts.accordion(
       label: 'Shipping Address',
       uid: 'section2',
       children: [
-        gui.layouts.grid([
+        gui.layouts.horizontalGrid([
           gui.inputs.textInput('shoppingCart.shippingAddress', { validator: { required: true } }),
           gui.inputs.textInput('shoppingCart.shippingState', { validator: { required: true } }),
         ]),
@@ -29,7 +29,7 @@ export const accordionTab = gui.layouts.accordion(
       label: 'Billing Address',
       uid: 'section3',
       children: [
-        gui.layouts.grid([
+        gui.layouts.horizontalGrid([
           gui.inputs.textInput('shoppingCart.billingAddress', { validator: { required: true } }),
           gui.inputs.textInput('shoppingCart.billingState', { validator: { required: true } }),
         ]),

@@ -12,7 +12,6 @@ import type { ComponentRendererProps } from '@golemui/gui-shared/internals';
   templateUrl: './renderer.component.html',
   host: {
     class: 'gui-renderer gui-field',
-    '[style.flex]': 'this.adapter.templateData().size',
   },
 })
 export class RendererComponent implements OnInit, OnDestroy, WithWidget {

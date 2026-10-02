@@ -19,7 +19,6 @@ const iconPosition = computed(() => templateData.value.iconPosition || 'left');
   <div
     class="gui-button gui-field"
     :class="{ 'gui-button--invalid': invalid && templateData.actionType === 'submit' }"
-    :style="{ flex: templateData.size }"
   >
     <gui-button
       :uid="uid"

@@ -21,7 +21,6 @@ import { deferHydrationAttr } from '../../utils/defer-hydration';
   templateUrl: './repeater.component.html',
   host: {
     class: 'gui-repeater gui-field',
-    '[style.flex]': 'this.adapter.templateData().size',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

@@ -36,7 +36,7 @@ export function RangeTimePicker(widgetInstance: WithWidget) {
   const isRequired = (templateData.validator as Validator)?.required;
 
   return (
-    <div className="gui-range-time-picker gui-field" style={{ flex: templateData.size }}>
+    <div className="gui-range-time-picker gui-field">
       <GuiRangeTimePickerReact
         uid={uid}
         label={templateData.label as string}

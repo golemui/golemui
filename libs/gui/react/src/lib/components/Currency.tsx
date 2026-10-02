@@ -32,7 +32,7 @@ export function Currency(widgetInstance: WithWidget) {
   const lang = templateData.lang;
 
   return (
-    <div className="gui-currency gui-field" style={{ flex: templateData.size }}>
+    <div className="gui-currency gui-field">
       <GuiCurrencyReact
         uid={uid}
         label={label}

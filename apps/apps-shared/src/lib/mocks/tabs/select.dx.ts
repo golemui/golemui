@@ -1,6 +1,6 @@
 import { gui } from '@golemui/gui-shared';
 
-export const selectTab = gui.layouts.flex([
+export const selectTab = gui.layouts.grid([
   gui.inputs.select('selects.greeting', {
     label: 'Greeting',
     readonly: true,

@@ -316,7 +316,7 @@ export function Dropdown(widgetInstance: WithWidget) {
   const showErrors = isTouched && errors && errors.length > 0;
 
   return (
-    <div className="gui-dropdown gui-field" style={{ flex: templateData.size }}>
+    <div className="gui-dropdown gui-field">
       <GuiLabelReact
         ref={labelRef}
         uid={uid}

@@ -1,43 +1,30 @@
 <script setup lang="ts">
+// The grid layout, and the deprecated flex layout, which renders as a grid.
 import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
 import { useLayoutWidget, WidgetRenderer } from '@golemui/vue';
-import type { GridProps } from '@golemui/gui-shared/internals';
-import { computed, type CSSProperties } from 'vue';
+import {
+  type FlexProps,
+  gridCellClasses,
+  gridClasses,
+  type GridProps,
+  resolveGrid,
+} from '@golemui/gui-shared/internals';
+import { computed } from 'vue';
 
 const props = defineProps<WithWidget>();
 const widget = props.widget as LayoutWidget;
-const { uid, children, templateData } = useLayoutWidget<GridProps>(widget);
+const { uid, children, templateData } = useLayoutWidget<GridProps & FlexProps>(widget);
 
-const isRow = computed(() => templateData.value.direction !== 'column');
-
-const widgetClass = computed(() => {
-  const direction = isRow.value ? 'gui-grid__widget--row' : 'gui-grid__widget--column';
-  const autoFit =
-    isRow.value && (templateData.value.autoFit ?? true) ? 'gui-grid__widget--row--auto-fit' : '';
-  const align = `gui-grid__widget--align-${(templateData.value.align as string) ?? 'stretch'}`;
-  const justify = templateData.value.justify
-    ? `gui-grid__widget--justify-${templateData.value.justify as string}`
-    : '';
-  return `gui-grid__widget ${direction} ${autoFit} ${align} ${justify}`;
-});
-
-const widgetStyle = computed<CSSProperties>(() => {
-  const style: CSSProperties = {};
-  if (templateData.value.columnGap !== undefined)
-    style.columnGap = `${templateData.value.columnGap}px`;
-  if (templateData.value.rowGap !== undefined) style.rowGap = `${templateData.value.rowGap}px`;
-  return style;
-});
+const grid = computed(() => resolveGrid(widget.type, templateData.value));
 </script>
 
 <template>
-  <div class="gui-grid gui-field" :style="{ flex: templateData.size }">
-    <div :class="widgetClass" :style="widgetStyle" :id="uid">
+  <div class="gui-field">
+    <div :class="gridClasses(grid)" :id="uid">
       <div
         v-for="child in children as NonFunctionWidget<string>[]"
         :key="child.uid"
-        class="gui-grid__cell"
-        :style="{ gridColumn: `span ${child.size || 1}` }"
+        :class="gridCellClasses(grid, child.size)"
       >
         <WidgetRenderer :widget="child" />
       </div>

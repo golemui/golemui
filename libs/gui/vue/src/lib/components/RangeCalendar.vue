@@ -61,7 +61,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="gui-range-calendar gui-field" :style="{ flex: templateData.size }">
+  <div class="gui-range-calendar gui-field">
     <gui-range-calendar
       ref="elRef"
       :uid="uid"

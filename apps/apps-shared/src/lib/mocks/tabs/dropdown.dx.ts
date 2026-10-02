@@ -6,7 +6,7 @@ const thousandsOfObjectItems = Array.from({ length: 20 }, (_, i) => ({
   value: i,
 }));
 
-export const dropdownTab = gui.layouts.flex([
+export const dropdownTab = gui.layouts.grid([
   gui.inputs.dropdown('dropdowns.searchAsYouType', {
     label: 'Search as you type',
     itemHeight: 60,

@@ -5,22 +5,57 @@
   "type": "object",
   "$defs": {
     "directionProp": {
-      "enum": ["row", "column"]
+      "enum": ["row", "column"],
+      "description": "`column`, the default, stacks the children. `row` puts them on one line, sharing the width by their `size`."
     },
-    "columnGapProp": {
-      "type": "number"
+    "columnsProp": {
+      "description": "Wraps the children in columns and overrides `direction`: that many equal columns, which a child spans by its `size`, or as many as fit with \"auto\".",
+      "oneOf": [
+        {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 12
+        },
+        {
+          "const": "auto"
+        }
+      ]
     },
-    "rowGapProp": {
-      "type": "number"
-    },
-    "autoFitProp": {
-      "type": "boolean"
-    },
-    "alignProp": {
-      "enum": ["center", "start", "end", "space-between", "space-around", "space-evenly", "stretch"]
+    "gapProp": {
+      "enum": ["none", "xs", "sm", "md", "lg", "xl"],
+      "description": "The space between the children. Defaults to `md`."
     },
     "justifyProp": {
-      "enum": ["center", "start", "end", "stretch"]
+      "enum": ["stretch", "start", "center", "end", "space-between"],
+      "description": "How a row's children use its width. `stretch`, the default, shares it by `size`; any other value keeps each child at its own width and places them on the row."
+    },
+    "columnGapProp": {
+      "type": "number",
+      "deprecated": true,
+      "description": "Deprecated: use `gap`. Pixels become the nearest gap step."
+    },
+    "rowGapProp": {
+      "type": "number",
+      "deprecated": true,
+      "description": "Deprecated: use `gap`. Pixels become the nearest gap step."
+    },
+    "autoFitProp": {
+      "type": "boolean",
+      "deprecated": true,
+      "description": "Deprecated: use `columns`. `false` is `columns: 12`; `true` is a row."
+    },
+    "alignProp": {
+      "enum": [
+        "center",
+        "start",
+        "end",
+        "space-between",
+        "space-around",
+        "space-evenly",
+        "stretch"
+      ],
+      "deprecated": true,
+      "description": "Deprecated: use `justify`, which places the children along the row."
     }
   },
   "allOf": [
@@ -48,6 +83,15 @@
         "direction": {
           "$ref": "#/$defs/directionProp"
         },
+        "columns": {
+          "$ref": "#/$defs/columnsProp"
+        },
+        "gap": {
+          "$ref": "#/$defs/gapProp"
+        },
+        "justify": {
+          "$ref": "#/$defs/justifyProp"
+        },
         "columnGap": {
           "$ref": "#/$defs/columnGapProp"
         },
@@ -59,14 +103,20 @@
         },
         "align": {
           "$ref": "#/$defs/alignProp"
-        },
-        "justify": {
-          "$ref": "#/$defs/justifyProp"
         }
       },
       "patternProperties": {
         "^direction\\.[^.]+$": {
           "$ref": "#/$defs/directionProp"
+        },
+        "^columns\\.[^.]+$": {
+          "$ref": "#/$defs/columnsProp"
+        },
+        "^gap\\.[^.]+$": {
+          "$ref": "#/$defs/gapProp"
+        },
+        "^justify\\.[^.]+$": {
+          "$ref": "#/$defs/justifyProp"
         },
         "^columnGap\\.[^.]+$": {
           "$ref": "#/$defs/columnGapProp"
@@ -79,14 +129,12 @@
         },
         "^align\\.[^.]+$": {
           "$ref": "#/$defs/alignProp"
-        },
-        "^justify\\.[^.]+$": {
-          "$ref": "#/$defs/justifyProp"
         }
       },
       "additionalProperties": false
     }
   },
   "required": ["kind", "type", "children"],
-  "unevaluatedProperties": false
+  "unevaluatedProperties": false,
+  "description": "A layout. With no direction it stacks its children; `direction: \"row\"` puts them on one line, sharing the width by `size`; `columns` wraps them in columns."
 }

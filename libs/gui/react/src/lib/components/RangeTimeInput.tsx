@@ -60,7 +60,7 @@ export function RangeTimeInput(widgetInstance: WithWidget) {
   const isRequired = (templateData.validator as Validator)?.required;
 
   return (
-    <div className="gui-range-time-input gui-field" style={{ flex: templateData.size }}>
+    <div className="gui-range-time-input gui-field">
       <GuiRangeTimeReact
         ref={handleRef}
         uid={uid}

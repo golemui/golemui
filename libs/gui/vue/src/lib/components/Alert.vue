@@ -10,7 +10,7 @@ const { uid, templateData } = useDisplayWidget<AlertProps>(widget);
 </script>
 
 <template>
-  <div class="gui-alert gui-field" :style="{ flex: templateData.size }">
+  <div class="gui-alert gui-field">
     <gui-alert :id="uid" :variant="templateData.level || 'default'">
       {{ templateData.text }}
     </gui-alert>

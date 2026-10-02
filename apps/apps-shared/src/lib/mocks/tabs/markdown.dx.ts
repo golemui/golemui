@@ -1,6 +1,6 @@
 import { gui } from '@golemui/gui-shared';
 
-export const markdownTab = gui.layouts.flex([
+export const markdownTab = gui.layouts.grid([
   gui.inputs.markdown('markdown', { autocomplete: 'off' }),
   gui.inputs.markdown('markdownDisabled', { disabled: true, readonly: true }),
   gui.inputs.markdown('markdownAutoGrow', {

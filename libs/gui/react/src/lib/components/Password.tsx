@@ -31,7 +31,7 @@ export function Password(widgetInstance: WithWidget) {
   const isRequired = (templateData.validator as Validator)?.required;
 
   return (
-    <div className="gui-password gui-field" style={{ flex: templateData.size }}>
+    <div className="gui-password gui-field">
       <GuiPasswordReact
         uid={uid}
         label={label}

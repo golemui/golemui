@@ -1,6 +1,6 @@
 import { gui } from '@golemui/gui-shared';
 
-export const fileUploadTab = gui.layouts.flex([
+export const fileUploadTab = gui.layouts.grid([
   gui.layouts.grid(
     [
       gui.inputs.textInput('fileUploads.title', {

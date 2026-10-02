@@ -2,7 +2,7 @@
   "$schema": "../../../../../../libs/gui/schemas/src/lib/layout-widget.schema.json",
   "uid": "tabRepeater",
   "kind": "layout",
-  "type": "flex",
+  "type": "grid",
   "children": [
     {
       "kind": "input",
@@ -20,6 +20,7 @@
         "template": {
           "kind": "layout",
           "type": "grid",
+          "props": { "direction": "row" },
           "children": [
             {
               "kind": "input",

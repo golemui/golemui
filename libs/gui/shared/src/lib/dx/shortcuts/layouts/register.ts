@@ -29,7 +29,7 @@ function mapToWidget<StateKeys extends UiState = never, FormData extends Record<
   return {
     uid: uid ?? '',
     kind: 'layout',
-    type: widgetName ?? 'flex',
+    type: widgetName ?? 'grid',
     props: {
       direction: cleanLayoutProps.direction ?? 'column',
       ...cleanLayoutProps,

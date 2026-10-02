@@ -20,7 +20,6 @@ import { deferHydrationAttr } from '../../utils/defer-hydration';
   templateUrl: './multi-file-upload.component.html',
   host: {
     class: 'gui-multi-file-upload gui-field',
-    '[style.flex]': 'this.adapter.templateData().size',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

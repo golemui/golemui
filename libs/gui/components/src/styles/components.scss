@@ -48,7 +48,6 @@
   @include meta.load-css('toggle');
 
   // Layout Widgets
-  @include meta.load-css('flex');
   @include meta.load-css('grid');
   @include meta.load-css('tabs');
   @include meta.load-css('accordion');

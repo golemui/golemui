@@ -31,7 +31,7 @@ export function Tags(widgetInstance: WithWidget) {
   const isRequired = (templateData.validator as Validator)?.required;
 
   return (
-    <div className="gui-tags gui-field" style={{ flex: templateData.size }}>
+    <div className="gui-tags gui-field">
       <GuiTagsReact
         uid={uid}
         label={label}

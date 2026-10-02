@@ -48,7 +48,7 @@ export function Select(widgetInstance: WithWidget) {
   const isRequired = (templateData.validator as Validator)?.required;
 
   return (
-    <div className="gui-select gui-field" style={{ flex: templateData.size }}>
+    <div className="gui-select gui-field">
       <GuiSelectReact
         uid={uid}
         label={label}

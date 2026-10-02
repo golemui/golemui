@@ -35,7 +35,7 @@ import { type AllSuffixable, type SomeSuffixable } from './utils/suffixable';
 
 /**
  * The widget type identifier used to resolve the corresponding UI component from the registry.
- * Examples: 'textinput', 'textarea', 'password', 'flex', 'grid', 'heading', 'markdown', 'alert'
+ * Examples: 'textinput', 'textarea', 'password', 'grid', 'tabs', 'markdown', 'alert'
  */
 export type WidgetType = string;
 

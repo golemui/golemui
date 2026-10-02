@@ -46,7 +46,7 @@ export const widgetLoaders: WidgetLoaders<Component<WithWidget>, GolemWidget> = 
   repeater: async () => (await import('./components/Repeater.vue')).default,
 
   // LAYOUTS
-  flex: async () => (await import('./components/Flex.vue')).default,
+  flex: async () => (await import('./components/Grid.vue')).default,
   grid: async () => (await import('./components/Grid.vue')).default,
   tabs: async () => (await import('./components/Tabs.vue')).default,
   accordion: async () => (await import('./components/Accordion.vue')).default,

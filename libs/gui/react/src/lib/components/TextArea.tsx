@@ -30,7 +30,7 @@ export function TextArea(widgetInstance: WithWidget) {
   const isRequired = (templateData.validator as Validator)?.required;
 
   return (
-    <div className="gui-textarea gui-field" style={{ flex: templateData.size }}>
+    <div className="gui-textarea gui-field">
       <GuiTextareaReact
         uid={uid}
         label={label}

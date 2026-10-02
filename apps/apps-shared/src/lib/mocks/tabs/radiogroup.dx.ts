@@ -1,6 +1,6 @@
 import { gui } from '@golemui/gui-shared';
 
-export const radiogroupTab = gui.layouts.flex([
+export const radiogroupTab = gui.layouts.grid([
   gui.inputs.radiogroup('radiogroups.greeting', {
     label: 'Greeting',
     readonly: true,

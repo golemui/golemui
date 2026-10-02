@@ -2,7 +2,7 @@
   "$schema": "../../../../../../libs/gui/schemas/src/lib/layout-widget.schema.json",
   "uid": "tabRangeDatePicker",
   "kind": "layout",
-  "type": "flex",
+  "type": "grid",
   "children": [
     {
       "kind": "input",

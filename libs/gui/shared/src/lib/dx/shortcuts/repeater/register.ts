@@ -40,7 +40,7 @@ function mapToWidget(def: Record<string, any>): NonFunctionWidget {
       : {}),
     props: {
       ...buildRepeaterProps(def as RepeaterDecorator),
-      template: { kind: 'layout', type: 'flex', children: [], props: { direction: 'column' } },
+      template: { kind: 'layout', type: 'grid', children: [], props: { direction: 'column' } },
     },
   } as NonFunctionWidget;
 }
@@ -84,7 +84,7 @@ function buildCustomWidget(mergeResult: MergeResult, context: BuildWidgetContext
 
   const template: LayoutWidget = {
     kind: 'layout',
-    type: 'flex',
+    type: 'grid',
     uid: '',
     children: walkedChildren,
     props: { direction: 'column' },

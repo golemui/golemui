@@ -114,7 +114,7 @@ await preloadFormWidgets({ widgetLoaders });
 - Set an explicit `formName` - required for SSR. Without one the server and the client mint
   different random ids (hydration still succeeds, but the markup id is not predictable).
 - Handlers run in the browser only - never during a server render.
-- The server renders the form structure and the native Angular widget internals (tabs, flex,
+- The server renders the form structure and the native Angular widget internals (tabs,
   grid). `gui-*` element internals stay empty until the browser upgrades them. Each `gui-*`
   element carries `defer-hydration`, removed by the first client change detection pass.
 - A widget that was not preloaded logs a warning during a server render and renders empty.

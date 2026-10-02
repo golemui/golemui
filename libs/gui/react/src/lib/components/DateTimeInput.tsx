@@ -56,7 +56,7 @@ export function DateTimeInput(widgetInstance: WithWidget) {
   const minuteStep = templateData.minuteStep;
 
   return (
-    <div className="gui-date-time gui-field" style={{ flex: templateData.size }}>
+    <div className="gui-date-time gui-field">
       <GuiDateTimeReact
         ref={handleRef}
         uid={uid}

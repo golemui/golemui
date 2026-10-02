@@ -22,7 +22,7 @@ const minimumHeight = computed(() => templateData.value.minimumHeight ?? 120);
 </script>
 
 <template>
-  <div class="gui-markdown gui-field" :style="{ flex: templateData.size }">
+  <div class="gui-markdown gui-field">
     <gui-markdown
       :uid="uid"
       :label="templateData.label"
