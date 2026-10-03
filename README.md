@@ -7,7 +7,7 @@
   </a>
 </p>
 
-<p align="center">The one stop shop for JS forms.</p>
+<p align="center">The ultimate JSON form engine.</p>
 
 <p align="center">
   <a href="https://golemui.com/integration/react/" title="React"><img alt="React" src="https://cdn.simpleicons.org/react/61DAFB" height="44"></a>
