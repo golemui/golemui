@@ -41,8 +41,10 @@ shapes with `gui.*` syntax in one artifact.
 - `label`, `validator`, `include`/`exclude`, and `on` (event handler names) are top-level widget
   keys; widget-specific options (`items`, `options`, `placeholder`, `minDate`, …) go under
   `props`.
-- Layouts (`"kind": "layout"`, types `flex`/`grid`/`tabs`/`accordion`) hold a `children` array
-  of widgets.
+- Layouts (`"kind": "layout"`, types `grid`/`tabs`/`accordion`) hold a `children` array
+  of widgets. A `grid` stacks them by default; `"direction": "row"` puts them on one line,
+  `"columns"` wraps them, and `"gap"` is a step (`"sm"`, `"md"`, `"lg"`…), never a number.
+  `flex` is deprecated: never generate it.
 - Validators in JSON always carry an explicit `"type"` (`string`, `number`, `boolean`, `array`)
   plus rules and optional per-rule `messages`.
 - Event handlers are **names** (`"on": { "load": "loadCars" }`) resolved against host functions

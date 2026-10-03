@@ -1,8 +1,7 @@
-import { html, LitElement, nothing, type PropertyValues } from 'lit';
+import { html, nothing, type PropertyValues } from 'lit';
 import { property, state } from 'lit/decorators.js';
-import { safeDefine } from '@golemui/lit/internals';
+import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
-import type { DateRange, DisabledTimeRange } from '@golemui/gui-shared/internals';
 import './date-time-input';
 import './date-time-calendar';
 import type { GuiDateTime } from './date-time-input';
@@ -17,53 +16,106 @@ import {
   type HourFormat,
 } from '../utils/time';
 import { addErrors, addIcon, addLabel, addPickerPanel } from '../utils/templates';
-import { INVALID_DISABLED_TIME_RANGE_MESSAGE } from '../utils/messages';
 import { CARET_DOWN_PATH } from '../utils/icons';
+import type { DateRange, DisabledTimeRange } from '../types';
+import { boundsValidity, GuiFormControl, type GuiValidity } from '../gui-form-control';
+import {
+  dispatchBlur,
+  dispatchInputError,
+  dispatchValue,
+  stopPropagation,
+  fires,
+  valueEvents,
+  type GuiInputErrorEventDetail,
+} from '../utils/events';
+import { message, requiredName } from '../utils/messages';
 
-export class GuiDateTimePicker extends LitElement {
-  @property({ type: String }) uid: string | undefined = undefined;
-  @property({ type: String }) label: string | undefined = undefined;
-  @property({ type: String }) hint: string | undefined = undefined;
+/**
+ * A date and time field with a calendar and time popup.
+ *
+ * @fires gui-input - The user changed the value. `detail.value` is the new value.
+ * @fires gui-change - The user committed the value. `detail.value` is the committed value.
+ * @fires gui-blur - Focus left the control.
+ * @fires gui-input-error - The element rejected what the user entered, such as an impossible date
+ *   or a value out of bounds. `detail.message` is the error; show it through `errors`.
+ * @cssprop --gui-calendar-width - Width of one month.
+ * @cssprop --gui-calendar-day-button-size - Size of each day.
+ * @cssprop --gui-calendar-change-month-button-width - Width of the previous- and next-month
+ *   buttons.
+ * @cssprop --gui-calendar-change-month-button-height - Height of the previous- and next-month
+ *   buttons.
+ * @cssprop --gui-calendar-year-button-width - Width of each year in the year grid.
+ * @cssprop --gui-calendar-year-button-height - Height of each year in the year grid.
+ * @cssprop --gui-calendar-year-grid-height - Height of the year grid.
+ * @cssprop --gui-calendar-time-grid-height - Height of the time grid.
+ * @cssprop --gui-calendar-time-button-height - Height of each time in the grid.
+ */
+export class GuiDateTimePicker extends GuiFormControl {
+  /** Icon class name shown inside the control, for example from an icon font. */
   @property({ type: String }) icon: string | undefined = '';
+  /** Accessible name of the button that opens the popup. An empty value keeps the default. */
   @property({ type: String, attribute: 'toggle-aria-label' }) toggleAriaLabel: string | undefined =
     undefined;
-  @property({ type: String }) dayAriaLabel: string | undefined = undefined;
-  @property({ type: String }) monthAriaLabel: string | undefined = undefined;
-  @property({ type: String }) yearAriaLabel: string | undefined = undefined;
-  @property({ type: String }) hourAriaLabel: string | undefined = undefined;
-  @property({ type: String }) minuteAriaLabel: string | undefined = undefined;
-  @property({ type: String }) dayPeriodAriaLabel: string | undefined = undefined;
-  @property({ type: Array }) errors: string[] | undefined = [];
-  @property({ type: Boolean }) showErrors: boolean | undefined = true;
-  @property({ type: Boolean }) touched: boolean | undefined = false;
-  @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean }) disabled: boolean | undefined = false;
-  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
+  /** Accessible name of the day part. An empty value keeps the default. */
+  @property({ type: String, attribute: 'day-aria-label' }) dayAriaLabel: string | undefined =
+    undefined;
+  /** Accessible name of the month part. An empty value keeps the default. */
+  @property({ type: String, attribute: 'month-aria-label' }) monthAriaLabel: string | undefined =
+    undefined;
+  /** Accessible name of the year part. An empty value keeps the default. */
+  @property({ type: String, attribute: 'year-aria-label' }) yearAriaLabel: string | undefined =
+    undefined;
+  /** Accessible name of the hour part. An empty value keeps the default. */
+  @property({ type: String, attribute: 'hour-aria-label' }) hourAriaLabel: string | undefined =
+    undefined;
+  /** Accessible name of the minute part. An empty value keeps the default. */
+  @property({ type: String, attribute: 'minute-aria-label' }) minuteAriaLabel: string | undefined =
+    undefined;
+  /** Accessible name of the AM/PM part. An empty value keeps the default. */
+  @property({ type: String, attribute: 'day-period-aria-label' }) dayPeriodAriaLabel:
+    | string
+    | undefined = undefined;
+  /**
+   * Whether the element renders its own error list. Elements that embed it turn it off and show the
+   * errors themselves.
+   */
+  @property({ type: Boolean, attribute: 'show-errors' }) showErrors: boolean | undefined = true;
+  /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
+  /** The date and time, as an ISO date-time (`YYYY-MM-DDTHH:mm:ss`). */
   @property({ type: String }) value: string | undefined = undefined;
+  /** Icon class name of the previous-month button. */
   @property({ type: String, attribute: 'prev-month-icon' }) prevMonthIcon: string | undefined = '';
+  /** Icon class name of the next-month button. */
   @property({ type: String, attribute: 'next-month-icon' }) nextMonthIcon: string | undefined = '';
+  /** Accessible name of the previous-month button. An empty value keeps the default. */
   @property({ type: String, attribute: 'prev-month-aria-label' }) prevMonthAriaLabel:
     | string
     | undefined = undefined;
+  /** Accessible name of the next-month button. An empty value keeps the default. */
   @property({ type: String, attribute: 'next-month-aria-label' }) nextMonthAriaLabel:
     | string
     | undefined = undefined;
+  /** Accessible name of the button that opens the year grid. An empty value keeps the default. */
   @property({ type: String, attribute: 'select-year-aria-label' }) selectYearAriaLabel:
     | string
     | undefined = undefined;
+  /** Accessible name of the year grid. An empty value keeps the default. */
   @property({ type: String, attribute: 'year-grid-aria-label' }) yearGridAriaLabel:
     | string
     | undefined = undefined;
+  /** How day numbers are written. */
   @property({ type: String, attribute: 'day-format' }) dayFormat:
     | 'numeric'
     | '2-digit'
     | undefined = undefined;
+  /** How weekday names are written in the header. */
   @property({ type: String, attribute: 'weekday-format' }) weekdayFormat:
     | 'short'
     | 'long'
     | 'narrow'
     | undefined = undefined;
+  /** How the month is written in the header. */
   @property({ type: String, attribute: 'month-format' }) monthFormat:
     | 'numeric'
     | '2-digit'
@@ -71,43 +123,62 @@ export class GuiDateTimePicker extends LitElement {
     | 'short'
     | 'narrow'
     | undefined = undefined;
+  /** Earliest selectable date, as an ISO date (`YYYY-MM-DD`). */
   @property({ type: String, attribute: 'min-date' }) minDate: string | undefined = undefined;
+  /** Latest selectable date, as an ISO date (`YYYY-MM-DD`). */
   @property({ type: String, attribute: 'max-date' }) maxDate: string | undefined = undefined;
+  /** Dates that cannot be picked, as `{ start, end }` ISO date ranges. */
   @property({ type: Array, attribute: 'disabled-ranges' }) disabledRanges: DateRange[] | undefined =
     undefined;
+  /** Number of months shown side by side. */
   @property({ type: Number, attribute: 'number-of-months' }) numberOfMonths: number | undefined =
     undefined;
+  /** 12- or 24-hour clock. Defaults to the locale's. */
   @property({ type: String, attribute: 'hour-format' }) hourFormat: HourFormat | undefined =
     undefined;
+  /** Minutes between the times offered in the list. */
   @property({ type: Number, attribute: 'minute-step' }) minuteStep: number | undefined = undefined;
+  /** Earliest selectable time, as an ISO time (`HH:mm:ss`). */
   @property({ type: String, attribute: 'min-time' }) minTime: string | undefined = undefined;
+  /** Latest selectable time, as an ISO time (`HH:mm:ss`). */
   @property({ type: String, attribute: 'max-time' }) maxTime: string | undefined = undefined;
+  /** Times that cannot be picked, optionally only on a date or on some weekdays. */
   @property({ type: Array, attribute: 'disabled-time-ranges' }) disabledTimeRanges:
     | DisabledTimeRange[]
     | undefined = undefined;
+  /** Allows typing any time, not only picking one from the list. */
   @property({ type: Boolean, attribute: 'allow-custom-time' }) allowCustomTime:
     | boolean
     | undefined = false;
+  /** Error for a complete but impossible date, such as February 31. */
   @property({ type: String, attribute: 'invalid-date-message' }) invalidDateMessage:
     | string
     | undefined = undefined;
+  /** Error for a date before `minDate`. */
   @property({ type: String, attribute: 'min-date-message' }) minDateMessage: string | undefined =
     undefined;
+  /** Error for a date after `maxDate`. */
   @property({ type: String, attribute: 'max-date-message' }) maxDateMessage: string | undefined =
     undefined;
+  /** Error for a date inside `disabledRanges`. */
   @property({ type: String, attribute: 'disabled-date-range-message' }) disabledDateRangeMessage:
     | string
     | undefined = undefined;
+  /** Error for a time before `minTime`. */
   @property({ type: String, attribute: 'min-time-message' }) minTimeMessage: string | undefined =
     undefined;
+  /** Error for a time after `maxTime`. */
   @property({ type: String, attribute: 'max-time-message' }) maxTimeMessage: string | undefined =
     undefined;
+  /** Error for a time inside `disabledTimeRanges`. */
   @property({ type: String, attribute: 'disabled-time-range-message' }) disabledTimeRangeMessage:
     | string
     | undefined = undefined;
+  /** Text shown when no time can be picked. */
   @property({ type: String, attribute: 'no-available-times-message' }) noAvailableTimesMessage:
     | string
     | undefined = undefined;
+  /** Error when focus leaves a partly filled value. */
   @property({ type: String, attribute: 'incomplete-message' }) incompleteMessage:
     | string
     | undefined = undefined;
@@ -165,15 +236,16 @@ export class GuiDateTimePicker extends LitElement {
 
     const calendar = this._popup.open
       ? addPickerPanel(
-          this.uid ?? '',
+          this.uid,
           { errors: this.errors, touched: this.touched, showErrors: this.showErrors },
           html`<gui-date-time-calendar
             id=${`${this.uid}_popup`}
             role="dialog"
-            aria-label=${this.label ?? 'Calendar'}
+            aria-labelledby=${this.label ? `${this.uid}_label` : nothing}
+            aria-label=${this.label ? nothing : requiredName('calendar')}
             .uid=${this.uid}
             .hint=${this.hint}
-            ?touched=${this.touched}
+            .touched=${this.touched}
             ?required=${this.required}
             ?disabled=${this.disabled}
             ?readonly=${this.readOnly}
@@ -205,16 +277,18 @@ export class GuiDateTimePicker extends LitElement {
             .maxTimeMessage=${this.maxTimeMessage}
             .disabledTimeRangeMessage=${this.disabledTimeRangeMessage}
             .noAvailableTimesMessage=${this.noAvailableTimesMessage}
-            @blur=${this.onCalendarBlur}
-            @change=${this.onCalendarChange}
-            @partsChange=${this.onCalendarPartsChange}
+            @gui-blur=${this.onCalendarBlur}
+            @gui-input=${this.onCalendarInput}
+            @gui-change=${this.onCalendarChange}
+            @gui-parts-change=${this.onCalendarPartsChange}
+            @gui-input-error=${this.onInnerInputError}
           ></gui-date-time-calendar>`,
         )
       : nothing;
 
     return html`
       ${addLabel(
-        this.uid ?? '',
+        this.uid,
         {
           label: this.label,
           hint: this.hint,
@@ -239,7 +313,7 @@ export class GuiDateTimePicker extends LitElement {
           .showErrors=${false}
           .deferFocusLeave=${true}
           .errors=${this.errors}
-          ?touched=${this.touched}
+          .touched=${this.touched}
           ?required=${this.required}
           ?disabled=${this.disabled}
           ?readonly=${this.readOnly}
@@ -260,15 +334,17 @@ export class GuiDateTimePicker extends LitElement {
           .minTimeMessage=${this.minTimeMessage}
           .maxTimeMessage=${this.maxTimeMessage}
           .incompleteMessage=${this.incompleteMessage}
-          @blur=${this.onDateBlur}
-          @focus=${this._popup.show}
-          @change=${this.onDateChange}
-          @partsChange=${this.onInputPartsChange}
+          @gui-blur=${this.onDateBlur}
+          @gui-focus=${this.onDateFocus}
+          @gui-input=${this.onDateInput}
+          @gui-change=${stopPropagation}
+          @gui-parts-change=${this.onInputPartsChange}
+          @gui-input-error=${this.onInnerInputError}
         ></gui-date-time>
         <button
           type="button"
           class="gui-date-time-picker__arrow"
-          aria-label=${this.toggleAriaLabel ?? 'Show calendar'}
+          aria-label=${requiredName('showCalendar', this.toggleAriaLabel)}
           aria-haspopup="dialog"
           aria-expanded=${this._popup.open ? 'true' : 'false'}
           aria-controls=${`${this.uid}_popup`}
@@ -289,9 +365,7 @@ export class GuiDateTimePicker extends LitElement {
         ${calendar}
       </div>
 
-      ${this.showErrors
-        ? addErrors(this.uid ?? '', { errors: this.errors, touched: this.touched })
-        : ''}
+      ${this.showErrors ? addErrors(this.uid, { errors: this.errors, touched: this.touched }) : ''}
     `;
   }
 
@@ -305,7 +379,18 @@ export class GuiDateTimePicker extends LitElement {
     }
   };
 
-  private onDateChange(event: CustomEvent) {
+  private onDateFocus(event: Event) {
+    stopPropagation(event);
+    this._popup.show();
+  }
+
+  /** The field's and the calendar's errors are reported as the picker's own. */
+  private onInnerInputError(event: CustomEvent<GuiInputErrorEventDetail>) {
+    stopPropagation(event);
+    dispatchInputError(this, event.detail.message);
+  }
+
+  private onDateInput(event: CustomEvent) {
     event.stopPropagation();
     this.commitValue(event.detail.value);
   }
@@ -320,16 +405,22 @@ export class GuiDateTimePicker extends LitElement {
     event.stopPropagation();
   }
 
-  private onCalendarChange(event: CustomEvent) {
-    if (!this._popup.open) {
-      event.stopPropagation();
-      return;
-    }
-
+  private onCalendarInput(event: CustomEvent) {
     event.stopPropagation();
+    if (!this._popup.open) return;
     this.commitValue(event.detail.value);
-    if (event.detail.value && event.detail.commit) {
+  }
+
+  /**
+   * A deliberate time pick in the calendar completes the selection and closes the popover,
+   * returning focus to the field like Escape.
+   */
+  private onCalendarChange(event: CustomEvent) {
+    event.stopPropagation();
+    if (this._popup.open && event.detail.value) {
       this._popup.close();
+      // Once the popover is gone: the calendar's time picker focuses its own field after the pick.
+      this.updateComplete.then(() => this._popup.restoreFocusToInput());
     }
   }
 
@@ -366,22 +457,8 @@ export class GuiDateTimePicker extends LitElement {
     }
 
     const error = this.validateBounds(this.value);
-    this.dispatchEvent(
-      new CustomEvent('change', {
-        detail: { value: value ?? null },
-        bubbles: true,
-        composed: true,
-      }),
-    );
-    if (error) {
-      this.dispatchEvent(
-        new CustomEvent('inputError', {
-          detail: { message: error },
-          bubbles: true,
-          composed: true,
-        }),
-      );
-    }
+    dispatchValue(this, value ?? null);
+    if (error) dispatchInputError(this, error);
   }
 
   /**
@@ -394,8 +471,17 @@ export class GuiDateTimePicker extends LitElement {
    * the popover restores the partial.
    */
   private onFocusLeave(): void {
-    this.dispatchEvent(new CustomEvent('blur'));
+    dispatchBlur(this);
     this.querySelector<GuiDateTime>('gui-date-time')?.settleOnFocusLeave();
+  }
+
+  protected override validate(): GuiValidity | null {
+    // The bounds are days: a time outside a day's allowed times reports as a custom error.
+    const day = this.value?.slice(0, 10);
+    return (
+      boundsValidity(this.validateBounds(this.value), day, this.minDate, this.maxDate) ??
+      super.validate()
+    );
   }
 
   private validateBounds(value: string | undefined): string | null {
@@ -414,7 +500,7 @@ export class GuiDateTimePicker extends LitElement {
     // Disabled time ranges are date-scoped, so resolve them for the value's day.
     const ranges = resolveDisabledTimeRangesForDate(this.disabledTimeRanges, isoDate);
     if (isTimeDisabled(toISOTimeString(date), ranges)) {
-      return this.disabledTimeRangeMessage ?? INVALID_DISABLED_TIME_RANGE_MESSAGE;
+      return message('disabledTimeRange', this.disabledTimeRangeMessage);
     }
     return null;
   }
@@ -429,6 +515,12 @@ export class GuiDateTimePicker extends LitElement {
     this._popup.closeOnFocusLeave();
   }
 }
+
+/** The events `gui-date-time-picker` fires, with their types. */
+export const GuiDateTimePickerEvents = {
+  ...valueEvents<GuiDateTimePicker['value']>(),
+  'gui-input-error': fires<CustomEvent<GuiInputErrorEventDetail>>(),
+};
 
 declare global {
   interface HTMLElementTagNameMap {

@@ -1,10 +1,6 @@
-import type { DateRange } from '@golemui/gui-shared/internals';
 import { weekInfoData } from './week-info';
-import {
-  DISABLED_DATE_RANGE_MESSAGE,
-  INVALID_MAX_DATE_MESSAGE,
-  INVALID_MIN_DATE_MESSAGE,
-} from './messages';
+import type { DateRange } from '../types';
+import { message } from './messages';
 
 /**
  * Converts a Date object to a string formatted as an ISO 8601 date (YYYY-MM-DD).
@@ -107,13 +103,13 @@ export function dateBoundsError(
 ): string | null {
   const day = isoDate.split('T')[0];
   if (minDate && day < minDate.split('T')[0]) {
-    return messages?.minDateMessage ?? INVALID_MIN_DATE_MESSAGE;
+    return messages?.minDateMessage ?? message('minDate');
   }
   if (maxDate && day > maxDate.split('T')[0]) {
-    return messages?.maxDateMessage ?? INVALID_MAX_DATE_MESSAGE;
+    return messages?.maxDateMessage ?? message('maxDate');
   }
   if (isDateDisabled(day, undefined, undefined, disabledRanges)) {
-    return messages?.disabledDateRangeMessage ?? DISABLED_DATE_RANGE_MESSAGE;
+    return messages?.disabledDateRangeMessage ?? message('disabledDateRange');
   }
   return null;
 }
@@ -243,14 +239,24 @@ export function weekDaysOrder(localeId: string | undefined): number[] {
   return getOrderedWeekDays(localeData.firstDay);
 }
 
+/** How the calendars write the weekday names of the days grid header. */
+export type WeekdayFormat = 'short' | 'long' | 'narrow';
+
+/** How the calendars write the day numbers of the days grid. */
+export type DayFormat = 'numeric' | '2-digit';
+
 /**
  * Returns an array of weekday labels based on the specified locale.
  *
  * @param {string | undefined} localeId - The locale identifier used to format weekday labels. If undefined, the default locale is used.
- * @return {string[]} An array of localized weekday labels in "narrow" format, starting from the locale's defined first day of the week.
+ * @param {WeekdayFormat} [format] - How the weekday is written. Defaults to 'narrow'.
+ * @return {string[]} An array of localized weekday labels, starting from the locale's defined first day of the week.
  */
-export function getWeekdayLabels(localeId: string | undefined): string[] {
-  const formatter = new Intl.DateTimeFormat(localeId, { weekday: 'narrow' });
+export function getWeekdayLabels(
+  localeId: string | undefined,
+  format: WeekdayFormat = 'narrow',
+): string[] {
+  const formatter = new Intl.DateTimeFormat(localeId, { weekday: format });
   // Anchor Sunday date
   const sundayRef = new Date(2025, 10, 30);
   return weekDaysOrder(localeId).map((dayCode) => {
@@ -349,11 +355,16 @@ export function getMonthYearParts(
  *
  * @param {string | undefined} localeId - The locale identifier to format the day. Defaults to 'en-US' if not provided or undefined.
  * @param {Date} date - The date object from which the day label is retrieved.
+ * @param {DayFormat} [format] - How the day is written. Defaults to 'numeric'.
  * @return {string} The numeric day label as a string based on the locale format.
  */
-export function getDayLabel(localeId: string | undefined, date: Date): string {
+export function getDayLabel(
+  localeId: string | undefined,
+  date: Date,
+  format: DayFormat = 'numeric',
+): string {
   const locale = localeId || 'en-US';
-  const formatter = new Intl.DateTimeFormat(locale, { day: 'numeric' });
+  const formatter = new Intl.DateTimeFormat(locale, { day: format });
   const parts = formatter.formatToParts(date);
   const dayPart = parts.find((part) => part.type === 'day');
 

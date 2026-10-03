@@ -62,6 +62,7 @@ export default [
           depConstraints: [
             { sourceTag: 'type:app', bannedExternalImports: ['@golemui/*/internals'] },
             { sourceTag: 'scope:core', onlyDependOnLibsWithTags: ['scope:core'] },
+            { sourceTag: 'scope:components', onlyDependOnLibsWithTags: ['scope:components'] },
             {
               sourceTag: 'scope:framework',
               onlyDependOnLibsWithTags: ['scope:core', 'scope:framework'],

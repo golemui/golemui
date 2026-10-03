@@ -19,7 +19,7 @@ const direction = computed(() => templateData.value.direction || 'column');
 </script>
 
 <template>
-  <div class="gui-radiogroup gui-field" :style="{ flex: templateData.size }">
+  <div class="gui-radiogroup gui-field">
     <gui-radiogroup
       :uid="uid"
       :label="templateData.label"
@@ -34,8 +34,8 @@ const direction = computed(() => templateData.value.direction || 'column');
       :labelField="templateData.labelField"
       :valueField="templateData.valueField"
       :direction.prop="direction"
-      @change="handleChange"
-      @blur="onBlur"
+      @gui-input="handleChange"
+      @gui-blur="onBlur"
     ></gui-radiogroup>
   </div>
 </template>

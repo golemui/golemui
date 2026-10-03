@@ -18,7 +18,7 @@ const required = computed(() => (templateData.value.validator as Validator)?.req
 </script>
 
 <template>
-  <div class="gui-textinput gui-field" :style="{ flex: templateData.size }">
+  <div class="gui-textinput gui-field">
     <gui-textinput
       :uid="uid"
       :label="templateData.label"
@@ -32,8 +32,8 @@ const required = computed(() => (templateData.value.validator as Validator)?.req
       :icon="templateData.icon"
       :placeholder="templateData.placeholder ?? undefined"
       :autocomplete="templateData.autocomplete ?? undefined"
-      @input="handleInput"
-      @blur="onBlur"
+      @gui-input="handleInput"
+      @gui-blur="onBlur"
     ></gui-textinput>
   </div>
 </template>

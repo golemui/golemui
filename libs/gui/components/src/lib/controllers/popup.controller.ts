@@ -17,7 +17,7 @@ export interface GUIPopupControllerOptions {
   /**
    * Selector (scoped to the host, light DOM) for the element to focus when
    * Escape closes the popup, e.g. `'gui-date input'`. Hosts that delegate
-   * focus restoration to their own host (gui-pills' `pillexit`) omit it,
+   * focus restoration to their own host (gui-pills' `gui-pill-exit`) omit it,
    * making `restoreFocusToInput()` a no-op.
    */
   focusRestoreSelector?: string;

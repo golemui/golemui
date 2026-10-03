@@ -10,6 +10,7 @@ import { defaultMultiListItemRenderer } from './default-multi-list-item-renderer
 import '@golemui/gui-components/label';
 import '@golemui/gui-components/multi-list';
 import '@golemui/gui-components/errors';
+import { live } from 'lit/directives/live.js';
 
 export class MultiListElement extends LitElement implements WithWidget {
   widget!: InputWidget<OptionValue[]>;
@@ -31,18 +32,6 @@ export class MultiListElement extends LitElement implements WithWidget {
 
   override createRenderRoot() {
     return this;
-  }
-
-  override updated(changedProperties: any) {
-    super.updated(changedProperties);
-
-    const size = this.adapter.templateData.size;
-
-    if (size) {
-      this.style.flex = String(size);
-    } else {
-      this.style.removeProperty('flex');
-    }
   }
 
   override connectedCallback() {
@@ -89,19 +78,21 @@ export class MultiListElement extends LitElement implements WithWidget {
         .errors=${templateData.errors}
         .touched=${templateData.touched}
         .required=${templateData.validator?.required}
+        .disabled=${templateData.disabled}
+        .readOnly=${templateData.readonly}
         .native=${false}
       ></gui-label>
 
       <div class="gui-widget">
         <gui-multi-list
           .uid=${this.widget.uid}
-          .values=${values}
+          .values=${live(values)}
           .valueField=${templateData.valueField as string}
           .items=${templateData.items}
           .itemHeight=${templateData.itemHeight}
           .height=${templateData.height}
           ?required=${templateData.validator?.required}
-          ?touched=${templateData.touched}
+          .touched=${templateData.touched}
           ?disabled=${templateData.disabled}
           ?readonly=${templateData.readonly}
           aria-labelledby=${templateData.label ? `${this.widget.uid}_label` : nothing}
@@ -109,8 +100,8 @@ export class MultiListElement extends LitElement implements WithWidget {
           @gui-range-change=${this._onRangeChange}
           @gui-update-items=${this._onUpdateItems}
           @gui-focus-change=${this._onFocusChange}
-          @blur=${() => this.adapter.onBlur()}
-          @change=${this._valueChanged}
+          @gui-blur=${() => this.adapter.onBlur()}
+          @gui-item-toggle=${this._valueChanged}
         >
           ${visibleItems.map((item, index) => {
             const absoluteIndex = this._range.start + index;
@@ -190,7 +181,8 @@ export class MultiListElement extends LitElement implements WithWidget {
   }
 
   private _onClickItem(item: ListItem<any>, index: number) {
-    if (this.adapter.templateData.disabled || item.disabled) return;
+    const { disabled, readonly } = this.adapter.templateData;
+    if (disabled || readonly || item.disabled) return;
 
     this._toggleValue(item.value);
 

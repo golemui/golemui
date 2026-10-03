@@ -1,9 +1,7 @@
 import type { LayoutWidget, WithWidget } from '@golemui/core';
 import { LayoutWidgetAdapter, type LitFormContext, formContext, layoutContext } from '@golemui/lit';
-import {
-  createIntersectionObserver,
-  type TabsEventDetail,
-} from '@golemui/gui-components/internals';
+import type { GuiTabChangeEventDetail } from '@golemui/gui-components';
+import type { TabsEventDetail } from '@golemui/gui-components/internals';
 import { safeDefine, unsubscribeAll } from '@golemui/lit/internals';
 import {
   repeaterIndexSuffix,
@@ -12,27 +10,14 @@ import {
   type TabsProps,
 } from '@golemui/gui-shared/internals';
 import { consume, provide } from '@lit/context';
-import { html, LitElement, nothing, type PropertyValues } from 'lit';
-import { repeat } from 'lit-html/directives/repeat.js';
-import { property, query, queryAll, state } from 'lit/decorators.js';
-import { classMap } from 'lit/directives/class-map.js';
+import { html, LitElement } from 'lit';
+import { repeat } from 'lit/directives/repeat.js';
+import { property, state } from 'lit/decorators.js';
 import { type Subscription } from 'rxjs';
+import '@golemui/gui-components/tabs';
 
 export class TabsElement extends LitElement implements WithWidget {
   widget!: LayoutWidget;
-
-  // Queried by class: this element renders into the light DOM, so a fixed id would be duplicated
-  // across every tabs instance on the page.
-  @query('.gui-sentinel__start') startSentinel!: HTMLElement;
-  @query('.gui-sentinel__end') endSentinel!: HTMLElement;
-
-  @state() isStartVisible!: boolean;
-  @state() isEndVisible!: boolean;
-
-  @queryAll('button[role="tab"]')
-  tabButtons!: HTMLButtonElement[];
-
-  @property({ type: String }) activeTab = '';
 
   @consume({ context: formContext })
   @property({ attribute: false })
@@ -41,36 +26,14 @@ export class TabsElement extends LitElement implements WithWidget {
   @provide({ context: layoutContext })
   adapter = new LayoutWidgetAdapter<TabsProps>();
 
+  /** The tab uid, without row indexes: the panel children carry them, see `rowIndexSuffix`. */
+  @state() private activeTab = '';
+
   subscriptions: Subscription[] = [];
-
-  // `activeTab` holds the raw props uid, children arrive from the store with row indexes applied.
   private rowIndexSuffix = '';
-
-  private startObserver?: IntersectionObserver;
-  private endObserver?: IntersectionObserver;
-
-  private get activeChildUid() {
-    return this.childUid(this.activeTab);
-  }
-
-  private childUid(tabUid: string) {
-    return `${tabUid}${this.rowIndexSuffix}`;
-  }
 
   override createRenderRoot() {
     return this;
-  }
-
-  override updated(changedProperties: any) {
-    super.updated(changedProperties);
-
-    const size = this.adapter.templateData.size;
-
-    if (size) {
-      this.style.flex = String(size);
-    } else {
-      this.style.removeProperty('flex');
-    }
   }
 
   override connectedCallback() {
@@ -89,150 +52,66 @@ export class TabsElement extends LitElement implements WithWidget {
     );
   }
 
-  protected override firstUpdated(_changedProperties: PropertyValues) {
-    this.startObserver = createIntersectionObserver(
-      this.startSentinel,
-      (isIntersecting) => (this.isStartVisible = isIntersecting),
-    );
-    this.endObserver = createIntersectionObserver(
-      this.endSentinel,
-      (isIntersecting) => (this.isEndVisible = isIntersecting),
-    );
-
-    // Scroll into view the active tab, just in case it's out of view
-    const tabs = this.adapter.templateData.tabs ?? [];
-    const currentIndex = tabs.findIndex((tab) => tab.uid === this.activeTab);
-    if (currentIndex > -1) {
-      this.tabButtons[currentIndex].scrollIntoView({ block: 'nearest', inline: 'nearest' });
-    }
-  }
-
   override render() {
     if (!this.adapter.templateData) return html``;
 
+    const { tabs = [], children = [], renderMode } = this.adapter.templateData;
     // Panels come from the tab list, so a tab and its panel always carry the same uid. A tab whose
     // child is hidden by a `when` keeps its header and gets no panel.
-    const children = this.adapter.templateData.children ?? [];
-    const panels = (this.adapter.templateData.tabs ?? [])
-      .map((tab) => {
-        const child = children.find((section: any) => section.uid === this.childUid(tab.uid));
-        return { tab, child, isActive: child?.uid === this.activeChildUid };
-      })
-      .filter(
-        ({ child, isActive }) =>
-          child !== undefined &&
-          (isActive || this.adapter.templateData.renderMode !== 'activeOnly'),
-      );
+    const panels = tabs
+      .map((tab) => ({
+        tab,
+        child: children.find((child: any) => child.uid === `${tab.uid}${this.rowIndexSuffix}`),
+        isActive: tab.uid === this.activeTab,
+      }))
+      .filter(({ child, isActive }) => child && (isActive || renderMode !== 'activeOnly'));
 
-    const navClasses = {
-      'gui-widget': true,
-      'gui-widget--horizontal': true,
-      'gui-tabs--start-shadow': !this.isStartVisible,
-      'gui-tabs--end-shadow': !this.isEndVisible,
-    };
-
-    return html`<nav class=${classMap(navClasses)} id=${this.widget.uid}>
-        <ul role="tablist">
-          <li role="presentation" class="gui-sentinel gui-sentinel__start"></li>
-          ${this.adapter.templateData.tabs
-            ? repeat(
-                this.adapter.templateData.tabs,
-                (tab) => html`
-                  <li role="presentation">
-                    <button
-                      type="button"
-                      role="tab"
-                      tabindex=${tab.uid === this.activeTab ? '0' : '-1'}
-                      data-cy=${tabButtonId(this.widget.uid, tab.uid)}
-                      id=${tabButtonId(this.widget.uid, tab.uid)}
-                      aria-controls=${tabPanelId(this.widget.uid, tab.uid)}
-                      aria-selected=${tab.uid === this.activeTab ? 'true' : 'false'}
-                      class=${classMap({ active: tab.uid === this.activeTab })}
-                      @click=${() => this.onClickTab(tab.uid)}
-                      @keydown=${this.onKeyDown}
-                      @focus=${(event: FocusEvent) =>
-                        (event.target as HTMLButtonElement).scrollIntoView({
-                          block: 'nearest',
-                          inline: 'nearest',
-                        })}
-                    >
-                      ${tab.label}
-                    </button>
-                  </li>
-                `,
-              )
-            : nothing}
-          <li role="presentation" class="gui-sentinel gui-sentinel__end"></li>
-        </ul>
-      </nav>
+    return html`<gui-tabs
+      id=${this.widget.uid}
+      .active=${this.activeTab}
+      @gui-tab-change=${this.onTabChange}
+    >
+      <gui-tab-list>
+        ${repeat(
+          tabs,
+          (tab) => tab.uid,
+          (tab) =>
+            html`<gui-tab
+              panel=${tab.uid}
+              id=${tabButtonId(this.widget.uid, tab.uid)}
+              data-cy=${tabButtonId(this.widget.uid, tab.uid)}
+              >${tab.label}</gui-tab
+            >`,
+        )}
+      </gui-tab-list>
       ${repeat(
         panels,
         ({ tab }) => tab.uid,
         ({ tab, child, isActive }) =>
-          html`<section
-            role="tabpanel"
-            tabindex="0"
-            data-cy=${tabPanelId(this.widget.uid, tab.uid)}
+          html`<gui-tab-panel
+            name=${tab.uid}
             id=${tabPanelId(this.widget.uid, tab.uid)}
+            data-cy=${tabPanelId(this.widget.uid, tab.uid)}
             ?hidden=${!isActive}
-            aria-labelledby=${tabButtonId(this.widget.uid, tab.uid)}
           >
             <gui-widget .widget=${child}></gui-widget>
-          </section>`,
-      )}`;
+          </gui-tab-panel>`,
+      )}
+    </gui-tabs>`;
   }
 
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.adapter.destroy();
     unsubscribeAll(this.subscriptions);
-    this.startObserver?.disconnect();
-    this.endObserver?.disconnect();
   }
 
-  private onClickTab(uid: string) {
-    this.activeTab = uid;
-    this.adapter.change<TabsEventDetail>(uid);
-    this.requestUpdate();
-  }
-
-  private onKeyDown(event: KeyboardEvent) {
-    const tabs = this.adapter.templateData.tabs ?? [];
-    const currentIndex = tabs.findIndex((tab) => tab.uid === this.activeTab);
-    const tabButtons = Array.from(this.tabButtons);
-    const isRTL = window.getComputedStyle(this).direction === 'rtl';
-
-    switch (event.key) {
-      case 'ArrowLeft': {
-        const nextIndex = currentIndex + (isRTL ? 1 : -1);
-
-        if (nextIndex >= 0 && nextIndex < tabs.length) {
-          this.activeTab = tabs[nextIndex].uid;
-          tabButtons[nextIndex].focus();
-        }
-        break;
-      }
-      case 'ArrowRight': {
-        const nextIndex = currentIndex + (isRTL ? -1 : 1);
-
-        if (nextIndex >= 0 && nextIndex < tabs.length) {
-          this.activeTab = tabs[nextIndex].uid;
-          tabButtons[nextIndex].focus();
-        }
-        break;
-      }
-      case 'Home':
-        this.activeTab = tabs[0].uid;
-        tabButtons[0].focus();
-        break;
-      case 'End':
-        this.activeTab = tabs[tabs.length - 1].uid;
-        tabButtons[tabs.length - 1].focus();
-        break;
-      default:
-        return;
-    }
-  }
+  private onTabChange = (event: CustomEvent<GuiTabChangeEventDetail>) => {
+    // A tab set nested in a panel fires its own.
+    if (event.target !== event.currentTarget) return;
+    this.activeTab = event.detail.value;
+    this.adapter.change<TabsEventDetail>(event.detail.value);
+  };
 }
 
 safeDefine('gui-tabs-layout', TabsElement);

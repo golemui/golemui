@@ -65,7 +65,7 @@ const handleBlur = (e: FocusEvent) => {
 };
 
 const handleClickItem = (item: ListItem<any>, index: number) => {
-  if (templateData.value.disabled || item.disabled) return;
+  if (templateData.value.disabled || templateData.value.readonly || item.disabled) return;
   onValueChanged(item.value);
   focusedIndex.value = index;
   listRef.value?.focusItemAtIndex(index);
@@ -81,7 +81,7 @@ const ItemRenderer = computed<Component>(() => {
 </script>
 
 <template>
-  <div class="gui-list gui-field" :style="{ flex: templateData.size }">
+  <div class="gui-list gui-field">
     <gui-label
       ref="labelRef"
       :uid="uid"
@@ -90,6 +90,8 @@ const ItemRenderer = computed<Component>(() => {
       :errors="errors"
       :touched="isTouched"
       :required="required"
+      :disabled="isDisabled"
+      :readOnly="isReadOnly"
       :native="false"
     ></gui-label>
 
@@ -107,8 +109,8 @@ const ItemRenderer = computed<Component>(() => {
         :touched="isTouched"
         :disabled="isDisabled"
         :readOnly="isReadOnly"
-        @blur="handleBlur"
-        @change="handleChange"
+        @gui-blur="handleBlur"
+        @gui-input="handleChange"
         @gui-update-items="handleUpdateItems"
         @gui-range-change="handleRangeChange"
         @gui-focus-change="handleFocusChange"

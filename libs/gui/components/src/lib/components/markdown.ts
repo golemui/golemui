@@ -1,12 +1,12 @@
-import { html, LitElement, nothing } from 'lit';
+import { html, nothing } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import { live } from 'lit/directives/live.js';
-import { cspStyleMap, safeDefine } from '@golemui/lit/internals';
+import { cspStyleMap } from '@golemui/lit-utils';
+import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
-import type { Dependencies } from '@golemui/gui-shared';
-import type { MarkdownProps } from '@golemui/gui-shared/internals';
+import type { MarkdownParser } from '../types';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import './markdown-text';
 import {
@@ -21,50 +21,130 @@ import {
   TEXT_ITALIC_BOLD_PATH,
   TEXT_STRIKETHROUGH_PATH,
 } from '../utils/icons';
+import { GuiFormControl } from '../gui-form-control';
+import { dispatchBlur, dispatchChange, dispatchValue, valueEvents } from '../utils/events';
+import { optionalName, requiredName } from '../utils/messages';
 
-export class GuiMarkdown extends LitElement {
-  @property({ type: String }) uid: string | undefined = undefined;
-  @property({ type: String }) label: string | undefined = undefined;
+/** The formats that apply to whole lines, with the prefix that marks a line as formatted. */
+const LINE_FORMATS = {
+  heading: /^#{1,6}\s/,
+  quote: /^> /,
+  orderedList: /^\d+\.\s/,
+  unorderedList: /^- /,
+};
+
+type LineFormat = keyof typeof LINE_FORMATS;
+
+const isLineFormat = (format: string): format is LineFormat =>
+  Object.prototype.hasOwnProperty.call(LINE_FORMATS, format);
+
+/** What <gui-markdown> renders besides the control state: its presentation props. */
+export type GuiMarkdownProps = {
+  hint?: string;
+  placeholder?: string;
+  counterMode?: 'remaining' | 'current';
+  minimumHeight?: number;
+  autoGrow?: boolean;
+  defaultOpenPreview?: boolean;
+  maxLength?: number;
+  dependencies?: { markdown?: MarkdownParser };
+};
+
+/**
+ * A Markdown editor with a formatting toolbar and an optional preview.
+ *
+ * @fires gui-input - The user changed the value. `detail.value` is the new value.
+ * @fires gui-change - The user committed the text, on blur or with a toolbar command.
+ *   `detail.value` is the Markdown.
+ * @fires gui-blur - Focus left the control.
+ * @cssprop --gui-md-text-color - Text color.
+ * @cssprop --gui-md-line-height - Line height.
+ * @cssprop --gui-md-heading-color - Heading color.
+ * @cssprop --gui-md-heading-weight - Heading font weight.
+ * @cssprop --gui-md-link-color - Link color.
+ * @cssprop --gui-md-link-hover-color - Link color on hover.
+ * @cssprop --gui-md-blockquote-bg - Quote background.
+ * @cssprop --gui-md-blockquote-border-color - Quote border color.
+ * @cssprop --gui-md-blockquote-color - Quote text color.
+ * @cssprop --gui-md-code-bg - Code background.
+ * @cssprop --gui-md-code-color - Code text color.
+ * @cssprop --gui-md-code-radius - Code corner radius.
+ * @cssprop --gui-md-hr-color - Horizontal rule color.
+ */
+export class GuiMarkdown extends GuiFormControl {
+  /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
-  @property({ type: Array }) errors: string[] | undefined = [];
-  @property({ type: Boolean }) touched: boolean | undefined = false;
-  @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean }) disabled: boolean | undefined = false;
-  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
+  /** The Markdown text. */
   @property({ type: String }) value: string | undefined = undefined;
 
-  @property({ type: String }) hint: string | undefined = undefined;
+  /**
+   * Toolbar buttons, in order: `H` heading, `B` bold, `I` italic, `S` strikethrough, `Q` quote, `L`
+   * link, `OL` and `UL` lists, and `|` for a separator. All by default.
+   */
   @property({ type: Array }) tools: string[] | undefined = undefined;
+  /** Text shown while the control is empty. */
   @property({ type: String }) placeholder: string | undefined = undefined;
+  /** The `autocomplete` hint passed to the inner native control. */
   @property({ type: String }) autocomplete: string | undefined = undefined;
-  @property({ type: String, attribute: 'countermode' }) counterMode:
+  /**
+   * With `maxLength`, whether the counter shows the characters left (`remaining`) or used
+   * (`current`).
+   */
+  @property({ type: String, attribute: 'counter-mode' }) counterMode:
     | 'remaining'
     | 'current'
     | undefined;
-  @property({ type: Number, attribute: 'minimumheight' }) minimumHeight: number | undefined =
+  /** Minimum height of the field, in pixels. */
+  @property({ type: Number, attribute: 'minimum-height' }) minimumHeight: number | undefined =
     undefined;
-  @property({ type: Boolean, attribute: 'autogrow' }) autoGrow: boolean | undefined = false;
-  @property({ type: Boolean, attribute: 'defaultopenpreview' }) defaultOpenPreview:
+  /** Grows the field with its content instead of scrolling. */
+  @property({ type: Boolean, attribute: 'auto-grow' }) autoGrow: boolean | undefined = false;
+  /** Opens with the preview shown. */
+  @property({ type: Boolean, attribute: 'default-open-preview' }) defaultOpenPreview:
     | boolean
     | undefined = undefined;
+  /**
+   * The number of characters the counter counts against. It only drives the counter: longer text
+   * is not blocked, and the counter marks it as over the limit.
+   */
   @property({ type: Number, attribute: 'maxlength' }) maxLength: number | undefined = undefined;
 
   // Button titles
-  @property({ type: String }) headingTitle: string | undefined = undefined;
-  @property({ type: String }) boldTitle: string | undefined = undefined;
-  @property({ type: String }) italicTitle: string | undefined = undefined;
-  @property({ type: String }) strikethroughTitle: string | undefined = undefined;
-  @property({ type: String }) quoteTitle: string | undefined = undefined;
-  @property({ type: String }) linkTitle: string | undefined = undefined;
-  @property({ type: String }) orderedListTitle: string | undefined = undefined;
-  @property({ type: String }) unorderedListTitle: string | undefined = undefined;
-  @property({ type: String }) splitViewTitle: string | undefined = undefined;
+  /** Tooltip and accessible name of the heading button. An empty value keeps the default. */
+  @property({ type: String, attribute: 'heading-title' }) headingTitle: string | undefined =
+    undefined;
+  /** Tooltip and accessible name of the bold button. An empty value keeps the default. */
+  @property({ type: String, attribute: 'bold-title' }) boldTitle: string | undefined = undefined;
+  /** Tooltip and accessible name of the italic button. An empty value keeps the default. */
+  @property({ type: String, attribute: 'italic-title' }) italicTitle: string | undefined =
+    undefined;
+  /** Tooltip and accessible name of the strikethrough button. An empty value keeps the default. */
+  @property({ type: String, attribute: 'strikethrough-title' }) strikethroughTitle:
+    | string
+    | undefined = undefined;
+  /** Tooltip and accessible name of the quote button. An empty value keeps the default. */
+  @property({ type: String, attribute: 'quote-title' }) quoteTitle: string | undefined = undefined;
+  /** Tooltip and accessible name of the link button. An empty value keeps the default. */
+  @property({ type: String, attribute: 'link-title' }) linkTitle: string | undefined = undefined;
+  /** Tooltip and accessible name of the numbered list button. An empty value keeps the default. */
+  @property({ type: String, attribute: 'ordered-list-title' }) orderedListTitle:
+    | string
+    | undefined = undefined;
+  /** Tooltip and accessible name of the bulleted list button. An empty value keeps the default. */
+  @property({ type: String, attribute: 'unordered-list-title' }) unorderedListTitle:
+    | string
+    | undefined = undefined;
+  /** Tooltip and accessible name of the preview button. An empty value keeps the default. */
+  @property({ type: String, attribute: 'split-view-title' }) splitViewTitle: string | undefined =
+    undefined;
+  /** Accessible name of the toolbar. An empty value removes it. */
   @property({ type: String, attribute: 'toolbar-aria-label' }) toolbarAriaLabel:
     | string
     | undefined = undefined;
 
   // Deps
-  @property({ type: Object }) dependencies: Dependencies | undefined = undefined;
+  /** Provides the `markdown` parser used by the preview. */
+  @property({ type: Object }) dependencies: { markdown?: MarkdownParser } | undefined = undefined;
 
   @state() private splitViewActive = false;
   @state() private activeFormats: Record<string, boolean> = {};
@@ -74,7 +154,7 @@ export class GuiMarkdown extends LitElement {
   private ariaController = new GUIAriaController(this, {
     getTargets: () => this.querySelectorAll(`textarea[id="${this.uid}"]`),
     getState: () => ({
-      uid: this.uid as string,
+      uid: this.uid,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -109,8 +189,7 @@ export class GuiMarkdown extends LitElement {
   override render() {
     super.render();
 
-    const templateData: ControlTemplateData<string> &
-      MarkdownProps & { dependencies?: Dependencies } = {
+    const templateData: ControlTemplateData<string> & GuiMarkdownProps = {
       uid: this.uid,
       label: this.label,
       errors: this.errors,
@@ -161,7 +240,7 @@ export class GuiMarkdown extends LitElement {
     };
 
     return html`
-      ${addLabel(this.uid as string, templateData)}
+      ${addLabel(this.uid, templateData)}
 
       <div
         class=${classMap({
@@ -169,10 +248,10 @@ export class GuiMarkdown extends LitElement {
           'gui-markdown--with-preview': this.splitViewActive,
         })}
       >
-        <nav
+        <div
           class="gui-markdown__toolbar"
           role="toolbar"
-          aria-label=${this.toolbarAriaLabel ?? 'Text formatting'}
+          aria-label=${optionalName('textFormatting', this.toolbarAriaLabel) ?? nothing}
         >
           <ul role="presentation">
             ${(this.tools ?? ['H', 'B', 'I', 'S', 'Q', 'L', '|', 'OL', 'UL']).map((tool) =>
@@ -186,10 +265,10 @@ export class GuiMarkdown extends LitElement {
                   'gui-markdown__toolbar-button--active': this.splitViewActive,
                 })}
                 ?disabled=${this.disabled}
-                aria-label=${this.splitViewTitle ?? 'Split View'}
+                aria-label=${requiredName('splitView', this.splitViewTitle)}
                 aria-pressed=${this.splitViewActive ? 'true' : 'false'}
                 @click=${this.splitView}
-                title=${this.splitViewTitle ?? 'Split View'}
+                title=${requiredName('splitView', this.splitViewTitle)}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -203,11 +282,11 @@ export class GuiMarkdown extends LitElement {
               </button>
             </li>
           </ul>
-        </nav>
+        </div>
 
         <div class="gui-markdown__container">
           <textarea
-            id=${ifDefined(this.uid)}
+            id=${this.uid}
             class=${classMap(fieldClasses)}
             style=${cspStyleMap(autoGrowStyles)}
             ?required=${templateData.required}
@@ -217,6 +296,7 @@ export class GuiMarkdown extends LitElement {
             autocomplete=${this.autocomplete || nothing}
             .value=${live(this.value ?? '')}
             @input=${this.valueChanged}
+            @change=${this.valueCommitted}
             @keyup=${this.detectFormats}
             @mouseup=${this.detectFormats}
             @blur=${this.onBlur}
@@ -225,7 +305,7 @@ export class GuiMarkdown extends LitElement {
           ${this.splitViewActive
             ? html`
                 <section
-                  data-cy=${ifDefined(this.uid ? `${this.uid}_markdown` : nothing)}
+                  data-cy=${`${this.uid}_markdown`}
                   class="gui-markdown__preview"
                   style=${cspStyleMap(autoGrowStyles)}
                 >
@@ -240,7 +320,7 @@ export class GuiMarkdown extends LitElement {
       </div>
 
       <div class="gui-markdown--validation">
-        <div>${addErrors(this.uid as string, templateData)}</div>
+        <div>${addErrors(this.uid, templateData)}</div>
         ${counter}
       </div>
     `;
@@ -260,6 +340,7 @@ export class GuiMarkdown extends LitElement {
     textarea.style.height = `${Math.max(this.minimumHeight ?? 120, textarea.scrollHeight - totalVerticalPadding)}px`;
   }
 
+  /** @internal */
   splitView() {
     if (this.disabled) return;
     this.splitViewActive = !this.splitViewActive;
@@ -273,10 +354,10 @@ export class GuiMarkdown extends LitElement {
             type="button"
             class=${this.toolbarBtnClass('heading')}
             ?disabled=${this.disabled || this.readOnly}
-            aria-label=${this.headingTitle ?? 'Heading'}
+            aria-label=${requiredName('heading', this.headingTitle)}
             aria-pressed=${this.activeFormats['heading'] ? 'true' : 'false'}
             @click=${this.applyFormat('# ', '', 'heading')}
-            title=${this.headingTitle ?? 'Heading'}
+            title=${requiredName('heading', this.headingTitle)}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -295,10 +376,10 @@ export class GuiMarkdown extends LitElement {
             type="button"
             class=${this.toolbarBtnClass('bold')}
             ?disabled=${this.disabled || this.readOnly}
-            aria-label=${this.boldTitle ?? 'Bold'}
+            aria-label=${requiredName('bold', this.boldTitle)}
             aria-pressed=${this.activeFormats['bold'] ? 'true' : 'false'}
             @click=${this.applyFormat('**', '**', 'bold')}
-            title=${this.boldTitle ?? 'Bold'}
+            title=${requiredName('bold', this.boldTitle)}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -317,10 +398,10 @@ export class GuiMarkdown extends LitElement {
             type="button"
             class=${this.toolbarBtnClass('italic')}
             ?disabled=${this.disabled || this.readOnly}
-            aria-label=${this.italicTitle ?? 'Italic'}
+            aria-label=${requiredName('italic', this.italicTitle)}
             aria-pressed=${this.activeFormats['italic'] ? 'true' : 'false'}
             @click=${this.applyFormat('_', '_', 'italic')}
-            title=${this.italicTitle ?? 'Italic'}
+            title=${requiredName('italic', this.italicTitle)}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -339,10 +420,10 @@ export class GuiMarkdown extends LitElement {
             type="button"
             class=${this.toolbarBtnClass('strikethrough')}
             ?disabled=${this.disabled || this.readOnly}
-            aria-label=${this.strikethroughTitle ?? 'Strikethrough'}
+            aria-label=${requiredName('strikethrough', this.strikethroughTitle)}
             aria-pressed=${this.activeFormats['strikethrough'] ? 'true' : 'false'}
             @click=${this.applyFormat('~~', '~~', 'strikethrough')}
-            title=${this.strikethroughTitle ?? 'Strikethrough'}
+            title=${requiredName('strikethrough', this.strikethroughTitle)}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -361,10 +442,10 @@ export class GuiMarkdown extends LitElement {
             type="button"
             class=${this.toolbarBtnClass('quote')}
             ?disabled=${this.disabled || this.readOnly}
-            aria-label=${this.quoteTitle ?? 'Quote'}
+            aria-label=${requiredName('quote', this.quoteTitle)}
             aria-pressed=${this.activeFormats['quote'] ? 'true' : 'false'}
             @click=${this.applyFormat('> ', '', 'quote')}
-            title=${this.quoteTitle ?? 'Quote'}
+            title=${requiredName('quote', this.quoteTitle)}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -383,10 +464,10 @@ export class GuiMarkdown extends LitElement {
             type="button"
             class=${this.toolbarBtnClass('link')}
             ?disabled=${this.disabled || this.readOnly}
-            aria-label=${this.linkTitle ?? 'Link'}
+            aria-label=${requiredName('link', this.linkTitle)}
             aria-pressed=${this.activeFormats['link'] ? 'true' : 'false'}
             @click=${this.applyFormat('[', '](url)', 'link')}
-            title=${this.linkTitle ?? 'Link'}
+            title=${requiredName('link', this.linkTitle)}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -405,10 +486,10 @@ export class GuiMarkdown extends LitElement {
             type="button"
             class=${this.toolbarBtnClass('orderedList')}
             ?disabled=${this.disabled || this.readOnly}
-            aria-label=${this.orderedListTitle ?? 'Ordered List'}
+            aria-label=${requiredName('orderedList', this.orderedListTitle)}
             aria-pressed=${this.activeFormats['orderedList'] ? 'true' : 'false'}
             @click=${this.applyFormat('1. ', '', 'orderedList')}
-            title=${this.orderedListTitle ?? 'Ordered List'}
+            title=${requiredName('orderedList', this.orderedListTitle)}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -427,10 +508,10 @@ export class GuiMarkdown extends LitElement {
             type="button"
             class=${this.toolbarBtnClass('unorderedList')}
             ?disabled=${this.disabled || this.readOnly}
-            aria-label=${this.unorderedListTitle ?? 'Unordered List'}
+            aria-label=${requiredName('unorderedList', this.unorderedListTitle)}
             aria-pressed=${this.activeFormats['unorderedList'] ? 'true' : 'false'}
             @click=${this.applyFormat('- ', '', 'unorderedList')}
-            title=${this.unorderedListTitle ?? 'Unordered List'}
+            title=${requiredName('unorderedList', this.unorderedListTitle)}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -482,14 +563,14 @@ export class GuiMarkdown extends LitElement {
     const currentLine = value.substring(lineStart, lineEnd === -1 ? value.length : lineEnd);
 
     this.activeFormats = {
-      heading: /^#{1,6}\s/.test(currentLine),
+      heading: LINE_FORMATS.heading.test(currentLine),
       bold: this.isInsideInlineFormat(value, selectionStart, '**'),
       italic: this.isInsideInlineFormat(value, selectionStart, '_'),
       strikethrough: this.isInsideInlineFormat(value, selectionStart, '~~'),
-      quote: currentLine.startsWith('> '),
+      quote: LINE_FORMATS.quote.test(currentLine),
       link: this.isInsideLink(value, selectionStart),
-      orderedList: /^\d+\.\s/.test(currentLine),
-      unorderedList: currentLine.startsWith('- '),
+      orderedList: LINE_FORMATS.orderedList.test(currentLine),
+      unorderedList: LINE_FORMATS.unorderedList.test(currentLine),
     };
   }
 
@@ -533,6 +614,7 @@ export class GuiMarkdown extends LitElement {
     return false;
   }
 
+  /** @internal */
   applyFormat(formatStart: string, formatEnd = '', formatKey = '') {
     return () => {
       // The buttons are natively disabled too; this guards programmatic calls
@@ -541,7 +623,9 @@ export class GuiMarkdown extends LitElement {
       const textarea = this.querySelector(`textarea[id="${this.uid}"]`) as HTMLTextAreaElement;
       if (!textarea) return;
 
-      if (formatKey && this.activeFormats[formatKey]) {
+      if (isLineFormat(formatKey)) {
+        this.toggleLineFormat(textarea, formatStart, formatKey);
+      } else if (formatKey && this.activeFormats[formatKey]) {
         this.removeFormat(textarea, formatStart, formatEnd, formatKey);
       } else {
         const { selectionStart, selectionEnd, value } = textarea;
@@ -556,8 +640,49 @@ export class GuiMarkdown extends LitElement {
 
       textarea.focus();
       textarea.dispatchEvent(new Event('input', { bubbles: true }));
+      // A toolbar command is a complete edit, and a programmatic value change fires no native
+      // `change` to commit it later.
+      dispatchChange(this, textarea.value);
       this.detectFormats();
     };
+  }
+
+  /**
+   * Adds a line format (heading, quote, list) at the start of the caret's line, or of every
+   * selected line, or removes it from them when the caret's line already has it.
+   */
+  private toggleLineFormat(textarea: HTMLTextAreaElement, prefix: string, formatKey: LineFormat) {
+    const { selectionStart, selectionEnd, value } = textarea;
+    const pattern = LINE_FORMATS[formatKey];
+    const remove = !!this.activeFormats[formatKey];
+
+    const blockStart = value.lastIndexOf('\n', selectionStart - 1) + 1;
+    // A selection that ends right after a line break leaves the next line alone.
+    const end =
+      selectionEnd > selectionStart && value[selectionEnd - 1] === '\n'
+        ? selectionEnd - 1
+        : selectionEnd;
+    const lineEnd = value.indexOf('\n', end);
+    const blockEnd = lineEnd === -1 ? value.length : lineEnd;
+
+    const block = value
+      .substring(blockStart, blockEnd)
+      .split('\n')
+      .map((line, index) => {
+        if (remove) return line.replace(pattern, '');
+        if (pattern.test(line)) return line;
+        return `${formatKey === 'orderedList' ? `${index + 1}. ` : prefix}${line}`;
+      })
+      .join('\n');
+    textarea.value = `${value.substring(0, blockStart)}${block}${value.substring(blockEnd)}`;
+
+    if (selectionStart === selectionEnd) {
+      // The caret stays on its character, or at the line start when its prefix is removed.
+      const caret = Math.max(blockStart, selectionStart + block.length - (blockEnd - blockStart));
+      textarea.setSelectionRange(caret, caret);
+    } else {
+      textarea.setSelectionRange(blockStart, blockStart + block.length);
+    }
   }
 
   private removeFormat(
@@ -571,24 +696,7 @@ export class GuiMarkdown extends LitElement {
     const lineEnd = value.indexOf('\n', selectionStart);
     const currentLine = value.substring(lineStart, lineEnd === -1 ? value.length : lineEnd);
 
-    if (!formatEnd) {
-      // Line-prefix formats (heading, quote, orderedList, unorderedList)
-      let prefix = formatStart;
-      if (formatKey === 'heading') {
-        const match = currentLine.match(/^#{1,6}\s/);
-        if (match) prefix = match[0];
-      } else if (formatKey === 'orderedList') {
-        const match = currentLine.match(/^\d+\.\s/);
-        if (match) prefix = match[0];
-      }
-
-      const before = value.substring(0, lineStart);
-      const newLine = currentLine.substring(prefix.length);
-      const after = value.substring(lineEnd === -1 ? value.length : lineEnd);
-      textarea.value = `${before}${newLine}${after}`;
-      textarea.selectionStart = Math.max(lineStart, selectionStart - prefix.length);
-      textarea.selectionEnd = textarea.selectionStart;
-    } else if (formatKey === 'link') {
+    if (formatKey === 'link') {
       // Link: find [text](url) around cursor and replace with just text
       const cursorInLine = selectionStart - lineStart;
       const regex = /\[([^\]]*)\]\([^)]*\)/g;
@@ -627,30 +735,36 @@ export class GuiMarkdown extends LitElement {
     }
   }
 
+  /** @internal */
   valueChanged(event: InputEvent) {
     event.stopPropagation();
 
     if (!this.readOnly) {
       const target = event.target as HTMLInputElement;
-      this.dispatchEvent(
-        new CustomEvent('input', {
-          detail: { value: target.value },
-          bubbles: true,
-          composed: true,
-        }),
-      );
+      this.value = target.value;
+      dispatchValue(this, this.value, { commit: false });
     }
   }
 
+  /**
+   * The native `change`: the user committed the edit, on blur (Enter adds a new line).
+   *
+   * @internal
+   */
+  valueCommitted(event: Event) {
+    dispatchChange(this, (event.target as HTMLInputElement).value);
+  }
+
+  /** @internal */
   onBlur() {
-    this.dispatchEvent(
-      new CustomEvent('blur', {
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatchBlur(this);
   }
 }
+
+/** The events `gui-markdown` fires, with their types. */
+export const GuiMarkdownEvents = {
+  ...valueEvents<GuiMarkdown['value']>(),
+};
 
 declare global {
   interface HTMLElementTagNameMap {

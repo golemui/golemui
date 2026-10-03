@@ -58,7 +58,6 @@ Every widget’s exhaustive reference page (props, per-prop examples, CSS variab
 ## Layout widgets
 
 - `gui.layouts.accordion` — https://golemui.com/dx/widgets-reference/layout-fields/accordion.md (json: https://golemui.com/json/widgets-reference/layout-fields/accordion.md)
-- `gui.layouts.flex`, `gui.layouts.horizontalFlex`, `gui.layouts.verticalFlex` — https://golemui.com/dx/widgets-reference/layout-fields/flex.md (json: https://golemui.com/json/widgets-reference/layout-fields/flex.md)
 - `gui.layouts.grid`, `gui.layouts.horizontalGrid`, `gui.layouts.verticalGrid` — https://golemui.com/dx/widgets-reference/layout-fields/grid.md (json: https://golemui.com/json/widgets-reference/layout-fields/grid.md)
 - `gui.layouts.tabs` — https://golemui.com/dx/widgets-reference/layout-fields/tabs.md (json: https://golemui.com/json/widgets-reference/layout-fields/tabs.md)
 - Category overview — https://golemui.com/dx/widgets-reference/layout-fields/overview.md

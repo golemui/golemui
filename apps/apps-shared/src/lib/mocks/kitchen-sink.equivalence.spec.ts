@@ -101,7 +101,7 @@ const buildJsonTab = (tabSection: any) => ({
   states: {},
   form: {
     uid: 'gui-root-uid',
-    type: 'flex',
+    type: 'grid',
     kind: 'layout',
     children: [tabSection],
   },
@@ -145,20 +145,18 @@ const stripFields = (node: any, fields: readonly string[]): any => {
 //   - uid: pipelines have legitimately different uid-generation strategies
 //   - validator: known DX validator-hoist gap (validator stays in `props` instead
 //     of moving top-level); tracked for focus-closeout, not per-tab content
-//   - direction: DX pipeline auto-injects `direction: 'column'` on flex layouts;
+//   - direction: DX pipeline auto-injects `direction: 'column'` on grid layouts;
 //     JSON path doesn't. Pipeline default that doesn't affect rendering.
 //   - renderMode: DX accordion auto-injects `renderMode: 'all'`; JSON doesn't.
 //     Tracked alongside accordion per-section-type gap.
-//   - autoFit: DX grid layouts default to `autoFit: true` (sensible-default for
-//     responsive layouts); JSON path doesn't set it. Pipeline default.
 const stripped = (form: any) =>
-  stripFields(form, ['uid', '$schema', 'validator', 'direction', 'renderMode', 'autoFit']);
+  stripFields(form, ['uid', '$schema', 'validator', 'direction', 'renderMode']);
 
 // `_guiAccordion` (and similar layouts) hard-wrap each section's children in a
-// flex layout, even when the section's direct child is already a layout. JSON
+// grid layout, even when the section's direct child is already a layout. JSON
 // sections express the same structure with one fewer level of nesting (e.g., a
-// `grid` section directly, no enveloping flex). Collapse single-layout-child
-// flex wrappers so the equivalence test focuses on content, not nesting depth.
+// `grid` section directly, no enveloping grid). Collapse single-layout-child
+// grid wrappers so the equivalence test focuses on content, not nesting depth.
 // Tracked as a "per-section type override" gap on _guiAccordion / _guiTabs.
 const collapseLayoutWrappers = (node: any): any => {
   if (Array.isArray(node)) return node.map(collapseLayoutWrappers);
@@ -169,7 +167,7 @@ const collapseLayoutWrappers = (node: any): any => {
     }
     if (
       out['kind'] === 'layout' &&
-      out['type'] === 'flex' &&
+      out['type'] === 'grid' &&
       Array.isArray(out['children']) &&
       out['children'].length === 1 &&
       out['children'][0]?.kind === 'layout'

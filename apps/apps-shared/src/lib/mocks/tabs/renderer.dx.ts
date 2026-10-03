@@ -12,7 +12,7 @@ import { gui } from '@golemui/gui-shared';
  * below drives them all uniformly.
  */
 export const buildRendererTab = (render: (api: any) => unknown) =>
-  gui.layouts.flex([
+  gui.layouts.grid([
     gui.displays.display(render),
     gui.inputs.textInput('rendererClientName', {
       label: 'Client name',

@@ -7,6 +7,7 @@ import { html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
 import { safeDefine, unsubscribeAll } from '@golemui/lit/internals';
 import { type Subscription } from 'rxjs';
+import { live } from 'lit/directives/live.js';
 
 export class SelectElement extends LitElement implements WithWidget {
   widget!: InputWidget<string>;
@@ -22,18 +23,6 @@ export class SelectElement extends LitElement implements WithWidget {
 
   override createRenderRoot() {
     return this;
-  }
-
-  override updated(changedProperties: any) {
-    super.updated(changedProperties);
-
-    const size = this.adapter.templateData.size;
-
-    if (size) {
-      this.style.flex = String(size);
-    } else {
-      this.style.removeProperty('flex');
-    }
   }
 
   override connectedCallback() {
@@ -55,11 +44,11 @@ export class SelectElement extends LitElement implements WithWidget {
         .uid=${this.widget.uid}
         .label=${this.adapter.templateData.label}
         .errors=${this.adapter.templateData.errors}
-        ?touched=${this.adapter.templateData.touched}
+        .touched=${this.adapter.templateData.touched}
         ?required=${this.adapter.templateData.validator?.required}
         ?disabled=${this.adapter.templateData.disabled}
         ?readonly=${this.adapter.templateData.readonly}
-        .value=${this.adapter.templateData.value}
+        .value=${live(this.adapter.templateData.value)}
         .hint=${this.adapter.templateData.hint}
         .icon=${this.adapter.templateData.icon}
         .placeholder=${this.adapter.templateData.placeholder}
@@ -68,9 +57,9 @@ export class SelectElement extends LitElement implements WithWidget {
         .labelField=${this.adapter.templateData.labelField}
         .valueField=${this.adapter.templateData.valueField}
         .invalidOptionMessage=${this.adapter.templateData.invalidOptionMessage as string}
-        @change=${this.valueChanged}
-        @inputError=${this.onInputError}
-        @blur=${() => this.adapter.onBlur()}
+        @gui-input=${this.valueChanged}
+        @gui-input-error=${this.onInputError}
+        @gui-blur=${() => this.adapter.onBlur()}
       ></gui-select>
     `;
   }
@@ -82,7 +71,9 @@ export class SelectElement extends LitElement implements WithWidget {
   }
 
   onInputError(event: Event) {
-    this.adapter.injectValidationIssues([(event as CustomEvent).detail.message]);
+    // An empty message withdraws the error.
+    const message = (event as CustomEvent).detail.message as string;
+    this.adapter.injectValidationIssues(message ? [message] : null);
   }
 
   override disconnectedCallback() {

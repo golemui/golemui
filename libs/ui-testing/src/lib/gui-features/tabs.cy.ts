@@ -74,11 +74,11 @@ export const runTabsComponentTests = (mountFn: MountComponentFn) => {
       });
 
       // The single rendered panel is the second one, so both sides of the pair carry its tab uid
-      cy.get('section[role="tabpanel"]').should('have.length', 1);
+      cy.get('[role="tabpanel"]').should('have.length', 1);
       cy.get(`[data-cy="tab_${TABS_UID}_secondPanel"]`)
         .should('have.attr', 'aria-selected', 'true')
         .and('have.attr', 'aria-controls', `tabpanel_${TABS_UID}_secondPanel`);
-      cy.get('section[role="tabpanel"]')
+      cy.get('[role="tabpanel"]')
         .should('have.attr', 'id', `tabpanel_${TABS_UID}_secondPanel`)
         .and('have.attr', 'aria-labelledby', `tab_${TABS_UID}_secondPanel`);
     });
@@ -95,7 +95,7 @@ export const runTabsComponentTests = (mountFn: MountComponentFn) => {
         }),
       });
 
-      cy.get('button[role="tab"]').should('have.length', 3);
+      cy.get('[role="tab"]').should('have.length', 3);
       cy.get(`[data-cy="tab_${TABS_UID}_firstPanel"]`).should('have.attr', 'aria-selected', 'true');
       cy.get(`[data-cy="tabpanel_${TABS_UID}_firstPanel"]`).should('not.have.attr', 'hidden');
     });
@@ -123,8 +123,8 @@ export const runTabsComponentTests = (mountFn: MountComponentFn) => {
       });
 
       cy.get('[data-cy="outsideTabs_textinput"]').should('be.visible');
-      cy.get('button[role="tab"]').should('have.length', 0);
-      cy.get('section[role="tabpanel"]').should('not.exist');
+      cy.get('[role="tab"]').should('have.length', 0);
+      cy.get('[role="tabpanel"]').should('not.exist');
     });
 
     it('keeps the remaining panels wired to their own tab when a child is hidden', () => {

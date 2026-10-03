@@ -27,13 +27,8 @@ export class ButtonElement extends LitElement implements WithWidget {
   override updated(changedProperties: any) {
     super.updated(changedProperties);
 
-    const size = this.adapter.templateData.size;
-
-    if (size) {
-      this.style.flex = String(size);
-    } else {
-      this.style.removeProperty('flex');
-    }
+    const { invalid, actionType } = this.adapter.templateData;
+    this.classList.toggle('gui-button--invalid', invalid === true && actionType === 'submit');
   }
 
   override connectedCallback() {
@@ -51,10 +46,9 @@ export class ButtonElement extends LitElement implements WithWidget {
     return html`
       <gui-button
         .uid=${this.widget.uid}
-        .actionType=${this.adapter.templateData.actionType ?? 'button'}
+        .type=${this.adapter.templateData.actionType ?? 'button'}
         .label=${this.adapter.templateData.label}
         ?disabled=${this.adapter.templateData.disabled === true}
-        ?invalid=${this.adapter.templateData.invalid === true}
         .variant=${this.adapter.templateData.variant}
         .icon=${this.adapter.templateData.icon}
         .iconPosition=${this.adapter.templateData.iconPosition}

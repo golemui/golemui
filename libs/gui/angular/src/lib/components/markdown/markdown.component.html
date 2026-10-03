@@ -30,6 +30,6 @@
   [defaultOpenPreview]="templateData.defaultOpenPreview"
   [maxLength]="templateData.validator?.maxLength"
   [dependencies]="templateData.deps"
-  (input)="valueChanged($event)"
-  (blur)="adapter.onBlur()"
+  (gui-input)="valueChanged($event)"
+  (gui-blur)="adapter.onBlur()"
 ></gui-markdown>

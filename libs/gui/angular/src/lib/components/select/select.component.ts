@@ -20,7 +20,6 @@ import { deferHydrationAttr } from '../../utils/defer-hydration';
   templateUrl: './select.component.html',
   host: {
     class: 'gui-select gui-field',
-    '[style.flex]': 'this.adapter.templateData().size',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
@@ -44,6 +43,8 @@ export class SelectComponent implements OnInit, OnDestroy, WithWidget {
   }
 
   onInputError(event: Event) {
-    this.adapter.injectValidationIssues([(event as CustomEvent).detail.message]);
+    // An empty message withdraws the error.
+    const message = (event as CustomEvent).detail.message as string;
+    this.adapter.injectValidationIssues(message ? [message] : null);
   }
 }

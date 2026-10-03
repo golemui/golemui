@@ -1,5 +1,6 @@
 import { type ReactiveController, type ReactiveControllerHost } from 'lit';
 import type { GuiPillKeydownEventDetail, GuiPills } from '../components/pills';
+import { stopPropagation } from '../utils/events';
 
 export type GUIPillsNavigationHost = ReactiveControllerHost & HTMLElement;
 
@@ -18,13 +19,15 @@ export interface GUIPillsNavigationControllerOptions {
 /**
  * The linked-input half of the pill keyboard model: `GuiPills` owns roving
  * focus inside the strip/dropdown and re-emits boundary keys, this controller
- * owns the handoffs between the pills and the host's input.
+ * owns the handoffs between the pills and the host's input. Its handlers stop
+ * the events they handle: they are between the pills and their host, which
+ * fires only the events of its own events map.
  *
  * The host decides *when* to enter the pill list (a text input checks its
  * caret, a segmented input hooks `onNavigatePastStart`) and binds:
- *   - `@pillkeydown=${controller.onPillKeydown}` — ArrowRight past the last
+ *   - `@gui-pill-keydown=${controller.onPillKeydown}` — ArrowRight past the last
  *     strip pill returns focus to the linked input
- *   - `@pillexit=${controller.onPillExit}` — Escape closed the dropdown;
+ *   - `@gui-pill-exit=${controller.onPillExit}` — Escape closed the dropdown;
  *     focus returns to the linked input
  */
 export class GUIPillsNavigationController implements ReactiveController {
@@ -40,8 +43,9 @@ export class GUIPillsNavigationController implements ReactiveController {
     // template binds the handlers on gui-pills.
   }
 
-  /** Bind as `@pillkeydown`. */
+  /** Bind as `@gui-pill-keydown`. */
   onPillKeydown = (e: CustomEvent<GuiPillKeydownEventDetail>): void => {
+    stopPropagation(e);
     const ev = e.detail.event;
     // ArrowRight past the last pill (in strip mode) → return focus to input.
     if (ev.key === 'ArrowRight' && !this.isDropdownOpen()) {
@@ -49,8 +53,9 @@ export class GUIPillsNavigationController implements ReactiveController {
     }
   };
 
-  /** Bind as `@pillexit`. */
-  onPillExit = (): void => {
+  /** Bind as `@gui-pill-exit`. */
+  onPillExit = (e: Event): void => {
+    stopPropagation(e);
     this.focusLinkedInputDeferred();
   };
 
@@ -71,7 +76,7 @@ export class GUIPillsNavigationController implements ReactiveController {
     }
   }
 
-  /** For `pillremove` hosts: refocus the linked input once the strip is gone. */
+  /** For `gui-pill-remove` hosts: refocus the linked input once the strip is gone. */
   focusLinkedInputDeferred(): void {
     requestAnimationFrame(() => this.options.focusLinkedInput());
   }

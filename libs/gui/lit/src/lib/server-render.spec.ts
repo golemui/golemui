@@ -31,7 +31,7 @@ const config: FormInitConfig<Type<WithWidget>> = {
     form: {
       uid: 'root',
       kind: 'layout',
-      type: 'flex',
+      type: 'grid',
       children: [
         { kind: 'input', type: 'textinput', path: 'firstName', label: 'First name' },
         { kind: 'input', type: 'textinput', path: 'lastName', label: 'Last name' },
@@ -105,7 +105,7 @@ describe('server rendering the gui widget set in plain node', () => {
   });
 
   it('renders the widget elements with their host classes', () => {
-    expect(markup).toMatch(/<gui-flex-layout[^>]*class="[^"]*gui-flex[^"]*gui-field/);
+    expect(markup).toMatch(/<gui-grid-layout[^>]*class="[^"]*gui-field/);
     expect(markup).toMatch(/<gui-textinput-input[^>]*class="[^"]*gui-textinput[^"]*gui-field/);
     expect(markup).toMatch(/<gui-button-interactive[^>]*class="[^"]*gui-button[^"]*gui-field/);
   });
@@ -115,7 +115,8 @@ describe('server rendering the gui widget set in plain node', () => {
     expect(markup).toMatch(/<input[^>]*id="firstName-textinput"[^>]*value="Ada"/);
     expect(markup).toMatch(/<input[^>]*id="lastName-textinput"[^>]*value="Lovelace"/);
     expect(markup).toContain('Create account');
-    expect(markup).toContain('gui-flex__widget');
+    expect(markup).toMatch(/<div[^>]*class="gui-grid"/);
+    expect(markup).toMatch(/<div[^>]*class="gui-grid__cell"/);
   });
 
   it('renders the number widget, which reads the DOM in render()', () => {

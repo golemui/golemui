@@ -1,11 +1,11 @@
 import { type ReactiveController, type ReactiveControllerHost } from 'lit';
-import type { DateRange } from '@golemui/gui-shared/internals';
 import {
   isDateDisabled,
   isDateInVisibleMonths,
   parseISODateString,
   toISODateString,
 } from '../utils/date';
+import type { DateRange } from '../types';
 
 export type GUIMonthNavigationHost = ReactiveControllerHost;
 

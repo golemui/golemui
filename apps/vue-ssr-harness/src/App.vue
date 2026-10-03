@@ -8,7 +8,7 @@ import { onMounted, ref } from 'vue';
 // so the render does not depend on the server clock. The widget internals are not server
 // rendered, so each field only becomes usable once Lit upgrades its custom element.
 const formDef: DxDefinitionItem[] = [
-  gui.layouts.flex(
+  gui.layouts.grid(
     [
       gui.inputs.textInput('firstName', {
         label: 'First name',
@@ -21,7 +21,7 @@ const formDef: DxDefinitionItem[] = [
         validator: { required: true, minLength: 2 },
       }),
     ],
-    { direction: 'row', gap: 16 },
+    { direction: 'row' },
   ),
   gui.inputs.numberInput('seats', {
     label: 'Seats',

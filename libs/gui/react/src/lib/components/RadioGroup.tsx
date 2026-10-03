@@ -28,7 +28,7 @@ export function RadioGroup(widgetInstance: WithWidget) {
   const isRequired = (templateData.validator as Validator)?.required;
 
   return (
-    <div className="gui-radiogroup gui-field" style={{ flex: templateData.size }}>
+    <div className="gui-radiogroup gui-field">
       <GuiRadiogroupReact
         uid={uid}
         label={label}
@@ -43,8 +43,8 @@ export function RadioGroup(widgetInstance: WithWidget) {
         labelField={labelField}
         valueField={valueField}
         direction={direction}
-        onChange={handleChange}
-        onBlur={onBlur}
+        onGuiInput={handleChange}
+        onGuiBlur={onBlur}
       ></GuiRadiogroupReact>
     </div>
   );

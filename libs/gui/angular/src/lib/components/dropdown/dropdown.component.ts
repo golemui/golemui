@@ -29,7 +29,6 @@ import { deferHydrationAttr } from '../../utils/defer-hydration';
   templateUrl: './dropdown.component.html',
   host: {
     class: 'gui-dropdown gui-field',
-    '[style.flex]': 'this.adapter.templateData().size',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

@@ -1,6 +1,6 @@
 import { gui } from '@golemui/gui-shared';
 
-export const rangeTimeInputTab = gui.layouts.flex([
+export const rangeTimeInputTab = gui.layouts.grid([
   gui.inputs.rangeTimeInput('rangeTimeInputEmpty', {
     label: 'Empty',
     icon: 'schedule',

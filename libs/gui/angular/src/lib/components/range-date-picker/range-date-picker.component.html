@@ -47,7 +47,7 @@
   [editStartedMessage]="templateData.editStartedMessage"
   [editCommittedMessage]="templateData.editCommittedMessage"
   [editCancelledMessage]="templateData.editCancelledMessage"
-  (change)="onChangeDate($event)"
-  (inputError)="onInputError($event)"
-  (blur)="adapter.onBlur()"
+  (gui-input)="onChangeDate($event)"
+  (gui-input-error)="onInputError($event)"
+  (gui-blur)="adapter.onBlur()"
 ></gui-range-date-picker>

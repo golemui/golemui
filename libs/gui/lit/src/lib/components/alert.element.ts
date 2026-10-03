@@ -11,6 +11,7 @@ import {
 } from '@golemui/lit';
 import type { AlertProps } from '@golemui/gui-shared/internals';
 import { type Subscription } from 'rxjs';
+import '@golemui/gui-components/alert';
 
 export class AlertElement extends LitElement implements WithWidget {
   widget!: DisplayWidget;
@@ -28,18 +29,6 @@ export class AlertElement extends LitElement implements WithWidget {
     return this;
   }
 
-  override updated(changedProperties: any) {
-    super.updated(changedProperties);
-
-    const size = this.adapter.templateData.size;
-
-    if (size) {
-      this.style.flex = String(size);
-    } else {
-      this.style.removeProperty('flex');
-    }
-  }
-
   override connectedCallback() {
     super.connectedCallback();
     this.classList.add('gui-alert', 'gui-field');
@@ -52,17 +41,8 @@ export class AlertElement extends LitElement implements WithWidget {
   }
 
   override render() {
-    return html`
-      <div class="gui-widget" id=${this.widget.uid}>
-        <div
-          role="alert"
-          class="gui-alert-notification gui-alert-notification--${this.adapter.templateData.level ||
-          'default'}"
-        >
-          ${this.adapter.templateData.text}
-        </div>
-      </div>
-    `;
+    const { text, level } = this.adapter.templateData;
+    return html`<gui-alert id=${this.widget.uid} variant=${level || 'default'}>${text}</gui-alert>`;
   }
 
   override disconnectedCallback() {

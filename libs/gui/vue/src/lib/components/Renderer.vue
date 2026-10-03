@@ -16,7 +16,7 @@ const RenderSlot = () => templateData.value.render as VNode | string;
 </script>
 
 <template>
-  <div class="gui-renderer gui-field" :style="{ flex: templateData.size }">
+  <div class="gui-renderer gui-field">
     <div class="gui-widget" :id="uid">
       <component
         :is="RenderSlot"

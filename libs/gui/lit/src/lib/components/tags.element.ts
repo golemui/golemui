@@ -24,18 +24,6 @@ export class TagsElement extends LitElement implements WithWidget {
     return this;
   }
 
-  override updated(changedProperties: any) {
-    super.updated(changedProperties);
-
-    const size = this.adapter.templateData.size;
-
-    if (size) {
-      this.style.flex = String(size);
-    } else {
-      this.style.removeProperty('flex');
-    }
-  }
-
   override connectedCallback() {
     super.connectedCallback();
     this.classList.add('gui-tags', 'gui-field');
@@ -56,7 +44,7 @@ export class TagsElement extends LitElement implements WithWidget {
         .label=${this.adapter.templateData.label}
         .hint=${this.adapter.templateData.hint}
         .errors=${this.adapter.templateData.errors}
-        ?touched=${this.adapter.templateData.touched}
+        .touched=${this.adapter.templateData.touched}
         ?required=${this.adapter.templateData.validator?.required}
         ?disabled=${this.adapter.templateData.disabled}
         ?readonly=${this.adapter.templateData.readonly}
@@ -68,8 +56,8 @@ export class TagsElement extends LitElement implements WithWidget {
         .trim=${this.adapter.templateData.trim ?? true}
         .removeAriaLabel=${this.adapter.templateData.removeAriaLabel}
         .removeIcon=${this.adapter.templateData.removeIcon}
-        @change=${this.valueChanged}
-        @blur=${() => this.adapter.onBlur()}
+        @gui-input=${this.valueChanged}
+        @gui-blur=${() => this.adapter.onBlur()}
       ></gui-tags>
     `;
   }

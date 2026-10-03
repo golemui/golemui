@@ -22,7 +22,7 @@ const minimumHeight = computed(() => templateData.value.minimumHeight ?? 120);
 </script>
 
 <template>
-  <div class="gui-markdown gui-field" :style="{ flex: templateData.size }">
+  <div class="gui-markdown gui-field">
     <gui-markdown
       :uid="uid"
       :label="templateData.label"
@@ -52,8 +52,8 @@ const minimumHeight = computed(() => templateData.value.minimumHeight ?? 120);
       :splitViewTitle="templateData.splitViewTitle"
       :toolbarAriaLabel="templateData.toolbarAriaLabel"
       :dependencies="templateData.deps"
-      @input="handleInput"
-      @blur="onBlur"
+      @gui-input="handleInput"
+      @gui-blur="onBlur"
     ></gui-markdown>
   </div>
 </template>

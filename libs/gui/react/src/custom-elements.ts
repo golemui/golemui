@@ -1,5 +1,6 @@
 // eslint-disable-next-line import/no-namespace
 import type * as React from 'react';
+import type { GuiAlert } from '@golemui/gui-components/alert';
 import type { GuiButton } from '@golemui/gui-components/button';
 import type { GuiCalendar } from '@golemui/gui-components/calendar';
 import type { GuiDateTimeCalendar } from '@golemui/gui-components/date-time-calendar';
@@ -28,6 +29,9 @@ import type { GuiRangeTimeInput } from '@golemui/gui-components/range-time-input
 import type { GuiRangeDatePicker } from '@golemui/gui-components/range-date-picker';
 import type { GuiRangeTimePicker } from '@golemui/gui-components/range-time-picker';
 import type { GuiSelect } from '@golemui/gui-components/select';
+import type { GuiTab } from '@golemui/gui-components/tab';
+import type { GuiTabList } from '@golemui/gui-components/tab-list';
+import type { GuiTabPanel } from '@golemui/gui-components/tab-panel';
 import type { GuiTags } from '@golemui/gui-components/tags';
 import type { GuiTextarea } from '@golemui/gui-components/textarea';
 import type { GuiTextinput } from '@golemui/gui-components/textinput';
@@ -35,10 +39,18 @@ import type { GuiTimeList } from '@golemui/gui-components/time-list';
 import type { GuiTimePicker } from '@golemui/gui-components/time-picker';
 import type { GuiToggle } from '@golemui/gui-components/toggle';
 
+/**
+ * The properties an element adds to HTMLElement. For the tags rendered with children: the DOM's
+ * `children` would clash with React's.
+ */
+type OwnProps<T extends HTMLElement> = Partial<Omit<T, keyof HTMLElement>>;
+
 declare module 'react' {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace JSX {
     interface IntrinsicElements {
+      'gui-alert': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
+        OwnProps<GuiAlert>;
       'gui-button': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiButton>;
       'gui-calendar': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
@@ -144,6 +156,12 @@ declare module 'react' {
         Partial<GuiTextinput>;
       'gui-time-list': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiTimeList>;
+      'gui-tab': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
+        OwnProps<GuiTab>;
+      'gui-tab-list': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
+        OwnProps<GuiTabList>;
+      'gui-tab-panel': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
+        OwnProps<GuiTabPanel>;
       'gui-time-picker': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiTimePicker>;
       'gui-toggle': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &

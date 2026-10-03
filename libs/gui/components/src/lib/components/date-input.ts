@@ -1,47 +1,80 @@
-import type { DateinputProps } from '@golemui/gui-shared/internals';
-import { html, LitElement, nothing, type PropertyValues } from 'lit';
+import { html, nothing, type PropertyValues } from 'lit';
 import { property } from 'lit/decorators.js';
-import { safeDefine } from '@golemui/lit/internals';
+import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
 import { GUIPartsController } from '../controllers/parts.controller';
 import { dateBoundsError, getDateFormatParts } from '../utils/date';
-import { INCOMPLETE_DATE_MESSAGE } from '../utils/messages';
 import { renderGroupParts, type GUIPartsTemplateData } from '../utils/part-templates';
 import {
   dateInputPartDescriptors,
   parseDateGroup,
-  PART_DEFAULT_ARIA_LABELS,
   type DateTimePartDescriptor,
   type DateTimePartType,
   type GroupCompleteness,
 } from '../utils/parts';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
+import { boundsValidity, GuiFormControl, type GuiValidity } from '../gui-form-control';
+import {
+  dispatch,
+  dispatchBlur,
+  dispatchInputError,
+  dispatchValue,
+  fires,
+  valueEvents,
+  type GuiInputErrorEventDetail,
+} from '../utils/events';
+import { message } from '../utils/messages';
 
 const DATE_PART_TYPES: readonly DateTimePartType[] = ['day', 'month', 'year'];
 
-export class GuiDate extends LitElement {
-  @property({ type: String }) uid: string | undefined = undefined;
-  @property({ type: String }) label: string | undefined = undefined;
+/** What <gui-date-input> renders besides the control state: its presentation props. */
+export type GuiDateProps = {
+  icon?: string;
+  hint?: string;
+};
+
+/**
+ * A date field typed part by part (day, month, year) in the locale's order.
+ *
+ * @fires gui-input - The user changed the value. `detail.value` is the new value.
+ * @fires gui-change - The user committed the value. `detail.value` is the committed value.
+ * @fires gui-blur - Focus left the control.
+ * @fires gui-focus - One of the parts of the field received focus.
+ * @fires gui-input-error - The element rejected what the user entered, such as an impossible date
+ *   or a value out of bounds. `detail.message` is the error; show it through `errors`.
+ * @fires gui-parts-change - The typed parts changed before they form a complete value, for a host
+ *   that mirrors them.
+ */
+export class GuiDate extends GuiFormControl {
+  /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
-  @property({ type: Array }) errors: string[] | undefined = [];
-  @property({ type: Boolean }) showErrors: boolean | undefined = true;
-  @property({ type: Boolean }) touched: boolean | undefined = false;
-  @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean }) disabled: boolean | undefined = false;
-  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
+  /**
+   * Whether the element renders its own error list. Elements that embed it turn it off and show the
+   * errors themselves.
+   */
+  @property({ type: Boolean, attribute: 'show-errors' }) showErrors: boolean | undefined = true;
 
+  /** Icon class name shown inside the control, for example from an icon font. */
   @property({ type: String }) icon: string | undefined = '';
-  @property({ type: String }) hint: string | undefined = undefined;
-  @property({ type: String }) dayAriaLabel: string | undefined = undefined;
-  @property({ type: String }) monthAriaLabel: string | undefined = undefined;
-  @property({ type: String }) yearAriaLabel: string | undefined = undefined;
+  /** Accessible name of the day part. An empty value keeps the default. */
+  @property({ type: String, attribute: 'day-aria-label' }) dayAriaLabel: string | undefined =
+    undefined;
+  /** Accessible name of the month part. An empty value keeps the default. */
+  @property({ type: String, attribute: 'month-aria-label' }) monthAriaLabel: string | undefined =
+    undefined;
+  /** Accessible name of the year part. An empty value keeps the default. */
+  @property({ type: String, attribute: 'year-aria-label' }) yearAriaLabel: string | undefined =
+    undefined;
 
+  /** The date, as an ISO date (`YYYY-MM-DD`). */
   @property({ type: String }) value: string | undefined = undefined;
+  /** Error for a complete but impossible date, such as February 31. */
   @property({ type: String, attribute: 'invalid-date-message' }) invalidDateMessage:
     | string
     | undefined = undefined;
+  /** Error when focus leaves a partly filled value. */
   @property({ type: String, attribute: 'incomplete-message' }) incompleteMessage:
     | string
     | undefined = undefined;
@@ -53,10 +86,14 @@ export class GuiDate extends LitElement {
   @property({ type: Boolean, attribute: 'defer-focus-leave' }) deferFocusLeave:
     | boolean
     | undefined = false;
+  /** Earliest selectable date, as an ISO date (`YYYY-MM-DD`). */
   @property({ type: String, attribute: 'min-date' }) minDate: string | undefined = undefined;
+  /** Latest selectable date, as an ISO date (`YYYY-MM-DD`). */
   @property({ type: String, attribute: 'max-date' }) maxDate: string | undefined = undefined;
+  /** Error for a date before `minDate`. */
   @property({ type: String, attribute: 'min-date-message' }) minDateMessage: string | undefined =
     undefined;
+  /** Error for a date after `maxDate`. */
   @property({ type: String, attribute: 'max-date-message' }) maxDateMessage: string | undefined =
     undefined;
 
@@ -81,13 +118,11 @@ export class GuiDate extends LitElement {
 
       this._internalNullReport = true;
       this.value = undefined;
-      this.dispatchEvent(new CustomEvent('change', { detail: { value: null }, bubbles: true }));
+      dispatchValue(this, null);
       this._parts.resetSurfacedInputError();
     },
-    onInputErrorSurfaced: (message) =>
-      this.dispatchEvent(new CustomEvent('inputError', { detail: { message }, bubbles: true })),
-    onSurfacedErrorCleared: (value) =>
-      this.dispatchEvent(new CustomEvent('change', { detail: { value }, bubbles: true })),
+    onInputErrorSurfaced: (message) => dispatchInputError(this, message),
+    onSurfacedErrorCleared: (value) => dispatchValue(this, value),
   });
 
   private _focusLeave = new GUIFocusLeaveController(this, {
@@ -102,9 +137,10 @@ export class GuiDate extends LitElement {
   private _internalNullReport = false;
 
   protected ariaController: GUIAriaController<unknown, any> = new GUIAriaController(this, {
+    requiresLabel: true,
     getTargets: () => this.querySelectorAll(`.${this.inputBlockClass}`),
     getState: () => ({
-      uid: this.uid as string,
+      uid: this.uid,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -142,7 +178,7 @@ export class GuiDate extends LitElement {
   }
 
   override render() {
-    const templateData: ControlTemplateData<string> & DateinputProps = {
+    const templateData: ControlTemplateData<string> & GuiDateProps = {
       uid: this.uid,
       label: this.label,
       errors: this.errors,
@@ -167,7 +203,7 @@ export class GuiDate extends LitElement {
           month: this.monthAriaLabel,
           year: this.yearAriaLabel,
         };
-        return overrides[type] ?? PART_DEFAULT_ARIA_LABELS[type];
+        return message(type, overrides[type]);
       },
       disabled: this.disabled,
       partsReadonly: !!this.readOnly,
@@ -179,7 +215,7 @@ export class GuiDate extends LitElement {
     };
 
     return html`
-      ${this.label ? addLabel(this.uid as string, templateData, false, undefined, false) : nothing}
+      ${addLabel(this.uid, templateData, false, undefined, false)}
 
       <div class="gui-widget" @focusout=${this.onWidgetFocusOut}>
         <div
@@ -201,9 +237,7 @@ export class GuiDate extends LitElement {
           : nothing}
       </div>
 
-      ${this.showErrors && this.errors?.length
-        ? addErrors(this.uid as string, templateData)
-        : nothing}
+      ${this.showErrors && this.errors?.length ? addErrors(this.uid, templateData) : nothing}
     `;
   }
 
@@ -216,13 +250,7 @@ export class GuiDate extends LitElement {
     });
     this._parts.applyWriteBacks(group, writeBacks);
 
-    this.dispatchEvent(
-      new CustomEvent('partsChange', {
-        detail: { date: result.kind === 'valid' ? result.iso : null },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatch(this, 'gui-parts-change', { date: result.kind === 'valid' ? result.iso : null });
 
     if (result.kind === 'invalid') {
       // Date is complete but invalid
@@ -234,12 +262,8 @@ export class GuiDate extends LitElement {
       });
 
       if (boundsError) {
-        this.dispatchEvent(
-          new CustomEvent('change', {
-            detail: { value: result.iso },
-            bubbles: true,
-          }),
-        );
+        this.value = result.iso;
+        dispatchValue(this, this.value);
         this._parts.surfaceInputError(boundsError);
         this.requestUpdate();
         return;
@@ -248,18 +272,34 @@ export class GuiDate extends LitElement {
       this.value = result.iso;
       this._parts.resetSurfacedInputError();
 
-      this.dispatchEvent(
-        new CustomEvent('change', {
-          detail: { value: this.value },
-          bubbles: true,
-        }),
-      );
+      dispatchValue(this, this.value);
     }
 
     this.requestUpdate();
   }
 
-  /** The group's fill state, for host pickers' own focus-leave checks. */
+  /** An out-of-bounds date, then a typed date the element rejected, then `required`. */
+  protected override validate(): GuiValidity | null {
+    const boundsError = this.value
+      ? dateBoundsError(this.value, this.minDate, this.maxDate, undefined, {
+          minDateMessage: this.minDateMessage,
+          maxDateMessage: this.maxDateMessage,
+        })
+      : null;
+    return (
+      boundsValidity(boundsError, this.value, this.minDate, this.maxDate) ??
+      (this._parts.surfacedInputError
+        ? { flags: { badInput: true }, message: this._parts.surfacedInputError }
+        : null) ??
+      super.validate()
+    );
+  }
+
+  /**
+   * The group's fill state, for host pickers' own focus-leave checks.
+   *
+   * @internal
+   */
   groupCompleteness(): GroupCompleteness {
     const { result } = parseDateGroup(this._parts.values['default'] ?? {}, {
       descriptors: this.partDescriptors,
@@ -280,10 +320,11 @@ export class GuiDate extends LitElement {
    * segments never validates a half-typed entry.
    */
   private onFocusLeave(): void {
-    this.dispatchEvent(new CustomEvent('blur'));
+    dispatchBlur(this);
     this.settleOnFocusLeave();
   }
 
+  /** @internal */
   settleOnFocusLeave(): void {
     const completeness = this.groupCompleteness();
     if (completeness === 'complete') return;
@@ -297,10 +338,18 @@ export class GuiDate extends LitElement {
       this._internalNullReport = true;
       this.value = undefined;
     }
-    this.dispatchEvent(new CustomEvent('change', { detail: { value: null }, bubbles: true }));
-    this._parts.surfaceInputError(this.incompleteMessage ?? INCOMPLETE_DATE_MESSAGE);
+    dispatchValue(this, null);
+    this._parts.surfaceInputError(message('incompleteDate', this.incompleteMessage));
   }
 }
+
+/** The events `gui-date` fires, with their types. */
+export const GuiDateEvents = {
+  ...valueEvents<GuiDate['value']>(),
+  'gui-focus': fires<CustomEvent<FocusEvent>>(),
+  'gui-input-error': fires<CustomEvent<GuiInputErrorEventDetail>>(),
+  'gui-parts-change': fires<CustomEvent<{ date: string | null }>>(),
+};
 
 declare global {
   interface HTMLElementTagNameMap {

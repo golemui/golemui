@@ -72,6 +72,39 @@ describe('Grid schema validation', () => {
             ],
             props: {
               direction: 'row',
+              columns: 3,
+              gap: 'lg',
+              justify: 'end',
+            },
+          },
+        ],
+      });
+
+      const validGrid = formDef.form.children[0];
+      const isValid = validate(validGrid);
+      if (!isValid) {
+        specValidationErrorsLogger(validate, validGrid);
+      }
+      expect(isValid).toBe(true);
+    });
+
+    it('should still validate the deprecated pixel gaps', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            uid: 'grid-1',
+            kind: 'layout',
+            type: 'grid',
+            children: [
+              {
+                uid: 'grid-child-1',
+                kind: 'input',
+                type: 'textinput',
+                path: 'f1',
+              },
+            ],
+            props: {
+              direction: 'row',
               columnGap: 16,
               rowGap: 8,
             },
@@ -295,7 +328,7 @@ describe('Grid schema validation', () => {
               },
             ],
             props: {
-              justify: 'space-between',
+              justify: 'space-around',
             },
           },
         ],
@@ -307,6 +340,36 @@ describe('Grid schema validation', () => {
       expect(
         validate.errors?.some((e) => e.keyword === 'enum' && e.instancePath === '/props/justify'),
       ).toBe(true);
+    });
+
+    it('should fail on a pixel gap and on too many columns', () => {
+      const formDef = golemForm().create({
+        form: [
+          // @ts-expect-error Expected, gap and columns are invalid
+          {
+            uid: 'grid-1',
+            kind: 'layout',
+            type: 'grid',
+            children: [
+              {
+                uid: 'grid-child-1',
+                kind: 'input',
+                type: 'textinput',
+                path: 'f1',
+              },
+            ],
+            props: {
+              gap: 16,
+              columns: 13,
+            },
+          },
+        ],
+      });
+
+      const invalidGrid = formDef.form.children[0];
+      expect(validate(invalidGrid)).toBe(false);
+      expect(validate.errors?.some((e) => e.instancePath === '/props/gap')).toBe(true);
+      expect(validate.errors?.some((e) => e.instancePath === '/props/columns')).toBe(true);
     });
 
     it('should fail on empty children', () => {

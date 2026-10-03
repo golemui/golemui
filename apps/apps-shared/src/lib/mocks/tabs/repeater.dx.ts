@@ -1,6 +1,6 @@
 import { gui } from '@golemui/gui-shared';
 
-export const repeaterTab = gui.layouts.flex([
+export const repeaterTab = gui.layouts.grid([
   gui.inputs.repeater('repeaters.users', {
     label: 'Team Members',
     title: 'Developer',
@@ -13,7 +13,7 @@ export const repeaterTab = gui.layouts.flex([
       limitReached: { addLabel: `'Limit Reached, you can't add more'` },
     },
     template: [
-      gui.layouts.grid([
+      gui.layouts.horizontalGrid([
         gui.inputs.textInput('firstName', { validator: { required: true } }),
         gui.inputs.textInput('lastName'),
       ]),

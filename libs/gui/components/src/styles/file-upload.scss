@@ -208,7 +208,8 @@ gui-multi-file-upload {
     flex: 1 1 auto;
     min-width: 0;
     padding: 0 var(--gui-space-2);
-    color: var(--gui-intent-error);
+    // The error text color: it sits on the disabled box, where the error color lacks contrast.
+    color: var(--gui-intent-error-text);
     font-size: var(--gui-font-xs);
     overflow: hidden;
     text-overflow: ellipsis;

@@ -69,7 +69,7 @@ describe('DX Pipeline — Accordion', () => {
     const sectionWrapper = accordion.children?.[0] as LayoutWidget;
     expect(typeof sectionWrapper).not.toBe('function');
     expect(sectionWrapper.kind).toBe('layout');
-    expect(sectionWrapper.type).toBe('flex');
+    expect(sectionWrapper.type).toBe('grid');
     expect(sectionWrapper.uid).toBe('details');
 
     // The flex wrapper contains the processed input widgets

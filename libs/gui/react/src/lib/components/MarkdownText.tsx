@@ -8,7 +8,7 @@ export function MarkdownText(widgetInstance: WithWidget) {
   const { uid, templateData } = useDisplayWidget<MarkdownTextProps>(widget);
 
   return (
-    <div className="gui-markdown-text gui-field" style={{ flex: templateData.size }}>
+    <div className="gui-markdown-text gui-field">
       <div className="gui-widget" id={uid}>
         <GuiMarkdownTextReact md={templateData.md} dependencies={templateData.deps} />
       </div>

@@ -24,18 +24,6 @@ export class RangeDateTimeCalendarElement extends LitElement implements WithWidg
     return this;
   }
 
-  override updated(changedProperties: any) {
-    super.updated(changedProperties);
-
-    const size = this.adapter.templateData.size;
-
-    if (size) {
-      this.style.flex = String(size);
-    } else {
-      this.style.removeProperty('flex');
-    }
-  }
-
   override connectedCallback() {
     super.connectedCallback();
     this.classList.add('gui-range-date-time-calendar', 'gui-field');
@@ -58,7 +46,7 @@ export class RangeDateTimeCalendarElement extends LitElement implements WithWidg
         .label=${templateData.label}
         .hint=${templateData.hint}
         .errors=${templateData.errors}
-        ?touched=${templateData.touched}
+        .touched=${templateData.touched}
         ?required=${templateData.validator?.required}
         ?disabled=${templateData.disabled}
         ?readonly=${templateData.readonly}
@@ -98,9 +86,9 @@ export class RangeDateTimeCalendarElement extends LitElement implements WithWidg
         .editStartedMessage=${templateData.editStartedMessage as string}
         .editCommittedMessage=${templateData.editCommittedMessage as string}
         .editCancelledMessage=${templateData.editCancelledMessage as string}
-        @change=${this.valueChanged}
-        @inputError=${this.onInputError}
-        @blur=${() => this.adapter.onBlur()}
+        @gui-input=${this.valueChanged}
+        @gui-input-error=${this.onInputError}
+        @gui-blur=${() => this.adapter.onBlur()}
       ></gui-range-date-time-calendar>
     `;
   }

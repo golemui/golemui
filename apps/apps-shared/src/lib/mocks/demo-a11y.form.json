@@ -17,7 +17,7 @@
           "uid": "login-flex",
           "kind": "layout",
           "type": "grid",
-          "props": { "columnGap": 20, "direction": "column" },
+          "props": { "gap": "md", "direction": "column" },
           "children": [
             {
               "uid": "login-email",
@@ -47,7 +47,7 @@
           "uid": "register-flex",
           "kind": "layout",
           "type": "grid",
-          "props": { "columnGap": 20, "direction": "column" },
+          "props": { "gap": "md", "direction": "column" },
           "children": [
             {
               "uid": "login-firstName",

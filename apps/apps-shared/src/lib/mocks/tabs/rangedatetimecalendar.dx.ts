@@ -1,6 +1,6 @@
 import { gui } from '@golemui/gui-shared';
 
-export const rangeDateTimeCalendarTab = gui.layouts.flex([
+export const rangeDateTimeCalendarTab = gui.layouts.grid([
   gui.inputs.rangeDateTimeCalendar('rangeDateTimeCalendarEmpty', {
     label: 'Empty',
     minuteStep: 30,

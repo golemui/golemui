@@ -1,6 +1,6 @@
 import { gui } from '@golemui/gui-shared';
 
-export const numberTab = gui.layouts.flex([
+export const numberTab = gui.layouts.grid([
   gui.inputs.numberInput('number', {
     label: 'Celsius',
     hint: 'This is a hint',

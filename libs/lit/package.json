@@ -42,7 +42,8 @@
     "*.md"
   ],
   "dependencies": {
-    "@golemui/dx": "*"
+    "@golemui/dx": "*",
+    "@golemui/lit-utils": "*"
   },
   "peerDependencies": {
     "@golemui/core": "*",

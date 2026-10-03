@@ -32,7 +32,7 @@
           { "label": "Date Time Input Component", "uid": "tabDateTimeInput" },
           { "label": "Date Time Picker Component", "uid": "tabDateTimePicker" },
           { "label": "Dropdown Component", "uid": "tabDropdown" },
-          { "label": "Flex Layout", "uid": "tabFlex" },
+          { "label": "Flex Layout (deprecated)", "uid": "tabFlex" },
           { "label": "Grid Layout", "uid": "tabGrid" },
           { "label": "List Component", "uid": "tabList" },
           { "label": "Markdown Component", "uid": "tabMarkdown" },

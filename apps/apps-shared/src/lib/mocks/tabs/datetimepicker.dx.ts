@@ -1,6 +1,6 @@
 import { gui } from '@golemui/gui-shared';
 
-export const dateTimePickerTab = gui.layouts.flex([
+export const dateTimePickerTab = gui.layouts.grid([
   gui.inputs.dateTimePicker('dateTimePickerEmpty', {
     label: 'Empty',
     icon: 'calendar_month',

@@ -219,7 +219,7 @@ export const runRangeDateTimePickerComponentTests = (mountFn: MountComponentFn) 
       it('should stay open when chrome clicks hand focus to a focusable tabpanel ancestor', () => {
         // The playgrounds host widgets inside tabs, and role="tabpanel"
         // carries tabindex="0" — so in a real browser, clicking non-focusable
-        // chrome moves focus to the SECTION ancestor (focusout with a non-null
+        // chrome moves focus to the tabpanel ancestor (focusout with a non-null
         // relatedTarget outside the picker) instead of dropping it to body.
         // That is still gesture churn, not a departure.
         mountFn({
@@ -252,7 +252,7 @@ export const runRangeDateTimePickerComponentTests = (mountFn: MountComponentFn) 
         // Gesture starts on the time picker's label; the browser's
         // focus-nearest-focusable-ancestor fallback lands on the tabpanel
         cy.get(`${sel.startPicker} .gui-label`).first().trigger('pointerdown');
-        cy.get('section[role="tabpanel"]').first().focus();
+        cy.get('[role="tabpanel"]').first().focus();
         cy.wait(50);
         cy.get(sel.calendar).should('exist');
         startHour().should('not.be.disabled');
@@ -645,7 +645,7 @@ export const runRangeDateTimePickerComponentTests = (mountFn: MountComponentFn) 
 
         const changeSpy = cy.spy().as('changeSpy');
         cy.get(picker).then(($el) => {
-          $el[0].addEventListener('change', changeSpy as unknown as EventListener);
+          $el[0].addEventListener('gui-input', changeSpy as unknown as EventListener);
         });
 
         // Type 17th 11:00 → 17th 15:00 into the trigger and Enter.
@@ -692,7 +692,7 @@ export const runRangeDateTimePickerComponentTests = (mountFn: MountComponentFn) 
 
         const changeSpy = cy.spy().as('changeSpy');
         cy.get(picker).then(($el) => {
-          $el[0].addEventListener('change', changeSpy as unknown as EventListener);
+          $el[0].addEventListener('gui-input', changeSpy as unknown as EventListener);
         });
 
         // Type a full range whose end (25th) is past the max (20th) and Enter.

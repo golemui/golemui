@@ -9,10 +9,9 @@
     "form": [
       {
         "kind": "layout",
-        "type": "flex",
+        "type": "grid",
         "props": {
-          "direction": "column",
-          "gap": 8
+          "gap": "sm"
         },
         "children": [
           {

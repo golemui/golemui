@@ -19,7 +19,7 @@ import { keyed } from 'lit/directives/keyed.js';
 import { when } from 'lit/directives/when.js';
 import { type Subscription } from 'rxjs';
 import { formContext, LitFormContext } from '../../context/form.context';
-import { safeDefine } from '../../utils/define';
+import { safeDefine } from '@golemui/lit-utils';
 import { unsubscribeAll } from '../../utils/subscriptions';
 import '../widget/widget-element';
 import { defaultFormHealthBoundary, type FormHealthBoundary } from './form-health-boundary';

@@ -1,6 +1,6 @@
-import type { DateTimeRange, DisabledTimeRange } from '@golemui/gui-shared/internals';
 import { parseISODateString } from './date';
-import { INVALID_MAX_DATE_TIME_MESSAGE, INVALID_MIN_DATE_TIME_MESSAGE } from './messages';
+import type { DateTimeRange, DisabledTimeRange, TimeRange } from '../types';
+import { message } from './messages';
 
 export type HourFormat = '12' | '24';
 
@@ -168,21 +168,13 @@ export function parseISODateTimeString(value: string): Date {
   return new Date(value);
 }
 
-/**
- * A time-of-day range; both ends are ISO time strings (HH:mm or HH:mm:ss).
- */
-export interface TimeRange {
-  start: string;
-  end: string;
-}
+export type { TimeRange };
 
 /** A selectable time slot as consumed by the time picker list. */
 export interface TimeOption {
   value: string;
   disabled: boolean;
 }
-
-export const NO_AVAILABLE_TIMES_MESSAGE = 'No available times';
 
 /**
  * Compares two ISO time strings chronologically. HH:mm values are normalized
@@ -562,13 +554,13 @@ export function dateTimeBoundsError(
   if (minDateTime) {
     const min = parseISODateTimeString(minDateTime);
     if (!isNaN(min.getTime()) && time < min.getTime()) {
-      return messages?.minDateTimeMessage ?? INVALID_MIN_DATE_TIME_MESSAGE;
+      return messages?.minDateTimeMessage ?? message('minDateTime');
     }
   }
   if (maxDateTime) {
     const max = parseISODateTimeString(maxDateTime);
     if (!isNaN(max.getTime()) && time > max.getTime()) {
-      return messages?.maxDateTimeMessage ?? INVALID_MAX_DATE_TIME_MESSAGE;
+      return messages?.maxDateTimeMessage ?? message('maxDateTime');
     }
   }
   return null;

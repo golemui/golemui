@@ -1,6 +1,6 @@
 import { LitElement } from 'lit';
 import { beforeAll, describe, expect, it } from 'vitest';
-import { safeDefine } from '../utils/define';
+import { safeDefine } from '@golemui/lit-utils';
 import { installLitSsrSupport, stripFalseBooleanAttributes } from './server';
 
 describe('stripFalseBooleanAttributes', () => {

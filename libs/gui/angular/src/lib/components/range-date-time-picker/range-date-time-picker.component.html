@@ -58,7 +58,7 @@
   [editCancelledMessage]="templateData.editCancelledMessage"
   [dayCountAriaLabel]="templateData.dayCountAriaLabel"
   [disabledDayCountAriaLabel]="templateData.disabledDayCountAriaLabel"
-  (change)="onChangeValue($event)"
-  (inputError)="onInputError($event)"
-  (blur)="adapter.onBlur()"
+  (gui-input)="onChangeValue($event)"
+  (gui-input-error)="onInputError($event)"
+  (gui-blur)="adapter.onBlur()"
 ></gui-range-date-time-picker>

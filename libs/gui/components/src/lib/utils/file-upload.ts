@@ -25,6 +25,19 @@ export function errorMessage(err: unknown, fallback: string): string {
 }
 
 /**
+ * Reads the `accept` attribute: the native comma list (`.pdf,image/*`), or a JSON array
+ * (`[".pdf","image/*"]`).
+ */
+export function parseAccept(value: string | null): string[] | undefined {
+  if (value === null) return undefined;
+  if (value.trim().startsWith('[')) return JSON.parse(value) as string[];
+  return value
+    .split(',')
+    .map((rule) => rule.trim())
+    .filter(Boolean);
+}
+
+/**
  * Manual `accept` matching: `.ext`, an exact MIME type, or a `type/*`
  * wildcard. The input's own `accept` attribute is only a picker hint and drag
  * & drop bypasses it entirely.

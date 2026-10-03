@@ -16,9 +16,10 @@ import { type DefOrCallback, type GslConfigBase, type GuiShortcutOf } from '@gol
 export interface LayoutDecorator extends DxLayoutBase, DxCommonFields {
   widgetName?: string;
   direction?: FlexProps['direction'] | GridProps['direction'];
-  justify?: FlexProps['justify'];
+  columns?: GridProps['columns'];
+  justify?: FlexProps['justify'] | GridProps['justify'];
   align?: FlexProps['align'] | GridProps['align'];
-  gap?: FlexProps['gap'];
+  gap?: FlexProps['gap'] | GridProps['gap'];
   columnGap?: GridProps['columnGap'];
   rowGap?: GridProps['rowGap'];
   autoFit?: GridProps['autoFit'];
@@ -28,7 +29,11 @@ export interface LayoutDecorator extends DxLayoutBase, DxCommonFields {
 // Per-family façade prop types (spec-strict)
 // ═══════════════════════════════════════════════════
 
-/** User-facing prop slot for the flex family (`gui.layouts.flex` and variants). */
+/**
+ * User-facing prop slot for the flex family (`gui.layouts.flex` and variants).
+ *
+ * @deprecated Use the grid family (`GridFamilyProps`).
+ */
 export type FlexFamilyProps = FlexProps & DxLayoutBase & DxCommonFields;
 
 /** User-facing prop slot for the grid family (`gui.layouts.grid` and variants). */

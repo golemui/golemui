@@ -313,6 +313,8 @@ export type {
   FileUploadBaseProps,
   FileUploadProps,
   FlexProps,
+  GridGap,
+  GridJustify,
   GridProps,
   ListItem,
   ListProps,
@@ -368,3 +370,10 @@ export {
   tabPanelId,
 } from './lib/utils/layout-ids';
 export { getItemKey, repeaterIndexSuffix } from './lib/utils/repeater';
+export {
+  gapFromPixels,
+  gridCellClasses,
+  gridClasses,
+  resolveGrid,
+  type ResolvedGrid,
+} from './lib/utils/grid';

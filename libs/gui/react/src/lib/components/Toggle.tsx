@@ -25,7 +25,7 @@ export function Toggle(widgetInstance: WithWidget) {
   const isRequired = (templateData.validator as Validator)?.required;
 
   return (
-    <div className={`gui-toggle gui-field`} style={{ flex: templateData.size }}>
+    <div className={`gui-toggle gui-field`}>
       <GuiToggleReact
         uid={uid}
         label={label}
@@ -37,8 +37,8 @@ export function Toggle(widgetInstance: WithWidget) {
         value={value}
         hint={hint}
         togglePosition={togglePosition}
-        onChange={handleChange}
-        onBlur={onBlur}
+        onGuiInput={handleChange}
+        onGuiBlur={onBlur}
       />
     </div>
   );

@@ -14,6 +14,6 @@
   [icon]="templateData.icon"
   [placeholder]="templateData.placeholder"
   [autocomplete]="templateData.autocomplete"
-  (input)="valueChanged($event)"
-  (blur)="adapter.onBlur()"
+  (gui-input)="valueChanged($event)"
+  (gui-blur)="adapter.onBlur()"
 ></gui-textinput>

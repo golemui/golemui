@@ -204,8 +204,7 @@ const STATES_CONCEPT: GetConceptResult = {
               removeLabel: 'Remove',
               template: {
                 kind: 'layout',
-                type: 'flex',
-                props: { direction: 'column' },
+                type: 'grid',
                 children: [
                   { kind: 'input', type: 'textinput', path: 'users.items.name', label: 'Name' },
                 ],
@@ -573,8 +572,7 @@ const REACTIVE_SCOPE_CONCEPT: GetConceptResult = {
             props: {
               template: {
                 kind: 'layout',
-                type: 'flex',
-                props: { direction: 'column' },
+                type: 'grid',
                 children: [
                   {
                     kind: 'input',

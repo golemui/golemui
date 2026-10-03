@@ -1,28 +1,24 @@
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import {
-  type AfterViewInit,
   Component,
-  ElementRef,
+  CUSTOM_ELEMENTS_SCHEMA,
   inject,
   type OnDestroy,
   type OnInit,
-  PLATFORM_ID,
   signal,
-  viewChild,
-  viewChildren,
 } from '@angular/core';
 import { LayoutWidgetAdapter, WidgetDirective } from '@golemui/angular';
 import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
-import {
-  createIntersectionObserver,
-  type TabsEventDetail,
-} from '@golemui/gui-components/internals';
+import type { GuiTabChangeEventDetail } from '@golemui/gui-components';
+import type { TabsEventDetail } from '@golemui/gui-components/internals';
 import {
   repeaterIndexSuffix,
   tabButtonId,
   tabPanelId,
   type TabsProps,
 } from '@golemui/gui-shared/internals';
+import '@golemui/gui-components/tabs';
+import { deferHydrationAttr } from '../../utils/defer-hydration';
 
 @Component({
   standalone: true,
@@ -32,25 +28,17 @@ import {
   templateUrl: './tabs.component.html',
   host: {
     class: 'gui-tabs gui-field',
-    '[style.flex]': 'this.adapter.templateData().size',
   },
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class TabsComponent implements OnInit, AfterViewInit, OnDestroy, WithWidget {
-  elementRef = inject(ElementRef);
-  tabButtons = viewChildren<ElementRef>('tabButtonRef');
-  startSentinel = viewChild.required<ElementRef>('startSentinel');
-  endSentinel = viewChild.required<ElementRef>('endSentinel');
+export class TabsComponent implements OnInit, OnDestroy, WithWidget {
   widget!: LayoutWidget;
 
+  /** The tab uid, without row indexes: the panel children carry them, see `getChild`. */
   activeTab = signal('');
-  isStartVisible = signal(false);
-  isEndVisible = signal(false);
 
   protected adapter: LayoutWidgetAdapter<TabsProps> = inject(LayoutWidgetAdapter);
-  // Server renders run ngOnInit and ngAfterViewInit too, so browser-only APIs need this guard.
-  private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
-  private startObserver: IntersectionObserver | undefined;
-  private endObserver: IntersectionObserver | undefined;
+  protected readonly deferHydration = deferHydrationAttr();
   private rowIndexSuffix = '';
 
   ngOnInit(): void {
@@ -58,32 +46,6 @@ export class TabsComponent implements OnInit, AfterViewInit, OnDestroy, WithWidg
     const templateData = this.adapter.templateData();
     this.activeTab.set(templateData.defaultOpen ?? templateData.tabs?.[0]?.uid ?? '');
     this.rowIndexSuffix = repeaterIndexSuffix(this.widget.uid);
-
-    if (this.isBrowser) {
-      this.startObserver = createIntersectionObserver(
-        this.startSentinel().nativeElement,
-        (isIntersecting: boolean) => this.isStartVisible.set(isIntersecting),
-      );
-      this.endObserver = createIntersectionObserver(
-        this.endSentinel().nativeElement,
-        (isIntersecting: boolean) => this.isEndVisible.set(isIntersecting),
-      );
-    }
-  }
-
-  ngAfterViewInit() {
-    if (!this.isBrowser) {
-      return;
-    }
-    // Scroll into view the active tab, just in case it's out of view
-    const tabs = this.adapter.templateData().tabs ?? [];
-    const currentIndex = tabs.findIndex((tab) => tab.uid === this.activeTab());
-    if (currentIndex > -1) {
-      this.tabButtons()[currentIndex].nativeElement.scrollIntoView({
-        block: 'nearest',
-        inline: 'nearest',
-      });
-    }
   }
 
   /**
@@ -108,55 +70,15 @@ export class TabsComponent implements OnInit, AfterViewInit, OnDestroy, WithWidg
     return tabPanelId(this.widget.uid, tabUid);
   }
 
-  onClickTab(uid: string) {
-    this.activeTab.set(uid);
-    this.adapter.change<TabsEventDetail>(uid);
-  }
-
-  onFocus(event: FocusEvent) {
-    (event.target as Element).scrollIntoView({ block: 'nearest', inline: 'nearest' });
-  }
-
-  onKeyDown($event: KeyboardEvent) {
-    const tabs = this.adapter.templateData().tabs ?? [];
-    const currentIndex = tabs.findIndex((tab) => tab.uid === this.activeTab());
-    const isRTL = window.getComputedStyle(this.elementRef.nativeElement).direction === 'rtl';
-
-    switch ($event.key) {
-      case 'ArrowLeft': {
-        const nextIndex = currentIndex + (isRTL ? 1 : -1);
-
-        if (nextIndex >= 0 && nextIndex < tabs.length) {
-          this.activeTab.set(tabs[nextIndex].uid);
-          this.tabButtons()[nextIndex].nativeElement.focus();
-        }
-        break;
-      }
-      case 'ArrowRight': {
-        const nextIndex = currentIndex + (isRTL ? -1 : 1);
-
-        if (nextIndex >= 0 && nextIndex < tabs.length) {
-          this.activeTab.set(tabs[nextIndex].uid);
-          this.tabButtons()[nextIndex].nativeElement.focus();
-        }
-        break;
-      }
-      case 'Home':
-        this.activeTab.set(tabs[0].uid);
-        this.tabButtons()[0].nativeElement.focus();
-        break;
-      case 'End':
-        this.activeTab.set(tabs[tabs.length - 1].uid);
-        this.tabButtons()[tabs.length - 1].nativeElement.focus();
-        break;
-      default:
-        return;
-    }
+  onTabChange(event: Event) {
+    const { detail } = event as CustomEvent<GuiTabChangeEventDetail>;
+    // A tab set nested in a panel fires its own.
+    if (event.target !== event.currentTarget) return;
+    this.activeTab.set(detail.value);
+    this.adapter.change<TabsEventDetail>(detail.value);
   }
 
   ngOnDestroy(): void {
     this.adapter.destroy();
-    this.startObserver?.disconnect();
-    this.endObserver?.disconnect();
   }
 }

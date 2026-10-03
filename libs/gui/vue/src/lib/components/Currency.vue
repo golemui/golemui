@@ -20,7 +20,7 @@ const elementValue = computed(() => value.value ?? Number.NaN);
 </script>
 
 <template>
-  <div class="gui-currency gui-field" :style="{ flex: templateData.size }">
+  <div class="gui-currency gui-field">
     <gui-currency
       :uid="uid"
       :label="templateData.label"
@@ -39,8 +39,8 @@ const elementValue = computed(() => value.value ?? Number.NaN);
       :autocomplete="templateData.autocomplete ?? undefined"
       :placeholder="templateData.placeholder ?? undefined"
       :localeId="templateData.lang"
-      @input="handleInput"
-      @blur="onBlur"
+      @gui-input="handleInput"
+      @gui-blur="onBlur"
     ></gui-currency>
   </div>
 </template>

@@ -33,7 +33,13 @@ export default defineConfig(() => ({
         format === 'cjs' ? `${entryName}.cjs` : `${entryName}.js`,
     },
     rollupOptions: {
-      external: ['@golemui/core', '@golemui/dx', 'rxjs', /^@?lit(-\w+)?($|\/.+)/],
+      external: [
+        '@golemui/core',
+        '@golemui/dx',
+        '@golemui/lit-utils',
+        'rxjs',
+        /^@?lit(-\w+)?($|\/.+)/,
+      ],
     },
   },
   test: {

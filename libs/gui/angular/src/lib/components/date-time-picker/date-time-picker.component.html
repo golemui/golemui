@@ -48,7 +48,7 @@
   [disabledTimeRangeMessage]="templateData.disabledTimeRangeMessage"
   [noAvailableTimesMessage]="templateData.noAvailableTimesMessage"
   [incompleteMessage]="templateData.incompleteMessage"
-  (change)="onChangeDateTime($event)"
-  (inputError)="onInputError($event)"
-  (blur)="adapter.onBlur()"
+  (gui-input)="onChangeDateTime($event)"
+  (gui-input-error)="onInputError($event)"
+  (gui-blur)="adapter.onBlur()"
 ></gui-date-time-picker>

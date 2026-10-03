@@ -42,13 +42,9 @@ export const runAccordionComponentTests = (mountFn: MountComponentFn) => {
       });
     });
 
-    it('gives every button and region an id built from the accordion uid', () => {
+    it('gives every header and region an id built from the accordion uid', () => {
       ['firstSection', 'secondSection'].forEach((sectionUid) => {
-        cy.get(`[id="accordion_button_${ACCORDION_UID}_${sectionUid}"]`).should(
-          'have.attr',
-          'aria-controls',
-          `accordion_section_${ACCORDION_UID}_${sectionUid}`,
-        );
+        cy.get(`summary[id="accordion_button_${ACCORDION_UID}_${sectionUid}"]`).should('exist');
         cy.get(`[id="accordion_section_${ACCORDION_UID}_${sectionUid}"]`).should(
           'have.attr',
           'aria-labelledby',
@@ -59,18 +55,15 @@ export const runAccordionComponentTests = (mountFn: MountComponentFn) => {
       expectNoDuplicateIds();
     });
 
-    it('toggles the section the clicked button controls', () => {
-      cy.get(`[id="accordion_section_${ACCORDION_UID}_secondSection"]`).should(
-        'have.attr',
-        'hidden',
-      );
+    it('toggles the section of the clicked header', () => {
       cy.get(`[id="accordion_button_${ACCORDION_UID}_secondSection"]`)
-        .should('have.attr', 'aria-expanded', 'false')
-        .click();
-      cy.get(`[id="accordion_section_${ACCORDION_UID}_secondSection"]`).should(
-        'not.have.attr',
-        'hidden',
-      );
+        .parent('details')
+        .should('not.have.attr', 'open');
+      cy.get(`[id="accordion_button_${ACCORDION_UID}_secondSection"]`).click();
+      cy.get(`[id="accordion_button_${ACCORDION_UID}_secondSection"]`)
+        .parent('details')
+        .should('have.attr', 'open');
+      cy.get(`[id="accordion_section_${ACCORDION_UID}_secondSection"]`).should('be.visible');
       cy.get('[data-cy="secondSection_textinput"]').should('be.visible');
     });
   });
@@ -119,14 +112,8 @@ export const runAccordionComponentTests = (mountFn: MountComponentFn) => {
       cy.get(`[id="accordion_button_${ACCORDION_UID}_secondSection"]`).click();
 
       // singleOpen is false, so opening the second section keeps the first one open
-      cy.get(`[id="accordion_section_${ACCORDION_UID}_secondSection"]`).should(
-        'not.have.attr',
-        'hidden',
-      );
-      cy.get(`[id="accordion_section_${ACCORDION_UID}_firstSection"]`).should(
-        'not.have.attr',
-        'hidden',
-      );
+      cy.get(`[id="accordion_section_${ACCORDION_UID}_secondSection"]`).should('be.visible');
+      cy.get(`[id="accordion_section_${ACCORDION_UID}_firstSection"]`).should('be.visible');
     });
   });
 };

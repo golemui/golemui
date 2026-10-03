@@ -17,6 +17,6 @@
   [minimumHeight]="templateData.minimumHeight"
   [autoGrow]="templateData.autoGrow"
   [maxLength]="templateData.validator?.maxLength"
-  (input)="valueChanged($event)"
-  (blur)="adapter.onBlur()"
+  (gui-input)="valueChanged($event)"
+  (gui-blur)="adapter.onBlur()"
 ></gui-textarea>

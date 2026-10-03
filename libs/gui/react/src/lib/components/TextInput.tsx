@@ -27,7 +27,7 @@ export function TextInput(widgetInstance: WithWidget) {
   const isRequired = (templateData.validator as Validator)?.required;
 
   return (
-    <div className="gui-textinput gui-field" style={{ flex: templateData.size }}>
+    <div className="gui-textinput gui-field">
       <GuiTextinputReact
         uid={uid}
         label={label}
@@ -41,8 +41,8 @@ export function TextInput(widgetInstance: WithWidget) {
         icon={icon}
         placeholder={placeholder ?? undefined}
         autocomplete={autocomplete ?? undefined}
-        onInput={handleChange}
-        onBlur={onBlur}
+        onGuiInput={handleChange}
+        onGuiBlur={onBlur}
       ></GuiTextinputReact>
     </div>
   );

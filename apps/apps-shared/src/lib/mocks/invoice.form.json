@@ -13,10 +13,9 @@
       "kind": "layout",
       "type": "grid",
       "props": {
-        "autoFit": false,
+        "columns": 12,
         "direction": "row",
-        "columnGap": 24,
-        "rowGap": 8
+        "gap": "lg"
       },
       "children": [
         {
@@ -78,10 +77,9 @@
       "kind": "layout",
       "type": "grid",
       "props": {
-        "autoFit": false,
+        "columns": 12,
         "direction": "row",
-        "columnGap": 16,
-        "rowGap": 8
+        "gap": "md"
       },
       "children": [
         {
@@ -144,10 +142,10 @@
         "title": "Line Item",
         "template": {
           "kind": "layout",
-          "type": "flex",
+          "type": "grid",
           "props": {
             "direction": "row",
-            "gap": 12
+            "gap": "sm"
           },
           "children": [
             {
@@ -203,10 +201,9 @@
       "kind": "layout",
       "type": "grid",
       "props": {
-        "autoFit": false,
+        "columns": 12,
         "direction": "row",
-        "columnGap": 12,
-        "rowGap": 4
+        "gap": "sm"
       },
       "children": [
         {
@@ -251,10 +248,10 @@
     },
     {
       "kind": "layout",
-      "type": "flex",
+      "type": "grid",
       "props": {
         "direction": "row",
-        "align": "end"
+        "justify": "end"
       },
       "children": [
         {

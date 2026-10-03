@@ -7,19 +7,19 @@
     {
       "uid": "header_layout",
       "kind": "layout",
-      "type": "flex",
+      "type": "grid",
       "props": {
         "direction": "column",
-        "gap": 20
+        "gap": "md"
       },
       "children": [
         {
           "uid": "vessel_section",
           "kind": "layout",
-          "type": "flex",
+          "type": "grid",
           "props": {
             "direction": "row",
-            "gap": 15
+            "gap": "md"
           },
           "children": [
             {
@@ -58,10 +58,10 @@
         {
           "uid": "voyage_details",
           "kind": "layout",
-          "type": "flex",
+          "type": "grid",
           "props": {
             "direction": "row",
-            "gap": 14
+            "gap": "md"
           },
           "children": [
             {
@@ -118,15 +118,15 @@
         "template": {
           "uid": "container_item",
           "kind": "layout",
-          "type": "flex",
+          "type": "grid",
           "props": {
             "direction": "column",
-            "gap": 10
+            "gap": "sm"
           },
           "children": [
             {
               "kind": "layout",
-              "type": "flex",
+              "type": "grid",
               "props": {
                 "direction": "row"
               },
@@ -167,10 +167,10 @@
                 "template": {
                   "uid": "pallet_item",
                   "kind": "layout",
-                  "type": "flex",
+                  "type": "grid",
                   "props": {
                     "direction": "column",
-                    "gap": 10
+                    "gap": "sm"
                   },
                   "children": [
                     {
@@ -198,10 +198,10 @@
                         "template": {
                           "uid": "sku_item",
                           "kind": "layout",
-                          "type": "flex",
+                          "type": "grid",
                           "props": {
                             "direction": "row",
-                            "gap": 10
+                            "gap": "sm"
                           },
                           "children": [
                             {
@@ -261,10 +261,10 @@
     {
       "uid": "regulatory_compliance",
       "kind": "layout",
-      "type": "flex",
+      "type": "grid",
       "props": {
         "direction": "column",
-        "gap": 14
+        "gap": "md"
       },
       "children": [
         {
@@ -289,10 +289,10 @@
         {
           "uid": "origin_grid",
           "kind": "layout",
-          "type": "flex",
+          "type": "grid",
           "props": {
             "direction": "row",
-            "gap": 10
+            "gap": "sm"
           },
           "children": [
             {
@@ -321,13 +321,13 @@
         {
           "uid": "hazard_declaration",
           "kind": "layout",
-          "type": "flex",
+          "type": "grid",
           "include": {
             "in": ["isHazardous"]
           },
           "props": {
             "direction": "row",
-            "gap": 10
+            "gap": "sm"
           },
           "children": [
             {
@@ -378,10 +378,10 @@
         {
           "uid": "tab_fees",
           "kind": "layout",
-          "type": "flex",
+          "type": "grid",
           "props": {
             "direction": "column",
-            "gap": 10
+            "gap": "sm"
           },
           "children": [
             {
@@ -419,10 +419,10 @@
         {
           "uid": "tab_insurance",
           "kind": "layout",
-          "type": "flex",
+          "type": "grid",
           "props": {
             "direction": "column",
-            "gap": 10
+            "gap": "sm"
           },
           "children": [
             {
@@ -462,10 +462,10 @@
     {
       "uid": "footer_actions",
       "kind": "layout",
-      "type": "flex",
+      "type": "grid",
       "props": {
         "direction": "row",
-        "gap": 10
+        "gap": "sm"
       },
       "children": [
         {

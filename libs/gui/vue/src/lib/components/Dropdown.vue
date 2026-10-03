@@ -264,7 +264,7 @@ const ItemRenderer = computed<Component>(() => {
 </script>
 
 <template>
-  <div class="gui-dropdown gui-field" :style="{ flex: templateData.size }">
+  <div class="gui-dropdown gui-field">
     <gui-label
       ref="labelRef"
       :uid="uid"
@@ -356,7 +356,7 @@ const ItemRenderer = computed<Component>(() => {
           :readOnly="isReadOnly"
           :hidden="!isListVisible"
           @focus="handleInputFocus"
-          @change="handleListChange"
+          @gui-input="handleListChange"
           @gui-update-items="handleUpdateItems"
           @gui-range-change="handleRangeChange"
           @gui-focus-change="handleFocusChange"

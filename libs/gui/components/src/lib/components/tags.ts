@@ -1,43 +1,72 @@
-import { html, LitElement, nothing } from 'lit';
+import { html, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
-import { cspStyleMap, safeDefine } from '@golemui/lit/internals';
+import { cspStyleMap } from '@golemui/lit-utils';
+import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { GUIPillsNavigationController } from '../controllers/pills-navigation.controller';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
-import type { TagsProps } from '@golemui/gui-shared/internals';
 import './pills';
 import type { GuiPillEventDetail, GuiPillItem } from './pills';
+import { GuiFormControl } from '../gui-form-control';
+import { dispatchBlur, dispatchValue, stopPropagation, valueEvents } from '../utils/events';
+import { booleanAttribute } from '../utils/converters';
+import { message, requiredName } from '../utils/messages';
 
 type TagsSeparator = 'Enter' | ',' | 'Tab' | 'blur' | string;
 
 const DEFAULT_SEPARATORS: TagsSeparator[] = ['Enter', ',', 'Tab', 'blur'];
 
-export class GuiTags extends LitElement {
-  @property({ type: String }) uid: string | undefined = undefined;
-  @property({ type: String }) label: string | undefined = undefined;
+/** What <gui-tags> renders besides the control state: its presentation props. */
+export type GuiTagsProps = {
+  hint?: string;
+  placeholder?: string;
+  icon?: string;
+};
+
+/**
+ * A field that turns typed text into a list of tags.
+ *
+ * @fires gui-input - The user changed the value. `detail.value` is the new value.
+ * @fires gui-change - The user committed the value. `detail.value` is the committed value.
+ * @fires gui-blur - Focus left the control.
+ * @cssprop --gui-pill-height - Height of each pill.
+ * @cssprop --gui-pill-font-size - Font size of the pill text.
+ * @cssprop --gui-pill-action-size - Size of the icons inside a pill.
+ * @cssprop --gui-pill-action-hit - Clickable area of the buttons inside a pill.
+ */
+export class GuiTags extends GuiFormControl {
+  /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
-  @property({ type: Array }) errors: string[] | undefined = [];
-  @property({ type: Boolean }) touched: boolean | undefined = false;
-  @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean }) disabled: boolean | undefined = false;
-  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
+  /** The tags. */
   @property({ type: Array }) value: string[] | undefined = [];
 
-  @property({ type: String }) hint: string | undefined = undefined;
+  /** Text shown while the control is empty. */
   @property({ type: String }) placeholder: string | undefined = undefined;
+  /** Icon class name shown inside the control, for example from an icon font. */
   @property({ type: String }) icon: string | undefined = undefined;
+  /**
+   * Keys that turn the typed text into a tag: `Enter`, `Tab` or a character such as `,` or `;`,
+   * which also splits pasted text. `blur` adds it when focus leaves.
+   */
   @property({ type: Array }) separators: TagsSeparator[] | undefined = undefined;
-  @property({ type: Boolean }) allowDuplicates: boolean | undefined = true;
-  @property({ type: Boolean }) trim: boolean | undefined = true;
+  /** Allows the same tag more than once. On by default: `allow-duplicates="false"` turns it off. */
+  @property({ attribute: 'allow-duplicates', converter: booleanAttribute }) allowDuplicates:
+    | boolean
+    | undefined = true;
+  /** Removes spaces around each tag. On by default: `trim="false"` turns it off. */
+  @property({ converter: booleanAttribute }) trim: boolean | undefined = true;
+  /** Accessible name of the remove button of each tag. An empty value keeps the default. */
   @property({ type: String, attribute: 'remove-aria-label' }) removeAriaLabel: string | undefined =
     undefined;
+  /** Icon class name of the remove button, replacing the default ×. */
   @property({ type: String, attribute: 'remove-icon' }) removeIcon: string | undefined = undefined;
 
   private ariaController = new GUIAriaController(this, {
+    requiresLabel: true,
     getTargets: () => this.querySelectorAll(`.gui-tags-input`),
     getState: () => ({
-      uid: this.uid as string,
+      uid: this.uid,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -73,7 +102,7 @@ export class GuiTags extends LitElement {
   }
 
   private getRemoveAriaLabel(): string {
-    return this.removeAriaLabel ?? 'Remove tag';
+    return requiredName('removeTag', this.removeAriaLabel);
   }
 
   private pillKey(tag: string, index: number): string {
@@ -82,7 +111,7 @@ export class GuiTags extends LitElement {
 
   override render() {
     const tags = this.getValue();
-    const templateData: ControlTemplateData<string[]> & TagsProps = {
+    const templateData: ControlTemplateData<string[]> & GuiTagsProps = {
       uid: this.uid,
       label: this.label,
       hint: this.hint,
@@ -107,7 +136,7 @@ export class GuiTags extends LitElement {
     }));
 
     return html`
-      ${this.label ? addLabel(this.uid as string, templateData, false, undefined, false) : nothing}
+      ${addLabel(this.uid, templateData, false, undefined, false)}
 
       <div class="gui-widget">
         <div
@@ -117,7 +146,7 @@ export class GuiTags extends LitElement {
             'gui-tags-input--icon': !!this.icon,
           })}
           role="group"
-          aria-label=${this.label ?? 'Tags input'}
+          aria-labelledby=${`${this.uid}_label`}
         >
           ${this.icon
             ? html`<span
@@ -131,7 +160,7 @@ export class GuiTags extends LitElement {
             class="gui-tags__pills"
             style=${cspStyleMap(pillItems.length ? {} : { 'min-width': 0 })}
             .uid=${this.uid}
-            .toolbarAriaLabel=${'Selected tags'}
+            .toolbarAriaLabel=${message('selectedTags')}
             .items=${pillItems}
             .errors=${this.errors}
             .touched=${!!this.touched}
@@ -143,10 +172,11 @@ export class GuiTags extends LitElement {
             ?readonly=${this.readOnly}
             .removeAriaLabel=${this.getRemoveAriaLabel()}
             .removeIcon=${this.removeIcon}
-            .compactAriaLabel=${`${tags.length} tags`}
-            @pillremove=${this.onPillRemove}
-            @pillkeydown=${this._pillsNav.onPillKeydown}
-            @pillexit=${this._pillsNav.onPillExit}
+            .compactAriaLabel=${requiredName('tagCount', undefined, { count: tags.length })}
+            @gui-pill-remove=${this.onPillRemove}
+            @gui-pill-keydown=${this._pillsNav.onPillKeydown}
+            @gui-pill-exit=${this._pillsNav.onPillExit}
+            @gui-dropdown-toggle=${stopPropagation}
           ></gui-pills>
 
           <input
@@ -154,6 +184,7 @@ export class GuiTags extends LitElement {
             id=${this.uid}
             data-cy=${`${this.uid}_tags-input`}
             class="gui-tags__input"
+            aria-labelledby=${`${this.uid}_label`}
             ?disabled=${this.disabled}
             ?readonly=${this.readOnly}
             placeholder=${this.placeholder || nothing}
@@ -165,11 +196,13 @@ export class GuiTags extends LitElement {
         </div>
       </div>
 
-      ${addErrors(this.uid as string, templateData)}
+      ${addErrors(this.uid, templateData)}
     `;
   }
 
   private onPillRemove = (e: CustomEvent<GuiPillEventDetail>) => {
+    // The removal reaches the host as the new value: gui-input and gui-change.
+    stopPropagation(e);
     if (this.disabled || this.readOnly) return;
     const tags = this.getValue();
     const idx = tags.findIndex((tag, i) => this.pillKey(tag, i) === e.detail.key);
@@ -190,13 +223,8 @@ export class GuiTags extends LitElement {
     const draft = input.value;
     const caretAtStart = input.selectionStart === 0 && input.selectionEnd === 0;
 
-    if (e.key === 'Enter' && separators.includes('Enter')) {
-      e.preventDefault();
-      if (this.commitDraft(draft)) input.value = '';
-      return;
-    }
-
-    if (e.key === ',' && separators.includes(',')) {
+    // Enter and the character separators (`,` or custom ones like `;`) commit instead of typing.
+    if (e.key !== 'Tab' && separators.includes(e.key)) {
       e.preventDefault();
       if (this.commitDraft(draft)) input.value = '';
       return;
@@ -251,12 +279,7 @@ export class GuiTags extends LitElement {
       if (this.commitDraft(draft)) input.value = '';
     }
 
-    this.dispatchEvent(
-      new CustomEvent('blur', {
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatchBlur(this);
   }
 
   private onPaste(e: ClipboardEvent) {
@@ -285,8 +308,12 @@ export class GuiTags extends LitElement {
     }
   }
 
+  private clean(rawDraft: string): string {
+    return this.trim !== false ? rawDraft.trim() : rawDraft;
+  }
+
   private commitDraft(rawDraft: string): boolean {
-    const cleaned = this.trim ? rawDraft.trim() : rawDraft;
+    const cleaned = this.clean(rawDraft);
     if (cleaned.length === 0) return false;
 
     const tags = this.getValue();
@@ -300,7 +327,7 @@ export class GuiTags extends LitElement {
     const tags = this.getValue();
     const next = [...tags];
     for (const raw of rawDrafts) {
-      const cleaned = this.trim ? raw.trim() : raw;
+      const cleaned = this.clean(raw);
       if (cleaned.length === 0) continue;
       if (this.allowDuplicates === false && next.includes(cleaned)) continue;
       next.push(cleaned);
@@ -312,13 +339,7 @@ export class GuiTags extends LitElement {
 
   private emitChange(next: string[]) {
     this.value = next;
-    this.dispatchEvent(
-      new CustomEvent('change', {
-        detail: { value: next },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatchValue(this, next);
   }
 
   private focusInput() {
@@ -326,6 +347,11 @@ export class GuiTags extends LitElement {
     input?.focus();
   }
 }
+
+/** The events `gui-tags` fires, with their types. */
+export const GuiTagsEvents = {
+  ...valueEvents<GuiTags['value']>(),
+};
 
 declare global {
   interface HTMLElementTagNameMap {

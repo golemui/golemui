@@ -31,7 +31,7 @@
   [incompleteMessage]="templateData.incompleteMessage"
   [hourFormat]="templateData.hourFormat"
   [minuteStep]="templateData.minuteStep"
-  (change)="onChangeDateTime($event)"
-  (inputError)="onInputError($event)"
-  (blur)="adapter.onBlur()"
+  (gui-input)="onChangeDateTime($event)"
+  (gui-input-error)="onInputError($event)"
+  (gui-blur)="adapter.onBlur()"
 ></gui-date-time>

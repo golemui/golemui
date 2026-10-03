@@ -30,7 +30,7 @@
   [removePillAriaLabel]="templateData.removePillAriaLabel"
   [startDateAriaLabel]="templateData.startDateAriaLabel"
   [endDateAriaLabel]="templateData.endDateAriaLabel"
-  (blur)="adapter.onBlur()"
-  (change)="onChangeDate($event)"
-  (inputError)="onInputError($event)"
+  (gui-blur)="adapter.onBlur()"
+  (gui-input)="onChangeDate($event)"
+  (gui-input-error)="onInputError($event)"
 ></gui-range-date>

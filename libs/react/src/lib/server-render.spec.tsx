@@ -20,6 +20,12 @@ describe('server rendering a form in a plain node environment', () => {
     expect(html.match(/<input/g)).toHaveLength(2);
   });
 
+  // Native constraint validation stays off: the engine owns validation, and the form-associated
+  // gui-* elements planned for v2 would otherwise trigger the browser's own validation UI.
+  it('turns off native form validation', () => {
+    expect(renderForm()).toMatch(/<form[^>]*\snovalidate/i);
+  });
+
   it('emits the values the form was initialized with', () => {
     const html = renderForm();
 

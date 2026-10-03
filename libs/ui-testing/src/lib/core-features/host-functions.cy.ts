@@ -278,7 +278,7 @@ export const runHostFunctionsComponentTests = (mountFn: MountComponentFn) => {
                 removeLabel: 'Remove line item',
                 template: {
                   kind: 'layout',
-                  type: 'flex',
+                  type: 'grid',
                   children: [
                     {
                       uid: 'lineQty',

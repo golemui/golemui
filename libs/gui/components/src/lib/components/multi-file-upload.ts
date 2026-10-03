@@ -1,15 +1,44 @@
 import { html, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
-import { safeDefine } from '@golemui/lit/internals';
-import type { FileItem } from '@golemui/gui-shared/internals';
+import { safeDefine } from '@golemui/lit-utils';
 import { GuiFileUpload } from './file-upload';
-import { MULTI_FILE_UPLOAD_BUTTON_LABEL, formatFileMessage } from '../utils/messages';
-import { FILE_REMOVE_ARIA_LABEL } from '../utils/messages';
+import { message, requiredName } from '../utils/messages';
 import './pills';
 import type { GuiPillEventDetail, GuiPillItem } from './pills';
+import type { FileItem } from '../types';
+import {
+  stopPropagation,
+  fires,
+  valueEvents,
+  type GuiInputErrorEventDetail,
+} from '../utils/events';
 
+/**
+ * A file upload that accepts several files, shown as pills. Its value is `values`, the list of
+ * files; the inherited `value` is not used.
+ *
+ * @fires gui-input - The files changed. `detail.value` is the list of files.
+ * @fires gui-change - The files changed: one was added, uploaded or removed. `detail.value` is the
+ *   list of files.
+ * @fires gui-blur - Focus left the control.
+ * @fires gui-input-error - A file was refused (its type or size), its upload failed or removing it
+ *   failed. `detail.message` is the error, or `''` when it clears; show it through `errors`.
+ * @cssprop --gui-pill-height - Height of each pill.
+ * @cssprop --gui-pill-font-size - Font size of the pill text.
+ * @cssprop --gui-pill-action-size - Size of the icons inside a pill.
+ * @cssprop --gui-pill-action-hit - Clickable area of the buttons inside a pill.
+ */
 export class GuiMultiFileUpload extends GuiFileUpload {
+  /** The files, with their upload status. */
   @property({ type: Array }) values: FileItem[] | undefined = [];
+
+  protected override get controlValue(): unknown {
+    return this.values;
+  }
+
+  protected override set controlValue(values: unknown) {
+    this.values = values as FileItem[] | undefined;
+  }
 
   protected override isMultiple(): boolean {
     return true;
@@ -31,7 +60,7 @@ export class GuiMultiFileUpload extends GuiFileUpload {
   }
 
   protected override getDefaultButtonLabel(): string {
-    return MULTI_FILE_UPLOAD_BUTTON_LABEL;
+    return message('uploadFiles');
   }
 
   protected override renderCounter(item: FileItem): string {
@@ -47,15 +76,12 @@ export class GuiMultiFileUpload extends GuiFileUpload {
       label: item.name,
       busy: this._removingIds.has(item.id),
     }));
-    const removeAriaLabel = formatFileMessage(
-      this.removeAriaLabel ?? FILE_REMOVE_ARIA_LABEL,
-      '',
-    ).trim();
+    const removeAriaLabel = requiredName('removeFile', this.removeAriaLabel, { name: '' }).trim();
 
     return html`<gui-pills
       class="gui-file-upload__pills"
       .uid=${this.uid}
-      .toolbarAriaLabel=${'Uploaded files'}
+      .toolbarAriaLabel=${message('uploadedFiles')}
       .items=${pillItems}
       .errors=${this.errors}
       .touched=${!!this.touched}
@@ -67,17 +93,27 @@ export class GuiMultiFileUpload extends GuiFileUpload {
       ?readonly=${this.readOnly}
       .removeAriaLabel=${removeAriaLabel}
       .removeIcon=${this.removeIcon}
-      .compactAriaLabel=${`${items.length} files`}
-      @pillremove=${this.onPillRemove}
+      .compactAriaLabel=${requiredName('fileCount', undefined, { count: items.length })}
+      @gui-pill-remove=${this.onPillRemove}
+      @gui-pill-keydown=${stopPropagation}
+      @gui-pill-exit=${stopPropagation}
+      @gui-dropdown-toggle=${stopPropagation}
     ></gui-pills>`;
   }
 
   private onPillRemove = (e: CustomEvent<GuiPillEventDetail>) => {
+    e.stopPropagation();
     if (this.disabled || this.readOnly) return;
     const item = this.getItems().find((current) => current.id === e.detail.key);
     if (item) void this.removeItem(item);
   };
 }
+
+/** The events `gui-multi-file-upload` fires, with their types. */
+export const GuiMultiFileUploadEvents = {
+  ...valueEvents<GuiMultiFileUpload['values']>(),
+  'gui-input-error': fires<CustomEvent<GuiInputErrorEventDetail>>(),
+};
 
 declare global {
   interface HTMLElementTagNameMap {

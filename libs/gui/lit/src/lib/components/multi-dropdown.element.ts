@@ -23,6 +23,7 @@ import '@golemui/gui-components/label';
 import '@golemui/gui-components/multi-list';
 import '@golemui/gui-components/multi-select-trigger';
 import '@golemui/gui-components/errors';
+import { live } from 'lit/directives/live.js';
 
 export class MultiDropdownElement extends LitElement implements WithWidget {
   widget!: InputWidget<OptionValue[]>;
@@ -64,18 +65,6 @@ export class MultiDropdownElement extends LitElement implements WithWidget {
 
   override createRenderRoot() {
     return this;
-  }
-
-  override updated(changedProperties: any) {
-    super.updated(changedProperties);
-
-    const size = this.adapter.templateData.size;
-
-    if (size) {
-      this.style.flex = String(size);
-    } else {
-      this.style.removeProperty('flex');
-    }
   }
 
   override connectedCallback() {
@@ -366,8 +355,8 @@ export class MultiDropdownElement extends LitElement implements WithWidget {
           @keydown=${this._onKeyDown}
           @input=${this._onInput}
           @focusin=${this._onFocusIn}
-          @pillremove=${this._onPillRemove}
-          @dropdowntoggle=${this._onPillsDropdownToggle}
+          @gui-pill-remove=${this._onPillRemove}
+          @gui-dropdown-toggle=${this._onPillsDropdownToggle}
         ></gui-multi-select-trigger>
         <button
           type="button"
@@ -401,7 +390,7 @@ export class MultiDropdownElement extends LitElement implements WithWidget {
           <gui-multi-list
             id=${`${this.widget.uid}-list`}
             .uid=${this.widget.uid}
-            .values=${values}
+            .values=${live(values)}
             .valueField=${templateData.valueField! as string}
             .items=${this._isFiltering && !asyncFiltering
               ? this._filteredItems
@@ -409,14 +398,14 @@ export class MultiDropdownElement extends LitElement implements WithWidget {
             .itemHeight=${templateData.itemHeight}
             .height=${templateData.height}
             ?required=${templateData.validator?.required}
-            ?touched=${templateData.touched}
+            .touched=${templateData.touched}
             ?disabled=${templateData.disabled}
             ?readonly=${templateData.readonly}
             ?hidden=${!this._isListVisible}
             @gui-range-change=${this._onRangeChange}
             @gui-update-items=${this._onUpdateItems}
             @gui-focus-change=${this._onFocusChange}
-            @change=${this._onValueChange}
+            @gui-item-toggle=${this._onValueChange}
           >
             ${visibleItems.map((item, index) => {
               const absoluteIndex = this._range.start + index;

@@ -40,7 +40,7 @@ const formHtml = await renderForm(config, {
   );
   if (languagePicker) {
     languagePicker.options = languages;
-    languagePicker.addEventListener('change', (event) => {
+    languagePicker.addEventListener('gui-change', (event) => {
       i18next.changeLanguage((event as CustomEvent<{ value: string }>).detail.value);
     });
   }

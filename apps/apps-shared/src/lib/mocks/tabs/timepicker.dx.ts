@@ -1,6 +1,6 @@
 import { gui } from '@golemui/gui-shared';
 
-export const timePickerTab = gui.layouts.flex([
+export const timePickerTab = gui.layouts.grid([
   gui.inputs.timePicker('timePickerEmpty', {
     label: 'Empty',
     icon: 'schedule',

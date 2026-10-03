@@ -1,61 +1,7 @@
-/**
- * Upload lifecycle of one file as tracked in the form value. `uploading` and
- * `error` items block submission while `blockPendingUploads` is on (the
- * default) so a half-finished upload can never be submitted silently.
- */
-export type FileStatus = 'uploading' | 'uploaded' | 'error';
+import type { MarkdownParser, UploadService } from '@golemui/gui-components';
 
-/**
- * The value held by the `fileUpload` (one item or `null`) and
- * `multiFileUpload` (an array) widgets. It is plain JSON: the `File` object
- * never enters the form state, only this envelope does. `data` is whatever the
- * host's `uploadService.upload` resolved with, stored verbatim, so a submit
- * payload carries exactly what the host's own endpoint returned.
- */
-export type FileItem<TData = unknown> = {
-  /** Synthetic id generated when the file is added; stable across progress/retry. */
-  id: string;
-  name: string;
-  /** Size in bytes. */
-  size: number;
-  /** Best-effort MIME type as reported by the browser. */
-  type: string;
-  status: FileStatus;
-  /** Human-readable reason when `status === 'error'`. */
-  error?: string;
-  /** The server response, verbatim. */
-  data?: TData;
-};
-
-/**
- * Transport for the file upload widgets, provided by the host. The widget
- * calls `upload` as soon as a file is picked and stores the resolved value in
- * `FileItem.data`; `remove` (optional) is awaited when the user removes an
- * uploaded file so the server can delete it.
- *
- * Server file cleanup is the host's job. `remove` runs only on that explicit
- * user removal and when the single-file widget replaces its file with a new
- * pick (not awaited, a failure is only logged). A deleted repeater row, a
- * field pruned by a state, `setData`, a config replacement or an abandoned
- * form all leave the file on the server: the widget cannot know which of
- * those makes it unwanted. Treat every `upload` result as provisional and
- * reconcile server files against the submitted value.
- *
- * Keep the object reference stable (module level or memoized): a new form
- * `config` identity re-initializes the form.
- */
-export type UploadService = {
-  upload(
-    file: File,
-    ctx: {
-      id: string;
-      path: string;
-      onProgress?: (percentage: number) => void;
-      signal: AbortSignal;
-    },
-  ): Promise<unknown>;
-  remove?(item: FileItem): Promise<void>;
-};
+// The file value and upload service types belong to the gui-* elements.
+export type { FileItem, FileStatus, UploadService } from '@golemui/gui-components';
 
 /**
  * Dependencies are any 3rd party service components may need internally.
@@ -69,9 +15,7 @@ export type Dependencies = {
    * The markdown parser used by the markdown component
    * Popular options are Snarkdown, Micromark and Marked.
    */
-  markdown?: {
-    parse: (markdown: string) => string;
-  };
+  markdown?: MarkdownParser;
   /**
    * The upload transport used by the fileUpload and multiFileUpload components.
    */

@@ -13,6 +13,7 @@ import {
   type PartValues,
 } from '../utils/parts';
 import { parseISODateString } from '../utils/date';
+import { dispatch } from '../utils/events';
 import {
   from24Hour,
   parseISODateTimeString,
@@ -71,12 +72,12 @@ export interface GUIPartsControllerOptions {
   /** Locale day-period labels. */
   getDayPeriodLabels?(): { am: string; pm: string };
   /**
-   * Dispatches a surfaced `inputError`
+   * Dispatches a surfaced `gui-input-error`
    * Required by hosts that call {@link GUIPartsController.surfaceInputError}.
    */
   onInputErrorSurfaced?(message: string): void;
   /**
-   * Dispatches the `change` echo that clears a previously-surfaced `inputError`
+   * Dispatches the `gui-input` echo that clears a previously-surfaced `gui-input-error`
    * Required by hosts that call {@link GUIPartsController.clearSurfacedInputError}.
    */
   onSurfacedErrorCleared?(value: unknown): void;
@@ -90,7 +91,7 @@ export class GUIPartsController implements ReactiveController {
   private options: GUIPartsControllerOptions;
 
   private _values: PartValues = {};
-  private _hasSurfacedInputError = false;
+  private _surfacedInputError: string | null = null;
   private _keydownTarget: EventTarget | null = null;
 
   constructor(host: GUIPartsHost, options: GUIPartsControllerOptions) {
@@ -338,9 +339,9 @@ export class GUIPartsController implements ReactiveController {
     }
   };
 
-  /** Re-dispatches focus as the host's `focus` CustomEvent (handleFocus). */
+  /** Re-dispatches focus as the host's `gui-focus` CustomEvent (handleFocus). */
   handleFocus = (event: FocusEvent): void => {
-    this.host.dispatchEvent(new CustomEvent('focus', { detail: event }));
+    dispatch(this.host, 'gui-focus', event);
   };
 
   /**
@@ -558,31 +559,36 @@ export class GUIPartsController implements ReactiveController {
     }
   }
 
-  /** Whether an inputError has been surfaced and not yet cleared. */
+  /** Whether a `gui-input-error` has been surfaced and not yet cleared. */
   get hasSurfacedInputError(): boolean {
-    return this._hasSurfacedInputError;
+    return this._surfacedInputError !== null;
+  }
+
+  /** The message of the surfaced `gui-input-error`, or null when none is. */
+  get surfacedInputError(): string | null {
+    return this._surfacedInputError;
   }
 
   /**
-   * Surfaces an inputError through `onInputErrorSurfaced` and remembers it so
+   * Surfaces a `gui-input-error` through `onInputErrorSurfaced` and remembers it so
    * it can later be cleared.
    */
   surfaceInputError(message: string): void {
-    this._hasSurfacedInputError = true;
+    this._surfacedInputError = message;
     this.options.onInputErrorSurfaced?.(message);
   }
 
   /**
-   * Clears a previously-surfaced inputError by echoing the given (unchanged)
+   * Clears a previously-surfaced `gui-input-error` by echoing the given (unchanged)
    * value through `onSurfacedErrorCleared`; a no-op when nothing is surfaced.
    */
   clearSurfacedInputError(value: unknown): void {
-    if (!this._hasSurfacedInputError) return;
-    this._hasSurfacedInputError = false;
+    if (this._surfacedInputError === null) return;
+    this._surfacedInputError = null;
     this.options.onSurfacedErrorCleared?.(value);
   }
 
   resetSurfacedInputError(): void {
-    this._hasSurfacedInputError = false;
+    this._surfacedInputError = null;
   }
 }

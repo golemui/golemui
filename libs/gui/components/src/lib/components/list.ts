@@ -1,11 +1,26 @@
-import { css, html, LitElement, type PropertyValues } from 'lit';
+import { css, html, render, type PropertyValues } from 'lit';
 import { property, query, state } from 'lit/decorators.js';
-import { cspStyleMap, safeDefine } from '@golemui/lit/internals';
+import { cspStyleMap } from '@golemui/lit-utils';
+import { safeDefine } from '@golemui/lit-utils';
 import { gridKeyStep, listPageSize, nextEnabledIndex } from '../utils/grid-nav';
 import { updateListItems } from './list-items';
-import type { ListItem, ListProps, OptionValue } from '@golemui/gui-shared/internals';
+import type { ListItem, OptionValue } from '../types';
+import { GuiFormControl } from '../gui-form-control';
+import { dispatch, dispatchBlur, dispatchValue, fires, valueEvents } from '../utils/events';
+import { addErrors, showsErrors } from '../utils/templates';
 
-export class GuiList extends LitElement {
+/**
+ * A virtualized listbox to pick one item, with keyboard navigation.
+ *
+ * @fires gui-input - The user changed the value. `detail.value` is the new value.
+ * @fires gui-change - The user committed the value. `detail.value` is the committed value.
+ * @fires gui-blur - Focus left the control.
+ * @fires gui-focus-change - The focused item changed. `detail.index` is its index, or -1.
+ * @fires gui-range-change - The rendered items changed while scrolling. `detail` has the
+ *   `startIndex` and `endIndex`.
+ * @fires gui-update-items - The items were normalized. `detail` is the list of items.
+ */
+export class GuiList extends GuiFormControl {
   // Inline `style` attributes are blocked by a strict `style-src` CSP: static rules
   // live here (adopted stylesheet) and dynamic values go through `cspStyleMap` (CSSOM)
   static override styles = css`
@@ -30,18 +45,16 @@ export class GuiList extends LitElement {
     }
   `;
 
-  @property({ type: String }) uid: string | undefined = undefined;
-  @property({ type: Boolean }) touched: boolean | undefined = false;
-  @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean }) disabled: boolean | undefined = false;
-  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
+  /** The value of the selected item. */
   @property({ type: String }) value: OptionValue | undefined = undefined;
-  @property({ type: String }) valueField: string | undefined = undefined;
-  @property({ type: String }) label: string | undefined = undefined;
-  @property({ type: String }) hint: string | undefined = undefined;
+  /** For items given as objects, the key of the value. */
+  @property({ type: String, attribute: 'value-field' }) valueField: string | undefined = undefined;
+  /** The items of the list. */
   @property({ type: Array }) items: ListItem<unknown>[] = [];
 
-  @property({ type: Number }) itemHeight: number | undefined = undefined;
+  /** Height of each item, in pixels. Needed to virtualize the list. */
+  @property({ type: Number, attribute: 'item-height' }) itemHeight: number | undefined = undefined;
+  /** Height of the scrollable list, in pixels. */
   @property({ type: Number }) height: number | undefined = undefined;
 
   @state() private _items: ListItem<any>[] = [];
@@ -52,6 +65,9 @@ export class GuiList extends LitElement {
   @query('.gui-list__scroll-viewport') private viewportElement!: HTMLElement;
 
   private buffer = 5;
+  // Whether the list shows errors set on it, and so owns its invalid state (see syncHostAria).
+  private showsOwnErrors = false;
+  private errorsElement: HTMLElement | undefined = undefined;
 
   override willUpdate(changedProperties: PropertyValues) {
     super.willUpdate(changedProperties);
@@ -81,7 +97,19 @@ export class GuiList extends LitElement {
     };
 
     toggleAttr('aria-required', this.required ? 'true' : null);
-    toggleAttr('aria-disabled', this.disabled || this.readOnly ? 'true' : null);
+    toggleAttr('aria-disabled', this.disabled ? 'true' : null);
+    toggleAttr('aria-readonly', this.readOnly ? 'true' : null);
+
+    // GolemUI Forms leaves `errors` unset: its host renders them next to the list and its
+    // <gui-label> marks the list invalid. So the list only sets, and clears, the invalid state
+    // of errors set on it, and leaves the host's alone.
+    const showErrors = showsErrors(this.touched, this.errors);
+    if (showErrors || this.showsOwnErrors) {
+      toggleAttr('aria-invalid', showErrors ? 'true' : null);
+      toggleAttr('aria-errormessage', showErrors ? `${this.uid}_errors` : null);
+    }
+    this.showsOwnErrors = showErrors;
+
     toggleAttr(
       'aria-activedescendant',
       this._focusedIndex >= 0 ? `${this.uid}-item-${this._focusedIndex}` : null,
@@ -100,6 +128,26 @@ export class GuiList extends LitElement {
   override firstUpdated() {
     this.measureViewport();
     new ResizeObserver(() => this.measureViewport()).observe(this.viewportElement);
+  }
+
+  override updated() {
+    this.renderErrors();
+  }
+
+  /**
+   * Renders the errors set on the list into its light DOM, slotted under the items: that is where
+   * `aria-errormessage` can reach them, since an id reference does not cross into a shadow root.
+   * Created on the first errors, so a list whose host renders them gets none.
+   */
+  private renderErrors() {
+    if (!this.errorsElement) {
+      if (!this.showsOwnErrors) return;
+      this.errorsElement = document.createElement('div');
+      this.errorsElement.slot = 'errors';
+      this.errorsElement.className = 'gui-list__errors';
+      this.append(this.errorsElement);
+    }
+    render(addErrors(this.uid, { errors: this.errors, touched: this.touched }), this.errorsElement);
   }
 
   override render() {
@@ -124,13 +172,16 @@ export class GuiList extends LitElement {
           <slot></slot>
         </div>
       </div>
+      <slot name="errors"></slot>
     `;
   }
 
+  /** @internal */
   public focusItemAtIndex(index: number) {
     this._focusedIndex = index;
   }
 
+  /** @internal */
   public scrollToSelectedIndex() {
     this.scrollToIndex(this.findSelectedIndex());
   }
@@ -149,14 +200,16 @@ export class GuiList extends LitElement {
   }
 
   private onKeyDown = (e: KeyboardEvent) => {
-    if (this.disabled || this.readOnly) return;
+    if (this.disabled) return;
 
     if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      // Read-only: the items can be browsed, not picked.
+      if (this.readOnly) return;
       const item = this._items[this._focusedIndex];
       if (this._focusedIndex >= 0 && item != null && !item.disabled) {
         this.selectItem(item);
       }
-      e.preventDefault();
       return;
     }
 
@@ -201,13 +254,7 @@ export class GuiList extends LitElement {
     this._focusedIndex = selectedIndex;
     this.scrollToIndex(selectedIndex);
 
-    this.dispatchEvent(
-      new CustomEvent('gui-focus-change', {
-        detail: { index: selectedIndex },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatch(this, 'gui-focus-change', { index: selectedIndex });
   };
 
   private onFocusOut = (e: FocusEvent) => {
@@ -217,17 +264,11 @@ export class GuiList extends LitElement {
 
     this._focusedIndex = -1;
 
-    this.dispatchEvent(
-      new CustomEvent('gui-focus-change', {
-        detail: { index: -1 },
-        bubbles: true,
-        composed: true,
-      }),
-    );
-
-    this.dispatchEvent(new CustomEvent('blur', { bubbles: true, composed: true }));
+    dispatch(this, 'gui-focus-change', { index: -1 });
+    dispatchBlur(this);
   };
 
+  /** @internal */
   public scrollToIndex(index: number) {
     const itemHeight = this.itemHeight ?? 40;
     const viewportHeight = this.height ?? 300;
@@ -245,14 +286,10 @@ export class GuiList extends LitElement {
     }
   }
 
-  private selectItem(item: ListItem<any>) {
-    this.dispatchEvent(
-      new CustomEvent('change', {
-        detail: { value: item.value },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+  /** The user picked an item: the list reports it as its new value. */
+  protected selectItem(item: ListItem<any>) {
+    this.value = item.value;
+    dispatchValue(this, item.value);
   }
 
   private setFocusedIndex(index: number) {
@@ -261,37 +298,19 @@ export class GuiList extends LitElement {
     this._focusedIndex = index;
     this.scrollToIndex(index);
 
-    this.dispatchEvent(
-      new CustomEvent('gui-focus-change', {
-        detail: { index },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatch(this, 'gui-focus-change', { index });
   }
 
   private updateItems() {
-    this._items = updateListItems(this.items, { valueField: this.valueField } as ListProps<any>);
+    this._items = updateListItems(this.items, { valueField: this.valueField });
 
-    this.dispatchEvent(
-      new CustomEvent('gui-update-items', {
-        detail: this._items,
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatch(this, 'gui-update-items', this._items);
   }
 
   private emitRangeChange() {
     const { startIndex, endIndex } = this.calculateRange();
 
-    this.dispatchEvent(
-      new CustomEvent('gui-range-change', {
-        detail: { startIndex, endIndex },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatch(this, 'gui-range-change', { startIndex, endIndex });
   }
 
   private measureViewport() {
@@ -327,6 +346,14 @@ export class GuiList extends LitElement {
     this.removeEventListener('focusout', this.onFocusOut);
   }
 }
+
+/** The events `gui-list` fires, with their types. */
+export const GuiListEvents = {
+  ...valueEvents<GuiList['value']>(),
+  'gui-focus-change': fires<CustomEvent<{ index: number }>>(),
+  'gui-range-change': fires<CustomEvent<{ startIndex: number; endIndex: number }>>(),
+  'gui-update-items': fires<CustomEvent<ListItem<unknown>[]>>(),
+};
 
 declare global {
   interface HTMLElementTagNameMap {

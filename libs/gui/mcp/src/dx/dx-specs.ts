@@ -123,7 +123,8 @@ function commonNote(fw: DxFramework = 'react'): string {
     'A form is just an array of these items: `export const form = [ /* items */ ];`. ' +
     FRAMEWORK_SETUP[fw] +
     ' ' +
-    'Import the component stylesheet ONCE — `@golemui/gui-components/index.css` — or the form renders unstyled. ' +
+    'Import the two stylesheets ONCE, in this order — `@golemui/gui-components/index.css`, then ' +
+    '`@golemui/gui-shared/forms.css` — or the form renders unstyled. ' +
     "To RECEIVE A SUBMIT: add a `gui.actions.button({ label, actionType: 'submit' })` to the form and listen for " +
     'the submit on the host component (the RENDER line above shows how for your framework) — the handler gets a ' +
     '`FormSubmitEvent` whose `.data` is the collected form data. ' +
@@ -749,43 +750,20 @@ const DISPLAYS: DxSpec[] = [
 // Layouts wrap a `children` array of other gui.* items (children come FIRST).
 const LAYOUTS: DxSpec[] = [
   {
-    factory: 'flex',
-    namespace: 'layouts',
-    docSlug: 'flex',
-    call: 'gui.layouts.flex(children, props?)',
-    example:
-      "gui.layouts.flex([ gui.inputs.textInput('firstName', { label: 'First name' }), gui.inputs.textInput('lastName', { label: 'Last name' }) ])",
-    notes: [
-      'Layouts take the **children array first**, then optional props — unlike inputs (path first).',
-      'Direction-locked variants: `verticalFlex`, `horizontalFlex` (and `grid` / `verticalGrid` / `horizontalGrid`).',
-    ],
-  },
-  {
-    factory: 'verticalFlex',
-    namespace: 'layouts',
-    docSlug: 'flex',
-    call: 'gui.layouts.verticalFlex(children, props?)',
-    example:
-      "gui.layouts.verticalFlex([ gui.inputs.textInput('a', { label: 'A' }), gui.inputs.textInput('b', { label: 'B' }) ])",
-    notes: ['A `flex` with direction fixed to vertical.'],
-  },
-  {
-    factory: 'horizontalFlex',
-    namespace: 'layouts',
-    docSlug: 'flex',
-    call: 'gui.layouts.horizontalFlex(children, props?)',
-    example:
-      "gui.layouts.horizontalFlex([ gui.inputs.textInput('a', { label: 'A' }), gui.inputs.textInput('b', { label: 'B' }) ])",
-    notes: ['A `flex` with direction fixed to horizontal.'],
-  },
-  {
     factory: 'grid',
     namespace: 'layouts',
     docSlug: 'grid',
     call: 'gui.layouts.grid(children, props?)',
     example:
-      "gui.layouts.grid([ gui.inputs.textInput('a', { label: 'A' }), gui.inputs.textInput('b', { label: 'B' }) ])",
-    notes: ['Grid layout; `horizontalGrid` / `verticalGrid` lock the direction.'],
+      "gui.layouts.grid([ gui.inputs.textInput('firstName', { label: 'First name', size: 2 }), gui.inputs.textInput('initial', { label: 'Initial' }) ], { direction: 'row', gap: 'lg' })",
+    notes: [
+      'Layouts take the **children array first**, then optional props — unlike inputs (path first).',
+      "The one layout. No `direction` stacks the children; `direction: 'row'` puts them on one line, sharing the width by each child's `size`; `columns: 3` (1–12) or `columns: 'auto'` wraps them in columns.",
+      "`gap`: `'none' | 'xs' | 'sm' | 'md'` (default) `| 'lg' | 'xl'` — never a number.",
+      "Rows only: `justify: 'start' | 'center' | 'end' | 'space-between'` keeps each child at its own width and places them, e.g. buttons on the right; the default `'stretch'` shares the width by `size`.",
+      'In a row or columns, labels, controls and errors line up across the fields on their own. Every grid stacks below a 480px wide container.',
+      '`gui.layouts.flex`, `verticalFlex` and `horizontalFlex` are deprecated: never use them.',
+    ],
   },
   {
     factory: 'verticalGrid',
@@ -794,7 +772,7 @@ const LAYOUTS: DxSpec[] = [
     call: 'gui.layouts.verticalGrid(children, props?)',
     example:
       "gui.layouts.verticalGrid([ gui.inputs.textInput('a', { label: 'A' }), gui.inputs.textInput('b', { label: 'B' }) ])",
-    notes: ['A `grid` with direction fixed to vertical.'],
+    notes: ['A `grid` stack, the same as `grid` with no direction.'],
   },
   {
     factory: 'horizontalGrid',
@@ -802,8 +780,11 @@ const LAYOUTS: DxSpec[] = [
     docSlug: 'grid',
     call: 'gui.layouts.horizontalGrid(children, props?)',
     example:
-      "gui.layouts.horizontalGrid([ gui.inputs.textInput('a', { label: 'A' }), gui.inputs.textInput('b', { label: 'B' }) ])",
-    notes: ['A `grid` with direction fixed to horizontal.'],
+      "gui.layouts.horizontalGrid([ gui.actions.button({ label: 'Cancel' }), gui.actions.button({ label: 'Save', actionType: 'submit' }) ], { justify: 'end' })",
+    notes: [
+      "A `grid` row: `grid` with `direction: 'row'`.",
+      "With `justify: 'end'` the children keep their own width and sit on the right: the usual place for form buttons.",
+    ],
   },
   {
     factory: 'tabs',

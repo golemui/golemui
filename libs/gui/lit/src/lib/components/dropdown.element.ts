@@ -11,6 +11,7 @@ import { defaultListItemRenderer } from './default-list-item-renderer';
 import '@golemui/gui-components/label';
 import '@golemui/gui-components/list';
 import '@golemui/gui-components/errors';
+import { live } from 'lit/directives/live.js';
 
 export class DropdownElement extends LitElement implements WithWidget {
   widget!: InputWidget<string>;
@@ -53,18 +54,6 @@ export class DropdownElement extends LitElement implements WithWidget {
 
   override createRenderRoot() {
     return this;
-  }
-
-  override updated(changedProperties: any) {
-    super.updated(changedProperties);
-
-    const size = this.adapter.templateData.size;
-
-    if (size) {
-      this.style.flex = String(size);
-    } else {
-      this.style.removeProperty('flex');
-    }
   }
 
   override connectedCallback() {
@@ -377,7 +366,7 @@ export class DropdownElement extends LitElement implements WithWidget {
           <gui-list
             id=${`${this.widget.uid}-list`}
             .uid=${this.widget.uid}
-            .value=${templateData.value ?? ''}
+            .value=${live(templateData.value ?? '')}
             .valueField=${templateData.valueField! as string}
             .items=${this._isFiltering && !asyncFiltering
               ? this._filteredItems
@@ -385,7 +374,7 @@ export class DropdownElement extends LitElement implements WithWidget {
             .itemHeight=${templateData.itemHeight}
             .height=${templateData.height}
             ?required=${templateData.validator?.required}
-            ?touched=${templateData.touched}
+            .touched=${templateData.touched}
             ?disabled=${templateData.disabled}
             ?readonly=${templateData.readonly}
             ?hidden=${!this._isListVisible}
@@ -393,7 +382,7 @@ export class DropdownElement extends LitElement implements WithWidget {
             @gui-update-items=${this._onUpdateItems}
             @gui-focus-change=${this._onFocusChange}
             @focus=${this._onFocus}
-            @change=${this._onValueChange}
+            @gui-input=${this._onValueChange}
           >
             ${visibleItems.map((item, index) => {
               const absoluteIndex = this._range.start + index;

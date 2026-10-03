@@ -1,32 +1,45 @@
-import { html, LitElement, nothing } from 'lit';
+import { html, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
 import { live } from 'lit/directives/live.js';
-import { safeDefine } from '@golemui/lit/internals';
+import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addIcon, addLabel, type ControlTemplateData } from '../utils/templates';
-import type { TextinputProps } from '@golemui/gui-shared/internals';
+import { GuiFormControl } from '../gui-form-control';
+import { dispatchBlur, dispatchChange, dispatchValue, valueEvents } from '../utils/events';
 
-export class GuiTextinput extends LitElement {
-  @property({ type: String }) uid: string | undefined = undefined;
-  @property({ type: String }) label: string | undefined = undefined;
+/** What <gui-textinput> renders besides the control state: its presentation props. */
+export type GuiTextinputProps = {
+  hint?: string;
+  icon?: string;
+  placeholder?: string;
+  autocomplete?: string;
+};
+
+/**
+ * A single-line text field.
+ *
+ * @fires gui-input - The user changed the value. `detail.value` is the new value.
+ * @fires gui-change - The user committed the text, on blur or Enter. `detail.value` is the value.
+ * @fires gui-blur - Focus left the control.
+ */
+export class GuiTextinput extends GuiFormControl {
+  /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
-  @property({ type: Array }) errors: string[] | undefined = [];
-  @property({ type: Boolean }) touched: boolean | undefined = false;
-  @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean }) disabled: boolean | undefined = false;
-  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
+  /** The text. */
   @property({ type: String }) value: string | undefined = undefined;
 
-  @property({ type: String }) hint: string | undefined = undefined;
+  /** Icon class name shown inside the control, for example from an icon font. */
   @property({ type: String }) icon: string | undefined = undefined;
+  /** Text shown while the control is empty. */
   @property({ type: String }) placeholder: string | undefined = undefined;
+  /** The `autocomplete` hint passed to the inner native control. */
   @property({ type: String }) autocomplete: string | undefined = undefined;
 
   private ariaController = new GUIAriaController(this, {
     getTargets: () => this.querySelectorAll(`input[id="${this.uid}"]`),
     getState: () => ({
-      uid: this.uid as string,
+      uid: this.uid,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -50,7 +63,7 @@ export class GuiTextinput extends LitElement {
   override render() {
     super.render();
 
-    const templateData: ControlTemplateData<string> & TextinputProps = {
+    const templateData: ControlTemplateData<string> & GuiTextinputProps = {
       uid: this.uid,
       label: this.label,
       hint: this.hint,
@@ -74,7 +87,7 @@ export class GuiTextinput extends LitElement {
     };
 
     return html`
-      ${addLabel(this.uid as string, templateData)}
+      ${addLabel(this.uid, templateData)}
 
       <div class="gui-widget">
         <input
@@ -89,39 +102,46 @@ export class GuiTextinput extends LitElement {
           placeholder=${this.placeholder || nothing}
           autocomplete=${this.autocomplete || nothing}
           @input=${this.valueChanged}
+          @change=${this.valueCommitted}
           @blur=${this.onBlur}
         />
         ${textinputIcon.html}
       </div>
 
-      ${addErrors(this.uid as string, templateData)}
+      ${addErrors(this.uid, templateData)}
     `;
   }
 
+  /** @internal */
   valueChanged(event: InputEvent) {
     event.stopPropagation();
 
     if (!this.readOnly) {
       const target = event.target as HTMLInputElement;
-      this.dispatchEvent(
-        new CustomEvent('input', {
-          detail: { value: target.value },
-          bubbles: true,
-          composed: true,
-        }),
-      );
+      this.value = target.value;
+      dispatchValue(this, this.value, { commit: false });
     }
   }
 
+  /**
+   * The native `change`: the user committed the edit (blur or Enter).
+   *
+   * @internal
+   */
+  valueCommitted(event: Event) {
+    dispatchChange(this, (event.target as HTMLInputElement).value);
+  }
+
+  /** @internal */
   onBlur() {
-    this.dispatchEvent(
-      new CustomEvent('blur', {
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatchBlur(this);
   }
 }
+
+/** The events `gui-textinput` fires, with their types. */
+export const GuiTextinputEvents = {
+  ...valueEvents<GuiTextinput['value']>(),
+};
 
 declare global {
   interface HTMLElementTagNameMap {

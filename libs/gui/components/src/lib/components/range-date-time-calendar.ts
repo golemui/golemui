@@ -1,8 +1,7 @@
-import { html, LitElement, nothing, type PropertyValues, type TemplateResult } from 'lit';
+import { html, nothing, type PropertyValues, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
-import { safeDefine } from '@golemui/lit/internals';
+import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
-import type { DateTimeRange } from '@golemui/gui-shared/internals';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { GUICalendarKeyboardController } from '../controllers/calendar-keyboard.controller';
 import { GUIEditSessionController } from '../controllers/edit-session.controller';
@@ -15,6 +14,7 @@ import './time-picker';
 import type { GuiTime } from './time-input';
 import type { GuiTimePicker } from './time-picker';
 import {
+  getDayLabel,
   getFullDateLabel,
   isDateDisabled,
   parseISODateString,
@@ -61,101 +61,179 @@ import {
   type HourFormat,
   type TimeRange,
 } from '../utils/time';
+import type { DateTimeRange } from '../types';
+import { GuiFormControl } from '../gui-form-control';
 import {
-  CANCEL_EDIT_RANGE_LABEL,
-  CONFIRM_EDIT_RANGE_LABEL,
-  DISABLED_DATE_RANGE_MESSAGE,
-  EDIT_RANGE_ARIA_LABEL,
-  EDIT_RANGE_CANCELLED_MESSAGE,
-  EDIT_RANGE_COMMITTED_MESSAGE,
-  EDIT_RANGE_LABEL,
-  EDIT_RANGE_STARTED_MESSAGE,
-  formatEditMessage,
-  INCOMPLETE_DATE_TIME_MESSAGE,
-} from '../utils/messages';
+  dispatch,
+  dispatchBlur,
+  dispatchInputError,
+  dispatchValue,
+  fires,
+  stopPropagation,
+  valueEvents,
+  type GuiInputErrorEventDetail,
+} from '../utils/events';
+import { message, requiredName } from '../utils/messages';
 
-export class GuiRangeDateTimeCalendar extends LitElement {
-  @property({ type: String }) uid: string | undefined = undefined;
-  @property({ type: String }) label: string | undefined = undefined;
-  @property({ type: String }) hint: string | undefined = undefined;
+/** A count bubble on a day: `text` is what the bubble and its hover label say. */
+interface DayBadge {
+  kind: 'day-count' | 'disabled-count';
+  count: number;
+  text: string;
+  labels: string[];
+}
+/**
+ * A calendar with start and end time pickers, to pick one or more date-time ranges.
+ *
+ * @fires gui-input - The user changed the value. `detail.value` is the new value.
+ * @fires gui-change - The user committed the value. `detail.value` is the committed value.
+ * @fires gui-blur - Focus left the control.
+ * @fires gui-input-error - The element rejected what the user entered, such as an impossible date
+ *   or a value out of bounds. `detail.message` is the error; show it through `errors`.
+ * @fires gui-parts-change - The typed parts changed before they form a complete value, for a host
+ *   that mirrors them.
+ * @cssprop --gui-calendar-width - Width of one month.
+ * @cssprop --gui-calendar-day-button-size - Size of each day.
+ * @cssprop --gui-calendar-change-month-button-width - Width of the previous- and next-month
+ *   buttons.
+ * @cssprop --gui-calendar-change-month-button-height - Height of the previous- and next-month
+ *   buttons.
+ * @cssprop --gui-calendar-year-button-width - Width of each year in the year grid.
+ * @cssprop --gui-calendar-year-button-height - Height of each year in the year grid.
+ * @cssprop --gui-calendar-year-grid-height - Height of the year grid.
+ * @cssprop --gui-calendar-time-grid-height - Height of the time grid.
+ * @cssprop --gui-calendar-time-button-height - Height of each time in the grid.
+ * @cssprop --gui-range-bg - Background of the days inside a selected range.
+ * @cssprop --gui-range-error-bg - Background of the days inside a rejected range.
+ * @cssprop --gui-pill-height - Height of each pill.
+ * @cssprop --gui-pill-font-size - Font size of the pill text.
+ * @cssprop --gui-pill-action-size - Size of the icons inside a pill.
+ * @cssprop --gui-pill-action-hit - Clickable area of the buttons inside a pill.
+ */
+export class GuiRangeDateTimeCalendar extends GuiFormControl {
+  /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
-  @property({ type: Array }) errors: string[] | undefined = [];
-  @property({ type: Boolean }) touched: boolean | undefined = undefined;
-  @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean }) disabled: boolean | undefined = false;
-  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
 
+  /** Icon class name of the previous-month button. */
   @property({ type: String, attribute: 'prev-month-icon' }) prevMonthIcon: string | undefined = '';
+  /** Icon class name of the next-month button. */
   @property({ type: String, attribute: 'next-month-icon' }) nextMonthIcon: string | undefined = '';
+  /** Accessible name of the previous-month button. An empty value keeps the default. */
   @property({ type: String, attribute: 'prev-month-aria-label' }) prevMonthAriaLabel:
     | string
-    | undefined = '';
+    | undefined = undefined;
+  /** Accessible name of the next-month button. An empty value keeps the default. */
   @property({ type: String, attribute: 'next-month-aria-label' }) nextMonthAriaLabel:
     | string
-    | undefined = '';
+    | undefined = undefined;
+  /** Accessible name of the button that opens the year grid. An empty value keeps the default. */
   @property({ type: String, attribute: 'select-year-aria-label' }) selectYearAriaLabel:
     | string
     | undefined = undefined;
+  /** Accessible name of the year grid. An empty value keeps the default. */
   @property({ type: String, attribute: 'year-grid-aria-label' }) yearGridAriaLabel:
     | string
     | undefined = undefined;
-  @property({ type: String }) dayFormat: 'numeric' | '2-digit' | undefined = 'numeric';
-  @property({ type: String }) weekdayFormat: 'short' | 'long' | 'narrow' | undefined = 'narrow';
-  @property({ type: String }) monthFormat:
+  /** How day numbers are written. */
+  @property({ type: String, attribute: 'day-format' }) dayFormat:
+    | 'numeric'
+    | '2-digit'
+    | undefined = 'numeric';
+  /** How weekday names are written in the header. */
+  @property({ type: String, attribute: 'weekday-format' }) weekdayFormat:
+    | 'short'
+    | 'long'
+    | 'narrow'
+    | undefined = 'narrow';
+  /** How the month is written in the header. */
+  @property({ type: String, attribute: 'month-format' }) monthFormat:
     | 'numeric'
     | '2-digit'
     | 'long'
     | 'short'
     | 'narrow'
     | undefined = 'long';
-  @property({ type: String }) minDate: string | undefined = undefined;
-  @property({ type: String }) maxDate: string | undefined = undefined;
+  /** Earliest selectable date, as an ISO date (`YYYY-MM-DD`). */
+  @property({ type: String, attribute: 'min-date' }) minDate: string | undefined = undefined;
+  /** Latest selectable date, as an ISO date (`YYYY-MM-DD`). */
+  @property({ type: String, attribute: 'max-date' }) maxDate: string | undefined = undefined;
+  /** Date-times that cannot be picked, as `{ start, end }` ISO date-time ranges. */
   @property({ type: Array, attribute: 'disabled-ranges' }) disabledRanges:
     | DateTimeRange[]
     | undefined = undefined;
-  @property({ type: Number }) numberOfMonths: number | undefined = 1;
+  /** Number of months shown side by side. */
+  @property({ type: Number, attribute: 'number-of-months' }) numberOfMonths: number | undefined = 1;
 
+  /** The date-time ranges, as `{ start, end }` ISO date-times. */
   @property({ type: Array }) value: DateTimeRange[] | undefined = [];
-  @property({ type: String }) focusDate: string | undefined = undefined;
-  @property({ type: Boolean }) hidePills = false;
-  @property({ type: String }) removePillAriaLabel: string | undefined = undefined;
+  /** @internal */
+  @property({ type: String, attribute: 'focus-date' }) focusDate: string | undefined = undefined;
+  /** @internal */
+  @property({ type: Boolean, attribute: 'hide-pills' }) hidePills = false;
+  /** Accessible name of the remove button of each range pill. An empty value keeps the default. */
+  @property({ type: String, attribute: 'remove-pill-aria-label' }) removePillAriaLabel:
+    | string
+    | undefined = undefined;
+  /** Error for a range that steps over a disabled day. Defaults to `disabledRangeMessage`. */
   @property({ type: String, attribute: 'disabled-date-range-message' }) disabledDateRangeMessage:
     | string
     | undefined = undefined;
-  @property({ attribute: false }) invalidRange: { start: string; end: string } | null = null;
+  /** @internal */
+  @property({ attribute: 'invalid-range' }) invalidRange: { start: string; end: string } | null =
+    null;
 
+  /** 12- or 24-hour clock. Defaults to the locale's. */
   @property({ type: String, attribute: 'hour-format' }) hourFormat: HourFormat | undefined =
     undefined;
+  /** Minutes between the times offered in the list. */
   @property({ type: Number, attribute: 'minute-step' }) minuteStep: number | undefined = undefined;
+  /** Allows typing any time, not only picking one from the list. */
   @property({ type: Boolean, attribute: 'allow-custom-time' }) allowCustomTime:
     | boolean
     | undefined = false;
+  /** Label of the start time. An empty value keeps the default. */
   @property({ type: String, attribute: 'start-time-label' }) startTimeLabel: string | undefined =
     undefined;
+  /** Label of the end time. An empty value keeps the default. */
   @property({ type: String, attribute: 'end-time-label' }) endTimeLabel: string | undefined =
     undefined;
+  /** Earliest allowed date-time, as an ISO date-time (`YYYY-MM-DDTHH:mm:ss`). */
   @property({ type: String, attribute: 'min-date-time' }) minDateTime: string | undefined =
     undefined;
+  /** Latest allowed date-time, as an ISO date-time (`YYYY-MM-DDTHH:mm:ss`). */
   @property({ type: String, attribute: 'max-date-time' }) maxDateTime: string | undefined =
     undefined;
+  /** Error for a date-time before `minDateTime`. */
   @property({ type: String, attribute: 'min-date-time-message' }) minDateTimeMessage:
     | string
     | undefined = undefined;
+  /** Error for a date-time after `maxDateTime`. */
   @property({ type: String, attribute: 'max-date-time-message' }) maxDateTimeMessage:
     | string
     | undefined = undefined;
+  /** Error for a time inside `disabledRanges`. */
   @property({ type: String, attribute: 'disabled-range-message' }) disabledRangeMessage:
     | string
     | undefined = undefined;
+  /** Text shown when no time can be picked. */
   @property({ type: String, attribute: 'no-available-times-message' }) noAvailableTimesMessage:
     | string
     | undefined = undefined;
+  /** Error when focus leaves a partly filled value. */
   @property({ type: String, attribute: 'incomplete-message' }) incompleteMessage:
     | string
     | undefined = undefined;
+  /**
+   * Read with a day that has several ranges, before the ranges themselves. `{count}` is the number
+   * of ranges.
+   */
   @property({ type: String, attribute: 'day-count-aria-label' }) dayCountAriaLabel:
     | string
     | undefined = undefined;
+  /**
+   * Read with a day that has disabled times, before the times themselves. `{count}` is the number
+   * of disabled ranges.
+   */
   @property({ type: String, attribute: 'disabled-day-count-aria-label' })
   disabledDayCountAriaLabel: string | undefined = undefined;
   /**
@@ -165,10 +243,13 @@ export class GuiRangeDateTimeCalendar extends LitElement {
    */
   @property({ type: String, attribute: 'working-start' }) workingStart: string | undefined =
     undefined;
+  /** @internal */
   @property({ type: String, attribute: 'working-end' }) workingEnd: string | undefined = undefined;
+  /** @internal */
   @property({ type: String, attribute: 'working-start-time' }) workingStartTime:
     | string
     | undefined = undefined;
+  /** @internal */
   @property({ type: String, attribute: 'working-end-time' }) workingEndTime: string | undefined =
     undefined;
   /**
@@ -183,7 +264,7 @@ export class GuiRangeDateTimeCalendar extends LitElement {
    * The host picker's allowEdit-selected range: its days are marked so the
    * range being inspected or edited stands out among its neighbors.
    */
-  @property({ attribute: false }) selectedRange: DateTimeRange | null = null;
+  @property({ attribute: 'selected-range' }) selectedRange: DateTimeRange | null = null;
   /**
    * Set by a host picker while an edit session is open: completed pieces park
    * as working state instead of committing — the session's explicit Confirm
@@ -191,21 +272,29 @@ export class GuiRangeDateTimeCalendar extends LitElement {
    */
   @property({ type: Boolean, attribute: 'defer-commit' }) deferCommit = false;
 
+  /** Lets the user edit a range in place from its pill. */
   @property({ type: Boolean, attribute: 'allow-edit' }) allowEdit: boolean | undefined = false;
+  /** Tooltip of the edit button of a range pill. */
   @property({ type: String, attribute: 'edit-label' }) editLabel: string | undefined = undefined;
+  /** Hint that a range pill can be edited. `{label}` is the range. */
   @property({ type: String, attribute: 'edit-aria-label' }) editAriaLabel: string | undefined =
     undefined;
+  /** Tooltip of the confirm button of a range being edited. */
   @property({ type: String, attribute: 'confirm-edit-label' }) confirmEditLabel:
     | string
     | undefined = undefined;
+  /** Tooltip of the cancel button of a range being edited. */
   @property({ type: String, attribute: 'cancel-edit-label' }) cancelEditLabel: string | undefined =
     undefined;
+  /** Announcement when editing a range starts. `{label}` is the range. */
   @property({ type: String, attribute: 'edit-started-message' }) editStartedMessage:
     | string
     | undefined = undefined;
+  /** Announcement when an edited range is saved. `{label}` is the new range. */
   @property({ type: String, attribute: 'edit-committed-message' }) editCommittedMessage:
     | string
     | undefined = undefined;
+  /** Announcement when editing a range is cancelled. */
   @property({ type: String, attribute: 'edit-cancelled-message' }) editCancelledMessage:
     | string
     | undefined = undefined;
@@ -227,8 +316,8 @@ export class GuiRangeDateTimeCalendar extends LitElement {
    * former `_currentDate`/`_yearSelectorOpen` reactive state.
    */
   protected _nav = new GUIMonthNavigationController(this, {
-    getMinDate: () => this.minDate,
-    getMaxDate: () => this.maxDate,
+    getMinDate: () => this.minDay,
+    getMaxDate: () => this.maxDay,
     getNumberOfMonths: () => this.numberOfMonths,
     getDisabledRanges: () => this.disabledRanges,
     onYearSelectorToggled: () => this._keyboard.onYearGridToggled(),
@@ -255,7 +344,7 @@ export class GuiRangeDateTimeCalendar extends LitElement {
   protected ariaController: GUIAriaController<unknown, any> = new GUIAriaController(this, {
     getTargets: () => this.querySelectorAll(`.gui-calendar-input`),
     getState: () => ({
-      uid: this.uid as string,
+      uid: this.uid,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -286,7 +375,7 @@ export class GuiRangeDateTimeCalendar extends LitElement {
   private _focusLeave = new GUIFocusLeaveController(this, {
     onLeave: () => {
       if (!this.deferFocusLeave) this.settleOnLeave();
-      this.dispatchEvent(new CustomEvent('blur', { bubbles: true, composed: true }));
+      dispatchBlur(this);
     },
   });
 
@@ -299,9 +388,9 @@ export class GuiRangeDateTimeCalendar extends LitElement {
     clearCompose: () => this.clearCompose(),
     getPills: () => this.querySelector('gui-pills'),
     getMessages: () => ({
-      started: this.editStartedMessage ?? EDIT_RANGE_STARTED_MESSAGE,
-      committed: this.editCommittedMessage ?? EDIT_RANGE_COMMITTED_MESSAGE,
-      cancelled: this.editCancelledMessage ?? EDIT_RANGE_CANCELLED_MESSAGE,
+      started: message('editRangeStarted', this.editStartedMessage),
+      committed: message('editRangeCommitted', this.editCommittedMessage),
+      cancelled: message('editRangeCancelled', this.editCancelledMessage),
     }),
   });
 
@@ -367,7 +456,7 @@ export class GuiRangeDateTimeCalendar extends LitElement {
       return;
     }
 
-    this.emitInputError(this.incompleteMessage ?? INCOMPLETE_DATE_TIME_MESSAGE);
+    this.emitInputError(message('incompleteDateTime', this.incompleteMessage));
   }
 
   /**
@@ -439,14 +528,6 @@ export class GuiRangeDateTimeCalendar extends LitElement {
   override willUpdate(changedProperties: PropertyValues): void {
     this._edit.reconcileValue(this.value);
     this.adoptWorkingSelection(changedProperties);
-    if (
-      !this.hasUpdated ||
-      changedProperties.has('minDateTime') ||
-      changedProperties.has('maxDateTime')
-    ) {
-      this.minDate = this.minDateTime ? this.minDateTime.split('T')[0] : undefined;
-      this.maxDate = this.maxDateTime ? this.maxDateTime.split('T')[0] : undefined;
-    }
     if (changedProperties.has('invalidRange')) {
       if (this.invalidRange) {
         const start = this.endpointDay(this.invalidRange.start);
@@ -511,6 +592,7 @@ export class GuiRangeDateTimeCalendar extends LitElement {
           monthFormat: this.monthFormat,
           yearSelectorOpen: this._nav.yearSelectorOpen,
           selectYearAriaLabel: this.selectYearAriaLabel,
+          disabled: this.disabled,
           onToggleYearSelector: () => this.toggleYearSelector(),
           renderBelowHeader: (panelOffset) => this.renderBelowHeader(panelOffset),
           renderPanelBody: (panelOffset) => this.renderPanelBody(panelOffset),
@@ -541,8 +623,8 @@ export class GuiRangeDateTimeCalendar extends LitElement {
         >
           <gui-time-picker
             class="gui-time-picker gui-field gui-range-date-time-calendar__start"
-            .uid=${this.uid ? `${this.uid}-start-time` : undefined}
-            .label=${this.startTimeLabel ?? 'Start time'}
+            .uid=${`${this.uid}-start-time`}
+            .label=${requiredName('startTime', this.startTimeLabel)}
             .showErrors=${false}
             .deferFocusLeave=${true}
             ?required=${this.required}
@@ -559,9 +641,11 @@ export class GuiRangeDateTimeCalendar extends LitElement {
             .columns=${4}
             .disabledRangeMessage=${this.disabledRangeMessage}
             .noAvailableTimesMessage=${this.noAvailableTimesMessage}
-            @change=${this.onStartTimeChange}
-            @partsChange=${this.stopInnerPartsChange}
-            @listtoggle=${(e: CustomEvent<{ open: boolean }>) => this.onListToggle(e, 'start')}
+            @gui-input=${this.onStartTimeInput}
+            @gui-change=${this.onTimeChange}
+            @gui-blur=${stopPropagation}
+            @gui-input-error=${this.onTimeInputError}
+            @gui-list-toggle=${(e: CustomEvent<{ open: boolean }>) => this.onListToggle(e, 'start')}
           ></gui-time-picker>
         </div>
 
@@ -573,8 +657,8 @@ export class GuiRangeDateTimeCalendar extends LitElement {
         >
           <gui-time-picker
             class="gui-time-picker gui-field gui-range-date-time-calendar__end"
-            .uid=${this.uid ? `${this.uid}-end-time` : undefined}
-            .label=${this.endTimeLabel ?? 'End time'}
+            .uid=${`${this.uid}-end-time`}
+            .label=${requiredName('endTime', this.endTimeLabel)}
             .showErrors=${false}
             .deferFocusLeave=${true}
             ?required=${this.required}
@@ -591,9 +675,11 @@ export class GuiRangeDateTimeCalendar extends LitElement {
             .columns=${4}
             .disabledRangeMessage=${this.disabledRangeMessage}
             .noAvailableTimesMessage=${this.noAvailableTimesMessage}
-            @change=${this.onEndTimeChange}
-            @partsChange=${this.stopInnerPartsChange}
-            @listtoggle=${(e: CustomEvent<{ open: boolean }>) => this.onListToggle(e, 'end')}
+            @gui-input=${this.onEndTimeInput}
+            @gui-change=${this.onTimeChange}
+            @gui-blur=${stopPropagation}
+            @gui-input-error=${this.onTimeInputError}
+            @gui-list-toggle=${(e: CustomEvent<{ open: boolean }>) => this.onListToggle(e, 'end')}
           ></gui-time-picker>
         </div>
       </div>
@@ -616,6 +702,8 @@ export class GuiRangeDateTimeCalendar extends LitElement {
       localeId: this.localeId,
       currentDate: this._nav.currentDate,
       yearGridAriaLabel: this.yearGridAriaLabel,
+      weekdayFormat: this.weekdayFormat,
+      disabled: this.disabled,
       getDays: (o) => this.getDaysInMonth(o),
       renderDay: (day) => this.renderDay(day),
     });
@@ -628,12 +716,27 @@ export class GuiRangeDateTimeCalendar extends LitElement {
     this._nav.toggleYearSelector();
   }
 
+  /** The first selectable day: `minDate` or the day of `minDateTime`, whichever is later. */
+  private get minDay(): string | undefined {
+    return [this.minDate, this.minDateTime?.split('T')[0]]
+      .filter((day): day is string => !!day)
+      .sort()
+      .pop();
+  }
+
+  /** The last selectable day: `maxDate` or the day of `maxDateTime`, whichever is earlier. */
+  private get maxDay(): string | undefined {
+    return [this.maxDate, this.maxDateTime?.split('T')[0]]
+      .filter((day): day is string => !!day)
+      .sort()[0];
+  }
+
   /**
    * A day is unclickable only when a span covers it entirely.
    */
   protected isDisabled(date: Date): boolean {
     const day = toISODateString(date);
-    if (isDateDisabled(day, this.minDate, this.maxDate)) return true;
+    if (isDateDisabled(day, this.minDay, this.maxDay)) return true;
     return isDayFullyBlocked(day, this.disabledRanges);
   }
 
@@ -666,8 +769,10 @@ export class GuiRangeDateTimeCalendar extends LitElement {
     };
   }
 
+  /** @internal */
   renderDay(day: RangeCalendarDay): TemplateResult {
     const isInvalidSingle = day.isInvalidStart && day.isInvalidEnd;
+    const badges = this.dayBadges(day);
     const classes = {
       'gui-calendar__day-button': true,
       today: day.isToday,
@@ -692,10 +797,11 @@ export class GuiRangeDateTimeCalendar extends LitElement {
         type="button"
         role="gridcell"
         class=${classMap(classes)}
-        tabindex=${day.isFocusable ? 0 : -1}
-        ?disabled=${!day.isCurrentMonth}
+        tabindex=${day.isFocusable && !this.disabled ? 0 : -1}
+        ?disabled=${!day.isCurrentMonth || this.disabled}
         aria-disabled=${day.isCurrentMonth && day.isDisabled ? 'true' : nothing}
         aria-label=${getFullDateLabel(this.localeId, day.date)}
+        aria-description=${badges.length ? badges.map((badge) => badge.text).join('. ') : nothing}
         aria-current=${day.isToday ? 'date' : nothing}
         data-date=${toISODateString(day.date)}
         @click=${(e: MouseEvent) => this.selectDate(day, e)}
@@ -704,11 +810,12 @@ export class GuiRangeDateTimeCalendar extends LitElement {
         @keydown=${(e: KeyboardEvent) => this._keyboard.handleDayKeydown(e)}
         aria-selected=${day.isRangeStart || day.isRangeEnd || day.isInRange ? 'true' : 'false'}
       >
-        ${this.renderDayContent(day)}
+        ${this.renderDayContent(day, badges)}
       </button>
     `;
   }
 
+  /** @internal */
   getDaysInMonth(offset: number): RangeCalendarDay[] {
     const ranges = (this.value ?? []).map((range) => ({
       start: this.endpointDay(range.start),
@@ -740,7 +847,7 @@ export class GuiRangeDateTimeCalendar extends LitElement {
 
         return {
           date: base.date,
-          dayLabel: base.dayLabel,
+          dayLabel: getDayLabel(this.localeId, base.date, this.dayFormat),
           isCurrentMonth: base.isCurrentMonth,
           isToday: base.isToday,
           isRangeStart: status.isRangeStart,
@@ -765,6 +872,7 @@ export class GuiRangeDateTimeCalendar extends LitElement {
     });
   }
 
+  /** @internal */
   selectDate(day: RangeCalendarDay, _e: MouseEvent | KeyboardEvent | null = null) {
     if (!day.isCurrentMonth || day.isDisabled || this.disabled || this.readOnly) return;
 
@@ -786,7 +894,9 @@ export class GuiRangeDateTimeCalendar extends LitElement {
 
     if (this.spanCoversBlockedDay(commit.start, commit.end)) {
       this._invalidRange = { start: commit.start, end: commit.end };
-      this.emitInputError(this.disabledRangeMessage ?? DISABLED_DATE_RANGE_MESSAGE);
+      this.emitInputError(
+        message('disabledDateRange', this.disabledDateRangeMessage ?? this.disabledRangeMessage),
+      );
       this.requestUpdate();
       return;
     }
@@ -819,21 +929,21 @@ export class GuiRangeDateTimeCalendar extends LitElement {
     }).state;
   }
 
-  private onStartTimeChange(event: CustomEvent) {
-    this.onTimeChange(event, 'start');
+  private onStartTimeInput(event: CustomEvent) {
+    this.onTimeInput(event, 'start');
   }
 
-  private onEndTimeChange(event: CustomEvent) {
-    this.onTimeChange(event, 'end');
+  private onEndTimeInput(event: CustomEvent) {
+    this.onTimeInput(event, 'end');
   }
 
   /**
    * Both endpoints follow one rule: the value is always kept as working state
    * (so it survives and syncs), but only a deliberate selection — a list pick
-   * or Enter — attempts the commit. Typing a custom time must never create an
-   * unintended pill.
+   * or Enter — attempts the commit, see {@link onTimeChange}. Typing a custom
+   * time must never create an unintended pill.
    */
-  private onTimeChange(event: CustomEvent, endpoint: 'start' | 'end') {
+  private onTimeInput(event: CustomEvent, endpoint: 'start' | 'end') {
     event.stopPropagation();
 
     const time = (event.detail.value as string | null) ?? undefined;
@@ -843,8 +953,11 @@ export class GuiRangeDateTimeCalendar extends LitElement {
       this._workingEndTime = time;
     }
     this.emitPartsChange();
+  }
 
-    if (event.detail.commit !== true) return;
+  /** A deliberate time pick, whose value {@link onTimeInput} already holds. */
+  private onTimeChange(event: CustomEvent) {
+    event.stopPropagation();
     this.tryCommitWorkingRange();
   }
 
@@ -886,7 +999,7 @@ export class GuiRangeDateTimeCalendar extends LitElement {
     const ordered = orderDateTimeRange(`${startDate}T${timeIn}`, `${endDate}T${timeOut}`);
 
     if (dateTimeRangeOverlaps(ordered, this.disabledRanges)) {
-      this.emitInputError(this.disabledRangeMessage ?? DISABLED_DATE_RANGE_MESSAGE);
+      this.emitInputError(message('disabledDateRange', this.disabledRangeMessage));
       return { kind: 'rejected' };
     }
 
@@ -912,16 +1025,14 @@ export class GuiRangeDateTimeCalendar extends LitElement {
     return { kind: 'committed', start: ordered.start };
   }
 
-  /** Whether an inputError has been emitted and not yet cleared by a change. */
+  /** Whether a `gui-input-error` has been emitted and not yet cleared by a change. */
   private _surfacedError = false;
 
   private emitChange(value: DateTimeRange[]): void {
     // The form layer clears injected issues on every change, so the mirror
     // flag resets with it.
     this._surfacedError = false;
-    this.dispatchEvent(
-      new CustomEvent('change', { detail: { value }, bubbles: true, composed: true }),
-    );
+    dispatchValue(this, value);
   }
 
   /**
@@ -930,19 +1041,13 @@ export class GuiRangeDateTimeCalendar extends LitElement {
    * layer, so it can't trigger validation.
    */
   private emitPartsChange(): void {
-    this.dispatchEvent(
-      new CustomEvent('partsChange', {
-        detail: {
-          anchor: this.anchorISO() ?? null,
-          start: this._workingStart ?? null,
-          end: this._workingEnd ?? null,
-          startTime: this._workingStartTime ?? null,
-          endTime: this._workingEndTime ?? null,
-        },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatch(this, 'gui-parts-change', {
+      anchor: this.anchorISO() ?? null,
+      start: this._workingStart ?? null,
+      end: this._workingEnd ?? null,
+      startTime: this._workingStartTime ?? null,
+      endTime: this._workingEndTime ?? null,
+    });
   }
 
   /**
@@ -1015,7 +1120,7 @@ export class GuiRangeDateTimeCalendar extends LitElement {
     });
     if (bound) return bound;
     if (isTimeDisabled(time, disabledSlots)) {
-      return this.disabledRangeMessage ?? DISABLED_DATE_RANGE_MESSAGE;
+      return message('disabledDateRange', this.disabledRangeMessage);
     }
     return null;
   }
@@ -1038,21 +1143,18 @@ export class GuiRangeDateTimeCalendar extends LitElement {
   }
 
   /**
-   * The embedded time pickers' own segmented inputs broadcast a bubbling,
-   * composed `partsChange` carrying only `{time}`. Left alone it reaches the
-   * host picker's listener looking like this calendar's report, whose missing
-   * keys read as "every piece is gone" and blank the working selection. The
-   * times this calendar holds already flow out through `@change`.
+   * A time picker's rejection of a typed time (out of the day's bounds, on a
+   * disabled slot) is reported as this calendar's own, so it shows while the
+   * user types.
    */
-  private stopInnerPartsChange = (event: Event) => {
-    event.stopPropagation();
-  };
+  private onTimeInputError(event: CustomEvent<GuiInputErrorEventDetail>) {
+    stopPropagation(event);
+    dispatchInputError(this, event.detail.message);
+  }
 
   private emitInputError(message: string) {
     this._surfacedError = true;
-    this.dispatchEvent(
-      new CustomEvent('inputError', { detail: { message }, bubbles: true, composed: true }),
-    );
+    dispatchInputError(this, message);
   }
 
   private get startPicker(): GuiTimePicker | null {
@@ -1120,53 +1222,53 @@ export class GuiRangeDateTimeCalendar extends LitElement {
     return { minTime: floor, maxTime: base.maxTime };
   }
 
-  protected renderDayContent(day: RangeCalendarDay): TemplateResult {
-    const rangeBadge = this.renderRangeCountBadge(day);
-    const disabledBadge = this.renderDisabledSlotsBadge(day);
-    if (rangeBadge === nothing && disabledBadge === nothing) return html`${day.dayLabel}`;
+  protected renderDayContent(day: RangeCalendarDay, badges: DayBadge[]): TemplateResult {
+    if (!badges.length) return html`${day.dayLabel}`;
 
     // One shared corner row: when a day has both a selection count and a
     // disabled count, the bubbles stack side by side instead of fighting for
     // the corner.
     return html`${day.dayLabel}<span class="gui-range-date-time-calendar__badges"
-        >${rangeBadge}${disabledBadge}</span
+        >${badges.map((badge) => this.renderBadge(badge))}</span
       >`;
+  }
+
+  /** The count bubbles of a day: the day button reads their text as its description. */
+  private dayBadges(day: RangeCalendarDay): DayBadge[] {
+    return [this.rangeCountBadge(day), this.disabledSlotsBadge(day)].filter(
+      (badge): badge is DayBadge => !!badge,
+    );
   }
 
   /**
    * Renders a count bubble plus its hover label as SIBLINGS (the label must not
-   * live inside the count span — the bubble shows only the number).
+   * live inside the count span — the bubble shows only the number). Both are
+   * visual: the day button's description carries their text.
    */
-  private renderBadge(
-    kind: 'day-count' | 'disabled-count',
-    count: number,
-    aria: string,
-    labels: string[],
-  ): TemplateResult {
-    return html`<span class="gui-range-date-time-calendar__${kind}" aria-label=${aria}
-        >${count}</span
+  private renderBadge(badge: DayBadge): TemplateResult {
+    return html`<span class="gui-range-date-time-calendar__${badge.kind}" aria-hidden="true"
+        >${badge.count}</span
       ><span class="gui-range-date-time-calendar__badge-tooltip" aria-hidden="true"
-        >${labels.map((label) => html`<span>${label}</span>`)}</span
+        >${badge.labels.map((label) => html`<span>${label}</span>`)}</span
       >`;
   }
 
-  private renderRangeCountBadge(day: RangeCalendarDay): TemplateResult | typeof nothing {
-    if (!day.isCurrentMonth) return nothing;
+  private rangeCountBadge(day: RangeCalendarDay): DayBadge | null {
+    if (!day.isCurrentMonth) return null;
     const ranges = this.rangesOnDay(day.date);
-    if (ranges.length <= 1) return nothing;
+    if (ranges.length <= 1) return null;
 
     const labels = ranges.map((range) => this.formatPillLabel(range));
-    const aria = `${(this.dayCountAriaLabel ?? '{count} ranges').replace(
-      '{count}',
-      String(ranges.length),
-    )}: ${labels.join(', ')}`;
-    return this.renderBadge('day-count', ranges.length, aria, labels);
+    const text = `${message('dayRangeCount', this.dayCountAriaLabel, {
+      count: ranges.length,
+    })}: ${labels.join(', ')}`;
+    return { kind: 'day-count', count: ranges.length, text, labels };
   }
 
-  private renderDisabledSlotsBadge(day: RangeCalendarDay): TemplateResult | typeof nothing {
-    if (!day.isCurrentMonth || day.isDisabled) return nothing;
+  private disabledSlotsBadge(day: RangeCalendarDay): DayBadge | null {
+    if (!day.isCurrentMonth || day.isDisabled) return null;
     const slots = resolveDisabledTimesForDate(this.disabledRanges, toISODateString(day.date));
-    if (!slots.length) return nothing;
+    if (!slots.length) return null;
 
     const hourFormat = resolveHourFormat(this.localeId, this.hourFormat);
     const labels = slots.map(
@@ -1177,11 +1279,10 @@ export class GuiRangeDateTimeCalendar extends LitElement {
           hourFormat,
         )}`,
     );
-    const aria = `${(this.disabledDayCountAriaLabel ?? '{count} disabled ranges').replace(
-      '{count}',
-      String(slots.length),
-    )}: ${labels.join(', ')}`;
-    return this.renderBadge('disabled-count', slots.length, aria, labels);
+    const text = `${message('disabledTimeRangeCount', this.disabledDayCountAriaLabel, {
+      count: slots.length,
+    })}: ${labels.join(', ')}`;
+    return { kind: 'disabled-count', count: slots.length, text, labels };
   }
 
   /** Committed ranges covering `date`, a range counts on every day of its span. */
@@ -1197,6 +1298,7 @@ export class GuiRangeDateTimeCalendar extends LitElement {
 
   // --- Pills ---
 
+  /** @internal */
   renderAboveCalendar(): TemplateResult | typeof nothing {
     const liveRegion = this.allowEdit
       ? html`<div class="gui-visually-hidden" aria-live="polite">${this._edit.announcement}</div>`
@@ -1216,27 +1318,29 @@ export class GuiRangeDateTimeCalendar extends LitElement {
       <gui-pills
         class="gui-range-calendar__pills"
         .uid=${this.uid}
-        .toolbarAriaLabel=${'Selected date-time ranges'}
+        .toolbarAriaLabel=${message('selectedDateTimeRanges')}
         .items=${pillItems}
         .removable=${true}
         .clickable=${true}
         .bubble=${false}
         ?disabled=${this.disabled}
         ?readonly=${this.readOnly}
-        .removeAriaLabel=${this.removePillAriaLabel ?? 'Remove date'}
+        .removeAriaLabel=${requiredName('removeDateTime', this.removePillAriaLabel)}
         .editable=${this.editEnabled}
         .selectedKey=${this._edit.selectedKey ?? undefined}
         .editingKey=${this._edit.editing?.key ?? undefined}
-        .editLabel=${this.editLabel ?? EDIT_RANGE_LABEL}
-        .confirmEditLabel=${this.confirmEditLabel ?? CONFIRM_EDIT_RANGE_LABEL}
-        .cancelEditLabel=${this.cancelEditLabel ?? CANCEL_EDIT_RANGE_LABEL}
-        @pillremove=${this.onPillRemoveEvent}
-        @pillclick=${this.onPillClickEvent}
-        @pillfocus=${this.onPillFocusEvent}
-        @pillsblur=${this.onPillsBlurEvent}
-        @pilledit=${this.onPillEditEvent}
-        @pilleditconfirm=${this.onPillEditConfirm}
-        @pilleditcancel=${this.onPillEditCancel}
+        .editLabel=${requiredName('editRange', this.editLabel)}
+        .confirmEditLabel=${requiredName('confirmEditRange', this.confirmEditLabel)}
+        .cancelEditLabel=${requiredName('cancelEditRange', this.cancelEditLabel)}
+        @gui-pill-remove=${this.onPillRemoveEvent}
+        @gui-pill-click=${this.onPillClickEvent}
+        @gui-pill-focus=${this.onPillFocusEvent}
+        @gui-pills-blur=${this.onPillsBlurEvent}
+        @gui-pill-edit=${this.onPillEditEvent}
+        @gui-pill-edit-confirm=${this.onPillEditConfirm}
+        @gui-pill-edit-cancel=${this.onPillEditCancel}
+        @gui-pill-keydown=${stopPropagation}
+        @gui-pill-exit=${stopPropagation}
       ></gui-pills>
     `;
   }
@@ -1255,7 +1359,7 @@ export class GuiRangeDateTimeCalendar extends LitElement {
         ...item,
         label,
         ariaLabel: label,
-        editAriaLabel: formatEditMessage(this.editAriaLabel ?? EDIT_RANGE_ARIA_LABEL, item.label),
+        editAriaLabel: message('editRangeHint', this.editAriaLabel, { label: item.label }),
       };
     });
   }
@@ -1272,6 +1376,7 @@ export class GuiRangeDateTimeCalendar extends LitElement {
   }
 
   private onPillRemoveEvent = (e: CustomEvent<GuiPillEventDetail>) => {
+    e.stopPropagation();
     if (this.disabled || this.readOnly) return;
     const removal = removeRangeByKey(this.value, e.detail.key);
     if (!removal) return;
@@ -1280,6 +1385,7 @@ export class GuiRangeDateTimeCalendar extends LitElement {
   };
 
   private onPillClickEvent = (e: CustomEvent<GuiPillEventDetail>) => {
+    e.stopPropagation();
     const range = findRangeByKey(this.getSortedPills(), e.detail.key);
     if (!range) return;
     const outcome = this._edit.handlePillClick(e.detail.key);
@@ -1292,6 +1398,7 @@ export class GuiRangeDateTimeCalendar extends LitElement {
    * focused pill offers the edit affordance and drives the day marking.
    */
   private onPillFocusEvent = (e: CustomEvent<GuiPillEventDetail>) => {
+    e.stopPropagation();
     if (!this.editEnabled || this._edit.editing) return;
     if (this._edit.selectedKey !== e.detail.key) this._edit.handlePillClick(e.detail.key);
   };
@@ -1301,19 +1408,22 @@ export class GuiRangeDateTimeCalendar extends LitElement {
    * session keeps its selection — its focus legitimately lives in the day grid
    * or the time pickers.
    */
-  private onPillsBlurEvent = () => {
+  private onPillsBlurEvent = (e: Event) => {
+    e.stopPropagation();
     if (this._edit.editing) return;
     this._edit.clearSelection();
   };
 
   /** Edit icon or F2 / E on a pill: select it (if needed) and start editing. */
   private onPillEditEvent = (e: CustomEvent<GuiPillEventDetail>) => {
+    e.stopPropagation();
     if (!this.editEnabled || this._edit.editing?.key === e.detail.key) return;
     if (this._edit.selectedKey !== e.detail.key) this._edit.handlePillClick(e.detail.key);
     this._edit.startEdit();
   };
 
-  private onPillEditConfirm = () => {
+  private onPillEditConfirm = (e: Event) => {
+    e.stopPropagation();
     if (!this._edit.editing) return;
     const outcome = this.commitWorking(this._edit.baseRanges(this.value));
     if (outcome.kind === 'committed') {
@@ -1326,11 +1436,12 @@ export class GuiRangeDateTimeCalendar extends LitElement {
       return;
     }
     if (outcome.kind === 'incomplete') {
-      this.emitInputError(this.incompleteMessage ?? INCOMPLETE_DATE_TIME_MESSAGE);
+      this.emitInputError(message('incompleteDateTime', this.incompleteMessage));
     }
   };
 
-  private onPillEditCancel = () => {
+  private onPillEditCancel = (e: Event) => {
+    e.stopPropagation();
     if (!this._edit.editing) return;
     this._edit.cancel();
     this._edit.focusSelectedPill();
@@ -1347,6 +1458,21 @@ export class GuiRangeDateTimeCalendar extends LitElement {
     this._nav.navigateToDate(this.endpointDay(isoDate));
   }
 }
+
+/** The events `gui-range-date-time-calendar` fires, with their types. */
+export const GuiRangeDateTimeCalendarEvents = {
+  ...valueEvents<GuiRangeDateTimeCalendar['value']>(),
+  'gui-input-error': fires<CustomEvent<GuiInputErrorEventDetail>>(),
+  'gui-parts-change': fires<
+    CustomEvent<{
+      anchor: string | null;
+      start: string | null;
+      end: string | null;
+      startTime: string | null;
+      endTime: string | null;
+    }>
+  >(),
+};
 
 declare global {
   interface HTMLElementTagNameMap {

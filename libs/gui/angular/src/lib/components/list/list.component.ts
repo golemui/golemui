@@ -27,7 +27,6 @@ import { deferHydrationAttr } from '../../utils/defer-hydration';
   templateUrl: './list.component.html',
   host: {
     class: 'gui-list gui-field',
-    '[style.flex]': 'this.adapter.templateData().size',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
@@ -62,7 +61,8 @@ export class ListComponent implements OnInit, OnDestroy, WithWidget {
   }
 
   protected onClickItem(item: any, index: number, listRef: any) {
-    if (this.adapter.templateData().disabled || item.disabled) return;
+    const { disabled, readonly } = this.adapter.templateData();
+    if (disabled || readonly || item.disabled) return;
 
     this.setValue(item.value);
     this.focusedIndex.set(index);

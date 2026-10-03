@@ -1,14 +1,20 @@
-import type { LayoutWidget, WithWidget } from '@golemui/core';
+import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
 import { LayoutWidgetAdapter, type LitFormContext, formContext, layoutContext } from '@golemui/lit';
-import type { GridProps } from '@golemui/gui-shared/internals';
+import {
+  type FlexProps,
+  gridCellClasses,
+  gridClasses,
+  type GridProps,
+  resolveGrid,
+} from '@golemui/gui-shared/internals';
 import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
-import { cspStyleMap, safeDefine, unsubscribeAll } from '@golemui/lit/internals';
+import { safeDefine, unsubscribeAll } from '@golemui/lit/internals';
 import { type Subscription } from 'rxjs';
 import { repeat } from 'lit-html/directives/repeat.js';
-import { classMap } from 'lit/directives/class-map.js';
 
+/** The grid layout, and the deprecated flex layout, which renders as a grid. */
 export class GridElement extends LitElement implements WithWidget {
   widget!: LayoutWidget;
 
@@ -17,7 +23,7 @@ export class GridElement extends LitElement implements WithWidget {
   formContext!: LitFormContext<any>;
 
   @provide({ context: layoutContext })
-  adapter = new LayoutWidgetAdapter<GridProps>();
+  adapter = new LayoutWidgetAdapter<GridProps & FlexProps>();
 
   subscriptions: Subscription[] = [];
 
@@ -25,21 +31,9 @@ export class GridElement extends LitElement implements WithWidget {
     return this;
   }
 
-  override updated(changedProperties: any) {
-    super.updated(changedProperties);
-
-    const size = this.adapter.templateData.size;
-
-    if (size) {
-      this.style.flex = String(size);
-    } else {
-      this.style.removeProperty('flex');
-    }
-  }
-
   override connectedCallback() {
     super.connectedCallback();
-    this.classList.add('gui-grid', 'gui-field');
+    this.classList.add('gui-field');
     this.adapter.context = this.formContext;
     this.adapter.init(this.widget);
 
@@ -49,46 +43,16 @@ export class GridElement extends LitElement implements WithWidget {
   }
 
   override render() {
-    const isColumn = this.adapter.templateData.direction === 'column';
-    const isRow = !isColumn;
-    const autoFit = this.adapter.templateData.autoFit ?? true;
-    const classes = {
-      'gui-grid__widget': true,
-      'gui-grid__widget--row': isRow,
-      'gui-grid__widget--row--auto-fit': isRow && autoFit,
-      'gui-grid__widget--column': isColumn,
-      'gui-grid__widget--align-center': this.adapter.templateData.align === 'center',
-      'gui-grid__widget--align-start': this.adapter.templateData.align === 'start',
-      'gui-grid__widget--align-end': this.adapter.templateData.align === 'end',
-      'gui-grid__widget--align-space-between': this.adapter.templateData.align === 'space-between',
-      'gui-grid__widget--align-space-around': this.adapter.templateData.align === 'space-around',
-      'gui-grid__widget--align-space-evenly': this.adapter.templateData.align === 'space-evenly',
-      'gui-grid__widget--align-stretch':
-        !this.adapter.templateData.align || this.adapter.templateData.align === 'stretch',
-      'gui-grid__widget--justify-center': this.adapter.templateData.justify === 'center',
-      'gui-grid__widget--justify-start': this.adapter.templateData.justify === 'start',
-      'gui-grid__widget--justify-end': this.adapter.templateData.justify === 'end',
-      'gui-grid__widget--justify-stretch': this.adapter.templateData.justify === 'stretch',
-    };
-
-    const styles: Record<string, string> = {};
-    if (this.adapter.templateData.columnGap !== undefined) {
-      styles['column-gap'] = `${this.adapter.templateData.columnGap}px`;
-    }
-    if (this.adapter.templateData.rowGap !== undefined) {
-      styles['row-gap'] = `${this.adapter.templateData.rowGap}px`;
-    }
+    const grid = resolveGrid(this.widget.type, this.adapter.templateData);
+    const children = (this.adapter.templateData.children || []) as NonFunctionWidget<string>[];
 
     return html`
-      <div class=${classMap(classes)} id=${this.widget?.uid} style=${cspStyleMap(styles)}>
+      <div class=${gridClasses(grid)} id=${this.widget?.uid}>
         ${repeat(
-          this.adapter.templateData.children || [],
-          (child: any) => child?.uid,
-          (child: any) =>
-            html`<div
-              class="gui-grid__cell"
-              style=${cspStyleMap({ 'grid-column': `span ${child.size || 1}` })}
-            >
+          children,
+          (child) => child?.uid,
+          (child) =>
+            html`<div class=${gridCellClasses(grid, child.size)}>
               <gui-widget .widget=${child}></gui-widget>
             </div>`,
         )}

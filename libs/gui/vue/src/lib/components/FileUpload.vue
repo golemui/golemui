@@ -30,7 +30,7 @@ const required = computed(() => (templateData.value.validator as Validator)?.req
 </script>
 
 <template>
-  <div class="gui-file-upload gui-field" :style="{ flex: templateData.size }">
+  <div class="gui-file-upload gui-field">
     <gui-file-upload
       :uid="uid"
       :path="widget.path"
@@ -59,9 +59,9 @@ const required = computed(() => (templateData.value.validator as Validator)?.req
       :uploadedMessage="templateData.uploadedMessage"
       :removedMessage="templateData.removedMessage"
       :failedMessage="templateData.failedMessage"
-      @change="handleChange"
-      @blur="onBlur"
-      @inputError="handleInputError"
+      @gui-input="handleChange"
+      @gui-blur="onBlur"
+      @gui-input-error="handleInputError"
     ></gui-file-upload>
   </div>
 </template>

@@ -19,7 +19,7 @@ const checkboxPosition = computed(() => templateData.value.checkboxPosition || '
 </script>
 
 <template>
-  <div class="gui-checkbox gui-field" :style="{ flex: templateData.size }">
+  <div class="gui-checkbox gui-field">
     <gui-checkbox
       :uid="uid"
       :label="templateData.label"
@@ -31,8 +31,8 @@ const checkboxPosition = computed(() => templateData.value.checkboxPosition || '
       :value="value"
       :hint="templateData.hint"
       :checkboxPosition.prop="checkboxPosition"
-      @change="handleChange"
-      @blur="onBlur"
+      @gui-input="handleChange"
+      @gui-blur="onBlur"
     ></gui-checkbox>
   </div>
 </template>

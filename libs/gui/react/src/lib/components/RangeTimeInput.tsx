@@ -33,15 +33,15 @@ export function RangeTimeInput(widgetInstance: WithWidget) {
       };
 
       if (node) {
-        target.addEventListener('blur', blurHandler);
-        target.addEventListener('change', changeHandler);
-        target.addEventListener('inputError', errorHandler);
+        target.addEventListener('gui-blur', blurHandler);
+        target.addEventListener('gui-input', changeHandler);
+        target.addEventListener('gui-input-error', errorHandler);
       }
 
       return () => {
-        target.removeEventListener('blur', blurHandler);
-        target.removeEventListener('change', changeHandler);
-        target.removeEventListener('inputError', errorHandler);
+        target.removeEventListener('gui-blur', blurHandler);
+        target.removeEventListener('gui-input', changeHandler);
+        target.removeEventListener('gui-input-error', errorHandler);
       };
     },
     [onValueChanged, onBlur, injectValidationIssues],
@@ -60,7 +60,7 @@ export function RangeTimeInput(widgetInstance: WithWidget) {
   const isRequired = (templateData.validator as Validator)?.required;
 
   return (
-    <div className="gui-range-time-input gui-field" style={{ flex: templateData.size }}>
+    <div className="gui-range-time-input gui-field">
       <GuiRangeTimeReact
         ref={handleRef}
         uid={uid}

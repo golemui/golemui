@@ -1,11 +1,8 @@
 @let templateData = adapter.templateData();
 
-<div class="gui-widget" [id]="widget.uid">
-  <div
-    role="alert"
-    class="gui-alert-notification"
-    [ngClass]="`gui-alert-notification--${templateData.level || 'default'}`"
-  >
-    {{ templateData.text }}
-  </div>
-</div>
+<gui-alert
+  [attr.defer-hydration]="deferHydration"
+  [id]="widget.uid"
+  [attr.variant]="templateData.level || 'default'"
+  >{{ templateData.text }}</gui-alert
+>

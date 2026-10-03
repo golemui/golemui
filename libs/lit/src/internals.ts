@@ -1,3 +1,3 @@
-export { cspStyleMap, type CspStyleInfo } from './lib/utils/csp-style-map';
-export { safeDefine, tagNameOf } from './lib/utils/define';
+export { cspStyleMap, type CspStyleInfo } from '@golemui/lit-utils';
+export { safeDefine, tagNameOf } from '@golemui/lit-utils';
 export { unsubscribeAll } from './lib/utils/subscriptions';

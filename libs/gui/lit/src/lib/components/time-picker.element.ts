@@ -24,18 +24,6 @@ export class TimePickerElement extends LitElement implements WithWidget {
     return this;
   }
 
-  override updated(changedProperties: any) {
-    super.updated(changedProperties);
-
-    const size = this.adapter.templateData.size;
-
-    if (size) {
-      this.style.flex = String(size);
-    } else {
-      this.style.removeProperty('flex');
-    }
-  }
-
   override connectedCallback() {
     super.connectedCallback();
     this.classList.add('gui-time-picker', 'gui-field');
@@ -58,7 +46,7 @@ export class TimePickerElement extends LitElement implements WithWidget {
         .label=${templateData.label}
         .hint=${templateData.hint}
         .errors=${templateData.errors}
-        ?touched=${templateData.touched}
+        .touched=${templateData.touched}
         ?required=${templateData.validator?.required}
         ?disabled=${templateData.disabled}
         ?readonly=${templateData.readonly}
@@ -82,9 +70,9 @@ export class TimePickerElement extends LitElement implements WithWidget {
         .disabledRangeMessage=${templateData.disabledRangeMessage as string}
         .noAvailableTimesMessage=${templateData.noAvailableTimesMessage as string}
         .incompleteMessage=${templateData.incompleteMessage as string}
-        @inputError=${this.onInputError}
-        @blur=${() => this.adapter.onBlur()}
-        @change=${this.valueChanged}
+        @gui-input-error=${this.onInputError}
+        @gui-blur=${() => this.adapter.onBlur()}
+        @gui-input=${this.valueChanged}
       ></gui-time-picker>
     `;
   }

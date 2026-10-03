@@ -382,8 +382,8 @@ export const runRangeDatePickerComponentTests = (mountFn: MountComponentFn) => {
       const changeSpy = cy.spy().as('changeSpy');
       const inputErrorSpy = cy.spy().as('inputErrorSpy');
       cy.get('gui-range-date-picker').then(($el) => {
-        $el[0].addEventListener('change', changeSpy as unknown as EventListener);
-        $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
+        $el[0].addEventListener('gui-input', changeSpy as unknown as EventListener);
+        $el[0].addEventListener('gui-input-error', inputErrorSpy as unknown as EventListener);
       });
 
       // Type a full range 06/25 – 06/26, both past maxDate, and press Enter.

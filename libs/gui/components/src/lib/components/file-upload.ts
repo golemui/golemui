@@ -1,82 +1,114 @@
-import { html, LitElement, nothing, type PropertyValues, type TemplateResult } from 'lit';
+import { html, nothing, type PropertyValues, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
-import { cspStyleMap, safeDefine } from '@golemui/lit/internals';
-import type { Dependencies, FileItem, FileUploadProps } from '@golemui/gui-shared/internals';
+import { cspStyleMap } from '@golemui/lit-utils';
+import { safeDefine } from '@golemui/lit-utils';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 import { ARROW_CLOCKWISE_PATH, UPLOAD_PATH, X_CIRCLE_PATH, spinnerIcon } from '../utils/icons';
-import { clampPct, errorMessage, matchesAccept, newId } from '../utils/file-upload';
+import { clampPct, errorMessage, matchesAccept, newId, parseAccept } from '../utils/file-upload';
+import type { FileItem, UploadService } from '../types';
+import { GuiFormControl } from '../gui-form-control';
 import {
-  FILE_CANCEL_ARIA_LABEL,
-  FILE_FAILED_MESSAGE,
-  FILE_REMOVE_ARIA_LABEL,
-  FILE_REMOVE_FAILED_MESSAGE,
-  FILE_REMOVED_MESSAGE,
-  FILE_RETRY_ARIA_LABEL,
-  FILE_TOO_LARGE_MESSAGE,
-  FILE_TYPE_NOT_ACCEPTED_MESSAGE,
-  FILE_UPLOAD_BUTTON_LABEL,
-  FILE_UPLOAD_FAILED_MESSAGE,
-  FILE_UPLOAD_INTERRUPTED_MESSAGE,
-  FILE_UPLOADED_MESSAGE,
-  MISSING_UPLOAD_SERVICE_MESSAGE,
-  formatFileMessage,
-} from '../utils/messages';
+  dispatchBlur,
+  dispatchInputError,
+  dispatchValue,
+  fires,
+  valueEvents,
+  type GuiInputErrorEventDetail,
+} from '../utils/events';
+import { message, requiredName } from '../utils/messages';
+
+/** What <gui-file-upload> renders besides the control state: its presentation props. */
+export type GuiFileUploadProps = {
+  hint?: string;
+};
 
 /**
  * The single file upload widget; `GuiMultiFileUpload` extends it for arrays.
  *
  * A restored item with status `uploading` cannot resume: its `File` is gone.
  * The widget only renders it as failed with `interruptedMessage`. The value
- * is left as is and no `change` fires, so the host never sees an untouched
+ * is left as is and no `gui-change` fires, so the host never sees an untouched
  * form as edited. The value changes when the user removes the item.
  *
  * Server file cleanup belongs to the host; `uploadService.remove` is only a
  * courtesy on explicit user removals and single-file replacement. See the
- * `UploadService` doc in `@golemui/gui-shared`.
+ * `UploadService` doc in `../types.ts`.
+ *
+ * @fires gui-input - The user changed the value. `detail.value` is the new value.
+ * @fires gui-change - The file changed: it was added, uploaded or removed. `detail.value` is the
+ *   file, or `null`.
+ * @fires gui-blur - Focus left the control.
+ * @fires gui-input-error - A file was refused (its type or size) or its upload failed.
+ *   `detail.message` is the error, or `''` when it clears; show it through `errors`.
  */
-export class GuiFileUpload extends LitElement {
-  @property({ type: String }) uid: string | undefined = undefined;
+export class GuiFileUpload extends GuiFormControl {
   /** The form data path, forwarded to `uploadService.upload` as `ctx.path`. */
   @property({ type: String }) path: string | undefined = undefined;
-  @property({ type: String }) label: string | undefined = undefined;
-  @property({ type: Array }) errors: string[] | undefined = [];
-  @property({ type: Boolean }) touched: boolean | undefined = false;
-  @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean }) disabled: boolean | undefined = false;
-  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
+  /** The file, with its upload status, or `null`. */
   @property({ type: Object }) value: FileItem | null | undefined = null;
-  @property({ type: Object }) dependencies: Dependencies | undefined = undefined;
+  /** Provides the `uploadService` that uploads and removes files. */
+  @property({ type: Object }) dependencies: { uploadService?: UploadService } | undefined =
+    undefined;
 
-  @property({ type: String }) hint: string | undefined = undefined;
+  /** Icon class name of the upload button. */
   @property({ type: String }) icon: string | undefined = undefined;
-  @property({ type: Array }) accept: string[] | undefined = undefined;
-  @property({ type: Number }) maxSize: number | undefined = undefined;
+  /**
+   * Accepted file types, as MIME types (`image/*`) or extensions (`.pdf`). The attribute takes the
+   * native comma list (`accept=".pdf,image/*"`) or a JSON array.
+   */
+  @property({ type: Array, converter: { fromAttribute: parseAccept } }) accept:
+    | string[]
+    | undefined = undefined;
+  /** Largest accepted file, in bytes. */
+  @property({ type: Number, attribute: 'max-size' }) maxSize: number | undefined = undefined;
+  /** Text of the upload button. */
   @property({ type: String, attribute: 'button-label' }) buttonLabel: string | undefined =
     undefined;
+  /**
+   * Accessible name of the remove button. `{name}` is the file name. An empty value keeps the
+   * default.
+   */
   @property({ type: String, attribute: 'remove-aria-label' }) removeAriaLabel: string | undefined =
     undefined;
+  /**
+   * Accessible name of the cancel button of an upload in progress. `{name}` is the file name. An
+   * empty value keeps the default.
+   */
   @property({ type: String, attribute: 'cancel-aria-label' }) cancelAriaLabel: string | undefined =
     undefined;
+  /**
+   * Accessible name of the retry button. `{name}` is the file name. An empty value keeps the
+   * default.
+   */
   @property({ type: String, attribute: 'retry-aria-label' }) retryAriaLabel: string | undefined =
     undefined;
+  /** Icon class name of the remove button, replacing the default ×. */
   @property({ type: String, attribute: 'remove-icon' }) removeIcon: string | undefined = undefined;
+  /** Icon class name of the retry button. */
   @property({ type: String, attribute: 'retry-icon' }) retryIcon: string | undefined = undefined;
+  /** Error for a file larger than `maxSize`. */
   @property({ type: String, attribute: 'max-size-message' }) maxSizeMessage: string | undefined =
     undefined;
+  /** Error for a file whose type is not in `accept`. */
   @property({ type: String, attribute: 'accept-message' }) acceptMessage: string | undefined =
     undefined;
+  /** Error for a file whose upload never finished. `{name}` is the file name. */
   @property({ type: String, attribute: 'interrupted-message' }) interruptedMessage:
     | string
     | undefined = undefined;
+  /** Text shown when no `uploadService` is provided. */
   @property({ type: String, attribute: 'missing-service-message' }) missingServiceMessage:
     | string
     | undefined = undefined;
+  /** Announcement after a file uploads. `{name}` is the file name. */
   @property({ type: String, attribute: 'uploaded-message' }) uploadedMessage: string | undefined =
     undefined;
+  /** Announcement after a file is removed. `{name}` is the file name. */
   @property({ type: String, attribute: 'removed-message' }) removedMessage: string | undefined =
     undefined;
+  /** Announcement after an upload fails. `{name}` is the file name. */
   @property({ type: String, attribute: 'failed-message' }) failedMessage: string | undefined =
     undefined;
 
@@ -97,9 +129,10 @@ export class GuiFileUpload extends LitElement {
   private _serviceErrorLogged = false;
 
   private ariaController = new GUIAriaController(this, {
+    requiresLabel: true,
     getTargets: () => this.querySelector('.gui-file-upload__box') as HTMLElement | null,
     getState: () => ({
-      uid: this.uid as string,
+      uid: this.uid,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -144,13 +177,7 @@ export class GuiFileUpload extends LitElement {
   }
 
   protected emitChange(value: unknown) {
-    this.dispatchEvent(
-      new CustomEvent('change', {
-        detail: { value },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatchValue(this, value);
   }
 
   /**
@@ -179,7 +206,7 @@ export class GuiFileUpload extends LitElement {
   }
 
   protected getDefaultButtonLabel(): string {
-    return FILE_UPLOAD_BUTTON_LABEL;
+    return message('uploadFile');
   }
 
   /** The text on the right of the bar while uploading. */
@@ -215,19 +242,17 @@ export class GuiFileUpload extends LitElement {
     this.syncInputError();
   }
 
-  private _lastInputError: string | null = null;
+  private _lastInputError = '';
 
   private syncInputError() {
     const barItem = this.getBarItem();
     const item = barItem && this.presentItem(barItem);
-    const message =
+    const errorMessage =
       this._removeError?.message ??
-      (item?.status === 'error' ? (item.error ?? FILE_UPLOAD_FAILED_MESSAGE) : null);
-    if (message === this._lastInputError) return;
-    this._lastInputError = message;
-    this.dispatchEvent(
-      new CustomEvent('inputError', { detail: { message }, bubbles: true, composed: true }),
-    );
+      (item?.status === 'error' ? (item.error ?? message('uploadFailed')) : '');
+    if (errorMessage === this._lastInputError) return;
+    this._lastInputError = errorMessage;
+    dispatchInputError(this, errorMessage);
   }
 
   /**
@@ -273,16 +298,16 @@ export class GuiFileUpload extends LitElement {
         status: 'uploaded',
         data,
       }));
-      this.announce(formatFileMessage(this.uploadedMessage ?? FILE_UPLOADED_MESSAGE, item.name));
+      this.announce(message('fileUploaded', this.uploadedMessage, { name: item.name }));
     } catch (err) {
       if (controller.signal.aborted) return;
       this.finishActive(item.id);
       this.updateItem(item.id, (current) => ({
         ...current,
         status: 'error',
-        error: errorMessage(err, FILE_UPLOAD_FAILED_MESSAGE),
+        error: errorMessage(err, message('uploadFailed')),
       }));
-      this.announce(formatFileMessage(this.failedMessage ?? FILE_FAILED_MESSAGE, item.name));
+      this.announce(message('fileFailed', this.failedMessage, { name: item.name }));
     }
   }
 
@@ -333,10 +358,10 @@ export class GuiFileUpload extends LitElement {
   /** Pre-upload gates against the `File`; returns the reason when refused. */
   protected checkFile(file: File): string | undefined {
     if (this.accept && this.accept.length > 0 && !matchesAccept(file, this.accept)) {
-      return this.acceptMessage ?? FILE_TYPE_NOT_ACCEPTED_MESSAGE;
+      return message('fileTypeNotAccepted', this.acceptMessage);
     }
     if (typeof this.maxSize === 'number' && file.size > this.maxSize) {
-      return this.maxSizeMessage ?? FILE_TOO_LARGE_MESSAGE;
+      return message('fileTooLarge', this.maxSizeMessage);
     }
     return undefined;
   }
@@ -359,7 +384,7 @@ export class GuiFileUpload extends LitElement {
       try {
         await service.remove(item);
       } catch (err) {
-        this._removeError = { id: item.id, message: errorMessage(err, FILE_REMOVE_FAILED_MESSAGE) };
+        this._removeError = { id: item.id, message: errorMessage(err, message('removeFailed')) };
         return;
       } finally {
         const next = new Set(this._removingIds);
@@ -371,7 +396,7 @@ export class GuiFileUpload extends LitElement {
     this._files.delete(item.id);
     if (this._removeError?.id === item.id) this._removeError = null;
     this.commit(this.getItems().filter((current) => current.id !== item.id));
-    this.announce(formatFileMessage(this.removedMessage ?? FILE_REMOVED_MESSAGE, item.name));
+    this.announce(message('fileRemoved', this.removedMessage, { name: item.name }));
     void this.focusAfterRemoval();
   }
 
@@ -474,7 +499,7 @@ export class GuiFileUpload extends LitElement {
   private onFocusOut = (e: FocusEvent) => {
     const next = e.relatedTarget as Node | null;
     if (next && this.contains(next)) return;
-    this.dispatchEvent(new CustomEvent('blur', { bubbles: true, composed: true }));
+    dispatchBlur(this);
   };
 
   // ─── Rendering ───────────────────────────────────────────────────────────
@@ -484,7 +509,7 @@ export class GuiFileUpload extends LitElement {
     if (!this.getService() && !this._serviceErrorLogged) {
       this._serviceErrorLogged = true;
       console.error(
-        `[gui-file-upload] widget "${this.uid ?? ''}" has no uploadService. Provide one through the form's dependencies: { uploadService: { upload, remove? } }.`,
+        `[gui-file-upload] widget "${this.uid}" has no uploadService. Provide one through the form's dependencies: { uploadService: { upload, remove? } }.`,
       );
     }
   }
@@ -503,10 +528,7 @@ export class GuiFileUpload extends LitElement {
     return {
       ...item,
       status: 'error',
-      error: formatFileMessage(
-        this.interruptedMessage ?? FILE_UPLOAD_INTERRUPTED_MESSAGE,
-        item.name,
-      ),
+      error: message('uploadInterrupted', this.interruptedMessage, { name: item.name }),
     };
   }
 
@@ -518,7 +540,7 @@ export class GuiFileUpload extends LitElement {
     const showButton =
       hasService && !this.readOnly && !barItem && (this.isMultiple() || items.length === 0);
 
-    const templateData: ControlTemplateData<FileItem[]> & FileUploadProps = {
+    const templateData: ControlTemplateData<FileItem[]> & GuiFileUploadProps = {
       uid: this.uid,
       label: this.label,
       hint: this.hint,
@@ -531,7 +553,7 @@ export class GuiFileUpload extends LitElement {
     };
 
     return html`
-      ${this.label ? addLabel(this.uid as string, templateData, false, undefined, false) : nothing}
+      ${addLabel(this.uid, templateData, false, undefined, false)}
 
       <div class="gui-widget">
         <div
@@ -545,7 +567,7 @@ export class GuiFileUpload extends LitElement {
           })}
           data-cy=${`${this.uid}_file-box`}
           role="group"
-          aria-label=${this.label ?? 'File upload'}
+          aria-labelledby=${`${this.uid}_label`}
           @dragover=${this.onDragOver}
           @dragleave=${this.onDragLeave}
           @drop=${this.onDrop}
@@ -567,16 +589,18 @@ export class GuiFileUpload extends LitElement {
                 role="alert"
                 data-cy=${`${this.uid}_file-service-error`}
               >
-                ${this.missingServiceMessage ?? MISSING_UPLOAD_SERVICE_MESSAGE}
+                ${message('missingUploadService', this.missingServiceMessage)}
               </div>`
             : nothing}
 
+          <!-- The upload button opens it: hidden from assistive technology, which uses the button. -->
           <input
             type="file"
             class="gui-visually-hidden gui-file-upload__input"
-            id=${this.uid ?? nothing}
+            id=${this.uid}
             data-cy=${`${this.uid}_file-input`}
             tabindex="-1"
+            aria-hidden="true"
             ?multiple=${this.isMultiple()}
             accept=${this.accept?.length ? this.accept.join(',') : nothing}
             ?disabled=${this.disabled || this.readOnly || !hasService}
@@ -594,7 +618,7 @@ export class GuiFileUpload extends LitElement {
         ${this._announcement}
       </div>
 
-      ${addErrors(this.uid as string, templateData)}
+      ${addErrors(this.uid, templateData)}
     `;
   }
 
@@ -637,8 +661,8 @@ export class GuiFileUpload extends LitElement {
         >${item.name}</span
       >${meta}`;
     const actionLabel = uploading
-      ? formatFileMessage(this.cancelAriaLabel ?? FILE_CANCEL_ARIA_LABEL, item.name)
-      : formatFileMessage(this.removeAriaLabel ?? FILE_REMOVE_ARIA_LABEL, item.name);
+      ? requiredName('cancelFile', this.cancelAriaLabel, { name: item.name })
+      : requiredName('removeFile', this.removeAriaLabel, { name: item.name });
 
     return html`<div
       class=${classMap({
@@ -668,7 +692,7 @@ export class GuiFileUpload extends LitElement {
             type="button"
             class="gui-file-upload__action gui-file-upload__action--retry"
             data-cy=${`${this.uid}_file-retry`}
-            aria-label=${formatFileMessage(this.retryAriaLabel ?? FILE_RETRY_ARIA_LABEL, item.name)}
+            aria-label=${requiredName('retryFile', this.retryAriaLabel, { name: item.name })}
             ?disabled=${this.disabled || removing}
             @click=${() => this.retry(item)}
           >
@@ -730,6 +754,12 @@ export class GuiFileUpload extends LitElement {
     </div>`;
   }
 }
+
+/** The events `gui-file-upload` fires, with their types. */
+export const GuiFileUploadEvents = {
+  ...valueEvents<GuiFileUpload['value']>(),
+  'gui-input-error': fires<CustomEvent<GuiInputErrorEventDetail>>(),
+};
 
 declare global {
   interface HTMLElementTagNameMap {

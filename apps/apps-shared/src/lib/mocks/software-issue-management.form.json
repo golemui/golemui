@@ -4,10 +4,10 @@
     {
       "uid": "root",
       "kind": "layout",
-      "type": "flex",
+      "type": "grid",
       "props": {
         "direction": "column",
-        "gap": 4
+        "gap": "xs"
       },
       "children": [
         {
@@ -42,7 +42,7 @@
             {
               "uid": "projects-tab",
               "kind": "layout",
-              "type": "flex",
+              "type": "grid",
               "children": [
                 {
                   "uid": "projects-repeater",
@@ -57,7 +57,7 @@
                       "kind": "layout",
                       "type": "grid",
                       "props": {
-                        "autoFit": false,
+                        "columns": 12,
                         "direction": "row"
                       },
                       "children": [
@@ -109,7 +109,7 @@
             {
               "uid": "developers-tab",
               "kind": "layout",
-              "type": "flex",
+              "type": "grid",
               "children": [
                 {
                   "uid": "devs-repeater",
@@ -123,7 +123,7 @@
                       "kind": "layout",
                       "type": "grid",
                       "props": {
-                        "autoFit": false,
+                        "columns": 12,
                         "direction": "row"
                       },
                       "children": [
@@ -192,7 +192,7 @@
             {
               "uid": "issues-tab",
               "kind": "layout",
-              "type": "flex",
+              "type": "grid",
               "children": [
                 {
                   "uid": "issues-repeater",
@@ -215,7 +215,7 @@
                           "size": 3,
                           "props": {
                             "direction": "column",
-                            "align": "start"
+                            "justify": "start"
                           },
                           "children": [
                             {

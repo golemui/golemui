@@ -22,7 +22,7 @@ const minimumHeight = computed(() => templateData.value.minimumHeight ?? 120);
 </script>
 
 <template>
-  <div class="gui-textarea gui-field" :style="{ flex: templateData.size }">
+  <div class="gui-textarea gui-field">
     <gui-textarea
       :uid="uid"
       :label="templateData.label"
@@ -39,8 +39,8 @@ const minimumHeight = computed(() => templateData.value.minimumHeight ?? 120);
       :minimumHeight.prop="minimumHeight"
       :autoGrow="templateData.autoGrow"
       :maxLength="maxLength"
-      @input="handleInput"
-      @blur="onBlur"
+      @gui-input="handleInput"
+      @gui-blur="onBlur"
     ></gui-textarea>
   </div>
 </template>

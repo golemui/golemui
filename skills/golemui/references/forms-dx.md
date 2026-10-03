@@ -8,7 +8,7 @@ GolemUI forms are **data, not markup**: a form is an array of field items built 
 
 HOW TO USE THIS REFERENCE: read it **once** and write the whole form from it — it is self-sufficient for almost every form, so you should rarely need another fetch. For a widget’s exhaustive options beyond what is here, follow the **Reference:** link printed under that factory below — each is a full absolute URL on https://golemui.com. The complete page index is at https://golemui.com/llms.txt. These docs are the authoritative source — do NOT read the `@golemui` TypeScript declarations in `node_modules` or search the filesystem; everything you need is here or one Reference link away. VERIFY when done: write the form to a file and run `npx -y @golemui/gui-mcp check-dx <file.ts>` (exit 0 = compiles against the real `@golemui` types; exit 1 = fix the reported diagnostics and re-run).
 
-General: GolemUI builds FORMS — data collection and validation. It is NOT a general-purpose UI toolkit: it never renders documents, page content, or markdown for display. A form is just an array of these items: `export const form = [ /* items */ ];`. RENDER (React) — `import { gui } from '@golemui/gui-shared'; import { GuiForm } from '@golemui/gui-react'; import type { FormSubmitEvent } from '@golemui/core';`, then render `<GuiForm config={{ formDef: form }} formSubmit={(e: FormSubmitEvent) => { /* e.data is the form data */ }} />`. A `gui.displays.display(() => <h2>…</h2>)` returns React JSX. For SSR (Next.js App Router) await `preloadFormWidgets({ widgetLoaders })` from `@golemui/core` before the first render on both server and client (a `'use client'` provider that `use()`s a module-scope promise); `widgetLoaders` comes from `@golemui/gui-react`. Set an explicit `formName`. Handlers run in the browser only. Import the component stylesheet ONCE — `@golemui/gui-components/index.css` — or the form renders unstyled. To RECEIVE A SUBMIT: add a `gui.actions.button({ label, actionType: 'submit' })` to the form and listen for the submit on the host component (the RENDER line above shows how for your framework) — the handler gets a `FormSubmitEvent` whose `.data` is the collected form data. To DISABLE submit until the form is valid, add `disabled: { when: '$formIsInvalid || $form.<requiredField> === undefined' }` to that button. `$formIsInvalid` is a built-in validity flag, but validation NEVER runs at mount, so on the pristine form it is `false` and `$formIsInvalid` ALONE leaves the button ENABLED while required fields are still empty — the extra data check covers that gap. See the conditional-and-state-props pattern. The SAME `formDef` renders in every framework (React/Angular/Vue/Lit/vanilla) — only the host wrapper changes. FORM-LEVEL CONFIG — `formDef` is ALWAYS the bare array. Anything form-wide (named `states`, `validateOn`) goes in a sibling `formConfig` on the config (`config={{ formDef: form, formConfig: { states, validateOn } }}`), NEVER inside `formDef`. Do NOT wrap the array as `{ states, form: [...] }` and pass THAT as `formDef` — `formDef` is typed `Record<string, any>` so it COMPILES, but the `gui.*` items are never resolved and the form renders BLANK with no error. See the form-level-states pattern. Common fields like `include`/`exclude` (conditional visibility) go INSIDE a factory’s config argument — never spread them onto the result (`{ ...gui.inputs.x(...), include }` compiles but silently does nothing). See the conditional-visibility pattern. STATIC CONTENT — a section heading or any non-input text/block is the HOST’s job, not GolemUI’s: use `gui.displays.display(() => <h2>…</h2>)` returning your framework’s own node (React JSX, Vue/Angular/Lit node) — it needs no dependency and always renders. MARKDOWN has exactly ONE use: `gui.inputs.markdown`, an INPUT where the user EDITS markdown (its value is their markdown string). There is NO markdown-for-display widget — never use markdown to render a heading or content; use `display` for that. VALIDATOR `type` — one rule, three cases (so you never have to guess): (1) choice widgets (`dropdown`, `radiogroup`, `select`) REQUIRE an explicit `type`: `validator: { type: 'string', required: true }`. (2) `repeater` (array), `tags` (array), `fileUpload` (file) and `multiFileUpload` (files) validators auto-supply their `type` — supply only the rules, e.g. `validator: { required: true, minItems: 1 }`, never `type`. (3) everything else (text, number, date) takes the loose validator with NO `type`: `validator: { required: true }`. EVENT HANDLERS — `onChange`/`onLoad`/`onFilter`/`onBlur` (inputs/layouts) and `onClick` (actions) are FUNCTIONS, never bare strings: return a string to dispatch a host event by that name (`onChange: () => 'languageChanged'`), or take the event to push live changes (`onChange: (event) => event.update({ path: 'city', options: [...] })`).
+General: GolemUI builds FORMS — data collection and validation. It is NOT a general-purpose UI toolkit: it never renders documents, page content, or markdown for display. A form is just an array of these items: `export const form = [ /* items */ ];`. RENDER (React) — `import { gui } from '@golemui/gui-shared'; import { GuiForm } from '@golemui/gui-react'; import type { FormSubmitEvent } from '@golemui/core';`, then render `<GuiForm config={{ formDef: form }} formSubmit={(e: FormSubmitEvent) => { /* e.data is the form data */ }} />`. A `gui.displays.display(() => <h2>…</h2>)` returns React JSX. For SSR (Next.js App Router) await `preloadFormWidgets({ widgetLoaders })` from `@golemui/core` before the first render on both server and client (a `'use client'` provider that `use()`s a module-scope promise); `widgetLoaders` comes from `@golemui/gui-react`. Set an explicit `formName`. Handlers run in the browser only. Import the two stylesheets ONCE, in this order — `@golemui/gui-components/index.css`, then `@golemui/gui-shared/forms.css` — or the form renders unstyled. To RECEIVE A SUBMIT: add a `gui.actions.button({ label, actionType: 'submit' })` to the form and listen for the submit on the host component (the RENDER line above shows how for your framework) — the handler gets a `FormSubmitEvent` whose `.data` is the collected form data. To DISABLE submit until the form is valid, add `disabled: { when: '$formIsInvalid || $form.<requiredField> === undefined' }` to that button. `$formIsInvalid` is a built-in validity flag, but validation NEVER runs at mount, so on the pristine form it is `false` and `$formIsInvalid` ALONE leaves the button ENABLED while required fields are still empty — the extra data check covers that gap. See the conditional-and-state-props pattern. The SAME `formDef` renders in every framework (React/Angular/Vue/Lit/vanilla) — only the host wrapper changes. FORM-LEVEL CONFIG — `formDef` is ALWAYS the bare array. Anything form-wide (named `states`, `validateOn`) goes in a sibling `formConfig` on the config (`config={{ formDef: form, formConfig: { states, validateOn } }}`), NEVER inside `formDef`. Do NOT wrap the array as `{ states, form: [...] }` and pass THAT as `formDef` — `formDef` is typed `Record<string, any>` so it COMPILES, but the `gui.*` items are never resolved and the form renders BLANK with no error. See the form-level-states pattern. Common fields like `include`/`exclude` (conditional visibility) go INSIDE a factory’s config argument — never spread them onto the result (`{ ...gui.inputs.x(...), include }` compiles but silently does nothing). See the conditional-visibility pattern. STATIC CONTENT — a section heading or any non-input text/block is the HOST’s job, not GolemUI’s: use `gui.displays.display(() => <h2>…</h2>)` returning your framework’s own node (React JSX, Vue/Angular/Lit node) — it needs no dependency and always renders. MARKDOWN has exactly ONE use: `gui.inputs.markdown`, an INPUT where the user EDITS markdown (its value is their markdown string). There is NO markdown-for-display widget — never use markdown to render a heading or content; use `display` for that. VALIDATOR `type` — one rule, three cases (so you never have to guess): (1) choice widgets (`dropdown`, `radiogroup`, `select`) REQUIRE an explicit `type`: `validator: { type: 'string', required: true }`. (2) `repeater` (array), `tags` (array), `fileUpload` (file) and `multiFileUpload` (files) validators auto-supply their `type` — supply only the rules, e.g. `validator: { required: true, minItems: 1 }`, never `type`. (3) everything else (text, number, date) takes the loose validator with NO `type`: `validator: { required: true }`. EVENT HANDLERS — `onChange`/`onLoad`/`onFilter`/`onBlur` (inputs/layouts) and `onClick` (actions) are FUNCTIONS, never bare strings: return a string to dispatch a host event by that name (`onChange: () => 'languageChanged'`), or take the event to push live changes (`onChange: (event) => event.update({ path: 'city', options: [...] })`).
 
 ## Host wiring per framework
 
@@ -41,9 +41,7 @@ Every `gui.*` factory and its calling convention. Look up the detail below for t
 - `gui.displays.display(render)`
 - `gui.inputs.dropdown(path, { label, items, validator? })`
 - `gui.inputs.fileUpload(path, { label?, accept?, maxSize?, buttonLabel?, validator? })`
-- `gui.layouts.flex(children, props?)`
 - `gui.layouts.grid(children, props?)`
-- `gui.layouts.horizontalFlex(children, props?)`
 - `gui.layouts.horizontalGrid(children, props?)`
 - `gui.inputs.list(path, { label, items, height?, itemHeight? })`
 - `gui.inputs.markdown(path, { label })`
@@ -69,7 +67,6 @@ Every `gui.*` factory and its calling convention. Look up the detail below for t
 - `gui.inputs.textarea(path, { label, placeholder?, validator? })`
 - `gui.inputs.timeInput(path, { label, hourFormat?, minuteStep?, validator? })`
 - `gui.inputs.timePicker(path, { label, minTime?, maxTime?, minuteStep?, disabledRanges?, allowCustomTime?, validator? })`
-- `gui.layouts.verticalFlex(children, props?)`
 - `gui.layouts.verticalGrid(children, props?)`
 
 ## gui.layouts.accordion
@@ -311,64 +308,45 @@ gui.inputs.fileUpload('cv', {
 
 Reference: https://golemui.com/dx/widgets-reference/input-fields/file-upload.md
 
-## gui.layouts.flex
-
-Call: `gui.layouts.flex(children, props?)`
-
-```ts
-gui.layouts.flex([
-  gui.inputs.textInput('firstName', { label: 'First name' }),
-  gui.inputs.textInput('lastName', { label: 'Last name' }),
-]);
-```
-
-- Layouts take the **children array first**, then optional props — unlike inputs (path first).
-- Direction-locked variants: `verticalFlex`, `horizontalFlex` (and `grid` / `verticalGrid` / `horizontalGrid`).
-
-Reference: https://golemui.com/dx/widgets-reference/layout-fields/flex.md
-
 ## gui.layouts.grid
 
 Call: `gui.layouts.grid(children, props?)`
 
 ```ts
-gui.layouts.grid([
-  gui.inputs.textInput('a', { label: 'A' }),
-  gui.inputs.textInput('b', { label: 'B' }),
-]);
+gui.layouts.grid(
+  [
+    gui.inputs.textInput('firstName', { label: 'First name', size: 2 }),
+    gui.inputs.textInput('initial', { label: 'Initial' }),
+  ],
+  { direction: 'row', gap: 'lg' },
+);
 ```
 
-- Grid layout; `horizontalGrid` / `verticalGrid` lock the direction.
+- Layouts take the **children array first**, then optional props — unlike inputs (path first).
+- The one layout. No `direction` stacks the children; `direction: 'row'` puts them on one line, sharing the width by each child's `size`; `columns: 3` (1–12) or `columns: 'auto'` wraps them in columns.
+- `gap`: `'none' | 'xs' | 'sm' | 'md'` (default) `| 'lg' | 'xl'` — never a number.
+- Rows only: `justify: 'start' | 'center' | 'end' | 'space-between'` keeps each child at its own width and places them, e.g. buttons on the right; the default `'stretch'` shares the width by `size`.
+- In a row or columns, labels, controls and errors line up across the fields on their own. Every grid stacks below a 480px wide container.
+- `gui.layouts.flex`, `verticalFlex` and `horizontalFlex` are deprecated: never use them.
 
 Reference: https://golemui.com/dx/widgets-reference/layout-fields/grid.md
-
-## gui.layouts.horizontalFlex
-
-Call: `gui.layouts.horizontalFlex(children, props?)`
-
-```ts
-gui.layouts.horizontalFlex([
-  gui.inputs.textInput('a', { label: 'A' }),
-  gui.inputs.textInput('b', { label: 'B' }),
-]);
-```
-
-- A `flex` with direction fixed to horizontal.
-
-Reference: https://golemui.com/dx/widgets-reference/layout-fields/flex.md
 
 ## gui.layouts.horizontalGrid
 
 Call: `gui.layouts.horizontalGrid(children, props?)`
 
 ```ts
-gui.layouts.horizontalGrid([
-  gui.inputs.textInput('a', { label: 'A' }),
-  gui.inputs.textInput('b', { label: 'B' }),
-]);
+gui.layouts.horizontalGrid(
+  [
+    gui.actions.button({ label: 'Cancel' }),
+    gui.actions.button({ label: 'Save', actionType: 'submit' }),
+  ],
+  { justify: 'end' },
+);
 ```
 
-- A `grid` with direction fixed to horizontal.
+- A `grid` row: `grid` with `direction: 'row'`.
+- With `justify: 'end'` the children keep their own width and sit on the right: the usual place for form buttons.
 
 Reference: https://golemui.com/dx/widgets-reference/layout-fields/grid.md
 
@@ -752,21 +730,6 @@ gui.inputs.timePicker('meetingTime', {
 
 Reference: https://golemui.com/dx/widgets-reference/input-fields/timepicker.md
 
-## gui.layouts.verticalFlex
-
-Call: `gui.layouts.verticalFlex(children, props?)`
-
-```ts
-gui.layouts.verticalFlex([
-  gui.inputs.textInput('a', { label: 'A' }),
-  gui.inputs.textInput('b', { label: 'B' }),
-]);
-```
-
-- A `flex` with direction fixed to vertical.
-
-Reference: https://golemui.com/dx/widgets-reference/layout-fields/flex.md
-
 ## gui.layouts.verticalGrid
 
 Call: `gui.layouts.verticalGrid(children, props?)`
@@ -778,7 +741,7 @@ gui.layouts.verticalGrid([
 ]);
 ```
 
-- A `grid` with direction fixed to vertical.
+- A `grid` stack, the same as `grid` with no direction.
 
 Reference: https://golemui.com/dx/widgets-reference/layout-fields/grid.md
 

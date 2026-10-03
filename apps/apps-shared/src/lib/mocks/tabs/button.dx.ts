@@ -1,6 +1,6 @@
 import { gui } from '@golemui/gui-shared';
 
-export const buttonTab = gui.layouts.flex([
+export const buttonTab = gui.layouts.grid([
   gui.actions.button({ label: 'Save' }),
   gui.actions.button({ label: 'Save', variant: 'outlined' }),
   gui.actions.button({ label: 'Save', variant: 'link' }),

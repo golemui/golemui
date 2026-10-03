@@ -40,7 +40,7 @@ export function defineForm<
     ...config,
     form: {
       uid: '',
-      type: 'flex',
+      type: 'grid',
       kind: 'layout',
       children: config.form,
     },

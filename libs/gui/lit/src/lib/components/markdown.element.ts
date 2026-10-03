@@ -7,6 +7,7 @@ import { html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
 import { safeDefine, unsubscribeAll } from '@golemui/lit/internals';
 import { type Subscription } from 'rxjs';
+import { live } from 'lit/directives/live.js';
 
 export class MarkdownElement extends LitElement implements WithWidget {
   widget!: InputWidget<string>;
@@ -22,18 +23,6 @@ export class MarkdownElement extends LitElement implements WithWidget {
 
   override createRenderRoot() {
     return this;
-  }
-
-  override updated(changedProperties: any) {
-    super.updated(changedProperties);
-
-    const size = this.adapter.templateData.size;
-
-    if (size) {
-      this.style.flex = String(size);
-    } else {
-      this.style.removeProperty('flex');
-    }
   }
 
   override connectedCallback() {
@@ -55,11 +44,11 @@ export class MarkdownElement extends LitElement implements WithWidget {
         .uid=${this.widget.uid}
         .label=${this.adapter.templateData.label}
         .errors=${this.adapter.templateData.errors}
-        ?touched=${this.adapter.templateData.touched}
+        .touched=${this.adapter.templateData.touched}
         ?required=${this.adapter.templateData.validator?.required}
         ?disabled=${this.adapter.templateData.disabled}
         ?readonly=${this.adapter.templateData.readonly}
-        .value=${this.adapter.templateData.value}
+        .value=${live(this.adapter.templateData.value)}
         .hint=${this.adapter.templateData.hint}
         .placeholder=${this.adapter.templateData.placeholder}
         .autocomplete=${this.adapter.templateData.autocomplete}
@@ -80,8 +69,8 @@ export class MarkdownElement extends LitElement implements WithWidget {
         .defaultOpenPreview=${this.adapter.templateData.defaultOpenPreview}
         .maxLength=${this.adapter.templateData.validator?.maxLength}
         .dependencies=${this.adapter.templateData.deps}
-        @input=${this.valueChanged}
-        @blur=${() => this.adapter.onBlur()}
+        @gui-input=${this.valueChanged}
+        @gui-blur=${() => this.adapter.onBlur()}
       ></gui-markdown>
     `;
   }

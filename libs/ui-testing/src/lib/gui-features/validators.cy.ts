@@ -547,7 +547,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
                   addLabel: 'Add Item',
                   template: {
                     kind: 'layout',
-                    type: 'flex',
+                    type: 'grid',
                     children: [
                       {
                         uid: 'requiredArray_item',
@@ -596,7 +596,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
                   addLabel: 'Add Item',
                   template: {
                     kind: 'layout',
-                    type: 'flex',
+                    type: 'grid',
                     children: [
                       {
                         uid: 'minItems_item',
@@ -645,7 +645,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
                   addLabel: 'Add Item',
                   template: {
                     kind: 'layout',
-                    type: 'flex',
+                    type: 'grid',
                     children: [
                       {
                         uid: 'maxItems_item',
@@ -1436,7 +1436,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
       context('Array validators', () => {
         const repeaterTemplate = {
           kind: 'layout' as const,
-          type: 'flex' as const,
+          type: 'grid' as const,
           children: [
             {
               uid: 'item_name',

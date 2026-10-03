@@ -38,27 +38,27 @@ const errorHandler = (e: Event) => {
 let currentEl: HTMLElement | null = null;
 watch(calendarRef, (el) => {
   if (currentEl) {
-    currentEl.removeEventListener('change', changeHandler);
-    currentEl.removeEventListener('inputError', errorHandler);
-    currentEl.removeEventListener('blur', onBlur);
+    currentEl.removeEventListener('gui-input', changeHandler);
+    currentEl.removeEventListener('gui-input-error', errorHandler);
+    currentEl.removeEventListener('gui-blur', onBlur);
   }
   currentEl = el;
   if (el) {
-    el.addEventListener('change', changeHandler);
-    el.addEventListener('inputError', errorHandler);
-    el.addEventListener('blur', onBlur);
+    el.addEventListener('gui-input', changeHandler);
+    el.addEventListener('gui-input-error', errorHandler);
+    el.addEventListener('gui-blur', onBlur);
   }
 });
 
 onUnmounted(() => {
-  currentEl?.removeEventListener('change', changeHandler);
-  currentEl?.removeEventListener('inputError', errorHandler);
-  currentEl?.removeEventListener('blur', onBlur);
+  currentEl?.removeEventListener('gui-input', changeHandler);
+  currentEl?.removeEventListener('gui-input-error', errorHandler);
+  currentEl?.removeEventListener('gui-blur', onBlur);
 });
 </script>
 
 <template>
-  <div class="gui-range-date-time-calendar gui-field" :style="{ flex: templateData.size }">
+  <div class="gui-range-date-time-calendar gui-field">
     <gui-range-date-time-calendar
       ref="calendarRef"
       :uid="uid"
