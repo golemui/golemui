@@ -1,3 +1,13 @@
+## 1.6.0 (2026-10-03)
+
+### 🚀 Features
+
+- **schemas:** convert a JSON Schema into a form definition ([#402](https://github.com/golemui/golemui/pull/402))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+
 ## 1.6.0-rc.1 (2026-10-02)
 
 This was a version bump only for schemas to align it with other projects, there were no code changes.
