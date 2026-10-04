@@ -132,6 +132,12 @@ export type {
 export { configureMessages, DEFAULT_MESSAGES } from './lib/utils/messages';
 export type { GuiMessageKey, GuiMessageParams, GuiTranslate } from './lib/utils/messages';
 
+// ─── Server rendering ───
+//
+// The browser side. The server side, renderGuiHtml, is in @golemui/gui-components/ssr.
+
+export { resumeServerRendered } from '@golemui/lit-utils';
+
 // ─── Events ───
 
 export type {

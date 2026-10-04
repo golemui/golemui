@@ -14,6 +14,11 @@
       "types": "./index.d.ts",
       "import": "./index.js",
       "require": "./index.umd.cjs"
+    },
+    "./ssr": {
+      "types": "./ssr.d.ts",
+      "import": "./ssr.js",
+      "require": "./ssr.umd.cjs"
     }
   },
   "files": [
@@ -21,10 +26,21 @@
     "index.d.ts",
     "index.js",
     "index.umd.cjs",
+    "ssr.d.ts",
+    "ssr.js",
+    "ssr.umd.cjs",
+    "*.js",
+    "*.cjs",
     "*.md"
   ],
   "peerDependencies": {
+    "@lit-labs/ssr": "^4.1.0",
     "lit": "^3.3.1"
+  },
+  "peerDependenciesMeta": {
+    "@lit-labs/ssr": {
+      "optional": true
+    }
   },
   "repository": {
     "type": "git",

@@ -3,7 +3,9 @@
 [Golem UI](https://golemui.com): the declarative form engine.
 
 Internal building blocks shared by `@golemui/lit` and `@golemui/gui-components`: the `safeDefine`
-element registry and the CSP-safe `cspStyleMap` directive. You do not need to install it
+element registry, the CSP-safe `cspStyleMap` directive and the server rendering of the elements
+(`renderGuiHtml` in the server-only `@golemui/lit-utils/ssr`, `resumeServerRendered` for the
+client). You do not need to install it
 yourself; import `safeDefine` from `@golemui/lit`.
 
 ## Documentation

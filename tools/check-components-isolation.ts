@@ -8,11 +8,11 @@ import { fileURLToPath } from 'node:url';
  * Standalone install check for @golemui/gui-components.
  *
  * GolemUI Components must work without the form engine: it needs `lit`, its own
- * @golemui/lit-utils helpers and @lit/react for its React components, nothing else; react and
- * vue are optional peers. This script packs both built packages, installs
- * them in an empty project next to `lit`, then imports the package root, one component entry
- * point and resolves the stylesheets. An import of any other @golemui package fails there, because
- * none is installed.
+ * @golemui/lit-utils helpers and @lit/react for its React components, nothing else; react, vue
+ * and @lit-labs/ssr are optional peers. This script packs both built packages, installs
+ * them in an empty project next to `lit` and `@lit-labs/ssr`, then imports the package root, one
+ * component entry point, server-renders that component and resolves the stylesheets. An import of
+ * any other @golemui package fails there, because none is installed.
  *
  * Run with `npm run test:components-isolation`. Pass `--skip-build` to reuse the existing
  * `dist` output.
@@ -39,6 +39,14 @@ await import('@golemui/gui-components/textinput');
 
 if (!customElements.get('gui-textinput')) {
   throw new Error('gui-textinput was not registered');
+}
+
+// Server rendering through the package's own entry point, with no form engine installed.
+const { renderGuiHtml } = await import('@golemui/gui-components/ssr');
+const { html } = await import('lit');
+const markup = await renderGuiHtml(html\`<gui-textinput uid="email" label="Email"></gui-textinput>\`);
+if (!/<gui-textinput[^>]*defer-hydration/.test(markup) || !/<input[^>]*id="email"/.test(markup)) {
+  throw new Error(\`gui-textinput did not server-render its content: \${markup}\`);
 }
 const require = createRequire(import.meta.url);
 for (const stylesheet of ['index.css', 'tokens.css', 'components.css', 'themes/clay.css']) {
@@ -86,7 +94,7 @@ function main() {
       JSON.stringify({ name: 'gui-components-isolation', private: true, type: 'module' }),
     );
     const tarballArgs = tarballs.map((tarball) => `"./${tarball}"`).join(' ');
-    run(`npm install --no-audit --no-fund ${tarballArgs} lit@^3`, scratch);
+    run(`npm install --no-audit --no-fund ${tarballArgs} lit@^3 @lit-labs/ssr@^4.1.0`, scratch);
 
     const golemuiPackages = readdirSync(join(scratch, 'node_modules/@golemui')).sort();
     if (golemuiPackages.join() !== packages.join()) {
@@ -98,7 +106,9 @@ function main() {
     writeFileSync(join(scratch, 'check.mjs'), importCheck);
     run('node check.mjs', scratch);
 
-    console.log('[components-isolation] gui-components installs and loads with lit and lit-utils');
+    console.log(
+      '[components-isolation] gui-components installs, loads and server-renders with lit and lit-utils',
+    );
   } finally {
     rmSync(scratch, { recursive: true, force: true });
   }

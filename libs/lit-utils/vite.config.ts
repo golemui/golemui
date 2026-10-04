@@ -22,13 +22,18 @@ export default defineConfig(() => ({
     emptyOutDir: true,
     reportCompressedSize: true,
     lib: {
-      entry: 'src/index.ts',
+      entry: {
+        index: 'src/index.ts',
+        ssr: 'src/ssr.ts',
+      },
       name: 'lit-utils',
-      fileName: 'index',
+      formats: ['es', 'cjs'],
+      fileName: (format: string, entryName: string) =>
+        format === 'cjs' ? `${entryName}.umd.cjs` : `${entryName}.js`,
     },
     rollupOptions: {
       // External packages that should not be bundled into your library.
-      external: ['lit', /^lit\//],
+      external: ['lit', /^lit\//, /^@lit-labs\/ssr($|\/)/],
     },
   },
   test: {

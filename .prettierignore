@@ -13,3 +13,5 @@
 CHANGELOG.md
 # goldens.spec.ts compares these files byte for byte
 /libs/gui/mcp/src/json/goldens
+# server-render.spec.ts compares this file byte for byte
+/libs/gui/components/src/lib/ssr/goldens

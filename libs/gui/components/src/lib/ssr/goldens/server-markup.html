@@ -1,0 +1,170 @@
+<form id="checkout">
+    <gui-alert  variant="info" defer-hydration>Yearly billing saves two months.</gui-alert>
+    <gui-textinput
+
+
+
+
+
+
+     uid="email" name="email" label="Email" hint="We send the receipt here." value="ada@example.com" required class="gui-field" defer-hydration>
+      <label
+      class="gui-label"
+      for="email"
+      data-cy="email_label"
+      id="email_label"
+    >
+      <span class="gui-label__text"
+        >Email<span aria-hidden="true"> *</span></span
+      >
+      <div class="gui-widget-hint" id="email_hint" aria-hidden="true">We send the receipt here.</div>
+    </label>
+
+      <div class="gui-widget">
+        <input
+          type="text"
+          id="email"
+          data-cy="email_textinput"
+          class=" gui-widget-input "
+          value="ada@example.com"
+          required
+
+
+
+
+
+
+
+        />
+
+      </div>
+
+      <div
+    class=" gui-validator gui-validator--empty "
+    id="email_errors"
+    role="alert"
+
+
+  >
+
+  </div>
+    </gui-textinput>
+    <gui-tabs  active="billing" defer-hydration>
+      <gui-tab-list  aria-label="Checkout" defer-hydration>
+        <gui-tab  panel="billing" defer-hydration>Billing</gui-tab>
+      </gui-tab-list>
+      <gui-tab-panel  name="billing" defer-hydration>
+        <gui-select
+
+
+
+
+
+         uid="plan" name="plan" label="Plan" value="team" options="[{&quot;label&quot;:&quot;Starter&quot;,&quot;value&quot;:&quot;starter&quot;},{&quot;label&quot;:&quot;Team&quot;,&quot;value&quot;:&quot;team&quot;}]" class="gui-field" defer-hydration>
+      <label
+      class="gui-label"
+      for="plan"
+      data-cy="plan_label"
+      id="plan_label"
+    >
+      <span class="gui-label__text"
+        >Plan</span
+      >
+
+    </label>
+
+      <div class="gui-widget">
+        <select
+          id="plan"
+          data-cy="plan_select"
+          class=" gui-widget-input "
+
+
+
+
+
+
+
+        >
+
+          <option value="" disabled>
+            Select an option
+          </option>
+          <option
+                value="starter"
+              >
+                Starter
+              </option><option
+                value="team"
+                selected="true"
+              >
+                Team
+              </option>
+
+        </select>
+        <span class="gui-select__arrow"
+          ><svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 256 256"
+            aria-hidden="true"
+          >
+            <path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"></path></svg
+        ></span>
+
+      </div>
+
+      <div
+    class=" gui-validator gui-validator--empty "
+    id="plan_errors"
+    role="alert"
+
+
+  >
+
+  </div>
+    </gui-select>
+      </gui-tab-panel>
+    </gui-tabs>
+    <gui-checkbox     uid="terms" name="terms" label="I accept the terms" value="true" class="gui-field" defer-hydration>
+      <label
+        class="gui-label"
+        for="terms"
+        data-cy="terms_label"
+        id="terms_label"
+      >
+        <div class="gui-widget gui-widget--horizontal">
+          <input
+            type="checkbox"
+            id="terms"
+            data-cy="terms_checkbox"
+            checked="true"
+
+
+
+
+
+          />
+        </div>
+
+        <span class="gui-label__container">
+          <span class="gui-label__text"
+            >I accept the terms</span
+          >
+        </span>
+      </label>
+
+      <div class="gui-widget-hint" id="terms_hint">
+         <div
+    class=" gui-validator gui-validator--empty "
+    id="terms_errors"
+    role="alert"
+
+
+  >
+
+  </div>
+      </div>
+    </gui-checkbox>
+  </form>

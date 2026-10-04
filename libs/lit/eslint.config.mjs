@@ -9,7 +9,14 @@ export default [
         'error',
         {
           ignoredFiles: ['{projectRoot}/eslint.config.{js,cjs,mjs,ts,cts,mts}'],
-          ignoredDependencies: ['@nx/vite', 'vite', 'vite-plugin-dts', '@nx/dependency-checks'],
+          ignoredDependencies: [
+            '@nx/vite',
+            'vite',
+            'vite-plugin-dts',
+            '@nx/dependency-checks',
+            // An optional peer for the ssr entry point, which builds on @golemui/lit-utils/ssr.
+            '@lit-labs/ssr',
+          ],
         },
       ],
     },

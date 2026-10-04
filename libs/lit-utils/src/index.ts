@@ -5,3 +5,4 @@
 
 export { cspStyleMap, type CspStyleInfo } from './lib/csp-style-map';
 export { onElementRegistered, safeDefine, tagNameOf } from './lib/define';
+export { resumeServerRendered } from './lib/resume';

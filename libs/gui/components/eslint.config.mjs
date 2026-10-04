@@ -42,6 +42,8 @@ export default [
             'cypress-ct-lit',
             // An optional peer for the generated vue.d.ts, which the build writes.
             'vue',
+            // An optional peer for the ssr entry point, which re-exports @golemui/lit-utils/ssr.
+            '@lit-labs/ssr',
           ],
         },
       ],

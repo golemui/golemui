@@ -201,6 +201,40 @@ The parts of sibling fields line up whatever the length of a label, and an error
 controls next to it. A custom field lines up the same way when its root has the `gui-field` class
 and its parts use these three classes; anything else in a cell spans the three tracks.
 
+## Server rendering
+
+The elements load in Node without a DOM, so server-rendered pages can import them. A framework's
+own server render (React, Next.js, Vue, Nuxt, Angular) sends the empty tags, and the elements fill
+in on the client.
+
+To send their complete markup instead, render them with `renderGuiHtml` from the server-only
+`@golemui/gui-components/ssr` entry point. It needs `@lit-labs/ssr` 4.1 or later:
+
+```ts
+import { html } from 'lit';
+import { renderGuiHtml } from '@golemui/gui-components/ssr';
+import '@golemui/gui-components/textinput';
+
+const markup = await renderGuiHtml(
+  html`<gui-textinput uid="email" name="email" label="Email"></gui-textinput>`,
+);
+```
+
+The markup holds every element inert with a `defer-hydration` attribute. On the client, import the
+elements and call `resumeServerRendered()`, which swaps the server markup for the live render:
+
+```ts
+import { resumeServerRendered } from '@golemui/gui-components';
+import '@golemui/gui-components/textinput';
+
+resumeServerRendered();
+```
+
+- Pass values as attributes. The client builds the elements from the HTML, so a property binding
+  such as `.options=${options}` reaches the server render only.
+- Give each element a `uid` when something else points at the ids of its parts: the client
+  render generates the ids again.
+
 ## Documentation
 
 - Website: https://golemui.com

@@ -38,6 +38,7 @@
       "@golemui/gui-components": ["libs/gui/components/src/index.ts"],
       "@golemui/gui-components/internals": ["libs/gui/components/src/internals.ts"],
       "@golemui/gui-components/react": ["libs/gui/components/src/react.ts"],
+      "@golemui/gui-components/ssr": ["libs/gui/components/src/ssr.ts"],
       "@golemui/gui-components/accordion": ["libs/gui/components/src/lib/components/accordion.ts"],
       "@golemui/gui-components/accordion-item": [
         "libs/gui/components/src/lib/components/accordion-item.ts"
@@ -130,6 +131,7 @@
       "@golemui/lit": ["libs/lit/src/index.ts"],
       "@golemui/lit/internals": ["libs/lit/src/internals.ts"],
       "@golemui/lit-utils": ["libs/lit-utils/src/index.ts"],
+      "@golemui/lit-utils/ssr": ["libs/lit-utils/src/ssr.ts"],
       "@golemui/lit/ssr": ["libs/lit/src/ssr.ts"],
       "@golemui/react": ["libs/react/src/index.ts"],
       "@golemui/vue": ["libs/vue/src/index.ts"],

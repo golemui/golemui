@@ -38,6 +38,7 @@ export default defineConfig(() => ({
         index: 'src/index.ts',
         internals: 'src/internals.ts',
         react: 'src/react.ts',
+        ssr: 'src/ssr.ts',
         'lib/components/accordion': 'src/lib/components/accordion.ts',
         'lib/components/accordion-item': 'src/lib/components/accordion-item.ts',
         'lib/components/alert': 'src/lib/components/alert.ts',
@@ -93,7 +94,8 @@ export default defineConfig(() => ({
       // `lit` must stay external so Node resolves lit's own `node` export condition.
       // Bundling it inlines the browser build, which reads `HTMLElement` at module scope.
       external: [
-        '@golemui/lit-utils',
+        /^@golemui\/lit-utils($|\/)/,
+        /^@lit-labs\/ssr($|\/)/,
         'lit',
         /^lit\/.+/,
         'lit-html',

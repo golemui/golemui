@@ -1,8 +1,9 @@
+// Server-only entry point. It needs @lit-labs/ssr, an optional peer dependency.
+
 export {
   GuiSsrElementRenderer,
   installLitSsrSupport,
   renderGuiHtml,
   stripFalseBooleanAttributes,
   stripShadowRootTemplates,
-} from '@golemui/lit-utils/ssr';
-export { renderGuiFormHtml } from './lib/ssr/server';
+} from './lib/ssr/server';

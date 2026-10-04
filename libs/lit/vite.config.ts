@@ -36,7 +36,7 @@ export default defineConfig(() => ({
       external: [
         '@golemui/core',
         '@golemui/dx',
-        '@golemui/lit-utils',
+        /^@golemui\/lit-utils($|\/)/,
         'rxjs',
         /^@?lit(-\w+)?($|\/.+)/,
       ],
