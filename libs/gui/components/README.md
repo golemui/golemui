@@ -232,8 +232,9 @@ resumeServerRendered();
 
 - Pass values as attributes. The client builds the elements from the HTML, so a property binding
   such as `.options=${options}` reaches the server render only.
-- Give each element a `uid` when something else points at the ids of its parts: the client
-  render generates the ids again.
+- The client render generates the ids of each element's parts again, and the element keeps its
+  own label, hint and errors linked. Set a `uid` only when something outside the element points
+  at those ids, such as your own `aria-describedby`, a CSS or test selector, or a link.
 
 ## Documentation
 
