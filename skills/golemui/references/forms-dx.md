@@ -35,9 +35,9 @@ Every `gui.*` factory and its calling convention. Look up the detail below for t
 - `gui.inputs.currency(path, { label, validator? })`
 - `gui.inputs.dateInput(path, { label, minDate?, maxDate?, validator? })`
 - `gui.inputs.datePicker(path, { label, minDate?, maxDate?, validator? })`
-- `gui.inputs.dateTimeCalendar(path, { label, minDate?, maxDate?, minTime?, maxTime?, minuteStep?, disabledTimeRanges?, allowCustomTime? })`
+- `gui.inputs.dateTimeCalendar(path, { label, minDate?, maxDate?, minTime?, maxTime?, minuteStep?, disabledTimeRanges?, allowCustomTime?, timeLabel? })`
 - `gui.inputs.dateTimeInput(path, { label, hourFormat?, minuteStep?, validator? })`
-- `gui.inputs.dateTimePicker(path, { label, minDate?, maxDate?, minTime?, maxTime?, minuteStep?, disabledTimeRanges?, allowCustomTime? })`
+- `gui.inputs.dateTimePicker(path, { label, minDate?, maxDate?, minTime?, maxTime?, minuteStep?, disabledTimeRanges?, allowCustomTime?, timeLabel? })`
 - `gui.displays.display(render)`
 - `gui.inputs.dropdown(path, { label, items, validator? })`
 - `gui.inputs.fileUpload(path, { label?, accept?, maxSize?, buttonLabel?, validator? })`
@@ -205,7 +205,7 @@ Reference: https://golemui.com/dx/widgets-reference/input-fields/date-picker.md
 
 ## gui.inputs.dateTimeCalendar
 
-Call: `gui.inputs.dateTimeCalendar(path, { label, minDate?, maxDate?, minTime?, maxTime?, minuteStep?, disabledTimeRanges?, allowCustomTime? })`
+Call: `gui.inputs.dateTimeCalendar(path, { label, minDate?, maxDate?, minTime?, maxTime?, minuteStep?, disabledTimeRanges?, allowCustomTime?, timeLabel? })`
 
 ```ts
 gui.inputs.dateTimeCalendar('appointmentAt', {
@@ -237,7 +237,7 @@ Reference: https://golemui.com/dx/widgets-reference/input-fields/datetimeinput.m
 
 ## gui.inputs.dateTimePicker
 
-Call: `gui.inputs.dateTimePicker(path, { label, minDate?, maxDate?, minTime?, maxTime?, minuteStep?, disabledTimeRanges?, allowCustomTime? })`
+Call: `gui.inputs.dateTimePicker(path, { label, minDate?, maxDate?, minTime?, maxTime?, minuteStep?, disabledTimeRanges?, allowCustomTime?, timeLabel? })`
 
 ```ts
 gui.inputs.dateTimePicker('appointmentAt', {

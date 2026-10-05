@@ -71,6 +71,7 @@ export class DateTimeCalendarElement extends LitElement implements WithWidget {
         .maxTime=${templateData.maxTime}
         .disabledTimeRanges=${templateData.disabledTimeRanges}
         ?allow-custom-time=${templateData.allowCustomTime}
+        .timeLabel=${templateData.timeLabel as string}
         .minTimeMessage=${templateData.minTimeMessage as string}
         .maxTimeMessage=${templateData.maxTimeMessage as string}
         .disabledTimeRangeMessage=${templateData.disabledTimeRangeMessage as string}

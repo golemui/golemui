@@ -88,6 +88,7 @@ describe('DateTimePicker schema validation', () => {
                 { start: '17:00:00', end: '18:00:00' },
               ],
               allowCustomTime: true,
+              timeLabel: 'Appointment time',
               invalidDateMessage: 'That date does not exist',
               minTimeMessage: 'Too early',
               maxTimeMessage: { key: 'dtp.max', default: 'Too late' },

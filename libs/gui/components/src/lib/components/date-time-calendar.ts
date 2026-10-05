@@ -45,7 +45,7 @@ import {
   valueEvents,
   type GuiInputErrorEventDetail,
 } from '../utils/events';
-import { message } from '../utils/messages';
+import { message, requiredName } from '../utils/messages';
 
 export interface DateTimeCalendarDay {
   date: Date;
@@ -166,6 +166,8 @@ export class GuiDateTimeCalendar extends GuiFormControl {
   @property({ type: Boolean, attribute: 'allow-custom-time' }) allowCustomTime:
     | boolean
     | undefined = false;
+  /** Label of the time. An empty value keeps the default. */
+  @property({ type: String, attribute: 'time-label' }) timeLabel: string | undefined = undefined;
   /** Error when focus leaves a partly filled value. */
   @property({ type: String, attribute: 'incomplete-message' }) incompleteMessage:
     | string
@@ -528,6 +530,7 @@ export class GuiDateTimeCalendar extends GuiFormControl {
         <gui-time-picker
           class="gui-time-picker gui-field"
           .uid=${`${this.uid}-time`}
+          .label=${requiredName('time', this.timeLabel)}
           .showErrors=${false}
           .deferFocusLeave=${true}
           ?required=${this.required}

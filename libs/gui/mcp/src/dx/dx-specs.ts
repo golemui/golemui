@@ -472,7 +472,7 @@ const INPUTS: DxSpec[] = [
     factory: 'dateTimeCalendar',
     namespace: 'inputs',
     docSlug: 'datetimecalendar',
-    call: 'gui.inputs.dateTimeCalendar(path, { label, minDate?, maxDate?, minTime?, maxTime?, minuteStep?, disabledTimeRanges?, allowCustomTime? })',
+    call: 'gui.inputs.dateTimeCalendar(path, { label, minDate?, maxDate?, minTime?, maxTime?, minuteStep?, disabledTimeRanges?, allowCustomTime?, timeLabel? })',
     example:
       "gui.inputs.dateTimeCalendar('appointmentAt', { label: 'Appointment', minTime: '09:00', maxTime: '18:00' })",
     notes: [
@@ -493,7 +493,7 @@ const INPUTS: DxSpec[] = [
     factory: 'dateTimePicker',
     namespace: 'inputs',
     docSlug: 'datetimepicker',
-    call: 'gui.inputs.dateTimePicker(path, { label, minDate?, maxDate?, minTime?, maxTime?, minuteStep?, disabledTimeRanges?, allowCustomTime? })',
+    call: 'gui.inputs.dateTimePicker(path, { label, minDate?, maxDate?, minTime?, maxTime?, minuteStep?, disabledTimeRanges?, allowCustomTime?, timeLabel? })',
     example:
       "gui.inputs.dateTimePicker('appointmentAt', { label: 'Appointment', minTime: '09:00', maxTime: '18:00' })",
     notes: [

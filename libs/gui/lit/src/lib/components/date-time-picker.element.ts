@@ -79,6 +79,7 @@ export class DateTimePickerElement extends LitElement implements WithWidget {
         .maxTime=${templateData.maxTime}
         .disabledTimeRanges=${templateData.disabledTimeRanges}
         ?allow-custom-time=${templateData.allowCustomTime}
+        .timeLabel=${templateData.timeLabel as string}
         .invalidDateMessage=${templateData.invalidDateMessage as string}
         .minDateMessage=${templateData.minDateMessage as string}
         .maxDateMessage=${templateData.maxDateMessage as string}

@@ -149,6 +149,8 @@ export class GuiDateTimePicker extends GuiFormControl {
   @property({ type: Boolean, attribute: 'allow-custom-time' }) allowCustomTime:
     | boolean
     | undefined = false;
+  /** Label of the time in the calendar. An empty value keeps the default. */
+  @property({ type: String, attribute: 'time-label' }) timeLabel: string | undefined = undefined;
   /** Error for a complete but impossible date, such as February 31. */
   @property({ type: String, attribute: 'invalid-date-message' }) invalidDateMessage:
     | string
@@ -272,6 +274,7 @@ export class GuiDateTimePicker extends GuiFormControl {
             .maxTime=${this.maxTime}
             .disabledTimeRanges=${this.disabledTimeRanges}
             .allowCustomTime=${this.allowCustomTime}
+            .timeLabel=${this.timeLabel}
             .minTimeMessage=${this.minTimeMessage}
             .maxTimeMessage=${this.maxTimeMessage}
             .disabledTimeRangeMessage=${this.disabledTimeRangeMessage}

@@ -91,6 +91,7 @@ onUnmounted(() => {
       :maxTime="templateData.maxTime"
       :disabledTimeRanges.prop="templateData.disabledTimeRanges"
       :allowCustomTime="templateData.allowCustomTime"
+      :timeLabel="templateData.timeLabel"
       :minTimeMessage="templateData.minTimeMessage"
       :maxTimeMessage="templateData.maxTimeMessage"
       :disabledTimeRangeMessage="templateData.disabledTimeRangeMessage"

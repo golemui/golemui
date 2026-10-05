@@ -56,6 +56,7 @@ export const DEFAULT_MESSAGES = {
   yearSelection: 'Year selection',
   timeList: 'Time list',
   showTimeList: 'Show time list',
+  time: 'Time',
   startTime: 'Start time',
   endTime: 'End time',
 

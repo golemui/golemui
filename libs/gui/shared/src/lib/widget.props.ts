@@ -266,6 +266,8 @@ export type DateTimeCalendarProps = CalendarProps &
     disabledTimeRanges?: DisabledTimeRange[];
     /** Allows typing a time in the input; when false (default) times come only from the grid. */
     allowCustomTime?: boolean;
+    /** Visible heading on the time picker. Defaults to "Time". */
+    timeLabel?: Localizable;
     minTimeMessage?: Localizable;
     maxTimeMessage?: Localizable;
     disabledTimeRangeMessage?: Localizable;

@@ -57,6 +57,7 @@ describe('DateTimeCalendar schema validation', () => {
             type: 'dateTimeCalendar',
             props: {
               selectYearAriaLabel: 'Choose year',
+              timeLabel: { key: 'dtc.time', default: 'Time' },
               yearGridAriaLabel: 'Years',
               hint: 'Pick a slot',
               prevMonthIcon: 'chevron_left',

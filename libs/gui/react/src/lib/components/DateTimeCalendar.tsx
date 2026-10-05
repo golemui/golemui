@@ -67,6 +67,7 @@ export function DateTimeCalendar(widgetInstance: WithWidget) {
         maxTime={templateData.maxTime}
         disabledTimeRanges={templateData.disabledTimeRanges}
         allowCustomTime={templateData.allowCustomTime}
+        timeLabel={templateData.timeLabel as string}
         minTimeMessage={templateData.minTimeMessage as string}
         maxTimeMessage={templateData.maxTimeMessage as string}
         disabledTimeRangeMessage={templateData.disabledTimeRangeMessage as string}

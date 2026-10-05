@@ -1,7 +1,7 @@
 import { gui } from '@golemui/gui-shared';
 
 export const tagsTab = gui.layouts.grid([
-  gui.inputs.tags('tags.basic', { placeholder: 'Add a tag…' }),
+  gui.inputs.tags('tags.basic', { label: 'Tags', placeholder: 'Add a tag…' }),
   gui.inputs.tags('tags.withIcon', {
     label: 'Tags with icon',
     icon: 'label',
