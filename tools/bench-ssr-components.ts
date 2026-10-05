@@ -45,6 +45,9 @@ const pages = {
     Array.from({ length: 700 }, (_, index) => paragraph(index)).join('') +
       `<form id="checkout">${demoElements}</form>`,
   ),
+  'content page (no fields)': shell(
+    Array.from({ length: 700 }, (_, index) => paragraph(index)).join(''),
+  ),
   'form page (100 fields)': shell(
     `<form>${Array.from(
       { length: 100 },

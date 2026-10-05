@@ -192,6 +192,32 @@ describe('renderElementsInHtml', () => {
       '<myui-shadowed></myui-shadowed><other-field></other-field>';
     expect(renderElementsInHtml(page)).toBe(page);
   });
+
+  it('returns a page without the start tag of an element it renders as it is', () => {
+    const page = '<main><myui-fields></myui-fields><p>&lt;myui-field&gt; or myui-field</p></main>';
+    expect(renderElementsInHtml(page)).toBe(page);
+  });
+
+  it('finds an element whose tag is in upper case', () => {
+    expect(renderElementsInHtml('<MYUI-FIELD label="U"></MYUI-FIELD>')).toMatch(
+      /^<myui-field label="U" data-golemui-ssr><label>U<\/label\s*>/,
+    );
+  });
+
+  it('renders an element registered after an earlier call', () => {
+    class Late extends LitElement {
+      override createRenderRoot() {
+        return this;
+      }
+      override render() {
+        return html`<b>late</b>`;
+      }
+    }
+    const page = '<myui-late></myui-late>';
+    expect(renderElementsInHtml(page)).toBe(page);
+    safeDefine('myui-late', Late);
+    expect(renderElementsInHtml(page)).toMatch(/^<myui-late data-golemui-ssr><b>late<\/b>/);
+  });
 });
 
 describe('renderElementsInDocument', () => {

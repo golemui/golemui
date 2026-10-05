@@ -2,7 +2,13 @@
 // Analog render the tags with their attributes, empty. Both functions render the same elements,
 // those registered through safeDefine that render into their light DOM (`serverRenderedClass`),
 // whatever their tag.
-import { SERVER_RENDERED_ATTRIBUTE, serverRenderedClass } from '../define';
+import {
+  onElementRegistered,
+  rendersIntoLightDom,
+  SERVER_RENDERED_ATTRIBUTE,
+  serverRenderedClass,
+  tagNameOf,
+} from '../define';
 import {
   applyEdits,
   attributeOf,
@@ -13,6 +19,28 @@ import {
   parseMarkup,
 } from './markup';
 import { renderElement } from './render';
+
+// The tags of the elements these functions render, kept as elements register. A page without any
+// of them has nothing to render, which a text search tells far faster than parsing it.
+const renderedTags = new Set<string>();
+let renderedTagPattern: RegExp | null | undefined;
+onElementRegistered((ctor) => {
+  const tagName = tagNameOf(ctor);
+  if (tagName && rendersIntoLightDom(ctor)) {
+    renderedTags.add(tagName);
+    renderedTagPattern = undefined;
+  }
+});
+
+/** Whether the HTML has the start tag of an element these functions render. */
+function hasRenderedTag(html: string): boolean {
+  if (renderedTagPattern === undefined) {
+    const tags = [...renderedTags].map((tag) => tag.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+    // HTML tag names are case-insensitive; a start tag ends its name with a space, `/` or `>`.
+    renderedTagPattern = tags.length ? new RegExp(`<(?:${tags.join('|')})[\\s/>]`, 'i') : null;
+  }
+  return renderedTagPattern?.test(html) ?? false;
+}
 
 const warn = (tagName: string, error: unknown) =>
   console.warn(`[GolemUI] <${tagName}> could not be rendered on the server`, error);
@@ -37,6 +65,9 @@ const warn = (tagName: string, error: unknown) =>
  * const html = renderElementsInHtml(await renderToString(app));
  */
 export function renderElementsInHtml(html: string): string {
+  if (!hasRenderedTag(html)) {
+    return html;
+  }
   const edits: MarkupEdit[] = [];
   for (const node of nodesOf(parseMarkup(html), false)) {
     if (
