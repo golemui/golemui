@@ -506,7 +506,9 @@ export class GuiFileUpload extends GuiFormControl {
 
   protected override willUpdate(changed: PropertyValues) {
     super.willUpdate(changed);
-    if (!this.getService() && !this._serviceErrorLogged) {
+    // Checked once the host has passed its dependencies (a form always passes them). A
+    // framework that hydrates server markup, such as Vue, sets them after the first update.
+    if (this.dependencies !== undefined && !this.getService() && !this._serviceErrorLogged) {
       this._serviceErrorLogged = true;
       console.error(
         `[gui-file-upload] widget "${this.uid}" has no uploadService. Provide one through the form's dependencies: { uploadService: { upload, remove? } }.`,
