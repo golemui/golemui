@@ -84,7 +84,7 @@ const data = {
 };
 
 // TODO: Move the calculated items logic to the *.form.json file
-const form = {
+const _form = {
   form: [
     {
       uid: 'root',
