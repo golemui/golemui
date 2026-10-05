@@ -1,4 +1,7 @@
 import type { ReactNode } from 'react';
+// Server only (the layout is a Server Component): the GolemUI elements render their content on
+// the server.
+import '@golemui/gui-components/ssr';
 import { GolemuiProvider } from '../components/golemui-provider';
 import '../styles.scss';
 

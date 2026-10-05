@@ -39,6 +39,8 @@ export default defineConfig(() => ({
         internals: 'src/internals.ts',
         react: 'src/react.ts',
         ssr: 'src/ssr.ts',
+        nuxt: 'src/nuxt.ts',
+        'nuxt-server-plugin': 'src/nuxt-server-plugin.ts',
         'lib/components/accordion': 'src/lib/components/accordion.ts',
         'lib/components/accordion-item': 'src/lib/components/accordion-item.ts',
         'lib/components/alert': 'src/lib/components/alert.ts',
@@ -102,6 +104,7 @@ export default defineConfig(() => ({
         /^lit-html\/.+/,
         '@lit/react',
         'react',
+        /^@nuxt\/kit($|\/)/,
       ],
       output: {
         // The React components use hooks, so React Server Components must load them on the

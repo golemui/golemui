@@ -40,6 +40,11 @@
       "import": "./ssr.js",
       "require": "./ssr.umd.cjs"
     },
+    "./nuxt": {
+      "types": "./nuxt.d.ts",
+      "import": "./nuxt.js",
+      "require": "./nuxt.umd.cjs"
+    },
     "./vue": {
       "types": "./vue.d.ts"
     },
@@ -288,6 +293,12 @@
     "ssr.d.ts",
     "ssr.js",
     "ssr.umd.cjs",
+    "nuxt.d.ts",
+    "nuxt.js",
+    "nuxt.umd.cjs",
+    "nuxt-server-plugin.d.ts",
+    "nuxt-server-plugin.js",
+    "nuxt-server-plugin.umd.cjs",
     "vue.d.ts",
     "custom-elements.json",
     "*.js",
@@ -300,12 +311,16 @@
   },
   "peerDependencies": {
     "@lit-labs/ssr": "^4.1.0",
+    "@nuxt/kit": ">=3.0.0",
     "lit": "^3.3.1",
     "react": ">=18.0.0",
     "vue": "^3.3.0"
   },
   "peerDependenciesMeta": {
     "@lit-labs/ssr": {
+      "optional": true
+    },
+    "@nuxt/kit": {
       "optional": true
     },
     "react": {

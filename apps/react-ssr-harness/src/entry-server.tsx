@@ -1,5 +1,6 @@
 import { preloadFormWidgets } from '@golemui/core';
 import { widgetLoaders } from '@golemui/gui-react';
+import '@golemui/gui-components/ssr';
 import { renderToString } from 'react-dom/server';
 import { App } from './App';
 

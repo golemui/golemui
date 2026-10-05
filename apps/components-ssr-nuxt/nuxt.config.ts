@@ -17,6 +17,8 @@ export default defineNuxtConfig({
   compatibilityDate: '2026-08-28',
   ssr: true,
   telemetry: false,
+  // The GolemUI module, from the workspace sources: an app lists '@golemui/gui-components/nuxt'.
+  modules: [`${workspaceRoot}libs/gui/components/src/nuxt.ts`],
   // Port registry for every app: CONTRIBUTING.md, "Playground and harness ports".
   devServer: { port: 3614 },
   app: {
@@ -27,19 +29,15 @@ export default defineNuxtConfig({
     },
   },
   css: ['~/assets/styles.scss'],
-  vue: { compilerOptions: { isCustomElement: (tag) => tag.startsWith('gui-') } },
   vite: {
     plugins: [nxViteTsPaths()],
     build: { commonjsOptions: { transformMixedEsModules: true } },
   },
   nitro: {
     output: { dir: fileURLToPath(new URL('../../dist/apps/components-ssr-nuxt', import.meta.url)) },
-    // The Nitro plugin (server/plugins/golemui.ts) is bundled by Nitro, not Vite, so it needs the
-    // workspace sources aliased too. An app installs the package instead.
-    alias: {
-      '@golemui/gui-components/ssr': `${workspaceRoot}libs/gui/components/src/ssr.ts`,
-      '@golemui/lit-utils/ssr': `${workspaceRoot}libs/lit-utils/src/ssr.ts`,
-    },
+    // The module's Nitro plugin is bundled by Nitro, not Vite, so it needs the workspace sources
+    // aliased too. An app installs the package instead.
+    alias: { '@golemui/lit-utils/ssr': `${workspaceRoot}libs/lit-utils/src/ssr.ts` },
     // The plugin type-checks those sources, which use the DOM types.
     typescript: { tsConfig: { compilerOptions: { lib: ['ESNext', 'DOM'] } } },
   },

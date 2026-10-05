@@ -55,6 +55,9 @@ Tell Vue the `gui-*` tags are custom elements, for example in `vite.config.ts`:
 vue({ template: { compilerOptions: { isCustomElement: (tag) => tag.startsWith('gui-') } } });
 ```
 
+In Nuxt, the `@golemui/gui-components/nuxt` module does it, and renders the elements on the
+server too: add it to `modules` in `nuxt.config.ts`.
+
 For typed props and `@gui-*` handlers in templates, add the typings once, for example in
 `env.d.ts`:
 

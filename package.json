@@ -85,6 +85,7 @@
     "@custom-elements-manifest/analyzer": "^0.11.0",
     "@lit-labs/ssr": "^4.1.0",
     "@lit-labs/ssr-client": "^1.1.8",
+    "@nuxt/kit": "~4.4.8",
     "@nx/angular": "22.7.8",
     "@nx/cypress": "22.7.8",
     "@nx/eslint": "22.7.8",
