@@ -1,3 +1,5 @@
+import { isServer, nothing } from 'lit';
+
 /**
  * Characters accepted by an `<input type="number">`: digits, decimal separators
  * ('.' and the locale-dependent ','), exponent markers and signs.
@@ -14,6 +16,18 @@ const VALID_NUMBER_INPUT_CHARS = /^[0-9.,eE+-]+$/;
  */
 export const isRealNumber = (value: unknown): value is number =>
   typeof value === 'number' && !Number.isNaN(value);
+
+/**
+ * The `value` attribute of a number input, rendered on the server only. In the browser the
+ * elements set the input's value themselves after each render (a template binding would
+ * overwrite what the user is typing), but the server has no input to set it on: without the
+ * attribute the server HTML would show an empty field.
+ *
+ * @param {number | undefined} value - The element's value.
+ * @return The value as an attribute on the server, otherwise `nothing`.
+ */
+export const serverValue = (value: number | undefined) =>
+  isServer && value !== undefined ? String(value) : nothing;
 
 /**
  * Prevents text that is not valid inside an `<input type="number">` from being

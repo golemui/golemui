@@ -4,7 +4,9 @@ import { renderToString } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { GuiSelect, GuiTabs, GuiTextinput } from '../../react';
 import { renderElement, renderElementsInHtml, renderTemplate } from '../../ssr';
+import '../components/currency';
 import '../components/list';
+import '../components/number';
 import './ssr.fixture';
 
 /**
@@ -37,6 +39,19 @@ describe('rendering one element', () => {
     });
     expect(rendered?.innerHTML).toMatch(/<option\s+value="starter"/);
     expect(rendered?.innerHTML).toMatch(/<option\s+value="team"\s+selected/);
+  });
+
+  it('renders the value of the number fields, which the browser sets on the input itself', () => {
+    const number = renderElement('gui-number', { attributes: { uid: 'seats', value: '3' } });
+    expect(number?.innerHTML).toMatch(/<input[^>]*id="seats"[^>]*value="3"/);
+    const currency = renderElement('gui-currency', {
+      attributes: { uid: 'price', currency: 'EUR' },
+      properties: { value: 49.5 },
+    });
+    expect(currency?.innerHTML).toMatch(/<input[^>]*id="price"[^>]*value="49.5"/);
+    expect(renderElement('gui-number', { attributes: { uid: 'empty' } })?.innerHTML).not.toMatch(
+      /<input[^>]*value=/,
+    );
   });
 
   it('renders nothing for an element that wraps the app children or has a shadow root', () => {

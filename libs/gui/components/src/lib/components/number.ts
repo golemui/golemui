@@ -4,7 +4,12 @@ import { cspStyleMap } from '@golemui/lit-utils';
 import { safeDefine } from '@golemui/lit-utils';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
-import { blockNonNumericInput, blockNonNumericKeys, isRealNumber } from '../utils/numeric';
+import {
+  blockNonNumericInput,
+  blockNonNumericKeys,
+  isRealNumber,
+  serverValue,
+} from '../utils/numeric';
 import { GuiFormControl, type GuiValidity } from '../gui-form-control';
 import { dispatchBlur, dispatchChange, dispatchValue, valueEvents } from '../utils/events';
 import { message } from '../utils/messages';
@@ -129,6 +134,7 @@ export class GuiNumber extends GuiFormControl {
           max=${isRealNumber(this.maximum) ? this.maximum : nothing}
           placeholder=${this.placeholder || nothing}
           autocomplete=${this.autocomplete || nothing}
+          value=${serverValue(this.normalizedValue)}
           @input=${this.valueChanged}
           @change=${this.valueCommitted}
           @beforeinput=${blockNonNumericInput}

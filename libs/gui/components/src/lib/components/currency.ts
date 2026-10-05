@@ -4,7 +4,12 @@ import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addIcon, addLabel, type ControlTemplateData } from '../utils/templates';
-import { blockNonNumericInput, blockNonNumericKeys, isRealNumber } from '../utils/numeric';
+import {
+  blockNonNumericInput,
+  blockNonNumericKeys,
+  isRealNumber,
+  serverValue,
+} from '../utils/numeric';
 import { GuiFormControl } from '../gui-form-control';
 import { dispatchBlur, dispatchChange, dispatchValue, valueEvents } from '../utils/events';
 
@@ -174,6 +179,7 @@ export class GuiCurrency extends GuiFormControl {
           ?readonly=${this.readOnly}
           placeholder=${this.placeholder || nothing}
           autocomplete=${this.autocomplete || nothing}
+          value=${serverValue(this.normalizedValue)}
           @input=${this.handleInput}
           @change=${this.handleChange}
           @beforeinput=${blockNonNumericInput}
