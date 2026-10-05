@@ -1,0 +1,73 @@
+name: Server Rendering (latest Lit)
+
+# The server rendering relies on private details of @lit-labs/ssr and lit (see
+# libs/lit-utils/src/lib/ssr/support.ts), and users install any version our peer ranges allow. This
+# runs the server rendering specs and both parity checks with the newest of those versions, every
+# week and on the pull requests that change that code, so a Lit release that breaks it shows up
+# before a user reports it.
+
+on:
+  schedule:
+    # Mondays at 06:00 UTC.
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'libs/lit-utils/src/lib/ssr/**'
+      - 'libs/lit-utils/src/lib/define.ts'
+      - 'libs/lit-utils/src/lib/server-renderer.ts'
+      - 'libs/lit/src/lib/ssr/**'
+      - '.github/workflows/ssr-latest-lit.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  latest-lit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      NX_DAEMON: false
+      # Nx hashes the dependencies from the lockfile, which this job leaves unchanged, so a cache
+      # would serve builds made with the locked versions.
+      NX_SKIP_NX_CACHE: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install the newest Lit the peer ranges allow
+        run: |
+          set -euo pipefail
+          peer() { node -p "require('./libs/lit-utils/package.json').peerDependencies['$1']"; }
+          # The packages lit and @lit-labs/ssr are built from, at the majors those versions use:
+          # an install of the two alone keeps the locked versions of these when they still match.
+          npm install --no-save --no-audit --no-fund \
+            "@lit-labs/ssr@$(peer @lit-labs/ssr)" \
+            "lit@$(peer lit)" \
+            '@lit-labs/ssr-client@^1' \
+            '@lit-labs/ssr-dom-shim@^1' \
+            'lit-html@^3' \
+            'lit-element@^4' \
+            '@lit/reactive-element@^2'
+
+      - name: Show the versions under test
+        run: |
+          for package in @lit-labs/ssr @lit-labs/ssr-client @lit-labs/ssr-dom-shim lit lit-html lit-element @lit/reactive-element; do
+            echo "$package $(node -p "require('./node_modules/$package/package.json').version")"
+          done
+
+      - name: Server rendering specs
+        run: npx nx run-many --target=vite:test --projects=lit-utils,lit,gui-components,gui-lit
+
+      - name: Forms server rendering
+        run: npm run test:ssr-parity
+
+      - name: Components server rendering
+        run: npm run test:ssr-parity-components
