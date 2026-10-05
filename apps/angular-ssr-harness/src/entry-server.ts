@@ -1,16 +1,10 @@
-import { DOCUMENT, inject } from '@angular/core';
 import {
   type BootstrapContext,
   bootstrapApplication,
   provideClientHydration,
 } from '@angular/platform-browser';
-import {
-  BEFORE_APP_SERIALIZED,
-  provideServerRendering,
-  renderApplication,
-} from '@angular/platform-server';
+import { provideServerRendering, renderApplication } from '@angular/platform-server';
 import { preloadFormWidgets } from '@golemui/core';
-import { renderElementsInDocument } from '@golemui/gui-components/ssr';
 import { widgetLoaders } from '@golemui/gui-angular';
 import { AppComponent } from './app.component';
 
@@ -44,20 +38,7 @@ export async function render(template: string): Promise<string> {
     (context: BootstrapContext) =>
       bootstrapApplication(
         AppComponent,
-        {
-          providers: [
-            provideServerRendering(),
-            provideClientHydration(),
-            {
-              provide: BEFORE_APP_SERIALIZED,
-              multi: true,
-              useFactory: () => {
-                const document = inject(DOCUMENT);
-                return () => renderElementsInDocument(document);
-              },
-            },
-          ],
-        },
+        { providers: [provideServerRendering(), provideClientHydration()] },
         context,
       ),
     { document: template },
