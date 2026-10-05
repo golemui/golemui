@@ -160,7 +160,7 @@ export class GuiRangeTimePicker extends GuiFormControl {
     | string
     | undefined = undefined;
 
-  @query('#time-input') private _inputRef?: GuiRangeTimeInput;
+  @query('gui-range-time') private _inputRef?: GuiRangeTimeInput;
 
   @state() private _workingIn: string | undefined = undefined;
   @state() private _workingOut: string | undefined = undefined;
@@ -333,7 +333,7 @@ export class GuiRangeTimePicker extends GuiFormControl {
         @focusout=${this._focusLeave.onFocusOut}
       >
         <gui-range-time
-          id="time-input"
+          id=${`${this.uid}_time`}
           class=${classMap(pickerIcon.widgetClasses)}
           .uid=${this.uid}
           .hint=${this.hint}

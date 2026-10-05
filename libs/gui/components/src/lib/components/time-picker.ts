@@ -173,7 +173,7 @@ export class GuiTimePicker extends GuiFormControl {
         @focusout=${this._focusLeave.onFocusOut}
       >
         <gui-time
-          id="time-input"
+          id=${`${this.uid}_time`}
           class=${classMap(timePickerIcon.widgetClasses)}
           .uid=${this.uid}
           .hint=${this.hint}

@@ -181,7 +181,7 @@ export class GuiRangeDatePicker extends GuiFormControl {
     | string
     | undefined = undefined;
 
-  @query('#date-input') private _dateRef?: GuiRangeDateInput;
+  @query('gui-range-date') private _dateRef?: GuiRangeDateInput;
 
   /**
    * Mirror of the embedded input's edit session, fed by its
@@ -328,7 +328,7 @@ export class GuiRangeDatePicker extends GuiFormControl {
         @focusout=${this._focusLeave.onFocusOut}
       >
         <gui-range-date
-          id="date-input"
+          id=${`${this.uid}_date`}
           .deferFocusLeave=${true}
           class=${classMap(datePickerIcon.widgetClasses)}
           .uid=${this.uid}

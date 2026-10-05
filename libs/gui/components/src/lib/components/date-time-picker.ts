@@ -306,7 +306,7 @@ export class GuiDateTimePicker extends GuiFormControl {
         @focusout=${this._focusLeave.onFocusOut}
       >
         <gui-date-time
-          id="date-input"
+          id=${`${this.uid}_date`}
           class=${classMap(datePickerIcon.widgetClasses)}
           .uid=${this.uid}
           .hint=${this.hint}
