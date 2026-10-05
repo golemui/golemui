@@ -85,7 +85,7 @@
     "@nx/angular": "22.7.8",
     "@nx/cypress": "22.7.8",
     "@nx/eslint": "22.7.8",
-    "@nx/eslint-plugin": "22.7.8",
+    "@nx/eslint-plugin": "23.2.1",
     "@nx/js": "22.7.8",
     "@nx/react": "22.7.8",
     "@nx/vite": "22.7.8",
