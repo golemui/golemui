@@ -127,25 +127,43 @@ npx nx run analog-playground:serve # server-rendered (Analog, Angular)
 Each app binds a fixed port, so several can run at the same time. This table is the only
 copy of the registry. Add a row here when you add an app.
 
-| Port | App                   | Dev server command                    |
-| ---- | --------------------- | ------------------------------------- |
-| 3300 | `lit-playground`      | `npx nx run lit-playground:serve`     |
-| 3500 | `vue-playground`      | `npx nx run vue-playground:serve`     |
-| 3600 | `vue-ssr-harness`     | `npm run start:vue-ssr`               |
-| 3601 | `react-ssr-harness`   | `npm run start:react-ssr`             |
-| 3602 | `lit-ssr-harness`     | `npm run start:lit-ssr`               |
-| 3603 | `angular-ssr-harness` | `npm run start:angular-ssr`           |
-| 3700 | `nuxt-playground`     | `npx nx run nuxt-playground:serve`    |
-| 3800 | `nextjs-playground`   | `npx nx run nextjs-playground:serve`  |
-| 3900 | `astro-playground`    | `npx nx run astro-playground:serve`   |
-| 4000 | `analog-playground`   | `npx nx run analog-playground:serve`  |
-| 4200 | `angular-playground`  | `npx nx run angular-playground:serve` |
-| 8080 | `react-playground`    | `npx nx run react-playground:serve`   |
+| Port | App                      | Dev server command                            |
+| ---- | ------------------------ | --------------------------------------------- |
+| 3300 | `lit-playground`         | `npx nx run lit-playground:serve`             |
+| 3500 | `vue-playground`         | `npx nx run vue-playground:serve`             |
+| 3600 | `vue-ssr-harness`        | `npm run start:vue-ssr`                       |
+| 3601 | `react-ssr-harness`      | `npm run start:react-ssr`                     |
+| 3602 | `lit-ssr-harness`        | `npm run start:lit-ssr`                       |
+| 3603 | `angular-ssr-harness`    | `npm run start:angular-ssr`                   |
+| 3610 | `components-ssr-react`   | `npx nx run components-ssr-react:serve-ssr`   |
+| 3611 | `components-ssr-vue`     | `npx nx run components-ssr-vue:serve-ssr`     |
+| 3612 | `components-ssr-angular` | `npx nx run components-ssr-angular:serve-ssr` |
+| 3613 | `components-ssr-nextjs`  | `npx nx run components-ssr-nextjs:serve`      |
+| 3614 | `components-ssr-nuxt`    | `npx nx run components-ssr-nuxt:serve`        |
+| 3615 | `components-ssr-analog`  | `npx nx run components-ssr-analog:serve`      |
+| 3700 | `nuxt-playground`        | `npx nx run nuxt-playground:serve`            |
+| 3800 | `nextjs-playground`      | `npx nx run nextjs-playground:serve`          |
+| 3900 | `astro-playground`       | `npx nx run astro-playground:serve`           |
+| 4000 | `analog-playground`      | `npx nx run analog-playground:serve`          |
+| 4200 | `angular-playground`     | `npx nx run angular-playground:serve`         |
+| 8080 | `react-playground`       | `npx nx run react-playground:serve`           |
 
 The `preview` target of a playground reuses its dev server port, except `lit-playground`
 (4300) and `vue-playground` (4500), which serve the vite preview build on their own port.
 
-A harness reads `PORT` from the environment, so `PORT=3610 npm run start:lit-ssr` moves it.
+A harness reads `PORT` from the environment, so `PORT=3650 npm run start:lit-ssr` moves it.
+
+### Server rendering checks
+
+Two scripts render the SSR apps on the server and check that each framework sends a complete
+page. CI runs each one when its apps are affected.
+
+```bash
+npm run test:ssr-parity            # Forms: the *-ssr-harness apps
+npm run test:ssr-parity-components # Components: the components-ssr-* apps
+```
+
+Both build the apps first. Pass `--skip-build` to check the last build again.
 
 ### Running Cypress Tests
 
