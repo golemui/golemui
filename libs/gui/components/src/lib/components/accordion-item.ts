@@ -1,25 +1,15 @@
-import { ReactiveElement, render, type PropertyValues } from 'lit';
+import { ReactiveElement, type PropertyValues } from 'lit';
 import { property } from 'lit/decorators.js';
 import { safeDefine } from '@golemui/lit-utils';
 import { fires } from '../utils/events';
-import { caretDownIcon } from '../utils/icons';
 
 /** The detail of `gui-toggle`: whether the item is now open. */
 export type GuiToggleEventDetail = { open: boolean };
 
-/** The caret at the end of a summary, in a span of the item's own: the summary is the app's. */
-function createArrow(): HTMLSpanElement {
-  const arrow = document.createElement('span');
-  arrow.className = 'gui-accordion__arrow';
-  arrow.setAttribute('aria-hidden', 'true');
-  render(caretDownIcon(), arrow);
-  return arrow;
-}
-
 /**
  * An item of a `gui-accordion`: a `<details>` the app renders, with its `<summary>` as the header
- * and the rest as the content. The item keeps the details' open state in `open`, and adds the
- * arrow at the end of the summary.
+ * and the rest as the content. The item keeps the details' open state in `open`. The stylesheet
+ * draws the arrow at the end of the summary, so the item adds nothing to the app's markup.
  *
  * ```html
  * <gui-accordion-item>
@@ -50,12 +40,11 @@ export class GuiAccordionItem extends ReactiveElement {
     super.connectedCallback();
     // The toggle event does not bubble: a capturing listener sees the details'.
     this.addEventListener('toggle', this.onToggle, true);
-    // The app can render, or re-render, the details and its summary after the item connects. A
-    // framework that sets a summary's text with textContent also removes the arrow.
+    // The app can render, or re-render, the details after the item connects.
     this.mutations = new MutationObserver((records) => {
       const changed = records.some((record) => {
         const target = record.target as Element;
-        return target === this || target.localName === 'details' || target.localName === 'summary';
+        return target === this || target.localName === 'details';
       });
       if (changed) this.sync();
     });
@@ -78,18 +67,13 @@ export class GuiAccordionItem extends ReactiveElement {
     return this.querySelector(':scope > details');
   }
 
-  /** Brings the details in line with `open`, and gives its summary the arrow. */
+  /** Brings the details in line with `open`. */
   private sync() {
     const details = this.details;
     if (!details) return;
 
     if (this.open === undefined) this.open = details.open;
     else if (details.open !== this.open) details.open = this.open;
-
-    const summary = details.querySelector(':scope > summary');
-    if (summary && !summary.querySelector(':scope > .gui-accordion__arrow')) {
-      summary.append(createArrow());
-    }
   }
 
   /** The details toggled: by the user, when it no longer matches `open`. */

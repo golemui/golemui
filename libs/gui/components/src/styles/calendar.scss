@@ -68,7 +68,7 @@ gui-range-date-time-calendar {
       border-radius: 100%;
       width: var(--gui-calendar-change-month-button-width);
       height: var(--gui-calendar-change-month-button-height);
-      fill: var(--gui-color-white);
+      color: var(--gui-color-white);
 
       .gui-widget-icon {
         color: var(--gui-color-white);
@@ -190,7 +190,7 @@ gui-range-date-time-calendar {
       }
 
       &-arrow {
-        fill: var(--gui-text-default);
+        color: var(--gui-text-default);
         transform: rotate(0deg);
         transition: transform 0.3s;
         pointer-events: none;

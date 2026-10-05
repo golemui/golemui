@@ -1,0 +1,19 @@
+// The caret of the pickers, selects, dropdowns, number spinner, calendar and accordion: a box in
+// the text colour, cut to shape by CSS. It loads no image, so a strict Content Security Policy
+// allows it, and it needs no element of its own: the accordion draws it on the app's summary.
+// --gui-caret-shape and --gui-caret-image change every caret at once.
+@mixin gui-caret($size: 16px) {
+  display: inline-block;
+  flex: none;
+  inline-size: $size;
+  block-size: $size;
+  background-color: currentColor;
+  clip-path: var(--gui-caret-shape);
+  mask-image: var(--gui-caret-image);
+  mask-position: center;
+  mask-repeat: no-repeat;
+  mask-size: contain;
+  // Forced colours would paint the background in the page colour and hide the caret: it keeps
+  // the forced text colour it inherits instead.
+  forced-color-adjust: none;
+}

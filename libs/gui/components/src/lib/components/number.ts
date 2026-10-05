@@ -5,7 +5,6 @@ import { safeDefine } from '@golemui/lit-utils';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 import { blockNonNumericInput, blockNonNumericKeys, isRealNumber } from '../utils/numeric';
-import { CARET_DOWN_PATH, CARET_UP_PATH } from '../utils/icons';
 import { GuiFormControl, type GuiValidity } from '../gui-form-control';
 import { dispatchBlur, dispatchChange, dispatchValue, valueEvents } from '../utils/events';
 import { message } from '../utils/messages';
@@ -137,24 +136,8 @@ export class GuiNumber extends GuiFormControl {
           @blur=${this.onBlur}
         />
         <span class="gui-number__decoration">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="12"
-            height="12"
-            viewBox="0 0 256 256"
-            aria-hidden="true"
-          >
-            <path d=${CARET_UP_PATH}></path>
-          </svg>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="12"
-            height="12"
-            viewBox="0 0 256 256"
-            aria-hidden="true"
-          >
-            <path d=${CARET_DOWN_PATH}></path>
-          </svg>
+          <span class="gui-caret gui-caret--up" aria-hidden="true"></span>
+          <span class="gui-caret" aria-hidden="true"></span>
         </span>
       </div>
 

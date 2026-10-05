@@ -3,7 +3,6 @@ import { repeat } from 'lit/directives/repeat.js';
 import { getMonthYearLabel, getMonthYearParts, getWeekdayLabels, type WeekdayFormat } from './date';
 import { chunk } from './grid-nav';
 import { addErrors, addLabel } from './templates';
-import { CARET_DOWN_PATH, CARET_LEFT_PATH, CARET_RIGHT_PATH } from './icons';
 import { requiredName } from './messages';
 
 /**
@@ -153,15 +152,7 @@ export function renderMonthNavButton(
               data-icon=${data.icon}
               aria-hidden="true"
             ></span>`
-          : html`<svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 256 256"
-              aria-hidden="true"
-            >
-              <path d=${CARET_LEFT_PATH}></path>
-            </svg>`}
+          : html`<span class="gui-caret gui-caret--left" aria-hidden="true"></span>`}
       </button>
     `;
   }
@@ -180,15 +171,7 @@ export function renderMonthNavButton(
             data-icon=${data.icon}
             aria-hidden="true"
           ></span>`
-        : html`<svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            viewBox="0 0 256 256"
-            aria-hidden="true"
-          >
-            <path d=${CARET_RIGHT_PATH}></path>
-          </svg>`}
+        : html`<span class="gui-caret gui-caret--right" aria-hidden="true"></span>`}
     </button>
   `;
 }
@@ -349,14 +332,7 @@ export function renderMonthHeader(panelDate: Date, data: MonthHeaderData): Templ
               >
                 <span class="gui-calendar__year-value">${part.value}</span>
                 <span class="gui-calendar__year-arrow" aria-hidden="true">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 256 256"
-                  >
-                    <path d=${CARET_DOWN_PATH}></path>
-                  </svg>
+                  <span class="gui-caret" aria-hidden="true"></span>
                 </span>
               </button>`
             : html`<span class="gui-calendar__month-name">${part.value}</span>`,

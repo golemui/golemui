@@ -1,3 +1,22 @@
+@use 'caret' as *;
+
+// A caret pointing down, or the way of its modifier.
+.gui-caret {
+  @include gui-caret;
+
+  &--up {
+    rotate: 180deg;
+  }
+
+  &--left {
+    rotate: 90deg;
+  }
+
+  &--right {
+    rotate: -90deg;
+  }
+}
+
 .gui-label {
   grid-row: 1;
   align-self: end;

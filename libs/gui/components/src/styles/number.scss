@@ -43,9 +43,14 @@ gui-number {
       inset-inline-end: var(--gui-space-1);
       display: flex;
       flex-direction: column;
-      fill: var(--gui-text-default);
+      color: var(--gui-text-default);
       height: 100%;
       justify-content: center;
+
+      .gui-caret {
+        inline-size: 12px;
+        block-size: 12px;
+      }
     }
 
     input[type='number'] {

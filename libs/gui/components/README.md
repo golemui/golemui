@@ -93,6 +93,21 @@ Every rule sits in a `golemui.*` cascade layer, so your own unlayered CSS wins w
 specificity. To restyle, set the tokens on `:root` or write plain selectors such as
 `gui-tab[aria-selected='true']`.
 
+The carets of the pickers, selects, dropdowns, number spinner, calendar and accordion are drawn by
+the stylesheet, with no image, so a strict Content Security Policy allows them. Change every caret
+at once with two tokens: `--gui-caret-shape`, a `clip-path` shape, or your own icon in
+`--gui-caret-image` with the shape set to `none`:
+
+```css
+:root {
+  --gui-caret-image: url('/icons/chevron-down.svg');
+  --gui-caret-shape: none;
+}
+```
+
+The icon points down, and it takes the color of the text around it. An icon in a `data:` URL
+needs `img-src data:` in your Content Security Policy.
+
 Some elements change layout when there is little room, for example a grid row stacks its cells.
 They measure the nearest ancestor with the `gui-container` class, so put it on the element that
 sets their width. A GolemUI form is already one.

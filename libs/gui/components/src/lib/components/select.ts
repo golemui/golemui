@@ -7,7 +7,6 @@ import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addIcon, addLabel, type ControlTemplateData } from '../utils/templates';
 import { inferOptionValue, updateOptions } from './one-of';
-import { CARET_DOWN_PATH } from '../utils/icons';
 import type { Option, OptionValue } from '../types';
 import { GuiFormControl } from '../gui-form-control';
 import {
@@ -162,16 +161,7 @@ export class GuiSelect extends GuiFormControl {
         >
           ${options}
         </select>
-        <span class="gui-select__arrow"
-          ><svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            viewBox="0 0 256 256"
-            aria-hidden="true"
-          >
-            <path d=${CARET_DOWN_PATH}></path></svg
-        ></span>
+        <span class="gui-select__arrow"><span class="gui-caret" aria-hidden="true"></span></span>
         ${selectIcon.html}
       </div>
 

@@ -1,3 +1,5 @@
+@use 'caret' as *;
+
 // The Forms adapters wrap the element in a host with this class.
 .gui-accordion {
   display: block;
@@ -52,21 +54,21 @@ gui-accordion-item {
       border-bottom-color: var(--gui-bg-default);
     }
 
-    &[open] > summary {
-      .gui-accordion__arrow {
-        transform: rotate(180deg);
-      }
+    // The caret, drawn on the app's summary: the item adds nothing to the app's markup.
+    > summary::after {
+      @include gui-caret;
+      content: '';
+      position: absolute;
+      inset-inline-end: var(--gui-space-3);
+      top: 50%;
+      margin-top: -8px;
+      transition: rotate 0.3s;
+      pointer-events: none;
     }
-  }
 
-  .gui-accordion__arrow {
-    fill: var(--gui-text-default);
-    transform: rotate(0deg);
-    transition: transform 0.3s;
-    position: absolute;
-    inset-inline-end: var(--gui-space-3);
-    transform-origin: 50% 40%;
-    pointer-events: none;
+    &[open] > summary::after {
+      rotate: 180deg;
+    }
   }
 
   section[role='region'] {

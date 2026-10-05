@@ -9,7 +9,6 @@ import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
 import { GUIPopupController } from '../controllers/popup.controller';
 import { dateBoundsError } from '../utils/date';
 import { addErrors, addIcon, addLabel, addPickerPanel } from '../utils/templates';
-import { CARET_DOWN_PATH } from '../utils/icons';
 import type { DateRange } from '../types';
 import { boundsValidity, GuiFormControl, type GuiValidity } from '../gui-form-control';
 import {
@@ -251,15 +250,7 @@ export class GuiDatePicker extends GuiFormControl {
           ?disabled=${this.disabled}
           @click=${this.onToggleClick}
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            viewBox="0 0 256 256"
-            aria-hidden="true"
-          >
-            <path d=${CARET_DOWN_PATH}></path>
-          </svg>
+          <span class="gui-caret" aria-hidden="true"></span>
         </button>
 
         ${calendar}

@@ -195,6 +195,23 @@
   /* Widgets */
   --gui-widget-size: 40px;
 
+  /* Caret: the arrow of the pickers, selects, dropdowns, number spinner, calendar and accordion.
+     The default is a CSS shape, so it loads no image. For an icon of your own, set the image
+     (a url() your Content Security Policy allows) and set the shape to none. */
+  --gui-caret-shape: polygon(
+    79.04% 35.29%,
+    83.46% 35.29%,
+    83.46% 39.71%,
+    52.21% 70.96%,
+    50% 71.88%,
+    47.79% 70.96%,
+    16.54% 39.71%,
+    16.54% 35.29%,
+    20.96% 35.29%,
+    50% 64.33%
+  );
+  --gui-caret-image: none;
+
   /* Pills */
   --gui-pill-height: 24px;
   --gui-pill-action-size: 16px;
