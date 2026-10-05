@@ -1,7 +1,7 @@
 import { type InputWidget, preloadFormWidgets } from '@golemui/core';
 import { Subject } from 'rxjs';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
-import { renderGuiFormHtml } from '../ssr';
+import { renderForm } from '../ssr';
 import { ActionWidgetAdapter } from './adapters/action-widget.adapter';
 import { InputWidgetAdapter } from './adapters/input-widget.adapter';
 import { type LitFormContext } from './context/form.context';
@@ -19,7 +19,7 @@ import {
  */
 
 async function renderFixtureForm(options?: { keepMarkers?: boolean }): Promise<string> {
-  return renderGuiFormHtml({
+  return renderForm({
     config: buildConfig(),
     validators: noopValidators,
     keepMarkers: options?.keepMarkers,
@@ -88,9 +88,7 @@ describe('server rendering a form in plain node', () => {
   it('throws without an explicit formName', async () => {
     const config = buildConfig();
     delete config.formName;
-    await expect(renderGuiFormHtml({ config, validators: noopValidators })).rejects.toThrow(
-      /formName/,
-    );
+    await expect(renderForm({ config, validators: noopValidators })).rejects.toThrow(/formName/);
   });
 
   it('renders an untouched form without validation errors', () => {

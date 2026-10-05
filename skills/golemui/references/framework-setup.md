@@ -181,12 +181,12 @@ Server (Astro frontmatter, or a request handler):
 ```ts
 import { preloadFormWidgets } from '@golemui/core';
 import { widgetLoaders } from '@golemui/gui-lit'; // also registers <gui-form>
-import { renderGuiHtml } from '@golemui/lit/ssr';
+import { renderTemplate } from '@golemui/lit/ssr';
 import { html } from 'lit';
 import { config } from './form'; // MUST set formName
 
 await preloadFormWidgets({ widgetLoaders }); // the render is synchronous: no awaiting loaders
-const formHtml = await renderGuiHtml(html`<gui-form .config=${config}></gui-form>`);
+const formHtml = await renderTemplate(html`<gui-form .config=${config}></gui-form>`);
 // Astro: <Fragment set:html={formHtml} />. Every element carries `defer-hydration` and stays inert.
 ```
 
@@ -211,8 +211,8 @@ resumeServerRenderedForm(form as unknown as CoreFormElement, {
 Rules that follow from it:
 
 - `formName` is mandatory (the server render throws without it).
-- `renderGuiFormHtml({ config, validators })` from the same entry renders one form without a
-  surrounding template. `renderGuiHtml` is the general entry point.
+- `renderForm({ config, validators })` from the same entry renders one form without a
+  surrounding template. `renderTemplate` is the general entry point.
 - Listeners and properties (`formHealthBoundary`, `autocomplete`) go on the element BEFORE
   `resumeServerRenderedForm`; the resume removes `defer-hydration`, which triggers the render.
 - Custom widgets must be registered with `safeDefine('my-tag', MyElement)` from `@golemui/lit`,

@@ -42,9 +42,9 @@ if (!customElements.get('gui-textinput')) {
 }
 
 // Server rendering through the package's own entry point, with no form engine installed.
-const { renderGuiHtml } = await import('@golemui/gui-components/ssr');
+const { renderTemplate } = await import('@golemui/gui-components/ssr');
 const { html } = await import('lit');
-const markup = await renderGuiHtml(html\`<gui-textinput uid="email" label="Email"></gui-textinput>\`);
+const markup = await renderTemplate(html\`<gui-textinput uid="email" label="Email"></gui-textinput>\`);
 if (!/<gui-textinput[^>]*defer-hydration/.test(markup) || !/<input[^>]*id="email"/.test(markup)) {
   throw new Error(\`gui-textinput did not server-render its content: \${markup}\`);
 }

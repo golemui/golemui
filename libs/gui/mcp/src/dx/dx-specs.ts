@@ -101,7 +101,7 @@ const FRAMEWORK_SETUP: Record<DxFramework, string> = {
     '`' +
     formEventNames.submit +
     '` (camelCase) — Lit dispatches a raw CustomEvent, so there is no kebab-case alias. ' +
-    'For SSR (Astro, plain Node) the server renders the whole form with `renderGuiHtml` from `@golemui/lit/ssr` ' +
+    'For SSR (Astro, plain Node) the server renders the whole form with `renderTemplate` from `@golemui/lit/ssr` ' +
     '(needs `@lit-labs/ssr` >= 4.1.0) after `preloadFormWidgets({ widgetLoaders })`; the client preloads again and calls ' +
     '`resumeServerRenderedForm` from `@golemui/lit`. `formName` is mandatory; custom widgets register with ' +
     '`safeDefine` from `@golemui/lit`, not `@customElement`.',

@@ -33,7 +33,7 @@ export default defineConfig(() => ({
     },
     rollupOptions: {
       // External packages that should not be bundled into your library.
-      external: ['lit', /^lit\//, /^@lit-labs\/ssr($|\/)/],
+      external: ['lit', /^lit\//, /^@lit-labs\/ssr($|\/)/, 'parse5'],
     },
   },
   test: {

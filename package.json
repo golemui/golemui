@@ -128,6 +128,7 @@
     "ng-packagr": "21.2.5",
     "nuxt": "~4.4.8",
     "nx": "22.7.8",
+    "parse5": "^7.3.0",
     "postcss": "^8.4.5",
     "prettier": "3.6.2",
     "react-router": "^7.9.3",

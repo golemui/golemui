@@ -156,7 +156,7 @@ export function buildConfig(): FormInitConfig<Type<WithWidget>> {
 }
 
 /**
- * The exact output of renderGuiFormHtml for buildConfig() plus noopValidators.
+ * The exact output of renderForm for buildConfig() plus noopValidators.
  * The server render spec asserts equality with this string byte for byte, and the
  * resume spec loads it into the DOM, so the two specs always test the same markup.
  */
@@ -164,7 +164,7 @@ export const canonicalServerMarkup = `<gui-core-form
       
       
       
-     class="gui-form" defer-hydration>
+     class="gui-form" data-golemui-ssr defer-hydration>
   
   
       <form
@@ -174,13 +174,13 @@ export const canonicalServerMarkup = `<gui-core-form
         
         
       >
-         <gui-widget  style="display:contents" defer-hydration><gui-stub-flex   id="host-root" defer-hydration><div class="stub-flex" id="root">
-      <gui-widget  style="display:contents" defer-hydration><gui-stub-input   id="host-firstName-textinput" defer-hydration><input
+         <gui-widget  style="display:contents" data-golemui-ssr defer-hydration><gui-stub-flex   id="host-root" data-golemui-ssr defer-hydration><div class="stub-flex" id="root">
+      <gui-widget  style="display:contents" data-golemui-ssr defer-hydration><gui-stub-input   id="host-firstName-textinput" data-golemui-ssr defer-hydration><input
       type="text"
       id="firstName-textinput"
       data-label="First name"
       value="Ada"
-    /></gui-stub-input></gui-widget><gui-widget  style="display:contents" defer-hydration><gui-stub-input   id="host-lastName-textinput" defer-hydration><input
+    /></gui-stub-input></gui-widget><gui-widget  style="display:contents" data-golemui-ssr defer-hydration><gui-stub-input   id="host-lastName-textinput" data-golemui-ssr defer-hydration><input
       type="text"
       id="lastName-textinput"
       data-label="Last name"

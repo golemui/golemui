@@ -1,0 +1,41 @@
+{
+  "name": "components-ssr-vue",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/components-ssr-vue/src",
+  "tags": ["scope:app", "type:app"],
+  "// targets": "to see all targets run: nx show project components-ssr-vue --web",
+  "targets": {
+    "build": {
+      "dependsOn": ["build-server"]
+    },
+    "build-server": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "outputs": ["{workspaceRoot}/dist/apps/components-ssr-vue/server"],
+      "dependsOn": ["^build"],
+      "options": {
+        "cwd": "apps/components-ssr-vue",
+        "command": "npx vite build --ssr src/entry-server.ts"
+      }
+    },
+    "serve-ssr": {
+      "executor": "nx:run-commands",
+      "continuous": true,
+      "options": {
+        "command": "node apps/components-ssr-vue/server.mjs"
+      }
+    },
+    "serve-ssr-prod": {
+      "executor": "nx:run-commands",
+      "continuous": true,
+      "dependsOn": ["build"],
+      "options": {
+        "command": "node apps/components-ssr-vue/server.mjs --production"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

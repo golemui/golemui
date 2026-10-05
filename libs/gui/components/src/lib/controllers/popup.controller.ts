@@ -239,8 +239,9 @@ export class GUIPopupController implements ReactiveController {
   }
 
   hostConnected() {
-    // A server render runs connectedCallback without a document.
-    if (typeof document === 'undefined') {
+    // A server render runs connectedCallback without a document, or with a stub of one (Angular's
+    // server rendering installs one in development).
+    if (typeof document === 'undefined' || typeof document.addEventListener !== 'function') {
       return;
     }
     document.addEventListener('click', this.onDocumentClick);

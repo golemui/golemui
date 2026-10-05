@@ -127,6 +127,7 @@ function supportDeferHydrationAttribute(ctor: CustomElementConstructor): void {
     if (this.hasAttribute('defer-hydration')) {
       return;
     }
+    discardServerContent(this);
     originalConnectedCallback?.call(this);
   };
 
@@ -138,12 +139,59 @@ function supportDeferHydrationAttribute(ctor: CustomElementConstructor): void {
   ) {
     if (name === 'defer-hydration') {
       if (value === null && this.isConnected) {
+        discardServerContent(this);
         originalConnectedCallback?.call(this);
       }
       return;
     }
     originalAttributeChangedCallback?.call(this, name, oldValue, value);
   };
+}
+
+/**
+ * The attribute the server renderers (@golemui/lit-utils/ssr) put on an element whose content
+ * they rendered. The element discards that content when it first connects in the browser, so
+ * its live render replaces the server markup instead of adding a second copy after it.
+ */
+export const SERVER_RENDERED_ATTRIBUTE = 'data-golemui-ssr';
+
+function discardServerContent(element: HTMLElement): void {
+  // The server adds the attribute after connectedCallback, so it is only ever found in a DOM.
+  if (!element.hasAttribute(SERVER_RENDERED_ATTRIBUTE)) {
+    return;
+  }
+  element.removeAttribute(SERVER_RENDERED_ATTRIBUTE);
+  element.replaceChildren();
+}
+
+/**
+ * Whether the class renders its own template into its light DOM: a LitElement whose
+ * `createRenderRoot` returns the element instead of a shadow root. Elements that enhance the
+ * app's children (ReactiveElements) and elements with a shadow root are not.
+ *
+ * Works across lit copies: it finds the class's own LitElement by the marker Lit puts on it.
+ */
+export function rendersIntoLightDom(ctor: CustomElementConstructor): boolean {
+  let litElement: object | null = ctor;
+  while (litElement && !Object.prototype.hasOwnProperty.call(litElement, '_$litElement$')) {
+    litElement = Object.getPrototypeOf(litElement);
+  }
+  if (!litElement) {
+    return false;
+  }
+  const createRenderRoot = (target: object) =>
+    (target as { prototype: { createRenderRoot?: unknown } }).prototype.createRenderRoot;
+  return createRenderRoot(ctor) !== createRenderRoot(litElement);
+}
+
+/**
+ * The class of a tag whose content the server renders, or undefined. That is an element
+ * registered through {@link safeDefine}, whatever its tag, that renders into its light DOM:
+ * every server path (one element, a page's HTML, a server DOM) renders exactly these.
+ */
+export function serverRenderedClass(tagName: string): CustomElementConstructor | undefined {
+  const ctor = typeof customElements === 'undefined' ? undefined : customElements.get(tagName);
+  return ctor && tagNameOf(ctor) !== undefined && rendersIntoLightDom(ctor) ? ctor : undefined;
 }
 
 // ─── Registry readers ───

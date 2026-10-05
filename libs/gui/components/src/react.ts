@@ -7,7 +7,13 @@
  * <GuiTextinput label="Name" onGuiChange={(event) => save(event.detail.value)} />;
  * ```
  */
+import {
+  rendersIntoLightDom,
+  serverElementRenderer,
+  type ServerElementRenderer,
+} from '@golemui/lit-utils';
 import { createComponent, type EventName, type ReactWebComponent } from '@lit/react';
+import { isServer } from 'lit';
 import React from 'react';
 import {
   GuiAccordion as GuiAccordionElement,
@@ -134,6 +140,61 @@ type ReactEvents<Events> = {
 const eventProp = (name: string) =>
   `on${name.replace(/(?:^|-)(\w)/g, (_match, letter: string) => letter.toUpperCase())}`;
 
+// One object, so React never sees a changed `innerHTML` and never resets the element's content.
+const EMPTY_HTML = { __html: '' };
+
+/**
+ * Renders an element and its content on the server, or returns undefined when the app has not
+ * imported `@golemui/gui-components/ssr` (the element is then rendered empty, as before).
+ *
+ * The props split as @lit/react splits them: the element's own properties are set on it, the
+ * other primitive props are attributes, and the event props have no use on the server.
+ */
+function renderOnServer(
+  tagName: string,
+  elementClass: { prototype: object },
+  props: Record<string, unknown>,
+): React.ReactElement | undefined {
+  const render = serverElementRenderer();
+  if (!render) {
+    return undefined;
+  }
+  const attributes: Record<string, string> = {};
+  const properties: Record<string, unknown> = {};
+  for (const [name, value] of Object.entries(props)) {
+    if (value === undefined || name === 'children' || name === 'className' || name === 'style') {
+      continue;
+    }
+    if (name in elementClass.prototype) {
+      properties[name] = value;
+    } else if (!/^on[A-Z]/.test(name) && (typeof value === 'string' || typeof value === 'number')) {
+      attributes[name] = String(value);
+    } else if (value === true) {
+      attributes[name] = '';
+    }
+  }
+  let rendered: ReturnType<ServerElementRenderer>;
+  try {
+    rendered = render(tagName, { attributes, properties });
+  } catch (error) {
+    // One element must not fail the page: it is rendered empty instead, as without the hook.
+    console.warn(`[GolemUI] <${tagName}> could not be rendered on the server`, error);
+    return undefined;
+  }
+  if (!rendered) {
+    return undefined;
+  }
+  const { class: elementClasses, ...hostAttributes } = rendered.attributes;
+  return React.createElement(tagName, {
+    ...hostAttributes,
+    className: [props['className'], elementClasses].filter(Boolean).join(' ') || undefined,
+    style: props['style'],
+    'defer-hydration': '',
+    suppressHydrationWarning: true,
+    dangerouslySetInnerHTML: { __html: rendered.innerHTML },
+  });
+}
+
 function wrap<I extends HTMLElement, Events extends object = Record<never, never>>(
   tagName: string,
   elementClass: { new (): I },
@@ -149,16 +210,36 @@ function wrap<I extends HTMLElement, Events extends object = Record<never, never
     events,
   });
 
-  // The `defer-hydration` attribute keeps a server-rendered element empty until React has
-  // hydrated it (the element renders into light DOM, so an early Lit render would add
-  // children the server markup does not have and hydration would fail on them). It is an
-  // unknown non-event prop, so it reaches the markup as an attribute on the server and
-  // the client alike, and the @lit/react wrapper removes it right after mount. In a
-  // client-only app the removal happens in the same commit the element connects in, so
-  // the first Lit render stays on its usual schedule.
+  // The `defer-hydration` attribute keeps a server-rendered element inert until React has
+  // hydrated it and set its properties. It is an unknown non-event prop, so it reaches the
+  // markup as an attribute on the server and the client alike, and the @lit/react wrapper
+  // removes it right after mount. In a client-only app the removal happens in the same
+  // commit the element connects in, so the first Lit render stays on its usual schedule.
+  //
+  // An element that renders its own content into its light DOM (a field, a button) owns its
+  // children, so React must not hydrate or render them: the element is an `innerHTML` leaf for
+  // React, empty on the client. On the server, once the app imported
+  // `@golemui/gui-components/ssr`, its content is rendered into that `innerHTML`. Lit replaces it
+  // on the first client render (see SERVER_RENDERED_ATTRIBUTE).
+  const ownsChildren = rendersIntoLightDom(elementClass as unknown as CustomElementConstructor);
   const WithDeferredHydration = React.forwardRef<I, object>(
     function WithDeferredHydration(props, ref) {
-      return React.createElement(Component, { ...props, ref, 'defer-hydration': '' });
+      if (ownsChildren && isServer) {
+        const rendered = renderOnServer(tagName, elementClass, props as Record<string, unknown>);
+        if (rendered) {
+          return rendered;
+        }
+      }
+      return React.createElement(Component, {
+        ...props,
+        ref,
+        'defer-hydration': '',
+        // The server's content and attributes differ from these on purpose. @lit/react suppresses
+        // the warning too, but only in its browser build.
+        ...(ownsChildren
+          ? { dangerouslySetInnerHTML: EMPTY_HTML, suppressHydrationWarning: true }
+          : {}),
+      });
     },
   );
   WithDeferredHydration.displayName = `WithDeferredHydration(${tagName})`;

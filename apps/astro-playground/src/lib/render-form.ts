@@ -1,7 +1,7 @@
 import { preloadFormWidgets } from '@golemui/core';
 import type { GuiFormInitConfig } from '@golemui/gui-shared';
 import type { FormHealthBoundary } from '@golemui/lit';
-import { renderGuiHtml } from '@golemui/lit/ssr';
+import { renderTemplate } from '@golemui/lit/ssr';
 import { html } from 'lit';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { allWidgetLoaders } from './widget-loaders';
@@ -22,7 +22,7 @@ export async function renderForm(
   options: { autocomplete?: string; formHealthBoundary?: FormHealthBoundary } = {},
 ): Promise<string> {
   await preloadFormWidgets({ widgetLoaders: allWidgetLoaders });
-  return renderGuiHtml(html`
+  return renderTemplate(html`
     <gui-form
       .config=${config}
       autocomplete=${ifDefined(options.autocomplete)}

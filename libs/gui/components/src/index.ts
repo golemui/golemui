@@ -134,7 +134,7 @@ export type { GuiMessageKey, GuiMessageParams, GuiTranslate } from './lib/utils/
 
 // ─── Server rendering ───
 //
-// The browser side. The server side, renderGuiHtml, is in @golemui/gui-components/ssr.
+// The browser side. The server side, renderTemplate, is in @golemui/gui-components/ssr.
 
 export { resumeServerRendered } from '@golemui/lit-utils';
 

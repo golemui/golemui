@@ -33,6 +33,9 @@
     "*.cjs",
     "*.md"
   ],
+  "dependencies": {
+    "parse5": "^7.1.1"
+  },
   "peerDependencies": {
     "@lit-labs/ssr": "^4.1.0",
     "lit": "^3.3.1"

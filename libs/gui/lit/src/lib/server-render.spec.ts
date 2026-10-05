@@ -5,7 +5,7 @@ import {
   type ValidatorFn,
   type WithWidget,
 } from '@golemui/core';
-import { renderGuiFormHtml } from '@golemui/lit/ssr';
+import { renderForm } from '@golemui/lit/ssr';
 import type { Type } from '@golemui/lit';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { widgetLoaders } from './widget.loaders';
@@ -95,7 +95,7 @@ describe('server rendering the gui widget set in plain node', () => {
 
   beforeAll(async () => {
     await preloadFormWidgets({ widgetLoaders });
-    markup = await renderGuiFormHtml({ config, validators: noopValidators });
+    markup = await renderForm({ config, validators: noopValidators });
   });
 
   it('renders the form with its host class and name', () => {
@@ -137,7 +137,7 @@ describe('server rendering the gui widget set in plain node', () => {
   });
 
   // @lit-labs/ssr serializes a false `.selected` or `.checked` property as `name="false"`,
-  // and HTML reads any present boolean attribute as true. renderGuiHtml removes those.
+  // and HTML reads any present boolean attribute as true. renderTemplate removes those.
   it('renders exactly one selected option and no false-valued selected attribute', () => {
     expect(markup).not.toMatch(/\sselected="false"/);
     const selectedOptions = markup.match(/<option[^>]*\sselected=[^>]*>/g) ?? [];
@@ -163,7 +163,54 @@ describe('server rendering the gui widget set in plain node', () => {
   });
 
   it('is deterministic across renders', async () => {
-    const second = await renderGuiFormHtml({ config, validators: noopValidators });
+    const second = await renderForm({ config, validators: noopValidators });
     expect(second).toBe(markup);
+  });
+});
+
+describe('server rendering the fields inside a tabs layout', () => {
+  // gui-tabs and its parts are not LitElements, so the server renders their tags only: the
+  // fields in a panel still reach the form context through the tabs layout element.
+  const tabsConfig: FormInitConfig<Type<WithWidget>> = {
+    formName: 'gui-lit-ssr-tabs',
+    formDef: {
+      form: {
+        uid: 'root',
+        kind: 'layout',
+        type: 'tabs',
+        props: {
+          tabs: [
+            { label: 'Personal', uid: 'personal' },
+            { label: 'Company', uid: 'company' },
+          ],
+        },
+        children: [
+          {
+            uid: 'personal',
+            kind: 'layout',
+            type: 'grid',
+            children: [
+              { kind: 'input', type: 'textinput', path: 'firstName', label: 'First name' },
+            ],
+          },
+          {
+            uid: 'company',
+            kind: 'layout',
+            type: 'grid',
+            children: [{ kind: 'input', type: 'textinput', path: 'company', label: 'Company' }],
+          },
+        ],
+      },
+    },
+    widgetLoaders,
+    data: { firstName: 'Ada', company: 'Analytical Engines' },
+  };
+
+  it('renders the fields of every panel with their values', async () => {
+    await preloadFormWidgets({ widgetLoaders });
+    const markup = await renderForm({ config: tabsConfig, validators: noopValidators });
+    expect(markup).toMatch(/<gui-tab-panel[^>]*>/);
+    expect(markup).toMatch(/<input[^>]*id="firstName-textinput"[^>]*value="Ada"/);
+    expect(markup).toMatch(/<input[^>]*id="company-textinput"[^>]*value="Analytical Engines"/);
   });
 });

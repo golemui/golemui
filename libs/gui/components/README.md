@@ -203,25 +203,93 @@ and its parts use these three classes; anything else in a cell spans the three t
 
 ## Server rendering
 
-The elements load in Node without a DOM, so server-rendered pages can import them. A framework's
-own server render (React, Next.js, Vue, Nuxt, Angular) sends the empty tags, and the elements fill
-in on the client.
+The elements load in Node without a DOM, so server-rendered pages can import them. Out of the box a
+framework's server render sends the tags empty, and the elements fill in on the client. The
+server-only `@golemui/gui-components/ssr` entry point renders their content too, so the page
+arrives complete. It needs `@lit-labs/ssr` 4.1 or later.
 
-To send their complete markup instead, render them with `renderGuiHtml` from the server-only
-`@golemui/gui-components/ssr` entry point. It needs `@lit-labs/ssr` 4.1 or later:
+The browser side needs nothing extra: the server marks the content it rendered (`data-golemui-ssr`),
+and each element replaces it with its live render when it upgrades.
+
+It renders every element registered with `safeDefine`, whatever its tag, so the elements of a widget
+set of your own render the same way as the `gui-*` ones.
+
+### React and Next.js
+
+Import the entry point once in server code, and the React components render their content on the
+server:
+
+```ts
+// Vite: the server entry. Next.js App Router: the root layout (a Server Component).
+import '@golemui/gui-components/ssr';
+```
+
+In Next.js, import it in the root layout rather than `instrumentation.ts`, which does not run when
+the build prerenders static pages.
+
+### Vue and Nuxt
+
+Pass the rendered page through `renderElementsInHtml`:
+
+```ts
+import { renderToString } from 'vue/server-renderer';
+import { renderElementsInHtml } from '@golemui/gui-components/ssr';
+
+const html = renderElementsInHtml(await renderToString(app));
+```
+
+In Nuxt, do it in a Nitro plugin:
+
+```ts
+// server/plugins/golemui.ts
+import { renderElementsInHtml } from '@golemui/gui-components/ssr';
+
+export default defineNitroPlugin((nitroApp) => {
+  nitroApp.hooks.hook('render:html', (html) => {
+    html.body = html.body.map(renderElementsInHtml);
+  });
+});
+```
+
+Bind arrays and objects with `.prop`, such as `:options.prop="plans"`. Vue's production hydration
+skips the other bindings of a custom element when their value is a constant. The server renders the
+elements from their attributes only, so a value bound as a property shows once the element
+upgrades.
+
+### Angular and Analog
+
+Render the elements just before Angular serializes the page, with a server provider:
+
+```ts
+import { DOCUMENT, inject } from '@angular/core';
+import { BEFORE_APP_SERIALIZED } from '@angular/platform-server';
+import { renderElementsInDocument } from '@golemui/gui-components/ssr';
+
+export const provideGolemuiServerRendering = () => ({
+  provide: BEFORE_APP_SERIALIZED,
+  multi: true,
+  useFactory: () => {
+    const document = inject(DOCUMENT);
+    return () => renderElementsInDocument(document);
+  },
+});
+```
+
+It reads the values bound as properties (`[value]`, `[options]`) as well as the attributes.
+
+### Lit and plain Node
+
+Render a template with `renderTemplate`, then call `resumeServerRendered()` on the client:
 
 ```ts
 import { html } from 'lit';
-import { renderGuiHtml } from '@golemui/gui-components/ssr';
+import { renderTemplate } from '@golemui/gui-components/ssr';
 import '@golemui/gui-components/textinput';
 
-const markup = await renderGuiHtml(
+const markup = await renderTemplate(
   html`<gui-textinput uid="email" name="email" label="Email"></gui-textinput>`,
 );
 ```
-
-The markup holds every element inert with a `defer-hydration` attribute. On the client, import the
-elements and call `resumeServerRendered()`, which swaps the server markup for the live render:
 
 ```ts
 import { resumeServerRendered } from '@golemui/gui-components';
@@ -230,11 +298,21 @@ import '@golemui/gui-components/textinput';
 resumeServerRendered();
 ```
 
-- Pass values as attributes. The client builds the elements from the HTML, so a property binding
-  such as `.options=${options}` reaches the server render only.
-- The client render generates the ids of each element's parts again, and the element keeps its
-  own label, hint and errors linked. Set a `uid` only when something outside the element points
-  at those ids, such as your own `aria-describedby`, a CSS or test selector, or a link.
+The markup holds every element inert with a `defer-hydration` attribute until that call. Pass the
+values as attributes: the client builds the elements from the HTML, so a property binding such as
+`.options=${options}` reaches the server render only.
+
+### What the server renders
+
+- The content of the elements that render their own: the fields, the pickers, the button.
+- Not the state of the elements that wrap your markup (`gui-tabs`, `gui-accordion`, `gui-alert`):
+  their children are rendered, but the roles and the hidden panels come when the element upgrades.
+  Put `hidden` on the inactive tab panels yourself to keep them out of the server HTML.
+- Not `gui-list` and `gui-multi-list`, which render into a shadow root: their items are rendered,
+  the list renders around them when it upgrades.
+- The client render generates the ids of each element's parts again, and the element keeps its own
+  label, hint and errors linked. Set a `uid` only when something outside the element points at those
+  ids, such as your own `aria-describedby`, a CSS or test selector, or a link.
 
 ## Documentation
 

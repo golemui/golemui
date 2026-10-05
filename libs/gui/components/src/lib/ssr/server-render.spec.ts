@@ -1,6 +1,6 @@
 import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
-import { renderGuiHtml } from '../../ssr';
+import { renderTemplate } from '../../ssr';
 import { serverTemplate } from './ssr.fixture';
 
 /**
@@ -14,7 +14,7 @@ describe('server rendering standalone elements in plain node', () => {
   let markup = '';
 
   beforeAll(async () => {
-    markup = await renderGuiHtml(serverTemplate());
+    markup = await renderTemplate(serverTemplate());
   });
 
   // Without the trailing spaces lit leaves on blank lines, which an editor trims on save

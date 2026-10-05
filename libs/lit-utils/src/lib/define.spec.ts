@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
-import { html, LitElement } from 'lit';
+import { html, LitElement, ReactiveElement } from 'lit';
 import { describe, expect, it, vi } from 'vitest';
-import { safeDefine, tagNameOf } from './define';
+import { rendersIntoLightDom, safeDefine, tagNameOf } from './define';
 
 describe('safeDefine', () => {
   it('defines the element when the tag is free', () => {
@@ -152,5 +152,26 @@ describe('duplicate installs of safeDefine', () => {
     expect(
       CrossInstallSubclass.observedAttributes.filter((a) => a === 'defer-hydration'),
     ).toHaveLength(1);
+  });
+});
+
+describe('rendersIntoLightDom', () => {
+  class LightElement extends LitElement {
+    override createRenderRoot() {
+      return this;
+    }
+  }
+  class LightSubclass extends LightElement {}
+  class ShadowElement extends LitElement {}
+  class EnhancerElement extends ReactiveElement {}
+
+  it('is true for a LitElement that renders into itself, and for its subclasses', () => {
+    expect(rendersIntoLightDom(LightElement)).toBe(true);
+    expect(rendersIntoLightDom(LightSubclass)).toBe(true);
+  });
+
+  it('is false for a LitElement with a shadow root and for a ReactiveElement', () => {
+    expect(rendersIntoLightDom(ShadowElement)).toBe(false);
+    expect(rendersIntoLightDom(EnhancerElement)).toBe(false);
   });
 });

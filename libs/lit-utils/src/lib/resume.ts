@@ -1,21 +1,21 @@
 import { tagNameOf } from './define';
 
 /**
- * Client entry point for server-rendered GolemUI elements (the output of `renderGuiHtml`).
+ * Client entry point for a server-rendered lit template (the output of `renderTemplate`).
  *
  * The server markup holds each element inert through the `defer-hydration` attribute. This
- * call removes the attribute from every held GolemUI element under `root`, which runs the
- * held connectedCallback. An element that renders its own content (a LitElement such as
- * `gui-textinput`) is emptied first, so its live render replaces the server markup instead of
- * adding a second copy after it. An element whose children are the app's (such as `gui-tabs`
- * or `gui-alert`) keeps them. Lit renders before the browser paints again, so the server
- * markup is not visible in a cleared state.
+ * call removes the attribute from every held element registered through safeDefine under
+ * `root`, which runs the held connectedCallback. An element whose content the server rendered
+ * (marked with `data-golemui-ssr`) discards it first, so its live render replaces the server
+ * markup instead of adding a second copy after it. An element whose children are the app's keeps
+ * them. Lit renders before the browser paints again, so the server markup is not visible in a
+ * cleared state.
  *
  * Import the elements first: an element whose definition has not loaded yet stays held. The
  * elements upgrade from the HTML, so a value the server template passed as a property (such
  * as `.options=${[...]}`) is not there: pass it as an attribute, or set the property before
- * this call. The live render generates the ids again, so give an element a `uid` when
- * something outside it points at those ids.
+ * this call. The live render generates the ids again, so give an element an id of its own when
+ * something outside it points at the ids of its parts.
  *
  * @param root - Where to look for held elements (default: the whole document). An element
  * passed as `root` is resumed too.
@@ -31,21 +31,11 @@ export function resumeServerRendered(root: ParentNode = document): void {
     held.unshift(root);
   }
   // Document order: a parent is resumed before its descendants, and the descendants it
-  // cleared are detached by then, so they are skipped.
+  // discarded are detached by then, so they are skipped.
   for (const element of held) {
     const ctor = customElements.get(element.localName);
-    if (!element.isConnected || !ctor || tagNameOf(ctor) === undefined) {
-      continue;
+    if (element.isConnected && ctor && tagNameOf(ctor) !== undefined) {
+      element.removeAttribute('defer-hydration');
     }
-    if (rendersOwnContent(ctor)) {
-      element.replaceChildren();
-    }
-    element.removeAttribute('defer-hydration');
   }
-}
-
-/** Whether the class renders a template (LitElement), rather than enhancing the app's children. */
-function rendersOwnContent(ctor: CustomElementConstructor): boolean {
-  // The same check as @lit-labs/ssr's LitElementRenderer, which works across lit copies.
-  return (ctor as unknown as { _$litElement$?: boolean })._$litElement$ === true;
 }

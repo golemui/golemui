@@ -16,6 +16,7 @@
     "./lib/components/*.js",
     "./lib/components/*.umd.cjs",
     "./src/lib/components/*.ts",
+    "./src/ssr.ts",
     "*.css"
   ],
   "exports": {

@@ -8,7 +8,7 @@
  */
 import type { FormInitConfig, ValidatorFn, WithWidget } from '@golemui/core';
 import { html } from 'lit';
-import { renderGuiHtml } from '@golemui/lit-utils/ssr';
+import { renderTemplate } from '@golemui/lit-utils/ssr';
 import '../components/form/form.element';
 import type { Type } from '../utils/type';
 
@@ -21,9 +21,9 @@ import type { Type } from '../utils/type';
  * @returns The rendered markup: a `<gui-core-form>` element holding the complete form.
  * @example
  * await preloadFormWidgets({ widgetLoaders });
- * const markup = await renderGuiFormHtml({ config, validators });
+ * const markup = await renderForm({ config, validators });
  */
-export async function renderGuiFormHtml(options: {
+export async function renderForm(options: {
   config: FormInitConfig<Type<WithWidget>>;
   validators: ValidatorFn<any>;
   autocomplete?: string;
@@ -35,7 +35,7 @@ export async function renderGuiFormHtml(options: {
         'so the server and the client produce the same markup.',
     );
   }
-  return renderGuiHtml(
+  return renderTemplate(
     html`<gui-core-form
       .config=${options.config}
       .validators=${options.validators}

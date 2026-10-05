@@ -1,6 +1,6 @@
 import { preloadFormWidgets } from '@golemui/core';
 import { widgetLoaders } from '@golemui/gui-lit';
-import { renderGuiHtml } from '@golemui/lit/ssr';
+import { renderTemplate } from '@golemui/lit/ssr';
 import { html } from 'lit';
 import { config } from './form-config';
 
@@ -14,7 +14,7 @@ import { config } from './form-config';
  */
 export async function render(): Promise<string> {
   await preloadFormWidgets({ widgetLoaders });
-  return renderGuiHtml(html`
+  return renderTemplate(html`
     <div class="harness">
       <h1 class="harness__title">Lit server rendering harness</h1>
       <p class="harness__status" data-resumed="false">Server HTML, not yet resumed</p>
