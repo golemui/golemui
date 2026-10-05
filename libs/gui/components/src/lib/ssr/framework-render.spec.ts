@@ -7,6 +7,7 @@ import { renderElement, renderElementsInHtml, renderTemplate } from '../../ssr';
 import '../components/currency';
 import '../components/list';
 import '../components/number';
+import '../components/time-picker';
 import './ssr.fixture';
 
 /**
@@ -52,6 +53,15 @@ describe('rendering one element', () => {
     expect(renderElement('gui-number', { attributes: { uid: 'empty' } })?.innerHTML).not.toMatch(
       /<input[^>]*value=/,
     );
+  });
+
+  it('leaves the closed time list out, which the browser renders when the element upgrades', () => {
+    const rendered = renderElement('gui-time-picker', {
+      attributes: { uid: 'at', value: '10:30' },
+    });
+    expect(rendered?.innerHTML).toMatch(/<gui-time[^>]*id="at_time"/);
+    expect(rendered?.innerHTML).toMatch(/aria-controls="at_popup"/);
+    expect(rendered?.innerHTML).not.toMatch(/<gui-time-list/);
   });
 
   it('renders nothing for an element that wraps the app children or has a shadow root', () => {

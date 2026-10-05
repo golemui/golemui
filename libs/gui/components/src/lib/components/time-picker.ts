@@ -1,4 +1,4 @@
-import { html, nothing, type PropertyValues } from 'lit';
+import { html, isServer, nothing, type PropertyValues } from 'lit';
 import { property, query } from 'lit/decorators.js';
 import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
@@ -152,6 +152,43 @@ export class GuiTimePicker extends GuiFormControl {
   override render() {
     const timePickerIcon = addIcon('timePicker', { icon: this.icon });
 
+    // The list is in the page while closed, hidden, so it is ready to open. The server leaves the
+    // closed list out rather than send every time of the day: the browser renders it when the
+    // element upgrades.
+    const list =
+      isServer && !this._popup.open
+        ? nothing
+        : addPickerPanel(
+            this.uid,
+            { errors: this.errors, touched: this.touched, showErrors: this.showErrors },
+            // Dual hidden: tests select the inner list's [hidden]; the panel's
+            // own [hidden] removes the card chrome. Both bind to the same state.
+            html`<gui-time-list
+              id=${`${this.uid}_popup`}
+              role="dialog"
+              aria-labelledby=${this.label ? `${this.uid}_label` : nothing}
+              aria-label=${this.label ? nothing : requiredName('timeList')}
+              .uid=${this.uid}
+              .value=${this.value}
+              .label=${this.label}
+              .localeId=${this.localeId}
+              .hourFormat=${this.hourFormat}
+              .minuteStep=${this.minuteStep}
+              .minTime=${this.minTime}
+              .maxTime=${this.maxTime}
+              .disabledRanges=${this.disabledRanges}
+              .height=${this.height}
+              .itemHeight=${this.itemHeight}
+              .columns=${this.columns}
+              .noAvailableTimesMessage=${this.noAvailableTimesMessage}
+              ?readonly=${this.readOnly}
+              ?hidden=${!this._popup.open}
+              @gui-input=${stopPropagation}
+              @gui-change=${this.onListChange}
+            ></gui-time-list>`,
+            { hidden: !this._popup.open },
+          );
+
     return html`
       ${addLabel(
         this.uid,
@@ -216,36 +253,7 @@ export class GuiTimePicker extends GuiFormControl {
           <span class="gui-caret" aria-hidden="true"></span>
         </button>
 
-        ${addPickerPanel(
-          this.uid,
-          { errors: this.errors, touched: this.touched, showErrors: this.showErrors },
-          // Dual hidden: tests select the inner list's [hidden]; the panel's
-          // own [hidden] removes the card chrome. Both bind to the same state.
-          html`<gui-time-list
-            id=${`${this.uid}_popup`}
-            role="dialog"
-            aria-labelledby=${this.label ? `${this.uid}_label` : nothing}
-            aria-label=${this.label ? nothing : requiredName('timeList')}
-            .uid=${this.uid}
-            .value=${this.value}
-            .label=${this.label}
-            .localeId=${this.localeId}
-            .hourFormat=${this.hourFormat}
-            .minuteStep=${this.minuteStep}
-            .minTime=${this.minTime}
-            .maxTime=${this.maxTime}
-            .disabledRanges=${this.disabledRanges}
-            .height=${this.height}
-            .itemHeight=${this.itemHeight}
-            .columns=${this.columns}
-            .noAvailableTimesMessage=${this.noAvailableTimesMessage}
-            ?readonly=${this.readOnly}
-            ?hidden=${!this._popup.open}
-            @gui-input=${stopPropagation}
-            @gui-change=${this.onListChange}
-          ></gui-time-list>`,
-          { hidden: !this._popup.open },
-        )}
+        ${list}
       </div>
 
       ${this.showErrors ? addErrors(this.uid, { errors: this.errors, touched: this.touched }) : ''}
