@@ -151,7 +151,6 @@ export class GuiSelect extends GuiFormControl {
           id=${this.uid}
           data-cy=${`${this.uid}_select`}
           class=${classMap({ 'gui-widget-input': true, ...selectIcon.widgetClasses })}
-          ?required=${templateData.required}
           ?disabled=${templateData.disabled}
           autocomplete=${this.autocomplete || nothing}
           @mousedown=${this.onMousedown}

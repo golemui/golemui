@@ -27,7 +27,9 @@ describe('server rendering standalone elements in plain node', () => {
 
   it('renders the content of the elements that render their own', () => {
     expect(markup).toMatch(/<label[^>]*for="email"/);
-    expect(markup).toMatch(/<input[^>]*id="email"[^>]*value="ada@example.com"[^>]*required/);
+    expect(markup).toMatch(/<input[^>]*id="email"[^>]*value="ada@example.com"/);
+    // The element validates itself: a native constraint would make the browser validate again.
+    expect(markup).not.toMatch(/<input[^>]*id="email"[^>]*\srequired/);
     expect(markup).toMatch(/<option\s+value="team"\s+selected/);
     expect(markup).toMatch(/<input[^>]*type="checkbox"[^>]*id="terms"[^>]*checked/);
   });

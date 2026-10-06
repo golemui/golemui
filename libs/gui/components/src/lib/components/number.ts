@@ -115,6 +115,8 @@ export class GuiNumber extends GuiFormControl {
       autocomplete: this.autocomplete,
     };
 
+    // The inner input carries no constraints (see GuiFormControl): `step="any"` keeps the browser
+    // from rejecting decimals, and the bounds reach assistive technology as aria-valuemin/max.
     return html`
       ${addLabel(this.uid, templateData)}
 
@@ -126,12 +128,11 @@ export class GuiNumber extends GuiFormControl {
           data-cy=${`${this.uid}_number`}
           class="gui-widget-input"
           style=${cspStyleMap(inputStyles)}
-          ?required=${this.required}
           ?disabled=${this.disabled}
           ?readonly=${this.readOnly}
-          step=${typeof this.step === 'number' ? this.step : nothing}
-          min=${isRealNumber(this.minimum) ? this.minimum : nothing}
-          max=${isRealNumber(this.maximum) ? this.maximum : nothing}
+          step="any"
+          aria-valuemin=${isRealNumber(this.minimum) ? this.minimum : nothing}
+          aria-valuemax=${isRealNumber(this.maximum) ? this.maximum : nothing}
           placeholder=${this.placeholder || nothing}
           autocomplete=${this.autocomplete || nothing}
           value=${serverValue(this.normalizedValue)}

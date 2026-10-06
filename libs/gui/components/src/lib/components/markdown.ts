@@ -289,7 +289,6 @@ export class GuiMarkdown extends GuiFormControl {
             id=${this.uid}
             class=${classMap(fieldClasses)}
             style=${cspStyleMap(autoGrowStyles)}
-            ?required=${templateData.required}
             ?disabled=${templateData.disabled}
             ?readonly=${templateData.readonly}
             placeholder=${ifDefined(templateData.placeholder)}

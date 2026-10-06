@@ -10,7 +10,8 @@ import { GUIPopupController } from '../controllers/popup.controller';
 import { type HourFormat } from '../utils/time';
 import { addErrors, addIcon, addLabel, addPickerPanel } from '../utils/templates';
 import type { DateTimeRange } from '../types';
-import { GuiFormControl } from '../gui-form-control';
+import { GuiFormControl, type GuiValidity } from '../gui-form-control';
+import { dateTimeRangesValidity } from '../utils/range-validity';
 import {
   dispatchBlur,
   dispatchChange,
@@ -332,6 +333,11 @@ export class GuiRangeDateTimePicker extends GuiFormControl {
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.removeEventListener('gui-dropdown-toggle', this.onDropdownToggle);
+  }
+
+  /** A range outside `minDateTime`/`maxDateTime` or over a disabled range, then `required`. */
+  protected override validate(): GuiValidity | null {
+    return dateTimeRangesValidity(this.value, this) ?? super.validate();
   }
 
   override render() {

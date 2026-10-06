@@ -45,6 +45,12 @@ const toFormEntry = (value: unknown): string =>
  * Only an element with a `name` takes part in submission and validation. GolemUI Forms never sets
  * one, and neither do the elements that compose others (a picker's inner field), so neither is
  * validated twice.
+ *
+ * The native controls an element renders sit in the light DOM, inside the same `<form>`, so they
+ * must carry no constraint attributes (`required`, `min`, `max`, `step`, `pattern`): the browser
+ * would validate them too, with or without a `name`. The element validates through
+ * {@link GuiFormControl.validate} and points the browser at the control with
+ * {@link GuiFormControl.validationAnchor}; `aria-required` and the like carry the state.
  */
 export abstract class GuiFormControl extends GuiElement {
   static formAssociated = true;
@@ -91,7 +97,10 @@ export abstract class GuiFormControl extends GuiElement {
   private defaultValue: unknown = undefined;
   private hasDefaultValue = false;
 
-  /** Disabled by its own attribute or by a disabled `<fieldset>` around it. */
+  /**
+   * Disabled by its own attribute or by a disabled `<fieldset>` around it. Setting the property
+   * sets the attribute, like a native control's.
+   */
   @property({ type: Boolean })
   get disabled(): boolean | undefined {
     return this.ownDisabled || this.formDisabled;
@@ -99,6 +108,12 @@ export abstract class GuiFormControl extends GuiElement {
 
   set disabled(value: boolean | undefined) {
     this.ownDisabled = value;
+    // The browser reads the attribute, not the property: without it, a disabled element would
+    // still be submitted. Only the element's own state is reflected, never the fieldset's.
+    if (!!value !== this.hasAttribute('disabled')) {
+      if (value) this.setAttribute('disabled', '');
+      else this.removeAttribute('disabled');
+    }
   }
 
   // Not every environment implements ElementInternals (jsdom does not).

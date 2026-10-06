@@ -39,7 +39,8 @@ import { addErrors, addLabel, type ControlTemplateData } from '../utils/template
 import './pills';
 import type { GuiPillEventDetail, GuiPillItem, GuiPillsDropdownEventDetail } from './pills';
 import type { DateTimeRange } from '../types';
-import { GuiFormControl } from '../gui-form-control';
+import { GuiFormControl, type GuiValidity } from '../gui-form-control';
+import { dateTimeRangesValidity } from '../utils/range-validity';
 import {
   dispatch,
   dispatchBlur,
@@ -154,11 +155,17 @@ export class GuiRangeDateTimeInput extends GuiFormControl {
    * standalone rangeDateTimeInput widget's public API (typed inputs in this
    * family stay hole-unaware, matching rangeTimeInput); this is here just to
    * pass them down to the range date-time picker's calendar
+   *
+   * @internal
    */
   @property({ type: Array, attribute: 'disabled-ranges' }) disabledRanges:
     | DateTimeRange[]
     | undefined = undefined;
-  /** Error for a time inside `disabledRanges`. */
+  /**
+   * Error for a time inside `disabledRanges`, which the range date-time picker passes down.
+   *
+   * @internal
+   */
   @property({ type: String, attribute: 'disabled-range-message' }) disabledRangeMessage:
     | string
     | undefined = undefined;
@@ -196,6 +203,8 @@ export class GuiRangeDateTimeInput extends GuiFormControl {
    * Set by host pickers that run their own whole-widget focus-leave check:
    * moving focus from this input into the picker's popover must not count as
    * leaving, so the embedded input skips its incomplete-on-leave handling.
+   *
+   * @internal
    */
   @property({ type: Boolean, attribute: 'defer-focus-leave' }) deferFocusLeave:
     | boolean
@@ -348,6 +357,11 @@ export class GuiRangeDateTimeInput extends GuiFormControl {
       this._parts.seedDayPeriods();
     }
     this._edit.reconcileValue(this.value);
+  }
+
+  /** A range outside `minDateTime`/`maxDateTime` or over a disabled range, then `required`. */
+  protected override validate(): GuiValidity | null {
+    return dateTimeRangesValidity(this.value, this) ?? super.validate();
   }
 
   override render() {

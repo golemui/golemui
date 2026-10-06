@@ -62,7 +62,8 @@ import {
   type TimeRange,
 } from '../utils/time';
 import type { DateTimeRange } from '../types';
-import { GuiFormControl } from '../gui-form-control';
+import { GuiFormControl, type GuiValidity } from '../gui-form-control';
+import { dateTimeRangesValidity } from '../utils/range-validity';
 import {
   dispatch,
   dispatchBlur,
@@ -240,6 +241,8 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
    * The host picker's working selection — typed into its input, or picked here
    * and held there across the popover's unmount/remount cycle. One date
    * renders as an in-progress anchor, both as a parked span.
+   *
+   * @internal
    */
   @property({ type: String, attribute: 'working-start' }) workingStart: string | undefined =
     undefined;
@@ -256,6 +259,8 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
    * Set by host pickers that run their own whole-widget focus-leave check:
    * moving from this calendar into the picker's trigger is not leaving the
    * control, so the calendar leaves the commit to the host.
+   *
+   * @internal
    */
   @property({ type: Boolean, attribute: 'defer-focus-leave' }) deferFocusLeave:
     | boolean
@@ -263,12 +268,16 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
   /**
    * The host picker's allowEdit-selected range: its days are marked so the
    * range being inspected or edited stands out among its neighbors.
+   *
+   * @internal
    */
   @property({ attribute: 'selected-range' }) selectedRange: DateTimeRange | null = null;
   /**
    * Set by a host picker while an edit session is open: completed pieces park
    * as working state instead of committing — the session's explicit Confirm
    * owns the commit.
+   *
+   * @internal
    */
   @property({ type: Boolean, attribute: 'defer-commit' }) deferCommit = false;
 
@@ -323,11 +332,16 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
     onYearSelectorToggled: () => this._keyboard.onYearGridToggled(),
   });
 
-  /** The nav controller's month cursor, kept under its historical name. */
+  /**
+   * The nav controller's month cursor, kept under its historical name.
+   *
+   * @internal
+   */
   get _currentDate(): Date {
     return this._nav.currentDate;
   }
 
+  /** @internal */
   set _currentDate(date: Date) {
     this._nav.currentDate = date;
   }
@@ -560,6 +574,11 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
         }
       }
     }
+  }
+
+  /** A range outside the allowed days or date-times, or over a disabled range, then `required`. */
+  protected override validate(): GuiValidity | null {
+    return dateTimeRangesValidity(this.value, this) ?? super.validate();
   }
 
   override render() {

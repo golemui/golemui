@@ -148,7 +148,6 @@ export class GuiTextarea extends GuiFormControl {
           data-cy=${`${this.uid}_textarea`}
           class="gui-widget-input"
           style=${cspStyleMap(autoGrowStyles)}
-          ?required=${templateData.required}
           ?disabled=${templateData.disabled}
           ?readonly=${templateData.readonly}
           placeholder=${templateData.placeholder || nothing}

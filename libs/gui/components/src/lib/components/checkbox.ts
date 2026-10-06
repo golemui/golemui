@@ -79,6 +79,8 @@ export class GuiCheckbox extends GuiFormControl {
       this.classList.remove('gui-checkbox--right');
     }
 
+    // The hint and the errors share the third row of a grid cell. The hint's id is on its text
+    // alone, so `aria-describedby` doesn't read the errors as the description.
     return html`
       <label
         class="gui-label"
@@ -92,7 +94,6 @@ export class GuiCheckbox extends GuiFormControl {
             id=${this.uid}
             data-cy=${`${this.uid}_checkbox`}
             .checked=${live(this.value ?? false)}
-            ?required=${this.required}
             ?disabled=${this.disabled}
             @click=${this.onClick}
             @change=${this.valueChanged}
@@ -107,8 +108,11 @@ export class GuiCheckbox extends GuiFormControl {
         </span>
       </label>
 
-      <div class="gui-widget-hint" id=${`${templateData.uid}_hint`}>
-        ${templateData.hint ?? nothing} ${addErrors(this.uid, templateData)}
+      <div class="gui-widget-hint">
+        ${templateData.hint
+          ? html`<span id=${`${templateData.uid}_hint`}>${templateData.hint}</span>`
+          : nothing}
+        ${addErrors(this.uid, templateData)}
       </div>
     `;
   }

@@ -7,10 +7,10 @@ import type { GuiRangeDateInput } from './range-date-input';
 import './range-calendar';
 import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
 import { GUIPopupController } from '../controllers/popup.controller';
-import { dateBoundsError, rangeSpansDisabledDay } from '../utils/date';
 import { addErrors, addIcon, addLabel, addPickerPanel } from '../utils/templates';
 import type { DateRange } from '../types';
-import { GuiFormControl } from '../gui-form-control';
+import { GuiFormControl, type GuiValidity } from '../gui-form-control';
+import { dateRangesValidity } from '../utils/range-validity';
 import {
   dispatchBlur,
   dispatchChange,
@@ -21,7 +21,7 @@ import {
   valueEvents,
   type GuiInputErrorEventDetail,
 } from '../utils/events';
-import { message, requiredName } from '../utils/messages';
+import { requiredName } from '../utils/messages';
 
 /**
  * A date range field with a calendar popup.
@@ -257,6 +257,11 @@ export class GuiRangeDatePicker extends GuiFormControl {
     this.removeEventListener('gui-dropdown-toggle', this.onDropdownToggle);
   }
 
+  /** A range outside `minDate`/`maxDate` or over a disabled day, then `required`. */
+  protected override validate(): GuiValidity | null {
+    return dateRangesValidity(this.value, this) ?? super.validate();
+  }
+
   override render() {
     const datePickerIcon = addIcon('datePicker', { icon: this.icon });
 
@@ -420,22 +425,7 @@ export class GuiRangeDatePicker extends GuiFormControl {
 
   /** The message for the first constraint a range violates, or null when valid. */
   private rangeError(range: DateRange): string | null {
-    const start = range.start;
-    const end = range.end ?? range.start;
-    // A disabled day anywhere in the span — not just at the endpoints.
-    if (rangeSpansDisabledDay(start, end, this.disabledRanges)) {
-      return message('disabledDateRange', this.disabledDateRangeMessage);
-    }
-    // Either endpoint outside the allowed [minDate, maxDate] window.
-    const messages = {
-      minDateMessage: this.minDateMessage,
-      maxDateMessage: this.maxDateMessage,
-    };
-    for (const endpoint of [start, end]) {
-      const error = dateBoundsError(endpoint, this.minDate, this.maxDate, undefined, messages);
-      if (error) return error;
-    }
-    return null;
+    return dateRangesValidity([range], this)?.message ?? null;
   }
 
   private rejectTypedRange(range: DateRange, message: string) {

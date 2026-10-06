@@ -84,6 +84,8 @@ export class GuiToggle extends GuiFormControl {
       this.classList.remove('gui-toggle--right');
     }
 
+    // The hint and the errors share the third row of a grid cell. The hint's id is on its text
+    // alone, so `aria-describedby` doesn't read the errors as the description.
     return html`
       <label
         class="gui-label"
@@ -98,7 +100,6 @@ export class GuiToggle extends GuiFormControl {
             id=${this.uid}
             data-cy=${`${this.uid}_toggle`}
             .checked=${live(templateData.value ?? false)}
-            ?required=${templateData.required}
             ?disabled=${templateData.disabled}
             @click=${this.onClick}
             @change=${this.valueChanged}
@@ -115,8 +116,11 @@ export class GuiToggle extends GuiFormControl {
         </span>
       </label>
 
-      <div class="gui-widget-hint" id=${`${templateData.uid}_hint`}>
-        ${templateData.hint ?? nothing} ${addErrors(this.uid, templateData)}
+      <div class="gui-widget-hint">
+        ${templateData.hint
+          ? html`<span id=${`${templateData.uid}_hint`}>${templateData.hint}</span>`
+          : nothing}
+        ${addErrors(this.uid, templateData)}
       </div>
     `;
   }

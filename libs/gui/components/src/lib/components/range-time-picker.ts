@@ -7,13 +7,8 @@ import type { GuiRangeTimeInput } from './range-time-input';
 import './time-list';
 import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
 import { GUIPopupController } from '../controllers/popup.controller';
-import {
-  buildTimeOptions,
-  compareISOTimes,
-  isTimeRangeDisabled,
-  oneStepAfterISOTime,
-  type HourFormat,
-} from '../utils/time';
+import { buildTimeOptions, oneStepAfterISOTime, type HourFormat } from '../utils/time';
+import { timeRangesValidity } from '../utils/range-validity';
 import { addErrors, addIcon, addLabel } from '../utils/templates';
 import type { TimeRange } from '../types';
 import { GuiFormControl, type GuiValidity } from '../gui-form-control';
@@ -27,7 +22,7 @@ import {
   valueEvents,
   type GuiInputErrorEventDetail,
 } from '../utils/events';
-import { message, requiredName } from '../utils/messages';
+import { requiredName } from '../utils/messages';
 
 /**
  * A time range field with start and end time lists in a popup.
@@ -520,33 +515,14 @@ export class GuiRangeTimePicker extends GuiFormControl {
       this._workingIn = undefined;
       this._workingOut = undefined;
     }
-    const error = this.validateBounds(this.value);
+    const error = timeRangesValidity(this.value, this)?.message;
     dispatchValue(this, value ?? null, { commit: committed });
     if (error) dispatchInputError(this, error);
   }
 
+  /** A range outside `minTime`/`maxTime` or over a disabled range, then `required`. */
   protected override validate(): GuiValidity | null {
-    const boundsError = this.validateBounds(this.value);
-    return boundsError ? { flags: { customError: true }, message: boundsError } : super.validate();
-  }
-
-  private validateBounds(value: TimeRange[] | undefined): string | null {
-    if (!value || value.length === 0) return null;
-    for (const range of value) {
-      for (const endpoint of [range.start, range.end]) {
-        if (!endpoint) continue;
-        if (this.minTime && compareISOTimes(endpoint, this.minTime) < 0) {
-          return message('minTime', this.minTimeMessage);
-        }
-        if (this.maxTime && compareISOTimes(endpoint, this.maxTime) > 0) {
-          return message('maxTime', this.maxTimeMessage);
-        }
-      }
-      if (isTimeRangeDisabled(range.start, range.end, this.disabledRanges)) {
-        return message('disabledTimeRange', this.disabledRangeMessage);
-      }
-    }
-    return null;
+    return timeRangesValidity(this.value, this) ?? super.validate();
   }
 
   private onPillClick(event: Event) {

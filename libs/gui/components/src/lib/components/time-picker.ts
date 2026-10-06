@@ -106,6 +106,8 @@ export class GuiTimePicker extends GuiFormControl {
    * Set by hosts (the date-time calendars) that run their own focus-leave
    * check over a subtree containing this picker: skips the picker's own
    * incomplete-on-leave handling.
+   *
+   * @internal
    */
   @property({ type: Boolean, attribute: 'defer-focus-leave' }) deferFocusLeave:
     | boolean

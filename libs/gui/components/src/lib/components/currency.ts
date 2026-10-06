@@ -173,8 +173,7 @@ export class GuiCurrency extends GuiFormControl {
           id=${this.uid}
           data-cy=${`${this.uid}_currency`}
           class=${classMap(fieldClasses)}
-          step=${this.step && this.step > 0 ? this.step : nothing}
-          ?required=${this.required}
+          step="any"
           ?disabled=${this.disabled}
           ?readonly=${this.readOnly}
           placeholder=${this.placeholder || nothing}

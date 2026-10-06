@@ -248,7 +248,7 @@ export type DayFormat = 'numeric' | '2-digit';
 /**
  * Returns an array of weekday labels based on the specified locale.
  *
- * @param {string | undefined} localeId - The locale identifier used to format weekday labels. If undefined, the default locale is used.
+ * @param {string | undefined} localeId - The locale identifier used to format weekday labels. Defaults to 'en'.
  * @param {WeekdayFormat} [format] - How the weekday is written. Defaults to 'narrow'.
  * @return {string[]} An array of localized weekday labels, starting from the locale's defined first day of the week.
  */
@@ -256,7 +256,7 @@ export function getWeekdayLabels(
   localeId: string | undefined,
   format: WeekdayFormat = 'narrow',
 ): string[] {
-  const formatter = new Intl.DateTimeFormat(localeId, { weekday: format });
+  const formatter = new Intl.DateTimeFormat(localeId ?? 'en', { weekday: format });
   // Anchor Sunday date
   const sundayRef = new Date(2025, 10, 30);
   return weekDaysOrder(localeId).map((dayCode) => {
@@ -274,7 +274,7 @@ export function getWeekdayLabels(
  * @return {string} The full month name formatted in the specified locale.
  */
 export function getMonthName(localeId: string | undefined, currentDate: Date): string {
-  return new Intl.DateTimeFormat(localeId, { month: 'long' }).format(currentDate);
+  return new Intl.DateTimeFormat(localeId ?? 'en', { month: 'long' }).format(currentDate);
 }
 
 /**
@@ -287,7 +287,7 @@ export function getMonthName(localeId: string | undefined, currentDate: Date): s
  * @return {string} The localized month/year label.
  */
 export function getMonthYearLabel(localeId: string | undefined, date: Date): string {
-  return new Intl.DateTimeFormat(localeId, { month: 'long', year: 'numeric' }).format(date);
+  return new Intl.DateTimeFormat(localeId ?? 'en', { month: 'long', year: 'numeric' }).format(date);
 }
 
 /**
@@ -300,7 +300,7 @@ export function getMonthYearLabel(localeId: string | undefined, date: Date): str
  * @return {string} The full localized date label.
  */
 export function getFullDateLabel(localeId: string | undefined, date: Date): string {
-  return new Intl.DateTimeFormat(localeId, { dateStyle: 'full' }).format(date);
+  return new Intl.DateTimeFormat(localeId ?? 'en', { dateStyle: 'full' }).format(date);
 }
 
 /**
@@ -346,7 +346,10 @@ export function getMonthYearParts(
   date: Date,
   monthFormat: 'numeric' | '2-digit' | 'long' | 'short' | 'narrow' = 'long',
 ): { type: string; value: string }[] {
-  const formatter = new Intl.DateTimeFormat(localeId, { month: monthFormat, year: 'numeric' });
+  const formatter = new Intl.DateTimeFormat(localeId ?? 'en', {
+    month: monthFormat,
+    year: 'numeric',
+  });
   return formatter.formatToParts(date).filter((p) => p.type === 'month' || p.type === 'year');
 }
 
@@ -363,7 +366,7 @@ export function getDayLabel(
   date: Date,
   format: DayFormat = 'numeric',
 ): string {
-  const locale = localeId || 'en-US';
+  const locale = localeId || 'en';
   const formatter = new Intl.DateTimeFormat(locale, { day: format });
   const parts = formatter.formatToParts(date);
   const dayPart = parts.find((part) => part.type === 'day');

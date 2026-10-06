@@ -188,7 +188,6 @@ export class GuiMultiSelectTrigger extends GuiElement {
           id=${this.uid}
           data-cy=${`${this.uid}_textinput`}
           class="gui-multi-select__input"
-          ?required=${this.required}
           ?disabled=${this.disabled}
           ?readonly=${this.readOnly}
           placeholder=${this.placeholder ?? ''}

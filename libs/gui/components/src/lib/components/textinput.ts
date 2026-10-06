@@ -96,7 +96,6 @@ export class GuiTextinput extends GuiFormControl {
           data-cy=${`${this.uid}_textinput`}
           class=${classMap(fieldClasses)}
           .value=${live(this.value ?? '')}
-          ?required=${this.required}
           ?disabled=${this.disabled}
           ?readonly=${this.readOnly}
           placeholder=${this.placeholder || nothing}

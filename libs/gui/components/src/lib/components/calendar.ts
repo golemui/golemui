@@ -118,11 +118,16 @@ export class GuiCalendar extends GuiFormControl {
     onYearSelectorToggled: () => this._keyboard.onYearGridToggled(),
   });
 
-  /** The nav controller's month cursor, kept under its historical name. */
+  /**
+   * The nav controller's month cursor, kept under its historical name.
+   *
+   * @internal
+   */
   get _currentDate(): Date {
     return this._nav.currentDate;
   }
 
+  /** @internal */
   set _currentDate(date: Date) {
     this._nav.currentDate = date;
   }

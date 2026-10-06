@@ -46,7 +46,8 @@ import {
 import './pills';
 import type { GuiPillEventDetail, GuiPillItem } from './pills';
 import type { DateRange } from '../types';
-import { GuiFormControl } from '../gui-form-control';
+import { GuiFormControl, type GuiValidity } from '../gui-form-control';
+import { dateRangesValidity } from '../utils/range-validity';
 import {
   stopPropagation,
   dispatch,
@@ -165,6 +166,8 @@ export class GuiRangeCalendar extends GuiFormControl {
    * The host picker's working endpoints — typed into its input, or picked here
    * and held there across the popover's unmount/remount cycle. One endpoint
    * renders as an in-progress anchor, both as a parked span.
+   *
+   * @internal
    */
   @property({ type: String, attribute: 'working-start' }) workingStart: string | undefined =
     undefined;
@@ -186,12 +189,16 @@ export class GuiRangeCalendar extends GuiFormControl {
   /**
    * The host picker's allowEdit-selected range: its days are marked so the
    * range being inspected or edited stands out among its neighbors.
+   *
+   * @internal
    */
   @property({ attribute: 'selected-range' }) selectedRange: DateRange | null = null;
   /**
    * Set by a host picker while an edit session is open: a completed two-click
    * span parks as the working selection (dotted preview) instead of merging
    * into the value — the session's explicit Confirm owns the commit.
+   *
+   * @internal
    */
   @property({ type: Boolean, attribute: 'defer-commit' }) deferCommit = false;
 
@@ -242,11 +249,16 @@ export class GuiRangeCalendar extends GuiFormControl {
     onYearSelectorToggled: () => this._keyboard.onYearGridToggled(),
   });
 
-  /** The nav controller's month cursor, kept under its historical name. */
+  /**
+   * The nav controller's month cursor, kept under its historical name.
+   *
+   * @internal
+   */
   get _currentDate(): Date {
     return this._nav.currentDate;
   }
 
+  /** @internal */
   set _currentDate(date: Date) {
     this._nav.currentDate = date;
   }
@@ -441,6 +453,11 @@ export class GuiRangeCalendar extends GuiFormControl {
         }
       }
     }
+  }
+
+  /** A range outside `minDate`/`maxDate` or over a disabled day, then `required`. */
+  protected override validate(): GuiValidity | null {
+    return dateRangesValidity(this.value, this) ?? super.validate();
   }
 
   override render() {

@@ -177,6 +177,8 @@ export class GuiDateTimeCalendar extends GuiFormControl {
    * internal selection whenever no committed value exists, so a partial
    * selection survives the popover unmount/remount cycle. A committed `value`
    * always takes precedence.
+   *
+   * @internal
    */
   @property({ type: String, attribute: 'working-date' }) workingDate: string | undefined =
     undefined;
@@ -188,6 +190,8 @@ export class GuiDateTimeCalendar extends GuiFormControl {
    * moving focus from this calendar into the picker's input must not count as
    * leaving, so the embedded calendar skips its incomplete-on-leave handling
    * (the `gui-blur` re-dispatch still fires — hosts close the popover with it).
+   *
+   * @internal
    */
   @property({ type: Boolean, attribute: 'defer-focus-leave' }) deferFocusLeave:
     | boolean

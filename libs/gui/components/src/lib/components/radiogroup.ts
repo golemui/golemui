@@ -119,7 +119,6 @@ export class GuiRadiogroup extends GuiFormControl {
                   form=${`${this.uid}_none`}
                   value=${opt.value}
                   .checked=${live(isChecked)}
-                  ?required=${templateData.required}
                   ?disabled=${templateData.disabled}
                   @click=${this.onClick}
                   @keydown=${this.onKeydown}

@@ -37,7 +37,8 @@ import { addErrors, addLabel, type ControlTemplateData } from '../utils/template
 import './pills';
 import type { GuiPillEventDetail, GuiPillItem, GuiPillsDropdownEventDetail } from './pills';
 import type { TimeRange } from '../types';
-import { GuiFormControl } from '../gui-form-control';
+import { GuiFormControl, type GuiValidity } from '../gui-form-control';
+import { timeRangesValidity } from '../utils/range-validity';
 import {
   dispatch,
   dispatchBlur,
@@ -179,6 +180,8 @@ export class GuiRangeTimeInput extends GuiFormControl {
    * Set by host pickers that run their own whole-widget focus-leave check:
    * moving focus from this input into the picker's popup must not count as
    * leaving, so the embedded input skips its incomplete-on-leave handling.
+   *
+   * @internal
    */
   @property({ type: Boolean, attribute: 'defer-focus-leave' }) deferFocusLeave:
     | boolean
@@ -324,6 +327,11 @@ export class GuiRangeTimeInput extends GuiFormControl {
       this._parts.seedDayPeriods();
     }
     this._edit.reconcileValue(this.value);
+  }
+
+  /** A range outside `minTime`/`maxTime` or over a disabled range, then `required`. */
+  protected override validate(): GuiValidity | null {
+    return timeRangesValidity(this.value, this) ?? super.validate();
   }
 
   override render() {
