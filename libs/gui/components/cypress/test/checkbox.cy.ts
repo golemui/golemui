@@ -27,7 +27,7 @@ describe('gui-checkbox', () => {
     it('marks the checkbox as required', () => {
       cy.mount(html`<gui-checkbox label="I agree" required></gui-checkbox>`);
 
-      input().should('have.attr', 'required');
+      input().should('not.have.attr', 'required');
       input().should('have.attr', 'aria-required', 'true');
       cy.get('gui-checkbox label [aria-hidden="true"]').should('contain.text', '*');
     });

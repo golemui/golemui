@@ -29,7 +29,9 @@ describe('gui-select', () => {
       cy.get('gui-select option').eq(0).should('be.disabled').and('be.selected');
       cy.get('gui-select option').eq(2).should('have.value', 'green');
       cy.get('gui-select option').eq(2).should('contain.text', 'Green');
-      select().should('have.attr', 'autocomplete', 'off').and('have.attr', 'required');
+      select().should('have.attr', 'autocomplete', 'off');
+      // The element validates itself: only the ARIA state is on the native control.
+      select().should('have.attr', 'aria-required', 'true').and('not.have.attr', 'required');
       cy.get('gui-select label').should('contain.text', 'Color');
     });
 

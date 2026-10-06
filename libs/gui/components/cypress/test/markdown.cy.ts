@@ -20,10 +20,9 @@ describe('gui-markdown', () => {
         ></gui-markdown>`,
       );
 
-      textarea()
-        .should('have.value', '# Hi')
-        .and('have.attr', 'placeholder', 'Write something')
-        .and('have.attr', 'required');
+      textarea().should('have.value', '# Hi').and('have.attr', 'placeholder', 'Write something');
+      // The element validates itself: only the ARIA state is on the native control.
+      textarea().should('have.attr', 'aria-required', 'true').and('not.have.attr', 'required');
       cy.get('gui-markdown label').should('contain.text', 'Bio');
     });
 

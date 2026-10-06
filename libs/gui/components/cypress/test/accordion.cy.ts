@@ -5,6 +5,10 @@ const item = (index: number) => cy.get('gui-accordion-item').eq(index);
 const details = (index: number) => item(index).find('details');
 const summary = (index: number) => item(index).find('summary');
 
+// The caret is CSS, drawn on the app's summary (`summary::after`): no element of its own.
+const caretOf = (summary: HTMLElement) =>
+  summary.ownerDocument.defaultView!.getComputedStyle(summary, '::after');
+
 const profile = (multiple = false) =>
   html`<gui-accordion ?multiple=${multiple}>
     <gui-accordion-item>
@@ -23,16 +27,21 @@ const profile = (multiple = false) =>
 
 describe('gui-accordion', () => {
   describe('rendering', () => {
-    it('takes the open state of its details, and adds the arrow to each summary', () => {
+    it('takes the open state of its details, and draws the caret on each summary', () => {
       cy.mount(profile());
 
       item(0).should('have.prop', 'open', true);
       item(1).should('have.prop', 'open', false);
-      summary(0)
-        .find('.gui-accordion__arrow')
-        .should('have.attr', 'aria-hidden', 'true')
-        .find('svg path')
-        .should('have.attr', 'd');
+      summary(0).should(([element]) => {
+        const caret = caretOf(element);
+        expect(caret.content).to.equal('""');
+        expect(caret.width).to.equal('16px');
+        expect(caret.rotate).to.equal('180deg');
+      });
+      summary(1).should(([element]) => {
+        expect(caretOf(element).content).to.equal('""');
+        expect(caretOf(element).rotate).not.to.equal('180deg');
+      });
     });
 
     it('opens and closes its details with open', () => {
@@ -44,14 +53,16 @@ describe('gui-accordion', () => {
       details(1).should('not.have.attr', 'open');
     });
 
-    it('adds the arrow again to a summary the app re-renders', () => {
+    it('keeps the caret on a summary the app re-renders', () => {
       cy.mount(profile());
 
       summary(0).then(([element]) => {
         element.textContent = 'Personal data';
       });
 
-      summary(0).should('contain.text', 'Personal data').find('.gui-accordion__arrow');
+      summary(0)
+        .should('contain.text', 'Personal data')
+        .should(([element]) => expect(caretOf(element).content).to.equal('""'));
     });
 
     it('has no accessibility violations', () => {

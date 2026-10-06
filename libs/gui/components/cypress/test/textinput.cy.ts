@@ -20,8 +20,9 @@ describe('gui-textinput', () => {
       input()
         .should('have.value', 'Ada')
         .and('have.attr', 'placeholder', 'Your name')
-        .and('have.attr', 'autocomplete', 'name')
-        .and('have.attr', 'required');
+        .and('have.attr', 'autocomplete', 'name');
+      // The element validates itself: only the ARIA state is on the native control.
+      input().should('have.attr', 'aria-required', 'true').and('not.have.attr', 'required');
       cy.get('gui-textinput label').should('contain.text', 'Name');
     });
 

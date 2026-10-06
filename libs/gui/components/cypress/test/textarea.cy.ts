@@ -21,8 +21,9 @@ describe('gui-textarea', () => {
       textarea()
         .should('have.value', 'Hello')
         .and('have.attr', 'placeholder', 'About you')
-        .and('have.attr', 'autocomplete', 'off')
-        .and('have.attr', 'required');
+        .and('have.attr', 'autocomplete', 'off');
+      // The element validates itself: only the ARIA state is on the native control.
+      textarea().should('have.attr', 'aria-required', 'true').and('not.have.attr', 'required');
       cy.get('gui-textarea label').should('contain.text', 'Bio');
     });
 

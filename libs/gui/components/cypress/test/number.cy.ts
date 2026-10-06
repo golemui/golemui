@@ -22,11 +22,16 @@ describe('gui-number', () => {
       input()
         .should('have.value', '42')
         .and('have.attr', 'type', 'number')
-        .and('have.attr', 'step', '5')
-        .and('have.attr', 'min', '18')
-        .and('have.attr', 'max', '99')
-        .and('have.attr', 'placeholder', 'Your age')
-        .and('have.attr', 'required');
+        // The element validates itself: the inner input carries no constraints, and the bounds
+        // reach assistive technology as ARIA values.
+        .and('have.attr', 'step', 'any')
+        .and('have.attr', 'aria-valuemin', '18')
+        .and('have.attr', 'aria-valuemax', '99')
+        .and('have.attr', 'placeholder', 'Your age');
+      input().should('not.have.attr', 'min');
+      input().should('not.have.attr', 'max');
+      // The element validates itself: only the ARIA state is on the native control.
+      input().should('have.attr', 'aria-required', 'true').and('not.have.attr', 'required');
       element().should('have.prop', 'value', 42);
       cy.get('gui-number label').should('contain.text', 'Age');
     });

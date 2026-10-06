@@ -32,8 +32,9 @@ describe('gui-multi-select-trigger', () => {
         .and('have.attr', 'autocomplete', 'off')
         .and('have.attr', 'aria-controls', 'colors-panel')
         .and('have.attr', 'aria-expanded', 'false')
-        .and('have.attr', 'aria-autocomplete', 'list')
-        .and('have.attr', 'required');
+        .and('have.attr', 'aria-autocomplete', 'list');
+      // The element validates itself: only the ARIA state is on the native control.
+      input().should('have.attr', 'aria-required', 'true').and('not.have.attr', 'required');
       input().should('have.attr', 'aria-required', 'true');
 
       element().invoke('attr', 'panel-open', '');

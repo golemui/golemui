@@ -22,10 +22,11 @@ describe('gui-currency', () => {
       input()
         .should('have.value', '12.5')
         .and('have.attr', 'type', 'number')
-        .and('have.attr', 'step', '0.5')
+        .and('have.attr', 'step', 'any')
         .and('have.attr', 'placeholder', '0.00')
-        .and('have.attr', 'autocomplete', 'off')
-        .and('have.attr', 'required');
+        .and('have.attr', 'autocomplete', 'off');
+      // The element validates itself: only the ARIA state is on the native control.
+      input().should('have.attr', 'aria-required', 'true').and('not.have.attr', 'required');
       cy.get('gui-currency label').should('contain.text', 'Price');
     });
 

@@ -27,7 +27,7 @@ describe('gui-toggle', () => {
     it('marks the switch as required', () => {
       cy.mount(html`<gui-toggle label="Notifications" required></gui-toggle>`);
 
-      input().should('have.attr', 'required');
+      input().should('not.have.attr', 'required');
       input().should('have.attr', 'aria-required', 'true');
       cy.get('gui-toggle label [aria-hidden="true"]').should('contain.text', '*');
     });

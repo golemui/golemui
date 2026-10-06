@@ -22,8 +22,9 @@ describe('gui-password', () => {
         .should('have.attr', 'type', 'password')
         .and('have.value', 'secret')
         .and('have.attr', 'placeholder', 'At least 8 characters')
-        .and('have.attr', 'autocomplete', 'current-password')
-        .and('have.attr', 'required');
+        .and('have.attr', 'autocomplete', 'current-password');
+      // The element validates itself: only the ARIA state is on the native control.
+      input().should('have.attr', 'aria-required', 'true').and('not.have.attr', 'required');
       cy.get('gui-password label').should('contain.text', 'Password');
     });
 
