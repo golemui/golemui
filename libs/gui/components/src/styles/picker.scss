@@ -17,8 +17,6 @@
   gui-range-date-time-picker
 ) {
   display: block;
-  container-type: inline-size;
-  container-name: gui-picker-widget;
 
   &:has(.gui-widget > button[aria-expanded='true']) {
     position: relative;
@@ -119,7 +117,7 @@ $nested-in-calendar: ':is(gui-date-time-calendar, gui-range-date-time-calendar) 
     border-color: var(--gui-intent-error);
   }
 
-  @container gui-picker-widget (max-width: 540px) {
+  @media (max-width: 540px) {
     .gui-widget > .gui-picker__panel:not(#{$nested-in-calendar}) {
       width: calc(100% - var(--gui-space-2) * 2 - 2px);
 

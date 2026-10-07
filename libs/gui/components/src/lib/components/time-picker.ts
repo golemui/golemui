@@ -145,6 +145,11 @@ export class GuiTimePicker extends GuiFormControl {
     return this;
   }
 
+  override connectedCallback() {
+    super.connectedCallback();
+    this.classList.add('gui-field');
+  }
+
   override updated(changed: PropertyValues) {
     if (changed.has('value') && this._listRef && this._listRef.value !== this.value) {
       this._listRef.value = this.value;

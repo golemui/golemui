@@ -154,6 +154,11 @@ export class GuiDatePicker extends GuiFormControl {
     return this;
   }
 
+  override connectedCallback() {
+    super.connectedCallback();
+    this.classList.add('gui-field');
+  }
+
   override render() {
     const datePickerIcon = addIcon('datePicker', { icon: this.icon });
 

@@ -13,7 +13,7 @@
 
   .gui-calendar__day-button {
     box-sizing: border-box;
-    width: var(--gui-calendar-day-button-size);
+    width: 100%;
     height: var(--gui-calendar-day-button-size);
     padding: 0;
     display: inline-flex;
@@ -48,7 +48,8 @@
 
   .gui-calendar__days-grid {
     display: grid;
-    grid-template-columns: repeat(7, var(--gui-calendar-day-button-size));
+    // Each column is the day size at most, and narrows when the calendar has less room.
+    grid-template-columns: repeat(7, minmax(0, var(--gui-calendar-day-button-size)));
     gap: 1px;
   }
 }

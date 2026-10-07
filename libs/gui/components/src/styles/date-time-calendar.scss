@@ -1,6 +1,6 @@
 gui-date-time-calendar {
   .gui-calendar__panel {
-    min-width: calc(7 * var(--gui-calendar-day-button-size) + 6px);
+    min-width: min(100%, calc(7 * var(--gui-calendar-day-button-size) + 6px));
   }
 
   .gui-calendar__time-input-row {

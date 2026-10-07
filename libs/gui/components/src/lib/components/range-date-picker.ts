@@ -249,6 +249,7 @@ export class GuiRangeDatePicker extends GuiFormControl {
 
   override connectedCallback() {
     super.connectedCallback();
+    this.classList.add('gui-field');
     this.addEventListener('gui-dropdown-toggle', this.onDropdownToggle);
   }
 

@@ -216,6 +216,11 @@ export class GuiDateTimePicker extends GuiFormControl {
     return this;
   }
 
+  override connectedCallback() {
+    super.connectedCallback();
+    this.classList.add('gui-field');
+  }
+
   override willUpdate(changedProperties: PropertyValues): void {
     if (!changedProperties.has('value')) return;
     if (this._internalValueChange) {

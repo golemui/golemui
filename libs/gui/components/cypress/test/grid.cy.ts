@@ -105,6 +105,28 @@ describe('gui-grid', () => {
       );
     });
 
+    it('lines up the pickers with the other fields', () => {
+      mountIn(
+        900,
+        html`<div class="gui-grid gui-grid--row">
+          <div class="gui-grid__cell">
+            <gui-textinput uid="a" label="Name" hint="As on your passport"></gui-textinput>
+          </div>
+          <div class="gui-grid__cell"><gui-date-picker uid="b" label="Date"></gui-date-picker></div>
+          <div class="gui-grid__cell"><gui-time-picker uid="c" label="Time"></gui-time-picker></div>
+          <div class="gui-grid__cell">
+            <gui-range-date-picker uid="d" label="Dates"></gui-range-date-picker>
+          </div>
+        </div>`,
+      );
+
+      // The hint only grows the label track: every control starts at the same line.
+      rects('.gui-grid__cell > * > .gui-widget').then((widgets) => {
+        expect(widgets).to.have.length(4);
+        widgets.forEach((widget) => expect(widget.top).to.be.closeTo(widgets[0].top, 0.5));
+      });
+    });
+
     it('centres a checkbox, a toggle and a button on the input', () => {
       mountIn(
         800,
