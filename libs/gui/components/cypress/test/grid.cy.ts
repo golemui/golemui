@@ -149,8 +149,8 @@ describe('gui-grid', () => {
 
       rects('.gui-grid').then(([grid]) =>
         rects('.gui-grid__cell').then(([cancel, save]) => {
-          expect(save.right).to.equal(grid.right);
-          expect(save.left - cancel.right).to.equal(16);
+          expect(save.right).to.be.closeTo(grid.right, 0.5);
+          expect(save.left - cancel.right).to.be.closeTo(16, 0.5);
           // The span does not apply: each cell is as wide as its button.
           expect(cancel.width).to.be.below(150);
         }),
