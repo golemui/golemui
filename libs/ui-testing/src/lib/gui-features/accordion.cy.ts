@@ -68,6 +68,71 @@ export const runAccordionComponentTests = (mountFn: MountComponentFn) => {
     });
   });
 
+  describe('Accordion Component with singleOpen', () => {
+    const ACCORDION_UID = 'singleOpenAccordion';
+    const header = (sectionUid: string) =>
+      cy.get(`[id="accordion_button_${ACCORDION_UID}_${sectionUid}"]`);
+
+    it('closes the open section when another one opens, and emits one change', () => {
+      const formEventHandler = cy.stub().as('formEventHandler');
+
+      mountFn({
+        formDef: defineForm({
+          form: [
+            {
+              uid: ACCORDION_UID,
+              kind: 'layout',
+              type: 'accordion',
+              on: { change: 'sectionsChanged' },
+              props: {
+                singleOpen: true,
+                defaultOpen: { firstSection: true },
+                sections: [
+                  { uid: 'firstSection', label: 'First' },
+                  { uid: 'secondSection', label: 'Second' },
+                ],
+              },
+              children: [
+                {
+                  uid: 'firstSection',
+                  kind: 'input',
+                  type: 'textinput',
+                  path: 'accordion.first',
+                  label: 'First',
+                },
+                {
+                  uid: 'secondSection',
+                  kind: 'input',
+                  type: 'textinput',
+                  path: 'accordion.second',
+                  label: 'Second',
+                },
+              ],
+            },
+          ],
+        }),
+        formEvent: formEventHandler,
+      });
+
+      const changes = () =>
+        formEventHandler
+          .getCalls()
+          .filter((call) => call.args[0].name === 'sectionsChanged')
+          .map((call) => call.args[0].detail);
+
+      header('firstSection').parent('details').should('have.attr', 'open');
+      header('secondSection').click();
+
+      header('secondSection').parent('details').should('have.attr', 'open');
+      header('firstSection').parent('details').should('not.have.attr', 'open');
+      // gui-accordion fires the close of the first section in a microtask, before this check runs:
+      // a handler that reads stale sections emits a second change here.
+      cy.get('@formEventHandler').should(() => {
+        expect(changes()).to.deep.equal([{ firstSection: false, secondSection: true }]);
+      });
+    });
+  });
+
   describe('Accordion Component with calculated props', () => {
     const ACCORDION_UID = 'calculatedAccordion';
 

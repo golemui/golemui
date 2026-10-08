@@ -7,7 +7,7 @@ import {
   type AccordionProps,
   repeaterIndexSuffix,
 } from '@golemui/gui-shared/internals';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { GuiAccordionItemReact, GuiAccordionReact } from '../web-components';
 
 const empty = {};
@@ -17,6 +17,11 @@ export function Accordion(widgetInstance: WithWidget) {
   const { uid, children, templateData, onChange } = useLayoutWidget<AccordionProps>(widget);
   const [activeSections, setActiveSections] =
     useState<NonNullable<AccordionProps['defaultOpen']>>(empty);
+  // The sections as of the last toggle. With singleOpen, opening one section makes gui-accordion
+  // fire the close of the others in a microtask, before React renders the first update: reading
+  // the state from this render's closure would undo it.
+  const sectionsRef = useRef(activeSections);
+  sectionsRef.current = activeSections;
   // Section uids come from the props without row indexes, the children come from the store with
   // them, so the lookup adds this accordion's own suffix.
   const rowIndexSuffix = repeaterIndexSuffix(widget.uid);
@@ -31,15 +36,17 @@ export function Accordion(widgetInstance: WithWidget) {
     // An accordion nested in a section fires its own.
     if (event.target !== event.currentTarget) return;
     const { open } = event.detail;
-    if (!!activeSections[sectionUid] === open) return;
+    const current = sectionsRef.current;
+    if (!!current[sectionUid] === open) return;
 
-    const next: typeof activeSections = { ...activeSections };
+    const next: typeof activeSections = { ...current };
     if (open && templateData.singleOpen) {
       Object.keys(next).forEach((key) => {
         next[key] = false;
       });
     }
     next[sectionUid] = open;
+    sectionsRef.current = next;
     setActiveSections(next);
     onChange(next);
   };
