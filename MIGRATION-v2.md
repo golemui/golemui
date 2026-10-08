@@ -13,6 +13,7 @@ you use GolemUI:
 | render forms                                                   | [Every Forms app](#every-forms-app), [Layouts](#layouts) |
 | style forms with your own CSS, or select their markup in tests | [CSS and markup](#css-and-markup)                        |
 | write custom widgets that render `gui-*` elements              | [Custom widgets](#custom-widgets)                        |
+| build your own widget set on `@golemui/core`                   | [Custom widget sets](#custom-widget-sets)                |
 | import from `@golemui/*/internals` or pin packages             | [Packages](#packages)                                    |
 
 ## Checklist
@@ -24,6 +25,7 @@ you use GolemUI:
 - [ ] Check your global CSS resets, which now override GolemUI's styles.
 - [ ] Update CSS and test selectors that target tabs, accordions, alerts, grids or error lists.
 - [ ] In custom widgets, listen for the `gui-*` events.
+- [ ] In your own widget set, rename the `flex` loader to `grid`, or add a `grid` loader.
 
 ## Every Forms app
 
@@ -599,6 +601,43 @@ override updated(changed: PropertyValues) {
 To line up with the fields next to it, give your widget's root the `gui-field` class, and its parts
 the `gui-label`, `gui-widget` and `gui-validator` classes. See
 [the field anatomy](libs/gui/components/README.md#layout).
+
+## Custom widget sets
+
+This section applies if you build your own widget set on `@golemui/core`, with your own
+`widgetLoaders`, instead of the gui widgets.
+
+`grid` replaces `flex` as a reserved widget type. Core wraps every form whose `form` is an array in a
+`grid` layout with no props, so every widget set must now provide a `grid` loader, next to
+`repeater`. Without one, the form can't load its root: the console shows
+`Widget "grid" could not be loaded`, and nothing renders, on the server either.
+
+**Before:**
+
+```ts
+const widgetLoaders = {
+  flex: () => import('./layouts/stack').then((m) => m.Stack),
+  repeater: () => import('./layouts/repeater').then((m) => m.Repeater),
+  // …your widgets
+};
+```
+
+**After:**
+
+```ts
+const widgetLoaders = {
+  grid: () => import('./layouts/stack').then((m) => m.Stack),
+  repeater: () => import('./layouts/repeater').then((m) => m.Repeater),
+  // …your widgets
+};
+```
+
+- Your `grid` widget must stack its children when it gets no props.
+- Keep the `flex` loader too if your stored forms use `flex` layouts.
+- If your widget set has a DX adapter, its `rootEntry` must build a `grid` root too.
+- A widget set scaffolded with `npx @golemui/schemas init` now starts with a `grid` component schema
+  instead of `flex`. In an existing one, add `grid` to the manifest in `schemas.config.mjs`, with
+  its schema, and rerun `npx @golemui/schemas generate`.
 
 ## Packages
 

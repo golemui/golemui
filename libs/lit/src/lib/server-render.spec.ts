@@ -10,6 +10,7 @@ import {
   canonicalServerMarkup,
   formData,
   noopValidators,
+  reservedOnlyWidgetLoaders,
   stubWidgetLoaders,
 } from './ssr.fixture';
 
@@ -128,5 +129,25 @@ describe('server rendering a form in plain node', () => {
     } as any);
 
     expect(emitEvent).not.toHaveBeenCalled();
+  });
+});
+
+describe('server rendering with only the reserved loaders', () => {
+  it('renders an array-shaped form inside the grid root core adds', async () => {
+    await preloadFormWidgets({ widgetLoaders: reservedOnlyWidgetLoaders as any });
+    const markup = await renderForm({
+      config: {
+        formName: 'reserved-only-form',
+        formDef: {
+          form: [{ kind: 'input', type: 'textinput', path: 'name', label: 'Name' }],
+        },
+        widgetLoaders: reservedOnlyWidgetLoaders as any,
+        data: { name: 'Ada' },
+      },
+      validators: noopValidators,
+    });
+
+    expect(markup).toContain('class="stub-flex"');
+    expect(markup).toMatch(/<input[^>]*data-label="Name"[^>]*value="Ada"/);
   });
 });

@@ -114,6 +114,16 @@ export const stubWidgetLoaders = {
   flex: async (): Promise<Type<WithWidget>> => StubFlexElement as Type<WithWidget>,
 };
 
+/**
+ * The smallest widget set the contract allows: the reserved `grid` and `repeater` loaders and
+ * one input. Core wraps an array-shaped form in a `grid` root, so this set must render one.
+ */
+export const reservedOnlyWidgetLoaders = {
+  grid: async (): Promise<Type<WithWidget>> => StubFlexElement as Type<WithWidget>,
+  repeater: async (): Promise<Type<WithWidget>> => StubFlexElement as Type<WithWidget>,
+  textinput: async (): Promise<Type<WithWidget>> => StubTextInputElement as Type<WithWidget>,
+};
+
 /** Accepts everything. The specs assert on markup, not on validation. */
 export const noopValidators: ValidatorFn<any> = () =>
   ({

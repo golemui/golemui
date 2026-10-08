@@ -2,7 +2,7 @@ import type { Form, LayoutWidget, ReactiveExpression } from '@golemui/core';
 
 /**
  * Builds a test form definition: wraps the given widgets in a root vertical
- * layout using the reserved `flex` type every widget set implementation must
+ * layout using the reserved `grid` type every widget set implementation must
  * provide. Runtime-identical to the gui builder helper the suites previously
  * imported from gui-shared, but without gui-specific widget typing, so the
  * suites stay free of implementation imports.

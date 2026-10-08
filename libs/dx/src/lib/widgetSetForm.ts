@@ -84,7 +84,7 @@ export interface WidgetSetDefinition<
 > {
   /**
    * Lazy widget loaders keyed by widget type name. Must include the reserved
-   * `flex` and `repeater` entries every implementation provides.
+   * `grid` and `repeater` entries every implementation provides.
    */
   widgetLoaders: WidgetLoaders<TComponent>;
   /**

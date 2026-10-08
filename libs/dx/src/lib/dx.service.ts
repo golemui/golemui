@@ -38,7 +38,7 @@ export interface DxAdapter {
   /**
    * The auto-stack root: wraps all top-level definitions in a synthetic root
    * layout so the form renders as a single vertical container. Must resolve
-   * to the reserved `flex` widget type.
+   * to the reserved `grid` widget type.
    */
   rootEntry(children: ValidGuiShortcut[]): ValidGuiShortcut;
 }
@@ -108,7 +108,7 @@ export class DxService<TDependencies extends Dependencies = Dependencies> {
    *  2. Normalize selectors - convert mixed leaf/aggregated selectors into a uniform
    *     aggregated shape, and extract form-level config (see {@link FormConfig}).
    *  3. Auto-stack - unless suppressed, wrap all definitions in a synthetic root
-   *     flex column layout so the form renders as a single vertical container.
+   *     grid stack layout so the form renders as a single vertical container.
    */
   private prepareForm(
     dxDefinitionsRaw: DxDefinitions,

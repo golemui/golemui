@@ -107,7 +107,7 @@ describe('runCli', () => {
         idBase: 'https://x.dev/schemas/kendo',
         generatorPath: 'x',
         formTitle: 'x',
-        manifest: [{ type: 'flex', schemaFile: 'flex.schema.json', kind: 'layout' }],
+        manifest: [{ type: 'grid', schemaFile: 'grid.schema.json', kind: 'layout' }],
       };\n`,
       'utf-8',
     );

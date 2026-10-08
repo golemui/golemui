@@ -102,7 +102,7 @@ class GolemFormBuilder<
       states: config.states,
       form: {
         uid: 'gui-root-uid',
-        type: 'flex',
+        type: 'grid',
         kind: 'layout',
         children: config.form as any,
       } as LayoutWidget<ExtractStates<States>, FormType>,
@@ -160,7 +160,7 @@ class GolemFormBuilder<
  *     }),
  *     {
  *       kind: 'layout',
- *       type: 'flex',
+ *       type: 'grid',
  *       props: { direction: 'row' },
  *       children: [
  *         {
