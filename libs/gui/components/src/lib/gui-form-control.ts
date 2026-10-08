@@ -193,8 +193,14 @@ export abstract class GuiFormControl extends GuiElement {
     );
   }
 
+  /**
+   * The inner native controls are in the light DOM, so the reset empties them too. The render after
+   * it writes the value back into them, also when the value did not change and setting it would
+   * schedule no render. An element that overrides this calls `super.formResetCallback()`.
+   */
   formResetCallback(): void {
     if (this.hasDefaultValue) this.controlValue = this.defaultValue;
+    this.requestUpdate();
   }
 
   formDisabledCallback(disabled: boolean): void {

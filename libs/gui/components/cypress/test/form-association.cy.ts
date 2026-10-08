@@ -99,6 +99,55 @@ describe('native form association', () => {
     form().then(([element]) => expect(new FormData(element).get('name')).to.equal('Ada'));
   });
 
+  // The inner controls are in the light DOM, so a native reset empties them too: the element must
+  // write its value back, also when the value did not change.
+  it('shows its initial value again after a reset without edits', () => {
+    const options = [
+      { label: 'Starter', value: 'starter' },
+      { label: 'Team', value: 'team' },
+    ];
+    cy.mount(
+      html`<form>
+        <gui-textinput name="name" label="Name" value="Ada"></gui-textinput>
+        <gui-password name="secret" label="Password" value="hunter2"></gui-password>
+        <gui-textarea name="bio" label="Bio" value="Hello"></gui-textarea>
+        <gui-markdown name="notes" label="Notes" value="# Hi"></gui-markdown>
+        <gui-checkbox name="terms" label="Terms" .value=${true}></gui-checkbox>
+        <gui-toggle name="news" label="News" .value=${true}></gui-toggle>
+        <gui-select name="plan" label="Plan" .options=${options} value="team"></gui-select>
+        <gui-number name="age" label="Age" value="42"></gui-number>
+        <gui-currency name="price" label="Price" value="12.5"></gui-currency>
+      </form>`,
+    );
+    cy.get('gui-select select').should('have.value', 'team');
+
+    form().then(([element]) => element.reset());
+
+    cy.get('gui-textinput input').should('have.value', 'Ada');
+    cy.get('gui-password input').should('have.value', 'hunter2');
+    cy.get('gui-textarea textarea').should('have.value', 'Hello');
+    cy.get('gui-markdown textarea').should('have.value', '# Hi');
+    cy.get('gui-checkbox input').should('be.checked');
+    cy.get('gui-toggle input').should('be.checked');
+    cy.get('gui-select select').should('have.value', 'team');
+    cy.get('gui-number input').should('have.value', '42');
+    cy.get('gui-currency input').should('have.value', '12.5');
+    form().then(([element]) => {
+      const data = new FormData(element);
+      expect(Object.fromEntries(data)).to.deep.equal({
+        name: 'Ada',
+        secret: 'hunter2',
+        bio: 'Hello',
+        notes: '# Hi',
+        terms: 'on',
+        news: 'on',
+        plan: 'team',
+        age: '42',
+        price: '12.5',
+      });
+    });
+  });
+
   it('is disabled by a disabled fieldset, and enabled again with it', () => {
     cy.mount(
       html`<form>
