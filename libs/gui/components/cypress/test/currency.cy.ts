@@ -156,6 +156,64 @@ describe('gui-currency', () => {
     });
   });
 
+  describe('keyboard', () => {
+    it('steps by its step with ArrowUp and ArrowDown and commits each step', () => {
+      const onChange = cy.spy().as('change');
+      cy.mount(
+        html`<gui-currency
+          label="Price"
+          value="1"
+          step="0.5"
+          @gui-change=${onChange}
+        ></gui-currency>`,
+      );
+
+      input().type('{upArrow}');
+      input().should('have.value', '1.5');
+      element().should('have.prop', 'value', 1.5);
+      cy.get('@change').its('lastCall.args.0.detail').should('deep.equal', { value: 1.5 });
+
+      input().type('{downArrow}{downArrow}{downArrow}');
+      input().should('have.value', '0');
+      cy.get('@change').should('have.callCount', 4);
+    });
+
+    it('steps a fractional step without floating-point noise', () => {
+      cy.mount(html`<gui-currency label="Price" value="0.2" step="0.1"></gui-currency>`);
+
+      input().type('{upArrow}');
+
+      input().should('have.value', '0.3');
+      element().should('have.prop', 'value', 0.3);
+    });
+
+    it('steps by 1 without a step, and from 0 when empty', () => {
+      cy.mount(html`<gui-currency label="Price"></gui-currency>`);
+
+      input().type('{downArrow}');
+
+      input().should('have.value', '-1');
+    });
+
+    it('does not step when read-only', () => {
+      const onChange = cy.spy().as('change');
+      cy.mount(
+        html`<gui-currency
+          label="Price"
+          value="5"
+          step="0.5"
+          readonly
+          @gui-change=${onChange}
+        ></gui-currency>`,
+      );
+
+      input().focus().trigger('keydown', { key: 'ArrowUp' });
+
+      input().should('have.value', '5');
+      cy.get('@change').should('not.have.been.called');
+    });
+  });
+
   describe('states', () => {
     it('makes the native input read-only', () => {
       cy.mount(html`<gui-currency label="Price" value="12.5" readonly></gui-currency>`);

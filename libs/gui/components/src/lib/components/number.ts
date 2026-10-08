@@ -9,6 +9,7 @@ import {
   blockNonNumericKeys,
   isRealNumber,
   serverValue,
+  stepValue,
 } from '../utils/numeric';
 import { GuiFormControl, type GuiValidity } from '../gui-form-control';
 import { dispatchBlur, dispatchChange, dispatchValue, valueEvents } from '../utils/events';
@@ -218,20 +219,17 @@ export class GuiNumber extends GuiFormControl {
     this.stepBy(1);
   }
 
-  /**
-   * Steps the value up or down like a native number input: an empty field steps from 0, so
-   * ArrowDown gives -step, and the result is clamped to minimum and maximum.
-   */
+  /** Steps the value up or down like a native number input's arrow keys (see stepValue). */
   private stepBy(direction: 1 | -1) {
     if (this.readOnly) return;
 
     const target = this.querySelector(`input[id="${this.uid}"]`) as HTMLInputElement;
-    const step = typeof this.step === 'number' ? this.step : 1;
-    const current = Number.isNaN(target.valueAsNumber) ? 0 : target.valueAsNumber;
-    let value = current + direction * step;
-
-    value = isRealNumber(this.maximum) ? Math.min(value, this.maximum) : value;
-    value = isRealNumber(this.minimum) ? Math.max(value, this.minimum) : value;
+    const current = Number.isNaN(target.valueAsNumber) ? undefined : target.valueAsNumber;
+    const value = stepValue(current, direction, {
+      step: this.step,
+      minimum: this.minimum,
+      maximum: this.maximum,
+    });
 
     target.valueAsNumber = value;
     this.value = value;

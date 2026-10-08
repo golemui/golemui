@@ -9,6 +9,7 @@ import {
   blockNonNumericKeys,
   isRealNumber,
   serverValue,
+  stepValue,
 } from '../utils/numeric';
 import { GuiFormControl } from '../gui-form-control';
 import { dispatchBlur, dispatchChange, dispatchValue, valueEvents } from '../utils/events';
@@ -182,7 +183,7 @@ export class GuiCurrency extends GuiFormControl {
           @input=${this.handleInput}
           @change=${this.handleChange}
           @beforeinput=${blockNonNumericInput}
-          @keydown=${blockNonNumericKeys}
+          @keydown=${this.keyDown}
           @focus=${this.handleFocus}
           @blur=${this.handleBlur}
         />
@@ -213,6 +214,28 @@ export class GuiCurrency extends GuiFormControl {
       this.value = Number.isNaN(value) ? undefined : value;
       dispatchValue(this, this.value, { commit: false });
     }
+  }
+
+  /**
+   * The inner input has `step="any"`, so the browser would step it by 1: ArrowUp and ArrowDown
+   * step by `step` here instead, like gui-number.
+   */
+  private keyDown(event: KeyboardEvent) {
+    blockNonNumericKeys(event);
+    if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown') return;
+    event.preventDefault();
+    if (this.readOnly) return;
+
+    const target = event.target as HTMLInputElement;
+    const current = Number.isNaN(target.valueAsNumber) ? undefined : target.valueAsNumber;
+    const value = stepValue(current, event.key === 'ArrowUp' ? 1 : -1, { step: this.step });
+
+    target.valueAsNumber = value;
+    this.value = value;
+    this.displayValue = this.formatCurrency(value);
+
+    // A step is a complete edit, like the native number input's arrow keys.
+    dispatchValue(this, this.value);
   }
 
   /** The native `change`: the user committed the typed amount (blur or Enter). */

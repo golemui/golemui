@@ -159,6 +159,23 @@ describe('gui-number', () => {
       input().should('have.value', '1');
     });
 
+    it('steps a fractional step without floating-point noise', () => {
+      cy.mount(html`<gui-number label="Weight" value="0.2" step="0.1"></gui-number>`);
+
+      input().type('{upArrow}');
+
+      input().should('have.value', '0.3');
+      element().should('have.prop', 'value', 0.3);
+    });
+
+    it('steps by 1 when its step is not a positive number', () => {
+      cy.mount(html`<gui-number label="Age" value="5" step="0"></gui-number>`);
+
+      input().type('{upArrow}');
+
+      input().should('have.value', '6');
+    });
+
     it('blocks letters', () => {
       cy.mount(html`<gui-number label="Age"></gui-number>`);
 
