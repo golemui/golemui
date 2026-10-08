@@ -389,6 +389,8 @@ export class GuiDateTimePicker extends GuiFormControl {
   private onInnerInputError(event: CustomEvent<GuiInputErrorEventDetail>) {
     stopPropagation(event);
     dispatchInputError(this, event.detail.message);
+    // The inner field's bad input is part of this picker's validity.
+    this.requestUpdate();
   }
 
   private onDateInput(event: CustomEvent) {
@@ -430,6 +432,8 @@ export class GuiDateTimePicker extends GuiFormControl {
     event.stopPropagation();
     this._workingDate = (event.detail.date as string | null) ?? undefined;
     this._workingTime = (event.detail.time as string | null) ?? undefined;
+    // The inner field's bad input is part of this picker's validity.
+    this.requestUpdate();
   }
 
   /** A calendar pick feeds the working state and paints the input's segments. */
@@ -479,8 +483,11 @@ export class GuiDateTimePicker extends GuiFormControl {
   protected override validate(): GuiValidity | null {
     // The bounds are days: a time outside a day's allowed times reports as a custom error.
     const day = this.value?.slice(0, 10);
+    // A typed entry the inner field cannot turn into a value: it keeps the previous one.
+    const badInput = this.querySelector<GuiDateTime>('gui-date-time')?.partsBadInput() ?? null;
     return (
       boundsValidity(this.validateBounds(this.value), day, this.minDate, this.maxDate) ??
+      (badInput ? { flags: { badInput: true }, message: badInput } : null) ??
       super.validate()
     );
   }

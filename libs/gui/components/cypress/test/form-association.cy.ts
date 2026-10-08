@@ -286,3 +286,81 @@ describe('native form association of segmented fields', () => {
     });
   }
 });
+
+// A picker or a range field keeps its previous value while the user types an entry it cannot use,
+// so it must report that entry as bad input, like gui-date does.
+describe('native form association of pickers and range fields', () => {
+  // The time pickers' fields only take typing with allow-custom-time.
+  const mount = (tag: string, value?: string) =>
+    cy.mount(
+      html`<form>
+          <${unsafeStatic(tag)}
+            name="when"
+            label="When"
+            locale-id="en-US"
+            value=${value ?? nothing}
+            ?allow-custom-time=${tag.endsWith('time-picker') && !tag.includes('date')}
+          ></${unsafeStatic(tag)}>
+        </form>
+        <button id="outside">Outside</button>`,
+    );
+  const part = (tag: string, type: string) => cy.get(`${tag} [data-type="${type}"]`).first();
+  const expectValid = (valid: boolean) =>
+    form().should(([element]) => expect(element.checkValidity()).to.equal(valid));
+
+  const partlyTyped = [
+    { tag: 'gui-date-picker', first: 'month' },
+    { tag: 'gui-time-picker', first: 'hour' },
+    { tag: 'gui-date-time-picker', first: 'month' },
+    { tag: 'gui-range-date', first: 'month' },
+    { tag: 'gui-range-time', first: 'hour' },
+    { tag: 'gui-range-date-time', first: 'month' },
+    { tag: 'gui-range-date-picker', first: 'month' },
+    { tag: 'gui-range-time-picker', first: 'hour' },
+    { tag: 'gui-range-date-time-picker', first: 'month' },
+  ];
+
+  for (const { tag, first } of partlyTyped) {
+    it(`${tag} blocks submission while an entry is partly typed, and not once it is deleted`, () => {
+      mount(tag);
+
+      part(tag, first).type('12');
+      expectValid(false);
+      control(tag).should(([el]) => expect(el.validity?.badInput).to.equal(true));
+      cy.get('#outside').focus();
+      expectValid(false);
+
+      part(tag, first).clear();
+      cy.get('#outside').focus();
+      expectValid(true);
+    });
+  }
+
+  const impossible = [
+    { tag: 'gui-date-picker', value: '2024-02-10' },
+    { tag: 'gui-date-time-picker', value: '2024-02-10T10:00:00' },
+  ];
+
+  for (const { tag, value } of impossible) {
+    it(`${tag} blocks submission when the typed date is impossible`, () => {
+      mount(tag, value);
+
+      part(tag, 'day').clear().type('31');
+      cy.get('#outside').focus();
+
+      expectValid(false);
+      control(tag).should(([el]) => expect(el.validity?.badInput).to.equal(true));
+    });
+  }
+
+  it('gui-range-date-picker blocks submission when a typed endpoint is impossible', () => {
+    mount('gui-range-date-picker');
+
+    part('gui-range-date-picker', 'month').type('02');
+    cy.focused().type('31');
+    cy.focused().type('2024');
+
+    expectValid(false);
+    control('gui-range-date-picker').should(([el]) => expect(el.validity?.badInput).to.equal(true));
+  });
+});

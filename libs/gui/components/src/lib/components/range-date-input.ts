@@ -35,7 +35,7 @@ import { addErrors, addLabel, type ControlTemplateData } from '../utils/template
 import './pills';
 import type { GuiPillEventDetail, GuiPillItem, GuiPillsDropdownEventDetail } from './pills';
 import type { DateRange } from '../types';
-import { GuiFormControl } from '../gui-form-control';
+import { GuiFormControl, type GuiValidity } from '../gui-form-control';
 import {
   dispatch,
   dispatchBlur,
@@ -618,6 +618,39 @@ export class GuiRangeDateInput extends GuiFormControl {
 
   private onPillClick(range: DateRange) {
     dispatch(this, 'gui-range-click', { range });
+  }
+
+  /** A draft the element cannot add as a range (see partsBadInput), then `required`. */
+  protected override validate(): GuiValidity | null {
+    const badInput = this.partsBadInput();
+    return (badInput ? { flags: { badInput: true }, message: badInput } : null) ?? super.validate();
+  }
+
+  /**
+   * The bad input the draft holds now: the error the field shows, or a date that is partly
+   * typed or impossible. An empty draft has none, and neither has a complete one, which leaving or
+   * Enter adds as a range. Read when the validity is written, and by the picker that embeds the
+   * element. It parses without clamping, so reading it changes nothing.
+   *
+   * @internal
+   */
+  partsBadInput(): string | null {
+    if (this.groups.every((group) => this._parts.isGroupEmpty(group, this.datePartTypes)))
+      return null;
+    if (this._parts.surfacedInputError) return this._parts.surfacedInputError;
+
+    const results = this.groups.map(
+      (group) =>
+        parseDateGroup(this._parts.values[group] ?? {}, {
+          descriptors: this.partDescriptors,
+          invalidDateMessage: this.invalidDateMessage,
+        }).result,
+    );
+    for (const result of results) {
+      if (result.kind === 'invalid') return result.message;
+    }
+    if (results.every((result) => result.kind === 'valid')) return null;
+    return message('incompleteDate', this.incompleteMessage);
   }
 
   private validateDateParts(group: string): RangeEndpoint<Date> {

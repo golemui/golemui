@@ -260,7 +260,13 @@ export class GuiRangeDatePicker extends GuiFormControl {
 
   /** A range outside `minDate`/`maxDate` or over a disabled day, then `required`. */
   protected override validate(): GuiValidity | null {
-    return dateRangesValidity(this.value, this) ?? super.validate();
+    // A typed entry the inner field cannot turn into a value: it keeps the previous one.
+    const badInput = this._dateRef?.partsBadInput() ?? null;
+    return (
+      dateRangesValidity(this.value, this) ??
+      (badInput ? { flags: { badInput: true }, message: badInput } : null) ??
+      super.validate()
+    );
   }
 
   override render() {
@@ -463,6 +469,8 @@ export class GuiRangeDatePicker extends GuiFormControl {
   private onDateInputError(event: CustomEvent<GuiInputErrorEventDetail>) {
     stopPropagation(event);
     dispatchInputError(this, event.detail.message);
+    // The inner field's bad input is part of this picker's validity.
+    this.requestUpdate();
   }
 
   private onCalendarChange(event: CustomEvent) {
@@ -492,6 +500,8 @@ export class GuiRangeDatePicker extends GuiFormControl {
   private onInputPartsChange(event: CustomEvent<{ start: string | null; end: string | null }>) {
     event.stopPropagation();
     this.setWorking(event.detail.start ?? undefined, event.detail.end ?? undefined);
+    // The inner field's bad input is part of this picker's validity.
+    this.requestUpdate();
   }
 
   /**

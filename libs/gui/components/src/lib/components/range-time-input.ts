@@ -336,7 +336,12 @@ export class GuiRangeTimeInput extends GuiFormControl {
 
   /** A range outside `minTime`/`maxTime` or over a disabled range, then `required`. */
   protected override validate(): GuiValidity | null {
-    return timeRangesValidity(this.value, this) ?? super.validate();
+    const badInput = this.partsBadInput();
+    return (
+      timeRangesValidity(this.value, this) ??
+      (badInput ? { flags: { badInput: true }, message: badInput } : null) ??
+      super.validate()
+    );
   }
 
   override render() {
@@ -657,6 +662,34 @@ export class GuiRangeTimeInput extends GuiFormControl {
 
   private getSortedPills(): TimeRange[] {
     return sortRangesByStart(this.value, compareISOTimes);
+  }
+
+  /**
+   * The bad input the draft holds now: the error the field shows, or a time that is partly
+   * typed or impossible. An empty draft has none, and neither has a complete one, which leaving or
+   * Enter adds as a range. Read when the validity is written, and by the picker that embeds the
+   * element. It parses without clamping, so reading it changes nothing.
+   *
+   * @internal
+   */
+  partsBadInput(): string | null {
+    if (this.groups.every((group) => this._parts.isGroupEmpty(group, this.timePartTypes)))
+      return null;
+    if (this._parts.surfacedInputError) return this._parts.surfacedInputError;
+
+    const { effectiveHourFormat, descriptors } = this.timeLocaleData;
+    const results = this.groups.map(
+      (group) =>
+        parseTimeGroup(this._parts.values[group] ?? {}, {
+          hourFormat: effectiveHourFormat,
+          descriptors,
+        }).result,
+    );
+    for (const result of results) {
+      if (result.kind === 'invalid') return result.message;
+    }
+    if (results.every((result) => result.kind === 'valid')) return null;
+    return message('incompleteTime', this.incompleteMessage);
   }
 
   /**

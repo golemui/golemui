@@ -246,7 +246,7 @@ export class GuiTimePicker extends GuiFormControl {
           @gui-input=${this.onTimeInput}
           @gui-change=${stopPropagation}
           @gui-input-error=${this.onTimeInputError}
-          @gui-parts-change=${stopPropagation}
+          @gui-parts-change=${this.onInnerPartsChange}
         ></gui-time>
         <button
           type="button"
@@ -287,6 +287,8 @@ export class GuiTimePicker extends GuiFormControl {
   private onTimeInputError(event: CustomEvent<GuiInputErrorEventDetail>) {
     stopPropagation(event);
     dispatchInputError(this, event.detail.message);
+    // The inner field's bad input is part of this picker's validity.
+    this.requestUpdate();
   }
 
   /** Typing in the field is continuous editing: the field's own commit is not the picker's. */
@@ -326,9 +328,18 @@ export class GuiTimePicker extends GuiFormControl {
     if (error) dispatchInputError(this, error);
   }
 
+  /** The inner field's parts changed, and with them its bad input, which is part of the validity. */
+  private onInnerPartsChange(event: Event) {
+    stopPropagation(event);
+    this.requestUpdate();
+  }
+
   protected override validate(): GuiValidity | null {
+    // A typed entry the inner field cannot turn into a value: it keeps the previous one.
+    const badInput = this.querySelector<GuiTime>('gui-time')?.partsBadInput() ?? null;
     return (
       boundsValidity(this.validateBounds(this.value), this.value, this.minTime, this.maxTime) ??
+      (badInput ? { flags: { badInput: true }, message: badInput } : null) ??
       super.validate()
     );
   }

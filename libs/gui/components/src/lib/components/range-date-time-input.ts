@@ -366,7 +366,12 @@ export class GuiRangeDateTimeInput extends GuiFormControl {
 
   /** A range outside `minDateTime`/`maxDateTime` or over a disabled range, then `required`. */
   protected override validate(): GuiValidity | null {
-    return dateTimeRangesValidity(this.value, this) ?? super.validate();
+    const badInput = this.partsBadInput();
+    return (
+      dateTimeRangesValidity(this.value, this) ??
+      (badInput ? { flags: { badInput: true }, message: badInput } : null) ??
+      super.validate()
+    );
   }
 
   override render() {
@@ -705,6 +710,35 @@ export class GuiRangeDateTimeInput extends GuiFormControl {
       this.value,
       (a, b) => parseISODateTimeString(a).getTime() - parseISODateTimeString(b).getTime(),
     );
+  }
+
+  /**
+   * The bad input the draft holds now: the error the field shows, or a date and time that is partly
+   * typed or impossible. An empty draft has none, and neither has a complete one, which leaving or
+   * Enter adds as a range. Read when the validity is written, and by the picker that embeds the
+   * element. It parses without clamping, so reading it changes nothing.
+   *
+   * @internal
+   */
+  partsBadInput(): string | null {
+    if (this.groups.every((group) => this._parts.isGroupEmpty(group, this.dateTimePartTypes)))
+      return null;
+    if (this._parts.surfacedInputError) return this._parts.surfacedInputError;
+
+    const { effectiveHourFormat, descriptors } = this.localeData;
+    const results = this.groups.map(
+      (group) =>
+        parseDateTimeGroup(this._parts.values[group] ?? {}, {
+          hourFormat: effectiveHourFormat,
+          descriptors,
+          invalidDateMessage: this.invalidDateMessage,
+        }).result,
+    );
+    for (const result of results) {
+      if (result.kind === 'invalid') return result.message;
+    }
+    if (results.every((result) => result.kind === 'valid')) return null;
+    return message('incompleteDateTime', this.incompleteMessage);
   }
 
   /**

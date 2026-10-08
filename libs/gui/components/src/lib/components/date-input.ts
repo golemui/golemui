@@ -328,9 +328,12 @@ export class GuiDate extends GuiFormControl {
 
   /**
    * The bad input the parts hold now: a partly typed date, or a complete one that is no date.
-   * Read when the validity is written, so it never lags behind the error last shown.
+   * Read when the validity is written, so it never lags behind the error last shown, and by the
+   * picker that embeds the element.
+   *
+   * @internal
    */
-  private partsBadInput(): string | null {
+  partsBadInput(): string | null {
     const result = this.parseParts();
     if (result.kind === 'invalid') return result.message;
     return this.groupCompleteness() === 'partial'

@@ -338,7 +338,13 @@ export class GuiRangeDateTimePicker extends GuiFormControl {
 
   /** A range outside `minDateTime`/`maxDateTime` or over a disabled range, then `required`. */
   protected override validate(): GuiValidity | null {
-    return dateTimeRangesValidity(this.value, this) ?? super.validate();
+    // A typed entry the inner field cannot turn into a value: it keeps the previous one.
+    const badInput = this._dateRef?.partsBadInput() ?? null;
+    return (
+      dateTimeRangesValidity(this.value, this) ??
+      (badInput ? { flags: { badInput: true }, message: badInput } : null) ??
+      super.validate()
+    );
   }
 
   override render() {
@@ -574,6 +580,8 @@ export class GuiRangeDateTimePicker extends GuiFormControl {
       startTime: start.time ?? undefined,
       endTime: end.time ?? undefined,
     });
+    // The inner field's bad input is part of this picker's validity.
+    this.requestUpdate();
   }
 
   /**
@@ -628,6 +636,8 @@ export class GuiRangeDateTimePicker extends GuiFormControl {
   private onInputError(event: CustomEvent<GuiInputErrorEventDetail>) {
     stopPropagation(event);
     dispatchInputError(this, event.detail.message);
+    // The inner field's bad input is part of this picker's validity.
+    this.requestUpdate();
   }
 
   /**

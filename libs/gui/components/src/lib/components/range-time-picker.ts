@@ -430,6 +430,8 @@ export class GuiRangeTimePicker extends GuiFormControl {
     event.stopPropagation();
     this._workingIn = event.detail.start ?? undefined;
     this._workingOut = event.detail.end ?? undefined;
+    // The inner field's bad input is part of this picker's validity.
+    this.requestUpdate();
   }
 
   /**
@@ -451,6 +453,8 @@ export class GuiRangeTimePicker extends GuiFormControl {
   private onInputError(event: CustomEvent<GuiInputErrorEventDetail>) {
     stopPropagation(event);
     dispatchInputError(this, event.detail.message);
+    // The inner field's bad input is part of this picker's validity.
+    this.requestUpdate();
   }
 
   private onInListChange(event: CustomEvent) {
@@ -524,7 +528,13 @@ export class GuiRangeTimePicker extends GuiFormControl {
 
   /** A range outside `minTime`/`maxTime` or over a disabled range, then `required`. */
   protected override validate(): GuiValidity | null {
-    return timeRangesValidity(this.value, this) ?? super.validate();
+    // A typed entry the inner field cannot turn into a value: it keeps the previous one.
+    const badInput = this._inputRef?.partsBadInput() ?? null;
+    return (
+      timeRangesValidity(this.value, this) ??
+      (badInput ? { flags: { badInput: true }, message: badInput } : null) ??
+      super.validate()
+    );
   }
 
   private onPillClick(event: Event) {

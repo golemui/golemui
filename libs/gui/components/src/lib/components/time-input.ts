@@ -347,9 +347,12 @@ export class GuiTime extends GuiFormControl {
 
   /**
    * The bad input the parts hold now: a partly typed time, or a complete one that is no time.
-   * Read when the validity is written, so it never lags behind the error last shown.
+   * Read when the validity is written, so it never lags behind the error last shown, and by the
+   * picker that embeds the element.
+   *
+   * @internal
    */
-  private partsBadInput(): string | null {
+  partsBadInput(): string | null {
     const result = this.parseParts();
     if (result.kind === 'invalid') return result.message;
     return this.groupCompleteness() === 'partial'

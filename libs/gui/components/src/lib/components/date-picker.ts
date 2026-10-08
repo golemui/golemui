@@ -245,7 +245,7 @@ export class GuiDatePicker extends GuiFormControl {
           @gui-input=${this.onDateInput}
           @gui-change=${this.onDateChange}
           @gui-input-error=${this.onDateInputError}
-          @gui-parts-change=${stopPropagation}
+          @gui-parts-change=${this.onInnerPartsChange}
         ></gui-date>
         <button
           type="button"
@@ -285,6 +285,8 @@ export class GuiDatePicker extends GuiFormControl {
   private onDateInputError(event: CustomEvent<GuiInputErrorEventDetail>) {
     stopPropagation(event);
     dispatchInputError(this, event.detail.message);
+    // The inner field's bad input is part of this picker's validity.
+    this.requestUpdate();
   }
 
   private onDateInput(event: CustomEvent) {
@@ -327,9 +329,18 @@ export class GuiDatePicker extends GuiFormControl {
     if (error) dispatchInputError(this, error);
   }
 
+  /** The inner field's parts changed, and with them its bad input, which is part of the validity. */
+  private onInnerPartsChange(event: Event) {
+    stopPropagation(event);
+    this.requestUpdate();
+  }
+
   protected override validate(): GuiValidity | null {
+    // A typed entry the inner field cannot turn into a value: it keeps the previous one.
+    const badInput = this.querySelector<GuiDate>('gui-date')?.partsBadInput() ?? null;
     return (
       boundsValidity(this.validateBounds(this.value), this.value, this.minDate, this.maxDate) ??
+      (badInput ? { flags: { badInput: true }, message: badInput } : null) ??
       super.validate()
     );
   }
