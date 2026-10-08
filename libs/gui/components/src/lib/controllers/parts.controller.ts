@@ -576,6 +576,9 @@ export class GUIPartsController implements ReactiveController {
   surfaceInputError(message: string): void {
     this._surfacedInputError = message;
     this.options.onInputErrorSurfaced?.(message);
+    // The host writes its validity in an update, and this can run outside one (a focus leave
+    // settles in an animation frame).
+    this.host.requestUpdate();
   }
 
   /**
@@ -586,9 +589,13 @@ export class GUIPartsController implements ReactiveController {
     if (this._surfacedInputError === null) return;
     this._surfacedInputError = null;
     this.options.onSurfacedErrorCleared?.(value);
+    this.host.requestUpdate();
   }
 
+  /** Forgets the surfaced `gui-input-error` without reporting it. */
   resetSurfacedInputError(): void {
+    if (this._surfacedInputError === null) return;
     this._surfacedInputError = null;
+    this.host.requestUpdate();
   }
 }

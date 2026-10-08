@@ -13,6 +13,7 @@ import {
   type DateTimePartDescriptor,
   type DateTimePartType,
   type GroupCompleteness,
+  type GroupParseResult,
 } from '../utils/parts';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 import { boundsValidity, GuiFormControl, type GuiValidity } from '../gui-form-control';
@@ -299,11 +300,10 @@ export class GuiDate extends GuiFormControl {
           maxDateMessage: this.maxDateMessage,
         })
       : null;
+    const badInput = this.partsBadInput();
     return (
       boundsValidity(boundsError, this.value, this.minDate, this.maxDate) ??
-      (this._parts.surfacedInputError
-        ? { flags: { badInput: true }, message: this._parts.surfacedInputError }
-        : null) ??
+      (badInput ? { flags: { badInput: true }, message: badInput } : null) ??
       super.validate()
     );
   }
@@ -314,12 +314,35 @@ export class GuiDate extends GuiFormControl {
    * @internal
    */
   groupCompleteness(): GroupCompleteness {
-    const { result } = parseDateGroup(this._parts.values['default'] ?? {}, {
+    if (this.parseParts().kind !== 'incomplete') return 'complete';
+    return this._parts.isGroupEmpty('default', DATE_PART_TYPES) ? 'empty' : 'partial';
+  }
+
+  /** The parts as they are now, parsed. */
+  private parseParts(): GroupParseResult {
+    return parseDateGroup(this._parts.values['default'] ?? {}, {
       descriptors: this.partDescriptors,
       invalidDateMessage: this.invalidDateMessage,
-    });
-    if (result.kind !== 'incomplete') return 'complete';
-    return this._parts.isGroupEmpty('default', DATE_PART_TYPES) ? 'empty' : 'partial';
+    }).result;
+  }
+
+  /**
+   * The bad input the parts hold now: a partly typed date, or a complete one that is no date.
+   * Read when the validity is written, so it never lags behind the error last shown.
+   */
+  private partsBadInput(): string | null {
+    const result = this.parseParts();
+    if (result.kind === 'invalid') return result.message;
+    return this.groupCompleteness() === 'partial'
+      ? message('incompleteDate', this.incompleteMessage)
+      : null;
+  }
+
+  /** Also refills the parts, which the reset emptied, and drops the error they showed. */
+  override formResetCallback(): void {
+    super.formResetCallback();
+    this._parts.setGroupFromISO('default', this.value ?? '', 'date');
+    this._parts.resetSurfacedInputError();
   }
 
   private onWidgetFocusOut = (event: FocusEvent): void => {

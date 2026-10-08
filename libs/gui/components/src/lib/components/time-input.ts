@@ -13,6 +13,7 @@ import {
   type DateTimePartDescriptor,
   type DateTimePartType,
   type GroupCompleteness,
+  type GroupParseResult,
   type TimeLocaleData,
 } from '../utils/parts';
 
@@ -317,11 +318,10 @@ export class GuiTime extends GuiFormControl {
           maxTimeMessage: this.maxTimeMessage,
         })
       : null;
+    const badInput = this.partsBadInput();
     return (
       boundsValidity(boundsError, this.value, this.minTime, this.maxTime) ??
-      (this._parts.surfacedInputError
-        ? { flags: { badInput: true }, message: this._parts.surfacedInputError }
-        : null) ??
+      (badInput ? { flags: { badInput: true }, message: badInput } : null) ??
       super.validate()
     );
   }
@@ -332,13 +332,41 @@ export class GuiTime extends GuiFormControl {
    * @internal
    */
   groupCompleteness(): GroupCompleteness {
+    if (this.parseParts().kind !== 'incomplete') return 'complete';
+    return this._parts.isGroupEmpty('default', TIME_PART_TYPES) ? 'empty' : 'partial';
+  }
+
+  /** The parts as they are now, parsed. */
+  private parseParts(): GroupParseResult {
     const { effectiveHourFormat, descriptors } = this.timeLocaleData;
-    const { result } = parseTimeGroup(this._parts.values['default'] ?? {}, {
+    return parseTimeGroup(this._parts.values['default'] ?? {}, {
       hourFormat: effectiveHourFormat,
       descriptors,
-    });
-    if (result.kind !== 'incomplete') return 'complete';
-    return this._parts.isGroupEmpty('default', TIME_PART_TYPES) ? 'empty' : 'partial';
+    }).result;
+  }
+
+  /**
+   * The bad input the parts hold now: a partly typed time, or a complete one that is no time.
+   * Read when the validity is written, so it never lags behind the error last shown.
+   */
+  private partsBadInput(): string | null {
+    const result = this.parseParts();
+    if (result.kind === 'invalid') return result.message;
+    return this.groupCompleteness() === 'partial'
+      ? message('incompleteTime', this.incompleteMessage)
+      : null;
+  }
+
+  /** Also refills the parts, which the reset emptied, and drops the error they showed. */
+  override formResetCallback(): void {
+    super.formResetCallback();
+    this._parts.setGroupFromISO(
+      'default',
+      this.value ?? '',
+      'time',
+      this.timeLocaleData.effectiveHourFormat,
+    );
+    this._parts.resetSurfacedInputError();
   }
 
   private onWidgetFocusOut = (event: FocusEvent): void => {

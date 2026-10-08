@@ -1,4 +1,5 @@
-import { html } from 'lit';
+import { nothing } from 'lit';
+import { html, unsafeStatic } from 'lit/static-html.js';
 import type { GuiFormControl } from '../../src/lib/gui-form-control';
 
 const form = () => cy.get<HTMLFormElement>('form');
@@ -218,4 +219,70 @@ describe('standalone use', () => {
     cy.get('@change').its('firstCall.args.0.detail').should('deep.equal', { value: 'Ada' });
     cy.get('gui-textinput').should('have.prop', 'value', 'Ada');
   });
+});
+
+// The parts of a date or time field hold more than its value: a partly typed entry has no value
+// yet, and the element must report it as bad input at once, not after focus leaves.
+describe('native form association of segmented fields', () => {
+  const cases = [
+    { tag: 'gui-date', first: 'month', cleared: 'day', value: '2026-03-15' },
+    { tag: 'gui-time', first: 'hour', cleared: 'minute', value: '10:30:00' },
+    { tag: 'gui-date-time', first: 'month', cleared: 'day', value: '2026-03-15T10:30:00' },
+  ] as const;
+
+  for (const { tag, first, cleared, value } of cases) {
+    describe(tag, () => {
+      const part = (type: string) => cy.get(`${tag} [data-type="${type}"]`);
+      const field = (initial?: string) =>
+        html`<form>
+            <${unsafeStatic(tag)}
+              name="when"
+              label="When"
+              locale-id="en-US"
+              value=${initial ?? nothing}
+            ></${unsafeStatic(tag)}>
+          </form>
+          <button id="outside">Outside</button>`;
+      const expectValid = (valid: boolean) =>
+        form().should(([element]) => expect(element.checkValidity()).to.equal(valid));
+
+      it('blocks submission while an entry is partly typed', () => {
+        cy.mount(field());
+
+        part(first).type('12');
+        expectValid(false);
+        control(tag).should(([el]) => expect(el.validity?.badInput).to.equal(true));
+
+        cy.get('#outside').focus();
+        expectValid(false);
+      });
+
+      it('is valid again once the partly typed entry is deleted', () => {
+        cy.mount(field());
+
+        part(first).type('12');
+        cy.get('#outside').focus();
+        expectValid(false);
+
+        part(first).clear();
+        cy.get('#outside').focus();
+        expectValid(true);
+        form().then(([element]) => expect(new FormData(element).has('when')).to.equal(false));
+      });
+
+      it('restores its value and its validity on reset', () => {
+        cy.mount(field(value));
+
+        part(cleared).clear();
+        cy.get('#outside').focus();
+        expectValid(false);
+
+        form().then(([element]) => element.reset());
+
+        part(cleared).invoke('val').should('not.equal', '');
+        expectValid(true);
+        form().then(([element]) => expect(new FormData(element).get('when')).to.equal(value));
+      });
+    });
+  }
 });

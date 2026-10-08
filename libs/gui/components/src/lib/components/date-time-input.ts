@@ -15,6 +15,7 @@ import {
   type DateTimePartDescriptor,
   type DateTimePartType,
   type GroupCompleteness,
+  type GroupParseResult,
   type TimeLocaleData,
 } from '../utils/parts';
 
@@ -229,11 +230,10 @@ export class GuiDateTime extends GuiFormControl {
     const boundsError = this.value
       ? this.boundsError(this.value, parseISODateTimeString(this.value))
       : null;
+    const badInput = this.partsBadInput();
     return (
       boundsValidity(boundsError, this.value?.slice(0, 10), this.minDate, this.maxDate) ??
-      (this._parts.surfacedInputError
-        ? { flags: { badInput: true }, message: this._parts.surfacedInputError }
-        : null) ??
+      (badInput ? { flags: { badInput: true }, message: badInput } : null) ??
       super.validate()
     );
   }
@@ -436,14 +436,42 @@ export class GuiDateTime extends GuiFormControl {
    * @internal
    */
   groupCompleteness(): GroupCompleteness {
+    if (this.parseParts().kind !== 'incomplete') return 'complete';
+    return this._parts.isGroupEmpty('default', DATE_TIME_PART_TYPES) ? 'empty' : 'partial';
+  }
+
+  /** The parts as they are now, parsed. */
+  private parseParts(): GroupParseResult {
     const { effectiveHourFormat, descriptors } = this.localeData;
-    const { result } = parseDateTimeGroup(this._parts.values['default'] ?? {}, {
+    return parseDateTimeGroup(this._parts.values['default'] ?? {}, {
       hourFormat: effectiveHourFormat,
       descriptors,
       invalidDateMessage: this.invalidDateMessage,
-    });
-    if (result.kind !== 'incomplete') return 'complete';
-    return this._parts.isGroupEmpty('default', DATE_TIME_PART_TYPES) ? 'empty' : 'partial';
+    }).result;
+  }
+
+  /**
+   * The bad input the parts hold now: a partly typed date and time, or a complete one that is not
+   * valid. Read when the validity is written, so it never lags behind the error last shown.
+   */
+  private partsBadInput(): string | null {
+    const result = this.parseParts();
+    if (result.kind === 'invalid') return result.message;
+    return this.groupCompleteness() === 'partial'
+      ? message('incompleteDateTime', this.incompleteMessage)
+      : null;
+  }
+
+  /** Also refills the parts, which the reset emptied, and drops the error they showed. */
+  override formResetCallback(): void {
+    super.formResetCallback();
+    this._parts.setGroupFromISO(
+      'default',
+      this.value ?? '',
+      'dateTime',
+      this.localeData.effectiveHourFormat,
+    );
+    this._parts.resetSurfacedInputError();
   }
 
   private onWidgetFocusOut = (event: FocusEvent): void => {
