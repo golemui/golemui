@@ -8,7 +8,7 @@ import { addErrors, addLabel, type ControlTemplateData } from '../utils/template
 import { ARROW_CLOCKWISE_PATH, UPLOAD_PATH, X_CIRCLE_PATH, spinnerIcon } from '../utils/icons';
 import { clampPct, errorMessage, matchesAccept, newId, parseAccept } from '../utils/file-upload';
 import type { FileItem, UploadService } from '../types';
-import { GuiFormControl } from '../gui-form-control';
+import { GuiFormControl, type GuiValidity } from '../gui-form-control';
 import {
   dispatchBlur,
   dispatchInputError,
@@ -111,6 +111,16 @@ export class GuiFileUpload extends GuiFormControl {
   /** Announcement after an upload fails. `{name}` is the file name. */
   @property({ type: String, attribute: 'failed-message' }) failedMessage: string | undefined =
     undefined;
+  /** Error that blocks a native form submit while a file is still uploading. */
+  @property({ type: String, attribute: 'pending-message' }) pendingMessage: string | undefined =
+    undefined;
+  /**
+   * Error that blocks a native form submit while a file failed to upload. `{name}` is the file
+   * name.
+   */
+  @property({ type: String, attribute: 'upload-error-message' }) uploadErrorMessage:
+    | string
+    | undefined = undefined;
 
   /** Progress of the active upload, 0..100. */
   @state() protected _pct = 0;
@@ -158,6 +168,28 @@ export class GuiFileUpload extends GuiFormControl {
     this._abort?.abort();
     this._abort = null;
     this._activeId = null;
+  }
+
+  /**
+   * A file that failed or is still uploading has no data to submit, so it blocks a native submit,
+   * as the Forms file validators do. Then `required`.
+   */
+  protected override validate(): GuiValidity | null {
+    const items = this.getItems();
+    const failed = items.find((item) => item.status === 'error');
+    if (failed) {
+      return {
+        flags: { customError: true },
+        message: message('uploadErrored', this.uploadErrorMessage, { name: failed.name }),
+      };
+    }
+    if (items.some((item) => item.status !== 'uploaded')) {
+      return {
+        flags: { customError: true },
+        message: message('uploadPending', this.pendingMessage),
+      };
+    }
+    return super.validate();
   }
 
   // ─── Value access (overridden by the multi variant) ──────────────────────

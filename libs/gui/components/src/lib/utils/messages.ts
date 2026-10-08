@@ -131,6 +131,8 @@ export const DEFAULT_MESSAGES = {
   fileTypeNotAccepted: 'File type not accepted',
   uploadFailed: 'Upload failed',
   uploadInterrupted: '{name} was not uploaded. Remove it and pick the file again.',
+  uploadPending: 'Wait for the upload to finish.',
+  uploadErrored: '{name} failed to upload. Retry it or remove it.',
   removeFailed: 'Could not remove the file',
   missingUploadService: 'File uploads are not configured',
   fileUploaded: '{name} uploaded.',

@@ -453,3 +453,83 @@ describe('native form validity of date and time bounds', () => {
     );
   });
 });
+
+// A file that failed or is still uploading has no data to submit: it blocks a native submit.
+describe('native form validity of file uploads', () => {
+  const pick = (tag: string, fileName: string) =>
+    cy
+      .get(`${tag} input[type=file]`)
+      .selectFile({ contents: Cypress.Buffer.from('abc'), fileName }, { force: true });
+
+  /** An upload service whose uploads settle when the test says so. */
+  const service = () => {
+    const pending: { resolve: (data: unknown) => void; reject: (err: Error) => void }[] = [];
+    const uploadService = {
+      upload: () => new Promise((resolve, reject) => pending.push({ resolve, reject })),
+    };
+    return { uploadService, pending };
+  };
+
+  for (const tag of ['gui-file-upload', 'gui-multi-file-upload']) {
+    describe(tag, () => {
+      const mount = (uploadService: unknown, props: Record<string, unknown> = {}) =>
+        cy.mount(
+          html`<form>
+            <${unsafeStatic(tag)}
+              ${ref(
+                (node) =>
+                  node &&
+                  Object.assign(node, {
+                    name: 'files',
+                    label: 'Files',
+                    dependencies: { uploadService },
+                    ...props,
+                  }),
+              )}
+            ></${unsafeStatic(tag)}>
+          </form>`,
+        );
+      const expectValid = (valid: boolean) =>
+        form().should(([element]) => expect(element.checkValidity()).to.equal(valid));
+
+      it('blocks submission with a refused file', () => {
+        mount(service().uploadService, { required: true, accept: ['.pdf'] });
+
+        pick(tag, 'photo.png');
+
+        expectValid(false);
+        control(tag).should(([el]) => {
+          expect(el.validity?.customError).to.equal(true);
+          expect(el.validationMessage).to.equal(
+            'photo.png failed to upload. Retry it or remove it.',
+          );
+        });
+      });
+
+      it('blocks submission while an upload runs, and not once it finished', () => {
+        const { uploadService, pending } = service();
+        mount(uploadService);
+
+        pick(tag, 'notes.txt');
+
+        expectValid(false);
+        control(tag).should(([el]) =>
+          expect(el.validationMessage).to.equal('Wait for the upload to finish.'),
+        );
+        cy.then(() => pending[0].resolve({ url: '/files/1' }));
+        expectValid(true);
+      });
+
+      it('blocks submission when an upload failed', () => {
+        const { uploadService, pending } = service();
+        mount(uploadService, { required: true });
+
+        pick(tag, 'notes.txt');
+        cy.then(() => pending[0].reject(new Error('Network down')));
+
+        expectValid(false);
+        control(tag).should(([el]) => expect(el.validity?.customError).to.equal(true));
+      });
+    });
+  }
+});
