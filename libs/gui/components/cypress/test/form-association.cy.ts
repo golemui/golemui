@@ -1,4 +1,5 @@
 import { nothing } from 'lit';
+import { ref } from 'lit/directives/ref.js';
 import { html, unsafeStatic } from 'lit/static-html.js';
 import type { GuiFormControl } from '../../src/lib/gui-form-control';
 
@@ -362,5 +363,93 @@ describe('native form association of pickers and range fields', () => {
 
     expectValid(false);
     control('gui-range-date-picker').should(([el]) => expect(el.validity?.badInput).to.equal(true));
+  });
+});
+
+// `required` and the bounds block a native submit: a value outside them, set from code or kept by
+// the element with an error, makes the element invalid.
+describe('native form validity of date and time bounds', () => {
+  const cases = [
+    {
+      tag: 'gui-calendar',
+      bounds: { minDate: '2024-01-01' },
+      outside: '2020-01-01',
+      inside: '2024-06-01',
+      flag: 'rangeUnderflow',
+    },
+    {
+      tag: 'gui-date-picker',
+      bounds: { maxDate: '2024-12-31' },
+      outside: '2025-01-01',
+      inside: '2024-06-01',
+      flag: 'rangeOverflow',
+    },
+    {
+      tag: 'gui-time-picker',
+      bounds: { minTime: '09:00:00' },
+      outside: '08:00:00',
+      inside: '10:00:00',
+      flag: 'rangeUnderflow',
+    },
+    {
+      tag: 'gui-date-time-picker',
+      bounds: { minTime: '09:00:00', maxTime: '17:00:00' },
+      outside: '2024-03-15T18:00:00',
+      inside: '2024-03-15T10:00:00',
+      flag: 'customError',
+    },
+    {
+      tag: 'gui-date-time-calendar',
+      bounds: { minTime: '09:00:00', maxTime: '17:00:00' },
+      outside: '2024-03-15T18:00:00',
+      inside: '2024-03-15T10:00:00',
+      flag: 'customError',
+    },
+  ] as const;
+
+  for (const { tag, bounds, outside, inside, flag } of cases) {
+    it(`${tag} blocks a value outside its bounds`, () => {
+      cy.mount(
+        html`<form>
+          <${unsafeStatic(tag)}
+            ${ref((node) => node && Object.assign(node, { name: 'when', ...bounds, value: outside }))}
+          ></${unsafeStatic(tag)}>
+        </form>`,
+      );
+
+      form().should(([element]) => expect(element.checkValidity()).to.equal(false));
+      control(tag).should(([el]) => expect(el.validity?.[flag]).to.equal(true));
+
+      control(tag).then(([el]) => {
+        (el as unknown as { value: string }).value = inside;
+      });
+      form().should(([element]) => expect(element.checkValidity()).to.equal(true));
+    });
+  }
+
+  it('gui-date-time-picker blocks a typed time outside min-time and max-time', () => {
+    cy.mount(
+      html`<form>
+          <gui-date-time-picker
+            name="at"
+            locale-id="en-GB"
+            min-time="09:00:00"
+            max-time="17:00:00"
+          ></gui-date-time-picker>
+        </form>
+        <button id="outside">Outside</button>`,
+    );
+
+    cy.get('gui-date-time-picker [data-type="day"]').type('15');
+    cy.focused().type('03');
+    cy.focused().type('2024');
+    cy.focused().should('have.attr', 'data-type', 'hour').type('18');
+    cy.focused().type('00');
+    cy.get('#outside').focus();
+
+    form().should(([element]) => expect(element.checkValidity()).to.equal(false));
+    form().then(([element]) =>
+      expect(new FormData(element).get('at')).to.equal('2024-03-15T18:00:00'),
+    );
   });
 });

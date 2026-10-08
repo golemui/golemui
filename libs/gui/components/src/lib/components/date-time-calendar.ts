@@ -33,7 +33,7 @@ import {
   type TimeRange,
 } from '../utils/time';
 import type { DateRange, DisabledTimeRange } from '../types';
-import { GuiFormControl } from '../gui-form-control';
+import { boundsValidity, GuiFormControl, type GuiValidity } from '../gui-form-control';
 import {
   dispatch,
   dispatchBlur,
@@ -45,6 +45,7 @@ import {
   valueEvents,
   type GuiInputErrorEventDetail,
 } from '../utils/events';
+import { dateTimeValueBoundsError } from '../utils/date-time-bounds';
 import { message, requiredName } from '../utils/messages';
 
 export interface DateTimeCalendarDay {
@@ -342,6 +343,23 @@ export class GuiDateTimeCalendar extends GuiFormControl {
   private emitValue(value: string | null) {
     this._surfacedError = false;
     dispatchValue(this, value, { commit: false });
+  }
+
+  /**
+   * A value outside the bounds, then `required`. A picked day keeps the time already chosen, even
+   * when that time is not allowed on that day, and a typed custom time can be outside the bounds:
+   * both are reported here, not only as `gui-input-error`.
+   */
+  protected override validate(): GuiValidity | null {
+    // The date bounds are days: a time outside its bounds reports as a custom error.
+    return (
+      boundsValidity(
+        dateTimeValueBoundsError(this.value, this),
+        this.value?.slice(0, 10),
+        this.minDate,
+        this.maxDate,
+      ) ?? super.validate()
+    );
   }
 
   /** @internal */

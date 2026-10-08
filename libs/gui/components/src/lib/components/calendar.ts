@@ -12,6 +12,7 @@ import {
   renderCalendarPanelBody,
 } from '../utils/calendar-templates';
 import {
+  dateBoundsError,
   getDayLabel,
   getFullDateLabel,
   isToday,
@@ -20,7 +21,7 @@ import {
 } from '../utils/date';
 import { buildMonthDays, computeDayStatus } from '../utils/day-status';
 import type { DateRange } from '../types';
-import { GuiFormControl } from '../gui-form-control';
+import { boundsValidity, GuiFormControl, type GuiValidity } from '../gui-form-control';
 import { dispatchBlur, dispatchValue, valueEvents } from '../utils/events';
 
 export interface CalendarDay {
@@ -313,6 +314,14 @@ export class GuiCalendar extends GuiFormControl {
       },
       focusFallbackDates: [selectedDate ? parseISODateString(selectedDate) : new Date()],
     });
+  }
+
+  /** A day outside the bounds, such as a value set from code, then `required`. */
+  protected override validate(): GuiValidity | null {
+    const error = this.value
+      ? dateBoundsError(this.value, this.minDate, this.maxDate, this.disabledRanges)
+      : null;
+    return boundsValidity(error, this.value, this.minDate, this.maxDate) ?? super.validate();
   }
 
   /** @internal */

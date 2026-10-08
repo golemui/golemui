@@ -7,14 +7,7 @@ import './date-time-calendar';
 import type { GuiDateTime } from './date-time-input';
 import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
 import { GUIPopupController } from '../controllers/popup.controller';
-import { dateBoundsError, toISODateString } from '../utils/date';
-import {
-  isTimeDisabled,
-  parseISODateTimeString,
-  resolveDisabledTimeRangesForDate,
-  toISOTimeString,
-  type HourFormat,
-} from '../utils/time';
+import { type HourFormat } from '../utils/time';
 import { addErrors, addIcon, addLabel, addPickerPanel } from '../utils/templates';
 import type { DateRange, DisabledTimeRange } from '../types';
 import { boundsValidity, GuiFormControl, type GuiValidity } from '../gui-form-control';
@@ -27,7 +20,8 @@ import {
   valueEvents,
   type GuiInputErrorEventDetail,
 } from '../utils/events';
-import { message, requiredName } from '../utils/messages';
+import { dateTimeValueBoundsError } from '../utils/date-time-bounds';
+import { requiredName } from '../utils/messages';
 
 /**
  * A date and time field with a calendar and time popup.
@@ -493,24 +487,7 @@ export class GuiDateTimePicker extends GuiFormControl {
   }
 
   private validateBounds(value: string | undefined): string | null {
-    if (!value) return null;
-    const date = parseISODateTimeString(value);
-    if (isNaN(date.getTime())) return null;
-
-    const isoDate = toISODateString(date);
-    const dateError = dateBoundsError(isoDate, this.minDate, this.maxDate, this.disabledRanges, {
-      minDateMessage: this.minDateMessage,
-      maxDateMessage: this.maxDateMessage,
-      disabledDateRangeMessage: this.disabledDateRangeMessage,
-    });
-    if (dateError) return dateError;
-
-    // Disabled time ranges are date-scoped, so resolve them for the value's day.
-    const ranges = resolveDisabledTimeRangesForDate(this.disabledTimeRanges, isoDate);
-    if (isTimeDisabled(toISOTimeString(date), ranges)) {
-      return message('disabledTimeRange', this.disabledTimeRangeMessage);
-    }
-    return null;
+    return dateTimeValueBoundsError(value, this);
   }
 
   /**
