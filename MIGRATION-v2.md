@@ -15,6 +15,7 @@ you use GolemUI:
 | write custom widgets that render `gui-*` elements              | [Custom widgets](#custom-widgets)                        |
 | build your own widget set on `@golemui/core`                   | [Custom widget sets](#custom-widget-sets)                |
 | import from `@golemui/*/internals` or pin packages             | [Packages](#packages)                                    |
+| render forms on the server with `@golemui/lit/ssr`             | [Lit server rendering](#lit-server-rendering)            |
 
 ## Checklist
 
@@ -26,6 +27,7 @@ you use GolemUI:
 - [ ] Update CSS and test selectors that target tabs, accordions, alerts, grids or error lists.
 - [ ] In custom widgets, listen for the `gui-*` events.
 - [ ] In your own widget set, rename the `flex` loader to `grid`, or add a `grid` loader.
+- [ ] Rename the `@golemui/lit/ssr` functions you import.
 
 ## Every Forms app
 
@@ -654,6 +656,26 @@ const widgetLoaders = {
 - `@golemui/gui-react` no longer depends on `@lit/react`.
 - We still release all packages together, and each one depends on the exact version of the others.
   Upgrade them all to 2.0 at once.
+
+### Lit server rendering
+
+Five exports of `@golemui/lit/ssr` have new names. They now come from `@golemui/lit-utils`, which
+`@golemui/gui-components/ssr` shares.
+
+| 1.x                                                       | 2.0                         |
+| --------------------------------------------------------- | --------------------------- |
+| `renderGuiHtml`                                           | `renderTemplate`            |
+| `renderGuiFormHtml`                                       | `renderForm`                |
+| `GuiSsrElementRenderer`                                   | `RegisteredElementRenderer` |
+| `stripShadowRootTemplates`, `stripFalseBooleanAttributes` | `cleanServerMarkup`         |
+
+- `renderTemplate` and `renderForm` take the same arguments as before, and
+  `RegisteredElementRenderer` goes in the same place in `elementRenderers`.
+- `cleanServerMarkup` does the work of both strip functions in one pass, and also removes lit's
+  hydration markers. Pass `{ keepMarkers: true }` to keep them, as the 1.x functions did. It keeps
+  the shadow root of an element that renders into one, such as `gui-list`.
+- Each server-rendered element now has a `data-golemui-ssr` attribute. `resumeServerRenderedForm`
+  handles it, so only code that reads or snapshots the server markup sees the change.
 
 ## New in 2.0
 
