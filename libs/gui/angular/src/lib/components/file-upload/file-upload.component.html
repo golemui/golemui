@@ -29,7 +29,7 @@
   [uploadedMessage]="templateData.uploadedMessage"
   [removedMessage]="templateData.removedMessage"
   [failedMessage]="templateData.failedMessage"
-  (change)="valueChanged($event)"
-  (blur)="adapter.onBlur()"
-  (inputError)="onInputError($event)"
+  (gui-input)="valueChanged($event)"
+  (gui-blur)="adapter.onBlur()"
+  (gui-input-error)="onInputError($event)"
 ></gui-file-upload>

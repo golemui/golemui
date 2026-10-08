@@ -1,6 +1,6 @@
 import { gui } from '@golemui/gui-shared';
 
-export const dateTimeInputTab = gui.layouts.flex([
+export const dateTimeInputTab = gui.layouts.grid([
   gui.inputs.dateTimeInput('dateTimeInputEmpty', {
     label: 'Empty',
     icon: 'calendar_month',

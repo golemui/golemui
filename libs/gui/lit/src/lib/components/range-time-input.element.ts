@@ -24,18 +24,6 @@ export class RangeTimeInputElement extends LitElement implements WithWidget {
     return this;
   }
 
-  override updated(changedProperties: any) {
-    super.updated(changedProperties);
-
-    const size = this.adapter.templateData.size;
-
-    if (size) {
-      this.style.flex = String(size);
-    } else {
-      this.style.removeProperty('flex');
-    }
-  }
-
   override connectedCallback() {
     super.connectedCallback();
     this.classList.add('gui-range-time', 'gui-field');
@@ -57,7 +45,7 @@ export class RangeTimeInputElement extends LitElement implements WithWidget {
         .hint=${this.adapter.templateData.hint}
         .icon=${this.adapter.templateData.icon}
         .errors=${this.adapter.templateData.errors}
-        ?touched=${this.adapter.templateData.touched}
+        .touched=${this.adapter.templateData.touched}
         ?required=${this.adapter.templateData.validator?.required}
         ?disabled=${this.adapter.templateData.disabled}
         ?readonly=${this.adapter.templateData.readonly}
@@ -86,8 +74,8 @@ export class RangeTimeInputElement extends LitElement implements WithWidget {
         .editStartedMessage=${this.adapter.templateData.editStartedMessage as string}
         .editCommittedMessage=${this.adapter.templateData.editCommittedMessage as string}
         .editCancelledMessage=${this.adapter.templateData.editCancelledMessage as string}
-        @change=${this.valueChanged}
-        @inputError=${this.onInputError}
+        @gui-input=${this.valueChanged}
+        @gui-input-error=${this.onInputError}
       ></gui-range-time>
     `;
   }

@@ -192,7 +192,8 @@ export const runReadonlyComponentTests = (mountFn: MountComponentFn) => {
               form: [{ uid, kind: 'input', type: widget, path: 'test', readonly: true }],
             }),
           });
-          cy.get(selector).should('have.attr', 'disabled');
+          // Read-only, not disabled: the select stays focusable
+          cy.get(selector).should('not.have.attr', 'disabled');
           cy.get(selector).should('have.attr', 'aria-readonly', 'true');
           cy.get(selector).should('not.have.attr', 'aria-disabled');
         });
@@ -213,7 +214,7 @@ export const runReadonlyComponentTests = (mountFn: MountComponentFn) => {
               ],
             }),
           });
-          cy.get(selector).should('have.attr', 'disabled');
+          cy.get(selector).should('not.have.attr', 'disabled');
           cy.get(selector).should('have.attr', 'aria-readonly', 'true');
         });
 
@@ -238,8 +239,8 @@ export const runReadonlyComponentTests = (mountFn: MountComponentFn) => {
             }),
           });
 
-          // Select maps readonly to disabled + aria-readonly
-          cy.get(selector).should('have.attr', 'disabled');
+          // Select stays enabled and focusable, marked aria-readonly
+          cy.get(selector).should('not.have.attr', 'disabled');
           cy.get(selector).should('have.attr', 'aria-readonly', 'true');
 
           cy.get('[data-cy="lock-uid_checkbox"]').click();

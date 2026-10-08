@@ -20,13 +20,13 @@ export function Calendar(widgetInstance: WithWidget) {
         onBlur();
       };
       if (node) {
-        target.addEventListener('blur', blurHandler);
-        target.addEventListener('change', changeHandler);
+        target.addEventListener('gui-blur', blurHandler);
+        target.addEventListener('gui-input', changeHandler);
       }
 
       return () => {
-        target.removeEventListener('blur', blurHandler);
-        target.removeEventListener('change', changeHandler);
+        target.removeEventListener('gui-blur', blurHandler);
+        target.removeEventListener('gui-input', changeHandler);
       };
     },
     [onValueChanged, onBlur],
@@ -53,7 +53,7 @@ export function Calendar(widgetInstance: WithWidget) {
   const isRequired = (templateData.validator as Validator)?.required;
 
   return (
-    <div className="gui-calendar gui-field" style={{ flex: templateData.size }}>
+    <div className="gui-calendar gui-field">
       <GuiCalendarReact
         ref={handleRef}
         uid={uid}

@@ -24,18 +24,6 @@ export class RangeDateTimePickerElement extends LitElement implements WithWidget
     return this;
   }
 
-  override updated(changedProperties: any) {
-    super.updated(changedProperties);
-
-    const size = this.adapter.templateData.size;
-
-    if (size) {
-      this.style.flex = String(size);
-    } else {
-      this.style.removeProperty('flex');
-    }
-  }
-
   override connectedCallback() {
     super.connectedCallback();
     this.classList.add('gui-range-date-time-picker', 'gui-field');
@@ -59,7 +47,7 @@ export class RangeDateTimePickerElement extends LitElement implements WithWidget
         .hint=${templateData.hint}
         .icon=${templateData.icon}
         .errors=${templateData.errors}
-        ?touched=${templateData.touched}
+        .touched=${templateData.touched}
         ?required=${templateData.validator?.required}
         ?disabled=${templateData.disabled}
         ?readonly=${templateData.readonly}
@@ -110,9 +98,9 @@ export class RangeDateTimePickerElement extends LitElement implements WithWidget
         .editCancelledMessage=${templateData.editCancelledMessage as string}
         .dayCountAriaLabel=${templateData.dayCountAriaLabel as string}
         .disabledDayCountAriaLabel=${templateData.disabledDayCountAriaLabel as string}
-        @change=${this.valueChanged}
-        @inputError=${this.onInputError}
-        @blur=${() => this.adapter.onBlur()}
+        @gui-input=${this.valueChanged}
+        @gui-input-error=${this.onInputError}
+        @gui-blur=${() => this.adapter.onBlur()}
       ></gui-range-date-time-picker>
     `;
   }

@@ -1,0 +1,52 @@
+name: Server Rendering
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  # Renders every SSR app on the server and checks the page each framework sends: the Forms
+  # harnesses (*-ssr-harness) and the Components apps (components-ssr-*). Each check runs when one
+  # of its apps is affected, which includes any change to the libraries they build from.
+  parity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      NX_DAEMON: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          filter: tree:0
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: 'npm'
+
+      - uses: nrwl/nx-set-shas@v4
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Find the affected SSR apps
+        id: affected
+        run: |
+          set -euo pipefail
+          AFFECTED=$(npx nx show projects --affected --projects='*-ssr-harness,components-ssr-*' --json)
+          echo "forms=$(echo "$AFFECTED" | jq '[.[] | select(endswith("-ssr-harness"))] | length')" >> "$GITHUB_OUTPUT"
+          echo "components=$(echo "$AFFECTED" | jq '[.[] | select(startswith("components-ssr-"))] | length')" >> "$GITHUB_OUTPUT"
+
+      - name: Forms server rendering
+        if: steps.affected.outputs.forms != '0'
+        run: npm run test:ssr-parity
+
+      - name: Components server rendering
+        if: steps.affected.outputs.components != '0'
+        run: npm run test:ssr-parity-components

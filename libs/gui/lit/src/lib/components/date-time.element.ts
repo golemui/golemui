@@ -26,18 +26,6 @@ export class DateTimeElement extends LitElement implements WithWidget {
     return this;
   }
 
-  override updated(changedProperties: any) {
-    super.updated(changedProperties);
-
-    const size = this.adapter.templateData.size;
-
-    if (size) {
-      this.style.flex = String(size);
-    } else {
-      this.style.removeProperty('flex');
-    }
-  }
-
   override connectedCallback() {
     super.connectedCallback();
     this.classList.add('gui-date-time', 'gui-field');
@@ -62,7 +50,7 @@ export class DateTimeElement extends LitElement implements WithWidget {
         .label=${this.adapter.templateData.label as string}
         .hint=${this.adapter.templateData.hint}
         .errors=${this.adapter.templateData.errors}
-        ?touched=${this.adapter.templateData.touched}
+        .touched=${this.adapter.templateData.touched}
         ?required=${this.adapter.templateData.validator?.required}
         ?disabled=${this.adapter.templateData.disabled}
         ?readonly=${this.adapter.templateData.readonly}
@@ -87,9 +75,9 @@ export class DateTimeElement extends LitElement implements WithWidget {
         .incompleteMessage=${this.adapter.templateData.incompleteMessage as string}
         .hourFormat=${this.adapter.templateData.hourFormat}
         .minuteStep=${this.adapter.templateData.minuteStep}
-        @inputError=${this.onInputError}
-        @blur=${() => this.adapter.onBlur()}
-        @change=${this.valueChanged}
+        @gui-input-error=${this.onInputError}
+        @gui-blur=${() => this.adapter.onBlur()}
+        @gui-input=${this.valueChanged}
       ></gui-date-time>
     `;
   }

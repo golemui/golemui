@@ -17,7 +17,7 @@ export interface GUIPopupControllerOptions {
   /**
    * Selector (scoped to the host, light DOM) for the element to focus when
    * Escape closes the popup, e.g. `'gui-date input'`. Hosts that delegate
-   * focus restoration to their own host (gui-pills' `pillexit`) omit it,
+   * focus restoration to their own host (gui-pills' `gui-pill-exit`) omit it,
    * making `restoreFocusToInput()` a no-op.
    */
   focusRestoreSelector?: string;
@@ -239,8 +239,9 @@ export class GUIPopupController implements ReactiveController {
   }
 
   hostConnected() {
-    // A server render runs connectedCallback without a document.
-    if (typeof document === 'undefined') {
+    // A server render runs connectedCallback without a document, or with a stub of one (Angular's
+    // server rendering installs one in development).
+    if (typeof document === 'undefined' || typeof document.addEventListener !== 'function') {
       return;
     }
     document.addEventListener('click', this.onDocumentClick);

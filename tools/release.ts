@@ -15,6 +15,7 @@ const PUBLISHABLE_PACKAGES = [
   '@golemui/react',
   '@golemui/gui-react',
   '@golemui/lit',
+  '@golemui/lit-utils',
   '@golemui/gui-lit',
   '@golemui/vue',
   '@golemui/gui-vue',

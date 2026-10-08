@@ -1,6 +1,6 @@
 import { gui } from '@golemui/gui-shared';
 
-export const textinputTab = gui.layouts.flex([
+export const textinputTab = gui.layouts.grid([
   gui.inputs.textInput('textinput', { autocomplete: 'off' }),
   gui.inputs.textInput('textinputDisabled', { disabled: true, readonly: true }),
   gui.inputs.textInput('textinputPhone', { placeholder: 'Please enter your phone number' }),

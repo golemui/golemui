@@ -1,136 +1,136 @@
-.gui-form {
-  .gui-grid {
-    width: 100%;
-    flex: 1 1 0%;
+// Grid, the one layout. On its own it stacks its cells. `--row` puts them on one line, sharing the
+// width by span, and `--columns-N` / `--auto` wrap them in columns.
+//
+// In a row or columns, a cell spans three row tracks and shares them with its row: label and hint,
+// then the control, then the errors. The parts of sibling fields line up whatever the length of a
+// label, and an error only grows the last track.
 
-    .gui-grid__widget {
-      display: grid;
-      column-gap: var(--gui-space-4);
-      row-gap: var(--gui-space-2);
+// The grids whose cells share their rows.
+$aligned: '.gui-grid:is(.gui-grid--row, .gui-grid--auto, [class*="gui-grid--columns-"])';
+$cell: '#{$aligned} > .gui-grid__cell';
 
-      &--row {
-        grid-template-rows: auto auto auto;
-        grid-template-columns: repeat(12, 1fr);
+// A widget's outer element, and the element it wraps, inside a cell: frameworks may put one
+// element between the cell and the widget (Lit renders a `display: contents` one).
+$fields: '#{$cell} > .gui-field, #{$cell} > :not(.gui-field) > .gui-field';
+$nested-fields: '#{$cell} > .gui-field > .gui-field, #{$cell} > :not(.gui-field) > .gui-field > .gui-field';
 
-        &--auto-fit {
-          grid-template-columns: repeat(auto-fit, minmax(120px, auto));
-        }
+.gui-grid {
+  // The gap, set here and not inherited, so a nested grid keeps its own.
+  --_gap: var(--gui-layout-gap-md);
 
-        &.gui-grid__widget--align-center {
-          justify-content: center;
-        }
-        &.gui-grid__widget--align-start {
-          justify-content: start;
-        }
-        &.gui-grid__widget--align-end {
-          justify-content: end;
-        }
-        &.gui-grid__widget--align-space-between {
-          justify-content: space-between;
-        }
-        &.gui-grid__widget--align-space-around {
-          justify-content: space-around;
-        }
-        &.gui-grid__widget--align-space-evenly {
-          justify-content: space-evenly;
-        }
-        &.gui-grid__widget--align-stretch {
-          justify-content: stretch;
-        }
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--_gap);
+  min-width: 0;
 
-        &.gui-grid__widget--justify-center {
-          align-items: center;
-        }
-        &.gui-grid__widget--justify-start {
-          align-items: start;
-        }
-        &.gui-grid__widget--justify-end {
-          align-items: end;
-        }
-        &.gui-grid__widget--justify-stretch {
-          align-items: stretch;
-        }
-      }
-
-      &--column {
-        grid-template-columns: auto;
-        height: 100%;
-
-        &.gui-grid__widget--align-center {
-          align-content: center;
-        }
-        &.gui-grid__widget--align-start {
-          align-content: start;
-        }
-        &.gui-grid__widget--align-end {
-          align-content: end;
-        }
-        &.gui-grid__widget--align-space-between {
-          align-content: space-between;
-        }
-        &.gui-grid__widget--align-space-around {
-          align-content: space-around;
-        }
-        &.gui-grid__widget--align-space-evenly {
-          align-content: space-evenly;
-        }
-        &.gui-grid__widget--align-stretch {
-          align-content: stretch;
-        }
-
-        &.gui-grid__widget--justify-center {
-          justify-items: center;
-        }
-        &.gui-grid__widget--justify-start {
-          justify-items: start;
-        }
-        &.gui-grid__widget--justify-end {
-          justify-items: end;
-        }
-        &.gui-grid__widget--justify-stretch {
-          justify-items: stretch;
-        }
-      }
-
-      .gui-grid__cell {
-        display: grid;
-        grid-template-rows: subgrid;
-        grid-row: span 3;
-        gap: var(--gui-space-1);
-        align-items: start;
-
-        .gui-field {
-          display: grid;
-          grid-template-rows: subgrid;
-          grid-row: span 3;
-          gap: 0;
-          align-items: start;
-        }
-      }
+  @each $token in none, xs, sm, md, lg, xl {
+    &--gap-#{$token} {
+      --_gap: var(--gui-layout-gap-#{$token});
     }
   }
 
-  .gui-grid__widget--row {
-    gui-checkbox::after,
-    gui-toggle::after {
-      content: '';
-      display: block;
+  &--row {
+    grid-template-columns: none;
+    grid-template-rows: repeat(3, auto);
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+
+    // With `justify`, the cells keep their own width and the row places them.
+    &:is(
+      .gui-grid--justify-start,
+      .gui-grid--justify-center,
+      .gui-grid--justify-end,
+      .gui-grid--justify-space-between
+    ) {
+      grid-auto-columns: auto;
     }
+  }
+
+  @each $value in start, center, end, space-between {
+    &--justify-#{$value} {
+      justify-content: #{$value};
+    }
+  }
+
+  @for $columns from 1 through 12 {
+    &--columns-#{$columns} {
+      grid-template-columns: repeat(#{$columns}, minmax(0, 1fr));
+    }
+  }
+
+  &--auto {
+    grid-template-columns: repeat(auto-fit, minmax(min(var(--gui-layout-column-min), 100%), 1fr));
   }
 }
 
-@container gui-form (max-width: 480px) {
-  .gui-form .gui-grid .gui-grid__widget--row {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto;
+.gui-grid__cell {
+  min-width: 0;
+}
 
-    .gui-grid__cell {
-      grid-row: auto;
-      grid-column: auto !important;
+// A span applies in a row and in numbered columns: a stack has one column and `--auto` sizes its
+// own.
+@for $span from 2 through 12 {
+  .gui-grid:is(.gui-grid--row, [class*='gui-grid--columns-']) > .gui-grid__cell--span-#{$span} {
+    grid-column: span $span;
+  }
+}
 
-      .gui-field {
-        display: block;
-      }
+// A justified row places its cells at their own width, so a span has nothing to share.
+.gui-grid--row:is(
+    .gui-grid--justify-start,
+    .gui-grid--justify-center,
+    .gui-grid--justify-end,
+    .gui-grid--justify-space-between
+  )
+  > .gui-grid__cell {
+  grid-column: auto;
+}
+
+#{$cell},
+#{$fields},
+#{$nested-fields} {
+  display: grid;
+  grid-template-rows: subgrid;
+  grid-row: span 3;
+  row-gap: 0;
+  align-items: start;
+}
+
+// A row gap would also fall between the three tracks of a cell. The space between rows of cells is a
+// margin below each cell instead, and the grid takes back the one below its last row.
+#{$aligned} {
+  row-gap: 0;
+  margin-block-end: calc(-1 * var(--_gap));
+
+  > .gui-grid__cell {
+    margin-block-end: var(--_gap);
+  }
+}
+
+// Anything that is not one of a field's parts (a nested layout, an alert, markdown) takes all three
+// tracks. `:where` lets the parts' own rows win: `.gui-label` row 1, `.gui-widget` row 2,
+// `.gui-validator` row 3.
+:where(#{$cell}, #{$fields}, #{$nested-fields}) > * {
+  grid-row: 1 / -1;
+}
+
+// The control track centres its content, so a checkbox, a toggle or a button lines up with a 40px
+// input. Checkbox and toggle wrap their control in their label.
+#{$cell} > gui-button,
+:is(#{$fields}, #{$nested-fields}) > :is(.gui-widget, .gui-label:has(> .gui-widget), gui-button) {
+  grid-row: 2;
+  align-self: center;
+}
+
+// Narrow containers stack every grid. The cells keep their tracks, one below the other.
+@container gui-container (max-width: 480px) {
+  #{$aligned} {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+    grid-auto-flow: row;
+
+    > .gui-grid__cell {
+      grid-column: auto;
     }
   }
 }

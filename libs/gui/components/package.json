@@ -9,12 +9,14 @@
   "main": "./index.umd.cjs",
   "module": "./index.js",
   "types": "./index.d.ts",
+  "customElements": "custom-elements.json",
   "sideEffects": [
     "./*.js",
     "./*.cjs",
     "./lib/components/*.js",
     "./lib/components/*.umd.cjs",
     "./src/lib/components/*.ts",
+    "./src/ssr.ts",
     "*.css"
   ],
   "exports": {
@@ -27,6 +29,39 @@
       "types": "./internals.d.ts",
       "import": "./internals.js",
       "require": "./internals.umd.cjs"
+    },
+    "./react": {
+      "types": "./react.d.ts",
+      "import": "./react.js",
+      "require": "./react.umd.cjs"
+    },
+    "./ssr": {
+      "types": "./ssr.d.ts",
+      "import": "./ssr.js",
+      "require": "./ssr.umd.cjs"
+    },
+    "./nuxt": {
+      "types": "./nuxt.d.ts",
+      "import": "./nuxt.js",
+      "require": "./nuxt.umd.cjs"
+    },
+    "./vue": {
+      "types": "./vue.d.ts"
+    },
+    "./accordion": {
+      "types": "./lib/components/accordion.d.ts",
+      "import": "./lib/components/accordion.js",
+      "require": "./lib/components/accordion.umd.cjs"
+    },
+    "./accordion-item": {
+      "types": "./lib/components/accordion-item.d.ts",
+      "import": "./lib/components/accordion-item.js",
+      "require": "./lib/components/accordion-item.umd.cjs"
+    },
+    "./alert": {
+      "types": "./lib/components/alert.d.ts",
+      "import": "./lib/components/alert.js",
+      "require": "./lib/components/alert.umd.cjs"
     },
     "./button": {
       "types": "./lib/components/button.d.ts",
@@ -183,6 +218,26 @@
       "import": "./lib/components/select.js",
       "require": "./lib/components/select.umd.cjs"
     },
+    "./tab": {
+      "types": "./lib/components/tab.d.ts",
+      "import": "./lib/components/tab.js",
+      "require": "./lib/components/tab.umd.cjs"
+    },
+    "./tab-list": {
+      "types": "./lib/components/tab-list.d.ts",
+      "import": "./lib/components/tab-list.js",
+      "require": "./lib/components/tab-list.umd.cjs"
+    },
+    "./tab-panel": {
+      "types": "./lib/components/tab-panel.d.ts",
+      "import": "./lib/components/tab-panel.js",
+      "require": "./lib/components/tab-panel.umd.cjs"
+    },
+    "./tabs": {
+      "types": "./lib/components/tabs.d.ts",
+      "import": "./lib/components/tabs.js",
+      "require": "./lib/components/tabs.umd.cjs"
+    },
     "./tags": {
       "types": "./lib/components/tags.d.ts",
       "import": "./lib/components/tags.js",
@@ -218,6 +273,8 @@
       "import": "./lib/components/toggle.js",
       "require": "./lib/components/toggle.umd.cjs"
     },
+    "./tokens.css": "./lib/styles/tokens.css",
+    "./components.css": "./lib/styles/components.css",
     "./index.css": "./lib/styles/index.css",
     "./themes/clay.css": "./lib/styles/themes/clay.css"
   },
@@ -230,16 +287,48 @@
     "internals.d.ts",
     "internals.js",
     "internals.umd.cjs",
+    "react.d.ts",
+    "react.js",
+    "react.umd.cjs",
+    "ssr.d.ts",
+    "ssr.js",
+    "ssr.umd.cjs",
+    "nuxt.d.ts",
+    "nuxt.js",
+    "nuxt.umd.cjs",
+    "nuxt-server-plugin.d.ts",
+    "nuxt-server-plugin.js",
+    "nuxt-server-plugin.umd.cjs",
+    "vue.d.ts",
+    "custom-elements.json",
     "*.js",
     "*.cjs",
     "*.md"
   ],
+  "dependencies": {
+    "@golemui/lit-utils": "*",
+    "@lit/react": "^1.0.8"
+  },
   "peerDependencies": {
-    "@golemui/lit": "*",
-    "@golemui/core": "*",
-    "@golemui/gui-shared": "*",
-    "lit-html": "^3.3.1",
-    "lit": "^3.3.1"
+    "@lit-labs/ssr": "^4.1.0",
+    "@nuxt/kit": ">=3.0.0",
+    "lit": "^3.3.1",
+    "react": ">=18.0.0",
+    "vue": "^3.3.0"
+  },
+  "peerDependenciesMeta": {
+    "@lit-labs/ssr": {
+      "optional": true
+    },
+    "@nuxt/kit": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    },
+    "vue": {
+      "optional": true
+    }
   },
   "repository": {
     "type": "git",

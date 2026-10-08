@@ -30,7 +30,7 @@ export function NumberInput(widgetInstance: WithWidget) {
   const isRequired = (templateData.validator as Validator)?.required;
 
   return (
-    <div className="gui-number gui-field" style={{ flex: templateData.size }}>
+    <div className="gui-number gui-field">
       <GuiNumberReact
         uid={uid}
         label={label}
@@ -47,8 +47,8 @@ export function NumberInput(widgetInstance: WithWidget) {
         autoGrow={autoGrow}
         autocomplete={autocomplete ?? undefined}
         placeholder={placeholder ?? undefined}
-        onInput={handleChange}
-        onBlur={onBlur}
+        onGuiInput={handleChange}
+        onGuiBlur={onBlur}
       ></GuiNumberReact>
     </div>
   );

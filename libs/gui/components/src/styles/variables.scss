@@ -141,6 +141,15 @@
   --gui-space-12: 3rem;
   /* 48px */
 
+  /* Layout: the grid's `gap` steps, and the narrowest column of an `auto` grid */
+  --gui-layout-gap-none: 0px;
+  --gui-layout-gap-xs: var(--gui-space-1);
+  --gui-layout-gap-sm: var(--gui-space-2);
+  --gui-layout-gap-md: var(--gui-space-4);
+  --gui-layout-gap-lg: var(--gui-space-6);
+  --gui-layout-gap-xl: var(--gui-space-8);
+  --gui-layout-column-min: 12rem;
+
   /* Typography Scale */
   --gui-font-family:
     ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
@@ -185,6 +194,23 @@
 
   /* Widgets */
   --gui-widget-size: 40px;
+
+  /* Caret: the arrow of the pickers, selects, dropdowns, number spinner, calendar and accordion.
+     The default is a CSS shape, so it loads no image. For an icon of your own, set the image
+     (a url() your Content Security Policy allows) and set the shape to none. */
+  --gui-caret-shape: polygon(
+    79.04% 35.29%,
+    83.46% 35.29%,
+    83.46% 39.71%,
+    52.21% 70.96%,
+    50% 71.88%,
+    47.79% 70.96%,
+    16.54% 39.71%,
+    16.54% 35.29%,
+    20.96% 35.29%,
+    50% 64.33%
+  );
+  --gui-caret-image: none;
 
   /* Pills */
   --gui-pill-height: 24px;

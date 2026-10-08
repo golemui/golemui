@@ -51,7 +51,7 @@ const isLimitReached = computed(() =>
 </script>
 
 <template>
-  <div class="gui-repeater gui-field" :style="{ flex: templateData.size }">
+  <div class="gui-repeater gui-field">
     <div ref="repeaterRef" :id="uid" :class="cardClass" @focusin="onFocusIn" @focusout="onFocusOut">
       <gui-label
         :targetElement="repeaterRef ?? undefined"

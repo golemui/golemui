@@ -50,7 +50,7 @@ const config: GuiFormInitConfig = {
         {
           uid: 'tab1',
           kind: 'layout',
-          type: 'flex',
+          type: 'grid',
           children: [
             { kind: 'input', type: 'textinput', path: 'firstName', label: 'First name' },
             // The upload widgets read their service on their first update, so they must stay

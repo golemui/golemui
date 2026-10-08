@@ -1,36 +1,60 @@
-import { html, LitElement, nothing } from 'lit';
+import { html } from 'lit';
 import { property } from 'lit/decorators.js';
-import { cspStyleMap, safeDefine } from '@golemui/lit/internals';
+import { cspStyleMap } from '@golemui/lit-utils';
+import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
 import { chunk, gridKeyStep, listPageSize, nextEnabledIndex } from '../utils/grid-nav';
 import {
   buildTimeOptions,
   compareISOTimes,
   formatISOTimeForLocale,
-  NO_AVAILABLE_TIMES_MESSAGE,
   resolveHourFormat,
   type HourFormat,
   type TimeOption,
   type TimeRange,
 } from '../utils/time';
+import { GuiElement } from '../gui-element';
+import { dispatchValue, fires, type GuiValueEvent } from '../utils/events';
+import { message, requiredName } from '../utils/messages';
 
-export class GuiTimeList extends LitElement {
-  @property({ type: String }) uid: string | undefined = undefined;
+/**
+ * A grid of times to pick from.
+ *
+ * @fires gui-input - The user changed the value. `detail.value` is the new value.
+ * @fires gui-change - The user committed the value. `detail.value` is the committed value.
+ * @cssprop --gui-calendar-time-grid-height - Height of the time grid.
+ * @cssprop --gui-calendar-time-button-height - Height of each time in the grid.
+ */
+export class GuiTimeList extends GuiElement {
+  /** The selected time, as an ISO time (`HH:mm:ss`). */
   @property({ type: String }) value: string | undefined = undefined;
+  /** Accessible name of the list. An empty value keeps the default. */
   @property({ type: String }) label: string | undefined = undefined;
+  /** Earliest selectable time, as an ISO time (`HH:mm:ss`). */
   @property({ type: String, attribute: 'min-time' }) minTime: string | undefined = undefined;
+  /** Latest selectable time, as an ISO time (`HH:mm:ss`). */
   @property({ type: String, attribute: 'max-time' }) maxTime: string | undefined = undefined;
+  /** Minutes between the times offered in the list. */
   @property({ type: Number, attribute: 'minute-step' }) minuteStep: number | undefined = undefined;
+  /** Times that cannot be picked, as `{ start, end }` ISO time ranges. */
   @property({ type: Array, attribute: 'disabled-ranges' }) disabledRanges: TimeRange[] | undefined =
     undefined;
+  /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
+  /** 12- or 24-hour clock. Defaults to the locale's. */
   @property({ type: String, attribute: 'hour-format' }) hourFormat: HourFormat | undefined =
     undefined;
+  /** Disables the list. */
   @property({ type: Boolean }) disabled = false;
+  /** Shows the times without letting the user pick one. */
   @property({ type: Boolean, attribute: 'readonly' }) readOnly = false;
+  /** Height of the scrollable list, in pixels. */
   @property({ type: Number }) height: number | undefined = undefined;
+  /** Height of each item, in pixels. Needed to virtualize the list. */
   @property({ type: Number, attribute: 'item-height' }) itemHeight: number | undefined = undefined;
+  /** Number of columns of the time grid. */
   @property({ type: Number }) columns: number | undefined = undefined;
+  /** Text shown when no time can be picked. */
   @property({ type: String, attribute: 'no-available-times-message' }) noAvailableTimesMessage:
     | string
     | undefined = undefined;
@@ -88,6 +112,7 @@ export class GuiTimeList extends LitElement {
     return options.findIndex((option) => !option.disabled);
   }
 
+  /** @internal */
   scrollToSelectedValue() {
     const viewport = this.querySelector('.gui-time-list__viewport');
     const target = (this.querySelector('.gui-time-list__option--selected') ??
@@ -104,6 +129,7 @@ export class GuiTimeList extends LitElement {
     }
   }
 
+  /** @internal */
   focusSelectedOption() {
     const target = this.querySelector<HTMLButtonElement>('.gui-time-list__option[tabindex="0"]');
     target?.focus();
@@ -114,13 +140,7 @@ export class GuiTimeList extends LitElement {
     if (this.disabled || this.readOnly || option.disabled) return;
 
     this.value = option.value;
-    this.dispatchEvent(
-      new CustomEvent('change', {
-        detail: { value: option.value },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatchValue(this, option.value);
   }
 
   private onKeyDown(event: KeyboardEvent) {
@@ -204,7 +224,7 @@ export class GuiTimeList extends LitElement {
 
     if (options.length === 0) {
       return html`<div class="gui-time-list__empty">
-        ${this.noAvailableTimesMessage ?? NO_AVAILABLE_TIMES_MESSAGE}
+        ${message('noAvailableTimes', this.noAvailableTimesMessage)}
       </div>`;
     }
 
@@ -221,7 +241,7 @@ export class GuiTimeList extends LitElement {
           class="gui-time-list__viewport"
           role="listbox"
           style=${sizeVars}
-          aria-label=${this.label ?? nothing}
+          aria-label=${requiredName('timeList', this.label)}
           @keydown=${this.onKeyDown}
         >
           ${options.map((option, index) => this.renderOption(option, index, 'option'))}
@@ -236,7 +256,7 @@ export class GuiTimeList extends LitElement {
         class="gui-time-list__viewport gui-time-list__viewport--grid"
         role="grid"
         style=${sizeVars}
-        aria-label=${this.label ?? nothing}
+        aria-label=${requiredName('timeList', this.label)}
         @keydown=${this.onKeyDown}
       >
         ${rows.map(
@@ -252,6 +272,12 @@ export class GuiTimeList extends LitElement {
     `;
   }
 }
+
+/** The events `gui-time-list` fires, with their types. */
+export const GuiTimeListEvents = {
+  'gui-input': fires<GuiValueEvent<GuiTimeList['value']>>(),
+  'gui-change': fires<GuiValueEvent<GuiTimeList['value']>>(),
+};
 
 declare global {
   interface HTMLElementTagNameMap {

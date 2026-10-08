@@ -244,7 +244,7 @@ export const runRangeTimePickerComponentTests = (mountFn: MountComponentFn) => {
 
       const inputErrorSpy = cy.spy().as('inputErrorSpy');
       cy.get('gui-range-time-picker').then(($el) => {
-        $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
+        $el[0].addEventListener('gui-input-error', inputErrorSpy as unknown as EventListener);
       });
 
       cy.get(sel.startHour).click();
@@ -406,7 +406,7 @@ export const runRangeTimePickerComponentTests = (mountFn: MountComponentFn) => {
 
       const inputErrorSpy = cy.spy().as('inputErrorSpy');
       cy.get('gui-range-time-picker').then(($el) => {
-        $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
+        $el[0].addEventListener('gui-input-error', inputErrorSpy as unknown as EventListener);
       });
 
       // in=12:00, out=18:00 straddles the disabled 13:00-14:00 block: neither

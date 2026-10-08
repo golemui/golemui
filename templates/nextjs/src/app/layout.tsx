@@ -3,6 +3,7 @@ import { GolemuiProvider } from './golemui-provider';
 // GolemUI never injects its stylesheet. Load it once here and override the design tokens in
 // your own CSS.
 import '@golemui/gui-components/index.css';
+import '@golemui/gui-shared/forms.css';
 import './styles.css';
 
 export const metadata = {

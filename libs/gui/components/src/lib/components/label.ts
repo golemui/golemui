@@ -1,19 +1,32 @@
-import { html, LitElement } from 'lit';
+import { html } from 'lit';
 import { property } from 'lit/decorators.js';
-import { safeDefine } from '@golemui/lit/internals';
+import { safeDefine } from '@golemui/lit-utils';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addLabel } from '../utils/templates';
+import { GuiElement } from '../gui-element';
 
-export class GuiLabel extends LitElement {
-  @property({ type: Object }) targetElement: HTMLElement[] | HTMLElement | undefined = undefined;
-  @property({ type: String }) uid: string | undefined = undefined;
+/** A label for a control built by hand. It sets the control's ARIA attributes from its state. */
+export class GuiLabel extends GuiElement {
+  /** The control or controls the label describes; they receive its ARIA attributes. */
+  @property({ type: Object, attribute: false }) targetElement:
+    | HTMLElement[]
+    | HTMLElement
+    | undefined = undefined;
+  /** Text of the label. */
   @property({ type: String }) label: string | undefined = undefined;
+  /** Help text shown under the label. */
   @property({ type: String }) hint: string | undefined = undefined;
+  /** Adds the required marker, and `aria-required` to the target. */
   @property({ type: Boolean }) required: boolean | undefined = undefined;
+  /** Errors of the labelled control, which set `aria-invalid` on it. */
   @property({ type: Array }) errors: string[] | undefined = [];
+  /** Sets `aria-disabled` on the target. */
   @property({ type: Boolean }) disabled: boolean | undefined = false;
+  /** Sets `aria-readonly` on the target. */
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
-  @property({ type: Boolean }) touched: boolean | undefined = false;
+  /** Whether the labelled control was touched: errors wait for it unless unset. */
+  @property({ type: Boolean }) touched: boolean | undefined = undefined;
+  /** Renders a native `<label for>`. Turn it off for targets that a `<label>` cannot name. */
   @property({ type: Boolean }) native: boolean | undefined = true;
 
   private ariaController = new GUIAriaController(this, {
@@ -22,7 +35,7 @@ export class GuiLabel extends LitElement {
         ? [...this.targetElement]
         : [this.targetElement as HTMLElement],
     getState: () => ({
-      uid: this.uid as string,
+      uid: this.uid,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -42,7 +55,7 @@ export class GuiLabel extends LitElement {
     super.render();
 
     return html`${addLabel(
-      this.uid as string,
+      this.uid,
       {
         label: this.label,
         hint: this.hint,

@@ -37,7 +37,7 @@ export function RangeDatePicker(widgetInstance: WithWidget) {
   const isRequired = (templateData.validator as Validator)?.required;
 
   return (
-    <div className="gui-range-date-picker gui-field" style={{ flex: templateData.size }}>
+    <div className="gui-range-date-picker gui-field">
       <GuiRangeDatePickerReact
         uid={uid}
         label={templateData.label as string}
@@ -84,9 +84,9 @@ export function RangeDatePicker(widgetInstance: WithWidget) {
         editStartedMessage={templateData.editStartedMessage as string}
         editCommittedMessage={templateData.editCommittedMessage as string}
         editCancelledMessage={templateData.editCancelledMessage as string}
-        onChange={handleChange}
-        onBlur={onBlur}
-        onInputError={handleInputError}
+        onGuiInput={handleChange}
+        onGuiBlur={onBlur}
+        onGuiInputError={handleInputError}
       />
     </div>
   );

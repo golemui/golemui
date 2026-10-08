@@ -8,11 +8,7 @@ import {
   toISOTimeString,
   type HourFormat,
 } from './time';
-import {
-  INVALID_DATE_MESSAGE,
-  INVALID_MAX_TIME_MESSAGE,
-  INVALID_MIN_TIME_MESSAGE,
-} from './messages';
+import { message } from './messages';
 
 export type DateTimePartType =
   | 'day'
@@ -37,17 +33,6 @@ export interface DateTimePartDescriptor {
 
 /** Descriptor lookup by part type, as consumed by the parse pipelines. */
 export type PartDescriptorMap = Partial<Record<DateTimePartType, DateTimePartDescriptor>>;
-
-/** Default English accessible names for the part inputs; hosts override via aria-label props. */
-export const PART_DEFAULT_ARIA_LABELS: Record<DateTimePartType, string> = {
-  day: 'Day',
-  month: 'Month',
-  year: 'Year',
-  hour: 'Hour',
-  minute: 'Minute',
-  second: 'Second',
-  dayPeriod: 'AM/PM',
-};
 
 /** The raw string values of one group's parts, e.g. { day: '15', month: '06' }. */
 export type GroupPartValues = Partial<Record<DateTimePartType, string>>;
@@ -297,7 +282,7 @@ export function parseDateGroup(
 
   if (dayVal > maxValidDayInMonth(monthVal, yearVal)) {
     return {
-      result: { kind: 'invalid', message: options.invalidDateMessage ?? INVALID_DATE_MESSAGE },
+      result: { kind: 'invalid', message: message('invalidDate', options.invalidDateMessage) },
       writeBacks,
     };
   }
@@ -379,7 +364,7 @@ export function parseDateTimeGroup(
 
   if (dayVal > maxValidDayInMonth(monthVal, yearVal)) {
     return {
-      result: { kind: 'invalid', message: options.invalidDateMessage ?? INVALID_DATE_MESSAGE },
+      result: { kind: 'invalid', message: message('invalidDate', options.invalidDateMessage) },
       writeBacks,
     };
   }
@@ -404,7 +389,7 @@ export interface DateTimeSubGroupResults {
 
 /**
  * Parses the date and time halves of a date-time group separately, so a
- * complete half can live-sync (via `partsChange`) while the other is still
+ * complete half can live-sync (via `gui-parts-change`) while the other is still
  * empty. Write-backs are NOT applied here — the combined
  * {@link parseDateTimeGroup} the host runs first already produced them.
  *
@@ -434,17 +419,17 @@ export function parseDateTimeSubGroups(
   return { date, time };
 }
 
-/** `partsChange` detail of `gui-date`. */
+/** `gui-parts-change` detail of `gui-date`. */
 export interface DatePartsChangeDetail {
   date: string | null;
 }
 
-/** `partsChange` detail of `gui-time`. */
+/** `gui-parts-change` detail of `gui-time`. */
 export interface TimePartsChangeDetail {
   time: string | null;
 }
 
-/** `partsChange` detail of `gui-date-time` and `gui-date-time-calendar`. */
+/** `gui-parts-change` detail of `gui-date-time` and `gui-date-time-calendar`. */
 export interface DateTimePartsChangeDetail {
   date: string | null;
   time: string | null;
@@ -467,10 +452,10 @@ export interface TimeBounds {
  */
 export function timeBoundsError(iso: string, bounds: TimeBounds): string | null {
   if (bounds.minTime && compareISOTimes(iso, bounds.minTime) < 0) {
-    return bounds.minTimeMessage ?? INVALID_MIN_TIME_MESSAGE;
+    return bounds.minTimeMessage ?? message('minTime');
   }
   if (bounds.maxTime && compareISOTimes(iso, bounds.maxTime) > 0) {
-    return bounds.maxTimeMessage ?? INVALID_MAX_TIME_MESSAGE;
+    return bounds.maxTimeMessage ?? message('maxTime');
   }
   return null;
 }

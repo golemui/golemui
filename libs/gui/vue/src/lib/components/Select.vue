@@ -28,22 +28,24 @@ const selectRef = ref<HTMLElement | null>(null);
 let currentEl: HTMLElement | null = null;
 
 const errorHandler = (e: Event) => {
-  injectValidationIssues([(e as CustomEvent).detail.message]);
+  // An empty message withdraws the error.
+  const message = (e as CustomEvent).detail.message as string;
+  injectValidationIssues(message ? [message] : null);
 };
 
 watch(selectRef, (el) => {
-  if (currentEl) currentEl.removeEventListener('inputError', errorHandler);
+  if (currentEl) currentEl.removeEventListener('gui-input-error', errorHandler);
   currentEl = el;
-  if (el) el.addEventListener('inputError', errorHandler);
+  if (el) el.addEventListener('gui-input-error', errorHandler);
 });
 
 onUnmounted(() => {
-  currentEl?.removeEventListener('inputError', errorHandler);
+  currentEl?.removeEventListener('gui-input-error', errorHandler);
 });
 </script>
 
 <template>
-  <div class="gui-select gui-field" :style="{ flex: templateData.size }">
+  <div class="gui-select gui-field">
     <gui-select
       ref="selectRef"
       :uid="uid"
@@ -62,8 +64,8 @@ onUnmounted(() => {
       :labelField="templateData.labelField"
       :valueField="templateData.valueField"
       :invalidOptionMessage="templateData.invalidOptionMessage"
-      @change="handleChange"
-      @blur="onBlur"
+      @gui-input="handleChange"
+      @gui-blur="onBlur"
     ></gui-select>
   </div>
 </template>

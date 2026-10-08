@@ -26,8 +26,12 @@ export function Select(widgetInstance: WithWidget) {
     [injectValidationIssues, onValueChanged],
   );
 
+  // An empty message withdraws the error.
   const handleInputError = useCallback(
-    (e: Event) => injectValidationIssues([(e as CustomEvent).detail.message]),
+    (e: Event) => {
+      const message = (e as CustomEvent).detail.message as string;
+      injectValidationIssues(message ? [message] : null);
+    },
     [injectValidationIssues],
   );
 
@@ -44,7 +48,7 @@ export function Select(widgetInstance: WithWidget) {
   const isRequired = (templateData.validator as Validator)?.required;
 
   return (
-    <div className="gui-select gui-field" style={{ flex: templateData.size }}>
+    <div className="gui-select gui-field">
       <GuiSelectReact
         uid={uid}
         label={label}
@@ -62,9 +66,9 @@ export function Select(widgetInstance: WithWidget) {
         labelField={labelField}
         valueField={valueField}
         invalidOptionMessage={templateData.invalidOptionMessage as string}
-        onChange={handleChange}
-        onBlur={onBlur}
-        onInputError={handleInputError}
+        onGuiInput={handleChange}
+        onGuiBlur={onBlur}
+        onGuiInputError={handleInputError}
       ></GuiSelectReact>
     </div>
   );

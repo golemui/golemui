@@ -84,7 +84,7 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
                 removeLabel: 'Remove user',
                 template: {
                   kind: 'layout',
-                  type: 'flex',
+                  type: 'grid',
                   children: [
                     {
                       uid: 'name',
@@ -348,8 +348,8 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
         formEvent: formEventHandler,
       });
 
-      cy.get('[id="alertFirst"] [role="alert"]').should('contain.text', 'First alert default text');
-      cy.get('[id="alertSecond"] [role="alert"]').should(
+      cy.get('[id="alertFirst"][role="alert"]').should('contain.text', 'First alert default text');
+      cy.get('[id="alertSecond"][role="alert"]').should(
         'contain.text',
         'Second alert default text',
       );
@@ -357,8 +357,8 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
       cy.get('[data-cy="updateAlertsButton_button"]').click();
 
       cy.get('@formEventHandler').should('have.been.called');
-      cy.get('[id="alertFirst"] [role="alert"]').should('contain.text', 'First alert updated');
-      cy.get('[id="alertSecond"] [role="alert"]').should('contain.text', 'Second alert updated');
+      cy.get('[id="alertFirst"][role="alert"]').should('contain.text', 'First alert updated');
+      cy.get('[id="alertSecond"][role="alert"]').should('contain.text', 'Second alert updated');
     });
   });
 };

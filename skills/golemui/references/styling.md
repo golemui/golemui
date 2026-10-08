@@ -1,6 +1,7 @@
 # GolemUI — styling
 
-Baseline: import `@golemui/gui-components/index.css` once (mandatory). On top of that there are
+Baseline: import `@golemui/gui-components/index.css` and then `@golemui/gui-shared/forms.css`
+once (mandatory). On top of that there are
 three layers — fetch the page before writing CSS, the variable names are not guessable:
 
 - **Theming** — the default theme plus the bundled "Clay" theme; themes can be scoped to a

@@ -19,7 +19,8 @@
       "types": "./internals.d.ts",
       "import": "./internals.js",
       "require": "./internals.umd.cjs"
-    }
+    },
+    "./forms.css": "./forms.css"
   },
   "files": [
     "lib",
@@ -31,12 +32,14 @@
     "internals.umd.cjs",
     "*.js",
     "*.cjs",
-    "*.md"
+    "*.md",
+    "forms.css"
   ],
   "dependencies": {
     "@golemui/core": "*",
     "@golemui/dx": "*",
-    "@golemui/gui-validators": "*"
+    "@golemui/gui-validators": "*",
+    "@golemui/gui-components": "*"
   },
   "repository": {
     "type": "git",

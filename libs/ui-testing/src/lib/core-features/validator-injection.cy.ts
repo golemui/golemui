@@ -89,10 +89,10 @@ export const runValidatorInjectionTests = (mountFn: MountComponentFn) => {
 
       cy.get('[data-cy="testSubject_customdate"]').type('1-2-3');
       cy.get('[data-cy="testSubject_validator-errors"]').should('exist');
-      cy.get('[data-cy="testSubject_validator-errors"] li')
+      cy.get('[data-cy="testSubject_validator-error"]')
         .eq(0)
         .contains('Too small: expected string to have >=10 characters');
-      cy.get('[data-cy="testSubject_validator-errors"] li').eq(1).contains('Invalid date format');
+      cy.get('[data-cy="testSubject_validator-error"]').eq(1).contains('Invalid date format');
     });
 
     it(`Should mark the control as touched when injecting validation issues`, () => {
@@ -124,7 +124,7 @@ export const runValidatorInjectionTests = (mountFn: MountComponentFn) => {
       // managed validation remains visible
       cy.get('[data-cy="testSubject_customdate"]').type('{selectall}{backspace}');
       cy.get('[data-cy="testSubject_customdate"]').type('28-02-2026');
-      cy.get('[data-cy="testSubject_validator-errors"] li').should('have.length', 1);
+      cy.get('[data-cy="testSubject_validator-error"]').should('have.length', 1);
       cy.get('[data-cy="testSubject_validator-error"]').contains(
         'Too small: expected string to have >=20 characters',
       );

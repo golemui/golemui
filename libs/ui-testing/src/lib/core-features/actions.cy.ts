@@ -26,7 +26,9 @@ export const runActionsComponentTests = (mountFn: MountComponentFn) => {
           }),
         });
 
-        cy.get('[data-cy="submitBtn_button"]').should('not.have.class', 'gui-button--invalid');
+        cy.get('[data-cy="submitBtn_button"]')
+          .closest('.gui-button')
+          .should('not.have.class', 'gui-button--invalid');
       });
 
       it('should apply the invalid class when submitted with validation errors', () => {
@@ -52,7 +54,9 @@ export const runActionsComponentTests = (mountFn: MountComponentFn) => {
         });
 
         cy.get('[data-cy="submitBtn_button"]').click();
-        cy.get('[data-cy="submitBtn_button"]').should('have.class', 'gui-button--invalid');
+        cy.get('[data-cy="submitBtn_button"]')
+          .closest('.gui-button')
+          .should('have.class', 'gui-button--invalid');
       });
 
       it('should remove the invalid class once all errors are resolved', () => {
@@ -78,10 +82,14 @@ export const runActionsComponentTests = (mountFn: MountComponentFn) => {
         });
 
         cy.get('[data-cy="submitBtn_button"]').click();
-        cy.get('[data-cy="submitBtn_button"]').should('have.class', 'gui-button--invalid');
+        cy.get('[data-cy="submitBtn_button"]')
+          .closest('.gui-button')
+          .should('have.class', 'gui-button--invalid');
 
         cy.get('[data-cy="name_textinput"]').type('Joan');
-        cy.get('[data-cy="submitBtn_button"]').should('not.have.class', 'gui-button--invalid');
+        cy.get('[data-cy="submitBtn_button"]')
+          .closest('.gui-button')
+          .should('not.have.class', 'gui-button--invalid');
       });
 
       it('should not apply the invalid class to a non-submit button', () => {
@@ -114,8 +122,12 @@ export const runActionsComponentTests = (mountFn: MountComponentFn) => {
         });
 
         cy.get('[data-cy="submitBtn_button"]').click();
-        cy.get('[data-cy="submitBtn_button"]').should('have.class', 'gui-button--invalid');
-        cy.get('[data-cy="plainBtn_button"]').should('not.have.class', 'gui-button--invalid');
+        cy.get('[data-cy="submitBtn_button"]')
+          .closest('.gui-button')
+          .should('have.class', 'gui-button--invalid');
+        cy.get('[data-cy="plainBtn_button"]')
+          .closest('.gui-button')
+          .should('not.have.class', 'gui-button--invalid');
       });
     });
   });

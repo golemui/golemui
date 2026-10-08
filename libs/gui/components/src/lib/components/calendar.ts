@@ -1,8 +1,7 @@
-import { html, LitElement, nothing, type PropertyValues, type TemplateResult } from 'lit';
+import { html, nothing, type PropertyValues, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
-import { safeDefine } from '@golemui/lit/internals';
+import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
-import type { DateRange } from '@golemui/gui-shared/internals';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { GUICalendarKeyboardController } from '../controllers/calendar-keyboard.controller';
 import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
@@ -13,6 +12,7 @@ import {
   renderCalendarPanelBody,
 } from '../utils/calendar-templates';
 import {
+  dateBoundsError,
   getDayLabel,
   getFullDateLabel,
   isToday,
@@ -20,6 +20,9 @@ import {
   toISODateString,
 } from '../utils/date';
 import { buildMonthDays, computeDayStatus } from '../utils/day-status';
+import type { DateRange } from '../types';
+import { boundsValidity, GuiFormControl, type GuiValidity } from '../gui-form-control';
+import { dispatchBlur, dispatchValue, valueEvents } from '../utils/events';
 
 export interface CalendarDay {
   date: Date;
@@ -31,45 +34,81 @@ export interface CalendarDay {
   isDisabled: boolean;
 }
 
-export class GuiCalendar extends LitElement {
-  @property({ type: String }) uid: string | undefined = undefined;
-  @property({ type: String }) label: string | undefined = undefined;
-  @property({ type: String }) hint: string | undefined = undefined;
+/**
+ * A month calendar to pick a date.
+ *
+ * @fires gui-input - The user changed the value. `detail.value` is the new value.
+ * @fires gui-change - The user committed the value. `detail.value` is the committed value.
+ * @fires gui-blur - Focus left the control.
+ * @cssprop --gui-calendar-width - Width of one month.
+ * @cssprop --gui-calendar-day-button-size - Size of each day.
+ * @cssprop --gui-calendar-change-month-button-width - Width of the previous- and next-month
+ *   buttons.
+ * @cssprop --gui-calendar-change-month-button-height - Height of the previous- and next-month
+ *   buttons.
+ * @cssprop --gui-calendar-year-button-width - Width of each year in the year grid.
+ * @cssprop --gui-calendar-year-button-height - Height of each year in the year grid.
+ * @cssprop --gui-calendar-year-grid-height - Height of the year grid.
+ */
+export class GuiCalendar extends GuiFormControl {
+  /**
+   * Whether the element renders its hint. Elements that embed it turn it off and show the hint
+   * themselves: `aria-describedby` still points at the hint by its id.
+   */
+  @property({ type: Boolean, attribute: 'show-hint' }) showHint: boolean | undefined = true;
+  /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
-  @property({ type: Array }) errors: string[] | undefined = [];
-  @property({ type: Boolean }) touched: boolean | undefined = undefined;
-  @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean }) disabled: boolean | undefined = false;
-  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
 
+  /** Icon class name of the previous-month button. */
   @property({ type: String, attribute: 'prev-month-icon' }) prevMonthIcon: string | undefined = '';
+  /** Icon class name of the next-month button. */
   @property({ type: String, attribute: 'next-month-icon' }) nextMonthIcon: string | undefined = '';
+  /** Accessible name of the previous-month button. An empty value keeps the default. */
   @property({ type: String, attribute: 'prev-month-aria-label' }) prevMonthAriaLabel:
     | string
-    | undefined = '';
+    | undefined = undefined;
+  /** Accessible name of the next-month button. An empty value keeps the default. */
   @property({ type: String, attribute: 'next-month-aria-label' }) nextMonthAriaLabel:
     | string
-    | undefined = '';
+    | undefined = undefined;
+  /** Accessible name of the button that opens the year grid. An empty value keeps the default. */
   @property({ type: String, attribute: 'select-year-aria-label' }) selectYearAriaLabel:
     | string
     | undefined = undefined;
+  /** Accessible name of the year grid. An empty value keeps the default. */
   @property({ type: String, attribute: 'year-grid-aria-label' }) yearGridAriaLabel:
     | string
     | undefined = undefined;
-  @property({ type: String }) dayFormat: 'numeric' | '2-digit' | undefined = 'numeric';
-  @property({ type: String }) weekdayFormat: 'short' | 'long' | 'narrow' | undefined = 'narrow';
-  @property({ type: String }) monthFormat:
+  /** How day numbers are written. */
+  @property({ type: String, attribute: 'day-format' }) dayFormat:
+    | 'numeric'
+    | '2-digit'
+    | undefined = 'numeric';
+  /** How weekday names are written in the header. */
+  @property({ type: String, attribute: 'weekday-format' }) weekdayFormat:
+    | 'short'
+    | 'long'
+    | 'narrow'
+    | undefined = 'narrow';
+  /** How the month is written in the header. */
+  @property({ type: String, attribute: 'month-format' }) monthFormat:
     | 'numeric'
     | '2-digit'
     | 'long'
     | 'short'
     | 'narrow'
     | undefined = 'long';
-  @property({ type: String }) minDate: string | undefined = undefined;
-  @property({ type: String }) maxDate: string | undefined = undefined;
-  @property({ type: Array }) disabledRanges: DateRange[] | undefined = undefined;
-  @property({ type: Number }) numberOfMonths: number | undefined = 1;
+  /** Earliest selectable date, as an ISO date (`YYYY-MM-DD`). */
+  @property({ type: String, attribute: 'min-date' }) minDate: string | undefined = undefined;
+  /** Latest selectable date, as an ISO date (`YYYY-MM-DD`). */
+  @property({ type: String, attribute: 'max-date' }) maxDate: string | undefined = undefined;
+  /** Dates that cannot be picked, as `{ start, end }` ISO date ranges. */
+  @property({ type: Array, attribute: 'disabled-ranges' }) disabledRanges: DateRange[] | undefined =
+    undefined;
+  /** Number of months shown side by side. */
+  @property({ type: Number, attribute: 'number-of-months' }) numberOfMonths: number | undefined = 1;
 
+  /** The selected date, as an ISO date (`YYYY-MM-DD`). */
   @property({ type: String }) value: string | undefined = undefined;
 
   /**
@@ -85,11 +124,16 @@ export class GuiCalendar extends LitElement {
     onYearSelectorToggled: () => this._keyboard.onYearGridToggled(),
   });
 
-  /** The nav controller's month cursor, kept under its historical name. */
+  /**
+   * The nav controller's month cursor, kept under its historical name.
+   *
+   * @internal
+   */
   get _currentDate(): Date {
     return this._nav.currentDate;
   }
 
+  /** @internal */
   set _currentDate(date: Date) {
     this._nav.currentDate = date;
   }
@@ -97,7 +141,7 @@ export class GuiCalendar extends LitElement {
   protected ariaController: GUIAriaController<unknown, any> = new GUIAriaController(this, {
     getTargets: () => this.querySelectorAll(`.gui-calendar-input`),
     getState: () => ({
-      uid: this.uid as string,
+      uid: this.uid,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -133,7 +177,7 @@ export class GuiCalendar extends LitElement {
 
   private _focusLeave = new GUIFocusLeaveController(this, {
     onLeave: () => {
-      this.dispatchEvent(new CustomEvent('blur', { bubbles: true, composed: true }));
+      dispatchBlur(this);
     },
   });
 
@@ -159,6 +203,7 @@ export class GuiCalendar extends LitElement {
       uid: this.uid,
       label: this.label,
       hint: this.hint,
+      showHint: this.showHint,
       errors: this.errors,
       touched: this.touched,
       required: this.required,
@@ -184,6 +229,7 @@ export class GuiCalendar extends LitElement {
           monthFormat: this.monthFormat,
           yearSelectorOpen: this._nav.yearSelectorOpen,
           selectYearAriaLabel: this.selectYearAriaLabel,
+          disabled: this.disabled,
           onToggleYearSelector: () => this._nav.toggleYearSelector(),
           renderPanelBody: (o) => this.renderPanelBody(o),
         }),
@@ -206,11 +252,14 @@ export class GuiCalendar extends LitElement {
       localeId: this.localeId,
       currentDate: this._nav.currentDate,
       yearGridAriaLabel: this.yearGridAriaLabel,
+      weekdayFormat: this.weekdayFormat,
+      disabled: this.disabled,
       getDays: (o) => this.getDaysInMonth(o),
       renderDay: (day) => this.renderDay(day),
     });
   }
 
+  /** @internal */
   renderDay(day: CalendarDay) {
     const classes = {
       'gui-calendar__day-button': true,
@@ -225,8 +274,8 @@ export class GuiCalendar extends LitElement {
         type="button"
         role="gridcell"
         class=${classMap(classes)}
-        tabindex=${day.isFocusable ? 0 : -1}
-        ?disabled=${!day.isCurrentMonth}
+        tabindex=${day.isFocusable && !this.disabled ? 0 : -1}
+        ?disabled=${!day.isCurrentMonth || this.disabled}
         aria-disabled=${day.isCurrentMonth && day.isDisabled ? 'true' : nothing}
         aria-label=${getFullDateLabel(this.localeId, day.date)}
         aria-current=${day.isToday ? 'date' : nothing}
@@ -240,6 +289,7 @@ export class GuiCalendar extends LitElement {
     `;
   }
 
+  /** @internal */
   getDaysInMonth(offset: number): CalendarDay[] {
     const selectedDate = this.value;
 
@@ -254,7 +304,7 @@ export class GuiCalendar extends LitElement {
 
         return {
           date: base.date,
-          dayLabel: base.dayLabel,
+          dayLabel: getDayLabel(this.localeId, base.date, this.dayFormat),
           isCurrentMonth: base.isCurrentMonth,
           isToday: base.isToday,
           isDisabled: base.isDisabled,
@@ -266,6 +316,15 @@ export class GuiCalendar extends LitElement {
     });
   }
 
+  /** A day outside the bounds, such as a value set from code, then `required`. */
+  protected override validate(): GuiValidity | null {
+    const error = this.value
+      ? dateBoundsError(this.value, this.minDate, this.maxDate, this.disabledRanges)
+      : null;
+    return boundsValidity(error, this.value, this.minDate, this.maxDate) ?? super.validate();
+  }
+
+  /** @internal */
   selectDate(day: CalendarDay) {
     if (!day.isCurrentMonth || day.isDisabled || this.disabled || this.readOnly) return;
 
@@ -273,19 +332,18 @@ export class GuiCalendar extends LitElement {
 
     this.value = isoDate;
 
-    this.dispatchEvent(
-      new CustomEvent('change', {
-        detail: { value: isoDate },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatchValue(this, isoDate);
   }
 
   protected isDisabled(date: Date): boolean {
     return this._nav.isDisabled(date);
   }
 }
+
+/** The events `gui-calendar` fires, with their types. */
+export const GuiCalendarEvents = {
+  ...valueEvents<GuiCalendar['value']>(),
+};
 
 declare global {
   interface HTMLElementTagNameMap {

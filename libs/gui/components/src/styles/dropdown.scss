@@ -18,7 +18,7 @@
     }
 
     .gui-dropdown__arrow {
-      fill: var(--gui-text-default);
+      color: var(--gui-text-default);
       transform: rotate(0deg);
       transition: transform 0.3s;
       position: absolute;

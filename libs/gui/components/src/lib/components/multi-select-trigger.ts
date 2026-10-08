@@ -1,34 +1,70 @@
-import { html, LitElement, nothing, type PropertyValues } from 'lit';
+import { html, nothing, type PropertyValues } from 'lit';
 import { property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
-import { cspStyleMap, safeDefine } from '@golemui/lit/internals';
+import { cspStyleMap } from '@golemui/lit-utils';
+import { safeDefine } from '@golemui/lit-utils';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { GUIPillsNavigationController } from '../controllers/pills-navigation.controller';
 import './pills';
-import type { GuiPillItem } from './pills';
+import type { GuiPillEventDetail, GuiPillItem, GuiPillsDropdownEventDetail } from './pills';
+import { GuiElement } from '../gui-element';
+import { message, requiredName } from '../utils/messages';
+import { fires } from '../utils/events';
 
-export class GuiMultiSelectTrigger extends LitElement {
-  @property({ type: String }) uid: string | undefined = undefined;
-  @property({ type: Boolean }) touched: boolean | undefined = false;
+/**
+ * The field of a multi-select dropdown: the selected options as pills and a search input. A
+ * building block of GolemUI Forms.
+ *
+ * @fires gui-pill-remove - The user removed a selected option from its pill. `detail.key` is the
+ *   pill's key.
+ * @fires gui-dropdown-toggle - The count bubble opened or closed its dropdown. `detail.open` is the
+ *   new state.
+ * @cssprop --gui-pill-height - Height of each pill.
+ * @cssprop --gui-pill-font-size - Font size of the pill text.
+ * @cssprop --gui-pill-action-size - Size of the icons inside a pill.
+ * @cssprop --gui-pill-action-hit - Clickable area of the buttons inside a pill.
+ */
+export class GuiMultiSelectTrigger extends GuiElement {
+  /** Whether that field was touched. */
+  @property({ type: Boolean }) touched: boolean | undefined = undefined;
+  /** Whether that field is required. */
   @property({ type: Boolean }) required: boolean | undefined = false;
+  /** Disables the trigger. */
   @property({ type: Boolean }) disabled: boolean | undefined = false;
+  /** Shows the selection without letting the user change it. */
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
+  /** Errors of the field the trigger belongs to. */
   @property({ type: Array }) errors: string[] | undefined = [];
+  /** @internal */
   @property({ type: Array }) pills: GuiPillItem[] = [];
 
+  /** Text shown while nothing is selected. */
   @property({ type: String }) placeholder: string | undefined = undefined;
+  /** Icon class name shown inside the trigger. */
   @property({ type: String }) icon: string | undefined = undefined;
+  /** The `autocomplete` hint of the search field. */
   @property({ type: String }) autocomplete: string | undefined = undefined;
+  /** @internal */
   @property({ type: Boolean, attribute: 'has-label' }) hasLabel = false;
+  /** @internal */
   @property({ type: Boolean, attribute: 'has-hint' }) hasHint = false;
+  /** @internal */
   @property({ type: Boolean, attribute: 'panel-open' }) panelOpen = false;
+  /** @internal */
   @property({ type: String, attribute: 'panel-id' }) panelId: string | undefined = undefined;
+  /** Accessible name of each remove button. An empty value keeps the default. */
   @property({ type: String, attribute: 'remove-aria-label' }) removeAriaLabel: string | undefined =
     undefined;
+  /** Icon class name of the remove buttons. */
   @property({ type: String, attribute: 'remove-icon' }) removeIcon: string | undefined = undefined;
+  /**
+   * Accessible name of the count shown when the options do not fit. `{count}` is the number
+   * selected. An empty value keeps the default.
+   */
   @property({ type: String, attribute: 'compact-aria-label' }) compactAriaLabel:
     | string
     | undefined = undefined;
+  /** Accessible name of the selected options. An empty value removes it. */
   @property({ type: String, attribute: 'toolbar-aria-label' }) toolbarAriaLabel:
     | string
     | undefined = undefined;
@@ -42,7 +78,7 @@ export class GuiMultiSelectTrigger extends LitElement {
       return [field, input].filter((el): el is HTMLElement => !!el);
     },
     getState: () => ({
-      uid: this.uid as string,
+      uid: this.uid,
       templateData: {
         hint: this.hasHint ? `${this.uid}_hint` : undefined,
         errors: this.errors,
@@ -64,19 +100,23 @@ export class GuiMultiSelectTrigger extends LitElement {
     return this;
   }
 
+  /** @internal */
   get input(): HTMLInputElement | null {
     return this.querySelector<HTMLInputElement>('input[role="combobox"]');
   }
 
+  /** @internal */
   public focusInput() {
     this.input?.focus();
   }
 
+  /** @internal */
   public clearInput() {
     const input = this.input;
     if (input) input.value = '';
   }
 
+  /** @internal */
   public closePillsDropdown() {
     this.querySelector('gui-pills')?.closeDropdown();
   }
@@ -98,6 +138,9 @@ export class GuiMultiSelectTrigger extends LitElement {
       [this.icon as string]: !!this.icon,
     };
 
+    // Of the pills' events, gui-pill-remove and gui-dropdown-toggle pass through as the trigger's
+    // own. The navigation controller stops gui-pill-keydown and gui-pill-exit, and the pills fire
+    // no other event unless clickable or editable.
     return html`
       <div
         class=${classMap({
@@ -119,7 +162,7 @@ export class GuiMultiSelectTrigger extends LitElement {
           class="gui-multi-select__pills"
           style=${cspStyleMap(pillItems.length ? {} : { 'min-width': 0 })}
           .uid=${this.uid}
-          .toolbarAriaLabel=${this.toolbarAriaLabel ?? 'Selected options'}
+          .toolbarAriaLabel=${message('selectedOptions', this.toolbarAriaLabel)}
           .items=${pillItems}
           .errors=${this.errors}
           .touched=${!!this.touched}
@@ -129,12 +172,14 @@ export class GuiMultiSelectTrigger extends LitElement {
           .tabbable=${false}
           ?disabled=${this.disabled}
           ?readonly=${this.readOnly}
-          .removeAriaLabel=${this.removeAriaLabel ?? 'Remove option'}
+          .removeAriaLabel=${requiredName('removeOption', this.removeAriaLabel)}
           .removeIcon=${this.removeIcon}
-          .compactAriaLabel=${this.compactAriaLabel ?? `${pillItems.length} selected`}
-          @pillremove=${this.onPillRemove}
-          @pillkeydown=${this._pillsNav.onPillKeydown}
-          @pillexit=${this._pillsNav.onPillExit}
+          .compactAriaLabel=${requiredName('selectedCount', this.compactAriaLabel, {
+            count: pillItems.length,
+          })}
+          @gui-pill-remove=${this.onPillRemove}
+          @gui-pill-keydown=${this._pillsNav.onPillKeydown}
+          @gui-pill-exit=${this._pillsNav.onPillExit}
         ></gui-pills>
 
         <input
@@ -143,7 +188,6 @@ export class GuiMultiSelectTrigger extends LitElement {
           id=${this.uid}
           data-cy=${`${this.uid}_textinput`}
           class="gui-multi-select__input"
-          ?required=${this.required}
           ?disabled=${this.disabled}
           ?readonly=${this.readOnly}
           placeholder=${this.placeholder ?? ''}
@@ -189,6 +233,12 @@ export class GuiMultiSelectTrigger extends LitElement {
     }
   };
 }
+
+/** The events `gui-multi-select-trigger` fires, with their types. */
+export const GuiMultiSelectTriggerEvents = {
+  'gui-pill-remove': fires<CustomEvent<GuiPillEventDetail>>(),
+  'gui-dropdown-toggle': fires<CustomEvent<GuiPillsDropdownEventDetail>>(),
+};
 
 declare global {
   interface HTMLElementTagNameMap {

@@ -1,8 +1,7 @@
-import { html, LitElement, nothing, type PropertyValues, type TemplateResult } from 'lit';
+import { html, nothing, type PropertyValues, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
-import { safeDefine } from '@golemui/lit/internals';
+import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
-import type { DateRange, DisabledTimeRange } from '@golemui/gui-shared/internals';
 import './time-picker';
 import type { GuiTime } from './time-input';
 import type { GuiTimePicker } from './time-picker';
@@ -24,10 +23,6 @@ import {
   toISODateString,
 } from '../utils/date';
 import { buildMonthDays, computeDayStatus } from '../utils/day-status';
-import {
-  INCOMPLETE_DATE_TIME_MESSAGE,
-  INVALID_DISABLED_TIME_RANGE_MESSAGE,
-} from '../utils/messages';
 import { timeBoundsError } from '../utils/parts';
 import {
   isTimeDisabled,
@@ -37,6 +32,21 @@ import {
   type HourFormat,
   type TimeRange,
 } from '../utils/time';
+import type { DateRange, DisabledTimeRange } from '../types';
+import { boundsValidity, GuiFormControl, type GuiValidity } from '../gui-form-control';
+import {
+  dispatch,
+  dispatchBlur,
+  dispatchChange,
+  dispatchInputError,
+  dispatchValue,
+  fires,
+  stopPropagation,
+  valueEvents,
+  type GuiInputErrorEventDetail,
+} from '../utils/events';
+import { dateTimeValueBoundsError } from '../utils/date-time-bounds';
+import { message, requiredName } from '../utils/messages';
 
 export interface DateTimeCalendarDay {
   date: Date;
@@ -48,68 +58,123 @@ export interface DateTimeCalendarDay {
   isDisabled: boolean;
 }
 
-export class GuiDateTimeCalendar extends LitElement {
-  @property({ type: String }) uid: string | undefined = undefined;
-  @property({ type: String }) label: string | undefined = undefined;
-  @property({ type: String }) hint: string | undefined = undefined;
+/**
+ * A calendar with a time picker, to pick a date and a time.
+ *
+ * @fires gui-input - The user changed the value. `detail.value` is the new value.
+ * @fires gui-change - The user picked a time for the chosen day. `detail.value` is the date-time.
+ * @fires gui-blur - Focus left the control.
+ * @fires gui-input-error - The element rejected what the user entered, such as an impossible date
+ *   or a value out of bounds. `detail.message` is the error; show it through `errors`.
+ * @fires gui-parts-change - The typed parts changed before they form a complete value, for a host
+ *   that mirrors them.
+ * @cssprop --gui-calendar-width - Width of one month.
+ * @cssprop --gui-calendar-day-button-size - Size of each day.
+ * @cssprop --gui-calendar-change-month-button-width - Width of the previous- and next-month
+ *   buttons.
+ * @cssprop --gui-calendar-change-month-button-height - Height of the previous- and next-month
+ *   buttons.
+ * @cssprop --gui-calendar-year-button-width - Width of each year in the year grid.
+ * @cssprop --gui-calendar-year-button-height - Height of each year in the year grid.
+ * @cssprop --gui-calendar-year-grid-height - Height of the year grid.
+ * @cssprop --gui-calendar-time-grid-height - Height of the time grid.
+ * @cssprop --gui-calendar-time-button-height - Height of each time in the grid.
+ */
+export class GuiDateTimeCalendar extends GuiFormControl {
+  /**
+   * Whether the element renders its hint. Elements that embed it turn it off and show the hint
+   * themselves: `aria-describedby` still points at the hint by its id.
+   */
+  @property({ type: Boolean, attribute: 'show-hint' }) showHint: boolean | undefined = true;
+  /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
-  @property({ type: Array }) errors: string[] | undefined = [];
-  @property({ type: Boolean }) touched: boolean | undefined = undefined;
-  @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean }) disabled: boolean | undefined = false;
-  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
 
+  /** Icon class name of the previous-month button. */
   @property({ type: String, attribute: 'prev-month-icon' }) prevMonthIcon: string | undefined = '';
+  /** Icon class name of the next-month button. */
   @property({ type: String, attribute: 'next-month-icon' }) nextMonthIcon: string | undefined = '';
+  /** Accessible name of the previous-month button. An empty value keeps the default. */
   @property({ type: String, attribute: 'prev-month-aria-label' }) prevMonthAriaLabel:
     | string
-    | undefined = '';
+    | undefined = undefined;
+  /** Accessible name of the next-month button. An empty value keeps the default. */
   @property({ type: String, attribute: 'next-month-aria-label' }) nextMonthAriaLabel:
     | string
-    | undefined = '';
+    | undefined = undefined;
+  /** Accessible name of the button that opens the year grid. An empty value keeps the default. */
   @property({ type: String, attribute: 'select-year-aria-label' }) selectYearAriaLabel:
     | string
     | undefined = undefined;
+  /** Accessible name of the year grid. An empty value keeps the default. */
   @property({ type: String, attribute: 'year-grid-aria-label' }) yearGridAriaLabel:
     | string
     | undefined = undefined;
-  @property({ type: String }) dayFormat: 'numeric' | '2-digit' | undefined = 'numeric';
-  @property({ type: String }) weekdayFormat: 'short' | 'long' | 'narrow' | undefined = 'narrow';
-  @property({ type: String }) monthFormat:
+  /** How day numbers are written. */
+  @property({ type: String, attribute: 'day-format' }) dayFormat:
+    | 'numeric'
+    | '2-digit'
+    | undefined = 'numeric';
+  /** How weekday names are written in the header. */
+  @property({ type: String, attribute: 'weekday-format' }) weekdayFormat:
+    | 'short'
+    | 'long'
+    | 'narrow'
+    | undefined = 'narrow';
+  /** How the month is written in the header. */
+  @property({ type: String, attribute: 'month-format' }) monthFormat:
     | 'numeric'
     | '2-digit'
     | 'long'
     | 'short'
     | 'narrow'
     | undefined = 'long';
-  @property({ type: String }) minDate: string | undefined = undefined;
-  @property({ type: String }) maxDate: string | undefined = undefined;
-  @property({ type: Array }) disabledRanges: DateRange[] | undefined = undefined;
-  @property({ type: Number }) numberOfMonths: number | undefined = 1;
+  /** Earliest selectable date, as an ISO date (`YYYY-MM-DD`). */
+  @property({ type: String, attribute: 'min-date' }) minDate: string | undefined = undefined;
+  /** Latest selectable date, as an ISO date (`YYYY-MM-DD`). */
+  @property({ type: String, attribute: 'max-date' }) maxDate: string | undefined = undefined;
+  /** Dates that cannot be picked, as `{ start, end }` ISO date ranges. */
+  @property({ type: Array, attribute: 'disabled-ranges' }) disabledRanges: DateRange[] | undefined =
+    undefined;
+  /** Number of months shown side by side. */
+  @property({ type: Number, attribute: 'number-of-months' }) numberOfMonths: number | undefined = 1;
 
+  /** The date and time, as an ISO date-time (`YYYY-MM-DDTHH:mm:ss`). */
   @property({ type: String }) value: string | undefined = undefined;
 
+  /** 12- or 24-hour clock. Defaults to the locale's. */
   @property({ type: String, attribute: 'hour-format' }) hourFormat: HourFormat | undefined =
     undefined;
+  /** Minutes between the times offered in the list. */
   @property({ type: Number, attribute: 'minute-step' }) minuteStep: number | undefined = undefined;
+  /** Earliest selectable time, as an ISO time (`HH:mm:ss`). */
   @property({ type: String, attribute: 'min-time' }) minTime: string | undefined = undefined;
+  /** Latest selectable time, as an ISO time (`HH:mm:ss`). */
   @property({ type: String, attribute: 'max-time' }) maxTime: string | undefined = undefined;
+  /** Times that cannot be picked, optionally only on a date or on some weekdays. */
   @property({ type: Array, attribute: 'disabled-time-ranges' }) disabledTimeRanges:
     | DisabledTimeRange[]
     | undefined = undefined;
+  /** Error for a time before `minTime`. */
   @property({ type: String, attribute: 'min-time-message' }) minTimeMessage: string | undefined =
     undefined;
+  /** Error for a time after `maxTime`. */
   @property({ type: String, attribute: 'max-time-message' }) maxTimeMessage: string | undefined =
     undefined;
+  /** Error for a time inside `disabledTimeRanges`. */
   @property({ type: String, attribute: 'disabled-time-range-message' }) disabledTimeRangeMessage:
     | string
     | undefined = undefined;
+  /** Text shown when no time can be picked. */
   @property({ type: String, attribute: 'no-available-times-message' }) noAvailableTimesMessage:
     | string
     | undefined = undefined;
+  /** Allows typing any time, not only picking one from the list. */
   @property({ type: Boolean, attribute: 'allow-custom-time' }) allowCustomTime:
     | boolean
     | undefined = false;
+  /** Label of the time. An empty value keeps the default. */
+  @property({ type: String, attribute: 'time-label' }) timeLabel: string | undefined = undefined;
+  /** Error when focus leaves a partly filled value. */
   @property({ type: String, attribute: 'incomplete-message' }) incompleteMessage:
     | string
     | undefined = undefined;
@@ -118,16 +183,21 @@ export class GuiDateTimeCalendar extends LitElement {
    * internal selection whenever no committed value exists, so a partial
    * selection survives the popover unmount/remount cycle. A committed `value`
    * always takes precedence.
+   *
+   * @internal
    */
   @property({ type: String, attribute: 'working-date' }) workingDate: string | undefined =
     undefined;
+  /** @internal */
   @property({ type: String, attribute: 'working-time' }) workingTime: string | undefined =
     undefined;
   /**
    * Set by host pickers that run their own whole-widget focus-leave check:
    * moving focus from this calendar into the picker's input must not count as
    * leaving, so the embedded calendar skips its incomplete-on-leave handling
-   * (the `blur` re-dispatch still fires — hosts close the popover with it).
+   * (the `gui-blur` re-dispatch still fires — hosts close the popover with it).
+   *
+   * @internal
    */
   @property({ type: Boolean, attribute: 'defer-focus-leave' }) deferFocusLeave:
     | boolean
@@ -154,7 +224,7 @@ export class GuiDateTimeCalendar extends LitElement {
   protected ariaController: GUIAriaController<unknown, any> = new GUIAriaController(this, {
     getTargets: () => this.querySelectorAll(`.gui-calendar-input`),
     getState: () => ({
-      uid: this.uid as string,
+      uid: this.uid,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -190,7 +260,7 @@ export class GuiDateTimeCalendar extends LitElement {
 
   private _focusLeave = new GUIFocusLeaveController(this, {
     onLeave: () => {
-      this.dispatchEvent(new CustomEvent('blur', { bubbles: true, composed: true }));
+      dispatchBlur(this);
       if (this.deferFocusLeave) return;
       this.reportIncompleteOnLeave();
     },
@@ -266,17 +336,33 @@ export class GuiDateTimeCalendar extends LitElement {
     this.value = value;
   }
 
-  private emitChange(value: string | null, commit = false) {
+  /**
+   * Reports a new value without committing it: only a deliberate time pick commits, see
+   * {@link onTimePickerChange}, so a host picker keeps its popover open while the day changes.
+   */
+  private emitValue(value: string | null) {
     this._surfacedError = false;
-    this.dispatchEvent(
-      new CustomEvent('change', {
-        detail: { value, commit },
-        bubbles: true,
-        composed: true,
-      }),
+    dispatchValue(this, value, { commit: false });
+  }
+
+  /**
+   * A value outside the bounds, then `required`. A picked day keeps the time already chosen, even
+   * when that time is not allowed on that day, and a typed custom time can be outside the bounds:
+   * both are reported here, not only as `gui-input-error`.
+   */
+  protected override validate(): GuiValidity | null {
+    // The date bounds are days: a time outside its bounds reports as a custom error.
+    return (
+      boundsValidity(
+        dateTimeValueBoundsError(this.value, this),
+        this.value?.slice(0, 10),
+        this.minDate,
+        this.maxDate,
+      ) ?? super.validate()
     );
   }
 
+  /** @internal */
   selectDate(day: DateTimeCalendarDay) {
     if (!day.isCurrentMonth || day.isDisabled || this.disabled || this.readOnly) return;
 
@@ -288,7 +374,7 @@ export class GuiDateTimeCalendar extends LitElement {
     if (this._selectedTime) {
       const isoTime = this._selectedTime;
       this.setValueInternal(`${isoDate}T${isoTime}`);
-      this.emitChange(this.value as string);
+      this.emitValue(this.value as string);
       const error = this.timeErrorForDay(isoTime, isoDate);
       if (error) this.emitInputError(error);
       return;
@@ -297,26 +383,21 @@ export class GuiDateTimeCalendar extends LitElement {
     this.emitPartsChange();
   }
 
-  private commitTime(isoTime: string, commit = false) {
+  private commitTime(isoTime: string) {
     this._selectedTime = isoTime;
     this.setValueInternal(`${this._selectedDate}T${isoTime}`);
-    this.emitChange(this.value as string, commit);
+    this.emitValue(this.value as string);
   }
 
-  private stopInnerPartsChange = (event: Event) => {
-    event.stopPropagation();
-  };
-
-  private onTimePickerChange(event: CustomEvent) {
+  private onTimePickerInput(event: CustomEvent) {
     event.stopPropagation();
 
     const time = event.detail.value as string | null;
-    const commit = event.detail.commit === true;
     if (!time) {
       this._selectedTime = undefined;
       if (this.value) {
         this.setValueInternal(undefined);
-        this.emitChange(null);
+        this.emitValue(null);
       }
       this.emitPartsChange();
       return;
@@ -330,32 +411,40 @@ export class GuiDateTimeCalendar extends LitElement {
       return;
     }
 
-    this.commitTime(time, commit);
+    this.commitTime(time);
+  }
+
+  /**
+   * A deliberate time pick (list pick or Enter) commits the date-time once a day is chosen. The
+   * pick's value already arrived through {@link onTimePickerInput}.
+   */
+  private onTimePickerChange(event: CustomEvent) {
+    event.stopPropagation();
+    if (event.detail.value && this._selectedDate) {
+      dispatchChange(this, this.value ?? null);
+    }
+  }
+
+  /** The time picker's error is reported as the calendar's own. */
+  private onTimePickerInputError(event: CustomEvent<GuiInputErrorEventDetail>) {
+    stopPropagation(event);
+    dispatchInputError(this, event.detail.message);
   }
 
   /** Live-syncs the working halves to a host picker (never wired by forms). */
   private emitPartsChange(): void {
-    this.dispatchEvent(
-      new CustomEvent('partsChange', {
-        detail: { date: this._selectedDate ?? null, time: this._selectedTime ?? null },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatch(this, 'gui-parts-change', {
+      date: this._selectedDate ?? null,
+      time: this._selectedTime ?? null,
+    });
   }
 
-  /** Whether an inputError has been emitted and not yet cleared by a change. */
+  /** Whether a `gui-input-error` has been emitted and not yet cleared by a change. */
   private _surfacedError = false;
 
   private emitInputError(message: string): void {
     this._surfacedError = true;
-    this.dispatchEvent(
-      new CustomEvent('inputError', {
-        detail: { message },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatchInputError(this, message);
   }
 
   /** The kept time checked against a day's bounds and disabled ranges. */
@@ -370,7 +459,7 @@ export class GuiDateTimeCalendar extends LitElement {
 
     const ranges = resolveDisabledTimeRangesForDate(this.disabledTimeRanges, isoDate);
     if (isTimeDisabled(isoTime, ranges)) {
-      return this.disabledTimeRangeMessage ?? INVALID_DISABLED_TIME_RANGE_MESSAGE;
+      return message('disabledTimeRange', this.disabledTimeRangeMessage);
     }
     return null;
   }
@@ -394,12 +483,12 @@ export class GuiDateTimeCalendar extends LitElement {
       this.querySelector<GuiTime>('gui-time')?.groupCompleteness() === 'partial';
 
     if (!leftBehind) {
-      if (this._surfacedError) this.emitChange(null);
+      if (this._surfacedError) this.emitValue(null);
       return;
     }
 
-    this.emitChange(null);
-    this.emitInputError(this.incompleteMessage ?? INCOMPLETE_DATE_TIME_MESSAGE);
+    this.emitValue(null);
+    this.emitInputError(message('incompleteDateTime', this.incompleteMessage));
   }
 
   private onListToggle(event: CustomEvent<{ open: boolean }>) {
@@ -426,6 +515,7 @@ export class GuiDateTimeCalendar extends LitElement {
       uid: this.uid,
       label: this.label,
       hint: this.hint,
+      showHint: this.showHint,
       errors: this.errors,
       touched: this.touched,
       required: this.required,
@@ -451,6 +541,7 @@ export class GuiDateTimeCalendar extends LitElement {
           monthFormat: this.monthFormat,
           yearSelectorOpen: this._nav.yearSelectorOpen,
           selectYearAriaLabel: this.selectYearAriaLabel,
+          disabled: this.disabled,
           onToggleYearSelector: () => this.toggleYearSelector(),
           renderBelowHeader: (o) => this.renderBelowHeader(o),
           renderPanelBody: (o) => this.renderPanelBody(o),
@@ -466,7 +557,8 @@ export class GuiDateTimeCalendar extends LitElement {
       <div class="gui-calendar__time-input-row">
         <gui-time-picker
           class="gui-time-picker gui-field"
-          .uid=${this.uid ? `${this.uid}-time` : undefined}
+          .uid=${`${this.uid}-time`}
+          .label=${requiredName('time', this.timeLabel)}
           .showErrors=${false}
           .deferFocusLeave=${true}
           ?required=${this.required}
@@ -485,9 +577,11 @@ export class GuiDateTimeCalendar extends LitElement {
           .maxTimeMessage=${this.maxTimeMessage}
           .disabledRangeMessage=${this.disabledTimeRangeMessage}
           .noAvailableTimesMessage=${this.noAvailableTimesMessage}
-          @change=${this.onTimePickerChange}
-          @partsChange=${this.stopInnerPartsChange}
-          @listtoggle=${this.onListToggle}
+          @gui-input=${this.onTimePickerInput}
+          @gui-change=${this.onTimePickerChange}
+          @gui-blur=${stopPropagation}
+          @gui-input-error=${this.onTimePickerInputError}
+          @gui-list-toggle=${this.onListToggle}
         ></gui-time-picker>
       </div>
     `;
@@ -508,11 +602,14 @@ export class GuiDateTimeCalendar extends LitElement {
       localeId: this.localeId,
       currentDate: this._nav.currentDate,
       yearGridAriaLabel: this.yearGridAriaLabel,
+      weekdayFormat: this.weekdayFormat,
+      disabled: this.disabled,
       getDays: (o) => this.getDaysInMonth(o),
       renderDay: (day) => this.renderDay(day),
     });
   }
 
+  /** @internal */
   renderDay(day: DateTimeCalendarDay) {
     const classes = {
       'gui-calendar__day-button': true,
@@ -527,8 +624,8 @@ export class GuiDateTimeCalendar extends LitElement {
         type="button"
         role="gridcell"
         class=${classMap(classes)}
-        tabindex=${day.isFocusable ? 0 : -1}
-        ?disabled=${!day.isCurrentMonth}
+        tabindex=${day.isFocusable && !this.disabled ? 0 : -1}
+        ?disabled=${!day.isCurrentMonth || this.disabled}
         aria-disabled=${day.isCurrentMonth && day.isDisabled ? 'true' : nothing}
         aria-label=${getFullDateLabel(this.localeId, day.date)}
         aria-current=${day.isToday ? 'date' : nothing}
@@ -542,6 +639,7 @@ export class GuiDateTimeCalendar extends LitElement {
     `;
   }
 
+  /** @internal */
   getDaysInMonth(offset: number): DateTimeCalendarDay[] {
     const selectedDate = this._selectedDate;
 
@@ -556,7 +654,7 @@ export class GuiDateTimeCalendar extends LitElement {
 
         return {
           date: base.date,
-          dayLabel: base.dayLabel,
+          dayLabel: getDayLabel(this.localeId, base.date, this.dayFormat),
           isCurrentMonth: base.isCurrentMonth,
           isToday: base.isToday,
           isDisabled: base.isDisabled,
@@ -572,6 +670,13 @@ export class GuiDateTimeCalendar extends LitElement {
     return this._nav.isDisabled(date);
   }
 }
+
+/** The events `gui-date-time-calendar` fires, with their types. */
+export const GuiDateTimeCalendarEvents = {
+  ...valueEvents<GuiDateTimeCalendar['value']>(),
+  'gui-input-error': fires<CustomEvent<GuiInputErrorEventDetail>>(),
+  'gui-parts-change': fires<CustomEvent<{ date: string | null; time: string | null }>>(),
+};
 
 declare global {
   interface HTMLElementTagNameMap {

@@ -170,7 +170,7 @@ export const runDateInputComponentTests = (mountFn: MountComponentFn) => {
 
         const changeSpy = cy.spy().as('changeSpy');
         cy.get('gui-date').then(($el) => {
-          $el[0].addEventListener('change', changeSpy as unknown as EventListener);
+          $el[0].addEventListener('gui-input', changeSpy as unknown as EventListener);
         });
 
         cy.get(sel.month).type('02');
@@ -284,7 +284,7 @@ export const runDateInputComponentTests = (mountFn: MountComponentFn) => {
 
         const changeSpy = cy.spy().as('changeSpy');
         cy.get('gui-date').then(($el) => {
-          $el[0].addEventListener('change', changeSpy as unknown as EventListener);
+          $el[0].addEventListener('gui-input', changeSpy as unknown as EventListener);
         });
 
         cy.get(sel.day).type('{selectAll}{backspace}');
@@ -323,7 +323,7 @@ export const runDateInputComponentTests = (mountFn: MountComponentFn) => {
 
         const changeSpy = cy.spy().as('changeSpy');
         cy.get('gui-date').then(($el) => {
-          $el[0].addEventListener('change', changeSpy as unknown as EventListener);
+          $el[0].addEventListener('gui-input', changeSpy as unknown as EventListener);
         });
 
         cy.get(sel.month).type('06');
@@ -418,14 +418,14 @@ export const runDateInputComponentTests = (mountFn: MountComponentFn) => {
     });
 
     describe('bounds validation', () => {
-      it('should emit change and inputError for a date past maxDate', () => {
+      it('should emit gui-input and gui-input-error for a date past maxDate', () => {
         mountDateInput({ props: { maxDate: '2026-06-20', maxDateMessage: 'Too far out' } });
 
         const changeSpy = cy.spy().as('changeSpy');
         const inputErrorSpy = cy.spy().as('inputErrorSpy');
         cy.get('gui-date').then(($el) => {
-          $el[0].addEventListener('change', changeSpy as unknown as EventListener);
-          $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
+          $el[0].addEventListener('gui-input', changeSpy as unknown as EventListener);
+          $el[0].addEventListener('gui-input-error', inputErrorSpy as unknown as EventListener);
         });
 
         // en-US order month/day/year; 06/25/2026 is past maxDate

@@ -8,7 +8,7 @@ export function Renderer(widgetInstance: WithWidget) {
   const { uid, templateData } = useDisplayWidget<RendererProps<ReactNode>>(widget);
   const renderedElement = templateData?.render;
   return (
-    <div className="gui-renderer gui-field" style={{ flex: templateData.size }}>
+    <div className="gui-renderer gui-field">
       <div className="gui-widget" id={uid}>
         {renderedElement}
       </div>

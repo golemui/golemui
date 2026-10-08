@@ -17,7 +17,7 @@
     {
       "uid": "section1",
       "kind": "layout",
-      "type": "flex",
+      "type": "grid",
       "children": [
         {
           "kind": "input",
@@ -37,6 +37,7 @@
       "uid": "section2",
       "kind": "layout",
       "type": "grid",
+      "props": { "direction": "row" },
       "children": [
         {
           "kind": "input",
@@ -56,6 +57,7 @@
       "uid": "section3",
       "kind": "layout",
       "type": "grid",
+      "props": { "direction": "row" },
       "children": [
         {
           "kind": "input",

@@ -43,7 +43,7 @@ export const initialize = ({ lang }: State, action: INITIALIZE): State => {
       ...(formDef as Record<string, any>),
       form: {
         uid: '',
-        type: 'flex',
+        type: 'grid',
         kind: 'layout',
         children: widgets,
       },

@@ -15,6 +15,6 @@
   [labelField]="templateData.labelField"
   [valueField]="templateData.valueField"
   [direction]="templateData.direction"
-  (change)="valueChanged($event)"
-  (blur)="adapter.onBlur()"
+  (gui-input)="valueChanged($event)"
+  (gui-blur)="adapter.onBlur()"
 ></gui-radiogroup>

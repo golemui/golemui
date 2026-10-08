@@ -35,7 +35,7 @@ describe('DX Pipeline — Repeater', () => {
     // Template is a flex layout wrapping the walked children
     const template = w.props?.template as LayoutWidget;
     expect(template.kind).toBe('layout');
-    expect(template.type).toBe('flex');
+    expect(template.type).toBe('grid');
     expect(template.children?.length).toBe(2);
 
     const child1 = template.children?.[0] as NonFunctionWidget;

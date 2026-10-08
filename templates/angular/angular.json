@@ -33,6 +33,7 @@
             ],
             "styles": [
               "node_modules/@golemui/gui-components/lib/styles/index.css",
+              "node_modules/@golemui/gui-shared/forms.css",
               "src/styles.scss"
             ]
           },

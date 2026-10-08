@@ -1,38 +1,69 @@
-import { html, LitElement, nothing } from 'lit';
+import { html, nothing } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import { live } from 'lit/directives/live.js';
-import { safeDefine } from '@golemui/lit/internals';
+import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addIcon, addLabel, type ControlTemplateData } from '../utils/templates';
-import type { PasswordProps } from '@golemui/gui-shared/internals';
+import { GuiFormControl } from '../gui-form-control';
+import { dispatchBlur, dispatchChange, dispatchValue, valueEvents } from '../utils/events';
+import { message, requiredName } from '../utils/messages';
 
-export class GuiPassword extends LitElement {
-  @property({ type: String }) uid: string | undefined = undefined;
-  @property({ type: String }) label: string | undefined = undefined;
+/** What <gui-password> renders besides the control state: its presentation props. */
+export type GuiPasswordProps = {
+  hint?: string;
+  icon?: string;
+  placeholder?: string;
+  autocomplete?: string;
+  showPasswordIcon?: string;
+  hidePasswordIcon?: string;
+  showPasswordLabel?: string;
+  hidePasswordLabel?: string;
+};
+
+/**
+ * A password field with a button that shows or hides the password.
+ *
+ * @fires gui-input - The user changed the value. `detail.value` is the new value.
+ * @fires gui-change - The user committed the text, on blur or Enter. `detail.value` is the value.
+ * @fires gui-blur - Focus left the control.
+ */
+export class GuiPassword extends GuiFormControl {
+  /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
-  @property({ type: Array }) errors: string[] | undefined = [];
-  @property({ type: Boolean }) touched: boolean | undefined = false;
-  @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean }) disabled: boolean | undefined = false;
-  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
+  /** The password. */
   @property({ type: String }) value: string | undefined = undefined;
 
-  @property({ type: String }) hint: string | undefined = undefined;
+  /** Icon class name shown inside the control, for example from an icon font. */
   @property({ type: String }) icon: string | undefined = undefined;
+  /** Text shown while the control is empty. */
   @property({ type: String }) placeholder: string | undefined = undefined;
+  /** The `autocomplete` hint passed to the inner native control. */
   @property({ type: String }) autocomplete: string | undefined = undefined;
-  @property({ type: String }) showPasswordIcon: string | undefined = undefined;
-  @property({ type: String }) hidePasswordIcon: string | undefined = undefined;
-  @property({ type: String }) showPasswordLabel: string | undefined = undefined;
-  @property({ type: String }) hidePasswordLabel: string | undefined = undefined;
+  /** Icon class name of the button that shows the password, while the password is hidden. */
+  @property({ type: String, attribute: 'show-password-icon' }) showPasswordIcon:
+    | string
+    | undefined = undefined;
+  /** Icon class name of the button that hides the password, while the password is shown. */
+  @property({ type: String, attribute: 'hide-password-icon' }) hidePasswordIcon:
+    | string
+    | undefined = undefined;
+  /** Accessible name of the button that shows the password. An empty value keeps the default. */
+  @property({ type: String, attribute: 'show-password-label' }) showPasswordLabel:
+    | string
+    | undefined = undefined;
+  /** Accessible name of the button that hides the password. An empty value keeps the default. */
+  @property({ type: String, attribute: 'hide-password-label' }) hidePasswordLabel:
+    | string
+    | undefined = undefined;
 
+  /** @internal */
   @state() showPassword = false;
 
   private ariaController = new GUIAriaController(this, {
     getTargets: () => this.querySelectorAll(`input[id="${this.uid}"]`),
     getState: () => ({
-      uid: this.uid as string,
+      uid: this.uid,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -56,7 +87,7 @@ export class GuiPassword extends LitElement {
   override render() {
     super.render();
 
-    const templateData: ControlTemplateData<string> & PasswordProps = {
+    const templateData: ControlTemplateData<string> & GuiPasswordProps = {
       uid: this.uid,
       label: this.label,
       hint: this.hint,
@@ -83,8 +114,13 @@ export class GuiPassword extends LitElement {
       [`gui-password--icon`]: !!this.icon,
     };
 
+    // The toggle shows the icon of what it does: show the hidden password, or hide it again.
+    const toggleIcon = this.showPassword
+      ? templateData.hidePasswordIcon
+      : templateData.showPasswordIcon;
+
     return html`
-      ${addLabel(this.uid as string, templateData)}
+      ${addLabel(this.uid, templateData)}
 
       <div class="gui-widget">
         <input
@@ -93,65 +129,69 @@ export class GuiPassword extends LitElement {
           data-cy=${`${this.uid}_password`}
           class=${classMap(fieldClasses)}
           .value=${live(this.value ?? '')}
-          ?required=${this.required}
           ?disabled=${this.disabled}
           ?readonly=${this.readOnly}
           placeholder=${this.placeholder || nothing}
           autocomplete=${this.autocomplete || nothing}
           @input=${this.valueChanged}
+          @change=${this.valueCommitted}
           @blur=${this.onBlur}
         />
         ${passwordIcon.html}
         <button
-          class=${`gui-password__toggle gui-widget-icon ${this.showPassword && templateData.showPasswordIcon ? templateData.showPasswordIcon : ''} ${!this.showPassword && templateData.hidePasswordIcon ? templateData.hidePasswordIcon : ''}`}
-          data-icon=${this.showPassword
-            ? templateData.showPasswordIcon
-            : templateData.hidePasswordIcon}
+          class=${`gui-password__toggle gui-widget-icon ${toggleIcon ?? ''}`}
+          data-icon=${toggleIcon || nothing}
           type="button"
           ?disabled=${this.disabled}
           aria-label=${!this.showPassword
-            ? (templateData.showPasswordLabel ?? 'Show password')
-            : (templateData.hidePasswordLabel ?? 'Hide password')}
+            ? requiredName('showPassword', templateData.showPasswordLabel)
+            : requiredName('hidePassword', templateData.hidePasswordLabel)}
           @click=${() => (this.showPassword = !this.showPassword)}
         >
-          ${templateData.showPasswordIcon || templateData.hidePasswordIcon
+          ${toggleIcon
             ? nothing
             : html`<span aria-hidden="true"
                 >${!this.showPassword
-                  ? (templateData.showPasswordLabel ?? 'Show')
-                  : (templateData.hidePasswordLabel ?? 'Hide')}</span
+                  ? message('show', templateData.showPasswordLabel)
+                  : message('hide', templateData.hidePasswordLabel)}</span
               >`}
         </button>
       </div>
 
-      ${addErrors(this.uid as string, templateData)}
+      ${addErrors(this.uid, templateData)}
     `;
   }
 
+  /** @internal */
   valueChanged(event: InputEvent) {
     event.stopPropagation();
 
     if (!this.readOnly) {
       const target = event.target as HTMLInputElement;
-      this.dispatchEvent(
-        new CustomEvent('input', {
-          detail: { value: target.value },
-          bubbles: true,
-          composed: true,
-        }),
-      );
+      this.value = target.value;
+      dispatchValue(this, this.value, { commit: false });
     }
   }
 
+  /**
+   * The native `change`: the user committed the edit (blur or Enter).
+   *
+   * @internal
+   */
+  valueCommitted(event: Event) {
+    dispatchChange(this, (event.target as HTMLInputElement).value);
+  }
+
+  /** @internal */
   onBlur() {
-    this.dispatchEvent(
-      new CustomEvent('blur', {
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatchBlur(this);
   }
 }
+
+/** The events `gui-password` fires, with their types. */
+export const GuiPasswordEvents = {
+  ...valueEvents<GuiPassword['value']>(),
+};
 
 declare global {
   interface HTMLElementTagNameMap {

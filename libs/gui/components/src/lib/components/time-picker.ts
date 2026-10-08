@@ -1,6 +1,6 @@
-import { html, LitElement, type PropertyValues } from 'lit';
+import { html, isServer, nothing, type PropertyValues } from 'lit';
 import { property, query } from 'lit/decorators.js';
-import { safeDefine } from '@golemui/lit/internals';
+import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
 import './time-input';
 import './time-list';
@@ -11,50 +11,94 @@ import { GUIPopupController } from '../controllers/popup.controller';
 import { buildTimeOptions, isTimeDisabled, type HourFormat, type TimeRange } from '../utils/time';
 import { timeBoundsError } from '../utils/parts';
 import { addErrors, addIcon, addLabel, addPickerPanel } from '../utils/templates';
-import { INVALID_DISABLED_TIME_RANGE_MESSAGE } from '../utils/messages';
-import { CARET_DOWN_PATH } from '../utils/icons';
+import { boundsValidity, GuiFormControl, type GuiValidity } from '../gui-form-control';
+import {
+  dispatch,
+  dispatchBlur,
+  dispatchInputError,
+  dispatchValue,
+  stopPropagation,
+  fires,
+  valueEvents,
+  type GuiInputErrorEventDetail,
+} from '../utils/events';
+import { message, requiredName } from '../utils/messages';
 
-export class GuiTimePicker extends LitElement {
-  @property({ type: String }) uid: string | undefined = undefined;
-  @property({ type: String }) label: string | undefined = undefined;
-  @property({ type: String }) hint: string | undefined = undefined;
+/**
+ * A time field with a list of times in a popup.
+ *
+ * @fires gui-input - The user changed the value. `detail.value` is the new value.
+ * @fires gui-change - The user picked a time from the list or pressed Enter. `detail.value` is the
+ *   time.
+ * @fires gui-blur - Focus left the control.
+ * @fires gui-input-error - The element rejected what the user entered, such as an impossible date
+ *   or a value out of bounds. `detail.message` is the error; show it through `errors`.
+ * @fires gui-list-toggle - The time list opened or closed. `detail.open` is its new state.
+ * @cssprop --gui-calendar-time-grid-height - Height of the time grid.
+ * @cssprop --gui-calendar-time-button-height - Height of each time in the grid.
+ */
+export class GuiTimePicker extends GuiFormControl {
+  /** Icon class name shown inside the control, for example from an icon font. */
   @property({ type: String }) icon: string | undefined = '';
+  /** Accessible name of the button that opens the popup. An empty value keeps the default. */
   @property({ type: String, attribute: 'toggle-aria-label' }) toggleAriaLabel: string | undefined =
     undefined;
-  @property({ type: String }) hourAriaLabel: string | undefined = undefined;
-  @property({ type: String }) minuteAriaLabel: string | undefined = undefined;
-  @property({ type: String }) dayPeriodAriaLabel: string | undefined = undefined;
-  @property({ type: Array }) errors: string[] | undefined = [];
-  @property({ type: Boolean }) showErrors: boolean | undefined = true;
-  @property({ type: Boolean }) touched: boolean | undefined = false;
-  @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean }) disabled: boolean | undefined = false;
-  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
+  /** Accessible name of the hour part. An empty value keeps the default. */
+  @property({ type: String, attribute: 'hour-aria-label' }) hourAriaLabel: string | undefined =
+    undefined;
+  /** Accessible name of the minute part. An empty value keeps the default. */
+  @property({ type: String, attribute: 'minute-aria-label' }) minuteAriaLabel: string | undefined =
+    undefined;
+  /** Accessible name of the AM/PM part. An empty value keeps the default. */
+  @property({ type: String, attribute: 'day-period-aria-label' }) dayPeriodAriaLabel:
+    | string
+    | undefined = undefined;
+  /**
+   * Whether the element renders its own error list. Elements that embed it turn it off and show the
+   * errors themselves.
+   */
+  @property({ type: Boolean, attribute: 'show-errors' }) showErrors: boolean | undefined = true;
+  /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
+  /** The time, as an ISO time (`HH:mm:ss`). */
   @property({ type: String }) value: string | undefined = undefined;
+  /** 12- or 24-hour clock. Defaults to the locale's. */
   @property({ type: String, attribute: 'hour-format' }) hourFormat: HourFormat | undefined =
     undefined;
+  /** Minutes between the times offered in the list. */
   @property({ type: Number, attribute: 'minute-step' }) minuteStep: number | undefined = undefined;
+  /** Earliest selectable time, as an ISO time (`HH:mm:ss`). */
   @property({ type: String, attribute: 'min-time' }) minTime: string | undefined = undefined;
+  /** Latest selectable time, as an ISO time (`HH:mm:ss`). */
   @property({ type: String, attribute: 'max-time' }) maxTime: string | undefined = undefined;
+  /** Times that cannot be picked, as `{ start, end }` ISO time ranges. */
   @property({ type: Array, attribute: 'disabled-ranges' }) disabledRanges: TimeRange[] | undefined =
     undefined;
+  /** Allows typing any time, not only picking one from the list. */
   @property({ type: Boolean, attribute: 'allow-custom-time' }) allowCustomTime:
     | boolean
     | undefined = false;
+  /** Height of the time list, in pixels. */
   @property({ type: Number }) height: number | undefined = undefined;
+  /** Height of each time in the list, in pixels. */
   @property({ type: Number, attribute: 'item-height' }) itemHeight: number | undefined = undefined;
+  /** Number of columns of the time grid. */
   @property({ type: Number }) columns: number | undefined = undefined;
+  /** Error for a time before `minTime`. */
   @property({ type: String, attribute: 'min-time-message' }) minTimeMessage: string | undefined =
     undefined;
+  /** Error for a time after `maxTime`. */
   @property({ type: String, attribute: 'max-time-message' }) maxTimeMessage: string | undefined =
     undefined;
+  /** Error for a time inside `disabledRanges`. */
   @property({ type: String, attribute: 'disabled-range-message' }) disabledRangeMessage:
     | string
     | undefined = undefined;
+  /** Text shown when no time can be picked. */
   @property({ type: String, attribute: 'no-available-times-message' }) noAvailableTimesMessage:
     | string
     | undefined = undefined;
+  /** Error when focus leaves a partly filled value. */
   @property({ type: String, attribute: 'incomplete-message' }) incompleteMessage:
     | string
     | undefined = undefined;
@@ -62,6 +106,8 @@ export class GuiTimePicker extends LitElement {
    * Set by hosts (the date-time calendars) that run their own focus-leave
    * check over a subtree containing this picker: skips the picker's own
    * incomplete-on-leave handling.
+   *
+   * @internal
    */
   @property({ type: Boolean, attribute: 'defer-focus-leave' }) deferFocusLeave:
     | boolean
@@ -73,7 +119,7 @@ export class GuiTimePicker extends LitElement {
     onLeave: () => {
       // Embedded in a calendar: that host owns focus reporting for the subtree.
       if (this.deferFocusLeave) return;
-      this.dispatchEvent(new CustomEvent('blur'));
+      dispatchBlur(this);
       this.reportIncompleteOnLeave();
     },
   });
@@ -99,6 +145,11 @@ export class GuiTimePicker extends LitElement {
     return this;
   }
 
+  override connectedCallback() {
+    super.connectedCallback();
+    this.classList.add('gui-field');
+  }
+
   override updated(changed: PropertyValues) {
     if (changed.has('value') && this._listRef && this._listRef.value !== this.value) {
       this._listRef.value = this.value;
@@ -108,9 +159,46 @@ export class GuiTimePicker extends LitElement {
   override render() {
     const timePickerIcon = addIcon('timePicker', { icon: this.icon });
 
+    // The list is in the page while closed, hidden, so it is ready to open. The server leaves the
+    // closed list out rather than send every time of the day: the browser renders it when the
+    // element upgrades.
+    const list =
+      isServer && !this._popup.open
+        ? nothing
+        : addPickerPanel(
+            this.uid,
+            { errors: this.errors, touched: this.touched, showErrors: this.showErrors },
+            // Dual hidden: tests select the inner list's [hidden]; the panel's
+            // own [hidden] removes the card chrome. Both bind to the same state.
+            html`<gui-time-list
+              id=${`${this.uid}_popup`}
+              role="dialog"
+              aria-labelledby=${this.label ? `${this.uid}_label` : nothing}
+              aria-label=${this.label ? nothing : requiredName('timeList')}
+              .uid=${this.uid}
+              .value=${this.value}
+              .label=${this.label}
+              .localeId=${this.localeId}
+              .hourFormat=${this.hourFormat}
+              .minuteStep=${this.minuteStep}
+              .minTime=${this.minTime}
+              .maxTime=${this.maxTime}
+              .disabledRanges=${this.disabledRanges}
+              .height=${this.height}
+              .itemHeight=${this.itemHeight}
+              .columns=${this.columns}
+              .noAvailableTimesMessage=${this.noAvailableTimesMessage}
+              ?readonly=${this.readOnly}
+              ?hidden=${!this._popup.open}
+              @gui-input=${stopPropagation}
+              @gui-change=${this.onListChange}
+            ></gui-time-list>`,
+            { hidden: !this._popup.open },
+          );
+
     return html`
       ${addLabel(
-        this.uid ?? '',
+        this.uid,
         {
           label: this.label,
           hint: this.hint,
@@ -128,14 +216,15 @@ export class GuiTimePicker extends LitElement {
         @focusout=${this._focusLeave.onFocusOut}
       >
         <gui-time
-          id="time-input"
+          id=${`${this.uid}_time`}
           class=${classMap(timePickerIcon.widgetClasses)}
           .uid=${this.uid}
           .hint=${this.hint}
+          .showHint=${false}
           .showErrors=${false}
           .deferFocusLeave=${true}
           .errors=${this.errors}
-          ?touched=${this.touched}
+          .touched=${this.touched}
           ?required=${this.required}
           ?disabled=${this.disabled}
           ?readonly=${this.readOnly || !this.allowCustomTime}
@@ -152,64 +241,30 @@ export class GuiTimePicker extends LitElement {
           .minTimeMessage=${this.minTimeMessage}
           .maxTimeMessage=${this.maxTimeMessage}
           .incompleteMessage=${this.incompleteMessage}
-          @blur=${this.onTimeBlur}
-          @focus=${this._popup.show}
-          @change=${this.onTimeChange}
+          @gui-blur=${this.onTimeBlur}
+          @gui-focus=${this.onTimeFocus}
+          @gui-input=${this.onTimeInput}
+          @gui-change=${stopPropagation}
+          @gui-input-error=${this.onTimeInputError}
+          @gui-parts-change=${this.onInnerPartsChange}
         ></gui-time>
         <button
           type="button"
           class="gui-time-picker__arrow"
-          aria-label=${this.toggleAriaLabel ?? 'Show time list'}
+          aria-label=${requiredName('showTimeList', this.toggleAriaLabel)}
           aria-haspopup="dialog"
           aria-expanded=${this._popup.open ? 'true' : 'false'}
           aria-controls=${`${this.uid}_popup`}
           ?disabled=${this.disabled}
           @click=${this.onToggleClick}
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            viewBox="0 0 256 256"
-            aria-hidden="true"
-          >
-            <path d=${CARET_DOWN_PATH}></path>
-          </svg>
+          <span class="gui-caret" aria-hidden="true"></span>
         </button>
 
-        ${addPickerPanel(
-          this.uid ?? '',
-          { errors: this.errors, touched: this.touched, showErrors: this.showErrors },
-          // Dual hidden: tests select the inner list's [hidden]; the panel's
-          // own [hidden] removes the card chrome. Both bind to the same state.
-          html`<gui-time-list
-            id=${`${this.uid}_popup`}
-            role="dialog"
-            aria-label=${this.label ?? 'Time list'}
-            .uid=${this.uid}
-            .value=${this.value}
-            .label=${this.label}
-            .localeId=${this.localeId}
-            .hourFormat=${this.hourFormat}
-            .minuteStep=${this.minuteStep}
-            .minTime=${this.minTime}
-            .maxTime=${this.maxTime}
-            .disabledRanges=${this.disabledRanges}
-            .height=${this.height}
-            .itemHeight=${this.itemHeight}
-            .columns=${this.columns}
-            .noAvailableTimesMessage=${this.noAvailableTimesMessage}
-            ?readonly=${this.readOnly}
-            ?hidden=${!this._popup.open}
-            @change=${this.onListChange}
-          ></gui-time-list>`,
-          { hidden: !this._popup.open },
-        )}
+        ${list}
       </div>
 
-      ${this.showErrors
-        ? addErrors(this.uid ?? '', { errors: this.errors, touched: this.touched })
-        : ''}
+      ${this.showErrors ? addErrors(this.uid, { errors: this.errors, touched: this.touched }) : ''}
     `;
   }
 
@@ -223,7 +278,21 @@ export class GuiTimePicker extends LitElement {
     }
   };
 
-  private onTimeChange(event: CustomEvent) {
+  private onTimeFocus(event: Event) {
+    stopPropagation(event);
+    this._popup.show();
+  }
+
+  /** The field's error is reported as the picker's own. */
+  private onTimeInputError(event: CustomEvent<GuiInputErrorEventDetail>) {
+    stopPropagation(event);
+    dispatchInputError(this, event.detail.message);
+    // The inner field's bad input is part of this picker's validity.
+    this.requestUpdate();
+  }
+
+  /** Typing in the field is continuous editing: the field's own commit is not the picker's. */
+  private onTimeInput(event: CustomEvent) {
     event.stopPropagation();
     this.commitValue(event.detail.value);
   }
@@ -255,22 +324,24 @@ export class GuiTimePicker extends LitElement {
   private commitValue(value: string | null | undefined, commit = false) {
     this.value = value ?? undefined;
     const error = this.validateBounds(this.value);
-    this.dispatchEvent(
-      new CustomEvent('change', {
-        detail: { value: value ?? null, commit },
-        bubbles: true,
-        composed: true,
-      }),
+    dispatchValue(this, value ?? null, { commit });
+    if (error) dispatchInputError(this, error);
+  }
+
+  /** The inner field's parts changed, and with them its bad input, which is part of the validity. */
+  private onInnerPartsChange(event: Event) {
+    stopPropagation(event);
+    this.requestUpdate();
+  }
+
+  protected override validate(): GuiValidity | null {
+    // A typed entry the inner field cannot turn into a value: it keeps the previous one.
+    const badInput = this.querySelector<GuiTime>('gui-time')?.partsBadInput() ?? null;
+    return (
+      boundsValidity(this.validateBounds(this.value), this.value, this.minTime, this.maxTime) ??
+      (badInput ? { flags: { badInput: true }, message: badInput } : null) ??
+      super.validate()
     );
-    if (error) {
-      this.dispatchEvent(
-        new CustomEvent('inputError', {
-          detail: { message: error },
-          bubbles: true,
-          composed: true,
-        }),
-      );
-    }
   }
 
   private validateBounds(value: string | undefined): string | null {
@@ -283,7 +354,7 @@ export class GuiTimePicker extends LitElement {
     });
     if (boundsError) return boundsError;
     if (isTimeDisabled(value, this.disabledRanges)) {
-      return this.disabledRangeMessage ?? INVALID_DISABLED_TIME_RANGE_MESSAGE;
+      return message('disabledTimeRange', this.disabledRangeMessage);
     }
     return null;
   }
@@ -338,6 +409,8 @@ export class GuiTimePicker extends LitElement {
   }
 
   /** Public close hook kept for the date-time calendars, which close the
+   *
+   * @internal
    * embedded time-picker's list imperatively. */
   closeList() {
     this._popup.close();
@@ -347,22 +420,23 @@ export class GuiTimePicker extends LitElement {
    * Hands the embedded input its deferred settlement: a partially typed time
    * left behind surfaces the incomplete message, an emptied one clears a
    * message it surfaced earlier. The input's resulting change bubbles back
-   * through {@link onTimeChange}, so the picker's value follows.
+   * through {@link onTimeInput}, so the picker's value follows.
    */
   private reportIncompleteOnLeave(): void {
     this.querySelector<GuiTime>('gui-time')?.settleOnFocusLeave();
   }
 
   private dispatchListToggle(open: boolean) {
-    this.dispatchEvent(
-      new CustomEvent('listtoggle', {
-        detail: { open },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatch(this, 'gui-list-toggle', { open });
   }
 }
+
+/** The events `gui-time-picker` fires, with their types. */
+export const GuiTimePickerEvents = {
+  ...valueEvents<GuiTimePicker['value']>(),
+  'gui-input-error': fires<CustomEvent<GuiInputErrorEventDetail>>(),
+  'gui-list-toggle': fires<CustomEvent<{ open: boolean }>>(),
+};
 
 declare global {
   interface HTMLElementTagNameMap {

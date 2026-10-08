@@ -19,7 +19,7 @@ const togglePosition = computed(() => templateData.value.togglePosition || 'left
 </script>
 
 <template>
-  <div class="gui-toggle gui-field" :style="{ flex: templateData.size }">
+  <div class="gui-toggle gui-field">
     <gui-toggle
       :uid="uid"
       :label="templateData.label"
@@ -31,8 +31,8 @@ const togglePosition = computed(() => templateData.value.togglePosition || 'left
       :value="value"
       :hint="templateData.hint"
       :togglePosition.prop="togglePosition"
-      @change="handleChange"
-      @blur="onBlur"
+      @gui-input="handleChange"
+      @gui-blur="onBlur"
     ></gui-toggle>
   </div>
 </template>

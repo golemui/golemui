@@ -149,7 +149,7 @@ export const createInitialState = (lang: string): State => ({
   formDef: formDefDecoder.parse({
     form: {
       kind: 'layout',
-      type: 'flex',
+      type: 'grid',
       children: [],
     },
   }) as Form,

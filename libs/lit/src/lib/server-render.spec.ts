@@ -1,7 +1,7 @@
 import { type InputWidget, preloadFormWidgets } from '@golemui/core';
 import { Subject } from 'rxjs';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
-import { renderGuiFormHtml } from '../ssr';
+import { renderForm } from '../ssr';
 import { ActionWidgetAdapter } from './adapters/action-widget.adapter';
 import { InputWidgetAdapter } from './adapters/input-widget.adapter';
 import { type LitFormContext } from './context/form.context';
@@ -10,6 +10,7 @@ import {
   canonicalServerMarkup,
   formData,
   noopValidators,
+  reservedOnlyWidgetLoaders,
   stubWidgetLoaders,
 } from './ssr.fixture';
 
@@ -19,7 +20,7 @@ import {
  */
 
 async function renderFixtureForm(options?: { keepMarkers?: boolean }): Promise<string> {
-  return renderGuiFormHtml({
+  return renderForm({
     config: buildConfig(),
     validators: noopValidators,
     keepMarkers: options?.keepMarkers,
@@ -42,6 +43,12 @@ describe('server rendering a form in plain node', () => {
     expect(markup).toContain('<gui-core-form');
     expect(markup).toMatch(/<form[^>]*id="fixture-form"/);
     expect(markup).not.toContain('Loading form...');
+  });
+
+  // Native constraint validation stays off: the engine owns validation, and the form-associated
+  // gui-* elements planned for v2 would otherwise trigger the browser's own validation UI.
+  it('turns off native form validation', () => {
+    expect(markup).toMatch(/<form[^>]*\snovalidate/);
   });
 
   it('renders every widget of the definition', () => {
@@ -82,9 +89,7 @@ describe('server rendering a form in plain node', () => {
   it('throws without an explicit formName', async () => {
     const config = buildConfig();
     delete config.formName;
-    await expect(renderGuiFormHtml({ config, validators: noopValidators })).rejects.toThrow(
-      /formName/,
-    );
+    await expect(renderForm({ config, validators: noopValidators })).rejects.toThrow(/formName/);
   });
 
   it('renders an untouched form without validation errors', () => {
@@ -124,5 +129,25 @@ describe('server rendering a form in plain node', () => {
     } as any);
 
     expect(emitEvent).not.toHaveBeenCalled();
+  });
+});
+
+describe('server rendering with only the reserved loaders', () => {
+  it('renders an array-shaped form inside the grid root core adds', async () => {
+    await preloadFormWidgets({ widgetLoaders: reservedOnlyWidgetLoaders as any });
+    const markup = await renderForm({
+      config: {
+        formName: 'reserved-only-form',
+        formDef: {
+          form: [{ kind: 'input', type: 'textinput', path: 'name', label: 'Name' }],
+        },
+        widgetLoaders: reservedOnlyWidgetLoaders as any,
+        data: { name: 'Ada' },
+      },
+      validators: noopValidators,
+    });
+
+    expect(markup).toContain('class="stub-flex"');
+    expect(markup).toMatch(/<input[^>]*data-label="Name"[^>]*value="Ada"/);
   });
 });

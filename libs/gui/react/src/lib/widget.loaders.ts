@@ -47,7 +47,7 @@ export const widgetLoaders: WidgetLoaders<React.ComponentType<WithWidget>, Golem
   repeater: async () => (await import('./components/Repeater')).Repeater,
 
   // LAYOUTS
-  flex: async () => (await import('./components/Flex')).Flex,
+  flex: async () => (await import('./components/Grid')).Grid,
   grid: async () => (await import('./components/Grid')).Grid,
   tabs: async () => (await import('./components/Tabs')).Tabs,
   accordion: async () => (await import('./components/Accordion')).Accordion,

@@ -36,7 +36,7 @@ export function DatePicker(widgetInstance: WithWidget) {
   const isRequired = (templateData.validator as Validator)?.required;
 
   return (
-    <div className="gui-date-picker gui-field" style={{ flex: templateData.size }}>
+    <div className="gui-date-picker gui-field">
       <GuiDatePickerReact
         uid={uid}
         label={templateData.label as string}
@@ -71,9 +71,9 @@ export function DatePicker(widgetInstance: WithWidget) {
         maxDateMessage={templateData.maxDateMessage as string}
         disabledDateRangeMessage={templateData.disabledDateRangeMessage as string}
         incompleteMessage={templateData.incompleteMessage as string}
-        onChange={handleChange}
-        onBlur={onBlur}
-        onInputError={handleInputError}
+        onGuiInput={handleChange}
+        onGuiBlur={onBlur}
+        onGuiInputError={handleInputError}
       />
     </div>
   );

@@ -113,7 +113,7 @@ function transformSchemaMap(
  * Builds the self-contained editor schema by walking the `$ref` graph from the form
  * envelope. Every reachable file is inlined, so the result loads with no network access.
  * @param config - The implementation's schema configuration.
- * @param readSchema - Returns the parsed schema at a lib-relative path, e.g. `components/flex.schema.json`.
+ * @param readSchema - Returns the parsed schema at a lib-relative path, e.g. `components/grid.schema.json`.
  * @returns The bundle, ready to be serialized.
  * @example
  * const bundle = buildEditorBundle(config, (path) =>

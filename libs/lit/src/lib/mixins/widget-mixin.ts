@@ -4,7 +4,7 @@ import { type LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
 import { html as staticHtml, unsafeStatic } from 'lit/static-html.js';
 import { formContext, type LitFormContext } from '../context/form.context';
-import { tagNameOf } from '../utils/define';
+import { tagNameOf } from '@golemui/lit-utils';
 
 // Static template identity is derived from the strings, so one value per tag is enough.
 const staticTagCache = new Map<string, ReturnType<typeof unsafeStatic>>();

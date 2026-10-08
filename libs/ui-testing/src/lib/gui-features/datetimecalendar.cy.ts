@@ -260,7 +260,7 @@ export const runDateTimeCalendarComponentTests = (mountFn: MountComponentFn) => 
         option('09:30:00').should('not.be.disabled');
       });
 
-      it('should reject a typed time inside a day-scoped range with inputError', () => {
+      it('should reject a typed time inside a day-scoped range with gui-input-error', () => {
         // Hydrate a Monday so the view shows February, then move to the
         // scoped 13th — the 11:00 time is kept and stays in the parts
         mountCalendar({
@@ -278,7 +278,7 @@ export const runDateTimeCalendarComponentTests = (mountFn: MountComponentFn) => 
 
         const inputErrorSpy = cy.spy().as('inputErrorSpy');
         cy.get('gui-date-time-calendar').then(($el) => {
-          $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
+          $el[0].addEventListener('gui-input-error', inputErrorSpy as unknown as EventListener);
         });
 
         cy.get(sel.hour).type('{selectAll}09');
@@ -346,7 +346,7 @@ export const runDateTimeCalendarComponentTests = (mountFn: MountComponentFn) => 
         });
       });
 
-      it('should emit inputError and a change for a typed out-of-bounds time', () => {
+      it('should emit gui-input-error and a change for a typed out-of-bounds time', () => {
         mountCalendar({
           data: { myAppointment: null },
           props: { ...officeProps, hourFormat: '24', allowCustomTime: true },
@@ -357,8 +357,8 @@ export const runDateTimeCalendarComponentTests = (mountFn: MountComponentFn) => 
         const changeSpy = cy.spy().as('changeSpy');
         const inputErrorSpy = cy.spy().as('inputErrorSpy');
         cy.get('gui-date-time-calendar').then(($el) => {
-          $el[0].addEventListener('change', changeSpy as unknown as EventListener);
-          $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
+          $el[0].addEventListener('gui-input', changeSpy as unknown as EventListener);
+          $el[0].addEventListener('gui-input-error', inputErrorSpy as unknown as EventListener);
         });
 
         cy.get(sel.hour).type('08');
@@ -386,7 +386,7 @@ export const runDateTimeCalendarComponentTests = (mountFn: MountComponentFn) => 
 
         const inputErrorSpy = cy.spy().as('inputErrorSpy');
         cy.get('gui-date-time-calendar').then(($el) => {
-          $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
+          $el[0].addEventListener('gui-input-error', inputErrorSpy as unknown as EventListener);
         });
 
         cy.get(sel.hour).type('08');

@@ -1,6 +1,6 @@
 import { gui } from '@golemui/gui-shared';
 
-export const dateTimeCalendarTab = gui.layouts.flex([
+export const dateTimeCalendarTab = gui.layouts.grid([
   gui.inputs.dateTimeCalendar('dateTimeCalendarEmpty', {
     label: 'Empty',
     minTime: '09:00:00',

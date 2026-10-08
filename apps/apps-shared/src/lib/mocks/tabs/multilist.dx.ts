@@ -10,7 +10,7 @@ const objectItems = [
   { label: 'Item 5', value: 5 },
 ];
 
-export const multiListTab = gui.layouts.flex([
+export const multiListTab = gui.layouts.grid([
   gui.inputs.multiList('multiLists.frameworks', {
     label: 'Frameworks',
     hint: 'Click or press Enter/Space to toggle options on and off',

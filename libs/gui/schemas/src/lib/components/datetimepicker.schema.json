@@ -257,6 +257,9 @@
         },
         "allowCustomTime": {
           "$ref": "#/$defs/allowCustomTimeProp"
+        },
+        "timeLabel": {
+          "$ref": "../core/common.schema.json#/$defs/localizable"
         }
       },
       "patternProperties": {
@@ -270,6 +273,9 @@
           "$ref": "../core/common.schema.json#/$defs/localizable"
         },
         "^disabledDateRangeMessage\\.[^.]+$": {
+          "$ref": "../core/common.schema.json#/$defs/localizable"
+        },
+        "^timeLabel\\.[^.]+$": {
           "$ref": "../core/common.schema.json#/$defs/localizable"
         },
         "^minTimeMessage\\.[^.]+$": {

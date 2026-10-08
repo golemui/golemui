@@ -1,0 +1,10 @@
+// A submit button after a submit attempt on an invalid form. The adapters set the class on their
+// own host around the <gui-button>.
+.gui-button--invalid :is(button, a) {
+  border: 2px solid var(--gui-intent-error);
+
+  &:focus {
+    outline: 0;
+    box-shadow: var(--gui-shadow-focus-error);
+  }
+}

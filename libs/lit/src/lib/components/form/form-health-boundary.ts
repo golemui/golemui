@@ -1,6 +1,6 @@
 import type { FormHealth } from '@golemui/core';
 import { html, nothing, type TemplateResult } from 'lit';
-import { cspStyleMap } from '../../utils/csp-style-map';
+import { cspStyleMap } from '@golemui/lit-utils';
 
 /**
  * Params for a FormHealth boundary. `health` is the form's current health; `form` is the rendered

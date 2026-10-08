@@ -1,35 +1,59 @@
-import { html, LitElement, nothing } from 'lit';
+import { html, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
-import { cspStyleMap, safeDefine } from '@golemui/lit/internals';
+import { cspStyleMap } from '@golemui/lit-utils';
+import { safeDefine } from '@golemui/lit-utils';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
-import { blockNonNumericInput, blockNonNumericKeys, isRealNumber } from '../utils/numeric';
-import type { NumberinputProps } from '@golemui/gui-shared/internals';
-import { CARET_DOWN_PATH, CARET_UP_PATH } from '../utils/icons';
+import {
+  blockNonNumericInput,
+  blockNonNumericKeys,
+  isRealNumber,
+  serverValue,
+  stepValue,
+} from '../utils/numeric';
+import { GuiFormControl, type GuiValidity } from '../gui-form-control';
+import { dispatchBlur, dispatchChange, dispatchValue, valueEvents } from '../utils/events';
+import { message } from '../utils/messages';
 
-export class GuiNumber extends LitElement {
-  @property({ type: String }) uid: string | undefined = undefined;
-  @property({ type: String }) label: string | undefined = undefined;
-  @property({ type: String }) hint: string | undefined = undefined;
+/** What <gui-number> renders besides the control state: its presentation props. */
+export type GuiNumberProps = {
+  hint?: string;
+  step?: number;
+  placeholder?: string;
+  autocomplete?: string;
+};
+
+/**
+ * A number field. ArrowUp and ArrowDown step the value.
+ *
+ * @fires gui-input - The user changed the value. `detail.value` is the new value.
+ * @fires gui-change - The user committed the number: on blur or Enter, or at once with a step.
+ *   `detail.value` is the number.
+ * @fires gui-blur - Focus left the control.
+ */
+export class GuiNumber extends GuiFormControl {
+  /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
-  @property({ type: Array }) errors: string[] | undefined = [];
-  @property({ type: Boolean }) touched: boolean | undefined = false;
-  @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean }) disabled: boolean | undefined = false;
-  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
+  /** The number, or `undefined` when empty. */
   @property({ type: Number }) value: number | undefined = undefined;
 
+  /** The step of the ArrowUp and ArrowDown keys. Defaults to 1. An empty field steps from 0. */
   @property({ type: Number }) step: number | undefined = undefined;
+  /** Text shown while the control is empty. */
   @property({ type: String }) placeholder: string | undefined = undefined;
+  /** The `autocomplete` hint passed to the inner native control. */
   @property({ type: String }) autocomplete: string | undefined = undefined;
+  /** Smallest allowed number. */
   @property({ type: Number }) minimum: number | undefined = undefined;
+  /** Largest allowed number. */
   @property({ type: Number }) maximum: number | undefined = undefined;
-  @property({ type: Number }) autoGrow: boolean | undefined = false;
+  /** Grows the field with its content instead of scrolling. */
+  @property({ type: Boolean, attribute: 'auto-grow' }) autoGrow: boolean | undefined = false;
 
   private ariaController = new GUIAriaController(this, {
     getTargets: () => this.querySelectorAll(`input[id="${this.uid}"]`),
     getState: () => ({
-      uid: this.uid as string,
+      uid: this.uid,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -77,7 +101,7 @@ export class GuiNumber extends LitElement {
       }
     }
 
-    const templateData: ControlTemplateData<number> & NumberinputProps = {
+    const templateData: ControlTemplateData<number> & GuiNumberProps = {
       uid: this.uid,
       label: this.label,
       hint: this.hint,
@@ -92,8 +116,10 @@ export class GuiNumber extends LitElement {
       autocomplete: this.autocomplete,
     };
 
+    // The inner input carries no constraints (see GuiFormControl): `step="any"` keeps the browser
+    // from rejecting decimals, and the bounds reach assistive technology as aria-valuemin/max.
     return html`
-      ${addLabel(this.uid as string, templateData)}
+      ${addLabel(this.uid, templateData)}
 
       <div class="gui-widget">
         <input
@@ -103,42 +129,27 @@ export class GuiNumber extends LitElement {
           data-cy=${`${this.uid}_number`}
           class="gui-widget-input"
           style=${cspStyleMap(inputStyles)}
-          ?required=${this.required}
           ?disabled=${this.disabled}
           ?readonly=${this.readOnly}
-          step=${typeof this.step === 'number' ? this.step : nothing}
-          min=${isRealNumber(this.minimum) ? this.minimum : nothing}
-          max=${isRealNumber(this.maximum) ? this.maximum : nothing}
+          step="any"
+          aria-valuemin=${isRealNumber(this.minimum) ? this.minimum : nothing}
+          aria-valuemax=${isRealNumber(this.maximum) ? this.maximum : nothing}
           placeholder=${this.placeholder || nothing}
           autocomplete=${this.autocomplete || nothing}
+          value=${serverValue(this.normalizedValue)}
           @input=${this.valueChanged}
+          @change=${this.valueCommitted}
           @beforeinput=${blockNonNumericInput}
           @keydown=${this.keyDown}
           @blur=${this.onBlur}
         />
         <span class="gui-number__decoration">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="12"
-            height="12"
-            viewBox="0 0 256 256"
-            aria-hidden="true"
-          >
-            <path d=${CARET_UP_PATH}></path>
-          </svg>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="12"
-            height="12"
-            viewBox="0 0 256 256"
-            aria-hidden="true"
-          >
-            <path d=${CARET_DOWN_PATH}></path>
-          </svg>
+          <span class="gui-caret gui-caret--up" aria-hidden="true"></span>
+          <span class="gui-caret" aria-hidden="true"></span>
         </span>
       </div>
 
-      ${addErrors(this.uid as string, templateData)}
+      ${addErrors(this.uid, templateData)}
     `;
   }
 
@@ -181,6 +192,7 @@ export class GuiNumber extends LitElement {
     this.syncNativeInput();
   }
 
+  /** @internal */
   keyDown(event: KeyboardEvent) {
     event.stopPropagation();
     blockNonNumericKeys(event);
@@ -197,85 +209,88 @@ export class GuiNumber extends LitElement {
     }
   }
 
+  /** @internal */
   minus() {
-    if (!this.readOnly) {
-      const target = this.querySelector(`input[id="${this.uid}"]`) as HTMLInputElement;
-      const step = typeof this.step === 'number' ? this.step : 1;
-      let value =
-        Number(target.valueAsNumber) || Number(target.valueAsNumber) === 0
-          ? target.valueAsNumber - step
-          : 1;
-
-      value = isRealNumber(this.maximum) ? Math.min(value, this.maximum) : value;
-      value = isRealNumber(this.minimum) ? Math.max(value, this.minimum) : value;
-
-      target.valueAsNumber = value;
-      this.value = value;
-
-      this.dispatchEvent(
-        new CustomEvent('input', {
-          detail: { value: this.value },
-          bubbles: true,
-          composed: true,
-        }),
-      );
-    }
+    this.stepBy(-1);
   }
 
+  /** @internal */
   plus() {
-    if (!this.readOnly) {
-      const target = this.querySelector(`input[id="${this.uid}"]`) as HTMLInputElement;
-      const step = typeof this.step === 'number' ? this.step : 1;
-      let value =
-        Number(target.valueAsNumber) || Number(target.valueAsNumber) === 0
-          ? target.valueAsNumber + step
-          : 1;
-
-      value = isRealNumber(this.maximum) ? Math.min(value, this.maximum) : value;
-      value = isRealNumber(this.minimum) ? Math.max(value, this.minimum) : value;
-
-      target.valueAsNumber = value;
-      this.value = value;
-
-      this.dispatchEvent(
-        new CustomEvent('input', {
-          detail: { value: this.value },
-          bubbles: true,
-          composed: true,
-        }),
-      );
-    }
+    this.stepBy(1);
   }
 
+  /** Steps the value up or down like a native number input's arrow keys (see stepValue). */
+  private stepBy(direction: 1 | -1) {
+    if (this.readOnly) return;
+
+    const target = this.querySelector(`input[id="${this.uid}"]`) as HTMLInputElement;
+    const current = Number.isNaN(target.valueAsNumber) ? undefined : target.valueAsNumber;
+    const value = stepValue(current, direction, {
+      step: this.step,
+      minimum: this.minimum,
+      maximum: this.maximum,
+    });
+
+    target.valueAsNumber = value;
+    this.value = value;
+
+    // A step is a complete edit, like the native number input's arrow keys.
+    dispatchValue(this, this.value);
+  }
+
+  protected override validate(): GuiValidity | null {
+    const value = this.normalizedValue;
+    if (value !== undefined && isRealNumber(this.minimum) && value < this.minimum) {
+      return {
+        flags: { rangeUnderflow: true },
+        message: message('rangeUnderflow', undefined, { min: this.minimum }),
+      };
+    }
+    if (value !== undefined && isRealNumber(this.maximum) && value > this.maximum) {
+      return {
+        flags: { rangeOverflow: true },
+        message: message('rangeOverflow', undefined, { max: this.maximum }),
+      };
+    }
+    return super.validate();
+  }
+
+  /** @internal */
   valueChanged(event: InputEvent) {
     event.stopPropagation();
 
     if (!this.readOnly) {
       const target = event.target as HTMLInputElement;
       const value = target.valueAsNumber;
-      this.dispatchEvent(
-        new CustomEvent('input', {
-          detail: { value: Number.isNaN(value) ? undefined : value },
-          bubbles: true,
-          composed: true,
-        }),
-      );
+      this.value = Number.isNaN(value) ? undefined : value;
+      dispatchValue(this, this.value, { commit: false });
     }
   }
 
+  /**
+   * The native `change`: the user committed the typed number (blur or Enter).
+   *
+   * @internal
+   */
+  valueCommitted(event: Event) {
+    const value = (event.target as HTMLInputElement).valueAsNumber;
+    dispatchChange(this, Number.isNaN(value) ? undefined : value);
+  }
+
+  /** @internal */
   onBlur() {
     // The focus guard in syncNativeInput() defers programmatic values while the
     // user is typing; land them now instead of relying on the blur dispatch to
     // coincidentally cause a store change and re-render.
     this.syncNativeInput();
-    this.dispatchEvent(
-      new CustomEvent('blur', {
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatchBlur(this);
   }
 }
+
+/** The events `gui-number` fires, with their types. */
+export const GuiNumberEvents = {
+  ...valueEvents<GuiNumber['value']>(),
+};
 
 declare global {
   interface HTMLElementTagNameMap {

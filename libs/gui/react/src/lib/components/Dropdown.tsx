@@ -123,13 +123,13 @@ export function Dropdown(widgetInstance: WithWidget) {
     element.addEventListener('gui-range-change', handleRangeChange);
     element.addEventListener('gui-update-items', handleUpdateItems);
     element.addEventListener('gui-focus-change', handleFocusChange);
-    element.addEventListener('change', handleChange);
+    element.addEventListener('gui-input', handleChange);
 
     return () => {
       element.removeEventListener('gui-range-change', handleRangeChange);
       element.removeEventListener('gui-update-items', handleUpdateItems);
       element.removeEventListener('gui-focus-change', handleFocusChange);
-      element.removeEventListener('change', handleChange);
+      element.removeEventListener('gui-input', handleChange);
     };
   }, [handleValueChange, listItems, onValueChanged]);
 
@@ -316,7 +316,7 @@ export function Dropdown(widgetInstance: WithWidget) {
   const showErrors = isTouched && errors && errors.length > 0;
 
   return (
-    <div className="gui-dropdown gui-field" style={{ flex: templateData.size }}>
+    <div className="gui-dropdown gui-field">
       <GuiLabelReact
         ref={labelRef}
         uid={uid}
@@ -374,15 +374,7 @@ export function Dropdown(widgetInstance: WithWidget) {
           onMouseDown={handleToggleMouseDown}
           onClick={handleToggleClick}
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            viewBox="0 0 256 256"
-            aria-hidden="true"
-          >
-            <path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"></path>
-          </svg>
+          <span className="gui-caret" aria-hidden="true"></span>
         </button>
 
         <div

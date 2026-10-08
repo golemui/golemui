@@ -26,6 +26,6 @@
   [disabledRanges]="templateData.disabledRanges"
   [numberOfMonths]="templateData.numberOfMonths"
   [localeId]="templateData.lang"
-  (blur)="adapter.onBlur()"
-  (change)="onChangeDate($event)"
+  (gui-blur)="adapter.onBlur()"
+  (gui-input)="onChangeDate($event)"
 ></gui-calendar>

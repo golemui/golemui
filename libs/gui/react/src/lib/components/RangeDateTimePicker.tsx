@@ -38,7 +38,7 @@ export function RangeDateTimePicker(widgetInstance: WithWidget) {
   const isRequired = (templateData.validator as Validator)?.required;
 
   return (
-    <div className="gui-range-date-time-picker gui-field" style={{ flex: templateData.size }}>
+    <div className="gui-range-date-time-picker gui-field">
       <GuiRangeDateTimePickerReact
         uid={uid}
         label={templateData.label as string}
@@ -96,9 +96,9 @@ export function RangeDateTimePicker(widgetInstance: WithWidget) {
         editCancelledMessage={templateData.editCancelledMessage as string}
         dayCountAriaLabel={templateData.dayCountAriaLabel as string}
         disabledDayCountAriaLabel={templateData.disabledDayCountAriaLabel as string}
-        onChange={handleChange}
-        onBlur={onBlur}
-        onInputError={handleInputError}
+        onGuiInput={handleChange}
+        onGuiBlur={onBlur}
+        onGuiInputError={handleInputError}
       />
     </div>
   );

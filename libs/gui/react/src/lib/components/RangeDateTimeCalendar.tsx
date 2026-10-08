@@ -38,7 +38,7 @@ export function RangeDateTimeCalendar(widgetInstance: WithWidget) {
   const isRequired = (templateData.validator as Validator)?.required;
 
   return (
-    <div className="gui-range-date-time-calendar gui-field" style={{ flex: templateData.size }}>
+    <div className="gui-range-date-time-calendar gui-field">
       <GuiRangeDateTimeCalendarReact
         uid={uid}
         label={templateData.label as string}
@@ -84,9 +84,9 @@ export function RangeDateTimeCalendar(widgetInstance: WithWidget) {
         editStartedMessage={templateData.editStartedMessage as string}
         editCommittedMessage={templateData.editCommittedMessage as string}
         editCancelledMessage={templateData.editCancelledMessage as string}
-        onChange={handleChange}
-        onBlur={onBlur}
-        onInputError={handleInputError}
+        onGuiInput={handleChange}
+        onGuiBlur={onBlur}
+        onGuiInputError={handleInputError}
       />
     </div>
   );

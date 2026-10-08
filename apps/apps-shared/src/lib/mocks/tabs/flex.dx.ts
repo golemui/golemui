@@ -1,5 +1,6 @@
 import { gui } from '@golemui/gui-shared';
 
+// The deprecated flex layout, kept to show that it still renders, as a grid.
 export const flexTab = gui.layouts.flex(
   [
     gui.layouts.flex(

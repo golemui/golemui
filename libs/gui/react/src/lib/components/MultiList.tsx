@@ -80,14 +80,14 @@ export function MultiList(widgetInstance: WithWidget) {
     };
 
     // Binding
-    element.addEventListener('change', handleChange);
+    element.addEventListener('gui-item-toggle', handleChange);
     element.addEventListener('gui-update-items', handleUpdateItems);
     element.addEventListener('gui-range-change', handleRangeChange);
     element.addEventListener('gui-focus-change', handleFocusChange);
 
     return () => {
       // Cleanup
-      element.removeEventListener('change', handleChange);
+      element.removeEventListener('gui-item-toggle', handleChange);
       element.removeEventListener('gui-update-items', handleUpdateItems);
       element.removeEventListener('gui-range-change', handleRangeChange);
       element.removeEventListener('gui-focus-change', handleFocusChange);
@@ -96,7 +96,7 @@ export function MultiList(widgetInstance: WithWidget) {
 
   const handleClickItem = useCallback(
     (item: ListItem<any>, index: number) => {
-      if (templateData.disabled || item.disabled) return;
+      if (templateData.disabled || templateData.readonly || item.disabled) return;
 
       toggleValue(item.value);
       setFocusedIndex(index);
@@ -117,7 +117,7 @@ export function MultiList(widgetInstance: WithWidget) {
   const showErrors = isTouched && errors && errors.length > 0;
 
   return (
-    <div className="gui-multi-list-widget gui-field" style={{ flex: templateData.size }}>
+    <div className="gui-multi-list-widget gui-field">
       <GuiLabelReact
         targetElement={listRef.current || undefined}
         uid={uid}
@@ -126,6 +126,8 @@ export function MultiList(widgetInstance: WithWidget) {
         errors={errors}
         touched={isTouched}
         required={isRequired}
+        disabled={isDisabled}
+        readOnly={isReadOnly}
         native={false}
       ></GuiLabelReact>
 

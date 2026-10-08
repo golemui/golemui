@@ -1,0 +1,8 @@
+// Design tokens: the --gui-* custom properties every component reads.
+@use 'sass:meta';
+@use 'layer-order';
+
+@layer golemui.tokens {
+  @include meta.load-css('variables');
+  @include meta.load-css('responsive');
+}

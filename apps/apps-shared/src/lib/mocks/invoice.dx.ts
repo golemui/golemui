@@ -39,7 +39,7 @@ const formDef: DxDefinitionItem[] = [
         validator: { required: true, minLength: 1 },
       }),
     ],
-    { direction: 'row', autoFit: false, columnGap: 24, rowGap: 8 },
+    { direction: 'row', columns: 12, gap: 'lg' },
   ),
 
   gui.displays.markdownText({ md: '#### Invoice details' }),
@@ -73,7 +73,7 @@ const formDef: DxDefinitionItem[] = [
         include: { in: ['eurSelected'] },
       }),
     ],
-    { direction: 'row', autoFit: false, columnGap: 16, rowGap: 8 },
+    { direction: 'row', columns: 12, gap: 'md' },
   ),
 
   gui.displays.markdownText({ md: '#### Line Items' }),
@@ -84,7 +84,7 @@ const formDef: DxDefinitionItem[] = [
     removeLabel: 'Remove',
     validator: { required: true, minItems: 1 },
     template: [
-      gui.layouts.flex(
+      gui.layouts.grid(
         [
           gui.inputs.numberInput('lineItems.items.quantity', {
             label: 'Quantity',
@@ -114,7 +114,7 @@ const formDef: DxDefinitionItem[] = [
             include: { when: '$item.quantity !== undefined' },
           }),
         ],
-        { direction: 'row', gap: 12 },
+        { direction: 'row', gap: 'sm' },
       ),
     ],
   }),
@@ -133,7 +133,7 @@ const formDef: DxDefinitionItem[] = [
         size: 3,
       }),
     ],
-    { direction: 'row', autoFit: false, columnGap: 12, rowGap: 4 },
+    { direction: 'row', columns: 12, gap: 'sm' },
   ),
 
   gui.displays.alert({
@@ -141,7 +141,7 @@ const formDef: DxDefinitionItem[] = [
     text: `Grand Total: {{$form.invoice?.currency === 'EUR' ? '€' : '$'}}{{((${SUBTOTAL_EXPR}) * ($form.invoice?.currency === 'EUR' ? 1.15 : 1.02)).toFixed(2)}}`,
   }),
 
-  gui.layouts.flex(
+  gui.layouts.grid(
     [
       gui.actions.button({
         label: 'Submit Invoice',
@@ -150,7 +150,7 @@ const formDef: DxDefinitionItem[] = [
         disabled: { when: '$formIsInvalid' },
       }),
     ],
-    { direction: 'row', align: 'end' },
+    { direction: 'row', justify: 'end' },
   ),
 ];
 

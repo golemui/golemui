@@ -197,9 +197,15 @@
         },
         "allowCustomTime": {
           "$ref": "#/$defs/allowCustomTimeProp"
+        },
+        "timeLabel": {
+          "$ref": "../core/common.schema.json#/$defs/localizable"
         }
       },
       "patternProperties": {
+        "^timeLabel\\.[^.]+$": {
+          "$ref": "../core/common.schema.json#/$defs/localizable"
+        },
         "^minTimeMessage\\.[^.]+$": {
           "$ref": "../core/common.schema.json#/$defs/localizable"
         },

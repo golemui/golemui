@@ -36,7 +36,7 @@ export function TimePicker(widgetInstance: WithWidget) {
   const isRequired = (templateData.validator as Validator)?.required;
 
   return (
-    <div className="gui-time-picker gui-field" style={{ flex: templateData.size }}>
+    <div className="gui-time-picker gui-field">
       <GuiTimePickerReact
         uid={uid}
         label={templateData.label as string}
@@ -66,9 +66,9 @@ export function TimePicker(widgetInstance: WithWidget) {
         disabledRangeMessage={templateData.disabledRangeMessage as string}
         noAvailableTimesMessage={templateData.noAvailableTimesMessage as string}
         incompleteMessage={templateData.incompleteMessage as string}
-        onChange={handleChange}
-        onBlur={onBlur}
-        onInputError={handleInputError}
+        onGuiInput={handleChange}
+        onGuiBlur={onBlur}
+        onGuiInputError={handleInputError}
       />
     </div>
   );

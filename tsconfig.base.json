@@ -37,6 +37,14 @@
       "@golemui/gui-vue": ["libs/gui/vue/src/index.ts"],
       "@golemui/gui-components": ["libs/gui/components/src/index.ts"],
       "@golemui/gui-components/internals": ["libs/gui/components/src/internals.ts"],
+      "@golemui/gui-components/react": ["libs/gui/components/src/react.ts"],
+      "@golemui/gui-components/ssr": ["libs/gui/components/src/ssr.ts"],
+      "@golemui/gui-components/nuxt": ["libs/gui/components/src/nuxt.ts"],
+      "@golemui/gui-components/accordion": ["libs/gui/components/src/lib/components/accordion.ts"],
+      "@golemui/gui-components/accordion-item": [
+        "libs/gui/components/src/lib/components/accordion-item.ts"
+      ],
+      "@golemui/gui-components/alert": ["libs/gui/components/src/lib/components/alert.ts"],
       "@golemui/gui-components/button": ["libs/gui/components/src/lib/components/button.ts"],
       "@golemui/gui-components/calendar": ["libs/gui/components/src/lib/components/calendar.ts"],
       "@golemui/gui-components/checkbox": ["libs/gui/components/src/lib/components/checkbox.ts"],
@@ -106,6 +114,10 @@
         "libs/gui/components/src/lib/components/range-time-picker.ts"
       ],
       "@golemui/gui-components/select": ["libs/gui/components/src/lib/components/select.ts"],
+      "@golemui/gui-components/tab": ["libs/gui/components/src/lib/components/tab.ts"],
+      "@golemui/gui-components/tab-list": ["libs/gui/components/src/lib/components/tab-list.ts"],
+      "@golemui/gui-components/tab-panel": ["libs/gui/components/src/lib/components/tab-panel.ts"],
+      "@golemui/gui-components/tabs": ["libs/gui/components/src/lib/components/tabs.ts"],
       "@golemui/gui-components/tags": ["libs/gui/components/src/lib/components/tags.ts"],
       "@golemui/gui-components/textarea": ["libs/gui/components/src/lib/components/textarea.ts"],
       "@golemui/gui-components/time-input": [
@@ -119,6 +131,8 @@
       "@golemui/gui-components/toggle": ["libs/gui/components/src/lib/components/toggle.ts"],
       "@golemui/lit": ["libs/lit/src/index.ts"],
       "@golemui/lit/internals": ["libs/lit/src/internals.ts"],
+      "@golemui/lit-utils": ["libs/lit-utils/src/index.ts"],
+      "@golemui/lit-utils/ssr": ["libs/lit-utils/src/ssr.ts"],
       "@golemui/lit/ssr": ["libs/lit/src/ssr.ts"],
       "@golemui/react": ["libs/react/src/index.ts"],
       "@golemui/vue": ["libs/vue/src/index.ts"],

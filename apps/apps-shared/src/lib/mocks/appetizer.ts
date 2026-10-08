@@ -139,7 +139,7 @@ const formDef: DxDefinitions = [
         onChange: () => 'fieldChange',
       }),
     ],
-    { direction: 'row', autoFit: true, align: 'stretch' },
+    { direction: 'row' },
   ),
 
   gui.layouts.grid(
@@ -204,10 +204,10 @@ const formDef: DxDefinitions = [
         include: { when: '$form.includePets === true' },
       }),
     ],
-    { direction: 'row', autoFit: true, align: 'end' },
+    { direction: 'row', justify: 'end' },
   ),
 
-  gui.layouts.flex(
+  gui.layouts.grid(
     [
       gui.inputs.booleanInput('includePets', {
         size: 3,
@@ -218,7 +218,7 @@ const formDef: DxDefinitions = [
         onChange: () => 'fieldChange',
       }),
     ],
-    { direction: 'column', align: 'end', justify: 'end' },
+    { direction: 'row', justify: 'end' },
   ),
 
   gui.inputs.rangeCalendar('preferredDates', {

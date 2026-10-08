@@ -1,0 +1,64 @@
+// Base reset for every gui-* element, so an element renders the same inside and outside a form.
+// It sets the inherited properties a form container gives its widgets; `:where` keeps it at zero
+// specificity, so any other rule, the element's own or the page's, wins.
+:where(
+  gui-accordion,
+  gui-alert,
+  gui-button,
+  gui-calendar,
+  gui-checkbox,
+  gui-currency,
+  gui-date,
+  gui-date-picker,
+  gui-date-time,
+  gui-date-time-calendar,
+  gui-date-time-picker,
+  gui-errors,
+  gui-file-upload,
+  gui-label,
+  gui-list,
+  gui-markdown,
+  gui-markdown-text,
+  gui-multi-file-upload,
+  gui-multi-list,
+  gui-multi-select-trigger,
+  gui-number,
+  gui-password,
+  gui-pills,
+  gui-radiogroup,
+  gui-range-calendar,
+  gui-range-date,
+  gui-range-date-picker,
+  gui-range-date-time,
+  gui-range-date-time-calendar,
+  gui-range-date-time-picker,
+  gui-range-time,
+  gui-range-time-picker,
+  gui-select,
+  gui-tabs,
+  gui-tags,
+  gui-textarea,
+  gui-textinput,
+  gui-time,
+  gui-time-list,
+  gui-time-picker,
+  gui-toggle
+) {
+  font-family: var(--gui-font-family);
+  font-size: var(--gui-font-sm);
+  color: var(--gui-text-default);
+
+  /* Safari (WebKit) ignores font inheritance on native <button>; re-assert it
+     so widget buttons match the surrounding text in every browser. */
+  :where(button) {
+    font-family: inherit;
+    font-size: inherit;
+  }
+}
+
+// Opt-in container for the components' narrow layouts: below 480px wide, horizontal fields,
+// flex and grid rows stack, calendars shrink and tabs tighten. Put it on any wrapper; a form
+// container already is one.
+.gui-container {
+  container: gui-container / inline-size;
+}

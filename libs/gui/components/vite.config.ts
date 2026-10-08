@@ -1,36 +1,18 @@
 import { nxCopyAssetsPlugin } from '@nx/vite/plugins/nx-copy-assets.plugin';
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
-import { defineConfig, type Plugin } from 'vite';
+import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
-import { mkdirSync, writeFileSync } from 'fs';
-import { dirname, join, resolve } from 'path';
-import { compile } from 'sass';
+import { join } from 'path';
+import { compileStyles } from '../../../tools/vite/compile-styles';
+import { customElementsManifest } from '../../../tools/vite/custom-elements-manifest';
 
+// The public stylesheets. index.css is tokens.css plus components.css.
 const STYLES: Record<string, string> = {
+  'src/styles/tokens.scss': 'lib/styles/tokens.css',
+  'src/styles/components.scss': 'lib/styles/components.css',
   'src/styles/index.scss': 'lib/styles/index.css',
   'src/styles/themes/clay.scss': 'lib/styles/themes/clay.css',
 };
-
-// Compiles the public stylesheets into the package. It runs on `closeBundle` because
-// `emptyOutDir` wipes the output directory at the start of every Vite build.
-function compileStyles(): Plugin {
-  let outDir: string;
-
-  return {
-    name: 'gui-components:compile-styles',
-    apply: 'build',
-    configResolved(config) {
-      outDir = resolve(config.root, config.build.outDir);
-    },
-    closeBundle() {
-      for (const [source, target] of Object.entries(STYLES)) {
-        const file = join(outDir, target);
-        mkdirSync(dirname(file), { recursive: true });
-        writeFileSync(file, compile(join(__dirname, source)).css + '\n');
-      }
-    },
-  };
-}
 
 export default defineConfig(() => ({
   root: __dirname,
@@ -43,7 +25,8 @@ export default defineConfig(() => ({
       tsconfigPath: join(__dirname, 'tsconfig.lib.json'),
       pathsToAliases: false,
     }),
-    compileStyles(),
+    compileStyles(__dirname, STYLES),
+    customElementsManifest(__dirname),
   ],
   // Configuration for building your library.
   build: {
@@ -54,6 +37,13 @@ export default defineConfig(() => ({
       entry: {
         index: 'src/index.ts',
         internals: 'src/internals.ts',
+        react: 'src/react.ts',
+        ssr: 'src/ssr.ts',
+        nuxt: 'src/nuxt.ts',
+        'nuxt-server-plugin': 'src/nuxt-server-plugin.ts',
+        'lib/components/accordion': 'src/lib/components/accordion.ts',
+        'lib/components/accordion-item': 'src/lib/components/accordion-item.ts',
+        'lib/components/alert': 'src/lib/components/alert.ts',
         'lib/components/button': 'src/lib/components/button.ts',
         'lib/components/calendar': 'src/lib/components/calendar.ts',
         'lib/components/checkbox': 'src/lib/components/checkbox.ts',
@@ -85,6 +75,10 @@ export default defineConfig(() => ({
         'lib/components/range-date-picker': 'src/lib/components/range-date-picker.ts',
         'lib/components/range-time-picker': 'src/lib/components/range-time-picker.ts',
         'lib/components/select': 'src/lib/components/select.ts',
+        'lib/components/tab': 'src/lib/components/tab.ts',
+        'lib/components/tab-list': 'src/lib/components/tab-list.ts',
+        'lib/components/tab-panel': 'src/lib/components/tab-panel.ts',
+        'lib/components/tabs': 'src/lib/components/tabs.ts',
         'lib/components/tags': 'src/lib/components/tags.ts',
         'lib/components/textarea': 'src/lib/components/textarea.ts',
         'lib/components/textinput': 'src/lib/components/textinput.ts',
@@ -102,15 +96,21 @@ export default defineConfig(() => ({
       // `lit` must stay external so Node resolves lit's own `node` export condition.
       // Bundling it inlines the browser build, which reads `HTMLElement` at module scope.
       external: [
-        '@golemui/core',
-        '@golemui/gui-shared',
-        '@golemui/lit',
-        /^@golemui\/lit\/.+/,
+        /^@golemui\/lit-utils($|\/)/,
+        /^@lit-labs\/ssr($|\/)/,
         'lit',
         /^lit\/.+/,
         'lit-html',
         /^lit-html\/.+/,
+        '@lit/react',
+        'react',
+        /^@nuxt\/kit($|\/)/,
       ],
+      output: {
+        // The React components use hooks, so React Server Components must load them on the
+        // client. The elements themselves stay usable on the server.
+        banner: (chunk) => (chunk.isEntry && chunk.name === 'react' ? '"use client";' : ''),
+      },
     },
   },
   test: {

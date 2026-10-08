@@ -372,7 +372,7 @@ export const runDateTimePickerComponentTests = (mountFn: MountComponentFn) => {
       });
     });
 
-    it('should advance the value and emit inputError for an out-of-bounds time toggled in the field', () => {
+    it('should advance the value and emit gui-input-error for an out-of-bounds time toggled in the field', () => {
       mountPicker({
         data: { myAppointment: '2026-02-13T09:30:00' },
         props: { ...officeProps, maxTimeMessage: 'Office closes at 11' },
@@ -381,8 +381,8 @@ export const runDateTimePickerComponentTests = (mountFn: MountComponentFn) => {
       const inputErrorSpy = cy.spy().as('inputErrorSpy');
       const changeSpy = cy.spy().as('changeSpy');
       cy.get('gui-date-time-picker').then(($el) => {
-        $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
-        $el[0].addEventListener('change', changeSpy as unknown as EventListener);
+        $el[0].addEventListener('gui-input-error', inputErrorSpy as unknown as EventListener);
+        $el[0].addEventListener('gui-input', changeSpy as unknown as EventListener);
       });
 
       // 09:30 AM is valid; toggling the field's period to PM makes 21:30, past
@@ -395,7 +395,7 @@ export const runDateTimePickerComponentTests = (mountFn: MountComponentFn) => {
       });
     });
 
-    it('should advance the value and emit inputError when the field date lands in a disabled range', () => {
+    it('should advance the value and emit gui-input-error when the field date lands in a disabled range', () => {
       mountPicker({
         props: {
           ...officeProps,
@@ -408,8 +408,8 @@ export const runDateTimePickerComponentTests = (mountFn: MountComponentFn) => {
       const changeSpy = cy.spy().as('changeSpy');
       const inputErrorSpy = cy.spy().as('inputErrorSpy');
       cy.get('gui-date-time-picker').then(($el) => {
-        $el[0].addEventListener('change', changeSpy as unknown as EventListener);
-        $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
+        $el[0].addEventListener('gui-input', changeSpy as unknown as EventListener);
+        $el[0].addEventListener('gui-input-error', inputErrorSpy as unknown as EventListener);
       });
 
       // Type a full date-time on a disabled day. Unlike a time bound, the date is
@@ -429,7 +429,7 @@ export const runDateTimePickerComponentTests = (mountFn: MountComponentFn) => {
       });
     });
 
-    it('should advance the value and emit inputError when the field time lands in a disabled time range', () => {
+    it('should advance the value and emit gui-input-error when the field time lands in a disabled time range', () => {
       mountPicker({
         props: {
           minTime: '09:00:00',
@@ -444,8 +444,8 @@ export const runDateTimePickerComponentTests = (mountFn: MountComponentFn) => {
       const changeSpy = cy.spy().as('changeSpy');
       const inputErrorSpy = cy.spy().as('inputErrorSpy');
       cy.get('gui-date-time-picker').then(($el) => {
-        $el[0].addEventListener('change', changeSpy as unknown as EventListener);
-        $el[0].addEventListener('inputError', inputErrorSpy as unknown as EventListener);
+        $el[0].addEventListener('gui-input', changeSpy as unknown as EventListener);
+        $el[0].addEventListener('gui-input-error', inputErrorSpy as unknown as EventListener);
       });
 
       // Type a full date-time whose time (10:15) is inside the disabled range but

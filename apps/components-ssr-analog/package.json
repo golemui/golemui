@@ -1,0 +1,6 @@
+{
+  "name": "@golemui/components-ssr-analog",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module"
+}

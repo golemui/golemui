@@ -50,8 +50,8 @@ export interface GridKeyStepOptions {
   isRTL: boolean;
   /**
    * Items to jump on PageUp/PageDown (see {@link listPageSize}). When
-   * omitted, PageUp/PageDown map to 'none' — the day and year grids do not
-   * handle paging.
+   * omitted, PageUp/PageDown map to 'none' — the year grid does not page,
+   * and the day grid pages by months itself (an item count does not fit).
    */
   pageSize?: number;
 }
@@ -73,9 +73,9 @@ export type GridKeyStepResult =
  * - PageUp/PageDown: ±pageSize, or 'none' when `pageSize` is omitted.
  * - Home/End: 'edge' — the time list moves to the first/last ENABLED item
  *   (resolve with {@link nextEnabledIndex} from index 0 forward / length-1
- *   backward, inclusive). The day and year grids treat Home/End as unhandled
- *   today; their callers must ignore 'edge' results (and omit `pageSize`) to
- *   preserve behavior.
+ *   backward, inclusive). The day grid handles Home/End (week row edges)
+ *   and PageUp/PageDown (months) before calling this; the year grid ignores
+ *   'edge' results (and omits `pageSize`).
  * - Anything else (including Enter/Space/Escape, which are selection/close
  *   concerns of the callers): 'none'. Callers must not preventDefault on a
  *   'none' result.

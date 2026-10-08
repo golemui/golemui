@@ -52,22 +52,27 @@ export const runNumberComponentTests = (mountFn: MountComponentFn) => {
     });
 
     describe('accessibility', () => {
-      it('should surface minimum and maximum as native min/max', () => {
+      // The bounds reach assistive technology as aria-valuemin/max. Native min/max would make the
+      // browser validate the inner input too, and step="any" keeps it from rejecting decimals.
+      it('should surface minimum and maximum as aria-valuemin/aria-valuemax', () => {
         mountNumber({ minimum: 1, maximum: 10 });
-        input().should('have.attr', 'min', '1');
-        input().should('have.attr', 'max', '10');
-      });
-
-      it('should not render min/max when no bounds are set', () => {
-        mountNumber();
+        input().should('have.attr', 'aria-valuemin', '1');
+        input().should('have.attr', 'aria-valuemax', '10');
         input().should('not.have.attr', 'min');
         input().should('not.have.attr', 'max');
+        input().should('have.attr', 'step', 'any');
+      });
+
+      it('should not render the bounds when none are set', () => {
+        mountNumber();
+        input().should('not.have.attr', 'aria-valuemin');
+        input().should('not.have.attr', 'aria-valuemax');
       });
 
       it('should surface a minimum or maximum of 0', () => {
         mountNumber({ minimum: 0, maximum: 0 });
-        input().should('have.attr', 'min', '0');
-        input().should('have.attr', 'max', '0');
+        input().should('have.attr', 'aria-valuemin', '0');
+        input().should('have.attr', 'aria-valuemax', '0');
       });
     });
 

@@ -1,12 +1,16 @@
-import { html, LitElement } from 'lit';
+import { html } from 'lit';
 import { property } from 'lit/decorators.js';
-import { safeDefine } from '@golemui/lit/internals';
+import { safeDefine } from '@golemui/lit-utils';
 import { addErrors } from '../utils/templates';
+import { GuiElement } from '../gui-element';
 
-export class GuiErrors extends LitElement {
-  @property({ type: String }) uid: string | undefined = undefined;
+/** The error list of a control built by hand. */
+export class GuiErrors extends GuiElement {
+  /** The error messages. */
   @property({ type: Array }) errors: string[] | undefined = [];
-  @property({ type: Boolean }) touched: boolean | undefined = false;
+  /** Whether the control was touched: errors wait for it unless unset. */
+  @property({ type: Boolean }) touched: boolean | undefined = undefined;
+  /** Renders the errors inside a popup panel instead of under a field. */
   @property({ type: Boolean }) panel = false;
 
   override createRenderRoot() {
@@ -17,7 +21,7 @@ export class GuiErrors extends LitElement {
     super.render();
 
     return html`${addErrors(
-      this.uid as string,
+      this.uid,
       {
         touched: this.touched,
         errors: this.errors,

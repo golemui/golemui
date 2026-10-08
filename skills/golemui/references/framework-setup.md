@@ -17,11 +17,12 @@ npm i @golemui/core @golemui/lit @golemui/gui-lit @golemui/gui-components @golem
 npm i @lit-labs/ssr@^4.1.0
 ```
 
-Then import the component styles ONCE in the app entry (mandatory — without it the form
-renders unstyled):
+Then import the two stylesheets ONCE in the app entry, in this order (mandatory — without them the
+form renders unstyled):
 
 ```ts
 import '@golemui/gui-components/index.css';
+import '@golemui/gui-shared/forms.css';
 ```
 
 ## Submit event — per-framework matrix
@@ -44,6 +45,7 @@ collected form data. **Vue is the ONLY kebab-case event.**
 
 ```tsx
 import '@golemui/gui-components/index.css';
+import '@golemui/gui-shared/forms.css';
 import { gui } from '@golemui/gui-shared';
 import { GuiForm } from '@golemui/gui-react';
 import type { FormSubmitEvent } from '@golemui/core';
@@ -78,9 +80,11 @@ Rules that follow from it:
 - `formSubmit`, `onLoad`, `onChange` and every other handler run in the browser only.
 - Custom widgets: ONE module-scope loaders object, spread into the preload call and passed as
   `customWidgetLoaders` in every form config (the registry caches by loader function identity).
-- Import `@golemui/gui-components/index.css` once in the root layout; nothing is injected.
-- A `gui-*` tag placed directly in JSX takes object props as properties in React 19
-  (`<gui-select options={list} onChange={…} />`).
+- Import `@golemui/gui-components/index.css` and then `@golemui/gui-shared/forms.css` once in the
+  root layout; nothing is injected.
+- To use a `gui-*` element directly in JSX, import its component from
+  `@golemui/gui-components/react` (`<GuiSelect options={list} onGuiChange={…} />`). The elements
+  fire `gui-*` events (`gui-input`, `gui-change`, `gui-blur`), not `change`.
 - The server renders the React layer (`<form>`, layouts, `gui-*` tags with their attributes and
   values); the Lit `gui-*` elements render their internals once the browser upgrades them.
 
@@ -111,7 +115,7 @@ await preloadFormWidgets({ widgetLoaders });
 - Set an explicit `formName` - required for SSR. Without one the server and the client mint
   different random ids (hydration still succeeds, but the markup id is not predictable).
 - Handlers run in the browser only - never during a server render.
-- The server renders the form structure and the native Angular widget internals (tabs, flex,
+- The server renders the form structure and the native Angular widget internals (tabs,
   grid). `gui-*` element internals stay empty until the browser upgrades them. Each `gui-*`
   element carries `defer-hydration`, removed by the first client change detection pass.
 - A widget that was not preloaded logs a warning during a server render and renders empty.
@@ -139,7 +143,8 @@ export default defineNuxtPlugin(async () => {
 });
 ```
 
-Load the stylesheet through `css: ['@golemui/gui-components/index.css']` in `nuxt.config.ts`
+Load the stylesheets through
+`css: ['@golemui/gui-components/index.css', '@golemui/gui-shared/forms.css']` in `nuxt.config.ts`
 (nothing is injected). Rules that follow from the preload:
 
 - Custom widgets: keep their loaders in ONE module-scope object, spread it into the preload call
@@ -176,12 +181,12 @@ Server (Astro frontmatter, or a request handler):
 ```ts
 import { preloadFormWidgets } from '@golemui/core';
 import { widgetLoaders } from '@golemui/gui-lit'; // also registers <gui-form>
-import { renderGuiHtml } from '@golemui/lit/ssr';
+import { renderTemplate } from '@golemui/lit/ssr';
 import { html } from 'lit';
 import { config } from './form'; // MUST set formName
 
 await preloadFormWidgets({ widgetLoaders }); // the render is synchronous: no awaiting loaders
-const formHtml = await renderGuiHtml(html`<gui-form .config=${config}></gui-form>`);
+const formHtml = await renderTemplate(html`<gui-form .config=${config}></gui-form>`);
 // Astro: <Fragment set:html={formHtml} />. Every element carries `defer-hydration` and stays inert.
 ```
 
@@ -206,8 +211,8 @@ resumeServerRenderedForm(form as unknown as CoreFormElement, {
 Rules that follow from it:
 
 - `formName` is mandatory (the server render throws without it).
-- `renderGuiFormHtml({ config, validators })` from the same entry renders one form without a
-  surrounding template. `renderGuiHtml` is the general entry point.
+- `renderForm({ config, validators })` from the same entry renders one form without a
+  surrounding template. `renderTemplate` is the general entry point.
 - Listeners and properties (`formHealthBoundary`, `autocomplete`) go on the element BEFORE
   `resumeServerRenderedForm`; the resume removes `defer-hydration`, which triggers the render.
 - Custom widgets must be registered with `safeDefine('my-tag', MyElement)` from `@golemui/lit`,

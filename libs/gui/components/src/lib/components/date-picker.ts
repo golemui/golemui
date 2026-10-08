@@ -1,8 +1,7 @@
-import { html, LitElement, nothing } from 'lit';
+import { html, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
-import { safeDefine } from '@golemui/lit/internals';
+import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
-import type { DateRange } from '@golemui/gui-shared/internals';
 import './date-input';
 import './calendar';
 import type { GuiDate } from './date-input';
@@ -10,49 +9,94 @@ import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
 import { GUIPopupController } from '../controllers/popup.controller';
 import { dateBoundsError } from '../utils/date';
 import { addErrors, addIcon, addLabel, addPickerPanel } from '../utils/templates';
-import { CARET_DOWN_PATH } from '../utils/icons';
+import type { DateRange } from '../types';
+import { boundsValidity, GuiFormControl, type GuiValidity } from '../gui-form-control';
+import {
+  dispatchBlur,
+  dispatchChange,
+  dispatchInputError,
+  dispatchValue,
+  fires,
+  stopPropagation,
+  valueEvents,
+  type GuiInputErrorEventDetail,
+} from '../utils/events';
+import { requiredName } from '../utils/messages';
 
-export class GuiDatePicker extends LitElement {
-  @property({ type: String }) uid: string | undefined = undefined;
-  @property({ type: String }) label: string | undefined = undefined;
-  @property({ type: String }) hint: string | undefined = undefined;
+/**
+ * A date field with a calendar popup.
+ *
+ * @fires gui-input - The user changed the value. `detail.value` is the new value.
+ * @fires gui-change - The user committed the value. `detail.value` is the committed value.
+ * @fires gui-blur - Focus left the control.
+ * @fires gui-input-error - The element rejected what the user entered, such as an impossible date
+ *   or a value out of bounds. `detail.message` is the error; show it through `errors`.
+ * @cssprop --gui-calendar-width - Width of one month.
+ * @cssprop --gui-calendar-day-button-size - Size of each day.
+ * @cssprop --gui-calendar-change-month-button-width - Width of the previous- and next-month
+ *   buttons.
+ * @cssprop --gui-calendar-change-month-button-height - Height of the previous- and next-month
+ *   buttons.
+ * @cssprop --gui-calendar-year-button-width - Width of each year in the year grid.
+ * @cssprop --gui-calendar-year-button-height - Height of each year in the year grid.
+ * @cssprop --gui-calendar-year-grid-height - Height of the year grid.
+ */
+export class GuiDatePicker extends GuiFormControl {
+  /** Icon class name shown inside the control, for example from an icon font. */
   @property({ type: String }) icon: string | undefined = '';
+  /** Accessible name of the button that opens the popup. An empty value keeps the default. */
   @property({ type: String, attribute: 'toggle-aria-label' }) toggleAriaLabel: string | undefined =
     undefined;
-  @property({ type: String }) dayAriaLabel: string | undefined = undefined;
-  @property({ type: String }) monthAriaLabel: string | undefined = undefined;
-  @property({ type: String }) yearAriaLabel: string | undefined = undefined;
-  @property({ type: Array }) errors: string[] | undefined = [];
-  @property({ type: Boolean }) showErrors: boolean | undefined = true;
-  @property({ type: Boolean }) touched: boolean | undefined = false;
-  @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean }) disabled: boolean | undefined = false;
-  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
+  /** Accessible name of the day part. An empty value keeps the default. */
+  @property({ type: String, attribute: 'day-aria-label' }) dayAriaLabel: string | undefined =
+    undefined;
+  /** Accessible name of the month part. An empty value keeps the default. */
+  @property({ type: String, attribute: 'month-aria-label' }) monthAriaLabel: string | undefined =
+    undefined;
+  /** Accessible name of the year part. An empty value keeps the default. */
+  @property({ type: String, attribute: 'year-aria-label' }) yearAriaLabel: string | undefined =
+    undefined;
+  /**
+   * Whether the element renders its own error list. Elements that embed it turn it off and show the
+   * errors themselves.
+   */
+  @property({ type: Boolean, attribute: 'show-errors' }) showErrors: boolean | undefined = true;
+  /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
+  /** The date, as an ISO date (`YYYY-MM-DD`). */
   @property({ type: String }) value: string | undefined = undefined;
+  /** Icon class name of the previous-month button. */
   @property({ type: String, attribute: 'prev-month-icon' }) prevMonthIcon: string | undefined = '';
+  /** Icon class name of the next-month button. */
   @property({ type: String, attribute: 'next-month-icon' }) nextMonthIcon: string | undefined = '';
+  /** Accessible name of the previous-month button. An empty value keeps the default. */
   @property({ type: String, attribute: 'prev-month-aria-label' }) prevMonthAriaLabel:
     | string
     | undefined = undefined;
+  /** Accessible name of the next-month button. An empty value keeps the default. */
   @property({ type: String, attribute: 'next-month-aria-label' }) nextMonthAriaLabel:
     | string
     | undefined = undefined;
+  /** Accessible name of the button that opens the year grid. An empty value keeps the default. */
   @property({ type: String, attribute: 'select-year-aria-label' }) selectYearAriaLabel:
     | string
     | undefined = undefined;
+  /** Accessible name of the year grid. An empty value keeps the default. */
   @property({ type: String, attribute: 'year-grid-aria-label' }) yearGridAriaLabel:
     | string
     | undefined = undefined;
+  /** How day numbers are written. */
   @property({ type: String, attribute: 'day-format' }) dayFormat:
     | 'numeric'
     | '2-digit'
     | undefined = undefined;
+  /** How weekday names are written in the header. */
   @property({ type: String, attribute: 'weekday-format' }) weekdayFormat:
     | 'short'
     | 'long'
     | 'narrow'
     | undefined = undefined;
+  /** How the month is written in the header. */
   @property({ type: String, attribute: 'month-format' }) monthFormat:
     | 'numeric'
     | '2-digit'
@@ -60,22 +104,31 @@ export class GuiDatePicker extends LitElement {
     | 'short'
     | 'narrow'
     | undefined = undefined;
+  /** Earliest selectable date, as an ISO date (`YYYY-MM-DD`). */
   @property({ type: String, attribute: 'min-date' }) minDate: string | undefined = undefined;
+  /** Latest selectable date, as an ISO date (`YYYY-MM-DD`). */
   @property({ type: String, attribute: 'max-date' }) maxDate: string | undefined = undefined;
+  /** Dates that cannot be picked, as `{ start, end }` ISO date ranges. */
   @property({ type: Array, attribute: 'disabled-ranges' }) disabledRanges: DateRange[] | undefined =
     undefined;
+  /** Number of months shown side by side. */
   @property({ type: Number, attribute: 'number-of-months' }) numberOfMonths: number | undefined =
     undefined;
+  /** Error for a complete but impossible date, such as February 31. */
   @property({ type: String, attribute: 'invalid-date-message' }) invalidDateMessage:
     | string
     | undefined = undefined;
+  /** Error for a date before `minDate`. */
   @property({ type: String, attribute: 'min-date-message' }) minDateMessage: string | undefined =
     undefined;
+  /** Error for a date after `maxDate`. */
   @property({ type: String, attribute: 'max-date-message' }) maxDateMessage: string | undefined =
     undefined;
+  /** Error for a date inside `disabledRanges`. */
   @property({ type: String, attribute: 'disabled-date-range-message' }) disabledDateRangeMessage:
     | string
     | undefined = undefined;
+  /** Error when focus leaves a partly filled value. */
   @property({ type: String, attribute: 'incomplete-message' }) incompleteMessage:
     | string
     | undefined = undefined;
@@ -101,20 +154,27 @@ export class GuiDatePicker extends LitElement {
     return this;
   }
 
+  override connectedCallback() {
+    super.connectedCallback();
+    this.classList.add('gui-field');
+  }
+
   override render() {
     const datePickerIcon = addIcon('datePicker', { icon: this.icon });
 
     const calendar = this._popup.open
       ? addPickerPanel(
-          this.uid ?? '',
+          this.uid,
           { errors: this.errors, touched: this.touched, showErrors: this.showErrors },
           html`<gui-calendar
             id=${`${this.uid}_popup`}
             role="dialog"
-            aria-label=${this.label ?? 'Calendar'}
+            aria-labelledby=${this.label ? `${this.uid}_label` : nothing}
+            aria-label=${this.label ? nothing : requiredName('calendar')}
             .uid=${this.uid}
             .hint=${this.hint}
-            ?touched=${this.touched}
+            .showHint=${false}
+            .touched=${this.touched}
             ?required=${this.required}
             ?disabled=${this.disabled}
             ?readonly=${this.readOnly}
@@ -133,15 +193,16 @@ export class GuiDatePicker extends LitElement {
             .disabledRanges=${this.disabledRanges}
             .numberOfMonths=${this.numberOfMonths}
             .localeId=${this.localeId}
-            @blur=${this.onCalendarBlur}
-            @change=${this.onCalendarChange}
+            @gui-blur=${this.onCalendarBlur}
+            @gui-input=${this.onCalendarInput}
+            @gui-change=${this.onCalendarChange}
           ></gui-calendar>`,
         )
       : nothing;
 
     return html`
       ${addLabel(
-        this.uid ?? '',
+        this.uid,
         {
           label: this.label,
           hint: this.hint,
@@ -159,14 +220,15 @@ export class GuiDatePicker extends LitElement {
         @focusout=${this._focusLeave.onFocusOut}
       >
         <gui-date
-          id="date-input"
+          id=${`${this.uid}_date`}
           class=${classMap(datePickerIcon.widgetClasses)}
           .uid=${this.uid}
           .hint=${this.hint}
+          .showHint=${false}
           .showErrors=${false}
           .deferFocusLeave=${true}
           .errors=${this.errors}
-          ?touched=${this.touched}
+          .touched=${this.touched}
           ?required=${this.required}
           ?disabled=${this.disabled}
           ?readonly=${this.readOnly}
@@ -178,37 +240,30 @@ export class GuiDatePicker extends LitElement {
           .yearAriaLabel=${this.yearAriaLabel}
           .invalidDateMessage=${this.invalidDateMessage}
           .incompleteMessage=${this.incompleteMessage}
-          @blur=${this.onDateBlur}
-          @focus=${this._popup.show}
-          @change=${this.onDateChange}
+          @gui-blur=${this.onDateBlur}
+          @gui-focus=${this.onDateFocus}
+          @gui-input=${this.onDateInput}
+          @gui-change=${this.onDateChange}
+          @gui-input-error=${this.onDateInputError}
+          @gui-parts-change=${this.onInnerPartsChange}
         ></gui-date>
         <button
           type="button"
           class="gui-date-picker__arrow"
-          aria-label=${this.toggleAriaLabel ?? 'Show calendar'}
+          aria-label=${requiredName('showCalendar', this.toggleAriaLabel)}
           aria-haspopup="dialog"
           aria-expanded=${this._popup.open ? 'true' : 'false'}
           aria-controls=${`${this.uid}_popup`}
           ?disabled=${this.disabled}
           @click=${this.onToggleClick}
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            viewBox="0 0 256 256"
-            aria-hidden="true"
-          >
-            <path d=${CARET_DOWN_PATH}></path>
-          </svg>
+          <span class="gui-caret" aria-hidden="true"></span>
         </button>
 
         ${calendar}
       </div>
 
-      ${this.showErrors
-        ? addErrors(this.uid ?? '', { errors: this.errors, touched: this.touched })
-        : ''}
+      ${this.showErrors ? addErrors(this.uid, { errors: this.errors, touched: this.touched }) : ''}
     `;
   }
 
@@ -221,9 +276,27 @@ export class GuiDatePicker extends LitElement {
     }
   };
 
+  private onDateFocus(event: Event) {
+    stopPropagation(event);
+    this._popup.show();
+  }
+
+  /** The field's error is reported as the picker's own. */
+  private onDateInputError(event: CustomEvent<GuiInputErrorEventDetail>) {
+    stopPropagation(event);
+    dispatchInputError(this, event.detail.message);
+    // The inner field's bad input is part of this picker's validity.
+    this.requestUpdate();
+  }
+
+  private onDateInput(event: CustomEvent) {
+    event.stopPropagation();
+    this.updateValue(event.detail.value);
+  }
+
   private onDateChange(event: CustomEvent) {
     event.stopPropagation();
-    this.commitValue(event.detail.value);
+    dispatchChange(this, this.value ?? null);
   }
 
   /**
@@ -236,31 +309,40 @@ export class GuiDatePicker extends LitElement {
     event.stopPropagation();
   }
 
+  private onCalendarInput(event: CustomEvent) {
+    event.stopPropagation();
+    this.updateValue(event.detail.value);
+  }
+
+  /** A pick closes the calendar and, like Escape, returns focus to the field. */
   private onCalendarChange(event: CustomEvent) {
     event.stopPropagation();
-    this.commitValue(event.detail.value);
+    dispatchChange(this, this.value ?? null);
+    this._popup.restoreFocusToInput();
     this._popup.close();
   }
 
-  private commitValue(value: string | null | undefined) {
+  private updateValue(value: string | null | undefined) {
     this.value = value ?? undefined;
     const error = this.validateBounds(this.value);
-    this.dispatchEvent(
-      new CustomEvent('change', {
-        detail: { value: value ?? null },
-        bubbles: true,
-        composed: true,
-      }),
+    dispatchValue(this, value ?? null, { commit: false });
+    if (error) dispatchInputError(this, error);
+  }
+
+  /** The inner field's parts changed, and with them its bad input, which is part of the validity. */
+  private onInnerPartsChange(event: Event) {
+    stopPropagation(event);
+    this.requestUpdate();
+  }
+
+  protected override validate(): GuiValidity | null {
+    // A typed entry the inner field cannot turn into a value: it keeps the previous one.
+    const badInput = this.querySelector<GuiDate>('gui-date')?.partsBadInput() ?? null;
+    return (
+      boundsValidity(this.validateBounds(this.value), this.value, this.minDate, this.maxDate) ??
+      (badInput ? { flags: { badInput: true }, message: badInput } : null) ??
+      super.validate()
     );
-    if (error) {
-      this.dispatchEvent(
-        new CustomEvent('inputError', {
-          detail: { message: error },
-          bubbles: true,
-          composed: true,
-        }),
-      );
-    }
   }
 
   private validateBounds(value: string | undefined): string | null {
@@ -288,13 +370,19 @@ export class GuiDatePicker extends LitElement {
    * embedded input its deferred settlement — a partial date left behind
    * surfaces the incomplete message, an emptied one clears a message it
    * surfaced earlier. The input's resulting change bubbles back through
-   * {@link onDateChange}, so the picker's value follows.
+   * {@link onDateInput}, so the picker's value follows.
    */
   private onFocusLeave(): void {
-    this.dispatchEvent(new CustomEvent('blur'));
+    dispatchBlur(this);
     this.querySelector<GuiDate>('gui-date')?.settleOnFocusLeave();
   }
 }
+
+/** The events `gui-date-picker` fires, with their types. */
+export const GuiDatePickerEvents = {
+  ...valueEvents<GuiDatePicker['value']>(),
+  'gui-input-error': fires<CustomEvent<GuiInputErrorEventDetail>>(),
+};
 
 declare global {
   interface HTMLElementTagNameMap {

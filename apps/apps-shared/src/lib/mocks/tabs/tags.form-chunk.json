@@ -2,12 +2,13 @@
   "$schema": "../../../../../../libs/gui/schemas/src/lib/layout-widget.schema.json",
   "uid": "tabTags",
   "kind": "layout",
-  "type": "flex",
+  "type": "grid",
   "children": [
     {
       "kind": "input",
       "type": "tags",
       "path": "tags.basic",
+      "label": "Tags",
       "props": {
         "placeholder": "Add a tag…"
       }

@@ -29,11 +29,17 @@ export default defineConfig(() => ({
       },
       name: 'lit',
       formats: ['es', 'cjs'],
-      fileName: (format: string, entryName: string) =>
+      fileName: (format, entryName) =>
         format === 'cjs' ? `${entryName}.cjs` : `${entryName}.js`,
     },
     rollupOptions: {
-      external: ['@golemui/core', '@golemui/dx', 'rxjs', /^@?lit(-\w+)?($|\/.+)/],
+      external: [
+        '@golemui/core',
+        '@golemui/dx',
+        /^@golemui\/lit-utils($|\/)/,
+        'rxjs',
+        /^@?lit(-\w+)?($|\/.+)/,
+      ],
     },
   },
   test: {

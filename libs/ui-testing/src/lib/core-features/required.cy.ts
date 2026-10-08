@@ -51,7 +51,9 @@ export const runRequiredComponentTests = (mountFn: MountComponentFn) => {
               ],
             }),
           });
-          cy.get(selector).should('have.attr', 'required');
+          // The element validates itself; a native `required` on its inner control would make the
+          // browser validate again, so only the ARIA state is there.
+          cy.get(selector).should('not.have.attr', 'required');
           cy.get(selector).should('have.attr', 'aria-required', 'true');
         });
 
@@ -95,7 +97,9 @@ export const runRequiredComponentTests = (mountFn: MountComponentFn) => {
               ],
             }),
           });
-          cy.get(selector).should('have.attr', 'required');
+          // The element validates itself; a native `required` on its inner control would make the
+          // browser validate again, so only the ARIA state is there.
+          cy.get(selector).should('not.have.attr', 'required');
           cy.get(selector).should('have.attr', 'aria-required', 'true');
         });
       });
@@ -165,7 +169,9 @@ export const runRequiredComponentTests = (mountFn: MountComponentFn) => {
               ],
             }),
           });
-          cy.get(selector).should('have.attr', 'required');
+          // The element validates itself; a native `required` on its inner control would make the
+          // browser validate again, so only the ARIA state is there.
+          cy.get(selector).should('not.have.attr', 'required');
           cy.get(selector).should('have.attr', 'aria-required', 'true');
         });
       });

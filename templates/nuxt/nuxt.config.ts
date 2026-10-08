@@ -12,5 +12,9 @@ export default defineNuxtConfig({
   },
   // GolemUI never injects its stylesheet. Load it once here and override the design tokens in
   // your own CSS.
-  css: ['@golemui/gui-components/index.css', '~/assets/styles.css'],
+  css: [
+    '@golemui/gui-components/index.css',
+    '@golemui/gui-shared/forms.css',
+    '~/assets/styles.css',
+  ],
 });

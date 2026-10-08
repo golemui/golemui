@@ -1,69 +1,123 @@
-import { html, LitElement, nothing } from 'lit';
+import { html, nothing } from 'lit';
 import { property, query, state } from 'lit/decorators.js';
-import { safeDefine } from '@golemui/lit/internals';
+import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
-import type { DateRange } from '@golemui/gui-shared/internals';
 import './range-date-input';
 import type { GuiRangeDateInput } from './range-date-input';
 import './range-calendar';
 import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
 import { GUIPopupController } from '../controllers/popup.controller';
-import { dateBoundsError, rangeSpansDisabledDay } from '../utils/date';
 import { addErrors, addIcon, addLabel, addPickerPanel } from '../utils/templates';
-import { DISABLED_DATE_RANGE_MESSAGE } from '../utils/messages';
-import { CARET_DOWN_PATH } from '../utils/icons';
+import type { DateRange } from '../types';
+import { GuiFormControl, type GuiValidity } from '../gui-form-control';
+import { dateRangesValidity } from '../utils/range-validity';
+import {
+  dispatchBlur,
+  dispatchChange,
+  dispatchInputError,
+  dispatchValue,
+  stopPropagation,
+  fires,
+  valueEvents,
+  type GuiInputErrorEventDetail,
+} from '../utils/events';
+import { requiredName } from '../utils/messages';
 
-export class GuiRangeDatePicker extends LitElement {
-  @property({ type: String }) uid: string | undefined = undefined;
-  @property({ type: String }) label: string | undefined = undefined;
-  @property({ type: String }) hint: string | undefined = undefined;
+/**
+ * A date range field with a calendar popup.
+ *
+ * @fires gui-input - The user changed the value. `detail.value` is the new value.
+ * @fires gui-change - The user added, removed or finished editing a range. `detail.value` is the
+ *   list of ranges.
+ * @fires gui-blur - Focus left the control.
+ * @fires gui-input-error - The element rejected what the user entered, such as an impossible date
+ *   or a value out of bounds. `detail.message` is the error; show it through `errors`.
+ * @cssprop --gui-calendar-width - Width of one month.
+ * @cssprop --gui-calendar-day-button-size - Size of each day.
+ * @cssprop --gui-calendar-change-month-button-width - Width of the previous- and next-month
+ *   buttons.
+ * @cssprop --gui-calendar-change-month-button-height - Height of the previous- and next-month
+ *   buttons.
+ * @cssprop --gui-calendar-year-button-width - Width of each year in the year grid.
+ * @cssprop --gui-calendar-year-button-height - Height of each year in the year grid.
+ * @cssprop --gui-calendar-year-grid-height - Height of the year grid.
+ * @cssprop --gui-range-bg - Background of the days inside a selected range.
+ * @cssprop --gui-range-error-bg - Background of the days inside a rejected range.
+ * @cssprop --gui-pill-height - Height of each pill.
+ * @cssprop --gui-pill-font-size - Font size of the pill text.
+ * @cssprop --gui-pill-action-size - Size of the icons inside a pill.
+ * @cssprop --gui-pill-action-hit - Clickable area of the buttons inside a pill.
+ */
+export class GuiRangeDatePicker extends GuiFormControl {
+  /** Icon class name shown inside the control, for example from an icon font. */
   @property({ type: String }) icon: string | undefined = '';
+  /** Accessible name of the button that opens the popup. An empty value keeps the default. */
   @property({ type: String, attribute: 'toggle-aria-label' }) toggleAriaLabel: string | undefined =
     undefined;
-  @property({ type: String }) dayAriaLabel: string | undefined = undefined;
-  @property({ type: String }) monthAriaLabel: string | undefined = undefined;
-  @property({ type: String }) yearAriaLabel: string | undefined = undefined;
-  @property({ type: Array }) errors: string[] | undefined = [];
-  @property({ type: Boolean }) showErrors: boolean | undefined = true;
-  @property({ type: Boolean }) touched: boolean | undefined = false;
-  @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean }) disabled: boolean | undefined = false;
-  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
+  /** Accessible name of the day part. An empty value keeps the default. */
+  @property({ type: String, attribute: 'day-aria-label' }) dayAriaLabel: string | undefined =
+    undefined;
+  /** Accessible name of the month part. An empty value keeps the default. */
+  @property({ type: String, attribute: 'month-aria-label' }) monthAriaLabel: string | undefined =
+    undefined;
+  /** Accessible name of the year part. An empty value keeps the default. */
+  @property({ type: String, attribute: 'year-aria-label' }) yearAriaLabel: string | undefined =
+    undefined;
+  /**
+   * Whether the element renders its own error list. Elements that embed it turn it off and show the
+   * errors themselves.
+   */
+  @property({ type: Boolean, attribute: 'show-errors' }) showErrors: boolean | undefined = true;
+  /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
+  /** The date ranges, as `{ start, end }` ISO dates. */
   @property({ type: Array }) value: DateRange[] | undefined = [];
+  /** Text shown between the start and end of a range. */
   @property({ type: String }) separator: string | undefined = undefined;
+  /** Accessible name of the remove button of each range pill. An empty value keeps the default. */
   @property({ type: String, attribute: 'remove-pill-aria-label' }) removePillAriaLabel:
     | string
     | undefined = undefined;
+  /** Accessible name of the start date field. An empty value removes it. */
   @property({ type: String, attribute: 'start-date-aria-label' }) startDateAriaLabel:
     | string
     | undefined = undefined;
+  /** Accessible name of the end date field. An empty value removes it. */
   @property({ type: String, attribute: 'end-date-aria-label' }) endDateAriaLabel:
     | string
     | undefined = undefined;
+  /** Icon class name of the previous-month button. */
   @property({ type: String, attribute: 'prev-month-icon' }) prevMonthIcon: string | undefined = '';
+  /** Icon class name of the next-month button. */
   @property({ type: String, attribute: 'next-month-icon' }) nextMonthIcon: string | undefined = '';
+  /** Accessible name of the previous-month button. An empty value keeps the default. */
   @property({ type: String, attribute: 'prev-month-aria-label' }) prevMonthAriaLabel:
     | string
     | undefined = undefined;
+  /** Accessible name of the next-month button. An empty value keeps the default. */
   @property({ type: String, attribute: 'next-month-aria-label' }) nextMonthAriaLabel:
     | string
     | undefined = undefined;
+  /** Accessible name of the button that opens the year grid. An empty value keeps the default. */
   @property({ type: String, attribute: 'select-year-aria-label' }) selectYearAriaLabel:
     | string
     | undefined = undefined;
+  /** Accessible name of the year grid. An empty value keeps the default. */
   @property({ type: String, attribute: 'year-grid-aria-label' }) yearGridAriaLabel:
     | string
     | undefined = undefined;
+  /** How day numbers are written. */
   @property({ type: String, attribute: 'day-format' }) dayFormat:
     | 'numeric'
     | '2-digit'
     | undefined = undefined;
+  /** How weekday names are written in the header. */
   @property({ type: String, attribute: 'weekday-format' }) weekdayFormat:
     | 'short'
     | 'long'
     | 'narrow'
     | undefined = undefined;
+  /** How the month is written in the header. */
   @property({ type: String, attribute: 'month-format' }) monthFormat:
     | 'numeric'
     | '2-digit'
@@ -71,49 +125,66 @@ export class GuiRangeDatePicker extends LitElement {
     | 'short'
     | 'narrow'
     | undefined = undefined;
+  /** Earliest selectable date, as an ISO date (`YYYY-MM-DD`). */
   @property({ type: String, attribute: 'min-date' }) minDate: string | undefined = undefined;
+  /** Latest selectable date, as an ISO date (`YYYY-MM-DD`). */
   @property({ type: String, attribute: 'max-date' }) maxDate: string | undefined = undefined;
+  /** Dates that cannot be picked, as `{ start, end }` ISO date ranges. */
   @property({ type: Array, attribute: 'disabled-ranges' }) disabledRanges: DateRange[] | undefined =
     undefined;
+  /** Number of months shown side by side. */
   @property({ type: Number, attribute: 'number-of-months' }) numberOfMonths: number | undefined =
     undefined;
+  /** Error for a complete but impossible date, such as February 31. */
   @property({ type: String, attribute: 'invalid-date-message' }) invalidDateMessage:
     | string
     | undefined = undefined;
+  /** Error for a date before `minDate`. */
   @property({ type: String, attribute: 'min-date-message' }) minDateMessage: string | undefined =
     undefined;
+  /** Error for a date after `maxDate`. */
   @property({ type: String, attribute: 'max-date-message' }) maxDateMessage: string | undefined =
     undefined;
+  /** Error for a date inside `disabledRanges`. */
   @property({ type: String, attribute: 'disabled-date-range-message' }) disabledDateRangeMessage:
     | string
     | undefined = undefined;
+  /** Error when focus leaves a partly filled value. */
   @property({ type: String, attribute: 'incomplete-message' }) incompleteMessage:
     | string
     | undefined = undefined;
+  /** Lets the user edit a range in place from its pill. */
   @property({ type: Boolean, attribute: 'allow-edit' }) allowEdit: boolean | undefined = false;
+  /** Tooltip of the edit button of a range pill. */
   @property({ type: String, attribute: 'edit-label' }) editLabel: string | undefined = undefined;
+  /** Hint that a range pill can be edited. `{label}` is the range. */
   @property({ type: String, attribute: 'edit-aria-label' }) editAriaLabel: string | undefined =
     undefined;
+  /** Tooltip of the confirm button of a range being edited. */
   @property({ type: String, attribute: 'confirm-edit-label' }) confirmEditLabel:
     | string
     | undefined = undefined;
+  /** Tooltip of the cancel button of a range being edited. */
   @property({ type: String, attribute: 'cancel-edit-label' }) cancelEditLabel: string | undefined =
     undefined;
+  /** Announcement when editing a range starts. `{label}` is the range. */
   @property({ type: String, attribute: 'edit-started-message' }) editStartedMessage:
     | string
     | undefined = undefined;
+  /** Announcement when an edited range is saved. `{label}` is the new range. */
   @property({ type: String, attribute: 'edit-committed-message' }) editCommittedMessage:
     | string
     | undefined = undefined;
+  /** Announcement when editing a range is cancelled. */
   @property({ type: String, attribute: 'edit-cancelled-message' }) editCancelledMessage:
     | string
     | undefined = undefined;
 
-  @query('#date-input') private _dateRef?: GuiRangeDateInput;
+  @query('gui-range-date') private _dateRef?: GuiRangeDateInput;
 
   /**
-   * Mirror of the embedded input's edit session, fed by its non-bubbling
-   * `editStateChange`: while a session is open the calendar defers commits to
+   * Mirror of the embedded input's edit session, fed by its
+   * `gui-edit-state-change`: while a session is open the calendar defers commits to
    * the session's Confirm, and the selected range's days are marked.
    */
   @state() private _editing = false;
@@ -157,12 +228,15 @@ export class GuiRangeDatePicker extends LitElement {
     resolveSyncOnRelatedTarget: true,
     onLeave: () => {
       this._dateRef?.finalizeOnLeave();
-      this.dispatchEvent(new CustomEvent('blur'));
+      dispatchBlur(this);
     },
   });
 
   // Pills dropdown and the calendar are mutually exclusive, opening one closes the other
+  /** @internal */
   onDropdownToggle = (event: Event) => {
+    // The range input's count bubble: the picker closes its popup, the event goes no further.
+    event.stopPropagation();
     const detail = (event as CustomEvent<{ open: boolean }>).detail;
     if (detail?.open && this._popup.open) {
       this._popup.close();
@@ -175,12 +249,24 @@ export class GuiRangeDatePicker extends LitElement {
 
   override connectedCallback() {
     super.connectedCallback();
-    this.addEventListener('dropdowntoggle', this.onDropdownToggle);
+    this.classList.add('gui-field');
+    this.addEventListener('gui-dropdown-toggle', this.onDropdownToggle);
   }
 
   override disconnectedCallback() {
     super.disconnectedCallback();
-    this.removeEventListener('dropdowntoggle', this.onDropdownToggle);
+    this.removeEventListener('gui-dropdown-toggle', this.onDropdownToggle);
+  }
+
+  /** A range outside `minDate`/`maxDate` or over a disabled day, then `required`. */
+  protected override validate(): GuiValidity | null {
+    // A typed entry the inner field cannot turn into a value: it keeps the previous one.
+    const badInput = this._dateRef?.partsBadInput() ?? null;
+    return (
+      dateRangesValidity(this.value, this) ??
+      (badInput ? { flags: { badInput: true }, message: badInput } : null) ??
+      super.validate()
+    );
   }
 
   override render() {
@@ -188,15 +274,17 @@ export class GuiRangeDatePicker extends LitElement {
 
     const calendar = this._popup.open
       ? addPickerPanel(
-          this.uid ?? '',
+          this.uid,
           { errors: this.errors, touched: this.touched, showErrors: this.showErrors },
           html`<gui-range-calendar
             id=${`${this.uid}_popup`}
             role="dialog"
-            aria-label=${this.label ?? 'Calendar'}
+            aria-labelledby=${this.label ? `${this.uid}_label` : nothing}
+            aria-label=${this.label ? nothing : requiredName('calendar')}
             .uid=${this.uid}
             .hint=${this.hint}
-            ?touched=${this.touched}
+            .showHint=${false}
+            .touched=${this.touched}
             ?required=${this.required}
             ?disabled=${this.disabled}
             ?readonly=${this.readOnly}
@@ -223,17 +311,18 @@ export class GuiRangeDatePicker extends LitElement {
             .invalidRange=${this._invalidRange}
             .selectedRange=${this._selectedEditRange}
             .deferCommit=${this._editing}
-            @blur=${this.onCalendarBlur}
-            @change=${this.onCalendarChange}
-            @partsChange=${this.onCalendarPartsChange}
-            @inputError=${this.onCalendarInputError}
+            @gui-blur=${this.onCalendarBlur}
+            @gui-input=${stopPropagation}
+            @gui-change=${this.onCalendarChange}
+            @gui-parts-change=${this.onCalendarPartsChange}
+            @gui-input-error=${this.onCalendarInputError}
           ></gui-range-calendar>`,
         )
       : nothing;
 
     return html`
       ${addLabel(
-        this.uid ?? '',
+        this.uid,
         {
           label: this.label,
           hint: this.hint,
@@ -251,14 +340,15 @@ export class GuiRangeDatePicker extends LitElement {
         @focusout=${this._focusLeave.onFocusOut}
       >
         <gui-range-date
-          id="date-input"
+          id=${`${this.uid}_date`}
           .deferFocusLeave=${true}
           class=${classMap(datePickerIcon.widgetClasses)}
           .uid=${this.uid}
           .hint=${this.hint}
+          .showHint=${false}
           .showErrors=${false}
           .errors=${this.errors}
-          ?touched=${this.touched}
+          .touched=${this.touched}
           ?required=${this.required}
           ?disabled=${this.disabled}
           ?readonly=${this.readOnly}
@@ -282,40 +372,32 @@ export class GuiRangeDatePicker extends LitElement {
           .editStartedMessage=${this.editStartedMessage}
           .editCommittedMessage=${this.editCommittedMessage}
           .editCancelledMessage=${this.editCancelledMessage}
-          @blur=${this.onDateBlur}
-          @focus=${this._popup.show}
-          @change=${this.onDateChange}
-          @partsChange=${this.onInputPartsChange}
-          @pillClick=${this.onPillClick}
-          @editStateChange=${this.onEditStateChange}
+          @gui-blur=${this.onDateBlur}
+          @gui-focus=${this.onDateFocus}
+          @gui-input=${this.onDateInput}
+          @gui-change=${this.onDateChange}
+          @gui-input-error=${this.onDateInputError}
+          @gui-parts-change=${this.onInputPartsChange}
+          @gui-range-click=${this.onPillClick}
+          @gui-edit-state-change=${this.onEditStateChange}
         ></gui-range-date>
         <button
           type="button"
           class="gui-range-date-picker__arrow"
-          aria-label=${this.toggleAriaLabel ?? 'Show calendar'}
+          aria-label=${requiredName('showCalendar', this.toggleAriaLabel)}
           aria-haspopup="dialog"
           aria-expanded=${this._popup.open ? 'true' : 'false'}
           aria-controls=${`${this.uid}_popup`}
           ?disabled=${this.disabled}
           @click=${this.onToggleClick}
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            viewBox="0 0 256 256"
-            aria-hidden="true"
-          >
-            <path d=${CARET_DOWN_PATH}></path>
-          </svg>
+          <span class="gui-caret" aria-hidden="true"></span>
         </button>
 
         ${calendar}
       </div>
 
-      ${this.showErrors
-        ? addErrors(this.uid ?? '', { errors: this.errors, touched: this.touched })
-        : ''}
+      ${this.showErrors ? addErrors(this.uid, { errors: this.errors, touched: this.touched }) : ''}
     `;
   }
 
@@ -329,7 +411,7 @@ export class GuiRangeDatePicker extends LitElement {
     }
   };
 
-  private onDateChange(event: CustomEvent) {
+  private onDateInput(event: CustomEvent) {
     event.stopPropagation();
     const value = event.detail.value as DateRange[] | undefined;
     for (const range of value ?? []) {
@@ -339,27 +421,20 @@ export class GuiRangeDatePicker extends LitElement {
         return;
       }
     }
-    this.commitValue(value, event.detail.commit !== false);
+    this.commitValue(value, false);
+  }
+
+  /** The input committed a typed range (Enter), unless {@link onDateInput} rejected it. */
+  private onDateChange(event: CustomEvent) {
+    event.stopPropagation();
+    if (this._invalidRange) return;
+    this.setWorking(undefined, undefined);
+    dispatchChange(this, this.value ?? null);
   }
 
   /** The message for the first constraint a range violates, or null when valid. */
   private rangeError(range: DateRange): string | null {
-    const start = range.start;
-    const end = range.end ?? range.start;
-    // A disabled day anywhere in the span — not just at the endpoints.
-    if (rangeSpansDisabledDay(start, end, this.disabledRanges)) {
-      return this.disabledDateRangeMessage ?? DISABLED_DATE_RANGE_MESSAGE;
-    }
-    // Either endpoint outside the allowed [minDate, maxDate] window.
-    const messages = {
-      minDateMessage: this.minDateMessage,
-      maxDateMessage: this.maxDateMessage,
-    };
-    for (const endpoint of [start, end]) {
-      const error = dateBoundsError(endpoint, this.minDate, this.maxDate, undefined, messages);
-      if (error) return error;
-    }
-    return null;
+    return dateRangesValidity([range], this)?.message ?? null;
   }
 
   private rejectTypedRange(range: DateRange, message: string) {
@@ -383,6 +458,19 @@ export class GuiRangeDatePicker extends LitElement {
    */
   private onDateBlur(event: Event) {
     event.stopPropagation();
+  }
+
+  private onDateFocus(event: Event) {
+    stopPropagation(event);
+    this._popup.show();
+  }
+
+  /** The input's error is reported as the picker's own. */
+  private onDateInputError(event: CustomEvent<GuiInputErrorEventDetail>) {
+    stopPropagation(event);
+    dispatchInputError(this, event.detail.message);
+    // The inner field's bad input is part of this picker's validity.
+    this.requestUpdate();
   }
 
   private onCalendarChange(event: CustomEvent) {
@@ -412,6 +500,8 @@ export class GuiRangeDatePicker extends LitElement {
   private onInputPartsChange(event: CustomEvent<{ start: string | null; end: string | null }>) {
     event.stopPropagation();
     this.setWorking(event.detail.start ?? undefined, event.detail.end ?? undefined);
+    // The inner field's bad input is part of this picker's validity.
+    this.requestUpdate();
   }
 
   /**
@@ -439,8 +529,11 @@ export class GuiRangeDatePicker extends LitElement {
     this.setWorking(undefined, undefined, true);
   }
 
+  /** The calendar's error is reported as the picker's own, its rejected span shown in the input. */
   private onCalendarInputError(event: CustomEvent) {
-    const range = event.detail?.range as { start: string; end: string } | undefined;
+    stopPropagation(event);
+    dispatchInputError(this, event.detail.message);
+    const range = event.detail.range as { start: string; end: string } | undefined;
     if (!range) return;
     this._invalidRange = range;
     this._dateRef?.showRange(range.start, range.end);
@@ -449,21 +542,16 @@ export class GuiRangeDatePicker extends LitElement {
   /**
    * The single funnel every commit passes through — a calendar span, a typed
    * Enter — so the working selection is torn down once, and the calendar
-   * (which follows the cleared props) with it. `committed` is false for the
-   * input's error-clearing echo, which carries no new pill and must leave a
-   * half-entered range alone.
+   * (which follows the cleared props) with it. `committed` is false for typed
+   * values until the input commits them (see {@link onDateChange}), and for
+   * the input's error-clearing echo, which carries no new pill and must leave
+   * a half-entered range alone.
    */
   private commitValue(value: DateRange[] | null | undefined, committed = true) {
     this.value = value ?? undefined;
     this._invalidRange = null;
     if (committed) this.setWorking(undefined, undefined);
-    this.dispatchEvent(
-      new CustomEvent('change', {
-        detail: { value: value ?? null },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatchValue(this, value ?? null, { commit: committed });
   }
 
   /**
@@ -477,6 +565,7 @@ export class GuiRangeDatePicker extends LitElement {
   }
 
   private onPillClick(event: CustomEvent) {
+    stopPropagation(event);
     this._focusDate = event.detail.range.start;
     this._popup.show();
   }
@@ -484,6 +573,7 @@ export class GuiRangeDatePicker extends LitElement {
   private onEditStateChange = (
     event: CustomEvent<{ selected: DateRange | null; editing: boolean }>,
   ) => {
+    stopPropagation(event);
     this._selectedEditRange = event.detail.selected;
     this._editing = event.detail.editing;
   };
@@ -505,6 +595,12 @@ export class GuiRangeDatePicker extends LitElement {
     pills?.closeDropdown?.();
   }
 }
+
+/** The events `gui-range-date-picker` fires, with their types. */
+export const GuiRangeDatePickerEvents = {
+  ...valueEvents<GuiRangeDatePicker['value']>(),
+  'gui-input-error': fires<CustomEvent<GuiInputErrorEventDetail>>(),
+};
 
 declare global {
   interface HTMLElementTagNameMap {

@@ -84,15 +84,15 @@ const data = {
 };
 
 // TODO: Move the calculated items logic to the *.form.json file
-const form = {
+const _form = {
   form: [
     {
       uid: 'root',
       kind: 'layout',
-      type: 'flex',
+      type: 'grid',
       props: {
         direction: 'column',
-        gap: 4,
+        gap: 'xs',
       },
       children: [
         {
@@ -127,7 +127,7 @@ const form = {
             {
               uid: 'projects-tab',
               kind: 'layout',
-              type: 'flex',
+              type: 'grid',
               children: [
                 {
                   uid: 'projects-repeater',
@@ -142,7 +142,7 @@ const form = {
                       kind: 'layout',
                       type: 'grid',
                       props: {
-                        autoFit: false,
+                        columns: 12,
                         direction: 'row',
                       },
                       children: [
@@ -194,7 +194,7 @@ const form = {
             {
               uid: 'developers-tab',
               kind: 'layout',
-              type: 'flex',
+              type: 'grid',
               children: [
                 {
                   uid: 'devs-repeater',
@@ -208,7 +208,7 @@ const form = {
                       kind: 'layout',
                       type: 'grid',
                       props: {
-                        autoFit: false,
+                        columns: 12,
                         direction: 'row',
                       },
                       children: [
@@ -277,7 +277,7 @@ const form = {
             {
               uid: 'issues-tab',
               kind: 'layout',
-              type: 'flex',
+              type: 'grid',
               children: [
                 {
                   uid: 'issues-repeater',
@@ -300,7 +300,6 @@ const form = {
                           size: 3,
                           props: {
                             direction: 'column',
-                            align: 'start',
                           },
                           children: [
                             {

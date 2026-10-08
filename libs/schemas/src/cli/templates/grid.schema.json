@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "__ID_BASE__components/grid.schema.json",
+  "$comment": "STARTER TEMPLATE, owned by you. `grid` is a reserved widget type: core wraps every array-shaped form in a `grid` root. Keep the name and the `children` array, change the props to match your layout widget.",
+  "title": "__IMPLEMENTATION__ grid widget",
+  "type": "object",
+  "$defs": {
+    "directionProp": { "enum": ["row", "column"] },
+    "columnsProp": {
+      "oneOf": [{ "type": "integer", "minimum": 1, "maximum": 12 }, { "const": "auto" }]
+    },
+    "gapProp": { "enum": ["none", "xs", "sm", "md", "lg", "xl"] },
+    "justifyProp": { "enum": ["stretch", "start", "center", "end", "space-between"] }
+  },
+  "allOf": [{ "$ref": "../core/common.schema.json#/$defs/baseWidget" }],
+  "properties": {
+    "kind": { "const": "layout" },
+    "type": { "const": "grid" },
+    "children": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "../widgets.schema.json#/$defs/formWidget" }
+    },
+    "props": {
+      "type": "object",
+      "properties": {
+        "direction": { "$ref": "#/$defs/directionProp" },
+        "columns": { "$ref": "#/$defs/columnsProp" },
+        "gap": { "$ref": "#/$defs/gapProp" },
+        "justify": { "$ref": "#/$defs/justifyProp" }
+      },
+      "patternProperties": {
+        "^direction\\.[^.]+$": { "$ref": "#/$defs/directionProp" },
+        "^columns\\.[^.]+$": { "$ref": "#/$defs/columnsProp" },
+        "^gap\\.[^.]+$": { "$ref": "#/$defs/gapProp" },
+        "^justify\\.[^.]+$": { "$ref": "#/$defs/justifyProp" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": ["kind", "type", "children"],
+  "unevaluatedProperties": false
+}

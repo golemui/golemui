@@ -10,7 +10,7 @@ const objectItems = [
   { label: 'Item 5', value: 5 },
 ];
 
-export const multiDropdownTab = gui.layouts.flex([
+export const multiDropdownTab = gui.layouts.grid([
   gui.inputs.multiDropdown('multiDropdowns.frameworks', {
     label: 'Frameworks',
     placeholder: 'Search frameworks…',

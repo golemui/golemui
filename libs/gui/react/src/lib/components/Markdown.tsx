@@ -42,7 +42,7 @@ export function Markdown(widgetInstance: WithWidget) {
   const isRequired = (templateData.validator as Validator)?.required;
 
   return (
-    <div className="gui-markdown gui-field" style={{ flex: templateData.size }}>
+    <div className="gui-markdown gui-field">
       <GuiMarkdownReact
         uid={uid}
         label={label}
@@ -72,8 +72,8 @@ export function Markdown(widgetInstance: WithWidget) {
         splitViewTitle={splitViewTitle}
         toolbarAriaLabel={toolbarAriaLabel}
         dependencies={templateData.deps}
-        onInput={handleChange}
-        onBlur={onBlur}
+        onGuiInput={handleChange}
+        onGuiBlur={onBlur}
       ></GuiMarkdownReact>
     </div>
   );

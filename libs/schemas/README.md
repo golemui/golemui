@@ -114,7 +114,7 @@ npx @golemui/schemas generate
 ```
 
 `init` writes `schemas.config.mjs` (the manifest and config), a starter validators schema, a
-starter `flex` and example input component schema, an example form and a test skeleton, then
+starter `grid` and example input component schema, an example form and a test skeleton, then
 runs `generate`. Run it with no flags for prompts.
 
 `schemas.config.mjs` and the component schemas are the implementer's to edit. Everything

@@ -1,56 +1,55 @@
 // Picker layout comes from `picker.scss`; this file keeps the month-calendar
 // rules the date picker adds on top
-.gui-form {
-  .gui-date-picker.gui-field {
-    .gui-calendar__header {
-      display: flex;
-      justify-content: center;
-      align-items: center;
+:is(.gui-date-picker.gui-field, gui-date-picker) {
+  .gui-calendar__header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .gui-calendar__weekday {
+    text-align: center;
+  }
+
+  .gui-calendar__day-button {
+    box-sizing: border-box;
+    width: 100%;
+    height: var(--gui-calendar-day-button-size);
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--gui-text-default);
+    border-radius: var(--gui-radius-md);
+    cursor: pointer;
+
+    &:hover {
+      border: 1px solid var(--gui-border-default);
+      background-color: var(--gui-text-secondary);
     }
 
-    .gui-calendar__weekday {
-      text-align: center;
+    &.today {
+      border-color: var(--gui-intent-primary-hover);
+      border-width: 2px;
     }
 
-    .gui-calendar__day-button {
-      box-sizing: border-box;
-      width: var(--gui-calendar-day-button-size);
-      height: var(--gui-calendar-day-button-size);
-      padding: 0;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      border: 1px solid transparent;
-      background: transparent;
-      color: var(--gui-text-default);
-      border-radius: var(--gui-radius-md);
-      cursor: pointer;
-
-      &:hover {
-        border: 1px solid var(--gui-border-default);
-        background-color: var(--gui-text-secondary);
-      }
-
-      &.today {
-        border-color: var(--gui-intent-primary-hover);
-        border-width: 2px;
-      }
-
-      &.selected {
-        background-color: var(--gui-intent-primary);
-        color: var(--gui-color-white);
-      }
-
-      &[disabled] {
-        background-color: var(--gui-bg-disabled);
-        cursor: not-allowed;
-      }
+    &.selected {
+      background-color: var(--gui-intent-primary);
+      color: var(--gui-color-white);
     }
 
-    .gui-calendar__days-grid {
-      display: grid;
-      grid-template-columns: repeat(7, var(--gui-calendar-day-button-size));
-      gap: 1px;
+    &[disabled] {
+      background-color: var(--gui-bg-disabled);
+      cursor: not-allowed;
     }
+  }
+
+  .gui-calendar__days-grid {
+    display: grid;
+    // Each column is the day size at most, and narrows when the calendar has less room.
+    grid-template-columns: repeat(7, minmax(0, var(--gui-calendar-day-button-size)));
+    gap: 1px;
   }
 }

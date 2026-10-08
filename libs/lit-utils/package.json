@@ -1,0 +1,53 @@
+{
+  "name": "@golemui/lit-utils",
+  "version": "0.0.0",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "type": "module",
+  "main": "./index.umd.cjs",
+  "module": "./index.js",
+  "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./index.js",
+      "require": "./index.umd.cjs"
+    },
+    "./ssr": {
+      "types": "./ssr.d.ts",
+      "import": "./ssr.js",
+      "require": "./ssr.umd.cjs"
+    }
+  },
+  "files": [
+    "lib",
+    "index.d.ts",
+    "index.js",
+    "index.umd.cjs",
+    "ssr.d.ts",
+    "ssr.js",
+    "ssr.umd.cjs",
+    "*.js",
+    "*.cjs",
+    "*.md"
+  ],
+  "dependencies": {
+    "parse5": "^7.1.1"
+  },
+  "peerDependencies": {
+    "@lit-labs/ssr": "^4.1.0",
+    "lit": "^3.3.1"
+  },
+  "peerDependenciesMeta": {
+    "@lit-labs/ssr": {
+      "optional": true
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/golemui/golemui.git",
+    "directory": "libs/lit-utils"
+  }
+}

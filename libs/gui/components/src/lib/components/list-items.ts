@@ -1,6 +1,11 @@
-import type { ListItem, ListProps } from '@golemui/gui-shared/internals';
+import type { ListItem } from '../types';
 
 export type ListItemValue = string | number;
+
+/** The field that maps an object's property to a list item's value. */
+export type ListItemFields = {
+  valueField?: PropertyKey;
+};
 
 /**
  * Checks whether a value is a fully compliant ListItem (with template and value fields)
@@ -22,7 +27,7 @@ export function isListItemValue(value: unknown): value is ListItemValue {
 /** Checks if an object can be converted into an actual ListItem */
 export const isProtoListItem = (
   opt: unknown,
-  { valueField }: ListProps<any>,
+  { valueField }: ListItemFields,
 ): opt is Record<string, unknown> => {
   if (opt === null || typeof opt !== 'object') {
     return false;
@@ -38,7 +43,7 @@ export const isProtoListItem = (
 };
 
 /** Returns a mapper function that converts objects into { template, value } */
-export function createListItemMapper(opt: unknown, { valueField }: ListProps<any>) {
+export function createListItemMapper(opt: unknown, { valueField }: ListItemFields) {
   if (opt === null || typeof opt !== 'object') {
     throw new Error('Provided value is not an object');
   }
@@ -67,7 +72,7 @@ export function createListItemMapper(opt: unknown, { valueField }: ListProps<any
   };
 }
 
-export const updateListItems = (opts: ListItem<any>[], props: ListProps<any>): ListItem<any>[] => {
+export const updateListItems = (opts: ListItem<any>[], props: ListItemFields): ListItem<any>[] => {
   if (Array.isArray(opts) && opts.length > 0) {
     if (isListItem(opts[0])) {
       // nothing to do
@@ -77,7 +82,7 @@ export const updateListItems = (opts: ListItem<any>[], props: ListProps<any>): L
         value: opt,
       }));
     } else if (isProtoListItem(opts[0], props)) {
-      const optionMapper = createListItemMapper(opts[0], props as ListProps<any>);
+      const optionMapper = createListItemMapper(opts[0], props as ListItemFields);
       return opts.map(optionMapper);
     } else {
       throw new Error('Invalid list item shape');

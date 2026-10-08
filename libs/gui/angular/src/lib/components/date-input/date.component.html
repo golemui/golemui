@@ -22,7 +22,7 @@
   [minDateMessage]="templateData.minDateMessage"
   [maxDateMessage]="templateData.maxDateMessage"
   [incompleteMessage]="templateData.incompleteMessage"
-  (change)="onChangeDate($event)"
-  (inputError)="onInputError($event)"
-  (blur)="adapter.onBlur()"
+  (gui-input)="onChangeDate($event)"
+  (gui-input-error)="onInputError($event)"
+  (gui-blur)="adapter.onBlur()"
 ></gui-date>

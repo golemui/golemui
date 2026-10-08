@@ -5,7 +5,7 @@
  */
 import exampleFormTemplate from './templates/example.form.json';
 import exampleInputTemplate from './templates/example-input.schema.json';
-import flexTemplate from './templates/flex.schema.json';
+import gridTemplate from './templates/grid.schema.json';
 import validatorsTemplate from './templates/validators.schema.json';
 import type { SchemaObject } from '../lib/generator/builders.js';
 
@@ -46,7 +46,7 @@ export function starterFiles(tokens: TemplateTokens): Record<string, string> {
   return {
     'schemas.config.mjs': schemasConfigSource(tokens),
     'src/lib/validators.schema.json': renderJson(validatorsTemplate as SchemaObject, tokens),
-    'src/lib/components/flex.schema.json': renderJson(flexTemplate as SchemaObject, tokens),
+    'src/lib/components/grid.schema.json': renderJson(gridTemplate as SchemaObject, tokens),
     'src/lib/components/example-input.schema.json': renderJson(
       exampleInputTemplate as SchemaObject,
       tokens,
@@ -76,10 +76,10 @@ export default {
     'Named boolean conditions keyed by state name, each mapping to a reactive expression. ' +
     'Root-level widget props such as \`label\`, \`disabled\`, \`readonly\` and \`validator\` accept ' +
     'a \`.stateName\` suffix, as does any key inside \`props\`.',
-  // One entry per widget type. \`flex\` and \`repeater\` are reserved names: use them for
+  // One entry per widget type. \`grid\` and \`repeater\` are reserved names: use them for
   // your layout and repeat widgets, and do not give another widget those types.
   manifest: [
-    { type: 'flex', schemaFile: 'flex.schema.json', kind: 'layout' },
+    { type: 'grid', schemaFile: 'grid.schema.json', kind: 'layout' },
     {
       type: '${exampleInputWidgetType(tokens.implementation)}',
       schemaFile: 'example-input.schema.json',

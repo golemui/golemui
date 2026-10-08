@@ -36,7 +36,7 @@ export function DateTimeCalendar(widgetInstance: WithWidget) {
   const isRequired = (templateData.validator as Validator)?.required;
 
   return (
-    <div className="gui-date-time-calendar gui-field" style={{ flex: templateData.size }}>
+    <div className="gui-date-time-calendar gui-field">
       <GuiDateTimeCalendarReact
         uid={uid}
         label={templateData.label as string}
@@ -67,14 +67,15 @@ export function DateTimeCalendar(widgetInstance: WithWidget) {
         maxTime={templateData.maxTime}
         disabledTimeRanges={templateData.disabledTimeRanges}
         allowCustomTime={templateData.allowCustomTime}
+        timeLabel={templateData.timeLabel as string}
         minTimeMessage={templateData.minTimeMessage as string}
         maxTimeMessage={templateData.maxTimeMessage as string}
         disabledTimeRangeMessage={templateData.disabledTimeRangeMessage as string}
         noAvailableTimesMessage={templateData.noAvailableTimesMessage as string}
         incompleteMessage={templateData.incompleteMessage as string}
-        onChange={handleChange}
-        onBlur={onBlur}
-        onInputError={handleInputError}
+        onGuiInput={handleChange}
+        onGuiBlur={onBlur}
+        onGuiInputError={handleInputError}
       />
     </div>
   );

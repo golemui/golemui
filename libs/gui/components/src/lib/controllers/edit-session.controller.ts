@@ -102,7 +102,7 @@ export class GUIEditSessionController<R extends RangeLike> implements ReactiveCo
     return this._announcement;
   }
 
-  /** Routes a `pillclick` key. Call before the host's legacy click handling. */
+  /** Routes a `gui-pill-click` key. Call before the host's legacy click handling. */
   handlePillClick(key: string): GUIEditSessionPillClick {
     if (!this.options.isEnabled()) return 'ignored';
     if (this._editing) {

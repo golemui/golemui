@@ -1,6 +1,6 @@
 import { gui } from '@golemui/gui-shared';
 
-export const passwordTab = gui.layouts.flex([
+export const passwordTab = gui.layouts.grid([
   gui.inputs.password('password', { autocomplete: 'off' }),
   gui.inputs.password('passwordDisabled', { disabled: true, readonly: true }),
   gui.inputs.password('passwordPhone', { placeholder: 'Please enter your phone number' }),

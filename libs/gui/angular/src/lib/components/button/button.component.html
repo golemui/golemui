@@ -3,10 +3,9 @@
 <gui-button
   [attr.defer-hydration]="deferHydration"
   [uid]="widget.uid"
-  [actionType]="templateData.actionType ?? 'button'"
+  [type]="templateData.actionType ?? 'button'"
   [label]="templateData.label"
   [disabled]="templateData.disabled"
-  [invalid]="templateData.invalid"
   [variant]="templateData.variant"
   [icon]="templateData.icon"
   [iconPosition]="templateData.iconPosition"

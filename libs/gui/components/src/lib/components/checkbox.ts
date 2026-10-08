@@ -1,35 +1,47 @@
 import { GUIAriaController } from '../controllers/aria.controller';
-import { html, LitElement, nothing } from 'lit';
+import { html, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
 import { live } from 'lit/directives/live.js';
-import { safeDefine } from '@golemui/lit/internals';
+import { safeDefine } from '@golemui/lit-utils';
 import { addErrors, requiredMarker, type ControlTemplateData } from '../utils/templates';
-import type { CheckboxProps } from '@golemui/gui-shared/internals';
+import { GuiFormControl } from '../gui-form-control';
+import { dispatchBlur, dispatchValue, valueEvents } from '../utils/events';
+import { booleanAttribute } from '../utils/converters';
 
-export class GuiCheckbox extends LitElement {
-  @property({ type: String }) uid: string | undefined = undefined;
-  @property({ type: String }) label: string | undefined = undefined;
+/** What <gui-checkbox> renders besides the control state: its presentation props. */
+export type GuiCheckboxProps = {
+  hint?: string;
+  checkboxPosition?: 'left' | 'right';
+};
+
+/**
+ * A checkbox. Its value is `true` or `false`.
+ *
+ * @fires gui-input - The user changed the value. `detail.value` is the new value.
+ * @fires gui-change - The user committed the value. `detail.value` is the committed value.
+ * @fires gui-blur - Focus left the control.
+ */
+export class GuiCheckbox extends GuiFormControl {
+  /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
-  @property({ type: Array }) errors: string[] | undefined = [];
-  @property({ type: Boolean }) touched: boolean | undefined = undefined;
-  @property({ type: Boolean }) required: boolean | undefined = undefined;
-  @property({ type: Boolean }) disabled: boolean | undefined = false;
-  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
-  @property({ type: String }) value: boolean | undefined = undefined;
+  /** Whether it is checked. As an attribute, `value` checks it and `value="false"` does not. */
+  @property({ converter: booleanAttribute }) value: boolean | undefined = undefined;
 
-  @property({ type: String }) hint: string | undefined = undefined;
-  @property({ type: String }) checkboxPosition: 'left' | 'right' | undefined = 'left';
+  /** Side of the label the checkbox is on. */
+  @property({ type: String, attribute: 'checkbox-position' }) checkboxPosition:
+    | 'left'
+    | 'right'
+    | undefined = 'left';
 
   private ariaController = new GUIAriaController(this, {
     getTargets: () => this.querySelectorAll(`input[id="${this.uid}"]`),
     getState: () => ({
-      uid: this.uid as string,
+      uid: this.uid,
       templateData: {
         hint: this.hint,
         errors: this.errors,
         touched: this.touched,
-        // Checkboxes can't have aria-readonly
-        readonly: false,
+        readonly: this.readOnly,
         disabled: false,
         required: this.required,
       },
@@ -48,7 +60,7 @@ export class GuiCheckbox extends LitElement {
   override render() {
     super.render();
 
-    const templateData: ControlTemplateData<boolean> & CheckboxProps = {
+    const templateData: ControlTemplateData<boolean> & GuiCheckboxProps = {
       uid: this.uid,
       label: this.label,
       hint: this.hint,
@@ -67,6 +79,8 @@ export class GuiCheckbox extends LitElement {
       this.classList.remove('gui-checkbox--right');
     }
 
+    // The hint and the errors share the third row of a grid cell. The hint's id is on its text
+    // alone, so `aria-describedby` doesn't read the errors as the description.
     return html`
       <label
         class="gui-label"
@@ -80,8 +94,8 @@ export class GuiCheckbox extends LitElement {
             id=${this.uid}
             data-cy=${`${this.uid}_checkbox`}
             .checked=${live(this.value ?? false)}
-            ?required=${this.required}
-            ?disabled=${this.disabled || this.readOnly}
+            ?disabled=${this.disabled}
+            @click=${this.onClick}
             @change=${this.valueChanged}
             @blur=${this.onBlur}
           />
@@ -94,36 +108,46 @@ export class GuiCheckbox extends LitElement {
         </span>
       </label>
 
-      <div class="gui-widget-hint" id=${`${templateData.uid}_hint`}>
-        ${templateData.hint ?? nothing} ${addErrors(this.uid as string, templateData)}
+      <div class="gui-widget-hint">
+        ${templateData.hint
+          ? html`<span id=${`${templateData.uid}_hint`}>${templateData.hint}</span>`
+          : nothing}
+        ${addErrors(this.uid, templateData)}
       </div>
     `;
   }
 
+  /** @internal */
   valueChanged(event: Event) {
     event.stopPropagation();
 
     if (!this.readOnly) {
       const target = event.target as HTMLInputElement;
-      this.dispatchEvent(
-        new CustomEvent('change', {
-          detail: { value: target.checked },
-          bubbles: true,
-          composed: true,
-        }),
-      );
+      this.value = target.checked;
+      dispatchValue(this, this.value);
     }
   }
 
+  /**
+   * A read-only control stays focusable, so its click is cancelled instead: the browser then
+   * restores the checked state and fires no `change`.
+   *
+   * @internal
+   */
+  onClick(event: Event) {
+    if (this.readOnly) event.preventDefault();
+  }
+
+  /** @internal */
   onBlur() {
-    this.dispatchEvent(
-      new CustomEvent('blur', {
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatchBlur(this);
   }
 }
+
+/** The events `gui-checkbox` fires, with their types. */
+export const GuiCheckboxEvents = {
+  ...valueEvents<GuiCheckbox['value']>(),
+};
 
 declare global {
   interface HTMLElementTagNameMap {

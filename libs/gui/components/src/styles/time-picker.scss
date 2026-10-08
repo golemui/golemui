@@ -2,10 +2,8 @@ gui-time-picker {
   display: block;
 }
 
-.gui-form {
-  .gui-time-picker.gui-field {
-    .gui-widget > .gui-picker__panel {
-      width: 100%;
-    }
+:is(.gui-time-picker.gui-field, gui-time-picker) {
+  .gui-widget > .gui-picker__panel {
+    width: 100%;
   }
 }

@@ -1,20 +1,21 @@
 ---
 import { preloadFormWidgets } from '@golemui/core';
 import { widgetLoaders } from '@golemui/gui-lit';
-import { renderGuiHtml } from '@golemui/lit/ssr';
+import { renderTemplate } from '@golemui/lit/ssr';
 import { html } from 'lit';
 import { config } from '../form';
 // GolemUI never injects its stylesheet. Load it once here and override the design tokens in
 // your own CSS.
 import '@golemui/gui-components/index.css';
+import '@golemui/gui-shared/forms.css';
 import '../styles.css';
 
 // The frontmatter runs on the server only. The widgets load through dynamic imports, which
 // the render cannot wait for while it produces the string, so they are preloaded first.
-// renderGuiHtml returns the complete form markup, widget internals included, with every
+// renderTemplate returns the complete form markup, widget internals included, with every
 // element held inert through the `defer-hydration` attribute.
 await preloadFormWidgets({ widgetLoaders });
-const formHtml = await renderGuiHtml(html`<gui-form .config=${config}></gui-form>`);
+const formHtml = await renderTemplate(html`<gui-form .config=${config}></gui-form>`);
 ---
 
 <!doctype html>

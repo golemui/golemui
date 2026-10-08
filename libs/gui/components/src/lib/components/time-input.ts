@@ -1,55 +1,100 @@
-import type { TimeInputProps } from '@golemui/gui-shared/internals';
-import { html, LitElement, nothing, type PropertyValues } from 'lit';
+import { html, nothing, type PropertyValues } from 'lit';
 import { property } from 'lit/decorators.js';
-import { safeDefine } from '@golemui/lit/internals';
+import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
 import { GUIPartsController } from '../controllers/parts.controller';
-import { INCOMPLETE_TIME_MESSAGE } from '../utils/messages';
 import { renderGroupParts, type GUIPartsTemplateData } from '../utils/part-templates';
 import {
   getTimeLocaleData,
   parseTimeGroup,
-  PART_DEFAULT_ARIA_LABELS,
   timeBoundsError,
   type DateTimePartDescriptor,
   type DateTimePartType,
   type GroupCompleteness,
+  type GroupParseResult,
   type TimeLocaleData,
 } from '../utils/parts';
 
 const TIME_PART_TYPES: readonly DateTimePartType[] = ['hour', 'minute'];
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 import { getTimeFormatParts, type HourFormat } from '../utils/time';
+import { boundsValidity, GuiFormControl, type GuiValidity } from '../gui-form-control';
+import {
+  dispatch,
+  dispatchBlur,
+  dispatchInputError,
+  dispatchValue,
+  fires,
+  valueEvents,
+  type GuiInputErrorEventDetail,
+} from '../utils/events';
+import { message } from '../utils/messages';
 
-export class GuiTime extends LitElement {
-  @property({ type: String }) uid: string | undefined = undefined;
-  @property({ type: String }) label: string | undefined = undefined;
+/** What <gui-time-input> renders besides the control state: its presentation props. */
+export type GuiTimeProps = {
+  icon?: string;
+  hint?: string;
+};
+
+/**
+ * A time field typed part by part (hour, minute, AM/PM).
+ *
+ * @fires gui-input - The user changed the value. `detail.value` is the new value.
+ * @fires gui-change - The user committed the value. `detail.value` is the committed value.
+ * @fires gui-blur - Focus left the control.
+ * @fires gui-focus - One of the parts of the field received focus.
+ * @fires gui-input-error - The element rejected what the user entered, such as an impossible date
+ *   or a value out of bounds. `detail.message` is the error; show it through `errors`.
+ * @fires gui-parts-change - The typed parts changed before they form a complete value, for a host
+ *   that mirrors them.
+ */
+export class GuiTime extends GuiFormControl {
+  /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
-  @property({ type: Array }) errors: string[] | undefined = [];
-  @property({ type: Boolean }) showErrors: boolean | undefined = true;
-  @property({ type: Boolean }) touched: boolean | undefined = false;
-  @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean }) disabled: boolean | undefined = false;
-  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
+  /**
+   * Whether the element renders its own error list. Elements that embed it turn it off and show the
+   * errors themselves.
+   */
+  @property({ type: Boolean, attribute: 'show-errors' }) showErrors: boolean | undefined = true;
+  /**
+   * Whether the element renders its hint. Elements that embed it turn it off and show the hint
+   * themselves: `aria-describedby` still points at the hint by its id.
+   */
+  @property({ type: Boolean, attribute: 'show-hint' }) showHint: boolean | undefined = true;
 
+  /** Icon class name shown inside the control, for example from an icon font. */
   @property({ type: String }) icon: string | undefined = '';
-  @property({ type: String }) hint: string | undefined = undefined;
-  @property({ type: String }) hourAriaLabel: string | undefined = undefined;
-  @property({ type: String }) minuteAriaLabel: string | undefined = undefined;
-  @property({ type: String }) dayPeriodAriaLabel: string | undefined = undefined;
+  /** Accessible name of the hour part. An empty value keeps the default. */
+  @property({ type: String, attribute: 'hour-aria-label' }) hourAriaLabel: string | undefined =
+    undefined;
+  /** Accessible name of the minute part. An empty value keeps the default. */
+  @property({ type: String, attribute: 'minute-aria-label' }) minuteAriaLabel: string | undefined =
+    undefined;
+  /** Accessible name of the AM/PM part. An empty value keeps the default. */
+  @property({ type: String, attribute: 'day-period-aria-label' }) dayPeriodAriaLabel:
+    | string
+    | undefined = undefined;
 
+  /** The time, as an ISO time (`HH:mm:ss`). */
   @property({ type: String }) value: string | undefined = undefined;
+  /** 12- or 24-hour clock. Defaults to the locale's. */
   @property({ type: String, attribute: 'hour-format' }) hourFormat: HourFormat | undefined =
     undefined;
+  /** Minutes between the times offered in the list. */
   @property({ type: Number, attribute: 'minute-step' }) minuteStep: number | undefined = 1;
+  /** Earliest selectable time, as an ISO time (`HH:mm:ss`). */
   @property({ type: String, attribute: 'min-time' }) minTime: string | undefined = undefined;
+  /** Latest selectable time, as an ISO time (`HH:mm:ss`). */
   @property({ type: String, attribute: 'max-time' }) maxTime: string | undefined = undefined;
+  /** Error for a time before `minTime`. */
   @property({ type: String, attribute: 'min-time-message' }) minTimeMessage: string | undefined =
     undefined;
+  /** Error for a time after `maxTime`. */
   @property({ type: String, attribute: 'max-time-message' }) maxTimeMessage: string | undefined =
     undefined;
+  /** Error when focus leaves a partly filled value. */
   @property({ type: String, attribute: 'incomplete-message' }) incompleteMessage:
     | string
     | undefined = undefined;
@@ -57,6 +102,8 @@ export class GuiTime extends LitElement {
    * Set by host pickers that run their own whole-widget focus-leave check:
    * moving focus from this input into the picker's popup must not count as
    * leaving, so the embedded input skips its incomplete-on-leave handling.
+   *
+   * @internal
    */
   @property({ type: Boolean, attribute: 'defer-focus-leave' }) deferFocusLeave:
     | boolean
@@ -81,13 +128,11 @@ export class GuiTime extends LitElement {
 
       this._internalNullReport = true;
       this.value = undefined;
-      this.dispatchEvent(new CustomEvent('change', { detail: { value: null }, bubbles: true }));
+      dispatchValue(this, null);
       this._parts.resetSurfacedInputError();
     },
-    onInputErrorSurfaced: (message) =>
-      this.dispatchEvent(new CustomEvent('inputError', { detail: { message }, bubbles: true })),
-    onSurfacedErrorCleared: (value) =>
-      this.dispatchEvent(new CustomEvent('change', { detail: { value }, bubbles: true })),
+    onInputErrorSurfaced: (message) => dispatchInputError(this, message),
+    onSurfacedErrorCleared: (value) => dispatchValue(this, value),
     getHourFormat: () => this.timeLocaleData.effectiveHourFormat,
     getDayPeriodLabels: () => this.timeLocaleData.dayPeriodLabels,
   });
@@ -104,9 +149,10 @@ export class GuiTime extends LitElement {
   private _internalNullReport = false;
 
   protected ariaController: GUIAriaController<unknown, any> = new GUIAriaController(this, {
+    requiresLabel: true,
     getTargets: () => this.querySelectorAll(`.${this.inputBlockClass}`),
     getState: () => ({
-      uid: this.uid as string,
+      uid: this.uid,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -155,7 +201,7 @@ export class GuiTime extends LitElement {
   }
 
   override render() {
-    const templateData: ControlTemplateData<string> & TimeInputProps = {
+    const templateData: ControlTemplateData<string> & GuiTimeProps = {
       uid: this.uid,
       label: this.label,
       errors: this.errors,
@@ -179,7 +225,7 @@ export class GuiTime extends LitElement {
           hour: this.hourAriaLabel,
           minute: this.minuteAriaLabel,
         };
-        return overrides[type] ?? PART_DEFAULT_ARIA_LABELS[type];
+        return message(type, overrides[type]);
       },
       dayPeriodAriaLabel: this.dayPeriodAriaLabel,
       disabled: this.disabled,
@@ -192,7 +238,13 @@ export class GuiTime extends LitElement {
     };
 
     return html`
-      ${this.label ? addLabel(this.uid as string, templateData, false, undefined, false) : nothing}
+      ${addLabel(
+        this.uid,
+        this.showHint ? templateData : { ...templateData, hint: undefined },
+        false,
+        undefined,
+        false,
+      )}
 
       <div class="gui-widget" @focusout=${this.onWidgetFocusOut}>
         <div
@@ -214,9 +266,7 @@ export class GuiTime extends LitElement {
           : nothing}
       </div>
 
-      ${this.showErrors && this.errors?.length
-        ? addErrors(this.uid as string, templateData)
-        : nothing}
+      ${this.showErrors && this.errors?.length ? addErrors(this.uid, templateData) : nothing}
     `;
   }
 
@@ -230,13 +280,7 @@ export class GuiTime extends LitElement {
     });
     this._parts.applyWriteBacks(group, writeBacks);
 
-    this.dispatchEvent(
-      new CustomEvent('partsChange', {
-        detail: { time: result.kind === 'valid' ? result.iso : null },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatch(this, 'gui-parts-change', { time: result.kind === 'valid' ? result.iso : null });
 
     if (result.kind !== 'valid') {
       this.requestUpdate();
@@ -251,9 +295,8 @@ export class GuiTime extends LitElement {
     });
 
     if (boundsError) {
-      this.dispatchEvent(
-        new CustomEvent('change', { detail: { value: result.iso }, bubbles: true }),
-      );
+      this.value = result.iso;
+      dispatchValue(this, this.value);
       this._parts.surfaceInputError(boundsError);
       this.requestUpdate();
       return;
@@ -261,19 +304,72 @@ export class GuiTime extends LitElement {
 
     this.value = result.iso;
     this._parts.resetSurfacedInputError();
-    this.dispatchEvent(new CustomEvent('change', { detail: { value: this.value }, bubbles: true }));
+    dispatchValue(this, this.value);
     this.requestUpdate();
   }
 
-  /** The group's fill state, for host pickers' own focus-leave checks. */
+  /** An out-of-bounds time, then a typed time the element rejected, then `required`. */
+  protected override validate(): GuiValidity | null {
+    const boundsError = this.value
+      ? timeBoundsError(this.value, {
+          minTime: this.minTime,
+          maxTime: this.maxTime,
+          minTimeMessage: this.minTimeMessage,
+          maxTimeMessage: this.maxTimeMessage,
+        })
+      : null;
+    const badInput = this.partsBadInput();
+    return (
+      boundsValidity(boundsError, this.value, this.minTime, this.maxTime) ??
+      (badInput ? { flags: { badInput: true }, message: badInput } : null) ??
+      super.validate()
+    );
+  }
+
+  /**
+   * The group's fill state, for host pickers' own focus-leave checks.
+   *
+   * @internal
+   */
   groupCompleteness(): GroupCompleteness {
+    if (this.parseParts().kind !== 'incomplete') return 'complete';
+    return this._parts.isGroupEmpty('default', TIME_PART_TYPES) ? 'empty' : 'partial';
+  }
+
+  /** The parts as they are now, parsed. */
+  private parseParts(): GroupParseResult {
     const { effectiveHourFormat, descriptors } = this.timeLocaleData;
-    const { result } = parseTimeGroup(this._parts.values['default'] ?? {}, {
+    return parseTimeGroup(this._parts.values['default'] ?? {}, {
       hourFormat: effectiveHourFormat,
       descriptors,
-    });
-    if (result.kind !== 'incomplete') return 'complete';
-    return this._parts.isGroupEmpty('default', TIME_PART_TYPES) ? 'empty' : 'partial';
+    }).result;
+  }
+
+  /**
+   * The bad input the parts hold now: a partly typed time, or a complete one that is no time.
+   * Read when the validity is written, so it never lags behind the error last shown, and by the
+   * picker that embeds the element.
+   *
+   * @internal
+   */
+  partsBadInput(): string | null {
+    const result = this.parseParts();
+    if (result.kind === 'invalid') return result.message;
+    return this.groupCompleteness() === 'partial'
+      ? message('incompleteTime', this.incompleteMessage)
+      : null;
+  }
+
+  /** Also refills the parts, which the reset emptied, and drops the error they showed. */
+  override formResetCallback(): void {
+    super.formResetCallback();
+    this._parts.setGroupFromISO(
+      'default',
+      this.value ?? '',
+      'time',
+      this.timeLocaleData.effectiveHourFormat,
+    );
+    this._parts.resetSurfacedInputError();
   }
 
   private onWidgetFocusOut = (event: FocusEvent): void => {
@@ -287,10 +383,11 @@ export class GuiTime extends LitElement {
    * segments never validates a half-typed entry.
    */
   private onFocusLeave(): void {
-    this.dispatchEvent(new CustomEvent('blur'));
+    dispatchBlur(this);
     this.settleOnFocusLeave();
   }
 
+  /** @internal */
   settleOnFocusLeave(): void {
     const completeness = this.groupCompleteness();
     if (completeness === 'complete') return;
@@ -304,10 +401,18 @@ export class GuiTime extends LitElement {
       this._internalNullReport = true;
       this.value = undefined;
     }
-    this.dispatchEvent(new CustomEvent('change', { detail: { value: null }, bubbles: true }));
-    this._parts.surfaceInputError(this.incompleteMessage ?? INCOMPLETE_TIME_MESSAGE);
+    dispatchValue(this, null);
+    this._parts.surfaceInputError(message('incompleteTime', this.incompleteMessage));
   }
 }
+
+/** The events `gui-time` fires, with their types. */
+export const GuiTimeEvents = {
+  ...valueEvents<GuiTime['value']>(),
+  'gui-focus': fires<CustomEvent<FocusEvent>>(),
+  'gui-input-error': fires<CustomEvent<GuiInputErrorEventDetail>>(),
+  'gui-parts-change': fires<CustomEvent<{ time: string | null }>>(),
+};
 
 declare global {
   interface HTMLElementTagNameMap {

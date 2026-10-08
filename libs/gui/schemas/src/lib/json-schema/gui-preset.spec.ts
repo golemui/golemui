@@ -265,8 +265,8 @@ describe('guiPreset: arrays and objects', () => {
         limit: 3,
         template: {
           kind: 'layout',
-          type: 'flex',
-          props: { direction: 'column', gap: 8 },
+          type: 'grid',
+          props: { gap: 'sm' },
           children: [
             {
               kind: 'input',
@@ -325,21 +325,21 @@ describe('guiPreset: arrays and objects', () => {
 
     expect(point).toMatchObject({
       kind: 'layout',
-      type: 'flex',
-      props: { direction: 'row', gap: 12 },
+      type: 'grid',
+      props: { direction: 'row', gap: 'sm' },
     });
     expect(point.children?.map((child) => child.path)).toEqual(['point.0', 'point.1']);
   });
 
-  it('groups a nested object in a flex column, with its title when asked', () => {
+  it('groups a nested object in a grid stack, with its title when asked', () => {
     const schema = objectOf({
       address: objectOf({ city: { type: 'string' } }, { title: 'Address' }),
     });
 
     expect(formOf(schema)[0]).toEqual({
       kind: 'layout',
-      type: 'flex',
-      props: { direction: 'column', gap: 8 },
+      type: 'grid',
+      props: { gap: 'sm' },
       children: [{ kind: 'input', type: 'textinput', path: 'address.city', label: 'City' }],
     });
     expect(formOf(schema, { objectTitle: 'markdownText' })[0].children?.[0]).toEqual({
@@ -385,8 +385,8 @@ describe('guiPreset: root and named widgets', () => {
   });
 
   it.each([
-    ['horizontal', 'flex', { direction: 'row', gap: 12 }],
-    ['grid', 'grid', { columnGap: 12, rowGap: 12 }],
+    ['horizontal', 'grid', { direction: 'row', gap: 'sm' }],
+    ['grid', 'grid', { columns: 'auto', gap: 'sm' }],
   ] as const)('wraps the form in a %s layout', (rootLayout, type, props) => {
     const { form } = convert(schema, { rootLayout }).formDefinition;
 

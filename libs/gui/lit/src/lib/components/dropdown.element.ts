@@ -11,6 +11,7 @@ import { defaultListItemRenderer } from './default-list-item-renderer';
 import '@golemui/gui-components/label';
 import '@golemui/gui-components/list';
 import '@golemui/gui-components/errors';
+import { live } from 'lit/directives/live.js';
 
 export class DropdownElement extends LitElement implements WithWidget {
   widget!: InputWidget<string>;
@@ -53,18 +54,6 @@ export class DropdownElement extends LitElement implements WithWidget {
 
   override createRenderRoot() {
     return this;
-  }
-
-  override updated(changedProperties: any) {
-    super.updated(changedProperties);
-
-    const size = this.adapter.templateData.size;
-
-    if (size) {
-      this.style.flex = String(size);
-    } else {
-      this.style.removeProperty('flex');
-    }
   }
 
   override connectedCallback() {
@@ -356,17 +345,7 @@ export class DropdownElement extends LitElement implements WithWidget {
           @mousedown=${this._onToggleMouseDown}
           @click=${this._onToggleClick}
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            viewBox="0 0 256 256"
-            aria-hidden="true"
-          >
-            <path
-              d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"
-            ></path>
-          </svg>
+          <span class="gui-caret" aria-hidden="true"></span>
         </button>
 
         <div
@@ -377,7 +356,7 @@ export class DropdownElement extends LitElement implements WithWidget {
           <gui-list
             id=${`${this.widget.uid}-list`}
             .uid=${this.widget.uid}
-            .value=${templateData.value ?? ''}
+            .value=${live(templateData.value ?? '')}
             .valueField=${templateData.valueField! as string}
             .items=${this._isFiltering && !asyncFiltering
               ? this._filteredItems
@@ -385,7 +364,7 @@ export class DropdownElement extends LitElement implements WithWidget {
             .itemHeight=${templateData.itemHeight}
             .height=${templateData.height}
             ?required=${templateData.validator?.required}
-            ?touched=${templateData.touched}
+            .touched=${templateData.touched}
             ?disabled=${templateData.disabled}
             ?readonly=${templateData.readonly}
             ?hidden=${!this._isListVisible}
@@ -393,7 +372,7 @@ export class DropdownElement extends LitElement implements WithWidget {
             @gui-update-items=${this._onUpdateItems}
             @gui-focus-change=${this._onFocusChange}
             @focus=${this._onFocus}
-            @change=${this._onValueChange}
+            @gui-input=${this._onValueChange}
           >
             ${visibleItems.map((item, index) => {
               const absoluteIndex = this._range.start + index;

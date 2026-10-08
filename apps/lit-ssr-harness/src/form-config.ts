@@ -4,7 +4,7 @@ import { gui, type DxDefinitionItem, type GuiFormInitConfig } from '@golemui/gui
 // comparable. No tabs, no markdown, and no calendar, so the render does not depend on the
 // server clock.
 const formDef: DxDefinitionItem[] = [
-  gui.layouts.flex(
+  gui.layouts.grid(
     [
       gui.inputs.textInput('firstName', {
         label: 'First name',
@@ -17,7 +17,7 @@ const formDef: DxDefinitionItem[] = [
         validator: { required: true, minLength: 2 },
       }),
     ],
-    { direction: 'row', gap: 16 },
+    { direction: 'row' },
   ),
   gui.inputs.numberInput('seats', {
     label: 'Seats',

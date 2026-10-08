@@ -1,0 +1,4 @@
+// The cascade layers of every GolemUI stylesheet, lowest priority first. Each published stylesheet
+// declares the whole order before its own layer, so the order holds whichever file loads first.
+// Unlayered page CSS beats all of them.
+@layer golemui.tokens, golemui.base, golemui.components, golemui.forms, golemui.theme;

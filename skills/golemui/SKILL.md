@@ -66,7 +66,8 @@ These are the silent failure modes. All of them compile/parse cleanly and then b
 4. **Markdown is an input, not a display.** `gui.inputs.markdown` is a markdown _editor_. For a
    heading or static block use `gui.displays.display(() => <h2>…</h2>)` returning your
    framework's own node.
-5. **Import `@golemui/gui-components/index.css` once** or the form renders unstyled.
+5. **Import `@golemui/gui-components/index.css` and then `@golemui/gui-shared/forms.css` once**
+   or the form renders unstyled.
 6. **Submit event name differs per framework** — Vue is the ONLY kebab-case one:
    React `formSubmit={...}` · Angular `(formSubmit)="..."` · Vue `@form-submit="..."` ·
    Lit `@formSubmit=${...}` · vanilla `addEventListener('formSubmit', ...)`.

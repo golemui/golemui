@@ -66,14 +66,14 @@ export function List(widgetInstance: WithWidget) {
     };
 
     // Binding
-    element.addEventListener('change', handleChange);
+    element.addEventListener('gui-input', handleChange);
     element.addEventListener('gui-update-items', handleUpdateItems);
     element.addEventListener('gui-range-change', handleRangeChange);
     element.addEventListener('gui-focus-change', handleFocusChange);
 
     return () => {
       // Cleanup
-      element.removeEventListener('change', handleChange);
+      element.removeEventListener('gui-input', handleChange);
       element.removeEventListener('gui-update-items', handleUpdateItems);
       element.removeEventListener('gui-range-change', handleRangeChange);
       element.removeEventListener('gui-focus-change', handleFocusChange);
@@ -82,7 +82,7 @@ export function List(widgetInstance: WithWidget) {
 
   const handleClickItem = useCallback(
     (item: ListItem<any>, index: number) => {
-      if (templateData.disabled || item.disabled) return;
+      if (templateData.disabled || templateData.readonly || item.disabled) return;
 
       onValueChanged(item.value);
       setFocusedIndex(index);
@@ -103,7 +103,7 @@ export function List(widgetInstance: WithWidget) {
   const showErrors = isTouched && errors && errors.length > 0;
 
   return (
-    <div className="gui-list gui-field" style={{ flex: templateData.size }}>
+    <div className="gui-list gui-field">
       <GuiLabelReact
         targetElement={listRef.current || undefined}
         uid={uid}
@@ -112,6 +112,8 @@ export function List(widgetInstance: WithWidget) {
         errors={errors}
         touched={isTouched}
         required={isRequired}
+        disabled={isDisabled}
+        readOnly={isReadOnly}
         native={false}
       ></GuiLabelReact>
 

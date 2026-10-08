@@ -24,18 +24,6 @@ export class DateTimeCalendarElement extends LitElement implements WithWidget {
     return this;
   }
 
-  override updated(changedProperties: any) {
-    super.updated(changedProperties);
-
-    const size = this.adapter.templateData.size;
-
-    if (size) {
-      this.style.flex = String(size);
-    } else {
-      this.style.removeProperty('flex');
-    }
-  }
-
   override connectedCallback() {
     super.connectedCallback();
     this.classList.add('gui-date-time-calendar', 'gui-field');
@@ -58,7 +46,7 @@ export class DateTimeCalendarElement extends LitElement implements WithWidget {
         .label=${templateData.label}
         .hint=${templateData.hint}
         .errors=${templateData.errors}
-        ?touched=${templateData.touched}
+        .touched=${templateData.touched}
         ?required=${templateData.validator?.required}
         ?disabled=${templateData.disabled}
         ?readonly=${templateData.readonly}
@@ -83,14 +71,15 @@ export class DateTimeCalendarElement extends LitElement implements WithWidget {
         .maxTime=${templateData.maxTime}
         .disabledTimeRanges=${templateData.disabledTimeRanges}
         ?allow-custom-time=${templateData.allowCustomTime}
+        .timeLabel=${templateData.timeLabel as string}
         .minTimeMessage=${templateData.minTimeMessage as string}
         .maxTimeMessage=${templateData.maxTimeMessage as string}
         .disabledTimeRangeMessage=${templateData.disabledTimeRangeMessage as string}
         .noAvailableTimesMessage=${templateData.noAvailableTimesMessage as string}
         .incompleteMessage=${templateData.incompleteMessage as string}
-        @change=${this.valueChanged}
-        @inputError=${this.onInputError}
-        @blur=${() => this.adapter.onBlur()}
+        @gui-input=${this.valueChanged}
+        @gui-input-error=${this.onInputError}
+        @gui-blur=${() => this.adapter.onBlur()}
       ></gui-date-time-calendar>
     `;
   }

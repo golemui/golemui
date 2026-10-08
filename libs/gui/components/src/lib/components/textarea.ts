@@ -1,39 +1,65 @@
-import { html, LitElement, nothing } from 'lit';
+import { html, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
 import { live } from 'lit/directives/live.js';
-import { cspStyleMap, safeDefine } from '@golemui/lit/internals';
+import { cspStyleMap } from '@golemui/lit-utils';
+import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
-import type { TextareaProps } from '@golemui/gui-shared/internals';
+import { GuiFormControl } from '../gui-form-control';
+import { dispatchBlur, dispatchChange, dispatchValue, valueEvents } from '../utils/events';
 
-export class GuiTextarea extends LitElement {
-  @property({ type: String }) uid: string | undefined = undefined;
-  @property({ type: String }) label: string | undefined = undefined;
+/** What <gui-textarea> renders besides the control state: its presentation props. */
+export type GuiTextareaProps = {
+  hint?: string;
+  placeholder?: string;
+  autocomplete?: string;
+  counterMode?: 'remaining' | 'current';
+  minimumHeight?: number;
+  autoGrow?: boolean;
+  maxLength?: number;
+};
+
+/**
+ * A multi-line text field, with an optional character counter.
+ *
+ * @fires gui-input - The user changed the value. `detail.value` is the new value.
+ * @fires gui-change - The user committed the text, on blur. `detail.value` is the value.
+ * @fires gui-blur - Focus left the control.
+ */
+export class GuiTextarea extends GuiFormControl {
+  /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
-  @property({ type: Array }) errors: string[] | undefined = [];
-  @property({ type: Boolean }) touched: boolean | undefined = false;
-  @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean }) disabled: boolean | undefined = false;
-  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
+  /** The text. */
   @property({ type: String }) value: string | undefined = undefined;
 
-  @property({ type: String }) hint: string | undefined = undefined;
+  /** Text shown while the control is empty. */
   @property({ type: String }) placeholder: string | undefined = undefined;
+  /** The `autocomplete` hint passed to the inner native control. */
   @property({ type: String }) autocomplete: string | undefined = undefined;
-  @property({ type: String, attribute: 'countermode' }) counterMode:
+  /**
+   * With `maxLength`, whether the counter shows the characters left (`remaining`) or used
+   * (`current`).
+   */
+  @property({ type: String, attribute: 'counter-mode' }) counterMode:
     | 'remaining'
     | 'current'
     | undefined;
-  @property({ type: Number, attribute: 'minimumheight' }) minimumHeight: number | undefined =
+  /** Minimum height of the field, in pixels. */
+  @property({ type: Number, attribute: 'minimum-height' }) minimumHeight: number | undefined =
     undefined;
-  @property({ type: Boolean, attribute: 'autogrow' }) autoGrow: boolean | undefined = false;
+  /** Grows the field with its content instead of scrolling. */
+  @property({ type: Boolean, attribute: 'auto-grow' }) autoGrow: boolean | undefined = false;
+  /**
+   * The number of characters the counter counts against. It only drives the counter: longer text
+   * is not blocked, and the counter marks it as over the limit.
+   */
   @property({ type: Number, attribute: 'maxlength' }) maxLength: number | undefined = undefined;
 
   private ariaController = new GUIAriaController(this, {
     getTargets: () => this.querySelectorAll(`textarea[id="${this.uid}"]`),
     getState: () => ({
-      uid: this.uid as string,
+      uid: this.uid,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -57,7 +83,7 @@ export class GuiTextarea extends LitElement {
   override render() {
     super.render();
 
-    const templateData: ControlTemplateData<string> & TextareaProps = {
+    const templateData: ControlTemplateData<string> & GuiTextareaProps = {
       uid: this.uid,
       label: this.label,
       errors: this.errors,
@@ -114,7 +140,7 @@ export class GuiTextarea extends LitElement {
     }
 
     return html`
-      ${addLabel(this.uid as string, templateData)}
+      ${addLabel(this.uid, templateData)}
 
       <div class="gui-widget">
         <textarea
@@ -122,48 +148,54 @@ export class GuiTextarea extends LitElement {
           data-cy=${`${this.uid}_textarea`}
           class="gui-widget-input"
           style=${cspStyleMap(autoGrowStyles)}
-          ?required=${templateData.required}
           ?disabled=${templateData.disabled}
           ?readonly=${templateData.readonly}
           placeholder=${templateData.placeholder || nothing}
           autocomplete=${this.autocomplete || nothing}
           .value=${live(this.value ?? '')}
           @input=${this.valueChanged}
+          @change=${this.valueCommitted}
           @blur=${this.onBlur}
         ></textarea>
       </div>
 
       <div class="gui-textarea--validation">
-        <div>${addErrors(this.uid as string, templateData)}</div>
+        <div>${addErrors(this.uid, templateData)}</div>
         ${counter}
       </div>
     `;
   }
 
+  /** @internal */
   valueChanged(event: InputEvent) {
     event.stopPropagation();
 
     if (!this.readOnly) {
       const target = event.target as HTMLInputElement;
-      this.dispatchEvent(
-        new CustomEvent('input', {
-          detail: { value: target.value },
-          bubbles: true,
-          composed: true,
-        }),
-      );
+      this.value = target.value;
+      dispatchValue(this, this.value, { commit: false });
     }
   }
 
+  /**
+   * The native `change`: the user committed the edit, on blur (Enter adds a new line).
+   *
+   * @internal
+   */
+  valueCommitted(event: Event) {
+    dispatchChange(this, (event.target as HTMLInputElement).value);
+  }
+
+  /** @internal */
   onBlur() {
-    this.dispatchEvent(
-      new CustomEvent('blur', {
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatchBlur(this);
   }
 }
+
+/** The events `gui-textarea` fires, with their types. */
+export const GuiTextareaEvents = {
+  ...valueEvents<GuiTextarea['value']>(),
+};
 
 declare global {
   interface HTMLElementTagNameMap {

@@ -261,13 +261,12 @@ const guiSelectors = createSelectors({
 });
 
 // The gui choices for the generic DX pipeline: a bare function in a form
-// definition becomes a gui display widget, and the auto-stack root is the
-// reserved 'flex' layout rendered as a vertical column.
+// definition becomes a gui display widget, and the auto-stack root is a grid stack.
 const guiAdapter: DxAdapter = {
   bareItemToWidget: (renderFn) => _guiDisplay(renderFn),
   rootEntry: (children: ValidShortcut[]) => {
     const rootEntry: LayoutEntry = {
-      def: { uid: '#root', direction: 'column', widgetName: 'flex' },
+      def: { uid: '#root', direction: 'column', widgetName: 'grid' },
       children,
     };
     return { type: 'ITEMS', itemType: GuiItemTypes.LAYOUTS, items: [rootEntry], tags: [] };
@@ -326,8 +325,11 @@ const guiFacade = {
     custom: _guiCustomDisplay,
   },
   layouts: {
+    /** @deprecated Use `grid`, which stacks its children; a flex layout renders as one. */
     flex: _guiFlex,
+    /** @deprecated Use `horizontalGrid`; a flex layout renders as a grid. */
     horizontalFlex: _guiHorizontalFlex,
+    /** @deprecated Use `grid` or `verticalGrid`; a flex layout renders as a grid. */
     verticalFlex: _guiVerticalFlex,
     grid: _guiGrid,
     horizontalGrid: _guiHorizontalGrid,

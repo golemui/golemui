@@ -1,7 +1,7 @@
-import type { DateRange, RangeDateInputProps } from '@golemui/gui-shared/internals';
-import { html, LitElement, nothing } from 'lit';
+import { html, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
-import { cspStyleMap, safeDefine } from '@golemui/lit/internals';
+import { cspStyleMap } from '@golemui/lit-utils';
+import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { GUIEditSessionController } from '../controllers/edit-session.controller';
@@ -14,22 +14,10 @@ import {
   parseISODateString,
   toISODateString,
 } from '../utils/date';
-import {
-  CANCEL_EDIT_RANGE_LABEL,
-  CONFIRM_EDIT_RANGE_LABEL,
-  EDIT_RANGE_ARIA_LABEL,
-  EDIT_RANGE_CANCELLED_MESSAGE,
-  EDIT_RANGE_COMMITTED_MESSAGE,
-  EDIT_RANGE_LABEL,
-  EDIT_RANGE_STARTED_MESSAGE,
-  formatEditMessage,
-  INCOMPLETE_DATE_MESSAGE,
-} from '../utils/messages';
 import { renderGroupParts, type GUIPartsTemplateData } from '../utils/part-templates';
 import {
   dateInputPartDescriptors,
   parseDateGroup,
-  PART_DEFAULT_ARIA_LABELS,
   type DateTimePartDescriptor,
   type DateTimePartType,
 } from '../utils/parts';
@@ -45,52 +33,121 @@ import {
 import { commitRange, orderEndpoints, type RangeEndpoint } from '../utils/range-commit';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 import './pills';
-import type { GuiPillEventDetail, GuiPillItem } from './pills';
+import type { GuiPillEventDetail, GuiPillItem, GuiPillsDropdownEventDetail } from './pills';
+import type { DateRange } from '../types';
+import { GuiFormControl, type GuiValidity } from '../gui-form-control';
+import {
+  dispatch,
+  dispatchBlur,
+  dispatchInputError,
+  dispatchValue,
+  fires,
+  valueEvents,
+  type GuiInputErrorEventDetail,
+} from '../utils/events';
+import { message, optionalName, requiredName } from '../utils/messages';
 
-export class GuiRangeDateInput extends LitElement {
-  @property({ type: String }) uid: string | undefined = undefined;
-  @property({ type: String }) label: string | undefined = undefined;
+/** What <gui-range-date-input> renders besides the control state: its presentation props. */
+export type GuiRangeDateInputProps = {
+  hint?: string;
+};
+
+/**
+ * A field to type one or more date ranges, shown as pills.
+ *
+ * @fires gui-input - The user changed the value. `detail.value` is the new value.
+ * @fires gui-change - The user added, removed or finished editing a range. `detail.value` is the
+ *   list of ranges.
+ * @fires gui-blur - Focus left the control.
+ * @fires gui-focus - One of the parts of the field received focus.
+ * @fires gui-input-error - The element rejected what the user entered, such as an impossible date
+ *   or a value out of bounds. `detail.message` is the error; show it through `errors`.
+ * @fires gui-parts-change - The typed parts changed before they form a complete value, for a host
+ *   that mirrors them.
+ * @fires gui-edit-state-change - Editing a range in place started, changed selection or ended.
+ *   `detail` has the `selected` range and whether it is `editing`.
+ * @fires gui-range-click - The user clicked a range pill. `detail.range` is the range.
+ * @fires gui-dropdown-toggle - The count of ranges opened or closed its dropdown. `detail.open` is
+ *   the new state.
+ * @cssprop --gui-pill-height - Height of each pill.
+ * @cssprop --gui-pill-font-size - Font size of the pill text.
+ * @cssprop --gui-pill-action-size - Size of the icons inside a pill.
+ * @cssprop --gui-pill-action-hit - Clickable area of the buttons inside a pill.
+ */
+export class GuiRangeDateInput extends GuiFormControl {
+  /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
-  @property({ type: Array }) errors: string[] | undefined = [];
-  @property({ type: Boolean }) showErrors: boolean | undefined = true;
-  @property({ type: Boolean }) touched: boolean | undefined = false;
-  @property({ type: Boolean }) required: boolean | undefined = false;
-  @property({ type: Boolean }) disabled: boolean | undefined = false;
-  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
+  /**
+   * Whether the element renders its own error list. Elements that embed it turn it off and show the
+   * errors themselves.
+   */
+  @property({ type: Boolean, attribute: 'show-errors' }) showErrors: boolean | undefined = true;
+  /**
+   * Whether the element renders its hint. Elements that embed it turn it off and show the hint
+   * themselves: `aria-describedby` still points at the hint by its id.
+   */
+  @property({ type: Boolean, attribute: 'show-hint' }) showHint: boolean | undefined = true;
 
+  /** Icon class name shown inside the control, for example from an icon font. */
   @property({ type: String }) icon: string | undefined = '';
-  @property({ type: String }) hint: string | undefined = undefined;
-  @property({ type: String }) dayAriaLabel: string | undefined = undefined;
-  @property({ type: String }) monthAriaLabel: string | undefined = undefined;
-  @property({ type: String }) yearAriaLabel: string | undefined = undefined;
+  /** Accessible name of the day part. An empty value keeps the default. */
+  @property({ type: String, attribute: 'day-aria-label' }) dayAriaLabel: string | undefined =
+    undefined;
+  /** Accessible name of the month part. An empty value keeps the default. */
+  @property({ type: String, attribute: 'month-aria-label' }) monthAriaLabel: string | undefined =
+    undefined;
+  /** Accessible name of the year part. An empty value keeps the default. */
+  @property({ type: String, attribute: 'year-aria-label' }) yearAriaLabel: string | undefined =
+    undefined;
 
+  /** The date ranges, as `{ start, end }` ISO dates. */
   @property({ type: Array }) value: DateRange[] | undefined = [];
+  /** Error for a complete but impossible date, such as February 31. */
   @property({ type: String, attribute: 'invalid-date-message' }) invalidDateMessage:
     | string
     | undefined = undefined;
 
-  @property({ type: String }) removePillAriaLabel: string | undefined = undefined;
-  @property({ type: String }) startDateAriaLabel: string | undefined = undefined;
-  @property({ type: String }) endDateAriaLabel: string | undefined = undefined;
+  /** Accessible name of the remove button of each range pill. An empty value keeps the default. */
+  @property({ type: String, attribute: 'remove-pill-aria-label' }) removePillAriaLabel:
+    | string
+    | undefined = undefined;
+  /** Accessible name of the start date field. An empty value removes it. */
+  @property({ type: String, attribute: 'start-date-aria-label' }) startDateAriaLabel:
+    | string
+    | undefined = undefined;
+  /** Accessible name of the end date field. An empty value removes it. */
+  @property({ type: String, attribute: 'end-date-aria-label' }) endDateAriaLabel:
+    | string
+    | undefined = undefined;
+  /** Text shown between the start and end of a range. */
   @property({ type: String }) separator: string | undefined = undefined;
+  /** Error when focus leaves a partly filled value. */
   @property({ type: String, attribute: 'incomplete-message' }) incompleteMessage:
     | string
     | undefined = undefined;
+  /** Lets the user edit a range in place from its pill. */
   @property({ type: Boolean, attribute: 'allow-edit' }) allowEdit: boolean | undefined = false;
+  /** Tooltip of the edit button of a range pill. */
   @property({ type: String, attribute: 'edit-label' }) editLabel: string | undefined = undefined;
+  /** Hint that a range pill can be edited. `{label}` is the range. */
   @property({ type: String, attribute: 'edit-aria-label' }) editAriaLabel: string | undefined =
     undefined;
+  /** Tooltip of the confirm button of a range being edited. */
   @property({ type: String, attribute: 'confirm-edit-label' }) confirmEditLabel:
     | string
     | undefined = undefined;
+  /** Tooltip of the cancel button of a range being edited. */
   @property({ type: String, attribute: 'cancel-edit-label' }) cancelEditLabel: string | undefined =
     undefined;
+  /** Announcement when editing a range starts. `{label}` is the range. */
   @property({ type: String, attribute: 'edit-started-message' }) editStartedMessage:
     | string
     | undefined = undefined;
+  /** Announcement when an edited range is saved. `{label}` is the new range. */
   @property({ type: String, attribute: 'edit-committed-message' }) editCommittedMessage:
     | string
     | undefined = undefined;
+  /** Announcement when editing a range is cancelled. */
   @property({ type: String, attribute: 'edit-cancelled-message' }) editCancelledMessage:
     | string
     | undefined = undefined;
@@ -98,6 +155,8 @@ export class GuiRangeDateInput extends LitElement {
    * Set by host pickers that run their own whole-widget focus-leave check:
    * moving focus from this input into the picker's popover must not count as
    * leaving, so the embedded input skips its incomplete-on-leave handling.
+   *
+   * @internal
    */
   @property({ type: Boolean, attribute: 'defer-focus-leave' }) deferFocusLeave:
     | boolean
@@ -149,16 +208,8 @@ export class GuiRangeDateInput extends LitElement {
         this.onPillClick(lastRange);
       }
     },
-    onInputErrorSurfaced: (message) =>
-      this.dispatchEvent(new CustomEvent('inputError', { detail: { message }, bubbles: true })),
-    onSurfacedErrorCleared: (value) =>
-      this.dispatchEvent(
-        new CustomEvent('change', {
-          detail: { value, commit: false },
-          bubbles: true,
-          composed: true,
-        }),
-      ),
+    onInputErrorSurfaced: (message) => dispatchInputError(this, message),
+    onSurfacedErrorCleared: (value) => dispatchValue(this, value, { commit: false }),
   });
 
   private _pillsNav = new GUIPillsNavigationController(this, {
@@ -182,9 +233,9 @@ export class GuiRangeDateInput extends LitElement {
     onStateChanged: () => this.emitEditState(),
     getPills: () => this.querySelector('gui-pills'),
     getMessages: () => ({
-      started: this.editStartedMessage ?? EDIT_RANGE_STARTED_MESSAGE,
-      committed: this.editCommittedMessage ?? EDIT_RANGE_COMMITTED_MESSAGE,
-      cancelled: this.editCancelledMessage ?? EDIT_RANGE_CANCELLED_MESSAGE,
+      started: message('editRangeStarted', this.editStartedMessage),
+      committed: message('editRangeCommitted', this.editCommittedMessage),
+      cancelled: message('editRangeCancelled', this.editCancelledMessage),
     }),
   });
 
@@ -206,14 +257,15 @@ export class GuiRangeDateInput extends LitElement {
       // Embedded in a picker: that host owns focus reporting for the subtree.
       if (this.deferFocusLeave) return;
       this.finalizeOnLeave();
-      this.dispatchEvent(new CustomEvent('blur'));
+      dispatchBlur(this);
     },
   });
 
   protected ariaController: GUIAriaController<unknown, any> = new GUIAriaController(this, {
+    requiresLabel: true,
     getTargets: () => this.querySelectorAll(`.${this.inputBlockClass}`),
     getState: () => ({
-      uid: this.uid as string,
+      uid: this.uid,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -243,7 +295,7 @@ export class GuiRangeDateInput extends LitElement {
   }
 
   override render() {
-    const templateData: ControlTemplateData<DateRange[]> & RangeDateInputProps = {
+    const templateData: ControlTemplateData<DateRange[]> & GuiRangeDateInputProps = {
       uid: this.uid,
       label: this.label,
       errors: this.errors,
@@ -267,7 +319,7 @@ export class GuiRangeDateInput extends LitElement {
           month: this.monthAriaLabel,
           year: this.yearAriaLabel,
         };
-        return overrides[type] ?? PART_DEFAULT_ARIA_LABELS[type];
+        return message(type, overrides[type]);
       },
       disabled: this.disabled,
       partsReadonly: !!this.readOnly,
@@ -283,7 +335,13 @@ export class GuiRangeDateInput extends LitElement {
     };
 
     return html`
-      ${this.label ? addLabel(this.uid as string, templateData, false, undefined, false) : nothing}
+      ${addLabel(
+        this.uid,
+        this.showHint ? templateData : { ...templateData, hint: undefined },
+        false,
+        undefined,
+        false,
+      )}
 
       <div
         class="gui-widget"
@@ -301,7 +359,7 @@ export class GuiRangeDateInput extends LitElement {
             ? 'gui-range-date-input--icon'
             : ''}"
           role="group"
-          aria-label=${this.label ?? 'Date range input'}
+          aria-labelledby=${`${this.uid}_label`}
         >
           ${this.icon
             ? html`<span
@@ -315,7 +373,7 @@ export class GuiRangeDateInput extends LitElement {
             class="gui-range-date-input__pills"
             style=${cspStyleMap(pillItems.length ? {} : { 'min-width': 0 })}
             .uid=${this.uid}
-            .toolbarAriaLabel=${'Selected date ranges'}
+            .toolbarAriaLabel=${message('selectedDateRanges')}
             .items=${pillItems}
             .errors=${this.errors}
             .touched=${!!this.touched}
@@ -325,40 +383,44 @@ export class GuiRangeDateInput extends LitElement {
             .tabbable=${false}
             ?disabled=${this.disabled}
             ?readonly=${this.readOnly}
-            .removeAriaLabel=${this.removePillAriaLabel ?? 'Remove date'}
-            .compactAriaLabel=${`${pillItems.length} date ranges`}
+            .removeAriaLabel=${requiredName('removeDate', this.removePillAriaLabel)}
+            .compactAriaLabel=${requiredName('dateRangeCount', undefined, {
+              count: pillItems.length,
+            })}
             .editable=${this.editEnabled}
             .selectedKey=${this._edit.selectedKey ?? undefined}
             .editingKey=${this._edit.editing?.key ?? undefined}
-            .editLabel=${this.editLabel ?? EDIT_RANGE_LABEL}
-            .confirmEditLabel=${this.confirmEditLabel ?? CONFIRM_EDIT_RANGE_LABEL}
-            .cancelEditLabel=${this.cancelEditLabel ?? CANCEL_EDIT_RANGE_LABEL}
-            @pillremove=${this.onPillRemoveEvent}
-            @pillclick=${this.onPillClickEvent}
-            @pillfocus=${this.onPillFocusEvent}
-            @pillsblur=${this.onPillsBlurEvent}
-            @pilledit=${this.onPillEditEvent}
-            @pilleditconfirm=${this.onPillEditConfirm}
-            @pilleditcancel=${this.onPillEditCancel}
-            @pillkeydown=${this._pillsNav.onPillKeydown}
-            @pillexit=${this._pillsNav.onPillExit}
+            .editLabel=${requiredName('editRange', this.editLabel)}
+            .confirmEditLabel=${requiredName('confirmEditRange', this.confirmEditLabel)}
+            .cancelEditLabel=${requiredName('cancelEditRange', this.cancelEditLabel)}
+            @gui-pill-remove=${this.onPillRemoveEvent}
+            @gui-pill-click=${this.onPillClickEvent}
+            @gui-pill-focus=${this.onPillFocusEvent}
+            @gui-pills-blur=${this.onPillsBlurEvent}
+            @gui-pill-edit=${this.onPillEditEvent}
+            @gui-pill-edit-confirm=${this.onPillEditConfirm}
+            @gui-pill-edit-cancel=${this.onPillEditCancel}
+            @gui-pill-keydown=${this._pillsNav.onPillKeydown}
+            @gui-pill-exit=${this._pillsNav.onPillExit}
           ></gui-pills>
 
           <div class="gui-range-date-input__inputs">
             <div
               class="gui-parts gui-range-date-input__field"
               role="group"
-              aria-label=${this.startDateAriaLabel ?? 'Start date'}
+              aria-label=${optionalName('startDate', this.startDateAriaLabel) ?? nothing}
             >
               ${renderGroupParts('start', partsData, this._parts)}
             </div>
 
-            <span class="gui-range-date-input__separator">${this.separator ?? '-'}</span>
+            <span class="gui-range-date-input__separator" aria-hidden="true"
+              >${this.separator ?? '-'}</span
+            >
 
             <div
               class="gui-parts gui-range-date-input__field"
               role="group"
-              aria-label=${this.endDateAriaLabel ?? 'End date'}
+              aria-label=${optionalName('endDate', this.endDateAriaLabel) ?? nothing}
             >
               ${renderGroupParts('end', partsData, this._parts)}
             </div>
@@ -366,9 +428,7 @@ export class GuiRangeDateInput extends LitElement {
         </div>
       </div>
 
-      ${this.showErrors && this.errors?.length
-        ? addErrors(this.uid as string, templateData)
-        : nothing}
+      ${this.showErrors && this.errors?.length ? addErrors(this.uid, templateData) : nothing}
     `;
   }
 
@@ -390,7 +450,7 @@ export class GuiRangeDateInput extends LitElement {
         ...item,
         label,
         ariaLabel: label,
-        editAriaLabel: formatEditMessage(this.editAriaLabel ?? EDIT_RANGE_ARIA_LABEL, item.label),
+        editAriaLabel: message('editRangeHint', this.editAriaLabel, { label: item.label }),
       };
     });
   }
@@ -408,11 +468,10 @@ export class GuiRangeDateInput extends LitElement {
   };
 
   private emitEditState() {
-    this.dispatchEvent(
-      new CustomEvent('editStateChange', {
-        detail: { selected: this._edit.selectedRange, editing: !!this._edit.editing },
-      }),
-    );
+    dispatch(this, 'gui-edit-state-change', {
+      selected: this._edit.selectedRange,
+      editing: !!this._edit.editing,
+    });
   }
 
   private loadRangeForEdit(range: DateRange) {
@@ -432,12 +491,20 @@ export class GuiRangeDateInput extends LitElement {
     this.syncParts();
   }
 
-  /** Starts editing the selected pill; the host picker's Edit action. */
+  /**
+   * Starts editing the selected pill; the host picker's Edit action.
+   *
+   * @internal
+   */
   startEdit(): boolean {
     return this._edit.startEdit();
   }
 
-  /** Cancels an open edit session; the host picker's Cancel action. */
+  /**
+   * Cancels an open edit session; the host picker's Cancel action.
+   *
+   * @internal
+   */
   cancelEdit(): void {
     this._edit.cancel();
   }
@@ -445,15 +512,19 @@ export class GuiRangeDateInput extends LitElement {
   /**
    * The host picker's Escape layering routes here once its popup declined
    * the key: cancels an open session first, then clears the selection.
+   *
+   * @internal
    */
   handleSessionEscape(event: KeyboardEvent): boolean {
     return this._edit.handleEscape(event);
   }
 
+  /** @internal */
   get isEditing(): boolean {
     return !!this._edit.editing;
   }
 
+  /** @internal */
   get selectedEditRange(): DateRange | null {
     return this._edit.selectedRange;
   }
@@ -462,24 +533,21 @@ export class GuiRangeDateInput extends LitElement {
    * Attempts to commit the currently-entered parts as a pill, returning
    * whether one was created — the picker's confirm path onto the same
    * {@link tryCreatePill} pipeline typed entry uses.
+   *
+   * @internal
    */
   commitFromParts(): boolean {
     return this.tryCreatePill();
   }
 
   private onPillRemoveEvent = (e: CustomEvent<GuiPillEventDetail>) => {
+    e.stopPropagation();
     if (this.disabled || this.readOnly) return;
     const removal = removeRangeByKey(this.value, e.detail.key);
     if (!removal) return;
     this.value = removal.next;
 
-    this.dispatchEvent(
-      new CustomEvent('change', {
-        detail: { value: this.value },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatchValue(this, this.value);
 
     if (removal.next.length === 0) {
       // Strip is gone; return focus to the segments.
@@ -488,6 +556,7 @@ export class GuiRangeDateInput extends LitElement {
   };
 
   private onPillClickEvent = (e: CustomEvent<GuiPillEventDetail>) => {
+    e.stopPropagation();
     const range = findRangeByKey(this.getSortedPills(), e.detail.key);
     if (!range) return;
     const outcome = this._edit.handlePillClick(e.detail.key);
@@ -503,6 +572,7 @@ export class GuiRangeDateInput extends LitElement {
    * An open session is left alone (its pill keeps focus semantics of its own).
    */
   private onPillFocusEvent = (e: CustomEvent<GuiPillEventDetail>) => {
+    e.stopPropagation();
     if (!this.editEnabled || this._edit.editing) return;
     if (this._edit.selectedKey !== e.detail.key) this._edit.handlePillClick(e.detail.key);
   };
@@ -512,24 +582,28 @@ export class GuiRangeDateInput extends LitElement {
    * edit affordance and any calendar marking disappear. An open session keeps
    * its selection — its focus legitimately lives in the compose surface.
    */
-  private onPillsBlurEvent = () => {
+  private onPillsBlurEvent = (e: Event) => {
+    e.stopPropagation();
     if (this._edit.editing) return;
     this._edit.clearSelection();
   };
 
   /** Edit icon or F2 / E on a pill: select it (if needed) and start editing. */
   private onPillEditEvent = (e: CustomEvent<GuiPillEventDetail>) => {
+    e.stopPropagation();
     if (!this.editEnabled || this._edit.editing?.key === e.detail.key) return;
     if (this._edit.selectedKey !== e.detail.key) this._edit.handlePillClick(e.detail.key);
     this._edit.startEdit();
   };
 
-  private onPillEditConfirm = () => {
+  private onPillEditConfirm = (e: Event) => {
+    e.stopPropagation();
     if (!this._edit.editing) return;
     this.commitFromParts();
   };
 
-  private onPillEditCancel = () => {
+  private onPillEditCancel = (e: Event) => {
+    e.stopPropagation();
     if (!this._edit.editing) return;
     this._edit.cancel();
     this._edit.focusSelectedPill();
@@ -543,13 +617,40 @@ export class GuiRangeDateInput extends LitElement {
   }
 
   private onPillClick(range: DateRange) {
-    this.dispatchEvent(
-      new CustomEvent('pillClick', {
-        detail: { range },
-        bubbles: true,
-        composed: true,
-      }),
+    dispatch(this, 'gui-range-click', { range });
+  }
+
+  /** A draft the element cannot add as a range (see partsBadInput), then `required`. */
+  protected override validate(): GuiValidity | null {
+    const badInput = this.partsBadInput();
+    return (badInput ? { flags: { badInput: true }, message: badInput } : null) ?? super.validate();
+  }
+
+  /**
+   * The bad input the draft holds now: the error the field shows, or a date that is partly
+   * typed or impossible. An empty draft has none, and neither has a complete one, which leaving or
+   * Enter adds as a range. Read when the validity is written, and by the picker that embeds the
+   * element. It parses without clamping, so reading it changes nothing.
+   *
+   * @internal
+   */
+  partsBadInput(): string | null {
+    if (this.groups.every((group) => this._parts.isGroupEmpty(group, this.datePartTypes)))
+      return null;
+    if (this._parts.surfacedInputError) return this._parts.surfacedInputError;
+
+    const results = this.groups.map(
+      (group) =>
+        parseDateGroup(this._parts.values[group] ?? {}, {
+          descriptors: this.partDescriptors,
+          invalidDateMessage: this.invalidDateMessage,
+        }).result,
     );
+    for (const result of results) {
+      if (result.kind === 'invalid') return result.message;
+    }
+    if (results.every((result) => result.kind === 'valid')) return null;
+    return message('incompleteDate', this.incompleteMessage);
   }
 
   private validateDateParts(group: string): RangeEndpoint<Date> {
@@ -569,7 +670,7 @@ export class GuiRangeDateInput extends LitElement {
   /**
    * Re-parses both endpoints so per-endpoint problems (impossible date, out of
    * bounds) surface while the user types, and notifies the host picker via
-   * `partsChange` so its calendar follows the typed endpoints. Runs on every
+   * `gui-parts-change` so its calendar follows the typed endpoints. Runs on every
    * part change.
    */
   private syncParts() {
@@ -582,13 +683,7 @@ export class GuiRangeDateInput extends LitElement {
     this._workingISO = { start: iso(start), end: iso(end) };
     if (this._edit.editing) this.requestUpdate();
 
-    this.dispatchEvent(
-      new CustomEvent('partsChange', {
-        detail: { start: iso(start), end: iso(end) },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatch(this, 'gui-parts-change', { start: iso(start), end: iso(end) });
 
     return { start, end };
   }
@@ -608,6 +703,8 @@ export class GuiRangeDateInput extends LitElement {
    * "incomplete". `_validationTriggered` makes the next edit re-evaluate, so
    * the message clears as soon as the user comes back and continues (or
    * empties the fields).
+   *
+   * @internal
    */
   finalizeOnLeave(): void {
     if (this._edit.editing) {
@@ -646,7 +743,7 @@ export class GuiRangeDateInput extends LitElement {
 
     this._validationTriggered = true;
     this._parts.surfaceInputError(
-      invalidMessage ?? this.incompleteMessage ?? INCOMPLETE_DATE_MESSAGE,
+      invalidMessage ?? message('incompleteDate', this.incompleteMessage),
     );
   }
 
@@ -721,13 +818,7 @@ export class GuiRangeDateInput extends LitElement {
 
     // The commit's own change clears any injected error downstream.
     this._parts.resetSurfacedInputError();
-    this.dispatchEvent(
-      new CustomEvent('change', {
-        detail: { value: this.value },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatchValue(this, this.value);
 
     if (wasEditing) {
       // Selection and focus move to the committed (possibly merged) pill.
@@ -747,12 +838,15 @@ export class GuiRangeDateInput extends LitElement {
   /**
    * Echo a range into the input parts without committing it (no pill, no change
    * event). Used by the picker to show a range the calendar rejected.
+   *
+   * @internal
    */
   public showRange(startISO: string, endISO: string): void {
     this._parts.setGroupFromISO('start', startISO, 'date');
     this._parts.setGroupFromISO('end', endISO, 'date');
   }
 
+  /** @internal */
   public surfaceHostError(message: string): void {
     this._parts.surfaceInputError(message);
   }
@@ -762,6 +856,8 @@ export class GuiRangeDateInput extends LitElement {
    * null. The range date picker calls this so a day picked in the calendar
    * lands in the visible field straight away — the reverse of typed parts
    * moving the calendar's selection.
+   *
+   * @internal
    */
   fillGroup(group: 'start' | 'end', iso: string | null): void {
     this._parts.setGroupFromISO(group, iso, 'date');
@@ -769,16 +865,31 @@ export class GuiRangeDateInput extends LitElement {
     this.requestUpdate();
   }
 
-  /** Clear both groups' parts (e.g. once a valid range is committed). */
+  /**
+   * Clear both groups' parts (e.g. once a valid range is committed).
+   *
+   * @internal
+   */
   public clearRangeInputs(): void {
     this._parts.clearGroup('start');
     this._parts.clearGroup('end');
   }
 }
 
+/** The events `gui-range-date` fires, with their types. */
+export const GuiRangeDateInputEvents = {
+  'gui-dropdown-toggle': fires<CustomEvent<GuiPillsDropdownEventDetail>>(),
+  ...valueEvents<GuiRangeDateInput['value']>(),
+  'gui-focus': fires<CustomEvent<FocusEvent>>(),
+  'gui-input-error': fires<CustomEvent<GuiInputErrorEventDetail>>(),
+  'gui-parts-change': fires<CustomEvent<{ start: string | null; end: string | null }>>(),
+  'gui-edit-state-change': fires<CustomEvent<{ selected: DateRange | null; editing: boolean }>>(),
+  'gui-range-click': fires<CustomEvent<{ range: DateRange }>>(),
+};
+
 declare global {
   interface HTMLElementTagNameMap {
-    'gui-range-date-input': GuiRangeDateInput;
+    'gui-range-date': GuiRangeDateInput;
   }
 }
 

@@ -15,7 +15,8 @@
   }
 }
 
-@mixin gui-scroll-shadows($block) {
+// The shadows, hidden: show one with `opacity: 1` on its pseudo-element.
+@mixin gui-scroll-shadow-layers {
   &::before,
   &::after {
     content: '';
@@ -38,6 +39,11 @@
     right: 0;
     background: linear-gradient(to left, var(--gui-bg-default) 20%, transparent);
   }
+}
+
+// The shadows, shown by the `#{$block}--start-shadow` and `#{$block}--end-shadow` classes.
+@mixin gui-scroll-shadows($block) {
+  @include gui-scroll-shadow-layers;
 
   &.#{$block}--start-shadow::before {
     opacity: 1;

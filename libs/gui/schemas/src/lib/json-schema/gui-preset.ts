@@ -60,7 +60,7 @@ const TAG_CONSTRAINTS = ['format', 'pattern', 'minLength', 'maxLength', 'minimum
  * - `number`/`integer`: `number`. `boolean`: `checkbox`.
  * - arrays: `repeater` for objects, `multiList`/`multiDropdown` for choices, `tags` for other
  *   values, a row of widgets for a tuple.
- * - objects: a `flex` column.
+ * - objects: a grid stack.
  *
  * On every input: `title` is the label, `description` the hint, `examples[0]` the placeholder,
  * `readOnly` makes it read-only and `default` (also from a parent object default) is the
@@ -78,7 +78,7 @@ export function guiPreset(options: GuiPresetOptions = {}): Preset {
   const objectTitle = options.objectTitle ?? 'none';
 
   const group = (children: FormWidgetJson[], groupOptions: GroupOptions): FormWidgetJson =>
-    layout('flex', { direction: 'column', gap: 8 }, withTitle(children, groupOptions.title), {
+    layout({ gap: 'sm' }, withTitle(children, groupOptions.title), {
       uid: groupOptions.uid,
       include: groupOptions.include,
     });
@@ -137,7 +137,7 @@ export function guiPreset(options: GuiPresetOptions = {}): Preset {
     const template =
       !Array.isArray(built) && built?.kind === 'layout'
         ? built
-        : layout('flex', { direction: 'column', gap: 8 }, built ? [built].flat() : []);
+        : layout({ gap: 'sm' }, built ? [built].flat() : []);
     if (template.children?.length === 0) {
       context.diagnostic({
         severity: 'error',
@@ -198,10 +198,11 @@ export function guiPreset(options: GuiPresetOptions = {}): Preset {
           'The form edits the fixed positions only. Extra items the schema allows are not editable.',
       });
     }
-    return layout('flex', { direction: 'row', gap: 12 }, withTitle(children, context.label(node)));
+    return layout({ direction: 'row', gap: 'sm' }, withTitle(children, context.label(node)));
   };
 
-  const object = (node: SchemaNode, context: BuildContext, type: 'flex' | 'grid'): BuildResult => {
+  // A stack of the object's fields, or with `columns` as many columns of them as fit.
+  const object = (node: SchemaNode, context: BuildContext, columns = false): BuildResult => {
     const children = context.buildChildren(node);
     if (children.length === 0) {
       context.diagnostic({
@@ -213,9 +214,9 @@ export function guiPreset(options: GuiPresetOptions = {}): Preset {
     }
     // An array item gets the array title on the repeater instead.
     const title = isArrayItem(node) ? undefined : context.label(node);
-    return type === 'flex'
-      ? group(children, { title })
-      : layout('grid', { columnGap: 12, rowGap: 12 }, withTitle(children, title));
+    return columns
+      ? layout({ columns: 'auto', gap: 'sm' }, withTitle(children, title))
+      : group(children, { title });
   };
 
   const rules: Rule[] = [
@@ -311,7 +312,7 @@ export function guiPreset(options: GuiPresetOptions = {}): Preset {
     {
       name: 'gui object',
       when: (node) => node.type === 'object',
-      build: (node, context) => object(node, context, 'flex'),
+      build: (node, context) => object(node, context),
     },
   ];
 
@@ -332,8 +333,9 @@ export function guiPreset(options: GuiPresetOptions = {}): Preset {
       multipleChoice(node, context, 'multiDropdown') as FormWidgetJson,
     tags: (node, context) => tags(node, context) as FormWidgetJson,
     repeater: (node, context) => repeater(node, context) as FormWidgetJson,
-    flex: (node, context) => object(node, context, 'flex') as FormWidgetJson,
-    grid: (node, context) => object(node, context, 'grid') as FormWidgetJson,
+    // `flex` is deprecated: the layout it named renders as a grid stack.
+    flex: (node, context) => object(node, context) as FormWidgetJson,
+    grid: (node, context) => object(node, context, true) as FormWidgetJson,
     ...Object.fromEntries(
       [
         'dateInput',
@@ -375,8 +377,8 @@ export function guiPreset(options: GuiPresetOptions = {}): Preset {
     }
     return [
       options.rootLayout === 'grid'
-        ? layout('grid', { columnGap: 12, rowGap: 12 }, widgets)
-        : layout('flex', { direction: 'row', gap: 12 }, widgets),
+        ? layout({ columns: 'auto', gap: 'sm' }, widgets)
+        : layout({ direction: 'row', gap: 'sm' }, widgets),
     ];
   };
 
@@ -425,12 +427,11 @@ function booleanInput(type: string, node: SchemaNode, context: BuildContext): Fo
 }
 
 function layout(
-  type: 'flex' | 'grid',
   props: Record<string, unknown>,
   children: FormWidgetJson[],
   fields: Partial<FormWidgetJson> = {},
 ): FormWidgetJson {
-  return { kind: 'layout', type, ...fields, props, children };
+  return { kind: 'layout', type: 'grid', ...fields, props, children };
 }
 
 /** The node `default`, otherwise the value an enclosing object `default` has for it. */

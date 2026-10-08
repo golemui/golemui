@@ -6,8 +6,8 @@
         "kind": "layout",
         "type": "grid",
         "props": {
-          "columnGap": 12,
-          "rowGap": 12
+          "columns": "auto",
+          "gap": "sm"
         },
         "children": [
           {

@@ -13,7 +13,7 @@ import { type Subscription } from 'rxjs';
 import { InputWidgetAdapter } from './adapters/input-widget.adapter';
 import { LayoutWidgetAdapter } from './adapters/layout-widget.adapter';
 import { formContext, type LitFormContext } from './context/form.context';
-import { safeDefine } from './utils/define';
+import { safeDefine } from '@golemui/lit-utils';
 import type { Type } from './utils/type';
 import './components/form/form.element';
 
@@ -114,6 +114,16 @@ export const stubWidgetLoaders = {
   flex: async (): Promise<Type<WithWidget>> => StubFlexElement as Type<WithWidget>,
 };
 
+/**
+ * The smallest widget set the contract allows: the reserved `grid` and `repeater` loaders and
+ * one input. Core wraps an array-shaped form in a `grid` root, so this set must render one.
+ */
+export const reservedOnlyWidgetLoaders = {
+  grid: async (): Promise<Type<WithWidget>> => StubFlexElement as Type<WithWidget>,
+  repeater: async (): Promise<Type<WithWidget>> => StubFlexElement as Type<WithWidget>,
+  textinput: async (): Promise<Type<WithWidget>> => StubTextInputElement as Type<WithWidget>,
+};
+
 /** Accepts everything. The specs assert on markup, not on validation. */
 export const noopValidators: ValidatorFn<any> = () =>
   ({
@@ -156,7 +166,7 @@ export function buildConfig(): FormInitConfig<Type<WithWidget>> {
 }
 
 /**
- * The exact output of renderGuiFormHtml for buildConfig() plus noopValidators.
+ * The exact output of renderForm for buildConfig() plus noopValidators.
  * The server render spec asserts equality with this string byte for byte, and the
  * resume spec loads it into the DOM, so the two specs always test the same markup.
  */
@@ -164,7 +174,7 @@ export const canonicalServerMarkup = `<gui-core-form
       
       
       
-     class="gui-form" defer-hydration>
+     class="gui-form" data-golemui-ssr defer-hydration>
   
   
       <form
@@ -174,13 +184,13 @@ export const canonicalServerMarkup = `<gui-core-form
         
         
       >
-         <gui-widget  style="display:contents" defer-hydration><gui-stub-flex   id="host-root" defer-hydration><div class="stub-flex" id="root">
-      <gui-widget  style="display:contents" defer-hydration><gui-stub-input   id="host-firstName-textinput" defer-hydration><input
+         <gui-widget  style="display:contents" data-golemui-ssr defer-hydration><gui-stub-flex   id="host-root" data-golemui-ssr defer-hydration><div class="stub-flex" id="root">
+      <gui-widget  style="display:contents" data-golemui-ssr defer-hydration><gui-stub-input   id="host-firstName-textinput" data-golemui-ssr defer-hydration><input
       type="text"
       id="firstName-textinput"
       data-label="First name"
       value="Ada"
-    /></gui-stub-input></gui-widget><gui-widget  style="display:contents" defer-hydration><gui-stub-input   id="host-lastName-textinput" defer-hydration><input
+    /></gui-stub-input></gui-widget><gui-widget  style="display:contents" data-golemui-ssr defer-hydration><gui-stub-input   id="host-lastName-textinput" data-golemui-ssr defer-hydration><input
       type="text"
       id="lastName-textinput"
       data-label="Last name"
