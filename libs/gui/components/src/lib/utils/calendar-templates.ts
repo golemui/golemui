@@ -27,6 +27,8 @@ export interface CalendarChromeData {
   uid: string | undefined;
   label: string | undefined;
   hint: string | undefined;
+  /** False when an embedding picker shows the hint itself. */
+  showHint: boolean | undefined;
   errors: string[] | undefined;
   touched: boolean | undefined;
   required: boolean | undefined;
@@ -64,7 +66,7 @@ export function renderCalendarChrome(data: CalendarChromeData): TemplateResult {
   const templateData: any = {
     uid: data.uid,
     label: data.label,
-    hint: data.hint,
+    hint: data.showHint === false ? undefined : data.hint,
     errors: data.errors,
     touched: data.touched,
     required: data.required,
@@ -79,7 +81,7 @@ export function renderCalendarChrome(data: CalendarChromeData): TemplateResult {
     .join(', ');
 
   return html`
-    ${data.label ? addLabel(data.uid as string, templateData, false, 'calendar') : nothing}
+    ${addLabel(data.uid as string, templateData, false, 'calendar')}
 
     <div class="gui-widget" @focusout=${data.onFocusOut}>
       <div

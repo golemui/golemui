@@ -332,6 +332,7 @@ export class GuiRangeTimePicker extends GuiFormControl {
           class=${classMap(pickerIcon.widgetClasses)}
           .uid=${this.uid}
           .hint=${this.hint}
+          .showHint=${false}
           .showErrors=${false}
           .deferFocusLeave=${true}
           .errors=${this.errors}

@@ -70,6 +70,11 @@ export class GuiDateTime extends GuiFormControl {
    * errors themselves.
    */
   @property({ type: Boolean, attribute: 'show-errors' }) showErrors: boolean | undefined = true;
+  /**
+   * Whether the element renders its hint. Elements that embed it turn it off and show the hint
+   * themselves: `aria-describedby` still points at the hint by its id.
+   */
+  @property({ type: Boolean, attribute: 'show-hint' }) showHint: boolean | undefined = true;
 
   /** Icon class name shown inside the control, for example from an icon font. */
   @property({ type: String }) icon: string | undefined = '';
@@ -309,7 +314,13 @@ export class GuiDateTime extends GuiFormControl {
     };
 
     return html`
-      ${addLabel(this.uid, templateData, false, undefined, false)}
+      ${addLabel(
+        this.uid,
+        this.showHint ? templateData : { ...templateData, hint: undefined },
+        false,
+        undefined,
+        false,
+      )}
 
       <div class="gui-widget" @focusout=${this.onWidgetFocusOut}>
         <div

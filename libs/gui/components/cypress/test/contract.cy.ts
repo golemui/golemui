@@ -91,3 +91,55 @@ describe('element contract', () => {
     });
   }
 });
+
+// A field renders its hint once, under the id its controls' aria-describedby points at. Pickers
+// embed a field and a calendar that take the same uid and hint, so each is checked with its popup
+// open too.
+describe('hint', () => {
+  const hint = 'Use the format on your card';
+  const uid = 'field';
+
+  const expectOneHint = (tag: string) =>
+    cy.get(tag).should(([el]) => {
+      expect(el.querySelectorAll(`[id="${uid}_hint"]`), 'elements with the hint id').to.have.length(
+        1,
+      );
+      expect(el.textContent?.split(hint).length, 'times the hint text shows').to.equal(2);
+      for (const described of el.querySelectorAll('[aria-describedby]')) {
+        for (const id of described.getAttribute('aria-describedby')?.split(/\s+/) ?? []) {
+          expect(document.getElementById(id), `#${id}, from aria-describedby`).not.to.equal(null);
+        }
+      }
+    });
+
+  // gui-list and gui-multi-list render no label or hint: their host does, and they carry the hint
+  // as aria-description.
+  for (const testCase of elements.filter((item) => item.form && !item.hostRendersChildren)) {
+    const { tag } = testCase;
+    const picker = tag.endsWith('-picker');
+
+    for (const [name, label] of [
+      ['with a label', testCase.props['label']],
+      ['without a label', undefined],
+    ] as const) {
+      it(`${tag} renders its hint once, ${name}`, () => {
+        cy.mount(element(testCase, { uid, hint, label }));
+
+        expectOneHint(tag);
+        if (label) {
+          checkA11y(
+            { include: [tag], exclude: testCase.exclude?.map((selector) => `${tag} ${selector}`) },
+            testCase.rules,
+          );
+        }
+        if (picker) {
+          cy.get(`${tag} button[aria-haspopup]`).first().click();
+          cy.get(`${tag} button[aria-haspopup]`)
+            .first()
+            .should('have.attr', 'aria-expanded', 'true');
+          expectOneHint(tag);
+        }
+      });
+    }
+  }
+});

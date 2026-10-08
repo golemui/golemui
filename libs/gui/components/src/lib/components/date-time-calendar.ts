@@ -80,6 +80,11 @@ export interface DateTimeCalendarDay {
  * @cssprop --gui-calendar-time-button-height - Height of each time in the grid.
  */
 export class GuiDateTimeCalendar extends GuiFormControl {
+  /**
+   * Whether the element renders its hint. Elements that embed it turn it off and show the hint
+   * themselves: `aria-describedby` still points at the hint by its id.
+   */
+  @property({ type: Boolean, attribute: 'show-hint' }) showHint: boolean | undefined = true;
   /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
 
@@ -492,6 +497,7 @@ export class GuiDateTimeCalendar extends GuiFormControl {
       uid: this.uid,
       label: this.label,
       hint: this.hint,
+      showHint: this.showHint,
       errors: this.errors,
       touched: this.touched,
       required: this.required,

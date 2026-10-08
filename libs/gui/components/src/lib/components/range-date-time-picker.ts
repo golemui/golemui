@@ -355,6 +355,7 @@ export class GuiRangeDateTimePicker extends GuiFormControl {
             aria-label=${this.label ? nothing : requiredName('calendar')}
             .uid=${this.uid}
             .hint=${this.hint}
+            .showHint=${false}
             .touched=${this.touched}
             ?required=${this.required}
             ?disabled=${this.disabled}
@@ -428,6 +429,7 @@ export class GuiRangeDateTimePicker extends GuiFormControl {
           class=${classMap(datePickerIcon.widgetClasses)}
           .uid=${this.uid}
           .hint=${this.hint}
+          .showHint=${false}
           .showErrors=${false}
           .errors=${this.errors}
           .touched=${this.touched}

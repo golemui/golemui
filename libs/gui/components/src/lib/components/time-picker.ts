@@ -220,6 +220,7 @@ export class GuiTimePicker extends GuiFormControl {
           class=${classMap(timePickerIcon.widgetClasses)}
           .uid=${this.uid}
           .hint=${this.hint}
+          .showHint=${false}
           .showErrors=${false}
           .deferFocusLeave=${true}
           .errors=${this.errors}
