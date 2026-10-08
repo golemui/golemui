@@ -1,10 +1,10 @@
 import {
   preloadFormWidgets,
   type FormInitConfig,
-  type StandardSchemaV1,
   type ValidatorFn,
   type WithWidget,
 } from '@golemui/core';
+import type { StandardSchemaV1 } from '@standard-schema/spec';
 import { renderForm } from '@golemui/lit/ssr';
 import type { Type } from '@golemui/lit';
 import { beforeAll, describe, expect, it } from 'vitest';
