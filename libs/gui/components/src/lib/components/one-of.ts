@@ -1,4 +1,4 @@
-import type { Option, OptionValue } from '../types';
+import type { Option, OptionInput, OptionValue } from '../types';
 
 /** The fields that map an object's properties to an option's label and value. */
 export type OptionFields = {
@@ -30,10 +30,11 @@ export function inferOptionValue(value: string, options: Option[]): OptionValue 
 /**
  * Returns an array of normalized Options
  */
-export const updateOptions = (opts: Option[], props: OptionFields): Option[] => {
+export const updateOptions = (opts: OptionInput[], props: OptionFields): Option[] => {
   if (Array.isArray(opts) && opts.length > 0) {
     if (isOption(opts[0])) {
-      // nothing to do
+      // Already normalized.
+      return opts as Option[];
     } else if (isOptionValue(opts[0])) {
       return (opts as unknown as OptionValue[]).map((opt) => ({
         label: opt.toString(),
@@ -47,7 +48,7 @@ export const updateOptions = (opts: Option[], props: OptionFields): Option[] => 
     }
   }
 
-  return opts;
+  return [];
 };
 
 /** Checks if an object can be converted into an actual Option */

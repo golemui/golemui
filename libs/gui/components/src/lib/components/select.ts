@@ -7,7 +7,7 @@ import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addIcon, addLabel, type ControlTemplateData } from '../utils/templates';
 import { inferOptionValue, updateOptions } from './one-of';
-import type { Option, OptionValue } from '../types';
+import type { Option, OptionInput, OptionValue } from '../types';
 import { GuiFormControl } from '../gui-form-control';
 import {
   dispatchBlur,
@@ -49,8 +49,11 @@ export class GuiSelect extends GuiFormControl {
   @property({ type: String }) icon: string | undefined = undefined;
   /** The `autocomplete` hint passed to the inner native control. */
   @property({ type: String }) autocomplete: string | undefined = undefined;
-  /** The options, as values or `{ label, value }` objects. */
-  @property({ type: Array }) options: Option[] = [];
+  /**
+   * The options: values, which are both the text and the value, `{ label, value }` objects, or
+   * any objects read through `label-field` and `value-field`.
+   */
+  @property({ type: Array }) options: OptionInput[] = [];
   /** Text shown while the control is empty. */
   @property({ type: String }) placeholder: string | undefined = undefined;
   /** Error when `value` matches no option. `{value}` is the value. */
@@ -64,6 +67,8 @@ export class GuiSelect extends GuiFormControl {
 
   protected optionsLoading = false;
   protected hasMatchingValue = false;
+  /** `options` as `{ label, value }` objects, refreshed on every render. */
+  protected normalizedOptions: Option[] = [];
   // Whether the last gui-input-error about the value still stands, to withdraw it.
   private reportedInvalidOption = false;
 
@@ -106,7 +111,6 @@ export class GuiSelect extends GuiFormControl {
       hint: this.hint,
       icon: this.icon,
       autocomplete: this.autocomplete,
-      options: this.options,
       placeholder: this.placeholder,
       labelField: this.labelField,
       valueField: this.valueField,
@@ -115,13 +119,14 @@ export class GuiSelect extends GuiFormControl {
     // Icon
     const selectIcon = addIcon('select', templateData);
 
-    this.options = updateOptions(this.options, {
+    this.normalizedOptions = updateOptions(this.options ?? [], {
       labelField: this.labelField,
       valueField: this.valueField,
     });
+    templateData.options = this.normalizedOptions;
 
-    this.hasMatchingValue = this.options?.length
-      ? this.options.find(({ value }) => value === this.value) !== undefined
+    this.hasMatchingValue = this.normalizedOptions.length
+      ? this.normalizedOptions.find(({ value }) => value === this.value) !== undefined
       : false;
 
     const options = this.optionsLoading
@@ -131,7 +136,7 @@ export class GuiSelect extends GuiFormControl {
             ${message('selectAnOption', this.placeholder)}
           </option>
           ${repeat(
-            this.options || [],
+            this.normalizedOptions,
             (opt: any) => opt?.value,
             (opt: any) =>
               html`<option
@@ -174,7 +179,7 @@ export class GuiSelect extends GuiFormControl {
     // Options often arrive after the value (loaded from a server): no options yet is not an
     // invalid value, and options that make it valid withdraw the error.
     const hasValue = this.value !== undefined && this.value !== null && this.value !== '';
-    const invalid = hasValue && !!this.options?.length && !this.hasMatchingValue;
+    const invalid = hasValue && !!this.normalizedOptions.length && !this.hasMatchingValue;
     // Reported once per value: hosts re-render with new options arrays as they show the error.
     if (invalid && (changedProperties.has('value') || !this.reportedInvalidOption)) {
       dispatchInputError(
@@ -193,7 +198,7 @@ export class GuiSelect extends GuiFormControl {
 
     if (!this.readOnly) {
       const target = event.target as HTMLInputElement;
-      this.value = inferOptionValue(target.value, this.options);
+      this.value = inferOptionValue(target.value, this.normalizedOptions);
       // A picked option is valid, and its gui-input already replaces the error for the host.
       this.reportedInvalidOption = false;
       dispatchValue(this, this.value);

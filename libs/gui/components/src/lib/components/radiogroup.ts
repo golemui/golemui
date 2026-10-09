@@ -6,7 +6,7 @@ import { safeDefine } from '@golemui/lit-utils';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addLabel, type ControlTemplateData, showsErrors } from '../utils/templates';
 import { inferOptionValue, updateOptions } from './one-of';
-import type { Option, OptionValue } from '../types';
+import type { Option, OptionInput, OptionValue } from '../types';
 import { GuiFormControl } from '../gui-form-control';
 import { dispatchBlur, dispatchValue, valueEvents } from '../utils/events';
 
@@ -32,8 +32,11 @@ export class GuiRadiogroup extends GuiFormControl {
   /** The value of the selected option. */
   @property({ type: String }) value: OptionValue | undefined = undefined;
 
-  /** The options, as values or `{ label, value }` objects. */
-  @property({ type: Array }) options: Option[] = [];
+  /**
+   * The options: values, which are both the text and the value, `{ label, value }` objects, or
+   * any objects read through `label-field` and `value-field`.
+   */
+  @property({ type: Array }) options: OptionInput[] = [];
   /** For options given as objects, the key of the text to show. */
   @property({ type: String, attribute: 'label-field' }) labelField: string | undefined = undefined;
   /** For options given as objects, the key of the value. */
@@ -43,6 +46,8 @@ export class GuiRadiogroup extends GuiFormControl {
 
   protected optionsLoading = false;
   protected hasMatchingValue = false;
+  /** `options` as `{ label, value }` objects, refreshed on every render. */
+  protected normalizedOptions: Option[] = [];
 
   private ariaController = new GUIAriaController(this, {
     getTargets: () => this.querySelectorAll(`input[name="${this.uid}"]`),
@@ -82,26 +87,26 @@ export class GuiRadiogroup extends GuiFormControl {
       readonly: this.readOnly,
       value: this.value,
       hint: this.hint,
-      options: this.options,
       labelField: this.labelField,
       valueField: this.valueField,
       direction: this.direction,
     };
 
-    this.options = updateOptions(this.options, {
+    this.normalizedOptions = updateOptions(this.options ?? [], {
       labelField: this.labelField,
       valueField: this.valueField,
     });
+    templateData.options = this.normalizedOptions;
     const selection = this.value;
-    this.hasMatchingValue = this.options?.length
-      ? this.options.find(({ value }) => value === selection) !== undefined
+    this.hasMatchingValue = this.normalizedOptions.length
+      ? this.normalizedOptions.find(({ value }) => value === selection) !== undefined
       : false;
 
     const options = this.optionsLoading
       ? html`<span>Loading...</span>`
       : html`
           ${repeat(
-            this.options || [],
+            this.normalizedOptions,
             (opt: any) => opt?.value,
             (opt: any, index) => {
               const isChecked = this.hasMatchingValue && opt.value === templateData.value;
@@ -158,7 +163,7 @@ export class GuiRadiogroup extends GuiFormControl {
 
     if (!this.readOnly) {
       const target = event.target as HTMLInputElement;
-      this.value = inferOptionValue(target.value, this.options);
+      this.value = inferOptionValue(target.value, this.normalizedOptions);
       dispatchValue(this, this.value);
     }
   }

@@ -37,6 +37,16 @@ describe('gui-radiogroup', () => {
       cy.get('gui-radiogroup label').eq(1).should('contain.text', 'M');
     });
 
+    it('keeps options as they were given', () => {
+      const given = ['S', 'M'];
+      cy.mount(html`<gui-radiogroup label="Size" .options=${given}></gui-radiogroup>`);
+
+      radios().should('have.length', 2);
+      // The element normalizes a copy: the property still holds what the host set.
+      element().should(($el) => expect($el[0].options).to.equal(given));
+      element().should(($el) => expect($el[0].options).to.deep.equal(['S', 'M']));
+    });
+
     it('names the group with its label and describes it with its hint', () => {
       cy.mount(
         html`<gui-radiogroup label="Color" hint="Pick one" .options=${options}></gui-radiogroup>`,
