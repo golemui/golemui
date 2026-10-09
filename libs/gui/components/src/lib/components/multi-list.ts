@@ -1,7 +1,7 @@
 import { property } from 'lit/decorators.js';
 import { safeDefine } from '@golemui/lit-utils';
 import { GuiList } from './list';
-import type { ListItem, OptionValue } from '../types';
+import type { GuiVisibleItem, ListItem, OptionValue } from '../types';
 import { dispatch, dispatchValue, fires, valueEvents } from '../utils/events';
 
 /**
@@ -55,6 +55,7 @@ export const GuiMultiListEvents = {
   'gui-focus-change': fires<CustomEvent<{ index: number }>>(),
   'gui-range-change': fires<CustomEvent<{ startIndex: number; endIndex: number }>>(),
   'gui-update-items': fires<CustomEvent<ListItem<unknown>[]>>(),
+  'gui-visible-items-change': fires<CustomEvent<GuiVisibleItem[]>>(),
   'gui-item-toggle': fires<CustomEvent<{ value: OptionValue }>>(),
 };
 

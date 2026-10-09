@@ -62,6 +62,27 @@ export type ListItem<T> = {
 };
 
 /**
+ * An item of a list as it renders: the item, where it is, and its state. `gui-list` and
+ * `gui-multi-list` report the items in view this way, so an option renders from one entry.
+ */
+export type GuiVisibleItem<T = unknown> = {
+  /** The item as you gave it: a value or your object. */
+  template: T;
+  /** The item's value. */
+  value: OptionValue;
+  /** The item's index in `items`. */
+  index: number;
+  /** The option's id, `<uid>-item-<index>`: the list points `aria-activedescendant` at it. */
+  id: string;
+  /** The item is selected. */
+  selected: boolean;
+  /** The item is the active one, the one the keyboard is on. */
+  focused: boolean;
+  /** The item can't be picked: it is disabled, or the whole list is. */
+  disabled: boolean;
+};
+
+/**
  * Upload lifecycle of one file as tracked in the form value. `uploading` and
  * `error` items block submission while `blockPendingUploads` is on (the
  * default) so a half-finished upload can never be submitted silently.

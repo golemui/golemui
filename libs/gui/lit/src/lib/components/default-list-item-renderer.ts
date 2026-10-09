@@ -10,14 +10,5 @@ export const defaultListItemRenderer = (ctx: ItemRenderContext<any>) => {
     'gui-list__item-disabled': !!ctx.disabled,
   };
 
-  return html`
-    <div
-      role="option"
-      class=${classMap(classes)}
-      aria-selected=${ctx.selected ? 'true' : 'false'}
-      aria-disabled=${ctx.disabled ? 'true' : 'false'}
-    >
-      ${ctx.template}
-    </div>
-  `;
+  return html` <div class=${classMap(classes)}>${ctx.template}</div> `;
 };

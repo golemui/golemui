@@ -7,7 +7,7 @@ import './multi-select-trigger';
 import type { GuiMultiSelectTrigger } from './multi-select-trigger';
 import type { GuiPillEventDetail, GuiPillsDropdownEventDetail } from './pills';
 import { GuiDropdown, type GuiFilterEventDetail } from './dropdown';
-import type { ListItem, OptionValue } from '../types';
+import type { OptionValue } from '../types';
 import { dispatchValue, fires, valueEvents } from '../utils/events';
 import { selectedPills } from '../utils/items';
 import type { addIcon } from '../utils/templates';
@@ -100,8 +100,9 @@ export class GuiMultiDropdown extends GuiDropdown {
       .height=${this.height}
       ?disabled=${this.disabled}
       ?readonly=${this.readOnly}
-      @gui-range-change=${this.onRangeChange}
-      @gui-focus-change=${this.onFocusChange}
+      @gui-visible-items-change=${this.onVisibleItemsChange}
+      @gui-range-change=${this.stop}
+      @gui-focus-change=${this.stop}
       @gui-update-items=${this.stop}
       @gui-item-toggle=${this.onItemToggle}
       @gui-input=${this.stop}
@@ -121,18 +122,6 @@ export class GuiMultiDropdown extends GuiDropdown {
     </span>`;
   }
 
-  protected override isSelected(value: OptionValue): boolean {
-    return this.currentValues.includes(value);
-  }
-
-  /** The user picked an item: it's added to `values`, or taken out. The panel stays open. */
-  protected override pick(item: ListItem<unknown>, index: number) {
-    if (this.disabled || this.readOnly || item.disabled) return;
-    this.toggle(item.value as OptionValue);
-    this.focusedIndex = index;
-    this.list?.focusItemAtIndex(index);
-  }
-
   protected override clear() {
     // Pills are removed one by one, from their remove buttons or the keyboard.
   }
@@ -149,7 +138,7 @@ export class GuiMultiDropdown extends GuiDropdown {
     dispatchValue(this, this.values);
   }
 
-  /** The list toggled its active item, from the keyboard. */
+  /** The list toggled an item, from a click or the keyboard. The panel stays open. */
   private onItemToggle(event: CustomEvent<{ value: OptionValue }>) {
     event.stopPropagation();
     if (this.disabled || this.readOnly) return;

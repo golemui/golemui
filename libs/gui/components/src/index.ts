@@ -122,6 +122,7 @@ export type {
   DisabledTimeRange,
   FileItem,
   FileStatus,
+  GuiVisibleItem,
   ListItem,
   ListItemInput,
   MarkdownParser,

@@ -1,6 +1,7 @@
 import type { InputWidget, WithWidget } from '@golemui/core';
 import { InputWidgetAdapter, type LitFormContext, formContext, inputContext } from '@golemui/lit';
-import type { ListItem, ListProps } from '@golemui/gui-shared/internals';
+import type { ListProps } from '@golemui/gui-shared/internals';
+import type { GuiVisibleItem } from '@golemui/gui-components';
 import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';
 import { property, query, state } from 'lit/decorators.js';
@@ -24,9 +25,7 @@ export class ListElement extends LitElement implements WithWidget {
 
   subscriptions: Subscription[] = [];
 
-  @state() private _range = { start: 0, end: 10 };
-  @state() private _listItems: ListItem<any>[] = [];
-  @state() private _focusedIndex = -1;
+  @state() private _visibleItems: GuiVisibleItem<any>[] = [];
 
   @query('gui-list') private _guiListRef!: any;
 
@@ -41,13 +40,7 @@ export class ListElement extends LitElement implements WithWidget {
     this.adapter.init(this.widget);
 
     this.subscriptions.push(
-      this.adapter.templateDataChanged$.subscribe(() => {
-        const data = this.adapter.templateData;
-        if (data.items && this._listItems.length === 0) {
-          this._listItems = data.items;
-        }
-        this.requestUpdate();
-      }),
+      this.adapter.templateDataChanged$.subscribe(() => this.requestUpdate()),
     );
   }
 
@@ -61,7 +54,6 @@ export class ListElement extends LitElement implements WithWidget {
     const templateData = this.adapter.templateData;
     const showErrors =
       templateData.touched && templateData.errors && templateData.errors.length > 0;
-    const visibleItems = this._listItems.slice(this._range.start, this._range.end);
 
     const itemRenderer = this.adapter.getItemRenderer(
       templateData.itemRenderer,
@@ -96,18 +88,11 @@ export class ListElement extends LitElement implements WithWidget {
           ?readonly=${templateData.readonly}
           aria-labelledby=${templateData.label ? `${this.widget.uid}_label` : nothing}
           aria-describedby=${templateData.hint ? `${this.widget.uid}_hint` : nothing}
-          @gui-range-change=${this._onRangeChange}
-          @gui-update-items=${this._onUpdateItems}
-          @gui-focus-change=${this._onFocusChange}
+          @gui-visible-items-change=${this._onVisibleItemsChange}
           @gui-blur=${() => this.adapter.onBlur()}
           @gui-input=${this._valueChanged}
         >
-          ${visibleItems.map((item, index) => {
-            const absoluteIndex = this._range.start + index;
-            const isSelected = templateData.value === item.value;
-            const isFocused = this._focusedIndex === absoluteIndex;
-            const isDisabled = !!templateData.disabled || !!item.disabled;
-
+          ${this._visibleItems.map((item) => {
             const labelField = templateData.labelField ?? 'label';
             const isObject = item.template !== null && typeof item.template === 'object';
             const template =
@@ -120,19 +105,18 @@ export class ListElement extends LitElement implements WithWidget {
                 role="option"
                 tabindex="-1"
                 class="gui-list__item-wrapper"
-                id="${this.widget.uid}-item-${absoluteIndex}"
+                id=${item.id}
                 style=${cspStyleMap({ height: `${templateData.itemHeight || 40}px` })}
-                aria-selected=${isSelected ? 'true' : 'false'}
-                aria-disabled=${isDisabled ? 'true' : 'false'}
-                @click=${() => this._onClickItem(item, absoluteIndex)}
+                aria-selected=${item.selected ? 'true' : 'false'}
+                aria-disabled=${item.disabled ? 'true' : 'false'}
               >
                 ${itemRenderer({
                   template: template as string,
                   value: item.value,
-                  index: absoluteIndex,
-                  selected: isSelected,
-                  disabled: isDisabled,
-                  focused: isFocused,
+                  index: item.index,
+                  selected: item.selected,
+                  disabled: item.disabled,
+                  focused: item.focused,
                 })}
               </div>
             `;
@@ -150,29 +134,8 @@ export class ListElement extends LitElement implements WithWidget {
     `;
   }
 
-  private _onRangeChange(e: CustomEvent) {
-    this._range = { start: e.detail.startIndex, end: e.detail.endIndex };
-  }
-
-  private _onUpdateItems(e: CustomEvent) {
-    this._listItems = e.detail || [];
-  }
-
-  private _onFocusChange(e: CustomEvent) {
-    this._focusedIndex = e.detail.index;
-  }
-
-  private _onClickItem(item: ListItem<any>, index: number) {
-    const { disabled, readonly } = this.adapter.templateData;
-    if (disabled || readonly || item.disabled) return;
-
-    this.adapter.valueChanged(item.value);
-
-    this._focusedIndex = index;
-
-    if (this._guiListRef && typeof this._guiListRef.focusItemAtIndex === 'function') {
-      this._guiListRef.focusItemAtIndex(index);
-    }
+  private _onVisibleItemsChange(e: CustomEvent<GuiVisibleItem<any>[]>) {
+    this._visibleItems = e.detail;
   }
 
   private _valueChanged(e: CustomEvent) {

@@ -2,12 +2,13 @@ import { GuiErrorsReact, GuiLabelReact, GuiListReact } from '../web-components';
 import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useDebounceCallback, useInputWidget, useItemRenderer } from '@golemui/react';
 import type { DropdownProps, ListItem, OptionValue } from '@golemui/gui-shared/internals';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { DefaultListItemRenderer } from './item-renderers/DefaultListItemRenderer';
 import { type ListItemRendererProps } from './item-renderers/props';
 import { useBrowserLayoutEffect } from './shared/use-browser-layout-effect';
 import { searchItems } from '@golemui/gui-components/internals';
 import type { GuiList } from '@golemui/gui-components/list';
+import type { GuiVisibleItem } from '@golemui/gui-components';
 import type { GuiLabel } from '@golemui/gui-components/label';
 
 export function Dropdown(widgetInstance: WithWidget) {
@@ -16,10 +17,10 @@ export function Dropdown(widgetInstance: WithWidget) {
   const { uid, errors, value, isTouched, templateData, onFilter, onValueChanged, onBlur } =
     useInputWidget<string | number | null, DropdownProps<never>>(widget);
 
-  const [range, setRange] = useState({ start: 0, end: 10 });
+  // The options to render, as the list reports them.
+  const [visibleItems, setVisibleItems] = useState<GuiVisibleItem<any>[]>([]);
   const [listItems, setListItems] = useState<ListItem<never>[]>([]);
   const [filteredItems, setFilteredItems] = useState<ListItem<never>[]>([]);
-  const [focusedIndex, setFocusedIndex] = useState<number>(-1);
   const [isFiltering, setIsFiltering] = useState(false);
   const [isListVisible, setIsListVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState<ListItem<never> | undefined>(undefined);
@@ -30,8 +31,6 @@ export function Dropdown(widgetInstance: WithWidget) {
   const inputRef = useRef<HTMLInputElement>(null);
   const labelRef = useRef<GuiLabel>(null);
   const ignoreNextFocusRef = useRef(false);
-
-  const visibleItems = useMemo(() => listItems.slice(range.start, range.end), [listItems, range]);
 
   const closeList = useCallback(() => {
     onBlur();
@@ -66,33 +65,14 @@ export function Dropdown(widgetInstance: WithWidget) {
     [onValueChanged, templateData],
   );
 
-  const handleClickItem = useCallback(
-    (item: ListItem<never>, index: number) => {
-      if (templateData.readonly || item.disabled) return;
-
-      handleValueChange(item.value);
-      onFilter('');
-      setFocusedIndex(index);
-      setSelectedItem(item);
-      setIsFiltering(false);
-      setIsListVisible(false);
-
-      if (listRef.current) {
-        listRef.current.focusItemAtIndex(index);
-      }
-    },
-    [handleValueChange, onFilter, templateData.readonly],
-  );
-
   // A layout effect so these listeners exist before first paint. A passive effect
   // attaches them after paint, and an early click then fires 'change' with no listener.
   useBrowserLayoutEffect(() => {
     const element = listRef.current;
     if (!element) return;
 
-    const handleRangeChange = (e: Event) => {
-      const { startIndex, endIndex } = (e as CustomEvent).detail;
-      setRange({ start: startIndex, end: endIndex });
+    const handleVisibleItemsChange = (e: Event) => {
+      setVisibleItems((e as CustomEvent<GuiVisibleItem<any>[]>).detail);
     };
 
     const handleUpdateItems = (e: Event) => {
@@ -108,31 +88,29 @@ export function Dropdown(widgetInstance: WithWidget) {
       }
     };
 
-    const handleFocusChange = (e: Event) => {
-      const index = (e as CustomEvent).detail.index;
-      setFocusedIndex(index);
-    };
-
     const handleChange = (e: Event) => {
       const val = (e as CustomEvent).detail.value;
       handleValueChange(val);
+      onFilter('');
       setSelectedItem(listItems.find((item) => item.value === val));
       setIsFiltering(false);
       setIsListVisible(false);
     };
 
-    element.addEventListener('gui-range-change', handleRangeChange);
+    element.addEventListener('gui-visible-items-change', handleVisibleItemsChange);
+
+    // The list may have reported its items before these listeners existed.
+
+    setVisibleItems(element.visibleItems ?? []);
     element.addEventListener('gui-update-items', handleUpdateItems);
-    element.addEventListener('gui-focus-change', handleFocusChange);
     element.addEventListener('gui-input', handleChange);
 
     return () => {
-      element.removeEventListener('gui-range-change', handleRangeChange);
+      element.removeEventListener('gui-visible-items-change', handleVisibleItemsChange);
       element.removeEventListener('gui-update-items', handleUpdateItems);
-      element.removeEventListener('gui-focus-change', handleFocusChange);
       element.removeEventListener('gui-input', handleChange);
     };
-  }, [handleValueChange, listItems, onValueChanged]);
+  }, [handleValueChange, listItems, onFilter, onValueChanged]);
 
   useEffect(() => {
     const handleDocumentClick = (event: MouseEvent) => {
@@ -385,12 +363,7 @@ export function Dropdown(widgetInstance: WithWidget) {
             hidden={!isListVisible}
             onFocus={handleInputFocus}
           >
-            {visibleItems.map((item, index) => {
-              const absoluteIndex = range.start + index;
-              const isSelected = value === item.value;
-              const isFocused = focusedIndex === absoluteIndex;
-              const isItemDisabled = isDisabled || !!item.disabled;
-
+            {visibleItems.map((item) => {
               const labelField = templateData.labelField ?? 'label';
               const isObject = item.template !== null && typeof item.template === 'object';
               const template =
@@ -400,23 +373,22 @@ export function Dropdown(widgetInstance: WithWidget) {
 
               return (
                 <div
-                  key={absoluteIndex}
+                  key={item.index}
                   role="option"
                   tabIndex={-1}
                   className="gui-list__item-wrapper"
-                  id={`${uid}-item-${absoluteIndex}`}
+                  id={item.id}
                   style={{ height: `${templateData.itemHeight || 40}px` }}
-                  aria-selected={isSelected}
-                  aria-disabled={isItemDisabled ? 'true' : 'false'}
-                  onClick={() => handleClickItem(item, absoluteIndex)}
+                  aria-selected={item.selected}
+                  aria-disabled={item.disabled ? 'true' : 'false'}
                 >
                   <ItemRenderer
                     template={template}
                     value={item.value}
-                    index={absoluteIndex}
-                    selected={isSelected}
-                    disabled={isItemDisabled || isReadOnly}
-                    focused={isFocused}
+                    index={item.index}
+                    selected={item.selected}
+                    disabled={item.disabled || isReadOnly}
+                    focused={item.focused}
                   />
                 </div>
               );

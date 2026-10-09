@@ -11,7 +11,7 @@ import { GUIAriaController } from '../controllers/aria.controller';
 import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
 import { GUIPopupController } from '../controllers/popup.controller';
 import { GuiFormControl } from '../gui-form-control';
-import type { ListItem, ListItemInput, OptionValue } from '../types';
+import type { GuiVisibleItem, ListItem, ListItemInput, OptionValue } from '../types';
 import { dispatch, dispatchBlur, dispatchValue, fires, valueEvents } from '../utils/events';
 import { itemContent, type GuiItemRenderer, type GuiItemState } from '../utils/item-content';
 import { itemLabel, searchItems } from '../utils/items';
@@ -85,8 +85,8 @@ export class GuiDropdown extends GuiFormControl {
   @state() protected editing = false;
   // The query the items are filtered by: `query` once the debounce settles.
   @state() private searchedQuery = '';
-  @state() private range = { startIndex: 0, endIndex: 10 };
-  @state() protected focusedIndex = -1;
+  // The options to render, as the list reports them.
+  @state() private visible: GuiVisibleItem[] = [];
 
   /** Every item, normalized. */
   protected allItems: ListItem<unknown>[] = [];
@@ -270,8 +270,9 @@ export class GuiDropdown extends GuiFormControl {
       .height=${this.height}
       ?disabled=${this.disabled}
       ?readonly=${this.readOnly}
-      @gui-range-change=${this.onRangeChange}
-      @gui-focus-change=${this.onFocusChange}
+      @gui-visible-items-change=${this.onVisibleItemsChange}
+      @gui-range-change=${this.stop}
+      @gui-focus-change=${this.stop}
       @gui-update-items=${this.stop}
       @gui-input=${this.onListInput}
       @gui-change=${this.stop}
@@ -280,33 +281,26 @@ export class GuiDropdown extends GuiFormControl {
     >`;
   }
 
-  /** The options in view, and five more on each side: the list virtualizes the rest. */
+  /** The options the list reports: in view, and five more on each side. A click picks one. */
   private renderVisibleOptions() {
-    const { startIndex, endIndex } = this.range;
     const height = `${this.itemHeight ?? 40}px`;
     const renderer = this.renderItem ?? this.defaultRenderer;
 
     return repeat(
-      this.listItems.slice(startIndex, endIndex),
-      (item) => item.value,
-      (item, offset) => {
-        const index = startIndex + offset;
-        const state: GuiItemState = {
-          index,
-          selected: this.isSelected(item.value),
-          focused: index === this.focusedIndex,
-          disabled: !!this.disabled || !!item.disabled,
-        };
+      this.visible,
+      (entry) => entry.value,
+      ({ template, value, index, id, selected, focused, disabled }) => {
+        const item: ListItem<unknown> = { template, value, disabled };
+        const state: GuiItemState = { index, selected, focused, disabled };
 
         return html`<div
           role="option"
           tabindex="-1"
           class="gui-list__item-wrapper"
-          id=${`${this.uid}-item-${index}`}
+          id=${id}
           style=${cspStyleMap({ height })}
-          aria-selected=${state.selected ? 'true' : 'false'}
-          aria-disabled=${state.disabled ? 'true' : 'false'}
-          @click=${() => this.onOptionClick(item, index)}
+          aria-selected=${selected ? 'true' : 'false'}
+          aria-disabled=${disabled ? 'true' : 'false'}
         >
           <div
             class=${classMap({
@@ -331,12 +325,8 @@ export class GuiDropdown extends GuiFormControl {
 
   private defaultRenderer: GuiItemRenderer = (item) => itemLabel(item.template, this.labelField);
 
-  protected isSelected(value: OptionValue): boolean {
-    return value === this.value;
-  }
-
   /** The user picked an item: it becomes the value, and the panel closes. */
-  protected pick(item: ListItem<unknown>, _index: number) {
+  protected pick(item: ListItem<unknown>) {
     if (this.disabled || this.readOnly || item.disabled) return;
     this.value = item.value as OptionValue;
     dispatchValue(this, this.value);
@@ -357,31 +347,19 @@ export class GuiDropdown extends GuiFormControl {
     // Nothing to do before the single dropdown opens.
   }
 
-  private onOptionClick(item: ListItem<unknown>, index: number) {
-    this.pick(item, index);
-  }
-
-  /** The list picked its active item, from the keyboard. */
+  /** The list picked an item, from a click or the keyboard. */
   private onListInput(event: CustomEvent<{ value: OptionValue }>) {
     event.stopPropagation();
     const item = this.listItems.find((candidate) => candidate.value === event.detail.value);
-    if (item) this.pick(item, this.listItems.indexOf(item));
+    if (item) this.pick(item);
   }
 
   /** The list's own events stay inside the dropdown. */
   protected stop = (event: Event) => event.stopPropagation();
 
-  protected onRangeChange(event: CustomEvent<{ startIndex: number; endIndex: number }>) {
+  protected onVisibleItemsChange(event: CustomEvent<GuiVisibleItem[]>) {
     event.stopPropagation();
-    const { startIndex, endIndex } = event.detail;
-    if (startIndex !== this.range.startIndex || endIndex !== this.range.endIndex) {
-      this.range = { startIndex, endIndex };
-    }
-  }
-
-  protected onFocusChange(event: CustomEvent<{ index: number }>) {
-    event.stopPropagation();
-    this.focusedIndex = event.detail.index;
+    this.visible = event.detail;
   }
 
   /** Escape closes the panel and returns focus to the field. */

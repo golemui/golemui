@@ -1,5 +1,6 @@
 import { html } from 'lit';
 import type { GuiMultiList } from '../../src/lib/components/multi-list';
+import type { GuiVisibleItem } from '../../src/lib/types';
 
 const frameworks = [
   { label: 'React', value: 'react' },
@@ -100,6 +101,37 @@ describe('gui-multi-list', () => {
         expect(onInput).to.have.been.calledBefore(onChange);
       });
       element().should('have.prop', 'values').and('deep.equal', ['angular']);
+    });
+
+    it('toggles a clicked option once, on and off', () => {
+      const onToggle = cy.spy().as('toggle');
+      const renderOptions = (event: Event) => {
+        const list = event.currentTarget as GuiMultiList;
+        list.querySelectorAll('[role="option"]').forEach((option) => option.remove());
+        for (const item of (event as CustomEvent<GuiVisibleItem[]>).detail) {
+          const option = document.createElement('div');
+          option.id = item.id;
+          option.setAttribute('role', 'option');
+          option.setAttribute('aria-selected', String(item.selected));
+          option.textContent = String(item.value);
+          list.append(option);
+        }
+      };
+      cy.mount(
+        html`<gui-multi-list
+          uid="colors"
+          .items=${frameworks}
+          @gui-visible-items-change=${renderOptions}
+          @gui-item-toggle=${onToggle}
+        ></gui-multi-list>`,
+      );
+
+      cy.get('#colors-item-1').click();
+      element().should('have.prop', 'values').and('deep.equal', ['angular']);
+      cy.get('#colors-item-1').should('have.attr', 'aria-selected', 'true');
+      cy.get('#colors-item-1').click();
+      element().should('have.prop', 'values').and('deep.equal', []);
+      cy.get('@toggle').should('have.been.calledTwice');
     });
 
     it('toggles the active item off again with Space', () => {

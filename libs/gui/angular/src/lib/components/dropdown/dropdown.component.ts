@@ -13,6 +13,7 @@ import {
 } from '@angular/core';
 import { type AngularItemRenderer, InputWidgetAdapter } from '@golemui/angular';
 import type { InputWidget, WithWidget } from '@golemui/core';
+import type { GuiVisibleItem } from '@golemui/gui-components';
 import type { DropdownProps, ListItem } from '@golemui/gui-shared/internals';
 import { searchItems, type ItemFields } from '@golemui/gui-components/internals';
 import { debounceTime, Subject, type Subscription } from 'rxjs';
@@ -45,9 +46,7 @@ export class DropdownComponent implements OnInit, OnDestroy, WithWidget {
 
   protected defaultListItemRenderer: AngularItemRenderer<string> = DefaultListItemRenderer;
 
-  protected currentRange = signal({ start: 0, end: 10 });
   protected listItems = signal<ListItem<never>[]>([]);
-  protected focusedIndex = signal<number>(-1);
   protected isListVisible = signal(false);
   protected isFiltering = signal(false);
   private ignoreNextFocus = false;
@@ -67,11 +66,8 @@ export class DropdownComponent implements OnInit, OnDestroy, WithWidget {
     return data.items || [];
   });
 
-  protected visibleItems = computed(() => {
-    const items = this.listItems();
-    const { start, end } = this.currentRange();
-    return items.slice(start, end);
-  });
+  /** The options to render, as the list reports them. */
+  protected visibleItems = signal<GuiVisibleItem<any>[]>([]);
 
   protected selectedItemValue = computed(() => {
     const data = this.adapter.templateData();
@@ -226,29 +222,6 @@ export class DropdownComponent implements OnInit, OnDestroy, WithWidget {
     this.closeList();
   }
 
-  protected onClickItem(item: ListItem<never>, index: number) {
-    const templateData = this.adapter.templateData();
-
-    if (templateData.readonly || item.disabled) return;
-
-    this.adapter.valueChanged(item.value);
-    this.adapter.filterChanged('');
-
-    this.focusedIndex.set(index);
-    this.selectedItem.set(item);
-    this.isFiltering.set(false);
-    this.isListVisible.set(false);
-
-    if (this.listRef()?.nativeElement) {
-      this.listRef().nativeElement.focusItemAtIndex(index);
-    }
-  }
-
-  protected onFocusChange(event: Event) {
-    const index = (event as CustomEvent).detail.index;
-    this.focusedIndex.set(index);
-  }
-
   protected onUpdateItems(event: Event) {
     const items = (event as CustomEvent).detail;
     this.listItems.set(items ? [...items] : []);
@@ -264,9 +237,8 @@ export class DropdownComponent implements OnInit, OnDestroy, WithWidget {
     }
   }
 
-  protected onRangeChange(event: Event) {
-    const { startIndex, endIndex } = (event as CustomEvent).detail;
-    this.currentRange.set({ start: startIndex, end: endIndex });
+  protected onVisibleItemsChange(event: Event) {
+    this.visibleItems.set((event as CustomEvent<GuiVisibleItem<any>[]>).detail);
   }
 
   protected onValueChange(event: Event) {
