@@ -14,6 +14,7 @@ import {
 import { type AngularItemRenderer, InputWidgetAdapter } from '@golemui/angular';
 import type { InputWidget, WithWidget } from '@golemui/core';
 import type { DropdownProps, ListItem } from '@golemui/gui-shared/internals';
+import { searchItems, type ItemFields } from '@golemui/gui-components/internals';
 import { debounceTime, Subject, type Subscription } from 'rxjs';
 import { DefaultListItemRenderer } from '../list/default-list.item-renderer';
 import '@golemui/gui-components/label';
@@ -203,28 +204,11 @@ export class DropdownComponent implements OnInit, OnDestroy, WithWidget {
       this.isFiltering.set(true);
       this.isListVisible.set(true);
 
-      const searchFields =
-        templateData.searchFields ??
-        ([templateData.labelField!, templateData.valueField!].filter(
-          (field) => !!field,
-        ) as string[]);
-      const hasSearchFields = searchFields.length > 0;
-      const items = templateData.items || [];
-      const filtered = items.filter((item: any) => {
-        const isPrimitiveValue = item === null || typeof item !== 'object';
-
-        if (isPrimitiveValue) {
-          return item != null && item.toString().toLowerCase().includes(filterValue.toLowerCase());
-        }
-
-        const keys = Object.keys(item);
-        const reduceFunc = (acc: boolean, prop: string) =>
-          acc || item[prop].toString().toLowerCase().includes(filterValue.toLowerCase());
-
-        return hasSearchFields
-          ? keys.filter((prop: string) => searchFields.includes(prop)).reduce(reduceFunc, false)
-          : keys.reduce(reduceFunc, false);
-      });
+      const filtered = searchItems(
+        templateData.items || [],
+        filterValue,
+        templateData as ItemFields,
+      );
       this.filteredItems.set(filtered);
     } else {
       this.isFiltering.set(false);

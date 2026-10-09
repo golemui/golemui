@@ -2,6 +2,7 @@
 import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useDebounceCallback, useInputWidget, useVueFormContext } from '@golemui/vue';
 import type { DropdownProps, ListItem, OptionValue } from '@golemui/gui-shared/internals';
+import { searchItems, type ItemFields } from '@golemui/gui-components/internals';
 import { computed, onMounted, onUnmounted, ref, watch, type Component } from 'vue';
 import DefaultListItemRenderer from './item-renderers/DefaultListItemRenderer.vue';
 import '@golemui/gui-components/label';
@@ -170,28 +171,11 @@ const filterItems = (filterValue: string) => {
     isFiltering.value = true;
     isListVisible.value = true;
 
-    const searchFields =
-      templateData.value.searchFields ??
-      ([templateData.value.labelField!, templateData.value.valueField!].filter(
-        (f) => !!f,
-      ) as string[]);
-    const hasSearchFields = searchFields.length > 0;
-    const items = templateData.value.items || [];
-    const filtered = items.filter((item: any) => {
-      const isPrimitive = item === null || typeof item !== 'object';
-
-      if (isPrimitive) {
-        return item != null && item.toString().toLowerCase().includes(filterValue.toLowerCase());
-      }
-
-      const keys = Object.keys(item);
-      const reduceFn = (acc: boolean, prop: string) =>
-        acc || item[prop].toString().toLowerCase().includes(filterValue.toLowerCase());
-
-      return hasSearchFields
-        ? keys.filter((p: string) => searchFields.includes(p)).reduce(reduceFn, false)
-        : keys.reduce(reduceFn, false);
-    });
+    const filtered = searchItems(
+      templateData.value.items || [],
+      filterValue,
+      templateData.value as ItemFields,
+    );
     filteredItems.value = filtered;
   } else {
     isFiltering.value = false;

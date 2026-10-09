@@ -24,6 +24,8 @@ export {
   GuiDateTimeCalendarEvents,
 } from './lib/components/date-time-calendar';
 export { GuiDateTimePicker, GuiDateTimePickerEvents } from './lib/components/date-time-picker';
+export { GuiDropdown, GuiDropdownEvents } from './lib/components/dropdown';
+export type { GuiFilterEventDetail } from './lib/components/dropdown';
 export { GuiErrors } from './lib/components/errors';
 export { GuiLabel } from './lib/components/label';
 export { GuiList, GuiListEvents } from './lib/components/list';
@@ -41,6 +43,7 @@ export { matchesAccept } from './lib/utils/file-upload';
 export { GuiMarkdown, GuiMarkdownEvents } from './lib/components/markdown';
 export type { GuiMarkdownProps } from './lib/components/markdown';
 export { GuiMarkdownText } from './lib/components/markdown-text';
+export { GuiMultiDropdown, GuiMultiDropdownEvents } from './lib/components/multi-dropdown';
 export { GuiMultiFileUpload, GuiMultiFileUploadEvents } from './lib/components/multi-file-upload';
 export { GuiMultiList, GuiMultiListEvents } from './lib/components/multi-list';
 export {
@@ -128,6 +131,7 @@ export type {
   TimeRange,
   UploadService,
 } from './lib/types';
+export type { GuiItemRenderContext, GuiItemRenderer, GuiItemState } from './lib/utils/item-content';
 
 // ─── Messages ───
 

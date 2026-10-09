@@ -76,3 +76,9 @@ gui-multi-list {
     }
   }
 }
+
+// The content of an option drawn by gui-dropdown's renderItem: it fills the option.
+.gui-list__item-content {
+  flex: 1;
+  min-width: 0;
+}

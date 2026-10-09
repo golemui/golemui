@@ -6,6 +6,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { DefaultListItemRenderer } from './item-renderers/DefaultListItemRenderer';
 import { type ListItemRendererProps } from './item-renderers/props';
 import { useBrowserLayoutEffect } from './shared/use-browser-layout-effect';
+import { searchItems } from '@golemui/gui-components/internals';
 import type { GuiList } from '@golemui/gui-components/list';
 import type { GuiLabel } from '@golemui/gui-components/label';
 
@@ -197,29 +198,10 @@ export function Dropdown(widgetInstance: WithWidget) {
         setIsFiltering(true);
         setIsListVisible(true);
 
-        const searchFields =
-          templateData.searchFields ??
-          ([templateData.labelField!, templateData.valueField!].filter(
-            (field) => !!field,
-          ) as string[]);
-        const hasSearchFields = searchFields.length > 0;
-        const items = templateData.items || [];
-        const filteredItems = items.filter((item: any) => {
-          const isPrimitiveValue = item === null || typeof item !== 'object';
-
-          if (isPrimitiveValue) {
-            return (
-              item != null && item.toString().toLowerCase().includes(filterValue.toLowerCase())
-            );
-          }
-
-          const keys = Object.keys(item);
-          const reduceFunc = (acc: boolean, prop: string) =>
-            acc || item[prop].toString().toLowerCase().includes(filterValue.toLowerCase());
-
-          return hasSearchFields
-            ? keys.filter((prop: string) => searchFields.includes(prop)).reduce(reduceFunc, false)
-            : keys.reduce(reduceFunc, false);
+        const filteredItems = searchItems(templateData.items || [], filterValue, {
+          labelField: templateData.labelField as string | undefined,
+          valueField: templateData.valueField as string | undefined,
+          searchFields: templateData.searchFields as string[] | undefined,
         });
 
         setFilteredItems(filteredItems);

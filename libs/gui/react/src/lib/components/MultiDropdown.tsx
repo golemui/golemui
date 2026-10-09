@@ -12,7 +12,7 @@ import type {
   MultiDropdownProps,
   OptionValue,
 } from '@golemui/gui-shared/internals';
-import { updateListItems } from '@golemui/gui-components/internals';
+import { searchItems, selectedPills, updateListItems } from '@golemui/gui-components/internals';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DefaultMultiListItemRenderer } from './item-renderers/DefaultMultiListItemRenderer';
 import { type ListItemRendererProps } from './item-renderers/props';
@@ -47,22 +47,11 @@ export function MultiDropdown(widgetInstance: WithWidget) {
   const visibleItems = useMemo(() => listItems.slice(range.start, range.end), [listItems, range]);
 
   const pillItems = useMemo<GuiPillItem[]>(() => {
-    const labelField = (templateData.labelField as string) ?? 'label';
     const source = updateListItems(
       (templateData.items ?? []) as ListItem<any>[],
       templateData as unknown as ListProps<any>,
     );
-    return currentValues.map((val) => {
-      const item = source.find((i) => i.value === val) ?? listItems.find((i) => i.value === val);
-      const isObject = item != null && item.template !== null && typeof item.template === 'object';
-      const label =
-        item == null
-          ? String(val)
-          : isObject
-            ? String((item.template as any)[labelField])
-            : String(item.template);
-      return { key: String(val), label };
-    });
+    return selectedPills(currentValues, source, templateData.labelField as string, listItems);
   }, [currentValues, listItems, templateData]);
 
   const closeList = useCallback(() => {
@@ -196,29 +185,10 @@ export function MultiDropdown(widgetInstance: WithWidget) {
         setIsFiltering(true);
         setIsListVisible(true);
 
-        const searchFields =
-          templateData.searchFields ??
-          ([templateData.labelField!, templateData.valueField!].filter(
-            (field) => !!field,
-          ) as string[]);
-        const hasSearchFields = searchFields.length > 0;
-        const items = templateData.items || [];
-        const filteredItems = items.filter((item: any) => {
-          const isPrimitiveValue = item === null || typeof item !== 'object';
-
-          if (isPrimitiveValue) {
-            return (
-              item != null && item.toString().toLowerCase().includes(filterValue.toLowerCase())
-            );
-          }
-
-          const keys = Object.keys(item);
-          const reduceFunc = (acc: boolean, prop: string) =>
-            acc || item[prop].toString().toLowerCase().includes(filterValue.toLowerCase());
-
-          return hasSearchFields
-            ? keys.filter((prop: string) => searchFields.includes(prop)).reduce(reduceFunc, false)
-            : keys.reduce(reduceFunc, false);
+        const filteredItems = searchItems(templateData.items || [], filterValue, {
+          labelField: templateData.labelField as string | undefined,
+          valueField: templateData.valueField as string | undefined,
+          searchFields: templateData.searchFields as string[] | undefined,
         });
 
         setFilteredItems(filteredItems);

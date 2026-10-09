@@ -6,7 +6,12 @@ import type {
   MultiDropdownProps,
   OptionValue,
 } from '@golemui/gui-shared/internals';
-import { updateListItems } from '@golemui/gui-components/internals';
+import {
+  searchItems,
+  selectedPills,
+  updateListItems,
+  type ItemFields,
+} from '@golemui/gui-components/internals';
 import type {
   GuiMultiSelectTrigger,
   GuiPillEventDetail,
@@ -110,23 +115,11 @@ export class MultiDropdownElement extends LitElement implements WithWidget {
 
   private _pillItems(values: OptionValue[]): GuiPillItem[] {
     const templateData = this.adapter.templateData;
-    const labelField = (templateData.labelField as string) ?? 'label';
     const source = updateListItems(
       (templateData.items ?? []) as ListItem<any>[],
       templateData as unknown as ListProps<any>,
     );
-    return values.map((value) => {
-      const item =
-        source.find((i) => i.value === value) ?? this._listItems.find((i) => i.value === value);
-      const isObject = item != null && item.template !== null && typeof item.template === 'object';
-      const label =
-        item == null
-          ? String(value)
-          : isObject
-            ? String((item.template as any)[labelField])
-            : String(item.template);
-      return { key: String(value), label };
-    });
+    return selectedPills(values, source, templateData.labelField as string, this._listItems);
   }
 
   private _toggleValue(value: OptionValue) {
@@ -215,30 +208,11 @@ export class MultiDropdownElement extends LitElement implements WithWidget {
       this._isFiltering = true;
       this._isListVisible = true;
 
-      const searchFields =
-        templateData.searchFields ??
-        ([templateData.labelField!, templateData.valueField!].filter(
-          (field) => !!field,
-        ) as string[]);
-      const hasSearchFields = searchFields.length > 0;
-      const items = templateData.items || [];
-      const filteredItems = items.filter((item: any) => {
-        const isPrimitiveValue = item === null || typeof item !== 'object';
-
-        if (isPrimitiveValue) {
-          return item != null && item.toString().toLowerCase().includes(filterValue.toLowerCase());
-        }
-
-        const keys = Object.keys(item);
-        const reduceFunc = (acc: boolean, prop: string) =>
-          acc || item[prop].toString().toLowerCase().includes(filterValue.toLowerCase());
-
-        return hasSearchFields
-          ? keys.filter((prop: string) => searchFields.includes(prop)).reduce(reduceFunc, false)
-          : keys.reduce(reduceFunc, false);
-      });
-
-      this._filteredItems = [...filteredItems];
+      this._filteredItems = searchItems(
+        templateData.items || [],
+        filterValue,
+        templateData as ItemFields,
+      );
     } else {
       this._isFiltering = false;
       this._filteredItems = [...templateData.items];

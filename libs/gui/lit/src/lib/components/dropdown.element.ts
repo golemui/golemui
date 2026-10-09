@@ -1,6 +1,7 @@
 import type { InputWidget, WithWidget } from '@golemui/core';
 import { InputWidgetAdapter, type LitFormContext, formContext, inputContext } from '@golemui/lit';
 import type { DropdownProps, ListItem } from '@golemui/gui-shared/internals';
+import { searchItems, type ItemFields } from '@golemui/gui-components/internals';
 import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';
 import { classMap } from 'lit/directives/class-map.js';
@@ -87,6 +88,7 @@ export class DropdownElement extends LitElement implements WithWidget {
 
   override disconnectedCallback() {
     super.disconnectedCallback();
+    document.removeEventListener('click', this.onDocumentClick);
     this.adapter.destroy();
     unsubscribeAll(this.subscriptions);
   }
@@ -180,30 +182,11 @@ export class DropdownElement extends LitElement implements WithWidget {
       this._isFiltering = true;
       this._isListVisible = true;
 
-      const searchFields =
-        templateData.searchFields ??
-        ([templateData.labelField!, templateData.valueField!].filter(
-          (field) => !!field,
-        ) as string[]);
-      const hasSearchFields = searchFields.length > 0;
-      const items = templateData.items || [];
-      const filteredItems = items.filter((item: any) => {
-        const isPrimitiveValue = item === null || typeof item !== 'object';
-
-        if (isPrimitiveValue) {
-          return item != null && item.toString().toLowerCase().includes(filterValue.toLowerCase());
-        }
-
-        const keys = Object.keys(item);
-        const reduceFunc = (acc: boolean, prop: string) =>
-          acc || item[prop].toString().toLowerCase().includes(filterValue.toLowerCase());
-
-        return hasSearchFields
-          ? keys.filter((prop: string) => searchFields.includes(prop)).reduce(reduceFunc, false)
-          : keys.reduce(reduceFunc, false);
-      });
-
-      this._filteredItems = [...filteredItems];
+      this._filteredItems = searchItems(
+        templateData.items || [],
+        filterValue,
+        templateData as ItemFields,
+      );
     } else {
       this._isFiltering = false;
       this._filteredItems = [...templateData.items];

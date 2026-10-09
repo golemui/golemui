@@ -45,6 +45,7 @@ import {
   GuiDateTimePicker as GuiDateTimePickerElement,
   GuiDateTimePickerEvents,
 } from './lib/components/date-time-picker';
+import { GuiDropdown as GuiDropdownElement, GuiDropdownEvents } from './lib/components/dropdown';
 import { GuiErrors as GuiErrorsElement } from './lib/components/errors';
 import {
   GuiFileUpload as GuiFileUploadElement,
@@ -54,6 +55,10 @@ import { GuiLabel as GuiLabelElement } from './lib/components/label';
 import { GuiList as GuiListElement, GuiListEvents } from './lib/components/list';
 import { GuiMarkdown as GuiMarkdownElement, GuiMarkdownEvents } from './lib/components/markdown';
 import { GuiMarkdownText as GuiMarkdownTextElement } from './lib/components/markdown-text';
+import {
+  GuiMultiDropdown as GuiMultiDropdownElement,
+  GuiMultiDropdownEvents,
+} from './lib/components/multi-dropdown';
 import {
   GuiMultiFileUpload as GuiMultiFileUploadElement,
   GuiMultiFileUploadEvents,
@@ -272,12 +277,18 @@ export const GuiDateTimePicker = wrap(
   GuiDateTimePickerElement,
   GuiDateTimePickerEvents,
 );
+export const GuiDropdown = wrap('gui-dropdown', GuiDropdownElement, GuiDropdownEvents);
 export const GuiErrors = wrap('gui-errors', GuiErrorsElement);
 export const GuiFileUpload = wrap('gui-file-upload', GuiFileUploadElement, GuiFileUploadEvents);
 export const GuiLabel = wrap('gui-label', GuiLabelElement);
 export const GuiList = wrap('gui-list', GuiListElement, GuiListEvents);
 export const GuiMarkdown = wrap('gui-markdown', GuiMarkdownElement, GuiMarkdownEvents);
 export const GuiMarkdownText = wrap('gui-markdown-text', GuiMarkdownTextElement);
+export const GuiMultiDropdown = wrap(
+  'gui-multi-dropdown',
+  GuiMultiDropdownElement,
+  GuiMultiDropdownEvents,
+);
 export const GuiMultiFileUpload = wrap(
   'gui-multi-file-upload',
   GuiMultiFileUploadElement,
