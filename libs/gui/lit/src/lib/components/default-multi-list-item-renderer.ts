@@ -11,12 +11,7 @@ export const defaultMultiListItemRenderer = (ctx: ItemRenderContext<any>) => {
   };
 
   return html`
-    <div
-      role="option"
-      class=${classMap(classes)}
-      aria-selected=${ctx.selected ? 'true' : 'false'}
-      aria-disabled=${ctx.disabled ? 'true' : 'false'}
-    >
+    <div class=${classMap(classes)}>
       <span class="gui-list__item-check" aria-hidden="true">
         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 256 256">
           <path

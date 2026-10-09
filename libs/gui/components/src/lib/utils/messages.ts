@@ -97,8 +97,9 @@ export const DEFAULT_MESSAGES = {
   removeOption: 'Remove option',
   selectedCount: '{count} selected',
 
-  // ─── Select and radio group ───
+  // ─── Select, dropdown and radio group ───
   selectAnOption: 'Select an option',
+  showOptions: 'Show options',
   loading: 'Loading...',
 
   // ─── Password ───

@@ -1,6 +1,8 @@
 import type { InputWidget, WithWidget } from '@golemui/core';
 import { InputWidgetAdapter, type LitFormContext, formContext, inputContext } from '@golemui/lit';
 import type { DropdownProps, ListItem } from '@golemui/gui-shared/internals';
+import { searchItems, type ItemFields } from '@golemui/gui-components/internals';
+import type { GuiVisibleItem } from '@golemui/gui-components';
 import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';
 import { classMap } from 'lit/directives/class-map.js';
@@ -26,10 +28,9 @@ export class DropdownElement extends LitElement implements WithWidget {
   debouncer = new Subject<string>();
   subscriptions: Subscription[] = [];
 
-  @state() private _range = { start: 0, end: 10 };
+  @state() private _visibleItems: GuiVisibleItem<any>[] = [];
   @state() private _filteredItems: ListItem<never>[] = [];
   @state() private _listItems: ListItem<never>[] = [];
-  @state() private _focusedIndex = -1;
   @state() private _isFiltering = false;
   @state() private _isListVisible = false;
   @state() private _selectedItem: ListItem<never> | undefined = undefined;
@@ -87,12 +88,13 @@ export class DropdownElement extends LitElement implements WithWidget {
 
   override disconnectedCallback() {
     super.disconnectedCallback();
+    document.removeEventListener('click', this.onDocumentClick);
     this.adapter.destroy();
     unsubscribeAll(this.subscriptions);
   }
 
-  private _onRangeChange(e: CustomEvent) {
-    this._range = { start: e.detail.startIndex, end: e.detail.endIndex };
+  private _onVisibleItemsChange(e: CustomEvent<GuiVisibleItem<any>[]>) {
+    this._visibleItems = e.detail;
   }
 
   private _onUpdateItems(e: CustomEvent) {
@@ -107,30 +109,6 @@ export class DropdownElement extends LitElement implements WithWidget {
       if (match) {
         this._selectedItem = match;
       }
-    }
-  }
-
-  private _onFocusChange(e: CustomEvent) {
-    this._focusedIndex = e.detail.index;
-  }
-
-  private _onClickItem(item: ListItem<never>, index: number) {
-    if (this.adapter.templateData.readonly || item.disabled) return;
-
-    const templateData = this.adapter.templateData;
-    this.adapter.valueChanged(item.value);
-    this.adapter.filterChanged('');
-
-    this._focusedIndex = index;
-    this._selectedItem = item;
-    this._isFiltering = false;
-    this._isListVisible = false;
-
-    if (this._listRef) {
-      this._listRef.focusItemAtIndex(index);
-      this._inputRef.value = templateData.valueField
-        ? (item.template as any)[templateData.valueField]
-        : item.template;
     }
   }
 
@@ -180,30 +158,11 @@ export class DropdownElement extends LitElement implements WithWidget {
       this._isFiltering = true;
       this._isListVisible = true;
 
-      const searchFields =
-        templateData.searchFields ??
-        ([templateData.labelField!, templateData.valueField!].filter(
-          (field) => !!field,
-        ) as string[]);
-      const hasSearchFields = searchFields.length > 0;
-      const items = templateData.items || [];
-      const filteredItems = items.filter((item: any) => {
-        const isPrimitiveValue = item === null || typeof item !== 'object';
-
-        if (isPrimitiveValue) {
-          return item != null && item.toString().toLowerCase().includes(filterValue.toLowerCase());
-        }
-
-        const keys = Object.keys(item);
-        const reduceFunc = (acc: boolean, prop: string) =>
-          acc || item[prop].toString().toLowerCase().includes(filterValue.toLowerCase());
-
-        return hasSearchFields
-          ? keys.filter((prop: string) => searchFields.includes(prop)).reduce(reduceFunc, false)
-          : keys.reduce(reduceFunc, false);
-      });
-
-      this._filteredItems = [...filteredItems];
+      this._filteredItems = searchItems(
+        templateData.items || [],
+        filterValue,
+        templateData as ItemFields,
+      );
     } else {
       this._isFiltering = false;
       this._filteredItems = [...templateData.items];
@@ -274,7 +233,6 @@ export class DropdownElement extends LitElement implements WithWidget {
     const templateData = this.adapter.templateData;
     const showErrors =
       templateData.touched && templateData.errors && templateData.errors.length > 0;
-    const visibleItems = this._listItems.slice(this._range.start, this._range.end);
 
     const itemRenderer = this.adapter.getItemRenderer(
       templateData.itemRenderer,
@@ -368,18 +326,12 @@ export class DropdownElement extends LitElement implements WithWidget {
             ?disabled=${templateData.disabled}
             ?readonly=${templateData.readonly}
             ?hidden=${!this._isListVisible}
-            @gui-range-change=${this._onRangeChange}
+            @gui-visible-items-change=${this._onVisibleItemsChange}
             @gui-update-items=${this._onUpdateItems}
-            @gui-focus-change=${this._onFocusChange}
             @focus=${this._onFocus}
             @gui-input=${this._onValueChange}
           >
-            ${visibleItems.map((item, index) => {
-              const absoluteIndex = this._range.start + index;
-              const isSelected = templateData.value === item.value;
-              const isFocused = this._focusedIndex === absoluteIndex;
-              const isDisabled = !!templateData.disabled || !!item.disabled;
-
+            ${this._visibleItems.map((item) => {
               const labelField = templateData.labelField ?? 'label';
               const isObject = item.template !== null && typeof item.template === 'object';
               const template =
@@ -392,19 +344,18 @@ export class DropdownElement extends LitElement implements WithWidget {
                   role="option"
                   tabindex="-1"
                   class="gui-list__item-wrapper"
-                  id="${this.widget.uid}-item-${absoluteIndex}"
+                  id=${item.id}
                   style=${cspStyleMap({ height: `${templateData.itemHeight || 40}px` })}
-                  aria-selected=${isSelected ? 'true' : 'false'}
-                  aria-disabled=${isDisabled ? 'true' : 'false'}
-                  @click=${() => this._onClickItem(item, absoluteIndex)}
+                  aria-selected=${item.selected ? 'true' : 'false'}
+                  aria-disabled=${item.disabled ? 'true' : 'false'}
                 >
                   ${itemRenderer({
                     template: template as string,
                     value: item.value,
-                    index: absoluteIndex,
-                    selected: isSelected,
-                    disabled: isDisabled,
-                    focused: isFocused,
+                    index: item.index,
+                    selected: item.selected,
+                    disabled: item.disabled,
+                    focused: item.focused,
                   })}
                 </div>
               `;

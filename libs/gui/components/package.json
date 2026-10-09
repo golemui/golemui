@@ -108,6 +108,11 @@
       "import": "./lib/components/date-time-picker.js",
       "require": "./lib/components/date-time-picker.umd.cjs"
     },
+    "./dropdown": {
+      "types": "./lib/components/dropdown.d.ts",
+      "import": "./lib/components/dropdown.js",
+      "require": "./lib/components/dropdown.umd.cjs"
+    },
     "./errors": {
       "types": "./lib/components/errors.d.ts",
       "import": "./lib/components/errors.js",
@@ -137,6 +142,11 @@
       "types": "./lib/components/file-upload.d.ts",
       "import": "./lib/components/file-upload.js",
       "require": "./lib/components/file-upload.umd.cjs"
+    },
+    "./multi-dropdown": {
+      "types": "./lib/components/multi-dropdown.d.ts",
+      "import": "./lib/components/multi-dropdown.js",
+      "require": "./lib/components/multi-dropdown.umd.cjs"
     },
     "./multi-file-upload": {
       "types": "./lib/components/multi-file-upload.d.ts",

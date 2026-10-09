@@ -34,29 +34,23 @@
     [hint]="templateData.hint"
     (gui-blur)="adapter.onBlur()"
     (gui-item-toggle)="valueChanged($event)"
-    (gui-update-items)="onUpdateItems($event)"
-    (gui-range-change)="onRangeChange($event)"
-    (gui-focus-change)="onFocusChange($event)"
+    (gui-visible-items-change)="onVisibleItemsChange($event)"
   >
-    @for (item of visibleItems(); track $index) {
-      @let absoluteIndex = currentRange().start + $index;
+    @for (item of visibleItems(); track item.index) {
       @let labelField = templateData.labelField ?? 'label';
       @let isObject = item.template !== null && typeof item.template === 'object';
       @let template =
         isObject && labelField && !templateData.itemRenderer
           ? item.template[labelField]
           : item.template;
-
-      <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events -->
       <div
         role="option"
         tabindex="-1"
         class="gui-list__item-wrapper"
-        [id]="widget.uid + '-item-' + absoluteIndex"
+        [id]="item.id"
         [style.height.px]="templateData.itemHeight || 40"
-        [attr.aria-selected]="currentValues().includes(item.value)"
-        [attr.aria-disabled]="templateData.disabled || !!item.disabled"
-        (click)="onClickItem(item, absoluteIndex, listRef)"
+        [attr.aria-selected]="item.selected"
+        [attr.aria-disabled]="item.disabled"
       >
         <ng-container
           *ngComponentOutlet="
@@ -64,10 +58,10 @@
             inputs: {
               template: template,
               value: item.value,
-              disabled: templateData.disabled || !!item.disabled,
-              selected: currentValues().includes(item.value),
-              focused: focusedIndex() === absoluteIndex,
-              index: $index,
+              disabled: item.disabled,
+              selected: item.selected,
+              focused: item.focused,
+              index: item.index,
             }
           "
         >

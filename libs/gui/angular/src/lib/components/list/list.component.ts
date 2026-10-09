@@ -1,7 +1,6 @@
 import { CommonModule, NgComponentOutlet } from '@angular/common';
 import {
   Component,
-  computed,
   CUSTOM_ELEMENTS_SCHEMA,
   type ElementRef,
   inject,
@@ -12,7 +11,8 @@ import {
 } from '@angular/core';
 import { type AngularItemRenderer, InputWidgetAdapter } from '@golemui/angular';
 import type { InputWidget, WithWidget } from '@golemui/core';
-import type { ListItem, ListProps, OptionValue } from '@golemui/gui-shared/internals';
+import type { GuiVisibleItem } from '@golemui/gui-components';
+import type { ListProps, OptionValue } from '@golemui/gui-shared/internals';
 import { DefaultListItemRenderer } from './default-list.item-renderer';
 import '@golemui/gui-components/label';
 import '@golemui/gui-components/list';
@@ -41,16 +41,8 @@ export class ListComponent implements OnInit, OnDestroy, WithWidget {
 
   protected listElementRef = viewChild.required<ElementRef>('listRef');
 
-  protected currentRange = signal({ start: 0, end: 10 });
-  protected listItems = signal<ListItem<any>[]>([]);
-  protected focusedIndex = signal<number>(-1);
-
-  protected visibleItems = computed(() => {
-    const items = this.listItems() || [];
-    const { start, end } = this.currentRange();
-
-    return items.slice(start, end);
-  });
+  /** The options to render, as the list reports them. */
+  protected visibleItems = signal<GuiVisibleItem<any>[]>([]);
 
   ngOnInit(): void {
     this.adapter.init(this.widget);
@@ -58,15 +50,6 @@ export class ListComponent implements OnInit, OnDestroy, WithWidget {
 
   ngOnDestroy(): void {
     this.adapter.destroy();
-  }
-
-  protected onClickItem(item: any, index: number, listRef: any) {
-    const { disabled, readonly } = this.adapter.templateData();
-    if (disabled || readonly || item.disabled) return;
-
-    this.setValue(item.value);
-    this.focusedIndex.set(index);
-    listRef.focusItemAtIndex(index);
   }
 
   protected valueChanged(event: Event) {
@@ -78,18 +61,7 @@ export class ListComponent implements OnInit, OnDestroy, WithWidget {
     this.adapter.valueChanged(value);
   }
 
-  protected onFocusChange(event: Event) {
-    const index = (event as CustomEvent).detail.index;
-    this.focusedIndex.set(index);
-  }
-
-  protected onUpdateItems(event: Event) {
-    const items = (event as CustomEvent).detail;
-    this.listItems.set(items ? [...items] : []);
-  }
-
-  protected onRangeChange(event: Event) {
-    const { startIndex, endIndex } = (event as CustomEvent).detail;
-    this.currentRange.set({ start: startIndex, end: endIndex });
+  protected onVisibleItemsChange(event: Event) {
+    this.visibleItems.set((event as CustomEvent<GuiVisibleItem<any>[]>).detail);
   }
 }

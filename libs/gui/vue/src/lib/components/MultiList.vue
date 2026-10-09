@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import type { GuiVisibleItem } from '@golemui/gui-components';
 import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useInputWidget, useVueFormContext } from '@golemui/vue';
-import type { ListItem, MultiListProps, OptionValue } from '@golemui/gui-shared/internals';
+import type { MultiListProps, OptionValue } from '@golemui/gui-shared/internals';
 import { computed, ref, watch, type Component } from 'vue';
 import DefaultMultiListItemRenderer from './item-renderers/DefaultMultiListItemRenderer.vue';
 import type { GuiLabel } from '@golemui/gui-components/label';
@@ -17,19 +18,12 @@ const { uid, errors, value, isTouched, templateData, onValueChanged, onBlur } = 
   MultiListProps<unknown>
 >(widget);
 
-const rangeStart = ref(0);
-const rangeEnd = ref(10);
-const listItems = ref<ListItem<any>[]>([]);
-const focusedIndex = ref<number>(-1);
+// The options to render, as the list reports them.
+const visibleItems = ref<GuiVisibleItem<any>[]>([]);
 const listRef = ref<GuiMultiList | null>(null);
 const labelRef = ref<GuiLabel | null>(null);
 
 const currentValues = computed(() => (Array.isArray(value.value) ? value.value : []));
-
-const visibleItems = computed(() => {
-  const items = listItems.value.length > 0 ? listItems.value : templateData.value.items || [];
-  return items.slice(rangeStart.value, rangeEnd.value);
-});
 
 const required = computed(() => (templateData.value.validator as Validator)?.required);
 const isDisabled = computed(() => templateData.value.disabled as boolean);
@@ -47,17 +41,8 @@ const toggleValue = (val: OptionValue) => {
   onValueChanged([...current, val]);
 };
 
-const handleRangeChange = (e: Event) => {
-  const { startIndex, endIndex } = (e as CustomEvent).detail;
-  rangeStart.value = startIndex;
-  rangeEnd.value = endIndex;
-};
-const handleUpdateItems = (e: Event) => {
-  const items = (e as CustomEvent).detail;
-  listItems.value = items ? [...items] : [];
-};
-const handleFocusChange = (e: Event) => {
-  focusedIndex.value = (e as CustomEvent).detail.index;
+const handleVisibleItemsChange = (e: Event) => {
+  visibleItems.value = (e as CustomEvent<GuiVisibleItem<any>[]>).detail;
 };
 const handleChange = (e: Event) => {
   toggleValue((e as CustomEvent).detail.value);
@@ -72,13 +57,6 @@ watch(listRef, (el) => {
 const handleBlur = (e: FocusEvent) => {
   if (listRef.value && e.relatedTarget && listRef.value.contains(e.relatedTarget as Node)) return;
   onBlur();
-};
-
-const handleClickItem = (item: ListItem<any>, index: number) => {
-  if (templateData.value.disabled || templateData.value.readonly || item.disabled) return;
-  toggleValue(item.value);
-  focusedIndex.value = index;
-  listRef.value?.focusItemAtIndex(index);
 };
 
 const formContext = useVueFormContext();
@@ -122,21 +100,18 @@ const ItemRenderer = computed<Component>(() => {
         :readOnly="isReadOnly"
         @gui-blur="handleBlur"
         @gui-item-toggle="handleChange"
-        @gui-update-items="handleUpdateItems"
-        @gui-range-change="handleRangeChange"
-        @gui-focus-change="handleFocusChange"
+        @gui-visible-items-change="handleVisibleItemsChange"
       >
         <div
-          v-for="(item, idx) in visibleItems"
-          :key="rangeStart + idx"
+          v-for="item in visibleItems"
+          :key="item.index"
           role="option"
           tabindex="-1"
-          :id="`${uid}-item-${rangeStart + idx}`"
+          :id="item.id"
           class="gui-list__item-wrapper"
           :style="{ height: `${templateData.itemHeight || 40}px` }"
-          :aria-selected="currentValues.includes(item.value)"
-          :aria-disabled="isDisabled || item.disabled ? 'true' : 'false'"
-          @click="handleClickItem(item, rangeStart + idx)"
+          :aria-selected="item.selected"
+          :aria-disabled="item.disabled ? 'true' : 'false'"
         >
           <component
             :is="ItemRenderer"
@@ -150,10 +125,10 @@ const ItemRenderer = computed<Component>(() => {
               })()
             "
             :value="item.value"
-            :index="idx"
-            :selected="currentValues.includes(item.value)"
-            :disabled="isDisabled || !!item.disabled"
-            :focused="focusedIndex === rangeStart + idx"
+            :index="item.index"
+            :selected="item.selected"
+            :disabled="item.disabled"
+            :focused="item.focused"
           />
         </div>
       </gui-multi-list>

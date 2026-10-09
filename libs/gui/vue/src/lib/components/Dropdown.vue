@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import type { GuiVisibleItem } from '@golemui/gui-components';
 import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useDebounceCallback, useInputWidget, useVueFormContext } from '@golemui/vue';
 import type { DropdownProps, ListItem, OptionValue } from '@golemui/gui-shared/internals';
+import { searchItems, type ItemFields } from '@golemui/gui-components/internals';
 import { computed, onMounted, onUnmounted, ref, watch, type Component } from 'vue';
 import DefaultListItemRenderer from './item-renderers/DefaultListItemRenderer.vue';
 import '@golemui/gui-components/label';
@@ -21,11 +23,10 @@ const widget = props.widget as InputWidget<string | null>;
 const { uid, errors, value, isTouched, templateData, onFilter, onValueChanged, onBlur } =
   useInputWidget<string | number | null, DropdownProps<never>>(widget);
 
-const rangeStart = ref(0);
-const rangeEnd = ref(10);
+// The options to render, as the list reports them.
+const visibleItems = ref<GuiVisibleItem<any>[]>([]);
 const listItems = ref<ListItem<never>[]>([]);
 const filteredItems = ref<ListItem<never>[]>([]);
-const focusedIndex = ref<number>(-1);
 const isFiltering = ref(false);
 const isListVisible = ref(false);
 const selectedItem = ref<ListItem<never> | undefined>(undefined);
@@ -35,8 +36,6 @@ const panelRef = ref<HTMLDivElement | null>(null);
 const inputRef = ref<HTMLInputElement | null>(null);
 const labelRef = ref<GuiLabelElement | null>(null);
 const widgetRef = ref<HTMLDivElement | null>(null);
-
-const visibleItems = computed(() => listItems.value.slice(rangeStart.value, rangeEnd.value));
 
 const required = computed(() => (templateData.value.validator as Validator)?.required);
 const isDisabled = computed(() => templateData.value.disabled as boolean);
@@ -72,21 +71,8 @@ const handleValueChange = (newValue: OptionValue | null) => {
   isFiltering.value = false;
 };
 
-const handleClickItem = (item: ListItem<never>, index: number) => {
-  if (templateData.value.readonly || item.disabled) return;
-  handleValueChange(item.value);
-  onFilter('' as never);
-  focusedIndex.value = index;
-  selectedItem.value = item;
-  isFiltering.value = false;
-  isListVisible.value = false;
-  listRef.value?.focusItemAtIndex(index);
-};
-
-const handleRangeChange = (e: Event) => {
-  const { startIndex, endIndex } = (e as CustomEvent).detail;
-  rangeStart.value = startIndex;
-  rangeEnd.value = endIndex;
+const handleVisibleItemsChange = (e: Event) => {
+  visibleItems.value = (e as CustomEvent<GuiVisibleItem<any>[]>).detail;
 };
 
 const handleUpdateItems = (e: Event) => {
@@ -98,13 +84,10 @@ const handleUpdateItems = (e: Event) => {
   }
 };
 
-const handleFocusChange = (e: Event) => {
-  focusedIndex.value = (e as CustomEvent).detail.index;
-};
-
 const handleListChange = (e: Event) => {
   const val = (e as CustomEvent).detail.value;
   handleValueChange(val);
+  onFilter('' as never);
   selectedItem.value = listItems.value.find((item) => item.value === val);
   isFiltering.value = false;
   isListVisible.value = false;
@@ -170,28 +153,11 @@ const filterItems = (filterValue: string) => {
     isFiltering.value = true;
     isListVisible.value = true;
 
-    const searchFields =
-      templateData.value.searchFields ??
-      ([templateData.value.labelField!, templateData.value.valueField!].filter(
-        (f) => !!f,
-      ) as string[]);
-    const hasSearchFields = searchFields.length > 0;
-    const items = templateData.value.items || [];
-    const filtered = items.filter((item: any) => {
-      const isPrimitive = item === null || typeof item !== 'object';
-
-      if (isPrimitive) {
-        return item != null && item.toString().toLowerCase().includes(filterValue.toLowerCase());
-      }
-
-      const keys = Object.keys(item);
-      const reduceFn = (acc: boolean, prop: string) =>
-        acc || item[prop].toString().toLowerCase().includes(filterValue.toLowerCase());
-
-      return hasSearchFields
-        ? keys.filter((p: string) => searchFields.includes(p)).reduce(reduceFn, false)
-        : keys.reduce(reduceFn, false);
-    });
+    const filtered = searchItems(
+      templateData.value.items || [],
+      filterValue,
+      templateData.value as ItemFields,
+    );
     filteredItems.value = filtered;
   } else {
     isFiltering.value = false;
@@ -348,20 +314,18 @@ const ItemRenderer = computed<Component>(() => {
           @focus="handleInputFocus"
           @gui-input="handleListChange"
           @gui-update-items="handleUpdateItems"
-          @gui-range-change="handleRangeChange"
-          @gui-focus-change="handleFocusChange"
+          @gui-visible-items-change="handleVisibleItemsChange"
         >
           <div
-            v-for="(item, idx) in visibleItems"
-            :key="rangeStart + idx"
+            v-for="item in visibleItems"
+            :key="item.index"
             role="option"
             tabindex="-1"
             class="gui-list__item-wrapper"
-            :id="`${uid}-item-${rangeStart + idx}`"
+            :id="item.id"
             :style="{ height: `${templateData.itemHeight || 40}px` }"
-            :aria-selected="value === item.value"
-            :aria-disabled="isDisabled || item.disabled ? 'true' : 'false'"
-            @click="handleClickItem(item, rangeStart + idx)"
+            :aria-selected="item.selected"
+            :aria-disabled="item.disabled ? 'true' : 'false'"
           >
             <component
               :is="ItemRenderer"
@@ -375,10 +339,10 @@ const ItemRenderer = computed<Component>(() => {
                 })()
               "
               :value="item.value"
-              :index="rangeStart + idx"
-              :selected="value === item.value"
-              :disabled="isDisabled || isReadOnly || !!item.disabled"
-              :focused="focusedIndex === rangeStart + idx"
+              :index="item.index"
+              :selected="item.selected"
+              :disabled="item.disabled"
+              :focused="item.focused"
             />
           </div>
         </gui-list>

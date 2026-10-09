@@ -18,7 +18,7 @@ const classes = computed(() =>
 </script>
 
 <template>
-  <div role="option" :class="classes" :aria-selected="selected">
+  <div :class="classes">
     <span class="gui-list__item-check" aria-hidden="true">
       <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 256 256">
         <path

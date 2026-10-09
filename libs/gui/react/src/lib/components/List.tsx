@@ -1,12 +1,13 @@
 import { GuiErrorsReact, GuiLabelReact, GuiListReact } from '../web-components';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useInputWidget, useItemRenderer } from '@golemui/react';
-import type { ListItem, ListProps, OptionValue } from '@golemui/gui-shared/internals';
+import type { ListProps, OptionValue } from '@golemui/gui-shared/internals';
 import { DefaultListItemRenderer } from './item-renderers/DefaultListItemRenderer';
 import { type ListItemRendererProps } from './item-renderers/props';
 import { useBrowserLayoutEffect } from './shared/use-browser-layout-effect';
 import type { GuiList } from '@golemui/gui-components/list';
+import type { GuiVisibleItem } from '@golemui/gui-components';
 
 export function List(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<OptionValue>;
@@ -28,16 +29,10 @@ export function List(widgetInstance: WithWidget) {
     [onBlur],
   );
 
-  const [range, setRange] = useState({ start: 0, end: 10 });
-  const [listItems, setListItems] = useState<ListItem<any>[]>([]);
-  const [focusedIndex, setFocusedIndex] = useState<number>(-1);
+  // The options to render, as the list reports them.
+  const [visibleItems, setVisibleItems] = useState<GuiVisibleItem<any>[]>([]);
 
   const listRef = useRef<GuiList>(null);
-
-  const visibleItems = useMemo(() => {
-    const items = listItems.length > 0 ? listItems : templateData.items || [];
-    return items.slice(range.start, range.end);
-  }, [listItems, templateData.items, range]);
 
   // A layout effect so these listeners exist before first paint. A passive effect
   // attaches them after paint, and an early click then fires 'change' with no listener.
@@ -45,19 +40,8 @@ export function List(widgetInstance: WithWidget) {
     const element = listRef.current;
     if (!element) return;
 
-    const handleRangeChange = (e: Event) => {
-      const { startIndex, endIndex } = (e as CustomEvent).detail;
-      setRange({ start: startIndex, end: endIndex });
-    };
-
-    const handleUpdateItems = (e: Event) => {
-      const items = (e as CustomEvent).detail;
-      setListItems(items ? [...items] : []);
-    };
-
-    const handleFocusChange = (e: Event) => {
-      const index = (e as CustomEvent).detail.index;
-      setFocusedIndex(index);
+    const handleVisibleItemsChange = (e: Event) => {
+      setVisibleItems((e as CustomEvent<GuiVisibleItem<any>[]>).detail);
     };
 
     const handleChange = (e: Event) => {
@@ -67,32 +51,16 @@ export function List(widgetInstance: WithWidget) {
 
     // Binding
     element.addEventListener('gui-input', handleChange);
-    element.addEventListener('gui-update-items', handleUpdateItems);
-    element.addEventListener('gui-range-change', handleRangeChange);
-    element.addEventListener('gui-focus-change', handleFocusChange);
+    element.addEventListener('gui-visible-items-change', handleVisibleItemsChange);
+    // The list may have reported its items before these listeners existed.
+    setVisibleItems(element.visibleItems ?? []);
 
     return () => {
       // Cleanup
       element.removeEventListener('gui-input', handleChange);
-      element.removeEventListener('gui-update-items', handleUpdateItems);
-      element.removeEventListener('gui-range-change', handleRangeChange);
-      element.removeEventListener('gui-focus-change', handleFocusChange);
+      element.removeEventListener('gui-visible-items-change', handleVisibleItemsChange);
     };
   }, [onValueChanged]);
-
-  const handleClickItem = useCallback(
-    (item: ListItem<any>, index: number) => {
-      if (templateData.disabled || templateData.readonly || item.disabled) return;
-
-      onValueChanged(item.value);
-      setFocusedIndex(index);
-
-      if (listRef.current) {
-        listRef.current.focusItemAtIndex(index);
-      }
-    },
-    [onValueChanged],
-  );
 
   const ItemRenderer = (useItemRenderer(templateData.itemRenderer as string) ||
     DefaultListItemRenderer) as React.ComponentType<ListItemRendererProps<any>>;
@@ -133,12 +101,7 @@ export function List(widgetInstance: WithWidget) {
           readOnly={isReadOnly}
           onBlur={handleBlur}
         >
-          {visibleItems.map((item, index) => {
-            const absoluteIndex = range.start + index;
-            const isSelected = value === item.value;
-            const isFocused = focusedIndex === absoluteIndex;
-            const isItemDisabled = isDisabled || !!item.disabled;
-
+          {visibleItems.map((item) => {
             const labelField = templateData.labelField ?? 'label';
             const isObject = item.template !== null && typeof item.template === 'object';
             const template =
@@ -148,23 +111,22 @@ export function List(widgetInstance: WithWidget) {
 
             return (
               <div
-                key={absoluteIndex}
+                key={item.index}
                 role="option"
                 tabIndex={-1}
-                id={`${uid}-item-${absoluteIndex}`}
+                id={item.id}
                 className="gui-list__item-wrapper"
                 style={{ height: `${templateData.itemHeight || 40}px` }}
-                aria-selected={isSelected}
-                aria-disabled={isItemDisabled ? 'true' : 'false'}
-                onClick={() => handleClickItem(item, absoluteIndex)}
+                aria-selected={item.selected}
+                aria-disabled={item.disabled ? 'true' : 'false'}
               >
                 <ItemRenderer
                   template={template}
                   value={item.value}
-                  index={index}
-                  selected={isSelected}
-                  disabled={isItemDisabled}
-                  focused={isFocused}
+                  index={item.index}
+                  selected={item.selected}
+                  disabled={item.disabled}
+                  focused={item.focused}
                 />
               </div>
             );

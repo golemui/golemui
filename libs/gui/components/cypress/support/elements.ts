@@ -75,6 +75,11 @@ export const elements: ElementCase[] = [
     props: { label: 'Start' },
     form: { property: 'value', sample: '2026-03-15T10:30:00' },
   },
+  {
+    tag: 'gui-dropdown',
+    props: { label: 'Color', items: options },
+    form: { property: 'value', sample: 'red' },
+  },
   { tag: 'gui-errors', props: { errors: ['Required'], touched: true } },
   {
     tag: 'gui-file-upload',
@@ -94,6 +99,11 @@ export const elements: ElementCase[] = [
   {
     tag: 'gui-markdown-text',
     props: { md: 'Hello', dependencies: { markdown: { parse: (md: string) => `<p>${md}</p>` } } },
+  },
+  {
+    tag: 'gui-multi-dropdown',
+    props: { label: 'Colors', items: options },
+    form: { property: 'values', sample: ['red'] },
   },
   {
     tag: 'gui-multi-file-upload',

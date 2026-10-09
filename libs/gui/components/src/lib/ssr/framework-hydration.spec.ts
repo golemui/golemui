@@ -4,6 +4,8 @@ import { hydrateRoot } from 'react-dom/client';
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { resumeServerRendered } from '@golemui/lit-utils';
 import { GuiTextinput } from '../../react';
+import '../components/dropdown';
+import type { GuiDropdown } from '../components/dropdown';
 import '../components/list';
 import '../components/textinput';
 
@@ -114,5 +116,28 @@ describe('a gui-list', () => {
     await settle();
 
     expect(document.querySelector('gui-list > [role="option"]')?.textContent).toBe('A');
+  });
+});
+
+describe('a gui-dropdown', () => {
+  it('replaces its server markup, inner list included, without a second copy', async () => {
+    document.body.innerHTML =
+      '<gui-dropdown uid="plan" label="Plan" value="team" class="gui-dropdown gui-field" data-golemui-ssr>' +
+      '<label class="gui-label" for="plan" id="plan_label">Plan</label>' +
+      '<div class="gui-widget"><input type="text" role="combobox" id="plan" value="team">' +
+      '<button type="button" class="gui-dropdown__arrow"></button>' +
+      '<div class="gui-picker__panel" hidden><gui-list id="plan-list" defer-hydration></gui-list></div>' +
+      '</div></gui-dropdown>';
+    await settle();
+
+    const dropdown = document.querySelector<GuiDropdown>('gui-dropdown');
+    expect(dropdown?.hasAttribute('data-golemui-ssr')).toBe(false);
+    expect(document.querySelectorAll('#plan')).toHaveLength(1);
+    expect(document.querySelectorAll('[id="plan-list"]')).toHaveLength(1);
+    expect(document.querySelectorAll('label[for="plan"]')).toHaveLength(1);
+
+    dropdown!.items = [{ label: 'Team', value: 'team' }];
+    await settle();
+    expect((document.getElementById('plan') as HTMLInputElement).value).toBe('Team');
   });
 });

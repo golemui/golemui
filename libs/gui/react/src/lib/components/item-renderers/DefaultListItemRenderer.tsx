@@ -17,9 +17,5 @@ export function DefaultListItemRenderer({
     .filter(Boolean)
     .join(' ');
 
-  return (
-    <div role="option" className={classes} aria-selected={selected}>
-      {template}
-    </div>
-  );
+  return <div className={classes}>{template}</div>;
 }

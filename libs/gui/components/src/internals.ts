@@ -1,4 +1,5 @@
 export { updateListItems } from './lib/components/list-items';
+export { searchItems, itemLabel, selectedPills, type ItemFields } from './lib/utils/items';
 export {
   createDateRange,
   getDateFormatParts,

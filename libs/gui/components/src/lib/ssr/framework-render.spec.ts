@@ -5,6 +5,8 @@ import { describe, expect, it } from 'vitest';
 import { GuiSelect, GuiTabs, GuiTextinput } from '../../react';
 import { renderElement, renderElementsInHtml, renderTemplate } from '../../ssr';
 import '../components/currency';
+import '../components/dropdown';
+import '../components/multi-dropdown';
 import '../components/list';
 import '../components/number';
 import '../components/time-picker';
@@ -62,6 +64,29 @@ describe('rendering one element', () => {
     expect(rendered?.innerHTML).toMatch(/<gui-time[^>]*id="at_time"/);
     expect(rendered?.innerHTML).toMatch(/aria-controls="at_popup"/);
     expect(rendered?.innerHTML).not.toMatch(/<gui-time-list/);
+  });
+
+  it("renders a dropdown's field with the selected item's text", () => {
+    const rendered = renderElement('gui-dropdown', {
+      attributes: { uid: 'plan', label: 'Plan', value: 'team' },
+      properties: { items: options },
+    });
+    expect(rendered?.innerHTML).toMatch(/<label[^>]*for="plan"/);
+    expect(rendered?.innerHTML).toMatch(
+      /<input[^>]*role="combobox"[^>]*id="plan"[^>]*value="Team"/,
+    );
+    expect(rendered?.innerHTML).toMatch(/aria-controls="plan-list"/);
+    expect(rendered?.innerHTML).not.toMatch(/role="option"/);
+  });
+
+  it("renders a multi-dropdown's pills", () => {
+    const rendered = renderElement('gui-multi-dropdown', {
+      attributes: { uid: 'plans', label: 'Plans' },
+      properties: { items: options, values: ['starter', 'team'] },
+    });
+    expect(rendered?.innerHTML).toMatch(/<gui-multi-select-trigger/);
+    expect(rendered?.innerHTML).toContain('Starter');
+    expect(rendered?.innerHTML).toContain('Team');
   });
 
   it('renders nothing for an element that wraps the app children or has a shadow root', () => {

@@ -1,5 +1,6 @@
 import { html } from 'lit';
 import type { GuiList } from '../../src/lib/components/list';
+import type { GuiVisibleItem } from '../../src/lib/types';
 
 const frameworks = [
   { label: 'React', value: 'react' },
@@ -220,6 +221,21 @@ describe('gui-list', () => {
       activeItem(2);
     });
 
+    it('scrolls to the selected item when the keyboard focuses it', () => {
+      const items = Array.from({ length: 20 }, (_, i) => `item-${i}`);
+      cy.mount(
+        html`<gui-list uid="colors" height="200" value="item-15" .items=${items}></gui-list>`,
+      );
+
+      element().focus();
+
+      activeItem(15);
+      element()
+        .shadow()
+        .find('.gui-list__scroll-viewport')
+        .should(($viewport) => expect($viewport[0].scrollTop).to.be.greaterThan(0));
+    });
+
     it('fires gui-focus-change with -1 and gui-blur when focus leaves', () => {
       const onFocus = cy.spy().as('focus');
       const onBlur = cy.spy().as('blur');
@@ -290,6 +306,183 @@ describe('gui-list', () => {
       cy.mount(html`<gui-list disabled .items=${frameworks}></gui-list>`);
 
       element().should('have.attr', 'tabindex', '-1').and('have.attr', 'aria-disabled', 'true');
+    });
+  });
+
+  describe('visible items', () => {
+    it('reports the items to render, with their ids and state', () => {
+      const onVisible = cy.spy().as('visible');
+      const items = [
+        { label: 'React', value: 'react' },
+        { label: 'Angular', value: 'angular', disabled: true },
+        { label: 'Vue', value: 'vue' },
+      ];
+      cy.mount(
+        html`<gui-list
+          uid="fw"
+          value="vue"
+          .items=${items}
+          @gui-visible-items-change=${onVisible}
+        ></gui-list>`,
+      );
+
+      cy.get('@visible')
+        .its('lastCall.args.0.detail')
+        .should('deep.equal', [
+          {
+            template: items[0],
+            value: 'react',
+            index: 0,
+            id: 'fw-item-0',
+            selected: false,
+            focused: false,
+            disabled: false,
+          },
+          {
+            template: items[1],
+            value: 'angular',
+            index: 1,
+            id: 'fw-item-1',
+            selected: false,
+            focused: false,
+            disabled: true,
+          },
+          {
+            template: items[2],
+            value: 'vue',
+            index: 2,
+            id: 'fw-item-2',
+            selected: true,
+            focused: false,
+            disabled: false,
+          },
+        ]);
+      element().its('0.visibleItems').should('have.length', 3);
+    });
+
+    it('reports them again on scroll, selection and the active item, and only then', () => {
+      const onVisible = cy.spy().as('visible');
+      const items = Array.from({ length: 100 }, (_, i) => `Item ${i}`);
+      cy.mount(
+        html`<gui-list
+          uid="long"
+          height="200"
+          .items=${items}
+          @gui-visible-items-change=${onVisible}
+        ></gui-list>`,
+      );
+
+      cy.get('@visible').its('lastCall.args.0.detail.length').should('equal', 10);
+      cy.get('@visible').then((spy) => spy.resetHistory());
+
+      element().shadow().find('.gui-list__scroll-viewport').scrollTo(0, 400);
+      cy.get('@visible').its('lastCall.args.0.detail.0.index').should('equal', 5);
+
+      cy.get('@visible').then((spy) => spy.resetHistory());
+      element().focus().type('{downArrow}');
+      cy.get('@visible')
+        .its('lastCall.args.0.detail')
+        .should((visible: { focused: boolean; value: string }[]) => {
+          expect(visible.find((item) => item.focused)?.value).to.equal('Item 0');
+        });
+
+      cy.get('@visible').then((spy) => spy.resetHistory());
+      element().invoke('prop', 'disabled', false);
+      cy.get('@visible').should('not.have.been.called');
+    });
+
+    it('marks every item disabled while the list is', () => {
+      cy.mount(html`<gui-list disabled .items=${frameworks}></gui-list>`);
+      element()
+        .its('0.visibleItems')
+        .should((visible: { disabled: boolean }[]) => {
+          expect(visible.every((item) => item.disabled)).to.equal(true);
+        });
+    });
+  });
+
+  describe('clicks', () => {
+    // Renders the options from visibleItems, as an app does.
+    const renderOptions = (event: Event) => {
+      const list = event.currentTarget as GuiList;
+      const visible = (event as CustomEvent<GuiVisibleItem[]>).detail;
+      list.querySelectorAll('[role="option"]').forEach((option) => option.remove());
+      for (const item of visible) {
+        const option = document.createElement('div');
+        option.id = item.id;
+        option.setAttribute('role', 'option');
+        option.textContent = String(item.value);
+        list.append(option);
+      }
+    };
+
+    it('picks the clicked option and makes it the active one', () => {
+      const onChange = cy.spy().as('change');
+      cy.mount(
+        html`<gui-list
+          uid="colors"
+          .items=${frameworks}
+          @gui-visible-items-change=${renderOptions}
+          @gui-change=${onChange}
+        ></gui-list>`,
+      );
+
+      cy.get('#colors-item-2').click();
+
+      element().should('have.prop', 'value', 'vue');
+      activeItem(2);
+      cy.get('@change')
+        .should('have.been.calledOnce')
+        .its('lastCall.args.0.detail')
+        .should('deep.equal', { value: 'vue' });
+    });
+
+    it('picks the clicked option on the first click while the selected one is out of view', () => {
+      const items = Array.from({ length: 20 }, (_, i) => `item-${i}`);
+      cy.mount(
+        html`<gui-list
+          uid="colors"
+          height="200"
+          value="item-15"
+          .items=${items}
+          @gui-visible-items-change=${(event: Event) => {
+            renderOptions(event);
+            (event.currentTarget as GuiList)
+              .querySelectorAll<HTMLElement>('[role="option"]')
+              .forEach((option) => (option.style.height = '40px'));
+          }}
+        ></gui-list>`,
+      );
+
+      cy.get('#colors-item-1').click();
+
+      element().should('have.prop', 'value', 'item-1');
+      activeItem(1);
+    });
+
+    it('ignores clicks on disabled items, and while read-only or disabled', () => {
+      const onChange = cy.spy().as('change');
+      const items = [
+        { label: 'React', value: 'react' },
+        { label: 'Angular', value: 'angular', disabled: true },
+      ];
+      cy.mount(
+        html`<gui-list
+          uid="colors"
+          .items=${items}
+          @gui-visible-items-change=${renderOptions}
+          @gui-change=${onChange}
+        ></gui-list>`,
+      );
+
+      cy.get('#colors-item-1').click();
+      element().invoke('prop', 'readOnly', true);
+      cy.get('#colors-item-0').click();
+      element().invoke('prop', 'readOnly', false).invoke('prop', 'disabled', true);
+      cy.get('#colors-item-0').click({ force: true });
+
+      element().should(($list) => expect($list[0].value).to.equal(undefined));
+      cy.get('@change').should('not.have.been.called');
     });
   });
 });

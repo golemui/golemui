@@ -18,7 +18,7 @@ const classes = computed(() =>
 </script>
 
 <template>
-  <div role="option" :class="classes" :aria-selected="selected">
+  <div :class="classes">
     {{ template }}
   </div>
 </template>
