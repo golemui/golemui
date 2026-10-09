@@ -1,3 +1,13 @@
+## 2.0.0-rc.1 (2026-10-09)
+
+### 🚀 Features
+
+- **gui-components:** simplify list api ([#421](https://github.com/golemui/golemui/pull/421))
+
+### ❤️ Thank You
+
+- Raúl Jiménez @Elecash
+
 ## 2.0.0-rc.0 (2026-10-08)
 
 ### 🚀 Features
