@@ -44,6 +44,10 @@ the form component accepts: https://golemui.com/dx/features/overview.md
   `uploadService` (`{ upload, remove? }` for `fileUpload`/`multiFileUpload`). Passed by reference,
   never stored in form data; keep the object identity stable. Not the field-to-field
   "Dependencies" feature above. MCP: `get_concept({ concept: "host-services" })`.
+  The markdown widgets insert the `parse` result as HTML without sanitizing it. For markdown from
+  users or stored data, `parse` must remove raw HTML and `javascript:` links (Snarkdown and Marked
+  keep both, Micromark and markdown-it escape both by default). It returns `SanitizedHtml`, so
+  TypeScript hosts cast the sanitized result.
 
 ## Form Definition API (TS `gui.*` deep-dives)
 

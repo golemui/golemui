@@ -918,7 +918,7 @@ const HOST_SERVICES_CONCEPT: GetConceptResult = {
     'HTTP transport for file uploads. The host application injects them through the `dependencies` ' +
     'entry of the form init config (a sibling of `functions`). The object is passed by reference to ' +
     'the widgets that read it and never enters the form state — so it may hold async functions and ' +
-    'closures over tokens. Known keys: `markdown` (`{ parse(markdown) => html }`, read by the ' +
+    'closures over tokens. Known keys: `markdown` (`{ parse(markdown) => SanitizedHtml }`, read by the ' +
     '`markdown` and `markdownText` widgets) and `uploadService` (read by `fileUpload` and ' +
     '`multiFileUpload`). This is unrelated to the "dependencies between fields" feature (a field ' +
     "reacting to another field's value), which is expressed with reactive expressions.",
@@ -972,6 +972,11 @@ const HOST_SERVICES_CONCEPT: GetConceptResult = {
     'Keep the `dependencies` object reference stable (module level or memoized): the form ' +
       're-initializes whenever its `config` identity changes, and an inline object literal in ' +
       'JSX or a template is a new identity on every render.',
+    'The `markdown` and `markdownText` widgets insert the `parse` result as HTML without ' +
+      'sanitizing it. When the markdown can come from users or stored data, `parse` must remove raw ' +
+      'HTML and `javascript:` links. Snarkdown and Marked keep both, so sanitize their output. ' +
+      'Micromark and markdown-it escape both with their default options. In TypeScript, cast the ' +
+      'result to `SanitizedHtml` (exported by `@golemui/gui-shared`).',
     'A widget that needs a missing service does not break the form: `fileUpload` renders disabled ' +
       'with an inline "not configured" error and logs to the console; `markdown` renders blank.',
     'Never put a `File` object in the form value — the value is the plain envelope the widget ' +
