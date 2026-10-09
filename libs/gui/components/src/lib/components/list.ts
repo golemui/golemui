@@ -140,6 +140,7 @@ export class GuiList extends GuiFormControl {
   override connectedCallback() {
     super.connectedCallback();
     this.addEventListener('keydown', this.onKeyDown);
+    this.addEventListener('pointerdown', this.onPointerDown);
     this.addEventListener('focus', this.onFocus);
     this.addEventListener('focusout', this.onFocusOut);
     this.addEventListener('click', this.onClick);
@@ -283,7 +284,18 @@ export class GuiList extends GuiFormControl {
     this.selectItem(item);
   };
 
+  /** Set while a press on the list is giving it focus. */
+  private pointerFocus = false;
+
+  private onPointerDown = () => {
+    this.pointerFocus = true;
+    setTimeout(() => (this.pointerFocus = false));
+  };
+
   private onFocus = () => {
+    // A click focuses the list before it picks: scrolling to the selected item now would move
+    // another option under the pointer, and the click would miss the one pressed.
+    if (this.pointerFocus) return;
     if (!this.hasSelection() || !this.items.length) return;
 
     const selectedIndex = this.findSelectedIndex();
@@ -416,6 +428,7 @@ export class GuiList extends GuiFormControl {
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.removeEventListener('keydown', this.onKeyDown);
+    this.removeEventListener('pointerdown', this.onPointerDown);
     this.removeEventListener('focus', this.onFocus);
     this.removeEventListener('focusout', this.onFocusOut);
     this.removeEventListener('click', this.onClick);

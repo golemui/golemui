@@ -221,6 +221,21 @@ describe('gui-list', () => {
       activeItem(2);
     });
 
+    it('scrolls to the selected item when the keyboard focuses it', () => {
+      const items = Array.from({ length: 20 }, (_, i) => `item-${i}`);
+      cy.mount(
+        html`<gui-list uid="colors" height="200" value="item-15" .items=${items}></gui-list>`,
+      );
+
+      element().focus();
+
+      activeItem(15);
+      element()
+        .shadow()
+        .find('.gui-list__scroll-viewport')
+        .should(($viewport) => expect($viewport[0].scrollTop).to.be.greaterThan(0));
+    });
+
     it('fires gui-focus-change with -1 and gui-blur when focus leaves', () => {
       const onFocus = cy.spy().as('focus');
       const onBlur = cy.spy().as('blur');
@@ -420,6 +435,29 @@ describe('gui-list', () => {
         .should('have.been.calledOnce')
         .its('lastCall.args.0.detail')
         .should('deep.equal', { value: 'vue' });
+    });
+
+    it('picks the clicked option on the first click while the selected one is out of view', () => {
+      const items = Array.from({ length: 20 }, (_, i) => `item-${i}`);
+      cy.mount(
+        html`<gui-list
+          uid="colors"
+          height="200"
+          value="item-15"
+          .items=${items}
+          @gui-visible-items-change=${(event: Event) => {
+            renderOptions(event);
+            (event.currentTarget as GuiList)
+              .querySelectorAll<HTMLElement>('[role="option"]')
+              .forEach((option) => (option.style.height = '40px'));
+          }}
+        ></gui-list>`,
+      );
+
+      cy.get('#colors-item-1').click();
+
+      element().should('have.prop', 'value', 'item-1');
+      activeItem(1);
     });
 
     it('ignores clicks on disabled items, and while read-only or disabled', () => {
