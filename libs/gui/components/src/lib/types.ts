@@ -41,6 +41,19 @@ export type Option = {
   value: OptionValue;
 };
 
+/**
+ * An option as you give it to `gui-select` or `gui-radiogroup`: a value, which is both its text
+ * and its value, a `{ label, value }` object, or any object whose text and value `label-field`
+ * and `value-field` name.
+ */
+export type OptionInput = OptionValue | object;
+
+/**
+ * An item as you give it to `gui-list` or `gui-multi-list`: a value, or any object whose value
+ * `value-field` names (`value` by default). The list turns each one into a {@link ListItem}.
+ */
+export type ListItemInput = OptionValue | object;
+
 export type ListItem<T> = {
   template: T;
   value: OptionValue;
@@ -98,8 +111,11 @@ export type FileItem<TData = unknown> = {
  *
  * Keep the object reference stable (module level or memoized): a new form
  * `config` identity re-initializes the form.
+ *
+ * `TData` is what `upload` resolves with, so `remove` reads it typed: an
+ * `UploadService<{ url: string }>` gets `item.data?.url`.
  */
-export type UploadService = {
+export type UploadService<TData = unknown> = {
   upload(
     file: File,
     ctx: {
@@ -108,8 +124,8 @@ export type UploadService = {
       onProgress?: (percentage: number) => void;
       signal: AbortSignal;
     },
-  ): Promise<unknown>;
-  remove?(item: FileItem): Promise<void>;
+  ): Promise<TData>;
+  remove?(item: FileItem<TData>): Promise<void>;
 };
 
 /** Converts markdown to HTML. Popular options are Snarkdown, Micromark and Marked. */

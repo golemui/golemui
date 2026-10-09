@@ -29,6 +29,7 @@ export default [
           ignoredFiles: [
             '{projectRoot}/eslint.config.{js,cjs,mjs,ts,cts,mts}',
             '{projectRoot}/src/**/*.spec*.ts',
+            '{projectRoot}/test-types/**/*',
             '{projectRoot}/cypress/**/*',
             '{projectRoot}/cypress.config.ts',
           ],

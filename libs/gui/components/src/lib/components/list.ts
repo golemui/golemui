@@ -4,7 +4,7 @@ import { cspStyleMap } from '@golemui/lit-utils';
 import { safeDefine } from '@golemui/lit-utils';
 import { gridKeyStep, listPageSize, nextEnabledIndex } from '../utils/grid-nav';
 import { updateListItems } from './list-items';
-import type { ListItem, OptionValue } from '../types';
+import type { ListItem, ListItemInput, OptionValue } from '../types';
 import { GuiFormControl } from '../gui-form-control';
 import { dispatch, dispatchBlur, dispatchValue, fires, valueEvents } from '../utils/events';
 import { addErrors, showsErrors } from '../utils/templates';
@@ -49,8 +49,11 @@ export class GuiList extends GuiFormControl {
   @property({ type: String }) value: OptionValue | undefined = undefined;
   /** For items given as objects, the key of the value. */
   @property({ type: String, attribute: 'value-field' }) valueField: string | undefined = undefined;
-  /** The items of the list. */
-  @property({ type: Array }) items: ListItem<unknown>[] = [];
+  /**
+   * The items of the list: values, or objects whose value `value-field` names. The list
+   * normalizes them to `{ template, value }` objects, the detail of `gui-update-items`.
+   */
+  @property({ type: Array }) items: ListItemInput[] = [];
 
   /** Height of each item, in pixels. Needed to virtualize the list. */
   @property({ type: Number, attribute: 'item-height' }) itemHeight: number | undefined = undefined;

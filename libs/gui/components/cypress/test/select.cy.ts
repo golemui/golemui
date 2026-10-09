@@ -35,6 +35,16 @@ describe('gui-select', () => {
       cy.get('gui-select label').should('contain.text', 'Color');
     });
 
+    it('renders plain values and keeps options as they were given', () => {
+      const given = ['Red', 'Green'];
+      cy.mount(html`<gui-select label="Color" .options=${given}></gui-select>`);
+
+      cy.get('gui-select option').eq(2).should('have.value', 'Green').and('contain.text', 'Green');
+      // The element normalizes a copy: the property still holds what the host set.
+      element().should(($el) => expect($el[0].options).to.equal(given));
+      element().should(($el) => expect($el[0].options).to.deep.equal(['Red', 'Green']));
+    });
+
     it('says "Select an option" without a placeholder', () => {
       cy.mount(html`<gui-select label="Color" .options=${options}></gui-select>`);
 
