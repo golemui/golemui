@@ -4,6 +4,7 @@ import {
   commonLanguages,
   initializeI18n,
   kitchenSink,
+  mockMarkdownParser,
   mockUploadService,
   onFormEvent,
 } from '@golemui/apps-shared';
@@ -19,7 +20,6 @@ import type { Dependencies, GuiFormInitConfig } from '@golemui/gui-shared';
 import type { CustomValidatorSchemas } from '@golemui/gui-validators';
 import type { VueItemRenderer } from '@golemui/vue';
 import i18next from 'i18next';
-import snarkdown from 'snarkdown';
 import CustomFormHealthBoundary from '~/components/CustomFormHealthBoundary.vue';
 import AirportItemRenderer from '~/components/item-renderers/AirportItemRenderer.vue';
 import ComplexListItemRenderer from '~/components/item-renderers/ComplexListItemRenderer.vue';
@@ -40,9 +40,7 @@ const languages = commonLanguages
     label: `${flag} ${label}`,
   }));
 const deps: Dependencies = {
-  markdown: {
-    parse: (md: string) => snarkdown(md),
-  },
+  markdown: mockMarkdownParser,
   uploadService: mockUploadService,
 };
 const middlewares = [devToolsMiddleware()];

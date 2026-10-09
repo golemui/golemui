@@ -3,13 +3,13 @@
 import {
   buildKitchenSinkDx,
   initializeI18n,
+  mockMarkdownParser,
   mockUploadService,
   onFormEvent,
 } from '@golemui/apps-shared';
 import type { FormHealth } from '@golemui/core';
 import { GuiForm } from '@golemui/gui-react';
 import { useCallback, useState } from 'react';
-import snarkdown from 'snarkdown';
 import { customWidgetLoaders } from '../../../components/custom-widget-loaders';
 import { AirportItemRenderer } from '../../../components/item-renderers/AirportItemRenderer';
 import { ComplexListItemRenderer } from '../../../components/item-renderers/ComplexListItemRenderer';
@@ -30,9 +30,7 @@ const ks = buildKitchenSinkDx({
     countryItemRenderer: CountryItemRenderer,
   },
   dependencies: {
-    markdown: {
-      parse: (md: string) => snarkdown(md),
-    },
+    markdown: mockMarkdownParser,
     uploadService: mockUploadService,
   },
   // React-flavored Renderer example — the `render` function is called with the

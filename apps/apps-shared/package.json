@@ -10,6 +10,7 @@
     "@golemui/gui-shared": "*",
     "@golemui/gui-validators": "*",
     "i18next": "^25.7.4",
+    "snarkdown": "^2.0.0",
     "tslib": "^2.3.0",
     "zod": "^4.0.0"
   }

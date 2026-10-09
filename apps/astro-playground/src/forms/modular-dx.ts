@@ -1,11 +1,10 @@
-import { mockUploadService, modularDx } from '@golemui/apps-shared';
+import { mockMarkdownParser, mockUploadService, modularDx } from '@golemui/apps-shared';
 import type { Dependencies, GuiFormInitConfig } from '@golemui/gui-shared';
-import snarkdown from 'snarkdown';
 
 const md = modularDx;
 
 const dependencies: Dependencies = {
-  markdown: { parse: (markdown: string) => snarkdown(markdown) },
+  markdown: mockMarkdownParser,
   uploadService: mockUploadService,
 };
 
