@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
 import { create, ts } from '@custom-elements-manifest/analyzer';
+import type { CustomElement } from 'custom-elements-manifest/schema';
 import { describe, expect, it } from 'vitest';
 
 const sources = import.meta.glob<string>(
@@ -30,8 +31,10 @@ describe('gui-components events maps', () => {
         if (declaration.kind !== 'class' || !(declaration.name in exports)) continue;
         const map = exports[`${declaration.name}Events`] as object | undefined;
         const mapped = Object.keys(map ?? {}).sort();
+        // The schema's CustomElementDeclaration leaves out the CustomElement fields it writes.
+        const { events = [] } = declaration as typeof declaration & CustomElement;
         // The analyzer also reads `new CustomEvent(type)` as an event named `type`.
-        const documented = (declaration.events ?? [])
+        const documented = events
           .map(({ name }) => name)
           .filter((name) => name.startsWith('gui-'))
           .sort();

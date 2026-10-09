@@ -11,7 +11,8 @@ const kebab = (name: string) => name.replace(/[A-Z]/g, (letter) => `-${letter.to
 // Without an explicit `attribute`, Lit would lowercase the name instead (`mindate`).
 describe('gui-components attribute names', () => {
   it('are the kebab-case form of their property', { timeout: 30_000 }, async () => {
-    const elements = Object.values(await import('../../index')).filter(
+    const exported: unknown[] = Object.values(await import('../../index'));
+    const elements = exported.filter(
       (value): value is typeof ReactiveElement =>
         typeof value === 'function' && 'elementProperties' in value,
     );

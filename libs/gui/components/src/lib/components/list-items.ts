@@ -72,10 +72,7 @@ export function createListItemMapper(opt: unknown, { valueField }: ListItemField
   };
 }
 
-export const updateListItems = (
-  opts: ListItemInput[],
-  props: ListItemFields,
-): ListItem<any>[] => {
+export const updateListItems = (opts: ListItemInput[], props: ListItemFields): ListItem<any>[] => {
   if (Array.isArray(opts) && opts.length > 0) {
     if (isListItem(opts[0])) {
       // Already normalized.
