@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import type { SanitizedHtml } from '../../shared';
 import { processDx, getRawChild, resolveDynamic } from './helpers';
 import { _guiButton } from '../shortcuts/actions/guiActions.impl';
 import { formDefs } from '../formDefs';
@@ -105,7 +106,7 @@ describe('DX Pipeline — Actions', () => {
     });
 
     it('includes dependencies in DxResult when formConfig provides them', () => {
-      const mockParse = (md: string) => `<p>${md}</p>`;
+      const mockParse = (md: string) => `<p>${md}</p>` as SanitizedHtml;
       const result = formDefs.processDxFacade([_guiTextInput('name')], [], {
         dependencies: { markdown: { parse: mockParse } },
       });

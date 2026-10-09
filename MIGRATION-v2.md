@@ -24,6 +24,7 @@ you use GolemUI:
 - [ ] Replace `flex` layouts with `grid` (they still render, as a grid).
 - [ ] Replace pixel gaps with gap steps, and check every grid that sets `justify` or `align`.
 - [ ] Check your global CSS resets, which now override GolemUI's styles.
+- [ ] Make your `markdown` parser return `SanitizedHtml`, and sanitize its output.
 - [ ] Update CSS and test selectors that target tabs, accordions, alerts, grids or error lists.
 - [ ] In custom widgets, listen for the `gui-*` events.
 - [ ] In your own widget set, rename the `flex` loader to `grid`, or add a `grid` loader.
@@ -111,6 +112,40 @@ declare the layer order at the top of your CSS, before the GolemUI stylesheets l
 ```
 
 Token overrides work as before: set the `--gui-*` variables on `:root` or any ancestor.
+
+### The markdown parser returns `SanitizedHtml`
+
+This applies only to TypeScript apps that pass a `markdown` parser in `dependencies`.
+
+The `markdown` and `markdownText` widgets insert the parser output as HTML without sanitizing it.
+To make that visible, `parse` now returns `SanitizedHtml` instead of `string`. A parser that returns
+a plain string no longer compiles.
+
+**Before:**
+
+```ts
+import snarkdown from 'snarkdown';
+
+const dependencies = {
+  markdown: { parse: (md: string) => snarkdown(md) },
+};
+```
+
+**After:**
+
+```ts
+import type { SanitizedHtml } from '@golemui/gui-shared';
+import snarkdown from 'snarkdown';
+
+const dependencies = {
+  // `sanitizeHtml` is your HTML sanitizer.
+  markdown: { parse: (md: string) => sanitizeHtml(snarkdown(md)) as SanitizedHtml },
+};
+```
+
+When the markdown can come from users or stored data, sanitize the parser output. Snarkdown and
+Marked keep raw HTML and `javascript:` links. Micromark and markdown-it escape both with their
+default options. When all the markdown comes from your own source code, the cast alone is enough.
 
 ## Layouts
 

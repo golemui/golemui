@@ -351,7 +351,14 @@ export type {
   ToggleProps,
 } from './lib/widget.props';
 
-export type { Dependencies, FileItem, FileStatus, UploadService } from './lib/shared';
+export type {
+  Dependencies,
+  FileItem,
+  FileStatus,
+  MarkdownParser,
+  SanitizedHtml,
+  UploadService,
+} from './lib/shared';
 
 export type { GolemWidget } from './lib/widgets';
 export { actionWidgets, displayWidgets, inputWidgets, layoutWidgets } from './lib/widgets';

@@ -149,7 +149,30 @@ export type UploadService<TData = unknown> = {
   remove?(item: FileItem<TData>): Promise<void>;
 };
 
-/** Converts markdown to HTML. Popular options are Snarkdown, Micromark and Marked. */
+declare const sanitizedHtmlBrand: unique symbol;
+
+/**
+ * HTML that is safe to insert into the page. Only a cast creates it, and nothing checks the
+ * content. The cast marks the place where the host sanitizes the HTML or trusts its source.
+ */
+export type SanitizedHtml = string & { readonly [sanitizedHtmlBrand]: true };
+
+/**
+ * Converts markdown to HTML for `gui-markdown-text` and the `gui-markdown` preview.
+ *
+ * The elements insert the result as HTML without sanitizing it. When the markdown can come from
+ * users or stored data, `parse` must remove raw HTML and `javascript:` links. Snarkdown and Marked
+ * keep both, so sanitize their output. Micromark and markdown-it escape both with their default
+ * options. With server rendering, `parse` also runs in Node.
+ *
+ * @example
+ * import snarkdown from 'snarkdown';
+ *
+ * const markdown: MarkdownParser = {
+ *   // `sanitizeHtml` is your HTML sanitizer.
+ *   parse: (md) => sanitizeHtml(snarkdown(md)) as SanitizedHtml,
+ * };
+ */
 export type MarkdownParser = {
-  parse: (markdown: string) => string;
+  parse: (markdown: string) => SanitizedHtml;
 };
