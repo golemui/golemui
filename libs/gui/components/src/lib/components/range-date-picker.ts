@@ -1,5 +1,6 @@
 import { html, nothing } from 'lit';
 import { property, query, state } from 'lit/decorators.js';
+import { booleanAttribute } from '../utils/converters';
 import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
 import './range-date-input';
@@ -67,7 +68,9 @@ export class GuiRangeDatePicker extends GuiFormControl {
    * Whether the element renders its own error list. Elements that embed it turn it off and show the
    * errors themselves.
    */
-  @property({ type: Boolean, attribute: 'show-errors' }) showErrors: boolean | undefined = true;
+  @property({ attribute: 'show-errors', converter: booleanAttribute }) showErrors:
+    | boolean
+    | undefined = true;
   /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
   /** The date ranges, as `{ start, end }` ISO dates. */
@@ -154,7 +157,9 @@ export class GuiRangeDatePicker extends GuiFormControl {
     | string
     | undefined = undefined;
   /** Lets the user edit a range in place from its pill. */
-  @property({ type: Boolean, attribute: 'allow-edit' }) allowEdit: boolean | undefined = false;
+  @property({ attribute: 'allow-edit', converter: booleanAttribute }) allowEdit:
+    | boolean
+    | undefined = false;
   /** Tooltip of the edit button of a range pill. */
   @property({ type: String, attribute: 'edit-label' }) editLabel: string | undefined = undefined;
   /** Hint that a range pill can be edited. `{label}` is the range. */
@@ -397,7 +402,9 @@ export class GuiRangeDatePicker extends GuiFormControl {
         ${calendar}
       </div>
 
-      ${this.showErrors ? addErrors(this.uid, { errors: this.errors, touched: this.touched }) : ''}
+      ${this.showErrors !== false
+        ? addErrors(this.uid, { errors: this.errors, touched: this.touched })
+        : ''}
     `;
   }
 

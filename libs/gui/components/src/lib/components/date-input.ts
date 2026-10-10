@@ -1,5 +1,6 @@
 import { html, nothing, type PropertyValues } from 'lit';
 import { property } from 'lit/decorators.js';
+import { booleanAttribute } from '../utils/converters';
 import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
@@ -55,12 +56,15 @@ export class GuiDate extends GuiFormControl {
    * Whether the element renders its own error list. Elements that embed it turn it off and show the
    * errors themselves.
    */
-  @property({ type: Boolean, attribute: 'show-errors' }) showErrors: boolean | undefined = true;
+  @property({ attribute: 'show-errors', converter: booleanAttribute }) showErrors:
+    | boolean
+    | undefined = true;
   /**
    * Whether the element renders its hint. Elements that embed it turn it off and show the hint
    * themselves: `aria-describedby` still points at the hint by its id.
    */
-  @property({ type: Boolean, attribute: 'show-hint' }) showHint: boolean | undefined = true;
+  @property({ attribute: 'show-hint', converter: booleanAttribute }) showHint: boolean | undefined =
+    true;
 
   /** Icon class name shown inside the control, for example from an icon font. */
   @property({ type: String }) icon: string | undefined = '';
@@ -91,7 +95,7 @@ export class GuiDate extends GuiFormControl {
    *
    * @internal
    */
-  @property({ type: Boolean, attribute: 'defer-focus-leave' }) deferFocusLeave:
+  @property({ attribute: 'defer-focus-leave', converter: booleanAttribute }) deferFocusLeave:
     | boolean
     | undefined = false;
   /** Earliest selectable date, as an ISO date (`YYYY-MM-DD`). */
@@ -225,7 +229,7 @@ export class GuiDate extends GuiFormControl {
     return html`
       ${addLabel(
         this.uid,
-        this.showHint ? templateData : { ...templateData, hint: undefined },
+        this.showHint !== false ? templateData : { ...templateData, hint: undefined },
         false,
         undefined,
         false,
@@ -251,7 +255,9 @@ export class GuiDate extends GuiFormControl {
           : nothing}
       </div>
 
-      ${this.showErrors && this.errors?.length ? addErrors(this.uid, templateData) : nothing}
+      ${this.showErrors !== false && this.errors?.length
+        ? addErrors(this.uid, templateData)
+        : nothing}
     `;
   }
 

@@ -1,5 +1,6 @@
 import { html, nothing, type PropertyValues } from 'lit';
 import { property } from 'lit/decorators.js';
+import { booleanAttribute } from '../utils/converters';
 import { cspStyleMap } from '@golemui/lit-utils';
 import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
@@ -84,12 +85,15 @@ export class GuiRangeTimeInput extends GuiFormControl {
    * Whether the element renders its own error list. Elements that embed it turn it off and show the
    * errors themselves.
    */
-  @property({ type: Boolean, attribute: 'show-errors' }) showErrors: boolean | undefined = true;
+  @property({ attribute: 'show-errors', converter: booleanAttribute }) showErrors:
+    | boolean
+    | undefined = true;
   /**
    * Whether the element renders its hint. Elements that embed it turn it off and show the hint
    * themselves: `aria-describedby` still points at the hint by its id.
    */
-  @property({ type: Boolean, attribute: 'show-hint' }) showHint: boolean | undefined = true;
+  @property({ attribute: 'show-hint', converter: booleanAttribute }) showHint: boolean | undefined =
+    true;
 
   /** Icon class name shown inside the control, for example from an icon font. */
   @property({ type: String }) icon: string | undefined = '';
@@ -141,7 +145,7 @@ export class GuiRangeTimeInput extends GuiFormControl {
   /** Text shown between the start and end of a range. */
   @property({ type: String }) separator: string | undefined = undefined;
   /** Allows typing any time, not only picking one from the list. */
-  @property({ type: Boolean, attribute: 'allow-custom-time' }) allowCustomTime:
+  @property({ attribute: 'allow-custom-time', converter: booleanAttribute }) allowCustomTime:
     | boolean
     | undefined = undefined;
   /** Times that cannot be picked, as `{ start, end }` ISO time ranges. */
@@ -156,7 +160,9 @@ export class GuiRangeTimeInput extends GuiFormControl {
     | string
     | undefined = undefined;
   /** Opt-in select → edit → confirm flow on the pills. */
-  @property({ type: Boolean, attribute: 'allow-edit' }) allowEdit: boolean | undefined = false;
+  @property({ attribute: 'allow-edit', converter: booleanAttribute }) allowEdit:
+    | boolean
+    | undefined = false;
   /** Tooltip of the edit button of a range pill. */
   @property({ type: String, attribute: 'edit-label' }) editLabel: string | undefined = undefined;
   /** Hint that a range pill can be edited. `{label}` is the range. */
@@ -188,7 +194,7 @@ export class GuiRangeTimeInput extends GuiFormControl {
    *
    * @internal
    */
-  @property({ type: Boolean, attribute: 'defer-focus-leave' }) deferFocusLeave:
+  @property({ attribute: 'defer-focus-leave', converter: booleanAttribute }) deferFocusLeave:
     | boolean
     | undefined = false;
 
@@ -387,7 +393,7 @@ export class GuiRangeTimeInput extends GuiFormControl {
     return html`
       ${addLabel(
         this.uid,
-        this.showHint ? templateData : { ...templateData, hint: undefined },
+        this.showHint !== false ? templateData : { ...templateData, hint: undefined },
         false,
         undefined,
         false,
@@ -420,7 +426,7 @@ export class GuiRangeTimeInput extends GuiFormControl {
             .toolbarAriaLabel=${message('selectedTimeRanges')}
             .items=${pillItems}
             .errors=${this.errors}
-            .touched=${!!this.touched}
+            .touched=${this.touched}
             .removable=${true}
             .clickable=${true}
             .bubble=${true}
@@ -478,7 +484,9 @@ export class GuiRangeTimeInput extends GuiFormControl {
           : nothing}
       </div>
 
-      ${this.showErrors && this.errors?.length ? addErrors(this.uid, templateData) : nothing}
+      ${this.showErrors !== false && this.errors?.length
+        ? addErrors(this.uid, templateData)
+        : nothing}
     `;
   }
 

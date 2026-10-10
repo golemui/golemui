@@ -1,5 +1,6 @@
 import { html, nothing, type PropertyValues } from 'lit';
 import { property, state } from 'lit/decorators.js';
+import { booleanAttribute } from '../utils/converters';
 import { classMap } from 'lit/directives/class-map.js';
 import { live } from 'lit/directives/live.js';
 import { repeat } from 'lit/directives/repeat.js';
@@ -57,7 +58,9 @@ export class GuiDropdown extends GuiFormControl {
    * The search is the app's: the dropdown shows `items` as they are and reports what the user
    * types with `gui-filter`.
    */
-  @property({ type: Boolean, attribute: 'remote-filter' }) remoteFilter = false;
+  @property({ attribute: 'remote-filter', converter: booleanAttribute }) remoteFilter:
+    | boolean
+    | undefined = false;
   /** Milliseconds to wait after the last keystroke before searching. */
   @property({ type: Number, attribute: 'input-debounce' }) inputDebounce = 500;
   /**

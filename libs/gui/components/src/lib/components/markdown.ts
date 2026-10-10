@@ -1,5 +1,6 @@
 import { html, nothing } from 'lit';
 import { property, state } from 'lit/decorators.js';
+import { booleanAttribute } from '../utils/converters';
 import { live } from 'lit/directives/live.js';
 import { cspStyleMap } from '@golemui/lit-utils';
 import { safeDefine } from '@golemui/lit-utils';
@@ -98,9 +99,10 @@ export class GuiMarkdown extends GuiFormControl {
   @property({ type: Number, attribute: 'minimum-height' }) minimumHeight: number | undefined =
     undefined;
   /** Grows the field with its content instead of scrolling. */
-  @property({ type: Boolean, attribute: 'auto-grow' }) autoGrow: boolean | undefined = false;
+  @property({ attribute: 'auto-grow', converter: booleanAttribute }) autoGrow: boolean | undefined =
+    false;
   /** Opens with the preview shown. */
-  @property({ type: Boolean, attribute: 'default-open-preview' }) defaultOpenPreview:
+  @property({ attribute: 'default-open-preview', converter: booleanAttribute }) defaultOpenPreview:
     | boolean
     | undefined = undefined;
   /**

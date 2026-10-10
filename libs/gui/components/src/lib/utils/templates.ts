@@ -162,5 +162,7 @@ export const addPickerPanel = (
 ) =>
   html`<div class="gui-picker__panel" ?hidden=${options?.hidden ?? false}>
     ${content}
-    ${templateData.showErrors ? addErrors(uid, templateData, { variant: 'panel' }) : nothing}
+    ${templateData.showErrors !== false
+      ? addErrors(uid, templateData, { variant: 'panel' })
+      : nothing}
   </div>`;

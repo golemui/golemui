@@ -1,5 +1,6 @@
 import { html, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
+import { booleanAttribute } from '../utils/converters';
 import { cspStyleMap } from '@golemui/lit-utils';
 import { safeDefine } from '@golemui/lit-utils';
 import { GUIAriaController } from '../controllers/aria.controller';
@@ -48,7 +49,8 @@ export class GuiNumber extends GuiFormControl {
   /** Largest allowed number. */
   @property({ type: Number }) maximum: number | undefined = undefined;
   /** Grows the field with its content instead of scrolling. */
-  @property({ type: Boolean, attribute: 'auto-grow' }) autoGrow: boolean | undefined = false;
+  @property({ attribute: 'auto-grow', converter: booleanAttribute }) autoGrow: boolean | undefined =
+    false;
 
   private ariaController = new GUIAriaController(this, {
     getTargets: () => this.querySelectorAll(`input[id="${this.uid}"]`),

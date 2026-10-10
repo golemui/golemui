@@ -1,5 +1,6 @@
 import { ReactiveElement } from 'lit';
 import { property } from 'lit/decorators.js';
+import { booleanAttribute } from '../utils/converters';
 import { safeDefine } from '@golemui/lit-utils';
 import { fires } from '../utils/events';
 import type { GuiAccordionItem, GuiToggleEventDetail } from './accordion-item';
@@ -31,7 +32,7 @@ import './accordion-item';
  */
 export class GuiAccordion extends ReactiveElement {
   /** Lets several items be open at once. */
-  @property({ type: Boolean, reflect: true }) multiple = false;
+  @property({ converter: booleanAttribute, reflect: true }) multiple: boolean | undefined = false;
 
   override createRenderRoot() {
     return this;

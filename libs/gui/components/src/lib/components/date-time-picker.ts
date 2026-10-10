@@ -1,5 +1,6 @@
 import { html, nothing, type PropertyValues } from 'lit';
 import { property, state } from 'lit/decorators.js';
+import { booleanAttribute } from '../utils/converters';
 import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
 import './date-time-input';
@@ -72,7 +73,9 @@ export class GuiDateTimePicker extends GuiFormControl {
    * Whether the element renders its own error list. Elements that embed it turn it off and show the
    * errors themselves.
    */
-  @property({ type: Boolean, attribute: 'show-errors' }) showErrors: boolean | undefined = true;
+  @property({ attribute: 'show-errors', converter: booleanAttribute }) showErrors:
+    | boolean
+    | undefined = true;
   /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
   /** The date and time, as an ISO date-time (`YYYY-MM-DDTHH:mm:ss`). */
@@ -140,7 +143,7 @@ export class GuiDateTimePicker extends GuiFormControl {
     | DisabledTimeRange[]
     | undefined = undefined;
   /** Allows typing any time, not only picking one from the list. */
-  @property({ type: Boolean, attribute: 'allow-custom-time' }) allowCustomTime:
+  @property({ attribute: 'allow-custom-time', converter: booleanAttribute }) allowCustomTime:
     | boolean
     | undefined = false;
   /** Label of the time in the calendar. An empty value keeps the default. */
@@ -360,7 +363,9 @@ export class GuiDateTimePicker extends GuiFormControl {
         ${calendar}
       </div>
 
-      ${this.showErrors ? addErrors(this.uid, { errors: this.errors, touched: this.touched }) : ''}
+      ${this.showErrors !== false
+        ? addErrors(this.uid, { errors: this.errors, touched: this.touched })
+        : ''}
     `;
   }
 

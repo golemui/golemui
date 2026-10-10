@@ -84,7 +84,7 @@ export class GuiMultiFileUpload extends GuiFileUpload {
       .toolbarAriaLabel=${message('uploadedFiles')}
       .items=${pillItems}
       .errors=${this.errors}
-      .touched=${!!this.touched}
+      .touched=${this.touched}
       .removable=${!this.readOnly}
       .clickable=${false}
       .bubble=${true}

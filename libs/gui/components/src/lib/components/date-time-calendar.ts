@@ -1,5 +1,6 @@
 import { html, nothing, type PropertyValues, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
+import { booleanAttribute } from '../utils/converters';
 import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
 import './time-picker';
@@ -85,7 +86,8 @@ export class GuiDateTimeCalendar extends GuiFormControl {
    * Whether the element renders its hint. Elements that embed it turn it off and show the hint
    * themselves: `aria-describedby` still points at the hint by its id.
    */
-  @property({ type: Boolean, attribute: 'show-hint' }) showHint: boolean | undefined = true;
+  @property({ attribute: 'show-hint', converter: booleanAttribute }) showHint: boolean | undefined =
+    true;
   /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
 
@@ -169,7 +171,7 @@ export class GuiDateTimeCalendar extends GuiFormControl {
     | string
     | undefined = undefined;
   /** Allows typing any time, not only picking one from the list. */
-  @property({ type: Boolean, attribute: 'allow-custom-time' }) allowCustomTime:
+  @property({ attribute: 'allow-custom-time', converter: booleanAttribute }) allowCustomTime:
     | boolean
     | undefined = false;
   /** Label of the time. An empty value keeps the default. */
@@ -199,7 +201,7 @@ export class GuiDateTimeCalendar extends GuiFormControl {
    *
    * @internal
    */
-  @property({ type: Boolean, attribute: 'defer-focus-leave' }) deferFocusLeave:
+  @property({ attribute: 'defer-focus-leave', converter: booleanAttribute }) deferFocusLeave:
     | boolean
     | undefined = false;
 

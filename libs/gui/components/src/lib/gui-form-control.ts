@@ -1,4 +1,5 @@
 import { property } from 'lit/decorators.js';
+import { booleanAttribute } from './utils/converters';
 import { GuiElement } from './gui-element';
 import { message } from './utils/messages';
 
@@ -84,24 +85,37 @@ export abstract class GuiFormControl extends GuiElement {
    * Whether the user has interacted with the control. Leave it unset unless you validate on
    * interaction: `false` holds `errors` back until it becomes `true`.
    */
-  @property({ type: Boolean }) touched: boolean | undefined = undefined;
+  @property({ converter: booleanAttribute }) touched: boolean | undefined = undefined;
 
   /** The control needs a value: it is marked as required and, with a `name`, blocks submission. */
-  @property({ type: Boolean }) required: boolean | undefined = false;
+  @property({ converter: booleanAttribute }) required: boolean | undefined = false;
 
-  /** The value can be read and focused but not changed. */
-  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
-
+  private ownReadOnly: boolean | undefined = false;
   private ownDisabled: boolean | undefined = false;
   private formDisabled = false;
   private defaultValue: unknown = undefined;
   private hasDefaultValue = false;
 
+  /** The value can be read and focused but not changed. */
+  @property({ attribute: 'readonly', converter: booleanAttribute })
+  get readOnly(): boolean | undefined {
+    // The setter removes `readonly="false"`, and the callback for that removal can set `undefined`.
+    return !!this.ownReadOnly;
+  }
+
+  set readOnly(value: boolean | undefined) {
+    this.ownReadOnly = value;
+    // The browser never validates an element with a `readonly` attribute, even `readonly="false"`.
+    if (!value && this.hasAttribute('readonly')) {
+      this.removeAttribute('readonly');
+    }
+  }
+
   /**
    * Disabled by its own attribute or by a disabled `<fieldset>` around it. Setting the property
    * sets the attribute, like a native control's.
    */
-  @property({ type: Boolean })
+  @property({ converter: booleanAttribute })
   get disabled(): boolean | undefined {
     return this.ownDisabled || this.formDisabled;
   }
@@ -109,7 +123,8 @@ export abstract class GuiFormControl extends GuiElement {
   set disabled(value: boolean | undefined) {
     this.ownDisabled = value;
     // The browser reads the attribute, not the property: without it, a disabled element would
-    // still be submitted. Only the element's own state is reflected, never the fieldset's.
+    // still be submitted. Only the element's own state is reflected, never the fieldset's. This
+    // also removes `disabled="false"`, which the browser reads as disabled.
     if (!!value !== this.hasAttribute('disabled')) {
       if (value) this.setAttribute('disabled', '');
       else this.removeAttribute('disabled');

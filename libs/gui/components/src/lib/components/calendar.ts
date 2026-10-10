@@ -1,5 +1,6 @@
 import { html, nothing, type PropertyValues, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
+import { booleanAttribute } from '../utils/converters';
 import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
@@ -55,7 +56,8 @@ export class GuiCalendar extends GuiFormControl {
    * Whether the element renders its hint. Elements that embed it turn it off and show the hint
    * themselves: `aria-describedby` still points at the hint by its id.
    */
-  @property({ type: Boolean, attribute: 'show-hint' }) showHint: boolean | undefined = true;
+  @property({ attribute: 'show-hint', converter: booleanAttribute }) showHint: boolean | undefined =
+    true;
   /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
 
