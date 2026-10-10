@@ -1,3 +1,27 @@
+## 2.0.0-rc.2 (2026-10-10)
+
+### 🚀 Features
+
+- ⚠️  **gui-components:** require SanitizedHtml from the markdown parser ([#422](https://github.com/golemui/golemui/pull/422))
+
+### ⚠️  Breaking Changes
+
+- **gui-components:** require SanitizedHtml from the markdown parser  ([#422](https://github.com/golemui/golemui/pull/422))
+  MarkdownParser.parse must return SanitizedHtml instead of string
+  * chore(apps-shared): use one markdown parser with a placeholder sanitizer in the playgrounds
+  The placeholder returns the HTML unchanged. Its comment says that a real app must use a proper HTML sanitizer
+  * docs(gui-mcp): document that the markdown parser output is inserted without sanitizing
+  The host-services concept, the markdownText notes and the skill reference name the parsers that are safe by default
+  * docs(gui-mcp): add the markdown parser note to the DX markdown spec
+  The note says that the preview needs a parser and inserts its output without sanitizing it. forms-dx.md is regenerated
+  * docs(gui-mcp): add the markdown parser note to the JSON markdown widget
+  * docs: remove migration guide as it has been moved to the website
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
 ## 2.0.0-rc.1 (2026-10-09)
 
 This was a version bump only for gui-shared to align it with other projects, there were no code changes.

@@ -1,3 +1,7 @@
+## 2.0.0-rc.2 (2026-10-10)
+
+This was a version bump only for schemas to align it with other projects, there were no code changes.
+
 ## 2.0.0-rc.1 (2026-10-09)
 
 This was a version bump only for schemas to align it with other projects, there were no code changes.
