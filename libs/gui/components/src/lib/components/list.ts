@@ -177,9 +177,14 @@ export class GuiList extends GuiFormControl {
     const totalHeight = (this.items?.length ?? 0) * itemHeight;
     const { offsetY } = this.calculateRange();
 
+    // The host is the listbox and keeps the focus: the arrow keys move the active option and
+    // scroll it into view. Without tabindex="-1", Chrome and Firefox would make this scroll area a
+    // tab stop of its own, since nothing in it is focusable. Being focusable, it shows up in the
+    // accessibility tree, and a listbox may only hold options and groups: hence the group role.
     return html`
       <div
         class="gui-list__scroll-viewport"
+        role="group"
         style=${cspStyleMap({ 'max-height': `${height}px` })}
         tabindex="-1"
         @scroll="${this.onScroll}"

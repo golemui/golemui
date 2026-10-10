@@ -28,6 +28,7 @@
     &:hover {
       border: 1px solid var(--gui-border-default);
       background-color: var(--gui-text-secondary);
+      color: var(--gui-text-inverse);
     }
 
     &.today {
@@ -37,7 +38,7 @@
 
     &.selected {
       background-color: var(--gui-intent-primary);
-      color: var(--gui-color-white);
+      color: var(--gui-intent-primary-text);
     }
 
     &[disabled] {

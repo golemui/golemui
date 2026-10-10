@@ -68,10 +68,10 @@ gui-range-date-time-calendar {
       border-radius: 100%;
       width: var(--gui-calendar-change-month-button-width);
       height: var(--gui-calendar-change-month-button-height);
-      color: var(--gui-color-white);
+      color: var(--gui-intent-primary-text);
 
       .gui-widget-icon {
-        color: var(--gui-color-white);
+        color: var(--gui-intent-primary-text);
       }
 
       &--prev {
@@ -117,7 +117,7 @@ gui-range-date-time-calendar {
       &:hover {
         border: 1px solid var(--gui-border-default);
         background-color: var(--gui-text-secondary);
-        color: var(--gui-color-white);
+        color: var(--gui-text-inverse);
       }
 
       &.today {
@@ -125,7 +125,7 @@ gui-range-date-time-calendar {
       }
 
       &.selected {
-        color: var(--gui-color-white);
+        color: var(--gui-intent-primary-text);
         background-color: var(--gui-intent-primary);
       }
 
@@ -242,7 +242,7 @@ gui-range-date-time-calendar {
         &:hover {
           border: 1px solid var(--gui-border-default);
           background-color: var(--gui-text-secondary);
-          color: var(--gui-color-white);
+          color: var(--gui-text-inverse);
         }
 
         &.current {

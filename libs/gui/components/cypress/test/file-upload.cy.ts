@@ -297,6 +297,21 @@ describe('gui-file-upload', () => {
       fileInput().should('be.disabled');
     });
 
+    // It uploads nothing, so it needs no service, and its file name keeps an active field's
+    // contrast: a read-only field isn't inactive, so WCAG 1.4.3 applies to it.
+    it('shows the file of a read-only field without an upload service as active', () => {
+      cy.mount(
+        html`<gui-file-upload label="Report" readonly .value=${uploaded}></gui-file-upload>`,
+      );
+
+      bar().should('contain.text', 'report.pdf');
+      cy.get('gui-file-upload .gui-file-upload__box').should(
+        'not.have.class',
+        'gui-file-upload__box--disabled',
+      );
+      cy.get('gui-file-upload .gui-file-upload__service-error').should('not.exist');
+    });
+
     it('disables its upload button and picker', () => {
       const { service } = fakeService();
       cy.mount(

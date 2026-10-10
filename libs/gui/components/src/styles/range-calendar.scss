@@ -18,7 +18,7 @@ gui-range-date-time-calendar {
 
     &.in-range {
       background-color: var(--gui-range-bg);
-      color: var(--gui-color-white);
+      color: var(--gui-text-default);
       border-radius: 0;
     }
 
@@ -38,7 +38,7 @@ gui-range-date-time-calendar {
     }
     &.range-start {
       background-color: var(--gui-intent-primary);
-      color: var(--gui-color-white);
+      color: var(--gui-intent-primary-text);
 
       // Top Left - Top Right - Bottom Left - Bottom Right
       border-start-end-radius: 0;
@@ -48,7 +48,7 @@ gui-range-date-time-calendar {
     }
     &.range-end {
       background-color: var(--gui-intent-primary);
-      color: var(--gui-color-white);
+      color: var(--gui-intent-primary-text);
 
       // Top Left - Top Right - Bottom Left - Bottom Right
       border-start-end-radius: var(--gui-radius-range);
@@ -73,12 +73,12 @@ gui-range-date-time-calendar {
 
     &.invalid-in-range:not([disabled]):not([aria-disabled='true']) {
       background-color: var(--gui-range-error-bg);
-      color: var(--gui-color-white);
+      color: var(--gui-text-default);
       border-radius: 0;
     }
     &.invalid-range-start {
       background-color: var(--gui-intent-error);
-      color: var(--gui-color-white);
+      color: var(--gui-intent-primary-text);
 
       // Top Left - Top Right - Bottom Left - Bottom Right
       border-start-end-radius: 0;
@@ -88,7 +88,7 @@ gui-range-date-time-calendar {
     }
     &.invalid-range-end {
       background-color: var(--gui-intent-error);
-      color: var(--gui-color-white);
+      color: var(--gui-intent-primary-text);
 
       // Top Left - Top Right - Bottom Left - Bottom Right
       border-start-end-radius: var(--gui-radius-range);
@@ -98,7 +98,7 @@ gui-range-date-time-calendar {
     }
     &.invalid-range-single {
       background-color: var(--gui-intent-error);
-      color: var(--gui-color-white);
+      color: var(--gui-intent-primary-text);
       border-radius: var(--gui-radius-range);
     }
   }

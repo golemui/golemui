@@ -7,9 +7,13 @@ import { elements, type ElementCase } from '../support/elements';
 type Control = GuiFormControl & HTMLElement & Record<string, unknown>;
 
 /** The element with its props, set before it connects (a `ref` runs before insertion). */
-const element = ({ tag, props }: ElementCase, extra: Record<string, unknown> = {}) =>
+const element = ({ tag, props, setup }: ElementCase, extra: Record<string, unknown> = {}) =>
   html`<${unsafeStatic(tag)}
-    ${ref((node) => node && Object.assign(node, props, extra))}
+    ${ref((node) => {
+      if (!node) return;
+      Object.assign(node, props, extra);
+      setup?.(node as HTMLElement);
+    })}
   ></${unsafeStatic(tag)}>`;
 
 const control = (tag: string) => cy.get<Control>(tag);
@@ -22,15 +26,32 @@ describe('element contract', () => {
     const { tag, form: formCase } = testCase;
 
     describe(tag, () => {
-      it('renders with no accessibility violations', () => {
-        cy.mount(element(testCase));
-
+      const checkElement = () => {
         if (testCase.hostRendersChildren) cy.get(tag).should('exist');
         else cy.get(tag).children().should('not.have.length', 0);
         checkA11y(
           { include: [tag], exclude: testCase.exclude?.map((selector) => `${tag} ${selector}`) },
           testCase.rules,
         );
+      };
+
+      it('renders with no accessibility violations', () => {
+        cy.mount(element(testCase));
+        checkElement();
+      });
+
+      // With its value, so selected days, pills and options show, on the dark theme's page.
+      it('renders with no accessibility violations in the dark theme', () => {
+        cy.document().then(({ documentElement, body }) => {
+          documentElement.setAttribute('data-theme', 'dark');
+          body.style.backgroundColor = 'var(--gui-bg-default)';
+        });
+        cy.mount(element(testCase, formCase ? { [formCase.property]: formCase.sample } : {}));
+        checkElement();
+        cy.document().then(({ documentElement, body }) => {
+          documentElement.removeAttribute('data-theme');
+          body.style.removeProperty('background-color');
+        });
       });
 
       if (!formCase) return;

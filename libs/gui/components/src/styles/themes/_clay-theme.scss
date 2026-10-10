@@ -35,14 +35,17 @@
   /* Semantic Tokens - Borders */
   --gui-border-default: #d3c4b7;
   --gui-border-subtle: #e6dacd;
-  --gui-border-strong: #a89a8e;
+  /* The boundary of a control: 3:1 or more against the page and the control's fill. */
+  --gui-border-strong: #8c7b6f;
   --gui-border-disabled: #e6dacd;
   --gui-border-focus: #c25e4e;
 
   /* Semantic Tokens - Status / Intent (Primary = Terracotta) */
-  --gui-intent-primary: #c25e4e;
-  --gui-intent-primary-hover: #a64c3e;
-  --gui-intent-primary-active: #8a3c30;
+  /* One step darker than the focus terracotta, so white text on it and the primary as text
+     both reach 4.5:1. */
+  --gui-intent-primary: #a64c3e;
+  --gui-intent-primary-hover: #8a3c30;
+  --gui-intent-primary-active: #6e2f25;
   --gui-intent-primary-text: #ffffff;
 }
 
@@ -83,7 +86,7 @@
   /* Semantic Tokens - Borders (Dark Mode) */
   --gui-border-default: #5c4e45;
   --gui-border-subtle: #4a3e37;
-  --gui-border-strong: #7a6a5e;
+  --gui-border-strong: #8c7b6f;
   --gui-border-disabled: #4a3e37;
   --gui-border-focus: #db7665;
 
@@ -91,6 +94,8 @@
   --gui-intent-primary: #db7665;
   --gui-intent-primary-hover: #e38d7e;
   --gui-intent-primary-active: #eba598;
+  /* The light fills above need dark text: white on them is under 4.5:1. */
+  --gui-intent-primary-text: #24201e;
 }
 
 [data-theme='clay-dark'] {

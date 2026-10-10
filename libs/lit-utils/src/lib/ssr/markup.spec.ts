@@ -23,9 +23,7 @@ describe('cleanServerMarkup: false boolean attributes', () => {
 
   it('removes every false-valued boolean attribute in one tag', () => {
     expect(
-      cleanServerMarkup(
-        '<input disabled="false" hidden="false" required="false" value="x">',
-      ),
+      cleanServerMarkup('<input disabled="false" hidden="false" required="false" value="x">'),
     ).toBe('<input value="x">');
   });
 
