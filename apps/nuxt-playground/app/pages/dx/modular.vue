@@ -1,14 +1,18 @@
 <script setup lang="ts">
-import { mockUploadService, modularDx, onFormEvent } from '@golemui/apps-shared';
+import {
+  mockMarkdownParser,
+  mockUploadService,
+  modularDx,
+  onFormEvent,
+} from '@golemui/apps-shared';
 import type { FormHealth, FormSubmitEvent } from '@golemui/core';
 import { GuiForm } from '@golemui/gui-vue';
 import type { Dependencies, GuiFormInitConfig } from '@golemui/gui-shared';
 import { ref } from 'vue';
-import snarkdown from 'snarkdown';
 
 const md = modularDx;
 const dependencies: Dependencies = {
-  markdown: { parse: (markdown: string) => snarkdown(markdown) },
+  markdown: mockMarkdownParser,
   uploadService: mockUploadService,
 };
 const config: GuiFormInitConfig = {

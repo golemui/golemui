@@ -129,6 +129,7 @@ export type {
   Option,
   OptionInput,
   OptionValue,
+  SanitizedHtml,
   TimeRange,
   UploadService,
 } from './lib/types';

@@ -306,9 +306,13 @@ const NOTES: Record<string, string[]> = {
       'Supports state suffix: `"icon.<stateName>": "check"` to swap the icon when a state is active. ' +
       'Call `get_concept({ concept: "icons" })` for setup and the full list of icon-capable widgets.',
   ],
+  markdown: [
+    'The preview needs a `dependencies.markdown` parser in the form init config, or the preview stays blank. The preview inserts the parser output as HTML without sanitizing it, so for markdown from users or stored data the parser must remove raw HTML and `javascript:` links. Call `get_concept({ concept: "host-services" })`.',
+  ],
   markdownText: [
     'Display-only widget for rendering markdown. Can be used as a top-level form widget (inside any layout) or inside templates like `dropdown.props.items[].template`.',
     'The required prop is `md` (the markdown string), not `text`.',
+    'REQUIRES a `dependencies.markdown` parser in the form init config, or it renders blank. The widget inserts the parser output as HTML without sanitizing it, so for markdown from users or stored data the parser must remove raw HTML and `javascript:` links. Call `get_concept({ concept: "host-services" })`.',
   ],
   tags: [
     'Use `tags` for free-form arrays of primitive values (typically `string[]`) — e.g. keywords, email lists, hashtags. Backing data is `string[]`. For arrays of structured objects, use `repeater` instead.',

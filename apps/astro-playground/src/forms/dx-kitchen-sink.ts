@@ -1,7 +1,11 @@
-import { buildKitchenSinkDx, initializeI18n, mockUploadService } from '@golemui/apps-shared';
+import {
+  buildKitchenSinkDx,
+  initializeI18n,
+  mockMarkdownParser,
+  mockUploadService,
+} from '@golemui/apps-shared';
 import type { GuiFormInitConfig } from '@golemui/gui-shared';
 import { html } from 'lit';
-import snarkdown from 'snarkdown';
 import { airportItemRenderer } from '../item-renderers/airport.item-renderer';
 import { complexListItemRenderer } from '../item-renderers/complex-list.item-renderer';
 import { countryItemRenderer } from '../item-renderers/country.item-renderer';
@@ -21,9 +25,7 @@ const ks = buildKitchenSinkDx({
     countryItemRenderer,
   },
   dependencies: {
-    markdown: {
-      parse: (md: string) => snarkdown(md),
-    },
+    markdown: mockMarkdownParser,
     uploadService: mockUploadService,
   },
   // Lit Renderer example: the `render` function is called with the

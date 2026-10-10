@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import type { SanitizedHtml } from '../../shared';
 import { processDx } from './helpers';
 import { formDefs } from '../formDefs';
 import { _guiSelect } from '../shortcuts/select/guiSelect.impl';
@@ -49,7 +50,7 @@ describe('DX Pipeline — State Foundation (Phase 1.2.2.3)', () => {
 
   describe('formConfig — other fields still work alongside states', () => {
     it('dependencies and validateOn pass through when states are present', () => {
-      const deps = { markdown: { parse: (x: string) => x } };
+      const deps = { markdown: { parse: (x: string) => x as SanitizedHtml } };
       const result = formDefs.processDxFacade([_guiTextInput('name')], [], {
         states: { editing: '!!$form.name' },
         dependencies: deps,

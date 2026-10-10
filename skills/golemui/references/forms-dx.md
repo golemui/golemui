@@ -377,6 +377,7 @@ gui.inputs.markdown('notes', { label: 'Notes (markdown)' });
 ```
 
 - A markdown _editor input_ — the user types markdown and the value IS that markdown string. This is the ONLY use of markdown in GolemUI: there is no markdown-for-display. For a heading or static block, use `gui.displays.display(() => <node>)` (your host renders it), never a markdown widget.
+- The preview needs a parser: pass `dependencies: { markdown: { parse } }` in the init config, or the preview stays blank. The preview inserts the `parse` result as HTML without sanitizing it, so for markdown from users or stored data `parse` must remove raw HTML and `javascript:` links. `parse` returns `SanitizedHtml`: cast the sanitized result. Call `get_concept({ concept: "host-services" })`.
 
 Reference: https://golemui.com/dx/widgets-reference/input-fields/markdown.md
 

@@ -1,15 +1,19 @@
-import { mockUploadService, modularDx, onFormEvent } from '@golemui/apps-shared';
+import {
+  mockMarkdownParser,
+  mockUploadService,
+  modularDx,
+  onFormEvent,
+} from '@golemui/apps-shared';
 import type { FormEvent, FormHealth, FormSubmitEvent } from '@golemui/core';
 import '@golemui/gui-lit';
 import { type Dependencies, type GuiFormInitConfig } from '@golemui/gui-shared';
 import { html, LitElement, nothing } from 'lit';
 import { customElement } from 'lit/decorators.js';
-import snarkdown from 'snarkdown';
 
 const md = modularDx;
 
 const dependencies: Dependencies = {
-  markdown: { parse: (markdown: string) => snarkdown(markdown) },
+  markdown: mockMarkdownParser,
   uploadService: mockUploadService,
 };
 

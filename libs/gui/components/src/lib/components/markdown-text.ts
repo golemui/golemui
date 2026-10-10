@@ -24,7 +24,10 @@ import type { MarkdownParser } from '../types';
 export class GuiMarkdownText extends LitElement {
   /** The Markdown to render. */
   @property({ type: String }) md: string | undefined = undefined;
-  /** Provides the `markdown` parser that turns `md` into HTML. */
+  /**
+   * Provides the `markdown` parser that turns `md` into HTML. The element inserts that HTML
+   * without sanitizing it, see `MarkdownParser`.
+   */
   @property({ type: Object }) dependencies: { markdown?: MarkdownParser } | undefined = undefined;
 
   override createRenderRoot() {

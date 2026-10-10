@@ -3,6 +3,7 @@ import {
   commonLanguages,
   initializeI18n,
   kitchenSink,
+  mockMarkdownParser,
   mockUploadService,
   onFormEvent,
 } from '@golemui/apps-shared';
@@ -18,7 +19,6 @@ import { type Dependencies, type GuiFormInitConfig } from '@golemui/gui-shared';
 import type { CustomValidatorSchemas } from '@golemui/gui-validators';
 import { type FormHealthBoundary, type ReactItemRenderer } from '@golemui/react';
 import i18next from 'i18next';
-import snarkdown from 'snarkdown';
 import { AirportItemRenderer } from '../../item-renderers/AirportItemRenderer';
 import { ComplexListItemRenderer } from '../../item-renderers/ComplexListItemRenderer';
 import { CountryItemRenderer } from '../../item-renderers/CountryItemRenderer';
@@ -35,9 +35,7 @@ const languages = commonLanguages
     label: `${flag} ${label}`,
   }));
 const deps: Dependencies = {
-  markdown: {
-    parse: (md: string) => snarkdown(md),
-  },
+  markdown: mockMarkdownParser,
   uploadService: mockUploadService,
 };
 const customWidgetLoaders = {

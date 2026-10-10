@@ -729,3 +729,15 @@ export const legacyInitConfigDependencyProbe: GuiInitConfig = {
     },
   },
 };
+
+// The cast to `SanitizedHtml` is where a host decides that the HTML is safe, so a parser
+// that returns a plain string must keep failing.
+export const markdownParserReturnTypeProbe: GuiInitConfig = {
+  formDef: [],
+  dependencies: {
+    markdown: {
+      // @ts-expect-error the gui markdown parser must return SanitizedHtml, not a plain string
+      parse: (markdown: string) => markdown,
+    },
+  },
+};

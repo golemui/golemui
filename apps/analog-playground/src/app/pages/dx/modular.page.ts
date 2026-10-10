@@ -1,14 +1,18 @@
 import { Component, signal } from '@angular/core';
-import { mockUploadService, modularDx, onFormEvent } from '@golemui/apps-shared';
+import {
+  mockMarkdownParser,
+  mockUploadService,
+  modularDx,
+  onFormEvent,
+} from '@golemui/apps-shared';
 import type { FormEvent, FormHealth, FormSubmitEvent } from '@golemui/core';
 import { FormComponent } from '@golemui/gui-angular';
 import type { Dependencies, GuiFormInitConfig } from '@golemui/gui-shared';
-import snarkdown from 'snarkdown';
 
 const formExample = modularDx;
 
 const dependencies: Dependencies = {
-  markdown: { parse: (markdown: string) => snarkdown(markdown) },
+  markdown: mockMarkdownParser,
   uploadService: mockUploadService,
 };
 

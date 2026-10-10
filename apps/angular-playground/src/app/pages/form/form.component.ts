@@ -6,6 +6,7 @@ import {
   commonLanguages,
   initializeI18n,
   kitchenSink,
+  mockMarkdownParser,
   mockUploadService,
   onFormEvent,
 } from '@golemui/apps-shared';
@@ -19,7 +20,6 @@ import { FormComponent } from '@golemui/gui-angular';
 import { type Dependencies, type GuiFormInitConfig } from '@golemui/gui-shared';
 import type { CustomValidatorSchemas } from '@golemui/gui-validators';
 import i18next from 'i18next';
-import snarkdown from 'snarkdown';
 import { APP_CONFIG } from '../../../environments/environment.model';
 import { AirportItemRenderer } from '../../item-renderers/airport.item-renderer';
 import { ComplexListItemRenderer } from '../../item-renderers/complex-list.item-renderer';
@@ -53,7 +53,7 @@ export class AppFormPage {
 
   private loadFormDef() {
     const deps: Dependencies = {
-      markdown: { parse: (md: string) => snarkdown(md) },
+      markdown: mockMarkdownParser,
       uploadService: mockUploadService,
     };
     this.config = {

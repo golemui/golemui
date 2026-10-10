@@ -10,6 +10,7 @@ export * from './json-schema-order';
 export * from './item-renderers';
 export * from './kitchen-sink';
 export * from './kitchen-sink.dx';
+export * from './markdown-parser.mock';
 export * from './messages';
 export * from './modular.dx';
 export * from './selects';

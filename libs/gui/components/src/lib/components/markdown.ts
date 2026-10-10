@@ -143,7 +143,10 @@ export class GuiMarkdown extends GuiFormControl {
     | undefined = undefined;
 
   // Deps
-  /** Provides the `markdown` parser used by the preview. */
+  /**
+   * Provides the `markdown` parser used by the preview. The preview inserts its HTML without
+   * sanitizing it, see `MarkdownParser`.
+   */
   @property({ type: Object }) dependencies: { markdown?: MarkdownParser } | undefined = undefined;
 
   @state() private splitViewActive = false;

@@ -2,13 +2,13 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
 import {
   buildKitchenSinkDx,
   initializeI18n,
+  mockMarkdownParser,
   mockUploadService,
   onFormEvent,
 } from '@golemui/apps-shared';
 import type { FormEvent, FormHealth, FormSubmitEvent } from '@golemui/core';
 import { FormComponent } from '@golemui/gui-angular';
 import type { GuiFormInitConfig } from '@golemui/gui-shared';
-import snarkdown from 'snarkdown';
 import { customWidgetLoaders } from '../../custom-widget-loaders';
 import { AirportItemRenderer } from '../../item-renderers/airport.item-renderer';
 import { ComplexListItemRenderer } from '../../item-renderers/complex-list.item-renderer';
@@ -29,9 +29,7 @@ const ks = buildKitchenSinkDx({
     countryItemRenderer: CountryItemRenderer,
   },
   dependencies: {
-    markdown: {
-      parse: (md: string) => snarkdown(md),
-    },
+    markdown: mockMarkdownParser,
     uploadService: mockUploadService,
   },
   // Angular-flavored Renderer example — returns `{ component, api }`. The

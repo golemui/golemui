@@ -3,6 +3,7 @@ import {
   commonLanguages,
   initializeI18n,
   kitchenSink,
+  mockMarkdownParser,
   mockUploadService,
   onFormEvent,
 } from '@golemui/apps-shared';
@@ -14,7 +15,6 @@ import type { CustomValidatorSchemas } from '@golemui/gui-validators';
 import i18next from 'i18next';
 import { html, LitElement, nothing } from 'lit';
 import { customElement } from 'lit/decorators.js';
-import snarkdown from 'snarkdown';
 import { airportItemRenderer } from '../../item-renderers/airport.item-renderer';
 import { complexListItemRenderer } from '../../item-renderers/complex-list.item-renderer';
 import { countryItemRenderer } from '../../item-renderers/country.item-renderer';
@@ -53,9 +53,7 @@ export class FormElement extends LitElement {
       meta: mock.meta || {},
       localization: initializeI18n(mock.resources),
       dependencies: {
-        markdown: {
-          parse: (md: string) => snarkdown(md),
-        },
+        markdown: mockMarkdownParser,
         uploadService: mockUploadService,
       },
       functions: mock.functions,
