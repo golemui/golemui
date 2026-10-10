@@ -167,6 +167,33 @@ describe('native form association', () => {
     cy.get('gui-textinput input').should('not.be.disabled');
   });
 
+  it('validates and submits with disabled="false" and readonly="false"', () => {
+    cy.mount(
+      html`<form>
+        <gui-textinput
+          name="email"
+          label="Email"
+          required
+          disabled="false"
+          readonly="false"
+        ></gui-textinput>
+      </form>`,
+    );
+
+    control('gui-textinput').should('have.prop', 'disabled', false);
+    control('gui-textinput').should('have.prop', 'readOnly', false);
+    // The browser skips an element with either attribute, whatever its value.
+    control('gui-textinput').should('not.have.attr', 'disabled');
+    control('gui-textinput').should('not.have.attr', 'readonly');
+    form().then(([element]) => expect(element.checkValidity()).to.equal(false));
+
+    cy.get('gui-textinput input').type('ada@example.com');
+
+    form().then(([element]) => {
+      expect(new FormData(element).get('email')).to.equal('ada@example.com');
+    });
+  });
+
   it('reports a typed date outside its bounds', () => {
     cy.mount(
       html`<form>
