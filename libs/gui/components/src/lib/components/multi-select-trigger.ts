@@ -1,5 +1,6 @@
 import { html, nothing, type PropertyValues } from 'lit';
 import { property } from 'lit/decorators.js';
+import { booleanAttribute } from '../utils/converters';
 import { classMap } from 'lit/directives/class-map.js';
 import { cspStyleMap } from '@golemui/lit-utils';
 import { safeDefine } from '@golemui/lit-utils';
@@ -26,13 +27,14 @@ import { fires } from '../utils/events';
  */
 export class GuiMultiSelectTrigger extends GuiElement {
   /** Whether that field was touched. */
-  @property({ type: Boolean }) touched: boolean | undefined = undefined;
+  @property({ converter: booleanAttribute }) touched: boolean | undefined = undefined;
   /** Whether that field is required. */
-  @property({ type: Boolean }) required: boolean | undefined = false;
+  @property({ converter: booleanAttribute }) required: boolean | undefined = false;
   /** Disables the trigger. */
-  @property({ type: Boolean }) disabled: boolean | undefined = false;
+  @property({ converter: booleanAttribute }) disabled: boolean | undefined = false;
   /** Shows the selection without letting the user change it. */
-  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
+  @property({ attribute: 'readonly', converter: booleanAttribute }) readOnly: boolean | undefined =
+    false;
   /** Errors of the field the trigger belongs to. */
   @property({ type: Array }) errors: string[] | undefined = [];
   /** @internal */
@@ -45,11 +47,15 @@ export class GuiMultiSelectTrigger extends GuiElement {
   /** The `autocomplete` hint of the search field. */
   @property({ type: String }) autocomplete: string | undefined = undefined;
   /** @internal */
-  @property({ type: Boolean, attribute: 'has-label' }) hasLabel = false;
+  @property({ attribute: 'has-label', converter: booleanAttribute }) hasLabel: boolean | undefined =
+    false;
   /** @internal */
-  @property({ type: Boolean, attribute: 'has-hint' }) hasHint = false;
+  @property({ attribute: 'has-hint', converter: booleanAttribute }) hasHint: boolean | undefined =
+    false;
   /** @internal */
-  @property({ type: Boolean, attribute: 'panel-open' }) panelOpen = false;
+  @property({ attribute: 'panel-open', converter: booleanAttribute }) panelOpen:
+    | boolean
+    | undefined = false;
   /** @internal */
   @property({ type: String, attribute: 'panel-id' }) panelId: string | undefined = undefined;
   /** Accessible name of each remove button. An empty value keeps the default. */

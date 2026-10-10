@@ -1,5 +1,6 @@
 import { html, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
+import { booleanAttribute } from '../utils/converters';
 import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
 import './date-input';
@@ -60,7 +61,9 @@ export class GuiDatePicker extends GuiFormControl {
    * Whether the element renders its own error list. Elements that embed it turn it off and show the
    * errors themselves.
    */
-  @property({ type: Boolean, attribute: 'show-errors' }) showErrors: boolean | undefined = true;
+  @property({ attribute: 'show-errors', converter: booleanAttribute }) showErrors:
+    | boolean
+    | undefined = true;
   /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
   /** The date, as an ISO date (`YYYY-MM-DD`). */
@@ -263,7 +266,9 @@ export class GuiDatePicker extends GuiFormControl {
         ${calendar}
       </div>
 
-      ${this.showErrors ? addErrors(this.uid, { errors: this.errors, touched: this.touched }) : ''}
+      ${this.showErrors !== false
+        ? addErrors(this.uid, { errors: this.errors, touched: this.touched })
+        : ''}
     `;
   }
 

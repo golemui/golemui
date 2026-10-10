@@ -1,5 +1,6 @@
 import { html, nothing } from 'lit';
 import { property, state } from 'lit/decorators.js';
+import { booleanAttribute } from '../utils/converters';
 import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
 import { repeat } from 'lit/directives/repeat.js';
@@ -102,20 +103,21 @@ export class GuiPills extends GuiElement {
   @property({ type: Array }) items: GuiPillItem[] = [];
 
   /** Makes the pill bodies clickable, firing `gui-pill-click`. */
-  @property({ type: Boolean }) clickable = false;
+  @property({ converter: booleanAttribute }) clickable: boolean | undefined = false;
   /** Adds a remove button to each pill, unless the pills are disabled or read-only. */
-  @property({ type: Boolean }) removable = true;
+  @property({ converter: booleanAttribute }) removable: boolean | undefined = true;
   /** Collapses the pills into a count with a dropdown when they do not fit. */
-  @property({ type: Boolean }) bubble = true;
+  @property({ converter: booleanAttribute }) bubble: boolean | undefined = true;
   /** When false, pills are not in the tab cycle (entered via ArrowLeft instead). */
-  @property({ type: Boolean }) tabbable = true;
+  @property({ converter: booleanAttribute }) tabbable: boolean | undefined = true;
   /** Disables the pills. */
-  @property({ type: Boolean }) disabled = false;
+  @property({ converter: booleanAttribute }) disabled: boolean | undefined = false;
   /** Shows the pills without remove buttons or editing. */
-  @property({ type: Boolean, attribute: 'readonly' }) readOnly = false;
+  @property({ attribute: 'readonly', converter: booleanAttribute }) readOnly: boolean | undefined =
+    false;
 
   /** When true, clickable pills expose selection as toggle-button semantics (aria-pressed). */
-  @property({ type: Boolean }) editable = false;
+  @property({ converter: booleanAttribute }) editable: boolean | undefined = false;
   /** Key of the pill selected by the host's allowEdit flow. */
   @property({ type: String, attribute: 'selected-key' }) selectedKey: string | undefined =
     undefined;
@@ -144,13 +146,13 @@ export class GuiPills extends GuiElement {
   /** Errors repeated inside the dropdown. */
   @property({ type: Array }) errors: string[] | undefined = undefined;
   /** Whether the field was touched: errors wait for it unless unset. */
-  @property({ type: Boolean }) touched = false;
+  @property({ converter: booleanAttribute }) touched: boolean | undefined = false;
 
   @state() private _isStartVisible = true;
   @state() private _isEndVisible = true;
 
   private _popup = new GUIPopupController(this, {
-    isDisabled: () => this.disabled || this.readOnly,
+    isDisabled: () => !!(this.disabled || this.readOnly),
     clickIntent: () => 'ignore',
     keyToggleMode: 'openClose',
     focusPopupSelector: '.gui-pills__dropdown .gui-pills__pill',
@@ -216,8 +218,8 @@ export class GuiPills extends GuiElement {
     if (total === 0) return nothing;
 
     return html`
-      ${this.renderStrip()} ${this.bubble ? this.renderCompact(total) : nothing}
-      ${this.bubble && this._showDropdown ? this.renderDropdown() : nothing}
+      ${this.renderStrip()} ${this.bubble !== false ? this.renderCompact(total) : nothing}
+      ${this.bubble !== false && this._showDropdown ? this.renderDropdown() : nothing}
     `;
   }
 
@@ -302,11 +304,11 @@ export class GuiPills extends GuiElement {
 
   /** Whether the pills show their remove button: never while disabled or read-only. */
   private get isRemovable(): boolean {
-    return this.removable && !this.disabled && !this.readOnly;
+    return this.removable !== false && !this.disabled && !this.readOnly;
   }
 
   private renderPill(item: GuiPillItem, index: number, inDropdown: boolean) {
-    const isClickable = this.clickable && !this.disabled && !this.readOnly;
+    const isClickable = !!this.clickable && !this.disabled && !this.readOnly;
     const isSelected = item.key === this.selectedKey;
     const isEditing = item.key === this.editingKey;
     const isBusy = !!item.busy;
@@ -330,7 +332,7 @@ export class GuiPills extends GuiElement {
         data-key=${item.key}
         data-index=${index}
         data-in-dropdown=${inDropdown}
-        tabindex=${this.tabbable && !this.disabled && !this.readOnly ? 0 : -1}
+        tabindex=${this.tabbable !== false && !this.disabled && !this.readOnly ? 0 : -1}
         ?disabled=${this.disabled || this.readOnly}
         aria-pressed=${this.editable && isClickable ? String(isSelected) : nothing}
         aria-busy=${isBusy ? 'true' : nothing}
@@ -365,7 +367,7 @@ export class GuiPills extends GuiElement {
               () => this.emitEditAction('gui-pill-edit', item.key),
             )
           : nothing}
-        ${this.removable && !isEditing
+        ${this.removable !== false && !isEditing
           ? isBusy
             ? this.renderBusy()
             : this.isRemovable
@@ -492,7 +494,7 @@ export class GuiPills extends GuiElement {
       return;
     }
 
-    if (this.removable && (e.key === 'Delete' || e.key === 'Backspace')) {
+    if (this.removable !== false && (e.key === 'Delete' || e.key === 'Backspace')) {
       e.preventDefault();
       e.stopPropagation();
       // A busy pill swallows the key: its removal is already in flight.
@@ -627,7 +629,7 @@ export class GuiPills extends GuiElement {
    * @internal
    */
   openDropdown() {
-    if (!this.bubble || this._showDropdown) return;
+    if (this.bubble === false || this._showDropdown) return;
     this._popup.openAndFocus();
   }
 

@@ -1,5 +1,6 @@
 import { html } from 'lit';
 import { property } from 'lit/decorators.js';
+import { booleanAttribute } from '../utils/converters';
 import { cspStyleMap } from '@golemui/lit-utils';
 import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
@@ -45,9 +46,10 @@ export class GuiTimeList extends GuiElement {
   @property({ type: String, attribute: 'hour-format' }) hourFormat: HourFormat | undefined =
     undefined;
   /** Disables the list. */
-  @property({ type: Boolean }) disabled = false;
+  @property({ converter: booleanAttribute }) disabled: boolean | undefined = false;
   /** Shows the times without letting the user pick one. */
-  @property({ type: Boolean, attribute: 'readonly' }) readOnly = false;
+  @property({ attribute: 'readonly', converter: booleanAttribute }) readOnly: boolean | undefined =
+    false;
   /** Height of the scrollable list, in pixels. */
   @property({ type: Number }) height: number | undefined = undefined;
   /** Height of each item, in pixels. Needed to virtualize the list. */

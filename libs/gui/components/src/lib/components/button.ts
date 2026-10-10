@@ -1,5 +1,6 @@
 import { html, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
+import { booleanAttribute } from '../utils/converters';
 import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
 import { GuiElement } from '../gui-element';
@@ -14,12 +15,12 @@ export class GuiButton extends GuiElement {
   /** Text of the button. */
   @property({ type: String }) label: string | undefined = undefined;
   /** Disables the button. A disabled link loses its `href`. */
-  @property({ type: Boolean }) disabled: boolean | undefined = false;
+  @property({ converter: booleanAttribute }) disabled: boolean | undefined = false;
   /**
    * Shows a spinner and ignores clicks, while keeping the button focusable, for an action in
    * progress.
    */
-  @property({ type: Boolean }) loading: boolean | undefined = false;
+  @property({ converter: booleanAttribute }) loading: boolean | undefined = false;
   /** Icon class name shown next to the text. */
   @property({ type: String }) icon: string | undefined = undefined;
   /** Visual style of the button: `link` looks like a link. */

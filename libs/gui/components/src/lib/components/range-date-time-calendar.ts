@@ -1,5 +1,6 @@
 import { html, nothing, type PropertyValues, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
+import { booleanAttribute } from '../utils/converters';
 import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
@@ -116,7 +117,8 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
    * Whether the element renders its hint. Elements that embed it turn it off and show the hint
    * themselves: `aria-describedby` still points at the hint by its id.
    */
-  @property({ type: Boolean, attribute: 'show-hint' }) showHint: boolean | undefined = true;
+  @property({ attribute: 'show-hint', converter: booleanAttribute }) showHint: boolean | undefined =
+    true;
   /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
 
@@ -175,7 +177,9 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
   /** @internal */
   @property({ type: String, attribute: 'focus-date' }) focusDate: string | undefined = undefined;
   /** @internal */
-  @property({ type: Boolean, attribute: 'hide-pills' }) hidePills = false;
+  @property({ attribute: 'hide-pills', converter: booleanAttribute }) hidePills:
+    | boolean
+    | undefined = false;
   /** Accessible name of the remove button of each range pill. An empty value keeps the default. */
   @property({ type: String, attribute: 'remove-pill-aria-label' }) removePillAriaLabel:
     | string
@@ -194,7 +198,7 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
   /** Minutes between the times offered in the list. */
   @property({ type: Number, attribute: 'minute-step' }) minuteStep: number | undefined = undefined;
   /** Allows typing any time, not only picking one from the list. */
-  @property({ type: Boolean, attribute: 'allow-custom-time' }) allowCustomTime:
+  @property({ attribute: 'allow-custom-time', converter: booleanAttribute }) allowCustomTime:
     | boolean
     | undefined = false;
   /** Label of the start time. An empty value keeps the default. */
@@ -267,7 +271,7 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
    *
    * @internal
    */
-  @property({ type: Boolean, attribute: 'defer-focus-leave' }) deferFocusLeave:
+  @property({ attribute: 'defer-focus-leave', converter: booleanAttribute }) deferFocusLeave:
     | boolean
     | undefined = false;
   /**
@@ -284,10 +288,14 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
    *
    * @internal
    */
-  @property({ type: Boolean, attribute: 'defer-commit' }) deferCommit = false;
+  @property({ attribute: 'defer-commit', converter: booleanAttribute }) deferCommit:
+    | boolean
+    | undefined = false;
 
   /** Lets the user edit a range in place from its pill. */
-  @property({ type: Boolean, attribute: 'allow-edit' }) allowEdit: boolean | undefined = false;
+  @property({ attribute: 'allow-edit', converter: booleanAttribute }) allowEdit:
+    | boolean
+    | undefined = false;
   /** Tooltip of the edit button of a range pill. */
   @property({ type: String, attribute: 'edit-label' }) editLabel: string | undefined = undefined;
   /** Hint that a range pill can be edited. `{label}` is the range. */

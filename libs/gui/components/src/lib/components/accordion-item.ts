@@ -1,5 +1,6 @@
 import { ReactiveElement, type PropertyValues } from 'lit';
 import { property } from 'lit/decorators.js';
+import { booleanAttribute } from '../utils/converters';
 import { safeDefine } from '@golemui/lit-utils';
 import { fires } from '../utils/events';
 
@@ -28,7 +29,7 @@ export class GuiAccordionItem extends ReactiveElement {
    * Whether the item is open. Without a value it takes the details' own `open`. Setting it fires no
    * `gui-toggle`.
    */
-  @property({ type: Boolean, reflect: true }) open: boolean | undefined = undefined;
+  @property({ converter: booleanAttribute, reflect: true }) open: boolean | undefined = undefined;
 
   private mutations?: MutationObserver;
 

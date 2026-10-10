@@ -1,4 +1,5 @@
 import { property } from 'lit/decorators.js';
+import { booleanAttribute } from './utils/converters';
 import { GuiElement } from './gui-element';
 import { message } from './utils/messages';
 
@@ -84,13 +85,14 @@ export abstract class GuiFormControl extends GuiElement {
    * Whether the user has interacted with the control. Leave it unset unless you validate on
    * interaction: `false` holds `errors` back until it becomes `true`.
    */
-  @property({ type: Boolean }) touched: boolean | undefined = undefined;
+  @property({ converter: booleanAttribute }) touched: boolean | undefined = undefined;
 
   /** The control needs a value: it is marked as required and, with a `name`, blocks submission. */
-  @property({ type: Boolean }) required: boolean | undefined = false;
+  @property({ converter: booleanAttribute }) required: boolean | undefined = false;
 
   /** The value can be read and focused but not changed. */
-  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
+  @property({ attribute: 'readonly', converter: booleanAttribute }) readOnly: boolean | undefined =
+    false;
 
   private ownDisabled: boolean | undefined = false;
   private formDisabled = false;
@@ -101,7 +103,7 @@ export abstract class GuiFormControl extends GuiElement {
    * Disabled by its own attribute or by a disabled `<fieldset>` around it. Setting the property
    * sets the attribute, like a native control's.
    */
-  @property({ type: Boolean })
+  @property({ converter: booleanAttribute })
   get disabled(): boolean | undefined {
     return this.ownDisabled || this.formDisabled;
   }

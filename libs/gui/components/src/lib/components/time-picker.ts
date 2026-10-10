@@ -1,5 +1,6 @@
 import { html, isServer, nothing, type PropertyValues } from 'lit';
 import { property, query } from 'lit/decorators.js';
+import { booleanAttribute } from '../utils/converters';
 import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
 import './time-input';
@@ -57,7 +58,9 @@ export class GuiTimePicker extends GuiFormControl {
    * Whether the element renders its own error list. Elements that embed it turn it off and show the
    * errors themselves.
    */
-  @property({ type: Boolean, attribute: 'show-errors' }) showErrors: boolean | undefined = true;
+  @property({ attribute: 'show-errors', converter: booleanAttribute }) showErrors:
+    | boolean
+    | undefined = true;
   /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
   /** The time, as an ISO time (`HH:mm:ss`). */
@@ -75,7 +78,7 @@ export class GuiTimePicker extends GuiFormControl {
   @property({ type: Array, attribute: 'disabled-ranges' }) disabledRanges: TimeRange[] | undefined =
     undefined;
   /** Allows typing any time, not only picking one from the list. */
-  @property({ type: Boolean, attribute: 'allow-custom-time' }) allowCustomTime:
+  @property({ attribute: 'allow-custom-time', converter: booleanAttribute }) allowCustomTime:
     | boolean
     | undefined = false;
   /** Height of the time list, in pixels. */
@@ -109,7 +112,7 @@ export class GuiTimePicker extends GuiFormControl {
    *
    * @internal
    */
-  @property({ type: Boolean, attribute: 'defer-focus-leave' }) deferFocusLeave:
+  @property({ attribute: 'defer-focus-leave', converter: booleanAttribute }) deferFocusLeave:
     | boolean
     | undefined = false;
 
@@ -264,7 +267,9 @@ export class GuiTimePicker extends GuiFormControl {
         ${list}
       </div>
 
-      ${this.showErrors ? addErrors(this.uid, { errors: this.errors, touched: this.touched }) : ''}
+      ${this.showErrors !== false
+        ? addErrors(this.uid, { errors: this.errors, touched: this.touched })
+        : ''}
     `;
   }
 

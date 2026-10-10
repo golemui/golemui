@@ -1,5 +1,6 @@
 import { html } from 'lit';
 import { property } from 'lit/decorators.js';
+import { booleanAttribute } from '../utils/converters';
 import { safeDefine } from '@golemui/lit-utils';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addLabel } from '../utils/templates';
@@ -17,17 +18,18 @@ export class GuiLabel extends GuiElement {
   /** Help text shown under the label. */
   @property({ type: String }) hint: string | undefined = undefined;
   /** Adds the required marker, and `aria-required` to the target. */
-  @property({ type: Boolean }) required: boolean | undefined = undefined;
+  @property({ converter: booleanAttribute }) required: boolean | undefined = undefined;
   /** Errors of the labelled control, which set `aria-invalid` on it. */
   @property({ type: Array }) errors: string[] | undefined = [];
   /** Sets `aria-disabled` on the target. */
-  @property({ type: Boolean }) disabled: boolean | undefined = false;
+  @property({ converter: booleanAttribute }) disabled: boolean | undefined = false;
   /** Sets `aria-readonly` on the target. */
-  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
+  @property({ attribute: 'readonly', converter: booleanAttribute }) readOnly: boolean | undefined =
+    false;
   /** Whether the labelled control was touched: errors wait for it unless unset. */
-  @property({ type: Boolean }) touched: boolean | undefined = undefined;
+  @property({ converter: booleanAttribute }) touched: boolean | undefined = undefined;
   /** Renders a native `<label for>`. Turn it off for targets that a `<label>` cannot name. */
-  @property({ type: Boolean }) native: boolean | undefined = true;
+  @property({ converter: booleanAttribute }) native: boolean | undefined = true;
 
   private ariaController = new GUIAriaController(this, {
     getTargets: () =>
@@ -65,7 +67,7 @@ export class GuiLabel extends GuiElement {
       },
       false,
       undefined,
-      this.native,
+      this.native !== false,
     )}`;
   }
 }
