@@ -97,7 +97,7 @@ gui-toggle {
       bottom: 0;
       width: calc(var(--gui-toggle-width) - 2px);
       background-color: var(--gui-bg-default);
-      border: 1px solid var(--gui-border-default);
+      border: 1px solid var(--gui-border-strong);
       transition: 0.4s;
       border-radius: 30px;
 
@@ -109,7 +109,7 @@ gui-toggle {
         border-radius: 20px;
         left: 2px;
         top: 1px;
-        background-color: var(--gui-border-default);
+        background-color: var(--gui-border-strong);
         transition: 0.4s;
       }
     }

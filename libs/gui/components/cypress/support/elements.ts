@@ -1,11 +1,13 @@
 import type { RuleObject } from 'axe-core';
-import type { FileItem } from '../../src/lib/types';
+import type { FileItem, GuiVisibleItem } from '../../src/lib/types';
 
 /** Every GolemUI element, with the props it needs to render something meaningful. */
 export interface ElementCase {
   tag: string;
   /** Props set before the element connects. */
   props: Record<string, unknown>;
+  /** Runs before the element connects, after its props are set. */
+  setup?: (element: HTMLElement) => void;
   /** For a form control: the property that holds its value, and a sample value. */
   form?: { property: 'value' | 'values'; sample: unknown };
   /** axe rules off for this element, each with the reason next to it. */
@@ -33,13 +35,25 @@ const dateRange = [{ start: '2026-03-01', end: '2026-03-05' }];
 const dateTimeRange = [{ start: '2026-03-01T09:00:00', end: '2026-03-05T17:00:00' }];
 const timeRange = [{ start: '09:00:00', end: '17:00:00' }];
 
-// A listbox's options are its host's children (GolemUI Forms renders them), so on its own it
-// has none.
-const hostRenderedOptions: RuleObject = { 'aria-required-children': { enabled: false } };
+// A listbox's options are its host's children: render them from the items the list reports, as
+// an app does, so axe checks the listbox with its options.
+const renderOptions = (list: HTMLElement) =>
+  list.addEventListener('gui-visible-items-change', (event) => {
+    list.querySelectorAll('[role="option"]').forEach((option) => option.remove());
+    for (const item of (event as CustomEvent<GuiVisibleItem[]>).detail) {
+      const option = document.createElement('div');
+      option.id = item.id;
+      option.setAttribute('role', 'option');
+      option.setAttribute('aria-selected', String(item.selected));
+      option.textContent = String(item.value);
+      list.append(option);
+    }
+  });
 
 // Without an upload service the whole field is inactive, and WCAG 1.4.3 exempts the text of
-// inactive components from contrast: the message explaining why is inside it.
-const inactiveUpload = ['.gui-file-upload__service-error'];
+// inactive components from contrast: the message explaining why is inside it, and so is the name
+// of a file it holds.
+const inactiveUpload = ['.gui-file-upload__service-error', '.gui-file-upload__text'];
 
 export const elements: ElementCase[] = [
   // Its items are the app's children: accordion.cy.ts checks it with them.
@@ -92,7 +106,7 @@ export const elements: ElementCase[] = [
     tag: 'gui-list',
     props: { label: 'Color', items: options, valueField: 'value' },
     form: { property: 'value', sample: 'red' },
-    rules: hostRenderedOptions,
+    setup: renderOptions,
     hostRendersChildren: true,
   },
   { tag: 'gui-markdown', props: { label: 'Bio' }, form: { property: 'value', sample: '# Hi' } },
@@ -115,7 +129,7 @@ export const elements: ElementCase[] = [
     tag: 'gui-multi-list',
     props: { label: 'Colors', items: options, valueField: 'value' },
     form: { property: 'values', sample: ['red'] },
-    rules: hostRenderedOptions,
+    setup: renderOptions,
     hostRendersChildren: true,
   },
   // Its name is the label its host renders, see `has-label`.

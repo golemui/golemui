@@ -88,7 +88,9 @@
   /* Semantic Tokens - Borders */
   --gui-border-default: var(--gui-color-neutral-300);
   --gui-border-subtle: var(--gui-color-neutral-200);
-  --gui-border-strong: var(--gui-color-neutral-400);
+  /* The boundary of a control (input, checkbox, radio, toggle, list): 3:1 or more against the
+     page and the control's fill, as WCAG 1.4.11 asks. */
+  --gui-border-strong: var(--gui-color-neutral-500);
   --gui-border-disabled: var(--gui-color-neutral-200);
   --gui-border-focus: var(--gui-color-primary-500);
 
@@ -276,7 +278,7 @@
   /* Semantic Tokens - Borders (Dark Mode) */
   --gui-border-default: var(--gui-color-neutral-700);
   --gui-border-subtle: var(--gui-color-neutral-800);
-  --gui-border-strong: var(--gui-color-neutral-600);
+  --gui-border-strong: var(--gui-color-neutral-500);
   --gui-border-disabled: var(--gui-color-neutral-700);
   --gui-border-focus: var(--gui-color-primary-500);
 
@@ -284,6 +286,8 @@
   --gui-intent-primary: var(--gui-color-primary-500);
   --gui-intent-primary-hover: var(--gui-color-primary-400);
   --gui-intent-primary-active: var(--gui-color-primary-300);
+  /* The light fills above need dark text: white on them is under 4.5:1. */
+  --gui-intent-primary-text: var(--gui-color-neutral-950);
 
   /* For dark mode background tints, we use color-mix to tint the dark surface */
   --gui-intent-success-bg: color-mix(in srgb, var(--gui-color-success-500) 20%, transparent);

@@ -29,7 +29,8 @@ gui-range-date-time {
     padding-inline-start: 1rem;
     gap: 0 var(--gui-space-2);
     flex-wrap: wrap;
-    min-width: 265px;
+    // One line where there is room; on a narrow field the end wraps below the start (WCAG 1.4.10).
+    min-width: min(265px, 100%);
   }
 
   .gui-range-date-time-input__pills {

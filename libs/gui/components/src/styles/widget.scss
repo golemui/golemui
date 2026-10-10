@@ -91,7 +91,7 @@
     height: var(--gui-widget-size);
     border-radius: var(--gui-radius-md);
     background: var(--gui-bg-surface);
-    border: 1px solid var(--gui-border-default);
+    border: 1px solid var(--gui-border-strong);
     color: var(--gui-text-default);
     transition:
       border-color var(--gui-transition-normal, 0.2s),

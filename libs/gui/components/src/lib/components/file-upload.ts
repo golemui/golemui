@@ -571,6 +571,9 @@ export class GuiFileUpload extends GuiFormControl {
     const barItem = this.getBarItem();
     const uploaded = items.filter((item) => item.status === 'uploaded' && item.id !== barItem?.id);
     const hasService = !!this.getService();
+    // A read-only field only shows its files: it uploads nothing, so it needs no service, and its
+    // file names keep the contrast of an active field.
+    const missingService = !hasService && !this.readOnly;
     const showButton =
       hasService && !this.readOnly && !barItem && (this.isMultiple() || items.length === 0);
 
@@ -596,7 +599,7 @@ export class GuiFileUpload extends GuiFormControl {
             'gui-file-upload__box': true,
             'gui-file-upload__box--icon': !!this.icon,
             'gui-file-upload__box--dragover': this._dragover,
-            'gui-file-upload__box--disabled': !!this.disabled || !hasService,
+            'gui-file-upload__box--disabled': !!this.disabled || missingService,
             'gui-file-upload__box--readonly': !!this.readOnly,
           })}
           data-cy=${`${this.uid}_file-box`}
@@ -617,7 +620,7 @@ export class GuiFileUpload extends GuiFormControl {
           ${this.renderUploaded(uploaded)}
           ${barItem ? this.renderBar(this.presentItem(barItem)) : nothing}
           ${showButton ? this.renderButton() : nothing}
-          ${!hasService
+          ${missingService
             ? html`<div
                 class="gui-file-upload__service-error"
                 role="alert"
@@ -719,7 +722,11 @@ export class GuiFileUpload extends GuiFormControl {
       <span class="gui-file-upload__fill" aria-hidden="true"></span>
       <span class="gui-file-upload__text">
         <span class="gui-file-upload__text-base">${text}</span>
-        <span class="gui-file-upload__text-overlay" aria-hidden="true">${text}</span>
+        ${uploading
+          ? // The text over the fill, clipped to its width. Only while uploading: clipped to
+            // nothing, it would still be there for tools that ignore the clip.
+            html`<span class="gui-file-upload__text-overlay" aria-hidden="true">${text}</span>`
+          : nothing}
       </span>
       ${showError && this.canRetry(item) && !this.readOnly
         ? html`<button
