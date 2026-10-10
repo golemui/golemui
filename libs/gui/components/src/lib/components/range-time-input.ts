@@ -426,7 +426,7 @@ export class GuiRangeTimeInput extends GuiFormControl {
             .toolbarAriaLabel=${message('selectedTimeRanges')}
             .items=${pillItems}
             .errors=${this.errors}
-            .touched=${!!this.touched}
+            .touched=${this.touched}
             .removable=${true}
             .clickable=${true}
             .bubble=${true}

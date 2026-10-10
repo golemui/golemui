@@ -171,7 +171,7 @@ export class GuiMultiSelectTrigger extends GuiElement {
           .toolbarAriaLabel=${message('selectedOptions', this.toolbarAriaLabel)}
           .items=${pillItems}
           .errors=${this.errors}
-          .touched=${!!this.touched}
+          .touched=${this.touched}
           .removable=${true}
           .clickable=${false}
           .bubble=${true}

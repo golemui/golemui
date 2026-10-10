@@ -146,7 +146,7 @@ export class GuiPills extends GuiElement {
   /** Errors repeated inside the dropdown. */
   @property({ type: Array }) errors: string[] | undefined = undefined;
   /** Whether the field was touched: errors wait for it unless unset. */
-  @property({ converter: booleanAttribute }) touched: boolean | undefined = false;
+  @property({ converter: booleanAttribute }) touched: boolean | undefined = undefined;
 
   @state() private _isStartVisible = true;
   @state() private _isEndVisible = true;

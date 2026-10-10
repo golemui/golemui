@@ -459,7 +459,7 @@ export class GuiRangeDateTimeInput extends GuiFormControl {
             .toolbarAriaLabel=${message('selectedDateTimeRanges')}
             .items=${pillItems}
             .errors=${this.errors}
-            .touched=${!!this.touched}
+            .touched=${this.touched}
             .removable=${true}
             .clickable=${true}
             .bubble=${true}

@@ -163,7 +163,7 @@ export class GuiTags extends GuiFormControl {
             .toolbarAriaLabel=${message('selectedTags')}
             .items=${pillItems}
             .errors=${this.errors}
-            .touched=${!!this.touched}
+            .touched=${this.touched}
             .removable=${true}
             .clickable=${false}
             .bubble=${true}
