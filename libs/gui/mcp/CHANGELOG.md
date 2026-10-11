@@ -1,3 +1,13 @@
+## 2.0.0-rc.4 (2026-10-11)
+
+### 🩹 Fixes
+
+- **gui-mcp:** correct the $errors, state-suffix and SSR guidance ([#426](https://github.com/golemui/golemui/pull/426))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+
 ## 2.0.0-rc.3 (2026-10-11)
 
 This was a version bump only for gui-mcp to align it with other projects, there were no code changes.
