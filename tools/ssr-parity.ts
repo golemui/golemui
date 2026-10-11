@@ -44,9 +44,9 @@ interface FrameworkCheck {
   /**
    * Strings the framework serializes into the server markup. Vue reflects primitive
    * props as attributes on the gui-* tags. Lit renders the widget interiors, so the
-   * values sit on the native inputs (except the number widget, which assigns its
-   * input value in updated(), a hook that never runs on the server). React and
-   * Angular stop at the custom element boundary and serialize no values.
+   * values sit on the native inputs (the number widget writes its value as an attribute
+   * only on the server, see `serverValue`). React and Angular stop at the custom element
+   * boundary and serialize no values.
    */
   expectedValues: string[];
   /** Whether every expected widget tag must carry the defer-hydration hold attribute. */
@@ -79,7 +79,13 @@ const checks: FrameworkCheck[] = [
   {
     name: 'lit',
     serverEntry: join(repoRoot, 'dist/apps/lit-ssr-harness/server/entry-server.js'),
-    expectedValues: ['value="Ada"', 'value="Lovelace"', 'First name', 'Create account'],
+    expectedValues: [
+      'value="Ada"',
+      'value="Lovelace"',
+      'value="3"',
+      'First name',
+      'Create account',
+    ],
     holdsWithDeferHydration: true,
   },
   {

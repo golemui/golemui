@@ -210,7 +210,9 @@ resumeServerRenderedForm(form as unknown as CoreFormElement, {
 
 Rules that follow from it:
 
-- `formName` is mandatory (the server render throws without it).
+- `formName` is mandatory. Without it the form element generates a random name, so the server
+  markup and the client render use different ids. `renderForm` throws when it is missing.
+  `renderTemplate` does not check it.
 - `renderForm({ config, validators })` from the same entry renders one form without a
   surrounding template. `renderTemplate` is the general entry point.
 - Listeners and properties (`formHealthBoundary`, `autocomplete`) go on the element BEFORE
@@ -221,9 +223,8 @@ Rules that follow from it:
   module-scope object, spread into both preload calls and passed as `customWidgetLoaders`.
 - `@golemui/lit/ssr` has no browser build; import it only in server code.
 - `onLoad`, `onChange` and every other handler run in the browser only.
-- Known limitations: a widget that assigns its input value imperatively (the number widget)
-  renders without its value. Calendar widgets read the server clock, so their markup depends on
-  when the server rendered.
+- Known limitation: calendar widgets read the server clock, so their markup depends on when the
+  server rendered.
 
 Starter: `templates/astro` in the GolemUI repo (`output: 'server'` + `@astrojs/node`; the same
 code prerenders at build time under Astro's default static output).

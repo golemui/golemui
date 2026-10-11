@@ -25,7 +25,7 @@ const STATES_CONCEPT: GetConceptResult = {
   concept: 'states',
   summary:
     'States are named boolean conditions declared at the form root. ' +
-    'Each state name maps to a reactive expression string (using `$form`, `$meta`, `$formIsInvalid`, or `$fn`) ' +
+    'Each state name maps to a reactive expression string (using `$form`, `$meta`, `$errors`, `$formIsInvalid`, or `$fn`) ' +
     'that the runtime evaluates continuously as the user interacts with the form. ' +
     'Once declared, state names can gate widget visibility (include / exclude) and ' +
     'swap individual widget properties per-state — a capability unique to named states ' +
@@ -38,7 +38,8 @@ const STATES_CONCEPT: GetConceptResult = {
         'Add a `"states"` object to the top-level form definition. ' +
         'Each key is a state name; each value is a reactive expression string. ' +
         'Expressions are evaluated at runtime — they have access to `$form` (all current form values), ' +
-        '`$meta` (host-supplied metadata), `$formIsInvalid`, and `$fn` (host-provided pure functions). ' +
+        '`$meta` (host-supplied metadata), `$errors` (validation messages), `$formIsInvalid`, and ' +
+        '`$fn` (host-provided pure functions). ' +
         'State names can contain letters, numbers, hyphens, and underscores. ' +
         'Colons enable hierarchical composition — see the "Composed sub-states (colon notation)" pattern below.',
       example: {
@@ -48,7 +49,7 @@ const STATES_CONCEPT: GetConceptResult = {
           hasDiscount: '$form.hasDiscountCode === true',
           limitReached: '$form.users?.length === 5',
         },
-        form: ['/* ... widgets ... */'],
+        form: [{ kind: 'input', type: 'checkbox', path: 'terms', label: 'I accept the terms' }],
       },
     },
     {
@@ -116,7 +117,7 @@ const STATES_CONCEPT: GetConceptResult = {
         'For a one-off condition that applies to a single widget only, use the inline `when` form: ' +
         '`"include": { "when": "expression" }` or `"exclude": { "when": "expression" }`. ' +
         'The expression is evaluated exactly like a state expression — it has access to `$form`, ' +
-        '`$meta`, `$formIsInvalid`, and `$fn`, uses the same safe operator subset, and must use ' +
+        '`$meta`, `$errors`, `$formIsInvalid`, and `$fn`, uses the same safe operator subset, and must use ' +
         'optional chaining for nested fields. ' +
         'No entry in the root `states` map is required. ' +
         'Use this form when the condition is not shared with any other widget; use the named-state ' +
@@ -158,8 +159,9 @@ const STATES_CONCEPT: GetConceptResult = {
         'This works on root-level widget properties (`label`, `disabled`, `readonly`, `validator`, `size`) ' +
         'AND on any key inside the `props` object (`hint`, `placeholder`, `items`, `addLabel`, etc.). ' +
         'There is NO inline `when` equivalent for this — state-suffixed props REQUIRE a named state. ' +
-        'Multiple suffixes can coexist on the same property; when more than one state is active, ' +
-        'the last matching suffix in document order wins.',
+        'Multiple suffixes can coexist on the same property. When more than one matching state is ' +
+        'active, the longest state name wins. For names of equal length, the state declared first ' +
+        'in the root `states` map wins.',
       example: {
         $schema: FORM_SCHEMA_URL,
         states: {
@@ -198,9 +200,9 @@ const STATES_CONCEPT: GetConceptResult = {
             type: 'repeater',
             path: 'users',
             label: 'Users',
-            addLabel: 'Add user',
-            'addLabel.limitReached': "Limit reached — can't add more",
             props: {
+              addLabel: 'Add user',
+              'addLabel.limitReached': "Limit reached — can't add more",
               removeLabel: 'Remove',
               template: {
                 kind: 'layout',
@@ -223,7 +225,7 @@ const STATES_CONCEPT: GetConceptResult = {
     'State-suffixed root props — only these support suffixes at the widget root level: `label`, `disabled`, `readonly`, `validator`, `size`. All other overridable properties live inside `props`.',
     'State-suffixed props inside `props` — any key inside the `props` object can be suffixed: `"hint.<state>"`, `"placeholder.<state>"`, `"items.<state>"`, `"addLabel.<state>"`, etc.',
     'Suffix names must not contain dots (the dot is the separator between property and state name): `"label.myState"` ✅, `"label.register:adult"` ✅ — `"label.my.state"` ❌.',
-    'Reactive expressions must reference `$form`, `$meta`, `$formIsInvalid`, or `$fn`. A bare identifier like `termsAccepted` without a root reference is invalid.',
+    'Reactive expressions must reference `$form`, `$meta`, `$errors`, `$formIsInvalid`, or `$fn`. A bare identifier like `termsAccepted` without a root reference is invalid.',
     'Use `===` / `!==` for equality, `&&` / `||` for logic. Avoid `=` (assignment), `==`/`!=` (loose equality), or bitwise `&`/`|`.',
     'When multiple states are active at the same time and a property has more than one matching suffix, the longest state name wins (most specific takes priority). Example: if both `register` and `register:adult` are active, `"label.register:adult"` overrides `"label.register"`.',
     '`include.in` and `exclude.from` each accept an Array of state names. A widget included `in: ["a", "b"]` renders when state `a` OR state `b` is active.',
@@ -252,7 +254,7 @@ const STRING_INTERPOLATION_CONCEPT: GetConceptResult = {
       description:
         'Embed `{{expression}}` in any string prop to inject live values. ' +
         'Available scopes: `$form` (all current field values), `$meta` (host-supplied metadata), ' +
-        '`$errors` (current validation error messages keyed by field uid), ' +
+        '`$errors` (current validation error messages, an array per input at its `path`), ' +
         '`$formIsInvalid` (boolean — `true` when any field currently fails validation), ' +
         'and `$fn` (host-provided pure functions, called as `$fn.name(...)`). ' +
         'Use optional chaining (`?.`) when accessing nested fields that may not yet exist. ' +
@@ -303,10 +305,11 @@ const STRING_INTERPOLATION_CONCEPT: GetConceptResult = {
         'Slots support full JavaScript-like expressions: arithmetic, string concatenation, ' +
         'ternary conditionals, and optional chaining. The expression is evaluated against the ' +
         'same scope object (`$form`, `$meta`, `$errors`, `$formIsInvalid`, `$fn`). ' +
-        'If the expression evaluates to `null` or `undefined`, the slot renders as an empty string.',
+        'If the expression evaluates to `null` or `undefined`, the slot renders as an empty string. ' +
+        "With the form data `{ firstName: 'Jane', lastName: 'Doe', count: 4, role: 'admin' }` the " +
+        'example renders "Full name: Jane Doe", "Next item: 5", "Role: Administrator" and "City: ".',
       example: {
         $schema: FORM_SCHEMA_URL,
-        data: { firstName: 'Jane', lastName: 'Doe', count: 4, role: 'admin' },
         form: [
           {
             uid: 'full-name',
@@ -341,11 +344,12 @@ const STRING_INTERPOLATION_CONCEPT: GetConceptResult = {
         'When using i18n translations, `params` values support the same expression language ' +
         'as `{{}}` slots, but as **bare expressions** without the `{{}}` delimiters. ' +
         'Params that start with a `$` scope prefix are evaluated; others are passed as static strings. ' +
-        'The expression has access to `$form`, `$meta`, `$errors`, `$formIsInvalid`, and `$fn`.',
+        'The expression has access to `$form`, `$meta`, `$errors`, `$formIsInvalid`, and `$fn`. ' +
+        "With the form data `{ firstName: 'Jane', lastName: 'Doe', count: 4 }` and the metadata " +
+        "`{ connectionStatus: 'online' }`, the params resolve to `fullName: 'Jane Doe'`, `n: 5` and " +
+        "`status: 'online'`. `hello` stays the static string `'Hola'`.",
       example: {
         $schema: FORM_SCHEMA_URL,
-        data: { firstName: 'Jane', lastName: 'Doe', count: 4 },
-        meta: { connectionStatus: 'online' },
         form: [
           {
             uid: 'greeting',
@@ -449,12 +453,12 @@ const REACTIVE_SCOPE_CONCEPT: GetConceptResult = {
     {
       name: '$errors — validation error messages',
       description:
-        '`$errors` is a plain object keyed by widget `uid`. ' +
-        '`$errors.myField` is the current validation error message string for the widget with ' +
-        '`uid: "myField"`, or `undefined` if that field is currently valid. ' +
+        '`$errors` has the same shape as `$form`: the messages of an input sit at its `path`, ' +
+        'not at its `uid`. `$errors.email` is the array of current error messages for the input ' +
+        'with `path: "email"`, or `undefined` when that input is valid. A nested path nests the ' +
+        'same way: `path: "address.city"` -> `$errors.address?.city`. ' +
         "Use it to display a field's error message inside another widget (e.g. an `alert`). " +
-        'Note: a widget must have an explicit `uid` value set for its errors to appear in `$errors`; ' +
-        'auto-generated uids are not predictable.',
+        '`$errors.email?.[0]` reads the first message.',
       example: {
         $schema: FORM_SCHEMA_URL,
         form: [
@@ -471,11 +475,11 @@ const REACTIVE_SCOPE_CONCEPT: GetConceptResult = {
             type: 'alert',
             props: {
               level: 'error',
-              // Render the live validation error message for the emailField widget.
-              text: '{{$errors.emailField}}',
+              // $errors is keyed by the input's path ("email"), not by its uid ("emailField").
+              text: '{{$errors.email?.[0]}}',
             },
             // Only show this alert when the field actually has an error.
-            include: { when: '$errors.emailField !== undefined' },
+            include: { when: '$errors.email !== undefined' },
           },
         ],
       },
@@ -606,7 +610,7 @@ const REACTIVE_SCOPE_CONCEPT: GetConceptResult = {
     'Use optional chaining (`?.`) at every intermediate segment of a nested path. `$form.address?.city` is safe; `$form.address.city` throws if `address` is undefined.',
     'A widget\'s `path` value maps directly to a `$form` key path using the same dot segments. `path: "shipping.address.zip"` -> `$form.shipping?.address?.zip`.',
     '`$formIsInvalid` is a built-in bare boolean — use it directly: `disabled: { when: "$formIsInvalid" }` or `states: { formValid: "!$formIsInvalid" }`. Never chain: `$formIsInvalid.value` is invalid.',
-    '`$errors` keys are widget `uid` values, not field path values. A widget must have an explicit `uid` for its errors to be addressable.',
+    '`$errors` has the same shape as `$form`: the messages of an input sit at its `path`, not at its `uid`. `path: "address.city"` -> `$errors.address?.city`. Each entry is an array of message strings, and a valid input has no entry.',
     '`$meta` keys are arbitrary — they depend entirely on what the host application passes to the form component. Use optional chaining if a key may be absent.',
     'Supported operators across all expressions: arithmetic (`+`, `-`, `*`, `/`, `%`), comparison (`===`, `!==`, `<`, `>`, `<=`, `>=`), logical (`&&`, `||`, `!`), ternary (`? :`), optional chaining (`?.`), nullish coalescing (`??`).',
     'Use `===` / `!==` for equality. Avoid `==` / `!=` (loose equality causes unexpected coercions with `undefined`).',
