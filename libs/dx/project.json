@@ -6,8 +6,7 @@
   "release": {
     "version": {
       "manifestRootsToUpdate": ["dist/{projectRoot}"],
-      "currentVersionResolver": "git-tag",
-      "fallbackCurrentVersionResolver": "disk"
+      "currentVersionResolver": "git-tag"
     }
   },
   "tags": ["scope:core", "type:lib"],
