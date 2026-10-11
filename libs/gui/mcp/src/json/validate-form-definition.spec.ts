@@ -156,6 +156,26 @@ describe('json_validate_form_definition', () => {
     ).toEqual([]);
   });
 
+  it('accepts $errors as a valid root reference', () => {
+    const result = validateFormDefinition({
+      formDefinition: {
+        states: { emailInvalid: '$errors.email !== undefined' },
+        form: [
+          { kind: 'input', type: 'textinput', path: 'email', label: 'Email' },
+          {
+            kind: 'display',
+            type: 'alert',
+            props: { text: 'Check the email' },
+            include: { when: '$errors.email !== undefined' },
+          },
+        ],
+      },
+    });
+    expect(
+      result.expressionWarnings.filter((w) => w.message.includes('does not reference')),
+    ).toEqual([]);
+  });
+
   it('does not flag !$formIsInvalid (negation of a boolean is valid)', () => {
     const result = validateFormDefinition({
       formDefinition: {

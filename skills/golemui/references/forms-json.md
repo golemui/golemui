@@ -36,8 +36,9 @@ shapes with `gui.*` syntax in one artifact.
 - Top level: `form` (required widget array), optional `states` (name → reactive expression
   string) — here `states` IS a sibling of `form` inside the document (unlike the TS API, where
   states live in a separate `formConfig` object).
-- Every widget: `kind` (`input` | `action` | `display` | `layout`) + `type` (lowercase widget
-  name, e.g. `textinput`, `datepicker`, `radiogroup`) + for inputs a `path` (the data key).
+- Every widget: `kind` (`input` | `action` | `display` | `layout`) + `type` (the exact widget
+  name, case-sensitive, e.g. `textinput`, `datePicker`, `radiogroup`) + for inputs a `path` (the
+  data key).
 - `label`, `validator`, `include`/`exclude`, and `on` (event handler names) are top-level widget
   keys; widget-specific options (`items`, `options`, `placeholder`, `minDate`, …) go under
   `props`.
