@@ -1,3 +1,13 @@
+## 2.0.0-rc.3 (2026-10-11)
+
+### 🩹 Fixes
+
+- **gui-components:** darker colours, accessible lists and file uploads ([801c77d1](https://github.com/golemui/golemui/commit/801c77d1))
+
+### ❤️ Thank You
+
+- Raúl Jiménez @Elecash
+
 ## 2.0.0-rc.2 (2026-10-10)
 
 This was a version bump only for lit-utils to align it with other projects, there were no code changes.
