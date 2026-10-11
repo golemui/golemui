@@ -117,6 +117,9 @@
     }
   },
   "release": {
+    "releaseTag": {
+      "strictPreid": true
+    },
     "version": {
       "specifierSource": "conventional-commits",
       "currentVersionResolver": "git-tag",

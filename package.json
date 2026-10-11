@@ -53,7 +53,6 @@
     "@lit/react": "^1.0.8",
     "@modelcontextprotocol/sdk": "^1.0.0",
     "@standard-schema/spec": "^1.0.0",
-    "ajv-formats": "^3.0.1",
     "lit": "^3.3.1",
     "react": "19.0.0",
     "react-dom": "19.0.0",
