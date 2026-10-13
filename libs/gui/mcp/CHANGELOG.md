@@ -1,3 +1,13 @@
+## 2.0.0-rc.5 (2026-10-13)
+
+### 🩹 Fixes
+
+- **gui-mcp:** bundle subscript and declare the core deps the bundle imports ([#427](https://github.com/golemui/golemui/pull/427))
+
+### ❤️ Thank You
+
+- Raúl Jiménez @Elecash
+
 ## 2.0.0-rc.4 (2026-10-11)
 
 ### 🩹 Fixes
