@@ -1,0 +1,26 @@
+{
+  "name": "ink-playground",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/ink-playground/src",
+  "projectType": "application",
+  "tags": ["scope:app", "type:app"],
+  "// targets": "to see all targets run: nx show project ink-playground --web",
+  "targets": {
+    "serve": {
+      "executor": "nx:run-commands",
+      "continuous": true,
+      "options": {
+        "command": "tsx --tsconfig apps/ink-playground/tsconfig.tsx.json apps/ink-playground/src/main.tsx"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc -p apps/ink-playground/tsconfig.app.json --noEmit"
+      }
+    }
+  }
+}
