@@ -16,6 +16,12 @@ export default defineConfig(() => ({
       pathsToAliases: false,
     }),
   ],
+  ssr: {
+    // `ssr: true` leaves every node_modules import external. @golemui/core is compiled in from
+    // source, and core bundles `subscript` rather than declaring it (#393), so bundle it here too:
+    // left external, its import is a runtime dependency nothing installs.
+    noExternal: ['subscript'],
+  },
   build: {
     outDir: '../../../dist/libs/gui/mcp',
     emptyOutDir: true,

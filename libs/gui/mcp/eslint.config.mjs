@@ -28,6 +28,8 @@ export default [
             '@golemui/dx',
             'zod',
             '@standard-schema/spec',
+            'rxjs',
+            'ts.data.json',
           ],
         },
       ],
