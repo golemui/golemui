@@ -1,0 +1,42 @@
+{
+  "name": "@golemui/gui-ink",
+  "version": "0.0.0",
+  "private": true,
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "type": "module",
+  "module": "./index.js",
+  "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./index.js"
+    }
+  },
+  "files": [
+    "lib",
+    "index.d.ts",
+    "*.js",
+    "*.md"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "@golemui/gui-validators": "*"
+  },
+  "peerDependencies": {
+    "react": "^19.2.0",
+    "ink": "^7.0.0",
+    "@golemui/react": "*",
+    "@golemui/core": "*",
+    "@golemui/gui-shared": "*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/golemui/golemui.git",
+    "directory": "libs/gui/ink"
+  }
+}

@@ -32,6 +32,7 @@
       ],
       "@golemui/schemas/json-schema": ["libs/schemas/src/json-schema.ts"],
       "@golemui/gui-angular": ["libs/gui/angular/src/index.ts"],
+      "@golemui/gui-ink": ["libs/gui/ink/src/index.ts"],
       "@golemui/gui-lit": ["libs/gui/lit/src/index.ts"],
       "@golemui/gui-react": ["libs/gui/react/src/index.ts"],
       "@golemui/gui-vue": ["libs/gui/vue/src/index.ts"],
