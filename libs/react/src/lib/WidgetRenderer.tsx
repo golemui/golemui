@@ -11,7 +11,7 @@ type WidgetComponent = React.ComponentType<WithWidget>;
 
 // Repeater rows and layout children arrive from the store with their row indexes already applied to `uid` and `path`, so the renderer takes the widget as it is
 function WidgetRenderer(props: Props) {
-  const { formContext } = useReactFormContext();
+  const { formContext, widgetErrorFallback } = useReactFormContext();
   const [asyncLoadedComponent, setAsyncLoadedComponent] = useState<WidgetComponent | null>(null);
   const isMounted = useRef(true);
 
@@ -57,7 +57,7 @@ function WidgetRenderer(props: Props) {
   }
 
   return (
-    <WidgetErrorBoundary widget={props.widget}>
+    <WidgetErrorBoundary widget={props.widget} fallback={widgetErrorFallback}>
       <Component widget={props.widget} />
     </WidgetErrorBoundary>
   );

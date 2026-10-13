@@ -4,7 +4,14 @@ export { FormComponent } from './lib/FormComponent';
 export type { FormComponentHandle, FormComponentProps } from './lib/FormComponent';
 
 export { createFormComponent } from './lib/createFormComponent';
-export type { WidgetSetFormComponent, WidgetSetFormProps } from './lib/createFormComponent';
+export type {
+  CreateFormComponentOptions,
+  WidgetSetFormComponent,
+  WidgetSetFormProps,
+} from './lib/createFormComponent';
+
+export { DefaultWidgetErrorFallback } from './lib/WidgetErrorBoundary';
+export type { WidgetErrorFallback } from './lib/WidgetErrorBoundary';
 
 export { DefaultFormHealthBoundary } from './lib/FormHealthBoundary';
 export type { FormHealthBoundary, FormHealthBoundaryProps } from './lib/FormHealthBoundary';

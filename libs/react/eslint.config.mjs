@@ -15,17 +15,17 @@ export default [
       '@nx/dependency-checks': [
         'error',
         {
-          ignoredFiles: ['{projectRoot}/eslint.config.{js,cjs,mjs,ts,cts,mts}'],
+          ignoredFiles: [
+            '{projectRoot}/eslint.config.{js,cjs,mjs,ts,cts,mts}',
+            // Test-only widgets for the Ink render spec. The library never imports `ink`.
+            '{projectRoot}/src/lib/ink.fixture.tsx',
+          ],
           ignoredDependencies: [
             '@nx/vite',
             'vite',
             'vite-plugin-dts',
             '@nx/dependency-checks',
             '@vitejs/plugin-react',
-            // No shipped file imports react-dom, but the components render DOM and
-            // custom elements, so they only run under it. The peer range is also
-            // the react-dom range the hydration and server-render specs cover.
-            'react-dom',
           ],
         },
       ],

@@ -1,10 +1,16 @@
 import { createContext, useContext } from 'react';
 
 import type { FormContext, WithWidget } from '@golemui/core';
+import type { WidgetErrorFallback } from './WidgetErrorBoundary';
 
-export const ReactFormContext = createContext<{
+/** The value every widget and renderer below a form reads. */
+export interface ReactFormContextValue {
   formContext: FormContext<React.ComponentType<WithWidget>>;
-} | null>(null);
+  /** Replacement UI for a widget that threw. Undefined keeps the DOM default of `WidgetErrorBoundary`. */
+  widgetErrorFallback?: WidgetErrorFallback;
+}
+
+export const ReactFormContext = createContext<ReactFormContextValue | null>(null);
 
 export function useReactFormContext() {
   const context = useContext(ReactFormContext);

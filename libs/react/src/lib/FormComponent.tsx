@@ -12,6 +12,7 @@ import {
 import { type FormInitConfig } from '@golemui/core';
 import {
   forwardRef,
+  type RefObject,
   useEffect,
   useId,
   useImperativeHandle,
@@ -22,7 +23,7 @@ import {
 } from 'react';
 import { DefaultFormHealthBoundary, type FormHealthBoundary } from './FormHealthBoundary';
 import { ReactFormContextProvider } from './ReactFormContextProvider';
-import WidgetErrorBoundary from './WidgetErrorBoundary';
+import WidgetErrorBoundary, { type WidgetErrorFallback } from './WidgetErrorBoundary';
 import WidgetRenderer from './WidgetRenderer';
 
 export interface FormComponentHandle {
@@ -36,12 +37,25 @@ export interface FormComponentProps {
   formEvent?: (event: FormEvent) => void;
   formSubmit?: (event: FormSubmitEvent) => void;
   formHealth?: (error: FormHealth) => void;
-  /** Wraps the form and renders the error UI for an errored {@link FormHealth}. Defaults to {@link DefaultFormHealthBoundary} (a red banner). */
+  /** Wraps the form and renders the error UI for an errored {@link FormHealth}. Defaults to {@link DefaultFormHealthBoundary} (a red banner). In headless mode the default renders the form only. */
   formHealthBoundary?: FormHealthBoundary;
   autocomplete?: string;
+  /**
+   * Renders the widget tree without the `div.gui-form` and `form` wrapper, for a host that
+   * cannot render DOM elements (Ink, for example). `autocomplete` has no effect in this mode,
+   * and a submit button has to call the `onSubmit` of `useActionWidget` itself. The default
+   * error UI renders DOM elements, so in this mode it shows nothing unless
+   * `formHealthBoundary` and `widgetErrorFallback` are passed. The errors are still logged.
+   */
+  headless?: boolean;
+  /** Replacement UI for a widget that threw. Defaults to {@link DefaultWidgetErrorFallback}, which renders DOM elements. In headless mode the default renders nothing. */
+  widgetErrorFallback?: WidgetErrorFallback;
 }
 
 type WidgetComponent = React.ComponentType<WithWidget>;
+
+/** The three callbacks the subscriptions forward to, read through a ref so a new callback identity never resubscribes. */
+type FormCallbacks = Pick<FormComponentProps, 'formEvent' | 'formSubmit' | 'formHealth'>;
 
 /**
  * Everything one store initialization produces, kept in one state value so the tree key,
@@ -125,9 +139,62 @@ function createFormInstance(
 // Effects never run during a server render, and renderToString warns on useLayoutEffect.
 const useBrowserLayoutEffect = typeof document === 'undefined' ? useEffect : useLayoutEffect;
 
+// The default error UI renders DOM elements, which a headless host cannot draw. The errors
+// still reach the console through FormSubscriptions and WidgetErrorBoundary.
+const HeadlessFormHealthBoundary: FormHealthBoundary = ({ children }) => children;
+const headlessWidgetErrorFallback: WidgetErrorFallback = () => null;
+
+/**
+ * Subscribes to the form events, the submit events and the form health. Renders nothing.
+ *
+ * It is the first child of the form, so its effect runs before every widget effect and
+ * catches the `load` events of the first commit. In the browser it is a layout effect, so
+ * the subscriptions also exist before the first paint, when the user can start to click.
+ */
+function FormSubscriptions({
+  instance,
+  callbacksRef,
+}: {
+  instance: FormInstance;
+  callbacksRef: RefObject<FormCallbacks>;
+}) {
+  useBrowserLayoutEffect(() => {
+    const eventSub = instance.context.events$.subscribe((event) =>
+      callbacksRef.current.formEvent?.(event),
+    );
+    const submitSub = instance.context.submit$.subscribe((event) =>
+      callbacksRef.current.formSubmit?.(event),
+    );
+    const healthSub = watchFormHealth(instance.store.state$).subscribe((health) => {
+      if (health.status === 'errored') {
+        console.error('GolemUI form failed to initialize:', health.message);
+      }
+      callbacksRef.current.formHealth?.(health);
+    });
+    return () => {
+      eventSub.unsubscribe();
+      submitSub.unsubscribe();
+      healthSub.unsubscribe();
+    };
+    // callbacksRef is a ref object, its identity never changes, so only `instance` resubscribes.
+  }, [instance, callbacksRef]);
+
+  return null;
+}
+
 export const FormComponent = forwardRef<FormComponentHandle, FormComponentProps>(
   function FormComponent(
-    { config, validators, formHealth, formEvent, formSubmit, formHealthBoundary, autocomplete },
+    {
+      config,
+      validators,
+      formHealth,
+      formEvent,
+      formSubmit,
+      formHealthBoundary,
+      autocomplete,
+      headless,
+      widgetErrorFallback,
+    },
     ref,
   ) {
     // useId gives the same id on the server and the hydrating client, so an omitted
@@ -165,29 +232,6 @@ export const FormComponent = forwardRef<FormComponentHandle, FormComponentProps>
       setInstance(createFormInstance(config, validators, formName, instance.generation + 1));
     }, [config, validators, formName, instance]);
 
-    // Layout effect on purpose: the widget tree mounts in the same commit and emits its
-    // `load` events from passive effects, which run after every layout effect. A passive
-    // subscription here would subscribe too late and lose those events.
-    useBrowserLayoutEffect(() => {
-      const eventSub = instance.context.events$.subscribe((event) =>
-        callbacksRef.current.formEvent?.(event),
-      );
-      const submitSub = instance.context.submit$.subscribe((event) =>
-        callbacksRef.current.formSubmit?.(event),
-      );
-      const healthSub = watchFormHealth(instance.store.state$).subscribe((health) => {
-        if (health.status === 'errored') {
-          console.error('GolemUI form failed to initialize:', health.message);
-        }
-        callbacksRef.current.formHealth?.(health);
-      });
-      return () => {
-        eventSub.unsubscribe();
-        submitSub.unsubscribe();
-        healthSub.unsubscribe();
-      };
-    }, [instance]);
-
     // Browser-only subscription: a language change reaches the render through the store.
     useEffect(() => {
       const unsubscribeI18n = instance.context.localization.subscribe((newLang) => {
@@ -215,26 +259,40 @@ export const FormComponent = forwardRef<FormComponentHandle, FormComponentProps>
     };
 
     // Always render the form inside the boundary so a recovered health clears the error in place.
-    const Boundary = formHealthBoundary ?? DefaultFormHealthBoundary;
+    const Boundary =
+      formHealthBoundary ?? (headless ? HeadlessFormHealthBoundary : DefaultFormHealthBoundary);
+    const errorFallback =
+      widgetErrorFallback ?? (headless ? headlessWidgetErrorFallback : undefined);
+
+    const widgetTree = formLayoutField && (
+      <WidgetErrorBoundary
+        key={instance.generation}
+        widget={formLayoutField}
+        fallback={errorFallback}
+      >
+        <WidgetRenderer widget={formLayoutField} />
+      </WidgetErrorBoundary>
+    );
 
     return (
-      <ReactFormContextProvider formContext={instance.context}>
+      <ReactFormContextProvider formContext={instance.context} widgetErrorFallback={errorFallback}>
+        <FormSubscriptions instance={instance} callbacksRef={callbacksRef} />
         <Boundary health={healthError ?? { status: 'ok' }}>
-          <div className="gui-form">
-            <form
-              id={formName}
-              noValidate
-              dir={direction}
-              autoComplete={autocomplete}
-              onSubmit={onFormSubmit}
-            >
-              {formLayoutField && (
-                <WidgetErrorBoundary key={instance.generation} widget={formLayoutField}>
-                  <WidgetRenderer widget={formLayoutField} />
-                </WidgetErrorBoundary>
-              )}
-            </form>
-          </div>
+          {headless ? (
+            widgetTree
+          ) : (
+            <div className="gui-form">
+              <form
+                id={formName}
+                noValidate
+                dir={direction}
+                autoComplete={autocomplete}
+                onSubmit={onFormSubmit}
+              >
+                {widgetTree}
+              </form>
+            </div>
+          )}
         </Boundary>
       </ReactFormContextProvider>
     );
