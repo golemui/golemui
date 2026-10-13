@@ -41,9 +41,24 @@ export function useActionWidget<ExtraProps extends Record<string, any>>(
     formContext.emitEvent('click', widget);
   }, [widget, formContext]);
 
+  /**
+   * Validates the whole form and emits the submit event when the form is valid. Does nothing
+   * unless the widget's `actionType` is `submit`, like a DOM button of type `button`.
+   *
+   * A widget calls it after `onClick` when the host has no form element to submit. In the DOM
+   * the form element already submits, so a DOM button only needs `onClick`.
+   */
+  const onSubmit = useCallback(() => {
+    if (widget.actionType !== 'submit') {
+      return;
+    }
+    formContext.emitSubmitEvent();
+  }, [widget, formContext]);
+
   return {
     uid: widget.uid,
     templateData,
     onClick,
+    onSubmit,
   };
 }
