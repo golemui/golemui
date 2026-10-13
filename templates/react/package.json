@@ -10,11 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@golemui/core": "1.6.0",
-    "@golemui/react": "1.6.0",
-    "@golemui/gui-react": "1.6.0",
-    "@golemui/gui-components": "1.6.0",
-    "@golemui/gui-shared": "1.6.0",
+    "@golemui/core": "2.0.0",
+    "@golemui/react": "2.0.0",
+    "@golemui/gui-react": "2.0.0",
+    "@golemui/gui-components": "2.0.0",
+    "@golemui/gui-shared": "2.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
