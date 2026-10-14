@@ -11,7 +11,6 @@ import type { ComponentType } from 'react';
 export type InkWidgetType =
   | 'button'
   | 'checkbox'
-  | 'flex'
   | 'grid'
   | 'markdownText'
   | 'password'
@@ -28,7 +27,6 @@ export const widgetLoaders: WidgetLoaders<ComponentType<WithWidget>, InkWidgetTy
   textinput: async () => (await import('./components/TextInput')).TextInput,
 
   // LAYOUTS
-  flex: async () => (await import('./components/Grid')).Grid,
   grid: async () => (await import('./components/Grid')).Grid,
 
   // DISPLAY

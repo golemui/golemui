@@ -81,15 +81,15 @@ focus starts on the first field of the definition.
 ## Widgets
 
 The set implements these widget types. A form that uses any other type shows a form health error
-that names the type.
+that names the type. That includes `flex`, which is deprecated since 2.0: use `grid`.
 
-| Family  | Types                   | What the terminal does                                                                             |
-| ------- | ----------------------- | -------------------------------------------------------------------------------------------------- |
-| Text    | `textinput`, `password` | One line with a caret. `password` draws `*` for each character and has no reveal toggle.           |
-| Choice  | `checkbox`              | The glyph and the label on one line.                                                               |
-| Display | `markdownText`          | Prints the markdown source as plain text. Nothing parses it, so markup characters stay visible.    |
-| Layout  | `grid`, `flex`          | `flex` renders as a `grid`. Gaps are counted in cells. A grid does not stack in a narrow terminal. |
-| Action  | `button`                | A bracketed label. Focus shows as the focus marker, plus inverse video in a terminal with colors.  |
+| Family  | Types                   | What the terminal does                                                                            |
+| ------- | ----------------------- | ------------------------------------------------------------------------------------------------- |
+| Text    | `textinput`, `password` | One line with a caret. `password` draws `*` for each character and has no reveal toggle.          |
+| Choice  | `checkbox`              | The glyph and the label on one line.                                                              |
+| Display | `markdownText`          | Prints the markdown source as plain text. Nothing parses it, so markup characters stay visible.   |
+| Layout  | `grid`                  | Gaps are counted in cells. A grid does not stack in a narrow terminal.                            |
+| Action  | `button`                | A bracketed label. Focus shows as the focus marker, plus inverse video in a terminal with colors. |
 
 Placeholders are hidden while a field is focused. A validation error replaces the hint of its field
 instead of showing below it.

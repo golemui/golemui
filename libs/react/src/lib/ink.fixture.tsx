@@ -76,7 +76,7 @@ function InkStubButton(widgetInstance: WithWidget) {
 }
 
 /** Stacks its children in a column. */
-function InkStubFlex(widgetInstance: WithWidget) {
+function InkStubGrid(widgetInstance: WithWidget) {
   const { children } = useLayoutWidget<Record<string, any>>(
     widgetInstance.widget as LayoutWidget<string>,
   );
@@ -100,7 +100,7 @@ type StubComponent = React.ComponentType<WithWidget>;
 export const inkStubWidgetLoaders = {
   textinput: async (): Promise<StubComponent> => InkStubTextInput,
   button: async (): Promise<StubComponent> => InkStubButton,
-  flex: async (): Promise<StubComponent> => InkStubFlex,
+  grid: async (): Promise<StubComponent> => InkStubGrid,
   throwing: async (): Promise<StubComponent> => InkStubThrowingWidget as StubComponent,
 };
 
@@ -131,7 +131,7 @@ export function buildInkConfig(): FormInitConfig<StubComponent> {
       form: {
         uid: 'root',
         kind: 'layout',
-        type: 'flex',
+        type: 'grid',
         children: [
           {
             kind: 'input',
@@ -162,7 +162,7 @@ export function buildThrowingInkConfig(): FormInitConfig<StubComponent> {
       form: {
         uid: 'root',
         kind: 'layout',
-        type: 'flex',
+        type: 'grid',
         children: [
           { kind: 'display', type: 'throwing' },
           { kind: 'input', type: 'textinput', path: 'firstName', label: 'First name' },
@@ -181,7 +181,7 @@ export function buildMissingLoaderInkConfig(): FormInitConfig<StubComponent> {
       form: {
         uid: 'root',
         kind: 'layout',
-        type: 'flex',
+        type: 'grid',
         children: [
           { kind: 'display', type: 'missing' },
           { kind: 'input', type: 'textinput', path: 'firstName', label: 'First name' },

@@ -91,4 +91,26 @@ describe('the grid layout widget', () => {
       expect(secondLine).toMatch(/^four +five$/);
     });
   });
+
+  it('does not render the deprecated flex layout and names it in the form health', async () => {
+    // The adapter logs the errored form health, which is expected noise here.
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    try {
+      const form = await renderForm({
+        formDef: {
+          form: [
+            { uid: 'name', kind: 'input', type: 'textinput', path: 'name', label: 'Name' },
+            { uid: 'old-layout', kind: 'layout', type: 'flex', children: [text('inside')] },
+          ],
+        },
+      });
+
+      await vi.waitFor(() => {
+        expect(form.frame()).toContain('Widget "flex" could not be loaded');
+        expect(form.frame()).not.toContain('inside');
+      });
+    } finally {
+      consoleError.mockRestore();
+    }
+  });
 });

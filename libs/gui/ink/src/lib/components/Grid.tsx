@@ -1,6 +1,5 @@
 import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
 import {
-  type FlexProps,
   type GridGap,
   type GridJustify,
   type GridProps,
@@ -35,15 +34,15 @@ const JUSTIFY_CONTENT: Record<Exclude<GridJustify, 'stretch'>, BoxProps['justify
 type GridChild = { widget: NonFunctionWidget<string>; index: number };
 
 /**
- * The `grid` layout widget, and the deprecated `flex` layout, which renders as a grid.
+ * The `grid` layout widget.
  *
  * Each child sizes itself (`flexGrow` from its `size`, `flexBasis={0}`), so a stack and a
  * stretched row render the children directly. The other modes wrap each child in a column cell.
  */
 export function Grid(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as LayoutWidget;
-  const { children, templateData } = useLayoutWidget<GridProps & FlexProps>(widget);
-  const grid = resolveGrid(widget.type, templateData);
+  const { children, templateData } = useLayoutWidget<GridProps>(widget);
+  const grid = resolveGrid('grid', templateData);
   const gap = GAP_CELLS[grid.gap];
   const gridChildren = (children as NonFunctionWidget<string>[]).map((child, index) => ({
     widget: child,
