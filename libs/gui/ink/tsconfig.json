@@ -5,6 +5,8 @@
     "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
     "strict": true,
+    // es2022 for Intl.Segmenter, which the text caret uses. Node 22, the minimum, has it.
+    "lib": ["es2022", "dom"],
     "types": ["vite/client", "vitest"]
   },
   "files": [],

@@ -4,10 +4,12 @@ import { useInputWidget } from '@golemui/react';
 import { Box, Text } from 'ink';
 import { Field } from '../internal/Field';
 import { useFieldFocus } from '../internal/useFieldFocus';
+import { useFocusedInput } from '../internal/useFocusedInput';
 import { useTheme } from '../theme';
 
 /**
- * The `checkbox` widget. Space and Enter both toggle the value.
+ * The `checkbox` widget. Space toggles the value. Enter moves to the next field, as in a text
+ * field, so a user who walks through the form with Enter does not change the value.
  *
  * The label sits next to the glyph instead of above it, so {@link Field} gets no label and this
  * component draws the label and the required glyph itself.
@@ -24,15 +26,21 @@ export function Checkbox(widgetInstance: WithWidget) {
   const isReadonly = templateData.readonly as boolean;
   const isRequired = (templateData.validator as Validator)?.required;
 
-  const { isFocused, useFocusedInput } = useFieldFocus({ uid, isDisabled, onBlur });
+  const { isFocused, focusNext } = useFieldFocus({ uid, isDisabled, onBlur });
 
-  useFocusedInput((input, key) => {
-    if (isReadonly) {
-      return;
-    }
-    if (input === ' ' || key.return) {
-      onValueChanged(!value);
-    }
+  useFocusedInput(uid, {
+    onKey: (input, key) => {
+      if (key.return) {
+        focusNext();
+        return;
+      }
+      if (isReadonly) {
+        return;
+      }
+      if (input === ' ') {
+        onValueChanged(!value);
+      }
+    },
   });
 
   const glyph = value ? theme.glyphs.checkboxOn : theme.glyphs.checkboxOff;

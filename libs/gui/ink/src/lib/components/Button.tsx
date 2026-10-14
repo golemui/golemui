@@ -3,6 +3,7 @@ import type { ButtonProps } from '@golemui/gui-shared/internals';
 import { useActionWidget } from '@golemui/react';
 import { Box, Text } from 'ink';
 import { useFieldFocus } from '../internal/useFieldFocus';
+import { useFocusedInput } from '../internal/useFocusedInput';
 import { useTheme } from '../theme';
 
 /**
@@ -18,17 +19,19 @@ export function Button(widgetInstance: WithWidget) {
 
   const theme = useTheme();
   const isDisabled = templateData.disabled as boolean;
-  const { isFocused, useFocusedInput } = useFieldFocus({ uid, isDisabled });
+  const { isFocused } = useFieldFocus({ uid, isDisabled });
 
-  useFocusedInput((input, key) => {
-    if (!key.return && input !== ' ') {
-      return;
-    }
-    // The click event is what a host listens to, so it is emitted before the submit runs
-    // validation and possibly reports the form as invalid. `onSubmit` does nothing for an action
-    // that is not a submit.
-    onClick();
-    onSubmit();
+  useFocusedInput(uid, {
+    onKey: (input, key) => {
+      if (!key.return && input !== ' ') {
+        return;
+      }
+      // The click event is what a host listens to, so it is emitted before the submit runs
+      // validation and possibly reports the form as invalid. `onSubmit` does nothing for an
+      // action that is not a submit.
+      onClick();
+      onSubmit();
+    },
   });
 
   return (

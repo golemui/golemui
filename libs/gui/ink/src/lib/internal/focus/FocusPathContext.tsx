@@ -34,7 +34,7 @@ export type FocusPathProviderProps = {
 export function FocusPathProvider({ index, children }: FocusPathProviderProps) {
   const parentPath = useContext(FocusPathContext);
   const path = useMemo(() => [...parentPath, index], [parentPath, index]);
-  return <FocusPathContext.Provider value={path}>{children}</FocusPathContext.Provider>;
+  return <FocusPathContext value={path}>{children}</FocusPathContext>;
 }
 
 /**

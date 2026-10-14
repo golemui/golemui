@@ -71,7 +71,9 @@ focus starts on the first field of the definition.
   which the widgets are drawn.
 - Enter in a text field moves to the next field. This replaces clicking away from an input in a
   browser, so it marks the field touched and runs blur validation.
-- Space or Enter toggles a checkbox.
+- Space toggles a checkbox. Enter on a checkbox moves to the next field, as in a text field.
+- A paste into a text field is inserted in one piece. Line breaks and other control characters are
+  removed, as a browser does for a single-line input.
 - Space or Enter on a button clicks it. When its `actionType` is `submit`, it also submits the
   form.
 - Ctrl+C quits. This is Ink's default.
@@ -96,8 +98,9 @@ instead of showing below it.
 
 Every widget reads its colors and glyphs from the form theme. The `theme` prop replaces single keys
 of `defaultTheme`, and every key it leaves out keeps its default. Colors are passed straight to
-Ink, so a chalk color name and a hex string both work. The default glyphs are ASCII, so the form
-draws the same in a terminal without a unicode font.
+Ink, so a chalk color name and a hex string both work. A color with no default draws in the
+terminal's own foreground color, which stays readable on a dark and on a light background. The
+default glyphs are ASCII, so the form draws the same in a terminal without a unicode font.
 
 ```tsx
 import { GuiForm } from '@golemui/gui-ink';
@@ -113,8 +116,8 @@ import { GuiForm } from '@golemui/gui-ink';
 
 | Key                  | Default | Used for                                      |
 | -------------------- | ------- | --------------------------------------------- |
-| `colors.label`       | `white` | Field labels.                                 |
-| `colors.value`       | `white` | Field values and button labels.               |
+| `colors.label`       | none    | Field labels.                                 |
+| `colors.value`       | none    | Field values and button labels.               |
 | `colors.placeholder` | `gray`  | Placeholders.                                 |
 | `colors.focus`       | `cyan`  | The focus marker.                             |
 | `colors.error`       | `red`   | Validation errors.                            |

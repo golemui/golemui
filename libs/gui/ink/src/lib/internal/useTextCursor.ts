@@ -19,11 +19,14 @@ export type TextCursorOptions = {
  * calling `setData` replaces what is shown.
  *
  * @param options - The store value, the focus state, and the change callback.
- * @returns The current text, the caret index, and the key handler.
+ * @returns The current text, the caret index, and the key and paste handlers.
  *
  * @example
- * const { text, cursor, handleKey } = useTextCursor({ value, isFocused, onValueChanged });
- * useFocusedInput((input, key) => { handleKey(input, key); });
+ * const { text, cursor, handleKey, insertText } = useTextCursor({ value, isFocused, onValueChanged });
+ * useFocusedInput(uid, {
+ *   onKey: (input, key) => { handleKey(input, key); },
+ *   onPaste: (pastedText) => { insertText(pastedText); },
+ * });
  */
 export function useTextCursor({ value, isFocused, onValueChanged }: TextCursorOptions): DraftText {
   const storeText = value ?? '';

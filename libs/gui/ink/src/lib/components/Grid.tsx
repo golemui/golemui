@@ -82,10 +82,12 @@ function GridContent({
     const columns = grid.columns ?? 1;
     return (
       <>
-        {splitIntoRows(gridChildren, columns).map((row) => {
+        {splitIntoRows(gridChildren, columns).map((row, rowIndex) => {
           const usedColumns = row.reduce((sum, cell) => sum + cell.span, 0);
+          // Keyed by position: a row keyed by its first cell remounts every cell of the row when
+          // `when` hides that first cell.
           return (
-            <Box key={row[0].child.widget.uid} flexDirection="row" columnGap={columnGap}>
+            <Box key={rowIndex} flexDirection="row" columnGap={columnGap}>
               {row.map(({ child, span }) => (
                 <Box key={child.widget.uid} flexDirection="column" flexGrow={span} flexBasis={0}>
                   <GridChildRenderer child={child} />

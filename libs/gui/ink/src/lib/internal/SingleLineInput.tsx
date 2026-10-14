@@ -4,7 +4,9 @@ import { useInputWidget } from '@golemui/react';
 import { Box, Text } from 'ink';
 import { useTheme } from '../theme';
 import { Field } from './Field';
+import { countGraphemes } from './graphemes';
 import { useFieldFocus } from './useFieldFocus';
+import { useFocusedInput } from './useFocusedInput';
 import { useTextCursor } from './useTextCursor';
 
 /** Props of {@link SingleLineInput}. */
@@ -31,23 +33,40 @@ export function SingleLineInput({ widget, mask }: SingleLineInputProps) {
   const isReadonly = templateData.readonly as boolean;
   const isRequired = (templateData.validator as Validator)?.required;
 
-  const { isFocused, useFocusedInput, focusNext } = useFieldFocus({ uid, isDisabled, onBlur });
-  const { text, cursor, handleKey } = useTextCursor({ value, isFocused, onValueChanged });
+  const { isFocused, focusNext } = useFieldFocus({ uid, isDisabled, onBlur });
+  const { text, cursor, handleKey, insertText } = useTextCursor({
+    value,
+    isFocused,
+    onValueChanged,
+  });
 
-  useFocusedInput((input, key) => {
-    if (key.return) {
-      focusNext();
-      return;
-    }
-    if (isReadonly) {
-      return;
-    }
-    handleKey(input, key);
+  useFocusedInput(uid, {
+    onKey: (input, key) => {
+      if (key.return) {
+        focusNext();
+        return;
+      }
+      if (isReadonly) {
+        return;
+      }
+      handleKey(input, key);
+    },
+    onPaste: (pastedText) => {
+      if (isReadonly) {
+        return;
+      }
+      insertText(pastedText);
+    },
   });
 
   const placeholder = templateData.placeholder ?? '';
   const showPlaceholder = !isFocused && text === '' && placeholder !== '';
-  const shownText = mask === undefined ? text : mask.repeat(text.length);
+  const textBeforeCursor = text.slice(0, cursor);
+  const textAfterCursor = text.slice(cursor);
+  const shownBeforeCursor =
+    mask === undefined ? textBeforeCursor : mask.repeat(countGraphemes(textBeforeCursor));
+  const shownAfterCursor =
+    mask === undefined ? textAfterCursor : mask.repeat(countGraphemes(textAfterCursor));
 
   return (
     <Field
@@ -68,9 +87,9 @@ export function SingleLineInput({ widget, mask }: SingleLineInputProps) {
           <Text color={theme.colors.placeholder}>{placeholder}</Text>
         ) : (
           <Text color={isDisabled ? theme.colors.disabled : theme.colors.value}>
-            {shownText.slice(0, cursor)}
+            {shownBeforeCursor}
             {isFocused ? theme.glyphs.cursor : ''}
-            {shownText.slice(cursor)}
+            {shownAfterCursor}
           </Text>
         )}
       </Box>

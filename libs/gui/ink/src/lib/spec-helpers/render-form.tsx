@@ -15,6 +15,7 @@ export const keys = {
   enter: '\r',
   space: ' ',
   backspace: String.fromCharCode(127),
+  delete: `${ESCAPE_CHARACTER}[3~`,
   escape: ESCAPE_CHARACTER,
   shiftTab: `${ESCAPE_CHARACTER}[Z`,
   up: `${ESCAPE_CHARACTER}[A`,
@@ -26,6 +27,19 @@ export const keys = {
   pageUp: `${ESCAPE_CHARACTER}[5~`,
   pageDown: `${ESCAPE_CHARACTER}[6~`,
 };
+
+/**
+ * Wraps a text in the markers a terminal sends around a paste when bracketed paste is on.
+ *
+ * @param text - The pasted text.
+ * @returns The bytes to write to the fake stdin.
+ *
+ * @example
+ * await form.press(bracketedPaste('joan@example.com\n'));
+ */
+export function bracketedPaste(text: string): string {
+  return `${ESCAPE_CHARACTER}[200~${text}${ESCAPE_CHARACTER}[201~`;
+}
 
 /**
  * Lets Ink flush its render and the form focus effects.
@@ -81,7 +95,7 @@ export function focusedLine(frame: string): string {
  * @param config - The form config, usually just `{ formDef }`.
  * @param formSubmit - Receives the submit event, normally a spy.
  * @param formEvent - Receives the events a widget declares under `on`, normally a spy.
- * @returns The Ink testing instance plus `frame()` (ANSI stripped), `rawFrame()` and `press()`.
+ * @returns The Ink testing instance plus `frame()` (ANSI stripped) and `press()`.
  *
  * @example
  * const form = await renderForm({ formDef });

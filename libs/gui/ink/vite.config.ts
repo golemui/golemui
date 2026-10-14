@@ -49,8 +49,8 @@ export default defineConfig(() => ({
   },
   test: {
     name: 'gui-ink',
-    // Ink asks chalk whether the terminal has colors, and a spec reads focus from the inverse
-    // video of the frame. Without this the frames arrive plain and every focus assertion fails.
+    // Ink asks chalk whether the terminal has colors, and nx sets FORCE_COLOR for the processes it
+    // starts. Setting it here gives the same frames under nx and under a direct vitest run.
     env: { FORCE_COLOR: '1' },
     watch: false,
     passWithNoTests: true,

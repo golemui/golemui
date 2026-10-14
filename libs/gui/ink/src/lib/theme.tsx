@@ -9,8 +9,10 @@ import { createContext, useContext, useMemo, type ReactNode } from 'react';
  */
 export type Theme = {
   colors: {
-    label: string;
-    value: string;
+    /** Undefined draws the terminal's own foreground, readable on dark and light backgrounds. */
+    label: string | undefined;
+    /** Undefined draws the terminal's own foreground, readable on dark and light backgrounds. */
+    value: string | undefined;
     placeholder: string;
     focus: string;
     error: string;
@@ -45,8 +47,8 @@ export type ThemeOverrides = {
  */
 export const defaultTheme: Theme = {
   colors: {
-    label: 'white',
-    value: 'white',
+    label: undefined,
+    value: undefined,
     placeholder: 'gray',
     focus: 'cyan',
     error: 'red',
@@ -95,7 +97,7 @@ export function ThemeProvider({ overrides, children }: ThemeProviderProps) {
     }),
     [colorOverrides, glyphOverrides],
   );
-  return <ThemeContext.Provider value={theme}>{children}</ThemeContext.Provider>;
+  return <ThemeContext value={theme}>{children}</ThemeContext>;
 }
 
 /**

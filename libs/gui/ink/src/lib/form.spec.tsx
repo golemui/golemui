@@ -80,9 +80,9 @@ describe('GuiForm in a terminal', () => {
     await form.press('joan@example.com');
     await vi.waitFor(() => expect(form.frame()).toContain('joan@example.com'));
 
-    // No wait between the Tab and the first character of the next field. Every widget keeps its
-    // input subscription open and checks the focus inside the handler, so the key reaches the
-    // field the frame already shows.
+    // No wait between the Tab and the first character of the next field. The form hands each key
+    // to the widget that is focused when the key arrives, so the key reaches the field the frame
+    // already shows.
     await form.press(keys.tab);
     await form.press('secret');
     await vi.waitFor(() => expect(form.frame()).toContain('******'));

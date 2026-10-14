@@ -1,4 +1,4 @@
-import { Text, useInput, useStdin, type Key } from 'ink';
+import { Text, useInput, usePaste, useStdin, type Key } from 'ink';
 import {
   createContext,
   useCallback,
@@ -16,12 +16,20 @@ const NO_TERMINAL_MESSAGE = 'Keyboard input needs a terminal. The form is shown 
 /** Receives the keys a widget gets while it holds the focus. */
 export type KeyHandler = (input: string, key: Key) => void;
 
+/** Receives a text the user pasted while the widget holds the focus, in one piece. */
+export type PasteHandler = (text: string) => void;
+
+/** The handlers of the input a widget receives while it holds the focus. */
+export type InputHandlers = {
+  handleKey: KeyHandler;
+  handlePaste: PasteHandler;
+};
+
 /** What the manager keeps for one registered widget. */
 type FocusEntry = {
   path: FocusPath;
   /** A disabled widget registers as inactive, so the tab order skips it. */
   isActive: boolean;
-  handleKey?: KeyHandler;
 };
 
 /** The focus API every widget of the form reads. */
@@ -30,13 +38,15 @@ export type FocusManagerApi = {
   activeUid: string | undefined;
   /** False when the host has no terminal, which is when no widget may subscribe to input. */
   isInteractive: boolean;
-  /**
-   * Adds the widget to the registry, or updates the entry of a widget that is already there.
-   * `handleKey` receives every key except Tab while the widget holds the focus.
-   */
-  register: (uid: string, path: FocusPath, isActive: boolean, handleKey?: KeyHandler) => void;
-  /** Removes the widget. When it was focused, the focus moves on by itself. */
+  /** Adds the widget to the registry, or updates the entry of a widget that is already there. */
+  register: (uid: string, path: FocusPath, isActive: boolean) => void;
+  /** Removes the widget and its input handlers. When it was focused, the focus moves on by itself. */
   unregister: (uid: string) => void;
+  /**
+   * Sets the handlers that receive the input of the widget while it holds the focus. Every key
+   * except Tab, which moves the focus, and every paste.
+   */
+  setInputHandlers: (uid: string, handlers: InputHandlers) => void;
   /** Focuses the next widget in path order, wrapping around at the end. */
   focusNext: () => void;
   /** Focuses the previous widget in path order, wrapping around at the start. */
@@ -71,6 +81,8 @@ export function FocusManager({ children }: FocusManagerProps) {
   // The registry is a ref, not state: a widget registers in its mount effect, and the mount effect
   // of this component has to read a registry that is already complete.
   const registryRef = useRef(new Map<string, FocusEntry>());
+  // Kept apart from the registry, so a widget that registers again keeps its handlers.
+  const inputHandlersRef = useRef(new Map<string, InputHandlers>());
   const [activeUid, setActiveUid] = useState<string | undefined>(undefined);
   const activeUidRef = useRef<string | undefined>(undefined);
   const hasInitialFocusRunRef = useRef(false);
@@ -113,8 +125,8 @@ export function FocusManager({ children }: FocusManagerProps) {
   );
 
   const register = useCallback(
-    (uid: string, path: FocusPath, isActive: boolean, handleKey?: KeyHandler) => {
-      registryRef.current.set(uid, { path, isActive, handleKey });
+    (uid: string, path: FocusPath, isActive: boolean) => {
+      registryRef.current.set(uid, { path, isActive });
       if (!hasInitialFocusRunRef.current || !isInteractive) {
         return;
       }
@@ -134,13 +146,26 @@ export function FocusManager({ children }: FocusManagerProps) {
     (uid: string) => {
       const entry = registryRef.current.get(uid);
       registryRef.current.delete(uid);
+      inputHandlersRef.current.delete(uid);
       if (activeUidRef.current !== uid) {
         return;
       }
-      applyActiveUid(findSuccessor(entry?.path));
+      // React runs every effect cleanup of a commit before every effect setup, so a widget that
+      // remounts in this commit (a grid cell that moves to another row, a form reinit) registers
+      // again only after this call. The microtask runs once all the effects of the commit ran.
+      queueMicrotask(() => {
+        if (activeUidRef.current !== uid || registryRef.current.get(uid)?.isActive) {
+          return;
+        }
+        applyActiveUid(findSuccessor(entry?.path));
+      });
     },
     [applyActiveUid, findSuccessor],
   );
+
+  const setInputHandlers = useCallback((uid: string, handlers: InputHandlers) => {
+    inputHandlersRef.current.set(uid, handlers);
+  }, []);
 
   const moveFocus = useCallback(
     (step: 1 | -1) => {
@@ -181,6 +206,10 @@ export function FocusManager({ children }: FocusManagerProps) {
   // moves the focus would also reach the widget it focused.
   useInput(
     (input, key) => {
+      // The kitty keyboard protocol can also report the release of a key, which is not a new key.
+      if (key.eventType === 'release') {
+        return;
+      }
       if (key.tab) {
         if (key.shift) {
           focusPrevious();
@@ -193,7 +222,20 @@ export function FocusManager({ children }: FocusManagerProps) {
       if (focusedUid === undefined) {
         return;
       }
-      registryRef.current.get(focusedUid)?.handleKey?.(input, key);
+      inputHandlersRef.current.get(focusedUid)?.handleKey(input, key);
+    },
+    { isActive: isInteractive },
+  );
+
+  // While a paste handler is active, Ink turns on bracketed paste and delivers a paste here in one
+  // piece, line breaks included, instead of passing it to `useInput`.
+  usePaste(
+    (text) => {
+      const focusedUid = activeUidRef.current;
+      if (focusedUid === undefined) {
+        return;
+      }
+      inputHandlersRef.current.get(focusedUid)?.handlePaste(text);
     },
     { isActive: isInteractive },
   );
@@ -204,17 +246,18 @@ export function FocusManager({ children }: FocusManagerProps) {
       isInteractive,
       register,
       unregister,
+      setInputHandlers,
       focusNext,
       focusPrevious,
     }),
-    [activeUid, isInteractive, register, unregister, focusNext, focusPrevious],
+    [activeUid, isInteractive, register, unregister, setInputHandlers, focusNext, focusPrevious],
   );
 
   return (
-    <FocusManagerContext.Provider value={api}>
+    <FocusManagerContext value={api}>
       {children}
       {!isInteractive && <Text dimColor>{NO_TERMINAL_MESSAGE}</Text>}
-    </FocusManagerContext.Provider>
+    </FocusManagerContext>
   );
 }
 

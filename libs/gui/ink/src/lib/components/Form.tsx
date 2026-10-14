@@ -13,15 +13,7 @@ import {
   type FormHealthBoundary,
   type WidgetErrorFallback,
 } from '@golemui/react';
-import {
-  forwardRef,
-  useEffect,
-  useRef,
-  useState,
-  type ForwardRefExoticComponent,
-  type PropsWithoutRef,
-  type RefAttributes,
-} from 'react';
+import { useEffect, useRef, useState, type Ref } from 'react';
 import { InkFormHealthBoundary, inkWidgetErrorFallback } from '../boundaries';
 import { FocusManager } from '../internal/focus/FocusManager';
 import { ThemeProvider, type ThemeOverrides } from '../theme';
@@ -45,6 +37,8 @@ export interface InkFormComponentProps {
    * <GuiForm config={config} theme={{ colors: { focus: '#00afff' } }} />
    */
   theme?: ThemeOverrides;
+  /** Receives the `setData` and `setMeta` handle of the form. */
+  ref?: Ref<FormComponentHandle>;
 }
 
 const InkForm = createFormComponent<GuiFormInitConfig>(
@@ -61,12 +55,16 @@ const InkForm = createFormComponent<GuiFormInitConfig>(
   },
 );
 
-// The explicit type annotation keeps the public GuiForm type expressed in gui's own prop names.
-// The assignment fails to compile if these props ever drift from what the factory-built
-// component accepts.
-export const GuiForm: ForwardRefExoticComponent<
-  PropsWithoutRef<InkFormComponentProps> & RefAttributes<FormComponentHandle>
-> = forwardRef<FormComponentHandle, InkFormComponentProps>(function GuiForm(props, ref) {
+/**
+ * Renders a gui form definition in a terminal. Render it with Ink's `render`.
+ *
+ * @param props - The form config, the event callbacks, the error UI, the theme and the ref.
+ * @returns Nothing until the widgets are loaded, then the form.
+ *
+ * @example
+ * render(<GuiForm config={{ formDef }} formSubmit={(event) => console.log(event.data)} />);
+ */
+export function GuiForm({ theme, ref, ...formProps }: InkFormComponentProps) {
   const [arePreloaded, setArePreloaded] = useState(false);
 
   // The focus manager reads its registry once, in the mount effect that follows the first commit.
@@ -76,7 +74,7 @@ export const GuiForm: ForwardRefExoticComponent<
   // The loaders are read from a ref so a host that builds `customWidgetLoaders` inline does not
   // preload again on every render. A loader added later still loads on demand through the
   // registry, and by then the initial focus is already settled.
-  const widgetLoadersRef = useRef(props.config.customWidgetLoaders);
+  const widgetLoadersRef = useRef(formProps.config.customWidgetLoaders);
   useEffect(() => {
     let isMounted = true;
     const loaders = { ...widgetLoaders, ...(widgetLoadersRef.current ?? {}) };
@@ -98,7 +96,6 @@ export const GuiForm: ForwardRefExoticComponent<
   }
   // The manager sits above the widget tree and inside the Ink tree, which is where it can both
   // own the form level Tab handling and see every widget register.
-  const { theme, ...formProps } = props;
   return (
     <ThemeProvider overrides={theme}>
       <FocusManager>
@@ -106,6 +103,4 @@ export const GuiForm: ForwardRefExoticComponent<
       </FocusManager>
     </ThemeProvider>
   );
-});
-
-GuiForm.displayName = 'GuiForm';
+}
