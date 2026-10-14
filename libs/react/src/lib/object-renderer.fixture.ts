@@ -111,6 +111,7 @@ function createObjectReconciler() {
     clearContainer: (container: ObjectContainer) => {
       container.children.splice(0);
     },
+    // @ts-expect-error The 0.31 types still list the React 18 parameters with `updatePayload`.
     commitUpdate: (instance: ObjectElement, _type: string, _oldProps: Props, newProps: Props) => {
       instance.props = propsWithoutChildren(newProps);
     },
@@ -153,19 +154,14 @@ function createObjectReconciler() {
     resetFormInstance: () => undefined,
     requestPostPaintCallback: () => undefined,
     shouldAttemptEagerTransition: () => false,
-    trackSchedulerEvent: () => undefined,
     resolveEventType: () => null,
     // React's value for "no event timestamp".
     resolveEventTimeStamp: () => -1.1,
     maySuspendCommit: () => false,
-    maySuspendCommitOnUpdate: () => false,
-    maySuspendCommitInSyncRender: () => false,
     preloadInstance: () => true,
     startSuspendingCommit: () => null,
     suspendInstance: () => undefined,
-    suspendOnActiveViewTransition: () => undefined,
     waitForCommitToBeReady: () => null,
-    getSuspendedCommitReason: () => null,
   });
 }
 
@@ -204,18 +200,22 @@ export async function renderToObjects(
   const container: ObjectContainer = { children: [] };
   // An error that no error boundary caught fails the next `act` call of the spec.
   const uncaughtErrors: unknown[] = [];
-  const root = reconciler.createContainer(
+  // The 0.31 types still list the React 18 parameters. The 0.31 runtime takes three error
+  // callbacks after `identifierPrefix`, then `transitionCallbacks`.
+  const createContainer = reconciler.createContainer as (
+    ...args: unknown[]
+  ) => ReturnType<typeof reconciler.createContainer>;
+  const root = createContainer(
     container,
     rootKind === 'legacy' ? LegacyRoot : ConcurrentRoot,
     null,
     false,
     null,
     '',
-    (error) => uncaughtErrors.push(error),
+    (error: unknown) => uncaughtErrors.push(error),
     // The widget and form boundaries log what they catch.
     () => undefined,
-    (error) => console.error('Recoverable error in the object renderer:', error),
-    () => undefined,
+    (error: unknown) => console.error('Recoverable error in the object renderer:', error),
     null,
   );
 

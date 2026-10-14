@@ -13,7 +13,7 @@ import {
 } from './headless.fixture';
 import { type RootKind, renderToObjects } from './object-renderer.fixture';
 
-// The renderer is built on react-reconciler 0.33, which needs React 19.2.
+// The renderer is built on react-reconciler 0.31, which needs React 19.
 describe.skipIf(process.env.REACT18 === '1')('rendering a headless form without a DOM', () => {
   beforeAll(async () => {
     // Preloaded widgets mount in the same commit as the form, which is the commit whose
