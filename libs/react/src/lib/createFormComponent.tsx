@@ -47,9 +47,9 @@ export interface WidgetSetFormProps<
  * renders for one host only.
  *
  * @example
- * export const InkForm = createFormComponent<InkFormInitConfig>(inkWidgetSet, {
+ * export const NativeForm = createFormComponent<NativeFormInitConfig>(nativeWidgetSet, {
  *   headless: true,
- *   widgetErrorFallback: (error, widget) => <Text color="red">{widget.type}: {error.message}</Text>,
+ *   widgetErrorFallback: (error, widget) => <Text>{widget.type}: {error.message}</Text>,
  * });
  */
 export interface CreateFormComponentOptions {

@@ -42,9 +42,9 @@ export interface FormComponentProps {
   autocomplete?: string;
   /**
    * Renders the widget tree without the `div.gui-form` and `form` wrapper, for a host that
-   * cannot render DOM elements (Ink, for example). `autocomplete` has no effect in this mode,
-   * and a submit button has to call the `onSubmit` of `useActionWidget` itself. The default
-   * error UI renders DOM elements, so in this mode it shows nothing unless
+   * cannot render DOM elements (a terminal or native renderer). `autocomplete` has no effect in
+   * this mode, and a submit button has to call the `onSubmit` of `useActionWidget` itself. The
+   * default error UI renders DOM elements, so in this mode it shows nothing unless
    * `formHealthBoundary` and `widgetErrorFallback` are passed. The errors are still logged.
    */
   headless?: boolean;

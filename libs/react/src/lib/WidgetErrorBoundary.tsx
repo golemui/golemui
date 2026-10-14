@@ -4,13 +4,13 @@ import { Component, type ErrorInfo, type ReactNode } from 'react';
 /**
  * Renders the replacement UI for a widget that threw while rendering.
  *
- * Every host renders its own element types, so a host without a DOM (Ink, for example)
- * has to supply one. Pass it through the `widgetErrorFallback` prop of `FormComponent`
- * or through the options of `createFormComponent`.
+ * Every host renders its own element types, so a host without a DOM (a terminal or native
+ * renderer) has to supply one. Pass it through the `widgetErrorFallback` prop of
+ * `FormComponent` or through the options of `createFormComponent`.
  *
  * @example
- * const inkWidgetErrorFallback: WidgetErrorFallback = (error, widget) => (
- *   <Text color="red">
+ * const nativeWidgetErrorFallback: WidgetErrorFallback = (error, widget) => (
+ *   <Text>
  *     {widget.type}[{widget.uid}] failed with: {error.message}
  *   </Text>
  * );
