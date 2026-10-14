@@ -2,10 +2,6 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
-    // `ink` and `ink-testing-library` publish their types through an `exports` map only,
-    // which the workspace-wide "node" resolution cannot read. Specs are not part of the
-    // lib build, so this stays local to the spec program.
-    "moduleResolution": "bundler",
     "types": ["vitest/globals", "vitest/importMeta", "vite/client", "node", "vitest"]
   },
   "include": [

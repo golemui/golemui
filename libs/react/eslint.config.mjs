@@ -17,8 +17,8 @@ export default [
         {
           ignoredFiles: [
             '{projectRoot}/eslint.config.{js,cjs,mjs,ts,cts,mts}',
-            // Test-only widgets for the Ink render spec. The library never imports `ink`.
-            '{projectRoot}/src/lib/ink.fixture.tsx',
+            // Test-only renderer for the headless spec. The library never imports `react-reconciler`.
+            '{projectRoot}/src/lib/object-renderer.fixture.ts',
           ],
           ignoredDependencies: [
             '@nx/vite',
