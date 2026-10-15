@@ -47,6 +47,30 @@ describe('server rendering a form in a plain node environment', () => {
   });
 });
 
+describe('server rendering a headless form', () => {
+  beforeAll(async () => {
+    await preloadFormWidgets({ widgetLoaders: stubWidgetLoaders });
+  });
+
+  it('renders the widget tree without the form wrapper', () => {
+    const html = renderToString(
+      <FormComponent config={buildConfig()} validators={noopValidators} headless />,
+    );
+
+    expect(html).not.toContain('<form');
+    expect(html).not.toContain('gui-form');
+    expect(html).toContain('class="stub-flex"');
+    expect(html.match(/<input/g)).toHaveLength(2);
+  });
+
+  it('keeps the form wrapper when headless is omitted', () => {
+    const html = renderForm();
+
+    expect(html).toContain('<div class="gui-form">');
+    expect(html).toContain('<form');
+  });
+});
+
 describe('server rendering determinism', () => {
   beforeAll(async () => {
     await preloadFormWidgets({ widgetLoaders: stubWidgetLoaders });

@@ -21,6 +21,7 @@ import {
 } from 'react';
 import { FormComponent, type FormComponentHandle } from './FormComponent';
 import { type FormHealthBoundary } from './FormHealthBoundary';
+import { type WidgetErrorFallback } from './WidgetErrorBoundary';
 
 /**
  * Props of a form component returned by {@link createFormComponent}, generic
@@ -35,6 +36,28 @@ export interface WidgetSetFormProps<
   formSubmit?: (event: FormSubmitEvent) => void;
   formHealth?: (formHealth: FormHealth) => void;
   /** Wraps the form and renders the error UI for an errored FormHealth. Defaults to a red banner. */
+  formHealthBoundary?: FormHealthBoundary;
+  /** Replacement UI for a widget that threw. Overrides the `widgetErrorFallback` of the widget set. */
+  widgetErrorFallback?: WidgetErrorFallback;
+}
+
+/**
+ * Defaults a widget set applies to every form it creates. A per-form prop overrides the
+ * matching option, except `headless`, which the widget set fixes once because a widget set
+ * renders for one host only.
+ *
+ * @example
+ * export const NativeForm = createFormComponent<NativeFormInitConfig>(nativeWidgetSet, {
+ *   headless: true,
+ *   widgetErrorFallback: (error, widget) => <Text>{widget.type}: {error.message}</Text>,
+ * });
+ */
+export interface CreateFormComponentOptions {
+  /** Renders the widget tree without the `div.gui-form` and `form` wrapper. Set it for a host that cannot render DOM elements. */
+  headless?: boolean;
+  /** Replacement UI for a widget that threw. A per-form `widgetErrorFallback` prop overrides it. */
+  widgetErrorFallback?: WidgetErrorFallback;
+  /** Wraps every form and renders the error UI for an errored FormHealth. A per-form `formHealthBoundary` prop overrides it. */
   formHealthBoundary?: FormHealthBoundary;
 }
 
@@ -56,6 +79,8 @@ export type WidgetSetFormComponent<
  *
  * @param widgetSet - The widget set's loaders, validator factory, and
  * optional form input resolver.
+ * @param options - Defaults for every form the widget set creates. A per-form prop wins
+ * over the matching option.
  *
  * @example
  * export const GuiForm = createFormComponent<GuiFormInitConfig>({
@@ -68,9 +93,18 @@ export function createFormComponent<
   TConfig extends WidgetSetFormInitConfig<any> = WidgetSetFormInitConfig,
 >(
   widgetSet: WidgetSetDefinition<ComponentType<WithWidget>, TConfig>,
+  options?: CreateFormComponentOptions,
 ): WidgetSetFormComponent<TConfig> {
   return forwardRef<FormComponentHandle, WidgetSetFormProps<TConfig>>(function WidgetSetForm(
-    { config, formHealth, formEvent, formSubmit, formHealthBoundary, autocomplete },
+    {
+      config,
+      formHealth,
+      formEvent,
+      formSubmit,
+      formHealthBoundary,
+      widgetErrorFallback,
+      autocomplete,
+    },
     ref,
   ) {
     const { initConfig, validators, resolved } = useMemo(
@@ -97,8 +131,10 @@ export function createFormComponent<
         config={coreConfig}
         validators={validators}
         autocomplete={autocomplete}
+        headless={options?.headless}
         formHealth={formHealth}
-        formHealthBoundary={formHealthBoundary}
+        formHealthBoundary={formHealthBoundary ?? options?.formHealthBoundary}
+        widgetErrorFallback={widgetErrorFallback ?? options?.widgetErrorFallback}
         formEvent={mergedFormEvent}
         formSubmit={formSubmit}
       />
