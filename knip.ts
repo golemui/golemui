@@ -24,6 +24,10 @@ const config = {
     // Analog app (file-based routes; main.ts is covered by the apps glob above)
     'apps/analog-playground/src/main.server.ts',
     'apps/analog-playground/src/app/pages/**/*.page.ts',
+    // TanStack Start app (file-based routes; the Start plugin finds the client, server and
+    // router entries by name)
+    'apps/tanstack-playground/src/{client,server,router}.{ts,tsx}',
+    'apps/tanstack-playground/src/routes/**/*.tsx',
     // Publishable libs (public and cross-package entry points)
     'libs/**/src/index.ts',
     'libs/**/src/internals.ts',
