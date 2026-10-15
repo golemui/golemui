@@ -1,3 +1,18 @@
+## 2.1.0-rc.0 (2026-10-15)
+
+### 🚀 Features
+
+- **react:** render forms in renderers without a DOM ([#440](https://github.com/golemui/golemui/pull/440))
+
+### 🩹 Fixes
+
+- **gui-react:** fix tabs and alert hydration issues ([#441](https://github.com/golemui/golemui/pull/441))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
 # 2.0.0 (2026-10-13)
 
 ### 🚀 Features

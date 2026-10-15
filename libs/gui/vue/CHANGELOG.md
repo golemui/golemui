@@ -1,3 +1,7 @@
+## 2.1.0-rc.0 (2026-10-15)
+
+This was a version bump only for gui-vue to align it with other projects, there were no code changes.
+
 # 2.0.0 (2026-10-13)
 
 ### 🚀 Features

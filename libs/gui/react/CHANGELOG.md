@@ -1,3 +1,13 @@
+## 2.1.0-rc.0 (2026-10-15)
+
+### 🩹 Fixes
+
+- **gui-react:** fix tabs and alert hydration issues ([#441](https://github.com/golemui/golemui/pull/441))
+
+### ❤️ Thank You
+
+- Raúl Jiménez @Elecash
+
 # 2.0.0 (2026-10-13)
 
 ### 🚀 Features
