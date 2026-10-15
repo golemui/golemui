@@ -33,12 +33,15 @@ export function Tabs(widgetInstance: WithWidget) {
   return (
     <div className="gui-tabs gui-field">
       {/* The parts are plain tags, not React wrappers: a server render then has their attributes,
-          such as the inactive panels' hidden. */}
+          such as the inactive panels' hidden. Nothing holds them, so they upgrade before React
+          hydrates and add their role (and a panel its tabindex): the markup has them too, or
+          React reports a mismatch. */}
       <GuiTabsReact id={uid} active={activeTab} onGuiTabChange={onTabChange}>
-        <gui-tab-list>
+        <gui-tab-list role="tablist">
           {tabs.map((tab) => (
             <gui-tab
               key={tab.uid}
+              role="tab"
               panel={tab.uid}
               id={tabButtonId(widget.uid, tab.uid)}
               data-cy={tabButtonId(widget.uid, tab.uid)}
@@ -57,6 +60,8 @@ export function Tabs(widgetInstance: WithWidget) {
           return (
             <gui-tab-panel
               key={tab.uid}
+              role="tabpanel"
+              tabIndex={0}
               name={tab.uid}
               id={tabPanelId(widget.uid, tab.uid)}
               data-cy={tabPanelId(widget.uid, tab.uid)}
