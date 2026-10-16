@@ -2,8 +2,8 @@ import { ReactiveElement } from 'lit';
 import { property } from 'lit/decorators.js';
 import { booleanAttribute } from '../utils/converters';
 import { safeDefine } from '@golemui/lit-utils';
-import { fires } from '../utils/events';
-import type { GuiAccordionItem, GuiToggleEventDetail } from './accordion-item';
+import { dispatchToggle, fires, type GuiToggleEventDetail } from '../utils/events';
+import type { GuiAccordionItem } from './accordion-item';
 import './accordion-item';
 
 /**
@@ -65,13 +65,7 @@ export class GuiAccordion extends ReactiveElement {
     // After the opened item's event has reached the page, so a listener sees it first.
     queueMicrotask(() => {
       for (const item of closed) {
-        item.dispatchEvent(
-          new CustomEvent<GuiToggleEventDetail>('gui-toggle', {
-            detail: { open: false },
-            bubbles: true,
-            composed: true,
-          }),
-        );
+        dispatchToggle(item, false);
       }
     });
   };

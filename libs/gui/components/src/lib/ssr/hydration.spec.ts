@@ -76,6 +76,16 @@ describe('resuming server-rendered standalone elements', () => {
     expect(document.querySelector('gui-tab-panel > gui-select')).not.toBeNull();
   });
 
+  it('leaves the markup of a closed popover as the server sent it', async () => {
+    const popover = () => document.querySelector('gui-popover') as HTMLElement;
+    const before = popover().outerHTML;
+    resumeServerRendered();
+    await settle();
+
+    // Only the hold goes: the element adds nothing the server markup lacks.
+    expect(popover().outerHTML).toBe(before.replace(' defer-hydration=""', ''));
+  });
+
   it('accepts user input after the resume', async () => {
     resumeServerRendered();
     await settle();

@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Popover · GolemUI Components playground</title>
+    <link rel="stylesheet" href="/src/styles.scss" />
+  </head>
+  <body data-pg-events="gui-toggle">
+    <main class="pg-main">
+      <section class="pg-section">
+        <h1>gui-popover</h1>
+        <p>
+          Each button opens a native <code>[popover]</code> panel through
+          <code>popovertarget</code>, and <code>gui-popover</code> places it next to the button.
+          Escape and a click outside close it. Turn on "Overlays measure" in the toolbar to review
+          the fallback for browsers without CSS anchor positioning.
+        </p>
+      </section>
+
+      <section class="pg-section" id="placements">
+        <h2>The twelve placements</h2>
+        <div class="pg-stage">
+          <div class="pg-grid-3">
+            <button type="button" class="pg-button" popovertarget="placement-top-start">
+              top-start
+            </button>
+            <gui-popover placement="top-start">
+              <div id="placement-top-start" popover>
+                <strong>top-start</strong>
+                <p>A panel with a <a href="#placements">link</a> inside.</p>
+              </div>
+            </gui-popover>
+            <button type="button" class="pg-button" popovertarget="placement-top">top</button>
+            <gui-popover placement="top">
+              <div id="placement-top" popover>
+                <strong>top</strong>
+                <p>A panel with a <a href="#placements">link</a> inside.</p>
+              </div>
+            </gui-popover>
+            <button type="button" class="pg-button" popovertarget="placement-top-end">
+              top-end
+            </button>
+            <gui-popover placement="top-end">
+              <div id="placement-top-end" popover>
+                <strong>top-end</strong>
+                <p>A panel with a <a href="#placements">link</a> inside.</p>
+              </div>
+            </gui-popover>
+            <button type="button" class="pg-button" popovertarget="placement-start-start">
+              start-start
+            </button>
+            <gui-popover placement="start-start">
+              <div id="placement-start-start" popover>
+                <strong>start-start</strong>
+                <p>A panel with a <a href="#placements">link</a> inside.</p>
+              </div>
+            </gui-popover>
+            <button type="button" class="pg-button" popovertarget="placement-start">start</button>
+            <gui-popover placement="start">
+              <div id="placement-start" popover>
+                <strong>start</strong>
+                <p>A panel with a <a href="#placements">link</a> inside.</p>
+              </div>
+            </gui-popover>
+            <button type="button" class="pg-button" popovertarget="placement-start-end">
+              start-end
+            </button>
+            <gui-popover placement="start-end">
+              <div id="placement-start-end" popover>
+                <strong>start-end</strong>
+                <p>A panel with a <a href="#placements">link</a> inside.</p>
+              </div>
+            </gui-popover>
+            <button type="button" class="pg-button" popovertarget="placement-end-start">
+              end-start
+            </button>
+            <gui-popover placement="end-start">
+              <div id="placement-end-start" popover>
+                <strong>end-start</strong>
+                <p>A panel with a <a href="#placements">link</a> inside.</p>
+              </div>
+            </gui-popover>
+            <button type="button" class="pg-button" popovertarget="placement-end">end</button>
+            <gui-popover placement="end">
+              <div id="placement-end" popover>
+                <strong>end</strong>
+                <p>A panel with a <a href="#placements">link</a> inside.</p>
+              </div>
+            </gui-popover>
+            <button type="button" class="pg-button" popovertarget="placement-end-end">
+              end-end
+            </button>
+            <gui-popover placement="end-end">
+              <div id="placement-end-end" popover>
+                <strong>end-end</strong>
+                <p>A panel with a <a href="#placements">link</a> inside.</p>
+              </div>
+            </gui-popover>
+            <button type="button" class="pg-button" popovertarget="placement-bottom-start">
+              bottom-start
+            </button>
+            <gui-popover placement="bottom-start">
+              <div id="placement-bottom-start" popover>
+                <strong>bottom-start</strong>
+                <p>A panel with a <a href="#placements">link</a> inside.</p>
+              </div>
+            </gui-popover>
+            <button type="button" class="pg-button" popovertarget="placement-bottom">bottom</button>
+            <gui-popover placement="bottom">
+              <div id="placement-bottom" popover>
+                <strong>bottom</strong>
+                <p>A panel with a <a href="#placements">link</a> inside.</p>
+              </div>
+            </gui-popover>
+            <button type="button" class="pg-button" popovertarget="placement-bottom-end">
+              bottom-end
+            </button>
+            <gui-popover placement="bottom-end">
+              <div id="placement-bottom-end" popover>
+                <strong>bottom-end</strong>
+                <p>A panel with a <a href="#placements">link</a> inside.</p>
+              </div>
+            </gui-popover>
+          </div>
+        </div>
+      </section>
+
+      <section class="pg-section">
+        <h2>Near the edges</h2>
+        <p>A panel that would overflow flips to the other side, or to the other alignment.</p>
+        <div class="pg-row pg-row--spread">
+          <button type="button" class="pg-button" popovertarget="edge-start">
+            end, at the start edge
+          </button>
+          <gui-popover placement="end">
+            <div id="edge-start" popover>
+              <strong>end</strong>
+              <p>A panel with a <a href="#placements">link</a> inside.</p>
+            </div>
+          </gui-popover>
+          <button type="button" class="pg-button" popovertarget="edge-end">
+            end-start, at the end edge
+          </button>
+          <gui-popover placement="end-start">
+            <div id="edge-end" popover>
+              <strong>end-start</strong>
+              <p>A panel with a <a href="#placements">link</a> inside.</p>
+            </div>
+          </gui-popover>
+        </div>
+      </section>
+
+      <section class="pg-section" dir="rtl">
+        <h2>A right-to-left part of the page</h2>
+        <p>
+          Start and end follow the reading direction. Switch the whole page with the Direction
+          control: a panel whose direction differs from the page's is always measured, because
+          Firefox misplaces it with CSS anchor positioning.
+        </p>
+        <div class="pg-row">
+          <button type="button" class="pg-button" popovertarget="rtl-bottom-start">
+            bottom-start
+          </button>
+          <gui-popover placement="bottom-start">
+            <div id="rtl-bottom-start" popover>
+              <strong>bottom-start</strong>
+              <p>A panel with a <a href="#placements">link</a> inside.</p>
+            </div>
+          </gui-popover>
+          <button type="button" class="pg-button" popovertarget="rtl-end">end</button>
+          <gui-popover placement="end">
+            <div id="rtl-end" popover>
+              <strong>end</strong>
+              <p>A panel with a <a href="#placements">link</a> inside.</p>
+            </div>
+          </gui-popover>
+        </div>
+      </section>
+
+      <section class="pg-section">
+        <h2>Other ways to open it</h2>
+        <div class="pg-row">
+          <button type="button" class="pg-button" data-pg-toggle="from-code">
+            Toggle with the open property
+          </button>
+          <span id="from-code-anchor">Anchored here with the anchor attribute</span>
+          <gui-popover id="from-code" anchor="from-code-anchor" placement="bottom">
+            <div id="from-code-panel" popover="manual">A manual popover: only code closes it.</div>
+          </gui-popover>
+          <button
+            type="button"
+            class="pg-button"
+            commandfor="command-panel"
+            command="toggle-popover"
+          >
+            Invoker command (commandfor)
+          </button>
+          <gui-popover placement="top">
+            <div id="command-panel" popover>Opened with an invoker command.</div>
+          </gui-popover>
+        </div>
+      </section>
+
+      <section class="pg-section">
+        <h2>In a scrolling container</h2>
+        <p>Open it, then scroll the box: the panel follows its button.</p>
+        <div class="pg-scroller">
+          <div>
+            <button type="button" class="pg-button" popovertarget="scroll">
+              Open, then scroll
+            </button>
+            <gui-popover placement="bottom-start">
+              <div id="scroll" popover>
+                <strong>bottom-start</strong>
+                <p>A panel with a <a href="#placements">link</a> inside.</p>
+              </div>
+            </gui-popover>
+          </div>
+        </div>
+      </section>
+
+      <section class="pg-section">
+        <h2>In a modal dialog</h2>
+        <p>
+          The popover shows above the dialog. The date picker doesn't yet: the dialog clips its
+          panel until the pickers move to the top layer (M3).
+        </p>
+        <div class="pg-row">
+          <button type="button" class="pg-button" commandfor="edit-dialog" command="show-modal">
+            Open the dialog
+          </button>
+        </div>
+        <dialog id="edit-dialog" class="pg-dialog" aria-label="Edit filters">
+          <div class="pg-row">
+            <button type="button" class="pg-button" popovertarget="dialog-popover">
+              Popover in the dialog
+            </button>
+            <gui-popover placement="bottom-start">
+              <div id="dialog-popover" popover>
+                <strong>bottom-start</strong>
+                <p>A panel with a <a href="#placements">link</a> inside.</p>
+              </div>
+            </gui-popover>
+            <button type="button" class="pg-button" commandfor="edit-dialog" command="close">
+              Close
+            </button>
+          </div>
+          <gui-date-picker label="Start date"></gui-date-picker>
+        </dialog>
+      </section>
+    </main>
+    <script type="module" src="/src/pages/popover.ts"></script>
+  </body>
+</html>
