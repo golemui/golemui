@@ -167,6 +167,23 @@ code {
   inline-size: 300px;
 }
 
+// The playground's own dialog content: the dialog's look is gui-dialog's.
+.pg-dialog-body {
+  > * + * {
+    margin-block-start: var(--gui-space-4);
+  }
+
+  h2 {
+    margin: 0;
+  }
+}
+
+.pg-dialog-form {
+  display: grid;
+  gap: var(--gui-space-4);
+  inline-size: min(360px, 80vw);
+}
+
 .pg-dialog {
   inline-size: min(420px, 90vw);
   color: var(--gui-text-default);

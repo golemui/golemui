@@ -45,6 +45,7 @@ import {
   GuiDateTimePicker as GuiDateTimePickerElement,
   GuiDateTimePickerEvents,
 } from './lib/components/date-time-picker';
+import { GuiDialog as GuiDialogElement, GuiDialogEvents } from './lib/components/dialog';
 import { GuiDropdown as GuiDropdownElement, GuiDropdownEvents } from './lib/components/dropdown';
 import { GuiErrors as GuiErrorsElement } from './lib/components/errors';
 import {
@@ -279,6 +280,7 @@ export const GuiDateTimePicker = wrap(
   GuiDateTimePickerElement,
   GuiDateTimePickerEvents,
 );
+export const GuiDialog = wrap('gui-dialog', GuiDialogElement, GuiDialogEvents);
 export const GuiDropdown = wrap('gui-dropdown', GuiDropdownElement, GuiDropdownEvents);
 export const GuiErrors = wrap('gui-errors', GuiErrorsElement);
 export const GuiFileUpload = wrap('gui-file-upload', GuiFileUploadElement, GuiFileUploadEvents);

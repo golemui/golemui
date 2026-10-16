@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dialog · GolemUI Components playground</title>
+    <link rel="stylesheet" href="/src/styles.scss" />
+  </head>
+  <body data-pg-events="gui-toggle gui-change">
+    <main class="pg-main">
+      <section class="pg-section">
+        <h1>gui-dialog</h1>
+        <p>
+          The app's own <code>&lt;dialog&gt;</code>, opened as a modal: the page behind it is inert
+          and stops scrolling, Escape closes it, and focus goes back to the button that opened it.
+          The buttons use invoker commands (<code>commandfor</code>), so they need no script.
+        </p>
+      </section>
+
+      <section class="pg-section">
+        <h2>A form in a dialog</h2>
+        <p>The pickers' panels and the tooltip float above the dialog's edges.</p>
+        <div class="pg-row">
+          <button type="button" class="pg-button" commandfor="profile-dialog" command="show-modal">
+            Edit profile
+          </button>
+        </div>
+        <gui-dialog>
+          <dialog id="profile-dialog" class="pg-dialog-body" aria-labelledby="profile-title">
+            <h2 id="profile-title">Edit profile</h2>
+            <form class="pg-dialog-form" id="profile-form">
+              <gui-textinput label="Name" name="name" uid="profile-name" required></gui-textinput>
+              <gui-date-picker
+                label="Member since"
+                name="since"
+                uid="profile-since"
+              ></gui-date-picker>
+              <gui-dropdown
+                label="Plan"
+                name="plan"
+                uid="profile-plan"
+                items='[{"label":"Starter","value":"starter"},{"label":"Team","value":"team"},{"label":"Business","value":"business"}]'
+              ></gui-dropdown>
+              <div class="pg-row">
+                <button type="submit" class="pg-button" id="profile-save">Save</button>
+                <gui-tooltip for="profile-save">Saves without publishing</gui-tooltip>
+                <button type="button" class="pg-button" commandfor="profile-dialog" command="close">
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </dialog>
+        </gui-dialog>
+      </section>
+
+      <section class="pg-section">
+        <h2>Drawers</h2>
+        <p>
+          Each one is <code>dismissible</code>: a click on the backdrop closes it too. Switch the
+          direction in the toolbar: start and end swap. Each one focuses its heading first
+          (<code>autofocus</code>), as its first field is a date picker, which would open.
+        </p>
+        <div class="pg-row">
+          <button type="button" class="pg-button" commandfor="drawer-start" command="show-modal">
+            Start
+          </button>
+          <button type="button" class="pg-button" commandfor="drawer-end" command="show-modal">
+            End
+          </button>
+          <button type="button" class="pg-button" commandfor="drawer-top" command="show-modal">
+            Top
+          </button>
+          <button type="button" class="pg-button" commandfor="drawer-bottom" command="show-modal">
+            Bottom
+          </button>
+        </div>
+        <gui-dialog placement="start" dismissible>
+          <dialog id="drawer-start" class="pg-dialog-body" aria-labelledby="drawer-start-title">
+            <h2 id="drawer-start-title" tabindex="-1" autofocus>Filters (start)</h2>
+            <p>A drawer along the start edge. Escape, the backdrop or the button closes it.</p>
+            <gui-date-picker label="From" uid="drawer-start-from"></gui-date-picker>
+            <button type="button" class="pg-button" commandfor="drawer-start" command="close">
+              Close
+            </button>
+          </dialog>
+        </gui-dialog>
+        <gui-dialog placement="end" dismissible>
+          <dialog id="drawer-end" class="pg-dialog-body" aria-labelledby="drawer-end-title">
+            <h2 id="drawer-end-title" tabindex="-1" autofocus>Filters (end)</h2>
+            <p>A drawer along the end edge. Escape, the backdrop or the button closes it.</p>
+            <gui-date-picker label="From" uid="drawer-end-from"></gui-date-picker>
+            <button type="button" class="pg-button" commandfor="drawer-end" command="close">
+              Close
+            </button>
+          </dialog>
+        </gui-dialog>
+        <gui-dialog placement="top" dismissible>
+          <dialog id="drawer-top" class="pg-dialog-body" aria-labelledby="drawer-top-title">
+            <h2 id="drawer-top-title" tabindex="-1" autofocus>Filters (top)</h2>
+            <p>A drawer along the top edge. Escape, the backdrop or the button closes it.</p>
+            <gui-date-picker label="From" uid="drawer-top-from"></gui-date-picker>
+            <button type="button" class="pg-button" commandfor="drawer-top" command="close">
+              Close
+            </button>
+          </dialog>
+        </gui-dialog>
+        <gui-dialog placement="bottom" dismissible>
+          <dialog id="drawer-bottom" class="pg-dialog-body" aria-labelledby="drawer-bottom-title">
+            <h2 id="drawer-bottom-title" tabindex="-1" autofocus>Filters (bottom)</h2>
+            <p>A drawer along the bottom edge. Escape, the backdrop or the button closes it.</p>
+            <gui-date-picker label="From" uid="drawer-bottom-from"></gui-date-picker>
+            <button type="button" class="pg-button" commandfor="drawer-bottom" command="close">
+              Close
+            </button>
+          </dialog>
+        </gui-dialog>
+      </section>
+
+      <section class="pg-section">
+        <h2>An alert dialog</h2>
+        <p>
+          <code>alert</code> gives it the <code>alertdialog</code> role, and a click on the backdrop
+          never closes it.
+        </p>
+        <div class="pg-row">
+          <button type="button" class="pg-button" commandfor="discard-dialog" command="show-modal">
+            Discard changes
+          </button>
+        </div>
+        <gui-dialog alert>
+          <dialog
+            id="discard-dialog"
+            class="pg-dialog-body"
+            aria-labelledby="discard-title"
+            aria-describedby="discard-text"
+          >
+            <h2 id="discard-title">Discard your changes?</h2>
+            <p id="discard-text">The changes you made since you last saved will be lost.</p>
+            <div class="pg-row">
+              <button type="button" class="pg-button" commandfor="discard-dialog" command="close">
+                Discard
+              </button>
+              <button
+                type="button"
+                class="pg-button"
+                commandfor="discard-dialog"
+                command="close"
+                autofocus
+              >
+                Keep editing
+              </button>
+            </div>
+          </dialog>
+        </gui-dialog>
+      </section>
+
+      <section class="pg-section">
+        <h2>A long dialog, and one opened from code</h2>
+        <p>The dialog scrolls inside, while the page behind it stays put.</p>
+        <div class="pg-row">
+          <button type="button" class="pg-button" commandfor="terms-dialog" command="show-modal">
+            Read the terms
+          </button>
+          <button type="button" class="pg-button" data-pg-toggle="from-code-dialog">
+            Open with the open property
+          </button>
+        </div>
+        <gui-dialog dismissible>
+          <dialog id="terms-dialog" class="pg-dialog-body" aria-labelledby="terms-title">
+            <h2 id="terms-title">Terms of service</h2>
+            <p>
+              Clause 1. The service is provided as is. You can cancel at any time from your account
+              settings, and we keep your data for thirty days after you leave.
+            </p>
+            <p>
+              Clause 2. The service is provided as is. You can cancel at any time from your account
+              settings, and we keep your data for thirty days after you leave.
+            </p>
+            <p>
+              Clause 3. The service is provided as is. You can cancel at any time from your account
+              settings, and we keep your data for thirty days after you leave.
+            </p>
+            <p>
+              Clause 4. The service is provided as is. You can cancel at any time from your account
+              settings, and we keep your data for thirty days after you leave.
+            </p>
+            <p>
+              Clause 5. The service is provided as is. You can cancel at any time from your account
+              settings, and we keep your data for thirty days after you leave.
+            </p>
+            <p>
+              Clause 6. The service is provided as is. You can cancel at any time from your account
+              settings, and we keep your data for thirty days after you leave.
+            </p>
+            <p>
+              Clause 7. The service is provided as is. You can cancel at any time from your account
+              settings, and we keep your data for thirty days after you leave.
+            </p>
+            <p>
+              Clause 8. The service is provided as is. You can cancel at any time from your account
+              settings, and we keep your data for thirty days after you leave.
+            </p>
+            <p>
+              Clause 9. The service is provided as is. You can cancel at any time from your account
+              settings, and we keep your data for thirty days after you leave.
+            </p>
+            <p>
+              Clause 10. The service is provided as is. You can cancel at any time from your account
+              settings, and we keep your data for thirty days after you leave.
+            </p>
+            <p>
+              Clause 11. The service is provided as is. You can cancel at any time from your account
+              settings, and we keep your data for thirty days after you leave.
+            </p>
+            <p>
+              Clause 12. The service is provided as is. You can cancel at any time from your account
+              settings, and we keep your data for thirty days after you leave.
+            </p>
+            <p>
+              Clause 13. The service is provided as is. You can cancel at any time from your account
+              settings, and we keep your data for thirty days after you leave.
+            </p>
+            <p>
+              Clause 14. The service is provided as is. You can cancel at any time from your account
+              settings, and we keep your data for thirty days after you leave.
+            </p>
+            <p>
+              Clause 15. The service is provided as is. You can cancel at any time from your account
+              settings, and we keep your data for thirty days after you leave.
+            </p>
+            <button type="button" class="pg-button" commandfor="terms-dialog" command="close">
+              I agree
+            </button>
+          </dialog>
+        </gui-dialog>
+        <gui-dialog id="from-code-dialog" dismissible>
+          <dialog class="pg-dialog-body" aria-label="Opened from code">
+            <p>
+              Opened by setting <code>open</code>, which fires no <code>gui-toggle</code>. Escape or
+              a click on the backdrop closes it and fires one; this button sets
+              <code>open</code> again, and fires none.
+            </p>
+            <button type="button" class="pg-button" data-pg-toggle="from-code-dialog">Close</button>
+          </dialog>
+        </gui-dialog>
+      </section>
+    </main>
+    <script type="module" src="/src/pages/dialog.ts"></script>
+  </body>
+</html>

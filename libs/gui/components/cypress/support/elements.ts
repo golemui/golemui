@@ -89,6 +89,8 @@ export const elements: ElementCase[] = [
     props: { label: 'Start' },
     form: { property: 'value', sample: '2026-03-15T10:30:00' },
   },
+  // Its dialog is the app's child: dialog.cy.ts checks it with one, open and closed.
+  { tag: 'gui-dialog', props: {}, hostRendersChildren: true },
   {
     tag: 'gui-dropdown',
     props: { label: 'Color', items: options },

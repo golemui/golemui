@@ -89,6 +89,19 @@ describe('resuming server-rendered standalone elements', () => {
     );
   });
 
+  it('leaves the markup of a closed dialog as the server sent it', async () => {
+    const dialog = () => document.querySelector('gui-dialog > dialog') as HTMLDialogElement;
+    const before = dialog().outerHTML;
+    resumeServerRendered();
+    await settle();
+
+    expect(dialog().open).toBe(false);
+    expect(document.querySelector('gui-dialog')?.hasAttribute('open')).toBe(false);
+    // The text input inside it resumed: only its server-rendered markers changed.
+    expect(dialog().getAttributeNames()).toEqual(['id', 'aria-labelledby']);
+    expect(before).toContain('id="plan-dialog"');
+  });
+
   it('leaves the markup of a closed popover as the server sent it', async () => {
     const popover = () => document.querySelector('gui-popover') as HTMLElement;
     const before = popover().outerHTML;

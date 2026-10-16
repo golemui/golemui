@@ -4,7 +4,7 @@ import { hydrateRoot } from 'react-dom/client';
 import { renderToString } from 'react-dom/server';
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { resumeServerRendered } from '@golemui/lit-utils';
-import { GuiPopover, GuiTextinput, GuiTooltip } from '../../react';
+import { GuiDialog, GuiPopover, GuiTextinput, GuiTooltip } from '../../react';
 import '../components/dropdown';
 import type { GuiDropdown } from '../components/dropdown';
 import '../components/list';
@@ -171,6 +171,36 @@ describe('a gui-tooltip', () => {
     const tooltip = container.querySelector('gui-tooltip') as HTMLElement;
     expect(tooltip.getAttribute('role')).toBe('tooltip');
     expect(container.querySelector('#save')?.getAttribute('aria-describedby')).toBe(tooltip.id);
+    errorSpy.mockRestore();
+  });
+});
+
+describe('a gui-dialog', () => {
+  it('hydrates in React without a mismatch, then makes an alert dialog of its dialog', async () => {
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const app = () =>
+      createElement(
+        GuiDialog,
+        { alert: true },
+        createElement(
+          'dialog',
+          { id: 'discard', 'aria-labelledby': 'discard-title' },
+          createElement('h2', { id: 'discard-title' }, 'Discard your changes?'),
+        ),
+      );
+    const container = document.createElement('div');
+    container.innerHTML = renderToString(app());
+    document.body.append(container);
+    expect(container.querySelector('dialog')?.hasAttribute('role')).toBe(false);
+
+    await act(async () => {
+      hydrateRoot(container, app(), { onRecoverableError: (error) => console.error(error) });
+    });
+    await settle();
+
+    // The element waited for React: the role came after hydration, so React saw no mismatch.
+    expect(errorSpy).not.toHaveBeenCalled();
+    expect(container.querySelector('dialog')?.getAttribute('role')).toBe('alertdialog');
     errorSpy.mockRestore();
   });
 });

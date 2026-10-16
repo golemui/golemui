@@ -20,6 +20,7 @@ export {
   GuiDateTimeCalendarEvents,
 } from './lib/components/date-time-calendar';
 export { GuiDateTimePicker, GuiDateTimePickerEvents } from './lib/components/date-time-picker';
+export { GuiDialog, GuiDialogEvents, type GuiDialogPlacement } from './lib/components/dialog';
 export { GuiDropdown, GuiDropdownEvents } from './lib/components/dropdown';
 export type { GuiFilterEventDetail } from './lib/components/dropdown';
 export { GuiErrors } from './lib/components/errors';

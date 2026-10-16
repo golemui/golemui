@@ -1,0 +1,133 @@
+// The element only enhances its dialog, which the browser shows in the top layer.
+gui-dialog {
+  display: contents;
+
+  > dialog {
+    box-sizing: border-box;
+    max-inline-size: min(var(--gui-dialog-max-width, 32rem), calc(100vw - var(--gui-space-4) * 2));
+    max-block-size: calc(100dvh - var(--gui-space-4) * 2);
+    padding: var(--gui-space-5);
+    border: 1px solid var(--gui-border-default);
+    border-radius: var(--gui-radius-lg);
+    background: var(--gui-bg-default);
+    color: var(--gui-text-default);
+    box-shadow: var(--gui-shadow-lg);
+    overflow: auto;
+
+    // Fades in from `@starting-style`, and out while `display` and `overlay` stay discrete, so it
+    // stays in the top layer until the fade ends. Without them it shows and hides at once.
+    opacity: 0;
+    scale: 0.96;
+    transition:
+      opacity var(--gui-overlay-duration) ease-out,
+      scale var(--gui-overlay-duration) ease-out,
+      translate var(--gui-overlay-duration) ease-out,
+      display var(--gui-overlay-duration) allow-discrete,
+      overlay var(--gui-overlay-duration) allow-discrete;
+
+    &[open] {
+      opacity: 1;
+      scale: 1;
+
+      @starting-style {
+        opacity: 0;
+        scale: 0.96;
+      }
+    }
+
+    &::backdrop {
+      background: transparent;
+      transition:
+        background-color var(--gui-overlay-duration) ease-out,
+        display var(--gui-overlay-duration) allow-discrete,
+        overlay var(--gui-overlay-duration) allow-discrete;
+    }
+
+    &[open]::backdrop {
+      background: var(--gui-dialog-backdrop, rgb(0 0 0 / 0.45));
+
+      @starting-style {
+        background: transparent;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+
+      &::backdrop {
+        transition: none;
+      }
+    }
+  }
+
+  // A drawer: flush with one edge of the viewport, as tall (or as wide) as it, sliding in from it
+  // (from `--gui-drawer-from`, which mirrors in right to left) and out to it.
+  &:is([placement='start'], [placement='end'], [placement='top'], [placement='bottom']) > dialog {
+    margin: 0;
+    max-inline-size: 100vw;
+    max-block-size: 100dvh;
+    border-radius: 0;
+    scale: 1;
+    translate: var(--gui-drawer-from);
+
+    &[open] {
+      translate: 0 0;
+
+      @starting-style {
+        scale: 1;
+        translate: var(--gui-drawer-from);
+      }
+    }
+  }
+
+  &:is([placement='start'], [placement='end']) > dialog {
+    inline-size: min(var(--gui-drawer-size, 24rem), 100vw);
+    block-size: 100dvh;
+    border-block: 0;
+  }
+
+  &:is([placement='top'], [placement='bottom']) > dialog {
+    inline-size: 100vw;
+    max-block-size: min(var(--gui-drawer-size, 24rem), 100dvh);
+    border-inline: 0;
+  }
+
+  &[placement='start'] > dialog {
+    --gui-drawer-from: -100% 0;
+    margin-inline-end: auto;
+    border-inline-start: 0;
+
+    &:dir(rtl) {
+      --gui-drawer-from: 100% 0;
+    }
+  }
+
+  &[placement='end'] > dialog {
+    --gui-drawer-from: 100% 0;
+    margin-inline-start: auto;
+    border-inline-end: 0;
+
+    &:dir(rtl) {
+      --gui-drawer-from: -100% 0;
+    }
+  }
+
+  &[placement='top'] > dialog {
+    --gui-drawer-from: 0 -100%;
+    margin-block-end: auto;
+    border-block-start: 0;
+  }
+
+  &[placement='bottom'] > dialog {
+    --gui-drawer-from: 0 100%;
+    margin-block-start: auto;
+    border-block-end: 0;
+  }
+}
+
+// While a dialog is open the page behind it does not scroll. The gutter stays, so the page does
+// not shift sideways when its scrollbar goes.
+html:has(gui-dialog > dialog:modal) {
+  overflow: hidden;
+  scrollbar-gutter: stable;
+}

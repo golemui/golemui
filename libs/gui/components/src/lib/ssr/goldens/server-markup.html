@@ -123,6 +123,52 @@
     <gui-popover  placement="bottom-start" defer-hydration>
       <div id="plan-help" popover>Every plan includes email support.</div>
     </gui-popover>
+    <gui-dialog  placement="end" defer-hydration>
+      <dialog id="plan-dialog" aria-labelledby="plan-dialog-title">
+        <h2 id="plan-dialog-title">Compare plans</h2>
+        <gui-textinput    uid="coupon" name="coupon" label="Coupon" class="gui-field" data-golemui-ssr defer-hydration>
+      <label
+      class="gui-label"
+      for="coupon"
+      data-cy="coupon_label"
+      id="coupon_label"
+    >
+      <span class="gui-label__text"
+        >Coupon</span
+      >
+
+    </label>
+
+      <div class="gui-widget">
+        <input
+          type="text"
+          id="coupon"
+          data-cy="coupon_textinput"
+          class=" gui-widget-input "
+          value=""
+
+
+
+
+
+
+
+        />
+
+      </div>
+
+      <div
+    class=" gui-validator gui-validator--empty "
+    id="coupon_errors"
+    role="alert"
+
+
+  >
+
+  </div>
+    </gui-textinput>
+      </dialog>
+    </gui-dialog>
     <gui-checkbox     uid="terms" name="terms" label="I accept the terms" value="true" class="gui-field" data-golemui-ssr defer-hydration>
       <label
         class="gui-label"
