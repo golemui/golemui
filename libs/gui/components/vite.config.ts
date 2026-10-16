@@ -118,6 +118,11 @@ export default defineConfig(() => ({
       },
     },
   },
+  // Pre-bundled for the component tests: discovered mid-run, they made Vite reload, and a spec
+  // loading at that moment failed with "Failed to fetch dynamically imported module".
+  optimizeDeps: {
+    include: ['lit/directives/ref.js', 'lit/static-html.js'],
+  },
   test: {
     name: 'gui-components',
     watch: false,

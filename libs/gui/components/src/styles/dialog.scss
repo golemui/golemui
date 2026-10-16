@@ -125,9 +125,10 @@ gui-dialog {
   }
 }
 
-// While a dialog is open the page behind it does not scroll. The gutter stays, so the page does
-// not shift sideways when its scrollbar goes.
+// While a dialog is open the page behind it does not scroll. No `scrollbar-gutter` here: where
+// scrollbars take space (Windows, Linux) it would reserve one even on a page that had none, and
+// the drawers would stop short of the window's edge. An app whose page always scrolls can set
+// `html { scrollbar-gutter: stable; }` itself.
 html:has(gui-dialog > dialog:modal) {
   overflow: hidden;
-  scrollbar-gutter: stable;
 }
