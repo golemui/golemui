@@ -150,6 +150,23 @@ export const runMultiDropdownComponentTests = (mountFn: MountComponentFn) => {
     describe('panel toggle button', () => {
       const toggleSel = '.gui-multi-dropdown button.gui-dropdown__arrow';
 
+      // In the top layer, so no container clips it: under the field and as wide as it.
+      it('should show the panel in the top layer, under its field and as wide as it', () => {
+        mountMultiDropdown();
+
+        cy.get(toggleSel).click();
+        cy.get('.gui-multi-dropdown > .gui-widget').then(([field]) =>
+          cy.get('.gui-multi-dropdown .gui-widget > .gui-picker__panel').should(([panel]) => {
+            expect(panel.matches(':popover-open'), 'in the top layer').to.equal(true);
+            const fieldBox = field.getBoundingClientRect();
+            const panelBox = panel.getBoundingClientRect();
+            expect(panelBox.top).to.be.closeTo(fieldBox.bottom + 2, 1);
+            expect(panelBox.left).to.be.closeTo(fieldBox.left, 1);
+            expect(panelBox.width).to.be.closeTo(fieldBox.width, 1);
+          }),
+        );
+      });
+
       it('should expose a named toggle button wired to the listbox', () => {
         mountMultiDropdown();
 

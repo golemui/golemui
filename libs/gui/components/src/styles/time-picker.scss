@@ -3,7 +3,10 @@ gui-time-picker {
 }
 
 :is(.gui-time-picker.gui-field, gui-time-picker) {
+  // As wide as the field: the controller sets the field's width. A time picker in a calendar
+  // shows its list inline instead, as wide as its row.
   .gui-widget > .gui-picker__panel {
-    width: 100%;
+    box-sizing: border-box;
+    width: var(--gui-anchor-width, 100%);
   }
 }

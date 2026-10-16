@@ -1,0 +1,24 @@
+/*
+ * The motion of every element the browser shows in the top layer: it fades in from
+ * `@starting-style` and out while `display` and `overlay` stay discrete, so it remains in the top
+ * layer until the fade ends. Where the browser cannot animate those, it shows and hides at once.
+ */
+@mixin gui-overlay-motion($open-selector) {
+  opacity: 0;
+  transition:
+    opacity var(--gui-overlay-duration) ease-out,
+    display var(--gui-overlay-duration) allow-discrete,
+    overlay var(--gui-overlay-duration) allow-discrete;
+
+  &#{$open-selector} {
+    opacity: 1;
+
+    @starting-style {
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}

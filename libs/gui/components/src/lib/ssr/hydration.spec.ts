@@ -76,6 +76,29 @@ describe('resuming server-rendered standalone elements', () => {
     expect(document.querySelector('gui-tab-panel > gui-select')).not.toBeNull();
   });
 
+  it('makes a tooltip describe its target once it resumes, and keeps it closed', async () => {
+    resumeServerRendered();
+    await settle();
+
+    const tooltip = document.querySelector('gui-tooltip') as HTMLElement;
+    expect(tooltip.getAttribute('role')).toBe('tooltip');
+    expect(tooltip.getAttribute('popover')).toBe('manual');
+    expect(tooltip.hasAttribute('open')).toBe(false);
+    expect(document.getElementById('plan-help-button')?.getAttribute('aria-describedby')).toBe(
+      tooltip.id,
+    );
+  });
+
+  it('leaves the markup of a closed popover as the server sent it', async () => {
+    const popover = () => document.querySelector('gui-popover') as HTMLElement;
+    const before = popover().outerHTML;
+    resumeServerRendered();
+    await settle();
+
+    // Only the hold goes: the element adds nothing the server markup lacks.
+    expect(popover().outerHTML).toBe(before.replace(' defer-hydration=""', ''));
+  });
+
   it('accepts user input after the resume', async () => {
     resumeServerRendered();
     await settle();

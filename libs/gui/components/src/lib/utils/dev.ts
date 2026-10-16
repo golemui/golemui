@@ -32,3 +32,18 @@ export function warnIfUnlabelled(host: HTMLElement, labelId: string): void {
     host,
   );
 }
+
+const warnings = new WeakMap<Element, Set<string>>();
+
+/**
+ * Warns once per element and message, in development, about markup the app has to write and did
+ * not, such as the `[popover]` child of a `gui-popover`. The element then does without it.
+ */
+export function warnInDevelopment(host: HTMLElement, message: string): void {
+  if (!devMode) return;
+  const seen = warnings.get(host) ?? new Set<string>();
+  if (seen.has(message)) return;
+  seen.add(message);
+  warnings.set(host, seen);
+  console.warn(`<${host.localName}> ${message}`, host);
+}

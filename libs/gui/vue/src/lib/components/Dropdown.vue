@@ -5,6 +5,7 @@ import { useDebounceCallback, useInputWidget, useVueFormContext } from '@golemui
 import type { DropdownProps, ListItem, OptionValue } from '@golemui/gui-shared/internals';
 import { searchItems, type ItemFields } from '@golemui/gui-components/internals';
 import { computed, onMounted, onUnmounted, ref, watch, type Component } from 'vue';
+import { useFloatingPanel } from './shared/use-floating-panel';
 import DefaultListItemRenderer from './item-renderers/DefaultListItemRenderer.vue';
 import '@golemui/gui-components/label';
 import '@golemui/gui-components/list';
@@ -36,6 +37,8 @@ const panelRef = ref<HTMLDivElement | null>(null);
 const inputRef = ref<HTMLInputElement | null>(null);
 const labelRef = ref<GuiLabelElement | null>(null);
 const widgetRef = ref<HTMLDivElement | null>(null);
+// The panel shows in the top layer while the list is visible, under the field.
+useFloatingPanel(panelRef, widgetRef, isListVisible);
 
 const required = computed(() => (templateData.value.validator as Validator)?.required);
 const isDisabled = computed(() => templateData.value.disabled as boolean);
@@ -293,6 +296,7 @@ const ItemRenderer = computed<Component>(() => {
 
       <div
         class="gui-picker__panel"
+        popover="manual"
         :hidden="!isListVisible"
         ref="panelRef"
         @mousedown="handlePanelMouseDown"

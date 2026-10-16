@@ -178,6 +178,11 @@
       "import": "./lib/components/pills.js",
       "require": "./lib/components/pills.umd.cjs"
     },
+    "./popover": {
+      "types": "./lib/components/popover.d.ts",
+      "import": "./lib/components/popover.js",
+      "require": "./lib/components/popover.umd.cjs"
+    },
     "./radiogroup": {
       "types": "./lib/components/radiogroup.d.ts",
       "import": "./lib/components/radiogroup.js",
@@ -282,6 +287,11 @@
       "types": "./lib/components/toggle.d.ts",
       "import": "./lib/components/toggle.js",
       "require": "./lib/components/toggle.umd.cjs"
+    },
+    "./tooltip": {
+      "types": "./lib/components/tooltip.d.ts",
+      "import": "./lib/components/tooltip.js",
+      "require": "./lib/components/tooltip.umd.cjs"
     },
     "./tokens.css": "./lib/styles/tokens.css",
     "./components.css": "./lib/styles/components.css",

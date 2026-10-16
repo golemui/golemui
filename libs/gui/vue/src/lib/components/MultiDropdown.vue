@@ -15,6 +15,7 @@ import {
   type ItemFields,
 } from '@golemui/gui-components/internals';
 import { computed, onMounted, onUnmounted, ref, watch, type Component } from 'vue';
+import { useFloatingPanel } from './shared/use-floating-panel';
 import DefaultMultiListItemRenderer from './item-renderers/DefaultMultiListItemRenderer.vue';
 import type { GuiLabel } from '@golemui/gui-components/label';
 import type { GuiMultiList } from '@golemui/gui-components/multi-list';
@@ -41,6 +42,8 @@ const panelRef = ref<HTMLDivElement | null>(null);
 const triggerRef = ref<GuiMultiSelectTrigger | null>(null);
 const labelRef = ref<GuiLabel | null>(null);
 const widgetRef = ref<HTMLDivElement | null>(null);
+// The panel shows in the top layer while the list is visible, under the field.
+useFloatingPanel(panelRef, widgetRef, isListVisible);
 
 const currentValues = computed(() => (Array.isArray(value.value) ? value.value : []));
 
@@ -291,6 +294,7 @@ const ItemRenderer = computed<Component>(() => {
 
       <div
         class="gui-picker__panel"
+        popover="manual"
         :hidden="!isListVisible"
         ref="panelRef"
         @mousedown="handlePanelMouseDown"

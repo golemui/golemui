@@ -67,6 +67,7 @@ export default defineConfig(() => ({
         'lib/components/number': 'src/lib/components/number.ts',
         'lib/components/password': 'src/lib/components/password.ts',
         'lib/components/pills': 'src/lib/components/pills.ts',
+        'lib/components/popover': 'src/lib/components/popover.ts',
         'lib/components/radiogroup': 'src/lib/components/radiogroup.ts',
         'lib/components/range-calendar': 'src/lib/components/range-calendar.ts',
         'lib/components/range-date-input': 'src/lib/components/range-date-input.ts',
@@ -88,6 +89,7 @@ export default defineConfig(() => ({
         'lib/components/time-list': 'src/lib/components/time-list.ts',
         'lib/components/time-picker': 'src/lib/components/time-picker.ts',
         'lib/components/toggle': 'src/lib/components/toggle.ts',
+        'lib/components/tooltip': 'src/lib/components/tooltip.ts',
       },
       formats: ['es', 'cjs'],
       fileName: (format, entryName) =>

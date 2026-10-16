@@ -2,10 +2,9 @@ import { ReactiveElement, type PropertyValues } from 'lit';
 import { property } from 'lit/decorators.js';
 import { booleanAttribute } from '../utils/converters';
 import { safeDefine } from '@golemui/lit-utils';
-import { fires } from '../utils/events';
+import { dispatchToggle, fires, type GuiToggleEventDetail } from '../utils/events';
 
-/** The detail of `gui-toggle`: whether the item is now open. */
-export type GuiToggleEventDetail = { open: boolean };
+export type { GuiToggleEventDetail } from '../utils/events';
 
 /**
  * An item of a `gui-accordion`: a `<details>` the app renders, with its `<summary>` as the header
@@ -82,13 +81,7 @@ export class GuiAccordionItem extends ReactiveElement {
     const details = this.details;
     if (!details || event.target !== details || details.open === this.open) return;
     this.open = details.open;
-    this.dispatchEvent(
-      new CustomEvent<GuiToggleEventDetail>('gui-toggle', {
-        detail: { open: details.open },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatchToggle(this, details.open);
   };
 }
 

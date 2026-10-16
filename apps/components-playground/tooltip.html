@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tooltip · GolemUI Components playground</title>
+    <link rel="stylesheet" href="/src/styles.scss" />
+  </head>
+  <body data-pg-events="gui-toggle">
+    <main class="pg-main">
+      <section class="pg-section">
+        <h1>gui-tooltip</h1>
+        <p>
+          Rest the pointer on a button, or reach it with Tab: its tooltip opens after half a second.
+          Escape closes it, and the pointer can move onto it without it closing (WCAG 1.4.13). It
+          never opens for touch. Each tooltip joins its button's
+          <code>aria-describedby</code>, so a screen reader reads it as the button's description.
+        </p>
+      </section>
+
+      <section class="pg-section">
+        <h2>The twelve placements</h2>
+        <div class="pg-stage">
+          <div class="pg-grid-3">
+            <button type="button" class="pg-button" id="tip-top-start">top-start</button>
+            <gui-tooltip for="tip-top-start" placement="top-start">Placed at top-start</gui-tooltip>
+            <button type="button" class="pg-button" id="tip-top">top</button>
+            <gui-tooltip for="tip-top" placement="top">Placed at top</gui-tooltip>
+            <button type="button" class="pg-button" id="tip-top-end">top-end</button>
+            <gui-tooltip for="tip-top-end" placement="top-end">Placed at top-end</gui-tooltip>
+            <button type="button" class="pg-button" id="tip-start-start">start-start</button>
+            <gui-tooltip for="tip-start-start" placement="start-start"
+              >Placed at start-start</gui-tooltip
+            >
+            <button type="button" class="pg-button" id="tip-start">start</button>
+            <gui-tooltip for="tip-start" placement="start">Placed at start</gui-tooltip>
+            <button type="button" class="pg-button" id="tip-start-end">start-end</button>
+            <gui-tooltip for="tip-start-end" placement="start-end">Placed at start-end</gui-tooltip>
+            <button type="button" class="pg-button" id="tip-end-start">end-start</button>
+            <gui-tooltip for="tip-end-start" placement="end-start">Placed at end-start</gui-tooltip>
+            <button type="button" class="pg-button" id="tip-end">end</button>
+            <gui-tooltip for="tip-end" placement="end">Placed at end</gui-tooltip>
+            <button type="button" class="pg-button" id="tip-end-end">end-end</button>
+            <gui-tooltip for="tip-end-end" placement="end-end">Placed at end-end</gui-tooltip>
+            <button type="button" class="pg-button" id="tip-bottom-start">bottom-start</button>
+            <gui-tooltip for="tip-bottom-start" placement="bottom-start"
+              >Placed at bottom-start</gui-tooltip
+            >
+            <button type="button" class="pg-button" id="tip-bottom">bottom</button>
+            <gui-tooltip for="tip-bottom" placement="bottom">Placed at bottom</gui-tooltip>
+            <button type="button" class="pg-button" id="tip-bottom-end">bottom-end</button>
+            <gui-tooltip for="tip-bottom-end" placement="bottom-end"
+              >Placed at bottom-end</gui-tooltip
+            >
+          </div>
+        </div>
+      </section>
+
+      <section class="pg-section">
+        <h2>A toolbar, by keyboard</h2>
+        <p>Tab through the buttons: each tooltip opens on focus and closes when focus moves on.</p>
+        <div class="pg-row">
+          <button type="button" class="pg-button" id="tool-bold">B</button>
+          <gui-tooltip for="tool-bold">Bold (Ctrl+B)</gui-tooltip>
+          <button type="button" class="pg-button" id="tool-italic">I</button>
+          <gui-tooltip for="tool-italic">Italic (Ctrl+I)</gui-tooltip>
+          <button type="button" class="pg-button" id="tool-link">Link</button>
+          <gui-tooltip for="tool-link">Insert a link (Ctrl+K)</gui-tooltip>
+        </div>
+      </section>
+
+      <section class="pg-section">
+        <h2>A long tooltip</h2>
+        <p>Move the pointer from the button onto the tooltip: it stays open while you read it.</p>
+        <div class="pg-row">
+          <button type="button" class="pg-button" id="tip-long">Publishing rules</button>
+          <gui-tooltip for="tip-long"
+            >Changes go live for everyone once you publish them. Until then only editors see them,
+            in the preview.</gui-tooltip
+          >
+        </div>
+      </section>
+
+      <section class="pg-section">
+        <h2>Alongside an existing description</h2>
+        <p>The button already has a description; the tooltip is added to it, not swapped in.</p>
+        <div class="pg-row">
+          <button
+            type="button"
+            class="pg-button"
+            id="tip-shortcut"
+            aria-describedby="shortcut-hint"
+          >
+            Save
+          </button>
+          <span id="shortcut-hint">Ctrl+S</span>
+          <gui-tooltip for="tip-shortcut">Saves without publishing</gui-tooltip>
+        </div>
+      </section>
+
+      <section class="pg-section">
+        <h2>On an unavailable control</h2>
+        <p>
+          A <code>disabled</code> button gets no pointer or focus events, so it can't show a
+          tooltip. Mark it <code>aria-disabled="true"</code> instead: it stays focusable and
+          explains why.
+        </p>
+        <div class="pg-row">
+          <button type="button" class="pg-button" id="tip-disabled" aria-disabled="true">
+            Delete
+          </button>
+          <gui-tooltip for="tip-disabled">Only owners can delete a project</gui-tooltip>
+        </div>
+      </section>
+
+      <section class="pg-section" dir="rtl">
+        <h2>A right-to-left part of the page</h2>
+        <div class="pg-row">
+          <button type="button" class="pg-button" id="tip-rtl-start">start</button>
+          <gui-tooltip for="tip-rtl-start" placement="start"
+            >Before the button in the reading direction</gui-tooltip
+          >
+          <button type="button" class="pg-button" id="tip-rtl-end">bottom-end</button>
+          <gui-tooltip for="tip-rtl-end" placement="bottom-end"
+            >Lined up with the end of the button</gui-tooltip
+          >
+        </div>
+      </section>
+
+      <section class="pg-section">
+        <h2>Opened from code, and in a modal dialog</h2>
+        <div class="pg-row">
+          <button type="button" class="pg-button" data-pg-toggle="from-code-tip">
+            Toggle with the open property
+          </button>
+          <span id="from-code-target">Described here</span>
+          <gui-tooltip id="from-code-tip" for="from-code-target" placement="bottom">
+            Opened from code
+          </gui-tooltip>
+          <button type="button" class="pg-button" commandfor="tip-dialog" command="show-modal">
+            Open the dialog
+          </button>
+        </div>
+        <dialog id="tip-dialog" class="pg-dialog" aria-label="Share">
+          <button type="button" class="pg-button" id="tip-in-dialog">Copy link</button>
+          <gui-tooltip for="tip-in-dialog">Copies a link anyone in the team can open</gui-tooltip>
+          <button type="button" class="pg-button" commandfor="tip-dialog" command="close">
+            Close
+          </button>
+        </dialog>
+      </section>
+    </main>
+    <script type="module" src="/src/pages/tooltip.ts"></script>
+  </body>
+</html>

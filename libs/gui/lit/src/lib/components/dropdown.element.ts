@@ -1,7 +1,7 @@
 import type { InputWidget, WithWidget } from '@golemui/core';
 import { InputWidgetAdapter, type LitFormContext, formContext, inputContext } from '@golemui/lit';
 import type { DropdownProps, ListItem } from '@golemui/gui-shared/internals';
-import { searchItems, type ItemFields } from '@golemui/gui-components/internals';
+import { GUIFloatingPanel, type ItemFields, searchItems } from '@golemui/gui-components/internals';
 import type { GuiVisibleItem } from '@golemui/gui-components';
 import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';
@@ -33,6 +33,12 @@ export class DropdownElement extends LitElement implements WithWidget {
   @state() private _listItems: ListItem<never>[] = [];
   @state() private _isFiltering = false;
   @state() private _isListVisible = false;
+
+  // The panel shows in the top layer while the list is visible, under the field.
+  private readonly floating = new GUIFloatingPanel({
+    panel: () => this.querySelector<HTMLElement>(':scope > .gui-widget > .gui-picker__panel'),
+    anchor: () => this.querySelector(':scope > .gui-widget'),
+  });
   @state() private _selectedItem: ListItem<never> | undefined = undefined;
 
   @query('input') private _inputRef!: any;
@@ -86,8 +92,13 @@ export class DropdownElement extends LitElement implements WithWidget {
     );
   }
 
+  protected override updated() {
+    this.floating.sync(this._isListVisible);
+  }
+
   override disconnectedCallback() {
     super.disconnectedCallback();
+    this.floating.dispose();
     document.removeEventListener('click', this.onDocumentClick);
     this.adapter.destroy();
     unsubscribeAll(this.subscriptions);
@@ -308,6 +319,7 @@ export class DropdownElement extends LitElement implements WithWidget {
 
         <div
           class="gui-picker__panel"
+          popover="manual"
           ?hidden=${!this._isListVisible}
           @mousedown=${this._onPanelMouseDown}
         >

@@ -1,0 +1,21 @@
+@use 'overlay' as *;
+
+// The element is the floating box. Until it opens (and before it upgrades) it stays hidden, so its
+// text never shows in the page's flow.
+gui-tooltip {
+  @include gui-overlay-motion(':popover-open');
+  box-sizing: border-box;
+  max-inline-size: min(var(--gui-tooltip-max-width, 20rem), calc(100vw - var(--gui-space-2) * 2));
+  padding: var(--gui-space-1) var(--gui-space-2);
+  border: 0;
+  border-radius: var(--gui-radius-sm);
+  background: var(--gui-tooltip-bg, var(--gui-bg-inverse));
+  color: var(--gui-tooltip-text, var(--gui-text-inverse));
+  font-size: var(--gui-font-xs);
+  line-height: 1.4;
+  overflow: visible;
+
+  &:not(:popover-open) {
+    display: none;
+  }
+}

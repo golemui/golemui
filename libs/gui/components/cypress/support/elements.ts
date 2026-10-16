@@ -150,6 +150,8 @@ export const elements: ElementCase[] = [
       removable: true,
     },
   },
+  // Its panel is the app's child: popover.cy.ts checks it with one, open and closed.
+  { tag: 'gui-popover', props: {}, hostRendersChildren: true },
   {
     tag: 'gui-radiogroup',
     props: { label: 'Color', options },
@@ -221,4 +223,7 @@ export const elements: ElementCase[] = [
     props: { label: 'Notifications' },
     form: { property: 'value', sample: true },
   },
+  // Its text is the app's children, and it stays hidden until it opens: tooltip.cy.ts checks it
+  // open, with its target.
+  { tag: 'gui-tooltip', props: {}, hostRendersChildren: true },
 ];
