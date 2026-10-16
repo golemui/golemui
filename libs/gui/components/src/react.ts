@@ -74,6 +74,7 @@ import {
 import { GuiNumber as GuiNumberElement, GuiNumberEvents } from './lib/components/number';
 import { GuiPassword as GuiPasswordElement, GuiPasswordEvents } from './lib/components/password';
 import { GuiPills as GuiPillsElement, GuiPillsEvents } from './lib/components/pills';
+import { GuiPopover as GuiPopoverElement, GuiPopoverEvents } from './lib/components/popover';
 import {
   GuiRadiogroup as GuiRadiogroupElement,
   GuiRadiogroupEvents,
@@ -303,6 +304,7 @@ export const GuiMultiSelectTrigger = wrap(
 export const GuiNumber = wrap('gui-number', GuiNumberElement, GuiNumberEvents);
 export const GuiPassword = wrap('gui-password', GuiPasswordElement, GuiPasswordEvents);
 export const GuiPills = wrap('gui-pills', GuiPillsElement, GuiPillsEvents);
+export const GuiPopover = wrap('gui-popover', GuiPopoverElement, GuiPopoverEvents);
 export const GuiRadiogroup = wrap('gui-radiogroup', GuiRadiogroupElement, GuiRadiogroupEvents);
 export const GuiRangeCalendar = wrap(
   'gui-range-calendar',

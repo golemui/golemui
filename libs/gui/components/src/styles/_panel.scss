@@ -1,4 +1,14 @@
 /*
+ * The look of every floating card: the pickers' panels and the popovers.
+ */
+@mixin gui-floating-surface {
+  background: var(--gui-bg-default);
+  border: 1px solid var(--gui-border-default);
+  border-radius: var(--gui-radius-md);
+  box-shadow: var(--gui-shadow-md);
+}
+
+/*
  * Shared chrome for `.gui-picker__panel`, the floating card every picker
  * (and the dropdown) wraps its popup layout in.
  */
@@ -11,10 +21,7 @@
   flex-direction: column;
   gap: var(--gui-space-2);
   padding: var(--gui-space-2);
-  background: var(--gui-bg-default);
-  border: 1px solid var(--gui-border-default);
-  border-radius: var(--gui-radius-md);
-  box-shadow: var(--gui-shadow-md);
+  @include gui-floating-surface;
   width: max-content;
   max-width: none;
 

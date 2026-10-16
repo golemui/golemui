@@ -5,6 +5,8 @@ const config = {
   entry: [
     // Apps (playgrounds)
     'apps/*/src/main.{ts,tsx}',
+    // The components playground: a page entry per HTML page
+    'apps/components-playground/src/pages/*.ts',
     'apps/apps-shared/src/index.ts',
     // Nuxt app (file-based entry points, no main.ts)
     'apps/*/nuxt.config.ts',

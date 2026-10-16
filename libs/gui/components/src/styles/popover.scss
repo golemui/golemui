@@ -1,0 +1,19 @@
+@use 'panel' as *;
+@use 'overlay' as *;
+
+// The element only enhances its panel, which the browser shows in the top layer.
+gui-popover {
+  display: contents;
+
+  > [popover] {
+    @include gui-floating-surface;
+    @include gui-overlay-motion(':popover-open');
+    box-sizing: border-box;
+    padding: var(--gui-space-3);
+    color: var(--gui-text-default);
+    // Never wider or taller than the viewport, less a gap: the content scrolls instead.
+    max-inline-size: calc(100vw - var(--gui-space-2) * 2);
+    max-block-size: calc(100dvh - var(--gui-space-2) * 2);
+    overflow: auto;
+  }
+}

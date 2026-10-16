@@ -1,6 +1,7 @@
 import { html } from 'lit';
 import '../components/alert';
 import '../components/checkbox';
+import '../components/popover';
 import '../components/select';
 import '../components/tab';
 import '../components/tab-list';
@@ -10,8 +11,8 @@ import '../components/textinput';
 
 /**
  * A page of elements shared by the server render and the resume specs: elements that render
- * their own content (the inputs) and elements whose children are the app's (the alert and the
- * tabs), one nested in the other.
+ * their own content (the inputs) and elements whose children are the app's (the alert, the tabs
+ * and the popover), one nested in the other.
  *
  * Every value is an attribute: the client upgrades the elements from the HTML, so a property
  * binding such as `.options=${[...]}` would reach the server render only.
@@ -41,5 +42,9 @@ export const serverTemplate = () =>
         ></gui-select>
       </gui-tab-panel>
     </gui-tabs>
+    <button type="button" popovertarget="plan-help">What does a plan include?</button>
+    <gui-popover placement="bottom-start">
+      <div id="plan-help" popover>Every plan includes email support.</div>
+    </gui-popover>
     <gui-checkbox uid="terms" name="terms" label="I accept the terms" value="true"></gui-checkbox>
   </form>`;
