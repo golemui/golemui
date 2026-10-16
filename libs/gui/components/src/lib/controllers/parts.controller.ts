@@ -388,6 +388,8 @@ export class GUIPartsController implements ReactiveController {
       event.key === 'ArrowDown' ||
       event.key === 'ArrowLeft' ||
       event.key === 'ArrowRight';
+    // Alt+ArrowUp/Down open and close a picker's popup: they never step a value.
+    if (event.altKey && (event.key === 'ArrowUp' || event.key === 'ArrowDown')) return;
     if (isArrowKey) {
       if (event.target !== this._keydownTarget) return;
       this._keydownTarget = null;

@@ -377,7 +377,7 @@ export class GuiRangeTimePicker extends GuiFormControl {
           .editCommittedMessage=${this.editCommittedMessage}
           .editCancelledMessage=${this.editCancelledMessage}
           @gui-blur=${this.onInputBlur}
-          @gui-focus=${this.onInputFocus}
+          @gui-focus=${stopPropagation}
           @gui-input=${this.onRangeInput}
           @gui-change=${this.onRangeChange}
           @gui-input-error=${this.onInputError}
@@ -451,11 +451,6 @@ export class GuiRangeTimePicker extends GuiFormControl {
    */
   private onInputBlur(event: Event) {
     event.stopPropagation();
-  }
-
-  private onInputFocus(event: Event) {
-    stopPropagation(event);
-    this._popup.show();
   }
 
   /** The input's error is reported as the picker's own. */

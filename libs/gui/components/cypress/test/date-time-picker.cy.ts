@@ -168,7 +168,7 @@ describe('gui-date-time-picker', () => {
           <button id="outside">Outside</button>`,
       );
 
-      part('day').focus();
+      part('day').click();
       day('2026-03-15').focus();
       cy.get('@blur').should('not.have.been.called');
 

@@ -45,8 +45,6 @@ export class DropdownElement extends LitElement implements WithWidget {
   @query('gui-list') private _listRef!: any;
   @query('.gui-picker__panel') private _panelRef!: any;
 
-  private _ignoreNextFocus = false;
-
   onDocumentClick = (event: MouseEvent) => {
     if (!this._isListVisible) return;
 
@@ -180,27 +178,26 @@ export class DropdownElement extends LitElement implements WithWidget {
     }
   }
 
+  /** Escape and Alt+ArrowUp close the list and return focus to the field (APG combobox). */
   private _onWidgetKeyDown(event: Event) {
-    if ((event as KeyboardEvent).key !== 'Escape' || !this._isListVisible) return;
+    const { key, altKey } = event as KeyboardEvent;
+    const closing = key === 'Escape' || (altKey && key === 'ArrowUp');
+    if (!closing || !this._isListVisible) return;
     event.preventDefault();
     event.stopPropagation();
     this._isListVisible = false;
     this._isFiltering = false;
-    this._ignoreNextFocus = true;
     this._inputRef?.focus();
-    setTimeout(() => {
-      this._ignoreNextFocus = false;
-    });
   }
 
-  private async _onFocus() {
-    if (this._ignoreNextFocus) return;
+  /** Opens the list: from a click on the field or the toggle. Focus alone does not. */
+  private _showList = async () => {
     this._isListVisible = true;
 
     await this.updateComplete;
 
     this._listRef.scrollToSelectedIndex();
-  }
+  };
 
   private _onToggleMouseDown = (event: MouseEvent) => {
     event.preventDefault();
@@ -211,14 +208,10 @@ export class DropdownElement extends LitElement implements WithWidget {
     if (this._isListVisible) {
       this._isListVisible = false;
       this._isFiltering = false;
-      this._ignoreNextFocus = true;
       this._inputRef?.focus();
-      setTimeout(() => {
-        this._ignoreNextFocus = false;
-      });
     } else {
       this._inputRef?.focus();
-      this._onFocus();
+      this._showList();
     }
   };
 
@@ -296,7 +289,7 @@ export class DropdownElement extends LitElement implements WithWidget {
           autocomplete=${(templateData.autocomplete as any) || nothing}
           @keydown=${this._onKeyDown}
           @input=${this._onInput}
-          @focus=${this._onFocus}
+          @click=${this._showList}
           aria-expanded=${this._isListVisible ? 'true' : 'false'}
           aria-controls=${`${this.widget.uid}-list`}
           aria-autocomplete="list"
@@ -340,7 +333,6 @@ export class DropdownElement extends LitElement implements WithWidget {
             ?hidden=${!this._isListVisible}
             @gui-visible-items-change=${this._onVisibleItemsChange}
             @gui-update-items=${this._onUpdateItems}
-            @focus=${this._onFocus}
             @gui-input=${this._onValueChange}
           >
             ${this._visibleItems.map((item) => {

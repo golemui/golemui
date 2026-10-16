@@ -164,15 +164,24 @@ export class GUIPopupController implements ReactiveController {
   };
 
   /**
-   * Template-bindable anchor keydown handler. Escape while open prevents
-   * default, stops propagation, restores focus to the input, then closes.
+   * Template-bindable anchor keydown handler: the keys of the APG combobox pattern. Alt+ArrowDown
+   * opens the popup (and focuses into it, as the toggle does), Alt+ArrowUp and Escape close it and
+   * return focus to the field. Focus alone never opens it: the user asks for it.
    *
-   * @returns true when it consumed the event (Escape while open), so hosts
-   *   with extra keydown behavior (time-picker's arrow stepping / Enter
-   *   commit) can bail out exactly where the monolithic handler returned.
+   * @returns true when it consumed the event, so hosts with extra keydown behavior (time-picker's
+   *   arrow stepping / Enter commit) can bail out exactly where the monolithic handler returned.
    */
   onAnchorKeyDown = (event: KeyboardEvent): boolean => {
     if (this.options.isDisabled()) return false;
+    if (event.altKey && (event.key === 'ArrowDown' || event.key === 'ArrowUp')) {
+      event.preventDefault();
+      if (event.key === 'ArrowDown' && !this._open) this.openAndFocus();
+      if (event.key === 'ArrowUp' && this._open) {
+        this.restoreFocusToInput();
+        this.close();
+      }
+      return true;
+    }
     if (event.key === 'Escape' && this._open) {
       event.preventDefault();
       event.stopPropagation();

@@ -226,7 +226,7 @@ describe('gui-time-picker', () => {
         ></gui-time-picker>`,
       );
 
-      part('hour').focus().trigger('keydown', { key: 'ArrowDown' });
+      part('hour').click().trigger('keydown', { key: 'ArrowDown' });
       cy.get('@input').its('lastCall.args.0.detail').should('deep.equal', { value: '09:00:00' });
 
       part('hour').trigger('keydown', { key: 'ArrowDown' });
@@ -292,7 +292,7 @@ describe('gui-time-picker', () => {
         ></gui-time-picker>`,
       );
 
-      part('hour').focus().trigger('keydown', { key: 'ArrowDown' });
+      part('hour').click().trigger('keydown', { key: 'ArrowDown' });
       list().should('not.have.attr', 'hidden');
       option('09:30:00').click();
 

@@ -44,7 +44,6 @@ export function MultiDropdown(widgetInstance: WithWidget) {
   useFloatingPanel(panelRef, widgetRef, isListVisible);
   const triggerRef = useRef<GuiMultiSelectTrigger>(null);
   const labelRef = useRef<GuiLabel>(null);
-  const ignoreNextFocusRef = useRef(false);
 
   const currentValues = useMemo(() => (Array.isArray(value) ? value : []), [value]);
 
@@ -203,11 +202,11 @@ export function MultiDropdown(widgetInstance: WithWidget) {
     debouncedFilter(filterValue);
   };
 
-  const handleFocusIn = useCallback(
-    (e: React.FocusEvent) => {
-      if (ignoreNextFocusRef.current) return;
+  // A click on the search field opens the list, not one on a pill. Focus alone does not (APG
+  // combobox).
+  const handleTriggerClick = useCallback(
+    (e: React.MouseEvent) => {
       if (isListVisible) return;
-
       if (e.target !== triggerRef.current?.input) return;
 
       openPanel();
@@ -215,17 +214,15 @@ export function MultiDropdown(widgetInstance: WithWidget) {
     [isListVisible, openPanel],
   );
 
+  // Escape and Alt+ArrowUp close the list and return focus to the field (APG combobox).
   const handleWidgetKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key !== 'Escape' || !isListVisible) return;
+    const closing = event.key === 'Escape' || (event.altKey && event.key === 'ArrowUp');
+    if (!closing || !isListVisible) return;
     event.preventDefault();
     event.stopPropagation();
     setIsListVisible(false);
     setIsFiltering(false);
-    ignoreNextFocusRef.current = true;
     triggerRef.current?.focusInput();
-    setTimeout(() => {
-      ignoreNextFocusRef.current = false;
-    });
   };
 
   const handleToggleMouseDown = (event: React.MouseEvent) => {
@@ -237,11 +234,7 @@ export function MultiDropdown(widgetInstance: WithWidget) {
     if (isListVisible) {
       setIsListVisible(false);
       setIsFiltering(false);
-      ignoreNextFocusRef.current = true;
       triggerRef.current?.focusInput();
-      setTimeout(() => {
-        ignoreNextFocusRef.current = false;
-      });
     } else {
       triggerRef.current?.focusInput();
       openPanel();
@@ -326,7 +319,7 @@ export function MultiDropdown(widgetInstance: WithWidget) {
           compactAriaLabel={`${pillItems.length} selected`}
           onKeyDown={handleTriggerKeyDown}
           onInput={handleInputFilter}
-          onFocus={handleFocusIn}
+          onClick={handleTriggerClick}
           onGuiPillRemove={handlePillRemove}
           onGuiDropdownToggle={handlePillsDropdownToggle}
         ></GuiMultiSelectTriggerReact>

@@ -43,7 +43,7 @@
     [value]="selectedItemValue() ?? templateData.value ?? ''"
     (keydown)="onInputKeyDown($event)"
     (input)="onInput($event)"
-    (focus)="onInputFocus()"
+    (click)="showList()"
     [attr.aria-expanded]="isListVisible() ? 'true' : 'false'"
     [attr.aria-controls]="widget.uid + '-list'"
     aria-autocomplete="list"
@@ -86,7 +86,6 @@
       [hidden]="!isListVisible()"
       (gui-update-items)="onUpdateItems($event)"
       (gui-visible-items-change)="onVisibleItemsChange($event)"
-      (focus)="onInputFocus()"
       (gui-input)="onValueChange($event)"
     >
       @for (item of visibleItems(); track item.index) {

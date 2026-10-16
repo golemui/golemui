@@ -245,7 +245,7 @@ export class GuiDatePicker extends GuiFormControl {
           .invalidDateMessage=${this.invalidDateMessage}
           .incompleteMessage=${this.incompleteMessage}
           @gui-blur=${this.onDateBlur}
-          @gui-focus=${this.onDateFocus}
+          @gui-focus=${stopPropagation}
           @gui-input=${this.onDateInput}
           @gui-change=${this.onDateChange}
           @gui-input-error=${this.onDateInputError}
@@ -281,11 +281,6 @@ export class GuiDatePicker extends GuiFormControl {
       this._popup.openAndFocus();
     }
   };
-
-  private onDateFocus(event: Event) {
-    stopPropagation(event);
-    this._popup.show();
-  }
 
   /** The field's error is reported as the picker's own. */
   private onDateInputError(event: CustomEvent<GuiInputErrorEventDetail>) {

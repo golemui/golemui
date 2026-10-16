@@ -42,7 +42,7 @@
     [compactAriaLabel]="pillItems().length + ' selected'"
     (keydown)="onTriggerKeyDown($event)"
     (input)="onInput($event)"
-    (focusin)="onTriggerFocusIn($event)"
+    (click)="onTriggerClick($event)"
     (gui-pill-remove)="onPillRemove($event)"
     (gui-dropdown-toggle)="onPillsDropdownToggle($event)"
   ></gui-multi-select-trigger>

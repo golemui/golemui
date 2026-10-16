@@ -254,7 +254,7 @@ export class GuiTimePicker extends GuiFormControl {
           .maxTimeMessage=${this.maxTimeMessage}
           .incompleteMessage=${this.incompleteMessage}
           @gui-blur=${this.onTimeBlur}
-          @gui-focus=${this.onTimeFocus}
+          @gui-focus=${stopPropagation}
           @gui-input=${this.onTimeInput}
           @gui-change=${stopPropagation}
           @gui-input-error=${this.onTimeInputError}
@@ -291,11 +291,6 @@ export class GuiTimePicker extends GuiFormControl {
       this._popup.openAndFocus();
     }
   };
-
-  private onTimeFocus(event: Event) {
-    stopPropagation(event);
-    this._popup.show();
-  }
 
   /** The field's error is reported as the picker's own. */
   private onTimeInputError(event: CustomEvent<GuiInputErrorEventDetail>) {

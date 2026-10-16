@@ -313,9 +313,14 @@ describe('gui-date-time-calendar', () => {
       day('2026-03-15').focus().type('{rightArrow}{enter}');
       day('2026-03-16').should('have.attr', 'aria-selected', 'true');
 
-      timePart('hour').focus();
+      // Focus alone opens nothing: Alt+ArrowDown opens the time list (APG combobox).
+      timePart('hour')
+        .focus()
+        .trigger('keydown', { key: 'ArrowDown', altKey: true, eventConstructor: 'KeyboardEvent' });
       timeList().should('not.have.attr', 'hidden');
-      option('10:00:00').should('have.attr', 'tabindex', '0').focus().type('{rightArrow}{enter}');
+      // It moves focus to the selected time, where the arrows and Enter go on.
+      cy.focused().should('have.attr', 'data-value', '10:00:00');
+      cy.focused().type('{rightArrow}{enter}');
 
       cy.get('@change')
         .its('firstCall.args.0.detail')

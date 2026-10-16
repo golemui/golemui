@@ -33,7 +33,6 @@ export function Dropdown(widgetInstance: WithWidget) {
   useFloatingPanel(panelRef, widgetRef, isListVisible);
   const inputRef = useRef<HTMLInputElement>(null);
   const labelRef = useRef<GuiLabel>(null);
-  const ignoreNextFocusRef = useRef(false);
 
   const closeList = useCallback(() => {
     onBlur();
@@ -213,8 +212,8 @@ export function Dropdown(widgetInstance: WithWidget) {
     debouncedFilter(filterValue);
   };
 
-  const handleInputFocus = useCallback(() => {
-    if (ignoreNextFocusRef.current) return;
+  // Opens the list: from a click on the field or the toggle. Focus alone does not (APG combobox).
+  const showList = useCallback(() => {
     if (isListVisible) return;
 
     setIsListVisible(true);
@@ -226,17 +225,15 @@ export function Dropdown(widgetInstance: WithWidget) {
     }, 0);
   }, [isListVisible]);
 
+  // Escape and Alt+ArrowUp close the list and return focus to the field (APG combobox).
   const handleWidgetKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key !== 'Escape' || !isListVisible) return;
+    const closing = event.key === 'Escape' || (event.altKey && event.key === 'ArrowUp');
+    if (!closing || !isListVisible) return;
     event.preventDefault();
     event.stopPropagation();
     setIsListVisible(false);
     setIsFiltering(false);
-    ignoreNextFocusRef.current = true;
     inputRef.current?.focus();
-    setTimeout(() => {
-      ignoreNextFocusRef.current = false;
-    });
   };
 
   const handleToggleMouseDown = (event: React.MouseEvent) => {
@@ -248,14 +245,10 @@ export function Dropdown(widgetInstance: WithWidget) {
     if (isListVisible) {
       setIsListVisible(false);
       setIsFiltering(false);
-      ignoreNextFocusRef.current = true;
       inputRef.current?.focus();
-      setTimeout(() => {
-        ignoreNextFocusRef.current = false;
-      });
     } else {
       inputRef.current?.focus();
-      handleInputFocus();
+      showList();
     }
   };
 
@@ -319,7 +312,7 @@ export function Dropdown(widgetInstance: WithWidget) {
           autoComplete={templateData.autocomplete ?? undefined}
           onKeyDown={handleInputKeyDown}
           onInput={handleInputFilter}
-          onFocus={handleInputFocus}
+          onClick={showList}
           aria-expanded={isListVisible ? 'true' : 'false'}
           aria-controls={`${uid}-list`}
           aria-autocomplete="list"
@@ -365,7 +358,6 @@ export function Dropdown(widgetInstance: WithWidget) {
             disabled={isDisabled || isReadOnly}
             readOnly={isReadOnly}
             hidden={!isListVisible}
-            onFocus={handleInputFocus}
           >
             {visibleItems.map((item) => {
               const labelField = templateData.labelField ?? 'label';

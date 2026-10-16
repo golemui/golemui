@@ -164,25 +164,23 @@ const handleInputFilter = (event: Event) => {
   debouncedFilter(target.value);
 };
 
-let ignoreNextFocus = false;
-const handleFocusIn = (e: FocusEvent) => {
-  if (ignoreNextFocus) return;
+// A click on the search field opens the list, not one on a pill. Focus alone does not (APG
+// combobox).
+const handleTriggerClick = (e: MouseEvent) => {
   if (isListVisible.value) return;
   if (e.target !== triggerRef.value?.input) return;
   openPanel();
 };
 
+// Escape and Alt+ArrowUp close the list and return focus to the field (APG combobox).
 const handleWidgetKeyDown = (event: KeyboardEvent) => {
-  if (event.key !== 'Escape' || !isListVisible.value) return;
+  const closing = event.key === 'Escape' || (event.altKey && event.key === 'ArrowUp');
+  if (!closing || !isListVisible.value) return;
   event.preventDefault();
   event.stopPropagation();
   isListVisible.value = false;
   isFiltering.value = false;
-  ignoreNextFocus = true;
   triggerRef.value?.focusInput();
-  setTimeout(() => {
-    ignoreNextFocus = false;
-  });
 };
 
 const handleFocusOut = (e: FocusEvent) => {
@@ -200,11 +198,7 @@ const handleToggleClick = (event: MouseEvent) => {
   if (isListVisible.value) {
     isListVisible.value = false;
     isFiltering.value = false;
-    ignoreNextFocus = true;
     triggerRef.value?.focusInput();
-    setTimeout(() => {
-      ignoreNextFocus = false;
-    });
   } else {
     triggerRef.value?.focusInput();
     openPanel();
@@ -274,7 +268,7 @@ const ItemRenderer = computed<Component>(() => {
         :compactAriaLabel="`${pillItems.length} selected`"
         @keydown="handleTriggerKeyDown"
         @input="handleInputFilter"
-        @focusin="handleFocusIn"
+        @click="handleTriggerClick"
         @gui-pill-remove="handlePillRemove"
         @gui-dropdown-toggle="handlePillsDropdownToggle"
       ></gui-multi-select-trigger>

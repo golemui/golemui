@@ -480,7 +480,7 @@ export class GuiRangeDateTimePicker extends GuiFormControl {
           .editCommittedMessage=${this.editCommittedMessage}
           .editCancelledMessage=${this.editCancelledMessage}
           @gui-blur=${this.onDateBlur}
-          @gui-focus=${this.onDateFocus}
+          @gui-focus=${stopPropagation}
           @gui-input=${this.onDateInput}
           @gui-change=${this.onDateChange}
           @gui-input-error=${this.onInputError}
@@ -540,11 +540,6 @@ export class GuiRangeDateTimePicker extends GuiFormControl {
    */
   private onDateBlur(event: Event) {
     event.stopPropagation();
-  }
-
-  private onDateFocus(event: Event) {
-    stopPropagation(event);
-    this._popup.show();
   }
 
   /**
