@@ -7,10 +7,11 @@ import type {
   OptionValue,
 } from '@golemui/gui-shared/internals';
 import {
+  GUIFloatingPanel,
+  type ItemFields,
   searchItems,
   selectedPills,
   updateListItems,
-  type ItemFields,
 } from '@golemui/gui-components/internals';
 import type {
   GuiMultiSelectTrigger,
@@ -49,6 +50,12 @@ export class MultiDropdownElement extends LitElement implements WithWidget {
   @state() private _listItems: ListItem<any>[] = [];
   @state() private _isFiltering = false;
   @state() private _isListVisible = false;
+
+  // The panel shows in the top layer while the list is visible, under the field.
+  private readonly floating = new GUIFloatingPanel({
+    panel: () => this.querySelector<HTMLElement>(':scope > .gui-widget > .gui-picker__panel'),
+    anchor: () => this.querySelector(':scope > .gui-widget'),
+  });
 
   @query('gui-multi-select-trigger') private _triggerRef!: GuiMultiSelectTrigger;
   @query('gui-multi-list') private _listRef!: any;
@@ -101,8 +108,13 @@ export class MultiDropdownElement extends LitElement implements WithWidget {
     );
   }
 
+  protected override updated() {
+    this.floating.sync(this._isListVisible);
+  }
+
   override disconnectedCallback() {
     super.disconnectedCallback();
+    this.floating.dispose();
     document.removeEventListener('click', this.onDocumentClick);
     this.adapter.destroy();
     unsubscribeAll(this.subscriptions);
@@ -332,6 +344,7 @@ export class MultiDropdownElement extends LitElement implements WithWidget {
 
         <div
           class="gui-picker__panel"
+          popover="manual"
           ?hidden=${!this._isListVisible}
           @mousedown=${this._onPanelMouseDown}
         >

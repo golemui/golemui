@@ -26,15 +26,6 @@
 @mixin gui-picker-panel-chrome {
   @include gui-top-layer-panel;
   display: flex;
-  // A panel its host doesn't show in the top layer (the Forms adapters' own dropdowns) hangs under
-  // its field instead, inside the field's stacking context and clipping containers.
-  // TODO(M3b): remove once those dropdowns float too.
-  &:not([popover]) {
-    position: absolute;
-    top: 100%;
-    margin-top: 2px;
-    z-index: 10;
-  }
 
   flex-direction: column;
   gap: var(--gui-space-2);

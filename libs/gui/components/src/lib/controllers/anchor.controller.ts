@@ -67,9 +67,13 @@ export class GUIAnchorController implements ReactiveController {
   private frame = 0;
   private resizeObserver?: ResizeObserver;
 
-  constructor(host: ReactiveControllerHost, options: GUIAnchorControllerOptions) {
+  /**
+   * @param host - The Lit element whose disconnection clears the controller, or `null` for code
+   *   without one, which calls `dispose()` itself.
+   */
+  constructor(host: ReactiveControllerHost | null, options: GUIAnchorControllerOptions) {
     this.options = options;
-    host.addController(this);
+    host?.addController(this);
   }
 
   /**
@@ -157,9 +161,14 @@ export class GUIAnchorController implements ReactiveController {
     this.set(floating, { translate: `${x}px ${y}px` });
   }
 
-  hostDisconnected(): void {
+  /** Stops following the anchor and removes every style the controller set. */
+  dispose(): void {
     this.detach();
     this.clear();
+  }
+
+  hostDisconnected(): void {
+    this.dispose();
   }
 
   private track(anchor: Element, floating: HTMLElement) {

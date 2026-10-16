@@ -154,7 +154,7 @@ export class GuiPills extends GuiElement {
   private _popup = new GUIPopupController(this, {
     // The overflow list floats under the wrapper the host positions for it (see pills.scss).
     floating: {
-      panel: () => this.querySelector(':scope > .gui-pills__dropdown'),
+      panel: () => this.querySelector<HTMLElement>(':scope > .gui-pills__dropdown'),
       anchor: () => this.offsetParent,
       offset: 4,
     },

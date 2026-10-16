@@ -42,3 +42,5 @@ export type { TabsEventDetail, AccordionEventDetail } from './lib/widget-event.d
 export { configureMessages, interpolate, message } from './lib/utils/messages';
 // Places floating elements next to their anchors. The playground forces its measuring path.
 export { GUIAnchorController } from './lib/controllers/anchor.controller';
+// Floats a field's panel in the top layer: the Forms adapters' own dropdowns use it.
+export { GUIFloatingPanel } from './lib/controllers/floating-panel';

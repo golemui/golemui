@@ -6,6 +6,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { DefaultListItemRenderer } from './item-renderers/DefaultListItemRenderer';
 import { type ListItemRendererProps } from './item-renderers/props';
 import { useBrowserLayoutEffect } from './shared/use-browser-layout-effect';
+import { useFloatingPanel } from './shared/use-floating-panel';
 import { searchItems } from '@golemui/gui-components/internals';
 import type { GuiList } from '@golemui/gui-components/list';
 import type { GuiVisibleItem } from '@golemui/gui-components';
@@ -28,6 +29,8 @@ export function Dropdown(widgetInstance: WithWidget) {
   const listRef = useRef<GuiList>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const widgetRef = useRef<HTMLDivElement>(null);
+  // The panel shows in the top layer while the list is visible, under the field.
+  useFloatingPanel(panelRef, widgetRef, isListVisible);
   const inputRef = useRef<HTMLInputElement>(null);
   const labelRef = useRef<GuiLabel>(null);
   const ignoreNextFocusRef = useRef(false);
@@ -339,6 +342,7 @@ export function Dropdown(widgetInstance: WithWidget) {
 
         <div
           className="gui-picker__panel"
+          popover="manual"
           hidden={!isListVisible}
           ref={panelRef}
           onMouseDown={(event) => {

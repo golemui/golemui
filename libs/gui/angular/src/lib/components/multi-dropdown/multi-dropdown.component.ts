@@ -33,6 +33,7 @@ import '@golemui/gui-components/multi-list';
 import '@golemui/gui-components/multi-select-trigger';
 import '@golemui/gui-components/errors';
 import { deferHydrationAttr } from '../../utils/defer-hydration';
+import { injectFloatingPanel } from '../../utils/floating-panel';
 
 @Component({
   standalone: true,
@@ -60,6 +61,8 @@ export class MultiDropdownComponent implements OnInit, OnDestroy, WithWidget {
 
   protected listItems = signal<ListItem<any>[]>([]);
   protected isListVisible = signal(false);
+  // The panel shows in the top layer while the list is visible, under the field.
+  protected readonly floating = injectFloatingPanel(() => this.isListVisible());
   protected isFiltering = signal(false);
   private ignoreNextFocus = false;
 

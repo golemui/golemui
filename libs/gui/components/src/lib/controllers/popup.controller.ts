@@ -1,6 +1,5 @@
 import { type ReactiveController } from 'lit';
-import { type GuiPlacement } from '../utils/placement';
-import { GUIAnchorController } from './anchor.controller';
+import { GUIFloatingPanel, type GUIFloatingPanelOptions } from './floating-panel';
 import { GUIFocusLeaveController, type GUIFocusLeaveHost } from './focus-leave.controller';
 
 export type GUIPopupHost = GUIFocusLeaveHost;
@@ -54,34 +53,14 @@ export interface GUIPopupControllerOptions {
    * flipped at the viewport's edges. The host renders the panel with `popover="manual"`; the
    * controller shows, places and hides it, and keeps owning when it opens and closes.
    */
-  floating?: GUIPopupFloating;
-}
-
-export interface GUIPopupFloating {
-  /** The panel, when it floats: `null` keeps it where the host renders it (inline). */
-  panel(): HTMLElement | null;
-  /** The element it is placed next to: the field. */
-  anchor(): Element | null;
-  /** Default `bottom-start`. */
-  placement?: GuiPlacement;
-  /** The gap between the field and the panel, in pixels. Default 2. */
-  offset?: number;
+  floating?: GUIFloatingPanelOptions;
 }
 
 /** The floating panel of a field: the `.gui-picker__panel` in its `.gui-widget`, placed under it. */
-export const fieldPanel = (host: HTMLElement): GUIPopupFloating => ({
-  panel: () => host.querySelector(':scope > .gui-widget > .gui-picker__panel'),
+export const fieldPanel = (host: HTMLElement): GUIFloatingPanelOptions => ({
+  panel: () => host.querySelector<HTMLElement>(':scope > .gui-widget > .gui-picker__panel'),
   anchor: () => host.querySelector(':scope > .gui-widget'),
 });
-
-/** Whether a popover is showing. A DOM without the Popover API never shows one. */
-const isShowing = (panel: HTMLElement): boolean => {
-  try {
-    return panel.matches(':popover-open');
-  } catch {
-    return false;
-  }
-};
 
 /**
  * Overlay shell shared by the six picker components.
@@ -106,9 +85,7 @@ export class GUIPopupController implements ReactiveController {
   private _pointerDownInside = false;
   private _pointerDownTarget: HTMLElement | null = null;
 
-  private anchor?: GUIAnchorController;
-  /** The panel the controller showed in the top layer, while it is open. */
-  private shown: HTMLElement | null = null;
+  private floating?: GUIFloatingPanel;
 
   constructor(host: GUIPopupHost, options: GUIPopupControllerOptions) {
     this.host = host;
@@ -119,15 +96,7 @@ export class GUIPopupController implements ReactiveController {
       },
     });
     host.addController(this);
-    const { floating } = options;
-    if (floating) {
-      this.anchor = new GUIAnchorController(host, {
-        floating: () => this.shown,
-        anchor: () => floating.anchor(),
-        placement: () => floating.placement ?? 'bottom-start',
-        offset: floating.offset ?? 2,
-      });
-    }
+    if (options.floating) this.floating = new GUIFloatingPanel(options.floating);
   }
 
   get open(): boolean {
@@ -284,34 +253,7 @@ export class GUIPopupController implements ReactiveController {
     if (this._open && this.options.isDisabled()) {
       this.close();
     }
-    this.syncTopLayer();
-  }
-
-  /**
-   * Shows the rendered panel in the top layer once the popup opens, and hides it once it closes.
-   * A panel the host renders only while open leaves the top layer with the DOM on its own.
-   */
-  private syncTopLayer() {
-    const floating = this.options.floating;
-    if (!floating || !this.anchor) return;
-
-    const panel = this._open ? floating.panel() : null;
-    if (panel === this.shown && (!panel || isShowing(panel))) return;
-
-    if (this.shown) {
-      if (this.shown.isConnected && isShowing(this.shown)) this.shown.hidePopover();
-      this.anchor.detach();
-      this.shown = null;
-    }
-    if (!panel?.hasAttribute('popover')) return;
-    try {
-      panel.showPopover();
-    } catch {
-      // No Popover API: the panel stays where the host renders it.
-      return;
-    }
-    this.shown = panel;
-    this.anchor.attach();
+    this.floating?.sync(this._open);
   }
 
   hostConnected() {
@@ -331,5 +273,6 @@ export class GUIPopupController implements ReactiveController {
     document.removeEventListener('pointerdown', this.onDocumentPointerDown, true);
     document.removeEventListener('keydown', this.onDocumentKeyDown, true);
     this.host.removeEventListener('focusout', this.onHostFocusOut);
+    this.floating?.dispose();
   }
 }

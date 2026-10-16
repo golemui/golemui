@@ -103,10 +103,9 @@ gui-multi-select-trigger {
 
     > .gui-picker__panel {
       @include gui-picker-panel-chrome;
-      // As wide as the field: the controller sets the field's width; a panel that hangs under
-      // its field takes the field's width from its containing block.
+      // As wide as the field: the controller sets the field's width.
       box-sizing: border-box;
-      width: var(--gui-anchor-width, 100%);
+      width: var(--gui-anchor-width, auto);
 
       gui-multi-list {
         position: static;
@@ -132,12 +131,6 @@ gui-multi-select-trigger {
     .gui-widget
     > .gui-picker__panel {
     border-color: var(--gui-intent-error);
-  }
-
-  // A panel that hangs under its field (see gui-picker-panel-chrome) stacks above later fields.
-  // TODO(M3b): remove once every dropdown floats.
-  &:has(.gui-widget input[aria-expanded='true']):has(.gui-picker__panel:not([popover])) {
-    z-index: 20;
   }
 }
 
