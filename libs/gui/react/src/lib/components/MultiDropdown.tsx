@@ -17,6 +17,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { DefaultMultiListItemRenderer } from './item-renderers/DefaultMultiListItemRenderer';
 import { type ListItemRendererProps } from './item-renderers/props';
 import { useBrowserLayoutEffect } from './shared/use-browser-layout-effect';
+import { useFloatingPanel } from './shared/use-floating-panel';
 import type { GuiMultiList } from '@golemui/gui-components/multi-list';
 import type { GuiVisibleItem } from '@golemui/gui-components';
 import type { GuiMultiSelectTrigger } from '@golemui/gui-components/multi-select-trigger';
@@ -39,6 +40,8 @@ export function MultiDropdown(widgetInstance: WithWidget) {
   const listRef = useRef<GuiMultiList>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const widgetRef = useRef<HTMLDivElement>(null);
+  // The panel shows in the top layer while the list is visible, under the field.
+  useFloatingPanel(panelRef, widgetRef, isListVisible);
   const triggerRef = useRef<GuiMultiSelectTrigger>(null);
   const labelRef = useRef<GuiLabel>(null);
   const ignoreNextFocusRef = useRef(false);
@@ -343,6 +346,7 @@ export function MultiDropdown(widgetInstance: WithWidget) {
 
         <div
           className="gui-picker__panel"
+          popover="manual"
           hidden={!isListVisible}
           ref={panelRef}
           onMouseDown={(event) => {

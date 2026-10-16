@@ -116,6 +116,10 @@
     </gui-select>
       </gui-tab-panel>
     </gui-tabs>
+    <button type="button" popovertarget="plan-help">What does a plan include?</button>
+    <gui-popover  placement="bottom-start" defer-hydration>
+      <div id="plan-help" popover>Every plan includes email support.</div>
+    </gui-popover>
     <gui-checkbox     uid="terms" name="terms" label="I accept the terms" value="true" class="gui-field" data-golemui-ssr defer-hydration>
       <label
         class="gui-label"

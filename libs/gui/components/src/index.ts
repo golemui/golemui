@@ -1,11 +1,7 @@
 // ─── Web components ───
 
 export { GuiAccordion, GuiAccordionEvents } from './lib/components/accordion';
-export {
-  GuiAccordionItem,
-  GuiAccordionItemEvents,
-  type GuiToggleEventDetail,
-} from './lib/components/accordion-item';
+export { GuiAccordionItem, GuiAccordionItemEvents } from './lib/components/accordion-item';
 export { GuiAlert, type GuiAlertVariant } from './lib/components/alert';
 export { GuiButton } from './lib/components/button';
 export { GuiCalendar, GuiCalendarEvents } from './lib/components/calendar';
@@ -69,6 +65,7 @@ export type {
   GuiPillKeydownEventDetail,
   GuiPillsDropdownEventDetail,
 } from './lib/components/pills';
+export { GuiPopover, GuiPopoverEvents, type GuiPlacement } from './lib/components/popover';
 export { GuiRadiogroup, GuiRadiogroupEvents } from './lib/components/radiogroup';
 export type { GuiRadiogroupProps } from './lib/components/radiogroup';
 export { GuiRangeCalendar, GuiRangeCalendarEvents } from './lib/components/range-calendar';
@@ -152,6 +149,7 @@ export type {
   GuiEventMap,
   GuiEventType,
   GuiInputErrorEventDetail,
+  GuiToggleEventDetail,
   GuiValueEvent,
   GuiValueEventDetail,
 } from './lib/utils/events';

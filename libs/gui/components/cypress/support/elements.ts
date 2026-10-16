@@ -150,6 +150,8 @@ export const elements: ElementCase[] = [
       removable: true,
     },
   },
+  // Its panel is the app's child: popover.cy.ts checks it with one, open and closed.
+  { tag: 'gui-popover', props: {}, hostRendersChildren: true },
   {
     tag: 'gui-radiogroup',
     props: { label: 'Color', options },

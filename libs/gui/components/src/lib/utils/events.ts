@@ -9,6 +9,12 @@ export type GuiValueEventDetail<T = unknown> = { value: T };
 export type GuiValueEvent<T = unknown> = CustomEvent<GuiValueEventDetail<T>>;
 
 /**
+ * The detail of `gui-toggle`: whether the element is now open. The accordion items and the
+ * overlays fire it.
+ */
+export type GuiToggleEventDetail = { open: boolean };
+
+/**
  * The detail of `gui-input-error`: why the element rejected what the user entered, or `''` when
  * that error clears.
  */
@@ -47,6 +53,10 @@ export type GuiEventMap<Events> = {
 export function dispatch<T>(host: HTMLElement, type: string, detail?: T): void {
   host.dispatchEvent(new CustomEvent<T>(type, { detail, ...eventInit }));
 }
+
+/** Reports that the user opened or closed the element: `gui-toggle`. */
+export const dispatchToggle = (host: HTMLElement, open: boolean): void =>
+  dispatch<GuiToggleEventDetail>(host, 'gui-toggle', { open });
 
 /** Reports that focus left the control: `gui-blur`. */
 export const dispatchBlur = (host: HTMLElement): void => dispatch(host, 'gui-blur');

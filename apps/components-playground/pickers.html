@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pickers · GolemUI Components playground</title>
+    <link rel="stylesheet" href="/src/styles.scss" />
+  </head>
+  <body data-pg-events="gui-change">
+    <main class="pg-main">
+      <section class="pg-section">
+        <h1>Pickers and dropdowns</h1>
+        <p>
+          Their panels show in the top layer, placed under their field with the same controller as
+          <code>gui-popover</code>: no container clips them, and they open above the field when
+          there is no room below. Turn on "Overlays measure" in the toolbar to review the fallback.
+        </p>
+      </section>
+
+      <section class="pg-section">
+        <h2>Every picker</h2>
+        <div class="pg-fields">
+          <gui-date-picker label="Start date" uid="all-date"></gui-date-picker>
+          <gui-time-picker label="Start time" uid="all-time"></gui-time-picker>
+          <gui-date-time-picker label="Delivery" uid="all-datetime"></gui-date-time-picker>
+          <gui-range-date-picker label="Stay" uid="all-rangedate"></gui-range-date-picker>
+          <gui-range-time-picker label="Opening hours" uid="all-rangetime"></gui-range-time-picker>
+          <gui-range-date-time-picker
+            label="Rental"
+            uid="all-rangedatetime"
+          ></gui-range-date-time-picker>
+          <gui-dropdown
+            label="Plan"
+            uid="all-plan"
+            items='[{"label":"Starter","value":"starter"},{"label":"Team","value":"team"},{"label":"Business","value":"business"},{"label":"Enterprise","value":"enterprise"}]'
+          ></gui-dropdown>
+          <gui-multi-dropdown
+            label="Add-ons"
+            uid="all-addons"
+            items='[{"label":"Starter","value":"starter"},{"label":"Team","value":"team"},{"label":"Business","value":"business"},{"label":"Enterprise","value":"enterprise"}]'
+          ></gui-multi-dropdown>
+        </div>
+      </section>
+
+      <section class="pg-section">
+        <h2>In a box that clips its overflow</h2>
+        <p>The box is <code>overflow: hidden</code> and only as tall as the fields.</p>
+        <div class="pg-clip">
+          <gui-date-picker label="Start date" uid="clip-date"></gui-date-picker>
+          <gui-dropdown
+            label="Plan"
+            uid="clip-plan"
+            items='[{"label":"Starter","value":"starter"},{"label":"Team","value":"team"},{"label":"Business","value":"business"},{"label":"Enterprise","value":"enterprise"}]'
+          ></gui-dropdown>
+        </div>
+      </section>
+
+      <section class="pg-section">
+        <h2>In a modal dialog and in a drawer</h2>
+        <p>
+          The drawer slides in with a <code>transform</code>, which used to cut off any panel inside
+          it.
+        </p>
+        <div class="pg-row">
+          <button type="button" class="pg-button" commandfor="pickers-dialog" command="show-modal">
+            Open the dialog
+          </button>
+          <button type="button" class="pg-button" commandfor="pickers-drawer" command="show-modal">
+            Open the drawer
+          </button>
+        </div>
+        <dialog id="pickers-dialog" class="pg-dialog" aria-label="Edit the booking">
+          <button
+            type="button"
+            class="pg-button"
+            commandfor="pickers-dialog"
+            command="close"
+            autofocus
+          >
+            Close
+          </button>
+          <gui-range-date-picker label="Stay" uid="dialog-rangedate"></gui-range-date-picker>
+          <gui-dropdown
+            label="Plan"
+            uid="dialog-plan"
+            items='[{"label":"Starter","value":"starter"},{"label":"Team","value":"team"},{"label":"Business","value":"business"},{"label":"Enterprise","value":"enterprise"}]'
+          ></gui-dropdown>
+          <gui-multi-dropdown
+            label="Add-ons"
+            uid="dialog-addons"
+            items='[{"label":"Starter","value":"starter"},{"label":"Team","value":"team"},{"label":"Business","value":"business"},{"label":"Enterprise","value":"enterprise"}]'
+          ></gui-multi-dropdown>
+        </dialog>
+        <dialog id="pickers-drawer" class="pg-dialog pg-drawer" aria-label="Filters">
+          <button
+            type="button"
+            class="pg-button"
+            commandfor="pickers-drawer"
+            command="close"
+            autofocus
+          >
+            Close
+          </button>
+          <gui-date-time-picker label="Delivery" uid="drawer-datetime"></gui-date-time-picker>
+          <gui-range-time-picker
+            label="Opening hours"
+            uid="drawer-rangetime"
+          ></gui-range-time-picker>
+          <gui-dropdown
+            label="Plan"
+            uid="drawer-plan"
+            items='[{"label":"Starter","value":"starter"},{"label":"Team","value":"team"},{"label":"Business","value":"business"},{"label":"Enterprise","value":"enterprise"}]'
+          ></gui-dropdown>
+        </dialog>
+      </section>
+
+      <section class="pg-section">
+        <h2>In a popover</h2>
+        <p>Picking in the panel keeps the popover open: the panel is part of it.</p>
+        <div class="pg-row">
+          <button type="button" class="pg-button" popovertarget="pickers-popover">Filters</button>
+          <gui-popover>
+            <div id="pickers-popover" popover class="pg-popover-form">
+              <gui-date-picker label="Start date" uid="popover-date"></gui-date-picker>
+              <gui-dropdown
+                label="Plan"
+                uid="popover-plan"
+                items='[{"label":"Starter","value":"starter"},{"label":"Team","value":"team"},{"label":"Business","value":"business"},{"label":"Enterprise","value":"enterprise"}]'
+              ></gui-dropdown>
+            </div>
+          </gui-popover>
+        </div>
+      </section>
+
+      <section class="pg-section">
+        <h2>Docked at the bottom of the viewport</h2>
+        <p>The fields in the bar at the bottom of the window open their panels above them.</p>
+      </section>
+    </main>
+    <div class="pg-docked">
+      <gui-date-picker label="Start date" uid="docked-date"></gui-date-picker>
+      <gui-dropdown
+        label="Plan"
+        uid="docked-plan"
+        items='[{"label":"Starter","value":"starter"},{"label":"Team","value":"team"},{"label":"Business","value":"business"},{"label":"Enterprise","value":"enterprise"}]'
+      ></gui-dropdown>
+    </div>
+    <script type="module" src="/src/pages/pickers.ts"></script>
+  </body>
+</html>

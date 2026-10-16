@@ -1,9 +1,9 @@
 // @vitest-environment jsdom
-import { act, createElement, useState } from 'react';
+import { act, createElement, Fragment, useState } from 'react';
 import { hydrateRoot } from 'react-dom/client';
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { resumeServerRendered } from '@golemui/lit-utils';
-import { GuiTextinput } from '../../react';
+import { GuiPopover, GuiTextinput } from '../../react';
 import '../components/dropdown';
 import type { GuiDropdown } from '../components/dropdown';
 import '../components/list';
@@ -104,6 +104,44 @@ describe('an element whose content the server rendered', () => {
     await settle();
     expect(document.getElementById('email')).toBe(input);
     expect(document.querySelector('label[for="email"]')?.textContent).toContain('Work email');
+    errorSpy.mockRestore();
+  });
+});
+
+describe('a gui-popover', () => {
+  it('hydrates in React without a mismatch: it adds nothing to the markup the server sent', async () => {
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const container = document.createElement('div');
+    // What React renders on the server: the element is a wrapper, so it sends the app's children.
+    container.innerHTML =
+      '<button type="button" popovertarget="help">Help</button>' +
+      '<gui-popover placement="top" defer-hydration="">' +
+      '<div id="help" popover="">Saves without publishing.</div>' +
+      '</gui-popover>';
+    document.body.append(container);
+    const panel = container.querySelector('#help');
+
+    await act(async () => {
+      hydrateRoot(
+        container,
+        createElement(
+          Fragment,
+          null,
+          createElement('button', { type: 'button', popoverTarget: 'help' }, 'Help'),
+          createElement(
+            GuiPopover,
+            { placement: 'top' },
+            createElement('div', { id: 'help', popover: '' }, 'Saves without publishing.'),
+          ),
+        ),
+        { onRecoverableError: (error) => console.error(error) },
+      );
+    });
+    await settle();
+
+    expect(errorSpy).not.toHaveBeenCalled();
+    expect(container.querySelector('#help')).toBe(panel);
+    expect(container.querySelector('gui-popover')?.getAttributeNames()).toEqual(['placement']);
     errorSpy.mockRestore();
   });
 });

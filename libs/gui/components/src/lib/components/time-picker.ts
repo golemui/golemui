@@ -8,7 +8,7 @@ import './time-list';
 import type { GuiTime } from './time-input';
 import type { GuiTimeList } from './time-list';
 import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
-import { GUIPopupController } from '../controllers/popup.controller';
+import { fieldPanel, GUIPopupController } from '../controllers/popup.controller';
 import { buildTimeOptions, isTimeDisabled, type HourFormat, type TimeRange } from '../utils/time';
 import { timeBoundsError } from '../utils/parts';
 import { addErrors, addIcon, addLabel, addPickerPanel } from '../utils/templates';
@@ -128,6 +128,7 @@ export class GuiTimePicker extends GuiFormControl {
   });
 
   private _popup = new GUIPopupController(this, {
+    floating: fieldPanel(this),
     focusRestoreSelector: 'gui-time input, gui-time button',
     focusPopupSelector: '.gui-time-list__option[tabindex="0"]',
     isDisabled: () => !!this.disabled,
@@ -157,6 +158,14 @@ export class GuiTimePicker extends GuiFormControl {
     if (changed.has('value') && this._listRef && this._listRef.value !== this.value) {
       this._listRef.value = this.value;
     }
+  }
+
+  /**
+   * Whether the picker is part of a date-time calendar, which shows its list inline, in the
+   * calendar's own panel, rather than floating.
+   */
+  private get inCalendar(): boolean {
+    return !isServer && !!this.closest('gui-date-time-calendar, gui-range-date-time-calendar');
   }
 
   override render() {
@@ -196,7 +205,7 @@ export class GuiTimePicker extends GuiFormControl {
               @gui-input=${stopPropagation}
               @gui-change=${this.onListChange}
             ></gui-time-list>`,
-            { hidden: !this._popup.open },
+            { hidden: !this._popup.open, inline: this.inCalendar },
           );
 
     return html`

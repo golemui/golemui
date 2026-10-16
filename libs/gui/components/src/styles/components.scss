@@ -59,6 +59,9 @@
   @include meta.load-css('alert');
   @include meta.load-css('markdown-text');
 
+  // Overlays
+  @include meta.load-css('popover');
+
   // Validators
   @include meta.load-css('validator');
 }
