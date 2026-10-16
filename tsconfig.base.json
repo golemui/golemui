@@ -64,6 +64,7 @@
       "@golemui/gui-components/date-time-picker": [
         "libs/gui/components/src/lib/components/date-time-picker.ts"
       ],
+      "@golemui/gui-components/dialog": ["libs/gui/components/src/lib/components/dialog.ts"],
       "@golemui/gui-components/dropdown": ["libs/gui/components/src/lib/components/dropdown.ts"],
       "@golemui/gui-components/errors": ["libs/gui/components/src/lib/components/errors.ts"],
       "@golemui/gui-components/label": ["libs/gui/components/src/lib/components/label.ts"],
@@ -90,6 +91,7 @@
       "@golemui/gui-components/number": ["libs/gui/components/src/lib/components/number.ts"],
       "@golemui/gui-components/password": ["libs/gui/components/src/lib/components/password.ts"],
       "@golemui/gui-components/pills": ["libs/gui/components/src/lib/components/pills.ts"],
+      "@golemui/gui-components/popover": ["libs/gui/components/src/lib/components/popover.ts"],
       "@golemui/gui-components/radiogroup": [
         "libs/gui/components/src/lib/components/radiogroup.ts"
       ],
@@ -133,6 +135,7 @@
       ],
       "@golemui/gui-components/textinput": ["libs/gui/components/src/lib/components/textinput.ts"],
       "@golemui/gui-components/toggle": ["libs/gui/components/src/lib/components/toggle.ts"],
+      "@golemui/gui-components/tooltip": ["libs/gui/components/src/lib/components/tooltip.ts"],
       "@golemui/lit": ["libs/lit/src/index.ts"],
       "@golemui/lit/internals": ["libs/lit/src/internals.ts"],
       "@golemui/lit-utils": ["libs/lit-utils/src/index.ts"],

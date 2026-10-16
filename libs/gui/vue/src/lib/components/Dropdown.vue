@@ -5,6 +5,7 @@ import { useDebounceCallback, useInputWidget, useVueFormContext } from '@golemui
 import type { DropdownProps, ListItem, OptionValue } from '@golemui/gui-shared/internals';
 import { searchItems, type ItemFields } from '@golemui/gui-components/internals';
 import { computed, onMounted, onUnmounted, ref, watch, type Component } from 'vue';
+import { useFloatingPanel } from './shared/use-floating-panel';
 import DefaultListItemRenderer from './item-renderers/DefaultListItemRenderer.vue';
 import '@golemui/gui-components/label';
 import '@golemui/gui-components/list';
@@ -36,6 +37,8 @@ const panelRef = ref<HTMLDivElement | null>(null);
 const inputRef = ref<HTMLInputElement | null>(null);
 const labelRef = ref<GuiLabelElement | null>(null);
 const widgetRef = ref<HTMLDivElement | null>(null);
+// The panel shows in the top layer while the list is visible, under the field.
+useFloatingPanel(panelRef, widgetRef, isListVisible);
 
 const required = computed(() => (templateData.value.validator as Validator)?.required);
 const isDisabled = computed(() => templateData.value.disabled as boolean);
@@ -173,25 +176,22 @@ const handleInputFilter = (event: Event) => {
   debouncedFilter(target.value);
 };
 
-const handleInputFocus = () => {
-  if (ignoreNextFocus) return;
+// Opens the list: from a click on the field or the toggle. Focus alone does not (APG combobox).
+const showList = () => {
   if (isListVisible.value) return;
   isListVisible.value = true;
   setTimeout(() => listRef.value?.scrollToSelectedIndex(), 0);
 };
 
-let ignoreNextFocus = false;
+// Escape and Alt+ArrowUp close the list and return focus to the field (APG combobox).
 const handleWidgetKeyDown = (event: KeyboardEvent) => {
-  if (event.key !== 'Escape' || !isListVisible.value) return;
+  const closing = event.key === 'Escape' || (event.altKey && event.key === 'ArrowUp');
+  if (!closing || !isListVisible.value) return;
   event.preventDefault();
   event.stopPropagation();
   isListVisible.value = false;
   isFiltering.value = false;
-  ignoreNextFocus = true;
   inputRef.value?.focus();
-  setTimeout(() => {
-    ignoreNextFocus = false;
-  });
 };
 
 const handleFocusOut = (e: FocusEvent) => {
@@ -209,14 +209,10 @@ const handleToggleClick = (event: MouseEvent) => {
   if (isListVisible.value) {
     isListVisible.value = false;
     isFiltering.value = false;
-    ignoreNextFocus = true;
     inputRef.value?.focus();
-    setTimeout(() => {
-      ignoreNextFocus = false;
-    });
   } else {
     inputRef.value?.focus();
-    handleInputFocus();
+    showList();
   }
 };
 
@@ -275,7 +271,7 @@ const ItemRenderer = computed<Component>(() => {
         :aria-describedby="templateData.hint ? `${uid}_hint` : undefined"
         @keydown="handleInputKeyDown"
         @input="handleInputFilter"
-        @focus="handleInputFocus"
+        @click="showList"
       />
       <button
         type="button"
@@ -293,6 +289,7 @@ const ItemRenderer = computed<Component>(() => {
 
       <div
         class="gui-picker__panel"
+        popover="manual"
         :hidden="!isListVisible"
         ref="panelRef"
         @mousedown="handlePanelMouseDown"
@@ -311,7 +308,6 @@ const ItemRenderer = computed<Component>(() => {
           :disabled="isDisabled || isReadOnly"
           :readOnly="isReadOnly"
           :hidden="!isListVisible"
-          @focus="handleInputFocus"
           @gui-input="handleListChange"
           @gui-update-items="handleUpdateItems"
           @gui-visible-items-change="handleVisibleItemsChange"

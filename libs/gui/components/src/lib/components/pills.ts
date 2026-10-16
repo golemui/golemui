@@ -152,6 +152,12 @@ export class GuiPills extends GuiElement {
   @state() private _isEndVisible = true;
 
   private _popup = new GUIPopupController(this, {
+    // The overflow list floats under the wrapper the host positions for it (see pills.scss).
+    floating: {
+      panel: () => this.querySelector<HTMLElement>(':scope > .gui-pills__dropdown'),
+      anchor: () => this.offsetParent,
+      offset: 4,
+    },
     isDisabled: () => !!(this.disabled || this.readOnly),
     clickIntent: () => 'ignore',
     keyToggleMode: 'openClose',
@@ -286,6 +292,7 @@ export class GuiPills extends GuiElement {
       <div
         id=${this.dropdownId ?? nothing}
         class="gui-pills__dropdown"
+        popover="manual"
         role="toolbar"
         aria-orientation="vertical"
         aria-label=${optionalName('selectedItems', this.toolbarAriaLabel) ?? nothing}

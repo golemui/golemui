@@ -7,10 +7,11 @@ import type {
   OptionValue,
 } from '@golemui/gui-shared/internals';
 import {
+  GUIFloatingPanel,
+  type ItemFields,
   searchItems,
   selectedPills,
   updateListItems,
-  type ItemFields,
 } from '@golemui/gui-components/internals';
 import type {
   GuiMultiSelectTrigger,
@@ -50,11 +51,15 @@ export class MultiDropdownElement extends LitElement implements WithWidget {
   @state() private _isFiltering = false;
   @state() private _isListVisible = false;
 
+  // The panel shows in the top layer while the list is visible, under the field.
+  private readonly floating = new GUIFloatingPanel({
+    panel: () => this.querySelector<HTMLElement>(':scope > .gui-widget > .gui-picker__panel'),
+    anchor: () => this.querySelector(':scope > .gui-widget'),
+  });
+
   @query('gui-multi-select-trigger') private _triggerRef!: GuiMultiSelectTrigger;
   @query('gui-multi-list') private _listRef!: any;
   @query('.gui-picker__panel') private _panelRef!: any;
-
-  private _ignoreNextFocus = false;
 
   onDocumentClick = (event: MouseEvent) => {
     if (!this._isListVisible) return;
@@ -101,8 +106,13 @@ export class MultiDropdownElement extends LitElement implements WithWidget {
     );
   }
 
+  protected override updated() {
+    this.floating.sync(this._isListVisible);
+  }
+
   override disconnectedCallback() {
     super.disconnectedCallback();
+    this.floating.dispose();
     document.removeEventListener('click', this.onDocumentClick);
     this.adapter.destroy();
     unsubscribeAll(this.subscriptions);
@@ -204,28 +214,23 @@ export class MultiDropdownElement extends LitElement implements WithWidget {
     }
   }
 
+  /** Escape and Alt+ArrowUp close the list and return focus to the field (APG combobox). */
   private _onWidgetKeyDown(event: Event) {
-    if ((event as KeyboardEvent).key !== 'Escape' || !this._isListVisible) return;
+    const { key, altKey } = event as KeyboardEvent;
+    const closing = key === 'Escape' || (altKey && key === 'ArrowUp');
+    if (!closing || !this._isListVisible) return;
     event.preventDefault();
     event.stopPropagation();
     this._isListVisible = false;
     this._isFiltering = false;
-    this._ignoreNextFocus = true;
     this._triggerRef?.focusInput();
-    setTimeout(() => {
-      this._ignoreNextFocus = false;
-    });
   }
 
-  private async _onFocusIn(e: FocusEvent) {
-    if (this._ignoreNextFocus) return;
-
-    const input = this._triggerRef?.input;
-    const isListTarget = this._listRef && e.target === this._listRef;
-    if (e.target !== input && !isListTarget) return;
-
+  /** A click on the search field opens the list, not one on a pill. Focus alone does not. */
+  private _onTriggerClick = async (event: MouseEvent) => {
+    if (event.target !== this._triggerRef?.input) return;
     await this._openPanel();
-  }
+  };
 
   private _onToggleMouseDown = (event: MouseEvent) => {
     event.preventDefault();
@@ -236,11 +241,7 @@ export class MultiDropdownElement extends LitElement implements WithWidget {
     if (this._isListVisible) {
       this._isListVisible = false;
       this._isFiltering = false;
-      this._ignoreNextFocus = true;
       this._triggerRef?.focusInput();
-      setTimeout(() => {
-        this._ignoreNextFocus = false;
-      });
     } else {
       this._triggerRef?.focusInput();
       await this._openPanel();
@@ -312,7 +313,7 @@ export class MultiDropdownElement extends LitElement implements WithWidget {
           .compactAriaLabel=${`${pillItems.length} selected`}
           @keydown=${this._onKeyDown}
           @input=${this._onInput}
-          @focusin=${this._onFocusIn}
+          @click=${this._onTriggerClick}
           @gui-pill-remove=${this._onPillRemove}
           @gui-dropdown-toggle=${this._onPillsDropdownToggle}
         ></gui-multi-select-trigger>
@@ -332,6 +333,7 @@ export class MultiDropdownElement extends LitElement implements WithWidget {
 
         <div
           class="gui-picker__panel"
+          popover="manual"
           ?hidden=${!this._isListVisible}
           @mousedown=${this._onPanelMouseDown}
         >

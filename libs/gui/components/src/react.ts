@@ -45,6 +45,7 @@ import {
   GuiDateTimePicker as GuiDateTimePickerElement,
   GuiDateTimePickerEvents,
 } from './lib/components/date-time-picker';
+import { GuiDialog as GuiDialogElement, GuiDialogEvents } from './lib/components/dialog';
 import { GuiDropdown as GuiDropdownElement, GuiDropdownEvents } from './lib/components/dropdown';
 import { GuiErrors as GuiErrorsElement } from './lib/components/errors';
 import {
@@ -74,6 +75,7 @@ import {
 import { GuiNumber as GuiNumberElement, GuiNumberEvents } from './lib/components/number';
 import { GuiPassword as GuiPasswordElement, GuiPasswordEvents } from './lib/components/password';
 import { GuiPills as GuiPillsElement, GuiPillsEvents } from './lib/components/pills';
+import { GuiPopover as GuiPopoverElement, GuiPopoverEvents } from './lib/components/popover';
 import {
   GuiRadiogroup as GuiRadiogroupElement,
   GuiRadiogroupEvents,
@@ -128,6 +130,7 @@ import {
   GuiTimePickerEvents,
 } from './lib/components/time-picker';
 import { GuiToggle as GuiToggleElement, GuiToggleEvents } from './lib/components/toggle';
+import { GuiTooltip as GuiTooltipElement, GuiTooltipEvents } from './lib/components/tooltip';
 import { fires, type GuiEventMap } from './lib/utils/events';
 
 /** `gui-pill-remove` → `GuiPillRemove`. */
@@ -277,6 +280,7 @@ export const GuiDateTimePicker = wrap(
   GuiDateTimePickerElement,
   GuiDateTimePickerEvents,
 );
+export const GuiDialog = wrap('gui-dialog', GuiDialogElement, GuiDialogEvents);
 export const GuiDropdown = wrap('gui-dropdown', GuiDropdownElement, GuiDropdownEvents);
 export const GuiErrors = wrap('gui-errors', GuiErrorsElement);
 export const GuiFileUpload = wrap('gui-file-upload', GuiFileUploadElement, GuiFileUploadEvents);
@@ -303,6 +307,7 @@ export const GuiMultiSelectTrigger = wrap(
 export const GuiNumber = wrap('gui-number', GuiNumberElement, GuiNumberEvents);
 export const GuiPassword = wrap('gui-password', GuiPasswordElement, GuiPasswordEvents);
 export const GuiPills = wrap('gui-pills', GuiPillsElement, GuiPillsEvents);
+export const GuiPopover = wrap('gui-popover', GuiPopoverElement, GuiPopoverEvents);
 export const GuiRadiogroup = wrap('gui-radiogroup', GuiRadiogroupElement, GuiRadiogroupEvents);
 export const GuiRangeCalendar = wrap(
   'gui-range-calendar',
@@ -356,3 +361,4 @@ export const GuiTime = wrap('gui-time', GuiTimeElement, GuiTimeEvents);
 export const GuiTimeList = wrap('gui-time-list', GuiTimeListElement, GuiTimeListEvents);
 export const GuiTimePicker = wrap('gui-time-picker', GuiTimePickerElement, GuiTimePickerEvents);
 export const GuiToggle = wrap('gui-toggle', GuiToggleElement, GuiToggleEvents);
+export const GuiTooltip = wrap('gui-tooltip', GuiTooltipElement, GuiTooltipEvents);

@@ -42,7 +42,7 @@
     [compactAriaLabel]="pillItems().length + ' selected'"
     (keydown)="onTriggerKeyDown($event)"
     (input)="onInput($event)"
-    (focusin)="onTriggerFocusIn($event)"
+    (click)="onTriggerClick($event)"
     (gui-pill-remove)="onPillRemove($event)"
     (gui-dropdown-toggle)="onPillsDropdownToggle($event)"
   ></gui-multi-select-trigger>
@@ -59,7 +59,12 @@
   >
     <span class="gui-caret" aria-hidden="true"></span>
   </button>
-  <div class="gui-picker__panel" [hidden]="!isListVisible()" (mousedown)="onPanelMouseDown($event)">
+  <div
+    class="gui-picker__panel"
+    popover="manual"
+    [hidden]="!isListVisible()"
+    (mousedown)="onPanelMouseDown($event)"
+  >
     <gui-multi-list
       [attr.defer-hydration]="deferHydration"
       #listRef

@@ -13,6 +13,7 @@
   gui-date-time,
   gui-date-time-calendar,
   gui-date-time-picker,
+  gui-dialog,
   gui-errors,
   gui-file-upload,
   gui-label,
@@ -25,6 +26,7 @@
   gui-number,
   gui-password,
   gui-pills,
+  gui-popover,
   gui-radiogroup,
   gui-range-calendar,
   gui-range-date,
@@ -42,7 +44,8 @@
   gui-time,
   gui-time-list,
   gui-time-picker,
-  gui-toggle
+  gui-toggle,
+  gui-tooltip
 ) {
   font-family: var(--gui-font-family);
   font-size: var(--gui-font-sm);

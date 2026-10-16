@@ -53,6 +53,7 @@ export default defineConfig(() => ({
         'lib/components/date-time-calendar': 'src/lib/components/date-time-calendar.ts',
         'lib/components/date-time-input': 'src/lib/components/date-time-input.ts',
         'lib/components/date-time-picker': 'src/lib/components/date-time-picker.ts',
+        'lib/components/dialog': 'src/lib/components/dialog.ts',
         'lib/components/dropdown': 'src/lib/components/dropdown.ts',
         'lib/components/errors': 'src/lib/components/errors.ts',
         'lib/components/file-upload': 'src/lib/components/file-upload.ts',
@@ -67,6 +68,7 @@ export default defineConfig(() => ({
         'lib/components/number': 'src/lib/components/number.ts',
         'lib/components/password': 'src/lib/components/password.ts',
         'lib/components/pills': 'src/lib/components/pills.ts',
+        'lib/components/popover': 'src/lib/components/popover.ts',
         'lib/components/radiogroup': 'src/lib/components/radiogroup.ts',
         'lib/components/range-calendar': 'src/lib/components/range-calendar.ts',
         'lib/components/range-date-input': 'src/lib/components/range-date-input.ts',
@@ -88,6 +90,7 @@ export default defineConfig(() => ({
         'lib/components/time-list': 'src/lib/components/time-list.ts',
         'lib/components/time-picker': 'src/lib/components/time-picker.ts',
         'lib/components/toggle': 'src/lib/components/toggle.ts',
+        'lib/components/tooltip': 'src/lib/components/tooltip.ts',
       },
       formats: ['es', 'cjs'],
       fileName: (format, entryName) =>
@@ -114,6 +117,11 @@ export default defineConfig(() => ({
         banner: (chunk) => (chunk.isEntry && chunk.name === 'react' ? '"use client";' : ''),
       },
     },
+  },
+  // Pre-bundled for the component tests: discovered mid-run, they made Vite reload, and a spec
+  // loading at that moment failed with "Failed to fetch dynamically imported module".
+  optimizeDeps: {
+    include: ['lit/directives/ref.js', 'lit/static-html.js'],
   },
   test: {
     name: 'gui-components',

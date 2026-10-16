@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GolemUI Components playground</title>
+    <link rel="stylesheet" href="/src/styles.scss" />
+  </head>
+  <body>
+    <main class="pg-main">
+      <section class="pg-section">
+        <h1>GolemUI Components playground</h1>
+        <p>
+          The elements on their own: plain HTML, no framework and no form. Each page writes the
+          markup an app would write. The toolbar switches the theme, the direction of the whole
+          page, the built-in strings and the way overlays are placed; the box in the corner logs the
+          events.
+        </p>
+        <p>
+          <code>npm run start:components</code> serves the pages as you edit them.
+          <code>npx nx run components-playground:preview</code> builds them and serves them under a
+          strict Content Security Policy (<code>default-src 'self'</code>), as a careful app ships.
+        </p>
+      </section>
+
+      <section class="pg-section">
+        <h2>Elements</h2>
+        <ul class="pg-catalog">
+          <li>
+            <a href="/dialog.html">
+              <strong>Dialog</strong>
+              <span>
+                A form in a modal, drawers on every edge, an alert dialog and a long dialog that
+                scrolls inside.
+              </span>
+            </a>
+          </li>
+          <li>
+            <a href="/pickers.html">
+              <strong>Pickers and dropdowns</strong>
+              <span>
+                Every picker and dropdown, in a clipping box, a modal dialog, a drawer, a popover
+                and docked at the bottom of the window.
+              </span>
+            </a>
+          </li>
+          <li>
+            <a href="/popover.html">
+              <strong>Popover</strong>
+              <span>
+                A panel anchored to the button that opens it: placements, edges, right to left,
+                scrolling and modal dialogs.
+              </span>
+            </a>
+          </li>
+          <li>
+            <a href="/tooltip.html">
+              <strong>Tooltip</strong>
+              <span>
+                Hover and keyboard focus, every placement, a tooltip you can move onto, right to
+                left and an unavailable control.
+              </span>
+            </a>
+          </li>
+        </ul>
+      </section>
+    </main>
+    <script type="module" src="/src/pages/index.ts"></script>
+  </body>
+</html>

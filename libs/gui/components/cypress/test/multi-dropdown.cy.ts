@@ -65,7 +65,7 @@ describe('gui-multi-dropdown', () => {
         ></gui-multi-dropdown>`,
       );
 
-      input().focus();
+      input().click();
       options().eq(1).find('.gui-list__item-check svg').should('be.visible');
       options().eq(0).find('.gui-list__item-check svg').should('not.be.visible');
       options().eq(1).should('have.attr', 'aria-selected', 'true');
@@ -83,7 +83,7 @@ describe('gui-multi-dropdown', () => {
         ></gui-multi-dropdown>`,
       );
 
-      input().focus();
+      input().click();
       options().eq(0).click();
       options().eq(2).click();
 
@@ -105,7 +105,7 @@ describe('gui-multi-dropdown', () => {
         ></gui-multi-dropdown>`,
       );
 
-      input().focus();
+      input().click();
       options().eq(0).click();
       element().should('have.prop', 'values').and('deep.equal', ['French']);
     });
@@ -119,7 +119,7 @@ describe('gui-multi-dropdown', () => {
         ></gui-multi-dropdown>`,
       );
 
-      input().focus().type('{downArrow}');
+      input().click().type('{downArrow}');
       cy.focused().should('have.attr', 'id', 'langs-list');
       cy.focused().type('{downArrow}{downArrow}{enter}');
       element().should('have.prop', 'values').and('deep.equal', ['Spanish']);
@@ -154,7 +154,7 @@ describe('gui-multi-dropdown', () => {
         ></gui-multi-dropdown>`,
       );
 
-      input().focus();
+      input().click();
       options().eq(1).click();
       element().should('have.prop', 'values').and('deep.equal', ['English']);
     });
@@ -215,7 +215,7 @@ describe('gui-multi-dropdown', () => {
         ></gui-multi-dropdown>`,
       );
 
-      input().focus();
+      input().click();
       options().eq(0).find('.gui-list__item-check').should('exist');
       options().eq(0).find('.gui-list__item-content b').should('have.text', 'MAD');
     });
@@ -238,7 +238,7 @@ describe('gui-multi-dropdown', () => {
         'aria-invalid',
         'true',
       );
-      input().focus();
+      input().click();
       cy.get('#langs_panel_errors').should('be.visible');
     });
   });
