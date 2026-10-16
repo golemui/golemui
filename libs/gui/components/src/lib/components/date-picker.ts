@@ -7,7 +7,7 @@ import './date-input';
 import './calendar';
 import type { GuiDate } from './date-input';
 import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
-import { GUIPopupController } from '../controllers/popup.controller';
+import { fieldPanel, GUIPopupController } from '../controllers/popup.controller';
 import { dateBoundsError } from '../utils/date';
 import { addErrors, addIcon, addLabel, addPickerPanel } from '../utils/templates';
 import type { DateRange } from '../types';
@@ -141,6 +141,7 @@ export class GuiDatePicker extends GuiFormControl {
   });
 
   private _popup = new GUIPopupController(this, {
+    floating: fieldPanel(this),
     focusRestoreSelector: 'gui-date input',
     focusPopupSelector: '.gui-calendar__day-button[tabindex="0"]',
     isDisabled: () => !!this.disabled,

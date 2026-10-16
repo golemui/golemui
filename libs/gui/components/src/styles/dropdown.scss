@@ -39,7 +39,10 @@
 
     > .gui-picker__panel {
       @include gui-picker-panel-chrome;
-      width: calc(100% - (var(--gui-space-2) * 2) - 2px);
+      // As wide as the field: the controller sets the field's width; a panel that hangs under
+      // its field takes the field's width from its containing block.
+      box-sizing: border-box;
+      width: var(--gui-anchor-width, 100%);
 
       gui-list {
         position: static;
@@ -66,8 +69,9 @@
     border-color: var(--gui-intent-error);
   }
 
-  // Parity with the pickers: an open dropdown stacks above later fields.
-  &:has(.gui-widget > input[aria-expanded='true']) {
+  // A panel that hangs under its field (see gui-picker-panel-chrome) stacks above later fields.
+  // TODO(M3b): remove once every dropdown floats.
+  &:has(.gui-widget > input[aria-expanded='true']):has(.gui-picker__panel:not([popover])) {
     z-index: 20;
   }
 }

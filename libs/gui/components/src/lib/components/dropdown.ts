@@ -10,7 +10,7 @@ import type { GuiList } from './list';
 import { updateListItems } from './list-items';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
-import { GUIPopupController } from '../controllers/popup.controller';
+import { fieldPanel, GUIPopupController } from '../controllers/popup.controller';
 import { GuiFormControl } from '../gui-form-control';
 import type { GuiVisibleItem, ListItem, ListItemInput, OptionValue } from '../types';
 import { dispatch, dispatchBlur, dispatchValue, fires, valueEvents } from '../utils/events';
@@ -101,6 +101,7 @@ export class GuiDropdown extends GuiFormControl {
   private reportedQuery = false;
 
   protected popup = new GUIPopupController(this, {
+    floating: fieldPanel(this),
     focusRestoreSelector: 'input[role="combobox"]',
     isDisabled: () => !!this.disabled,
     // The panel opens from focus and from the toggle button, not from clicks on the field.

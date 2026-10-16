@@ -132,6 +132,41 @@ code {
   }
 }
 
+.pg-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--gui-space-4);
+}
+
+.pg-clip {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--gui-space-4);
+  overflow: hidden;
+  padding: var(--gui-space-3);
+  border: 1px dashed var(--gui-border-default);
+  border-radius: var(--gui-radius-md);
+}
+
+.pg-docked {
+  position: fixed;
+  inset-block-end: 0;
+  inset-inline-start: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(200px, 260px));
+  gap: var(--gui-space-4);
+  padding: var(--gui-space-3) var(--gui-space-5);
+  background: var(--gui-bg-surface);
+  border-block-start: 1px solid var(--gui-border-default);
+  border-inline-end: 1px solid var(--gui-border-default);
+}
+
+.pg-popover-form {
+  display: grid;
+  gap: var(--gui-space-3);
+  inline-size: 300px;
+}
+
 .pg-dialog {
   inline-size: min(420px, 90vw);
   color: var(--gui-text-default);
@@ -141,6 +176,30 @@ code {
 
   > * + * {
     margin-block-start: var(--gui-space-4);
+  }
+}
+
+// A drawer at the end of the window that slides in with a transform.
+.pg-drawer {
+  margin-block: 0;
+  margin-inline: auto 0;
+  block-size: 100dvh;
+  max-block-size: none;
+  border-radius: 0;
+  transform: translateX(0);
+  transition:
+    transform 0.2s ease-out,
+    display 0.2s allow-discrete,
+    overlay 0.2s allow-discrete;
+
+  @starting-style {
+    transform: translateX(100%);
+  }
+
+  &:dir(rtl) {
+    @starting-style {
+      transform: translateX(-100%);
+    }
   }
 }
 

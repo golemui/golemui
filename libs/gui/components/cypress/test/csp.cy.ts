@@ -1,5 +1,6 @@
 import { html } from 'lit';
 import { GUIAnchorController } from '../../src/lib/controllers/anchor.controller';
+import { options } from '../support/elements';
 
 // A strict Content Security Policy blocks `style` attributes (`style-src-attr`), but not styles set
 // through the CSSOM. The elements must style themselves through the CSSOM only. This spec turns on
@@ -59,6 +60,20 @@ describe('a strict style-src-attr policy', () => {
       cy.get('gui-popover').invoke('attr', 'placement', 'bottom-end');
       cy.get('gui-popover').invoke('prop', 'open', false);
       cy.get('#tips').should('not.match', ':popover-open');
+      expectNoViolations();
+      cy.then(() => {
+        GUIAnchorController.forceFallback = false;
+      });
+    });
+
+    it(`allows a dropdown's panel to float in the top layer${fallback ? ', measuring' : ''}`, () => {
+      GUIAnchorController.forceFallback = fallback;
+      cy.mount(html`<gui-dropdown label="Plan" .items=${options}></gui-dropdown>`);
+
+      cy.get('gui-dropdown .gui-dropdown__arrow').click();
+      cy.get('gui-dropdown .gui-picker__panel').should('match', ':popover-open');
+      cy.get('gui-dropdown .gui-dropdown__arrow').click();
+      cy.get('gui-dropdown .gui-picker__panel').should('not.match', ':popover-open');
       expectNoViolations();
       cy.then(() => {
         GUIAnchorController.forceFallback = false;

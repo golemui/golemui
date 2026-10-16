@@ -158,9 +158,15 @@ export const addPickerPanel = (
   uid: string,
   templateData: { errors?: string[]; touched?: boolean; showErrors?: boolean },
   content: unknown,
-  options?: { hidden?: boolean },
+  options?: { hidden?: boolean; inline?: boolean },
 ) =>
-  html`<div class="gui-picker__panel" ?hidden=${options?.hidden ?? false}>
+  // A popover, for its picker to show in the top layer; `inline` leaves it in the flow (a time
+  // picker in a calendar).
+  html`<div
+    class="gui-picker__panel"
+    popover=${options?.inline ? nothing : 'manual'}
+    ?hidden=${options?.hidden ?? false}
+  >
     ${content}
     ${templateData.showErrors !== false
       ? addErrors(uid, templateData, { variant: 'panel' })

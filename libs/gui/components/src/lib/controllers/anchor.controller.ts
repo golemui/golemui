@@ -9,11 +9,6 @@ export interface GUIAnchorControllerOptions {
   placement(): GuiPlacement;
   /** The gap between the anchor and the floating element, in pixels. Default 4. */
   offset?: number;
-  /**
-   * Sizes the floating element from the anchor's width: `'min'` makes it at least as wide (a
-   * dropdown's panel), `'exact'` as wide. Default false.
-   */
-  matchWidth?: 'min' | 'exact' | false;
 }
 
 let nextAnchor = 0;
@@ -37,6 +32,9 @@ const supportsAnchorPositioning = () =>
  * moves the floating one into place from the viewport's corner, flips it the same way, and places
  * it again on scroll, on resize and when either element changes size. TODO(2028-07): remove this
  * path once anchor positioning is widely available and Firefox places mixed directions right.
+ *
+ * On both paths the floating element gets the anchor's width in `--gui-anchor-width`, for its
+ * stylesheet to size it from: a dropdown's panel is as wide as its field.
  *
  * Every style goes through the CSSOM, never a `style` attribute, so a strict Content Security
  * Policy allows it.
@@ -98,7 +96,6 @@ export class GUIAnchorController implements ReactiveController {
     // Starts over: the element, the anchor or the path may have changed since the last time.
     this.clear();
     const offset = this.options.offset ?? 4;
-    const { matchWidth = false } = this.options;
 
     this.measuring = this.shouldMeasure(floating);
     if (this.measuring) {
@@ -116,8 +113,7 @@ export class GUIAnchorController implements ReactiveController {
       inset: 'auto',
       'position-anchor': this.name,
       ...placementStyles(this.options.placement(), offset),
-      ...(matchWidth === 'min' ? { 'min-width': 'anchor-size(width)' } : {}),
-      ...(matchWidth === 'exact' ? { width: 'anchor-size(width)' } : {}),
+      '--gui-anchor-width': 'anchor-size(width)',
     });
   }
 
@@ -146,9 +142,7 @@ export class GUIAnchorController implements ReactiveController {
     if (!floating || !anchor || !this.measuring || !floating.getClientRects().length) return;
 
     const anchorBox = anchor.getBoundingClientRect();
-    const { matchWidth = false } = this.options;
-    if (matchWidth === 'min') this.set(floating, { 'min-width': `${anchorBox.width}px` });
-    if (matchWidth === 'exact') this.set(floating, { width: `${anchorBox.width}px` });
+    this.set(floating, { '--gui-anchor-width': `${anchorBox.width}px` });
 
     const view = floating.ownerDocument.documentElement;
     const { x, y } = computePosition({

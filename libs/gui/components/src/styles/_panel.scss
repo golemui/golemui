@@ -9,15 +9,33 @@
 }
 
 /*
+ * What a panel the browser shows in the top layer (`popover="manual"`) needs back from the
+ * user-agent popover styles: the text colour of its field, and no scrollbars of its own. Its
+ * place (inset, margin) comes from GUIAnchorController.
+ */
+@mixin gui-top-layer-panel {
+  color: inherit;
+  overflow: visible;
+}
+
+/*
  * Shared chrome for `.gui-picker__panel`, the floating card every picker
- * (and the dropdown) wraps its popup layout in.
+ * (and the dropdown) wraps its popup layout in. It shows in the top layer, placed under its
+ * field, so no container clips it.
  */
 @mixin gui-picker-panel-chrome {
-  position: absolute;
-  top: 100%;
-  margin-top: 2px;
-  z-index: 10;
+  @include gui-top-layer-panel;
   display: flex;
+  // A panel its host doesn't show in the top layer (the Forms adapters' own dropdowns) hangs under
+  // its field instead, inside the field's stacking context and clipping containers.
+  // TODO(M3b): remove once those dropdowns float too.
+  &:not([popover]) {
+    position: absolute;
+    top: 100%;
+    margin-top: 2px;
+    z-index: 10;
+  }
+
   flex-direction: column;
   gap: var(--gui-space-2);
   padding: var(--gui-space-2);
