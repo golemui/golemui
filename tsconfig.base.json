@@ -73,6 +73,7 @@
       "@golemui/gui-components/markdown-text": [
         "libs/gui/components/src/lib/components/markdown-text.ts"
       ],
+      "@golemui/gui-components/menu": ["libs/gui/components/src/lib/components/menu.ts"],
       "@golemui/gui-components/file-upload": [
         "libs/gui/components/src/lib/components/file-upload.ts"
       ],

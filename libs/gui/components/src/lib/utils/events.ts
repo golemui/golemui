@@ -15,6 +15,12 @@ export type GuiValueEvent<T = unknown> = CustomEvent<GuiValueEventDetail<T>>;
 export type GuiToggleEventDetail = { open: boolean };
 
 /**
+ * The detail of `gui-action`: the user picked an action, such as a menu item. `value` is the
+ * item's `value`, and `item` the element.
+ */
+export type GuiActionEventDetail = { value: string; item: HTMLElement };
+
+/**
  * The detail of `gui-input-error`: why the element rejected what the user entered, or `''` when
  * that error clears.
  */

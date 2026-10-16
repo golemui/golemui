@@ -123,6 +123,14 @@
     <gui-popover  placement="bottom-start" defer-hydration>
       <div id="plan-help" popover>Every plan includes email support.</div>
     </gui-popover>
+    <button type="button" popovertarget="plan-actions" id="plan-actions-button">Plan</button>
+    <gui-menu defer-hydration>
+      <div id="plan-actions" popover>
+        <button type="button" value="upgrade">Upgrade</button>
+        <hr />
+        <button type="button" value="cancel">Cancel the plan</button>
+      </div>
+    </gui-menu>
     <gui-dialog  placement="end" defer-hydration>
       <dialog id="plan-dialog" aria-labelledby="plan-dialog-title">
         <h2 id="plan-dialog-title">Compare plans</h2>

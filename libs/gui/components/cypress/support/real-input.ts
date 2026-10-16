@@ -12,13 +12,23 @@ export const takesRealInput = () => Cypress.isBrowser({ family: 'chromium' });
 const send = (command: string, params: Record<string, unknown>) =>
   Cypress.automation('remote:debugger:protocol', { command, params });
 
-const keyCodes = { Escape: 27, Tab: 9, Enter: 13 } as const;
+// The DevTools Protocol's key, code and Windows key code of each key the specs press. A key that
+// types a character carries it as `text`, or the browser does not activate a button with it.
+const keys = {
+  Escape: { key: 'Escape', code: 'Escape', windowsVirtualKeyCode: 27 },
+  Tab: { key: 'Tab', code: 'Tab', windowsVirtualKeyCode: 9 },
+  Enter: { key: 'Enter', code: 'Enter', windowsVirtualKeyCode: 13, text: '\r' },
+  Space: { key: ' ', code: 'Space', windowsVirtualKeyCode: 32, text: ' ' },
+} as const;
 
 /** Presses and releases a key, in the element that has focus. */
-export const realPress = (key: keyof typeof keyCodes) =>
+export const realPress = (key: keyof typeof keys) =>
   cy.then(async () => {
-    const event = { key, code: key, windowsVirtualKeyCode: keyCodes[key] };
-    await send('Input.dispatchKeyEvent', { type: 'rawKeyDown', ...event });
+    const event = keys[key];
+    await send('Input.dispatchKeyEvent', {
+      type: 'text' in event ? 'keyDown' : 'rawKeyDown',
+      ...event,
+    });
     await send('Input.dispatchKeyEvent', { type: 'keyUp', ...event });
   });
 

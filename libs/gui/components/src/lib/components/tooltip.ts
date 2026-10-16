@@ -2,12 +2,11 @@ import { ReactiveElement, type PropertyValues } from 'lit';
 import { property } from 'lit/decorators.js';
 import { safeDefine } from '@golemui/lit-utils';
 import { GUIFloatingPanel } from '../controllers/floating-panel';
+import { ensureId, setIfMissing } from '../utils/attributes';
 import { booleanAttribute } from '../utils/converters';
 import { warnInDevelopment } from '../utils/dev';
 import { dispatchToggle, fires, type GuiToggleEventDetail } from '../utils/events';
 import { toPlacement, type GuiPlacement } from '../utils/placement';
-
-let nextTooltip = 0;
 
 /**
  * A short text that describes another element, shown next to it while the pointer rests on it or
@@ -68,9 +67,9 @@ export class GuiTooltip extends ReactiveElement {
 
   override connectedCallback() {
     super.connectedCallback();
-    if (!this.hasAttribute('popover')) this.setAttribute('popover', 'manual');
-    if (!this.hasAttribute('role')) this.setAttribute('role', 'tooltip');
-    if (!this.id) this.id = `gui-tooltip-${++nextTooltip}`;
+    setIfMissing(this, 'popover', 'manual');
+    setIfMissing(this, 'role', 'tooltip');
+    ensureId(this, 'tooltip');
     this.addEventListener('pointerenter', this.onPointerEnterTooltip);
     this.addEventListener('pointerleave', this.onPointerLeave);
     this.bind();

@@ -143,6 +143,11 @@
       "import": "./lib/components/markdown-text.js",
       "require": "./lib/components/markdown-text.umd.cjs"
     },
+    "./menu": {
+      "types": "./lib/components/menu.d.ts",
+      "import": "./lib/components/menu.js",
+      "require": "./lib/components/menu.umd.cjs"
+    },
     "./file-upload": {
       "types": "./lib/components/file-upload.d.ts",
       "import": "./lib/components/file-upload.js",

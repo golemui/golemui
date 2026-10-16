@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Menu · GolemUI Components playground</title>
+    <link rel="stylesheet" href="/src/styles.scss" />
+  </head>
+  <body data-pg-events="gui-action gui-toggle">
+    <main class="pg-main">
+      <section class="pg-section">
+        <h1>gui-menu</h1>
+        <p>
+          A menu of actions opened from a button (the APG menu button pattern). Click the button, or
+          focus it and press Enter, Space, ArrowDown (first item) or ArrowUp (last item). In the
+          menu, the arrows move and wrap, Home and End jump, and typing a letter moves to the next
+          item that starts with it. Picking an item fires <code>gui-action</code>, shown in the
+          corner.
+        </p>
+      </section>
+
+      <section class="pg-section">
+        <h2>Row actions</h2>
+        <div class="pg-row">
+          <button
+            type="button"
+            class="pg-button"
+            id="row-actions-button"
+            popovertarget="row-actions"
+          >
+            Actions
+          </button>
+          <gui-menu>
+            <div id="row-actions" popover>
+              <button type="button" value="edit">Edit</button>
+              <button type="button" value="duplicate">Duplicate</button>
+              <button type="button" value="archive" disabled>Archive (no permission)</button>
+              <a href="#row-actions-button">Copy a link to this row</a>
+              <hr />
+              <button type="button" value="delete">Delete</button>
+            </div>
+          </gui-menu>
+        </div>
+      </section>
+
+      <section class="pg-section">
+        <h2>At the end of a row</h2>
+        <p>
+          A "more" button at the end of a row opens its menu lined up with the button's end
+          (<code>placement="bottom-end"</code>), and flips above it near the bottom of the window.
+        </p>
+        <div class="pg-row pg-row--spread">
+          <span>Invoice 2026-104</span>
+          <button
+            type="button"
+            class="pg-button"
+            id="more-button"
+            popovertarget="more"
+            aria-label="More actions"
+          >
+            ⋯
+          </button>
+          <gui-menu placement="bottom-end">
+            <div id="more" popover>
+              <button type="button" value="download">Download PDF</button>
+              <button type="button" value="send">Send again</button>
+              <button type="button" value="void">Void invoice</button>
+            </div>
+          </gui-menu>
+        </div>
+      </section>
+
+      <section class="pg-section" dir="rtl">
+        <h2>A right-to-left part of the page</h2>
+        <div class="pg-row">
+          <button type="button" class="pg-button" id="rtl-menu-button" popovertarget="rtl-menu">
+            Sort
+          </button>
+          <gui-menu>
+            <div id="rtl-menu" popover>
+              <button type="button" value="name">By name</button>
+              <button type="button" value="date">By date</button>
+              <button type="button" value="size">By size</button>
+            </div>
+          </gui-menu>
+        </div>
+      </section>
+
+      <section class="pg-section">
+        <h2>In a modal dialog</h2>
+        <div class="pg-row">
+          <button type="button" class="pg-button" commandfor="menu-dialog" command="show-modal">
+            Open the dialog
+          </button>
+        </div>
+        <gui-dialog>
+          <dialog id="menu-dialog" class="pg-dialog-body" aria-labelledby="menu-dialog-title">
+            <h2 id="menu-dialog-title">Share</h2>
+            <div class="pg-row">
+              <button type="button" class="pg-button" id="share-button" popovertarget="share">
+                Share with
+              </button>
+              <gui-menu>
+                <div id="share" popover>
+                  <button type="button" value="team">The team</button>
+                  <button type="button" value="link">Anyone with the link</button>
+                </div>
+              </gui-menu>
+              <button type="button" class="pg-button" commandfor="menu-dialog" command="close">
+                Close
+              </button>
+            </div>
+          </dialog>
+        </gui-dialog>
+      </section>
+    </main>
+    <script type="module" src="/src/pages/menu.ts"></script>
+  </body>
+</html>

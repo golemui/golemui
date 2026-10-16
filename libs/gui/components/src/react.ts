@@ -56,6 +56,7 @@ import { GuiLabel as GuiLabelElement } from './lib/components/label';
 import { GuiList as GuiListElement, GuiListEvents } from './lib/components/list';
 import { GuiMarkdown as GuiMarkdownElement, GuiMarkdownEvents } from './lib/components/markdown';
 import { GuiMarkdownText as GuiMarkdownTextElement } from './lib/components/markdown-text';
+import { GuiMenu as GuiMenuElement, GuiMenuEvents } from './lib/components/menu';
 import {
   GuiMultiDropdown as GuiMultiDropdownElement,
   GuiMultiDropdownEvents,
@@ -288,6 +289,7 @@ export const GuiLabel = wrap('gui-label', GuiLabelElement);
 export const GuiList = wrap('gui-list', GuiListElement, GuiListEvents);
 export const GuiMarkdown = wrap('gui-markdown', GuiMarkdownElement, GuiMarkdownEvents);
 export const GuiMarkdownText = wrap('gui-markdown-text', GuiMarkdownTextElement);
+export const GuiMenu = wrap('gui-menu', GuiMenuElement, GuiMenuEvents);
 export const GuiMultiDropdown = wrap(
   'gui-multi-dropdown',
   GuiMultiDropdownElement,

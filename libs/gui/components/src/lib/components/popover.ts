@@ -106,14 +106,16 @@ export class GuiPopover extends ReactiveElement {
     return isShowing(this.panel);
   }
 
-  private get anchorElement(): Element | null {
+  /** The element the panel is anchored to: see the class docs. */
+  protected get anchorElement(): Element | null {
     const root = this.getRootNode() as Document | ShadowRoot;
     if (this.anchor) return root.getElementById?.(this.anchor) ?? null;
     if (this.source?.isConnected) return this.source;
 
     const id = this.panel?.id;
     if (!id) return null;
-    const escaped = CSS.escape(id);
+    // Inside a double-quoted attribute value only `"` and `\` need escaping.
+    const escaped = id.replace(/["\\]/g, '\\$&');
     return root.querySelector(`[popovertarget="${escaped}"], [commandfor="${escaped}"]`);
   }
 
@@ -158,10 +160,16 @@ export class GuiPopover extends ReactiveElement {
     // The panel is rendered by now: measuring places it here if nothing has yet.
     if (open) this.positioning.update();
     else this.positioning.detach();
+    this.panelToggled(open);
     if (open === this.open) return;
     this.open = open;
     dispatchToggle(this, open);
   };
+
+  /** Runs once the panel has opened or closed, however it did: for elements built on this one. */
+  protected panelToggled(_open: boolean): void {
+    // Nothing to do here.
+  }
 }
 
 /** The events `gui-popover` fires, with their types. */

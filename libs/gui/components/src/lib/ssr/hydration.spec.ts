@@ -89,6 +89,23 @@ describe('resuming server-rendered standalone elements', () => {
     );
   });
 
+  it('gives a menu, its items and its button their roles once it resumes', async () => {
+    resumeServerRendered();
+    await settle();
+
+    const panel = document.getElementById('plan-actions') as HTMLElement;
+    expect(panel.getAttribute('role')).toBe('menu');
+    expect(panel.getAttribute('aria-labelledby')).toBe('plan-actions-button');
+    const items = panel.querySelectorAll('button');
+    for (const item of items) {
+      expect(item.getAttribute('role')).toBe('menuitem');
+      expect(item.getAttribute('tabindex')).toBe('-1');
+    }
+    expect(document.getElementById('plan-actions-button')?.getAttribute('aria-haspopup')).toBe(
+      'menu',
+    );
+  });
+
   it('leaves the markup of a closed dialog as the server sent it', async () => {
     const dialog = () => document.querySelector('gui-dialog > dialog') as HTMLDialogElement;
     const before = dialog().outerHTML;
