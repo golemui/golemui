@@ -89,6 +89,7 @@ export default defineConfig(() => ({
         'lib/components/time-list': 'src/lib/components/time-list.ts',
         'lib/components/time-picker': 'src/lib/components/time-picker.ts',
         'lib/components/toggle': 'src/lib/components/toggle.ts',
+        'lib/components/tooltip': 'src/lib/components/tooltip.ts',
       },
       formats: ['es', 'cjs'],
       fileName: (format, entryName) =>

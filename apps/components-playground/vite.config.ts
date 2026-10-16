@@ -3,7 +3,7 @@ import { defineConfig } from 'vite';
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 
 // A page per element, in plain HTML: the elements on their own, with no framework and no form.
-const pages = ['index', 'pickers', 'popover'];
+const pages = ['index', 'pickers', 'popover', 'tooltip'];
 
 export default defineConfig(() => ({
   root: __dirname,

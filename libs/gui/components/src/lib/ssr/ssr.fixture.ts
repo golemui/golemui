@@ -8,11 +8,12 @@ import '../components/tab-list';
 import '../components/tab-panel';
 import '../components/tabs';
 import '../components/textinput';
+import '../components/tooltip';
 
 /**
  * A page of elements shared by the server render and the resume specs: elements that render
- * their own content (the inputs) and elements whose children are the app's (the alert, the tabs
- * and the popover), one nested in the other.
+ * their own content (the inputs) and elements whose children are the app's (the alert, the tabs,
+ * the popover and the tooltip), one nested in the other.
  *
  * Every value is an attribute: the client upgrades the elements from the HTML, so a property
  * binding such as `.options=${[...]}` would reach the server render only.
@@ -42,7 +43,10 @@ export const serverTemplate = () =>
         ></gui-select>
       </gui-tab-panel>
     </gui-tabs>
-    <button type="button" popovertarget="plan-help">What does a plan include?</button>
+    <button type="button" popovertarget="plan-help" id="plan-help-button">
+      What does a plan include?
+    </button>
+    <gui-tooltip for="plan-help-button">Opens the plan details</gui-tooltip>
     <gui-popover placement="bottom-start">
       <div id="plan-help" popover>Every plan includes email support.</div>
     </gui-popover>

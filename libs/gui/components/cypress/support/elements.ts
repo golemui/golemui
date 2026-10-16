@@ -223,4 +223,7 @@ export const elements: ElementCase[] = [
     props: { label: 'Notifications' },
     form: { property: 'value', sample: true },
   },
+  // Its text is the app's children, and it stays hidden until it opens: tooltip.cy.ts checks it
+  // open, with its target.
+  { tag: 'gui-tooltip', props: {}, hostRendersChildren: true },
 ];

@@ -6,8 +6,12 @@ import { booleanAttribute } from '../utils/converters';
 import type { GuiLabel } from './label';
 import type { GuiTextinput } from './textinput';
 
-// Attributes that mirror a native form control keep the native spelling.
-const NATIVE_ATTRIBUTES: Record<string, string> = { readOnly: 'readonly', maxLength: 'maxlength' };
+// Attributes that mirror a native element keep the native spelling: `for` is a label's.
+const NATIVE_ATTRIBUTES: Record<string, string> = {
+  readOnly: 'readonly',
+  maxLength: 'maxlength',
+  htmlFor: 'for',
+};
 
 const kebab = (name: string) => name.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`);
 

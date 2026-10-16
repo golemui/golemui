@@ -129,6 +129,7 @@ import {
   GuiTimePickerEvents,
 } from './lib/components/time-picker';
 import { GuiToggle as GuiToggleElement, GuiToggleEvents } from './lib/components/toggle';
+import { GuiTooltip as GuiTooltipElement, GuiTooltipEvents } from './lib/components/tooltip';
 import { fires, type GuiEventMap } from './lib/utils/events';
 
 /** `gui-pill-remove` → `GuiPillRemove`. */
@@ -358,3 +359,4 @@ export const GuiTime = wrap('gui-time', GuiTimeElement, GuiTimeEvents);
 export const GuiTimeList = wrap('gui-time-list', GuiTimeListElement, GuiTimeListEvents);
 export const GuiTimePicker = wrap('gui-time-picker', GuiTimePickerElement, GuiTimePickerEvents);
 export const GuiToggle = wrap('gui-toggle', GuiToggleElement, GuiToggleEvents);
+export const GuiTooltip = wrap('gui-tooltip', GuiTooltipElement, GuiTooltipEvents);

@@ -17,10 +17,18 @@ export interface OverlayCase {
   host: string;
   /** The pseudo-class the floating element matches while it is open. */
   openState: ':popover-open' | ':modal';
-  /** A focusable element inside the floating one. */
-  focusable: string;
-  /** Whether a click outside closes it. */
-  lightDismiss: boolean;
+  /**
+   * A focusable element inside the floating one. Without one (a tooltip holds no controls), focus
+   * stays on the invoker.
+   */
+  focusable?: string;
+  /** How the user opens it from its invoker. Default: a click. */
+  openFromInvoker?: () => void;
+  /**
+   * What a click outside does: `closes` (light dismiss), `stays`, or `skip` for an overlay that
+   * closes when the pointer leaves its invoker, which a click outside also does.
+   */
+  outsideClick: 'closes' | 'stays' | 'skip';
   /**
    * How it lines up with its invoker, for an overlay anchored to it: `start` for an alignment to
    * the invoker's start edge, `center` for a centered one. Anchored overlays also run on the
@@ -63,6 +71,8 @@ export function overlaySuite(overlay: OverlayCase): void {
   const isOpen = (expected: boolean) =>
     cy.get(floating).should(([element]) => expect(element.matches(openState)).to.equal(expected));
   const open = () => cy.get(host).invoke('prop', 'open', true);
+  const openFromInvoker = overlay.openFromInvoker ?? (() => cy.get(invoker).click());
+  const focusInside = () => cy.get(overlay.focusable ?? invoker).focus();
   // Until it has faded in, axe would measure the contrast of half-transparent text.
   const settled = () =>
     cy.get(floating).should(([element]) => expect(element.getAnimations()).to.have.length(0));
@@ -81,15 +91,15 @@ export function overlaySuite(overlay: OverlayCase): void {
         cy.mount(overlay.template());
 
         isOpen(false);
-        cy.get(invoker).click();
+        openFromInvoker();
         isOpen(true);
       });
 
       it('opens and closes with open, and returns focus to its invoker', () => {
         cy.mount(overlay.template());
 
-        cy.get(invoker).click();
-        cy.get(overlay.focusable).focus();
+        openFromInvoker();
+        focusInside();
         cy.get(host).invoke('prop', 'open', false);
         isOpen(false);
         cy.focused().should('match', invoker);
@@ -118,7 +128,7 @@ export function overlaySuite(overlay: OverlayCase): void {
         );
         cy.get<HTMLDialogElement>('#overlay-dialog').then(([dialog]) => dialog.showModal());
 
-        cy.get(invoker).click();
+        openFromInvoker();
         isOpen(true);
         cy.get(floating).should(([element]) => {
           const { x, y, width, height } = element.getBoundingClientRect();
@@ -142,21 +152,24 @@ export function overlaySuite(overlay: OverlayCase): void {
         it('closes on Escape and returns focus to its invoker', () => {
           cy.mount(overlay.template());
 
-          cy.get(invoker).click();
-          cy.get(overlay.focusable).focus();
+          openFromInvoker();
+          focusInside();
           realPress('Escape');
           isOpen(false);
           cy.focused().should('match', invoker);
         });
 
-        it(`${overlay.lightDismiss ? 'closes' : 'stays open'} on a click outside`, () => {
-          cy.mount(overlay.template());
+        if (overlay.outsideClick !== 'skip') {
+          const closes = overlay.outsideClick === 'closes';
+          it(`${closes ? 'closes' : 'stays open'} on a click outside`, () => {
+            cy.mount(overlay.template());
 
-          cy.get(invoker).click();
-          isOpen(true);
-          cy.window().then((win) => realClick(4, win.innerHeight - 4));
-          isOpen(!overlay.lightDismiss);
-        });
+            openFromInvoker();
+            isOpen(true);
+            cy.window().then((win) => realClick(4, win.innerHeight - 4));
+            isOpen(!closes);
+          });
+        }
       }
 
       if (!overlay.anchored) return;

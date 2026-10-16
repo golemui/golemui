@@ -6,8 +6,8 @@ export interface GUIFloatingPanelOptions {
   panel(): HTMLElement | null | undefined;
   /** The element it is placed next to: the field. */
   anchor(): Element | null | undefined;
-  /** Default `bottom-start`. */
-  placement?: GuiPlacement;
+  /** Default `bottom-start`. A function is read on each placement, for one that changes. */
+  placement?: GuiPlacement | (() => GuiPlacement);
   /** The gap between the field and the panel, in pixels. Default 2. */
   offset?: number;
 }
@@ -46,7 +46,10 @@ export class GUIFloatingPanel {
     this.anchor = new GUIAnchorController(null, {
       floating: () => this.shown,
       anchor: () => options.anchor(),
-      placement: () => options.placement ?? 'bottom-start',
+      placement: () => {
+        const { placement = 'bottom-start' } = options;
+        return typeof placement === 'function' ? placement() : placement;
+      },
       offset: options.offset ?? 2,
     });
   }
@@ -69,6 +72,11 @@ export class GUIFloatingPanel {
     }
     this.shown = panel;
     this.anchor.attach();
+  }
+
+  /** Places the shown panel again, after its placement or its anchor changed. */
+  place(): void {
+    if (this.shown) this.anchor.attach();
   }
 
   /** Hides the panel and stops placing it: on unmount. */

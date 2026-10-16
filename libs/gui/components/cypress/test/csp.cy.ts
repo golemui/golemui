@@ -66,6 +66,23 @@ describe('a strict style-src-attr policy', () => {
       });
     });
 
+    it(`allows a gui-tooltip to describe, open and close${fallback ? ', measuring' : ''}`, () => {
+      GUIAnchorController.forceFallback = fallback;
+      cy.mount(
+        html`<button type="button" id="save">Save</button>
+          <gui-tooltip for="save">Saves without publishing</gui-tooltip>`,
+      );
+
+      cy.get('gui-tooltip').invoke('prop', 'open', true);
+      cy.get('gui-tooltip').should('match', ':popover-open');
+      cy.get('gui-tooltip').invoke('prop', 'open', false);
+      cy.get('gui-tooltip').should('not.match', ':popover-open');
+      expectNoViolations();
+      cy.then(() => {
+        GUIAnchorController.forceFallback = false;
+      });
+    });
+
     it(`allows a dropdown's panel to float in the top layer${fallback ? ', measuring' : ''}`, () => {
       GUIAnchorController.forceFallback = fallback;
       cy.mount(html`<gui-dropdown label="Plan" .items=${options}></gui-dropdown>`);

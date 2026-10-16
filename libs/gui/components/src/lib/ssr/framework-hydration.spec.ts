@@ -1,9 +1,10 @@
 // @vitest-environment jsdom
 import { act, createElement, Fragment, useState } from 'react';
 import { hydrateRoot } from 'react-dom/client';
+import { renderToString } from 'react-dom/server';
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { resumeServerRendered } from '@golemui/lit-utils';
-import { GuiPopover, GuiTextinput } from '../../react';
+import { GuiPopover, GuiTextinput, GuiTooltip } from '../../react';
 import '../components/dropdown';
 import type { GuiDropdown } from '../components/dropdown';
 import '../components/list';
@@ -142,6 +143,34 @@ describe('a gui-popover', () => {
     expect(errorSpy).not.toHaveBeenCalled();
     expect(container.querySelector('#help')).toBe(panel);
     expect(container.querySelector('gui-popover')?.getAttributeNames()).toEqual(['placement']);
+    errorSpy.mockRestore();
+  });
+});
+
+describe('a gui-tooltip', () => {
+  it('hydrates in React without a mismatch, then describes its target', async () => {
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const app = () =>
+      createElement(
+        Fragment,
+        null,
+        createElement('button', { type: 'button', id: 'save' }, 'Save'),
+        createElement(GuiTooltip, { htmlFor: 'save' }, 'Saves without publishing'),
+      );
+    const container = document.createElement('div');
+    container.innerHTML = renderToString(app());
+    document.body.append(container);
+
+    await act(async () => {
+      hydrateRoot(container, app(), { onRecoverableError: (error) => console.error(error) });
+    });
+    await settle();
+
+    // The element waited for React: what it adds came after hydration, so React saw no mismatch.
+    expect(errorSpy).not.toHaveBeenCalled();
+    const tooltip = container.querySelector('gui-tooltip') as HTMLElement;
+    expect(tooltip.getAttribute('role')).toBe('tooltip');
+    expect(container.querySelector('#save')?.getAttribute('aria-describedby')).toBe(tooltip.id);
     errorSpy.mockRestore();
   });
 });

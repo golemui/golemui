@@ -41,11 +41,12 @@ describe('server rendering standalone elements in plain node', () => {
     expect(markup).toMatch(
       /<gui-popover[^>]*>\s*<div id="plan-help" popover>Every plan includes email support.<\/div>/,
     );
+    expect(markup).toMatch(/<gui-tooltip\s+for="plan-help-button"[^>]*>Opens the plan details</);
   });
 
   it('holds every GolemUI element inert through defer-hydration', () => {
     const tags = [...markup.matchAll(/<(gui-[a-z-]+)([^>]*)>/g)];
-    expect(tags.length).toBe(9);
+    expect(tags.length).toBe(10);
     for (const [, tag, attributes] of tags) {
       expect(attributes, tag).toContain('defer-hydration');
     }

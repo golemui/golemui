@@ -107,6 +107,7 @@ export type { GuiTimeProps } from './lib/components/time-input';
 export { GuiTimeList, GuiTimeListEvents } from './lib/components/time-list';
 export { GuiTimePicker, GuiTimePickerEvents } from './lib/components/time-picker';
 export { GuiToggle, GuiToggleEvents } from './lib/components/toggle';
+export { GuiTooltip, GuiTooltipEvents } from './lib/components/tooltip';
 export type { GuiToggleProps } from './lib/components/toggle';
 export { weekInfoData } from './lib/utils/week-info';
 export type { WeekInfo } from './lib/utils/week-info';

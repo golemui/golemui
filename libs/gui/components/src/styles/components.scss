@@ -61,6 +61,7 @@
 
   // Overlays
   @include meta.load-css('popover');
+  @include meta.load-css('tooltip');
 
   // Validators
   @include meta.load-css('validator');

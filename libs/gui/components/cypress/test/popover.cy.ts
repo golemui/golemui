@@ -37,7 +37,7 @@ overlaySuite({
   host: 'gui-popover',
   openState: ':popover-open',
   focusable: '#filters button',
-  lightDismiss: true,
+  outsideClick: 'closes',
   anchored: 'start',
 });
 
