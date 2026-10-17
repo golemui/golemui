@@ -1,6 +1,6 @@
 # @golemui/gui-react
 
-[Golem UI](https://golemui.com): the declarative form engine.
+[GolemUI](https://golemui.com): dynamic forms from JSON for React, Angular, Vue, Lit and vanilla JS.
 
 ## Install
 

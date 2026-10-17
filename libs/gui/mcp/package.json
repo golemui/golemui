@@ -1,11 +1,23 @@
 {
   "name": "@golemui/gui-mcp",
   "version": "0.0.0",
+  "description": "MCP server for GolemUI dynamic forms: gives AI coding assistants schema validation and form generation for GolemUI form definitions. Open source (MIT).",
+  "keywords": [
+    "golemui",
+    "mcp",
+    "model-context-protocol",
+    "ai",
+    "ai-agents",
+    "dynamic-forms",
+    "json-forms",
+    "form-builder",
+    "form",
+    "json-schema"
+  ],
   "license": "MIT",
   "publishConfig": {
     "access": "public"
   },
-  "description": "Model Context Protocol server for GolemUI — gives AI coding assistants deterministic schema validation and form generation for GolemUI form definitions.",
   "type": "module",
   "main": "./lib.js",
   "module": "./lib.js",
@@ -30,14 +42,6 @@
     "dx",
     "shared",
     "*.md"
-  ],
-  "keywords": [
-    "mcp",
-    "model-context-protocol",
-    "golemui",
-    "ai",
-    "form",
-    "json-schema"
   ],
   "dependencies": {
     "ajv": "^8.17.1",

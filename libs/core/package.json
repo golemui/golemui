@@ -1,6 +1,24 @@
 {
   "name": "@golemui/core",
   "version": "0.0.0",
+  "description": "Dynamic forms from JSON for React, Angular, Vue, Lit and vanilla JS: the framework-agnostic core of the GolemUI forms engine. Open source (MIT).",
+  "keywords": [
+    "golemui",
+    "dynamic-forms",
+    "json-forms",
+    "json-schema-form",
+    "form-builder",
+    "form-generator",
+    "forms",
+    "validation",
+    "react",
+    "angular",
+    "vue",
+    "lit",
+    "web-components",
+    "typescript",
+    "mcp"
+  ],
   "license": "MIT",
   "publishConfig": {
     "access": "public"

@@ -1,6 +1,6 @@
 # @golemui/lit-utils
 
-[Golem UI](https://golemui.com): the declarative form engine.
+[GolemUI](https://golemui.com): dynamic forms from JSON for React, Angular, Vue, Lit and vanilla JS.
 
 Internal building blocks shared by `@golemui/lit` and `@golemui/gui-components`: the `safeDefine`
 element registry, the CSP-safe `cspStyleMap` directive and the server rendering of the elements

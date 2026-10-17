@@ -1,6 +1,21 @@
 {
   "name": "@golemui/gui-react",
   "version": "0.0.0",
+  "description": "Dynamic forms from JSON in React: the GolemUI GuiForm component, with server-side rendering in React and Next.js. Open source (MIT).",
+  "keywords": [
+    "golemui",
+    "dynamic-forms",
+    "json-forms",
+    "json-schema-form",
+    "form-builder",
+    "form-generator",
+    "forms",
+    "validation",
+    "react",
+    "react-forms",
+    "nextjs",
+    "ssr"
+  ],
   "license": "MIT",
   "publishConfig": {
     "access": "public"

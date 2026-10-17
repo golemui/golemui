@@ -1,6 +1,26 @@
 {
   "name": "@golemui/gui-components",
   "version": "0.0.0",
+  "description": "GolemUI Components: accessible web components for plain HTML, React, Angular, Vue and Lit. Headless, server-rendered and ready for any i18n library. Open source (MIT).",
+  "keywords": [
+    "golemui",
+    "web-components",
+    "custom-elements",
+    "ui-kit",
+    "ui-components",
+    "design-system",
+    "form-controls",
+    "date-picker",
+    "accessibility",
+    "a11y",
+    "headless",
+    "ssr",
+    "i18n",
+    "lit",
+    "react",
+    "angular",
+    "vue"
+  ],
   "license": "MIT",
   "publishConfig": {
     "access": "public"

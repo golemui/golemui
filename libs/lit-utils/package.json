@@ -1,6 +1,12 @@
 {
   "name": "@golemui/lit-utils",
   "version": "0.0.0",
+  "description": "Internal building blocks shared by @golemui/lit and @golemui/gui-components. Open source (MIT).",
+  "keywords": [
+    "golemui",
+    "lit",
+    "web-components"
+  ],
   "license": "MIT",
   "publishConfig": {
     "access": "public"

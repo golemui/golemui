@@ -1,6 +1,15 @@
 {
   "name": "@golemui/vue",
   "version": "0.0.0",
+  "description": "Vue bindings of the GolemUI forms engine, for building widget sets. For dynamic forms in Vue, install @golemui/gui-vue. Open source (MIT).",
+  "keywords": [
+    "golemui",
+    "dynamic-forms",
+    "json-forms",
+    "forms",
+    "vue",
+    "widget-set"
+  ],
   "license": "MIT",
   "publishConfig": {
     "access": "public"
