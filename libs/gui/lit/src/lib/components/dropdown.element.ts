@@ -1,7 +1,7 @@
 import type { InputWidget, WithWidget } from '@golemui/core';
 import { InputWidgetAdapter, type LitFormContext, formContext, inputContext } from '@golemui/lit';
 import type { DropdownProps, ListItem } from '@golemui/gui-shared/internals';
-import { searchItems, type ItemFields } from '@golemui/gui-components/internals';
+import { GUIFloatingPanel, type ItemFields, searchItems } from '@golemui/gui-components/internals';
 import type { GuiVisibleItem } from '@golemui/gui-components';
 import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';
@@ -33,13 +33,17 @@ export class DropdownElement extends LitElement implements WithWidget {
   @state() private _listItems: ListItem<never>[] = [];
   @state() private _isFiltering = false;
   @state() private _isListVisible = false;
+
+  // The panel shows in the top layer while the list is visible, under the field.
+  private readonly floating = new GUIFloatingPanel({
+    panel: () => this.querySelector<HTMLElement>(':scope > .gui-widget > .gui-picker__panel'),
+    anchor: () => this.querySelector(':scope > .gui-widget'),
+  });
   @state() private _selectedItem: ListItem<never> | undefined = undefined;
 
   @query('input') private _inputRef!: any;
   @query('gui-list') private _listRef!: any;
   @query('.gui-picker__panel') private _panelRef!: any;
-
-  private _ignoreNextFocus = false;
 
   onDocumentClick = (event: MouseEvent) => {
     if (!this._isListVisible) return;
@@ -86,8 +90,13 @@ export class DropdownElement extends LitElement implements WithWidget {
     );
   }
 
+  protected override updated() {
+    this.floating.sync(this._isListVisible);
+  }
+
   override disconnectedCallback() {
     super.disconnectedCallback();
+    this.floating.dispose();
     document.removeEventListener('click', this.onDocumentClick);
     this.adapter.destroy();
     unsubscribeAll(this.subscriptions);
@@ -169,27 +178,26 @@ export class DropdownElement extends LitElement implements WithWidget {
     }
   }
 
+  /** Escape and Alt+ArrowUp close the list and return focus to the field (APG combobox). */
   private _onWidgetKeyDown(event: Event) {
-    if ((event as KeyboardEvent).key !== 'Escape' || !this._isListVisible) return;
+    const { key, altKey } = event as KeyboardEvent;
+    const closing = key === 'Escape' || (altKey && key === 'ArrowUp');
+    if (!closing || !this._isListVisible) return;
     event.preventDefault();
     event.stopPropagation();
     this._isListVisible = false;
     this._isFiltering = false;
-    this._ignoreNextFocus = true;
     this._inputRef?.focus();
-    setTimeout(() => {
-      this._ignoreNextFocus = false;
-    });
   }
 
-  private async _onFocus() {
-    if (this._ignoreNextFocus) return;
+  /** Opens the list: from a click on the field or the toggle. Focus alone does not. */
+  private _showList = async () => {
     this._isListVisible = true;
 
     await this.updateComplete;
 
     this._listRef.scrollToSelectedIndex();
-  }
+  };
 
   private _onToggleMouseDown = (event: MouseEvent) => {
     event.preventDefault();
@@ -200,14 +208,10 @@ export class DropdownElement extends LitElement implements WithWidget {
     if (this._isListVisible) {
       this._isListVisible = false;
       this._isFiltering = false;
-      this._ignoreNextFocus = true;
       this._inputRef?.focus();
-      setTimeout(() => {
-        this._ignoreNextFocus = false;
-      });
     } else {
       this._inputRef?.focus();
-      this._onFocus();
+      this._showList();
     }
   };
 
@@ -285,7 +289,7 @@ export class DropdownElement extends LitElement implements WithWidget {
           autocomplete=${(templateData.autocomplete as any) || nothing}
           @keydown=${this._onKeyDown}
           @input=${this._onInput}
-          @focus=${this._onFocus}
+          @click=${this._showList}
           aria-expanded=${this._isListVisible ? 'true' : 'false'}
           aria-controls=${`${this.widget.uid}-list`}
           aria-autocomplete="list"
@@ -308,6 +312,7 @@ export class DropdownElement extends LitElement implements WithWidget {
 
         <div
           class="gui-picker__panel"
+          popover="manual"
           ?hidden=${!this._isListVisible}
           @mousedown=${this._onPanelMouseDown}
         >
@@ -328,7 +333,6 @@ export class DropdownElement extends LitElement implements WithWidget {
             ?hidden=${!this._isListVisible}
             @gui-visible-items-change=${this._onVisibleItemsChange}
             @gui-update-items=${this._onUpdateItems}
-            @focus=${this._onFocus}
             @gui-input=${this._onValueChange}
           >
             ${this._visibleItems.map((item) => {

@@ -1,17 +1,21 @@
 import { html } from 'lit';
 import '../components/alert';
 import '../components/checkbox';
+import '../components/dialog';
+import '../components/menu';
+import '../components/popover';
 import '../components/select';
 import '../components/tab';
 import '../components/tab-list';
 import '../components/tab-panel';
 import '../components/tabs';
 import '../components/textinput';
+import '../components/tooltip';
 
 /**
  * A page of elements shared by the server render and the resume specs: elements that render
- * their own content (the inputs) and elements whose children are the app's (the alert and the
- * tabs), one nested in the other.
+ * their own content (the inputs) and elements whose children are the app's (the alert, the tabs,
+ * the popover, the tooltip, the dialog and the menu), one nested in the other.
  *
  * Every value is an attribute: the client upgrades the elements from the HTML, so a property
  * binding such as `.options=${[...]}` would reach the server render only.
@@ -41,5 +45,26 @@ export const serverTemplate = () =>
         ></gui-select>
       </gui-tab-panel>
     </gui-tabs>
+    <button type="button" popovertarget="plan-help" id="plan-help-button">
+      What does a plan include?
+    </button>
+    <gui-tooltip for="plan-help-button">Opens the plan details</gui-tooltip>
+    <gui-popover placement="bottom-start">
+      <div id="plan-help" popover>Every plan includes email support.</div>
+    </gui-popover>
+    <button type="button" popovertarget="plan-actions" id="plan-actions-button">Plan</button>
+    <gui-menu>
+      <div id="plan-actions" popover>
+        <button type="button" value="upgrade">Upgrade</button>
+        <hr />
+        <button type="button" value="cancel">Cancel the plan</button>
+      </div>
+    </gui-menu>
+    <gui-dialog placement="end">
+      <dialog id="plan-dialog" aria-labelledby="plan-dialog-title">
+        <h2 id="plan-dialog-title">Compare plans</h2>
+        <gui-textinput uid="coupon" name="coupon" label="Coupon"></gui-textinput>
+      </dialog>
+    </gui-dialog>
     <gui-checkbox uid="terms" name="terms" label="I accept the terms" value="true"></gui-checkbox>
   </form>`;

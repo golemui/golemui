@@ -1,0 +1,270 @@
+// The components' own stylesheet, as an app loads it, then the playground's chrome. Everything is
+// a class: the built pages run under a strict Content Security Policy, which blocks style
+// attributes.
+@use '../../../libs/gui/components/src/styles/index';
+
+html {
+  color-scheme: light dark;
+}
+
+body {
+  margin: 0;
+  background: var(--gui-bg-default);
+  color: var(--gui-text-default);
+  font-family: var(--gui-font-family);
+  font-size: var(--gui-font-sm);
+  line-height: 1.5;
+}
+
+a {
+  color: var(--gui-intent-primary);
+}
+
+code {
+  font-family: ui-monospace, monospace;
+  font-size: 0.9em;
+}
+
+.pg-toolbar {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gui-space-3) var(--gui-space-5);
+  align-items: center;
+  padding: var(--gui-space-3) var(--gui-space-5);
+  background: var(--gui-bg-surface);
+  border-block-end: 1px solid var(--gui-border-default);
+
+  label {
+    display: inline-flex;
+    gap: var(--gui-space-2);
+    align-items: center;
+  }
+
+  select,
+  input {
+    font: inherit;
+  }
+}
+
+.pg-toolbar__home {
+  margin-inline-end: auto;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.pg-main {
+  display: grid;
+  gap: var(--gui-space-8);
+  max-inline-size: 960px;
+  margin-inline: auto;
+  padding: var(--gui-space-6) var(--gui-space-5) 12rem;
+
+  h1,
+  h2,
+  p {
+    margin: 0;
+  }
+}
+
+.pg-section {
+  display: grid;
+  gap: var(--gui-space-3);
+
+  > p {
+    max-inline-size: 70ch;
+    color: var(--gui-text-secondary);
+  }
+}
+
+.pg-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gui-space-3);
+  align-items: center;
+}
+
+.pg-row--spread {
+  justify-content: space-between;
+}
+
+.pg-button {
+  font: inherit;
+  padding: var(--gui-space-1) var(--gui-space-3);
+  border: 1px solid var(--gui-border-default);
+  border-radius: var(--gui-radius-md);
+  background: var(--gui-bg-surface);
+  color: var(--gui-text-default);
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: var(--gui-shadow-focus);
+  }
+}
+
+.pg-stage {
+  display: grid;
+  place-content: center;
+  padding: 8rem var(--gui-space-4);
+  border: 1px dashed var(--gui-border-default);
+  border-radius: var(--gui-radius-md);
+}
+
+.pg-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, max-content);
+  gap: var(--gui-space-2);
+}
+
+.pg-scroller {
+  block-size: 160px;
+  overflow: auto;
+  padding: var(--gui-space-4);
+  border: 1px dashed var(--gui-border-default);
+  border-radius: var(--gui-radius-md);
+
+  > div {
+    block-size: 600px;
+    padding-block-start: var(--gui-space-8);
+  }
+}
+
+.pg-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--gui-space-4);
+}
+
+.pg-clip {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--gui-space-4);
+  overflow: hidden;
+  padding: var(--gui-space-3);
+  border: 1px dashed var(--gui-border-default);
+  border-radius: var(--gui-radius-md);
+}
+
+.pg-docked {
+  position: fixed;
+  inset-block-end: 0;
+  inset-inline-start: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(200px, 260px));
+  gap: var(--gui-space-4);
+  padding: var(--gui-space-3) var(--gui-space-5);
+  background: var(--gui-bg-surface);
+  border-block-start: 1px solid var(--gui-border-default);
+  border-inline-end: 1px solid var(--gui-border-default);
+}
+
+.pg-popover-form {
+  display: grid;
+  gap: var(--gui-space-3);
+  inline-size: 300px;
+}
+
+// The playground's own dialog content: the dialog's look is gui-dialog's.
+.pg-dialog-body {
+  > * + * {
+    margin-block-start: var(--gui-space-4);
+  }
+
+  h2 {
+    margin: 0;
+  }
+}
+
+.pg-dialog-form {
+  display: grid;
+  gap: var(--gui-space-4);
+  inline-size: min(360px, 80vw);
+}
+
+.pg-dialog {
+  inline-size: min(420px, 90vw);
+  color: var(--gui-text-default);
+  background: var(--gui-bg-default);
+  border: 1px solid var(--gui-border-default);
+  border-radius: var(--gui-radius-lg);
+
+  > * + * {
+    margin-block-start: var(--gui-space-4);
+  }
+}
+
+// A drawer at the end of the window that slides in with a transform.
+.pg-drawer {
+  margin-block: 0;
+  margin-inline: auto 0;
+  block-size: 100dvh;
+  max-block-size: none;
+  border-radius: 0;
+  transform: translateX(0);
+  transition:
+    transform 0.2s ease-out,
+    display 0.2s allow-discrete,
+    overlay 0.2s allow-discrete;
+
+  @starting-style {
+    transform: translateX(100%);
+  }
+
+  &:dir(rtl) {
+    @starting-style {
+      transform: translateX(-100%);
+    }
+  }
+}
+
+.pg-catalog {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--gui-space-4);
+  padding: 0;
+  list-style: none;
+
+  a {
+    display: grid;
+    gap: var(--gui-space-1);
+    padding: var(--gui-space-4);
+    color: inherit;
+    text-decoration: none;
+    border: 1px solid var(--gui-border-default);
+    border-radius: var(--gui-radius-lg);
+
+    &:hover,
+    &:focus-visible {
+      border-color: var(--gui-intent-primary);
+    }
+  }
+
+  span {
+    color: var(--gui-text-secondary);
+  }
+}
+
+.pg-log {
+  position: fixed;
+  inset-block-end: var(--gui-space-3);
+  inset-inline-end: var(--gui-space-3);
+  inline-size: min(420px, calc(100vw - var(--gui-space-6)));
+  max-block-size: 9rem;
+  overflow: auto;
+  margin: 0;
+  padding: var(--gui-space-2) var(--gui-space-3);
+  font-family: ui-monospace, monospace;
+  font-size: var(--gui-font-xs);
+  background: var(--gui-bg-surface-hover);
+  border: 1px solid var(--gui-border-default);
+  border-radius: var(--gui-radius-md);
+  list-style: none;
+
+  &:empty::before {
+    content: 'gui-* events show here';
+    color: var(--gui-text-secondary);
+  }
+}

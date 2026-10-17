@@ -1,6 +1,15 @@
 {
   "name": "@golemui/react",
   "version": "0.0.0",
+  "description": "React bindings of the GolemUI forms engine, for building widget sets. For dynamic forms in React, install @golemui/gui-react. Open source (MIT).",
+  "keywords": [
+    "golemui",
+    "dynamic-forms",
+    "json-forms",
+    "forms",
+    "react",
+    "widget-set"
+  ],
   "license": "MIT",
   "publishConfig": {
     "access": "public"

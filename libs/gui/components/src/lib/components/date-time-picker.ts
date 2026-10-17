@@ -7,7 +7,7 @@ import './date-time-input';
 import './date-time-calendar';
 import type { GuiDateTime } from './date-time-input';
 import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
-import { GUIPopupController } from '../controllers/popup.controller';
+import { fieldPanel, GUIPopupController } from '../controllers/popup.controller';
 import { type HourFormat } from '../utils/time';
 import { addErrors, addIcon, addLabel, addPickerPanel } from '../utils/templates';
 import type { DateRange, DisabledTimeRange } from '../types';
@@ -196,6 +196,7 @@ export class GuiDateTimePicker extends GuiFormControl {
   });
 
   private _popup = new GUIPopupController(this, {
+    floating: fieldPanel(this),
     focusRestoreSelector: 'gui-date-time input',
     focusPopupSelector: '.gui-calendar__day-button[tabindex="0"]',
     isDisabled: () => !!this.disabled,
@@ -341,7 +342,7 @@ export class GuiDateTimePicker extends GuiFormControl {
           .maxTimeMessage=${this.maxTimeMessage}
           .incompleteMessage=${this.incompleteMessage}
           @gui-blur=${this.onDateBlur}
-          @gui-focus=${this.onDateFocus}
+          @gui-focus=${stopPropagation}
           @gui-input=${this.onDateInput}
           @gui-change=${stopPropagation}
           @gui-parts-change=${this.onInputPartsChange}
@@ -378,11 +379,6 @@ export class GuiDateTimePicker extends GuiFormControl {
       this._popup.openAndFocus();
     }
   };
-
-  private onDateFocus(event: Event) {
-    stopPropagation(event);
-    this._popup.show();
-  }
 
   /** The field's and the calendar's errors are reported as the picker's own. */
   private onInnerInputError(event: CustomEvent<GuiInputErrorEventDetail>) {

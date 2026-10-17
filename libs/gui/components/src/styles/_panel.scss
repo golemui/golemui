@@ -1,20 +1,36 @@
 /*
- * Shared chrome for `.gui-picker__panel`, the floating card every picker
- * (and the dropdown) wraps its popup layout in.
+ * The look of every floating card: the pickers' panels and the popovers.
  */
-@mixin gui-picker-panel-chrome {
-  position: absolute;
-  top: 100%;
-  margin-top: 2px;
-  z-index: 10;
-  display: flex;
-  flex-direction: column;
-  gap: var(--gui-space-2);
-  padding: var(--gui-space-2);
+@mixin gui-floating-surface {
   background: var(--gui-bg-default);
   border: 1px solid var(--gui-border-default);
   border-radius: var(--gui-radius-md);
   box-shadow: var(--gui-shadow-md);
+}
+
+/*
+ * What a panel the browser shows in the top layer (`popover="manual"`) needs back from the
+ * user-agent popover styles: the text colour of its field, and no scrollbars of its own. Its
+ * place (inset, margin) comes from GUIAnchorController.
+ */
+@mixin gui-top-layer-panel {
+  color: inherit;
+  overflow: visible;
+}
+
+/*
+ * Shared chrome for `.gui-picker__panel`, the floating card every picker
+ * (and the dropdown) wraps its popup layout in. It shows in the top layer, placed under its
+ * field, so no container clips it.
+ */
+@mixin gui-picker-panel-chrome {
+  @include gui-top-layer-panel;
+  display: flex;
+
+  flex-direction: column;
+  gap: var(--gui-space-2);
+  padding: var(--gui-space-2);
+  @include gui-floating-surface;
   width: max-content;
   max-width: none;
 

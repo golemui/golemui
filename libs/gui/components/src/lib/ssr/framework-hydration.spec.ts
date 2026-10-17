@@ -1,9 +1,10 @@
 // @vitest-environment jsdom
-import { act, createElement, useState } from 'react';
+import { act, createElement, Fragment, useState } from 'react';
 import { hydrateRoot } from 'react-dom/client';
+import { renderToString } from 'react-dom/server';
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { resumeServerRendered } from '@golemui/lit-utils';
-import { GuiTextinput } from '../../react';
+import { GuiDialog, GuiMenu, GuiPopover, GuiTextinput, GuiTooltip } from '../../react';
 import '../components/dropdown';
 import type { GuiDropdown } from '../components/dropdown';
 import '../components/list';
@@ -104,6 +105,142 @@ describe('an element whose content the server rendered', () => {
     await settle();
     expect(document.getElementById('email')).toBe(input);
     expect(document.querySelector('label[for="email"]')?.textContent).toContain('Work email');
+    errorSpy.mockRestore();
+  });
+});
+
+describe('a gui-popover', () => {
+  it('hydrates in React without a mismatch: it adds nothing to the markup the server sent', async () => {
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const container = document.createElement('div');
+    // What React renders on the server: the element is a wrapper, so it sends the app's children.
+    container.innerHTML =
+      '<button type="button" popovertarget="help">Help</button>' +
+      '<gui-popover placement="top" defer-hydration="">' +
+      '<div id="help" popover="">Saves without publishing.</div>' +
+      '</gui-popover>';
+    document.body.append(container);
+    const panel = container.querySelector('#help');
+
+    await act(async () => {
+      hydrateRoot(
+        container,
+        createElement(
+          Fragment,
+          null,
+          createElement('button', { type: 'button', popoverTarget: 'help' }, 'Help'),
+          createElement(
+            GuiPopover,
+            { placement: 'top' },
+            createElement('div', { id: 'help', popover: '' }, 'Saves without publishing.'),
+          ),
+        ),
+        { onRecoverableError: (error) => console.error(error) },
+      );
+    });
+    await settle();
+
+    expect(errorSpy).not.toHaveBeenCalled();
+    expect(container.querySelector('#help')).toBe(panel);
+    expect(container.querySelector('gui-popover')?.getAttributeNames()).toEqual(['placement']);
+    errorSpy.mockRestore();
+  });
+});
+
+describe('a gui-tooltip', () => {
+  it('hydrates in React without a mismatch, then describes its target', async () => {
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const app = () =>
+      createElement(
+        Fragment,
+        null,
+        createElement('button', { type: 'button', id: 'save' }, 'Save'),
+        createElement(GuiTooltip, { htmlFor: 'save' }, 'Saves without publishing'),
+      );
+    const container = document.createElement('div');
+    container.innerHTML = renderToString(app());
+    document.body.append(container);
+
+    await act(async () => {
+      hydrateRoot(container, app(), { onRecoverableError: (error) => console.error(error) });
+    });
+    await settle();
+
+    // The element waited for React: what it adds came after hydration, so React saw no mismatch.
+    expect(errorSpy).not.toHaveBeenCalled();
+    const tooltip = container.querySelector('gui-tooltip') as HTMLElement;
+    expect(tooltip.getAttribute('role')).toBe('tooltip');
+    expect(container.querySelector('#save')?.getAttribute('aria-describedby')).toBe(tooltip.id);
+    errorSpy.mockRestore();
+  });
+});
+
+describe('a gui-dialog', () => {
+  it('hydrates in React without a mismatch, then makes an alert dialog of its dialog', async () => {
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const app = () =>
+      createElement(
+        GuiDialog,
+        { alert: true },
+        createElement(
+          'dialog',
+          { id: 'discard', 'aria-labelledby': 'discard-title' },
+          createElement('h2', { id: 'discard-title' }, 'Discard your changes?'),
+        ),
+      );
+    const container = document.createElement('div');
+    container.innerHTML = renderToString(app());
+    document.body.append(container);
+    expect(container.querySelector('dialog')?.hasAttribute('role')).toBe(false);
+
+    await act(async () => {
+      hydrateRoot(container, app(), { onRecoverableError: (error) => console.error(error) });
+    });
+    await settle();
+
+    // The element waited for React: the role came after hydration, so React saw no mismatch.
+    expect(errorSpy).not.toHaveBeenCalled();
+    expect(container.querySelector('dialog')?.getAttribute('role')).toBe('alertdialog');
+    errorSpy.mockRestore();
+  });
+});
+
+describe('a gui-menu', () => {
+  it('hydrates in React without a mismatch, then gives its parts their roles', async () => {
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const app = () =>
+      createElement(
+        Fragment,
+        null,
+        createElement(
+          'button',
+          { type: 'button', id: 'actions', popoverTarget: 'menu' },
+          'Actions',
+        ),
+        createElement(
+          GuiMenu,
+          null,
+          createElement(
+            'div',
+            { id: 'menu', popover: '' },
+            createElement('button', { type: 'button', value: 'edit' }, 'Edit'),
+          ),
+        ),
+      );
+    const container = document.createElement('div');
+    container.innerHTML = renderToString(app());
+    document.body.append(container);
+
+    await act(async () => {
+      hydrateRoot(container, app(), { onRecoverableError: (error) => console.error(error) });
+    });
+    await settle();
+
+    // The element waited for React: the roles came after hydration, so React saw no mismatch.
+    expect(errorSpy).not.toHaveBeenCalled();
+    expect(container.querySelector('#menu')?.getAttribute('role')).toBe('menu');
+    expect(container.querySelector('#menu button')?.getAttribute('role')).toBe('menuitem');
+    expect(container.querySelector('#actions')?.getAttribute('aria-haspopup')).toBe('menu');
     errorSpy.mockRestore();
   });
 });

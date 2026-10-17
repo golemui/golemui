@@ -18,11 +18,6 @@
 ) {
   display: block;
 
-  &:has(.gui-widget > button[aria-expanded='true']) {
-    position: relative;
-    z-index: 20;
-  }
-
   .gui-widget {
     :is(
       .gui-date-picker__arrow,
@@ -118,8 +113,10 @@ $nested-in-calendar: ':is(gui-date-time-calendar, gui-range-date-time-calendar) 
   }
 
   @media (max-width: 540px) {
+    // As wide as the field: the controller sets the field's width.
     .gui-widget > .gui-picker__panel:not(#{$nested-in-calendar}) {
-      width: calc(100% - var(--gui-space-2) * 2 - 2px);
+      box-sizing: border-box;
+      width: var(--gui-anchor-width, auto);
 
       > :is(
         gui-calendar,

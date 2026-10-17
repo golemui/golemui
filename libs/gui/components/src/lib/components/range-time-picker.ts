@@ -7,7 +7,7 @@ import './range-time-input';
 import type { GuiRangeTimeInput } from './range-time-input';
 import './time-list';
 import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
-import { GUIPopupController } from '../controllers/popup.controller';
+import { fieldPanel, GUIPopupController } from '../controllers/popup.controller';
 import { buildTimeOptions, oneStepAfterISOTime, type HourFormat } from '../utils/time';
 import { timeRangesValidity } from '../utils/range-validity';
 import { addErrors, addIcon, addLabel } from '../utils/templates';
@@ -171,6 +171,7 @@ export class GuiRangeTimePicker extends GuiFormControl {
   @state() private _editing = false;
 
   private _popup = new GUIPopupController(this, {
+    floating: fieldPanel(this),
     // The fields' parts, not the pill buttons that come before them.
     focusRestoreSelector: 'gui-range-time .gui-range-time-input__part',
     focusPopupSelector: '.gui-time-list__option[tabindex="0"]',
@@ -253,6 +254,7 @@ export class GuiRangeTimePicker extends GuiFormControl {
     const panel = this._popup.open
       ? html`<div
           class="gui-picker__panel gui-range-time-picker__panel"
+          popover="manual"
           id=${`${this.uid}_popup`}
           role="dialog"
           aria-labelledby=${this.label ? `${this.uid}_label` : nothing}
@@ -375,7 +377,7 @@ export class GuiRangeTimePicker extends GuiFormControl {
           .editCommittedMessage=${this.editCommittedMessage}
           .editCancelledMessage=${this.editCancelledMessage}
           @gui-blur=${this.onInputBlur}
-          @gui-focus=${this.onInputFocus}
+          @gui-focus=${stopPropagation}
           @gui-input=${this.onRangeInput}
           @gui-change=${this.onRangeChange}
           @gui-input-error=${this.onInputError}
@@ -449,11 +451,6 @@ export class GuiRangeTimePicker extends GuiFormControl {
    */
   private onInputBlur(event: Event) {
     event.stopPropagation();
-  }
-
-  private onInputFocus(event: Event) {
-    stopPropagation(event);
-    this._popup.show();
   }
 
   /** The input's error is reported as the picker's own. */

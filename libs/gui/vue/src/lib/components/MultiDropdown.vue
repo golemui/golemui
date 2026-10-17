@@ -15,6 +15,7 @@ import {
   type ItemFields,
 } from '@golemui/gui-components/internals';
 import { computed, onMounted, onUnmounted, ref, watch, type Component } from 'vue';
+import { useFloatingPanel } from './shared/use-floating-panel';
 import DefaultMultiListItemRenderer from './item-renderers/DefaultMultiListItemRenderer.vue';
 import type { GuiLabel } from '@golemui/gui-components/label';
 import type { GuiMultiList } from '@golemui/gui-components/multi-list';
@@ -41,6 +42,8 @@ const panelRef = ref<HTMLDivElement | null>(null);
 const triggerRef = ref<GuiMultiSelectTrigger | null>(null);
 const labelRef = ref<GuiLabel | null>(null);
 const widgetRef = ref<HTMLDivElement | null>(null);
+// The panel shows in the top layer while the list is visible, under the field.
+useFloatingPanel(panelRef, widgetRef, isListVisible);
 
 const currentValues = computed(() => (Array.isArray(value.value) ? value.value : []));
 
@@ -161,25 +164,23 @@ const handleInputFilter = (event: Event) => {
   debouncedFilter(target.value);
 };
 
-let ignoreNextFocus = false;
-const handleFocusIn = (e: FocusEvent) => {
-  if (ignoreNextFocus) return;
+// A click on the search field opens the list, not one on a pill. Focus alone does not (APG
+// combobox).
+const handleTriggerClick = (e: MouseEvent) => {
   if (isListVisible.value) return;
   if (e.target !== triggerRef.value?.input) return;
   openPanel();
 };
 
+// Escape and Alt+ArrowUp close the list and return focus to the field (APG combobox).
 const handleWidgetKeyDown = (event: KeyboardEvent) => {
-  if (event.key !== 'Escape' || !isListVisible.value) return;
+  const closing = event.key === 'Escape' || (event.altKey && event.key === 'ArrowUp');
+  if (!closing || !isListVisible.value) return;
   event.preventDefault();
   event.stopPropagation();
   isListVisible.value = false;
   isFiltering.value = false;
-  ignoreNextFocus = true;
   triggerRef.value?.focusInput();
-  setTimeout(() => {
-    ignoreNextFocus = false;
-  });
 };
 
 const handleFocusOut = (e: FocusEvent) => {
@@ -197,11 +198,7 @@ const handleToggleClick = (event: MouseEvent) => {
   if (isListVisible.value) {
     isListVisible.value = false;
     isFiltering.value = false;
-    ignoreNextFocus = true;
     triggerRef.value?.focusInput();
-    setTimeout(() => {
-      ignoreNextFocus = false;
-    });
   } else {
     triggerRef.value?.focusInput();
     openPanel();
@@ -271,7 +268,7 @@ const ItemRenderer = computed<Component>(() => {
         :compactAriaLabel="`${pillItems.length} selected`"
         @keydown="handleTriggerKeyDown"
         @input="handleInputFilter"
-        @focusin="handleFocusIn"
+        @click="handleTriggerClick"
         @gui-pill-remove="handlePillRemove"
         @gui-dropdown-toggle="handlePillsDropdownToggle"
       ></gui-multi-select-trigger>
@@ -291,6 +288,7 @@ const ItemRenderer = computed<Component>(() => {
 
       <div
         class="gui-picker__panel"
+        popover="manual"
         :hidden="!isListVisible"
         ref="panelRef"
         @mousedown="handlePanelMouseDown"

@@ -75,8 +75,8 @@ describe('gui-dropdown', () => {
       cy.mount(html`<gui-dropdown uid="fw" label="Framework" .items=${frameworks}></gui-dropdown>`);
     });
 
-    it('opens on focus and lists the items', () => {
-      input().focus();
+    it('opens when the user clicks into it, and lists the items', () => {
+      input().click();
       panel().should('be.visible');
       input().should('have.attr', 'aria-expanded', 'true');
       options().should('have.length', 3);
@@ -104,11 +104,13 @@ describe('gui-dropdown', () => {
       const onBlur = cy.spy().as('blur');
       element().then(($el) => $el[0].addEventListener('gui-blur', onBlur));
 
-      input().focus();
+      input().click();
       toggle().focus();
       panel().should('be.visible');
       cy.get('@blur').should('not.have.been.called');
 
+      // The user presses somewhere else, which moves focus out.
+      cy.document().trigger('pointerdown').trigger('mousedown');
       toggle().blur();
       panel().should('not.be.visible');
       cy.get('@blur').should('have.been.calledOnce');
@@ -120,7 +122,7 @@ describe('gui-dropdown', () => {
         doc.addEventListener('keydown', (event) => event.key === 'Escape' && onEscape()),
       );
 
-      input().focus();
+      input().click();
       input().type('{esc}');
       panel().should('not.be.visible');
       cy.get('@escape').should('not.have.been.called');
@@ -130,7 +132,7 @@ describe('gui-dropdown', () => {
     });
 
     it('closes on Escape from inside the list and returns focus to the field', () => {
-      input().focus().type('{downArrow}');
+      input().click().type('{downArrow}');
       cy.focused().should('have.attr', 'id', 'fw-list');
       cy.focused().type('{esc}');
       panel().should('not.be.visible');
@@ -138,7 +140,7 @@ describe('gui-dropdown', () => {
     });
 
     it('keeps the list as the only tab stop of the panel', () => {
-      input().focus();
+      input().click();
       list().should('have.attr', 'tabindex', '0');
       options().should('have.attr', 'tabindex', '-1');
     });
@@ -160,7 +162,7 @@ describe('gui-dropdown', () => {
         ></gui-dropdown>`,
       );
 
-      input().focus();
+      input().click();
       options().contains('Porto').click();
 
       element().should('have.prop', 'value', 'POR');
@@ -185,7 +187,7 @@ describe('gui-dropdown', () => {
         ></gui-dropdown>`,
       );
 
-      input().focus().type('{downArrow}');
+      input().click().type('{downArrow}');
       cy.focused().type('{downArrow}{downArrow}');
       list().should('have.attr', 'aria-activedescendant', 'fw-item-1');
       cy.get('#fw-item-1').should('have.attr', 'role', 'option');
@@ -206,7 +208,7 @@ describe('gui-dropdown', () => {
         html`<gui-dropdown label="Framework" value="Vue" .items=${frameworks}></gui-dropdown>`,
       );
 
-      input().focus();
+      input().click();
       options().eq(2).should('have.attr', 'aria-selected', 'true');
       options().eq(2).find('.gui-list__item').should('have.class', 'gui-list__item-selected');
       options().eq(0).should('have.attr', 'aria-selected', 'false');
@@ -219,7 +221,7 @@ describe('gui-dropdown', () => {
       ];
       cy.mount(html`<gui-dropdown label="Framework" .items=${items}></gui-dropdown>`);
 
-      input().focus();
+      input().click();
       options().eq(1).should('have.attr', 'aria-disabled', 'true');
       options().eq(1).click({ force: true });
       element().should(($el) => expect($el[0].value).to.equal(undefined));
@@ -236,7 +238,7 @@ describe('gui-dropdown', () => {
         ></gui-dropdown>`,
       );
 
-      input().focus().clear().type('{enter}');
+      input().click().clear().type('{enter}');
       element().should(($el) => expect($el[0].value).to.equal(undefined));
       cy.get('@change').should(
         'have.been.calledOnceWith',
@@ -257,7 +259,7 @@ describe('gui-dropdown', () => {
       );
 
       input().should('have.attr', 'readonly');
-      input().focus();
+      input().click();
       options().eq(0).click();
       input().invoke('val', '').trigger('keydown', { key: 'Enter' });
       element().should('have.prop', 'value', 'Vue');
@@ -408,7 +410,7 @@ describe('gui-dropdown', () => {
         'have.been.calledWith',
         Cypress.sinon.match.has('detail', { query: '' }),
       );
-      input().blur().focus();
+      input().blur().click();
       options().should('have.length', 3);
     });
   });
@@ -428,7 +430,7 @@ describe('gui-dropdown', () => {
         ></gui-dropdown>`,
       );
 
-      input().focus();
+      input().click();
       options().eq(0).find('.gui-list__item-content b.code').should('have.text', 'MAD');
       options().eq(1).should('contain.text', 'Lisbon ✓');
     });
@@ -440,7 +442,7 @@ describe('gui-dropdown', () => {
         html`<gui-dropdown label="Text" .items=${items} .renderItem=${renderItem}></gui-dropdown>`,
       );
 
-      input().focus();
+      input().click();
       options().eq(0).find('i').should('have.text', items[0].label);
       options().eq(0).find('img').should('not.exist');
       cy.window().should((win) =>
@@ -458,7 +460,7 @@ describe('gui-dropdown', () => {
         ></gui-dropdown>`,
       );
 
-      input().focus();
+      input().click();
       options().eq(0).should('contain.text', '<b>React</b>');
       options().eq(0).find('b').should('not.exist');
     });
@@ -478,11 +480,12 @@ describe('gui-dropdown', () => {
         ></gui-dropdown>`,
       );
 
-      input().focus();
+      input().click();
       options().eq(1).find('.gui-list__item-content').should('have.text', 'Own Angular');
       input().type('Vu');
       options().should('have.length', 1);
       cy.wrap(cleaned).should('deep.equal', ['React', 'Angular']);
+      cy.document().trigger('pointerdown').trigger('mousedown');
       input().blur();
       cy.wrap(cleaned).should('deep.equal', ['React', 'Angular', 'Vue']);
     });
@@ -495,7 +498,7 @@ describe('gui-dropdown', () => {
         html`<gui-dropdown uid="long" label="Item" height="200" .items=${items}></gui-dropdown>`,
       );
 
-      input().focus();
+      input().click();
       options().should('have.length.lessThan', 20);
       list()
         .shadow()
@@ -524,7 +527,7 @@ describe('gui-dropdown', () => {
         .should('have.attr', 'aria-invalid', 'true')
         .and('have.attr', 'aria-errormessage', 'fw_errors');
 
-      input().focus();
+      input().click();
       cy.get('#fw_panel_errors')
         .should('be.visible')
         .and('contain.text', 'Pick a framework')
@@ -544,7 +547,7 @@ describe('gui-dropdown', () => {
         ></gui-dropdown>`,
       );
 
-      input().focus();
+      input().click();
       cy.get('#fw_panel_errors').click();
       panel().should('be.visible');
     });

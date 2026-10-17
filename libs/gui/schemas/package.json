@@ -1,6 +1,16 @@
 {
   "name": "@golemui/gui-schemas",
   "version": "0.0.0",
+  "description": "JSON Schemas for GolemUI form definitions, so dynamic forms written in JSON get editor completion and validation. Open source (MIT).",
+  "keywords": [
+    "golemui",
+    "dynamic-forms",
+    "json-forms",
+    "json-schema",
+    "json-schema-form",
+    "forms",
+    "validation"
+  ],
   "license": "MIT",
   "publishConfig": {
     "access": "public"

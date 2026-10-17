@@ -1,6 +1,8 @@
 import { ReactiveElement, type PropertyValues } from 'lit';
 import { property } from 'lit/decorators.js';
 import { safeDefine } from '@golemui/lit-utils';
+import { GUIRovingFocusController } from '../controllers/roving-focus.controller';
+import { ensureId, syncAttribute } from '../utils/attributes';
 import { fires } from '../utils/events';
 import type { GuiTab } from './tab';
 import type { GuiTabList } from './tab-list';
@@ -11,20 +13,6 @@ import './tab-panel';
 
 /** The detail of `gui-tab-change`: the `panel` of the tab the user selected. */
 export type GuiTabChangeEventDetail = { value: string };
-
-let nextId = 0;
-
-/** Gives an element an id, unless it has one. */
-function ensureId(element: Element, part: string): string {
-  if (!element.id) element.id = `gui-${part}-${++nextId}`;
-  return element.id;
-}
-
-/** Sets an attribute, or removes it for `null`, leaving it alone when it already matches. */
-function syncAttribute(element: Element, name: string, value: string | null): void {
-  if (value === null) element.removeAttribute(name);
-  else if (element.getAttribute(name) !== value) element.setAttribute(name, value);
-}
 
 /**
  * Tabs, composed from parts the app renders: a `gui-tab-list` of `gui-tab`s, and a `gui-tab-panel`
@@ -54,6 +42,13 @@ export class GuiTabs extends ReactiveElement {
   private resizes?: ResizeObserver;
   private observedList: Element | undefined;
   private revealed = false;
+
+  // The arrows, Home and End move between the tabs, and moving selects (automatic activation).
+  private roving = new GUIRovingFocusController(this, {
+    items: () => this.tabs,
+    orientation: 'horizontal',
+    onMove: (tab) => this.select(tab as GuiTab),
+  });
 
   override createRenderRoot() {
     return this;
@@ -204,22 +199,7 @@ export class GuiTabs extends ReactiveElement {
 
   private onKeyDown = (event: KeyboardEvent) => {
     const tab = this.ownTab(event);
-    if (!tab) return;
-
-    const tabs = this.tabs;
-    const index = tabs.indexOf(tab);
-    const forward = getComputedStyle(this).direction === 'rtl' ? -1 : 1;
-    const next = {
-      ArrowLeft: tabs[index - forward],
-      ArrowRight: tabs[index + forward],
-      Home: tabs[0],
-      End: tabs[tabs.length - 1],
-    }[event.key];
-    if (!next) return;
-
-    event.preventDefault();
-    next.focus();
-    this.select(next);
+    if (tab) this.roving.handleKeyDown(event, tab);
   };
 
   private onScroll = (event: Event) => {

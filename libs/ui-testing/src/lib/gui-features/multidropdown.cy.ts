@@ -150,6 +150,33 @@ export const runMultiDropdownComponentTests = (mountFn: MountComponentFn) => {
     describe('panel toggle button', () => {
       const toggleSel = '.gui-multi-dropdown button.gui-dropdown__arrow';
 
+      // In the top layer, so no container clips it: under the field and as wide as it.
+      // APG combobox: focus alone never opens the list. A click, ArrowDown or typing does.
+      it('should open the panel on a click or ArrowDown, not on focus alone', () => {
+        mountMultiDropdown();
+
+        cy.get(sel.input).focus();
+        cy.get(sel.panel).should('not.be.visible');
+        cy.get(sel.input).type('{downArrow}');
+        cy.get(sel.panel).should('be.visible');
+      });
+
+      it('should show the panel in the top layer, under its field and as wide as it', () => {
+        mountMultiDropdown();
+
+        cy.get(toggleSel).click();
+        cy.get('.gui-multi-dropdown > .gui-widget').then(([field]) =>
+          cy.get('.gui-multi-dropdown .gui-widget > .gui-picker__panel').should(([panel]) => {
+            expect(panel.matches(':popover-open'), 'in the top layer').to.equal(true);
+            const fieldBox = field.getBoundingClientRect();
+            const panelBox = panel.getBoundingClientRect();
+            expect(panelBox.top).to.be.closeTo(fieldBox.bottom + 2, 1);
+            expect(panelBox.left).to.be.closeTo(fieldBox.left, 1);
+            expect(panelBox.width).to.be.closeTo(fieldBox.width, 1);
+          }),
+        );
+      });
+
       it('should expose a named toggle button wired to the listbox', () => {
         mountMultiDropdown();
 
@@ -187,7 +214,7 @@ export const runMultiDropdownComponentTests = (mountFn: MountComponentFn) => {
       it('should keep the panel open when focus moves from the input to the toggle button', () => {
         mountMultiDropdown();
 
-        cy.get(sel.input).focus();
+        cy.get(sel.input).click();
         cy.get(sel.panel).should('be.visible');
 
         cy.get(toggleSel).focus();
@@ -311,8 +338,8 @@ export const runMultiDropdownComponentTests = (mountFn: MountComponentFn) => {
         mountMultiDropdown({ data: { myField: ['React', 'Vue'] } });
         cy.get(sel.pill).should('have.length', 2);
 
-        // Focusing the input opens the panel first
-        cy.get(sel.input).focus();
+        // A click in the input opens the panel first
+        cy.get(sel.input).click();
         cy.get(sel.panel).should('not.have.attr', 'hidden');
 
         cy.focused().type('{leftArrow}');

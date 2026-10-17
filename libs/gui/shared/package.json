@@ -1,6 +1,23 @@
 {
   "name": "@golemui/gui-shared",
   "version": "0.0.0",
+  "description": "The GolemUI widget set for dynamic forms: the typed gui.* form builder, the widget definitions and their styles, for every framework. Open source (MIT).",
+  "keywords": [
+    "golemui",
+    "dynamic-forms",
+    "json-forms",
+    "json-schema-form",
+    "form-builder",
+    "form-generator",
+    "forms",
+    "validation",
+    "react",
+    "angular",
+    "vue",
+    "lit",
+    "web-components",
+    "typescript"
+  ],
   "license": "MIT",
   "publishConfig": {
     "access": "public"

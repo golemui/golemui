@@ -1,11 +1,7 @@
 // ─── Web components ───
 
 export { GuiAccordion, GuiAccordionEvents } from './lib/components/accordion';
-export {
-  GuiAccordionItem,
-  GuiAccordionItemEvents,
-  type GuiToggleEventDetail,
-} from './lib/components/accordion-item';
+export { GuiAccordionItem, GuiAccordionItemEvents } from './lib/components/accordion-item';
 export { GuiAlert, type GuiAlertVariant } from './lib/components/alert';
 export { GuiButton } from './lib/components/button';
 export { GuiCalendar, GuiCalendarEvents } from './lib/components/calendar';
@@ -24,6 +20,7 @@ export {
   GuiDateTimeCalendarEvents,
 } from './lib/components/date-time-calendar';
 export { GuiDateTimePicker, GuiDateTimePickerEvents } from './lib/components/date-time-picker';
+export { GuiDialog, GuiDialogEvents, type GuiDialogPlacement } from './lib/components/dialog';
 export { GuiDropdown, GuiDropdownEvents } from './lib/components/dropdown';
 export type { GuiFilterEventDetail } from './lib/components/dropdown';
 export { GuiErrors } from './lib/components/errors';
@@ -43,6 +40,7 @@ export { matchesAccept } from './lib/utils/file-upload';
 export { GuiMarkdown, GuiMarkdownEvents } from './lib/components/markdown';
 export type { GuiMarkdownProps } from './lib/components/markdown';
 export { GuiMarkdownText } from './lib/components/markdown-text';
+export { GuiMenu, GuiMenuEvents } from './lib/components/menu';
 export { GuiMultiDropdown, GuiMultiDropdownEvents } from './lib/components/multi-dropdown';
 export { GuiMultiFileUpload, GuiMultiFileUploadEvents } from './lib/components/multi-file-upload';
 export { GuiMultiList, GuiMultiListEvents } from './lib/components/multi-list';
@@ -69,6 +67,7 @@ export type {
   GuiPillKeydownEventDetail,
   GuiPillsDropdownEventDetail,
 } from './lib/components/pills';
+export { GuiPopover, GuiPopoverEvents, type GuiPlacement } from './lib/components/popover';
 export { GuiRadiogroup, GuiRadiogroupEvents } from './lib/components/radiogroup';
 export type { GuiRadiogroupProps } from './lib/components/radiogroup';
 export { GuiRangeCalendar, GuiRangeCalendarEvents } from './lib/components/range-calendar';
@@ -110,6 +109,7 @@ export type { GuiTimeProps } from './lib/components/time-input';
 export { GuiTimeList, GuiTimeListEvents } from './lib/components/time-list';
 export { GuiTimePicker, GuiTimePickerEvents } from './lib/components/time-picker';
 export { GuiToggle, GuiToggleEvents } from './lib/components/toggle';
+export { GuiTooltip, GuiTooltipEvents } from './lib/components/tooltip';
 export type { GuiToggleProps } from './lib/components/toggle';
 export { weekInfoData } from './lib/utils/week-info';
 export type { WeekInfo } from './lib/utils/week-info';
@@ -149,9 +149,11 @@ export { resumeServerRendered } from '@golemui/lit-utils';
 // ─── Events ───
 
 export type {
+  GuiActionEventDetail,
   GuiEventMap,
   GuiEventType,
   GuiInputErrorEventDetail,
+  GuiToggleEventDetail,
   GuiValueEvent,
   GuiValueEventDetail,
 } from './lib/utils/events';

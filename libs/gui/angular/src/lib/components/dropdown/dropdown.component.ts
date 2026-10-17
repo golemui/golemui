@@ -22,6 +22,7 @@ import '@golemui/gui-components/label';
 import '@golemui/gui-components/list';
 import '@golemui/gui-components/errors';
 import { deferHydrationAttr } from '../../utils/defer-hydration';
+import { injectFloatingPanel } from '../../utils/floating-panel';
 
 @Component({
   standalone: true,
@@ -48,8 +49,9 @@ export class DropdownComponent implements OnInit, OnDestroy, WithWidget {
 
   protected listItems = signal<ListItem<never>[]>([]);
   protected isListVisible = signal(false);
+  // The panel shows in the top layer while the list is visible, under the field.
+  protected readonly floating = injectFloatingPanel(() => this.isListVisible());
   protected isFiltering = signal(false);
-  private ignoreNextFocus = false;
 
   protected selectedItem = signal<ListItem<never> | undefined>(undefined);
   protected filteredItems = signal<ListItem<never>[]>([]);
@@ -115,8 +117,8 @@ export class DropdownComponent implements OnInit, OnDestroy, WithWidget {
     event.preventDefault();
   }
 
-  protected onInputFocus() {
-    if (this.ignoreNextFocus) return;
+  /** Opens the list: from a click on the field or the toggle. Focus alone does not (APG combobox). */
+  protected showList() {
     this.isListVisible.set(true);
 
     setTimeout(() => {
@@ -126,17 +128,15 @@ export class DropdownComponent implements OnInit, OnDestroy, WithWidget {
     }, 0);
   }
 
+  /** Escape and Alt+ArrowUp close the list and return focus to the field (APG combobox). */
   protected onWidgetKeyDown(event: KeyboardEvent) {
-    if (event.key !== 'Escape' || !this.isListVisible()) return;
+    const closing = event.key === 'Escape' || (event.altKey && event.key === 'ArrowUp');
+    if (!closing || !this.isListVisible()) return;
     event.preventDefault();
     event.stopPropagation();
     this.isListVisible.set(false);
     this.isFiltering.set(false);
-    this.ignoreNextFocus = true;
     this.inputRef().nativeElement.focus();
-    setTimeout(() => {
-      this.ignoreNextFocus = false;
-    });
   }
 
   protected onToggleMouseDown(event: MouseEvent) {
@@ -148,14 +148,10 @@ export class DropdownComponent implements OnInit, OnDestroy, WithWidget {
     if (this.isListVisible()) {
       this.isListVisible.set(false);
       this.isFiltering.set(false);
-      this.ignoreNextFocus = true;
       this.inputRef().nativeElement.focus();
-      setTimeout(() => {
-        this.ignoreNextFocus = false;
-      });
     } else {
       this.inputRef().nativeElement.focus();
-      this.onInputFocus();
+      this.showList();
     }
   }
 

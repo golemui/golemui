@@ -1,6 +1,16 @@
 {
   "name": "@golemui/gui-validators",
   "version": "0.0.0",
+  "description": "Validators for GolemUI dynamic forms: built-in rules for strings, numbers, booleans, arrays and files, plus your own custom validators. Open source (MIT).",
+  "keywords": [
+    "golemui",
+    "dynamic-forms",
+    "json-forms",
+    "forms",
+    "validation",
+    "validators",
+    "form-validation"
+  ],
   "license": "MIT",
   "publishConfig": {
     "access": "public"
