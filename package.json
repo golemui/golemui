@@ -88,7 +88,7 @@
     "@nuxt/kit": "~4.4.8",
     "@nx/angular": "22.7.8",
     "@nx/cypress": "22.7.8",
-    "@nx/eslint": "22.7.8",
+    "@nx/eslint": "23.3.0",
     "@nx/eslint-plugin": "22.7.8",
     "@nx/js": "22.7.8",
     "@nx/react": "22.7.8",
