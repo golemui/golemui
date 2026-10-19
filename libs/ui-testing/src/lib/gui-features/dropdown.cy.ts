@@ -141,6 +141,37 @@ export const runDropdownComponentTests = (mountFn: MountComponentFn) => {
       const toggleSel = 'button.gui-dropdown__arrow';
       const panelSel = '.gui-dropdown .gui-widget > .gui-picker__panel';
 
+      // In the top layer, so no container clips it: under the field and as wide as it.
+      // APG combobox: focus alone never opens the list. A click, ArrowDown or typing does.
+      it('should open the panel on a click or ArrowDown, not on focus alone', () => {
+        mountWithItems(['one', 'two']);
+
+        cy.get('[data-cy="testSubject_textinput"]').focus();
+        cy.get(panelSel).should('not.be.visible');
+        cy.get('[data-cy="testSubject_textinput"]').type('{downArrow}');
+        cy.get(panelSel).should('be.visible');
+        cy.get('[data-cy="testSubject_textinput"]').type('{esc}');
+        cy.get(panelSel).should('not.be.visible');
+        cy.get('[data-cy="testSubject_textinput"]').click();
+        cy.get(panelSel).should('be.visible');
+      });
+
+      it('should show the panel in the top layer, under its field and as wide as it', () => {
+        mountWithItems(['one', 'two']);
+
+        cy.get(toggleSel).click();
+        cy.get('.gui-dropdown > .gui-widget').then(([field]) =>
+          cy.get('.gui-dropdown .gui-widget > .gui-picker__panel').should(([panel]) => {
+            expect(panel.matches(':popover-open'), 'in the top layer').to.equal(true);
+            const fieldBox = field.getBoundingClientRect();
+            const panelBox = panel.getBoundingClientRect();
+            expect(panelBox.top).to.be.closeTo(fieldBox.bottom + 2, 1);
+            expect(panelBox.left).to.be.closeTo(fieldBox.left, 1);
+            expect(panelBox.width).to.be.closeTo(fieldBox.width, 1);
+          }),
+        );
+      });
+
       it('should expose a named toggle button wired to the listbox', () => {
         mountWithItems(['one', 'two']);
 
@@ -178,7 +209,7 @@ export const runDropdownComponentTests = (mountFn: MountComponentFn) => {
       it('should keep the panel open when focus moves from the input to the toggle button', () => {
         mountWithItems(['one', 'two']);
 
-        cy.get('[data-cy="testSubject_textinput"]').focus();
+        cy.get('[data-cy="testSubject_textinput"]').click();
         cy.get(panelSel).should('be.visible');
 
         cy.get(toggleSel).focus();

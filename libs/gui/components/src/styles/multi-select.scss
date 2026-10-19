@@ -103,7 +103,9 @@ gui-multi-select-trigger {
 
     > .gui-picker__panel {
       @include gui-picker-panel-chrome;
-      width: calc(100% - (var(--gui-space-2) * 2) - 2px);
+      // As wide as the field: the controller sets the field's width.
+      box-sizing: border-box;
+      width: var(--gui-anchor-width, auto);
 
       gui-multi-list {
         position: static;
@@ -129,11 +131,6 @@ gui-multi-select-trigger {
     .gui-widget
     > .gui-picker__panel {
     border-color: var(--gui-intent-error);
-  }
-
-  // Parity with the pickers: an open multi-dropdown stacks above later fields.
-  &:has(.gui-widget input[aria-expanded='true']) {
-    z-index: 20;
   }
 }
 

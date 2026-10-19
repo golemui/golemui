@@ -197,6 +197,9 @@
   /* Widgets */
   --gui-widget-size: 40px;
 
+  /* Overlays: how long popovers take to fade in and out. */
+  --gui-overlay-duration: 0.15s;
+
   /* Caret: the arrow of the pickers, selects, dropdowns, number spinner, calendar and accordion.
      The default is a CSS shape, so it loads no image. For an icon of your own, set the image
      (a url() your Content Security Policy allows) and set the shape to none. */

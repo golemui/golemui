@@ -1,6 +1,26 @@
 {
   "name": "@golemui/gui-components",
   "version": "0.0.0",
+  "description": "GolemUI Components: accessible web components for plain HTML, React, Angular, Vue and Lit. Headless, server-rendered and ready for any i18n library. Open source (MIT).",
+  "keywords": [
+    "golemui",
+    "web-components",
+    "custom-elements",
+    "ui-kit",
+    "ui-components",
+    "design-system",
+    "form-controls",
+    "date-picker",
+    "accessibility",
+    "a11y",
+    "headless",
+    "ssr",
+    "i18n",
+    "lit",
+    "react",
+    "angular",
+    "vue"
+  ],
   "license": "MIT",
   "publishConfig": {
     "access": "public"
@@ -108,6 +128,11 @@
       "import": "./lib/components/date-time-picker.js",
       "require": "./lib/components/date-time-picker.umd.cjs"
     },
+    "./dialog": {
+      "types": "./lib/components/dialog.d.ts",
+      "import": "./lib/components/dialog.js",
+      "require": "./lib/components/dialog.umd.cjs"
+    },
     "./dropdown": {
       "types": "./lib/components/dropdown.d.ts",
       "import": "./lib/components/dropdown.js",
@@ -137,6 +162,11 @@
       "types": "./lib/components/markdown-text.d.ts",
       "import": "./lib/components/markdown-text.js",
       "require": "./lib/components/markdown-text.umd.cjs"
+    },
+    "./menu": {
+      "types": "./lib/components/menu.d.ts",
+      "import": "./lib/components/menu.js",
+      "require": "./lib/components/menu.umd.cjs"
     },
     "./file-upload": {
       "types": "./lib/components/file-upload.d.ts",
@@ -177,6 +207,11 @@
       "types": "./lib/components/pills.d.ts",
       "import": "./lib/components/pills.js",
       "require": "./lib/components/pills.umd.cjs"
+    },
+    "./popover": {
+      "types": "./lib/components/popover.d.ts",
+      "import": "./lib/components/popover.js",
+      "require": "./lib/components/popover.umd.cjs"
     },
     "./radiogroup": {
       "types": "./lib/components/radiogroup.d.ts",
@@ -282,6 +317,11 @@
       "types": "./lib/components/toggle.d.ts",
       "import": "./lib/components/toggle.js",
       "require": "./lib/components/toggle.umd.cjs"
+    },
+    "./tooltip": {
+      "types": "./lib/components/tooltip.d.ts",
+      "import": "./lib/components/tooltip.js",
+      "require": "./lib/components/tooltip.umd.cjs"
     },
     "./tokens.css": "./lib/styles/tokens.css",
     "./components.css": "./lib/styles/components.css",

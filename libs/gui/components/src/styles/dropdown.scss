@@ -39,7 +39,9 @@
 
     > .gui-picker__panel {
       @include gui-picker-panel-chrome;
-      width: calc(100% - (var(--gui-space-2) * 2) - 2px);
+      // As wide as the field: the controller sets the field's width.
+      box-sizing: border-box;
+      width: var(--gui-anchor-width, auto);
 
       gui-list {
         position: static;
@@ -64,10 +66,5 @@
   // Invalid field → the open panel shares the red border.
   &:has(.gui-widget > .gui-widget-input[aria-invalid='true']) .gui-widget > .gui-picker__panel {
     border-color: var(--gui-intent-error);
-  }
-
-  // Parity with the pickers: an open dropdown stacks above later fields.
-  &:has(.gui-widget > input[aria-expanded='true']) {
-    z-index: 20;
   }
 }

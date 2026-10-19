@@ -1,6 +1,15 @@
 {
   "name": "@golemui/schemas",
   "version": "0.0.0",
+  "description": "Base JSON Schemas and builders for GolemUI widget sets, so JSON form definitions written against your widgets get completion and validation. Open source (MIT).",
+  "keywords": [
+    "golemui",
+    "dynamic-forms",
+    "json-forms",
+    "json-schema",
+    "forms",
+    "widget-set"
+  ],
   "license": "MIT",
   "publishConfig": {
     "access": "public"

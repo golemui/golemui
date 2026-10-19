@@ -1,6 +1,22 @@
 {
   "name": "@golemui/gui-lit",
   "version": "0.0.0",
+  "description": "Dynamic forms from JSON with Lit or vanilla JS: the GolemUI form element, with server-side rendering in Lit and Astro. Open source (MIT).",
+  "keywords": [
+    "golemui",
+    "dynamic-forms",
+    "json-forms",
+    "json-schema-form",
+    "form-builder",
+    "form-generator",
+    "forms",
+    "validation",
+    "lit",
+    "web-components",
+    "vanilla-js",
+    "astro",
+    "ssr"
+  ],
   "license": "MIT",
   "publishConfig": {
     "access": "public"

@@ -89,6 +89,8 @@ export const elements: ElementCase[] = [
     props: { label: 'Start' },
     form: { property: 'value', sample: '2026-03-15T10:30:00' },
   },
+  // Its dialog is the app's child: dialog.cy.ts checks it with one, open and closed.
+  { tag: 'gui-dialog', props: {}, hostRendersChildren: true },
   {
     tag: 'gui-dropdown',
     props: { label: 'Color', items: options },
@@ -114,6 +116,8 @@ export const elements: ElementCase[] = [
     tag: 'gui-markdown-text',
     props: { md: 'Hello', dependencies: { markdown: { parse: (md: string) => `<p>${md}</p>` } } },
   },
+  // Its panel and items are the app's children: menu.cy.ts checks it with them, open and closed.
+  { tag: 'gui-menu', props: {}, hostRendersChildren: true },
   {
     tag: 'gui-multi-dropdown',
     props: { label: 'Colors', items: options },
@@ -150,6 +154,8 @@ export const elements: ElementCase[] = [
       removable: true,
     },
   },
+  // Its panel is the app's child: popover.cy.ts checks it with one, open and closed.
+  { tag: 'gui-popover', props: {}, hostRendersChildren: true },
   {
     tag: 'gui-radiogroup',
     props: { label: 'Color', options },
@@ -221,4 +227,7 @@ export const elements: ElementCase[] = [
     props: { label: 'Notifications' },
     form: { property: 'value', sample: true },
   },
+  // Its text is the app's children, and it stays hidden until it opens: tooltip.cy.ts checks it
+  // open, with its target.
+  { tag: 'gui-tooltip', props: {}, hostRendersChildren: true },
 ];

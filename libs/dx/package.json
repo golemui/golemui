@@ -1,6 +1,16 @@
 {
   "name": "@golemui/dx",
   "version": "0.0.0",
+  "description": "The typed form-authoring pipeline behind GolemUI widget sets: generates a gui.* style builder for your own widget set. Open source (MIT).",
+  "keywords": [
+    "golemui",
+    "dynamic-forms",
+    "form-builder",
+    "forms",
+    "typescript",
+    "widget-set",
+    "codegen"
+  ],
   "license": "MIT",
   "publishConfig": {
     "access": "public"

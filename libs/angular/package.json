@@ -1,6 +1,15 @@
 {
   "name": "@golemui/angular",
   "version": "0.0.0",
+  "description": "Angular bindings of the GolemUI forms engine, for building widget sets. For dynamic forms in Angular, install @golemui/gui-angular. Open source (MIT).",
+  "keywords": [
+    "golemui",
+    "dynamic-forms",
+    "json-forms",
+    "forms",
+    "angular",
+    "widget-set"
+  ],
   "license": "MIT",
   "publishConfig": {
     "access": "public"

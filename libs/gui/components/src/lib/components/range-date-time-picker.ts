@@ -7,7 +7,7 @@ import './range-date-time-input';
 import './range-date-time-calendar';
 import type { GuiRangeDateTimeInput } from './range-date-time-input';
 import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
-import { GUIPopupController } from '../controllers/popup.controller';
+import { fieldPanel, GUIPopupController } from '../controllers/popup.controller';
 import { type HourFormat } from '../utils/time';
 import { addErrors, addIcon, addLabel, addPickerPanel } from '../utils/templates';
 import type { DateTimeRange } from '../types';
@@ -275,6 +275,7 @@ export class GuiRangeDateTimePicker extends GuiFormControl {
   @state() private _workingEndTime: string | undefined = undefined;
 
   private _popup = new GUIPopupController(this, {
+    floating: fieldPanel(this),
     focusRestoreSelector: 'gui-range-date-time input',
     focusPopupSelector: '.gui-calendar__day-button[tabindex="0"]',
     isDisabled: () => !!this.disabled,
@@ -479,7 +480,7 @@ export class GuiRangeDateTimePicker extends GuiFormControl {
           .editCommittedMessage=${this.editCommittedMessage}
           .editCancelledMessage=${this.editCancelledMessage}
           @gui-blur=${this.onDateBlur}
-          @gui-focus=${this.onDateFocus}
+          @gui-focus=${stopPropagation}
           @gui-input=${this.onDateInput}
           @gui-change=${this.onDateChange}
           @gui-input-error=${this.onInputError}
@@ -539,11 +540,6 @@ export class GuiRangeDateTimePicker extends GuiFormControl {
    */
   private onDateBlur(event: Event) {
     event.stopPropagation();
-  }
-
-  private onDateFocus(event: Event) {
-    stopPropagation(event);
-    this._popup.show();
   }
 
   /**

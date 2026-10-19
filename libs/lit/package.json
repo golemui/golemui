@@ -1,6 +1,16 @@
 {
   "name": "@golemui/lit",
   "version": "0.0.0",
+  "description": "Lit and web component bindings of the GolemUI forms engine, for building widget sets. For dynamic forms with Lit, install @golemui/gui-lit. Open source (MIT).",
+  "keywords": [
+    "golemui",
+    "dynamic-forms",
+    "json-forms",
+    "forms",
+    "lit",
+    "web-components",
+    "widget-set"
+  ],
   "license": "MIT",
   "publishConfig": {
     "access": "public"

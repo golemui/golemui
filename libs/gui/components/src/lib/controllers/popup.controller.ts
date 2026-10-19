@@ -1,4 +1,5 @@
 import { type ReactiveController } from 'lit';
+import { GUIFloatingPanel, type GUIFloatingPanelOptions } from './floating-panel';
 import { GUIFocusLeaveController, type GUIFocusLeaveHost } from './focus-leave.controller';
 
 export type GUIPopupHost = GUIFocusLeaveHost;
@@ -46,7 +47,20 @@ export interface GUIPopupControllerOptions {
   beforeOpen?(controller: GUIPopupController): void;
   /** Fired after every actual open-state change (not on redundant calls). */
   onOpenChanged?(open: boolean): void;
+  /**
+   * Shows the popup in the top layer while it is open, above every container that would clip it
+   * (an `overflow` box, a modal dialog, a transformed drawer), placed next to its anchor and
+   * flipped at the viewport's edges. The host renders the panel with `popover="manual"`; the
+   * controller shows, places and hides it, and keeps owning when it opens and closes.
+   */
+  floating?: GUIFloatingPanelOptions;
 }
+
+/** The floating panel of a field: the `.gui-picker__panel` in its `.gui-widget`, placed under it. */
+export const fieldPanel = (host: HTMLElement): GUIFloatingPanelOptions => ({
+  panel: () => host.querySelector<HTMLElement>(':scope > .gui-widget > .gui-picker__panel'),
+  anchor: () => host.querySelector(':scope > .gui-widget'),
+});
 
 /**
  * Overlay shell shared by the six picker components.
@@ -71,6 +85,8 @@ export class GUIPopupController implements ReactiveController {
   private _pointerDownInside = false;
   private _pointerDownTarget: HTMLElement | null = null;
 
+  private floating?: GUIFloatingPanel;
+
   constructor(host: GUIPopupHost, options: GUIPopupControllerOptions) {
     this.host = host;
     this.options = options;
@@ -80,6 +96,7 @@ export class GUIPopupController implements ReactiveController {
       },
     });
     host.addController(this);
+    if (options.floating) this.floating = new GUIFloatingPanel(options.floating);
   }
 
   get open(): boolean {
@@ -147,15 +164,24 @@ export class GUIPopupController implements ReactiveController {
   };
 
   /**
-   * Template-bindable anchor keydown handler. Escape while open prevents
-   * default, stops propagation, restores focus to the input, then closes.
+   * Template-bindable anchor keydown handler: the keys of the APG combobox pattern. Alt+ArrowDown
+   * opens the popup (and focuses into it, as the toggle does), Alt+ArrowUp and Escape close it and
+   * return focus to the field. Focus alone never opens it: the user asks for it.
    *
-   * @returns true when it consumed the event (Escape while open), so hosts
-   *   with extra keydown behavior (time-picker's arrow stepping / Enter
-   *   commit) can bail out exactly where the monolithic handler returned.
+   * @returns true when it consumed the event, so hosts with extra keydown behavior (time-picker's
+   *   arrow stepping / Enter commit) can bail out exactly where the monolithic handler returned.
    */
   onAnchorKeyDown = (event: KeyboardEvent): boolean => {
     if (this.options.isDisabled()) return false;
+    if (event.altKey && (event.key === 'ArrowDown' || event.key === 'ArrowUp')) {
+      event.preventDefault();
+      if (event.key === 'ArrowDown' && !this._open) this.openAndFocus();
+      if (event.key === 'ArrowUp' && this._open) {
+        this.restoreFocusToInput();
+        this.close();
+      }
+      return true;
+    }
     if (event.key === 'Escape' && this._open) {
       event.preventDefault();
       event.stopPropagation();
@@ -236,6 +262,7 @@ export class GUIPopupController implements ReactiveController {
     if (this._open && this.options.isDisabled()) {
       this.close();
     }
+    this.floating?.sync(this._open);
   }
 
   hostConnected() {
@@ -255,5 +282,6 @@ export class GUIPopupController implements ReactiveController {
     document.removeEventListener('pointerdown', this.onDocumentPointerDown, true);
     document.removeEventListener('keydown', this.onDocumentKeyDown, true);
     this.host.removeEventListener('focusout', this.onHostFocusOut);
+    this.floating?.dispose();
   }
 }

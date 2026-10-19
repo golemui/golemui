@@ -76,6 +76,59 @@ describe('resuming server-rendered standalone elements', () => {
     expect(document.querySelector('gui-tab-panel > gui-select')).not.toBeNull();
   });
 
+  it('makes a tooltip describe its target once it resumes, and keeps it closed', async () => {
+    resumeServerRendered();
+    await settle();
+
+    const tooltip = document.querySelector('gui-tooltip') as HTMLElement;
+    expect(tooltip.getAttribute('role')).toBe('tooltip');
+    expect(tooltip.getAttribute('popover')).toBe('manual');
+    expect(tooltip.hasAttribute('open')).toBe(false);
+    expect(document.getElementById('plan-help-button')?.getAttribute('aria-describedby')).toBe(
+      tooltip.id,
+    );
+  });
+
+  it('gives a menu, its items and its button their roles once it resumes', async () => {
+    resumeServerRendered();
+    await settle();
+
+    const panel = document.getElementById('plan-actions') as HTMLElement;
+    expect(panel.getAttribute('role')).toBe('menu');
+    expect(panel.getAttribute('aria-labelledby')).toBe('plan-actions-button');
+    const items = panel.querySelectorAll('button');
+    for (const item of items) {
+      expect(item.getAttribute('role')).toBe('menuitem');
+      expect(item.getAttribute('tabindex')).toBe('-1');
+    }
+    expect(document.getElementById('plan-actions-button')?.getAttribute('aria-haspopup')).toBe(
+      'menu',
+    );
+  });
+
+  it('leaves the markup of a closed dialog as the server sent it', async () => {
+    const dialog = () => document.querySelector('gui-dialog > dialog') as HTMLDialogElement;
+    const before = dialog().outerHTML;
+    resumeServerRendered();
+    await settle();
+
+    expect(dialog().open).toBe(false);
+    expect(document.querySelector('gui-dialog')?.hasAttribute('open')).toBe(false);
+    // The text input inside it resumed: only its server-rendered markers changed.
+    expect(dialog().getAttributeNames()).toEqual(['id', 'aria-labelledby']);
+    expect(before).toContain('id="plan-dialog"');
+  });
+
+  it('leaves the markup of a closed popover as the server sent it', async () => {
+    const popover = () => document.querySelector('gui-popover') as HTMLElement;
+    const before = popover().outerHTML;
+    resumeServerRendered();
+    await settle();
+
+    // Only the hold goes: the element adds nothing the server markup lacks.
+    expect(popover().outerHTML).toBe(before.replace(' defer-hydration=""', ''));
+  });
+
   it('accepts user input after the resume', async () => {
     resumeServerRendered();
     await settle();

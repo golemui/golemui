@@ -1,6 +1,21 @@
 {
   "name": "@golemui/gui-vue",
   "version": "0.0.0",
+  "description": "Dynamic forms from JSON in Vue: the GolemUI GuiForm component, with server-side rendering in Vue and Nuxt. Open source (MIT).",
+  "keywords": [
+    "golemui",
+    "dynamic-forms",
+    "json-forms",
+    "json-schema-form",
+    "form-builder",
+    "form-generator",
+    "forms",
+    "validation",
+    "vue",
+    "vue-forms",
+    "nuxt",
+    "ssr"
+  ],
   "license": "MIT",
   "publishConfig": {
     "access": "public"

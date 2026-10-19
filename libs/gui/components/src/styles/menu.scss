@@ -1,0 +1,65 @@
+@use 'panel' as *;
+@use 'overlay' as *;
+
+// The element only enhances its panel, which the browser shows in the top layer.
+gui-menu {
+  display: contents;
+
+  > [popover] {
+    @include gui-floating-surface;
+    @include gui-overlay-motion(':popover-open');
+    box-sizing: border-box;
+    min-inline-size: 10rem;
+    max-inline-size: calc(100vw - var(--gui-space-2) * 2);
+    max-block-size: calc(100dvh - var(--gui-space-2) * 2);
+    padding: var(--gui-space-1);
+    color: var(--gui-text-default);
+    overflow: auto;
+    // The layout holds while the menu fades out, when it no longer matches :popover-open.
+    flex-direction: column;
+
+    // Only `display` waits for :popover-open: on a closed popover it would show it. The fade
+    // keeps it until the end, so the column above stays a column while the menu vanishes.
+    &:popover-open {
+      display: flex;
+    }
+
+    > :is(button, a[href], [role='menuitem']) {
+      appearance: none;
+      box-sizing: border-box;
+      display: block;
+      inline-size: 100%;
+      padding: var(--gui-space-2) var(--gui-space-3);
+      border: 0;
+      border-radius: var(--gui-radius-sm);
+      background: transparent;
+      color: inherit;
+      font: inherit;
+      text-align: start;
+      text-decoration: none;
+      cursor: pointer;
+
+      &:hover,
+      &:focus-visible {
+        background: var(--gui-bg-surface-hover);
+      }
+
+      &:focus-visible {
+        outline: 2px solid var(--gui-border-focus);
+        outline-offset: -2px;
+      }
+
+      &:is(:disabled, [aria-disabled='true']) {
+        background: transparent;
+        color: var(--gui-text-disabled);
+        cursor: not-allowed;
+      }
+    }
+
+    > hr {
+      margin: var(--gui-space-1) 0;
+      border: 0;
+      border-block-start: 1px solid var(--gui-border-default);
+    }
+  }
+}

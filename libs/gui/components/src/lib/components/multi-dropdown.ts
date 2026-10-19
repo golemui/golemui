@@ -82,7 +82,7 @@ export class GuiMultiDropdown extends GuiDropdown {
       .removeIcon=${this.removeIcon}
       @keydown=${this.onInputKeyDown}
       @input=${this.onInput}
-      @focusin=${this.onTriggerFocusIn}
+      @click=${this.onTriggerClick}
       @gui-pill-remove=${this.onPillRemove}
       @gui-dropdown-toggle=${this.onPillsDropdownToggle}
     ></gui-multi-select-trigger>`;
@@ -145,8 +145,11 @@ export class GuiMultiDropdown extends GuiDropdown {
     this.toggle(event.detail.value);
   }
 
-  /** Focus entering the search field opens the panel, not focus on a pill. */
-  private onTriggerFocusIn = (event: FocusEvent) => {
+  /**
+   * A click or tap on the search field opens the panel, not one on a pill. Focus alone does not
+   * (APG combobox).
+   */
+  private onTriggerClick = (event: MouseEvent) => {
     if (event.target === this.trigger?.input) this.popup.show();
   };
 

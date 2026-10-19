@@ -33,6 +33,7 @@ import '@golemui/gui-components/multi-list';
 import '@golemui/gui-components/multi-select-trigger';
 import '@golemui/gui-components/errors';
 import { deferHydrationAttr } from '../../utils/defer-hydration';
+import { injectFloatingPanel } from '../../utils/floating-panel';
 
 @Component({
   standalone: true,
@@ -60,8 +61,9 @@ export class MultiDropdownComponent implements OnInit, OnDestroy, WithWidget {
 
   protected listItems = signal<ListItem<any>[]>([]);
   protected isListVisible = signal(false);
+  // The panel shows in the top layer while the list is visible, under the field.
+  protected readonly floating = injectFloatingPanel(() => this.isListVisible());
   protected isFiltering = signal(false);
-  private ignoreNextFocus = false;
 
   protected filteredItems = signal<ListItem<any>[]>([]);
 
@@ -157,8 +159,11 @@ export class MultiDropdownComponent implements OnInit, OnDestroy, WithWidget {
     event.preventDefault();
   }
 
-  protected onTriggerFocusIn(event: FocusEvent) {
-    if (this.ignoreNextFocus) return;
+  /**
+   * A click on the search field opens the list, not one on a pill. Focus alone does not (APG
+   * combobox).
+   */
+  protected onTriggerClick(event: MouseEvent) {
     if (this.isListVisible()) return;
 
     const input = this.triggerRef()?.nativeElement?.input;
@@ -167,17 +172,15 @@ export class MultiDropdownComponent implements OnInit, OnDestroy, WithWidget {
     this.openPanel();
   }
 
+  /** Escape and Alt+ArrowUp close the list and return focus to the field (APG combobox). */
   protected onWidgetKeyDown(event: KeyboardEvent) {
-    if (event.key !== 'Escape' || !this.isListVisible()) return;
+    const closing = event.key === 'Escape' || (event.altKey && event.key === 'ArrowUp');
+    if (!closing || !this.isListVisible()) return;
     event.preventDefault();
     event.stopPropagation();
     this.isListVisible.set(false);
     this.isFiltering.set(false);
-    this.ignoreNextFocus = true;
     this.triggerRef()?.nativeElement?.focusInput();
-    setTimeout(() => {
-      this.ignoreNextFocus = false;
-    });
   }
 
   protected onToggleMouseDown(event: MouseEvent) {
@@ -189,11 +192,7 @@ export class MultiDropdownComponent implements OnInit, OnDestroy, WithWidget {
     if (this.isListVisible()) {
       this.isListVisible.set(false);
       this.isFiltering.set(false);
-      this.ignoreNextFocus = true;
       this.triggerRef()?.nativeElement?.focusInput();
-      setTimeout(() => {
-        this.ignoreNextFocus = false;
-      });
     } else {
       this.triggerRef()?.nativeElement?.focusInput();
       this.openPanel();

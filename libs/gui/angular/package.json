@@ -1,6 +1,21 @@
 {
   "name": "@golemui/gui-angular",
   "version": "0.0.0",
+  "description": "Dynamic forms from JSON in Angular: the GolemUI form component, with server-side rendering in Angular and Analog. Open source (MIT).",
+  "keywords": [
+    "golemui",
+    "dynamic-forms",
+    "json-forms",
+    "json-schema-form",
+    "form-builder",
+    "form-generator",
+    "forms",
+    "validation",
+    "angular",
+    "angular-forms",
+    "analog",
+    "ssr"
+  ],
   "license": "MIT",
   "publishConfig": {
     "access": "public"
