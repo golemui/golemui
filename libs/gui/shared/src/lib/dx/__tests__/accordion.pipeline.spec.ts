@@ -29,6 +29,20 @@ describe('DX Pipeline — Accordion', () => {
     expect(w.props?.renderMode).toBe('all');
   });
 
+  it('keeps a translation config label and derives the uid from its key', () => {
+    const result = processDx(
+      _guiAccordion([{ label: { key: 'sections.billing' }, children: [_guiTextInput('iban')] }]),
+    );
+    const w = getStaticChild(result, 0) as LayoutWidget & {
+      props?: { sections?: { label: unknown; uid: string }[] };
+    };
+
+    expect(w.props?.sections).toEqual([
+      { label: { key: 'sections.billing' }, uid: 'sections-billing' },
+    ]);
+    expect(w.children?.[0].uid).toBe('sections-billing');
+  });
+
   it('passes singleOpen, defaultOpen, and renderMode through to props', () => {
     const result = processDx(
       _guiAccordion(
