@@ -103,21 +103,26 @@
   --gui-intent-success: var(--gui-color-success-600);
   --gui-intent-success-hover: var(--gui-color-success-700);
   --gui-intent-success-bg: var(--gui-color-success-50);
+  /* The same tint, opaque, for an element that floats over the page (a toast). */
+  --gui-intent-success-surface: var(--gui-color-success-50);
   --gui-intent-success-text: var(--gui-color-success-900);
 
   --gui-intent-info: var(--gui-color-info-600);
   --gui-intent-info-hover: var(--gui-color-info-700);
   --gui-intent-info-bg: var(--gui-color-info-50);
+  --gui-intent-info-surface: var(--gui-color-info-50);
   --gui-intent-info-text: var(--gui-color-info-900);
 
   --gui-intent-warning: var(--gui-color-warning-500);
   --gui-intent-warning-hover: var(--gui-color-warning-600);
   --gui-intent-warning-bg: var(--gui-color-warning-50);
+  --gui-intent-warning-surface: var(--gui-color-warning-50);
   --gui-intent-warning-text: var(--gui-color-warning-900);
 
   --gui-intent-error: var(--gui-color-error-600);
   --gui-intent-error-hover: var(--gui-color-error-700);
   --gui-intent-error-bg: var(--gui-color-error-50);
+  --gui-intent-error-surface: var(--gui-color-error-50);
   --gui-intent-error-text: var(--gui-color-error-900);
 
   /* Spacing Scale */
@@ -292,19 +297,37 @@
   /* The light fills above need dark text: white on them is under 4.5:1. */
   --gui-intent-primary-text: var(--gui-color-neutral-950);
 
-  /* For dark mode background tints, we use color-mix to tint the dark surface */
+  /* For dark mode background tints, we use color-mix to tint the dark surface. A tint is
+     translucent; its `-surface` twin mixes it into the page background, opaque, for floating
+     elements. */
   --gui-intent-success-bg: color-mix(in srgb, var(--gui-color-success-500) 20%, transparent);
+  --gui-intent-success-surface: color-mix(
+    in srgb,
+    var(--gui-color-success-500) 20%,
+    var(--gui-bg-default)
+  );
   --gui-intent-success-text: var(--gui-color-success-400);
 
   --gui-intent-info-bg: color-mix(in srgb, var(--gui-color-info-500) 20%, transparent);
+  --gui-intent-info-surface: color-mix(
+    in srgb,
+    var(--gui-color-info-500) 20%,
+    var(--gui-bg-default)
+  );
   --gui-intent-info-text: var(--gui-color-info-400);
 
   --gui-intent-warning-bg: color-mix(in srgb, var(--gui-color-warning-500) 20%, transparent);
+  --gui-intent-warning-surface: color-mix(
+    in srgb,
+    var(--gui-color-warning-500) 20%,
+    var(--gui-bg-default)
+  );
   --gui-intent-warning-text: var(--gui-color-warning-400);
 
   --gui-intent-error: var(--gui-color-error-400);
   --gui-intent-error-hover: var(--gui-color-error-300);
   --gui-intent-error-bg: var(--gui-color-error-900);
+  --gui-intent-error-surface: var(--gui-color-error-900);
   --gui-intent-error-text: var(--gui-color-error-100);
 
   --gui-md-code-bg: var(--gui-color-neutral-700);

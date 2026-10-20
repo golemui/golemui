@@ -1,3 +1,5 @@
+@use 'intent' as *;
+
 gui-alert {
   padding: 0 var(--gui-space-4);
   margin: 0;
@@ -13,27 +15,5 @@ gui-alert {
   border-color: var(--gui-border-default);
   color: var(--gui-text-default);
 
-  &[variant='info'] {
-    background-color: var(--gui-intent-info-bg);
-    border-color: var(--gui-intent-info);
-    color: var(--gui-intent-info-text);
-  }
-
-  &[variant='success'] {
-    background-color: var(--gui-intent-success-bg);
-    border-color: var(--gui-intent-success);
-    color: var(--gui-intent-success-text);
-  }
-
-  &[variant='warning'] {
-    background-color: var(--gui-intent-warning-bg);
-    border-color: var(--gui-intent-warning);
-    color: var(--gui-intent-warning-text);
-  }
-
-  &[variant='error'] {
-    background-color: var(--gui-intent-error-bg);
-    border-color: var(--gui-intent-error);
-    color: var(--gui-intent-error-text);
-  }
+  @include gui-intent-colors('variant');
 }

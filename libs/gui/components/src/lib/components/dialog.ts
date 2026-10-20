@@ -4,6 +4,7 @@ import { safeDefine } from '@golemui/lit-utils';
 import { booleanAttribute } from '../utils/converters';
 import { warnInDevelopment } from '../utils/dev';
 import { dispatchToggle, fires, type GuiToggleEventDetail } from '../utils/events';
+import { trackModal } from '../utils/modal-stack';
 
 /** Where a dialog shows: centered, or as a drawer along one edge of the viewport. */
 export type GuiDialogPlacement = 'center' | 'start' | 'end' | 'top' | 'bottom';
@@ -57,6 +58,8 @@ export class GuiDialog extends ReactiveElement {
   private roleGiven: HTMLDialogElement | null = null;
   /** Whether the pointer went down on the backdrop: a drag out of the dialog is not a click on it. */
   private pressedBackdrop = false;
+  /** The dialog registered as an open modal, for the toaster (see `utils/modal-stack.ts`). */
+  private modal: HTMLDialogElement | null = null;
 
   override createRenderRoot() {
     return this;
@@ -83,6 +86,7 @@ export class GuiDialog extends ReactiveElement {
     this.mutations?.disconnect();
     this.removeEventListener('pointerdown', this.onPointerDown);
     this.removeEventListener('click', this.onClick);
+    this.syncModal(null);
   }
 
   protected override updated(changedProperties: PropertyValues) {
@@ -109,11 +113,21 @@ export class GuiDialog extends ReactiveElement {
 
     if (this.open === undefined) {
       this.open = this.known = dialog.open;
-      return;
+    } else {
+      this.known = this.open;
+      if (this.open && !dialog.open) this.show(dialog);
+      else if (!this.open && dialog.open) dialog.close();
     }
-    this.known = this.open;
-    if (this.open && !dialog.open) this.show(dialog);
-    else if (!this.open && dialog.open) dialog.close();
+    this.syncModal(dialog);
+  }
+
+  /** Registers the dialog on the modal stack while it is open as a modal, and only then. */
+  private syncModal(dialog: HTMLDialogElement | null) {
+    const modal = dialog?.open && dialog.matches(':modal') ? dialog : null;
+    if (modal === this.modal) return;
+    if (this.modal) trackModal(this.modal, false);
+    this.modal = modal;
+    if (modal) trackModal(modal, true);
   }
 
   /** The dialog opened or closed, or the app rendered it: the user's changes update `open`. */
@@ -121,6 +135,7 @@ export class GuiDialog extends ReactiveElement {
     const dialog = this.dialog;
     if (!dialog) return;
     this.syncRole(dialog);
+    this.syncModal(dialog);
     if (this.known === undefined || dialog.open === this.known) return;
     this.known = dialog.open;
     this.open = dialog.open;

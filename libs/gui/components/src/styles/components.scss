@@ -63,6 +63,7 @@
   @include meta.load-css('dialog');
   @include meta.load-css('menu');
   @include meta.load-css('popover');
+  @include meta.load-css('toast');
   @include meta.load-css('tooltip');
 
   // Validators

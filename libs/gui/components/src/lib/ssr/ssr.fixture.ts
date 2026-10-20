@@ -10,12 +10,14 @@ import '../components/tab-list';
 import '../components/tab-panel';
 import '../components/tabs';
 import '../components/textinput';
+import '../components/toast';
 import '../components/tooltip';
 
 /**
  * A page of elements shared by the server render and the resume specs: elements that render
  * their own content (the inputs) and elements whose children are the app's (the alert, the tabs,
- * the popover, the tooltip, the dialog and the menu), one nested in the other.
+ * the popover, the tooltip, the dialog and the menu), one nested in the other, and the toaster,
+ * which renders nothing until a toast arrives.
  *
  * Every value is an attribute: the client upgrades the elements from the HTML, so a property
  * binding such as `.options=${[...]}` would reach the server render only.
@@ -67,4 +69,5 @@ export const serverTemplate = () =>
       </dialog>
     </gui-dialog>
     <gui-checkbox uid="terms" name="terms" label="I accept the terms" value="true"></gui-checkbox>
+    <gui-toaster placement="top-end"></gui-toaster>
   </form>`;

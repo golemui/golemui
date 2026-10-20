@@ -168,6 +168,11 @@
       "import": "./lib/components/menu.js",
       "require": "./lib/components/menu.umd.cjs"
     },
+    "./toast": {
+      "types": "./lib/components/toast.d.ts",
+      "import": "./lib/components/toast.js",
+      "require": "./lib/components/toast.umd.cjs"
+    },
     "./file-upload": {
       "types": "./lib/components/file-upload.d.ts",
       "import": "./lib/components/file-upload.js",
