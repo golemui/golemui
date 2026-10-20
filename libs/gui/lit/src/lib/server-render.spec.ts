@@ -74,6 +74,13 @@ const config: FormInitConfig<Type<WithWidget>> = {
           props: { currency: 'USD' },
         },
         { kind: 'action', type: 'button', label: 'Create account', action: 'submit' },
+        {
+          uid: 'moreActions',
+          kind: 'action',
+          type: 'menu',
+          label: 'More',
+          props: { items: [{ label: 'Save as draft', value: 'draft' }] },
+        },
       ],
     },
   },
@@ -108,6 +115,7 @@ describe('server rendering the gui widget set in plain node', () => {
     expect(markup).toMatch(/<gui-grid-layout[^>]*class="[^"]*gui-field/);
     expect(markup).toMatch(/<gui-textinput-input[^>]*class="[^"]*gui-textinput[^"]*gui-field/);
     expect(markup).toMatch(/<gui-button-interactive[^>]*class="[^"]*gui-button[^"]*gui-field/);
+    expect(markup).toMatch(/<gui-menu-interactive[^>]*class="[^"]*gui-menu-button[^"]*gui-field/);
   });
 
   it('renders labels, values and the layout structure', () => {
@@ -115,6 +123,9 @@ describe('server rendering the gui widget set in plain node', () => {
     expect(markup).toMatch(/<input[^>]*id="firstName-textinput"[^>]*value="Ada"/);
     expect(markup).toMatch(/<input[^>]*id="lastName-textinput"[^>]*value="Lovelace"/);
     expect(markup).toContain('Create account');
+    expect(markup).toMatch(/<button[^>]*id="moreActions"[^>]*popovertarget="moreActions_menu"/);
+    expect(markup).toMatch(/<div[^>]*id="moreActions_menu"[^>]*popover/);
+    expect(markup).toContain('Save as draft');
     expect(markup).toMatch(/<div[^>]*class="gui-grid"/);
     expect(markup).toMatch(/<div[^>]*class="gui-grid__cell"/);
   });

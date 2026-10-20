@@ -3,6 +3,7 @@ import type {
   DateRange,
   DateTimeRange,
   DisabledTimeRange,
+  GuiPlacement,
   ListItem,
   Option,
   TimeRange,
@@ -31,6 +32,39 @@ export type ButtonProps = {
   variant?: 'filled' | 'outlined' | 'link';
   icon?: string;
   iconPosition?: 'left' | 'right';
+};
+
+/** An action in a menu. */
+export type MenuAction = {
+  /** The text of the item. */
+  label: Localizable;
+  /** What the menu's event carries in `detail.value` when the user picks the item. */
+  value: string;
+  /** Shows the item but stops the user picking it. */
+  disabled?: boolean;
+};
+
+/** A line between two groups of a menu's items. */
+export type MenuSeparator = { separator: true };
+
+export type MenuItem = MenuAction | MenuSeparator;
+
+export type MenuProps = {
+  /** The menu's items, in order. */
+  items: MenuItem[];
+  /** Where the menu opens, next to its button. Defaults to `bottom-start`. */
+  placement?: GuiPlacement;
+  /** The button's style. */
+  variant?: ButtonProps['variant'];
+  /** An icon on the button: a Material Icons ligature name. */
+  icon?: string;
+  /** The side of the label the icon is on. */
+  iconPosition?: ButtonProps['iconPosition'];
+  /**
+   * The button's accessible name when it shows no label, such as an icon-only "⋮" button. Screen
+   * readers announce it, and the menu takes its name from the button.
+   */
+  ariaLabel?: Localizable;
 };
 
 export type Autocomplete = 'on' | 'off' | (string & {});

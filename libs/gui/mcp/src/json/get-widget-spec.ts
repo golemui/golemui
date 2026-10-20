@@ -228,6 +228,21 @@ const EXAMPLES: Record<string, Record<string, unknown>> = {
     label: 'Submit',
     props: { variant: 'filled' },
   },
+  menu: {
+    uid: 'rowActions',
+    kind: 'action',
+    type: 'menu',
+    label: 'Actions',
+    on: { click: 'rowAction' },
+    props: {
+      items: [
+        { label: 'Edit', value: 'edit' },
+        { label: 'Duplicate', value: 'duplicate' },
+        { separator: true },
+        { label: 'Delete', value: 'delete' },
+      ],
+    },
+  },
   alert: {
     kind: 'display',
     type: 'alert',
@@ -377,6 +392,14 @@ const NOTES: Record<string, string[]> = {
       '`props.iconPosition` controls placement: `"left"` (default) or `"right"`. ' +
       'Both support state suffixes: `"icon.<stateName>": "hourglass_empty"` swaps the icon while a state is active. ' +
       'Call `get_concept({ concept: "icons" })` for setup instructions and the full list of icon-capable widgets.',
+  ],
+  menu: [
+    'A button that opens a menu of actions. Picking an item dispatches ONE event, `on.click`, with the item\'s `value` in `detail.value`: the host\'s `formEvent` handler receives `{ name: "rowAction", detail: { value: "edit" } }` and switches on the value. There is no event name per item.',
+    '`props.items` is an array of actions `{ label, value, disabled? }` and separators `{ separator: true }`. `label` is localizable. A menu is not an input: it has no `path` and stores nothing in the form data.',
+    '`props.placement` sets where the menu opens next to its button (default `"bottom-start"`; `"bottom-end"` suits a menu at the end of a row). `props.variant`, `props.icon` and `props.iconPosition` style the button like a `button` widget.',
+    '`label` is optional. An icon-only button (e.g. `props.icon: "more_vert"` for a "⋮" row menu) MUST set `props.ariaLabel`, the button\'s accessible name; the menu is named after the button too. `ariaLabel` is ignored while a `label` is shown.',
+    'In a repeater, every row gets its own menu. The event does not carry the row yet, so a per-row action must read the row some other way.',
+    'Keyboard and screen reader support come from `gui-menu`: the button gets `aria-haspopup="menu"`, the arrows move through the items, typing jumps to an item, Escape closes it and returns focus to the button.',
   ],
   checkbox: [
     'MANDATORY CHECKBOX (e.g. terms acceptance): `required: true` alone is a silent trap — it only rejects a MISSING value; an unchecked box holding `false` is a valid boolean and passes. `const: true` is what rejects `false` — but alone it lets the pristine `undefined` pass (non-required validators are optional). Use BOTH: `validator: { type: "boolean", required: true, const: true }`.',

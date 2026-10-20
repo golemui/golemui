@@ -36,7 +36,7 @@ export const inputWidgets = [
 ] as const;
 export const layoutWidgets = ['accordion', 'flex', 'grid', 'tabs'] as const;
 export const displayWidgets = ['alert', 'markdownText', 'renderer'] as const;
-export const actionWidgets = ['button'] as const;
+export const actionWidgets = ['button', 'menu'] as const;
 
 export const golemWidgets = [
   ...inputWidgets,

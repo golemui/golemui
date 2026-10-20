@@ -39,6 +39,7 @@ export {
   _guiList,
   _guiMarkdown,
   _guiMarkdownText,
+  _guiMenu,
   _guiMultiDropdown,
   _guiMultiFileUpload,
   _guiMultiList,
@@ -117,6 +118,8 @@ export {
   _gslMarkdowns,
   _gslMarkdownTextByUid,
   _gslMarkdownTexts,
+  _gslMenuByUid,
+  _gslMenus,
   _gslMultiDropdownByUid,
   _gslMultiDropdowns,
   _gslMultiFileUploadByUid,
@@ -237,6 +240,7 @@ export type {
   GslLayoutsConfig,
   GslListConfig,
   GslMarkdownConfig,
+  GslMenusConfig,
   GslMultiDropdownConfig,
   GslMultiFileUploadConfig,
   GslMultiListConfig,
@@ -263,6 +267,7 @@ export type {
   LayoutDecorator,
   ListDecorator,
   MarkdownDecorator,
+  MenuDecorator,
   MultiDropdownDecorator,
   MultiFileUploadDecorator,
   MultiListDecorator,
@@ -320,6 +325,10 @@ export type {
   ListProps,
   MarkdownProps,
   MarkdownTextProps,
+  MenuAction,
+  MenuItem,
+  MenuProps,
+  MenuSeparator,
   MultiDropdownProps,
   MultiFileUploadProps,
   MultiListProps,
@@ -377,6 +386,13 @@ export {
   tabPanelId,
 } from './lib/utils/layout-ids';
 export { getItemKey, repeaterIndexSuffix } from './lib/utils/repeater';
+export {
+  DEFAULT_MENU_PLACEMENT,
+  isMenuSeparator,
+  menuButtonAriaLabel,
+  menuButtonClasses,
+  menuPanelId,
+} from './lib/utils/menu';
 export {
   gapFromPixels,
   gridCellClasses,
