@@ -21,7 +21,7 @@ import { type $Errors, type ExpressionFunctions } from '../../shared';
 import { calculateValidationVariables, type ValidationVariables } from '../../utils/form';
 import { compileExpression } from '../../utils/justin';
 import { get, set } from '../../utils/object';
-import { extractRepeaterIndexes } from '../../utils/repeater';
+import { extractRepeaterIndexes, isRepeaterWidget } from '../../utils/repeater';
 import { type DerivedWidget, type RepeaterItemScope, type State } from '../model';
 import { deepEqual, hasWhen } from './utils';
 import { errorCodes } from '../../errors';
@@ -314,7 +314,12 @@ function applyCoreField(t: ChangeTracker, ctx: ResolverCtx, field: CoreField): v
 function applyPropsField(t: ChangeTracker, ctx: ResolverCtx, subProp: string): void {
   const sourceProps = (t.source as { props?: Record<string, unknown> }).props;
   const raw = pickSuffixedValue(sourceProps, subProp, ctx.sortedStates);
-  let resolved = resolveNestedTranslations(resolveValue(raw, ctx), ctx);
+  let resolved = resolveValue(raw, ctx);
+  // Row widgets are their own `calculatedWidgets` entries and resolve the template configs with
+  // the row scope, so the template is not walked here, where `$item` is not bound.
+  if (!(isRepeaterWidget(t.source) && subProp === 'template')) {
+    resolved = resolveNestedTranslations(resolved, ctx);
+  }
 
   // widgetPropOverrides takes precedence over everything - applied AFTER function evaluation,
   // i18n translation, and template substitution.

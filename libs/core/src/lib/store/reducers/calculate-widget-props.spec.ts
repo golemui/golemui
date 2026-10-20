@@ -485,6 +485,38 @@ describe('calculateWidgetProps', () => {
       expect(propsOf(first)['sections'][0].label).toBe('en:k');
       expect(propsOf(second)['sections'][0].label).toBe('es:k');
     });
+
+    it('leaves the repeater template alone: its widgets resolve per row with the row scope', () => {
+      const translator = makeTranslator((key) => `T:${key}`);
+      const template = {
+        uid: 'row',
+        kind: 'layout',
+        type: 'flex',
+        props: {},
+        children: [
+          {
+            uid: 'name',
+            kind: 'input',
+            type: 'textinput',
+            path: 'rows.items.name',
+            label: { key: 'row.name', params: { who: '$item.name' } },
+          },
+        ],
+      };
+      seed(state, 'rep', {
+        uid: 'rep',
+        kind: 'input',
+        type: 'repeater',
+        path: 'rows',
+        props: { template },
+      });
+
+      const next = run(state, translator);
+
+      expect(next.formHealth).toEqual(state.formHealth);
+      expect(propsOf(next, 'rep')['template']).toBe(template);
+      expect(translator.calls).toHaveLength(0);
+    });
   });
 
   describe('translation config', () => {
