@@ -23,6 +23,7 @@
           { "label": "Accordion Layout", "uid": "tabAccordion" },
           { "label": "Alert Component", "uid": "tabAlert" },
           { "label": "Button Component", "uid": "tabButton" },
+          { "label": "Menu Component", "uid": "tabMenu" },
           { "label": "Calendar Component", "uid": "tabCalendar" },
           { "label": "Checkbox Component", "uid": "tabCheckbox" },
           { "label": "Currency Component", "uid": "tabCurrency" },
@@ -68,6 +69,7 @@
       "children": [
         { "$ref": "./tabs/alert.form-chunk.json" },
         { "$ref": "./tabs/button.form-chunk.json" },
+        { "$ref": "./tabs/menu.form-chunk.json" },
         { "$ref": "./tabs/markdown-text.form-chunk.json" },
         { "$ref": "./tabs/accordion.form-chunk.json" },
         { "$ref": "./tabs/flex.form-chunk.json" },

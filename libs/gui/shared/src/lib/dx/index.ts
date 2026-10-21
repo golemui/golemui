@@ -10,6 +10,7 @@ export { gui } from './gui';
 
 export { _guiAccordion } from './shortcuts/accordion/guiAccordion.impl';
 export { _guiButton } from './shortcuts/actions/guiActions.impl';
+export { _guiMenu } from './shortcuts/menu/guiMenu.impl';
 export { _guiAlert } from './shortcuts/alert/guiAlert.impl';
 export { _guiCalendar } from './shortcuts/calendar/guiCalendar.impl';
 export { _guiDateTimeCalendar } from './shortcuts/date-time-calendar/guiDateTimeCalendar.impl';
@@ -65,6 +66,7 @@ export { _guiTimePicker } from './shortcuts/time-picker/guiTimePicker.impl';
 
 export { _gslAccordionByUid, _gslAccordions } from './shortcuts/accordion/register';
 export { _gslActionByUid, _gslActions } from './shortcuts/actions/register';
+export { _gslMenuByUid, _gslMenus } from './shortcuts/menu/register';
 export { _gslAlertByUid, _gslAlerts } from './shortcuts/alert/register';
 export { _gslCalendarByUid, _gslCalendars } from './shortcuts/calendar/register';
 export {
@@ -173,6 +175,7 @@ export type {
   GslAccordionConfig,
 } from './shortcuts/accordion/accordion.domain';
 export type { ActionDecorator, GslActionsConfig } from './shortcuts/actions/actions.domain';
+export type { GslMenusConfig, MenuDecorator } from './shortcuts/menu/menu.domain';
 export type { AlertDecorator, GslAlertsConfig } from './shortcuts/alert/alert.domain';
 export type { CalendarDecorator, GslCalendarConfig } from './shortcuts/calendar/calendar.domain';
 export type {

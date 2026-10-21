@@ -10,6 +10,8 @@ import jsonAlertTab from './tabs/alert.form-chunk.json';
 import { alertTab as dxAlertTab } from './tabs/alert.dx';
 import jsonButtonTab from './tabs/button.form-chunk.json';
 import { buttonTab as dxButtonTab } from './tabs/button.dx';
+import jsonMenuTab from './tabs/menu.form-chunk.json';
+import { menuTab as dxMenuTab } from './tabs/menu.dx';
 import jsonDateinputTab from './tabs/dateinput.form-chunk.json';
 import { dateInputTab as dxDateinputTab } from './tabs/dateinput.dx';
 import jsonCalendarTab from './tabs/calendar.form-chunk.json';
@@ -221,6 +223,12 @@ describe('Kitchen Sink — JSON ↔ DX equivalence', () => {
   it('button tab', () => {
     const json = buildJsonTab(jsonButtonTab).form;
     const dx = buildDxTab(dxButtonTab);
+    expect(normalise(dx)).toEqual(normalise(json));
+  });
+
+  it('menu tab', () => {
+    const json = buildJsonTab(jsonMenuTab).form;
+    const dx = buildDxTab(dxMenuTab);
     expect(normalise(dx)).toEqual(normalise(json));
   });
 

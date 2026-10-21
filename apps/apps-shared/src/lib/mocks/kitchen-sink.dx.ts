@@ -11,6 +11,7 @@ import { allowedNames } from '../custom-validators/allowed-names';
 import { accordionTab } from './tabs/accordion.dx';
 import { alertTab } from './tabs/alert.dx';
 import { buttonTab } from './tabs/button.dx';
+import { menuTab } from './tabs/menu.dx';
 import { dateInputTab } from './tabs/dateinput.dx';
 import { calendarTab } from './tabs/calendar.dx';
 import { datePickerTab } from './tabs/datepicker.dx';
@@ -199,6 +200,7 @@ export const buildKitchenSinkDx = (options: KitchenSinkDxOptions = {}): KitchenS
       [
         { label: 'Alert Component', uid: 'tabAlert', children: [alertTab] },
         { label: 'Button Component', uid: 'tabButton', children: [buttonTab] },
+        { label: 'Menu Component', uid: 'tabMenu', children: [menuTab] },
         { label: 'Markdown Text Component', uid: 'tabMarkdownText', children: [markdownTextTab] },
         { label: 'Accordion Layout', uid: 'tabAccordion', children: [accordionTab] },
         { label: 'Flex Layout (deprecated)', uid: 'tabFlex', children: [flexTab] },

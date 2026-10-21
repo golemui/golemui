@@ -1,0 +1,53 @@
+@let templateData = adapter.templateData();
+
+<div class="gui-widget">
+  <button
+    type="button"
+    [id]="widget.uid"
+    [class]="menuButtonClasses(templateData)"
+    [attr.data-cy]="widget.uid + '_button'"
+    [attr.popovertarget]="panelId"
+    [attr.aria-label]="menuButtonAriaLabel(templateData.label, templateData.ariaLabel) ?? null"
+    [disabled]="templateData.disabled === true"
+  >
+    @if (templateData.icon && templateData.iconPosition !== 'right') {
+      <span
+        [class]="'gui-widget-icon gui-button-icon ' + templateData.icon"
+        [attr.data-icon]="templateData.icon"
+        aria-hidden="true"
+      ></span>
+    }
+    @if (templateData.label) {
+      <span>{{ templateData.label }}</span>
+    }
+    @if (templateData.icon && templateData.iconPosition === 'right') {
+      <span
+        [class]="'gui-widget-icon gui-button-icon ' + templateData.icon"
+        [attr.data-icon]="templateData.icon"
+        aria-hidden="true"
+      ></span>
+    }
+  </button>
+</div>
+<gui-menu
+  [attr.defer-hydration]="deferHydration"
+  [placement]="templateData.placement ?? defaultPlacement"
+  (gui-action)="onAction($event)"
+>
+  <div [id]="panelId" [attr.data-cy]="panelId" popover>
+    @for (item of templateData?.items ?? []; track $index) {
+      @if (isMenuSeparator(item)) {
+        <hr />
+      } @else {
+        <button
+          type="button"
+          [value]="item.value"
+          [attr.data-cy]="widget.uid + '_item_' + item.value"
+          [disabled]="item.disabled === true"
+        >
+          {{ item.label }}
+        </button>
+      }
+    }
+  </div>
+</gui-menu>

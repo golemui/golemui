@@ -26,7 +26,8 @@ export class ActionWidgetAdapter<
     }
   }
 
-  click() {
-    this.context.emitEvent('click', this.widget);
+  /** Emits `click`, with a detail such as the value of the item picked in a menu. */
+  click(detail?: unknown) {
+    this.context.emitEvent('click', this.widget, detail);
   }
 }
