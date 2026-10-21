@@ -2,6 +2,7 @@
 import {
   allowedNames,
   commonLanguages,
+  i18nDemo,
   initializeI18n,
   kitchenSink,
   mockMarkdownParser,
@@ -28,6 +29,10 @@ import ProductItemRenderer from '~/components/item-renderers/ProductItemRenderer
 import { customWidgetLoaders } from '~/utils/custom-widget-loaders';
 
 const mock = kitchenSink;
+// for the language picker
+if (import.meta.client) {
+  import('@golemui/gui-components/select');
+}
 const formData = mock.data;
 const formMeta = mock.meta;
 // i18next is a module level singleton. On the server every request re-initializes it with the

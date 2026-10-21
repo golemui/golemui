@@ -4,6 +4,7 @@ import { type AngularItemRenderer } from '@golemui/angular';
 import {
   allowedNames,
   commonLanguages,
+  i18nDemo,
   initializeI18n,
   kitchenSink,
   mockMarkdownParser,
@@ -17,6 +18,8 @@ import {
   devToolsMiddleware,
 } from '@golemui/core';
 import { FormComponent } from '@golemui/gui-angular';
+// for the language picker
+import '@golemui/gui-components/select';
 import { type Dependencies, type GuiFormInitConfig } from '@golemui/gui-shared';
 import type { CustomValidatorSchemas } from '@golemui/gui-validators';
 import i18next from 'i18next';

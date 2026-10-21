@@ -2,6 +2,7 @@
 import {
   allowedNames,
   commonLanguages,
+  i18nDemo,
   initializeI18n,
   kitchenSink,
   mockMarkdownParser,
@@ -15,6 +16,8 @@ import {
   type ValidateOn,
   devToolsMiddleware,
 } from '@golemui/core';
+// for the language picker
+import '@golemui/gui-components/select';
 import { GuiForm } from '@golemui/gui-vue';
 import type { Dependencies, GuiFormInitConfig } from '@golemui/gui-shared';
 import type { CustomValidatorSchemas } from '@golemui/gui-validators';
@@ -91,11 +94,12 @@ const onLanguageChanged = (event: Event) => {
 <template>
   <div>
     <div v-if="languages.length > 0">
+      <!-- `.prop` sets the array as a property. An attribute would stringify it. -->
       <gui-select
         label="Language picker"
         uid="language"
         value="en"
-        :options="languages"
+        :options.prop="languages"
         @gui-change="onLanguageChanged"
       ></gui-select>
     </div>

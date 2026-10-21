@@ -1,6 +1,7 @@
 import {
   allowedNames,
   commonLanguages,
+  i18nDemo,
   initializeI18n,
   kitchenSink,
   mockMarkdownParser,
@@ -8,6 +9,8 @@ import {
   onFormEvent,
 } from '@golemui/apps-shared';
 import { type FormEvent, type FormHealth, devToolsMiddleware } from '@golemui/core';
+// for the language picker
+import '@golemui/gui-components/select';
 import '@golemui/gui-lit';
 import type { FormHealthBoundary } from '@golemui/lit';
 import { type GuiFormInitConfig } from '@golemui/gui-shared';
