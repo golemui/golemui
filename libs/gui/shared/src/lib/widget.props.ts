@@ -833,5 +833,5 @@ export type GridProps = {
 export type TabsProps = {
   defaultOpen?: string;
   renderMode?: 'all' | 'activeOnly';
-  tabs: { label: string; uid: string }[];
+  tabs: { label: Localizable; uid: string }[];
 };
