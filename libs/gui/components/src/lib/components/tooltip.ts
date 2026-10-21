@@ -57,7 +57,9 @@ export class GuiTooltip extends ReactiveElement {
       panel: () => this,
       anchor: () => this.target,
       placement: () => toPlacement(this.placement, 'top'),
-      offset: 6,
+      // Room for the arrow, which points at the target.
+      offset: 8,
+      arrow: true,
     });
   }
 

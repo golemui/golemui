@@ -199,6 +199,13 @@ describe('gui-slider', () => {
       bubble().should('have.text', '40').and('have.css', 'visibility', 'hidden');
       input().focus();
       bubble().should('have.css', 'visibility', 'visible');
+      // Its arrow points down at the thumb, over the gap between them.
+      bubble().should(([element]) => {
+        const arrow = getComputedStyle(element, '::before');
+        expect(arrow.content).not.to.equal('none');
+        expect(parseFloat(arrow.top)).to.be.closeTo(element.clientHeight, 1);
+        expect(parseFloat(arrow.left)).to.be.closeTo(element.clientWidth / 2, 1);
+      });
     });
 
     it('hides the bubble on Escape until the focus leaves', () => {

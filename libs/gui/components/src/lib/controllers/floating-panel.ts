@@ -10,6 +10,8 @@ export interface GUIFloatingPanelOptions {
   placement?: GuiPlacement | (() => GuiPlacement);
   /** The gap between the field and the panel, in pixels. Default 2. */
   offset?: number;
+  /** Whether the panel points an arrow at the field: see `GUIAnchorController`. */
+  arrow?: boolean;
 }
 
 /** Whether a popover is showing. A DOM without the Popover API never shows one. */
@@ -51,6 +53,7 @@ export class GUIFloatingPanel {
         return typeof placement === 'function' ? placement() : placement;
       },
       offset: options.offset ?? 2,
+      arrow: options.arrow,
     });
   }
 

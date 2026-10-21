@@ -3,6 +3,8 @@
 // half a thumb at each end, where the thumb's centre travels. Positions are percentages along that
 // rail (`--_percent`, `--_start`, `--_end`), set through the CSSOM.
 
+@use 'arrow' as *;
+
 // The thumb's look, for each engine's pseudo-element: one rule per engine, since a selector list
 // with an unknown pseudo-element drops the whole rule.
 @mixin gui-slider-thumb {
@@ -239,8 +241,12 @@
 // Over the thumb while it is hovered, focused or dragged. It stays while the pointer is on it, and
 // Escape hides it until the pointer and the focus leave (WCAG 1.4.13).
 .gui-slider__bubble {
+  // A tooltip's arrow, and the same gap for it: it points at the thumb.
+  --_arrow: 0.5rem;
+  --_gap: 0.5rem;
+
   position: absolute;
-  inset-block-end: calc(50% + var(--_thumb) / 2 + var(--gui-space-1));
+  inset-block-end: calc(50% + var(--_thumb) / 2 + var(--_gap));
   inset-inline-start: calc(var(--_thumb) / 2 + (100% - var(--_thumb)) * var(--_percent) / 100);
   z-index: 1;
   padding: var(--gui-space-1) var(--gui-space-2);
@@ -254,13 +260,17 @@
   translate: var(--_center) 0;
   visibility: hidden;
 
+  &::before {
+    @include gui-arrow(bottom, 50%);
+  }
+
   // Bridges the gap to the thumb, so the pointer can move onto the bubble without it closing.
   &::after {
     content: '';
     position: absolute;
     inset-inline: 0;
     inset-block-start: 100%;
-    block-size: var(--gui-space-1);
+    block-size: var(--_gap);
   }
 }
 

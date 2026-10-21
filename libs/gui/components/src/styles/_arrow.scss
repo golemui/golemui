@@ -1,0 +1,68 @@
+/*
+ * The arrow of a floating box, on its `$side` edge at `$offset` along it, pointing away from the
+ * box: a square of `--_arrow` turned 45°, centred on the edge and clipped to the half outside the
+ * box (and a sliver inside, so no seam shows). It takes the box's background and border, so it
+ * covers the border where the two meet. Apply it to the box's `::before`, which the box must
+ * leave unclipped (`overflow: visible`).
+ */
+$-bleed: 2px;
+
+@mixin gui-arrow($side, $offset) {
+  content: '';
+  position: absolute;
+  box-sizing: border-box;
+  inline-size: var(--_arrow);
+  block-size: var(--_arrow);
+  border: inherit;
+  border-radius: 0;
+  background: inherit;
+  rotate: 45deg;
+  translate: -50% -50%;
+  pointer-events: none;
+
+  // The geometry is physical: the controller measures the box on screen. Turned 45°, each corner
+  // of the square points one way: top-left up, top-right right, and so on.
+  @if $side == top {
+    top: 0;
+    left: $offset;
+    border-right-color: transparent;
+    border-bottom-color: transparent;
+    clip-path: polygon(0 0, 100% 0, 100% $-bleed, $-bleed 100%, 0 100%);
+  } @else if $side == bottom {
+    top: 100%;
+    left: $offset;
+    border-top-color: transparent;
+    border-left-color: transparent;
+    clip-path: polygon(
+      100% 0,
+      100% 100%,
+      0 100%,
+      0 calc(100% - #{$-bleed}),
+      calc(100% - #{$-bleed}) 0
+    );
+  } @else if $side == left {
+    top: $offset;
+    left: 0;
+    border-top-color: transparent;
+    border-right-color: transparent;
+    clip-path: polygon(0 0, $-bleed 0, 100% calc(100% - #{$-bleed}), 100% 100%, 0 100%);
+  } @else if $side == right {
+    top: $offset;
+    left: 100%;
+    border-bottom-color: transparent;
+    border-left-color: transparent;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, calc(100% - #{$-bleed}) 100%, 0 $-bleed);
+  }
+}
+
+/*
+ * The arrow of a box GUIAnchorController places with `arrow`: on the edge it names in
+ * `data-gui-arrow`, at `--gui-arrow-offset` along it.
+ */
+@mixin gui-anchored-arrow {
+  @each $side in (top, bottom, left, right) {
+    &[data-gui-arrow='#{$side}']::before {
+      @include gui-arrow($side, var(--gui-arrow-offset));
+    }
+  }
+}
