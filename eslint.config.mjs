@@ -61,6 +61,8 @@ export default [
         {
           enforceBuildableLibDependency: true,
           allow: ['^.*/eslint(\\.base)?\\.config\\.[cm]?[jt]s$'],
+          // The rule checks per project. The server-only ssr entry does not load the element entries that pages import lazily.
+          checkDynamicDependenciesExceptions: ['^@golemui/gui-components/ssr$'],
           depConstraints: [
             { sourceTag: 'type:app', bannedExternalImports: ['@golemui/*/internals'] },
             { sourceTag: 'scope:core', onlyDependOnLibsWithTags: ['scope:core'] },
