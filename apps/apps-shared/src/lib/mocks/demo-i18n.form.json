@@ -45,55 +45,120 @@
       ]
     },
     {
+      "uid": "travelSections",
       "kind": "layout",
-      "type": "grid",
+      "type": "accordion",
       "props": {
-        "direction": "row",
-        "justify": "start"
+        "defaultOpen": { "travellers": true, "extras": true },
+        "sections": [
+          { "uid": "travellers", "label": { "key": "travelPlanner.section.travellers" } },
+          {
+            "uid": "extras",
+            "label": { "key": "travelPlanner.section.extras", "default": "Extras" }
+          }
+        ]
       },
       "children": [
         {
-          "uid": "includePets",
+          "uid": "travellers",
           "kind": "input",
-          "type": "toggle",
-          "path": "includePets",
+          "type": "repeater",
+          "path": "travellers",
           "label": {
-            "key": "travelPlanner.field.includePets.label",
-            "default": "Include Pets"
+            "key": "travelPlanner.field.travellers",
+            "default": "Travellers"
           },
           "props": {
-            "togglePosition": "left",
-            "hint": {
-              "key": "travelPlanner.field.includePets.hint",
-              "default": "Only hosts with pets will be included in the search results."
+            "addLabel": "Add traveller",
+            "removeLabel": "Remove",
+            "template": {
+              "kind": "layout",
+              "type": "grid",
+              "props": { "direction": "row", "gap": "sm" },
+              "children": [
+                {
+                  "kind": "input",
+                  "type": "textinput",
+                  "path": "travellers.items.name",
+                  "defaultValue": "",
+                  "label": {
+                    "key": "travelPlanner.row.traveller",
+                    "params": { "who": "$item.name" }
+                  }
+                }
+              ]
             }
           }
+        },
+        {
+          "uid": "extras",
+          "kind": "layout",
+          "type": "tabs",
+          "props": {
+            "tabs": [
+              { "uid": "pets", "label": { "key": "travelPlanner.tab.pets" } },
+              {
+                "uid": "preferredDates",
+                "label": { "key": "travelPlanner.tab.dates", "default": "Dates" }
+              }
+            ]
+          },
+          "children": [
+            {
+              "uid": "pets",
+              "kind": "layout",
+              "type": "grid",
+              "props": {
+                "direction": "row",
+                "justify": "start"
+              },
+              "children": [
+                {
+                  "uid": "includePets",
+                  "kind": "input",
+                  "type": "toggle",
+                  "path": "includePets",
+                  "label": {
+                    "key": "travelPlanner.field.includePets.label",
+                    "default": "Include Pets"
+                  },
+                  "props": {
+                    "togglePosition": "left",
+                    "hint": {
+                      "key": "travelPlanner.field.includePets.hint",
+                      "default": "Only hosts with pets will be included in the search results."
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "uid": "preferredDates",
+              "kind": "input",
+              "type": "rangeCalendar",
+              "path": "preferredDates",
+              "label": {
+                "key": "travelPlanner.field.preferredDates.label",
+                "default": "Select Preferred Dates"
+              },
+              "size": 1,
+              "props": {
+                "numberOfMonths": 2,
+                "prevMonthIcon": "chevron_left",
+                "nextMonthIcon": "chevron_right",
+                "prevMonthAriaLabel": {
+                  "key": "travelPlanner.field.preferredDates.prevMonthAriaLabel",
+                  "default": "Previous Month"
+                },
+                "nextMonthAriaLabel": {
+                  "key": "travelPlanner.field.preferredDates.nextMonthAriaLabel",
+                  "default": "Next Month"
+                }
+              }
+            }
+          ]
         }
       ]
-    },
-    {
-      "uid": "preferredDates",
-      "kind": "input",
-      "type": "rangeCalendar",
-      "path": "preferredDates",
-      "label": {
-        "key": "travelPlanner.field.preferredDates.label",
-        "default": "Select Preferred Dates"
-      },
-      "size": 1,
-      "props": {
-        "numberOfMonths": 2,
-        "prevMonthIcon": "chevron_left",
-        "nextMonthIcon": "chevron_right",
-        "prevMonthAriaLabel": {
-          "key": "travelPlanner.field.preferredDates.prevMonthAriaLabel",
-          "default": "Previous Month"
-        },
-        "nextMonthAriaLabel": {
-          "key": "travelPlanner.field.preferredDates.nextMonthAriaLabel",
-          "default": "Next Month"
-        }
-      }
     }
   ]
 }

@@ -21,7 +21,7 @@ import { type $Errors, type ExpressionFunctions } from '../../shared';
 import { calculateValidationVariables, type ValidationVariables } from '../../utils/form';
 import { compileExpression } from '../../utils/justin';
 import { get, set } from '../../utils/object';
-import { extractRepeaterIndexes } from '../../utils/repeater';
+import { extractRepeaterIndexes, isRepeaterWidget } from '../../utils/repeater';
 import { type DerivedWidget, type RepeaterItemScope, type State } from '../model';
 import { deepEqual, hasWhen } from './utils';
 import { errorCodes } from '../../errors';
@@ -315,6 +315,11 @@ function applyPropsField(t: ChangeTracker, ctx: ResolverCtx, subProp: string): v
   const sourceProps = (t.source as { props?: Record<string, unknown> }).props;
   const raw = pickSuffixedValue(sourceProps, subProp, ctx.sortedStates);
   let resolved = resolveValue(raw, ctx);
+  // Row widgets are their own `calculatedWidgets` entries and resolve the template configs with
+  // the row scope, so the template is not walked here, where `$item` is not bound.
+  if (!(isRepeaterWidget(t.source) && subProp === 'template')) {
+    resolved = resolveNestedTranslations(resolved, ctx);
+  }
 
   // widgetPropOverrides takes precedence over everything - applied AFTER function evaluation,
   // i18n translation, and template substitution.
@@ -394,6 +399,82 @@ function resolveValue(value: unknown, ctx: ResolverCtx): unknown {
     return resolveString(value, ctx);
   }
   return value;
+}
+
+/**
+ * Objects and arrays already walked that hold no translation config. Source props keep their
+ * references between passes, so each one is walked once, not on every state change.
+ * Assumes the form definition is not mutated after INITIALIZE. Change detection relies on the
+ * same assumption: `ChangeTracker.write` treats an unchanged reference as equal.
+ */
+const holdsNoTranslation = new WeakSet<object>();
+
+/** A plain object or an array: the values a prop nests translation configs in. */
+function isWalkable(value: unknown): value is Record<string, unknown> | unknown[] {
+  if (Array.isArray(value)) {
+    return true;
+  }
+  if (typeof value !== 'object' || value === null) {
+    return false;
+  }
+  const proto = Object.getPrototypeOf(value);
+  return proto === Object.prototype || proto === null;
+}
+
+/**
+ * A translation config nested in a prop, such as an accordion section's label. Stricter than
+ * `isTranslationConfig`: nested objects are often data, so an object only counts when `key`,
+ * `params` and `default` are all it has. `{ key: 'a', label: 'A' }` stays an object.
+ * `default` must be a string and `params` a plain object when present, as the JSON schema says.
+ */
+function isNestedTranslationConfig(value: Record<string, unknown>): value is TranslationConfig {
+  if (typeof value['key'] !== 'string') {
+    return false;
+  }
+  if (value['default'] !== undefined && typeof value['default'] !== 'string') {
+    return false;
+  }
+  const params = value['params'];
+  if (params !== undefined && (!isWalkable(params) || Array.isArray(params))) {
+    return false;
+  }
+  return Object.keys(value).every((k) => k === 'key' || k === 'params' || k === 'default');
+}
+
+/**
+ * Translates the translation configs nested in a prop's arrays and plain objects, at any depth.
+ * Only translation configs: nested strings are not interpolated and nested functions are not
+ * called. Copy on write: a value holding no translation config comes back as the same reference.
+ */
+function resolveNestedTranslations(value: unknown, ctx: ResolverCtx): unknown {
+  if (!isWalkable(value) || holdsNoTranslation.has(value)) {
+    return value;
+  }
+
+  let copy: Record<string, unknown> | unknown[] | undefined;
+  const entries: [string | number, unknown][] = Array.isArray(value)
+    ? value.map((item, index) => [index, item])
+    : Object.entries(value);
+
+  for (const [key, item] of entries) {
+    let next = item;
+    if (isWalkable(item)) {
+      next =
+        !Array.isArray(item) && isNestedTranslationConfig(item)
+          ? resolveTranslationConfig(item, ctx)
+          : resolveNestedTranslations(item, ctx);
+    }
+    if (next !== item) {
+      copy ??= Array.isArray(value) ? [...value] : { ...value };
+      (copy as Record<string | number, unknown>)[key] = next;
+    }
+  }
+
+  if (copy === undefined) {
+    holdsNoTranslation.add(value);
+    return value;
+  }
+  return copy;
 }
 
 /** For `disabled` / `readonly` - function | {when}->widgetFlags | string | passthrough. */

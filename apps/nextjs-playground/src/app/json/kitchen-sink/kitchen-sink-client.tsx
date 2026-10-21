@@ -16,6 +16,8 @@ import {
   type ValidateOn,
   devToolsMiddleware,
 } from '@golemui/core';
+// for the language picker
+import { GuiSelect } from '@golemui/gui-components/react';
 import { GuiForm } from '@golemui/gui-react';
 import { type Dependencies, type GuiFormInitConfig } from '@golemui/gui-shared';
 import type { CustomValidatorSchemas } from '@golemui/gui-validators';
@@ -102,8 +104,7 @@ const config: GuiFormInitConfig = {
 };
 
 export default function KitchenSinkJsonClient() {
-  // The picker is a hand-written `gui-select` with no `defer-hydration`, so it must stay out of
-  // the server markup. It is rendered after mount, when the widget registry is already filled.
+  // The picker is rendered after mount, so it stays out of the server markup.
   const [isMounted, setIsMounted] = useState(false);
   useEffect(() => {
     setIsMounted(true);
@@ -130,21 +131,23 @@ export default function KitchenSinkJsonClient() {
   );
 }
 
-function onLanguageChanged(event: Event) {
-  const code = (event as CustomEvent<{ value: string }>).detail.value;
-  i18next.changeLanguage(code);
+function onLanguageChanged(event: CustomEvent<{ value: unknown }>) {
+  const code = event.detail.value;
+  if (typeof code === 'string') {
+    i18next.changeLanguage(code);
+  }
 }
 
 function LanguagePicker() {
   return (
     <div>
-      <gui-select
+      <GuiSelect
         label="Language picker"
         uid="language"
         value="en"
         options={languages}
-        ongui-change={onLanguageChanged}
-      ></gui-select>
+        onGuiChange={onLanguageChanged}
+      />
     </div>
   );
 }

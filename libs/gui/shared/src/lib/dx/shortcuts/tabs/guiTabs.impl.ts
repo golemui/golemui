@@ -1,16 +1,18 @@
+import type { Localizable } from '@golemui/core';
 import { GuiItemTypes, type ValidGuiShortcut } from '@golemui/dx';
 import type { GuiTabsShortcut, TabsDecorator } from './tabs.domain';
 
 type TabsFactoryProps = Omit<TabsDecorator, 'tabs'>;
 
 export interface TabSection {
-  label: string;
+  label: Localizable;
   children: ValidGuiShortcut[];
   uid?: string;
 }
 
-function slugify(label: string): string {
-  return label
+/** The uid of a section with none: its label, or its translation key, as a slug. */
+function slugify(label: Localizable): string {
+  return (typeof label === 'string' ? label : label.key)
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/(^-|-$)/g, '');

@@ -812,6 +812,7 @@ const LAYOUTS: DxSpec[] = [
       "gui.layouts.tabs([ { label: 'Account', children: [ gui.inputs.textInput('email', { label: 'Email' }) ] }, { label: 'Profile', children: [ gui.inputs.textInput('name', { label: 'Name' }) ] } ])",
     notes: [
       'Takes `sections: { label, children, uid? }[]` — each section is a tab with its own children.',
+      '`label` is a string or an i18n `{ key, params?, default? }` object. A tab without `uid` gets the slug of its label, or of its key.',
     ],
   },
   {
@@ -823,6 +824,7 @@ const LAYOUTS: DxSpec[] = [
       "gui.layouts.accordion([ { label: 'Billing', children: [ gui.inputs.textInput('card', { label: 'Card' }) ] } ])",
     notes: [
       'Takes `sections: { label, children, uid? }[]` — same shape as `tabs`, rendered as collapsible panels.',
+      '`label` is a string or an i18n `{ key, params?, default? }` object. A section without `uid` gets the slug of its label, or of its key.',
     ],
   },
 ];

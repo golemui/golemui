@@ -1,9 +1,10 @@
+import type { Localizable } from '@golemui/core';
 import type { DxCommonFields, DxLayoutBase } from '@golemui/dx';
 import type { DefOrCallback, GslConfigBase, GuiShortcutOf } from '@golemui/dx';
 import type { ValidGuiShortcut } from '@golemui/dx';
 
 export interface TabsDecorator extends DxLayoutBase, DxCommonFields {
-  tabs: { label: string; uid: string }[];
+  tabs: { label: Localizable; uid: string }[];
   renderMode?: 'all' | 'activeOnly';
   defaultOpen?: string;
 }

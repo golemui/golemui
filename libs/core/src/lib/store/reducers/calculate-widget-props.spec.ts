@@ -362,6 +362,192 @@ describe('calculateWidgetProps', () => {
   // TranslationConfig
   // ---------------------------------------------------------------------------
 
+  describe('nested translation configs', () => {
+    const accordion = (sections: unknown, extra: Record<string, unknown> = {}) =>
+      ({
+        kind: 'layout',
+        uid: 'acc',
+        type: 'accordion',
+        props: { sections, ...extra },
+        children: [],
+      }) as LayoutWidget<string>;
+    const propsOf = (next: State, uid = 'acc') =>
+      (next.calculatedWidgets[uid].current as LayoutWidget<string>).props as Record<string, any>;
+
+    it('translates a config nested in an array of objects and keeps the other fields', () => {
+      const translator = makeTranslator((key) => `T:${key}`);
+      seed(
+        state,
+        'acc',
+        accordion([
+          { uid: 'billing', label: { key: 'sections.billing' } },
+          { uid: 'notes', label: 'Notes' },
+        ]),
+      );
+
+      const next = run(state, translator);
+
+      expect(propsOf(next)['sections']).toEqual([
+        { uid: 'billing', label: 'T:sections.billing' },
+        { uid: 'notes', label: 'Notes' },
+      ]);
+    });
+
+    it('translates at any depth, with the default and params resolved like a top-level config', () => {
+      const translator = makeTranslator((key, params, d) =>
+        key === 'greet' ? `Hi ${params?.['name']}` : (d ?? key),
+      );
+      seed(
+        state,
+        'acc',
+        accordion([], {
+          menu: {
+            groups: [{ items: [{ label: { key: 'greet', params: { name: '$form.name' } } }] }],
+          },
+          empty: { key: 'missing', default: 'Nothing here' },
+        }),
+      );
+      state.data = { name: 'Ana' };
+
+      const props = propsOf(run(state, translator));
+
+      expect(props['menu'].groups[0].items[0].label).toBe('Hi Ana');
+      expect(props['empty']).toBe('Nothing here');
+    });
+
+    it('resolves the params of a nested config against the repeater row', () => {
+      const translator = makeTranslator((_key, params) => `Row ${params?.['n']}`);
+      seed(state, 'acc[1]', {
+        ...accordion([{ uid: 's', label: { key: 'row', params: { n: '$index + 1' } } }]),
+        uid: 'acc[1]',
+      });
+      state.repeaterItemScopes['acc[1]'] = { itemPath: 'rows.1', index: 1 };
+
+      expect(propsOf(run(state, translator), 'acc[1]')['sections'][0].label).toBe('Row 2');
+    });
+
+    it('translates the configs a function prop returns', () => {
+      const translator = makeTranslator((key) => `T:${key}`);
+      seed(
+        state,
+        'acc',
+        accordion(() => [{ uid: 'a', label: { key: 'k' } }]),
+      );
+
+      expect(propsOf(run(state, translator))['sections'][0].label).toBe('T:k');
+    });
+
+    it('leaves an object that has a key and other fields alone: it is data, not a config', () => {
+      const translator = makeTranslator((key) => `T:${key}`);
+      const options = [
+        { key: 'es', label: 'Spanish' },
+        { key: 'fr', value: 2 },
+      ];
+      seed(state, 'acc', accordion([], { options }));
+
+      const props = propsOf(run(state, translator));
+
+      expect(props['options']).toBe(options);
+      expect(translator.calls).toHaveLength(0);
+    });
+
+    it('does not interpolate nested strings', () => {
+      seed(state, 'acc', accordion([{ uid: 's', label: '{{ $index }}' }]));
+
+      expect(propsOf(run(state))['sections'][0].label).toBe('{{ $index }}');
+    });
+
+    it('keeps the source reference when nothing nested is a config', () => {
+      const sections = [{ uid: 's', label: 'Plain' }];
+      seed(state, 'acc', accordion(sections));
+
+      expect(propsOf(run(state))['sections']).toBe(sections);
+    });
+
+    it('keeps the previous widget when a later pass translates to the same text', () => {
+      seed(state, 'acc', accordion([{ uid: 's', label: { key: 'k' } }]));
+
+      const first = run(state);
+      const second = run(first);
+
+      expect(second.calculatedWidgets['acc']).toBe(first.calculatedWidgets['acc']);
+    });
+
+    it('translates again when the translation changes', () => {
+      let lang = 'en';
+      const translator = makeTranslator((key) => `${lang}:${key}`);
+      seed(state, 'acc', accordion([{ uid: 's', label: { key: 'k' } }]));
+
+      const first = run(state, translator);
+      lang = 'es';
+      const second = run(first, translator);
+
+      expect(propsOf(first)['sections'][0].label).toBe('en:k');
+      expect(propsOf(second)['sections'][0].label).toBe('es:k');
+    });
+
+    it('leaves the repeater template alone: its widgets resolve per row with the row scope', () => {
+      const translator = makeTranslator((key) => `T:${key}`);
+      const template = {
+        uid: 'row',
+        kind: 'layout',
+        type: 'flex',
+        props: {},
+        children: [
+          {
+            uid: 'name',
+            kind: 'input',
+            type: 'textinput',
+            path: 'rows.items.name',
+            label: { key: 'row.name', params: { who: '$item.name' } },
+          },
+        ],
+      };
+      seed(state, 'rep', {
+        uid: 'rep',
+        kind: 'input',
+        type: 'repeater',
+        path: 'rows',
+        props: { template },
+      });
+
+      const next = run(state, translator);
+
+      expect(next.formHealth).toEqual(state.formHealth);
+      expect(propsOf(next, 'rep')['template']).toBe(template);
+      expect(translator.calls).toHaveLength(0);
+    });
+
+    it('walks a config-free value once: a config added to it by mutation later is not seen', () => {
+      const translator = makeTranslator((key) => `T:${key}`);
+      const sections: Record<string, unknown>[] = [{ uid: 'a', label: 'Plain' }];
+      seed(state, 'acc', accordion(sections));
+      const first = run(state, translator);
+
+      // The engine assumes the form definition is immutable after INITIALIZE.
+      sections.push({ uid: 'b', label: { key: 'k' } });
+      const second = run(first, translator);
+
+      expect(translator.calls).toHaveLength(0);
+      expect(propsOf(second)['sections']).toBe(sections);
+    });
+
+    it('leaves an object alone when its default is not a string or its params is not an object', () => {
+      const translator = makeTranslator((key) => `T:${key}`);
+      const data = [
+        { key: 'a', default: 1 },
+        { key: 'b', params: 'x' },
+        { key: 'c', params: ['x'] },
+      ];
+      seed(state, 'acc', accordion([], { data }));
+
+      const props = propsOf(run(state, translator));
+
+      expect(props['data']).toBe(data);
+      expect(translator.calls).toHaveLength(0);
+    });
+  });
+
   describe('translation config', () => {
     it('label: TranslationConfig calls translator with key, resolved params, default', () => {
       const translator = makeTranslator((_k, params) => `RESOLVED:${params?.['name']}`);
