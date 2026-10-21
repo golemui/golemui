@@ -69,7 +69,7 @@ export type {
 } from './lib/components/pills';
 export { GuiPopover, GuiPopoverEvents, type GuiPlacement } from './lib/components/popover';
 export { GuiRadiogroup, GuiRadiogroupEvents } from './lib/components/radiogroup';
-export type { GuiRadiogroupProps } from './lib/components/radiogroup';
+export type { GuiRadiogroupAppearance, GuiRadiogroupProps } from './lib/components/radiogroup';
 export { GuiRangeCalendar, GuiRangeCalendarEvents } from './lib/components/range-calendar';
 export type { RangeCalendarDay } from './lib/components/range-calendar';
 

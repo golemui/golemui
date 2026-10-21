@@ -1,5 +1,6 @@
 import { html } from 'lit';
 import type { GuiRadiogroup } from '../../src/lib/components/radiogroup';
+import { realPress, takesRealInput } from '../support/real-input';
 
 const options = [
   { label: 'Red', value: 'red' },
@@ -220,6 +221,108 @@ describe('gui-radiogroup', () => {
       cy.mount(html`<gui-radiogroup label="Color" disabled .options=${options}></gui-radiogroup>`);
 
       radios().should('have.length', 3).and('be.disabled');
+    });
+  });
+
+  describe('segmented appearance', () => {
+    const ranges = [
+      { label: 'Day', value: 'day' },
+      { label: 'Week', value: 'week' },
+      { label: 'Month', value: 'month' },
+    ];
+    const segments = () => cy.get('gui-radiogroup .gui-widget--segmented > label');
+    const segment = (text: string) =>
+      cy.contains('gui-radiogroup .gui-widget--segmented > label', text);
+    const tops = (labels: JQuery<HTMLElement>) =>
+      [...labels].map((label) => Math.round(label.getBoundingClientRect().top));
+    const mountSegmented = (attributes: Record<string, unknown> = {}) =>
+      cy.mount(
+        html`<gui-radiogroup
+          label="Range"
+          appearance="segmented"
+          .options=${ranges}
+          .value=${attributes['value']}
+          ?disabled=${attributes['disabled'] === true}
+          direction=${(attributes['direction'] as string) ?? 'column'}
+        ></gui-radiogroup>`,
+      );
+
+    it('shows the options as joined segments in a row, still a radio group', () => {
+      mountSegmented({ direction: 'column' });
+
+      group().should('have.class', 'gui-widget--segmented');
+      radios().should('have.length', 3).and('have.css', 'opacity', '0');
+      // A row, whatever `direction` says.
+      segments().should((labels) => expect(new Set(tops(labels)).size).to.equal(1));
+    });
+
+    it('picks an option with a click on its segment, and fills the selected one', () => {
+      const onInput = cy.spy().as('input');
+      mountSegmented({ value: 'day' });
+      element().then(([host]) => host.addEventListener('gui-input', onInput));
+
+      segment('Week').click();
+
+      cy.get('@input').its('lastCall.args.0.detail.value').should('equal', 'week');
+      segment('Week').should(([label]) => {
+        const fill = getComputedStyle(label).backgroundColor;
+        const other = getComputedStyle(label.parentElement!.firstElementChild!).backgroundColor;
+        expect(fill).not.to.equal(other);
+      });
+    });
+
+    it('ignores clicks when disabled', () => {
+      const onInput = cy.spy().as('input');
+      mountSegmented({ value: 'day', disabled: true });
+      element().then(([host]) => host.addEventListener('gui-input', onInput));
+
+      segment('Month').click({ force: true });
+
+      cy.get('@input').should('not.have.been.called');
+      radios().should('be.disabled');
+    });
+
+    if (takesRealInput()) {
+      it('moves the selection with the arrow keys, and shows the focus on the segment', () => {
+        mountSegmented({ value: 'day' });
+
+        radios().first().focus();
+        realPress('ArrowRight');
+
+        cy.focused().should('have.value', 'week').and('be.checked');
+        segment('Week').should('not.have.css', 'box-shadow', 'none');
+        realPress('ArrowLeft');
+        cy.focused().should('have.value', 'day');
+      });
+    }
+
+    it('mirrors in right to left', () => {
+      cy.mount(
+        html`<div dir="rtl">
+          <gui-radiogroup appearance="segmented" .options=${ranges}></gui-radiogroup>
+        </div>`,
+      );
+
+      segments().should(([first, second]) =>
+        expect(first.getBoundingClientRect().left).to.be.greaterThan(
+          second.getBoundingClientRect().left,
+        ),
+      );
+    });
+
+    it('stacks its segments in a narrow form', () => {
+      cy.mount(
+        html`<div class="narrow">
+          <gui-radiogroup appearance="segmented" .options=${ranges}></gui-radiogroup>
+        </div>`,
+      );
+      // A narrow GolemUI form: the container the components' narrow layouts query.
+      cy.get('.narrow').then(([narrow]) => {
+        narrow.style.setProperty('container', 'gui-container / inline-size');
+        narrow.style.setProperty('inline-size', '320px');
+      });
+
+      segments().should((labels) => expect(new Set(tops(labels)).size).to.equal(3));
     });
   });
 });

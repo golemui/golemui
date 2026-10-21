@@ -16,6 +16,7 @@ const handleChange = (e: Event) => onValueChanged((e as CustomEvent).detail.valu
 const required = computed(() => (templateData.value.validator as Validator)?.required);
 // Mirror Lit class-field default to avoid Vue coercing undefined → '' on the enum prop.
 const direction = computed(() => templateData.value.direction || 'column');
+const appearance = computed(() => templateData.value.appearance || 'default');
 </script>
 
 <template>
@@ -34,6 +35,7 @@ const direction = computed(() => templateData.value.direction || 'column');
       :labelField="templateData.labelField"
       :valueField="templateData.valueField"
       :direction.prop="direction"
+      :appearance.prop="appearance"
       @gui-input="handleChange"
       @gui-blur="onBlur"
     ></gui-radiogroup>

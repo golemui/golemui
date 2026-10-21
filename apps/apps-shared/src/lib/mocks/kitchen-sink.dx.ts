@@ -158,6 +158,7 @@ const data: Record<string, unknown> = {
     greeting: 'bye',
     wrongGreeting: 'aaaaaa',
     greetingIndex: 2,
+    range: 'week',
   },
   repeaters: {
     users: [

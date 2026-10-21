@@ -66,3 +66,126 @@ gui-radiogroup {
     }
   }
 }
+
+// `appearance="segmented"`: a row of joined buttons, the selected one filled. The radios stay in
+// the page, focusable and invisible, so the keyboard and the semantics are a radio group's; the
+// labels draw the buttons.
+gui-radiogroup .gui-widget--segmented {
+  --_radius: var(--gui-radius-md);
+
+  // A row of segments with no gaps, whatever `.gui-widget` sets.
+  display: inline-flex;
+  flex-direction: row;
+  gap: 0;
+  max-inline-size: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--gui-border-strong);
+  border-radius: var(--_radius);
+  background: var(--gui-bg-surface);
+
+  label {
+    position: relative;
+    display: flex;
+    flex: 1 1 auto;
+    align-items: center;
+    justify-content: center;
+    min-inline-size: 0;
+    min-block-size: calc(var(--gui-widget-size) - 2px);
+    padding: var(--gui-space-1) var(--gui-space-3);
+    box-sizing: border-box;
+    text-align: center;
+    cursor: pointer;
+    transition:
+      background-color var(--gui-transition-normal, 0.2s),
+      color var(--gui-transition-normal, 0.2s);
+
+    // The line between two segments.
+    & + label {
+      border-inline-start: 1px solid var(--gui-border-strong);
+    }
+
+    &:first-child {
+      border-start-start-radius: var(--_radius);
+      border-end-start-radius: var(--_radius);
+    }
+
+    &:last-child {
+      border-start-end-radius: var(--_radius);
+      border-end-end-radius: var(--_radius);
+    }
+
+    &:hover {
+      background: var(--gui-bg-surface-hover);
+    }
+
+    &:has(input:checked) {
+      background: var(--gui-intent-primary);
+      color: var(--gui-intent-primary-text);
+    }
+
+    &:has(input:focus-visible) {
+      z-index: 1;
+      box-shadow: var(--gui-shadow-focus);
+    }
+
+    // `.gui-widget` already dims a disabled group.
+    &:has(input:disabled) {
+      cursor: not-allowed;
+    }
+  }
+
+  // Invisible, but still the control the keyboard and assistive technology use.
+  input {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    opacity: 0;
+    pointer-events: none;
+
+    &::before {
+      content: none;
+    }
+  }
+
+  &:has(input[aria-invalid='true']) {
+    border-color: var(--gui-intent-error);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    label {
+      transition: none;
+    }
+  }
+}
+
+// A narrow form stacks the segments, full width, rather than squeezing them.
+@container gui-container (max-width: 480px) {
+  gui-radiogroup .gui-widget--segmented {
+    display: flex;
+    flex-direction: column;
+
+    label {
+      & + label {
+        border-inline-start: 0;
+        border-block-start: 1px solid var(--gui-border-strong);
+      }
+
+      &:first-child {
+        border-radius: var(--_radius) var(--_radius) 0 0;
+      }
+
+      &:last-child {
+        border-radius: 0 0 var(--_radius) var(--_radius);
+      }
+
+      &:only-child {
+        border-radius: var(--_radius);
+      }
+    }
+  }
+}
