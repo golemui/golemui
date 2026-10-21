@@ -1,0 +1,246 @@
+{
+  "$schema": "../../../../../../libs/gui/schemas/src/lib/layout-widget.schema.json",
+  "uid": "tabMenu",
+  "kind": "layout",
+  "type": "grid",
+  "children": [
+    {
+      "uid": "menuActions",
+      "kind": "action",
+      "type": "menu",
+      "label": "Actions",
+      "on": {
+        "click": "onMenuAction"
+      },
+      "props": {
+        "items": [
+          {
+            "label": "Edit",
+            "value": "edit"
+          },
+          {
+            "label": "Duplicate",
+            "value": "duplicate"
+          },
+          {
+            "separator": true
+          },
+          {
+            "label": "Archive",
+            "value": "archive",
+            "disabled": true
+          },
+          {
+            "label": "Delete",
+            "value": "delete"
+          }
+        ]
+      }
+    },
+    {
+      "uid": "menuOutlined",
+      "kind": "action",
+      "type": "menu",
+      "label": "Actions",
+      "on": {
+        "click": "onMenuAction"
+      },
+      "props": {
+        "items": [
+          {
+            "label": "Edit",
+            "value": "edit"
+          },
+          {
+            "label": "Duplicate",
+            "value": "duplicate"
+          },
+          {
+            "separator": true
+          },
+          {
+            "label": "Archive",
+            "value": "archive",
+            "disabled": true
+          },
+          {
+            "label": "Delete",
+            "value": "delete"
+          }
+        ],
+        "variant": "outlined"
+      }
+    },
+    {
+      "uid": "menuLink",
+      "kind": "action",
+      "type": "menu",
+      "label": "Actions",
+      "on": {
+        "click": "onMenuAction"
+      },
+      "props": {
+        "items": [
+          {
+            "label": "Edit",
+            "value": "edit"
+          },
+          {
+            "label": "Duplicate",
+            "value": "duplicate"
+          },
+          {
+            "separator": true
+          },
+          {
+            "label": "Archive",
+            "value": "archive",
+            "disabled": true
+          },
+          {
+            "label": "Delete",
+            "value": "delete"
+          }
+        ],
+        "variant": "link"
+      }
+    },
+    {
+      "uid": "menuIcon",
+      "kind": "action",
+      "type": "menu",
+      "label": "More",
+      "on": {
+        "click": "onMenuAction"
+      },
+      "props": {
+        "items": [
+          {
+            "label": "Edit",
+            "value": "edit"
+          },
+          {
+            "label": "Duplicate",
+            "value": "duplicate"
+          },
+          {
+            "separator": true
+          },
+          {
+            "label": "Archive",
+            "value": "archive",
+            "disabled": true
+          },
+          {
+            "label": "Delete",
+            "value": "delete"
+          }
+        ],
+        "icon": "more_vert",
+        "iconPosition": "right",
+        "placement": "bottom-end"
+      }
+    },
+    {
+      "uid": "menuIconOnly",
+      "kind": "action",
+      "type": "menu",
+      "on": {
+        "click": "onMenuAction"
+      },
+      "props": {
+        "items": [
+          {
+            "label": "Edit",
+            "value": "edit"
+          },
+          {
+            "label": "Duplicate",
+            "value": "duplicate"
+          },
+          {
+            "separator": true
+          },
+          {
+            "label": "Archive",
+            "value": "archive",
+            "disabled": true
+          },
+          {
+            "label": "Delete",
+            "value": "delete"
+          }
+        ],
+        "ariaLabel": "Row actions",
+        "icon": "more_vert",
+        "variant": "outlined",
+        "placement": "bottom-end"
+      }
+    },
+    {
+      "uid": "menuTop",
+      "kind": "action",
+      "type": "menu",
+      "label": "Opens above",
+      "on": {
+        "click": "onMenuAction"
+      },
+      "props": {
+        "items": [
+          {
+            "label": "Edit",
+            "value": "edit"
+          },
+          {
+            "label": "Duplicate",
+            "value": "duplicate"
+          },
+          {
+            "separator": true
+          },
+          {
+            "label": "Archive",
+            "value": "archive",
+            "disabled": true
+          },
+          {
+            "label": "Delete",
+            "value": "delete"
+          }
+        ],
+        "placement": "top-start"
+      }
+    },
+    {
+      "uid": "menuDisabled",
+      "kind": "action",
+      "type": "menu",
+      "label": "Actions",
+      "disabled": true,
+      "props": {
+        "items": [
+          {
+            "label": "Edit",
+            "value": "edit"
+          },
+          {
+            "label": "Duplicate",
+            "value": "duplicate"
+          },
+          {
+            "separator": true
+          },
+          {
+            "label": "Archive",
+            "value": "archive",
+            "disabled": true
+          },
+          {
+            "label": "Delete",
+            "value": "delete"
+          }
+        ]
+      }
+    }
+  ]
+}

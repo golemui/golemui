@@ -4,6 +4,7 @@ import { type Example } from './types';
 import kitchenSinkJson from './kitchen-sink.form.json';
 import alertChunk from './tabs/alert.form-chunk.json';
 import buttonChunk from './tabs/button.form-chunk.json';
+import menuChunk from './tabs/menu.form-chunk.json';
 import markdownTextChunk from './tabs/markdown-text.form-chunk.json';
 import accordionChunk from './tabs/accordion.form-chunk.json';
 import flexChunk from './tabs/flex.form-chunk.json';
@@ -46,6 +47,7 @@ import fileuploadChunk from './tabs/fileupload.form-chunk.json';
 const chunks: Record<string, unknown> = {
   './tabs/alert.form-chunk.json': alertChunk,
   './tabs/button.form-chunk.json': buttonChunk,
+  './tabs/menu.form-chunk.json': menuChunk,
   './tabs/markdown-text.form-chunk.json': markdownTextChunk,
   './tabs/accordion.form-chunk.json': accordionChunk,
   './tabs/flex.form-chunk.json': flexChunk,

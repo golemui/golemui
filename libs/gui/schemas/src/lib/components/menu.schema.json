@@ -1,0 +1,167 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://golemui.com/schemas/gui/components/menu.schema.json",
+  "title": "Menu Widget",
+  "description": "A button that opens a menu of actions. Picking an item dispatches `on.click` with the item's value in `detail.value`.",
+  "type": "object",
+  "$defs": {
+    "labelDef": {
+      "$ref": "../core/common.schema.json#/$defs/localizable"
+    },
+    "disabledDef": {
+      "$ref": "../core/common.schema.json#/$defs/boolOrWhen"
+    },
+    "menuAction": {
+      "type": "object",
+      "description": "An action in the menu.",
+      "properties": {
+        "label": {
+          "$ref": "../core/common.schema.json#/$defs/localizable"
+        },
+        "value": {
+          "type": "string",
+          "description": "Sent in the event's `detail.value` when the user picks the item."
+        },
+        "disabled": {
+          "type": "boolean",
+          "description": "Shows the item but stops the user picking it."
+        }
+      },
+      "required": ["label", "value"],
+      "additionalProperties": false
+    },
+    "menuSeparator": {
+      "type": "object",
+      "description": "A line between two groups of items.",
+      "properties": {
+        "separator": {
+          "const": true
+        }
+      },
+      "required": ["separator"],
+      "additionalProperties": false
+    },
+    "itemsProp": {
+      "type": "array",
+      "description": "The menu's items, in order.",
+      "items": {
+        "oneOf": [
+          {
+            "$ref": "#/$defs/menuAction"
+          },
+          {
+            "$ref": "#/$defs/menuSeparator"
+          }
+        ]
+      },
+      "minItems": 1
+    },
+    "placementProp": {
+      "description": "Where the menu opens, next to its button. Defaults to `bottom-start`.",
+      "enum": [
+        "top",
+        "top-start",
+        "top-end",
+        "bottom",
+        "bottom-start",
+        "bottom-end",
+        "start",
+        "start-start",
+        "start-end",
+        "end",
+        "end-start",
+        "end-end"
+      ]
+    },
+    "variantProp": {
+      "enum": ["filled", "outlined", "link"]
+    },
+    "iconProp": {
+      "type": "string"
+    },
+    "iconPositionProp": {
+      "enum": ["left", "right"]
+    },
+    "ariaLabelProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable",
+      "description": "The button's accessible name when it shows no label, such as an icon-only button."
+    }
+  },
+  "allOf": [
+    {
+      "$ref": "../core/common.schema.json#/$defs/baseWidget"
+    }
+  ],
+  "properties": {
+    "kind": {
+      "const": "action"
+    },
+    "type": {
+      "const": "menu"
+    },
+    "label": {
+      "$ref": "#/$defs/labelDef"
+    },
+    "disabled": {
+      "$ref": "#/$defs/disabledDef"
+    },
+    "on": {
+      "$ref": "../core/common.schema.json#/$defs/on"
+    },
+    "props": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "$ref": "#/$defs/itemsProp"
+        },
+        "placement": {
+          "$ref": "#/$defs/placementProp"
+        },
+        "variant": {
+          "$ref": "#/$defs/variantProp"
+        },
+        "icon": {
+          "$ref": "#/$defs/iconProp"
+        },
+        "iconPosition": {
+          "$ref": "#/$defs/iconPositionProp"
+        },
+        "ariaLabel": {
+          "$ref": "#/$defs/ariaLabelProp"
+        }
+      },
+      "patternProperties": {
+        "^items\\.[^.]+$": {
+          "$ref": "#/$defs/itemsProp"
+        },
+        "^placement\\.[^.]+$": {
+          "$ref": "#/$defs/placementProp"
+        },
+        "^variant\\.[^.]+$": {
+          "$ref": "#/$defs/variantProp"
+        },
+        "^icon\\.[^.]+$": {
+          "$ref": "#/$defs/iconProp"
+        },
+        "^iconPosition\\.[^.]+$": {
+          "$ref": "#/$defs/iconPositionProp"
+        },
+        "^ariaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/ariaLabelProp"
+        }
+      },
+      "required": ["items"],
+      "additionalProperties": false
+    }
+  },
+  "patternProperties": {
+    "^disabled\\.[^.]+$": {
+      "$ref": "#/$defs/disabledDef"
+    },
+    "^label\\.[^.]+$": {
+      "$ref": "#/$defs/labelDef"
+    }
+  },
+  "required": ["kind", "type", "props"],
+  "unevaluatedProperties": false
+}

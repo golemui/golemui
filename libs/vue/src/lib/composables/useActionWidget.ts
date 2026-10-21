@@ -9,6 +9,11 @@ export interface UseActionWidgetReturn<ExtraProps extends Record<string, any>> {
   /** Kept for existing templates. `templateData.invalid` is the portable form the other three use. */
   invalid: Ref<boolean>;
   onClick: () => void;
+  /**
+   * Emits `click` with a detail, such as the value of the item picked in a menu. `onClick` takes
+   * no detail, so a DOM event bound to it never ends up in the form event.
+   */
+  emitClick: (detail?: unknown) => void;
 }
 
 export function useActionWidget<ExtraProps extends Record<string, any> = Record<string, any>>(
@@ -40,12 +45,14 @@ export function useActionWidget<ExtraProps extends Record<string, any> = Record<
     viewModelSub.unsubscribe();
   });
 
-  const onClick = () => {
+  const emitClick = (detail?: unknown) => {
     if (disposed) {
       return;
     }
-    formContext.emitEvent('click', widget);
+    formContext.emitEvent('click', widget, detail);
   };
 
-  return { uid, templateData, invalid, onClick };
+  const onClick = () => emitClick();
+
+  return { uid, templateData, invalid, onClick, emitClick };
 }

@@ -47,6 +47,7 @@ Every widget’s exhaustive reference page (props, per-prop examples, CSS variab
 ## Action widgets
 
 - `gui.actions.button` — https://golemui.com/dx/widgets-reference/interactive-fields/button.md (json: https://golemui.com/json/widgets-reference/interactive-fields/button.md)
+- `gui.actions.menu` — https://golemui.com/dx/widgets-reference/interactive-fields/menu.md (json: https://golemui.com/json/widgets-reference/interactive-fields/menu.md)
 - Category overview — https://golemui.com/dx/widgets-reference/interactive-fields/overview.md
 
 ## Display widgets

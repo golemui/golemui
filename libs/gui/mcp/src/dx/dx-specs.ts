@@ -716,6 +716,21 @@ const ACTIONS: DxSpec[] = [
       'For a non-submit action use an `onClick: (event) => { /* event.data is the form data */ }` handler.',
     ],
   },
+  {
+    factory: 'menu',
+    namespace: 'actions',
+    docSlug: 'menu',
+    call: 'gui.actions.menu({ label?, items, onClick?, placement?, variant?, icon?, ariaLabel? })',
+    example:
+      "gui.actions.menu({ label: 'Actions', items: [{ label: 'Edit', value: 'edit' }, { separator: true }, { label: 'Delete', value: 'delete' }], onClick: (event) => console.log(event.detail.value) })",
+    notes: [
+      'A button that opens a menu of actions. `items` holds actions `{ label, value, disabled? }` and separators `{ separator: true }`.',
+      "`onClick` gets the event: the picked item's value is `event.detail.value`. Unlike `button`, whose `onClick` gets the form data.",
+      "A handler with no parameters that returns a string (`onClick: () => 'rowAction'`) dispatches that event name to the host's `formEvent` instead.",
+      "`placement` sets where the menu opens (default `'bottom-start'`). It is not an input: no path, nothing in the form data.",
+      "`label` is optional: an icon-only menu (`icon: 'more_vert'`) MUST set `ariaLabel`, the button's accessible name.",
+    ],
+  },
 ];
 
 const DISPLAYS: DxSpec[] = [

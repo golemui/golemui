@@ -45,6 +45,7 @@ Every `gui.*` factory and its calling convention. Look up the detail below for t
 - `gui.layouts.horizontalGrid(children, props?)`
 - `gui.inputs.list(path, { label, items, height?, itemHeight? })`
 - `gui.inputs.markdown(path, { label })`
+- `gui.actions.menu({ label?, items, onClick?, placement?, variant?, icon?, ariaLabel? })`
 - `gui.inputs.multiDropdown(path, { label, items, validator? })`
 - `gui.inputs.multiFileUpload(path, { label?, accept?, maxSize?, buttonLabel?, validator? })`
 - `gui.inputs.multiList(path, { label, items, height?, itemHeight?, validator? })`
@@ -380,6 +381,30 @@ gui.inputs.markdown('notes', { label: 'Notes (markdown)' });
 - The preview needs a parser: pass `dependencies: { markdown: { parse } }` in the init config, or the preview stays blank. The preview inserts the `parse` result as HTML without sanitizing it, so for markdown from users or stored data `parse` must remove raw HTML and `javascript:` links. `parse` returns `SanitizedHtml`: cast the sanitized result. Call `get_concept({ concept: "host-services" })`.
 
 Reference: https://golemui.com/dx/widgets-reference/input-fields/markdown.md
+
+## gui.actions.menu
+
+Call: `gui.actions.menu({ label?, items, onClick?, placement?, variant?, icon?, ariaLabel? })`
+
+```ts
+gui.actions.menu({
+  label: 'Actions',
+  items: [
+    { label: 'Edit', value: 'edit' },
+    { separator: true },
+    { label: 'Delete', value: 'delete' },
+  ],
+  onClick: (event) => console.log(event.detail.value),
+});
+```
+
+- A button that opens a menu of actions. `items` holds actions `{ label, value, disabled? }` and separators `{ separator: true }`.
+- `onClick` gets the event: the picked item's value is `event.detail.value`. Unlike `button`, whose `onClick` gets the form data.
+- A handler with no parameters that returns a string (`onClick: () => 'rowAction'`) dispatches that event name to the host's `formEvent` instead.
+- `placement` sets where the menu opens (default `'bottom-start'`). It is not an input: no path, nothing in the form data.
+- `label` is optional: an icon-only menu (`icon: 'more_vert'`) MUST set `ariaLabel`, the button's accessible name.
+
+Reference: https://golemui.com/dx/widgets-reference/interactive-fields/menu.md
 
 ## gui.inputs.multiDropdown
 
