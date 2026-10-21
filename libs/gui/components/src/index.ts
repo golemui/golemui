@@ -69,7 +69,7 @@ export type {
 } from './lib/components/pills';
 export { GuiPopover, GuiPopoverEvents, type GuiPlacement } from './lib/components/popover';
 export { GuiRadiogroup, GuiRadiogroupEvents } from './lib/components/radiogroup';
-export type { GuiRadiogroupProps } from './lib/components/radiogroup';
+export type { GuiRadiogroupAppearance, GuiRadiogroupProps } from './lib/components/radiogroup';
 export { GuiRangeCalendar, GuiRangeCalendarEvents } from './lib/components/range-calendar';
 export type { RangeCalendarDay } from './lib/components/range-calendar';
 
@@ -109,6 +109,17 @@ export type { GuiTimeProps } from './lib/components/time-input';
 export { GuiTimeList, GuiTimeListEvents } from './lib/components/time-list';
 export { GuiTimePicker, GuiTimePickerEvents } from './lib/components/time-picker';
 export { GuiToggle, GuiToggleEvents } from './lib/components/toggle';
+export {
+  GuiToaster,
+  GuiToasterEvents,
+  toast,
+  type GuiDismissEventDetail,
+  type GuiDismissReason,
+  type GuiToasterPlacement,
+  type GuiToastHandle,
+  type GuiToastOptions,
+  type GuiToastVariant,
+} from './lib/components/toast';
 export { GuiTooltip, GuiTooltipEvents } from './lib/components/tooltip';
 export type { GuiToggleProps } from './lib/components/toggle';
 export { weekInfoData } from './lib/utils/week-info';

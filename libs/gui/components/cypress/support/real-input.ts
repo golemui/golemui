@@ -19,6 +19,8 @@ const keys = {
   Tab: { key: 'Tab', code: 'Tab', windowsVirtualKeyCode: 9 },
   Enter: { key: 'Enter', code: 'Enter', windowsVirtualKeyCode: 13, text: '\r' },
   Space: { key: ' ', code: 'Space', windowsVirtualKeyCode: 32, text: ' ' },
+  ArrowRight: { key: 'ArrowRight', code: 'ArrowRight', windowsVirtualKeyCode: 39 },
+  ArrowLeft: { key: 'ArrowLeft', code: 'ArrowLeft', windowsVirtualKeyCode: 37 },
 } as const;
 
 /** Presses and releases a key, in the element that has focus. */

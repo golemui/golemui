@@ -47,11 +47,13 @@ describe('server rendering standalone elements in plain node', () => {
     expect(markup).toMatch(/<gui-dialog[^>]*>\s*<dialog id="plan-dialog"[^>]*>\s*<h2/);
     expect(markup).not.toMatch(/<dialog[^>]*\sopen/);
     expect(markup).toMatch(/<input[^>]*id="coupon"/);
+    // An empty toaster: its region is created in the browser.
+    expect(markup).toMatch(/<gui-toaster[^>]*placement="top-end"[^>]*><\/gui-toaster>/);
   });
 
   it('holds every GolemUI element inert through defer-hydration', () => {
     const tags = [...markup.matchAll(/<(gui-[a-z-]+)([^>]*)>/g)];
-    expect(tags.length).toBe(13);
+    expect(tags.length).toBe(14);
     for (const [, tag, attributes] of tags) {
       expect(attributes, tag).toContain('defer-hydration');
     }

@@ -17,10 +17,18 @@ export type GuiRadiogroupProps = {
   labelField?: string;
   valueField?: string;
   direction?: 'row' | 'column';
+  appearance?: GuiRadiogroupAppearance;
 };
 
 /**
- * A group of radio buttons to pick one option.
+ * How a radio group looks: `default` radio buttons, or `segmented`, a row of joined buttons with
+ * the selected one filled. Both are the same native radios, with the same keyboard and semantics.
+ */
+export type GuiRadiogroupAppearance = 'default' | 'segmented';
+
+/**
+ * A group of radio buttons to pick one option. With `appearance="segmented"` it shows as a
+ * segmented control: a row of joined buttons for a few short options, such as Day, Week, Month.
  *
  * @fires gui-input - The user changed the value. `detail.value` is the new value.
  * @fires gui-change - The user committed the value. `detail.value` is the committed value.
@@ -41,8 +49,13 @@ export class GuiRadiogroup extends GuiFormControl {
   @property({ type: String, attribute: 'label-field' }) labelField: string | undefined = undefined;
   /** For options given as objects, the key of the value. */
   @property({ type: String, attribute: 'value-field' }) valueField: string | undefined = undefined;
-  /** Lays the options out in a row or a column. */
+  /** Lays the options out in a row or a column. A segmented group is always a row. */
   @property({ type: String }) direction: 'row' | 'column' | undefined = 'column';
+  /**
+   * `segmented` shows the options as a row of joined buttons, which stack in a narrow form. Keep
+   * it to a few short options: past about five, a default group or a dropdown reads better.
+   */
+  @property({ type: String }) appearance: GuiRadiogroupAppearance | undefined = 'default';
 
   protected optionsLoading = false;
   protected hasMatchingValue = false;
@@ -90,6 +103,7 @@ export class GuiRadiogroup extends GuiFormControl {
       labelField: this.labelField,
       valueField: this.valueField,
       direction: this.direction,
+      appearance: this.appearance,
     };
 
     this.normalizedOptions = updateOptions(this.options ?? [], {
@@ -140,7 +154,7 @@ export class GuiRadiogroup extends GuiFormControl {
       ${addLabel(this.uid, templateData, false, undefined, false)}
 
       <div
-        class="gui-widget${this.direction === 'row' ? ' gui-widget--horizontal' : ''}"
+        class=${this.widgetClass}
         role="radiogroup"
         id=${this.uid}
         aria-labelledby=${templateData.label ? `${this.uid}_label` : nothing}
@@ -155,6 +169,11 @@ export class GuiRadiogroup extends GuiFormControl {
 
       ${addErrors(this.uid, templateData)}
     `;
+  }
+
+  private get widgetClass(): string {
+    if (this.appearance === 'segmented') return 'gui-widget gui-widget--segmented';
+    return `gui-widget${this.direction === 'row' ? ' gui-widget--horizontal' : ''}`;
   }
 
   /** @internal */
