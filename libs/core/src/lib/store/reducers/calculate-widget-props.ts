@@ -404,6 +404,8 @@ function resolveValue(value: unknown, ctx: ResolverCtx): unknown {
 /**
  * Objects and arrays already walked that hold no translation config. Source props keep their
  * references between passes, so each one is walked once, not on every state change.
+ * Assumes the form definition is not mutated after INITIALIZE. Change detection relies on the
+ * same assumption: `ChangeTracker.write` treats an unchanged reference as equal.
  */
 const holdsNoTranslation = new WeakSet<object>();
 

@@ -517,6 +517,20 @@ describe('calculateWidgetProps', () => {
       expect(propsOf(next, 'rep')['template']).toBe(template);
       expect(translator.calls).toHaveLength(0);
     });
+
+    it('walks a config-free value once: a config added to it by mutation later is not seen', () => {
+      const translator = makeTranslator((key) => `T:${key}`);
+      const sections: Record<string, unknown>[] = [{ uid: 'a', label: 'Plain' }];
+      seed(state, 'acc', accordion(sections));
+      const first = run(state, translator);
+
+      // The engine assumes the form definition is immutable after INITIALIZE.
+      sections.push({ uid: 'b', label: { key: 'k' } });
+      const second = run(first, translator);
+
+      expect(translator.calls).toHaveLength(0);
+      expect(propsOf(second)['sections']).toBe(sections);
+    });
   });
 
   describe('translation config', () => {
