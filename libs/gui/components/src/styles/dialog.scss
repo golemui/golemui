@@ -4,7 +4,11 @@ gui-dialog {
 
   > dialog {
     box-sizing: border-box;
-    max-inline-size: min(var(--gui-dialog-max-width, 32rem), calc(100vw - var(--gui-space-4) * 2));
+    // A set width, as a drawer has, not the dialog's default `fit-content`: a GolemUI form inside
+    // has `container-type: inline-size`, so it has no width of its own, and a dialog that fits its
+    // content collapses around it.
+    inline-size: var(--gui-dialog-size, 32rem);
+    max-inline-size: calc(100vw - var(--gui-space-4) * 2);
     max-block-size: calc(100dvh - var(--gui-space-4) * 2);
     padding: var(--gui-space-5);
     border: 1px solid var(--gui-border-default);
