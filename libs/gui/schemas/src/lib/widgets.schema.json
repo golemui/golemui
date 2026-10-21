@@ -48,7 +48,8 @@
         "alert",
         "markdownText",
         "renderer",
-        "button"
+        "button",
+        "menu"
       ]
     },
     "formWidget": {
@@ -95,6 +96,7 @@
         { "$ref": "./components/alert.schema.json" },
         { "$ref": "./components/markdowntext.schema.json" },
         { "$ref": "./components/button.schema.json" },
+        { "$ref": "./components/menu.schema.json" },
         { "$ref": "./components/custom.schema.json" },
         { "$ref": "./core/common.schema.json#/$defs/chunkRef" }
       ]

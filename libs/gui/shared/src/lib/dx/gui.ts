@@ -56,6 +56,7 @@ import { _guiCustomInput } from './shortcuts/custom-input/guiCustomInput.impl';
 
 // --- Actions ---
 import { _guiButton } from './shortcuts/actions/guiActions.impl';
+import { _guiMenu } from './shortcuts/menu/guiMenu.impl';
 import { _guiCustomAction } from './shortcuts/custom-action/guiCustomAction.impl';
 
 // --- Displays ---
@@ -152,6 +153,7 @@ import {
 } from './shortcuts/range-time-picker/register';
 import { _gslRepeaters, _gslRepeaterByUid } from './shortcuts/repeater/register';
 import { _gslActions, _gslActionByUid } from './shortcuts/actions/register';
+import { _gslMenus, _gslMenuByUid } from './shortcuts/menu/register';
 import { _gslLayouts, _gslLayoutByUid } from './shortcuts/layouts/register';
 import { _gslDisplays, _gslDisplayByUid } from './shortcuts/display/register';
 import { _gslAlerts, _gslAlertByUid } from './shortcuts/alert/register';
@@ -237,6 +239,8 @@ const guiSelectors = createSelectors({
   // Actions, displays, layouts
   actions: _gslActions,
   actionByUid: _gslActionByUid,
+  menus: _gslMenus,
+  menuByUid: _gslMenuByUid,
   layouts: _gslLayouts,
   layoutByUid: _gslLayoutByUid,
   displays: _gslDisplays,
@@ -316,6 +320,7 @@ const guiFacade = {
   },
   actions: {
     button: _guiButton,
+    menu: _guiMenu,
     custom: _guiCustomAction,
   },
   displays: {

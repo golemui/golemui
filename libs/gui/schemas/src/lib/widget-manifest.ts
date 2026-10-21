@@ -50,6 +50,7 @@ export const guiWidgetManifest: readonly WidgetManifestEntry[] = [
   // cannot express. Listing it in knownWidgetTypes rejects it in JSON forms.
   { type: 'renderer', kind: 'display' },
   { type: 'button', schemaFile: 'button.schema.json', kind: 'action' },
+  { type: 'menu', schemaFile: 'menu.schema.json', kind: 'action' },
 ];
 
 /**

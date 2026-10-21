@@ -45,6 +45,7 @@ import { tabsShortcutType } from './shortcuts/tabs/register';
 import { listShortcutType } from './shortcuts/list/register';
 import { tagsShortcutType } from './shortcuts/tags/register';
 import { alertShortcutType } from './shortcuts/alert/register';
+import { menuShortcutType } from './shortcuts/menu/register';
 import { markdownTextShortcutType } from './shortcuts/markdown-text/register';
 import { datePickerShortcutType } from './shortcuts/date-picker/register';
 import { dropdownShortcutType } from './shortcuts/dropdown/register';
@@ -90,6 +91,7 @@ const guiShortcutTypes: ShortcutTypeDefinition<any, any, any>[] = [
   listShortcutType,
   tagsShortcutType,
   alertShortcutType,
+  menuShortcutType,
   markdownTextShortcutType,
   datePickerShortcutType,
   dropdownShortcutType,

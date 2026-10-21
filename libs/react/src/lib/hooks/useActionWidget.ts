@@ -42,6 +42,17 @@ export function useActionWidget<ExtraProps extends Record<string, any>>(
   }, [widget, formContext]);
 
   /**
+   * Emits `click` with a detail, such as the value of the item picked in a menu. `onClick` takes
+   * no detail, so a DOM event handed to it never ends up in the form event.
+   */
+  const emitClick = useCallback(
+    (detail?: unknown) => {
+      formContext.emitEvent('click', widget, detail);
+    },
+    [widget, formContext],
+  );
+
+  /**
    * Validates the whole form and emits the submit event when the form is valid. Does nothing
    * unless the widget's `actionType` is `submit`, like a DOM button of type `button`.
    *
@@ -59,6 +70,7 @@ export function useActionWidget<ExtraProps extends Record<string, any>>(
     uid: widget.uid,
     templateData,
     onClick,
+    emitClick,
     onSubmit,
   };
 }

@@ -24,6 +24,7 @@ export * from './lib/core-features/widget-loaders.cy';
 // gui widget suites
 export * from './lib/gui-features/accordion.cy';
 export * from './lib/gui-features/radiogroup.cy';
+export * from './lib/gui-features/menu.cy';
 export * from './lib/gui-features/alert.cy';
 export * from './lib/gui-features/currency.cy';
 export * from './lib/gui-features/dateinput.cy';

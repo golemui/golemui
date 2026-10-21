@@ -84,6 +84,8 @@ const SELECTOR_TYPE_BY_METHOD: Record<string, string> = {
   repeaterByUid: 'REPEATER',
   actions: 'ACTIONS',
   actionByUid: 'ACTIONS',
+  menus: 'MENUS',
+  menuByUid: 'MENUS',
   layouts: 'LAYOUTS',
   layoutByUid: 'LAYOUTS',
   displays: 'DISPLAYS',
@@ -134,7 +136,7 @@ describe('gui.selectors method surface', () => {
     const byUidNames = Object.keys(SELECTOR_TYPE_BY_METHOD).filter((name) =>
       name.endsWith('ByUid'),
     );
-    expect(byUidNames.length).toBe(41 + 1); // 41 widget pairs plus inputByUid
+    expect(byUidNames.length).toBe(42 + 1); // 42 widget pairs plus inputByUid
     for (const methodName of byUidNames) {
       const leaf = buildLeaf(gui.selectors, methodName);
       expect(leaf.matcher({ uid: 'probe-uid' }), methodName).toBe(true);

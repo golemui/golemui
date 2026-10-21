@@ -30,6 +30,7 @@ const expectedKindByItemType: Record<string, ShortcutItemKind> = {
   LIST: 'input',
   MARKDOWN: 'input',
   MARKDOWN_TEXTS: 'display',
+  MENUS: 'action',
   MULTI_DROPDOWN: 'input',
   MULTI_FILE_UPLOAD: 'input',
   MULTI_LIST: 'input',
