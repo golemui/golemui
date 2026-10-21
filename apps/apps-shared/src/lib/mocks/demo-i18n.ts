@@ -3,6 +3,7 @@ import { type Example } from './types';
 import demoI18nForm from './demo-i18n.form.json';
 
 const data = {
+  travellers: [{ name: 'Ana' }, { name: 'Bo' }],
   details: {
     clientName: '',
     date: null,
@@ -23,6 +24,7 @@ const resources = {
           budget: 'Travel Budget',
           passengers: 'Passengers',
           pets: 'Pets',
+          travellers: 'Travellers',
           includePets: {
             label: 'Include Pets',
             hint: 'Only hosts with pets will be included in the search results.',
@@ -32,6 +34,15 @@ const resources = {
             nextMonthAriaLabel: 'Next Month',
             prevMonthAriaLabel: 'Previous Month',
           },
+        },
+        section: {
+          travellers: 'Travellers',
+        },
+        tab: {
+          pets: 'Pets',
+        },
+        row: {
+          traveller: 'Traveller {{who}}',
         },
         btn: {
           submit: 'Search My Trip',
@@ -48,6 +59,7 @@ const resources = {
           budget: 'Presupuesto de viaje',
           passengers: 'Pasajeros',
           pets: 'Mascotas',
+          travellers: 'Viajeros',
           includePets: {
             label: 'Incluir mascotas',
             hint: 'Solo se incluirán en los resultados de búsqueda los alojamientos que acepten mascotas.',
@@ -57,6 +69,15 @@ const resources = {
             nextMonthAriaLabel: 'Mes siguiente',
             prevMonthAriaLabel: 'Mes anterior',
           },
+        },
+        section: {
+          travellers: 'Viajeros',
+        },
+        tab: {
+          pets: 'Mascotas',
+        },
+        row: {
+          traveller: 'Viajero {{who}}',
         },
         btn: {
           submit: 'Buscar mi viaje',
