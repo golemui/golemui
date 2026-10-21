@@ -57,7 +57,7 @@ export default defineConfig(() => ({
     // to that one spec plus the entry points it imports.
     typecheck: {
       enabled: true,
-      include: ['src/legacy-imports.spec.ts'],
+      include: ['src/legacy-imports.spec.ts', 'src/lib/golem-form.spec.ts'],
       tsconfig: 'tsconfig.legacy-imports.json',
     },
     reporters: ['default'],

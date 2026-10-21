@@ -14,6 +14,8 @@ import {
   type ValidateOn,
   devToolsMiddleware,
 } from '@golemui/core';
+// for the language picker
+import { GuiSelect } from '@golemui/gui-components/react';
 import { GuiForm } from '@golemui/gui-react';
 import { type Dependencies, type GuiFormInitConfig } from '@golemui/gui-shared';
 import type { CustomValidatorSchemas } from '@golemui/gui-validators';
@@ -121,21 +123,26 @@ export function FormPage() {
   );
 }
 
-function onLanguageChanged(event: Event) {
-  const code = (event as CustomEvent<{ value: string }>).detail.value;
-  i18next.changeLanguage(code);
+function onLanguageChanged(event: CustomEvent<{ value: unknown }>) {
+  const code = event.detail.value;
+  if (typeof code === 'string') {
+    i18next.changeLanguage(code);
+  }
 }
 
+// The wrapper imports the element class, so `gui-select` is defined before the first render and
+// React sets `options` as a property. A raw `<gui-select>` rendered first gets `options` as the
+// attribute "[object Object],..." because the form loads the element later.
 function LanguagePicker() {
   return (
     <div>
-      <gui-select
+      <GuiSelect
         label="Language picker"
         uid="language"
         value="en"
         options={languages}
-        ongui-change={onLanguageChanged}
-      ></gui-select>
+        onGuiChange={onLanguageChanged}
+      />
     </div>
   );
 }

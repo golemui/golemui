@@ -36,6 +36,20 @@ describe('DX Pipeline — Container Types (Phase 6.3)', () => {
       expect(tabs?.[1]).toEqual({ label: 'Address', uid: 'address' });
     });
 
+    it('keeps a translation config label and derives the uid from its key', () => {
+      const result = processDx(
+        _guiTabs([{ label: { key: 'tabs.billing' }, children: [_guiTextInput('iban')] }]),
+      );
+      const tabsWidget = getStaticChild(result, 0) as LayoutWidget & {
+        props?: { tabs?: Array<{ label: unknown; uid: string }> };
+      };
+
+      expect(tabsWidget.props?.tabs).toEqual([
+        { label: { key: 'tabs.billing' }, uid: 'tabs-billing' },
+      ]);
+      expect(tabsWidget.children?.[0].uid).toBe('tabs-billing');
+    });
+
     it('wraps each tab content in a flex layout child', () => {
       const result = processDx(
         _guiTabs([

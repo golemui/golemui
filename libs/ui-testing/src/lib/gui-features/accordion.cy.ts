@@ -1,5 +1,5 @@
 import { defineForm } from '@golemui/core';
-import { expectNoDuplicateIds, type MountComponentFn } from '../utils';
+import { dictionaryTranslator, expectNoDuplicateIds, type MountComponentFn } from '../utils';
 
 export const runAccordionComponentTests = (mountFn: MountComponentFn) => {
   describe('Accordion Component', () => {
@@ -179,6 +179,54 @@ export const runAccordionComponentTests = (mountFn: MountComponentFn) => {
       // singleOpen is false, so opening the second section keeps the first one open
       cy.get(`[id="accordion_section_${ACCORDION_UID}_secondSection"]`).should('be.visible');
       cy.get(`[id="accordion_section_${ACCORDION_UID}_firstSection"]`).should('be.visible');
+    });
+  });
+
+  describe('Accordion Component with translated labels', () => {
+    it('translates a section label given as a translation config, again when the language changes', () => {
+      const ACCORDION_UID = 'translatedAccordion';
+      const sectionLabel = (sectionUid: string) =>
+        cy
+          .get(`summary[id="accordion_button_${ACCORDION_UID}_${sectionUid}"]`)
+          .invoke('text')
+          .invoke('trim');
+      const translator = dictionaryTranslator('en', {
+        en: { 'sections.billing': 'Billing' },
+        es: { 'sections.billing': 'Facturación' },
+      });
+
+      mountFn({
+        localization: translator,
+        formDef: defineForm({
+          form: [
+            {
+              uid: ACCORDION_UID,
+              kind: 'layout',
+              type: 'accordion',
+              props: {
+                sections: [
+                  { uid: 'billing', label: { key: 'sections.billing' } },
+                  { uid: 'shipping', label: { key: 'sections.missing', default: 'Shipping' } },
+                  { uid: 'notes', label: 'Notes' },
+                ],
+              },
+              children: [
+                { uid: 'billing', kind: 'input', type: 'textinput', path: 'billing', label: 'A' },
+                { uid: 'shipping', kind: 'input', type: 'textinput', path: 'shipping', label: 'B' },
+                { uid: 'notes', kind: 'input', type: 'textinput', path: 'notes', label: 'C' },
+              ],
+            },
+          ],
+        }),
+      });
+
+      sectionLabel('billing').should('equal', 'Billing');
+      sectionLabel('shipping').should('equal', 'Shipping');
+      sectionLabel('notes').should('equal', 'Notes');
+
+      cy.then(() => translator.setLang('es'));
+      sectionLabel('billing').should('equal', 'Facturación');
+      sectionLabel('notes').should('equal', 'Notes');
     });
   });
 };

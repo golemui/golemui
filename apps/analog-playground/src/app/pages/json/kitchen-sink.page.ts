@@ -1,5 +1,11 @@
 import { isPlatformServer } from '@angular/common';
-import { Component, CUSTOM_ELEMENTS_SCHEMA, inject, PLATFORM_ID } from '@angular/core';
+import {
+  afterNextRender,
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  inject,
+  PLATFORM_ID,
+} from '@angular/core';
 import { type AngularItemRenderer } from '@golemui/angular';
 import {
   allowedNames,
@@ -78,6 +84,13 @@ export default class JsonKitchenSinkPage {
       label: `${flag} ${label}`,
     }));
   protected readonly customFormHealthBoundary = CustomFormHealthBoundaryComponent;
+
+  constructor() {
+    // for the language picker
+    afterNextRender(() => {
+      import('@golemui/gui-components/select');
+    });
+  }
   protected readonly config: GuiFormInitConfig = {
     // Stable id: with SSR the server and client must agree on the form id.
     formName: 'analog-json-kitchen-sink',

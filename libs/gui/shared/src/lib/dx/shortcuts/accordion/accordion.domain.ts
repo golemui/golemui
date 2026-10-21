@@ -1,9 +1,10 @@
+import type { Localizable } from '@golemui/core';
 import type { DxCommonFields, DxLayoutBase } from '@golemui/dx';
 import type { DefOrCallback, GslConfigBase, GuiShortcutOf } from '@golemui/dx';
 import type { ValidGuiShortcut } from '@golemui/dx';
 
 export interface AccordionDecorator extends DxLayoutBase, DxCommonFields {
-  sections: { label: string; uid: string }[];
+  sections: { label: Localizable; uid: string }[];
   singleOpen?: boolean;
   defaultOpen?: { [key: string]: boolean };
   renderMode?: 'all' | 'activeOnly';

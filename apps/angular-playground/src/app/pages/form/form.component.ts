@@ -48,6 +48,8 @@ export class AppFormPage {
 
   constructor() {
     console.log(`Playground started in "${this.appConfig.env}" mode`);
+    // For the language picker
+    import('@golemui/gui-components/select');
     this.loadFormDef();
   }
 

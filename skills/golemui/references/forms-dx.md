@@ -81,6 +81,7 @@ gui.layouts.accordion([
 ```
 
 - Takes `sections: { label, children, uid? }[]` — same shape as `tabs`, rendered as collapsible panels.
+- `label` is a string or an i18n `{ key, params?, default? }` object. A section without `uid` gets the slug of its label, or of its key.
 
 Reference: https://golemui.com/dx/widgets-reference/layout-fields/accordion.md
 
@@ -683,6 +684,7 @@ gui.layouts.tabs([
 ```
 
 - Takes `sections: { label, children, uid? }[]` — each section is a tab with its own children.
+- `label` is a string or an i18n `{ key, params?, default? }` object. A tab without `uid` gets the slug of its label, or of its key.
 
 Reference: https://golemui.com/dx/widgets-reference/layout-fields/tabs.md
 
