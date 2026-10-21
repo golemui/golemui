@@ -89,6 +89,17 @@ describe('resuming server-rendered standalone elements', () => {
     );
   });
 
+  it("creates the toaster's region once it resumes, closed and named", async () => {
+    resumeServerRendered();
+    await settle();
+
+    const region = document.querySelector('gui-toaster > .gui-toaster__region') as HTMLElement;
+    expect(region.getAttribute('popover')).toBe('manual');
+    expect(region.getAttribute('aria-label')).toBe('Notifications');
+    expect(region.dataset['placement']).toBe('top-end');
+    expect(region.querySelector('ol')?.children).toHaveLength(0);
+  });
+
   it('gives a menu, its items and its button their roles once it resumes', async () => {
     resumeServerRendered();
     await settle();

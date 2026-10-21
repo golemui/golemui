@@ -74,6 +74,7 @@
         "libs/gui/components/src/lib/components/markdown-text.ts"
       ],
       "@golemui/gui-components/menu": ["libs/gui/components/src/lib/components/menu.ts"],
+      "@golemui/gui-components/toast": ["libs/gui/components/src/lib/components/toast.ts"],
       "@golemui/gui-components/file-upload": [
         "libs/gui/components/src/lib/components/file-upload.ts"
       ],

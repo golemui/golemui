@@ -25,6 +25,27 @@ export const radiogroupTab = gui.layouts.grid([
       { label: 'bye.2', value: 2 },
     ],
   }),
+  gui.inputs.radiogroup('radiogroups.range', {
+    label: 'Range',
+    hint: 'A segmented radio group: "Week" should be selected',
+    appearance: 'segmented',
+    options: [
+      { label: 'Day', value: 'day' },
+      { label: 'Week', value: 'week' },
+      { label: 'Month', value: 'month' },
+    ],
+  }),
+  gui.inputs.radiogroup('radiogroups.view', {
+    label: 'View',
+    hint: 'Segmented and required: nothing selected, with a validation error',
+    appearance: 'segmented',
+    options: [
+      { label: 'List', value: 'list' },
+      { label: 'Grid', value: 'grid' },
+      { label: 'Board', value: 'board' },
+    ],
+    validator: { type: 'string', required: true },
+  }),
   gui.inputs.radiogroup('radiogroups.subregion', {
     label: 'Country subregion',
     hint: 'No option should be selected',

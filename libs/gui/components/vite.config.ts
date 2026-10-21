@@ -62,6 +62,7 @@ export default defineConfig(() => ({
         'lib/components/markdown': 'src/lib/components/markdown.ts',
         'lib/components/markdown-text': 'src/lib/components/markdown-text.ts',
         'lib/components/menu': 'src/lib/components/menu.ts',
+        'lib/components/toast': 'src/lib/components/toast.ts',
         'lib/components/multi-dropdown': 'src/lib/components/multi-dropdown.ts',
         'lib/components/multi-file-upload': 'src/lib/components/multi-file-upload.ts',
         'lib/components/multi-list': 'src/lib/components/multi-list.ts',

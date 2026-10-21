@@ -1,0 +1,23 @@
+/*
+ * The colours of each intent (info, success, warning, error), for every element that shows one:
+ * `gui-alert` and the toasts.
+ *
+ * $attribute: the attribute that names the intent, such as `variant`.
+ * $floating: for an element that floats over other content. It takes the opaque `-surface` tints:
+ * the `-bg` ones are translucent in the dark theme, which suits an element on the page background
+ * but lets the content under a floating one show through.
+ */
+@mixin gui-intent-colors($attribute, $floating: false) {
+  $fill: 'bg';
+  @if $floating {
+    $fill: 'surface';
+  }
+
+  @each $intent in (info, success, warning, error) {
+    &[#{$attribute}='#{$intent}'] {
+      background-color: var(--gui-intent-#{$intent}-#{$fill});
+      border-color: var(--gui-intent-#{$intent});
+      color: var(--gui-intent-#{$intent}-text);
+    }
+  }
+}

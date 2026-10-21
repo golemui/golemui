@@ -4,7 +4,7 @@ import { hydrateRoot } from 'react-dom/client';
 import { renderToString } from 'react-dom/server';
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { resumeServerRendered } from '@golemui/lit-utils';
-import { GuiDialog, GuiMenu, GuiPopover, GuiTextinput, GuiTooltip } from '../../react';
+import { GuiDialog, GuiMenu, GuiPopover, GuiTextinput, GuiToaster, GuiTooltip } from '../../react';
 import '../components/dropdown';
 import type { GuiDropdown } from '../components/dropdown';
 import '../components/list';
@@ -241,6 +241,28 @@ describe('a gui-menu', () => {
     expect(container.querySelector('#menu')?.getAttribute('role')).toBe('menu');
     expect(container.querySelector('#menu button')?.getAttribute('role')).toBe('menuitem');
     expect(container.querySelector('#actions')?.getAttribute('aria-haspopup')).toBe('menu');
+    errorSpy.mockRestore();
+  });
+});
+
+describe('a gui-toaster', () => {
+  it('hydrates in React without a mismatch, then adds its region', async () => {
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const app = () => createElement(GuiToaster, { placement: 'bottom-start' });
+    const container = document.createElement('div');
+    container.innerHTML = renderToString(app());
+    document.body.append(container);
+    // The server sends an empty toaster: its region is the browser's.
+    expect(container.querySelector('gui-toaster')?.children).toHaveLength(0);
+
+    await act(async () => {
+      hydrateRoot(container, app(), { onRecoverableError: (error) => console.error(error) });
+    });
+    await settle();
+
+    expect(errorSpy).not.toHaveBeenCalled();
+    const region = container.querySelector('gui-toaster > .gui-toaster__region') as HTMLElement;
+    expect(region.dataset['placement']).toBe('bottom-start');
     errorSpy.mockRestore();
   });
 });

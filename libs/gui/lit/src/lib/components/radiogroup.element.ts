@@ -54,6 +54,7 @@ export class RadiogroupElement extends LitElement implements WithWidget {
         .labelField=${this.adapter.templateData.labelField}
         .valueField=${this.adapter.templateData.valueField}
         .direction=${this.adapter.templateData.direction}
+        .appearance=${this.adapter.templateData.appearance}
         @gui-input=${this.valueChanged}
         @gui-blur=${() => this.adapter.onBlur()}
       ></gui-radiogroup>

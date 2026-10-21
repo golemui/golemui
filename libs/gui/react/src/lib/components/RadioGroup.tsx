@@ -23,6 +23,7 @@ export function RadioGroup(widgetInstance: WithWidget) {
   const labelField = templateData.labelField;
   const valueField = templateData.valueField;
   const direction = templateData.direction;
+  const appearance = templateData.appearance;
   const isDisabled = templateData.disabled as boolean;
   const isReadonly = templateData.readonly as boolean;
   const isRequired = (templateData.validator as Validator)?.required;
@@ -43,6 +44,7 @@ export function RadioGroup(widgetInstance: WithWidget) {
         labelField={labelField}
         valueField={valueField}
         direction={direction}
+        appearance={appearance}
         onGuiInput={handleChange}
         onGuiBlur={onBlur}
       ></GuiRadiogroupReact>
