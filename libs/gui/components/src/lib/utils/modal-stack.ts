@@ -34,7 +34,7 @@ export function trackModal(dialog: HTMLDialogElement, modal: boolean): void {
 
 /** The topmost open modal dialog `gui-dialog` opened, if any. */
 export function topmostModal(): HTMLDialogElement | null {
-  return state.dialogs.at(-1) ?? null;
+  return state.dialogs[state.dialogs.length - 1] ?? null;
 }
 
 /**
