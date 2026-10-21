@@ -51,7 +51,7 @@ Every `gui.*` factory and its calling convention. Look up the detail below for t
 - `gui.inputs.multiList(path, { label, items, height?, itemHeight?, validator? })`
 - `gui.inputs.numberInput(path, { label, defaultValue?, validator? })`
 - `gui.inputs.password(path, { label, validator? })`
-- `gui.inputs.radiogroup(path, { label, options, defaultValue?, validator? })`
+- `gui.inputs.radiogroup(path, { label, options, defaultValue?, validator?, appearance?: 'segmented' })`
 - `gui.inputs.rangeCalendar(path, { label? })`
 - `gui.inputs.rangeDateInput(path, { label? })`
 - `gui.inputs.rangeDatePicker(path, { label? })`
@@ -491,7 +491,7 @@ Reference: https://golemui.com/dx/widgets-reference/input-fields/password.md
 
 ## gui.inputs.radiogroup
 
-Call: `gui.inputs.radiogroup(path, { label, options, defaultValue?, validator? })`
+Call: `gui.inputs.radiogroup(path, { label, options, defaultValue?, validator?, appearance?: 'segmented' })`
 
 ```ts
 gui.inputs.radiogroup('accountType', {
@@ -506,6 +506,7 @@ gui.inputs.radiogroup('accountType', {
 
 - Radio group uses **`options`** (`{ value, label }[]`) — note the asymmetry: `dropdown` uses `items`, `radiogroup` uses `options`.
 - If required, use a typed validator `{ type: 'string', required: true }` (same wart as `dropdown`).
+- `appearance: 'segmented'` shows the options as a segmented control (a row of joined buttons) for a few short options such as Day / Week / Month. Same value, keyboard and validation; there is no separate segmented widget.
 
 Reference: https://golemui.com/dx/widgets-reference/input-fields/radiogroup.md
 

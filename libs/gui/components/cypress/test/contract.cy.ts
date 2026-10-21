@@ -29,6 +29,7 @@ describe('element contract', () => {
       const checkElement = () => {
         if (testCase.hostRendersChildren) cy.get(tag).should('exist');
         else cy.get(tag).children().should('not.have.length', 0);
+        testCase.ready?.();
         checkA11y(
           { include: [tag], exclude: testCase.exclude?.map((selector) => `${tag} ${selector}`) },
           testCase.rules,

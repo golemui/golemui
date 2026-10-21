@@ -120,6 +120,10 @@ export const DEFAULT_MESSAGES = {
   unorderedList: 'Unordered List',
   splitView: 'Split View',
 
+  // ─── Toasts ───
+  notifications: 'Notifications',
+  dismissNotification: 'Dismiss notification',
+
   // ─── File upload: `{name}` is the file name ───
   uploadFile: 'Upload file',
   uploadFiles: 'Upload files',

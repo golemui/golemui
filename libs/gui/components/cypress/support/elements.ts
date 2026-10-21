@@ -1,4 +1,5 @@
 import type { RuleObject } from 'axe-core';
+import { toast } from '../../src/lib/components/toast';
 import type { FileItem, GuiVisibleItem } from '../../src/lib/types';
 
 /** Every GolemUI element, with the props it needs to render something meaningful. */
@@ -16,6 +17,8 @@ export interface ElementCase {
   exclude?: string[];
   /** Renders no children of its own: its host renders them. */
   hostRendersChildren?: boolean;
+  /** Waits until the element is settled, such as an entry animation, before axe checks it. */
+  ready?: () => void;
 }
 
 export const options = [
@@ -229,5 +232,26 @@ export const elements: ElementCase[] = [
   },
   // Its text is the app's children, and it stays hidden until it opens: tooltip.cy.ts checks it
   // open, with its target.
+  {
+    tag: 'gui-toaster',
+    props: { id: 'contract-toaster', max: 5 },
+    // axe reads the colours mid fade-in as too faint: wait until the toasts are opaque.
+    ready: () =>
+      cy
+        .get('gui-toaster .gui-toast')
+        .should('have.length', 5)
+        .each((item) => cy.wrap(item).should('have.css', 'opacity', '1')),
+    // Toasts of every variant, queued for it before it connects, so axe checks them open.
+    setup: () => {
+      for (const variant of ['default', 'info', 'success', 'warning', 'error'] as const) {
+        toast({
+          toaster: 'contract-toaster',
+          variant,
+          message: `A ${variant} toast`,
+          action: variant === 'default' ? { label: 'Undo', onAction: () => undefined } : undefined,
+        });
+      }
+    },
+  },
   { tag: 'gui-tooltip', props: {}, hostRendersChildren: true },
 ];

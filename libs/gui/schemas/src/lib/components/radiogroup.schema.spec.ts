@@ -64,6 +64,7 @@ describe('Radiogroup schema validation', () => {
               labelField: 'label',
               valueField: 'value',
               direction: 'row',
+              appearance: 'segmented',
             },
           },
         ],
@@ -90,6 +91,7 @@ describe('Radiogroup schema validation', () => {
               'hint.hasError': 'Required selection',
               'options.isLoaded': [{ label: 'Option B', value: 'B' }],
               'direction.mobile': 'column',
+              'appearance.compact': 'default',
             },
           },
         ],
@@ -165,6 +167,20 @@ describe('Radiogroup schema validation', () => {
       const isValid = validate(widget);
       if (!isValid) specValidationErrorsLogger(validate, widget);
       expect(isValid).toBe(true);
+    });
+  });
+
+  describe('appearance', () => {
+    it('rejects an appearance other than default or segmented', () => {
+      const widget = {
+        uid: 'radio-1',
+        path: 'choice',
+        kind: 'input',
+        type: 'radiogroup',
+        props: { options: ['a', 'b'], appearance: 'buttons' },
+      };
+
+      expect(validate(widget)).toBe(false);
     });
   });
 

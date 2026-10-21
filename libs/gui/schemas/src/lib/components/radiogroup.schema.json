@@ -35,6 +35,11 @@
       "description": "Layout direction for the radio buttons (`row` = horizontal, `column` = vertical). Defaults to `column`.",
       "enum": ["row", "column"],
       "default": "column"
+    },
+    "appearanceProp": {
+      "description": "How the options look: `default` radio buttons, or `segmented`, a row of joined buttons with the selected one filled, for a few short options. A segmented group is always a row (`direction` doesn't apply) and stacks in a narrow form.",
+      "enum": ["default", "segmented"],
+      "default": "default"
     }
   },
   "allOf": [
@@ -87,6 +92,9 @@
         },
         "direction": {
           "$ref": "#/$defs/directionProp"
+        },
+        "appearance": {
+          "$ref": "#/$defs/appearanceProp"
         }
       },
       "patternProperties": {
@@ -104,6 +112,9 @@
         },
         "^direction\\.[^.]+$": {
           "$ref": "#/$defs/directionProp"
+        },
+        "^appearance\\.[^.]+$": {
+          "$ref": "#/$defs/appearanceProp"
         }
       },
       "additionalProperties": false

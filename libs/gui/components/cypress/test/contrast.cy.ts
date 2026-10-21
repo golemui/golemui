@@ -43,6 +43,15 @@ const controls: [string, TemplateResult, string, string?][] = [
     html`<gui-radiogroup label="Color" .options=${options}></gui-radiogroup>`,
     'input',
   ],
+  [
+    'gui-radiogroup',
+    html`<gui-radiogroup
+      label="Color"
+      appearance="segmented"
+      .options=${options}
+    ></gui-radiogroup>`,
+    '.gui-widget--segmented',
+  ],
   ['gui-number', html`<gui-number label="Age"></gui-number>`, '.gui-widget'],
   ['gui-markdown', html`<gui-markdown label="Bio"></gui-markdown>`, '.gui-widget'],
   ['gui-toggle', html`<gui-toggle label="Notifications"></gui-toggle>`, '.gui-toggle--slider'],
@@ -74,6 +83,26 @@ describe('control boundaries (WCAG 1.4.11)', () => {
         cy.document().then(({ documentElement, body }) => {
           documentElement.removeAttribute('data-theme');
           body.style.removeProperty('background-color');
+        });
+      });
+
+      // The fill is all that tells the selected segment from the others.
+      it('gui-radiogroup segmented: the selected segment reaches 3:1 against the others', () => {
+        cy.mount(
+          html`<gui-radiogroup
+            label="Color"
+            appearance="segmented"
+            .options=${options}
+            .value=${'red'}
+          ></gui-radiogroup>`,
+        );
+
+        cy.get('gui-radiogroup .gui-widget--segmented').should(([group]) => {
+          const page = toRgb(getComputedStyle(document.body).backgroundColor, [255, 255, 255]);
+          const surface = toRgb(getComputedStyle(group).backgroundColor, page);
+          const [selected, other] = Array.from(group.children);
+          const fill = (label: Element) => toRgb(getComputedStyle(label).backgroundColor, surface);
+          expect(contrast(fill(selected), fill(other)), 'selected against unselected').to.be.gte(3);
         });
       });
 

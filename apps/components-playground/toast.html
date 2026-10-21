@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Toast · GolemUI Components playground</title>
+    <link rel="stylesheet" href="/src/styles.scss" />
+  </head>
+  <body data-pg-events="gui-dismiss gui-action">
+    <main class="pg-main">
+      <section class="pg-section">
+        <h1>gui-toaster</h1>
+        <p>
+          <code>toast()</code> shows a short message in the page's <code>gui-toaster</code>. A
+          status message is announced when the screen reader is idle, an error at once. A toast
+          closes after 5 seconds, paused while the pointer is over the toasts, the focus is in them
+          or the tab is hidden; errors and toasts with an action stay until closed. Escape in a
+          toast closes it. <code>gui-dismiss</code> shows in the corner.
+        </p>
+      </section>
+
+      <section class="pg-section">
+        <h2>Variants</h2>
+        <div class="pg-row">
+          <button type="button" class="pg-button" data-toast="default">Default</button>
+          <button type="button" class="pg-button" data-toast="info">Info</button>
+          <button type="button" class="pg-button" data-toast="success">Success</button>
+          <button type="button" class="pg-button" data-toast="warning">Warning</button>
+          <button type="button" class="pg-button" data-toast="error">Error (stays)</button>
+        </div>
+      </section>
+
+      <section class="pg-section">
+        <h2>A title and an action</h2>
+        <div class="pg-row">
+          <button type="button" class="pg-button" id="toast-undo">Delete an item</button>
+          <button type="button" class="pg-button" id="toast-title">With a title</button>
+        </div>
+      </section>
+
+      <section class="pg-section">
+        <h2>Queue and updates</h2>
+        <p>
+          Three show at a time; the rest wait. A toast with the id of a showing one replaces it.
+        </p>
+        <div class="pg-row">
+          <button type="button" class="pg-button" id="toast-five">Send five</button>
+          <button type="button" class="pg-button" id="toast-save">Save (updates in place)</button>
+          <button type="button" class="pg-button" id="toast-dismiss-all">
+            Dismiss the last five
+          </button>
+        </div>
+      </section>
+
+      <section class="pg-section">
+        <h2>Placement</h2>
+        <div class="pg-row">
+          <label>
+            Placement
+            <select id="toast-placement">
+              <option>top-start</option>
+              <option>top</option>
+              <option selected>top-end</option>
+              <option>bottom-start</option>
+              <option>bottom</option>
+              <option>bottom-end</option>
+            </select>
+          </label>
+        </div>
+      </section>
+
+      <section class="pg-section">
+        <h2>In a modal dialog</h2>
+        <p>
+          While a <code>gui-dialog</code> modal is open, the toasts move inside it, where they stay
+          clickable, and back when it closes.
+        </p>
+        <div class="pg-row">
+          <button type="button" class="pg-button" commandfor="toast-dialog" command="show-modal">
+            Open the dialog
+          </button>
+        </div>
+        <gui-dialog>
+          <dialog id="toast-dialog" class="pg-dialog-body" aria-labelledby="toast-dialog-title">
+            <h2 id="toast-dialog-title">Publish</h2>
+            <p>Toasts sent from here show above the dialog, and their buttons work.</p>
+            <div class="pg-row">
+              <button type="button" class="pg-button" id="toast-in-dialog">Publish</button>
+              <button type="button" class="pg-button" commandfor="toast-dialog" command="close">
+                Close
+              </button>
+            </div>
+          </dialog>
+        </gui-dialog>
+      </section>
+    </main>
+    <!-- Top end: the event log takes the bottom corner. -->
+    <gui-toaster id="toaster" placement="top-end"></gui-toaster>
+    <script type="module" src="/src/pages/toast.ts"></script>
+  </body>
+</html>

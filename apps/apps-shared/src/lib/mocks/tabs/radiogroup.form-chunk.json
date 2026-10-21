@@ -23,7 +23,10 @@
         "hint": "No option should be selected, because the provided data does not match the enum of options. A validation error should also be displayed",
         "options": ["hello", "bye"]
       },
-      "validator": { "type": "string", "required": true }
+      "validator": {
+        "type": "string",
+        "required": true
+      }
     },
     {
       "kind": "input",
@@ -34,7 +37,10 @@
         "options": ["hello", "bye"],
         "direction": "row"
       },
-      "validator": { "type": "string", "required": true }
+      "validator": {
+        "type": "string",
+        "required": true
+      }
     },
     {
       "kind": "input",
@@ -43,8 +49,66 @@
       "props": {
         "hint": "\"bye.2\" should be selected",
         "options": [
-          { "label": "hello.1", "value": 1 },
-          { "label": "bye.2", "value": 2 }
+          {
+            "label": "hello.1",
+            "value": 1
+          },
+          {
+            "label": "bye.2",
+            "value": 2
+          }
+        ]
+      }
+    },
+    {
+      "kind": "input",
+      "type": "radiogroup",
+      "path": "radiogroups.range",
+      "label": "Range",
+      "props": {
+        "hint": "A segmented radio group: \"Week\" should be selected",
+        "appearance": "segmented",
+        "options": [
+          {
+            "label": "Day",
+            "value": "day"
+          },
+          {
+            "label": "Week",
+            "value": "week"
+          },
+          {
+            "label": "Month",
+            "value": "month"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "input",
+      "type": "radiogroup",
+      "path": "radiogroups.view",
+      "label": "View",
+      "validator": {
+        "type": "string",
+        "required": true
+      },
+      "props": {
+        "hint": "Segmented and required: nothing selected, with a validation error",
+        "appearance": "segmented",
+        "options": [
+          {
+            "label": "List",
+            "value": "list"
+          },
+          {
+            "label": "Grid",
+            "value": "grid"
+          },
+          {
+            "label": "Board",
+            "value": "board"
+          }
         ]
       }
     },
@@ -54,7 +118,9 @@
       "type": "radiogroup",
       "path": "radiogroups.subregion",
       "label": "Country subregion",
-      "props": { "hint": "No option should be selected" },
+      "props": {
+        "hint": "No option should be selected"
+      },
       "on": {
         "load": "getSubregionsForRadio",
         "change": "getCountriesForRadio"
@@ -65,7 +131,9 @@
       "kind": "input",
       "type": "radiogroup",
       "path": "radiogroups.country",
-      "include": { "in": ["hasSubregionRadiogroup"] }
+      "include": {
+        "in": ["hasSubregionRadiogroup"]
+      }
     }
   ]
 }

@@ -1,0 +1,142 @@
+@use 'intent' as *;
+
+// The toaster's region shows in the top layer while it has toasts. It may live inside a modal
+// `<dialog>` (see toast.ts), away from `gui-toaster`, so every rule hangs off the region itself.
+.gui-toaster__region {
+  position: fixed;
+  inset: auto;
+  box-sizing: border-box;
+  inline-size: min(var(--gui-toast-width, 22rem), calc(100vw - var(--gui-space-4) * 2));
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  overflow: visible;
+  // Only the toasts take the pointer: the page under the gaps between them stays clickable.
+  pointer-events: none;
+  font-family: var(--gui-font-family);
+  font-size: var(--gui-font-sm);
+  line-height: 1.4;
+  color: var(--gui-text-default);
+
+  &[data-placement^='top'] {
+    inset-block-start: var(--gui-space-4);
+  }
+
+  &[data-placement^='bottom'] {
+    inset-block-end: var(--gui-space-4);
+  }
+
+  &[data-placement$='start'] {
+    inset-inline-start: var(--gui-space-4);
+  }
+
+  &[data-placement$='end'] {
+    inset-inline-end: var(--gui-space-4);
+  }
+
+  &:is([data-placement='top'], [data-placement='bottom']) {
+    inset-inline: 0;
+    margin-inline: auto;
+  }
+}
+
+.gui-toaster__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gui-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gui-toast {
+  // The newest slides in from the edge the toasts stack from.
+  --gui-toast-from: 0 var(--gui-space-4);
+
+  display: flex;
+  align-items: flex-start;
+  gap: var(--gui-space-3);
+  box-sizing: border-box;
+  padding: var(--gui-space-3) var(--gui-space-3) var(--gui-space-3) var(--gui-space-4);
+  border: 1px solid var(--gui-border-default);
+  border-radius: var(--gui-radius-md);
+  background: var(--gui-bg-default);
+  color: var(--gui-text-default);
+  box-shadow: var(--gui-shadow-lg);
+  pointer-events: auto;
+  transition:
+    opacity var(--gui-overlay-duration) ease-out,
+    translate var(--gui-overlay-duration) ease-out;
+
+  @starting-style {
+    opacity: 0;
+    translate: var(--gui-toast-from);
+  }
+
+  .gui-toaster__region[data-placement^='top'] & {
+    --gui-toast-from: 0 calc(var(--gui-space-4) * -1);
+  }
+
+  &[data-leaving] {
+    opacity: 0;
+  }
+
+  // The intents of `gui-alert`, laid on the toast's own surface: it floats over the page.
+  @include gui-intent-colors('data-variant', $floating: true);
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+.gui-toast__body {
+  flex: 1;
+  min-inline-size: 0;
+  padding-block: var(--gui-space-1);
+  overflow-wrap: anywhere;
+}
+
+.gui-toast__title,
+.gui-toast__message {
+  margin: 0;
+}
+
+.gui-toast__title {
+  font-weight: 600;
+}
+
+.gui-toast__action,
+.gui-toast__close {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: 1.75rem;
+  border: 1px solid transparent;
+  border-radius: var(--gui-radius-sm);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+
+  &:hover {
+    background: color-mix(in srgb, currentColor 10%, transparent);
+  }
+
+  &:focus-visible {
+    outline: 0;
+    box-shadow: var(--gui-shadow-focus);
+  }
+}
+
+.gui-toast__action {
+  padding-inline: var(--gui-space-2);
+  border-color: currentColor;
+  font-weight: 500;
+}
+
+.gui-toast__close {
+  min-inline-size: 1.75rem;
+  padding: 0;
+}

@@ -352,12 +352,13 @@ const INPUTS: DxSpec[] = [
     factory: 'radiogroup',
     namespace: 'inputs',
     docSlug: 'radiogroup',
-    call: 'gui.inputs.radiogroup(path, { label, options, defaultValue?, validator? })',
+    call: "gui.inputs.radiogroup(path, { label, options, defaultValue?, validator?, appearance?: 'segmented' })",
     example:
       "gui.inputs.radiogroup('accountType', { label: 'Account type', defaultValue: 'personal', options: [{ value: 'personal', label: 'Personal' }, { value: 'business', label: 'Business' }] })",
     notes: [
       'Radio group uses **`options`** (`{ value, label }[]`) — note the asymmetry: `dropdown` uses `items`, `radiogroup` uses `options`.',
       "If required, use a typed validator `{ type: 'string', required: true }` (same wart as `dropdown`).",
+      "`appearance: 'segmented'` shows the options as a segmented control (a row of joined buttons) for a few short options such as Day / Week / Month. Same value, keyboard and validation; there is no separate segmented widget.",
     ],
   },
   {

@@ -146,6 +146,7 @@ const data = {
     greeting: 'bye',
     wrongGreeting: 'aaaaaa',
     greetingIndex: 2,
+    range: 'week',
   },
   repeaters: {
     users: [

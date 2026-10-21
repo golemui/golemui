@@ -348,6 +348,9 @@ const NOTES: Record<string, string[]> = {
     'Same cleanup contract as `fileUpload`: `uploadService.remove` runs only when the user removes a pill; every other way an envelope leaves the array keeps the file on the server, so the HOST reconciles uploads against the submitted value.',
     'Validate with a `filesValidator`: `{ type: "files", required, minItems, maxItems, blockPendingUploads }`. Message keys: `invalid`, `required`, `minItems`, `maxItems`, `pendingUploads`.',
   ],
+  radiogroup: [
+    '`props.appearance: "segmented"` shows the options as a segmented control: a row of joined buttons, the selected one filled, for a few short options (Day / Week / Month, List / Grid). It is the same radio group (same value, keyboard, validation), not a separate widget. It is always a row, so `props.direction` does not apply, and it stacks in a narrow form. Past about five options, or with long labels, keep the default appearance or use a `dropdown`.',
+  ],
   dropdown: [
     'PREFER `select` for plain label/value lists (countries, plans, sizes). `dropdown` is for richer item shapes: when each item has extra fields (icons, flags, metadata) that an `itemRenderer` or `labelField`/`valueField` can use.',
     '`props.items` is EITHER primitives `["one", 2, ...]` OR arbitrary objects `[{ label, value, ...extras }]`. Pair the object form with `labelField`/`valueField` to tell the dropdown which fields to render as label and which to use as the value. **Widget templates inside items (the `{template, value}` shape) are NOT supported — only `repeater` accepts widget templates.**',

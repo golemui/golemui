@@ -1,4 +1,5 @@
 import { html } from 'lit';
+import { toast } from '../../src/lib/components/toast';
 import { GUIAnchorController } from '../../src/lib/controllers/anchor.controller';
 import { options } from '../support/elements';
 
@@ -42,6 +43,22 @@ describe('a strict style-src-attr policy', () => {
     cy.mount(html`<p>Styled</p>`);
     cy.get('p').then(([paragraph]) => paragraph.setAttribute('style', 'color: red'));
     cy.wrap(violations).should('have.length.at.least', 1);
+  });
+
+  it('allows a gui-toaster to show, move into a modal and close its toasts', () => {
+    cy.mount(
+      html`<gui-dialog>
+          <dialog id="csp-dialog" aria-label="Edit"><p>Edit</p></dialog>
+        </gui-dialog>
+        <gui-toaster></gui-toaster>`,
+    );
+    cy.then(() => toast({ message: 'Saved', variant: 'success' }));
+    cy.get('.gui-toast').should('exist');
+    cy.get('gui-dialog').invoke('prop', 'open', true);
+    cy.get('#csp-dialog > .gui-toaster__region').should('exist');
+    cy.get('.gui-toast__close').click();
+    cy.get('.gui-toast').should('not.exist');
+    expectNoViolations();
   });
 
   for (const fallback of [false, true]) {

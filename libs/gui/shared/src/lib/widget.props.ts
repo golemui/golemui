@@ -804,6 +804,8 @@ export type RadiogroupProps = {
   labelField?: string;
   valueField?: string;
   direction?: 'row' | 'column';
+  /** `segmented` shows the options as a row of joined buttons: for a few short options. */
+  appearance?: 'default' | 'segmented';
 };
 
 export type OneOfProps = {

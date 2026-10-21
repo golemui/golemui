@@ -27,6 +27,20 @@ export const gridTab = gui.layouts.grid([
     gui.inputs.textInput('gridSearch', { label: 'Search members', size: 3 }),
     gui.actions.button({ label: 'Search' }),
   ]),
+  // A segmented radio group lines up with a text field: same label row, same 42px control.
+  gui.layouts.horizontalGrid([
+    gui.inputs.textInput('gridReport', { label: 'Report name', size: 2 }),
+    gui.inputs.radiogroup('gridPeriod', {
+      label: 'Period',
+      hint: 'How often the report runs',
+      appearance: 'segmented',
+      options: [
+        { label: 'Day', value: 'day' },
+        { label: 'Week', value: 'week' },
+        { label: 'Month', value: 'month' },
+      ],
+    }),
+  ]),
   gui.displays.markdownText({
     md: '#### Columns\nThree columns with a `lg` gap: the street spans two of them.',
   }),
