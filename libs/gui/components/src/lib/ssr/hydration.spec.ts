@@ -49,13 +49,14 @@ describe('resuming server-rendered standalone elements', () => {
     await settle();
 
     expect(document.querySelectorAll('[defer-hydration]')).toHaveLength(0);
-    for (const id of ['email', 'plan', 'terms']) {
+    for (const id of ['email', 'plan', 'terms', 'seats']) {
       expect(document.querySelectorAll(`#${id}`), id).toHaveLength(1);
       expect(document.querySelectorAll(`label[for="${id}"]`), id).toHaveLength(1);
     }
     expect((document.getElementById('email') as HTMLInputElement).value).toBe('ada@example.com');
     expect((document.getElementById('plan') as HTMLSelectElement).value).toBe('team');
     expect((document.getElementById('terms') as HTMLInputElement).checked).toBe(true);
+    expect((document.getElementById('seats') as HTMLInputElement).value).toBe('12');
 
     expect(errorSpy).not.toHaveBeenCalled();
     errorSpy.mockRestore();

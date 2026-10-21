@@ -5,6 +5,7 @@ import '../components/dialog';
 import '../components/menu';
 import '../components/popover';
 import '../components/select';
+import '../components/slider';
 import '../components/tab';
 import '../components/tab-list';
 import '../components/tab-panel';
@@ -69,5 +70,6 @@ export const serverTemplate = () =>
       </dialog>
     </gui-dialog>
     <gui-checkbox uid="terms" name="terms" label="I accept the terms" value="true"></gui-checkbox>
+    <gui-slider uid="seats" name="seats" label="Seats" value="12" maximum="50"></gui-slider>
     <gui-toaster placement="top-end"></gui-toaster>
   </form>`;

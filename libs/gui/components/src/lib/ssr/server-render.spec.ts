@@ -32,6 +32,9 @@ describe('server rendering standalone elements in plain node', () => {
     expect(markup).not.toMatch(/<input[^>]*id="email"[^>]*\srequired/);
     expect(markup).toMatch(/<option\s+value="team"\s+selected/);
     expect(markup).toMatch(/<input[^>]*type="checkbox"[^>]*id="terms"[^>]*checked/);
+    // The slider's value shows in its label, and its range input carries its bounds.
+    expect(markup).toMatch(/<output class="gui-slider__value"[^>]*>12<\/output>/);
+    expect(markup).toMatch(/<input[^>]*type="range"[^>]*id="seats"[^>]*max="50"/);
   });
 
   it("keeps the app's children of the elements that enhance them", () => {
@@ -53,7 +56,7 @@ describe('server rendering standalone elements in plain node', () => {
 
   it('holds every GolemUI element inert through defer-hydration', () => {
     const tags = [...markup.matchAll(/<(gui-[a-z-]+)([^>]*)>/g)];
-    expect(tags.length).toBe(14);
+    expect(tags.length).toBe(15);
     for (const [, tag, attributes] of tags) {
       expect(attributes, tag).toContain('defer-hydration');
     }

@@ -223,6 +223,16 @@
       "import": "./lib/components/radiogroup.js",
       "require": "./lib/components/radiogroup.umd.cjs"
     },
+    "./range-slider": {
+      "types": "./lib/components/range-slider.d.ts",
+      "import": "./lib/components/range-slider.js",
+      "require": "./lib/components/range-slider.umd.cjs"
+    },
+    "./slider": {
+      "types": "./lib/components/slider.d.ts",
+      "import": "./lib/components/slider.js",
+      "require": "./lib/components/slider.umd.cjs"
+    },
     "./range-calendar": {
       "types": "./lib/components/range-calendar.d.ts",
       "import": "./lib/components/range-calendar.js",

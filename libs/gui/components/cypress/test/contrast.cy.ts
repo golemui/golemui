@@ -106,6 +106,20 @@ describe('control boundaries (WCAG 1.4.11)', () => {
         });
       });
 
+      // The rail shows where a slider is, and the fill where its value is: the thumb's ring has the
+      // fill's colour.
+      it('gui-slider: the rail and the fill reach 3:1 against the page', () => {
+        cy.mount(html`<gui-slider label="Volume" .value=${50}></gui-slider>`);
+
+        cy.get('gui-slider').should(([host]) => {
+          const page = toRgb(getComputedStyle(document.body).backgroundColor, [255, 255, 255]);
+          for (const part of ['.gui-slider__rail', '.gui-slider__fill']) {
+            const color = getComputedStyle(host.querySelector(part)!).backgroundColor;
+            expect(contrast(toRgb(color, page), page), `${part} against the page`).to.be.gte(3);
+          }
+        });
+      });
+
       for (const [tag, template, part, pseudo] of controls) {
         it(`${tag}${pseudo ? ` ${pseudo}` : ''} reaches 3:1 against the page`, () => {
           cy.mount(template);

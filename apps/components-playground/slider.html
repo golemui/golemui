@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Slider · GolemUI Components playground</title>
+    <link rel="stylesheet" href="/src/styles.scss" />
+  </head>
+  <body data-pg-events="gui-input gui-change">
+    <main class="pg-main">
+      <section class="pg-section">
+        <h1>gui-slider and gui-range-slider</h1>
+        <p>
+          Drag a thumb, or focus it and use the arrows, Page Up and Page Down, Home and End. Until
+          the user moves it, a slider has no value: the thumb rests at the end, hollow, and the
+          value reads "–". The direction switch above mirrors them.
+        </p>
+      </section>
+
+      <section class="pg-section">
+        <h2>Slider</h2>
+        <div class="pg-stack">
+          <gui-slider label="Volume" hint="No value until you move it"></gui-slider>
+          <gui-slider label="Brightness" value="40" step="10" marks></gui-slider>
+          <gui-slider
+            id="opacity"
+            label="Opacity"
+            value="0.6"
+            minimum="0"
+            maximum="1"
+            step="0.05"
+            value-placement="bubble"
+          ></gui-slider>
+          <gui-slider
+            id="rating"
+            label="Rating"
+            value="3"
+            minimum="1"
+            maximum="5"
+            value-placement="both"
+          ></gui-slider>
+          <gui-slider label="Disabled" value="30" disabled></gui-slider>
+          <gui-slider label="Read-only" value="70" readonly></gui-slider>
+        </div>
+      </section>
+
+      <section class="pg-section">
+        <h2>Range slider</h2>
+        <div class="pg-stack">
+          <gui-range-slider id="price" label="Price" maximum="500" step="10"></gui-range-slider>
+          <gui-range-slider
+            id="hours"
+            label="Opening hours"
+            minimum="0"
+            maximum="24"
+            value-placement="both"
+          ></gui-range-slider>
+        </div>
+      </section>
+
+      <section class="pg-section">
+        <h2>In a form</h2>
+        <form id="slider-form" class="pg-stack">
+          <gui-slider name="discount" label="Discount" required></gui-slider>
+          <gui-range-slider
+            name="budget"
+            label="Budget"
+            maximum="1000"
+            step="50"
+            required
+          ></gui-range-slider>
+          <div class="pg-row">
+            <button type="submit" class="pg-button">Submit</button>
+            <button type="reset" class="pg-button">Reset</button>
+          </div>
+          <output id="slider-form-output"></output>
+        </form>
+      </section>
+    </main>
+    <script type="module" src="/src/pages/slider.ts"></script>
+  </body>
+</html>

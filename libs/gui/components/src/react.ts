@@ -82,6 +82,11 @@ import {
   GuiRadiogroupEvents,
 } from './lib/components/radiogroup';
 import {
+  GuiRangeSlider as GuiRangeSliderElement,
+  GuiRangeSliderEvents,
+} from './lib/components/range-slider';
+import { GuiSlider as GuiSliderElement, GuiSliderEvents } from './lib/components/slider';
+import {
   GuiRangeCalendar as GuiRangeCalendarElement,
   GuiRangeCalendarEvents,
 } from './lib/components/range-calendar';
@@ -312,6 +317,8 @@ export const GuiPassword = wrap('gui-password', GuiPasswordElement, GuiPasswordE
 export const GuiPills = wrap('gui-pills', GuiPillsElement, GuiPillsEvents);
 export const GuiPopover = wrap('gui-popover', GuiPopoverElement, GuiPopoverEvents);
 export const GuiRadiogroup = wrap('gui-radiogroup', GuiRadiogroupElement, GuiRadiogroupEvents);
+export const GuiRangeSlider = wrap('gui-range-slider', GuiRangeSliderElement, GuiRangeSliderEvents);
+export const GuiSlider = wrap('gui-slider', GuiSliderElement, GuiSliderEvents);
 export const GuiRangeCalendar = wrap(
   'gui-range-calendar',
   GuiRangeCalendarElement,
