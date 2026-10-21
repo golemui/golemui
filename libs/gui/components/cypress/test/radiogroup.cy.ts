@@ -256,6 +256,24 @@ describe('gui-radiogroup', () => {
       segments().should((labels) => expect(new Set(tops(labels)).size).to.equal(1));
     });
 
+    it('is as tall as a text field', () => {
+      cy.mount(
+        html`<gui-textinput label="Name"></gui-textinput>
+          <gui-radiogroup
+            label="Range"
+            appearance="segmented"
+            .options=${ranges}
+          ></gui-radiogroup>`,
+      );
+
+      cy.get('gui-textinput input').then(([input]) => {
+        const field = input.getBoundingClientRect().height;
+        group().should(([segmented]) =>
+          expect(segmented.getBoundingClientRect().height).to.be.closeTo(field, 0.5),
+        );
+      });
+    });
+
     it('picks an option with a click on its segment, and fills the selected one', () => {
       const onInput = cy.spy().as('input');
       mountSegmented({ value: 'day' });

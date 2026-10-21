@@ -90,7 +90,8 @@ gui-radiogroup .gui-widget--segmented {
     align-items: center;
     justify-content: center;
     min-inline-size: 0;
-    min-block-size: calc(var(--gui-widget-size) - 2px);
+    // The widget size inside the group's border, as a text field has it: 42px in all.
+    min-block-size: var(--gui-widget-size);
     padding: var(--gui-space-1) var(--gui-space-3);
     box-sizing: border-box;
     text-align: center;

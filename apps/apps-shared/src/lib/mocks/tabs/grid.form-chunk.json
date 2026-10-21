@@ -81,6 +81,46 @@
       ]
     },
     {
+      "kind": "layout",
+      "type": "grid",
+      "props": {
+        "direction": "row"
+      },
+      "children": [
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "gridReport",
+          "label": "Report name",
+          "size": 2
+        },
+        {
+          "kind": "input",
+          "type": "radiogroup",
+          "path": "gridPeriod",
+          "label": "Period",
+          "props": {
+            "hint": "How often the report runs",
+            "appearance": "segmented",
+            "options": [
+              {
+                "label": "Day",
+                "value": "day"
+              },
+              {
+                "label": "Week",
+                "value": "week"
+              },
+              {
+                "label": "Month",
+                "value": "month"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
       "kind": "display",
       "type": "markdownText",
       "props": {
