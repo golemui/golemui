@@ -531,6 +531,21 @@ describe('calculateWidgetProps', () => {
       expect(translator.calls).toHaveLength(0);
       expect(propsOf(second)['sections']).toBe(sections);
     });
+
+    it('leaves an object alone when its default is not a string or its params is not an object', () => {
+      const translator = makeTranslator((key) => `T:${key}`);
+      const data = [
+        { key: 'a', default: 1 },
+        { key: 'b', params: 'x' },
+        { key: 'c', params: ['x'] },
+      ];
+      seed(state, 'acc', accordion([], { data }));
+
+      const props = propsOf(run(state, translator));
+
+      expect(props['data']).toBe(data);
+      expect(translator.calls).toHaveLength(0);
+    });
   });
 
   describe('translation config', () => {
