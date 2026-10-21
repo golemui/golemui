@@ -102,10 +102,9 @@ export class GuiSlider extends GuiSliderBase {
           />
           ${this.bubble(text, percent)}
         </div>
-        ${this.tickLabels()}
       </div>
 
-      ${addErrors(this.uid, templateData)}
+      ${this.footer(addErrors(this.uid, templateData))}
     `;
   }
 

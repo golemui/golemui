@@ -147,10 +147,9 @@ export class GuiRangeSlider extends GuiSliderBase {
           </div>
           ${this.ticks(empty ? { start: -1, end: -1 } : percents)} ${thumb('start')} ${thumb('end')}
         </div>
-        ${this.tickLabels()}
       </div>
 
-      ${addErrors(this.uid, templateData)}
+      ${this.footer(addErrors(this.uid, templateData))}
     `;
   }
 

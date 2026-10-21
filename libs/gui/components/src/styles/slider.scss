@@ -102,11 +102,16 @@
   }
 }
 
+// Under the control, in the errors' track of a grid row (see `footer()`).
+.gui-slider__footer {
+  grid-row: 3;
+}
+
 .gui-slider__tick-labels {
   position: relative;
   block-size: 1.4em;
   margin-inline: calc(var(--_thumb) / 2);
-  margin-block-start: calc(var(--gui-space-1) * -1);
+  margin-block-start: var(--gui-space-1);
   color: var(--gui-text-secondary);
   font-size: var(--gui-font-xs);
 }

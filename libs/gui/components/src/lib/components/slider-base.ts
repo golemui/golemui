@@ -162,7 +162,15 @@ export abstract class GuiSliderBase extends GuiFormControl {
   }
 
   /** The labels of the marks that have one, under the control. Decorative: the thumbs read values. */
-  protected tickLabels(): TemplateResult | typeof nothing {
+  /**
+   * What goes under the control: the marks' labels, then the errors. It takes the errors' track in
+   * a grid row, so the control is as tall as its neighbours' and lines up with them.
+   */
+  protected footer(errors: unknown): TemplateResult {
+    return html`<div class="gui-slider__footer">${this.tickLabels()}${errors}</div>`;
+  }
+
+  private tickLabels(): TemplateResult | typeof nothing {
     const labelled = this.tickList.filter((tick) => tick.label);
     if (!labelled.length) return nothing;
     return html`<div class="gui-slider__tick-labels" aria-hidden="true">

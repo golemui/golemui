@@ -101,6 +101,48 @@ describe('gui-slider', () => {
     });
   });
 
+  describe('in a grid row', () => {
+    it('lines its control up with the fields beside it, with labelled marks and errors', () => {
+      cy.mount(
+        html`<div class="gui-grid gui-grid--row">
+          <div class="gui-grid__cell">
+            <gui-textinput label="Name" hint="As on your passport"></gui-textinput>
+          </div>
+          <div class="gui-grid__cell">
+            <gui-slider
+              label="Rating"
+              minimum="1"
+              maximum="5"
+              .marks=${[
+                { value: 1, label: 'Poor' },
+                { value: 5, label: 'Great' },
+              ]}
+              .errors=${['Pick a rating']}
+            ></gui-slider>
+          </div>
+        </div>`,
+      );
+
+      const middle = (element: Element) => {
+        const { top, height } = element.getBoundingClientRect();
+        return top + height / 2;
+      };
+      cy.get('gui-textinput input').then(([field]) =>
+        cy.get('gui-slider .gui-slider__control').should(([control]) => {
+          expect(middle(control)).to.be.closeTo(middle(field), 0.5);
+        }),
+      );
+      // The marks' labels, then the errors, under the control.
+      cy.get('gui-slider').should(([host]) => {
+        const control = host.querySelector('.gui-slider__control')!.getBoundingClientRect();
+        const labels = host.querySelector('.gui-slider__tick-labels')!.getBoundingClientRect();
+        const errors = host.querySelector('.gui-validator')!.getBoundingClientRect();
+        expect(labels.top).to.be.at.least(control.bottom);
+        expect(errors.top).to.be.at.least(labels.bottom);
+      });
+    });
+  });
+
   describe('marks', () => {
     it('draws a tick at every step, filled up to the value', () => {
       cy.mount(html`<gui-slider label="Level" step="25" .value=${50} marks></gui-slider>`);
