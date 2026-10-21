@@ -3,7 +3,6 @@
 import {
   allowedNames,
   commonLanguages,
-  i18nDemo,
   initializeI18n,
   kitchenSink,
   mockMarkdownParser,
