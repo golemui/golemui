@@ -31,6 +31,7 @@ import type {
   ListProps,
   MarkdownProps,
   MarkdownTextProps,
+  MenuProps,
   NumberinputProps,
   OptionValue,
   PasswordProps,
@@ -203,6 +204,7 @@ type GolemWidget<
   | GuiAccordion<FormType, States, V, CustomWidget>
   | GuiAlert<FormType, States>
   | GuiButton<FormType, States>
+  | GuiMenu<FormType, States>
   | GuiCalendar<FormType, States, V>
   | GuiCheckbox<FormType, States, V>
   | GuiDateTimeCalendar<FormType, States, V>
@@ -267,6 +269,12 @@ type GuiButton<FormType extends Record<string, any>, States extends string> = Ac
   FormType,
   ButtonProps
 > & { type: 'button' };
+
+type GuiMenu<FormType extends Record<string, any>, States extends string> = ActionWidget<
+  States,
+  FormType,
+  MenuProps
+> & { type: 'menu' };
 
 type GuiCalendar<FormType extends Record<string, any>, States extends string, V> = InputWidget<
   string,

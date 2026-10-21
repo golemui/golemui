@@ -29,6 +29,10 @@ export type GuiDialogPlacement = 'center' | 'start' | 'end' | 'top' | 'bottom';
  * development when it has none. With `alert` the element gives the dialog the `alertdialog` role,
  * for a dialog that asks the user to confirm or acknowledge something urgent.
  *
+ * A centered dialog is `--gui-dialog-size` wide (32rem), and a drawer `--gui-drawer-size` (24rem),
+ * within the viewport. They don't fit their content, so a form inside, which takes the width it is
+ * given, has room.
+ *
  * @fires gui-toggle - The dialog opened or closed, from an invoker, Escape, a backdrop click or a
  *   button that closes it. `detail.open` is the new state. Setting `open` fires nothing.
  */

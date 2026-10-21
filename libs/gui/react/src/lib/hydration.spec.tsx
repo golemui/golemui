@@ -29,6 +29,16 @@ const config: GuiFormInitConfig = {
       { label: 'Shipping', children: [gui.displays.alert({ text: 'Shipping panel' })] },
       { label: 'Billing', children: [gui.displays.alert({ text: 'Billing panel' })] },
     ]),
+    // A plain <button> React renders, which gui-menu gives aria-haspopup once it connects: its
+    // React wrapper holds that until React has hydrated.
+    gui.actions.menu({
+      uid: 'rowActions',
+      label: 'Actions',
+      items: [
+        { label: 'Edit', value: 'edit' },
+        { label: 'Delete', value: 'delete' },
+      ],
+    }),
   ],
 };
 
@@ -77,5 +87,7 @@ describe('hydrating a server-rendered form', () => {
     });
 
     expect(messages).toEqual([]);
+    expect(target.querySelector('#rowActions_menu')?.getAttribute('role')).toBe('menu');
+    expect(target.querySelector('#rowActions')?.getAttribute('aria-haspopup')).toBe('menu');
   });
 });

@@ -17,6 +17,7 @@ export {
   GuiList as GuiListReact,
   GuiMarkdown as GuiMarkdownReact,
   GuiMarkdownText as GuiMarkdownTextReact,
+  GuiMenu as GuiMenuReact,
   GuiMultiFileUpload as GuiMultiFileUploadReact,
   GuiMultiList as GuiMultiListReact,
   GuiMultiSelectTrigger as GuiMultiSelectTriggerReact,

@@ -197,6 +197,49 @@ describe('gui-dialog', () => {
     });
   }
 
+  describe('size', () => {
+    /** The width of `calc(...)` in this page, measured on a scratch element. */
+    const measure = (inlineSize: string) =>
+      cy.document().then((doc) => {
+        const probe = doc.createElement('div');
+        probe.style.setProperty('inline-size', inlineSize);
+        doc.body.append(probe);
+        const width = probe.getBoundingClientRect().width;
+        probe.remove();
+        return width;
+      });
+    const hasWidth = (expected: number) =>
+      dialog().should(([element]) =>
+        expect(element.getBoundingClientRect().width).to.be.closeTo(expected, 1),
+      );
+
+    it('keeps its width around content with none of its own, like a form', () => {
+      cy.mount(edit());
+      // A GolemUI form is an inline-size container, which gives it no width of its own.
+      dialog().then(([element]) => {
+        const form = element.ownerDocument.createElement('div');
+        form.style.setProperty('container-type', 'inline-size');
+        element.replaceChildren(form);
+      });
+
+      host().invoke('prop', 'open', true);
+      measure('min(32rem, calc(100vw - var(--gui-space-4) * 2))').then((expected) =>
+        hasWidth(expected),
+      );
+    });
+
+    it('takes its width from --gui-dialog-size, within the viewport', () => {
+      cy.mount(edit());
+      host().then(([element]) => element.style.setProperty('--gui-dialog-size', '20rem'));
+
+      host().invoke('prop', 'open', true);
+      measure('20rem').then((expected) => hasWidth(expected));
+
+      host().then(([element]) => element.style.setProperty('--gui-dialog-size', '200rem'));
+      measure('calc(100vw - var(--gui-space-4) * 2)').then((expected) => hasWidth(expected));
+    });
+  });
+
   describe('drawers', () => {
     // Where each drawer's box sits once it has slid in, in a left-to-right page.
     const flush: Record<string, (box: DOMRect, width: number, height: number) => void> = {
