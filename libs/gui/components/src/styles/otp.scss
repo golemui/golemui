@@ -1,0 +1,142 @@
+// `gui-otp`. The boxes are drawn; the native input lies over them, transparent, and takes the
+// typing, the paste, the autofill and the pointer. The box the next digit goes in is the active
+// one: it shows the focus ring and a caret while the input has focus.
+
+gui-otp {
+  --_box: var(--gui-otp-box-size, var(--gui-widget-size));
+
+  display: block;
+}
+
+.gui-otp__control {
+  position: relative;
+  inline-size: fit-content;
+  max-inline-size: 100%;
+}
+
+.gui-otp__boxes,
+.gui-otp__group {
+  display: flex;
+  align-items: center;
+  gap: var(--gui-space-2);
+  min-inline-size: 0;
+}
+
+.gui-otp__group {
+  flex: 1 1 auto;
+}
+
+.gui-otp__separator {
+  flex: none;
+  inline-size: var(--gui-space-2);
+  block-size: 2px;
+  border-radius: 1px;
+  background: var(--gui-border-strong);
+}
+
+.gui-otp__box {
+  box-sizing: border-box;
+  display: flex;
+  // A width, not a flex-basis: the control is as wide as its boxes, and Chrome sizes a
+  // fit-content flex row from its items' widths. They shrink in a narrow container.
+  flex: 0 1 auto;
+  align-items: center;
+  justify-content: center;
+  inline-size: var(--_box);
+  min-inline-size: 1.75rem;
+  // As tall as a text field, so the code lines up with the fields in its row.
+  block-size: calc(var(--gui-widget-size) + 2px);
+  border: 1px solid var(--gui-border-strong);
+  border-radius: var(--gui-radius-md);
+  background: var(--gui-bg-surface);
+  color: var(--gui-text-default);
+  font-size: var(--gui-font-lg);
+  font-variant-numeric: tabular-nums;
+  transition:
+    border-color var(--gui-transition-normal, 0.2s),
+    box-shadow var(--gui-transition-normal, 0.2s);
+}
+
+.gui-otp__input {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: transparent;
+  caret-color: transparent;
+  // 16px keeps iOS from zooming in on focus; the text is invisible anyway.
+  font-size: 16px;
+  cursor: text;
+
+  &::selection {
+    background: transparent;
+    color: transparent;
+  }
+
+  // Autofill paints its own background and text: keep both invisible, the boxes show the code.
+  &:-webkit-autofill {
+    -webkit-text-fill-color: transparent;
+    transition:
+      background-color 0s 600000s,
+      color 0s 600000s;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+
+.gui-otp__control:has(.gui-otp__input:focus) .gui-otp__box--active {
+  border-color: var(--gui-border-focus);
+  box-shadow: var(--gui-shadow-focus);
+}
+
+// The caret, in the empty box the next digit goes in.
+.gui-otp__control:has(.gui-otp__input:focus:not([readonly]))
+  .gui-otp__box--active:not(.gui-otp__box--filled)::after {
+  content: '';
+  inline-size: 1px;
+  block-size: 1.25em;
+  background: currentColor;
+  animation: gui-otp-caret 1s step-end infinite;
+}
+
+@keyframes gui-otp-caret {
+  50% {
+    opacity: 0;
+  }
+}
+
+.gui-otp__control:has(.gui-otp__input[aria-invalid='true']) {
+  .gui-otp__box {
+    border-color: var(--gui-intent-error);
+  }
+
+  &:has(.gui-otp__input:focus) .gui-otp__box--active {
+    box-shadow: var(--gui-shadow-focus-error);
+  }
+}
+
+// Disabled, the boxes turn grey like a disabled field, on top of the dimming every disabled
+// widget gets.
+.gui-otp__control:has(.gui-otp__input:disabled) .gui-otp__box {
+  background: var(--gui-bg-disabled);
+  color: var(--gui-text-disabled);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gui-otp__box {
+    transition: none;
+  }
+
+  .gui-otp__control:has(.gui-otp__input:focus:not([readonly]))
+    .gui-otp__box--active:not(.gui-otp__box--filled)::after {
+    animation: none;
+  }
+}

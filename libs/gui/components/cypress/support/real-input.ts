@@ -21,6 +21,8 @@ const keys = {
   Space: { key: ' ', code: 'Space', windowsVirtualKeyCode: 32, text: ' ' },
   ArrowRight: { key: 'ArrowRight', code: 'ArrowRight', windowsVirtualKeyCode: 39 },
   ArrowLeft: { key: 'ArrowLeft', code: 'ArrowLeft', windowsVirtualKeyCode: 37 },
+  Home: { key: 'Home', code: 'Home', windowsVirtualKeyCode: 36 },
+  Backspace: { key: 'Backspace', code: 'Backspace', windowsVirtualKeyCode: 8 },
 } as const;
 
 /** Presses and releases a key, in the element that has focus. */
@@ -33,6 +35,12 @@ export const realPress = (key: keyof typeof keys) =>
     });
     await send('Input.dispatchKeyEvent', { type: 'keyUp', ...event });
   });
+
+/**
+ * Types text at the caret of the element that has focus, as a keyboard or an IME would: one
+ * trusted `input` event per call, inserted where the browser has the caret.
+ */
+export const realType = (text: string) => cy.then(() => send('Input.insertText', { text }));
 
 /**
  * Sends mouse events at a point of the page under test, in its own CSS pixels. The page runs in a

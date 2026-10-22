@@ -125,6 +125,9 @@ export const DEFAULT_MESSAGES = {
   maximum: 'Maximum',
   notSet: 'Not set',
 
+  // ─── One-time codes: `{length}` is the number of digits ───
+  incompleteCode: 'Enter all {length} digits.',
+
   // ─── Toasts ───
   notifications: 'Notifications',
   dismissNotification: 'Dismiss notification',

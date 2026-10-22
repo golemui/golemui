@@ -203,6 +203,11 @@
       "import": "./lib/components/number.js",
       "require": "./lib/components/number.umd.cjs"
     },
+    "./otp": {
+      "types": "./lib/components/otp.d.ts",
+      "import": "./lib/components/otp.js",
+      "require": "./lib/components/otp.umd.cjs"
+    },
     "./password": {
       "types": "./lib/components/password.d.ts",
       "import": "./lib/components/password.js",

@@ -68,6 +68,7 @@ export default defineConfig(() => ({
         'lib/components/multi-list': 'src/lib/components/multi-list.ts',
         'lib/components/multi-select-trigger': 'src/lib/components/multi-select-trigger.ts',
         'lib/components/number': 'src/lib/components/number.ts',
+        'lib/components/otp': 'src/lib/components/otp.ts',
         'lib/components/password': 'src/lib/components/password.ts',
         'lib/components/pills': 'src/lib/components/pills.ts',
         'lib/components/popover': 'src/lib/components/popover.ts',

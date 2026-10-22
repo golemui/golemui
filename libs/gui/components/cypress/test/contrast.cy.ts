@@ -53,6 +53,7 @@ const controls: [string, TemplateResult, string, string?][] = [
     '.gui-widget--segmented',
   ],
   ['gui-number', html`<gui-number label="Age"></gui-number>`, '.gui-widget'],
+  ['gui-otp', html`<gui-otp label="Code"></gui-otp>`, '.gui-otp__box'],
   ['gui-markdown', html`<gui-markdown label="Bio"></gui-markdown>`, '.gui-widget'],
   ['gui-toggle', html`<gui-toggle label="Notifications"></gui-toggle>`, '.gui-toggle--slider'],
   // The knob is all an unchecked toggle shows of its state.
