@@ -349,6 +349,36 @@
       "required": ["type"],
       "additionalProperties": false
     },
+    "rangeValidator": {
+      "type": "object",
+      "description": "Validates a range stored as `{ start, end }`, like the `rangeSlider` widget's: both ends set, with `start` no later than `end`.",
+      "properties": {
+        "type": {
+          "const": "range"
+        },
+        "required": {
+          "type": "boolean",
+          "description": "Makes the field mandatory - validation fails while there is no range"
+        },
+        "messages": {
+          "type": "object",
+          "description": "Custom error messages that override the default text for each constraint violation",
+          "properties": {
+            "invalid": {
+              "$ref": "#/$defs/localizable",
+              "description": "Shown when the value is not a range with both ends set, in order"
+            },
+            "required": {
+              "$ref": "#/$defs/localizable",
+              "description": "Shown when a required range is absent"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": ["type"],
+      "additionalProperties": false
+    },
     "customValidator": {
       "type": "object",
       "description": "A custom validator that delegates validation to application code. The registered validator function receives these constraint keys and must return a Standard Schema V1-compliant schema object (https://standardschema.dev). Add arbitrary constraint keys alongside `type` - they are passed as-is to the registered validator function.",
@@ -365,7 +395,7 @@
       "additionalProperties": true
     },
     "validator": {
-      "description": "Validation rules for this field. The `type` discriminant selects the validator: `string`, `number`, `integer`, `boolean`, `array`, `file`, `files`, or `custom`.",
+      "description": "Validation rules for this field. The `type` discriminant selects the validator: `string`, `number`, `integer`, `boolean`, `array`, `file`, `files`, `range`, or `custom`.",
       "oneOf": [
         {
           "$ref": "#/$defs/stringValidator"
@@ -384,6 +414,9 @@
         },
         {
           "$ref": "#/$defs/filesValidator"
+        },
+        {
+          "$ref": "#/$defs/rangeValidator"
         },
         {
           "$ref": "#/$defs/customValidator"

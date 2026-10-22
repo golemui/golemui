@@ -30,10 +30,12 @@ import rangedatepickerSchemaJson from './lib/components/rangedatepicker.schema.j
 import rangedatetimeinputSchemaJson from './lib/components/rangedatetimeinput.schema.json';
 import rangedatetimecalendarSchemaJson from './lib/components/rangedatetimecalendar.schema.json';
 import rangedatetimepickerSchemaJson from './lib/components/rangedatetimepicker.schema.json';
+import rangesliderSchemaJson from './lib/components/rangeslider.schema.json';
 import rangetimeinputSchemaJson from './lib/components/rangetimeinput.schema.json';
 import rangetimepickerSchemaJson from './lib/components/rangetimepicker.schema.json';
 import repeaterSchemaJson from './lib/components/repeater.schema.json';
 import selectSchemaJson from './lib/components/select.schema.json';
+import sliderSchemaJson from './lib/components/slider.schema.json';
 import tagsSchemaJson from './lib/components/tags.schema.json';
 import textareaSchemaJson from './lib/components/textarea.schema.json';
 import textinputSchemaJson from './lib/components/textinput.schema.json';
@@ -80,10 +82,12 @@ export const rangedatepickerSchema: Record<string, unknown> = rangedatepickerSch
 export const rangedatetimeinputSchema: Record<string, unknown> = rangedatetimeinputSchemaJson;
 export const rangedatetimecalendarSchema: Record<string, unknown> = rangedatetimecalendarSchemaJson;
 export const rangedatetimepickerSchema: Record<string, unknown> = rangedatetimepickerSchemaJson;
+export const rangesliderSchema: Record<string, unknown> = rangesliderSchemaJson;
 export const rangetimeinputSchema: Record<string, unknown> = rangetimeinputSchemaJson;
 export const rangetimepickerSchema: Record<string, unknown> = rangetimepickerSchemaJson;
 export const repeaterSchema: Record<string, unknown> = repeaterSchemaJson;
 export const selectSchema: Record<string, unknown> = selectSchemaJson;
+export const sliderSchema: Record<string, unknown> = sliderSchemaJson;
 export const tagsSchema: Record<string, unknown> = tagsSchemaJson;
 export const textareaSchema: Record<string, unknown> = textareaSchemaJson;
 export const textinputSchema: Record<string, unknown> = textinputSchemaJson;
@@ -126,10 +130,12 @@ export const COMPONENT_SCHEMAS_BY_TYPE = {
   rangeDateTimeInput: rangedatetimeinputSchema,
   rangeDateTimeCalendar: rangedatetimecalendarSchema,
   rangeDateTimePicker: rangedatetimepickerSchema,
+  rangeSlider: rangesliderSchema,
   rangeTimeInput: rangetimeinputSchema,
   rangeTimePicker: rangetimepickerSchema,
   repeater: repeaterSchema,
   select: selectSchema,
+  slider: sliderSchema,
   tags: tagsSchema,
   textarea: textareaSchema,
   textinput: textinputSchema,

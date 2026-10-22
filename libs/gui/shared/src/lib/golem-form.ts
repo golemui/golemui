@@ -48,6 +48,9 @@ import type {
   TimeRange,
   RepeaterProps,
   SelectProps,
+  SliderProps,
+  SliderRange,
+  RangeSliderProps,
   TabsProps,
   DateTimeInputProps,
   TextareaProps,
@@ -231,11 +234,13 @@ type GolemWidget<
   | GuiRangeDateTimeInput<FormType, States, V>
   | GuiRangeDateTimeCalendar<FormType, States, V>
   | GuiRangeDateTimePicker<FormType, States, V>
+  | GuiRangeSlider<FormType, States, V>
   | GuiRangeTimeInput<FormType, States, V>
   | GuiRangeTimePicker<FormType, States, V>
   // | GuiRenderer<FormType, States>
   | GuiRepeater<FormType, States, V, CustomWidget>
   | GuiSelect<FormType, States, V>
+  | GuiSlider<FormType, States, V>
   | GuiFlex<FormType, States, V, CustomWidget>
   | GuiGrid<FormType, States, V, CustomWidget>
   | GuiTabs<FormType, States, V, CustomWidget>
@@ -420,6 +425,22 @@ type GuiRadiogroup<FormType extends Record<string, any>, States extends string, 
 > & {
   type: 'radiogroup';
 };
+
+type GuiSlider<FormType extends Record<string, any>, States extends string, V> = InputWidget<
+  number,
+  States,
+  FormType,
+  SliderProps,
+  V
+> & { type: 'slider' };
+
+type GuiRangeSlider<FormType extends Record<string, any>, States extends string, V> = InputWidget<
+  SliderRange,
+  States,
+  FormType,
+  RangeSliderProps,
+  V
+> & { type: 'rangeSlider' };
 
 type GuiRangeCalendar<FormType extends Record<string, any>, States extends string, V> = InputWidget<
   string,

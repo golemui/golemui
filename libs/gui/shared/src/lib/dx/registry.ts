@@ -39,6 +39,8 @@ import { timePickerShortcutType } from './shortcuts/time-picker/register';
 import { dateTimeInputShortcutType } from './shortcuts/date-time-input/register';
 import { currencyShortcutType } from './shortcuts/currency/register';
 import { rangeCalendarShortcutType } from './shortcuts/range-calendar/register';
+import { sliderShortcutType } from './shortcuts/slider/register';
+import { rangeSliderShortcutType } from './shortcuts/range-slider/register';
 import { selectShortcutType } from './shortcuts/select/register';
 import { radiogroupShortcutType } from './shortcuts/radiogroup/register';
 import { tabsShortcutType } from './shortcuts/tabs/register';
@@ -85,6 +87,8 @@ const guiShortcutTypes: ShortcutTypeDefinition<any, any, any>[] = [
   dateTimeInputShortcutType,
   currencyShortcutType,
   rangeCalendarShortcutType,
+  sliderShortcutType,
+  rangeSliderShortcutType,
   selectShortcutType,
   radiogroupShortcutType,
   tabsShortcutType,

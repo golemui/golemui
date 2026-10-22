@@ -31,7 +31,7 @@ type Thumb = 'start' | 'end';
  * @fires gui-input - The user moved a thumb. `detail.value` is the new `{ start, end }`.
  * @fires gui-change - The user let go of a thumb, or moved it with a key. `detail.value` is the
  *   range.
- * @fires gui-blur - Focus left a thumb.
+ * @fires gui-blur - Focus left the range slider: not when it moves from one thumb to the other.
  */
 export class GuiRangeSlider extends GuiSliderBase {
   /** The range, or `undefined` before the user picks one. */

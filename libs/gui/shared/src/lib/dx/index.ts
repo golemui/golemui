@@ -47,6 +47,8 @@ export { _guiMarkdownText } from './shortcuts/markdown-text/guiMarkdownText.impl
 export { _guiPassword } from './shortcuts/password/guiPassword.impl';
 export { _guiRadiogroup } from './shortcuts/radiogroup/guiRadiogroup.impl';
 export { _guiRangeCalendar } from './shortcuts/range-calendar/guiRangeCalendar.impl';
+export { _guiRangeSlider } from './shortcuts/range-slider/guiRangeSlider.impl';
+export { _guiSlider } from './shortcuts/slider/guiSlider.impl';
 export { _guiRangeDateInput } from './shortcuts/range-date-input/guiRangeDateInput.impl';
 export { _guiRangeDateTimeInput } from './shortcuts/range-date-time-input/guiRangeDateTimeInput.impl';
 export { _guiRangeDateTimeCalendar } from './shortcuts/range-date-time-calendar/guiRangeDateTimeCalendar.impl';
@@ -108,6 +110,8 @@ export { _gslMarkdownTextByUid, _gslMarkdownTexts } from './shortcuts/markdown-t
 export { _gslPasswordByUid, _gslPasswords } from './shortcuts/password/register';
 export { _gslRadiogroupByUid, _gslRadiogroups } from './shortcuts/radiogroup/register';
 export { _gslRangeCalendarByUid, _gslRangeCalendars } from './shortcuts/range-calendar/register';
+export { _gslRangeSliderByUid, _gslRangeSliders } from './shortcuts/range-slider/register';
+export { _gslSliderByUid, _gslSliders } from './shortcuts/slider/register';
 export {
   _gslRangeDateInputByUid,
   _gslRangeDateInputs,
@@ -256,6 +260,11 @@ export type {
   GslRangeCalendarConfig,
   RangeCalendarDecorator,
 } from './shortcuts/range-calendar/rangeCalendar.domain';
+export type {
+  GslRangeSliderConfig,
+  RangeSliderDecorator,
+} from './shortcuts/range-slider/range-slider.domain';
+export type { GslSliderConfig, SliderDecorator } from './shortcuts/slider/slider.domain';
 export type {
   GslRangeDateInputConfig,
   RangeDateInputDecorator,

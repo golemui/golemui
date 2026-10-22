@@ -8,6 +8,7 @@ export type {
   FileValidator,
   FilesValidator,
   NumberValidator,
+  RangeValidator,
   StringValidator,
   Validator,
 } from './lib/validators';

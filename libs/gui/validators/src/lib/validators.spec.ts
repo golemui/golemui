@@ -8,6 +8,7 @@ import {
   type FileValidator,
   initValidators,
   type NumberValidator,
+  type RangeValidator,
   type StringValidator,
   type Validator,
 } from './validators';
@@ -280,6 +281,50 @@ describe('Golem validators', () => {
           blockPendingUploads: false,
         } satisfies FilesValidator);
         expect(isValid(schema, [uploaded, uploading, failed])).toBe(true);
+      });
+    });
+  });
+
+  describe('RangeValidator', () => {
+    describe('optional (required not set)', () => {
+      const schema = validate({ type: 'range' } satisfies RangeValidator);
+
+      it('accepts no range', () => {
+        expect(isValid(schema, undefined)).toBe(true);
+      });
+
+      it('accepts a range, its ends equal or in order', () => {
+        expect(isValid(schema, { start: 20, end: 60 })).toBe(true);
+        expect(isValid(schema, { start: 40, end: 40 })).toBe(true);
+        expect(isValid(schema, { start: '2026-02-13', end: '2026-02-16' })).toBe(true);
+      });
+
+      it('rejects a range with an end missing or out of order', () => {
+        expect(getErrors(schema, { start: 20 })).toEqual(['Invalid range']);
+        expect(getErrors(schema, { start: 60, end: 20 })).toEqual(['Invalid range']);
+        expect(getErrors(schema, 40)).toEqual(['Invalid range']);
+      });
+    });
+
+    describe('required', () => {
+      it('fails without a range', () => {
+        const schema = validate({ type: 'range', required: true } satisfies RangeValidator);
+        expect(getErrors(schema, undefined)).toEqual(['This field is required']);
+        expect(getErrors(schema, null)).toEqual(['This field is required']);
+        expect(isValid(schema, { start: 0, end: 0 })).toBe(true);
+      });
+
+      it('uses its own, translated, messages', () => {
+        const schema = validate(
+          {
+            type: 'range',
+            required: true,
+            messages: { required: { key: 'pickRange' }, invalid: 'Pick a valid range' },
+          } satisfies RangeValidator,
+          mockTranslator({ pickRange: 'Elige un rango' }),
+        );
+        expect(getErrors(schema, undefined)).toEqual(['Elige un rango']);
+        expect(getErrors(schema, { start: 2, end: 1 })).toEqual(['Pick a valid range']);
       });
     });
   });

@@ -1,0 +1,133 @@
+{
+  "$schema": "../../../../../../libs/gui/schemas/src/lib/layout-widget.schema.json",
+  "uid": "tabSlider",
+  "kind": "layout",
+  "type": "grid",
+  "children": [
+    {
+      "kind": "input",
+      "type": "slider",
+      "path": "sliders.volume",
+      "label": "Volume",
+      "props": {
+        "hint": "No value until you move the thumb. Required: an error shows once it is touched"
+      },
+      "validator": {
+        "type": "number",
+        "required": true,
+        "messages": {
+          "invalid": "Pick a volume"
+        }
+      }
+    },
+    {
+      "kind": "input",
+      "type": "slider",
+      "path": "sliders.brightness",
+      "label": "Brightness",
+      "props": {
+        "hint": "A tick at every step of 10, filled up to the value",
+        "step": 10,
+        "marks": true
+      },
+      "defaultValue": 40
+    },
+    {
+      "kind": "input",
+      "type": "slider",
+      "path": "sliders.opacity",
+      "label": "Opacity",
+      "props": {
+        "hint": "A percentage, in the label and in a bubble over the thumb",
+        "maximum": 1,
+        "step": 0.05,
+        "format": {
+          "style": "percent"
+        },
+        "valuePlacement": "both"
+      },
+      "defaultValue": 0.6
+    },
+    {
+      "kind": "input",
+      "type": "slider",
+      "path": "sliders.rating",
+      "label": "Rating",
+      "props": {
+        "hint": "Labelled marks, and the value in a bubble only",
+        "minimum": 1,
+        "maximum": 5,
+        "marks": [
+          {
+            "value": 1,
+            "label": "Poor"
+          },
+          3,
+          {
+            "value": 5,
+            "label": "Great"
+          }
+        ],
+        "valuePlacement": "bubble"
+      }
+    },
+    {
+      "kind": "input",
+      "type": "slider",
+      "path": "sliders.disabled",
+      "label": "Disabled",
+      "disabled": true,
+      "defaultValue": 30
+    },
+    {
+      "kind": "input",
+      "type": "slider",
+      "path": "sliders.readonly",
+      "label": "Read-only",
+      "readonly": true,
+      "defaultValue": 70
+    },
+    {
+      "kind": "layout",
+      "type": "grid",
+      "props": {
+        "direction": "row"
+      },
+      "children": [
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "sliders.speaker",
+          "label": "Speaker",
+          "props": {
+            "hint": "Its name in the app"
+          }
+        },
+        {
+          "kind": "input",
+          "type": "slider",
+          "path": "sliders.bass",
+          "label": "Bass",
+          "props": {
+            "minimum": -10,
+            "maximum": 10,
+            "marks": [
+              {
+                "value": -10,
+                "label": "-10 dB"
+              },
+              {
+                "value": 0,
+                "label": "0"
+              },
+              {
+                "value": 10,
+                "label": "+10 dB"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

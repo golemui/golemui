@@ -31,6 +31,8 @@ export const widgetLoaders: WidgetLoaders<React.ComponentType<WithWidget>, Golem
   number: async () => (await import('./components/Number')).NumberInput,
   select: async () => (await import('./components/Select')).Select,
   radiogroup: async () => (await import('./components/RadioGroup')).RadioGroup,
+  slider: async () => (await import('./components/Slider')).Slider,
+  rangeSlider: async () => (await import('./components/RangeSlider')).RangeSlider,
   rangeCalendar: async () => (await import('./components/RangeCalendar')).RangeCalendar,
   rangeDateInput: async () => (await import('./components/RangeDateInput')).RangeDateInput,
   rangeTimeInput: async () => (await import('./components/RangeTimeInput')).RangeTimeInput,

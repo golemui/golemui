@@ -247,8 +247,9 @@ export abstract class GuiSliderBase extends GuiFormControl {
     }
   }
 
-  /** @internal */
-  onBlur() {
+  /** @internal Focus left the control: moving from one thumb to the other doesn't count. */
+  onBlur(event: FocusEvent) {
+    if (this.contains(event.relatedTarget as Node | null)) return;
     dispatchBlur(this);
   }
 
