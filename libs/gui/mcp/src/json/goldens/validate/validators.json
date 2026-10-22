@@ -433,6 +433,68 @@
       "interpolationWarnings": []
     }
   },
+  "range/unknown-keyword": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "field",
+          "validator": {
+            "type": "range",
+            "notAKeyword": 1
+          }
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/validator",
+          "message": "Unknown property `notAKeyword` at `/form/0/validator`",
+          "keyword": "additionalProperties",
+          "params": {
+            "additionalProperty": "notAKeyword"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "range/wrong-required-type": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "field",
+          "validator": {
+            "type": "range",
+            "required": "yes"
+          }
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/validator/required",
+          "message": "Expected type boolean at `/form/0/validator/required`, got \"yes\"",
+          "keyword": "type",
+          "params": {
+            "type": "boolean"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
   "custom/unknown-keyword": {
     "input": {
       "form": [
@@ -536,7 +598,7 @@
         {
           "path": "/form/0/validator/type",
           "message": "Value \"zzzzzzzz\" at `/form/0/validator/type` is not one of the allowed values",
-          "suggestion": "Allowed values: `string`, `number`, `integer`, `boolean`, `array`, `file`, `files`, `custom`.",
+          "suggestion": "Allowed values: `string`, `number`, `integer`, `boolean`, `array`, `file`, `files`, `range`, `custom`.",
           "keyword": "enum",
           "params": {
             "allowedValues": [
@@ -547,6 +609,7 @@
               "array",
               "file",
               "files",
+              "range",
               "custom"
             ]
           }

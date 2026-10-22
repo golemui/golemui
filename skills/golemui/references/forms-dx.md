@@ -58,10 +58,12 @@ Every `gui.*` factory and its calling convention. Look up the detail below for t
 - `gui.inputs.rangeDateTimeCalendar(path, { label?, minDateTime?, maxDateTime?, disabledRanges?, startTimeLabel?, endTimeLabel? })`
 - `gui.inputs.rangeDateTimeInput(path, { label?, minDateTime?, maxDateTime? })`
 - `gui.inputs.rangeDateTimePicker(path, { label?, minDateTime?, maxDateTime?, disabledRanges?, startTimeLabel?, endTimeLabel? })`
+- `gui.inputs.rangeSlider(path, { label, minimum?, maximum?, step?, marks?, format?, valuePlacement?, startLabel?, endLabel?, defaultValue?, validator? })`
 - `gui.inputs.rangeTimeInput(path, { label?, minTime?, maxTime? })`
 - `gui.inputs.rangeTimePicker(path, { label?, minTime?, maxTime? })`
 - `gui.inputs.repeater(path, { label?, addLabel?, removeLabel?, limit?, template })`
 - `gui.inputs.select(path, { label, options, validator? })`
+- `gui.inputs.slider(path, { label, minimum?, maximum?, step?, marks?, format?, valuePlacement?: 'label' | 'bubble' | 'both' | 'hidden', defaultValue?, validator? })`
 - `gui.layouts.tabs(sections)`
 - `gui.inputs.tags(path, { label })`
 - `gui.inputs.textInput(path, { label, placeholder?, defaultValue?, validator? })`
@@ -605,6 +607,26 @@ gui.inputs.rangeDateTimePicker('stay', {
 
 Reference: https://golemui.com/dx/widgets-reference/input-fields/range-datetime-picker.md
 
+## gui.inputs.rangeSlider
+
+Call: `gui.inputs.rangeSlider(path, { label, minimum?, maximum?, step?, marks?, format?, valuePlacement?, startLabel?, endLabel?, defaultValue?, validator? })`
+
+```ts
+gui.inputs.rangeSlider('price', {
+  label: 'Price per night',
+  maximum: 500,
+  step: 10,
+  format: { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 },
+  validator: { required: true, messages: { required: 'Pick a price range' } },
+});
+```
+
+- Two thumbs on one track. The value is ONE object `{ start, end }` of numbers, not an array like the date and time ranges.
+- Same props as `slider`, plus `startLabel` / `endLabel`, the thumbs' names for screen readers (default "Minimum" / "Maximum").
+- The validator is a range validator: `{ required, messages: { required, invalid } }`, no other rules. `required` fails while there is no range.
+
+Reference: https://golemui.com/dx/widgets-reference/input-fields/range-slider.md
+
 ## gui.inputs.rangeTimeInput
 
 Call: `gui.inputs.rangeTimeInput(path, { label?, minTime?, maxTime? })`
@@ -670,6 +692,25 @@ gui.inputs.select('plan', {
 - Same validator wart as the other choice widgets: if required, use a typed validator `{ type: 'string', required: true }`.
 
 Reference: https://golemui.com/dx/widgets-reference/input-fields/select.md
+
+## gui.inputs.slider
+
+Call: `gui.inputs.slider(path, { label, minimum?, maximum?, step?, marks?, format?, valuePlacement?: 'label' | 'bubble' | 'both' | 'hidden', defaultValue?, validator? })`
+
+```ts
+gui.inputs.slider('volume', {
+  label: 'Volume',
+  step: 10,
+  marks: true,
+  validator: { required: true, messages: { invalid: 'Pick a volume' } },
+});
+```
+
+- A number picked on a track, from `minimum` (default 0) to `maximum` (default 100) in `step` (default 1). It has no value until the user moves the thumb, so `required` works; the missing value fails the number type check, so word it with `messages.invalid`.
+- `marks: true` draws a tick at every step; a list (`[0, { value: 50, label: 'Half' }, 100]`) draws them at those values, with labels under the track. `format` takes `Intl.NumberFormat` options (`{ style: 'percent' }`, `{ style: 'currency', currency: 'EUR' }`) for the value and the marks.
+- `valuePlacement`: `'label'` (default, at the end of the label), `'bubble'` (over the thumb while it is hovered, focused or dragged), `'both'` or `'hidden'`.
+
+Reference: https://golemui.com/dx/widgets-reference/input-fields/slider.md
 
 ## gui.layouts.tabs
 
@@ -831,7 +872,7 @@ gui.inputs.textInput('email', {
 });
 ```
 
-- Every validator accepts a `messages` map from rule name to custom error text (string or i18n `{ key, params?, default? }`). Keys per type — string: `invalid`, `required`, `minLength`, `maxLength`, `pattern`, `format`, `enum`, `const`; number: `invalid`, `minimum`, `maximum`, `exclusiveMinimum`, `exclusiveMaximum`, `multipleOf`, `enum`, `const`; boolean: `invalid`, `const`; array: `invalid`, `required`, `minItems`, `maxItems`. The special key `invalid` customizes the base type check. Set custom messages for every rule you use — the library defaults (e.g. "Invalid input: expected string, received undefined") are developer-facing, not user-facing.
+- Every validator accepts a `messages` map from rule name to custom error text (string or i18n `{ key, params?, default? }`). Keys per type — string: `invalid`, `required`, `minLength`, `maxLength`, `pattern`, `format`, `enum`, `const`; number: `invalid`, `minimum`, `maximum`, `exclusiveMinimum`, `exclusiveMaximum`, `multipleOf`, `enum`, `const`; boolean: `invalid`, `const`; array: `invalid`, `required`, `minItems`, `maxItems`; range: `invalid`, `required`. The special key `invalid` customizes the base type check. Set custom messages for every rule you use — the library defaults (e.g. "Invalid input: expected string, received undefined") are developer-facing, not user-facing.
 - ALWAYS pair `messages.required` with `messages.invalid` (same text): an `undefined`/`null` value — the pristine or cleared field, the most common empty state — fails the base TYPE check and shows the `invalid` message; the `required` rule only fires on present-but-empty values (`""`, `[]`). That is also why number/boolean validators have NO `required` message key — for them `messages.invalid` is the only way to word the missing-value error. `null` is never valid, even on non-required fields.
 - MANDATORY CHECKBOX: boolean `required: true` does NOT force it checked (`false` is a valid boolean) and `const: true` alone lets the pristine `undefined` pass. Use both plus paired messages — see the `gui.inputs.checkbox` entry for the full recipe.
 - WHEN VALIDATION RUNS: only on user interaction, per `formConfig.validateOn` — `"eager"` (default: first change or blur anywhere validates the whole form), `"change"`, `"blur"`, `"submit"`, or an array. NOTHING validates at mount, which is why `$formIsInvalid` starts `false` — see the conditional-and-state-props pattern for gating the submit button correctly. Submit clicks always re-validate everything and the runtime blocks the submit event while invalid.

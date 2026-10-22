@@ -1,0 +1,205 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://golemui.com/schemas/gui/components/slider.schema.json",
+  "title": "Slider Widget",
+  "type": "object",
+  "$defs": {
+    "labelDef": {
+      "$ref": "../core/common.schema.json#/$defs/localizable"
+    },
+    "disabledDef": {
+      "$ref": "../core/common.schema.json#/$defs/boolOrWhen"
+    },
+    "readonlyDef": {
+      "$ref": "../core/common.schema.json#/$defs/boolOrWhen"
+    },
+    "hintProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable"
+    },
+    "minimumProp": {
+      "type": "number",
+      "description": "The lowest value. Defaults to 0."
+    },
+    "maximumProp": {
+      "type": "number",
+      "description": "The highest value. Defaults to 100."
+    },
+    "stepProp": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "description": "The distance between values. Defaults to 1."
+    },
+    "marksProp": {
+      "description": "Ticks on the track: `true` draws one at every step (up to 101), a list draws them at those values, each with an optional label under the track.",
+      "oneOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": "number"
+                  },
+                  "label": {
+                    "$ref": "../core/common.schema.json#/$defs/localizable"
+                  }
+                },
+                "required": ["value"],
+                "additionalProperties": false
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "formatProp": {
+      "type": "object",
+      "description": "How the value and the marks' values show: `Intl.NumberFormat` options.",
+      "properties": {
+        "style": {
+          "enum": ["decimal", "currency", "percent", "unit"]
+        },
+        "currency": {
+          "type": "string",
+          "description": "An ISO 4217 code, for `style: 'currency'`."
+        },
+        "currencyDisplay": {
+          "enum": ["symbol", "narrowSymbol", "code", "name"]
+        },
+        "unit": {
+          "type": "string",
+          "description": "A unit identifier, for `style: 'unit'`, e.g. `kilometer-per-hour`."
+        },
+        "unitDisplay": {
+          "enum": ["short", "narrow", "long"]
+        },
+        "minimumFractionDigits": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "maximumFractionDigits": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "useGrouping": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "valuePlacementProp": {
+      "enum": ["label", "bubble", "both", "hidden"],
+      "description": "Where the value shows: at the end of the label (default), over the thumb while it is hovered, focused or dragged, both, or nowhere. Assistive technology reads it in every case."
+    }
+  },
+  "allOf": [
+    {
+      "$ref": "../core/common.schema.json#/$defs/baseWidget"
+    }
+  ],
+  "properties": {
+    "kind": {
+      "const": "input"
+    },
+    "type": {
+      "const": "slider"
+    },
+    "path": {
+      "$ref": "../core/common.schema.json#/$defs/dotPath"
+    },
+    "label": {
+      "$ref": "#/$defs/labelDef"
+    },
+    "disabled": {
+      "$ref": "#/$defs/disabledDef"
+    },
+    "readonly": {
+      "$ref": "#/$defs/readonlyDef"
+    },
+    "on": {
+      "$ref": "../core/common.schema.json#/$defs/on"
+    },
+    "validator": {
+      "$ref": "../validators.schema.json#/$defs/validator"
+    },
+    "defaultValue": {
+      "type": "number"
+    },
+    "props": {
+      "type": "object",
+      "properties": {
+        "hint": {
+          "$ref": "#/$defs/hintProp"
+        },
+        "minimum": {
+          "$ref": "#/$defs/minimumProp"
+        },
+        "maximum": {
+          "$ref": "#/$defs/maximumProp"
+        },
+        "step": {
+          "$ref": "#/$defs/stepProp"
+        },
+        "marks": {
+          "$ref": "#/$defs/marksProp"
+        },
+        "format": {
+          "$ref": "#/$defs/formatProp"
+        },
+        "valuePlacement": {
+          "$ref": "#/$defs/valuePlacementProp"
+        }
+      },
+      "patternProperties": {
+        "^hint\\.[^.]+$": {
+          "$ref": "#/$defs/hintProp"
+        },
+        "^minimum\\.[^.]+$": {
+          "$ref": "#/$defs/minimumProp"
+        },
+        "^maximum\\.[^.]+$": {
+          "$ref": "#/$defs/maximumProp"
+        },
+        "^step\\.[^.]+$": {
+          "$ref": "#/$defs/stepProp"
+        },
+        "^marks\\.[^.]+$": {
+          "$ref": "#/$defs/marksProp"
+        },
+        "^format\\.[^.]+$": {
+          "$ref": "#/$defs/formatProp"
+        },
+        "^valuePlacement\\.[^.]+$": {
+          "$ref": "#/$defs/valuePlacementProp"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "patternProperties": {
+    "^label\\.[^.]+$": {
+      "$ref": "#/$defs/labelDef"
+    },
+    "^disabled\\.[^.]+$": {
+      "$ref": "#/$defs/disabledDef"
+    },
+    "^readonly\\.[^.]+$": {
+      "$ref": "#/$defs/readonlyDef"
+    },
+    "^validator\\.[^.]+$": {
+      "$ref": "../validators.schema.json#/$defs/validator"
+    }
+  },
+  "required": ["kind", "type", "path"],
+  "unevaluatedProperties": false
+}

@@ -73,6 +73,14 @@ const config: FormInitConfig<Type<WithWidget>> = {
           label: 'Budget',
           props: { currency: 'USD' },
         },
+        { kind: 'input', type: 'slider', path: 'volume', label: 'Volume', props: { maximum: 10 } },
+        {
+          kind: 'input',
+          type: 'rangeSlider',
+          path: 'price',
+          label: 'Price',
+          props: { maximum: 500, step: 10 },
+        },
         { kind: 'action', type: 'button', label: 'Create account', action: 'submit' },
         {
           uid: 'moreActions',
@@ -94,6 +102,8 @@ const config: FormInitConfig<Type<WithWidget>> = {
     acceptTerms: false,
     newsletter: false,
     budget: 1234.5,
+    volume: 7,
+    price: { start: 100, end: 300 },
   },
 };
 
@@ -136,6 +146,24 @@ describe('server rendering the gui widget set in plain node', () => {
     expect(markup).toMatch(/<gui-number-input[^>]*class="[^"]*gui-number[^"]*gui-field/);
     expect(markup).toContain('Seats');
     expect(markup).toMatch(/<input[^>]*type="number"[^>]*id="seats-number"/);
+  });
+
+  it('renders the slider widgets with their values in their range inputs and labels', () => {
+    expect(markup).toMatch(/<gui-slider-input[^>]*class="[^"]*gui-slider[^"]*gui-field/);
+    expect(markup).toMatch(/<input[^>]*type="range"[^>]*id="volume-slider"[^>]*value="7"/);
+    expect(markup).toMatch(
+      /<gui-range-slider-input[^>]*class="[^"]*gui-range-slider[^"]*gui-field/,
+    );
+    expect(markup).toMatch(
+      /<input[^>]*type="range"[^>]*id="price-rangeSlider_start"[^>]*value="100"/,
+    );
+    expect(markup).toMatch(
+      /<input[^>]*type="range"[^>]*id="price-rangeSlider_end"[^>]*value="300"/,
+    );
+    expect(markup).toMatch(
+      /class="gui-slider__value"[^>]*>(<!--[^>]*-->)*7(<!--[^>]*-->)*<\/output>/,
+    );
+    expect(markup).toMatch(/class="gui-slider__value"[^>]*>(<!--[^>]*-->)*100 – 300/);
   });
 
   it('renders the currency widget, which reads its own children in willUpdate()', () => {

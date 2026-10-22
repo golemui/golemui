@@ -235,7 +235,8 @@ const PATTERNS: DxPattern[] = [
         '`{ key, params?, default? }`). Keys per type — string: `invalid`, `required`, `minLength`, `maxLength`, ' +
         '`pattern`, `format`, `enum`, `const`; number: `invalid`, `minimum`, `maximum`, `exclusiveMinimum`, ' +
         '`exclusiveMaximum`, `multipleOf`, `enum`, `const`; boolean: `invalid`, `const`; array: `invalid`, ' +
-        '`required`, `minItems`, `maxItems`. The special key `invalid` customizes the base type check. ' +
+        '`required`, `minItems`, `maxItems`; range: `invalid`, `required`. The special key `invalid` customizes ' +
+        'the base type check. ' +
         'Set custom messages for every rule you use — the library defaults (e.g. "Invalid input: expected string, ' +
         'received undefined") are developer-facing, not user-facing.',
       'ALWAYS pair `messages.required` with `messages.invalid` (same text): an `undefined`/`null` value — the ' +
@@ -598,6 +599,32 @@ const INPUTS: DxSpec[] = [
       'A failed file pauses the queue until it is retried or removed. The count is never silently blocked: cap it with `maxItems` so the user is told why.',
       'Same cleanup contract as `fileUpload`: `uploadService.remove` runs only when the user removes a pill; every other way an envelope leaves the array keeps the file on the server, so the HOST reconciles uploads against the submitted value.',
       "The validator auto-supplies `type: 'files'`; rules: `required` (non-empty), `minItems`, `maxItems`, `blockPendingUploads` (default true); message keys: `invalid`, `required`, `minItems`, `maxItems`, `pendingUploads`.",
+    ],
+  },
+  {
+    factory: 'slider',
+    namespace: 'inputs',
+    docSlug: 'slider',
+    call: "gui.inputs.slider(path, { label, minimum?, maximum?, step?, marks?, format?, valuePlacement?: 'label' | 'bubble' | 'both' | 'hidden', defaultValue?, validator? })",
+    example:
+      "gui.inputs.slider('volume', { label: 'Volume', step: 10, marks: true, validator: { required: true, messages: { invalid: 'Pick a volume' } } })",
+    notes: [
+      'A number picked on a track, from `minimum` (default 0) to `maximum` (default 100) in `step` (default 1). It has no value until the user moves the thumb, so `required` works; the missing value fails the number type check, so word it with `messages.invalid`.',
+      "`marks: true` draws a tick at every step; a list (`[0, { value: 50, label: 'Half' }, 100]`) draws them at those values, with labels under the track. `format` takes `Intl.NumberFormat` options (`{ style: 'percent' }`, `{ style: 'currency', currency: 'EUR' }`) for the value and the marks.",
+      "`valuePlacement`: `'label'` (default, at the end of the label), `'bubble'` (over the thumb while it is hovered, focused or dragged), `'both'` or `'hidden'`.",
+    ],
+  },
+  {
+    factory: 'rangeSlider',
+    namespace: 'inputs',
+    docSlug: 'range-slider',
+    call: 'gui.inputs.rangeSlider(path, { label, minimum?, maximum?, step?, marks?, format?, valuePlacement?, startLabel?, endLabel?, defaultValue?, validator? })',
+    example:
+      "gui.inputs.rangeSlider('price', { label: 'Price per night', maximum: 500, step: 10, format: { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }, validator: { required: true, messages: { required: 'Pick a price range' } } })",
+    notes: [
+      'Two thumbs on one track. The value is ONE object `{ start, end }` of numbers, not an array like the date and time ranges.',
+      'Same props as `slider`, plus `startLabel` / `endLabel`, the thumbs\' names for screen readers (default "Minimum" / "Maximum").',
+      'The validator is a range validator: `{ required, messages: { required, invalid } }`, no other rules. `required` fails while there is no range.',
     ],
   },
   {

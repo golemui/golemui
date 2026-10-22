@@ -115,6 +115,15 @@ export interface FilesValidator extends BaseValidator {
   blockPendingUploads?: boolean;
 }
 
+/**
+ * Validates a range stored as `{ start, end }`, like the `rangeSlider` widget's. `required` fails
+ * while there is none (`undefined` or `null`); any other value must have both ends set, with
+ * `start` no later than `end`, or it is `invalid`.
+ */
+export interface RangeValidator extends BaseValidator {
+  type: 'range';
+}
+
 export interface CustomValidator {
   type: 'custom';
   required?: boolean;
@@ -133,6 +142,7 @@ export type Validator =
   | ArrayValidator
   | FileValidator
   | FilesValidator
+  | RangeValidator
   | CustomValidator;
 
 // --------------------------------
@@ -164,6 +174,9 @@ export const initValidators =
       case 'files':
         return fromFilesValidator(validator, localization);
 
+      case 'range':
+        return fromRangeValidator(validator, localization);
+
       case 'custom': {
         if (!customValidators) {
           throw new Error(
@@ -176,7 +189,7 @@ export const initValidators =
       default: {
         const unknownValidator: never = validator;
         throw new Error(
-          `Unknown validator config: ${JSON.stringify(unknownValidator)}. The "type" property must be one of: "string", "number", "integer", "boolean", "array", "file", "files", "custom".`,
+          `Unknown validator config: ${JSON.stringify(unknownValidator)}. The "type" property must be one of: "string", "number", "integer", "boolean", "array", "file", "files", "range", "custom".`,
         );
       }
     }
@@ -575,6 +588,32 @@ function fromCustomValidator(v: CustomValidator, customValidators: CustomValidat
 }
 
 // We need this to isolate the optional schema type from the from*Validator functions
+const DEFAULT_INVALID_RANGE_MESSAGE = 'Invalid range';
+
+/** Whether a value is a range with both ends set, the start no later than the end. */
+function isRange(val: unknown): boolean {
+  if (val === null || typeof val !== 'object') return false;
+  const { start, end } = val as { start?: unknown; end?: unknown };
+  if (start == null || end == null || typeof start !== typeof end) return false;
+  return (start as number) <= (end as number);
+}
+
+function fromRangeValidator(v: RangeValidator, localization?: I18nTranslator) {
+  return withOptional(v, (v) => {
+    const invalidMsg =
+      resolveMessage(v.messages?.['invalid'], localization) ?? DEFAULT_INVALID_RANGE_MESSAGE;
+    let schema = any();
+
+    if (v.required === true) {
+      const msg =
+        resolveMessage(v.messages?.['required'], localization) ?? DEFAULT_REQUIRED_MESSAGE;
+      schema = schema.check(refine((val) => val != null, { error: msg }));
+    }
+
+    return schema.check(refine((val) => val == null || isRange(val), { error: invalidMsg }));
+  });
+}
+
 function withOptional<T extends ZodMiniType, V extends Validator>(
   validator: V,
   builder: (v: V) => T,

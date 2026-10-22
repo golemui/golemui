@@ -932,6 +932,34 @@
       "interpolationWarnings": []
     }
   },
+  "rangeSlider": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "rangeSlider",
+          "path": "field",
+          "notAProperty": true
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0",
+          "message": "Unknown property `notAProperty` at `/form/0`",
+          "keyword": "unevaluatedProperties",
+          "params": {
+            "unevaluatedProperty": "notAProperty"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
   "rangeTimeInput": {
     "input": {
       "form": [
@@ -1030,6 +1058,34 @@
         {
           "kind": "input",
           "type": "select",
+          "path": "field",
+          "notAProperty": true
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0",
+          "message": "Unknown property `notAProperty` at `/form/0`",
+          "keyword": "unevaluatedProperties",
+          "params": {
+            "unevaluatedProperty": "notAProperty"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "slider": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "slider",
           "path": "field",
           "notAProperty": true
         }

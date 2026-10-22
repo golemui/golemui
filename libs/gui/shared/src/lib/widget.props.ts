@@ -647,6 +647,51 @@ export type NumberinputProps = {
   autoGrow?: true;
 };
 
+/** A mark on a slider's track: at a value, with an optional label under the track. */
+export type SliderMark = number | { value: number; label?: Localizable };
+
+/** How a slider shows its value and its marks' values: `Intl.NumberFormat` options. */
+export type SliderFormat = Pick<
+  Intl.NumberFormatOptions,
+  | 'style'
+  | 'currency'
+  | 'currencyDisplay'
+  | 'unit'
+  | 'unitDisplay'
+  | 'minimumFractionDigits'
+  | 'maximumFractionDigits'
+  | 'useGrouping'
+>;
+
+export type SliderProps = {
+  hint?: string;
+  /** The lowest value. Defaults to 0. */
+  minimum?: number;
+  /** The highest value. Defaults to 100. */
+  maximum?: number;
+  /** The distance between values. Defaults to 1. */
+  step?: number;
+  /** `true` draws a tick at every step (up to 101); a list draws them at those values. */
+  marks?: boolean | SliderMark[];
+  format?: SliderFormat;
+  /**
+   * Where the value shows: at the end of the label (`label`, the default), over the thumb while it
+   * is hovered, focused or dragged (`bubble`), in both, or nowhere (`hidden`). Assistive
+   * technology reads it in every case.
+   */
+  valuePlacement?: 'label' | 'bubble' | 'both' | 'hidden';
+};
+
+/** A range slider's value. */
+export type SliderRange = { start: number; end: number };
+
+export type RangeSliderProps = SliderProps & {
+  /** The start thumb's name for assistive technology. Defaults to "Minimum". */
+  startLabel?: Localizable;
+  /** The end thumb's name for assistive technology. Defaults to "Maximum". */
+  endLabel?: Localizable;
+};
+
 export type CheckboxProps = {
   checkboxPosition?: 'left' | 'right';
   hint?: string;

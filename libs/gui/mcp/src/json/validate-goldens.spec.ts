@@ -96,6 +96,7 @@ const VALIDATOR_BRANCH_TYPES = [
   'array',
   'file',
   'files',
+  'range',
   'custom',
 ];
 

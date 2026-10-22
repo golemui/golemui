@@ -42,6 +42,8 @@ import { _guiDateInput } from './shortcuts/date-input/guiDateInput.impl';
 import { _guiDatePicker } from './shortcuts/date-picker/guiDatePicker.impl';
 import { _guiDateTimePicker } from './shortcuts/date-time-picker/guiDateTimePicker.impl';
 import { _guiRangeCalendar } from './shortcuts/range-calendar/guiRangeCalendar.impl';
+import { _guiSlider } from './shortcuts/slider/guiSlider.impl';
+import { _guiRangeSlider } from './shortcuts/range-slider/guiRangeSlider.impl';
 import { _guiRangeDateInput } from './shortcuts/range-date-input/guiRangeDateInput.impl';
 import { _guiRangeDateTimeInput } from './shortcuts/range-date-time-input/guiRangeDateTimeInput.impl';
 import { _guiRangeDateTimeCalendar } from './shortcuts/range-date-time-calendar/guiRangeDateTimeCalendar.impl';
@@ -120,6 +122,8 @@ import {
   _gslDateTimePickerByUid,
 } from './shortcuts/date-time-picker/register';
 import { _gslRangeCalendars, _gslRangeCalendarByUid } from './shortcuts/range-calendar/register';
+import { _gslSliders, _gslSliderByUid } from './shortcuts/slider/register';
+import { _gslRangeSliders, _gslRangeSliderByUid } from './shortcuts/range-slider/register';
 import {
   _gslRangeDateInputs,
   _gslRangeDateInputByUid,
@@ -220,6 +224,10 @@ const guiSelectors = createSelectors({
   dateTimePickerByUid: _gslDateTimePickerByUid,
   rangeCalendars: _gslRangeCalendars,
   rangeCalendarByUid: _gslRangeCalendarByUid,
+  sliders: _gslSliders,
+  sliderByUid: _gslSliderByUid,
+  rangeSliders: _gslRangeSliders,
+  rangeSliderByUid: _gslRangeSliderByUid,
   rangeDateInputs: _gslRangeDateInputs,
   rangeDateInputByUid: _gslRangeDateInputByUid,
   rangeTimeInputs: _gslRangeTimeInputs,
@@ -296,6 +304,8 @@ const guiFacade = {
     list: _guiList,
     multiDropdown: _guiMultiDropdown,
     multiList: _guiMultiList,
+    slider: _guiSlider,
+    rangeSlider: _guiRangeSlider,
     fileUpload: _guiFileUpload,
     multiFileUpload: _guiMultiFileUpload,
     calendar: _guiCalendar,

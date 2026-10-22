@@ -134,7 +134,17 @@ function suggestForEnum(value: unknown, allowed: unknown[]): string | undefined 
   return `Allowed values: ${stringAllowed.map((v) => `\`${v}\``).join(', ')}.`;
 }
 
-const VALIDATOR_TYPES = ['string', 'number', 'integer', 'boolean', 'array', 'custom'];
+const VALIDATOR_TYPES = [
+  'string',
+  'number',
+  'integer',
+  'boolean',
+  'array',
+  'file',
+  'files',
+  'range',
+  'custom',
+];
 
 function suggestForConst(
   value: unknown,

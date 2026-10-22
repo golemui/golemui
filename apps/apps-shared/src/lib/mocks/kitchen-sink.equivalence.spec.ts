@@ -65,11 +65,15 @@ import { numberTab as dxNumberTab } from './tabs/number.dx';
 import jsonPasswordTab from './tabs/password.form-chunk.json';
 import { passwordTab as dxPasswordTab } from './tabs/password.dx';
 import jsonRadiogroupTab from './tabs/radiogroup.form-chunk.json';
+import jsonRangeSliderTab from './tabs/rangeslider.form-chunk.json';
+import { rangeSliderTab as dxRangeSliderTab } from './tabs/rangeslider.dx';
 import { radiogroupTab as dxRadiogroupTab } from './tabs/radiogroup.dx';
 import jsonRepeaterTab from './tabs/repeater.form-chunk.json';
 import { repeaterTab as dxRepeaterTab } from './tabs/repeater.dx';
 import jsonSelectTab from './tabs/select.form-chunk.json';
 import { selectTab as dxSelectTab } from './tabs/select.dx';
+import jsonSliderTab from './tabs/slider.form-chunk.json';
+import { sliderTab as dxSliderTab } from './tabs/slider.dx';
 import jsonTagsTab from './tabs/tags.form-chunk.json';
 import { tagsTab as dxTagsTab } from './tabs/tags.dx';
 import jsonMultidropdownTab from './tabs/multidropdown.form-chunk.json';
@@ -259,6 +263,18 @@ describe('Kitchen Sink — JSON ↔ DX equivalence', () => {
   it('radiogroup tab', () => {
     const json = buildJsonTab(jsonRadiogroupTab).form;
     const dx = buildDxTab(dxRadiogroupTab);
+    expect(normalise(dx)).toEqual(normalise(json));
+  });
+
+  it('slider tab', () => {
+    const json = buildJsonTab(jsonSliderTab).form;
+    const dx = buildDxTab(dxSliderTab);
+    expect(normalise(dx)).toEqual(normalise(json));
+  });
+
+  it('range slider tab', () => {
+    const json = buildJsonTab(jsonRangeSliderTab).form;
+    const dx = buildDxTab(dxRangeSliderTab);
     expect(normalise(dx)).toEqual(normalise(json));
   });
 

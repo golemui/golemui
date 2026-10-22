@@ -24,6 +24,7 @@ export * from './lib/core-features/widget-loaders.cy';
 // gui widget suites
 export * from './lib/gui-features/accordion.cy';
 export * from './lib/gui-features/radiogroup.cy';
+export * from './lib/gui-features/rangeslider.cy';
 export * from './lib/gui-features/menu.cy';
 export * from './lib/gui-features/alert.cy';
 export * from './lib/gui-features/currency.cy';
@@ -49,6 +50,7 @@ export * from './lib/gui-features/rangedatepicker.cy';
 export * from './lib/gui-features/rangetimepicker.cy';
 export * from './lib/gui-features/repeater.cy';
 export * from './lib/gui-features/select.cy';
+export * from './lib/gui-features/slider.cy';
 export * from './lib/gui-features/tabs.cy';
 export * from './lib/gui-features/tags.cy';
 export * from './lib/gui-features/timeinput.cy';

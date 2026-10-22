@@ -32,6 +32,7 @@ export const VALIDATOR_TYPE_TO_DEF: Readonly<Record<string, string>> = {
   array: 'arrayValidator',
   file: 'fileValidator',
   files: 'filesValidator',
+  range: 'rangeValidator',
   custom: 'customValidator',
 };
 

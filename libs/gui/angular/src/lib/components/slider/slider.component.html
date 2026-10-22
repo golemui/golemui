@@ -1,0 +1,23 @@
+@let templateData = adapter.templateData();
+
+<gui-slider
+  [attr.defer-hydration]="deferHydration"
+  [uid]="widget.uid"
+  [label]="templateData.label"
+  [hint]="templateData.hint"
+  [errors]="templateData.errors"
+  [touched]="templateData.touched"
+  [required]="templateData.validator?.required"
+  [disabled]="templateData.disabled"
+  [readonly]="templateData.readonly"
+  [value]="templateData.value"
+  [minimum]="templateData.minimum"
+  [maximum]="templateData.maximum"
+  [step]="templateData.step"
+  [marks]="templateData.marks"
+  [format]="templateData.format"
+  [valuePlacement]="templateData.valuePlacement"
+  [localeId]="templateData.lang"
+  (gui-input)="valueChanged($event)"
+  (gui-blur)="adapter.onBlur()"
+></gui-slider>

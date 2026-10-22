@@ -1,0 +1,43 @@
+import { CommonModule } from '@angular/common';
+import {
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  inject,
+  type OnDestroy,
+  type OnInit,
+} from '@angular/core';
+import { InputWidgetAdapter } from '@golemui/angular';
+import type { InputWidget, WithWidget } from '@golemui/core';
+import type { SliderProps } from '@golemui/gui-shared/internals';
+import '@golemui/gui-components/slider';
+import { deferHydrationAttr } from '../../utils/defer-hydration';
+
+@Component({
+  standalone: true,
+  selector: 'gui-slider-control',
+  imports: [CommonModule],
+  providers: [InputWidgetAdapter],
+  templateUrl: './slider.component.html',
+  host: {
+    class: 'gui-slider gui-field',
+  },
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+})
+export class SliderComponent implements OnInit, OnDestroy, WithWidget {
+  widget!: InputWidget<number>;
+  protected adapter: InputWidgetAdapter<number, SliderProps> = inject(InputWidgetAdapter);
+  protected readonly deferHydration = deferHydrationAttr();
+
+  ngOnInit(): void {
+    this.adapter.init(this.widget);
+  }
+
+  ngOnDestroy(): void {
+    this.adapter.destroy();
+  }
+
+  valueChanged(event: Event) {
+    const value = (event as CustomEvent).detail.value;
+    this.adapter.valueChanged(value);
+  }
+}

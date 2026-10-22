@@ -164,6 +164,17 @@ describe('gui-range-slider', () => {
       thumb('end').should('be.disabled');
     });
 
+    it('fires gui-blur when focus leaves it, not when it moves between the thumbs', () => {
+      const onBlur = cy.spy().as('blur');
+      cy.mount(html`<div @gui-blur=${onBlur}>${price()}<button type="button">Next</button></div>`);
+
+      thumb('start').focus();
+      thumb('end').focus();
+      cy.get('@blur').should('not.have.been.called');
+      cy.get('button').focus();
+      cy.get('@blur').should('have.been.calledOnce');
+    });
+
     if (takesRealInput()) {
       it('moves each thumb with the arrow keys', () => {
         cy.mount(price());

@@ -81,6 +81,26 @@ const EXAMPLES: Record<string, Record<string, unknown>> = {
     label: 'Salary',
     props: { currency: 'USD' },
   },
+  slider: {
+    kind: 'input',
+    type: 'slider',
+    path: 'volume',
+    label: 'Volume',
+    props: { maximum: 100, step: 10, marks: true },
+    validator: { type: 'number', required: true, messages: { invalid: 'Pick a volume' } },
+  },
+  rangeSlider: {
+    kind: 'input',
+    type: 'rangeSlider',
+    path: 'price',
+    label: 'Price per night',
+    props: {
+      maximum: 500,
+      step: 10,
+      format: { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 },
+    },
+    validator: { type: 'range', required: true, messages: { required: 'Pick a price range' } },
+  },
   checkbox: {
     kind: 'input',
     type: 'checkbox',
@@ -350,6 +370,17 @@ const NOTES: Record<string, string[]> = {
   ],
   radiogroup: [
     '`props.appearance: "segmented"` shows the options as a segmented control: a row of joined buttons, the selected one filled, for a few short options (Day / Week / Month, List / Grid). It is the same radio group (same value, keyboard, validation), not a separate widget. It is always a row, so `props.direction` does not apply, and it stacks in a narrow form. Past about five options, or with long labels, keep the default appearance or use a `dropdown`.',
+  ],
+  slider: [
+    'A number picked by dragging a thumb along a track, between `props.minimum` (default 0) and `props.maximum` (default 100) in `props.step` (default 1). For an exact number the user types, use `number`.',
+    'It has NO value until the user moves the thumb (the thumb rests at the minimum and the value shows "–"), so `required` works. Set `defaultValue` to start somewhere else. Validate with a number validator: `{ type: "number", required: true }`; set `messages.invalid` too, which is what an unset value shows.',
+    "`props.marks`: `true` draws a tick at every step (up to 101), or a list of values and `{ value, label }` objects draws ticks there, with the labels under the track (`label` is localizable). `props.format` takes `Intl.NumberFormat` options (`style`: `decimal` | `currency` | `percent` | `unit`, `currency`, `unit`, fraction digits) for the value and the marks, in the form's locale.",
+    '`props.valuePlacement`: `"label"` (default) shows the value at the end of the label, `"bubble"` over the thumb while it is hovered, focused or dragged, `"both"`, or `"hidden"`. Screen readers read the formatted value in every case.',
+  ],
+  rangeSlider: [
+    'A range picked with two thumbs on one track. The value is ONE object `{ start, end }` of numbers, not an array (unlike the date and time range widgets). The thumbs can meet but not cross.',
+    'Same props as `slider`: `minimum`, `maximum`, `step`, `marks`, `format`, `valuePlacement`. `props.startLabel` and `props.endLabel` rename the thumbs for screen readers (default "Minimum" and "Maximum"), e.g. "From" and "To".',
+    'Validate with a range validator: `{ type: "range", required: true }`. It has no other rules: `required` fails while there is no range, and anything that is not a `{ start, end }` with both ends set and `start <= end` is `invalid`. Message keys: `required`, `invalid`.',
   ],
   dropdown: [
     'PREFER `select` for plain label/value lists (countries, plans, sizes). `dropdown` is for richer item shapes: when each item has extra fields (icons, flags, metadata) that an `itemRenderer` or `labelField`/`valueField` can use.',

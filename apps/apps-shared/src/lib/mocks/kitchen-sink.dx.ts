@@ -42,9 +42,11 @@ import { multiListTab } from './tabs/multilist.dx';
 import { numberTab } from './tabs/number.dx';
 import { passwordTab } from './tabs/password.dx';
 import { radiogroupTab } from './tabs/radiogroup.dx';
+import { rangeSliderTab } from './tabs/rangeslider.dx';
 import { buildRendererTab } from './tabs/renderer.dx';
 import { repeaterTab } from './tabs/repeater.dx';
 import { selectTab } from './tabs/select.dx';
+import { sliderTab } from './tabs/slider.dx';
 import { tagsTab } from './tabs/tags.dx';
 import { textareaTab } from './tabs/textarea.dx';
 import { textinputTab } from './tabs/textinput.dx';
@@ -276,6 +278,12 @@ export const buildKitchenSinkDx = (options: KitchenSinkDxOptions = {}): KitchenS
         { label: 'Toggle Component', uid: 'tabToggle', children: [toggleTab] },
         { label: 'Radiogroup Component', uid: 'tabRadiogroup', children: [radiogroupTab] },
         { label: 'Select Component', uid: 'tabSelect', children: [selectTab] },
+        { label: 'Slider Component', uid: 'tabSlider', children: [sliderTab] },
+        {
+          label: 'Range Slider Component',
+          uid: 'tabRangeSlider',
+          children: [rangeSliderTab],
+        },
         { label: 'Dropdown Component', uid: 'tabDropdown', children: [dropdownTab] },
         { label: 'File Upload Component', uid: 'tabFileUpload', children: [fileUploadTab] },
         { label: 'List Component', uid: 'tabList', children: [listTab] },
