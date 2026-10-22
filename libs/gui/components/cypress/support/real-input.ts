@@ -35,18 +35,27 @@ export const realPress = (key: keyof typeof keys) =>
   });
 
 /**
- * Clicks at a point of the page under test, in its own CSS pixels. The page runs in a scaled
- * iframe of the Cypress runner, so the point is mapped to the runner's viewport first.
+ * Sends mouse events at a point of the page under test, in its own CSS pixels. The page runs in a
+ * scaled iframe of the Cypress runner, so the point is mapped to the runner's viewport first.
  */
-export const realClick = (x: number, y: number) =>
+const realMouse = (x: number, y: number, types: readonly string[]) =>
   cy.window({ log: false }).then(async (win) => {
     // `frameElement` is null in the runner: find the frame from the runner's side.
     const frame = win.parent.document.querySelector<HTMLIFrameElement>('iframe.aut-iframe');
-    if (!frame) throw new Error('realClick: no Cypress runner frame around the page');
+    if (!frame) throw new Error('realMouse: no Cypress runner frame around the page');
     const box = frame.getBoundingClientRect();
     const scale = box.width / win.innerWidth;
     const point = { x: box.x + x * scale, y: box.y + y * scale, button: 'left', clickCount: 1 };
-    await send('Input.dispatchMouseEvent', { type: 'mouseMoved', ...point });
-    await send('Input.dispatchMouseEvent', { type: 'mousePressed', ...point });
-    await send('Input.dispatchMouseEvent', { type: 'mouseReleased', ...point });
+    for (const type of types) await send('Input.dispatchMouseEvent', { type, ...point });
   });
+
+/** Clicks at a point of the page under test, in its own CSS pixels. */
+export const realClick = (x: number, y: number) =>
+  realMouse(x, y, ['mouseMoved', 'mousePressed', 'mouseReleased']);
+
+/** Presses the mouse button at a point and holds it, until `realMouseUp`. */
+export const realMouseDown = (x: number, y: number) =>
+  realMouse(x, y, ['mouseMoved', 'mousePressed']);
+
+/** Releases the mouse button at a point. */
+export const realMouseUp = (x: number, y: number) => realMouse(x, y, ['mouseReleased']);

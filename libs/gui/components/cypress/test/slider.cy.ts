@@ -1,6 +1,6 @@
 import { html } from 'lit';
 import type { GuiSlider } from '../../src/lib/components/slider';
-import { realPress, takesRealInput } from '../support/real-input';
+import { realMouseDown, realMouseUp, realPress, takesRealInput } from '../support/real-input';
 
 const element = () => cy.get<GuiSlider>('gui-slider');
 const input = () => cy.get<HTMLInputElement>('gui-slider input[type="range"]');
@@ -214,6 +214,23 @@ describe('gui-slider', () => {
         element().should(([host]) => expect(host.value).to.equal(45));
       });
 
+      // The ring is drawn on the thumb for `:focus-visible` and `:active`, and the thumb's
+      // pseudo-element can't be measured: the input is active while its thumb is held.
+      it('is active while the thumb is pressed, so it shows the focus ring as for the keyboard', () => {
+        cy.mount(html`<gui-slider label="Volume" .value=${40}></gui-slider>`);
+
+        input().then(([range]) => {
+          const box = range.getBoundingClientRect();
+          // The thumb's centre: 40% of the way along the track, which is the input less a thumb.
+          const x = box.left + 10 + (box.width - 20) * 0.4;
+          const y = box.top + box.height / 2;
+          realMouseDown(x, y);
+          input().should('match', ':active');
+          realMouseUp(x, y);
+          input().should('not.match', ':active');
+        });
+      });
+
       it('stays put on the arrow keys when read-only', () => {
         cy.mount(html`<gui-slider label="Volume" .value=${50} readonly></gui-slider>`);
 
@@ -224,10 +241,20 @@ describe('gui-slider', () => {
       });
     }
 
-    it('is disabled with its input', () => {
-      cy.mount(html`<gui-slider label="Volume" disabled></gui-slider>`);
+    it('is disabled with its input, and turns grey', () => {
+      cy.mount(html`<gui-slider label="Volume" .value=${40} disabled></gui-slider>`);
 
       input().should('be.disabled');
+      // The fill takes the disabled text colour, as a disabled field's text does.
+      cy.get('gui-slider').should(([host]) => {
+        const probe = host.ownerDocument.createElement('span');
+        probe.style.color = 'var(--gui-text-disabled)';
+        host.append(probe);
+        const disabled = getComputedStyle(probe).color;
+        probe.remove();
+        const fill = host.querySelector('.gui-slider__fill')!;
+        expect(getComputedStyle(fill).backgroundColor).to.equal(disabled);
+      });
     });
   });
 

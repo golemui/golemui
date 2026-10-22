@@ -1,7 +1,7 @@
 import { html } from 'lit';
 import type { GuiRangeSlider } from '../../src/lib/components/range-slider';
 import { configureMessages } from '../../src/lib/utils/messages';
-import { realPress, takesRealInput } from '../support/real-input';
+import { realMouseDown, realMouseUp, realPress, takesRealInput } from '../support/real-input';
 
 const element = () => cy.get<GuiRangeSlider>('gui-range-slider');
 const thumb = (which: 'start' | 'end') =>
@@ -176,6 +176,23 @@ describe('gui-range-slider', () => {
     });
 
     if (takesRealInput()) {
+      it('activates the thumb that is pressed, which only takes the pointer on its thumb', () => {
+        cy.mount(price());
+        element().invoke('prop', 'value', { start: 100, end: 300 });
+
+        thumb('end').then(([range]) => {
+          const box = range.getBoundingClientRect();
+          // The end thumb sits 60% of the way along the track, the input less a thumb.
+          const x = box.left + 10 + (box.width - 20) * 0.6;
+          const y = box.top + box.height / 2;
+          realMouseDown(x, y);
+          thumb('end').should('match', ':active');
+          thumb('start').should('not.match', ':active');
+          realMouseUp(x, y);
+          thumb('end').should('not.match', ':active');
+        });
+      });
+
       it('moves each thumb with the arrow keys', () => {
         cy.mount(price());
         element().invoke('prop', 'value', { start: 100, end: 300 });

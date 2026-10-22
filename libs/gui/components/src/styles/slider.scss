@@ -175,11 +175,12 @@
     @include gui-slider-thumb;
   }
 
-  &:focus-visible::-webkit-slider-thumb {
+  // The ring shows for keyboard focus, and while the thumb is pressed or dragged.
+  &:is(:focus-visible, :active)::-webkit-slider-thumb {
     box-shadow: var(--gui-shadow-focus);
   }
 
-  &:focus-visible::-moz-range-thumb {
+  &:is(:focus-visible, :active)::-moz-range-thumb {
     box-shadow: var(--gui-shadow-focus);
   }
 
@@ -230,6 +231,33 @@
 
   &::-moz-range-thumb {
     border-color: var(--gui-border-strong);
+  }
+}
+
+// Disabled, it turns grey like a disabled field, on top of the dimming every disabled widget gets.
+.gui-slider__control:has(.gui-slider__input:disabled) {
+  .gui-slider__rail,
+  .gui-slider__tick {
+    background: var(--gui-bg-disabled);
+  }
+
+  .gui-slider__fill,
+  .gui-slider__tick--filled {
+    background: var(--gui-text-disabled);
+  }
+
+  .gui-slider__input {
+    &::-webkit-slider-thumb {
+      border-color: var(--gui-text-disabled);
+      background: var(--gui-bg-disabled);
+      box-shadow: none;
+    }
+
+    &::-moz-range-thumb {
+      border-color: var(--gui-text-disabled);
+      background: var(--gui-bg-disabled);
+      box-shadow: none;
+    }
   }
 }
 
