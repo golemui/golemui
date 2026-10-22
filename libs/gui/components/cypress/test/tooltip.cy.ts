@@ -1,5 +1,6 @@
 import { html, nothing } from 'lit';
 import type { GuiTooltip } from '../../src/lib/components/tooltip';
+import { GUIAnchorController } from '../../src/lib/controllers/anchor.controller';
 import { overlaySuite } from '../support/overlay';
 import { realClick, realPress, takesRealInput } from '../support/real-input';
 
@@ -184,7 +185,7 @@ describe('gui-tooltip', () => {
       target().then(([button]) =>
         tooltip().should(([element]) => {
           expect(element.getBoundingClientRect().bottom).to.be.closeTo(
-            button.getBoundingClientRect().top - 6,
+            button.getBoundingClientRect().top - 8,
             1,
           );
         }),
@@ -193,11 +194,100 @@ describe('gui-tooltip', () => {
       target().then(([button]) =>
         tooltip().should(([element]) => {
           expect(element.getBoundingClientRect().top).to.be.closeTo(
-            button.getBoundingClientRect().bottom + 6,
+            button.getBoundingClientRect().bottom + 8,
             1,
           );
         }),
       );
     });
   });
+
+  for (const fallback of [false, true]) {
+    describe(`arrow${fallback ? ', measuring path' : ''}`, () => {
+      beforeEach(() => {
+        GUIAnchorController.forceFallback = fallback;
+        cy.viewport(800, 600);
+      });
+
+      afterEach(() => {
+        GUIAnchorController.forceFallback = false;
+      });
+
+      /** Where the arrow points, on screen: its edge, and its centre along that edge. */
+      const arrow = (element: Element) => {
+        const box = element.getBoundingClientRect();
+        const side = element.getAttribute('data-gui-arrow');
+        const offset = parseFloat(
+          (element as HTMLElement).style.getPropertyValue('--gui-arrow-offset'),
+        );
+        const across = side === 'top' || side === 'bottom';
+        return { side, at: (across ? box.left : box.top) + offset };
+      };
+
+      const opened = (template: unknown, placement: string) => {
+        cy.mount(template);
+        tooltip().invoke('attr', 'placement', placement).invoke('prop', 'open', true);
+        isOpen(true);
+      };
+
+      it('points at the middle of its target, from the edge that faces it', () => {
+        opened(html`<div style="position: fixed; top: 250px; left: 300px">${save()}</div>`, 'top');
+
+        target().then(([button]) =>
+          tooltip().should(([element]) => {
+            const { left, width } = button.getBoundingClientRect();
+            expect(arrow(element).side).to.equal('bottom');
+            expect(arrow(element).at).to.be.closeTo(left + width / 2, 1);
+            expect(getComputedStyle(element, '::before').content).not.to.equal('none');
+          }),
+        );
+        tooltip().invoke('attr', 'placement', 'end');
+        target().then(([button]) =>
+          tooltip().should(([element]) => {
+            const { top, height } = button.getBoundingClientRect();
+            expect(arrow(element).side).to.equal('left');
+            expect(arrow(element).at).to.be.closeTo(top + height / 2, 1);
+          }),
+        );
+      });
+
+      it('sits near the corner lined up with a wider target', () => {
+        opened(
+          html`<div style="position: fixed; top: 250px; left: 100px">
+            <button type="button" id="save" style="inline-size: 500px">Save</button>
+            <gui-tooltip for="save">Saves without publishing</gui-tooltip>
+          </div>`,
+          'bottom-end',
+        );
+
+        tooltip().should(([element]) => {
+          expect(arrow(element).side).to.equal('top');
+          expect(arrow(element).at).to.be.closeTo(element.getBoundingClientRect().right - 12, 1);
+        });
+      });
+
+      it('turns with the tooltip when it flips', () => {
+        opened(html`<div style="position: fixed; top: 4px; left: 300px">${save()}</div>`, 'top');
+
+        tooltip().should(([element]) => expect(arrow(element).side).to.equal('top'));
+      });
+
+      it('points back at its target in right to left', () => {
+        opened(
+          html`<div dir="rtl" style="position: fixed; top: 250px; left: 400px">${save()}</div>`,
+          'end',
+        );
+
+        target().then(([button]) =>
+          tooltip().should(([element]) => {
+            expect(element.getBoundingClientRect().right).to.be.closeTo(
+              button.getBoundingClientRect().left - 8,
+              1,
+            );
+            expect(arrow(element).side).to.equal('right');
+          }),
+        );
+      });
+    });
+  }
 });

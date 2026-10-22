@@ -207,3 +207,47 @@ export function computePosition(input: PositionInput): PositionResult {
     placement: chosen,
   };
 }
+
+/** The edge of a floating element its arrow sits on, and where along it: see `arrowPosition`. */
+export interface ArrowPosition {
+  side: 'top' | 'bottom' | 'left' | 'right';
+  /** From the edge's left or top end, in pixels. */
+  offset: number;
+}
+
+type Edges = Pick<DOMRect, 'top' | 'right' | 'bottom' | 'left'>;
+
+/** How close an arrow comes to a corner of its floating element, in pixels: clear of the rounding. */
+const ARROW_INSET = 12;
+
+/**
+ * Where a floating element's arrow goes, from where it ended up next to its anchor, flipped or
+ * not: on the edge that faces the anchor, pointing at the middle of the stretch of the anchor that
+ * edge runs along. Lined up with one end of a longer anchor it sits near that corner instead, and
+ * it never comes closer than `ARROW_INSET` to a corner. `null` when the element overlaps its
+ * anchor (a viewport too small for both): no edge faces it.
+ */
+export function arrowPosition(anchor: Edges, floating: Edges): ArrowPosition | null {
+  const tolerance = 1;
+  let side: ArrowPosition['side'];
+  if (floating.bottom <= anchor.top + tolerance) side = 'bottom';
+  else if (floating.top >= anchor.bottom - tolerance) side = 'top';
+  else if (floating.right <= anchor.left + tolerance) side = 'right';
+  else if (floating.left >= anchor.right - tolerance) side = 'left';
+  else return null;
+
+  const across = side === 'top' || side === 'bottom';
+  const [start, end] = across ? [floating.left, floating.right] : [floating.top, floating.bottom];
+  const [from, to] = across ? [anchor.left, anchor.right] : [anchor.top, anchor.bottom];
+
+  let target = (Math.max(start, from) + Math.min(end, to)) / 2;
+  const startAligned = Math.abs(start - from) <= tolerance;
+  const endAligned = Math.abs(end - to) <= tolerance;
+  if (startAligned && !endAligned) target = Math.min(target, start + ARROW_INSET);
+  if (endAligned && !startAligned) target = Math.max(target, end - ARROW_INSET);
+
+  const min = start + ARROW_INSET;
+  const max = end - ARROW_INSET;
+  const point = min > max ? (start + end) / 2 : Math.min(Math.max(target, min), max);
+  return { side, offset: point - start };
+}

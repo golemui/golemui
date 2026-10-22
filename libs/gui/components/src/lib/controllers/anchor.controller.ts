@@ -1,5 +1,10 @@
 import { type ReactiveController, type ReactiveControllerHost } from 'lit';
-import { computePosition, placementStyles, type GuiPlacement } from '../utils/placement';
+import {
+  arrowPosition,
+  computePosition,
+  placementStyles,
+  type GuiPlacement,
+} from '../utils/placement';
 
 export interface GUIAnchorControllerOptions {
   /** The floating element. It must be in the top layer: an open `[popover]` or a modal dialog. */
@@ -9,6 +14,8 @@ export interface GUIAnchorControllerOptions {
   placement(): GuiPlacement;
   /** The gap between the anchor and the floating element, in pixels. Default 4. */
   offset?: number;
+  /** Whether the floating element points an arrow at the anchor: see the class docs. */
+  arrow?: boolean;
 }
 
 let nextAnchor = 0;
@@ -35,6 +42,12 @@ const supportsAnchorPositioning = () =>
  *
  * On both paths the floating element gets the anchor's width in `--gui-anchor-width`, for its
  * stylesheet to size it from: a dropdown's panel is as wide as its field.
+ *
+ * With `arrow`, the controller also measures where the element ended up, after any flip, and
+ * tells its stylesheet where to draw an arrow at the anchor: the edge in `data-gui-arrow` (`top`,
+ * `bottom`, `left` or `right`) and the distance along it in `--gui-arrow-offset`, from the
+ * padding box's left or top. The CSS path flips on its own while the page scrolls, so it is
+ * measured again then too. No room for an arrow removes the attribute.
  *
  * Every style goes through the CSSOM, never a `style` attribute, so a strict Content Security
  * Policy allows it.
@@ -119,6 +132,7 @@ export class GUIAnchorController implements ReactiveController {
       ...placementStyles(this.options.placement(), offset),
       '--gui-anchor-width': 'anchor-size(width)',
     });
+    if (this.options.arrow) this.track(anchor, floating);
   }
 
   /**
@@ -137,14 +151,18 @@ export class GUIAnchorController implements ReactiveController {
   }
 
   /**
-   * Places the floating element again now, on the measuring path. It waits while the element is
-   * not rendered yet (a popover about to open): its size would read as zero.
+   * Places the floating element again now, on the measuring path, and points its arrow. It waits
+   * while the element is not rendered yet (a popover about to open): its size would read as zero.
    */
   update(): void {
     const floating = this.options.floating();
     const anchor = this.options.anchor();
-    if (!floating || !anchor || !this.measuring || !floating.getClientRects().length) return;
+    if (!floating || !anchor || !floating.getClientRects().length) return;
+    if (this.measuring) this.place(anchor, floating);
+    if (this.options.arrow) this.pointArrow(anchor, floating);
+  }
 
+  private place(anchor: Element, floating: HTMLElement) {
     const anchorBox = anchor.getBoundingClientRect();
     this.set(floating, { '--gui-anchor-width': `${anchorBox.width}px` });
 
@@ -159,6 +177,18 @@ export class GUIAnchorController implements ReactiveController {
       rtl: getComputedStyle(floating).direction === 'rtl',
     });
     this.set(floating, { translate: `${x}px ${y}px` });
+  }
+
+  private pointArrow(anchor: Element, floating: HTMLElement) {
+    const arrow = arrowPosition(anchor.getBoundingClientRect(), floating.getBoundingClientRect());
+    if (!arrow) {
+      floating.removeAttribute('data-gui-arrow');
+      return;
+    }
+    const across = arrow.side === 'top' || arrow.side === 'bottom';
+    const border = across ? floating.clientLeft : floating.clientTop;
+    floating.setAttribute('data-gui-arrow', arrow.side);
+    this.set(floating, { '--gui-arrow-offset': `${arrow.offset - border}px` });
   }
 
   /** Stops following the anchor and removes every style the controller set. */
@@ -221,6 +251,7 @@ export class GUIAnchorController implements ReactiveController {
   private clear() {
     this.unname();
     if (!this.styled) return;
+    if (this.options.arrow) this.styled.element.removeAttribute('data-gui-arrow');
     const { element, properties } = this.styled;
     for (const property of properties) element.style.removeProperty(property);
     this.styled = undefined;

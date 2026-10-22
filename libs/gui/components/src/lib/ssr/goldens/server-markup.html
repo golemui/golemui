@@ -18,6 +18,7 @@
         >Email<span aria-hidden="true"> *</span></span
       >
       <div class="gui-widget-hint" id="email_hint" aria-hidden="true">We send the receipt here.</div>
+
     </label>
 
       <div class="gui-widget">
@@ -69,6 +70,7 @@
       <span class="gui-label__text"
         >Plan</span
       >
+
 
     </label>
 
@@ -145,6 +147,7 @@
         >Coupon</span
       >
 
+
     </label>
 
       <div class="gui-widget">
@@ -217,5 +220,59 @@
   </div>
       </div>
     </gui-checkbox>
+    <gui-slider      uid="seats" name="seats" label="Seats" value="12" maximum="50" class="gui-field" data-golemui-ssr defer-hydration>
+      <label
+      class="gui-label"
+      for="seats"
+      data-cy="seats_label"
+      id="seats_label"
+    >
+      <span class="gui-label__text"
+        >Seats</span
+      >
+
+      <output class="gui-slider__value" aria-hidden="true">12</output>
+    </label>
+
+      <div class="gui-widget">
+        <div class="gui-slider__control">
+          <div class="gui-slider__rail" aria-hidden="true">
+            <span
+              class="gui-slider__fill"
+              style="--_start:0;--_end:24;"
+            ></span>
+          </div>
+
+          <input
+            type="range"
+            id="seats"
+            data-cy="seats_slider"
+            class="gui-slider__input"
+            min="0"
+            max="50"
+            step="1"
+            value="12"
+
+            aria-valuetext="12"
+
+
+
+
+
+          />
+
+        </div>
+      </div>
+
+      <div class="gui-slider__footer"><div
+    class=" gui-validator gui-validator--empty "
+    id="seats_errors"
+    role="alert"
+
+
+  >
+
+  </div></div>
+    </gui-slider>
     <gui-toaster  placement="top-end" defer-hydration></gui-toaster>
   </form>

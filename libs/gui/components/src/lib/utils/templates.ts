@@ -34,6 +34,8 @@ export const addLabel = <T, ExtraProps extends { hint?: string }>(
   withErrors = false,
   type: string | undefined = undefined,
   isNativeElement = true,
+  /** Content at the end of the label, such as a slider's value, which its stylesheet places. */
+  extra: unknown = nothing,
 ) => {
   // Without a label the hint still renders, on its own: the control's aria-describedby points at
   // it.
@@ -49,7 +51,8 @@ export const addLabel = <T, ExtraProps extends { hint?: string }>(
       <span class="gui-label__text"
         >${templateData.label}${requiredMarker(templateData.required)}</span
       >
-      ${addHint(uid, templateData, true)} ${withErrors ? addErrors(uid, templateData) : nothing}
+      ${addHint(uid, templateData, true)}
+      ${withErrors ? addErrors(uid, templateData) : nothing}${extra}
     </label>`;
   } else {
     return html`<span
@@ -60,7 +63,8 @@ export const addLabel = <T, ExtraProps extends { hint?: string }>(
       <span class="gui-label__text"
         >${templateData.label}${requiredMarker(templateData.required)}</span
       >
-      ${addHint(uid, templateData, true)} ${withErrors ? addErrors(uid, templateData) : nothing}
+      ${addHint(uid, templateData, true)}
+      ${withErrors ? addErrors(uid, templateData) : nothing}${extra}
     </span>`;
   }
 };

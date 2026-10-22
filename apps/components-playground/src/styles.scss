@@ -90,6 +90,13 @@ code {
   justify-content: space-between;
 }
 
+// Fields one under the other, at a form's width.
+.pg-stack {
+  display: grid;
+  gap: var(--gui-space-4);
+  max-inline-size: 32rem;
+}
+
 .pg-button {
   font: inherit;
   padding: var(--gui-space-1) var(--gui-space-3);

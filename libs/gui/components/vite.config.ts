@@ -72,6 +72,8 @@ export default defineConfig(() => ({
         'lib/components/pills': 'src/lib/components/pills.ts',
         'lib/components/popover': 'src/lib/components/popover.ts',
         'lib/components/radiogroup': 'src/lib/components/radiogroup.ts',
+        'lib/components/range-slider': 'src/lib/components/range-slider.ts',
+        'lib/components/slider': 'src/lib/components/slider.ts',
         'lib/components/range-calendar': 'src/lib/components/range-calendar.ts',
         'lib/components/range-date-input': 'src/lib/components/range-date-input.ts',
         'lib/components/range-date-time-input': 'src/lib/components/range-date-time-input.ts',

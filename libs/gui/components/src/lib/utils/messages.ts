@@ -120,6 +120,11 @@ export const DEFAULT_MESSAGES = {
   unorderedList: 'Unordered List',
   splitView: 'Split View',
 
+  // ─── Sliders ───
+  minimum: 'Minimum',
+  maximum: 'Maximum',
+  notSet: 'Not set',
+
   // ─── Toasts ───
   notifications: 'Notifications',
   dismissNotification: 'Dismiss notification',

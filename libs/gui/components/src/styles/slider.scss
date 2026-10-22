@@ -1,0 +1,292 @@
+// `gui-slider` and `gui-range-slider`. Each thumb is a native range input stretched over the
+// control, with its own track hidden: the rail, the fill and the ticks are drawn under it, inset by
+// half a thumb at each end, where the thumb's centre travels. Positions are percentages along that
+// rail (`--_percent`, `--_start`, `--_end`), set through the CSSOM.
+
+@use 'arrow' as *;
+
+// The thumb's look, for each engine's pseudo-element: one rule per engine, since a selector list
+// with an unknown pseudo-element drops the whole rule.
+@mixin gui-slider-thumb {
+  box-sizing: border-box;
+  inline-size: var(--_thumb);
+  block-size: var(--_thumb);
+  border: 2px solid var(--gui-intent-primary);
+  border-radius: 50%;
+  background: var(--gui-bg-default);
+  box-shadow: var(--gui-shadow-sm);
+  cursor: grab;
+  pointer-events: auto;
+  transition: box-shadow var(--gui-transition-normal, 0.2s);
+}
+
+:is(gui-slider, gui-range-slider) {
+  --_thumb: var(--gui-slider-thumb-size, 1.25rem);
+  --_track: var(--gui-slider-track-size, 0.25rem);
+  // Centres a box on a point along the rail, in either direction.
+  --_center: -50%;
+
+  display: block;
+
+  &:dir(rtl) {
+    --_center: 50%;
+  }
+
+  // The value sits at the end of the label's first line.
+  .gui-label:has(.gui-slider__value) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: var(--gui-space-2);
+
+    > * {
+      grid-column: 1 / -1;
+    }
+
+    > .gui-label__text {
+      grid-column: 1;
+      grid-row: 1;
+    }
+
+    > .gui-slider__value {
+      grid-column: 2;
+      grid-row: 1;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+  }
+}
+
+.gui-slider__control {
+  position: relative;
+  // As tall as a text field, so a slider lines up with the fields in its row.
+  block-size: calc(var(--gui-widget-size) + 2px);
+}
+
+.gui-slider__rail {
+  position: absolute;
+  inset-inline: calc(var(--_thumb) / 2);
+  inset-block-start: calc(50% - var(--_track) / 2);
+  block-size: var(--_track);
+  border-radius: var(--_track);
+  // Non-text contrast (WCAG 1.4.11): the rail is what shows where the slider is.
+  background: var(--gui-border-strong);
+}
+
+.gui-slider__fill {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: calc(var(--_start) * 1%);
+  inline-size: calc((var(--_end) - var(--_start)) * 1%);
+  border-radius: inherit;
+  background: var(--gui-intent-primary);
+}
+
+.gui-slider__ticks {
+  position: absolute;
+  inset-inline: calc(var(--_thumb) / 2);
+  inset-block-start: 50%;
+  pointer-events: none;
+}
+
+.gui-slider__tick {
+  position: absolute;
+  inset-inline-start: calc(var(--_percent) * 1%);
+  inline-size: calc(var(--_track) * 2);
+  block-size: calc(var(--_track) * 2);
+  border-radius: 50%;
+  translate: var(--_center) -50%;
+  background: var(--gui-border-strong);
+
+  &--filled {
+    background: var(--gui-intent-primary);
+  }
+}
+
+// Under the control, in the errors' track of a grid row (see `footer()`).
+.gui-slider__footer {
+  grid-row: 3;
+}
+
+.gui-slider__tick-labels {
+  position: relative;
+  block-size: 1.4em;
+  margin-inline: calc(var(--_thumb) / 2);
+  margin-block-start: var(--gui-space-1);
+  color: var(--gui-text-secondary);
+  font-size: var(--gui-font-xs);
+}
+
+.gui-slider__tick-label {
+  position: absolute;
+  inset-inline-start: calc(var(--_percent) * 1%);
+  translate: var(--_center) 0;
+  white-space: nowrap;
+
+  // The labels at the ends line up with the field's edges, rather than overflow it.
+  &--first {
+    margin-inline-start: calc(var(--_thumb) / -2);
+    translate: 0 0;
+  }
+
+  &--last {
+    margin-inline-start: calc(var(--_thumb) / 2);
+    translate: calc(var(--_center) * 2) 0;
+  }
+}
+
+.gui-slider__input {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: calc(50% - var(--_thumb) / 2);
+  inline-size: 100%;
+  block-size: var(--_thumb);
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  appearance: none;
+  cursor: pointer;
+
+  &:focus {
+    outline: 0;
+  }
+
+  &::-webkit-slider-runnable-track {
+    block-size: var(--_thumb);
+    border: 0;
+    background: transparent;
+  }
+
+  &::-moz-range-track {
+    block-size: var(--_thumb);
+    border: 0;
+    background: transparent;
+  }
+
+  &::-moz-range-progress {
+    background: transparent;
+  }
+
+  &::-webkit-slider-thumb {
+    @include gui-slider-thumb;
+    appearance: none;
+  }
+
+  &::-moz-range-thumb {
+    @include gui-slider-thumb;
+  }
+
+  &:focus-visible::-webkit-slider-thumb {
+    box-shadow: var(--gui-shadow-focus);
+  }
+
+  &:focus-visible::-moz-range-thumb {
+    box-shadow: var(--gui-shadow-focus);
+  }
+
+  &:active::-webkit-slider-thumb {
+    cursor: grabbing;
+  }
+
+  &:active::-moz-range-thumb {
+    cursor: grabbing;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+
+  &:disabled::-webkit-slider-thumb {
+    cursor: not-allowed;
+  }
+
+  &:disabled::-moz-range-thumb {
+    cursor: not-allowed;
+  }
+
+  &[aria-invalid='true']::-webkit-slider-thumb {
+    border-color: var(--gui-intent-error);
+  }
+
+  &[aria-invalid='true']::-moz-range-thumb {
+    border-color: var(--gui-intent-error);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &::-webkit-slider-thumb {
+      transition: none;
+    }
+
+    &::-moz-range-thumb {
+      transition: none;
+    }
+  }
+}
+
+// Without a value the thumb rests at its end, hollow, and nothing is filled.
+.gui-slider__control--empty .gui-slider__input {
+  &::-webkit-slider-thumb {
+    border-color: var(--gui-border-strong);
+  }
+
+  &::-moz-range-thumb {
+    border-color: var(--gui-border-strong);
+  }
+}
+
+// Two inputs share the track: each takes the pointer on its thumb only, and the control takes
+// presses on the track itself (see range-slider.ts).
+.gui-slider__control--range {
+  cursor: pointer;
+
+  .gui-slider__input {
+    pointer-events: none;
+  }
+}
+
+// Over the thumb while it is hovered, focused or dragged. It stays while the pointer is on it, and
+// Escape hides it until the pointer and the focus leave (WCAG 1.4.13).
+.gui-slider__bubble {
+  // A tooltip's arrow, and the same gap for it: it points at the thumb.
+  --_arrow: 0.5rem;
+  --_gap: 0.5rem;
+
+  position: absolute;
+  inset-block-end: calc(50% + var(--_thumb) / 2 + var(--_gap));
+  inset-inline-start: calc(var(--_thumb) / 2 + (100% - var(--_thumb)) * var(--_percent) / 100);
+  z-index: 1;
+  padding: var(--gui-space-1) var(--gui-space-2);
+  border-radius: var(--gui-radius-sm);
+  background: var(--gui-tooltip-bg, var(--gui-bg-inverse));
+  color: var(--gui-tooltip-text, var(--gui-text-inverse));
+  font-size: var(--gui-font-xs);
+  line-height: 1.4;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  translate: var(--_center) 0;
+  visibility: hidden;
+
+  &::before {
+    @include gui-arrow(bottom, 50%);
+  }
+
+  // Bridges the gap to the thumb, so the pointer can move onto the bubble without it closing.
+  &::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    inset-block-start: 100%;
+    block-size: var(--_gap);
+  }
+}
+
+.gui-slider__input:is(:hover, :focus-visible, :active) + .gui-slider__bubble,
+.gui-slider__bubble:hover {
+  visibility: visible;
+}
+
+.gui-slider__control.gui-slider__control--dismissed
+  .gui-slider__input:is(:hover, :focus-visible, :active)
+  + .gui-slider__bubble,
+.gui-slider__control.gui-slider__control--dismissed .gui-slider__bubble:hover {
+  visibility: hidden;
+}

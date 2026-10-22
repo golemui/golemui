@@ -97,6 +97,10 @@
       "@golemui/gui-components/radiogroup": [
         "libs/gui/components/src/lib/components/radiogroup.ts"
       ],
+      "@golemui/gui-components/range-slider": [
+        "libs/gui/components/src/lib/components/range-slider.ts"
+      ],
+      "@golemui/gui-components/slider": ["libs/gui/components/src/lib/components/slider.ts"],
       "@golemui/gui-components/range-calendar": [
         "libs/gui/components/src/lib/components/range-calendar.ts"
       ],

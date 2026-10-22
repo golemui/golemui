@@ -165,6 +165,11 @@ export const elements: ElementCase[] = [
     form: { property: 'value', sample: 'red' },
   },
   {
+    tag: 'gui-range-slider',
+    props: { label: 'Price' },
+    form: { property: 'value', sample: { start: 20, end: 60 } },
+  },
+  {
     tag: 'gui-range-calendar',
     props: { label: 'Stay' },
     form: { property: 'value', sample: dateRange },
@@ -204,6 +209,7 @@ export const elements: ElementCase[] = [
     props: { label: 'Shift' },
     form: { property: 'value', sample: timeRange },
   },
+  { tag: 'gui-slider', props: { label: 'Volume' }, form: { property: 'value', sample: 40 } },
   {
     tag: 'gui-select',
     props: { label: 'Color', options },

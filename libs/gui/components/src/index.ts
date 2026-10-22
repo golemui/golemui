@@ -70,6 +70,9 @@ export type {
 export { GuiPopover, GuiPopoverEvents, type GuiPlacement } from './lib/components/popover';
 export { GuiRadiogroup, GuiRadiogroupEvents } from './lib/components/radiogroup';
 export type { GuiRadiogroupAppearance, GuiRadiogroupProps } from './lib/components/radiogroup';
+export { GuiRangeSlider, GuiRangeSliderEvents } from './lib/components/range-slider';
+export { GuiSlider, GuiSliderEvents } from './lib/components/slider';
+export type { GuiSliderMark, GuiSliderRange, GuiSliderValuePlacement } from './lib/utils/slider';
 export { GuiRangeCalendar, GuiRangeCalendarEvents } from './lib/components/range-calendar';
 export type { RangeCalendarDay } from './lib/components/range-calendar';
 

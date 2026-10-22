@@ -61,6 +61,25 @@ describe('a strict style-src-attr policy', () => {
     expectNoViolations();
   });
 
+  it('allows a gui-slider and a gui-range-slider to render, move and show their bubbles', () => {
+    cy.mount(
+      html`<gui-slider label="Volume" marks value-placement="both"></gui-slider>
+        <gui-range-slider
+          label="Price"
+          .value=${{ start: 20, end: 60 }}
+          .marks=${[{ value: 0, label: 'Free' }, 100]}
+          value-placement="both"
+        ></gui-range-slider>`,
+    );
+    cy.get('gui-slider input').then(([input]) => {
+      (input as HTMLInputElement).value = '40';
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+    cy.get('gui-slider .gui-slider__value').should('have.text', '40');
+    cy.get('gui-range-slider input').first().focus();
+    expectNoViolations();
+  });
+
   for (const fallback of [false, true]) {
     it(`allows a gui-popover to open, follow its anchor and close${fallback ? ', measuring' : ''}`, () => {
       GUIAnchorController.forceFallback = fallback;
