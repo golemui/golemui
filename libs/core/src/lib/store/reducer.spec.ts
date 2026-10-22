@@ -1040,6 +1040,52 @@ describe('reducer end-to-end', () => {
       expect(propsOf(state, 'rowTotal[0]')['text']).toBe('Row 1: 9');
       expect(state.widgetFlags['quantity[0]']).toEqual({ hidden: true });
     });
+
+    it('translates a row label config with the row in scope and leaves the template alone', () => {
+      const reduce = reducer({
+        validators: validators as ValidatorFn<any>,
+        validateOn: 'eager',
+        localization: {
+          get lang() {
+            return 'en-US';
+          },
+          translate: (key, params) => `${key}:${params?.['who']}`,
+          subscribe: () => () => undefined,
+        },
+        functions,
+      });
+      const template = {
+        uid: 'usersRow',
+        kind: 'layout',
+        type: 'flex',
+        children: [
+          {
+            uid: 'name',
+            kind: 'input',
+            type: 'textinput',
+            path: 'users.items.name',
+            label: { key: 'row.name', params: { who: '$item.name' } },
+          },
+        ],
+      };
+      const formDef = {
+        form: [
+          { uid: 'users', kind: 'input', type: 'repeater', path: 'users', props: { template } },
+        ],
+      };
+      const labelOf = (state: State, uid: string) =>
+        (state.calculatedWidgets[uid].current as InputWidget<unknown, string>).label;
+
+      const state = [
+        init(formDef),
+        setData({ users: [{ name: 'Ada' }, { name: 'Linus' }] }),
+      ].reduce((current, action) => reduce(current, action), createInitialState('en-US'));
+
+      expect(state.formHealth.status).toBe('ok');
+      expect(labelOf(state, 'name[0]')).toBe('row.name:Ada');
+      expect(labelOf(state, 'name[1]')).toBe('row.name:Linus');
+      expect(propsOf(state, 'users')['template']).toEqual(template);
+    });
   });
 
   // ---------------------------------------------------------------------------

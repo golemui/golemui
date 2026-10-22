@@ -1,4 +1,4 @@
 {
   "extends": "./tsconfig.spec.json",
-  "include": ["src/legacy-imports.spec.ts", "src/**/*.d.ts"]
+  "include": ["src/legacy-imports.spec.ts", "src/lib/golem-form.spec.ts", "src/**/*.d.ts"]
 }

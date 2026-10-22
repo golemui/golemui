@@ -5,9 +5,16 @@ import type {
   FormHealth,
   FormSubmitEvent,
   I18nTranslator,
+  MutableI18nTranslator,
   UiState,
 } from '@golemui/core';
-import { type Action, type Middleware, type State, type ValidateOn } from '@golemui/core';
+import {
+  type Action,
+  identityTranslator,
+  type Middleware,
+  type State,
+  type ValidateOn,
+} from '@golemui/core';
 import { type Dependencies } from '@golemui/dx';
 import { type CustomValidatorSchemas } from '@golemui/gui-validators';
 
@@ -45,6 +52,25 @@ export interface MountOptions<StateKeys extends UiState = string> {
 export type MountComponentFn<StateKeys extends UiState = string> = (
   options: MountOptions<StateKeys>,
 ) => void;
+
+/**
+ * A translator that looks keys up in one dictionary per language, falling back to the default and
+ * then the key. `setLang` switches the dictionary and notifies the form.
+ */
+export const dictionaryTranslator = (
+  lang: string,
+  dictionaries: Record<string, Record<string, string>>,
+): MutableI18nTranslator => {
+  const translator = identityTranslator(lang);
+  return {
+    ...translator,
+    get lang() {
+      return translator.lang;
+    },
+    translate: (key, _params, defaultValue) =>
+      dictionaries[translator.lang]?.[key] ?? defaultValue ?? key,
+  };
+};
 
 const PILLS_WIDTH_STYLE_ID = 'ui-testing-pills-width-override';
 

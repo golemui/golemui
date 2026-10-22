@@ -1,5 +1,5 @@
 import { defineForm } from '@golemui/core';
-import { expectNoDuplicateIds, type MountComponentFn } from '../utils';
+import { dictionaryTranslator, expectNoDuplicateIds, type MountComponentFn } from '../utils';
 
 export const runTabsComponentTests = (mountFn: MountComponentFn) => {
   describe('Tabs Component', () => {
@@ -148,6 +148,39 @@ export const runTabsComponentTests = (mountFn: MountComponentFn) => {
         'aria-labelledby',
         `tab_${TABS_UID}_firstPanel`,
       );
+    });
+
+    it('translates a tab label given as a translation config, again when the language changes', () => {
+      const tabLabel = (tabUid: string) =>
+        cy.get(`[data-cy="tab_${TABS_UID}_${tabUid}"]`).invoke('text').invoke('trim');
+      const translator = dictionaryTranslator('en', {
+        en: { 'tabs.billing': 'Billing' },
+        es: { 'tabs.billing': 'Facturación' },
+      });
+      mountFn({
+        localization: translator,
+        formDef: getFormDefinition({
+          tabs: [
+            { uid: 'firstPanel', label: { key: 'tabs.billing' } },
+            { uid: 'secondPanel', label: { key: 'tabs.missing', default: 'Shipping' } },
+            { uid: 'thirdPanel', label: 'Third' },
+          ],
+        }),
+      });
+
+      tabLabel('firstPanel').should('equal', 'Billing');
+      tabLabel('secondPanel').should('equal', 'Shipping');
+      tabLabel('thirdPanel').should('equal', 'Third');
+      // The tab names its panel, so the panel's name is the translated label too.
+      cy.get(`[data-cy="tabpanel_${TABS_UID}_firstPanel"]`).should(
+        'have.attr',
+        'aria-labelledby',
+        `tab_${TABS_UID}_firstPanel`,
+      );
+
+      cy.then(() => translator.setLang('es'));
+      tabLabel('firstPanel').should('equal', 'Facturación');
+      tabLabel('thirdPanel').should('equal', 'Third');
     });
   });
 };

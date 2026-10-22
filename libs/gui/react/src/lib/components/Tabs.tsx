@@ -46,7 +46,7 @@ export function Tabs(widgetInstance: WithWidget) {
               id={tabButtonId(widget.uid, tab.uid)}
               data-cy={tabButtonId(widget.uid, tab.uid)}
             >
-              {tab.label}
+              {tab.label as string}
             </gui-tab>
           ))}
         </gui-tab-list>
