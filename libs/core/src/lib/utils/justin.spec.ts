@@ -1,10 +1,12 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+import { enableDevMode } from './dev-mode';
 import {
   COMPILED_EXPRESSION_CACHE_LIMIT,
   compileExpression,
+  ExpressionRejectedError,
   expressionIsTrue,
-  normalizeArrayIndexes,
 } from './justin';
+import { normalizeArrayIndexes } from './normalize-array-indexes';
 
 describe('justin', () => {
   const $form = {
@@ -274,6 +276,53 @@ describe('justin', () => {
       const after = compileExpression('$form.a');
       expect(after).not.toBe(before);
       expect(after({ $form: { a: 7 } })).toBe(7);
+    });
+  });
+  describe('compileExpression policy', () => {
+    it.each(['warn', 'strict'] as const)(
+      'throws ExpressionRejectedError for a code execution path with the %s policy',
+      (policy) => {
+        const expression = "(x => x).constructor('return 42')()";
+
+        expect(() => compileExpression(expression, policy)).toThrow(ExpressionRejectedError);
+        try {
+          compileExpression(expression, policy);
+        } catch (error) {
+          expect((error as ExpressionRejectedError).code).toBe(50);
+          expect((error as ExpressionRejectedError).message).toContain(expression);
+        }
+      },
+    );
+
+    it('rejects a write in an expressionIsTrue condition and leaves the data unchanged', () => {
+      const $form = { tags: [1] };
+
+      expect(() => expressionIsTrue('$form.tags.push(2) > 0', $form, {}, {}, false)).toThrow(
+        ExpressionRejectedError,
+      );
+      expect($form).toEqual({ tags: [1] });
+    });
+
+    it('compiles a method outside the list with warn and rejects it with strict', () => {
+      const expression = "$form.name.startsWith('A')";
+
+      expect(() => compileExpression(expression, 'strict')).toThrow(ExpressionRejectedError);
+      // The strict rejection is not cached, and the warn cache is separate.
+      expect(compileExpression(expression, 'warn')({ $form: { name: 'Ada' } })).toBe(true);
+      expect(() => compileExpression(expression, 'strict')).toThrow(ExpressionRejectedError);
+    });
+
+    it('prints one dev mode warning per expression with the warn policy', () => {
+      enableDevMode();
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+      const expression = "$form.name.endsWith('a')";
+
+      compileExpression(expression, 'warn');
+      compileExpression(expression, 'warn');
+
+      expect(warn).toHaveBeenCalledTimes(1);
+      expect(warn.mock.calls[0][0]).toContain(expression);
+      warn.mockRestore();
     });
   });
 });
