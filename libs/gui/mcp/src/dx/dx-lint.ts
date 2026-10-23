@@ -27,7 +27,8 @@ import type { DxDiagnostic } from './typecheck';
  *     are opaque to the type-checker. We funnel each through the SAME engine the JSON
  *     `json_validate_form_definition` path uses ({@link checkReactiveExpression}), so the two
  *     surfaces share one set of rules. Reported as non-blocking `expressionWarnings`,
- *     mirroring the JSON path.
+ *     mirroring the JSON path. An expression the runtime always rejects is a blocking
+ *     `diagnostic` instead.
  *
  *  3. **The mandatory-checkbox trap.** On `gui.inputs.checkbox`/`gui.inputs.booleanInput`,
  *     a validator with only half of the `required: true` + `const: true` pair type-checks
@@ -148,7 +149,12 @@ export function lintDxSnippet(ts: typeof TS, sourceText: string, lineOffset: num
         inRepeaterTemplate: inTemplate,
       });
       for (const f of findings) {
-        expressionWarnings.push(f);
+        if (f.failsAtRuntime === true) {
+          // The form rejects this expression at runtime, so it blocks like a type error.
+          diagnostics.push({ code: 0, message: f.message, line, column, hint: f.suggestion });
+        } else {
+          expressionWarnings.push(f);
+        }
       }
     }
 

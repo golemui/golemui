@@ -23,8 +23,8 @@ export function validateFormDefinition(input: ValidateInput): ValidateResult {
   const validate = getFormValidator();
   const ajvOk = validate(input.formDefinition) as boolean;
   const { errors, warnings } = formatAjvErrors(validate.errors, input.formDefinition);
-  const expressionWarnings = lintReactiveExpressions(input.formDefinition);
-  const interpolationWarnings = lintStringInterpolations(input.formDefinition);
+  const expressionFindings = lintReactiveExpressions(input.formDefinition);
+  const interpolationFindings = lintStringInterpolations(input.formDefinition);
 
   // Safety net: if ajv said the form is invalid but our collapser produced zero errors,
   // something in the form definition is being rejected by the schema that our targeted
@@ -53,13 +53,34 @@ export function validateFormDefinition(input: ValidateInput): ValidateResult {
     }),
   );
 
+  // The form rejects these expressions at runtime with an errored formHealth, so they are hard
+  // errors here. Added after the safety net, which must only see the schema errors.
+  for (const finding of expressionFindings.filter((f) => f.failsAtRuntime === true)) {
+    errors.push({
+      path: finding.path,
+      message: finding.message,
+      suggestion: finding.suggestion,
+      keyword: 'reactiveExpression',
+      params: { expression: finding.expression },
+    });
+  }
+  for (const finding of interpolationFindings.filter((f) => f.failsAtRuntime === true)) {
+    errors.push({
+      path: finding.path,
+      message: finding.message,
+      suggestion: finding.suggestion,
+      keyword: 'stringInterpolation',
+      params: { expression: finding.slot },
+    });
+  }
+
   // `valid` follows hard errors only — custom-widget warnings don't fail validation.
   return {
     valid: errors.length === 0,
     errors,
     warnings: [...warnings, ...booleanValidatorWarnings],
-    expressionWarnings,
-    interpolationWarnings,
+    expressionWarnings: expressionFindings.filter((f) => f.failsAtRuntime !== true),
+    interpolationWarnings: interpolationFindings.filter((f) => f.failsAtRuntime !== true),
   };
 }
 
@@ -80,7 +101,10 @@ export const JSON_VALIDATE_FORM_DEFINITION_TOOL = {
     'malformed one produces errors alongside its warning. Reactive expressions (`include.when`, `disabled.when`, etc.) are linted ' +
     'separately into `expressionWarnings`. String interpolation templates (`{{$form.x}}`, ' +
     '`{{$meta.y}}`, expressions like `{{$form.count + 1}}`, etc.) in widget props, and bare ' +
-    'expressions inside i18n `params` objects, are linted into `interpolationWarnings`.',
+    'expressions inside i18n `params` objects, are linted into `interpolationWarnings`. ' +
+    'An expression the form always rejects at runtime (one that writes into the data, calls a ' +
+    'function other than `$fn.<name>`, `$log` and the allowed methods, or does not parse) is an ' +
+    'error in `errors` instead, with keyword `reactiveExpression` or `stringInterpolation`, and flips `valid` to false.',
   inputSchema: {
     type: 'object' as const,
     properties: {

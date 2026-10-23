@@ -11,6 +11,7 @@ import {
 } from '../form-widget';
 import { identityTranslator } from '../i18n';
 import { type ExpressionFunctions, type ValidateOn } from '../shared';
+import { type ExpressionPolicy } from '../utils/check-expression';
 import { pruneHiddenData } from '../utils/form';
 import { type Action } from './actions';
 import { createInitialState, type State } from './model';
@@ -2739,6 +2740,144 @@ describe('reducer end-to-end', () => {
       const pruned = pruneHiddenData(state);
       expect(pruned['invoice'].items[1]).not.toHaveProperty('itemsTotal');
       expect(pruned['invoice'].items[0].itemsTotal).toBe(3);
+    });
+  });
+  // ---------------------------------------------------------------------------
+  // 29. Rejected expressions
+  // ---------------------------------------------------------------------------
+
+  describe('rejected expressions', () => {
+    const driveWithPolicy = (expressionPolicy: ExpressionPolicy, actions: Action[]): State => {
+      const reduce = reducer({
+        validators: validators as ValidatorFn<any>,
+        validateOn: 'eager',
+        localization: identityTranslator('en-US'),
+        functions,
+        expressionPolicy,
+      });
+      return actions.reduce((state, action) => reduce(state, action), createInitialState('en-US'));
+    };
+
+    const heading = (fields: Record<string, unknown>) => ({
+      uid: 'title',
+      kind: 'display',
+      type: 'heading',
+      ...fields,
+    });
+
+    it('fails an i18n param that writes into the data, and leaves the data unchanged', () => {
+      const injection = "$formX || ($form.injected = 'yes')";
+      const state = drive([
+        init({
+          form: [heading({ props: { text: { key: 'greeting', params: { name: injection } } } })],
+        }),
+        setData({ name: 'Ada' }),
+      ]);
+
+      expect(state.formHealth).toEqual({
+        status: 'errored',
+        code: 50,
+        message: `[50] Rejected expression "${injection}": [EXPRESSION_REJECTED] The assignment "=" writes into the data. Expressions can only read.`,
+      });
+      expect(state.data).toEqual({ name: 'Ada' });
+    });
+
+    it.each([
+      ['a {{ }} interpolation', heading({ props: { text: "Hi {{ $form.injected = 'yes' }}" } })],
+      [
+        'an include.when rule',
+        heading({ include: { when: "($form.injected = 'yes') === 'yes'" } }),
+      ],
+      [
+        'a disabled.when rule',
+        {
+          uid: 'name',
+          kind: 'input',
+          type: 'textinput',
+          path: 'name',
+          disabled: { when: '$form.tags.push(1) > 0' },
+        },
+      ],
+    ])('fails %s that writes into the data', (_site, widget) => {
+      const state = drive([init({ form: [widget] }), setData({ name: 'Ada', tags: [] })]);
+
+      expect(state.formHealth.status).toBe('errored');
+      if (state.formHealth.status === 'errored') {
+        expect(state.formHealth.code).toBe(50);
+      }
+      expect(state.data).toEqual({ name: 'Ada', tags: [] });
+    });
+
+    it('fails a states expression instead of treating it as false', () => {
+      const state = drive([
+        init({ states: { injected: "($form.injected = 'yes') === 'yes'" }, form: [heading({})] }),
+        setData({ name: 'Ada' }),
+      ]);
+
+      expect(state.formHealth.status).toBe('errored');
+      if (state.formHealth.status === 'errored') {
+        expect(state.formHealth.code).toBe(50);
+      }
+      expect(state.data).toEqual({ name: 'Ada' });
+    });
+
+    it('fails a code execution path with the warn policy', () => {
+      const state = drive([
+        init({
+          form: [heading({ props: { text: "{{ (x => x)['constr' + 'uctor']('return 1')() }}" } })],
+        }),
+        setData({}),
+      ]);
+
+      expect(state.formHealth.status).toBe('errored');
+      if (state.formHealth.status === 'errored') {
+        expect(state.formHealth.code).toBe(50);
+        expect(state.formHealth.message).toContain('Rejected call');
+      }
+    });
+
+    it('runs a method outside the allowed list with the warn policy and fails it with strict', () => {
+      const formDef = { form: [heading({ include: { when: "$form.name.startsWith('A')" } })] };
+      const actions = [init(formDef), setData({ name: 'Ada' })];
+
+      const warned = driveWithPolicy('warn', actions);
+      expect(warned.formHealth).toEqual({ status: 'ok' });
+      expect(warned.widgetFlags['title']).toEqual({ hidden: false });
+
+      const strict = driveWithPolicy('strict', [init(formDef), setData({ name: 'Ada' })]);
+      expect(strict.formHealth.status).toBe('errored');
+      if (strict.formHealth.status === 'errored') {
+        expect(strict.formHealth.code).toBe(50);
+        expect(strict.formHealth.message).toContain('"startsWith"');
+      }
+    });
+
+    it('recovers when the repeater row that holds a rejected expression is removed', () => {
+      const formDef = {
+        form: [
+          {
+            uid: 'users',
+            kind: 'input',
+            type: 'repeater',
+            path: 'users',
+            props: {
+              template: {
+                uid: 'usersRow',
+                kind: 'layout',
+                type: 'flex',
+                children: [heading({ uid: 'rowTitle', props: { text: '{{ $item.tags.pop() }}' } })],
+              },
+            },
+          },
+        ],
+      };
+      const errored = drive([init(formDef), setData({ users: [{ tags: ['a'] }] })]);
+      expect(errored.formHealth.status).toBe('errored');
+      expect(errored.data).toEqual({ users: [{ tags: ['a'] }] });
+
+      const reduce = makeReducer();
+      const healed = reduce(errored, setData({ users: [] }));
+      expect(healed.formHealth).toEqual({ status: 'ok' });
     });
   });
 });

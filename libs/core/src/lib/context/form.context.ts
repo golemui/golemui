@@ -14,6 +14,7 @@ import {
 } from '../shared';
 import { type Action } from '../store/actions';
 import { type Middleware, type State } from '../store/model';
+import { type ExpressionPolicy } from '../utils/check-expression';
 import { pruneHiddenData } from '../utils/form';
 import { type WidgetLoaders, WidgetRegistry } from './widget-registry';
 
@@ -39,12 +40,20 @@ export class FormContext<ComponentType> {
     localization: I18nTranslator = identityTranslator(),
     dependencies: Record<string, unknown>,
     functions: ExpressionFunctions = {},
+    expressionPolicy: ExpressionPolicy = 'warn',
   ) {
     this.localization = localization;
     this.dependencies = dependencies;
     this.widgetRegistry.setWidgetLoaders(widgetLoaders);
     this.itemRenderers = itemRenderers;
-    this.store = createFormStore(middlewares, validators, validateOn, localization, functions);
+    this.store = createFormStore(
+      middlewares,
+      validators,
+      validateOn,
+      localization,
+      functions,
+      expressionPolicy,
+    );
   }
 
   emitEvent(

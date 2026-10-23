@@ -134,6 +134,24 @@ describe('dx_check_code', () => {
     );
   });
 
+  it('blocks a `when` expression that the runtime rejects', async () => {
+    const r = await checkDxCode({
+      code: `[ gui.inputs.textInput('promoCode', { label: 'Promo code', include: { when: '$form.tags.push(1) > 0' } }) ]`,
+    });
+    expect(r.ok).toBe(false);
+    expect(r.diagnostics).toHaveLength(1);
+    expect(r.diagnostics[0]).toMatchObject({ code: 0, line: 1 });
+    expect(r.diagnostics[0].message).toContain('EXPRESSION_REJECTED');
+  });
+
+  it('keeps a `when` expression that fails only with the strict policy advisory', async () => {
+    const r = await checkDxCode({
+      code: `[ gui.inputs.textInput('promoCode', { label: 'Promo code', include: { when: "$form.code?.startsWith('A') === true" } }) ]`,
+    });
+    expect(r.ok).toBe(true);
+    expect(r.expressionWarnings.some((w) => w.message.includes('"startsWith"'))).toBe(true);
+  });
+
   it('warns on a checkbox validator with `required: true` but no `const` (the mandatory-checkbox trap)', async () => {
     const r = await checkDxCode({
       code: `[ gui.inputs.checkbox('terms', { label: 'I accept the terms', validator: { required: true } }) ]`,

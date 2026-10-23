@@ -18,8 +18,9 @@ import {
   type TranslationConfig,
 } from '../../i18n';
 import { type $Errors, type ExpressionFunctions } from '../../shared';
+import { type ExpressionPolicy, isI18nParamExpression } from '../../utils/check-expression';
 import { calculateValidationVariables, type ValidationVariables } from '../../utils/form';
-import { compileExpression } from '../../utils/justin';
+import { compileExpression, ExpressionRejectedError } from '../../utils/justin';
 import { get, set } from '../../utils/object';
 import { extractRepeaterIndexes, isRepeaterWidget } from '../../utils/repeater';
 import { type DerivedWidget, type RepeaterItemScope, type State } from '../model';
@@ -36,13 +37,23 @@ import { errorCodes } from '../../errors';
  * @param validationVariables - Pass them when already computed for this pass, otherwise they are computed here.
  */
 export const calculateWidgetProps =
-  (localization: I18nTranslator, functions: ExpressionFunctions) =>
+  (
+    localization: I18nTranslator,
+    functions: ExpressionFunctions,
+    expressionPolicy: ExpressionPolicy = 'warn',
+  ) =>
   (state: State, validationVariables?: ValidationVariables): State => {
     try {
       const variables = validationVariables ?? calculateValidationVariables(state);
       return {
         ...state,
-        calculatedWidgets: calculateAll(state, localization, functions, variables),
+        calculatedWidgets: calculateAll(
+          state,
+          localization,
+          functions,
+          expressionPolicy,
+          variables,
+        ),
       };
     } catch (err) {
       const error = err as Error & { code?: number };
@@ -66,9 +77,17 @@ function calculateAll(
   state: State,
   localization: I18nTranslator,
   functions: ExpressionFunctions,
+  expressionPolicy: ExpressionPolicy,
   { $formIsInvalid, $errors }: ValidationVariables,
 ): State['calculatedWidgets'] {
-  const ctx = makeResolverCtx(state, localization, $formIsInvalid, $errors, functions);
+  const ctx = makeResolverCtx(
+    state,
+    localization,
+    $formIsInvalid,
+    $errors,
+    functions,
+    expressionPolicy,
+  );
   const result: State['calculatedWidgets'] = {};
 
   for (const uid of Object.keys(state.calculatedWidgets)) {
@@ -370,7 +389,8 @@ function resolveString(input: string, ctx: ResolverCtx): string {
 
   return input.replace(STRING_INTERPOLATION_REGEX, (_match, rawExpr: string) => {
     try {
-      const result = compileExpression(rawExpr.trim())({
+      const evaluate = compileExpression(rawExpr.trim(), ctx.expressionPolicy);
+      const result = evaluate({
         $form: ctx.$form,
         $meta: ctx.$meta,
         $errors: ctx.$errors,
@@ -381,6 +401,10 @@ function resolveString(input: string, ctx: ResolverCtx): string {
       });
       return result == null ? '' : String(result);
     } catch (err) {
+      // Keeps its own code, so the form health tells a rejected expression from a runtime error.
+      if (err instanceof ExpressionRejectedError) {
+        throw err;
+      }
       const cause = err instanceof Error ? err.message : String(err);
       throw new StringInterpolationError(`Failed to evaluate '{{${rawExpr.trim()}}}': ${cause}`);
     }
@@ -535,18 +559,6 @@ function pickSuffixedValue<V = unknown>(
   return fieldSource[baseKey] as V | undefined;
 }
 
-function isPotentialExpression(value: string): boolean {
-  return (
-    value.startsWith('$form') ||
-    value.startsWith('$meta') ||
-    value.startsWith('$errors') ||
-    value.startsWith('$item') ||
-    value.startsWith('$index') ||
-    value.startsWith('$fn') ||
-    value === '$formIsInvalid'
-  );
-}
-
 /**
  * Resolves i18n interpolation parameters to concrete values.
  *
@@ -562,9 +574,10 @@ function resolveI18nParams(
   }
   return Object.keys(params).reduce((acc, key) => {
     const param = String(params[key]);
-    if (isPotentialExpression(param)) {
+    if (isI18nParamExpression(param)) {
       try {
-        const result = compileExpression(param)({
+        const evaluate = compileExpression(param, ctx.expressionPolicy);
+        const result = evaluate({
           $form: ctx.$form,
           $meta: ctx.$meta,
           $errors: ctx.$errors,
@@ -575,6 +588,9 @@ function resolveI18nParams(
         });
         acc[key] = result ?? param;
       } catch (err) {
+        if (err instanceof ExpressionRejectedError) {
+          throw err;
+        }
         const cause = err instanceof Error ? err.message : String(err);
         throw new StringInterpolationError(`Failed to evaluate i18n param '${param}': ${cause}`);
       }
@@ -640,6 +656,7 @@ interface ResolverCtx {
   localization: I18nTranslator;
   /** Host-provided pure functions, exposed to expressions as `$fn`. */
   $fn: ExpressionFunctions;
+  expressionPolicy: ExpressionPolicy;
   /** Set only for widgets inside a repeater item: the item object itself */
   $item?: unknown;
   /** Set only for widgets inside a repeater item: the item's position. */
@@ -652,6 +669,7 @@ function makeResolverCtx(
   $formIsInvalid: boolean,
   $errors: $Errors,
   functions: ExpressionFunctions,
+  expressionPolicy: ExpressionPolicy,
 ): ResolverCtx {
   return {
     sortedStates: [...state.currentStates].sort((a, b) => b.length - a.length),
@@ -663,6 +681,7 @@ function makeResolverCtx(
     $errors,
     localization,
     $fn: functions,
+    expressionPolicy,
   };
 }
 

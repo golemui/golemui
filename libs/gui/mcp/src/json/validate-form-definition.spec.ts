@@ -928,4 +928,66 @@ describe('json_validate_form_definition', () => {
       expect(warnings[0].path).toBe('/form/0/children/0/validator');
     });
   });
+  describe('runtime expression check', () => {
+    const heading = (fields: Record<string, unknown>) => ({
+      kind: 'display',
+      type: 'heading',
+      props: { text: 'Title' },
+      ...fields,
+    });
+
+    it.each([
+      [
+        'a when rule',
+        heading({ include: { when: "(x => x).constructor('return 1')()" } }),
+        'reactiveExpression',
+        '/form/0/include/when',
+      ],
+      [
+        'a {{ }} slot',
+        heading({ props: { text: "{{ $form.tags.push('x') }}" } }),
+        'stringInterpolation',
+        '/form/0/props/text',
+      ],
+      [
+        'an i18n param',
+        heading({
+          props: {
+            text: { key: 'greeting', params: { name: "$formX || ($form.injected = 'yes')" } },
+          },
+        }),
+        'stringInterpolation',
+        '/form/0/props/text/params/name',
+      ],
+    ])('reports %s that the runtime rejects as an error', (_site, widget, keyword, errorPath) => {
+      const result = validateFormDefinition({ formDefinition: { form: [widget] } });
+
+      expect(result.valid).toBe(false);
+      const rejection = result.errors.find((error) => error.keyword === keyword);
+      expect(rejection?.message).toMatch(/^EXPRESSION_REJECTED: /);
+      expect(rejection?.path).toBe(errorPath);
+    });
+
+    it('rejects a states expression that writes into the data', () => {
+      const result = validateFormDefinition({
+        formDefinition: { states: { active: '($form.a = 1) === 1' }, form: [heading({})] },
+      });
+
+      expect(result.valid).toBe(false);
+      expect(result.errors.some((error) => error.path === '/states/active')).toBe(true);
+    });
+
+    it('keeps an issue that fails only with the strict policy in expressionWarnings', () => {
+      const result = validateFormDefinition({
+        formDefinition: {
+          form: [heading({ include: { when: "$form.name?.startsWith('A') === true" } })],
+        },
+      });
+
+      expect(result.valid).toBe(true);
+      expect(result.errors).toEqual([]);
+      const warning = result.expressionWarnings.find((w) => w.message.includes('"startsWith"'));
+      expect(warning?.failsAtRuntime).toBe(false);
+    });
+  });
 });

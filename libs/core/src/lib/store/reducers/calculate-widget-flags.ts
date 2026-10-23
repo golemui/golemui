@@ -8,6 +8,7 @@ import {
 } from '../../form-widget';
 import { type $Errors, type ExpressionFunctions, type Uid } from '../../shared';
 import { calculateValidationVariables, type ValidationVariables } from '../../utils/form';
+import { type ExpressionPolicy } from '../../utils/check-expression';
 import { expressionIsTrue } from '../../utils/justin';
 import { get } from '../../utils/object';
 import {
@@ -25,13 +26,13 @@ import { hasWhen } from './utils';
  * @param validationVariables - Pass them when already computed for this pass, otherwise they are computed here.
  */
 export const calculateWidgetFlags =
-  (functions: ExpressionFunctions) =>
+  (functions: ExpressionFunctions, expressionPolicy: ExpressionPolicy = 'warn') =>
   (state: State, validationVariables?: ValidationVariables): State => {
     const { $formIsInvalid, $errors } = validationVariables ?? calculateValidationVariables(state);
 
     return {
       ...state,
-      widgetFlags: calculateFlags(state, $errors, $formIsInvalid, functions),
+      widgetFlags: calculateFlags(state, $errors, $formIsInvalid, functions, expressionPolicy),
     };
   };
 
@@ -40,6 +41,7 @@ function calculateFlags(
   $errors: $Errors,
   $formIsInvalid: boolean,
   functions: ExpressionFunctions,
+  expressionPolicy: ExpressionPolicy,
 ): State['widgetFlags'] {
   // A function widget resolves first because its flag fields are impossible to know before the call.
   // Other widgets are checked on the source directly: the when-transform never adds or removes fields.
@@ -78,6 +80,7 @@ function calculateFlags(
           $errors,
           $formIsInvalid,
           extraScope,
+          expressionPolicy,
         );
       }
 
@@ -94,6 +97,7 @@ function calculateFlags(
           $errors,
           $formIsInvalid,
           extraScope,
+          expressionPolicy,
         );
       }
 
@@ -110,6 +114,7 @@ function calculateFlags(
             $errors,
             $formIsInvalid,
             extraScope,
+            expressionPolicy,
           );
         }
       }
@@ -123,6 +128,7 @@ function calculateFlags(
           $errors,
           $formIsInvalid,
           extraScope,
+          expressionPolicy,
         );
       }
 

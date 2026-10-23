@@ -1,9 +1,59 @@
+import {
+  ALLOWED_EXPRESSION_METHODS,
+  checkExpression as checkWithRuntimeRules,
+  type ExpressionIssue,
+} from '@golemui/core/internals';
+
 export type ExpressionFinding = {
   path: string;
   expression: string;
   message: string;
   suggestion?: string;
+  /**
+   * True when the form rejects the expression with every `expressionPolicy` and reports an
+   * errored `formHealth`. The tools report these findings as blocking errors.
+   */
+  failsAtRuntime?: boolean;
 };
+
+/** A finding of the runtime expression check, without the location fields. */
+export type RuntimeExpressionFinding = Pick<
+  ExpressionFinding,
+  'message' | 'suggestion' | 'failsAtRuntime'
+>;
+
+/**
+ * Runs the expression check of `@golemui/core`. The form runs the same check before it evaluates
+ * an expression, so the tools reject what the runtime rejects.
+ *
+ * @param expression - The expression without `{{ }}`.
+ * @returns One finding per issue. `failsAtRuntime` is true for an issue that fails with every
+ * `expressionPolicy`.
+ * @example
+ * runtimeExpressionFindings('$form.tags.push(1)');
+ * // [{ message: 'EXPRESSION_REJECTED: The method "push" changes ...', failsAtRuntime: true, ... }]
+ */
+export function runtimeExpressionFindings(expression: string): RuntimeExpressionFinding[] {
+  return checkWithRuntimeRules(expression).map((issue) => ({
+    message: `${issue.code}: ${issue.message}`,
+    suggestion: runtimeSuggestion(issue),
+    failsAtRuntime: issue.failsIn === 'every-policy',
+  }));
+}
+
+function runtimeSuggestion(issue: ExpressionIssue): string {
+  if (issue.code === 'EXPRESSION_PARSE_ERROR') {
+    return 'Fix the syntax. The form cannot compile this expression.';
+  }
+  if (issue.code === 'EXPRESSION_TOO_LARGE') {
+    return 'Move the logic into a host function and call it with `$fn.<name>(...)`. The default `expressionPolicy: "warn"` runs it and prints a dev warning, `expressionPolicy: "strict"` rejects it.';
+  }
+  const callableMethods = ALLOWED_EXPRESSION_METHODS.join(', ');
+  if (issue.failsIn === 'strict-policy') {
+    return `Use one of the allowed methods (${callableMethods}) or a host function called with \`$fn.<name>(...)\`. The default \`expressionPolicy: "warn"\` runs this expression and prints a dev warning, \`expressionPolicy: "strict"\` rejects it.`;
+  }
+  return `The form rejects this expression and reports an errored \`formHealth\`. Expressions only read data. They can call \`$fn.<name>(...)\`, \`$log(...)\` and these methods: ${callableMethods}.`;
+}
 
 /**
  * Lints reactive expressions inside a form definition without executing them.
@@ -13,8 +63,7 @@ export type ExpressionFinding = {
  *   - unbalanced parentheses / brackets / braces
  *   - missing `$form` prefix (LLMs sometimes write bare property names)
  *   - common operator typos (`=` instead of `===`, `&` instead of `&&`)
- *
- * We deliberately don't try to fully parse: too easy to get false positives, too little gain.
+ *   - every issue of the runtime expression check (see {@link runtimeExpressionFindings})
  */
 export function lintReactiveExpressions(formDefinition: unknown): ExpressionFinding[] {
   const findings: ExpressionFinding[] = [];
@@ -300,5 +349,9 @@ function checkExpression(
       });
       r5Flagged = true;
     }
+  }
+
+  for (const finding of runtimeExpressionFindings(expr)) {
+    out.push({ path, expression: expr, ...finding });
   }
 }
