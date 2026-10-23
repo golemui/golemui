@@ -2880,4 +2880,63 @@ describe('reducer end-to-end', () => {
       expect(healed.formHealth).toEqual({ status: 'ok' });
     });
   });
+
+  describe('forbidden path segments', () => {
+    afterEach(() => {
+      delete (Object.prototype as any).isAdminE2E;
+    });
+
+    // Every decode error inside a repeater template throws from INITIALIZE, not only this one.
+    it('rejects an input of a repeater template with a forbidden path', () => {
+      const formDef = {
+        form: [
+          {
+            uid: 'users',
+            kind: 'input',
+            type: 'repeater',
+            path: 'users',
+            props: {
+              template: {
+                uid: 'usersRow',
+                kind: 'layout',
+                type: 'flex',
+                children: [{ uid: 'name', kind: 'input', type: 'text', path: '__proto__.name' }],
+              },
+            },
+          },
+        ],
+      };
+
+      expect(() => drive([init(formDef), setData({ users: [{}] })])).toThrow(
+        'children[0].path: Path "__proto__.name" has the segment "__proto__"',
+      );
+    });
+
+    it('errors the props pass for a prop named __proto__', () => {
+      // JSON.parse keeps `__proto__` as an own key, so the props pass reads it as a prop name.
+      // Without the guard, its write replaced the prototype of the resolved props object.
+      const formDef = JSON.parse(
+        '{ "form": [{ "uid": "title", "kind": "display", "type": "heading", "props": { "__proto__": { "isAdminE2E": true } } }] }',
+      );
+
+      const state = drive([init(formDef), setData({})]);
+
+      expect(state.formHealth).toMatchObject({ status: 'errored', code: 12 });
+      if (state.formHealth.status === 'errored') {
+        expect(state.formHealth.message).toContain(
+          'Path "props.__proto__" has the segment "__proto__"',
+        );
+      }
+    });
+
+    it('throws from SET_WIDGET_DATA for a forbidden path and leaves Object.prototype unchanged', () => {
+      const reduce = makeReducer();
+      const state = drive([init(makeBaseFormDef())]);
+
+      expect(() => reduce(state, setWidgetData('__proto__.isAdminE2E', true))).toThrow(
+        'has the segment "__proto__"',
+      );
+      expect(({} as any).isAdminE2E).toBeUndefined();
+    });
+  });
 });

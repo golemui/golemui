@@ -25,6 +25,7 @@ import {
   type WidgetPropertyFunction,
 } from './shared';
 import { objectWithSuffix } from './utils/decoder';
+import { forbiddenPathSegmentIssue } from './utils/object';
 import { type AllSuffixable, type SomeSuffixable } from './utils/suffixable';
 
 // --------------------------------
@@ -304,6 +305,16 @@ const localizableDecoder = oneOf<Localizable>([string(), translationConfigDecode
 // Missing uids are assigned later by assignDeterministicUids (see formDefDecoder)
 const uidDecoder = optional(string());
 
+// The path writers throw on these segments too. Rejecting them at decode names the widget in the
+// form health message, and the `unset` of a hidden input at submit never throws.
+const inputPathDecoder = new Decoder<DotPath>((json: unknown) => {
+  if (typeof json !== 'string') {
+    return string().decode(json);
+  }
+  const issue = forbiddenPathSegmentIssue(json);
+  return issue === undefined ? ok(json) : err([{ message: issue, path: [] }]);
+});
+
 const displayWidgetDecoder = objectWithSuffix<DisplayWidget<string>>({
   kind: { decoder: literal('display') },
   uid: { decoder: uidDecoder },
@@ -346,9 +357,14 @@ const functionWidgetDecoder: Decoder<FunctionWidget<string>> = new Decoder((json
     });
     // The uid is stored on the function object itself so re-decoding the same function keeps the same uid.
     // An empty uid gets a position uid later (see assignDeterministicUids), so a server and a client process decoding the same definition agree on it.
+    const path = (widget as InputWidget<unknown>).path; // this could be undefined, and it's ok.
+    const pathIssue = typeof path === 'string' ? forbiddenPathSegmentIssue(path) : undefined;
+    if (pathIssue !== undefined) {
+      return err([{ message: pathIssue, path: [] }]);
+    }
     fnWidget.uid = fnWidget.uid || widget.uid;
     fnWidget.type = widget.type;
-    fnWidget.path = (widget as InputWidget<unknown>).path; // this could be undefined, and it's ok.
+    fnWidget.path = path;
     return ok(fnWidget);
   } else {
     return err([{ message: `Expected a function, got '${jsonTypeof}'`, path: [] }]);
@@ -370,7 +386,7 @@ const inputWidgetDecoder = objectWithSuffix<InputWidget<any, string>>({
     suffixed: true,
     decoder: decodeWidgetPropOrWidgetPropFn(optional(localizableDecoder)),
   },
-  path: { decoder: string() },
+  path: { decoder: inputPathDecoder },
   defaultValue: { decoder: optional(succeed()) },
   validator: {
     suffixed: true,

@@ -211,3 +211,51 @@ describe('initialize - function widget decode probe', () => {
     expect(formDef.form).toEqual([widget]);
   });
 });
+
+describe('initialize - forbidden path segments', () => {
+  const init = (formDef: Record<string, any>) =>
+    initialize(createInitialState('en-US'), {
+      type: 'INITIALIZE',
+      payload: { formName: 'f', formDef },
+    });
+
+  const expectPathError = (result: ReturnType<typeof init>, segment: string) => {
+    expect(result.formHealth).toMatchObject({
+      status: 'errored',
+      code: errorCodes.initializeUnknownError,
+    });
+    if (result.formHealth.status === 'errored') {
+      expect(result.formHealth.message).toContain(`has the segment "${segment}"`);
+    }
+  };
+
+  it.each([
+    ['__proto__.isAdmin', '__proto__'],
+    ['user.constructor', 'constructor'],
+    ['prototype', 'prototype'],
+  ])('errors at decode for the input path %s', (path, segment) => {
+    const result = init({ form: [{ uid: 'x', kind: 'input', type: 'text', path }] });
+
+    expectPathError(result, segment);
+    if (result.formHealth.status === 'errored') {
+      expect(result.formHealth.message).toContain('.path:');
+    }
+  });
+
+  it('errors at decode for a function widget that returns a forbidden path', () => {
+    const fnWidget = () => ({ kind: 'input' as const, type: 'text', path: 'a.__proto__.b' });
+
+    expectPathError(init({ form: [fnWidget] }), '__proto__');
+  });
+
+  it('accepts a path whose segments only contain a forbidden word', () => {
+    const result = init({
+      form: [
+        { uid: 'a', kind: 'input', type: 'text', path: 'user.constructorName' },
+        { uid: 'b', kind: 'input', type: 'text', path: 'prototypes.0' },
+      ],
+    });
+
+    expect(result.formHealth.status).toBe('ok');
+  });
+});

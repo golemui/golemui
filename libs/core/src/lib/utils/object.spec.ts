@@ -1,5 +1,13 @@
-import { describe, expect, it } from 'vitest';
-import { cloneObject, copyOnWriteSet, get, pathExists, set, unset } from './object';
+import { afterEach, describe, expect, it } from 'vitest';
+import {
+  cloneObject,
+  copyOnWriteSet,
+  forbiddenPathSegmentIssue,
+  get,
+  pathExists,
+  set,
+  unset,
+} from './object';
 
 describe('object.set', () => {
   it('sets dot notation paths', () => {
@@ -393,6 +401,75 @@ describe('object.unset', () => {
     const obj = { a: { b: 1 } };
     const result = unset(obj, 'a.b');
     expect(result).toBe(obj);
+  });
+});
+
+describe('object path writers - forbidden segments', () => {
+  const writers = {
+    set: (object: Record<string, any>, path: string) => set(object, path, 'written'),
+    copyOnWriteSet: (object: Record<string, any>, path: string) =>
+      copyOnWriteSet(object, path, 'written'),
+    unset: (object: Record<string, any>, path: string) => unset(object, path),
+  };
+
+  const cases = Object.keys(writers).flatMap((writer) =>
+    [
+      '__proto__.written',
+      '__proto__',
+      'list.__proto__.written',
+      'constructor.prototype.written',
+      'user.constructor',
+      'user.prototype',
+    ].map((path) => [writer as keyof typeof writers, path] as const),
+  );
+
+  // Without the guard a failing spec pollutes the prototypes, and every later spec would see it.
+  afterEach(() => {
+    delete (Object.prototype as any).written;
+    delete (Array.prototype as any).written;
+  });
+
+  it.each(cases)('%s throws on the path %s', (writer, path) => {
+    expect(() => writers[writer]({ list: [], user: {} }, path)).toThrow(
+      /has the segment "(__proto__|constructor|prototype)"/,
+    );
+  });
+
+  it.each(cases)(
+    '%s leaves the input and the prototypes unchanged for the path %s',
+    (writer, path) => {
+      const input = { list: [], user: { name: 'Ada' } };
+
+      expect(() => writers[writer](input, path)).toThrow();
+
+      expect(input).toEqual({ list: [], user: { name: 'Ada' } });
+      expect(Object.getPrototypeOf(input)).toBe(Object.prototype);
+      expect(Object.getPrototypeOf(input.user)).toBe(Object.prototype);
+      expect(({} as any).written).toBeUndefined();
+      expect(([] as any).written).toBeUndefined();
+    },
+  );
+
+  it('unset does not delete a method of Object.prototype', () => {
+    expect(() => unset({}, '__proto__.hasOwnProperty')).toThrow();
+
+    expect(typeof Object.prototype.hasOwnProperty).toBe('function');
+  });
+
+  it.each(['__proto__x', 'user.constructorName', 'prototypes.0', 'my__proto__'])(
+    'writes the path %s, whose segments only contain a forbidden word',
+    (path) => {
+      expect(get(set({}, path, 'written'), path)).toBe('written');
+      expect(get(copyOnWriteSet({}, path, 'written'), path)).toBe('written');
+      expect(pathExists(unset(set({}, path, 'written'), path), path)).toBe(false);
+    },
+  );
+
+  it('forbiddenPathSegmentIssue names the first forbidden segment and the path', () => {
+    expect(forbiddenPathSegmentIssue('user.name')).toBeUndefined();
+    expect(forbiddenPathSegmentIssue('a.constructor.prototype')).toBe(
+      'Path "a.constructor.prototype" has the segment "constructor". A path cannot contain the segments __proto__, constructor or prototype.',
+    );
   });
 });
 
