@@ -42,12 +42,16 @@ export const realPress = (key: keyof typeof keys) =>
  */
 export const realType = (text: string) => cy.then(() => send('Input.insertText', { text }));
 
+/** Whether a test moved the trusted pointer, which then stays where it left it. */
+let pointerMoved = false;
+
 /**
  * Sends mouse events at a point of the page under test, in its own CSS pixels. The page runs in a
  * scaled iframe of the Cypress runner, so the point is mapped to the runner's viewport first.
  */
-const realMouse = (x: number, y: number, types: readonly string[]) =>
-  cy.window({ log: false }).then(async (win) => {
+const realMouse = (x: number, y: number, types: readonly string[]) => {
+  pointerMoved = true;
+  return cy.window({ log: false }).then(async (win) => {
     // `frameElement` is null in the runner: find the frame from the runner's side.
     const frame = win.parent.document.querySelector<HTMLIFrameElement>('iframe.aut-iframe');
     if (!frame) throw new Error('realMouse: no Cypress runner frame around the page');
@@ -56,6 +60,16 @@ const realMouse = (x: number, y: number, types: readonly string[]) =>
     const point = { x: box.x + x * scale, y: box.y + y * scale, button: 'left', clickCount: 1 };
     for (const type of types) await send('Input.dispatchMouseEvent', { type, ...point });
   });
+};
+
+// The trusted pointer stays where a test leaves it, over whatever the next test mounts there,
+// which then matches `:hover` once the browser updates it after layout, at a time of its own
+// choosing. After a test that moved it, park it at the runner's corner, outside the page.
+afterEach(() => {
+  if (!pointerMoved) return;
+  pointerMoved = false;
+  cy.then(() => send('Input.dispatchMouseEvent', { type: 'mouseMoved', x: 0, y: 0 }));
+});
 
 /** Clicks at a point of the page under test, in its own CSS pixels. */
 export const realClick = (x: number, y: number) =>
