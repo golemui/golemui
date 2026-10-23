@@ -57,6 +57,7 @@ export {
   isProtoOption,
   updateOptions,
 } from './lib/components/one-of';
+export { GuiOtp, GuiOtpEvents } from './lib/components/otp';
 export { GuiPassword, GuiPasswordEvents } from './lib/components/password';
 export type { GuiPasswordProps } from './lib/components/password';
 export { GuiPills, GuiPillsEvents } from './lib/components/pills';

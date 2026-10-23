@@ -35,6 +35,9 @@ describe('server rendering standalone elements in plain node', () => {
     // The slider's value shows in its label, and its range input carries its bounds.
     expect(markup).toMatch(/<output class="gui-slider__value"[^>]*>12<\/output>/);
     expect(markup).toMatch(/<input[^>]*type="range"[^>]*id="seats"[^>]*max="50"/);
+    // The code's digits show in its boxes, and its input takes them and the autofill hint.
+    expect(markup).toMatch(/<span class="\s*gui-otp__box gui-otp__box--filled\s*">1<\/span>/);
+    expect(markup).toMatch(/<input[^>]*id="pin"[^>]*autocomplete="one-time-code"[^>]*value="123"/);
   });
 
   it("keeps the app's children of the elements that enhance them", () => {
@@ -56,7 +59,7 @@ describe('server rendering standalone elements in plain node', () => {
 
   it('holds every GolemUI element inert through defer-hydration', () => {
     const tags = [...markup.matchAll(/<(gui-[a-z-]+)([^>]*)>/g)];
-    expect(tags.length).toBe(15);
+    expect(tags.length).toBe(16);
     for (const [, tag, attributes] of tags) {
       expect(attributes, tag).toContain('defer-hydration');
     }

@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>One-time code · GolemUI Components playground</title>
+    <link rel="stylesheet" href="/src/styles.scss" />
+  </head>
+  <body data-pg-events="gui-input gui-change">
+    <main class="pg-main">
+      <section class="pg-section">
+        <h1>gui-otp</h1>
+        <p>
+          Type the digits in order, or paste a code: anything that isn't a digit is dropped, so
+          <code>123-456</code> pastes as <code>123456</code>. Backspace removes the last digit, and
+          select all replaces the whole code. The code stays left to right when the direction switch
+          above mirrors the page.
+        </p>
+      </section>
+
+      <section class="pg-section">
+        <h2>Codes</h2>
+        <div class="pg-stack">
+          <gui-otp label="Verification code" hint="We sent it to your phone"></gui-otp>
+          <gui-otp label="Grouped" groups="3,3" value="123"></gui-otp>
+          <gui-otp label="Four digits" length="4"></gui-otp>
+          <gui-otp label="Eight digits, in two groups" length="8" groups="4,4"></gui-otp>
+          <gui-otp label="Disabled" value="482913" disabled></gui-otp>
+          <gui-otp label="Read-only" value="482913" readonly></gui-otp>
+          <gui-otp label="With an error" value="48" touched id="otp-error"></gui-otp>
+        </div>
+      </section>
+
+      <section class="pg-section">
+        <h2>In a form</h2>
+        <form id="otp-form" class="pg-stack">
+          <gui-otp name="code" label="Sign-in code" groups="3,3" required></gui-otp>
+          <div class="pg-row">
+            <button type="submit" class="pg-button">Submit</button>
+            <button type="reset" class="pg-button">Reset</button>
+          </div>
+          <output id="otp-form-output"></output>
+        </form>
+      </section>
+    </main>
+    <script type="module" src="/src/pages/otp.ts"></script>
+  </body>
+</html>

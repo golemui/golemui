@@ -152,6 +152,19 @@ describe('resuming server-rendered standalone elements', () => {
     expect(element.value).toBe('grace@example.com');
   });
 
+  it('takes a pasted code after the resume, without its separators', async () => {
+    resumeServerRendered();
+    await settle();
+
+    const element = document.querySelector('gui-otp') as HTMLElement & { value?: string };
+    const input = document.getElementById('pin') as HTMLInputElement;
+    input.value = '987-654';
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    await settle();
+    expect(element.value).toBe('987654');
+    expect(element.querySelectorAll('.gui-otp__box--filled')).toHaveLength(6);
+  });
+
   it('resumes only the elements under the root it is given', async () => {
     const textinput = document.querySelector('gui-textinput') as HTMLElement;
     resumeServerRendered(textinput);

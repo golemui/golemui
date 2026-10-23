@@ -74,6 +74,7 @@ import {
   GuiMultiSelectTriggerEvents,
 } from './lib/components/multi-select-trigger';
 import { GuiNumber as GuiNumberElement, GuiNumberEvents } from './lib/components/number';
+import { GuiOtp as GuiOtpElement, GuiOtpEvents } from './lib/components/otp';
 import { GuiPassword as GuiPasswordElement, GuiPasswordEvents } from './lib/components/password';
 import { GuiPills as GuiPillsElement, GuiPillsEvents } from './lib/components/pills';
 import { GuiPopover as GuiPopoverElement, GuiPopoverEvents } from './lib/components/popover';
@@ -313,6 +314,7 @@ export const GuiMultiSelectTrigger = wrap(
   GuiMultiSelectTriggerEvents,
 );
 export const GuiNumber = wrap('gui-number', GuiNumberElement, GuiNumberEvents);
+export const GuiOtp = wrap('gui-otp', GuiOtpElement, GuiOtpEvents);
 export const GuiPassword = wrap('gui-password', GuiPasswordElement, GuiPasswordEvents);
 export const GuiPills = wrap('gui-pills', GuiPillsElement, GuiPillsEvents);
 export const GuiPopover = wrap('gui-popover', GuiPopoverElement, GuiPopoverEvents);

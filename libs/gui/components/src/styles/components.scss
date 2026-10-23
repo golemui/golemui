@@ -28,6 +28,7 @@
   @include meta.load-css('markdown');
   @include meta.load-css('multi-select');
   @include meta.load-css('number');
+  @include meta.load-css('otp');
   @include meta.load-css('password');
   @include meta.load-css('picker');
   @include meta.load-css('pills');
