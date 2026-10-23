@@ -73,6 +73,8 @@ import { repeaterTab as dxRepeaterTab } from './tabs/repeater.dx';
 import jsonSelectTab from './tabs/select.form-chunk.json';
 import { selectTab as dxSelectTab } from './tabs/select.dx';
 import jsonSliderTab from './tabs/slider.form-chunk.json';
+import jsonOtpTab from './tabs/otp.form-chunk.json';
+import { otpTab as dxOtpTab } from './tabs/otp.dx';
 import { sliderTab as dxSliderTab } from './tabs/slider.dx';
 import jsonTagsTab from './tabs/tags.form-chunk.json';
 import { tagsTab as dxTagsTab } from './tabs/tags.dx';
@@ -275,6 +277,12 @@ describe('Kitchen Sink — JSON ↔ DX equivalence', () => {
   it('range slider tab', () => {
     const json = buildJsonTab(jsonRangeSliderTab).form;
     const dx = buildDxTab(dxRangeSliderTab);
+    expect(normalise(dx)).toEqual(normalise(json));
+  });
+
+  it('otp tab', () => {
+    const json = buildJsonTab(jsonOtpTab).form;
+    const dx = buildDxTab(dxOtpTab);
     expect(normalise(dx)).toEqual(normalise(json));
   });
 

@@ -37,6 +37,7 @@ import radiogroupChunk from './tabs/radiogroup.form-chunk.json';
 import selectChunk from './tabs/select.form-chunk.json';
 import sliderChunk from './tabs/slider.form-chunk.json';
 import rangesliderChunk from './tabs/rangeslider.form-chunk.json';
+import otpChunk from './tabs/otp.form-chunk.json';
 import dropdownChunk from './tabs/dropdown.form-chunk.json';
 import listChunk from './tabs/list.form-chunk.json';
 import repeaterChunk from './tabs/repeater.form-chunk.json';
@@ -82,6 +83,7 @@ const chunks: Record<string, unknown> = {
   './tabs/select.form-chunk.json': selectChunk,
   './tabs/slider.form-chunk.json': sliderChunk,
   './tabs/rangeslider.form-chunk.json': rangesliderChunk,
+  './tabs/otp.form-chunk.json': otpChunk,
   './tabs/dropdown.form-chunk.json': dropdownChunk,
   './tabs/list.form-chunk.json': listChunk,
   './tabs/repeater.form-chunk.json': repeaterChunk,

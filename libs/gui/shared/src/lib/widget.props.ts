@@ -89,6 +89,20 @@ export type TagsProps = {
   removeIcon?: string;
 };
 
+/**
+ * A one-time code field: the digits of a verification code, one box per digit. The code is as
+ * long as the validator's `exactLength`, 6 without one.
+ */
+export type OtpProps = {
+  hint?: string;
+  /**
+   * Splits the boxes into groups with a gap between them, such as `[3, 3]` for `123 456`. The
+   * sizes must add up to the code's length, the validator's `exactLength` (6 without one). It
+   * changes how the code looks, never the value.
+   */
+  groups?: number[];
+};
+
 export type PasswordProps = {
   hint?: string;
   placeholder?: string;

@@ -642,7 +642,7 @@ const VALIDATION_CONCEPT: GetConceptResult = {
       description:
         'Every validator accepts a `messages` object mapping rule names to custom error text. ' +
         'The allowed keys depend on the validator type — string: `invalid`, `required`, `minLength`, ' +
-        '`maxLength`, `pattern`, `format`, `enum`, `const`; number/integer: `invalid`, `minimum`, ' +
+        '`maxLength`, `exactLength`, `pattern`, `format`, `enum`, `const`; number/integer: `invalid`, `minimum`, ' +
         '`maximum`, `exclusiveMinimum`, `exclusiveMaximum`, `multipleOf`, `enum`, `const`; ' +
         'boolean: `invalid`, `const`; array: `invalid`, `required`, `minItems`, `maxItems`; ' +
         'file (the `fileUpload` envelope): `invalid`, `required`, `pendingUploads`; files (the ' +

@@ -39,6 +39,7 @@ export * from './lib/gui-features/multidropdown.cy';
 export * from './lib/gui-features/multifileupload.cy';
 export * from './lib/gui-features/multilist.cy';
 export * from './lib/gui-features/number.cy';
+export * from './lib/gui-features/otp.cy';
 export * from './lib/gui-features/password.cy';
 export * from './lib/gui-features/rangecalendar.cy';
 export * from './lib/gui-features/rangedateinput.cy';

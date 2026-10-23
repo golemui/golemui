@@ -232,7 +232,7 @@ const PATTERNS: DxPattern[] = [
       "gui.inputs.textInput('email', { label: 'Email', validator: { required: true, format: 'email', messages: { invalid: 'Email is required', required: 'Email is required', format: 'Enter a valid email address' } } })",
     notes: [
       'Every validator accepts a `messages` map from rule name to custom error text (string or i18n ' +
-        '`{ key, params?, default? }`). Keys per type — string: `invalid`, `required`, `minLength`, `maxLength`, ' +
+        '`{ key, params?, default? }`). Keys per type — string: `invalid`, `required`, `minLength`, `maxLength`, `exactLength`, ' +
         '`pattern`, `format`, `enum`, `const`; number: `invalid`, `minimum`, `maximum`, `exclusiveMinimum`, ' +
         '`exclusiveMaximum`, `multipleOf`, `enum`, `const`; boolean: `invalid`, `const`; array: `invalid`, ' +
         '`required`, `minItems`, `maxItems`; range: `invalid`, `required`. The special key `invalid` customizes ' +
@@ -266,7 +266,7 @@ const INPUTS: DxSpec[] = [
     example:
       "gui.inputs.textInput('fullName', { label: 'Full name', validator: { required: true, minLength: 2 } })",
     notes: [
-      'Text fields accept a loose validator: `{ required, minLength, maxLength, pattern, format }` (no `type` needed).',
+      'Text fields accept a loose validator: `{ required, minLength, maxLength, exactLength, pattern, format }` (no `type` needed).',
       "Email is a text input with `validator: { required: true, format: 'email' }` — use `format`, not a regex. " +
         'The full `format` enum: `email`, `url`, `uuid`, `hostname`, `ipv4`, `ipv6`, `date`, `time`, `date-time`, `duration`.',
     ],
@@ -324,6 +324,19 @@ const INPUTS: DxSpec[] = [
     example:
       "gui.inputs.password('password', { label: 'Password', validator: { required: true, minLength: 8 } })",
     notes: ['Masked text input; loose string validator.'],
+  },
+  {
+    factory: 'otp',
+    namespace: 'inputs',
+    docSlug: 'otp',
+    call: 'gui.inputs.otp(path, { label, groups?, defaultValue?, validator? })',
+    example:
+      "gui.inputs.otp('verificationCode', { label: 'Verification code', groups: [3, 3], validator: { required: true, exactLength: 6, messages: { required: 'Enter the code', invalid: 'Enter the code', exactLength: 'Enter all 6 digits' } } })",
+    notes: [
+      'A one-time code, one box per digit. The value is a string of digits (leading zeros kept); anything else typed or pasted is dropped, so `123-456` becomes `123456`.',
+      "The number of digits is the validator's `exactLength` (6 without one); there is no `length` prop. `groups` splits the boxes visually (`[3, 3]`, must add up to that length).",
+      'A string validator; its `exactLength` also makes a partial code invalid (word it with `messages.exactLength`); word an empty code with `messages.required` and `messages.invalid` (an untouched code is undefined).',
+    ],
   },
   {
     factory: 'dropdown',

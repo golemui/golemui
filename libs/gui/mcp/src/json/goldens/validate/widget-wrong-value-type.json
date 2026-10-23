@@ -1218,6 +1218,59 @@
       "interpolationWarnings": []
     }
   },
+  "otp": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "otp",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/label",
+          "message": "Expected type string at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "string"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Expected type object at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Value at `/form/0/label` does not match any allowed variant",
+          "keyword": "oneOf",
+          "params": {
+            "passingSchemas": null
+          }
+        },
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
   "password": {
     "input": {
       "form": [

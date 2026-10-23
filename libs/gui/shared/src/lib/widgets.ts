@@ -15,6 +15,7 @@ export const inputWidgets = [
   'multiFileUpload',
   'multiList',
   'number',
+  'otp',
   'password',
   'radiogroup',
   'rangeCalendar',

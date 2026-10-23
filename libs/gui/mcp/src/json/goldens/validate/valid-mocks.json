@@ -84,7 +84,7 @@
         "path": "/form/0/type",
         "keyword": "customWidget",
         "message": "Widget type `heading` at `/form/0` is not a built-in GolemUI widget - assumed custom. Its props were not validated.",
-        "suggestion": "Built-in widget types: calendar, dateTimeCalendar, checkbox, currency, dateInput, datePicker, dateTimeInput, dateTimePicker, dropdown, fileUpload, list, markdown, multiDropdown, multiFileUpload, multiList, number, password, radiogroup, rangeCalendar, rangeDateInput, rangeDatePicker, rangeDateTimeInput, rangeDateTimeCalendar, rangeDateTimePicker, rangeSlider, rangeTimeInput, rangeTimePicker, repeater, select, slider, tags, textarea, textinput, timeInput, timePicker, toggle, accordion, flex, grid, tabs, alert, markdownText, button, menu. If this is intentional (a custom widget registered via the framework loader), you can ignore this warning.",
+        "suggestion": "Built-in widget types: calendar, dateTimeCalendar, checkbox, currency, dateInput, datePicker, dateTimeInput, dateTimePicker, dropdown, fileUpload, list, markdown, multiDropdown, multiFileUpload, multiList, number, otp, password, radiogroup, rangeCalendar, rangeDateInput, rangeDatePicker, rangeDateTimeInput, rangeDateTimeCalendar, rangeDateTimePicker, rangeSlider, rangeTimeInput, rangeTimePicker, repeater, select, slider, tags, textarea, textinput, timeInput, timePicker, toggle, accordion, flex, grid, tabs, alert, markdownText, button, menu. If this is intentional (a custom widget registered via the framework loader), you can ignore this warning.",
         "params": {
           "type": "heading"
         }
@@ -219,7 +219,7 @@
         "path": "/form/0/children/0/type",
         "keyword": "customWidget",
         "message": "Widget type `heading` at `/form/0/children/0` is not a built-in GolemUI widget - assumed custom. Its props were not validated.",
-        "suggestion": "Built-in widget types: calendar, dateTimeCalendar, checkbox, currency, dateInput, datePicker, dateTimeInput, dateTimePicker, dropdown, fileUpload, list, markdown, multiDropdown, multiFileUpload, multiList, number, password, radiogroup, rangeCalendar, rangeDateInput, rangeDatePicker, rangeDateTimeInput, rangeDateTimeCalendar, rangeDateTimePicker, rangeSlider, rangeTimeInput, rangeTimePicker, repeater, select, slider, tags, textarea, textinput, timeInput, timePicker, toggle, accordion, flex, grid, tabs, alert, markdownText, button, menu. If this is intentional (a custom widget registered via the framework loader), you can ignore this warning.",
+        "suggestion": "Built-in widget types: calendar, dateTimeCalendar, checkbox, currency, dateInput, datePicker, dateTimeInput, dateTimePicker, dropdown, fileUpload, list, markdown, multiDropdown, multiFileUpload, multiList, number, otp, password, radiogroup, rangeCalendar, rangeDateInput, rangeDatePicker, rangeDateTimeInput, rangeDateTimeCalendar, rangeDateTimePicker, rangeSlider, rangeTimeInput, rangeTimePicker, repeater, select, slider, tags, textarea, textinput, timeInput, timePicker, toggle, accordion, flex, grid, tabs, alert, markdownText, button, menu. If this is intentional (a custom widget registered via the framework loader), you can ignore this warning.",
         "params": {
           "type": "heading"
         }
@@ -236,7 +236,7 @@
         "path": "/form/0/type",
         "keyword": "customWidget",
         "message": "Widget type `heading` at `/form/0` is not a built-in GolemUI widget - assumed custom. Its props were not validated.",
-        "suggestion": "Built-in widget types: calendar, dateTimeCalendar, checkbox, currency, dateInput, datePicker, dateTimeInput, dateTimePicker, dropdown, fileUpload, list, markdown, multiDropdown, multiFileUpload, multiList, number, password, radiogroup, rangeCalendar, rangeDateInput, rangeDatePicker, rangeDateTimeInput, rangeDateTimeCalendar, rangeDateTimePicker, rangeSlider, rangeTimeInput, rangeTimePicker, repeater, select, slider, tags, textarea, textinput, timeInput, timePicker, toggle, accordion, flex, grid, tabs, alert, markdownText, button, menu. If this is intentional (a custom widget registered via the framework loader), you can ignore this warning.",
+        "suggestion": "Built-in widget types: calendar, dateTimeCalendar, checkbox, currency, dateInput, datePicker, dateTimeInput, dateTimePicker, dropdown, fileUpload, list, markdown, multiDropdown, multiFileUpload, multiList, number, otp, password, radiogroup, rangeCalendar, rangeDateInput, rangeDatePicker, rangeDateTimeInput, rangeDateTimeCalendar, rangeDateTimePicker, rangeSlider, rangeTimeInput, rangeTimePicker, repeater, select, slider, tags, textarea, textinput, timeInput, timePicker, toggle, accordion, flex, grid, tabs, alert, markdownText, button, menu. If this is intentional (a custom widget registered via the framework loader), you can ignore this warning.",
         "params": {
           "type": "heading"
         }

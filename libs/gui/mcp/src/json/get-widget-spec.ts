@@ -67,6 +67,23 @@ const EXAMPLES: Record<string, Record<string, unknown>> = {
     label: 'Password',
     validator: { type: 'string', required: true, minLength: 8 },
   },
+  otp: {
+    kind: 'input',
+    type: 'otp',
+    path: 'verificationCode',
+    label: 'Verification code',
+    props: { groups: [3, 3] },
+    validator: {
+      type: 'string',
+      required: true,
+      exactLength: 6,
+      messages: {
+        required: 'Enter the code',
+        invalid: 'Enter the code',
+        exactLength: 'Enter all 6 digits',
+      },
+    },
+  },
   number: {
     kind: 'input',
     type: 'number',
@@ -370,6 +387,12 @@ const NOTES: Record<string, string[]> = {
   ],
   radiogroup: [
     '`props.appearance: "segmented"` shows the options as a segmented control: a row of joined buttons, the selected one filled, for a few short options (Day / Week / Month, List / Grid). It is the same radio group (same value, keyboard, validation), not a separate widget. It is always a row, so `props.direction` does not apply, and it stacks in a narrow form. Past about five options, or with long labels, keep the default appearance or use a `dropdown`.',
+  ],
+  otp: [
+    'A one-time code (a verification code sent by SMS, email or an authenticator app): one box per digit. The value is a STRING of digits, so leading zeros survive (`"012345"`). For any other short text, use `textinput`.',
+    'Digits only: anything else is dropped as it is typed or pasted, so `123-456` pastes as `"123456"`. The number of digits is the validator\'s `exactLength` (6 without one). `props.groups` splits the boxes visually, e.g. `[3, 3]`; the sizes must add up to that length, and the value never contains a separator.',
+    'Validate with a string validator: `{ type: "string", required: true, exactLength: 6 }`, and word the empty code with both `messages.required` and `messages.invalid` (an untouched code is undefined, which fails the string check first). `exactLength` sets the code\'s length AND makes a code with only some of its digits invalid: word that with `messages.exactLength` (localizable). There is no `length` prop, and no need for `minLength`, `maxLength` or `pattern`: the widget keeps digits only, at most `exactLength` of them.',
+    'Its input has `autocomplete="one-time-code"`, so phones offer the code from an SMS, and password managers fill it.',
   ],
   slider: [
     'A number picked by dragging a thumb along a track, between `props.minimum` (default 0) and `props.maximum` (default 100) in `props.step` (default 1). For an exact number the user types, use `number`.',

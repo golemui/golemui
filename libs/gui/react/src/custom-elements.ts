@@ -22,6 +22,7 @@ import type { GuiPills } from '@golemui/gui-components/pills';
 import type { GuiRadiogroup } from '@golemui/gui-components/radiogroup';
 import type { GuiRangeSlider } from '@golemui/gui-components/range-slider';
 import type { GuiSlider } from '@golemui/gui-components/slider';
+import type { GuiOtp } from '@golemui/gui-components/otp';
 import type { GuiRangeCalendar } from '@golemui/gui-components/range-calendar';
 import type { GuiRangeDateInput } from '@golemui/gui-components/range-date-input';
 import type { GuiRangeDateTimeInput } from '@golemui/gui-components/range-date-time-input';
@@ -115,6 +116,8 @@ declare module 'react' {
         Partial<GuiRangeSlider>;
       'gui-slider': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiSlider>;
+      'gui-otp': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
+        Partial<GuiOtp>;
       'gui-range-calendar': React.DetailedHTMLProps<
         React.HTMLAttributes<HTMLElement>,
         HTMLElement
