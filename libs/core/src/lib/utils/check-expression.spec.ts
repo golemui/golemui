@@ -79,8 +79,27 @@ describe('checkExpression', () => {
       '$form.tags.sort()',
       '$form.tags.splice(0, 1)',
       '$item.tags.pop()',
+      "$meta.cache.set('role', 'admin')",
+      "$meta.tags.add('x')",
+      "$meta.cache.delete('role')",
+      '$meta.cache.clear()',
+      "$meta.cache.getOrInsert('role', 'admin')",
+      "$meta.cache?.getOrInsertComputed('role', key => key)",
+      '$meta.start.setFullYear(2000)',
+      '$meta.start.setUTCHours(0)',
+      '$form.date?.setTime(0)',
     ])('rejects %s in every policy', (expression) => {
       expect(rejectedEveryPolicy(checkExpression(expression))).toBe(true);
+    });
+
+    it('names the value type and the $fn fix for a Map or Set write method', () => {
+      expect(checkExpression('$meta.start.add(1)')[0].message).toBe(
+        'The method "add" changes a Map or a Set in place, so it writes into the data. Expressions can only read. If the value is immutable, call the method in a $fn function.',
+      );
+    });
+
+    it('accepts a host function with the name of a write method', () => {
+      expect(checkExpression('$fn.add($form.a, 1) + $fn.set(2)')).toEqual([]);
     });
   });
 

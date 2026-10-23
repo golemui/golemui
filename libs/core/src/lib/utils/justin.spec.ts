@@ -303,6 +303,15 @@ describe('justin', () => {
       expect($form).toEqual({ tags: [1] });
     });
 
+    it('rejects a write into a Map in $meta and leaves the Map unchanged', () => {
+      const $meta = { cache: new Map<string, string>() };
+
+      expect(() =>
+        expressionIsTrue("$meta.cache.set('role', 'admin').size > 0", {}, $meta, {}, false),
+      ).toThrow(ExpressionRejectedError);
+      expect($meta.cache.size).toBe(0);
+    });
+
     it('compiles a method outside the list with warn and rejects it with strict', () => {
       const expression = "$form.name.startsWith('A')";
 

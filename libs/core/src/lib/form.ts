@@ -72,8 +72,8 @@ export interface FormInitConfig<ComponentType = unknown> {
   /**
    * How the form treats an expression that the expression check rejects. Defaults to `'warn'`.
    *
-   * An expression that can run code or write into the form data always fails, with an errored
-   * `formHealth`. With `'warn'`, any other issue (a method outside the allowed list, an
+   * An expression that can run code or write into the form data or `$meta` always fails, with
+   * an errored `formHealth`. With `'warn'`, any other issue (a method outside the allowed list, an
    * expression over the size limits) prints one warning in dev mode and the expression runs.
    * With `'strict'`, those issues fail too.
    */

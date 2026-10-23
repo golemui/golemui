@@ -78,8 +78,8 @@ export const ALLOWED_EXPRESSION_METHODS: readonly string[] = [
 ];
 const ALLOWED_METHOD_SET = new Set(ALLOWED_EXPRESSION_METHODS);
 
-// Array methods that change the array in place, so a call writes into the form data.
-const MUTATING_METHODS = new Set([
+// Methods that change the value they are called on, so a call writes into the data.
+const ARRAY_WRITE_METHODS = new Set([
   'push',
   'pop',
   'shift',
@@ -89,6 +89,36 @@ const MUTATING_METHODS = new Set([
   'reverse',
   'fill',
   'copyWithin',
+]);
+
+// Map, Set, WeakMap and WeakSet. Immutable libraries use some of these names for reads (dayjs
+// `add`, Immutable.js `set`), but the check sees only the name, not the type of the value.
+const COLLECTION_WRITE_METHODS = new Set([
+  'set',
+  'add',
+  'delete',
+  'clear',
+  'getOrInsert',
+  'getOrInsertComputed',
+]);
+
+const DATE_WRITE_METHODS = new Set([
+  'setFullYear',
+  'setMonth',
+  'setDate',
+  'setHours',
+  'setMinutes',
+  'setSeconds',
+  'setMilliseconds',
+  'setTime',
+  'setYear',
+  'setUTCFullYear',
+  'setUTCMonth',
+  'setUTCDate',
+  'setUTCHours',
+  'setUTCMinutes',
+  'setUTCSeconds',
+  'setUTCMilliseconds',
 ]);
 
 // Names that reach the Function constructor or an object prototype.
@@ -508,11 +538,9 @@ function checkCallee(callee: AST, context: CheckContext): void {
     if (withoutGroups(target[1]) === '$fn' || ALLOWED_METHOD_SET.has(name as string)) {
       return;
     }
-    if (MUTATING_METHODS.has(name as string)) {
-      reject(
-        context,
-        `The method "${name}" changes the array in place, so it writes into the data. Expressions can only read.`,
-      );
+    const writeMessage = describeWriteMethod(name as string);
+    if (writeMessage !== undefined) {
+      reject(context, writeMessage);
       return;
     }
     reject(
@@ -523,6 +551,19 @@ function checkCallee(callee: AST, context: CheckContext): void {
     return;
   }
   rejectCall(context, describeCallee(operator));
+}
+
+function describeWriteMethod(name: string): string | undefined {
+  if (ARRAY_WRITE_METHODS.has(name)) {
+    return `The method "${name}" changes the array in place, so it writes into the data. Expressions can only read.`;
+  }
+  if (DATE_WRITE_METHODS.has(name)) {
+    return `The method "${name}" changes the Date in place, so it writes into the data. Expressions can only read.`;
+  }
+  if (COLLECTION_WRITE_METHODS.has(name)) {
+    return `The method "${name}" changes a Map or a Set in place, so it writes into the data. Expressions can only read. If the value is immutable, call the method in a $fn function.`;
+  }
+  return undefined;
 }
 
 function describeCallee(operator: string): string {
