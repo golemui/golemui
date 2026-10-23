@@ -5,6 +5,7 @@ import { type ExpressionFunctions, type ValidateOn } from './shared';
 import { type Action } from './store/actions';
 import { createInitialState, type Middleware, type MiddlewareAPI, type State } from './store/model';
 import { reducer } from './store/reducer';
+import { type ExpressionPolicy } from './utils/check-expression';
 
 export function createFormStore(
   middlewares: Middleware<State, Action>[] = [],
@@ -12,10 +13,11 @@ export function createFormStore(
   validateOn: ValidateOn,
   localization: I18nTranslator,
   functions: ExpressionFunctions = {},
+  expressionPolicy: ExpressionPolicy = 'warn',
 ): FormStore {
   const subject = new BehaviorSubject<State>(createInitialState(localization.lang));
   const state$ = subject.asObservable().pipe(distinctUntilChanged());
-  const reducerFn = reducer({ validators, validateOn, localization, functions });
+  const reducerFn = reducer({ validators, validateOn, localization, functions, expressionPolicy });
 
   function baseDispatch(action: Action) {
     const current = subject.getValue();

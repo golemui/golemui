@@ -1,7 +1,15 @@
 import { compile, type Evaluator, parse } from 'subscript/justin';
+import { errorCodes } from '../errors';
 import { type $Errors, type ExpressionFunctions, type ReactiveExpression } from '../shared';
 import { type State } from '../store/model';
+import {
+  checkParsedExpression,
+  type ExpressionIssue,
+  type ExpressionPolicy,
+} from './check-expression';
 import { Debug } from './debug';
+import { isDevMode } from './dev-mode';
+import { normalizeArrayIndexes } from './normalize-array-indexes';
 
 /**
  * Extra scope variables available to expressions evaluated inside a repeater `props.template`: the current item object and its position
@@ -19,25 +27,65 @@ export type ExpressionExtraScope = RepeaterItemExpressionScope & {
 };
 
 export const COMPILED_EXPRESSION_CACHE_LIMIT = 2000;
-const compiledExpressionCache = new Map<string, Evaluator>();
+// One cache per policy, because the same expression can fail with `strict` and run with `warn`.
+const compiledExpressionCaches: Record<ExpressionPolicy, Map<string, Evaluator>> = {
+  warn: new Map(),
+  strict: new Map(),
+};
 
 /**
- * Returns the compiled evaluator for an expression, compiling on the first call.
+ * Thrown by {@link compileExpression} when the expression check rejects an expression under the
+ * form's policy. The derive turns it into an errored `formHealth` with this error's `code`.
+ */
+export class ExpressionRejectedError extends Error {
+  readonly code = errorCodes.expressionRejectedError;
+  override name = 'ExpressionRejectedError';
+  readonly issue: ExpressionIssue;
+
+  constructor(issue: ExpressionIssue) {
+    super(`Rejected expression "${issue.expression}": [${issue.code}] ${issue.message}`);
+    this.issue = issue;
+  }
+}
+
+/**
+ * Returns the compiled evaluator for an expression, checking and compiling it on the first call.
  *
  * Row-rewritten `when` expressions are distinct per row, so the cache grows with the row
  * count and is cleared when it reaches the limit. The next call recompiles. A failed parse
- * is never cached, so an invalid expression throws the same error on every call.
+ * is never cached, so an invalid expression throws the same error on every call. A rejected
+ * expression is not cached either.
+ *
+ * @param policy - Which issues of the expression check make the expression fail.
+ * @throws {@link ExpressionRejectedError} when the check rejects the expression under the policy.
  */
-export function compileExpression(expression: string): Evaluator {
-  const cached = compiledExpressionCache.get(expression);
+export function compileExpression(
+  expression: string,
+  policy: ExpressionPolicy = 'warn',
+): Evaluator {
+  const cache = compiledExpressionCaches[policy];
+  const cached = cache.get(expression);
   if (cached !== undefined) {
     return cached;
   }
-  const evaluate = compile(parse(normalizeArrayIndexes(expression)));
-  if (compiledExpressionCache.size >= COMPILED_EXPRESSION_CACHE_LIMIT) {
-    compiledExpressionCache.clear();
+  const ast = parse(normalizeArrayIndexes(expression));
+  const issues = checkParsedExpression(expression, ast);
+  const failure = issues.find((issue) => policy === 'strict' || issue.failsIn === 'every-policy');
+  if (failure !== undefined) {
+    throw new ExpressionRejectedError(failure);
   }
-  compiledExpressionCache.set(expression, evaluate);
+  if (issues.length > 0 && isDevMode()) {
+    // The cache keeps the evaluator, so this prints once per expression until the cache is cleared.
+    const messages = issues.map((issue) => issue.message).join(' ');
+    console.warn(
+      `[GolemUI] Expression "${expression}" fails with expressionPolicy 'strict': ${messages}`,
+    );
+  }
+  const evaluate = compile(ast);
+  if (cache.size >= COMPILED_EXPRESSION_CACHE_LIMIT) {
+    cache.clear();
+  }
+  cache.set(expression, evaluate);
   return evaluate;
 }
 
@@ -48,8 +96,9 @@ export function expressionIsTrue(
   $errors: $Errors,
   $formIsInvalid: boolean,
   extraScope?: ExpressionExtraScope,
+  policy: ExpressionPolicy = 'warn',
 ): boolean {
-  const evaluate = compileExpression(expression);
+  const evaluate = compileExpression(expression, policy);
   const result = evaluate({
     $form,
     $meta,
@@ -60,47 +109,4 @@ export function expressionIsTrue(
     ...extraScope,
   });
   return result === true;
-}
-
-// TODO: add a fast-path conditional to shortcircuit the regexp. Is it worth it?
-// Converts dot notation numeric indexes to bracket notation for JS compatibility.
-// e.g. '$form.teams.1.developers?.0?.firstName' -> '$form.teams[1].developers?.[0]?.firstName'
-// Decimal number literals are left untouched: '0.15' stays '0.15'.
-export function normalizeArrayIndexes(expression: string): string {
-  return expression.replace(
-    /(\?\.|\.)(\d+)/g,
-    (match, dot: string, digits: string, offset: number) => {
-      if (dot === '.' && isDecimalPoint(expression, offset)) {
-        return match;
-      }
-      return dot === '?.' ? `?.[${digits}]` : `[${digits}]`;
-    },
-  );
-}
-
-// Decides whether the dot at `dotIndex` is the decimal point of a number
-// literal ('0.15', '* .5') rather than a path index separator ('teams.1',
-// 'teams.1.0', 'item2.0').
-function isDecimalPoint(expression: string, dotIndex: number): boolean {
-  let i = dotIndex - 1;
-  let hasDigitsBefore = false;
-  while (i >= 0 && expression[i] >= '0' && expression[i] <= '9') {
-    hasDigitsBefore = true;
-    i--;
-  }
-  if (i < 0) {
-    // The expression starts with a number ('0.15') or a bare decimal ('.5').
-    return true;
-  }
-  const charBeforeNumber = expression[i];
-  if (hasDigitsBefore) {
-    // Digits before the dot are a path segment when they follow another dot
-    // ('teams.1.0') or an identifier tail ('item2.0'); otherwise they are the
-    // integer part of a number literal ('35 * 0.02').
-    return !/[\w$.\]]/.test(charBeforeNumber);
-  }
-  // No digits before the dot: member access on an identifier, call result or
-  // index result keeps index behavior ('teams.1'); anything else is a
-  // leading-dot decimal ('* .5').
-  return !/[\w$)\]]/.test(charBeforeNumber);
 }

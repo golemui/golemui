@@ -1,7 +1,8 @@
 import { errorCodes } from '../../errors';
 import { type ExpressionFunctions } from '../../shared';
 import { calculateValidationVariables, type ValidationVariables } from '../../utils/form';
-import { expressionIsTrue } from '../../utils/justin';
+import { type ExpressionPolicy } from '../../utils/check-expression';
+import { ExpressionRejectedError, expressionIsTrue } from '../../utils/justin';
 import { type FormHealth, type State } from '../model';
 
 /**
@@ -10,7 +11,7 @@ import { type FormHealth, type State } from '../model';
  * @param validationVariables - Pass them when already computed for this pass, otherwise they are computed here.
  */
 export const calculateCurrentState =
-  (functions: ExpressionFunctions) =>
+  (functions: ExpressionFunctions, expressionPolicy: ExpressionPolicy = 'warn') =>
   (state: State, validationVariables?: ValidationVariables): State => {
     let stateExpressions = state.formDef.states;
     if (!stateExpressions || Object.keys(stateExpressions).length === 0) {
@@ -33,10 +34,20 @@ export const calculateCurrentState =
           const expression = stateExpressions[stateName];
           let result: boolean;
           try {
-            result = expressionIsTrue(expression, state.data, state.meta, $errors, $formIsInvalid, {
-              $fn: functions,
-            });
-          } catch {
+            result = expressionIsTrue(
+              expression,
+              state.data,
+              state.meta,
+              $errors,
+              $formIsInvalid,
+              { $fn: functions },
+              expressionPolicy,
+            );
+          } catch (err) {
+            // A rejected expression is an error in the form definition, not a state that is false.
+            if (err instanceof ExpressionRejectedError) {
+              throw err;
+            }
             result = false;
           }
           return result === true ? stateName : undefined;
@@ -44,7 +55,10 @@ export const calculateCurrentState =
         .filter((stateName) => stateName !== undefined);
     } catch (err) {
       const error = err as Error;
-      const code = errorCodes.calculateCurrentStateError;
+      const code =
+        error instanceof ExpressionRejectedError
+          ? error.code
+          : errorCodes.calculateCurrentStateError;
       formHealth = {
         status: 'errored',
         message: `[${code}] ${error.message}`,

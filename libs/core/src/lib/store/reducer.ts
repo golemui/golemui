@@ -3,7 +3,9 @@ import { type ValidatorFn } from '../form-validator';
 import { type I18nTranslator } from '../i18n';
 import { type DotPath, type ExpressionFunctions, type ValidateOn } from '../shared';
 import { assertNever } from '../utils/assert-never';
+import { type ExpressionPolicy } from '../utils/check-expression';
 import { calculateValidationVariables, inputPath } from '../utils/form';
+import { ExpressionRejectedError } from '../utils/justin';
 import { isInputWidget } from '../form-widget';
 import { type Action, type ATTEMPT_VALIDATION, type OVERRIDE_WIDGET_PROP } from './actions';
 import { type State } from './model';
@@ -30,15 +32,17 @@ export const reducer = ({
   validateOn,
   localization,
   functions,
+  expressionPolicy = 'warn',
 }: {
   validators: ValidatorFn<any>;
   validateOn: ValidateOn;
   localization: I18nTranslator;
   functions: ExpressionFunctions;
+  expressionPolicy?: ExpressionPolicy;
 }) => {
-  const derive = makeDerive(localization, functions);
+  const derive = makeDerive(localization, functions, expressionPolicy);
   const validate = validateAll(validators, localization);
-  const applyWidgetProps = calculateWidgetProps(localization, functions);
+  const applyWidgetProps = calculateWidgetProps(localization, functions, expressionPolicy);
   // Data, meta and override actions go through this wrapper. SET_LANGUAGE runs the props pass alone.
   const deriveAndValidateAppearingInputs = (state: State): State =>
     validateInputsAppearingAfterSubmit(state, derive, validate, false);
@@ -117,15 +121,21 @@ const deriveOwnedErrorCodes = new Set<number>([
   errorCodes.calculateWidgetFlagsError,
   errorCodes.calculateWidgetPropsError,
   errorCodes.resolveStringInterpolationError,
+  // A rejected expression inside a repeater row goes away with the row.
+  errorCodes.expressionRejectedError,
 ]);
 
 const erroredOutsideDerive = (state: State): boolean =>
   state.formHealth.status === 'errored' && !deriveOwnedErrorCodes.has(state.formHealth.code);
 
-function makeDerive(localization: I18nTranslator, functions: ExpressionFunctions) {
-  const applyCurrentState = calculateCurrentState(functions);
-  const applyWidgetFlags = calculateWidgetFlags(functions);
-  const applyWidgetProps = calculateWidgetProps(localization, functions);
+function makeDerive(
+  localization: I18nTranslator,
+  functions: ExpressionFunctions,
+  expressionPolicy: ExpressionPolicy,
+) {
+  const applyCurrentState = calculateCurrentState(functions, expressionPolicy);
+  const applyWidgetFlags = calculateWidgetFlags(functions, expressionPolicy);
+  const applyWidgetProps = calculateWidgetProps(localization, functions, expressionPolicy);
 
   return function derive(state: State): State {
     if (erroredOutsideDerive(state)) {
@@ -153,7 +163,8 @@ function makeDerive(localization: I18nTranslator, functions: ExpressionFunctions
     } catch (err) {
       // This catch covers every pass, so defaults, expand and validation variables report the
       // flags code too. All four derive codes self-heal identically, so only the label is off.
-      const code = errorCodes.calculateWidgetFlagsError;
+      const code =
+        err instanceof ExpressionRejectedError ? err.code : errorCodes.calculateWidgetFlagsError;
       return discardPass({
         status: 'errored',
         code,

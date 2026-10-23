@@ -93,6 +93,7 @@ function createFormInstance(
     config.localization,
     config.dependencies ?? {},
     config.functions ?? {},
+    config.expressionPolicy ?? 'warn',
   );
   // Dispatching during render is safe here: the store was created one line above and has
   // no subscribers yet, so these stay private to this instance. Running init in render

@@ -38,6 +38,8 @@ export const DX_CHECK_CODE_TOOL = {
     'expressionWarnings, validatorWarnings }`; each diagnostic has a TypeScript `code` (0 for the static lints), `message`, ' +
     '`line`/`column`, and — for recognized GolemUI mistakes — a `hint` with the fix. `expressionWarnings` ' +
     'and `validatorWarnings` are advisory and do not flip `ok` — surface them and apply their `suggestion`. ' +
+    'A `when` expression the form always rejects at runtime (a write into the data, a call other than ' +
+    '`$fn.<name>`, `$log` and the allowed methods) is a blocking diagnostic with code 0 instead. ' +
     'Treat `ok: false` as blocking: apply the fixes and re-check until `ok` is true.',
   inputSchema: {
     type: 'object',

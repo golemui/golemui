@@ -11,6 +11,7 @@ import {
 } from './shared';
 import { type Action } from './store/actions';
 import { type Middleware, type State } from './store/model';
+import { type ExpressionPolicy } from './utils/check-expression';
 import { assignDeterministicUids } from './utils/deterministic-uids';
 
 // --------------------------------
@@ -68,6 +69,15 @@ export interface FormInitConfig<ComponentType = unknown> {
    * `when` expressions (include/exclude/disabled/readonly) and state expressions.
    */
   functions?: ExpressionFunctions;
+  /**
+   * How the form treats an expression that the expression check rejects. Defaults to `'warn'`.
+   *
+   * An expression that can run code or write into the form data or `$meta` always fails, with
+   * an errored `formHealth`. With `'warn'`, any other issue (a method outside the allowed list, an
+   * expression over the size limits) prints one warning in dev mode and the expression runs.
+   * With `'strict'`, those issues fail too.
+   */
+  expressionPolicy?: ExpressionPolicy;
   middlewares?: Middleware<State, Action>[];
   validateOn?: ValidateOn;
   data?: Record<string, any>;

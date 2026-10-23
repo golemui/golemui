@@ -11,4 +11,5 @@ export const errorCodes = {
   initializeMalformedFormShapeError: 23,
   widgetCouldNotBeLoaded: 30,
   resolveStringInterpolationError: 40,
+  expressionRejectedError: 50,
 };
