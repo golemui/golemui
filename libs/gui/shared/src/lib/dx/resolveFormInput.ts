@@ -1,4 +1,4 @@
-import type { ExpressionFunctions, ValidateOn } from '@golemui/core';
+import type { ExpressionFunctions, FormInitConfig, ValidateOn } from '@golemui/core';
 import type { Action, I18nTranslator, Middleware, State } from '@golemui/core';
 import type { CustomValidatorSchemas } from '@golemui/gui-validators';
 import type { GslSelectorsInput, FormInput } from '@golemui/dx';
@@ -39,6 +39,11 @@ export interface GuiFormInitConfig {
    * this config wins on name collisions.
    */
   functions?: ExpressionFunctions;
+  /**
+   * How the form treats an expression that the expression check rejects. Defaults to `'warn'`.
+   * See `FormInitConfig.expressionPolicy` in `@golemui/core`.
+   */
+  expressionPolicy?: FormInitConfig['expressionPolicy'];
   formName?: string;
 }
 

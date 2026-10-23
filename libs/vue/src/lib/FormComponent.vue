@@ -50,6 +50,7 @@ const reinit = () => {
     props.config.localization,
     props.config.dependencies ?? {},
     props.config.functions ?? {},
+    props.config.expressionPolicy ?? 'warn',
   );
   storeVersion.value += 1;
 };

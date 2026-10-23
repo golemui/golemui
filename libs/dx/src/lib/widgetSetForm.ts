@@ -58,6 +58,11 @@ export interface WidgetSetFormInitConfig<TDependencies extends Dependencies = De
    * this config wins on name collisions.
    */
   functions?: ExpressionFunctions;
+  /**
+   * How the form treats an expression that the expression check rejects. Defaults to `'warn'`.
+   * See `FormInitConfig.expressionPolicy` in `@golemui/core`.
+   */
+  expressionPolicy?: FormInitConfig['expressionPolicy'];
   formName?: string;
 }
 
@@ -150,6 +155,7 @@ export function buildWidgetSetForm<TConfig extends WidgetSetFormInitConfig<any>>
     },
     functions: { ...(resolved.functions ?? {}), ...(config.functions ?? {}) },
     validateOn: config.validateOn ?? resolved.validateOn ?? 'eager',
+    expressionPolicy: config.expressionPolicy,
     itemRenderers: {
       ...(resolved.itemRenderers ?? {}),
       ...(config.itemRenderers ?? {}),

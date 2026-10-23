@@ -86,6 +86,7 @@ export class FormCoreComponent implements OnInit, OnDestroy {
         c.localization,
         c.dependencies ?? {},
         c.functions ?? {},
+        c.expressionPolicy ?? 'warn',
       );
       this.storeGeneration.update((generation) => generation + 1);
       this.context.store.dispatch({
