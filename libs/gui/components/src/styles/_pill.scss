@@ -51,7 +51,8 @@
   align-self: stretch;
   background: transparent;
   border: 0;
-  color: white;
+  // The pill's text color, which the theme sets for contrast: dark on the dark mode primary.
+  color: inherit;
   padding: 0;
   width: var(--gui-pill-action-hit, 24px);
   position: relative; // hit box wins over the unpositioned pill text

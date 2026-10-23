@@ -218,9 +218,15 @@ export abstract class GuiFormControl extends GuiElement {
     this.requestUpdate();
   }
 
-  formDisabledCallback(disabled: boolean): void {
+  /**
+   * Reads the state from `:disabled` rather than from the argument: WebKit (26) passes the opposite
+   * state when the attribute is added and removed in one step, as `disabled="false"` is, which
+   * would leave the element disabled. `:disabled` also matches the element's own attribute, which
+   * changes nothing: `disabled` is true then anyway, and removing it calls this again.
+   */
+  formDisabledCallback(): void {
     const previous = this.disabled;
-    this.formDisabled = disabled;
+    this.formDisabled = this.matches(':disabled');
     this.requestUpdate('disabled', previous);
   }
 
