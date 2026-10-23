@@ -22,6 +22,7 @@ import multidropdownSchemaJson from './lib/components/multidropdown.schema.json'
 import multifileuploadSchemaJson from './lib/components/multifileupload.schema.json';
 import multilistSchemaJson from './lib/components/multilist.schema.json';
 import numberSchemaJson from './lib/components/number.schema.json';
+import otpSchemaJson from './lib/components/otp.schema.json';
 import passwordSchemaJson from './lib/components/password.schema.json';
 import radiogroupSchemaJson from './lib/components/radiogroup.schema.json';
 import rangecalendarSchemaJson from './lib/components/rangecalendar.schema.json';
@@ -74,6 +75,7 @@ export const multidropdownSchema: Record<string, unknown> = multidropdownSchemaJ
 export const multifileuploadSchema: Record<string, unknown> = multifileuploadSchemaJson;
 export const multilistSchema: Record<string, unknown> = multilistSchemaJson;
 export const numberSchema: Record<string, unknown> = numberSchemaJson;
+export const otpSchema: Record<string, unknown> = otpSchemaJson;
 export const passwordSchema: Record<string, unknown> = passwordSchemaJson;
 export const radiogroupSchema: Record<string, unknown> = radiogroupSchemaJson;
 export const rangecalendarSchema: Record<string, unknown> = rangecalendarSchemaJson;
@@ -122,6 +124,7 @@ export const COMPONENT_SCHEMAS_BY_TYPE = {
   multiFileUpload: multifileuploadSchema,
   multiList: multilistSchema,
   number: numberSchema,
+  otp: otpSchema,
   password: passwordSchema,
   radiogroup: radiogroupSchema,
   rangeCalendar: rangecalendarSchema,

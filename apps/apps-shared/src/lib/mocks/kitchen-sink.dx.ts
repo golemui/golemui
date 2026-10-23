@@ -47,6 +47,7 @@ import { buildRendererTab } from './tabs/renderer.dx';
 import { repeaterTab } from './tabs/repeater.dx';
 import { selectTab } from './tabs/select.dx';
 import { sliderTab } from './tabs/slider.dx';
+import { otpTab } from './tabs/otp.dx';
 import { tagsTab } from './tabs/tags.dx';
 import { textareaTab } from './tabs/textarea.dx';
 import { textinputTab } from './tabs/textinput.dx';
@@ -284,6 +285,7 @@ export const buildKitchenSinkDx = (options: KitchenSinkDxOptions = {}): KitchenS
           uid: 'tabRangeSlider',
           children: [rangeSliderTab],
         },
+        { label: 'OTP Component', uid: 'tabOtp', children: [otpTab] },
         { label: 'Dropdown Component', uid: 'tabDropdown', children: [dropdownTab] },
         { label: 'File Upload Component', uid: 'tabFileUpload', children: [fileUploadTab] },
         { label: 'List Component', uid: 'tabList', children: [listTab] },

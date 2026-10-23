@@ -81,6 +81,13 @@ const config: FormInitConfig<Type<WithWidget>> = {
           label: 'Price',
           props: { maximum: 500, step: 10 },
         },
+        {
+          kind: 'input',
+          type: 'otp',
+          path: 'code',
+          label: 'Sign-in code',
+          props: { groups: [3, 3] },
+        },
         { kind: 'action', type: 'button', label: 'Create account', action: 'submit' },
         {
           uid: 'moreActions',
@@ -95,6 +102,7 @@ const config: FormInitConfig<Type<WithWidget>> = {
   widgetLoaders,
   data: {
     firstName: 'Ada',
+    code: '123',
     lastName: 'Lovelace',
     seats: 3,
     plan: 'pro',
@@ -164,6 +172,14 @@ describe('server rendering the gui widget set in plain node', () => {
       /class="gui-slider__value"[^>]*>(<!--[^>]*-->)*7(<!--[^>]*-->)*<\/output>/,
     );
     expect(markup).toMatch(/class="gui-slider__value"[^>]*>(<!--[^>]*-->)*100 – 300/);
+  });
+
+  it('renders the otp widget with its digits in its boxes and its input', () => {
+    expect(markup).toMatch(/<gui-otp-input[^>]*class="[^"]*gui-otp[^"]*gui-field/);
+    expect(markup).toMatch(/<input[^>]*id="code-otp"[^>]*autocomplete="one-time-code"/);
+    expect(markup).toMatch(/<input[^>]*id="code-otp"[^>]*value="123"/);
+    expect(markup.match(/gui-otp__box--filled/g)).toHaveLength(3);
+    expect(markup).toContain('class="gui-otp__separator"');
   });
 
   it('renders the currency widget, which reads its own children in willUpdate()', () => {

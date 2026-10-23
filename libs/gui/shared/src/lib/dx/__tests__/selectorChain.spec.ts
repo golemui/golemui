@@ -66,6 +66,8 @@ const SELECTOR_TYPE_BY_METHOD: Record<string, string> = {
   dateTimePickerByUid: 'DATE_TIME_PICKER',
   rangeCalendars: 'RANGE_CALENDAR',
   rangeCalendarByUid: 'RANGE_CALENDAR',
+  otps: 'OTP',
+  otpByUid: 'OTP',
   sliders: 'SLIDER',
   sliderByUid: 'SLIDER',
   rangeSliders: 'RANGE_SLIDER',
@@ -140,7 +142,7 @@ describe('gui.selectors method surface', () => {
     const byUidNames = Object.keys(SELECTOR_TYPE_BY_METHOD).filter((name) =>
       name.endsWith('ByUid'),
     );
-    expect(byUidNames.length).toBe(44 + 1); // 44 widget pairs plus inputByUid
+    expect(byUidNames.length).toBe(45 + 1); // 45 widget pairs plus inputByUid
     for (const methodName of byUidNames) {
       const leaf = buildLeaf(gui.selectors, methodName);
       expect(leaf.matcher({ uid: 'probe-uid' }), methodName).toBe(true);

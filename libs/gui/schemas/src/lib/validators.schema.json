@@ -25,6 +25,10 @@
           "type": "number",
           "description": "Maximum number of characters the string may contain"
         },
+        "exactLength": {
+          "type": "number",
+          "description": "Exact number of characters the string must contain, such as a one-time code's digits"
+        },
         "pattern": {
           "type": "string",
           "description": "A regular expression pattern the value must match"
@@ -71,6 +75,10 @@
             "maxLength": {
               "$ref": "#/$defs/localizable",
               "description": "Shown when the value is longer than `maxLength`"
+            },
+            "exactLength": {
+              "$ref": "#/$defs/localizable",
+              "description": "Shown when the value is not exactly `exactLength` characters long"
             },
             "pattern": {
               "$ref": "#/$defs/localizable",

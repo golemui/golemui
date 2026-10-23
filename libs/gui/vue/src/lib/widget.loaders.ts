@@ -32,6 +32,7 @@ export const widgetLoaders: WidgetLoaders<Component<WithWidget>, GolemWidget> = 
   number: async () => (await import('./components/NumberInput.vue')).default,
   select: async () => (await import('./components/Select.vue')).default,
   radiogroup: async () => (await import('./components/RadioGroup.vue')).default,
+  otp: async () => (await import('./components/Otp.vue')).default,
   slider: async () => (await import('./components/Slider.vue')).default,
   rangeSlider: async () => (await import('./components/RangeSlider.vue')).default,
   rangeCalendar: async () => (await import('./components/RangeCalendar.vue')).default,
