@@ -80,6 +80,13 @@ describe('a strict style-src-attr policy', () => {
     expectNoViolations();
   });
 
+  it('allows a gui-otp to render, take a code and show its caret', () => {
+    cy.mount(html`<gui-otp label="Code" groups="3,3"></gui-otp>`);
+    cy.get('gui-otp input').type('123');
+    cy.get('gui-otp .gui-otp__box--filled').should('have.length', 3);
+    expectNoViolations();
+  });
+
   for (const fallback of [false, true]) {
     it(`allows a gui-popover to open, follow its anchor and close${fallback ? ', measuring' : ''}`, () => {
       GUIAnchorController.forceFallback = fallback;

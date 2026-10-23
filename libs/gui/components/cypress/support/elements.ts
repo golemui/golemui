@@ -142,6 +142,7 @@ export const elements: ElementCase[] = [
   // Its name is the label its host renders, see `has-label`.
   { tag: 'gui-multi-select-trigger', props: {}, rules: { label: { enabled: false } } },
   { tag: 'gui-number', props: { label: 'Age' }, form: { property: 'value', sample: 42 } },
+  { tag: 'gui-otp', props: { label: 'Code' }, form: { property: 'value', sample: '123456' } },
   {
     tag: 'gui-password',
     props: { label: 'Password' },

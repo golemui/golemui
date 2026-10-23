@@ -274,5 +274,68 @@
 
   </div></div>
     </gui-slider>
+    <gui-otp      uid="pin" name="pin" label="Sign-in code" value="123" groups="3,3" class="gui-field" data-golemui-ssr defer-hydration>
+      <label
+      class="gui-label"
+      for="pin"
+      data-cy="pin_label"
+      id="pin_label"
+    >
+      <span class="gui-label__text"
+        >Sign-in code</span
+      >
+
+
+    </label>
+
+      <div class="gui-widget">
+        <div class="gui-otp__control" dir="ltr">
+          <div class="gui-otp__boxes" aria-hidden="true">
+
+
+          <span class="gui-otp__group">
+            <span class=" gui-otp__box gui-otp__box--filled ">1</span><span class=" gui-otp__box gui-otp__box--filled ">2</span><span class=" gui-otp__box gui-otp__box--filled ">3</span>
+          </span>
+
+          <span class="gui-otp__separator"></span>
+          <span class="gui-otp__group">
+            <span class=" gui-otp__box gui-otp__box--active "></span><span class=" gui-otp__box "></span><span class=" gui-otp__box "></span>
+          </span>
+
+    </div>
+          <input
+            type="text"
+            id="pin"
+            data-cy="pin_otp"
+            class="gui-otp__input"
+            inputmode="numeric"
+            autocomplete="one-time-code"
+            autocapitalize="off"
+            autocorrect="off"
+            spellcheck="false"
+            value="123"
+
+
+
+
+
+
+
+
+
+          />
+        </div>
+      </div>
+
+      <div
+    class=" gui-validator gui-validator--empty "
+    id="pin_errors"
+    role="alert"
+
+
+  >
+
+  </div>
+    </gui-otp>
     <gui-toaster  placement="top-end" defer-hydration></gui-toaster>
   </form>

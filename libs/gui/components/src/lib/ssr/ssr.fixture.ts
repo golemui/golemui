@@ -3,6 +3,7 @@ import '../components/alert';
 import '../components/checkbox';
 import '../components/dialog';
 import '../components/menu';
+import '../components/otp';
 import '../components/popover';
 import '../components/select';
 import '../components/slider';
@@ -71,5 +72,6 @@ export const serverTemplate = () =>
     </gui-dialog>
     <gui-checkbox uid="terms" name="terms" label="I accept the terms" value="true"></gui-checkbox>
     <gui-slider uid="seats" name="seats" label="Seats" value="12" maximum="50"></gui-slider>
+    <gui-otp uid="pin" name="pin" label="Sign-in code" value="123" groups="3,3"></gui-otp>
     <gui-toaster placement="top-end"></gui-toaster>
   </form>`;
