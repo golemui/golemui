@@ -34,6 +34,7 @@ export {
   GuiRangeTimeInput as GuiRangeTimeReact,
   GuiRangeTimePicker as GuiRangeTimePickerReact,
   GuiSelect as GuiSelectReact,
+  GuiOtp as GuiOtpReact,
   GuiSlider as GuiSliderReact,
   GuiTabs as GuiTabsReact,
   GuiTags as GuiTagsReact,

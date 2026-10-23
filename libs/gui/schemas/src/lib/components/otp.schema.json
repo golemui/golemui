@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://golemui.com/schemas/gui/components/otp.schema.json",
+  "title": "OTP Widget",
+  "type": "object",
+  "$defs": {
+    "labelDef": {
+      "$ref": "../core/common.schema.json#/$defs/localizable"
+    },
+    "disabledDef": {
+      "$ref": "../core/common.schema.json#/$defs/boolOrWhen"
+    },
+    "readonlyDef": {
+      "$ref": "../core/common.schema.json#/$defs/boolOrWhen"
+    },
+    "hintProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable"
+    },
+    "groupsProp": {
+      "type": "array",
+      "items": {
+        "type": "integer",
+        "minimum": 1
+      },
+      "minItems": 1,
+      "description": "Splits the boxes into groups with a gap between them, such as `[3, 3]` for `123 456`. The sizes must add up to the code's length, the validator's `exactLength` (6 without one). It changes how the code looks, never the value."
+    }
+  },
+  "allOf": [
+    {
+      "$ref": "../core/common.schema.json#/$defs/baseWidget"
+    }
+  ],
+  "properties": {
+    "kind": {
+      "const": "input"
+    },
+    "type": {
+      "const": "otp"
+    },
+    "path": {
+      "$ref": "../core/common.schema.json#/$defs/dotPath"
+    },
+    "label": {
+      "$ref": "#/$defs/labelDef"
+    },
+    "disabled": {
+      "$ref": "#/$defs/disabledDef"
+    },
+    "readonly": {
+      "$ref": "#/$defs/readonlyDef"
+    },
+    "on": {
+      "$ref": "../core/common.schema.json#/$defs/on"
+    },
+    "validator": {
+      "$ref": "../validators.schema.json#/$defs/validator"
+    },
+    "defaultValue": {
+      "type": "string",
+      "pattern": "^\\d*$"
+    },
+    "props": {
+      "type": "object",
+      "properties": {
+        "hint": {
+          "$ref": "#/$defs/hintProp"
+        },
+        "groups": {
+          "$ref": "#/$defs/groupsProp"
+        }
+      },
+      "patternProperties": {
+        "^hint\\.[^.]+$": {
+          "$ref": "#/$defs/hintProp"
+        },
+        "^groups\\.[^.]+$": {
+          "$ref": "#/$defs/groupsProp"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "patternProperties": {
+    "^label\\.[^.]+$": {
+      "$ref": "#/$defs/labelDef"
+    },
+    "^disabled\\.[^.]+$": {
+      "$ref": "#/$defs/disabledDef"
+    },
+    "^readonly\\.[^.]+$": {
+      "$ref": "#/$defs/readonlyDef"
+    },
+    "^validator\\.[^.]+$": {
+      "$ref": "../validators.schema.json#/$defs/validator"
+    }
+  },
+  "required": ["kind", "type", "path"],
+  "unevaluatedProperties": false
+}

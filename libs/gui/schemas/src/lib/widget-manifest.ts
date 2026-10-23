@@ -22,6 +22,7 @@ export const guiWidgetManifest: readonly WidgetManifestEntry[] = [
   { type: 'multiFileUpload', schemaFile: 'multifileupload.schema.json', kind: 'input' },
   { type: 'multiList', schemaFile: 'multilist.schema.json', kind: 'input' },
   { type: 'number', schemaFile: 'number.schema.json', kind: 'input' },
+  { type: 'otp', schemaFile: 'otp.schema.json', kind: 'input' },
   { type: 'password', schemaFile: 'password.schema.json', kind: 'input' },
   { type: 'radiogroup', schemaFile: 'radiogroup.schema.json', kind: 'input' },
   { type: 'rangeCalendar', schemaFile: 'rangecalendar.schema.json', kind: 'input' },

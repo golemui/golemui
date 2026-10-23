@@ -371,6 +371,19 @@ describe('Golem validators', () => {
       });
     });
 
+    describe('exactLength', () => {
+      const schema = validate({ type: 'string', exactLength: 6 } satisfies StringValidator);
+
+      it('rejects shorter and longer strings', () => {
+        expect(isValid(schema, '12345')).toBe(false);
+        expect(isValid(schema, '1234567')).toBe(false);
+      });
+
+      it('accepts a string of that length', () => {
+        expect(isValid(schema, '123456')).toBe(true);
+      });
+    });
+
     describe('pattern', () => {
       const schema = validate({ type: 'string', pattern: '^\\d+$' } satisfies StringValidator);
 
@@ -695,6 +708,16 @@ describe('Golem validators', () => {
         } satisfies StringValidator);
         expect(getErrors(schema, 'ab')).toEqual(['Must be at least 4 characters']);
         expect(getErrors(schema, 'abcd')).toEqual([]);
+      });
+
+      it('uses a plain string message for exactLength', () => {
+        const schema = validate({
+          type: 'string',
+          exactLength: 6,
+          messages: { exactLength: 'Enter all 6 digits' },
+        } satisfies StringValidator);
+        expect(getErrors(schema, '123')).toEqual(['Enter all 6 digits']);
+        expect(getErrors(schema, '123456')).toEqual([]);
       });
 
       it('uses a plain string message for maxLength', () => {

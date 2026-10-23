@@ -24,6 +24,7 @@ Every widget’s exhaustive reference page (props, per-prop examples, CSS variab
 - `gui.inputs.multiFileUpload` — https://golemui.com/dx/widgets-reference/input-fields/multi-file-upload.md (json: https://golemui.com/json/widgets-reference/input-fields/multi-file-upload.md)
 - `gui.inputs.multiList` — https://golemui.com/dx/widgets-reference/input-fields/multi-list.md (json: https://golemui.com/json/widgets-reference/input-fields/multi-list.md)
 - `gui.inputs.numberInput` — https://golemui.com/dx/widgets-reference/input-fields/number.md (json: https://golemui.com/json/widgets-reference/input-fields/number.md)
+- `gui.inputs.otp` — https://golemui.com/dx/widgets-reference/input-fields/otp.md (json: https://golemui.com/json/widgets-reference/input-fields/otp.md)
 - `gui.inputs.password` — https://golemui.com/dx/widgets-reference/input-fields/password.md (json: https://golemui.com/json/widgets-reference/input-fields/password.md)
 - `gui.inputs.radiogroup` — https://golemui.com/dx/widgets-reference/input-fields/radiogroup.md (json: https://golemui.com/json/widgets-reference/input-fields/radiogroup.md)
 - `gui.inputs.rangeCalendar` — https://golemui.com/dx/widgets-reference/input-fields/range-calendar.md (json: https://golemui.com/json/widgets-reference/input-fields/range-calendar.md)

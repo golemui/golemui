@@ -34,6 +34,7 @@ import type {
   MenuProps,
   NumberinputProps,
   OptionValue,
+  OtpProps,
   PasswordProps,
   RadiogroupProps,
   RangeCalendarProps,
@@ -226,6 +227,7 @@ type GolemWidget<
   | GuiMultiFileUpload<FormType, States, V>
   | GuiMultiList<FormType, States, V>
   | GuiNumberinput<FormType, States, V>
+  | GuiOtp<FormType, States, V>
   | GuiPassword<FormType, States, V>
   | GuiRadiogroup<FormType, States, V>
   | GuiRangeCalendar<FormType, States, V>
@@ -580,6 +582,14 @@ type GuiTextInput<FormType extends Record<string, any>, States extends string, V
   TextinputProps,
   V
 > & { type: 'textinput' };
+
+type GuiOtp<FormType extends Record<string, any>, States extends string, V> = InputWidget<
+  string,
+  States,
+  FormType,
+  OtpProps,
+  V
+> & { type: 'otp' };
 
 type GuiPassword<FormType extends Record<string, any>, States extends string, V> = InputWidget<
   string,

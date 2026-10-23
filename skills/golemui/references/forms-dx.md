@@ -50,6 +50,7 @@ Every `gui.*` factory and its calling convention. Look up the detail below for t
 - `gui.inputs.multiFileUpload(path, { label?, accept?, maxSize?, buttonLabel?, validator? })`
 - `gui.inputs.multiList(path, { label, items, height?, itemHeight?, validator? })`
 - `gui.inputs.numberInput(path, { label, defaultValue?, validator? })`
+- `gui.inputs.otp(path, { label, groups?, defaultValue?, validator? })`
 - `gui.inputs.password(path, { label, validator? })`
 - `gui.inputs.radiogroup(path, { label, options, defaultValue?, validator?, appearance?: 'segmented' })`
 - `gui.inputs.rangeCalendar(path, { label? })`
@@ -480,6 +481,32 @@ gui.inputs.numberInput('age', {
 
 Reference: https://golemui.com/dx/widgets-reference/input-fields/number.md
 
+## gui.inputs.otp
+
+Call: `gui.inputs.otp(path, { label, groups?, defaultValue?, validator? })`
+
+```ts
+gui.inputs.otp('verificationCode', {
+  label: 'Verification code',
+  groups: [3, 3],
+  validator: {
+    required: true,
+    exactLength: 6,
+    messages: {
+      required: 'Enter the code',
+      invalid: 'Enter the code',
+      exactLength: 'Enter all 6 digits',
+    },
+  },
+});
+```
+
+- A one-time code, one box per digit. The value is a string of digits (leading zeros kept); anything else typed or pasted is dropped, so `123-456` becomes `123456`.
+- The number of digits is the validator's `exactLength` (6 without one); there is no `length` prop. `groups` splits the boxes visually (`[3, 3]`, must add up to that length).
+- A string validator; its `exactLength` also makes a partial code invalid (word it with `messages.exactLength`); word an empty code with `messages.required` and `messages.invalid` (an untouched code is undefined).
+
+Reference: https://golemui.com/dx/widgets-reference/input-fields/otp.md
+
 ## gui.inputs.password
 
 Call: `gui.inputs.password(path, { label, validator? })`
@@ -752,7 +779,7 @@ gui.inputs.textInput('fullName', {
 });
 ```
 
-- Text fields accept a loose validator: `{ required, minLength, maxLength, pattern, format }` (no `type` needed).
+- Text fields accept a loose validator: `{ required, minLength, maxLength, exactLength, pattern, format }` (no `type` needed).
 - Email is a text input with `validator: { required: true, format: 'email' }` — use `format`, not a regex. The full `format` enum: `email`, `url`, `uuid`, `hostname`, `ipv4`, `ipv6`, `date`, `time`, `date-time`, `duration`.
 
 Reference: https://golemui.com/dx/widgets-reference/input-fields/textinput.md
@@ -874,7 +901,7 @@ gui.inputs.textInput('email', {
 });
 ```
 
-- Every validator accepts a `messages` map from rule name to custom error text (string or i18n `{ key, params?, default? }`). Keys per type — string: `invalid`, `required`, `minLength`, `maxLength`, `pattern`, `format`, `enum`, `const`; number: `invalid`, `minimum`, `maximum`, `exclusiveMinimum`, `exclusiveMaximum`, `multipleOf`, `enum`, `const`; boolean: `invalid`, `const`; array: `invalid`, `required`, `minItems`, `maxItems`; range: `invalid`, `required`. The special key `invalid` customizes the base type check. Set custom messages for every rule you use — the library defaults (e.g. "Invalid input: expected string, received undefined") are developer-facing, not user-facing.
+- Every validator accepts a `messages` map from rule name to custom error text (string or i18n `{ key, params?, default? }`). Keys per type — string: `invalid`, `required`, `minLength`, `maxLength`, `exactLength`, `pattern`, `format`, `enum`, `const`; number: `invalid`, `minimum`, `maximum`, `exclusiveMinimum`, `exclusiveMaximum`, `multipleOf`, `enum`, `const`; boolean: `invalid`, `const`; array: `invalid`, `required`, `minItems`, `maxItems`; range: `invalid`, `required`. The special key `invalid` customizes the base type check. Set custom messages for every rule you use — the library defaults (e.g. "Invalid input: expected string, received undefined") are developer-facing, not user-facing.
 - ALWAYS pair `messages.required` with `messages.invalid` (same text): an `undefined`/`null` value — the pristine or cleared field, the most common empty state — fails the base TYPE check and shows the `invalid` message; the `required` rule only fires on present-but-empty values (`""`, `[]`). That is also why number/boolean validators have NO `required` message key — for them `messages.invalid` is the only way to word the missing-value error. `null` is never valid, even on non-required fields.
 - MANDATORY CHECKBOX: boolean `required: true` does NOT force it checked (`false` is a valid boolean) and `const: true` alone lets the pristine `undefined` pass. Use both plus paired messages — see the `gui.inputs.checkbox` entry for the full recipe.
 - WHEN VALIDATION RUNS: only on user interaction, per `formConfig.validateOn` — `"eager"` (default: first change or blur anywhere validates the whole form), `"change"`, `"blur"`, `"submit"`, or an array. NOTHING validates at mount, which is why `$formIsInvalid` starts `false` — see the conditional-and-state-props pattern for gating the submit button correctly. Submit clicks always re-validate everything and the runtime blocks the submit event while invalid.

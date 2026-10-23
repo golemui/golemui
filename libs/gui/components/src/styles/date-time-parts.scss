@@ -54,8 +54,11 @@
     display: none;
   }
 
+  // The field's size, not the browser's default for controls: 11px in Safari, 13.33px in Chrome.
+  // A font stack, not the bare `monospace`: that is Courier in Safari and Menlo in Chrome.
   input[type='text'] {
-    font-family: monospace;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: inherit;
     border: 0;
     padding: 0;
     background: transparent;
@@ -106,7 +109,7 @@
 
   // The AM/PM part is a toggle button styled like the text segments
   button.gui-parts__part {
-    font-family: monospace;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     font-size: inherit;
     color: var(--gui-text-default);
     border: 0;

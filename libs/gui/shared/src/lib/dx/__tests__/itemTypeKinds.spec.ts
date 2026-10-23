@@ -36,6 +36,7 @@ const expectedKindByItemType: Record<string, ShortcutItemKind> = {
   MULTI_LIST: 'input',
   PASSWORD: 'input',
   RADIOGROUP: 'input',
+  OTP: 'input',
   RANGE_CALENDAR: 'input',
   RANGE_DATE_INPUT: 'input',
   RANGE_DATE_PICKER: 'input',

@@ -1,0 +1,101 @@
+{
+  "$schema": "../../../../../../libs/gui/schemas/src/lib/layout-widget.schema.json",
+  "uid": "tabOtp",
+  "kind": "layout",
+  "type": "grid",
+  "children": [
+    {
+      "kind": "input",
+      "type": "otp",
+      "path": "otp.verification",
+      "label": "Verification code",
+      "props": {
+        "hint": "Six digits. Paste 123-456 and the dash is dropped. Leave it half typed for an error"
+      },
+      "validator": {
+        "type": "string",
+        "required": true,
+        "exactLength": 6,
+        "messages": {
+          "required": "Enter the code",
+          "invalid": "Enter the code",
+          "exactLength": "Enter all 6 digits"
+        }
+      }
+    },
+    {
+      "kind": "input",
+      "type": "otp",
+      "path": "otp.grouped",
+      "label": "Grouped",
+      "props": {
+        "hint": "Two groups of three",
+        "groups": [3, 3]
+      },
+      "defaultValue": "123"
+    },
+    {
+      "kind": "input",
+      "type": "otp",
+      "path": "otp.short",
+      "label": "Four digits",
+      "props": {
+        "hint": "Four digits: the validator's exactLength sets the length"
+      },
+      "validator": {
+        "type": "string",
+        "required": true,
+        "exactLength": 4,
+        "messages": {
+          "required": "Enter the code",
+          "invalid": "Enter the code",
+          "exactLength": "The code has four digits"
+        }
+      }
+    },
+    {
+      "kind": "input",
+      "type": "otp",
+      "path": "otp.disabled",
+      "label": "Disabled",
+      "disabled": true,
+      "defaultValue": "482913"
+    },
+    {
+      "kind": "input",
+      "type": "otp",
+      "path": "otp.readonly",
+      "label": "Read-only",
+      "readonly": true,
+      "defaultValue": "482913"
+    },
+    {
+      "kind": "layout",
+      "type": "grid",
+      "props": {
+        "direction": "row"
+      },
+      "children": [
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "otp.email",
+          "label": "Email",
+          "props": {
+            "hint": "Where we sent the code"
+          }
+        },
+        {
+          "kind": "input",
+          "type": "otp",
+          "path": "otp.emailCode",
+          "label": "Email code",
+          "validator": {
+            "type": "string",
+            "exactLength": 4
+          }
+        }
+      ]
+    }
+  ]
+}

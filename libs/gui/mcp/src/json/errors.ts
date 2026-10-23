@@ -102,6 +102,7 @@ function suggestForAdditional(propertyName: string, instancePath: string): strin
       'required',
       'minLength',
       'maxLength',
+      'exactLength',
       'minimum',
       'maximum',
       'pattern',

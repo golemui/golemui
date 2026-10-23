@@ -107,6 +107,23 @@ describe('control boundaries (WCAG 1.4.11)', () => {
         });
       });
 
+      // A pill's text is 12px, so it needs 4.5:1 against the pill's fill (WCAG 1.4.3), and its
+      // remove icon, its only control, takes the same color.
+      it('gui-tags: the pill text reaches 4.5:1 against its fill, and the icon matches it', () => {
+        cy.mount(html`<gui-tags label="Tags" value='["lit"]'></gui-tags>`);
+
+        cy.get('gui-tags .gui-pills__pill-remove').should(([icon]) => {
+          const pill = icon.closest('.gui-pills__pill') as HTMLElement;
+          const page = toRgb(getComputedStyle(document.body).backgroundColor, [255, 255, 255]);
+          const fill = toRgb(getComputedStyle(pill).backgroundColor, page);
+          const text = toRgb(getComputedStyle(pill).color, fill);
+          expect(contrast(text, fill), 'text against the pill').to.be.gte(4.5);
+          expect(toRgb(getComputedStyle(icon).color, fill), 'icon in the text color').to.deep.equal(
+            text,
+          );
+        });
+      });
+
       // The rail shows where a slider is, and the fill where its value is: the thumb's ring has the
       // fill's colour.
       it('gui-slider: the rail and the fill reach 3:1 against the page', () => {
