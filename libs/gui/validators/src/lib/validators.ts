@@ -17,6 +17,7 @@ import {
   int,
   ipv4,
   ipv6,
+  length,
   maximum,
   maxLength,
   minimum,
@@ -66,6 +67,7 @@ export interface StringValidator extends BaseValidator {
   type: 'string';
   minLength?: number;
   maxLength?: number;
+  exactLength?: number; // a fixed length, such as a one-time code's
   pattern?: string; // regex pattern
   format?: StringFormat;
 }
@@ -236,6 +238,16 @@ function fromStringValidator(v: StringValidator, localization?: I18nTranslator) 
         msg
           ? refine((val) => (val as string).length <= threshold, { error: msg })
           : maxLength(threshold),
+      );
+    }
+
+    if (typeof v.exactLength === 'number') {
+      const msg = resolveMessage(v.messages?.['exactLength'], localization);
+      const expected = v.exactLength;
+      schema = schema.check(
+        msg
+          ? refine((val) => (val as string).length === expected, { error: msg })
+          : length(expected),
       );
     }
 
