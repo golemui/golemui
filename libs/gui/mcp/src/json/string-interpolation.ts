@@ -1,8 +1,16 @@
+import { isI18nParamExpression } from '@golemui/core/internals';
+import { runtimeExpressionFindings } from '../shared/lint/reactive-expressions';
+
 export type InterpolationFinding = {
   path: string;
   slot: string;
   message: string;
   suggestion?: string;
+  /**
+   * True when the form rejects the expression with every `expressionPolicy` and reports an
+   * errored `formHealth`. The tools report these findings as blocking errors.
+   */
+  failsAtRuntime?: boolean;
 };
 
 /**
@@ -13,6 +21,7 @@ export type InterpolationFinding = {
  *   - unbalanced `{{` / `}}` delimiters
  *   - assignment operator inside a slot (likely meant `===`)
  *   - nested `{{` inside a slot (copy-paste error)
+ *   - every issue of the runtime expression check, in slots and in i18n param expressions
  */
 export function lintStringInterpolations(formDefinition: unknown): InterpolationFinding[] {
   const findings: InterpolationFinding[] = [];
@@ -86,6 +95,12 @@ function checkParamExpression(value: string, path: string, out: InterpolationFin
       message: 'i18n param expression contains a single `=` (assignment).',
       suggestion: 'Param expressions are read-only. Did you mean `===` for equality?',
     });
+  }
+  // The runtime evaluates only the param values that start with a scope value.
+  if (isI18nParamExpression(value)) {
+    for (const finding of runtimeExpressionFindings(value)) {
+      out.push({ path, slot: value, ...finding });
+    }
   }
 }
 
@@ -181,5 +196,9 @@ function checkSlot(
       message: 'Interpolation slot contains a single `=` (assignment).',
       suggestion: 'Template slots are read-only. Did you mean `===` for equality?',
     });
+  }
+
+  for (const finding of runtimeExpressionFindings(trimmed)) {
+    out.push({ path, slot, ...finding });
   }
 }
