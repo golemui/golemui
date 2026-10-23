@@ -1,3 +1,13 @@
+## 2.1.0-rc.1 (2026-10-23)
+
+### 🩹 Fixes
+
+- **core:** reject code execution paths in reactive expressions ([#466](https://github.com/golemui/golemui/pull/466))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+
 ## 2.1.0-rc.0 (2026-10-15)
 
 This was a version bump only for dx to align it with other projects, there were no code changes.

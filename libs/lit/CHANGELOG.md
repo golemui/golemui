@@ -1,3 +1,18 @@
+## 2.1.0-rc.1 (2026-10-23)
+
+### 🚀 Features
+
+- add the menu action widget ([#460](https://github.com/golemui/golemui/pull/460))
+
+### 🩹 Fixes
+
+- **core:** reject code execution paths in reactive expressions ([#466](https://github.com/golemui/golemui/pull/466))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
 ## 2.1.0-rc.0 (2026-10-15)
 
 This was a version bump only for lit to align it with other projects, there were no code changes.

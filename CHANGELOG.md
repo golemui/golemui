@@ -1,3 +1,40 @@
+## 2.1.0-rc.1 (2026-10-23)
+
+### 🚀 Features
+
+- add the menu action widget ([#460](https://github.com/golemui/golemui/pull/460))
+- add slider and range slider widgets ([#464](https://github.com/golemui/golemui/pull/464))
+- add OTP widget and exactLength validator ([#467](https://github.com/golemui/golemui/pull/467))
+- **gui-angular,gui-components,gui-lit,gui-react,gui-vue:** use floating panels in framework dropdowns ([7b84f0b2](https://github.com/golemui/golemui/commit/7b84f0b2))
+- **gui-components:** Add popover component ([d0f1412e](https://github.com/golemui/golemui/commit/d0f1412e))
+- **gui-components:** Use floating popups controller in all pickers ([260dc317](https://github.com/golemui/golemui/commit/260dc317))
+- **gui-components:** add tooltip components ([d33694fc](https://github.com/golemui/golemui/commit/d33694fc))
+- **gui-components:** add dialog component ([8f071477](https://github.com/golemui/golemui/commit/8f071477))
+- **gui-components:** add menu component ([ab8df0c7](https://github.com/golemui/golemui/commit/ab8df0c7))
+- **gui-components:** add toast and radiogroup segmented appearence ([#462](https://github.com/golemui/golemui/pull/462))
+- **gui-components:** add slider and range slider components ([345abeca](https://github.com/golemui/golemui/commit/345abeca))
+- **gui-components:** add anchor arrows to tooltips ([f6877760](https://github.com/golemui/golemui/commit/f6877760))
+- **gui-components:** add OTP input ([#465](https://github.com/golemui/golemui/pull/465))
+
+### 🩹 Fixes
+
+- **core:** translate nested string properties in objects and arrays ([#458](https://github.com/golemui/golemui/pull/458))
+- **core:** reject code execution paths in reactive expressions ([#466](https://github.com/golemui/golemui/pull/466))
+- **core:** reject prototype segments in data paths ([#469](https://github.com/golemui/golemui/pull/469))
+- **gui-components:** avoid open pickers on focus ([f8095b45](https://github.com/golemui/golemui/commit/f8095b45))
+- **gui-components:** fix dialog scroll lock ([84c214bc](https://github.com/golemui/golemui/commit/84c214bc))
+- **gui-components:** give centered dialogs a set width so forms don't collapse them ([#461](https://github.com/golemui/golemui/pull/461))
+- **gui-components:** line sliders up with the fields beside them in a grid row ([fe7596d6](https://github.com/golemui/golemui/commit/fe7596d6))
+- **gui-components:** stop disabled="false" from leaving form controls disabled in Safari ([a77d166f](https://github.com/golemui/golemui/commit/a77d166f))
+- **gui-components:** size date and time digits like the rest of the field ([b2ebbb48](https://github.com/golemui/golemui/commit/b2ebbb48))
+- **gui-components:** give pill icons the pill's text color in dark mode ([2f428a96](https://github.com/golemui/golemui/commit/2f428a96))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+- Raúl Jiménez @Elecash
+
 ## 2.1.0-rc.0 (2026-10-15)
 
 ### 🚀 Features

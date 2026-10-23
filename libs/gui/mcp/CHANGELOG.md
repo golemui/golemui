@@ -1,3 +1,22 @@
+## 2.1.0-rc.1 (2026-10-23)
+
+### 🚀 Features
+
+- add OTP widget and exactLength validator ([#467](https://github.com/golemui/golemui/pull/467))
+- add slider and range slider widgets ([#464](https://github.com/golemui/golemui/pull/464))
+- **gui-components:** add toast and radiogroup segmented appearence ([#462](https://github.com/golemui/golemui/pull/462))
+- add the menu action widget ([#460](https://github.com/golemui/golemui/pull/460))
+
+### 🩹 Fixes
+
+- **core:** reject code execution paths in reactive expressions ([#466](https://github.com/golemui/golemui/pull/466))
+- **core:** translate nested string properties in objects and arrays ([#458](https://github.com/golemui/golemui/pull/458))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
 ## 2.1.0-rc.0 (2026-10-15)
 
 This was a version bump only for gui-mcp to align it with other projects, there were no code changes.
