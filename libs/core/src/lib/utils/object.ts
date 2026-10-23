@@ -123,6 +123,7 @@ export const pathExists = (object: Record<string, any>, path: DotPath): boolean 
  * @param path - The path of the property to set (dot notation)
  * @param value - The value to set
  * @returns The modified object (mutates the original object)
+ * @throws When a segment of the path is `__proto__`, `constructor` or `prototype`.
  *
  * @example
  * Basic property setting:
@@ -196,6 +197,7 @@ export const set = (object: Record<string, any>, path: DotPath, value: any) => {
   }
 
   const pathArray = path.split('.');
+  assertNoForbiddenSegment(path, pathArray);
 
   let current = object;
   for (let i = 0; i < pathArray.length - 1; i++) {
@@ -227,6 +229,7 @@ export const set = (object: Record<string, any>, path: DotPath, value: any) => {
  * @param path - Dot-separated path, array indexes as numeric segments.
  * @param value - The value to set at the path.
  * @returns A new root object with the value set.
+ * @throws When a segment of the path is `__proto__`, `constructor` or `prototype`.
  * @example
  * const next = copyOnWriteSet({ a: { b: 1 }, c: { d: 2 } }, 'a.b', 3);
  * next.a.b;           // 3
@@ -248,6 +251,7 @@ export const copyOnWriteSet = (
   }
 
   const pathArray = path.split('.');
+  assertNoForbiddenSegment(path, pathArray);
   const root = copyContainer(object);
 
   let current = root;
@@ -284,6 +288,7 @@ const copyContainer = (container: any): any =>
  *   Pass an empty string to return the object unchanged.
  * @returns The modified object (mutates the original object). Returns unchanged if path is
  *   empty or does not exist.
+ * @throws When a segment of the path is `__proto__`, `constructor` or `prototype`.
  *
  * @example
  * Basic property removal with sibling preserved:
@@ -315,6 +320,7 @@ export const unset = <T extends Record<string, any>>(object: T, path: DotPath): 
   }
 
   const segments = path.split('.');
+  assertNoForbiddenSegment(path, segments);
   const containers: Array<any> = [object];
 
   // Collect each intermediate container along the path
@@ -358,6 +364,38 @@ export const unset = <T extends Record<string, any>>(object: T, path: DotPath): 
 
   return object;
 };
+
+// A write through `__proto__` changes a prototype that every object of the realm shares.
+// `constructor.prototype` gives the same access to code that walks into a function value.
+const forbiddenPathSegments = new Set(['__proto__', 'constructor', 'prototype']);
+
+/**
+ * Checks a dot path for a segment that the path writers reject: `__proto__`, `constructor` or
+ * `prototype`.
+ * @param path - Dot-separated path.
+ * @returns The error message for the first forbidden segment, or `undefined` when there is none.
+ * @example
+ * forbiddenPathSegmentIssue('user.name');             // undefined
+ * forbiddenPathSegmentIssue('user.__proto__.isAdmin'); // 'Path "user.__proto__.isAdmin" has the segment "__proto__". ...'
+ */
+export function forbiddenPathSegmentIssue(path: DotPath): string | undefined {
+  return forbiddenSegmentIssue(path, path.split('.'));
+}
+
+function assertNoForbiddenSegment(path: DotPath, segments: string[]): void {
+  const issue = forbiddenSegmentIssue(path, segments);
+  if (issue !== undefined) {
+    throw new Error(issue);
+  }
+}
+
+function forbiddenSegmentIssue(path: DotPath, segments: string[]): string | undefined {
+  const forbidden = segments.find((segment) => forbiddenPathSegments.has(segment));
+  if (forbidden === undefined) {
+    return undefined;
+  }
+  return `Path "${path}" has the segment "${forbidden}". A path cannot contain the segments __proto__, constructor or prototype.`;
+}
 
 function isIndex(value: string) {
   const num = Number(value);
