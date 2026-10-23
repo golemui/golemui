@@ -167,6 +167,32 @@ describe('native form association', () => {
     cy.get('gui-textinput input').should('not.be.disabled');
   });
 
+  // WebKit (26) passes formDisabledCallback the opposite state when the attribute is added and
+  // removed in one step, as disabled="false" is. These calls replay that in every browser.
+  it('keeps its real disabled state whatever formDisabledCallback is told', () => {
+    type Callback = { formDisabledCallback(disabled: boolean): void };
+    cy.mount(
+      html`<form>
+        <gui-textinput uid="enabled" name="a" label="Enabled"></gui-textinput>
+        <fieldset disabled>
+          <gui-textinput uid="locked" name="b" label="Locked"></gui-textinput>
+        </fieldset>
+      </form>`,
+    );
+
+    control('gui-textinput[uid="enabled"]').then(([el]) =>
+      (el as unknown as Callback).formDisabledCallback(true),
+    );
+    control('gui-textinput[uid="locked"]').then(([el]) =>
+      (el as unknown as Callback).formDisabledCallback(false),
+    );
+
+    control('gui-textinput[uid="enabled"]').should('have.prop', 'disabled', false);
+    cy.get('#enabled').should('not.be.disabled');
+    control('gui-textinput[uid="locked"]').should('have.prop', 'disabled', true);
+    cy.get('#locked').should('be.disabled');
+  });
+
   it('validates and submits with disabled="false" and readonly="false"', () => {
     cy.mount(
       html`<form>
