@@ -123,6 +123,71 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
       cy.get('@formEventHandler').should(() => expect(loadCallCount()).to.equal(3));
     });
 
+    it('Should send the repeater row with an event from a row widget', () => {
+      const formEventHandler = cy.stub().as('formEventHandler');
+
+      mountFn({
+        formDef: defineForm({
+          form: [
+            {
+              uid: 'users',
+              kind: 'input',
+              type: 'repeater',
+              path: 'users',
+              props: {
+                removeLabel: 'Remove user',
+                template: {
+                  kind: 'layout',
+                  type: 'grid',
+                  children: [
+                    {
+                      uid: 'name',
+                      kind: 'input',
+                      type: 'textinput',
+                      label: 'Name',
+                      path: 'users.items.name',
+                    },
+                    {
+                      uid: 'pickUser',
+                      kind: 'action',
+                      type: 'button',
+                      label: 'Pick',
+                      on: { click: 'userPicked' },
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+        }),
+        data: { users: [{ name: 'Ada' }, { name: 'Linus' }, { name: 'Grace' }] },
+        formEvent: formEventHandler,
+      });
+
+      const pickEvents = (): FormEvent[] =>
+        formEventHandler
+          .getCalls()
+          .map((call) => call.args[0] as FormEvent)
+          .filter((event) => event.name === 'userPicked');
+
+      cy.get('[data-cy="pickUser[2]_button"]').click();
+      cy.get('@formEventHandler').should(() => {
+        expect(pickEvents()).to.have.length(1);
+        expect(pickEvents()[0].row).to.deep.equal({ index: 2, indexes: [2], path: 'users.2' });
+        expect(pickEvents()[0].data['users'][2].name).to.equal('Grace');
+      });
+
+      // The row components are reused after a removal, so Grace's button must send its new row.
+      cy.get('.gui-button').contains('Remove user').first().click();
+      cy.get('[data-cy="name[2]_textinput"]').should('not.exist');
+      cy.get('[data-cy="pickUser[1]_button"]').click();
+      cy.get('@formEventHandler').should(() => {
+        expect(pickEvents()).to.have.length(2);
+        expect(pickEvents()[1].row).to.deep.equal({ index: 1, indexes: [1], path: 'users.1' });
+        expect(pickEvents()[1].data['users'][1].name).to.equal('Grace');
+      });
+    });
+
     it('Should execute form events on change', () => {
       const mockCountries: any = {
         europe: ['Spain', 'France', 'Italy'],
