@@ -558,6 +558,13 @@ const INPUTS: DxSpec[] = [
         "row's array index (`attendees.items.name` → `attendees[0].name`, `attendees[1].name`, …); nesting a " +
         'repeater inside a template adds another `.items.` segment (`teams.items.members.items.name`).',
       '`limit` caps the number of rows; `addLabel`/`removeLabel` set the button text.',
+      'PER-ROW EVENTS: every form event from a widget inside a row carries `row: { index, indexes, path }`, ' +
+        "for example `{ index: 1, indexes: [2, 1], path: 'teams.2.devs.1' }`. `indexes` lists the position in " +
+        'every enclosing repeater, outermost first. `path` is the data path of the row. Outside a repeater `row` ' +
+        'is undefined. Read it in the host `formEvent` handler (`e.row`), in a menu `onClick: (event) => ...`, or ' +
+        "in an input `onChange: (event) => { if (event.row) { event.update({ path: event.row.path + '.city', options }); } }`. A button " +
+        '`onClick` handler receives only the form data, so it cannot read `row`: return a host event name ' +
+        "instead (`onClick: () => 'rowPicked'`) and read `e.row` in `formEvent`.",
     ],
   },
   {

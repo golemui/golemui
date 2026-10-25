@@ -20,6 +20,8 @@ the form component accepts: https://golemui.com/dx/features/overview.md
 - **Form events** — `formSubmit`, `formHealth` (validity), `formEvent` (widget→host events);
   widget handlers `onChange`/`onLoad`/`onFilter`/`onBlur`/`onClick`. In TS these are functions
   (return a string to dispatch a named host event); in JSON they are handler names under `on`.
+  An event from a widget inside a repeater row also carries `row` (`{ index, indexes, path }`),
+  so the host can tell the rows apart.
   https://golemui.com/dx/features/events.md
 - **Runtime methods** — imperative API on the form component instance (read/patch values,
   trigger validation, react to runtime changes). https://golemui.com/dx/features/runtime-methods.md
