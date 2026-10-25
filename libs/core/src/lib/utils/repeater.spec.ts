@@ -1,8 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { isInputWidget, type FunctionWidget, type NonFunctionWidget } from '../form-widget';
-import { type RepeaterRow } from '../store/model';
+import { type RepeaterRow, type State } from '../store/model';
 import {
   extractRepeaterIndexes,
+  getFormEventRow,
   makeRepeaterItemConfig,
   transformRepeaterItemWhenExpression,
   transformWidgetWhenExpressions,
@@ -378,5 +379,35 @@ describe('extractRepeaterIndexes', () => {
     ['a[12]', [12]],
   ])('%s -> %j', (uid, expected) => {
     expect(extractRepeaterIndexes(uid)).toEqual(expected);
+  });
+});
+
+describe('getFormEventRow', () => {
+  // `getFormEventRow` reads only `repeaterRows`.
+  const stateWithRows = (repeaterRows: State['repeaterRows']) => ({ repeaterRows }) as State;
+
+  it('should return undefined for a widget that is not in a repeater', () => {
+    expect(getFormEventRow(stateWithRows({}), 'save')).toBeUndefined();
+  });
+
+  it('should return the row of a widget in a flat repeater', () => {
+    const state = stateWithRows({ 'name[1]': rowsOf(['users.items', 'users.1']) });
+
+    expect(getFormEventRow(state, 'name[1]')).toEqual({ index: 1, indexes: [1], path: 'users.1' });
+  });
+
+  it('should return the innermost row and every index, outermost first, in a nested repeater', () => {
+    const state = stateWithRows({
+      'devMenu[2][1]': rowsOf(
+        ['teams.items', 'teams.2'],
+        ['teams.items.devs.items', 'teams.2.devs.1'],
+      ),
+    });
+
+    expect(getFormEventRow(state, 'devMenu[2][1]')).toEqual({
+      index: 1,
+      indexes: [2, 1],
+      path: 'teams.2.devs.1',
+    });
   });
 });
