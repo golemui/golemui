@@ -26,12 +26,38 @@
               "kind": "input",
               "type": "textinput",
               "path": "repeaters.users.items.firstName",
+              "size": 5,
               "validator": { "type": "string", "required": true }
             },
             {
               "kind": "input",
               "type": "textinput",
-              "path": "repeaters.users.items.lastName"
+              "path": "repeaters.users.items.lastName",
+              "size": 5
+            },
+            {
+              "uid": "userRowMenu",
+              "kind": "action",
+              "type": "menu",
+              "on": {
+                "click": "repeaterRowAction"
+              },
+              "props": {
+                "items": [
+                  {
+                    "label": "Edit",
+                    "value": "edit"
+                  },
+                  {
+                    "label": "Duplicate",
+                    "value": "duplicate"
+                  }
+                ],
+                "ariaLabel": "Row actions",
+                "icon": "more_vert",
+                "variant": "outlined",
+                "placement": "bottom-end"
+              }
             }
           ]
         }
@@ -41,6 +67,15 @@
         "required": true,
         "minItems": 1,
         "maxItems": 2
+      }
+    },
+    {
+      "uid": "repeaterRowActionResult",
+      "kind": "display",
+      "type": "alert",
+      "props": {
+        "text": "Pick an action in the menu of a row.",
+        "level": "info"
       }
     }
   ]

@@ -14,10 +14,27 @@ export const repeaterTab = gui.layouts.grid([
     },
     template: [
       gui.layouts.horizontalGrid([
-        gui.inputs.textInput('firstName', { validator: { required: true } }),
-        gui.inputs.textInput('lastName'),
+        gui.inputs.textInput('firstName', { size: 5, validator: { required: true } }),
+        gui.inputs.textInput('lastName', { size: 5 }),
+        gui.actions.menu({
+          uid: 'userRowMenu',
+          ariaLabel: 'Row actions',
+          icon: 'more_vert',
+          variant: 'outlined',
+          placement: 'bottom-end',
+          items: [
+            { label: 'Edit', value: 'edit' },
+            { label: 'Duplicate', value: 'duplicate' },
+          ],
+          onClick: () => 'repeaterRowAction',
+        }),
       ]),
     ],
     validator: { required: true, minItems: 1, maxItems: 2 },
+  }),
+  gui.displays.alert({
+    uid: 'repeaterRowActionResult',
+    text: 'Pick an action in the menu of a row.',
+    level: 'info',
   }),
 ]);

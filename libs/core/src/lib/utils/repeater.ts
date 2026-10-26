@@ -7,7 +7,7 @@ import {
   type LayoutWidget,
   type NonFunctionWidget,
 } from '../form-widget';
-import { type DotPath, type Uid } from '../shared';
+import { type DotPath, type FormEventRow, type Uid } from '../shared';
 import { type RepeaterItemScope, type RepeaterRow, type State } from '../store/model';
 import { flattenForm } from './form';
 import { get } from './object';
@@ -28,6 +28,28 @@ export const isRepeaterWidget = (widget: FormWidget<string>): widget is Repeater
 /** `"abc[0][1]"` -> `[0, 1]`, `"abc"` -> `[]`. */
 export const extractRepeaterIndexes = (uid: string): number[] =>
   [...uid.matchAll(/\[(\d+)\]/g)].map((m) => parseInt(m[1], 10));
+
+/**
+ * Returns the repeater row a form event carries for a widget, or undefined when the widget is not
+ * inside a repeater.
+ * @param state - The state the event is dispatched from.
+ * @param uid - The uid of the widget that sends the event, with its row indexes.
+ * @example
+ * getFormEventRow(state, 'devMenu[2][1]'); // { index: 1, indexes: [2, 1], path: 'teams.2.devs.1' }
+ * getFormEventRow(state, 'save');          // undefined
+ */
+export function getFormEventRow(state: State, uid: Uid): FormEventRow | undefined {
+  const rows = state.repeaterRows[uid];
+  if (rows === undefined || rows.length === 0) {
+    return undefined;
+  }
+  const innermostRow = rows[rows.length - 1];
+  return {
+    index: innermostRow.index,
+    indexes: rows.map((row) => row.index),
+    path: innermostRow.itemPath,
+  };
+}
 
 /** The path segment that stands for "the current row" in template paths, e.g. `users.items.name`. */
 const ITEMS_TOKEN = 'items';
