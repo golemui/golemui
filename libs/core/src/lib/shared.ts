@@ -139,11 +139,28 @@ export type FormEvent<T = any> = {
   data: Record<string, T>;
   /** The detail provided by the widget at the moment the event was dispatched. */
   detail?: any;
+  /** The repeater row of the widget that sent the event. Undefined outside a repeater. */
+  row?: FormEventRow;
   /** Actions that the client can execute to interact with the forms engine from the application scope */
   callback: (action: EventHandlerCallback) => void;
 };
 
-export type FormSubmitEvent<T = any> = Omit<FormEvent<T>, 'name' | 'detail'>;
+/**
+ * The repeater row of the widget that sent a form event.
+ * @example
+ * // The menu of dev 1 in team 2 of a nested repeater
+ * { index: 1, indexes: [2, 1], path: 'teams.2.devs.1' }
+ */
+export type FormEventRow = {
+  /** Zero-based position of the row in its repeater, the same value as `$index`. */
+  index: number;
+  /** The position in every enclosing repeater, outermost first. The last one is `index`. */
+  indexes: number[];
+  /** Data path of the row. */
+  path: DotPath;
+};
+
+export type FormSubmitEvent<T = any> = Omit<FormEvent<T>, 'name' | 'detail' | 'row'>;
 
 /**
  * The DOM event names dispatched by `<gui-core-form>`, and therefore the names the Lit

@@ -146,6 +146,26 @@ const eventHandlers = {
       });
     }
   },
+  repeaterRowAction(event: FormEvent) {
+    // Every row's menu sends this name, so `row` tells the rows apart.
+    if (!event.row) {
+      return;
+    }
+    const repeaters = event.data['repeaters'] as
+      | { users?: { firstName?: string; lastName?: string }[] }
+      | undefined;
+    const user = repeaters?.users?.[event.row.index];
+    const name = [user?.firstName, user?.lastName].filter(Boolean).join(' ') || '(no name)';
+    const action = (event.detail as { value?: string } | undefined)?.value;
+    event.callback({
+      type: 'OVERRIDE_WIDGET_PROP',
+      payload: {
+        uid: 'repeaterRowActionResult',
+        prop: 'text',
+        value: `"${action}" on row ${event.row.index} (${event.row.path}): ${name}`,
+      },
+    });
+  },
   send(event: FormEvent) {
     const name = String((event.data as any).userName ?? '');
     event.callback({

@@ -16,6 +16,7 @@ import { type Action } from '../store/actions';
 import { type Middleware, type State } from '../store/model';
 import { type ExpressionPolicy } from '../utils/check-expression';
 import { pruneHiddenData } from '../utils/form';
+import { getFormEventRow } from '../utils/repeater';
 import { type WidgetLoaders, WidgetRegistry } from './widget-registry';
 
 export class FormContext<ComponentType> {
@@ -75,29 +76,34 @@ export class FormContext<ComponentType> {
       matchedStates.forEach((currentState) => {
         const eventName = widget.on?.[`${eventType}.${currentState}`] as EventName | undefined;
         if (eventName) {
-          this.events$.next({
-            name: eventName,
-            data: pruneHiddenData(this.store.getState()),
-            detail: detail ?? undefined,
-            callback: (action: EventHandlerCallback) => {
-              this.store.dispatch(action);
-            },
-          });
+          this.events$.next(this.createFormEvent(eventName, widget, detail ?? undefined));
         }
       });
     } else {
       const eventName = widget.on?.[eventType] as EventName | undefined;
       if (eventName) {
-        this.events$.next({
-          name: eventName,
-          data: pruneHiddenData(this.store.getState()),
-          detail: detail,
-          callback: (action: EventHandlerCallback) => {
-            this.store.dispatch(action);
-          },
-        });
+        this.events$.next(this.createFormEvent(eventName, widget, detail));
       }
     }
+  }
+
+  private createFormEvent(
+    name: EventName,
+    widget: InputWidget<any, string> | ActionWidget<string> | LayoutWidget<string>,
+    detail: any,
+  ): FormEvent {
+    const state = this.store.getState();
+    const row = getFormEventRow(state, widget.uid);
+    return {
+      name,
+      data: pruneHiddenData(state),
+      detail,
+      // No `row` key outside a repeater, so the events of other widgets keep their shape.
+      ...(row !== undefined ? { row } : {}),
+      callback: (action: EventHandlerCallback) => {
+        this.store.dispatch(action);
+      },
+    };
   }
 
   emitSubmitEvent() {
