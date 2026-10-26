@@ -562,9 +562,13 @@ const INPUTS: DxSpec[] = [
         "for example `{ index: 1, indexes: [2, 1], path: 'teams.2.devs.1' }`. `indexes` lists the position in " +
         'every enclosing repeater, outermost first. `path` is the data path of the row. Outside a repeater `row` ' +
         'is undefined. Read it in the host `formEvent` handler (`e.row`), in a menu `onClick: (event) => ...`, or ' +
-        "in an input `onChange: (event) => { if (event.row) { event.update({ path: event.row.path + '.city', options }); } }`. A button " +
-        '`onClick` handler receives only the form data, so it cannot read `row`: return a host event name ' +
-        "instead (`onClick: () => 'rowPicked'`) and read `e.row` in `formEvent`.",
+        'in an input `onChange: (event) => ...`. A button `onClick` handler receives only the form data, so it ' +
+        "cannot read `row`: return a host event name instead (`onClick: () => 'rowPicked'`) and read `e.row` in " +
+        '`formEvent`.',
+      'PER-ROW OPTIONS: do NOT set options that depend on the row data with `event.update` from a row event. ' +
+        'An override stays at its row position, so after a row is removed, the row that moves into that position ' +
+        'shows the options of the removed row. Use a definition callback that reads `$item`, the data of its own ' +
+        "row: `gui.inputs.dropdown('users.items.city', ({ $item }) => ({ label: 'City', items: citiesOf($item?.country) }))`.",
     ],
   },
   {

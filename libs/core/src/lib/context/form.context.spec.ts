@@ -31,7 +31,7 @@ function createForm(formDef: Record<string, any>, data: Record<string, any>) {
   const events: FormEvent[] = [];
   context.events$.subscribe((event) => events.push(event));
 
-  // Adapters emit with the node they render: a layout hands its children from `resolvedSources`
+  // Adapters emit with the node they render: a layout passes its children from `resolvedSources`
   // (`stampedChildren` in view-model.ts), not the calculated widget.
   const emitFrom = (eventType: EventType, uid: string) => {
     const widget = context.store.getState().resolvedSources[uid];
