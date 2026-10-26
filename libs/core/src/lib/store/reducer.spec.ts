@@ -803,6 +803,92 @@ const makePositionUidFormDef = () => ({
   ],
 });
 
+/** A row of plain values. The input binds the whole row, so row 1 has the path `<arrayPath>.1`. */
+const plainRow = (uid: string, arrayPath: string) => ({
+  uid: `${uid}Row`,
+  kind: 'layout',
+  type: 'flex',
+  children: [
+    {
+      uid,
+      kind: 'input',
+      type: 'textinput',
+      path: `${arrayPath}.items`,
+      include: { when: "$item !== 'hidden'" },
+    },
+  ],
+});
+
+/** A repeater of plain values that hides each row whose value is `'hidden'`. */
+const makePlainRowsFormDef = () => ({
+  form: [
+    {
+      uid: 'tags',
+      kind: 'input',
+      type: 'repeater',
+      path: 'tags',
+      props: { template: plainRow('tag', 'tags') },
+    },
+  ],
+});
+
+/** A repeater of plain values inside the rows of a repeater of objects. */
+const makeNestedPlainRowsFormDef = () => ({
+  form: [
+    {
+      uid: 'groups',
+      kind: 'input',
+      type: 'repeater',
+      path: 'groups',
+      props: {
+        template: {
+          uid: 'groupRow',
+          kind: 'layout',
+          type: 'flex',
+          children: [
+            {
+              uid: 'groupTags',
+              kind: 'input',
+              type: 'repeater',
+              path: 'groups.items.tags',
+              props: { template: plainRow('groupTag', 'groups.items.tags') },
+            },
+          ],
+        },
+      },
+    },
+  ],
+});
+
+/** A repeater whose rows are arrays of plain values. It hides the outer row at index 1. */
+const makePlainMatrixFormDef = () => ({
+  form: [
+    {
+      uid: 'matrix',
+      kind: 'input',
+      type: 'repeater',
+      path: 'matrix',
+      props: {
+        template: {
+          uid: 'matrixRow',
+          kind: 'layout',
+          type: 'flex',
+          children: [
+            {
+              uid: 'cells',
+              kind: 'input',
+              type: 'repeater',
+              path: 'matrix.items',
+              include: { when: '$index !== 1' },
+              props: { template: plainRow('cell', 'matrix.items') },
+            },
+          ],
+        },
+      },
+    },
+  ],
+});
+
 // -----------------------------------------------------------------------------
 // Tests
 // -----------------------------------------------------------------------------
@@ -2937,6 +3023,84 @@ describe('reducer end-to-end', () => {
         'has the segment "__proto__"',
       );
       expect(({} as any).isAdminE2E).toBeUndefined();
+    });
+  });
+
+  // ---------------------------------------------------------------------------
+  // 30. Hidden rows of a repeater of plain values
+  // ---------------------------------------------------------------------------
+
+  // formSubmit and formEvent data both come from `pruneHiddenData`. A hidden row leaves an empty
+  // slot at its index, so a row index names the same row in the pruned data. `toEqual` reads an
+  // empty slot as `undefined`, and `Object.keys` lists the indexes that hold a value.
+  describe('hidden rows of a repeater of plain values', () => {
+    it('keeps each visible row at its index when two rows are hidden', () => {
+      const state = drive([
+        init(makePlainRowsFormDef()),
+        setData({ tags: ['a', 'hidden', 'hidden', 'd'] }),
+      ]);
+
+      expect(state.widgetFlags['tag[1]']).toEqual({ hidden: true });
+      expect(state.widgetFlags['tag[2]']).toEqual({ hidden: true });
+      const pruned = pruneHiddenData(state);
+      expect(pruned).toEqual({ tags: ['a', undefined, undefined, 'd'] });
+      expect(Object.keys(pruned['tags'])).toEqual(['0', '3']);
+      expect(state.data['tags']).toEqual(['a', 'hidden', 'hidden', 'd']);
+    });
+
+    it('keeps the array length when every row is hidden', () => {
+      const state = drive([init(makePlainRowsFormDef()), setData({ tags: ['hidden', 'hidden'] })]);
+
+      const pruned = pruneHiddenData(state);
+      expect(pruned['tags']).toHaveLength(2);
+      expect(Object.keys(pruned['tags'])).toEqual([]);
+    });
+
+    it('keeps the positions of hidden plain values inside object rows', () => {
+      const state = drive([
+        init(makeNestedPlainRowsFormDef()),
+        setData({
+          groups: [{ tags: ['hidden', 'b', 'hidden', 'd'] }, { tags: ['e', 'hidden', 'g'] }],
+        }),
+      ]);
+
+      const pruned = pruneHiddenData(state);
+      expect(pruned).toEqual({
+        groups: [{ tags: [undefined, 'b', undefined, 'd'] }, { tags: ['e', undefined, 'g'] }],
+      });
+      expect(Object.keys(pruned['groups'][0].tags)).toEqual(['1', '3']);
+      expect(Object.keys(pruned['groups'][1].tags)).toEqual(['0', '2']);
+    });
+
+    it('keeps the positions of a hidden outer row and of hidden inner rows', () => {
+      const state = drive([
+        init(makePlainMatrixFormDef()),
+        setData({ matrix: [['a', 'hidden', 'c'], ['d'], ['hidden', 'f']] }),
+      ]);
+
+      expect(state.widgetFlags['cells[1]']).toEqual({ hidden: true });
+      const pruned = pruneHiddenData(state);
+      expect(pruned).toEqual({ matrix: [['a', undefined, 'c'], undefined, [undefined, 'f']] });
+      expect(Object.keys(pruned['matrix'])).toEqual(['0', '2']);
+      expect(Object.keys(pruned['matrix'][0])).toEqual(['0', '2']);
+      expect(Object.keys(pruned['matrix'][2])).toEqual(['1']);
+    });
+
+    it('keeps each object row at its index when the fields of two rows are hidden', () => {
+      const state = drive([
+        init(makeRowScopeFormDef()),
+        setData({
+          lineItems: [
+            { quantity: 1, active: false },
+            { quantity: 2, active: false },
+            { quantity: 3, active: true },
+          ],
+        }),
+      ]);
+
+      expect(pruneHiddenData(state)).toStrictEqual({
+        lineItems: [{ active: false }, { active: false }, { quantity: 3, active: true }],
+      });
     });
   });
 });
