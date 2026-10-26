@@ -385,6 +385,32 @@ describe('object.unset', () => {
     expect(obj).toEqual({ items: [{}, { name: 'Bob' }] });
   });
 
+  // `toEqual` reads an empty slot as `undefined`, so these specs check the slot with `pathExists`.
+  it('leaves an empty slot at an array index and keeps the array length', () => {
+    const obj = { tags: ['a', 'b', 'c'] };
+    unset(obj, 'tags.1');
+    expect(obj).toEqual({ tags: ['a', undefined, 'c'] });
+    expect(pathExists(obj, 'tags.1')).toBe(false);
+  });
+
+  it('keeps every later element at its index when two indexes are removed', () => {
+    const obj = { tags: ['a', 'b', 'c', 'd'] };
+    unset(obj, 'tags.1');
+    unset(obj, 'tags.2');
+    expect(obj).toEqual({ tags: ['a', undefined, undefined, 'd'] });
+    expect(pathExists(obj, 'tags.1')).toBe(false);
+    expect(pathExists(obj, 'tags.2')).toBe(false);
+  });
+
+  it('is a no-op for a segment that is not an index of the array', () => {
+    const obj = { tags: ['a', 'b'] };
+    unset(obj, 'tags.2');
+    unset(obj, 'tags.-1');
+    unset(obj, 'tags.1abc');
+    unset(obj, 'tags.length');
+    expect(obj).toStrictEqual({ tags: ['a', 'b'] });
+  });
+
   it('is a no-op when the path does not exist', () => {
     const obj = { a: 1 };
     unset(obj, 'a.b.c');

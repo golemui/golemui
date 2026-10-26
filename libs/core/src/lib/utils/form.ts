@@ -83,6 +83,8 @@ export function inputPath(widget: FormWidget<string> | undefined): DotPath | und
  * Returns a copy of the form data with values for currently-hidden input widgets removed.
  * Paths come from `resolvedSources`, so hidden repeater row inputs are pruned too and hidden
  * widgets absent from calculatedWidgets are still covered.
+ * A hidden row of plain values leaves an empty slot at its index, so a row index in the pruned
+ * data names the same row as in the form.
  */
 export function pruneHiddenData(state: State): Record<string, any> {
   const pruned = cloneObject(state.data);

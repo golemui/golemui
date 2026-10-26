@@ -282,6 +282,8 @@ const copyContainer = (container: any): any =>
  * After deletion, any ancestor plain objects that become empty are also removed.
  * Ancestor arrays that become empty are left in place, upward pruning stops as
  * soon as an array boundary is encountered.
+ * An array element is deleted and leaves an empty slot, so the array keeps its length and every
+ * later element keeps its index.
  *
  * @param object - The object to modify
  * @param path - The dot-separated path of the property to remove (e.g. "user.profile.name").
@@ -313,6 +315,14 @@ const copyContainer = (container: any): any =>
  * unset(obj, 'items.0.name');
  * // Result: { items: [{}] } (the empty object is kept inside the array)
  * ```
+ *
+ * @example
+ * An array element keeps its position:
+ * ```typescript
+ * const obj = { tags: ['a', 'b', 'c'] };
+ * unset(obj, 'tags.1');
+ * // Result: { tags: ['a', <empty slot>, 'c'] }, and tags[1] reads undefined
+ * ```
  */
 export const unset = <T extends Record<string, any>>(object: T, path: DotPath): T => {
   if (path === '') {
@@ -341,7 +351,11 @@ export const unset = <T extends Record<string, any>>(object: T, path: DotPath): 
   const targetContainer = containers[containers.length - 1];
   const targetSegment = segments[segments.length - 1];
   if (Array.isArray(targetContainer)) {
-    targetContainer.splice(parseInt(targetSegment, 10), 1);
+    // No splice: it moves the later elements, so a later path into the same array would name a
+    // different element. A segment that is not an index, such as `length`, is left alone.
+    if (isIndex(targetSegment)) {
+      delete targetContainer[Number(targetSegment)];
+    }
   } else {
     delete targetContainer[targetSegment];
   }

@@ -187,5 +187,37 @@ describe('utils.form', () => {
       );
       expect(pruneHiddenData(state)).toEqual({ users: [{ name: 'Alice' }, {}] });
     });
+
+    // A template input bound to the whole row has the row as its path: `tags.items` -> `tags.1`.
+    const plainRowSources = (count: number) => {
+      const sources: State['resolvedSources'] = {};
+      for (let index = 0; index < count; index++) {
+        sources[`tag[${index}]`] = inputWidget(`tags.${index}`);
+      }
+      return sources;
+    };
+
+    // `toEqual` reads an empty slot as `undefined`. `Object.keys` lists the indexes with a value.
+    it('leaves an empty slot for a hidden row of plain values and keeps the later rows', () => {
+      const state = makeState(
+        { tags: ['a', 'b', 'c'] },
+        { 'tag[1]': { hidden: true } },
+        plainRowSources(3),
+      );
+      const pruned = pruneHiddenData(state);
+      expect(pruned).toEqual({ tags: ['a', undefined, 'c'] });
+      expect(Object.keys(pruned['tags'])).toEqual(['0', '2']);
+    });
+
+    it('keeps each visible row of plain values at its index when two rows are hidden', () => {
+      const state = makeState(
+        { tags: ['a', 'b', 'c', 'd'] },
+        { 'tag[1]': { hidden: true }, 'tag[2]': { hidden: true } },
+        plainRowSources(4),
+      );
+      const pruned = pruneHiddenData(state);
+      expect(pruned).toEqual({ tags: ['a', undefined, undefined, 'd'] });
+      expect(Object.keys(pruned['tags'])).toEqual(['0', '3']);
+    });
   });
 });
