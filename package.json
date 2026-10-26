@@ -94,7 +94,7 @@
     "@nx/js": "22.7.8",
     "@nx/react": "22.7.8",
     "@nx/vite": "22.7.8",
-    "@nx/vitest": "22.7.8",
+    "@nx/vitest": "24.0.0",
     "@nx/web": "22.7.8",
     "@nx/workspace": "22.7.8",
     "@schematics/angular": "21.2.19",
