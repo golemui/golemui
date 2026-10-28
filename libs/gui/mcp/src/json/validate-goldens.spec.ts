@@ -257,6 +257,23 @@ function nestedAndChunkCases(): Record<string, unknown> {
   };
 }
 
+function templateCases(): Record<string, unknown> {
+  const textInput = (fields: Record<string, unknown>) => ({
+    form: [{ kind: 'input', type: 'textinput', path: 'field', ...fields }],
+  });
+  return {
+    'disabled-is-a-template': textInput({ disabled: '{{$form.off}}' }),
+    'readonly-is-a-template': textInput({ readonly: '{{$form.off}}' }),
+    'size-is-a-template': textInput({ size: '{{$form.n}}' }),
+    'label-is-a-template': textInput({ label: '{{$form.name}}' }),
+    'label-is-a-template-with-text': textInput({ label: 'Hello {{$form.name}}' }),
+    'placeholder-is-a-template': textInput({ props: { placeholder: '{{$form.count}}' } }),
+    'placeholder-is-a-template-with-text': textInput({
+      props: { placeholder: 'Count: {{$form.count}}' },
+    }),
+  };
+}
+
 async function expectGolden(fileName: string, value: unknown): Promise<void> {
   await expect(serialize(value)).toMatchFileSnapshot(join(GOLDENS_DIRECTORY, fileName));
 }
@@ -306,6 +323,23 @@ describe('validate_form_definition goldens', () => {
 
   it('matches the recorded results for chunk refs, nested widgets, and form level errors', async () => {
     await expectGolden('nested-chunk-and-form.json', validateAll(nestedAndChunkCases()));
+  });
+
+  it('matches the recorded results for templates in props that take a string and in props that do not', async () => {
+    await expectGolden('templates.json', validateAll(templateCases()));
+  });
+
+  it('rejects a template as the whole value of a boolean or number prop, and accepts it in a string prop', () => {
+    const isValid = (caseName: string) =>
+      validateFormDefinition({ formDefinition: templateCases()[caseName] }).valid;
+
+    expect(isValid('disabled-is-a-template')).toBe(false);
+    expect(isValid('readonly-is-a-template')).toBe(false);
+    expect(isValid('size-is-a-template')).toBe(false);
+    expect(isValid('label-is-a-template')).toBe(true);
+    expect(isValid('label-is-a-template-with-text')).toBe(true);
+    expect(isValid('placeholder-is-a-template')).toBe(true);
+    expect(isValid('placeholder-is-a-template-with-text')).toBe(true);
   });
 });
 

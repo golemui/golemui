@@ -256,6 +256,23 @@ describe('justin', () => {
   });
 
   describe('compileExpression cache', () => {
+    it('throws the same parse error on every call', () => {
+      const expression = '$form.a +';
+      const messages = [1, 2].map(() => {
+        try {
+          compileExpression(expression);
+          return undefined;
+        } catch (error) {
+          return (error as Error).message;
+        }
+      });
+
+      expect(messages[0]).toContain('Unexpected token');
+      expect(messages[1]).toBe(messages[0]);
+      // A valid expression still compiles after the failures.
+      expect(compileExpression('$form.a')({ $form: { a: 1 } })).toBe(1);
+    });
+
     it('returns the same evaluator for the same expression string', () => {
       const first = compileExpression('$form.total * 2');
       const second = compileExpression('$form.total * 2');

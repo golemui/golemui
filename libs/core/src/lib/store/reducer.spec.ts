@@ -11,7 +11,11 @@ import {
 } from '../form-widget';
 import { identityTranslator } from '../i18n';
 import { type ExpressionFunctions, type ValidateOn } from '../shared';
-import { type ExpressionPolicy } from '../utils/check-expression';
+import {
+  EXPRESSION_LIMITS,
+  type ExpressionPolicy,
+  measureExpression,
+} from '../utils/check-expression';
 import { pruneHiddenData } from '../utils/form';
 import { type Action } from './actions';
 import { createInitialState, type State } from './model';
@@ -3412,6 +3416,193 @@ describe('reducer end-to-end', () => {
       const reduce = makeReducer();
       const healed = reduce(errored, setData({ users: [] }));
       expect(healed.formHealth).toEqual({ status: 'ok' });
+    });
+
+    describe('size limits', () => {
+      const showWhen = (when: string) => ({
+        form: [heading({ include: { when } })],
+      });
+      const sizedExpressions = {
+        characters: `$form.a ===${' '.repeat(EXPRESSION_LIMITS.maxLength)}1`,
+        'AST nodes': `[${'1,'.repeat(EXPRESSION_LIMITS.maxNodes)}1].length > 0`,
+        'AST depth': `${'!'.repeat(EXPRESSION_LIMITS.maxDepth)}$form.a`,
+      };
+
+      it.each(Object.entries(sizedExpressions))(
+        'runs an expression over the limit of %s with the warn policy',
+        (_limit, expression) => {
+          const state = driveWithPolicy('warn', [init(showWhen(expression)), setData({ a: 1 })]);
+
+          expect(state.formHealth).toEqual({ status: 'ok' });
+          // The widget is shown, so the expression ran to the end and gave true.
+          expect(state.widgetFlags['title']).toEqual({ hidden: false });
+        },
+      );
+
+      it.each(Object.entries(sizedExpressions))(
+        'fails an expression over the limit of %s with the strict policy',
+        (limit, expression) => {
+          const state = driveWithPolicy('strict', [init(showWhen(expression)), setData({ a: 1 })]);
+
+          expect(state.formHealth.status).toBe('errored');
+          if (state.formHealth.status === 'errored') {
+            expect(state.formHealth.code).toBe(50);
+            expect(state.formHealth.message).toContain('[EXPRESSION_TOO_LARGE]');
+            expect(state.formHealth.message).toContain(limit);
+          }
+        },
+      );
+
+      it('runs an expression of exactly the maximum length with the strict policy', () => {
+        const fillerLength = EXPRESSION_LIMITS.maxLength - '$form.a ===1'.length;
+        const expression = `$form.a ===${' '.repeat(fillerLength)}1`;
+        expect(expression).toHaveLength(EXPRESSION_LIMITS.maxLength);
+
+        const state = driveWithPolicy('strict', [init(showWhen(expression)), setData({ a: 1 })]);
+
+        expect(state.formHealth).toEqual({ status: 'ok' });
+        expect(state.widgetFlags['title']).toEqual({ hidden: false });
+      });
+
+      it('runs expressions with exactly the maximum nodes and depth with the strict policy', () => {
+        const nodeItems = EXPRESSION_LIMITS.maxNodes - measureExpression('[].length > 0').nodes;
+        const atNodeLimit = `[${Array(nodeItems).fill('1').join(',')}].length > 0`;
+        const atDepthLimit = `${'!'.repeat(EXPRESSION_LIMITS.maxDepth - 2)}$form.a`;
+        expect(measureExpression(atNodeLimit).nodes).toBe(EXPRESSION_LIMITS.maxNodes);
+        expect(measureExpression(atDepthLimit).depth).toBe(EXPRESSION_LIMITS.maxDepth);
+
+        for (const expression of [atNodeLimit, atDepthLimit]) {
+          const state = driveWithPolicy('strict', [init(showWhen(expression)), setData({ a: 1 })]);
+
+          expect(state.formHealth).toEqual({ status: 'ok' });
+          expect(state.widgetFlags['title']).toEqual({ hidden: false });
+        }
+      });
+
+      it('runs a small expression over a large array to the end', () => {
+        const items = Array.from({ length: 100_000 }, () => 1);
+        const state = driveWithPolicy('strict', [
+          init(showWhen('$form.items.reduce((sum, item) => sum + item, 0) === 100000')),
+          setData({ items }),
+        ]);
+
+        expect(state.formHealth).toEqual({ status: 'ok' });
+        expect(state.widgetFlags['title']).toEqual({ hidden: false });
+      });
+    });
+  });
+
+  describe('scope roots that core does not know', () => {
+    const heading = (fields: Record<string, unknown>) => ({
+      uid: 'title',
+      kind: 'display',
+      type: 'heading',
+      ...fields,
+    });
+
+    it('treats a state that reads an unknown root as inactive', () => {
+      const state = drive([
+        init({
+          states: { routed: '$route.id === 1', known: '$form.id === 1' },
+          form: [heading({})],
+        }),
+        setData({ id: 1 }),
+      ]);
+
+      expect(state.formHealth).toEqual({ status: 'ok' });
+      expect(state.currentStates).toEqual(['known']);
+    });
+
+    it('gives an empty string for a template that is an unknown root', () => {
+      const state = drive([
+        init({ form: [heading({ props: { text: 'a{{ $route }}b' } })] }),
+        setData({}),
+      ]);
+
+      expect(state.formHealth).toEqual({ status: 'ok' });
+      expect(propsOf(state, 'title')['text']).toBe('ab');
+    });
+
+    it('fails with code 40 for a template that reads a property of an unknown root', () => {
+      const state = drive([
+        init({ form: [heading({ props: { text: '{{ $route.id }}' } })] }),
+        setData({}),
+      ]);
+
+      expect(state.formHealth.status).toBe('errored');
+      if (state.formHealth.status === 'errored') {
+        expect(state.formHealth.code).toBe(40);
+      }
+    });
+
+    it('fails with code 11 for an include.when rule that reads an unknown root', () => {
+      const state = drive([
+        init({ form: [heading({ include: { when: '$route.id === 1' } })] }),
+        setData({}),
+      ]);
+
+      expect(state.formHealth.status).toBe('errored');
+      if (state.formHealth.status === 'errored') {
+        expect(state.formHealth.code).toBe(11);
+      }
+    });
+  });
+
+  describe('keys that a widget kind does not have', () => {
+    const driveWidget = (widget: Record<string, unknown>): State =>
+      drive([init({ form: [widget] }), setData({})]);
+
+    it('drops on from a display widget, and keeps it on an action widget', () => {
+      const display = driveWidget({
+        uid: 'title',
+        kind: 'display',
+        type: 'heading',
+        on: { click: 'headingClicked' },
+      });
+      const action = driveWidget({
+        uid: 'save',
+        kind: 'action',
+        type: 'button',
+        on: { click: 'saveClicked' },
+      });
+
+      expect(display.formHealth).toEqual({ status: 'ok' });
+      expect(display.flatForm['title']).not.toHaveProperty('on');
+      expect(display.calculatedWidgets['title'].current).not.toHaveProperty('on');
+      // The same key stays on a kind that has it.
+      expect(action.flatForm['save']).toHaveProperty('on');
+      expect(action.calculatedWidgets['save'].current).toHaveProperty('on', {
+        click: 'saveClicked',
+      });
+    });
+
+    it('drops label from a display widget', () => {
+      const state = driveWidget({ uid: 'title', kind: 'display', type: 'heading', label: 'Title' });
+
+      expect(state.formHealth).toEqual({ status: 'ok' });
+      expect(state.flatForm['title']).not.toHaveProperty('label');
+      expect(state.calculatedWidgets['title'].current).not.toHaveProperty('label');
+    });
+
+    it('drops defaultValue from an action widget, and keeps it on an input widget', () => {
+      const action = driveWidget({
+        uid: 'save',
+        kind: 'action',
+        type: 'button',
+        defaultValue: 'x',
+      });
+      const input = driveWidget({
+        uid: 'name',
+        kind: 'input',
+        type: 'textinput',
+        path: 'name',
+        defaultValue: 'x',
+      });
+
+      expect(action.formHealth).toEqual({ status: 'ok' });
+      expect(action.flatForm['save']).not.toHaveProperty('defaultValue');
+      expect(action.calculatedWidgets['save'].current).not.toHaveProperty('defaultValue');
+      expect(input.flatForm['name']).toHaveProperty('defaultValue', 'x');
     });
   });
 

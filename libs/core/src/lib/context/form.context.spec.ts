@@ -214,3 +214,43 @@ describe('FormContext.emitSubmitEvent', () => {
     expect(submitEvents[0]).not.toHaveProperty('row');
   });
 });
+
+describe('FormContext.initialize', () => {
+  const formDef = {
+    form: [
+      {
+        uid: 'title',
+        kind: 'display',
+        type: 'heading',
+        include: { when: "$form.name.startsWith('A')" },
+      },
+    ],
+  };
+
+  const stateWithPolicy = (expressionPolicy?: 'warn' | 'strict') => {
+    const context = new FormContext<unknown>();
+    context.initialize({}, [], acceptEveryValue, 'eager', {}, undefined, {}, {}, expressionPolicy);
+    context.store.dispatch({ type: 'INITIALIZE', payload: { formName: 'test', formDef } });
+    context.store.dispatch({ type: 'SET_DATA', payload: { data: { name: 'Ada' } } });
+    return context.store.getState();
+  };
+
+  it.each([undefined, 'warn' as const])(
+    'runs a method outside the allowed list with the %s expression policy',
+    (expressionPolicy) => {
+      const state = stateWithPolicy(expressionPolicy);
+
+      expect(state.formHealth).toEqual({ status: 'ok' });
+      expect(state.widgetFlags['title']).toEqual({ hidden: false });
+    },
+  );
+
+  it('fails a method outside the allowed list with the strict expression policy', () => {
+    const state = stateWithPolicy('strict');
+
+    expect(state.formHealth.status).toBe('errored');
+    if (state.formHealth.status === 'errored') {
+      expect(state.formHealth.code).toBe(50);
+    }
+  });
+});

@@ -1,0 +1,198 @@
+{
+  "disabled-is-a-template": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "field",
+          "disabled": "{{$form.off}}"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/disabled",
+          "message": "Expected type boolean at `/form/0/disabled`, got \"{{$form.off}}\"",
+          "keyword": "type",
+          "params": {
+            "type": "boolean"
+          }
+        },
+        {
+          "path": "/form/0/disabled",
+          "message": "Expected type object at `/form/0/disabled`, got \"{{$form.off}}\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0/disabled",
+          "message": "Value at `/form/0/disabled` does not match any allowed variant",
+          "keyword": "oneOf",
+          "params": {
+            "passingSchemas": null
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "readonly-is-a-template": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "field",
+          "readonly": "{{$form.off}}"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/readonly",
+          "message": "Expected type boolean at `/form/0/readonly`, got \"{{$form.off}}\"",
+          "keyword": "type",
+          "params": {
+            "type": "boolean"
+          }
+        },
+        {
+          "path": "/form/0/readonly",
+          "message": "Expected type object at `/form/0/readonly`, got \"{{$form.off}}\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0/readonly",
+          "message": "Value at `/form/0/readonly` does not match any allowed variant",
+          "keyword": "oneOf",
+          "params": {
+            "passingSchemas": null
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "size-is-a-template": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "field",
+          "size": "{{$form.n}}"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/size",
+          "message": "Expected type number at `/form/0/size`, got \"{{$form.n}}\"",
+          "keyword": "type",
+          "params": {
+            "type": "number"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "label-is-a-template": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "field",
+          "label": "{{$form.name}}"
+        }
+      ]
+    },
+    "result": {
+      "valid": true,
+      "errors": [],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "label-is-a-template-with-text": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "field",
+          "label": "Hello {{$form.name}}"
+        }
+      ]
+    },
+    "result": {
+      "valid": true,
+      "errors": [],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "placeholder-is-a-template": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "field",
+          "props": {
+            "placeholder": "{{$form.count}}"
+          }
+        }
+      ]
+    },
+    "result": {
+      "valid": true,
+      "errors": [],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "placeholder-is-a-template-with-text": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "field",
+          "props": {
+            "placeholder": "Count: {{$form.count}}"
+          }
+        }
+      ]
+    },
+    "result": {
+      "valid": true,
+      "errors": [],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  }
+}

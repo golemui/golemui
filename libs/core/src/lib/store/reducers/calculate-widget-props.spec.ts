@@ -338,6 +338,26 @@ describe('calculateWidgetProps', () => {
       );
     });
 
+    it('a prop function receives only $form, translate, $item and $index', () => {
+      let receivedNames: string[] = [];
+      const source = {
+        kind: 'action',
+        uid: 'a',
+        type: 'button',
+        label: (api: object) => {
+          receivedNames = Object.keys(api).sort();
+          return 'x';
+        },
+      } satisfies ActionWidget<string>;
+      seed(state, 'a', source);
+
+      const next = run(state);
+
+      // Checks that the function ran, so the names below were recorded.
+      expect((next.calculatedWidgets['a'].current as ActionWidget<string>).label).toBe('x');
+      expect(receivedNames).toEqual(['$form', '$index', '$item', 'translate']);
+    });
+
     it('props field function is invoked and its result is stored', () => {
       const source = {
         kind: 'display',
@@ -591,6 +611,22 @@ describe('calculateWidgetProps', () => {
       run(state, translator);
 
       expect(translator.calls[0].params).toEqual({ a: 'literal', n: '42' });
+    });
+
+    it('i18n params: a value that starts with an unknown root is a literal string', () => {
+      const translator = makeTranslator();
+      const source = {
+        kind: 'action',
+        uid: 'a',
+        type: 'button',
+        label: { key: 'k', params: { id: '$route.id', known: '$form.id' } },
+      } satisfies ActionWidget<string>;
+      seed(state, 'a', source);
+      state.data = { id: 7 };
+
+      run(state, translator);
+
+      expect(translator.calls[0].params).toEqual({ id: '$route.id', known: 7 });
     });
 
     it('i18n params: a param named __proto__ is an own property and does not change the prototype', () => {
@@ -1413,6 +1449,106 @@ describe('calculateWidgetProps', () => {
 
       const next = run(state);
       expect(next.formHealth).toEqual({ status: 'errored', code: 12, message: '[12] boom' });
+    });
+  });
+
+  describe('template results', () => {
+    const textOf = (template: string, data: Record<string, unknown> = {}) => {
+      const source = {
+        kind: 'display',
+        uid: 'd',
+        type: 'heading',
+        props: { text: template },
+      } satisfies DisplayWidget<string>;
+      seed(state, 'd', source);
+      state.data = data;
+
+      const next = run(state);
+      return { text: next.calculatedWidgets['d']?.current?.props?.['text'], next };
+    };
+
+    it.each([
+      ['a number', { n: 5 }, '5'],
+      ['true', { n: true }, 'true'],
+      ['an array', { n: ['a', 'b'] }, 'a,b'],
+      ['an object', { n: { a: 1 } }, '[object Object]'],
+    ])('gives a string for a template that is one expression with %s', (_name, data, expected) => {
+      const { text } = textOf('{{ $form.n }}', data);
+
+      // `toBe` compares the type too, so the number 5 would not match '5'.
+      expect(text).toBe(expected);
+    });
+
+    it('gives an empty string for a template with an empty expression', () => {
+      const { text, next } = textOf('a{{ }}b');
+
+      expect(text).toBe('ab');
+      expect(next.formHealth).toEqual({ status: 'ok' });
+    });
+
+    it('keeps the text of braces without an expression between them', () => {
+      expect(textOf('a{{}}b').text).toBe('a{{}}b');
+    });
+
+    it('keeps the raw text of a template whose expression contains a closing brace', () => {
+      const template = '{{ $fn.f({a: 1}).a }}';
+      const { text, next } = textOf(template);
+
+      expect(text).toBe(template);
+      expect(next.formHealth).toEqual({ status: 'ok' });
+    });
+
+    it('keeps the raw text of a template that is not closed', () => {
+      const template = '{{ $form.n';
+      const { text, next } = textOf(template, { n: 5 });
+
+      expect(text).toBe(template);
+      expect(next.formHealth).toEqual({ status: 'ok' });
+    });
+
+    it('gives a string for a template in a label', () => {
+      const source = {
+        kind: 'action',
+        uid: 'a',
+        type: 'button',
+        label: '{{ $form.n }}',
+      } satisfies ActionWidget<string>;
+      seed(state, 'a', source);
+      state.data = { n: 5 };
+
+      const next = run(state);
+
+      expect((next.calculatedWidgets['a'].current as ActionWidget<string>).label).toBe('5');
+    });
+
+    it('passes literal i18n params as strings and expression results with their type', () => {
+      const translator = makeTranslator();
+      const source = {
+        kind: 'action',
+        uid: 'a',
+        type: 'button',
+        label: {
+          key: 'k',
+          params: {
+            number: 5,
+            flag: true,
+            zero: '$form.zero',
+            missing: '$form.missing',
+          } as unknown as I18nParams,
+        },
+      } satisfies ActionWidget<string>;
+      seed(state, 'a', source);
+      state.data = { zero: 0 };
+
+      run(state, translator);
+
+      // A missing value gives back the param text. A zero stays the number 0.
+      expect(translator.calls[0].params).toStrictEqual({
+        number: '5',
+        flag: 'true',
+        zero: 0,
+        missing: '$form.missing',
+      });
     });
   });
 
