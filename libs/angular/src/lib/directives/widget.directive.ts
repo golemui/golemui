@@ -58,6 +58,10 @@ export class WidgetDirective implements OnInit, OnDestroy {
       }
       this.createComponent(component);
     } catch {
+      // The form no longer shows a destroyed widget, so its failure is not a form error.
+      if (this.destroyed) {
+        return;
+      }
       const code = errorCodes.widgetCouldNotBeLoaded;
       store.dispatch({
         type: 'SET_FORM_HEALTH',

@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { type FormHealth, type FormInitConfig, type WithWidget } from '@golemui/core';
-import { type Component, createApp, h, nextTick, shallowRef } from 'vue';
+import { type Component, createApp, h, nextTick, shallowReactive, shallowRef } from 'vue';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import FormComponent from './FormComponent.vue';
 import { formData, formDef, noopValidators, stubWidgetLoaders } from './ssr.fixture';
@@ -11,7 +11,7 @@ describe('a widget whose load fails', () => {
   let container: HTMLDivElement;
   let consoleError: ReturnType<typeof vi.spyOn>;
   let rejectLoad: (error: Error) => void;
-  let unmount: () => void;
+  let unmount: () => void = () => undefined;
 
   const configWithFailingWidget = (): FormInitConfig<StubComponent> => ({
     formDef: {
@@ -53,6 +53,7 @@ describe('a widget whose load fails', () => {
   beforeEach(() => {
     // The errored health is logged, which is expected here.
     consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    unmount = () => undefined;
     container = document.createElement('div');
     document.body.appendChild(container);
   });
@@ -77,6 +78,22 @@ describe('a widget whose load fails', () => {
     const { config, receivedHealths } = await mountForm(configWithFailingWidget());
 
     config.value = { formDef, widgetLoaders: stubWidgetLoaders, data: formData };
+    await nextTick();
+    rejectLoad(new Error('network error'));
+    // Gives the rejected load time to dispatch its error.
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    await nextTick();
+
+    expect(receivedHealths.filter((health) => health.status === 'errored')).toEqual([]);
+    expect(container.querySelectorAll('input')).toHaveLength(2);
+  });
+
+  it('does not mark the form as errored after a new formDef on the same config replaced the widget', async () => {
+    // Only a reactive config lets the form see a new formDef on the same object.
+    const config = shallowReactive(configWithFailingWidget());
+    const { receivedHealths } = await mountForm(config);
+
+    config.formDef = formDef;
     await nextTick();
     rejectLoad(new Error('network error'));
     // Gives the rejected load time to dispatch its error.

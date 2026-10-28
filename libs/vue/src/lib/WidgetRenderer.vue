@@ -41,6 +41,10 @@ onMounted(async () => {
     if (!isMounted.value) return;
     LoadedComponent.value = loaded;
   } catch {
+    // A new formDef on the same store unmounts this widget, and the form no longer shows it.
+    if (!isMounted.value) {
+      return;
+    }
     const code = errorCodes.widgetCouldNotBeLoaded;
     store.dispatch({
       type: 'SET_FORM_HEALTH',
