@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { type ValidatorFn } from '../form-validator';
+import { type ActionWidget, type InputWidget } from '../form-widget';
 import { type FormEvent, type FormSubmitEvent } from '../shared';
+import { type Action } from '../store/actions';
+import { type Middleware, type State } from '../store/model';
 import { FormContext } from './form.context';
 
 /**
@@ -18,30 +21,56 @@ const acceptEveryValue: ValidatorFn<unknown> = () => ({
   '~standard': { version: 1, vendor: 'test', validate: (value) => ({ value }) },
 });
 
+/** Fails an empty value when the validator descriptor has `required: true`. */
+const requiredValidators: ValidatorFn<{ required?: boolean }> = (validator) => ({
+  '~standard': {
+    version: 1,
+    vendor: 'test',
+    validate: (value) => {
+      const isEmpty = value === undefined || value === null || value === '';
+      return validator?.required && isEmpty ? { issues: [{ message: 'required' }] } : { value };
+    },
+  },
+});
+
 type EventWidget = Parameters<FormContext<unknown>['emitEvent']>[1];
 type EventType = Parameters<FormContext<unknown>['emitEvent']>[0];
 
-/** Creates a form from a definition and data, and records every form event it sends. */
-function createForm(formDef: Record<string, any>, data: Record<string, any>) {
+/**
+ * Creates a form from a definition and data. It records every form event it sends, and every
+ * action that reaches the store after the form is set up.
+ */
+function createForm(
+  formDef: Record<string, any>,
+  data: Record<string, any>,
+  validators: ValidatorFn<{ required?: boolean }> = acceptEveryValue,
+) {
+  const actions: Action[] = [];
+  const recordActions: Middleware<State, Action> = () => (next) => (action) => {
+    actions.push(action);
+    next(action);
+  };
+
   const context = new FormContext<unknown>();
-  context.initialize({}, [], acceptEveryValue, 'eager', {}, undefined, {});
+  context.initialize({}, [recordActions], validators, 'eager', {}, undefined, {});
   context.store.dispatch({ type: 'INITIALIZE', payload: { formName: 'test', formDef } });
   context.store.dispatch({ type: 'SET_DATA', payload: { data } });
+  actions.length = 0;
 
   const events: FormEvent[] = [];
   context.events$.subscribe((event) => events.push(event));
 
   // Adapters emit with the node they render: a layout passes its children from `resolvedSources`
   // (`stampedChildren` in view-model.ts), not the calculated widget.
-  const emitFrom = (eventType: EventType, uid: string) => {
+  const emitFrom = (eventType: EventType, uid: string, detail?: unknown) => {
     const widget = context.store.getState().resolvedSources[uid];
     if (widget === undefined) {
       throw new Error(`The form has no widget "${uid}"`);
     }
-    context.emitEvent(eventType, widget as EventWidget);
+    context.emitEvent(eventType, widget as EventWidget, detail);
   };
 
-  return { context, events, emitFrom };
+  return { context, events, actions, emitFrom };
 }
 
 const button = (uid: string, on: Record<string, string>) => ({
@@ -200,6 +229,253 @@ describe('FormContext.emitEvent', () => {
       expect(data['users'][0]).toEqual({ name: 'Linus' });
     });
   });
+
+  describe('handlers with a state suffix', () => {
+    const makeStatesFormDef = (states: Record<string, string>) => ({
+      states,
+      form: [button('save', { click: 'base', 'click.a': 'onA', 'click.bb': 'onBB' })],
+    });
+
+    it('sends one event per active state that has a handler, in the order of the active states', () => {
+      const { context, events, emitFrom } = createForm(
+        makeStatesFormDef({ a: 'true', bb: 'true' }),
+        {},
+      );
+
+      emitFrom('click', 'save');
+
+      expect(events.map((event) => event.name)).toEqual(['onA', 'onBB']);
+      // The calculated widget holds the handler of the longest state name only.
+      // An event is still sent for every active state that has a handler.
+      const calculated = context.store.getState().calculatedWidgets['save']
+        .current as ActionWidget<string>;
+      expect(calculated.on?.click).toBe('onBB');
+    });
+
+    it('follows the order of the declared states, not the length of their names', () => {
+      const { events, emitFrom } = createForm(makeStatesFormDef({ bb: 'true', a: 'true' }), {});
+
+      emitFrom('click', 'save');
+
+      expect(events.map((event) => event.name)).toEqual(['onBB', 'onA']);
+    });
+
+    it('sends only the handlers of the states that are active', () => {
+      const { events, emitFrom } = createForm(makeStatesFormDef({ a: 'true', bb: 'false' }), {});
+
+      emitFrom('click', 'save');
+
+      expect(events.map((event) => event.name)).toEqual(['onA']);
+    });
+
+    it('sends the base handler when no active state has a handler for the event', () => {
+      const { events, emitFrom } = createForm(makeStatesFormDef({ other: 'true' }), {});
+
+      emitFrom('click', 'save');
+
+      expect(events.map((event) => event.name)).toEqual(['base']);
+    });
+
+    it('sends the base handler when no state is active', () => {
+      const { events, emitFrom } = createForm(makeStatesFormDef({ a: 'false' }), {});
+
+      emitFrom('click', 'save');
+
+      expect(events.map((event) => event.name)).toEqual(['base']);
+    });
+
+    it('sends no event for an event type the widget has no handler for', () => {
+      const { events, emitFrom } = createForm(makeStatesFormDef({ a: 'true' }), {});
+
+      emitFrom('blur', 'save');
+
+      expect(events).toEqual([]);
+      // The same widget sends an event for a handler it has.
+      emitFrom('click', 'save');
+      expect(events).toHaveLength(1);
+    });
+  });
+
+  describe('validation actions', () => {
+    const formDef = {
+      form: [
+        {
+          uid: 'name',
+          kind: 'input',
+          type: 'textinput',
+          path: 'profile.name',
+          on: {
+            change: 'nameChanged',
+            blur: 'nameBlurred',
+            filter: 'nameFiltered',
+            load: 'loaded',
+          },
+        },
+        { uid: 'noHandlers', kind: 'input', type: 'textinput', path: 'nickname' },
+        {
+          uid: 'send',
+          kind: 'action',
+          type: 'button',
+          actionType: 'submit',
+          on: { click: 'sendClicked' },
+        },
+        {
+          uid: 'cancel',
+          kind: 'action',
+          type: 'button',
+          actionType: 'button',
+          on: { click: 'cancelClicked' },
+        },
+        {
+          uid: 'group',
+          kind: 'layout',
+          type: 'grid',
+          on: { change: 'groupChanged' },
+          children: [{ uid: 'inGroup', kind: 'input', type: 'textinput', path: 'inGroup' }],
+        },
+      ],
+    };
+
+    it('validates the input on change, with the reason and the path of the widget', () => {
+      const { events, actions, emitFrom } = createForm(formDef, {});
+
+      emitFrom('change', 'name');
+
+      expect(events.map((event) => event.name)).toEqual(['nameChanged']);
+      expect(actions).toEqual([
+        {
+          type: 'ATTEMPT_VALIDATION',
+          payload: { reason: 'change', path: 'profile.name', uid: 'name' },
+        },
+      ]);
+    });
+
+    it('validates the input on change when the input has no change handler', () => {
+      const { events, actions, emitFrom } = createForm(formDef, {});
+
+      emitFrom('change', 'noHandlers');
+
+      expect(events).toEqual([]);
+      expect(actions).toEqual([
+        {
+          type: 'ATTEMPT_VALIDATION',
+          payload: { reason: 'change', path: 'nickname', uid: 'noHandlers' },
+        },
+      ]);
+    });
+
+    it('validates the whole form on a click of a submit button', () => {
+      const { events, actions, emitFrom } = createForm(formDef, {});
+
+      emitFrom('click', 'send');
+
+      expect(events.map((event) => event.name)).toEqual(['sendClicked']);
+      expect(actions).toEqual([{ type: 'VALIDATE_ALL' }]);
+    });
+
+    it('does not validate on a click of a button that is not a submit button', () => {
+      const { events, actions, emitFrom } = createForm(formDef, {});
+
+      emitFrom('click', 'cancel');
+
+      expect(events.map((event) => event.name)).toEqual(['cancelClicked']);
+      expect(actions).toEqual([]);
+    });
+
+    it('does not validate on a change of a layout', () => {
+      const { events, actions, emitFrom } = createForm(formDef, {});
+
+      emitFrom('change', 'group');
+
+      expect(events.map((event) => event.name)).toEqual(['groupChanged']);
+      expect(actions).toEqual([]);
+    });
+
+    it.each(['blur', 'filter', 'load'] as const)('does not validate on %s of an input', (type) => {
+      const { events, actions, emitFrom } = createForm(formDef, {});
+
+      emitFrom(type, 'name', type === 'filter' ? 'Ad' : undefined);
+
+      expect(events).toHaveLength(1);
+      expect(actions).toEqual([]);
+    });
+
+    it('sends the filter text as the detail of the event', () => {
+      const { events, emitFrom } = createForm(formDef, {});
+
+      emitFrom('filter', 'name', 'Ad');
+
+      expect(events[0].name).toBe('nameFiltered');
+      expect(events[0].detail).toBe('Ad');
+    });
+  });
+
+  describe('event data and callback', () => {
+    const formDef = {
+      states: { vip: '$form.vip === true' },
+      form: [
+        { uid: 'name', kind: 'input', type: 'textinput', path: 'name', on: { change: 'changed' } },
+        {
+          uid: 'secret',
+          kind: 'input',
+          type: 'textinput',
+          path: 'secret',
+          include: { in: ['vip'] },
+        },
+      ],
+    };
+
+    it('removes the value of a hidden input from the data of the event', () => {
+      const { events, emitFrom } = createForm(formDef, { vip: false, name: 'Ada', secret: 'x' });
+
+      emitFrom('change', 'name');
+
+      expect(events[0].data).toEqual({ vip: false, name: 'Ada' });
+    });
+
+    it('keeps the value of an input that is visible in the data of the event', () => {
+      const { events, emitFrom } = createForm(formDef, { vip: true, name: 'Ada', secret: 'x' });
+
+      emitFrom('change', 'name');
+
+      expect(events[0].data).toEqual({ vip: true, name: 'Ada', secret: 'x' });
+    });
+
+    it('sends an undefined detail when the caller gives none', () => {
+      const { events, emitFrom } = createForm(formDef, {});
+
+      emitFrom('change', 'name');
+
+      expect(events[0].detail).toBeUndefined();
+    });
+
+    it('dispatches a widget prop override from the callback', () => {
+      const { context, events, emitFrom } = createForm(formDef, {});
+      emitFrom('change', 'name');
+
+      events[0].callback({
+        type: 'OVERRIDE_WIDGET_PROP',
+        payload: { uid: 'name', prop: 'placeholder', value: 'Your name' },
+      });
+
+      const state = context.store.getState();
+      expect(state.widgetPropOverrides['name']).toEqual({ placeholder: 'Your name' });
+      const calculated = state.calculatedWidgets['name'].current as InputWidget<any, string>;
+      expect(calculated.props?.['placeholder']).toBe('Your name');
+    });
+
+    it('dispatches validation issues from the callback', () => {
+      const { context, events, emitFrom } = createForm(formDef, {});
+      emitFrom('change', 'name');
+
+      events[0].callback({
+        type: 'INJECT_VALIDATION_ISSUES',
+        payload: { path: 'name', issues: ['taken'] },
+      });
+
+      expect(context.store.getState().injectedValidations['name']).toEqual(['taken']);
+    });
+  });
 });
 
 describe('FormContext.emitSubmitEvent', () => {
@@ -212,6 +488,88 @@ describe('FormContext.emitSubmitEvent', () => {
 
     expect(submitEvents).toHaveLength(1);
     expect(submitEvents[0]).not.toHaveProperty('row');
+  });
+
+  describe('data and validity', () => {
+    const formDef = {
+      states: { vip: '$form.vip === true' },
+      form: [
+        {
+          uid: 'name',
+          kind: 'input',
+          type: 'textinput',
+          path: 'name',
+          validator: { required: true },
+        },
+        {
+          uid: 'secret',
+          kind: 'input',
+          type: 'textinput',
+          path: 'secret',
+          include: { in: ['vip'] },
+        },
+      ],
+    };
+
+    const collectSubmits = (context: FormContext<unknown>) => {
+      const submitEvents: FormSubmitEvent[] = [];
+      context.submit$.subscribe((event) => submitEvents.push(event));
+      return submitEvents;
+    };
+
+    it('sends no submit event while the form is invalid, and sends one when it is valid', () => {
+      const { context } = createForm(formDef, { vip: false }, requiredValidators);
+      const submitEvents = collectSubmits(context);
+
+      context.emitSubmitEvent();
+
+      expect(submitEvents).toEqual([]);
+      expect(context.store.getState().isFormValid).toBe(false);
+
+      context.store.dispatch({ type: 'SET_DATA', payload: { data: { vip: false, name: 'Ada' } } });
+      context.emitSubmitEvent();
+
+      expect(submitEvents).toHaveLength(1);
+    });
+
+    it('removes the value of a hidden input from the submitted data', () => {
+      const { context } = createForm(
+        formDef,
+        { vip: false, name: 'Ada', secret: 'x' },
+        requiredValidators,
+      );
+      const submitEvents = collectSubmits(context);
+
+      context.emitSubmitEvent();
+
+      expect(submitEvents[0].data).toEqual({ vip: false, name: 'Ada' });
+    });
+
+    it('keeps the value of a visible input in the submitted data', () => {
+      const { context } = createForm(
+        formDef,
+        { vip: true, name: 'Ada', secret: 'x' },
+        requiredValidators,
+      );
+      const submitEvents = collectSubmits(context);
+
+      context.emitSubmitEvent();
+
+      expect(submitEvents[0].data).toEqual({ vip: true, name: 'Ada', secret: 'x' });
+    });
+
+    it('dispatches validation issues from the callback of the submit event', () => {
+      const { context } = createForm(formDef, { vip: false, name: 'Ada' }, requiredValidators);
+      const submitEvents = collectSubmits(context);
+      context.emitSubmitEvent();
+
+      submitEvents[0].callback({
+        type: 'INJECT_VALIDATION_ISSUES',
+        payload: { path: 'name', issues: ['taken'] },
+      });
+
+      expect(context.store.getState().injectedValidations['name']).toEqual(['taken']);
+    });
   });
 });
 
@@ -252,5 +610,56 @@ describe('FormContext.initialize', () => {
     if (state.formHealth.status === 'errored') {
       expect(state.formHealth.code).toBe(50);
     }
+  });
+
+  describe('defaults', () => {
+    it('uses a translator that returns the translation key', () => {
+      const context = new FormContext<unknown>();
+      context.initialize({}, [], acceptEveryValue, 'eager', {}, undefined, {});
+
+      expect(context.localization.translate('some.key')).toBe('some.key');
+    });
+
+    it('uses no host functions when none are given', () => {
+      const context = new FormContext<unknown>();
+      context.initialize({}, [], acceptEveryValue, 'eager', {}, undefined, {});
+      context.store.dispatch({
+        type: 'INITIALIZE',
+        payload: {
+          formName: 'test',
+          formDef: { states: { adult: '$fn.isAdult($form.age)', always: 'true' }, form: [] },
+        },
+      });
+      context.store.dispatch({ type: 'SET_DATA', payload: { data: { age: 30 } } });
+
+      const state = context.store.getState();
+
+      expect(state.currentStates).toEqual(['always']);
+      expect(state.formHealth).toEqual({ status: 'ok' });
+    });
+
+    it('calls the host functions that are given', () => {
+      const context = new FormContext<unknown>();
+      context.initialize(
+        {},
+        [],
+        acceptEveryValue,
+        'eager',
+        {},
+        undefined,
+        {},
+        { isAdult: (age: number) => age >= 18 },
+      );
+      context.store.dispatch({
+        type: 'INITIALIZE',
+        payload: {
+          formName: 'test',
+          formDef: { states: { adult: '$fn.isAdult($form.age)' }, form: [] },
+        },
+      });
+      context.store.dispatch({ type: 'SET_DATA', payload: { data: { age: 30 } } });
+
+      expect(context.store.getState().currentStates).toEqual(['adult']);
+    });
   });
 });

@@ -4377,4 +4377,77 @@ describe('reducer end-to-end', () => {
       expect(validated.validations).toEqual({ first: null });
     });
   });
+
+  describe('which suffixed value a widget uses when several states are active', () => {
+    const makeLabelFormDef = (states: Record<string, string>) => ({
+      states,
+      form: [
+        {
+          uid: 'save',
+          kind: 'action',
+          type: 'button',
+          label: 'base',
+          'label.aa': 'AA',
+          'label.bb': 'BB',
+          'label.c': 'C',
+          'label.long': 'LONG',
+          'label.register': 'REGISTER',
+          'label.register:adult': 'REGISTER_ADULT',
+        },
+      ],
+    });
+
+    const labelOf = (state: State) =>
+      (state.calculatedWidgets['save'].current as ActionWidget<string>).label;
+
+    it('uses the base value when no declared state is active', () => {
+      const state = drive([init(makeLabelFormDef({ bb: 'false' })), setData({})]);
+
+      expect(state.currentStates).toEqual([]);
+      expect(labelOf(state)).toBe('base');
+    });
+
+    it('uses the value of the child state when a parent and its child are active', () => {
+      const state = drive([
+        init(makeLabelFormDef({ register: 'true', 'register:adult': '$form.age >= 18' })),
+        setData({ age: 20 }),
+      ]);
+
+      expect(state.currentStates).toEqual(['register', 'register:adult']);
+      expect(labelOf(state)).toBe('REGISTER_ADULT');
+    });
+
+    it('uses the value of the parent state when its child state is not active', () => {
+      const state = drive([
+        init(makeLabelFormDef({ register: 'true', 'register:adult': '$form.age >= 18' })),
+        setData({ age: 10 }),
+      ]);
+
+      expect(state.currentStates).toEqual(['register']);
+      expect(labelOf(state)).toBe('REGISTER');
+    });
+
+    it('uses the state with the longest name when unrelated states are active', () => {
+      const state = drive([init(makeLabelFormDef({ c: 'true', long: 'true' })), setData({})]);
+
+      expect(state.currentStates).toEqual(['c', 'long']);
+      expect(labelOf(state)).toBe('LONG');
+    });
+
+    it('uses the state declared first when two active states have names of the same length', () => {
+      const bbFirst = drive([
+        init(makeLabelFormDef({ bb: 'true', aa: 'true', c: 'true' })),
+        setData({}),
+      ]);
+      expect(bbFirst.currentStates).toEqual(['bb', 'aa', 'c']);
+      expect(labelOf(bbFirst)).toBe('BB');
+
+      const aaFirst = drive([
+        init(makeLabelFormDef({ aa: 'true', bb: 'true', c: 'true' })),
+        setData({}),
+      ]);
+      expect(aaFirst.currentStates).toEqual(['aa', 'bb', 'c']);
+      expect(labelOf(aaFirst)).toBe('AA');
+    });
+  });
 });
