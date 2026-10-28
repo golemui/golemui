@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { formDefDecoder } from './form';
+import { type FunctionWidget, type InputWidget } from './form-widget';
 
 // Widgets without an explicit uid must get a stable, position-based uid so that decoding the same JSON twice
 // (StrictMode re-initialize, a re-fetched form definition) produces the exact same uids everywhere,
@@ -145,5 +146,18 @@ describe('formDefDecoder - deterministic function widget uids', () => {
     const decoded = formDefDecoder.parse(raw);
 
     expect(decoded.form.children[0].uid).toBe('explicitUid');
+  });
+
+  it('writes the uid, type and path of the returned widget on the function object', () => {
+    const notes: FunctionWidget<string> = () =>
+      ({ kind: 'input', type: 'textinput', uid: 'notes', path: 'notes' }) as InputWidget<
+        any,
+        string
+      >;
+    formDefDecoder.parse({ form: { kind: 'layout', type: 'flex', children: [notes] } });
+
+    expect(notes.uid).toBe('notes');
+    expect(notes.type).toBe('textinput');
+    expect(notes.path).toBe('notes');
   });
 });

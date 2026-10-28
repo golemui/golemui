@@ -106,6 +106,11 @@ const blur = (path: string, uid: string): Action => ({
 
 const validateAllAction: Action = { type: 'VALIDATE_ALL' };
 
+const overrideByPath = (path: string, value: unknown): Action => ({
+  type: 'OVERRIDE_WIDGET_PROP',
+  payload: { path, prop: 'placeholder', value },
+});
+
 const propsOf = (state: State, uid: string): Record<string, any> =>
   (state.calculatedWidgets[uid].current as NonFunctionWidget<string>).props ?? {};
 
@@ -677,7 +682,7 @@ const makeMetaFormDef = () => ({
 });
 
 /** A repeater inside a repeater template, so `$item` / `$index` resolve at two levels. */
-const makeNestedRepeaterFormDef = () => ({
+const makeNestedRepeaterFormDef = (extraDevRowChildren: Record<string, unknown>[] = []) => ({
   form: [
     {
       uid: 'teams',
@@ -714,6 +719,7 @@ const makeNestedRepeaterFormDef = () => ({
                       type: 'heading',
                       props: { text: 'dev {{$index}}: {{$item.name}}' },
                     },
+                    ...extraDevRowChildren,
                   ],
                 },
               },
@@ -1221,6 +1227,73 @@ describe('reducer end-to-end', () => {
       // when it evaluates the condition.
       const rowEntry = state.resolvedSources['legacyGate[1]'] as DisplayWidget<string>;
       expect(rowEntry.include).toEqual({ when: '$form.lineItems.items.active === true' });
+    });
+
+    it('rewrites both tokens of a nested row for every inner row', () => {
+      const formDef = makeNestedRepeaterFormDef([
+        {
+          uid: 'badge',
+          kind: 'display',
+          type: 'heading',
+          include: { when: '$form.teams.items.devs.items.active === true' },
+        },
+      ]);
+
+      const state = drive([
+        init(formDef),
+        setData({
+          teams: [
+            { devs: [{ active: true }, { active: false }] },
+            { devs: [{ active: false }, { active: true }] },
+          ],
+        }),
+      ]);
+
+      expect(state.formHealth).toEqual({ status: 'ok' });
+      expect(state.widgetFlags['badge[0][0]']).toEqual({ hidden: false });
+      expect(state.widgetFlags['badge[0][1]']).toEqual({ hidden: true });
+      expect(state.widgetFlags['badge[1][0]']).toEqual({ hidden: true });
+      expect(state.widgetFlags['badge[1][1]']).toEqual({ hidden: false });
+    });
+
+    // Only `when` expressions keep the old token. A row prop reads the row through `$item`.
+    it('does not rewrite the token in a row prop, so the prop fails with code 40', () => {
+      const formDef = {
+        form: [
+          {
+            uid: 'users',
+            kind: 'input',
+            type: 'repeater',
+            path: 'users',
+            props: {
+              template: {
+                uid: 'usersRow',
+                kind: 'layout',
+                type: 'flex',
+                children: [
+                  {
+                    uid: 'title',
+                    kind: 'display',
+                    type: 'heading',
+                    props: { text: 'Name: {{ $form.users.items.name }}' },
+                  },
+                ],
+              },
+            },
+          },
+        ],
+      };
+      const noRows = drive([init(formDef), setData({ users: [] })]);
+      expect(noRows.formHealth).toEqual({ status: 'ok' });
+
+      const reduce = makeReducer();
+      const state = reduce(noRows, setData({ users: [{ name: 'Ada' }] }));
+
+      expect(state.formHealth).toMatchObject({
+        status: 'errored',
+        code: 40,
+        message: expect.stringContaining("'{{$form.users.items.name}}'"),
+      });
     });
   });
 
@@ -1916,6 +1989,73 @@ describe('reducer end-to-end', () => {
       expect(oneRow.calculatedWidgets).toHaveProperty('usersRow[0]');
       expect(oneRow.touchedControls['users.0.name']).toBe(true);
       expect(oneRow.validations['users.0.name']).toBeNull();
+    });
+
+    // A row is identified by its index. Its entries stay at that index when the data under it
+    // changes, so they then belong to the value that moved there.
+    it('keeps the entries of each index when two rows swap', () => {
+      const before = drive([
+        init(makeRequiredRowsFormDef()),
+        setData({ users: [{ name: '' }, { name: 'B' }] }),
+        blur('users.0.name', 'name[0]'),
+        {
+          type: 'OVERRIDE_WIDGET_PROP',
+          payload: { uid: 'name[0]', prop: 'placeholder', value: 'First' },
+        },
+      ]);
+      expect(before.validations['users.0.name']).toEqual(['required']);
+
+      const reduce = makeReducer();
+      const swapped = reduce(before, setData({ users: [{ name: 'B' }, { name: '' }] }));
+
+      expect(swapped.touchedControls).toEqual({ 'users.0.name': true });
+      // A data write does not validate again, so the error of index 0 now stands next to 'B'.
+      expect(swapped.validations['users.0.name']).toEqual(['required']);
+      expect(swapped.widgetPropOverrides).toEqual({ 'name[0]': { placeholder: 'First' } });
+      expect(propsOf(swapped, 'name[0]')['placeholder']).toBe('First');
+      expect(propsOf(swapped, 'name[1]')['placeholder']).toBeUndefined();
+    });
+
+    it('drops the entries of the last index when the first of three rows is removed', () => {
+      const threeRows = drive([
+        init(makeRequiredRowsFormDef()),
+        setData({ users: [{ name: 'A' }, { name: '' }, { name: 'C' }] }),
+        validateAllAction,
+        {
+          type: 'OVERRIDE_WIDGET_PROP',
+          payload: { uid: 'name[0]', prop: 'placeholder', value: 'First' },
+        },
+        {
+          type: 'OVERRIDE_WIDGET_PROP',
+          payload: { uid: 'name[2]', prop: 'placeholder', value: 'Third' },
+        },
+      ]);
+      expect(threeRows.validations).toEqual({
+        users: null,
+        'users.0.name': null,
+        'users.1.name': ['required'],
+        'users.2.name': null,
+      });
+
+      // Index 1 keeps its error, now next to 'C'. The override of index 0 now shows on the empty
+      // row, and the override of index 2 is dropped.
+      const reduce = makeReducer();
+      const twoRows = reduce(threeRows, setData({ users: [{ name: '' }, { name: 'C' }] }));
+
+      expect(twoRows.touchedControls).toEqual({
+        users: true,
+        'users.0.name': true,
+        'users.1.name': true,
+      });
+      expect(twoRows.validations).toEqual({
+        users: null,
+        'users.0.name': null,
+        'users.1.name': ['required'],
+      });
+      expect(twoRows.widgetPropOverrides).toEqual({ 'name[0]': { placeholder: 'First' } });
+      expect(Object.keys(twoRows.calculatedWidgets).sort()).toEqual(
+        ['#0', 'users', 'usersRow[0]', 'name[0]', 'usersRow[1]', 'name[1]'].sort(),
+      );
     });
   });
 
@@ -2783,11 +2923,6 @@ describe('reducer end-to-end', () => {
   // `current`. Every pass keyed by the input path has to find it there or on the stamped
   // `source.path`, exactly like a plain input.
   describe('function widget controls', () => {
-    const overrideByPath = (path: string, value: string): Action => ({
-      type: 'OVERRIDE_WIDGET_PROP',
-      payload: { path, prop: 'placeholder', value },
-    });
-
     const overrideByUid = (uid: string, value: string): Action => ({
       type: 'OVERRIDE_WIDGET_PROP',
       payload: { uid, prop: 'placeholder', value },
@@ -3748,6 +3883,307 @@ describe('reducer end-to-end', () => {
 
       const onBlur = reduce(initial, blur('firstName', 'firstName'));
       expect(onBlur.validations).toEqual({ firstName: ['required'], users: null });
+    });
+  });
+
+  describe('overrides addressed by path', () => {
+    /** Two inputs on the path 'x'. The first one is always hidden. */
+    const makeSharedPathFormDef = (secondHidden: boolean) => ({
+      form: [
+        { uid: 'first', kind: 'input', type: 'textinput', path: 'x', include: { when: 'false' } },
+        {
+          uid: 'second',
+          kind: 'input',
+          type: 'textinput',
+          path: 'x',
+          include: { when: secondHidden ? 'false' : 'true' },
+        },
+      ],
+    });
+
+    it('stores the override under the visible input when a hidden input owns the same path', () => {
+      const state = drive([
+        init(makeSharedPathFormDef(false)),
+        setData({}),
+        overrideByPath('x', 'Shared'),
+      ]);
+
+      expect(state.widgetFlags['first']).toEqual({ hidden: true });
+      expect(state.widgetPropOverrides).toEqual({ second: { placeholder: 'Shared' } });
+      expect(propsOf(state, 'second')['placeholder']).toBe('Shared');
+    });
+
+    it('stores the override under the first input of the form when every owner is hidden', () => {
+      const state = drive([
+        init(makeSharedPathFormDef(true)),
+        setData({}),
+        overrideByPath('x', 'Shared'),
+      ]);
+
+      expect(state.widgetPropOverrides).toEqual({ first: { placeholder: 'Shared' } });
+    });
+
+    it('stores the override of a row path under the uid of that row', () => {
+      const state = drive([
+        init(makeBaseFormDef()),
+        setData({ users: [{ name: 'Ada' }, { name: 'Bob' }] }),
+        overrideByPath('users.1.name', 'Second'),
+      ]);
+
+      expect(state.widgetPropOverrides).toEqual({ 'name[1]': { placeholder: 'Second' } });
+      expect(propsOf(state, 'name[1]')['placeholder']).toBe('Second');
+      expect(propsOf(state, 'name[0]')['placeholder']).toBeUndefined();
+    });
+
+    it('keeps the key of an override set to undefined and shows the source value again', () => {
+      const formDef = {
+        form: [
+          {
+            uid: 'firstName',
+            kind: 'input',
+            type: 'textinput',
+            path: 'firstName',
+            props: { placeholder: 'Source' },
+          },
+        ],
+      };
+      const overridden = drive([init(formDef), setData({}), overrideByPath('firstName', 'Over')]);
+      expect(propsOf(overridden, 'firstName')['placeholder']).toBe('Over');
+
+      const reduce = makeReducer();
+      const state = reduce(overridden, overrideByPath('firstName', undefined));
+
+      expect('placeholder' in state.widgetPropOverrides['firstName']).toBe(true);
+      expect(state.widgetPropOverrides['firstName']['placeholder']).toBeUndefined();
+      expect(propsOf(state, 'firstName')['placeholder']).toBe('Source');
+    });
+
+    it('validates again on a touched form only when the addressed input is touched', () => {
+      const formDef = {
+        form: [
+          { uid: 'a', kind: 'input', type: 'textinput', path: 'a', validator: { required: true } },
+          { uid: 'b', kind: 'input', type: 'textinput', path: 'b', validator: { required: true } },
+        ],
+      };
+      // Both validations are stale: a data write does not validate again.
+      const before = drive([
+        init(formDef),
+        setData({}),
+        blur('a', 'a'),
+        setWidgetData('a', 'filled'),
+        setWidgetData('b', 'filled'),
+      ]);
+      expect(before.touched).toBe(true);
+      expect(before.touchedControls).toEqual({ a: true });
+      expect(before.validations).toEqual({ a: ['required'], b: ['required'] });
+
+      const reduce = makeReducer();
+      const untouchedTarget = reduce(before, overrideByPath('b', 'B'));
+      const touchedTarget = reduce(before, overrideByPath('a', 'A'));
+
+      expect(untouchedTarget.validations).toEqual({ a: ['required'], b: ['required'] });
+      expect(touchedTarget.validations['a']).toBeNull();
+    });
+  });
+
+  describe('function widget calls', () => {
+    // The call arguments are compared with toStrictEqual, so a key that holds undefined must be
+    // there, and a missing key must be missing.
+
+    /** A function widget that records its calls. It owns the path 'notes'. */
+    const makeRecordedWidget = (returned: Record<string, unknown> = {}) =>
+      vi.fn<FunctionWidget<string>>(
+        () =>
+          ({
+            uid: 'notes',
+            kind: 'input',
+            type: 'textinput',
+            path: 'notes',
+            ...returned,
+          }) as InputWidget<any, string>,
+      );
+
+    it('INITIALIZE calls it once with empty data and without errors, touched or translate', () => {
+      const notes = makeRecordedWidget();
+
+      const state = drive([init({ form: [notes] })]);
+
+      expect(state.formHealth).toEqual({ status: 'ok' });
+      expect(notes).toHaveBeenCalledTimes(1);
+      expect(notes.mock.calls[0][0]).toStrictEqual({
+        $form: {},
+        errors: undefined,
+        touched: undefined,
+        translate: undefined,
+      });
+    });
+
+    it('SET_DATA calls it twice, first for the flags without translate, then for the props', () => {
+      const notes = makeRecordedWidget();
+      const initialized = drive([init({ form: [notes] })]);
+      notes.mockClear();
+
+      const reduce = makeReducer();
+      const state = reduce(initialized, setData({ notes: 'a' }));
+
+      expect(notes).toHaveBeenCalledTimes(2);
+      expect(notes.mock.calls[0][0]).toStrictEqual({
+        $form: { notes: 'a' },
+        $item: undefined,
+        $index: undefined,
+        errors: undefined,
+        touched: undefined,
+        translate: undefined,
+      });
+      expect(notes.mock.calls[1][0]).toStrictEqual({
+        $form: { notes: 'a' },
+        $item: undefined,
+        $index: undefined,
+        errors: undefined,
+        touched: undefined,
+        translate: expect.any(Function),
+      });
+
+      notes.mockClear();
+      reduce(state, setData({ notes: 'b' }));
+
+      expect(notes).toHaveBeenCalledTimes(2);
+    });
+
+    it('a blur passes errors and touched to the props call only', () => {
+      const notes = makeRecordedWidget({ validator: { required: true } });
+      const initial = drive([init({ form: [notes] }), setData({ notes: '' })]);
+      notes.mockClear();
+
+      const reduce = makeReducer();
+      reduce(initial, blur('notes', 'notes'));
+
+      expect(notes).toHaveBeenCalledTimes(2);
+      expect(notes.mock.calls[0][0]).toStrictEqual({
+        $form: { notes: '' },
+        $item: undefined,
+        $index: undefined,
+        errors: undefined,
+        touched: undefined,
+        translate: undefined,
+      });
+      expect(notes.mock.calls[1][0]).toStrictEqual({
+        $form: { notes: '' },
+        $item: undefined,
+        $index: undefined,
+        errors: ['required'],
+        touched: true,
+        translate: expect.any(Function),
+      });
+    });
+
+    it('calls a hidden function widget for its flags only', () => {
+      const notes = makeRecordedWidget({ include: { when: '$form.show === true' } });
+      const initialized = drive([init({ form: [notes] })]);
+      const reduce = makeReducer();
+
+      notes.mockClear();
+      const hidden = reduce(initialized, setData({ show: false }));
+
+      expect(hidden.calculatedWidgets).not.toHaveProperty('notes');
+      expect(notes).toHaveBeenCalledTimes(1);
+      expect(notes.mock.calls[0][0]?.translate).toBeUndefined();
+
+      notes.mockClear();
+      const visible = reduce(hidden, setData({ show: true }));
+
+      expect(visible.calculatedWidgets).toHaveProperty('notes');
+      expect(notes).toHaveBeenCalledTimes(2);
+    });
+
+    it('calls a row function widget once more per row, to find a nested repeater', () => {
+      const rowName = vi.fn<FunctionWidget<string>>(
+        () =>
+          ({
+            uid: 'rowName',
+            kind: 'input',
+            type: 'textinput',
+            path: 'users.items.name',
+          }) as InputWidget<any, string>,
+      );
+      const formDef = {
+        form: [
+          {
+            uid: 'users',
+            kind: 'input',
+            type: 'repeater',
+            path: 'users',
+            props: {
+              template: { uid: 'usersRow', kind: 'layout', type: 'flex', children: [rowName] },
+            },
+          },
+        ],
+      };
+      const initialized = drive([init(formDef)]);
+      expect(rowName).toHaveBeenCalledTimes(1);
+      rowName.mockClear();
+
+      const reduce = makeReducer();
+      const data = { users: [{ name: 'Ada' }, { name: 'Bob' }] };
+      reduce(initialized, setData(data));
+
+      const rowCall = (index: number, translate: unknown) => ({
+        $form: data,
+        $item: data.users[index],
+        $index: index,
+        errors: undefined,
+        touched: undefined,
+        translate,
+      });
+      expect(rowName).toHaveBeenCalledTimes(6);
+      // The row expansion.
+      expect(rowName.mock.calls[0][0]).toStrictEqual(rowCall(0, undefined));
+      expect(rowName.mock.calls[1][0]).toStrictEqual(rowCall(1, undefined));
+      // The flags.
+      expect(rowName.mock.calls[2][0]).toStrictEqual(rowCall(0, undefined));
+      expect(rowName.mock.calls[3][0]).toStrictEqual(rowCall(1, undefined));
+      // The props.
+      expect(rowName.mock.calls[4][0]).toStrictEqual(rowCall(0, expect.any(Function)));
+      expect(rowName.mock.calls[5][0]).toStrictEqual(rowCall(1, expect.any(Function)));
+    });
+
+    it('reports code 21 when the same function object is used twice in one form', () => {
+      const notes: FunctionWidget<string> = () =>
+        ({ kind: 'input', type: 'textinput', path: 'notes' }) as InputWidget<any, string>;
+
+      const state = drive([init({ form: [notes, notes] })]);
+
+      expect(state.formHealth).toEqual({
+        status: 'errored',
+        message: '[21] Duplicate UID "#0.0.f": Assigned to widget "textinput" and "textinput".',
+        code: 21,
+      });
+    });
+
+    // The path is the key of the input's data, touched flag, errors and overrides, so it is read
+    // once, when the form is decoded.
+    it('keeps the path of the decode call when the function returns another path later', () => {
+      let returnedPath = 'first';
+      const notes: FunctionWidget<string> = () =>
+        ({
+          uid: 'notes',
+          kind: 'input',
+          type: 'textinput',
+          path: returnedPath,
+          validator: { required: true },
+        }) as InputWidget<any, string>;
+      const initialized = drive([init({ form: [notes] })]);
+
+      returnedPath = 'second';
+      const reduce = makeReducer();
+      const state = reduce(initialized, setData({ first: 'a', second: 'b' }));
+      const validated = reduce(state, validateAllAction);
+
+      expect((state.calculatedWidgets['notes'].current as InputWidget<any, string>).path).toBe(
+        'first',
+      );
+      expect(validated.touchedControls).toEqual({ first: true });
+      expect(validated.validations).toEqual({ first: null });
     });
   });
 });
