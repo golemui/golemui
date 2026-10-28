@@ -1,4 +1,4 @@
-import { type FormHealth, type FormWidget, errorCodes, formEventNames } from '@golemui/core';
+import { type FormWidget, errorCodes } from '@golemui/core';
 import { consume } from '@lit/context';
 import { type LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
@@ -69,6 +69,10 @@ export const WidgetMixin = <T extends new (...args: any[]) => LitElement>(superC
 
     private async loadWidgetComponent() {
       if (!this.widget) return;
+      // A new config gives the form context a new store while the load runs. The error belongs to
+      // the store of this widget.
+      // Without a form context, the load fails inside the `try` and is only logged.
+      const store = this.formContext?.store;
 
       try {
         const component = await this.formContext.widgetRegistry.loadWidget(this.widget.type!);
@@ -81,18 +85,18 @@ export const WidgetMixin = <T extends new (...args: any[]) => LitElement>(superC
       } catch (err) {
         console.error(`Widget "${this.widget.type}" could not be loaded`, err);
 
+        // The form element shows the error and dispatches the `formHealth` event of the store.
         const code = errorCodes.widgetCouldNotBeLoaded;
-        this.dispatchEvent(
-          new CustomEvent<FormHealth>(formEventNames.health, {
-            detail: {
+        store?.dispatch({
+          type: 'SET_FORM_HEALTH',
+          payload: {
+            formHealth: {
               status: 'errored',
               message: `[${code}] Widget "${this.widget.type}" could not be loaded`,
               code,
             },
-            bubbles: true,
-            composed: true,
-          }),
-        );
+          },
+        });
       }
     }
 

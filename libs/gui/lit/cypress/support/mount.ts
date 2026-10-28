@@ -20,29 +20,14 @@ export const mountFramework = (options: MountOptions) => {
       }
     : {};
 
-  const handleFormEvent = (e: CustomEvent<FormEvent>) => {
-    if (options.formEvent) {
-      options.formEvent(e.detail);
-    } else {
-      cy.spy().as('formEvent')(e.detail);
-    }
-  };
+  // One spy per mount, so an alias records every call, as in the other framework mounts.
+  const onFormEvent = options.formEvent ?? cy.spy().as('formEvent');
+  const onFormHealth = options.formHealth ?? cy.spy().as('formHealth');
+  const onFormSubmit = options.formSubmit ?? cy.spy().as('formSubmit');
 
-  const handleFormHealth = (e: CustomEvent<FormHealth>) => {
-    if (options.formHealth) {
-      options.formHealth(e.detail);
-    } else {
-      cy.spy().as('formHealth')(e.detail);
-    }
-  };
-
-  const handleFormSubmit = (e: CustomEvent<FormSubmitEvent>) => {
-    if (options.formSubmit) {
-      options.formSubmit(e.detail);
-    } else {
-      cy.spy().as('formSubmit')(e.detail);
-    }
-  };
+  const handleFormEvent = (e: CustomEvent<FormEvent>) => onFormEvent(e.detail);
+  const handleFormHealth = (e: CustomEvent<FormHealth>) => onFormHealth(e.detail);
+  const handleFormSubmit = (e: CustomEvent<FormSubmitEvent>) => onFormSubmit(e.detail);
 
   const config: GuiFormInitConfig = {
     formDef: options.formDef,
