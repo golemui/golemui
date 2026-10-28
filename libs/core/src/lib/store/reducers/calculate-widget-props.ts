@@ -586,7 +586,7 @@ function resolveI18nParams(
           $index: ctx.$index,
           $fn: ctx.$fn,
         });
-        acc[key] = result ?? param;
+        setOwnParam(acc, key, result ?? param);
       } catch (err) {
         if (err instanceof ExpressionRejectedError) {
           throw err;
@@ -595,10 +595,20 @@ function resolveI18nParams(
         throw new StringInterpolationError(`Failed to evaluate i18n param '${param}': ${cause}`);
       }
     } else {
-      acc[key] = param;
+      setOwnParam(acc, key, param);
     }
     return acc;
   }, {} as I18nParams);
+}
+
+// A plain assignment to `__proto__` sets the prototype of the object instead of adding a key.
+function setOwnParam(params: I18nParams, key: string, value: unknown): void {
+  Object.defineProperty(params, key, {
+    value,
+    enumerable: true,
+    writable: true,
+    configurable: true,
+  });
 }
 
 // -----------------------------------------------------------------------------

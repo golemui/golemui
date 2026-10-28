@@ -593,6 +593,25 @@ describe('calculateWidgetProps', () => {
       expect(translator.calls[0].params).toEqual({ a: 'literal', n: '42' });
     });
 
+    it('i18n params: a param named __proto__ is an own property and does not change the prototype', () => {
+      const translator = makeTranslator();
+      const params = JSON.parse('{"__proto__": "polluted", "a": "literal"}');
+      const source = {
+        kind: 'action',
+        uid: 'a',
+        type: 'button',
+        label: { key: 'k', params },
+      } satisfies ActionWidget<string>;
+      seed(state, 'a', source);
+
+      run(state, translator);
+
+      const received = translator.calls[0].params as Record<string, unknown>;
+      expect(Object.getPrototypeOf(received)).toBe(Object.prototype);
+      expect(Object.getOwnPropertyDescriptor(received, '__proto__')?.value).toBe('polluted');
+      expect(received['a']).toBe('literal');
+    });
+
     it('i18n params: string concat expression resolves', () => {
       const translator = makeTranslator();
       const source = {
