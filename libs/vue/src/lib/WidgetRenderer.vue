@@ -33,13 +33,20 @@ onMounted(async () => {
   if (preloaded) {
     return;
   }
+  // A new config replaces the store of the same context during the load, and a failure of
+  // this widget must not mark the newer form as errored.
+  const store = formContext.store;
   try {
     const loaded = await formContext.widgetRegistry.loadWidget(props.widget.type);
     if (!isMounted.value) return;
     LoadedComponent.value = loaded;
   } catch {
+    // A new formDef on the same store unmounts this widget, and the form no longer shows it.
+    if (!isMounted.value) {
+      return;
+    }
     const code = errorCodes.widgetCouldNotBeLoaded;
-    formContext.store.dispatch({
+    store.dispatch({
       type: 'SET_FORM_HEALTH',
       payload: {
         formHealth: {

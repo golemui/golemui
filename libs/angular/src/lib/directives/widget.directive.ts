@@ -47,6 +47,9 @@ export class WidgetDirective implements OnInit, OnDestroy {
           'Call preloadFormWidgets() before rendering.',
       );
     }
+    // A new config replaces the store of the same context during the load, and a failure of
+    // this widget must not mark the newer form as errored.
+    const store = this.formContext.store;
     try {
       const component = await this.formContext.widgetRegistry.loadWidget(widget.type);
       // The directive can be destroyed while the loader is still running.
@@ -55,8 +58,12 @@ export class WidgetDirective implements OnInit, OnDestroy {
       }
       this.createComponent(component);
     } catch {
+      // The form no longer shows a destroyed widget, so its failure is not a form error.
+      if (this.destroyed) {
+        return;
+      }
       const code = errorCodes.widgetCouldNotBeLoaded;
-      this.formContext.store.dispatch({
+      store.dispatch({
         type: 'SET_FORM_HEALTH',
         payload: {
           formHealth: {
