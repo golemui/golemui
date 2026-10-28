@@ -2103,6 +2103,19 @@ describe('reducer end-to-end', () => {
       expect(onBlur.validations).toEqual({ firstName: ['required'], users: null });
     });
 
+    it('SET_WIDGET_DATA on a path no input owns writes the value and runs a derive', () => {
+      // No input of the base form owns `age`. The `adult` state reads it.
+      const before = drive([init(makeBaseFormDef()), setData({})]);
+      expect(before.widgetFlags['bio']).toEqual({ hidden: true });
+
+      const reduce = makeReducer();
+      const state = reduce(before, setWidgetData('age', 21));
+
+      expect(state.data).toEqual({ age: 21 });
+      expect(state.currentStates).toEqual(['adult']);
+      expect(state.widgetFlags['bio']).toEqual({ hidden: false });
+    });
+
     it('INITIALIZE starts over: data and every derived map are reset', () => {
       const state = drive([
         init(makeBaseFormDef()),
@@ -3549,6 +3562,192 @@ describe('reducer end-to-end', () => {
       expect(state.formHealth).toEqual({ status: 'ok' });
       expect(state.currentStates).toEqual(['always']);
       expect(state.widgetFlags['brokenOnly']).toEqual({ hidden: true });
+    });
+  });
+
+  describe('INITIALIZE on a form that already has state', () => {
+    it('resets meta, injected issues, overrides and the submit flags, and keeps the language', () => {
+      const used = drive([
+        init(makeBaseFormDef()),
+        setData({ users: [] }),
+        { type: 'SET_META', payload: { meta: { mode: 'dev' } } },
+        validateAllAction,
+        { type: 'INJECT_VALIDATION_ISSUES', payload: { path: 'firstName', issues: ['taken'] } },
+        {
+          type: 'OVERRIDE_WIDGET_PROP',
+          payload: { uid: 'firstName', prop: 'placeholder', value: 'Name' },
+        },
+        { type: 'SET_LANGUAGE', payload: { lang: 'fr-FR' } },
+      ]);
+      expect(used.meta).toEqual({ mode: 'dev' });
+      expect(used.injectedValidations).toEqual({ firstName: ['taken'] });
+      expect(used.widgetPropOverrides).toEqual({ firstName: { placeholder: 'Name' } });
+      expect(used.allControlsValidated).toBe(true);
+      expect(used.isFormValid).toBe(false);
+      expect(used.touched).toBe(true);
+      expect(used.touchedControls).toEqual({ firstName: true, users: true });
+      expect(used.validations).toEqual({ firstName: ['required'], users: null });
+
+      const reduce = makeReducer();
+      const state = reduce(used, {
+        type: 'INITIALIZE',
+        payload: { formName: 'second-form', formDef: makeBaseFormDef() },
+      });
+
+      expect(state.meta).toEqual({});
+      expect(state.injectedValidations).toEqual({});
+      expect(state.widgetPropOverrides).toEqual({});
+      expect(state.allControlsValidated).toBe(false);
+      expect(state.isFormValid).toBe(true);
+      expect(state.touched).toBe(false);
+      expect(state.touchedControls).toEqual({});
+      expect(state.validations).toEqual({});
+      expect(state.lang).toBe('fr-FR');
+      expect(state.formName).toBe('second-form');
+    });
+
+    it('clears an error set outside the derive, so the next SET_DATA computes the form', () => {
+      const frozen = drive([
+        init(makeBaseFormDef()),
+        setData({}),
+        {
+          type: 'SET_FORM_HEALTH',
+          payload: { formHealth: { status: 'errored', code: 30, message: '[30] no widget' } },
+        },
+      ]);
+      expect(frozen.formHealth.status).toBe('errored');
+
+      const reduce = makeReducer();
+      const initialized = reduce(frozen, init(makeBaseFormDef()));
+      expect(initialized.formHealth).toEqual({ status: 'ok' });
+
+      const state = reduce(initialized, setData({ age: 21 }));
+      expect(state.currentStates).toEqual(['adult']);
+      expect(state.calculatedWidgets).toHaveProperty('bio');
+    });
+
+    it('keeps and submits the data of a removed input when the host sets the old data again', () => {
+      const firstName = { uid: 'firstName', kind: 'input', type: 'textinput', path: 'firstName' };
+      const nickname = { uid: 'nickname', kind: 'input', type: 'textinput', path: 'nickname' };
+      const oldData = { firstName: 'Joan', nickname: 'J' };
+      const before = drive([init({ form: [firstName, nickname] }), setData(oldData)]);
+
+      const reduce = makeReducer();
+      const replaced = reduce(before, init({ form: [{ ...firstName }] }));
+      const state = reduce(replaced, setData(before.data));
+
+      expect(state.flatForm).not.toHaveProperty('nickname');
+      expect(state.data).toEqual(oldData);
+      expect(pruneHiddenData(state)).toEqual(oldData);
+    });
+  });
+
+  describe('function widget failures', () => {
+    it('reports code 11 when a function widget throws in the flags call, and recovers', () => {
+      const notes: FunctionWidget<string> = (api) => {
+        if (api?.$form?.['explode']) {
+          throw new Error('flags failed');
+        }
+        return { uid: 'notes', kind: 'input', type: 'textinput', path: 'notes' } as InputWidget<
+          any,
+          string
+        >;
+      };
+      notes.uid = 'notes';
+      const ok = drive([init({ form: [notes] }), setData({})]);
+      expect(ok.formHealth).toEqual({ status: 'ok' });
+
+      const reduce = makeReducer();
+      const state = reduce(ok, setData({ explode: true }));
+
+      expect(state.formHealth).toEqual({
+        status: 'errored',
+        message: '[11] flags failed',
+        code: 11,
+      });
+      expect(reduce(state, setData({})).formHealth).toEqual({ status: 'ok' });
+    });
+
+    it('reports code 12 when a function widget throws only in the props call, and recovers', () => {
+      const notes: FunctionWidget<string> = (api) => {
+        // Only the props call passes a translate function.
+        if (api?.$form?.['explode'] && api.translate !== undefined) {
+          throw new Error('props failed');
+        }
+        return { uid: 'notes', kind: 'input', type: 'textinput', path: 'notes' } as InputWidget<
+          any,
+          string
+        >;
+      };
+      notes.uid = 'notes';
+      const ok = drive([init({ form: [notes] }), setData({})]);
+      expect(ok.formHealth).toEqual({ status: 'ok' });
+
+      const reduce = makeReducer();
+      const state = reduce(ok, setData({ explode: true }));
+
+      expect(state.formHealth).toEqual({
+        status: 'errored',
+        message: '[12] props failed',
+        code: 12,
+      });
+      expect(reduce(state, setData({})).formHealth).toEqual({ status: 'ok' });
+    });
+  });
+
+  describe('injected issues and the derive', () => {
+    it('drops an injected issue on a path no input owns at the next derive', () => {
+      const injected = drive([
+        init(makeValidationDrivenFormDef()),
+        setData({ firstName: 'Joan' }),
+        { type: 'INJECT_VALIDATION_ISSUES', payload: { path: 'ghost', issues: ['unknown'] } },
+        { type: 'INJECT_VALIDATION_ISSUES', payload: { path: 'firstName', issues: ['taken'] } },
+      ]);
+      expect(injected.injectedValidations).toEqual({ ghost: ['unknown'], firstName: ['taken'] });
+
+      const reduce = makeReducer();
+      const state = reduce(injected, setData({ firstName: 'Ada' }));
+
+      expect(state.injectedValidations).toEqual({ firstName: ['taken'] });
+    });
+  });
+
+  describe('validateOn modes', () => {
+    const change = (path: string, uid: string): Action => ({
+      type: 'ATTEMPT_VALIDATION',
+      payload: { reason: 'change', path, uid },
+    });
+
+    it("'submit' ignores blur and change, and VALIDATE_ALL still validates", () => {
+      const initial = drive([init(makeBaseFormDef()), setData({})], 'submit');
+      const reduce = makeReducer('submit');
+
+      expect(reduce(initial, blur('firstName', 'firstName'))).toBe(initial);
+      expect(reduce(initial, change('firstName', 'firstName'))).toBe(initial);
+
+      const submitted = reduce(initial, validateAllAction);
+      expect(submitted.validations).toEqual({ firstName: ['required'], users: null });
+    });
+
+    it("['change', 'blur'] validates on a change and on a blur", () => {
+      const initial = drive([init(makeBaseFormDef()), setData({})], ['change', 'blur']);
+      const reduce = makeReducer(['change', 'blur']);
+
+      const onChange = reduce(initial, change('firstName', 'firstName'));
+      const onBlur = reduce(initial, blur('firstName', 'firstName'));
+
+      expect(onChange.validations).toEqual({ firstName: ['required'], users: null });
+      expect(onBlur.validations).toEqual({ firstName: ['required'], users: null });
+    });
+
+    it("['blur'] ignores a change and validates on a blur", () => {
+      const initial = drive([init(makeBaseFormDef()), setData({})], ['blur']);
+      const reduce = makeReducer(['blur']);
+
+      expect(reduce(initial, change('firstName', 'firstName'))).toBe(initial);
+
+      const onBlur = reduce(initial, blur('firstName', 'firstName'));
+      expect(onBlur.validations).toEqual({ firstName: ['required'], users: null });
     });
   });
 });
