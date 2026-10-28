@@ -4,6 +4,8 @@ import type { ComponentType, ReactNode } from 'react';
 /**
  * Props for a FormHealth boundary. `health` is the form's current health; `children` is the rendered
  * form - keep it mounted so a recovered health (e.g. a corrected config) restores the form in place.
+ * Render `children` at the same child position for every health. A different position makes React
+ * build a new form, and the focus and the typed text are lost.
  */
 export interface FormHealthBoundaryProps {
   health: FormHealth;
@@ -13,6 +15,9 @@ export interface FormHealthBoundaryProps {
 /**
  * Wraps the form and renders error UI based on {@link FormHealth}. Pass via the `formHealthBoundary`
  * prop on `FormComponent` / `GuiForm`; defaults to {@link DefaultFormHealthBoundary}.
+ *
+ * The banner expression keeps its child position also when it is `false`, so `children` is always the
+ * second child.
  *
  * @example
  * const MyBoundary: FormHealthBoundary = ({ health, children }) => (
