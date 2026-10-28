@@ -488,6 +488,18 @@ describe('createWidgetViewModelReader', () => {
     expect(after.rows).toBe(before.rows);
   });
 
+  it('returns the identical view model when VALIDATE_ALL finds the same failure again', () => {
+    const reduce = makeReducer();
+    let state = drive([init(makeBaseFormDef()), setData({ users: [] }), validateAllAction]);
+    const read = createWidgetViewModelReader();
+
+    const before = read<string>(state, 'firstName');
+    expect(before.errors).toEqual(['required']);
+    state = reduce(state, validateAllAction);
+
+    expect(read(state, 'firstName')).toBe(before);
+  });
+
   it('reuses the children array when only the form-invalid flag changed', () => {
     const reduce = makeReducer();
     let state = drive([init(makeBaseFormDef()), setData({ users: [{ name: 'a' }] })]);

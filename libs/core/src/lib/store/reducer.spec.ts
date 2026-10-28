@@ -63,17 +63,24 @@ const functions: ExpressionFunctions = {
   isAdult: (age: number) => age >= 18,
 };
 
-const makeReducer = (validateOn: ValidateOn = 'eager') =>
+const makeReducer = (
+  validateOn: ValidateOn = 'eager',
+  formValidators: ValidatorFn<any> = validators as ValidatorFn<any>,
+) =>
   reducer({
-    validators: validators as ValidatorFn<any>,
+    validators: formValidators,
     validateOn,
     localization: identityTranslator('en-US'),
     functions,
   });
 
 /** Dispatches a sequence of actions from a fresh initial state and returns the final state. */
-const drive = (actions: Action[], validateOn: ValidateOn = 'eager'): State => {
-  const reduce = makeReducer(validateOn);
+const drive = (
+  actions: Action[],
+  validateOn: ValidateOn = 'eager',
+  formValidators?: ValidatorFn<any>,
+): State => {
+  const reduce = makeReducer(validateOn, formValidators);
   return actions.reduce((state, action) => reduce(state, action), createInitialState('en-US'));
 };
 
@@ -1755,6 +1762,120 @@ describe('reducer end-to-end', () => {
       expect(state.calculatedWidgets).toBe(errored.calculatedWidgets);
       expect(state.widgetFlags).toBe(errored.widgetFlags);
     });
+
+    it('reports code 12 when a prop function throws, and recovers when it returns', () => {
+      const formDef = {
+        form: [
+          {
+            uid: 'status',
+            kind: 'display',
+            type: 'heading',
+            props: {
+              text: ({ $form }: { $form: Record<string, any> }) => {
+                if (!$form['ok']) {
+                  throw new Error('not ok');
+                }
+                return 'fine';
+              },
+            },
+          },
+        ],
+      };
+      const errored = drive([init(formDef), setData({})]);
+      expect(errored.formHealth).toEqual({
+        status: 'errored',
+        message: '[12] not ok',
+        code: 12,
+      });
+
+      const reduce = makeReducer();
+      const healed = reduce(errored, setData({ ok: true }));
+
+      expect(healed.formHealth).toEqual({ status: 'ok' });
+      expect(propsOf(healed, 'status')['text']).toBe('fine');
+    });
+
+    it('writes no default value in a derive that fails, and writes it in the next good derive', () => {
+      const formDef = {
+        form: [
+          {
+            uid: 'nickname',
+            kind: 'input',
+            type: 'textinput',
+            path: 'nickname',
+            defaultValue: 'x',
+          },
+          { uid: 'oops', kind: 'display', type: 'heading', props: { text: '{{ $form.a.b }}' } },
+        ],
+      };
+      const errored = drive([init(formDef), setData({})]);
+
+      expect(errored.formHealth).toMatchObject({ status: 'errored', code: 40 });
+      expect(errored.data).toEqual({});
+
+      const reduce = makeReducer();
+      const healed = reduce(errored, setData({ a: { b: 1 } }));
+
+      expect(healed.formHealth).toEqual({ status: 'ok' });
+      expect(healed.data).toEqual({ a: { b: 1 }, nickname: 'x' });
+    });
+
+    it('reports code 11 for a row input whose path is outside its repeater', () => {
+      const formDef = {
+        form: [
+          {
+            uid: 'rows',
+            kind: 'input',
+            type: 'repeater',
+            path: 'rows',
+            props: {
+              template: {
+                uid: 'rowsRow',
+                kind: 'layout',
+                type: 'flex',
+                children: [{ uid: 'name', kind: 'input', type: 'textinput', path: 'other.name' }],
+              },
+            },
+          },
+        ],
+      };
+
+      const state = drive([init(formDef), setData({ rows: [{}] })]);
+
+      // The row expansion throws. The catch of the derive gives code 11 to every error that is
+      // not a rejected expression, whichever pass threw it.
+      expect(state.formHealth).toEqual({
+        status: 'errored',
+        code: 11,
+        message: '[11] Path "other.name" is not inside the repeater row "rows.items".',
+      });
+    });
+
+    it.each([
+      {
+        code: 21,
+        formDef: {
+          form: [
+            { uid: 'name', kind: 'input', type: 'textinput', path: 'first' },
+            { uid: 'name', kind: 'input', type: 'textinput', path: 'last' },
+          ],
+        },
+      },
+      { code: 22, formDef: { form: [{ uid: 'name', kind: 'unknown' }] } },
+    ])(
+      'keeps the decode error with code $code after SET_DATA and computes no widget',
+      ({ code, formDef }) => {
+        const initialized = drive([init(formDef)]);
+        expect(initialized.formHealth).toMatchObject({ status: 'errored', code });
+
+        const reduce = makeReducer();
+        const state = reduce(initialized, setData({ first: 'Ada' }));
+
+        expect(state.formHealth).toBe(initialized.formHealth);
+        expect(state.data).toEqual({ first: 'Ada' });
+        expect(state.calculatedWidgets).toEqual({});
+      },
+    );
   });
 
   // ---------------------------------------------------------------------------
@@ -2077,6 +2198,41 @@ describe('reducer end-to-end', () => {
       expect(state.touchedControls).toEqual({});
       expect(state.validations).toEqual({});
     });
+
+    it('touches an input that a failing derive reveals only after the next good derive', () => {
+      const formDef = {
+        ...makeGatedInputFormDef(),
+        form: [
+          ...makeGatedInputFormDef().form,
+          {
+            uid: 'oops',
+            kind: 'display',
+            type: 'heading',
+            props: { text: '{{$form.missing.deep}}' },
+          },
+        ],
+      };
+      const validated = drive([
+        init(formDef),
+        setData({ age: 10, missing: { deep: 1 } }),
+        validateAllAction,
+      ]);
+      expect(validated.allControlsValidated).toBe(true);
+
+      const reduce = makeReducer();
+      const errored = reduce(validated, setData({ age: 21 }));
+
+      expect(errored.formHealth).toMatchObject({ status: 'errored', code: 40 });
+      expect(errored.touchedControls).toEqual({});
+      expect(errored.validations['secret']).toBeUndefined();
+
+      const healed = reduce(errored, setData({ age: 21, missing: { deep: 1 } }));
+
+      expect(healed.formHealth).toEqual({ status: 'ok' });
+      expect(healed.touchedControls).toEqual({ secret: true });
+      expect(healed.validations['secret']).toEqual(['required']);
+      expect(healed.isFormValid).toBe(false);
+    });
   });
 
   // ---------------------------------------------------------------------------
@@ -2211,6 +2367,105 @@ describe('reducer end-to-end', () => {
         unchanged.calculatedWidgets['rowName[0]'],
       );
       expect(propsOf(changed, 'rowName[0]')['seenItemName']).toBe('Grace');
+    });
+
+    it('keeps the reference of a static prop when a state changes another prop', () => {
+      const options = [{ label: 'A', value: 'a' }];
+      const formDef = {
+        states: { on: '$form.on === true' },
+        form: [
+          {
+            uid: 'choice',
+            kind: 'input',
+            type: 'dropdown',
+            path: 'choice',
+            props: { options, label: 'Off', 'label.on': 'On' },
+          },
+        ],
+      };
+      const off = drive([init(formDef), setData({})]);
+
+      const reduce = makeReducer();
+      const on = reduce(off, setData({ on: true }));
+
+      expect(propsOf(on, 'choice')['label']).toBe('On');
+      expect(on.calculatedWidgets['choice']).not.toBe(off.calculatedWidgets['choice']);
+      expect(propsOf(on, 'choice')['options']).toBe(propsOf(off, 'choice')['options']);
+    });
+
+    it('keeps the child uids of a layout when a state changes its size', () => {
+      const formDef = {
+        states: { big: '$form.big === true' },
+        form: [
+          {
+            uid: 'card',
+            kind: 'layout',
+            type: 'flex',
+            size: 6,
+            'size.big': 12,
+            children: [
+              { uid: 'title', kind: 'display', type: 'heading' },
+              { uid: 'subtitle', kind: 'display', type: 'heading' },
+            ],
+          },
+        ],
+      };
+      const small = drive([init(formDef), setData({})]);
+
+      const reduce = makeReducer();
+      const big = reduce(small, setData({ big: true }));
+
+      const sizeOf = (state: State) =>
+        (state.calculatedWidgets['card'].current as LayoutWidget<string>).size;
+      expect(sizeOf(small)).toBe(6);
+      expect(sizeOf(big)).toBe(12);
+      expect(childUidsOf(small, 'card')).toEqual(['title', 'subtitle']);
+      expect(childUidsOf(big, 'card')).toEqual(['title', 'subtitle']);
+    });
+
+    it('keeps the content of a widget flag after a SET_META that does not change it', () => {
+      const formDef = {
+        form: [
+          { uid: 'debugOnly', kind: 'display', type: 'heading', include: { when: '$meta.debug' } },
+        ],
+      };
+      const before = drive([init(formDef), setData({})]);
+
+      const reduce = makeReducer();
+      const after = reduce(before, { type: 'SET_META', payload: { meta: { mode: 'edit' } } });
+
+      expect(after.widgetFlags['debugOnly']).toEqual({ hidden: true });
+      expect(after.widgetFlags['debugOnly']).toEqual(before.widgetFlags['debugOnly']);
+    });
+
+    it('keeps the validation array when VALIDATE_ALL finds the same failure again', () => {
+      let message = 'required';
+      const alwaysFails: ValidatorFn<unknown> = () => ({
+        '~standard': {
+          version: 1,
+          vendor: 'reducer-spec',
+          validate: () => ({ issues: [{ message }] }),
+        },
+      });
+      const formDef = {
+        form: [
+          { uid: 'firstName', kind: 'input', type: 'textinput', path: 'firstName', validator: {} },
+        ],
+      };
+      const first = drive(
+        [init(formDef), setData({}), validateAllAction],
+        'eager',
+        alwaysFails as ValidatorFn<any>,
+      );
+
+      const reduce = makeReducer('eager', alwaysFails as ValidatorFn<any>);
+      const same = reduce(first, validateAllAction);
+      message = 'too short';
+      const different = reduce(same, validateAllAction);
+
+      expect(first.validations['firstName']).toEqual(['required']);
+      expect(same.validations['firstName']).toBe(first.validations['firstName']);
+      expect(different.validations['firstName']).toEqual(['too short']);
     });
   });
 
@@ -2641,6 +2896,51 @@ describe('reducer end-to-end', () => {
       expect(healed.formHealth).toEqual({ status: 'ok' });
       expect(healed.calculatedWidgets['greeting[0]']).toBeUndefined();
       expect(propsOf(healed, 'title')['text']).toBe('Users');
+    });
+
+    it('keeps the entries of a removed row when the pass fails, and drops them in the next good derive', () => {
+      const formDef = {
+        ...makeBaseFormDef(),
+        form: [
+          ...makeBaseFormDef().form,
+          {
+            uid: 'oops',
+            kind: 'display',
+            type: 'heading',
+            props: { text: '{{$form.missing.deep}}' },
+          },
+        ],
+      };
+      const twoRows = drive([
+        init(formDef),
+        setData({ missing: { deep: 1 }, users: [{}, {}] }),
+        validateAllAction,
+        {
+          type: 'OVERRIDE_WIDGET_PROP',
+          payload: { uid: 'name[1]', prop: 'placeholder', value: 'Second' },
+        },
+      ]);
+      expect(twoRows.formHealth).toEqual({ status: 'ok' });
+      expect(twoRows.touchedControls['users.1.name']).toBe(true);
+      expect(twoRows.widgetPropOverrides['name[1]']).toEqual({ placeholder: 'Second' });
+
+      const reduce = makeReducer();
+      const errored = reduce(twoRows, setData({ users: [{}] }));
+
+      expect(errored.formHealth).toMatchObject({ status: 'errored', code: 40 });
+      expect(errored.touchedControls['users.1.name']).toBe(true);
+      expect(errored.widgetPropOverrides['name[1]']).toEqual({ placeholder: 'Second' });
+      expect(errored.validations).toHaveProperty('users.1.name');
+      expect(errored.calculatedWidgets).toHaveProperty('name[1]');
+
+      const healed = reduce(errored, setData({ missing: { deep: 1 }, users: [{}] }));
+
+      expect(healed.formHealth).toEqual({ status: 'ok' });
+      expect(healed.touchedControls).not.toHaveProperty('users.1.name');
+      expect(healed.widgetPropOverrides).not.toHaveProperty('name[1]');
+      expect(healed.validations).not.toHaveProperty('users.1.name');
+      expect(healed.calculatedWidgets).not.toHaveProperty('name[1]');
+      expect(healed.calculatedWidgets).toHaveProperty('name[0]');
     });
   });
 
@@ -3101,6 +3401,154 @@ describe('reducer end-to-end', () => {
       expect(pruneHiddenData(state)).toStrictEqual({
         lineItems: [{ active: false }, { active: false }, { quantity: 3, active: true }],
       });
+    });
+  });
+
+  // ---------------------------------------------------------------------------
+  // 31. The order of the derive passes
+  // ---------------------------------------------------------------------------
+
+  // One derive writes the defaults, drops the entries of removed rows, builds the validation
+  // variables, and then runs the states, flags and props passes, in this order.
+  describe('the order of the derive passes', () => {
+    const makeNamedFormDef = () => ({
+      states: { named: "$form.firstName === 'Anon'" },
+      form: [
+        {
+          uid: 'firstName',
+          kind: 'input',
+          type: 'textinput',
+          path: 'firstName',
+          defaultValue: 'Anon',
+        },
+        {
+          uid: 'anonNote',
+          kind: 'display',
+          type: 'heading',
+          include: { when: "$form.firstName === 'Anon'" },
+        },
+      ],
+    });
+
+    it('activates a state that reads a default written in the same derive', () => {
+      const state = drive([init(makeNamedFormDef()), setData({})]);
+
+      expect(state.data).toEqual({ firstName: 'Anon' });
+      expect(state.currentStates).toEqual(['named']);
+    });
+
+    it('shows a widget whose when reads a default written in the same derive', () => {
+      const state = drive([init(makeNamedFormDef()), setData({})]);
+
+      expect(state.widgetFlags['anonNote']).toEqual({ hidden: false });
+      expect(state.calculatedWidgets).toHaveProperty('anonNote');
+    });
+
+    it('drops the validation of a removed row before $formIsInvalid is computed', () => {
+      const formDef = {
+        form: [
+          {
+            uid: 'invalidNote',
+            kind: 'display',
+            type: 'heading',
+            include: { when: '$formIsInvalid' },
+          },
+          ...makeRequiredRowsFormDef().form,
+        ],
+      };
+      const twoRows = drive([
+        init(formDef),
+        setData({ users: [{ name: 'Ada' }, {}] }),
+        validateAllAction,
+      ]);
+      expect(twoRows.validations['users.1.name']).toEqual(['required']);
+      expect(twoRows.widgetFlags['invalidNote']).toEqual({ hidden: false });
+
+      const reduce = makeReducer();
+      const oneRow = reduce(twoRows, setData({ users: [{ name: 'Ada' }] }));
+
+      expect(oneRow.validations).not.toHaveProperty('users.1.name');
+      expect(oneRow.widgetFlags['invalidNote']).toEqual({ hidden: true });
+      expect(oneRow.calculatedWidgets).not.toHaveProperty('invalidNote');
+    });
+  });
+
+  // ---------------------------------------------------------------------------
+  // 32. Error codes of INITIALIZE and of the states pass
+  // ---------------------------------------------------------------------------
+
+  describe('error codes of INITIALIZE and of the states pass', () => {
+    const initFromString = (formDef: string): Action => ({
+      type: 'INITIALIZE',
+      payload: { formName: 'test-form', formDef },
+    });
+
+    it('reports code 20 with the JSON.parse message for a form definition that is not JSON', () => {
+      const badJson = '{ bad';
+      let parseMessage = '';
+      try {
+        JSON.parse(badJson);
+      } catch (error) {
+        parseMessage = (error as Error).message;
+      }
+
+      const state = drive([initFromString(badJson)]);
+
+      expect(parseMessage).not.toBe('');
+      expect(state.formHealth).toEqual({
+        status: 'errored',
+        message: `[20] ${parseMessage}`,
+        code: 20,
+      });
+      expect(state.flatForm).toEqual({});
+    });
+
+    it('decodes a form definition given as a JSON string', () => {
+      const formDef = JSON.stringify({
+        form: [{ uid: 'firstName', kind: 'input', type: 'textinput', path: 'firstName' }],
+      });
+
+      const state = drive([initFromString(formDef), setData({})]);
+
+      expect(state.formHealth).toEqual({ status: 'ok' });
+      expect(state.flatForm).toHaveProperty('firstName');
+      expect(state.calculatedWidgets).toHaveProperty('firstName');
+    });
+
+    it('reports code 22 with the issue path for an unknown widget kind', () => {
+      const state = drive([init({ form: [{ uid: 'name', kind: 'unknown' }] })]);
+
+      expect(state.formHealth).toEqual({
+        status: 'errored',
+        message:
+          '[22] form.children[0].kind: "kind" must be one of "input", "layout", "display", "action", but got "unknown"',
+        code: 22,
+      });
+    });
+
+    it('labels an issue of the whole form definition as root', () => {
+      const state = drive([initFromString('"form"')]);
+
+      expect(state.formHealth).toEqual({
+        status: 'errored',
+        message: '[22] root: "form" is not a valid object',
+        code: 22,
+      });
+    });
+
+    it('treats a state expression that throws as an inactive state, not as code 10', () => {
+      const formDef = {
+        states: { broken: '$form.missing.deep === 1', always: 'true' },
+        form: [
+          { uid: 'brokenOnly', kind: 'display', type: 'heading', include: { in: ['broken'] } },
+        ],
+      };
+
+      const state = drive([init(formDef), setData({})]);
+
+      expect(state.formHealth).toEqual({ status: 'ok' });
+      expect(state.currentStates).toEqual(['always']);
+      expect(state.widgetFlags['brokenOnly']).toEqual({ hidden: true });
     });
   });
 });
