@@ -18,20 +18,15 @@ async function mountForm(config = buildConfig()): Promise<FormElement> {
   return form;
 }
 
+// Removes the listeners of `recordEvents` after each test.
+let listeners = new AbortController();
+
 function recordEvents<Detail>(target: EventTarget, name: string): Detail[] {
   const details: Detail[] = [];
-  target.addEventListener(name, (event) => details.push((event as CustomEvent<Detail>).detail));
+  target.addEventListener(name, (event) => details.push((event as CustomEvent<Detail>).detail), {
+    signal: listeners.signal,
+  });
   return details;
-}
-
-async function waitFor(isReady: () => boolean): Promise<void> {
-  for (let attempt = 0; attempt < 100; attempt += 1) {
-    if (isReady()) {
-      return;
-    }
-    await new Promise((resolve) => setTimeout(resolve, 5));
-  }
-  throw new Error('The condition did not become true in 500 ms.');
 }
 
 function setErroredHealth(form: FormElement, message: string) {
@@ -42,6 +37,8 @@ function setErroredHealth(form: FormElement, message: string) {
 }
 
 afterEach(() => {
+  listeners.abort();
+  listeners = new AbortController();
   document.body.innerHTML = '';
   vi.restoreAllMocks();
 });
@@ -83,27 +80,32 @@ describe('a gui-core-form that moves in the DOM', () => {
   it('follows a store that a new config created while the form was detached', async () => {
     vi.spyOn(console, 'error').mockImplementation(() => undefined);
     const form = await mountForm();
-    const healths = recordEvents<FormHealth>(form, 'formHealth');
+    setErroredHealth(form, 'old store');
+    await form.updateComplete;
 
     form.remove();
     setConfig(form, buildConfig());
     await form.updateComplete;
-    setErroredHealth(form, 'while detached');
-    expect(healths).toEqual([]);
+    expect(form.health).toEqual({ status: 'ok' });
+    expect(form.querySelector('.gui-form-health-error')).toBeNull();
 
     document.body.append(form);
+    const healths = recordEvents<FormHealth>(form, 'formHealth');
+    setErroredHealth(form, 'new store');
     await form.updateComplete;
 
-    expect(healths).toEqual([{ status: 'errored', message: 'while detached', code: 1 }]);
-    expect(form.querySelector('.gui-form-health-error')?.textContent).toContain('while detached');
+    expect(healths).toEqual([{ status: 'errored', message: 'new store', code: 1 }]);
+    expect(form.querySelector('.gui-form-health-error')?.textContent).toContain('new store');
   });
 
-  it('applies a language change that happened while the form was detached', async () => {
+  it('stops listening to the language while detached, and applies a change on reconnect', async () => {
     const localization = identityTranslator('en-US');
     const form = await mountForm({ ...buildConfig(), localization });
 
     form.remove();
     localization.setLang('ar');
+    expect(form.context.store.getState().lang).toBe('en-US');
+
     document.body.append(form);
     await form.updateComplete;
 
@@ -129,7 +131,7 @@ describe('a widget that fails to load', () => {
     const healths = recordEvents<FormHealth>(document.body, 'formHealth');
 
     const form = await mountForm(config);
-    await waitFor(() => form.context.store.getState().formHealth.status === 'errored');
+    await vi.waitFor(() => expect(form.context.store.getState().formHealth.status).toBe('errored'));
     await form.updateComplete;
 
     expect(form.context.store.getState().formHealth).toEqual(loadError);
@@ -151,18 +153,33 @@ describe('a widget that fails to load', () => {
         }),
     } as typeof config.widgetLoaders;
     const form = await mountForm(config);
-    await waitFor(() => loadStarted);
+    await vi.waitFor(() => expect(loadStarted).toBe(true));
     const oldStore = form.context.store;
 
     setConfig(form, buildConfig());
     await form.updateComplete;
     const newStore = form.context.store;
     failLoad(new Error('The chunk did not load'));
-    await waitFor(() => oldStore.getState().formHealth.status === 'errored');
+    await vi.waitFor(() => expect(oldStore.getState().formHealth.status).toBe('errored'));
     await form.updateComplete;
 
     expect(newStore).not.toBe(oldStore);
     expect(newStore.getState().formHealth).toEqual({ status: 'ok' });
     expect(form.querySelector('.gui-form-health-error')).toBeNull();
+  });
+
+  it('only logs the failure when no form is above the widget', async () => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const widget = document.createElement('gui-widget') as HTMLElement & { widget: unknown };
+    widget.widget = { uid: 'name', kind: 'input', type: 'textinput', path: 'name' };
+
+    document.body.append(widget);
+
+    await vi.waitFor(() =>
+      expect(consoleError).toHaveBeenCalledWith(
+        'Widget "textinput" could not be loaded',
+        expect.any(TypeError),
+      ),
+    );
   });
 });

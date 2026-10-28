@@ -71,7 +71,8 @@ export const WidgetMixin = <T extends new (...args: any[]) => LitElement>(superC
       if (!this.widget) return;
       // A new config gives the form context a new store while the load runs. The error belongs to
       // the store of this widget.
-      const store = this.formContext.store;
+      // Without a form context, the load fails inside the `try` and is only logged.
+      const store = this.formContext?.store;
 
       try {
         const component = await this.formContext.widgetRegistry.loadWidget(this.widget.type!);
@@ -86,7 +87,7 @@ export const WidgetMixin = <T extends new (...args: any[]) => LitElement>(superC
 
         // The form element shows the error and dispatches the `formHealth` event of the store.
         const code = errorCodes.widgetCouldNotBeLoaded;
-        store.dispatch({
+        store?.dispatch({
           type: 'SET_FORM_HEALTH',
           payload: {
             formHealth: {

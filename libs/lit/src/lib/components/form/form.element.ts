@@ -24,17 +24,6 @@ import { unsubscribeAll } from '../../utils/subscriptions';
 import '../widget/widget-element';
 import { defaultFormHealthBoundary, type FormHealthBoundary } from './form-health-boundary';
 
-// The same comparison as the `formHealth` selector of core.
-function isSameFormHealth(previous: FormHealth, current: FormHealth): boolean {
-  if (previous.status !== current.status) {
-    return false;
-  }
-  if (previous.status === 'errored' && current.status === 'errored') {
-    return previous.message === current.message && previous.code === current.code;
-  }
-  return true;
-}
-
 export class FormElement extends LitElement {
   @provide({ context: formContext })
   context = new LitFormContext();
@@ -53,18 +42,13 @@ export class FormElement extends LitElement {
   // only when needed (on store subscription setup).
   private formState: State | undefined;
 
-  // Subscriptions replaced on each config change (store is recreated on init).
+  // Subscriptions replaced on each config change (store is recreated on init). They stay open while
+  // the element is detached, so a moved form still follows its store. Only this element holds the
+  // store, so a removed form and its store are garbage collected together.
   private stateSub: Subscription | undefined;
   private healthSub: Subscription | undefined;
-  // A DOM move closes the store subscriptions in disconnectedCallback, and connectedCallback opens
-  // them again on the same store.
-  private storeInitialized = false;
-  private storeSubscriptionsOpen = false;
-  // Lit still updates a disconnected element, so a new config can arrive while it is detached.
+  // Lit still updates a detached element, so a new config can arrive while it is detached.
   private detached = false;
-  // A new subscription emits the current health first. After a DOM move, an unchanged health must
-  // not log or dispatch again.
-  private lastHealth: FormHealth | undefined;
   // Keys the widget tree. Every initialization bumps it, so the whole tree is destroyed
   // and recreated and every widget subscribes to the store INITIALIZE ran on.
   private storeGeneration = 0;
@@ -82,8 +66,7 @@ export class FormElement extends LitElement {
     this.classList.add('gui-form');
     this.configureLongLivedEvents();
     this.detached = false;
-    if (this.storeInitialized && !this.storeSubscriptionsOpen) {
-      this.subscribeToStore();
+    if (this.storeGeneration > 0) {
       this.subscribeToLanguage();
       // The language listener was closed while the element was detached.
       const lang = this.context.localization.lang;
@@ -130,7 +113,9 @@ export class FormElement extends LitElement {
 
   private _reinitialize(c: FormInitConfig<WithWidget>) {
     // Tear down subscriptions tied to the previous store instance.
-    this.closeStoreSubscriptions();
+    this.unsubscribeI18n();
+    this.stateSub?.unsubscribe();
+    this.healthSub?.unsubscribe();
     this.storeGeneration += 1;
 
     this.context.initialize(
@@ -144,42 +129,15 @@ export class FormElement extends LitElement {
       c.functions ?? {},
       c.expressionPolicy ?? 'warn',
     );
-    this.storeInitialized = true;
-    this.lastHealth = undefined;
 
     this.direction = getDirectionFromLanguage(this.context.localization.lang);
 
-    // A detached element opens the subscriptions in connectedCallback.
-    if (!this.detached) {
-      this.subscribeToStore();
-    }
-
-    this.context.store.dispatch({
-      type: 'INITIALIZE',
-      payload: { formName: c.formName ?? this._defaultFormName, formDef: c.formDef },
-    });
-    this.context.store.dispatch({ type: 'SET_DATA', payload: { data: c.data ?? {} } });
-    this.context.store.dispatch({ type: 'SET_META', payload: { meta: c.meta ?? {} } });
-
-    if (this.detached) {
-      // No state subscription is open, and the render of a detached update must use the new store.
-      this.formState = this.context.store.getState();
-    } else {
-      this.subscribeToLanguage();
-    }
-  }
-
-  private subscribeToStore() {
     this.stateSub = this.context.store.state$.subscribe((s) => {
       this.formState = s;
       this.requestUpdate();
     });
 
     this.healthSub = formHealth(this.context.store.state$).subscribe((health) => {
-      if (this.lastHealth !== undefined && isSameFormHealth(this.lastHealth, health)) {
-        return;
-      }
-      this.lastHealth = health;
       this.health = health;
       if (health.status === 'errored') {
         console.error('GolemUI form failed to initialize:', health.message);
@@ -191,7 +149,18 @@ export class FormElement extends LitElement {
         }),
       );
     });
-    this.storeSubscriptionsOpen = true;
+
+    this.context.store.dispatch({
+      type: 'INITIALIZE',
+      payload: { formName: c.formName ?? this._defaultFormName, formDef: c.formDef },
+    });
+    this.context.store.dispatch({ type: 'SET_DATA', payload: { data: c.data ?? {} } });
+    this.context.store.dispatch({ type: 'SET_META', payload: { meta: c.meta ?? {} } });
+
+    // A detached element subscribes in connectedCallback.
+    if (!this.detached) {
+      this.subscribeToLanguage();
+    }
   }
 
   private subscribeToLanguage() {
@@ -201,13 +170,6 @@ export class FormElement extends LitElement {
   private applyLanguage(lang: string) {
     this.direction = getDirectionFromLanguage(lang);
     this.context.store.dispatch({ type: 'SET_LANGUAGE', payload: { lang } });
-  }
-
-  private closeStoreSubscriptions() {
-    this.unsubscribeI18n();
-    this.stateSub?.unsubscribe();
-    this.healthSub?.unsubscribe();
-    this.storeSubscriptionsOpen = false;
   }
 
   override createRenderRoot() {
@@ -260,9 +222,10 @@ export class FormElement extends LitElement {
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.detached = true;
-    this.closeStoreSubscriptions();
     // `connectedCallback` refills the array on a reconnect, so it must be emptied here.
     unsubscribeAll(this.eventSub);
+    // The translator belongs to the app, so its listener would keep a removed form in memory.
+    this.unsubscribeI18n();
   }
 }
 
