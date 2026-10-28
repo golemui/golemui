@@ -1,23 +1,83 @@
-import { Component, inject, type OnDestroy, type OnInit, type Type } from '@angular/core';
+import {
+  Component,
+  Directive,
+  inject,
+  type OnDestroy,
+  type OnInit,
+  type Type,
+} from '@angular/core';
 import type {
+  ActionWidget,
+  DisplayWidget,
   FormEvent,
   FormInitConfig,
   InputWidget,
   LayoutWidget,
+  NonFunctionWidget,
   ValidatorFn,
   WithWidget,
 } from '@golemui/core';
+import { ActionWidgetAdapter } from './adapters/action-widget-adapter.service';
+import { type BaseWidgetAdapter } from './adapters/base-widget.adapter';
+import { DisplayWidgetAdapter } from './adapters/display-widget-adapter.service';
 import { InputWidgetAdapter } from './adapters/input-widget-adapter.service';
 import { LayoutWidgetAdapter } from './adapters/layout-widget-adapter.service';
 import { FormCoreComponent } from './components/form/form.component';
 import { WidgetDirective } from './directives/widget.directive';
 
 /**
- * Stub widgets and a form definition shared by the server render specs.
+ * Stub widgets and a form definition shared by the server render specs and the adapter specs.
  *
  * The widgets use the real adapters and the real WidgetDirective, so a value that reaches
  * the markup was read from the store through the same path the shipped widgets use.
  */
+
+/** The adapter of the stub textinput and repeater widgets. */
+export type InputAdapter<T = unknown> = InputWidgetAdapter<T, Record<string, any>>;
+/** The adapter of the stub button widget. */
+export type ActionAdapter = ActionWidgetAdapter<Record<string, any>>;
+/** The adapter of the stub flex widget and of repeater rows. */
+export type LayoutAdapter = LayoutWidgetAdapter<Record<string, any>>;
+/** The adapter of the stub text widget. */
+export type DisplayAdapter = DisplayWidgetAdapter<Record<string, any>>;
+
+/** One stub widget created: the widget uid and its adapter. */
+export type AdapterRecord = { uid: string; adapter: unknown };
+
+/** One record per stub widget created, in creation order. Clear it between specs. */
+export const recordedAdapters: AdapterRecord[] = [];
+
+/**
+ * @param uid - The uid of the widget, with row indexes inside a repeater row.
+ * @returns The adapter of the last widget created with that uid. Its templateData signal holds
+ * the current values.
+ */
+export function lastAdapter<Adapter>(uid: string): Adapter {
+  for (let index = recordedAdapters.length - 1; index >= 0; index--) {
+    if (recordedAdapters[index].uid === uid) {
+      return recordedAdapters[index].adapter as Adapter;
+    }
+  }
+  throw new Error(`No widget with the uid "${uid}" was created`);
+}
+
+/** Starts the adapter of a stub widget and records it in `recordedAdapters`. */
+@Directive()
+abstract class StubWidgetComponent<Widget extends NonFunctionWidget>
+  implements OnInit, OnDestroy, WithWidget
+{
+  widget!: Widget;
+  protected abstract adapter: BaseWidgetAdapter<Widget> & { init(widget: Widget): void };
+
+  ngOnInit(): void {
+    this.adapter.init(this.widget);
+    recordedAdapters.push({ uid: this.widget.uid, adapter: this.adapter });
+  }
+
+  ngOnDestroy(): void {
+    this.adapter.destroy();
+  }
+}
 
 @Component({
   standalone: true,
@@ -32,17 +92,8 @@ import { WidgetDirective } from './directives/widget.directive';
     readonly
   />`,
 })
-class StubTextInputComponent implements OnInit, OnDestroy, WithWidget {
-  widget!: InputWidget<string>;
+class StubTextInputComponent extends StubWidgetComponent<InputWidget<string>> {
   protected adapter: InputWidgetAdapter<string, Record<string, any>> = inject(InputWidgetAdapter);
-
-  ngOnInit(): void {
-    this.adapter.init(this.widget);
-  }
-
-  ngOnDestroy(): void {
-    this.adapter.destroy();
-  }
 }
 
 @Component({
@@ -56,22 +107,54 @@ class StubTextInputComponent implements OnInit, OnDestroy, WithWidget {
     }
   </div>`,
 })
-class StubFlexComponent implements OnInit, OnDestroy, WithWidget {
-  widget!: LayoutWidget;
+class StubFlexComponent extends StubWidgetComponent<LayoutWidget> {
   protected adapter: LayoutWidgetAdapter<Record<string, any>> = inject(LayoutWidgetAdapter);
+}
 
-  ngOnInit(): void {
-    this.adapter.init(this.widget);
-  }
+/** Renders one row layout per row of its array value. */
+@Component({
+  standalone: true,
+  selector: 'gui-stub-repeater',
+  imports: [WidgetDirective],
+  providers: [InputWidgetAdapter],
+  template: `<div class="stub-repeater" [id]="widget.uid">
+    @for (row of adapter.templateData().rows ?? []; track row.uid) {
+      <ng-container guiWidget [widget]="row" />
+    }
+  </div>`,
+})
+class StubRepeaterComponent extends StubWidgetComponent<InputWidget<unknown[]>> {
+  protected adapter: InputWidgetAdapter<unknown[], Record<string, any>> =
+    inject(InputWidgetAdapter);
+}
 
-  ngOnDestroy(): void {
-    this.adapter.destroy();
-  }
+/** A plain button, so a click never submits the form. */
+@Component({
+  standalone: true,
+  selector: 'gui-stub-button',
+  providers: [ActionWidgetAdapter],
+  template: `<button type="button" [id]="widget.uid">{{ adapter.templateData().label }}</button>`,
+})
+class StubButtonComponent extends StubWidgetComponent<ActionWidget> {
+  protected adapter: ActionWidgetAdapter<Record<string, any>> = inject(ActionWidgetAdapter);
+}
+
+@Component({
+  standalone: true,
+  selector: 'gui-stub-text',
+  providers: [DisplayWidgetAdapter],
+  template: `<p [id]="widget.uid">{{ adapter.templateData().text }}</p>`,
+})
+class StubTextComponent extends StubWidgetComponent<DisplayWidget> {
+  protected adapter: DisplayWidgetAdapter<Record<string, any>> = inject(DisplayWidgetAdapter);
 }
 
 export const stubWidgetLoaders = {
   textinput: async (): Promise<Type<WithWidget>> => StubTextInputComponent,
   flex: async (): Promise<Type<WithWidget>> => StubFlexComponent,
+  repeater: async (): Promise<Type<WithWidget>> => StubRepeaterComponent,
+  button: async (): Promise<Type<WithWidget>> => StubButtonComponent,
+  text: async (): Promise<Type<WithWidget>> => StubTextComponent,
 };
 
 /** Accepts everything. The specs assert on markup, not on validation. */
