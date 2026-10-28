@@ -42,9 +42,13 @@ export class FormElement extends LitElement {
   // only when needed (on store subscription setup).
   private formState: State | undefined;
 
-  // Subscriptions replaced on each config change (store is recreated on init).
+  // Subscriptions replaced on each config change (store is recreated on init). They stay open while
+  // the element is detached, so a moved form still follows its store. Only this element holds the
+  // store, so a removed form and its store are garbage collected together.
   private stateSub: Subscription | undefined;
   private healthSub: Subscription | undefined;
+  // Lit still updates a detached element, so a new config can arrive while it is detached.
+  private detached = false;
   // Keys the widget tree. Every initialization bumps it, so the whole tree is destroyed
   // and recreated and every widget subscribes to the store INITIALIZE ran on.
   private storeGeneration = 0;
@@ -61,6 +65,15 @@ export class FormElement extends LitElement {
     super.connectedCallback();
     this.classList.add('gui-form');
     this.configureLongLivedEvents();
+    this.detached = false;
+    if (this.storeGeneration > 0) {
+      this.subscribeToLanguage();
+      // The language listener was closed while the element was detached.
+      const lang = this.context.localization.lang;
+      if (this.context.store.getState().lang !== lang) {
+        this.applyLanguage(lang);
+      }
+    }
   }
 
   /**
@@ -144,10 +157,19 @@ export class FormElement extends LitElement {
     this.context.store.dispatch({ type: 'SET_DATA', payload: { data: c.data ?? {} } });
     this.context.store.dispatch({ type: 'SET_META', payload: { meta: c.meta ?? {} } });
 
-    this.unsubscribeI18n = this.context.localization.subscribe((lang) => {
-      this.direction = getDirectionFromLanguage(lang);
-      this.context.store.dispatch({ type: 'SET_LANGUAGE', payload: { lang } });
-    });
+    // A detached element subscribes in connectedCallback.
+    if (!this.detached) {
+      this.subscribeToLanguage();
+    }
+  }
+
+  private subscribeToLanguage() {
+    this.unsubscribeI18n = this.context.localization.subscribe((lang) => this.applyLanguage(lang));
+  }
+
+  private applyLanguage(lang: string) {
+    this.direction = getDirectionFromLanguage(lang);
+    this.context.store.dispatch({ type: 'SET_LANGUAGE', payload: { lang } });
   }
 
   override createRenderRoot() {
@@ -199,10 +221,10 @@ export class FormElement extends LitElement {
 
   override disconnectedCallback() {
     super.disconnectedCallback();
-    this.stateSub?.unsubscribe();
-    this.healthSub?.unsubscribe();
+    this.detached = true;
     // `connectedCallback` refills the array on a reconnect, so it must be emptied here.
     unsubscribeAll(this.eventSub);
+    // The translator belongs to the app, so its listener would keep a removed form in memory.
     this.unsubscribeI18n();
   }
 }
