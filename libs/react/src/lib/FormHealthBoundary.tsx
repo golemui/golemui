@@ -26,21 +26,22 @@ export type FormHealthBoundary = ComponentType<FormHealthBoundaryProps>;
 
 /** Default boundary: prepends a red banner when health is errored, otherwise renders the form alone. Override via the `formHealthBoundary` prop. */
 export function DefaultFormHealthBoundary({ health, children }: FormHealthBoundaryProps) {
-  if (health.status !== 'errored') {
-    return <>{children}</>;
-  }
+  // The banner slot always exists, so the form stays the second child and React keeps its DOM
+  // and its focus when the health changes.
   return (
     <>
-      <div
-        className="gui-form-health-error"
-        role="alert"
-        style={{ border: '2px solid red', borderRadius: 4, padding: 12, marginBottom: 8 }}
-      >
-        <strong style={{ color: 'red' }}>GolemUI form error</strong>
-        <p style={{ marginTop: 4 }}>
-          <code>{health.message}</code>
-        </p>
-      </div>
+      {health.status === 'errored' ? (
+        <div
+          className="gui-form-health-error"
+          role="alert"
+          style={{ border: '2px solid red', borderRadius: 4, padding: 12, marginBottom: 8 }}
+        >
+          <strong style={{ color: 'red' }}>GolemUI form error</strong>
+          <p style={{ marginTop: 4 }}>
+            <code>{health.message}</code>
+          </p>
+        </div>
+      ) : null}
       {children}
     </>
   );
