@@ -6,6 +6,7 @@ import {
   createFormComponent,
   type FormComponentHandle,
   type FormHealthBoundary,
+  type WidgetErrorFallback,
 } from '@golemui/react';
 import { type ForwardRefExoticComponent, type PropsWithoutRef, type RefAttributes } from 'react';
 import { widgetLoaders } from '../widget.loaders';
@@ -18,6 +19,8 @@ export interface ReactFormComponentProps {
   formHealth?: (formHealth: FormHealth) => void;
   /** Wraps the form and renders the error UI for an errored FormHealth. Defaults to a red banner. */
   formHealthBoundary?: FormHealthBoundary;
+  /** Replacement UI for a widget that threw. Defaults to a red box with the widget type, the uid and the error message. */
+  widgetErrorFallback?: WidgetErrorFallback;
 }
 
 // The explicit type annotation keeps the public GuiForm type expressed in
