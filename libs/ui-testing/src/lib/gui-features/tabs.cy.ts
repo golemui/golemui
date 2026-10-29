@@ -183,4 +183,174 @@ export const runTabsComponentTests = (mountFn: MountComponentFn) => {
       tabLabel('thirdPanel').should('equal', 'Third');
     });
   });
+
+  describe('Tabs Component panels at runtime', () => {
+    const TABS_UID = 'runtimeTabs';
+    const tab = (tabUid: string) => cy.get(`[data-cy="tab_${TABS_UID}_${tabUid}"]`);
+    const panel = (tabUid: string) => cy.get(`[data-cy="tabpanel_${TABS_UID}_${tabUid}"]`);
+    const input = (uid: string) => cy.get(`[data-cy="${uid}_textinput"]`);
+
+    // The `show` input outside the tabs controls the `include.when` of the tabs or of a child.
+    const getFormDefinition = ({
+      renderMode,
+      tabsInclude,
+      thirdPanelInclude,
+    }: {
+      renderMode?: 'all' | 'activeOnly';
+      tabsInclude?: { when: string };
+      thirdPanelInclude?: { when: string };
+    } = {}) =>
+      defineForm({
+        form: [
+          { uid: 'show', kind: 'input', type: 'textinput', path: 'show', label: 'Show' },
+          {
+            uid: TABS_UID,
+            kind: 'layout',
+            type: 'tabs',
+            ...(tabsInclude ? { include: tabsInclude } : {}),
+            props: {
+              ...(renderMode ? { renderMode } : {}),
+              tabs: [
+                { uid: 'firstPanel', label: 'First' },
+                { uid: 'secondPanel', label: 'Second' },
+                { uid: 'thirdPanel', label: 'Third' },
+              ],
+            },
+            children: [
+              {
+                uid: 'firstPanel',
+                kind: 'input',
+                type: 'textinput',
+                path: 'first',
+                label: 'First',
+              },
+              {
+                uid: 'secondPanel',
+                kind: 'input',
+                type: 'textinput',
+                path: 'second',
+                label: 'Second',
+              },
+              {
+                uid: 'thirdPanel',
+                kind: 'input',
+                type: 'textinput',
+                path: 'third',
+                label: 'Third',
+                ...(thirdPanelInclude ? { include: thirdPanelInclude } : {}),
+              },
+            ],
+          },
+        ],
+      });
+
+    it('keeps the input node of an inactive panel in all mode and hides the panel', () => {
+      mountFn({ formDef: getFormDefinition({ renderMode: 'all' }) });
+
+      let firstInput!: HTMLElement;
+      input('firstPanel').type('Ann');
+      input('firstPanel').then(($input) => {
+        firstInput = $input[0];
+      });
+
+      tab('secondPanel').click();
+      tab('secondPanel').should('have.attr', 'aria-selected', 'true');
+      panel('firstPanel').should('have.attr', 'hidden');
+      input('firstPanel')
+        .should('not.be.visible')
+        .and(($input) => {
+          expect($input[0], 'first input node').to.equal(firstInput);
+        });
+
+      tab('firstPanel').click();
+      panel('firstPanel').should('not.have.attr', 'hidden');
+      input('firstPanel')
+        .should('be.visible')
+        .and('have.value', 'Ann')
+        .and(($input) => {
+          expect($input[0], 'first input node').to.equal(firstInput);
+        });
+    });
+
+    it('removes the inactive panel in activeOnly mode and shows the stored value again', () => {
+      mountFn({ formDef: getFormDefinition({ renderMode: 'activeOnly' }) });
+
+      input('firstPanel').type('Ann');
+
+      tab('secondPanel').click();
+      input('secondPanel').should('be.visible');
+      input('firstPanel').should('not.exist');
+      panel('firstPanel').should('not.exist');
+
+      tab('firstPanel').click();
+      input('firstPanel').should('be.visible').and('have.value', 'Ann');
+      input('secondPanel').should('not.exist');
+    });
+
+    it('adds and removes the panel of a child that is shown and hidden at runtime', () => {
+      mountFn({
+        formDef: getFormDefinition({ thirdPanelInclude: { when: '$form.show === "yes"' } }),
+      });
+
+      tab('thirdPanel').should('exist');
+      panel('thirdPanel').should('not.exist');
+
+      input('show').type('yes');
+      panel('thirdPanel').should('have.attr', 'aria-labelledby', `tab_${TABS_UID}_thirdPanel`);
+      tab('thirdPanel').should('have.attr', 'aria-controls', `tabpanel_${TABS_UID}_thirdPanel`);
+      tab('thirdPanel').click();
+      input('thirdPanel').should('be.visible');
+      tab('firstPanel').click();
+      input('firstPanel').should('be.visible');
+
+      input('show').clear();
+      panel('thirdPanel').should('not.exist');
+      tab('thirdPanel').should('exist').and('not.have.attr', 'aria-controls');
+      input('firstPanel').should('be.visible');
+      panel('firstPanel').should('have.attr', 'aria-labelledby', `tab_${TABS_UID}_firstPanel`);
+    });
+
+    it('keeps the active tab selected with no panel while its child is hidden', () => {
+      mountFn({
+        data: { show: 'yes' },
+        formDef: getFormDefinition({ thirdPanelInclude: { when: '$form.show === "yes"' } }),
+      });
+
+      tab('thirdPanel').click();
+      input('thirdPanel').should('be.visible');
+
+      input('show').clear();
+      panel('thirdPanel').should('not.exist');
+      tab('thirdPanel').should('have.attr', 'aria-selected', 'true');
+      panel('firstPanel').should('have.attr', 'hidden');
+      panel('secondPanel').should('have.attr', 'hidden');
+
+      // The tab is still the active one, so its panel shows as soon as the child is shown again.
+      input('show').type('yes');
+      input('thirdPanel').should('be.visible');
+      tab('thirdPanel').should('have.attr', 'aria-selected', 'true');
+    });
+
+    it('opens the first tab again when the hidden tabs layout is shown again', () => {
+      mountFn({
+        data: { show: 'yes' },
+        formDef: getFormDefinition({ tabsInclude: { when: '$form.show === "yes"' } }),
+      });
+
+      tab('secondPanel').click();
+      input('secondPanel').type('Bob');
+      tab('secondPanel').should('have.attr', 'aria-selected', 'true');
+
+      input('show').clear();
+      tab('firstPanel').should('not.exist');
+
+      input('show').type('yes');
+      // The layout mounts again, so it starts from its first tab. The store keeps the value.
+      tab('firstPanel').should('have.attr', 'aria-selected', 'true');
+      tab('secondPanel').should('have.attr', 'aria-selected', 'false');
+      panel('firstPanel').should('not.have.attr', 'hidden');
+      panel('secondPanel').should('have.attr', 'hidden');
+      input('secondPanel').should('have.value', 'Bob');
+    });
+  });
 };

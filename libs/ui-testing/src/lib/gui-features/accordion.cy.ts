@@ -1,5 +1,10 @@
 import { defineForm } from '@golemui/core';
-import { dictionaryTranslator, expectNoDuplicateIds, type MountComponentFn } from '../utils';
+import {
+  dictionaryTranslator,
+  eventsNamed,
+  expectNoDuplicateIds,
+  type MountComponentFn,
+} from '../utils';
 
 export const runAccordionComponentTests = (mountFn: MountComponentFn) => {
   describe('Accordion Component', () => {
@@ -227,6 +232,192 @@ export const runAccordionComponentTests = (mountFn: MountComponentFn) => {
       cy.then(() => translator.setLang('es'));
       sectionLabel('billing').should('equal', 'Facturación');
       sectionLabel('notes').should('equal', 'Notes');
+    });
+  });
+
+  describe('Accordion Component sections at runtime', () => {
+    const ACCORDION_UID = 'runtimeAccordion';
+    const header = (sectionUid: string) =>
+      cy.get(`summary[id="accordion_button_${ACCORDION_UID}_${sectionUid}"]`);
+    const details = (sectionUid: string) => header(sectionUid).parent('details');
+    const region = (sectionUid: string) =>
+      cy.get(`[id="accordion_section_${ACCORDION_UID}_${sectionUid}"]`);
+    const input = (uid: string) => cy.get(`[data-cy="${uid}_textinput"]`);
+    // Cypress does not treat the content of a closed details element as hidden, the browser does.
+    const expectHidden = ($input: JQuery<HTMLElement>) => {
+      expect($input[0].checkVisibility(), 'input visibility').to.equal(false);
+    };
+
+    // The `show` input outside the accordion controls the `include.when` of the accordion or of a
+    // section child.
+    const getFormDefinition = ({
+      renderMode,
+      accordionInclude,
+      thirdSectionInclude,
+    }: {
+      renderMode?: 'all' | 'activeOnly';
+      accordionInclude?: { when: string };
+      thirdSectionInclude?: { when: string };
+    } = {}) =>
+      defineForm({
+        form: [
+          { uid: 'show', kind: 'input', type: 'textinput', path: 'show', label: 'Show' },
+          {
+            uid: ACCORDION_UID,
+            kind: 'layout',
+            type: 'accordion',
+            on: { change: 'sectionsChanged' },
+            ...(accordionInclude ? { include: accordionInclude } : {}),
+            props: {
+              ...(renderMode ? { renderMode } : {}),
+              defaultOpen: { firstSection: true },
+              sections: [
+                { uid: 'firstSection', label: 'First' },
+                { uid: 'secondSection', label: 'Second' },
+                { uid: 'thirdSection', label: 'Third' },
+              ],
+            },
+            children: [
+              {
+                uid: 'firstSection',
+                kind: 'input',
+                type: 'textinput',
+                path: 'first',
+                label: 'First',
+              },
+              {
+                uid: 'secondSection',
+                kind: 'input',
+                type: 'textinput',
+                path: 'second',
+                label: 'Second',
+              },
+              {
+                uid: 'thirdSection',
+                kind: 'input',
+                type: 'textinput',
+                path: 'third',
+                label: 'Third',
+                ...(thirdSectionInclude ? { include: thirdSectionInclude } : {}),
+              },
+            ],
+          },
+        ],
+      });
+
+    it('keeps the input node of a closed section in all mode', () => {
+      mountFn({ formDef: getFormDefinition({ renderMode: 'all' }) });
+
+      // A section that was never opened has its input too.
+      details('secondSection').should('not.have.attr', 'open');
+      input('secondSection').should(expectHidden);
+
+      let firstInput!: HTMLElement;
+      input('firstSection').type('Ann');
+      input('firstSection').then(($input) => {
+        firstInput = $input[0];
+      });
+
+      header('firstSection').click();
+      details('firstSection').should('not.have.attr', 'open');
+      input('firstSection')
+        .should(expectHidden)
+        .and(($input) => {
+          expect($input[0], 'first input node').to.equal(firstInput);
+        });
+
+      header('firstSection').click();
+      details('firstSection').should('have.attr', 'open');
+      input('firstSection')
+        .should('be.visible')
+        .and('have.value', 'Ann')
+        .and(($input) => {
+          expect($input[0], 'first input node').to.equal(firstInput);
+        });
+    });
+
+    it('removes a closed section in activeOnly mode and shows the stored value again', () => {
+      mountFn({ formDef: getFormDefinition({ renderMode: 'activeOnly' }) });
+
+      input('firstSection').should('be.visible');
+      input('secondSection').should('not.exist');
+      input('firstSection').type('Ann');
+
+      header('firstSection').click();
+      details('firstSection').should('not.have.attr', 'open');
+      input('firstSection').should('not.exist');
+      region('firstSection').should('not.exist');
+
+      header('firstSection').click();
+      input('firstSection').should('be.visible').and('have.value', 'Ann');
+    });
+
+    it('adds and removes the section of a child that is shown and hidden at runtime', () => {
+      mountFn({
+        formDef: getFormDefinition({ thirdSectionInclude: { when: '$form.show === "yes"' } }),
+      });
+
+      header('thirdSection').should('exist');
+      region('thirdSection').should('not.exist');
+
+      input('show').type('yes');
+      region('thirdSection').should(
+        'have.attr',
+        'aria-labelledby',
+        `accordion_button_${ACCORDION_UID}_thirdSection`,
+      );
+      header('thirdSection').click();
+      input('thirdSection').should('be.visible');
+
+      input('show').clear();
+      region('thirdSection').should('not.exist');
+      header('thirdSection').should('exist');
+
+      // The accordion stays mounted, so the section is still open when its child comes back.
+      input('show').type('yes');
+      details('thirdSection').should('have.attr', 'open');
+      input('thirdSection').should('be.visible');
+    });
+
+    it('opens the default sections again when the hidden accordion is shown again', () => {
+      mountFn({
+        data: { show: 'yes' },
+        formDef: getFormDefinition({ accordionInclude: { when: '$form.show === "yes"' } }),
+      });
+
+      header('secondSection').click();
+      header('firstSection').click();
+      details('secondSection').should('have.attr', 'open');
+      details('firstSection').should('not.have.attr', 'open');
+      input('secondSection').type('Bob');
+
+      input('show').clear();
+      header('firstSection').should('not.exist');
+
+      input('show').type('yes');
+      // The layout mounts again, so it starts from defaultOpen. The store keeps the value.
+      details('firstSection').should('have.attr', 'open');
+      details('secondSection').should('not.have.attr', 'open');
+      input('secondSection').should('have.value', 'Bob');
+    });
+
+    it('emits every open section in the change event when more than one can be open', () => {
+      const formEventHandler = cy.stub().as('formEventHandler');
+      mountFn({ formDef: getFormDefinition(), formEvent: formEventHandler });
+
+      header('secondSection').click();
+      details('secondSection').should('have.attr', 'open');
+      header('firstSection').click();
+      details('firstSection').should('not.have.attr', 'open');
+
+      cy.get('@formEventHandler').should(() => {
+        expect(
+          eventsNamed(formEventHandler, 'sectionsChanged').map((event) => event.detail),
+        ).to.deep.equal([
+          { firstSection: true, secondSection: true },
+          { firstSection: false, secondSection: true },
+        ]);
+      });
     });
   });
 };
