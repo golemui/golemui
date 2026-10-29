@@ -38,6 +38,10 @@ type PopoverToggleEvent = ToggleEvent & { source?: Element | null };
  * else the first element whose `popovertarget` or `commandfor` names it. Without one the browser
  * centers the panel in the viewport.
  *
+ * When the panel closes with focus inside it, the browser returns focus to the invoker that opened
+ * it. A panel opened from code has none, so the element returns focus to the anchor instead,
+ * unless a press outside the panel closed it: the user is pointing somewhere else.
+ *
  * The element adds nothing to the app's markup: the panel's `popover` attribute and id, and the
  * invoker's `popovertarget`, are the app's, so the server's HTML and the browser's agree.
  *
@@ -67,6 +71,11 @@ export class GuiPopover extends ReactiveElement {
 
   private mutations?: MutationObserver;
 
+  /** Whether the pointer last went down outside the open panel, which light dismisses it. */
+  private pressedOutside = false;
+  /** Whether the closing panel had focus, which goes to the anchor if the browser drops it. */
+  private returnFocus = false;
+
   override createRenderRoot() {
     return this;
   }
@@ -87,6 +96,7 @@ export class GuiPopover extends ReactiveElement {
     this.removeEventListener('beforetoggle', this.onBeforeToggle, true);
     this.removeEventListener('toggle', this.onToggle, true);
     this.mutations?.disconnect();
+    this.watchPresses(false);
   }
 
   protected override updated(changedProperties: PropertyValues) {
@@ -116,7 +126,9 @@ export class GuiPopover extends ReactiveElement {
     if (!id) return null;
     // Inside a double-quoted attribute value only `"` and `\` need escaping.
     const escaped = id.replace(/["\\]/g, '\\$&');
-    return root.querySelector(`[popovertarget="${escaped}"], [commandfor="${escaped}"]`);
+    const invoker = root.querySelector(`[popovertarget="${escaped}"], [commandfor="${escaped}"]`);
+    // A gui-button carries the commandfor of its inner button, the real invoker, once it renders.
+    return invoker?.querySelector(`button[commandfor="${escaped}"]`) ?? invoker;
   }
 
   /** Brings the panel in line with `open`. */
@@ -138,8 +150,12 @@ export class GuiPopover extends ReactiveElement {
   /** Places the panel before the browser shows it, so it never shows anywhere else. */
   private onBeforeToggle = (event: Event) => {
     const toggle = event as PopoverToggleEvent;
-    if (toggle.target !== this.panel) return;
-    if (toggle.newState !== 'open') return;
+    const panel = this.panel;
+    if (!panel || toggle.target !== panel) return;
+    if (toggle.newState !== 'open') {
+      this.returnFocus = panel.matches(':focus-within') && !this.pressedOutside;
+      return;
+    }
 
     this.source = toggle.source ?? null;
     if (!this.anchorElement) {
@@ -160,11 +176,38 @@ export class GuiPopover extends ReactiveElement {
     // The panel is rendered by now: measuring places it here if nothing has yet.
     if (open) this.positioning.update();
     else this.positioning.detach();
+    this.watchPresses(open);
+    if (!open && this.returnFocus) this.focusAnchor();
     this.panelToggled(open);
     if (open === this.open) return;
     this.open = open;
     dispatchToggle(this, open);
   };
+
+  /** Follows where the pointer goes down while the panel is open. */
+  private watchPresses(watch: boolean) {
+    this.pressedOutside = false;
+    if (typeof document === 'undefined') return;
+    if (watch) document.addEventListener('pointerdown', this.onPress, true);
+    else document.removeEventListener('pointerdown', this.onPress, true);
+  }
+
+  private onPress = (event: PointerEvent) => {
+    const panel = this.panel;
+    this.pressedOutside = !!panel && !event.composedPath().includes(panel);
+  };
+
+  /**
+   * The panel closed with focus inside it, and the browser had no invoker to return it to: focus
+   * stays in the hidden panel until the browser drops it to the page's body. It goes to the anchor
+   * instead, where the user can open the panel again.
+   */
+  private focusAnchor() {
+    this.returnFocus = false;
+    const active = this.ownerDocument.activeElement;
+    const lost = !active || active === this.ownerDocument.body || !!this.panel?.contains(active);
+    if (lost) (this.anchorElement as HTMLElement | null)?.focus?.();
+  }
 
   /** Runs once the panel has opened or closed, however it did: for elements built on this one. */
   protected panelToggled(_open: boolean): void {

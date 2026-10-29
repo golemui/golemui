@@ -11,6 +11,7 @@ import {
   type GuiSliderValuePlacement,
   sliderBounds,
   sliderTicks,
+  snapToStep,
 } from '../utils/slider';
 
 /** `marks` from an attribute: present for a tick at every step, or a JSON list of marks. */
@@ -47,7 +48,9 @@ const MOVING_KEYS = new Set([
  *
  * The native inputs carry `min`, `max` and `step`: a range input clamps its value to them, so
  * unlike other inner controls it can never be invalid, and the browser never blocks a submission
- * for it. The element validates its own value.
+ * for it. The element validates its own value: one set from outside, below `minimum`, above
+ * `maximum` or off a step, reads as it is while the thumb sits at the nearest value it can take,
+ * and is reported invalid.
  */
 export abstract class GuiSliderBase extends GuiFormControl {
   /** BCP 47 locale for formatting the value, such as `en-US` or `es`. */
@@ -65,8 +68,8 @@ export abstract class GuiSliderBase extends GuiFormControl {
   @property({ converter: marksConverter }) marks: boolean | GuiSliderMark[] | undefined = undefined;
   /**
    * How the value reads: `Intl.NumberFormat` options, such as `{ style: 'currency', currency:
-   * 'EUR' }` or `{ style: 'percent' }`. Used next to the label, in the bubbles, in the tick labels
-   * and for screen readers.
+   * 'EUR' }` or `{ style: 'percent' }`. Used next to the label, in the bubbles and for screen
+   * readers. Mark labels show as they are written.
    */
   @property({ type: Object }) format: Intl.NumberFormatOptions | undefined = undefined;
   /**
@@ -200,6 +203,22 @@ export abstract class GuiSliderBase extends GuiFormControl {
       .join(' ');
   }
 
+  /** Whether the slider has no value yet. */
+  protected abstract get empty(): boolean;
+
+  /**
+   * Takes the value a thumb shows as the user's: on an empty slider the thumbs rest at the ends,
+   * where Home, a key toward that end or a press on the thumb moves nothing, so nothing reports it.
+   */
+  protected abstract pick(input: HTMLInputElement): void;
+
+  /** Picks the thumb's value once the key or the press is done, if it left the slider empty. */
+  private pickIfStillEmpty(input: HTMLInputElement) {
+    setTimeout(() => {
+      if (this.empty && !this.disabled && !this.readOnly && input.isConnected) this.pick(input);
+    });
+  }
+
   /** A bounds error for a value set from outside, which the thumbs could not reach. */
   protected boundsError(value: number | undefined): GuiValidity | null {
     if (!isRealNumber(value)) return null;
@@ -219,6 +238,19 @@ export abstract class GuiSliderBase extends GuiFormControl {
     return null;
   }
 
+  /** A step error for a value set from outside that is off a step, which the thumbs can't take. */
+  protected stepError(value: number | undefined): GuiValidity | null {
+    if (!isRealNumber(value)) return null;
+    const { min, max, step } = this.bounds;
+    const nearest = snapToStep(value, min, max, step);
+    // A decimal step leaves floating point noise: 0.1 + 0.2 is on a step of 0.1.
+    if (Math.abs(nearest - value) <= step * 1e-9) return null;
+    return {
+      flags: { stepMismatch: true },
+      message: message('stepMismatch', undefined, { nearest: this.formatValue(nearest) }),
+    };
+  }
+
   /**
    * A read-only slider stays focusable and readable, but its keys and pointer don't move it: a
    * native range input has no read-only state of its own.
@@ -236,7 +268,9 @@ export abstract class GuiSliderBase extends GuiFormControl {
       }
       return;
     }
-    if (this.readOnly && MOVING_KEYS.has(event.key)) event.preventDefault();
+    if (!MOVING_KEYS.has(event.key)) return;
+    if (this.readOnly) event.preventDefault();
+    else if (this.empty) this.pickIfStillEmpty(event.currentTarget as HTMLInputElement);
   }
 
   /** @internal */
@@ -244,7 +278,22 @@ export abstract class GuiSliderBase extends GuiFormControl {
     if (this.readOnly) {
       event.preventDefault();
       (event.currentTarget as HTMLElement).focus();
+      return;
     }
+    if (!this.empty || event.button !== 0) return;
+    // The press picks the thumb's value when it is let go, unless a scroll or a drag cancels it.
+    const input = event.currentTarget as HTMLInputElement;
+    const listening = new AbortController();
+    const options = { signal: listening.signal };
+    window.addEventListener(
+      'pointerup',
+      () => {
+        listening.abort();
+        this.pickIfStillEmpty(input);
+      },
+      options,
+    );
+    window.addEventListener('pointercancel', () => listening.abort(), options);
   }
 
   /** @internal Focus left the control: moving from one thumb to the other doesn't count. */

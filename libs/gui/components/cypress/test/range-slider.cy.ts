@@ -196,6 +196,20 @@ describe('gui-range-slider', () => {
         });
       });
 
+      it('picks the whole range with a key that leaves a thumb at its end, while it has no value', () => {
+        const onChange = cy.spy().as('change');
+        cy.mount(html`<div @gui-change=${onChange}>${price()}</div>`);
+
+        thumb('end').focus();
+        realPress('ArrowRight');
+        valueOf({ start: 0, end: 500 });
+        cy.get('@change').should('have.been.calledOnce');
+        cy.get('@change').its('lastCall.args.0.detail.value').should('deep.equal', {
+          start: 0,
+          end: 500,
+        });
+      });
+
       it('moves each thumb with the arrow keys', () => {
         cy.mount(price());
         element().invoke('prop', 'value', { start: 100, end: 300 });
@@ -208,6 +222,22 @@ describe('gui-range-slider', () => {
         valueOf({ start: 110, end: 290 });
       });
     }
+  });
+
+  describe('validation', () => {
+    it('reports an end off a step, set from outside, with the nearest value formatted', () => {
+      cy.mount(html`<form>${price()}</form>`);
+      element().invoke('attr', 'name', 'price');
+      element().invoke('prop', 'value', { start: 100, end: 305 });
+
+      element().should(([host]) => {
+        expect(host.validity?.stepMismatch).to.equal(true);
+        expect(host.validationMessage).to.match(
+          /^Choose a valid value\. The nearest is .*310.*\.$/,
+        );
+      });
+      labelValue().should('contain.text', '305');
+    });
   });
 
   describe('form', () => {

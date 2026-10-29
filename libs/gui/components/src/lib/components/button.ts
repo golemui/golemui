@@ -11,6 +11,16 @@ import { spinnerIcon } from '../utils/icons';
  * A button, with an optional icon. It renders a native `<button>` in the page, so inside a form
  * `type="submit"` submits it, Enter in a field submits it too, and `name` and `value` are sent
  * with the submission. With `href` it renders a link that looks like a button instead.
+ *
+ * With `commandfor` and `command` it opens and closes a popover, a menu or a dialog, as a native
+ * invoker does:
+ *
+ * ```html
+ * <gui-button label="Edit" commandfor="edit" command="show-modal"></gui-button>
+ * ```
+ *
+ * The `aria-describedby` and `aria-haspopup` set on the element, such as the description a
+ * `gui-tooltip` adds, go on to its inner button or link, where assistive technology reads them.
  */
 export class GuiButton extends GuiElement {
   /** Text of the button. */
@@ -47,6 +57,23 @@ export class GuiButton extends GuiElement {
   @property({ type: String }) value: string | undefined = undefined;
   /** The id of the form the button belongs to, when it is outside it. */
   @property({ type: String }) form: string | undefined = undefined;
+  /**
+   * The id of the popover, menu or dialog the button acts on with `command`: the native
+   * `commandfor`. A link ignores it. It reflects, so `gui-popover` and `gui-menu` find the button.
+   */
+  @property({ type: String, attribute: 'commandfor', reflect: true }) commandFor:
+    | string
+    | undefined = undefined;
+  /**
+   * What the button does to the element `commandfor` names: `toggle-popover`, `show-popover`,
+   * `hide-popover`, `show-modal`, `close`, `request-close`, or a custom `--command`.
+   */
+  @property({ type: String }) command: string | undefined = undefined;
+  /** The element's `aria-describedby`, for its inner button or link. @internal */
+  @property({ type: String, attribute: 'aria-describedby' }) describedBy: string | undefined =
+    undefined;
+  /** The element's `aria-haspopup`, for its inner button or link. @internal */
+  @property({ type: String, attribute: 'aria-haspopup' }) hasPopup: string | undefined = undefined;
   /** Makes the button a link to this URL. */
   @property({ type: String }) href: string | undefined = undefined;
   /** Where the link opens, such as `_blank`. */
@@ -108,6 +135,8 @@ export class GuiButton extends GuiElement {
             target=${this.target || nothing}
             rel=${this.rel || nothing}
             aria-label=${ariaLabel}
+            aria-describedby=${this.describedBy || nothing}
+            aria-haspopup=${this.hasPopup || nothing}
             aria-disabled=${inactive ? 'true' : nothing}
             aria-busy=${this.loading ? 'true' : nothing}
             @click=${this.onClick}
@@ -128,7 +157,11 @@ export class GuiButton extends GuiElement {
           .value=${this.value ?? ''}
           form=${this.form || nothing}
           ?disabled=${this.disabled}
+          commandfor=${this.commandFor || nothing}
+          command=${this.command || nothing}
           aria-label=${ariaLabel}
+          aria-describedby=${this.describedBy || nothing}
+          aria-haspopup=${this.hasPopup || nothing}
           aria-disabled=${this.loading ? 'true' : nothing}
           aria-busy=${this.loading ? 'true' : nothing}
           @click=${this.onClick}
