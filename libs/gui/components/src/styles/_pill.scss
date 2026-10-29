@@ -1,7 +1,6 @@
-// Shared pill / chip visual rules.
-// Consumed by `gui-range-calendar` (date range pills) and `gui-tags` (chips).
-// Host selectors apply these mixins to their own scoped class names so the
-// visual treatment stays in a single source of truth.
+// Shared pill / chip visual rules, consumed by `gui-pills` (`pills.scss`), which draws the
+// pills of the tags, multi-select, multi-file upload and range fields. Host selectors apply these
+// mixins to their own scoped class names so the visual treatment stays in a single source of truth.
 
 @mixin gui-pill {
   display: flex;
@@ -69,8 +68,8 @@
   @include gui-pill-action;
 }
 
-// Pill-count badge (the "+N" bubble shown in compact-width fallback layouts).
-// Used by `gui-tags` and mirrored by the equivalent in `gui-range-date-input`.
+// Pill-count badge (the "+N" bubble shown in compact-width fallback layouts), used by
+// `gui-pills`.
 @mixin gui-pill-count {
   display: flex;
   align-items: center;
