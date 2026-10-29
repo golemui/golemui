@@ -5,7 +5,7 @@ import { hydrateRoot, type Root } from 'react-dom/client';
 import { renderToString } from 'react-dom/server';
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { FormComponent } from './FormComponent';
-import { buildConfig, noopValidators, stubWidgetLoaders } from './ssr.fixture';
+import { buildConfig, formDef, noopValidators, stubWidgetLoaders } from './ssr.fixture';
 
 const formElement = () => <FormComponent config={buildConfig()} validators={noopValidators} />;
 
@@ -104,5 +104,34 @@ describe('hydrating server-rendered markup', () => {
 
     expect(warnings).toEqual([]);
     expect(hydrationContainer.querySelector('input')).toBe(firstInputBeforeHydration);
+  });
+  it('calls a load handler once after hydration and never during the server render', async () => {
+    const formEvent = vi.fn();
+    const loadingConfig = () => {
+      // formDef is a shared module constant, so the test changes a copy.
+      const loadingFormDef = structuredClone(formDef);
+      (loadingFormDef.form.children[0] as Record<string, unknown>).on = { load: 'firstNameLoaded' };
+      return { ...buildConfig(), formDef: loadingFormDef };
+    };
+    const loadingForm = () => (
+      <FormComponent config={loadingConfig()} validators={noopValidators} formEvent={formEvent} />
+    );
+
+    const serverHtml = renderToString(loadingForm());
+    expect(serverHtml).toContain('value="Ada"');
+    expect(formEvent).not.toHaveBeenCalled();
+
+    container = document.createElement('div');
+    container.innerHTML = serverHtml;
+    document.body.appendChild(container);
+    const hydrationContainer = container;
+    await act(async () => {
+      root = hydrateRoot(hydrationContainer, loadingForm(), {
+        onRecoverableError: (error) => warnings.push(String(error)),
+      });
+    });
+
+    expect(formEvent).toHaveBeenCalledTimes(1);
+    expect(formEvent.mock.calls[0][0].name).toBe('firstNameLoaded');
   });
 });

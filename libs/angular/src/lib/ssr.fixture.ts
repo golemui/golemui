@@ -10,6 +10,7 @@ import type {
   ActionWidget,
   DisplayWidget,
   FormEvent,
+  FormHealth,
   FormInitConfig,
   InputWidget,
   LayoutWidget,
@@ -280,4 +281,60 @@ export const notPreloadedWidgetLoaders = {
 export class SsrNotPreloadedHostComponent {
   config = { ...buildConfig(), widgetLoaders: notPreloadedWidgetLoaders };
   validators = noopValidators;
+}
+
+/** Health values the health host received. Specs reset it with `recordedFormHealth.length = 0`. */
+export const recordedFormHealth: FormHealth[] = [];
+
+/** Same form as `SsrHostComponent`, plus a `formHealth` listener feeding `recordedFormHealth`. */
+@Component({
+  standalone: true,
+  selector: 'gui-ssr-host',
+  imports: [FormCoreComponent],
+  template: `<gui-core-form
+    [config]="config"
+    [validators]="validators"
+    (formHealth)="onFormHealth($event)"
+  />`,
+})
+export class SsrHealthHostComponent {
+  config = buildConfig();
+  validators = noopValidators;
+
+  onFormHealth(health: FormHealth) {
+    recordedFormHealth.push(health);
+  }
+}
+
+/** Same as `SsrHealthHostComponent`, but two widgets share one uid, so the form is errored. */
+@Component({
+  standalone: true,
+  selector: 'gui-ssr-host',
+  imports: [FormCoreComponent],
+  template: `<gui-core-form
+    [config]="config"
+    [validators]="validators"
+    (formHealth)="onFormHealth($event)"
+  />`,
+})
+export class SsrDuplicateUidHostComponent {
+  config: FormInitConfig<Type<WithWidget>> = {
+    ...buildConfig(),
+    formDef: {
+      form: {
+        uid: 'root',
+        kind: 'layout',
+        type: 'flex',
+        children: [
+          { kind: 'input', type: 'textinput', path: 'firstName', uid: 'same-uid' },
+          { kind: 'input', type: 'textinput', path: 'lastName', uid: 'same-uid' },
+        ],
+      },
+    },
+  };
+  validators = noopValidators;
+
+  onFormHealth(health: FormHealth) {
+    recordedFormHealth.push(health);
+  }
 }

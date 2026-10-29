@@ -1,6 +1,6 @@
 import { preloadFormWidgets } from '@golemui/core';
 import { renderToString } from 'react-dom/server';
-import { beforeAll, describe, expect, it } from 'vitest';
+import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { FormComponent } from './FormComponent';
 import { buildConfig, noopValidators, stubWidgetLoaders } from './ssr.fixture';
 
@@ -96,5 +96,64 @@ describe('server rendering determinism', () => {
 
     expect(first).toBeDefined();
     expect(first).toBe(second);
+  });
+});
+
+describe('server rendering the form health', () => {
+  const buildDuplicateUidConfig = () => ({
+    ...buildConfig(),
+    formDef: {
+      form: {
+        uid: 'root',
+        kind: 'layout' as const,
+        type: 'flex',
+        children: [
+          { kind: 'input', type: 'textinput', path: 'firstName', uid: 'same-uid' },
+          { kind: 'input', type: 'textinput', path: 'lastName', uid: 'same-uid' },
+        ],
+      },
+    },
+  });
+
+  beforeAll(async () => {
+    await preloadFormWidgets({ widgetLoaders: stubWidgetLoaders });
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('does not call formHealth for a valid config, because effects do not run on the server', () => {
+    const formHealth = vi.fn();
+
+    const html = renderToString(
+      <FormComponent config={buildConfig()} validators={noopValidators} formHealth={formHealth} />,
+    );
+
+    expect(html).toContain('class="stub-flex"');
+    expect(formHealth).not.toHaveBeenCalled();
+  });
+
+  it('writes the error message of a duplicate uid into the markup and logs nothing', () => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+
+    const html = renderToString(
+      <FormComponent config={buildDuplicateUidConfig()} validators={noopValidators} />,
+    );
+
+    expect(html).toContain('gui-form-health-error');
+    expect(html).toContain('[21] Duplicate UID');
+    expect(html).not.toContain('<input');
+    expect(consoleError).not.toHaveBeenCalled();
+  });
+
+  it('does not call a load handler during the server render', () => {
+    const formEvent = vi.fn();
+
+    renderToString(
+      <FormComponent config={buildConfig()} validators={noopValidators} formEvent={formEvent} />,
+    );
+
+    expect(formEvent).not.toHaveBeenCalled();
   });
 });

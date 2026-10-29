@@ -10,7 +10,10 @@ import { preloadFormWidgets } from '@golemui/core';
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import {
   recordedFormEvents,
+  recordedFormHealth,
+  SsrDuplicateUidHostComponent,
   SsrEventRecordingHostComponent,
+  SsrHealthHostComponent,
   SsrHostComponent,
   SsrNotPreloadedHostComponent,
   stubWidgetLoaders,
@@ -138,5 +141,41 @@ describe('server rendering determinism', () => {
     const html = await renderForm();
 
     expect(html).toMatch(/<form [^>]*id="ssr-spec-form"/);
+  });
+});
+
+describe('server rendering the form health', () => {
+  beforeAll(async () => {
+    await preloadFormWidgets({ widgetLoaders: stubWidgetLoaders });
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('calls formHealth with the ok status for a valid config', async () => {
+    recordedFormHealth.length = 0;
+
+    const html = await renderHost(SsrHealthHostComponent);
+
+    expect(html).toContain('class="stub-flex"');
+    expect(recordedFormHealth).toEqual([{ status: 'ok' }]);
+  });
+
+  it('writes the error message of a duplicate uid into the markup, logs it and reports it', async () => {
+    recordedFormHealth.length = 0;
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+
+    const html = await renderHost(SsrDuplicateUidHostComponent);
+
+    expect(html).toContain('gui-form-health-error');
+    expect(html).toContain('[21] Duplicate UID');
+    expect(html).not.toContain('<input');
+    expect(consoleError).toHaveBeenCalledWith(
+      'GolemUI form failed to initialize:',
+      expect.stringContaining('[21] Duplicate UID'),
+    );
+    expect(recordedFormHealth).toHaveLength(1);
+    expect(recordedFormHealth[0].status).toBe('errored');
   });
 });
