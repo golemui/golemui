@@ -9,7 +9,7 @@ type OwnWidgetProps = {
 /** A custom layout widget that shows its `title` prop and renders its children. */
 @Component({
   standalone: true,
-  selector: 'app-custom-layout',
+  selector: 'gui-custom-layout',
   imports: [WidgetDirective],
   providers: [LayoutWidgetAdapter],
   template: `<section [id]="widget.uid" data-cy="custom-layout">

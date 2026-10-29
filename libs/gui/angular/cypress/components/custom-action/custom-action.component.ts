@@ -5,7 +5,7 @@ import type { ActionWidget, WithWidget } from '@golemui/core';
 /** A custom action widget: a native button that sends the click of the widget. */
 @Component({
   standalone: true,
-  selector: 'app-custom-action',
+  selector: 'gui-custom-action',
   providers: [ActionWidgetAdapter],
   template: `<button [id]="widget.uid" type="button" data-cy="custom-action" (click)="onClick()">
     {{ adapter.templateData().label }}

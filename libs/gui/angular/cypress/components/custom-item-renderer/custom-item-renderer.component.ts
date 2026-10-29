@@ -4,7 +4,7 @@ import { type AngularItemRenderContext } from '@golemui/angular';
 /** Shows every field of the render context, so a test can read what the widget passed. */
 @Component({
   standalone: true,
-  selector: 'app-custom-item-renderer',
+  selector: 'gui-custom-item-renderer',
   template: `<div data-cy="custom-item">
     {{ index() }}|{{ value() }}|{{ template().name }}|{{ selected() === true }}
   </div>`,
