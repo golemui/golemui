@@ -1,17 +1,23 @@
 // @vitest-environment jsdom
 import { type FormHealth, identityTranslator } from '@golemui/core';
+import { html, nothing } from 'lit';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { buildConfig, noopValidators, stubWidgetLoaders } from '../../ssr.fixture';
 import type { FormElement } from './form.element';
+import type { FormHealthBoundary } from './form-health-boundary';
 
 // `FormElement.config` is typed with the widget instance, the fixture with the widget class.
 function setConfig(form: FormElement, config: ReturnType<typeof buildConfig>) {
   form.config = config as unknown as FormElement['config'];
 }
 
-async function mountForm(config = buildConfig()): Promise<FormElement> {
+async function mountForm(
+  config = buildConfig(),
+  formHealthBoundary?: FormHealthBoundary,
+): Promise<FormElement> {
   const form = document.createElement('gui-core-form') as FormElement;
   form.validators = noopValidators;
+  form.formHealthBoundary = formHealthBoundary;
   setConfig(form, config);
   document.body.append(form);
   await form.updateComplete;
@@ -181,5 +187,37 @@ describe('a widget that fails to load', () => {
         expect.any(TypeError),
       ),
     );
+  });
+});
+
+describe('a custom form health boundary', () => {
+  it('receives the health and the form, and keeps the form mounted', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const receivedHealths: FormHealth[] = [];
+    const customBoundary: FormHealthBoundary = ({ health, form }) => {
+      receivedHealths.push(health);
+      return html`<section class="custom-boundary">
+        ${health.status === 'errored'
+          ? html`<p class="custom-error">${health.message}</p>`
+          : nothing}
+        ${form}
+      </section>`;
+    };
+    const form = await mountForm(buildConfig(), customBoundary);
+    const formElement = form.querySelector('.custom-boundary form');
+    expect(formElement).not.toBeNull();
+    expect(receivedHealths.at(-1)).toEqual({ status: 'ok' });
+
+    setErroredHealth(form, 'custom boundary');
+    await form.updateComplete;
+
+    expect(receivedHealths.at(-1)).toEqual({
+      status: 'errored',
+      message: 'custom boundary',
+      code: 1,
+    });
+    expect(form.querySelector('.custom-error')?.textContent).toBe('custom boundary');
+    expect(form.querySelector('.custom-boundary form')).toBe(formElement);
+    expect(form.querySelector('.gui-form-health-error')).toBeNull();
   });
 });
