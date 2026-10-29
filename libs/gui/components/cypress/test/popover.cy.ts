@@ -2,6 +2,7 @@ import { html, nothing } from 'lit';
 import { GUIAnchorController } from '../../src/lib/controllers/anchor.controller';
 import { PLACEMENTS, type GuiPlacement } from '../../src/lib/utils/placement';
 import { overlaySuite } from '../support/overlay';
+import { realClick, realPress, takesRealInput } from '../support/real-input';
 
 const filters = ({ placement, anchor }: { placement?: GuiPlacement; anchor?: string } = {}) =>
   html`<button type="button" popovertarget="filters">Filters</button>
@@ -243,6 +244,57 @@ describe('gui-popover', () => {
       popover().invoke('prop', 'open', false);
       panel().should('not.match', ':popover-open');
       cy.get('@toggle').should('have.been.calledTwice');
+    });
+
+    describe('focus, for a panel opened from code', () => {
+      const anchorButton = () => cy.get('button[popovertarget="filters"]');
+      const openWithFocusInside = () => {
+        popover().invoke('prop', 'open', true);
+        panel().should('match', ':popover-open');
+        cy.get('#filters button').focus();
+      };
+
+      it('goes back to the anchor when the panel closes with focus inside', () => {
+        cy.mount(filters());
+
+        openWithFocusInside();
+        popover().invoke('prop', 'open', false);
+        panel().should('not.match', ':popover-open');
+        cy.focused().should('match', 'button[popovertarget="filters"]');
+      });
+
+      it('stays where it is when the panel closes with focus outside', () => {
+        cy.mount(html`${filters()}<input aria-label="Search" />`);
+
+        popover().invoke('prop', 'open', true);
+        cy.get('input').focus();
+        popover().invoke('prop', 'open', false);
+        panel().should('not.match', ':popover-open');
+        cy.focused().should('match', 'input');
+      });
+
+      if (takesRealInput()) {
+        it('goes back to the anchor when Escape closes the panel', () => {
+          cy.mount(filters());
+
+          openWithFocusInside();
+          realPress('Escape');
+          panel().should('not.match', ':popover-open');
+          cy.focused().should('match', 'button[popovertarget="filters"]');
+        });
+
+        it('stays off the anchor when a press outside closes the panel', () => {
+          cy.mount(filters());
+
+          openWithFocusInside();
+          cy.document().then((document) => {
+            const view = document.documentElement;
+            realClick(view.clientWidth - 5, view.clientHeight - 5);
+          });
+          panel().should('not.match', ':popover-open');
+          anchorButton().should('not.match', ':focus');
+        });
+      }
     });
 
     it('adds nothing to the markup of the app', () => {

@@ -228,10 +228,27 @@ describe('gui-otp', () => {
       element().should(([host]) => expect(host.checkValidity()).to.equal(true));
     });
 
-    it('reports a value that is not digits, set from outside', () => {
-      cy.mount(html`<form><gui-otp name="code" length="4" value="12ab"></gui-otp></form>`);
+    it('reports a value that is not digits, set from outside, with its own message', () => {
+      cy.mount(html`<form><gui-otp name="code" length="4" value="12-34"></gui-otp></form>`);
 
-      element().should(([host]) => expect(host.validity?.patternMismatch).to.equal(true));
+      shows('1234');
+      element().should(([host]) => {
+        expect(host.value).to.equal('12-34');
+        expect(host.validity?.patternMismatch).to.equal(true);
+        expect(host.validationMessage).to.equal('Enter a 4-digit code.');
+      });
+    });
+
+    it('reports too many digits, set from outside, with its own message', () => {
+      cy.mount(html`<form><gui-otp name="code" length="4" value="12345"></gui-otp></form>`);
+
+      shows('1234');
+      element().should(([host]) => {
+        expect(host.value).to.equal('12345');
+        expect(host.validity?.tooLong).to.equal(true);
+        expect(host.validity?.tooShort).to.equal(false);
+        expect(host.validationMessage).to.equal('Enter a 4-digit code.');
+      });
     });
 
     it('takes its own incomplete message', () => {

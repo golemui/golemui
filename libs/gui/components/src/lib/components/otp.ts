@@ -38,6 +38,10 @@ const isPositiveInteger = (value: unknown): value is number =>
  * field. The user types in order and Backspace removes the last digit. Anything that isn't a digit
  * is dropped, so a pasted `123-456` becomes `123456`.
  *
+ * A `value` set from code is kept as it is, and the boxes show its first `length` digits. One with
+ * anything but digits, or more than `length` of them, is invalid with its own message, "Enter a
+ * 6-digit code.", rather than the incomplete one.
+ *
  * The code always runs left to right, like a phone number, also in a right-to-left page.
  *
  * ```html
@@ -205,14 +209,21 @@ export class GuiOtp extends GuiFormControl {
   protected override validate(): GuiValidity | null {
     const value = this.value ?? '';
     if (value === '') return super.validate();
-    if (value.length === this.codeLength && /^\d+$/.test(value)) return null;
+    const length = this.codeLength;
+    if (/^\d+$/.test(value)) {
+      if (value.length === length) return null;
+      if (value.length < length) {
+        return {
+          flags: { tooShort: true },
+          message: message('incompleteCode', this.incompleteMessage, { length }),
+        };
+      }
+    }
+    // Only a value set from code can hold more digits, or anything else: typing keeps neither.
     const flags: ValidityStateFlags = /^\d+$/.test(value)
-      ? { tooShort: true }
+      ? { tooLong: true }
       : { patternMismatch: true };
-    return {
-      flags,
-      message: message('incompleteCode', this.incompleteMessage, { length: this.codeLength }),
-    };
+    return { flags, message: message('invalidCode', undefined, { length }) };
   }
 
   /** Keeps the digits of a typed or pasted text, up to the code's length. */
