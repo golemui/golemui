@@ -1,5 +1,11 @@
 import { defineForm, type FormWidget, identityTranslator } from '@golemui/core';
-import { expectNoDuplicateIds, type FormHandle, type MountComponentFn } from '../utils';
+import {
+  dictionaryTranslator,
+  eventsNamed,
+  expectNoDuplicateIds,
+  type FormHandle,
+  type MountComponentFn,
+} from '../utils';
 
 export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
   describe('Repeater Component', () => {
@@ -817,7 +823,7 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
         ],
       };
 
-      const tabsRowsForm = () =>
+      const tabsRowsForm = (tabsOn?: Record<string, string>) =>
         defineForm({
           form: [
             {
@@ -832,6 +838,7 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
                   uid: 'rowTabs',
                   kind: 'layout',
                   type: 'tabs',
+                  ...(tabsOn ? { on: tabsOn } : {}),
                   props: {
                     renderMode: 'activeOnly',
                     tabs: [
@@ -1158,6 +1165,29 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
         cy.get('[data-cy="firstPanel[0]_textinput"]').should('have.value', 'Alice');
         cy.get('[data-cy="secondPanel[0]_textinput"]').should('not.exist');
       });
+
+      it('sends the row of the tabs with a tab change in a row', () => {
+        const formEventHandler = cy.stub().as('formEventHandler');
+        mountFn({
+          localization: identityTranslator('en-US'),
+          data: nestedRowsData,
+          formDef: tabsRowsForm({ change: 'rowTabChanged' }),
+          formEvent: formEventHandler,
+        });
+
+        cy.get('[data-cy="tab_rowTabs[1]_secondPanel"]').click();
+
+        cy.get('@formEventHandler').should(() => {
+          const events = eventsNamed(formEventHandler, 'rowTabChanged');
+          expect(events).to.have.length(1);
+          expect(events[0].detail).to.equal('secondPanel');
+          expect(events[0].row).to.deep.equal({
+            index: 1,
+            indexes: [1],
+            path: 'nestedRows.1',
+          });
+        });
+      });
     });
 
     describe('row positions after a removal', () => {
@@ -1322,6 +1352,243 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
           expect(ids).to.deep.equal(['devRepeater[0]', 'devRepeater[1]']);
         });
         expectNoDuplicateIds();
+      });
+    });
+
+    describe('data and props of the repeater', () => {
+      const MEMBERS_PATH = 'members';
+
+      const membersForm = (
+        repeaterProps: Record<string, unknown> = {},
+        repeaterOn?: Record<string, string>,
+      ) =>
+        defineForm({
+          form: [
+            {
+              uid: 'membersRepeater',
+              kind: 'input',
+              type: 'repeater',
+              path: MEMBERS_PATH,
+              ...(repeaterOn ? { on: repeaterOn } : {}),
+              props: {
+                template: {
+                  kind: 'layout',
+                  type: 'grid',
+                  children: [
+                    {
+                      uid: 'memberName',
+                      kind: 'input',
+                      type: 'textinput',
+                      path: `${MEMBERS_PATH}.items.name`,
+                    },
+                    {
+                      uid: 'memberRole',
+                      kind: 'input',
+                      type: 'textinput',
+                      path: `${MEMBERS_PATH}.items.role`,
+                    },
+                  ],
+                },
+                ...repeaterProps,
+              },
+            } as FormWidget<string>,
+            {
+              uid: 'outsideInput',
+              kind: 'input',
+              type: 'textinput',
+              path: 'outside',
+            },
+            {
+              uid: SUBMIT_BUTTON_UID,
+              kind: 'action',
+              type: 'button',
+              label: 'Submit',
+              actionType: 'submit',
+            },
+          ],
+        });
+
+      it('sends a change with the new rows for each add, and disables Add at the limit', () => {
+        const formEventHandler = cy.stub().as('formEventHandler');
+        const formSubmitHandler = cy.stub().as('formSubmitHandler');
+        mountFn({
+          formDef: membersForm({ limit: 2 }, { change: 'rowsChanged' }),
+          formEvent: formEventHandler,
+          formSubmit: formSubmitHandler,
+        });
+
+        cy.get('.gui-repeater__add-btn').click();
+        cy.get('.gui-repeater__add-btn').should('not.be.disabled').click();
+        cy.get('.gui-repeater__add-btn').should('be.disabled');
+
+        cy.get('@formEventHandler').should(() => {
+          const events = eventsNamed(formEventHandler, 'rowsChanged');
+          expect(events).to.have.length(2);
+          // A new row has a key for each input of the template, with no value
+          const emptyRow = { name: undefined, role: undefined };
+          expect(events[0].data[MEMBERS_PATH]).to.deep.equal([emptyRow]);
+          expect(events[1].data[MEMBERS_PATH]).to.deep.equal([emptyRow, emptyRow]);
+        });
+
+        // Every field of the row that stays has a value, so the removal keeps the same keys in
+        // every framework
+        cy.get('[data-cy="memberName[1]_textinput"]').type('Bob');
+        cy.get('[data-cy="memberRole[1]_textinput"]').type('Dev');
+        cy.get('.gui-repeater__remove-btn').eq(0).click();
+        cy.get('.gui-repeater__add-btn').should('not.be.disabled');
+        cy.get('@formEventHandler').should(() => {
+          const events = eventsNamed(formEventHandler, 'rowsChanged');
+          expect(events).to.have.length(3);
+          expect(events[2].data[MEMBERS_PATH]).to.deep.equal([{ name: 'Bob', role: 'Dev' }]);
+        });
+
+        cy.get(`[data-cy="${SUBMIT_BUTTON_UID}_button"]`).click();
+        cy.get('@formSubmitHandler').should('have.been.calledOnce');
+        cy.get('@formSubmitHandler').then((stub: any) => {
+          expect(stub.getCall(0).args[0].data[MEMBERS_PATH]).to.deep.equal([
+            { name: 'Bob', role: 'Dev' },
+          ]);
+        });
+      });
+
+      it('numbers the row titles, and numbers them again after a removal', () => {
+        mountFn({
+          data: { members: [{ name: 'Ann' }, { name: 'Bob' }, { name: 'Cid' }] },
+          formDef: membersForm({ title: 'Member' }),
+        });
+
+        const titles = () =>
+          cy
+            .get('.gui-repeater__card-title')
+            .then(($titles) => $titles.toArray().map((title) => title.textContent?.trim()));
+
+        titles().should('deep.equal', ['Member 1', 'Member 2', 'Member 3']);
+        cy.get('.gui-repeater__remove-btn').eq(0).click();
+        cy.get('[data-cy="memberName[0]_textinput"]').should('have.value', 'Bob');
+        titles().should('deep.equal', ['Member 1', 'Member 2']);
+      });
+
+      it('shows no row title without a title prop', () => {
+        mountFn({
+          data: { members: [{ name: 'Ann' }] },
+          formDef: membersForm(),
+        });
+
+        cy.get('[data-cy="memberName[0]_textinput"]').should('have.value', 'Ann');
+        cy.get('.gui-repeater__card-title').should('not.exist');
+      });
+
+      it('shows the default labels without addLabel and removeLabel', () => {
+        mountFn({
+          data: { members: [{ name: 'Ann' }] },
+          formDef: membersForm(),
+        });
+
+        cy.get('.gui-repeater__add-btn').invoke('text').invoke('trim').should('equal', 'Add');
+        cy.get('.gui-repeater__remove-btn').invoke('text').invoke('trim').should('equal', 'Remove');
+      });
+
+      it('translates addLabel and removeLabel given as a translation config', () => {
+        const translator = dictionaryTranslator('en', {
+          en: { 'members.add': 'Add member', 'members.remove': 'Remove member' },
+          es: { 'members.add': 'Añadir miembro', 'members.remove': 'Quitar miembro' },
+        });
+        mountFn({
+          localization: translator,
+          data: { members: [{ name: 'Ann' }] },
+          formDef: membersForm({
+            addLabel: { key: 'members.add' },
+            removeLabel: { key: 'members.remove' },
+          }),
+        });
+
+        cy.get('.gui-repeater__add-btn')
+          .invoke('text')
+          .invoke('trim')
+          .should('equal', 'Add member');
+        cy.get('.gui-repeater__remove-btn')
+          .invoke('text')
+          .invoke('trim')
+          .should('equal', 'Remove member');
+
+        cy.then(() => translator.setLang('es'));
+        cy.get('.gui-repeater__add-btn')
+          .invoke('text')
+          .invoke('trim')
+          .should('equal', 'Añadir miembro');
+        cy.get('.gui-repeater__remove-btn')
+          .invoke('text')
+          .invoke('trim')
+          .should('equal', 'Quitar miembro');
+      });
+
+      it('sends blur when the focus leaves the repeater for an input outside it', () => {
+        const formEventHandler = cy.stub().as('formEventHandler');
+        mountFn({
+          data: { members: [{ name: 'Ann', role: 'Dev' }] },
+          formDef: membersForm({}, { blur: 'rowsLeft' }),
+          formEvent: formEventHandler,
+        });
+
+        cy.get('[data-cy="memberName[0]_textinput"]').focus();
+        cy.get('[data-cy="outsideInput_textinput"]').focus();
+
+        cy.get('@formEventHandler').should(() => {
+          expect(eventsNamed(formEventHandler, 'rowsLeft')).to.have.length(1);
+        });
+      });
+    });
+
+    it('submits the nested arrays after a removal, additions and typing in nested rows', () => {
+      const formSubmitHandler = cy.stub().as('formSubmitHandler');
+      mountFn({
+        data: {
+          repeaters: {
+            teams: [
+              {
+                teamName: 'T0',
+                developers: [
+                  { firstName: 'Alice', lastName: 'Smith', skills: [{ skill: 'JS' }] },
+                  { firstName: 'John', lastName: 'Doe', skills: [] },
+                ],
+              },
+            ],
+          },
+        },
+        formDef: getFormDefinition(),
+        formSubmit: formSubmitHandler,
+      });
+
+      // Vue removes a row with a JSON copy, which drops keys that hold undefined. The removal comes
+      // before the additions, so the rows it copies have a value in each field.
+      cy.get('.gui-repeater__remove-btn').filter(':contains("Remove developer")').eq(0).click();
+      cy.get('[data-cy="firstName[0][0]_textinput"]').should('have.value', 'John');
+
+      cy.get('.gui-button').contains('Add new developer').click();
+      cy.get('[data-cy="firstName[0][1]_textinput"]').type('Jane');
+      cy.get('[data-cy="lastName[0][1]_textinput"]').type('Roe');
+      cy.get('.gui-repeater__add-btn').filter(':contains("Add new skill")').eq(0).click();
+      cy.get('[data-cy="developerSkill[0][0][0]_textinput"]').type('Go');
+      // Without a skill, the new row submits `skills: undefined`, which a later Vue removal drops
+      cy.get('.gui-repeater__add-btn').filter(':contains("Add new skill")').eq(1).click();
+      cy.get('[data-cy="developerSkill[0][1][0]_textinput"]').type('Rust');
+
+      cy.get(`[data-cy="${SUBMIT_BUTTON_UID}_button"]`).click();
+      cy.get('@formSubmitHandler').should('have.been.calledOnce');
+      cy.get('@formSubmitHandler').then((stub: any) => {
+        expect(stub.getCall(0).args[0].data).to.deep.equal({
+          repeaters: {
+            teams: [
+              {
+                teamName: 'T0',
+                developers: [
+                  { firstName: 'John', lastName: 'Doe', skills: [{ skill: 'Go' }] },
+                  { firstName: 'Jane', lastName: 'Roe', skills: [{ skill: 'Rust' }] },
+                ],
+              },
+            ],
+          },
+        });
       });
     });
   });

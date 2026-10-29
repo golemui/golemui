@@ -72,6 +72,13 @@ export const dictionaryTranslator = (
   };
 };
 
+/** The form events with this name that a `formEvent` stub received, in order. */
+export const eventsNamed = (handler: sinon.SinonStub, name: string): FormEvent[] =>
+  handler
+    .getCalls()
+    .map((call) => call.args[0] as FormEvent)
+    .filter((event) => event.name === name);
+
 const PILLS_WIDTH_STYLE_ID = 'ui-testing-pills-width-override';
 
 /**
