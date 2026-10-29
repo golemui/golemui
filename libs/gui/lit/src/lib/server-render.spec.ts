@@ -5,9 +5,13 @@ import {
   type WithWidget,
 } from '@golemui/core';
 import type { StandardSchemaV1 } from '@standard-schema/spec';
-import { renderForm } from '@golemui/lit/ssr';
+import { renderForm, renderTemplate } from '@golemui/lit/ssr';
 import type { Type } from '@golemui/lit';
+import { html } from 'lit';
+import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
+import './components/form.element';
+import { resumeFormConfig } from './ssr.fixture';
 import { widgetLoaders } from './widget.loaders';
 
 /**
@@ -267,5 +271,31 @@ describe('server rendering the fields inside a tabs layout', () => {
     expect(markup).toMatch(/<gui-tab-panel[^>]*>/);
     expect(markup).toMatch(/<input[^>]*id="firstName-textinput"[^>]*value="Ada"/);
     expect(markup).toMatch(/<input[^>]*id="company-textinput"[^>]*value="Analytical Engines"/);
+  });
+});
+
+describe('server rendering the gui-form element', () => {
+  let markup = '';
+
+  beforeAll(async () => {
+    await preloadFormWidgets({ widgetLoaders });
+    markup = await renderTemplate(html`<gui-form .config=${resumeFormConfig}></gui-form>`);
+  });
+
+  // The resume spec loads this file into a DOM. Run vitest with `-u` to update it. The file has
+  // no trailing spaces and ends with a newline, as an editor saves it (.editorconfig).
+  it('matches the golden markup the resume spec loads', async () => {
+    await expect(`${markup.replace(/[ \t]+$/gm, '')}\n`).toMatchFileSnapshot(
+      join(__dirname, 'goldens/resume-form.html'),
+    );
+  });
+
+  it('renders the widgets with their values inside the inert gui-form', () => {
+    expect(markup).toMatch(/<gui-form[^>]*defer-hydration/);
+    expect(markup).toMatch(/<gui-core-form[^>]*defer-hydration/);
+    expect(markup).toMatch(/<input[^>]*id="firstName-textinput"[^>]*value="Ada"/);
+    expect(markup).toMatch(/<input[^>]*type="number"[^>]*id="seats-number"/);
+    expect(markup).toMatch(/<input[^>]*type="checkbox"[^>]*id="acceptTerms-checkbox"[^>]*checked/);
+    expect(markup).toContain('Send');
   });
 });
