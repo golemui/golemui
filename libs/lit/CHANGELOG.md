@@ -1,3 +1,13 @@
+## 2.1.0-rc.2 (2026-10-29)
+
+### 🩹 Fixes
+
+- **lit:** keep a moved form in sync with its store and report widget load failures ([#484](https://github.com/golemui/golemui/pull/484))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+
 ## 2.1.0-rc.1 (2026-10-23)
 
 ### 🚀 Features

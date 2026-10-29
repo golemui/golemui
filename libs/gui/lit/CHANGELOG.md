@@ -1,3 +1,15 @@
+## 2.1.0-rc.2 (2026-10-29)
+
+### 🩹 Fixes
+
+- **gui-components:** add missing aria label and remove dead css ([#490](https://github.com/golemui/golemui/pull/490))
+- **lit:** keep a moved form in sync with its store and report widget load failures ([#484](https://github.com/golemui/golemui/pull/484))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
 ## 2.1.0-rc.1 (2026-10-23)
 
 ### 🚀 Features

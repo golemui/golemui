@@ -1,5 +1,3 @@
-@use 'pill' as *;
-
 // No `container-type` on the host: it carries `.gui-field`, which grid layouts
 // turn into a row subgrid, and inline-size containment drops the subgrid (the
 // field stops lining up with its neighbours). `.gui-tags-input` is the
@@ -64,51 +62,6 @@ gui-tags {
     overflow-x: auto;
     overflow-y: hidden;
     scrollbar-width: none;
-  }
-
-  .gui-tags__chip {
-    @include gui-pill;
-
-    cursor: default;
-  }
-
-  .gui-tags__chip-text {
-    @include gui-pill-text;
-  }
-
-  .gui-tags__chip-remove {
-    @include gui-pill-remove;
-  }
-
-  .gui-tags__pills-compact {
-    display: none;
-    align-items: center;
-  }
-
-  .gui-tags__pill--count {
-    @include gui-pill-count;
-  }
-
-  .gui-tags__pills-dropdown {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    z-index: 10;
-    display: flex;
-    flex-direction: column;
-    background-color: var(--gui-bg-default);
-    border: 1px solid var(--gui-border-default);
-    border-radius: var(--gui-radius-md);
-    box-shadow: var(--gui-shadow-md);
-    padding: var(--gui-space-2);
-    gap: var(--gui-space-2);
-    max-height: 200px;
-    overflow-y: auto;
-
-    .gui-tags__chip {
-      justify-content: space-between;
-    }
   }
 
   .gui-tags__input {

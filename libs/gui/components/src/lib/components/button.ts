@@ -1,9 +1,10 @@
-import { html, nothing } from 'lit';
+import { html, nothing, type PropertyValues } from 'lit';
 import { property } from 'lit/decorators.js';
 import { booleanAttribute } from '../utils/converters';
 import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
 import { GuiElement } from '../gui-element';
+import { warnInDevelopment } from '../utils/dev';
 import { spinnerIcon } from '../utils/icons';
 
 /**
@@ -14,6 +15,12 @@ import { spinnerIcon } from '../utils/icons';
 export class GuiButton extends GuiElement {
   /** Text of the button. */
   @property({ type: String }) label: string | undefined = undefined;
+  /**
+   * The button's accessible name when it shows no label, such as an icon-only button. Screen
+   * readers announce it; with a label, the label is the name and this is ignored.
+   */
+  @property({ type: String, attribute: 'button-aria-label' }) buttonAriaLabel: string | undefined =
+    undefined;
   /** Disables the button. A disabled link loses its `href`. */
   @property({ converter: booleanAttribute }) disabled: boolean | undefined = false;
   /**
@@ -78,6 +85,9 @@ export class GuiButton extends GuiElement {
       'gui-button--loading': !!this.loading,
     });
 
+    // A visible label is always the name (WCAG 2.5.3): the aria-label is only for no label.
+    const ariaLabel = !this.label && this.buttonAriaLabel ? this.buttonAriaLabel : nothing;
+
     const content = html`
       ${iconPosition === 'left' ? icon : nothing}
       ${this.label ? html`<span>${this.label}</span>` : nothing}
@@ -97,6 +107,7 @@ export class GuiButton extends GuiElement {
             role=${this.disabled ? 'link' : nothing}
             target=${this.target || nothing}
             rel=${this.rel || nothing}
+            aria-label=${ariaLabel}
             aria-disabled=${inactive ? 'true' : nothing}
             aria-busy=${this.loading ? 'true' : nothing}
             @click=${this.onClick}
@@ -117,6 +128,7 @@ export class GuiButton extends GuiElement {
           .value=${this.value ?? ''}
           form=${this.form || nothing}
           ?disabled=${this.disabled}
+          aria-label=${ariaLabel}
           aria-disabled=${this.loading ? 'true' : nothing}
           aria-busy=${this.loading ? 'true' : nothing}
           @click=${this.onClick}
@@ -125,6 +137,16 @@ export class GuiButton extends GuiElement {
         </button>
       </div>
     `;
+  }
+
+  protected override updated(changed: PropertyValues<this>) {
+    super.updated(changed);
+    if (!this.label && !this.buttonAriaLabel) {
+      warnInDevelopment(
+        this,
+        'has no label or button-aria-label, so it has no accessible name. Set one of them.',
+      );
+    }
   }
 
   /** A loading button, or a disabled link, does nothing: no submission, navigation or click. */

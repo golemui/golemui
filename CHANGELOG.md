@@ -1,3 +1,23 @@
+## 2.1.0-rc.2 (2026-10-29)
+
+### 🚀 Features
+
+- **core:** add the repeater row to form events ([#481](https://github.com/golemui/golemui/pull/481))
+
+### 🩹 Fixes
+
+- **core:** keep the index of hidden rows in a repeater of plain values ([#482](https://github.com/golemui/golemui/pull/482))
+- **core:** keep a param named __proto__ in i18n params ([#483](https://github.com/golemui/golemui/pull/483))
+- **gui-components:** add missing aria label and remove dead css ([#490](https://github.com/golemui/golemui/pull/490))
+- **lit:** keep a moved form in sync with its store and report widget load failures ([#484](https://github.com/golemui/golemui/pull/484))
+- **react:** keep the form mounted on a health error, and type widgetErrorFallback on GuiForm ([#485](https://github.com/golemui/golemui/pull/485))
+- **vue,angular:** keep a late widget load failure out of the newer form ([#486](https://github.com/golemui/golemui/pull/486))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
 ## 2.1.0-rc.1 (2026-10-23)
 
 ### 🚀 Features

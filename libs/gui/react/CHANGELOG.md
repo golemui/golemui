@@ -1,3 +1,15 @@
+## 2.1.0-rc.2 (2026-10-29)
+
+### 🩹 Fixes
+
+- **gui-components:** add missing aria label and remove dead css ([#490](https://github.com/golemui/golemui/pull/490))
+- **react:** keep the form mounted on a health error, and type widgetErrorFallback on GuiForm ([#485](https://github.com/golemui/golemui/pull/485))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
 ## 2.1.0-rc.1 (2026-10-23)
 
 ### 🚀 Features

@@ -29,7 +29,7 @@ Every `gui.*` factory and its calling convention. Look up the detail below for t
 - `gui.layouts.accordion(sections)`
 - `gui.displays.alert({ text })`
 - `gui.inputs.booleanInput(path, { label, defaultValue? })`
-- `gui.actions.button({ label, actionType?: 'submit', onClick? })`
+- `gui.actions.button({ label?, actionType?: 'submit', variant?, icon?, iconPosition?, ariaLabel?, onClick? })`
 - `gui.inputs.calendar(path, { label, minDate?, maxDate? })`
 - `gui.inputs.checkbox(path, { label, defaultValue?, validator? })`
 - `gui.inputs.currency(path, { label, validator? })`
@@ -114,7 +114,7 @@ Reference: https://golemui.com/dx/widgets-reference/input-fields/toggle.md
 
 ## gui.actions.button
 
-Call: `gui.actions.button({ label, actionType?: 'submit', onClick? })`
+Call: `gui.actions.button({ label?, actionType?: 'submit', variant?, icon?, iconPosition?, ariaLabel?, onClick? })`
 
 ```ts
 gui.actions.button({ label: 'Sign up', actionType: 'submit' });
@@ -123,6 +123,7 @@ gui.actions.button({ label: 'Sign up', actionType: 'submit' });
 - Submit button: `gui.actions.button({ label, actionType: 'submit' })`.
 - There is NO `gui.actions.submitButton` — it was removed. Use `button` with `actionType: 'submit'`.
 - For a non-submit action use an `onClick: (event) => { /* event.data is the form data */ }` handler.
+- An icon-only button (no `label`) needs `ariaLabel`, its accessible name: `gui.actions.button({ icon: 'close', ariaLabel: 'Close' })`. With a label, the label is the name.
 
 Reference: https://golemui.com/dx/widgets-reference/interactive-fields/button.md
 
