@@ -1,5 +1,5 @@
-import { defineForm, identityTranslator } from '@golemui/core';
-import { expectNoDuplicateIds, type MountComponentFn } from '../utils';
+import { defineForm, type FormWidget, identityTranslator } from '@golemui/core';
+import { expectNoDuplicateIds, type FormHandle, type MountComponentFn } from '../utils';
 
 export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
   describe('Repeater Component', () => {
@@ -809,52 +809,109 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
         ],
       };
 
+      const threeNestedRowsData = {
+        nestedRows: [
+          { first: 'Alice', second: 'Ann' },
+          { first: 'Bob', second: 'Bea' },
+          { first: 'Carol', second: 'Cid' },
+        ],
+      };
+
+      const tabsRowsForm = () =>
+        defineForm({
+          form: [
+            {
+              uid: 'nestedRowsRepeater',
+              kind: 'input',
+              type: 'repeater',
+              path: NESTED_ROWS_PATH,
+              props: {
+                addLabel: 'Add row',
+                removeLabel: 'Remove row',
+                template: {
+                  uid: 'rowTabs',
+                  kind: 'layout',
+                  type: 'tabs',
+                  props: {
+                    renderMode: 'activeOnly',
+                    tabs: [
+                      { uid: 'firstPanel', label: 'First' },
+                      { uid: 'secondPanel', label: 'Second' },
+                    ],
+                  },
+                  children: [
+                    {
+                      uid: 'firstPanel',
+                      kind: 'input',
+                      type: 'textinput',
+                      path: `${NESTED_ROWS_PATH}.items.first`,
+                      label: 'First',
+                      on: { load: 'firstPanelLoaded' },
+                    },
+                    {
+                      uid: 'secondPanel',
+                      kind: 'input',
+                      type: 'textinput',
+                      path: `${NESTED_ROWS_PATH}.items.second`,
+                      label: 'Second',
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+        });
+
+      const accordionRowsForm = () =>
+        defineForm({
+          form: [
+            {
+              uid: 'nestedRowsRepeater',
+              kind: 'input',
+              type: 'repeater',
+              path: NESTED_ROWS_PATH,
+              props: {
+                addLabel: 'Add row',
+                removeLabel: 'Remove row',
+                template: {
+                  uid: 'rowAccordion',
+                  kind: 'layout',
+                  type: 'accordion',
+                  props: {
+                    renderMode: 'activeOnly',
+                    defaultOpen: { firstSection: true },
+                    sections: [
+                      { uid: 'firstSection', label: 'First' },
+                      { uid: 'secondSection', label: 'Second' },
+                    ],
+                  },
+                  children: [
+                    {
+                      uid: 'firstSection',
+                      kind: 'input',
+                      type: 'textinput',
+                      path: `${NESTED_ROWS_PATH}.items.first`,
+                      label: 'First',
+                    },
+                    {
+                      uid: 'secondSection',
+                      kind: 'input',
+                      type: 'textinput',
+                      path: `${NESTED_ROWS_PATH}.items.second`,
+                      label: 'Second',
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+        });
+
       it('renders the active panel of a tabs layout in every repeater row', () => {
         mountFn({
           localization: identityTranslator('en-US'),
           data: nestedRowsData,
-          formDef: defineForm({
-            form: [
-              {
-                uid: 'nestedRowsRepeater',
-                kind: 'input',
-                type: 'repeater',
-                path: NESTED_ROWS_PATH,
-                props: {
-                  addLabel: 'Add row',
-                  removeLabel: 'Remove row',
-                  template: {
-                    uid: 'rowTabs',
-                    kind: 'layout',
-                    type: 'tabs',
-                    props: {
-                      renderMode: 'activeOnly',
-                      tabs: [
-                        { uid: 'firstPanel', label: 'First' },
-                        { uid: 'secondPanel', label: 'Second' },
-                      ],
-                    },
-                    children: [
-                      {
-                        uid: 'firstPanel',
-                        kind: 'input',
-                        type: 'textinput',
-                        path: `${NESTED_ROWS_PATH}.items.first`,
-                        label: 'First',
-                      },
-                      {
-                        uid: 'secondPanel',
-                        kind: 'input',
-                        type: 'textinput',
-                        path: `${NESTED_ROWS_PATH}.items.second`,
-                        label: 'Second',
-                      },
-                    ],
-                  },
-                },
-              },
-            ],
-          }),
+          formDef: tabsRowsForm(),
         });
 
         // Every row shows its own value in the tab that is open by default
@@ -885,49 +942,7 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
         mountFn({
           localization: identityTranslator('en-US'),
           data: nestedRowsData,
-          formDef: defineForm({
-            form: [
-              {
-                uid: 'nestedRowsRepeater',
-                kind: 'input',
-                type: 'repeater',
-                path: NESTED_ROWS_PATH,
-                props: {
-                  addLabel: 'Add row',
-                  removeLabel: 'Remove row',
-                  template: {
-                    uid: 'rowAccordion',
-                    kind: 'layout',
-                    type: 'accordion',
-                    props: {
-                      renderMode: 'activeOnly',
-                      defaultOpen: { firstSection: true },
-                      sections: [
-                        { uid: 'firstSection', label: 'First' },
-                        { uid: 'secondSection', label: 'Second' },
-                      ],
-                    },
-                    children: [
-                      {
-                        uid: 'firstSection',
-                        kind: 'input',
-                        type: 'textinput',
-                        path: `${NESTED_ROWS_PATH}.items.first`,
-                        label: 'First',
-                      },
-                      {
-                        uid: 'secondSection',
-                        kind: 'input',
-                        type: 'textinput',
-                        path: `${NESTED_ROWS_PATH}.items.second`,
-                        label: 'Second',
-                      },
-                    ],
-                  },
-                },
-              },
-            ],
-          }),
+          formDef: accordionRowsForm(),
         });
 
         // Every row shows its own value in the section that is open by default
@@ -1017,6 +1032,296 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
         cy.get('[id="accordion_button_rowAccordion[1]_secondSection"]').should('exist');
         cy.get('[id="accordion_section_rowAccordion[0]_secondSection"]').should('exist');
         cy.get('[id="accordion_section_rowAccordion[1]_secondSection"]').should('not.exist');
+      });
+
+      it('keeps the selected tab at its row position when an earlier row is removed', () => {
+        mountFn({
+          localization: identityTranslator('en-US'),
+          data: threeNestedRowsData,
+          formDef: tabsRowsForm(),
+        });
+
+        cy.get('[data-cy="tab_rowTabs[1]_secondPanel"]').click();
+        cy.get('[data-cy="secondPanel[1]_textinput"]').should('have.value', 'Bea');
+
+        cy.get('.gui-repeater__remove-btn').eq(0).click();
+
+        // Rows are identified by their position, so the selected tab stays at index 1
+        cy.get('[data-cy="secondPanel[1]_textinput"]').should('have.value', 'Cid');
+        cy.get('[data-cy="firstPanel[1]_textinput"]').should('not.exist');
+        cy.get('[data-cy="firstPanel[0]_textinput"]').should('have.value', 'Bob');
+        cy.get('[data-cy="secondPanel[0]_textinput"]').should('not.exist');
+        cy.get('[data-cy="firstPanel[2]_textinput"]').should('not.exist');
+        cy.get('[data-cy="secondPanel[2]_textinput"]').should('not.exist');
+        expectNoDuplicateIds();
+      });
+
+      it('keeps the open accordion section at its row position when an earlier row is removed', () => {
+        mountFn({
+          localization: identityTranslator('en-US'),
+          data: threeNestedRowsData,
+          formDef: accordionRowsForm(),
+        });
+
+        cy.get('[id="accordion_button_rowAccordion[1]_secondSection"]').click();
+        cy.get('[data-cy="secondSection[1]_textinput"]').should('have.value', 'Bea');
+
+        cy.get('.gui-repeater__remove-btn').eq(0).click();
+
+        cy.get('[data-cy="secondSection[1]_textinput"]').should('have.value', 'Cid');
+        cy.get('[data-cy="firstSection[1]_textinput"]').should('have.value', 'Carol');
+        cy.get('[data-cy="firstSection[0]_textinput"]').should('have.value', 'Bob');
+        cy.get('[data-cy="secondSection[0]_textinput"]').should('not.exist');
+        cy.get('[data-cy="firstSection[2]_textinput"]').should('not.exist');
+        expectNoDuplicateIds();
+      });
+
+      it('drops the open accordion section of the last row position when an earlier row is removed', () => {
+        mountFn({
+          localization: identityTranslator('en-US'),
+          data: nestedRowsData,
+          formDef: accordionRowsForm(),
+        });
+
+        cy.get('[id="accordion_button_rowAccordion[1]_secondSection"]').click();
+        cy.get('[data-cy="secondSection[1]_textinput"]').should('have.value', 'Bea');
+
+        cy.get('.gui-repeater__remove-btn').eq(0).click();
+
+        cy.get('[data-cy="firstSection[0]_textinput"]').should('have.value', 'Bob');
+        cy.get('[data-cy="secondSection[0]_textinput"]').should('not.exist');
+        cy.get('[data-cy="firstSection[1]_textinput"]').should('not.exist');
+
+        // A row added at index 1 opens only the default section
+        cy.get('.gui-button').contains('Add row').click();
+        cy.get('[data-cy="firstSection[1]_textinput"]').should('have.value', '');
+        cy.get('[data-cy="secondSection[1]_textinput"]').should('not.exist');
+      });
+
+      it('keeps the selected tab of every row when the host reverses the rows, without a new load', () => {
+        const formEventHandler = cy.stub().as('formEventHandler');
+        const loadCallCount = () =>
+          formEventHandler.getCalls().filter((call) => call.args[0].name === 'firstPanelLoaded')
+            .length;
+        let handle!: FormHandle;
+
+        mountFn({
+          localization: identityTranslator('en-US'),
+          data: nestedRowsData,
+          formDef: tabsRowsForm(),
+          formEvent: formEventHandler,
+          onFormReady: (formHandle) => {
+            handle = formHandle;
+          },
+        });
+
+        cy.get('[data-cy="tab_rowTabs[1]_secondPanel"]').click();
+        cy.get('[data-cy="secondPanel[1]_textinput"]').should('have.value', 'Bea');
+        cy.get('@formEventHandler').should(() => expect(loadCallCount()).to.equal(2));
+
+        cy.then(() =>
+          handle.setData({
+            nestedRows: [
+              { first: 'Bob', second: 'Bea' },
+              { first: 'Alice', second: 'Ann' },
+            ],
+          }),
+        );
+
+        cy.get('[data-cy="firstPanel[0]_textinput"]').should('have.value', 'Bob');
+        cy.get('[data-cy="secondPanel[1]_textinput"]').should('have.value', 'Ann');
+        cy.get('[data-cy="secondPanel[0]_textinput"]').should('not.exist');
+        cy.get('[data-cy="firstPanel[1]_textinput"]').should('not.exist');
+
+        // Opening the first tab of row 1 again mounts its panel and sends one load. A load sent by
+        // setData would make the count 4.
+        cy.get('[data-cy="tab_rowTabs[1]_firstPanel"]').click();
+        cy.get('[data-cy="firstPanel[1]_textinput"]').should('have.value', 'Alice');
+        cy.get('@formEventHandler').should(() => expect(loadCallCount()).to.equal(3));
+      });
+
+      it('keeps the selected tab of the existing rows when a row is added', () => {
+        mountFn({
+          localization: identityTranslator('en-US'),
+          data: nestedRowsData,
+          formDef: tabsRowsForm(),
+        });
+
+        cy.get('[data-cy="tab_rowTabs[1]_secondPanel"]').click();
+        cy.get('[data-cy="secondPanel[1]_textinput"]').should('have.value', 'Bea');
+
+        cy.get('.gui-button').contains('Add row').click();
+
+        cy.get('[data-cy="firstPanel[2]_textinput"]').should('have.value', '');
+        cy.get('[data-cy="secondPanel[2]_textinput"]').should('not.exist');
+        cy.get('[data-cy="secondPanel[1]_textinput"]').should('have.value', 'Bea');
+        cy.get('[data-cy="firstPanel[0]_textinput"]').should('have.value', 'Alice');
+        cy.get('[data-cy="secondPanel[0]_textinput"]').should('not.exist');
+      });
+    });
+
+    describe('row positions after a removal', () => {
+      const ROWS_PATH = 'rows';
+      const item = (field: string) => `${ROWS_PATH}.items.${field}`;
+
+      const rowsForm = (children: FormWidget<string>[]) =>
+        defineForm({
+          form: [
+            {
+              uid: 'rowsRepeater',
+              kind: 'input',
+              type: 'repeater',
+              path: ROWS_PATH,
+              props: {
+                addLabel: 'Add row',
+                removeLabel: 'Remove row',
+                template: { kind: 'layout', type: 'grid', children },
+              },
+            },
+          ],
+        });
+
+      it('shifts the values of a toggle and a textarea into the rows that stay', () => {
+        mountFn({
+          data: {
+            rows: [
+              { name: 'Alice', active: true, note: 'note A' },
+              { name: 'Bob', active: false, note: 'note B' },
+              { name: 'Carol', active: false, note: 'note C' },
+            ],
+          },
+          formDef: rowsForm([
+            { uid: 'name', kind: 'input', type: 'textinput', path: item('name') },
+            { uid: 'active', kind: 'input', type: 'toggle', path: item('active') },
+            { uid: 'note', kind: 'input', type: 'textarea', path: item('note') },
+          ]),
+        });
+
+        // Make the last row dirty so the row that takes its values has to follow the store
+        cy.get('[data-cy="active[2]_toggle"]').click({ force: true }).should('be.checked');
+        cy.get('[data-cy="note[2]_textarea"]').clear().type('note C typed');
+
+        cy.get('.gui-repeater__remove-btn').eq(1).click();
+
+        cy.get('[data-cy="name[0]_textinput"]').should('have.value', 'Alice');
+        cy.get('[data-cy="active[0]_toggle"]').should('be.checked');
+        cy.get('[data-cy="note[0]_textarea"]').should('have.value', 'note A');
+        cy.get('[data-cy="name[1]_textinput"]').should('have.value', 'Carol');
+        cy.get('[data-cy="active[1]_toggle"]').should('be.checked');
+        cy.get('[data-cy="note[1]_textarea"]').should('have.value', 'note C typed');
+        cy.get('[data-cy="name[2]_textinput"]').should('not.exist');
+        cy.get('[data-cy="active[2]_toggle"]').should('not.exist');
+        cy.get('[data-cy="note[2]_textarea"]').should('not.exist');
+      });
+
+      it('keeps a revealed password at its row position when an earlier row is removed', () => {
+        mountFn({
+          data: {
+            rows: [{ secret: 'secret A' }, { secret: 'secret B' }, { secret: 'secret C' }],
+          },
+          formDef: rowsForm([
+            { uid: 'secret', kind: 'input', type: 'password', path: item('secret') },
+          ]),
+        });
+
+        cy.get('.gui-password__toggle').eq(1).click();
+        cy.get('[data-cy="secret[1]_password"]').should('have.attr', 'type', 'text');
+
+        cy.get('.gui-repeater__remove-btn').eq(0).click();
+
+        cy.get('[data-cy="secret[0]_password"]').should('have.value', 'secret B');
+        cy.get('[data-cy="secret[0]_password"]').should('have.attr', 'type', 'password');
+        cy.get('[data-cy="secret[1]_password"]').should('have.value', 'secret C');
+        cy.get('[data-cy="secret[1]_password"]').should('have.attr', 'type', 'text');
+        cy.get('[data-cy="secret[2]_password"]').should('not.exist');
+      });
+
+      it('shifts the teams and their nested rows when a team is removed', () => {
+        const formSubmitHandler = cy.stub().as('formSubmitHandler');
+        // Every rendered field has a value, so the submitted rows have no undefined fields
+        const alice = { firstName: 'Alice', lastName: 'Smith', skills: [] };
+        const john = { firstName: 'John', lastName: 'Doe', skills: [] };
+        const jane = { firstName: 'Jane', lastName: 'Roe', skills: [] };
+        mountFn({
+          data: {
+            repeaters: {
+              teams: [
+                { teamName: 'T0', developers: [alice] },
+                { teamName: 'T1', developers: [john, jane] },
+              ],
+            },
+          },
+          formDef: getFormDefinition(),
+          formSubmit: formSubmitHandler,
+        });
+
+        cy.get('.gui-repeater__remove-btn').filter(':contains("Remove team")').eq(0).click();
+
+        cy.get('[data-cy="teamName[0]_textinput"]').should('have.value', 'T1');
+        cy.get('[data-cy="firstName[0][0]_textinput"]').should('have.value', 'John');
+        cy.get('[data-cy="firstName[0][1]_textinput"]').should('have.value', 'Jane');
+        cy.get('[data-cy="teamName[1]_textinput"]').should('not.exist');
+        cy.get('[data-cy="firstName[1][0]_textinput"]').should('not.exist');
+
+        cy.get(`[data-cy="${SUBMIT_BUTTON_UID}_button"]`).click();
+        cy.get('@formSubmitHandler').should('have.been.calledOnce');
+        cy.get('@formSubmitHandler').then((stub: any) => {
+          expect(stub.getCall(0).args[0].data).to.deep.equal({
+            repeaters: {
+              teams: [{ teamName: 'T1', developers: [john, jane] }],
+            },
+          });
+        });
+
+        // A new team starts with an empty nested repeater
+        cy.get('.gui-button').contains('Add new team').click();
+        cy.get('[data-cy="teamName[1]_textinput"]').should('have.value', '');
+        cy.get('[id="devRepeater[1]"]').should('exist');
+        cy.get('[data-cy="firstName[1][0]_textinput"]').should('not.exist');
+      });
+
+      it('renders unique ids with the shifted indexes after an add, a remove and a nested remove', () => {
+        mountFn({
+          data: {
+            repeaters: {
+              teams: [
+                { teamName: 'T0', developers: [{ firstName: 'A' }] },
+                {
+                  teamName: 'T1',
+                  developers: [{ firstName: 'B' }, { firstName: 'C' }, { firstName: 'D' }],
+                },
+              ],
+            },
+          },
+          formDef: getFormDefinition(),
+        });
+
+        cy.get('.gui-button').contains('Add new team').click();
+        cy.get('[data-cy="teamName[2]_textinput"]').should('exist');
+        cy.get('.gui-repeater__remove-btn').filter(':contains("Remove team")').eq(0).click();
+        cy.get('[data-cy="teamName[2]_textinput"]').should('not.exist');
+        cy.get('.gui-repeater__remove-btn').filter(':contains("Remove developer")').eq(1).click();
+
+        cy.get('gui-textinput input[data-cy$="_textinput"]').should(($elements) => {
+          const order = $elements.toArray().map((element) => element.getAttribute('data-cy'));
+          expect(order).to.deep.equal([
+            'teamName[0]_textinput',
+            'firstName[0][0]_textinput',
+            'lastName[0][0]_textinput',
+            'firstName[0][1]_textinput',
+            'lastName[0][1]_textinput',
+            'teamName[1]_textinput',
+          ]);
+        });
+        cy.get('[data-cy="teamName[0]_textinput"]').should('have.value', 'T1');
+        cy.get('[data-cy="firstName[0][0]_textinput"]').should('have.value', 'B');
+        cy.get('[data-cy="firstName[0][1]_textinput"]').should('have.value', 'D');
+        cy.get('[data-cy="teamName[1]_textinput"]').should('have.value', '');
+        cy.get('.gui-repeater__main-card[id^="devRepeater"]').should(($elements) => {
+          const ids = $elements.toArray().map((element) => element.id);
+          expect(ids).to.deep.equal(['devRepeater[0]', 'devRepeater[1]']);
+        });
+        expectNoDuplicateIds();
       });
     });
   });
