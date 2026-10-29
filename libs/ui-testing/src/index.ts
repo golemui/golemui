@@ -27,6 +27,7 @@ export * from './lib/gui-features/radiogroup.cy';
 export * from './lib/gui-features/rangeslider.cy';
 export * from './lib/gui-features/menu.cy';
 export * from './lib/gui-features/alert.cy';
+export * from './lib/gui-features/button.cy';
 export * from './lib/gui-features/currency.cy';
 export * from './lib/gui-features/dateinput.cy';
 export * from './lib/gui-features/datetimeinput.cy';

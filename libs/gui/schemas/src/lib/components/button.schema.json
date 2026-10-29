@@ -18,6 +18,10 @@
     },
     "iconPositionProp": {
       "enum": ["left", "right"]
+    },
+    "ariaLabelProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable",
+      "description": "The button's accessible name when it shows no label, such as an icon-only button. With a label, the label is the name and this is ignored."
     }
   },
   "allOf": [
@@ -55,6 +59,9 @@
         },
         "iconPosition": {
           "$ref": "#/$defs/iconPositionProp"
+        },
+        "ariaLabel": {
+          "$ref": "#/$defs/ariaLabelProp"
         }
       },
       "patternProperties": {
@@ -66,6 +73,9 @@
         },
         "^iconPosition\\.[^.]+$": {
           "$ref": "#/$defs/iconPositionProp"
+        },
+        "^ariaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/ariaLabelProp"
         }
       },
       "additionalProperties": false

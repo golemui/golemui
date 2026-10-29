@@ -19,6 +19,7 @@ export function Button(widgetInstance: WithWidget) {
         variant={templateData.variant}
         icon={templateData.icon}
         iconPosition={templateData.iconPosition}
+        buttonAriaLabel={templateData.ariaLabel as string}
         onClick={onClick}
       />
     </div>

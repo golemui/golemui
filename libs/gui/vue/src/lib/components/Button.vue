@@ -28,6 +28,7 @@ const iconPosition = computed(() => templateData.value.iconPosition || 'left');
       :variant.prop="variant"
       :icon="templateData.icon"
       :iconPosition.prop="iconPosition"
+      :buttonAriaLabel="templateData.ariaLabel"
       @click="onClick"
     />
   </div>

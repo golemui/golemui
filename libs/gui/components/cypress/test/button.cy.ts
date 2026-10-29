@@ -40,6 +40,32 @@ describe('gui-button', () => {
     });
   });
 
+  describe('accessible name', () => {
+    it('names an icon-only button with button-aria-label', () => {
+      cy.mount(html`<gui-button icon="icon-close" button-aria-label="Close"></gui-button>`);
+
+      button().should('have.attr', 'aria-label', 'Close');
+    });
+
+    it('keeps its visible label as its name, and drops the aria-label', () => {
+      cy.mount(
+        html`<gui-button label="Save" icon="icon-save" button-aria-label="Store"></gui-button>`,
+      );
+
+      button().should('not.have.attr', 'aria-label');
+      cy.get('gui-button').invoke('prop', 'label', '');
+      button().should('have.attr', 'aria-label', 'Store');
+    });
+
+    it('names an icon-only link too', () => {
+      cy.mount(
+        html`<gui-button href="/help" icon="icon-help" button-aria-label="Help"></gui-button>`,
+      );
+
+      cy.get('gui-button a').should('have.attr', 'aria-label', 'Help');
+    });
+  });
+
   describe('states', () => {
     it('submits its form with type="submit", sending its name and value', () => {
       const onSubmit = cy.spy((event: Event) => event.preventDefault()).as('submit');

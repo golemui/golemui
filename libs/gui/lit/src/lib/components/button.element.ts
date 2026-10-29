@@ -52,6 +52,7 @@ export class ButtonElement extends LitElement implements WithWidget {
         .variant=${this.adapter.templateData.variant}
         .icon=${this.adapter.templateData.icon}
         .iconPosition=${this.adapter.templateData.iconPosition}
+        .buttonAriaLabel=${this.adapter.templateData.ariaLabel as string}
         @click=${() => this.adapter.click()}
       ></gui-button>
     `;
