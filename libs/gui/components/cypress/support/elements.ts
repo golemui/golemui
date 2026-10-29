@@ -64,6 +64,8 @@ export const elements: ElementCase[] = [
   // Its message is the app's children: alert.cy.ts checks it with them.
   { tag: 'gui-alert', props: {}, hostRendersChildren: true },
   { tag: 'gui-button', props: { label: 'Save' } },
+  // Icon-only: named by button-aria-label alone.
+  { tag: 'gui-button', props: { icon: 'icon-close', buttonAriaLabel: 'Close' } },
   {
     tag: 'gui-calendar',
     props: { label: 'Day' },

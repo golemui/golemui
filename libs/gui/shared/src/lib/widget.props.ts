@@ -32,6 +32,11 @@ export type ButtonProps = {
   variant?: 'filled' | 'outlined' | 'link';
   icon?: string;
   iconPosition?: 'left' | 'right';
+  /**
+   * The button's accessible name when it shows no label, such as an icon-only button. Screen
+   * readers announce it; with a label, the label is the name and this is ignored.
+   */
+  ariaLabel?: Localizable;
 };
 
 /** An action in a menu. */

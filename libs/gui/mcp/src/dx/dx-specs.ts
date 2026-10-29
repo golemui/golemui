@@ -760,12 +760,13 @@ const ACTIONS: DxSpec[] = [
     factory: 'button',
     namespace: 'actions',
     docSlug: 'button',
-    call: "gui.actions.button({ label, actionType?: 'submit', onClick? })",
+    call: "gui.actions.button({ label?, actionType?: 'submit', variant?, icon?, iconPosition?, ariaLabel?, onClick? })",
     example: "gui.actions.button({ label: 'Sign up', actionType: 'submit' })",
     notes: [
       "Submit button: `gui.actions.button({ label, actionType: 'submit' })`.",
       "There is NO `gui.actions.submitButton` — it was removed. Use `button` with `actionType: 'submit'`.",
       'For a non-submit action use an `onClick: (event) => { /* event.data is the form data */ }` handler.',
+      "An icon-only button (no `label`) needs `ariaLabel`, its accessible name: `gui.actions.button({ icon: 'close', ariaLabel: 'Close' })`. With a label, the label is the name.",
     ],
   },
   {

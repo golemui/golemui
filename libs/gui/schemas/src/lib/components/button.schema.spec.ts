@@ -56,6 +56,7 @@ describe('Button schema validation', () => {
               variant: 'filled',
               icon: 'settings_icon',
               iconPosition: 'right',
+              ariaLabel: { key: 'settings', default: 'Settings' },
             },
           },
         ],

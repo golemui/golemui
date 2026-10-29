@@ -449,6 +449,7 @@ const NOTES: Record<string, string[]> = {
       '`props.iconPosition` controls placement: `"left"` (default) or `"right"`. ' +
       'Both support state suffixes: `"icon.<stateName>": "hourglass_empty"` swaps the icon while a state is active. ' +
       'Call `get_concept({ concept: "icons" })` for setup instructions and the full list of icon-capable widgets.',
+    'An icon-only button (no `label`) MUST set `props.ariaLabel` (localizable), its accessible name for screen readers, e.g. `{ "icon": "close", "ariaLabel": "Close" }`. With a `label`, the label is the name and `ariaLabel` is ignored.',
   ],
   menu: [
     'A button that opens a menu of actions. Picking an item dispatches ONE event, `on.click`, with the item\'s `value` in `detail.value`: the host\'s `formEvent` handler receives `{ name: "rowAction", detail: { value: "edit" } }` and switches on the value. There is no event name per item.',

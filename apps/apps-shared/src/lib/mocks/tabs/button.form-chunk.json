@@ -47,6 +47,15 @@
       "type": "button",
       "label": "Save",
       "disabled": true
+    },
+    {
+      "kind": "action",
+      "type": "button",
+      "props": {
+        "icon": "close",
+        "variant": "outlined",
+        "ariaLabel": "Close"
+      }
     }
   ]
 }
