@@ -23,13 +23,23 @@ export interface FormHandle {
   setMeta: (meta: Record<string, any>) => void;
   /** Replaces the mounted form's whole config object, which reinitializes the form. */
   setConfig: (next: SetConfigInput) => void;
+  /**
+   * Renders the host again and passes the same config object to the form. Resolves after two
+   * animation frames, so a render or effect that the host render starts has finished.
+   */
+  rerender: () => Promise<void>;
 }
 
-/** The parts of the config `FormHandle.setConfig` replaces. */
+/**
+ * The parts of the config `FormHandle.setConfig` replaces. `formName` and `localization` keep
+ * their current value when the key is missing. A key set to `undefined` removes the value.
+ */
 export interface SetConfigInput {
   formDef: Form<any>;
   data?: Record<string, any>;
   meta?: Record<string, any>;
+  formName?: string;
+  localization?: I18nTranslator;
 }
 
 export interface MountOptions<StateKeys extends UiState = string> {
@@ -71,6 +81,16 @@ export const dictionaryTranslator = (
       dictionaries[translator.lang]?.[key] ?? defaultValue ?? key,
   };
 };
+
+/**
+ * Waits for two animation frames and one task.
+ *
+ * @returns A promise that resolves after the second frame and the task that follows it.
+ */
+export const afterTwoFrames = () =>
+  new Promise<void>((resolve) => {
+    requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(resolve, 0)));
+  });
 
 /** The form events with this name that a `formEvent` stub received, in order. */
 export const eventsNamed = (handler: sinon.SinonStub, name: string): FormEvent[] =>

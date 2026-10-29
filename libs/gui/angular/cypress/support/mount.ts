@@ -9,7 +9,7 @@ import type {
   WithWidget,
 } from '@golemui/core';
 import { type Dependencies, type GuiFormInitConfig } from '@golemui/gui-shared';
-import { type MountOptions } from '@golemui/ui-testing';
+import { afterTwoFrames, type MountOptions } from '@golemui/ui-testing';
 import { createOutputSpy, mount } from 'cypress/angular';
 import { FormComponent } from '../../src/lib/components/form/form.component';
 
@@ -88,12 +88,21 @@ export const mountFramework = (options: MountOptions) => {
           formDef: next.formDef,
           data: next.data,
           meta: next.meta,
+          formName: 'formName' in next ? next.formName : currentConfig.formName,
+          localization: 'localization' in next ? next.localization : currentConfig.localization,
         };
         fixture.componentRef.setInput('config', currentConfig);
         // Two runs for the same reason as above: the first schedules the toObservable effect,
         // the second flushes it.
         fixture.detectChanges();
         fixture.detectChanges();
+      },
+      rerender: () => {
+        // A host template that renders again with the same object sets no input. Only change
+        // detection runs again.
+        fixture.detectChanges();
+        fixture.detectChanges();
+        return afterTwoFrames();
       },
     });
   });

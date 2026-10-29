@@ -2,6 +2,7 @@ import { Component, inject, signal, type Type, viewChild } from '@angular/core';
 import { type ComponentFixture, TestBed } from '@angular/core/testing';
 import {
   type Action,
+  type FormHealth,
   type FormInitConfig,
   identityTranslator,
   type Middleware,
@@ -76,11 +77,16 @@ const usersRepeater = (extra: Record<string, unknown> = {}) => ({
 @Component({
   standalone: true,
   imports: [FormCoreComponent],
-  template: `<gui-core-form [config]="config()" [validators]="validators()" />`,
+  template: `<gui-core-form
+    [config]="config()"
+    [validators]="validators()"
+    (formHealth)="healths.push($event)"
+  />`,
 })
 class FormHostComponent {
   config = signal<StubConfig>({ formDef: rootLayout([]), widgetLoaders: stubWidgetLoaders });
   validators = signal<ValidatorFn<any>>(noopValidators);
+  healths: FormHealth[] = [];
   form = viewChild.required(FormCoreComponent);
 }
 
@@ -539,6 +545,23 @@ describe('the form id', () => {
     expect(recorder.formNames.at(-1)).toBe('signup');
   });
 
+  it('uses the formName of a new config object', () => {
+    const recorder = formNameRecorder();
+    const config: StubConfig = {
+      formDef: rootLayout([firstNameInput]),
+      widgetLoaders: stubWidgetLoaders,
+      data: {},
+      formName: 'signup',
+      middlewares: [recorder.middleware],
+    };
+    const { formElement, setConfig } = mountForm(config);
+
+    setConfig({ ...config, formName: 'checkout' });
+
+    expect(formElement().id).toBe('checkout');
+    expect(recorder.formNames.at(-1)).toBe('checkout');
+  });
+
   it('gives two forms on one page different ids', () => {
     const twoFormsFixture = TestBed.createComponent(TwoFormsHostComponent);
     fixture = twoFormsFixture;
@@ -582,5 +605,82 @@ describe('a formDef changed on the same config object', () => {
     mounted.setConfig({ ...config });
 
     expect(renderedInputIds()).toEqual(['email']);
+  });
+});
+
+describe('a new validators object', () => {
+  it('reinitializes the form with the config data, and the same validators object does not', () => {
+    const initializeActions: Action[] = [];
+    const recordInitialize: Middleware<State, Action> = () => (next) => (action) => {
+      if (action.type === 'INITIALIZE') {
+        initializeActions.push(action);
+      }
+      next(action);
+    };
+    const otherValidators: ValidatorFn<any> = (validator) => noopValidators(validator);
+    const mounted = mountForm({
+      formDef: rootLayout([firstNameInput]),
+      widgetLoaders: stubWidgetLoaders,
+      data: { firstName: 'Ada' },
+      middlewares: [recordInitialize],
+    });
+    mounted.setData({ firstName: 'Grace' });
+
+    mounted.fixture.componentInstance.validators.set(noopValidators);
+    mounted.fixture.detectChanges();
+
+    expect(lastAdapter<InputAdapter<string>>('firstName').templateData()).toMatchObject({
+      value: 'Grace',
+    });
+    expect(initializeActions).toHaveLength(1);
+
+    mounted.fixture.componentInstance.validators.set(otherValidators);
+    mounted.fixture.detectChanges();
+
+    expect(lastAdapter<InputAdapter<string>>('firstName').templateData()).toMatchObject({
+      value: 'Ada',
+    });
+    expect(initializeActions).toHaveLength(2);
+  });
+});
+
+describe('a new config object', () => {
+  const firstNameConfig = (): StubConfig => ({
+    formDef: rootLayout([firstNameInput]),
+    widgetLoaders: stubWidgetLoaders,
+    data: {},
+  });
+
+  it('emits an ok health once more, and a render with the same config emits none', () => {
+    const config = firstNameConfig();
+    const mounted = mountForm(config);
+    const { healths } = mounted.fixture.componentInstance;
+    expect(healths).toEqual([{ status: 'ok' }]);
+
+    // A host that renders again with the same object sets no input. Only change detection runs.
+    mounted.fixture.detectChanges();
+
+    expect(healths).toEqual([{ status: 'ok' }]);
+
+    mounted.setConfig({ ...config });
+
+    expect(healths).toEqual([{ status: 'ok' }, { status: 'ok' }]);
+  });
+
+  it('follows the language of the new translator and ignores the old one', () => {
+    const firstTranslator = identityTranslator('en-US');
+    const secondTranslator = identityTranslator('en-US');
+    const mounted = mountForm({ ...firstNameConfig(), localization: firstTranslator });
+    mounted.setConfig({ ...firstNameConfig(), localization: secondTranslator });
+
+    firstTranslator.setLang('ar');
+    mounted.fixture.detectChanges();
+
+    expect(mounted.formElement().dir).toBe('ltr');
+
+    secondTranslator.setLang('ar');
+    mounted.fixture.detectChanges();
+
+    expect(mounted.formElement().dir).toBe('rtl');
   });
 });

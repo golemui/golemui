@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import {
   type Action,
+  type FormHealth,
   type FormInitConfig,
   identityTranslator,
   type Middleware,
@@ -97,8 +98,18 @@ class WidgetsWithoutLayoutElement extends LitElement {
 
 safeDefine('adapters-spec-widgets', WidgetsWithoutLayoutElement);
 
-const mountForm = async (config: StubConfig, validators: ValidatorFn<any> = noopValidators) => {
+const mountForm = async (
+  config: StubConfig,
+  validators: ValidatorFn<any> = noopValidators,
+  onFormHealth?: (health: FormHealth) => void,
+) => {
   const form = document.createElement('gui-core-form') as FormElement;
+  // Added before the append, so the first health is recorded too.
+  if (onFormHealth) {
+    form.addEventListener('formHealth', (event) => {
+      onFormHealth((event as CustomEvent<FormHealth>).detail);
+    });
+  }
   form.validators = validators;
   form.config = config;
   document.body.append(form);
@@ -526,6 +537,23 @@ describe('the form id', () => {
     expect(recorder.formNames.at(-1)).toBe('signup');
   });
 
+  it('uses the formName of a new config object', async () => {
+    const recorder = formNameRecorder();
+    const config: StubConfig = {
+      formDef: rootLayout([firstNameInput]),
+      widgetLoaders: loaders,
+      data: {},
+      formName: 'signup',
+      middlewares: [recorder.middleware],
+    };
+    const { formElement, setConfig } = await mountForm(config);
+
+    await setConfig({ ...config, formName: 'checkout' });
+
+    expect(formElement().id).toBe('checkout');
+    expect(recorder.formNames.at(-1)).toBe('checkout');
+  });
+
   it('gives two forms on one page different ids', async () => {
     const config = (): StubConfig => ({
       formDef: rootLayout([firstNameInput]),
@@ -563,5 +591,85 @@ describe('a formDef changed on the same config object', () => {
     await mounted.setConfig({ ...config });
 
     expect(renderedInputIds()).toEqual(['email']);
+  });
+});
+
+describe('a new validators object', () => {
+  it('reinitializes the form with the config data, and the same validators object does not', async () => {
+    const initializeActions: Action[] = [];
+    const recordInitialize: Middleware<State, Action> = () => (next) => (action) => {
+      if (action.type === 'INITIALIZE') {
+        initializeActions.push(action);
+      }
+      next(action);
+    };
+    const otherValidators: ValidatorFn<any> = (validator) => noopValidators(validator);
+    const mounted = await mountForm({
+      formDef: rootLayout([firstNameInput]),
+      widgetLoaders: loaders,
+      data: { firstName: 'Ada' },
+      middlewares: [recordInitialize],
+    });
+    await mounted.setData({ firstName: 'Grace' });
+
+    mounted.form.validators = noopValidators;
+    mounted.form.requestUpdate();
+    await afterLitRenderSchedule();
+
+    expect(lastAdapter<InputAdapter<string>>('firstName').templateData).toMatchObject({
+      value: 'Grace',
+    });
+    expect(initializeActions).toHaveLength(1);
+
+    mounted.form.validators = otherValidators;
+    await afterLitRenderSchedule();
+
+    expect(lastAdapter<InputAdapter<string>>('firstName').templateData).toMatchObject({
+      value: 'Ada',
+    });
+    expect(initializeActions).toHaveLength(2);
+  });
+});
+
+describe('a new config object', () => {
+  const firstNameConfig = (): StubConfig => ({
+    formDef: rootLayout([firstNameInput]),
+    widgetLoaders: loaders,
+    data: {},
+  });
+
+  it('emits an ok health once more, and a render with the same config emits none', async () => {
+    const healths: FormHealth[] = [];
+    const config = firstNameConfig();
+    const { form } = await mountForm(config, noopValidators, (health) => healths.push(health));
+    expect(healths).toEqual([{ status: 'ok' }]);
+
+    form.config = config;
+    form.requestUpdate();
+    await afterLitRenderSchedule();
+
+    expect(healths).toEqual([{ status: 'ok' }]);
+
+    form.config = { ...config };
+    await afterLitRenderSchedule();
+
+    expect(healths).toEqual([{ status: 'ok' }, { status: 'ok' }]);
+  });
+
+  it('follows the language of the new translator and ignores the old one', async () => {
+    const firstTranslator = identityTranslator('en-US');
+    const secondTranslator = identityTranslator('en-US');
+    const mounted = await mountForm({ ...firstNameConfig(), localization: firstTranslator });
+    await mounted.setConfig({ ...firstNameConfig(), localization: secondTranslator });
+
+    firstTranslator.setLang('ar');
+    await afterLitRenderSchedule();
+
+    expect(mounted.formElement().dir).toBe('ltr');
+
+    secondTranslator.setLang('ar');
+    await afterLitRenderSchedule();
+
+    expect(mounted.formElement().dir).toBe('rtl');
   });
 });

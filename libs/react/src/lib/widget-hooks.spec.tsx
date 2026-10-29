@@ -2,6 +2,7 @@
 import {
   type Action,
   FormContext,
+  type FormHealth,
   type FormInitConfig,
   type FormSubmitEvent,
   identityTranslator,
@@ -548,5 +549,100 @@ describe('a formDef changed on the same config object', () => {
     );
 
     expect(renderedInputIds()).toEqual(['email']);
+  });
+});
+
+describe('a new validators object', () => {
+  it('reinitializes the form with the config data, and the same validators object does not', async () => {
+    const initializeActions: Action[] = [];
+    const recordInitialize: Middleware<State, Action> = () => (next) => (action) => {
+      if (action.type === 'INITIALIZE') {
+        initializeActions.push(action);
+      }
+      next(action);
+    };
+    const config: FormInitConfig<StubComponent> = {
+      formDef: rootLayout([firstNameInput]),
+      widgetLoaders: stubWidgetLoaders,
+      data: { firstName: 'Ada' },
+      middlewares: [recordInitialize],
+    };
+    const otherValidators: ValidatorFn<any> = (validator) => noopValidators(validator);
+    const formRef = createRef<FormComponentHandle>();
+    await render(<FormComponent ref={formRef} config={config} validators={noopValidators} />);
+    await act(async () => formRef.current?.setData({ firstName: 'Grace' }));
+
+    await act(async () =>
+      root?.render(<FormComponent ref={formRef} config={config} validators={noopValidators} />),
+    );
+
+    expect(lastHookOutput<InputHookOutput<string>>('firstName').value).toBe('Grace');
+    expect(initializeActions).toHaveLength(1);
+
+    await act(async () =>
+      root?.render(<FormComponent ref={formRef} config={config} validators={otherValidators} />),
+    );
+
+    expect(lastHookOutput<InputHookOutput<string>>('firstName').value).toBe('Ada');
+    expect(initializeActions).toHaveLength(2);
+  });
+});
+
+describe('a new config object', () => {
+  const firstNameConfig = (): FormInitConfig<StubComponent> => ({
+    formDef: rootLayout([firstNameInput]),
+    widgetLoaders: stubWidgetLoaders,
+    data: {},
+  });
+
+  it('emits an ok health once more, and a render with the same config emits none', async () => {
+    const healths: FormHealth[] = [];
+    const form = (config: FormInitConfig<StubComponent>) => (
+      <FormComponent
+        config={config}
+        validators={noopValidators}
+        formHealth={(health) => {
+          healths.push(health);
+        }}
+      />
+    );
+    const config = firstNameConfig();
+    await render(form(config));
+    expect(healths).toEqual([{ status: 'ok' }]);
+
+    await act(async () => root?.render(form(config)));
+
+    expect(healths).toEqual([{ status: 'ok' }]);
+
+    await act(async () => root?.render(form({ ...config })));
+
+    expect(healths).toEqual([{ status: 'ok' }, { status: 'ok' }]);
+  });
+
+  it('follows the language of the new translator and ignores the old one', async () => {
+    const firstTranslator = identityTranslator('en-US');
+    const secondTranslator = identityTranslator('en-US');
+    const mounted = await render(
+      <FormComponent
+        config={{ ...firstNameConfig(), localization: firstTranslator }}
+        validators={noopValidators}
+      />,
+    );
+    await act(async () =>
+      root?.render(
+        <FormComponent
+          config={{ ...firstNameConfig(), localization: secondTranslator }}
+          validators={noopValidators}
+        />,
+      ),
+    );
+
+    await act(async () => firstTranslator.setLang('ar'));
+
+    expect(mounted.querySelector('form')?.dir).toBe('ltr');
+
+    await act(async () => secondTranslator.setLang('ar'));
+
+    expect(mounted.querySelector('form')?.dir).toBe('rtl');
   });
 });

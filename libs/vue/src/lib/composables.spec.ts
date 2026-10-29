@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import {
   type Action,
+  type FormHealth,
   type FormInitConfig,
   type FormSubmitEvent,
   identityTranslator,
@@ -11,7 +12,17 @@ import {
   type ValidatorFn,
   type WithWidget,
 } from '@golemui/core';
-import { type App, type Component, createApp, defineComponent, h, nextTick, ref, toRaw } from 'vue';
+import {
+  type App,
+  type Component,
+  createApp,
+  defineComponent,
+  h,
+  nextTick,
+  ref,
+  shallowRef,
+  toRaw,
+} from 'vue';
 import { afterEach, beforeAll, describe, expect, it } from 'vitest';
 import FormComponent from './FormComponent.vue';
 import type { FormComponentHandle } from './FormComponent.types';
@@ -510,5 +521,88 @@ describe('the form id', () => {
     const ids = Array.from(mounted.querySelectorAll('form')).map((form) => form.id);
     expect(ids).toHaveLength(2);
     expect(ids[0]).not.toBe(ids[1]);
+  });
+});
+
+describe('a new validators object', () => {
+  it('reinitializes the form with the config data, and the same validators object does not', async () => {
+    const initializeActions: Action[] = [];
+    const recordInitialize: Middleware<State, Action> = () => (next) => (action) => {
+      if (action.type === 'INITIALIZE') {
+        initializeActions.push(action);
+      }
+      next(action);
+    };
+    const config: FormInitConfig<StubComponent> = {
+      formDef: rootLayout([firstNameInput]),
+      widgetLoaders: stubWidgetLoaders,
+      data: { firstName: 'Ada' },
+      middlewares: [recordInitialize],
+    };
+    const otherValidators: ValidatorFn<any> = (validator) => noopValidators(validator);
+    const formHandle = ref<FormComponentHandle | null>(null);
+    const validators = ref<ValidatorFn<any>>(noopValidators);
+    const hostRenders = ref(0);
+    await mount({
+      setup: () => () => {
+        // Read so that a change renders the host again.
+        void hostRenders.value;
+        return h(FormComponent, { ref: formHandle, config, validators: validators.value });
+      },
+    });
+    formHandle.value?.setData({ firstName: 'Grace' });
+    await nextTick();
+
+    hostRenders.value += 1;
+    validators.value = noopValidators;
+    await nextTick();
+
+    expect(lastComposableOutput<InputComposableOutput<string>>('firstName').value.value).toBe(
+      'Grace',
+    );
+    expect(initializeActions).toHaveLength(1);
+
+    validators.value = otherValidators;
+    await nextTick();
+
+    expect(lastComposableOutput<InputComposableOutput<string>>('firstName').value.value).toBe(
+      'Ada',
+    );
+    expect(initializeActions).toHaveLength(2);
+  });
+});
+
+describe('a new config object', () => {
+  it('emits an ok health once more, and a render with the same config emits none', async () => {
+    const healths: FormHealth[] = [];
+    // A shallowRef passes the plain config object, as an app does.
+    const config = shallowRef<FormInitConfig<StubComponent>>({
+      formDef: rootLayout([firstNameInput]),
+      widgetLoaders: stubWidgetLoaders,
+      data: {},
+    });
+    const hostRenders = ref(0);
+    await mount({
+      setup: () => () => {
+        // Read so that a change renders the host again.
+        void hostRenders.value;
+        return h(FormComponent, {
+          config: config.value,
+          validators: noopValidators,
+          onFormHealth: (health: FormHealth) => healths.push(health),
+        });
+      },
+    });
+    expect(healths).toEqual([{ status: 'ok' }]);
+
+    hostRenders.value += 1;
+    await nextTick();
+
+    expect(healths).toEqual([{ status: 'ok' }]);
+
+    config.value = { ...config.value };
+    await nextTick();
+
+    expect(healths).toEqual([{ status: 'ok' }, { status: 'ok' }]);
   });
 });

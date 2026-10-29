@@ -7,7 +7,7 @@ import type {
 } from '@golemui/core';
 import { type Dependencies, type GuiFormInitConfig } from '@golemui/gui-shared';
 import type { FormComponentHandle } from '@golemui/react';
-import { type MountOptions, type SetConfigInput } from '@golemui/ui-testing';
+import { afterTwoFrames, type MountOptions, type SetConfigInput } from '@golemui/ui-testing';
 import { mount } from 'cypress/react';
 import {
   type ComponentType,
@@ -21,6 +21,7 @@ import { GuiForm } from '../../src/lib/components/Form';
 
 interface ConfigHarnessHandle {
   setConfig: (next: SetConfigInput) => void;
+  rerender: () => void;
 }
 
 interface ConfigHarnessProps {
@@ -38,6 +39,7 @@ const ConfigHarness = forwardRef<ConfigHarnessHandle, ConfigHarnessProps>(functi
   ref,
 ) {
   const [config, setConfig] = useState(initialConfig);
+  const [, setRenderCount] = useState(0);
   useImperativeHandle(ref, () => ({
     setConfig: (next) =>
       setConfig((current) => ({
@@ -45,7 +47,10 @@ const ConfigHarness = forwardRef<ConfigHarnessHandle, ConfigHarnessProps>(functi
         formDef: next.formDef,
         data: next.data,
         meta: next.meta,
+        formName: 'formName' in next ? next.formName : current.formName,
+        localization: 'localization' in next ? next.localization : current.localization,
       })),
+    rerender: () => setRenderCount((count) => count + 1),
   }));
   return (
     <GuiForm
@@ -113,6 +118,10 @@ export const mountFramework = (options: MountOptions) => {
           setData: (data) => formRef.current!.setData(data),
           setMeta: (meta) => formRef.current!.setMeta(meta),
           setConfig: (next) => harnessRef.current!.setConfig(next),
+          rerender: () => {
+            harnessRef.current!.rerender();
+            return afterTwoFrames();
+          },
         });
       });
   }

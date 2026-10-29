@@ -7,7 +7,7 @@ import type {
 } from '@golemui/core';
 import { type Dependencies, type GuiFormInitConfig } from '@golemui/gui-shared';
 import { type Type } from '@golemui/lit';
-import { type FormHandle, type MountOptions } from '@golemui/ui-testing';
+import { afterTwoFrames, type FormHandle, type MountOptions } from '@golemui/ui-testing';
 import { html } from 'lit';
 import '../../src/lib/components/form.element';
 
@@ -55,12 +55,25 @@ export const mountFramework = (options: MountOptions) => {
       config: GuiFormInitConfig;
       setData: FormHandle['setData'];
       setMeta: FormHandle['setMeta'];
+      requestUpdate: () => void;
     };
     options.onFormReady?.({
       setData: (data) => el.setData(data),
       setMeta: (meta) => el.setMeta(meta),
       setConfig: (next) => {
-        el.config = { ...el.config, formDef: next.formDef, data: next.data, meta: next.meta };
+        el.config = {
+          ...el.config,
+          formDef: next.formDef,
+          data: next.data,
+          meta: next.meta,
+          formName: 'formName' in next ? next.formName : el.config.formName,
+          localization: 'localization' in next ? next.localization : el.config.localization,
+        };
+      },
+      rerender: () => {
+        // Lit ignores a set with the same config object, so only the form renders again.
+        el.requestUpdate();
+        return afterTwoFrames();
       },
     });
   });
