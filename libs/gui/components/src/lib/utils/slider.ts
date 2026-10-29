@@ -66,8 +66,8 @@ export function sliderTicks(
 const formatters = new Map<string, Intl.NumberFormat>();
 
 /**
- * Formats a slider value for its locale: the value next to the label, the bubbles, the tick
- * labels and the value a screen reader reads.
+ * Formats a slider value for its locale: the value next to the label, the bubbles and the value a
+ * screen reader reads.
  *
  * @param format - `Intl.NumberFormat` options, such as `{ style: 'currency', currency: 'EUR' }`.
  */

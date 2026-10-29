@@ -202,6 +202,28 @@ describe('gui-slider', () => {
       element().should(([host]) => expect(host.validity?.rangeOverflow).to.equal(true));
     });
 
+    it('reports a value off a step, set from outside, and reads it as it is', () => {
+      cy.mount(html`<form><gui-slider name="level" step="5" .value=${37}></gui-slider></form>`);
+
+      input().should('have.value', '35').and('have.attr', 'aria-valuetext', '37');
+      element().should(([host]) => {
+        expect(host.validity?.stepMismatch).to.equal(true);
+        expect(host.validationMessage).to.equal('Choose a valid value. The nearest is 35.');
+      });
+      element().invoke('prop', 'value', 35);
+      element().should(([host]) => expect(host.checkValidity()).to.equal(true));
+    });
+
+    it('takes a value on a decimal step, whatever its floating point noise', () => {
+      cy.mount(
+        html`<form>
+          <gui-slider name="opacity" maximum="1" step="0.1" .value=${0.1 + 0.2}></gui-slider>
+        </form>`,
+      );
+
+      element().should(([host]) => expect(host.checkValidity()).to.equal(true));
+    });
+
     if (takesRealInput()) {
       it('steps with the arrow keys', () => {
         cy.mount(html`<gui-slider label="Volume" step="5" .value=${50}></gui-slider>`);
@@ -212,6 +234,70 @@ describe('gui-slider', () => {
         realPress('ArrowLeft');
         realPress('ArrowLeft');
         element().should(([host]) => expect(host.value).to.equal(45));
+      });
+
+      it('picks the minimum with Home while it has no value, as a key that moves it would', () => {
+        const onInput = cy.spy().as('input');
+        const onChange = cy.spy().as('change');
+        cy.mount(
+          html`<div @gui-input=${onInput} @gui-change=${onChange}>
+            <gui-slider label="Volume" minimum="10" maximum="50"></gui-slider>
+          </div>`,
+        );
+
+        input().focus();
+        realPress('Home');
+        element().should(([host]) => expect(host.value).to.equal(10));
+        input().should('have.attr', 'aria-valuetext', '10');
+        cy.get('@input').should(
+          'have.been.calledOnceWith',
+          Cypress.sinon.match.has('detail', { value: 10 }),
+        );
+        cy.get('@change').should(
+          'have.been.calledOnceWith',
+          Cypress.sinon.match.has('detail', { value: 10 }),
+        );
+      });
+
+      it('moves off the minimum with a key away from it, and picks nothing more', () => {
+        const onChange = cy.spy().as('change');
+        cy.mount(
+          html`<div @gui-change=${onChange}>
+            <gui-slider label="Volume" minimum="10" maximum="50"></gui-slider>
+          </div>`,
+        );
+
+        input().focus();
+        realPress('ArrowRight');
+        element().should(([host]) => expect(host.value).to.equal(11));
+        // The pick waits for the key to be done: by then the value is the one the key moved to.
+        cy.wait(50);
+        cy.get('@change').should('have.been.calledOnce');
+        element().should(([host]) => expect(host.value).to.equal(11));
+      });
+
+      it('picks the minimum with a press on the thumb while it has no value', () => {
+        cy.mount(html`<gui-slider label="Volume" minimum="10" maximum="50"></gui-slider>`);
+
+        input().then(([range]) => {
+          const box = range.getBoundingClientRect();
+          // The thumb rests at the start of the track.
+          const x = box.left + 10;
+          const y = box.top + box.height / 2;
+          realMouseDown(x, y);
+          element().should(([host]) => expect(host.value).to.equal(undefined));
+          realMouseUp(x, y);
+          element().should(([host]) => expect(host.value).to.equal(10));
+        });
+      });
+
+      it('picks nothing on Home while read-only', () => {
+        cy.mount(html`<gui-slider label="Volume" readonly></gui-slider>`);
+
+        input().focus();
+        realPress('Home');
+        cy.wait(50);
+        element().should(([host]) => expect(host.value).to.equal(undefined));
       });
 
       // The ring is drawn on the thumb for `:focus-visible` and `:active`, and the thumb's

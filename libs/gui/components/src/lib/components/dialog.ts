@@ -134,9 +134,16 @@ export class GuiDialog extends ReactiveElement {
   private onMutation = () => {
     const dialog = this.dialog;
     if (!dialog) return;
+
+    // The dialog arrived after the element connected
+    if (this.known === undefined) {
+      this.sync();
+      return;
+    }
+
     this.syncRole(dialog);
     this.syncModal(dialog);
-    if (this.known === undefined || dialog.open === this.known) return;
+    if (dialog.open === this.known) return;
     this.known = dialog.open;
     this.open = dialog.open;
     dispatchToggle(this, dialog.open);

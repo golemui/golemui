@@ -184,4 +184,109 @@ describe('gui-button', () => {
       cy.get('@click').should('not.have.been.called');
     });
   });
+
+  describe('as an invoker', () => {
+    it('toggles a popover with commandfor and command, which anchors to its inner button', () => {
+      cy.mount(
+        html`<gui-button label="Filters" commandfor="filters" command="toggle-popover"></gui-button>
+          <gui-popover>
+            <div id="filters" popover><button type="button">Apply</button></div>
+          </gui-popover>`,
+      );
+
+      button()
+        .should('have.attr', 'commandfor', 'filters')
+        .and('have.attr', 'command', 'toggle-popover');
+      button().click();
+      cy.get('#filters').should('match', ':popover-open');
+      button().then(([invoker]) =>
+        cy.get('#filters').should(([panel]) => {
+          const anchor = invoker.getBoundingClientRect();
+          const box = panel.getBoundingClientRect();
+          expect(box.top).to.be.closeTo(anchor.bottom + 4, 1);
+          expect(box.left).to.be.closeTo(anchor.left, 1);
+        }),
+      );
+      button().click();
+      cy.get('#filters').should('not.match', ':popover-open');
+    });
+
+    it('opens a dialog with command="show-modal", and gets focus back when it closes', () => {
+      cy.mount(
+        html`<gui-button label="Edit" commandfor="edit" command="show-modal"></gui-button>
+          <gui-dialog>
+            <dialog id="edit" aria-label="Edit profile">
+              <button type="button" commandfor="edit" command="close">Cancel</button>
+            </dialog>
+          </gui-dialog>`,
+      );
+
+      button().click();
+      cy.get('#edit').should('match', ':modal');
+      cy.get('#edit button').click();
+      cy.get('#edit').should('not.match', ':modal');
+      cy.focused().should(([focused]) =>
+        expect(focused).to.equal(Cypress.$('gui-button button')[0]),
+      );
+    });
+
+    it('opens a menu, whose aria-haspopup reaches its inner button', () => {
+      cy.mount(
+        html`<gui-button
+            id="actions"
+            label="Actions"
+            commandfor="row-actions"
+            command="toggle-popover"
+          ></gui-button>
+          <gui-menu>
+            <div id="row-actions" popover>
+              <button type="button" value="edit">Edit</button>
+            </div>
+          </gui-menu>`,
+      );
+
+      button().should('have.attr', 'aria-haspopup', 'menu');
+      button().click();
+      cy.get('#row-actions').should('match', ':popover-open');
+      cy.focused().should('have.attr', 'value', 'edit');
+    });
+
+    it('leaves commandfor off a link', () => {
+      cy.mount(
+        html`<gui-button
+          label="Docs"
+          href="#docs"
+          commandfor="edit"
+          command="show-modal"
+        ></gui-button>`,
+      );
+
+      cy.get('gui-button a').should('not.have.attr', 'commandfor');
+      cy.get('gui-button a').should('not.have.attr', 'command');
+    });
+  });
+
+  describe('description', () => {
+    it("passes a tooltip's description on to its inner button", () => {
+      cy.mount(
+        html`<gui-button id="save" label="Save"></gui-button>
+          <gui-tooltip for="save">Saves without publishing</gui-tooltip>`,
+      );
+
+      cy.get('gui-tooltip').then(([tooltip]) => {
+        button().should('have.attr', 'aria-describedby', tooltip.id);
+        tooltip.remove();
+        button().should('not.have.attr', 'aria-describedby');
+      });
+    });
+
+    it('passes aria-describedby on to its inner link', () => {
+      cy.mount(
+        html`<gui-button label="Docs" href="#docs" aria-describedby="docs-hint"></gui-button>
+          <p id="docs-hint">Opens in this tab</p>`,
+      );
+
+      cy.get('gui-button a').should('have.attr', 'aria-describedby', 'docs-hint');
+    });
+  });
 });

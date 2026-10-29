@@ -4,7 +4,7 @@ import { live } from 'lit/directives/live.js';
 import { cspStyleMap, safeDefine } from '@golemui/lit-utils';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { type GuiValidity } from '../gui-form-control';
-import { dispatchValue, valueEvents } from '../utils/events';
+import { dispatchChange, dispatchValue, valueEvents } from '../utils/events';
 import { requiredName } from '../utils/messages';
 import { isRealNumber } from '../utils/numeric';
 import { type GuiSliderRange, percentOf, snapToStep } from '../utils/slider';
@@ -18,11 +18,12 @@ type Thumb = 'start' | 'end';
  * value is `{ start, end }`. The thumbs can meet but not cross, and a press on the track moves the
  * nearer one there.
  *
- * Each thumb is named after the label, as "Price, minimum" and "Price, maximum"; the "Minimum" and
- * "Maximum" strings translate through `configureMessages`.
+ * Each thumb is named by the label and then its own name, as "Price Minimum" and "Price Maximum";
+ * the "Minimum" and "Maximum" strings translate through `configureMessages`.
  *
  * Until the user moves a thumb, or `value` is set, it has no value: the thumbs rest at the ends,
- * the value shows as "–", and screen readers hear "Not set".
+ * the value shows as "–", and screen readers hear "Not set". A key or a press that leaves a thumb
+ * at its end then picks the whole range, from `minimum` to `maximum`.
  *
  * ```html
  * <gui-range-slider label="Price" minimum="0" maximum="500" step="10"></gui-range-slider>
@@ -155,7 +156,22 @@ export class GuiRangeSlider extends GuiSliderBase {
 
   protected override validate(): GuiValidity | null {
     const range = this.range;
-    return this.boundsError(range?.start) ?? this.boundsError(range?.end) ?? super.validate();
+    return (
+      this.boundsError(range?.start) ??
+      this.boundsError(range?.end) ??
+      this.stepError(range?.start) ??
+      this.stepError(range?.end) ??
+      super.validate()
+    );
+  }
+
+  protected override get empty(): boolean {
+    return this.range === undefined;
+  }
+
+  protected override pick(input: HTMLInputElement) {
+    const which: Thumb = input.id === `${this.uid}_start` ? 'start' : 'end';
+    this.setThumb(which, Number(input.value), true);
   }
 
   /** The thumb the browser points at for an invalid value. */
@@ -180,7 +196,7 @@ export class GuiRangeSlider extends GuiSliderBase {
   onChange(event: Event) {
     event.stopPropagation();
     if (this.readOnly) return;
-    dispatchValue(this, this.value);
+    dispatchChange(this, this.value);
   }
 
   private setThumb(which: Thumb, value: number, commit: boolean) {

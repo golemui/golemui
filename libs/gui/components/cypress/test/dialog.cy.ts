@@ -80,6 +80,50 @@ describe('gui-dialog', () => {
       isOpen(true);
     });
 
+    describe('with a dialog the app renders after the element connects', () => {
+      /** Adds the dialog to the empty element, as Angular renders its children. */
+      const renderDialog = () =>
+        host().then(([element]) => {
+          const late = document.createElement('dialog');
+          late.id = 'edit';
+          late.setAttribute('aria-label', 'Edit profile');
+          late.innerHTML =
+            '<button type="button" commandfor="edit" command="close">Cancel</button>';
+          element.append(late);
+        });
+
+      it('takes its state, and fires gui-toggle', () => {
+        const onToggle = cy.spy().as('toggle');
+        cy.mount(
+          html`<div @gui-toggle=${onToggle}>
+            <button type="button" commandfor="edit" command="show-modal">Edit</button>
+            <gui-dialog></gui-dialog>
+          </div>`,
+        );
+        renderDialog();
+        host().should('have.prop', 'open', false);
+
+        openButton().click();
+        isOpen(true);
+        host().should('have.prop', 'open', true);
+        cy.get('@toggle').its('lastCall.args.0.detail').should('deep.equal', { open: true });
+
+        cy.get('button[command="close"]').click();
+        isOpen(false);
+        host().should('have.prop', 'open', false);
+        cy.get('@toggle').should('have.been.calledTwice');
+      });
+
+      it('opens when open was set before it arrived, and fires nothing', () => {
+        const onToggle = cy.spy().as('toggle');
+        cy.mount(html`<div @gui-toggle=${onToggle}><gui-dialog open></gui-dialog></div>`);
+        renderDialog();
+
+        isOpen(true);
+        cy.get('@toggle').should('not.have.been.called');
+      });
+    });
+
     it("locks the page's scroll while it is open", () => {
       cy.mount(edit());
 

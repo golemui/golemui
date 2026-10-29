@@ -15,7 +15,8 @@ import { GuiSliderBase } from './slider-base';
  * Page Down, Home and End.
  *
  * Until the user moves it, or `value` is set, it has no value: the thumb rests at `minimum`, the
- * value shows as "–", and screen readers hear "Not set".
+ * value shows as "–", and screen readers hear "Not set". Home, a key toward the minimum or a press
+ * on the thumb then picks `minimum`.
  *
  * ```html
  * <gui-slider label="Volume" minimum="0" maximum="100" step="5"></gui-slider>
@@ -109,7 +110,16 @@ export class GuiSlider extends GuiSliderBase {
   }
 
   protected override validate(): GuiValidity | null {
-    return this.boundsError(this.number) ?? super.validate();
+    return this.boundsError(this.number) ?? this.stepError(this.number) ?? super.validate();
+  }
+
+  protected override get empty(): boolean {
+    return this.number === undefined;
+  }
+
+  protected override pick(input: HTMLInputElement) {
+    this.value = Number(input.value);
+    dispatchValue(this, this.value);
   }
 
   /** @internal */

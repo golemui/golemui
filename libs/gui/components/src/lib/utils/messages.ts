@@ -124,9 +124,11 @@ export const DEFAULT_MESSAGES = {
   minimum: 'Minimum',
   maximum: 'Maximum',
   notSet: 'Not set',
+  stepMismatch: 'Choose a valid value. The nearest is {nearest}.',
 
   // ─── One-time codes: `{length}` is the number of digits ───
   incompleteCode: 'Enter all {length} digits.',
+  invalidCode: 'Enter a {length}-digit code.',
 
   // ─── Toasts ───
   notifications: 'Notifications',

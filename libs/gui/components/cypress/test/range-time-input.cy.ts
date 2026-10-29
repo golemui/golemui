@@ -320,7 +320,29 @@ describe('gui-range-time', () => {
       cy.get('gui-range-time input').each((input) =>
         cy.wrap(input).should('have.attr', 'readonly'),
       );
+      cy.get('gui-range-time [role="spinbutton"]').each((input) =>
+        cy.wrap(input).should('have.attr', 'aria-readonly', 'true'),
+      );
       pills().should('be.disabled');
+    });
+
+    it('makes its parts read-only for assistive technology too when custom times are off', () => {
+      cy.mount(
+        html`<gui-range-time
+          label="Shift"
+          locale-id="en-US"
+          .allowCustomTime=${false}
+          .value=${shift}
+        ></gui-range-time>`,
+      );
+
+      cy.get('gui-range-time [role="spinbutton"]').should((parts) => {
+        expect(parts).to.have.length.greaterThan(0);
+        for (const part of parts) {
+          expect(part).to.have.attr('readonly');
+          expect(part).to.have.attr('aria-readonly', 'true');
+        }
+      });
     });
 
     it('disables its parts and pills', () => {
