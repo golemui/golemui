@@ -37,6 +37,7 @@ export * from './lib/core-features/string-interpolation.cy';
 export * from './lib/core-features/uid.cy';
 export * from './lib/core-features/validator-injection.cy';
 export * from './lib/core-features/widget-loaders.cy';
+export * from './lib/core-features/preloaded-widgets.cy';
 
 export * from './lib/test-form';
 export * from './lib/utils';

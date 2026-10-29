@@ -1,15 +1,18 @@
-import type {
-  FormEvent,
-  FormHealth,
-  FormSubmitEvent,
-  WidgetLoaders,
-  WithWidget,
+import {
+  type FormEvent,
+  type FormHealth,
+  type FormSubmitEvent,
+  preloadFormWidgets,
+  type WidgetLoaders,
+  type WithWidget,
 } from '@golemui/core';
 import { type Dependencies, type GuiFormInitConfig } from '@golemui/gui-shared';
 import { type Type } from '@golemui/lit';
 import { afterTwoFrames, type FormHandle, type MountOptions } from '@golemui/ui-testing';
 import { html } from 'lit';
 import '../../src/lib/components/form.element';
+import { widgetLoaders } from '../../src/lib/widget.loaders';
+import { customItemRenderer } from '../components/custom-item-renderer/custom-item-renderer';
 
 export const mountFramework = (options: MountOptions) => {
   const customWidgetLoaders: WidgetLoaders<Type<WithWidget>> = options.withCustomComponent
@@ -17,6 +20,10 @@ export const mountFramework = (options: MountOptions) => {
         heading: async () => (await import('../components/heading/heading.element')).HeadingElement,
         customdate: async () =>
           (await import('../components/custom-date/customdate.element')).CustomdateElement,
+        customLayout: async () =>
+          (await import('../components/custom-layout/custom-layout.element')).CustomLayoutElement,
+        customAction: async () =>
+          (await import('../components/custom-action/custom-action.element')).CustomActionElement,
       }
     : {};
 
@@ -42,7 +49,15 @@ export const mountFramework = (options: MountOptions) => {
     functions: options.functions,
     formName: options.formName,
     customWidgetLoaders,
+    itemRenderers: options.withCustomItemRenderer ? { custom: customItemRenderer } : undefined,
   };
+
+  if (options.preloadWidgets) {
+    // The same loader references as the form, because the loaded components are stored by loader.
+    cy.then(() =>
+      preloadFormWidgets({ widgetLoaders: { ...widgetLoaders, ...customWidgetLoaders } }),
+    );
+  }
 
   cy.mount(
     html`<gui-form

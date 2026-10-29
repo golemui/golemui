@@ -1,15 +1,26 @@
-import type { FormSubmitEvent, WidgetLoaders, WithWidget } from '@golemui/core';
+import {
+  type FormSubmitEvent,
+  preloadFormWidgets,
+  type WidgetLoaders,
+  type WithWidget,
+} from '@golemui/core';
 import type { Dependencies, GuiFormInitConfig } from '@golemui/gui-shared';
 import { afterTwoFrames, type MountOptions } from '@golemui/ui-testing';
 import { h, ref, shallowRef, type Component } from 'vue';
 import GuiForm from '../../src/lib/components/Form';
 import type { GuiFormHandle } from '../../src/lib/components/Form.types';
+import { widgetLoaders } from '../../src/lib/widget.loaders';
+import CustomItemRenderer from '../components/custom-item-renderer/CustomItemRenderer.vue';
 
 export const mountFramework = (options: MountOptions) => {
   const customWidgetLoaders: WidgetLoaders<Component<WithWidget>> = options.withCustomComponent
     ? {
         heading: async () => (await import('../components/heading/HeadingComponent.vue')).default,
         customdate: async () => (await import('../components/custom-date/Customdate.vue')).default,
+        customLayout: async () =>
+          (await import('../components/custom-layout/CustomLayout.vue')).default,
+        customAction: async () =>
+          (await import('../components/custom-action/CustomAction.vue')).default,
       }
     : {};
 
@@ -32,7 +43,15 @@ export const mountFramework = (options: MountOptions) => {
     functions: options.functions,
     formName: options.formName,
     customWidgetLoaders,
+    itemRenderers: options.withCustomItemRenderer ? { custom: CustomItemRenderer } : undefined,
   };
+
+  if (options.preloadWidgets) {
+    // The same loader references as the form, because the loaded components are stored by loader.
+    cy.then(() =>
+      preloadFormWidgets({ widgetLoaders: { ...widgetLoaders, ...customWidgetLoaders } }),
+    );
+  }
 
   const formRef = ref<GuiFormHandle | null>(null);
   // `shallowRef` so the config object is handed to the form as it is, not wrapped in a

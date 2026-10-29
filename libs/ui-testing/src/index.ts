@@ -23,6 +23,7 @@ export * from './lib/core-features/string-interpolation.cy';
 export * from './lib/core-features/uid.cy';
 export * from './lib/core-features/validator-injection.cy';
 export * from './lib/core-features/widget-loaders.cy';
+export * from './lib/core-features/preloaded-widgets.cy';
 
 // gui widget suites
 export * from './lib/gui-features/accordion.cy';
@@ -41,6 +42,7 @@ export * from './lib/gui-features/markdown-text.cy';
 export * from './lib/gui-features/renderer.cy';
 export * from './lib/gui-features/grid.cy';
 export * from './lib/gui-features/list.cy';
+export * from './lib/gui-features/item-renderers.cy';
 export * from './lib/gui-features/multidropdown.cy';
 export * from './lib/gui-features/multifileupload.cy';
 export * from './lib/gui-features/multilist.cy';

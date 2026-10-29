@@ -1,9 +1,10 @@
-import type {
-  FormEvent,
-  FormHealth,
-  FormSubmitEvent,
-  WidgetLoaders,
-  WithWidget,
+import {
+  type FormEvent,
+  type FormHealth,
+  type FormSubmitEvent,
+  preloadFormWidgets,
+  type WidgetLoaders,
+  type WithWidget,
 } from '@golemui/core';
 import { type Dependencies, type GuiFormInitConfig } from '@golemui/gui-shared';
 import type { FormComponentHandle } from '@golemui/react';
@@ -18,6 +19,8 @@ import {
   useState,
 } from 'react';
 import { GuiForm } from '../../src/lib/components/Form';
+import { widgetLoaders } from '../../src/lib/widget.loaders';
+import { CustomItemRenderer } from '../components/custom-item-renderer/CustomItemRenderer';
 
 interface ConfigHarnessHandle {
   setConfig: (next: SetConfigInput) => void;
@@ -71,6 +74,10 @@ export const mountFramework = (options: MountOptions) => {
         heading: async () =>
           (await import('../components/heading/heading.component')).HeadingComponent,
         customdate: async () => (await import('../components/custom-date/Customdate')).Customdate,
+        customLayout: async () =>
+          (await import('../components/custom-layout/CustomLayout')).CustomLayout,
+        customAction: async () =>
+          (await import('../components/custom-action/CustomAction')).CustomAction,
       }
     : {};
 
@@ -93,7 +100,15 @@ export const mountFramework = (options: MountOptions) => {
     functions: options.functions,
     formName: options.formName,
     customWidgetLoaders,
+    itemRenderers: options.withCustomItemRenderer ? { custom: CustomItemRenderer } : undefined,
   };
+
+  if (options.preloadWidgets) {
+    // The same loader references as the form, because the loaded components are stored by loader.
+    cy.then(() =>
+      preloadFormWidgets({ widgetLoaders: { ...widgetLoaders, ...customWidgetLoaders } }),
+    );
+  }
 
   const formRef = createRef<FormComponentHandle>();
   const harnessRef = createRef<ConfigHarnessHandle>();

@@ -52,7 +52,19 @@ export interface MountOptions<StateKeys extends UiState = string> {
   formHealth?: (error: FormHealth) => void | Promise<void>;
   formSubmit?: (event: FormSubmitEvent) => void;
   validateOn?: ValidateOn;
+  /**
+   * Adds the custom widget loaders of the test fixtures: `heading` (display), `customdate`
+   * (input), `customLayout` (layout) and `customAction` (action).
+   */
   withCustomComponent?: boolean;
+  /**
+   * Loads every widget component with `preloadFormWidgets` before the mount, so the form renders
+   * the widgets without a dynamic import. The loaded components stay loaded for the next tests
+   * of the same spec file.
+   */
+  preloadWidgets?: boolean;
+  /** Adds the `custom` item renderer of the test fixtures to `config.itemRenderers`. */
+  withCustomItemRenderer?: boolean;
   localization?: I18nTranslator;
   dependencies?: Dependencies;
   functions?: ExpressionFunctions;
