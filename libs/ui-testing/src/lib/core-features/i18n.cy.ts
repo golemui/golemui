@@ -296,7 +296,73 @@ export const runI18nTests = (mountFn: MountComponentFn) => {
     });
   });
 
+  describe('Language change', () => {
+    afterEach(() => {
+      cy.then(() => i18next.changeLanguage('en'));
+      cy.then(() => i18next.removeResourceBundle('es', 'translation'));
+    });
+
+    it('should translate an input label and display params again after a language change', () => {
+      i18next.addResourceBundle(
+        'en',
+        'translation',
+        { 'contact.name': 'Name', 'contact.greeting': 'Hello, {{name}}!' },
+        true,
+        true,
+      );
+      i18next.addResourceBundle(
+        'es',
+        'translation',
+        { 'contact.name': 'Nombre', 'contact.greeting': 'Hola, {{name}}!' },
+        true,
+        true,
+      );
+
+      mountFn({
+        localization: i18nTranslator,
+        data: { name: 'Ada' },
+        formDef: defineForm({
+          form: [
+            {
+              uid: 'contactName',
+              kind: 'input',
+              type: 'textinput',
+              path: 'name',
+              label: { key: 'contact.name' },
+            },
+            {
+              uid: 'contactGreeting',
+              kind: 'display',
+              type: 'alert',
+              props: { text: { key: 'contact.greeting', params: { name: '$form.name' } } },
+            },
+          ],
+        }),
+      });
+
+      cy.get('label[for="contactName"]').should('contain.text', 'Name');
+      cy.get('gui-alert[id="contactGreeting"]').should('contain.text', 'Hello, Ada!');
+
+      cy.then(() => i18next.changeLanguage('es'));
+
+      cy.get('label[for="contactName"]').should('contain.text', 'Nombre');
+      cy.get('gui-alert[id="contactGreeting"]').should('contain.text', 'Hola, Ada!');
+    });
+  });
+
   describe('identityTranslator', () => {
+    it('should render the form with dir rtl when it mounts with an rtl language', () => {
+      mountFn({
+        localization: identityTranslator('ar'),
+        formDef: defineForm({
+          form: [{ uid: 'name', kind: 'input', type: 'textinput', path: 'name' }],
+        }),
+      });
+
+      cy.get('[data-cy="name_textinput"]').should('exist');
+      cy.get('form').should('have.attr', 'dir', 'rtl');
+    });
+
     it('should update the form direction to rtl when setLang is called with an rtl language', () => {
       const translator = identityTranslator('en-US');
 

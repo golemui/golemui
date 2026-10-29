@@ -35,6 +35,8 @@ export * from './lib/gui-features/datepicker.cy';
 export * from './lib/gui-features/dropdown.cy';
 export * from './lib/gui-features/fileupload.cy';
 export * from './lib/gui-features/markdown.cy';
+export * from './lib/gui-features/markdown-text.cy';
+export * from './lib/gui-features/renderer.cy';
 export * from './lib/gui-features/grid.cy';
 export * from './lib/gui-features/list.cy';
 export * from './lib/gui-features/multidropdown.cy';
