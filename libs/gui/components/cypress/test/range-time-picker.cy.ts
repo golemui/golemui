@@ -41,6 +41,28 @@ describe('gui-range-time-picker', () => {
       part('start', 'hour').should('have.attr', 'readonly');
     });
 
+    it('tells assistive technology its parts are read-only while only the lists pick the times', () => {
+      cy.mount(
+        html`<gui-range-time-picker label="Shift" .value=${morning}></gui-range-time-picker>`,
+      );
+
+      cy.get(`${tag} [role="spinbutton"]`).should((parts) => {
+        expect(parts).to.have.length.greaterThan(0);
+        for (const part of parts) {
+          expect(part).to.have.attr('readonly');
+          expect(part).to.have.attr('aria-readonly', 'true');
+        }
+      });
+
+      element().invoke('prop', 'allowCustomTime', true);
+      cy.get(`${tag} [role="spinbutton"]`).should((parts) => {
+        for (const part of parts) {
+          expect(part).not.to.have.attr('readonly');
+          expect(part).not.to.have.attr('aria-readonly');
+        }
+      });
+    });
+
     it('opens two lists within its bounds and steps', () => {
       cy.mount(
         html`<gui-range-time-picker

@@ -223,7 +223,7 @@ export class GuiRangeTimeInput extends GuiFormControl {
     },
     onInputErrorSurfaced: (message) => dispatchInputError(this, message),
     onSurfacedErrorCleared: (value) => dispatchValue(this, value, { commit: false }),
-    isReadonly: () => !!this.readOnly || this.allowCustomTime === false,
+    isReadonly: () => this.partsReadonly,
     isDisabled: () => !!this.disabled,
     onEmptyPartBlur: () => {
       // Unlike gui-time, an empty part never commits a null value
@@ -274,6 +274,14 @@ export class GuiRangeTimeInput extends GuiFormControl {
     }),
   });
 
+  /**
+   * Whether the time parts take no typing: in a read-only field, and where `allowCustomTime` is
+   * `false`, as a range time picker leaves its times to the list.
+   */
+  private get partsReadonly(): boolean {
+    return !!this.readOnly || this.allowCustomTime === false;
+  }
+
   private get editEnabled(): boolean {
     return !!this.allowEdit && !this.disabled && !this.readOnly;
   }
@@ -304,7 +312,8 @@ export class GuiRangeTimeInput extends GuiFormControl {
       templateData: {
         hint: this.hint,
         errors: this.errors,
-        readonly: this.readOnly,
+        // The parts' own state: read-only too when only the list picks the times.
+        readonly: this.partsReadonly,
         disabled: this.disabled,
         touched: this.touched,
         required: this.required,
@@ -378,7 +387,7 @@ export class GuiRangeTimeInput extends GuiFormControl {
       },
       dayPeriodAriaLabel: this.dayPeriodAriaLabel,
       disabled: this.disabled,
-      partsReadonly: !!this.readOnly || this.allowCustomTime === false,
+      partsReadonly: this.partsReadonly,
     };
 
     const pillItems: GuiPillItem[] = this.decoratePillItems(

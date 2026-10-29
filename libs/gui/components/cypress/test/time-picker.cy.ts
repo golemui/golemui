@@ -24,6 +24,7 @@ describe('gui-time-picker', () => {
       );
 
       part('hour').should('have.value', '02').and('have.attr', 'readonly');
+      part('hour').should('have.attr', 'aria-readonly', 'true');
       part('minute').should('have.value', '30');
       part('dayPeriod').should('contain.text', 'PM');
       toggle()
