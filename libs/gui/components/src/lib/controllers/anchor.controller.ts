@@ -92,8 +92,10 @@ export class GUIAnchorController implements ReactiveController {
   /**
    * Whether the controller places this floating element by measuring it rather than with CSS:
    * where the browser has no anchor positioning, and where the element's direction differs from
-   * the page's. Firefox (156) places the inline axis wrongly then, e.g. a right-to-left panel in a
-   * left-to-right page. TODO: drop the direction check once Firefox fixes it.
+   * the page's. Firefox (156 to 158 at least) places a popover's inline axis wrongly then, e.g. a
+   * right-to-left panel in a left-to-right page, whatever the position-area keywords and
+   * justify-self. See https://bugzilla.mozilla.org/show_bug.cgi?id=2019601. TODO: drop the
+   * direction check once that bug is fixed in the Firefox versions we support.
    */
   private shouldMeasure(floating: HTMLElement): boolean {
     if (GUIAnchorController.forceFallback || !supportsAnchorPositioning()) return true;
