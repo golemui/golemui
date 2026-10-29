@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest';
-// A static import loads the entry before the test starts, so the slow cold load does not count against the test timeout.
-import * as entry from './index';
 
 describe('public exports', () => {
-  it('exports these names from the main entry', () => {
+  // On CI widget.loaders.spec.ts runs in parallel and this import waits for its Vite transforms, which can take more than 5 s.
+  it('exports these names from the main entry', { timeout: 30_000 }, async () => {
+    const entry = await import('./index');
+
     expect(Object.keys(entry).sort()).toMatchInlineSnapshot(`
       [
         "GuiForm",
