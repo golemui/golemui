@@ -61,7 +61,16 @@ export function lastAdapter<Adapter>(uid: string): Adapter {
   throw new Error(`No widget with the uid "${uid}" was created`);
 }
 
-/** Starts the adapter of a stub widget and records it in `recordedAdapters`. */
+/** One evaluation of the template of a stub widget. */
+export type RenderRecord = { uid: string };
+
+/** One record per template evaluation of a stub widget, in render order. Clear it between specs. */
+export const renderRecords: RenderRecord[] = [];
+
+/**
+ * Starts the adapter of a stub widget and records it in `recordedAdapters`. Its template calls
+ * `recordRender`, which records each template evaluation in `renderRecords`.
+ */
 @Directive()
 abstract class StubWidgetComponent<Widget extends NonFunctionWidget>
   implements OnInit, OnDestroy, WithWidget
@@ -77,6 +86,16 @@ abstract class StubWidgetComponent<Widget extends NonFunctionWidget>
   ngOnDestroy(): void {
     this.adapter.destroy();
   }
+
+  /**
+   * Bound to the id of the root element, so Angular calls it each time it evaluates the template.
+   *
+   * @returns The widget uid.
+   */
+  protected recordRender(): string {
+    renderRecords.push({ uid: this.widget.uid });
+    return this.widget.uid;
+  }
 }
 
 @Component({
@@ -85,7 +104,7 @@ abstract class StubWidgetComponent<Widget extends NonFunctionWidget>
   providers: [InputWidgetAdapter],
   template: `<input
     type="text"
-    [id]="widget.uid"
+    [id]="recordRender()"
     [name]="widget.path"
     [attr.data-label]="adapter.templateData().label"
     [value]="adapter.templateData().value ?? ''"
@@ -101,7 +120,7 @@ class StubTextInputComponent extends StubWidgetComponent<InputWidget<string>> {
   selector: 'gui-stub-flex',
   imports: [WidgetDirective],
   providers: [LayoutWidgetAdapter],
-  template: `<div class="stub-flex" [id]="widget.uid">
+  template: `<div class="stub-flex" [id]="recordRender()">
     @for (child of adapter.templateData().children; track child.uid) {
       <ng-container guiWidget [widget]="child" />
     }
@@ -117,7 +136,7 @@ class StubFlexComponent extends StubWidgetComponent<LayoutWidget> {
   selector: 'gui-stub-repeater',
   imports: [WidgetDirective],
   providers: [InputWidgetAdapter],
-  template: `<div class="stub-repeater" [id]="widget.uid">
+  template: `<div class="stub-repeater" [id]="recordRender()">
     @for (row of adapter.templateData().rows ?? []; track row.uid) {
       <ng-container guiWidget [widget]="row" />
     }
@@ -133,7 +152,9 @@ class StubRepeaterComponent extends StubWidgetComponent<InputWidget<unknown[]>> 
   standalone: true,
   selector: 'gui-stub-button',
   providers: [ActionWidgetAdapter],
-  template: `<button type="button" [id]="widget.uid">{{ adapter.templateData().label }}</button>`,
+  // A line break inside the button would add whitespace to its text.
+  // prettier-ignore
+  template: `<button type="button" [id]="recordRender()">{{ adapter.templateData().label }}</button>`,
 })
 class StubButtonComponent extends StubWidgetComponent<ActionWidget> {
   protected adapter: ActionWidgetAdapter<Record<string, any>> = inject(ActionWidgetAdapter);
@@ -143,7 +164,7 @@ class StubButtonComponent extends StubWidgetComponent<ActionWidget> {
   standalone: true,
   selector: 'gui-stub-text',
   providers: [DisplayWidgetAdapter],
-  template: `<p [id]="widget.uid">{{ adapter.templateData().text }}</p>`,
+  template: `<p [id]="recordRender()">{{ adapter.templateData().text }}</p>`,
 })
 class StubTextComponent extends StubWidgetComponent<DisplayWidget> {
   protected adapter: DisplayWidgetAdapter<Record<string, any>> = inject(DisplayWidgetAdapter);

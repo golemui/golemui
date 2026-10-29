@@ -9,7 +9,7 @@ import type {
   WithWidget,
 } from '@golemui/core';
 import { consume } from '@lit/context';
-import { html, LitElement } from 'lit';
+import { html, LitElement, type PropertyValues } from 'lit';
 import { property } from 'lit/decorators.js';
 import { type Subscription } from 'rxjs';
 import { ActionWidgetAdapter } from './adapters/action-widget.adapter';
@@ -67,9 +67,16 @@ export function lastAdapter<Adapter>(uid: string): Adapter {
  */
 export const afterLitRenderSchedule = () => new Promise((resolve) => setTimeout(resolve, 0));
 
+/** One completed render of a stub widget. */
+export type RenderRecord = { uid: string };
+
+/** One record per completed render of a stub widget, in render order. Clear it between specs. */
+export const renderRecords: RenderRecord[] = [];
+
 /**
  * Starts the adapter of a stub widget when the element connects, records it in
- * `recordedAdapters`, and renders again on every templateData change.
+ * `recordedAdapters`, and renders again on every templateData change. Each completed render is
+ * recorded in `renderRecords`.
  */
 abstract class StubWidgetElement<Widget extends NonFunctionWidget>
   extends LitElement
@@ -97,6 +104,11 @@ abstract class StubWidgetElement<Widget extends NonFunctionWidget>
     this.subscriptions.push(
       this.adapter.templateDataChanged$.subscribe(() => this.requestUpdate()),
     );
+  }
+
+  override updated(changedProperties: PropertyValues) {
+    super.updated(changedProperties);
+    renderRecords.push({ uid: this.widget.uid });
   }
 
   override disconnectedCallback() {

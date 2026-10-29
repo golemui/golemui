@@ -29,8 +29,11 @@ export type ActionHookOutput = ReturnType<typeof useActionWidget<Record<string, 
 export type LayoutHookOutput = ReturnType<typeof useLayoutWidget<Record<string, any>>>;
 export type DisplayHookOutput = ReturnType<typeof useDisplayWidget<Record<string, any>>>;
 
-/** One render of a stub widget: the widget uid and what its hook returned. */
-export type HookOutputRecord = { uid: string; output: unknown };
+/**
+ * One render of a stub widget: the widget uid, the widget prop it got, and what its hook
+ * returned.
+ */
+export type HookOutputRecord = { uid: string; widget: WithWidget['widget']; output: unknown };
 
 /** One record per committed render of a stub widget. Clear it between specs. */
 export const hookOutputs: HookOutputRecord[] = [];
@@ -39,9 +42,9 @@ export const hookOutputs: HookOutputRecord[] = [];
 const useBrowserLayoutEffect = typeof document === 'undefined' ? useEffect : useLayoutEffect;
 
 /** Records in an effect, so a render that React runs and then discards is not recorded. */
-function useRecordHookOutput(uid: string, output: unknown) {
+function useRecordHookOutput(uid: string, widget: WithWidget['widget'], output: unknown) {
   useBrowserLayoutEffect(() => {
-    hookOutputs.push({ uid, output });
+    hookOutputs.push({ uid, widget, output });
   });
 }
 
@@ -61,7 +64,7 @@ export function lastHookOutput<Output>(uid: string): Output {
 function StubTextInput(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<string, string>;
   const output = useInputWidget<string, Record<string, any>>(widget);
-  useRecordHookOutput(output.uid, output);
+  useRecordHookOutput(output.uid, widgetInstance.widget, output);
   const { uid, value, templateData } = output;
 
   // readOnly only prevents React's controlled-input warning, the specs never type into it.
@@ -81,7 +84,7 @@ function StubFlex(widgetInstance: WithWidget) {
   const output = useLayoutWidget<Record<string, any>>(
     widgetInstance.widget as LayoutWidget<string>,
   );
-  useRecordHookOutput(output.uid, output);
+  useRecordHookOutput(output.uid, widgetInstance.widget, output);
   const { uid, children } = output;
 
   return (
@@ -98,7 +101,7 @@ function StubRepeater(widgetInstance: WithWidget) {
   const output = useInputWidget<unknown[], Record<string, any>>(
     widgetInstance.widget as InputWidget<unknown[], string>,
   );
-  useRecordHookOutput(output.uid, output);
+  useRecordHookOutput(output.uid, widgetInstance.widget, output);
 
   return (
     <div className="stub-repeater" id={output.uid}>
@@ -114,7 +117,7 @@ function StubButton(widgetInstance: WithWidget) {
   const output = useActionWidget<Record<string, any>>(
     widgetInstance.widget as ActionWidget<string>,
   );
-  useRecordHookOutput(output.uid, output);
+  useRecordHookOutput(output.uid, widgetInstance.widget, output);
 
   return (
     <button type="button" id={output.uid}>
@@ -127,7 +130,7 @@ function StubText(widgetInstance: WithWidget) {
   const output = useDisplayWidget<Record<string, any>>(
     widgetInstance.widget as DisplayWidget<string>,
   );
-  useRecordHookOutput(output.uid, output);
+  useRecordHookOutput(output.uid, widgetInstance.widget, output);
 
   return <p id={output.uid}>{output.templateData.text as string}</p>;
 }

@@ -84,13 +84,14 @@ const StubFlex = defineComponent({
   props: { widget: { type: Object, required: true } },
   setup(props) {
     const output = useLayoutWidget(props.widget as LayoutWidget);
-    const { uid, children } = output;
+    const { uid, children, templateData } = output;
 
     return () => {
       composableOutputs.push({ uid: uid.value, output });
       return h(
         'div',
-        { class: 'stub-flex', id: uid.value },
+        // Reads templateData like a real layout, so a templateData change renders it again.
+        { class: 'stub-flex', id: uid.value, 'data-label': templateData.value.label },
         (children.value as NonFunctionWidget<string>[]).map((child) =>
           h(WidgetRenderer, { key: child.uid, widget: child }),
         ),
