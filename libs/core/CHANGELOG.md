@@ -1,3 +1,18 @@
+## 2.1.0-rc.2 (2026-10-29)
+
+### 🚀 Features
+
+- **core:** add the repeater row to form events ([#481](https://github.com/golemui/golemui/pull/481))
+
+### 🩹 Fixes
+
+- **core:** keep a param named __proto__ in i18n params ([#483](https://github.com/golemui/golemui/pull/483))
+- **core:** keep the index of hidden rows in a repeater of plain values ([#482](https://github.com/golemui/golemui/pull/482))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+
 ## 2.1.0-rc.1 (2026-10-23)
 
 ### 🩹 Fixes
