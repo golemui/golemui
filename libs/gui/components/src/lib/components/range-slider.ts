@@ -4,7 +4,7 @@ import { live } from 'lit/directives/live.js';
 import { cspStyleMap, safeDefine } from '@golemui/lit-utils';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { type GuiValidity } from '../gui-form-control';
-import { dispatchValue, valueEvents } from '../utils/events';
+import { dispatchChange, dispatchValue, valueEvents } from '../utils/events';
 import { requiredName } from '../utils/messages';
 import { isRealNumber } from '../utils/numeric';
 import { type GuiSliderRange, percentOf, snapToStep } from '../utils/slider';
@@ -180,7 +180,7 @@ export class GuiRangeSlider extends GuiSliderBase {
   onChange(event: Event) {
     event.stopPropagation();
     if (this.readOnly) return;
-    dispatchValue(this, this.value);
+    dispatchChange(this, this.value);
   }
 
   private setThumb(which: Thumb, value: number, commit: boolean) {

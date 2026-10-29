@@ -112,6 +112,9 @@ describe('gui-range-slider', () => {
         start: 120,
         end: 500,
       });
+      // Letting go commits the value the thumb moved to: no gui-input again.
+      cy.get('@input').should('have.been.calledOnce');
+      cy.get('@change').should('have.been.calledOnce');
     });
 
     it('stops a thumb at the other rather than cross it', () => {
