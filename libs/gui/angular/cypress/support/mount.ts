@@ -62,6 +62,7 @@ export const mountFramework = (options: MountOptions) => {
     // The conformance MountOptions declare the open dependency record. The gui suites pass gui dependencies.
     dependencies: options.dependencies as Dependencies | undefined,
     functions: options.functions,
+    formName: options.formName,
   };
 
   mount(FormComponent, {
@@ -69,6 +70,7 @@ export const mountFramework = (options: MountOptions) => {
     providers: [provideZoneChangeDetection()],
     componentProperties: {
       config,
+      autocomplete: options.autocomplete,
       formHealth: formHealthOutput,
       formEvent: formEventOutput,
       formSubmit: formSubmitOutput,

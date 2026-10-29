@@ -40,12 +40,14 @@ export const mountFramework = (options: MountOptions) => {
     // The conformance MountOptions declare the open dependency record. The gui suites pass gui dependencies.
     dependencies: options.dependencies as Dependencies | undefined,
     functions: options.functions,
+    formName: options.formName,
     customWidgetLoaders,
   };
 
   cy.mount(
     html`<gui-form
       .config=${config}
+      .autocomplete=${options.autocomplete}
       @formEvent=${handleFormEvent}
       @formHealth=${handleFormHealth}
       @formSubmit=${handleFormSubmit}

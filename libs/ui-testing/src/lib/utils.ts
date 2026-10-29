@@ -57,6 +57,10 @@ export interface MountOptions<StateKeys extends UiState = string> {
   dependencies?: Dependencies;
   functions?: ExpressionFunctions;
   onFormReady?: (handle: FormHandle) => void;
+  /** The `formName` of the config, which is also the id of the form element. */
+  formName?: string;
+  /** The `autocomplete` attribute of the form element. */
+  autocomplete?: string;
 }
 
 export type MountComponentFn<StateKeys extends UiState = string> = (

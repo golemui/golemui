@@ -30,12 +30,13 @@ interface ConfigHarnessProps {
   formEvent: (event: FormEvent) => void | Promise<void>;
   formHealth: (health: FormHealth) => void | Promise<void>;
   formSubmit: (event: FormSubmitEvent) => void;
+  autocomplete?: string;
 }
 
 // Holds the config in state so a test can replace it, which is how a host app
 // triggers a form reinitialization.
 const ConfigHarness = forwardRef<ConfigHarnessHandle, ConfigHarnessProps>(function ConfigHarness(
-  { initialConfig, formRef, formEvent, formHealth, formSubmit },
+  { initialConfig, formRef, formEvent, formHealth, formSubmit, autocomplete },
   ref,
 ) {
   const [config, setConfig] = useState(initialConfig);
@@ -59,6 +60,7 @@ const ConfigHarness = forwardRef<ConfigHarnessHandle, ConfigHarnessProps>(functi
       formEvent={formEvent}
       formHealth={formHealth}
       formSubmit={formSubmit}
+      autocomplete={autocomplete}
     />
   );
 });
@@ -89,6 +91,7 @@ export const mountFramework = (options: MountOptions) => {
     // The conformance MountOptions declare the open dependency record. The gui suites pass gui dependencies.
     dependencies: options.dependencies as Dependencies | undefined,
     functions: options.functions,
+    formName: options.formName,
     customWidgetLoaders,
   };
 
@@ -103,6 +106,7 @@ export const mountFramework = (options: MountOptions) => {
       formEvent={handleFormEvent}
       formHealth={handleFormHealth}
       formSubmit={handleFormSubmit}
+      autocomplete={options.autocomplete}
     />,
   );
 

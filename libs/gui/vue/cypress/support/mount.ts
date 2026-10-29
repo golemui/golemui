@@ -30,6 +30,7 @@ export const mountFramework = (options: MountOptions) => {
     // The conformance MountOptions declare the open dependency record. The gui suites pass gui dependencies.
     dependencies: options.dependencies as Dependencies | undefined,
     functions: options.functions,
+    formName: options.formName,
     customWidgetLoaders,
   };
 
@@ -47,6 +48,7 @@ export const mountFramework = (options: MountOptions) => {
     return h(GuiForm as Component, {
       ref: formRef,
       config: configRef.value,
+      autocomplete: options.autocomplete,
       'onForm-event': handleFormEvent,
       'onForm-health': handleFormHealth,
       'onForm-submit': handleFormSubmit,
