@@ -7,7 +7,8 @@
   </a>
 </p>
 
-<p align="center">The ultimate JSON form engine.</p>
+<h3 align="center">The dynamic forms engine.</h3>
+<p align="center">Define forms in JSON or JSON Schema. Render them with your favorite framework.</p>
 
 <p align="center">
   <a href="https://golemui.com/integration/react/" title="React"><img alt="React" src="https://cdn.simpleicons.org/react/61DAFB" height="44"></a>
