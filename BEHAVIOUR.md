@@ -663,24 +663,18 @@ one.
 
 ## Events and expressions
 
-### 31. The event name of a function `on` handler is a string
+### 31. An `on` value is an event name
 
-An `on` handler can be a function that returns the event name.
+In a form definition, each `on` value is the name of the event, a string. Function handlers are a
+`gui.*` feature: the builder keeps the function and writes an event name into `on`.
 
-- Scenario: a widget set built on `@golemui/core` (not on the `gui.*` builder) chooses the event
-  name from the data. The host handles `formEvent` with a `switch (event.name)`.
-- Example:
-
-  ```ts
-  on: {
-    click: ({ $form }) => ($form.isDraft ? 'saveDraft' : 'publish');
-  }
-  ```
-
-  -> the form event has `name: 'saveDraft'` or `name: 'publish'`.
-
-- Status: not yet. `FormEvent.name` is the function itself, so a check like
-  `event.name === 'publish'` fails.
+- Scenario: a widget set built directly on `@golemui/core` chooses the event name with a function:
+  `on: { click: ({ $form }) => ($form.isDraft ? 'saveDraft' : 'publish') }`.
+- Example: write the handler with `gui.*`, for example
+  `gui.actions.button({ label: 'Publish', onClick: () => 'publish' })`, or use one event name
+  and read `event.data.isDraft` in the host `formEvent` handler.
+- Status: not yet. The core types and the decoder accept a function in `on`, and
+  `FormEvent.name` is then the function itself.
 
 ### 32. A button `onClick` handler runs only on click
 
