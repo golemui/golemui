@@ -11,7 +11,11 @@ import {
 } from '../form-widget';
 import { identityTranslator } from '../i18n';
 import { type ExpressionFunctions, type ValidateOn } from '../shared';
-import { type ExpressionPolicy } from '../utils/check-expression';
+import {
+  EXPRESSION_LIMITS,
+  type ExpressionPolicy,
+  measureExpression,
+} from '../utils/check-expression';
 import { pruneHiddenData } from '../utils/form';
 import { type Action } from './actions';
 import { createInitialState, type State } from './model';
@@ -63,17 +67,24 @@ const functions: ExpressionFunctions = {
   isAdult: (age: number) => age >= 18,
 };
 
-const makeReducer = (validateOn: ValidateOn = 'eager') =>
+const makeReducer = (
+  validateOn: ValidateOn = 'eager',
+  formValidators: ValidatorFn<any> = validators as ValidatorFn<any>,
+) =>
   reducer({
-    validators: validators as ValidatorFn<any>,
+    validators: formValidators,
     validateOn,
     localization: identityTranslator('en-US'),
     functions,
   });
 
 /** Dispatches a sequence of actions from a fresh initial state and returns the final state. */
-const drive = (actions: Action[], validateOn: ValidateOn = 'eager'): State => {
-  const reduce = makeReducer(validateOn);
+const drive = (
+  actions: Action[],
+  validateOn: ValidateOn = 'eager',
+  formValidators?: ValidatorFn<any>,
+): State => {
+  const reduce = makeReducer(validateOn, formValidators);
   return actions.reduce((state, action) => reduce(state, action), createInitialState('en-US'));
 };
 
@@ -98,6 +109,11 @@ const blur = (path: string, uid: string): Action => ({
 });
 
 const validateAllAction: Action = { type: 'VALIDATE_ALL' };
+
+const overrideByPath = (path: string, value: unknown): Action => ({
+  type: 'OVERRIDE_WIDGET_PROP',
+  payload: { path, prop: 'placeholder', value },
+});
 
 const propsOf = (state: State, uid: string): Record<string, any> =>
   (state.calculatedWidgets[uid].current as NonFunctionWidget<string>).props ?? {};
@@ -670,7 +686,7 @@ const makeMetaFormDef = () => ({
 });
 
 /** A repeater inside a repeater template, so `$item` / `$index` resolve at two levels. */
-const makeNestedRepeaterFormDef = () => ({
+const makeNestedRepeaterFormDef = (extraDevRowChildren: Record<string, unknown>[] = []) => ({
   form: [
     {
       uid: 'teams',
@@ -707,6 +723,7 @@ const makeNestedRepeaterFormDef = () => ({
                       type: 'heading',
                       props: { text: 'dev {{$index}}: {{$item.name}}' },
                     },
+                    ...extraDevRowChildren,
                   ],
                 },
               },
@@ -1214,6 +1231,73 @@ describe('reducer end-to-end', () => {
       // when it evaluates the condition.
       const rowEntry = state.resolvedSources['legacyGate[1]'] as DisplayWidget<string>;
       expect(rowEntry.include).toEqual({ when: '$form.lineItems.items.active === true' });
+    });
+
+    it('rewrites both tokens of a nested row for every inner row', () => {
+      const formDef = makeNestedRepeaterFormDef([
+        {
+          uid: 'badge',
+          kind: 'display',
+          type: 'heading',
+          include: { when: '$form.teams.items.devs.items.active === true' },
+        },
+      ]);
+
+      const state = drive([
+        init(formDef),
+        setData({
+          teams: [
+            { devs: [{ active: true }, { active: false }] },
+            { devs: [{ active: false }, { active: true }] },
+          ],
+        }),
+      ]);
+
+      expect(state.formHealth).toEqual({ status: 'ok' });
+      expect(state.widgetFlags['badge[0][0]']).toEqual({ hidden: false });
+      expect(state.widgetFlags['badge[0][1]']).toEqual({ hidden: true });
+      expect(state.widgetFlags['badge[1][0]']).toEqual({ hidden: true });
+      expect(state.widgetFlags['badge[1][1]']).toEqual({ hidden: false });
+    });
+
+    // Only `when` expressions keep the old token. A row prop reads the row through `$item`.
+    it('does not rewrite the token in a row prop, so the prop fails with code 40', () => {
+      const formDef = {
+        form: [
+          {
+            uid: 'users',
+            kind: 'input',
+            type: 'repeater',
+            path: 'users',
+            props: {
+              template: {
+                uid: 'usersRow',
+                kind: 'layout',
+                type: 'flex',
+                children: [
+                  {
+                    uid: 'title',
+                    kind: 'display',
+                    type: 'heading',
+                    props: { text: 'Name: {{ $form.users.items.name }}' },
+                  },
+                ],
+              },
+            },
+          },
+        ],
+      };
+      const noRows = drive([init(formDef), setData({ users: [] })]);
+      expect(noRows.formHealth).toEqual({ status: 'ok' });
+
+      const reduce = makeReducer();
+      const state = reduce(noRows, setData({ users: [{ name: 'Ada' }] }));
+
+      expect(state.formHealth).toMatchObject({
+        status: 'errored',
+        code: 40,
+        message: expect.stringContaining("'{{$form.users.items.name}}'"),
+      });
     });
   });
 
@@ -1755,6 +1839,120 @@ describe('reducer end-to-end', () => {
       expect(state.calculatedWidgets).toBe(errored.calculatedWidgets);
       expect(state.widgetFlags).toBe(errored.widgetFlags);
     });
+
+    it('reports code 12 when a prop function throws, and recovers when it returns', () => {
+      const formDef = {
+        form: [
+          {
+            uid: 'status',
+            kind: 'display',
+            type: 'heading',
+            props: {
+              text: ({ $form }: { $form: Record<string, any> }) => {
+                if (!$form['ok']) {
+                  throw new Error('not ok');
+                }
+                return 'fine';
+              },
+            },
+          },
+        ],
+      };
+      const errored = drive([init(formDef), setData({})]);
+      expect(errored.formHealth).toEqual({
+        status: 'errored',
+        message: '[12] not ok',
+        code: 12,
+      });
+
+      const reduce = makeReducer();
+      const healed = reduce(errored, setData({ ok: true }));
+
+      expect(healed.formHealth).toEqual({ status: 'ok' });
+      expect(propsOf(healed, 'status')['text']).toBe('fine');
+    });
+
+    it('writes no default value in a derive that fails, and writes it in the next good derive', () => {
+      const formDef = {
+        form: [
+          {
+            uid: 'nickname',
+            kind: 'input',
+            type: 'textinput',
+            path: 'nickname',
+            defaultValue: 'x',
+          },
+          { uid: 'oops', kind: 'display', type: 'heading', props: { text: '{{ $form.a.b }}' } },
+        ],
+      };
+      const errored = drive([init(formDef), setData({})]);
+
+      expect(errored.formHealth).toMatchObject({ status: 'errored', code: 40 });
+      expect(errored.data).toEqual({});
+
+      const reduce = makeReducer();
+      const healed = reduce(errored, setData({ a: { b: 1 } }));
+
+      expect(healed.formHealth).toEqual({ status: 'ok' });
+      expect(healed.data).toEqual({ a: { b: 1 }, nickname: 'x' });
+    });
+
+    it('reports code 11 for a row input whose path is outside its repeater', () => {
+      const formDef = {
+        form: [
+          {
+            uid: 'rows',
+            kind: 'input',
+            type: 'repeater',
+            path: 'rows',
+            props: {
+              template: {
+                uid: 'rowsRow',
+                kind: 'layout',
+                type: 'flex',
+                children: [{ uid: 'name', kind: 'input', type: 'textinput', path: 'other.name' }],
+              },
+            },
+          },
+        ],
+      };
+
+      const state = drive([init(formDef), setData({ rows: [{}] })]);
+
+      // The row expansion throws. The catch of the derive gives code 11 to every error that is
+      // not a rejected expression, whichever pass threw it.
+      expect(state.formHealth).toEqual({
+        status: 'errored',
+        code: 11,
+        message: '[11] Path "other.name" is not inside the repeater row "rows.items".',
+      });
+    });
+
+    it.each([
+      {
+        code: 21,
+        formDef: {
+          form: [
+            { uid: 'name', kind: 'input', type: 'textinput', path: 'first' },
+            { uid: 'name', kind: 'input', type: 'textinput', path: 'last' },
+          ],
+        },
+      },
+      { code: 22, formDef: { form: [{ uid: 'name', kind: 'unknown' }] } },
+    ])(
+      'keeps the decode error with code $code after SET_DATA and computes no widget',
+      ({ code, formDef }) => {
+        const initialized = drive([init(formDef)]);
+        expect(initialized.formHealth).toMatchObject({ status: 'errored', code });
+
+        const reduce = makeReducer();
+        const state = reduce(initialized, setData({ first: 'Ada' }));
+
+        expect(state.formHealth).toBe(initialized.formHealth);
+        expect(state.data).toEqual({ first: 'Ada' });
+        expect(state.calculatedWidgets).toEqual({});
+      },
+    );
   });
 
   // ---------------------------------------------------------------------------
@@ -1795,6 +1993,73 @@ describe('reducer end-to-end', () => {
       expect(oneRow.calculatedWidgets).toHaveProperty('usersRow[0]');
       expect(oneRow.touchedControls['users.0.name']).toBe(true);
       expect(oneRow.validations['users.0.name']).toBeNull();
+    });
+
+    // A row is identified by its index. Its entries stay at that index when the data under it
+    // changes, so they then belong to the value that moved there.
+    it('keeps the entries of each index when two rows swap', () => {
+      const before = drive([
+        init(makeRequiredRowsFormDef()),
+        setData({ users: [{ name: '' }, { name: 'B' }] }),
+        blur('users.0.name', 'name[0]'),
+        {
+          type: 'OVERRIDE_WIDGET_PROP',
+          payload: { uid: 'name[0]', prop: 'placeholder', value: 'First' },
+        },
+      ]);
+      expect(before.validations['users.0.name']).toEqual(['required']);
+
+      const reduce = makeReducer();
+      const swapped = reduce(before, setData({ users: [{ name: 'B' }, { name: '' }] }));
+
+      expect(swapped.touchedControls).toEqual({ 'users.0.name': true });
+      // A data write does not validate again, so the error of index 0 now stands next to 'B'.
+      expect(swapped.validations['users.0.name']).toEqual(['required']);
+      expect(swapped.widgetPropOverrides).toEqual({ 'name[0]': { placeholder: 'First' } });
+      expect(propsOf(swapped, 'name[0]')['placeholder']).toBe('First');
+      expect(propsOf(swapped, 'name[1]')['placeholder']).toBeUndefined();
+    });
+
+    it('drops the entries of the last index when the first of three rows is removed', () => {
+      const threeRows = drive([
+        init(makeRequiredRowsFormDef()),
+        setData({ users: [{ name: 'A' }, { name: '' }, { name: 'C' }] }),
+        validateAllAction,
+        {
+          type: 'OVERRIDE_WIDGET_PROP',
+          payload: { uid: 'name[0]', prop: 'placeholder', value: 'First' },
+        },
+        {
+          type: 'OVERRIDE_WIDGET_PROP',
+          payload: { uid: 'name[2]', prop: 'placeholder', value: 'Third' },
+        },
+      ]);
+      expect(threeRows.validations).toEqual({
+        users: null,
+        'users.0.name': null,
+        'users.1.name': ['required'],
+        'users.2.name': null,
+      });
+
+      // Index 1 keeps its error, now next to 'C'. The override of index 0 now shows on the empty
+      // row, and the override of index 2 is dropped.
+      const reduce = makeReducer();
+      const twoRows = reduce(threeRows, setData({ users: [{ name: '' }, { name: 'C' }] }));
+
+      expect(twoRows.touchedControls).toEqual({
+        users: true,
+        'users.0.name': true,
+        'users.1.name': true,
+      });
+      expect(twoRows.validations).toEqual({
+        users: null,
+        'users.0.name': null,
+        'users.1.name': ['required'],
+      });
+      expect(twoRows.widgetPropOverrides).toEqual({ 'name[0]': { placeholder: 'First' } });
+      expect(Object.keys(twoRows.calculatedWidgets).sort()).toEqual(
+        ['#0', 'users', 'usersRow[0]', 'name[0]', 'usersRow[1]', 'name[1]'].sort(),
+      );
     });
   });
 
@@ -1982,6 +2247,19 @@ describe('reducer end-to-end', () => {
       expect(onBlur.validations).toEqual({ firstName: ['required'], users: null });
     });
 
+    it('SET_WIDGET_DATA on a path no input owns writes the value and runs a derive', () => {
+      // No input of the base form owns `age`. The `adult` state reads it.
+      const before = drive([init(makeBaseFormDef()), setData({})]);
+      expect(before.widgetFlags['bio']).toEqual({ hidden: true });
+
+      const reduce = makeReducer();
+      const state = reduce(before, setWidgetData('age', 21));
+
+      expect(state.data).toEqual({ age: 21 });
+      expect(state.currentStates).toEqual(['adult']);
+      expect(state.widgetFlags['bio']).toEqual({ hidden: false });
+    });
+
     it('INITIALIZE starts over: data and every derived map are reset', () => {
       const state = drive([
         init(makeBaseFormDef()),
@@ -2076,6 +2354,41 @@ describe('reducer end-to-end', () => {
       expect(state.touched).toBe(false);
       expect(state.touchedControls).toEqual({});
       expect(state.validations).toEqual({});
+    });
+
+    it('touches an input that a failing derive reveals only after the next good derive', () => {
+      const formDef = {
+        ...makeGatedInputFormDef(),
+        form: [
+          ...makeGatedInputFormDef().form,
+          {
+            uid: 'oops',
+            kind: 'display',
+            type: 'heading',
+            props: { text: '{{$form.missing.deep}}' },
+          },
+        ],
+      };
+      const validated = drive([
+        init(formDef),
+        setData({ age: 10, missing: { deep: 1 } }),
+        validateAllAction,
+      ]);
+      expect(validated.allControlsValidated).toBe(true);
+
+      const reduce = makeReducer();
+      const errored = reduce(validated, setData({ age: 21 }));
+
+      expect(errored.formHealth).toMatchObject({ status: 'errored', code: 40 });
+      expect(errored.touchedControls).toEqual({});
+      expect(errored.validations['secret']).toBeUndefined();
+
+      const healed = reduce(errored, setData({ age: 21, missing: { deep: 1 } }));
+
+      expect(healed.formHealth).toEqual({ status: 'ok' });
+      expect(healed.touchedControls).toEqual({ secret: true });
+      expect(healed.validations['secret']).toEqual(['required']);
+      expect(healed.isFormValid).toBe(false);
     });
   });
 
@@ -2211,6 +2524,105 @@ describe('reducer end-to-end', () => {
         unchanged.calculatedWidgets['rowName[0]'],
       );
       expect(propsOf(changed, 'rowName[0]')['seenItemName']).toBe('Grace');
+    });
+
+    it('keeps the reference of a static prop when a state changes another prop', () => {
+      const options = [{ label: 'A', value: 'a' }];
+      const formDef = {
+        states: { on: '$form.on === true' },
+        form: [
+          {
+            uid: 'choice',
+            kind: 'input',
+            type: 'dropdown',
+            path: 'choice',
+            props: { options, label: 'Off', 'label.on': 'On' },
+          },
+        ],
+      };
+      const off = drive([init(formDef), setData({})]);
+
+      const reduce = makeReducer();
+      const on = reduce(off, setData({ on: true }));
+
+      expect(propsOf(on, 'choice')['label']).toBe('On');
+      expect(on.calculatedWidgets['choice']).not.toBe(off.calculatedWidgets['choice']);
+      expect(propsOf(on, 'choice')['options']).toBe(propsOf(off, 'choice')['options']);
+    });
+
+    it('keeps the child uids of a layout when a state changes its size', () => {
+      const formDef = {
+        states: { big: '$form.big === true' },
+        form: [
+          {
+            uid: 'card',
+            kind: 'layout',
+            type: 'flex',
+            size: 6,
+            'size.big': 12,
+            children: [
+              { uid: 'title', kind: 'display', type: 'heading' },
+              { uid: 'subtitle', kind: 'display', type: 'heading' },
+            ],
+          },
+        ],
+      };
+      const small = drive([init(formDef), setData({})]);
+
+      const reduce = makeReducer();
+      const big = reduce(small, setData({ big: true }));
+
+      const sizeOf = (state: State) =>
+        (state.calculatedWidgets['card'].current as LayoutWidget<string>).size;
+      expect(sizeOf(small)).toBe(6);
+      expect(sizeOf(big)).toBe(12);
+      expect(childUidsOf(small, 'card')).toEqual(['title', 'subtitle']);
+      expect(childUidsOf(big, 'card')).toEqual(['title', 'subtitle']);
+    });
+
+    it('keeps the content of a widget flag after a SET_META that does not change it', () => {
+      const formDef = {
+        form: [
+          { uid: 'debugOnly', kind: 'display', type: 'heading', include: { when: '$meta.debug' } },
+        ],
+      };
+      const before = drive([init(formDef), setData({})]);
+
+      const reduce = makeReducer();
+      const after = reduce(before, { type: 'SET_META', payload: { meta: { mode: 'edit' } } });
+
+      expect(after.widgetFlags['debugOnly']).toEqual({ hidden: true });
+      expect(after.widgetFlags['debugOnly']).toEqual(before.widgetFlags['debugOnly']);
+    });
+
+    it('keeps the validation array when VALIDATE_ALL finds the same failure again', () => {
+      let message = 'required';
+      const alwaysFails: ValidatorFn<unknown> = () => ({
+        '~standard': {
+          version: 1,
+          vendor: 'reducer-spec',
+          validate: () => ({ issues: [{ message }] }),
+        },
+      });
+      const formDef = {
+        form: [
+          { uid: 'firstName', kind: 'input', type: 'textinput', path: 'firstName', validator: {} },
+        ],
+      };
+      const first = drive(
+        [init(formDef), setData({}), validateAllAction],
+        'eager',
+        alwaysFails as ValidatorFn<any>,
+      );
+
+      const reduce = makeReducer('eager', alwaysFails as ValidatorFn<any>);
+      const same = reduce(first, validateAllAction);
+      message = 'too short';
+      const different = reduce(same, validateAllAction);
+
+      expect(first.validations['firstName']).toEqual(['required']);
+      expect(same.validations['firstName']).toBe(first.validations['firstName']);
+      expect(different.validations['firstName']).toEqual(['too short']);
     });
   });
 
@@ -2515,11 +2927,6 @@ describe('reducer end-to-end', () => {
   // `current`. Every pass keyed by the input path has to find it there or on the stamped
   // `source.path`, exactly like a plain input.
   describe('function widget controls', () => {
-    const overrideByPath = (path: string, value: string): Action => ({
-      type: 'OVERRIDE_WIDGET_PROP',
-      payload: { path, prop: 'placeholder', value },
-    });
-
     const overrideByUid = (uid: string, value: string): Action => ({
       type: 'OVERRIDE_WIDGET_PROP',
       payload: { uid, prop: 'placeholder', value },
@@ -2641,6 +3048,51 @@ describe('reducer end-to-end', () => {
       expect(healed.formHealth).toEqual({ status: 'ok' });
       expect(healed.calculatedWidgets['greeting[0]']).toBeUndefined();
       expect(propsOf(healed, 'title')['text']).toBe('Users');
+    });
+
+    it('keeps the entries of a removed row when the pass fails, and drops them in the next good derive', () => {
+      const formDef = {
+        ...makeBaseFormDef(),
+        form: [
+          ...makeBaseFormDef().form,
+          {
+            uid: 'oops',
+            kind: 'display',
+            type: 'heading',
+            props: { text: '{{$form.missing.deep}}' },
+          },
+        ],
+      };
+      const twoRows = drive([
+        init(formDef),
+        setData({ missing: { deep: 1 }, users: [{}, {}] }),
+        validateAllAction,
+        {
+          type: 'OVERRIDE_WIDGET_PROP',
+          payload: { uid: 'name[1]', prop: 'placeholder', value: 'Second' },
+        },
+      ]);
+      expect(twoRows.formHealth).toEqual({ status: 'ok' });
+      expect(twoRows.touchedControls['users.1.name']).toBe(true);
+      expect(twoRows.widgetPropOverrides['name[1]']).toEqual({ placeholder: 'Second' });
+
+      const reduce = makeReducer();
+      const errored = reduce(twoRows, setData({ users: [{}] }));
+
+      expect(errored.formHealth).toMatchObject({ status: 'errored', code: 40 });
+      expect(errored.touchedControls['users.1.name']).toBe(true);
+      expect(errored.widgetPropOverrides['name[1]']).toEqual({ placeholder: 'Second' });
+      expect(errored.validations).toHaveProperty('users.1.name');
+      expect(errored.calculatedWidgets).toHaveProperty('name[1]');
+
+      const healed = reduce(errored, setData({ missing: { deep: 1 }, users: [{}] }));
+
+      expect(healed.formHealth).toEqual({ status: 'ok' });
+      expect(healed.touchedControls).not.toHaveProperty('users.1.name');
+      expect(healed.widgetPropOverrides).not.toHaveProperty('name[1]');
+      expect(healed.validations).not.toHaveProperty('users.1.name');
+      expect(healed.calculatedWidgets).not.toHaveProperty('name[1]');
+      expect(healed.calculatedWidgets).toHaveProperty('name[0]');
     });
   });
 
@@ -2965,6 +3417,193 @@ describe('reducer end-to-end', () => {
       const healed = reduce(errored, setData({ users: [] }));
       expect(healed.formHealth).toEqual({ status: 'ok' });
     });
+
+    describe('size limits', () => {
+      const showWhen = (when: string) => ({
+        form: [heading({ include: { when } })],
+      });
+      const sizedExpressions = {
+        characters: `$form.a ===${' '.repeat(EXPRESSION_LIMITS.maxLength)}1`,
+        'AST nodes': `[${'1,'.repeat(EXPRESSION_LIMITS.maxNodes)}1].length > 0`,
+        'AST depth': `${'!'.repeat(EXPRESSION_LIMITS.maxDepth)}$form.a`,
+      };
+
+      it.each(Object.entries(sizedExpressions))(
+        'runs an expression over the limit of %s with the warn policy',
+        (_limit, expression) => {
+          const state = driveWithPolicy('warn', [init(showWhen(expression)), setData({ a: 1 })]);
+
+          expect(state.formHealth).toEqual({ status: 'ok' });
+          // The widget is shown, so the expression ran to the end and gave true.
+          expect(state.widgetFlags['title']).toEqual({ hidden: false });
+        },
+      );
+
+      it.each(Object.entries(sizedExpressions))(
+        'fails an expression over the limit of %s with the strict policy',
+        (limit, expression) => {
+          const state = driveWithPolicy('strict', [init(showWhen(expression)), setData({ a: 1 })]);
+
+          expect(state.formHealth.status).toBe('errored');
+          if (state.formHealth.status === 'errored') {
+            expect(state.formHealth.code).toBe(50);
+            expect(state.formHealth.message).toContain('[EXPRESSION_TOO_LARGE]');
+            expect(state.formHealth.message).toContain(limit);
+          }
+        },
+      );
+
+      it('runs an expression of exactly the maximum length with the strict policy', () => {
+        const fillerLength = EXPRESSION_LIMITS.maxLength - '$form.a ===1'.length;
+        const expression = `$form.a ===${' '.repeat(fillerLength)}1`;
+        expect(expression).toHaveLength(EXPRESSION_LIMITS.maxLength);
+
+        const state = driveWithPolicy('strict', [init(showWhen(expression)), setData({ a: 1 })]);
+
+        expect(state.formHealth).toEqual({ status: 'ok' });
+        expect(state.widgetFlags['title']).toEqual({ hidden: false });
+      });
+
+      it('runs expressions with exactly the maximum nodes and depth with the strict policy', () => {
+        const nodeItems = EXPRESSION_LIMITS.maxNodes - measureExpression('[].length > 0').nodes;
+        const atNodeLimit = `[${Array(nodeItems).fill('1').join(',')}].length > 0`;
+        const atDepthLimit = `${'!'.repeat(EXPRESSION_LIMITS.maxDepth - 2)}$form.a`;
+        expect(measureExpression(atNodeLimit).nodes).toBe(EXPRESSION_LIMITS.maxNodes);
+        expect(measureExpression(atDepthLimit).depth).toBe(EXPRESSION_LIMITS.maxDepth);
+
+        for (const expression of [atNodeLimit, atDepthLimit]) {
+          const state = driveWithPolicy('strict', [init(showWhen(expression)), setData({ a: 1 })]);
+
+          expect(state.formHealth).toEqual({ status: 'ok' });
+          expect(state.widgetFlags['title']).toEqual({ hidden: false });
+        }
+      });
+
+      it('runs a small expression over a large array to the end', () => {
+        const items = Array.from({ length: 100_000 }, () => 1);
+        const state = driveWithPolicy('strict', [
+          init(showWhen('$form.items.reduce((sum, item) => sum + item, 0) === 100000')),
+          setData({ items }),
+        ]);
+
+        expect(state.formHealth).toEqual({ status: 'ok' });
+        expect(state.widgetFlags['title']).toEqual({ hidden: false });
+      });
+    });
+  });
+
+  describe('scope roots that core does not know', () => {
+    const heading = (fields: Record<string, unknown>) => ({
+      uid: 'title',
+      kind: 'display',
+      type: 'heading',
+      ...fields,
+    });
+
+    it('treats a state that reads an unknown root as inactive', () => {
+      const state = drive([
+        init({
+          states: { routed: '$route.id === 1', known: '$form.id === 1' },
+          form: [heading({})],
+        }),
+        setData({ id: 1 }),
+      ]);
+
+      expect(state.formHealth).toEqual({ status: 'ok' });
+      expect(state.currentStates).toEqual(['known']);
+    });
+
+    it('gives an empty string for a template that is an unknown root', () => {
+      const state = drive([
+        init({ form: [heading({ props: { text: 'a{{ $route }}b' } })] }),
+        setData({}),
+      ]);
+
+      expect(state.formHealth).toEqual({ status: 'ok' });
+      expect(propsOf(state, 'title')['text']).toBe('ab');
+    });
+
+    it('fails with code 40 for a template that reads a property of an unknown root', () => {
+      const state = drive([
+        init({ form: [heading({ props: { text: '{{ $route.id }}' } })] }),
+        setData({}),
+      ]);
+
+      expect(state.formHealth.status).toBe('errored');
+      if (state.formHealth.status === 'errored') {
+        expect(state.formHealth.code).toBe(40);
+      }
+    });
+
+    it('fails with code 11 for an include.when rule that reads an unknown root', () => {
+      const state = drive([
+        init({ form: [heading({ include: { when: '$route.id === 1' } })] }),
+        setData({}),
+      ]);
+
+      expect(state.formHealth.status).toBe('errored');
+      if (state.formHealth.status === 'errored') {
+        expect(state.formHealth.code).toBe(11);
+      }
+    });
+  });
+
+  describe('keys that a widget kind does not have', () => {
+    const driveWidget = (widget: Record<string, unknown>): State =>
+      drive([init({ form: [widget] }), setData({})]);
+
+    it('drops on from a display widget, and keeps it on an action widget', () => {
+      const display = driveWidget({
+        uid: 'title',
+        kind: 'display',
+        type: 'heading',
+        on: { click: 'headingClicked' },
+      });
+      const action = driveWidget({
+        uid: 'save',
+        kind: 'action',
+        type: 'button',
+        on: { click: 'saveClicked' },
+      });
+
+      expect(display.formHealth).toEqual({ status: 'ok' });
+      expect(display.flatForm['title']).not.toHaveProperty('on');
+      expect(display.calculatedWidgets['title'].current).not.toHaveProperty('on');
+      // The same key stays on a kind that has it.
+      expect(action.flatForm['save']).toHaveProperty('on');
+      expect(action.calculatedWidgets['save'].current).toHaveProperty('on', {
+        click: 'saveClicked',
+      });
+    });
+
+    it('drops label from a display widget', () => {
+      const state = driveWidget({ uid: 'title', kind: 'display', type: 'heading', label: 'Title' });
+
+      expect(state.formHealth).toEqual({ status: 'ok' });
+      expect(state.flatForm['title']).not.toHaveProperty('label');
+      expect(state.calculatedWidgets['title'].current).not.toHaveProperty('label');
+    });
+
+    it('drops defaultValue from an action widget, and keeps it on an input widget', () => {
+      const action = driveWidget({
+        uid: 'save',
+        kind: 'action',
+        type: 'button',
+        defaultValue: 'x',
+      });
+      const input = driveWidget({
+        uid: 'name',
+        kind: 'input',
+        type: 'textinput',
+        path: 'name',
+        defaultValue: 'x',
+      });
+
+      expect(action.formHealth).toEqual({ status: 'ok' });
+      expect(action.flatForm['save']).not.toHaveProperty('defaultValue');
+      expect(action.calculatedWidgets['save'].current).not.toHaveProperty('defaultValue');
+      expect(input.flatForm['name']).toHaveProperty('defaultValue', 'x');
+    });
   });
 
   describe('forbidden path segments', () => {
@@ -3101,6 +3740,714 @@ describe('reducer end-to-end', () => {
       expect(pruneHiddenData(state)).toStrictEqual({
         lineItems: [{ active: false }, { active: false }, { quantity: 3, active: true }],
       });
+    });
+  });
+
+  // ---------------------------------------------------------------------------
+  // 31. The order of the derive passes
+  // ---------------------------------------------------------------------------
+
+  // One derive writes the defaults, drops the entries of removed rows, builds the validation
+  // variables, and then runs the states, flags and props passes, in this order.
+  describe('the order of the derive passes', () => {
+    const makeNamedFormDef = () => ({
+      states: { named: "$form.firstName === 'Anon'" },
+      form: [
+        {
+          uid: 'firstName',
+          kind: 'input',
+          type: 'textinput',
+          path: 'firstName',
+          defaultValue: 'Anon',
+        },
+        {
+          uid: 'anonNote',
+          kind: 'display',
+          type: 'heading',
+          include: { when: "$form.firstName === 'Anon'" },
+        },
+      ],
+    });
+
+    it('activates a state that reads a default written in the same derive', () => {
+      const state = drive([init(makeNamedFormDef()), setData({})]);
+
+      expect(state.data).toEqual({ firstName: 'Anon' });
+      expect(state.currentStates).toEqual(['named']);
+    });
+
+    it('shows a widget whose when reads a default written in the same derive', () => {
+      const state = drive([init(makeNamedFormDef()), setData({})]);
+
+      expect(state.widgetFlags['anonNote']).toEqual({ hidden: false });
+      expect(state.calculatedWidgets).toHaveProperty('anonNote');
+    });
+
+    it('drops the validation of a removed row before $formIsInvalid is computed', () => {
+      const formDef = {
+        form: [
+          {
+            uid: 'invalidNote',
+            kind: 'display',
+            type: 'heading',
+            include: { when: '$formIsInvalid' },
+          },
+          ...makeRequiredRowsFormDef().form,
+        ],
+      };
+      const twoRows = drive([
+        init(formDef),
+        setData({ users: [{ name: 'Ada' }, {}] }),
+        validateAllAction,
+      ]);
+      expect(twoRows.validations['users.1.name']).toEqual(['required']);
+      expect(twoRows.widgetFlags['invalidNote']).toEqual({ hidden: false });
+
+      const reduce = makeReducer();
+      const oneRow = reduce(twoRows, setData({ users: [{ name: 'Ada' }] }));
+
+      expect(oneRow.validations).not.toHaveProperty('users.1.name');
+      expect(oneRow.widgetFlags['invalidNote']).toEqual({ hidden: true });
+      expect(oneRow.calculatedWidgets).not.toHaveProperty('invalidNote');
+    });
+  });
+
+  // ---------------------------------------------------------------------------
+  // 32. Error codes of INITIALIZE and of the states pass
+  // ---------------------------------------------------------------------------
+
+  describe('error codes of INITIALIZE and of the states pass', () => {
+    const initFromString = (formDef: string): Action => ({
+      type: 'INITIALIZE',
+      payload: { formName: 'test-form', formDef },
+    });
+
+    it('reports code 20 with the JSON.parse message for a form definition that is not JSON', () => {
+      const badJson = '{ bad';
+      let parseMessage = '';
+      try {
+        JSON.parse(badJson);
+      } catch (error) {
+        parseMessage = (error as Error).message;
+      }
+
+      const state = drive([initFromString(badJson)]);
+
+      expect(parseMessage).not.toBe('');
+      expect(state.formHealth).toEqual({
+        status: 'errored',
+        message: `[20] ${parseMessage}`,
+        code: 20,
+      });
+      expect(state.flatForm).toEqual({});
+    });
+
+    it('decodes a form definition given as a JSON string', () => {
+      const formDef = JSON.stringify({
+        form: [{ uid: 'firstName', kind: 'input', type: 'textinput', path: 'firstName' }],
+      });
+
+      const state = drive([initFromString(formDef), setData({})]);
+
+      expect(state.formHealth).toEqual({ status: 'ok' });
+      expect(state.flatForm).toHaveProperty('firstName');
+      expect(state.calculatedWidgets).toHaveProperty('firstName');
+    });
+
+    it('reports code 22 with the issue path for an unknown widget kind', () => {
+      const state = drive([init({ form: [{ uid: 'name', kind: 'unknown' }] })]);
+
+      expect(state.formHealth).toEqual({
+        status: 'errored',
+        message:
+          '[22] form.children[0].kind: "kind" must be one of "input", "layout", "display", "action", but got "unknown"',
+        code: 22,
+      });
+    });
+
+    it('labels an issue of the whole form definition as root', () => {
+      const state = drive([initFromString('"form"')]);
+
+      expect(state.formHealth).toEqual({
+        status: 'errored',
+        message: '[22] root: "form" is not a valid object',
+        code: 22,
+      });
+    });
+
+    it('treats a state expression that throws as an inactive state, not as code 10', () => {
+      const formDef = {
+        states: { broken: '$form.missing.deep === 1', always: 'true' },
+        form: [
+          { uid: 'brokenOnly', kind: 'display', type: 'heading', include: { in: ['broken'] } },
+        ],
+      };
+
+      const state = drive([init(formDef), setData({})]);
+
+      expect(state.formHealth).toEqual({ status: 'ok' });
+      expect(state.currentStates).toEqual(['always']);
+      expect(state.widgetFlags['brokenOnly']).toEqual({ hidden: true });
+    });
+  });
+
+  describe('INITIALIZE on a form that already has state', () => {
+    it('resets meta, injected issues, overrides and the submit flags, and keeps the language', () => {
+      const used = drive([
+        init(makeBaseFormDef()),
+        setData({ users: [] }),
+        { type: 'SET_META', payload: { meta: { mode: 'dev' } } },
+        validateAllAction,
+        { type: 'INJECT_VALIDATION_ISSUES', payload: { path: 'firstName', issues: ['taken'] } },
+        {
+          type: 'OVERRIDE_WIDGET_PROP',
+          payload: { uid: 'firstName', prop: 'placeholder', value: 'Name' },
+        },
+        { type: 'SET_LANGUAGE', payload: { lang: 'fr-FR' } },
+      ]);
+      expect(used.meta).toEqual({ mode: 'dev' });
+      expect(used.injectedValidations).toEqual({ firstName: ['taken'] });
+      expect(used.widgetPropOverrides).toEqual({ firstName: { placeholder: 'Name' } });
+      expect(used.allControlsValidated).toBe(true);
+      expect(used.isFormValid).toBe(false);
+      expect(used.touched).toBe(true);
+      expect(used.touchedControls).toEqual({ firstName: true, users: true });
+      expect(used.validations).toEqual({ firstName: ['required'], users: null });
+
+      const reduce = makeReducer();
+      const state = reduce(used, {
+        type: 'INITIALIZE',
+        payload: { formName: 'second-form', formDef: makeBaseFormDef() },
+      });
+
+      expect(state.meta).toEqual({});
+      expect(state.injectedValidations).toEqual({});
+      expect(state.widgetPropOverrides).toEqual({});
+      expect(state.allControlsValidated).toBe(false);
+      expect(state.isFormValid).toBe(true);
+      expect(state.touched).toBe(false);
+      expect(state.touchedControls).toEqual({});
+      expect(state.validations).toEqual({});
+      expect(state.lang).toBe('fr-FR');
+      expect(state.formName).toBe('second-form');
+    });
+
+    it('clears an error set outside the derive, so the next SET_DATA computes the form', () => {
+      const frozen = drive([
+        init(makeBaseFormDef()),
+        setData({}),
+        {
+          type: 'SET_FORM_HEALTH',
+          payload: { formHealth: { status: 'errored', code: 30, message: '[30] no widget' } },
+        },
+      ]);
+      expect(frozen.formHealth.status).toBe('errored');
+
+      const reduce = makeReducer();
+      const initialized = reduce(frozen, init(makeBaseFormDef()));
+      expect(initialized.formHealth).toEqual({ status: 'ok' });
+
+      const state = reduce(initialized, setData({ age: 21 }));
+      expect(state.currentStates).toEqual(['adult']);
+      expect(state.calculatedWidgets).toHaveProperty('bio');
+    });
+
+    it('keeps and submits the data of a removed input when the host sets the old data again', () => {
+      const firstName = { uid: 'firstName', kind: 'input', type: 'textinput', path: 'firstName' };
+      const nickname = { uid: 'nickname', kind: 'input', type: 'textinput', path: 'nickname' };
+      const oldData = { firstName: 'Joan', nickname: 'J' };
+      const before = drive([init({ form: [firstName, nickname] }), setData(oldData)]);
+
+      const reduce = makeReducer();
+      const replaced = reduce(before, init({ form: [{ ...firstName }] }));
+      const state = reduce(replaced, setData(before.data));
+
+      expect(state.flatForm).not.toHaveProperty('nickname');
+      expect(state.data).toEqual(oldData);
+      expect(pruneHiddenData(state)).toEqual(oldData);
+    });
+  });
+
+  describe('function widget failures', () => {
+    it('reports code 11 when a function widget throws in the flags call, and recovers', () => {
+      const notes: FunctionWidget<string> = (api) => {
+        if (api?.$form?.['explode']) {
+          throw new Error('flags failed');
+        }
+        return { uid: 'notes', kind: 'input', type: 'textinput', path: 'notes' } as InputWidget<
+          any,
+          string
+        >;
+      };
+      notes.uid = 'notes';
+      const ok = drive([init({ form: [notes] }), setData({})]);
+      expect(ok.formHealth).toEqual({ status: 'ok' });
+
+      const reduce = makeReducer();
+      const state = reduce(ok, setData({ explode: true }));
+
+      expect(state.formHealth).toEqual({
+        status: 'errored',
+        message: '[11] flags failed',
+        code: 11,
+      });
+      expect(reduce(state, setData({})).formHealth).toEqual({ status: 'ok' });
+    });
+
+    it('reports code 12 when a function widget throws only in the props call, and recovers', () => {
+      const notes: FunctionWidget<string> = (api) => {
+        // Only the props call passes a translate function.
+        if (api?.$form?.['explode'] && api.translate !== undefined) {
+          throw new Error('props failed');
+        }
+        return { uid: 'notes', kind: 'input', type: 'textinput', path: 'notes' } as InputWidget<
+          any,
+          string
+        >;
+      };
+      notes.uid = 'notes';
+      const ok = drive([init({ form: [notes] }), setData({})]);
+      expect(ok.formHealth).toEqual({ status: 'ok' });
+
+      const reduce = makeReducer();
+      const state = reduce(ok, setData({ explode: true }));
+
+      expect(state.formHealth).toEqual({
+        status: 'errored',
+        message: '[12] props failed',
+        code: 12,
+      });
+      expect(reduce(state, setData({})).formHealth).toEqual({ status: 'ok' });
+    });
+  });
+
+  describe('injected issues and the derive', () => {
+    it('drops an injected issue on a path no input owns at the next derive', () => {
+      const injected = drive([
+        init(makeValidationDrivenFormDef()),
+        setData({ firstName: 'Joan' }),
+        { type: 'INJECT_VALIDATION_ISSUES', payload: { path: 'ghost', issues: ['unknown'] } },
+        { type: 'INJECT_VALIDATION_ISSUES', payload: { path: 'firstName', issues: ['taken'] } },
+      ]);
+      expect(injected.injectedValidations).toEqual({ ghost: ['unknown'], firstName: ['taken'] });
+
+      const reduce = makeReducer();
+      const state = reduce(injected, setData({ firstName: 'Ada' }));
+
+      expect(state.injectedValidations).toEqual({ firstName: ['taken'] });
+    });
+  });
+
+  describe('validateOn modes', () => {
+    const change = (path: string, uid: string): Action => ({
+      type: 'ATTEMPT_VALIDATION',
+      payload: { reason: 'change', path, uid },
+    });
+
+    it("'submit' ignores blur and change, and VALIDATE_ALL still validates", () => {
+      const initial = drive([init(makeBaseFormDef()), setData({})], 'submit');
+      const reduce = makeReducer('submit');
+
+      expect(reduce(initial, blur('firstName', 'firstName'))).toBe(initial);
+      expect(reduce(initial, change('firstName', 'firstName'))).toBe(initial);
+
+      const submitted = reduce(initial, validateAllAction);
+      expect(submitted.validations).toEqual({ firstName: ['required'], users: null });
+    });
+
+    it("['change', 'blur'] validates on a change and on a blur", () => {
+      const initial = drive([init(makeBaseFormDef()), setData({})], ['change', 'blur']);
+      const reduce = makeReducer(['change', 'blur']);
+
+      const onChange = reduce(initial, change('firstName', 'firstName'));
+      const onBlur = reduce(initial, blur('firstName', 'firstName'));
+
+      expect(onChange.validations).toEqual({ firstName: ['required'], users: null });
+      expect(onBlur.validations).toEqual({ firstName: ['required'], users: null });
+    });
+
+    it("['blur'] ignores a change and validates on a blur", () => {
+      const initial = drive([init(makeBaseFormDef()), setData({})], ['blur']);
+      const reduce = makeReducer(['blur']);
+
+      expect(reduce(initial, change('firstName', 'firstName'))).toBe(initial);
+
+      const onBlur = reduce(initial, blur('firstName', 'firstName'));
+      expect(onBlur.validations).toEqual({ firstName: ['required'], users: null });
+    });
+  });
+
+  describe('overrides addressed by path', () => {
+    /** Two inputs on the path 'x'. The first one is always hidden. */
+    const makeSharedPathFormDef = (secondHidden: boolean) => ({
+      form: [
+        { uid: 'first', kind: 'input', type: 'textinput', path: 'x', include: { when: 'false' } },
+        {
+          uid: 'second',
+          kind: 'input',
+          type: 'textinput',
+          path: 'x',
+          include: { when: secondHidden ? 'false' : 'true' },
+        },
+      ],
+    });
+
+    it('stores the override under the visible input when a hidden input owns the same path', () => {
+      const state = drive([
+        init(makeSharedPathFormDef(false)),
+        setData({}),
+        overrideByPath('x', 'Shared'),
+      ]);
+
+      expect(state.widgetFlags['first']).toEqual({ hidden: true });
+      expect(state.widgetPropOverrides).toEqual({ second: { placeholder: 'Shared' } });
+      expect(propsOf(state, 'second')['placeholder']).toBe('Shared');
+    });
+
+    it('stores the override under the first input of the form when every owner is hidden', () => {
+      const state = drive([
+        init(makeSharedPathFormDef(true)),
+        setData({}),
+        overrideByPath('x', 'Shared'),
+      ]);
+
+      expect(state.widgetPropOverrides).toEqual({ first: { placeholder: 'Shared' } });
+    });
+
+    it('stores the override of a row path under the uid of that row', () => {
+      const state = drive([
+        init(makeBaseFormDef()),
+        setData({ users: [{ name: 'Ada' }, { name: 'Bob' }] }),
+        overrideByPath('users.1.name', 'Second'),
+      ]);
+
+      expect(state.widgetPropOverrides).toEqual({ 'name[1]': { placeholder: 'Second' } });
+      expect(propsOf(state, 'name[1]')['placeholder']).toBe('Second');
+      expect(propsOf(state, 'name[0]')['placeholder']).toBeUndefined();
+    });
+
+    it('keeps the key of an override set to undefined and shows the source value again', () => {
+      const formDef = {
+        form: [
+          {
+            uid: 'firstName',
+            kind: 'input',
+            type: 'textinput',
+            path: 'firstName',
+            props: { placeholder: 'Source' },
+          },
+        ],
+      };
+      const overridden = drive([init(formDef), setData({}), overrideByPath('firstName', 'Over')]);
+      expect(propsOf(overridden, 'firstName')['placeholder']).toBe('Over');
+
+      const reduce = makeReducer();
+      const state = reduce(overridden, overrideByPath('firstName', undefined));
+
+      expect('placeholder' in state.widgetPropOverrides['firstName']).toBe(true);
+      expect(state.widgetPropOverrides['firstName']['placeholder']).toBeUndefined();
+      expect(propsOf(state, 'firstName')['placeholder']).toBe('Source');
+    });
+
+    it('validates again on a touched form only when the addressed input is touched', () => {
+      const formDef = {
+        form: [
+          { uid: 'a', kind: 'input', type: 'textinput', path: 'a', validator: { required: true } },
+          { uid: 'b', kind: 'input', type: 'textinput', path: 'b', validator: { required: true } },
+        ],
+      };
+      // Both validations are stale: a data write does not validate again.
+      const before = drive([
+        init(formDef),
+        setData({}),
+        blur('a', 'a'),
+        setWidgetData('a', 'filled'),
+        setWidgetData('b', 'filled'),
+      ]);
+      expect(before.touched).toBe(true);
+      expect(before.touchedControls).toEqual({ a: true });
+      expect(before.validations).toEqual({ a: ['required'], b: ['required'] });
+
+      const reduce = makeReducer();
+      const untouchedTarget = reduce(before, overrideByPath('b', 'B'));
+      const touchedTarget = reduce(before, overrideByPath('a', 'A'));
+
+      expect(untouchedTarget.validations).toEqual({ a: ['required'], b: ['required'] });
+      expect(touchedTarget.validations['a']).toBeNull();
+    });
+  });
+
+  describe('function widget calls', () => {
+    // The call arguments are compared with toStrictEqual, so a key that holds undefined must be
+    // there, and a missing key must be missing.
+
+    /** A function widget that records its calls. It owns the path 'notes'. */
+    const makeRecordedWidget = (returned: Record<string, unknown> = {}) =>
+      vi.fn<FunctionWidget<string>>(
+        () =>
+          ({
+            uid: 'notes',
+            kind: 'input',
+            type: 'textinput',
+            path: 'notes',
+            ...returned,
+          }) as InputWidget<any, string>,
+      );
+
+    it('INITIALIZE calls it once with empty data and without errors, touched or translate', () => {
+      const notes = makeRecordedWidget();
+
+      const state = drive([init({ form: [notes] })]);
+
+      expect(state.formHealth).toEqual({ status: 'ok' });
+      expect(notes).toHaveBeenCalledTimes(1);
+      expect(notes.mock.calls[0][0]).toStrictEqual({
+        $form: {},
+        errors: undefined,
+        touched: undefined,
+        translate: undefined,
+      });
+    });
+
+    it('SET_DATA calls it twice, first for the flags without translate, then for the props', () => {
+      const notes = makeRecordedWidget();
+      const initialized = drive([init({ form: [notes] })]);
+      notes.mockClear();
+
+      const reduce = makeReducer();
+      const state = reduce(initialized, setData({ notes: 'a' }));
+
+      expect(notes).toHaveBeenCalledTimes(2);
+      expect(notes.mock.calls[0][0]).toStrictEqual({
+        $form: { notes: 'a' },
+        $item: undefined,
+        $index: undefined,
+        errors: undefined,
+        touched: undefined,
+        translate: undefined,
+      });
+      expect(notes.mock.calls[1][0]).toStrictEqual({
+        $form: { notes: 'a' },
+        $item: undefined,
+        $index: undefined,
+        errors: undefined,
+        touched: undefined,
+        translate: expect.any(Function),
+      });
+
+      notes.mockClear();
+      reduce(state, setData({ notes: 'b' }));
+
+      expect(notes).toHaveBeenCalledTimes(2);
+    });
+
+    it('a blur passes errors and touched to the props call only', () => {
+      const notes = makeRecordedWidget({ validator: { required: true } });
+      const initial = drive([init({ form: [notes] }), setData({ notes: '' })]);
+      notes.mockClear();
+
+      const reduce = makeReducer();
+      reduce(initial, blur('notes', 'notes'));
+
+      expect(notes).toHaveBeenCalledTimes(2);
+      expect(notes.mock.calls[0][0]).toStrictEqual({
+        $form: { notes: '' },
+        $item: undefined,
+        $index: undefined,
+        errors: undefined,
+        touched: undefined,
+        translate: undefined,
+      });
+      expect(notes.mock.calls[1][0]).toStrictEqual({
+        $form: { notes: '' },
+        $item: undefined,
+        $index: undefined,
+        errors: ['required'],
+        touched: true,
+        translate: expect.any(Function),
+      });
+    });
+
+    it('calls a hidden function widget for its flags only', () => {
+      const notes = makeRecordedWidget({ include: { when: '$form.show === true' } });
+      const initialized = drive([init({ form: [notes] })]);
+      const reduce = makeReducer();
+
+      notes.mockClear();
+      const hidden = reduce(initialized, setData({ show: false }));
+
+      expect(hidden.calculatedWidgets).not.toHaveProperty('notes');
+      expect(notes).toHaveBeenCalledTimes(1);
+      expect(notes.mock.calls[0][0]?.translate).toBeUndefined();
+
+      notes.mockClear();
+      const visible = reduce(hidden, setData({ show: true }));
+
+      expect(visible.calculatedWidgets).toHaveProperty('notes');
+      expect(notes).toHaveBeenCalledTimes(2);
+    });
+
+    it('calls a row function widget once more per row, to find a nested repeater', () => {
+      const rowName = vi.fn<FunctionWidget<string>>(
+        () =>
+          ({
+            uid: 'rowName',
+            kind: 'input',
+            type: 'textinput',
+            path: 'users.items.name',
+          }) as InputWidget<any, string>,
+      );
+      const formDef = {
+        form: [
+          {
+            uid: 'users',
+            kind: 'input',
+            type: 'repeater',
+            path: 'users',
+            props: {
+              template: { uid: 'usersRow', kind: 'layout', type: 'flex', children: [rowName] },
+            },
+          },
+        ],
+      };
+      const initialized = drive([init(formDef)]);
+      expect(rowName).toHaveBeenCalledTimes(1);
+      rowName.mockClear();
+
+      const reduce = makeReducer();
+      const data = { users: [{ name: 'Ada' }, { name: 'Bob' }] };
+      reduce(initialized, setData(data));
+
+      const rowCall = (index: number, translate: unknown) => ({
+        $form: data,
+        $item: data.users[index],
+        $index: index,
+        errors: undefined,
+        touched: undefined,
+        translate,
+      });
+      expect(rowName).toHaveBeenCalledTimes(6);
+      // The row expansion.
+      expect(rowName.mock.calls[0][0]).toStrictEqual(rowCall(0, undefined));
+      expect(rowName.mock.calls[1][0]).toStrictEqual(rowCall(1, undefined));
+      // The flags.
+      expect(rowName.mock.calls[2][0]).toStrictEqual(rowCall(0, undefined));
+      expect(rowName.mock.calls[3][0]).toStrictEqual(rowCall(1, undefined));
+      // The props.
+      expect(rowName.mock.calls[4][0]).toStrictEqual(rowCall(0, expect.any(Function)));
+      expect(rowName.mock.calls[5][0]).toStrictEqual(rowCall(1, expect.any(Function)));
+    });
+
+    it('reports code 21 when the same function object is used twice in one form', () => {
+      const notes: FunctionWidget<string> = () =>
+        ({ kind: 'input', type: 'textinput', path: 'notes' }) as InputWidget<any, string>;
+
+      const state = drive([init({ form: [notes, notes] })]);
+
+      expect(state.formHealth).toEqual({
+        status: 'errored',
+        message: '[21] Duplicate UID "#0.0.f": Assigned to widget "textinput" and "textinput".',
+        code: 21,
+      });
+    });
+
+    // The path is the key of the input's data, touched flag, errors and overrides, so it is read
+    // once, when the form is decoded.
+    it('keeps the path of the decode call when the function returns another path later', () => {
+      let returnedPath = 'first';
+      const notes: FunctionWidget<string> = () =>
+        ({
+          uid: 'notes',
+          kind: 'input',
+          type: 'textinput',
+          path: returnedPath,
+          validator: { required: true },
+        }) as InputWidget<any, string>;
+      const initialized = drive([init({ form: [notes] })]);
+
+      returnedPath = 'second';
+      const reduce = makeReducer();
+      const state = reduce(initialized, setData({ first: 'a', second: 'b' }));
+      const validated = reduce(state, validateAllAction);
+
+      expect((state.calculatedWidgets['notes'].current as InputWidget<any, string>).path).toBe(
+        'first',
+      );
+      expect(validated.touchedControls).toEqual({ first: true });
+      expect(validated.validations).toEqual({ first: null });
+    });
+  });
+
+  describe('which suffixed value a widget uses when several states are active', () => {
+    const makeLabelFormDef = (states: Record<string, string>) => ({
+      states,
+      form: [
+        {
+          uid: 'save',
+          kind: 'action',
+          type: 'button',
+          label: 'base',
+          'label.aa': 'AA',
+          'label.bb': 'BB',
+          'label.c': 'C',
+          'label.long': 'LONG',
+          'label.register': 'REGISTER',
+          'label.register:adult': 'REGISTER_ADULT',
+        },
+      ],
+    });
+
+    const labelOf = (state: State) =>
+      (state.calculatedWidgets['save'].current as ActionWidget<string>).label;
+
+    it('uses the base value when no declared state is active', () => {
+      const state = drive([init(makeLabelFormDef({ bb: 'false' })), setData({})]);
+
+      expect(state.currentStates).toEqual([]);
+      expect(labelOf(state)).toBe('base');
+    });
+
+    it('uses the value of the child state when a parent and its child are active', () => {
+      const state = drive([
+        init(makeLabelFormDef({ register: 'true', 'register:adult': '$form.age >= 18' })),
+        setData({ age: 20 }),
+      ]);
+
+      expect(state.currentStates).toEqual(['register', 'register:adult']);
+      expect(labelOf(state)).toBe('REGISTER_ADULT');
+    });
+
+    it('uses the value of the parent state when its child state is not active', () => {
+      const state = drive([
+        init(makeLabelFormDef({ register: 'true', 'register:adult': '$form.age >= 18' })),
+        setData({ age: 10 }),
+      ]);
+
+      expect(state.currentStates).toEqual(['register']);
+      expect(labelOf(state)).toBe('REGISTER');
+    });
+
+    it('uses the state with the longest name when unrelated states are active', () => {
+      const state = drive([init(makeLabelFormDef({ c: 'true', long: 'true' })), setData({})]);
+
+      expect(state.currentStates).toEqual(['c', 'long']);
+      expect(labelOf(state)).toBe('LONG');
+    });
+
+    it('uses the state declared first when two active states have names of the same length', () => {
+      const bbFirst = drive([
+        init(makeLabelFormDef({ bb: 'true', aa: 'true', c: 'true' })),
+        setData({}),
+      ]);
+      expect(bbFirst.currentStates).toEqual(['bb', 'aa', 'c']);
+      expect(labelOf(bbFirst)).toBe('BB');
+
+      const aaFirst = drive([
+        init(makeLabelFormDef({ aa: 'true', bb: 'true', c: 'true' })),
+        setData({}),
+      ]);
+      expect(aaFirst.currentStates).toEqual(['aa', 'bb', 'c']);
+      expect(labelOf(aaFirst)).toBe('AA');
     });
   });
 });

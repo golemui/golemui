@@ -94,3 +94,39 @@ describe('gridCellClasses', () => {
     );
   });
 });
+
+describe('edge values', () => {
+  it('keeps a column count between 1 and 12 and rounds it', () => {
+    expect(resolveGrid('grid', { columns: 0 })).toMatchObject({ mode: 'columns', columns: 1 });
+    expect(resolveGrid('grid', { columns: 2.6 }).columns).toBe(3);
+  });
+
+  it('gives a cell no span for a size of zero or less', () => {
+    const row = resolveGrid('grid', { direction: 'row' });
+    expect(gridCellClasses(row, 0)).toBe('gui-grid__cell');
+    expect(gridCellClasses(row, -2)).toBe('gui-grid__cell');
+  });
+
+  it('prefers gap over the pixel gaps and keeps a pixel gap of zero', () => {
+    expect(resolveGrid('grid', { gap: 'xs', columnGap: 30 }).gap).toBe('xs');
+    expect(resolveGrid('grid', { columnGap: 0, rowGap: 30 }).gap).toBe('none');
+    expect(resolveGrid('flex', { gap: 0 }).gap).toBe('none');
+  });
+
+  it('renders every flex column direction as a stack', () => {
+    expect(resolveGrid('flex', { direction: 'column-reverse' }).mode).toBe('stack');
+  });
+
+  it('maps the space-around align of a grid and of a flex layout to space-between', () => {
+    expect(resolveGrid('grid', { direction: 'row', align: 'space-around' }).justify).toBe(
+      'space-between',
+    );
+    expect(resolveGrid('flex', { direction: 'row', align: 'space-around' }).justify).toBe(
+      'space-between',
+    );
+  });
+
+  it('gives no gap to a negative number of pixels', () => {
+    expect(gapFromPixels(-5)).toBe('none');
+  });
+});

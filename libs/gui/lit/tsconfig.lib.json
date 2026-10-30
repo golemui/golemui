@@ -29,5 +29,5 @@
     "**/*.cy.ts",
     "**/*.cy.js"
   ],
-  "exclude": ["src/**/*.spec.ts", "src/**/*.test.ts"]
+  "exclude": ["src/**/*.spec.ts", "src/**/*.test.ts", "src/**/*.fixture.ts"]
 }

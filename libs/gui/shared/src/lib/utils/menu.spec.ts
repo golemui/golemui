@@ -23,4 +23,25 @@ describe('menu helpers', () => {
       menuButtonClasses({ variant: 'outlined', icon: 'more_vert', iconPosition: 'right' }),
     ).toBe('gui-button gui-button-icon-right gui-button-with-icon gui-button--outlined');
   });
+
+  it('uses the aria label when the label is an empty string', () => {
+    expect(menuButtonAriaLabel('', 'Row')).toBe('Row');
+  });
+
+  it('gives no aria label when it is empty or not a string', () => {
+    expect(menuButtonAriaLabel(undefined, '')).toBeUndefined();
+    expect(menuButtonAriaLabel(undefined, { key: 'k' })).toBeUndefined();
+  });
+
+  it('adds the link class for the link variant', () => {
+    expect(menuButtonClasses({ variant: 'link' })).toBe(
+      'gui-button gui-button-icon-left gui-button--link',
+    );
+  });
+
+  it('adds the icon classes when an icon is set', () => {
+    expect(menuButtonClasses({ icon: 'x' })).toBe(
+      'gui-button gui-button-icon-left gui-button-with-icon',
+    );
+  });
 });

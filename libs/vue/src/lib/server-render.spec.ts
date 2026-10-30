@@ -1,7 +1,7 @@
 import { preloadFormWidgets } from '@golemui/core';
 import { createSSRApp, h } from 'vue';
 import { renderToString } from 'vue/server-renderer';
-import { beforeAll, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import FormComponent from './FormComponent.vue';
 import { buildConfig, noopValidators, stubWidgetLoaders } from './ssr.fixture';
 
@@ -91,5 +91,62 @@ describe('server rendering determinism', () => {
 
     expect(first).toBeDefined();
     expect(first).toBe(second);
+  });
+});
+
+describe('server rendering the form health', () => {
+  const buildDuplicateUidConfig = () => ({
+    ...buildConfig(),
+    formDef: {
+      form: {
+        uid: 'root',
+        kind: 'layout' as const,
+        type: 'flex',
+        children: [
+          { kind: 'input', type: 'textinput', path: 'firstName', uid: 'same-uid' },
+          { kind: 'input', type: 'textinput', path: 'lastName', uid: 'same-uid' },
+        ],
+      },
+    },
+  });
+
+  const renderWithHealth = (config: ReturnType<typeof buildConfig>, onFormHealth: () => void) =>
+    renderToString(
+      createSSRApp({
+        render: () => h(FormComponent, { config, validators: noopValidators, onFormHealth }),
+      }),
+    );
+
+  beforeAll(async () => {
+    await preloadFormWidgets({ widgetLoaders: stubWidgetLoaders });
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('calls formHealth with the ok status for a valid config', async () => {
+    const onFormHealth = vi.fn();
+
+    const html = await renderWithHealth(buildConfig(), onFormHealth);
+
+    expect(html).toContain('class="stub-flex"');
+    expect(onFormHealth).toHaveBeenCalledTimes(1);
+    expect(onFormHealth).toHaveBeenCalledWith({ status: 'ok' });
+  });
+
+  it('writes the error message of a duplicate uid into the markup, logs it and reports it', async () => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const onFormHealth = vi.fn();
+
+    const html = await renderWithHealth(buildDuplicateUidConfig(), onFormHealth);
+
+    expect(html).toContain('gui-form-health-error');
+    expect(html).toContain('[21] Duplicate UID');
+    expect(html).not.toContain('<input');
+    expect(consoleError).toHaveBeenCalledTimes(1);
+    expect(consoleError.mock.calls[0][0]).toBe('GolemUI form failed to initialize:');
+    expect(onFormHealth).toHaveBeenCalledTimes(1);
+    expect(onFormHealth.mock.calls[0][0]).toMatchObject({ status: 'errored' });
   });
 });

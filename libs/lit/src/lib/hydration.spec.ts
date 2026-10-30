@@ -4,6 +4,7 @@ import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { FormElement } from './components/form/form.element';
 import { resumeServerRenderedForm } from './ssr/resume';
 import {
+  afterLitRenderSchedule,
   buildConfig,
   canonicalServerMarkup,
   noopValidators,
@@ -16,10 +17,6 @@ import {
  * verifies that the resume entry point replaces the markup with an equivalent live
  * render.
  */
-
-// Lit renders on the microtask schedule, so waiting one macrotask completes every
-// nested first render.
-const afterLitRenderSchedule = () => new Promise((resolve) => setTimeout(resolve, 0));
 
 describe('resuming a server rendered form', () => {
   beforeAll(async () => {

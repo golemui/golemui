@@ -1,4 +1,4 @@
-import { defineForm } from '@golemui/core';
+import { type Action, defineForm, type Middleware, type State } from '@golemui/core';
 import { createMockUploadService } from '../mocks/upload-service.mock';
 import { type FormHandle, type MountComponentFn } from '../utils';
 
@@ -192,6 +192,126 @@ export const runReinitComponentTests = (mountFn: MountComponentFn) => {
       cy.get('[data-cy="submitBtn_button"]').click();
       cy.get('@formSubmit').should((spy: any) => {
         expect(spy.lastCall.args[0].data).to.deep.equal({ attachments: [] });
+      });
+    });
+
+    describe('a new config with the same formDef and data', () => {
+      const firstNameInput = '[data-cy="firstName_textinput"]';
+      const firstNameError = '[data-cy="firstName_validator-error"]';
+
+      const requiredFirstNameFormDef = () =>
+        defineForm({
+          form: [
+            {
+              uid: 'firstName',
+              kind: 'input',
+              type: 'textinput',
+              path: 'firstName',
+              label: 'First name',
+              validator: { type: 'string', required: true },
+              on: { load: 'firstNameLoaded' },
+            },
+          ],
+        });
+
+      const mountRequiredFirstName = (
+        formEvent: sinon.SinonStub,
+        middlewares: Middleware<State, Action>[] = [],
+      ) => {
+        let handle: FormHandle;
+        mountFn({
+          formDef: requiredFirstNameFormDef(),
+          data: { firstName: 'Ada' },
+          formEvent,
+          middlewares,
+          onFormReady: (h) => {
+            handle = h;
+          },
+        });
+        cy.get(firstNameInput).should('have.value', 'Ada');
+        return () => handle;
+      };
+
+      const loadCount = (formEvent: sinon.SinonStub) =>
+        formEvent.getCalls().filter((call) => call.args[0].name === 'firstNameLoaded').length;
+
+      it('shows the config data again and resets touched and errors', () => {
+        // A new config creates a new store with the same middlewares. Only the newest store
+        // records, so a late action on the old store does not count.
+        let storeCount = 0;
+        let newestState: State | undefined;
+        const recordNewestState: Middleware<State, Action> = (api) => {
+          storeCount += 1;
+          const storeNumber = storeCount;
+          return (next) => (action) => {
+            next(action);
+            if (storeNumber === storeCount) {
+              newestState = api.getState();
+            }
+          };
+        };
+        const getHandle = mountRequiredFirstName(cy.stub(), [recordNewestState]);
+
+        cy.get(firstNameInput).clear();
+        cy.get(firstNameInput).blur();
+        cy.get(firstNameError).should('exist');
+        cy.wrap(null).should(() =>
+          expect(newestState?.touchedControls).to.deep.equal({ firstName: true }),
+        );
+
+        cy.then(() => {
+          getHandle().setConfig({
+            formDef: requiredFirstNameFormDef(),
+            data: { firstName: 'Ada' },
+          });
+        });
+
+        cy.get(firstNameInput).should('have.value', 'Ada');
+        cy.get(firstNameError).should('not.exist');
+        cy.wrap(null).should(() => expect(newestState?.touchedControls).to.deep.equal({}));
+      });
+
+      it('sends load again and renders a new input node without focus', () => {
+        const formEvent = cy.stub();
+        const getHandle = mountRequiredFirstName(formEvent);
+        let firstNode: HTMLElement;
+
+        cy.get(firstNameInput).type('!');
+        cy.get(firstNameInput).then(($element) => {
+          firstNode = $element[0];
+        });
+        cy.focused().should(($element) => expect($element[0]).to.equal(firstNode));
+        cy.wrap(formEvent).should(() => expect(loadCount(formEvent)).to.equal(1));
+
+        cy.then(() => {
+          getHandle().setConfig({
+            formDef: requiredFirstNameFormDef(),
+            data: { firstName: 'Ada' },
+          });
+        });
+
+        cy.get(firstNameInput).should('have.value', 'Ada');
+        cy.get(firstNameInput).should(($element) => expect($element[0]).not.to.equal(firstNode));
+        cy.document().should((doc) => expect(doc.activeElement).to.equal(doc.body));
+        cy.wrap(formEvent).should(() => expect(loadCount(formEvent)).to.equal(2));
+      });
+
+      it('keeps the typed value, the input node and its focus when the host renders again with the same config', () => {
+        const formEvent = cy.stub();
+        const getHandle = mountRequiredFirstName(formEvent);
+        let firstNode: HTMLElement;
+
+        cy.get(firstNameInput).type('!');
+        cy.get(firstNameInput).then(($element) => {
+          firstNode = $element[0];
+        });
+
+        cy.then(() => getHandle().rerender());
+
+        cy.get(firstNameInput).should('have.value', 'Ada!');
+        cy.get(firstNameInput).should(($element) => expect($element[0]).to.equal(firstNode));
+        cy.focused().should(($element) => expect($element[0]).to.equal(firstNode));
+        cy.wrap(formEvent).should(() => expect(loadCount(formEvent)).to.equal(1));
       });
     });
   });

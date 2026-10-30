@@ -1,5 +1,5 @@
 import { type FormEvent, type FormHealth, defineForm } from '@golemui/core';
-import { type MountComponentFn } from '../utils';
+import { eventsNamed, type MountComponentFn } from '../utils';
 
 export const runEventsComponentTests = (mountFn: MountComponentFn) => {
   describe('Events', () => {
@@ -185,6 +185,137 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
         expect(pickEvents()).to.have.length(2);
         expect(pickEvents()[1].row).to.deep.equal({ index: 1, indexes: [1], path: 'users.1' });
         expect(pickEvents()[1].data['users'][1].name).to.equal('Grace');
+      });
+    });
+
+    describe('rows of nested repeaters', () => {
+      const teamsForm = () =>
+        defineForm({
+          form: [
+            {
+              uid: 'teams',
+              kind: 'input',
+              type: 'repeater',
+              path: 'teams',
+              props: {
+                removeLabel: 'Remove team',
+                template: {
+                  kind: 'layout',
+                  type: 'grid',
+                  children: [
+                    {
+                      uid: 'developers',
+                      kind: 'input',
+                      type: 'repeater',
+                      path: 'teams.items.developers',
+                      props: {
+                        removeLabel: 'Remove developer',
+                        template: {
+                          kind: 'layout',
+                          type: 'grid',
+                          children: [
+                            {
+                              uid: 'devName',
+                              kind: 'input',
+                              type: 'textinput',
+                              path: 'teams.items.developers.items.name',
+                              on: { change: 'devNameChanged' },
+                            },
+                            {
+                              uid: 'pickDev',
+                              kind: 'action',
+                              type: 'button',
+                              label: 'Pick',
+                              on: { click: 'devPicked' },
+                            },
+                          ],
+                        },
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+            {
+              uid: 'outsideButton',
+              kind: 'action',
+              type: 'button',
+              label: 'Outside',
+              on: { click: 'outsideClicked' },
+            },
+          ],
+        });
+
+      const teamsData = {
+        teams: [
+          { developers: [{ name: 'Ada' }] },
+          { developers: [{ name: 'Linus' }, { name: 'Grace' }] },
+        ],
+      };
+
+      it('Should send every row index of a button in a nested row, and the new row after an outer removal', () => {
+        const formEventHandler = cy.stub().as('formEventHandler');
+        mountFn({ formDef: teamsForm(), data: teamsData, formEvent: formEventHandler });
+
+        cy.get('[data-cy="pickDev[1][1]_button"]').click();
+        cy.get('@formEventHandler').should(() => {
+          const events = eventsNamed(formEventHandler, 'devPicked');
+          expect(events).to.have.length(1);
+          expect(events[0].row).to.deep.equal({
+            index: 1,
+            indexes: [1, 1],
+            path: 'teams.1.developers.1',
+          });
+        });
+
+        // Team 1 moves to position 0, so Grace's button now sends row [0][1]
+        cy.get('.gui-repeater__remove-btn').filter(':contains("Remove team")').eq(0).click();
+        cy.get('[data-cy="devName[1][0]_textinput"]').should('not.exist');
+        cy.get('[data-cy="devName[0][1]_textinput"]').should('have.value', 'Grace');
+        cy.get('[data-cy="pickDev[0][1]_button"]').click();
+        cy.get('@formEventHandler').should(() => {
+          const events = eventsNamed(formEventHandler, 'devPicked');
+          expect(events).to.have.length(2);
+          expect(events[1].row).to.deep.equal({
+            index: 1,
+            indexes: [0, 1],
+            path: 'teams.0.developers.1',
+          });
+          expect(events[1].data['teams'][0].developers[1].name).to.equal('Grace');
+        });
+      });
+
+      it('Should send the row with a change event from an input in a nested row', () => {
+        const formEventHandler = cy.stub().as('formEventHandler');
+        mountFn({ formDef: teamsForm(), data: teamsData, formEvent: formEventHandler });
+
+        cy.get('[data-cy="devName[1][0]_textinput"]').type('!');
+        cy.get('@formEventHandler').should(() => {
+          const events = eventsNamed(formEventHandler, 'devNameChanged');
+          expect(events).to.have.length(1);
+          expect(events[0].row).to.deep.equal({
+            index: 0,
+            indexes: [1, 0],
+            path: 'teams.1.developers.0',
+          });
+          expect(events[0].data['teams'][1].developers[0].name).to.equal('Linus!');
+        });
+      });
+
+      it('Should send no row key with an event from a widget outside any repeater', () => {
+        const formEventHandler = cy.stub().as('formEventHandler');
+        mountFn({ formDef: teamsForm(), data: teamsData, formEvent: formEventHandler });
+
+        cy.get('[data-cy="pickDev[0][0]_button"]').click();
+        cy.get('[data-cy="outsideButton_button"]').click();
+        cy.get('@formEventHandler').should(() => {
+          const insideEvents = eventsNamed(formEventHandler, 'devPicked');
+          expect(insideEvents).to.have.length(1);
+          expect(insideEvents[0]).to.have.property('row');
+          const outsideEvents = eventsNamed(formEventHandler, 'outsideClicked');
+          expect(outsideEvents).to.have.length(1);
+          expect(outsideEvents[0]).to.not.have.property('row');
+        });
       });
     });
 

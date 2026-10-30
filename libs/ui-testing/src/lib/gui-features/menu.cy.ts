@@ -35,12 +35,12 @@ export const runMenuComponentTests = (mountFn: MountComponentFn) => {
       panel(uid).should(([element]) =>
         expect(element.matches(':popover-open'), 'menu open').to.equal(expected),
       );
-    const picks = (name = 'rowAction') =>
+    const picks = (name = 'rowAction', field: 'detail' | 'row' = 'detail') =>
       cy.get('@formEvent').then((stub) =>
         (stub as unknown as sinon.SinonStub)
           .getCalls()
           .filter((call) => call.args[0].name === name)
-          .map((call) => call.args[0].detail),
+          .map((call) => call.args[0][field]),
       );
 
     it('renders a button that names a menu of its items, closed', () => {
@@ -159,6 +159,43 @@ export const runMenuComponentTests = (mountFn: MountComponentFn) => {
 
       picks().should('deep.equal', [{ value: 'edit' }]);
       expectNoDuplicateIds();
+    });
+
+    it('sends the row of the menu with the pick, also in a row reused after a removal', () => {
+      const formEvent = cy.stub().as('formEvent');
+      mountFn({
+        data: { rows: [{ name: 'A' }, { name: 'B' }] },
+        formDef: defineForm({
+          form: [
+            {
+              uid: 'rows',
+              kind: 'input',
+              type: 'repeater',
+              path: 'rows',
+              props: {
+                template: {
+                  kind: 'layout',
+                  type: 'grid',
+                  children: [menuWidget()],
+                },
+              },
+            } as FormWidget<string>,
+          ],
+        }),
+        formEvent,
+      });
+      button(`${UID}[1]`).click();
+      item('edit', `${UID}[1]`).click();
+      picks('rowAction', 'row').should('deep.equal', [{ index: 1, indexes: [1], path: 'rows.1' }]);
+
+      cy.get('.gui-repeater__remove-btn').eq(0).click();
+      button(`${UID}[1]`).should('not.exist');
+      button(`${UID}[0]`).click();
+      item('edit', `${UID}[0]`).click();
+      picks('rowAction', 'row').should('deep.equal', [
+        { index: 1, indexes: [1], path: 'rows.1' },
+        { index: 0, indexes: [0], path: 'rows.0' },
+      ]);
     });
   });
 };

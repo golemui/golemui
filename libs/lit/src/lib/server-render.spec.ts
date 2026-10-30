@@ -1,9 +1,10 @@
 import { type InputWidget, preloadFormWidgets } from '@golemui/core';
 import { Subject } from 'rxjs';
-import { beforeAll, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { renderForm } from '../ssr';
 import { ActionWidgetAdapter } from './adapters/action-widget.adapter';
 import { InputWidgetAdapter } from './adapters/input-widget.adapter';
+import { FormElement } from './components/form/form.element';
 import { type LitFormContext } from './context/form.context';
 import {
   buildConfig,
@@ -149,5 +150,75 @@ describe('server rendering with only the reserved loaders', () => {
 
     expect(markup).toContain('class="stub-flex"');
     expect(markup).toMatch(/<input[^>]*data-label="Name"[^>]*value="Ada"/);
+  });
+});
+
+describe('server rendering the form health', () => {
+  const buildDuplicateUidConfig = () => ({
+    ...buildConfig(),
+    formDef: {
+      form: {
+        uid: 'root',
+        kind: 'layout' as const,
+        type: 'flex',
+        children: [
+          { kind: 'input', type: 'textinput', path: 'firstName', uid: 'same-uid' },
+          { kind: 'input', type: 'textinput', path: 'lastName', uid: 'same-uid' },
+        ],
+      },
+    },
+  });
+
+  // Event listeners are never attached during a server render, so the spec records the events
+  // that the form element dispatches.
+  const recordHealthEvents = () => {
+    const dispatched: Event[] = [];
+    vi.spyOn(FormElement.prototype, 'dispatchEvent').mockImplementation((event: Event) => {
+      dispatched.push(event);
+      return true;
+    });
+    return () =>
+      dispatched
+        .filter((event) => event.type === FormElement.FORM_HEALTH_EVENT)
+        .map((event) => (event as CustomEvent).detail);
+  };
+
+  beforeAll(async () => {
+    await preloadFormWidgets({ widgetLoaders: stubWidgetLoaders as any });
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('dispatches formHealth with the ok status for a valid config', async () => {
+    const healthEvents = recordHealthEvents();
+
+    const markup = await renderFixtureForm();
+
+    expect(markup).toMatch(/<div[^>]*class="stub-flex"/);
+    expect(healthEvents()).toEqual([{ status: 'ok' }]);
+  });
+
+  it('writes the error message of a duplicate uid into the markup, logs it and dispatches it', async () => {
+    const healthEvents = recordHealthEvents();
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+
+    const markup = await renderForm({
+      config: buildDuplicateUidConfig(),
+      validators: noopValidators,
+    });
+
+    expect(markup).toContain('gui-form-health-error');
+    expect(markup).toContain('[21] Duplicate UID');
+    expect(markup).not.toContain('<input');
+    expect(consoleError).toHaveBeenCalledWith(
+      'GolemUI form failed to initialize:',
+      expect.stringContaining('[21] Duplicate UID'),
+    );
+    // The element subscribes before INITIALIZE, so a first "ok" can come before the error.
+    const statuses = healthEvents().map((health) => health.status);
+    expect(statuses.filter((status) => status === 'errored')).toHaveLength(1);
+    expect(statuses.at(-1)).toBe('errored');
   });
 });

@@ -23,6 +23,107 @@ describe('calculateCurrentState', () => {
     expect(next.formHealth.status).toBe('ok');
   });
 
+  describe('state hierarchy', () => {
+    it('keeps a child state inactive while its parent state is false', () => {
+      state.formDef.states = { register: 'false', 'register:adult': 'true' };
+
+      const next = runCurrentState(state);
+
+      expect(next.currentStates).toEqual([]);
+    });
+
+    it('activates a child state on its own when the same expression has no parent', () => {
+      state.formDef.states = { 'register:adult': 'true' };
+
+      const next = runCurrentState(state);
+
+      expect(next.currentStates).toEqual(['register:adult']);
+    });
+
+    it('activates a parent and its child when both expressions are true', () => {
+      state.formDef.states = { register: 'true', 'register:adult': 'true' };
+
+      const next = runCurrentState(state);
+
+      expect(next.currentStates).toEqual(['register', 'register:adult']);
+    });
+
+    it('requires every declared level of a three level state', () => {
+      state.formDef.states = {
+        register: 'true',
+        'register:minor': '$form.age < 18',
+        'register:minor:tall': '$form.height > 180',
+      };
+
+      state.data = { age: 15, height: 190 };
+      expect(runCurrentState(state).currentStates).toEqual([
+        'register',
+        'register:minor',
+        'register:minor:tall',
+      ]);
+
+      state.data = { age: 30, height: 190 };
+      expect(runCurrentState(state).currentStates).toEqual(['register']);
+    });
+
+    it('skips an undeclared middle level and still requires the declared ones', () => {
+      state.formDef.states = { a: 'true', 'a:b:c': 'true' };
+      expect(runCurrentState(state).currentStates).toEqual(['a', 'a:b:c']);
+
+      state.formDef.states = { a: 'false', 'a:b:c': 'true' };
+      expect(runCurrentState(state).currentStates).toEqual([]);
+    });
+
+    it('lists the active states in declaration order', () => {
+      state.formDef.states = { bb: 'true', aa: 'true', c: 'true', off: 'false' };
+
+      const next = runCurrentState(state);
+
+      expect(next.currentStates).toEqual(['bb', 'aa', 'c']);
+    });
+  });
+
+  describe('results that are not the boolean true', () => {
+    it('activates a state when its expression returns true', () => {
+      state.formDef.states = { isTrue: 'true' };
+
+      expect(runCurrentState(state).currentStates).toEqual(['isTrue']);
+    });
+
+    it.each([
+      ["'yes'", 'a string'],
+      ['1', 'a number'],
+      ['({})', 'an object'],
+      ['$form.missing', 'undefined'],
+    ])('keeps a state inactive when its expression %s returns %s', (expression) => {
+      state.formDef.states = { result: expression, always: 'true' };
+
+      const next = runCurrentState(state);
+
+      expect(next.currentStates).toEqual(['always']);
+      expect(next.formHealth.status).toBe('ok');
+    });
+
+    it('treats an empty expression as an inactive state and keeps the form healthy', () => {
+      state.formDef.states = { empty: '', always: 'true' };
+
+      const next = runCurrentState(state);
+
+      expect(next.currentStates).toEqual(['always']);
+      expect(next.formHealth.status).toBe('ok');
+    });
+
+    it('treats an expression that reads a repeater row as an inactive state', () => {
+      state.formDef.states = { inRow: '$item.x === 1', always: 'true' };
+      state.data = { x: 1 };
+
+      const next = runCurrentState(state);
+
+      expect(next.currentStates).toEqual(['always']);
+      expect(next.formHealth.status).toBe('ok');
+    });
+  });
+
   describe('$fn host functions', () => {
     const functions: ExpressionFunctions = {
       isRegistered: (form: { userId?: string }) => form.userId !== undefined,

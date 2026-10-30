@@ -1,13 +1,14 @@
-import type {
-  FormEvent,
-  FormHealth,
-  FormSubmitEvent,
-  WidgetLoaders,
-  WithWidget,
+import {
+  type FormEvent,
+  type FormHealth,
+  type FormSubmitEvent,
+  preloadFormWidgets,
+  type WidgetLoaders,
+  type WithWidget,
 } from '@golemui/core';
 import { type Dependencies, type GuiFormInitConfig } from '@golemui/gui-shared';
 import type { FormComponentHandle } from '@golemui/react';
-import { type MountOptions, type SetConfigInput } from '@golemui/ui-testing';
+import { afterTwoFrames, type MountOptions, type SetConfigInput } from '@golemui/ui-testing';
 import { mount } from 'cypress/react';
 import {
   type ComponentType,
@@ -18,9 +19,12 @@ import {
   useState,
 } from 'react';
 import { GuiForm } from '../../src/lib/components/Form';
+import { widgetLoaders } from '../../src/lib/widget.loaders';
+import { CustomItemRenderer } from '../components/custom-item-renderer/CustomItemRenderer';
 
 interface ConfigHarnessHandle {
   setConfig: (next: SetConfigInput) => void;
+  rerender: () => void;
 }
 
 interface ConfigHarnessProps {
@@ -29,15 +33,17 @@ interface ConfigHarnessProps {
   formEvent: (event: FormEvent) => void | Promise<void>;
   formHealth: (health: FormHealth) => void | Promise<void>;
   formSubmit: (event: FormSubmitEvent) => void;
+  autocomplete?: string;
 }
 
 // Holds the config in state so a test can replace it, which is how a host app
 // triggers a form reinitialization.
 const ConfigHarness = forwardRef<ConfigHarnessHandle, ConfigHarnessProps>(function ConfigHarness(
-  { initialConfig, formRef, formEvent, formHealth, formSubmit },
+  { initialConfig, formRef, formEvent, formHealth, formSubmit, autocomplete },
   ref,
 ) {
   const [config, setConfig] = useState(initialConfig);
+  const [, setRenderCount] = useState(0);
   useImperativeHandle(ref, () => ({
     setConfig: (next) =>
       setConfig((current) => ({
@@ -45,7 +51,10 @@ const ConfigHarness = forwardRef<ConfigHarnessHandle, ConfigHarnessProps>(functi
         formDef: next.formDef,
         data: next.data,
         meta: next.meta,
+        formName: 'formName' in next ? next.formName : current.formName,
+        localization: 'localization' in next ? next.localization : current.localization,
       })),
+    rerender: () => setRenderCount((count) => count + 1),
   }));
   return (
     <GuiForm
@@ -54,6 +63,7 @@ const ConfigHarness = forwardRef<ConfigHarnessHandle, ConfigHarnessProps>(functi
       formEvent={formEvent}
       formHealth={formHealth}
       formSubmit={formSubmit}
+      autocomplete={autocomplete}
     />
   );
 });
@@ -64,6 +74,10 @@ export const mountFramework = (options: MountOptions) => {
         heading: async () =>
           (await import('../components/heading/heading.component')).HeadingComponent,
         customdate: async () => (await import('../components/custom-date/Customdate')).Customdate,
+        customLayout: async () =>
+          (await import('../components/custom-layout/CustomLayout')).CustomLayout,
+        customAction: async () =>
+          (await import('../components/custom-action/CustomAction')).CustomAction,
       }
     : {};
 
@@ -84,8 +98,17 @@ export const mountFramework = (options: MountOptions) => {
     // The conformance MountOptions declare the open dependency record. The gui suites pass gui dependencies.
     dependencies: options.dependencies as Dependencies | undefined,
     functions: options.functions,
+    formName: options.formName,
     customWidgetLoaders,
+    itemRenderers: options.withCustomItemRenderer ? { custom: CustomItemRenderer } : undefined,
   };
+
+  if (options.preloadWidgets) {
+    // The same loader references as the form, because the loaded components are stored by loader.
+    cy.then(() =>
+      preloadFormWidgets({ widgetLoaders: { ...widgetLoaders, ...customWidgetLoaders } }),
+    );
+  }
 
   const formRef = createRef<FormComponentHandle>();
   const harnessRef = createRef<ConfigHarnessHandle>();
@@ -98,6 +121,7 @@ export const mountFramework = (options: MountOptions) => {
       formEvent={handleFormEvent}
       formHealth={handleFormHealth}
       formSubmit={handleFormSubmit}
+      autocomplete={options.autocomplete}
     />,
   );
 
@@ -113,6 +137,10 @@ export const mountFramework = (options: MountOptions) => {
           setData: (data) => formRef.current!.setData(data),
           setMeta: (meta) => formRef.current!.setMeta(meta),
           setConfig: (next) => harnessRef.current!.setConfig(next),
+          rerender: () => {
+            harnessRef.current!.rerender();
+            return afterTwoFrames();
+          },
         });
       });
   }

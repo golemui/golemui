@@ -270,6 +270,29 @@ describe('widgetViewModel', () => {
     expect(widgetViewModel(injected, 'firstName').errors).toEqual(['required', 'already taken']);
   });
 
+  it('reports the errors of an untouched input once a blur on another input touched the form', () => {
+    const required = (uid: string) => ({
+      uid,
+      kind: 'input',
+      type: 'textinput',
+      path: uid,
+      validator: { required: true },
+    });
+    const loaded = drive([init({ form: [required('first'), required('second')] }), setData({})]);
+    expect(widgetViewModel(loaded, 'second').errors).toEqual([]);
+
+    const state = makeReducer()(loaded, {
+      type: 'ATTEMPT_VALIDATION',
+      payload: { reason: 'blur', path: 'first', uid: 'first' },
+    });
+
+    expect(widgetViewModel(state, 'first')).toMatchObject({ errors: ['required'], touched: true });
+    expect(widgetViewModel(state, 'second')).toMatchObject({
+      errors: ['required'],
+      touched: false,
+    });
+  });
+
   it('reports a hidden widget as hidden and recovers when it is revealed', () => {
     const reduce = makeReducer();
     let state = drive([init(makeBaseFormDef()), setData({ users: [] })]);
@@ -486,6 +509,18 @@ describe('createWidgetViewModelReader', () => {
     expect(after).not.toBe(before);
     expect(after.formInvalid).toBe(true);
     expect(after.rows).toBe(before.rows);
+  });
+
+  it('returns the identical view model when VALIDATE_ALL finds the same failure again', () => {
+    const reduce = makeReducer();
+    let state = drive([init(makeBaseFormDef()), setData({ users: [] }), validateAllAction]);
+    const read = createWidgetViewModelReader();
+
+    const before = read<string>(state, 'firstName');
+    expect(before.errors).toEqual(['required']);
+    state = reduce(state, validateAllAction);
+
+    expect(read(state, 'firstName')).toBe(before);
   });
 
   it('reuses the children array when only the form-invalid flag changed', () => {

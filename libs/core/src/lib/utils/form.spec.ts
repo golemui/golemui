@@ -77,6 +77,27 @@ describe('utils.form', () => {
       expect(result.$errors).not.toHaveProperty('name');
       expect(result.$errors).toMatchObject({ age: ['Too young'] });
     });
+
+    it('replaces the message of a container with the errors of row 0 when that row has an error', () => {
+      const result = calculateValidationVariables(
+        makeState({
+          users: ['min 2'],
+          'users.0.name': ['required'],
+          'users.1.name': ['too short'],
+        }),
+      );
+      expect(result).toEqual({
+        $formIsInvalid: true,
+        $errors: { users: [{ name: ['required'] }, { name: ['too short'] }] },
+      });
+    });
+
+    it('keeps the message of a container at index 0 when only row 1 has an error', () => {
+      const result = calculateValidationVariables(
+        makeState({ users: ['min 2'], 'users.0.name': null, 'users.1.name': ['required'] }),
+      );
+      expect(result.$errors).toEqual({ users: ['min 2', { name: ['required'] }] });
+    });
   });
 
   describe('pruneHiddenData', () => {
@@ -218,6 +239,15 @@ describe('utils.form', () => {
       const pruned = pruneHiddenData(state);
       expect(pruned).toEqual({ tags: ['a', undefined, undefined, 'd'] });
       expect(Object.keys(pruned['tags'])).toEqual(['0', '3']);
+    });
+
+    it('keeps the data at paths no input owns', () => {
+      const state = makeState(
+        { extra: 'hidden value', notes: { draft: 'x' }, tags: ['a'] },
+        { extraField: { hidden: true } },
+        { extraField: inputWidget('extra') },
+      );
+      expect(pruneHiddenData(state)).toEqual({ notes: { draft: 'x' }, tags: ['a'] });
     });
   });
 });

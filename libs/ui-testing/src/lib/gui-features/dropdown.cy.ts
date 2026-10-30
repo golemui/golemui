@@ -1,5 +1,5 @@
 import { defineForm } from '@golemui/core';
-import { type MountComponentFn } from '../utils';
+import { eventsNamed, type MountComponentFn } from '../utils';
 
 export const runDropdownComponentTests = (mountFn: MountComponentFn) => {
   describe('Dropdown Component', () => {
@@ -93,6 +93,36 @@ export const runDropdownComponentTests = (mountFn: MountComponentFn) => {
 
       cy.get('[data-cy="testSubject_textinput"]').clear();
       visibleItems().should('have.length', 3);
+    });
+
+    it('should send a filter event with what the user typed', () => {
+      const formEventHandler = cy.stub().as('formEventHandler');
+      mountFn({
+        formDef: defineForm({
+          form: [
+            {
+              uid: 'testSubject',
+              kind: 'input',
+              type: 'dropdown',
+              path: 'myField',
+              props: { items: ['Spain', 'France'], inputDebounce: 0 },
+              on: { filter: 'searched' },
+            },
+          ],
+        }),
+        formEvent: formEventHandler,
+      });
+
+      // Nothing is sent before the user types. The rendered input is the control.
+      cy.get('[data-cy="testSubject_textinput"]').should('exist');
+      cy.get('@formEventHandler').should(() => {
+        expect(eventsNamed(formEventHandler, 'searched')).to.have.length(0);
+      });
+      cy.get('[data-cy="testSubject_textinput"]').type('ab');
+      cy.get('@formEventHandler').should(() => {
+        const details = eventsNamed(formEventHandler, 'searched').map((event) => event.detail);
+        expect(details).to.include('ab');
+      });
     });
 
     it('should select a filtered primitive item', () => {

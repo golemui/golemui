@@ -1,0 +1,8 @@
+import {
+  runItemRenderersComponentTests,
+  runUnknownItemRendererComponentTests,
+} from '@golemui/ui-testing';
+import { mountFramework } from '../../support/mount';
+
+runItemRenderersComponentTests(mountFramework);
+runUnknownItemRendererComponentTests(mountFramework);

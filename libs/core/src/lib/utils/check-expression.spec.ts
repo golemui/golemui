@@ -236,6 +236,22 @@ describe('checkExpression', () => {
     ])('accepts %s', (expression) => {
       expect(checkExpression(expression)).toEqual([]);
     });
+
+    it.each([
+      '$route.id',
+      '$route.id === 1',
+      '$route',
+      '$form.items.map($route => $route.id)',
+      '$form.items.map(({ $route }) => $route)',
+    ])('accepts %s, because the check does not know the name $route', (expression) => {
+      expect(checkExpression(expression)).toEqual([]);
+    });
+
+    it('rejects a call of the name $route with every policy', () => {
+      // Only $log is called by name, so an unknown root is allowed as a value but not as a callee.
+      expect(rejectedEveryPolicy(checkExpression('$route(1)'))).toBe(true);
+      expect(checkExpression('$route.id')).toEqual([]);
+    });
   });
 });
 

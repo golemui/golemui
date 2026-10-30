@@ -1,17 +1,20 @@
 import { CommonModule } from '@angular/common';
 import { EventEmitter, provideZoneChangeDetection, type Type } from '@angular/core';
 import { FormCoreComponent } from '@golemui/angular';
-import type {
-  FormEvent,
-  FormHealth,
-  FormSubmitEvent,
-  WidgetLoaders,
-  WithWidget,
+import {
+  type FormEvent,
+  type FormHealth,
+  type FormSubmitEvent,
+  preloadFormWidgets,
+  type WidgetLoaders,
+  type WithWidget,
 } from '@golemui/core';
 import { type Dependencies, type GuiFormInitConfig } from '@golemui/gui-shared';
-import { type MountOptions } from '@golemui/ui-testing';
+import { afterTwoFrames, type MountOptions } from '@golemui/ui-testing';
 import { createOutputSpy, mount } from 'cypress/angular';
 import { FormComponent } from '../../src/lib/components/form/form.component';
+import { widgetLoaders } from '../../src/lib/widget.loaders';
+import { CustomItemRendererComponent } from '../components/custom-item-renderer/custom-item-renderer.component';
 
 export const mountFramework = (options: MountOptions) => {
   const customWidgetLoaders: WidgetLoaders<Type<WithWidget>> = options.withCustomComponent
@@ -20,6 +23,12 @@ export const mountFramework = (options: MountOptions) => {
           (await import('../components/heading/heading.component')).HeadingComponent,
         customdate: async () =>
           (await import('../components/custom-date/custom-date.component')).CustomdateComponent,
+        customLayout: async () =>
+          (await import('../components/custom-layout/custom-layout.component'))
+            .CustomLayoutComponent,
+        customAction: async () =>
+          (await import('../components/custom-action/custom-action.component'))
+            .CustomActionComponent,
       }
     : {};
 
@@ -62,13 +71,25 @@ export const mountFramework = (options: MountOptions) => {
     // The conformance MountOptions declare the open dependency record. The gui suites pass gui dependencies.
     dependencies: options.dependencies as Dependencies | undefined,
     functions: options.functions,
+    formName: options.formName,
+    itemRenderers: options.withCustomItemRenderer
+      ? { custom: CustomItemRendererComponent }
+      : undefined,
   };
+
+  if (options.preloadWidgets) {
+    // The same loader references as the form, because the loaded components are stored by loader.
+    cy.then(() =>
+      preloadFormWidgets({ widgetLoaders: { ...widgetLoaders, ...customWidgetLoaders } }),
+    );
+  }
 
   mount(FormComponent, {
     imports: [CommonModule, FormCoreComponent],
     providers: [provideZoneChangeDetection()],
     componentProperties: {
       config,
+      autocomplete: options.autocomplete,
       formHealth: formHealthOutput,
       formEvent: formEventOutput,
       formSubmit: formSubmitOutput,
@@ -88,12 +109,21 @@ export const mountFramework = (options: MountOptions) => {
           formDef: next.formDef,
           data: next.data,
           meta: next.meta,
+          formName: 'formName' in next ? next.formName : currentConfig.formName,
+          localization: 'localization' in next ? next.localization : currentConfig.localization,
         };
         fixture.componentRef.setInput('config', currentConfig);
         // Two runs for the same reason as above: the first schedules the toObservable effect,
         // the second flushes it.
         fixture.detectChanges();
         fixture.detectChanges();
+      },
+      rerender: () => {
+        // A host template that renders again with the same object sets no input. Only change
+        // detection runs again.
+        fixture.detectChanges();
+        fixture.detectChanges();
+        return afterTwoFrames();
       },
     });
   });
