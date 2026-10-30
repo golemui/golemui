@@ -1,3 +1,7 @@
+## 2.1.0-rc.3 (2026-10-30)
+
+This was a version bump only for vue to align it with other projects, there were no code changes.
+
 ## 2.1.0-rc.2 (2026-10-29)
 
 ### 🩹 Fixes

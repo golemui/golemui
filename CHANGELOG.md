@@ -1,3 +1,13 @@
+## 2.1.0-rc.3 (2026-10-30)
+
+### 🩹 Fixes
+
+- **gui-components:** misc issues v2.1.0 rc.2 ([#491](https://github.com/golemui/golemui/pull/491))
+
+### ❤️ Thank You
+
+- Raúl Jiménez @Elecash
+
 ## 2.1.0-rc.2 (2026-10-29)
 
 ### 🚀 Features
