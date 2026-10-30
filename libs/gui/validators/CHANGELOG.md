@@ -1,3 +1,14 @@
+## 2.1.0 (2026-10-30)
+
+### 🚀 Features
+
+- add OTP widget and exactLength validator ([#467](https://github.com/golemui/golemui/pull/467))
+- add slider and range slider widgets ([#464](https://github.com/golemui/golemui/pull/464))
+
+### ❤️ Thank You
+
+- Raúl Jiménez @Elecash
+
 ## 2.1.0-rc.3 (2026-10-30)
 
 This was a version bump only for gui-validators to align it with other projects, there were no code changes.

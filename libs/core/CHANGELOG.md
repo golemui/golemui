@@ -1,3 +1,22 @@
+## 2.1.0 (2026-10-30)
+
+### 🚀 Features
+
+- **core:** add the repeater row to form events ([#481](https://github.com/golemui/golemui/pull/481))
+
+### 🩹 Fixes
+
+- **core:** keep a param named __proto__ in i18n params ([#483](https://github.com/golemui/golemui/pull/483))
+- **core:** keep the index of hidden rows in a repeater of plain values ([#482](https://github.com/golemui/golemui/pull/482))
+- **core:** reject prototype segments in data paths ([#469](https://github.com/golemui/golemui/pull/469))
+- **core:** reject code execution paths in reactive expressions ([#466](https://github.com/golemui/golemui/pull/466))
+- **core:** translate nested string properties in objects and arrays ([#458](https://github.com/golemui/golemui/pull/458))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
 ## 2.1.0-rc.3 (2026-10-30)
 
 This was a version bump only for core to align it with other projects, there were no code changes.

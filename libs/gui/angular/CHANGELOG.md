@@ -1,3 +1,23 @@
+## 2.1.0 (2026-10-30)
+
+### 🚀 Features
+
+- add OTP widget and exactLength validator ([#467](https://github.com/golemui/golemui/pull/467))
+- add slider and range slider widgets ([#464](https://github.com/golemui/golemui/pull/464))
+- **gui-components:** add toast and radiogroup segmented appearence ([#462](https://github.com/golemui/golemui/pull/462))
+- add the menu action widget ([#460](https://github.com/golemui/golemui/pull/460))
+- **gui-angular,gui-components,gui-lit,gui-react,gui-vue:** use floating panels in framework dropdowns ([7b84f0b2](https://github.com/golemui/golemui/commit/7b84f0b2))
+
+### 🩹 Fixes
+
+- **gui-components:** add missing aria label and remove dead css ([#490](https://github.com/golemui/golemui/pull/490))
+- **gui-components:** avoid open pickers on focus ([f8095b45](https://github.com/golemui/golemui/commit/f8095b45))
+
+### ❤️ Thank You
+
+- Raúl Jiménez @Elecash
+- Raúl Jiménez @Elecash
+
 ## 2.1.0-rc.3 (2026-10-30)
 
 This was a version bump only for gui-angular to align it with other projects, there were no code changes.

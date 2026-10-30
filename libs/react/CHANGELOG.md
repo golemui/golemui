@@ -1,3 +1,20 @@
+## 2.1.0 (2026-10-30)
+
+### 🚀 Features
+
+- add the menu action widget ([#460](https://github.com/golemui/golemui/pull/460))
+- **react:** render forms in renderers without a DOM ([#440](https://github.com/golemui/golemui/pull/440))
+
+### 🩹 Fixes
+
+- **react:** keep the form mounted on a health error, and type widgetErrorFallback on GuiForm ([#485](https://github.com/golemui/golemui/pull/485))
+- **core:** reject code execution paths in reactive expressions ([#466](https://github.com/golemui/golemui/pull/466))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
 ## 2.1.0-rc.3 (2026-10-30)
 
 This was a version bump only for react to align it with other projects, there were no code changes.
