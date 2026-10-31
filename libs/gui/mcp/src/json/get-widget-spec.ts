@@ -52,7 +52,6 @@ const EXAMPLES: Record<string, Record<string, unknown>> = {
       placeholder: 'Add a keyword and press Enter',
       separators: ['Enter', ','],
       trim: true,
-      allowDuplicates: false,
     },
     validator: {
       type: 'array',
@@ -368,7 +367,7 @@ const NOTES: Record<string, string[]> = {
   ],
   tags: [
     'Use `tags` for free-form arrays of primitive values (typically `string[]`) — e.g. keywords, email lists, hashtags. Backing data is `string[]`. For arrays of structured objects, use `repeater` instead.',
-    '`props.separators` controls which keys/characters commit a new tag. Defaults emit on `Enter` and `,`; you can also include `"Tab"` or `"blur"`. `props.trim` strips whitespace from each tag; `props.allowDuplicates: false` rejects repeats.',
+    '`props.separators` controls which keys/characters commit a new tag. Defaults emit on `Enter` and `,`; you can also include `"Tab"` or `"blur"`. `props.trim` strips whitespace from each tag; a repeated tag is skipped unless `props.allowDuplicates` is `true`.',
     'Validate with an `arrayValidator`: `{ type: "array", minItems, maxItems, uniqueItems }`. Entry is never silently blocked — cap the tag count with `maxItems` so the user is told why.',
   ],
   fileUpload: [

@@ -16,7 +16,6 @@
         "addLabel": "Add new developer",
         "addLabel.limitReached": "'Limit Reached, you can't add more'",
         "removeLabel": "Delete",
-        "limit": 5,
         "template": {
           "kind": "layout",
           "type": "grid",

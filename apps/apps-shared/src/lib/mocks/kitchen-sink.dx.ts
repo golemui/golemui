@@ -175,7 +175,7 @@ const data: Record<string, unknown> = {
   tags: {
     basic: ['hello', 'world'],
     withIcon: [],
-    noDuplicates: ['unique'],
+    duplicates: ['vip', 'vip'],
     limited: [],
     scrollable: [
       'design',

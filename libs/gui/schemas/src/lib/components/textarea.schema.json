@@ -29,7 +29,9 @@
       "type": "boolean"
     },
     "maxLengthProp": {
-      "type": "number"
+      "type": "number",
+      "deprecated": true,
+      "description": "Deprecated: use `validator.maxLength`. This prop has no effect, and it will be removed in v3.0.0."
     },
     "autocompleteProp": {
       "type": "string"

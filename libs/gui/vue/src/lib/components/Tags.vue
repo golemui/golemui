@@ -32,7 +32,7 @@ const required = computed(() => (templateData.value.validator as Validator)?.req
       :placeholder="templateData.placeholder ?? undefined"
       :icon="templateData.icon"
       :separators="templateData.separators"
-      :allowDuplicates="templateData.allowDuplicates ?? true"
+      :allowDuplicates="templateData.allowDuplicates ?? false"
       :trim="templateData.trim ?? true"
       :removeAriaLabel="templateData.removeAriaLabel"
       :removeIcon="templateData.removeIcon"

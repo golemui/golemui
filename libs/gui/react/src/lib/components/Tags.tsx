@@ -22,7 +22,7 @@ export function Tags(widgetInstance: WithWidget) {
   const placeholder = templateData.placeholder;
   const icon = templateData.icon;
   const separators = templateData.separators;
-  const allowDuplicates = templateData.allowDuplicates ?? true;
+  const allowDuplicates = templateData.allowDuplicates ?? false;
   const trim = templateData.trim ?? true;
   const removeAriaLabel = templateData.removeAriaLabel;
   const removeIcon = templateData.removeIcon;

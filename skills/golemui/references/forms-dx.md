@@ -62,7 +62,7 @@ Every `gui.*` factory and its calling convention. Look up the detail below for t
 - `gui.inputs.rangeSlider(path, { label, minimum?, maximum?, step?, marks?, format?, valuePlacement?, startLabel?, endLabel?, defaultValue?, validator? })`
 - `gui.inputs.rangeTimeInput(path, { label?, minTime?, maxTime? })`
 - `gui.inputs.rangeTimePicker(path, { label?, minTime?, maxTime? })`
-- `gui.inputs.repeater(path, { label?, addLabel?, removeLabel?, limit?, template })`
+- `gui.inputs.repeater(path, { label?, addLabel?, removeLabel?, validator?, template })`
 - `gui.inputs.select(path, { label, options, validator? })`
 - `gui.inputs.slider(path, { label, minimum?, maximum?, step?, marks?, format?, valuePlacement?: 'label' | 'bubble' | 'both' | 'hidden', defaultValue?, validator? })`
 - `gui.layouts.tabs(sections)`
@@ -686,7 +686,7 @@ Reference: https://golemui.com/dx/widgets-reference/input-fields/range-time-pick
 
 ## gui.inputs.repeater
 
-Call: `gui.inputs.repeater(path, { label?, addLabel?, removeLabel?, limit?, template })`
+Call: `gui.inputs.repeater(path, { label?, addLabel?, removeLabel?, validator?, template })`
 
 ```ts
 gui.inputs.repeater('attendees', {
@@ -698,7 +698,7 @@ gui.inputs.repeater('attendees', {
 
 - The variable-length array field: the user adds/removes rows at runtime, each rendering the `template`. This is the idiomatic way to collect an UNKNOWN number of items — do NOT hand-roll N pre-generated copies gated by `include.when` (a common but wrong workaround).
 - Child field paths inside the template are **`<path>.items.<field>`** — a repeater on `'attendees'` holds `gui.inputs.textInput('attendees.items.name', …)`. At RUNTIME each `items` token is replaced by the row's array index (`attendees.items.name` → `attendees[0].name`, `attendees[1].name`, …); nesting a repeater inside a template adds another `.items.` segment (`teams.items.members.items.name`).
-- `limit` caps the number of rows; `addLabel`/`removeLabel` set the button text.
+- `validator: { maxItems }` caps the number of rows and shows an error past the cap (the `limit` prop is deprecated); `addLabel`/`removeLabel` set the button text.
 - PER-ROW EVENTS: every form event from a widget inside a row carries `row: { index, indexes, path }`, for example `{ index: 1, indexes: [2, 1], path: 'teams.2.devs.1' }`. `indexes` lists the position in every enclosing repeater, outermost first. `path` is the data path of the row. Outside a repeater `row` is undefined. Read it in the host `formEvent` handler (`e.row`), in a menu `onClick: (event) => ...`, or in an input `onChange: (event) => ...`. A button `onClick` handler receives only the form data, so it cannot read `row`: return a host event name instead (`onClick: () => 'rowPicked'`) and read `e.row` in `formEvent`.
 - PER-ROW OPTIONS: do NOT set options that depend on the row data with `event.update` from a row event. An override stays at its row position, so after a row is removed, the row that moves into that position shows the options of the removed row. Use a definition callback that reads `$item`, the data of its own row: `gui.inputs.dropdown('users.items.city', ({ $item }) => ({ label: 'City', items: citiesOf($item?.country) }))`.
 

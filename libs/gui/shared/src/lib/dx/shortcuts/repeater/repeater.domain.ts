@@ -8,6 +8,10 @@ export interface RepeaterDecorator extends DxCommonFields {
   label?: string;
   addLabel?: string;
   removeLabel?: string;
+  /**
+   * @deprecated Use `validator.maxItems`, which shows an error past the cap instead of disabling
+   * the add button without a message. It will be removed in v3.0.0.
+   */
   limit?: number;
   title?: string;
   addButtonIcon?: string;

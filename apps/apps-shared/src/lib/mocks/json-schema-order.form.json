@@ -125,7 +125,6 @@
         "title": "Line",
         "addLabel": "Add line",
         "removeLabel": "Remove",
-        "limit": 5,
         "template": {
           "kind": "layout",
           "type": "grid",

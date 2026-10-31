@@ -50,10 +50,10 @@ export class GuiTags extends GuiFormControl {
    * which also splits pasted text. `blur` adds it when focus leaves.
    */
   @property({ type: Array }) separators: TagsSeparator[] | undefined = undefined;
-  /** Allows the same tag more than once. On by default: `allow-duplicates="false"` turns it off. */
+  /** Allows the same tag more than once. Off by default, so a repeated tag is skipped. */
   @property({ attribute: 'allow-duplicates', converter: booleanAttribute }) allowDuplicates:
     | boolean
-    | undefined = true;
+    | undefined = false;
   /** Removes spaces around each tag. On by default: `trim="false"` turns it off. */
   @property({ converter: booleanAttribute }) trim: boolean | undefined = true;
   /** Accessible name of the remove button of each tag. An empty value keeps the default. */
@@ -317,7 +317,7 @@ export class GuiTags extends GuiFormControl {
     if (cleaned.length === 0) return false;
 
     const tags = this.getValue();
-    if (this.allowDuplicates === false && tags.includes(cleaned)) return true;
+    if (!this.allowDuplicates && tags.includes(cleaned)) return true;
 
     this.emitChange([...tags, cleaned]);
     return true;
@@ -329,7 +329,7 @@ export class GuiTags extends GuiFormControl {
     for (const raw of rawDrafts) {
       const cleaned = this.clean(raw);
       if (cleaned.length === 0) continue;
-      if (this.allowDuplicates === false && next.includes(cleaned)) continue;
+      if (!this.allowDuplicates && next.includes(cleaned)) continue;
       next.push(cleaned);
     }
     if (next.length === tags.length) return false;

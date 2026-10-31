@@ -163,7 +163,6 @@
               "validator": { "type": "array", "minItems": 2, "maxItems": 10 },
               "props": {
                 "addLabel": "Add Pallet",
-                "limit": 20,
                 "template": {
                   "uid": "pallet_item",
                   "kind": "layout",
