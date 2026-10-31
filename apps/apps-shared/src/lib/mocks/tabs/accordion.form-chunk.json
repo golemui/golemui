@@ -23,12 +23,14 @@
           "kind": "input",
           "type": "textinput",
           "path": "shoppingCart.firstName",
+          "label": "First name",
           "validator": { "type": "string", "required": true }
         },
         {
           "kind": "input",
           "type": "textinput",
           "path": "shoppingCart.lastName",
+          "label": "Last name",
           "validator": { "type": "string", "required": true }
         }
       ]
@@ -43,12 +45,14 @@
           "kind": "input",
           "type": "textinput",
           "path": "shoppingCart.shippingAddress",
+          "label": "Shipping address",
           "validator": { "type": "string", "required": true }
         },
         {
           "kind": "input",
           "type": "textinput",
           "path": "shoppingCart.shippingState",
+          "label": "Shipping state",
           "validator": { "type": "string", "required": true }
         }
       ]
@@ -63,12 +67,14 @@
           "kind": "input",
           "type": "textinput",
           "path": "shoppingCart.billingAddress",
+          "label": "Billing address",
           "validator": { "type": "string", "required": true }
         },
         {
           "kind": "input",
           "type": "textinput",
           "path": "shoppingCart.billingState",
+          "label": "Billing state",
           "validator": { "type": "string", "required": true }
         }
       ]

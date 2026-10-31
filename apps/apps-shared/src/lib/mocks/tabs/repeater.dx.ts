@@ -13,8 +13,12 @@ export const repeaterTab = gui.layouts.grid([
     },
     template: [
       gui.layouts.horizontalGrid([
-        gui.inputs.textInput('firstName', { size: 5, validator: { required: true } }),
-        gui.inputs.textInput('lastName', { size: 5 }),
+        gui.inputs.textInput('firstName', {
+          label: 'First name',
+          size: 5,
+          validator: { required: true },
+        }),
+        gui.inputs.textInput('lastName', { label: 'Last name', size: 5 }),
         gui.actions.menu({
           uid: 'userRowMenu',
           ariaLabel: 'Row actions',

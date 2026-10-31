@@ -8,17 +8,20 @@ export const radiogroupTab = gui.layouts.grid([
     options: ['hello', 'bye'],
   }),
   gui.inputs.radiogroup('radiogroups.wrongGreeting', {
+    label: 'Greeting with an unknown value',
     hint: 'No option should be selected, because the provided data does not match the enum of options. A validation error should also be displayed',
     options: ['hello', 'bye'],
     validator: { type: 'string', required: true },
   }),
   gui.inputs.radiogroup('radiogroups.requiredUnselected', {
+    label: 'Required greeting',
     hint: 'No option should be selected, and a validation error should be displayed because the field is required',
     options: ['hello', 'bye'],
     direction: 'row',
     validator: { type: 'string', required: true },
   }),
   gui.inputs.radiogroup('radiogroups.greetingIndex', {
+    label: 'Greeting by index',
     hint: '"bye.2" should be selected',
     options: [
       { label: 'hello.1', value: 1 },
@@ -53,6 +56,7 @@ export const radiogroupTab = gui.layouts.grid([
     onChange: () => 'getCountriesForRadio',
   }),
   gui.inputs.radiogroup('radiogroups.country', {
+    label: 'Country',
     include: { in: ['hasSubregionRadiogroup'] },
   }),
 ]);

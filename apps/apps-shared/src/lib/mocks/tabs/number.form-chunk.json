@@ -24,6 +24,7 @@
       "kind": "input",
       "type": "number",
       "path": "numberDisabled",
+      "label": "Disabled number",
       "disabled": true,
       "readonly": true
     },
@@ -31,6 +32,7 @@
       "kind": "input",
       "type": "number",
       "path": "percentage",
+      "label": "Percentage",
       "props": {
         "placeholder": "%"
       }
@@ -49,6 +51,7 @@
       "kind": "input",
       "type": "number",
       "path": "numberIcon",
+      "label": "Milliseconds",
       "props": {
         "hint": "This is a hint",
         "placeholder": "ms"
@@ -58,6 +61,7 @@
       "kind": "input",
       "type": "number",
       "path": "numberIconRight",
+      "label": "Inches",
       "props": {
         "hint": "This is a hint",
         "placeholder": "Inch"

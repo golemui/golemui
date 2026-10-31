@@ -25,6 +25,7 @@
               "kind": "input",
               "type": "textinput",
               "path": "repeaters.users.items.firstName",
+              "label": "First name",
               "size": 5,
               "validator": { "type": "string", "required": true }
             },
@@ -32,6 +33,7 @@
               "kind": "input",
               "type": "textinput",
               "path": "repeaters.users.items.lastName",
+              "label": "Last name",
               "size": 5
             },
             {

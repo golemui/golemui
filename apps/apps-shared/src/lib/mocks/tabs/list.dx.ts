@@ -8,10 +8,12 @@ const thousandsOfObjectItems = Array.from({ length: 20 }, (_, i) => ({
 
 export const listTab = gui.layouts.grid([
   gui.inputs.list('lists.defaultListRenderer', {
+    label: 'Default renderer',
     hint: 'Virtual scroll list with 1000 items. Default Item height.',
     items: thousandsOfItems,
   }),
   gui.inputs.list('lists.defaultListRendererObjectItems', {
+    label: 'Default renderer with object items',
     height: 150,
     hint: 'Virtual scroll list with 1000 items. Default Item height.',
     items: thousandsOfObjectItems,
@@ -45,6 +47,7 @@ export const listTab = gui.layouts.grid([
     validator: { type: 'string', required: true },
   }),
   gui.inputs.list('lists.customItemRenderer', {
+    label: 'Custom item renderer',
     height: 200,
     itemHeight: 60,
     labelField: 'title',

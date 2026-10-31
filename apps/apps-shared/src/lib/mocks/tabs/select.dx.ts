@@ -11,17 +11,20 @@ export const selectTab = gui.layouts.grid([
     autocomplete: 'off',
   }),
   gui.inputs.select('selects.wrongGreeting', {
+    label: 'Greeting with an unknown value',
     icon: 'phone_callback',
     hint: 'The disabled  "Select an Option" option should be selected, because the provided data does not match the enum of options. A validation error should also be displayed',
     options: ['hello', 'bye'],
     validator: { type: 'string', required: true },
   }),
   gui.inputs.select('selects.requiredUnselected', {
+    label: 'Required greeting',
     hint: 'The disabled  "Select an Option" option should be selected, and a validation error should be displayed because the field is required',
     options: ['hello', 'bye'],
     validator: { type: 'string', required: true },
   }),
   gui.inputs.select('selects.greetingIndex', {
+    label: 'Greeting by index',
     hint: '"bye.2" should be selected',
     options: [
       { label: 'hello.1', value: 1 },
@@ -35,6 +38,7 @@ export const selectTab = gui.layouts.grid([
     onChange: () => 'getCountriesForSelect',
   }),
   gui.inputs.select('selects.country', {
+    label: 'Country',
     include: { in: ['hasSubregionSelect'] },
   }),
 ]);

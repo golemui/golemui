@@ -12,15 +12,27 @@ export const numberTab = gui.layouts.grid([
     autocomplete: 'off',
     validator: { minimum: -45, maximum: 42, required: true },
   }),
-  gui.inputs.numberInput('numberDisabled', { disabled: true, readonly: true }),
-  gui.inputs.numberInput('percentage', { placeholder: '%' }),
+  gui.inputs.numberInput('numberDisabled', {
+    label: 'Disabled number',
+    disabled: true,
+    readonly: true,
+  }),
+  gui.inputs.numberInput('percentage', { label: 'Percentage', placeholder: '%' }),
   gui.inputs.numberInput('percentageWithHint', {
     label: 'Percentage',
     hint: 'This is a hint',
     placeholder: '%',
   }),
-  gui.inputs.numberInput('numberIcon', { hint: 'This is a hint', placeholder: 'ms' }),
-  gui.inputs.numberInput('numberIconRight', { hint: 'This is a hint', placeholder: 'Inch' }),
+  gui.inputs.numberInput('numberIcon', {
+    label: 'Milliseconds',
+    hint: 'This is a hint',
+    placeholder: 'ms',
+  }),
+  gui.inputs.numberInput('numberIconRight', {
+    label: 'Inches',
+    hint: 'This is a hint',
+    placeholder: 'Inch',
+  }),
   gui.inputs.numberInput('height', {
     label: 'Height',
     hint: 'In meters',

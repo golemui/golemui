@@ -22,6 +22,7 @@
       "kind": "input",
       "type": "select",
       "path": "selects.wrongGreeting",
+      "label": "Greeting with an unknown value",
       "props": {
         "icon": "phone_callback",
         "hint": "The disabled  \"Select an Option\" option should be selected, because the provided data does not match the enum of options. A validation error should also be displayed",
@@ -33,6 +34,7 @@
       "kind": "input",
       "type": "select",
       "path": "selects.requiredUnselected",
+      "label": "Required greeting",
       "props": {
         "hint": "The disabled  \"Select an Option\" option should be selected, and a validation error should be displayed because the field is required",
         "options": ["hello", "bye"]
@@ -43,6 +45,7 @@
       "kind": "input",
       "type": "select",
       "path": "selects.greetingIndex",
+      "label": "Greeting by index",
       "props": {
         "hint": "\"bye.2\" should be selected",
         "options": [
@@ -68,6 +71,7 @@
       "kind": "input",
       "type": "select",
       "path": "selects.country",
+      "label": "Country",
       "include": { "in": ["hasSubregionSelect"] }
     }
   ]
