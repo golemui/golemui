@@ -339,7 +339,7 @@ export class DropdownElement extends LitElement implements WithWidget {
               const labelField = templateData.labelField ?? 'label';
               const isObject = item.template !== null && typeof item.template === 'object';
               const template =
-                isObject && labelField && !templateData.itemRenderer
+                isObject && labelField && itemRenderer === defaultListItemRenderer
                   ? item.template[labelField]
                   : item.template;
 

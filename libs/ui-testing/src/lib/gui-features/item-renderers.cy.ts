@@ -86,6 +86,24 @@ export const runUnknownItemRendererComponentTests = (mountFn: MountComponentFn) 
         });
         cy.get('[data-cy="custom-item"]').should('not.exist');
       });
+
+      it(`${type}: should render object items with their labelField`, () => {
+        mountListWidget(mountFn, type, {
+          itemRenderer: 'missing',
+          labelField: 'name',
+          valueField: 'id',
+          items: [
+            { name: 'React', id: 'r' },
+            { name: 'Vue', id: 'v' },
+          ],
+        });
+
+        visibleRows().should('have.length', 2);
+        cy.get('.gui-list__item').then((items) => {
+          const texts = items.toArray().map((item) => item.textContent?.trim());
+          expect(texts).to.deep.equal(['React', 'Vue']);
+        });
+      });
     });
   });
 };

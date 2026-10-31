@@ -270,8 +270,10 @@ export function MultiDropdown(widgetInstance: WithWidget) {
     [isListVisible],
   );
 
-  const ItemRenderer = (useItemRenderer(templateData.itemRenderer as string) ||
-    DefaultMultiListItemRenderer) as React.ComponentType<ListItemRendererProps<any>>;
+  const ItemRenderer = useItemRenderer(
+    templateData.itemRenderer as string | undefined,
+    DefaultMultiListItemRenderer,
+  ) as React.ComponentType<ListItemRendererProps<any>>;
   const label = templateData.label as string;
   const isRequired = (templateData.validator as Validator)?.required;
   const isDisabled = templateData.disabled as boolean;
@@ -367,7 +369,7 @@ export function MultiDropdown(widgetInstance: WithWidget) {
               const labelField = templateData.labelField ?? 'label';
               const isObject = item.template !== null && typeof item.template === 'object';
               const template =
-                isObject && labelField && !templateData.itemRenderer
+                isObject && labelField && ItemRenderer === DefaultMultiListItemRenderer
                   ? item.template[labelField]
                   : item.template;
 

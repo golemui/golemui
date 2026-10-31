@@ -1,4 +1,5 @@
 import { type ControlTemplateData, type InputWidget, type ItemRenderItemData } from '@golemui/core';
+import { resolveItemRenderer } from '@golemui/core/internals';
 import { createContext } from '@lit/context';
 import { type LitItemRenderer } from '../components/item-renderers/item-renderer';
 import { BaseWidgetAdapter } from './base-widget.adapter';
@@ -49,17 +50,18 @@ export class InputWidgetAdapter<
   }
 
   /**
-   * This is a helper to get the item renderer from the context
+   * The item renderer the form registers under `itemRendererKey`, or `defaultItemRenderer` when
+   * there is none under that name. A missing one warns once in dev mode.
    */
   getItemRenderer<T extends ItemRenderItemData>(
     itemRendererKey: string | undefined,
     defaultItemRenderer: LitItemRenderer<T>,
   ): LitItemRenderer<T> {
-    if (!itemRendererKey) {
-      return defaultItemRenderer;
-    }
-    const itemRenderers = this.context.itemRenderers as Record<string, LitItemRenderer<T>>;
-    return itemRenderers[itemRendererKey];
+    return resolveItemRenderer(
+      this.context.itemRenderers as Record<string, LitItemRenderer<T>> | undefined,
+      itemRendererKey,
+      defaultItemRenderer,
+    );
   }
 
   onBlur() {

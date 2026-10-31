@@ -49,7 +49,14 @@ export default defineConfig(() => ({
       fileName: 'index',
     },
     rollupOptions: {
-      external: ['react', 'react-dom', 'react/jsx-runtime', '@golemui/core', '@golemui/dx'],
+      external: [
+        'react',
+        'react-dom',
+        'react/jsx-runtime',
+        '@golemui/core',
+        /^@golemui\/core\/.+/,
+        '@golemui/dx',
+      ],
       output: {
         // Marks the published ES entry as a client module for React Server Component
         // bundlers (Next.js App Router). Has no effect anywhere else

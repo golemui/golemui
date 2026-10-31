@@ -360,7 +360,7 @@ export class MultiDropdownElement extends LitElement implements WithWidget {
               const labelField = templateData.labelField ?? 'label';
               const isObject = item.template !== null && typeof item.template === 'object';
               const template =
-                isObject && labelField && !templateData.itemRenderer
+                isObject && labelField && itemRenderer === defaultMultiListItemRenderer
                   ? item.template[labelField]
                   : item.template;
 

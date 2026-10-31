@@ -16,3 +16,6 @@ export type {
   ExpressionPolicy,
   ExpressionSize,
 } from './lib/utils/check-expression';
+
+// The bindings resolve an input's `itemRenderer` the same way, falling back to the default one.
+export { resolveItemRenderer } from './lib/utils/resolve-item-renderer';

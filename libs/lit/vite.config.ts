@@ -34,6 +34,7 @@ export default defineConfig(() => ({
     rollupOptions: {
       external: [
         '@golemui/core',
+        /^@golemui\/core\/.+/,
         '@golemui/dx',
         /^@golemui\/lit-utils($|\/)/,
         'rxjs',

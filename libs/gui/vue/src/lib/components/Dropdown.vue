@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { GuiVisibleItem } from '@golemui/gui-components';
 import type { InputWidget, Validator, WithWidget } from '@golemui/core';
-import { useDebounceCallback, useInputWidget, useVueFormContext } from '@golemui/vue';
+import { useDebounceCallback, useInputWidget, useItemRenderer } from '@golemui/vue';
 import type { DropdownProps, ListItem, OptionValue } from '@golemui/gui-shared/internals';
 import { searchItems, type ItemFields } from '@golemui/gui-components/internals';
 import { computed, onMounted, onUnmounted, ref, watch, type Component } from 'vue';
@@ -216,13 +216,10 @@ const handleToggleClick = (event: MouseEvent) => {
   }
 };
 
-const formContext = useVueFormContext();
-const ItemRenderer = computed<Component>(() => {
-  const renderers = formContext.itemRenderers as Record<string, Component>;
-  return (
-    renderers[templateData.value.itemRenderer as string] || (DefaultListItemRenderer as Component)
-  );
-});
+const ItemRenderer = useItemRenderer(
+  () => templateData.value.itemRenderer as string | undefined,
+  DefaultListItemRenderer as Component,
+);
 </script>
 
 <template>
@@ -329,7 +326,7 @@ const ItemRenderer = computed<Component>(() => {
                 (() => {
                   const labelField = templateData.labelField ?? 'label';
                   const isObject = item.template !== null && typeof item.template === 'object';
-                  return isObject && labelField && !templateData.itemRenderer
+                  return isObject && labelField && ItemRenderer === DefaultListItemRenderer
                     ? (item.template as any)[labelField]
                     : item.template;
                 })()
