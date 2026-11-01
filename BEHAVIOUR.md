@@ -41,9 +41,7 @@ of each value.
 
   -> in `formSubmit`, `event.data.createdAt` is a `Date`.
 
-- Status: not yet. The copy keeps only the own keys of an object, so a `Date`, a `Map` or a
-  `File` becomes `{}`, and a class instance loses its prototype. The app receives
-  `{ name: 'Ann', createdAt: {} }`. Form events and `defaultValue` use the same copy.
+- Status: follows.
 
 ### 2. Removing a repeater row keeps the values of the other rows
 
@@ -126,7 +124,7 @@ the prototype of an object.
   -> the `constructor` param is missing. It is not the `Object` function, so the label never
   shows `function Object() { [native code] }`.
 
-- Status: not yet for copied data and for i18n params.
+- Status: follows.
 
 ### 6. Removing hidden data never removes the value of a visible input
 
@@ -157,8 +155,7 @@ visible input still uses.
 - Scenario: an address search input at `address` writes the whole address object. A checkbox
   "Enter the address by hand" hides it and shows inputs at `address.street` and `address.city`.
   The hidden search input must not remove the city.
-- Status: not yet. The form removes the path of each hidden input, so `country` is removed from
-  the submit data. A hidden input at `address` removes `address.city` too.
+- Status: follows.
 
 ### 7. A hidden row of a repeater of plain values keeps its position
 
@@ -737,9 +734,31 @@ In a form definition, each `on` value is the name of the event, a string. Functi
 
 - Status: not yet. It gives error code 40.
 
+### 34. An i18n param keeps the value it has
+
+The translator receives each param with its own value. A literal param keeps its type, and an
+expression param gives its result, also when the result is `null` or `undefined`.
+
+- Scenario: one translation key gives "Choose up to 1 topping" or "Choose up to 3 toppings". The
+  app uses i18next plural keys, which need the `count` param as a number.
+- Example:
+
+  ```ts
+  gui.inputs.tags('toppings', {
+    label: { key: 'toppings.choose', params: { count: 3 } },
+  });
+  ```
+
+  -> the translator receives `{ count: 3 }`, a number, so i18next picks the plural form.
+
+- Scenario: a greeting reads the middle name of the user, and the user has no middle name.
+- Example: params `{ middle: '$form.middleName' }` and data `{ middleName: null }` -> the
+  translator receives `{ middle: null }`. The text `$form.middleName` never reaches the user.
+- Status: follows.
+
 ## Rules for form authors
 
-### 34. Menu item values are unique
+### 35. Menu item values are unique
 
 Two items with the same `value` in one menu are not supported. The form does not check it, and
 the items can render or select wrong.
