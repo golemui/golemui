@@ -111,10 +111,11 @@ describe('utils.form', () => {
       data: State['data'],
       widgetFlags: State['widgetFlags'],
       resolvedSources: State['resolvedSources'],
+      repeaterItemScopes: State['repeaterItemScopes'] = {},
     ) =>
-      ({ data, widgetFlags, resolvedSources }) satisfies Pick<
+      ({ data, widgetFlags, resolvedSources, repeaterItemScopes }) satisfies Pick<
         State,
-        'data' | 'widgetFlags' | 'resolvedSources'
+        'data' | 'widgetFlags' | 'resolvedSources' | 'repeaterItemScopes'
       > as unknown as State;
 
     it('returns data unchanged when no widgets are hidden', () => {
@@ -171,6 +172,81 @@ describe('utils.form', () => {
         { cityField: inputWidget('city'), countryField: inputWidget('country') },
       );
       expect(pruneHiddenData(state)).toEqual({ name: 'Alice' });
+    });
+
+    it('keeps the value of a hidden input when a visible input has the same path', () => {
+      const state = makeState(
+        { region: 'us', country: 'Canada' },
+        { euCountry: { hidden: true }, otherCountry: {} },
+        { euCountry: inputWidget('country'), otherCountry: inputWidget('country') },
+      );
+      expect(pruneHiddenData(state)).toEqual({ region: 'us', country: 'Canada' });
+    });
+
+    it('keeps the value of a hidden input when a visible input has a path below it', () => {
+      const state = makeState(
+        { address: { street: 'Main St', city: 'Oslo' } },
+        { search: { hidden: true }, street: {}, city: {} },
+        {
+          search: inputWidget('address'),
+          street: inputWidget('address.street'),
+          city: inputWidget('address.city'),
+        },
+      );
+      expect(pruneHiddenData(state)).toEqual({ address: { street: 'Main St', city: 'Oslo' } });
+    });
+
+    it('keeps the value of a hidden input when a visible input has a path above it', () => {
+      const state = makeState(
+        { address: { street: 'Main St', city: 'Oslo' } },
+        { search: {}, city: { hidden: true } },
+        { search: inputWidget('address'), city: inputWidget('address.city') },
+      );
+      expect(pruneHiddenData(state)).toEqual({ address: { street: 'Main St', city: 'Oslo' } });
+    });
+
+    it('removes a hidden row input of a visible repeater', () => {
+      const state = makeState(
+        { users: [{ name: 'Alice' }, { name: 'Bob' }] },
+        { users: {}, 'name[1]': { hidden: true } },
+        {
+          users: inputWidget('users'),
+          'name[0]': inputWidget('users.0.name'),
+          'name[1]': inputWidget('users.1.name'),
+        },
+        {
+          'name[0]': { itemPath: 'users.0', index: 0 },
+          'name[1]': { itemPath: 'users.1', index: 1 },
+        },
+      );
+      expect(pruneHiddenData(state)).toEqual({ users: [{ name: 'Alice' }, {}] });
+    });
+
+    it('does not change an object that is not a plain object to remove a hidden value', () => {
+      class Profile {
+        constructor(
+          public name: string,
+          public nickname?: string,
+        ) {}
+      }
+      const profile = new Profile('Ann', 'Annie');
+      const state = makeState(
+        { profile },
+        { nickname: { hidden: true } },
+        { nickname: inputWidget('profile.nickname') },
+      );
+      const pruned = pruneHiddenData(state);
+      expect(pruned['profile']).toBe(profile);
+      expect(profile.nickname).toBe('Annie');
+    });
+
+    it('removes the value of a hidden input when a visible path only starts with the same text', () => {
+      const state = makeState(
+        { address: 'Main St', addressNote: 'Ring twice' },
+        { search: { hidden: true }, note: {} },
+        { search: inputWidget('address'), note: inputWidget('addressNote') },
+      );
+      expect(pruneHiddenData(state)).toEqual({ addressNote: 'Ring twice' });
     });
 
     it('skips entries with hidden not strictly true', () => {

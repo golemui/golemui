@@ -1,7 +1,7 @@
 import { type FormWidget, isFunctionWidget, isInputWidget, isLayoutWidget } from '../form-widget';
 import { type $Errors, type DotPath } from '../shared';
 import { type State } from '../store/model';
-import { cloneObject, set, unset } from './object';
+import { cloneObject, isPlainObject, set, unset } from './object';
 
 /**
  * Flattens the hierarchical form structure into a single-level array of form widgets.
@@ -85,18 +85,69 @@ export function inputPath(widget: FormWidget<string> | undefined): DotPath | und
  * widgets absent from calculatedWidgets are still covered.
  * A hidden row of plain values leaves an empty slot at its index, so a row index in the pruned
  * data names the same row as in the form.
+ * A hidden path stays when a visible input has the same path, a path below it, or a path above
+ * it. A hidden row of a visible repeater is still removed.
  */
 export function pruneHiddenData(state: State): Record<string, any> {
   const pruned = cloneObject(state.data);
 
-  for (const [uid, flags] of Object.entries(state.widgetFlags)) {
-    if (flags.hidden === true) {
-      const path = inputPath(state.resolvedSources[uid]);
-      if (path !== undefined) {
-        unset(pruned, path);
+  const hiddenInputs: { uid: string; path: DotPath }[] = [];
+  const visiblePaths = new Set<DotPath>();
+  const pathsAboveVisiblePaths = new Set<DotPath>();
+  for (const [uid, widget] of Object.entries(state.resolvedSources)) {
+    const path = inputPath(widget);
+    if (path === undefined) {
+      continue;
+    }
+    if (state.widgetFlags[uid]?.hidden === true) {
+      hiddenInputs.push({ uid, path });
+    } else {
+      visiblePaths.add(path);
+      for (const pathAbove of pathsAbove(path)) {
+        pathsAboveVisiblePaths.add(pathAbove);
       }
     }
   }
 
+  for (const { uid, path } of hiddenInputs) {
+    if (visiblePaths.has(path) || pathsAboveVisiblePaths.has(path)) {
+      continue;
+    }
+    const rowItemPath = state.repeaterItemScopes[uid]?.itemPath;
+    const isBelowVisibleValue = pathsAbove(path).some(
+      (pathAbove) =>
+        visiblePaths.has(pathAbove) &&
+        // A visible repeater does not keep its hidden rows.
+        !(rowItemPath !== undefined && rowItemPath.startsWith(`${pathAbove}.`)),
+    );
+    if (isBelowVisibleValue || !isInsideCopiedContainers(pruned, path)) {
+      continue;
+    }
+    unset(pruned, path);
+  }
+
   return pruned;
+}
+
+/** `pathsAbove('a.b.c')` is `['a', 'a.b']`. */
+function pathsAbove(path: DotPath): DotPath[] {
+  const segments = path.split('.');
+  const result: DotPath[] = [];
+  for (let length = 1; length < segments.length; length++) {
+    result.push(segments.slice(0, length).join('.'));
+  }
+  return result;
+}
+
+// `cloneObject` keeps a `Date` or a class instance as the same object. A delete inside it would
+// change the form state and the object of the app.
+function isInsideCopiedContainers(data: Record<string, any>, path: DotPath): boolean {
+  let current: unknown = data;
+  for (const segment of path.split('.').slice(0, -1)) {
+    if (!Array.isArray(current) && !isPlainObject(current)) {
+      return false;
+    }
+    current = (current as Record<string, unknown>)[segment];
+  }
+  return Array.isArray(current) || isPlainObject(current);
 }
