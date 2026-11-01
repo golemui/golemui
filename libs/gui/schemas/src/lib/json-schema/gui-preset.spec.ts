@@ -262,7 +262,6 @@ describe('guiPreset: arrays and objects', () => {
         title: 'Address',
         addLabel: 'Add address',
         removeLabel: 'Remove',
-        limit: 3,
         template: {
           kind: 'layout',
           type: 'grid',

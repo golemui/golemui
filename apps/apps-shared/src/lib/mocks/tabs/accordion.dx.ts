@@ -11,8 +11,14 @@ export const accordionTab = gui.layouts.accordion(
       // accept the auto-flex and embed a grid inside (one extra layer; tracked
       // as an accordion-per-section-type gap in dx-open-items).
       children: [
-        gui.inputs.textInput('shoppingCart.firstName', { validator: { required: true } }),
-        gui.inputs.textInput('shoppingCart.lastName', { validator: { required: true } }),
+        gui.inputs.textInput('shoppingCart.firstName', {
+          label: 'First name',
+          validator: { required: true },
+        }),
+        gui.inputs.textInput('shoppingCart.lastName', {
+          label: 'Last name',
+          validator: { required: true },
+        }),
       ],
     },
     {
@@ -20,8 +26,14 @@ export const accordionTab = gui.layouts.accordion(
       uid: 'section2',
       children: [
         gui.layouts.horizontalGrid([
-          gui.inputs.textInput('shoppingCart.shippingAddress', { validator: { required: true } }),
-          gui.inputs.textInput('shoppingCart.shippingState', { validator: { required: true } }),
+          gui.inputs.textInput('shoppingCart.shippingAddress', {
+            label: 'Shipping address',
+            validator: { required: true },
+          }),
+          gui.inputs.textInput('shoppingCart.shippingState', {
+            label: 'Shipping state',
+            validator: { required: true },
+          }),
         ]),
       ],
     },
@@ -30,8 +42,14 @@ export const accordionTab = gui.layouts.accordion(
       uid: 'section3',
       children: [
         gui.layouts.horizontalGrid([
-          gui.inputs.textInput('shoppingCart.billingAddress', { validator: { required: true } }),
-          gui.inputs.textInput('shoppingCart.billingState', { validator: { required: true } }),
+          gui.inputs.textInput('shoppingCart.billingAddress', {
+            label: 'Billing address',
+            validator: { required: true },
+          }),
+          gui.inputs.textInput('shoppingCart.billingState', {
+            label: 'Billing state',
+            validator: { required: true },
+          }),
         ]),
       ],
     },

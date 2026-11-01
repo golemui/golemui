@@ -19,6 +19,7 @@
       "kind": "input",
       "type": "radiogroup",
       "path": "radiogroups.wrongGreeting",
+      "label": "Greeting with an unknown value",
       "props": {
         "hint": "No option should be selected, because the provided data does not match the enum of options. A validation error should also be displayed",
         "options": ["hello", "bye"]
@@ -32,6 +33,7 @@
       "kind": "input",
       "type": "radiogroup",
       "path": "radiogroups.requiredUnselected",
+      "label": "Required greeting",
       "props": {
         "hint": "No option should be selected, and a validation error should be displayed because the field is required",
         "options": ["hello", "bye"],
@@ -46,6 +48,7 @@
       "kind": "input",
       "type": "radiogroup",
       "path": "radiogroups.greetingIndex",
+      "label": "Greeting by index",
       "props": {
         "hint": "\"bye.2\" should be selected",
         "options": [
@@ -131,6 +134,7 @@
       "kind": "input",
       "type": "radiogroup",
       "path": "radiogroups.country",
+      "label": "Country",
       "include": {
         "in": ["hasSubregionRadiogroup"]
       }

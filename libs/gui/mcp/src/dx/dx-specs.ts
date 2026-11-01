@@ -546,7 +546,7 @@ const INPUTS: DxSpec[] = [
     factory: 'repeater',
     namespace: 'inputs',
     docSlug: 'repeater',
-    call: 'gui.inputs.repeater(path, { label?, addLabel?, removeLabel?, limit?, template })',
+    call: 'gui.inputs.repeater(path, { label?, addLabel?, removeLabel?, validator?, template })',
     example:
       "gui.inputs.repeater('attendees', { label: 'Attendees', addLabel: 'Add attendee', template: [ gui.inputs.textInput('attendees.items.name', { label: 'Name' }) ] })",
     notes: [
@@ -557,7 +557,8 @@ const INPUTS: DxSpec[] = [
         "`gui.inputs.textInput('attendees.items.name', …)`. At RUNTIME each `items` token is replaced by the " +
         "row's array index (`attendees.items.name` → `attendees[0].name`, `attendees[1].name`, …); nesting a " +
         'repeater inside a template adds another `.items.` segment (`teams.items.members.items.name`).',
-      '`limit` caps the number of rows; `addLabel`/`removeLabel` set the button text.',
+      '`validator: { maxItems }` caps the number of rows and shows an error past the cap (the `limit` prop is ' +
+        'deprecated); `addLabel`/`removeLabel` set the button text.',
       'PER-ROW EVENTS: every form event from a widget inside a row carries `row: { index, indexes, path }`, ' +
         "for example `{ index: 1, indexes: [2, 1], path: 'teams.2.devs.1' }`. `indexes` lists the position in " +
         'every enclosing repeater, outermost first. `path` is the data path of the row. Outside a repeater `row` ' +

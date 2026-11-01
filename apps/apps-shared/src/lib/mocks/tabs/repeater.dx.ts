@@ -8,14 +8,17 @@ export const repeaterTab = gui.layouts.grid([
     removeButtonIcon: 'delete',
     addLabel: 'Add new developer',
     removeLabel: 'Delete',
-    limit: 5,
     states: {
       limitReached: { addLabel: `'Limit Reached, you can't add more'` },
     },
     template: [
       gui.layouts.horizontalGrid([
-        gui.inputs.textInput('firstName', { size: 5, validator: { required: true } }),
-        gui.inputs.textInput('lastName', { size: 5 }),
+        gui.inputs.textInput('firstName', {
+          label: 'First name',
+          size: 5,
+          validator: { required: true },
+        }),
+        gui.inputs.textInput('lastName', { label: 'Last name', size: 5 }),
         gui.actions.menu({
           uid: 'userRowMenu',
           ariaLabel: 'Row actions',

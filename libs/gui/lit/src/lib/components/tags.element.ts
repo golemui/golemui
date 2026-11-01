@@ -52,7 +52,7 @@ export class TagsElement extends LitElement implements WithWidget {
         .placeholder=${this.adapter.templateData.placeholder}
         .icon=${this.adapter.templateData.icon}
         .separators=${this.adapter.templateData.separators}
-        .allowDuplicates=${this.adapter.templateData.allowDuplicates ?? true}
+        .allowDuplicates=${this.adapter.templateData.allowDuplicates ?? false}
         .trim=${this.adapter.templateData.trim ?? true}
         .removeAriaLabel=${this.adapter.templateData.removeAriaLabel}
         .removeIcon=${this.adapter.templateData.removeIcon}

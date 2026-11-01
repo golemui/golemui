@@ -8,6 +8,7 @@
       "kind": "input",
       "type": "textinput",
       "path": "textinput",
+      "label": "Text input",
       "props": {
         "autocomplete": "off"
       }
@@ -16,6 +17,7 @@
       "kind": "input",
       "type": "textinput",
       "path": "textinputDisabled",
+      "label": "Disabled text input",
       "disabled": true,
       "readonly": true
     },
@@ -23,6 +25,7 @@
       "kind": "input",
       "type": "textinput",
       "path": "textinputPhone",
+      "label": "Phone number",
       "props": {
         "placeholder": "Please enter your phone number"
       }
@@ -31,6 +34,7 @@
       "kind": "input",
       "type": "textinput",
       "path": "textinputWithHint",
+      "label": "Text input with hint",
       "props": {
         "hint": "This is a hint",
         "placeholder": "Please enter your phone number"
@@ -40,6 +44,7 @@
       "kind": "input",
       "type": "textinput",
       "path": "textinputWithIcon",
+      "label": "Text input with icon",
       "props": {
         "icon": "phone_callback",
         "hint": "This is a hint",
@@ -50,6 +55,7 @@
       "kind": "input",
       "type": "textinput",
       "path": "textinputIconRight",
+      "label": "Required text input with icon",
       "props": {
         "icon": "phone_callback",
         "hint": "This is a hint",
@@ -61,6 +67,7 @@
       "kind": "input",
       "type": "textinput",
       "path": "textinputCustomValidator",
+      "label": "Name",
       "props": {
         "hint": "Try a name other than John or Jane",
         "placeholder": "Enter a name"

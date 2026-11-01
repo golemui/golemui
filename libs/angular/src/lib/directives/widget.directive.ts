@@ -73,7 +73,12 @@ export class WidgetDirective implements OnInit, OnDestroy {
           },
         },
       });
+      return;
     }
+    // Created outside change detection, the component's elements are already in the DOM with no
+    // bindings, and a custom element would render once without its properties before the next
+    // pass. Bind them before its first update. A template that throws still throws in this pass.
+    this.componentRef.changeDetectorRef.detectChanges();
   }
 
   ngOnDestroy() {

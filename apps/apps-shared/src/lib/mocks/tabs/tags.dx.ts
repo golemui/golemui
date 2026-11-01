@@ -8,11 +8,11 @@ export const tagsTab = gui.layouts.grid([
     hint: 'Press Enter, Tab or comma to add a tag',
     placeholder: 'Type and press Enter',
   }),
-  gui.inputs.tags('tags.noDuplicates', {
-    label: 'Tags with no duplicates',
-    hint: 'Duplicate tags are silently ignored',
+  gui.inputs.tags('tags.duplicates', {
+    label: 'Tags with duplicates',
+    hint: 'allowDuplicates lets the same tag be added more than once',
     placeholder: 'Try entering the same tag twice',
-    allowDuplicates: false,
+    allowDuplicates: true,
   }),
   gui.inputs.tags('tags.limited', {
     label: 'Tags with limited number of tags',

@@ -8,6 +8,7 @@
       "kind": "input",
       "type": "markdown",
       "path": "markdown",
+      "label": "Markdown",
       "props": {
         "autocomplete": "off"
       }
@@ -16,6 +17,7 @@
       "kind": "input",
       "type": "markdown",
       "path": "markdownDisabled",
+      "label": "Disabled markdown",
       "disabled": true,
       "readonly": true
     },
@@ -23,6 +25,7 @@
       "kind": "input",
       "type": "markdown",
       "path": "markdownAutoGrow",
+      "label": "Auto-growing markdown",
       "props": {
         "placeholder": "This editor will grow automatically when you type in it.",
         "autoGrow": true,
@@ -33,6 +36,7 @@
       "kind": "input",
       "type": "markdown",
       "path": "markdownWithHint",
+      "label": "Markdown with hint",
       "props": {
         "hint": "This is a hint",
         "placeholder": "Write some markdown here"
@@ -42,6 +46,7 @@
       "kind": "input",
       "type": "markdown",
       "path": "markdownWithPreview",
+      "label": "Markdown with preview",
       "props": {
         "defaultOpenPreview": true,
         "counterMode": "current",

@@ -8,6 +8,7 @@
       "kind": "input",
       "type": "currency",
       "path": "currency",
+      "label": "Currency",
       "props": {
         "autocomplete": "off"
       }
@@ -16,6 +17,7 @@
       "kind": "input",
       "type": "currency",
       "path": "currencyDisabled",
+      "label": "Disabled currency",
       "disabled": true,
       "readonly": true
     },
@@ -23,6 +25,7 @@
       "kind": "input",
       "type": "currency",
       "path": "currencyMaximumFractionDigits",
+      "label": "Currency with maximum fraction digits",
       "props": {
         "placeholder": "maximum 2 digits after the decimal point",
         "maximumFractionDigits": 2
@@ -32,6 +35,7 @@
       "kind": "input",
       "type": "currency",
       "path": "currencyMinimumFractionDigits",
+      "label": "Currency with minimum fraction digits",
       "props": {
         "placeholder": "minimum 4 digits after the decimal point",
         "minimumFractionDigits": 4
@@ -41,6 +45,7 @@
       "kind": "input",
       "type": "currency",
       "path": "currencyWithIcon",
+      "label": "Currency with icon",
       "props": {
         "icon": "phone_callback",
         "hint": "This is a hint",
@@ -51,6 +56,7 @@
       "kind": "input",
       "type": "currency",
       "path": "currencyIconRightWithEUR",
+      "label": "Currency in EUR",
       "props": {
         "currency": "EUR",
         "icon": "phone_callback",

@@ -107,10 +107,13 @@ export class GuiMenu extends GuiPopover {
     const invoker = this.anchorElement;
     this.bindInvoker(invoker);
     if (invoker) setIfMissing(invoker, 'aria-haspopup', 'menu');
-    if (!panel.hasAttribute('aria-label') && !panel.hasAttribute('aria-labelledby')) {
-      if (invoker?.id) panel.setAttribute('aria-labelledby', invoker.id);
-      else warnInDevelopment(this, 'has a menu with no name: give its button an id.');
+    if (invoker?.id && !this.panelIsNamed(panel)) {
+      panel.setAttribute('aria-labelledby', invoker.id);
     }
+  }
+
+  private panelIsNamed(panel: HTMLElement) {
+    return panel.hasAttribute('aria-label') || panel.hasAttribute('aria-labelledby');
   }
 
   private bindInvoker(invoker: Element | null) {
@@ -120,9 +123,17 @@ export class GuiMenu extends GuiPopover {
     invoker?.addEventListener('keydown', this.onInvokerKeyDown as EventListener);
   }
 
-  /** The menu opened: focus goes to its first item, or its last one for ArrowUp. */
+  /**
+   * The menu opened: focus goes to its first item, or its last one for ArrowUp. The name is
+   * checked here and not on connect, since a framework can set the button's id after inserting it.
+   */
   protected override panelToggled(open: boolean): void {
     if (!open) return;
+    this.syncMenu();
+    const panel = this.panel;
+    if (panel && !this.panelIsNamed(panel)) {
+      warnInDevelopment(this, 'has a menu with no name: give its button an id.');
+    }
     if (this.openToLast) this.roving.focusLast();
     else this.roving.focusFirst();
     this.openToLast = false;

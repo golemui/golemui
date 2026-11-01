@@ -61,6 +61,36 @@ describe('gui-menu', () => {
         .and('not.have.attr', 'aria-labelledby');
       cy.get('#sort button').should('have.attr', 'role', 'menuitemradio');
     });
+
+    it('is named after a button id set after it connects, as Angular sets it', () => {
+      cy.window().then((win) => cy.spy(win.console, 'warn').as('warn'));
+      cy.mount(
+        html`<button type="button" popovertarget="late">Actions</button>
+          <gui-menu>
+            <div id="late" popover><button type="button">Edit</button></div>
+          </gui-menu>`,
+      );
+
+      cy.get('[popovertarget="late"]').invoke('attr', 'id', 'late-actions').click();
+
+      cy.get('#late').should('have.attr', 'aria-labelledby', 'late-actions');
+      cy.get('@warn').should('not.have.been.called');
+    });
+
+    it('warns in development when it opens with no name', () => {
+      cy.window().then((win) => cy.spy(win.console, 'warn').as('warn'));
+      cy.mount(
+        html`<button type="button" popovertarget="unnamed">Actions</button>
+          <gui-menu>
+            <div id="unnamed" popover><button type="button">Edit</button></div>
+          </gui-menu>`,
+      );
+      cy.get('@warn').should('not.have.been.called');
+
+      cy.get('[popovertarget="unnamed"]').click();
+
+      cy.get('@warn').should('have.been.calledWithMatch', /<gui-menu> has a menu with no name/);
+    });
   });
 
   describe('layout', () => {

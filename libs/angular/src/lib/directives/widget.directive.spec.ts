@@ -1,4 +1,4 @@
-import { Component, signal, type Type } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, signal, type Type } from '@angular/core';
 import { type ComponentFixture, TestBed } from '@angular/core/testing';
 import { type FormHealth, type FormInitConfig, type WithWidget } from '@golemui/core';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -92,5 +92,64 @@ describe('a widget whose load fails', () => {
       (health) => health.status === 'errored',
     );
     expect(erroredHealths).toEqual([]);
+  });
+});
+
+// Records the uid it has when it first updates: a Lit element updates in a microtask after it
+// connects.
+const firstUpdateUids: (string | null)[] = [];
+
+class FirstUpdateProbeElement extends HTMLElement {
+  connectedCallback() {
+    queueMicrotask(() => firstUpdateUids.push(this.getAttribute('data-uid')));
+  }
+}
+customElements.define('gui-first-update-probe', FirstUpdateProbeElement);
+
+@Component({
+  standalone: true,
+  selector: 'gui-on-demand-widget',
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  template: `<gui-first-update-probe [attr.data-uid]="widget.uid"></gui-first-update-probe>`,
+})
+class OnDemandWidgetComponent implements WithWidget {
+  widget!: WithWidget['widget'];
+}
+
+@Component({
+  standalone: true,
+  imports: [FormCoreComponent],
+  template: `<gui-core-form [config]="config" [validators]="validators" />`,
+})
+class OnDemandHostComponent {
+  config: FormInitConfig<Type<WithWidget>> = {
+    formDef: {
+      form: {
+        uid: 'root',
+        kind: 'layout',
+        type: 'flex',
+        children: [{ uid: 'onDemand', kind: 'input', type: 'onDemand', path: 'firstName' }],
+      },
+    },
+    widgetLoaders: {
+      ...stubWidgetLoaders,
+      onDemand: async (): Promise<Type<WithWidget>> => OnDemandWidgetComponent,
+    },
+    data: formData,
+  };
+  validators = noopValidators;
+}
+
+describe('a widget the browser loads on demand', () => {
+  it('binds its template before a custom element in it first updates', async () => {
+    const fixture = TestBed.createComponent(OnDemandHostComponent);
+    fixture.detectChanges();
+    await vi.waitFor(() => {
+      fixture.detectChanges();
+      expect(firstUpdateUids).toHaveLength(1);
+    });
+
+    expect(firstUpdateUids).toEqual(['onDemand']);
+    fixture.destroy();
   });
 });

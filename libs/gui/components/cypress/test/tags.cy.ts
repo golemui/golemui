@@ -139,37 +139,32 @@ describe('gui-tags', () => {
       cy.get('@change').should('have.callCount', 3);
     });
 
-    it('turns allow-duplicates and trim off from their attributes', () => {
+    it('turns allow-duplicates on and trim off from their attributes', () => {
       const onChange = cy.spy().as('change');
       cy.mount(
         html`<gui-tags
           label="Tags"
           value='["lit"]'
-          allow-duplicates="false"
+          allow-duplicates
           trim="false"
           @gui-change=${onChange}
         ></gui-tags>`,
       );
 
-      element().should('have.prop', 'allowDuplicates', false).and('have.prop', 'trim', false);
+      element().should('have.prop', 'allowDuplicates', true).and('have.prop', 'trim', false);
       input().type('lit{enter}');
-      cy.get('@change').should('not.have.been.called');
+      cy.get('@change')
+        .its('lastCall.args.0.detail')
+        .should('deep.equal', { value: ['lit', 'lit'] });
       input().type(' css {enter}');
       cy.get('@change')
         .its('lastCall.args.0.detail')
-        .should('deep.equal', { value: ['lit', ' css '] });
+        .should('deep.equal', { value: ['lit', 'lit', ' css '] });
     });
 
-    it('skips a repeated tag with allowDuplicates false', () => {
+    it('skips a repeated tag by default', () => {
       const onChange = cy.spy().as('change');
-      cy.mount(
-        html`<gui-tags
-          label="Tags"
-          value='["lit"]'
-          .allowDuplicates=${false}
-          @gui-change=${onChange}
-        ></gui-tags>`,
-      );
+      cy.mount(html`<gui-tags label="Tags" value='["lit"]' @gui-change=${onChange}></gui-tags>`);
 
       input().type('lit{enter}');
 

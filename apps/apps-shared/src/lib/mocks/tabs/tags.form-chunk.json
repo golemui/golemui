@@ -27,12 +27,12 @@
     {
       "kind": "input",
       "type": "tags",
-      "path": "tags.noDuplicates",
-      "label": "Tags with no duplicates",
+      "path": "tags.duplicates",
+      "label": "Tags with duplicates",
       "props": {
-        "hint": "Duplicate tags are silently ignored",
+        "hint": "allowDuplicates lets the same tag be added more than once",
         "placeholder": "Try entering the same tag twice",
-        "allowDuplicates": false
+        "allowDuplicates": true
       }
     },
     {

@@ -137,6 +137,10 @@ export type TextareaProps = {
   counterMode?: 'remaining' | 'current';
   minimumHeight?: number;
   autoGrow?: boolean;
+  /**
+   * @deprecated Use `validator.maxLength`, which drives the counter and the error. This prop has
+   * no effect, and it will be removed in v3.0.0.
+   */
   maxLength?: number;
 };
 
@@ -746,10 +750,13 @@ export type ComponentRendererProps<ComponentType = unknown> = {
   render: { component: ComponentType; api: WidgetPropertyFunctionParams<any> };
 };
 
-// TODO: do we need an {"minItems": 1} property or can it handled by the validators?
 export type RepeaterProps<Template> = {
   addLabel?: string;
   removeLabel?: string;
+  /**
+   * @deprecated Use `validator.maxItems`, which shows an error past the cap instead of disabling
+   * the add button without a message. It will be removed in v3.0.0.
+   */
   limit?: number;
   template: Template;
   title?: string;

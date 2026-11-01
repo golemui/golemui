@@ -160,7 +160,6 @@ export function guiPreset(options: GuiPresetOptions = {}): Preset {
         title: itemTitle,
         addLabel: itemName !== undefined ? `Add ${itemName.toLowerCase()}` : 'Add',
         removeLabel: 'Remove',
-        limit: typeof node.schema['maxItems'] === 'number' ? node.schema['maxItems'] : undefined,
         template,
       },
     };

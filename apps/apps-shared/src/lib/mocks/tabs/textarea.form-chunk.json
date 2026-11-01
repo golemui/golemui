@@ -8,6 +8,7 @@
       "kind": "input",
       "type": "textarea",
       "path": "textarea",
+      "label": "Textarea",
       "props": {
         "autocomplete": "off"
       }
@@ -16,6 +17,7 @@
       "kind": "input",
       "type": "textarea",
       "path": "textareaDisabled",
+      "label": "Disabled textarea",
       "disabled": true,
       "readonly": true
     },
@@ -23,6 +25,7 @@
       "kind": "input",
       "type": "textarea",
       "path": "textareaAutoGrow",
+      "label": "Auto-growing textarea",
       "props": {
         "placeholder": "This textarea will grow automatically when you type in it.",
         "autoGrow": true,
@@ -33,6 +36,7 @@
       "kind": "input",
       "type": "textarea",
       "path": "textareaWithHint",
+      "label": "Textarea with hint",
       "props": {
         "hint": "This is a hint",
         "placeholder": "Please enter your phone number"
@@ -42,6 +46,7 @@
       "kind": "input",
       "type": "textarea",
       "path": "textareaWithCounter",
+      "label": "Textarea with counter",
       "props": {
         "hint": "This is a hint",
         "placeholder": "Please enter your phone number",
