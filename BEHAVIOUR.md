@@ -350,31 +350,54 @@ Apps inject issues, for example server errors, with `INJECT_VALIDATION_ISSUES`.
 - Status: not yet. The labels change, but the error stays in English until the input validates
   again.
 
-### 14. A prop limits the input, a validator marks the form invalid
+### 14. A limit is a validator rule: the user can go over it and sees an error
 
-The same name can be a prop and a validator rule. The prop stops the user. The validator lets the
-user type and reports an error.
+A length or count limit goes in the validator. The field lets the user type, paste or add past
+the limit, shows that the value is over it, and marks the form invalid. No widget enforces a
+limit by blocking input.
 
-- Scenario: a short post must stop at 280 characters while the user types, so the author sets
-  the prop. A cover letter can take a pasted text that is too long, and the user shortens it in
-  the field, so the author sets the validator rule.
+- Scenario: a short post has a limit of 280 characters. The user pastes a longer draft and
+  shortens it in the field.
 - Example:
 
   ```ts
-  gui.inputs.textarea('post', { label: 'Post', maxLength: 280 }),
-  gui.inputs.textarea('letter', { label: 'Cover letter', validator: { maxLength: 2000 } }),
+  gui.inputs.textarea('post', { label: 'Post', validator: { maxLength: 280 } }),
   ```
 
-  -> the user cannot type a 281st character in the post. The user can paste 2100 characters in
-  the letter, and the input shows an error.
+  -> the user can paste 300 characters. The counter shows `-20 / 280` in red, and the input
+  shows the `maxLength` error.
 
+- Scenario: a team takes at most 5 members. The user adds a sixth and removes another one.
+- Example:
+
+  ```ts
+  gui.inputs.repeater('members', {
+    label: 'Members',
+    validator: { maxItems: 5 },
+    template: [gui.inputs.textInput('members.items.name', { label: 'Name' })],
+  }),
+  ```
+
+  -> the add button stays enabled at 5 rows. With 6 rows the form is invalid, and the repeater
+  shows the `maxItems` error once focus leaves it.
+
+- Deprecated, to be removed in v3.0.0:
+  - the `maxLength` prop of the textarea and of the markdown editor. It has no effect. Use
+    `validator.maxLength`.
+  - the repeater's `limit` prop. It disables the add button with no message. Use
+    `validator.maxItems`.
+
+- Skipping a repeated tag is not a limit. The tags input skips a tag that the value already
+  holds, because the value does not change. `allowDuplicates: true` lets the same tag in more
+  than once.
 - Scenario: the tags of a contact come from the server and can hold a duplicate, for example
-  `['vip', 'vip']`. The tags input stops the user from adding a duplicate, but it does not check
+  `['vip', 'vip']`. The tags input skips a repeat that the user types, but it does not check
   the loaded value.
 - Example: `gui.inputs.tags('labels', { label: 'Labels', validator: { uniqueItems: true } })`
   with the value `['vip', 'vip']` -> the value is invalid.
-- Status: not yet. The textarea ignores `props.maxLength` and uses `validator.maxLength` to stop
-  typing. `uniqueItems` is accepted by the validator type, but it is never checked.
+- Status: the textarea, the repeater and the tags input work this way today. `uniqueItems` is
+  accepted by the validator type, but it is never checked, so the last example does not work
+  yet.
 
 ### 15. A cleared optional field is valid
 
@@ -640,14 +663,19 @@ an ancestor, for example of an outer page form, must not run for it.
 - Example:
 
   ```ts
-  gui.inputs.list('car', { label: 'Car', items: cars, itemRenderer: 'carItem' });
+  gui.inputs.list('car', {
+    label: 'Car',
+    items: cars,
+    labelField: 'model',
+    itemRenderer: 'carItem',
+  });
   ```
 
   with no `carItem` in the `itemRenderers` of the config -> the items render with the default
-  renderer.
+  renderer, labelled by `model`. In dev mode the console warns once, naming `carItem` and the
+  renderers the form registers.
 
-- Status: follows in React and Vue. Not yet in Lit, which throws a `TypeError`, and Angular, which
-  renders empty items.
+- Status: follows in React, Vue, Lit and Angular.
 
 ### 30. A layout hidden at mount has `children: []`
 
