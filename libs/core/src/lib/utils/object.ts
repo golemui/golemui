@@ -427,20 +427,59 @@ function isEmptyPlainObject(value: any): boolean {
 }
 
 /**
- * Deep-clones plain objects and arrays while preserving function references
- * (and other non-plain values) by reference. Functions are stateless widget
- * resolvers and only need to survive the trip into repeater item configs.
+ * Tells if a value is a plain object: its prototype is `Object.prototype` or `null`.
+ *
+ * @param value - Any value.
+ * @returns `true` for `{}` and `Object.create(null)`, `false` for arrays, `Date`, `Map` and class
+ *   instances.
+ */
+export function isPlainObject(value: unknown): value is Record<string, unknown> {
+  if (typeof value !== 'object' || value === null) {
+    return false;
+  }
+  const prototype = Object.getPrototypeOf(value);
+  return prototype === Object.prototype || prototype === null;
+}
+
+/**
+ * Sets an own key of an object, also when the key is `__proto__`.
+ *
+ * @param target - The object to write to.
+ * @param key - The key. `__proto__` becomes an own key and never changes the prototype.
+ * @param value - The value to write.
+ */
+export function setOwnKey(target: Record<string, unknown>, key: string, value: unknown): void {
+  // A plain assignment to `__proto__` sets the prototype of the object instead of adding a key.
+  if (key === '__proto__') {
+    Object.defineProperty(target, key, {
+      value,
+      enumerable: true,
+      writable: true,
+      configurable: true,
+    });
+  } else {
+    target[key] = value;
+  }
+}
+
+/**
+ * Deep-clones plain objects and arrays. Every other object (`Date`, `Map`, `File`, a class
+ * instance) and every function is kept as the same reference, because a copy of its own keys
+ * loses its type.
+ *
+ * @param value - The value to clone.
+ * @returns A copy of the plain objects and arrays in `value`, with the other values unchanged.
  */
 export function cloneObject<T>(value: T): T {
-  if (value === null || typeof value !== 'object') {
-    return value;
-  }
   if (Array.isArray(value)) {
     return value.map((item) => cloneObject(item)) as unknown as T;
   }
+  if (!isPlainObject(value)) {
+    return value;
+  }
   const out: Record<string, unknown> = {};
-  for (const key of Object.keys(value as Record<string, unknown>)) {
-    out[key] = cloneObject((value as Record<string, unknown>)[key]);
+  for (const key of Object.keys(value)) {
+    setOwnKey(out, key, cloneObject(value[key]));
   }
   return out as T;
 }
