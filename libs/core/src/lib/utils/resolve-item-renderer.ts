@@ -21,7 +21,10 @@ export function resolveItemRenderer<Renderer>(
   defaultRenderer: Renderer,
 ): Renderer {
   if (!name) return defaultRenderer;
-  const renderer = itemRenderers?.[name];
+  const renderer =
+    itemRenderers && Object.prototype.hasOwnProperty.call(itemRenderers, name)
+      ? itemRenderers[name]
+      : undefined;
   if (renderer) return renderer;
   if (isDevMode()) warnOnce(itemRenderers ?? NO_RENDERERS, name);
   return defaultRenderer;
