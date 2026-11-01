@@ -42,6 +42,7 @@ describe('@golemui/core entry points', () => {
       'EXPRESSION_LIMITS',
       'checkExpression',
       'isI18nParamExpression',
+      'resolveItemRenderer',
     ]);
   });
 });

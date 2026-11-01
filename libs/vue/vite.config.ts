@@ -35,10 +35,15 @@ export default defineConfig(() => ({
       fileName: 'index',
     },
     rollupOptions: {
-      external: ['vue', '@golemui/core', '@golemui/dx'],
+      external: ['vue', '@golemui/core', /^@golemui\/core\/.+/, '@golemui/dx'],
       // Set explicitly so the UMD global names do not follow the local import identifiers.
       output: {
-        globals: { vue: 'vue', '@golemui/core': 'core', '@golemui/dx': 'dx' },
+        globals: {
+          vue: 'vue',
+          '@golemui/core': 'core',
+          '@golemui/core/internals': 'coreInternals',
+          '@golemui/dx': 'dx',
+        },
       },
     },
   },

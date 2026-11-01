@@ -62,8 +62,10 @@ export function List(widgetInstance: WithWidget) {
     };
   }, [onValueChanged]);
 
-  const ItemRenderer = (useItemRenderer(templateData.itemRenderer as string) ||
-    DefaultListItemRenderer) as React.ComponentType<ListItemRendererProps<any>>;
+  const ItemRenderer = useItemRenderer(
+    templateData.itemRenderer as string | undefined,
+    DefaultListItemRenderer,
+  ) as React.ComponentType<ListItemRendererProps<any>>;
   const label = templateData.label as string;
   const isRequired = (templateData.validator as Validator)?.required;
   const isDisabled = templateData.disabled as boolean;
@@ -105,7 +107,7 @@ export function List(widgetInstance: WithWidget) {
             const labelField = templateData.labelField ?? 'label';
             const isObject = item.template !== null && typeof item.template === 'object';
             const template =
-              isObject && labelField && !templateData.itemRenderer
+              isObject && labelField && ItemRenderer === DefaultListItemRenderer
                 ? item.template[labelField]
                 : item.template;
 

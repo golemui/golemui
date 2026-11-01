@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { GuiVisibleItem } from '@golemui/gui-components';
 import type { InputWidget, Validator, WithWidget } from '@golemui/core';
-import { useInputWidget, useVueFormContext } from '@golemui/vue';
+import { useInputWidget, useItemRenderer } from '@golemui/vue';
 import type { MultiListProps, OptionValue } from '@golemui/gui-shared/internals';
 import { computed, ref, watch, type Component } from 'vue';
 import DefaultMultiListItemRenderer from './item-renderers/DefaultMultiListItemRenderer.vue';
@@ -59,14 +59,10 @@ const handleBlur = (e: FocusEvent) => {
   onBlur();
 };
 
-const formContext = useVueFormContext();
-const ItemRenderer = computed<Component>(() => {
-  const renderers = formContext.itemRenderers as Record<string, Component>;
-  return (
-    renderers[templateData.value.itemRenderer as string] ||
-    (DefaultMultiListItemRenderer as Component)
-  );
-});
+const ItemRenderer = useItemRenderer(
+  () => templateData.value.itemRenderer as string | undefined,
+  DefaultMultiListItemRenderer as Component,
+);
 </script>
 
 <template>
@@ -119,7 +115,7 @@ const ItemRenderer = computed<Component>(() => {
               (() => {
                 const labelField = templateData.labelField ?? 'label';
                 const isObject = item.template !== null && typeof item.template === 'object';
-                return isObject && labelField && !templateData.itemRenderer
+                return isObject && labelField && ItemRenderer === DefaultMultiListItemRenderer
                   ? (item.template as any)[labelField]
                   : item.template;
               })()
