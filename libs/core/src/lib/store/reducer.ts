@@ -50,7 +50,7 @@ export const reducer = ({
   const derive = makeDerive(localization, functions, expressionPolicy);
   const validate = validateAll(validators, localization);
   const applyWidgetProps = calculateWidgetProps(localization, functions, expressionPolicy);
-  // Every action that changes the inputs goes through this wrapper. SET_LANGUAGE runs the props pass alone.
+  // Every action that changes the inputs goes through this wrapper. SET_LANGUAGE does not use it.
   const deriveAndValidateAppearingInputs = (state: State): State =>
     validateInputsAppearingAfterSubmit(state, derive, validate);
 
@@ -69,9 +69,16 @@ export const reducer = ({
       case 'SET_WIDGET_DATA':
         return deriveAndValidateAppearingInputs(setWidgetData(state, action));
 
-      case 'SET_LANGUAGE':
-        // A language change only re-resolves translated props.
-        return applyWidgetProps(setLanguage(state, action));
+      case 'SET_LANGUAGE': {
+        // A language change does not change the data, the states or the flags, so there is no
+        // derive. It translates the validation messages, then it resolves the translated props.
+        const translated = translateValidationMessages(setLanguage(state, action), validate);
+        const next = applyWidgetProps(translated);
+        // A failed props pass must not replace a health that only the app can clear.
+        return erroredOutsideDerive(translated)
+          ? { ...next, formHealth: translated.formHealth }
+          : next;
+      }
 
       case 'OVERRIDE_WIDGET_PROP': {
         const overridden = overrideWidgetProp(state, action);
@@ -292,6 +299,37 @@ function touchAllInputs(state: State): State {
     }
   }
   return { ...state, touched: true, allControlsValidated: true, touchedControls };
+}
+
+/**
+ * Writes the validation messages of the inputs that have an error again, in the current language.
+ * The validators translate their messages when they run. An input without an error keeps its
+ * result, so a language change never creates an error or changes which inputs are valid.
+ */
+function translateValidationMessages(state: State, validate: (state: State) => State): State {
+  const failingPaths = Object.keys(state.validations).filter(
+    (path) => state.validations[path] !== null,
+  );
+  if (failingPaths.length === 0) {
+    return state;
+  }
+
+  const validated = validate(state);
+  if (validated.formHealth !== state.formHealth) {
+    // A validator failed. The health and `isFormValid` are the result of that failure.
+    return validated;
+  }
+
+  const validations = { ...state.validations };
+  for (const path of failingPaths) {
+    // A hidden input has no new result, and an input that is valid now keeps its old entry until
+    // the next validation. In both cases the language change does not decide the result.
+    const messages = validated.validations[path];
+    if (messages !== null && messages !== undefined) {
+      validations[path] = messages;
+    }
+  }
+  return { ...state, validations };
 }
 
 function shouldValidate(

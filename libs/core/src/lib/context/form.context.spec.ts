@@ -364,12 +364,17 @@ describe('FormContext.emitEvent', () => {
       ]);
     });
 
-    it('validates the whole form on a click of a submit button', () => {
-      const { events, actions, emitFrom } = createForm(formDef, {});
+    it('validates the whole form once for a click of a submit button and the submit that follows', () => {
+      const { context, events, actions, emitFrom } = createForm(formDef, {});
 
+      // The click only sends its event. The form submit that follows a click validates.
       emitFrom('click', 'send');
 
       expect(events.map((event) => event.name)).toEqual(['sendClicked']);
+      expect(actions).toEqual([]);
+
+      context.emitSubmitEvent();
+
       expect(actions).toEqual([{ type: 'VALIDATE_ALL' }]);
     });
 

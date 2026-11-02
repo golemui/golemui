@@ -97,7 +97,9 @@ export const runMiddlewaresComponentTests = (mountFn: MountComponentFn) => {
 
       cy.get('[data-cy="submit_button"]').click();
       cy.wrap(null).should(() => {
-        expect(actionTypes, 'submit').to.include('VALIDATE_ALL');
+        // The click and the native form submit that follows it validate the form once.
+        const validations = actionTypes.filter((type) => type === 'VALIDATE_ALL');
+        expect(validations, 'submit').to.have.length(1);
         expect(actionTypes, 'submit').to.not.include('SET_WIDGET_DATA');
       });
     });
