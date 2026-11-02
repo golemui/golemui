@@ -247,7 +247,7 @@ describe('object.get', () => {
 
     it('should handle null elements in arrays', () => {
       expect(get(testObj, 'user.addresses.2')).toBeNull();
-      expect(() => get(testObj, 'user.addresses.2.city')).toThrow();
+      expect(get(testObj, 'user.addresses.2.city')).toBeUndefined();
     });
   });
 
@@ -278,6 +278,27 @@ describe('object.get', () => {
     it('should handle single property path', () => {
       expect(get(testObj, 'user')).toBe(testObj.user);
       expect(get(testObj, 'zeroValue')).toBe(0);
+    });
+
+    it('should return undefined when a parent on the path is null', () => {
+      expect(get(testObj, 'nullValue.child')).toBeUndefined();
+      expect(get(testObj, 'user.profile.social.linkedin.url')).toBeUndefined();
+      // Positive control: the same path with a real parent still reads the value.
+      expect(get(testObj, 'user.profile.social.twitter')).toBe('@johndoe');
+    });
+
+    it('should return undefined when a parent on the path is a primitive', () => {
+      expect(get(testObj, 'zeroValue.child')).toBeUndefined();
+      expect(get(testObj, 'emptyString.length')).toBeUndefined();
+      expect(get({ fn: () => 1 }, 'fn.name')).toBeUndefined();
+    });
+
+    it('should read own keys only', () => {
+      expect(get({}, 'toString')).toBeUndefined();
+      expect(get({ a: {} }, 'a.constructor')).toBeUndefined();
+      expect(get({}, '__proto__')).toBeUndefined();
+      // Positive control: an own key with the same name is read.
+      expect(get({ toString: 'mine' }, 'toString')).toBe('mine');
     });
   });
 
@@ -345,6 +366,14 @@ describe('object.pathExists', () => {
 
   it('returns false for an empty path', () => {
     expect(pathExists({ user: {} }, '')).toBe(false);
+  });
+
+  it('does not find names that objects inherit', () => {
+    expect(pathExists({}, 'toString')).toBe(false);
+    expect(pathExists({ user: {} }, 'user.constructor')).toBe(false);
+    expect(pathExists({}, '__proto__')).toBe(false);
+    // Positive control: an own key with the same name exists.
+    expect(pathExists({ toString: 'mine' }, 'toString')).toBe(true);
   });
 });
 

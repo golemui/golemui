@@ -1064,6 +1064,24 @@ describe('reducer end-to-end', () => {
       expect(clearedByEdit.data['firstName']).toBe('');
     });
 
+    it('writes the default of an input whose path is a name that objects inherit', () => {
+      const formDef = {
+        form: [
+          {
+            uid: 'inherited',
+            kind: 'input',
+            type: 'textinput',
+            path: 'toString',
+            defaultValue: 'x',
+          },
+        ],
+      };
+      const state = drive([init(formDef), setData({})]);
+
+      expect(Object.prototype.hasOwnProperty.call(state.data, 'toString')).toBe(true);
+      expect(state.data['toString']).toBe('x');
+    });
+
     it('leaves an existing value alone', () => {
       const state = drive([init(makeDefaultsFormDef()), setData({ firstName: 'Joan' })]);
 
@@ -1895,6 +1913,46 @@ describe('reducer end-to-end', () => {
 
       expect(healed.formHealth).toEqual({ status: 'ok' });
       expect(healed.data).toEqual({ a: { b: 1 }, nickname: 'x' });
+    });
+
+    it('renders no rows and stays ok for a repeater under a null parent', () => {
+      const formDef = {
+        form: [
+          {
+            uid: 'lines',
+            kind: 'input',
+            type: 'repeater',
+            path: 'order.lines',
+            props: {
+              template: {
+                uid: 'linesRow',
+                kind: 'layout',
+                type: 'flex',
+                children: [
+                  { uid: 'sku', kind: 'input', type: 'textinput', path: 'order.lines.items.sku' },
+                ],
+              },
+            },
+          },
+        ],
+      };
+      const state = drive([init(formDef), setData({ order: null })]);
+
+      expect(state.formHealth).toEqual({ status: 'ok' });
+      expect(Object.keys(state.calculatedWidgets).filter((uid) => uid.startsWith('sku['))).toEqual(
+        [],
+      );
+
+      // A primitive parent and a null row list act the same way.
+      for (const data of [{ order: 5 }, { order: { lines: null } }]) {
+        const other = drive([init(formDef), setData(data)]);
+        expect(other.formHealth).toEqual({ status: 'ok' });
+        expect(other.calculatedWidgets).not.toHaveProperty('sku[0]');
+      }
+
+      // Positive control: with an array the same form renders a row.
+      const withRows = drive([init(formDef), setData({ order: { lines: [{ sku: 'a' }] } })]);
+      expect(withRows.calculatedWidgets).toHaveProperty('sku[0]');
     });
 
     it('reports code 11 for a row input whose path is outside its repeater', () => {

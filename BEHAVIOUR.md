@@ -77,8 +77,7 @@ APIs often send `null` for an empty object. The form must treat `{ order: null }
 
   -> the form renders the repeater with no rows, and the form health is `ok`.
 
-- Status: not yet. Reading `order.lines` throws, the form health has error code 11, and the form
-  does not render.
+- Status: follows.
 
 ### 4. Data paths read own keys only
 
@@ -96,8 +95,7 @@ JavaScript objects.
 
   -> the value is `'x'`.
 
-- Status: not yet. The form finds `Object.prototype.toString`, so it thinks the path already has
-  a value. The default is never written, and the input value is a function.
+- Status: follows.
 
 ### 5. `__proto__` and `constructor` are plain data keys
 
