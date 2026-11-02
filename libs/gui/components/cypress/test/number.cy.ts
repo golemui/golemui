@@ -193,6 +193,32 @@ describe('gui-number', () => {
       input().should('have.value', '1');
     });
 
+    it('fires nothing for a step that a bound keeps from changing the value', () => {
+      const onInput = cy.spy().as('input');
+      const onChange = cy.spy().as('change');
+      cy.mount(
+        html`<gui-number
+          label="Age"
+          value="10"
+          minimum="9"
+          maximum="10"
+          @gui-input=${onInput}
+          @gui-change=${onChange}
+        ></gui-number>`,
+      );
+
+      input().type('{upArrow}');
+      input().should('have.value', '10');
+      cy.get('@input').should('not.have.been.called');
+      cy.get('@change').should('not.have.been.called');
+
+      input().type('{downArrow}{downArrow}');
+      input().should('have.value', '9');
+      cy.get('@input').should('have.callCount', 1);
+      cy.get('@change').should('have.callCount', 1);
+      cy.get('@change').its('lastCall.args.0.detail').should('deep.equal', { value: 9 });
+    });
+
     it('steps a fractional step without floating-point noise', () => {
       cy.mount(html`<gui-number label="Weight" value="0.2" step="0.1"></gui-number>`);
 

@@ -242,6 +242,8 @@ export class GuiNumber extends GuiFormControl {
       minimum: this.minimum,
       maximum: this.maximum,
     });
+    // A step clamped at a bound changes nothing and, like the native input's, fires nothing.
+    if (value === current) return;
 
     target.valueAsNumber = value;
     this.value = value;
