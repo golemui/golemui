@@ -171,7 +171,6 @@ export class DropdownComponent implements OnInit, OnDestroy, WithWidget {
         }, 0);
         break;
       case 'Enter':
-        event.preventDefault();
         if (!this.inputRef().nativeElement.value) {
           // Field is empty and enter pressed, we clear the selection
           this.adapter.valueChanged(null);

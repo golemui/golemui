@@ -131,12 +131,16 @@ export function Dropdown(widgetInstance: WithWidget) {
     return () => document.removeEventListener('click', handleDocumentClick);
   }, [closeList, isListVisible]);
 
+  // A value no item matches shows as is, like the other frameworks. Only read while nothing is
+  // selected: clearing with Enter keeps selectedItem and must not write its label back.
+  const unmatchedValue = selectedItem ? null : value;
+
   useEffect(() => {
     const isObject = selectedItem?.template !== null && typeof selectedItem?.template === 'object';
     const referenceField = isObject ? (templateData.labelField ?? 'label') : null;
     const val = referenceField ? selectedItem?.template[referenceField] : selectedItem?.template;
-    inputRef.current!.value = val ?? '';
-  }, [selectedItem, templateData.labelField]);
+    inputRef.current!.value = val ?? (unmatchedValue != null ? String(unmatchedValue) : '');
+  }, [selectedItem, templateData.labelField, unmatchedValue]);
 
   useEffect(() => {
     if (labelRef.current && inputRef.current && listRef.current) {
