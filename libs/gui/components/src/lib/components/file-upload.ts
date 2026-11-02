@@ -655,6 +655,12 @@ export class GuiFileUpload extends GuiFormControl {
         ${this._announcement}
       </div>
 
+      ${this.required
+        ? // Neither the group nor its button allows aria-required, and the label's marker is
+          // hidden from assistive technology: the upload button reads this as its description.
+          // Hidden, since aria-describedby reads hidden elements too.
+          html`<span id=${`${this.uid}_required`} hidden>${requiredName('fileRequired')}</span>`
+        : nothing}
       ${addErrors(this.uid, templateData)}
     `;
   }
@@ -664,6 +670,7 @@ export class GuiFileUpload extends GuiFormControl {
       type="button"
       class="gui-file-upload__button"
       data-cy=${`${this.uid}_file-button`}
+      aria-describedby=${this.required ? `${this.uid}_required` : nothing}
       ?disabled=${this.disabled}
       @click=${this.openPicker}
     >
