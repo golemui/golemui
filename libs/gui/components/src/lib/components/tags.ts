@@ -236,7 +236,8 @@ export class GuiTags extends GuiFormControl {
       return;
     }
 
-    if (e.key === 'Escape') {
+    // Escape with no draft goes on, so it can close the dialog the tags are in.
+    if (e.key === 'Escape' && draft.length > 0) {
       e.preventDefault();
       input.value = '';
       return;
@@ -299,12 +300,20 @@ export class GuiTags extends GuiFormControl {
     e.preventDefault();
     const input = e.target instanceof HTMLInputElement ? e.target : null;
     const draft = input?.value ?? '';
-    const parts = (draft + text).split(splitRegex);
+    // Insert at the caret and replace the selection, as a native paste does.
+    const start = input?.selectionStart ?? draft.length;
+    const end = input?.selectionEnd ?? draft.length;
+    const after = draft.slice(end);
+    const parts = (draft.slice(0, start) + text + after).split(splitRegex);
     const drafts = parts.slice(0, -1);
     const tail = parts[parts.length - 1] ?? '';
 
-    if (this.commitDraftBatch(drafts) && input) {
+    this.commitDraftBatch(drafts);
+    if (input) {
       input.value = tail;
+      // The caret goes where the pasted text ends, before the rest of the old draft.
+      const caret = Math.max(0, tail.length - after.length);
+      input.setSelectionRange(caret, caret);
     }
   }
 
@@ -323,7 +332,7 @@ export class GuiTags extends GuiFormControl {
     return true;
   }
 
-  private commitDraftBatch(rawDrafts: string[]): boolean {
+  private commitDraftBatch(rawDrafts: string[]) {
     const tags = this.getValue();
     const next = [...tags];
     for (const raw of rawDrafts) {
@@ -332,9 +341,7 @@ export class GuiTags extends GuiFormControl {
       if (!this.allowDuplicates && next.includes(cleaned)) continue;
       next.push(cleaned);
     }
-    if (next.length === tags.length) return false;
-    this.emitChange(next);
-    return true;
+    if (next.length > tags.length) this.emitChange(next);
   }
 
   private emitChange(next: string[]) {
