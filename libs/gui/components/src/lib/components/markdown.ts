@@ -39,6 +39,45 @@ type LineFormat = keyof typeof LINE_FORMATS;
 const isLineFormat = (format: string): format is LineFormat =>
   Object.prototype.hasOwnProperty.call(LINE_FORMATS, format);
 
+const WORD_CHAR = /[\p{L}\p{N}]/u;
+
+/**
+ * Finds the inline span (`**bold**`, `_italic_`, `~~strike~~`) in a line that holds the caret.
+ * An `_` inside a word, as in `snake_case`, neither opens nor closes a span, as in CommonMark,
+ * which looks past the whole run of `_` (so `my__var` is plain text too).
+ */
+const findInlineSpan = (
+  line: string,
+  cursorInLine: number,
+  start: string,
+  end = start,
+): { openIdx: number; closeIdx: number } | null => {
+  const intraword = (marker: string, idx: number, side: -1 | 1) => {
+    if (marker !== '_') return false;
+    let i = idx + side;
+    while (line.charAt(i) === '_') i += side;
+    return WORD_CHAR.test(line.charAt(i));
+  };
+  const next = (marker: string, from: number, side: -1 | 1) => {
+    let idx = line.indexOf(marker, from);
+    while (idx !== -1 && intraword(marker, idx, side)) idx = line.indexOf(marker, idx + 1);
+    return idx;
+  };
+
+  let searchFrom = 0;
+  while (searchFrom < line.length) {
+    const openIdx = next(start, searchFrom, -1);
+    if (openIdx === -1) break;
+    const closeIdx = next(end, openIdx + start.length, 1);
+    if (closeIdx === -1) break;
+    if (cursorInLine >= openIdx && cursorInLine <= closeIdx + end.length) {
+      return { openIdx, closeIdx };
+    }
+    searchFrom = closeIdx + end.length;
+  }
+  return null;
+};
+
 /** What <gui-markdown> renders besides the control state: its presentation props. */
 export type GuiMarkdownProps = {
   hint?: string;
@@ -582,24 +621,7 @@ export class GuiMarkdown extends GuiFormControl {
     const lineStart = text.lastIndexOf('\n', cursorPos - 1) + 1;
     const lineEnd = text.indexOf('\n', cursorPos);
     const line = text.substring(lineStart, lineEnd === -1 ? text.length : lineEnd);
-    const cursorInLine = cursorPos - lineStart;
-
-    let searchFrom = 0;
-    while (searchFrom < line.length) {
-      const openIdx = line.indexOf(marker, searchFrom);
-      if (openIdx === -1) break;
-
-      const closeIdx = line.indexOf(marker, openIdx + marker.length);
-      if (closeIdx === -1) break;
-
-      if (cursorInLine >= openIdx && cursorInLine <= closeIdx + marker.length) {
-        return true;
-      }
-
-      searchFrom = closeIdx + marker.length;
-    }
-
-    return false;
+    return findInlineSpan(line, cursorPos - lineStart, marker) !== null;
   }
 
   private isInsideLink(text: string, cursorPos: number): boolean {
@@ -718,23 +740,15 @@ export class GuiMarkdown extends GuiFormControl {
       }
     } else {
       // Inline formats (bold, italic, strikethrough)
-      const cursorInLine = selectionStart - lineStart;
-      let searchFrom = 0;
-      while (searchFrom < currentLine.length) {
-        const openIdx = currentLine.indexOf(formatStart, searchFrom);
-        if (openIdx === -1) break;
-        const closeIdx = currentLine.indexOf(formatEnd, openIdx + formatStart.length);
-        if (closeIdx === -1) break;
-        if (cursorInLine >= openIdx && cursorInLine <= closeIdx + formatEnd.length) {
-          const innerText = currentLine.substring(openIdx + formatStart.length, closeIdx);
-          const matchStart = lineStart + openIdx;
-          const matchEnd = lineStart + closeIdx + formatEnd.length;
-          textarea.value = `${value.substring(0, matchStart)}${innerText}${value.substring(matchEnd)}`;
-          textarea.selectionStart = matchStart;
-          textarea.selectionEnd = matchStart + innerText.length;
-          break;
-        }
-        searchFrom = closeIdx + formatEnd.length;
+      const span = findInlineSpan(currentLine, selectionStart - lineStart, formatStart, formatEnd);
+      if (span) {
+        const { openIdx, closeIdx } = span;
+        const innerText = currentLine.substring(openIdx + formatStart.length, closeIdx);
+        const matchStart = lineStart + openIdx;
+        const matchEnd = lineStart + closeIdx + formatEnd.length;
+        textarea.value = `${value.substring(0, matchStart)}${innerText}${value.substring(matchEnd)}`;
+        textarea.selectionStart = matchStart;
+        textarea.selectionEnd = matchStart + innerText.length;
       }
     }
   }
