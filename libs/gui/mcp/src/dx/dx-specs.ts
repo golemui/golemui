@@ -235,7 +235,7 @@ const PATTERNS: DxPattern[] = [
         '`{ key, params?, default? }`). Keys per type — string: `invalid`, `required`, `minLength`, `maxLength`, `exactLength`, ' +
         '`pattern`, `format`, `enum`, `const`; number: `invalid`, `minimum`, `maximum`, `exclusiveMinimum`, ' +
         '`exclusiveMaximum`, `multipleOf`, `enum`, `const`; boolean: `invalid`, `const`; array: `invalid`, ' +
-        '`required`, `minItems`, `maxItems`; range: `invalid`, `required`. The special key `invalid` customizes ' +
+        '`required`, `minItems`, `maxItems`, `uniqueItems`; range: `invalid`, `required`. The special key `invalid` customizes ' +
         'the base type check. ' +
         'Set custom messages for every rule you use — the library defaults (e.g. "Invalid input: expected string, ' +
         'received undefined") are developer-facing, not user-facing.',
