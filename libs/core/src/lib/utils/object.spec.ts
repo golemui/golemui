@@ -540,4 +540,37 @@ describe('object.cloneObject', () => {
     expect(clone.items[0].resolver).toBe(fn);
     expect(clone.items).not.toBe(source.items);
   });
+
+  it('keeps a Date, a Map and a class instance as the same object', () => {
+    class Money {
+      constructor(readonly cents: number) {}
+    }
+    const source = {
+      createdAt: new Date('2026-01-01'),
+      lookup: new Map([['a', 1]]),
+      price: new Money(500),
+    };
+    const clone = cloneObject(source);
+    expect(clone).not.toBe(source);
+    expect(clone.createdAt).toBe(source.createdAt);
+    expect(clone.lookup).toBe(source.lookup);
+    expect(clone.price).toBe(source.price);
+  });
+
+  it('copies a __proto__ key as an own key and does not change the prototype of the copy', () => {
+    const source = JSON.parse('{ "__proto__": { "a": 1 }, "b": 2 }');
+    const clone = cloneObject(source);
+    expect(Object.getPrototypeOf(clone)).toBe(Object.prototype);
+    expect(Object.getOwnPropertyDescriptor(clone, '__proto__')?.value).toEqual({ a: 1 });
+    expect(clone.a).toBeUndefined();
+    expect(clone.b).toBe(2);
+  });
+
+  it('copies an object that has no prototype', () => {
+    const source = Object.assign(Object.create(null), { a: { b: 1 } });
+    const clone = cloneObject(source);
+    expect(clone).not.toBe(source);
+    expect(clone.a).not.toBe(source.a);
+    expect(clone.a).toEqual({ b: 1 });
+  });
 });

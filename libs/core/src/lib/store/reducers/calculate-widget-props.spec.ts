@@ -595,7 +595,7 @@ describe('calculateWidgetProps', () => {
       );
     });
 
-    it('i18n params: non-scoped values pass through as strings', () => {
+    it('i18n params: a literal param keeps its type', () => {
       const translator = makeTranslator();
       const source = {
         kind: 'action',
@@ -603,14 +603,14 @@ describe('calculateWidgetProps', () => {
         type: 'button',
         label: {
           key: 'k',
-          params: { a: 'literal', n: 42 as any },
+          params: { a: 'literal', n: 42, b: true as any },
         },
       } satisfies ActionWidget<string>;
       seed(state, 'a', source);
 
       run(state, translator);
 
-      expect(translator.calls[0].params).toEqual({ a: 'literal', n: '42' });
+      expect(translator.calls[0].params).toEqual({ a: 'literal', n: 42, b: true });
     });
 
     it('i18n params: a value that starts with an unknown root is a literal string', () => {
@@ -643,9 +643,28 @@ describe('calculateWidgetProps', () => {
       run(state, translator);
 
       const received = translator.calls[0].params as Record<string, unknown>;
-      expect(Object.getPrototypeOf(received)).toBe(Object.prototype);
+      expect(Object.getPrototypeOf(received)).toBeNull();
       expect(Object.getOwnPropertyDescriptor(received, '__proto__')?.value).toBe('polluted');
       expect(received['a']).toBe('literal');
+    });
+
+    it('i18n params: a message name that is not a param finds no inherited value', () => {
+      const translator = makeTranslator(
+        (_key, params) => `Approved on ${params?.['date']} by ${params?.['constructor']}`,
+      );
+      const source = {
+        kind: 'action',
+        uid: 'a',
+        type: 'button',
+        label: { key: 'approval', params: { date: '$form.date' } },
+      } satisfies ActionWidget<string>;
+      seed(state, 'a', source);
+      state.data = { date: '2026-01-01' };
+
+      run(state, translator);
+
+      expect(translator.calls[0].params?.['constructor']).toBeUndefined();
+      expect(translator.calls[0].params?.['date']).toBe('2026-01-01');
     });
 
     it('i18n params: string concat expression resolves', () => {
@@ -680,20 +699,23 @@ describe('calculateWidgetProps', () => {
       expect(translator.calls[0].params).toEqual({ n: 5 });
     });
 
-    it('i18n params: unknown path falls back to the param string', () => {
+    it('i18n params: an expression that gives undefined or null passes that value', () => {
       const translator = makeTranslator();
       const source = {
         kind: 'action',
         uid: 'a',
         type: 'button',
-        label: { key: 'k', params: { x: '$form.missing' } },
+        label: { key: 'k', params: { missing: '$form.missing', empty: '$form.middleName' } },
       } satisfies ActionWidget<string>;
       seed(state, 'a', source);
-      state.data = {};
+      state.data = { middleName: null };
 
       run(state, translator);
 
-      expect(translator.calls[0].params).toEqual({ x: '$form.missing' });
+      const received = translator.calls[0].params as Record<string, unknown>;
+      expect(Object.keys(received)).toEqual(['missing', 'empty']);
+      expect(received['missing']).toBeUndefined();
+      expect(received['empty']).toBeNull();
     });
 
     it('i18n params: bad expression sets formHealth to errored', () => {
@@ -1521,7 +1543,7 @@ describe('calculateWidgetProps', () => {
       expect((next.calculatedWidgets['a'].current as ActionWidget<string>).label).toBe('5');
     });
 
-    it('passes literal i18n params as strings and expression results with their type', () => {
+    it('passes literal i18n params and expression results with their type', () => {
       const translator = makeTranslator();
       const source = {
         kind: 'action',
@@ -1542,12 +1564,12 @@ describe('calculateWidgetProps', () => {
 
       run(state, translator);
 
-      // A missing value gives back the param text. A zero stays the number 0.
-      expect(translator.calls[0].params).toStrictEqual({
-        number: '5',
-        flag: 'true',
+      // The params object has no prototype, so the spread makes a plain object to compare.
+      expect({ ...translator.calls[0].params }).toStrictEqual({
+        number: 5,
+        flag: true,
         zero: 0,
-        missing: '$form.missing',
+        missing: undefined,
       });
     });
   });

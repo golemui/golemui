@@ -1,3 +1,5 @@
+import { isPlainObject } from '../../utils/object';
+
 export const hasWhen = (val: unknown): val is { when: string } => {
   return val !== undefined && typeof val === 'object' && val !== null && 'when' in val;
 };
@@ -5,14 +7,6 @@ export const hasWhen = (val: unknown): val is { when: string } => {
 // -----------------------------------------------------------------------------
 // Structural comparsion
 // -----------------------------------------------------------------------------
-
-function isPlainObject(value: unknown): value is Record<string, unknown> {
-  if (typeof value !== 'object' || value === null) {
-    return false;
-  }
-  const prototype = Object.getPrototypeOf(value);
-  return prototype === Object.prototype || prototype === null;
-}
 
 /**
  * Compares arrays by their elements and plain objects by their properties,
