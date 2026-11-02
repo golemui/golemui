@@ -341,8 +341,8 @@ Apps inject issues, for example server errors, with `INJECT_VALIDATION_ISSUES`.
 
   -> the error "This field is required" is in Spanish without another user action.
 
-- Status: not yet. The labels change, but the error stays in English until the input validates
-  again.
+- Status: follows. Each input that has an error is validated again, so its message is in the new
+  language and `$errors` has the new text. An input that was not validated yet gets no error.
 
 ### 14. A limit is a validator rule: the user can go over it and sees an error
 
@@ -683,9 +683,25 @@ one.
 - Status: follows in Angular. Not yet in Lit, where the key is missing until the layout is first
   visible. So the custom widget throws.
 
+### 31. A submit validates the form once
+
+- Scenario: a sign-up form has a Sign up button. The app has a middleware that logs every store
+  action, and a custom validator that counts its runs. The user clicks Sign up once.
+- Example:
+
+  ```ts
+  gui.actions.button({ label: 'Sign up', actionType: 'submit' });
+  ```
+
+  -> one click gives one `VALIDATE_ALL` action, and each validator runs once. The click event goes
+  out first, then the form submit validates. This holds when a widget set that has no form element
+  calls `onClick` and then `onSubmit`. A widget that calls only `onClick` does not validate.
+
+- Status: follows.
+
 ## Events and expressions
 
-### 31. An `on` value is an event name
+### 32. An `on` value is an event name
 
 In a form definition, each `on` value is the name of the event, a string. Function handlers are a
 `gui.*` feature: the builder keeps the function and writes an event name into `on`.
@@ -698,7 +714,7 @@ In a form definition, each `on` value is the name of the event, a string. Functi
 - Status: not yet. The core types and the decoder accept a function in `on`, and
   `FormEvent.name` is then the function itself.
 
-### 32. A button `onClick` handler runs only on click
+### 33. A button `onClick` handler runs only on click
 
 - Scenario: an app saves the form with a button that is not a submit button. The handler calls
   the server.
@@ -715,7 +731,7 @@ In a form definition, each `on` value is the name of the event, a string. Functi
   example calls `api.save(undefined)`. A handler like `(event) => event.data` throws there, and
   the form is not built. On click it gets only the data.
 
-### 33. `$log` works in every expression
+### 34. `$log` works in every expression
 
 `$log(value)` logs a value and returns it, to debug an expression.
 
@@ -731,7 +747,7 @@ In a form definition, each `on` value is the name of the event, a string. Functi
 
 - Status: not yet. It gives error code 40.
 
-### 34. An i18n param keeps the value it has
+### 35. An i18n param keeps the value it has
 
 The translator receives each param with its own value. A literal param keeps its type, and an
 expression param gives its result, also when the result is `null` or `undefined`.
@@ -755,7 +771,7 @@ expression param gives its result, also when the result is `null` or `undefined`
 
 ## Rules for form authors
 
-### 35. Menu item values are unique
+### 36. Menu item values are unique
 
 Two items with the same `value` in one menu are not supported. The form does not check it, and
 the items can render or select wrong.
