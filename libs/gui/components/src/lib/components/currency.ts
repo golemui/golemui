@@ -33,7 +33,10 @@ export type GuiCurrencyProps = {
  * @fires gui-blur - Focus left the control.
  */
 export class GuiCurrency extends GuiFormControl {
-  /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
+  /**
+   * BCP 47 locale the amount is formatted in, such as `en-US` or `es`. Typing and parsing follow
+   * the browser's locale.
+   */
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
   /** The amount, or `undefined` when empty. */
   @property({ type: Number }) value: number | null | undefined = undefined;
@@ -290,14 +293,6 @@ export class GuiCurrency extends GuiFormControl {
       console.warn('Invalid locale or currency', e);
       return value.toString();
     }
-  }
-
-  private get separators() {
-    const example = new Intl.NumberFormat(this.localeId ?? 'en').format(1111.1);
-    return {
-      group: example.replace(/1/g, '').replace(/\d/g, '')[0] || ',',
-      decimal: example.replace(/1/g, '').replace(/\d/g, '').slice(-1) || '.',
-    };
   }
 }
 

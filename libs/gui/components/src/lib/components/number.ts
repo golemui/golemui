@@ -34,7 +34,10 @@ export type GuiNumberProps = {
  * @fires gui-blur - Focus left the control.
  */
 export class GuiNumber extends GuiFormControl {
-  /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
+  /**
+   * @deprecated The inner `<input type="number">` formats and parses in the browser's locale, so
+   * this prop has no effect. It will be removed in v3.0.0.
+   */
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
   /** The number, or `undefined` when empty. */
   @property({ type: Number }) value: number | undefined = undefined;
