@@ -8,7 +8,8 @@ import { type DotPath } from '../shared';
  *
  * @param obj - The object to retrieve the value from
  * @param path - A dot-separated string path to the desired value (e.g., "user.profile.name" or "items.0.title")
- * @returns The value at the specified path, or undefined if the path doesn't exist
+ * @returns The value at the specified path, or undefined if the path doesn't exist, a parent
+ *   on the path is `null` or a primitive, or the key is not an own key of its object
  *
  * @example
  * Basic object navigation:
@@ -49,13 +50,14 @@ import { type DotPath } from '../shared';
  * ```
  */
 export const get = <T = any>(obj: Record<string, any>, path: DotPath): T => {
-  if (obj === undefined) {
-    throw new Error('obj is undefined');
+  if (obj === undefined || obj === null) {
+    throw new Error('obj is null or undefined');
   }
 
   return path.split('.').reduce((acc, prop) => {
-    if (acc === undefined) {
-      return acc;
+    // A null, primitive or function parent cannot hold the rest of the path.
+    if (acc === null || typeof acc !== 'object') {
+      return undefined;
     }
 
     if (prop === '') {
@@ -66,7 +68,8 @@ export const get = <T = any>(obj: Record<string, any>, path: DotPath): T => {
       return acc[parseInt(prop, 10)];
     }
 
-    return acc[prop];
+    // Own keys only, so a path like "toString" does not find a method of Object.prototype.
+    return Object.prototype.hasOwnProperty.call(acc, prop) ? acc[prop] : undefined;
   }, obj) as T;
 };
 
@@ -105,7 +108,7 @@ export const pathExists = (object: Record<string, any>, path: DotPath): boolean 
       }
       current = current[index];
     } else {
-      if (!(segment in current)) {
+      if (!Object.prototype.hasOwnProperty.call(current, segment)) {
         return false;
       }
       current = current[segment];
