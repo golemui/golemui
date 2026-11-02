@@ -174,7 +174,7 @@ export class DropdownElement extends LitElement implements WithWidget {
       );
     } else {
       this._isFiltering = false;
-      this._filteredItems = [...templateData.items];
+      this._filteredItems = [...(templateData.items || [])];
     }
   }
 
