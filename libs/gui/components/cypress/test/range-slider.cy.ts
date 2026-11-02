@@ -254,5 +254,26 @@ describe('gui-range-slider', () => {
         ),
       );
     });
+
+    it('treats a range missing an end as empty: required blocks it and nothing is submitted', () => {
+      cy.mount(
+        html`<form>
+          <gui-range-slider
+            label="Price"
+            name="price"
+            required
+            .value=${{ start: 10 }}
+          ></gui-range-slider>
+        </form>`,
+      );
+
+      // Bound before the first render, so the element is never empty for another reason.
+      element().should(([host]) => expect(host.validity?.valueMissing).to.equal(true));
+      labelValue().should('have.text', '–');
+      cy.get('form').should(([form]) => {
+        expect((form as HTMLFormElement).checkValidity()).to.equal(false);
+        expect(new FormData(form as HTMLFormElement).has('price')).to.equal(false);
+      });
+    });
   });
 });

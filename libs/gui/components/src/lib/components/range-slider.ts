@@ -63,6 +63,15 @@ export class GuiRangeSlider extends GuiSliderBase {
     return value && isRealNumber(value.start) && isRealNumber(value.end) ? value : undefined;
   }
 
+  /** The form submits and validates the range the slider shows, not a partial one. */
+  protected override get controlValue(): unknown {
+    return this.range;
+  }
+
+  protected override set controlValue(value: unknown) {
+    this.value = value as GuiSliderRange | undefined;
+  }
+
   /** Where each thumb sits: on the range, or at the ends without one. */
   private get positions(): GuiSliderRange {
     const { min, max, step } = this.bounds;
