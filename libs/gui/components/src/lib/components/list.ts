@@ -92,6 +92,7 @@ export class GuiList extends GuiFormControl {
     super.willUpdate(changedProperties);
     if (changedProperties.has('items')) {
       this.updateItems();
+      this.keepFocusedIndexInItems();
     }
     if (
       changedProperties.has('items') ||
@@ -354,6 +355,26 @@ export class GuiList extends GuiFormControl {
     this.scrollToIndex(index);
 
     dispatch(this, 'gui-focus-change', { index });
+  }
+
+  /**
+   * Items that shrink past the active option move it to the last enabled item, where End would
+   * take it, or to none: `aria-activedescendant` must name an option that exists.
+   */
+  private keepFocusedIndexInItems() {
+    const length = this._items.length;
+    if (this._focusedIndex < length) return;
+
+    const index = nextEnabledIndex(length - 1, -1, length, (i) => !!this._items[i]?.disabled, {
+      includeStart: true,
+      outOfBounds: 'none',
+    });
+    if (index >= 0) {
+      this.setFocusedIndex(index);
+    } else {
+      this._focusedIndex = -1;
+      dispatch(this, 'gui-focus-change', { index: -1 });
+    }
   }
 
   private updateItems() {

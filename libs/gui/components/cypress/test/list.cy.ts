@@ -177,6 +177,39 @@ describe('gui-list', () => {
       activeItem(0);
     });
 
+    it('moves the active item to the last enabled one when the items shrink past it', () => {
+      const onFocus = cy.spy().as('focus');
+      const onChange = cy.spy().as('change');
+      const items = Array.from({ length: 10 }, (_, i) => `Item ${i}`);
+      cy.mount(
+        html`<gui-list
+          uid="colors"
+          .items=${items}
+          @gui-focus-change=${onFocus}
+          @gui-change=${onChange}
+        ></gui-list>`,
+      );
+
+      element().focus().type('{end}');
+      activeItem(9);
+
+      element().invoke('prop', 'items', [
+        { label: 'Item 0', value: 'Item 0' },
+        { label: 'Item 1', value: 'Item 1' },
+        { label: 'Item 2', value: 'Item 2', disabled: true },
+      ]);
+
+      activeItem(1);
+      cy.get('@focus').its('lastCall.args.0.detail').should('deep.equal', { index: 1 });
+      element().type('{enter}');
+      cy.get('@change').its('lastCall.args.0.detail').should('deep.equal', { value: 'Item 1' });
+
+      element().invoke('prop', 'items', []);
+
+      element().should('not.have.attr', 'aria-activedescendant');
+      cy.get('@focus').its('lastCall.args.0.detail').should('deep.equal', { index: -1 });
+    });
+
     it('selects the active item with Enter and Space', () => {
       const onInput = cy.spy().as('input');
       const onChange = cy.spy().as('change');
