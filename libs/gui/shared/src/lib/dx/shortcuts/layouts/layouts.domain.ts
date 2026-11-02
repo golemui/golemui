@@ -32,7 +32,7 @@ export interface LayoutDecorator extends DxLayoutBase, DxCommonFields {
 /**
  * User-facing prop slot for the flex family (`gui.layouts.flex` and variants).
  *
- * @deprecated Use the grid family (`GridFamilyProps`).
+ * @deprecated Use the grid family (`GridFamilyProps`). It will be removed in v3.0.0.
  */
 export type FlexFamilyProps = FlexProps & DxLayoutBase & DxCommonFields;
 

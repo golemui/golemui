@@ -887,7 +887,7 @@ export type OneOfProps = {
 /**
  * @deprecated Use a grid (`GridProps`). A flex layout still renders, as a grid: `row` and
  * `row-reverse` become a row, `column` and `column-reverse` a stack, `align` becomes `justify`
- * and `gap` the nearest `GridGap`. `justify` is dropped.
+ * and `gap` the nearest `GridGap`. `justify` is dropped. It will be removed in v3.0.0.
  */
 export type FlexProps = {
   direction?: 'row' | 'row-reverse' | 'column' | 'column-reverse';
@@ -920,13 +920,19 @@ export type GridProps = {
    * value keeps each child at its own width, ignores `size`, and places the children on the row.
    */
   justify?: GridJustify;
-  /** @deprecated Use `columns`. `false` is `columns: 12`; `true`, the old default, is a row. */
+  /**
+   * @deprecated Use `columns`. `false` is `columns: 12`; `true`, the old default, is a row. It
+   * will be removed in v3.0.0.
+   */
   autoFit?: boolean;
-  /** @deprecated Use `gap`. Pixels become the nearest `GridGap`. */
+  /** @deprecated Use `gap`. Pixels become the nearest `GridGap`. It will be removed in v3.0.0. */
   columnGap?: number;
-  /** @deprecated Use `gap`. Pixels become the nearest `GridGap`. */
+  /** @deprecated Use `gap`. Pixels become the nearest `GridGap`. It will be removed in v3.0.0. */
   rowGap?: number;
-  /** @deprecated Use `justify`, which places the children along the row as `align` did. */
+  /**
+   * @deprecated Use `justify`, which places the children along the row as `align` did. It will
+   * be removed in v3.0.0.
+   */
   align?:
     | 'center'
     | 'start'

@@ -7,7 +7,10 @@ import {
 
 // ── Flex family — uniform (children, props?, tags?) ──
 
-/** @deprecated Use `gui.layouts.grid`, which stacks its children; a flex layout renders as one. */
+/**
+ * @deprecated Use `gui.layouts.grid`, which stacks its children; a flex layout renders as one.
+ * It will be removed in v3.0.0.
+ */
 export const _guiFlex = (
   children: ValidGuiShortcut[],
   props?: FlexFamilyProps,
@@ -19,14 +22,20 @@ export const _guiFlex = (
   tags: tags ?? [],
 });
 
-/** @deprecated Use `gui.layouts.horizontalGrid`; a flex layout renders as a grid. */
+/**
+ * @deprecated Use `gui.layouts.horizontalGrid`; a flex layout renders as a grid. It will be
+ * removed in v3.0.0.
+ */
 export const _guiHorizontalFlex = (
   children: ValidGuiShortcut[],
   props?: Omit<FlexFamilyProps, 'direction'>,
   tags?: string[],
 ): GuiLayoutItemsShortcut => _guiFlex(children, { direction: 'row', ...(props ?? {}) }, tags);
 
-/** @deprecated Use `gui.layouts.grid` or `gui.layouts.verticalGrid`; a flex layout renders as a grid. */
+/**
+ * @deprecated Use `gui.layouts.grid` or `gui.layouts.verticalGrid`; a flex layout renders as a
+ * grid. It will be removed in v3.0.0.
+ */
 export const _guiVerticalFlex = (
   children: ValidGuiShortcut[],
   props?: Omit<FlexFamilyProps, 'direction'>,
