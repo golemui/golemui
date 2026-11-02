@@ -217,6 +217,20 @@ Two"
       textarea().type('{end}');
       button('Bold').should('have.attr', 'aria-pressed', 'false');
     });
+
+    it('does not take an _ inside a word for italic', () => {
+      cy.mount(html`<gui-markdown label="Bio" value="my_var_name _real_"></gui-markdown>`);
+
+      // The caret after "my_v".
+      textarea().type('{moveToStart}{rightArrow}{rightArrow}{rightArrow}{rightArrow}');
+      button('Italic').should('have.attr', 'aria-pressed', 'false').click();
+      textarea().should('have.value', 'my_v__ar_name _real_');
+
+      // A real span after the snake_case word is still found, and removed alone.
+      textarea().type('{end}{leftArrow}{leftArrow}');
+      button('Italic').should('have.attr', 'aria-pressed', 'true').click();
+      textarea().should('have.value', 'my_v__ar_name real');
+    });
   });
 
   describe('preview', () => {
