@@ -299,12 +299,21 @@ export class GuiTags extends GuiFormControl {
     e.preventDefault();
     const input = e.target instanceof HTMLInputElement ? e.target : null;
     const draft = input?.value ?? '';
-    const parts = (draft + text).split(splitRegex);
+    // Insert at the caret and replace the selection, as a native paste does.
+    const start = input?.selectionStart ?? draft.length;
+    const end = input?.selectionEnd ?? draft.length;
+    const after = draft.slice(end);
+    const parts = (draft.slice(0, start) + text + after).split(splitRegex);
     const drafts = parts.slice(0, -1);
     const tail = parts[parts.length - 1] ?? '';
 
     this.commitDraftBatch(drafts);
-    if (input) input.value = tail;
+    if (input) {
+      input.value = tail;
+      // The caret goes where the pasted text ends, before the rest of the old draft.
+      const caret = Math.max(0, tail.length - after.length);
+      input.setSelectionRange(caret, caret);
+    }
   }
 
   private clean(rawDraft: string): string {

@@ -207,6 +207,34 @@ describe('gui-tags', () => {
       pills().should('have.length', 1);
     });
 
+    it('pastes at the caret and leaves the caret where the pasted text ends', () => {
+      const onChange = cy.spy().as('change');
+      cy.mount(html`<gui-tags label="Tags" @gui-change=${onChange}></gui-tags>`);
+
+      input().type('world{home}');
+      input().trigger('paste', { clipboardData: { getData: () => 'a,hello ' } });
+
+      cy.get('@change')
+        .its('lastCall.args.0.detail')
+        .should('deep.equal', { value: ['a'] });
+      input().should('have.value', 'hello world');
+      input().should('have.prop', 'selectionStart', 6);
+      input().should('have.prop', 'selectionEnd', 6);
+    });
+
+    it('replaces the selected text with a paste', () => {
+      const onChange = cy.spy().as('change');
+      cy.mount(html`<gui-tags label="Tags" @gui-change=${onChange}></gui-tags>`);
+
+      input().type('old{selectall}');
+      input().trigger('paste', { clipboardData: { getData: () => 'x,y' } });
+
+      cy.get('@change')
+        .its('lastCall.args.0.detail')
+        .should('deep.equal', { value: ['x'] });
+      input().should('have.value', 'y');
+    });
+
     it('removes a tag with its remove button', () => {
       const onChange = cy.spy().as('change');
       cy.mount(
