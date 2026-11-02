@@ -115,6 +115,85 @@ describe('Golem validators', () => {
         expect(isValid(schema, [1, 2, 3])).toBe(true);
       });
     });
+
+    describe('uniqueItems', () => {
+      const schema = validate({ type: 'array', uniqueItems: true } satisfies ArrayValidator);
+
+      it('rejects an array with a repeated primitive', () => {
+        expect(isValid(schema, ['vip', 'vip'])).toBe(false);
+        expect(isValid(schema, [1, 2, 1])).toBe(false);
+      });
+
+      it('accepts an array of distinct items', () => {
+        expect(isValid(schema, ['vip', 'new'])).toBe(true);
+        expect(isValid(schema, [1, 2, 3])).toBe(true);
+        expect(isValid(schema, [])).toBe(true);
+      });
+
+      it('does not mix up values of different types', () => {
+        expect(isValid(schema, [1, '1', true, null])).toBe(true);
+      });
+
+      it('compares objects by value, and ignores the order of their keys', () => {
+        expect(
+          isValid(schema, [
+            { a: 1, b: 2 },
+            { b: 2, a: 1 },
+          ]),
+        ).toBe(false);
+        expect(isValid(schema, [{ a: 1 }, { a: 2 }])).toBe(true);
+      });
+
+      it('compares nested arrays and objects by value', () => {
+        expect(
+          isValid(schema, [
+            [1, { a: [2] }],
+            [1, { a: [2] }],
+          ]),
+        ).toBe(false);
+        expect(
+          isValid(schema, [
+            [1, 2],
+            [2, 1],
+          ]),
+        ).toBe(true);
+      });
+
+      it('compares dates by time', () => {
+        expect(isValid(schema, [new Date(1000), new Date(1000)])).toBe(false);
+        expect(isValid(schema, [new Date(1000), new Date(2000)])).toBe(true);
+      });
+
+      it('does not check repeats when uniqueItems is not set', () => {
+        const schemaWithoutUnique = validate({ type: 'array' } satisfies ArrayValidator);
+        expect(isValid(schemaWithoutUnique, ['vip', 'vip'])).toBe(true);
+      });
+
+      it('does not check repeats when uniqueItems is false', () => {
+        const schemaWithFalse = validate({
+          type: 'array',
+          uniqueItems: false,
+        } satisfies ArrayValidator);
+        expect(isValid(schemaWithFalse, ['vip', 'vip'])).toBe(true);
+      });
+
+      it('accepts an absent value when the array is optional', () => {
+        expect(isValid(schema, undefined)).toBe(true);
+      });
+
+      it('rejects a value that is not an array, with no exception', () => {
+        expect(isValid(schema, 'vip')).toBe(false);
+        expect(isValid(schema, { length: 2 })).toBe(false);
+      });
+
+      it('treats NaN as equal to NaN', () => {
+        expect(isValid(schema, [Number.NaN, Number.NaN])).toBe(false);
+      });
+
+      it('has a default message', () => {
+        expect(getErrors(schema, ['vip', 'vip'])).toEqual(['Items must be unique']);
+      });
+    });
   });
 
   const uploaded = {
@@ -341,11 +420,81 @@ describe('Golem validators', () => {
       expect(isValid(schema, true)).toBe(false);
     });
 
+    describe('empty string when not required', () => {
+      it('accepts an empty string with minLength', () => {
+        const schema = validate({ type: 'string', minLength: 3 } satisfies StringValidator);
+        expect(isValid(schema, '')).toBe(true);
+        expect(isValid(schema, 'a')).toBe(false);
+        expect(isValid(schema, 'abc')).toBe(true);
+      });
+
+      it('accepts an empty string with exactLength', () => {
+        const schema = validate({ type: 'string', exactLength: 6 } satisfies StringValidator);
+        expect(isValid(schema, '')).toBe(true);
+        expect(isValid(schema, '12345')).toBe(false);
+        expect(isValid(schema, '123456')).toBe(true);
+      });
+
+      it('accepts an empty string with pattern', () => {
+        const schema = validate({ type: 'string', pattern: '^\\d+$' } satisfies StringValidator);
+        expect(isValid(schema, '')).toBe(true);
+        expect(isValid(schema, 'abc')).toBe(false);
+        expect(isValid(schema, '123')).toBe(true);
+      });
+
+      it('accepts an empty string with an email format', () => {
+        const schema = validate({ type: 'string', format: 'email' } satisfies StringValidator);
+        expect(isValid(schema, '')).toBe(true);
+        expect(isValid(schema, 'not-an-email')).toBe(false);
+        expect(isValid(schema, 'user@example.com')).toBe(true);
+      });
+
+      it('accepts an empty string with a format that has a custom message', () => {
+        const schema = validate({
+          type: 'string',
+          format: 'email',
+          messages: { format: 'Enter a valid email' },
+        } satisfies StringValidator);
+        expect(getErrors(schema, '')).toEqual([]);
+        expect(getErrors(schema, 'not-an-email')).toEqual(['Enter a valid email']);
+      });
+
+      it('accepts an empty string with enum', () => {
+        const schema = validate({ type: 'string', enum: ['a', 'b'] } satisfies StringValidator);
+        expect(isValid(schema, '')).toBe(true);
+        expect(isValid(schema, 'c')).toBe(false);
+      });
+
+      it('accepts an empty string when required is false', () => {
+        const schema = validate({
+          type: 'string',
+          required: false,
+          minLength: 3,
+        } satisfies StringValidator);
+        expect(isValid(schema, '')).toBe(true);
+      });
+
+      it('still rejects other values that are not strings', () => {
+        const schema = validate({ type: 'string', minLength: 3 } satisfies StringValidator);
+        expect(isValid(schema, 0)).toBe(false);
+        expect(isValid(schema, null)).toBe(false);
+      });
+    });
+
     describe('required', () => {
       const schema = validate({ type: 'string', required: true } satisfies StringValidator);
 
       it('rejects empty string', () => {
         expect(isValid(schema, '')).toBe(false);
+      });
+
+      it('rejects an empty string that also has minLength', () => {
+        const withMinLength = validate({
+          type: 'string',
+          required: true,
+          minLength: 3,
+        } satisfies StringValidator);
+        expect(isValid(withMinLength, '')).toBe(false);
       });
 
       it('accepts non-empty string', () => {
@@ -799,6 +948,30 @@ describe('Golem validators', () => {
         } satisfies ArrayValidator);
         expect(getErrors(schema, [1])).toEqual(['Select at least 2 items']);
         expect(getErrors(schema, [1, 2])).toEqual([]);
+      });
+
+      it('uses a plain string message for uniqueItems', () => {
+        const schema = validate({
+          type: 'array',
+          uniqueItems: true,
+          messages: { uniqueItems: 'Each label can be used once' },
+        } satisfies ArrayValidator);
+        expect(getErrors(schema, ['vip', 'vip'])).toEqual(['Each label can be used once']);
+        expect(getErrors(schema, ['vip', 'new'])).toEqual([]);
+      });
+
+      it('uses a translated message for uniqueItems', () => {
+        const translator = mockTranslator({ 'errors.labels.unique': 'Etiquetas repetidas' });
+        const validateWithI18n = initValidators();
+        const schema = validateWithI18n(
+          {
+            type: 'array',
+            uniqueItems: true,
+            messages: { uniqueItems: { key: 'errors.labels.unique', default: 'Repeated labels' } },
+          } satisfies ArrayValidator,
+          translator,
+        );
+        expect(getErrors(schema, ['vip', 'vip'])).toEqual(['Etiquetas repetidas']);
       });
     });
 

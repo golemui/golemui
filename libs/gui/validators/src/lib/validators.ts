@@ -24,10 +24,12 @@ import {
   minLength,
   number,
   optional,
+  pipe,
   refine,
   regex,
   string,
   superRefine,
+  transform,
   url,
   uuid,
   type ZodMiniOptional,
@@ -211,7 +213,7 @@ function resolveMessage(
 }
 
 function fromStringValidator(v: StringValidator, localization?: I18nTranslator) {
-  return withOptional(v, (v) => {
+  const schema = withOptional(v, (v) => {
     const invalidMsg = resolveMessage(v.messages?.['invalid'], localization);
     let schema = invalidMsg ? string(invalidMsg) : string();
 
@@ -296,6 +298,16 @@ function fromStringValidator(v: StringValidator, localization?: I18nTranslator) 
 
     return schema;
   });
+
+  if (v.required === true) {
+    return schema;
+  }
+  // A field that the user typed into and cleared holds '', and it is empty like `undefined`.
+  return pipe(transform(emptyStringToUndefined), schema);
+}
+
+function emptyStringToUndefined(value: unknown): unknown {
+  return value === '' ? undefined : value;
 }
 
 /**
@@ -411,8 +423,64 @@ function fromArrayValidator(v: ArrayValidator, localization?: I18nTranslator) {
       );
     }
 
+    if (v.uniqueItems === true) {
+      const msg =
+        resolveMessage(v.messages?.['uniqueItems'], localization) ?? DEFAULT_UNIQUE_ITEMS_MESSAGE;
+      schema = schema.check(refine((val) => hasUniqueItems(val as unknown[]), { error: msg }));
+    }
+
     return schema;
   });
+}
+
+const DEFAULT_UNIQUE_ITEMS_MESSAGE = 'Items must be unique';
+
+/** Whether two values are equal by content. Arrays and plain objects are compared deeply. */
+function areValuesEqual(first: unknown, second: unknown): boolean {
+  // `Object.is` makes NaN equal to NaN. `===` makes 0 equal to -0.
+  if (Object.is(first, second) || first === second) {
+    return true;
+  }
+  if (first instanceof Date && second instanceof Date) {
+    return first.getTime() === second.getTime();
+  }
+  if (Array.isArray(first) && Array.isArray(second)) {
+    return (
+      first.length === second.length &&
+      first.every((item, index) => areValuesEqual(item, second[index]))
+    );
+  }
+  if (isPlainObject(first) && isPlainObject(second)) {
+    const firstKeys = Object.keys(first);
+    return (
+      firstKeys.length === Object.keys(second).length &&
+      firstKeys.every(
+        (key) =>
+          Object.prototype.hasOwnProperty.call(second, key) &&
+          areValuesEqual(first[key], second[key]),
+      )
+    );
+  }
+  return false;
+}
+
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+  if (value === null || typeof value !== 'object') {
+    return false;
+  }
+  const prototype = Object.getPrototypeOf(value);
+  return prototype === Object.prototype || prototype === null;
+}
+
+function hasUniqueItems(items: unknown[]): boolean {
+  for (let index = 0; index < items.length; index++) {
+    for (let otherIndex = index + 1; otherIndex < items.length; otherIndex++) {
+      if (areValuesEqual(items[index], items[otherIndex])) {
+        return false;
+      }
+    }
+  }
+  return true;
 }
 
 const DEFAULT_REQUIRED_MESSAGE = 'This field is required';
