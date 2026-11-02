@@ -1,5 +1,6 @@
 import { html } from 'lit';
 import type { GuiSelect } from '../../src/lib/components/select';
+import { configureMessages } from '../../src/lib/utils/messages';
 
 const options = [
   { label: 'Red', value: 'red' },
@@ -10,6 +11,8 @@ const select = () => cy.get('gui-select select');
 const element = () => cy.get<GuiSelect>('gui-select');
 
 describe('gui-select', () => {
+  afterEach(() => configureMessages(null));
+
   describe('rendering', () => {
     it('renders its options from its attributes after a placeholder', () => {
       cy.mount(
@@ -43,6 +46,40 @@ describe('gui-select', () => {
       // The element normalizes a copy: the property still holds what the host set.
       element().should(($el) => expect($el[0].options).to.equal(given));
       element().should(($el) => expect($el[0].options).to.deep.equal(['Red', 'Green']));
+    });
+
+    it('reads label-field and value-field over the options’ own label and value', () => {
+      const onInput = cy.spy().as('input');
+      const countries = [
+        { id: 1, name: 'Spain', label: 'ES', value: 'es' },
+        { id: 2, name: 'France', label: 'FR', value: 'fr' },
+      ];
+      cy.mount(
+        html`<gui-select
+          label="Country"
+          label-field="name"
+          value-field="id"
+          .options=${countries}
+          @gui-input=${onInput}
+        ></gui-select>`,
+      );
+
+      cy.get('gui-select option').eq(1).should('contain.text', 'Spain');
+      select().select('Spain');
+
+      cy.get('@input').its('lastCall.args.0.detail').should('deep.equal', { value: 1 });
+    });
+
+    it('reads label or value for the field that is not set', () => {
+      cy.mount(
+        html`<gui-select
+          label="Country"
+          label-field="name"
+          .options=${[{ name: 'Spain', value: 'es' }]}
+        ></gui-select>`,
+      );
+
+      cy.get('gui-select option').eq(1).should('contain.text', 'Spain').and('have.value', 'es');
     });
 
     it('says "Select an option" without a placeholder', () => {
@@ -116,6 +153,26 @@ describe('gui-select', () => {
       select().select('2');
 
       cy.get('@change').its('firstCall.args.0.detail').should('deep.equal', { value: 2 });
+    });
+
+    it('selects the number option of a value attribute', () => {
+      const onError = cy.spy().as('error');
+      const onChange = cy.spy().as('change');
+      cy.mount(
+        html`<gui-select
+          label="Rating"
+          value="2"
+          options="[1,2,3]"
+          @gui-input-error=${onError}
+          @gui-change=${onChange}
+        ></gui-select>`,
+      );
+
+      select().should('have.value', '2');
+      cy.get('@error').should('not.have.been.called');
+
+      select().select('3');
+      cy.get('@change').its('firstCall.args.0.detail').should('deep.equal', { value: 3 });
     });
 
     it('fires gui-blur when focus leaves', () => {
@@ -245,6 +302,41 @@ describe('gui-select', () => {
       cy.get('@error')
         .its('firstCall.args.0.detail')
         .should('deep.equal', { message: 'blue is not on the list' });
+    });
+
+    // An empty message would mean the error cleared.
+    it('falls back to the default error for an empty invalid-option-message', () => {
+      const onError = cy.spy().as('error');
+      cy.mount(
+        html`<gui-select
+          label="Color"
+          invalid-option-message=""
+          value="purple"
+          .options=${options}
+          @gui-input-error=${onError}
+        ></gui-select>`,
+      );
+
+      cy.get('@error')
+        .its('firstCall.args.0.detail')
+        .should('deep.equal', { message: "Invalid selection: 'purple' is not a valid option." });
+    });
+
+    it('falls back to the default error for an empty translation', () => {
+      configureMessages((key) => (key === 'invalidOption' ? '' : undefined));
+      const onError = cy.spy().as('error');
+      cy.mount(
+        html`<gui-select
+          label="Color"
+          value="purple"
+          .options=${options}
+          @gui-input-error=${onError}
+        ></gui-select>`,
+      );
+
+      cy.get('@error')
+        .its('firstCall.args.0.detail')
+        .should('deep.equal', { message: "Invalid selection: 'purple' is not a valid option." });
     });
   });
 

@@ -5,7 +5,7 @@ import { live } from 'lit/directives/live.js';
 import { safeDefine } from '@golemui/lit-utils';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addLabel, type ControlTemplateData, showsErrors } from '../utils/templates';
-import { inferOptionValue, updateOptions } from './one-of';
+import { inferOptionValue, isOptionValueOf, updateOptions } from './one-of';
 import type { Option, OptionInput, OptionValue } from '../types';
 import { GuiFormControl } from '../gui-form-control';
 import { dispatchBlur, dispatchValue, valueEvents } from '../utils/events';
@@ -113,7 +113,7 @@ export class GuiRadiogroup extends GuiFormControl {
     templateData.options = this.normalizedOptions;
     const selection = this.value;
     this.hasMatchingValue = this.normalizedOptions.length
-      ? this.normalizedOptions.find(({ value }) => value === selection) !== undefined
+      ? this.normalizedOptions.some(({ value }) => isOptionValueOf(value, selection))
       : false;
 
     const options = this.optionsLoading
@@ -123,7 +123,7 @@ export class GuiRadiogroup extends GuiFormControl {
             this.normalizedOptions,
             (opt: any) => opt?.value,
             (opt: any, index) => {
-              const isChecked = this.hasMatchingValue && opt.value === templateData.value;
+              const isChecked = this.hasMatchingValue && isOptionValueOf(opt.value, selection);
               const isFirstUnchecked = !this.hasMatchingValue && index === 0;
               const focusable = isChecked || isFirstUnchecked;
               // The radios share a name to form one group, and point at a form that does not
@@ -142,7 +142,6 @@ export class GuiRadiogroup extends GuiFormControl {
                   @click=${this.onClick}
                   @keydown=${this.onKeydown}
                   @change=${this.valueChanged}
-                  @blur=${this.onBlur}
                 />
                 ${opt.label}
               </label>`;
@@ -163,6 +162,7 @@ export class GuiRadiogroup extends GuiFormControl {
         aria-readonly=${this.readOnly ? 'true' : nothing}
         aria-invalid=${showsErrors(this.touched, this.errors) ? 'true' : nothing}
         aria-errormessage=${showsErrors(this.touched, this.errors) ? `${this.uid}_errors` : nothing}
+        @focusout=${this.onFocusOut}
       >
         ${options}
       </div>
@@ -209,8 +209,14 @@ export class GuiRadiogroup extends GuiFormControl {
     }
   }
 
-  /** @internal */
-  onBlur() {
+  /**
+   * The arrow keys and a click move focus from one radio to another: only focus that leaves the
+   * group is a blur.
+   *
+   * @internal
+   */
+  onFocusOut(event: FocusEvent) {
+    if (event.relatedTarget instanceof Node && this.contains(event.relatedTarget)) return;
     dispatchBlur(this);
   }
 }

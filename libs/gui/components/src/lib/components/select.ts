@@ -6,9 +6,9 @@ import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addIcon, addLabel, type ControlTemplateData } from '../utils/templates';
-import { inferOptionValue, updateOptions } from './one-of';
+import { inferOptionValue, isOptionValueOf, updateOptions } from './one-of';
 import type { Option, OptionInput, OptionValue } from '../types';
-import { GuiFormControl } from '../gui-form-control';
+import { GuiFormControl, type GuiValidity } from '../gui-form-control';
 import {
   dispatchBlur,
   dispatchInputError,
@@ -17,7 +17,7 @@ import {
   valueEvents,
   type GuiInputErrorEventDetail,
 } from '../utils/events';
-import { message } from '../utils/messages';
+import { message, requiredName } from '../utils/messages';
 
 /** What <gui-select> renders besides the control state: its presentation props. */
 export type GuiSelectProps = {
@@ -126,7 +126,7 @@ export class GuiSelect extends GuiFormControl {
     templateData.options = this.normalizedOptions;
 
     this.hasMatchingValue = this.normalizedOptions.length
-      ? this.normalizedOptions.find(({ value }) => value === this.value) !== undefined
+      ? this.normalizedOptions.some(({ value }) => isOptionValueOf(value, this.value))
       : false;
 
     const options = this.optionsLoading
@@ -141,7 +141,7 @@ export class GuiSelect extends GuiFormControl {
             (opt: any) =>
               html`<option
                 value=${opt.value}
-                .selected=${live(this.hasMatchingValue && opt.value === this.value)}
+                .selected=${live(this.hasMatchingValue && isOptionValueOf(opt.value, this.value))}
               >
                 ${opt.label}
               </option>`,
@@ -176,20 +176,50 @@ export class GuiSelect extends GuiFormControl {
   override updated(changedProperties: Map<string, any>) {
     if (!changedProperties.has('value') && !changedProperties.has('options')) return;
 
-    // Options often arrive after the value (loaded from a server): no options yet is not an
-    // invalid value, and options that make it valid withdraw the error.
-    const hasValue = this.value !== undefined && this.value !== null && this.value !== '';
-    const invalid = hasValue && !!this.normalizedOptions.length && !this.hasMatchingValue;
+    // Options that make the value valid withdraw the error.
+    const invalid = this.matchesNoOption();
     // Reported once per value: hosts re-render with new options arrays as they show the error.
     if (invalid && (changedProperties.has('value') || !this.reportedInvalidOption)) {
-      dispatchInputError(
-        this,
-        message('invalidOption', this.invalidOptionMessage, { value: String(this.value) }),
-      );
+      dispatchInputError(this, this.invalidOptionError());
     } else if (!invalid && this.reportedInvalidOption) {
       dispatchInputError(this, '');
     }
     this.reportedInvalidOption = invalid;
+  }
+
+  /**
+   * A value the options do not hold: the select shows the placeholder, as a native select can't
+   * hold it. Options often arrive after the value (loaded from a server), so no options yet is not
+   * an invalid value.
+   */
+  private matchesNoOption(): boolean {
+    const hasValue = this.value !== undefined && this.value !== null && this.value !== '';
+    return hasValue && !!this.normalizedOptions.length && !this.hasMatchingValue;
+  }
+
+  /**
+   * A value that matches no option is missing when `required`, as the placeholder shows, and
+   * invalid otherwise. Then `required`.
+   */
+  protected override validate(): GuiValidity | null {
+    if (!this.matchesNoOption()) return super.validate();
+    if (this.required) {
+      return { flags: { valueMissing: true }, message: message('valueMissing') };
+    }
+    return { flags: { customError: true }, message: this.invalidOptionError() };
+  }
+
+  /**
+   * The error for a value that matches no option. An empty override or translation falls back to
+   * the default: `''` would clear the error in `gui-input-error`, and `setValidity` throws on it.
+   */
+  private invalidOptionError(): string {
+    return requiredName('invalidOption', this.invalidOptionMessage, { value: String(this.value) });
+  }
+
+  /** A value that matches no option is not submitted, as the select does not show it. */
+  protected override formValue(): string | FormData | null {
+    return this.matchesNoOption() ? null : super.formValue();
   }
 
   /** @internal */
