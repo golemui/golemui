@@ -389,9 +389,8 @@ limit by blocking input.
   the loaded value.
 - Example: `gui.inputs.tags('labels', { label: 'Labels', validator: { uniqueItems: true } })`
   with the value `['vip', 'vip']` -> the value is invalid.
-- Status: the textarea, the repeater and the tags input work this way today. `uniqueItems` is
-  accepted by the validator type, but it is never checked, so the last example does not work
-  yet.
+- Status: follows. The textarea, the repeater, the tags input and the `uniqueItems` rule work
+  this way.
 
 ### 15. A cleared optional field is valid
 
@@ -408,8 +407,8 @@ touched.
 
   -> the user types `a`, deletes it and leaves the field -> no error.
 
-- Status: not yet. The cleared field holds `''`, and an optional validator accepts only
-  `undefined` as empty. `''` fails `minLength` and `exactLength`, so the field shows an error.
+- Status: follows. A string validator without `required` treats `''` like `undefined`, so none
+  of its rules runs on a cleared field.
 
 ## Visibility
 
