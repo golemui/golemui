@@ -130,6 +130,8 @@ export class FormContext<ComponentType> {
       return;
     }
 
+    // A click on a submit button does not validate here. The form submit that follows the click
+    // calls `emitSubmitEvent`, which validates once.
     if (eventType === 'change') {
       this.store.dispatch({
         type: 'ATTEMPT_VALIDATION',
@@ -138,14 +140,6 @@ export class FormContext<ComponentType> {
           path: (widget as InputWidget<any, string>).path,
           uid: widget.uid,
         },
-      });
-    } else if (
-      eventType === 'click' &&
-      widget.kind === 'action' &&
-      widget.actionType === 'submit'
-    ) {
-      this.store.dispatch({
-        type: 'VALIDATE_ALL',
       });
     }
   }

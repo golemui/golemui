@@ -424,6 +424,32 @@ describe('useActionWidget', () => {
     await act(async () => lastHookOutput<ActionHookOutput>('save').onSubmit());
     expect(submits).toHaveLength(1);
   });
+
+  it('validates the form once for onClick followed by onSubmit', async () => {
+    const actionTypes: string[] = [];
+    const recordActions: Middleware<State, Action> = () => (next) => (action) => {
+      actionTypes.push(action.type);
+      next(action);
+    };
+    await mountForm(
+      {
+        formDef: requiredForm,
+        widgetLoaders: stubWidgetLoaders,
+        data: {},
+        middlewares: [recordActions],
+      },
+      { validators: requiredValidators },
+    );
+    actionTypes.length = 0;
+
+    // A widget set with no form element calls onClick and then onSubmit, like a DOM button
+    // inside a form does with the click and the native submit.
+    await act(async () => lastHookOutput<ActionHookOutput>('save').onClick());
+    expect(actionTypes).not.toContain('VALIDATE_ALL');
+
+    await act(async () => lastHookOutput<ActionHookOutput>('save').onSubmit());
+    expect(actionTypes.filter((type) => type === 'VALIDATE_ALL')).toHaveLength(1);
+  });
 });
 
 describe('useDisplayWidget', () => {
