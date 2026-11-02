@@ -180,6 +180,33 @@ export const runDropdownComponentTests = (mountFn: MountComponentFn) => {
       cy.get('[data-cy="testSubject_textinput"]').should('have.value', 'France');
     });
 
+    it('should submit the form when the user presses Enter in the field', () => {
+      mountFn({
+        formDef: defineForm({
+          form: [
+            {
+              uid: 'testSubject',
+              kind: 'input',
+              type: 'dropdown',
+              path: 'country',
+              props: { items: ['Spain', 'France'], inputDebounce: 0 },
+            },
+            { uid: 'submit', kind: 'action', type: 'button', label: 'Send', actionType: 'submit' },
+          ],
+        }),
+        formSubmit: cy.stub().as('formSubmit'),
+      });
+
+      cy.get('[data-cy="testSubject_textinput"]').type('Sp');
+      visibleItems().first().click();
+      cy.get('[data-cy="testSubject_textinput"]').should('have.value', 'Spain');
+
+      // Enter in the field submits implicitly, as it does in a text field.
+      cy.get('[data-cy="testSubject_textinput"]').type('{enter}');
+      cy.get('@formSubmit').should('have.been.calledOnce');
+      cy.get('@formSubmit').its('firstCall.args.0.data').should('deep.equal', { country: 'Spain' });
+    });
+
     it('should filter object items by their search fields', () => {
       mountWithItems(
         [
