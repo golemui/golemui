@@ -32,17 +32,17 @@
     "columnGapProp": {
       "type": "number",
       "deprecated": true,
-      "description": "Deprecated: use `gap`. Pixels become the nearest gap step."
+      "description": "Deprecated: use `gap`. Pixels become the nearest gap step. It will be removed in v3.0.0."
     },
     "rowGapProp": {
       "type": "number",
       "deprecated": true,
-      "description": "Deprecated: use `gap`. Pixels become the nearest gap step."
+      "description": "Deprecated: use `gap`. Pixels become the nearest gap step. It will be removed in v3.0.0."
     },
     "autoFitProp": {
       "type": "boolean",
       "deprecated": true,
-      "description": "Deprecated: use `columns`. `false` is `columns: 12`; `true` is a row."
+      "description": "Deprecated: use `columns`. `false` is `columns: 12`; `true` is a row. It will be removed in v3.0.0."
     },
     "alignProp": {
       "enum": [
@@ -55,7 +55,7 @@
         "stretch"
       ],
       "deprecated": true,
-      "description": "Deprecated: use `justify`, which places the children along the row."
+      "description": "Deprecated: use `justify`, which places the children along the row. It will be removed in v3.0.0."
     }
   },
   "allOf": [

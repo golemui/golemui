@@ -115,9 +115,17 @@ export class GuiOtp extends GuiFormControl {
     return this.validGroups ? (this.groups as number[]) : [this.codeLength];
   }
 
+  /**
+   * The value as text. Property bindings bypass the Lit converter, so a code from an API response
+   * or a framework binding can arrive as a number.
+   */
+  private get code(): string {
+    return this.value === undefined || this.value === null ? '' : String(this.value);
+  }
+
   /** The value's digits, at most `length` of them: what the boxes show. */
   private get digits(): string {
-    return this.sanitize(this.value ?? '');
+    return this.sanitize(this.code);
   }
 
   override render() {
@@ -207,7 +215,7 @@ export class GuiOtp extends GuiFormControl {
   }
 
   protected override validate(): GuiValidity | null {
-    const value = this.value ?? '';
+    const value = this.code;
     if (value === '') return super.validate();
     const length = this.codeLength;
     if (/^\d+$/.test(value)) {
@@ -238,7 +246,7 @@ export class GuiOtp extends GuiFormControl {
     const code = this.sanitize(input.value);
     // A typed dash or letter comes back out, and the caret stays at the end.
     if (input.value !== code) input.value = code;
-    if (code === (this.value ?? '')) return;
+    if (code === this.code) return;
 
     this.value = code;
     dispatchValue(this, code, { commit: false });

@@ -71,6 +71,16 @@ describe('gui-otp', () => {
       input().should('have.value', '123');
     });
 
+    it('shows the digits of a number value', () => {
+      cy.mount(html`<gui-otp label="Code"></gui-otp>`);
+
+      // A code from an API response or a framework binding can arrive as a number.
+      element().then(([el]) => Object.assign(el, { value: 123456 }));
+
+      shows('123456');
+      input().should('have.value', '123456');
+    });
+
     it('runs left to right in a right-to-left page', () => {
       cy.mount(html`<div dir="rtl"><gui-otp label="Code" value="123456"></gui-otp></div>`);
 
@@ -249,6 +259,20 @@ describe('gui-otp', () => {
         expect(host.validity?.tooShort).to.equal(false);
         expect(host.validationMessage).to.equal('Enter a 4-digit code.');
       });
+    });
+
+    it('validates and submits a number value as its digits', () => {
+      cy.mount(html`<form><gui-otp name="code" label="Code" length="4" required></gui-otp></form>`);
+
+      element().then(([el]) => Object.assign(el, { value: 12345 }));
+      shows('1234');
+      element().should(([host]) => expect(host.validity?.tooLong).to.equal(true));
+
+      element().then(([el]) => Object.assign(el, { value: 1234 }));
+      element().should(([host]) => expect(host.checkValidity()).to.equal(true));
+      cy.get('form').should(([form]) =>
+        expect(new FormData(form as HTMLFormElement).get('code')).to.equal('1234'),
+      );
     });
 
     it('takes its own incomplete message', () => {
