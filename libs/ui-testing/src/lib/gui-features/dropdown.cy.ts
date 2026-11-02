@@ -1,5 +1,5 @@
-import { defineForm } from '@golemui/core';
-import { eventsNamed, type MountComponentFn } from '../utils';
+import { defineForm, type FunctionWidgetParams } from '@golemui/core';
+import { eventsNamed, type FormHandle, type MountComponentFn } from '../utils';
 
 export const runDropdownComponentTests = (mountFn: MountComponentFn) => {
   describe('Dropdown Component', () => {
@@ -132,6 +132,107 @@ export const runDropdownComponentTests = (mountFn: MountComponentFn) => {
       visibleItems().first().click();
 
       cy.get('[data-cy="testSubject_textinput"]').should('have.value', 'React');
+    });
+
+    it('should show a loaded value that matches no item', () => {
+      mountFn({
+        formDef: defineForm({
+          form: [
+            {
+              uid: 'testSubject',
+              kind: 'input',
+              type: 'dropdown',
+              path: 'country',
+              props: { items: ['Spain', 'France'], inputDebounce: 0 },
+            },
+          ],
+        }),
+        data: { country: 'Italy' },
+      });
+
+      cy.get('[data-cy="testSubject_textinput"]').should('have.value', 'Italy');
+    });
+
+    it('should show the label of the item a loaded value matches', () => {
+      mountFn({
+        formDef: defineForm({
+          form: [
+            {
+              uid: 'testSubject',
+              kind: 'input',
+              type: 'dropdown',
+              path: 'country',
+              props: {
+                items: [
+                  { label: 'Spain', value: 'es' },
+                  { label: 'France', value: 'fr' },
+                ],
+                labelField: 'label',
+                valueField: 'value',
+                inputDebounce: 0,
+              },
+            },
+          ],
+        }),
+        data: { country: 'fr' },
+      });
+
+      cy.get('[data-cy="testSubject_textinput"]').should('have.value', 'France');
+    });
+
+    it('should submit the form when the user presses Enter in the field', () => {
+      mountFn({
+        formDef: defineForm({
+          form: [
+            {
+              uid: 'testSubject',
+              kind: 'input',
+              type: 'dropdown',
+              path: 'country',
+              props: { items: ['Spain', 'France'], inputDebounce: 0 },
+            },
+            { uid: 'submit', kind: 'action', type: 'button', label: 'Send', actionType: 'submit' },
+          ],
+        }),
+        formSubmit: cy.stub().as('formSubmit'),
+      });
+
+      cy.get('[data-cy="testSubject_textinput"]').type('Sp');
+      visibleItems().first().click();
+      cy.get('[data-cy="testSubject_textinput"]').should('have.value', 'Spain');
+
+      // Enter in the field submits implicitly, as it does in a text field.
+      cy.get('[data-cy="testSubject_textinput"]').type('{enter}');
+      cy.get('@formSubmit').should('have.been.calledOnce');
+      cy.get('@formSubmit').its('firstCall.args.0.data').should('deep.equal', { country: 'Spain' });
+    });
+
+    it('should clear the filter before the items load and list them once they do', () => {
+      let handle!: FormHandle;
+      mountFn({
+        formDef: defineForm({
+          form: [
+            (api?: FunctionWidgetParams<any>) => ({
+              uid: 'testSubject',
+              kind: 'input',
+              type: 'dropdown',
+              path: 'country',
+              props: { items: api?.$form.countries, inputDebounce: 0 },
+            }),
+          ],
+        }),
+        onFormReady: (formHandle) => {
+          handle = formHandle;
+        },
+      });
+
+      // An empty filter copies the items, which are not loaded yet.
+      cy.get('[data-cy="testSubject_textinput"]').type('a');
+      cy.get('[data-cy="testSubject_textinput"]').clear();
+
+      cy.then(() => handle.setData({ countries: ['Spain', 'France'] }));
+      cy.get('[data-cy="testSubject_textinput"]').click();
+      visibleItems().should('have.length', 2);
     });
 
     it('should filter object items by their search fields', () => {
