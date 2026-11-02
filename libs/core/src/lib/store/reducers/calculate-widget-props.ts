@@ -21,7 +21,7 @@ import { type $Errors, type ExpressionFunctions } from '../../shared';
 import { type ExpressionPolicy, isI18nParamExpression } from '../../utils/check-expression';
 import { calculateValidationVariables, type ValidationVariables } from '../../utils/form';
 import { compileExpression, ExpressionRejectedError } from '../../utils/justin';
-import { get, set } from '../../utils/object';
+import { get, isPlainObject, set, setOwnKey } from '../../utils/object';
 import { extractRepeaterIndexes, isRepeaterWidget } from '../../utils/repeater';
 import { type DerivedWidget, type RepeaterItemScope, type State } from '../model';
 import { deepEqual, hasWhen } from './utils';
@@ -435,14 +435,7 @@ const holdsNoTranslation = new WeakSet<object>();
 
 /** A plain object or an array: the values a prop nests translation configs in. */
 function isWalkable(value: unknown): value is Record<string, unknown> | unknown[] {
-  if (Array.isArray(value)) {
-    return true;
-  }
-  if (typeof value !== 'object' || value === null) {
-    return false;
-  }
-  const proto = Object.getPrototypeOf(value);
-  return proto === Object.prototype || proto === null;
+  return Array.isArray(value) || isPlainObject(value);
 }
 
 /**
@@ -562,8 +555,9 @@ function pickSuffixedValue<V = unknown>(
 /**
  * Resolves i18n interpolation parameters to concrete values.
  *
- * Each parameter value is either a literal (string or number) or a subscript
- * expression starting with a scope prefix ($form, $meta, $errors, $formIsInvalid).
+ * A string that starts with a scope prefix ($form, $meta, $errors, $formIsInvalid) is an
+ * expression and gives its result, also `null` or `undefined`. Every other value is passed as it
+ * is, so a number param stays a number for plural rules.
  */
 function resolveI18nParams(
   params: I18nParams | undefined,
@@ -572,43 +566,38 @@ function resolveI18nParams(
   if (!params) {
     return params;
   }
-  return Object.keys(params).reduce((acc, key) => {
-    const param = String(params[key]);
-    if (isI18nParamExpression(param)) {
-      try {
-        const evaluate = compileExpression(param, ctx.expressionPolicy);
-        const result = evaluate({
-          $form: ctx.$form,
-          $meta: ctx.$meta,
-          $errors: ctx.$errors,
-          $formIsInvalid: ctx.$formIsInvalid,
-          $item: ctx.$item,
-          $index: ctx.$index,
-          $fn: ctx.$fn,
-        });
-        setOwnParam(acc, key, result ?? param);
-      } catch (err) {
-        if (err instanceof ExpressionRejectedError) {
-          throw err;
-        }
-        const cause = err instanceof Error ? err.message : String(err);
-        throw new StringInterpolationError(`Failed to evaluate i18n param '${param}': ${cause}`);
-      }
+  // No prototype, so a translator that reads a name that is not a param gets `undefined`.
+  const resolved: Record<string, unknown> = Object.create(null);
+  for (const key of Object.keys(params)) {
+    const param: unknown = params[key];
+    if (typeof param === 'string' && isI18nParamExpression(param)) {
+      setOwnKey(resolved, key, evaluateI18nParam(param, ctx));
     } else {
-      setOwnParam(acc, key, param);
+      setOwnKey(resolved, key, param);
     }
-    return acc;
-  }, {} as I18nParams);
+  }
+  return resolved as I18nParams;
 }
 
-// A plain assignment to `__proto__` sets the prototype of the object instead of adding a key.
-function setOwnParam(params: I18nParams, key: string, value: unknown): void {
-  Object.defineProperty(params, key, {
-    value,
-    enumerable: true,
-    writable: true,
-    configurable: true,
-  });
+function evaluateI18nParam(param: string, ctx: ResolverCtx): unknown {
+  try {
+    const evaluate = compileExpression(param, ctx.expressionPolicy);
+    return evaluate({
+      $form: ctx.$form,
+      $meta: ctx.$meta,
+      $errors: ctx.$errors,
+      $formIsInvalid: ctx.$formIsInvalid,
+      $item: ctx.$item,
+      $index: ctx.$index,
+      $fn: ctx.$fn,
+    });
+  } catch (err) {
+    if (err instanceof ExpressionRejectedError) {
+      throw err;
+    }
+    const cause = err instanceof Error ? err.message : String(err);
+    throw new StringInterpolationError(`Failed to evaluate i18n param '${param}': ${cause}`);
+  }
 }
 
 // -----------------------------------------------------------------------------

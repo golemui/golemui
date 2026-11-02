@@ -558,6 +558,21 @@ describe('FormContext.emitSubmitEvent', () => {
       expect(submitEvents[0].data).toEqual({ vip: true, name: 'Ada', secret: 'x' });
     });
 
+    it('keeps a Date value that no input shows in the submitted data', () => {
+      const createdAt = new Date('2026-01-01');
+      const { context } = createForm(
+        formDef,
+        { vip: false, name: 'Ada', createdAt },
+        requiredValidators,
+      );
+      const submitEvents = collectSubmits(context);
+
+      context.emitSubmitEvent();
+
+      expect(submitEvents[0].data['createdAt']).toBeInstanceOf(Date);
+      expect(submitEvents[0].data['createdAt'].getTime()).toBe(createdAt.getTime());
+    });
+
     it('dispatches validation issues from the callback of the submit event', () => {
       const { context } = createForm(formDef, { vip: false, name: 'Ada' }, requiredValidators);
       const submitEvents = collectSubmits(context);
