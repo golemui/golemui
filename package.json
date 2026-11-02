@@ -72,7 +72,7 @@
     "@analogjs/vite-plugin-angular": "2.7.1",
     "@analogjs/vite-plugin-nitro": "2.7.1",
     "@analogjs/vitest-angular": "2.7.1",
-    "@angular-devkit/build-angular": "21.2.19",
+    "@angular-devkit/build-angular": "22.2.5",
     "@angular-devkit/core": "21.2.19",
     "@angular-devkit/schematics": "21.2.19",
     "@angular/build": "21.2.19",
