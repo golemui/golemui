@@ -36,8 +36,10 @@ export const initialize = ({ lang }: State, action: INITIALIZE): State => {
   // When the form declaration originates from JSON (i.e., not via defineForm()),
   // the layout must be generated here instead.
   let decodeInput = formDef;
-  if (Array.isArray((formDef as Record<string, any>)['form'])) {
-    const widgets: any[] = (formDef as Record<string, any>)['form'];
+  // `formDef` can be null or undefined at runtime. The decoder reports those.
+  const form = (formDef as Record<string, any> | null | undefined)?.['form'];
+  if (Array.isArray(form)) {
+    const widgets: any[] = form;
     // A copy, because the caller keeps using the object it dispatched.
     decodeInput = {
       ...(formDef as Record<string, any>),

@@ -16,6 +16,7 @@ import {
   calculateWidgetProps,
   dropRemovedWidgetEntries,
   fillCalculatedWidgets,
+  hasValidationError,
   initialize,
   injectValidationIssues,
   overrideWidgetProp,
@@ -80,8 +81,13 @@ export const reducer = ({
         return overrideTargetsTouchedInput(next, action) ? validate(next) : next;
       }
 
-      case 'SET_FORM_HEALTH':
-        return setFormHealth(state, action);
+      case 'SET_FORM_HEALTH': {
+        const next = setFormHealth(state, action);
+        // The failed validator stopped the derive, so data written since then is not computed.
+        return hasValidationError(state) && next.formHealth.status === 'ok'
+          ? deriveAfterValidationAction(next)
+          : next;
+      }
 
       case 'VALIDATE_ALL':
         return deriveAfterValidationAction(validate(touchAllInputs(state)));
@@ -114,7 +120,8 @@ export const reducer = ({
 /**
  * Error codes the derive itself produces. A form errored with one of them is computed again on the
  * next derive, so it recovers as soon as the data allows. Any other code (decode errors, a widget
- * that could not be loaded) freezes the derive until `SET_FORM_HEALTH` or `INITIALIZE` clears it.
+ * that could not be loaded, a failing validator) freezes the derive until `SET_FORM_HEALTH` or
+ * `INITIALIZE` clears it.
  */
 const deriveOwnedErrorCodes = new Set<number>([
   errorCodes.calculateCurrentStateError,
@@ -295,6 +302,11 @@ function overrideTargetsTouchedInput(state: State, action: OVERRIDE_WIDGET_PROP)
 
 // TODO: dedupe this. we already have $formIsInvalid (although it doesnt take into account injected validations)
 function calculateIsFormValid(state: State): State {
+  // A validator that failed gives no result for its input, so the form must not submit.
+  if (hasValidationError(state)) {
+    return { ...state, isFormValid: false };
+  }
+
   const injectedValidationsKeys = Object.keys(state.injectedValidations);
   const validationsKeys = Object.keys(state.validations);
 

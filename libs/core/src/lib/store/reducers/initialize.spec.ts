@@ -34,6 +34,29 @@ describe('initialize - malformed form shape guard', () => {
   });
 });
 
+describe('initialize - a form definition that is not an object', () => {
+  const init = (formDef: unknown) =>
+    initialize(createInitialState('en-US'), {
+      type: 'INITIALIZE',
+      payload: { formName: 'f', formDef: formDef as Record<string, any> },
+    });
+
+  it.each([
+    ['null', null],
+    ['undefined', undefined],
+    ["the JSON string 'null'", 'null'],
+    ['a number', 42],
+  ])('gives code 22 with the label root for %s', (_name, formDef) => {
+    const result = init(formDef);
+
+    expect(result.formHealth).toMatchObject({
+      status: 'errored',
+      code: errorCodes.initializeUnknownError,
+    });
+    expect((result.formHealth as { message: string }).message).toContain('[22] root:');
+  });
+});
+
 describe('initialize - uid collision guard', () => {
   const init = (formDef: Record<string, any>) =>
     initialize(createInitialState('en-US'), {

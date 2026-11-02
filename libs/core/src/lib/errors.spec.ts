@@ -15,6 +15,7 @@ describe('errorCodes', () => {
       widgetCouldNotBeLoaded: 30,
       resolveStringInterpolationError: 40,
       expressionRejectedError: 50,
+      validationError: 60,
     });
   });
 });

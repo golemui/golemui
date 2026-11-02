@@ -12,4 +12,4 @@ export { setFormHealth } from './set-form-health';
 export { setLanguage } from './set-language';
 export { setMeta } from './set-meta';
 export { setWidgetData } from './set-widget-data';
-export { validateAll } from './validate-all';
+export { hasValidationError, validateAll } from './validate-all';

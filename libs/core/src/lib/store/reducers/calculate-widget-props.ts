@@ -25,7 +25,7 @@ import { get, isPlainObject, set, setOwnKey } from '../../utils/object';
 import { extractRepeaterIndexes, isRepeaterWidget } from '../../utils/repeater';
 import { type DerivedWidget, type RepeaterItemScope, type State } from '../model';
 import { deepEqual, hasWhen } from './utils';
-import { errorCodes } from '../../errors';
+import { errorCodes, errorMessage } from '../../errors';
 
 // -----------------------------------------------------------------------------
 // Entry point
@@ -405,8 +405,9 @@ function resolveString(input: string, ctx: ResolverCtx): string {
       if (err instanceof ExpressionRejectedError) {
         throw err;
       }
-      const cause = err instanceof Error ? err.message : String(err);
-      throw new StringInterpolationError(`Failed to evaluate '{{${rawExpr.trim()}}}': ${cause}`);
+      throw new StringInterpolationError(
+        `Failed to evaluate '{{${rawExpr.trim()}}}': ${errorMessage(err)}`,
+      );
     }
   });
 }
@@ -595,8 +596,9 @@ function evaluateI18nParam(param: string, ctx: ResolverCtx): unknown {
     if (err instanceof ExpressionRejectedError) {
       throw err;
     }
-    const cause = err instanceof Error ? err.message : String(err);
-    throw new StringInterpolationError(`Failed to evaluate i18n param '${param}': ${cause}`);
+    throw new StringInterpolationError(
+      `Failed to evaluate i18n param '${param}': ${errorMessage(err)}`,
+    );
   }
 }
 

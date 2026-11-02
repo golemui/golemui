@@ -15,6 +15,7 @@ import {
   succeed,
   type FromDecoder,
 } from 'ts.data.json';
+import { errorMessage } from './errors';
 import { type Localizable, type TranslationConfig } from './i18n';
 import {
   type DotPath,
@@ -348,13 +349,26 @@ const functionWidgetDecoder: Decoder<FunctionWidget<string>> = new Decoder((json
   const jsonTypeof = typeof json;
   if (jsonTypeof === 'function') {
     const fnWidget = json as FunctionWidget<string>;
-    // Widget functions expect an empty object for `$form`, otherwise the evaluation crashes
-    const widget = fnWidget({
-      $form: {},
-      errors: undefined,
-      touched: undefined,
-      translate: undefined,
-    });
+    let widget: ReturnType<FunctionWidget<string>>;
+    try {
+      // Widget functions expect an empty object for `$form`, otherwise the evaluation crashes
+      widget = fnWidget({
+        $form: {},
+        errors: undefined,
+        touched: undefined,
+        translate: undefined,
+      });
+    } catch (error) {
+      return err([
+        {
+          message: `The widget function threw when the form called it with an empty $form and no $item: ${errorMessage(error)}`,
+          path: [],
+        },
+      ]);
+    }
+    if (widget === null || typeof widget !== 'object' || Array.isArray(widget)) {
+      return err([{ message: 'Expected the widget function to return a widget object', path: [] }]);
+    }
     // The uid is stored on the function object itself so re-decoding the same function keeps the same uid.
     // An empty uid gets a position uid later (see assignDeterministicUids), so a server and a client process decoding the same definition agree on it.
     const path = (widget as InputWidget<unknown>).path; // this could be undefined, and it's ok.
@@ -392,19 +406,31 @@ const inputWidgetDecoder = objectWithSuffix<InputWidget<any, string>>({
     suffixed: true,
     decoder: decodeWidgetPropOrWidgetPropFn(optional(succeed())),
   },
-}).map((ctrl) => {
-  const transformed = { ...ctrl };
-  if (!ctrl.uid) {
-    transformed.uid = `${ctrl.path}-${ctrl.type}`;
-  }
-  // TODO: no type safety in this block
-  if (ctrl.type === 'repeater') {
-    const props = ctrl['props'] as Record<string, any>;
-    // Copy the props so decoding never writes into the original form definition
-    transformed.props = { ...props, template: layoutWidgetDecoder.parse(props['template']) };
-  }
-  return transformed;
-});
+}).flatMap(
+  (ctrl) =>
+    new Decoder<InputWidget<any, string>>(() => {
+      const transformed = { ...ctrl };
+      if (!ctrl.uid) {
+        transformed.uid = `${ctrl.path}-${ctrl.type}`;
+      }
+      // TODO: no type safety in this block
+      if (ctrl.type === 'repeater') {
+        const props = ctrl['props'] as Record<string, any> | null | undefined;
+        const template = layoutWidgetDecoder.decode(props?.['template']);
+        if (!template.isOk()) {
+          return err(
+            template.issues.map((issue) => ({
+              ...issue,
+              path: ['props', 'template', ...issue.path],
+            })),
+          );
+        }
+        // Copy the props so decoding never writes into the original form definition
+        transformed.props = { ...props, template: template.value };
+      }
+      return ok(transformed);
+    }),
+);
 
 type FormWidgetDecoder = Decoder<
   | DisplayWidget<string>
