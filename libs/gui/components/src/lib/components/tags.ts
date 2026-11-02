@@ -303,9 +303,8 @@ export class GuiTags extends GuiFormControl {
     const drafts = parts.slice(0, -1);
     const tail = parts[parts.length - 1] ?? '';
 
-    if (this.commitDraftBatch(drafts) && input) {
-      input.value = tail;
-    }
+    this.commitDraftBatch(drafts);
+    if (input) input.value = tail;
   }
 
   private clean(rawDraft: string): string {
@@ -323,7 +322,7 @@ export class GuiTags extends GuiFormControl {
     return true;
   }
 
-  private commitDraftBatch(rawDrafts: string[]): boolean {
+  private commitDraftBatch(rawDrafts: string[]) {
     const tags = this.getValue();
     const next = [...tags];
     for (const raw of rawDrafts) {
@@ -332,9 +331,7 @@ export class GuiTags extends GuiFormControl {
       if (!this.allowDuplicates && next.includes(cleaned)) continue;
       next.push(cleaned);
     }
-    if (next.length === tags.length) return false;
-    this.emitChange(next);
-    return true;
+    if (next.length > tags.length) this.emitChange(next);
   }
 
   private emitChange(next: string[]) {

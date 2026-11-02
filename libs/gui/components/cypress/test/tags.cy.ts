@@ -185,6 +185,28 @@ describe('gui-tags', () => {
       input().should('have.value', 'vue');
     });
 
+    it('keeps the rest of a paste as the draft when its first part is empty', () => {
+      const onChange = cy.spy().as('change');
+      cy.mount(html`<gui-tags label="Tags" @gui-change=${onChange}></gui-tags>`);
+
+      input().trigger('paste', { clipboardData: { getData: () => ',css' } });
+
+      input().should('have.value', 'css');
+      cy.get('@change').should('not.have.been.called');
+      pills().should('have.length', 0);
+    });
+
+    it('keeps the rest of a paste as the draft when its first part is a repeated tag', () => {
+      const onChange = cy.spy().as('change');
+      cy.mount(html`<gui-tags label="Tags" value='["lit"]' @gui-change=${onChange}></gui-tags>`);
+
+      input().trigger('paste', { clipboardData: { getData: () => 'lit,css' } });
+
+      input().should('have.value', 'css');
+      cy.get('@change').should('not.have.been.called');
+      pills().should('have.length', 1);
+    });
+
     it('removes a tag with its remove button', () => {
       const onChange = cy.spy().as('change');
       cy.mount(
