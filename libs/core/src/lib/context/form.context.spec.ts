@@ -532,6 +532,26 @@ describe('FormContext.emitSubmitEvent', () => {
       expect(submitEvents).toHaveLength(1);
     });
 
+    it('sends no submit event when a validator throws, and sends one when the validators work', () => {
+      const failingValidators: ValidatorFn<{ required?: boolean }> = () => {
+        throw new Error('Unknown custom rule');
+      };
+      const { context: failingContext } = createForm(formDef, { name: 'Ada' }, failingValidators);
+      const failingSubmits = collectSubmits(failingContext);
+
+      expect(() => failingContext.emitSubmitEvent()).not.toThrow();
+
+      expect(failingSubmits).toEqual([]);
+      expect(failingContext.store.getState().formHealth).toMatchObject({ code: 60 });
+
+      const { context } = createForm(formDef, { name: 'Ada' }, requiredValidators);
+      const submitEvents = collectSubmits(context);
+
+      context.emitSubmitEvent();
+
+      expect(submitEvents).toHaveLength(1);
+    });
+
     it('removes the value of a hidden input from the submitted data', () => {
       const { context } = createForm(
         formDef,
