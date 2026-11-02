@@ -147,6 +147,18 @@ describe('gui-currency', () => {
       formatted().should('have.text', '$99.00');
     });
 
+    it('shows and submits a numeric string value as its number', () => {
+      cy.mount(html`<form><gui-currency name="price" label="Price"></gui-currency></form>`);
+
+      element().then(([el]) => Object.assign(el, { value: '12.5' }));
+
+      input().should('have.value', '12.5');
+      formatted().should('have.text', '$12.50');
+      cy.get('form').should(([form]) =>
+        expect(new FormData(form as HTMLFormElement).get('price')).to.equal('12.5'),
+      );
+    });
+
     it('blocks letters', () => {
       cy.mount(html`<gui-currency label="Price"></gui-currency>`);
 

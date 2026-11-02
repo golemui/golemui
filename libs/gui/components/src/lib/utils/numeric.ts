@@ -18,6 +18,20 @@ export const isRealNumber = (value: unknown): value is number =>
   typeof value === 'number' && !Number.isNaN(value);
 
 /**
+ * The number a value holds, or undefined. Property bindings bypass the Lit converters, so a
+ * number-typed property can hold '', NaN, null or a numeric string such as `'42'` from an API
+ * response or a framework binding. A numeric string reads as its number, like the attribute does;
+ * a blank one, unlike `Number('')`, reads as empty.
+ *
+ * @param {unknown} value - The value to read.
+ * @return {number | undefined} The number, or undefined for anything that isn't one.
+ */
+export const toRealNumber = (value: unknown): number | undefined => {
+  const number = typeof value === 'string' && value.trim() !== '' ? Number(value) : value;
+  return isRealNumber(number) ? number : undefined;
+};
+
+/**
  * The `value` attribute of a number input, rendered on the server only. In the browser the
  * elements set the input's value themselves after each render (a template binding would
  * overwrite what the user is typing), but the server has no input to set it on: without the

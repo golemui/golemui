@@ -7,9 +7,9 @@ import { addErrors, addIcon, addLabel, type ControlTemplateData } from '../utils
 import {
   blockNonNumericInput,
   blockNonNumericKeys,
-  isRealNumber,
   serverValue,
   stepValue,
+  toRealNumber,
 } from '../utils/numeric';
 import { GuiFormControl } from '../gui-form-control';
 import { dispatchBlur, dispatchChange, dispatchValue, valueEvents } from '../utils/events';
@@ -33,7 +33,10 @@ export type GuiCurrencyProps = {
  * @fires gui-blur - Focus left the control.
  */
 export class GuiCurrency extends GuiFormControl {
-  /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
+  /**
+   * BCP 47 locale the amount is formatted in, such as `en-US` or `es`. Typing and parsing follow
+   * the browser's locale.
+   */
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
   /** The amount, or `undefined` when empty. */
   @property({ type: Number }) value: number | null | undefined = undefined;
@@ -88,10 +91,19 @@ export class GuiCurrency extends GuiFormControl {
 
   /**
    * The value as an actual number, or undefined. Property bindings bypass the
-   * Lit converter, so consumers can hand us '', NaN or null.
+   * Lit converter, so consumers can hand us '', NaN, null or a numeric string.
    */
   private get normalizedValue(): number | undefined {
-    return isRealNumber(this.value) ? this.value : undefined;
+    return toRealNumber(this.value);
+  }
+
+  /** The form submits and validates the amount the field shows, not a raw string or NaN. */
+  protected override get controlValue(): unknown {
+    return this.normalizedValue;
+  }
+
+  protected override set controlValue(value: unknown) {
+    this.value = value as number | undefined;
   }
 
   override willUpdate(changedProperties: PropertyValues) {
@@ -103,7 +115,7 @@ export class GuiCurrency extends GuiFormControl {
       'minimumFractionDigits',
     ].some((prop) => changedProperties.has(prop));
     if (affectsFormat && !this.inputElement?.matches(':focus')) {
-      this.displayValue = this.formatCurrency(this.value);
+      this.displayValue = this.formatCurrency(this.normalizedValue);
     }
   }
 
@@ -245,14 +257,14 @@ export class GuiCurrency extends GuiFormControl {
   }
 
   private handleFocus() {
-    this.displayValue = this.formatCurrency(this.value);
+    this.displayValue = this.formatCurrency(this.normalizedValue);
   }
 
   private handleBlur() {
     // Land any programmatic value the focus guard deferred while the user was
     // typing, before downstream listeners read the input.
     this.syncNativeInput();
-    this.displayValue = this.formatCurrency(this.value);
+    this.displayValue = this.formatCurrency(this.normalizedValue);
 
     dispatchBlur(this);
   }
@@ -281,14 +293,6 @@ export class GuiCurrency extends GuiFormControl {
       console.warn('Invalid locale or currency', e);
       return value.toString();
     }
-  }
-
-  private get separators() {
-    const example = new Intl.NumberFormat(this.localeId ?? 'en').format(1111.1);
-    return {
-      group: example.replace(/1/g, '').replace(/\d/g, '')[0] || ',',
-      decimal: example.replace(/1/g, '').replace(/\d/g, '').slice(-1) || '.',
-    };
   }
 }
 

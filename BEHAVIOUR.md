@@ -376,7 +376,7 @@ limit by blocking input.
   -> the add button stays enabled at 5 rows. With 6 rows the form is invalid, and the repeater
   shows the `maxItems` error once focus leaves it.
 
-- Deprecated, to be removed in v3.0.0:
+- Deprecated, to be removed in v3.0.0 (see [DEPRECATIONS.md](DEPRECATIONS.md)):
   - the `maxLength` prop of the textarea and of the markdown editor. It has no effect. Use
     `validator.maxLength`.
   - the repeater's `limit` prop. It disables the add button with no message. Use

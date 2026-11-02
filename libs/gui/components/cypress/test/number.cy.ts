@@ -104,6 +104,40 @@ describe('gui-number', () => {
     });
   });
 
+  describe('form', () => {
+    it('shows, validates and submits a numeric string value as its number', () => {
+      cy.mount(
+        html`<form><gui-number name="age" label="Age" required maximum="10"></gui-number></form>`,
+      );
+
+      // A string from an API response or a framework binding bypasses the Number converter.
+      element().then(([el]) => Object.assign(el, { value: '42' }));
+
+      input().should('have.value', '42');
+      element().should(([el]) => {
+        expect(el.validity?.rangeOverflow).to.equal(true);
+        expect(el.checkValidity()).to.equal(false);
+      });
+      cy.get('form').should(([form]) =>
+        expect(new FormData(form as HTMLFormElement).get('age')).to.equal('42'),
+      );
+    });
+
+    it('treats a value that is not a number as empty, as it shows it', () => {
+      cy.mount(
+        html`<form><gui-number name="age" label="Age" value="7" required></gui-number></form>`,
+      );
+
+      element().then(([el]) => Object.assign(el, { value: 'abc' }));
+
+      input().should('have.value', '');
+      element().should(([el]) => expect(el.validity?.valueMissing).to.equal(true));
+      cy.get('form').should(([form]) =>
+        expect(new FormData(form as HTMLFormElement).has('age')).to.equal(false),
+      );
+    });
+  });
+
   describe('keyboard', () => {
     it('steps the value with ArrowUp and ArrowDown and commits each step', () => {
       const onInput = cy.spy().as('input');
@@ -157,6 +191,32 @@ describe('gui-number', () => {
       input().should('have.value', '3');
       input().type('{downArrow}{downArrow}{downArrow}');
       input().should('have.value', '1');
+    });
+
+    it('fires nothing for a step that a bound keeps from changing the value', () => {
+      const onInput = cy.spy().as('input');
+      const onChange = cy.spy().as('change');
+      cy.mount(
+        html`<gui-number
+          label="Age"
+          value="10"
+          minimum="9"
+          maximum="10"
+          @gui-input=${onInput}
+          @gui-change=${onChange}
+        ></gui-number>`,
+      );
+
+      input().type('{upArrow}');
+      input().should('have.value', '10');
+      cy.get('@input').should('not.have.been.called');
+      cy.get('@change').should('not.have.been.called');
+
+      input().type('{downArrow}{downArrow}');
+      input().should('have.value', '9');
+      cy.get('@input').should('have.callCount', 1);
+      cy.get('@change').should('have.callCount', 1);
+      cy.get('@change').its('lastCall.args.0.detail').should('deep.equal', { value: 9 });
     });
 
     it('steps a fractional step without floating-point noise', () => {

@@ -345,11 +345,20 @@ const guiFacade = {
     custom: _guiCustomDisplay,
   },
   layouts: {
-    /** @deprecated Use `grid`, which stacks its children; a flex layout renders as one. */
+    /**
+     * @deprecated Use `grid`, which stacks its children; a flex layout renders as one. It will
+     * be removed in v3.0.0.
+     */
     flex: _guiFlex,
-    /** @deprecated Use `horizontalGrid`; a flex layout renders as a grid. */
+    /**
+     * @deprecated Use `horizontalGrid`; a flex layout renders as a grid. It will be removed in
+     * v3.0.0.
+     */
     horizontalFlex: _guiHorizontalFlex,
-    /** @deprecated Use `grid` or `verticalGrid`; a flex layout renders as a grid. */
+    /**
+     * @deprecated Use `grid` or `verticalGrid`; a flex layout renders as a grid. It will be
+     * removed in v3.0.0.
+     */
     verticalFlex: _guiVerticalFlex,
     grid: _guiGrid,
     horizontalGrid: _guiHorizontalGrid,
