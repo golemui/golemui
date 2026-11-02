@@ -273,22 +273,24 @@ export class GuiCurrency extends GuiFormControl {
     if (value === '' || value === undefined || value === null || isNaN(value as number)) return '';
 
     try {
-      // Resolve max first, then clamp min so it never exceeds max, otherwise
-      // e.g. `maximumFractionDigits: 0` with the default min of 2 would make
-      // Intl.NumberFormat throw "maximumFractionDigits value is out of range".
-      const maximumFractionDigits =
-        this.maximumFractionDigits ?? Math.max(this.minimumFractionDigits ?? 2, 2);
-      const minimumFractionDigits = Math.min(
-        this.minimumFractionDigits ?? 2,
-        maximumFractionDigits,
-      );
-
-      return new Intl.NumberFormat(this.localeId ?? 'en', {
+      const locale = this.localeId ?? 'en';
+      const options: Intl.NumberFormatOptions = {
         style: 'currency',
         currency: this.currency ?? 'USD',
-        maximumFractionDigits,
-        minimumFractionDigits,
-      }).format(value as number);
+      };
+      const { maximumFractionDigits: max, minimumFractionDigits: min } = this;
+
+      // Unset digits keep the currency's own decimals (0 for JPY, 3 for KWD). When only one is
+      // set, the other is clamped to it, otherwise e.g. `maximumFractionDigits: 0` with the USD
+      // min of 2 would make Intl.NumberFormat throw "maximumFractionDigits value is out of range".
+      if (max !== undefined || min !== undefined) {
+        const { maximumFractionDigits: defaultMax = 2, minimumFractionDigits: defaultMin = 2 } =
+          new Intl.NumberFormat(locale, options).resolvedOptions();
+        options.maximumFractionDigits = max ?? Math.max(min ?? 0, defaultMax);
+        options.minimumFractionDigits = Math.min(min ?? defaultMin, options.maximumFractionDigits);
+      }
+
+      return new Intl.NumberFormat(locale, options).format(value as number);
     } catch (e) {
       console.warn('Invalid locale or currency', e);
       return value.toString();

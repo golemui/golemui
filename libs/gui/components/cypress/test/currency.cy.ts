@@ -59,6 +59,46 @@ describe('gui-currency', () => {
       formatted().last().should('have.text', '$12.500');
     });
 
+    it('shows the decimals of its currency by default', () => {
+      cy.mount(
+        html`<gui-currency label="Price" value="1234" currency="JPY"></gui-currency>
+          <gui-currency label="Cost" value="1234.5" currency="KWD"></gui-currency>`,
+      );
+
+      formatted().first().should('have.text', '¥1,234');
+      formatted().last().should('have.text', 'KWD 1,234.500');
+    });
+
+    it('clamps the unset fraction digits to the currency decimals', () => {
+      cy.mount(
+        html`<gui-currency
+            label="Price"
+            value="1234.5678"
+            currency="KWD"
+            maximum-fraction-digits="1"
+          ></gui-currency>
+          <gui-currency
+            label="Cost"
+            value="1234"
+            currency="JPY"
+            minimum-fraction-digits="2"
+          ></gui-currency>`,
+      );
+
+      formatted().first().should('have.text', 'KWD 1,234.6');
+      formatted().last().should('have.text', '¥1,234.00');
+    });
+
+    it('formats the currency decimals when the value is set and focus leaves', () => {
+      cy.mount(html`<gui-currency label="Price" currency="JPY"></gui-currency>`);
+
+      input().focus();
+      element().invoke('prop', 'value', 1234);
+      input().blur();
+
+      formatted().should('have.text', '¥1,234');
+    });
+
     it('describes the input with its hint and points it at its errors', () => {
       cy.mount(
         html`<gui-currency label="Price" hint="Before tax" .errors=${['Too high']}></gui-currency>`,
