@@ -8,7 +8,7 @@ import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addIcon, addLabel, type ControlTemplateData } from '../utils/templates';
 import { inferOptionValue, updateOptions } from './one-of';
 import type { Option, OptionInput, OptionValue } from '../types';
-import { GuiFormControl } from '../gui-form-control';
+import { GuiFormControl, type GuiValidity } from '../gui-form-control';
 import {
   dispatchBlur,
   dispatchInputError,
@@ -17,7 +17,7 @@ import {
   valueEvents,
   type GuiInputErrorEventDetail,
 } from '../utils/events';
-import { message } from '../utils/messages';
+import { message, requiredName } from '../utils/messages';
 
 /** What <gui-select> renders besides the control state: its presentation props. */
 export type GuiSelectProps = {
@@ -176,10 +176,8 @@ export class GuiSelect extends GuiFormControl {
   override updated(changedProperties: Map<string, any>) {
     if (!changedProperties.has('value') && !changedProperties.has('options')) return;
 
-    // Options often arrive after the value (loaded from a server): no options yet is not an
-    // invalid value, and options that make it valid withdraw the error.
-    const hasValue = this.value !== undefined && this.value !== null && this.value !== '';
-    const invalid = hasValue && !!this.normalizedOptions.length && !this.hasMatchingValue;
+    // Options that make the value valid withdraw the error.
+    const invalid = this.matchesNoOption();
     // Reported once per value: hosts re-render with new options arrays as they show the error.
     if (invalid && (changedProperties.has('value') || !this.reportedInvalidOption)) {
       dispatchInputError(
@@ -190,6 +188,39 @@ export class GuiSelect extends GuiFormControl {
       dispatchInputError(this, '');
     }
     this.reportedInvalidOption = invalid;
+  }
+
+  /**
+   * A value the options do not hold: the select shows the placeholder, as a native select can't
+   * hold it. Options often arrive after the value (loaded from a server), so no options yet is not
+   * an invalid value.
+   */
+  private matchesNoOption(): boolean {
+    const hasValue = this.value !== undefined && this.value !== null && this.value !== '';
+    return hasValue && !!this.normalizedOptions.length && !this.hasMatchingValue;
+  }
+
+  /**
+   * A value that matches no option is missing when `required`, as the placeholder shows, and
+   * invalid otherwise. Then `required`.
+   */
+  protected override validate(): GuiValidity | null {
+    if (!this.matchesNoOption()) return super.validate();
+    if (this.required) {
+      return { flags: { valueMissing: true }, message: message('valueMissing') };
+    }
+    // `setValidity` throws on an empty message, so an empty override falls back to the default.
+    return {
+      flags: { customError: true },
+      message: requiredName('invalidOption', this.invalidOptionMessage, {
+        value: String(this.value),
+      }),
+    };
+  }
+
+  /** A value that matches no option is not submitted, as the select does not show it. */
+  protected override formValue(): string | FormData | null {
+    return this.matchesNoOption() ? null : super.formValue();
   }
 
   /** @internal */

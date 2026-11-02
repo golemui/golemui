@@ -65,6 +65,69 @@ describe('native form association', () => {
     form().then(([element]) => expect(new FormData(element).get('age')).to.equal('30'));
   });
 
+  // A native select can't hold a value that is not one of its options: the element shows the
+  // placeholder for it, so it neither submits it nor counts it as a value.
+  it('blocks a select value that matches no option, and submits nothing for it', () => {
+    cy.mount(
+      html`<form>
+        <gui-select
+          name="color"
+          label="Color"
+          required
+          value="purple"
+          .options=${['red', 'green']}
+        ></gui-select>
+        <gui-select
+          name="shade"
+          label="Shade"
+          value="purple"
+          invalid-option-message=""
+          .options=${['light', 'dark']}
+        ></gui-select>
+      </form>`,
+    );
+
+    control('gui-select[name="color"]').then(([element]) => {
+      expect(element.validity?.valueMissing).to.equal(true);
+      expect(element.validationMessage).to.equal('Please fill out this field.');
+    });
+    control('gui-select[name="shade"]').then(([element]) => {
+      expect(element.validity?.customError).to.equal(true);
+      expect(element.validationMessage).to.equal(
+        "Invalid selection: 'purple' is not a valid option.",
+      );
+    });
+    form().then(([element]) => {
+      expect(element.checkValidity()).to.equal(false);
+      expect([...new FormData(element).keys()]).to.deep.equal([]);
+    });
+
+    cy.get('gui-select[name="color"] select').select('green');
+    control('gui-select[name="shade"]').invoke('prop', 'options', ['light', 'purple']);
+
+    // Retried: the new options render in an update after the command.
+    form().should(([element]) => {
+      expect(element.checkValidity()).to.equal(true);
+      expect(Object.fromEntries(new FormData(element))).to.deep.equal({
+        color: 'green',
+        shade: 'purple',
+      });
+    });
+  });
+
+  it('accepts a select value while its options are still loading', () => {
+    cy.mount(
+      html`<form>
+        <gui-select name="color" label="Color" required value="green"></gui-select>
+      </form>`,
+    );
+
+    form().then(([element]) => {
+      expect(element.checkValidity()).to.equal(true);
+      expect(new FormData(element).get('color')).to.equal('green');
+    });
+  });
+
   it('submits a checked checkbox as "on" and a required unchecked one as missing', () => {
     cy.mount(
       html`<form><gui-checkbox name="terms" label="I agree" required></gui-checkbox></form>`,
