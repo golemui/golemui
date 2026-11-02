@@ -294,13 +294,12 @@ to disable the submit button. Both must always agree with what the user sees.
   }),
   ```
 
-  -> when the VAT number is hidden, `$formIsInvalid` is false and `$errors.vatNumber` is not set,
-  at once. The Pay button is enabled.
+  -> when the VAT number is hidden, `$formIsInvalid` is false, `isFormValid` is true and
+  `$errors.vatNumber` is not set, at once. The Pay button is enabled.
 
 - Scenario: the server rejects the VAT number, and the app injects the issue. Then the user
-  unchecks the box, so the input is hidden. -> `isFormValid` is true after the next validation.
-- Status: not yet. The old error stays until the next validation, so the Pay button stays
-  disabled. An injected issue on a hidden input blocks submit, and the user cannot see why.
+  unchecks the box, so the input is hidden. -> `isFormValid` is true at once.
+- Status: follows.
 
 ### 12. Injected issues update `isFormValid` at once
 
@@ -328,8 +327,7 @@ Apps inject issues, for example server errors, with `INJECT_VALIDATION_ISSUES`.
   -> the input shows the issue and `isFormValid` is false, so the submit button gets its invalid
   style. Clear the issues with `issues: null` -> `isFormValid` is true again.
 
-- Status: not yet. The input shows the issue, but `isFormValid` changes only with the next
-  validation, for example the next blur.
+- Status: follows.
 
 ### 13. A language change translates the shown validation messages at once
 

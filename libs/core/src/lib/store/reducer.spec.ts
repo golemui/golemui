@@ -598,6 +598,31 @@ const makeValidationDrivenFormDef = () => ({
   ],
 });
 
+/** A required input that a checkbox hides, and widgets that read the validation variables. */
+const makeHiddenVatFormDef = () => ({
+  states: { broken: '$formIsInvalid' },
+  form: [
+    { uid: 'isCompany', kind: 'input', type: 'checkbox', path: 'isCompany' },
+    {
+      uid: 'vatNumber',
+      kind: 'input',
+      type: 'textinput',
+      path: 'vatNumber',
+      validator: { required: true },
+      include: { when: '$form.isCompany === true' },
+    },
+    { uid: 'vatHint', kind: 'display', type: 'heading', include: { when: '!!$errors.vatNumber' } },
+    { uid: 'status', kind: 'display', type: 'heading', props: { text: '{{$formIsInvalid}}' } },
+    {
+      uid: 'pay',
+      kind: 'action',
+      type: 'button',
+      actionType: 'submit',
+      disabled: { when: '$formIsInvalid' },
+    },
+  ],
+});
+
 /** A required input that only appears once the form is invalid, next to a required input. */
 const makeSubmitRevealFormDef = () => ({
   form: [
@@ -1732,8 +1757,9 @@ describe('reducer end-to-end', () => {
         { type: 'INJECT_VALIDATION_ISSUES', payload: { path: 'firstName', issues: ['taken'] } },
       ]);
 
-      // Injecting alone recomputes nothing, isFormValid included.
-      expect(injected.isFormValid).toBe(true);
+      // The action computes isFormValid and runs no derive.
+      expect(injected.isFormValid).toBe(false);
+      expect(injected.widgetFlags['submit']).toEqual({ disabled: false });
 
       const reduce = makeReducer();
       const state = reduce(injected, validateAllAction);
@@ -1745,6 +1771,349 @@ describe('reducer end-to-end', () => {
       expect(state.currentStates).toEqual([]);
       expect(state.widgetFlags['nameHint']).toEqual({ hidden: true });
       expect(state.widgetFlags['submit']).toEqual({ disabled: false });
+    });
+  });
+
+  describe('injected issues and isFormValid', () => {
+    const inject = (path: string, issues: string[] | null): Action => ({
+      type: 'INJECT_VALIDATION_ISSUES',
+      payload: { path, issues },
+    });
+    const validData = { firstName: 'Joan', users: [] };
+
+    it('makes the form invalid at once and valid again when the issues are cleared', () => {
+      const reduce = makeReducer();
+      const initial = drive([init(makeBaseFormDef()), setData(validData)]);
+      expect(initial.isFormValid).toBe(true);
+
+      const injected = reduce(initial, inject('firstName', ['taken']));
+      expect(injected.isFormValid).toBe(false);
+
+      const cleared = reduce(injected, inject('firstName', null));
+      expect(cleared.isFormValid).toBe(true);
+    });
+
+    it('stays invalid when one of two injected issues is cleared', () => {
+      const state = drive([
+        init(makeBaseFormDef()),
+        setData({ firstName: 'Joan', users: [{}] }),
+        inject('firstName', ['taken']),
+        inject('users.0.name', ['taken']),
+        inject('firstName', null),
+      ]);
+
+      expect(state.isFormValid).toBe(false);
+    });
+
+    it('stays invalid when the issues are cleared and a validator still fails', () => {
+      const state = drive([
+        init(makeBaseFormDef()),
+        setData({}),
+        blur('firstName', 'firstName'),
+        inject('firstName', ['taken']),
+        inject('firstName', null),
+      ]);
+
+      expect(state.validations['firstName']).toEqual(['required']);
+      expect(state.isFormValid).toBe(false);
+    });
+
+    it('stays valid with an empty issues array', () => {
+      const state = drive([init(makeBaseFormDef()), setData(validData), inject('firstName', [])]);
+
+      expect(state.isFormValid).toBe(true);
+    });
+
+    it('stays valid with an issue on a path that no input owns', () => {
+      const state = drive([init(makeBaseFormDef()), setData(validData), inject('ghost', ['bad'])]);
+
+      expect(state.injectedValidations['ghost']).toEqual(['bad']);
+      expect(state.isFormValid).toBe(true);
+    });
+
+    it('stays invalid after a failed validator when the issues are cleared', () => {
+      const failingValidators: ValidatorFn<any> = () => {
+        throw new Error('broken validator');
+      };
+      const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+
+      const state = drive(
+        [
+          init(makeBaseFormDef()),
+          setData(validData),
+          validateAllAction,
+          inject('firstName', ['taken']),
+          inject('firstName', null),
+        ],
+        'eager',
+        failingValidators,
+      );
+      consoleError.mockRestore();
+
+      expect(state.formHealth).toMatchObject({ code: errorCodes.validationError });
+      expect(state.isFormValid).toBe(false);
+    });
+  });
+
+  describe('hidden inputs and form validity', () => {
+    const inject = (path: string, issues: string[] | null): Action => ({
+      type: 'INJECT_VALIDATION_ISSUES',
+      payload: { path, issues },
+    });
+    const vatBlur = blur('vatNumber', 'vatNumber');
+
+    /** The VAT number input fails, then the checkbox is unchecked. */
+    const hiddenAfterError = (): State =>
+      drive([
+        init(makeHiddenVatFormDef()),
+        setData({ isCompany: true }),
+        vatBlur,
+        setWidgetData('isCompany', false),
+      ]);
+
+    it('uses the error of a visible input in states, flags and props', () => {
+      const state = drive([init(makeHiddenVatFormDef()), setData({ isCompany: true }), vatBlur]);
+
+      expect(state.currentStates).toEqual(['broken']);
+      expect(state.widgetFlags['vatHint']).toEqual({ hidden: false });
+      expect(state.widgetFlags['pay']).toEqual({ disabled: true });
+      expect(propsOf(state, 'status')['text']).toBe('true');
+      expect(state.isFormValid).toBe(false);
+    });
+
+    it('removes the error from states, flags and props at once when a data change hides the input', () => {
+      const state = hiddenAfterError();
+
+      expect(state.widgetFlags['vatNumber']).toEqual({ hidden: true });
+      expect(state.currentStates).toEqual([]);
+      expect(state.widgetFlags['vatHint']).toEqual({ hidden: true });
+      expect(state.widgetFlags['pay']).toEqual({ disabled: false });
+      expect(propsOf(state, 'status')['text']).toBe('false');
+      expect(state.isFormValid).toBe(true);
+    });
+
+    it('counts the error again when the input is shown again', () => {
+      const reduce = makeReducer();
+      const state = reduce(hiddenAfterError(), setWidgetData('isCompany', true));
+
+      expect(state.validations['vatNumber']).toEqual(['required']);
+      expect(state.currentStates).toEqual(['broken']);
+      expect(state.widgetFlags['vatHint']).toEqual({ hidden: false });
+      expect(state.widgetFlags['pay']).toEqual({ disabled: true });
+      expect(propsOf(state, 'status')['text']).toBe('true');
+      expect(state.isFormValid).toBe(false);
+    });
+
+    it('ignores the old error of a hidden input when an injected issue is cleared', () => {
+      const reduce = makeReducer();
+      const injected = reduce(hiddenAfterError(), inject('isCompany', ['server error']));
+      expect(injected.isFormValid).toBe(false);
+
+      const cleared = reduce(injected, inject('isCompany', null));
+
+      expect(cleared.validations['vatNumber']).toEqual(['required']);
+      expect(cleared.isFormValid).toBe(true);
+    });
+
+    it('ignores an issue injected on a hidden input', () => {
+      const state = drive([
+        init(makeHiddenVatFormDef()),
+        setData({ isCompany: false }),
+        inject('vatNumber', ['rejected']),
+      ]);
+
+      expect(state.injectedValidations['vatNumber']).toEqual(['rejected']);
+      expect(state.isFormValid).toBe(true);
+    });
+
+    it('ignores an injected issue at once when the input is hidden', () => {
+      const reduce = makeReducer();
+      const injected = drive([
+        init(makeHiddenVatFormDef()),
+        setData({ isCompany: true, vatNumber: 'ES123' }),
+        inject('vatNumber', ['rejected']),
+      ]);
+      expect(injected.isFormValid).toBe(false);
+
+      const hidden = reduce(injected, setWidgetData('isCompany', false));
+      expect(hidden.isFormValid).toBe(true);
+
+      expect(reduce(hidden, validateAllAction).isFormValid).toBe(true);
+    });
+
+    it('counts an injected issue again when the input is shown', () => {
+      const reduce = makeReducer();
+      const hidden = drive([
+        init(makeHiddenVatFormDef()),
+        setData({ isCompany: false, vatNumber: 'ES123' }),
+        inject('vatNumber', ['rejected']),
+      ]);
+      expect(hidden.isFormValid).toBe(true);
+
+      const shown = reduce(hidden, setWidgetData('isCompany', true));
+      expect(shown.isFormValid).toBe(false);
+
+      const state = reduce(shown, validateAllAction);
+      expect(state.injectedValidations['vatNumber']).toEqual(['rejected']);
+      expect(state.isFormValid).toBe(false);
+    });
+
+    it('counts the error when a visible input has the same path as a hidden input', () => {
+      const failed = drive([
+        init({
+          form: [
+            {
+              uid: 'companyVat',
+              kind: 'input',
+              type: 'textinput',
+              path: 'vatNumber',
+              validator: { required: true },
+              include: { when: '$form.isCompany === true' },
+            },
+            {
+              uid: 'personVat',
+              kind: 'input',
+              type: 'textinput',
+              path: 'vatNumber',
+              validator: { required: true },
+              exclude: { when: '$form.isCompany === true' },
+            },
+            {
+              uid: 'status',
+              kind: 'display',
+              type: 'heading',
+              props: { text: '{{$formIsInvalid}}' },
+            },
+          ],
+        }),
+        setData({ isCompany: true }),
+        blur('vatNumber', 'companyVat'),
+      ]);
+      const reduce = makeReducer();
+      const state = reduce(failed, setWidgetData('isCompany', false));
+
+      expect(state.widgetFlags['companyVat']).toEqual({ hidden: true });
+      expect(propsOf(state, 'status')['text']).toBe('true');
+    });
+
+    it('removes the errors of a row input when its row hides it', () => {
+      const makeRowsFormDef = () => ({
+        form: [
+          {
+            uid: 'rows',
+            kind: 'input',
+            type: 'repeater',
+            path: 'rows',
+            props: {
+              template: {
+                uid: 'row',
+                kind: 'layout',
+                type: 'flex',
+                children: [
+                  {
+                    uid: 'name',
+                    kind: 'input',
+                    type: 'textinput',
+                    path: 'rows.items.name',
+                    validator: { required: true },
+                    include: { when: '$item.active === true' },
+                  },
+                ],
+              },
+            },
+          },
+          {
+            uid: 'status',
+            kind: 'display',
+            type: 'heading',
+            props: { text: '{{$formIsInvalid}}' },
+          },
+        ],
+      });
+      const failed = drive([
+        init(makeRowsFormDef()),
+        setData({ rows: [{ active: true }] }),
+        validateAllAction,
+      ]);
+      expect(failed.validations['rows.0.name']).toEqual(['required']);
+      expect(propsOf(failed, 'status')['text']).toBe('true');
+
+      const reduce = makeReducer();
+      const state = reduce(failed, setData({ rows: [{ active: false }] }));
+
+      expect(propsOf(state, 'status')['text']).toBe('false');
+    });
+
+    it('follows a chain of inputs that hide each other through $errors', () => {
+      const failed = drive([
+        init({
+          form: [
+            {
+              uid: 'first',
+              kind: 'input',
+              type: 'textinput',
+              path: 'first',
+              validator: { required: true },
+              include: { when: '$form.showFirst === true' },
+            },
+            {
+              uid: 'second',
+              kind: 'input',
+              type: 'textinput',
+              path: 'second',
+              validator: { required: true },
+              include: { when: '!!$errors.first' },
+            },
+            {
+              uid: 'submit',
+              kind: 'action',
+              type: 'button',
+              actionType: 'submit',
+              disabled: { when: '$formIsInvalid' },
+            },
+          ],
+        }),
+        setData({ showFirst: true }),
+        blur('first', 'first'),
+        blur('second', 'second'),
+      ]);
+      expect(failed.validations).toEqual({ first: ['required'], second: ['required'] });
+      expect(failed.widgetFlags['submit']).toEqual({ disabled: true });
+
+      const reduce = makeReducer();
+      const state = reduce(failed, setWidgetData('showFirst', false));
+
+      expect(state.widgetFlags['first']).toEqual({ hidden: true });
+      expect(state.widgetFlags['second']).toEqual({ hidden: true });
+      expect(state.widgetFlags['submit']).toEqual({ disabled: false });
+    });
+
+    it('keeps the form healthy and the input stable when the error of the input hides it', () => {
+      const failed = drive([
+        init({
+          form: [
+            {
+              uid: 'selfHiding',
+              kind: 'input',
+              type: 'textinput',
+              path: 'selfHiding',
+              validator: { required: true },
+              include: { when: '!$formIsInvalid' },
+            },
+          ],
+        }),
+        setData({}),
+        blur('selfHiding', 'selfHiding'),
+      ]);
+      expect(failed.validations['selfHiding']).toEqual(['required']);
+
+      const reduce = makeReducer();
+      const first = reduce(failed, setData({ other: 1 }));
+      const second = reduce(first, setData({ other: 2 }));
+
+      expect(first.formHealth).toEqual({ status: 'ok' });
+      expect(second.widgetFlags['selfHiding']).toEqual(first.widgetFlags['selfHiding']);
+      expect(first.widgetFlags['selfHiding']).toEqual(failed.widgetFlags['selfHiding']);
     });
   });
 

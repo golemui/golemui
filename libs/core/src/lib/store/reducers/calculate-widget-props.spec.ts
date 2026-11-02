@@ -41,6 +41,11 @@ const seed = <W>(state: State, uid: string, source: W): void => {
   state.calculatedWidgets[uid] = { source: source as any, current: {} as any };
 };
 
+/** Adds a visible input, because only the error of a visible input counts in the validation variables. */
+const seedVisibleInput = (state: State, path: string): void => {
+  state.resolvedSources[path] = { kind: 'input', uid: path, type: 'textinput', path } as any;
+};
+
 const run = (
   state: State,
   translator: I18nTranslator = makeTranslator(),
@@ -783,6 +788,7 @@ describe('calculateWidgetProps', () => {
         props: { text: 'Invalid? {{$formIsInvalid}}' },
       } satisfies DisplayWidget<string>;
       seed(state, 'd', source1);
+      seedVisibleInput(state, 'some.path');
       state.validations = { 'some.path': [{ message: 'bad' }] as any };
 
       const next = run(state);
@@ -800,6 +806,7 @@ describe('calculateWidgetProps', () => {
         props: { text: 'Err: {{$errors.user.age}}' },
       } satisfies DisplayWidget<string>;
       seed(state, 'd', source);
+      seedVisibleInput(state, 'user.age');
       state.validations = { 'user.age': [{ message: 'too young' }] as any };
 
       const next = run(state);
@@ -1679,6 +1686,7 @@ describe('calculateWidgetProps', () => {
         props: { text: '{{$formIsInvalid}}' },
       } satisfies DisplayWidget<string>;
       seed(state, 'd', source);
+      seedVisibleInput(state, 'u.n');
       state.validations = { 'u.n': [{ message: 'bad' }] as any };
 
       const next = run(state);

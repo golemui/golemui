@@ -68,7 +68,8 @@ export type State = {
   injectedValidations: Record<DotPath, ValidationStatus>;
 
   /**
-   * caclulated each time the validation kicks-in. It atkes into account both `validations` and `injectedValidations`.
+   * Calculated on each derive and on each injected issue. It reads `validations` and
+   * `injectedValidations`, and only the paths of visible inputs count.
    */
   isFormValid: boolean;
 

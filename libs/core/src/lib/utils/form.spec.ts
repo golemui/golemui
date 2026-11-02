@@ -44,8 +44,46 @@ describe('utils.form', () => {
   });
 
   describe('calculateValidationVariables', () => {
-    const makeState = (validations: State['validations']) =>
-      ({ validations }) satisfies Pick<State, 'validations'> as unknown as State;
+    const makeState = (
+      validations: State['validations'],
+      resolvedSources: State['resolvedSources'] = Object.fromEntries(
+        Object.keys(validations).map((path) => [path, inputWidget(path)]),
+      ),
+      widgetFlags: State['widgetFlags'] = {},
+    ) =>
+      ({ validations, resolvedSources, widgetFlags }) satisfies Pick<
+        State,
+        'validations' | 'resolvedSources' | 'widgetFlags'
+      > as unknown as State;
+
+    const inputWidget = (path: string) =>
+      ({ uid: path, kind: 'input', type: 'textinput', path }) satisfies InputWidget<
+        unknown,
+        string
+      >;
+
+    it('skips the error of a hidden input', () => {
+      const result = calculateValidationVariables(
+        makeState({ vat: ['required'] }, { vat: inputWidget('vat') }, { vat: { hidden: true } }),
+      );
+      expect(result).toEqual({ $formIsInvalid: false, $errors: {} });
+    });
+
+    it('skips an error on a path that no input owns', () => {
+      const result = calculateValidationVariables(makeState({ ghost: ['required'] }, {}));
+      expect(result).toEqual({ $formIsInvalid: false, $errors: {} });
+    });
+
+    it('keeps the error when a visible input has the same path as a hidden input', () => {
+      const result = calculateValidationVariables(
+        makeState(
+          { vat: ['required'] },
+          { companyVat: inputWidget('vat'), personVat: inputWidget('vat') },
+          { companyVat: { hidden: true } },
+        ),
+      );
+      expect(result).toEqual({ $formIsInvalid: true, $errors: { vat: ['required'] } });
+    });
 
     it('returns $formIsInvalid: false and empty $errors when validations is empty', () => {
       const result = calculateValidationVariables(makeState({}));
