@@ -202,6 +202,18 @@ describe('gui-slider', () => {
       element().should(([host]) => expect(host.validity?.rangeOverflow).to.equal(true));
     });
 
+    it('reads a numeric string value as its number', () => {
+      cy.mount(html`<form><gui-slider name="level" maximum="50"></gui-slider></form>`);
+
+      element().then(([el]) => Object.assign(el, { value: '80' }));
+
+      input().should('have.attr', 'aria-valuetext', '80');
+      element().should(([host]) => expect(host.validity?.rangeOverflow).to.equal(true));
+      cy.get('form').should(([form]) =>
+        expect(new FormData(form as HTMLFormElement).get('level')).to.equal('80'),
+      );
+    });
+
     it('reports a value off a step, set from outside, and reads it as it is', () => {
       cy.mount(html`<form><gui-slider name="level" step="5" .value=${37}></gui-slider></form>`);
 

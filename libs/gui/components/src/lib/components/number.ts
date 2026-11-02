@@ -11,6 +11,7 @@ import {
   isRealNumber,
   serverValue,
   stepValue,
+  toRealNumber,
 } from '../utils/numeric';
 import { GuiFormControl, type GuiValidity } from '../gui-form-control';
 import { dispatchBlur, dispatchChange, dispatchValue, valueEvents } from '../utils/events';
@@ -158,10 +159,19 @@ export class GuiNumber extends GuiFormControl {
   /**
    * The value as an actual number, or undefined. Property bindings bypass the
    * Lit converter, so arbitrary consumers can hand us '' (Angular-style ?? ''
-   * templates), NaN (the Vue undefined workaround) or null.
+   * templates), NaN (the Vue undefined workaround), null or a numeric string.
    */
   private get normalizedValue(): number | undefined {
-    return isRealNumber(this.value) ? this.value : undefined;
+    return toRealNumber(this.value);
+  }
+
+  /** The form submits and validates the number the field shows, not a raw string or NaN. */
+  protected override get controlValue(): unknown {
+    return this.normalizedValue;
+  }
+
+  protected override set controlValue(value: unknown) {
+    this.value = value as number | undefined;
   }
 
   /**

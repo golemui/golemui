@@ -5,7 +5,7 @@ import { cspStyleMap, safeDefine } from '@golemui/lit-utils';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { type GuiValidity } from '../gui-form-control';
 import { dispatchChange, dispatchValue, valueEvents } from '../utils/events';
-import { isRealNumber } from '../utils/numeric';
+import { toRealNumber } from '../utils/numeric';
 import { percentOf, snapToStep } from '../utils/slider';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 import { GuiSliderBase } from './slider-base';
@@ -47,9 +47,18 @@ export class GuiSlider extends GuiSliderBase {
     }),
   });
 
-  /** The value, or `undefined` for anything that isn't a number. */
+  /** The value, or `undefined` for anything that isn't a number. A numeric string is its number. */
   private get number(): number | undefined {
-    return isRealNumber(this.value) ? this.value : undefined;
+    return toRealNumber(this.value);
+  }
+
+  /** The form submits and validates the number the slider shows, not a raw string or NaN. */
+  protected override get controlValue(): unknown {
+    return this.number;
+  }
+
+  protected override set controlValue(value: unknown) {
+    this.value = value as number | undefined;
   }
 
   override render() {

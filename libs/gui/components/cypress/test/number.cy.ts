@@ -104,6 +104,40 @@ describe('gui-number', () => {
     });
   });
 
+  describe('form', () => {
+    it('shows, validates and submits a numeric string value as its number', () => {
+      cy.mount(
+        html`<form><gui-number name="age" label="Age" required maximum="10"></gui-number></form>`,
+      );
+
+      // A string from an API response or a framework binding bypasses the Number converter.
+      element().then(([el]) => Object.assign(el, { value: '42' }));
+
+      input().should('have.value', '42');
+      element().should(([el]) => {
+        expect(el.validity?.rangeOverflow).to.equal(true);
+        expect(el.checkValidity()).to.equal(false);
+      });
+      cy.get('form').should(([form]) =>
+        expect(new FormData(form as HTMLFormElement).get('age')).to.equal('42'),
+      );
+    });
+
+    it('treats a value that is not a number as empty, as it shows it', () => {
+      cy.mount(
+        html`<form><gui-number name="age" label="Age" value="7" required></gui-number></form>`,
+      );
+
+      element().then(([el]) => Object.assign(el, { value: 'abc' }));
+
+      input().should('have.value', '');
+      element().should(([el]) => expect(el.validity?.valueMissing).to.equal(true));
+      cy.get('form').should(([form]) =>
+        expect(new FormData(form as HTMLFormElement).has('age')).to.equal(false),
+      );
+    });
+  });
+
   describe('keyboard', () => {
     it('steps the value with ArrowUp and ArrowDown and commits each step', () => {
       const onInput = cy.spy().as('input');

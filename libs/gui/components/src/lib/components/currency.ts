@@ -7,9 +7,9 @@ import { addErrors, addIcon, addLabel, type ControlTemplateData } from '../utils
 import {
   blockNonNumericInput,
   blockNonNumericKeys,
-  isRealNumber,
   serverValue,
   stepValue,
+  toRealNumber,
 } from '../utils/numeric';
 import { GuiFormControl } from '../gui-form-control';
 import { dispatchBlur, dispatchChange, dispatchValue, valueEvents } from '../utils/events';
@@ -88,10 +88,19 @@ export class GuiCurrency extends GuiFormControl {
 
   /**
    * The value as an actual number, or undefined. Property bindings bypass the
-   * Lit converter, so consumers can hand us '', NaN or null.
+   * Lit converter, so consumers can hand us '', NaN, null or a numeric string.
    */
   private get normalizedValue(): number | undefined {
-    return isRealNumber(this.value) ? this.value : undefined;
+    return toRealNumber(this.value);
+  }
+
+  /** The form submits and validates the amount the field shows, not a raw string or NaN. */
+  protected override get controlValue(): unknown {
+    return this.normalizedValue;
+  }
+
+  protected override set controlValue(value: unknown) {
+    this.value = value as number | undefined;
   }
 
   override willUpdate(changedProperties: PropertyValues) {
@@ -103,7 +112,7 @@ export class GuiCurrency extends GuiFormControl {
       'minimumFractionDigits',
     ].some((prop) => changedProperties.has(prop));
     if (affectsFormat && !this.inputElement?.matches(':focus')) {
-      this.displayValue = this.formatCurrency(this.value);
+      this.displayValue = this.formatCurrency(this.normalizedValue);
     }
   }
 
@@ -245,14 +254,14 @@ export class GuiCurrency extends GuiFormControl {
   }
 
   private handleFocus() {
-    this.displayValue = this.formatCurrency(this.value);
+    this.displayValue = this.formatCurrency(this.normalizedValue);
   }
 
   private handleBlur() {
     // Land any programmatic value the focus guard deferred while the user was
     // typing, before downstream listeners read the input.
     this.syncNativeInput();
-    this.displayValue = this.formatCurrency(this.value);
+    this.displayValue = this.formatCurrency(this.normalizedValue);
 
     dispatchBlur(this);
   }
