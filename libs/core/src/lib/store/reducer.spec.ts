@@ -4691,6 +4691,176 @@ describe('reducer end-to-end', () => {
     });
   });
 
+  describe('a language change and the validation messages', () => {
+    const requiredMessage: Record<string, string> = {
+      'en-US': 'This field is required',
+      'es-ES': 'Este campo es obligatorio',
+    };
+
+    // A validator fails while this flag is set. The flag is shared by the tests of this describe.
+    let validatorsBroken = false;
+    let consoleError: ReturnType<typeof vi.spyOn>;
+
+    beforeEach(() => {
+      validatorsBroken = false;
+      consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    });
+
+    afterEach(() => {
+      consoleError.mockRestore();
+    });
+
+    /** Answers in the language it was last set to, like a real i18n adapter. */
+    const makeTranslator = () => {
+      let lang = 'en-US';
+      return {
+        get lang() {
+          return lang;
+        },
+        translate: (key: string) => (key === 'required' ? requiredMessage[lang] : key),
+        subscribe: () => () => undefined,
+        setLang: (newLang: string) => {
+          lang = newLang;
+        },
+      };
+    };
+
+    /** Like the validators of the gui package, the message is translated when the validator runs. */
+    const translatingValidators: ValidatorFn<TestValidator> = (validator, localization) => {
+      if (validatorsBroken) {
+        throw new Error('the validator failed');
+      }
+      return {
+        '~standard': {
+          version: 1,
+          vendor: 'reducer-spec',
+          validate: (value: unknown) => {
+            const isEmpty = value === undefined || value === null || value === '';
+            return validator?.required && isEmpty
+              ? { issues: [{ message: localization?.translate('required') ?? 'required' }] }
+              : { value };
+          },
+        },
+      };
+    };
+
+    const makeForm = () => {
+      const translator = makeTranslator();
+      const reduce = reducer({
+        validators: translatingValidators as ValidatorFn<any>,
+        validateOn: 'eager',
+        localization: translator,
+        functions,
+      });
+      // The bindings do the same: the translator changes first, then SET_LANGUAGE reaches the store.
+      const changeLanguage = (state: State, lang: string): State => {
+        translator.setLang(lang);
+        return reduce(state, { type: 'SET_LANGUAGE', payload: { lang } });
+      };
+      return { reduce, changeLanguage };
+    };
+
+    const formDef = {
+      form: [
+        { uid: 'email', kind: 'input', type: 'text', path: 'email', validator: { required: true } },
+        {
+          uid: 'emailError',
+          kind: 'display',
+          type: 'heading',
+          props: { text: '{{$errors.email}}' },
+        },
+      ],
+    };
+
+    it('translates the shown error and $errors to the new language', () => {
+      const { reduce, changeLanguage } = makeForm();
+      const shown = [init(formDef), setData({}), blur('email', 'email')].reduce(
+        reduce,
+        createInitialState('en-US'),
+      );
+      expect(shown.validations).toEqual({ email: [requiredMessage['en-US']] });
+      expect(propsOf(shown, 'emailError')['text']).toBe(requiredMessage['en-US']);
+
+      const spanish = changeLanguage(shown, 'es-ES');
+
+      expect(spanish.validations).toEqual({ email: [requiredMessage['es-ES']] });
+      expect(propsOf(spanish, 'emailError')['text']).toBe(requiredMessage['es-ES']);
+      expect(spanish.isFormValid).toBe(false);
+      expect(spanish.touchedControls).toBe(shown.touchedControls);
+    });
+
+    it('does not create an error for an input that was not validated yet', () => {
+      const { reduce, changeLanguage } = makeForm();
+      const before = [init(formDef), setData({})].reduce(reduce, createInitialState('en-US'));
+
+      const after = changeLanguage(before, 'es-ES');
+
+      expect(after.validations).toEqual({});
+      expect(after.isFormValid).toBe(true);
+
+      // Control: the validator does answer in the new language once the input is validated.
+      const validated = reduce(after, blur('email', 'email'));
+      expect(validated.validations).toEqual({ email: [requiredMessage['es-ES']] });
+    });
+
+    it('gives the form health code 60 when a validator fails on the language change', () => {
+      const { reduce, changeLanguage } = makeForm();
+      const shown = [init(formDef), setData({}), blur('email', 'email')].reduce(
+        reduce,
+        createInitialState('en-US'),
+      );
+      expect(shown.formHealth).toEqual({ status: 'ok' });
+
+      validatorsBroken = true;
+      const failed = changeLanguage(shown, 'es-ES');
+
+      expect(failed.formHealth).toMatchObject({
+        status: 'errored',
+        code: errorCodes.validationError,
+      });
+      expect(failed.isFormValid).toBe(false);
+    });
+
+    it('keeps the health of a failed validator when the props pass fails on the language change', () => {
+      let functionBroken = false;
+      const translator = makeTranslator();
+      const reduce = reducer({
+        validators: translatingValidators as ValidatorFn<any>,
+        validateOn: 'eager',
+        localization: translator,
+        functions: {
+          ...functions,
+          label: () => {
+            if (functionBroken) {
+              throw new Error('the function failed');
+            }
+            return 'label';
+          },
+        },
+      });
+      const failedValidator = [
+        init({
+          form: [
+            ...formDef.form,
+            { uid: 'title', kind: 'display', type: 'heading', props: { text: '{{$fn.label()}}' } },
+          ],
+        }),
+        setData({}),
+        blur('email', 'email'),
+      ].reduce(reduce, createInitialState('en-US'));
+      validatorsBroken = true;
+      const failed = reduce(failedValidator, validateAllAction);
+      expect(failed.formHealth).toMatchObject({ code: errorCodes.validationError });
+
+      functionBroken = true;
+      translator.setLang('es-ES');
+      const after = reduce(failed, { type: 'SET_LANGUAGE', payload: { lang: 'es-ES' } });
+
+      expect(after.formHealth).toBe(failed.formHealth);
+      expect(after.isFormValid).toBe(false);
+    });
+  });
+
   describe('INITIALIZE on a form that already has state', () => {
     it('resets meta, injected issues, overrides and the submit flags, and keeps the language', () => {
       const used = drive([
