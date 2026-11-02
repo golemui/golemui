@@ -2491,6 +2491,296 @@ describe('reducer end-to-end', () => {
     });
   });
 
+  describe('repeater row changes', () => {
+    const removeRow = (path: string, data: unknown, index: number): Action => ({
+      type: 'SET_WIDGET_DATA',
+      payload: { path, data, rowChange: { type: 'removed', index } },
+    });
+
+    /** Rows `[Alice, '']`: the second row is touched, has an error, an injected issue and an override. */
+    const aliceAndEmptyBob = () =>
+      drive([
+        init(makeRequiredRowsFormDef()),
+        setData({ users: [{ name: 'Alice' }, { name: '' }] }),
+        blur('users.1.name', 'name[1]'),
+        overrideByPath('users.1.name', 'Second'),
+        { type: 'INJECT_VALIDATION_ISSUES', payload: { path: 'users.1.name', issues: ['taken'] } },
+      ]);
+
+    it('moves the state of the next row to the position of a removed row', () => {
+      const before = aliceAndEmptyBob();
+      expect(before.touchedControls['users.1.name']).toBe(true);
+      expect(before.touchedControls).not.toHaveProperty('users.0.name');
+
+      const state = makeReducer()(before, removeRow('users', [{ name: '' }], 0));
+
+      expect(state.touchedControls['users.0.name']).toBe(true);
+      expect(state.validations['users.0.name']).toEqual(['required']);
+      expect(state.injectedValidations['users.0.name']).toEqual(['taken']);
+      expect(state.widgetPropOverrides['name[0]']).toEqual({ placeholder: 'Second' });
+      expect(propsOf(state, 'name[0]')['placeholder']).toBe('Second');
+
+      expect(state.touchedControls).not.toHaveProperty('users.1.name');
+      expect(state.validations).not.toHaveProperty('users.1.name');
+      expect(state.injectedValidations).not.toHaveProperty('users.1.name');
+      expect(state.widgetPropOverrides).not.toHaveProperty('name[1]');
+      expect(state.isFormValid).toBe(false);
+    });
+
+    it('keeps the state at the positions when the write does not report a row change', () => {
+      const state = makeReducer()(aliceAndEmptyBob(), setWidgetData('users', [{ name: '' }]));
+
+      expect(state.touchedControls).not.toHaveProperty('users.0.name');
+      expect(state.widgetPropOverrides).toEqual({});
+    });
+
+    it('gives no state to a row added after a removal', () => {
+      const reduce = makeReducer();
+      const removed = reduce(aliceAndEmptyBob(), removeRow('users', [{ name: '' }], 0));
+
+      const state = reduce(removed, setWidgetData('users', [{ name: '' }, {}]));
+
+      expect(state.touchedControls).not.toHaveProperty('users.1.name');
+      expect(state.validations).not.toHaveProperty('users.1.name');
+      expect(state.injectedValidations).not.toHaveProperty('users.1.name');
+      expect(propsOf(state, 'name[1]')['placeholder']).toBeUndefined();
+      expect(propsOf(state, 'name[0]')['placeholder']).toBe('Second');
+    });
+
+    it('removes the state of the removed row, so the error of that row does not reach the next row', () => {
+      const before = drive([
+        init(makeRequiredRowsFormDef()),
+        setData({ users: [{ name: '' }, { name: 'Bob' }] }),
+        blur('users.0.name', 'name[0]'),
+        overrideByPath('users.0.name', 'First'),
+      ]);
+      expect(before.isFormValid).toBe(false);
+
+      const state = makeReducer()(before, removeRow('users', [{ name: 'Bob' }], 0));
+
+      expect(state.validations['users.0.name']).toBeNull();
+      expect(state.touchedControls).not.toHaveProperty('users.0.name');
+      expect(state.widgetPropOverrides).toEqual({});
+      expect(propsOf(state, 'name[0]')['placeholder']).toBeUndefined();
+      expect(state.isFormValid).toBe(true);
+    });
+
+    it('removes a prop that only the override of a removed row had set', () => {
+      const before = drive([
+        init(makeRequiredRowsFormDef()),
+        setData({ users: [{ name: 'Alice' }, { name: 'Bob' }] }),
+        {
+          type: 'OVERRIDE_WIDGET_PROP',
+          payload: { path: 'users.0.name', prop: 'readonly', value: true },
+        },
+      ]);
+      expect(propsOf(before, 'name[0]')['readonly']).toBe(true);
+
+      const state = makeReducer()(before, removeRow('users', [{ name: 'Bob' }], 0));
+
+      expect(propsOf(state, 'name[0]')).not.toHaveProperty('readonly');
+    });
+
+    it('keeps the shown errors after a submit attempt when a row is removed', () => {
+      const before = drive([
+        init(makeRequiredRowsFormDef()),
+        setData({ users: [{ name: 'Alice' }, { name: '' }, { name: 'Carol' }] }),
+        validateAllAction,
+      ]);
+
+      const state = makeReducer()(before, removeRow('users', [{ name: '' }, { name: 'Carol' }], 0));
+
+      expect(state.touchedControls).toEqual({
+        users: true,
+        'users.0.name': true,
+        'users.1.name': true,
+      });
+      expect(state.validations).toEqual({
+        users: null,
+        'users.0.name': ['required'],
+        'users.1.name': null,
+      });
+      expect(state.isFormValid).toBe(false);
+    });
+
+    it('keeps the rows before the removed row at their positions', () => {
+      const before = drive([
+        init(makeRequiredRowsFormDef()),
+        setData({ users: [{ name: 'A' }, { name: 'B' }, { name: 'C' }] }),
+        overrideByPath('users.0.name', 'First'),
+        overrideByPath('users.1.name', 'Second'),
+        overrideByPath('users.2.name', 'Third'),
+      ]);
+
+      const state = makeReducer()(before, removeRow('users', [{ name: 'A' }, { name: 'C' }], 1));
+
+      expect(state.widgetPropOverrides).toEqual({
+        'name[0]': { placeholder: 'First' },
+        'name[1]': { placeholder: 'Third' },
+      });
+    });
+
+    it('moves a row at position 10 by its number, not by the text of its path', () => {
+      const names = Array.from({ length: 11 }, (_, index) => ({ name: `row ${index}` }));
+      const before = drive([
+        init(makeRequiredRowsFormDef()),
+        setData({ users: names }),
+        { type: 'INJECT_VALIDATION_ISSUES', payload: { path: 'users.10.name', issues: ['taken'] } },
+        overrideByPath('users.10.name', 'Eleventh'),
+      ]);
+
+      const state = makeReducer()(
+        before,
+        removeRow(
+          'users',
+          names.filter((_, index) => index !== 1),
+          1,
+        ),
+      );
+
+      expect(state.injectedValidations['users.9.name']).toEqual(['taken']);
+      expect(state.widgetPropOverrides).toEqual({ 'name[9]': { placeholder: 'Eleventh' } });
+    });
+
+    it('moves the state of a repeater of plain values', () => {
+      const before = drive([
+        init({
+          form: [
+            {
+              uid: 'tags',
+              kind: 'input',
+              type: 'repeater',
+              path: 'tags',
+              props: { template: plainRow('tag', 'tags') },
+            },
+          ],
+        }),
+        setData({ tags: ['a', 'b'] }),
+        blur('tags.1', 'tag[1]'),
+        overrideByPath('tags.1', 'Second'),
+      ]);
+      expect(before.touchedControls['tags.1']).toBe(true);
+
+      const state = makeReducer()(before, removeRow('tags', ['b'], 0));
+
+      expect(state.touchedControls['tags.0']).toBe(true);
+      expect(state.touchedControls).not.toHaveProperty('tags.1');
+      expect(state.widgetPropOverrides).toEqual({ 'tag[0]': { placeholder: 'Second' } });
+    });
+
+    it('does not move the state of another repeater', () => {
+      const makeRepeater = (uid: string, path: string, inputUid: string) => ({
+        uid,
+        kind: 'input',
+        type: 'repeater',
+        path,
+        props: {
+          template: {
+            uid: `${uid}Row`,
+            kind: 'layout',
+            type: 'flex',
+            children: [
+              { uid: inputUid, kind: 'input', type: 'textinput', path: `${path}.items.name` },
+            ],
+          },
+        },
+      });
+      const before = drive([
+        init({
+          form: [
+            makeRepeater('users', 'users', 'name'),
+            makeRepeater('owners', 'usersOwners', 'owner'),
+          ],
+        }),
+        setData({ users: [{}, {}], usersOwners: [{}, {}] }),
+        blur('usersOwners.1.name', 'owner[1]'),
+        overrideByPath('usersOwners.1.name', 'Second owner'),
+      ]);
+
+      const state = makeReducer()(before, removeRow('users', [{}], 0));
+
+      expect(state.touchedControls['usersOwners.1.name']).toBe(true);
+      expect(state.widgetPropOverrides).toEqual({ 'owner[1]': { placeholder: 'Second owner' } });
+    });
+
+    it('does not move the state of a static input whose path points into a row', () => {
+      const repeater = makeRequiredRowsFormDef().form[0];
+      const before = drive([
+        init({
+          form: [
+            repeater,
+            {
+              uid: 'secondEmail',
+              kind: 'input',
+              type: 'textinput',
+              path: 'users.1.email',
+              validator: { required: true },
+            },
+          ],
+        }),
+        setData({ users: [{ name: 'A' }, { name: 'B' }, { name: 'C' }] }),
+        blur('users.1.email', 'secondEmail'),
+        overrideByPath('users.1.email', 'Email'),
+        overrideByPath('users.1.name', 'Second'),
+      ]);
+      expect(before.touchedControls['users.1.email']).toBe(true);
+
+      const state = makeReducer()(before, removeRow('users', [{ name: 'B' }, { name: 'C' }], 0));
+
+      expect(state.touchedControls['users.1.email']).toBe(true);
+      expect(state.touchedControls).not.toHaveProperty('users.0.email');
+      expect(state.validations['users.1.email']).toEqual(['required']);
+      expect(state.widgetPropOverrides).toEqual({
+        secondEmail: { placeholder: 'Email' },
+        'name[0]': { placeholder: 'Second' },
+      });
+    });
+
+    describe('nested repeaters', () => {
+      const devName = (name: string) => ({ name, active: true });
+
+      const twoTeams = () =>
+        drive([
+          init(makeNestedRepeaterFormDef()),
+          setData({
+            teams: [
+              { devs: [devName('Ada'), devName('Linus')] },
+              { devs: [devName('Grace'), devName('Ken')] },
+            ],
+          }),
+          blur('teams.1.devs.1.name', 'devName[1][1]'),
+          overrideByPath('teams.0.devs.1.name', 'Linus'),
+          overrideByPath('teams.1.devs.1.name', 'Ken'),
+        ]);
+
+      it('moves the state of the rows inside an outer row that moves', () => {
+        const before = twoTeams();
+        expect(before.touchedControls['teams.1.devs.1.name']).toBe(true);
+
+        const state = makeReducer()(
+          before,
+          removeRow('teams', [{ devs: [devName('Grace'), devName('Ken')] }], 0),
+        );
+
+        expect(state.touchedControls['teams.0.devs.1.name']).toBe(true);
+        expect(state.touchedControls).not.toHaveProperty('teams.1.devs.1.name');
+        expect(state.widgetPropOverrides).toEqual({ 'devName[0][1]': { placeholder: 'Ken' } });
+        expect(propsOf(state, 'devName[0][1]')['placeholder']).toBe('Ken');
+      });
+
+      it('moves only the rows of the inner repeater that changed', () => {
+        const state = makeReducer()(twoTeams(), removeRow('teams.1.devs', [devName('Ken')], 0));
+
+        expect(state.touchedControls['teams.1.devs.0.name']).toBe(true);
+        expect(state.touchedControls).not.toHaveProperty('teams.1.devs.1.name');
+        expect(state.widgetPropOverrides).toEqual({
+          'devName[0][1]': { placeholder: 'Linus' },
+          'devName[1][0]': { placeholder: 'Ken' },
+        });
+      });
+    });
+  });
+
   // ---------------------------------------------------------------------------
   // 15. Layout children
   // ---------------------------------------------------------------------------

@@ -459,10 +459,11 @@ with the repeater controls, the state moves with its row.
   name is still read-only and still shows the error. A new row added later is not read-only.
 - `setData` with a new array is different. The form cannot know which new row was which old row,
   so the state stays at the positions.
-- Status: not yet. All row state stays at its position. After the removal Bob shows no error and
-  is not read-only, and the next new row at position 1 is read-only. The repeater controls send
-  the whole new array to the form, so the fix needs a way to tell the form which row was added,
-  removed or moved.
+- Status: not yet. The form moves the state when `SET_WIDGET_DATA` has a `rowChange` that reports
+  a removed row, but the repeater controls do not send it yet. So all row state stays at its
+  position: after the removal Bob shows no error and is not read-only. Adding a row needs no report,
+  because the control appends it and no other row changes its position. No control moves a row yet,
+  and `rowChange` has no type for it.
 
 ### 18. A disabled or readonly repeater disables Add and Remove
 

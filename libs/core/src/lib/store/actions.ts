@@ -39,11 +39,21 @@ export type SET_LANGUAGE = {
 
 // TODO: rename all _WIDGET_ to _INPUT_ when the widget has a path (it's an input)
 /**
+ * A row that a repeater control removed. `index` is the position of the row before the removal.
+ * An added row needs no report: the control appends it, so no other row changes its position.
+ */
+export type RepeaterRowChange = { type: 'removed'; index: number };
+
+/**
  * Sets the data for a single form widget.
+ *
+ * @param payload.rowChange Set it when `data` is the new array of the repeater at `path` after a
+ * row removal. The touched state, errors, injected issues and prop overrides of the other rows
+ * then move with their rows. Without it they stay at their positions.
  */
 export type SET_WIDGET_DATA = {
   type: 'SET_WIDGET_DATA';
-  payload: { path: DotPath; data: any };
+  payload: { path: DotPath; data: any; rowChange?: RepeaterRowChange };
 };
 
 /**
