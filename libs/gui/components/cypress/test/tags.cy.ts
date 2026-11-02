@@ -1,5 +1,6 @@
 import { html } from 'lit';
 import type { GuiTags } from '../../src/lib/components/tags';
+import { realPress, takesRealInput } from '../support/real-input';
 
 const input = () => cy.get('gui-tags input');
 const group = () => cy.get('gui-tags [role="group"]');
@@ -185,6 +186,56 @@ describe('gui-tags', () => {
       input().should('have.value', 'vue');
     });
 
+    it('keeps the rest of a paste as the draft when its first part is empty', () => {
+      const onChange = cy.spy().as('change');
+      cy.mount(html`<gui-tags label="Tags" @gui-change=${onChange}></gui-tags>`);
+
+      input().trigger('paste', { clipboardData: { getData: () => ',css' } });
+
+      input().should('have.value', 'css');
+      cy.get('@change').should('not.have.been.called');
+      pills().should('have.length', 0);
+    });
+
+    it('keeps the rest of a paste as the draft when its first part is a repeated tag', () => {
+      const onChange = cy.spy().as('change');
+      cy.mount(html`<gui-tags label="Tags" value='["lit"]' @gui-change=${onChange}></gui-tags>`);
+
+      input().trigger('paste', { clipboardData: { getData: () => 'lit,css' } });
+
+      input().should('have.value', 'css');
+      cy.get('@change').should('not.have.been.called');
+      pills().should('have.length', 1);
+    });
+
+    it('pastes at the caret and leaves the caret where the pasted text ends', () => {
+      const onChange = cy.spy().as('change');
+      cy.mount(html`<gui-tags label="Tags" @gui-change=${onChange}></gui-tags>`);
+
+      input().type('world{home}');
+      input().trigger('paste', { clipboardData: { getData: () => 'a,hello ' } });
+
+      cy.get('@change')
+        .its('lastCall.args.0.detail')
+        .should('deep.equal', { value: ['a'] });
+      input().should('have.value', 'hello world');
+      input().should('have.prop', 'selectionStart', 6);
+      input().should('have.prop', 'selectionEnd', 6);
+    });
+
+    it('replaces the selected text with a paste', () => {
+      const onChange = cy.spy().as('change');
+      cy.mount(html`<gui-tags label="Tags" @gui-change=${onChange}></gui-tags>`);
+
+      input().type('old{selectall}');
+      input().trigger('paste', { clipboardData: { getData: () => 'x,y' } });
+
+      cy.get('@change')
+        .its('lastCall.args.0.detail')
+        .should('deep.equal', { value: ['x'] });
+      input().should('have.value', 'y');
+    });
+
     it('removes a tag with its remove button', () => {
       const onChange = cy.spy().as('change');
       cy.mount(
@@ -253,6 +304,27 @@ describe('gui-tags', () => {
       input().should('have.value', '');
       cy.get('@change').should('not.have.been.called');
     });
+
+    // The browser closes a modal dialog on a trusted Escape only, which Cypress sends in Chromium.
+    if (takesRealInput()) {
+      it('clears the draft on Escape, and closes the dialog the tags are in on the next one', () => {
+        cy.mount(
+          html`<gui-dialog open>
+            <dialog aria-label="Edit">
+              <gui-tags label="Tags"></gui-tags>
+            </dialog>
+          </gui-dialog>`,
+        );
+        cy.get('dialog').should('match', ':modal');
+
+        input().type('lit');
+        realPress('Escape');
+        input().should('have.value', '');
+        cy.get('dialog').should('match', ':modal');
+        realPress('Escape');
+        cy.get('dialog').should('not.match', ':modal');
+      });
+    }
 
     it('moves to the last tag on Backspace and removes it with Delete', () => {
       const onChange = cy.spy().as('change');
