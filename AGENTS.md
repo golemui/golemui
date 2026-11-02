@@ -115,6 +115,8 @@ npx nx run react-playground:serve   # also angular-, vue-, lit-, nuxt-, nextjs-,
   types.
 - Symbols other packages need but users must not import go in `src/internals.ts`
   (`@golemui/<pkg>/internals`). Start there: promoting to public is non-breaking, demoting is not.
+- A deprecation adds a row to [DEPRECATIONS.md](DEPRECATIONS.md) in the same PR, with what to use
+  instead and the version that removes it.
 - Commits and PR titles follow [Conventional Commits](https://www.conventionalcommits.org/)
   (`feat(react): …`, `fix(gui-components): …`). PRs are squash merged.
 
