@@ -325,5 +325,34 @@ describe('gui-file-upload', () => {
       cy.get('gui-file-upload .gui-file-upload__button').should('be.disabled');
       fileInput().should('be.disabled');
     });
+
+    // Neither the group nor a button allows aria-required, and the label's marker is hidden from
+    // assistive technology: the upload button carries the required state as its description.
+    it('describes its upload button as required', () => {
+      const { service } = fakeService();
+      cy.mount(
+        html`<gui-file-upload
+          label="Report"
+          required
+          .dependencies=${{ uploadService: service }}
+        ></gui-file-upload>`,
+      );
+
+      cy.get('gui-file-upload .gui-file-upload__button')
+        .should('have.attr', 'aria-describedby')
+        .then((id) => {
+          cy.get(`gui-file-upload [id="${id}"]`).should('have.text', 'Required');
+        });
+      cy.get('gui-file-upload [aria-required]').should('not.exist');
+
+      element().then(($el) => {
+        $el[0].required = false;
+      });
+      cy.get('gui-file-upload .gui-file-upload__button').should(
+        'not.have.attr',
+        'aria-describedby',
+      );
+      cy.get('gui-file-upload [id$="_required"]').should('not.exist');
+    });
   });
 });

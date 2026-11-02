@@ -138,6 +138,7 @@ export const DEFAULT_MESSAGES = {
   uploadFile: 'Upload file',
   uploadFiles: 'Upload files',
   uploadedFiles: 'Uploaded files',
+  fileRequired: 'Required',
   fileCount: { one: '{count} file', other: '{count} files' },
   removeFile: 'Remove {name}',
   cancelFile: 'Cancel {name}',
