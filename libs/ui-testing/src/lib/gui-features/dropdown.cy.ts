@@ -134,6 +134,52 @@ export const runDropdownComponentTests = (mountFn: MountComponentFn) => {
       cy.get('[data-cy="testSubject_textinput"]').should('have.value', 'React');
     });
 
+    it('should show a loaded value that matches no item', () => {
+      mountFn({
+        formDef: defineForm({
+          form: [
+            {
+              uid: 'testSubject',
+              kind: 'input',
+              type: 'dropdown',
+              path: 'country',
+              props: { items: ['Spain', 'France'], inputDebounce: 0 },
+            },
+          ],
+        }),
+        data: { country: 'Italy' },
+      });
+
+      cy.get('[data-cy="testSubject_textinput"]').should('have.value', 'Italy');
+    });
+
+    it('should show the label of the item a loaded value matches', () => {
+      mountFn({
+        formDef: defineForm({
+          form: [
+            {
+              uid: 'testSubject',
+              kind: 'input',
+              type: 'dropdown',
+              path: 'country',
+              props: {
+                items: [
+                  { label: 'Spain', value: 'es' },
+                  { label: 'France', value: 'fr' },
+                ],
+                labelField: 'label',
+                valueField: 'value',
+                inputDebounce: 0,
+              },
+            },
+          ],
+        }),
+        data: { country: 'fr' },
+      });
+
+      cy.get('[data-cy="testSubject_textinput"]').should('have.value', 'France');
+    });
+
     it('should filter object items by their search fields', () => {
       mountWithItems(
         [
