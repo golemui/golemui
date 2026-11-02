@@ -254,5 +254,48 @@ describe('gui-range-slider', () => {
         ),
       );
     });
+
+    it('reads a reversed range low end first: as its thumbs show it, announced and submitted', () => {
+      cy.mount(
+        html`<form>
+          <gui-range-slider
+            label="Price"
+            name="price"
+            .value=${{ start: 80, end: 20 }}
+          ></gui-range-slider>
+        </form>`,
+      );
+
+      labelValue().should('have.text', '20 – 80');
+      thumb('start').should('have.value', '20').and('have.attr', 'aria-valuetext', '20');
+      thumb('end').should('have.value', '80').and('have.attr', 'aria-valuetext', '80');
+      cy.get('form').should(([form]) => {
+        expect((form as HTMLFormElement).checkValidity()).to.equal(true);
+        expect(new FormData(form as HTMLFormElement).get('price')).to.equal(
+          '{"start":20,"end":80}',
+        );
+      });
+    });
+
+    it('treats a range missing an end as empty: required blocks it and nothing is submitted', () => {
+      cy.mount(
+        html`<form>
+          <gui-range-slider
+            label="Price"
+            name="price"
+            required
+            .value=${{ start: 10 }}
+          ></gui-range-slider>
+        </form>`,
+      );
+
+      // Bound before the first render, so the element is never empty for another reason.
+      element().should(([host]) => expect(host.validity?.valueMissing).to.equal(true));
+      labelValue().should('have.text', '–');
+      cy.get('form').should(([form]) => {
+        expect((form as HTMLFormElement).checkValidity()).to.equal(false);
+        expect(new FormData(form as HTMLFormElement).has('price')).to.equal(false);
+      });
+    });
   });
 });

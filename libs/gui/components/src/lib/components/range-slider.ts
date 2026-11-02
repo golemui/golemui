@@ -25,6 +25,9 @@ type Thumb = 'start' | 'end';
  * the value shows as "–", and screen readers hear "Not set". A key or a press that leaves a thumb
  * at its end then picks the whole range, from `minimum` to `maximum`.
  *
+ * A `value` set with its ends reversed reads low end first: `{ start: 80, end: 20 }` shows, is
+ * announced and submits as the range from 20 to 80.
+ *
  * ```html
  * <gui-range-slider label="Price" minimum="0" maximum="500" step="10"></gui-range-slider>
  * ```
@@ -57,10 +60,20 @@ export class GuiRangeSlider extends GuiSliderBase {
     }),
   });
 
-  /** The range, or `undefined` unless both ends are numbers. */
+  /** The range, low end first, or `undefined` unless both ends are numbers. */
   private get range(): GuiSliderRange | undefined {
     const value = this.value;
-    return value && isRealNumber(value.start) && isRealNumber(value.end) ? value : undefined;
+    if (!value || !isRealNumber(value.start) || !isRealNumber(value.end)) return undefined;
+    return value.start <= value.end ? value : { start: value.end, end: value.start };
+  }
+
+  /** The form submits and validates the range the slider shows, not a partial one. */
+  protected override get controlValue(): unknown {
+    return this.range;
+  }
+
+  protected override set controlValue(value: unknown) {
+    this.value = value as GuiSliderRange | undefined;
   }
 
   /** Where each thumb sits: on the range, or at the ends without one. */
@@ -68,9 +81,10 @@ export class GuiRangeSlider extends GuiSliderBase {
     const { min, max, step } = this.bounds;
     const range = this.range;
     if (!range) return { start: min, end: max };
-    const start = snapToStep(Math.min(range.start, range.end), min, max, step);
-    const end = snapToStep(Math.max(range.start, range.end), min, max, step);
-    return { start, end };
+    return {
+      start: snapToStep(range.start, min, max, step),
+      end: snapToStep(range.end, min, max, step),
+    };
   }
 
   override render() {
