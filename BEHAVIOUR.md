@@ -198,9 +198,10 @@ from there. An exception instead stops the whole app or the framework render.
 
 - Example: a JSON form uses the custom rule `{ "type": "custom", "iban": true }`, and the app
   forgot to register `iban` in `customValidators`. Or a registered rule returns a schema with an
-  async check, for example a server call. -> a form health error when the form validates.
-- Status: not yet. These cases throw an exception out of the form. In the validator cases, the
-  first blur or submit throws.
+  async check, for example a server call. -> code 60 with the path of the input when the form
+  validates. The form does not submit. The error stays and the form stops updating until the app
+  sends `SET_FORM_HEALTH` or a new config. `SET_FORM_HEALTH` with `ok` computes the form again.
+- Status: follows.
 
 ### 9. Duplicate uids give error code 21, also inside a repeater template
 
