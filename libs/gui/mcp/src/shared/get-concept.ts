@@ -644,7 +644,7 @@ const VALIDATION_CONCEPT: GetConceptResult = {
         'The allowed keys depend on the validator type — string: `invalid`, `required`, `minLength`, ' +
         '`maxLength`, `exactLength`, `pattern`, `format`, `enum`, `const`; number/integer: `invalid`, `minimum`, ' +
         '`maximum`, `exclusiveMinimum`, `exclusiveMaximum`, `multipleOf`, `enum`, `const`; ' +
-        'boolean: `invalid`, `const`; array: `invalid`, `required`, `minItems`, `maxItems`; ' +
+        'boolean: `invalid`, `const`; array: `invalid`, `required`, `minItems`, `maxItems`, `uniqueItems`; ' +
         'file (the `fileUpload` envelope): `invalid`, `required`, `pendingUploads`; files (the ' +
         '`multiFileUpload` array): `invalid`, `required`, `minItems`, `maxItems`, `pendingUploads`. ' +
         'The special key `invalid` customizes the base type check (wrong type, or `undefined`/`null` ' +

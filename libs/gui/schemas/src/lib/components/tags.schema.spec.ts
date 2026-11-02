@@ -156,6 +156,7 @@ describe('Tags schema validation', () => {
                 required: 'At least one tag is required',
                 minItems: 'Add at least one tag',
                 maxItems: 'No more than 5 tags',
+                uniqueItems: 'Each tag can be used once',
               },
             },
           },

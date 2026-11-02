@@ -257,6 +257,10 @@
             "maxItems": {
               "$ref": "#/$defs/localizable",
               "description": "Shown when the array has more items than `maxItems`"
+            },
+            "uniqueItems": {
+              "$ref": "#/$defs/localizable",
+              "description": "Shown when the array has a repeated item and `uniqueItems` is true"
             }
           },
           "additionalProperties": false
