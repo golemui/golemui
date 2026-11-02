@@ -236,7 +236,8 @@ export class GuiTags extends GuiFormControl {
       return;
     }
 
-    if (e.key === 'Escape') {
+    // Escape with no draft goes on, so it can close the dialog the tags are in.
+    if (e.key === 'Escape' && draft.length > 0) {
       e.preventDefault();
       input.value = '';
       return;

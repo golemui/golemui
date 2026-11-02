@@ -1,5 +1,6 @@
 import { html } from 'lit';
 import type { GuiTags } from '../../src/lib/components/tags';
+import { realPress, takesRealInput } from '../support/real-input';
 
 const input = () => cy.get('gui-tags input');
 const group = () => cy.get('gui-tags [role="group"]');
@@ -303,6 +304,27 @@ describe('gui-tags', () => {
       input().should('have.value', '');
       cy.get('@change').should('not.have.been.called');
     });
+
+    // The browser closes a modal dialog on a trusted Escape only, which Cypress sends in Chromium.
+    if (takesRealInput()) {
+      it('clears the draft on Escape, and closes the dialog the tags are in on the next one', () => {
+        cy.mount(
+          html`<gui-dialog open>
+            <dialog aria-label="Edit">
+              <gui-tags label="Tags"></gui-tags>
+            </dialog>
+          </gui-dialog>`,
+        );
+        cy.get('dialog').should('match', ':modal');
+
+        input().type('lit');
+        realPress('Escape');
+        input().should('have.value', '');
+        cy.get('dialog').should('match', ':modal');
+        realPress('Escape');
+        cy.get('dialog').should('not.match', ':modal');
+      });
+    }
 
     it('moves to the last tag on Backspace and removes it with Delete', () => {
       const onChange = cy.spy().as('change');
