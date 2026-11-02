@@ -39,29 +39,55 @@ export type ValidationVariables = {
 /**
  * Calculates validation variables to be used in reactive expressions
  * e.g. `{ invalidAge: '!!$errors.age' }` or { disabled { when: '$formIsInvalid' } }
+ * An error counts only when a visible input owns its path. The entry of a hidden input stays in
+ * `state.validations` until the next validation, and counts again if the input is shown before it.
  */
 export function calculateValidationVariables(state: State): ValidationVariables {
+  const failing = Object.entries(state.validations).filter(
+    (entry): entry is [DotPath, string[]] => entry[1] !== null,
+  );
+  if (failing.length === 0) {
+    return { $formIsInvalid: false, $errors: {} };
+  }
+
+  const visiblePaths = visibleInputPaths(state);
   // Shallow paths first, so a container written before its descendants makes the collision below
   // deterministic instead of dependent on widget order.
-  const byDepth = Object.entries(state.validations).sort(
-    ([a], [b]) => a.split('.').length - b.split('.').length,
-  );
+  const byDepth = failing
+    .filter(([dotPath]) => visiblePaths.has(dotPath))
+    .sort(([a], [b]) => a.split('.').length - b.split('.').length);
   const result = byDepth.reduce(
     (acc, [dotPath, errors]) => {
-      if (errors !== null) {
-        acc.$formIsInvalid = true;
-        // Copy the array so `set` can't mutate the entry shared with state.validations
-        // when a nested path (e.g. `users.1.firstName`) walks through this one (`users`).
-        // Known limit: when both `users` and `users.1.firstName` have errors, the nested write
-        // replaces element 1 of the container's array. One slot cannot hold both a message and a
-        // child object, so fixing it means changing the public `$errors` shape.
-        set(acc.$errors, dotPath, [...errors]);
-      }
+      acc.$formIsInvalid = true;
+      // Copy the array so `set` can't mutate the entry shared with state.validations
+      // when a nested path (e.g. `users.1.firstName`) walks through this one (`users`).
+      // Known limit: when both `users` and `users.1.firstName` have errors, the nested write
+      // replaces element 1 of the container's array. One slot cannot hold both a message and a
+      // child object, so fixing it means changing the public `$errors` shape.
+      set(acc.$errors, dotPath, [...errors]);
       return acc;
     },
     { $formIsInvalid: false, $errors: {} },
   );
   return result;
+}
+
+/**
+ * Collects the paths that at least one visible input owns. Two inputs can own the same path, so
+ * a hidden input does not remove a path that another input shows.
+ *
+ * @param state - The form state, with `resolvedSources` and the `widgetFlags` to read.
+ * @returns The paths of the visible inputs.
+ */
+export function visibleInputPaths(state: State): Set<DotPath> {
+  const paths = new Set<DotPath>();
+  for (const [uid, widget] of Object.entries(state.resolvedSources)) {
+    const path = inputPath(widget);
+    if (path !== undefined && state.widgetFlags[uid]?.hidden !== true) {
+      paths.add(path);
+    }
+  }
+  return paths;
 }
 
 /**
