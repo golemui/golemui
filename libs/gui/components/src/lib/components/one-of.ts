@@ -32,7 +32,8 @@ export function inferOptionValue(value: string, options: Option[]): OptionValue 
  */
 export const updateOptions = (opts: OptionInput[], props: OptionFields): Option[] => {
   if (Array.isArray(opts) && opts.length > 0) {
-    if (isOption(opts[0])) {
+    // `labelField` and `valueField` win over the objects' own `label` and `value` keys.
+    if (!props.labelField && !props.valueField && isOption(opts[0])) {
       // Already normalized.
       return opts as Option[];
     } else if (isOptionValue(opts[0])) {
@@ -82,11 +83,12 @@ export function createOptionMapper(opt: unknown, { labelField, valueField }: Opt
 
   const obj = opt as Record<string, unknown>;
 
-  // Resolve fields: only keep those that exist on the object
-  const resolvedLabelField =
-    labelField && Object.prototype.hasOwnProperty.call(obj, labelField) ? labelField : undefined;
-  const resolvedValueField =
-    valueField && Object.prototype.hasOwnProperty.call(obj, valueField) ? valueField : undefined;
+  // Resolve fields: only keep those that exist on the object. A field that is not set reads the
+  // `label` or `value` key, as the dropdown does.
+  const ownField = (field: string) =>
+    Object.prototype.hasOwnProperty.call(obj, field) ? field : undefined;
+  const resolvedLabelField = ownField(labelField || 'label');
+  const resolvedValueField = ownField(valueField || 'value');
 
   if (!resolvedLabelField && !resolvedValueField) {
     throw new Error('Neither labelField nor valueField exists on the object');

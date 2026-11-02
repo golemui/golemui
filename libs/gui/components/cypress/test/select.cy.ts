@@ -45,6 +45,40 @@ describe('gui-select', () => {
       element().should(($el) => expect($el[0].options).to.deep.equal(['Red', 'Green']));
     });
 
+    it('reads label-field and value-field over the options’ own label and value', () => {
+      const onInput = cy.spy().as('input');
+      const countries = [
+        { id: 1, name: 'Spain', label: 'ES', value: 'es' },
+        { id: 2, name: 'France', label: 'FR', value: 'fr' },
+      ];
+      cy.mount(
+        html`<gui-select
+          label="Country"
+          label-field="name"
+          value-field="id"
+          .options=${countries}
+          @gui-input=${onInput}
+        ></gui-select>`,
+      );
+
+      cy.get('gui-select option').eq(1).should('contain.text', 'Spain');
+      select().select('Spain');
+
+      cy.get('@input').its('lastCall.args.0.detail').should('deep.equal', { value: 1 });
+    });
+
+    it('reads label or value for the field that is not set', () => {
+      cy.mount(
+        html`<gui-select
+          label="Country"
+          label-field="name"
+          .options=${[{ name: 'Spain', value: 'es' }]}
+        ></gui-select>`,
+      );
+
+      cy.get('gui-select option').eq(1).should('contain.text', 'Spain').and('have.value', 'es');
+    });
+
     it('says "Select an option" without a placeholder', () => {
       cy.mount(html`<gui-select label="Color" .options=${options}></gui-select>`);
 
