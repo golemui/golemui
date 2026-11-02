@@ -150,10 +150,37 @@ describe('gui-radiogroup', () => {
         ></gui-radiogroup>`,
       );
 
-      radios().eq(0).focus().blur();
+      radios().eq(0).focus();
+      radios().eq(1).focus();
+      cy.get('@blur').should('not.have.been.called');
 
+      radios().eq(1).blur();
       cy.get('@blur').should('have.been.calledOnce');
     });
+
+    if (takesRealInput()) {
+      it('fires gui-blur once, when Tab leaves the group, not as the arrow keys move', () => {
+        const onBlur = cy.spy().as('blur');
+        cy.mount(
+          html`<gui-radiogroup
+              label="Color"
+              .options=${options}
+              @gui-blur=${onBlur}
+            ></gui-radiogroup>
+            <button>Next</button>`,
+        );
+
+        radios().eq(0).focus();
+        realPress('ArrowRight');
+        realPress('ArrowRight');
+        cy.focused().should('have.value', 'blue');
+        cy.get('@blur').should('not.have.been.called');
+
+        realPress('Tab');
+        cy.focused().should('have.text', 'Next');
+        cy.get('@blur').should('have.been.calledOnce');
+      });
+    }
 
     it('checks the option of a value set from outside', () => {
       cy.mount(

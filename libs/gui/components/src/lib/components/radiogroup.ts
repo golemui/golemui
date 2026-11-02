@@ -142,7 +142,6 @@ export class GuiRadiogroup extends GuiFormControl {
                   @click=${this.onClick}
                   @keydown=${this.onKeydown}
                   @change=${this.valueChanged}
-                  @blur=${this.onBlur}
                 />
                 ${opt.label}
               </label>`;
@@ -163,6 +162,7 @@ export class GuiRadiogroup extends GuiFormControl {
         aria-readonly=${this.readOnly ? 'true' : nothing}
         aria-invalid=${showsErrors(this.touched, this.errors) ? 'true' : nothing}
         aria-errormessage=${showsErrors(this.touched, this.errors) ? `${this.uid}_errors` : nothing}
+        @focusout=${this.onFocusOut}
       >
         ${options}
       </div>
@@ -209,8 +209,14 @@ export class GuiRadiogroup extends GuiFormControl {
     }
   }
 
-  /** @internal */
-  onBlur() {
+  /**
+   * The arrow keys and a click move focus from one radio to another: only focus that leaves the
+   * group is a blur.
+   *
+   * @internal
+   */
+  onFocusOut(event: FocusEvent) {
+    if (event.relatedTarget instanceof Node && this.contains(event.relatedTarget)) return;
     dispatchBlur(this);
   }
 }
