@@ -4,7 +4,13 @@ import { type I18nTranslator } from '../i18n';
 import { type DotPath, type ExpressionFunctions, type ValidateOn } from '../shared';
 import { assertNever } from '../utils/assert-never';
 import { type ExpressionPolicy } from '../utils/check-expression';
-import { calculateValidationVariables, inputPath } from '../utils/form';
+import {
+  calculateValidationVariables,
+  inputPath,
+  type ValidationVariables,
+  visibleInputPaths,
+} from '../utils/form';
+import { isDevMode } from '../utils/dev-mode';
 import { ExpressionRejectedError } from '../utils/justin';
 import { isInputWidget } from '../form-widget';
 import { type Action, type ATTEMPT_VALIDATION, type OVERRIDE_WIDGET_PROP } from './actions';
@@ -44,12 +50,9 @@ export const reducer = ({
   const derive = makeDerive(localization, functions, expressionPolicy);
   const validate = validateAll(validators, localization);
   const applyWidgetProps = calculateWidgetProps(localization, functions, expressionPolicy);
-  // Data, meta and override actions go through this wrapper. SET_LANGUAGE runs the props pass alone.
+  // Every action that changes the inputs goes through this wrapper. SET_LANGUAGE runs the props pass alone.
   const deriveAndValidateAppearingInputs = (state: State): State =>
-    validateInputsAppearingAfterSubmit(state, derive, validate, false);
-  // Validation actions recompute isFormValid exactly once, on whichever path the helper exits through.
-  const deriveAfterValidationAction = (state: State): State =>
-    validateInputsAppearingAfterSubmit(state, derive, validate, true);
+    validateInputsAppearingAfterSubmit(state, derive, validate);
 
   return (state: State, action: Action): State => {
     switch (action.type) {
@@ -85,12 +88,12 @@ export const reducer = ({
         const next = setFormHealth(state, action);
         // The failed validator stopped the derive, so data written since then is not computed.
         return hasValidationError(state) && next.formHealth.status === 'ok'
-          ? deriveAfterValidationAction(next)
+          ? deriveAndValidateAppearingInputs(next)
           : next;
       }
 
       case 'VALIDATE_ALL':
-        return deriveAfterValidationAction(validate(touchAllInputs(state)));
+        return deriveAndValidateAppearingInputs(validate(touchAllInputs(state)));
 
       case 'ATTEMPT_VALIDATION': {
         if (!shouldValidate(validateOn, action.payload.reason)) {
@@ -101,11 +104,11 @@ export const reducer = ({
           touched: true,
           touchedControls: { ...state.touchedControls, [action.payload.path]: true },
         };
-        return deriveAfterValidationAction(validate(touched));
+        return deriveAndValidateAppearingInputs(validate(touched));
       }
 
       case 'INJECT_VALIDATION_ISSUES':
-        return injectValidationIssues(state, action);
+        return calculateIsFormValid(injectValidationIssues(state, action));
 
       default:
         return assertNever(action);
@@ -131,6 +134,17 @@ const deriveOwnedErrorCodes = new Set<number>([
   // A rejected expression inside a repeater row goes away with the row.
   errorCodes.expressionRejectedError,
 ]);
+
+/**
+ * The limit of the states and flags passes of one derive. A form can have no stable result, for
+ * example when an input has `include: { when: '!$formIsInvalid' }` and a validation error. Such a
+ * form changes between two results on each pass. The limit is even, so the derive ends with the
+ * result it started from, and the input does not appear and disappear on each derive.
+ */
+const MAX_STATES_AND_FLAGS_PASSES = 6;
+
+const sameValidationVariables = (a: ValidationVariables, b: ValidationVariables): boolean =>
+  a.$formIsInvalid === b.$formIsInvalid && JSON.stringify(a.$errors) === JSON.stringify(b.$errors);
 
 const erroredOutsideDerive = (state: State): boolean =>
   state.formHealth.status === 'errored' && !deriveOwnedErrorCodes.has(state.formHealth.code);
@@ -158,12 +172,25 @@ function makeDerive(
         state.formHealth.status === 'ok' ? state : { ...state, formHealth: { status: 'ok' } };
       next = applyDefaultValues(next);
       next = dropRemovedWidgetEntries(next);
-      const validationVariables = calculateValidationVariables(next);
-      next = applyCurrentState(next, validationVariables);
-      if (next.formHealth.status !== 'ok') {
-        return discardPass(next.formHealth);
+      // The flags read the validation variables, and the variables count only the visible inputs.
+      // So a flag that hides an input can change the variables that other flags read.
+      let validationVariables = calculateValidationVariables(next);
+      let variablesChanged = true;
+      for (let pass = 0; variablesChanged && pass < MAX_STATES_AND_FLAGS_PASSES; pass++) {
+        next = applyCurrentState(next, validationVariables);
+        if (next.formHealth.status !== 'ok') {
+          return discardPass(next.formHealth);
+        }
+        next = applyWidgetFlags(next, validationVariables);
+        const variablesAfterPass = calculateValidationVariables(next);
+        variablesChanged = !sameValidationVariables(variablesAfterPass, validationVariables);
+        validationVariables = variablesAfterPass;
       }
-      next = applyWidgetFlags(next, validationVariables);
+      if (variablesChanged && isDevMode()) {
+        console.warn(
+          `[GolemUI] The conditions of this form have no stable result after ${MAX_STATES_AND_FLAGS_PASSES} passes. An include, exclude, disabled or readonly condition reads $errors or $formIsInvalid, and its result changes them.`,
+        );
+      }
       next = fillCalculatedWidgets(next);
       next = applyWidgetProps(next, validationVariables);
       return next.formHealth.status === 'ok' ? next : discardPass(next.formHealth);
@@ -191,28 +218,23 @@ function makeDerive(
  * validated right away so its errors show without interaction, then the derive runs once more so
  * `$errors`, `$formIsInvalid` and function widgets see the new validation result.
  *
- * When `recalculateIsFormValidOnEveryPath` is true, the exit paths that skip the appearing-input
- * validation also recompute `isFormValid`, so a validation action computes it exactly once here
- * instead of repeating it on the returned state.
+ * Every exit computes `isFormValid`, because a derive can hide or show an input.
  */
 function validateInputsAppearingAfterSubmit(
   state: State,
   derive: (state: State) => State,
   validate: (state: State) => State,
-  recalculateIsFormValidOnEveryPath: boolean,
 ): State {
-  const finishPass = (result: State): State =>
-    recalculateIsFormValidOnEveryPath ? calculateIsFormValid(result) : result;
   const previousSources = state.resolvedSources;
   const previousFlags = state.widgetFlags;
   let next = derive(state);
   if (!next.allControlsValidated || next.formHealth.status !== 'ok') {
-    return finishPass(next);
+    return calculateIsFormValid(next);
   }
 
   const appearing = pathsOfInputsAppearingIn(next, previousSources, previousFlags);
   if (appearing.length === 0) {
-    return finishPass(next);
+    return calculateIsFormValid(next);
   }
 
   const touchedControls = { ...next.touchedControls };
@@ -307,8 +329,12 @@ function calculateIsFormValid(state: State): State {
     return { ...state, isFormValid: false };
   }
 
-  const injectedValidationsKeys = Object.keys(state.injectedValidations);
-  const validationsKeys = Object.keys(state.validations);
+  // Only a visible input can show an issue. The user cannot correct an issue that is not shown.
+  const visiblePaths = visibleInputPaths(state);
+  const injectedValidationsKeys = Object.keys(state.injectedValidations).filter((key) =>
+    visiblePaths.has(key),
+  );
+  const validationsKeys = Object.keys(state.validations).filter((key) => visiblePaths.has(key));
 
   if (injectedValidationsKeys.length === 0 && validationsKeys.length === 0) {
     return { ...state, isFormValid: true };
