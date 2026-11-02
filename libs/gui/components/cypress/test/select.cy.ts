@@ -152,6 +152,26 @@ describe('gui-select', () => {
       cy.get('@change').its('firstCall.args.0.detail').should('deep.equal', { value: 2 });
     });
 
+    it('selects the number option of a value attribute', () => {
+      const onError = cy.spy().as('error');
+      const onChange = cy.spy().as('change');
+      cy.mount(
+        html`<gui-select
+          label="Rating"
+          value="2"
+          options="[1,2,3]"
+          @gui-input-error=${onError}
+          @gui-change=${onChange}
+        ></gui-select>`,
+      );
+
+      select().should('have.value', '2');
+      cy.get('@error').should('not.have.been.called');
+
+      select().select('3');
+      cy.get('@change').its('firstCall.args.0.detail').should('deep.equal', { value: 3 });
+    });
+
     it('fires gui-blur when focus leaves', () => {
       const onBlur = cy.spy().as('blur');
       cy.mount(

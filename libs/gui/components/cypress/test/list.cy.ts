@@ -221,6 +221,19 @@ describe('gui-list', () => {
       activeItem(2);
     });
 
+    it('selects the number item of a value attribute', () => {
+      cy.mount(html`<gui-list uid="colors" value="2" items="[1,2,3]"></gui-list>`);
+
+      element()
+        .its('0.visibleItems')
+        .should((items: GuiVisibleItem[]) => {
+          expect(items.map(({ selected }) => selected)).to.deep.equal([false, true, false]);
+        });
+      element().focus();
+
+      activeItem(1);
+    });
+
     it('scrolls to the selected item when the keyboard focuses it', () => {
       const items = Array.from({ length: 20 }, (_, i) => `item-${i}`);
       cy.mount(

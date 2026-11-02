@@ -23,6 +23,14 @@ export function isOptionValue(value: unknown): value is OptionValue {
   return t === 'string' || t === 'number';
 }
 
+/**
+ * Whether an option holds `value`. The `value` attribute always gives a string, so a string also
+ * matches the number option written the same: `"2"` matches `2`.
+ */
+export function isOptionValueOf(option: OptionValue, value: unknown): boolean {
+  return option === value || (typeof option === 'number' && String(option) === value);
+}
+
 export function inferOptionValue(value: string, options: Option[]): OptionValue {
   return options.find((op) => op.value.toString() === value)?.value as OptionValue;
 }

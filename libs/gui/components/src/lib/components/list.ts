@@ -4,6 +4,7 @@ import { cspStyleMap } from '@golemui/lit-utils';
 import { safeDefine } from '@golemui/lit-utils';
 import { gridKeyStep, listPageSize, nextEnabledIndex } from '../utils/grid-nav';
 import { updateListItems } from './list-items';
+import { isOptionValueOf } from './one-of';
 import type { GuiVisibleItem, ListItem, ListItemInput, OptionValue } from '../types';
 import { GuiFormControl } from '../gui-form-control';
 import { dispatch, dispatchBlur, dispatchValue, fires, valueEvents } from '../utils/events';
@@ -217,7 +218,7 @@ export class GuiList extends GuiFormControl {
   }
 
   protected isSelected(value: OptionValue): boolean {
-    return value === this.value;
+    return isOptionValueOf(value, this.value);
   }
 
   /** Index of the (first) selected item, or -1 when nothing is selected */

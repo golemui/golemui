@@ -123,6 +123,23 @@ describe('gui-radiogroup', () => {
       cy.get('@change').its('firstCall.args.0.detail').should('deep.equal', { value: 3 });
     });
 
+    it('checks the number option of a value attribute', () => {
+      const onChange = cy.spy().as('change');
+      cy.mount(
+        html`<gui-radiogroup
+          label="Rating"
+          value="2"
+          options="[1,2,3]"
+          @gui-change=${onChange}
+        ></gui-radiogroup>`,
+      );
+
+      radios().eq(1).should('be.checked').and('have.attr', 'tabindex', '0');
+
+      radios().eq(2).check();
+      cy.get('@change').its('firstCall.args.0.detail').should('deep.equal', { value: 3 });
+    });
+
     it('fires gui-blur when focus leaves', () => {
       const onBlur = cy.spy().as('blur');
       cy.mount(

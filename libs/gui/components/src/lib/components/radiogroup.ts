@@ -5,7 +5,7 @@ import { live } from 'lit/directives/live.js';
 import { safeDefine } from '@golemui/lit-utils';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addLabel, type ControlTemplateData, showsErrors } from '../utils/templates';
-import { inferOptionValue, updateOptions } from './one-of';
+import { inferOptionValue, isOptionValueOf, updateOptions } from './one-of';
 import type { Option, OptionInput, OptionValue } from '../types';
 import { GuiFormControl } from '../gui-form-control';
 import { dispatchBlur, dispatchValue, valueEvents } from '../utils/events';
@@ -113,7 +113,7 @@ export class GuiRadiogroup extends GuiFormControl {
     templateData.options = this.normalizedOptions;
     const selection = this.value;
     this.hasMatchingValue = this.normalizedOptions.length
-      ? this.normalizedOptions.find(({ value }) => value === selection) !== undefined
+      ? this.normalizedOptions.some(({ value }) => isOptionValueOf(value, selection))
       : false;
 
     const options = this.optionsLoading
@@ -123,7 +123,7 @@ export class GuiRadiogroup extends GuiFormControl {
             this.normalizedOptions,
             (opt: any) => opt?.value,
             (opt: any, index) => {
-              const isChecked = this.hasMatchingValue && opt.value === templateData.value;
+              const isChecked = this.hasMatchingValue && isOptionValueOf(opt.value, selection);
               const isFirstUnchecked = !this.hasMatchingValue && index === 0;
               const focusable = isChecked || isFirstUnchecked;
               // The radios share a name to form one group, and point at a form that does not

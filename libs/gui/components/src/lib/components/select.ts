@@ -6,7 +6,7 @@ import { safeDefine } from '@golemui/lit-utils';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addIcon, addLabel, type ControlTemplateData } from '../utils/templates';
-import { inferOptionValue, updateOptions } from './one-of';
+import { inferOptionValue, isOptionValueOf, updateOptions } from './one-of';
 import type { Option, OptionInput, OptionValue } from '../types';
 import { GuiFormControl, type GuiValidity } from '../gui-form-control';
 import {
@@ -126,7 +126,7 @@ export class GuiSelect extends GuiFormControl {
     templateData.options = this.normalizedOptions;
 
     this.hasMatchingValue = this.normalizedOptions.length
-      ? this.normalizedOptions.find(({ value }) => value === this.value) !== undefined
+      ? this.normalizedOptions.some(({ value }) => isOptionValueOf(value, this.value))
       : false;
 
     const options = this.optionsLoading
@@ -141,7 +141,7 @@ export class GuiSelect extends GuiFormControl {
             (opt: any) =>
               html`<option
                 value=${opt.value}
-                .selected=${live(this.hasMatchingValue && opt.value === this.value)}
+                .selected=${live(this.hasMatchingValue && isOptionValueOf(opt.value, this.value))}
               >
                 ${opt.label}
               </option>`,
