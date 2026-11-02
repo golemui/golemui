@@ -12,4 +12,15 @@ export const errorCodes = {
   widgetCouldNotBeLoaded: 30,
   resolveStringInterpolationError: 40,
   expressionRejectedError: 50,
+  validationError: 60,
 };
+
+/**
+ * Reads the message of a caught value. Code outside core can throw a value that is not an `Error`.
+ *
+ * @param error - The caught value.
+ * @returns The message of an `Error`, otherwise the value as a string.
+ */
+export function errorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
+}

@@ -1,5 +1,6 @@
 import { type StandardSchemaV1 } from '@standard-schema/spec';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { errorCodes } from '../errors';
 import { type ValidatorFn } from '../form-validator';
 import {
   type ActionWidget,
@@ -3664,12 +3665,378 @@ describe('reducer end-to-end', () => {
     });
   });
 
+  describe('invalid widget definitions', () => {
+    const expectDecodeError = (formDef: Record<string, any>, expectedMessage: string) => {
+      const state = drive([init(formDef), setData({})]);
+
+      expect(state.formHealth).toMatchObject({
+        status: 'errored',
+        code: errorCodes.initializeUnknownError,
+      });
+      expect((state.formHealth as { message: string }).message).toContain(expectedMessage);
+    };
+
+    it('gives code 22 for a repeater without props', () => {
+      expectDecodeError(
+        { form: [{ kind: 'input', type: 'repeater', path: 'contacts' }] },
+        'props.template',
+      );
+    });
+
+    it('gives code 22 for a repeater with props and no template', () => {
+      expectDecodeError(
+        { form: [{ kind: 'input', type: 'repeater', path: 'contacts', props: {} }] },
+        'props.template',
+      );
+    });
+
+    it('gives code 22 for an invalid template of a nested repeater', () => {
+      const repeaterWith = (path: string, child: Record<string, any>) => ({
+        kind: 'input',
+        type: 'repeater',
+        path,
+        props: { template: { kind: 'layout', type: 'flex', children: [child] } },
+      });
+
+      expectDecodeError(
+        {
+          form: [
+            repeaterWith(
+              'orders',
+              repeaterWith('orders.items.lines', { kind: 'input', type: 'text' }),
+            ),
+          ],
+        },
+        'props.template.children[0].props.template.children[0]',
+      );
+    });
+
+    it('keeps the other props of a valid repeater and leaves the definition unchanged', () => {
+      const template = {
+        uid: 'row',
+        kind: 'layout',
+        type: 'flex',
+        children: [{ uid: 'name', kind: 'input', type: 'text', path: 'users.items.name' }],
+      };
+      const props = { addLabel: 'Add', template };
+      const state = drive([
+        init({ form: [{ uid: 'users', kind: 'input', type: 'repeater', path: 'users', props }] }),
+        setData({ users: [{ name: 'Alice' }] }),
+      ]);
+
+      expect(state.formHealth).toEqual({ status: 'ok' });
+      expect((state.flatForm['users'] as { props: unknown }).props).toMatchObject({
+        addLabel: 'Add',
+        template: { uid: 'row' },
+      });
+      expect(props.template).toBe(template);
+    });
+
+    it('gives code 22 for a row function that reads $item without a check', () => {
+      const rowFunction = ({ $item }: any) => ({
+        uid: 'city',
+        kind: 'input',
+        type: 'text',
+        path: 'users.items.city',
+        label: $item.country,
+      });
+
+      expectDecodeError(
+        {
+          form: [
+            {
+              kind: 'input',
+              type: 'repeater',
+              path: 'users',
+              props: { template: { kind: 'layout', type: 'flex', children: [rowFunction] } },
+            },
+          ],
+        },
+        'country',
+      );
+    });
+
+    it.each([
+      ['undefined', () => undefined],
+      ['null', () => null],
+      ['an array', () => []],
+    ])('gives code 22 for a widget function that returns %s', (_name, widgetFunction) => {
+      expectDecodeError({ form: [widgetFunction] }, 'Expected the widget function to return');
+    });
+  });
+
+  describe('failing validators', () => {
+    let consoleError: ReturnType<typeof vi.spyOn>;
+
+    beforeEach(() => {
+      consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    });
+
+    afterEach(() => {
+      consoleError.mockRestore();
+    });
+
+    const emailInput = {
+      uid: 'email',
+      kind: 'input',
+      type: 'text',
+      path: 'email',
+      validator: { required: true },
+    };
+    const nameInput = {
+      uid: 'name',
+      kind: 'input',
+      type: 'text',
+      path: 'name',
+      validator: { required: true },
+    };
+    const validatorsThrowing: ValidatorFn<any> = () => {
+      throw new Error('Unknown custom rule "iban"');
+    };
+    const asyncValidators: ValidatorFn<any> = () => ({
+      '~standard': {
+        version: 1,
+        vendor: 'reducer-spec',
+        validate: async (value: unknown) => ({ value }),
+      },
+    });
+
+    const validateAllAction: Action = { type: 'VALIDATE_ALL' };
+    const blurAction: Action = {
+      type: 'ATTEMPT_VALIDATION',
+      payload: { reason: 'blur', path: 'email', uid: 'email' },
+    };
+
+    it.each([
+      ['the validators factory throws', validatorsThrowing, 'Unknown custom rule "iban"'],
+      ['a schema is async', asyncValidators, 'Schema validation must be synchronous'],
+    ])('gives code 60 with the input path on submit when %s', (_case, failing, reason) => {
+      const state = drive(
+        [init({ form: [emailInput] }), setData({ email: 'a@b.c' }), validateAllAction],
+        'eager',
+        failing,
+      );
+
+      expect(state.formHealth).toMatchObject({
+        status: 'errored',
+        code: errorCodes.validationError,
+      });
+      const { message } = state.formHealth as { message: string };
+      expect(message).toContain('[60]');
+      expect(message).toContain('"email"');
+      expect(message).toContain(reason);
+      expect(state.isFormValid).toBe(false);
+    });
+
+    it('gives code 60 on a blur', () => {
+      const state = drive(
+        [init({ form: [emailInput] }), setData({ email: 'a@b.c' }), blurAction],
+        'eager',
+        validatorsThrowing,
+      );
+
+      expect(state.formHealth).toMatchObject({ code: errorCodes.validationError });
+      expect(state.isFormValid).toBe(false);
+    });
+
+    it('logs the original error once, so the developer gets its stack', () => {
+      const original = new Error('Unknown custom rule "iban"');
+      const reduce = makeReducer('eager', () => {
+        throw original;
+      });
+      const failed = [
+        init({ form: [emailInput] }),
+        setData({ email: 'a@b.c' }),
+        validateAllAction,
+      ].reduce(reduce, createInitialState('en-US'));
+      reduce(failed, validateAllAction);
+
+      expect(consoleError).toHaveBeenCalledTimes(1);
+      expect(consoleError.mock.calls[0]).toContain(original);
+    });
+
+    it('names the input when a schema returns a result that is not valid', () => {
+      const returnsNoResult: ValidatorFn<any> = () => ({
+        '~standard': {
+          version: 1,
+          vendor: 'reducer-spec',
+          validate: () => undefined as unknown as StandardSchemaV1.Result<unknown>,
+        },
+      });
+      const state = drive(
+        [init({ form: [emailInput] }), setData({ email: 'a@b.c' }), validateAllAction],
+        'eager',
+        returnsNoResult,
+      );
+
+      expect(state.formHealth).toMatchObject({ code: errorCodes.validationError });
+      expect((state.formHealth as { message: string }).message).toContain('"email"');
+    });
+
+    it('sets isFormValid to false when a validator fails after a prop override', () => {
+      let isBroken = false;
+      const reduce = makeReducer('eager', (validator, localization) => {
+        if (isBroken) {
+          throw new Error('broken');
+        }
+        return (validators as ValidatorFn<any>)(validator, localization);
+      });
+      const valid = [
+        init({ form: [emailInput] }),
+        setData({ email: 'a@b.c' }),
+        validateAllAction,
+      ].reduce(reduce, createInitialState('en-US'));
+      expect(valid.isFormValid).toBe(true);
+
+      isBroken = true;
+      const state = reduce(valid, {
+        type: 'OVERRIDE_WIDGET_PROP',
+        payload: { path: 'email', prop: 'placeholder', value: 'Your email' },
+      });
+
+      expect(state.formHealth).toMatchObject({ code: errorCodes.validationError });
+      expect(state.isFormValid).toBe(false);
+    });
+
+    it('computes the data written after the failure when the app clears the health', () => {
+      let isBroken = true;
+      const reduce = makeReducer('eager', (validator, localization) => {
+        if (isBroken) {
+          throw new Error('broken');
+        }
+        return (validators as ValidatorFn<any>)(validator, localization);
+      });
+      const extraInput = {
+        ...nameInput,
+        include: { when: '$form.more === true' },
+      };
+      const failed = [
+        init({ form: [emailInput, extraInput] }),
+        setData({ email: 'a@b.c', more: true }),
+        validateAllAction,
+      ].reduce(reduce, createInitialState('en-US'));
+      const afterTyping = reduce(failed, setWidgetData('more', false));
+      expect(afterTyping.widgetFlags['name']?.hidden).not.toBe(true);
+
+      isBroken = false;
+      const cleared = reduce(afterTyping, {
+        type: 'SET_FORM_HEALTH',
+        payload: { formHealth: { status: 'ok' } },
+      });
+
+      expect(cleared.widgetFlags['name']?.hidden).toBe(true);
+      expect(cleared.isFormValid).toBe(true);
+
+      const validated = reduce(cleared, validateAllAction);
+
+      expect(validated.validations).not.toHaveProperty('name');
+      expect(validated.isFormValid).toBe(true);
+    });
+
+    it('gives the message of a thrown value that is not an Error', () => {
+      const throwsText: ValidatorFn<any> = () => {
+        throw 'not an error object';
+      };
+      const state = drive(
+        [init({ form: [emailInput] }), setData({ email: 'a@b.c' }), validateAllAction],
+        'eager',
+        throwsText,
+      );
+
+      expect((state.formHealth as { message: string }).message).toContain('not an error object');
+    });
+
+    it('names the first failing input and keeps the first message', () => {
+      let calls = 0;
+      const failsOnlyTheFirstTime: ValidatorFn<any> = (validator, localization) => {
+        calls += 1;
+        if (calls === 2) {
+          throw new Error('the first failure');
+        }
+        return (validators as ValidatorFn<any>)(validator, localization);
+      };
+      const reduce = makeReducer('eager', failsOnlyTheFirstTime);
+      const actions: Action[] = [
+        init({ form: [nameInput, emailInput] }),
+        setData({ name: 'Ada', email: 'a@b.c' }),
+        validateAllAction,
+      ];
+      const failed = actions.reduce(reduce, createInitialState('en-US'));
+
+      expect((failed.formHealth as { message: string }).message).toContain('"email"');
+      expect((failed.formHealth as { message: string }).message).toContain('the first failure');
+
+      // The validator now works, but the health stays until the app clears it.
+      const validatedAgain = reduce(failed, validateAllAction);
+
+      expect(validatedAgain.formHealth).toBe(failed.formHealth);
+      expect(validatedAgain.isFormValid).toBe(false);
+    });
+
+    it('stops the derive after the failure', () => {
+      const reduce = makeReducer('eager', validatorsThrowing);
+      const stateExpressionForm = {
+        form: [
+          emailInput,
+          { uid: 'info', kind: 'display', type: 'text', include: { when: '$form.email === "x"' } },
+        ],
+      };
+      const failed = [
+        init(stateExpressionForm),
+        setData({ email: 'a@b.c' }),
+        validateAllAction,
+      ].reduce(reduce, createInitialState('en-US'));
+      const afterTyping = reduce(failed, setWidgetData('email', 'x'));
+
+      expect(afterTyping.data).toEqual({ email: 'x' });
+      expect(afterTyping.widgetFlags).toBe(failed.widgetFlags);
+      expect(afterTyping.formHealth).toBe(failed.formHealth);
+    });
+
+    it('validates again after the app clears the health', () => {
+      let isBroken = true;
+      const failsWhileBroken: ValidatorFn<any> = (validator, localization) => {
+        if (isBroken) {
+          throw new Error('broken');
+        }
+        return (validators as ValidatorFn<any>)(validator, localization);
+      };
+      const reduce = makeReducer('eager', failsWhileBroken);
+      const failed = [
+        init({ form: [emailInput] }),
+        setData({ email: 'a@b.c' }),
+        validateAllAction,
+      ].reduce(reduce, createInitialState('en-US'));
+      expect(failed.isFormValid).toBe(false);
+
+      isBroken = false;
+      const cleared = reduce(failed, {
+        type: 'SET_FORM_HEALTH',
+        payload: { formHealth: { status: 'ok' } },
+      });
+      const validated = reduce(cleared, validateAllAction);
+
+      expect(validated.formHealth).toEqual({ status: 'ok' });
+      expect(validated.isFormValid).toBe(true);
+    });
+
+    it('keeps health ok and the form valid when the validators work', () => {
+      const state = drive([
+        init({ form: [emailInput] }),
+        setData({ email: 'a@b.c' }),
+        validateAllAction,
+      ]);
+
+      expect(state.formHealth).toEqual({ status: 'ok' });
+      expect(state.isFormValid).toBe(true);
+    });
+  });
+
   describe('forbidden path segments', () => {
     afterEach(() => {
       delete (Object.prototype as any).isAdminE2E;
     });
 
-    // Every decode error inside a repeater template throws from INITIALIZE, not only this one.
     it('rejects an input of a repeater template with a forbidden path', () => {
       const formDef = {
         form: [
@@ -3690,8 +4057,14 @@ describe('reducer end-to-end', () => {
         ],
       };
 
-      expect(() => drive([init(formDef), setData({ users: [{}] })])).toThrow(
-        'children[0].path: Path "__proto__.name" has the segment "__proto__"',
+      const state = drive([init(formDef), setData({ users: [{}] })]);
+
+      expect(state.formHealth).toMatchObject({
+        status: 'errored',
+        code: errorCodes.initializeUnknownError,
+      });
+      expect((state.formHealth as { message: string }).message).toContain(
+        'props.template.children[0].path: Path "__proto__.name" has the segment "__proto__"',
       );
     });
 
