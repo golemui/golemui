@@ -180,10 +180,7 @@ export class GuiSelect extends GuiFormControl {
     const invalid = this.matchesNoOption();
     // Reported once per value: hosts re-render with new options arrays as they show the error.
     if (invalid && (changedProperties.has('value') || !this.reportedInvalidOption)) {
-      dispatchInputError(
-        this,
-        message('invalidOption', this.invalidOptionMessage, { value: String(this.value) }),
-      );
+      dispatchInputError(this, this.invalidOptionError());
     } else if (!invalid && this.reportedInvalidOption) {
       dispatchInputError(this, '');
     }
@@ -209,13 +206,15 @@ export class GuiSelect extends GuiFormControl {
     if (this.required) {
       return { flags: { valueMissing: true }, message: message('valueMissing') };
     }
-    // `setValidity` throws on an empty message, so an empty override falls back to the default.
-    return {
-      flags: { customError: true },
-      message: requiredName('invalidOption', this.invalidOptionMessage, {
-        value: String(this.value),
-      }),
-    };
+    return { flags: { customError: true }, message: this.invalidOptionError() };
+  }
+
+  /**
+   * The error for a value that matches no option. An empty override or translation falls back to
+   * the default: `''` would clear the error in `gui-input-error`, and `setValidity` throws on it.
+   */
+  private invalidOptionError(): string {
+    return requiredName('invalidOption', this.invalidOptionMessage, { value: String(this.value) });
   }
 
   /** A value that matches no option is not submitted, as the select does not show it. */

@@ -1,5 +1,6 @@
 import { html } from 'lit';
 import type { GuiSelect } from '../../src/lib/components/select';
+import { configureMessages } from '../../src/lib/utils/messages';
 
 const options = [
   { label: 'Red', value: 'red' },
@@ -10,6 +11,8 @@ const select = () => cy.get('gui-select select');
 const element = () => cy.get<GuiSelect>('gui-select');
 
 describe('gui-select', () => {
+  afterEach(() => configureMessages(null));
+
   describe('rendering', () => {
     it('renders its options from its attributes after a placeholder', () => {
       cy.mount(
@@ -299,6 +302,41 @@ describe('gui-select', () => {
       cy.get('@error')
         .its('firstCall.args.0.detail')
         .should('deep.equal', { message: 'blue is not on the list' });
+    });
+
+    // An empty message would mean the error cleared.
+    it('falls back to the default error for an empty invalid-option-message', () => {
+      const onError = cy.spy().as('error');
+      cy.mount(
+        html`<gui-select
+          label="Color"
+          invalid-option-message=""
+          value="purple"
+          .options=${options}
+          @gui-input-error=${onError}
+        ></gui-select>`,
+      );
+
+      cy.get('@error')
+        .its('firstCall.args.0.detail')
+        .should('deep.equal', { message: "Invalid selection: 'purple' is not a valid option." });
+    });
+
+    it('falls back to the default error for an empty translation', () => {
+      configureMessages((key) => (key === 'invalidOption' ? '' : undefined));
+      const onError = cy.spy().as('error');
+      cy.mount(
+        html`<gui-select
+          label="Color"
+          value="purple"
+          .options=${options}
+          @gui-input-error=${onError}
+        ></gui-select>`,
+      );
+
+      cy.get('@error')
+        .its('firstCall.args.0.detail')
+        .should('deep.equal', { message: "Invalid selection: 'purple' is not a valid option." });
     });
   });
 

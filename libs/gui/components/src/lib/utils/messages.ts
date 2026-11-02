@@ -246,9 +246,9 @@ export function message(
 }
 
 /**
- * Resolves the accessible name of a control that can't do without one, such as an icon button, a
- * date part or a dialog. An empty override or translation falls back like a missing one: an
- * unnamed control fails WCAG 4.1.2.
+ * Resolves a string that can't be empty, such as the accessible name of an icon button, a date
+ * part or a dialog, or an error that `''` would clear. An empty override or translation falls back
+ * like a missing one: an unnamed control fails WCAG 4.1.2.
  */
 export function requiredName(
   key: GuiMessageKey,
