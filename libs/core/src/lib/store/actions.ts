@@ -100,9 +100,16 @@ export type VALIDATE_ALL = {
   type: 'VALIDATE_ALL';
 };
 
+/**
+ * Sets or clears the injected validation issues of one input.
+ *
+ * @param payload.reportedByWidget Set by a widget that reports the issue itself, such as a rejected
+ * date. A row removal leaves this issue at its position, because rejected text stays in the web
+ * component at that position. An issue without this flag moves with its row.
+ */
 export type INJECT_VALIDATION_ISSUES = {
   type: 'INJECT_VALIDATION_ISSUES';
-  payload: { issues: string[] | null; path: DotPath };
+  payload: { issues: string[] | null; path: DotPath; reportedByWidget?: boolean };
 };
 
 export type Action =

@@ -68,6 +68,12 @@ export type State = {
   injectedValidations: Record<DotPath, ValidationStatus>;
 
   /**
+   * The paths in `injectedValidations` whose issue a widget reported itself. A row removal leaves
+   * these issues at their position.
+   */
+  widgetReportedIssuePaths: Record<DotPath, true>;
+
+  /**
    * Calculated on each derive and on each injected issue. It reads `validations` and
    * `injectedValidations`, and only the paths of visible inputs count.
    */
@@ -161,6 +167,7 @@ export const createInitialState = (lang: string): State => ({
   validations: {},
   touchedControls: {},
   injectedValidations: {},
+  widgetReportedIssuePaths: {},
   isFormValid: true,
   widgetFlags: {},
   repeaterItemScopes: {},
