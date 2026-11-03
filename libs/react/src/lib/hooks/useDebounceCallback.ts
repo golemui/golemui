@@ -11,6 +11,15 @@ export function useDebounceCallback<T extends (...args: any[]) => void>(
     callbackRef.current = callback;
   }, [callback]);
 
+  // A pending call must not run for a component that no longer exists.
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
   return useCallback(
     (...args: Parameters<T>) => {
       if (timeoutRef.current) {

@@ -647,8 +647,7 @@ an ancestor, for example of an outer page form, must not run for it.
 
   -> the dialog closes 100 ms after the last key press -> no `searchCities` event is sent.
 
-- Status: follows in Vue. Not yet in React, which runs the filter and sends the event for a widget
-  that no longer exists. The app then starts a server search for a closed form.
+- Status: follows. A pending debounced call is canceled when the widget is removed.
 
 ### 29. An unknown `itemRenderer` uses the default renderer
 
