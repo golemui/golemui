@@ -8,10 +8,8 @@ import '@golemui/gui-components/errors';
 
 const props = defineProps<WithWidget>();
 const widget = props.widget as InputWidget<Record<string, unknown>[]>;
-const { uid, value, onValueChanged, templateData, errors, isTouched, onBlur } = useInputWidget<
-  Record<string, unknown>[],
-  RepeaterProps<NonFunctionWidget<string>>
->(widget);
+const { uid, value, onValueChanged, onRowRemoved, templateData, errors, isTouched, onBlur } =
+  useInputWidget<Record<string, unknown>[], RepeaterProps<NonFunctionWidget<string>>>(widget);
 
 const required = computed(() => (templateData.value.validator as Validator)?.required);
 const showErrors = computed(() => isTouched.value && errors.value && errors.value.length > 0);
@@ -27,7 +25,7 @@ const removeItem = (index: number) => {
   // structuredClone throws on Vue proxies, so it gets the raw objects. A JSON copy would change
   // Date, undefined and NaN values of the rows that stay.
   const rawItems = items.map((item) => toRaw(item));
-  onValueChanged(structuredClone(rawItems));
+  onRowRemoved(structuredClone(rawItems), index);
 };
 
 const onFocusIn = (event: FocusEvent) => {
