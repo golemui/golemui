@@ -56,6 +56,10 @@ export class FormElement extends LitElement {
   private eventSub: Subscription[] = [];
   private unsubscribeI18n: () => void = () => undefined;
   private readonly _defaultFormName = shortUUID();
+  // False until the first INITIALIZE ran. The calls before it wait for the store.
+  private started = false;
+  private dataBeforeStart: Record<string, any> | undefined;
+  private metaBeforeStart: Record<string, any> | undefined;
 
   static FORM_SUBMIT_EVENT = formEventNames.submit;
   static FORM_HEALTH_EVENT = formEventNames.health;
@@ -154,8 +158,13 @@ export class FormElement extends LitElement {
       type: 'INITIALIZE',
       payload: { formName: c.formName ?? this._defaultFormName, formDef: c.formDef },
     });
-    this.context.store.dispatch({ type: 'SET_DATA', payload: { data: c.data ?? {} } });
-    this.context.store.dispatch({ type: 'SET_META', payload: { meta: c.meta ?? {} } });
+    this.started = true;
+    const data = this.dataBeforeStart ?? c.data ?? {};
+    const meta = this.metaBeforeStart ?? c.meta ?? {};
+    this.dataBeforeStart = undefined;
+    this.metaBeforeStart = undefined;
+    this.context.store.dispatch({ type: 'SET_DATA', payload: { data } });
+    this.context.store.dispatch({ type: 'SET_META', payload: { meta } });
 
     // A detached element subscribes in connectedCallback.
     if (!this.detached) {
@@ -212,10 +221,18 @@ export class FormElement extends LitElement {
   }
 
   setData(data: Record<string, any>): void {
+    if (!this.started) {
+      this.dataBeforeStart = data;
+      return;
+    }
     this.context.store.dispatch({ type: 'SET_DATA', payload: { data } });
   }
 
   setMeta(meta: Record<string, any>): void {
+    if (!this.started) {
+      this.metaBeforeStart = meta;
+      return;
+    }
     this.context.store.dispatch({ type: 'SET_META', payload: { meta } });
   }
 

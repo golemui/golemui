@@ -49,6 +49,114 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
+describe('setData and setMeta before the form starts', () => {
+  function createFormWithoutMounting(): FormElement {
+    const form = document.createElement('gui-core-form') as FormElement;
+    form.validators = noopValidators;
+    return form;
+  }
+
+  async function startForm(form: FormElement) {
+    document.body.append(form);
+    await form.updateComplete;
+  }
+
+  it('replaces the config data with the data of a setData call before the form is in the page', async () => {
+    const form = createFormWithoutMounting();
+    setConfig(form, buildConfig());
+
+    form.setData({ firstName: 'Bob' });
+    await startForm(form);
+
+    expect(form.context.store.getState().data).toEqual({ firstName: 'Bob' });
+  });
+
+  it('keeps a setData call made before the config is set', async () => {
+    const form = createFormWithoutMounting();
+
+    form.setData({ firstName: 'Bob' });
+    setConfig(form, buildConfig());
+    await startForm(form);
+
+    expect(form.context.store.getState().data).toEqual({ firstName: 'Bob' });
+  });
+
+  it('uses the last setData call when there are several', async () => {
+    const form = createFormWithoutMounting();
+    setConfig(form, buildConfig());
+
+    form.setData({ firstName: 'Bob' });
+    form.setData({ firstName: 'Carol' });
+    await startForm(form);
+
+    expect(form.context.store.getState().data).toEqual({ firstName: 'Carol' });
+  });
+
+  it('replaces the config meta with the meta of an early setMeta call', async () => {
+    const form = createFormWithoutMounting();
+    setConfig(form, { ...buildConfig(), meta: { tier: 'free' } });
+
+    form.setMeta({ tier: 'paid' });
+    await startForm(form);
+
+    expect(form.context.store.getState().meta).toEqual({ tier: 'paid' });
+  });
+
+  it('uses the data of a later config, not the early value, when the form starts again', async () => {
+    const form = createFormWithoutMounting();
+    setConfig(form, buildConfig());
+    form.setData({ firstName: 'Bob' });
+    await startForm(form);
+
+    setConfig(form, { ...buildConfig(), data: { firstName: 'Dana' } });
+    await form.updateComplete;
+
+    expect(form.context.store.getState().data).toEqual({ firstName: 'Dana' });
+  });
+
+  it('keeps a setData call made by a formHealth listener during the first start', async () => {
+    const form = createFormWithoutMounting();
+    setConfig(form, buildConfig());
+    form.addEventListener('formHealth', () => form.setData({ firstName: 'Bob' }), {
+      once: true,
+      signal: listeners.signal,
+    });
+
+    await startForm(form);
+
+    expect(form.context.store.getState().data).toEqual({ firstName: 'Bob' });
+  });
+
+  it('sends one SET_DATA and one SET_META to the middlewares when an early call replaces the config values', async () => {
+    const form = createFormWithoutMounting();
+    const actionTypes: string[] = [];
+    setConfig(form, {
+      ...buildConfig(),
+      middlewares: [
+        () => (next) => (action) => {
+          actionTypes.push(action.type);
+          return next(action);
+        },
+      ],
+    });
+
+    form.setData({ firstName: 'Bob' });
+    form.setMeta({ tier: 'paid' });
+    await startForm(form);
+
+    expect(actionTypes.filter((type) => type === 'SET_DATA')).toHaveLength(1);
+    expect(actionTypes.filter((type) => type === 'SET_META')).toHaveLength(1);
+  });
+
+  it('applies a setData call after the start at once', async () => {
+    const form = await mountForm();
+
+    form.setData({ firstName: 'Bob' });
+
+    expect(form.context.store.getState().data).toEqual({ firstName: 'Bob' });
+  });
+});
+
 describe('a gui-core-form that moves in the DOM', () => {
   it('keeps its store and follows the store health after the move', async () => {
     vi.spyOn(console, 'error').mockImplementation(() => undefined);
