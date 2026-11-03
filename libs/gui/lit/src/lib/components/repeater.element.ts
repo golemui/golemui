@@ -146,9 +146,9 @@ export class RepeaterElement extends LitElement implements WithWidget {
     const items = (this.adapter.templateData.value ?? []).filter((_, i) => index !== i);
     // Make sure we don't keep object references
     if ('structuredClone' in window) {
-      this.adapter.valueChanged(structuredClone(items));
+      this.adapter.rowRemoved(structuredClone(items), index);
     } else {
-      this.adapter.valueChanged(JSON.parse(JSON.stringify(items)));
+      this.adapter.rowRemoved(JSON.parse(JSON.stringify(items)), index);
     }
     this.requestUpdate();
   }

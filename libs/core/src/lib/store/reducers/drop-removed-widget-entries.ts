@@ -6,8 +6,8 @@ import { type State } from '../model';
  * Removes the entries that belong to widgets the current data no longer produces, for example
  * the widgets of a repeater row that was deleted.
  *
- * `widgetPropOverrides` is keyed by uid, the other three are keyed by the input path, so a path
- * that no live input owns is dropped from them.
+ * `widgetPropOverrides` is keyed by uid, the others are keyed by the input path, so a path that no
+ * live input owns is dropped from them.
  *
  * @param state - The state to clean, after `resolvedSources` has been rebuilt
  * @returns The same state object when nothing was removed, otherwise a new one. Each record is
@@ -25,17 +25,28 @@ export const dropRemovedWidgetEntries = (state: State): State => {
   const injectedValidations = keepLiveKeys(state.injectedValidations, (path) =>
     livePaths.has(path),
   );
+  const widgetReportedIssuePaths = keepLiveKeys(state.widgetReportedIssuePaths, (path) =>
+    livePaths.has(path),
+  );
 
   if (
     widgetPropOverrides === state.widgetPropOverrides &&
     touchedControls === state.touchedControls &&
     validations === state.validations &&
-    injectedValidations === state.injectedValidations
+    injectedValidations === state.injectedValidations &&
+    widgetReportedIssuePaths === state.widgetReportedIssuePaths
   ) {
     return state;
   }
 
-  return { ...state, widgetPropOverrides, touchedControls, validations, injectedValidations };
+  return {
+    ...state,
+    widgetPropOverrides,
+    touchedControls,
+    validations,
+    injectedValidations,
+    widgetReportedIssuePaths,
+  };
 };
 
 /** The path of every input, plus the path a function widget carries when it is a control. */

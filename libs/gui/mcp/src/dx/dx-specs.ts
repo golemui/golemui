@@ -567,8 +567,9 @@ const INPUTS: DxSpec[] = [
         "cannot read `row`: return a host event name instead (`onClick: () => 'rowPicked'`) and read `e.row` in " +
         '`formEvent`.',
       'PER-ROW OPTIONS: do NOT set options that depend on the row data with `event.update` from a row event. ' +
-        'An override stays at its row position, so after a row is removed, the row that moves into that position ' +
-        'shows the options of the removed row. Use a definition callback that reads `$item`, the data of its own ' +
+        'An override moves with its row when the Remove button removes a row, but it stays at its position when ' +
+        '`setData` writes a new array, so a row can then show the options of another row. Use a definition callback ' +
+        'that reads `$item`, the data of its own ' +
         "row: `gui.inputs.dropdown('users.items.city', ({ $item }) => ({ label: 'City', items: citiesOf($item?.country) }))`.",
     ],
   },

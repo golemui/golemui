@@ -37,6 +37,18 @@ export class InputWidgetAdapter<
     this.context.emitEvent('change', this.widget);
   }
 
+  /**
+   * Repeater inputs only: writes the rows after the control removed the row at `index`. The touched
+   * state, errors, injected issues and prop overrides of the other rows move with their rows.
+   */
+  rowRemoved<T>(rows: T, index: number) {
+    this.context.store.dispatch({
+      type: 'SET_WIDGET_DATA',
+      payload: { path: this.widget.path, data: rows, rowChange: { type: 'removed', index } },
+    });
+    this.context.emitEvent('change', this.widget);
+  }
+
   filterChanged<T>(value: T) {
     this.context.emitEvent('filter', this.widget, value);
   }
@@ -44,7 +56,7 @@ export class InputWidgetAdapter<
   injectValidationIssues(issues: string[] | null) {
     this.context.store.dispatch({
       type: 'INJECT_VALIDATION_ISSUES',
-      payload: { path: this.widget.path, issues },
+      payload: { path: this.widget.path, issues, reportedByWidget: true },
     });
   }
 

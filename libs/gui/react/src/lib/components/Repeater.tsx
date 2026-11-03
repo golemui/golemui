@@ -7,10 +7,8 @@ import '../styles.scss';
 
 export function Repeater(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<Record<string, unknown>[]>;
-  const { uid, value, onValueChanged, templateData, errors, isTouched, onBlur } = useInputWidget<
-    Record<string, unknown>[],
-    RepeaterProps<NonFunctionWidget<string>>
-  >(widget);
+  const { uid, value, onValueChanged, onRowRemoved, templateData, errors, isTouched, onBlur } =
+    useInputWidget<Record<string, unknown>[], RepeaterProps<NonFunctionWidget<string>>>(widget);
 
   const repeaterRef = useRef<HTMLDivElement>(null);
 
@@ -27,12 +25,12 @@ export function Repeater(widgetInstance: WithWidget) {
       const items = (value ?? []).filter((_, i) => index !== i);
       // Make sure we don't keep object references
       if ('structuredClone' in window) {
-        onValueChanged(structuredClone(items));
+        onRowRemoved(structuredClone(items), index);
       } else {
-        onValueChanged(JSON.parse(JSON.stringify(items)));
+        onRowRemoved(JSON.parse(JSON.stringify(items)), index);
       }
     },
-    [onValueChanged],
+    [onRowRemoved],
   );
 
   const [isFocused, setIsFocused] = useState(false);

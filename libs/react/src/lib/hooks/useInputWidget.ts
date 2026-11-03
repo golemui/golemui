@@ -58,6 +58,21 @@ export function useInputWidget<T, ExtraProps extends Record<string, any>>(
     [widget, formContext],
   );
 
+  /**
+   * Repeater inputs only: writes the rows after the control removed the row at `index`. The touched
+   * state, errors, injected issues and prop overrides of the other rows move with their rows.
+   */
+  const onRowRemoved = useCallback(
+    (newRows: T, index: number) => {
+      formContext.store.dispatch({
+        type: 'SET_WIDGET_DATA',
+        payload: { path: widget.path, data: newRows, rowChange: { type: 'removed', index } },
+      });
+      formContext.emitEvent('change', widget);
+    },
+    [widget, formContext],
+  );
+
   const onFilter = useCallback(
     (newValue: T) => {
       formContext.emitEvent('filter', widget, newValue);
@@ -69,7 +84,7 @@ export function useInputWidget<T, ExtraProps extends Record<string, any>>(
     (issues: string[] | null) => {
       formContext.store.dispatch({
         type: 'INJECT_VALIDATION_ISSUES',
-        payload: { path: widget.path, issues },
+        payload: { path: widget.path, issues, reportedByWidget: true },
       });
     },
     [widget, formContext],
@@ -90,6 +105,7 @@ export function useInputWidget<T, ExtraProps extends Record<string, any>>(
     errors,
     isTouched,
     onValueChanged,
+    onRowRemoved,
     onFilter,
     onBlur,
     injectValidationIssues,

@@ -2507,6 +2507,64 @@ describe('reducer end-to-end', () => {
         { type: 'INJECT_VALIDATION_ISSUES', payload: { path: 'users.1.name', issues: ['taken'] } },
       ]);
 
+    describe('an issue that a widget reported', () => {
+      const reportIssue = (path: string, issues: string[] | null): Action => ({
+        type: 'INJECT_VALIDATION_ISSUES',
+        payload: { path, issues, reportedByWidget: true },
+      });
+
+      const rowsWithReportedIssue = (reportedPath: string) =>
+        drive([
+          init(makeRequiredRowsFormDef()),
+          setData({ users: [{ name: 'Alice' }, { name: 'Bob' }] }),
+          reportIssue(reportedPath, ['Invalid date']),
+        ]);
+
+      it('stays at the position of the removed row, where its text stays', () => {
+        const state = makeReducer()(
+          rowsWithReportedIssue('users.0.name'),
+          removeRow('users', [{ name: 'Bob' }], 0),
+        );
+
+        expect(state.injectedValidations['users.0.name']).toEqual(['Invalid date']);
+        expect(state.touchedControls['users.0.name']).toBe(true);
+        expect(state.isFormValid).toBe(false);
+      });
+
+      it('is removed with the last position, because that web component is removed', () => {
+        const state = makeReducer()(
+          rowsWithReportedIssue('users.1.name'),
+          removeRow('users', [{ name: 'Bob' }], 0),
+        );
+
+        expect(state.injectedValidations).not.toHaveProperty('users.0.name');
+        expect(state.injectedValidations).not.toHaveProperty('users.1.name');
+        expect(state.widgetReportedIssuePaths).toEqual({});
+        expect(state.isFormValid).toBe(true);
+      });
+
+      it('loses its mark when the widget clears it', () => {
+        const state = makeReducer()(
+          rowsWithReportedIssue('users.0.name'),
+          reportIssue('users.0.name', null),
+        );
+
+        expect(state.widgetReportedIssuePaths).toEqual({});
+      });
+
+      it('loses its mark when the app sends an issue for the same path, which then moves', () => {
+        const withAppIssue = makeReducer()(rowsWithReportedIssue('users.1.name'), {
+          type: 'INJECT_VALIDATION_ISSUES',
+          payload: { path: 'users.1.name', issues: ['taken'] },
+        });
+        expect(withAppIssue.widgetReportedIssuePaths).toEqual({});
+
+        const state = makeReducer()(withAppIssue, removeRow('users', [{ name: 'Bob' }], 0));
+
+        expect(state.injectedValidations['users.0.name']).toEqual(['taken']);
+      });
+    });
+
     it('moves the state of the next row to the position of a removed row', () => {
       const before = aliceAndEmptyBob();
       expect(before.touchedControls['users.1.name']).toBe(true);

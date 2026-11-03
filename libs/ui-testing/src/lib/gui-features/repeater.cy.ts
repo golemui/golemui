@@ -1,4 +1,4 @@
-import { defineForm, type FormWidget, identityTranslator } from '@golemui/core';
+import { defineForm, type FormEvent, type FormWidget, identityTranslator } from '@golemui/core';
 import {
   dictionaryTranslator,
   eventsNamed,
@@ -1352,6 +1352,230 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
           expect(ids).to.deep.equal(['devRepeater[0]', 'devRepeater[1]']);
         });
         expectNoDuplicateIds();
+      });
+    });
+
+    describe('row state after a removal', () => {
+      const nameInput = (index: number) => `[data-cy="name[${index}]_textinput"]`;
+      const nameError = (index: number) => `[data-cy="name[${index}]_validator-error"]`;
+      const removeButton = (index: number) => cy.get('.gui-repeater__remove-btn').eq(index);
+      const addButton = () => cy.get('.gui-repeater__add-btn');
+
+      const peopleForm = (extraWidgets: FormWidget<string>[] = []) =>
+        defineForm({
+          form: [
+            {
+              uid: 'people',
+              kind: 'input',
+              type: 'repeater',
+              path: 'people',
+              props: {
+                template: {
+                  kind: 'layout',
+                  type: 'grid',
+                  children: [
+                    {
+                      uid: 'name',
+                      kind: 'input',
+                      type: 'textinput',
+                      path: 'people.items.name',
+                      validator: { type: 'string', required: true },
+                    },
+                  ],
+                },
+              },
+            },
+            ...extraWidgets,
+          ],
+        });
+
+      it('moves a shown error with its row when an earlier row is removed', () => {
+        mountFn({
+          data: { people: [{ name: 'Alice' }, { name: 'Bob' }] },
+          formDef: peopleForm(),
+        });
+
+        cy.get(nameInput(1)).clear().blur();
+        cy.get(nameError(1)).should('be.visible');
+        cy.get(nameError(0)).should('not.exist');
+
+        removeButton(0).click();
+
+        cy.get(nameInput(0)).should('have.value', '');
+        cy.get(nameError(0)).should('be.visible');
+        cy.get(nameInput(1)).should('not.exist');
+
+        addButton().click();
+        cy.get(nameInput(1)).should('have.value', '');
+        cy.get(nameError(0)).should('be.visible');
+        cy.get(nameError(1)).should('not.exist');
+      });
+
+      it('removes the error of the removed row, so the row that takes its position shows none', () => {
+        mountFn({
+          data: { people: [{ name: 'Alice' }, { name: 'Bob' }] },
+          formDef: peopleForm(),
+        });
+
+        cy.get(nameInput(0)).clear().blur();
+        cy.get(nameError(0)).should('be.visible');
+
+        removeButton(0).click();
+
+        cy.get(nameInput(0)).should('have.value', 'Bob');
+        cy.get(nameError(0)).should('not.exist');
+      });
+
+      it('keeps the error of an earlier row when a later row is removed', () => {
+        mountFn({
+          data: { people: [{ name: 'Alice' }, { name: 'Bob' }, { name: 'Carol' }] },
+          formDef: peopleForm(),
+        });
+
+        cy.get(nameInput(0)).clear().blur();
+        cy.get(nameError(0)).should('be.visible');
+
+        removeButton(1).click();
+
+        cy.get(nameInput(1)).should('have.value', 'Carol');
+        cy.get(nameError(0)).should('be.visible');
+        cy.get(nameError(1)).should('not.exist');
+      });
+
+      describe('a date with rejected text', () => {
+        const dateError = (index: number) => `[data-cy="date[${index}]_validator-error"]`;
+        const datePart = (part: 'month' | 'day', index: number) =>
+          cy.get(`gui-date input[data-type="${part}"]`).eq(index);
+
+        const datesForm = () =>
+          defineForm({
+            form: [
+              {
+                uid: 'people',
+                kind: 'input',
+                type: 'repeater',
+                path: 'people',
+                props: {
+                  template: {
+                    kind: 'layout',
+                    type: 'grid',
+                    children: [
+                      { uid: 'date', kind: 'input', type: 'dateInput', path: 'people.items.date' },
+                    ],
+                  },
+                },
+              },
+            ],
+          });
+
+        const typeRejectedDate = (index: number) => {
+          datePart('month', index).type('02');
+          cy.focused().type('31');
+          cy.focused().type('2026');
+          cy.get(dateError(index)).should('contain.text', 'Invalid date');
+        };
+
+        it('keeps the error next to the text when the row of the text is removed', () => {
+          mountFn({
+            localization: identityTranslator('en-US'),
+            data: { people: [{}, {}] },
+            formDef: datesForm(),
+          });
+
+          typeRejectedDate(0);
+          removeButton(0).click();
+
+          cy.get('gui-date').should('have.length', 1);
+          datePart('day', 0).should('have.value', '31');
+          cy.get(dateError(0)).should('contain.text', 'Invalid date');
+        });
+
+        it('shows no error on the row that moves into a position without text', () => {
+          mountFn({
+            localization: identityTranslator('en-US'),
+            data: { people: [{ date: '2024-01-15' }, {}] },
+            formDef: datesForm(),
+          });
+
+          typeRejectedDate(1);
+          removeButton(0).click();
+
+          cy.get('gui-date').should('have.length', 1);
+          datePart('month', 0).should('have.value', '');
+          cy.get(dateError(0)).should('not.exist');
+        });
+      });
+
+      it('moves a prop override with its row, and a new row does not have it', () => {
+        const formEventHandler = cy.stub().as('formEventHandler');
+        formEventHandler.callsFake((event: FormEvent) => {
+          if (event.name === 'approveBob') {
+            event.callback?.({
+              type: 'OVERRIDE_WIDGET_PROP',
+              payload: { path: 'people.1.name', prop: 'readonly', value: true },
+            });
+          }
+        });
+
+        mountFn({
+          data: { people: [{ name: 'Alice' }, { name: 'Bob' }] },
+          formDef: peopleForm([
+            {
+              uid: 'approve',
+              kind: 'action',
+              type: 'button',
+              label: 'Approve Bob',
+              on: { click: 'approveBob' },
+            },
+          ]),
+          formEvent: formEventHandler,
+        });
+
+        cy.get('[data-cy="approve_button"]').click();
+        cy.get(nameInput(1)).should('have.attr', 'readonly');
+        cy.get(nameInput(0)).should('not.have.attr', 'readonly');
+
+        removeButton(0).click();
+
+        cy.get(nameInput(0)).should('have.value', 'Bob');
+        cy.get(nameInput(0)).should('have.attr', 'readonly');
+
+        addButton().click();
+        cy.get(nameInput(1)).should('have.value', '');
+        cy.get(nameInput(1)).should('not.have.attr', 'readonly');
+        cy.get(nameInput(0)).should('have.attr', 'readonly');
+      });
+
+      it('moves the error of a nested row when a nested row or its outer row is removed', () => {
+        const john = { firstName: 'John', lastName: 'Doe', skills: [] };
+        const jane = { firstName: 'Jane', lastName: 'Roe', skills: [] };
+        mountFn({
+          data: {
+            repeaters: {
+              teams: [
+                { teamName: 'T0', developers: [john] },
+                { teamName: 'T1', developers: [john, jane] },
+              ],
+            },
+          },
+          formDef: getFormDefinition(),
+        });
+
+        cy.get('[data-cy="firstName[1][1]_textinput"]').clear().blur();
+        cy.get('[data-cy="firstName[1][1]_validator-error"]').should('be.visible');
+
+        // The nested repeater of the first team stays as it is.
+        cy.get('.gui-repeater__remove-btn').filter(':contains("Remove developer")').eq(1).click();
+
+        cy.get('[data-cy="firstName[1][0]_textinput"]').should('have.value', '');
+        cy.get('[data-cy="firstName[1][0]_validator-error"]').should('be.visible');
+        cy.get('[data-cy="firstName[0][0]_validator-error"]').should('not.exist');
+
+        cy.get('.gui-repeater__remove-btn').filter(':contains("Remove team")').eq(0).click();
+
+        cy.get('[data-cy="teamName[0]_textinput"]').should('have.value', 'T1');
+        cy.get('[data-cy="firstName[0][0]_validator-error"]').should('be.visible');
+        cy.get('[data-cy="firstName[1][0]_textinput"]').should('not.exist');
       });
     });
 

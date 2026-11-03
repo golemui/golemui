@@ -457,11 +457,16 @@ with the repeater controls, the state moves with its row.
   name is still read-only and still shows the error. A new row added later is not read-only.
 - `setData` with a new array is different. The form cannot know which new row was which old row,
   so the state stays at the positions.
-- Status: not yet. The form moves the state when `SET_WIDGET_DATA` has a `rowChange` that reports
-  a removed row, but the repeater controls do not send it yet. So all row state stays at its
-  position: after the removal Bob shows no error and is not read-only. Adding a row needs no report,
-  because the control appends it and no other row changes its position. No control moves a row yet,
-  and `rowChange` has no type for it.
+- An error that a widget reports itself stays at its position: a rejected date such as 02/31/2026,
+  a date out of bounds, a value that matches no option. A rejected date is text inside the web
+  component, and that text stays at the position, so the error stays next to it.
+- The Remove button reports the removed row with `rowChange` in `SET_WIDGET_DATA`. Adding a row needs
+  no report, because the control appends it and no other row changes its position. No control moves
+  a row yet, and `rowChange` has no type for it.
+- Status: follows for touched state, validator errors, errors that the app injects and prop
+  overrides. Not yet for two cases of an error that a widget reports. A date out of bounds moves
+  with its row, but its error does not. A row with a date that moves into the position of a rejected
+  date shows the old error until the user edits the date.
 
 ### 18. A disabled or readonly repeater disables Add and Remove
 

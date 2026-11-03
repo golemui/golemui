@@ -10,6 +10,8 @@ import { type RepeaterRow, type State } from '../model';
  * row. The entries of the removed row are deleted. The rows of nested repeaters move too.
  *
  * Only the entries of row widgets move. A static input whose path points into a row keeps its entries.
+ * An issue that a widget reported itself stays at its position with its touched state, because
+ * rejected text stays in the web component at that position.
  *
  * @param state - The state whose `repeaterRows` and `resolvedSources` still describe the rows before
  *   the removal.
@@ -34,9 +36,18 @@ export const moveRowState = (
   }
   const { uidMoves, pathMoves } = collectKeyMoves(state, repeaterPath, rowChange.index);
 
-  const touchedControls = renameKeys(state.touchedControls, pathMoves);
+  const reportedPaths = new Set(Object.keys(state.widgetReportedIssuePaths));
+
+  const touchedControls = keepReportedPathsTouched(
+    renameKeys(state.touchedControls, pathMoves),
+    pathMoves,
+    reportedPaths,
+  );
   const validations = renameKeys(state.validations, pathMoves);
-  const injectedValidations = renameKeys(state.injectedValidations, pathMoves);
+  const injectedValidations = renameKeys(
+    state.injectedValidations,
+    issueMoves(pathMoves, reportedPaths),
+  );
   const widgetPropOverrides = renameKeys(state.widgetPropOverrides, uidMoves);
 
   if (
@@ -95,6 +106,34 @@ function uidAtRowIndex(uid: string, rows: RepeaterRow[], level: number, newIndex
   const templateUid = uid.slice(0, uid.length - indexSuffix.length);
   indexes[level] = newIndex;
   return toRepeaterItemUid(templateUid as Uid, indexes);
+}
+
+/** A reported issue stays at its path, and an issue that would move onto that path is deleted. */
+function issueMoves(pathMoves: KeyMoves, reportedPaths: Set<string>): KeyMoves {
+  const moves: KeyMoves = new Map();
+  for (const [path, newPath] of pathMoves) {
+    if (reportedPaths.has(path)) {
+      continue;
+    }
+    moves.set(path, newPath !== undefined && reportedPaths.has(newPath) ? undefined : newPath);
+  }
+  return moves;
+}
+
+function keepReportedPathsTouched(
+  touchedControls: State['touchedControls'],
+  pathMoves: KeyMoves,
+  reportedPaths: Set<string>,
+): State['touchedControls'] {
+  const pathsToKeep = [...reportedPaths].filter((path) => pathMoves.has(path));
+  if (pathsToKeep.length === 0) {
+    return touchedControls;
+  }
+  const touched = { ...touchedControls };
+  for (const path of pathsToKeep) {
+    setOwnKey(touched, path, true);
+  }
+  return touched;
 }
 
 function renameKeys<T>(record: Record<string, T>, moves: KeyMoves): Record<string, T> {

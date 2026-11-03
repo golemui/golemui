@@ -38,6 +38,61 @@ describe('moveRowState', () => {
     });
   });
 
+  it('leaves an issue that a widget reported at its position, and keeps that position touched', () => {
+    const before: State = {
+      ...stateWithRows(),
+      touchedControls: { 'users.0.name': true },
+      validations: {},
+      injectedValidations: { 'users.0.name': ['Invalid date'] },
+      widgetReportedIssuePaths: { 'users.0.name': true },
+    };
+
+    const state = moveRowState(before, 'users', removed(0));
+
+    expect(state.injectedValidations).toEqual({ 'users.0.name': ['Invalid date'] });
+    expect(state.widgetReportedIssuePaths).toEqual({ 'users.0.name': true });
+    expect(state.touchedControls).toEqual({ 'users.0.name': true });
+  });
+
+  it('moves an issue that the app sent while a reported issue of a later row stays', () => {
+    const three = stateWithRows();
+    const before: State = {
+      ...three,
+      injectedValidations: { 'users.1.name': ['taken'], 'users.2.name': ['Invalid date'] },
+      widgetReportedIssuePaths: { 'users.2.name': true },
+      touchedControls: { 'users.1.name': true, 'users.2.name': true },
+      resolvedSources: { ...three.resolvedSources, 'name[2]': rowInput('name[2]', 'users.2.name') },
+      repeaterRows: {
+        ...three.repeaterRows,
+        'name[2]': [{ declaredItemPath: 'users.items', itemPath: 'users.2', index: 2 }],
+      },
+    };
+
+    const state = moveRowState(before, 'users', removed(0));
+
+    expect(state.injectedValidations).toEqual({
+      'users.0.name': ['taken'],
+      'users.2.name': ['Invalid date'],
+    });
+    expect(state.touchedControls).toEqual({
+      'users.0.name': true,
+      'users.1.name': true,
+      'users.2.name': true,
+    });
+  });
+
+  it('deletes an issue of the app that would move onto a reported issue', () => {
+    const before: State = {
+      ...stateWithRows(),
+      injectedValidations: { 'users.0.name': ['Invalid date'], 'users.1.name': ['taken'] },
+      widgetReportedIssuePaths: { 'users.0.name': true },
+    };
+
+    const state = moveRowState(before, 'users', removed(0));
+
+    expect(state.injectedValidations).toEqual({ 'users.0.name': ['Invalid date'] });
+  });
+
   it('returns the same state when no key moves', () => {
     const before = stateWithRows();
 
