@@ -71,6 +71,11 @@ export class FormCoreComponent implements OnInit, OnDestroy {
   // Keys the widget tree in the template. Every initialization bumps it, so the whole tree
   // is destroyed and recreated and every widget subscribes to the store INITIALIZE ran on.
   protected storeGeneration = signal(0);
+  // False until the first INITIALIZE ran. The calls before it wait for the store.
+  // Not a signal: `setData` reads it, and an effect that calls `setData` must not depend on it.
+  private started = false;
+  private dataBeforeStart: Record<string, any> | undefined;
+  private metaBeforeStart: Record<string, any> | undefined;
 
   // `tap()` runs synchronously before `switchMap` accesses the new store, ensuring
   // that `context.initialize()` always fires before we resubscribe to `formHealth`
@@ -96,14 +101,13 @@ export class FormCoreComponent implements OnInit, OnDestroy {
           formDef: c.formDef,
         },
       });
-      this.context.store.dispatch({
-        type: 'SET_DATA',
-        payload: { data: c.data ?? {} },
-      });
-      this.context.store.dispatch({
-        type: 'SET_META',
-        payload: { meta: c.meta ?? {} },
-      });
+      this.started = true;
+      const data = this.dataBeforeStart ?? c.data ?? {};
+      const meta = this.metaBeforeStart ?? c.meta ?? {};
+      this.dataBeforeStart = undefined;
+      this.metaBeforeStart = undefined;
+      this.context.store.dispatch({ type: 'SET_DATA', payload: { data } });
+      this.context.store.dispatch({ type: 'SET_META', payload: { meta } });
       this.direction.set(getDirectionFromLanguage(this.context.localization.lang));
       this.unsubscribeI18n = this.context.localization.subscribe((lang) => {
         this.direction.set(getDirectionFromLanguage(lang));
@@ -153,10 +157,18 @@ export class FormCoreComponent implements OnInit, OnDestroy {
   }
 
   setData(data: Record<string, any>): void {
+    if (!this.started) {
+      this.dataBeforeStart = data;
+      return;
+    }
     this.context.store.dispatch({ type: 'SET_DATA', payload: { data } });
   }
 
   setMeta(meta: Record<string, any>): void {
+    if (!this.started) {
+      this.metaBeforeStart = meta;
+      return;
+    }
     this.context.store.dispatch({ type: 'SET_META', payload: { meta } });
   }
 
