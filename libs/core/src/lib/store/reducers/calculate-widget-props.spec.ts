@@ -909,6 +909,40 @@ describe('calculateWidgetProps', () => {
       const cur = next.calculatedWidgets['a'].current as ActionWidget<string>;
       expect(cur.label).toBe('original');
     });
+
+    it('removes a prop that only a removed override had set', () => {
+      const source: DisplayWidget<string> = {
+        kind: 'display',
+        uid: 'd',
+        type: 'heading',
+        props: { text: 'hello' },
+      };
+      seed(state, 'd', source);
+      state.widgetPropOverrides = { d: { newKey: 'new value' } };
+      const overridden = run(state);
+      expect(overridden.calculatedWidgets['d'].current.props).toHaveProperty('newKey');
+
+      const next = run({ ...overridden, widgetPropOverrides: {} });
+
+      expect(next.calculatedWidgets['d'].current.props).not.toHaveProperty('newKey');
+      expect(next.calculatedWidgets['d'].current.props).toEqual({ text: 'hello' });
+    });
+
+    it('keeps the widget reference when the override stays', () => {
+      const source: DisplayWidget<string> = {
+        kind: 'display',
+        uid: 'd',
+        type: 'heading',
+        props: { text: 'hello' },
+      };
+      seed(state, 'd', source);
+      state.widgetPropOverrides = { d: { newKey: 'new value' } };
+      const overridden = run(state);
+
+      const next = run(overridden);
+
+      expect(next.calculatedWidgets['d']).toBe(overridden.calculatedWidgets['d']);
+    });
   });
 
   // ---------------------------------------------------------------------------

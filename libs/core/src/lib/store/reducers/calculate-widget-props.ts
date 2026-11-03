@@ -260,6 +260,20 @@ function computePropsFields(
   for (const prop of unsuffixedUniqueKeys(Object.keys(merged))) {
     applyPropsField(tracker, ctx, prop);
   }
+  // No write sees a prop that only a removed override had set, so the old widget would stay.
+  if (!tracker.changed && hasRemovedKey(tracker.previous.props, tracker.current.props)) {
+    tracker.markChanged();
+  }
+}
+
+// This runs for every widget on every derive, so it allocates nothing.
+function hasRemovedKey(previous: object | undefined, current: object | undefined): boolean {
+  for (const key in previous) {
+    if (current === undefined || !Object.prototype.hasOwnProperty.call(current, key)) {
+      return true;
+    }
+  }
+  return false;
 }
 
 function computeOnFields(
