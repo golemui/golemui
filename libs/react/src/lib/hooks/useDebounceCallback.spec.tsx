@@ -58,4 +58,27 @@ describe('useDebounceCallback', () => {
     expect(firstCallback).not.toHaveBeenCalled();
     expect(secondCallback).toHaveBeenCalledWith('a');
   });
+
+  it('does not call the callback when the component unmounts before the delay ends', () => {
+    const callback = vi.fn();
+    act(() => root.render(<DebounceProbe callback={callback} delay={300} />));
+
+    debounced('a');
+    vi.advanceTimersByTime(100);
+    act(() => root.unmount());
+    vi.advanceTimersByTime(300);
+
+    expect(callback).not.toHaveBeenCalled();
+  });
+
+  it('calls the callback when the component stays mounted for the whole delay', () => {
+    // Positive control for the unmount test above.
+    const callback = vi.fn();
+    act(() => root.render(<DebounceProbe callback={callback} delay={300} />));
+
+    debounced('a');
+    vi.advanceTimersByTime(300);
+
+    expect(callback).toHaveBeenCalledWith('a');
+  });
 });
