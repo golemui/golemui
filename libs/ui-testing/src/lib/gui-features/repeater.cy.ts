@@ -1539,6 +1539,58 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
       });
     });
 
+    it('keeps Date, undefined and NaN values of the other rows when a row is removed', () => {
+      const formSubmitHandler = cy.stub().as('formSubmitHandler');
+      const createdAt = new Date('2026-01-01T00:00:00.000Z');
+      mountFn({
+        data: {
+          rows: [
+            { name: 'Alice' },
+            { name: 'Bob', nickname: undefined, score: NaN, createdAt },
+            { name: 'Carol', nickname: undefined, score: NaN, createdAt },
+          ],
+        },
+        formDef: defineForm({
+          form: [
+            {
+              uid: 'rowsRepeater',
+              kind: 'input',
+              type: 'repeater',
+              path: 'rows',
+              props: {
+                removeLabel: 'Remove row',
+                template: {
+                  kind: 'layout',
+                  type: 'grid',
+                  children: [
+                    { uid: 'name', kind: 'input', type: 'textinput', path: 'rows.items.name' },
+                  ],
+                },
+              },
+            },
+            { uid: SUBMIT_BUTTON_UID, kind: 'action', type: 'button', actionType: 'submit' },
+          ],
+        }),
+        formSubmit: formSubmitHandler,
+      });
+
+      cy.get('.gui-button').contains('Remove row').first().click();
+      cy.get('[data-cy="name[0]_textinput"]').should('have.value', 'Bob');
+      cy.get(`[data-cy="${SUBMIT_BUTTON_UID}_button"]`).click();
+
+      cy.get('@formSubmitHandler').should('have.been.calledOnce');
+      cy.get('@formSubmitHandler').then((stub: any) => {
+        const rows = stub.getCall(0).args[0].data.rows;
+        expect(rows).to.have.length(2);
+        expect(Object.keys(rows[0])).to.include('nickname');
+        expect(rows[0].nickname).to.equal(undefined);
+        expect(rows[0].score).to.be.NaN;
+        expect(rows[0].createdAt).to.be.instanceOf(Date);
+        expect(rows[0].createdAt.getTime()).to.equal(createdAt.getTime());
+        expect(rows[1].createdAt).to.be.instanceOf(Date);
+      });
+    });
+
     it('submits the nested arrays after a removal, additions and typing in nested rows', () => {
       const formSubmitHandler = cy.stub().as('formSubmitHandler');
       mountFn({

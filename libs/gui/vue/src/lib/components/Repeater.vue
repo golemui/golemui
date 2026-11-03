@@ -2,7 +2,7 @@
 import type { InputWidget, NonFunctionWidget, Validator, WithWidget } from '@golemui/core';
 import { type RepeaterProps } from '@golemui/gui-shared/internals';
 import { useInputWidget, WidgetRenderer } from '@golemui/vue';
-import { computed, ref } from 'vue';
+import { computed, ref, toRaw } from 'vue';
 import '@golemui/gui-components/label';
 import '@golemui/gui-components/errors';
 
@@ -24,9 +24,10 @@ const addItem = () => {
 
 const removeItem = (index: number) => {
   const items = (value.value ?? []).filter((_, i) => i !== index);
-  // The store hands back data wrapped in Vue reactive proxies and structuredClone() throws
-  // DataCloneError on those, so the JSON round-trip deep-clones and strips them instead.
-  onValueChanged(JSON.parse(JSON.stringify(items)));
+  // structuredClone throws on Vue proxies, so it gets the raw objects. A JSON copy would change
+  // Date, undefined and NaN values of the rows that stay.
+  const rawItems = items.map((item) => toRaw(item));
+  onValueChanged(structuredClone(rawItems));
 };
 
 const onFocusIn = (event: FocusEvent) => {

@@ -52,8 +52,7 @@ When the user removes a row, only that row changes. The other rows keep their ex
   now gets a string, and `getTime` throws.
 - Example: rows `[{ a: 1 }, { b: undefined, n: NaN, d: new Date() }]`, the user removes row 0 ->
   the remaining row still has the key `b` with `undefined`, `n` is `NaN` and `d` is a `Date`.
-- Status: follows in React, Angular and Lit. Not yet in Vue. Vue copies the rows with
-  `JSON.stringify`, so the row loses `b`, `n` becomes `null` and `d` becomes a string.
+- Status: follows.
 
 ### 3. A `null` parent acts like a missing parent
 
