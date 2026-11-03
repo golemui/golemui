@@ -1,3 +1,17 @@
+## 2.1.1-rc.0 (2026-11-03)
+
+### 🩹 Fixes
+
+- **gui-validators:** accept an empty string in an optional string field and check uniqueItems ([#557](https://github.com/golemui/golemui/pull/557))
+- **gui-components:** number component issues ([#545](https://github.com/golemui/golemui/pull/545))
+- deprecate limits to input fields ([dfc7ad74](https://github.com/golemui/golemui/commit/dfc7ad74))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+- Raúl Jiménez @Elecash
+
 ## 2.1.0 (2026-10-30)
 
 ### 🚀 Features

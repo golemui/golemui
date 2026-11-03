@@ -1,3 +1,7 @@
+## 2.1.1-rc.0 (2026-11-03)
+
+This was a version bump only for lit-utils to align it with other projects, there were no code changes.
+
 ## 2.1.0 (2026-10-30)
 
 This was a version bump only for lit-utils to align it with other projects, there were no code changes.

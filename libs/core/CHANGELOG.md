@@ -1,3 +1,22 @@
+## 2.1.1-rc.0 (2026-11-03)
+
+### 🩹 Fixes
+
+- keep the state of a repeater row when another row is removed ([#562](https://github.com/golemui/golemui/pull/562))
+- **core:** move touched state, errors and overrides with a removed repeater row ([#558](https://github.com/golemui/golemui/pull/558))
+- **core:** translate shown errors on a language change and validate once on submit ([#556](https://github.com/golemui/golemui/pull/556))
+- **core:** ignore hidden inputs and update isFormValid on injected issues ([#555](https://github.com/golemui/golemui/pull/555))
+- **core:** report invalid definitions and failing validators in form health ([#551](https://github.com/golemui/golemui/pull/551))
+- **core:** read data paths through null parents and own keys only ([#547](https://github.com/golemui/golemui/pull/547))
+- **core:** keep value types and visible values in form data ([#536](https://github.com/golemui/golemui/pull/536))
+- **core:** avoid finding prototype keys ([299e26cc](https://github.com/golemui/golemui/commit/299e26cc))
+- add resolveItemRenderer to fall back to the default renderer for an unknown name ([b74e0e6a](https://github.com/golemui/golemui/commit/b74e0e6a))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
 ## 2.1.0 (2026-10-30)
 
 ### 🚀 Features

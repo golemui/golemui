@@ -1,3 +1,13 @@
+## 2.1.1-rc.0 (2026-11-03)
+
+### 🩹 Fixes
+
+- **gui-validators:** accept an empty string in an optional string field and check uniqueItems ([#557](https://github.com/golemui/golemui/pull/557))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+
 ## 2.1.0 (2026-10-30)
 
 ### 🚀 Features

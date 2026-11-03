@@ -1,3 +1,18 @@
+## 2.1.1-rc.0 (2026-11-03)
+
+### 🩹 Fixes
+
+- keep the state of a repeater row when another row is removed ([#562](https://github.com/golemui/golemui/pull/562))
+- **gui-angular,gui-react,gui-lit:** dropdown issues ([#549](https://github.com/golemui/golemui/pull/549))
+- add resolveItemRenderer to fall back to the default renderer for an unknown name ([b74e0e6a](https://github.com/golemui/golemui/commit/b74e0e6a))
+- deprecate limits to input fields ([dfc7ad74](https://github.com/golemui/golemui/commit/dfc7ad74))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+- Raúl Jiménez @Elecash
+
 ## 2.1.0 (2026-10-30)
 
 ### 🚀 Features
