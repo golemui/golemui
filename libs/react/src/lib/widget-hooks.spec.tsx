@@ -199,6 +199,7 @@ describe('useInputWidget', () => {
       'isTouched',
       'onBlur',
       'onFilter',
+      'onRowRemoved',
       'onValueChanged',
       'templateData',
       'uid',

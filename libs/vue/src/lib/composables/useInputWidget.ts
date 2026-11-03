@@ -18,6 +18,11 @@ export interface UseInputWidgetReturn<T, ExtraProps extends Record<string, any>>
   errors: Ref<string[]>;
   isTouched: Ref<boolean | undefined>;
   onValueChanged: (newValue: T) => void;
+  /**
+   * Repeater inputs only: writes the rows after the control removed the row at `index`. The touched
+   * state, errors, injected issues and prop overrides of the other rows move with their rows.
+   */
+  onRowRemoved: (newRows: T, index: number) => void;
   onFilter: (newValue: T) => void;
   onBlur: () => void;
   injectValidationIssues: (issues: string[] | null) => void;
@@ -68,6 +73,17 @@ export function useInputWidget<T, ExtraProps extends Record<string, any> = Recor
     formContext.emitEvent('change', widget);
   };
 
+  const onRowRemoved = (newRows: T, index: number) => {
+    if (disposed) {
+      return;
+    }
+    formContext.store.dispatch({
+      type: 'SET_WIDGET_DATA',
+      payload: { path: widget.path, data: newRows, rowChange: { type: 'removed', index } },
+    });
+    formContext.emitEvent('change', widget);
+  };
+
   const onFilter = (newValue: T) => {
     if (disposed) return;
     formContext.emitEvent('filter', widget, newValue);
@@ -77,7 +93,7 @@ export function useInputWidget<T, ExtraProps extends Record<string, any> = Recor
     if (disposed) return;
     formContext.store.dispatch({
       type: 'INJECT_VALIDATION_ISSUES',
-      payload: { path: widget.path, issues },
+      payload: { path: widget.path, issues, reportedByWidget: true },
     });
   };
 
@@ -97,6 +113,7 @@ export function useInputWidget<T, ExtraProps extends Record<string, any> = Recor
     errors,
     isTouched,
     onValueChanged,
+    onRowRemoved,
     onFilter,
     onBlur,
     injectValidationIssues,
