@@ -592,7 +592,8 @@ When the app passes a new config object, the form starts again from the new conf
 ### 26. `setData` before the form has started keeps the values
 
 The form element exists before it has started (Lit: before its first update, Angular: before its
-config is applied). A `setData` or `setMeta` call in that time must not be lost.
+config is applied). A `setData` or `setMeta` call in that time must not be lost. The last call
+replaces the `data` or `meta` of the config, like a call after the start.
 
 - Scenario: a page creates the form, fills in a draft that it saved in `localStorage`, and then
   adds the form to the page.
@@ -607,8 +608,7 @@ config is applied). A `setData` or `setMeta` call in that time must not be lost.
 
   -> the form starts with `name: 'Ann'`.
 
-- Status: not yet. Lit and Angular throw "dispatch is not a function". The gui form components do
-  not throw, but they ignore the call, so the form starts empty.
+- Status: follows.
 
 ### 27. The native `submit` event does not reach ancestor elements
 

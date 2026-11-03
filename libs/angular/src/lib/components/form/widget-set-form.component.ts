@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import {
+  type AfterViewInit,
   Component,
   computed,
   inject,
@@ -69,7 +70,7 @@ export function provideWidgetSet(widgetSet: AngularWidgetSet<any>): Provider {
   selector: 'gui-widget-set-form',
   templateUrl: './widget-set-form.component.html',
 })
-export class WidgetSetFormComponent {
+export class WidgetSetFormComponent implements AfterViewInit {
   config = input.required<WidgetSetFormInitConfig<any>>();
   autocomplete = input<string | undefined>(undefined);
   /** Wraps the form and renders the error UI for an errored FormHealth. Defaults to a red banner. */
@@ -77,6 +78,9 @@ export class WidgetSetFormComponent {
 
   private widgetSet = inject(GOLEMUI_WIDGET_SET);
   private coreForm = viewChild(FormCoreComponent);
+  // The core form does not exist before the view, so these calls wait for it.
+  private dataBeforeView: Record<string, any> | undefined;
+  private metaBeforeView: Record<string, any> | undefined;
 
   protected bundle = computed(() => buildWidgetSetForm(this.widgetSet, this.config()));
 
@@ -102,11 +106,32 @@ export class WidgetSetFormComponent {
     this.formSubmit.emit(event);
   }
 
+  ngAfterViewInit(): void {
+    if (this.dataBeforeView) {
+      this.coreForm()?.setData(this.dataBeforeView);
+      this.dataBeforeView = undefined;
+    }
+    if (this.metaBeforeView) {
+      this.coreForm()?.setMeta(this.metaBeforeView);
+      this.metaBeforeView = undefined;
+    }
+  }
+
   setData(data: Record<string, any>): void {
-    this.coreForm()?.setData(data);
+    const coreForm = this.coreForm();
+    if (coreForm) {
+      coreForm.setData(data);
+    } else {
+      this.dataBeforeView = data;
+    }
   }
 
   setMeta(meta: Record<string, any>): void {
-    this.coreForm()?.setMeta(meta);
+    const coreForm = this.coreForm();
+    if (coreForm) {
+      coreForm.setMeta(meta);
+    } else {
+      this.metaBeforeView = meta;
+    }
   }
 }

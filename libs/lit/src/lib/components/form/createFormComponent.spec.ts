@@ -15,6 +15,13 @@ const WidgetSetForm = createFormComponent<any>({
 });
 safeDefine('create-form-component-spec-form', WidgetSetForm);
 
+class WidgetSetFormSubclass extends WidgetSetForm {
+  override firstUpdated() {
+    this.dataset['rendered'] = 'true';
+  }
+}
+safeDefine('create-form-component-spec-subclass', WidgetSetFormSubclass);
+
 const formDef = {
   form: {
     uid: 'root',
@@ -36,6 +43,64 @@ beforeAll(async () => {
 
 afterEach(() => {
   document.body.innerHTML = '';
+});
+
+describe('setData and setMeta on a form element built by createFormComponent', () => {
+  const coreStoreState = (wrapper: WidgetSetFormElement) =>
+    (wrapper.querySelector('gui-core-form') as FormElement).context.store.getState();
+
+  it('keeps a setData call made before the element is in the page', async () => {
+    const wrapper = createWrapper();
+
+    wrapper.setData({ firstName: 'Bob' });
+    document.body.append(wrapper);
+    await afterLitRenderSchedule();
+
+    expect(coreStoreState(wrapper).data).toEqual({ firstName: 'Bob' });
+  });
+
+  it('keeps a setData call made after the element is in the page but before its first update', async () => {
+    const wrapper = createWrapper();
+    document.body.append(wrapper);
+
+    wrapper.setData({ firstName: 'Bob' });
+    await afterLitRenderSchedule();
+
+    expect(coreStoreState(wrapper).data).toEqual({ firstName: 'Bob' });
+  });
+
+  it('keeps a setMeta call made before the element is in the page', async () => {
+    const wrapper = createWrapper();
+
+    wrapper.setMeta({ tier: 'paid' });
+    document.body.append(wrapper);
+    await afterLitRenderSchedule();
+
+    expect(coreStoreState(wrapper).meta).toEqual({ tier: 'paid' });
+  });
+
+  it('keeps an early setData call in a subclass that has its own firstUpdated', async () => {
+    const wrapper = document.createElement(
+      'create-form-component-spec-subclass',
+    ) as WidgetSetFormElement;
+    wrapper.config = { formDef, data: {} };
+
+    wrapper.setData({ firstName: 'Bob' });
+    document.body.append(wrapper);
+    await afterLitRenderSchedule();
+
+    expect(coreStoreState(wrapper).data).toEqual({ firstName: 'Bob' });
+  });
+
+  it('applies a setData call after the start at once', async () => {
+    const wrapper = createWrapper();
+    document.body.append(wrapper);
+    await afterLitRenderSchedule();
+
+    wrapper.setData({ firstName: 'Bob' });
+
+    expect(coreStoreState(wrapper).data).toEqual({ firstName: 'Bob' });
+  });
 });
 
 describe('a form element built by createFormComponent', () => {

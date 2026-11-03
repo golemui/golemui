@@ -72,16 +72,41 @@ export function createFormComponent<
     declare autocomplete: string | undefined;
     declare formHealthBoundary: FormHealthBoundary | undefined;
 
+    // The core form does not exist before the first render, so these calls wait for it.
+    private dataBeforeFirstRender: Record<string, any> | undefined;
+    private metaBeforeFirstRender: Record<string, any> | undefined;
+
     private get coreForm(): CoreFormElement | null {
       return this.renderRoot.querySelector('gui-core-form');
     }
 
     setData(data: Record<string, any>): void {
+      if (!this.hasUpdated) {
+        this.dataBeforeFirstRender = data;
+        return;
+      }
       this.coreForm?.setData(data);
     }
 
     setMeta(meta: Record<string, any>): void {
+      if (!this.hasUpdated) {
+        this.metaBeforeFirstRender = meta;
+        return;
+      }
       this.coreForm?.setMeta(meta);
+    }
+
+    // Not in firstUpdated(): a subclass can override that hook without calling super.
+    protected override update(changed: PropertyValues) {
+      super.update(changed);
+      if (this.dataBeforeFirstRender) {
+        this.coreForm?.setData(this.dataBeforeFirstRender);
+        this.dataBeforeFirstRender = undefined;
+      }
+      if (this.metaBeforeFirstRender) {
+        this.coreForm?.setMeta(this.metaBeforeFirstRender);
+        this.metaBeforeFirstRender = undefined;
+      }
     }
 
     override createRenderRoot() {
