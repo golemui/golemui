@@ -1,3 +1,17 @@
+## 2.1.1 (2026-11-04)
+
+### 🩹 Fixes
+
+- keep the state of a repeater row when another row is removed ([#562](https://github.com/golemui/golemui/pull/562))
+- **gui-vue:** keep the values of the other rows when a repeater row is removed ([#561](https://github.com/golemui/golemui/pull/561))
+- add resolveItemRenderer to fall back to the default renderer for an unknown name ([b74e0e6a](https://github.com/golemui/golemui/commit/b74e0e6a))
+- deprecate limits to input fields ([dfc7ad74](https://github.com/golemui/golemui/commit/dfc7ad74))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
 ## 2.1.1-rc.0 (2026-11-03)
 
 ### 🩹 Fixes

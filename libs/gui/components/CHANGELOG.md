@@ -1,3 +1,23 @@
+## 2.1.1 (2026-11-04)
+
+### 🩹 Fixes
+
+- **gui-components:** issues with oneOf components ([#554](https://github.com/golemui/golemui/pull/554))
+- **gui-components:** range slider issues ([#553](https://github.com/golemui/golemui/pull/553))
+- **gui-components:** ignore intraword underscores when detecting italic in markdown ([#550](https://github.com/golemui/golemui/pull/550))
+- **gui-components:** announce the required state of the file upload ([#552](https://github.com/golemui/golemui/pull/552))
+- **gui-components:** use the currency's own fraction digits by default ([#548](https://github.com/golemui/golemui/pull/548))
+- **gui-components:** tags component issues ([#546](https://github.com/golemui/golemui/pull/546))
+- **gui-components:** number component issues ([#545](https://github.com/golemui/golemui/pull/545))
+- **gui-components:** check gui-menu's name when it opens, not when it connects ([e8a1cbb3](https://github.com/golemui/golemui/commit/e8a1cbb3))
+- deprecate limits to input fields ([dfc7ad74](https://github.com/golemui/golemui/commit/dfc7ad74))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+- Raúl Jiménez @Elecash
+
 ## 2.1.1-rc.0 (2026-11-03)
 
 ### 🩹 Fixes

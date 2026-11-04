@@ -1,3 +1,15 @@
+## 2.1.1 (2026-11-04)
+
+### 🩹 Fixes
+
+- **gui-components:** number component issues ([#545](https://github.com/golemui/golemui/pull/545))
+- deprecate limits to input fields ([dfc7ad74](https://github.com/golemui/golemui/commit/dfc7ad74))
+
+### ❤️ Thank You
+
+- Raúl Jiménez @Elecash
+- Raúl Jiménez @Elecash
+
 ## 2.1.1-rc.0 (2026-11-03)
 
 ### 🩹 Fixes

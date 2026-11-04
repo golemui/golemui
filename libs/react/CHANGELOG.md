@@ -1,3 +1,17 @@
+## 2.1.1 (2026-11-04)
+
+### 🩹 Fixes
+
+- keep the state of a repeater row when another row is removed ([#562](https://github.com/golemui/golemui/pull/562))
+- **react:** cancel a pending debounced call on unmount ([#560](https://github.com/golemui/golemui/pull/560))
+- **core:** translate shown errors on a language change and validate once on submit ([#556](https://github.com/golemui/golemui/pull/556))
+- add resolveItemRenderer to fall back to the default renderer for an unknown name ([b74e0e6a](https://github.com/golemui/golemui/commit/b74e0e6a))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
 ## 2.1.1-rc.0 (2026-11-03)
 
 ### 🩹 Fixes

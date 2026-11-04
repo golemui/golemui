@@ -1,3 +1,38 @@
+## 2.1.1 (2026-11-04)
+
+### 🩹 Fixes
+
+- deprecate limits to input fields ([dfc7ad74](https://github.com/golemui/golemui/commit/dfc7ad74))
+- add resolveItemRenderer to fall back to the default renderer for an unknown name ([b74e0e6a](https://github.com/golemui/golemui/commit/b74e0e6a))
+- keep the state of a repeater row when another row is removed ([#562](https://github.com/golemui/golemui/pull/562))
+- **angular:** bind on-demand widgets before their elements first render ([9a2cd86e](https://github.com/golemui/golemui/commit/9a2cd86e))
+- **angular,lit:** keep setData calls made before the form starts ([#559](https://github.com/golemui/golemui/pull/559))
+- **core:** avoid finding prototype keys ([299e26cc](https://github.com/golemui/golemui/commit/299e26cc))
+- **core:** keep value types and visible values in form data ([#536](https://github.com/golemui/golemui/pull/536))
+- **core:** read data paths through null parents and own keys only ([#547](https://github.com/golemui/golemui/pull/547))
+- **core:** report invalid definitions and failing validators in form health ([#551](https://github.com/golemui/golemui/pull/551))
+- **core:** ignore hidden inputs and update isFormValid on injected issues ([#555](https://github.com/golemui/golemui/pull/555))
+- **core:** translate shown errors on a language change and validate once on submit ([#556](https://github.com/golemui/golemui/pull/556))
+- **core:** move touched state, errors and overrides with a removed repeater row ([#558](https://github.com/golemui/golemui/pull/558))
+- **gui-angular,gui-react,gui-lit:** dropdown issues ([#549](https://github.com/golemui/golemui/pull/549))
+- **gui-components:** check gui-menu's name when it opens, not when it connects ([e8a1cbb3](https://github.com/golemui/golemui/commit/e8a1cbb3))
+- **gui-components:** number component issues ([#545](https://github.com/golemui/golemui/pull/545))
+- **gui-components:** tags component issues ([#546](https://github.com/golemui/golemui/pull/546))
+- **gui-components:** use the currency's own fraction digits by default ([#548](https://github.com/golemui/golemui/pull/548))
+- **gui-components:** announce the required state of the file upload ([#552](https://github.com/golemui/golemui/pull/552))
+- **gui-components:** ignore intraword underscores when detecting italic in markdown ([#550](https://github.com/golemui/golemui/pull/550))
+- **gui-components:** range slider issues ([#553](https://github.com/golemui/golemui/pull/553))
+- **gui-components:** issues with oneOf components ([#554](https://github.com/golemui/golemui/pull/554))
+- **gui-validators:** accept an empty string in an optional string field and check uniqueItems ([#557](https://github.com/golemui/golemui/pull/557))
+- **gui-vue:** keep the values of the other rows when a repeater row is removed ([#561](https://github.com/golemui/golemui/pull/561))
+- **react:** cancel a pending debounced call on unmount ([#560](https://github.com/golemui/golemui/pull/560))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+- Raúl Jiménez @Elecash
+
 ## 2.1.1-rc.0 (2026-11-03)
 
 ### 🩹 Fixes

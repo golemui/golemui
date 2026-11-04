@@ -1,3 +1,17 @@
+## 2.1.1 (2026-11-04)
+
+### 🩹 Fixes
+
+- keep the state of a repeater row when another row is removed ([#562](https://github.com/golemui/golemui/pull/562))
+- **angular,lit:** keep setData calls made before the form starts ([#559](https://github.com/golemui/golemui/pull/559))
+- add resolveItemRenderer to fall back to the default renderer for an unknown name ([b74e0e6a](https://github.com/golemui/golemui/commit/b74e0e6a))
+- **angular:** bind on-demand widgets before their elements first render ([9a2cd86e](https://github.com/golemui/golemui/commit/9a2cd86e))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
 ## 2.1.1-rc.0 (2026-11-03)
 
 ### 🩹 Fixes

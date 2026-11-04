@@ -1,3 +1,16 @@
+## 2.1.1 (2026-11-04)
+
+### 🩹 Fixes
+
+- keep the state of a repeater row when another row is removed ([#562](https://github.com/golemui/golemui/pull/562))
+- **gui-validators:** accept an empty string in an optional string field and check uniqueItems ([#557](https://github.com/golemui/golemui/pull/557))
+- deprecate limits to input fields ([dfc7ad74](https://github.com/golemui/golemui/commit/dfc7ad74))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+- Raúl Jiménez @Elecash
+
 ## 2.1.1-rc.0 (2026-11-03)
 
 ### 🩹 Fixes
