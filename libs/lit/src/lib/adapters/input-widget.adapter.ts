@@ -13,7 +13,7 @@ export class InputWidgetAdapter<
   override templateData = {} as ControlTemplateData<T> & ExtraProps;
 
   init(widget: InputWidget<T>) {
-    this.widget = widget;
+    this.setWidget(widget);
 
     this.templateDataUpdater((viewModel) => ({
       value: viewModel.value,

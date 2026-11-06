@@ -11,16 +11,21 @@ const headingForm = defineForm({
 
 describe('Lit widget load paths', () => {
   it('replaces the gui-widget element with the widget element after a dynamic import', () => {
-    mountFramework({ withCustomComponent: true, formDef: headingForm });
+    mountFramework({ withCustomComponent: true, formDef: headingForm, formName: 'load' });
 
-    cy.get('app-heading').should('have.id', 'host-title');
+    cy.get('app-heading').should('have.id', 'host-load-title');
     cy.get('app-heading').parent().should('not.match', 'gui-widget');
   });
 
   it('keeps the gui-widget element with display contents when the widget was preloaded', () => {
-    mountFramework({ withCustomComponent: true, preloadWidgets: true, formDef: headingForm });
+    mountFramework({
+      withCustomComponent: true,
+      preloadWidgets: true,
+      formDef: headingForm,
+      formName: 'load',
+    });
 
-    cy.get('app-heading').should('have.id', 'host-title');
+    cy.get('app-heading').should('have.id', 'host-load-title');
     cy.get('app-heading').parent().should('match', 'gui-widget');
     // One for the root layout of the form and one for the heading.
     cy.get('gui-widget').should('have.length', 2);

@@ -1,10 +1,22 @@
 import { type InputWidget, type NonFunctionWidget, widgetViewModel$ } from '@golemui/core';
+import { toDomId } from '@golemui/core/internals';
 import { onMounted, onScopeDispose, ref, type Ref } from 'vue';
 import { useVueFormContext } from '../provideFormContext';
 import { mergeViewModelIntoTemplateData, type WithFlattenedProps } from './template-data';
 
 export interface UseInputWidgetReturn<T, ExtraProps extends Record<string, any>> {
   uid: Ref<string>;
+  /**
+   * The form's `formName`. Every DOM id the widget renders starts with it, so two forms on one
+   * page never share an id: pass it as `idPrefix` to GolemUI Components.
+   */
+  formName: string;
+  /**
+   * The widget uid behind the form's name: the DOM id of the widget's control, which the ids of
+   * its other parts extend (`${domId}_label`, `${domId}-list`). Computed once, when the widget sets
+   * up.
+   */
+  domId: string;
   value: Ref<T | undefined>;
   templateData: Ref<
     WithFlattenedProps<InputWidget<T, string>, ExtraProps> & {
@@ -108,6 +120,8 @@ export function useInputWidget<T, ExtraProps extends Record<string, any> = Recor
 
   return {
     uid,
+    formName: formContext.formName,
+    domId: toDomId(formContext.formName, widget.uid),
     value,
     templateData,
     errors,

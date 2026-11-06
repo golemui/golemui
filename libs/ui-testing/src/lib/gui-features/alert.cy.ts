@@ -1,7 +1,14 @@
 import { defineForm } from '@golemui/core';
-import { dictionaryTranslator, eventsNamed, type MountComponentFn } from '../utils';
+import {
+  dictionaryTranslator,
+  eventsNamed,
+  type MountComponentFn,
+  testDomId,
+  withTestFormName,
+} from '../utils';
 
-export const runAlertComponentTests = (mountFn: MountComponentFn) => {
+export const runAlertComponentTests = (baseMountFn: MountComponentFn) => {
+  const mountFn = withTestFormName(baseMountFn);
   describe('Alert Component', () => {
     beforeEach(() => {
       mountFn({
@@ -36,7 +43,7 @@ export const runAlertComponentTests = (mountFn: MountComponentFn) => {
         }),
       });
 
-      cy.get('gui-alert[id="note"]').should('have.attr', 'variant', 'default');
+      cy.get(`gui-alert[id="${testDomId('note')}"]`).should('have.attr', 'variant', 'default');
     });
 
     it('should use the level of the active state', () => {
@@ -55,11 +62,11 @@ export const runAlertComponentTests = (mountFn: MountComponentFn) => {
         }),
       });
 
-      cy.get('gui-alert[id="result"]').should('have.attr', 'variant', 'info');
+      cy.get(`gui-alert[id="${testDomId('result')}"]`).should('have.attr', 'variant', 'info');
       cy.get('[data-cy="status_textinput"]').type('failed');
-      cy.get('gui-alert[id="result"]').should('have.attr', 'variant', 'error');
+      cy.get(`gui-alert[id="${testDomId('result')}"]`).should('have.attr', 'variant', 'error');
       cy.get('[data-cy="status_textinput"]').type('x');
-      cy.get('gui-alert[id="result"]').should('have.attr', 'variant', 'info');
+      cy.get(`gui-alert[id="${testDomId('result')}"]`).should('have.attr', 'variant', 'info');
     });
 
     it('should translate a text given as a translation key, and again after a language change', () => {
@@ -82,9 +89,9 @@ export const runAlertComponentTests = (mountFn: MountComponentFn) => {
         }),
       });
 
-      cy.get('gui-alert[id="saved"]').should('contain.text', 'Saved');
+      cy.get(`gui-alert[id="${testDomId('saved')}"]`).should('contain.text', 'Saved');
       cy.then(() => translator.setLang('es'));
-      cy.get('gui-alert[id="saved"]').should('contain.text', 'Guardado');
+      cy.get(`gui-alert[id="${testDomId('saved')}"]`).should('contain.text', 'Guardado');
     });
 
     it('should send no form event for on handlers on an alert', () => {
@@ -113,7 +120,7 @@ export const runAlertComponentTests = (mountFn: MountComponentFn) => {
         }),
       });
 
-      cy.get('gui-alert[id="warning"]').click();
+      cy.get(`gui-alert[id="${testDomId('warning')}"]`).click();
       // The button event shows that the click above had time to send an event.
       cy.get('[data-cy="save_button"]').click();
       cy.get('@formEventHandler').should(() => {

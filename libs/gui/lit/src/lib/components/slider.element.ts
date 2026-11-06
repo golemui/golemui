@@ -42,6 +42,7 @@ export class SliderElement extends LitElement implements WithWidget {
     return html`
       <gui-slider
         .uid=${this.widget.uid}
+        .idPrefix=${this.adapter.formName}
         .label=${this.adapter.templateData.label}
         .hint=${this.adapter.templateData.hint}
         .errors=${this.adapter.templateData.errors}

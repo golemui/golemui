@@ -41,7 +41,7 @@ export class RendererElement extends LitElement implements WithWidget {
 
   override render() {
     return html`
-      <div class="gui-widget" id=${this.widget.uid}>${this.adapter.templateData.render}</div>
+      <div class="gui-widget" id=${this.adapter.domId}>${this.adapter.templateData.render}</div>
     `;
   }
 

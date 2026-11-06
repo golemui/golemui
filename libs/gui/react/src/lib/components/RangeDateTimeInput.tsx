@@ -9,6 +9,7 @@ export function RangeDateTimeInput(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<DateTimeRange[]>;
   const {
     uid,
+    formName,
     errors,
     value,
     isTouched,
@@ -64,6 +65,7 @@ export function RangeDateTimeInput(widgetInstance: WithWidget) {
       <GuiRangeDateTimeReact
         ref={handleRef}
         uid={uid}
+        idPrefix={formName}
         label={label}
         hint={hint}
         errors={errors}

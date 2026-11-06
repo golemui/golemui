@@ -61,12 +61,22 @@ export const mountFramework = (options: MountOptions) => {
 
   cy.mount(
     html`<gui-form
-      .config=${config}
-      .autocomplete=${options.autocomplete}
-      @formEvent=${handleFormEvent}
-      @formHealth=${handleFormHealth}
-      @formSubmit=${handleFormSubmit}
-    ></gui-form>`,
+        .config=${config}
+        .autocomplete=${options.autocomplete}
+        @formEvent=${handleFormEvent}
+        @formHealth=${handleFormHealth}
+        @formSubmit=${handleFormSubmit}
+      ></gui-form>
+      ${(options.extraForms ?? []).map(
+        (extra) =>
+          html`<gui-form
+            .config=${{ ...config, formName: extra.formName }}
+            .autocomplete=${options.autocomplete}
+            @formEvent=${handleFormEvent}
+            @formHealth=${handleFormHealth}
+            @formSubmit=${(e: CustomEvent<FormSubmitEvent>) => extra.formSubmit?.(e.detail)}
+          ></gui-form>`,
+      )}`,
   ).then(() => {
     const el = document.querySelector('gui-form') as HTMLElement & {
       config: GuiFormInitConfig;

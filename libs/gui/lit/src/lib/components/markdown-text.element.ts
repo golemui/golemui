@@ -42,7 +42,7 @@ export class MarkdownTextElement extends LitElement implements WithWidget {
 
   override render() {
     return html`
-      <div class="gui-widget" id=${this.widget.uid}>
+      <div class="gui-widget" id=${this.adapter.domId}>
         <gui-markdown-text
           .md=${this.adapter.templateData.md}
           .dependencies=${this.adapter.templateData.deps}

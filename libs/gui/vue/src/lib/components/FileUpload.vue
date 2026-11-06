@@ -9,6 +9,7 @@ const props = defineProps<WithWidget>();
 const widget = props.widget as InputWidget<FileItem | null>;
 const {
   uid,
+  formName,
   errors,
   value,
   isTouched,
@@ -33,6 +34,7 @@ const required = computed(() => (templateData.value.validator as Validator)?.req
   <div class="gui-file-upload gui-field">
     <gui-file-upload
       :uid="uid"
+      :id-prefix="formName"
       :path="widget.path"
       :label="templateData.label"
       :hint="templateData.hint"

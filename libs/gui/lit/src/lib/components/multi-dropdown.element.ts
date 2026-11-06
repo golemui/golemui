@@ -267,6 +267,7 @@ export class MultiDropdownElement extends LitElement implements WithWidget {
   }
 
   override render() {
+    const { domId } = this.adapter;
     const templateData = this.adapter.templateData;
     const showErrors =
       templateData.touched && templateData.errors && templateData.errors.length > 0;
@@ -284,6 +285,7 @@ export class MultiDropdownElement extends LitElement implements WithWidget {
       <gui-label
         .targetElement=${[this._listRef, this._triggerRef?.input]}
         .uid=${this.widget.uid}
+        .idPrefix=${this.adapter.formName}
         .label=${templateData.label}
         .hint=${templateData.hint}
         .errors=${templateData.errors}
@@ -295,6 +297,7 @@ export class MultiDropdownElement extends LitElement implements WithWidget {
       <div class="gui-widget" @keydown=${this._onWidgetKeyDown} @focusout=${this._onFocusOut}>
         <gui-multi-select-trigger
           .uid=${this.widget.uid}
+          .idPrefix=${this.adapter.formName}
           .pills=${pillItems}
           .errors=${templateData.errors}
           .touched=${!!templateData.touched}
@@ -307,7 +310,7 @@ export class MultiDropdownElement extends LitElement implements WithWidget {
           .hasLabel=${!!templateData.label}
           .hasHint=${!!templateData.hint}
           .panelOpen=${this._isListVisible}
-          .panelId=${`${this.widget.uid}-list`}
+          .panelId=${`${domId}-list`}
           .removeAriaLabel=${templateData.removeAriaLabel}
           .removeIcon=${templateData.removeIcon}
           .compactAriaLabel=${`${pillItems.length} selected`}
@@ -323,7 +326,7 @@ export class MultiDropdownElement extends LitElement implements WithWidget {
           aria-label=${templateData.toggleAriaLabel ?? 'Show options'}
           aria-haspopup="listbox"
           aria-expanded=${this._isListVisible ? 'true' : 'false'}
-          aria-controls=${`${this.widget.uid}-list`}
+          aria-controls=${`${domId}-list`}
           ?disabled=${templateData.disabled}
           @mousedown=${this._onToggleMouseDown}
           @click=${this._onToggleClick}
@@ -338,8 +341,9 @@ export class MultiDropdownElement extends LitElement implements WithWidget {
           @mousedown=${this._onPanelMouseDown}
         >
           <gui-multi-list
-            id=${`${this.widget.uid}-list`}
+            id=${`${domId}-list`}
             .uid=${this.widget.uid}
+            .idPrefix=${this.adapter.formName}
             .values=${live(values)}
             .valueField=${templateData.valueField! as string}
             .items=${this._isFiltering && !asyncFiltering
@@ -390,6 +394,7 @@ export class MultiDropdownElement extends LitElement implements WithWidget {
             ? html`<gui-errors
                 panel
                 .uid=${this.widget.uid}
+                .idPrefix=${this.adapter.formName}
                 .errors=${templateData.errors}
                 .touched=${templateData.touched}
               ></gui-errors>`
@@ -400,6 +405,7 @@ export class MultiDropdownElement extends LitElement implements WithWidget {
       ${showErrors
         ? html`<gui-errors
             .uid=${this.widget.uid}
+            .idPrefix=${this.adapter.formName}
             .errors=${templateData.errors}
             .touched=${templateData.touched}
           ></gui-errors>`

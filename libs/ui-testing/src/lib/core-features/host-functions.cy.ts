@@ -1,5 +1,5 @@
 import { defineForm, type ExpressionFunctions, type I18nTranslator } from '@golemui/core';
-import { type MountComponentFn } from '../utils';
+import { type MountComponentFn, testDomId, withTestFormName } from '../utils';
 
 const hostFunctions: ExpressionFunctions = {
   upper: (value: string) => String(value ?? '').toUpperCase(),
@@ -10,7 +10,8 @@ const hostFunctions: ExpressionFunctions = {
   isEven: (value: number) => Number(value) % 2 === 0,
 };
 
-export const runHostFunctionsComponentTests = (mountFn: MountComponentFn) => {
+export const runHostFunctionsComponentTests = (baseMountFn: MountComponentFn) => {
+  const mountFn = withTestFormName(baseMountFn);
   describe('$fn host functions', () => {
     describe('string interpolation', () => {
       it('should call a host function inside a {{ }} slot', () => {
@@ -136,9 +137,9 @@ export const runHostFunctionsComponentTests = (mountFn: MountComponentFn) => {
           }),
         });
 
-        cy.get('[id="even-message"]').should('exist');
+        cy.get(`[id="${testDomId('even-message')}"]`).should('exist');
         cy.get('[data-cy="count-input_number"]').clear().type('3');
-        cy.get('[id="even-message"]').should('not.exist');
+        cy.get(`[id="${testDomId('even-message')}"]`).should('not.exist');
       });
 
       it('should toggle exclude.when visibility from a $fn expression', () => {
@@ -164,9 +165,9 @@ export const runHostFunctionsComponentTests = (mountFn: MountComponentFn) => {
           }),
         });
 
-        cy.get('[id="odd-message"]').should('not.exist');
+        cy.get(`[id="${testDomId('odd-message')}"]`).should('not.exist');
         cy.get('[data-cy="count-input_number"]').clear().type('3');
-        cy.get('[id="odd-message"]').should('exist');
+        cy.get(`[id="${testDomId('odd-message')}"]`).should('exist');
       });
     });
 
@@ -255,11 +256,11 @@ export const runHostFunctionsComponentTests = (mountFn: MountComponentFn) => {
           }),
         });
 
-        cy.get('[id="even-state-message"]').should('exist');
+        cy.get(`[id="${testDomId('even-state-message')}"]`).should('exist');
         cy.get('[data-cy="count-input_number"]').clear().type('3');
-        cy.get('[id="even-state-message"]').should('not.exist');
+        cy.get(`[id="${testDomId('even-state-message')}"]`).should('not.exist');
         cy.get('[data-cy="count-input_number"]').clear().type('4');
-        cy.get('[id="even-state-message"]').should('exist');
+        cy.get(`[id="${testDomId('even-state-message')}"]`).should('exist');
       });
     });
 
@@ -326,14 +327,14 @@ export const runHostFunctionsComponentTests = (mountFn: MountComponentFn) => {
           dependencies: { markdown: { parse: (markdown: string) => markdown } },
         });
 
-        cy.get('[id="lineTotalMd[0]"]').should('contain.text', 'Line 1: 10');
-        cy.get('[id="lineTotalMd[1]"]').should('contain.text', 'Line 2: 30');
+        cy.get(`[id="${testDomId('lineTotalMd[0]')}"]`).should('contain.text', 'Line 1: 10');
+        cy.get(`[id="${testDomId('lineTotalMd[1]')}"]`).should('contain.text', 'Line 2: 30');
 
         // Editing a row re-evaluates the host function for that row only
         cy.get('[data-cy="lineQty[0]_textinput"]').clear();
         cy.get('[data-cy="lineQty[0]_textinput"]').type('4');
-        cy.get('[id="lineTotalMd[0]"]').should('contain.text', 'Line 1: 20');
-        cy.get('[id="lineTotalMd[1]"]').should('contain.text', 'Line 2: 30');
+        cy.get(`[id="${testDomId('lineTotalMd[0]')}"]`).should('contain.text', 'Line 1: 20');
+        cy.get(`[id="${testDomId('lineTotalMd[1]')}"]`).should('contain.text', 'Line 2: 30');
       });
 
       it('should evaluate a $fn include.when per repeater item', () => {
@@ -349,8 +350,8 @@ export const runHostFunctionsComponentTests = (mountFn: MountComponentFn) => {
           dependencies: { markdown: { parse: (markdown: string) => markdown } },
         });
 
-        cy.get('[id="evenQtyMd[0]"]').should('exist');
-        cy.get('[id="evenQtyMd[1]"]').should('not.exist');
+        cy.get(`[id="${testDomId('evenQtyMd[0]')}"]`).should('exist');
+        cy.get(`[id="${testDomId('evenQtyMd[1]')}"]`).should('not.exist');
       });
     });
 

@@ -7,10 +7,8 @@ import '@golemui/gui-components/calendar';
 
 const props = defineProps<WithWidget>();
 const widget = props.widget as InputWidget<string>;
-const { uid, errors, value, isTouched, templateData, onValueChanged, onBlur } = useInputWidget<
-  string,
-  CalendarProps
->(widget);
+const { uid, formName, errors, value, isTouched, templateData, onValueChanged, onBlur } =
+  useInputWidget<string, CalendarProps>(widget);
 
 const required = computed(() => (templateData.value.validator as Validator)?.required);
 
@@ -49,6 +47,7 @@ onUnmounted(() => {
     <gui-calendar
       ref="calRef"
       :uid="uid"
+      :id-prefix="formName"
       :label="templateData.label"
       :hint="templateData.hint"
       :errors="errors"

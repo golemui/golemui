@@ -51,6 +51,11 @@ export class MenuComponent implements OnInit, OnDestroy, WithWidget {
   }
 
   get panelId() {
+    return menuPanelId(this.adapter.domId);
+  }
+
+  /** The `data-cy` of the panel, built from the bare uid. */
+  get panelCy() {
     return menuPanelId(this.widget.uid);
   }
 

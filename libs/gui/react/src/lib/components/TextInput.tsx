@@ -7,10 +7,8 @@ import '../styles.scss';
 
 export function TextInput(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<string>;
-  const { uid, errors, value, isTouched, templateData, onValueChanged, onBlur } = useInputWidget<
-    string,
-    TextinputProps
-  >(widget);
+  const { uid, formName, errors, value, isTouched, templateData, onValueChanged, onBlur } =
+    useInputWidget<string, TextinputProps>(widget);
 
   const handleChange = useCallback(
     (e: Event) => onValueChanged((e as CustomEvent).detail.value),
@@ -30,6 +28,7 @@ export function TextInput(widgetInstance: WithWidget) {
     <div className="gui-textinput gui-field">
       <GuiTextinputReact
         uid={uid}
+        idPrefix={formName}
         label={label}
         hint={hint}
         errors={errors}

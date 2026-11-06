@@ -27,8 +27,18 @@ import '@golemui/gui-components/errors';
 
 const props = defineProps<WithWidget>();
 const widget = props.widget as InputWidget<OptionValue[]>;
-const { uid, errors, value, isTouched, templateData, onFilter, onValueChanged, onBlur } =
-  useInputWidget<OptionValue[], MultiDropdownProps<any>>(widget);
+const {
+  uid,
+  formName,
+  domId,
+  errors,
+  value,
+  isTouched,
+  templateData,
+  onFilter,
+  onValueChanged,
+  onBlur,
+} = useInputWidget<OptionValue[], MultiDropdownProps<any>>(widget);
 
 // The options to render, as the list reports them.
 const visibleItems = ref<GuiVisibleItem<any>[]>([]);
@@ -229,6 +239,7 @@ const ItemRenderer = useItemRenderer(
     <gui-label
       ref="labelRef"
       :uid="uid"
+      :id-prefix="formName"
       :label="templateData.label"
       :hint="templateData.hint"
       :errors="errors"
@@ -246,6 +257,7 @@ const ItemRenderer = useItemRenderer(
       <gui-multi-select-trigger
         ref="triggerRef"
         :uid="uid"
+        :id-prefix="formName"
         :pills="pillItems"
         :errors="errors"
         :touched="isTouched"
@@ -258,7 +270,7 @@ const ItemRenderer = useItemRenderer(
         :hasLabel="!!templateData.label"
         :hasHint="!!templateData.hint"
         :panelOpen="isListVisible"
-        :panelId="`${uid}-list`"
+        :panelId="`${domId}-list`"
         :removeAriaLabel="templateData.removeAriaLabel"
         :removeIcon="templateData.removeIcon"
         :compactAriaLabel="`${pillItems.length} selected`"
@@ -274,7 +286,7 @@ const ItemRenderer = useItemRenderer(
         :aria-label="templateData.toggleAriaLabel ?? 'Show options'"
         aria-haspopup="listbox"
         :aria-expanded="isListVisible ? 'true' : 'false'"
-        :aria-controls="`${uid}-list`"
+        :aria-controls="`${domId}-list`"
         :disabled="isDisabled"
         @mousedown="handleToggleMouseDown"
         @click="handleToggleClick"
@@ -291,8 +303,9 @@ const ItemRenderer = useItemRenderer(
       >
         <gui-multi-list
           ref="listRef"
-          :id="`${uid}-list`"
+          :id="`${domId}-list`"
           :uid="uid"
+          :id-prefix="formName"
           :values="currentValues"
           :valueField="templateData.valueField"
           :items="isFiltering && !asyncFiltering ? filteredItems : templateData.items"
@@ -341,12 +354,19 @@ const ItemRenderer = useItemRenderer(
           v-if="showErrors"
           :panel.prop="true"
           :uid="uid"
+          :id-prefix="formName"
           :errors="errors"
           :touched="isTouched"
         ></gui-errors>
       </div>
     </div>
 
-    <gui-errors v-if="showErrors" :uid="uid" :errors="errors" :touched="isTouched"></gui-errors>
+    <gui-errors
+      v-if="showErrors"
+      :uid="uid"
+      :id-prefix="formName"
+      :errors="errors"
+      :touched="isTouched"
+    ></gui-errors>
   </div>
 </template>

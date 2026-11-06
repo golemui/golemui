@@ -7,10 +7,8 @@ import '../styles.scss';
 
 export function NumberInput(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<number>;
-  const { uid, errors, value, isTouched, templateData, onValueChanged, onBlur } = useInputWidget<
-    number,
-    NumberinputProps
-  >(widget);
+  const { uid, formName, errors, value, isTouched, templateData, onValueChanged, onBlur } =
+    useInputWidget<number, NumberinputProps>(widget);
 
   const handleChange = useCallback(
     (e: Event) => onValueChanged((e as CustomEvent).detail.value),
@@ -33,6 +31,7 @@ export function NumberInput(widgetInstance: WithWidget) {
     <div className="gui-number gui-field">
       <GuiNumberReact
         uid={uid}
+        idPrefix={formName}
         label={label}
         hint={hint}
         errors={errors}

@@ -2,7 +2,7 @@
 
 <gui-alert
   [attr.defer-hydration]="deferHydration"
-  [id]="widget.uid"
+  [id]="adapter.domId"
   [attr.variant]="templateData.level || 'default'"
   >{{ templateData.text }}</gui-alert
 >

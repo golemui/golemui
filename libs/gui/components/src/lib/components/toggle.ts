@@ -39,9 +39,9 @@ export class GuiToggle extends GuiFormControl {
     | undefined = 'left';
 
   private ariaController = new GUIAriaController(this, {
-    getTargets: () => this.querySelectorAll(`input[id="${this.uid}"]`),
+    getTargets: () => this.querySelectorAll(`input[id="${this.domId}"]`),
     getState: () => ({
-      uid: this.uid,
+      domId: this.domId,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -66,7 +66,6 @@ export class GuiToggle extends GuiFormControl {
     super.render();
 
     const templateData: ControlTemplateData<boolean> & GuiToggleProps = {
-      uid: this.uid,
       label: this.label,
       hint: this.hint,
       errors: this.errors,
@@ -89,15 +88,15 @@ export class GuiToggle extends GuiFormControl {
     return html`
       <label
         class="gui-label"
-        for=${this.uid}
+        for=${this.domId}
         data-cy=${`${this.uid}_label`}
-        id=${`${this.uid}_label`}
+        id=${`${this.domId}_label`}
       >
         <div class="gui-widget gui-widget--horizontal gui-toggle--switch">
           <input
             type="checkbox"
             role="switch"
-            id=${this.uid}
+            id=${this.domId}
             data-cy=${`${this.uid}_toggle`}
             .checked=${live(templateData.value ?? false)}
             ?disabled=${templateData.disabled}
@@ -118,9 +117,9 @@ export class GuiToggle extends GuiFormControl {
 
       <div class="gui-widget-hint">
         ${templateData.hint
-          ? html`<span id=${`${templateData.uid}_hint`}>${templateData.hint}</span>`
+          ? html`<span id=${`${this.domId}_hint`}>${templateData.hint}</span>`
           : nothing}
-        ${addErrors(this.uid, templateData)}
+        ${addErrors(this, templateData)}
       </div>
     `;
   }

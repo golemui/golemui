@@ -7,10 +7,8 @@ import '@golemui/gui-components/tags';
 
 const props = defineProps<WithWidget>();
 const widget = props.widget as InputWidget<string[]>;
-const { uid, errors, value, isTouched, templateData, onValueChanged, onBlur } = useInputWidget<
-  string[],
-  TagsProps
->(widget);
+const { uid, formName, errors, value, isTouched, templateData, onValueChanged, onBlur } =
+  useInputWidget<string[], TagsProps>(widget);
 
 const handleChange = (e: Event) => onValueChanged((e as CustomEvent).detail.value as string[]);
 
@@ -21,6 +19,7 @@ const required = computed(() => (templateData.value.validator as Validator)?.req
   <div class="gui-tags gui-field">
     <gui-tags
       :uid="uid"
+      :id-prefix="formName"
       :label="templateData.label"
       :hint="templateData.hint"
       :errors="errors"

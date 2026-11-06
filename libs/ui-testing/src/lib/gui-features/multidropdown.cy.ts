@@ -4,6 +4,8 @@ import {
   forcePillsCompactMode,
   forcePillsStripMode,
   type MountComponentFn,
+  testDomId,
+  withTestFormName,
 } from '../utils';
 
 // Behavior tests for the multiDropdown widget: a combobox whose selected
@@ -13,7 +15,8 @@ import {
 // the input) with one deliberate divergence: ArrowDown from the INPUT always
 // opens the option panel — the input is a combobox. ArrowDown from the count
 // bubble opens the popup that button advertises: the pills dropdown.
-export const runMultiDropdownComponentTests = (mountFn: MountComponentFn) => {
+export const runMultiDropdownComponentTests = (baseMountFn: MountComponentFn) => {
+  const mountFn = withTestFormName(baseMountFn);
   describe('MultiDropdown Component', () => {
     const uid = 'testSubject';
     const sel = {
@@ -184,7 +187,7 @@ export const runMultiDropdownComponentTests = (mountFn: MountComponentFn) => {
           .should('have.attr', 'aria-label', 'Show options')
           .should('have.attr', 'aria-haspopup', 'listbox')
           .should('have.attr', 'aria-expanded', 'false')
-          .should('have.attr', 'aria-controls', `${uid}-list`);
+          .should('have.attr', 'aria-controls', testDomId(`${uid}-list`));
         cy.get(toggleSel).then(($btn) => {
           cy.get(`[id="${$btn.attr('aria-controls')}"]`).should('exist');
         });
@@ -532,8 +535,8 @@ export const runMultiDropdownComponentTests = (mountFn: MountComponentFn) => {
           .should('have.attr', 'role', 'combobox')
           .should('have.attr', 'aria-autocomplete', 'list')
           .should('have.attr', 'aria-expanded', 'false')
-          .should('have.attr', 'aria-controls', `${uid}-list`);
-        cy.get(`gui-multi-list#${uid}-list`)
+          .should('have.attr', 'aria-controls', testDomId(`${uid}-list`));
+        cy.get(`gui-multi-list[id="${testDomId(`${uid}-list`)}"]`)
           .should('have.attr', 'role', 'listbox')
           .should('have.attr', 'aria-multiselectable', 'true');
 
@@ -572,7 +575,7 @@ export const runMultiDropdownComponentTests = (mountFn: MountComponentFn) => {
         cy.get('gui-multi-list')
           .should('have.attr', 'aria-activedescendant')
           .then((activeId) => {
-            cy.get(`#${activeId}`).should('exist').should('have.attr', 'role', 'option');
+            cy.get(`[id="${activeId}"]`).should('exist').should('have.attr', 'role', 'option');
           });
       });
     });

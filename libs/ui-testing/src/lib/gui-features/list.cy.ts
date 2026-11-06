@@ -1,11 +1,12 @@
 import { defineForm, identityTranslator } from '@golemui/core';
-import { type MountComponentFn } from '../utils';
+import { type MountComponentFn, testDomId, withTestFormName } from '../utils';
 
 // Behavior tests for the single-choice list widget: a listbox whose value is
 // the selected item value. Pins the invalid chrome (the label's aria
 // controller stamps aria-invalid onto the listbox host) and the
 // single-tab-stop contract shared with gui-multi-list.
-export const runListComponentTests = (mountFn: MountComponentFn) => {
+export const runListComponentTests = (baseMountFn: MountComponentFn) => {
+  const mountFn = withTestFormName(baseMountFn);
   describe('List Component', () => {
     const uid = 'testSubject';
     const sel = {
@@ -62,13 +63,13 @@ export const runListComponentTests = (mountFn: MountComponentFn) => {
 
         cy.get('gui-list').focus();
         cy.focused().type('{downarrow}');
-        cy.get('gui-list').should('have.attr', 'aria-activedescendant', `${uid}-item-0`);
+        cy.get('gui-list').should('have.attr', 'aria-activedescendant', testDomId(`${uid}-item-0`));
 
         cy.focused().type('{downarrow}');
-        cy.get('gui-list').should('have.attr', 'aria-activedescendant', `${uid}-item-1`);
+        cy.get('gui-list').should('have.attr', 'aria-activedescendant', testDomId(`${uid}-item-1`));
 
         cy.focused().type('{uparrow}');
-        cy.get('gui-list').should('have.attr', 'aria-activedescendant', `${uid}-item-0`);
+        cy.get('gui-list').should('have.attr', 'aria-activedescendant', testDomId(`${uid}-item-0`));
       });
 
       it('should skip disabled items when stepping', () => {
@@ -79,10 +80,10 @@ export const runListComponentTests = (mountFn: MountComponentFn) => {
 
         cy.get('gui-list').focus();
         cy.focused().type('{downarrow}');
-        cy.get('gui-list').should('have.attr', 'aria-activedescendant', `${uid}-item-0`);
+        cy.get('gui-list').should('have.attr', 'aria-activedescendant', testDomId(`${uid}-item-0`));
 
         cy.focused().type('{downarrow}');
-        cy.get('gui-list').should('have.attr', 'aria-activedescendant', `${uid}-item-2`);
+        cy.get('gui-list').should('have.attr', 'aria-activedescendant', testDomId(`${uid}-item-2`));
       });
 
       it('should land on the first/last enabled item on Home/End', () => {
@@ -94,10 +95,10 @@ export const runListComponentTests = (mountFn: MountComponentFn) => {
         cy.get('gui-list').focus();
         // The last item is disabled — End lands on the last enabled one.
         cy.focused().type('{end}');
-        cy.get('gui-list').should('have.attr', 'aria-activedescendant', `${uid}-item-1`);
+        cy.get('gui-list').should('have.attr', 'aria-activedescendant', testDomId(`${uid}-item-1`));
 
         cy.focused().type('{home}');
-        cy.get('gui-list').should('have.attr', 'aria-activedescendant', `${uid}-item-0`);
+        cy.get('gui-list').should('have.attr', 'aria-activedescendant', testDomId(`${uid}-item-0`));
       });
 
       it('should page by floor(height / itemHeight) rows on PageDown/PageUp', () => {
@@ -108,14 +109,14 @@ export const runListComponentTests = (mountFn: MountComponentFn) => {
 
         cy.get('gui-list').focus();
         cy.focused().type('{downarrow}');
-        cy.get('gui-list').should('have.attr', 'aria-activedescendant', `${uid}-item-0`);
+        cy.get('gui-list').should('have.attr', 'aria-activedescendant', testDomId(`${uid}-item-0`));
 
         // 120px viewport / 40px rows = a 3-row page (floor semantics, grid-nav)
         cy.focused().type('{pagedown}');
-        cy.get('gui-list').should('have.attr', 'aria-activedescendant', `${uid}-item-3`);
+        cy.get('gui-list').should('have.attr', 'aria-activedescendant', testDomId(`${uid}-item-3`));
 
         cy.focused().type('{pageup}');
-        cy.get('gui-list').should('have.attr', 'aria-activedescendant', `${uid}-item-0`);
+        cy.get('gui-list').should('have.attr', 'aria-activedescendant', testDomId(`${uid}-item-0`));
       });
     });
 

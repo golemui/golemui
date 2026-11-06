@@ -9,6 +9,7 @@ export function RangeTimePicker(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<TimeRange[]>;
   const {
     uid,
+    formName,
     errors,
     value,
     isTouched,
@@ -39,6 +40,7 @@ export function RangeTimePicker(widgetInstance: WithWidget) {
     <div className="gui-range-time-picker gui-field">
       <GuiRangeTimePickerReact
         uid={uid}
+        idPrefix={formName}
         label={templateData.label as string}
         hint={templateData.hint}
         errors={errors}

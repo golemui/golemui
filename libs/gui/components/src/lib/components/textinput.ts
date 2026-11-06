@@ -37,9 +37,9 @@ export class GuiTextinput extends GuiFormControl {
   @property({ type: String }) autocomplete: string | undefined = undefined;
 
   private ariaController = new GUIAriaController(this, {
-    getTargets: () => this.querySelectorAll(`input[id="${this.uid}"]`),
+    getTargets: () => this.querySelectorAll(`input[id="${this.domId}"]`),
     getState: () => ({
-      uid: this.uid,
+      domId: this.domId,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -64,7 +64,6 @@ export class GuiTextinput extends GuiFormControl {
     super.render();
 
     const templateData: ControlTemplateData<string> & GuiTextinputProps = {
-      uid: this.uid,
       label: this.label,
       hint: this.hint,
       errors: this.errors,
@@ -87,12 +86,12 @@ export class GuiTextinput extends GuiFormControl {
     };
 
     return html`
-      ${addLabel(this.uid, templateData)}
+      ${addLabel(this, templateData)}
 
       <div class="gui-widget">
         <input
           type="text"
-          id=${this.uid}
+          id=${this.domId}
           data-cy=${`${this.uid}_textinput`}
           class=${classMap(fieldClasses)}
           .value=${live(this.value ?? '')}
@@ -107,7 +106,7 @@ export class GuiTextinput extends GuiFormControl {
         ${textinputIcon.html}
       </div>
 
-      ${addErrors(this.uid, templateData)}
+      ${addErrors(this, templateData)}
     `;
   }
 

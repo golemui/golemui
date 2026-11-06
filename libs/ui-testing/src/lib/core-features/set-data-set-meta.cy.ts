@@ -1,8 +1,9 @@
 import { defineForm, identityTranslator } from '@golemui/core';
 import { createMockUploadService } from '../mocks/upload-service.mock';
-import { type FormHandle, type MountComponentFn } from '../utils';
+import { type FormHandle, type MountComponentFn, testDomId, withTestFormName } from '../utils';
 
-export const runSetDataSetMetaTests = (mountFn: MountComponentFn) => {
+export const runSetDataSetMetaTests = (baseMountFn: MountComponentFn) => {
+  const mountFn = withTestFormName(baseMountFn);
   describe('setData / setMeta', () => {
     describe('setData', () => {
       it('should update field value when setData is called after init', () => {
@@ -228,9 +229,11 @@ export const runSetDataSetMetaTests = (mountFn: MountComponentFn) => {
           data: { value: 'initial' },
           onFormReady: (h) => (handle = h),
         });
-        cy.get('textarea[id="field"]').clear().type('abc');
+        cy.get(`textarea[id="${testDomId('field')}"]`)
+          .clear()
+          .type('abc');
         cy.then(() => handle.setData({ value: 'from store' }));
-        cy.get('textarea[id="field"]').should('have.value', 'from store');
+        cy.get(`textarea[id="${testDomId('field')}"]`).should('have.value', 'from store');
       });
 
       it('tags', () => {

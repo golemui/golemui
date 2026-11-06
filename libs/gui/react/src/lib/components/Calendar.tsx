@@ -7,10 +7,8 @@ import '../styles.scss';
 
 export function Calendar(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<string>;
-  const { uid, errors, value, isTouched, templateData, onBlur, onValueChanged } = useInputWidget<
-    string,
-    CalendarProps
-  >(widget);
+  const { uid, formName, errors, value, isTouched, templateData, onBlur, onValueChanged } =
+    useInputWidget<string, CalendarProps>(widget);
 
   const handleRef = useCallback(
     (node: HTMLElement | null) => {
@@ -57,6 +55,7 @@ export function Calendar(widgetInstance: WithWidget) {
       <GuiCalendarReact
         ref={handleRef}
         uid={uid}
+        idPrefix={formName}
         label={label}
         hint={hint}
         errors={errors}

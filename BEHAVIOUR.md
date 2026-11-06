@@ -702,9 +702,31 @@ one.
 
 - Status: follows.
 
+### 32. Two forms on one page share no DOM id
+
+Every DOM id a widget renders starts with the form's `formName`: the control, its label, hint and
+errors, popups, list options, tab and accordion parts, and the widget's host element. So a `for`,
+`aria-describedby` or `aria-controls` points at the field of its own form. The widget uid does not
+change: the store, form events, `after` references and `data-cy` attributes keep it.
+
+- Scenario: a page has a login form and a newsletter form, and both have an `email` field.
+- Example:
+
+  ```tsx
+  <GuiForm config={{ formDef: login, formName: 'login' }} />
+  <GuiForm config={{ formDef: newsletter, formName: 'newsletter' }} />
+  ```
+
+  -> the inputs have the ids `login-email-textinput` and `newsletter-email-textinput`, and a click
+  on the newsletter label focuses the newsletter input. Both keep
+  `data-cy="email-textinput_textinput"`. A form without a `formName` generates one, so its ids are
+  scoped too. An element of GolemUI Components used on its own takes no prefix.
+
+- Status: follows.
+
 ## Events and expressions
 
-### 32. An `on` value is an event name
+### 33. An `on` value is an event name
 
 In a form definition, each `on` value is the name of the event, a string. Function handlers are a
 `gui.*` feature: the builder keeps the function and writes an event name into `on`.
@@ -717,7 +739,7 @@ In a form definition, each `on` value is the name of the event, a string. Functi
 - Status: not yet. The core types and the decoder accept a function in `on`, and
   `FormEvent.name` is then the function itself.
 
-### 33. A button `onClick` handler runs only on click
+### 34. A button `onClick` handler runs only on click
 
 - Scenario: an app saves the form with a button that is not a submit button. The handler calls
   the server.
@@ -734,7 +756,7 @@ In a form definition, each `on` value is the name of the event, a string. Functi
   example calls `api.save(undefined)`. A handler like `(event) => event.data` throws there, and
   the form is not built. On click it gets only the data.
 
-### 34. `$log` works in every expression
+### 35. `$log` works in every expression
 
 `$log(value)` logs a value and returns it, to debug an expression.
 
@@ -750,7 +772,7 @@ In a form definition, each `on` value is the name of the event, a string. Functi
 
 - Status: not yet. It gives error code 40.
 
-### 35. An i18n param keeps the value it has
+### 36. An i18n param keeps the value it has
 
 The translator receives each param with its own value. A literal param keeps its type, and an
 expression param gives its result, also when the result is `null` or `undefined`.
@@ -774,7 +796,7 @@ expression param gives its result, also when the result is `null` or `undefined`
 
 ## Rules for form authors
 
-### 36. Menu item values are unique
+### 37. Menu item values are unique
 
 Two items with the same `value` in one menu are not supported. The form does not check it, and
 the items can render or select wrong.

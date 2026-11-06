@@ -1,7 +1,8 @@
 import { defineForm, identityTranslator } from '@golemui/core';
-import { type MountComponentFn } from '../utils';
+import { type MountComponentFn, testDomId, withTestFormName } from '../utils';
 
-export const runDatePickerComponentTests = (mountFn: MountComponentFn) => {
+export const runDatePickerComponentTests = (baseMountFn: MountComponentFn) => {
+  const mountFn = withTestFormName(baseMountFn);
   describe('DatePicker Component', () => {
     const mountWithDate = (formSubmit?: (event: any) => void) => {
       mountFn({
@@ -248,7 +249,7 @@ export const runDatePickerComponentTests = (mountFn: MountComponentFn) => {
           .should('have.attr', 'aria-label', 'Show calendar')
           .should('have.attr', 'aria-haspopup', 'dialog')
           .should('have.attr', 'aria-expanded', 'false')
-          .should('have.attr', 'aria-controls', 'testSubject_popup');
+          .should('have.attr', 'aria-controls', testDomId('testSubject_popup'));
       });
 
       it('should open a dialog from the toggle and move focus into the calendar', () => {
@@ -257,7 +258,7 @@ export const runDatePickerComponentTests = (mountFn: MountComponentFn) => {
         cy.get(toggleSel).should('have.attr', 'aria-expanded', 'true');
         cy.get('gui-calendar')
           .should('have.attr', 'role', 'dialog')
-          .should('have.id', 'testSubject_popup');
+          .should('have.id', testDomId('testSubject_popup'));
         cy.focused().should('have.class', 'gui-calendar__day-button');
       });
 
@@ -290,8 +291,8 @@ export const runDatePickerComponentTests = (mountFn: MountComponentFn) => {
         cy.get('gui-calendar').should('exist');
         // The date input's segment group owns the bare uid; the calendar
         // chrome carries the _calendar suffix
-        cy.get('[id="testSubject"]').should('have.length', 1);
-        cy.get('[id="testSubject_calendar"]').should('have.length', 1);
+        cy.get(`[id="${testDomId('testSubject')}"]`).should('have.length', 1);
+        cy.get(`[id="${testDomId('testSubject_calendar')}"]`).should('have.length', 1);
       });
     });
 
@@ -322,11 +323,11 @@ export const runDatePickerComponentTests = (mountFn: MountComponentFn) => {
 
         // The panel copy is decorative: hidden from AT with its own id; the
         // field copy below the widget stays the aria-errormessage target
-        cy.get('#testSubject_panel_errors')
+        cy.get(`[id="${testDomId('testSubject_panel_errors')}"]`)
           .should('have.attr', 'aria-hidden', 'true')
           .and('not.have.attr', 'role');
         cy.get('[data-cy="testSubject_validator-errors"]').should('exist');
-        cy.get('[id="testSubject_errors"]').should('have.length', 1);
+        cy.get(`[id="${testDomId('testSubject_errors')}"]`).should('have.length', 1);
 
         // Invalid field → the panel shares the red border
         cy.get('[data-cy="testSubject_validator-error"]').then(($li) => {

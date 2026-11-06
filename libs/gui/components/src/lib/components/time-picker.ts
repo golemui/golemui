@@ -178,16 +178,17 @@ export class GuiTimePicker extends GuiFormControl {
       isServer && !this._popup.open
         ? nothing
         : addPickerPanel(
-            this.uid,
+            this,
             { errors: this.errors, touched: this.touched, showErrors: this.showErrors },
             // Dual hidden: tests select the inner list's [hidden]; the panel's
             // own [hidden] removes the card chrome. Both bind to the same state.
             html`<gui-time-list
-              id=${`${this.uid}_popup`}
+              id=${`${this.domId}_popup`}
               role="dialog"
-              aria-labelledby=${this.label ? `${this.uid}_label` : nothing}
+              aria-labelledby=${this.label ? `${this.domId}_label` : nothing}
               aria-label=${this.label ? nothing : requiredName('timeList')}
               .uid=${this.uid}
+              .idPrefix=${this.idPrefix}
               .value=${this.value}
               .label=${this.label}
               .localeId=${this.localeId}
@@ -210,7 +211,7 @@ export class GuiTimePicker extends GuiFormControl {
 
     return html`
       ${addLabel(
-        this.uid,
+        this,
         {
           label: this.label,
           hint: this.hint,
@@ -228,9 +229,10 @@ export class GuiTimePicker extends GuiFormControl {
         @focusout=${this._focusLeave.onFocusOut}
       >
         <gui-time
-          id=${`${this.uid}_time`}
+          id=${`${this.domId}_time`}
           class=${classMap(timePickerIcon.widgetClasses)}
           .uid=${this.uid}
+          .idPrefix=${this.idPrefix}
           .hint=${this.hint}
           .showHint=${false}
           .showErrors=${false}
@@ -266,7 +268,7 @@ export class GuiTimePicker extends GuiFormControl {
           aria-label=${requiredName('showTimeList', this.toggleAriaLabel)}
           aria-haspopup="dialog"
           aria-expanded=${this._popup.open ? 'true' : 'false'}
-          aria-controls=${`${this.uid}_popup`}
+          aria-controls=${`${this.domId}_popup`}
           ?disabled=${this.disabled}
           @click=${this.onToggleClick}
         >
@@ -277,7 +279,7 @@ export class GuiTimePicker extends GuiFormControl {
       </div>
 
       ${this.showErrors !== false
-        ? addErrors(this.uid, { errors: this.errors, touched: this.touched })
+        ? addErrors(this, { errors: this.errors, touched: this.touched })
         : ''}
     `;
   }

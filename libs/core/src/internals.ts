@@ -19,3 +19,6 @@ export type {
 
 // The bindings resolve an input's `itemRenderer` the same way, falling back to the default one.
 export { resolveItemRenderer } from './lib/utils/resolve-item-renderer';
+
+// The bindings prefix every DOM id a widget renders with its form's name.
+export { toDomId } from './lib/utils/dom-id';

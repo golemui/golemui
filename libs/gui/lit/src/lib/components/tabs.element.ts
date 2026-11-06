@@ -5,7 +5,9 @@ import type { TabsEventDetail } from '@golemui/gui-components/internals';
 import { safeDefine, unsubscribeAll } from '@golemui/lit/internals';
 import {
   repeaterIndexSuffix,
+  tabButtonCy,
   tabButtonId,
+  tabPanelCy,
   tabPanelId,
   type TabsProps,
 } from '@golemui/gui-shared/internals';
@@ -66,11 +68,8 @@ export class TabsElement extends LitElement implements WithWidget {
       }))
       .filter(({ child, isActive }) => child && (isActive || renderMode !== 'activeOnly'));
 
-    return html`<gui-tabs
-      id=${this.widget.uid}
-      .active=${this.activeTab}
-      @gui-tab-change=${this.onTabChange}
-    >
+    const { domId } = this.adapter;
+    return html`<gui-tabs id=${domId} .active=${this.activeTab} @gui-tab-change=${this.onTabChange}>
       <gui-tab-list>
         ${repeat(
           tabs,
@@ -78,8 +77,8 @@ export class TabsElement extends LitElement implements WithWidget {
           (tab) =>
             html`<gui-tab
               panel=${tab.uid}
-              id=${tabButtonId(this.widget.uid, tab.uid)}
-              data-cy=${tabButtonId(this.widget.uid, tab.uid)}
+              id=${tabButtonId(domId, tab.uid)}
+              data-cy=${tabButtonCy(this.widget.uid, tab.uid)}
               >${tab.label}</gui-tab
             >`,
         )}
@@ -90,8 +89,8 @@ export class TabsElement extends LitElement implements WithWidget {
         ({ tab, child, isActive }) =>
           html`<gui-tab-panel
             name=${tab.uid}
-            id=${tabPanelId(this.widget.uid, tab.uid)}
-            data-cy=${tabPanelId(this.widget.uid, tab.uid)}
+            id=${tabPanelId(domId, tab.uid)}
+            data-cy=${tabPanelCy(this.widget.uid, tab.uid)}
             ?hidden=${!isActive}
           >
             <gui-widget .widget=${child}></gui-widget>

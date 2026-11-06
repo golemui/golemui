@@ -127,7 +127,7 @@ export class GuiButton extends GuiElement {
       return html`
         <div class="gui-widget">
           <a
-            id=${this.uid}
+            id=${this.domId}
             class=${classes}
             data-cy=${`${this.uid}_button`}
             href=${this.disabled ? nothing : this.href}
@@ -150,7 +150,7 @@ export class GuiButton extends GuiElement {
       <div class="gui-widget">
         <button
           type=${this.type ?? 'button'}
-          id=${this.uid}
+          id=${this.domId}
           class=${classes}
           data-cy=${`${this.uid}_button`}
           name=${this.name || nothing}

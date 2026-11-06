@@ -6,12 +6,12 @@ import '@golemui/gui-components/alert';
 
 const props = defineProps<WithWidget>();
 const widget = props.widget as DisplayWidget;
-const { uid, templateData } = useDisplayWidget<AlertProps>(widget);
+const { domId, templateData } = useDisplayWidget<AlertProps>(widget);
 </script>
 
 <template>
   <div class="gui-alert gui-field">
-    <gui-alert :id="uid" :variant="templateData.level || 'default'">
+    <gui-alert :id="domId" :variant="templateData.level || 'default'">
       {{ templateData.text }}
     </gui-alert>
   </div>

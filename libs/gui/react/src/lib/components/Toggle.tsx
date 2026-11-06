@@ -7,10 +7,8 @@ import '../styles.scss';
 
 export function Toggle(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<boolean>;
-  const { uid, errors, value, onValueChanged, onBlur, templateData, isTouched } = useInputWidget<
-    boolean,
-    ToggleProps
-  >(widget);
+  const { uid, formName, errors, value, onValueChanged, onBlur, templateData, isTouched } =
+    useInputWidget<boolean, ToggleProps>(widget);
 
   const handleChange = useCallback(
     (e: Event) => onValueChanged((e as CustomEvent).detail.value),
@@ -28,6 +26,7 @@ export function Toggle(widgetInstance: WithWidget) {
     <div className={`gui-toggle gui-field`}>
       <GuiToggleReact
         uid={uid}
+        idPrefix={formName}
         label={label}
         errors={errors}
         touched={isTouched}

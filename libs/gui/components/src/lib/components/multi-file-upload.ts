@@ -81,6 +81,7 @@ export class GuiMultiFileUpload extends GuiFileUpload {
     return html`<gui-pills
       class="gui-file-upload__pills"
       .uid=${this.uid}
+      .idPrefix=${this.idPrefix}
       .toolbarAriaLabel=${message('uploadedFiles')}
       .items=${pillItems}
       .errors=${this.errors}

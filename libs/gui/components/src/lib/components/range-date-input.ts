@@ -271,7 +271,7 @@ export class GuiRangeDateInput extends GuiFormControl {
     requiresLabel: true,
     getTargets: () => this.querySelectorAll(`.${this.inputBlockClass}`),
     getState: () => ({
-      uid: this.uid,
+      domId: this.domId,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -302,7 +302,6 @@ export class GuiRangeDateInput extends GuiFormControl {
 
   override render() {
     const templateData: ControlTemplateData<DateRange[]> & GuiRangeDateInputProps = {
-      uid: this.uid,
       label: this.label,
       errors: this.errors,
       touched: this.touched,
@@ -342,7 +341,7 @@ export class GuiRangeDateInput extends GuiFormControl {
 
     return html`
       ${addLabel(
-        this.uid,
+        this,
         this.showHint !== false ? templateData : { ...templateData, hint: undefined },
         false,
         undefined,
@@ -365,7 +364,7 @@ export class GuiRangeDateInput extends GuiFormControl {
             ? 'gui-range-date-input--icon'
             : ''}"
           role="group"
-          aria-labelledby=${`${this.uid}_label`}
+          aria-labelledby=${`${this.domId}_label`}
         >
           ${this.icon
             ? html`<span
@@ -379,6 +378,7 @@ export class GuiRangeDateInput extends GuiFormControl {
             class="gui-range-date-input__pills"
             style=${cspStyleMap(pillItems.length ? {} : { 'min-width': 0 })}
             .uid=${this.uid}
+            .idPrefix=${this.idPrefix}
             .toolbarAriaLabel=${message('selectedDateRanges')}
             .items=${pillItems}
             .errors=${this.errors}
@@ -434,9 +434,7 @@ export class GuiRangeDateInput extends GuiFormControl {
         </div>
       </div>
 
-      ${this.showErrors !== false && this.errors?.length
-        ? addErrors(this.uid, templateData)
-        : nothing}
+      ${this.showErrors !== false && this.errors?.length ? addErrors(this, templateData) : nothing}
     `;
   }
 

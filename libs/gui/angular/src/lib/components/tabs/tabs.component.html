@@ -2,7 +2,7 @@
 
 <gui-tabs
   [attr.defer-hydration]="deferHydration"
-  [id]="widget.uid"
+  [id]="adapter.domId"
   [active]="activeTab()"
   (gui-tab-change)="onTabChange($event)"
 >
@@ -12,7 +12,7 @@
         [attr.defer-hydration]="deferHydration"
         [attr.panel]="tab.uid"
         [id]="tabId(tab.uid)"
-        [attr.data-cy]="tabId(tab.uid)"
+        [attr.data-cy]="tabCy(tab.uid)"
         >{{ tab.label }}</gui-tab
       >
     }
@@ -27,7 +27,7 @@
         [attr.defer-hydration]="deferHydration"
         [attr.name]="tab.uid"
         [id]="panelId(tab.uid)"
-        [attr.data-cy]="panelId(tab.uid)"
+        [attr.data-cy]="panelCy(tab.uid)"
         [hidden]="!isActiveTab(tab.uid)"
       >
         <ng-container guiWidget [widget]="child" />

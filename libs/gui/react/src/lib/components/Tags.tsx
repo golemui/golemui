@@ -7,10 +7,8 @@ import '../styles.scss';
 
 export function Tags(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<string[]>;
-  const { uid, errors, value, isTouched, templateData, onValueChanged, onBlur } = useInputWidget<
-    string[],
-    TagsProps
-  >(widget);
+  const { uid, formName, errors, value, isTouched, templateData, onValueChanged, onBlur } =
+    useInputWidget<string[], TagsProps>(widget);
 
   const handleChange = useCallback(
     (e: Event) => onValueChanged((e as CustomEvent).detail.value),
@@ -34,6 +32,7 @@ export function Tags(widgetInstance: WithWidget) {
     <div className="gui-tags gui-field">
       <GuiTagsReact
         uid={uid}
+        idPrefix={formName}
         label={label}
         hint={hint}
         errors={errors}

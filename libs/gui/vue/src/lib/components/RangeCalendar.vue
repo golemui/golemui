@@ -9,6 +9,7 @@ const props = defineProps<WithWidget>();
 const widget = props.widget as InputWidget<DateRange[]>;
 const {
   uid,
+  formName,
   errors,
   value,
   isTouched,
@@ -65,6 +66,7 @@ onUnmounted(() => {
     <gui-range-calendar
       ref="elRef"
       :uid="uid"
+      :id-prefix="formName"
       :label="templateData.label"
       :hint="templateData.hint"
       :errors="errors"

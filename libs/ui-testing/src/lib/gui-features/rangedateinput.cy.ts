@@ -4,13 +4,16 @@ import {
   forcePillsCompactMode,
   forcePillsStripMode,
   type MountComponentFn,
+  testDomId,
+  withTestFormName,
 } from '../utils';
 
 // Characterization tests for the current gui-range-date behavior. They pin the
 // exact interaction model (cross-group auto-advance and arrow navigation,
 // transient clamping without write-back, pill creation/swap/merge, no null
 // emit on empty blur) so refactors of the input internals must not change it.
-export const runRangeDateInputComponentTests = (mountFn: MountComponentFn) => {
+export const runRangeDateInputComponentTests = (baseMountFn: MountComponentFn) => {
+  const mountFn = withTestFormName(baseMountFn);
   describe('RangeDateInput Component', () => {
     const uid = 'testSubject';
     const sel = {
@@ -521,10 +524,10 @@ export const runRangeDateInputComponentTests = (mountFn: MountComponentFn) => {
         cy.get('.gui-pills__count')
           .should('have.attr', 'aria-haspopup', 'true')
           .should('have.attr', 'aria-expanded', 'false')
-          .should('have.attr', 'aria-controls', 'testSubject_pills_dropdown');
+          .should('have.attr', 'aria-controls', testDomId('testSubject_pills_dropdown'));
 
         cy.get('.gui-pills__count').click({ force: true });
-        cy.get('#testSubject_pills_dropdown')
+        cy.get(`[id="${testDomId('testSubject_pills_dropdown')}"]`)
           .should('have.attr', 'role', 'toolbar')
           .should('have.attr', 'aria-orientation', 'vertical');
         cy.get('.gui-pills__count').should('have.attr', 'aria-expanded', 'true');
@@ -703,10 +706,10 @@ export const runRangeDateInputComponentTests = (mountFn: MountComponentFn) => {
 
         // The dropdown copy is decorative: hidden from AT with its own id;
         // the field copy stays the aria-errormessage target
-        cy.get(`#${uid}_pills_errors`)
+        cy.get(`[id="${testDomId(`${uid}_pills_errors`)}"]`)
           .should('have.attr', 'aria-hidden', 'true')
           .and('not.have.attr', 'role');
-        cy.get(`[id="${uid}_errors"]`).should('have.length', 1);
+        cy.get(`[id="${testDomId(`${uid}_errors`)}"]`).should('have.length', 1);
 
         // Invalid field → the dropdown shares the red border
         cy.get(`[data-cy="${uid}_validator-error"]`).then(($li) => {

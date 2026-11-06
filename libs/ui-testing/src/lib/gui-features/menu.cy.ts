@@ -1,7 +1,8 @@
 import { defineForm, type FormWidget } from '@golemui/core';
-import { expectNoDuplicateIds, type MountComponentFn } from '../utils';
+import { expectNoDuplicateIds, type MountComponentFn, testDomId, withTestFormName } from '../utils';
 
-export const runMenuComponentTests = (mountFn: MountComponentFn) => {
+export const runMenuComponentTests = (baseMountFn: MountComponentFn) => {
+  const mountFn = withTestFormName(baseMountFn);
   describe('Menu Component', () => {
     const UID = 'rowActions';
     const items = [
@@ -48,9 +49,11 @@ export const runMenuComponentTests = (mountFn: MountComponentFn) => {
 
       button()
         .should('contain.text', 'Actions')
-        .and('have.attr', 'popovertarget', `${UID}_menu`)
+        .and('have.attr', 'popovertarget', testDomId(`${UID}_menu`))
         .and('have.attr', 'aria-haspopup', 'menu');
-      panel().should('have.attr', 'role', 'menu').and('have.attr', 'aria-labelledby', UID);
+      panel()
+        .should('have.attr', 'role', 'menu')
+        .and('have.attr', 'aria-labelledby', testDomId(UID));
       panel().find('[role="menuitem"]').should('have.length', 4);
       panel().find('hr').should('have.length', 1);
       isOpen(false);
@@ -119,7 +122,7 @@ export const runMenuComponentTests = (mountFn: MountComponentFn) => {
         .should('have.attr', 'aria-label', 'Row actions')
         .find('span')
         .should('have.length', 1);
-      panel().should('have.attr', 'aria-labelledby', UID);
+      panel().should('have.attr', 'aria-labelledby', testDomId(UID));
     });
 
     it('keeps a visible label as the name, ignoring ariaLabel', () => {
@@ -152,7 +155,7 @@ export const runMenuComponentTests = (mountFn: MountComponentFn) => {
         formEvent,
       });
 
-      button(`${UID}[1]`).should('have.attr', 'popovertarget', `${UID}[1]_menu`).click();
+      button(`${UID}[1]`).should('have.attr', 'popovertarget', testDomId(`${UID}[1]_menu`)).click();
       isOpen(true, `${UID}[1]`);
       isOpen(false, `${UID}[0]`);
       item('edit', `${UID}[1]`).click();

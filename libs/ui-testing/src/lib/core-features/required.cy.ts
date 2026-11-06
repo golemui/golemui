@@ -1,7 +1,8 @@
 import { defineForm } from '@golemui/core';
-import { type MountComponentFn } from '../utils';
+import { type MountComponentFn, testDomId, withTestFormName } from '../utils';
 
-export const runRequiredComponentTests = (mountFn: MountComponentFn) => {
+export const runRequiredComponentTests = (baseMountFn: MountComponentFn) => {
+  const mountFn = withTestFormName(baseMountFn);
   describe('Field required', () => {
     context('control fields', () => {
       context('textinput', () => {
@@ -109,7 +110,7 @@ export const runRequiredComponentTests = (mountFn: MountComponentFn) => {
         const uid = `${widget}-uid`;
         // The group semantics live on the role="radiogroup" container, not
         // only on the individual radio inputs
-        const groupSelector = `[role="radiogroup"][id="${uid}"]`;
+        const groupSelector = `[role="radiogroup"][id="${testDomId(uid)}"]`;
         const options = ['One', 'Two'];
 
         it('should not mark the group required by default', () => {

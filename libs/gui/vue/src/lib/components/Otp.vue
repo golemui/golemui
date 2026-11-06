@@ -7,10 +7,8 @@ import '@golemui/gui-components/otp';
 
 const props = defineProps<WithWidget>();
 const widget = props.widget as InputWidget<string>;
-const { uid, errors, value, isTouched, templateData, onValueChanged, onBlur } = useInputWidget<
-  string,
-  OtpProps
->(widget);
+const { uid, formName, errors, value, isTouched, templateData, onValueChanged, onBlur } =
+  useInputWidget<string, OtpProps>(widget);
 
 const handleInput = (e: Event) => onValueChanged((e as CustomEvent).detail.value);
 const required = computed(() => (templateData.value.validator as Validator)?.required);
@@ -23,6 +21,7 @@ const length = computed(() => (templateData.value.validator as Validator)?.exact
   <div class="gui-otp gui-field">
     <gui-otp
       :uid="uid"
+      :id-prefix="formName"
       :label="templateData.label"
       :hint="templateData.hint"
       :errors="errors"

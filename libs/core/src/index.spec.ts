@@ -43,6 +43,7 @@ describe('@golemui/core entry points', () => {
       'checkExpression',
       'isI18nParamExpression',
       'resolveItemRenderer',
+      'toDomId',
     ]);
   });
 });

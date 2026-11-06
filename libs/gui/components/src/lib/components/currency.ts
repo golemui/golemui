@@ -66,9 +66,9 @@ export class GuiCurrency extends GuiFormControl {
   @query('input') inputElement!: HTMLInputElement;
 
   private ariaController = new GUIAriaController(this, {
-    getTargets: () => this.querySelectorAll(`input[id="${this.uid}"]`),
+    getTargets: () => this.querySelectorAll(`input[id="${this.domId}"]`),
     getState: () => ({
-      uid: this.uid,
+      domId: this.domId,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -151,7 +151,6 @@ export class GuiCurrency extends GuiFormControl {
     super.render();
 
     const templateData: ControlTemplateData<number> & GuiCurrencyProps = {
-      uid: this.uid,
       label: this.label,
       hint: this.hint,
       errors: this.errors,
@@ -177,13 +176,13 @@ export class GuiCurrency extends GuiFormControl {
     };
 
     return html`
-      ${addLabel(this.uid, templateData)}
+      ${addLabel(this, templateData)}
 
       <div class="gui-widget">
         <input
           type="number"
           inputmode="decimal"
-          id=${this.uid}
+          id=${this.domId}
           data-cy=${`${this.uid}_currency`}
           class=${classMap(fieldClasses)}
           step="any"
@@ -211,7 +210,7 @@ export class GuiCurrency extends GuiFormControl {
         ${currencyIcon.html}
       </div>
 
-      ${addErrors(this.uid, templateData)}
+      ${addErrors(this, templateData)}
     `;
   }
 

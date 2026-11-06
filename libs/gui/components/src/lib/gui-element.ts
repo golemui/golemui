@@ -29,6 +29,20 @@ export abstract class GuiElement extends LitElement {
     this.explicitUid = value;
   }
 
+  /**
+   * Goes in front of every DOM id the element renders, so two elements with the same `uid` in
+   * different forms render different ids. GolemUI Forms sets it to the form's `formName`.
+   *
+   * Only ids and the references to them (`for`, `aria-describedby`…) take it: `data-cy`
+   * attributes and event details keep the bare `uid`.
+   */
+  @property({ type: String, attribute: 'id-prefix' }) idPrefix: string | undefined = undefined;
+
+  /** The id of the element's control: `uid`, behind `idPrefix` when it is set. */
+  get domId(): string {
+    return this.idPrefix ? `${this.idPrefix}-${this.uid}` : this.uid;
+  }
+
   override connectedCallback(): void {
     super.connectedCallback();
     // Re-renders with the new strings when the app's translate function changes. Not on the

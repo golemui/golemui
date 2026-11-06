@@ -11,6 +11,7 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import { type NonFunctionWidget, type WithWidget, errorCodes } from '@golemui/core';
+import { toDomId } from '@golemui/core/internals';
 import { AngularFormContext } from '../context/form.context';
 
 /**
@@ -88,7 +89,8 @@ export class WidgetDirective implements OnInit, OnDestroy {
   private createComponent(component: Type<WithWidget>) {
     this.componentRef = this.viewContainerRef.createComponent(component);
     this.componentRef.instance.widget = this.widget();
+    // Scoped to the form like every id inside the widget.
     (this.componentRef.location.nativeElement as HTMLElement).id =
-      `host-${this.componentRef.instance.widget.uid}`;
+      `host-${toDomId(this.formContext.formName, this.componentRef.instance.widget.uid)}`;
   }
 }

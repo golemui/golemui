@@ -76,11 +76,11 @@ export class AccordionComponent implements OnInit, OnDestroy, WithWidget {
   }
 
   buttonId(sectionUid: string) {
-    return accordionButtonId(this.widget.uid, sectionUid);
+    return accordionButtonId(this.adapter.domId, sectionUid);
   }
 
   sectionId(sectionUid: string) {
-    return accordionSectionId(this.widget.uid, sectionUid);
+    return accordionSectionId(this.adapter.domId, sectionUid);
   }
 
   ngOnDestroy(): void {

@@ -4,13 +4,16 @@ import {
   forcePillsCompactMode,
   forcePillsStripMode,
   type MountComponentFn,
+  testDomId,
+  withTestFormName,
 } from '../utils';
 
 // Behavior tests for the gui-tags chip input. Pins the documented keyboard
 // model (widgets-reference/input-fields/tags.mdx): the text input is the
 // single tab stop, pills are entered with ArrowLeft/Backspace and left with
 // ArrowRight, and Escape closes the dropdown returning focus to the input.
-export const runTagsComponentTests = (mountFn: MountComponentFn) => {
+export const runTagsComponentTests = (baseMountFn: MountComponentFn) => {
+  const mountFn = withTestFormName(baseMountFn);
   describe('Tags Component', () => {
     const uid = 'testSubject';
     const sel = {
@@ -213,10 +216,10 @@ export const runTagsComponentTests = (mountFn: MountComponentFn) => {
 
         cy.get('.gui-pills__count').click({ force: true });
         cy.get(`[data-cy="${uid}_pills-validator-error"]`).should('be.visible');
-        cy.get(`#${uid}_pills_errors`)
+        cy.get(`[id="${testDomId(`${uid}_pills_errors`)}"]`)
           .should('have.attr', 'aria-hidden', 'true')
           .and('not.have.attr', 'role');
-        cy.get(`[id="${uid}_errors"]`).should('have.length', 1);
+        cy.get(`[id="${testDomId(`${uid}_errors`)}"]`).should('have.length', 1);
 
         cy.get(`[data-cy="${uid}_validator-error"]`).then(($li) => {
           cy.get('.gui-pills__dropdown').should('have.css', 'border-top-color', $li.css('color'));

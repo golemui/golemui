@@ -11,7 +11,7 @@ export class DisplayWidgetAdapter<
   override templateData = {} as DisplayWidgetTemplateData & ExtraProps;
 
   init(widget: DisplayWidget) {
-    this.widget = widget;
+    this.setWidget(widget);
 
     // Raw props seed: a widget hidden at init renders these until its first visible emission.
     this.setTemplateData({

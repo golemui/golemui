@@ -6,7 +6,7 @@ import {
   identityTranslator,
 } from '@golemui/core';
 import i18next from 'i18next';
-import { type MountComponentFn } from '../utils';
+import { type MountComponentFn, testDomId, withTestFormName } from '../utils';
 
 i18next.init({
   fallbackLng: 'en',
@@ -38,7 +38,8 @@ export const i18nTranslator: I18nTranslator = {
   },
 };
 
-export const runI18nTests = (mountFn: MountComponentFn) => {
+export const runI18nTests = (baseMountFn: MountComponentFn) => {
+  const mountFn = withTestFormName(baseMountFn);
   describe('i18n', () => {
     it('should find and apply the textinput translation label', () => {
       const uid = 'textinput-uid';
@@ -58,7 +59,9 @@ export const runI18nTests = (mountFn: MountComponentFn) => {
           ],
         }),
       });
-      cy.get(`label[for="${uid}"]`).should('exist').contains('Translated User Name Label');
+      cy.get(`label[for="${testDomId(uid)}"]`)
+        .should('exist')
+        .contains('Translated User Name Label');
     });
 
     it('should apply the default translation when the key does not exists', () => {
@@ -80,7 +83,9 @@ export const runI18nTests = (mountFn: MountComponentFn) => {
           ],
         }),
       });
-      cy.get(`label[for="${uid}"]`).should('exist').contains('This is the default label');
+      cy.get(`label[for="${testDomId(uid)}"]`)
+        .should('exist')
+        .contains('This is the default label');
     });
 
     it('should apply interpolate $form and $meta static params', () => {
@@ -340,13 +345,19 @@ export const runI18nTests = (mountFn: MountComponentFn) => {
         }),
       });
 
-      cy.get('label[for="contactName"]').should('contain.text', 'Name');
-      cy.get('gui-alert[id="contactGreeting"]').should('contain.text', 'Hello, Ada!');
+      cy.get(`label[for="${testDomId('contactName')}"]`).should('contain.text', 'Name');
+      cy.get(`gui-alert[id="${testDomId('contactGreeting')}"]`).should(
+        'contain.text',
+        'Hello, Ada!',
+      );
 
       cy.then(() => i18next.changeLanguage('es'));
 
-      cy.get('label[for="contactName"]').should('contain.text', 'Nombre');
-      cy.get('gui-alert[id="contactGreeting"]').should('contain.text', 'Hola, Ada!');
+      cy.get(`label[for="${testDomId('contactName')}"]`).should('contain.text', 'Nombre');
+      cy.get(`gui-alert[id="${testDomId('contactGreeting')}"]`).should(
+        'contain.text',
+        'Hola, Ada!',
+      );
     });
   });
 

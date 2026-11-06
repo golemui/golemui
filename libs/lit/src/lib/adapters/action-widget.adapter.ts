@@ -10,7 +10,7 @@ export class ActionWidgetAdapter<
   override templateData = {} as ActionWidgetTemplateData & ExtraProps;
 
   init(widget: ActionWidget) {
-    this.widget = widget;
+    this.setWidget(widget);
     this.setTemplateData({
       label: this.widget.label,
       icon: (this.widget.props as any)?.icon,

@@ -64,7 +64,7 @@ export const mountFramework = (options: MountOptions) => {
   cy.mount(() => {
     // Read so that `rerender` renders this host again.
     void hostRenders.value;
-    return h(GuiForm as Component, {
+    const form = h(GuiForm as Component, {
       ref: formRef,
       config: configRef.value,
       autocomplete: options.autocomplete,
@@ -72,6 +72,19 @@ export const mountFramework = (options: MountOptions) => {
       'onForm-health': handleFormHealth,
       'onForm-submit': handleFormSubmit,
     });
+    if (!options.extraForms?.length) return form;
+    return h('div', [
+      form,
+      ...options.extraForms.map((extra) =>
+        h(GuiForm as Component, {
+          config: { ...configRef.value, formName: extra.formName },
+          autocomplete: options.autocomplete,
+          'onForm-event': handleFormEvent,
+          'onForm-health': handleFormHealth,
+          'onForm-submit': (event: FormSubmitEvent) => extra.formSubmit?.(event),
+        }),
+      ),
+    ]);
   });
 
   const onFormReady = options.onFormReady;
