@@ -63,9 +63,9 @@ export class GuiRadiogroup extends GuiFormControl {
   protected normalizedOptions: Option[] = [];
 
   private ariaController = new GUIAriaController(this, {
-    getTargets: () => this.querySelectorAll(`input[name="${this.uid}"]`),
+    getTargets: () => this.querySelectorAll(`input[name="${this.domId}"]`),
     getState: () => ({
-      uid: this.uid,
+      domId: this.domId,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -91,7 +91,6 @@ export class GuiRadiogroup extends GuiFormControl {
     super.render();
 
     const templateData: ControlTemplateData<OptionValue> & GuiRadiogroupProps = {
-      uid: this.uid,
       label: this.label,
       errors: this.errors,
       touched: this.touched,
@@ -128,14 +127,14 @@ export class GuiRadiogroup extends GuiFormControl {
               const focusable = isChecked || isFirstUnchecked;
               // The radios share a name to form one group, and point at a form that does not
               // exist to stay out of the page's form: the element submits the value itself.
-              return html`<label for=${`${this.uid}_${index}`}>
+              return html`<label for=${`${this.domId}_${index}`}>
                 <input
                   type="radio"
                   tabindex=${focusable ? '0' : '-1'}
-                  id=${`${this.uid}_${index}`}
+                  id=${`${this.domId}_${index}`}
                   data-cy=${`${this.uid}_radiogroup_${index}`}
-                  name=${this.uid}
-                  form=${`${this.uid}_none`}
+                  name=${this.domId}
+                  form=${`${this.domId}_none`}
                   value=${opt.value}
                   .checked=${live(isChecked)}
                   ?disabled=${templateData.disabled}
@@ -150,24 +149,26 @@ export class GuiRadiogroup extends GuiFormControl {
         `;
 
     return html`
-      ${addLabel(this.uid, templateData, false, undefined, false)}
+      ${addLabel(this, templateData, false, undefined, false)}
 
       <div
         class=${this.widgetClass}
         role="radiogroup"
-        id=${this.uid}
-        aria-labelledby=${templateData.label ? `${this.uid}_label` : nothing}
-        aria-describedby=${templateData.hint ? `${this.uid}_hint` : nothing}
+        id=${this.domId}
+        aria-labelledby=${templateData.label ? `${this.domId}_label` : nothing}
+        aria-describedby=${templateData.hint ? `${this.domId}_hint` : nothing}
         aria-required=${this.required ? 'true' : nothing}
         aria-readonly=${this.readOnly ? 'true' : nothing}
         aria-invalid=${showsErrors(this.touched, this.errors) ? 'true' : nothing}
-        aria-errormessage=${showsErrors(this.touched, this.errors) ? `${this.uid}_errors` : nothing}
+        aria-errormessage=${showsErrors(this.touched, this.errors)
+          ? `${this.domId}_errors`
+          : nothing}
         @focusout=${this.onFocusOut}
       >
         ${options}
       </div>
 
-      ${addErrors(this.uid, templateData)}
+      ${addErrors(this, templateData)}
     `;
   }
 

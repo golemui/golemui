@@ -1,3 +1,4 @@
+import { toDomId } from '@golemui/core/internals';
 import { GuiErrorsReact, GuiLabelReact } from '../web-components';
 import type { InputWidget, NonFunctionWidget, Validator, WithWidget } from '@golemui/core';
 import { type RepeaterProps } from '@golemui/gui-shared/internals';
@@ -7,8 +8,18 @@ import '../styles.scss';
 
 export function Repeater(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<Record<string, unknown>[]>;
-  const { uid, value, onValueChanged, onRowRemoved, templateData, errors, isTouched, onBlur } =
-    useInputWidget<Record<string, unknown>[], RepeaterProps<NonFunctionWidget<string>>>(widget);
+  const {
+    uid,
+    formName,
+    value,
+    onValueChanged,
+    onRowRemoved,
+    templateData,
+    errors,
+    isTouched,
+    onBlur,
+  } = useInputWidget<Record<string, unknown>[], RepeaterProps<NonFunctionWidget<string>>>(widget);
+  const domId = toDomId(formName, uid);
 
   const repeaterRef = useRef<HTMLDivElement>(null);
 
@@ -80,7 +91,7 @@ export function Repeater(widgetInstance: WithWidget) {
     <div className="gui-repeater gui-field">
       <div
         ref={repeaterRef}
-        id={uid}
+        id={domId}
         className={`gui-repeater__main-card gui-repeater__card${isFocused ? ' gui-repeater__card--focused' : ''}`}
         onFocus={onFocusIn}
         onBlur={onFocusOut}
@@ -88,6 +99,7 @@ export function Repeater(widgetInstance: WithWidget) {
         <GuiLabelReact
           targetElement={repeaterRef.current || undefined}
           uid={uid}
+          idPrefix={formName}
           label={templateData.label as string}
           errors={errors}
           touched={isTouched}
@@ -114,7 +126,12 @@ export function Repeater(widgetInstance: WithWidget) {
       </div>
 
       {showErrors && (
-        <GuiErrorsReact uid={uid} errors={errors} touched={isTouched}></GuiErrorsReact>
+        <GuiErrorsReact
+          uid={uid}
+          idPrefix={formName}
+          errors={errors}
+          touched={isTouched}
+        ></GuiErrorsReact>
       )}
     </div>
   );

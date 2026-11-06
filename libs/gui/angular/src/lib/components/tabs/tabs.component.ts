@@ -1,3 +1,4 @@
+import { toDomId } from '@golemui/core/internals';
 import { CommonModule } from '@angular/common';
 import {
   Component,
@@ -13,7 +14,9 @@ import type { GuiTabChangeEventDetail } from '@golemui/gui-components';
 import type { TabsEventDetail } from '@golemui/gui-components/internals';
 import {
   repeaterIndexSuffix,
+  tabButtonCy,
   tabButtonId,
+  tabPanelCy,
   tabPanelId,
   type TabsProps,
 } from '@golemui/gui-shared/internals';
@@ -41,6 +44,11 @@ export class TabsComponent implements OnInit, OnDestroy, WithWidget {
   protected readonly deferHydration = deferHydrationAttr();
   private rowIndexSuffix = '';
 
+  /** The widget uid scoped to the form, for the DOM ids. */
+  protected get domId(): string {
+    return toDomId(this.adapter.formName, this.widget.uid);
+  }
+
   ngOnInit(): void {
     this.adapter.init(this.widget);
     const templateData = this.adapter.templateData();
@@ -63,11 +71,21 @@ export class TabsComponent implements OnInit, OnDestroy, WithWidget {
   }
 
   tabId(tabUid: string) {
-    return tabButtonId(this.widget.uid, tabUid);
+    return tabButtonId(this.domId, tabUid);
   }
 
   panelId(tabUid: string) {
-    return tabPanelId(this.widget.uid, tabUid);
+    return tabPanelId(this.domId, tabUid);
+  }
+
+  /** The `data-cy` of a tab button, built from the bare uid. */
+  tabCy(tabUid: string) {
+    return tabButtonCy(this.widget.uid, tabUid);
+  }
+
+  /** The `data-cy` of a tab panel, built from the bare uid. */
+  panelCy(tabUid: string) {
+    return tabPanelCy(this.widget.uid, tabUid);
   }
 
   onTabChange(event: Event) {

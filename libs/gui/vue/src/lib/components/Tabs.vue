@@ -1,10 +1,13 @@
 <script setup lang="ts">
+import { toDomId } from '@golemui/core/internals';
 import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
 import { useLayoutWidget, WidgetRenderer } from '@golemui/vue';
 import type { GuiTabChangeEventDetail } from '@golemui/gui-components';
 import {
   repeaterIndexSuffix,
+  tabButtonCy,
   tabButtonId,
+  tabPanelCy,
   tabPanelId,
   type TabsProps,
 } from '@golemui/gui-shared/internals';
@@ -13,7 +16,8 @@ import '@golemui/gui-components/tabs';
 
 const props = defineProps<WithWidget>();
 const widget = props.widget as LayoutWidget;
-const { uid, children, templateData, onChange } = useLayoutWidget<TabsProps>(widget);
+const { uid, formName, children, templateData, onChange } = useLayoutWidget<TabsProps>(widget);
+const domId = toDomId(formName, uid.value);
 
 const activeTab = ref<string | undefined>(templateData.value.defaultOpen);
 // Tab uids come from the props without row indexes, the panel children come from the store with
@@ -56,14 +60,14 @@ const onTabChange = (event: CustomEvent<GuiTabChangeEventDetail>) => {
 
 <template>
   <div class="gui-tabs gui-field">
-    <gui-tabs :id="uid" :active.prop="activeTab" @gui-tab-change="onTabChange">
+    <gui-tabs :id="domId" :active.prop="activeTab" @gui-tab-change="onTabChange">
       <gui-tab-list>
         <gui-tab
           v-for="tab in templateData.tabs"
           :key="tab.uid"
           :panel="tab.uid"
-          :id="tabButtonId(widget.uid, tab.uid)"
-          :data-cy="tabButtonId(widget.uid, tab.uid)"
+          :id="tabButtonId(domId, tab.uid)"
+          :data-cy="tabButtonCy(widget.uid, tab.uid)"
         >
           {{ tab.label }}
         </gui-tab>
@@ -72,8 +76,8 @@ const onTabChange = (event: CustomEvent<GuiTabChangeEventDetail>) => {
         v-for="panel in panels"
         :key="panel.tab.uid"
         :name="panel.tab.uid"
-        :id="tabPanelId(widget.uid, panel.tab.uid)"
-        :data-cy="tabPanelId(widget.uid, panel.tab.uid)"
+        :id="tabPanelId(domId, panel.tab.uid)"
+        :data-cy="tabPanelCy(widget.uid, panel.tab.uid)"
         :hidden="!panel.isActive"
       >
         <WidgetRenderer :widget="panel.child!" />

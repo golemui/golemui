@@ -57,9 +57,9 @@ export class GuiNumber extends GuiFormControl {
     false;
 
   private ariaController = new GUIAriaController(this, {
-    getTargets: () => this.querySelectorAll(`input[id="${this.uid}"]`),
+    getTargets: () => this.querySelectorAll(`input[id="${this.domId}"]`),
     getState: () => ({
-      uid: this.uid,
+      domId: this.domId,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -88,7 +88,7 @@ export class GuiNumber extends GuiFormControl {
     const inputElement =
       typeof document === 'undefined'
         ? null
-        : (this.querySelector(`input[id="${this.uid}"]`) as HTMLInputElement | null);
+        : (this.querySelector(`input[id="${this.domId}"]`) as HTMLInputElement | null);
 
     // TODO: Try to calculate this better, too many magic numbers
     const inputStyles: any = {
@@ -108,7 +108,6 @@ export class GuiNumber extends GuiFormControl {
     }
 
     const templateData: ControlTemplateData<number> & GuiNumberProps = {
-      uid: this.uid,
       label: this.label,
       hint: this.hint,
       errors: this.errors,
@@ -125,13 +124,13 @@ export class GuiNumber extends GuiFormControl {
     // The inner input carries no constraints (see GuiFormControl): `step="any"` keeps the browser
     // from rejecting decimals, and the bounds reach assistive technology as aria-valuemin/max.
     return html`
-      ${addLabel(this.uid, templateData)}
+      ${addLabel(this, templateData)}
 
       <div class="gui-widget">
         <input
           type="number"
           inputmode="decimal"
-          id=${this.uid}
+          id=${this.domId}
           data-cy=${`${this.uid}_number`}
           class="gui-widget-input"
           style=${cspStyleMap(inputStyles)}
@@ -155,7 +154,7 @@ export class GuiNumber extends GuiFormControl {
         </span>
       </div>
 
-      ${addErrors(this.uid, templateData)}
+      ${addErrors(this, templateData)}
     `;
   }
 
@@ -185,7 +184,7 @@ export class GuiNumber extends GuiFormControl {
    * focused input is left alone while typing.
    */
   private syncNativeInput(): void {
-    const input = this.querySelector(`input[id="${this.uid}"]`) as HTMLInputElement | null;
+    const input = this.querySelector(`input[id="${this.domId}"]`) as HTMLInputElement | null;
     if (input === null || input.matches(':focus')) {
       return;
     }
@@ -238,7 +237,7 @@ export class GuiNumber extends GuiFormControl {
   private stepBy(direction: 1 | -1) {
     if (this.readOnly) return;
 
-    const target = this.querySelector(`input[id="${this.uid}"]`) as HTMLInputElement;
+    const target = this.querySelector(`input[id="${this.domId}"]`) as HTMLInputElement;
     const current = Number.isNaN(target.valueAsNumber) ? undefined : target.valueAsNumber;
     const value = stepValue(current, direction, {
       step: this.step,

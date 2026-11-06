@@ -1,7 +1,8 @@
 import { type FormEvent, type FormHealth, defineForm } from '@golemui/core';
-import { eventsNamed, type MountComponentFn } from '../utils';
+import { eventsNamed, type MountComponentFn, testDomId, withTestFormName } from '../utils';
 
-export const runEventsComponentTests = (mountFn: MountComponentFn) => {
+export const runEventsComponentTests = (baseMountFn: MountComponentFn) => {
+  const mountFn = withTestFormName(baseMountFn);
   describe('Events', () => {
     it('Should execute form errors', () => {
       mountFn({
@@ -544,8 +545,11 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
         formEvent: formEventHandler,
       });
 
-      cy.get('[id="alertFirst"][role="alert"]').should('contain.text', 'First alert default text');
-      cy.get('[id="alertSecond"][role="alert"]').should(
+      cy.get(`[id="${testDomId('alertFirst')}"][role="alert"]`).should(
+        'contain.text',
+        'First alert default text',
+      );
+      cy.get(`[id="${testDomId('alertSecond')}"][role="alert"]`).should(
         'contain.text',
         'Second alert default text',
       );
@@ -553,8 +557,14 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
       cy.get('[data-cy="updateAlertsButton_button"]').click();
 
       cy.get('@formEventHandler').should('have.been.called');
-      cy.get('[id="alertFirst"][role="alert"]').should('contain.text', 'First alert updated');
-      cy.get('[id="alertSecond"][role="alert"]').should('contain.text', 'Second alert updated');
+      cy.get(`[id="${testDomId('alertFirst')}"][role="alert"]`).should(
+        'contain.text',
+        'First alert updated',
+      );
+      cy.get(`[id="${testDomId('alertSecond')}"][role="alert"]`).should(
+        'contain.text',
+        'Second alert updated',
+      );
     });
   });
 };

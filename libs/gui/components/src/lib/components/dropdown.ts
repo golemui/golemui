@@ -126,7 +126,7 @@ export class GuiDropdown extends GuiFormControl {
     requiresLabel: true,
     getTargets: () => this.ariaTargets(),
     getState: () => ({
-      uid: this.uid,
+      domId: this.domId,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -163,7 +163,7 @@ export class GuiDropdown extends GuiFormControl {
   }
 
   protected get list(): GuiList | null {
-    return this.querySelector<GuiList>(`[id="${this.uid}-list"]`);
+    return this.querySelector<GuiList>(`[id="${this.domId}-list"]`);
   }
 
   protected ariaTargets(): HTMLElement | null {
@@ -199,7 +199,7 @@ export class GuiDropdown extends GuiFormControl {
     const icon = addIcon('dropdown', { icon: this.icon });
 
     return html`
-      ${addLabel(this.uid, { label: this.label, hint: this.hint, required: this.required })}
+      ${addLabel(this, { label: this.label, hint: this.hint, required: this.required })}
 
       <div
         class="gui-widget"
@@ -213,7 +213,7 @@ export class GuiDropdown extends GuiFormControl {
           aria-label=${requiredName('showOptions', this.toggleAriaLabel)}
           aria-haspopup="listbox"
           aria-expanded=${open ? 'true' : 'false'}
-          aria-controls=${`${this.uid}-list`}
+          aria-controls=${`${this.domId}-list`}
           ?disabled=${this.disabled}
           @mousedown=${this.onToggleMouseDown}
           @click=${this.onToggleClick}
@@ -221,14 +221,14 @@ export class GuiDropdown extends GuiFormControl {
           <span class="gui-caret" aria-hidden="true"></span>
         </button>
         ${addPickerPanel(
-          this.uid,
+          this,
           { errors: this.errors, touched: this.touched, showErrors: true },
           this.renderList(open ? this.renderVisibleOptions() : nothing),
           { hidden: !open },
         )}
       </div>
 
-      ${addErrors(this.uid, { errors: this.errors, touched: this.touched })}
+      ${addErrors(this, { errors: this.errors, touched: this.touched })}
     `;
   }
 
@@ -245,7 +245,7 @@ export class GuiDropdown extends GuiFormControl {
       <input
         type="text"
         role="combobox"
-        id=${this.uid}
+        id=${this.domId}
         data-cy=${`${this.uid}_textinput`}
         class=${classMap({ 'gui-widget-input': true, ...icon.widgetClasses })}
         .value=${live(this.editing ? this.query : text)}
@@ -254,7 +254,7 @@ export class GuiDropdown extends GuiFormControl {
         placeholder=${this.placeholder ?? nothing}
         autocomplete=${this.autocomplete || nothing}
         aria-expanded=${open ? 'true' : 'false'}
-        aria-controls=${`${this.uid}-list`}
+        aria-controls=${`${this.domId}-list`}
         aria-autocomplete="list"
         @keydown=${this.onInputKeyDown}
         @input=${this.onInput}
@@ -265,8 +265,9 @@ export class GuiDropdown extends GuiFormControl {
   /** The list in the panel, holding the options. */
   protected renderList(options: unknown): unknown {
     return html`<gui-list
-      id=${`${this.uid}-list`}
+      id=${`${this.domId}-list`}
       .uid=${this.uid}
+      .idPrefix=${this.idPrefix}
       .label=${this.label}
       .items=${this.shownItems}
       .valueField=${this.valueField}

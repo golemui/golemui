@@ -59,9 +59,9 @@ export class GuiTextarea extends GuiFormControl {
   @property({ type: Number, attribute: 'maxlength' }) maxLength: number | undefined = undefined;
 
   private ariaController = new GUIAriaController(this, {
-    getTargets: () => this.querySelectorAll(`textarea[id="${this.uid}"]`),
+    getTargets: () => this.querySelectorAll(`textarea[id="${this.domId}"]`),
     getState: () => ({
-      uid: this.uid,
+      domId: this.domId,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -86,7 +86,6 @@ export class GuiTextarea extends GuiFormControl {
     super.render();
 
     const templateData: ControlTemplateData<string> & GuiTextareaProps = {
-      uid: this.uid,
       label: this.label,
       errors: this.errors,
       touched: this.touched,
@@ -129,7 +128,7 @@ export class GuiTextarea extends GuiFormControl {
       'min-height': `${templateData.minimumHeight}px`,
     };
 
-    const textarea = this.querySelector(`textarea[id="${this.uid}"]`) as HTMLTextAreaElement;
+    const textarea = this.querySelector(`textarea[id="${this.domId}"]`) as HTMLTextAreaElement;
 
     if (this.autoGrow && textarea) {
       const styles = window.getComputedStyle(textarea);
@@ -142,11 +141,11 @@ export class GuiTextarea extends GuiFormControl {
     }
 
     return html`
-      ${addLabel(this.uid, templateData)}
+      ${addLabel(this, templateData)}
 
       <div class="gui-widget">
         <textarea
-          id=${this.uid}
+          id=${this.domId}
           data-cy=${`${this.uid}_textarea`}
           class="gui-widget-input"
           style=${cspStyleMap(autoGrowStyles)}
@@ -162,7 +161,7 @@ export class GuiTextarea extends GuiFormControl {
       </div>
 
       <div class="gui-textarea--validation">
-        <div>${addErrors(this.uid, templateData)}</div>
+        <div>${addErrors(this, templateData)}</div>
         ${counter}
       </div>
     `;

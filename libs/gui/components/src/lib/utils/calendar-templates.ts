@@ -2,7 +2,7 @@ import { html, nothing, type TemplateResult } from 'lit';
 import { repeat } from 'lit/directives/repeat.js';
 import { getMonthYearLabel, getMonthYearParts, getWeekdayLabels, type WeekdayFormat } from './date';
 import { chunk } from './grid-nav';
-import { addErrors, addLabel } from './templates';
+import { addErrors, addLabel, type ElementIds } from './templates';
 import { requiredName } from './messages';
 
 /**
@@ -24,7 +24,8 @@ export function getPanelDate(currentDate: Date, offset: number): Date {
 export type CalendarMonthFormat = 'numeric' | '2-digit' | 'long' | 'short' | 'narrow';
 
 export interface CalendarChromeData {
-  uid: string | undefined;
+  /** The calendar element itself: its `uid` builds the `data-cy` attributes, `domId` the ids. */
+  ids: ElementIds;
   label: string | undefined;
   hint: string | undefined;
   /** False when an embedding picker shows the hint itself. */
@@ -64,7 +65,6 @@ export interface CalendarChromeData {
  */
 export function renderCalendarChrome(data: CalendarChromeData): TemplateResult {
   const templateData: any = {
-    uid: data.uid,
     label: data.label,
     hint: data.showHint === false ? undefined : data.hint,
     errors: data.errors,
@@ -81,14 +81,14 @@ export function renderCalendarChrome(data: CalendarChromeData): TemplateResult {
     .join(', ');
 
   return html`
-    ${addLabel(data.uid as string, templateData, false, 'calendar')}
+    ${addLabel(data.ids, templateData, false, 'calendar')}
 
     <div class="gui-widget" @focusout=${data.onFocusOut}>
       <div
-        id=${`${data.uid}_calendar`}
+        id=${`${data.ids.domId}_calendar`}
         class="gui-calendar-input"
         role="group"
-        aria-labelledby=${data.label ? `${data.uid}_calendar_label` : nothing}
+        aria-labelledby=${data.label ? `${data.ids.domId}_calendar_label` : nothing}
         aria-disabled=${data.disabled ? 'true' : nothing}
       >
         <div class="gui-visually-hidden" aria-live="polite">${visibleMonthsAnnouncement}</div>
@@ -115,7 +115,7 @@ export function renderCalendarChrome(data: CalendarChromeData): TemplateResult {
       </div>
     </div>
 
-    ${data.errors?.length ? addErrors(data.uid as string, templateData) : nothing}
+    ${data.errors?.length ? addErrors(data.ids, templateData) : nothing}
   `;
 }
 

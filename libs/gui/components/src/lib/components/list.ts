@@ -127,13 +127,13 @@ export class GuiList extends GuiFormControl {
     const showErrors = showsErrors(this.touched, this.errors);
     if (showErrors || this.showsOwnErrors) {
       toggleAttr('aria-invalid', showErrors ? 'true' : null);
-      toggleAttr('aria-errormessage', showErrors ? `${this.uid}_errors` : null);
+      toggleAttr('aria-errormessage', showErrors ? `${this.domId}_errors` : null);
     }
     this.showsOwnErrors = showErrors;
 
     toggleAttr(
       'aria-activedescendant',
-      this._focusedIndex >= 0 ? `${this.uid}-item-${this._focusedIndex}` : null,
+      this._focusedIndex >= 0 ? `${this.domId}-item-${this._focusedIndex}` : null,
     );
     toggleAttr('aria-label', this.label ?? null);
     toggleAttr('aria-description', this.hint ?? null);
@@ -170,7 +170,7 @@ export class GuiList extends GuiFormControl {
       this.errorsElement.className = 'gui-list__errors';
       this.append(this.errorsElement);
     }
-    render(addErrors(this.uid, { errors: this.errors, touched: this.touched }), this.errorsElement);
+    render(addErrors(this, { errors: this.errors, touched: this.touched }), this.errorsElement);
   }
 
   override render() {
@@ -279,7 +279,7 @@ export class GuiList extends GuiFormControl {
     if (this.disabled || this.readOnly) return;
 
     // The option is the element with this list's option id: an app may nest elements inside it.
-    const prefix = `${this.uid}-item-`;
+    const prefix = `${this.domId}-item-`;
     const option = (e.target as Element | null)?.closest?.(`[id^="${CSS.escape(prefix)}"]`);
     if (!option || !this.contains(option)) return;
     const index = Number(option.id.slice(prefix.length));
@@ -392,7 +392,7 @@ export class GuiList extends GuiFormControl {
         template: item.template,
         value: item.value,
         index,
-        id: `${this.uid}-item-${index}`,
+        id: `${this.domId}-item-${index}`,
         selected: this.isSelected(item.value),
         focused: index === this._focusedIndex,
         disabled: !!this.disabled || !!item.disabled,

@@ -1,3 +1,4 @@
+import { toDomId } from '@golemui/core/internals';
 import { html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
 import { safeDefine, unsubscribeAll } from '@golemui/lit/internals';
@@ -42,7 +43,7 @@ export class MarkdownTextElement extends LitElement implements WithWidget {
 
   override render() {
     return html`
-      <div class="gui-widget" id=${this.widget.uid}>
+      <div class="gui-widget" id=${toDomId(this.formContext.formName, this.widget.uid)}>
         <gui-markdown-text
           .md=${this.adapter.templateData.md}
           .dependencies=${this.adapter.templateData.deps}

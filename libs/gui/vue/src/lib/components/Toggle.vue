@@ -7,10 +7,8 @@ import '@golemui/gui-components/toggle';
 
 const props = defineProps<WithWidget>();
 const widget = props.widget as InputWidget<boolean>;
-const { uid, errors, value, isTouched, templateData, onValueChanged, onBlur } = useInputWidget<
-  boolean,
-  ToggleProps
->(widget);
+const { uid, formName, errors, value, isTouched, templateData, onValueChanged, onBlur } =
+  useInputWidget<boolean, ToggleProps>(widget);
 
 const handleChange = (e: Event) => onValueChanged((e as CustomEvent).detail.value);
 const required = computed(() => (templateData.value.validator as Validator)?.required);
@@ -22,6 +20,7 @@ const togglePosition = computed(() => templateData.value.togglePosition || 'left
   <div class="gui-toggle gui-field">
     <gui-toggle
       :uid="uid"
+      :id-prefix="formName"
       :label="templateData.label"
       :errors="errors"
       :touched="isTouched"

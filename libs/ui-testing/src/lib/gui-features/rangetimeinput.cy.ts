@@ -4,6 +4,8 @@ import {
   forcePillsCompactMode,
   forcePillsStripMode,
   type MountComponentFn,
+  testDomId,
+  withTestFormName,
 } from '../utils';
 
 // Behavior tests for the gui-range-time web component: two segmented time inputs
@@ -11,7 +13,8 @@ import {
 // create/merge/remove model and the "end must be after start" ordering error
 // (unlike the date range, which swaps). Uses en-GB (24h) so parts are just
 // hour+minute with no day-period.
-export const runRangeTimeInputComponentTests = (mountFn: MountComponentFn) => {
+export const runRangeTimeInputComponentTests = (baseMountFn: MountComponentFn) => {
+  const mountFn = withTestFormName(baseMountFn);
   describe('RangeTimeInput Component', () => {
     const uid = 'testSubject';
     const sel = {
@@ -470,10 +473,10 @@ export const runRangeTimeInputComponentTests = (mountFn: MountComponentFn) => {
         cy.get(`[data-cy="${uid}_pills-validator-error"]`)
           .should('be.visible')
           .and('contain.text', 'Incomplete time');
-        cy.get(`#${uid}_pills_errors`)
+        cy.get(`[id="${testDomId(`${uid}_pills_errors`)}"]`)
           .should('have.attr', 'aria-hidden', 'true')
           .and('not.have.attr', 'role');
-        cy.get(`[id="${uid}_errors"]`).should('have.length', 1);
+        cy.get(`[id="${testDomId(`${uid}_errors`)}"]`).should('have.length', 1);
 
         cy.get(`[data-cy="${uid}_validator-error"]`).then(($li) => {
           cy.get('.gui-pills__dropdown').should('have.css', 'border-top-color', $li.css('color'));

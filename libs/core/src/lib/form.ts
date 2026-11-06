@@ -57,6 +57,14 @@ export function defineForm<
 export interface FormInitConfig<ComponentType = unknown> {
   formDef: string | Record<string, any>;
   widgetLoaders: WidgetLoaders<ComponentType>;
+  /**
+   * The name of the form: the id of its `<form>` element and the prefix of every DOM id inside
+   * it, so two forms on one page never share an id (`name-textinput` renders as
+   * `signup-name-textinput`). Widget uids, form events and `data-cy` attributes do not take it.
+   *
+   * Optional: without it the form generates one. Set it when the server renders the form, and
+   * when CSS or tests select GolemUI elements by id.
+   */
   formName?: string;
   itemRenderers?: Record<string, ItemRenderer>;
   localization?: I18nTranslator;

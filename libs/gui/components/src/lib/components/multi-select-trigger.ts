@@ -84,9 +84,9 @@ export class GuiMultiSelectTrigger extends GuiElement {
       return [field, input].filter((el): el is HTMLElement => !!el);
     },
     getState: () => ({
-      uid: this.uid,
+      domId: this.domId,
       templateData: {
-        hint: this.hasHint ? `${this.uid}_hint` : undefined,
+        hint: this.hasHint ? `${this.domId}_hint` : undefined,
         errors: this.errors,
         readonly: this.readOnly,
         disabled: this.disabled,
@@ -168,6 +168,7 @@ export class GuiMultiSelectTrigger extends GuiElement {
           class="gui-multi-select__pills"
           style=${cspStyleMap(pillItems.length ? {} : { 'min-width': 0 })}
           .uid=${this.uid}
+          .idPrefix=${this.idPrefix}
           .toolbarAriaLabel=${message('selectedOptions', this.toolbarAriaLabel)}
           .items=${pillItems}
           .errors=${this.errors}
@@ -191,7 +192,7 @@ export class GuiMultiSelectTrigger extends GuiElement {
         <input
           type="text"
           role="combobox"
-          id=${this.uid}
+          id=${this.domId}
           data-cy=${`${this.uid}_textinput`}
           class="gui-multi-select__input"
           ?disabled=${this.disabled}
@@ -201,8 +202,8 @@ export class GuiMultiSelectTrigger extends GuiElement {
           aria-expanded=${this.panelOpen ? 'true' : 'false'}
           aria-controls=${this.panelId ?? nothing}
           aria-autocomplete="list"
-          aria-labelledby=${this.hasLabel ? `${this.uid}_label` : nothing}
-          aria-describedby=${this.hasHint ? `${this.uid}_hint` : nothing}
+          aria-labelledby=${this.hasLabel ? `${this.domId}_label` : nothing}
+          aria-describedby=${this.hasHint ? `${this.domId}_hint` : nothing}
           @keydown=${this.onInputKeydown}
         />
       </div>

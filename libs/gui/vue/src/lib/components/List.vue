@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { toDomId } from '@golemui/core/internals';
 import type { GuiVisibleItem } from '@golemui/gui-components';
 import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useInputWidget, useItemRenderer } from '@golemui/vue';
@@ -16,10 +17,9 @@ interface GuiListElement extends HTMLElement {
 
 const props = defineProps<WithWidget>();
 const widget = props.widget as InputWidget<OptionValue>;
-const { uid, errors, value, isTouched, templateData, onValueChanged, onBlur } = useInputWidget<
-  OptionValue,
-  ListProps<unknown>
->(widget);
+const { uid, formName, errors, value, isTouched, templateData, onValueChanged, onBlur } =
+  useInputWidget<OptionValue, ListProps<unknown>>(widget);
+const domId = toDomId(formName, uid.value);
 
 // The options to render, as the list reports them.
 const visibleItems = ref<GuiVisibleItem<any>[]>([]);
@@ -60,6 +60,7 @@ const ItemRenderer = useItemRenderer(
     <gui-label
       ref="labelRef"
       :uid="uid"
+      :id-prefix="formName"
       :label="templateData.label"
       :hint="templateData.hint"
       :errors="errors"
@@ -73,8 +74,9 @@ const ItemRenderer = useItemRenderer(
     <div class="gui-widget">
       <gui-list
         ref="listRef"
-        :id="uid"
+        :id="domId"
         :uid="uid"
+        :id-prefix="formName"
         :value="value ?? ''"
         :valueField="templateData.valueField"
         :items="templateData.items"
@@ -120,6 +122,12 @@ const ItemRenderer = useItemRenderer(
       </gui-list>
     </div>
 
-    <gui-errors v-if="showErrors" :uid="uid" :errors="errors" :touched="isTouched"></gui-errors>
+    <gui-errors
+      v-if="showErrors"
+      :uid="uid"
+      :id-prefix="formName"
+      :errors="errors"
+      :touched="isTouched"
+    ></gui-errors>
   </div>
 </template>

@@ -5,6 +5,11 @@ import { mergeViewModelIntoTemplateData, type WithFlattenedProps } from './templ
 
 export interface UseInputWidgetReturn<T, ExtraProps extends Record<string, any>> {
   uid: Ref<string>;
+  /**
+   * The form's `formName`. Every DOM id the widget renders starts with it, so two forms on one
+   * page never share an id: pass it as `idPrefix` to GolemUI Components.
+   */
+  formName: string;
   value: Ref<T | undefined>;
   templateData: Ref<
     WithFlattenedProps<InputWidget<T, string>, ExtraProps> & {
@@ -108,6 +113,7 @@ export function useInputWidget<T, ExtraProps extends Record<string, any> = Recor
 
   return {
     uid,
+    formName: formContext.formName,
     value,
     templateData,
     errors,

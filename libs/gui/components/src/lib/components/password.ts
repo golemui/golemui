@@ -61,9 +61,9 @@ export class GuiPassword extends GuiFormControl {
   @state() showPassword = false;
 
   private ariaController = new GUIAriaController(this, {
-    getTargets: () => this.querySelectorAll(`input[id="${this.uid}"]`),
+    getTargets: () => this.querySelectorAll(`input[id="${this.domId}"]`),
     getState: () => ({
-      uid: this.uid,
+      domId: this.domId,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -88,7 +88,6 @@ export class GuiPassword extends GuiFormControl {
     super.render();
 
     const templateData: ControlTemplateData<string> & GuiPasswordProps = {
-      uid: this.uid,
       label: this.label,
       hint: this.hint,
       errors: this.errors,
@@ -120,12 +119,12 @@ export class GuiPassword extends GuiFormControl {
       : templateData.showPasswordIcon;
 
     return html`
-      ${addLabel(this.uid, templateData)}
+      ${addLabel(this, templateData)}
 
       <div class="gui-widget">
         <input
           type=${this.showPassword ? 'text' : 'password'}
-          id=${this.uid}
+          id=${this.domId}
           data-cy=${`${this.uid}_password`}
           class=${classMap(fieldClasses)}
           .value=${live(this.value ?? '')}
@@ -158,7 +157,7 @@ export class GuiPassword extends GuiFormControl {
         </button>
       </div>
 
-      ${addErrors(this.uid, templateData)}
+      ${addErrors(this, templateData)}
     `;
   }
 

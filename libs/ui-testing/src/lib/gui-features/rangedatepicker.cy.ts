@@ -4,13 +4,16 @@ import {
   forcePillsCompactMode,
   forcePillsStripMode,
   type MountComponentFn,
+  testDomId,
+  withTestFormName,
 } from '../utils';
 
 // Behavior tests for the gui-range-date-picker web component. They pin the
 // open/close model that used to be hand-rolled per framework (open on input
 // interaction, stay open across range selection, close on outside click or
 // focus leaving the picker, pill click navigating to the range's month).
-export const runRangeDatePickerComponentTests = (mountFn: MountComponentFn) => {
+export const runRangeDatePickerComponentTests = (baseMountFn: MountComponentFn) => {
+  const mountFn = withTestFormName(baseMountFn);
   describe('RangeDatePicker Component', () => {
     const uid = 'testSubject';
     const sel = {
@@ -608,7 +611,7 @@ export const runRangeDatePickerComponentTests = (mountFn: MountComponentFn) => {
           .should('have.attr', 'aria-label', 'Show calendar')
           .should('have.attr', 'aria-haspopup', 'dialog')
           .should('have.attr', 'aria-expanded', 'false')
-          .should('have.attr', 'aria-controls', 'testSubject_popup');
+          .should('have.attr', 'aria-controls', testDomId('testSubject_popup'));
       });
 
       it('should open the calendar dialog from the toggle and move focus into it', () => {
@@ -617,7 +620,7 @@ export const runRangeDatePickerComponentTests = (mountFn: MountComponentFn) => {
         cy.get(toggleSel).should('have.attr', 'aria-expanded', 'true');
         cy.get('gui-range-calendar')
           .should('have.attr', 'role', 'dialog')
-          .should('have.id', 'testSubject_popup');
+          .should('have.id', testDomId('testSubject_popup'));
         cy.focused().should('have.class', 'gui-calendar__day-button');
       });
 
@@ -719,10 +722,10 @@ export const runRangeDatePickerComponentTests = (mountFn: MountComponentFn) => {
         cy.get(`[data-cy="${uid}_panel-validator-error"]`)
           .should('be.visible')
           .and('contain.text', 'Incomplete date');
-        cy.get(`#${uid}_panel_errors`)
+        cy.get(`[id="${testDomId(`${uid}_panel_errors`)}"]`)
           .should('have.attr', 'aria-hidden', 'true')
           .and('not.have.attr', 'role');
-        cy.get(`[id="${uid}_errors"]`).should('have.length', 1);
+        cy.get(`[id="${testDomId(`${uid}_errors`)}"]`).should('have.length', 1);
 
         cy.get(`[data-cy="${uid}_validator-error"]`).then(($li) => {
           cy.get(panelSel).should('have.css', 'border-top-color', $li.css('color'));

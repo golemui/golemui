@@ -1,3 +1,4 @@
+import { toDomId } from '@golemui/core/internals';
 import {
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
@@ -42,6 +43,11 @@ export class MenuComponent implements OnInit, OnDestroy, WithWidget {
   protected readonly menuButtonClasses = menuButtonClasses;
   protected readonly menuButtonAriaLabel = menuButtonAriaLabel;
 
+  /** The widget uid scoped to the form, for the DOM ids. */
+  protected get domId(): string {
+    return toDomId(this.adapter.formName, this.widget.uid);
+  }
+
   ngOnInit(): void {
     this.adapter.init(this.widget);
   }
@@ -51,6 +57,11 @@ export class MenuComponent implements OnInit, OnDestroy, WithWidget {
   }
 
   get panelId() {
+    return menuPanelId(this.domId);
+  }
+
+  /** The `data-cy` of the panel, built from the bare uid. */
+  get panelCy() {
     return menuPanelId(this.widget.uid);
   }
 

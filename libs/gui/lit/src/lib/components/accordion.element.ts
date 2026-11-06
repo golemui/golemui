@@ -1,3 +1,4 @@
+import { toDomId } from '@golemui/core/internals';
 import type { LayoutWidget, WithWidget } from '@golemui/core';
 import { LayoutWidgetAdapter, type LitFormContext, formContext, layoutContext } from '@golemui/lit';
 import {
@@ -76,9 +77,10 @@ export class AccordionElement extends LitElement implements WithWidget {
   override render() {
     if (!this.adapter.templateData) return html``;
     const { sections = [], singleOpen, renderMode } = this.adapter.templateData;
+    const domId = toDomId(this.formContext.formName, this.widget.uid);
 
     return html`
-      <gui-accordion id=${this.widget.uid} ?multiple=${!singleOpen}>
+      <gui-accordion id=${domId} ?multiple=${!singleOpen}>
         ${repeat(
           sections,
           (section) => section.uid,
@@ -91,8 +93,8 @@ export class AccordionElement extends LitElement implements WithWidget {
                 ? html`<section
                     class="gui-widget"
                     role="region"
-                    id=${accordionSectionId(this.widget.uid, section.uid)}
-                    aria-labelledby=${accordionButtonId(this.widget.uid, section.uid)}
+                    id=${accordionSectionId(domId, section.uid)}
+                    aria-labelledby=${accordionButtonId(domId, section.uid)}
                   >
                     <gui-widget .widget=${child}></gui-widget>
                   </section>`
@@ -104,9 +106,7 @@ export class AccordionElement extends LitElement implements WithWidget {
                 this.onToggle(event, section.uid)}
             >
               <details ?open=${isOpen}>
-                <summary id=${accordionButtonId(this.widget.uid, section.uid)}>
-                  ${section.label}
-                </summary>
+                <summary id=${accordionButtonId(domId, section.uid)}>${section.label}</summary>
                 ${content}
               </details>
             </gui-accordion-item>`;

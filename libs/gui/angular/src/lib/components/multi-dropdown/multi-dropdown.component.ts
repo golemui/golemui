@@ -1,3 +1,4 @@
+import { toDomId } from '@golemui/core/internals';
 import { CommonModule, NgComponentOutlet } from '@angular/common';
 import {
   Component,
@@ -103,6 +104,11 @@ export class MultiDropdownComponent implements OnInit, OnDestroy, WithWidget {
 
   protected debouncer = new Subject<string>();
   protected subscriptions: Subscription[] = [];
+
+  /** The widget uid scoped to the form, for the DOM ids. */
+  protected get domId(): string {
+    return toDomId(this.adapter.formName, this.widget.uid);
+  }
 
   ngOnInit(): void {
     this.adapter.init(this.widget);

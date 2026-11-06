@@ -216,6 +216,7 @@ describe('useInputWidget', () => {
     const output = lastComposableOutput<InputComposableOutput<string>>('firstName');
     expect(Object.keys(output).sort()).toEqual([
       'errors',
+      'formName',
       'injectValidationIssues',
       'isTouched',
       'onBlur',

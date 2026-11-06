@@ -259,13 +259,13 @@ export const canonicalServerMarkup = `<gui-core-form
         
         
       >
-         <gui-widget  style="display:contents" data-golemui-ssr defer-hydration><gui-stub-flex   id="host-root" data-golemui-ssr defer-hydration><div class="stub-flex" id="root">
-      <gui-widget  style="display:contents" data-golemui-ssr defer-hydration><gui-stub-input   id="host-firstName-textinput" data-golemui-ssr defer-hydration><input
+         <gui-widget  style="display:contents" data-golemui-ssr defer-hydration><gui-stub-flex   id="host-fixture-form-root" data-golemui-ssr defer-hydration><div class="stub-flex" id="root">
+      <gui-widget  style="display:contents" data-golemui-ssr defer-hydration><gui-stub-input   id="host-fixture-form-firstName-textinput" data-golemui-ssr defer-hydration><input
       type="text"
       id="firstName-textinput"
       data-label="First name"
       value="Ada"
-    /></gui-stub-input></gui-widget><gui-widget  style="display:contents" data-golemui-ssr defer-hydration><gui-stub-input   id="host-lastName-textinput" data-golemui-ssr defer-hydration><input
+    /></gui-stub-input></gui-widget><gui-widget  style="display:contents" data-golemui-ssr defer-hydration><gui-stub-input   id="host-fixture-form-lastName-textinput" data-golemui-ssr defer-hydration><input
       type="text"
       id="lastName-textinput"
       data-label="Last name"

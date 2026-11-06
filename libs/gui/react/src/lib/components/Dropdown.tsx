@@ -1,3 +1,4 @@
+import { toDomId } from '@golemui/core/internals';
 import { GuiErrorsReact, GuiLabelReact, GuiListReact } from '../web-components';
 import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useDebounceCallback, useInputWidget, useItemRenderer } from '@golemui/react';
@@ -15,8 +16,18 @@ import type { GuiLabel } from '@golemui/gui-components/label';
 export function Dropdown(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<string | null>;
 
-  const { uid, errors, value, isTouched, templateData, onFilter, onValueChanged, onBlur } =
-    useInputWidget<string | number | null, DropdownProps<never>>(widget);
+  const {
+    uid,
+    formName,
+    errors,
+    value,
+    isTouched,
+    templateData,
+    onFilter,
+    onValueChanged,
+    onBlur,
+  } = useInputWidget<string | number | null, DropdownProps<never>>(widget);
+  const domId = toDomId(formName, uid);
 
   // The options to render, as the list reports them.
   const [visibleItems, setVisibleItems] = useState<GuiVisibleItem<any>[]>([]);
@@ -282,6 +293,7 @@ export function Dropdown(widgetInstance: WithWidget) {
       <GuiLabelReact
         ref={labelRef}
         uid={uid}
+        idPrefix={formName}
         label={label}
         hint={templateData.hint}
         errors={errors}
@@ -307,7 +319,7 @@ export function Dropdown(widgetInstance: WithWidget) {
           ref={inputRef}
           type="text"
           role="combobox"
-          id={uid}
+          id={domId}
           data-cy={`${uid}_textinput`}
           className={`gui-widget-input${templateData.icon ? ' gui-dropdown--icon' : ''}`}
           defaultValue={value ?? ''}
@@ -320,10 +332,10 @@ export function Dropdown(widgetInstance: WithWidget) {
           onInput={handleInputFilter}
           onClick={showList}
           aria-expanded={isListVisible ? 'true' : 'false'}
-          aria-controls={`${uid}-list`}
+          aria-controls={`${domId}-list`}
           aria-autocomplete="list"
-          aria-labelledby={templateData.label ? `${uid}_label` : undefined}
-          aria-describedby={templateData.hint ? `${uid}_hint` : undefined}
+          aria-labelledby={templateData.label ? `${domId}_label` : undefined}
+          aria-describedby={templateData.hint ? `${domId}_hint` : undefined}
         />
         <button
           type="button"
@@ -331,7 +343,7 @@ export function Dropdown(widgetInstance: WithWidget) {
           aria-label={templateData.toggleAriaLabel ?? 'Show options'}
           aria-haspopup="listbox"
           aria-expanded={isListVisible ? 'true' : 'false'}
-          aria-controls={`${uid}-list`}
+          aria-controls={`${domId}-list`}
           disabled={isDisabled}
           onMouseDown={handleToggleMouseDown}
           onClick={handleToggleClick}
@@ -352,8 +364,9 @@ export function Dropdown(widgetInstance: WithWidget) {
         >
           <GuiListReact
             ref={listRef}
-            id={`${uid}-list`}
+            id={`${domId}-list`}
             uid={uid}
+            idPrefix={formName}
             value={value ?? ''}
             valueField={templateData.valueField! as string}
             items={isFiltering && !asyncFiltering ? filteredItems : templateData.items}
@@ -397,13 +410,24 @@ export function Dropdown(widgetInstance: WithWidget) {
             })}
           </GuiListReact>
           {showErrors && (
-            <GuiErrorsReact panel uid={uid} errors={errors} touched={isTouched}></GuiErrorsReact>
+            <GuiErrorsReact
+              panel
+              uid={uid}
+              idPrefix={formName}
+              errors={errors}
+              touched={isTouched}
+            ></GuiErrorsReact>
           )}
         </div>
       </div>
 
       {showErrors && (
-        <GuiErrorsReact uid={uid} errors={errors} touched={isTouched}></GuiErrorsReact>
+        <GuiErrorsReact
+          uid={uid}
+          idPrefix={formName}
+          errors={errors}
+          touched={isTouched}
+        ></GuiErrorsReact>
       )}
     </div>
   );

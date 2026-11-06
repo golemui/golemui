@@ -1,7 +1,8 @@
 import { defineForm } from '@golemui/core';
-import { type MountComponentFn } from '../utils';
+import { type MountComponentFn, testDomId, withTestFormName } from '../utils';
 
-export const runLabelComponentTests = (mountFn: MountComponentFn) => {
+export const runLabelComponentTests = (baseMountFn: MountComponentFn) => {
+  const mountFn = withTestFormName(baseMountFn);
   describe('Field label', () => {
     context('control fields', () => {
       context('textinput', () => {
@@ -21,7 +22,9 @@ export const runLabelComponentTests = (mountFn: MountComponentFn) => {
               ],
             }),
           });
-          cy.get(`label[for="${uid}"]`).should('exist').contains(label);
+          cy.get(`label[for="${testDomId(uid)}"]`)
+            .should('exist')
+            .contains(label);
         });
 
         it('should have a label.register', () => {
@@ -42,7 +45,9 @@ export const runLabelComponentTests = (mountFn: MountComponentFn) => {
               ],
             }),
           });
-          cy.get(`label[for="${uid}"]`).should('exist').contains(label);
+          cy.get(`label[for="${testDomId(uid)}"]`)
+            .should('exist')
+            .contains(label);
         });
       });
 
@@ -63,7 +68,9 @@ export const runLabelComponentTests = (mountFn: MountComponentFn) => {
               ],
             }),
           });
-          cy.get(`label[for="${uid}"]`).should('exist').contains(label);
+          cy.get(`label[for="${testDomId(uid)}"]`)
+            .should('exist')
+            .contains(label);
         });
 
         it('should have a label.register', () => {
@@ -84,7 +91,9 @@ export const runLabelComponentTests = (mountFn: MountComponentFn) => {
               ],
             }),
           });
-          cy.get(`label[for="${uid}"]`).should('exist').contains(label);
+          cy.get(`label[for="${testDomId(uid)}"]`)
+            .should('exist')
+            .contains(label);
         });
       });
 
@@ -105,7 +114,9 @@ export const runLabelComponentTests = (mountFn: MountComponentFn) => {
               ],
             }),
           });
-          cy.get(`label[for="${uid}"]`).should('exist').contains(label);
+          cy.get(`label[for="${testDomId(uid)}"]`)
+            .should('exist')
+            .contains(label);
         });
 
         it('should have a label.register', () => {
@@ -126,7 +137,9 @@ export const runLabelComponentTests = (mountFn: MountComponentFn) => {
               ],
             }),
           });
-          cy.get(`label[for="${uid}"]`).should('exist').contains(label);
+          cy.get(`label[for="${testDomId(uid)}"]`)
+            .should('exist')
+            .contains(label);
         });
       });
 
@@ -147,7 +160,9 @@ export const runLabelComponentTests = (mountFn: MountComponentFn) => {
               ],
             }),
           });
-          cy.get(`label[for="${uid}"]`).should('exist').contains(label);
+          cy.get(`label[for="${testDomId(uid)}"]`)
+            .should('exist')
+            .contains(label);
         });
 
         it('should have a label.register', () => {
@@ -168,7 +183,9 @@ export const runLabelComponentTests = (mountFn: MountComponentFn) => {
               ],
             }),
           });
-          cy.get(`label[for="${uid}"]`).should('exist').contains(label);
+          cy.get(`label[for="${testDomId(uid)}"]`)
+            .should('exist')
+            .contains(label);
         });
       });
 
@@ -189,7 +206,9 @@ export const runLabelComponentTests = (mountFn: MountComponentFn) => {
               ],
             }),
           });
-          cy.get(`span[id="${uid}_label"]`).should('exist').contains(label);
+          cy.get(`span[id="${testDomId(`${uid}_label`)}"]`)
+            .should('exist')
+            .contains(label);
         });
 
         it('should have a label.register', () => {
@@ -210,7 +229,9 @@ export const runLabelComponentTests = (mountFn: MountComponentFn) => {
               ],
             }),
           });
-          cy.get(`span[id="${uid}_label"]`).should('exist').contains(label);
+          cy.get(`span[id="${testDomId(`${uid}_label`)}"]`)
+            .should('exist')
+            .contains(label);
         });
       });
     });

@@ -5,6 +5,11 @@ import { mergeViewModelIntoTemplateData, type WithFlattenedProps } from './templ
 
 export interface UseLayoutWidgetReturn<ExtraProps extends Record<string, any>> {
   uid: Ref<string>;
+  /**
+   * The form's `formName`. Every DOM id the widget renders starts with it, so two forms on one
+   * page never share an id: pass it as `idPrefix` to GolemUI Components.
+   */
+  formName: string;
   children: Ref<FormWidget<string>[]>;
   templateData: Ref<WithFlattenedProps<LayoutWidget<string>, ExtraProps>>;
   onChange: (detail: any) => void;
@@ -41,5 +46,11 @@ export function useLayoutWidget<ExtraProps extends Record<string, any> = Record<
     formContext.emitEvent('change', widget, detail);
   };
 
-  return { uid, children, templateData, onChange };
+  return {
+    uid,
+    formName: formContext.formName,
+    children,
+    templateData,
+    onChange,
+  };
 }

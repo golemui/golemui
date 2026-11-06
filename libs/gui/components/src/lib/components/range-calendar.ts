@@ -279,7 +279,7 @@ export class GuiRangeCalendar extends GuiFormControl {
   protected ariaController: GUIAriaController<unknown, any> = new GUIAriaController(this, {
     getTargets: () => this.querySelectorAll(`.gui-calendar-input`),
     getState: () => ({
-      uid: this.uid,
+      domId: this.domId,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -475,7 +475,7 @@ export class GuiRangeCalendar extends GuiFormControl {
 
   override render() {
     return renderCalendarChrome({
-      uid: this.uid,
+      ids: this,
       label: this.label,
       hint: this.hint,
       showHint: this.showHint,
@@ -775,6 +775,7 @@ export class GuiRangeCalendar extends GuiFormControl {
       <gui-pills
         class="gui-range-calendar__pills"
         .uid=${this.uid}
+        .idPrefix=${this.idPrefix}
         .toolbarAriaLabel=${message('selectedDateRanges')}
         .items=${pillItems}
         .removable=${true}

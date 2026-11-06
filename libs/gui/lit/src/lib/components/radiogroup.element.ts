@@ -42,6 +42,7 @@ export class RadiogroupElement extends LitElement implements WithWidget {
     return html`
       <gui-radiogroup
         .uid=${this.widget.uid}
+        .idPrefix=${this.formContext.formName}
         .label=${this.adapter.templateData.label}
         .errors=${this.adapter.templateData.errors}
         .touched=${this.adapter.templateData.touched}

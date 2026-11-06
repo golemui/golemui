@@ -1,5 +1,11 @@
 import { defineForm } from '@golemui/core';
-import { dictionaryTranslator, eventsNamed, type MountComponentFn } from '../utils';
+import {
+  dictionaryTranslator,
+  eventsNamed,
+  type MountComponentFn,
+  testDomId,
+  withTestFormName,
+} from '../utils';
 
 // Wraps the source in a marker element, so a test can read the text the parser received.
 const wrappingParser = {
@@ -11,7 +17,8 @@ const wrappingParser = {
  *
  * @param mountFn - Mounts a form in the framework under test.
  */
-export const runMarkdownTextComponentTests = (mountFn: MountComponentFn) => {
+export const runMarkdownTextComponentTests = (baseMountFn: MountComponentFn) => {
+  const mountFn = withTestFormName(baseMountFn);
   describe('MarkdownText Component', () => {
     it('should parse the interpolated md again when the form data changes', () => {
       mountFn({
@@ -30,10 +37,10 @@ export const runMarkdownTextComponentTests = (mountFn: MountComponentFn) => {
         }),
       });
 
-      cy.get('[id="hello"] .parsed-markdown').should('have.text', 'Hi Bob');
+      cy.get(`[id="${testDomId('hello')}"] .parsed-markdown`).should('have.text', 'Hi Bob');
       cy.get('[data-cy="name_textinput"]').clear();
       cy.get('[data-cy="name_textinput"]').type('Ada');
-      cy.get('[id="hello"] .parsed-markdown').should('have.text', 'Hi Ada');
+      cy.get(`[id="${testDomId('hello')}"] .parsed-markdown`).should('have.text', 'Hi Ada');
     });
 
     it('should translate md given as a translation key, and again after a language change', () => {
@@ -57,9 +64,9 @@ export const runMarkdownTextComponentTests = (mountFn: MountComponentFn) => {
         }),
       });
 
-      cy.get('[id="welcome"] .parsed-markdown').should('have.text', 'Welcome');
+      cy.get(`[id="${testDomId('welcome')}"] .parsed-markdown`).should('have.text', 'Welcome');
       cy.then(() => translator.setLang('es'));
-      cy.get('[id="welcome"] .parsed-markdown').should('have.text', 'Bienvenida');
+      cy.get(`[id="${testDomId('welcome')}"] .parsed-markdown`).should('have.text', 'Bienvenida');
     });
 
     it('should render nothing inside the element when no markdown parser is provided', () => {
@@ -76,7 +83,9 @@ export const runMarkdownTextComponentTests = (mountFn: MountComponentFn) => {
         }),
       });
 
-      cy.get('[id="noParser"] gui-markdown-text').should('exist').and('have.text', '');
+      cy.get(`[id="${testDomId('noParser')}"] gui-markdown-text`)
+        .should('exist')
+        .and('have.text', '');
     });
 
     it('should send no form event for on handlers on a markdownText', () => {
@@ -106,7 +115,7 @@ export const runMarkdownTextComponentTests = (mountFn: MountComponentFn) => {
         }),
       });
 
-      cy.get('[id="note"] .parsed-markdown').click();
+      cy.get(`[id="${testDomId('note')}"] .parsed-markdown`).click();
       // The button event shows that the click above had time to send an event.
       cy.get('[data-cy="save_button"]').click();
       cy.get('@formEventHandler').should(() => {

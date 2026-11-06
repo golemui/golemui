@@ -7,10 +7,8 @@ import '@golemui/gui-components/currency';
 
 const props = defineProps<WithWidget>();
 const widget = props.widget as InputWidget<number>;
-const { uid, errors, value, isTouched, templateData, onValueChanged, onBlur } = useInputWidget<
-  number,
-  CurrencyProps
->(widget);
+const { uid, formName, errors, value, isTouched, templateData, onValueChanged, onBlur } =
+  useInputWidget<number, CurrencyProps>(widget);
 
 const handleInput = (e: Event) => onValueChanged((e as CustomEvent).detail.value);
 const required = computed(() => (templateData.value.validator as Validator)?.required);
@@ -23,6 +21,7 @@ const elementValue = computed(() => value.value ?? Number.NaN);
   <div class="gui-currency gui-field">
     <gui-currency
       :uid="uid"
+      :id-prefix="formName"
       :label="templateData.label"
       :hint="templateData.hint"
       :errors="errors"

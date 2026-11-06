@@ -73,11 +73,47 @@ export interface MountOptions<StateKeys extends UiState = string> {
   formName?: string;
   /** The `autocomplete` attribute of the form element. */
   autocomplete?: string;
+  /**
+   * Mounts one more form per entry after the first, with the same options: the same definition,
+   * data, handlers and widgets. An entry's `formName` replaces the shared one, and without it the
+   * form generates its own. `onFormReady` gets the handle of the first form only.
+   */
+  extraForms?: ExtraFormOptions[];
+}
+
+/** A form mounted next to the first one, see `MountOptions.extraForms`. */
+export interface ExtraFormOptions {
+  formName?: string;
+  formSubmit?: (event: FormSubmitEvent) => void;
 }
 
 export type MountComponentFn<StateKeys extends UiState = string> = (
   options: MountOptions<StateKeys>,
 ) => void;
+
+/** The `formName` of the forms that the suites selecting elements by id mount. */
+export const TEST_FORM_NAME = 'test-form';
+
+/**
+ * The DOM id of a widget part in a form named {@link TEST_FORM_NAME}: every DOM id starts with
+ * the form's name, see `toDomId` in `@golemui/core`.
+ *
+ * @param id - The id without the prefix, the widget uid or an id built from it.
+ * @example
+ * testDomId('email-textinput_label'); // 'test-form-email-textinput_label'
+ */
+export const testDomId = (id: string) => `${TEST_FORM_NAME}-${id}`;
+
+/**
+ * Mounts every form with `formName` {@link TEST_FORM_NAME} unless the options set one, so a suite
+ * can select its elements by the ids {@link testDomId} returns.
+ */
+export const withTestFormName =
+  <StateKeys extends UiState = string>(
+    mountFn: MountComponentFn<StateKeys>,
+  ): MountComponentFn<StateKeys> =>
+  (options) =>
+    mountFn({ ...options, formName: options.formName ?? TEST_FORM_NAME });
 
 /**
  * A translator that looks keys up in one dictionary per language, falling back to the default and
@@ -138,6 +174,47 @@ export const expectNoDuplicateIds = () => {
     });
 
     expect(Array.from(duplicates), 'duplicate DOM ids').to.deep.equal([]);
+  });
+};
+
+/** The attributes that point at other elements by id. */
+const ID_REFERENCES = [
+  'for',
+  'aria-describedby',
+  'aria-labelledby',
+  'aria-controls',
+  'aria-activedescendant',
+  'aria-errormessage',
+  'aria-owns',
+  'list',
+  'popovertarget',
+];
+
+/**
+ * Fails when two elements of the page share an id, or when an id reference inside a `<form>`
+ * points at an element outside that form. With several forms on one page, such a reference makes
+ * a label focus, or a screen reader announce, the field of another form.
+ *
+ * A closed picker's `aria-controls` may point at nothing: its popup renders only while it is open.
+ */
+export const assertIdsScopedPerForm = () => {
+  expectNoDuplicateIds();
+  cy.get('form').should((forms) => {
+    forms.each((_, form) => {
+      for (const attribute of ID_REFERENCES) {
+        form.querySelectorAll(`[${attribute}]`).forEach((node) => {
+          for (const id of (node.getAttribute(attribute) ?? '').split(/\s+/).filter(Boolean)) {
+            const target = form.ownerDocument.getElementById(id);
+            const closedPopup =
+              attribute === 'aria-controls' && node.getAttribute('aria-expanded') === 'false';
+            if (!target && closedPopup) continue;
+            const where = `#${id}, from ${attribute} in form #${form.id}`;
+            expect(target, where).not.to.equal(null);
+            expect(form.contains(target), `${where}, is inside that form`).to.equal(true);
+          }
+        });
+      }
+    });
   });
 };
 

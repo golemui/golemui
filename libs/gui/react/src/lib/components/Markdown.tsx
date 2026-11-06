@@ -7,10 +7,8 @@ import '../styles.scss';
 
 export function Markdown(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<string>;
-  const { uid, errors, value, isTouched, templateData, onValueChanged, onBlur } = useInputWidget<
-    string,
-    MarkdownProps
-  >(widget);
+  const { uid, formName, errors, value, isTouched, templateData, onValueChanged, onBlur } =
+    useInputWidget<string, MarkdownProps>(widget);
 
   const handleChange = useCallback(
     (e: Event) => onValueChanged((e as CustomEvent).detail.value),
@@ -45,6 +43,7 @@ export function Markdown(widgetInstance: WithWidget) {
     <div className="gui-markdown gui-field">
       <GuiMarkdownReact
         uid={uid}
+        idPrefix={formName}
         label={label}
         errors={errors}
         touched={isTouched}

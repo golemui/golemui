@@ -1,3 +1,4 @@
+import { toDomId } from '@golemui/core/internals';
 import type { DisplayWidget, WithWidget } from '@golemui/core';
 import {
   DisplayWidgetAdapter,
@@ -41,7 +42,9 @@ export class RendererElement extends LitElement implements WithWidget {
 
   override render() {
     return html`
-      <div class="gui-widget" id=${this.widget.uid}>${this.adapter.templateData.render}</div>
+      <div class="gui-widget" id=${toDomId(this.formContext.formName, this.widget.uid)}>
+        ${this.adapter.templateData.render}
+      </div>
     `;
   }
 

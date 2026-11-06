@@ -9,6 +9,7 @@ export function Select(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<string>;
   const {
     uid,
+    formName,
     errors,
     value,
     isTouched,
@@ -51,6 +52,7 @@ export function Select(widgetInstance: WithWidget) {
     <div className="gui-select gui-field">
       <GuiSelectReact
         uid={uid}
+        idPrefix={formName}
         label={label}
         errors={errors}
         touched={isTouched}

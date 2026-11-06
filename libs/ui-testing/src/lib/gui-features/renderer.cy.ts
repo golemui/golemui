@@ -1,5 +1,5 @@
 import { defineForm, type FunctionWidgetParams } from '@golemui/core';
-import { type MountComponentFn } from '../utils';
+import { type MountComponentFn, testDomId, withTestFormName } from '../utils';
 
 /**
  * Builds the framework value a `renderer` display shows: an element with the class
@@ -13,7 +13,11 @@ export type RenderTextFn = (text: string) => unknown;
  * @param mountFn - Mounts a form in the framework under test.
  * @param renderText - Builds the value the renderer shows, in the format of that framework.
  */
-export const runRendererComponentTests = (mountFn: MountComponentFn, renderText: RenderTextFn) => {
+export const runRendererComponentTests = (
+  baseMountFn: MountComponentFn,
+  renderText: RenderTextFn,
+) => {
+  const mountFn = withTestFormName(baseMountFn);
   describe('Renderer Component', () => {
     const nameInput = {
       uid: 'name',
@@ -38,10 +42,10 @@ export const runRendererComponentTests = (mountFn: MountComponentFn, renderText:
         }),
       });
 
-      cy.get('[id="greeting"] .renderer-text').should('have.text', 'Hello Bob');
+      cy.get(`[id="${testDomId('greeting')}"] .renderer-text`).should('have.text', 'Hello Bob');
       cy.get('[data-cy="name_textinput"]').clear();
       cy.get('[data-cy="name_textinput"]').type('Ada');
-      cy.get('[id="greeting"] .renderer-text').should('have.text', 'Hello Ada');
+      cy.get(`[id="${testDomId('greeting')}"] .renderer-text`).should('have.text', 'Hello Ada');
     });
 
     it('should give a renderer inside a repeater template the item of its row', () => {
@@ -79,12 +83,24 @@ export const runRendererComponentTests = (mountFn: MountComponentFn, renderText:
         }),
       });
 
-      cy.get('[id="personGreeting[0]"] .renderer-text').should('have.text', 'Row 0: Ada');
-      cy.get('[id="personGreeting[1]"] .renderer-text').should('have.text', 'Row 1: Bob');
+      cy.get(`[id="${testDomId('personGreeting[0]')}"] .renderer-text`).should(
+        'have.text',
+        'Row 0: Ada',
+      );
+      cy.get(`[id="${testDomId('personGreeting[1]')}"] .renderer-text`).should(
+        'have.text',
+        'Row 1: Bob',
+      );
       cy.get('[data-cy="personName[1]_textinput"]').clear();
       cy.get('[data-cy="personName[1]_textinput"]').type('Eve');
-      cy.get('[id="personGreeting[1]"] .renderer-text').should('have.text', 'Row 1: Eve');
-      cy.get('[id="personGreeting[0]"] .renderer-text').should('have.text', 'Row 0: Ada');
+      cy.get(`[id="${testDomId('personGreeting[1]')}"] .renderer-text`).should(
+        'have.text',
+        'Row 1: Eve',
+      );
+      cy.get(`[id="${testDomId('personGreeting[0]')}"] .renderer-text`).should(
+        'have.text',
+        'Row 0: Ada',
+      );
     });
 
     it('should render a renderer only while its include condition is true', () => {
@@ -104,11 +120,11 @@ export const runRendererComponentTests = (mountFn: MountComponentFn, renderText:
       });
 
       cy.get('[data-cy="name_textinput"]').should('exist');
-      cy.get('[id="secret"]').should('not.exist');
+      cy.get(`[id="${testDomId('secret')}"]`).should('not.exist');
       cy.get('[data-cy="name_textinput"]').type('Ada');
-      cy.get('[id="secret"] .renderer-text').should('have.text', 'Shown for Ada');
+      cy.get(`[id="${testDomId('secret')}"] .renderer-text`).should('have.text', 'Shown for Ada');
       cy.get('[data-cy="name_textinput"]').type('x');
-      cy.get('[id="secret"]').should('not.exist');
+      cy.get(`[id="${testDomId('secret')}"]`).should('not.exist');
     });
 
     it('should report a render function that throws in formHealth, and show the renderer again after a recovery', () => {
@@ -132,7 +148,7 @@ export const runRendererComponentTests = (mountFn: MountComponentFn, renderText:
         }),
       });
 
-      cy.get('[id="status"] .renderer-text').should('have.text', 'Name: ');
+      cy.get(`[id="${testDomId('status')}"] .renderer-text`).should('have.text', 'Name: ');
       cy.get('[data-cy="name_textinput"]').type('boom');
       cy.get('@formHealth').should('have.been.calledWithMatch', {
         status: 'errored',
@@ -140,7 +156,7 @@ export const runRendererComponentTests = (mountFn: MountComponentFn, renderText:
         message: '[11] render failed',
       });
       cy.get('[data-cy="name_textinput"]').type('!');
-      cy.get('[id="status"] .renderer-text').should('have.text', 'Name: boom!');
+      cy.get(`[id="${testDomId('status')}"] .renderer-text`).should('have.text', 'Name: boom!');
       cy.get('@formHealth').its('lastCall.args.0').should('deep.equal', { status: 'ok' });
     });
   });

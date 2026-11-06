@@ -32,6 +32,14 @@ export class FormContext<ComponentType> {
    */
   dependencies: Record<string, unknown> = {};
 
+  /**
+   * The name of the form, which the widgets put in front of their DOM ids (see `toDomId`). Empty
+   * until the store is initialized.
+   */
+  get formName(): string {
+    return this.store.getState?.().formName ?? '';
+  }
+
   initialize(
     widgetLoaders: WidgetLoaders<ComponentType>,
     middlewares: Middleware<State, Action>[] = [],

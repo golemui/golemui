@@ -1,3 +1,4 @@
+import { toDomId } from '@golemui/core/internals';
 import type { ActionWidget, WithWidget } from '@golemui/core';
 import { ActionWidgetAdapter, type LitFormContext, actionContext, formContext } from '@golemui/lit';
 import { consume, provide } from '@lit/context';
@@ -55,7 +56,8 @@ export class MenuElement extends LitElement implements WithWidget {
     const { label, disabled, items, placement, variant, icon, iconPosition, ariaLabel } =
       this.adapter.templateData;
     const uid = this.widget.uid;
-    const panelId = menuPanelId(uid);
+    const domId = toDomId(this.formContext.formName, uid);
+    const panelId = menuPanelId(domId);
     const iconPart = icon
       ? html`<span
           class="gui-widget-icon gui-button-icon ${icon}"
@@ -69,7 +71,7 @@ export class MenuElement extends LitElement implements WithWidget {
       <div class="gui-widget">
         <button
           type="button"
-          id=${uid}
+          id=${domId}
           class=${menuButtonClasses({ variant, icon, iconPosition })}
           data-cy=${`${uid}_button`}
           popovertarget=${panelId}
@@ -81,7 +83,7 @@ export class MenuElement extends LitElement implements WithWidget {
         </button>
       </div>
       <gui-menu placement=${placement ?? DEFAULT_MENU_PLACEMENT} @gui-action=${this.onAction}>
-        <div id=${panelId} data-cy=${panelId} popover>
+        <div id=${panelId} data-cy=${menuPanelId(uid)} popover>
           ${(items ?? []).map((item) =>
             isMenuSeparator(item)
               ? html`<hr />`

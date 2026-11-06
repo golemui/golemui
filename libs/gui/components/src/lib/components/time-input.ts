@@ -156,7 +156,7 @@ export class GuiTime extends GuiFormControl {
     requiresLabel: true,
     getTargets: () => this.querySelectorAll(`.${this.inputBlockClass}`),
     getState: () => ({
-      uid: this.uid,
+      domId: this.domId,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -206,7 +206,6 @@ export class GuiTime extends GuiFormControl {
 
   override render() {
     const templateData: ControlTemplateData<string> & GuiTimeProps = {
-      uid: this.uid,
       label: this.label,
       errors: this.errors,
       touched: this.touched,
@@ -243,7 +242,7 @@ export class GuiTime extends GuiFormControl {
 
     return html`
       ${addLabel(
-        this.uid,
+        this,
         this.showHint !== false ? templateData : { ...templateData, hint: undefined },
         false,
         undefined,
@@ -252,12 +251,12 @@ export class GuiTime extends GuiFormControl {
 
       <div class="gui-widget" @focusout=${this.onWidgetFocusOut}>
         <div
-          id=${this.uid}
+          id=${this.domId}
           class="gui-widget-input gui-parts gui-parts-ring gui-time-input ${this.icon
             ? 'gui-calendar--icon'
             : ''}"
           role="group"
-          aria-labelledby=${`${this.uid}_label`}
+          aria-labelledby=${`${this.domId}_label`}
         >
           ${renderGroupParts('default', partsData, this._parts)}
         </div>
@@ -270,9 +269,7 @@ export class GuiTime extends GuiFormControl {
           : nothing}
       </div>
 
-      ${this.showErrors !== false && this.errors?.length
-        ? addErrors(this.uid, templateData)
-        : nothing}
+      ${this.showErrors !== false && this.errors?.length ? addErrors(this, templateData) : nothing}
     `;
   }
 

@@ -8,10 +8,8 @@ import '../styles.scss';
 
 export function RangeSlider(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<SliderRange>;
-  const { uid, errors, value, isTouched, templateData, onValueChanged, onBlur } = useInputWidget<
-    SliderRange,
-    RangeSliderProps
-  >(widget);
+  const { uid, formName, errors, value, isTouched, templateData, onValueChanged, onBlur } =
+    useInputWidget<SliderRange, RangeSliderProps>(widget);
 
   const handleChange = useCallback(
     (e: Event) => onValueChanged((e as CustomEvent).detail.value),
@@ -27,6 +25,7 @@ export function RangeSlider(widgetInstance: WithWidget) {
     <div className="gui-range-slider gui-field">
       <GuiRangeSliderReact
         uid={uid}
+        idPrefix={formName}
         label={label}
         hint={templateData.hint}
         errors={errors}

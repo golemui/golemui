@@ -7,10 +7,8 @@ import '../styles.scss';
 
 export function Currency(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<number>;
-  const { uid, errors, value, isTouched, templateData, onValueChanged, onBlur } = useInputWidget<
-    number,
-    CurrencyProps
-  >(widget);
+  const { uid, formName, errors, value, isTouched, templateData, onValueChanged, onBlur } =
+    useInputWidget<number, CurrencyProps>(widget);
 
   const handleChange = useCallback(
     (e: Event) => onValueChanged((e as CustomEvent).detail.value),
@@ -35,6 +33,7 @@ export function Currency(widgetInstance: WithWidget) {
     <div className="gui-currency gui-field">
       <GuiCurrencyReact
         uid={uid}
+        idPrefix={formName}
         label={label}
         hint={hint}
         errors={errors}

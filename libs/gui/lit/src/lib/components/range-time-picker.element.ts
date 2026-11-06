@@ -43,6 +43,7 @@ export class RangeTimePickerElement extends LitElement implements WithWidget {
     return html`
       <gui-range-time-picker
         .uid=${this.widget.uid}
+        .idPrefix=${this.formContext.formName}
         .label=${templateData.label}
         .hint=${templateData.hint}
         .errors=${templateData.errors}

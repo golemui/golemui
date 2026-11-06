@@ -7,10 +7,8 @@ import '../styles.scss';
 
 export function Password(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<string>;
-  const { uid, errors, value, isTouched, templateData, onValueChanged, onBlur } = useInputWidget<
-    string,
-    PasswordProps
-  >(widget);
+  const { uid, formName, errors, value, isTouched, templateData, onValueChanged, onBlur } =
+    useInputWidget<string, PasswordProps>(widget);
 
   const handleChange = useCallback(
     (e: Event) => onValueChanged((e as CustomEvent).detail.value),
@@ -34,6 +32,7 @@ export function Password(widgetInstance: WithWidget) {
     <div className="gui-password gui-field">
       <GuiPasswordReact
         uid={uid}
+        idPrefix={formName}
         label={label}
         hint={hint}
         errors={errors}

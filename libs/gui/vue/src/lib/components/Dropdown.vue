@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { toDomId } from '@golemui/core/internals';
 import type { GuiVisibleItem } from '@golemui/gui-components';
 import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useDebounceCallback, useInputWidget, useItemRenderer } from '@golemui/vue';
@@ -21,8 +22,9 @@ interface GuiLabelElement extends HTMLElement {
 
 const props = defineProps<WithWidget>();
 const widget = props.widget as InputWidget<string | null>;
-const { uid, errors, value, isTouched, templateData, onFilter, onValueChanged, onBlur } =
+const { uid, formName, errors, value, isTouched, templateData, onFilter, onValueChanged, onBlur } =
   useInputWidget<string | number | null, DropdownProps<never>>(widget);
+const domId = toDomId(formName, uid.value);
 
 // The options to render, as the list reports them.
 const visibleItems = ref<GuiVisibleItem<any>[]>([]);
@@ -227,6 +229,7 @@ const ItemRenderer = useItemRenderer(
     <gui-label
       ref="labelRef"
       :uid="uid"
+      :id-prefix="formName"
       :label="templateData.label"
       :hint="templateData.hint"
       :errors="errors"
@@ -252,7 +255,7 @@ const ItemRenderer = useItemRenderer(
         ref="inputRef"
         type="text"
         role="combobox"
-        :id="uid"
+        :id="domId"
         :data-cy="`${uid}_textinput`"
         class="gui-widget-input"
         :class="{ 'gui-dropdown--icon': !!templateData.icon }"
@@ -262,10 +265,10 @@ const ItemRenderer = useItemRenderer(
         :placeholder="templateData.placeholder ?? ''"
         :autocomplete="templateData.autocomplete ?? undefined"
         :aria-expanded="isListVisible ? 'true' : 'false'"
-        :aria-controls="`${uid}-list`"
+        :aria-controls="`${domId}-list`"
         aria-autocomplete="list"
-        :aria-labelledby="templateData.label ? `${uid}_label` : undefined"
-        :aria-describedby="templateData.hint ? `${uid}_hint` : undefined"
+        :aria-labelledby="templateData.label ? `${domId}_label` : undefined"
+        :aria-describedby="templateData.hint ? `${domId}_hint` : undefined"
         @keydown="handleInputKeyDown"
         @input="handleInputFilter"
         @click="showList"
@@ -276,7 +279,7 @@ const ItemRenderer = useItemRenderer(
         :aria-label="templateData.toggleAriaLabel ?? 'Show options'"
         aria-haspopup="listbox"
         :aria-expanded="isListVisible ? 'true' : 'false'"
-        :aria-controls="`${uid}-list`"
+        :aria-controls="`${domId}-list`"
         :disabled="isDisabled"
         @mousedown="handleToggleMouseDown"
         @click="handleToggleClick"
@@ -293,8 +296,9 @@ const ItemRenderer = useItemRenderer(
       >
         <gui-list
           ref="listRef"
-          :id="`${uid}-list`"
+          :id="`${domId}-list`"
           :uid="uid"
+          :id-prefix="formName"
           :value="value ?? ''"
           :valueField="templateData.valueField"
           :items="isFiltering && !asyncFiltering ? filteredItems : templateData.items"
@@ -343,12 +347,19 @@ const ItemRenderer = useItemRenderer(
           v-if="showErrors"
           :panel.prop="true"
           :uid="uid"
+          :id-prefix="formName"
           :errors="errors"
           :touched="isTouched"
         ></gui-errors>
       </div>
     </div>
 
-    <gui-errors v-if="showErrors" :uid="uid" :errors="errors" :touched="isTouched"></gui-errors>
+    <gui-errors
+      v-if="showErrors"
+      :uid="uid"
+      :id-prefix="formName"
+      :errors="errors"
+      :touched="isTouched"
+    ></gui-errors>
   </div>
 </template>

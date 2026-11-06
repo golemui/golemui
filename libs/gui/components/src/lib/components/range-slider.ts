@@ -46,9 +46,9 @@ export class GuiRangeSlider extends GuiSliderBase {
   @property({ type: String, attribute: 'end-label' }) endLabel: string | undefined = undefined;
 
   private ariaController = new GUIAriaController(this, {
-    getTargets: () => this.querySelectorAll(`input[id^="${this.uid}_"].gui-slider__input`),
+    getTargets: () => this.querySelectorAll(`input[id^="${this.domId}_"].gui-slider__input`),
     getState: () => ({
-      uid: this.uid,
+      domId: this.domId,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -104,7 +104,6 @@ export class GuiRangeSlider extends GuiSliderBase {
     const labelText = empty ? '–' : `${texts.start} – ${texts.end}`;
 
     const templateData: ControlTemplateData<GuiSliderRange> & { hint?: string } = {
-      uid: this.uid,
       label: this.label,
       hint: this.hint,
       errors: this.errors,
@@ -118,7 +117,7 @@ export class GuiRangeSlider extends GuiSliderBase {
     const thumb = (which: Thumb) =>
       html`<input
           type="range"
-          id=${`${this.uid}_${which}`}
+          id=${`${this.domId}_${which}`}
           data-cy=${`${this.uid}_slider_${which}`}
           class="gui-slider__input"
           min=${min}
@@ -126,7 +125,7 @@ export class GuiRangeSlider extends GuiSliderBase {
           step=${step}
           .value=${live(String(positions[which]))}
           ?disabled=${this.disabled}
-          aria-labelledby=${[this.label ? `${this.uid}_label` : '', `${this.uid}_${which}_name`]
+          aria-labelledby=${[this.label ? `${this.domId}_label` : '', `${this.domId}_${which}_name`]
             .filter(Boolean)
             .join(' ')}
           aria-valuetext=${this.valueText(empty ? undefined : range[which])}
@@ -137,14 +136,14 @@ export class GuiRangeSlider extends GuiSliderBase {
           @blur=${this.onBlur}
         />
         ${this.bubble(texts[which], percents[which])}
-        <span class="gui-visually-hidden" id=${`${this.uid}_${which}_name`}
+        <span class="gui-visually-hidden" id=${`${this.domId}_${which}_name`}
           >${which === 'start'
             ? requiredName('minimum', this.startLabel)
             : requiredName('maximum', this.endLabel)}</span
         >`;
 
     return html`
-      ${addLabel(this.uid, templateData, false, undefined, false, this.labelValue(labelText))}
+      ${addLabel(this, templateData, false, undefined, false, this.labelValue(labelText))}
 
       <div class="gui-widget">
         <div
@@ -164,7 +163,7 @@ export class GuiRangeSlider extends GuiSliderBase {
         </div>
       </div>
 
-      ${this.footer(addErrors(this.uid, templateData))}
+      ${this.footer(addErrors(this, templateData))}
     `;
   }
 
@@ -184,13 +183,13 @@ export class GuiRangeSlider extends GuiSliderBase {
   }
 
   protected override pick(input: HTMLInputElement) {
-    const which: Thumb = input.id === `${this.uid}_start` ? 'start' : 'end';
+    const which: Thumb = input.id === `${this.domId}_start` ? 'start' : 'end';
     this.setThumb(which, Number(input.value), true);
   }
 
   /** The thumb the browser points at for an invalid value. */
   protected override validationAnchor(): HTMLElement | undefined {
-    return this.querySelector<HTMLElement>(`input[id="${this.uid}_start"]`) ?? undefined;
+    return this.querySelector<HTMLElement>(`input[id="${this.domId}_start"]`) ?? undefined;
   }
 
   /** A thumb moved: it stops at the other one rather than cross it. */
@@ -245,7 +244,7 @@ export class GuiRangeSlider extends GuiSliderBase {
             ? 'start'
             : 'end';
     event.preventDefault();
-    this.querySelector<HTMLInputElement>(`input[id="${this.uid}_${which}"]`)?.focus();
+    this.querySelector<HTMLInputElement>(`input[id="${this.domId}_${which}"]`)?.focus();
     this.setThumb(which, value, true);
   };
 }

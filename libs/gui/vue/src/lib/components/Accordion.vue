@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { toDomId } from '@golemui/core/internals';
 import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
 import { useLayoutWidget, WidgetRenderer } from '@golemui/vue';
 import type { GuiToggleEventDetail } from '@golemui/gui-components';
@@ -13,7 +14,8 @@ import '@golemui/gui-components/accordion';
 
 const props = defineProps<WithWidget>();
 const widget = props.widget as LayoutWidget;
-const { uid, children, templateData, onChange } = useLayoutWidget<AccordionProps>(widget);
+const { uid, formName, children, templateData, onChange } = useLayoutWidget<AccordionProps>(widget);
+const domId = toDomId(formName, uid.value);
 
 const activeSections = ref<NonNullable<AccordionProps['defaultOpen']>>({});
 let initialized = false;
@@ -76,7 +78,7 @@ const sections = computed(() => templateData.value.sections || []);
 
 <template>
   <div class="gui-accordion gui-field">
-    <gui-accordion :id="uid" :multiple.prop="!templateData.singleOpen">
+    <gui-accordion :id="domId" :multiple.prop="!templateData.singleOpen">
       <gui-accordion-item
         v-for="section in sections"
         :key="section.uid"
@@ -84,15 +86,15 @@ const sections = computed(() => templateData.value.sections || []);
         @gui-toggle="onToggle($event, section.uid)"
       >
         <details :open="isOpen(section.uid)">
-          <summary :id="accordionButtonId(widget.uid, section.uid)">
+          <summary :id="accordionButtonId(domId, section.uid)">
             {{ section.label }}
           </summary>
           <section
             v-if="shouldRenderContent(section.uid) && sectionForUid(section.uid)"
             class="gui-widget"
             role="region"
-            :id="accordionSectionId(widget.uid, section.uid)"
-            :aria-labelledby="accordionButtonId(widget.uid, section.uid)"
+            :id="accordionSectionId(domId, section.uid)"
+            :aria-labelledby="accordionButtonId(domId, section.uid)"
           >
             <WidgetRenderer :widget="sectionForUid(section.uid)!" />
           </section>

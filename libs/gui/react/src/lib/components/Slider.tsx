@@ -8,10 +8,8 @@ import '../styles.scss';
 
 export function Slider(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<number>;
-  const { uid, errors, value, isTouched, templateData, onValueChanged, onBlur } = useInputWidget<
-    number,
-    SliderProps
-  >(widget);
+  const { uid, formName, errors, value, isTouched, templateData, onValueChanged, onBlur } =
+    useInputWidget<number, SliderProps>(widget);
 
   const handleChange = useCallback(
     (e: Event) => onValueChanged((e as CustomEvent).detail.value),
@@ -27,6 +25,7 @@ export function Slider(widgetInstance: WithWidget) {
     <div className="gui-slider gui-field">
       <GuiSliderReact
         uid={uid}
+        idPrefix={formName}
         label={label}
         hint={templateData.hint}
         errors={errors}

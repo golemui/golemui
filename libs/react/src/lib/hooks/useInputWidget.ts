@@ -100,6 +100,11 @@ export function useInputWidget<T, ExtraProps extends Record<string, any>>(
 
   return {
     uid: widget.uid,
+    /**
+     * The form's `formName`. Every DOM id the widget renders starts with it, so two forms on one
+     * page never share an id: pass it as `idPrefix` to GolemUI Components.
+     */
+    formName: formContext.formName,
     value,
     templateData,
     errors,

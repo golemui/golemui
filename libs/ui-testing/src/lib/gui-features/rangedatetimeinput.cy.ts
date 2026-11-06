@@ -4,6 +4,8 @@ import {
   forcePillsCompactMode,
   forcePillsStripMode,
   type MountComponentFn,
+  testDomId,
+  withTestFormName,
 } from '../utils';
 
 // Behavior tests for the gui-range-date-time web component: two segmented
@@ -12,7 +14,8 @@ import {
 // which errors on a reversed range — the **swap** ordering (a backward
 // selection silently reorders on the full date-time). Uses en-GB (24h) so the
 // parts are dd/mm/yyyy hh:mm with no day-period.
-export const runRangeDateTimeInputComponentTests = (mountFn: MountComponentFn) => {
+export const runRangeDateTimeInputComponentTests = (baseMountFn: MountComponentFn) => {
+  const mountFn = withTestFormName(baseMountFn);
   describe('RangeDateTimeInput Component', () => {
     const uid = 'testSubject';
     const partSel = (group: string, type: string) =>
@@ -450,10 +453,10 @@ export const runRangeDateTimeInputComponentTests = (mountFn: MountComponentFn) =
         cy.get(`[data-cy="${uid}_pills-validator-error"]`)
           .should('be.visible')
           .and('contain.text', 'Incomplete date-time');
-        cy.get(`#${uid}_pills_errors`)
+        cy.get(`[id="${testDomId(`${uid}_pills_errors`)}"]`)
           .should('have.attr', 'aria-hidden', 'true')
           .and('not.have.attr', 'role');
-        cy.get(`[id="${uid}_errors"]`).should('have.length', 1);
+        cy.get(`[id="${testDomId(`${uid}_errors`)}"]`).should('have.length', 1);
 
         cy.get(`[data-cy="${uid}_validator-error"]`).then(($li) => {
           cy.get('.gui-pills__dropdown').should('have.css', 'border-top-color', $li.css('color'));

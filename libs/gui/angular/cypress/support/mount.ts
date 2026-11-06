@@ -84,6 +84,35 @@ export const mountFramework = (options: MountOptions) => {
     );
   }
 
+  if (options.extraForms?.length) {
+    // Several forms side by side, from a host template. `onFormReady` is not supported here.
+    mount(
+      `<gui-form [config]="config" [autocomplete]="autocomplete" (formEvent)="formEvent.emit($event)"
+          (formHealth)="formHealth.emit($event)" (formSubmit)="formSubmit.emit($event)"></gui-form>
+        @for (extra of extraForms; track $index) {
+          <gui-form [config]="extra.config" [autocomplete]="autocomplete"
+            (formEvent)="formEvent.emit($event)" (formHealth)="formHealth.emit($event)"
+            (formSubmit)="extra.formSubmit?.($event)"></gui-form>
+        }`,
+      {
+        imports: [CommonModule, FormComponent],
+        providers: [provideZoneChangeDetection()],
+        componentProperties: {
+          config,
+          autocomplete: options.autocomplete,
+          formHealth: formHealthOutput,
+          formEvent: formEventOutput,
+          formSubmit: formSubmitOutput,
+          extraForms: options.extraForms.map((extra) => ({
+            config: { ...config, formName: extra.formName },
+            formSubmit: extra.formSubmit,
+          })),
+        },
+      },
+    );
+    return;
+  }
+
   mount(FormComponent, {
     imports: [CommonModule, FormCoreComponent],
     providers: [provideZoneChangeDetection()],

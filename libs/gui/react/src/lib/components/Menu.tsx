@@ -1,3 +1,4 @@
+import { toDomId } from '@golemui/core/internals';
 import type { ActionWidget, WithWidget } from '@golemui/core';
 import { useActionWidget } from '@golemui/react';
 import {
@@ -17,9 +18,10 @@ import '../styles.scss';
  */
 export function Menu(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as ActionWidget;
-  const { uid, templateData, emitClick } = useActionWidget<MenuProps>(widget);
+  const { uid, formName, templateData, emitClick } = useActionWidget<MenuProps>(widget);
+  const domId = toDomId(formName, uid);
   const { variant, icon, iconPosition } = templateData;
-  const panelId = menuPanelId(uid);
+  const panelId = menuPanelId(domId);
   const iconPart = icon ? (
     <span
       className={`gui-widget-icon gui-button-icon ${icon}`}
@@ -34,7 +36,7 @@ export function Menu(widgetInstance: WithWidget) {
       <div className="gui-widget">
         <button
           type="button"
-          id={uid}
+          id={domId}
           className={menuButtonClasses({ variant, icon, iconPosition })}
           data-cy={`${uid}_button`}
           popoverTarget={panelId}
@@ -50,7 +52,7 @@ export function Menu(widgetInstance: WithWidget) {
         placement={templateData.placement ?? DEFAULT_MENU_PLACEMENT}
         onGuiAction={(event) => emitClick({ value: event.detail.value })}
       >
-        <div id={panelId} data-cy={panelId} popover="auto">
+        <div id={panelId} data-cy={menuPanelId(uid)} popover="auto">
           {(templateData.items ?? []).map((item, index) =>
             isMenuSeparator(item) ? (
               <hr key={`separator-${index}`} />

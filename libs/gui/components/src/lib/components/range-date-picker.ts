@@ -280,14 +280,15 @@ export class GuiRangeDatePicker extends GuiFormControl {
 
     const calendar = this._popup.open
       ? addPickerPanel(
-          this.uid,
+          this,
           { errors: this.errors, touched: this.touched, showErrors: this.showErrors },
           html`<gui-range-calendar
-            id=${`${this.uid}_popup`}
+            id=${`${this.domId}_popup`}
             role="dialog"
-            aria-labelledby=${this.label ? `${this.uid}_label` : nothing}
+            aria-labelledby=${this.label ? `${this.domId}_label` : nothing}
             aria-label=${this.label ? nothing : requiredName('calendar')}
             .uid=${this.uid}
+            .idPrefix=${this.idPrefix}
             .hint=${this.hint}
             .showHint=${false}
             .touched=${this.touched}
@@ -328,7 +329,7 @@ export class GuiRangeDatePicker extends GuiFormControl {
 
     return html`
       ${addLabel(
-        this.uid,
+        this,
         {
           label: this.label,
           hint: this.hint,
@@ -346,10 +347,11 @@ export class GuiRangeDatePicker extends GuiFormControl {
         @focusout=${this._focusLeave.onFocusOut}
       >
         <gui-range-date
-          id=${`${this.uid}_date`}
+          id=${`${this.domId}_date`}
           .deferFocusLeave=${true}
           class=${classMap(datePickerIcon.widgetClasses)}
           .uid=${this.uid}
+          .idPrefix=${this.idPrefix}
           .hint=${this.hint}
           .showHint=${false}
           .showErrors=${false}
@@ -393,7 +395,7 @@ export class GuiRangeDatePicker extends GuiFormControl {
           aria-label=${requiredName('showCalendar', this.toggleAriaLabel)}
           aria-haspopup="dialog"
           aria-expanded=${this._popup.open ? 'true' : 'false'}
-          aria-controls=${`${this.uid}_popup`}
+          aria-controls=${`${this.domId}_popup`}
           ?disabled=${this.disabled}
           @click=${this.onToggleClick}
         >
@@ -404,7 +406,7 @@ export class GuiRangeDatePicker extends GuiFormControl {
       </div>
 
       ${this.showErrors !== false
-        ? addErrors(this.uid, { errors: this.errors, touched: this.touched })
+        ? addErrors(this, { errors: this.errors, touched: this.touched })
         : ''}
     `;
   }

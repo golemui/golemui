@@ -1,4 +1,5 @@
 import { type FormWidget, errorCodes } from '@golemui/core';
+import { toDomId } from '@golemui/core/internals';
 import { consume } from '@lit/context';
 import { type LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
@@ -79,7 +80,7 @@ export const WidgetMixin = <T extends new (...args: any[]) => LitElement>(superC
         const element = new component();
 
         element.widget = this.widget;
-        element.id = `host-${this.widget.uid}`;
+        element.id = this.hostId(this.widget);
 
         this.replaceWith(element);
       } catch (err) {
@@ -100,13 +101,18 @@ export const WidgetMixin = <T extends new (...args: any[]) => LitElement>(superC
       }
     }
 
+    /** The id of the widget's element, scoped to its form like every id inside it. */
+    private hostId(widget: FormWidget<string>): string {
+      return `host-${toDomId(this.formContext?.formName, widget.uid as string)}`;
+    }
+
     override render() {
       const tag = this.resolvePreloadedTag();
       if (!tag || !this.widget) {
         return null;
       }
       const staticTag = staticTagFor(tag);
-      return staticHtml`<${staticTag} id=${`host-${this.widget.uid}`} .widget=${this.widget}></${staticTag}>`;
+      return staticHtml`<${staticTag} id=${this.hostId(this.widget)} .widget=${this.widget}></${staticTag}>`;
     }
   }
 

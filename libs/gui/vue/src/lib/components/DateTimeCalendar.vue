@@ -9,6 +9,7 @@ const props = defineProps<WithWidget>();
 const widget = props.widget as InputWidget<string>;
 const {
   uid,
+  formName,
   errors,
   value,
   isTouched,
@@ -63,6 +64,7 @@ onUnmounted(() => {
     <gui-date-time-calendar
       ref="calendarRef"
       :uid="uid"
+      :id-prefix="formName"
       :label="templateData.label"
       :hint="templateData.hint"
       :errors="errors"

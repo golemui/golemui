@@ -1,10 +1,11 @@
 import { defineForm, identityTranslator } from '@golemui/core';
-import { type MountComponentFn } from '../utils';
+import { type MountComponentFn, testDomId, withTestFormName } from '../utils';
 
 // Characterization tests for the current gui-date behavior. They pin the exact
 // interaction model (auto-advance wrap, clamping with write-back, null emit on
 // empty blur) so refactors of the input internals must not change any of it.
-export const runDateInputComponentTests = (mountFn: MountComponentFn) => {
+export const runDateInputComponentTests = (baseMountFn: MountComponentFn) => {
+  const mountFn = withTestFormName(baseMountFn);
   describe('DateInput Component', () => {
     const uid = 'testSubject';
     const sel = {
@@ -492,8 +493,8 @@ export const runDateInputComponentTests = (mountFn: MountComponentFn) => {
       it('should name the group via its label element', () => {
         mountDateInput();
         cy.get('gui-date [role="group"]')
-          .should('have.id', 'testSubject')
-          .should('have.attr', 'aria-labelledby', 'testSubject_label');
+          .should('have.id', testDomId('testSubject'))
+          .should('have.attr', 'aria-labelledby', testDomId('testSubject_label'));
       });
     });
   });

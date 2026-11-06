@@ -72,9 +72,9 @@ export class GuiOtp extends GuiFormControl {
   private committed: string | undefined = undefined;
 
   private ariaController = new GUIAriaController(this, {
-    getTargets: () => this.querySelectorAll(`input[id="${this.uid}"]`),
+    getTargets: () => this.querySelectorAll(`input[id="${this.domId}"]`),
     getState: () => ({
-      uid: this.uid,
+      domId: this.domId,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -132,7 +132,6 @@ export class GuiOtp extends GuiFormControl {
     super.render();
 
     const templateData: ControlTemplateData<string> & { hint?: string } = {
-      uid: this.uid,
       label: this.label,
       hint: this.hint,
       errors: this.errors,
@@ -144,14 +143,14 @@ export class GuiOtp extends GuiFormControl {
     };
 
     return html`
-      ${addLabel(this.uid, templateData)}
+      ${addLabel(this, templateData)}
 
       <div class="gui-widget">
         <div class="gui-otp__control" dir="ltr">
           ${this.boxes()}
           <input
             type="text"
-            id=${this.uid}
+            id=${this.domId}
             data-cy=${`${this.uid}_otp`}
             class="gui-otp__input"
             inputmode="numeric"
@@ -173,7 +172,7 @@ export class GuiOtp extends GuiFormControl {
         </div>
       </div>
 
-      ${addErrors(this.uid, templateData)}
+      ${addErrors(this, templateData)}
     `;
   }
 

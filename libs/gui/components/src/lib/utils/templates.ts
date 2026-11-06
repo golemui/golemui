@@ -2,7 +2,6 @@ import { html, nothing } from 'lit';
 import { classMap } from 'lit/directives/class-map.js';
 
 export type ControlTemplateData<T, V = any> = {
-  uid?: string;
   label?: string;
   value?: T;
   errors?: string[];
@@ -25,11 +24,17 @@ export const showsErrors = (touched: boolean | undefined, errors: string[] | und
  * The visual required marker. Hidden from AT — `aria-required` on the control
  * carries the semantics, so screen readers don't announce a stray "star".
  */
+/**
+ * The two ids of an element: `uid` builds its `data-cy` attributes, `domId` (the uid behind the
+ * element's `idPrefix`) its DOM ids and the references to them. Every `GuiElement` is one.
+ */
+export type ElementIds = { readonly uid: string; readonly domId: string };
+
 export const requiredMarker = (required: boolean | undefined) =>
   required ? html`<span aria-hidden="true"> *</span>` : nothing;
 
 export const addLabel = <T, ExtraProps extends { hint?: string }>(
-  uid: string,
+  ids: ElementIds,
   templateData: ControlTemplateData<T> & ExtraProps,
   withErrors = false,
   type: string | undefined = undefined,
@@ -39,32 +44,26 @@ export const addLabel = <T, ExtraProps extends { hint?: string }>(
 ) => {
   // Without a label the hint still renders, on its own: the control's aria-describedby points at
   // it.
-  if (!templateData.label) return addHint(uid, templateData);
+  if (!templateData.label) return addHint(ids, templateData);
+
+  const { uid, domId } = ids;
+  const labelId = type ? `${domId}_${type}_label` : `${domId}_label`;
 
   if (isNativeElement) {
-    return html`<label
-      class="gui-label"
-      for=${uid}
-      data-cy=${`${uid}_label`}
-      id=${type ? `${uid}_${type}_label` : `${uid}_label`}
-    >
+    return html`<label class="gui-label" for=${domId} data-cy=${`${uid}_label`} id=${labelId}>
       <span class="gui-label__text"
         >${templateData.label}${requiredMarker(templateData.required)}</span
       >
-      ${addHint(uid, templateData, true)}
-      ${withErrors ? addErrors(uid, templateData) : nothing}${extra}
+      ${addHint(ids, templateData, true)}
+      ${withErrors ? addErrors(ids, templateData) : nothing}${extra}
     </label>`;
   } else {
-    return html`<span
-      class="gui-label"
-      data-cy=${`${uid}_label`}
-      id=${type ? `${uid}_${type}_label` : `${uid}_label`}
-    >
+    return html`<span class="gui-label" data-cy=${`${uid}_label`} id=${labelId}>
       <span class="gui-label__text"
         >${templateData.label}${requiredMarker(templateData.required)}</span
       >
-      ${addHint(uid, templateData, true)}
-      ${withErrors ? addErrors(uid, templateData) : nothing}${extra}
+      ${addHint(ids, templateData, true)}
+      ${withErrors ? addErrors(ids, templateData) : nothing}${extra}
     </span>`;
   }
 };
@@ -75,13 +74,13 @@ export const addLabel = <T, ExtraProps extends { hint?: string }>(
  * `aria-describedby` reads the elements it points to even when they are hidden.
  */
 export const addHint = <T, ExtraProps extends { hint?: string }>(
-  uid: string,
+  ids: ElementIds,
   templateData: ControlTemplateData<T> & ExtraProps,
   inLabel = false,
 ) => {
   const hint = templateData.hint;
   if (!hint) return html``;
-  const id = `${uid}_hint`;
+  const id = `${ids.domId}_hint`;
   const hidden = inLabel ? 'true' : nothing;
   return html`<div class="gui-widget-hint" id=${id} aria-hidden=${hidden}>${hint}</div>`;
 };
@@ -118,7 +117,7 @@ export const addIcon = <T, ExtraProps extends { icon?: string }>(
 export type AddErrorsVariant = 'field' | 'panel' | 'pills';
 
 export const addErrors = <T, ExtraProps extends { hint?: string }>(
-  uid: string,
+  ids: ElementIds,
   templateData: ControlTemplateData<T> & ExtraProps,
   options?: { variant?: AddErrorsVariant },
 ) => {
@@ -133,7 +132,8 @@ export const addErrors = <T, ExtraProps extends { hint?: string }>(
     'gui-validator--empty': !showErrors,
   };
 
-  const id = variant === 'field' ? `${uid}_errors` : `${uid}_${variant}_errors`;
+  const { uid, domId } = ids;
+  const id = variant === 'field' ? `${domId}_errors` : `${domId}_${variant}_errors`;
   const dataCyPrefix = variant === 'field' ? `${uid}_validator` : `${uid}_${variant}-validator`;
 
   // A `div`, not a list: `role="alert"` would override a list's semantics and orphan its items.
@@ -159,7 +159,7 @@ export const addErrors = <T, ExtraProps extends { hint?: string }>(
  * hides what's wrong with the current selection.
  */
 export const addPickerPanel = (
-  uid: string,
+  ids: ElementIds,
   templateData: { errors?: string[]; touched?: boolean; showErrors?: boolean },
   content: unknown,
   options?: { hidden?: boolean; inline?: boolean },
@@ -173,6 +173,6 @@ export const addPickerPanel = (
   >
     ${content}
     ${templateData.showErrors !== false
-      ? addErrors(uid, templateData, { variant: 'panel' })
+      ? addErrors(ids, templateData, { variant: 'panel' })
       : nothing}
   </div>`;

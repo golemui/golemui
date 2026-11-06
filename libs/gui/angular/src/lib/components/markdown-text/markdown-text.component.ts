@@ -1,3 +1,4 @@
+import { toDomId } from '@golemui/core/internals';
 import { CommonModule } from '@angular/common';
 import {
   Component,
@@ -28,6 +29,11 @@ export class MarkdownTextComponent implements OnInit, OnDestroy, WithWidget {
 
   protected adapter: DisplayWidgetAdapter<MarkdownTextProps> = inject(DisplayWidgetAdapter);
   protected readonly deferHydration = deferHydrationAttr();
+
+  /** The widget uid scoped to the form, for the DOM ids. */
+  protected get domId(): string {
+    return toDomId(this.adapter.formName, this.widget.uid);
+  }
 
   ngOnInit(): void {
     this.adapter.init(this.widget);

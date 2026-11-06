@@ -195,6 +195,7 @@ describe('useInputWidget', () => {
     const output = lastHookOutput<InputHookOutput<string>>('firstName');
     expect(Object.keys(output).sort()).toEqual([
       'errors',
+      'formName',
       'injectValidationIssues',
       'isTouched',
       'onBlur',

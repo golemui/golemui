@@ -1,3 +1,4 @@
+import { toDomId } from '@golemui/core/internals';
 import type { InputWidget, WithWidget } from '@golemui/core';
 import { InputWidgetAdapter, type LitFormContext, formContext, inputContext } from '@golemui/lit';
 import type { DropdownProps, ListItem } from '@golemui/gui-shared/internals';
@@ -234,6 +235,7 @@ export class DropdownElement extends LitElement implements WithWidget {
   }
 
   override render() {
+    const domId = toDomId(this.formContext.formName, this.widget.uid);
     const templateData = this.adapter.templateData;
     const showErrors =
       templateData.touched && templateData.errors && templateData.errors.length > 0;
@@ -256,6 +258,7 @@ export class DropdownElement extends LitElement implements WithWidget {
       <gui-label
         .targetElement=${[this._listRef, this._inputRef]}
         .uid=${this.widget.uid}
+        .idPrefix=${this.formContext.formName}
         .label=${templateData.label}
         .hint=${templateData.hint}
         .errors=${templateData.errors}
@@ -275,7 +278,7 @@ export class DropdownElement extends LitElement implements WithWidget {
         <input
           type="text"
           role="combobox"
-          id=${this.widget.uid}
+          id=${domId}
           data-cy=${`${this.widget.uid}_textinput`}
           class=${classMap({
             'gui-widget-input': true,
@@ -291,10 +294,10 @@ export class DropdownElement extends LitElement implements WithWidget {
           @input=${this._onInput}
           @click=${this._showList}
           aria-expanded=${this._isListVisible ? 'true' : 'false'}
-          aria-controls=${`${this.widget.uid}-list`}
+          aria-controls=${`${domId}-list`}
           aria-autocomplete="list"
-          aria-labelledby=${templateData.label ? `${this.widget.uid}_label` : nothing}
-          aria-describedby=${templateData.hint ? `${this.widget.uid}_hint` : nothing}
+          aria-labelledby=${templateData.label ? `${domId}_label` : nothing}
+          aria-describedby=${templateData.hint ? `${domId}_hint` : nothing}
         />
         <button
           type="button"
@@ -302,7 +305,7 @@ export class DropdownElement extends LitElement implements WithWidget {
           aria-label=${templateData.toggleAriaLabel ?? 'Show options'}
           aria-haspopup="listbox"
           aria-expanded=${this._isListVisible ? 'true' : 'false'}
-          aria-controls=${`${this.widget.uid}-list`}
+          aria-controls=${`${domId}-list`}
           ?disabled=${templateData.disabled}
           @mousedown=${this._onToggleMouseDown}
           @click=${this._onToggleClick}
@@ -317,8 +320,9 @@ export class DropdownElement extends LitElement implements WithWidget {
           @mousedown=${this._onPanelMouseDown}
         >
           <gui-list
-            id=${`${this.widget.uid}-list`}
+            id=${`${domId}-list`}
             .uid=${this.widget.uid}
+            .idPrefix=${this.formContext.formName}
             .value=${live(templateData.value ?? '')}
             .valueField=${templateData.valueField! as string}
             .items=${this._isFiltering && !asyncFiltering
@@ -369,6 +373,7 @@ export class DropdownElement extends LitElement implements WithWidget {
             ? html`<gui-errors
                 panel
                 .uid=${this.widget.uid}
+                .idPrefix=${this.formContext.formName}
                 .errors=${templateData.errors}
                 .touched=${templateData.touched}
               ></gui-errors>`
@@ -379,6 +384,7 @@ export class DropdownElement extends LitElement implements WithWidget {
       ${showErrors
         ? html`<gui-errors
             .uid=${this.widget.uid}
+            .idPrefix=${this.formContext.formName}
             .errors=${templateData.errors}
             .touched=${templateData.touched}
           ></gui-errors>`

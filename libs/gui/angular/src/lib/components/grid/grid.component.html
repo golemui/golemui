@@ -1,4 +1,4 @@
-<div [class]="gridClasses(grid())" [id]="widget.uid">
+<div [class]="gridClasses(grid())" [id]="domId">
   @for (child of adapter.templateData().children; track child.uid) {
     <div [class]="cellClasses(child)">
       <ng-container guiWidget [widget]="child" />

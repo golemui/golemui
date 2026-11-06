@@ -371,7 +371,7 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
   protected ariaController: GUIAriaController<unknown, any> = new GUIAriaController(this, {
     getTargets: () => this.querySelectorAll(`.gui-calendar-input`),
     getState: () => ({
-      uid: this.uid,
+      domId: this.domId,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -596,7 +596,7 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
 
   override render() {
     return renderCalendarChrome({
-      uid: this.uid,
+      ids: this,
       label: this.label,
       hint: this.hint,
       showHint: this.showHint,
@@ -657,6 +657,7 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
           <gui-time-picker
             class="gui-time-picker gui-field gui-range-date-time-calendar__start"
             .uid=${`${this.uid}-start-time`}
+            .idPrefix=${this.idPrefix}
             .label=${requiredName('startTime', this.startTimeLabel)}
             .showErrors=${false}
             .deferFocusLeave=${true}
@@ -691,6 +692,7 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
           <gui-time-picker
             class="gui-time-picker gui-field gui-range-date-time-calendar__end"
             .uid=${`${this.uid}-end-time`}
+            .idPrefix=${this.idPrefix}
             .label=${requiredName('endTime', this.endTimeLabel)}
             .showErrors=${false}
             .deferFocusLeave=${true}
@@ -1351,6 +1353,7 @@ export class GuiRangeDateTimeCalendar extends GuiFormControl {
       <gui-pills
         class="gui-range-calendar__pills"
         .uid=${this.uid}
+        .idPrefix=${this.idPrefix}
         .toolbarAriaLabel=${message('selectedDateTimeRanges')}
         .items=${pillItems}
         .removable=${true}

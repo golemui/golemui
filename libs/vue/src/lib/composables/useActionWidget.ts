@@ -5,6 +5,11 @@ import { mergeViewModelIntoTemplateData, type WithFlattenedProps } from './templ
 
 export interface UseActionWidgetReturn<ExtraProps extends Record<string, any>> {
   uid: Ref<string>;
+  /**
+   * The form's `formName`. Every DOM id the widget renders starts with it, so two forms on one
+   * page never share an id: pass it as `idPrefix` to GolemUI Components.
+   */
+  formName: string;
   templateData: Ref<WithFlattenedProps<ActionWidget<string>, ExtraProps> & { invalid: boolean }>;
   /** Kept for existing templates. `templateData.invalid` is the portable form the other three use. */
   invalid: Ref<boolean>;
@@ -54,5 +59,12 @@ export function useActionWidget<ExtraProps extends Record<string, any> = Record<
 
   const onClick = () => emitClick();
 
-  return { uid, templateData, invalid, onClick, emitClick };
+  return {
+    uid,
+    formName: formContext.formName,
+    templateData,
+    invalid,
+    onClick,
+    emitClick,
+  };
 }

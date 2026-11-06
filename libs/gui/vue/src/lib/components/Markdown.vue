@@ -7,10 +7,8 @@ import '@golemui/gui-components/markdown';
 
 const props = defineProps<WithWidget>();
 const widget = props.widget as InputWidget<string>;
-const { uid, errors, value, isTouched, templateData, onValueChanged, onBlur } = useInputWidget<
-  string,
-  MarkdownProps
->(widget);
+const { uid, formName, errors, value, isTouched, templateData, onValueChanged, onBlur } =
+  useInputWidget<string, MarkdownProps>(widget);
 
 const handleInput = (e: Event) => onValueChanged((e as CustomEvent).detail.value);
 const required = computed(() => (templateData.value.validator as Validator)?.required);
@@ -25,6 +23,7 @@ const minimumHeight = computed(() => templateData.value.minimumHeight ?? 120);
   <div class="gui-markdown gui-field">
     <gui-markdown
       :uid="uid"
+      :id-prefix="formName"
       :label="templateData.label"
       :errors="errors"
       :touched="isTouched"

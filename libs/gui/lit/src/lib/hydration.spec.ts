@@ -49,7 +49,9 @@ describe('resuming a server-rendered gui-form', () => {
   });
 
   const form = () => document.querySelector('gui-form') as HTMLElement;
-  const input = (id: string) => document.getElementById(id) as HTMLInputElement;
+  // Every id inside the form starts with its name.
+  const input = (id: string) =>
+    document.getElementById(`${config.formName}-${id}`) as HTMLInputElement;
 
   const resume = async () => {
     // The gui-form element builds its own validators, so the ones passed here are not used.

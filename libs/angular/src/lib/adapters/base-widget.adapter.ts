@@ -17,6 +17,14 @@ export abstract class BaseWidgetAdapter<F extends NonFunctionWidget> {
   protected widget!: F;
 
   /**
+   * The form's `formName`. Every DOM id the widget renders starts with it, so two forms on one
+   * page never share an id: pass it as `idPrefix` to GolemUI Components.
+   */
+  get formName(): string {
+    return this.context.formName;
+  }
+
+  /**
    * Feeds the templateData signal from the widget's view model: the calculated widget and its
    * props merged into one flattened object, plus the extra fields the concrete adapter reads
    * from the view model.

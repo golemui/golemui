@@ -1,3 +1,4 @@
+import { toDomId } from '@golemui/core/internals';
 import {
   GuiErrorsReact,
   GuiLabelReact,
@@ -27,8 +28,18 @@ import type { GuiLabel } from '@golemui/gui-components/label';
 export function MultiDropdown(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<OptionValue[]>;
 
-  const { uid, errors, value, isTouched, templateData, onFilter, onValueChanged, onBlur } =
-    useInputWidget<OptionValue[], MultiDropdownProps<any>>(widget);
+  const {
+    uid,
+    formName,
+    errors,
+    value,
+    isTouched,
+    templateData,
+    onFilter,
+    onValueChanged,
+    onBlur,
+  } = useInputWidget<OptionValue[], MultiDropdownProps<any>>(widget);
+  const domId = toDomId(formName, uid);
 
   // The options to render, as the list reports them.
   const [visibleItems, setVisibleItems] = useState<GuiVisibleItem<any>[]>([]);
@@ -286,6 +297,7 @@ export function MultiDropdown(widgetInstance: WithWidget) {
       <GuiLabelReact
         ref={labelRef}
         uid={uid}
+        idPrefix={formName}
         label={label}
         hint={templateData.hint}
         errors={errors}
@@ -303,6 +315,7 @@ export function MultiDropdown(widgetInstance: WithWidget) {
         <GuiMultiSelectTriggerReact
           ref={triggerRef}
           uid={uid}
+          idPrefix={formName}
           pills={pillItems}
           errors={errors}
           touched={isTouched}
@@ -315,7 +328,7 @@ export function MultiDropdown(widgetInstance: WithWidget) {
           hasLabel={!!templateData.label}
           hasHint={!!templateData.hint}
           panelOpen={isListVisible}
-          panelId={`${uid}-list`}
+          panelId={`${domId}-list`}
           removeAriaLabel={templateData.removeAriaLabel}
           removeIcon={templateData.removeIcon}
           compactAriaLabel={`${pillItems.length} selected`}
@@ -331,7 +344,7 @@ export function MultiDropdown(widgetInstance: WithWidget) {
           aria-label={templateData.toggleAriaLabel ?? 'Show options'}
           aria-haspopup="listbox"
           aria-expanded={isListVisible ? 'true' : 'false'}
-          aria-controls={`${uid}-list`}
+          aria-controls={`${domId}-list`}
           disabled={isDisabled}
           onMouseDown={handleToggleMouseDown}
           onClick={handleToggleClick}
@@ -352,8 +365,9 @@ export function MultiDropdown(widgetInstance: WithWidget) {
         >
           <GuiMultiListReact
             ref={listRef}
-            id={`${uid}-list`}
+            id={`${domId}-list`}
             uid={uid}
+            idPrefix={formName}
             values={currentValues}
             valueField={templateData.valueField! as string}
             items={isFiltering && !asyncFiltering ? filteredItems : templateData.items}
@@ -397,13 +411,24 @@ export function MultiDropdown(widgetInstance: WithWidget) {
             })}
           </GuiMultiListReact>
           {showErrors && (
-            <GuiErrorsReact panel uid={uid} errors={errors} touched={isTouched}></GuiErrorsReact>
+            <GuiErrorsReact
+              panel
+              uid={uid}
+              idPrefix={formName}
+              errors={errors}
+              touched={isTouched}
+            ></GuiErrorsReact>
           )}
         </div>
       </div>
 
       {showErrors && (
-        <GuiErrorsReact uid={uid} errors={errors} touched={isTouched}></GuiErrorsReact>
+        <GuiErrorsReact
+          uid={uid}
+          idPrefix={formName}
+          errors={errors}
+          touched={isTouched}
+        ></GuiErrorsReact>
       )}
     </div>
   );

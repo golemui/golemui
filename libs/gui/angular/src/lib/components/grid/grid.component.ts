@@ -1,3 +1,4 @@
+import { toDomId } from '@golemui/core/internals';
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, type OnDestroy, type OnInit } from '@angular/core';
 import { LayoutWidgetAdapter, WidgetDirective } from '@golemui/angular';
@@ -32,6 +33,11 @@ export class GridComponent implements OnInit, OnDestroy, WithWidget {
 
   protected cellClasses(child: NonFunctionWidget<string>): string {
     return gridCellClasses(this.grid(), child.size);
+  }
+
+  /** The widget uid scoped to the form, for the DOM ids. */
+  protected get domId(): string {
+    return toDomId(this.adapter.formName, this.widget.uid);
   }
 
   ngOnInit(): void {

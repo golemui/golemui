@@ -143,7 +143,7 @@ export class GuiCalendar extends GuiFormControl {
   protected ariaController: GUIAriaController<unknown, any> = new GUIAriaController(this, {
     getTargets: () => this.querySelectorAll(`.gui-calendar-input`),
     getState: () => ({
-      uid: this.uid,
+      domId: this.domId,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -202,7 +202,7 @@ export class GuiCalendar extends GuiFormControl {
 
   override render() {
     return renderCalendarChrome({
-      uid: this.uid,
+      ids: this,
       label: this.label,
       hint: this.hint,
       showHint: this.showHint,

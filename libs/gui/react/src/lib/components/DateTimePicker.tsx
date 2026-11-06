@@ -9,6 +9,7 @@ export function DateTimePicker(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<string>;
   const {
     uid,
+    formName,
     errors,
     value,
     isTouched,
@@ -39,6 +40,7 @@ export function DateTimePicker(widgetInstance: WithWidget) {
     <div className="gui-date-time-picker gui-field">
       <GuiDateTimePickerReact
         uid={uid}
+        idPrefix={formName}
         label={templateData.label as string}
         hint={templateData.hint}
         errors={errors}

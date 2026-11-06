@@ -65,6 +65,7 @@ export class GuiMultiDropdown extends GuiDropdown {
 
     return html`<gui-multi-select-trigger
       .uid=${this.uid}
+      .idPrefix=${this.idPrefix}
       .pills=${pills}
       .errors=${this.errors}
       .touched=${this.touched}
@@ -77,7 +78,7 @@ export class GuiMultiDropdown extends GuiDropdown {
       .hasLabel=${!!this.label}
       .hasHint=${!!this.hint}
       .panelOpen=${open}
-      .panelId=${`${this.uid}-list`}
+      .panelId=${`${this.domId}-list`}
       .removeAriaLabel=${this.removeAriaLabel}
       .removeIcon=${this.removeIcon}
       @keydown=${this.onInputKeyDown}
@@ -90,8 +91,9 @@ export class GuiMultiDropdown extends GuiDropdown {
 
   protected override renderList(options: unknown): unknown {
     return html`<gui-multi-list
-      id=${`${this.uid}-list`}
+      id=${`${this.domId}-list`}
       .uid=${this.uid}
+      .idPrefix=${this.idPrefix}
       .label=${this.label}
       .items=${this.shownItems}
       .valueField=${this.valueField}

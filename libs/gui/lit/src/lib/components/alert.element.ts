@@ -1,3 +1,4 @@
+import { toDomId } from '@golemui/core/internals';
 import { html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
 import { safeDefine, unsubscribeAll } from '@golemui/lit/internals';
@@ -42,7 +43,11 @@ export class AlertElement extends LitElement implements WithWidget {
 
   override render() {
     const { text, level } = this.adapter.templateData;
-    return html`<gui-alert id=${this.widget.uid} variant=${level || 'default'}>${text}</gui-alert>`;
+    return html`<gui-alert
+      id=${toDomId(this.formContext.formName, this.widget.uid)}
+      variant=${level || 'default'}
+      >${text}</gui-alert
+    >`;
   }
 
   override disconnectedCallback() {

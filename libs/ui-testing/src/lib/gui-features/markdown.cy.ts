@@ -1,9 +1,10 @@
 import { defineForm } from '@golemui/core';
-import { type MountComponentFn } from '../utils';
+import { type MountComponentFn, testDomId, withTestFormName } from '../utils';
 
-export const runMarkdownComponentTests = (mountFn: MountComponentFn) => {
+export const runMarkdownComponentTests = (baseMountFn: MountComponentFn) => {
+  const mountFn = withTestFormName(baseMountFn);
   describe('Markdown Component', () => {
-    const textarea = () => cy.get('textarea[id="testSubject"]');
+    const textarea = () => cy.get(`textarea[id="${testDomId('testSubject')}"]`);
     const button = (label: string) =>
       cy.get(`.gui-markdown__toolbar-button[aria-label="${label}"]`);
 

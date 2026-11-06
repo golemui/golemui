@@ -9,6 +9,7 @@ export function RangeCalendar(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<DateRange[]>;
   const {
     uid,
+    formName,
     errors,
     value,
     isTouched,
@@ -73,6 +74,7 @@ export function RangeCalendar(widgetInstance: WithWidget) {
       <GuiRangeCalendarReact
         ref={handleRef}
         uid={uid}
+        idPrefix={formName}
         label={label}
         hint={hint}
         errors={errors}

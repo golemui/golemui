@@ -41,6 +41,7 @@ export class CalendarElement extends LitElement implements WithWidget {
     return html`
       <gui-calendar
         .uid=${this.widget.uid}
+        .idPrefix=${this.formContext.formName}
         .label=${this.adapter.templateData.label}
         .hint=${this.adapter.templateData.hint}
         .errors=${this.adapter.templateData.errors}

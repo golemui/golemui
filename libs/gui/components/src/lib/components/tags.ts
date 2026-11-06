@@ -66,7 +66,7 @@ export class GuiTags extends GuiFormControl {
     requiresLabel: true,
     getTargets: () => this.querySelectorAll(`.gui-tags-input`),
     getState: () => ({
-      uid: this.uid,
+      domId: this.domId,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -112,7 +112,6 @@ export class GuiTags extends GuiFormControl {
   override render() {
     const tags = this.getValue();
     const templateData: ControlTemplateData<string[]> & GuiTagsProps = {
-      uid: this.uid,
       label: this.label,
       hint: this.hint,
       errors: this.errors,
@@ -136,7 +135,7 @@ export class GuiTags extends GuiFormControl {
     }));
 
     return html`
-      ${addLabel(this.uid, templateData, false, undefined, false)}
+      ${addLabel(this, templateData, false, undefined, false)}
 
       <div class="gui-widget">
         <div
@@ -146,7 +145,7 @@ export class GuiTags extends GuiFormControl {
             'gui-tags-input--icon': !!this.icon,
           })}
           role="group"
-          aria-labelledby=${`${this.uid}_label`}
+          aria-labelledby=${`${this.domId}_label`}
         >
           ${this.icon
             ? html`<span
@@ -160,6 +159,7 @@ export class GuiTags extends GuiFormControl {
             class="gui-tags__pills"
             style=${cspStyleMap(pillItems.length ? {} : { 'min-width': 0 })}
             .uid=${this.uid}
+            .idPrefix=${this.idPrefix}
             .toolbarAriaLabel=${message('selectedTags')}
             .items=${pillItems}
             .errors=${this.errors}
@@ -181,10 +181,10 @@ export class GuiTags extends GuiFormControl {
 
           <input
             type="text"
-            id=${this.uid}
+            id=${this.domId}
             data-cy=${`${this.uid}_tags-input`}
             class="gui-tags__input"
-            aria-labelledby=${`${this.uid}_label`}
+            aria-labelledby=${`${this.domId}_label`}
             ?disabled=${this.disabled}
             ?readonly=${this.readOnly}
             placeholder=${this.placeholder || nothing}
@@ -196,7 +196,7 @@ export class GuiTags extends GuiFormControl {
         </div>
       </div>
 
-      ${addErrors(this.uid, templateData)}
+      ${addErrors(this, templateData)}
     `;
   }
 
@@ -350,7 +350,7 @@ export class GuiTags extends GuiFormControl {
   }
 
   private focusInput() {
-    const input = this.querySelector<HTMLInputElement>(`input[id="${this.uid}"]`);
+    const input = this.querySelector<HTMLInputElement>(`input[id="${this.domId}"]`);
     input?.focus();
   }
 }

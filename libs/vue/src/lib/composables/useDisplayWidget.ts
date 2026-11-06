@@ -5,6 +5,11 @@ import { mergeViewModelIntoTemplateData, type WithFlattenedProps } from './templ
 
 export interface UseDisplayWidgetReturn<ExtraProps extends Record<string, any>> {
   uid: Ref<string>;
+  /**
+   * The form's `formName`. Every DOM id the widget renders starts with it, so two forms on one
+   * page never share an id: pass it as `idPrefix` to GolemUI Components.
+   */
+  formName: string;
   templateData: Ref<WithFlattenedProps<DisplayWidget<string>, ExtraProps>>;
 }
 
@@ -25,5 +30,9 @@ export function useDisplayWidget<ExtraProps extends Record<string, any> = Record
     viewModelSub.unsubscribe();
   });
 
-  return { uid, templateData };
+  return {
+    uid,
+    formName: formContext.formName,
+    templateData,
+  };
 }

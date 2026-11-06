@@ -1,7 +1,8 @@
 import { defineForm } from '@golemui/core';
-import { type MountComponentFn } from '../utils';
+import { type MountComponentFn, testDomId, withTestFormName } from '../utils';
 
-export const runStringInterpolationTests = (mountFn: MountComponentFn) => {
+export const runStringInterpolationTests = (baseMountFn: MountComponentFn) => {
+  const mountFn = withTestFormName(baseMountFn);
   describe('String interpolation', () => {
     describe('$meta interpolation in text', () => {
       it('should interpolate $meta variables in display text', () => {
@@ -273,9 +274,9 @@ export const runStringInterpolationTests = (mountFn: MountComponentFn) => {
           }),
         });
 
-        cy.get('[id="vip-message"]').should('not.exist');
+        cy.get(`[id="${testDomId('vip-message')}"]`).should('not.exist');
         cy.get('[data-cy="is-vip_checkbox"]').click();
-        cy.get('[id="vip-message"]').should('exist');
+        cy.get(`[id="${testDomId('vip-message')}"]`).should('exist');
         cy.get('.gui-alert [role="alert"]').contains('Welcome VIP: Grace');
       });
 
@@ -309,8 +310,8 @@ export const runStringInterpolationTests = (mountFn: MountComponentFn) => {
           }),
         });
 
-        cy.get('[id="admin-message"]').should('exist');
-        cy.get('[id="user-message"]').should('not.exist');
+        cy.get(`[id="${testDomId('admin-message')}"]`).should('exist');
+        cy.get(`[id="${testDomId('user-message')}"]`).should('not.exist');
       });
     });
 

@@ -43,6 +43,7 @@ export class DateTimeCalendarElement extends LitElement implements WithWidget {
     return html`
       <gui-date-time-calendar
         .uid=${this.widget.uid}
+        .idPrefix=${this.formContext.formName}
         .label=${templateData.label}
         .hint=${templateData.hint}
         .errors=${templateData.errors}
