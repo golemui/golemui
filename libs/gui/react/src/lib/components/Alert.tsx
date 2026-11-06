@@ -1,4 +1,3 @@
-import { toDomId } from '@golemui/core/internals';
 import type { DisplayWidget, WithWidget } from '@golemui/core';
 import { useDisplayWidget } from '@golemui/react';
 import type { AlertProps } from '@golemui/gui-shared/internals';
@@ -6,8 +5,7 @@ import '@golemui/gui-components/alert';
 
 export function Alert(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as DisplayWidget;
-  const { uid, formName, templateData } = useDisplayWidget<AlertProps>(widget);
-  const domId = toDomId(formName, uid);
+  const { domId, templateData } = useDisplayWidget<AlertProps>(widget);
 
   // The plain tag, not the React wrapper: a server render then has the variant as an attribute.
   // Nothing holds the plain tag, so it upgrades before React hydrates and adds its role: the

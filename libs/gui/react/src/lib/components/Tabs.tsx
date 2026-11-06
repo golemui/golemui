@@ -1,4 +1,3 @@
-import { toDomId } from '@golemui/core/internals';
 import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
 import { useLayoutWidget, WidgetRenderer } from '@golemui/react';
 import type { GuiTabChangeEventDetail } from '@golemui/gui-components';
@@ -15,8 +14,7 @@ import { GuiTabsReact } from '../web-components';
 
 export function Tabs(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as LayoutWidget;
-  const { uid, formName, children, templateData, onChange } = useLayoutWidget<TabsProps>(widget);
-  const domId = toDomId(formName, uid);
+  const { domId, children, templateData, onChange } = useLayoutWidget<TabsProps>(widget);
   const tabs = templateData.tabs ?? [];
   const [activeTab, setActiveTab] = useState(templateData.defaultOpen ?? tabs[0]?.uid);
   // Tab uids come from the props without row indexes, the panel children come from the store with

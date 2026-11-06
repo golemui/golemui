@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { toDomId } from '@golemui/core/internals';
 // The grid layout, and the deprecated flex layout, which renders as a grid.
 import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
 import { useLayoutWidget, WidgetRenderer } from '@golemui/vue';
@@ -14,8 +13,7 @@ import { computed } from 'vue';
 
 const props = defineProps<WithWidget>();
 const widget = props.widget as LayoutWidget;
-const { uid, formName, children, templateData } = useLayoutWidget<GridProps & FlexProps>(widget);
-const domId = toDomId(formName, uid.value);
+const { domId, children, templateData } = useLayoutWidget<GridProps & FlexProps>(widget);
 
 const grid = computed(() => resolveGrid(widget.type, templateData.value));
 </script>

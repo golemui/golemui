@@ -1,4 +1,3 @@
-import { toDomId } from '@golemui/core/internals';
 import {
   GuiErrorsReact,
   GuiLabelReact,
@@ -31,6 +30,7 @@ export function MultiDropdown(widgetInstance: WithWidget) {
   const {
     uid,
     formName,
+    domId,
     errors,
     value,
     isTouched,
@@ -39,7 +39,6 @@ export function MultiDropdown(widgetInstance: WithWidget) {
     onValueChanged,
     onBlur,
   } = useInputWidget<OptionValue[], MultiDropdownProps<any>>(widget);
-  const domId = toDomId(formName, uid);
 
   // The options to render, as the list reports them.
   const [visibleItems, setVisibleItems] = useState<GuiVisibleItem<any>[]>([]);

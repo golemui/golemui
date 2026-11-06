@@ -47,7 +47,7 @@ export class DateTimeElement extends LitElement implements WithWidget {
       <gui-date-time
         class=${classMap(dateTimeIcon.widgetClasses)}
         .uid=${this.widget.uid}
-        .idPrefix=${this.formContext.formName}
+        .idPrefix=${this.adapter.formName}
         .label=${this.adapter.templateData.label as string}
         .hint=${this.adapter.templateData.hint}
         .errors=${this.adapter.templateData.errors}

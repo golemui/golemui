@@ -34,7 +34,7 @@
     role="combobox"
     class="gui-widget-input"
     [class.gui-dropdown--icon]="templateData.icon"
-    [id]="domId"
+    [id]="adapter.domId"
     [attr.data-cy]="widget.uid + '_textinput'"
     [required]="templateData.validator?.required"
     [disabled]="templateData.disabled"
@@ -46,10 +46,10 @@
     (input)="onInput($event)"
     (click)="showList()"
     [attr.aria-expanded]="isListVisible() ? 'true' : 'false'"
-    [attr.aria-controls]="domId + '-list'"
+    [attr.aria-controls]="adapter.domId + '-list'"
     aria-autocomplete="list"
-    [attr.aria-labelledby]="templateData.label ? domId + '_label' : null"
-    [attr.aria-describedby]="templateData.hint ? domId + '_hint' : null"
+    [attr.aria-labelledby]="templateData.label ? adapter.domId + '_label' : null"
+    [attr.aria-describedby]="templateData.hint ? adapter.domId + '_hint' : null"
   />
   <button
     type="button"
@@ -57,7 +57,7 @@
     [attr.aria-label]="templateData.toggleAriaLabel ?? 'Show options'"
     aria-haspopup="listbox"
     [attr.aria-expanded]="isListVisible() ? 'true' : 'false'"
-    [attr.aria-controls]="domId + '-list'"
+    [attr.aria-controls]="adapter.domId + '-list'"
     [disabled]="templateData.disabled"
     (mousedown)="onToggleMouseDown($event)"
     (click)="onToggleClick($event)"
@@ -73,7 +73,7 @@
     <gui-list
       [attr.defer-hydration]="deferHydration"
       #listRef
-      [id]="domId + '-list'"
+      [id]="adapter.domId + '-list'"
       [uid]="widget.uid"
       [idPrefix]="adapter.formName"
       [value]="templateData.value ?? ''"

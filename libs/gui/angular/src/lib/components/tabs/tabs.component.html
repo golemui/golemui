@@ -2,7 +2,7 @@
 
 <gui-tabs
   [attr.defer-hydration]="deferHydration"
-  [id]="domId"
+  [id]="adapter.domId"
   [active]="activeTab()"
   (gui-tab-change)="onTabChange($event)"
 >

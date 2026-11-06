@@ -1,4 +1,3 @@
-import { toDomId } from '@golemui/core/internals';
 import { GuiErrorsReact, GuiLabelReact, GuiMultiListReact } from '../web-components';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import type { InputWidget, Validator, WithWidget } from '@golemui/core';
@@ -13,9 +12,8 @@ import type { GuiVisibleItem } from '@golemui/gui-components';
 export function MultiList(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<OptionValue[]>;
 
-  const { uid, formName, errors, value, isTouched, templateData, onValueChanged, onBlur } =
+  const { uid, formName, domId, errors, value, isTouched, templateData, onValueChanged, onBlur } =
     useInputWidget<OptionValue[], MultiListProps<unknown>>(widget);
-  const domId = toDomId(formName, uid);
 
   const handleBlur = useCallback(
     (e: React.FocusEvent) => {

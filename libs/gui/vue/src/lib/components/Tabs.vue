@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { toDomId } from '@golemui/core/internals';
 import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
 import { useLayoutWidget, WidgetRenderer } from '@golemui/vue';
 import type { GuiTabChangeEventDetail } from '@golemui/gui-components';
@@ -16,8 +15,7 @@ import '@golemui/gui-components/tabs';
 
 const props = defineProps<WithWidget>();
 const widget = props.widget as LayoutWidget;
-const { uid, formName, children, templateData, onChange } = useLayoutWidget<TabsProps>(widget);
-const domId = toDomId(formName, uid.value);
+const { domId, children, templateData, onChange } = useLayoutWidget<TabsProps>(widget);
 
 const activeTab = ref<string | undefined>(templateData.value.defaultOpen);
 // Tab uids come from the props without row indexes, the panel children come from the store with

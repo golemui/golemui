@@ -1,4 +1,3 @@
-import { toDomId } from '@golemui/core/internals';
 import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
 import { useLayoutWidget, WidgetRenderer } from '@golemui/react';
 import {
@@ -13,8 +12,7 @@ import '../styles.scss';
 /** The grid layout, and the deprecated flex layout, which renders as a grid. */
 export function Grid(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as LayoutWidget;
-  const { uid, formName, children, templateData } = useLayoutWidget<GridProps & FlexProps>(widget);
-  const domId = toDomId(formName, uid);
+  const { domId, children, templateData } = useLayoutWidget<GridProps & FlexProps>(widget);
   const grid = resolveGrid(widget.type, templateData);
 
   return (

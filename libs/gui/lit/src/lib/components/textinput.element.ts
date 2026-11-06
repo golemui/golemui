@@ -42,7 +42,7 @@ export class TextinputElement extends LitElement implements WithWidget {
     return html`
       <gui-textinput
         .uid=${this.widget.uid}
-        .idPrefix=${this.formContext.formName}
+        .idPrefix=${this.adapter.formName}
         .label=${this.adapter.templateData.label}
         .hint=${this.adapter.templateData.hint}
         .errors=${this.adapter.templateData.errors}

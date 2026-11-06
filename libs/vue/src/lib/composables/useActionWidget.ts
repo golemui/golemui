@@ -1,4 +1,5 @@
 import { type ActionWidget, widgetViewModel$ } from '@golemui/core';
+import { toDomId } from '@golemui/core/internals';
 import { onMounted, onScopeDispose, ref, type Ref } from 'vue';
 import { useVueFormContext } from '../provideFormContext';
 import { mergeViewModelIntoTemplateData, type WithFlattenedProps } from './template-data';
@@ -10,6 +11,12 @@ export interface UseActionWidgetReturn<ExtraProps extends Record<string, any>> {
    * page never share an id: pass it as `idPrefix` to GolemUI Components.
    */
   formName: string;
+  /**
+   * The widget uid behind the form's name: the DOM id of the widget's control, which the ids of
+   * its other parts extend (`${domId}_label`, `${domId}-list`). Computed once, when the widget sets
+   * up.
+   */
+  domId: string;
   templateData: Ref<WithFlattenedProps<ActionWidget<string>, ExtraProps> & { invalid: boolean }>;
   /** Kept for existing templates. `templateData.invalid` is the portable form the other three use. */
   invalid: Ref<boolean>;
@@ -62,6 +69,7 @@ export function useActionWidget<ExtraProps extends Record<string, any> = Record<
   return {
     uid,
     formName: formContext.formName,
+    domId: toDomId(formContext.formName, widget.uid),
     templateData,
     invalid,
     onClick,

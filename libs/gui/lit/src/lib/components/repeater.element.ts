@@ -1,4 +1,3 @@
-import { toDomId } from '@golemui/core/internals';
 import type { InputWidget, WithWidget } from '@golemui/core';
 import { type RepeaterProps } from '@golemui/gui-shared/internals';
 import { formContext, inputContext, InputWidgetAdapter, type LitFormContext } from '@golemui/lit';
@@ -60,7 +59,7 @@ export class RepeaterElement extends LitElement implements WithWidget {
 
     return html`
       <div
-        id=${toDomId(this.formContext.formName, this.widget.uid)}
+        id=${this.adapter.domId}
         class=${`gui-repeater__main-card gui-repeater__card ${this.isFocused ? 'gui-repeater__card--focused' : ''}`}
         @focusin=${this.onFocusIn}
         @focusout=${this.onFocusOut}
@@ -68,7 +67,7 @@ export class RepeaterElement extends LitElement implements WithWidget {
         <gui-label
           .targetElement=${[this._repeaterRef]}
           .uid=${this.widget.uid}
-          .idPrefix=${this.formContext.formName}
+          .idPrefix=${this.adapter.formName}
           .label=${templateData.label}
           .errors=${templateData.errors}
           .touched=${templateData.touched}
@@ -125,7 +124,7 @@ export class RepeaterElement extends LitElement implements WithWidget {
       ${showErrors
         ? html`<gui-errors
             .uid=${this.widget.uid}
-            .idPrefix=${this.formContext.formName}
+            .idPrefix=${this.adapter.formName}
             .errors=${templateData.errors}
             .touched=${templateData.touched}
           ></gui-errors>`

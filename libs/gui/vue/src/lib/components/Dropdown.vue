@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { toDomId } from '@golemui/core/internals';
 import type { GuiVisibleItem } from '@golemui/gui-components';
 import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useDebounceCallback, useInputWidget, useItemRenderer } from '@golemui/vue';
@@ -22,9 +21,18 @@ interface GuiLabelElement extends HTMLElement {
 
 const props = defineProps<WithWidget>();
 const widget = props.widget as InputWidget<string | null>;
-const { uid, formName, errors, value, isTouched, templateData, onFilter, onValueChanged, onBlur } =
-  useInputWidget<string | number | null, DropdownProps<never>>(widget);
-const domId = toDomId(formName, uid.value);
+const {
+  uid,
+  formName,
+  domId,
+  errors,
+  value,
+  isTouched,
+  templateData,
+  onFilter,
+  onValueChanged,
+  onBlur,
+} = useInputWidget<string | number | null, DropdownProps<never>>(widget);
 
 // The options to render, as the list reports them.
 const visibleItems = ref<GuiVisibleItem<any>[]>([]);

@@ -1,4 +1,3 @@
-import { toDomId } from '@golemui/core/internals';
 import { GuiErrorsReact, GuiLabelReact } from '../web-components';
 import type { InputWidget, NonFunctionWidget, Validator, WithWidget } from '@golemui/core';
 import { type RepeaterProps } from '@golemui/gui-shared/internals';
@@ -11,6 +10,7 @@ export function Repeater(widgetInstance: WithWidget) {
   const {
     uid,
     formName,
+    domId,
     value,
     onValueChanged,
     onRowRemoved,
@@ -19,7 +19,6 @@ export function Repeater(widgetInstance: WithWidget) {
     isTouched,
     onBlur,
   } = useInputWidget<Record<string, unknown>[], RepeaterProps<NonFunctionWidget<string>>>(widget);
-  const domId = toDomId(formName, uid);
 
   const repeaterRef = useRef<HTMLDivElement>(null);
 

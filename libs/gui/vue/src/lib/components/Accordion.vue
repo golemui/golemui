@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { toDomId } from '@golemui/core/internals';
 import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
 import { useLayoutWidget, WidgetRenderer } from '@golemui/vue';
 import type { GuiToggleEventDetail } from '@golemui/gui-components';
@@ -14,8 +13,7 @@ import '@golemui/gui-components/accordion';
 
 const props = defineProps<WithWidget>();
 const widget = props.widget as LayoutWidget;
-const { uid, formName, children, templateData, onChange } = useLayoutWidget<AccordionProps>(widget);
-const domId = toDomId(formName, uid.value);
+const { domId, children, templateData, onChange } = useLayoutWidget<AccordionProps>(widget);
 
 const activeSections = ref<NonNullable<AccordionProps['defaultOpen']>>({});
 let initialized = false;

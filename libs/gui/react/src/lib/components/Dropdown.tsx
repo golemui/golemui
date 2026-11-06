@@ -1,4 +1,3 @@
-import { toDomId } from '@golemui/core/internals';
 import { GuiErrorsReact, GuiLabelReact, GuiListReact } from '../web-components';
 import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useDebounceCallback, useInputWidget, useItemRenderer } from '@golemui/react';
@@ -19,6 +18,7 @@ export function Dropdown(widgetInstance: WithWidget) {
   const {
     uid,
     formName,
+    domId,
     errors,
     value,
     isTouched,
@@ -27,7 +27,6 @@ export function Dropdown(widgetInstance: WithWidget) {
     onValueChanged,
     onBlur,
   } = useInputWidget<string | number | null, DropdownProps<never>>(widget);
-  const domId = toDomId(formName, uid);
 
   // The options to render, as the list reports them.
   const [visibleItems, setVisibleItems] = useState<GuiVisibleItem<any>[]>([]);

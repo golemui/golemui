@@ -11,7 +11,7 @@ export class ActionWidgetAdapter<
   );
 
   init(widget: ActionWidget) {
-    this.widget = widget;
+    this.setWidget(widget);
     this.templateData.update((current) => ({
       ...current,
       label: this.widget.label as string,

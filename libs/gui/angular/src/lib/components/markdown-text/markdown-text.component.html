@@ -1,6 +1,6 @@
 @let templateData = adapter.templateData();
 
-<div class="gui-widget" [id]="domId">
+<div class="gui-widget" [id]="adapter.domId">
   <gui-markdown-text
     [attr.defer-hydration]="deferHydration"
     [md]="templateData.md"

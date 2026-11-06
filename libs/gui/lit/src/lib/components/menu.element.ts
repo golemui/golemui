@@ -1,4 +1,3 @@
-import { toDomId } from '@golemui/core/internals';
 import type { ActionWidget, WithWidget } from '@golemui/core';
 import { ActionWidgetAdapter, type LitFormContext, actionContext, formContext } from '@golemui/lit';
 import { consume, provide } from '@lit/context';
@@ -56,7 +55,7 @@ export class MenuElement extends LitElement implements WithWidget {
     const { label, disabled, items, placement, variant, icon, iconPosition, ariaLabel } =
       this.adapter.templateData;
     const uid = this.widget.uid;
-    const domId = toDomId(this.formContext.formName, uid);
+    const { domId } = this.adapter;
     const panelId = menuPanelId(domId);
     const iconPart = icon
       ? html`<span

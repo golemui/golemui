@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { toDomId } from '@golemui/core/internals';
 import type { GuiVisibleItem } from '@golemui/gui-components';
 import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useInputWidget, useItemRenderer } from '@golemui/vue';
@@ -14,9 +13,8 @@ import '@golemui/gui-components/errors';
 
 const props = defineProps<WithWidget>();
 const widget = props.widget as InputWidget<OptionValue[]>;
-const { uid, formName, errors, value, isTouched, templateData, onValueChanged, onBlur } =
+const { uid, formName, domId, errors, value, isTouched, templateData, onValueChanged, onBlur } =
   useInputWidget<OptionValue[], MultiListProps<unknown>>(widget);
-const domId = toDomId(formName, uid.value);
 
 // The options to render, as the list reports them.
 const visibleItems = ref<GuiVisibleItem<any>[]>([]);

@@ -46,7 +46,7 @@ export class ButtonElement extends LitElement implements WithWidget {
     return html`
       <gui-button
         .uid=${this.widget.uid}
-        .idPrefix=${this.formContext.formName}
+        .idPrefix=${this.adapter.formName}
         .type=${this.adapter.templateData.actionType ?? 'button'}
         .label=${this.adapter.templateData.label}
         ?disabled=${this.adapter.templateData.disabled === true}

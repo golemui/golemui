@@ -1,4 +1,3 @@
-import { toDomId } from '@golemui/core/internals';
 import type { LayoutWidget, WithWidget } from '@golemui/core';
 import { LayoutWidgetAdapter, type LitFormContext, formContext, layoutContext } from '@golemui/lit';
 import {
@@ -77,7 +76,7 @@ export class AccordionElement extends LitElement implements WithWidget {
   override render() {
     if (!this.adapter.templateData) return html``;
     const { sections = [], singleOpen, renderMode } = this.adapter.templateData;
-    const domId = toDomId(this.formContext.formName, this.widget.uid);
+    const { domId } = this.adapter;
 
     return html`
       <gui-accordion id=${domId} ?multiple=${!singleOpen}>

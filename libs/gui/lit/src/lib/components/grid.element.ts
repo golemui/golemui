@@ -1,4 +1,3 @@
-import { toDomId } from '@golemui/core/internals';
 import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
 import { LayoutWidgetAdapter, type LitFormContext, formContext, layoutContext } from '@golemui/lit';
 import {
@@ -48,7 +47,7 @@ export class GridElement extends LitElement implements WithWidget {
     const children = (this.adapter.templateData.children || []) as NonFunctionWidget<string>[];
 
     return html`
-      <div class=${gridClasses(grid)} id=${toDomId(this.formContext.formName, this.widget.uid)}>
+      <div class=${gridClasses(grid)} id=${this.adapter.domId}>
         ${repeat(
           children,
           (child) => child?.uid,

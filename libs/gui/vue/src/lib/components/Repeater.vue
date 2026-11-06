@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { toDomId } from '@golemui/core/internals';
 import type { InputWidget, NonFunctionWidget, Validator, WithWidget } from '@golemui/core';
 import { type RepeaterProps } from '@golemui/gui-shared/internals';
 import { useInputWidget, WidgetRenderer } from '@golemui/vue';
@@ -12,6 +11,7 @@ const widget = props.widget as InputWidget<Record<string, unknown>[]>;
 const {
   uid,
   formName,
+  domId,
   value,
   onValueChanged,
   onRowRemoved,
@@ -20,7 +20,6 @@ const {
   isTouched,
   onBlur,
 } = useInputWidget<Record<string, unknown>[], RepeaterProps<NonFunctionWidget<string>>>(widget);
-const domId = toDomId(formName, uid.value);
 
 const required = computed(() => (templateData.value.validator as Validator)?.required);
 const showErrors = computed(() => isTouched.value && errors.value && errors.value.length > 0);

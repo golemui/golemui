@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { toDomId } from '@golemui/core/internals';
 import type { ActionWidget, WithWidget } from '@golemui/core';
 import { useActionWidget } from '@golemui/vue';
 import type { GuiActionEventDetail } from '@golemui/gui-components';
@@ -18,8 +17,7 @@ import '@golemui/gui-components/menu';
 // widget's `click` event with `{ value }` as its detail.
 const props = defineProps<WithWidget>();
 const widget = props.widget as ActionWidget;
-const { uid, formName, templateData, emitClick } = useActionWidget<MenuProps>(widget);
-const domId = toDomId(formName, uid.value);
+const { uid, domId, templateData, emitClick } = useActionWidget<MenuProps>(widget);
 
 const panelId = computed(() => menuPanelId(domId));
 const buttonClasses = computed(() => menuButtonClasses(templateData.value));

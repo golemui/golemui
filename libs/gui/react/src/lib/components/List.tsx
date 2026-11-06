@@ -1,4 +1,3 @@
-import { toDomId } from '@golemui/core/internals';
 import { GuiErrorsReact, GuiLabelReact, GuiListReact } from '../web-components';
 import React, { useCallback, useRef, useState } from 'react';
 import type { InputWidget, Validator, WithWidget } from '@golemui/core';
@@ -13,9 +12,8 @@ import type { GuiVisibleItem } from '@golemui/gui-components';
 export function List(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<OptionValue>;
 
-  const { uid, formName, errors, value, isTouched, templateData, onValueChanged, onBlur } =
+  const { uid, formName, domId, errors, value, isTouched, templateData, onValueChanged, onBlur } =
     useInputWidget<OptionValue, ListProps<unknown>>(widget);
-  const domId = toDomId(formName, uid);
 
   // React catches bubbling blur events meanwhile Lit and Angular don't, we prevent double blur events here
   const handleBlur = useCallback(

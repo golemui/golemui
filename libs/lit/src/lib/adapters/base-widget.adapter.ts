@@ -5,6 +5,7 @@ import {
   assertNoPropCollisions,
   widgetViewModel$,
 } from '@golemui/core';
+import { toDomId } from '@golemui/core/internals';
 import { Subject, takeUntil } from 'rxjs';
 import { type LitFormContext } from '../context/form.context';
 
@@ -15,6 +16,33 @@ export abstract class BaseWidgetAdapter<F extends NonFunctionWidget> {
   protected widget!: F;
 
   templateDataChanged$ = new Subject<void>();
+
+  private ids = { formName: '', domId: '' };
+
+  /**
+   * The form's `formName`. Every DOM id the widget renders starts with it, so two forms on one
+   * page never share an id: pass it as `idPrefix` to GolemUI Components. Set by `init`.
+   */
+  get formName(): string {
+    return this.ids.formName;
+  }
+
+  /**
+   * The widget uid behind the form's name: the DOM id of the widget's control, which the ids of
+   * its other parts extend (`${domId}_label`, `${domId}-list`). Set by `init`, once per widget:
+   * the form builds its widgets again when it starts again with a new name.
+   */
+  get domId(): string {
+    return this.ids.domId;
+  }
+
+  /** Keeps the widget and computes its ids. Every `init` calls it first. */
+  protected setWidget(widget: F) {
+    this.widget = widget;
+    // An element sets the context before `init`; without one the ids take no prefix.
+    const formName = this.context?.formName ?? '';
+    this.ids = { formName, domId: toDomId(formName, widget.uid as string) };
+  }
 
   private loadEmittedForUid: string | undefined;
 

@@ -42,7 +42,7 @@ export class SelectElement extends LitElement implements WithWidget {
     return html`
       <gui-select
         .uid=${this.widget.uid}
-        .idPrefix=${this.formContext.formName}
+        .idPrefix=${this.adapter.formName}
         .label=${this.adapter.templateData.label}
         .errors=${this.adapter.templateData.errors}
         .touched=${this.adapter.templateData.touched}

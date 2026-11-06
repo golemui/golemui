@@ -43,7 +43,7 @@ export class TimePickerElement extends LitElement implements WithWidget {
     return html`
       <gui-time-picker
         .uid=${this.widget.uid}
-        .idPrefix=${this.formContext.formName}
+        .idPrefix=${this.adapter.formName}
         .label=${templateData.label}
         .hint=${templateData.hint}
         .errors=${templateData.errors}

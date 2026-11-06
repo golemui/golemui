@@ -1,4 +1,3 @@
-import { toDomId } from '@golemui/core/internals';
 import type { ActionWidget, WithWidget } from '@golemui/core';
 import { useActionWidget } from '@golemui/react';
 import {
@@ -18,8 +17,7 @@ import '../styles.scss';
  */
 export function Menu(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as ActionWidget;
-  const { uid, formName, templateData, emitClick } = useActionWidget<MenuProps>(widget);
-  const domId = toDomId(formName, uid);
+  const { uid, domId, templateData, emitClick } = useActionWidget<MenuProps>(widget);
   const { variant, icon, iconPosition } = templateData;
   const panelId = menuPanelId(domId);
   const iconPart = icon ? (

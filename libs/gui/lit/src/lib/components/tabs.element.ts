@@ -1,4 +1,3 @@
-import { toDomId } from '@golemui/core/internals';
 import type { LayoutWidget, WithWidget } from '@golemui/core';
 import { LayoutWidgetAdapter, type LitFormContext, formContext, layoutContext } from '@golemui/lit';
 import type { GuiTabChangeEventDetail } from '@golemui/gui-components';
@@ -69,7 +68,7 @@ export class TabsElement extends LitElement implements WithWidget {
       }))
       .filter(({ child, isActive }) => child && (isActive || renderMode !== 'activeOnly'));
 
-    const domId = toDomId(this.formContext.formName, this.widget.uid);
+    const { domId } = this.adapter;
     return html`<gui-tabs id=${domId} .active=${this.activeTab} @gui-tab-change=${this.onTabChange}>
       <gui-tab-list>
         ${repeat(

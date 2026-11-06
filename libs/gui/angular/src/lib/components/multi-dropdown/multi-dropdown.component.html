@@ -38,7 +38,7 @@
     [hasLabel]="!!templateData.label"
     [hasHint]="!!templateData.hint"
     [panelOpen]="isListVisible()"
-    [panelId]="domId + '-list'"
+    [panelId]="adapter.domId + '-list'"
     [removeAriaLabel]="templateData.removeAriaLabel"
     [removeIcon]="templateData.removeIcon"
     [compactAriaLabel]="pillItems().length + ' selected'"
@@ -54,7 +54,7 @@
     [attr.aria-label]="templateData.toggleAriaLabel ?? 'Show options'"
     aria-haspopup="listbox"
     [attr.aria-expanded]="isListVisible() ? 'true' : 'false'"
-    [attr.aria-controls]="domId + '-list'"
+    [attr.aria-controls]="adapter.domId + '-list'"
     [disabled]="templateData.disabled"
     (mousedown)="onToggleMouseDown($event)"
     (click)="onToggleClick($event)"
@@ -70,7 +70,7 @@
     <gui-multi-list
       [attr.defer-hydration]="deferHydration"
       #listRef
-      [id]="domId + '-list'"
+      [id]="adapter.domId + '-list'"
       [uid]="widget.uid"
       [idPrefix]="adapter.formName"
       [values]="currentValues()"

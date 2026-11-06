@@ -11,7 +11,7 @@ export class LayoutWidgetAdapter<
   } as LayoutTemplateData & ExtraProps);
 
   init(widget: LayoutWidget) {
-    this.widget = widget;
+    this.setWidget(widget);
 
     // Set initial templateData
     this.templateData.update((current) => ({

@@ -1,4 +1,3 @@
-import { toDomId } from '@golemui/core/internals';
 import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
 import { useLayoutWidget, WidgetRenderer } from '@golemui/react';
 import type { GuiToggleEventDetail } from '@golemui/gui-components';
@@ -15,9 +14,7 @@ const empty = {};
 
 export function Accordion(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as LayoutWidget;
-  const { uid, formName, children, templateData, onChange } =
-    useLayoutWidget<AccordionProps>(widget);
-  const domId = toDomId(formName, uid);
+  const { domId, children, templateData, onChange } = useLayoutWidget<AccordionProps>(widget);
   const [activeSections, setActiveSections] =
     useState<NonNullable<AccordionProps['defaultOpen']>>(empty);
   // The sections as of the last toggle. With singleOpen, opening one section makes gui-accordion

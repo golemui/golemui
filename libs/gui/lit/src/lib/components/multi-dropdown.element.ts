@@ -1,4 +1,3 @@
-import { toDomId } from '@golemui/core/internals';
 import type { InputWidget, WithWidget } from '@golemui/core';
 import { InputWidgetAdapter, type LitFormContext, formContext, inputContext } from '@golemui/lit';
 import type {
@@ -268,7 +267,7 @@ export class MultiDropdownElement extends LitElement implements WithWidget {
   }
 
   override render() {
-    const domId = toDomId(this.formContext.formName, this.widget.uid);
+    const { domId } = this.adapter;
     const templateData = this.adapter.templateData;
     const showErrors =
       templateData.touched && templateData.errors && templateData.errors.length > 0;
@@ -286,7 +285,7 @@ export class MultiDropdownElement extends LitElement implements WithWidget {
       <gui-label
         .targetElement=${[this._listRef, this._triggerRef?.input]}
         .uid=${this.widget.uid}
-        .idPrefix=${this.formContext.formName}
+        .idPrefix=${this.adapter.formName}
         .label=${templateData.label}
         .hint=${templateData.hint}
         .errors=${templateData.errors}
@@ -298,7 +297,7 @@ export class MultiDropdownElement extends LitElement implements WithWidget {
       <div class="gui-widget" @keydown=${this._onWidgetKeyDown} @focusout=${this._onFocusOut}>
         <gui-multi-select-trigger
           .uid=${this.widget.uid}
-          .idPrefix=${this.formContext.formName}
+          .idPrefix=${this.adapter.formName}
           .pills=${pillItems}
           .errors=${templateData.errors}
           .touched=${!!templateData.touched}
@@ -344,7 +343,7 @@ export class MultiDropdownElement extends LitElement implements WithWidget {
           <gui-multi-list
             id=${`${domId}-list`}
             .uid=${this.widget.uid}
-            .idPrefix=${this.formContext.formName}
+            .idPrefix=${this.adapter.formName}
             .values=${live(values)}
             .valueField=${templateData.valueField! as string}
             .items=${this._isFiltering && !asyncFiltering
@@ -395,7 +394,7 @@ export class MultiDropdownElement extends LitElement implements WithWidget {
             ? html`<gui-errors
                 panel
                 .uid=${this.widget.uid}
-                .idPrefix=${this.formContext.formName}
+                .idPrefix=${this.adapter.formName}
                 .errors=${templateData.errors}
                 .touched=${templateData.touched}
               ></gui-errors>`
@@ -406,7 +405,7 @@ export class MultiDropdownElement extends LitElement implements WithWidget {
       ${showErrors
         ? html`<gui-errors
             .uid=${this.widget.uid}
-            .idPrefix=${this.formContext.formName}
+            .idPrefix=${this.adapter.formName}
             .errors=${templateData.errors}
             .touched=${templateData.touched}
           ></gui-errors>`

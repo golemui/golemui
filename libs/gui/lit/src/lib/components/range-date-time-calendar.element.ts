@@ -43,7 +43,7 @@ export class RangeDateTimeCalendarElement extends LitElement implements WithWidg
     return html`
       <gui-range-date-time-calendar
         .uid=${this.widget.uid}
-        .idPrefix=${this.formContext.formName}
+        .idPrefix=${this.adapter.formName}
         .label=${templateData.label}
         .hint=${templateData.hint}
         .errors=${templateData.errors}

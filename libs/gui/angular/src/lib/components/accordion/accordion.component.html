@@ -2,7 +2,7 @@
 
 <gui-accordion
   [attr.defer-hydration]="deferHydration"
-  [id]="domId"
+  [id]="adapter.domId"
   [multiple]="!templateData.singleOpen"
 >
   @for (section of templateData.sections; track section.uid) {
