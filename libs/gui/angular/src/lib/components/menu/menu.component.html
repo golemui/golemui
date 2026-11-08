@@ -3,7 +3,7 @@
 <div class="gui-widget">
   <button
     type="button"
-    [id]="widget.uid"
+    [id]="adapter.domId"
     [class]="menuButtonClasses(templateData)"
     [attr.data-cy]="widget.uid + '_button'"
     [attr.popovertarget]="panelId"
@@ -34,7 +34,7 @@
   [placement]="templateData.placement ?? defaultPlacement"
   (gui-action)="onAction($event)"
 >
-  <div [id]="panelId" [attr.data-cy]="panelId" popover>
+  <div [id]="panelId" [attr.data-cy]="panelCy" popover>
     @for (item of templateData?.items ?? []; track $index) {
       @if (isMenuSeparator(item)) {
         <hr />

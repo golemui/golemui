@@ -5,11 +5,11 @@ import { type ReactNode } from 'react';
 
 export function Renderer(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as DisplayWidget;
-  const { uid, templateData } = useDisplayWidget<RendererProps<ReactNode>>(widget);
+  const { domId, templateData } = useDisplayWidget<RendererProps<ReactNode>>(widget);
   const renderedElement = templateData?.render;
   return (
     <div className="gui-renderer gui-field">
-      <div className="gui-widget" id={uid}>
+      <div className="gui-widget" id={domId}>
         {renderedElement}
       </div>
     </div>

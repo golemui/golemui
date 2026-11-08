@@ -37,7 +37,7 @@ export class GuiLabel extends GuiElement {
         ? [...this.targetElement]
         : [this.targetElement as HTMLElement],
     getState: () => ({
-      uid: this.uid,
+      domId: this.domId,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -57,7 +57,7 @@ export class GuiLabel extends GuiElement {
     super.render();
 
     return html`${addLabel(
-      this.uid,
+      this,
       {
         label: this.label,
         hint: this.hint,

@@ -1,7 +1,8 @@
 import { defineForm, identityTranslator } from '@golemui/core';
-import { type MountComponentFn } from '../utils';
+import { type MountComponentFn, testDomId, withTestFormName } from '../utils';
 
-export const runTimePickerComponentTests = (mountFn: MountComponentFn) => {
+export const runTimePickerComponentTests = (baseMountFn: MountComponentFn) => {
+  const mountFn = withTestFormName(baseMountFn);
   describe('TimePicker Component', () => {
     const sel = {
       hour: 'gui-time input[data-type="hour"]',
@@ -572,7 +573,7 @@ export const runTimePickerComponentTests = (mountFn: MountComponentFn) => {
           .should('have.attr', 'aria-label', 'Show time list')
           .should('have.attr', 'aria-haspopup', 'dialog')
           .should('have.attr', 'aria-expanded', 'false')
-          .should('have.attr', 'aria-controls', 'testSubject_popup');
+          .should('have.attr', 'aria-controls', testDomId('testSubject_popup'));
       });
 
       it('should open the list dialog from the toggle and move focus into it', () => {
@@ -581,7 +582,7 @@ export const runTimePickerComponentTests = (mountFn: MountComponentFn) => {
         cy.get(toggleSel).should('have.attr', 'aria-expanded', 'true');
         cy.get('gui-time-list')
           .should('have.attr', 'role', 'dialog')
-          .should('have.id', 'testSubject_popup')
+          .should('have.id', testDomId('testSubject_popup'))
           .should('not.have.attr', 'hidden');
         cy.focused().should('have.class', 'gui-time-list__option');
       });
@@ -611,10 +612,10 @@ export const runTimePickerComponentTests = (mountFn: MountComponentFn) => {
         cy.get('[data-cy="testSubject_panel-validator-error"]')
           .should('be.visible')
           .and('contain.text', 'Incomplete time');
-        cy.get('#testSubject_panel_errors')
+        cy.get(`[id="${testDomId('testSubject_panel_errors')}"]`)
           .should('have.attr', 'aria-hidden', 'true')
           .and('not.have.attr', 'role');
-        cy.get('[id="testSubject_errors"]').should('have.length', 1);
+        cy.get(`[id="${testDomId('testSubject_errors')}"]`).should('have.length', 1);
 
         cy.get('[data-cy="testSubject_validator-error"]').then(($li) => {
           cy.get(panelSel).should('have.css', 'border-top-color', $li.css('color'));

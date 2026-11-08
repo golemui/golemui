@@ -51,6 +51,7 @@ export class MultiListElement extends LitElement implements WithWidget {
   }
 
   override render() {
+    const { domId } = this.adapter;
     const templateData = this.adapter.templateData;
     const showErrors =
       templateData.touched && templateData.errors && templateData.errors.length > 0;
@@ -65,6 +66,7 @@ export class MultiListElement extends LitElement implements WithWidget {
       <gui-label
         .targetElement=${this._guiListRef}
         .uid=${this.widget.uid}
+        .idPrefix=${this.adapter.formName}
         .label=${templateData.label}
         .hint=${templateData.hint}
         .errors=${templateData.errors}
@@ -78,6 +80,7 @@ export class MultiListElement extends LitElement implements WithWidget {
       <div class="gui-widget">
         <gui-multi-list
           .uid=${this.widget.uid}
+          .idPrefix=${this.adapter.formName}
           .values=${live(values)}
           .valueField=${templateData.valueField as string}
           .items=${templateData.items}
@@ -87,8 +90,8 @@ export class MultiListElement extends LitElement implements WithWidget {
           .touched=${templateData.touched}
           ?disabled=${templateData.disabled}
           ?readonly=${templateData.readonly}
-          aria-labelledby=${templateData.label ? `${this.widget.uid}_label` : nothing}
-          aria-describedby=${templateData.hint ? `${this.widget.uid}_hint` : nothing}
+          aria-labelledby=${templateData.label ? `${domId}_label` : nothing}
+          aria-describedby=${templateData.hint ? `${domId}_hint` : nothing}
           @gui-visible-items-change=${this._onVisibleItemsChange}
           @gui-blur=${() => this.adapter.onBlur()}
           @gui-item-toggle=${this._valueChanged}
@@ -128,6 +131,7 @@ export class MultiListElement extends LitElement implements WithWidget {
       ${showErrors
         ? html`<gui-errors
             .uid=${this.widget.uid}
+            .idPrefix=${this.adapter.formName}
             .errors=${templateData.errors}
             .touched=${templateData.touched}
           ></gui-errors>`

@@ -42,6 +42,7 @@ export class MultiFileUploadElement extends LitElement implements WithWidget {
     return html`
       <gui-multi-file-upload
         .uid=${this.widget.uid}
+        .idPrefix=${this.adapter.formName}
         .path=${this.widget.path}
         .label=${templateData.label}
         .hint=${templateData.hint}

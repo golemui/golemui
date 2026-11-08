@@ -7,10 +7,8 @@ import '@golemui/gui-components/password';
 
 const props = defineProps<WithWidget>();
 const widget = props.widget as InputWidget<string>;
-const { uid, errors, value, isTouched, templateData, onValueChanged, onBlur } = useInputWidget<
-  string,
-  PasswordProps
->(widget);
+const { uid, formName, errors, value, isTouched, templateData, onValueChanged, onBlur } =
+  useInputWidget<string, PasswordProps>(widget);
 
 const handleInput = (e: Event) => onValueChanged((e as CustomEvent).detail.value);
 const required = computed(() => (templateData.value.validator as Validator)?.required);
@@ -20,6 +18,7 @@ const required = computed(() => (templateData.value.validator as Validator)?.req
   <div class="gui-password gui-field">
     <gui-password
       :uid="uid"
+      :id-prefix="formName"
       :label="templateData.label"
       :hint="templateData.hint"
       :errors="errors"

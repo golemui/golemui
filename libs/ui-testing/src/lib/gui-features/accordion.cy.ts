@@ -4,9 +4,12 @@ import {
   eventsNamed,
   expectNoDuplicateIds,
   type MountComponentFn,
+  testDomId,
+  withTestFormName,
 } from '../utils';
 
-export const runAccordionComponentTests = (mountFn: MountComponentFn) => {
+export const runAccordionComponentTests = (baseMountFn: MountComponentFn) => {
+  const mountFn = withTestFormName(baseMountFn);
   describe('Accordion Component', () => {
     const ACCORDION_UID = 'settingsAccordion';
 
@@ -49,11 +52,13 @@ export const runAccordionComponentTests = (mountFn: MountComponentFn) => {
 
     it('gives every header and region an id built from the accordion uid', () => {
       ['firstSection', 'secondSection'].forEach((sectionUid) => {
-        cy.get(`summary[id="accordion_button_${ACCORDION_UID}_${sectionUid}"]`).should('exist');
-        cy.get(`[id="accordion_section_${ACCORDION_UID}_${sectionUid}"]`).should(
+        cy.get(`summary[id="${testDomId(ACCORDION_UID)}_accordion_button_${sectionUid}"]`).should(
+          'exist',
+        );
+        cy.get(`[id="${testDomId(ACCORDION_UID)}_accordion_section_${sectionUid}"]`).should(
           'have.attr',
           'aria-labelledby',
-          `accordion_button_${ACCORDION_UID}_${sectionUid}`,
+          `${testDomId(ACCORDION_UID)}_accordion_button_${sectionUid}`,
         );
       });
 
@@ -61,14 +66,16 @@ export const runAccordionComponentTests = (mountFn: MountComponentFn) => {
     });
 
     it('toggles the section of the clicked header', () => {
-      cy.get(`[id="accordion_button_${ACCORDION_UID}_secondSection"]`)
+      cy.get(`[id="${testDomId(ACCORDION_UID)}_accordion_button_secondSection"]`)
         .parent('details')
         .should('not.have.attr', 'open');
-      cy.get(`[id="accordion_button_${ACCORDION_UID}_secondSection"]`).click();
-      cy.get(`[id="accordion_button_${ACCORDION_UID}_secondSection"]`)
+      cy.get(`[id="${testDomId(ACCORDION_UID)}_accordion_button_secondSection"]`).click();
+      cy.get(`[id="${testDomId(ACCORDION_UID)}_accordion_button_secondSection"]`)
         .parent('details')
         .should('have.attr', 'open');
-      cy.get(`[id="accordion_section_${ACCORDION_UID}_secondSection"]`).should('be.visible');
+      cy.get(`[id="${testDomId(ACCORDION_UID)}_accordion_section_secondSection"]`).should(
+        'be.visible',
+      );
       cy.get('[data-cy="secondSection_textinput"]').should('be.visible');
     });
   });
@@ -76,7 +83,7 @@ export const runAccordionComponentTests = (mountFn: MountComponentFn) => {
   describe('Accordion Component with singleOpen', () => {
     const ACCORDION_UID = 'singleOpenAccordion';
     const header = (sectionUid: string) =>
-      cy.get(`[id="accordion_button_${ACCORDION_UID}_${sectionUid}"]`);
+      cy.get(`[id="${testDomId(ACCORDION_UID)}_accordion_button_${sectionUid}"]`);
 
     it('closes the open section when another one opens, and emits one change', () => {
       const formEventHandler = cy.stub().as('formEventHandler');
@@ -179,11 +186,15 @@ export const runAccordionComponentTests = (mountFn: MountComponentFn) => {
         }),
       });
 
-      cy.get(`[id="accordion_button_${ACCORDION_UID}_secondSection"]`).click();
+      cy.get(`[id="${testDomId(ACCORDION_UID)}_accordion_button_secondSection"]`).click();
 
       // singleOpen is false, so opening the second section keeps the first one open
-      cy.get(`[id="accordion_section_${ACCORDION_UID}_secondSection"]`).should('be.visible');
-      cy.get(`[id="accordion_section_${ACCORDION_UID}_firstSection"]`).should('be.visible');
+      cy.get(`[id="${testDomId(ACCORDION_UID)}_accordion_section_secondSection"]`).should(
+        'be.visible',
+      );
+      cy.get(`[id="${testDomId(ACCORDION_UID)}_accordion_section_firstSection"]`).should(
+        'be.visible',
+      );
     });
   });
 
@@ -192,7 +203,7 @@ export const runAccordionComponentTests = (mountFn: MountComponentFn) => {
       const ACCORDION_UID = 'translatedAccordion';
       const sectionLabel = (sectionUid: string) =>
         cy
-          .get(`summary[id="accordion_button_${ACCORDION_UID}_${sectionUid}"]`)
+          .get(`summary[id="${testDomId(ACCORDION_UID)}_accordion_button_${sectionUid}"]`)
           .invoke('text')
           .invoke('trim');
       const translator = dictionaryTranslator('en', {
@@ -238,10 +249,10 @@ export const runAccordionComponentTests = (mountFn: MountComponentFn) => {
   describe('Accordion Component sections at runtime', () => {
     const ACCORDION_UID = 'runtimeAccordion';
     const header = (sectionUid: string) =>
-      cy.get(`summary[id="accordion_button_${ACCORDION_UID}_${sectionUid}"]`);
+      cy.get(`summary[id="${testDomId(ACCORDION_UID)}_accordion_button_${sectionUid}"]`);
     const details = (sectionUid: string) => header(sectionUid).parent('details');
     const region = (sectionUid: string) =>
-      cy.get(`[id="accordion_section_${ACCORDION_UID}_${sectionUid}"]`);
+      cy.get(`[id="${testDomId(ACCORDION_UID)}_accordion_section_${sectionUid}"]`);
     const input = (uid: string) => cy.get(`[data-cy="${uid}_textinput"]`);
     // Cypress does not treat the content of a closed details element as hidden, the browser does.
     const expectHidden = ($input: JQuery<HTMLElement>) => {
@@ -364,7 +375,7 @@ export const runAccordionComponentTests = (mountFn: MountComponentFn) => {
       region('thirdSection').should(
         'have.attr',
         'aria-labelledby',
-        `accordion_button_${ACCORDION_UID}_thirdSection`,
+        `${testDomId(ACCORDION_UID)}_accordion_button_thirdSection`,
       );
       header('thirdSection').click();
       input('thirdSection').should('be.visible');

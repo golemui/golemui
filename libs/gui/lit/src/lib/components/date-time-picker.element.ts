@@ -43,6 +43,7 @@ export class DateTimePickerElement extends LitElement implements WithWidget {
     return html`
       <gui-date-time-picker
         .uid=${this.widget.uid}
+        .idPrefix=${this.adapter.formName}
         .label=${templateData.label}
         .hint=${templateData.hint}
         .errors=${templateData.errors}

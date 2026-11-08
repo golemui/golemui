@@ -3,7 +3,9 @@ import { useLayoutWidget, WidgetRenderer } from '@golemui/react';
 import type { GuiTabChangeEventDetail } from '@golemui/gui-components';
 import {
   repeaterIndexSuffix,
+  tabButtonCy,
   tabButtonId,
+  tabPanelCy,
   tabPanelId,
   type TabsProps,
 } from '@golemui/gui-shared/internals';
@@ -12,7 +14,7 @@ import { GuiTabsReact } from '../web-components';
 
 export function Tabs(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as LayoutWidget;
-  const { uid, children, templateData, onChange } = useLayoutWidget<TabsProps>(widget);
+  const { domId, children, templateData, onChange } = useLayoutWidget<TabsProps>(widget);
   const tabs = templateData.tabs ?? [];
   const [activeTab, setActiveTab] = useState(templateData.defaultOpen ?? tabs[0]?.uid);
   // Tab uids come from the props without row indexes, the panel children come from the store with
@@ -36,15 +38,15 @@ export function Tabs(widgetInstance: WithWidget) {
           such as the inactive panels' hidden. Nothing holds them, so they upgrade before React
           hydrates and add their role (and a panel its tabindex): the markup has them too, or
           React reports a mismatch. */}
-      <GuiTabsReact id={uid} active={activeTab} onGuiTabChange={onTabChange}>
+      <GuiTabsReact id={domId} active={activeTab} onGuiTabChange={onTabChange}>
         <gui-tab-list role="tablist">
           {tabs.map((tab) => (
             <gui-tab
               key={tab.uid}
               role="tab"
               panel={tab.uid}
-              id={tabButtonId(widget.uid, tab.uid)}
-              data-cy={tabButtonId(widget.uid, tab.uid)}
+              id={tabButtonId(domId, tab.uid)}
+              data-cy={tabButtonCy(widget.uid, tab.uid)}
             >
               {tab.label as string}
             </gui-tab>
@@ -63,8 +65,8 @@ export function Tabs(widgetInstance: WithWidget) {
               role="tabpanel"
               tabIndex={0}
               name={tab.uid}
-              id={tabPanelId(widget.uid, tab.uid)}
-              data-cy={tabPanelId(widget.uid, tab.uid)}
+              id={tabPanelId(domId, tab.uid)}
+              data-cy={tabPanelCy(widget.uid, tab.uid)}
               hidden={isActive ? undefined : true}
             >
               <WidgetRenderer widget={child as NonFunctionWidget<string>} />

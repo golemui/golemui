@@ -9,6 +9,7 @@ export function MultiFileUpload(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<FileItem[]>;
   const {
     uid,
+    formName,
     errors,
     value,
     isTouched,
@@ -40,6 +41,7 @@ export function MultiFileUpload(widgetInstance: WithWidget) {
     <div className="gui-multi-file-upload gui-field">
       <GuiMultiFileUploadReact
         uid={uid}
+        idPrefix={formName}
         path={widget.path}
         label={label}
         hint={templateData.hint}

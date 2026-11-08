@@ -41,6 +41,7 @@ export class RangeDateTimeInputElement extends LitElement implements WithWidget 
     return html`
       <gui-range-date-time
         .uid=${this.widget.uid}
+        .idPrefix=${this.adapter.formName}
         .label=${this.adapter.templateData.label}
         .hint=${this.adapter.templateData.hint}
         .icon=${this.adapter.templateData.icon}

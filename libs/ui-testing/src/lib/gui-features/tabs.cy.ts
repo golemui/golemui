@@ -1,7 +1,14 @@
 import { defineForm } from '@golemui/core';
-import { dictionaryTranslator, expectNoDuplicateIds, type MountComponentFn } from '../utils';
+import {
+  dictionaryTranslator,
+  expectNoDuplicateIds,
+  type MountComponentFn,
+  testDomId,
+  withTestFormName,
+} from '../utils';
 
-export const runTabsComponentTests = (mountFn: MountComponentFn) => {
+export const runTabsComponentTests = (baseMountFn: MountComponentFn) => {
+  const mountFn = withTestFormName(baseMountFn);
   describe('Tabs Component', () => {
     const TABS_UID = 'settingsTabs';
 
@@ -58,11 +65,11 @@ export const runTabsComponentTests = (mountFn: MountComponentFn) => {
         cy.get(`[data-cy="tab_${TABS_UID}_${tabUid}"]`).should(
           'have.attr',
           'aria-controls',
-          `tabpanel_${TABS_UID}_${tabUid}`,
+          `${testDomId(TABS_UID)}_tabpanel_${tabUid}`,
         );
         cy.get(`[data-cy="tabpanel_${TABS_UID}_${tabUid}"]`)
-          .should('have.attr', 'id', `tabpanel_${TABS_UID}_${tabUid}`)
-          .and('have.attr', 'aria-labelledby', `tab_${TABS_UID}_${tabUid}`);
+          .should('have.attr', 'id', `${testDomId(TABS_UID)}_tabpanel_${tabUid}`)
+          .and('have.attr', 'aria-labelledby', `${testDomId(TABS_UID)}_tab_${tabUid}`);
       });
 
       expectNoDuplicateIds();
@@ -77,10 +84,10 @@ export const runTabsComponentTests = (mountFn: MountComponentFn) => {
       cy.get('[role="tabpanel"]').should('have.length', 1);
       cy.get(`[data-cy="tab_${TABS_UID}_secondPanel"]`)
         .should('have.attr', 'aria-selected', 'true')
-        .and('have.attr', 'aria-controls', `tabpanel_${TABS_UID}_secondPanel`);
+        .and('have.attr', 'aria-controls', `${testDomId(TABS_UID)}_tabpanel_secondPanel`);
       cy.get('[role="tabpanel"]')
-        .should('have.attr', 'id', `tabpanel_${TABS_UID}_secondPanel`)
-        .and('have.attr', 'aria-labelledby', `tab_${TABS_UID}_secondPanel`);
+        .should('have.attr', 'id', `${testDomId(TABS_UID)}_tabpanel_secondPanel`)
+        .and('have.attr', 'aria-labelledby', `${testDomId(TABS_UID)}_tab_secondPanel`);
     });
 
     it('reads the tabs from the calculated props when a property function produces them', () => {
@@ -141,12 +148,12 @@ export const runTabsComponentTests = (mountFn: MountComponentFn) => {
       cy.get(`[data-cy="tabpanel_${TABS_UID}_secondPanel"]`).should(
         'have.attr',
         'aria-labelledby',
-        `tab_${TABS_UID}_secondPanel`,
+        `${testDomId(TABS_UID)}_tab_secondPanel`,
       );
       cy.get(`[data-cy="tabpanel_${TABS_UID}_firstPanel"]`).should(
         'have.attr',
         'aria-labelledby',
-        `tab_${TABS_UID}_firstPanel`,
+        `${testDomId(TABS_UID)}_tab_firstPanel`,
       );
     });
 
@@ -175,7 +182,7 @@ export const runTabsComponentTests = (mountFn: MountComponentFn) => {
       cy.get(`[data-cy="tabpanel_${TABS_UID}_firstPanel"]`).should(
         'have.attr',
         'aria-labelledby',
-        `tab_${TABS_UID}_firstPanel`,
+        `${testDomId(TABS_UID)}_tab_firstPanel`,
       );
 
       cy.then(() => translator.setLang('es'));
@@ -296,8 +303,16 @@ export const runTabsComponentTests = (mountFn: MountComponentFn) => {
       panel('thirdPanel').should('not.exist');
 
       input('show').type('yes');
-      panel('thirdPanel').should('have.attr', 'aria-labelledby', `tab_${TABS_UID}_thirdPanel`);
-      tab('thirdPanel').should('have.attr', 'aria-controls', `tabpanel_${TABS_UID}_thirdPanel`);
+      panel('thirdPanel').should(
+        'have.attr',
+        'aria-labelledby',
+        `${testDomId(TABS_UID)}_tab_thirdPanel`,
+      );
+      tab('thirdPanel').should(
+        'have.attr',
+        'aria-controls',
+        `${testDomId(TABS_UID)}_tabpanel_thirdPanel`,
+      );
       tab('thirdPanel').click();
       input('thirdPanel').should('be.visible');
       tab('firstPanel').click();
@@ -307,7 +322,11 @@ export const runTabsComponentTests = (mountFn: MountComponentFn) => {
       panel('thirdPanel').should('not.exist');
       tab('thirdPanel').should('exist').and('not.have.attr', 'aria-controls');
       input('firstPanel').should('be.visible');
-      panel('firstPanel').should('have.attr', 'aria-labelledby', `tab_${TABS_UID}_firstPanel`);
+      panel('firstPanel').should(
+        'have.attr',
+        'aria-labelledby',
+        `${testDomId(TABS_UID)}_tab_firstPanel`,
+      );
     });
 
     it('keeps the active tab selected with no panel while its child is hidden', () => {

@@ -5,9 +5,12 @@ import {
   expectNoDuplicateIds,
   type FormHandle,
   type MountComponentFn,
+  testDomId,
+  withTestFormName,
 } from '../utils';
 
-export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
+export const runRepeaterComponentTests = (baseMountFn: MountComponentFn) => {
+  const mountFn = withTestFormName(baseMountFn);
   describe('Repeater Component', () => {
     const TEAMS_REPEATER_PATH = 'repeaters.teams';
     const DEVELOPERS_REPEATER_PATH = `${TEAMS_REPEATER_PATH}.items.developers`;
@@ -537,15 +540,15 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
         });
 
         // pickCompanyAlert excludes from companyHasBeenPicked -> visible while no company is selected
-        cy.get('[id="pickCompanyAlert[0]"]').should('be.visible');
+        cy.get(`[id="${testDomId('pickCompanyAlert[0]')}"]`).should('be.visible');
         // companyStatusAlert includes in companyHasBeenPicked -> absent while no company is selected
-        cy.get('[id="companyStatusAlert[0]"]').should('not.exist');
+        cy.get(`[id="${testDomId('companyStatusAlert[0]')}"]`).should('not.exist');
 
         cy.get('[data-cy="companySelect_select"]').select('appl');
 
         // After picking a company the visibility flips for both alerts
-        cy.get('[id="pickCompanyAlert[0]"]').should('not.exist');
-        cy.get('[id="companyStatusAlert[0]"]').should('be.visible');
+        cy.get(`[id="${testDomId('pickCompanyAlert[0]')}"]`).should('not.exist');
+        cy.get(`[id="${testDomId('companyStatusAlert[0]')}"]`).should('be.visible');
       });
 
       it('should apply state-suffixed props to elements inside repeater items', () => {
@@ -555,12 +558,18 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
         });
 
         // isApple is active -> 'text.isApple' prop overrides the default text
-        cy.get('[id="companyStatusAlert[0]"]').should('contain.text', 'Company is Apple');
+        cy.get(`[id="${testDomId('companyStatusAlert[0]')}"]`).should(
+          'contain.text',
+          'Company is Apple',
+        );
 
         cy.get('[data-cy="companySelect_select"]').select('msf');
 
         // isMsoft is now active -> 'text.isMsoft' prop overrides the default text
-        cy.get('[id="companyStatusAlert[0]"]').should('contain.text', 'Company is Msoft');
+        cy.get(`[id="${testDomId('companyStatusAlert[0]')}"]`).should(
+          'contain.text',
+          'Company is Msoft',
+        );
       });
 
       it('should interpolate $item and $index independently per repeater item', () => {
@@ -610,21 +619,21 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
         });
 
         // Each row reads its own $item and $index
-        cy.get('[id="rowTotal[0]"]').should('contain.text', 'Row 1 total: 4');
-        cy.get('[id="rowTotal[1]"]').should('contain.text', 'Row 2 total: 10');
+        cy.get(`[id="${testDomId('rowTotal[0]')}"]`).should('contain.text', 'Row 1 total: 4');
+        cy.get(`[id="${testDomId('rowTotal[1]')}"]`).should('contain.text', 'Row 2 total: 10');
         // include.when with $item: quantity is undefined on the third item
-        cy.get('[id="rowTotal[2]"]').should('not.exist');
+        cy.get(`[id="${testDomId('rowTotal[2]')}"]`).should('not.exist');
 
         // Typing in row 1 must only affect row 1's total
         cy.get('[data-cy="qty[1]_textinput"]').clear();
         cy.get('[data-cy="qty[1]_textinput"]').type('7');
-        cy.get('[id="rowTotal[1]"]').should('contain.text', 'Row 2 total: 14');
-        cy.get('[id="rowTotal[0]"]').should('contain.text', 'Row 1 total: 4');
+        cy.get(`[id="${testDomId('rowTotal[1]')}"]`).should('contain.text', 'Row 2 total: 14');
+        cy.get(`[id="${testDomId('rowTotal[0]')}"]`).should('contain.text', 'Row 1 total: 4');
 
         // Removing row 0 rebinds $item/$index: the old row 1 becomes row 0
         cy.get('.gui-button').contains('Remove line item').first().click();
-        cy.get('[id="rowTotal[0]"]').should('contain.text', 'Row 1 total: 14');
-        cy.get('[id="rowTotal[1]"]').should('not.exist');
+        cy.get(`[id="${testDomId('rowTotal[0]')}"]`).should('contain.text', 'Row 1 total: 14');
+        cy.get(`[id="${testDomId('rowTotal[1]')}"]`).should('not.exist');
       });
 
       it('should render markdownText displays with $item interpolation inside repeater items', () => {
@@ -677,14 +686,14 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
         });
 
         // Interpolated $item/$index content must actually render in the DOM
-        cy.get('[id="lineTotalMd[0]"]').should('contain.text', 'Row 1 total: 4');
+        cy.get(`[id="${testDomId('lineTotalMd[0]')}"]`).should('contain.text', 'Row 1 total: 4');
         // include.when with $item: quantity is undefined on the second item
-        cy.get('[id="lineTotalMd[1]"]').should('not.exist');
+        cy.get(`[id="${testDomId('lineTotalMd[1]')}"]`).should('not.exist');
 
         // Editing the row updates the rendered markdown
         cy.get('[data-cy="lineQty[0]_textinput"]').clear();
         cy.get('[data-cy="lineQty[0]_textinput"]').type('5');
-        cy.get('[id="lineTotalMd[0]"]').should('contain.text', 'Row 1 total: 10');
+        cy.get(`[id="${testDomId('lineTotalMd[0]')}"]`).should('contain.text', 'Row 1 total: 10');
       });
 
       it('should scope $item and $index to the innermost item in nested repeaters', () => {
@@ -767,18 +776,33 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
 
         // $item and $index are the innermost line, so each line reads its own values.
         // $index restarts at 0 inside every order's line repeater.
-        cy.get('[id="lineSubtotal[0][0]"]').should('contain.text', 'Line 1 subtotal: 20');
-        cy.get('[id="lineSubtotal[0][1]"]').should('contain.text', 'Line 2 subtotal: 5');
+        cy.get(`[id="${testDomId('lineSubtotal[0][0]')}"]`).should(
+          'contain.text',
+          'Line 1 subtotal: 20',
+        );
+        cy.get(`[id="${testDomId('lineSubtotal[0][1]')}"]`).should(
+          'contain.text',
+          'Line 2 subtotal: 5',
+        );
         // The first line of the second order is index 0 again and reads its own $item (3 * 4).
-        cy.get('[id="lineSubtotal[1][0]"]').should('contain.text', 'Line 1 subtotal: 12');
+        cy.get(`[id="${testDomId('lineSubtotal[1][0]')}"]`).should(
+          'contain.text',
+          'Line 1 subtotal: 12',
+        );
         // include.when with $item: the third line of the first order has no quantity
-        cy.get('[id="lineSubtotal[0][2]"]').should('not.exist');
+        cy.get(`[id="${testDomId('lineSubtotal[0][2]')}"]`).should('not.exist');
 
         // Typing in the second order's line only affects that line's subtotal
         cy.get('[data-cy="qty[1][0]_textinput"]').clear();
         cy.get('[data-cy="qty[1][0]_textinput"]').type('10');
-        cy.get('[id="lineSubtotal[1][0]"]').should('contain.text', 'Line 1 subtotal: 40');
-        cy.get('[id="lineSubtotal[0][0]"]').should('contain.text', 'Line 1 subtotal: 20');
+        cy.get(`[id="${testDomId('lineSubtotal[1][0]')}"]`).should(
+          'contain.text',
+          'Line 1 subtotal: 40',
+        );
+        cy.get(`[id="${testDomId('lineSubtotal[0][0]')}"]`).should(
+          'contain.text',
+          'Line 1 subtotal: 20',
+        );
       });
 
       it('should evaluate index-aware include.when expressions independently per repeater item', () => {
@@ -795,14 +819,14 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
         });
 
         // Team at index 0 has a teamName -> alert is present
-        cy.get('[id="teamNameTypedAlert[0]"]').should('be.visible');
+        cy.get(`[id="${testDomId('teamNameTypedAlert[0]')}"]`).should('be.visible');
         // Team at index 1 has no teamName -> alert is absent
-        cy.get('[id="teamNameTypedAlert[1]"]').should('not.exist');
+        cy.get(`[id="${testDomId('teamNameTypedAlert[1]')}"]`).should('not.exist');
 
         // Developer [0][0] has a firstName -> alert is present for that specific item
-        cy.get('[id="firstNameAlert[0][0]"]').should('be.visible');
+        cy.get(`[id="${testDomId('firstNameAlert[0][0]')}"]`).should('be.visible');
         // Developer [0][1] has no firstName -> alert is absent for that specific item
-        cy.get('[id="firstNameAlert[0][1]"]').should('not.exist');
+        cy.get(`[id="${testDomId('firstNameAlert[0][1]')}"]`).should('not.exist');
       });
     });
 
@@ -935,12 +959,12 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
         cy.get('[data-cy="tab_rowTabs[0]_firstPanel"]').should(
           'have.attr',
           'aria-controls',
-          'tabpanel_rowTabs[0]_firstPanel',
+          `${testDomId('rowTabs[0]')}_tabpanel_firstPanel`,
         );
         cy.get('[data-cy="tab_rowTabs[1]_secondPanel"]').should(
           'have.attr',
           'aria-controls',
-          'tabpanel_rowTabs[1]_secondPanel',
+          `${testDomId('rowTabs[1]')}_tabpanel_secondPanel`,
         );
         expectNoDuplicateIds();
       });
@@ -958,20 +982,20 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
         cy.get('[data-cy="secondSection[1]_textinput"]').should('not.exist');
 
         // The section buttons carry the layout uid with its row index, so address the second row
-        cy.get('[id="accordion_button_rowAccordion[1]_secondSection"]').click();
+        cy.get(`[id="${testDomId('rowAccordion[1]')}_accordion_button_secondSection"]`).click();
         cy.get('[data-cy="secondSection[1]_textinput"]').should('have.value', 'Bea');
         cy.get('[data-cy="secondSection[0]_textinput"]').should('not.exist');
 
         // Each row's region is labelled by its own row's header
-        cy.get('[id="accordion_section_rowAccordion[0]_firstSection"]').should(
+        cy.get(`[id="${testDomId('rowAccordion[0]')}_accordion_section_firstSection"]`).should(
           'have.attr',
           'aria-labelledby',
-          'accordion_button_rowAccordion[0]_firstSection',
+          `${testDomId('rowAccordion[0]')}_accordion_button_firstSection`,
         );
-        cy.get('[id="accordion_section_rowAccordion[1]_secondSection"]').should(
+        cy.get(`[id="${testDomId('rowAccordion[1]')}_accordion_section_secondSection"]`).should(
           'have.attr',
           'aria-labelledby',
-          'accordion_button_rowAccordion[1]_secondSection',
+          `${testDomId('rowAccordion[1]')}_accordion_button_secondSection`,
         );
         expectNoDuplicateIds();
       });
@@ -1035,10 +1059,18 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
         cy.get('[data-cy="secondSection[1]_textinput"]').should('not.exist');
 
         // The header button still renders in both rows, the region only where the child exists
-        cy.get('[id="accordion_button_rowAccordion[0]_secondSection"]').should('exist');
-        cy.get('[id="accordion_button_rowAccordion[1]_secondSection"]').should('exist');
-        cy.get('[id="accordion_section_rowAccordion[0]_secondSection"]').should('exist');
-        cy.get('[id="accordion_section_rowAccordion[1]_secondSection"]').should('not.exist');
+        cy.get(`[id="${testDomId('rowAccordion[0]')}_accordion_button_secondSection"]`).should(
+          'exist',
+        );
+        cy.get(`[id="${testDomId('rowAccordion[1]')}_accordion_button_secondSection"]`).should(
+          'exist',
+        );
+        cy.get(`[id="${testDomId('rowAccordion[0]')}_accordion_section_secondSection"]`).should(
+          'exist',
+        );
+        cy.get(`[id="${testDomId('rowAccordion[1]')}_accordion_section_secondSection"]`).should(
+          'not.exist',
+        );
       });
 
       it('keeps the selected tab at its row position when an earlier row is removed', () => {
@@ -1070,7 +1102,7 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
           formDef: accordionRowsForm(),
         });
 
-        cy.get('[id="accordion_button_rowAccordion[1]_secondSection"]').click();
+        cy.get(`[id="${testDomId('rowAccordion[1]')}_accordion_button_secondSection"]`).click();
         cy.get('[data-cy="secondSection[1]_textinput"]').should('have.value', 'Bea');
 
         cy.get('.gui-repeater__remove-btn').eq(0).click();
@@ -1090,7 +1122,7 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
           formDef: accordionRowsForm(),
         });
 
-        cy.get('[id="accordion_button_rowAccordion[1]_secondSection"]').click();
+        cy.get(`[id="${testDomId('rowAccordion[1]')}_accordion_button_secondSection"]`).click();
         cy.get('[data-cy="secondSection[1]_textinput"]').should('have.value', 'Bea');
 
         cy.get('.gui-repeater__remove-btn').eq(0).click();
@@ -1306,7 +1338,7 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
         // A new team starts with an empty nested repeater
         cy.get('.gui-button').contains('Add new team').click();
         cy.get('[data-cy="teamName[1]_textinput"]').should('have.value', '');
-        cy.get('[id="devRepeater[1]"]').should('exist');
+        cy.get(`[id="${testDomId('devRepeater[1]')}"]`).should('exist');
         cy.get('[data-cy="firstName[1][0]_textinput"]').should('not.exist');
       });
 
@@ -1347,10 +1379,12 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
         cy.get('[data-cy="firstName[0][0]_textinput"]').should('have.value', 'B');
         cy.get('[data-cy="firstName[0][1]_textinput"]').should('have.value', 'D');
         cy.get('[data-cy="teamName[1]_textinput"]').should('have.value', '');
-        cy.get('.gui-repeater__main-card[id^="devRepeater"]').should(($elements) => {
-          const ids = $elements.toArray().map((element) => element.id);
-          expect(ids).to.deep.equal(['devRepeater[0]', 'devRepeater[1]']);
-        });
+        cy.get(`.gui-repeater__main-card[id^="${testDomId('devRepeater')}"]`).should(
+          ($elements) => {
+            const ids = $elements.toArray().map((element) => element.id);
+            expect(ids).to.deep.equal([testDomId('devRepeater[0]'), testDomId('devRepeater[1]')]);
+          },
+        );
         expectNoDuplicateIds();
       });
     });

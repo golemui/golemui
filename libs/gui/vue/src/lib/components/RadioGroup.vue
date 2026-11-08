@@ -7,10 +7,8 @@ import '@golemui/gui-components/radiogroup';
 
 const props = defineProps<WithWidget>();
 const widget = props.widget as InputWidget<string>;
-const { uid, errors, value, isTouched, templateData, onValueChanged, onBlur } = useInputWidget<
-  OptionValue,
-  RadiogroupProps
->(widget);
+const { uid, formName, errors, value, isTouched, templateData, onValueChanged, onBlur } =
+  useInputWidget<OptionValue, RadiogroupProps>(widget);
 
 const handleChange = (e: Event) => onValueChanged((e as CustomEvent).detail.value);
 const required = computed(() => (templateData.value.validator as Validator)?.required);
@@ -23,6 +21,7 @@ const appearance = computed(() => templateData.value.appearance || 'default');
   <div class="gui-radiogroup gui-field">
     <gui-radiogroup
       :uid="uid"
+      :id-prefix="formName"
       :label="templateData.label"
       :errors="errors"
       :touched="isTouched"

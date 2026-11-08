@@ -5,11 +5,11 @@ import { GuiMarkdownTextReact } from '../web-components';
 
 export function MarkdownText(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as DisplayWidget;
-  const { uid, templateData } = useDisplayWidget<MarkdownTextProps>(widget);
+  const { domId, templateData } = useDisplayWidget<MarkdownTextProps>(widget);
 
   return (
     <div className="gui-markdown-text gui-field">
-      <div className="gui-widget" id={uid}>
+      <div className="gui-widget" id={domId}>
         <GuiMarkdownTextReact md={templateData.md} dependencies={templateData.deps} />
       </div>
     </div>

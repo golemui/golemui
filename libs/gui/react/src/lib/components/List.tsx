@@ -12,10 +12,8 @@ import type { GuiVisibleItem } from '@golemui/gui-components';
 export function List(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<OptionValue>;
 
-  const { uid, errors, value, isTouched, templateData, onValueChanged, onBlur } = useInputWidget<
-    OptionValue,
-    ListProps<unknown>
-  >(widget);
+  const { uid, formName, domId, errors, value, isTouched, templateData, onValueChanged, onBlur } =
+    useInputWidget<OptionValue, ListProps<unknown>>(widget);
 
   // React catches bubbling blur events meanwhile Lit and Angular don't, we prevent double blur events here
   const handleBlur = useCallback(
@@ -77,6 +75,7 @@ export function List(widgetInstance: WithWidget) {
       <GuiLabelReact
         targetElement={listRef.current || undefined}
         uid={uid}
+        idPrefix={formName}
         label={label}
         hint={templateData.hint}
         errors={errors}
@@ -90,8 +89,9 @@ export function List(widgetInstance: WithWidget) {
       <div className="gui-widget">
         <GuiListReact
           ref={listRef}
-          id={uid}
+          id={domId}
           uid={uid}
+          idPrefix={formName}
           value={value ?? ''}
           valueField={templateData.valueField}
           items={templateData.items}
@@ -137,7 +137,12 @@ export function List(widgetInstance: WithWidget) {
       </div>
 
       {showErrors && (
-        <GuiErrorsReact uid={uid} errors={errors} touched={isTouched}></GuiErrorsReact>
+        <GuiErrorsReact
+          uid={uid}
+          idPrefix={formName}
+          errors={errors}
+          touched={isTouched}
+        ></GuiErrorsReact>
       )}
     </div>
   );

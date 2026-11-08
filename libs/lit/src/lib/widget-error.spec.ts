@@ -67,6 +67,7 @@ const rootLayout = (children: unknown[]) => ({
 const firstNameInput = { uid: 'firstName', kind: 'input', type: 'textinput', path: 'firstName' };
 
 const configWith = (widget: Record<string, unknown>): StubConfig => ({
+  formName: 'errors',
   formDef: rootLayout([widget, firstNameInput]),
   widgetLoaders,
   data: { firstName: 'Ada', lastName: 'Lovelace' },
@@ -143,7 +144,7 @@ describe('a widget that throws while rendering', () => {
     );
 
     expect(renderErrors).toEqual([new Error('render failed')]);
-    expect(form.querySelector('#host-broken')?.innerHTML).toBe('');
+    expect(form.querySelector('#host-errors-broken')?.innerHTML).toBe('');
     expect(form.querySelector('form')?.textContent).not.toContain('failed with:');
     expect(form.health).toEqual({ status: 'ok' });
     expect(inputValue('firstName')).toBe('Ada');

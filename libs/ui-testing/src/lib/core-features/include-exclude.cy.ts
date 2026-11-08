@@ -1,7 +1,8 @@
 import { defineForm } from '@golemui/core';
-import { type MountComponentFn } from '../utils';
+import { type MountComponentFn, testDomId, withTestFormName } from '../utils';
 
-export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
+export const runIncludeExcludeComponentTests = (baseMountFn: MountComponentFn) => {
+  const mountFn = withTestFormName(baseMountFn);
   describe('Include.in/Exclude.in fields with boolean values', () => {
     context('include fields', () => {
       it(`control fields should hide/show with include in`, () => {
@@ -401,13 +402,13 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
         }),
       });
 
-      cy.get('[id="errorAlert"]').should('not.exist');
+      cy.get(`[id="${testDomId('errorAlert')}"]`).should('not.exist');
 
       cy.get('[data-cy="submitBtn_button"]').click();
-      cy.get('[id="errorAlert"]').should('exist');
+      cy.get(`[id="${testDomId('errorAlert')}"]`).should('exist');
 
       cy.get('[data-cy="userName_textinput"]').type('Alice');
-      cy.get('[id="errorAlert"]').should('not.exist');
+      cy.get(`[id="${testDomId('errorAlert')}"]`).should('not.exist');
     });
 
     it('should show element via include.when when $formIsInvalid is true', () => {
@@ -439,13 +440,13 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
         }),
       });
 
-      cy.get('[id="formErrorBanner"]').should('not.exist');
+      cy.get(`[id="${testDomId('formErrorBanner')}"]`).should('not.exist');
 
       cy.get('[data-cy="submitBtn_button"]').click();
-      cy.get('[id="formErrorBanner"]').should('exist');
+      cy.get(`[id="${testDomId('formErrorBanner')}"]`).should('exist');
 
       cy.get('[data-cy="userName_textinput"]').type('Alice');
-      cy.get('[id="formErrorBanner"]').should('not.exist');
+      cy.get(`[id="${testDomId('formErrorBanner')}"]`).should('not.exist');
     });
 
     it('should hide element via exclude.when when $errors exist for a field', () => {
@@ -477,13 +478,13 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
         }),
       });
 
-      cy.get('[id="successMessage"]').should('exist');
+      cy.get(`[id="${testDomId('successMessage')}"]`).should('exist');
 
       cy.get('[data-cy="submitBtn_button"]').click();
-      cy.get('[id="successMessage"]').should('not.exist');
+      cy.get(`[id="${testDomId('successMessage')}"]`).should('not.exist');
 
       cy.get('[data-cy="userName_textinput"]').type('Alice');
-      cy.get('[id="successMessage"]').should('exist');
+      cy.get(`[id="${testDomId('successMessage')}"]`).should('exist');
     });
   });
 

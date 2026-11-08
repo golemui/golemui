@@ -7,10 +7,8 @@ import '@golemui/gui-components/range-slider';
 
 const props = defineProps<WithWidget>();
 const widget = props.widget as InputWidget<SliderRange>;
-const { uid, errors, value, isTouched, templateData, onValueChanged, onBlur } = useInputWidget<
-  SliderRange,
-  RangeSliderProps
->(widget);
+const { uid, formName, errors, value, isTouched, templateData, onValueChanged, onBlur } =
+  useInputWidget<SliderRange, RangeSliderProps>(widget);
 
 const handleInput = (e: Event) => onValueChanged((e as CustomEvent).detail.value);
 const required = computed(() => (templateData.value.validator as Validator)?.required);
@@ -21,6 +19,7 @@ const required = computed(() => (templateData.value.validator as Validator)?.req
     <!-- Vue writes 0 for an undefined number property: the bounds get their defaults here. -->
     <gui-range-slider
       :uid="uid"
+      :id-prefix="formName"
       :label="templateData.label"
       :hint="templateData.hint"
       :errors="errors"

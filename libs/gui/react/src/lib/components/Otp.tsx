@@ -7,10 +7,8 @@ import '../styles.scss';
 
 export function Otp(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<string>;
-  const { uid, errors, value, isTouched, templateData, onValueChanged, onBlur } = useInputWidget<
-    string,
-    OtpProps
-  >(widget);
+  const { uid, formName, errors, value, isTouched, templateData, onValueChanged, onBlur } =
+    useInputWidget<string, OtpProps>(widget);
 
   const handleInput = useCallback(
     (e: Event) => onValueChanged((e as CustomEvent).detail.value),
@@ -28,6 +26,7 @@ export function Otp(widgetInstance: WithWidget) {
     <div className="gui-otp gui-field">
       <GuiOtpReact
         uid={uid}
+        idPrefix={formName}
         label={label}
         hint={templateData.hint}
         errors={errors}

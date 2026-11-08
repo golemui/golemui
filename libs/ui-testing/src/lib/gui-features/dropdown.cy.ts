@@ -1,7 +1,14 @@
 import { defineForm, type FunctionWidgetParams } from '@golemui/core';
-import { eventsNamed, type FormHandle, type MountComponentFn } from '../utils';
+import {
+  eventsNamed,
+  type FormHandle,
+  type MountComponentFn,
+  testDomId,
+  withTestFormName,
+} from '../utils';
 
-export const runDropdownComponentTests = (mountFn: MountComponentFn) => {
+export const runDropdownComponentTests = (baseMountFn: MountComponentFn) => {
+  const mountFn = withTestFormName(baseMountFn);
   describe('Dropdown Component', () => {
     const mountWithItems = (items: unknown[], extraProps: Record<string, unknown> = {}) => {
       mountFn({
@@ -310,7 +317,7 @@ export const runDropdownComponentTests = (mountFn: MountComponentFn) => {
           .should('have.attr', 'aria-label', 'Show options')
           .should('have.attr', 'aria-haspopup', 'listbox')
           .should('have.attr', 'aria-expanded', 'false')
-          .should('have.attr', 'aria-controls', 'testSubject-list');
+          .should('have.attr', 'aria-controls', testDomId('testSubject-list'));
         cy.get(toggleSel).then(($btn) => {
           cy.get(`[id="${$btn.attr('aria-controls')}"]`).should('exist');
         });
@@ -367,8 +374,8 @@ export const runDropdownComponentTests = (mountFn: MountComponentFn) => {
           .should('have.attr', 'role', 'combobox')
           .should('have.attr', 'aria-autocomplete', 'list')
           .should('have.attr', 'aria-expanded', 'false')
-          .should('have.attr', 'aria-controls', 'testSubject-list');
-        cy.get('gui-list#testSubject-list').should('have.attr', 'role', 'listbox');
+          .should('have.attr', 'aria-controls', testDomId('testSubject-list'));
+        cy.get(`gui-list[id="${testDomId('testSubject-list')}"]`).should('have.attr', 'role', 'listbox');
 
         cy.get(inputSel).click();
         cy.get(inputSel).should('have.attr', 'aria-expanded', 'true');
@@ -388,8 +395,8 @@ export const runDropdownComponentTests = (mountFn: MountComponentFn) => {
 
       it('should not render duplicate ids for the input and the list', () => {
         mountWithItems(['React', 'Angular', 'Vue']);
-        cy.get('[id="testSubject"]').should('have.length', 1);
-        cy.get('[id="testSubject-list"]').should('have.length', 1);
+        cy.get(`[id="${testDomId('testSubject')}"]`).should('have.length', 1);
+        cy.get(`[id="${testDomId('testSubject-list')}"]`).should('have.length', 1);
       });
 
       it('should point aria-activedescendant at a resolvable option', () => {
@@ -402,7 +409,7 @@ export const runDropdownComponentTests = (mountFn: MountComponentFn) => {
         cy.get('gui-list')
           .should('have.attr', 'aria-activedescendant')
           .then((activeId) => {
-            cy.get(`#${activeId}`).should('exist').should('have.attr', 'role', 'option');
+            cy.get(`[id="${activeId}"]`).should('exist').should('have.attr', 'role', 'option');
           });
       });
     });
@@ -447,10 +454,10 @@ export const runDropdownComponentTests = (mountFn: MountComponentFn) => {
 
         cy.get(inputSel).click();
         cy.get('[data-cy="testSubject_panel-validator-error"]').should('be.visible');
-        cy.get('#testSubject_panel_errors')
+        cy.get(`[id="${testDomId('testSubject_panel_errors')}"]`)
           .should('have.attr', 'aria-hidden', 'true')
           .and('not.have.attr', 'role');
-        cy.get('[id="testSubject_errors"]').should('have.length', 1);
+        cy.get(`[id="${testDomId('testSubject_errors')}"]`).should('have.length', 1);
 
         // Invalid field → input and panel share the red border; the inner
         // listbox keeps its default border (the panel owns the invalid

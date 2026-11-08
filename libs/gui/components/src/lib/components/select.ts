@@ -73,9 +73,9 @@ export class GuiSelect extends GuiFormControl {
   private reportedInvalidOption = false;
 
   private ariaController = new GUIAriaController(this, {
-    getTargets: () => this.querySelectorAll(`select[id="${this.uid}"]`),
+    getTargets: () => this.querySelectorAll(`select[id="${this.domId}"]`),
     getState: () => ({
-      uid: this.uid,
+      domId: this.domId,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -100,7 +100,6 @@ export class GuiSelect extends GuiFormControl {
     super.render();
 
     const templateData: ControlTemplateData<OptionValue> & GuiSelectProps = {
-      uid: this.uid,
       label: this.label,
       errors: this.errors,
       touched: this.touched,
@@ -149,11 +148,11 @@ export class GuiSelect extends GuiFormControl {
         `;
 
     return html`
-      ${addLabel(this.uid, templateData)}
+      ${addLabel(this, templateData)}
 
       <div class="gui-widget">
         <select
-          id=${this.uid}
+          id=${this.domId}
           data-cy=${`${this.uid}_select`}
           class=${classMap({ 'gui-widget-input': true, ...selectIcon.widgetClasses })}
           ?disabled=${templateData.disabled}
@@ -169,7 +168,7 @@ export class GuiSelect extends GuiFormControl {
         ${selectIcon.html}
       </div>
 
-      ${addErrors(this.uid, templateData)}
+      ${addErrors(this, templateData)}
     `;
   }
 

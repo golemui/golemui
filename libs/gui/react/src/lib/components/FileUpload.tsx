@@ -9,6 +9,7 @@ export function FileUpload(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<FileItem | null>;
   const {
     uid,
+    formName,
     errors,
     value,
     isTouched,
@@ -40,6 +41,7 @@ export function FileUpload(widgetInstance: WithWidget) {
     <div className="gui-file-upload gui-field">
       <GuiFileUploadReact
         uid={uid}
+        idPrefix={formName}
         path={widget.path}
         label={label}
         hint={templateData.hint}

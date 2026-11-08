@@ -8,8 +8,18 @@ import '@golemui/gui-components/errors';
 
 const props = defineProps<WithWidget>();
 const widget = props.widget as InputWidget<Record<string, unknown>[]>;
-const { uid, value, onValueChanged, onRowRemoved, templateData, errors, isTouched, onBlur } =
-  useInputWidget<Record<string, unknown>[], RepeaterProps<NonFunctionWidget<string>>>(widget);
+const {
+  uid,
+  formName,
+  domId,
+  value,
+  onValueChanged,
+  onRowRemoved,
+  templateData,
+  errors,
+  isTouched,
+  onBlur,
+} = useInputWidget<Record<string, unknown>[], RepeaterProps<NonFunctionWidget<string>>>(widget);
 
 const required = computed(() => (templateData.value.validator as Validator)?.required);
 const showErrors = computed(() => isTouched.value && errors.value && errors.value.length > 0);
@@ -51,10 +61,17 @@ const isLimitReached = computed(() =>
 
 <template>
   <div class="gui-repeater gui-field">
-    <div ref="repeaterRef" :id="uid" :class="cardClass" @focusin="onFocusIn" @focusout="onFocusOut">
+    <div
+      ref="repeaterRef"
+      :id="domId"
+      :class="cardClass"
+      @focusin="onFocusIn"
+      @focusout="onFocusOut"
+    >
       <gui-label
         :targetElement="repeaterRef ?? undefined"
         :uid="uid"
+        :id-prefix="formName"
         :label="templateData.label"
         :errors="errors"
         :touched="isTouched"
@@ -104,6 +121,12 @@ const isLimitReached = computed(() =>
       </button>
     </div>
 
-    <gui-errors v-if="showErrors" :uid="uid" :errors="errors" :touched="isTouched"></gui-errors>
+    <gui-errors
+      v-if="showErrors"
+      :uid="uid"
+      :id-prefix="formName"
+      :errors="errors"
+      :touched="isTouched"
+    ></gui-errors>
   </div>
 </template>

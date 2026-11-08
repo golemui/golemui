@@ -9,6 +9,7 @@ export function DateTimeInput(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<string>;
   const {
     uid,
+    formName,
     errors,
     value,
     isTouched,
@@ -60,6 +61,7 @@ export function DateTimeInput(widgetInstance: WithWidget) {
       <GuiDateTimeReact
         ref={handleRef}
         uid={uid}
+        idPrefix={formName}
         label={label}
         hint={hint}
         errors={errors}

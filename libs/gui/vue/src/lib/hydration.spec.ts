@@ -146,10 +146,10 @@ describe('hydrating a server-rendered GuiForm', () => {
 
     await hydrate();
 
-    const firstName = container.querySelector<HTMLInputElement>('#firstName-textinput');
+    const firstName = container.querySelector<HTMLInputElement>('#gui-vue-hydration-form-firstName-textinput');
     expect(firstName?.value).toBe('Ada');
-    expect(container.querySelector<HTMLInputElement>('#acceptTerms-checkbox')?.checked).toBe(true);
-    expect(container.querySelector<HTMLSelectElement>('#size-select')?.value).toBe('m');
+    expect(container.querySelector<HTMLInputElement>('#gui-vue-hydration-form-acceptTerms-checkbox')?.checked).toBe(true);
+    expect(container.querySelector<HTMLSelectElement>('#gui-vue-hydration-form-size-select')?.value).toBe('m');
     expect(formEvents).toEqual([expect.objectContaining({ name: 'firstNameLoaded' })]);
   });
 });

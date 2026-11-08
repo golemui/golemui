@@ -114,15 +114,27 @@ export const mountFramework = (options: MountOptions) => {
   const harnessRef = createRef<ConfigHarnessHandle>();
 
   mount(
-    <ConfigHarness
-      ref={harnessRef}
-      initialConfig={config}
-      formRef={formRef}
-      formEvent={handleFormEvent}
-      formHealth={handleFormHealth}
-      formSubmit={handleFormSubmit}
-      autocomplete={options.autocomplete}
-    />,
+    <>
+      <ConfigHarness
+        ref={harnessRef}
+        initialConfig={config}
+        formRef={formRef}
+        formEvent={handleFormEvent}
+        formHealth={handleFormHealth}
+        formSubmit={handleFormSubmit}
+        autocomplete={options.autocomplete}
+      />
+      {(options.extraForms ?? []).map((extra, index) => (
+        <GuiForm
+          key={index}
+          config={{ ...config, formName: extra.formName }}
+          formEvent={handleFormEvent}
+          formHealth={handleFormHealth}
+          formSubmit={(event) => extra.formSubmit?.(event)}
+          autocomplete={options.autocomplete}
+        />
+      ))}
+    </>,
   );
 
   if (options.onFormReady) {

@@ -1,10 +1,22 @@
 import { type DisplayWidget, widgetViewModel$ } from '@golemui/core';
+import { toDomId } from '@golemui/core/internals';
 import { onScopeDispose, ref, type Ref } from 'vue';
 import { useVueFormContext } from '../provideFormContext';
 import { mergeViewModelIntoTemplateData, type WithFlattenedProps } from './template-data';
 
 export interface UseDisplayWidgetReturn<ExtraProps extends Record<string, any>> {
   uid: Ref<string>;
+  /**
+   * The form's `formName`. Every DOM id the widget renders starts with it, so two forms on one
+   * page never share an id: pass it as `idPrefix` to GolemUI Components.
+   */
+  formName: string;
+  /**
+   * The widget uid behind the form's name: the DOM id of the widget's control, which the ids of
+   * its other parts extend (`${domId}_label`, `${domId}-list`). Computed once, when the widget sets
+   * up.
+   */
+  domId: string;
   templateData: Ref<WithFlattenedProps<DisplayWidget<string>, ExtraProps>>;
 }
 
@@ -25,5 +37,10 @@ export function useDisplayWidget<ExtraProps extends Record<string, any> = Record
     viewModelSub.unsubscribe();
   });
 
-  return { uid, templateData };
+  return {
+    uid,
+    formName: formContext.formName,
+    domId: toDomId(formContext.formName, widget.uid),
+    templateData,
+  };
 }

@@ -196,9 +196,9 @@ export class GuiMarkdown extends GuiFormControl {
   private splitViewInitialized = false;
 
   private ariaController = new GUIAriaController(this, {
-    getTargets: () => this.querySelectorAll(`textarea[id="${this.uid}"]`),
+    getTargets: () => this.querySelectorAll(`textarea[id="${this.domId}"]`),
     getState: () => ({
-      uid: this.uid,
+      domId: this.domId,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -234,7 +234,6 @@ export class GuiMarkdown extends GuiFormControl {
     super.render();
 
     const templateData: ControlTemplateData<string> & GuiMarkdownProps = {
-      uid: this.uid,
       label: this.label,
       errors: this.errors,
       touched: this.touched,
@@ -284,7 +283,7 @@ export class GuiMarkdown extends GuiFormControl {
     };
 
     return html`
-      ${addLabel(this.uid, templateData)}
+      ${addLabel(this, templateData)}
 
       <div
         class=${classMap({
@@ -330,7 +329,7 @@ export class GuiMarkdown extends GuiFormControl {
 
         <div class="gui-markdown__container">
           <textarea
-            id=${this.uid}
+            id=${this.domId}
             class=${classMap(fieldClasses)}
             style=${cspStyleMap(autoGrowStyles)}
             ?disabled=${templateData.disabled}
@@ -363,7 +362,7 @@ export class GuiMarkdown extends GuiFormControl {
       </div>
 
       <div class="gui-markdown--validation">
-        <div>${addErrors(this.uid, templateData)}</div>
+        <div>${addErrors(this, templateData)}</div>
         ${counter}
       </div>
     `;
@@ -371,7 +370,7 @@ export class GuiMarkdown extends GuiFormControl {
 
   private recalculateAutoGrow() {
     if (!this.autoGrow) return;
-    const textarea = this.querySelector(`textarea[id="${this.uid}"]`) as HTMLTextAreaElement;
+    const textarea = this.querySelector(`textarea[id="${this.domId}"]`) as HTMLTextAreaElement;
     if (!textarea) return;
 
     const styles = window.getComputedStyle(textarea);
@@ -595,7 +594,7 @@ export class GuiMarkdown extends GuiFormControl {
   }
 
   private detectFormats() {
-    const textarea = this.querySelector(`textarea[id="${this.uid}"]`) as HTMLTextAreaElement;
+    const textarea = this.querySelector(`textarea[id="${this.domId}"]`) as HTMLTextAreaElement;
     if (!textarea) return;
 
     const { selectionStart, value } = textarea;
@@ -646,7 +645,7 @@ export class GuiMarkdown extends GuiFormControl {
       // The buttons are natively disabled too; this guards programmatic calls
       if (this.disabled || this.readOnly) return;
 
-      const textarea = this.querySelector(`textarea[id="${this.uid}"]`) as HTMLTextAreaElement;
+      const textarea = this.querySelector(`textarea[id="${this.domId}"]`) as HTMLTextAreaElement;
       if (!textarea) return;
 
       if (isLineFormat(formatKey)) {

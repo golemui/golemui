@@ -14,7 +14,7 @@ export class InputWidgetAdapter<
   );
 
   init(widget: InputWidget<T>) {
-    this.widget = widget;
+    this.setWidget(widget);
 
     this.templateDataUpdater(this.templateData, (viewModel) => ({
       value: viewModel.value as T,

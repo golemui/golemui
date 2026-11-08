@@ -7,7 +7,8 @@ export class GUIAriaController<T, ExtraProps extends { hint?: string; required?:
 {
   private getTargets: () => NodeListOf<Element> | HTMLElement[] | HTMLElement | null;
   private getState: () => {
-    uid: string;
+    /** The id of the element's control, `idPrefix` included: the ids of its parts derive from it. */
+    domId: string;
     templateData: ControlTemplateData<T> & ExtraProps;
   };
   private host: ReactiveControllerHost;
@@ -17,13 +18,13 @@ export class GUIAriaController<T, ExtraProps extends { hint?: string; required?:
     host: ReactiveControllerHost,
     options: {
       /**
-       * The field takes its accessible name from the `${uid}_label` element, its own label or its
+       * The field takes its accessible name from the `${domId}_label` element, its own label or its
        * host picker's, and warns in development when there is none.
        */
       requiresLabel?: boolean;
       getTargets: () => NodeListOf<Element> | HTMLElement[] | HTMLElement | null;
       getState: () => {
-        uid: string;
+        domId: string;
         templateData: ControlTemplateData<T> & ExtraProps;
       };
     },
@@ -53,9 +54,9 @@ export class GUIAriaController<T, ExtraProps extends { hint?: string; required?:
       elements = [rawTargets as Element];
     }
 
-    const { uid, templateData } = this.getState();
+    const { domId, templateData } = this.getState();
     if (this.requiresLabel && this.host instanceof HTMLElement) {
-      warnIfUnlabelled(this.host, `${uid}_label`);
+      warnIfUnlabelled(this.host, `${domId}_label`);
     }
     const { touched, errors, readonly, disabled, hint, required } = templateData;
     const showErrors = showsErrors(touched, errors);
@@ -71,9 +72,9 @@ export class GUIAriaController<T, ExtraProps extends { hint?: string; required?:
     for (const element of elements) {
       if (!element) continue;
 
-      toggleAttr(element, 'aria-describedby', hint ? `${uid}_hint` : null);
+      toggleAttr(element, 'aria-describedby', hint ? `${domId}_hint` : null);
       toggleAttr(element, 'aria-invalid', showErrors ? 'true' : null);
-      toggleAttr(element, 'aria-errormessage', showErrors ? `${uid}_errors` : null);
+      toggleAttr(element, 'aria-errormessage', showErrors ? `${domId}_errors` : null);
       toggleAttr(element, 'aria-disabled', disabled ? 'true' : null);
 
       // A group (the parts of a date or time field, the input of a tags field) supports neither

@@ -7,10 +7,8 @@ import '../styles.scss';
 
 export function TextArea(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<string>;
-  const { uid, errors, value, isTouched, templateData, onValueChanged, onBlur } = useInputWidget<
-    string,
-    TextareaProps
-  >(widget);
+  const { uid, formName, errors, value, isTouched, templateData, onValueChanged, onBlur } =
+    useInputWidget<string, TextareaProps>(widget);
 
   const handleChange = useCallback(
     (e: Event) => onValueChanged((e as CustomEvent).detail.value),
@@ -33,6 +31,7 @@ export function TextArea(widgetInstance: WithWidget) {
     <div className="gui-textarea gui-field">
       <GuiTextareaReact
         uid={uid}
+        idPrefix={formName}
         label={label}
         errors={errors}
         touched={isTouched}

@@ -226,7 +226,7 @@ export class GuiDateTimeCalendar extends GuiFormControl {
   protected ariaController: GUIAriaController<unknown, any> = new GUIAriaController(this, {
     getTargets: () => this.querySelectorAll(`.gui-calendar-input`),
     getState: () => ({
-      uid: this.uid,
+      domId: this.domId,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -514,7 +514,7 @@ export class GuiDateTimeCalendar extends GuiFormControl {
 
   override render() {
     return renderCalendarChrome({
-      uid: this.uid,
+      ids: this,
       label: this.label,
       hint: this.hint,
       showHint: this.showHint,
@@ -560,6 +560,7 @@ export class GuiDateTimeCalendar extends GuiFormControl {
         <gui-time-picker
           class="gui-time-picker gui-field"
           .uid=${`${this.uid}-time`}
+          .idPrefix=${this.idPrefix}
           .label=${requiredName('time', this.timeLabel)}
           .showErrors=${false}
           .deferFocusLeave=${true}

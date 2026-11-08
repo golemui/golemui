@@ -1,12 +1,13 @@
 import { defineForm, identityTranslator } from '@golemui/core';
-import { type MountComponentFn } from '../utils';
+import { type MountComponentFn, testDomId, withTestFormName } from '../utils';
 
 // Behavior tests for the gui-date-time-picker web component: a gui-date-time
 // input opening a gui-date-time-calendar popover. The popover closes only on
 // a deliberate commit (a list pick or Enter) — picking a day keeps any
 // previously chosen time (committing the new full value) or, with no time
 // yet, parks a working partial that survives closing the popover.
-export const runDateTimePickerComponentTests = (mountFn: MountComponentFn) => {
+export const runDateTimePickerComponentTests = (baseMountFn: MountComponentFn) => {
+  const mountFn = withTestFormName(baseMountFn);
   describe('DateTimePicker Component', () => {
     const sel = {
       // The typed field parts (the popover's own time input is scoped under gui-time)
@@ -597,7 +598,7 @@ export const runDateTimePickerComponentTests = (mountFn: MountComponentFn) => {
           .should('have.attr', 'aria-label', 'Show calendar')
           .should('have.attr', 'aria-haspopup', 'dialog')
           .should('have.attr', 'aria-expanded', 'false')
-          .should('have.attr', 'aria-controls', 'testSubject_popup');
+          .should('have.attr', 'aria-controls', testDomId('testSubject_popup'));
       });
 
       it('should open the calendar dialog from the toggle and move focus into it', () => {
@@ -606,7 +607,7 @@ export const runDateTimePickerComponentTests = (mountFn: MountComponentFn) => {
         cy.get(toggleSel).should('have.attr', 'aria-expanded', 'true');
         cy.get('gui-date-time-calendar')
           .should('have.attr', 'role', 'dialog')
-          .should('have.id', 'testSubject_popup');
+          .should('have.id', testDomId('testSubject_popup'));
         cy.focused().should('have.class', 'gui-calendar__day-button');
       });
     });
@@ -638,10 +639,10 @@ export const runDateTimePickerComponentTests = (mountFn: MountComponentFn) => {
         cy.get('[data-cy="testSubject_panel-validator-error"]')
           .should('be.visible')
           .and('contain.text', 'Incomplete date-time');
-        cy.get('#testSubject_panel_errors')
+        cy.get(`[id="${testDomId('testSubject_panel_errors')}"]`)
           .should('have.attr', 'aria-hidden', 'true')
           .and('not.have.attr', 'role');
-        cy.get('[id="testSubject_errors"]').should('have.length', 1);
+        cy.get(`[id="${testDomId('testSubject_errors')}"]`).should('have.length', 1);
 
         cy.get('[data-cy="testSubject_validator-error"]').then(($li) => {
           cy.get(panelSel).should('have.css', 'border-top-color', $li.css('color'));

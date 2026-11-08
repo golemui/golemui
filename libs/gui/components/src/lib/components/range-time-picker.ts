@@ -255,9 +255,9 @@ export class GuiRangeTimePicker extends GuiFormControl {
       ? html`<div
           class="gui-picker__panel gui-range-time-picker__panel"
           popover="manual"
-          id=${`${this.uid}_popup`}
+          id=${`${this.domId}_popup`}
           role="dialog"
-          aria-labelledby=${this.label ? `${this.uid}_label` : nothing}
+          aria-labelledby=${this.label ? `${this.domId}_label` : nothing}
           aria-label=${this.label ? nothing : requiredName('timeList')}
         >
           <div class="gui-range-time-picker__columns">
@@ -266,6 +266,7 @@ export class GuiRangeTimePicker extends GuiFormControl {
               <gui-time-list
                 class="gui-range-time-picker__list"
                 .uid=${this.uid}
+                .idPrefix=${this.idPrefix}
                 .label=${startLabel}
                 .value=${this._workingIn}
                 .localeId=${this.localeId}
@@ -288,6 +289,7 @@ export class GuiRangeTimePicker extends GuiFormControl {
               <gui-time-list
                 class="gui-range-time-picker__list"
                 .uid=${this.uid}
+                .idPrefix=${this.idPrefix}
                 .label=${endLabel}
                 .value=${this._workingOut}
                 .localeId=${this.localeId}
@@ -306,18 +308,14 @@ export class GuiRangeTimePicker extends GuiFormControl {
             </div>
           </div>
           ${this.showErrors !== false
-            ? addErrors(
-                this.uid,
-                { errors: this.errors, touched: this.touched },
-                { variant: 'panel' },
-              )
+            ? addErrors(this, { errors: this.errors, touched: this.touched }, { variant: 'panel' })
             : nothing}
         </div>`
       : nothing;
 
     return html`
       ${addLabel(
-        this.uid,
+        this,
         {
           label: this.label,
           hint: this.hint,
@@ -335,9 +333,10 @@ export class GuiRangeTimePicker extends GuiFormControl {
         @focusout=${this._focusLeave.onFocusOut}
       >
         <gui-range-time
-          id=${`${this.uid}_time`}
+          id=${`${this.domId}_time`}
           class=${classMap(pickerIcon.widgetClasses)}
           .uid=${this.uid}
+          .idPrefix=${this.idPrefix}
           .hint=${this.hint}
           .showHint=${false}
           .showErrors=${false}
@@ -391,7 +390,7 @@ export class GuiRangeTimePicker extends GuiFormControl {
           aria-label=${requiredName('showTimeList', this.toggleAriaLabel)}
           aria-haspopup="dialog"
           aria-expanded=${this._popup.open ? 'true' : 'false'}
-          aria-controls=${`${this.uid}_popup`}
+          aria-controls=${`${this.domId}_popup`}
           ?disabled=${this.disabled}
           @click=${this.onToggleClick}
         >
@@ -402,7 +401,7 @@ export class GuiRangeTimePicker extends GuiFormControl {
       </div>
 
       ${this.showErrors !== false
-        ? addErrors(this.uid, { errors: this.errors, touched: this.touched })
+        ? addErrors(this, { errors: this.errors, touched: this.touched })
         : ''}
     `;
   }

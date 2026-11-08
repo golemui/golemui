@@ -257,7 +257,7 @@ export class GuiPills extends GuiElement {
   }
 
   private get dropdownId(): string {
-    return `${this.uid}_pills_dropdown`;
+    return `${this.domId}_pills_dropdown`;
   }
 
   private renderCompact(count: number) {
@@ -304,7 +304,7 @@ export class GuiPills extends GuiElement {
             (item, index) => this.renderPill(item, index, true),
           )}
         </div>
-        ${addErrors(this.uid, { errors: this.errors, touched: this.touched }, { variant: 'pills' })}
+        ${addErrors(this, { errors: this.errors, touched: this.touched }, { variant: 'pills' })}
       </div>
     `;
   }

@@ -14,7 +14,7 @@ const empty = {};
 
 export function Accordion(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as LayoutWidget;
-  const { uid, children, templateData, onChange } = useLayoutWidget<AccordionProps>(widget);
+  const { domId, children, templateData, onChange } = useLayoutWidget<AccordionProps>(widget);
   const [activeSections, setActiveSections] =
     useState<NonNullable<AccordionProps['defaultOpen']>>(empty);
   // The sections as of the last toggle. With singleOpen, opening one section makes gui-accordion
@@ -53,7 +53,7 @@ export function Accordion(widgetInstance: WithWidget) {
 
   return (
     <div className="gui-accordion gui-field">
-      <GuiAccordionReact id={uid} multiple={!templateData.singleOpen}>
+      <GuiAccordionReact id={domId} multiple={!templateData.singleOpen}>
         {(templateData.sections ?? []).map((section) => {
           const isOpen = !!activeSections[section.uid];
           const child = children.find(
@@ -67,15 +67,15 @@ export function Accordion(widgetInstance: WithWidget) {
               onGuiToggle={(event) => onToggle(event, section.uid)}
             >
               <details open={isOpen}>
-                <summary id={accordionButtonId(widget.uid, section.uid)}>
+                <summary id={accordionButtonId(domId, section.uid)}>
                   {section.label as string}
                 </summary>
                 {child && (isOpen || templateData.renderMode !== 'activeOnly') ? (
                   <section
                     className="gui-widget"
                     role="region"
-                    id={accordionSectionId(widget.uid, section.uid)}
-                    aria-labelledby={accordionButtonId(widget.uid, section.uid)}
+                    id={accordionSectionId(domId, section.uid)}
+                    aria-labelledby={accordionButtonId(domId, section.uid)}
                   >
                     <WidgetRenderer widget={child} />
                   </section>

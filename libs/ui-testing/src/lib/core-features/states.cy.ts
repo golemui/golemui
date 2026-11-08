@@ -1,7 +1,8 @@
 import { type FormEvent, defineForm } from '@golemui/core';
-import { type MountComponentFn } from '../utils';
+import { type MountComponentFn, testDomId, withTestFormName } from '../utils';
 
-export const runStatesComponentTests = (mountFn: MountComponentFn) => {
+export const runStatesComponentTests = (baseMountFn: MountComponentFn) => {
+  const mountFn = withTestFormName(baseMountFn);
   describe('States', () => {
     context('Validators with boolean values', () => {
       it(`should add a validator with a state`, () => {
@@ -907,15 +908,15 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
         });
 
         // 'hasErrors' state is inactive -> errorSummary is hidden
-        cy.get('[id="errorSummary"]').should('not.exist');
+        cy.get(`[id="${testDomId('errorSummary')}"]`).should('not.exist');
 
         // Submit with empty required field -> $errors.userName gets errors -> 'hasErrors' activates
         cy.get('[data-cy="submitBtn_button"]').click();
-        cy.get('[id="errorSummary"]').should('exist');
+        cy.get(`[id="${testDomId('errorSummary')}"]`).should('exist');
 
         // Fill the field -> errors clear -> 'hasErrors' deactivates
         cy.get('[data-cy="userName_textinput"]').type('Alice');
-        cy.get('[id="errorSummary"]').should('not.exist');
+        cy.get(`[id="${testDomId('errorSummary')}"]`).should('not.exist');
       });
 
       it('should activate a state based on $formIsInvalid and drive include.in / exclude.from', () => {
@@ -958,18 +959,18 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
         });
 
         // Initially 'formInvalid' is inactive
-        cy.get('[id="invalidBanner"]').should('not.exist');
-        cy.get('[id="validMessage"]').should('exist');
+        cy.get(`[id="${testDomId('invalidBanner')}"]`).should('not.exist');
+        cy.get(`[id="${testDomId('validMessage')}"]`).should('exist');
 
         // After submit with errors: 'formInvalid' state activates
         cy.get('[data-cy="submitBtn_button"]').click();
-        cy.get('[id="invalidBanner"]').should('exist');
-        cy.get('[id="validMessage"]').should('not.exist');
+        cy.get(`[id="${testDomId('invalidBanner')}"]`).should('exist');
+        cy.get(`[id="${testDomId('validMessage')}"]`).should('not.exist');
 
         // After fixing: 'formInvalid' state deactivates
         cy.get('[data-cy="userName_textinput"]').type('Alice');
-        cy.get('[id="invalidBanner"]').should('not.exist');
-        cy.get('[id="validMessage"]').should('exist');
+        cy.get(`[id="${testDomId('invalidBanner')}"]`).should('not.exist');
+        cy.get(`[id="${testDomId('validMessage')}"]`).should('exist');
       });
     });
   });

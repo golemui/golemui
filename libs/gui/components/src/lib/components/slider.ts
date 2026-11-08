@@ -32,9 +32,9 @@ export class GuiSlider extends GuiSliderBase {
   @property({ type: Number }) value: number | undefined = undefined;
 
   private ariaController = new GUIAriaController(this, {
-    getTargets: () => this.querySelectorAll(`input[id="${this.uid}"]`),
+    getTargets: () => this.querySelectorAll(`input[id="${this.domId}"]`),
     getState: () => ({
-      uid: this.uid,
+      domId: this.domId,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -70,7 +70,6 @@ export class GuiSlider extends GuiSliderBase {
     const text = value === undefined ? '–' : this.formatValue(value);
 
     const templateData: ControlTemplateData<number> & { hint?: string } = {
-      uid: this.uid,
       label: this.label,
       hint: this.hint,
       errors: this.errors,
@@ -82,7 +81,7 @@ export class GuiSlider extends GuiSliderBase {
     };
 
     return html`
-      ${addLabel(this.uid, templateData, false, undefined, true, this.labelValue(text))}
+      ${addLabel(this, templateData, false, undefined, true, this.labelValue(text))}
 
       <div class="gui-widget">
         <div class=${this.controlClasses(value === undefined)}>
@@ -95,7 +94,7 @@ export class GuiSlider extends GuiSliderBase {
           ${this.ticks({ start: 0, end: value === undefined ? -1 : percent })}
           <input
             type="range"
-            id=${this.uid}
+            id=${this.domId}
             data-cy=${`${this.uid}_slider`}
             class="gui-slider__input"
             min=${min}
@@ -114,7 +113,7 @@ export class GuiSlider extends GuiSliderBase {
         </div>
       </div>
 
-      ${this.footer(addErrors(this.uid, templateData))}
+      ${this.footer(addErrors(this, templateData))}
     `;
   }
 

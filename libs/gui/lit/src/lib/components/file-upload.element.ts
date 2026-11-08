@@ -42,6 +42,7 @@ export class FileUploadElement extends LitElement implements WithWidget {
     return html`
       <gui-file-upload
         .uid=${this.widget.uid}
+        .idPrefix=${this.adapter.formName}
         .path=${this.widget.path}
         .label=${templateData.label}
         .hint=${templateData.hint}

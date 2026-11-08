@@ -1,12 +1,19 @@
 import { defineForm, identityTranslator } from '@golemui/core';
-import { clearPillsWidthOverride, forcePillsStripMode, type MountComponentFn } from '../utils';
+import {
+  clearPillsWidthOverride,
+  forcePillsStripMode,
+  type MountComponentFn,
+  testDomId,
+  withTestFormName,
+} from '../utils';
 
 // Behavior tests for the gui-range-time-picker: the gui-range-time typed input
 // plus a two-list popover (time-in left, time-out right). Both lists are usable
 // from the start, and once an in is chosen the out list floors one slot after
 // it so end > start strictly. Committed ranges accumulate as merged pills
 // (value = TimeRange[]). Uses en-GB (24h) so option labels are plain HH:mm.
-export const runRangeTimePickerComponentTests = (mountFn: MountComponentFn) => {
+export const runRangeTimePickerComponentTests = (baseMountFn: MountComponentFn) => {
+  const mountFn = withTestFormName(baseMountFn);
   describe('RangeTimePicker Component', () => {
     const uid = 'testSubject';
     const sel = {
@@ -465,7 +472,7 @@ export const runRangeTimePickerComponentTests = (mountFn: MountComponentFn) => {
           .should('have.attr', 'aria-label', 'Show time list')
           .should('have.attr', 'aria-haspopup', 'dialog')
           .should('have.attr', 'aria-expanded', 'false')
-          .should('have.attr', 'aria-controls', 'testSubject_popup');
+          .should('have.attr', 'aria-controls', testDomId('testSubject_popup'));
       });
 
       it('should open the list dialog from the toggle and move focus into it', () => {
@@ -474,7 +481,7 @@ export const runRangeTimePickerComponentTests = (mountFn: MountComponentFn) => {
         cy.get(toggleSel).should('have.attr', 'aria-expanded', 'true');
         cy.get('.gui-range-time-picker__panel')
           .should('have.attr', 'role', 'dialog')
-          .should('have.id', 'testSubject_popup');
+          .should('have.id', testDomId('testSubject_popup'));
         cy.focused().should('have.class', 'gui-time-list__option');
       });
     });
@@ -545,10 +552,10 @@ export const runRangeTimePickerComponentTests = (mountFn: MountComponentFn) => {
         cy.get(`[data-cy="${uid}_panel-validator-error"]`)
           .should('be.visible')
           .and('contain.text', 'Incomplete time');
-        cy.get(`#${uid}_panel_errors`)
+        cy.get(`[id="${testDomId(`${uid}_panel_errors`)}"]`)
           .should('have.attr', 'aria-hidden', 'true')
           .and('not.have.attr', 'role');
-        cy.get(`[id="${uid}_errors"]`).should('have.length', 1);
+        cy.get(`[id="${testDomId(`${uid}_errors`)}"]`).should('have.length', 1);
 
         cy.get(`[data-cy="${uid}_validator-error"]`).then(($li) => {
           cy.get(sel.panel).should('have.css', 'border-top-color', $li.css('color'));

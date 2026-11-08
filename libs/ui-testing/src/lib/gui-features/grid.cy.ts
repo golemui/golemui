@@ -1,5 +1,5 @@
 import { defineForm } from '@golemui/core';
-import { type MountComponentFn } from '../utils';
+import { type MountComponentFn, testDomId, withTestFormName } from '../utils';
 
 /** Two text inputs, the first with a size, in the layout widget `uid`. */
 const layoutForm = (type: 'grid' | 'flex', props: Record<string, unknown>, sizes: number[] = []) =>
@@ -22,9 +22,10 @@ const layoutForm = (type: 'grid' | 'flex', props: Record<string, unknown>, sizes
     ],
   });
 
-export const runGridComponentTests = (mountFn: MountComponentFn) => {
+export const runGridComponentTests = (baseMountFn: MountComponentFn) => {
+  const mountFn = withTestFormName(baseMountFn);
   describe('Grid Component', () => {
-    const container = () => cy.get('#layout');
+    const container = () => cy.get(`[id="${testDomId('layout')}"]`);
 
     // Angular writes the classes of a `[class]` binding in another order than the other
     // bindings, and the order has no meaning. So the classes are compared as sets.
@@ -126,7 +127,7 @@ export const runGridComponentTests = (mountFn: MountComponentFn) => {
       it('uses the widget uid as the container id and keeps the children in source order', () => {
         mountFn({ formDef: layoutForm('grid', { columns: 2 }) });
 
-        container().should('have.attr', 'id', 'layout').and('have.class', 'gui-grid');
+        container().should('have.attr', 'id', testDomId('layout')).and('have.class', 'gui-grid');
         expectInputOrder(['first', 'second', 'third']);
       });
     });

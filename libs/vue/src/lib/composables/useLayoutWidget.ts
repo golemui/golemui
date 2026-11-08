@@ -1,10 +1,22 @@
 import { type FormWidget, type LayoutWidget, widgetViewModel$ } from '@golemui/core';
+import { toDomId } from '@golemui/core/internals';
 import { onScopeDispose, ref, type Ref } from 'vue';
 import { useVueFormContext } from '../provideFormContext';
 import { mergeViewModelIntoTemplateData, type WithFlattenedProps } from './template-data';
 
 export interface UseLayoutWidgetReturn<ExtraProps extends Record<string, any>> {
   uid: Ref<string>;
+  /**
+   * The form's `formName`. Every DOM id the widget renders starts with it, so two forms on one
+   * page never share an id: pass it as `idPrefix` to GolemUI Components.
+   */
+  formName: string;
+  /**
+   * The widget uid behind the form's name: the DOM id of the widget's control, which the ids of
+   * its other parts extend (`${domId}_label`, `${domId}-list`). Computed once, when the widget sets
+   * up.
+   */
+  domId: string;
   children: Ref<FormWidget<string>[]>;
   templateData: Ref<WithFlattenedProps<LayoutWidget<string>, ExtraProps>>;
   onChange: (detail: any) => void;
@@ -41,5 +53,12 @@ export function useLayoutWidget<ExtraProps extends Record<string, any> = Record<
     formContext.emitEvent('change', widget, detail);
   };
 
-  return { uid, children, templateData, onChange };
+  return {
+    uid,
+    formName: formContext.formName,
+    domId: toDomId(formContext.formName, widget.uid),
+    children,
+    templateData,
+    onChange,
+  };
 }

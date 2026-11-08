@@ -9,6 +9,7 @@ const props = defineProps<WithWidget>();
 const widget = props.widget as InputWidget<string>;
 const {
   uid,
+  formName,
   errors,
   value,
   isTouched,
@@ -49,6 +50,7 @@ onUnmounted(() => {
     <gui-select
       ref="selectRef"
       :uid="uid"
+      :id-prefix="formName"
       :label="templateData.label"
       :errors="errors"
       :touched="isTouched"

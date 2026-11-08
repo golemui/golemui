@@ -142,7 +142,7 @@ export class GuiFileUpload extends GuiFormControl {
     requiresLabel: true,
     getTargets: () => this.querySelector('.gui-file-upload__box') as HTMLElement | null,
     getState: () => ({
-      uid: this.uid,
+      domId: this.domId,
       templateData: {
         hint: this.hint,
         errors: this.errors,
@@ -578,7 +578,6 @@ export class GuiFileUpload extends GuiFormControl {
       hasService && !this.readOnly && !barItem && (this.isMultiple() || items.length === 0);
 
     const templateData: ControlTemplateData<FileItem[]> & GuiFileUploadProps = {
-      uid: this.uid,
       label: this.label,
       hint: this.hint,
       errors: this.errors,
@@ -590,7 +589,7 @@ export class GuiFileUpload extends GuiFormControl {
     };
 
     return html`
-      ${addLabel(this.uid, templateData, false, undefined, false)}
+      ${addLabel(this, templateData, false, undefined, false)}
 
       <div class="gui-widget">
         <div
@@ -604,7 +603,7 @@ export class GuiFileUpload extends GuiFormControl {
           })}
           data-cy=${`${this.uid}_file-box`}
           role="group"
-          aria-labelledby=${`${this.uid}_label`}
+          aria-labelledby=${`${this.domId}_label`}
           @dragover=${this.onDragOver}
           @dragleave=${this.onDragLeave}
           @drop=${this.onDrop}
@@ -634,7 +633,7 @@ export class GuiFileUpload extends GuiFormControl {
           <input
             type="file"
             class="gui-visually-hidden gui-file-upload__input"
-            id=${this.uid}
+            id=${this.domId}
             data-cy=${`${this.uid}_file-input`}
             tabindex="-1"
             aria-hidden="true"
@@ -659,9 +658,9 @@ export class GuiFileUpload extends GuiFormControl {
         ? // Neither the group nor its button allows aria-required, and the label's marker is
           // hidden from assistive technology: the upload button reads this as its description.
           // Hidden, since aria-describedby reads hidden elements too.
-          html`<span id=${`${this.uid}_required`} hidden>${requiredName('fileRequired')}</span>`
+          html`<span id=${`${this.domId}_required`} hidden>${requiredName('fileRequired')}</span>`
         : nothing}
-      ${addErrors(this.uid, templateData)}
+      ${addErrors(this, templateData)}
     `;
   }
 
@@ -670,7 +669,7 @@ export class GuiFileUpload extends GuiFormControl {
       type="button"
       class="gui-file-upload__button"
       data-cy=${`${this.uid}_file-button`}
-      aria-describedby=${this.required ? `${this.uid}_required` : nothing}
+      aria-describedby=${this.required ? `${this.domId}_required` : nothing}
       ?disabled=${this.disabled}
       @click=${this.openPicker}
     >

@@ -11,7 +11,7 @@ export class DisplayWidgetAdapter<
   );
 
   init(widget: DisplayWidget) {
-    this.widget = widget;
+    this.setWidget(widget);
 
     // Set initial templateData
     this.templateData.update((current) => ({

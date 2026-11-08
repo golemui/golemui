@@ -17,9 +17,9 @@ import '@golemui/gui-components/menu';
 // widget's `click` event with `{ value }` as its detail.
 const props = defineProps<WithWidget>();
 const widget = props.widget as ActionWidget;
-const { uid, templateData, emitClick } = useActionWidget<MenuProps>(widget);
+const { uid, domId, templateData, emitClick } = useActionWidget<MenuProps>(widget);
 
-const panelId = computed(() => menuPanelId(uid.value));
+const panelId = computed(() => menuPanelId(domId));
 const buttonClasses = computed(() => menuButtonClasses(templateData.value));
 const ariaLabel = computed(() =>
   menuButtonAriaLabel(templateData.value.label, templateData.value.ariaLabel),
@@ -36,7 +36,7 @@ const onAction = (event: CustomEvent<GuiActionEventDetail>) => {
     <div class="gui-widget">
       <button
         type="button"
-        :id="uid"
+        :id="domId"
         :class="buttonClasses"
         :data-cy="`${uid}_button`"
         :popovertarget="panelId"
@@ -62,7 +62,7 @@ const onAction = (event: CustomEvent<GuiActionEventDetail>) => {
       :placement.prop="templateData.placement ?? DEFAULT_MENU_PLACEMENT"
       @gui-action="onAction"
     >
-      <div :id="panelId" :data-cy="panelId" popover>
+      <div :id="panelId" :data-cy="menuPanelId(uid)" popover>
         <template v-for="(item, index) in templateData.items ?? []" :key="index">
           <hr v-if="isMenuSeparator(item)" />
           <button

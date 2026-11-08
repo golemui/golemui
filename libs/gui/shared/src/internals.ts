@@ -403,7 +403,9 @@ export { isOption } from './lib/utils/one-of';
 export {
   accordionButtonId,
   accordionSectionId,
+  tabButtonCy,
   tabButtonId,
+  tabPanelCy,
   tabPanelId,
 } from './lib/utils/layout-ids';
 export { getItemKey, repeaterIndexSuffix } from './lib/utils/repeater';

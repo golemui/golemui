@@ -22,7 +22,7 @@ export class GuiErrors extends GuiElement {
     super.render();
 
     return html`${addErrors(
-      this.uid,
+      this,
       {
         touched: this.touched,
         errors: this.errors,

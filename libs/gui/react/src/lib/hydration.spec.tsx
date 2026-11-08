@@ -87,7 +87,7 @@ describe('hydrating a server-rendered form', () => {
     });
 
     expect(messages).toEqual([]);
-    expect(target.querySelector('#rowActions_menu')?.getAttribute('role')).toBe('menu');
-    expect(target.querySelector('#rowActions')?.getAttribute('aria-haspopup')).toBe('menu');
+    expect(target.querySelector('#hydration-rowActions_menu')?.getAttribute('role')).toBe('menu');
+    expect(target.querySelector('#hydration-rowActions')?.getAttribute('aria-haspopup')).toBe('menu');
   });
 });
