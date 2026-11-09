@@ -1,3 +1,13 @@
+## 2.1.2-rc.0 (2026-11-09)
+
+### 🩹 Fixes
+
+- duplicated ids ([#563](https://github.com/golemui/golemui/pull/563))
+
+### ❤️ Thank You
+
+- Raúl Jiménez @Elecash
+
 ## 2.1.1 (2026-11-04)
 
 ### 🩹 Fixes

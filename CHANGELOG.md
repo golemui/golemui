@@ -1,3 +1,17 @@
+## 2.1.2-rc.0 (2026-11-09)
+
+### 🩹 Fixes
+
+- duplicated ids ([#563](https://github.com/golemui/golemui/pull/563))
+
+### 🔥 Performance
+
+- **gui-mcp:** split the form validator into lazy-loaded modules ([#572](https://github.com/golemui/golemui/pull/572))
+
+### ❤️ Thank You
+
+- Raúl Jiménez @Elecash
+
 ## 2.1.1 (2026-11-04)
 
 ### 🩹 Fixes
