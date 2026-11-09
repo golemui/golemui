@@ -201,6 +201,29 @@ const { formDefinition: userForm } = await generateFromOpenapi({
 The tool descriptor objects (`VALIDATE_FORM_DEFINITION_TOOL`, `GENERATE_FROM_JSON_SCHEMA_TOOL`, ...)
 are also exported if you want to register the tools in your own MCP server.
 
+### Other runtimes and browsers
+
+`@golemui/gui-mcp/json` has the JSON tools without the Node-only `gui.*` type check, so it
+bundles anywhere, Cloudflare Workers included. `validateFormDefinition` there is synchronous
+and loads the validators of every widget type.
+
+In a browser, use `@golemui/gui-mcp/json/lazy`. Each widget type has its own validator module,
+and `validateFormDefinitionAsync` loads only the ones the form uses (about 50 KB gzipped for a
+typical form), then returns the same result as `validateFormDefinition`:
+
+```ts
+import { preload, validateFormDefinitionAsync } from '@golemui/gui-mcp/json/lazy';
+
+// Optional: start loading the common validators before the first form arrives.
+preload(['textinput', 'select']);
+
+const result = await validateFormDefinitionAsync({ formDefinition: myForm });
+if (!result.valid) console.error(result.errors);
+```
+
+No validator is compiled at runtime, so both entries work under a strict Content Security
+Policy (no `unsafe-eval`).
+
 ## Development
 
 ### Interactive testing with MCP Inspector

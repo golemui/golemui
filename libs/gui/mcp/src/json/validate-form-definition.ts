@@ -1,87 +1,15 @@
-import { getFormValidator } from './schemas/ajv';
-import { formatAjvErrors, type FormattedError } from './errors';
-import {
-  lintReactiveExpressions,
-  type ExpressionFinding,
-} from '../shared/lint/reactive-expressions';
-import { lintBooleanValidators } from '../shared/lint/boolean-validator';
-import { lintStringInterpolations, type InterpolationFinding } from './string-interpolation';
+import { SYNC_VALIDATORS } from './schemas/sync-validators';
+import { runValidation, type ValidateInput, type ValidateResult } from './validate-core';
 
-export type ValidateInput = {
-  formDefinition: unknown;
-};
+export type { ValidateInput, ValidateResult } from './validate-core';
 
-export type ValidateResult = {
-  valid: boolean;
-  errors: FormattedError[];
-  warnings: FormattedError[];
-  expressionWarnings: ExpressionFinding[];
-  interpolationWarnings: InterpolationFinding[];
-};
-
+/**
+ * Validates a GolemUI form definition with every generated validator loaded up front. For
+ * browsers, `validateFormDefinitionAsync` from `@golemui/gui-mcp/json/lazy` loads only the
+ * validators the form needs and returns the same result.
+ */
 export function validateFormDefinition(input: ValidateInput): ValidateResult {
-  const validate = getFormValidator();
-  const ajvOk = validate(input.formDefinition) as boolean;
-  const { errors, warnings } = formatAjvErrors(validate.errors, input.formDefinition);
-  const expressionFindings = lintReactiveExpressions(input.formDefinition);
-  const interpolationFindings = lintStringInterpolations(input.formDefinition);
-
-  // Safety net: if ajv said the form is invalid but our collapser produced zero errors,
-  // something in the form definition is being rejected by the schema that our targeted
-  // re-validation didn't surface (typically a widget type accepted in isolation but not allowed
-  // at its position by the formWidget oneOf, or an obscure shape we haven't accounted for).
-  // Surface a generic fallback so the caller has something to act on.
-  if (!ajvOk && errors.length === 0) {
-    errors.push({
-      path: '/',
-      keyword: 'oneOf',
-      message:
-        'Form failed schema validation but no specific error could be localized. The form may contain a widget at a position the form schema does not allow, or a structural shape that our targeted validator missed. Verify each widget against its `json_get_widget_spec` entry.',
-    });
-  }
-
-  // Semantic lint the schema cannot express: a boolean validator with only half of the
-  // `required: true` + `const: true` pair validates something the author almost never
-  // means (the mandatory-checkbox trap). Merged after the safety net above so these
-  // advisory findings can never mask an unlocalized hard error.
-  const booleanValidatorWarnings = lintBooleanValidators(input.formDefinition).map<FormattedError>(
-    (f) => ({
-      path: f.path,
-      message: f.message,
-      suggestion: f.suggestion,
-      keyword: 'booleanValidator',
-    }),
-  );
-
-  // The form rejects these expressions at runtime with an errored formHealth, so they are hard
-  // errors here. Added after the safety net, which must only see the schema errors.
-  for (const finding of expressionFindings.filter((f) => f.failsAtRuntime === true)) {
-    errors.push({
-      path: finding.path,
-      message: finding.message,
-      suggestion: finding.suggestion,
-      keyword: 'reactiveExpression',
-      params: { expression: finding.expression },
-    });
-  }
-  for (const finding of interpolationFindings.filter((f) => f.failsAtRuntime === true)) {
-    errors.push({
-      path: finding.path,
-      message: finding.message,
-      suggestion: finding.suggestion,
-      keyword: 'stringInterpolation',
-      params: { expression: finding.slot },
-    });
-  }
-
-  // `valid` follows hard errors only — custom-widget warnings don't fail validation.
-  return {
-    valid: errors.length === 0,
-    errors,
-    warnings: [...warnings, ...booleanValidatorWarnings],
-    expressionWarnings: expressionFindings.filter((f) => f.failsAtRuntime !== true),
-    interpolationWarnings: interpolationFindings.filter((f) => f.failsAtRuntime !== true),
-  };
+  return runValidation(input, SYNC_VALIDATORS);
 }
 
 export const JSON_VALIDATE_FORM_DEFINITION_TOOL = {
@@ -92,7 +20,9 @@ export const JSON_VALIDATE_FORM_DEFINITION_TOOL = {
     'pastes it into their codebase. Returns `{ valid, errors, warnings, expressionWarnings, interpolationWarnings }`. ' +
     'Hard mistakes (typos in widget `type`, missing required props, invalid validator shapes) ' +
     'show up in `errors` and flip `valid` to false. A chunk reference (`{"$ref": "./x.form-chunk.json"}`) ' +
-    'is a legal widget entry and is accepted anywhere a widget can appear. Likely-custom widgets (a `type` value that ' +
+    'is a legal widget entry and is accepted anywhere a widget can appear, except as a repeater `template`, which ' +
+    'must be a built-in layout (`accordion`, `flex`, `grid`, `tabs`); a widget where it is not allowed is an error ' +
+    'with keyword `position`. Likely-custom widgets (a `type` value that ' +
     "isn't a built-in and isn't close to one) and semantic validator traps (a boolean validator " +
     'with only half of the `required: true` + `const: true` pair — it will not force a mandatory ' +
     "checkbox to be checked) show up in `warnings` instead — they don't " +

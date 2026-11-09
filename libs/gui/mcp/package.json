@@ -30,6 +30,10 @@
     "./json": {
       "types": "./json.d.ts",
       "import": "./json.js"
+    },
+    "./json/lazy": {
+      "types": "./json-lazy.d.ts",
+      "import": "./json-lazy.js"
     }
   },
   "bin": {
