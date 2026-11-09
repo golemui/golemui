@@ -143,9 +143,13 @@ describe('server rendering the gui widget set in plain node', () => {
   it('renders labels, values and the layout structure', () => {
     expect(markup).toContain('First name');
     expect(markup).toMatch(/<input[^>]*id="gui-lit-ssr-form-firstName-textinput"[^>]*value="Ada"/);
-    expect(markup).toMatch(/<input[^>]*id="gui-lit-ssr-form-lastName-textinput"[^>]*value="Lovelace"/);
+    expect(markup).toMatch(
+      /<input[^>]*id="gui-lit-ssr-form-lastName-textinput"[^>]*value="Lovelace"/,
+    );
     expect(markup).toContain('Create account');
-    expect(markup).toMatch(/<button[^>]*id="gui-lit-ssr-form-moreActions"[^>]*popovertarget="gui-lit-ssr-form-moreActions_menu"/);
+    expect(markup).toMatch(
+      /<button[^>]*id="gui-lit-ssr-form-moreActions"[^>]*popovertarget="gui-lit-ssr-form-moreActions_menu"/,
+    );
     expect(markup).toMatch(/<div[^>]*id="gui-lit-ssr-form-moreActions_menu"[^>]*popover/);
     expect(markup).toContain('Save as draft');
     expect(markup).toMatch(/<div[^>]*class="gui-grid"/);
@@ -162,7 +166,9 @@ describe('server rendering the gui widget set in plain node', () => {
 
   it('renders the slider widgets with their values in their range inputs and labels', () => {
     expect(markup).toMatch(/<gui-slider-input[^>]*class="[^"]*gui-slider[^"]*gui-field/);
-    expect(markup).toMatch(/<input[^>]*type="range"[^>]*id="gui-lit-ssr-form-volume-slider"[^>]*value="7"/);
+    expect(markup).toMatch(
+      /<input[^>]*type="range"[^>]*id="gui-lit-ssr-form-volume-slider"[^>]*value="7"/,
+    );
     expect(markup).toMatch(
       /<gui-range-slider-input[^>]*class="[^"]*gui-range-slider[^"]*gui-field/,
     );
@@ -180,7 +186,9 @@ describe('server rendering the gui widget set in plain node', () => {
 
   it('renders the otp widget with its digits in its boxes and its input', () => {
     expect(markup).toMatch(/<gui-otp-input[^>]*class="[^"]*gui-otp[^"]*gui-field/);
-    expect(markup).toMatch(/<input[^>]*id="gui-lit-ssr-form-code-otp"[^>]*autocomplete="one-time-code"/);
+    expect(markup).toMatch(
+      /<input[^>]*id="gui-lit-ssr-form-code-otp"[^>]*autocomplete="one-time-code"/,
+    );
     expect(markup).toMatch(/<input[^>]*id="gui-lit-ssr-form-code-otp"[^>]*value="123"/);
     expect(markup.match(/gui-otp__box--filled/g)).toHaveLength(3);
     expect(markup).toContain('class="gui-otp__separator"');
@@ -206,8 +214,12 @@ describe('server rendering the gui widget set in plain node', () => {
 
   it('renders the unchecked checkbox, toggle and radios without a checked attribute', () => {
     expect(markup).not.toMatch(/\schecked="false"/);
-    expect(markup).toMatch(/<input[^>]*type="checkbox"[^>]*id="gui-lit-ssr-form-acceptTerms-checkbox"/);
-    expect(markup).not.toMatch(/<input[^>]*id="gui-lit-ssr-form-acceptTerms-checkbox"[^>]*\schecked=/);
+    expect(markup).toMatch(
+      /<input[^>]*type="checkbox"[^>]*id="gui-lit-ssr-form-acceptTerms-checkbox"/,
+    );
+    expect(markup).not.toMatch(
+      /<input[^>]*id="gui-lit-ssr-form-acceptTerms-checkbox"[^>]*\schecked=/,
+    );
     expect(markup).not.toMatch(/<input[^>]*id="gui-lit-ssr-form-newsletter-toggle"[^>]*\schecked=/);
     const checkedRadios = markup.match(/<input[^>]*type="radio"[^>]*\schecked=[^>]*>/g) ?? [];
     expect(checkedRadios).toHaveLength(1);
@@ -270,7 +282,9 @@ describe('server rendering the fields inside a tabs layout', () => {
     const markup = await renderForm({ config: tabsConfig, validators: noopValidators });
     expect(markup).toMatch(/<gui-tab-panel[^>]*>/);
     expect(markup).toMatch(/<input[^>]*id="gui-lit-ssr-tabs-firstName-textinput"[^>]*value="Ada"/);
-    expect(markup).toMatch(/<input[^>]*id="gui-lit-ssr-tabs-company-textinput"[^>]*value="Analytical Engines"/);
+    expect(markup).toMatch(
+      /<input[^>]*id="gui-lit-ssr-tabs-company-textinput"[^>]*value="Analytical Engines"/,
+    );
   });
 });
 
@@ -293,9 +307,13 @@ describe('server rendering the gui-form element', () => {
   it('renders the widgets with their values inside the inert gui-form', () => {
     expect(markup).toMatch(/<gui-form[^>]*defer-hydration/);
     expect(markup).toMatch(/<gui-core-form[^>]*defer-hydration/);
-    expect(markup).toMatch(/<input[^>]*id="gui-lit-resume-form-firstName-textinput"[^>]*value="Ada"/);
+    expect(markup).toMatch(
+      /<input[^>]*id="gui-lit-resume-form-firstName-textinput"[^>]*value="Ada"/,
+    );
     expect(markup).toMatch(/<input[^>]*type="number"[^>]*id="gui-lit-resume-form-seats-number"/);
-    expect(markup).toMatch(/<input[^>]*type="checkbox"[^>]*id="gui-lit-resume-form-acceptTerms-checkbox"[^>]*checked/);
+    expect(markup).toMatch(
+      /<input[^>]*type="checkbox"[^>]*id="gui-lit-resume-form-acceptTerms-checkbox"[^>]*checked/,
+    );
     expect(markup).toContain('Send');
   });
 });

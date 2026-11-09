@@ -178,8 +178,14 @@ describe('hydrating a server-rendered gui-form', () => {
   });
 
   it('renders the elements with the server values', () => {
-    expect(document.querySelector<HTMLInputElement>('#gui-angular-hydration-form-firstName-textinput')?.value).toBe('Ada');
-    expect(document.querySelector<HTMLInputElement>('#gui-angular-hydration-form-acceptTerms-checkbox')?.checked).toBe(true);
+    expect(
+      document.querySelector<HTMLInputElement>('#gui-angular-hydration-form-firstName-textinput')
+        ?.value,
+    ).toBe('Ada');
+    expect(
+      document.querySelector<HTMLInputElement>('#gui-angular-hydration-form-acceptTerms-checkbox')
+        ?.checked,
+    ).toBe(true);
     expect(document.querySelector('gui-button button')?.textContent).toContain('Send');
   });
 

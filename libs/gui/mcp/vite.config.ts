@@ -32,6 +32,8 @@ export default defineConfig(() => ({
       entry: {
         lib: 'src/lib.ts', // full surface (JSON + DX) - Node consumers
         json: 'src/json.ts', // JSON + shared only, no Node-only DX - bundles anywhere (e.g. Workers)
+        // The form validator for browsers: each validator is its own chunk, loaded on demand
+        'json-lazy': 'src/json-lazy.ts',
         cli: 'src/cli.ts', // MCP stdio server - Node.js only
       },
       formats: ['es'],
@@ -52,6 +54,13 @@ export default defineConfig(() => ({
       output: {
         // shebang only on the CLI bundle
         banner: (chunk) => (chunk.name === 'cli' ? '#!/usr/bin/env node' : ''),
+        // One chunk per generated validator, which `json-lazy` imports on demand. They keep
+        // their generated path (`json/validators/shallow/textinput-<hash>.js`), so a bundle
+        // report names them. The `json` entry imports the same chunks statically.
+        chunkFileNames: (chunk) => {
+          const match = chunk.facadeModuleId?.match(/\/schemas\/generated\/(.+)\.js$/);
+          return match ? `json/validators/${match[1]}-[hash].js` : '[name]-[hash].js';
+        },
       },
     },
   },

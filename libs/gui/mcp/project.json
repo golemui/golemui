@@ -29,10 +29,10 @@
         "{projectRoot}/src/json/schemas/validator-schemas.ts",
         "^production",
         {
-          "externalDependencies": ["ajv"]
+          "externalDependencies": ["ajv", "typescript"]
         }
       ],
-      "outputs": ["{projectRoot}/src/json/schemas/generated/validators.js"],
+      "outputs": ["{projectRoot}/src/json/schemas/generated/**/*.js"],
       "options": {
         "command": "tsx --tsconfig ./libs/gui/mcp/tsconfig.json libs/gui/mcp/tools/generate-validators.ts",
         "cwd": "{workspaceRoot}"

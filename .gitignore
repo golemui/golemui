@@ -76,4 +76,4 @@ lit-test-app
 templates/*/package-lock.json
 
 # gui-mcp validators, built by the nx target generate-validators
-/libs/gui/mcp/src/json/schemas/generated/validators.js
+/libs/gui/mcp/src/json/schemas/generated/**/*.js

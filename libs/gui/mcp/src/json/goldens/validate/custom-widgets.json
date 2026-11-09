@@ -318,9 +318,12 @@
       "valid": false,
       "errors": [
         {
-          "path": "/",
-          "keyword": "oneOf",
-          "message": "Form failed schema validation but no specific error could be localized. The form may contain a widget at a position the form schema does not allow, or a structural shape that our targeted validator missed. Verify each widget against its `json_get_widget_spec` entry."
+          "path": "/form/0/children",
+          "message": "must NOT have fewer than 1 items at `/form/0/children`",
+          "keyword": "minItems",
+          "params": {
+            "limit": 1
+          }
         }
       ],
       "warnings": [

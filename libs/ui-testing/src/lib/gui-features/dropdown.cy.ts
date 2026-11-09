@@ -375,7 +375,11 @@ export const runDropdownComponentTests = (baseMountFn: MountComponentFn) => {
           .should('have.attr', 'aria-autocomplete', 'list')
           .should('have.attr', 'aria-expanded', 'false')
           .should('have.attr', 'aria-controls', testDomId('testSubject-list'));
-        cy.get(`gui-list[id="${testDomId('testSubject-list')}"]`).should('have.attr', 'role', 'listbox');
+        cy.get(`gui-list[id="${testDomId('testSubject-list')}"]`).should(
+          'have.attr',
+          'role',
+          'listbox',
+        );
 
         cy.get(inputSel).click();
         cy.get(inputSel).should('have.attr', 'aria-expanded', 'true');

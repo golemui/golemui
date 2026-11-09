@@ -155,7 +155,9 @@ export const runMenuComponentTests = (baseMountFn: MountComponentFn) => {
         formEvent,
       });
 
-      button(`${UID}[1]`).should('have.attr', 'popovertarget', testDomId(`${UID}[1]_menu`)).click();
+      button(`${UID}[1]`)
+        .should('have.attr', 'popovertarget', testDomId(`${UID}[1]_menu`))
+        .click();
       isOpen(true, `${UID}[1]`);
       isOpen(false, `${UID}[0]`);
       item('edit', `${UID}[1]`).click();

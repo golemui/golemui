@@ -4,7 +4,7 @@ export default [
   ...baseConfig,
   {
     // Built by the nx target generate-validators, not hand-written.
-    ignores: ['**/schemas/generated/validators.js'],
+    ignores: ['**/schemas/generated/**/*.js'],
   },
   {
     files: ['**/*.json'],
