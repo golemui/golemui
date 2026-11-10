@@ -11,11 +11,11 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@golemui/core": "2.1.1",
-    "@golemui/react": "2.1.1",
-    "@golemui/gui-react": "2.1.1",
-    "@golemui/gui-components": "2.1.1",
-    "@golemui/gui-shared": "2.1.1",
+    "@golemui/core": "2.1.2",
+    "@golemui/react": "2.1.2",
+    "@golemui/gui-react": "2.1.2",
+    "@golemui/gui-components": "2.1.2",
+    "@golemui/gui-shared": "2.1.2",
     "next": "^15.5.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
