@@ -60,7 +60,7 @@ export const mountFramework = (options: MountOptions) => {
   const hostRenders = ref(0);
 
   // Use the render-function variant of cy.mount so we can attach a template ref
-  // (defineExpose) to the GuiForm instance for setData / setMeta access.
+  // (defineExpose) to the GuiForm instance for setData / setMeta / setHealth access.
   cy.mount(() => {
     // Read so that `rerender` renders this host again.
     void hostRenders.value;
@@ -100,6 +100,7 @@ export const mountFramework = (options: MountOptions) => {
         onFormReady({
           setData: (data) => handle.setData(data),
           setMeta: (meta) => handle.setMeta(meta),
+          setHealth: (health) => handle.setHealth(health),
           setConfig: (next) => {
             configRef.value = {
               ...configRef.value,

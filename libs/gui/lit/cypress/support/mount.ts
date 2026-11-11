@@ -82,11 +82,13 @@ export const mountFramework = (options: MountOptions) => {
       config: GuiFormInitConfig;
       setData: FormHandle['setData'];
       setMeta: FormHandle['setMeta'];
+      setHealth: FormHandle['setHealth'];
       requestUpdate: () => void;
     };
     options.onFormReady?.({
       setData: (data) => el.setData(data),
       setMeta: (meta) => el.setMeta(meta),
+      setHealth: (health) => el.setHealth(health),
       setConfig: (next) => {
         el.config = {
           ...el.config,

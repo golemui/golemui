@@ -199,7 +199,7 @@ from there. An exception instead stops the whole app or the framework render.
   forgot to register `iban` in `customValidators`. Or a registered rule returns a schema with an
   async check, for example a server call. -> code 60 with the path of the input when the form
   validates. The form does not submit. The error stays and the form stops updating until the app
-  sends `SET_FORM_HEALTH` or a new config. `SET_FORM_HEALTH` with `ok` computes the form again.
+  calls `setHealth` or sends a new config. `setHealth({ status: 'ok' })` computes the form again.
 - Status: follows.
 
 ### 9. Duplicate uids give error code 21, also inside a repeater template
@@ -596,8 +596,9 @@ When the app passes a new config object, the form starts again from the new conf
 ### 26. `setData` before the form has started keeps the values
 
 The form element exists before it has started (Lit: before its first update, Angular: before its
-config is applied). A `setData` or `setMeta` call in that time must not be lost. The last call
-replaces the `data` or `meta` of the config, like a call after the start.
+config is applied). A `setData`, `setMeta` or `setHealth` call in that time must not be lost. The
+last call replaces the `data` or `meta` of the config, like a call after the start. A `setHealth`
+call gives the health the form starts with.
 
 - Scenario: a page creates the form, fills in a draft that it saved in `localStorage`, and then
   adds the form to the page.
@@ -724,9 +725,32 @@ change: the store, form events, `after` references and `data-cy` attributes keep
 
 - Status: follows.
 
+### 33. `setHealth` with an error freezes the form until `{ status: 'ok' }`
+
+The app can report an error that the form cannot see, for example a server that cannot be
+reached. `setHealth` sets the form health from outside, next to `setData` and `setMeta`. The form
+shows the error like one of its own.
+
+- Scenario: a form saves each change to the server. The server goes down, and the app must stop the
+  user from making changes that cannot be saved.
+- Example:
+
+  ```ts
+  form.setHealth({ status: 'errored', code: 10_001, message: 'The server cannot be reached' });
+  // Later, when the server is back:
+  form.setHealth({ status: 'ok' });
+  ```
+
+  -> the form sends `formHealth` with the error, shows the `formHealthBoundary` and stops
+  updating: a `setData` call does not change the inputs. `{ status: 'ok' }` hides the boundary,
+  sends `formHealth` again, and the user can type again. Data written with `setData` while the
+  form was frozen shows with the next change. Codes below 1000 belong to the core.
+
+- Status: follows.
+
 ## Events and expressions
 
-### 33. An `on` value is an event name
+### 34. An `on` value is an event name
 
 In a form definition, each `on` value is the name of the event, a string. Function handlers are a
 `gui.*` feature: the builder keeps the function and writes an event name into `on`.
@@ -739,7 +763,7 @@ In a form definition, each `on` value is the name of the event, a string. Functi
 - Status: not yet. The core types and the decoder accept a function in `on`, and
   `FormEvent.name` is then the function itself.
 
-### 34. A button `onClick` handler runs only on click
+### 35. A button `onClick` handler runs only on click
 
 - Scenario: an app saves the form with a button that is not a submit button. The handler calls
   the server.
@@ -756,7 +780,7 @@ In a form definition, each `on` value is the name of the event, a string. Functi
   example calls `api.save(undefined)`. A handler like `(event) => event.data` throws there, and
   the form is not built. On click it gets only the data.
 
-### 35. `$log` works in every expression
+### 36. `$log` works in every expression
 
 `$log(value)` logs a value and returns it, to debug an expression.
 
@@ -772,7 +796,7 @@ In a form definition, each `on` value is the name of the event, a string. Functi
 
 - Status: not yet. It gives error code 40.
 
-### 36. An i18n param keeps the value it has
+### 37. An i18n param keeps the value it has
 
 The translator receives each param with its own value. A literal param keeps its type, and an
 expression param gives its result, also when the result is `null` or `undefined`.
@@ -796,7 +820,7 @@ expression param gives its result, also when the result is `null` or `undefined`
 
 ## Rules for form authors
 
-### 37. Menu item values are unique
+### 38. Menu item values are unique
 
 Two items with the same `value` in one menu are not supported. The form does not check it, and
 the items can render or select wrong.

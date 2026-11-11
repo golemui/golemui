@@ -179,6 +179,8 @@ onUnmounted(() => {
 defineExpose<FormComponentHandle>({
   setData: (data) => formContext.store.dispatch({ type: 'SET_DATA', payload: { data } }),
   setMeta: (meta) => formContext.store.dispatch({ type: 'SET_META', payload: { meta } }),
+  setHealth: (health) =>
+    formContext.store.dispatch({ type: 'SET_FORM_HEALTH', payload: { formHealth: health } }),
 });
 
 const onFormSubmit = (event: SubmitEvent) => {

@@ -75,6 +75,23 @@ describe('setData and setMeta on gui-core-form before the form starts', () => {
     expect(coreStoreState(fixture.componentInstance).meta).toEqual({ tier: 'paid' });
   });
 
+  it('starts the form with the health of an early setHealth call', () => {
+    const fixture = createForm();
+
+    fixture.componentInstance.setHealth({
+      status: 'errored' as const,
+      code: 10_001,
+      message: 'Set early',
+    });
+    fixture.detectChanges();
+
+    expect(coreStoreState(fixture.componentInstance).formHealth).toEqual({
+      status: 'errored' as const,
+      code: 10_001,
+      message: 'Set early',
+    });
+  });
+
   it('uses the data of a later config, not the early value, when the form starts again', () => {
     const fixture = createForm();
     fixture.componentInstance.setData({ firstName: 'Bob' });
@@ -151,6 +168,23 @@ describe('setData and setMeta on gui-widget-set-form before the form starts', ()
     fixture.detectChanges();
 
     expect(coreStoreState(innerForm(fixture)).meta).toEqual({ tier: 'paid' });
+  });
+
+  it('passes an early setHealth call to the inner form', () => {
+    const fixture = createWidgetSetForm();
+
+    fixture.componentInstance.setHealth({
+      status: 'errored' as const,
+      code: 10_001,
+      message: 'Set early',
+    });
+    fixture.detectChanges();
+
+    expect(coreStoreState(innerForm(fixture)).formHealth).toEqual({
+      status: 'errored' as const,
+      code: 10_001,
+      message: 'Set early',
+    });
   });
 
   it('keeps calls made before the inner form exists', () => {

@@ -21,6 +21,7 @@ import { type CustomValidatorSchemas } from '@golemui/gui-validators';
 export interface FormHandle {
   setData: (data: Record<string, any>) => void;
   setMeta: (meta: Record<string, any>) => void;
+  setHealth: (health: FormHealth) => void;
   /** Replaces the mounted form's whole config object, which reinitializes the form. */
   setConfig: (next: SetConfigInput) => void;
   /**

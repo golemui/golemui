@@ -1,4 +1,4 @@
-import type { FormEvent, FormInitConfig, WithWidget } from '@golemui/core';
+import type { FormEvent, FormHealth, FormInitConfig, WithWidget } from '@golemui/core';
 import {
   buildWidgetSetForm,
   type WidgetSetDefinition,
@@ -23,6 +23,8 @@ export interface WidgetSetFormElement<
   formHealthBoundary?: FormHealthBoundary;
   setData(data: Record<string, any>): void;
   setMeta(meta: Record<string, any>): void;
+  /** Sets the form health. An errored health shows the boundary and freezes the form until `{ status: 'ok' }`. */
+  setHealth(health: FormHealth): void;
 }
 
 /**
@@ -75,6 +77,7 @@ export function createFormComponent<
     // The core form does not exist before the first render, so these calls wait for it.
     private dataBeforeFirstRender: Record<string, any> | undefined;
     private metaBeforeFirstRender: Record<string, any> | undefined;
+    private healthBeforeFirstRender: FormHealth | undefined;
 
     private get coreForm(): CoreFormElement | null {
       return this.renderRoot.querySelector('gui-core-form');
@@ -96,6 +99,14 @@ export function createFormComponent<
       this.coreForm?.setMeta(meta);
     }
 
+    setHealth(health: FormHealth): void {
+      if (!this.hasUpdated) {
+        this.healthBeforeFirstRender = health;
+        return;
+      }
+      this.coreForm?.setHealth(health);
+    }
+
     // Not in firstUpdated(): a subclass can override that hook without calling super.
     protected override update(changed: PropertyValues) {
       super.update(changed);
@@ -106,6 +117,10 @@ export function createFormComponent<
       if (this.metaBeforeFirstRender) {
         this.coreForm?.setMeta(this.metaBeforeFirstRender);
         this.metaBeforeFirstRender = undefined;
+      }
+      if (this.healthBeforeFirstRender) {
+        this.coreForm?.setHealth(this.healthBeforeFirstRender);
+        this.healthBeforeFirstRender = undefined;
       }
     }
 

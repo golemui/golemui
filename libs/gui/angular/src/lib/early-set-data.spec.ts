@@ -75,6 +75,23 @@ describe('setData and setMeta on gui-form before the form starts', () => {
     expect(coreStoreState(fixture).meta).toEqual({ tier: 'paid' });
   });
 
+  it('starts the form with the health of an early setHealth call', () => {
+    const fixture = createForm();
+
+    fixture.componentInstance.setHealth({
+      status: 'errored' as const,
+      code: 10_001,
+      message: 'Set early',
+    });
+    fixture.detectChanges();
+
+    expect(coreStoreState(fixture).formHealth).toEqual({
+      status: 'errored' as const,
+      code: 10_001,
+      message: 'Set early',
+    });
+  });
+
   it('applies a setData call after the start at once', () => {
     const fixture = createForm();
     fixture.detectChanges();

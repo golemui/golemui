@@ -11,6 +11,8 @@ import type { Component } from 'vue';
 export interface FormComponentHandle {
   setData: (data: Record<string, any>) => void;
   setMeta: (meta: Record<string, any>) => void;
+  /** Sets the form health. An errored health shows the boundary and freezes the form until `{ status: 'ok' }`. */
+  setHealth: (health: FormHealth) => void;
 }
 
 export interface FormComponentProps {

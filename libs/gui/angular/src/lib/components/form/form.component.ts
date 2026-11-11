@@ -32,6 +32,7 @@ export class FormComponent implements AfterViewInit {
   // The inner form does not exist before the view, so these calls wait for it.
   private dataBeforeView: Record<string, any> | undefined;
   private metaBeforeView: Record<string, any> | undefined;
+  private healthBeforeView: FormHealth | undefined;
 
   formHealth = output<FormHealth>();
   formEvent = output<FormEvent>();
@@ -45,6 +46,10 @@ export class FormComponent implements AfterViewInit {
     if (this.metaBeforeView) {
       this.innerForm()?.setMeta(this.metaBeforeView);
       this.metaBeforeView = undefined;
+    }
+    if (this.healthBeforeView) {
+      this.innerForm()?.setHealth(this.healthBeforeView);
+      this.healthBeforeView = undefined;
     }
   }
 
@@ -63,6 +68,16 @@ export class FormComponent implements AfterViewInit {
       innerForm.setMeta(meta);
     } else {
       this.metaBeforeView = meta;
+    }
+  }
+
+  /** Sets the form health. An errored health shows the boundary and freezes the form until `{ status: 'ok' }`. */
+  setHealth(health: FormHealth): void {
+    const form = this.innerForm();
+    if (form) {
+      form.setHealth(health);
+    } else {
+      this.healthBeforeView = health;
     }
   }
 }

@@ -79,6 +79,20 @@ describe('setData and setMeta on a form element built by createFormComponent', (
     expect(coreStoreState(wrapper).meta).toEqual({ tier: 'paid' });
   });
 
+  it('keeps a setHealth call made before the element is in the page', async () => {
+    const wrapper = createWrapper();
+
+    wrapper.setHealth({ status: 'errored' as const, code: 10_001, message: 'Set early' });
+    document.body.append(wrapper);
+    await afterLitRenderSchedule();
+
+    expect(coreStoreState(wrapper).formHealth).toEqual({
+      status: 'errored' as const,
+      code: 10_001,
+      message: 'Set early',
+    });
+  });
+
   it('keeps an early setData call in a subclass that has its own firstUpdated', async () => {
     const wrapper = document.createElement(
       'create-form-component-spec-subclass',

@@ -43,6 +43,30 @@ In headless mode:
 
 `react-dom` is not a peer dependency of this package. Install it only when you render to the DOM.
 
+## Setting the form health
+
+The form ref has `setHealth`, next to `setData` and `setMeta`. It reports an error the form cannot
+see, for example a server that cannot be reached. An errored health freezes the form and shows the
+`formHealthBoundary` until a call with `{ status: 'ok' }` clears it. The form sends `formHealth`
+for both calls. Codes below 1000 belong to the core.
+
+```tsx
+import { useRef } from 'react';
+import type { FormComponentHandle } from '@golemui/react';
+
+const form = useRef<FormComponentHandle>(null);
+
+<NativeForm ref={form} config={{ formDef }} />;
+
+form.current?.setHealth({
+  status: 'errored',
+  code: 10_001,
+  message: 'The server cannot be reached',
+});
+// Later, when the server is back:
+form.current?.setHealth({ status: 'ok' });
+```
+
 ## Documentation
 
 - Website: https://golemui.com

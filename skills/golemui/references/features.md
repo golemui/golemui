@@ -24,7 +24,11 @@ the form component accepts: https://golemui.com/dx/features/overview.md
   so the host can tell the rows apart.
   https://golemui.com/dx/features/events.md
 - **Runtime methods** — imperative API on the form component instance (read/patch values,
-  trigger validation, react to runtime changes). https://golemui.com/dx/features/runtime-methods.md
+  trigger validation, react to runtime changes). `setData`, `setMeta` and `setHealth`;
+  `setHealth({ status: 'errored', code, message })` freezes the form and shows the
+  `formHealthBoundary` until `setHealth({ status: 'ok' })` (codes below 1000 belong to the core).
+  Per-framework handles: `framework-setup.md`.
+  https://golemui.com/dx/features/runtime-methods.md
 - **Widget loaders** — async population of a widget's options/data (e.g. load dropdown items
   from an API, with debounced filtering). https://golemui.com/dx/features/widget-loaders.md
 - **Item renderers** — custom rendering of options/rows inside list-like widgets (dropdown,

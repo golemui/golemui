@@ -18,4 +18,6 @@ export type GuiFormEmits = {
 export interface GuiFormHandle {
   setData: (data: Record<string, any>) => void;
   setMeta: (meta: Record<string, any>) => void;
+  /** Sets the form health. An errored health shows the boundary and freezes the form until `{ status: 'ok' }`. */
+  setHealth: (health: FormHealth) => void;
 }
