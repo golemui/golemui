@@ -18,6 +18,7 @@ export * from './lib/core-features/render-identity.cy';
 export * from './lib/core-features/reinit.cy';
 export * from './lib/core-features/required.cy';
 export * from './lib/core-features/set-data-set-meta.cy';
+export * from './lib/core-features/set-health.cy';
 export * from './lib/core-features/states.cy';
 export * from './lib/core-features/string-interpolation.cy';
 export * from './lib/core-features/uid.cy';

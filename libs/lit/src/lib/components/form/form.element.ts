@@ -60,6 +60,7 @@ export class FormElement extends LitElement {
   private started = false;
   private dataBeforeStart: Record<string, any> | undefined;
   private metaBeforeStart: Record<string, any> | undefined;
+  private healthBeforeStart: FormHealth | undefined;
 
   static FORM_SUBMIT_EVENT = formEventNames.submit;
   static FORM_HEALTH_EVENT = formEventNames.health;
@@ -165,6 +166,11 @@ export class FormElement extends LitElement {
     this.metaBeforeStart = undefined;
     this.context.store.dispatch({ type: 'SET_DATA', payload: { data } });
     this.context.store.dispatch({ type: 'SET_META', payload: { meta } });
+    if (this.healthBeforeStart) {
+      const formHealth = this.healthBeforeStart;
+      this.healthBeforeStart = undefined;
+      this.context.store.dispatch({ type: 'SET_FORM_HEALTH', payload: { formHealth } });
+    }
 
     // A detached element subscribes in connectedCallback.
     if (!this.detached) {
@@ -234,6 +240,22 @@ export class FormElement extends LitElement {
       return;
     }
     this.context.store.dispatch({ type: 'SET_META', payload: { meta } });
+  }
+
+  /**
+   * Sets the health of the form. An errored health with a code outside the core's own derive
+   * errors freezes the form and shows the {@link formHealthBoundary} until a call with
+   * `{ status: 'ok' }` clears it. The form dispatches `formHealth` as for any other change of
+   * health.
+   *
+   * @param health - The new health. Codes below 1000 belong to the core.
+   */
+  setHealth(health: FormHealth): void {
+    if (!this.started) {
+      this.healthBeforeStart = health;
+      return;
+    }
+    this.context.store.dispatch({ type: 'SET_FORM_HEALTH', payload: { formHealth: health } });
   }
 
   override disconnectedCallback() {

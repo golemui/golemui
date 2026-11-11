@@ -132,6 +132,7 @@ export const mountFramework = (options: MountOptions) => {
     options.onFormReady?.({
       setData: (data) => fixture.componentRef.instance.setData(data),
       setMeta: (meta) => fixture.componentRef.instance.setMeta(meta),
+      setHealth: (health) => fixture.componentRef.instance.setHealth(health),
       setConfig: (next) => {
         currentConfig = {
           ...currentConfig,

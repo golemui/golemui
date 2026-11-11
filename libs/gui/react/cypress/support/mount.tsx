@@ -148,6 +148,7 @@ export const mountFramework = (options: MountOptions) => {
         options.onFormReady!({
           setData: (data) => formRef.current!.setData(data),
           setMeta: (meta) => formRef.current!.setMeta(meta),
+          setHealth: (health) => formRef.current!.setHealth(health),
           setConfig: (next) => harnessRef.current!.setConfig(next),
           rerender: () => {
             harnessRef.current!.rerender();

@@ -31,11 +31,13 @@ export interface WidgetSetFormProps<
 export interface WidgetSetFormHandle {
   setData: (data: Record<string, any>) => void;
   setMeta: (meta: Record<string, any>) => void;
+  /** Sets the form health. An errored health shows the boundary and freezes the form until `{ status: 'ok' }`. */
+  setHealth: (health: FormHealth) => void;
 }
 
 /**
  * The component type returned by {@link createFormComponent}: the widget
- * set's props, the three form events, and the exposed setData / setMeta
+ * set's props, the three form events, and the exposed setData / setMeta / setHealth
  * methods.
  */
 export type WidgetSetFormComponent<
@@ -84,6 +86,7 @@ export function createFormComponent<
       expose({
         setData: (data: Record<string, any>) => formRef.value?.setData(data),
         setMeta: (meta: Record<string, any>) => formRef.value?.setMeta(meta),
+        setHealth: (health: FormHealth) => formRef.value?.setHealth(health),
       } satisfies WidgetSetFormHandle);
 
       return () =>

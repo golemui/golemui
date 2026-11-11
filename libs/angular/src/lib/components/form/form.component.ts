@@ -76,6 +76,7 @@ export class FormCoreComponent implements OnInit, OnDestroy {
   private started = false;
   private dataBeforeStart: Record<string, any> | undefined;
   private metaBeforeStart: Record<string, any> | undefined;
+  private healthBeforeStart: FormHealth | undefined;
 
   // `tap()` runs synchronously before `switchMap` accesses the new store, ensuring
   // that `context.initialize()` always fires before we resubscribe to `formHealth`
@@ -108,6 +109,11 @@ export class FormCoreComponent implements OnInit, OnDestroy {
       this.metaBeforeStart = undefined;
       this.context.store.dispatch({ type: 'SET_DATA', payload: { data } });
       this.context.store.dispatch({ type: 'SET_META', payload: { meta } });
+      if (this.healthBeforeStart) {
+        const formHealth = this.healthBeforeStart;
+        this.healthBeforeStart = undefined;
+        this.context.store.dispatch({ type: 'SET_FORM_HEALTH', payload: { formHealth } });
+      }
       this.direction.set(getDirectionFromLanguage(this.context.localization.lang));
       this.unsubscribeI18n = this.context.localization.subscribe((lang) => {
         this.direction.set(getDirectionFromLanguage(lang));
@@ -170,6 +176,18 @@ export class FormCoreComponent implements OnInit, OnDestroy {
       return;
     }
     this.context.store.dispatch({ type: 'SET_META', payload: { meta } });
+  }
+
+  /**
+   * Sets the form health. An errored health with a code outside the core's own derive errors
+   * shows the boundary and freezes the form until `{ status: 'ok' }` clears it.
+   */
+  setHealth(health: FormHealth): void {
+    if (!this.started) {
+      this.healthBeforeStart = health;
+      return;
+    }
+    this.context.store.dispatch({ type: 'SET_FORM_HEALTH', payload: { formHealth: health } });
   }
 
   protected onFormSubmit(event: SubmitEvent) {

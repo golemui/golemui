@@ -81,6 +81,7 @@ export class WidgetSetFormComponent implements AfterViewInit {
   // The core form does not exist before the view, so these calls wait for it.
   private dataBeforeView: Record<string, any> | undefined;
   private metaBeforeView: Record<string, any> | undefined;
+  private healthBeforeView: FormHealth | undefined;
 
   protected bundle = computed(() => buildWidgetSetForm(this.widgetSet, this.config()));
 
@@ -115,6 +116,10 @@ export class WidgetSetFormComponent implements AfterViewInit {
       this.coreForm()?.setMeta(this.metaBeforeView);
       this.metaBeforeView = undefined;
     }
+    if (this.healthBeforeView) {
+      this.coreForm()?.setHealth(this.healthBeforeView);
+      this.healthBeforeView = undefined;
+    }
   }
 
   setData(data: Record<string, any>): void {
@@ -132,6 +137,16 @@ export class WidgetSetFormComponent implements AfterViewInit {
       coreForm.setMeta(meta);
     } else {
       this.metaBeforeView = meta;
+    }
+  }
+
+  /** Sets the form health. An errored health shows the boundary and freezes the form until `{ status: 'ok' }`. */
+  setHealth(health: FormHealth): void {
+    const form = this.coreForm();
+    if (form) {
+      form.setHealth(health);
+    } else {
+      this.healthBeforeView = health;
     }
   }
 }

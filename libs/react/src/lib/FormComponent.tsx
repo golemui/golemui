@@ -29,6 +29,8 @@ import WidgetRenderer from './WidgetRenderer';
 export interface FormComponentHandle {
   setData: (data: Record<string, any>) => void;
   setMeta: (meta: Record<string, any>) => void;
+  /** Sets the form health. An errored health shows the boundary and freezes the form until `{ status: 'ok' }`. */
+  setHealth: (health: FormHealth) => void;
 }
 
 export interface FormComponentProps {
@@ -249,6 +251,9 @@ export const FormComponent = forwardRef<FormComponentHandle, FormComponentProps>
         },
         setMeta: (meta) => {
           instance.store.dispatch({ type: 'SET_META', payload: { meta } });
+        },
+        setHealth: (health) => {
+          instance.store.dispatch({ type: 'SET_FORM_HEALTH', payload: { formHealth: health } });
         },
       }),
       [instance],

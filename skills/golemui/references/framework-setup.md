@@ -251,6 +251,28 @@ In every case `formDef` is the bare array; form-wide config goes in the sibling
 of `eager` | `change` | `blur` | `submit`. There is also a `formHealth` callback/event
 (validity reporting) and a `formEvent` event for host-dispatched widget events.
 
+## Runtime methods — setData, setMeta, setHealth
+
+The form component has three methods. A call made before the form has started is kept.
+
+- `setData(data)` / `setMeta(meta)` replace the form data / meta.
+- `setHealth(health: FormHealth)` sets the form health from outside, for an error the form cannot
+  see (e.g. the server is unreachable). `{ status: 'errored', code, message }` freezes the form,
+  shows the `formHealthBoundary` and sends `formHealth`; `{ status: 'ok' }` clears it. Codes
+  below 1000 belong to the core, so use a code of 1000 or more.
+
+| Framework       | Handle                                                                       |
+| --------------- | ---------------------------------------------------------------------------- |
+| React           | `ref` on `<GuiForm>`, typed `FormComponentHandle` from `@golemui/react`      |
+| Angular         | `viewChild(FormComponent)` (`FormComponent` from `@golemui/gui-angular`)     |
+| Vue             | template `ref` on `<GuiForm>`, typed `GuiFormHandle` from `@golemui/gui-vue` |
+| Lit and vanilla | the `<gui-form>` element itself                                              |
+
+```ts
+form.setHealth({ status: 'errored', code: 10_001, message: 'The server cannot be reached' });
+form.setHealth({ status: 'ok' }); // later, when the server is back
+```
+
 ## SSR rules shared by every framework
 
 - Keep custom widget loaders in ONE module-scope object, reused by the preload call and the
