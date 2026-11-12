@@ -29,3 +29,26 @@ jobs:
             style
             revert
           requireScope: false
+
+  validate-pr-scope:
+    name: Validate PR scope (projects changed)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      # The release computes the version from the PR title: see tools/check-pr-scope.ts.
+      - name: Check the scope against the changed projects
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: node tools/check-pr-scope.ts "$BASE_SHA" "$HEAD_SHA"
