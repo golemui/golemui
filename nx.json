@@ -120,6 +120,9 @@
     "releaseTag": {
       "strictPreid": true
     },
+    "conventionalCommits": {
+      "useCommitScope": false
+    },
     "version": {
       "specifierSource": "conventional-commits",
       "currentVersionResolver": "git-tag",
