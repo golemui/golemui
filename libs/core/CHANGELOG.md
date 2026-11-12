@@ -1,3 +1,7 @@
+## 2.2.0-rc.0 (2026-11-12)
+
+This was a version bump only for core to align it with other projects, there were no code changes.
+
 ## 2.1.2 (2026-11-10)
 
 ### 🩹 Fixes

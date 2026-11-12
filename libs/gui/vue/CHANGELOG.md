@@ -1,3 +1,13 @@
+## 2.2.0-rc.0 (2026-11-12)
+
+### 🚀 Features
+
+- **gui-components:** add setHealth method ([#573](https://github.com/golemui/golemui/pull/573))
+
+### ❤️ Thank You
+
+- Raúl Jiménez @Elecash
+
 ## 2.1.2 (2026-11-10)
 
 ### 🩹 Fixes
