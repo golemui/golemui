@@ -22,16 +22,23 @@ export function Repeater(widgetInstance: WithWidget) {
 
   const repeaterRef = useRef<HTMLDivElement>(null);
 
+  const readonly = !!templateData.readonly;
+  const disabled = !!templateData.disabled;
+  // Read only and disabled freeze the number of rows: adding and removing do nothing, whoever calls them.
+  const locked = readonly || disabled;
+
   const addItem = useCallback(
     (value: Record<string, unknown>[]) => {
+      if (locked) return;
       const newValue = [...(value ?? []), {}];
       onValueChanged(newValue);
     },
-    [onValueChanged],
+    [onValueChanged, locked],
   );
 
   const removeItem = useCallback(
     (value: Record<string, unknown>[] | undefined, index: number) => {
+      if (locked) return;
       const items = (value ?? []).filter((_, i) => index !== i);
       // Make sure we don't keep object references
       if ('structuredClone' in window) {
@@ -40,7 +47,7 @@ export function Repeater(widgetInstance: WithWidget) {
         onRowRemoved(JSON.parse(JSON.stringify(items)), index);
       }
     },
-    [onRowRemoved],
+    [onRowRemoved, locked],
   );
 
   const [isFocused, setIsFocused] = useState(false);
@@ -63,31 +70,36 @@ export function Repeater(widgetInstance: WithWidget) {
           {templateData.title && (
             <span className="gui-repeater__card-title">{`${templateData.title} ${index + 1}`}</span>
           )}
-          <button
-            type="button"
-            tabIndex={0}
-            className="gui-button gui-button--sm gui-repeater__remove-btn"
-            onClick={() => removeItem(value, index)}
-          >
-            {templateData.removeButtonIcon && (
-              <span
-                className={`gui-widget-icon gui-button-icon ${templateData.removeButtonIcon}`}
-                data-icon={templateData.removeButtonIcon}
-              ></span>
-            )}
-            {templateData.removeLabel ?? 'Remove'}
-          </button>
+          {!readonly && (
+            <button
+              type="button"
+              tabIndex={0}
+              className="gui-button gui-button--sm gui-repeater__remove-btn"
+              onClick={() => removeItem(value, index)}
+              disabled={disabled}
+            >
+              {templateData.removeButtonIcon && (
+                <span
+                  className={`gui-widget-icon gui-button-icon ${templateData.removeButtonIcon}`}
+                  data-icon={templateData.removeButtonIcon}
+                ></span>
+              )}
+              {templateData.removeLabel ?? 'Remove'}
+            </button>
+          )}
         </div>
         <WidgetRenderer widget={row} />
       </div>
     ));
-  }, [templateData, value, removeItem]);
+  }, [templateData, value, removeItem, readonly, disabled]);
 
   const isRequired = (templateData.validator as Validator)?.required;
   const showErrors = isTouched && errors && errors.length > 0;
 
   return (
-    <div className="gui-repeater gui-field">
+    <div
+      className={`gui-repeater gui-field${readonly ? ' gui-repeater--readonly' : ''}${disabled ? ' gui-repeater--disabled' : ''}`}
+    >
       <div
         ref={repeaterRef}
         id={domId}
@@ -107,21 +119,25 @@ export function Repeater(widgetInstance: WithWidget) {
         ></GuiLabelReact>
 
         {renderWidgets()}
-        <button
-          type="button"
-          tabIndex={0}
-          className="gui-button gui-repeater__add-btn"
-          onClick={() => addItem(value || [])}
-          disabled={templateData.limit ? templateData.limit === (value?.length ?? 0) : false}
-        >
-          {templateData.addButtonIcon && (
-            <span
-              className={`gui-widget-icon gui-button-icon ${templateData.addButtonIcon}`}
-              data-icon={templateData.addButtonIcon}
-            ></span>
-          )}
-          {templateData.addLabel ?? 'Add'}
-        </button>
+        {!readonly && (
+          <button
+            type="button"
+            tabIndex={0}
+            className="gui-button gui-repeater__add-btn"
+            onClick={() => addItem(value || [])}
+            disabled={
+              disabled || (templateData.limit ? templateData.limit === (value?.length ?? 0) : false)
+            }
+          >
+            {templateData.addButtonIcon && (
+              <span
+                className={`gui-widget-icon gui-button-icon ${templateData.addButtonIcon}`}
+                data-icon={templateData.addButtonIcon}
+              ></span>
+            )}
+            {templateData.addLabel ?? 'Add'}
+          </button>
+        )}
       </div>
 
       {showErrors && (

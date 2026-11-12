@@ -546,7 +546,7 @@ const INPUTS: DxSpec[] = [
     factory: 'repeater',
     namespace: 'inputs',
     docSlug: 'repeater',
-    call: 'gui.inputs.repeater(path, { label?, addLabel?, removeLabel?, validator?, template })',
+    call: 'gui.inputs.repeater(path, { label?, addLabel?, removeLabel?, readonly?, disabled?, validator?, template })',
     example:
       "gui.inputs.repeater('attendees', { label: 'Attendees', addLabel: 'Add attendee', template: [ gui.inputs.textInput('attendees.items.name', { label: 'Name' }) ] })",
     notes: [
@@ -559,6 +559,9 @@ const INPUTS: DxSpec[] = [
         'repeater inside a template adds another `.items.` segment (`teams.items.members.items.name`).',
       '`validator: { maxItems }` caps the number of rows and shows an error past the cap (the `limit` prop is ' +
         'deprecated); `addLabel`/`removeLabel` set the button text.',
+      '`readonly` hides the add and remove buttons and `disabled` disables them; the rows still render. ' +
+        'They do NOT pass down to the template widgets: give those their own `readonly`/`disabled`, for ' +
+        "example the same `{ when: '$meta.answered' }` expression.",
       'PER-ROW EVENTS: every form event from a widget inside a row carries `row: { index, indexes, path }`, ' +
         "for example `{ index: 1, indexes: [2, 1], path: 'teams.2.devs.1' }`. `indexes` lists the position in " +
         'every enclosing repeater, outermost first. `path` is the data path of the row. Outside a repeater `row` ' +

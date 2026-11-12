@@ -26,11 +26,18 @@ const showErrors = computed(() => isTouched.value && errors.value && errors.valu
 const isFocused = ref(false);
 const repeaterRef = ref<HTMLDivElement | null>(null);
 
+const readonly = computed(() => !!templateData.value.readonly);
+const disabled = computed(() => !!templateData.value.disabled);
+// Read only and disabled freeze the number of rows: adding and removing do nothing, whoever calls them.
+const locked = computed(() => readonly.value || disabled.value);
+
 const addItem = () => {
+  if (locked.value) return;
   onValueChanged([...(value.value ?? []), {}]);
 };
 
 const removeItem = (index: number) => {
+  if (locked.value) return;
   const items = (value.value ?? []).filter((_, i) => i !== index);
   // structuredClone throws on Vue proxies, so it gets the raw objects. A JSON copy would change
   // Date, undefined and NaN values of the rows that stay.
@@ -57,10 +64,15 @@ const cardClass = computed(() => {
 const isLimitReached = computed(() =>
   templateData.value.limit ? templateData.value.limit === (value.value?.length ?? 0) : false,
 );
+
+const hostClass = computed(() => ({
+  'gui-repeater--readonly': readonly.value,
+  'gui-repeater--disabled': disabled.value,
+}));
 </script>
 
 <template>
-  <div class="gui-repeater gui-field">
+  <div class="gui-repeater gui-field" :class="hostClass">
     <div
       ref="repeaterRef"
       :id="domId"
@@ -89,9 +101,11 @@ const isLimitReached = computed(() =>
             >{{ templateData.title }} {{ index + 1 }}</span
           >
           <button
+            v-if="!readonly"
             type="button"
             tabindex="0"
             class="gui-button gui-button--sm gui-repeater__remove-btn"
+            :disabled="disabled"
             @click="removeItem(index)"
           >
             <span
@@ -106,10 +120,11 @@ const isLimitReached = computed(() =>
       </div>
 
       <button
+        v-if="!readonly"
         type="button"
         tabindex="0"
         class="gui-button gui-repeater__add-btn"
-        :disabled="isLimitReached"
+        :disabled="disabled || isLimitReached"
         @click="addItem"
       >
         <span

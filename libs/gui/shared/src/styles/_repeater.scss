@@ -25,6 +25,12 @@
           margin-inline-start: auto;
           gap: var(--gui-space-1);
         }
+
+        // A read-only repeater renders no remove button: a row with no title has nothing left
+        // in its header.
+        &:not(:has(> *)) {
+          display: none;
+        }
       }
 
       &--focused {
@@ -66,7 +72,7 @@
           }
         }
 
-        &:hover {
+        &:hover:not(:disabled) {
           color: var(--gui-intent-error-text);
           background: var(--gui-intent-error-bg);
           border-color: var(--gui-intent-error);
@@ -87,7 +93,7 @@
         transition: opacity var(--gui-transition-normal, 0.2s);
         gap: var(--gui-space-1);
 
-        &:hover {
+        &:hover:not(:disabled) {
           background: color-mix(in srgb, var(--gui-intent-primary) 10%, transparent);
           opacity: 1;
         }

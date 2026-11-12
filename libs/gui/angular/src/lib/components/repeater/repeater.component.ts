@@ -21,6 +21,8 @@ import { deferHydrationAttr } from '../../utils/defer-hydration';
   templateUrl: './repeater.component.html',
   host: {
     class: 'gui-repeater gui-field',
+    '[class.gui-repeater--readonly]': '!!this.adapter.templateData().readonly',
+    '[class.gui-repeater--disabled]': '!!this.adapter.templateData().disabled',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
@@ -38,12 +40,20 @@ export class RepeaterComponent implements OnInit, OnDestroy, WithWidget {
     this.adapter.init(this.widget);
   }
 
+  /** Read only and disabled freeze the number of rows: adding and removing do nothing, whoever calls them. */
+  private get locked(): boolean {
+    const { readonly, disabled } = this.adapter.templateData();
+    return !!readonly || !!disabled;
+  }
+
   addItem() {
+    if (this.locked) return;
     const newValue = [...(this.adapter.templateData().value ?? []), {}];
     this.adapter.valueChanged(newValue);
   }
 
   removeItem(index: number) {
+    if (this.locked) return;
     const items = (this.adapter.templateData().value ?? []).filter((_, i) => index !== i);
     // Make sure we don't keep object references
     if ('structuredClone' in window) {

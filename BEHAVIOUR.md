@@ -468,13 +468,24 @@ with the repeater controls, the state moves with its row.
   with its row, but its error does not. A row with a date that moves into the position of a rejected
   date shows the old error until the user edits the date.
 
-### 18. A disabled or readonly repeater disables Add and Remove
+### 18. A disabled or readonly repeater locks Add and Remove
 
-- Scenario: an order cannot change after its approval. The author disables the order lines when
-  the status is "approved".
-- Example: `{ "kind": "input", "type": "repeater", "path": "lines", "disabled": true, ... }` ->
-  the inputs and the Add and Remove buttons are disabled.
-- Status: not yet. The user can still add and remove rows.
+A read-only repeater renders its rows with no Add and no Remove button. A disabled repeater renders
+both buttons with the `disabled` attribute. With both flags, there are no buttons. Adding and
+removing do nothing while either flag is set, also when code calls the handlers. The host element
+gets the class `gui-repeater--readonly` or `gui-repeater--disabled`.
+
+The flags do not pass down to the rows. A widget of the template is read-only or disabled by its
+own `readonly` or `disabled`, so one state or one `$meta` value drives the repeater and its template
+widgets together. No layout passes these flags to its children yet. A rule for every container at
+once belongs to v3.0.
+
+- Scenario: an order cannot change after its approval. The author makes the order lines read-only
+  when the status is "approved".
+- Example: `{ "kind": "input", "type": "repeater", "path": "lines", "readonly": { "when": "$form.status === 'approved'" }, ... }`
+  with the same `readonly` on the inputs of the template -> once approved, the rows show their
+  values in read-only inputs, and there is no Add and no Remove button.
+- Status: follows.
 
 ### 19. A repeater blur event fires when the focus leaves the whole repeater
 

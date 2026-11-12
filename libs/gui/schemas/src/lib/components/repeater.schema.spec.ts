@@ -309,6 +309,43 @@ describe('Repeater schema validation', () => {
     });
   });
 
+  describe('readonly and disabled', () => {
+    const repeater = (extra: Record<string, unknown>) => ({
+      uid: 'rep-1',
+      path: 'items',
+      kind: 'input',
+      type: 'repeater',
+      props: {
+        template: {
+          uid: 'tpl-1',
+          kind: 'layout',
+          type: 'flex',
+          children: [{ uid: 'f-1', kind: 'input', type: 'textinput', path: 'value' }],
+        },
+      },
+      ...extra,
+    });
+
+    it.each([
+      ['a boolean', { readonly: true, disabled: false }],
+      ['a { when } expression', { readonly: { when: '$meta.answered' }, disabled: { when: 'x' } }],
+      ['a state suffix', { 'readonly.locked': true, 'disabled.busy': { when: '$meta.busy' } }],
+    ])('accepts readonly and disabled as %s', (_, extra) => {
+      const widget = repeater(extra);
+      const isValid = validate(widget);
+      if (!isValid) specValidationErrorsLogger(validate, widget);
+      expect(isValid).toBe(true);
+    });
+
+    it('rejects a readonly that is neither a boolean nor { when }', () => {
+      expect(validate(repeater({ readonly: 'yes' }))).toBe(false);
+    });
+
+    it('still rejects an unknown key', () => {
+      expect(validate(repeater({ readonly: true, locked: true }))).toBe(false);
+    });
+  });
+
   describe('Invalid configurations', () => {
     it('should fail on invalid type for limit', () => {
       const formDef = golemForm().create({
