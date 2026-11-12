@@ -439,6 +439,7 @@ const NOTES: Record<string, string[]> = {
     'Child paths inside the template MUST follow the form `<repeater.path>.items.<fieldName>`. The `items` segment is reserved — the runtime substitutes it with the current array index per row. For example, a repeater at `path: "users"` with a child `firstName` uses `path: "users.items.firstName"`. Plain `firstName` will NOT bind to the array.',
     'Nested repeaters chain the convention: a repeater at `path: "teams"` whose template contains a repeater at `path: "teams.items.members"` whose children use `path: "teams.items.members.items.<field>"`.',
     '`addLabel` supports state suffixes: `"addLabel.<stateName>": "Limit reached"` swaps the add-button label when a named state is active — useful for capping array length. Call `get_concept({ concept: "states" })` for the full pattern.',
+    '`readonly` hides the add and remove buttons, `disabled` disables them; the rows still render. Both take `true`, `{ when }` and a state suffix. They do NOT pass down to the template widgets: give those their own `readonly`/`disabled`, e.g. the same `{ when }` expression or state.',
   ],
   button: [
     '`actionType` controls the button\'s role. `actionType: "submit"` makes the button fire the form\'s `formSubmit` event natively — the host listens for it via `(formSubmit)` (Angular), `@formSubmit` (Vue), `onFormSubmit` (React), or the `form-submit` event (Lit). No custom handler needed. Use this for the primary submit button on a form.',

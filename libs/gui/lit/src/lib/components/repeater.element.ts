@@ -30,6 +30,14 @@ export class RepeaterElement extends LitElement implements WithWidget {
     return this;
   }
 
+  override updated(changedProperties: any) {
+    super.updated(changedProperties);
+
+    const { readonly, disabled } = this.adapter.templateData;
+    this.classList.toggle('gui-repeater--readonly', !!readonly);
+    this.classList.toggle('gui-repeater--disabled', !!disabled);
+  }
+
   override connectedCallback() {
     super.connectedCallback();
     this.classList.add('gui-repeater', 'gui-field');
@@ -56,6 +64,8 @@ export class RepeaterElement extends LitElement implements WithWidget {
     const templateData = this.adapter.templateData;
     const showErrors =
       templateData.touched && templateData.errors && templateData.errors.length > 0;
+    const readonly = !!templateData.readonly;
+    const disabled = !!templateData.disabled;
 
     return html`
       <div
@@ -85,41 +95,46 @@ export class RepeaterElement extends LitElement implements WithWidget {
                       >${templateData.title} ${index + 1}</span
                     >`
                   : nothing}
-                <button
-                  type="button"
-                  tabindex="0"
-                  class="gui-button gui-button--sm gui-repeater__remove-btn"
-                  @click=${() => this.removeItem(index)}
-                >
-                  ${templateData.removeButtonIcon
-                    ? html`<span
-                        class="gui-widget-icon gui-button-icon ${templateData.removeButtonIcon}"
-                        data-icon=${templateData.removeButtonIcon}
-                      ></span>`
-                    : nothing}
-                  ${templateData.removeLabel ?? 'Remove'}
-                </button>
+                ${readonly
+                  ? nothing
+                  : html`<button
+                      type="button"
+                      tabindex="0"
+                      class="gui-button gui-button--sm gui-repeater__remove-btn"
+                      @click=${() => this.removeItem(index)}
+                      ?disabled=${disabled}
+                    >
+                      ${templateData.removeButtonIcon
+                        ? html`<span
+                            class="gui-widget-icon gui-button-icon ${templateData.removeButtonIcon}"
+                            data-icon=${templateData.removeButtonIcon}
+                          ></span>`
+                        : nothing}
+                      ${templateData.removeLabel ?? 'Remove'}
+                    </button>`}
               </div>
               <gui-widget .widget=${row}></gui-widget>
             </div>
           `,
         )}
-
-        <button
-          type="button"
-          tabindex="0"
-          class="gui-button gui-repeater__add-btn"
-          @click=${() => this.addItem()}
-          ?disabled=${!!(templateData.limit && templateData.limit === templateData.value?.length)}
-        >
-          ${templateData.addButtonIcon
-            ? html`<span
-                class="gui-widget-icon gui-button-icon ${templateData.addButtonIcon}"
-                data-icon=${templateData.addButtonIcon}
-              ></span>`
-            : nothing}
-          ${templateData.addLabel ?? 'Add'}
-        </button>
+        ${readonly
+          ? nothing
+          : html`<button
+              type="button"
+              tabindex="0"
+              class="gui-button gui-repeater__add-btn"
+              @click=${() => this.addItem()}
+              ?disabled=${disabled ||
+              !!(templateData.limit && templateData.limit === templateData.value?.length)}
+            >
+              ${templateData.addButtonIcon
+                ? html`<span
+                    class="gui-widget-icon gui-button-icon ${templateData.addButtonIcon}"
+                    data-icon=${templateData.addButtonIcon}
+                  ></span>`
+                : nothing}
+              ${templateData.addLabel ?? 'Add'}
+            </button>`}
       </div>
       ${showErrors
         ? html`<gui-errors
@@ -138,13 +153,21 @@ export class RepeaterElement extends LitElement implements WithWidget {
     unsubscribeAll(this.subscriptions);
   }
 
+  /** Read only and disabled freeze the number of rows: adding and removing do nothing, whoever calls them. */
+  private get locked(): boolean {
+    const { readonly, disabled } = this.adapter.templateData;
+    return !!readonly || !!disabled;
+  }
+
   private addItem() {
+    if (this.locked) return;
     const newValue = [...(this.adapter.templateData.value ?? []), {}];
     this.adapter.valueChanged(newValue);
     this.requestUpdate();
   }
 
   private removeItem(index: number) {
+    if (this.locked) return;
     const items = (this.adapter.templateData.value ?? []).filter((_, i) => index !== i);
     // Make sure we don't keep object references
     if ('structuredClone' in window) {

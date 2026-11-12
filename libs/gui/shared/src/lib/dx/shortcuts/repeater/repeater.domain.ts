@@ -1,11 +1,21 @@
 import type { ArrayValidator } from '@golemui/gui-validators';
-import type { DxCommonFields } from '@golemui/dx';
+import type { DxCommonFields, DxInputBase } from '@golemui/dx';
 import type { DefOrCallback, GslConfigBase, GuiShortcutOf } from '@golemui/dx';
 import type { ValidGuiShortcut } from '@golemui/dx';
 import type { DxValidator } from '@golemui/dx';
 
 export interface RepeaterDecorator extends DxCommonFields {
   label?: string;
+  /**
+   * Disables the add and remove buttons. It does not pass down to the widgets of the template:
+   * give them their own `disabled`.
+   */
+  disabled?: DxInputBase['disabled'];
+  /**
+   * Hides the add and remove buttons. It does not pass down to the widgets of the template:
+   * give them their own `readonly`.
+   */
+  readonly?: DxInputBase['readonly'];
   addLabel?: string;
   removeLabel?: string;
   /**

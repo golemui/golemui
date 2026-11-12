@@ -1797,6 +1797,287 @@ export const runRepeaterComponentTests = (baseMountFn: MountComponentFn) => {
       });
     });
 
+    describe('readonly and disabled', () => {
+      const MEMBERS_PATH = 'members';
+      const MEMBERS = [
+        { name: 'Ann', role: 'Dev' },
+        { name: 'Bob', role: 'QA' },
+      ];
+
+      // The repeater host: the element with the `gui-repeater` class around the card with the id.
+      const repeaterHost = (uid: string) =>
+        cy.get(`[id="${testDomId(uid)}"]`).closest('.gui-repeater');
+
+      const membersForm = (
+        repeaterFields: Record<string, unknown>,
+        extra: { states?: Record<string, string>; repeaterProps?: Record<string, unknown> } = {},
+      ) =>
+        defineForm({
+          ...(extra.states ? { states: extra.states } : {}),
+          form: [
+            {
+              uid: 'membersRepeater',
+              kind: 'input',
+              type: 'repeater',
+              path: MEMBERS_PATH,
+              ...repeaterFields,
+              props: {
+                template: {
+                  kind: 'layout',
+                  type: 'grid',
+                  children: [
+                    {
+                      uid: 'memberName',
+                      kind: 'input',
+                      type: 'textinput',
+                      path: `${MEMBERS_PATH}.items.name`,
+                    },
+                    {
+                      uid: 'memberRole',
+                      kind: 'input',
+                      type: 'textinput',
+                      path: `${MEMBERS_PATH}.items.role`,
+                    },
+                  ],
+                },
+                ...extra.repeaterProps,
+              },
+            } as FormWidget<string>,
+            { uid: 'lock', kind: 'input', type: 'textinput', path: 'lock' },
+            {
+              uid: SUBMIT_BUTTON_UID,
+              kind: 'action',
+              type: 'button',
+              label: 'Submit',
+              actionType: 'submit',
+            },
+          ],
+        });
+
+      const expectLocked = () => {
+        cy.get('.gui-repeater__add-btn').should('not.exist');
+        cy.get('.gui-repeater__remove-btn').should('not.exist');
+        repeaterHost('membersRepeater').should('have.class', 'gui-repeater--readonly');
+      };
+
+      const expectUnlocked = (rows: number) => {
+        cy.get('.gui-repeater__add-btn').should('exist').and('not.be.disabled');
+        cy.get('.gui-repeater__remove-btn').should('have.length', rows);
+        repeaterHost('membersRepeater').should('not.have.class', 'gui-repeater--readonly');
+      };
+
+      it('renders the rows but no add or remove button when readonly is true', () => {
+        mountFn({ data: { members: MEMBERS }, formDef: membersForm({ readonly: true }) });
+
+        cy.get('[data-cy="memberName[0]_textinput"]').should('have.value', 'Ann');
+        cy.get('[data-cy="memberRole[1]_textinput"]').should('have.value', 'QA');
+        expectLocked();
+        repeaterHost('membersRepeater').should('not.have.class', 'gui-repeater--disabled');
+        // The flag does not pass down: the widgets of the template stay editable
+        cy.get('[data-cy="memberName[0]_textinput"]').should('not.have.attr', 'readonly');
+        cy.get('[data-cy="memberName[0]_textinput"]').type('e');
+        cy.get('[data-cy="memberName[0]_textinput"]').should('have.value', 'Anne');
+      });
+
+      it('renders no button when readonly and disabled are both true', () => {
+        mountFn({
+          data: { members: MEMBERS },
+          formDef: membersForm({ readonly: true, disabled: true }),
+        });
+
+        cy.get('[data-cy="memberName[1]_textinput"]').should('have.value', 'Bob');
+        expectLocked();
+        repeaterHost('membersRepeater').should('have.class', 'gui-repeater--disabled');
+      });
+
+      it('hides and shows the buttons by a state, and keeps what the user typed', () => {
+        mountFn({
+          data: { members: MEMBERS },
+          formDef: membersForm(
+            { 'readonly.locked': true },
+            { states: { locked: `$form.lock === 'yes'` } },
+          ),
+        });
+
+        expectUnlocked(2);
+        cy.get('[data-cy="memberName[0]_textinput"]').clear().type('Carla');
+
+        cy.get('[data-cy="lock_textinput"]').type('yes');
+        expectLocked();
+        cy.get('[data-cy="memberName[0]_textinput"]').should('have.value', 'Carla');
+
+        cy.get('[data-cy="lock_textinput"]').clear();
+        expectUnlocked(2);
+        cy.get('[data-cy="memberName[0]_textinput"]').should('have.value', 'Carla');
+        cy.get('[data-cy="memberRole[1]_textinput"]').should('have.value', 'QA');
+      });
+
+      it('hides and shows the buttons by { when } on $meta, and keeps what the user typed', () => {
+        let handle!: FormHandle;
+        mountFn({
+          data: { members: MEMBERS },
+          meta: { answered: false },
+          formDef: membersForm({ readonly: { when: '$meta.answered === true' } }),
+          onFormReady: (h) => {
+            handle = h;
+          },
+        });
+
+        expectUnlocked(2);
+        cy.get('[data-cy="memberRole[1]_textinput"]').clear().type('Ops');
+
+        cy.then(() => handle.setMeta({ answered: true }));
+        expectLocked();
+        cy.get('[data-cy="memberRole[1]_textinput"]').should('have.value', 'Ops');
+
+        cy.then(() => handle.setMeta({ answered: false }));
+        expectUnlocked(2);
+        cy.get('[data-cy="memberRole[1]_textinput"]').should('have.value', 'Ops');
+      });
+
+      it('disables both buttons when disabled is true, and a click changes nothing', () => {
+        const formEventHandler = cy.stub().as('formEventHandler');
+        mountFn({
+          data: { members: MEMBERS },
+          formDef: membersForm({ disabled: true, on: { change: 'rowsChanged' } }),
+          formEvent: formEventHandler,
+        });
+
+        repeaterHost('membersRepeater')
+          .should('have.class', 'gui-repeater--disabled')
+          .and('not.have.class', 'gui-repeater--readonly');
+        cy.get('.gui-repeater__add-btn').should('have.attr', 'disabled');
+        cy.get('.gui-repeater__remove-btn').should('have.length', 2);
+        cy.get('.gui-repeater__remove-btn').each(($btn) => {
+          cy.wrap($btn).should('have.attr', 'disabled');
+        });
+
+        cy.get('.gui-repeater__add-btn').click({ force: true });
+        cy.get('.gui-repeater__remove-btn').first().click({ force: true });
+        // The handlers check the flag too: a button enabled behind the binding's back adds and
+        // removes nothing
+        cy.get('.gui-repeater__add-btn').then(($btn) => {
+          ($btn[0] as HTMLButtonElement).disabled = false;
+          $btn[0].click();
+        });
+        cy.get('.gui-repeater__remove-btn')
+          .first()
+          .then(($btn) => {
+            ($btn[0] as HTMLButtonElement).disabled = false;
+            $btn[0].click();
+          });
+
+        cy.get('[data-cy="memberName[0]_textinput"]').should('have.value', 'Ann');
+        cy.get('[data-cy="memberName[1]_textinput"]').should('have.value', 'Bob');
+        cy.get('[data-cy="memberName[2]_textinput"]').should('not.exist');
+        cy.then(() => {
+          expect(eventsNamed(formEventHandler, 'rowsChanged')).to.have.length(0);
+        });
+      });
+
+      it('keeps the deprecated limit disabling the add button on its own', () => {
+        mountFn({
+          data: { members: MEMBERS },
+          formDef: membersForm({}, { repeaterProps: { limit: 2 } }),
+        });
+
+        cy.get('.gui-repeater__add-btn').should('be.disabled');
+        cy.get('.gui-repeater__remove-btn').first().should('not.be.disabled').click();
+        cy.get('.gui-repeater__add-btn').should('not.be.disabled');
+        repeaterHost('membersRepeater')
+          .should('not.have.class', 'gui-repeater--disabled')
+          .and('not.have.class', 'gui-repeater--readonly');
+      });
+
+      it('locks an inner repeater that is read only, and not the outer one', () => {
+        const TEAMS = 'teams';
+        const MEMBERS_OF_TEAM = `${TEAMS}.items.members`;
+        mountFn({
+          data: { teams: [{ name: 'Core', members: [{ name: 'Ann' }, { name: 'Bob' }] }] },
+          formDef: defineForm({
+            form: [
+              {
+                uid: 'teamsRepeater',
+                kind: 'input',
+                type: 'repeater',
+                path: TEAMS,
+                props: {
+                  addLabel: 'Add team',
+                  removeLabel: 'Remove team',
+                  template: {
+                    kind: 'layout',
+                    type: 'grid',
+                    children: [
+                      {
+                        uid: 'teamName',
+                        kind: 'input',
+                        type: 'textinput',
+                        path: `${TEAMS}.items.name`,
+                      },
+                      {
+                        uid: 'membersOfTeam',
+                        kind: 'input',
+                        type: 'repeater',
+                        path: MEMBERS_OF_TEAM,
+                        readonly: true,
+                        props: {
+                          addLabel: 'Add member',
+                          removeLabel: 'Remove member',
+                          template: {
+                            kind: 'layout',
+                            type: 'grid',
+                            children: [
+                              {
+                                uid: 'memberOfTeam',
+                                kind: 'input',
+                                type: 'textinput',
+                                path: `${MEMBERS_OF_TEAM}.items.name`,
+                              },
+                            ],
+                          },
+                        },
+                      },
+                    ],
+                  },
+                },
+              },
+            ],
+          }),
+        });
+
+        cy.get('[data-cy="memberOfTeam[0][1]_textinput"]').should('have.value', 'Bob');
+        repeaterHost('membersOfTeam[0]').should('have.class', 'gui-repeater--readonly');
+        repeaterHost('teamsRepeater').should('not.have.class', 'gui-repeater--readonly');
+        cy.get('.gui-button').contains('Add member').should('not.exist');
+        cy.get('.gui-button').contains('Remove member').should('not.exist');
+        cy.get('.gui-button').contains('Remove team').should('exist');
+
+        cy.get('.gui-button').contains('Add team').click();
+        cy.get('[data-cy="teamName[1]_textinput"]').should('exist');
+        repeaterHost('membersOfTeam[1]').should('have.class', 'gui-repeater--readonly');
+        cy.get('.gui-button').contains('Add member').should('not.exist');
+      });
+
+      it('still validates a read-only repeater with a maxItems validator', () => {
+        const formSubmitHandler = cy.stub().as('formSubmitHandler');
+        mountFn({
+          data: { members: [...MEMBERS, { name: 'Cleo', role: 'Ops' }] },
+          formDef: membersForm({
+            readonly: true,
+            validator: { type: 'array', maxItems: 2 },
+          }),
+          formSubmit: formSubmitHandler,
+        });
+
+        expectLocked();
+        cy.get(`[data-cy="${SUBMIT_BUTTON_UID}_button"]`).click();
+        cy.get('[data-cy="membersRepeater_validator-error"]').contains(
+          'Too big: expected array to have <=2 items',
+        );
+        cy.get('@formSubmitHandler').should('not.have.been.called');
+      });
+    });
+
     it('keeps Date, undefined and NaN values of the other rows when a row is removed', () => {
       const formSubmitHandler = cy.stub().as('formSubmitHandler');
       const createdAt = new Date('2026-01-01T00:00:00.000Z');

@@ -100,6 +100,30 @@ describe('DX Pipeline — Repeater', () => {
     expect(w.props?.['removeButtonIcon']).toBe('trash');
   });
 
+  it('passes readonly and disabled to the widget, not to its props', () => {
+    const result = processDx(
+      _guiRepeater('items', {
+        readonly: true,
+        disabled: { when: '$meta.busy' },
+        template: [_guiTextInput('name')],
+      }),
+    );
+    const w = getStaticChild(result, 0) as NonFunctionWidget & {
+      readonly?: unknown;
+      disabled?: unknown;
+      props?: Record<string, unknown>;
+    };
+
+    expect(w.readonly).toBe(true);
+    expect(w.disabled).toEqual({ when: '$meta.busy' });
+    expect(w.props).not.toHaveProperty('readonly');
+    expect(w.props).not.toHaveProperty('disabled');
+    // The flags stay on the repeater: the template widgets get none.
+    const leaf = (w.props?.['template'] as LayoutWidget).children?.[0] as NonFunctionWidget;
+    expect(leaf).not.toHaveProperty('readonly');
+    expect(leaf).not.toHaveProperty('disabled');
+  });
+
   it('processes template children through the full pipeline', () => {
     const result = processDx(
       _guiRepeater('orders', {

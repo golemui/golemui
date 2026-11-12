@@ -7,6 +7,14 @@
     "labelDef": {
       "$ref": "../core/common.schema.json#/$defs/localizable"
     },
+    "disabledDef": {
+      "description": "Disables the add and remove buttons. It does not pass down to the widgets of the template.",
+      "$ref": "../core/common.schema.json#/$defs/boolOrWhen"
+    },
+    "readonlyDef": {
+      "description": "Hides the add and remove buttons. It does not pass down to the widgets of the template.",
+      "$ref": "../core/common.schema.json#/$defs/boolOrWhen"
+    },
     "addLabelProp": {
       "description": "Label for the button that adds a new repeated item",
       "$ref": "../core/common.schema.json#/$defs/localizable"
@@ -54,6 +62,12 @@
     },
     "label": {
       "$ref": "#/$defs/labelDef"
+    },
+    "disabled": {
+      "$ref": "#/$defs/disabledDef"
+    },
+    "readonly": {
+      "$ref": "#/$defs/readonlyDef"
     },
     "on": {
       "$ref": "../core/common.schema.json#/$defs/on"
@@ -122,6 +136,12 @@
   "patternProperties": {
     "^label\\.[^.]+$": {
       "$ref": "#/$defs/labelDef"
+    },
+    "^disabled\\.[^.]+$": {
+      "$ref": "#/$defs/disabledDef"
+    },
+    "^readonly\\.[^.]+$": {
+      "$ref": "#/$defs/readonlyDef"
     },
     "^validator\\.[^.]+$": {
       "$ref": "../validators.schema.json#/$defs/validator"
