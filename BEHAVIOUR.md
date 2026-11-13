@@ -574,7 +574,7 @@ Moving a `gui-form` to another parent element keeps its data. It must keep its l
 
   -> the user had selected tab B before the move -> tab B is still selected.
 
-- Status: not yet. The tabs and the accordions go back to their `defaultOpen`.
+- Status: follows.
 
 ## Form component
 
@@ -592,16 +592,14 @@ When the app passes a new config object, the form starts again from the new conf
 - It uses the new `formName`. Status: follows in Angular and Lit. Not yet in React and Vue, which
   keep the first name.
 - It follows the translator of the new config. For example, the app loads a translator for each
-  language and passes the new one in the config. Status: follows in React, Angular and Lit. Not
-  yet in Vue, which still listens to the old translator.
+  language and passes the new one in the config. Status: follows in React, Angular, Vue and Lit.
 - No field is touched. For example, the user types in a field and presses a keyboard shortcut
   that opens the next customer, so the focus is still in the field. Status: follows in React and
   Vue. Not yet in Angular and Lit. When the focused input is removed, its blur reaches the new
   form and marks the field there as touched. So a required empty field shows its error before
   the user does anything.
 - It initializes once, and `formHealth` sends one value. For example, a middleware that logs
-  each form start logs one start. Status: follows in React, Vue and Lit. Not yet in Angular,
-  which initializes two times.
+  each form start logs one start. Status: follows in React, Angular, Vue and Lit.
 
 ### 26. `setData` before the form has started keeps the values
 

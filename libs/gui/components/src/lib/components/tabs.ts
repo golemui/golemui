@@ -81,6 +81,9 @@ export class GuiTabs extends ReactiveElement {
     this.mutations?.disconnect();
     this.resizes?.disconnect();
     this.observedList = undefined;
+    // The browser sets the scroll position of the strip back to 0 when the element is inserted
+    // again, so the next connect must scroll to the selected tab again.
+    this.revealed = false;
   }
 
   protected override updated(changedProperties: PropertyValues) {
@@ -151,7 +154,7 @@ export class GuiTabs extends ReactiveElement {
     this.updateShadows();
   }
 
-  /** Scrolls the strip, only, to the selected tab once it first renders. */
+  /** Scrolls the strip, only, to the selected tab once it first renders after each connect. */
   private revealSelectedTab() {
     const list = this.list;
     const tab = this.tabs.find((candidate) => panelOf(candidate) === this.current);
