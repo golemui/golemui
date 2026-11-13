@@ -1,6 +1,6 @@
 import { type ButtonProps } from '../../../widget.props';
 import { type DxActionBase, type DxCommonFields, type DxInternalFields } from '@golemui/dx';
-import { type DxRuntimeParams } from '@golemui/dx';
+import { type DxFormEvent, type DxRuntimeParams } from '@golemui/dx';
 import { type DefOrCallback, type GslConfigBase, type GuiShortcutOf } from '@golemui/dx';
 
 // ═══════════════════════════════════════════════════
@@ -10,7 +10,12 @@ import { type DefOrCallback, type GslConfigBase, type GuiShortcutOf } from '@gol
 export interface ActionDecorator extends DxActionBase, DxCommonFields, Partial<ButtonProps> {
   data?: any | null;
   type?: 'button';
-  onClick?: (data: any) => void | string;
+  /**
+   * Runs on click with the form data and the event, for example `event.row` in a repeater row.
+   * A handler with no parameters is also called while the form is built: return a string from it
+   * to send that host event name instead.
+   */
+  onClick?: (data: any, event: DxFormEvent) => void | string;
 }
 
 /**
