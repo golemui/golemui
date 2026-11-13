@@ -39,6 +39,11 @@ const controls: [string, TemplateResult, string, string?][] = [
   ['gui-select', html`<gui-select label="Color" .options=${options}></gui-select>`, 'select'],
   ['gui-checkbox', html`<gui-checkbox label="I agree"></gui-checkbox>`, 'input'],
   [
+    'gui-checkbox-group',
+    html`<gui-checkbox-group label="Colors" .options=${options}></gui-checkbox-group>`,
+    'input',
+  ],
+  [
     'gui-radiogroup',
     html`<gui-radiogroup label="Color" .options=${options}></gui-radiogroup>`,
     'input',
@@ -132,6 +137,21 @@ describe('control boundaries (WCAG 1.4.11)', () => {
           const style = getComputedStyle(bar);
           expect(contrast(toRgb(style.backgroundColor, page), page), 'track').to.be.gte(3);
           expect(contrast(toRgb(style.color, page), page), 'fill').to.be.gte(3);
+        });
+      });
+
+      // An empty star is an outline, and a picked one is filled: each is all that shows it.
+      it('gui-rating: the empty outline and the filled star reach 3:1 against the page', () => {
+        cy.mount(html`<gui-rating label="Service" .value=${2}></gui-rating>`);
+
+        cy.get('gui-rating').should(([host]) => {
+          const page = toRgb(getComputedStyle(document.body).backgroundColor, [255, 255, 255]);
+          const [filled, empty] = [
+            host.querySelector('.gui-rating__star--filled polygon')!,
+            host.querySelector('.gui-rating__star:not(.gui-rating__star--filled) polygon')!,
+          ].map((star) => getComputedStyle(star));
+          expect(contrast(toRgb(filled.fill, page), page), 'filled star').to.be.gte(3);
+          expect(contrast(toRgb(empty.stroke, page), page), 'empty outline').to.be.gte(3);
         });
       });
 

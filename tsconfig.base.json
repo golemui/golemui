@@ -49,6 +49,9 @@
       "@golemui/gui-components/button": ["libs/gui/components/src/lib/components/button.ts"],
       "@golemui/gui-components/calendar": ["libs/gui/components/src/lib/components/calendar.ts"],
       "@golemui/gui-components/checkbox": ["libs/gui/components/src/lib/components/checkbox.ts"],
+      "@golemui/gui-components/checkbox-group": [
+        "libs/gui/components/src/lib/components/checkbox-group.ts"
+      ],
       "@golemui/gui-components/currency": ["libs/gui/components/src/lib/components/currency.ts"],
       "@golemui/gui-components/date-input": [
         "libs/gui/components/src/lib/components/date-input.ts"
@@ -103,6 +106,7 @@
       "@golemui/gui-components/range-slider": [
         "libs/gui/components/src/lib/components/range-slider.ts"
       ],
+      "@golemui/gui-components/rating": ["libs/gui/components/src/lib/components/rating.ts"],
       "@golemui/gui-components/slider": ["libs/gui/components/src/lib/components/slider.ts"],
       "@golemui/gui-components/spinner": ["libs/gui/components/src/lib/components/spinner.ts"],
       "@golemui/gui-components/range-calendar": [

@@ -1,0 +1,132 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://golemui.com/schemas/gui/components/checkboxgroup.schema.json",
+  "title": "CheckboxGroup Widget",
+  "type": "object",
+  "$defs": {
+    "disabledDef": {
+      "$ref": "../core/common.schema.json#/$defs/boolOrWhen"
+    },
+    "readonlyDef": {
+      "$ref": "../core/common.schema.json#/$defs/boolOrWhen"
+    },
+    "labelDef": {
+      "$ref": "../core/common.schema.json#/$defs/localizable"
+    },
+    "hintProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable"
+    },
+    "optionsProp": {
+      "type": "array",
+      "description": "The options to check, any number of them. Options may be primitive values (string/number), structured `{ label, value }` records, or arbitrary objects (paired with `labelField`/`valueField` for custom rendering).",
+      "items": {
+        "type": ["string", "number", "object"]
+      }
+    },
+    "labelFieldProp": {
+      "type": "string",
+      "description": "Object property used as the display label when options are objects (e.g. `\"name\"` reads `item.name`)"
+    },
+    "valueFieldProp": {
+      "type": "string",
+      "description": "Object property used as the stored value when options are objects (e.g. `\"id\"` stores `item.id`)"
+    },
+    "directionProp": {
+      "description": "Layout direction for the checkboxes (`row` = horizontal, `column` = vertical). Defaults to `column`.",
+      "enum": ["row", "column"],
+      "default": "column"
+    }
+  },
+  "allOf": [
+    {
+      "$ref": "../core/common.schema.json#/$defs/baseWidget"
+    }
+  ],
+  "properties": {
+    "kind": {
+      "const": "input"
+    },
+    "type": {
+      "const": "checkboxGroup"
+    },
+    "path": {
+      "$ref": "../core/common.schema.json#/$defs/dotPath"
+    },
+    "label": {
+      "$ref": "#/$defs/labelDef"
+    },
+    "disabled": {
+      "$ref": "#/$defs/disabledDef"
+    },
+    "readonly": {
+      "$ref": "#/$defs/readonlyDef"
+    },
+    "on": {
+      "$ref": "../core/common.schema.json#/$defs/on"
+    },
+    "validator": {
+      "$ref": "../validators.schema.json#/$defs/validator"
+    },
+    "defaultValue": {
+      "type": "array",
+      "description": "The values of the checked options. The widget keeps them in the options' order.",
+      "items": {
+        "type": ["string", "number"]
+      }
+    },
+    "props": {
+      "type": "object",
+      "properties": {
+        "hint": {
+          "$ref": "#/$defs/hintProp"
+        },
+        "options": {
+          "$ref": "#/$defs/optionsProp"
+        },
+        "labelField": {
+          "$ref": "#/$defs/labelFieldProp"
+        },
+        "valueField": {
+          "$ref": "#/$defs/valueFieldProp"
+        },
+        "direction": {
+          "$ref": "#/$defs/directionProp"
+        }
+      },
+      "patternProperties": {
+        "^hint\\.[^.]+$": {
+          "$ref": "#/$defs/hintProp"
+        },
+        "^options\\.[^.]+$": {
+          "$ref": "#/$defs/optionsProp"
+        },
+        "^labelField\\.[^.]+$": {
+          "$ref": "#/$defs/labelFieldProp"
+        },
+        "^valueField\\.[^.]+$": {
+          "$ref": "#/$defs/valueFieldProp"
+        },
+        "^direction\\.[^.]+$": {
+          "$ref": "#/$defs/directionProp"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "patternProperties": {
+    "^label\\.[^.]+$": {
+      "$ref": "#/$defs/labelDef"
+    },
+    "^disabled\\.[^.]+$": {
+      "$ref": "#/$defs/disabledDef"
+    },
+    "^readonly\\.[^.]+$": {
+      "$ref": "#/$defs/readonlyDef"
+    },
+    "^validator\\.[^.]+$": {
+      "$ref": "../validators.schema.json#/$defs/validator"
+    }
+  },
+  "required": ["kind", "type", "path"],
+  "unevaluatedProperties": false
+}

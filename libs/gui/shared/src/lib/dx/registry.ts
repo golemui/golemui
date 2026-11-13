@@ -44,6 +44,8 @@ import { otpShortcutType } from './shortcuts/otp/register';
 import { rangeSliderShortcutType } from './shortcuts/range-slider/register';
 import { selectShortcutType } from './shortcuts/select/register';
 import { radiogroupShortcutType } from './shortcuts/radiogroup/register';
+import { checkboxGroupShortcutType } from './shortcuts/checkbox-group/register';
+import { ratingShortcutType } from './shortcuts/rating/register';
 import { tabsShortcutType } from './shortcuts/tabs/register';
 import { listShortcutType } from './shortcuts/list/register';
 import { tagsShortcutType } from './shortcuts/tags/register';
@@ -93,6 +95,8 @@ const guiShortcutTypes: ShortcutTypeDefinition<any, any, any>[] = [
   rangeSliderShortcutType,
   selectShortcutType,
   radiogroupShortcutType,
+  checkboxGroupShortcutType,
+  ratingShortcutType,
   tabsShortcutType,
   listShortcutType,
   tagsShortcutType,

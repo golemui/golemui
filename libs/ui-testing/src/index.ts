@@ -31,6 +31,8 @@ export * from './lib/core-features/multiple-forms.cy';
 export * from './lib/gui-features/accordion.cy';
 export * from './lib/gui-features/radiogroup.cy';
 export * from './lib/gui-features/rangeslider.cy';
+export * from './lib/gui-features/checkboxgroup.cy';
+export * from './lib/gui-features/rating.cy';
 export * from './lib/gui-features/menu.cy';
 export * from './lib/gui-features/alert.cy';
 export * from './lib/gui-features/button.cy';

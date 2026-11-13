@@ -37,6 +37,8 @@ export const DEFAULT_MESSAGES = {
   incompleteDateTime: 'Incomplete date-time: fill in all date and time parts.',
   noAvailableTimes: 'No available times',
   invalidOption: "Invalid selection: '{value}' is not a valid option.",
+  // The name a required checkbox group adds to its label, for screen readers.
+  requiredGroup: 'required',
 
   // ─── Date and time parts ───
   day: 'Day',
@@ -125,6 +127,9 @@ export const DEFAULT_MESSAGES = {
   maximum: 'Maximum',
   notSet: 'Not set',
   stepMismatch: 'Choose a valid value. The nearest is {nearest}.',
+
+  // ─── Ratings: `{count}` is a star's number ───
+  ratingStars: { one: '{count} star', other: '{count} stars' },
 
   // ─── One-time codes: `{length}` is the number of digits ───
   incompleteCode: 'Enter all {length} digits.',

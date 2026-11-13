@@ -1,0 +1,91 @@
+// The look of a checkbox's box and tick: `gui-checkbox` and `gui-checkbox-group` draw their
+// native checkboxes with it, so a token set anywhere above them styles both alike:
+//
+// - `--gui-checkbox-size`: the box's width and height (1rem);
+// - `--gui-checkbox-radius`: its corners (`--gui-radius-sm`);
+// - `--gui-checkbox-bg` and `--gui-checkbox-border`: its fill and border color;
+// - `--gui-checkbox-tick`: the tick's color (`--gui-intent-primary`);
+// - `--gui-checkbox-gap`: the space between the box and its text, which each element's label
+//   layout reads (`--gui-space-2`).
+
+@mixin gui-checkbox-input {
+  display: grid;
+  flex-shrink: 0;
+  padding: 0;
+  cursor: pointer;
+  place-content: center;
+  width: var(--gui-checkbox-size, 1rem);
+  height: var(--gui-checkbox-size, 1rem);
+  border-radius: var(--gui-checkbox-radius, var(--gui-radius-sm));
+  background: var(--gui-checkbox-bg, var(--gui-bg-surface));
+  border: 1px solid var(--gui-checkbox-border, var(--gui-border-strong));
+  accent-color: var(--gui-checkbox-tick, var(--gui-intent-primary));
+  appearance: none;
+  // Set here rather than left to the browser's defaults, which differ between engines: the box
+  // sits a little in from the label's start, and 1px down to line up with the text.
+  margin-block: 1px 3px;
+  margin-inline: 4px 0;
+  transition:
+    border-color var(--gui-transition-normal, 0.2s),
+    box-shadow var(--gui-transition-normal, 0.2s);
+
+  &:focus {
+    outline: 0;
+    border-color: var(--gui-border-focus);
+    box-shadow: var(--gui-shadow-focus);
+  }
+
+  &[aria-invalid='true'] {
+    border-color: var(--gui-intent-error);
+
+    &:focus {
+      outline: 0;
+      border-color: var(--gui-intent-error);
+      box-shadow: var(--gui-shadow-focus-error);
+    }
+  }
+
+  &::before {
+    content: '';
+    width: calc(var(--gui-checkbox-size, 1rem) * 0.75);
+    height: calc(var(--gui-checkbox-size, 1rem) * 0.75);
+    background-color: var(--gui-checkbox-tick, var(--gui-intent-primary));
+    // The tick is a polygon rather than an svg image: a `data:` uri needs `img-src data:` in the
+    // host's CSP, and a separate file gets inlined back into one by the consumer's bundler.
+    clip-path: polygon(
+      84.2% 24.8%,
+      86.3% 23.6%,
+      88.7% 23.6%,
+      90.8% 24.8%,
+      92% 26.9%,
+      92% 29.3%,
+      90.8% 31.4%,
+      40.8% 81.4%,
+      39.3% 82.5%,
+      37.5% 82.8%,
+      35.7% 82.5%,
+      34.2% 81.4%,
+      12.3% 59.6%,
+      11.1% 57.5%,
+      11.1% 55%,
+      12.3% 52.9%,
+      14.4% 51.7%,
+      16.8% 51.7%,
+      18.9% 52.9%,
+      37.5% 71.5%
+    );
+    transform: scale(0);
+    transform-origin: center center;
+    transition: 150ms transform cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* Windows High Contrast Mode: the theme color is dropped under forced colors,
+       so fall back to a system color that stays visible. */
+    @media (forced-colors: active) {
+      background-color: CanvasText;
+    }
+  }
+
+  &:checked::before {
+    transform: scale(1);
+  }
+}

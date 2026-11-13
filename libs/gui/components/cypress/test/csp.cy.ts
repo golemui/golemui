@@ -87,6 +87,17 @@ describe('a strict style-src-attr policy', () => {
     expectNoViolations();
   });
 
+  it('allows a gui-checkbox-group and a gui-rating to render, take a value and preview', () => {
+    cy.mount(
+      html`<gui-checkbox-group label="Colors" .options=${options}></gui-checkbox-group>
+        <gui-rating label="Service"></gui-rating>`,
+    );
+    cy.get('gui-checkbox-group input').first().check();
+    cy.get('gui-rating label').eq(3).click();
+    cy.get('gui-rating .gui-rating__star--filled').should('have.length', 4);
+    expectNoViolations();
+  });
+
   it('allows a gui-badge, a gui-progress and a gui-spinner to render and update', () => {
     cy.mount(
       html`<gui-badge variant="success">Paid</gui-badge>

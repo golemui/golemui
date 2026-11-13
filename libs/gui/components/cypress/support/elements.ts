@@ -79,6 +79,11 @@ export const elements: ElementCase[] = [
     form: { property: 'value', sample: '2026-03-15' },
   },
   { tag: 'gui-checkbox', props: { label: 'I agree' }, form: { property: 'value', sample: true } },
+  {
+    tag: 'gui-checkbox-group',
+    props: { label: 'Colors', options },
+    form: { property: 'values', sample: ['red'] },
+  },
   { tag: 'gui-currency', props: { label: 'Price' }, form: { property: 'value', sample: 12.5 } },
   { tag: 'gui-date', props: { label: 'Start' }, form: { property: 'value', sample: '2026-03-15' } },
   {
@@ -177,6 +182,7 @@ export const elements: ElementCase[] = [
     props: { label: 'Color', options },
     form: { property: 'value', sample: 'red' },
   },
+  { tag: 'gui-rating', props: { label: 'Service' }, form: { property: 'value', sample: 4 } },
   {
     tag: 'gui-range-slider',
     props: { label: 'Price' },

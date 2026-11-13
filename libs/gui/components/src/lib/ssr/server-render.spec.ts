@@ -38,6 +38,15 @@ describe('server rendering standalone elements in plain node', () => {
     // The code's digits show in its boxes, and its input takes them and the autofill hint.
     expect(markup).toMatch(/<span class="\s*gui-otp__box gui-otp__box--filled\s*">1<\/span>/);
     expect(markup).toMatch(/<input[^>]*id="pin"[^>]*autocomplete="one-time-code"[^>]*value="123"/);
+    // The checkbox group checks its values, and names itself required; the rating checks its star.
+    expect(markup).toMatch(
+      /<input[^>]*type="checkbox"[^>]*id="addons_1"[^>]*value="sso"[^>]*checked/,
+    );
+    expect(markup).toMatch(
+      /<div[^>]*role="group"[^>]*aria-labelledby="addons_label addons_required"/,
+    );
+    expect(markup).toMatch(/<input[^>]*type="radio"[^>]*id="support_4"[^>]*checked/);
+    expect(markup.match(/gui-rating__star gui-rating__star--filled/g)).toHaveLength(4);
     // The progress bar carries its value, and its label the percentage.
     expect(markup).toMatch(/<label[^>]*for="setup"/);
     expect(markup).toMatch(/<progress[^>]*id="setup"[^>]*max="100"[^>]*value="40"/);
@@ -67,7 +76,7 @@ describe('server rendering standalone elements in plain node', () => {
 
   it('holds every GolemUI element inert through defer-hydration', () => {
     const tags = [...markup.matchAll(/<(gui-[a-z-]+)([^>]*)>/g)];
-    expect(tags.length).toBe(19);
+    expect(tags.length).toBe(21);
     for (const [, tag, attributes] of tags) {
       expect(attributes, tag).toContain('defer-hydration');
     }

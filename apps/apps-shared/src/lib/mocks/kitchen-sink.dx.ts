@@ -47,6 +47,8 @@ import { buildRendererTab } from './tabs/renderer.dx';
 import { repeaterTab } from './tabs/repeater.dx';
 import { selectTab } from './tabs/select.dx';
 import { sliderTab } from './tabs/slider.dx';
+import { checkboxGroupTab } from './tabs/checkboxgroup.dx';
+import { ratingTab } from './tabs/rating.dx';
 import { otpTab } from './tabs/otp.dx';
 import { tagsTab } from './tabs/tags.dx';
 import { textareaTab } from './tabs/textarea.dx';
@@ -278,6 +280,12 @@ export const buildKitchenSinkDx = (options: KitchenSinkDxOptions = {}): KitchenS
         { label: 'Checkbox Component', uid: 'tabCheckbox', children: [checkboxTab] },
         { label: 'Toggle Component', uid: 'tabToggle', children: [toggleTab] },
         { label: 'Radiogroup Component', uid: 'tabRadiogroup', children: [radiogroupTab] },
+        {
+          label: 'Checkbox Group Component',
+          uid: 'tabCheckboxGroup',
+          children: [checkboxGroupTab],
+        },
+        { label: 'Rating Component', uid: 'tabRating', children: [ratingTab] },
         { label: 'Select Component', uid: 'tabSelect', children: [selectTab] },
         { label: 'Slider Component', uid: 'tabSlider', children: [sliderTab] },
         {

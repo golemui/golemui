@@ -37,6 +37,8 @@ import type {
   OtpProps,
   PasswordProps,
   RadiogroupProps,
+  RatingProps,
+  CheckboxGroupProps,
   RangeCalendarProps,
   RangeDateInputProps,
   RangeDatePickerProps,
@@ -230,6 +232,8 @@ type GolemWidget<
   | GuiOtp<FormType, States, V>
   | GuiPassword<FormType, States, V>
   | GuiRadiogroup<FormType, States, V>
+  | GuiCheckboxGroup<FormType, States, V>
+  | GuiRating<FormType, States, V>
   | GuiRangeCalendar<FormType, States, V>
   | GuiRangeDateInput<FormType, States, V>
   | GuiRangeDatePicker<FormType, States, V>
@@ -427,6 +431,24 @@ type GuiRadiogroup<FormType extends Record<string, any>, States extends string, 
 > & {
   type: 'radiogroup';
 };
+
+type GuiCheckboxGroup<FormType extends Record<string, any>, States extends string, V> = InputWidget<
+  OptionValue[],
+  States,
+  FormType,
+  CheckboxGroupProps,
+  V
+> & {
+  type: 'checkboxGroup';
+};
+
+type GuiRating<FormType extends Record<string, any>, States extends string, V> = InputWidget<
+  number,
+  States,
+  FormType,
+  RatingProps,
+  V
+> & { type: 'rating' };
 
 type GuiSlider<FormType extends Record<string, any>, States extends string, V> = InputWidget<
   number,

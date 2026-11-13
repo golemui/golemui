@@ -67,3 +67,16 @@ export const spinnerIcon = () =>
   >
     <path d=${CIRCLE_NOTCH_PATH}></path>
   </svg>`;
+
+/** A five-pointed star — aria-hidden; `gui-rating` fills or outlines it. */
+export const starIcon = () =>
+  html`<svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    class="gui-rating__glyph"
+    aria-hidden="true"
+  >
+    <polygon
+      points="12,2 14.49,9.17 22.08,9.32 16.03,13.91 18.23,21.18 12,16.84 5.77,21.18 7.97,13.91 1.92,9.32 9.51,9.17"
+    ></polygon>
+  </svg>`;

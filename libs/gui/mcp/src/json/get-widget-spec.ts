@@ -239,6 +239,41 @@ const EXAMPLES: Record<string, Record<string, unknown>> = {
       ],
     },
   },
+  checkboxGroup: {
+    kind: 'input',
+    type: 'checkboxGroup',
+    path: 'toppings',
+    label: 'Toppings',
+    props: {
+      options: [
+        { label: 'Cheese', value: 'cheese' },
+        { label: 'Ham', value: 'ham' },
+        { label: 'Olives', value: 'olives' },
+      ],
+    },
+    validator: {
+      type: 'array',
+      required: true,
+      maxItems: 2,
+      messages: {
+        invalid: 'Pick a topping',
+        required: 'Pick a topping',
+        maxItems: 'Pick at most two',
+      },
+    },
+  },
+  rating: {
+    kind: 'input',
+    type: 'rating',
+    path: 'service',
+    label: 'Service',
+    validator: {
+      type: 'integer',
+      required: true,
+      maximum: 5,
+      messages: { invalid: 'Rate the service' },
+    },
+  },
   dateInput: {
     kind: 'input',
     type: 'dateInput',
@@ -386,6 +421,14 @@ const NOTES: Record<string, string[]> = {
   ],
   radiogroup: [
     '`props.appearance: "segmented"` shows the options as a segmented control: a row of joined buttons, the selected one filled, for a few short options (Day / Week / Month, List / Grid). It is the same radio group (same value, keyboard, validation), not a separate widget. It is always a row, so `props.direction` does not apply, and it stacks in a narrow form. Past about five options, or with long labels, keep the default appearance or use a `dropdown`.',
+  ],
+  checkboxGroup: [
+    "Checkboxes to pick ANY number of options from `props.options` (the same shapes as `radiogroup`: values, `{ label, value }`, or objects with `labelField` / `valueField`). The value is an ARRAY of the checked values, kept in the options' order whatever order they are checked in. For one option use `radiogroup`; for a long list use `multiList` or `multiDropdown`; for a single yes/no use `checkbox`.",
+    'Validate with an array validator: `{ type: "array", required, minItems, maxItems }`. `required` means at least one checked. Message keys: `invalid`, `required`, `minItems`, `maxItems`; word the empty group with both `required` and `invalid` (an untouched group is undefined). `props.direction: "row"` lays it out in a row.',
+  ],
+  rating: [
+    'A score in stars: an integer from 1 to the validator\'s `maximum`, which is also the number of stars (5 without one). There is no `max` prop: put `maximum` on an integer validator, `{ type: "integer", maximum: 10 }`. For a longer or finer scale, use `slider`.',
+    'It has NO value until a star is picked; the user can clear it (a click on the picked star, or Delete / Backspace), also when the validator is `required`: a cleared required rating shows its error, as an emptied text field does. Word the missing value with `messages.invalid`: an unset value fails the integer type check. A `defaultValue` must be a whole number from 1.',
   ],
   otp: [
     'A one-time code (a verification code sent by SMS, email or an authenticator app): one box per digit. The value is a STRING of digits, so leading zeros survive (`"012345"`). For any other short text, use `textinput`.',

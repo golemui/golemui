@@ -45,6 +45,8 @@ import { _guiRangeCalendar } from './shortcuts/range-calendar/guiRangeCalendar.i
 import { _guiSlider } from './shortcuts/slider/guiSlider.impl';
 import { _guiOtp } from './shortcuts/otp/guiOtp.impl';
 import { _guiRangeSlider } from './shortcuts/range-slider/guiRangeSlider.impl';
+import { _guiCheckboxGroup } from './shortcuts/checkbox-group/guiCheckboxGroup.impl';
+import { _guiRating } from './shortcuts/rating/guiRating.impl';
 import { _guiRangeDateInput } from './shortcuts/range-date-input/guiRangeDateInput.impl';
 import { _guiRangeDateTimeInput } from './shortcuts/range-date-time-input/guiRangeDateTimeInput.impl';
 import { _guiRangeDateTimeCalendar } from './shortcuts/range-date-time-calendar/guiRangeDateTimeCalendar.impl';
@@ -126,6 +128,8 @@ import { _gslRangeCalendars, _gslRangeCalendarByUid } from './shortcuts/range-ca
 import { _gslSliders, _gslSliderByUid } from './shortcuts/slider/register';
 import { _gslOtps, _gslOtpByUid } from './shortcuts/otp/register';
 import { _gslRangeSliders, _gslRangeSliderByUid } from './shortcuts/range-slider/register';
+import { _gslCheckboxGroups, _gslCheckboxGroupByUid } from './shortcuts/checkbox-group/register';
+import { _gslRatings, _gslRatingByUid } from './shortcuts/rating/register';
 import {
   _gslRangeDateInputs,
   _gslRangeDateInputByUid,
@@ -232,6 +236,10 @@ const guiSelectors = createSelectors({
   otpByUid: _gslOtpByUid,
   rangeSliders: _gslRangeSliders,
   rangeSliderByUid: _gslRangeSliderByUid,
+  checkboxGroups: _gslCheckboxGroups,
+  checkboxGroupByUid: _gslCheckboxGroupByUid,
+  ratings: _gslRatings,
+  ratingByUid: _gslRatingByUid,
   rangeDateInputs: _gslRangeDateInputs,
   rangeDateInputByUid: _gslRangeDateInputByUid,
   rangeTimeInputs: _gslRangeTimeInputs,
@@ -311,6 +319,8 @@ const guiFacade = {
     slider: _guiSlider,
     otp: _guiOtp,
     rangeSlider: _guiRangeSlider,
+    checkboxGroup: _guiCheckboxGroup,
+    rating: _guiRating,
     fileUpload: _guiFileUpload,
     multiFileUpload: _guiMultiFileUpload,
     calendar: _guiCalendar,

@@ -103,6 +103,11 @@
       "import": "./lib/components/checkbox.js",
       "require": "./lib/components/checkbox.umd.cjs"
     },
+    "./checkbox-group": {
+      "types": "./lib/components/checkbox-group.d.ts",
+      "import": "./lib/components/checkbox-group.js",
+      "require": "./lib/components/checkbox-group.umd.cjs"
+    },
     "./currency": {
       "types": "./lib/components/currency.d.ts",
       "import": "./lib/components/currency.js",
@@ -242,6 +247,11 @@
       "types": "./lib/components/range-slider.d.ts",
       "import": "./lib/components/range-slider.js",
       "require": "./lib/components/range-slider.umd.cjs"
+    },
+    "./rating": {
+      "types": "./lib/components/rating.d.ts",
+      "import": "./lib/components/rating.js",
+      "require": "./lib/components/rating.umd.cjs"
     },
     "./slider": {
       "types": "./lib/components/slider.d.ts",

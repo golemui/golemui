@@ -58,6 +58,10 @@ describe('resuming server-rendered standalone elements', () => {
     expect((document.getElementById('terms') as HTMLInputElement).checked).toBe(true);
     expect((document.getElementById('seats') as HTMLInputElement).value).toBe('12');
     expect((document.getElementById('setup') as HTMLProgressElement).value).toBe(40);
+    expect((document.getElementById('addons_1') as HTMLInputElement).checked).toBe(true);
+    expect((document.getElementById('addons_0') as HTMLInputElement).checked).toBe(false);
+    expect((document.getElementById('support_4') as HTMLInputElement).checked).toBe(true);
+    expect(document.querySelectorAll('#support_4')).toHaveLength(1);
     expect(document.querySelectorAll('gui-spinner svg')).toHaveLength(1);
     expect(document.querySelector('gui-spinner [role="status"]')?.textContent).toBe(
       'Checking your coupon',

@@ -879,6 +879,21 @@ export type RadiogroupProps = {
   appearance?: 'default' | 'segmented';
 };
 
+export type CheckboxGroupProps = {
+  hint?: string;
+  /** The options to check, any number of them. */
+  options: Option[];
+  labelField?: string;
+  valueField?: string;
+  /** Lays the options out in a column (the default) or a row. */
+  direction?: 'row' | 'column';
+};
+
+/** A rating's stars are the integer validator's `maximum` (5 without one). */
+export type RatingProps = {
+  hint?: string;
+};
+
 export type OneOfProps = {
   labelField?: string;
   valueField?: string;

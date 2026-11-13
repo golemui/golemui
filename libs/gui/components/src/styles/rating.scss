@@ -1,0 +1,88 @@
+// `gui-rating`: native radios, hidden on screen, under stars drawn as inline SVG. An empty star is
+// an outline and a picked one is filled, so the rating reads without telling colors apart.
+
+gui-rating {
+  display: block;
+
+  .gui-rating__stars {
+    display: inline-flex;
+    gap: var(--gui-rating-gap, 0.125rem);
+  }
+
+  .gui-rating__star {
+    display: inline-flex;
+    cursor: pointer;
+    // Each star is a hit target as big as itself, and touches the next: the pointer never falls
+    // between two.
+    padding: 0.125rem;
+    border-radius: var(--gui-radius-sm);
+  }
+
+  .gui-rating__glyph {
+    inline-size: var(--gui-rating-size, 1.5rem);
+    block-size: var(--gui-rating-size, 1.5rem);
+    overflow: visible;
+
+    polygon {
+      // Non-text contrast (WCAG 1.4.11): the outline shows where an empty star is.
+      fill: transparent;
+      stroke: var(--gui-border-strong);
+      stroke-width: 1.5;
+      stroke-linejoin: round;
+      transition:
+        fill var(--gui-transition-normal, 0.2s),
+        stroke var(--gui-transition-normal, 0.2s);
+    }
+  }
+
+  .gui-rating__star--filled polygon {
+    fill: var(--gui-rating-fill);
+    stroke: var(--gui-rating-fill);
+  }
+
+  // The pointer previews the rating it would pick: the star under it and those before it fill,
+  // the others empty.
+  .gui-rating__stars:not(.gui-rating__stars--static):hover {
+    .gui-rating__star polygon {
+      fill: transparent;
+      stroke: var(--gui-border-strong);
+    }
+
+    .gui-rating__star:hover polygon,
+    .gui-rating__star:has(~ .gui-rating__star:hover) polygon {
+      fill: var(--gui-rating-fill);
+      stroke: var(--gui-rating-fill);
+    }
+  }
+
+  .gui-rating__star:has(.gui-rating__input:focus-visible) {
+    outline: 2px solid var(--gui-border-focus);
+    outline-offset: 1px;
+  }
+
+  .gui-rating__stars[aria-invalid='true'] .gui-rating__star:not(.gui-rating__star--filled) polygon {
+    stroke: var(--gui-intent-error);
+  }
+
+  // Read-only and disabled stars promise no change.
+  .gui-rating__stars--static .gui-rating__star {
+    cursor: default;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gui-rating__glyph polygon {
+      transition: none;
+    }
+  }
+
+  // Under forced colors the theme colors are dropped: system colors keep the stars visible.
+  @media (forced-colors: active) {
+    .gui-rating__glyph polygon {
+      stroke: CanvasText;
+    }
+
+    .gui-rating__star--filled polygon {
+      fill: CanvasText;
+    }
+  }
+}

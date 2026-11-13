@@ -1,0 +1,35 @@
+@use 'checkbox-input' as *;
+
+// `gui-checkbox-group`: native checkboxes in a row or a column, laid out as the radio group's.
+gui-checkbox-group {
+  display: block;
+
+  .gui-widget {
+    &--horizontal {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: start;
+      gap: 1em;
+    }
+
+    // Each option is laid out as a `gui-checkbox` is: the box, then its text, the same gap apart.
+    label {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--gui-checkbox-gap, var(--gui-space-2));
+      cursor: pointer;
+    }
+
+    input[type='checkbox'] {
+      @include gui-checkbox-input;
+    }
+  }
+
+  // Read-only looks like the editable group, as a read-only text field does, without the pointer
+  // that promises a change.
+  label:has(input[aria-readonly='true']),
+  input[aria-readonly='true'] {
+    cursor: default;
+  }
+}

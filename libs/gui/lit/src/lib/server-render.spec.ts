@@ -69,6 +69,25 @@ const config: FormInitConfig<Type<WithWidget>> = {
           },
         },
         { kind: 'input', type: 'checkbox', path: 'acceptTerms', label: 'I accept the terms' },
+        {
+          kind: 'input',
+          type: 'checkboxGroup',
+          path: 'extras',
+          label: 'Extras',
+          props: {
+            options: [
+              { value: 'wifi', label: 'Wi-Fi' },
+              { value: 'parking', label: 'Parking' },
+            ],
+          },
+        },
+        {
+          kind: 'input',
+          type: 'rating',
+          path: 'stay',
+          label: 'Your stay',
+          validator: { type: 'integer', maximum: 10 },
+        },
         { kind: 'input', type: 'toggle', path: 'newsletter', label: 'Newsletter' },
         {
           kind: 'input',
@@ -116,6 +135,8 @@ const config: FormInitConfig<Type<WithWidget>> = {
     budget: 1234.5,
     volume: 7,
     price: { start: 100, end: 300 },
+    extras: ['parking'],
+    stay: 8,
   },
 };
 
@@ -184,6 +205,25 @@ describe('server rendering the gui widget set in plain node', () => {
     expect(markup).toMatch(/class="gui-slider__value"[^>]*>(<!--[^>]*-->)*100 – 300/);
   });
 
+  it('renders the checkbox group with its values checked, and the rating with its stars', () => {
+    expect(markup).toMatch(
+      /<gui-checkbox-group-input[^>]*class="[^"]*gui-checkbox-group[^"]*gui-field/,
+    );
+    expect(markup).toMatch(
+      /<input[^>]*type="checkbox"[^>]*id="gui-lit-ssr-form-extras-checkboxGroup_1"[^>]*value="parking"[^>]*checked/,
+    );
+    expect(markup).not.toMatch(
+      /<input[^>]*id="gui-lit-ssr-form-extras-checkboxGroup_0"[^>]*checked/,
+    );
+    expect(markup).toMatch(/<gui-rating-input[^>]*class="[^"]*gui-rating[^"]*gui-field/);
+    // Ten stars, from the validator's maximum, the first eight filled.
+    expect(markup).toMatch(/<input[^>]*type="radio"[^>]*id="gui-lit-ssr-form-stay-rating_10"/);
+    expect(markup).toMatch(
+      /<input[^>]*type="radio"[^>]*id="gui-lit-ssr-form-stay-rating_8"[^>]*checked/,
+    );
+    expect(markup.match(/gui-rating__star gui-rating__star--filled/g)).toHaveLength(8);
+  });
+
   it('renders the otp widget with its digits in its boxes and its input', () => {
     expect(markup).toMatch(/<gui-otp-input[^>]*class="[^"]*gui-otp[^"]*gui-field/);
     expect(markup).toMatch(
@@ -221,7 +261,10 @@ describe('server rendering the gui widget set in plain node', () => {
       /<input[^>]*id="gui-lit-ssr-form-acceptTerms-checkbox"[^>]*\schecked=/,
     );
     expect(markup).not.toMatch(/<input[^>]*id="gui-lit-ssr-form-newsletter-toggle"[^>]*\schecked=/);
-    const checkedRadios = markup.match(/<input[^>]*type="radio"[^>]*\schecked=[^>]*>/g) ?? [];
+    // The radio group's: the rating's stars are radios too.
+    const checkedRadios = (
+      markup.match(/<input[^>]*type="radio"[^>]*\schecked=[^>]*>/g) ?? []
+    ).filter((radio) => !radio.includes('-rating_'));
     expect(checkedRadios).toHaveLength(1);
     expect(checkedRadios[0]).toMatch(/value="m"/);
   });
