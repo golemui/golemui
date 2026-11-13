@@ -531,6 +531,83 @@ describe('the form id', () => {
     expect(recorder.formNames.at(-1)).toBe('signup');
   });
 
+  it('uses the formName of a new config object', async () => {
+    const recorder = formNameRecorder();
+    const config: FormInitConfig<StubComponent> = {
+      formDef: rootLayout([firstNameInput]),
+      widgetLoaders: stubWidgetLoaders,
+      data: {},
+      formName: 'signup',
+      middlewares: [recorder.middleware],
+    };
+    const mounted = await render(<FormComponent config={config} validators={noopValidators} />);
+
+    await act(async () =>
+      root?.render(
+        <FormComponent config={{ ...config, formName: 'checkout' }} validators={noopValidators} />,
+      ),
+    );
+
+    expect(mounted.querySelector('form')?.id).toBe('checkout');
+    expect(recorder.formNames.at(-1)).toBe('checkout');
+    expect(lastHookOutput<InputHookOutput>('firstName').domId).toBe('checkout-firstName');
+  });
+
+  it('uses the generated id for a new config object with no formName, and keeps it', async () => {
+    const recorder = formNameRecorder();
+    const configOf = (formName?: string): FormInitConfig<StubComponent> => ({
+      formDef: rootLayout([firstNameInput]),
+      widgetLoaders: stubWidgetLoaders,
+      data: {},
+      formName,
+      middlewares: [recorder.middleware],
+    });
+    const form = (config: FormInitConfig<StubComponent>) => (
+      <FormComponent config={config} validators={noopValidators} />
+    );
+    const mounted = await render(form(configOf('signup')));
+    const formId = () => mounted.querySelector('form')?.id;
+
+    await act(async () => root?.render(form(configOf())));
+    const generatedId = formId();
+
+    expect(generatedId).toBeTruthy();
+    expect(generatedId).not.toBe('signup');
+    expect(recorder.formNames.at(-1)).toBe(generatedId);
+
+    await act(async () => root?.render(form(configOf())));
+
+    expect(formId()).toBe(generatedId);
+    expect(recorder.formNames.at(-1)).toBe(generatedId);
+  });
+
+  it('uses the id generated at mount again after a config object with a formName', async () => {
+    const recorder = formNameRecorder();
+    const configOf = (formName?: string): FormInitConfig<StubComponent> => ({
+      formDef: rootLayout([firstNameInput]),
+      widgetLoaders: stubWidgetLoaders,
+      data: {},
+      formName,
+      middlewares: [recorder.middleware],
+    });
+    const form = (config: FormInitConfig<StubComponent>) => (
+      <FormComponent config={config} validators={noopValidators} />
+    );
+    const mounted = await render(form(configOf()));
+    const formId = () => mounted.querySelector('form')?.id;
+    const idGeneratedAtMount = formId();
+    expect(idGeneratedAtMount).toBeTruthy();
+
+    await act(async () => root?.render(form(configOf('signup'))));
+
+    expect(formId()).toBe('signup');
+
+    await act(async () => root?.render(form(configOf())));
+
+    expect(formId()).toBe(idGeneratedAtMount);
+    expect(recorder.formNames.at(-1)).toBe(idGeneratedAtMount);
+  });
+
   it('gives two forms on one page different ids', async () => {
     const config = (): FormInitConfig<StubComponent> => ({
       formDef: rootLayout([firstNameInput]),

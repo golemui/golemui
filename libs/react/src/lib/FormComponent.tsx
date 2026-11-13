@@ -70,6 +70,9 @@ type FormInstance = {
    * tree is destroyed and recreated and every widget subscribes to the store INITIALIZE
    * ran on. */
   generation: number;
+  /** The formName INITIALIZE ran with. The `form` element takes its id from here, so the id
+   * always matches the DOM ids of the widgets of this store. */
+  formName: string;
   /** The exact prop identities this instance was initialized with, compared by the reinit effect. */
   config: FormInitConfig<WidgetComponent>;
   validators: ValidatorFn<any>;
@@ -82,9 +85,10 @@ type FormInstance = {
 function createFormInstance(
   config: FormInitConfig<WidgetComponent>,
   validators: ValidatorFn<any>,
-  formName: string,
+  generatedFormName: string,
   generation: number,
 ): FormInstance {
+  const formName = config.formName ?? generatedFormName;
   const context = new FormContext<WidgetComponent>();
   context.initialize(
     config.widgetLoaders,
@@ -113,6 +117,7 @@ function createFormInstance(
     context,
     store,
     generation,
+    formName,
     config,
     validators,
     subscribe: (onStoreChange) => {
@@ -201,12 +206,11 @@ export const FormComponent = forwardRef<FormComponentHandle, FormComponentProps>
     ref,
   ) {
     // useId gives the same id on the server and the hydrating client, so an omitted
-    // formName still produces matching markup. Computed once at mount and never updated,
-    // like every formName.
+    // formName still produces matching markup. The id never changes for this component, so
+    // every config without a formName gets the same one.
     const generatedFormName = useId();
-    const [formName] = useState(() => config.formName ?? generatedFormName);
     const [instance, setInstance] = useState(() =>
-      createFormInstance(config, validators, formName, 0),
+      createFormInstance(config, validators, generatedFormName, 0),
     );
 
     const callbacksRef = useRef({ formHealth, formEvent, formSubmit });
@@ -232,8 +236,10 @@ export const FormComponent = forwardRef<FormComponentHandle, FormComponentProps>
       if (instance.config === config && instance.validators === validators) {
         return;
       }
-      setInstance(createFormInstance(config, validators, formName, instance.generation + 1));
-    }, [config, validators, formName, instance]);
+      setInstance(
+        createFormInstance(config, validators, generatedFormName, instance.generation + 1),
+      );
+    }, [config, validators, generatedFormName, instance]);
 
     // Browser-only subscription: a language change reaches the render through the store.
     useEffect(() => {
@@ -289,7 +295,7 @@ export const FormComponent = forwardRef<FormComponentHandle, FormComponentProps>
           ) : (
             <div className="gui-form">
               <form
-                id={formName}
+                id={instance.formName}
                 noValidate
                 dir={direction}
                 autoComplete={autocomplete}
