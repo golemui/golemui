@@ -22,7 +22,11 @@ export const JSON_VALIDATE_FORM_DEFINITION_TOOL = {
     'show up in `errors` and flip `valid` to false. A chunk reference (`{"$ref": "./x.form-chunk.json"}`) ' +
     'is a legal widget entry and is accepted anywhere a widget can appear, except as a repeater `template`, which ' +
     'must be a built-in layout (`accordion`, `flex`, `grid`, `tabs`); a widget where it is not allowed is an error ' +
-    'with keyword `position`. Likely-custom widgets (a `type` value that ' +
+    'with keyword `position`. A repeated widget uid is an error with keyword `duplicateUid`. Outside repeater ' +
+    'templates, the uids of all widgets must differ, at any depth of layouts. Inside repeater templates, they ' +
+    'must differ among all the templates of the same repeater depth (the templates of the top-level repeaters, ' +
+    'then the templates of the repeaters inside them, and so on). A widget without `uid` gets `<path>-<type>` ' +
+    'when it is an input, and `#0.<index>` from its position otherwise. Likely-custom widgets (a `type` value that ' +
     "isn't a built-in and isn't close to one) and semantic validator traps (a boolean validator " +
     'with only half of the `required: true` + `const: true` pair — it will not force a mandatory ' +
     "checkbox to be checked) show up in `warnings` instead — they don't " +

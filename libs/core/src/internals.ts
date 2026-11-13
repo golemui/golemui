@@ -17,6 +17,9 @@ export type {
   ExpressionSize,
 } from './lib/utils/check-expression';
 
+// The uid rule of the form, so that tools such as @golemui/gui-mcp compute the same uids.
+export { collectWidgetUids } from './lib/utils/widget-uid';
+
 // The bindings resolve an input's `itemRenderer` the same way, falling back to the default one.
 export { resolveItemRenderer } from './lib/utils/resolve-item-renderer';
 

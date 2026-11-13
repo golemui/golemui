@@ -41,6 +41,7 @@ describe('@golemui/core entry points', () => {
       'ALLOWED_EXPRESSION_METHODS',
       'EXPRESSION_LIMITS',
       'checkExpression',
+      'collectWidgetUids',
       'isI18nParamExpression',
       'resolveItemRenderer',
       'toDomId',
