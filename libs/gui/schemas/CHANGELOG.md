@@ -1,3 +1,13 @@
+## 2.2.0-rc.1 (2026-11-12)
+
+### 🚀 Features
+
+- the repeater respects readonly and disabled ([#576](https://github.com/golemui/golemui/pull/576))
+
+### ❤️ Thank You
+
+- Raúl Jiménez @Elecash
+
 ## 2.2.0-rc.0 (2026-11-12)
 
 This was a version bump only for gui-schemas to align it with other projects, there were no code changes.
