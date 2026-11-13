@@ -804,7 +804,7 @@ In a form definition, each `on` value is the name of the event, a string. Functi
   -> the form logs the value and shows it in the label, as `$log` does in `when`. The same works
   in an i18n param.
 
-- Status: not yet. It gives error code 40.
+- Status: follows.
 
 ### 37. An i18n param keeps the value it has
 
