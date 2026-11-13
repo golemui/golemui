@@ -380,6 +380,32 @@ const INPUTS: DxSpec[] = [
     ],
   },
   {
+    factory: 'checkboxGroup',
+    namespace: 'inputs',
+    docSlug: 'checkbox-group',
+    call: "gui.inputs.checkboxGroup(path, { label, options, labelField?, valueField?, direction?: 'row' | 'column', defaultValue?, validator? })",
+    example:
+      "gui.inputs.checkboxGroup('toppings', { label: 'Toppings', options: [{ value: 'cheese', label: 'Cheese' }, { value: 'ham', label: 'Ham' }], validator: { required: true, maxItems: 2, messages: { invalid: 'Pick a topping', required: 'Pick a topping', maxItems: 'Pick at most two' } } })",
+    notes: [
+      "Checkboxes to pick ANY number of options, from `options` (like `radiogroup`). The value is an ARRAY of the checked values, in the options' order whatever order they are checked in. For one option use `radiogroup`; for a long list use `multiList` or `multiDropdown`; for a single yes/no use `checkbox`.",
+      'The validator is an array validator: `required` (at least one checked), `minItems`, `maxItems`, each with its message. Word the empty group with both `messages.required` and `messages.invalid`: an untouched group is undefined.',
+      "`direction: 'row'` lays the checkboxes out in a row.",
+    ],
+  },
+  {
+    factory: 'rating',
+    namespace: 'inputs',
+    docSlug: 'rating',
+    call: 'gui.inputs.rating(path, { label, hint?, defaultValue?, validator? })',
+    example:
+      "gui.inputs.rating('service', { label: 'Service', validator: { required: true, maximum: 5, messages: { invalid: 'Rate the service' } } })",
+    notes: [
+      "A number of stars, from 1 to the validator's `maximum` (5 without one): the validator sets how many stars there are. There is no `max` prop.",
+      'It has NO value until a star is picked, and the user can clear it (a click on the picked star, or Delete), also when the validator is `required`: a cleared required rating shows its error, as an emptied text field does. Word the missing value with `messages.invalid`: an unset value fails the integer type check.',
+      'For a score on a longer or finer scale, use `slider`.',
+    ],
+  },
+  {
     factory: 'datePicker',
     namespace: 'inputs',
     docSlug: 'date-picker',

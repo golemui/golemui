@@ -17,6 +17,11 @@ export type GuiCheckboxProps = {
 /**
  * A checkbox. Its value is `true` or `false`.
  *
+ * Its look comes from the `--gui-checkbox-*` tokens it shares with `gui-checkbox-group`, so one
+ * setting styles both: `--gui-checkbox-size`, `--gui-checkbox-radius`, `--gui-checkbox-bg`,
+ * `--gui-checkbox-border`, `--gui-checkbox-tick` and `--gui-checkbox-gap`, the space between the
+ * box and its text.
+ *
  * @fires gui-input - The user changed the value. `detail.value` is the new value.
  * @fires gui-change - The user committed the value. `detail.value` is the committed value.
  * @fires gui-blur - Focus left the control.

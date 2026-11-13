@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Progress · GolemUI Components playground</title>
+    <link rel="stylesheet" href="/src/styles.scss" />
+  </head>
+  <body>
+    <main class="pg-main">
+      <section class="pg-section">
+        <h1>gui-progress</h1>
+        <p>
+          A native <code>&lt;progress&gt;</code> with its label. Without a value it is
+          indeterminate: a band runs along the track, the other way when the direction switch above
+          mirrors the page, and slower when the system asks for reduced motion.
+        </p>
+      </section>
+
+      <section class="pg-section">
+        <h2>Bars</h2>
+        <div class="pg-stack">
+          <gui-progress label="Uploading" value="40" show-value></gui-progress>
+          <gui-progress label="Steps done" value="3" max="7" show-value></gui-progress>
+          <gui-progress label="Finished" value="100" show-value></gui-progress>
+          <gui-progress label="Waiting for the server"></gui-progress>
+          <gui-progress label="Subiendo" value="65" show-value locale-id="es"></gui-progress>
+        </div>
+      </section>
+
+      <section class="pg-section">
+        <h2>A task that runs</h2>
+        <div class="pg-stack">
+          <gui-progress id="task" label="Importing contacts" show-value></gui-progress>
+          <div class="pg-row">
+            <button type="button" class="pg-button" id="task-start">Start</button>
+            <button type="button" class="pg-button" id="task-reset">Reset</button>
+          </div>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="/src/pages/progress.ts"></script>
+  </body>
+</html>

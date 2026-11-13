@@ -1,0 +1,25 @@
+@use 'spinner' as *;
+
+// `gui-spinner`: the glyph the button, the pills and the file upload spin while busy, as an
+// element of its own. Its status text is visually hidden (`.gui-visually-hidden`). It is left out
+// of the base reset (`_base.scss`) on purpose: it takes the color and size of the text it sits in.
+gui-spinner {
+  display: inline-flex;
+  vertical-align: middle;
+  color: var(--gui-spinner-color, currentColor);
+  line-height: 1;
+
+  // The display above would defeat the UA's [hidden] rule.
+  &[hidden] {
+    display: none;
+  }
+
+  .gui-spinner__icon {
+    @include gui-spinner;
+
+    svg {
+      inline-size: var(--gui-spinner-size, 1.25em);
+      block-size: var(--gui-spinner-size, 1.25em);
+    }
+  }
+}

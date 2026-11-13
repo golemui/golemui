@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Spinner · GolemUI Components playground</title>
+    <link rel="stylesheet" href="/src/styles.scss" />
+  </head>
+  <body>
+    <main class="pg-main">
+      <section class="pg-section">
+        <h1>gui-spinner</h1>
+        <p>
+          A wait of unknown length. It takes the color and size of the text it sits in. Its label
+          goes in a status region hidden on screen, which screen readers announce when it changes;
+          without a label it says nothing.
+        </p>
+      </section>
+
+      <section class="pg-section">
+        <h2>Sizes from the text</h2>
+        <div class="pg-stack">
+          <p><gui-spinner label="Loading"></gui-spinner> Small text</p>
+          <h3><gui-spinner label="Loading"></gui-spinner> A heading</h3>
+          <h1><gui-spinner label="Loading"></gui-spinner> A title</h1>
+          <p>Decorative, next to text that says it: <gui-spinner></gui-spinner> Saving…</p>
+        </div>
+      </section>
+
+      <section class="pg-section">
+        <h2>Announced waits</h2>
+        <p>
+          The spinner is on the page from the start, without a label. Loading sets one, which screen
+          readers announce, and the results clear it.
+        </p>
+        <div class="pg-stack" id="results" aria-busy="false">
+          <div class="pg-row">
+            <button type="button" class="pg-button" id="load">Load results</button>
+            <gui-spinner id="results-spinner" hidden></gui-spinner>
+          </div>
+          <output id="results-output"></output>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="/src/pages/spinner.ts"></script>
+  </body>
+</html>

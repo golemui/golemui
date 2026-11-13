@@ -23,6 +23,7 @@ const keys = {
   ArrowLeft: { key: 'ArrowLeft', code: 'ArrowLeft', windowsVirtualKeyCode: 37 },
   Home: { key: 'Home', code: 'Home', windowsVirtualKeyCode: 36 },
   Backspace: { key: 'Backspace', code: 'Backspace', windowsVirtualKeyCode: 8 },
+  Delete: { key: 'Delete', code: 'Delete', windowsVirtualKeyCode: 46 },
 } as const;
 
 /** Presses and releases a key, in the element that has focus. */
@@ -81,3 +82,6 @@ export const realMouseDown = (x: number, y: number) =>
 
 /** Releases the mouse button at a point. */
 export const realMouseUp = (x: number, y: number) => realMouse(x, y, ['mouseReleased']);
+
+/** Moves the pointer to a point, without pressing: what `:hover` follows. */
+export const realHover = (x: number, y: number) => realMouse(x, y, ['mouseMoved']);

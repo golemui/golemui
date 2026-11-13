@@ -32,6 +32,7 @@ Every `gui.*` factory and its calling convention. Look up the detail below for t
 - `gui.actions.button({ label?, actionType?: 'submit', variant?, icon?, iconPosition?, ariaLabel?, onClick? })`
 - `gui.inputs.calendar(path, { label, minDate?, maxDate? })`
 - `gui.inputs.checkbox(path, { label, defaultValue?, validator? })`
+- `gui.inputs.checkboxGroup(path, { label, options, labelField?, valueField?, direction?: 'row' | 'column', defaultValue?, validator? })`
 - `gui.inputs.currency(path, { label, validator? })`
 - `gui.inputs.dateInput(path, { label, minDate?, maxDate?, validator? })`
 - `gui.inputs.datePicker(path, { label, minDate?, maxDate?, validator? })`
@@ -62,6 +63,7 @@ Every `gui.*` factory and its calling convention. Look up the detail below for t
 - `gui.inputs.rangeSlider(path, { label, minimum?, maximum?, step?, marks?, format?, valuePlacement?, startLabel?, endLabel?, defaultValue?, validator? })`
 - `gui.inputs.rangeTimeInput(path, { label?, minTime?, maxTime? })`
 - `gui.inputs.rangeTimePicker(path, { label?, minTime?, maxTime? })`
+- `gui.inputs.rating(path, { label, hint?, defaultValue?, validator? })`
 - `gui.inputs.repeater(path, { label?, addLabel?, removeLabel?, readonly?, disabled?, validator?, template })`
 - `gui.inputs.select(path, { label, options, validator? })`
 - `gui.inputs.slider(path, { label, minimum?, maximum?, step?, marks?, format?, valuePlacement?: 'label' | 'bubble' | 'both' | 'hidden', defaultValue?, validator? })`
@@ -160,6 +162,35 @@ gui.inputs.checkbox('terms', {
 - Set BOTH `messages.invalid` and `messages.const` to the same text: a never-touched box fails the type check (`invalid` message), a checked-then-unchecked box fails the `const` rule (`const` message). See the validation-messages pattern.
 
 Reference: https://golemui.com/dx/widgets-reference/input-fields/checkbox.md
+
+## gui.inputs.checkboxGroup
+
+Call: `gui.inputs.checkboxGroup(path, { label, options, labelField?, valueField?, direction?: 'row' | 'column', defaultValue?, validator? })`
+
+```ts
+gui.inputs.checkboxGroup('toppings', {
+  label: 'Toppings',
+  options: [
+    { value: 'cheese', label: 'Cheese' },
+    { value: 'ham', label: 'Ham' },
+  ],
+  validator: {
+    required: true,
+    maxItems: 2,
+    messages: {
+      invalid: 'Pick a topping',
+      required: 'Pick a topping',
+      maxItems: 'Pick at most two',
+    },
+  },
+});
+```
+
+- Checkboxes to pick ANY number of options, from `options` (like `radiogroup`). The value is an ARRAY of the checked values, in the options' order whatever order they are checked in. For one option use `radiogroup`; for a long list use `multiList` or `multiDropdown`; for a single yes/no use `checkbox`.
+- The validator is an array validator: `required` (at least one checked), `minItems`, `maxItems`, each with its message. Word the empty group with both `messages.required` and `messages.invalid`: an untouched group is undefined.
+- `direction: 'row'` lays the checkboxes out in a row.
+
+Reference: https://golemui.com/dx/widgets-reference/input-fields/checkbox-group.md
 
 ## gui.inputs.currency
 
@@ -687,6 +718,23 @@ gui.inputs.rangeTimePicker('shift', { label: 'Shift', minTime: '06:00:00', maxTi
 - **`allowEdit: true`** enables in-place pill editing — see `rangeDateInput`. During an edit, list picks reshape the range without committing — Enter in the segments or the pill's check icon confirms the replacement.
 
 Reference: https://golemui.com/dx/widgets-reference/input-fields/range-time-picker.md
+
+## gui.inputs.rating
+
+Call: `gui.inputs.rating(path, { label, hint?, defaultValue?, validator? })`
+
+```ts
+gui.inputs.rating('service', {
+  label: 'Service',
+  validator: { required: true, maximum: 5, messages: { invalid: 'Rate the service' } },
+});
+```
+
+- A number of stars, from 1 to the validator's `maximum` (5 without one): the validator sets how many stars there are. There is no `max` prop.
+- It has NO value until a star is picked, and the user can clear it (a click on the picked star, or Delete), also when the validator is `required`: a cleared required rating shows its error, as an emptied text field does. Word the missing value with `messages.invalid`: an unset value fails the integer type check.
+- For a score on a longer or finer scale, use `slider`.
+
+Reference: https://golemui.com/dx/widgets-reference/input-fields/rating.md
 
 ## gui.inputs.repeater
 

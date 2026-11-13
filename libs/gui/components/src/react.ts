@@ -24,9 +24,14 @@ import {
   GuiAccordionItemEvents,
 } from './lib/components/accordion-item';
 import { GuiAlert as GuiAlertElement } from './lib/components/alert';
+import { GuiBadge as GuiBadgeElement } from './lib/components/badge';
 import { GuiButton as GuiButtonElement } from './lib/components/button';
 import { GuiCalendar as GuiCalendarElement, GuiCalendarEvents } from './lib/components/calendar';
 import { GuiCheckbox as GuiCheckboxElement, GuiCheckboxEvents } from './lib/components/checkbox';
+import {
+  GuiCheckboxGroup as GuiCheckboxGroupElement,
+  GuiCheckboxGroupEvents,
+} from './lib/components/checkbox-group';
 import { GuiCurrency as GuiCurrencyElement, GuiCurrencyEvents } from './lib/components/currency';
 import { GuiDate as GuiDateElement, GuiDateEvents } from './lib/components/date-input';
 import {
@@ -78,6 +83,7 @@ import { GuiOtp as GuiOtpElement, GuiOtpEvents } from './lib/components/otp';
 import { GuiPassword as GuiPasswordElement, GuiPasswordEvents } from './lib/components/password';
 import { GuiPills as GuiPillsElement, GuiPillsEvents } from './lib/components/pills';
 import { GuiPopover as GuiPopoverElement, GuiPopoverEvents } from './lib/components/popover';
+import { GuiProgress as GuiProgressElement } from './lib/components/progress';
 import {
   GuiRadiogroup as GuiRadiogroupElement,
   GuiRadiogroupEvents,
@@ -87,6 +93,8 @@ import {
   GuiRangeSliderEvents,
 } from './lib/components/range-slider';
 import { GuiSlider as GuiSliderElement, GuiSliderEvents } from './lib/components/slider';
+import { GuiSpinner as GuiSpinnerElement } from './lib/components/spinner';
+import { GuiRating as GuiRatingElement, GuiRatingEvents } from './lib/components/rating';
 import {
   GuiRangeCalendar as GuiRangeCalendarElement,
   GuiRangeCalendarEvents,
@@ -271,9 +279,15 @@ export const GuiAccordionItem = wrap(
   GuiAccordionItemEvents,
 );
 export const GuiAlert = wrap('gui-alert', GuiAlertElement);
+export const GuiBadge = wrap('gui-badge', GuiBadgeElement);
 export const GuiButton = wrap('gui-button', GuiButtonElement, { click: fires<MouseEvent>() });
 export const GuiCalendar = wrap('gui-calendar', GuiCalendarElement, GuiCalendarEvents);
 export const GuiCheckbox = wrap('gui-checkbox', GuiCheckboxElement, GuiCheckboxEvents);
+export const GuiCheckboxGroup = wrap(
+  'gui-checkbox-group',
+  GuiCheckboxGroupElement,
+  GuiCheckboxGroupEvents,
+);
 export const GuiCurrency = wrap('gui-currency', GuiCurrencyElement, GuiCurrencyEvents);
 export const GuiDate = wrap('gui-date', GuiDateElement, GuiDateEvents);
 export const GuiDatePicker = wrap('gui-date-picker', GuiDatePickerElement, GuiDatePickerEvents);
@@ -318,9 +332,12 @@ export const GuiOtp = wrap('gui-otp', GuiOtpElement, GuiOtpEvents);
 export const GuiPassword = wrap('gui-password', GuiPasswordElement, GuiPasswordEvents);
 export const GuiPills = wrap('gui-pills', GuiPillsElement, GuiPillsEvents);
 export const GuiPopover = wrap('gui-popover', GuiPopoverElement, GuiPopoverEvents);
+export const GuiProgress = wrap('gui-progress', GuiProgressElement);
 export const GuiRadiogroup = wrap('gui-radiogroup', GuiRadiogroupElement, GuiRadiogroupEvents);
 export const GuiRangeSlider = wrap('gui-range-slider', GuiRangeSliderElement, GuiRangeSliderEvents);
+export const GuiRating = wrap('gui-rating', GuiRatingElement, GuiRatingEvents);
 export const GuiSlider = wrap('gui-slider', GuiSliderElement, GuiSliderEvents);
+export const GuiSpinner = wrap('gui-spinner', GuiSpinnerElement);
 export const GuiRangeCalendar = wrap(
   'gui-range-calendar',
   GuiRangeCalendarElement,

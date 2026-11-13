@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Rating · GolemUI Components playground</title>
+    <link rel="stylesheet" href="/src/styles.scss" />
+  </head>
+  <body data-pg-events="gui-input gui-change gui-blur">
+    <main class="pg-main">
+      <section class="pg-section">
+        <h1>gui-rating</h1>
+        <p>
+          Native radios drawn as stars: the arrow keys pick a star, and the pointer previews the
+          rating it would pick. A click on the picked star clears it, and so do Delete and
+          Backspace; a required rating clears too, and then shows its error. The stars run the other
+          way when the direction switch above mirrors the page.
+        </p>
+      </section>
+
+      <section class="pg-section">
+        <h2>Ratings</h2>
+        <div class="pg-stack">
+          <gui-rating label="Service" hint="How was it?"></gui-rating>
+          <gui-rating label="Food" value="4"></gui-rating>
+          <gui-rating label="Out of ten" max="10" value="7"></gui-rating>
+          <gui-rating label="Required" value="3" required></gui-rating>
+          <gui-rating label="Read-only" value="4" readonly></gui-rating>
+          <gui-rating label="Disabled" value="2" disabled></gui-rating>
+          <gui-rating label="With an error" touched id="rating-error"></gui-rating>
+        </div>
+      </section>
+
+      <section class="pg-section">
+        <h2>In a form</h2>
+        <form id="rating-form" class="pg-stack">
+          <gui-rating name="score" label="Your score" required></gui-rating>
+          <div class="pg-row">
+            <button type="submit" class="pg-button">Submit</button>
+            <button type="reset" class="pg-button">Reset</button>
+          </div>
+          <output id="rating-form-output"></output>
+        </form>
+      </section>
+    </main>
+    <script type="module" src="/src/pages/rating.ts"></script>
+  </body>
+</html>

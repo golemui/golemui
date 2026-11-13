@@ -63,6 +63,9 @@ export const widgetLoaders: WidgetLoaders<Type<WithWidget>, GolemWidget> = {
   select: async () => (await import('./components/select/select.component')).SelectComponent,
   radiogroup: async () =>
     (await import('./components/radiogroup/radiogroup.component')).RadiogroupComponent,
+  checkboxGroup: async () =>
+    (await import('./components/checkbox-group/checkbox-group.component')).CheckboxGroupComponent,
+  rating: async () => (await import('./components/rating/rating.component')).RatingComponent,
   otp: async () => (await import('./components/otp/otp.component')).OtpComponent,
   slider: async () => (await import('./components/slider/slider.component')).SliderComponent,
   rangeSlider: async () =>

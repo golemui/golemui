@@ -16,6 +16,7 @@ export { _guiCalendar } from './shortcuts/calendar/guiCalendar.impl';
 export { _guiDateTimeCalendar } from './shortcuts/date-time-calendar/guiDateTimeCalendar.impl';
 export { _guiDateTimePicker } from './shortcuts/date-time-picker/guiDateTimePicker.impl';
 export { _guiCheckbox } from './shortcuts/checkbox/guiCheckbox.impl';
+export { _guiCheckboxGroup } from './shortcuts/checkbox-group/guiCheckboxGroup.impl';
 export { _guiCurrency } from './shortcuts/currency/guiCurrency.impl';
 export { _guiCustomAction } from './shortcuts/custom-action/guiCustomAction.impl';
 export { _guiCustomDisplay } from './shortcuts/custom-display/guiCustomDisplay.impl';
@@ -48,6 +49,7 @@ export { _guiPassword } from './shortcuts/password/guiPassword.impl';
 export { _guiRadiogroup } from './shortcuts/radiogroup/guiRadiogroup.impl';
 export { _guiRangeCalendar } from './shortcuts/range-calendar/guiRangeCalendar.impl';
 export { _guiRangeSlider } from './shortcuts/range-slider/guiRangeSlider.impl';
+export { _guiRating } from './shortcuts/rating/guiRating.impl';
 export { _guiSlider } from './shortcuts/slider/guiSlider.impl';
 export { _guiOtp } from './shortcuts/otp/guiOtp.impl';
 export { _guiRangeDateInput } from './shortcuts/range-date-input/guiRangeDateInput.impl';
@@ -77,6 +79,7 @@ export {
   _gslDateTimeCalendars,
 } from './shortcuts/date-time-calendar/register';
 export { _gslCheckboxByUid, _gslCheckboxes } from './shortcuts/checkbox/register';
+export { _gslCheckboxGroupByUid, _gslCheckboxGroups } from './shortcuts/checkbox-group/register';
 export { _gslCurrencies, _gslCurrencyByUid } from './shortcuts/currency/register';
 export { _gslCustomActionByUid, _gslCustomActions } from './shortcuts/custom-action/register';
 export { _gslCustomDisplayByUid, _gslCustomDisplays } from './shortcuts/custom-display/register';
@@ -112,6 +115,7 @@ export { _gslPasswordByUid, _gslPasswords } from './shortcuts/password/register'
 export { _gslRadiogroupByUid, _gslRadiogroups } from './shortcuts/radiogroup/register';
 export { _gslRangeCalendarByUid, _gslRangeCalendars } from './shortcuts/range-calendar/register';
 export { _gslRangeSliderByUid, _gslRangeSliders } from './shortcuts/range-slider/register';
+export { _gslRatingByUid, _gslRatings } from './shortcuts/rating/register';
 export { _gslSliderByUid, _gslSliders } from './shortcuts/slider/register';
 export { _gslOtpByUid, _gslOtps } from './shortcuts/otp/register';
 export {
@@ -189,6 +193,11 @@ export type {
   GslDateTimeCalendarConfig,
 } from './shortcuts/date-time-calendar/dateTimeCalendar.domain';
 export type { CheckboxDecorator, GslCheckboxConfig } from './shortcuts/checkbox/checkbox.domain';
+export type {
+  CheckboxGroupDecorator,
+  GslCheckboxGroupConfig,
+} from './shortcuts/checkbox-group/checkbox-group.domain';
+export type { GslRatingConfig, RatingDecorator } from './shortcuts/rating/rating.domain';
 export type { CurrencyDecorator, GslCurrencyConfig } from './shortcuts/currency/currency.domain';
 export type {
   CustomActionDecorator,
