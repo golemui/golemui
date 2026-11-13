@@ -606,7 +606,8 @@ When the app passes a new config object, the form starts again from the new conf
 The form element exists before it has started (Lit: before its first update, Angular: before its
 config is applied). A `setData`, `setMeta` or `setHealth` call in that time must not be lost. The
 last call replaces the `data` or `meta` of the config, like a call after the start. A `setHealth`
-call gives the health the form starts with.
+call is applied when the form has started, so the first health value is the health of the started
+form (`ok` or the error of the start), and the health of the call follows.
 
 - Scenario: a page creates the form, fills in a draft that it saved in `localStorage`, and then
   adds the form to the page.
