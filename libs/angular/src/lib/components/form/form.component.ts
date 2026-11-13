@@ -24,7 +24,7 @@ import {
   type ValidatorFn,
   type WithWidget,
 } from '@golemui/core';
-import { combineLatest, share, switchMap, tap } from 'rxjs';
+import { share, switchMap, tap } from 'rxjs';
 import { AngularFormContext } from '../../context/form.context';
 import { WidgetDirective } from '../../directives/widget.directive';
 import { DefaultFormHealthBoundaryComponent } from './default-form-health-boundary.component';
@@ -78,10 +78,14 @@ export class FormCoreComponent implements OnInit, OnDestroy {
   private metaBeforeStart: Record<string, any> | undefined;
   private healthBeforeStart: FormHealth | undefined;
 
+  // One signal reads both inputs, so a change of both in the same change detection pass starts
+  // the form one time. With one observable for each input, it starts once for each changed input.
+  private startInputs = computed(() => ({ config: this.config(), validators: this.validators() }));
+
   // `tap()` runs synchronously before `switchMap` accesses the new store, ensuring
   // that `context.initialize()` always fires before we resubscribe to `formHealth`
-  private config$ = combineLatest([toObservable(this.config), toObservable(this.validators)]).pipe(
-    tap(([c, validators]) => {
+  private config$ = toObservable(this.startInputs).pipe(
+    tap(({ config: c, validators }) => {
       this.unsubscribeI18n();
       this.context.initialize(
         c.widgetLoaders,

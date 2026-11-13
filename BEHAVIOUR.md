@@ -599,8 +599,7 @@ When the app passes a new config object, the form starts again from the new conf
   form and marks the field there as touched. So a required empty field shows its error before
   the user does anything.
 - It initializes once, and `formHealth` sends one value. For example, a middleware that logs
-  each form start logs one start. Status: follows in React, Vue and Lit. Not yet in Angular,
-  which initializes two times.
+  each form start logs one start. Status: follows in React, Angular, Vue and Lit.
 
 ### 26. `setData` before the form has started keeps the values
 
