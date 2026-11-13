@@ -1,8 +1,8 @@
-import { Component, Directive, effect, inject, signal } from '@angular/core';
+import { Component, Directive, effect, inject, type OutputRef, signal } from '@angular/core';
 import { type ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { preloadFormWidgets } from '@golemui/core';
-import { afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { type FormHealth, preloadFormWidgets } from '@golemui/core';
+import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { FormCoreComponent } from './components/form/form.component';
 import {
   provideWidgetSet,
@@ -11,6 +11,37 @@ import {
 import { buildConfig, formDef, noopValidators, stubWidgetLoaders } from './ssr.fixture';
 
 const coreStoreState = (form: FormCoreComponent) => form['context'].store.getState();
+
+const earlyHealth: FormHealth = { status: 'errored', code: 10_001, message: 'Set early' };
+
+const duplicateUidFormDef = {
+  form: {
+    uid: 'root',
+    kind: 'layout',
+    type: 'flex',
+    children: [
+      { uid: 'same', kind: 'input', type: 'textinput', path: 'firstName' },
+      { uid: 'same', kind: 'input', type: 'textinput', path: 'lastName' },
+    ],
+  },
+};
+
+const duplicateUidHealth: FormHealth = {
+  status: 'errored',
+  code: 21,
+  message:
+    '[21] Duplicate UID "same": Assigned to widget "textinput" at "firstName" and "textinput" at "lastName".',
+};
+
+/**
+ * @param formHealthOutput - The `formHealth` output of a form.
+ * @returns Every value that the output sends after this call, in order.
+ */
+function recordHealthValues(formHealthOutput: OutputRef<FormHealth>): FormHealth[] {
+  const healthValues: FormHealth[] = [];
+  formHealthOutput.subscribe((health) => healthValues.push(health));
+  return healthValues;
+}
 
 // A directive on the host element runs its constructor before the view of the form exists.
 @Directive({ standalone: true, selector: '[guiEarlyCalls]' })
@@ -37,6 +68,7 @@ beforeAll(async () => {
 
 afterEach(() => {
   TestBed.resetTestingModule();
+  vi.restoreAllMocks();
 });
 
 describe('setData and setMeta on gui-core-form before the form starts', () => {
@@ -75,7 +107,7 @@ describe('setData and setMeta on gui-core-form before the form starts', () => {
     expect(coreStoreState(fixture.componentInstance).meta).toEqual({ tier: 'paid' });
   });
 
-  it('starts the form with the health of an early setHealth call', () => {
+  it('has the health of an early setHealth call after the start', () => {
     const fixture = createForm();
 
     fixture.componentInstance.setHealth({
@@ -90,6 +122,32 @@ describe('setData and setMeta on gui-core-form before the form starts', () => {
       code: 10_001,
       message: 'Set early',
     });
+  });
+
+  it('sends ok and then the health of an early setHealth call for a valid form', () => {
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const fixture = createForm();
+    const healthValues = recordHealthValues(fixture.componentInstance['formHealth']);
+
+    fixture.componentInstance.setHealth(earlyHealth);
+    fixture.detectChanges();
+
+    expect(healthValues).toEqual([{ status: 'ok' }, earlyHealth]);
+  });
+
+  it('sends and logs the definition error and then the health of an early setHealth call', () => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const fixture = createForm({ ...buildConfig(), formDef: duplicateUidFormDef });
+    const healthValues = recordHealthValues(fixture.componentInstance['formHealth']);
+
+    fixture.componentInstance.setHealth(earlyHealth);
+    fixture.detectChanges();
+
+    expect(healthValues).toEqual([duplicateUidHealth, earlyHealth]);
+    expect(consoleError).toHaveBeenCalledWith(
+      'GolemUI form failed to initialize:',
+      duplicateUidHealth.message,
+    );
   });
 
   it('uses the data of a later config, not the early value, when the form starts again', () => {
@@ -137,14 +195,17 @@ describe('setData and setMeta on gui-core-form before the form starts', () => {
 });
 
 describe('setData and setMeta on gui-widget-set-form before the form starts', () => {
-  const createWidgetSetForm = () => {
+  const createWidgetSetForm = (formDefinition: object = formDef) => {
     TestBed.configureTestingModule({
       providers: [
         provideWidgetSet({ widgetLoaders: stubWidgetLoaders, validators: () => noopValidators }),
       ],
     });
     const fixture = TestBed.createComponent(WidgetSetFormComponent);
-    fixture.componentRef.setInput('config', { formDef, data: { firstName: 'Ada' } });
+    fixture.componentRef.setInput('config', {
+      formDef: formDefinition,
+      data: { firstName: 'Ada' },
+    });
     return fixture;
   };
 
@@ -185,6 +246,32 @@ describe('setData and setMeta on gui-widget-set-form before the form starts', ()
       code: 10_001,
       message: 'Set early',
     });
+  });
+
+  it('sends ok and then the health of an early setHealth call for a valid form', () => {
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const fixture = createWidgetSetForm();
+    const healthValues = recordHealthValues(fixture.componentInstance.formHealth);
+
+    fixture.componentInstance.setHealth(earlyHealth);
+    fixture.detectChanges();
+
+    expect(healthValues).toEqual([{ status: 'ok' }, earlyHealth]);
+  });
+
+  it('sends and logs the definition error and then the health of an early setHealth call', () => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const fixture = createWidgetSetForm(duplicateUidFormDef);
+    const healthValues = recordHealthValues(fixture.componentInstance.formHealth);
+
+    fixture.componentInstance.setHealth(earlyHealth);
+    fixture.detectChanges();
+
+    expect(healthValues).toEqual([duplicateUidHealth, earlyHealth]);
+    expect(consoleError).toHaveBeenCalledWith(
+      'GolemUI form failed to initialize:',
+      duplicateUidHealth.message,
+    );
   });
 
   it('keeps calls made before the inner form exists', () => {

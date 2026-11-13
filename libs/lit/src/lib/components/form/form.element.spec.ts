@@ -356,7 +356,19 @@ describe('setHealth before the form starts', () => {
   const earlyHealth: FormHealth = { status: 'errored', code: 10_001, message: 'early call' };
   const listenerHealth: FormHealth = { status: 'errored', code: 10_002, message: 'listener call' };
 
-  it('dispatches and logs the definition error as the first event after an early setHealth call', async () => {
+  it('dispatches ok and then the health of an early setHealth call for a valid form', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const form = createFormWithoutMounting();
+    setConfig(form, buildConfig());
+    const healths = recordEvents<FormHealth>(form, 'formHealth');
+
+    form.setHealth(earlyHealth);
+    await startForm(form);
+
+    expect(healths).toEqual([{ status: 'ok' }, earlyHealth]);
+  });
+
+  it('dispatches and logs the definition error and then the health of an early setHealth call', async () => {
     const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
     const form = createFormWithoutMounting();
     setConfig(form, { ...buildConfig(), formDef: duplicateUidFormDef });
@@ -365,7 +377,7 @@ describe('setHealth before the form starts', () => {
     form.setHealth(earlyHealth);
     await startForm(form);
 
-    expect(healths[0]).toEqual(duplicateUidHealth);
+    expect(healths).toEqual([duplicateUidHealth, earlyHealth]);
     expect(consoleError).toHaveBeenCalledWith(
       'GolemUI form failed to initialize:',
       duplicateUidHealth.message,
