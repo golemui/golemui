@@ -589,8 +589,8 @@ When the app passes a new config object, the form starts again from the new conf
   <GuiForm config={{ formDef, formName: `customer-${customer.id}`, data: customer }} />
   ```
 
-- It uses the new `formName`. Status: follows in Angular and Lit. Not yet in React and Vue, which
-  keep the first name.
+- It uses the new `formName`. A new config with no `formName` gets the generated id of the form
+  component. Status: follows in React, Angular, Vue and Lit.
 - It follows the translator of the new config. For example, the app loads a translator for each
   language and passes the new one in the config. Status: follows in React, Angular, Vue and Lit.
 - No field is touched. For example, the user types in a field and presses a keyboard shortcut
