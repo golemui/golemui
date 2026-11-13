@@ -785,9 +785,10 @@ In a form definition, each `on` value is the name of the event, a string. Functi
   -> nothing runs when the form is built. On click, the handler gets the form data, and the event
   as a second parameter.
 
-- Status: not yet. Every handler is called once with `undefined` when the form is built, so this
-  example calls `api.save(undefined)`. A handler like `(event) => event.data` throws there, and
-  the form is not built. On click it gets only the data.
+- Status: follows for a handler that declares a parameter. A handler whose `length` is 0 is
+  called while the form is built, to read a host event name: a handler with no parameters, with
+  only default or rest parameters, or a wrapped function such as a debounced one. In a callback
+  button this call happens each time the callback runs.
 
 ### 36. `$log` works in every expression
 

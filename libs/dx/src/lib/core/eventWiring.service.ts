@@ -58,6 +58,9 @@ export function probeForHostEventName(handler: (...args: any[]) => any): string 
  *   Called from ItemWalker.processItem for every item.
  */
 export class EventWiringService {
+  /** Click handlers that already logged the warning about a returned string. */
+  private readonly handlersWarnedAboutString = new WeakSet<(...args: any[]) => any>();
+
   // ── Action-specific: onClick ───────────────────────────────────
 
   extractOnClickFromMergeResult(
@@ -89,15 +92,36 @@ export class EventWiringService {
 
     if (typeof rawOnClick === 'function') {
       const { onClick: _, ...rest } = actionDef;
-      const probeResult = rawOnClick(undefined);
-      if (typeof probeResult === 'string') {
-        return { ...rest, uid: actionId, on: { click: probeResult } };
+      const hostEventName = probeForHostEventName(rawOnClick);
+      if (hostEventName != null) {
+        return { ...rest, uid: actionId, on: { click: hostEventName } };
       }
-      eventRegistry.set(actionId, (event: FormEvent) => rawOnClick(event.data));
+      eventRegistry.set(actionId, (event: FormEvent) => {
+        // The data stays the first parameter, so a handler written as `(data) => ...` keeps working.
+        const returnValue = rawOnClick(event.data, event);
+        if (typeof returnValue === 'string') {
+          this.warnAboutIgnoredString(rawOnClick, returnValue);
+        }
+      });
       return { ...rest, uid: actionId, on: { click: actionId } };
     }
 
     return { ...actionDef, uid: actionId };
+  }
+
+  // `on.click` is already set when a registered handler runs, so the string cannot name an event.
+  // The set is keyed by the handler function, so a callback action that registers the same
+  // function again on each run warns one time.
+  private warnAboutIgnoredString(handler: (...args: any[]) => any, returnValue: string): void {
+    if (this.handlersWarnedAboutString.has(handler)) {
+      return;
+    }
+    this.handlersWarnedAboutString.add(handler);
+    console.warn(
+      `[GolemUI] An onClick handler returned "${returnValue}" on click. The string is ignored. ` +
+        `To send a host event, use an onClick handler with no parameters that returns the event ` +
+        `name, for example onClick: () => '${returnValue}'.`,
+    );
   }
 
   // ── Universal: onLoad, onChange, onFilter ──────────────────────
