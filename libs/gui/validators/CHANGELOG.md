@@ -1,3 +1,7 @@
+## 2.2.0 (2026-11-13)
+
+This was a version bump only for gui-validators to align it with other projects, there were no code changes.
+
 ## 2.2.0-rc.2 (2026-11-13)
 
 This was a version bump only for gui-validators to align it with other projects, there were no code changes.

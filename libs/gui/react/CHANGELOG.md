@@ -1,3 +1,15 @@
+## 2.2.0 (2026-11-13)
+
+### 🚀 Features
+
+- **gui-components:** add badge, progress, spinner, checkbox group and rating ([#577](https://github.com/golemui/golemui/pull/577))
+- the repeater respects readonly and disabled ([#576](https://github.com/golemui/golemui/pull/576))
+- **gui-components:** add setHealth method ([#573](https://github.com/golemui/golemui/pull/573))
+
+### ❤️ Thank You
+
+- Raúl Jiménez @Elecash
+
 ## 2.2.0-rc.2 (2026-11-13)
 
 ### 🚀 Features

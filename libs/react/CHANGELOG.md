@@ -1,3 +1,13 @@
+## 2.2.0 (2026-11-13)
+
+### 🚀 Features
+
+- **gui-components:** add setHealth method ([#573](https://github.com/golemui/golemui/pull/573))
+
+### ❤️ Thank You
+
+- Raúl Jiménez @Elecash
+
 ## 2.2.0-rc.2 (2026-11-13)
 
 This was a version bump only for react to align it with other projects, there were no code changes.
