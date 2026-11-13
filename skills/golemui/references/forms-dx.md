@@ -289,6 +289,8 @@ gui.inputs.dropdown('country', {
 
 - Choice list uses **`items`** (`{ value, label }[]`).
 - WART: choice widgets (`dropdown`, `radiogroup`, `select`) need a **typed** validator — `{ type: 'string', required: true }` — unlike text inputs which accept the loose `{ required: true }`. Add the `type`, or omit the validator.
+- `onLoad` fills the items at runtime: keep `items: []` (the key is required) and push them from the handler, which runs once when the widget mounts, in the browser only: `onLoad: (event) => fetchCountries().then((items) => event.update({ path: 'country', items }))`.
+- `onFilter` searches on the server: the widget stops filtering locally and calls the handler with the typed text in `event.detail`, `inputDebounce` ms after the last keystroke (default 500): `onFilter: (event) => searchCountries(event.detail).then((items) => event.update({ path: 'country', items }))`. Without `onFilter`, the widget filters its current items itself.
 
 Reference: https://golemui.com/dx/widgets-reference/input-fields/dropdown.md
 
@@ -428,6 +430,8 @@ gui.inputs.multiDropdown('countries', {
 
 - Multi-select dropdown: the value is an **array** of the selected item values; selections render as removable pills to the left of the filter input and the panel stays open while toggling.
 - The validator must be array-typed — `{ type: 'array', required: true, minItems?, maxItems? }`. Selection is never silently blocked; cap it with `maxItems` so the user is told why.
+- `onLoad` fills the items at runtime: keep `items: []` (the key is required) and push them from the handler, which runs once when the widget mounts, in the browser only: `onLoad: (event) => fetchCountries().then((items) => event.update({ path: 'countries', items }))`.
+- `onFilter` searches on the server: the widget stops filtering locally and calls the handler with the typed text in `event.detail`, `inputDebounce` ms after the last keystroke (default 500): `onFilter: (event) => searchCountries(event.detail).then((items) => event.update({ path: 'countries', items }))`. Without `onFilter`, the widget filters its current items itself.
 
 Reference: https://golemui.com/dx/widgets-reference/input-fields/multi-dropdown.md
 
