@@ -24,7 +24,7 @@ import {
   type ValidatorFn,
   type WithWidget,
 } from '@golemui/core';
-import { share, switchMap, tap } from 'rxjs';
+import { Observable, share, switchMap, tap } from 'rxjs';
 import { AngularFormContext } from '../../context/form.context';
 import { WidgetDirective } from '../../directives/widget.directive';
 import { DefaultFormHealthBoundaryComponent } from './default-form-health-boundary.component';
@@ -71,7 +71,8 @@ export class FormCoreComponent implements OnInit, OnDestroy {
   // Keys the widget tree in the template. Every initialization bumps it, so the whole tree
   // is destroyed and recreated and every widget subscribes to the store INITIALIZE ran on.
   protected storeGeneration = signal(0);
-  // False until the first INITIALIZE ran. The calls before it wait for the store.
+  // False until the first INITIALIZE ran. The calls before it wait for the store, and an early
+  // setHealth call also waits for the first health value.
   // Not a signal: `setData` reads it, and an effect that calls `setData` must not depend on it.
   private started = false;
   private dataBeforeStart: Record<string, any> | undefined;
@@ -113,11 +114,6 @@ export class FormCoreComponent implements OnInit, OnDestroy {
       this.metaBeforeStart = undefined;
       this.context.store.dispatch({ type: 'SET_DATA', payload: { data } });
       this.context.store.dispatch({ type: 'SET_META', payload: { meta } });
-      if (this.healthBeforeStart) {
-        const formHealth = this.healthBeforeStart;
-        this.healthBeforeStart = undefined;
-        this.context.store.dispatch({ type: 'SET_FORM_HEALTH', payload: { formHealth } });
-      }
       this.direction.set(getDirectionFromLanguage(this.context.localization.lang));
       this.unsubscribeI18n = this.context.localization.subscribe((lang) => {
         this.direction.set(getDirectionFromLanguage(lang));
@@ -134,7 +130,7 @@ export class FormCoreComponent implements OnInit, OnDestroy {
     // Resubscribe to the new store `formHealth` whenever config changes
     this.config$
       .pipe(
-        switchMap(() => formHealth(this.context.store.state$)),
+        switchMap(() => this.healthOfStartedForm()),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((health) => {
@@ -146,6 +142,20 @@ export class FormCoreComponent implements OnInit, OnDestroy {
       });
 
     this.configureLongLivedEvents();
+  }
+
+  // The store sends its current health on subscribe. So the first value is the health of the
+  // started form (ok or the error of the start), and the health of an early setHealth call follows.
+  private healthOfStartedForm(): Observable<FormHealth> {
+    return new Observable<FormHealth>((subscriber) => {
+      const subscription = formHealth(this.context.store.state$).subscribe(subscriber);
+      if (this.healthBeforeStart) {
+        const health = this.healthBeforeStart;
+        this.healthBeforeStart = undefined;
+        this.context.store.dispatch({ type: 'SET_FORM_HEALTH', payload: { formHealth: health } });
+      }
+      return subscription;
+    });
   }
 
   /**
