@@ -87,6 +87,20 @@ describe('a strict style-src-attr policy', () => {
     expectNoViolations();
   });
 
+  it('allows a gui-badge, a gui-progress and a gui-spinner to render and update', () => {
+    cy.mount(
+      html`<gui-badge variant="success">Paid</gui-badge>
+        <gui-progress label="Uploading" value="40" show-value></gui-progress>
+        <gui-progress label="Waiting"></gui-progress>
+        <gui-spinner label="Loading results"></gui-spinner>`,
+    );
+    cy.get('gui-progress').first().invoke('prop', 'value', 80);
+    cy.get('gui-progress .gui-progress__value').should('have.text', '80%');
+    cy.get('gui-spinner').invoke('prop', 'label', 'Still loading');
+    cy.get('gui-spinner [role="status"]').should('have.text', 'Still loading');
+    expectNoViolations();
+  });
+
   for (const fallback of [false, true]) {
     it(`allows a gui-popover to open, follow its anchor and close${fallback ? ', measuring' : ''}`, () => {
       GUIAnchorController.forceFallback = fallback;

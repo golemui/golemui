@@ -45,6 +45,7 @@
         "libs/gui/components/src/lib/components/accordion-item.ts"
       ],
       "@golemui/gui-components/alert": ["libs/gui/components/src/lib/components/alert.ts"],
+      "@golemui/gui-components/badge": ["libs/gui/components/src/lib/components/badge.ts"],
       "@golemui/gui-components/button": ["libs/gui/components/src/lib/components/button.ts"],
       "@golemui/gui-components/calendar": ["libs/gui/components/src/lib/components/calendar.ts"],
       "@golemui/gui-components/checkbox": ["libs/gui/components/src/lib/components/checkbox.ts"],
@@ -95,6 +96,7 @@
       "@golemui/gui-components/otp": ["libs/gui/components/src/lib/components/otp.ts"],
       "@golemui/gui-components/pills": ["libs/gui/components/src/lib/components/pills.ts"],
       "@golemui/gui-components/popover": ["libs/gui/components/src/lib/components/popover.ts"],
+      "@golemui/gui-components/progress": ["libs/gui/components/src/lib/components/progress.ts"],
       "@golemui/gui-components/radiogroup": [
         "libs/gui/components/src/lib/components/radiogroup.ts"
       ],
@@ -102,6 +104,7 @@
         "libs/gui/components/src/lib/components/range-slider.ts"
       ],
       "@golemui/gui-components/slider": ["libs/gui/components/src/lib/components/slider.ts"],
+      "@golemui/gui-components/spinner": ["libs/gui/components/src/lib/components/spinner.ts"],
       "@golemui/gui-components/range-calendar": [
         "libs/gui/components/src/lib/components/range-calendar.ts"
       ],

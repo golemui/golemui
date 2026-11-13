@@ -107,6 +107,50 @@ describe('control boundaries (WCAG 1.4.11)', () => {
         });
       });
 
+      // A badge's text is 12px, so it needs 4.5:1 against the badge's fill (WCAG 1.4.3), in
+      // every variant.
+      for (const variant of ['default', 'info', 'success', 'warning', 'error']) {
+        it(`gui-badge ${variant}: the text reaches 4.5:1 against its fill`, () => {
+          cy.mount(html`<gui-badge variant=${variant}>Paid</gui-badge>`);
+
+          cy.get('gui-badge').should(([badge]) => {
+            const page = toRgb(getComputedStyle(document.body).backgroundColor, [255, 255, 255]);
+            const fill = toRgb(getComputedStyle(badge).backgroundColor, page);
+            const text = toRgb(getComputedStyle(badge).color, fill);
+            expect(contrast(text, fill), 'text against the badge').to.be.gte(4.5);
+          });
+        });
+      }
+
+      // The track shows where the bar is, and the fill how far the task has got. The bar draws
+      // its fill in its text color.
+      it('gui-progress: the track and the fill reach 3:1 against the page', () => {
+        cy.mount(html`<gui-progress label="Uploading" value="40"></gui-progress>`);
+
+        cy.get('gui-progress progress').should(([bar]) => {
+          const page = toRgb(getComputedStyle(document.body).backgroundColor, [255, 255, 255]);
+          const style = getComputedStyle(bar);
+          expect(contrast(toRgb(style.backgroundColor, page), page), 'track').to.be.gte(3);
+          expect(contrast(toRgb(style.color, page), page), 'fill').to.be.gte(3);
+        });
+      });
+
+      // The glyph is all a spinner shows. It takes the color of the text it sits in: here, the
+      // theme's text, as on a themed page.
+      it('gui-spinner: the glyph reaches 3:1 against the page', () => {
+        cy.mount(
+          html`<p style="color: var(--gui-text-default)">
+            <gui-spinner label="Loading results"></gui-spinner>
+          </p>`,
+        );
+
+        cy.get('gui-spinner svg').should(([glyph]) => {
+          const page = toRgb(getComputedStyle(document.body).backgroundColor, [255, 255, 255]);
+          const color = toRgb(getComputedStyle(glyph).fill, page);
+          expect(contrast(color, page), 'glyph against the page').to.be.gte(3);
+        });
+      });
+
       // A pill's text is 12px, so it needs 4.5:1 against the pill's fill (WCAG 1.4.3), and its
       // remove icon, its only control, takes the same color.
       it('gui-tags: the pill text reaches 4.5:1 against its fill, and the icon matches it', () => {

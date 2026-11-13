@@ -59,7 +59,10 @@
 
   // Display Widgets
   @include meta.load-css('alert');
+  @include meta.load-css('badge');
   @include meta.load-css('markdown-text');
+  @include meta.load-css('progress');
+  @include meta.load-css('spinner-element');
 
   // Overlays
   @include meta.load-css('dialog');

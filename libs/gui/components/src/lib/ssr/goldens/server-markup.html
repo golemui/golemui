@@ -312,5 +312,44 @@
 
   </div>
     </gui-otp>
+    <p>Plan status: <gui-badge  variant="success" defer-hydration>Active</gui-badge></p>
+    <gui-progress
+
+
+
+
+
+     uid="setup" label="Setting up your workspace" value="40" show-value locale-id="en-US" data-golemui-ssr defer-hydration>
+      <label class="gui-label" for="setup" data-cy="setup_label" id="setup_label">
+      <span class="gui-label__text"
+        >Setting up your workspace</span
+      >
+
+      <span class="gui-progress__value" aria-hidden="true"
+            >40%</span
+          >
+    </label>
+      <progress
+        id="setup"
+        class="gui-progress__bar"
+        data-cy="setup_progress"
+        max="100"
+        value="40"
+      ></progress>
+    </gui-progress>
+    <gui-spinner  label="Checking your coupon" data-golemui-ssr defer-hydration><span class="gui-spinner__icon"><svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="16"
+    height="16"
+    viewBox="0 0 256 256"
+    fill="currentColor"
+    class="gui-spinner__glyph"
+    aria-hidden="true"
+  >
+    <path d="M232,128a104,104,0,0,1-208,0c0-41,23.81-78.36,60.66-95.27a8,8,0,0,1,6.68,14.54C60.15,61.59,40,93.27,40,128a88,88,0,0,0,176,0c0-34.73-20.15-66.41-51.34-80.73a8,8,0,0,1,6.68-14.54C208.19,49.64,232,87,232,128Z"></path>
+  </svg></span
+      ><span class="gui-spinner__status gui-visually-hidden" role="status"
+        >Checking your coupon</span
+      ></gui-spinner>
     <gui-toaster  placement="top-end" defer-hydration></gui-toaster>
   </form>

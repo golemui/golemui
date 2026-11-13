@@ -63,6 +63,13 @@ export const elements: ElementCase[] = [
   { tag: 'gui-accordion', props: {}, hostRendersChildren: true },
   // Its message is the app's children: alert.cy.ts checks it with them.
   { tag: 'gui-alert', props: {}, hostRendersChildren: true },
+  // Its text is the app's children: give it some, so axe checks its colors.
+  {
+    tag: 'gui-badge',
+    props: { variant: 'success' },
+    setup: (badge) => (badge.textContent = 'Paid'),
+    hostRendersChildren: true,
+  },
   { tag: 'gui-button', props: { label: 'Save' } },
   // Icon-only: named by button-aria-label alone.
   { tag: 'gui-button', props: { icon: 'icon-close', buttonAriaLabel: 'Close' } },
@@ -162,6 +169,9 @@ export const elements: ElementCase[] = [
   },
   // Its panel is the app's child: popover.cy.ts checks it with one, open and closed.
   { tag: 'gui-popover', props: {}, hostRendersChildren: true },
+  { tag: 'gui-progress', props: { label: 'Uploading', value: 40, showValue: true } },
+  // Indeterminate: no value.
+  { tag: 'gui-progress', props: { label: 'Uploading' } },
   {
     tag: 'gui-radiogroup',
     props: { label: 'Color', options },
@@ -213,6 +223,7 @@ export const elements: ElementCase[] = [
     form: { property: 'value', sample: timeRange },
   },
   { tag: 'gui-slider', props: { label: 'Volume' }, form: { property: 'value', sample: 40 } },
+  { tag: 'gui-spinner', props: { label: 'Loading results' } },
   {
     tag: 'gui-select',
     props: { label: 'Color', options },

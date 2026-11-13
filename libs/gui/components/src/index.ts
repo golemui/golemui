@@ -3,6 +3,7 @@
 export { GuiAccordion, GuiAccordionEvents } from './lib/components/accordion';
 export { GuiAccordionItem, GuiAccordionItemEvents } from './lib/components/accordion-item';
 export { GuiAlert, type GuiAlertVariant } from './lib/components/alert';
+export { GuiBadge, type GuiBadgeVariant } from './lib/components/badge';
 export { GuiButton } from './lib/components/button';
 export { GuiCalendar, GuiCalendarEvents } from './lib/components/calendar';
 export type { CalendarDay } from './lib/components/calendar';
@@ -69,11 +70,13 @@ export type {
   GuiPillsDropdownEventDetail,
 } from './lib/components/pills';
 export { GuiPopover, GuiPopoverEvents, type GuiPlacement } from './lib/components/popover';
+export { GuiProgress } from './lib/components/progress';
 export { GuiRadiogroup, GuiRadiogroupEvents } from './lib/components/radiogroup';
 export type { GuiRadiogroupAppearance, GuiRadiogroupProps } from './lib/components/radiogroup';
 export { GuiRangeSlider, GuiRangeSliderEvents } from './lib/components/range-slider';
 export { GuiSlider, GuiSliderEvents } from './lib/components/slider';
 export type { GuiSliderMark, GuiSliderRange, GuiSliderValuePlacement } from './lib/utils/slider';
+export { GuiSpinner } from './lib/components/spinner';
 export { GuiRangeCalendar, GuiRangeCalendarEvents } from './lib/components/range-calendar';
 export type { RangeCalendarDay } from './lib/components/range-calendar';
 

@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Badge · GolemUI Components playground</title>
+    <link rel="stylesheet" href="/src/styles.scss" />
+  </head>
+  <body>
+    <main class="pg-main">
+      <section class="pg-section">
+        <h1>gui-badge</h1>
+        <p>
+          A short status or count inline with text. Its children are the text, and it has no role:
+          screen readers read it with the text around it. Its color isn't read, so the text says
+          what it means.
+        </p>
+      </section>
+
+      <section class="pg-section">
+        <h2>Variants</h2>
+        <div class="pg-row">
+          <gui-badge>Draft</gui-badge>
+          <gui-badge variant="info">New</gui-badge>
+          <gui-badge variant="success">Paid</gui-badge>
+          <gui-badge variant="warning">Due soon</gui-badge>
+          <gui-badge variant="error">Overdue</gui-badge>
+        </div>
+      </section>
+
+      <section class="pg-section">
+        <h2>In text</h2>
+        <div class="pg-stack">
+          <p>Invoice 1042 <gui-badge variant="success">Paid</gui-badge></p>
+          <p>Inbox <gui-badge variant="info">3 new messages</gui-badge></p>
+          <h3>Billing <gui-badge variant="warning">Action needed</gui-badge></h3>
+          <p>
+            A long status in a narrow column stays on one line:
+            <gui-badge variant="error">Payment failed, card expired</gui-badge>
+          </p>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="/src/pages/badge.ts"></script>
+  </body>
+</html>

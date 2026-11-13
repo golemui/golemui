@@ -1,0 +1,113 @@
+// `gui-progress`: a native <progress>, restyled. Each engine draws the bar with its own
+// pseudo-elements, so each gets its own rule: a selector list with an unknown pseudo-element drops
+// the whole rule. The track and the fill are the slider's rail and fill.
+
+$fill: var(--gui-progress-fill, var(--gui-intent-primary));
+
+@keyframes gui-progress-indeterminate {
+  // A band 40% as wide as the track, from just out of its start to just out of its end:
+  // positions are relative to the room left beside the band, 60% of the track.
+  from {
+    background-position: -66.667% 0;
+  }
+
+  to {
+    background-position: 166.667% 0;
+  }
+}
+
+gui-progress {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gui-space-1);
+
+  // The display above would defeat the UA's [hidden] rule.
+  &[hidden] {
+    display: none;
+  }
+
+  // The percentage sits at the end of the label's first line, as the slider's value does.
+  .gui-label:has(.gui-progress__value) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: var(--gui-space-2);
+
+    > * {
+      grid-column: 1 / -1;
+    }
+
+    > .gui-label__text {
+      grid-column: 1;
+      grid-row: 1;
+    }
+
+    > .gui-progress__value {
+      grid-column: 2;
+      grid-row: 1;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+      // The formatted percentage sets its own direction: in a right-to-left page, "65 %" would
+      // otherwise read "% 65". A locale that writes it right to left marks it so.
+      unicode-bidi: plaintext;
+    }
+  }
+}
+
+.gui-progress__bar {
+  appearance: none;
+  display: block;
+  box-sizing: border-box;
+  inline-size: 100%;
+  block-size: var(--gui-progress-height, 0.5rem);
+  margin: 0;
+  border: 0;
+  border-radius: var(--gui-radius-full);
+  overflow: hidden;
+  // Non-text contrast (WCAG 1.4.11): the track shows where the bar is.
+  background-color: var(--gui-progress-track, var(--gui-border-strong));
+  // The fill, for an engine that draws the bar in the text color.
+  color: $fill;
+
+  &::-webkit-progress-bar {
+    background-color: transparent;
+  }
+
+  &::-webkit-progress-value {
+    border-radius: inherit;
+    background-color: $fill;
+    transition: inline-size var(--gui-transition-normal, 0.2s);
+  }
+
+  &::-moz-progress-bar {
+    border-radius: inherit;
+    background-color: $fill;
+  }
+
+  // Indeterminate: a band runs along the track. The engines draw nothing of their own for it
+  // once `appearance` is none, so the bar draws it as its background.
+  &:indeterminate {
+    background-image: linear-gradient($fill, $fill);
+    background-repeat: no-repeat;
+    background-size: 40% 100%;
+    animation: gui-progress-indeterminate 1.4s ease-in-out infinite;
+  }
+
+  &:indeterminate::-moz-progress-bar {
+    background-color: transparent;
+  }
+
+  &:indeterminate:dir(rtl) {
+    animation-direction: reverse;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &::-webkit-progress-value {
+      transition: none;
+    }
+
+    // Slower, never still: a band that stops would read as progress that stopped.
+    &:indeterminate {
+      animation-duration: 4.2s;
+    }
+  }
+}

@@ -13,6 +13,19 @@ const drag = (value: number) =>
     range.value = String(value);
     range.dispatchEvent(new Event('input', { bubbles: true }));
   });
+/** Where a character of an element's text starts on screen, from the left. */
+const leftOf = (element: Element, character: string) => {
+  // A text node: Lit's marker comments hold digits too.
+  const text = [...element.childNodes].find(
+    (node) => node.nodeType === Node.TEXT_NODE && node.textContent?.includes(character),
+  )!;
+  const index = text.textContent!.indexOf(character);
+  const range = document.createRange();
+  range.setStart(text, index);
+  range.setEnd(text, index + 1);
+  return range.getBoundingClientRect().left;
+};
+
 const release = () =>
   input().then(([range]) => range.dispatchEvent(new Event('change', { bubbles: true })));
 
@@ -63,6 +76,31 @@ describe('gui-slider', () => {
       labelValue()
         .invoke('text')
         .should('match', /^15\.000,00\s€$/);
+    });
+
+    it('keeps a left-to-right value in order in a right-to-left page', () => {
+      cy.mount(
+        html`<div dir="rtl">
+          <gui-slider
+            label="Opacidad"
+            locale-id="es"
+            maximum="1"
+            step="0.05"
+            value-placement="both"
+            .format=${{ style: 'percent' }}
+            .value=${0.65}
+          ></gui-slider>
+        </div>`,
+      );
+
+      for (const part of ['.gui-slider__value', '.gui-slider__bubble']) {
+        cy.get(`gui-slider ${part}`).should(([value]) => {
+          expect(value.textContent?.trim().replace(/\s/g, ' '), part).to.equal('65 %');
+          expect(leftOf(value, '6'), `${part}: digits before the sign`).to.be.lessThan(
+            leftOf(value, '%'),
+          );
+        });
+      }
     });
 
     it('fills the rail up to the thumb, and mirrors in right to left', () => {

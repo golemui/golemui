@@ -38,10 +38,18 @@ describe('server rendering standalone elements in plain node', () => {
     // The code's digits show in its boxes, and its input takes them and the autofill hint.
     expect(markup).toMatch(/<span class="\s*gui-otp__box gui-otp__box--filled\s*">1<\/span>/);
     expect(markup).toMatch(/<input[^>]*id="pin"[^>]*autocomplete="one-time-code"[^>]*value="123"/);
+    // The progress bar carries its value, and its label the percentage.
+    expect(markup).toMatch(/<label[^>]*for="setup"/);
+    expect(markup).toMatch(/<progress[^>]*id="setup"[^>]*max="100"[^>]*value="40"/);
+    expect(markup).toMatch(/<span class="gui-progress__value" aria-hidden="true"\s*>40%<\/span/);
+    // The spinner's glyph, and its label in its status region.
+    expect(markup).toMatch(/<gui-spinner[^>]*>\s*<span class="gui-spinner__icon"><svg/);
+    expect(markup).toMatch(/role="status"\s*>Checking your coupon<\/span/);
   });
 
   it("keeps the app's children of the elements that enhance them", () => {
     expect(markup).toMatch(/<gui-alert[^>]*>Yearly billing saves two months.<\/gui-alert>/);
+    expect(markup).toMatch(/<gui-badge[^>]*variant="success"[^>]*>Active<\/gui-badge>/);
     expect(markup).toMatch(/<gui-tab [^>]*>Billing<\/gui-tab>/);
     expect(markup).toMatch(/<gui-tab-panel[^>]*>\s*<gui-select/);
     expect(markup).toMatch(
@@ -59,7 +67,7 @@ describe('server rendering standalone elements in plain node', () => {
 
   it('holds every GolemUI element inert through defer-hydration', () => {
     const tags = [...markup.matchAll(/<(gui-[a-z-]+)([^>]*)>/g)];
-    expect(tags.length).toBe(16);
+    expect(tags.length).toBe(19);
     for (const [, tag, attributes] of tags) {
       expect(attributes, tag).toContain('defer-hydration');
     }

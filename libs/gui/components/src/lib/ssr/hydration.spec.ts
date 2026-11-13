@@ -49,7 +49,7 @@ describe('resuming server-rendered standalone elements', () => {
     await settle();
 
     expect(document.querySelectorAll('[defer-hydration]')).toHaveLength(0);
-    for (const id of ['email', 'plan', 'terms', 'seats']) {
+    for (const id of ['email', 'plan', 'terms', 'seats', 'setup']) {
       expect(document.querySelectorAll(`#${id}`), id).toHaveLength(1);
       expect(document.querySelectorAll(`label[for="${id}"]`), id).toHaveLength(1);
     }
@@ -57,6 +57,11 @@ describe('resuming server-rendered standalone elements', () => {
     expect((document.getElementById('plan') as HTMLSelectElement).value).toBe('team');
     expect((document.getElementById('terms') as HTMLInputElement).checked).toBe(true);
     expect((document.getElementById('seats') as HTMLInputElement).value).toBe('12');
+    expect((document.getElementById('setup') as HTMLProgressElement).value).toBe(40);
+    expect(document.querySelectorAll('gui-spinner svg')).toHaveLength(1);
+    expect(document.querySelector('gui-spinner [role="status"]')?.textContent).toBe(
+      'Checking your coupon',
+    );
 
     expect(errorSpy).not.toHaveBeenCalled();
     errorSpy.mockRestore();
@@ -139,6 +144,16 @@ describe('resuming server-rendered standalone elements', () => {
 
     // Only the hold goes: the element adds nothing the server markup lacks.
     expect(popover().outerHTML).toBe(before.replace(' defer-hydration=""', ''));
+  });
+
+  it('leaves a badge as the server sent it', async () => {
+    const badge = () => document.querySelector('gui-badge') as HTMLElement;
+    const before = badge().outerHTML;
+    resumeServerRendered();
+    await settle();
+
+    // Only the hold goes: the element adds nothing the server markup lacks.
+    expect(badge().outerHTML).toBe(before.replace(' defer-hydration=""', ''));
   });
 
   it('accepts user input after the resume', async () => {
