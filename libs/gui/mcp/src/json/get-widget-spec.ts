@@ -382,6 +382,12 @@ const EXAMPLES: Record<string, Record<string, unknown>> = {
   },
 };
 
+// Shared by `dropdown` and `multiDropdown`: an agent reads one spec at a time, so each repeats them.
+const DROPDOWN_LOAD_NOTE =
+  'Items can load at runtime: set `props.items: []` (the key is required) and `on: { load: "<event name>" }`. The widget emits the event once when it mounts, in the browser only. The host handles it in `formEvent` and answers `event.callback({ type: "OVERRIDE_WIDGET_PROP", payload: { path: "<widget path>", prop: "items", value: [...] } })`. The event does not say which widget sent it: use one event name per field.';
+const DROPDOWN_FILTER_NOTE =
+  'Server-side search: add `on: { filter: "<event name>" }`. The widget then stops filtering locally: it emits the typed text as `event.detail`, `props.inputDebounce` ms after the last keystroke (default 500), and the host answers with the same `OVERRIDE_WIDGET_PROP`. Without `on.filter`, the widget filters its current items itself.';
+
 const NOTES: Record<string, string[]> = {
   textinput: [
     '`path` is the dot-path into form data this field writes to.',
@@ -448,11 +454,18 @@ const NOTES: Record<string, string[]> = {
     'Validate with a range validator: `{ type: "range", required: true }`. It has no other rules: `required` fails while there is no range, and anything that is not a `{ start, end }` with both ends set and `start <= end` is `invalid`. Message keys: `required`, `invalid`.',
   ],
   dropdown: [
-    'PREFER `select` for plain label/value lists (countries, plans, sizes). `dropdown` is for richer item shapes: when each item has extra fields (icons, flags, metadata) that an `itemRenderer` or `labelField`/`valueField` can use.',
+    'Use `dropdown` when the user finds one value by typing: it has a filter box (`searchFields`, default `labelField`) and virtual scrolling (`height`, `itemHeight`). Typical cases: a long list, items loaded at runtime, or records where the user reads a name and the form stores an id (`labelField: "name"`, `valueField: "id"`). For a short fixed list of plain options, use `select`.',
     '`props.items` is EITHER primitives `["one", 2, ...]` OR arbitrary objects `[{ label, value, ...extras }]`. Pair the object form with `labelField`/`valueField` to tell the dropdown which fields to render as label and which to use as the value. **Widget templates inside items (the `{template, value}` shape) are NOT supported — only `repeater` accepts widget templates.**',
+    DROPDOWN_LOAD_NOTE,
+    DROPDOWN_FILTER_NOTE,
+  ],
+  multiDropdown: [
+    'Like `dropdown`, but the user picks several values: the value is an array of the selected item values, shown as removable pills next to the filter box. Validate with an array validator: `{ type: "array", required: true, minItems, maxItems }`; cap the count with `maxItems` so the user is told why.',
+    DROPDOWN_LOAD_NOTE,
+    DROPDOWN_FILTER_NOTE,
   ],
   select: [
-    '`props.options[]` is the simple form: `[{ label: "United States", value: "us" }, ...]`. Use this for ANY plain text list — countries, plans, sizes, status enums. Only switch to `dropdown` if you need custom per-item rendering (icons, flags, rich layouts).',
+    '`props.options[]` is the simple form: `[{ label: "United States", value: "us" }, ...]`. Use this for ANY short fixed list of plain text options — countries, plans, sizes, status enums. Switch to `dropdown` when the user needs to search, the list is long, the items load at runtime, or the items need custom rendering (icons, flags, rich layouts).',
     'For very large lists (>50 items) consider `dropdown` for its virtualization (`height`, `itemHeight`, `searchFields`).',
   ],
   flex: [

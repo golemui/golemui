@@ -15,6 +15,16 @@ describe('json_get_widget_spec', () => {
     expect(() => getWidgetSpec({ widgetType: 'nope' })).toThrow(/textinput/);
   });
 
+  it.each(['dropdown', 'multiDropdown'])(
+    'notes of %s teach loading and filtering items at runtime',
+    (widgetType) => {
+      const notes = getWidgetSpec({ widgetType }).notes.join('\n');
+      expect(notes).toContain('on: { load:');
+      expect(notes).toContain('on: { filter:');
+      expect(notes).toContain('OVERRIDE_WIDGET_PROP');
+    },
+  );
+
   it.each(listWidgetTypes())('example for %s validates against the form schema', (widgetType) => {
     const r = getWidgetSpec({ widgetType });
     const result = validateFormDefinition({ formDefinition: { form: [r.example] } });

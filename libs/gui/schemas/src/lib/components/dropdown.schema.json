@@ -55,7 +55,7 @@
     },
     "inputDebounceProp": {
       "type": "number",
-      "description": "Milliseconds to debounce the filter input before firing the `on.filter` event (default: 0)"
+      "description": "Milliseconds to wait after the last keystroke before filtering, locally or with the `on.filter` event (default: 500)"
     },
     "autocompleteProp": {
       "type": "string",
