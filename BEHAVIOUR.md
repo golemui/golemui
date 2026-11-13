@@ -265,8 +265,7 @@ An app that waits for the first `formHealth` value must not see `ok` for a broke
 
   -> `formHealth` sends the error only, so the app calls only `showErrorPage`.
 
-- Status: follows in React, Vue and Angular. Not yet in Lit. It sends `{ status: 'ok' }` first and
-  then the error, so the app shows the broken form first.
+- Status: follows.
 
 ## Validation
 
@@ -805,7 +804,7 @@ In a form definition, each `on` value is the name of the event, a string. Functi
   -> the form logs the value and shows it in the label, as `$log` does in `when`. The same works
   in an i18n param.
 
-- Status: not yet. It gives error code 40.
+- Status: follows.
 
 ### 37. An i18n param keeps the value it has
 

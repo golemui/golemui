@@ -1691,6 +1691,72 @@ describe('calculateWidgetProps', () => {
   });
 
   // ---------------------------------------------------------------------------
+  // $log
+  // ---------------------------------------------------------------------------
+
+  describe('$log', () => {
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    it('logs the value inside a {{ }} slot and shows it in the text', () => {
+      const consoleLog = vi.spyOn(console, 'log').mockImplementation(() => undefined);
+      const source = {
+        kind: 'display',
+        uid: 'd',
+        type: 'heading',
+        props: { text: 'Total: {{ $log($form.total) }}' },
+      } satisfies DisplayWidget<string>;
+      seed(state, 'd', source);
+      state.data = { total: 30 };
+
+      const next = run(state);
+
+      expect(next.formHealth).toEqual({ status: 'ok' });
+      expect(next.calculatedWidgets['d']?.current?.props?.['text']).toBe('Total: 30');
+      expect(consoleLog).toHaveBeenCalledWith(30);
+    });
+
+    it('i18n params: logs the value inside an expression param and passes its result', () => {
+      const consoleLog = vi.spyOn(console, 'log').mockImplementation(() => undefined);
+      const translator = makeTranslator();
+      const source = {
+        kind: 'action',
+        uid: 'a',
+        type: 'button',
+        label: { key: 'k', params: { name: "$form.first + ' ' + $log($form.last)" } },
+      } satisfies ActionWidget<string>;
+      seed(state, 'a', source);
+      state.data = { first: 'Jane', last: 'Doe' };
+
+      const next = run(state, translator);
+
+      expect(next.formHealth).toEqual({ status: 'ok' });
+      expect(translator.calls[0].params).toEqual({ name: 'Jane Doe' });
+      expect(consoleLog).toHaveBeenCalledWith('Doe');
+    });
+
+    it('i18n params: logs the value of a param that is one $log call and passes it', () => {
+      const consoleLog = vi.spyOn(console, 'log').mockImplementation(() => undefined);
+      const translator = makeTranslator();
+      const source = {
+        kind: 'action',
+        uid: 'a',
+        type: 'button',
+        label: { key: 'k', params: { last: '$log($form.last)' } },
+      } satisfies ActionWidget<string>;
+      seed(state, 'a', source);
+      state.data = { last: 'Doe' };
+
+      const next = run(state, translator);
+
+      expect(next.formHealth).toEqual({ status: 'ok' });
+      expect(translator.calls[0].params).toEqual({ last: 'Doe' });
+      expect(consoleLog).toHaveBeenCalledWith('Doe');
+    });
+  });
+
+  // ---------------------------------------------------------------------------
   // Validation variables integration
   // ---------------------------------------------------------------------------
 

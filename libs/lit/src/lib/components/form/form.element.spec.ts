@@ -1,9 +1,10 @@
 // @vitest-environment jsdom
 import { type FormHealth, identityTranslator } from '@golemui/core';
+import { safeDefine } from '@golemui/lit-utils';
 import { html, nothing } from 'lit';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { buildConfig, noopValidators, stubWidgetLoaders } from '../../ssr.fixture';
-import type { FormElement } from './form.element';
+import { FormElement } from './form.element';
 import type { FormHealthBoundary } from './form-health-boundary';
 
 // `FormElement.config` is typed with the widget instance, the fixture with the widget class.
@@ -49,18 +50,37 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
+function createFormWithoutMounting(): FormElement {
+  const form = document.createElement('gui-core-form') as FormElement;
+  form.validators = noopValidators;
+  return form;
+}
+
+async function startForm(form: FormElement) {
+  document.body.append(form);
+  await form.updateComplete;
+}
+
+const duplicateUidFormDef = {
+  form: {
+    uid: 'root',
+    kind: 'layout',
+    type: 'flex',
+    children: [
+      { uid: 'same', kind: 'input', type: 'textinput', path: 'firstName' },
+      { uid: 'same', kind: 'input', type: 'textinput', path: 'lastName' },
+    ],
+  },
+};
+
+const duplicateUidHealth: FormHealth = {
+  status: 'errored',
+  code: 21,
+  message:
+    '[21] Duplicate UID "same": Assigned to widget "textinput" at "firstName" and "textinput" at "lastName".',
+};
+
 describe('setData and setMeta before the form starts', () => {
-  function createFormWithoutMounting(): FormElement {
-    const form = document.createElement('gui-core-form') as FormElement;
-    form.validators = noopValidators;
-    return form;
-  }
-
-  async function startForm(form: FormElement) {
-    document.body.append(form);
-    await form.updateComplete;
-  }
-
   it('replaces the config data with the data of a setData call before the form is in the page', async () => {
     const form = createFormWithoutMounting();
     setConfig(form, buildConfig());
@@ -295,6 +315,151 @@ describe('a widget that fails to load', () => {
         expect.any(TypeError),
       ),
     );
+  });
+});
+
+describe('the health of a form with an invalid definition', () => {
+  it('dispatches only the errored health when the form starts', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const healths = recordEvents<FormHealth>(document.body, 'formHealth');
+
+    await mountForm({ ...buildConfig(), formDef: duplicateUidFormDef });
+
+    expect(healths).toEqual([duplicateUidHealth]);
+  });
+
+  it('dispatches only the errored health for a new config with an invalid definition', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const form = await mountForm();
+    const healths = recordEvents<FormHealth>(form, 'formHealth');
+
+    setConfig(form, { ...buildConfig(), formDef: duplicateUidFormDef });
+    await form.updateComplete;
+
+    expect(healths).toEqual([duplicateUidHealth]);
+  });
+
+  it('dispatches ok for a new config with a valid definition', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const form = await mountForm({ ...buildConfig(), formDef: duplicateUidFormDef });
+    const healths = recordEvents<FormHealth>(form, 'formHealth');
+
+    setConfig(form, buildConfig());
+    await form.updateComplete;
+
+    expect(healths).toEqual([{ status: 'ok' }]);
+    expect(form.querySelector('.gui-form-health-error')).toBeNull();
+  });
+});
+
+describe('setHealth before the form starts', () => {
+  const earlyHealth: FormHealth = { status: 'errored', code: 10_001, message: 'early call' };
+  const listenerHealth: FormHealth = { status: 'errored', code: 10_002, message: 'listener call' };
+
+  it('dispatches and logs the definition error as the first event after an early setHealth call', async () => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const form = createFormWithoutMounting();
+    setConfig(form, { ...buildConfig(), formDef: duplicateUidFormDef });
+    const healths = recordEvents<FormHealth>(form, 'formHealth');
+
+    form.setHealth(earlyHealth);
+    await startForm(form);
+
+    expect(healths[0]).toEqual(duplicateUidHealth);
+    expect(consoleError).toHaveBeenCalledWith(
+      'GolemUI form failed to initialize:',
+      duplicateUidHealth.message,
+    );
+  });
+
+  it('sends the first event to every listener before a setHealth call that a listener makes during it', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const form = createFormWithoutMounting();
+    setConfig(form, buildConfig());
+    form.addEventListener('formHealth', () => form.setHealth(listenerHealth), {
+      once: true,
+      signal: listeners.signal,
+    });
+    // Added after the listener that calls setHealth. A call dispatched at once would reach this
+    // listener before the first event.
+    const healths = recordEvents<FormHealth>(form, 'formHealth');
+
+    await startForm(form);
+
+    expect(healths).toEqual([{ status: 'ok' }, listenerHealth]);
+  });
+});
+
+describe('the health of a form whose condition fails with the config data', () => {
+  const brokenConditionFormDef = {
+    form: {
+      uid: 'root',
+      kind: 'layout',
+      type: 'flex',
+      children: [
+        {
+          kind: 'input',
+          type: 'textinput',
+          path: 'firstName',
+          include: { when: '$form.missing.deep === 1' },
+        },
+      ],
+    },
+  };
+
+  it('dispatches the error of the condition as the first event', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const healths = recordEvents<FormHealth>(document.body, 'formHealth');
+
+    await mountForm({ ...buildConfig(), formDef: brokenConditionFormDef });
+
+    expect(healths[0]).toMatchObject({ status: 'errored', code: 11 });
+  });
+});
+
+describe('an exception during the start', () => {
+  class FormThatKeepsStartErrors extends FormElement {
+    startErrors: unknown[] = [];
+
+    // Lit turns an exception of willUpdate into a rejected updateComplete and throws it again as
+    // an unhandled rejection at the next update. This subclass keeps it for the spec instead.
+    override willUpdate(changed: Map<string, unknown>) {
+      try {
+        super.willUpdate(changed);
+      } catch (error) {
+        this.startErrors.push(error);
+      }
+    }
+  }
+  safeDefine('form-element-spec-start-error', FormThatKeepsStartErrors);
+
+  it('applies and dispatches a setHealth call made after a middleware threw during the start', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const middlewareError = new Error('The middleware failed');
+    const laterHealth: FormHealth = { status: 'errored', code: 10_003, message: 'later call' };
+    const form = document.createElement(
+      'form-element-spec-start-error',
+    ) as FormThatKeepsStartErrors;
+    form.validators = noopValidators;
+    setConfig(form, {
+      ...buildConfig(),
+      middlewares: [
+        () => (next) => (action) => {
+          if (action.type === 'SET_DATA') {
+            throw middlewareError;
+          }
+          return next(action);
+        },
+      ],
+    });
+    const healths = recordEvents<FormHealth>(form, 'formHealth');
+    await startForm(form);
+
+    form.setHealth(laterHealth);
+
+    expect(form.startErrors).toEqual([middlewareError]);
+    expect(form.context.store.getState().formHealth).toEqual(laterHealth);
+    expect(healths.at(-1)).toEqual(laterHealth);
   });
 });
 

@@ -255,6 +255,16 @@ describe('checkExpression', () => {
   });
 });
 
+describe('isI18nParamExpression', () => {
+  it('treats a value that starts with a $log call as an expression', () => {
+    expect(isI18nParamExpression('$log($form.total)')).toBe(true);
+  });
+
+  it('keeps a text that starts with $log and is not a call as a literal', () => {
+    expect(isI18nParamExpression('$logo')).toBe(false);
+  });
+});
+
 describe('repository mock expressions', () => {
   const jsonExpressions = readMockFiles('.form.json').flatMap(({ file, text }) =>
     collectJsonExpressions(JSON.parse(text), file),
