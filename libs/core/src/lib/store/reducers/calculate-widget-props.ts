@@ -19,6 +19,7 @@ import {
 } from '../../i18n';
 import { type $Errors, type ExpressionFunctions } from '../../shared';
 import { type ExpressionPolicy, isI18nParamExpression } from '../../utils/check-expression';
+import { Debug } from '../../utils/debug';
 import { calculateValidationVariables, type ValidationVariables } from '../../utils/form';
 import { compileExpression, ExpressionRejectedError } from '../../utils/justin';
 import { get, isPlainObject, set, setOwnKey } from '../../utils/object';
@@ -409,6 +410,7 @@ function resolveString(input: string, ctx: ResolverCtx): string {
         $meta: ctx.$meta,
         $errors: ctx.$errors,
         $formIsInvalid: ctx.$formIsInvalid,
+        $log: Debug.log,
         $item: ctx.$item,
         $index: ctx.$index,
         $fn: ctx.$fn,
@@ -570,7 +572,7 @@ function pickSuffixedValue<V = unknown>(
 /**
  * Resolves i18n interpolation parameters to concrete values.
  *
- * A string that starts with a scope prefix ($form, $meta, $errors, $formIsInvalid) is an
+ * A string that starts with $form, $meta, $errors, $item, $index, $fn or `$log(` is an
  * expression and gives its result, also `null` or `undefined`. Every other value is passed as it
  * is, so a number param stays a number for plural rules.
  */
@@ -602,6 +604,7 @@ function evaluateI18nParam(param: string, ctx: ResolverCtx): unknown {
       $meta: ctx.$meta,
       $errors: ctx.$errors,
       $formIsInvalid: ctx.$formIsInvalid,
+      $log: Debug.log,
       $item: ctx.$item,
       $index: ctx.$index,
       $fn: ctx.$fn,

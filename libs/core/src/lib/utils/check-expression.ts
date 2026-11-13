@@ -275,6 +275,8 @@ export function isI18nParamExpression(value: string): boolean {
     value.startsWith('$item') ||
     value.startsWith('$index') ||
     value.startsWith('$fn') ||
+    // With the parenthesis, so a literal such as '$logo' stays a literal.
+    value.startsWith('$log(') ||
     value === '$formIsInvalid'
   );
 }
