@@ -28,6 +28,7 @@ import {
 import { objectWithSuffix } from './utils/decoder';
 import { forbiddenPathSegmentIssue } from './utils/object';
 import { type AllSuffixable, type SomeSuffixable } from './utils/suffixable';
+import { derivedInputUid } from './utils/widget-uid';
 
 // --------------------------------
 //
@@ -411,7 +412,7 @@ const inputWidgetDecoder = objectWithSuffix<InputWidget<any, string>>({
     new Decoder<InputWidget<any, string>>(() => {
       const transformed = { ...ctrl };
       if (!ctrl.uid) {
-        transformed.uid = `${ctrl.path}-${ctrl.type}`;
+        transformed.uid = derivedInputUid(ctrl.path, ctrl.type);
       }
       // TODO: no type safety in this block
       if (ctrl.type === 'repeater') {

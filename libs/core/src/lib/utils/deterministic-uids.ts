@@ -5,6 +5,12 @@ import {
   isLayoutWidget,
   type LayoutWidget,
 } from '../form-widget';
+import {
+  childPositionUid,
+  functionWidgetPositionUid,
+  ROOT_POSITION_UID,
+  templatePositionUid,
+} from './widget-uid';
 
 /**
  * Assigns a position-based uid to every widget in the tree that has none, e.g. '#0.2.t.1'
@@ -19,15 +25,13 @@ import {
  * assignDeterministicUids(decodedForm.form); // uid-less widgets now have '#0.x' uids
  */
 export function assignDeterministicUids(root: FormWidget<string>): void {
-  assignUidByPosition(root, '#0');
+  assignUidByPosition(root, ROOT_POSITION_UID);
 }
 
 function assignUidByPosition(widget: FormWidget<string>, positionUid: string): void {
   if (isFunctionWidget(widget)) {
-    // The 'f' segment keeps these uids separate from plain position uids: a function reused in a
-    // second form keeps its first-decode uid, which must not equal a position uid of that form.
     if (!widget.uid) {
-      widget.uid = `${positionUid}.f`;
+      widget.uid = functionWidgetPositionUid(positionUid);
     }
     return;
   }
@@ -36,13 +40,13 @@ function assignUidByPosition(widget: FormWidget<string>, positionUid: string): v
   }
   if (isLayoutWidget(widget)) {
     widget.children.forEach((child, index) => {
-      assignUidByPosition(child, `${positionUid}.${index}`);
+      assignUidByPosition(child, childPositionUid(positionUid, index));
     });
   }
   if (isInputWidget(widget) && widget.type === 'repeater') {
     const template = (widget.props as Record<string, unknown> | undefined)?.['template'];
     if (template) {
-      assignUidByPosition(template as LayoutWidget<string>, `${positionUid}.t`);
+      assignUidByPosition(template as LayoutWidget<string>, templatePositionUid(positionUid));
     }
   }
 }

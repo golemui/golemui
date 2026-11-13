@@ -1,12 +1,16 @@
 // @vitest-environment jsdom
 import {
+  type Action,
   type FormEvent,
   type FormHealth,
   type FormInitConfig,
   type I18nTranslator,
+  identityTranslator,
+  type Middleware,
+  type State,
   type WithWidget,
 } from '@golemui/core';
-import { type Component, createApp, defineComponent, h } from 'vue';
+import { type Component, createApp, defineComponent, h, nextTick, shallowReactive } from 'vue';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import FormComponent from './FormComponent.vue';
 import {
@@ -92,6 +96,15 @@ const mountForm = (props: Record<string, unknown>) => {
     }
   };
 };
+
+/** The props are shallow reactive, so setting `config` gives the mounted form a new config. */
+const mountFormWithReplaceableConfig = (config: FormInitConfig<StubComponent>) => {
+  const props = shallowReactive<Record<string, unknown>>({ config, validators: noopValidators });
+  mountForm(props);
+  return props;
+};
+
+const formDirection = () => container.querySelector('form')?.getAttribute('dir');
 
 beforeEach(() => {
   composableOutputs.length = 0;
@@ -182,5 +195,140 @@ describe('the translator listener', () => {
     unmount();
 
     expect(unsubscribe).toHaveBeenCalledTimes(1);
+  });
+
+  const spyTranslator = () => {
+    const unsubscribe = vi.fn();
+    const translator: I18nTranslator = {
+      lang: 'en',
+      translate: (key, _params, defaultValue) => defaultValue ?? key,
+      subscribe: vi.fn(() => unsubscribe),
+    };
+    return { translator, unsubscribe };
+  };
+
+  const recordActionTypes = () => {
+    const actionTypes: string[] = [];
+    const middleware: Middleware<State, Action> = () => (next) => (action) => {
+      actionTypes.push(action.type);
+      next(action);
+    };
+    return { actionTypes, middleware };
+  };
+
+  it('is removed when a new config replaces the form, and the new translator gets a listener', async () => {
+    const first = spyTranslator();
+    const second = spyTranslator();
+    const props = mountFormWithReplaceableConfig({
+      ...buildConfig(),
+      localization: first.translator,
+    });
+
+    props.config = { ...buildConfig(), localization: second.translator };
+    await nextTick();
+
+    expect(first.unsubscribe).toHaveBeenCalledTimes(1);
+    expect(second.translator.subscribe).toHaveBeenCalledTimes(1);
+    expect(second.unsubscribe).not.toHaveBeenCalled();
+  });
+
+  it('is removed from the translator of the new config on unmount', async () => {
+    const first = spyTranslator();
+    const second = spyTranslator();
+    const props = mountFormWithReplaceableConfig({
+      ...buildConfig(),
+      localization: first.translator,
+    });
+    props.config = { ...buildConfig(), localization: second.translator };
+    await nextTick();
+
+    unmount();
+
+    expect(second.unsubscribe).toHaveBeenCalledTimes(1);
+  });
+
+  it('sends a language change of the new translator to the form and ignores the old translator', async () => {
+    const firstTranslator = identityTranslator('en-US');
+    const secondTranslator = identityTranslator('en-US');
+    // Only the new config has the recorder, so a recorded action reached the current store.
+    const recorder = recordActionTypes();
+    const props = mountFormWithReplaceableConfig({
+      ...buildConfig(),
+      localization: firstTranslator,
+    });
+    props.config = {
+      ...buildConfig(),
+      localization: secondTranslator,
+      middlewares: [recorder.middleware],
+    };
+    await nextTick();
+
+    firstTranslator.setLang('ar');
+    await nextTick();
+
+    expect(recorder.actionTypes).not.toContain('SET_LANGUAGE');
+    expect(formDirection()).toBe('ltr');
+
+    secondTranslator.setLang('ar');
+    await nextTick();
+
+    expect(recorder.actionTypes).toContain('SET_LANGUAGE');
+    expect(formDirection()).toBe('rtl');
+  });
+
+  it('keeps one listener when a new config has the same translator', async () => {
+    const translator = identityTranslator('en-US');
+    const recorder = recordActionTypes();
+    const props = mountFormWithReplaceableConfig({
+      ...buildConfig(),
+      localization: translator,
+      middlewares: [recorder.middleware],
+    });
+    props.config = {
+      ...buildConfig(),
+      localization: translator,
+      middlewares: [recorder.middleware],
+    };
+    await nextTick();
+    recorder.actionTypes.length = 0;
+
+    translator.setLang('ar');
+
+    expect(recorder.actionTypes.filter((type) => type === 'SET_LANGUAGE')).toHaveLength(1);
+  });
+
+  it('logs no error for a translator whose subscribe returns nothing, at a replacement and at unmount', async () => {
+    // A translator written in JavaScript can return nothing, although the type asks for a function.
+    const translatorWithoutTeardown = (): I18nTranslator => ({
+      lang: 'en',
+      translate: (key, _params, defaultValue) => defaultValue ?? key,
+      subscribe: () => undefined as unknown as () => void,
+    });
+    const props = mountFormWithReplaceableConfig({
+      ...buildConfig(),
+      localization: translatorWithoutTeardown(),
+    });
+
+    props.config = { ...buildConfig(), localization: translatorWithoutTeardown() };
+    await nextTick();
+    unmount();
+
+    expect(consoleError).not.toHaveBeenCalled();
+    expect(consoleWarn).not.toHaveBeenCalled();
+  });
+});
+
+describe('the form direction after a new config', () => {
+  it('is the direction of the new translator language right after the replacement', async () => {
+    const props = mountFormWithReplaceableConfig({
+      ...buildConfig(),
+      localization: identityTranslator('en-US'),
+    });
+    expect(formDirection()).toBe('ltr');
+
+    props.config = { ...buildConfig(), localization: identityTranslator('ar') };
+    await nextTick();
+
+    expect(formDirection()).toBe('rtl');
   });
 });
