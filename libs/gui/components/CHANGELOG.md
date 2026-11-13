@@ -1,3 +1,13 @@
+## 2.2.0-rc.2 (2026-11-13)
+
+### 🚀 Features
+
+- **gui-components:** add badge, progress, spinner, checkbox group and rating ([#577](https://github.com/golemui/golemui/pull/577))
+
+### ❤️ Thank You
+
+- Raúl Jiménez @Elecash
+
 ## 2.2.0-rc.1 (2026-11-12)
 
 This was a version bump only for gui-components to align it with other projects, there were no code changes.
