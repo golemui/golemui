@@ -157,15 +157,26 @@ watch(
 const eventSub = formContext.events$.subscribe((event) => emit('form-event', event));
 const submitSub = formContext.submit$.subscribe((event) => emit('form-submit', event));
 
-let unsubscribeLang: (() => void) | null = null;
+// A new config or a new `validators` value gives a new store, and the listener moves to the
+// translator of the current config. A server render never mounts, so it adds no listener.
 onMounted(() => {
-  unsubscribeLang = formContext.localization.subscribe((lang) => {
-    direction.value = getDirectionFromLanguage(lang);
-    formContext.store.dispatch({
-      type: 'SET_LANGUAGE',
-      payload: { lang },
-    });
-  });
+  // Vue stops a watcher created in a lifecycle hook when the component unmounts, and runs its
+  // cleanup then.
+  watch(
+    () => storeVersion.value,
+    (_storeVersion, _previousStoreVersion, onCleanup) => {
+      // A translator written in JavaScript can return nothing, although the type asks for a function.
+      const unsubscribe: (() => void) | undefined = formContext.localization.subscribe((lang) => {
+        direction.value = getDirectionFromLanguage(lang);
+        formContext.store.dispatch({
+          type: 'SET_LANGUAGE',
+          payload: { lang },
+        });
+      });
+      onCleanup(() => unsubscribe?.());
+    },
+    { immediate: true },
+  );
 });
 
 onUnmounted(() => {
@@ -173,7 +184,6 @@ onUnmounted(() => {
   healthSub?.unsubscribe();
   eventSub.unsubscribe();
   submitSub.unsubscribe();
-  unsubscribeLang?.();
 });
 
 defineExpose<FormComponentHandle>({
