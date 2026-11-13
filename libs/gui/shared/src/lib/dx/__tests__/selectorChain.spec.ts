@@ -72,6 +72,10 @@ const SELECTOR_TYPE_BY_METHOD: Record<string, string> = {
   sliderByUid: 'SLIDER',
   rangeSliders: 'RANGE_SLIDER',
   rangeSliderByUid: 'RANGE_SLIDER',
+  checkboxGroups: 'CHECKBOX_GROUP',
+  checkboxGroupByUid: 'CHECKBOX_GROUP',
+  ratings: 'RATING',
+  ratingByUid: 'RATING',
   rangeDateInputs: 'RANGE_DATE_INPUT',
   rangeDateInputByUid: 'RANGE_DATE_INPUT',
   rangeTimeInputs: 'RANGE_TIME_INPUT',
@@ -142,7 +146,7 @@ describe('gui.selectors method surface', () => {
     const byUidNames = Object.keys(SELECTOR_TYPE_BY_METHOD).filter((name) =>
       name.endsWith('ByUid'),
     );
-    expect(byUidNames.length).toBe(45 + 1); // 45 widget pairs plus inputByUid
+    expect(byUidNames.length).toBe(47 + 1); // 47 widget pairs plus inputByUid
     for (const methodName of byUidNames) {
       const leaf = buildLeaf(gui.selectors, methodName);
       expect(leaf.matcher({ uid: 'probe-uid' }), methodName).toBe(true);

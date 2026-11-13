@@ -9,6 +9,7 @@ import widgetsSchemaJson from './lib/widgets.schema.json';
 import calendarSchemaJson from './lib/components/calendar.schema.json';
 import datetimecalendarSchemaJson from './lib/components/datetimecalendar.schema.json';
 import checkboxSchemaJson from './lib/components/checkbox.schema.json';
+import checkboxgroupSchemaJson from './lib/components/checkboxgroup.schema.json';
 import currencySchemaJson from './lib/components/currency.schema.json';
 import dateinputSchemaJson from './lib/components/dateinput.schema.json';
 import datepickerSchemaJson from './lib/components/datepicker.schema.json';
@@ -34,6 +35,7 @@ import rangedatetimepickerSchemaJson from './lib/components/rangedatetimepicker.
 import rangesliderSchemaJson from './lib/components/rangeslider.schema.json';
 import rangetimeinputSchemaJson from './lib/components/rangetimeinput.schema.json';
 import rangetimepickerSchemaJson from './lib/components/rangetimepicker.schema.json';
+import ratingSchemaJson from './lib/components/rating.schema.json';
 import repeaterSchemaJson from './lib/components/repeater.schema.json';
 import selectSchemaJson from './lib/components/select.schema.json';
 import sliderSchemaJson from './lib/components/slider.schema.json';
@@ -62,6 +64,7 @@ export const widgetsSchema: Record<string, unknown> = widgetsSchemaJson;
 export const calendarSchema: Record<string, unknown> = calendarSchemaJson;
 export const datetimecalendarSchema: Record<string, unknown> = datetimecalendarSchemaJson;
 export const checkboxSchema: Record<string, unknown> = checkboxSchemaJson;
+export const checkboxgroupSchema: Record<string, unknown> = checkboxgroupSchemaJson;
 export const currencySchema: Record<string, unknown> = currencySchemaJson;
 export const dateinputSchema: Record<string, unknown> = dateinputSchemaJson;
 export const datepickerSchema: Record<string, unknown> = datepickerSchemaJson;
@@ -87,6 +90,7 @@ export const rangedatetimepickerSchema: Record<string, unknown> = rangedatetimep
 export const rangesliderSchema: Record<string, unknown> = rangesliderSchemaJson;
 export const rangetimeinputSchema: Record<string, unknown> = rangetimeinputSchemaJson;
 export const rangetimepickerSchema: Record<string, unknown> = rangetimepickerSchemaJson;
+export const ratingSchema: Record<string, unknown> = ratingSchemaJson;
 export const repeaterSchema: Record<string, unknown> = repeaterSchemaJson;
 export const selectSchema: Record<string, unknown> = selectSchemaJson;
 export const sliderSchema: Record<string, unknown> = sliderSchemaJson;
@@ -111,6 +115,7 @@ export const COMPONENT_SCHEMAS_BY_TYPE = {
   calendar: calendarSchema,
   dateTimeCalendar: datetimecalendarSchema,
   checkbox: checkboxSchema,
+  checkboxGroup: checkboxgroupSchema,
   currency: currencySchema,
   dateInput: dateinputSchema,
   datePicker: datepickerSchema,
@@ -136,6 +141,7 @@ export const COMPONENT_SCHEMAS_BY_TYPE = {
   rangeSlider: rangesliderSchema,
   rangeTimeInput: rangetimeinputSchema,
   rangeTimePicker: rangetimepickerSchema,
+  rating: ratingSchema,
   repeater: repeaterSchema,
   select: selectSchema,
   slider: sliderSchema,

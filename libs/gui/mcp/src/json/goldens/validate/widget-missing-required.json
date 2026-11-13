@@ -164,6 +164,39 @@
       "interpolationWarnings": []
     }
   },
+  "checkboxGroup": {
+    "input": {
+      "form": [
+        {
+          "type": "checkboxGroup"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0",
+          "message": "Missing required property `kind` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "kind"
+          }
+        },
+        {
+          "path": "/form/0",
+          "message": "Missing required property `path` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "path"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
   "currency": {
     "input": {
       "form": [
@@ -1142,6 +1175,39 @@
       "form": [
         {
           "type": "rangeTimePicker"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0",
+          "message": "Missing required property `kind` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "kind"
+          }
+        },
+        {
+          "path": "/form/0",
+          "message": "Missing required property `path` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "path"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "rating": {
+    "input": {
+      "form": [
+        {
+          "type": "rating"
         }
       ]
     },

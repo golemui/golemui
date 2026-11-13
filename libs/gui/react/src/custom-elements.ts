@@ -20,6 +20,8 @@ import type { GuiNumber } from '@golemui/gui-components/number';
 import type { GuiPassword } from '@golemui/gui-components/password';
 import type { GuiPills } from '@golemui/gui-components/pills';
 import type { GuiRadiogroup } from '@golemui/gui-components/radiogroup';
+import type { GuiCheckboxGroup } from '@golemui/gui-components/checkbox-group';
+import type { GuiRating } from '@golemui/gui-components/rating';
 import type { GuiRangeSlider } from '@golemui/gui-components/range-slider';
 import type { GuiSlider } from '@golemui/gui-components/slider';
 import type { GuiOtp } from '@golemui/gui-components/otp';
@@ -112,6 +114,13 @@ declare module 'react' {
 
       'gui-radiogroup': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiRadiogroup>;
+      'gui-checkbox-group': React.DetailedHTMLProps<
+        React.HTMLAttributes<HTMLElement>,
+        HTMLElement
+      > &
+        Partial<GuiCheckboxGroup>;
+      'gui-rating': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
+        Partial<GuiRating>;
       'gui-range-slider': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiRangeSlider>;
       'gui-slider': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &

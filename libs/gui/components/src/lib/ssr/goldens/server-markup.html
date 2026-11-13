@@ -312,5 +312,283 @@
 
   </div>
     </gui-otp>
+    <gui-checkbox-group
+
+
+
+
+
+
+     uid="addons" name="addons" label="Add-ons" required values="[&quot;sso&quot;]" options="[{&quot;label&quot;:&quot;Audit log&quot;,&quot;value&quot;:&quot;audit&quot;},{&quot;label&quot;:&quot;Single sign-on&quot;,&quot;value&quot;:&quot;sso&quot;}]" class="gui-field" data-golemui-ssr defer-hydration>
+      <span class="gui-label" data-cy="addons_label" id="addons_label">
+      <span class="gui-label__text"
+        >Add-ons<span aria-hidden="true"> *</span></span
+      >
+
+
+    </span>
+
+      <div
+        class="gui-widget"
+        role="group"
+        id="addons"
+        aria-labelledby="addons_label addons_required"
+
+
+      >
+        <span class="gui-visually-hidden" id="addons_required"
+              >required</span
+            >
+        <label for="addons_0">
+              <input
+                type="checkbox"
+                id="addons_0"
+                data-cy="addons_checkbox_0"
+                data-group="addons"
+                form="addons_none"
+                value="audit"
+
+
+
+              />
+              Audit log
+            </label><label for="addons_1">
+              <input
+                type="checkbox"
+                id="addons_1"
+                data-cy="addons_checkbox_1"
+                data-group="addons"
+                form="addons_none"
+                value="sso"
+                checked="true"
+
+
+
+              />
+              Single sign-on
+            </label>
+      </div>
+
+      <div
+    class=" gui-validator gui-validator--empty "
+    id="addons_errors"
+    role="alert"
+
+
+  >
+
+  </div>
+    </gui-checkbox-group>
+    <gui-rating     uid="support" name="support" label="Support so far" value="4" class="gui-field" data-golemui-ssr defer-hydration>
+      <span class="gui-label" data-cy="support_label" id="support_label">
+      <span class="gui-label__text"
+        >Support so far</span
+      >
+
+
+    </span>
+
+      <div class="gui-widget">
+        <div
+          class="gui-rating__stars"
+          role="radiogroup"
+          id="support"
+          aria-labelledby="support_label"
+
+
+
+
+
+
+        >
+          <label
+        class="gui-rating__star gui-rating__star--filled"
+        for="support_1"
+        ><input
+          type="radio"
+          class="gui-rating__input gui-visually-hidden"
+          id="support_1"
+          data-cy="support_rating_1"
+          name="support"
+          form="support_none"
+          value="1"
+          tabindex="-1"
+          aria-label="1 star"
+
+
+
+
+        /><svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    class="gui-rating__glyph"
+    aria-hidden="true"
+  >
+    <polygon
+      points="12,2 14.49,9.17 22.08,9.32 16.03,13.91 18.23,21.18 12,16.84 5.77,21.18 7.97,13.91 1.92,9.32 9.51,9.17"
+    ></polygon>
+  </svg></label
+      ><label
+        class="gui-rating__star gui-rating__star--filled"
+        for="support_2"
+        ><input
+          type="radio"
+          class="gui-rating__input gui-visually-hidden"
+          id="support_2"
+          data-cy="support_rating_2"
+          name="support"
+          form="support_none"
+          value="2"
+          tabindex="-1"
+          aria-label="2 stars"
+
+
+
+
+        /><svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    class="gui-rating__glyph"
+    aria-hidden="true"
+  >
+    <polygon
+      points="12,2 14.49,9.17 22.08,9.32 16.03,13.91 18.23,21.18 12,16.84 5.77,21.18 7.97,13.91 1.92,9.32 9.51,9.17"
+    ></polygon>
+  </svg></label
+      ><label
+        class="gui-rating__star gui-rating__star--filled"
+        for="support_3"
+        ><input
+          type="radio"
+          class="gui-rating__input gui-visually-hidden"
+          id="support_3"
+          data-cy="support_rating_3"
+          name="support"
+          form="support_none"
+          value="3"
+          tabindex="-1"
+          aria-label="3 stars"
+
+
+
+
+        /><svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    class="gui-rating__glyph"
+    aria-hidden="true"
+  >
+    <polygon
+      points="12,2 14.49,9.17 22.08,9.32 16.03,13.91 18.23,21.18 12,16.84 5.77,21.18 7.97,13.91 1.92,9.32 9.51,9.17"
+    ></polygon>
+  </svg></label
+      ><label
+        class="gui-rating__star gui-rating__star--filled"
+        for="support_4"
+        ><input
+          type="radio"
+          class="gui-rating__input gui-visually-hidden"
+          id="support_4"
+          data-cy="support_rating_4"
+          name="support"
+          form="support_none"
+          value="4"
+          tabindex="0"
+          aria-label="4 stars"
+          checked="true"
+
+
+
+
+        /><svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    class="gui-rating__glyph"
+    aria-hidden="true"
+  >
+    <polygon
+      points="12,2 14.49,9.17 22.08,9.32 16.03,13.91 18.23,21.18 12,16.84 5.77,21.18 7.97,13.91 1.92,9.32 9.51,9.17"
+    ></polygon>
+  </svg></label
+      ><label
+        class="gui-rating__star"
+        for="support_5"
+        ><input
+          type="radio"
+          class="gui-rating__input gui-visually-hidden"
+          id="support_5"
+          data-cy="support_rating_5"
+          name="support"
+          form="support_none"
+          value="5"
+          tabindex="-1"
+          aria-label="5 stars"
+
+
+
+
+        /><svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    class="gui-rating__glyph"
+    aria-hidden="true"
+  >
+    <polygon
+      points="12,2 14.49,9.17 22.08,9.32 16.03,13.91 18.23,21.18 12,16.84 5.77,21.18 7.97,13.91 1.92,9.32 9.51,9.17"
+    ></polygon>
+  </svg></label
+      >
+        </div>
+      </div>
+
+      <div
+    class=" gui-validator gui-validator--empty "
+    id="support_errors"
+    role="alert"
+
+
+  >
+
+  </div>
+    </gui-rating>
+    <p>Plan status: <gui-badge  variant="success" defer-hydration>Active</gui-badge></p>
+    <gui-progress
+
+
+
+
+
+     uid="setup" label="Setting up your workspace" value="40" show-value locale-id="en-US" data-golemui-ssr defer-hydration>
+      <label class="gui-label" for="setup" data-cy="setup_label" id="setup_label">
+      <span class="gui-label__text"
+        >Setting up your workspace</span
+      >
+
+      <span class="gui-progress__value" aria-hidden="true"
+            >40%</span
+          >
+    </label>
+      <progress
+        id="setup"
+        class="gui-progress__bar"
+        data-cy="setup_progress"
+        max="100"
+        value="40"
+      ></progress>
+    </gui-progress>
+    <gui-spinner  label="Checking your coupon" data-golemui-ssr defer-hydration><span class="gui-spinner__icon"><svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="16"
+    height="16"
+    viewBox="0 0 256 256"
+    fill="currentColor"
+    class="gui-spinner__glyph"
+    aria-hidden="true"
+  >
+    <path d="M232,128a104,104,0,0,1-208,0c0-41,23.81-78.36,60.66-95.27a8,8,0,0,1,6.68,14.54C60.15,61.59,40,93.27,40,128a88,88,0,0,0,176,0c0-34.73-20.15-66.41-51.34-80.73a8,8,0,0,1,6.68-14.54C208.19,49.64,232,87,232,128Z"></path>
+  </svg></span
+      ><span class="gui-spinner__status gui-visually-hidden" role="status"
+        >Checking your coupon</span
+      ></gui-spinner>
     <gui-toaster  placement="top-end" defer-hydration></gui-toaster>
   </form>

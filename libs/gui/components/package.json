@@ -83,6 +83,11 @@
       "import": "./lib/components/alert.js",
       "require": "./lib/components/alert.umd.cjs"
     },
+    "./badge": {
+      "types": "./lib/components/badge.d.ts",
+      "import": "./lib/components/badge.js",
+      "require": "./lib/components/badge.umd.cjs"
+    },
     "./button": {
       "types": "./lib/components/button.d.ts",
       "import": "./lib/components/button.js",
@@ -97,6 +102,11 @@
       "types": "./lib/components/checkbox.d.ts",
       "import": "./lib/components/checkbox.js",
       "require": "./lib/components/checkbox.umd.cjs"
+    },
+    "./checkbox-group": {
+      "types": "./lib/components/checkbox-group.d.ts",
+      "import": "./lib/components/checkbox-group.js",
+      "require": "./lib/components/checkbox-group.umd.cjs"
     },
     "./currency": {
       "types": "./lib/components/currency.d.ts",
@@ -223,6 +233,11 @@
       "import": "./lib/components/popover.js",
       "require": "./lib/components/popover.umd.cjs"
     },
+    "./progress": {
+      "types": "./lib/components/progress.d.ts",
+      "import": "./lib/components/progress.js",
+      "require": "./lib/components/progress.umd.cjs"
+    },
     "./radiogroup": {
       "types": "./lib/components/radiogroup.d.ts",
       "import": "./lib/components/radiogroup.js",
@@ -233,10 +248,20 @@
       "import": "./lib/components/range-slider.js",
       "require": "./lib/components/range-slider.umd.cjs"
     },
+    "./rating": {
+      "types": "./lib/components/rating.d.ts",
+      "import": "./lib/components/rating.js",
+      "require": "./lib/components/rating.umd.cjs"
+    },
     "./slider": {
       "types": "./lib/components/slider.d.ts",
       "import": "./lib/components/slider.js",
       "require": "./lib/components/slider.umd.cjs"
+    },
+    "./spinner": {
+      "types": "./lib/components/spinner.d.ts",
+      "import": "./lib/components/spinner.js",
+      "require": "./lib/components/spinner.umd.cjs"
     },
     "./range-calendar": {
       "types": "./lib/components/range-calendar.d.ts",

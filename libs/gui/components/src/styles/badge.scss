@@ -1,0 +1,29 @@
+@use 'intent' as *;
+
+// `gui-badge`: a short status or count inline with text, in the alert's intent colors.
+gui-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gui-space-1);
+  box-sizing: border-box;
+  min-block-size: var(--gui-badge-height, 1.25rem);
+  padding-inline: var(--gui-space-2);
+  border: 1px solid;
+  border-radius: var(--gui-badge-radius, var(--gui-radius-full));
+  font-size: var(--gui-badge-font-size, var(--gui-font-xs));
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  vertical-align: middle;
+
+  background-color: var(--gui-bg-surface-hover);
+  border-color: var(--gui-border-default);
+  color: var(--gui-text-default);
+
+  @include gui-intent-colors('variant');
+
+  // The display above would defeat the UA's [hidden] rule.
+  &[hidden] {
+    display: none;
+  }
+}

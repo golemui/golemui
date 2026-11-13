@@ -39,6 +39,11 @@ const controls: [string, TemplateResult, string, string?][] = [
   ['gui-select', html`<gui-select label="Color" .options=${options}></gui-select>`, 'select'],
   ['gui-checkbox', html`<gui-checkbox label="I agree"></gui-checkbox>`, 'input'],
   [
+    'gui-checkbox-group',
+    html`<gui-checkbox-group label="Colors" .options=${options}></gui-checkbox-group>`,
+    'input',
+  ],
+  [
     'gui-radiogroup',
     html`<gui-radiogroup label="Color" .options=${options}></gui-radiogroup>`,
     'input',
@@ -104,6 +109,65 @@ describe('control boundaries (WCAG 1.4.11)', () => {
           const [selected, other] = Array.from(group.children);
           const fill = (label: Element) => toRgb(getComputedStyle(label).backgroundColor, surface);
           expect(contrast(fill(selected), fill(other)), 'selected against unselected').to.be.gte(3);
+        });
+      });
+
+      // A badge's text is 12px, so it needs 4.5:1 against the badge's fill (WCAG 1.4.3), in
+      // every variant.
+      for (const variant of ['default', 'info', 'success', 'warning', 'error']) {
+        it(`gui-badge ${variant}: the text reaches 4.5:1 against its fill`, () => {
+          cy.mount(html`<gui-badge variant=${variant}>Paid</gui-badge>`);
+
+          cy.get('gui-badge').should(([badge]) => {
+            const page = toRgb(getComputedStyle(document.body).backgroundColor, [255, 255, 255]);
+            const fill = toRgb(getComputedStyle(badge).backgroundColor, page);
+            const text = toRgb(getComputedStyle(badge).color, fill);
+            expect(contrast(text, fill), 'text against the badge').to.be.gte(4.5);
+          });
+        });
+      }
+
+      // The track shows where the bar is, and the fill how far the task has got. The bar draws
+      // its fill in its text color.
+      it('gui-progress: the track and the fill reach 3:1 against the page', () => {
+        cy.mount(html`<gui-progress label="Uploading" value="40"></gui-progress>`);
+
+        cy.get('gui-progress progress').should(([bar]) => {
+          const page = toRgb(getComputedStyle(document.body).backgroundColor, [255, 255, 255]);
+          const style = getComputedStyle(bar);
+          expect(contrast(toRgb(style.backgroundColor, page), page), 'track').to.be.gte(3);
+          expect(contrast(toRgb(style.color, page), page), 'fill').to.be.gte(3);
+        });
+      });
+
+      // An empty star is an outline, and a picked one is filled: each is all that shows it.
+      it('gui-rating: the empty outline and the filled star reach 3:1 against the page', () => {
+        cy.mount(html`<gui-rating label="Service" .value=${2}></gui-rating>`);
+
+        cy.get('gui-rating').should(([host]) => {
+          const page = toRgb(getComputedStyle(document.body).backgroundColor, [255, 255, 255]);
+          const [filled, empty] = [
+            host.querySelector('.gui-rating__star--filled polygon')!,
+            host.querySelector('.gui-rating__star:not(.gui-rating__star--filled) polygon')!,
+          ].map((star) => getComputedStyle(star));
+          expect(contrast(toRgb(filled.fill, page), page), 'filled star').to.be.gte(3);
+          expect(contrast(toRgb(empty.stroke, page), page), 'empty outline').to.be.gte(3);
+        });
+      });
+
+      // The glyph is all a spinner shows. It takes the color of the text it sits in: here, the
+      // theme's text, as on a themed page.
+      it('gui-spinner: the glyph reaches 3:1 against the page', () => {
+        cy.mount(
+          html`<p style="color: var(--gui-text-default)">
+            <gui-spinner label="Loading results"></gui-spinner>
+          </p>`,
+        );
+
+        cy.get('gui-spinner svg').should(([glyph]) => {
+          const page = toRgb(getComputedStyle(document.body).backgroundColor, [255, 255, 255]);
+          const color = toRgb(getComputedStyle(glyph).fill, page);
+          expect(contrast(color, page), 'glyph against the page').to.be.gte(3);
         });
       });
 

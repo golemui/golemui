@@ -4,13 +4,18 @@ import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 
 // A page per element, in plain HTML: the elements on their own, with no framework and no form.
 const pages = [
+  'badge',
+  'checkbox-group',
   'dialog',
   'index',
   'menu',
   'otp',
   'pickers',
   'popover',
+  'progress',
+  'rating',
   'slider',
+  'spinner',
   'toast',
   'tooltip',
 ];

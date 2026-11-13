@@ -52,6 +52,9 @@
       grid-row: 1;
       font-variant-numeric: tabular-nums;
       white-space: nowrap;
+      // The formatted value sets its own direction: in a right-to-left page, "65 %" would
+      // otherwise read "% 65". A locale that writes it right to left marks it so.
+      unicode-bidi: plaintext;
     }
   }
 }
@@ -290,6 +293,8 @@
   line-height: 1.4;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
+  // As the value in the label: the formatted value sets its own direction.
+  unicode-bidi: plaintext;
   translate: var(--_center) 0;
   visibility: hidden;
 

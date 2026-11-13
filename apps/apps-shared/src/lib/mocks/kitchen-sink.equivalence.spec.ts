@@ -76,6 +76,10 @@ import jsonSliderTab from './tabs/slider.form-chunk.json';
 import jsonOtpTab from './tabs/otp.form-chunk.json';
 import { otpTab as dxOtpTab } from './tabs/otp.dx';
 import { sliderTab as dxSliderTab } from './tabs/slider.dx';
+import jsonCheckboxGroupTab from './tabs/checkboxgroup.form-chunk.json';
+import { checkboxGroupTab as dxCheckboxGroupTab } from './tabs/checkboxgroup.dx';
+import jsonRatingTab from './tabs/rating.form-chunk.json';
+import { ratingTab as dxRatingTab } from './tabs/rating.dx';
 import jsonTagsTab from './tabs/tags.form-chunk.json';
 import { tagsTab as dxTagsTab } from './tabs/tags.dx';
 import jsonMultidropdownTab from './tabs/multidropdown.form-chunk.json';
@@ -271,6 +275,18 @@ describe('Kitchen Sink — JSON ↔ DX equivalence', () => {
   it('slider tab', () => {
     const json = buildJsonTab(jsonSliderTab).form;
     const dx = buildDxTab(dxSliderTab);
+    expect(normalise(dx)).toEqual(normalise(json));
+  });
+
+  it('checkbox group tab', () => {
+    const json = buildJsonTab(jsonCheckboxGroupTab).form;
+    const dx = buildDxTab(dxCheckboxGroupTab);
+    expect(normalise(dx)).toEqual(normalise(json));
+  });
+
+  it('rating tab', () => {
+    const json = buildJsonTab(jsonRatingTab).form;
+    const dx = buildDxTab(dxRatingTab);
     expect(normalise(dx)).toEqual(normalise(json));
   });
 

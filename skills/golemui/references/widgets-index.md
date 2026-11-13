@@ -10,6 +10,7 @@ Every widget’s exhaustive reference page (props, per-prop examples, CSS variab
 
 - `gui.inputs.calendar` — https://golemui.com/dx/widgets-reference/input-fields/calendar.md (json: https://golemui.com/json/widgets-reference/input-fields/calendar.md)
 - `gui.inputs.checkbox` — https://golemui.com/dx/widgets-reference/input-fields/checkbox.md (json: https://golemui.com/json/widgets-reference/input-fields/checkbox.md)
+- `gui.inputs.checkboxGroup` — https://golemui.com/dx/widgets-reference/input-fields/checkbox-group.md (json: https://golemui.com/json/widgets-reference/input-fields/checkbox-group.md)
 - `gui.inputs.currency` — https://golemui.com/dx/widgets-reference/input-fields/currency.md (json: https://golemui.com/json/widgets-reference/input-fields/currency.md)
 - `gui.inputs.datePicker` — https://golemui.com/dx/widgets-reference/input-fields/date-picker.md (json: https://golemui.com/json/widgets-reference/input-fields/date-picker.md)
 - `gui.inputs.dateInput` — https://golemui.com/dx/widgets-reference/input-fields/dateinput.md (json: https://golemui.com/json/widgets-reference/input-fields/dateinput.md)
@@ -36,6 +37,7 @@ Every widget’s exhaustive reference page (props, per-prop examples, CSS variab
 - `gui.inputs.rangeSlider` — https://golemui.com/dx/widgets-reference/input-fields/range-slider.md (json: https://golemui.com/json/widgets-reference/input-fields/range-slider.md)
 - `gui.inputs.rangeTimeInput` — https://golemui.com/dx/widgets-reference/input-fields/range-time-input.md (json: https://golemui.com/json/widgets-reference/input-fields/range-time-input.md)
 - `gui.inputs.rangeTimePicker` — https://golemui.com/dx/widgets-reference/input-fields/range-time-picker.md (json: https://golemui.com/json/widgets-reference/input-fields/range-time-picker.md)
+- `gui.inputs.rating` — https://golemui.com/dx/widgets-reference/input-fields/rating.md (json: https://golemui.com/json/widgets-reference/input-fields/rating.md)
 - `gui.inputs.repeater` — https://golemui.com/dx/widgets-reference/input-fields/repeater.md (json: https://golemui.com/json/widgets-reference/input-fields/repeater.md)
 - `gui.inputs.select` — https://golemui.com/dx/widgets-reference/input-fields/select.md (json: https://golemui.com/json/widgets-reference/input-fields/select.md)
 - `gui.inputs.slider` — https://golemui.com/dx/widgets-reference/input-fields/slider.md (json: https://golemui.com/json/widgets-reference/input-fields/slider.md)

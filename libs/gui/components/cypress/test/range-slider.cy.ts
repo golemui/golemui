@@ -10,6 +10,19 @@ const labelValue = () => cy.get('gui-range-slider .gui-slider__value');
 const valueOf = (expected: unknown) =>
   element().should(([host]) => expect(host.value).to.deep.equal(expected));
 
+/** Where a character of an element's text starts on screen, from the left. */
+const leftOf = (element: Element, character: string) => {
+  // A text node: Lit's marker comments hold digits too.
+  const text = [...element.childNodes].find(
+    (node) => node.nodeType === Node.TEXT_NODE && node.textContent?.includes(character),
+  )!;
+  const index = text.textContent!.indexOf(character);
+  const range = document.createRange();
+  range.setStart(text, index);
+  range.setEnd(text, index + 1);
+  return range.getBoundingClientRect().left;
+};
+
 /** Moves a thumb the way the browser reports a drag. */
 const drag = (which: 'start' | 'end', value: number) =>
   thumb(which).then(([range]) => {
@@ -77,6 +90,27 @@ describe('gui-range-slider', () => {
           'Máximo',
         ]),
       );
+    });
+
+    it('keeps a left-to-right range in order in a right-to-left page', () => {
+      cy.mount(
+        html`<div dir="rtl">
+          <gui-range-slider
+            label="Opacidad"
+            locale-id="es"
+            maximum="1"
+            step="0.05"
+            .format=${{ style: 'percent' }}
+            .value=${{ start: 0.2, end: 0.8 }}
+          ></gui-range-slider>
+        </div>`,
+      );
+
+      labelValue().should(([value]) => {
+        expect(value.textContent?.replace(/\s/g, ' ')).to.equal('20 % – 80 %');
+        expect(leftOf(value, '2'), 'the start first').to.be.lessThan(leftOf(value, '8'));
+        expect(leftOf(value, '2'), 'digits before the sign').to.be.lessThan(leftOf(value, '%'));
+      });
     });
 
     it('shows its range formatted, and fills the rail between the thumbs', () => {

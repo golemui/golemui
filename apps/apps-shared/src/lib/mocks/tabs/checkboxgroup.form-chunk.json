@@ -1,0 +1,182 @@
+{
+  "$schema": "../../../../../../libs/gui/schemas/src/lib/layout-widget.schema.json",
+  "uid": "tabCheckboxGroup",
+  "kind": "layout",
+  "type": "grid",
+  "children": [
+    {
+      "kind": "input",
+      "type": "checkboxGroup",
+      "path": "checkboxGroups.toppings",
+      "label": "Toppings",
+      "props": {
+        "hint": "The value keeps the options' order, whatever order you check them in",
+        "options": [
+          {
+            "label": "Cheese",
+            "value": "cheese"
+          },
+          {
+            "label": "Ham",
+            "value": "ham"
+          },
+          {
+            "label": "Olives",
+            "value": "olives"
+          },
+          {
+            "label": "Mushrooms",
+            "value": "mushrooms"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "input",
+      "type": "checkboxGroup",
+      "path": "checkboxGroups.favourites",
+      "label": "Favourite toppings",
+      "props": {
+        "hint": "At most two: check a third and the error shows",
+        "options": [
+          {
+            "label": "Cheese",
+            "value": "cheese"
+          },
+          {
+            "label": "Ham",
+            "value": "ham"
+          },
+          {
+            "label": "Olives",
+            "value": "olives"
+          },
+          {
+            "label": "Mushrooms",
+            "value": "mushrooms"
+          }
+        ]
+      },
+      "validator": {
+        "type": "array",
+        "maxItems": 2,
+        "messages": {
+          "maxItems": "Pick at most two toppings"
+        }
+      }
+    },
+    {
+      "kind": "input",
+      "type": "checkboxGroup",
+      "path": "checkboxGroups.extras",
+      "label": "Extras",
+      "props": {
+        "hint": "Required, and at most two: errors show once it is touched",
+        "options": ["Napkins", "Cutlery", "Sauce"]
+      },
+      "validator": {
+        "type": "array",
+        "required": true,
+        "maxItems": 2,
+        "messages": {
+          "invalid": "Pick at least one extra",
+          "required": "Pick at least one extra",
+          "maxItems": "Pick at most two extras"
+        }
+      }
+    },
+    {
+      "kind": "input",
+      "type": "checkboxGroup",
+      "path": "checkboxGroups.days",
+      "label": "Delivery days",
+      "props": {
+        "hint": "A row of options",
+        "options": ["Mon", "Tue", "Wed", "Thu", "Fri"],
+        "direction": "row"
+      },
+      "defaultValue": ["Mon", "Wed"]
+    },
+    {
+      "kind": "input",
+      "type": "checkboxGroup",
+      "path": "checkboxGroups.disabled",
+      "label": "Disabled",
+      "props": {
+        "options": [
+          {
+            "label": "Cheese",
+            "value": "cheese"
+          },
+          {
+            "label": "Ham",
+            "value": "ham"
+          },
+          {
+            "label": "Olives",
+            "value": "olives"
+          },
+          {
+            "label": "Mushrooms",
+            "value": "mushrooms"
+          }
+        ]
+      },
+      "disabled": true,
+      "defaultValue": ["ham"]
+    },
+    {
+      "kind": "input",
+      "type": "checkboxGroup",
+      "path": "checkboxGroups.readonly",
+      "label": "Read-only",
+      "props": {
+        "options": [
+          {
+            "label": "Cheese",
+            "value": "cheese"
+          },
+          {
+            "label": "Ham",
+            "value": "ham"
+          },
+          {
+            "label": "Olives",
+            "value": "olives"
+          },
+          {
+            "label": "Mushrooms",
+            "value": "mushrooms"
+          }
+        ]
+      },
+      "readonly": true,
+      "defaultValue": ["cheese", "olives"]
+    },
+    {
+      "kind": "layout",
+      "type": "grid",
+      "props": {
+        "direction": "row"
+      },
+      "children": [
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "checkboxGroups.name",
+          "label": "Name"
+        },
+        {
+          "kind": "input",
+          "type": "checkboxGroup",
+          "path": "checkboxGroups.contact",
+          "label": "Contact me by",
+          "props": {
+            "options": ["Email", "Phone"],
+            "direction": "row"
+          }
+        }
+      ]
+    }
+  ]
+}

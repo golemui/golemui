@@ -1,12 +1,17 @@
 import { html } from 'lit';
 import '../components/alert';
+import '../components/badge';
 import '../components/checkbox';
+import '../components/checkbox-group';
 import '../components/dialog';
 import '../components/menu';
 import '../components/otp';
 import '../components/popover';
+import '../components/progress';
+import '../components/rating';
 import '../components/select';
 import '../components/slider';
+import '../components/spinner';
 import '../components/tab';
 import '../components/tab-list';
 import '../components/tab-panel';
@@ -73,5 +78,23 @@ export const serverTemplate = () =>
     <gui-checkbox uid="terms" name="terms" label="I accept the terms" value="true"></gui-checkbox>
     <gui-slider uid="seats" name="seats" label="Seats" value="12" maximum="50"></gui-slider>
     <gui-otp uid="pin" name="pin" label="Sign-in code" value="123" groups="3,3"></gui-otp>
+    <gui-checkbox-group
+      uid="addons"
+      name="addons"
+      label="Add-ons"
+      required
+      values='["sso"]'
+      options='[{"label":"Audit log","value":"audit"},{"label":"Single sign-on","value":"sso"}]'
+    ></gui-checkbox-group>
+    <gui-rating uid="support" name="support" label="Support so far" value="4"></gui-rating>
+    <p>Plan status: <gui-badge variant="success">Active</gui-badge></p>
+    <gui-progress
+      uid="setup"
+      label="Setting up your workspace"
+      value="40"
+      show-value
+      locale-id="en-US"
+    ></gui-progress>
+    <gui-spinner label="Checking your coupon"></gui-spinner>
     <gui-toaster placement="top-end"></gui-toaster>
   </form>`;

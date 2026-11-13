@@ -1,0 +1,84 @@
+{
+  "$schema": "../../../../../../libs/gui/schemas/src/lib/layout-widget.schema.json",
+  "uid": "tabRating",
+  "kind": "layout",
+  "type": "grid",
+  "children": [
+    {
+      "kind": "input",
+      "type": "rating",
+      "path": "ratings.service",
+      "label": "Service",
+      "props": {
+        "hint": "Click the picked star again, or press Delete, to clear it"
+      }
+    },
+    {
+      "kind": "input",
+      "type": "rating",
+      "path": "ratings.food",
+      "label": "Food",
+      "props": {
+        "hint": "Required: an error shows once it is touched, and again once it is cleared"
+      },
+      "validator": {
+        "type": "integer",
+        "required": true,
+        "messages": {
+          "invalid": "Rate the food"
+        }
+      }
+    },
+    {
+      "kind": "input",
+      "type": "rating",
+      "path": "ratings.stay",
+      "label": "Your stay",
+      "props": {
+        "hint": "Ten stars: the validator's maximum"
+      },
+      "validator": {
+        "type": "integer",
+        "maximum": 10
+      },
+      "defaultValue": 7
+    },
+    {
+      "kind": "input",
+      "type": "rating",
+      "path": "ratings.disabled",
+      "label": "Disabled",
+      "disabled": true,
+      "defaultValue": 2
+    },
+    {
+      "kind": "input",
+      "type": "rating",
+      "path": "ratings.readonly",
+      "label": "Read-only",
+      "readonly": true,
+      "defaultValue": 4
+    },
+    {
+      "kind": "layout",
+      "type": "grid",
+      "props": {
+        "direction": "row"
+      },
+      "children": [
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "ratings.reviewer",
+          "label": "Reviewer"
+        },
+        {
+          "kind": "input",
+          "type": "rating",
+          "path": "ratings.overall",
+          "label": "Overall"
+        }
+      ]
+    }
+  ]
+}
