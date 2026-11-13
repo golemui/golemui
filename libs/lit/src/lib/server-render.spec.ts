@@ -216,9 +216,13 @@ describe('server rendering the form health', () => {
       'GolemUI form failed to initialize:',
       expect.stringContaining('[21] Duplicate UID'),
     );
-    // The element subscribes before INITIALIZE, so a first "ok" can come before the error.
-    const statuses = healthEvents().map((health) => health.status);
-    expect(statuses.filter((status) => status === 'errored')).toHaveLength(1);
-    expect(statuses.at(-1)).toBe('errored');
+    expect(healthEvents()).toEqual([
+      {
+        status: 'errored',
+        code: 21,
+        message:
+          '[21] Duplicate UID "same-uid": Assigned to widget "textinput" at "firstName" and "textinput" at "lastName".',
+      },
+    ]);
   });
 });

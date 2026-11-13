@@ -25,12 +25,15 @@ export const runUidTests = (mountFn: MountComponentFn) => {
         }),
       });
 
-      cy.get('@formHealth').should('have.been.calledWithMatch', {
-        status: 'errored',
-        message:
-          '[21] Duplicate UID "uid1": Assigned to widget "textinput" at "something1" and "alert".',
-        code: 21,
-      } satisfies FormHealth);
+      // The first call, so an ok health before the error fails the test.
+      cy.get('@formHealth')
+        .its('firstCall.args.0')
+        .should('deep.equal', {
+          status: 'errored',
+          message:
+            '[21] Duplicate UID "uid1": Assigned to widget "textinput" at "something1" and "alert".',
+          code: 21,
+        } satisfies FormHealth);
     });
   });
 };

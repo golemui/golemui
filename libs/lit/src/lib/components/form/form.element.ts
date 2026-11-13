@@ -56,7 +56,8 @@ export class FormElement extends LitElement {
   private eventSub: Subscription[] = [];
   private unsubscribeI18n: () => void = () => undefined;
   private readonly _defaultFormName = shortUUID();
-  // False until the first INITIALIZE ran. The calls before it wait for the store.
+  // False before the first initialization, and from the start of each initialization until its
+  // first health event was sent. The calls in that time wait in the three fields below.
   private started = false;
   private dataBeforeStart: Record<string, any> | undefined;
   private metaBeforeStart: Record<string, any> | undefined;
@@ -117,6 +118,7 @@ export class FormElement extends LitElement {
   }
 
   private _reinitialize(c: FormInitConfig<WithWidget>) {
+    this.started = false;
     // Tear down subscriptions tied to the previous store instance.
     this.unsubscribeI18n();
     this.stateSub?.unsubscribe();
@@ -142,39 +144,60 @@ export class FormElement extends LitElement {
       this.requestUpdate();
     });
 
-    this.healthSub = formHealth(this.context.store.state$).subscribe((health) => {
-      this.health = health;
-      if (health.status === 'errored') {
-        console.error('GolemUI form failed to initialize:', health.message);
-      }
-      this.dispatchEvent(
-        new CustomEvent<FormHealth>(FormElement.FORM_HEALTH_EVENT, {
-          detail: health,
-          bubbles: true,
-        }),
-      );
-    });
+    try {
+      this.context.store.dispatch({
+        type: 'INITIALIZE',
+        payload: { formName: c.formName ?? this._defaultFormName, formDef: c.formDef },
+      });
+      const data = this.dataBeforeStart ?? c.data ?? {};
+      const meta = this.metaBeforeStart ?? c.meta ?? {};
+      this.dataBeforeStart = undefined;
+      this.metaBeforeStart = undefined;
+      this.context.store.dispatch({ type: 'SET_DATA', payload: { data } });
+      this.context.store.dispatch({ type: 'SET_META', payload: { meta } });
+    } finally {
+      // Also after an exception of a middleware, so that the later calls are applied.
+      // The store sends its current health on subscribe, and the first event must be the health
+      // of the started form: ok or the definition error.
+      this.healthSub = formHealth(this.context.store.state$).subscribe((health) => {
+        this.health = health;
+        if (health.status === 'errored') {
+          console.error('GolemUI form failed to initialize:', health.message);
+        }
+        this.dispatchEvent(
+          new CustomEvent<FormHealth>(FormElement.FORM_HEALTH_EVENT, {
+            detail: health,
+            bubbles: true,
+          }),
+        );
+      });
 
-    this.context.store.dispatch({
-      type: 'INITIALIZE',
-      payload: { formName: c.formName ?? this._defaultFormName, formDef: c.formDef },
-    });
-    this.started = true;
-    const data = this.dataBeforeStart ?? c.data ?? {};
-    const meta = this.metaBeforeStart ?? c.meta ?? {};
-    this.dataBeforeStart = undefined;
-    this.metaBeforeStart = undefined;
-    this.context.store.dispatch({ type: 'SET_DATA', payload: { data } });
-    this.context.store.dispatch({ type: 'SET_META', payload: { meta } });
-    if (this.healthBeforeStart) {
-      const formHealth = this.healthBeforeStart;
-      this.healthBeforeStart = undefined;
-      this.context.store.dispatch({ type: 'SET_FORM_HEALTH', payload: { formHealth } });
+      this.started = true;
+      this.dispatchCallsBeforeStart();
     }
 
     // A detached element subscribes in connectedCallback.
     if (!this.detached) {
       this.subscribeToLanguage();
+    }
+  }
+
+  // Runs after the first health event, so a queued call never comes before that event.
+  private dispatchCallsBeforeStart() {
+    if (this.dataBeforeStart) {
+      const data = this.dataBeforeStart;
+      this.dataBeforeStart = undefined;
+      this.context.store.dispatch({ type: 'SET_DATA', payload: { data } });
+    }
+    if (this.metaBeforeStart) {
+      const meta = this.metaBeforeStart;
+      this.metaBeforeStart = undefined;
+      this.context.store.dispatch({ type: 'SET_META', payload: { meta } });
+    }
+    if (this.healthBeforeStart) {
+      const formHealth = this.healthBeforeStart;
+      this.healthBeforeStart = undefined;
+      this.context.store.dispatch({ type: 'SET_FORM_HEALTH', payload: { formHealth } });
     }
   }
 
