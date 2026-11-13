@@ -157,7 +157,11 @@ function commonNote(fw: DxFramework = 'react'): string {
     'EVENT HANDLERS — `onChange`/`onLoad`/`onFilter`/`onBlur` (inputs/layouts) and `onClick` (actions) are ' +
     'FUNCTIONS, never bare strings: return a string to dispatch a host event by that name ' +
     "(`onChange: () => 'languageChanged'`), or take the event to push live changes " +
-    "(`onChange: (event) => event.update({ path: 'city', options: [...] })`)."
+    "(`onChange: (event) => event.update({ path: 'city', options: [...] })`). " +
+    'A button `onClick` is different: its first parameter is the form data and the event is the second ' +
+    '(`onClick: (data, event) => ...`). ' +
+    'A handler with no parameters is called while the form is built, to read a host event name, so a ' +
+    'handler that does something must declare its first parameter.'
   );
 }
 
@@ -595,10 +599,8 @@ const INPUTS: DxSpec[] = [
       'PER-ROW EVENTS: every form event from a widget inside a row carries `row: { index, indexes, path }`, ' +
         "for example `{ index: 1, indexes: [2, 1], path: 'teams.2.devs.1' }`. `indexes` lists the position in " +
         'every enclosing repeater, outermost first. `path` is the data path of the row. Outside a repeater `row` ' +
-        'is undefined. Read it in the host `formEvent` handler (`e.row`), in a menu `onClick: (event) => ...`, or ' +
-        'in an input `onChange: (event) => ...`. A button `onClick` handler receives only the form data, so it ' +
-        "cannot read `row`: return a host event name instead (`onClick: () => 'rowPicked'`) and read `e.row` in " +
-        '`formEvent`.',
+        'is undefined. Read it in the host `formEvent` handler (`e.row`), in a menu `onClick: (event) => ...`, ' +
+        'in a button `onClick: (data, event) => ...`, or in an input `onChange: (event) => ...`.',
       'PER-ROW OPTIONS: do NOT set options that depend on the row data with `event.update` from a row event. ' +
         'An override moves with its row when the Remove button removes a row, but it stays at its position when ' +
         '`setData` writes a new array, so a row can then show the options of another row. Use a definition callback ' +
@@ -800,7 +802,9 @@ const ACTIONS: DxSpec[] = [
     notes: [
       "Submit button: `gui.actions.button({ label, actionType: 'submit' })`.",
       "There is NO `gui.actions.submitButton` — it was removed. Use `button` with `actionType: 'submit'`.",
-      'For a non-submit action use an `onClick: (event) => { /* event.data is the form data */ }` handler.',
+      'For a non-submit action use an `onClick: (data, event) => { ... }` handler: `data` is the form data and `event` is the form event, with `event.row` inside a repeater row. Such a handler runs only on click.',
+      'A handler that does something MUST declare the `data` parameter, also when it does not read it. A handler with no parameters, with only default or rest parameters, or wrapped (for example a debounced function) is called while the form is built, to read a host event name. In a callback button it is called each time the callback runs.',
+      "A handler with no parameters that returns a string (`onClick: () => 'saved'`) dispatches that event name to the host's `formEvent` instead. A string that a handler returns on click is ignored, and the form logs a warning.",
       "An icon-only button (no `label`) needs `ariaLabel`, its accessible name: `gui.actions.button({ icon: 'close', ariaLabel: 'Close' })`. With a label, the label is the name.",
     ],
   },
@@ -813,7 +817,7 @@ const ACTIONS: DxSpec[] = [
       "gui.actions.menu({ label: 'Actions', items: [{ label: 'Edit', value: 'edit' }, { separator: true }, { label: 'Delete', value: 'delete' }], onClick: (event) => console.log(event.detail.value) })",
     notes: [
       'A button that opens a menu of actions. `items` holds actions `{ label, value, disabled? }` and separators `{ separator: true }`.',
-      "`onClick` gets the event: the picked item's value is `event.detail.value`. Unlike `button`, whose `onClick` gets the form data.",
+      "`onClick` gets the event: the picked item's value is `event.detail.value`. Unlike `button`, whose `onClick` gets the form data first and the event second: `(data, event)`.",
       "A handler with no parameters that returns a string (`onClick: () => 'rowAction'`) dispatches that event name to the host's `formEvent` instead.",
       "`placement` sets where the menu opens (default `'bottom-start'`). It is not an input: no path, nothing in the form data.",
       "`label` is optional: an icon-only menu (`icon: 'more_vert'`) MUST set `ariaLabel`, the button's accessible name.",
