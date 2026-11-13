@@ -574,7 +574,7 @@ Moving a `gui-form` to another parent element keeps its data. It must keep its l
 
   -> the user had selected tab B before the move -> tab B is still selected.
 
-- Status: not yet. The tabs and the accordions go back to their `defaultOpen`.
+- Status: follows.
 
 ## Form component
 
