@@ -11,7 +11,7 @@ import { validateFormDefinition } from './validate-form-definition';
 // per-widget walk (with its position rules) are the only source of truth. This test keeps the
 // whole-form validator, generated for tests only, and checks on the goldens and on thousands of
 // mutations of them that the walk misses nothing it rejects.
-const LINT_KEYWORDS = new Set(['reactiveExpression', 'stringInterpolation']);
+const LINT_KEYWORDS = new Set(['reactiveExpression', 'stringInterpolation', 'duplicateUid']);
 
 const corpus = Object.entries(buildMutationCorpus());
 

@@ -990,4 +990,216 @@ describe('json_validate_form_definition', () => {
       expect(warning?.failsAtRuntime).toBe(false);
     });
   });
+
+  describe('repeated uids', () => {
+    const textInput = (path: string, uid?: string) => ({
+      kind: 'input',
+      type: 'textinput',
+      path,
+      ...(uid === undefined ? {} : { uid }),
+    });
+    const heading = (uid?: string) => ({
+      kind: 'display',
+      type: 'heading',
+      props: { text: 'Title' },
+      ...(uid === undefined ? {} : { uid }),
+    });
+    const flex = (children: unknown[]) => ({ kind: 'layout', type: 'flex', children });
+    const repeaterWith = (path: string, children: unknown[]) => ({
+      kind: 'input',
+      type: 'repeater',
+      path,
+      props: { template: flex(children) },
+    });
+    const chunkReference = { $ref: './contact.form-chunk.json' };
+    const duplicateUidErrors = (result: ReturnType<typeof validateFormDefinition>) =>
+      result.errors.filter((error) => error.keyword === 'duplicateUid');
+    const topLevelEffect = 'error code 21';
+    const rowEffect = 'In each row, one widget replaces the other, with no message.';
+
+    it.each([
+      {
+        name: 'two widgets with the same written uid at the top level',
+        form: [textInput('home', 'phone'), textInput('mobile', 'phone')],
+        errorPaths: ['/form/1'],
+        firstPath: '/form/0',
+        messageParts: ['`phone`', topLevelEffect],
+      },
+      {
+        name: 'two inputs with no uid and the same derived uid at the top level',
+        form: [textInput('email'), textInput('email')],
+        errorPaths: ['/form/1'],
+        firstPath: '/form/0',
+        messageParts: ['`email-textinput`', 'from `path` and `type`', topLevelEffect],
+      },
+      {
+        name: 'two widgets with the same written uid in a repeater template',
+        form: [
+          repeaterWith('contacts', [
+            textInput('contacts.items.home', 'phone'),
+            textInput('contacts.items.mobile', 'phone'),
+          ]),
+        ],
+        errorPaths: ['/form/0/props/template/children/1'],
+        firstPath: '/form/0/props/template/children/0',
+        messageParts: ['`phone`', rowEffect],
+      },
+      {
+        name: 'two inputs with no uid and the same derived uid in a repeater template',
+        form: [
+          repeaterWith('contacts', [
+            textInput('contacts.items.email'),
+            textInput('contacts.items.email'),
+          ]),
+        ],
+        errorPaths: ['/form/0/props/template/children/1'],
+        firstPath: '/form/0/props/template/children/0',
+        messageParts: ['`contacts.items.email-textinput`', rowEffect],
+      },
+      {
+        name: 'the same template uid in two repeaters next to each other',
+        form: [
+          repeaterWith('home', [textInput('home.items.street', 'street')]),
+          repeaterWith('work', [textInput('work.items.street', 'street')]),
+        ],
+        errorPaths: ['/form/1/props/template/children/0'],
+        firstPath: '/form/0/props/template/children/0',
+        messageParts: ['`street`', rowEffect],
+      },
+      {
+        name: 'a repeated uid inside a layout inside a layout',
+        form: [flex([flex([textInput('email')])]), textInput('email')],
+        errorPaths: ['/form/1'],
+        firstPath: '/form/0/children/0/children/0',
+        messageParts: ['`email-textinput`', topLevelEffect],
+      },
+      {
+        name: 'the same uid in the templates of two repeaters inside repeaters',
+        form: [
+          repeaterWith('teams', [
+            repeaterWith('teams.items.devs', [textInput('teams.items.devs.items.name', 'name')]),
+          ]),
+          repeaterWith('groups', [
+            repeaterWith('groups.items.members', [
+              textInput('groups.items.members.items.name', 'name'),
+            ]),
+          ]),
+        ],
+        errorPaths: ['/form/1/props/template/children/0/props/template/children/0'],
+        firstPath: '/form/0/props/template/children/0/props/template/children/0',
+        messageParts: ['`name`', rowEffect],
+      },
+      {
+        name: 'a written uid that is the derived uid of another input',
+        form: [textInput('email'), textInput('other', 'email-textinput')],
+        errorPaths: ['/form/1'],
+        firstPath: '/form/0',
+        messageParts: ['`email-textinput`', topLevelEffect],
+      },
+      {
+        name: 'a written uid that is the position uid of another widget',
+        form: [heading('#0.1'), heading()],
+        errorPaths: ['/form/1'],
+        firstPath: '/form/0',
+        messageParts: ['`#0.1`', 'from its position', topLevelEffect],
+      },
+      {
+        name: 'a repeated uid with a chunk reference between the widgets',
+        form: [textInput('email'), chunkReference, textInput('email')],
+        errorPaths: ['/form/2'],
+        firstPath: '/form/0',
+        messageParts: ['`email-textinput`', topLevelEffect],
+      },
+      {
+        name: 'three widgets with the same uid',
+        form: [textInput('a', 'name'), textInput('b', 'name'), textInput('c', 'name')],
+        errorPaths: ['/form/1', '/form/2'],
+        firstPath: '/form/0',
+        messageParts: ['`name`', topLevelEffect],
+      },
+    ])(
+      'reports $name as an error on each later widget',
+      ({ form, errorPaths, firstPath, messageParts }) => {
+        const result = validateFormDefinition({ formDefinition: { form } });
+
+        expect(result.valid).toBe(false);
+        const errors = duplicateUidErrors(result);
+        expect(errors.map((error) => error.path)).toEqual(errorPaths);
+        for (const error of errors) {
+          expect(error.message).toContain(`\`${firstPath}\``);
+          for (const part of messageParts) {
+            expect(error.message).toContain(part);
+          }
+          expect(error.suggestion).toBe('Give one of the two widgets another `uid`.');
+        }
+      },
+    );
+
+    it('names the root layout of the form for the uid #0', () => {
+      const result = validateFormDefinition({ formDefinition: { form: [heading('#0')] } });
+
+      expect(result.valid).toBe(false);
+      const errors = duplicateUidErrors(result);
+      expect(errors).toHaveLength(1);
+      expect(errors[0]?.path).toBe('/form/0');
+      expect(errors[0]?.message).toContain('the root layout that the form creates');
+      expect(errors[0]?.suggestion).toBe('Give this widget another `uid`.');
+    });
+
+    it.each([
+      {
+        name: 'widgets whose written and derived uids are all different',
+        form: [
+          textInput('email'),
+          { kind: 'input', type: 'number', path: 'email' },
+          textInput('phone', 'phone'),
+          flex([textInput('street')]),
+          flex([textInput('city')]),
+          repeaterWith('contacts', [
+            textInput('contacts.items.email'),
+            textInput('contacts.items.phone'),
+          ]),
+        ],
+      },
+      {
+        name: 'the same uid at the top level and in a repeater template',
+        form: [
+          textInput('home', 'phone'),
+          repeaterWith('contacts', [textInput('contacts.items.phone', 'phone')]),
+        ],
+      },
+      {
+        name: 'the same uid in a repeater template and in the template of a repeater inside it',
+        form: [
+          repeaterWith('teams', [
+            textInput('teams.items.name', 'name'),
+            repeaterWith('teams.items.devs', [textInput('teams.items.devs.items.name', 'name')]),
+          ]),
+        ],
+      },
+    ])('accepts $name', ({ form }) => {
+      const result = validateFormDefinition({ formDefinition: { form } });
+
+      expect(result.valid).toBe(true);
+      expect(result.errors).toEqual([]);
+    });
+
+    it('reports no repeated uid for inputs whose path or type is not a string', () => {
+      const result = validateFormDefinition({
+        formDefinition: {
+          form: [
+            { kind: 'input', type: 'textinput' },
+            { kind: 'input', type: 'textinput' },
+            { kind: 'input', type: 'textinput', path: 5 },
+            { kind: 'input', type: 'textinput', path: 5 },
+            { kind: 'input', type: 5, path: 'email' },
+            { kind: 'input', type: 5, path: 'email' },
+          ],
+        },
+      });
+
+      expect(result.valid).toBe(false);
+      expect(duplicateUidErrors(result)).toEqual([]);
+    });
+  });
 });
