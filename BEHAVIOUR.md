@@ -265,8 +265,7 @@ An app that waits for the first `formHealth` value must not see `ok` for a broke
 
   -> `formHealth` sends the error only, so the app calls only `showErrorPage`.
 
-- Status: follows in React, Vue and Angular. Not yet in Lit. It sends `{ status: 'ok' }` first and
-  then the error, so the app shows the broken form first.
+- Status: follows.
 
 ## Validation
 
