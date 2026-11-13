@@ -292,7 +292,7 @@ describe('DX Pipeline — Event Wiring', () => {
       ) as any;
 
       result.events!({ name: button.on.click, data: { x: 1 }, callback: vi.fn() });
-      expect(clickFn).toHaveBeenCalledWith({ x: 1 });
+      expect(clickFn).toHaveBeenCalledWith({ x: 1 }, expect.objectContaining({ data: { x: 1 } }));
     });
 
     it('onClick returning string lands as on.click for host-managed dispatch', () => {

@@ -574,7 +574,7 @@ Moving a `gui-form` to another parent element keeps its data. It must keep its l
 
   -> the user had selected tab B before the move -> tab B is still selected.
 
-- Status: not yet. The tabs and the accordions go back to their `defaultOpen`.
+- Status: follows.
 
 ## Form component
 
@@ -599,8 +599,7 @@ When the app passes a new config object, the form starts again from the new conf
   form and marks the field there as touched. So a required empty field shows its error before
   the user does anything.
 - It initializes once, and `formHealth` sends one value. For example, a middleware that logs
-  each form start logs one start. Status: follows in React, Vue and Lit. Not yet in Angular,
-  which initializes two times.
+  each form start logs one start. Status: follows in React, Angular, Vue and Lit.
 
 ### 26. `setData` before the form has started keeps the values
 
@@ -785,9 +784,10 @@ In a form definition, each `on` value is the name of the event, a string. Functi
   -> nothing runs when the form is built. On click, the handler gets the form data, and the event
   as a second parameter.
 
-- Status: not yet. Every handler is called once with `undefined` when the form is built, so this
-  example calls `api.save(undefined)`. A handler like `(event) => event.data` throws there, and
-  the form is not built. On click it gets only the data.
+- Status: follows for a handler that declares a parameter. A handler whose `length` is 0 is
+  called while the form is built, to read a host event name: a handler with no parameters, with
+  only default or rest parameters, or a wrapped function such as a debounced one. In a callback
+  button this call happens each time the callback runs.
 
 ### 36. `$log` works in every expression
 
