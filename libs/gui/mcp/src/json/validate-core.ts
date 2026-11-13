@@ -6,6 +6,7 @@ import {
 } from '../shared/lint/reactive-expressions';
 import { lintBooleanValidators } from '../shared/lint/boolean-validator';
 import { lintStringInterpolations, type InterpolationFinding } from './string-interpolation';
+import { findRepeatedUids } from './repeated-uids';
 
 export type ValidateInput = {
   formDefinition: unknown;
@@ -60,6 +61,9 @@ export function runValidation(input: ValidateInput, validators: ValidatorLookup)
       params: { expression: finding.slot },
     });
   }
+  // The form keeps the state of a widget under its uid, so a repeated uid breaks it. The schema
+  // cannot express this.
+  errors.push(...findRepeatedUids(input.formDefinition));
 
   // `valid` follows hard errors only — custom-widget warnings don't fail validation.
   return {
