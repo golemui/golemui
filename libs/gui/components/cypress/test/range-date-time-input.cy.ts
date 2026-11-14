@@ -1,4 +1,5 @@
 import { html } from 'lit';
+import type { DateTimeRange } from '../../src/lib/types';
 import type { GuiRangeDateTimeInput } from '../../src/lib/components/range-date-time-input';
 
 type Group = 'start' | 'end';
@@ -203,6 +204,27 @@ describe('gui-range-date-time', () => {
       part('end', 'day').should('have.value', '12');
       part('end', 'hour').should('have.value', '05');
       part('end', 'dayPeriod').should('contain.text', 'PM');
+    });
+
+    it('loads a range without an end into the fields, with the start as the end', () => {
+      const open = [{ start: '2026-03-15T10:00' }] as unknown as DateTimeRange[];
+      const onError = cy.spy().as('error');
+      cy.on('uncaught:exception', (err) => {
+        onError(err.message);
+        return false;
+      });
+      cy.mount(
+        html`<gui-range-date-time label="Shift" locale-id="en-US" allow-edit .value=${open}>
+        </gui-range-date-time>`,
+      );
+
+      pills().first().click({ force: true });
+      pills().first().type('e', { force: true });
+      part('start', 'day').should('have.value', '15');
+      part('end', 'month').should('have.value', '03');
+      part('end', 'day').should('have.value', '15');
+      part('end', 'hour').should('have.value', '10');
+      cy.get('@error').should('not.have.been.called');
     });
 
     it('fires its events to an ancestor listener', () => {

@@ -566,7 +566,7 @@ export class GuiRangeDateTimeInput extends GuiFormControl {
   private loadRangeForEdit(range: DateTimeRange) {
     this._parts.clearSurfacedInputError(this.value ?? []);
     const [startDate, startTime] = range.start.split('T');
-    const [endDate, endTime] = range.end.split('T');
+    const [endDate, endTime] = (range.end ?? range.start).split('T');
     this.fillDate('start', startDate);
     this.fillTime('start', startTime ?? null);
     this.fillDate('end', endDate);
