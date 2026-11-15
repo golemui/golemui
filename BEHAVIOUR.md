@@ -272,6 +272,12 @@ An app that waits for the first `formHealth` value must not see `ok` for a broke
 The user sees errors on the inputs. The app reads `isFormValid` and `$formIsInvalid`, for example
 to disable the submit button. Both must always agree with what the user sees.
 
+An issue injected with `INJECT_VALIDATION_ISSUES` (by the app, or by a widget through the adapter
+method `injectValidationIssues`) is an exception: `isFormValid` counts it, but `$formIsInvalid`
+and `$errors` do not. For example, the server rejects the email and the app injects the issue ->
+the email input shows the issue and `isFormValid` is false, but a submit button with
+`disabled: { when: '$formIsInvalid' }` stays enabled.
+
 ### 11. A hidden input never makes the form invalid
 
 - Scenario: a checkout form asks for a VAT number only from companies. The user checks "I buy as
@@ -695,8 +701,9 @@ an ancestor, for example of an outer page form, must not run for it.
 
 ### 30. A layout hidden at mount has `children: []`
 
-Custom layout widgets read `templateData.children`. Its type is an array, so it must always be
-one.
+Custom layout widgets in Angular and Lit read `templateData.children`. Its type is an array, so
+it must always be one. A React or Vue layout widget reads the `children` value that
+`useLayoutWidget` returns next to `templateData`.
 
 - Scenario: an app has a custom "card" layout widget that renders `templateData.children.map(...)`.
   A card has an `include.when` that is false when the form starts.
