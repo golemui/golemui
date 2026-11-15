@@ -504,9 +504,18 @@ is not leaving it.
 - Scenario: several users edit the same list. The app polls the server and calls `setData` with
   the new rows while a keyboard user types in the list.
 - Example: rows `[Alice, Bob, Carol]`, the focus is in Carol's input, the app calls
-  `setData({ rows: [Bob, Carol] })` -> the focus stays in an input of the repeater.
-- Status: not yet. The input of row 2 is removed, and the focus goes to `document.body`. A
-  keyboard user must start again from the top of the page.
+  `setData({ rows: [Bob, Carol] })` -> the input of row 2 is removed, and the focus moves to the
+  same input of the last row, row 1, which now shows Carol.
+- The user removes the last row with its Remove button: the focus is not moved, so it goes to
+  `document.body`. A moved focus would let a held Enter key remove one row after another.
+- The last row does not have the same element: another element of that row gets the focus, never
+  a Remove button. When the row has no such element, the focus goes to `document.body`.
+- No row is left: the Add button gets the focus. If there is no enabled Add button, the focus goes
+  to `document.body`.
+- The rows are keyed by position, so the focus follows a position, not a record. When the host
+  removes the record of the focus, the focus stays in the same input at its position, or moves to
+  the same input of the new last row when its position is gone. That input shows another record.
+- Status: follows.
 
 ## Tabs and accordion
 

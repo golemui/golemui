@@ -1,5 +1,10 @@
 import type { InputWidget, WithWidget } from '@golemui/core';
-import { type RepeaterProps } from '@golemui/gui-shared/internals';
+import {
+  findRepeaterRowFocus,
+  focusAfterRowRemoval,
+  type RepeaterProps,
+  type RepeaterRowFocus,
+} from '@golemui/gui-shared/internals';
 import { formContext, inputContext, InputWidgetAdapter, type LitFormContext } from '@golemui/lit';
 import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';
@@ -26,8 +31,19 @@ export class RepeaterElement extends LitElement implements WithWidget {
 
   subscriptions: Subscription[] = [];
 
+  private rowFocus: RepeaterRowFocus | null = null;
+
   override createRenderRoot() {
     return this;
+  }
+
+  // Lit changes the DOM of the rows between `willUpdate` and `updated`.
+  override willUpdate(changedProperties: any) {
+    super.willUpdate(changedProperties);
+    this.rowFocus = findRepeaterRowFocus(
+      this._repeaterRef,
+      this.adapter.templateData.rows?.length ?? 0,
+    );
   }
 
   override updated(changedProperties: any) {
@@ -36,6 +52,9 @@ export class RepeaterElement extends LitElement implements WithWidget {
     const { readonly, disabled } = this.adapter.templateData;
     this.classList.toggle('gui-repeater--readonly', !!readonly);
     this.classList.toggle('gui-repeater--disabled', !!disabled);
+
+    focusAfterRowRemoval(this._repeaterRef, this.rowFocus);
+    this.rowFocus = null;
   }
 
   override connectedCallback() {
