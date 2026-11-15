@@ -5,7 +5,7 @@ export const RELEASE_TYPES = ['alpha', 'beta', 'rc', 'stable'] as const;
 export type ReleaseType = (typeof RELEASE_TYPES)[number];
 
 interface ParsedVersion {
-  /** The version as it was given, for example `v2.2.1-rc.0`. Used in error messages. */
+  /** The version as it was given, for example `v1.2.1-rc.0`. Used in error messages. */
   text: string;
   major: number;
   minor: number;
@@ -107,12 +107,12 @@ function compareVersions(first: ParsedVersion, second: ParsedVersion): number {
  * Checks that the computed version has the shape of the requested release type: no pre-release
  * part for `stable`, and the pre-release name of the type for the other types.
  *
- * @param version - The version that the release computed, for example `3.0.0-alpha.0`.
+ * @param version - The version that the release computed, for example `2.0.0-alpha.0`.
  * @param releaseType - The requested release type.
  * @returns True when the version belongs to the release type.
  * @example
- * versionMatchesReleaseType('2.2.1-rc.0', 'rc'); // true
- * versionMatchesReleaseType('2.2.1-rc.0', 'stable'); // false
+ * versionMatchesReleaseType('1.2.1-rc.0', 'rc'); // true
+ * versionMatchesReleaseType('1.2.1-rc.0', 'stable'); // false
  */
 export function versionMatchesReleaseType(version: string, releaseType: ReleaseType): boolean {
   const { prerelease } = parseVersionOrThrow(version);
@@ -135,15 +135,15 @@ export function versionMatchesReleaseType(version: string, releaseType: ReleaseT
  *
  * @param version - The version to publish.
  * @param existingVersions - The versions that exist already, as versions or as version tags
- * (`2.2.0` or `v2.2.0`). A text that is not a version is ignored.
+ * (`1.2.0` or `v1.2.0`). A text that is not a version is ignored.
  * @returns The npm dist-tag.
  * @throws When an existing version of the same major is equal to or higher than the version to
  * publish, for example an alpha after a beta of the same version. The tag would move back to an
  * older version.
  * @example
- * npmTagForVersion('2.2.1', ['v2.2.0', 'v3.0.0-beta.1']); // 'latest'
- * npmTagForVersion('2.2.2', ['v2.2.1', 'v3.0.0']); // 'latest-2'
- * npmTagForVersion('2.2.2-rc.0', ['v2.2.1', 'v3.0.0-alpha.0']); // 'next-2'
+ * npmTagForVersion('1.2.1', ['v1.2.0', 'v2.0.0-beta.1']); // 'latest'
+ * npmTagForVersion('1.2.2', ['v1.2.1', 'v2.0.0']); // 'latest-1'
+ * npmTagForVersion('1.2.2-rc.0', ['v1.2.1', 'v2.0.0-alpha.0']); // 'next-1'
  */
 export function npmTagForVersion(version: string, existingVersions: readonly string[]): string {
   const released = parseVersionOrThrow(version);

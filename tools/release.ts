@@ -2,7 +2,7 @@ import { execFileSync, execSync } from 'node:child_process';
 import { copyFileSync, existsSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { releaseChangelog, releasePublish, releaseVersion } from 'nx/release';
-import { npmTagForVersion, parseReleaseType, versionMatchesReleaseType } from './release-plan';
+import { npmTagForVersion, parseReleaseType, versionMatchesReleaseType } from './release-rules';
 import { updateTemplateVersions } from './update-template-versions';
 
 process.setMaxListeners(20);
