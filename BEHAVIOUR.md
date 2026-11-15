@@ -622,8 +622,25 @@ last call replaces the `data` or `meta` of the config, like a call after the sta
 call is applied when the form has started, so the first health value is the health of the started
 form (`ok` or the error of the start), and the health of the call follows.
 
+A new config is a similar case, but the frameworks differ.
+
+In Lit, the form gets the new config when the app assigns the property `config` (or `validators`
+of `gui-core-form`), and it starts with it in the next update. A call between these two moments
+belongs to the new form and follows the rule above. The old form gets nothing from it. On a form
+that has started before, a call that was made for a config that never starts is dropped: when the
+app assigns config B, calls `setData` and assigns config C in the same task, the form starts once,
+with the data of C. A form that has never started keeps every call for its first start. When no
+start follows, because the config became `undefined` again, the form that is there gets the call.
+
+In Angular, React and Vue, the form gets a new config in its next render (Angular: the next change
+detection pass, also after `ComponentRef.setInput`). A call before that goes to the old form, and
+then the new config replaces that form (rule 25).
+
 - Scenario: a page creates the form, fills in a draft that it saved in `localStorage`, and then
   adds the form to the page.
+- Scenario: a Lit page shows a form for the selected customer. When the user selects another
+  customer, the page assigns the config of that customer and fills in the draft that it saved for
+  them.
 - Example:
 
   ```ts
@@ -635,7 +652,22 @@ form (`ok` or the error of the start), and the health of the call follows.
 
   -> the form starts with `name: 'Ann'`.
 
-- Status: follows.
+- Example, a Lit form that is on the page:
+
+  ```ts
+  form.config = { formDef, data: { name: 'Bea' } };
+  form.setData({ name: 'Ann' });
+  ```
+
+  -> the new form starts with `name: 'Ann'`, and the old form gets no `setData` call.
+
+- Status: follows for the first start. For a new config: follows in Lit. Vue starts the form in the
+  render in which it gets the new config, so no call can come between. Angular starts the form in
+  the change detection pass in which it gets the new config, but after the lifecycle hooks of that
+  pass, so a call from `ngOnChanges`, `ngOnInit` or `ngDoCheck` of another directive in that pass
+  is lost. Not yet in React: after the form has started with the new config, the handle still calls
+  the old form until one more render, so a call from an effect of the host that runs for the new
+  config is lost.
 
 ### 27. The native `submit` event does not reach ancestor elements
 

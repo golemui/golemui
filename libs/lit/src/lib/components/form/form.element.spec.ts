@@ -3,7 +3,12 @@ import { type Action, type FormHealth, identityTranslator } from '@golemui/core'
 import { safeDefine } from '@golemui/lit-utils';
 import { html, nothing } from 'lit';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { buildConfig, noopValidators, stubWidgetLoaders } from '../../ssr.fixture';
+import {
+  buildConfig,
+  noopValidators,
+  recordActionsByStore,
+  stubWidgetLoaders,
+} from '../../ssr.fixture';
 import { FormElement } from './form.element';
 import type { FormHealthBoundary } from './form-health-boundary';
 
@@ -96,6 +101,28 @@ describe('setData and setMeta before the form starts', () => {
 
     form.setData({ firstName: 'Bob' });
     setConfig(form, buildConfig());
+    await startForm(form);
+
+    expect(form.context.store.getState().data).toEqual({ firstName: 'Bob' });
+  });
+
+  it('keeps a setData call made before two config assignments that come before the first update', async () => {
+    const form = createFormWithoutMounting();
+
+    form.setData({ firstName: 'Bob' });
+    setConfig(form, buildConfig());
+    setConfig(form, { ...buildConfig(), localization: identityTranslator('en-US') });
+    await startForm(form);
+
+    expect(form.context.store.getState().data).toEqual({ firstName: 'Bob' });
+  });
+
+  it('keeps a setData call made between two config assignments that come before the first update', async () => {
+    const form = createFormWithoutMounting();
+
+    setConfig(form, buildConfig());
+    form.setData({ firstName: 'Bob' });
+    setConfig(form, { ...buildConfig(), localization: identityTranslator('en-US') });
     await startForm(form);
 
     expect(form.context.store.getState().data).toEqual({ firstName: 'Bob' });
@@ -399,6 +426,265 @@ describe('setHealth before the form starts', () => {
     await startForm(form);
 
     expect(healths).toEqual([{ status: 'ok' }, listenerHealth]);
+  });
+});
+
+describe('a call after a new config and before the form starts with it', () => {
+  const draft = { firstName: 'Bob' };
+  const callHealth: FormHealth = { status: 'errored', code: 10_004, message: 'call after config' };
+
+  /** Records the actions of each store, and builds configs with the recording middleware. */
+  const createRecorder = () => {
+    const { actionTypesByStore, middleware } = recordActionsByStore();
+    const configWith = (values: Record<string, unknown> = {}) =>
+      ({ ...buildConfig(), middlewares: [middleware], ...values }) as ReturnType<
+        typeof buildConfig
+      >;
+    return { actionTypesByStore, configWith };
+  };
+
+  /** Mounts a form, waits for its widgets and clears the actions of its start. */
+  async function mountRecordedForm() {
+    const recorder = createRecorder();
+    const form = await mountForm(recorder.configWith());
+    await vi.waitFor(() => expect(form.querySelector('gui-stub-flex')).not.toBeNull());
+    const oldStoreActions = recorder.actionTypesByStore[0];
+    oldStoreActions.length = 0;
+    return { form, oldStoreActions, recorder };
+  }
+
+  const countOf = (actionTypes: string[], actionType: string) =>
+    actionTypes.filter((type) => type === actionType).length;
+
+  it('starts the new form with the data of a setData call made after the new config', async () => {
+    const { form, oldStoreActions, recorder } = await mountRecordedForm();
+
+    setConfig(form, recorder.configWith({ data: { firstName: 'Dana' } }));
+    form.setData(draft);
+    await form.updateComplete;
+
+    expect(form.context.store.getState().data).toEqual(draft);
+    expect(oldStoreActions).toEqual([]);
+    expect(recorder.actionTypesByStore).toHaveLength(2);
+    expect(countOf(recorder.actionTypesByStore[1], 'SET_DATA')).toBe(1);
+  });
+
+  it('starts the new form with the meta of a setMeta call made after the new config', async () => {
+    const { form, oldStoreActions, recorder } = await mountRecordedForm();
+
+    setConfig(form, recorder.configWith({ meta: { tier: 'free' } }));
+    form.setMeta({ tier: 'paid' });
+    await form.updateComplete;
+
+    expect(form.context.store.getState().meta).toEqual({ tier: 'paid' });
+    expect(oldStoreActions).toEqual([]);
+    expect(recorder.actionTypesByStore).toHaveLength(2);
+    expect(countOf(recorder.actionTypesByStore[1], 'SET_META')).toBe(1);
+  });
+
+  it('dispatches ok for the new form and then the health of a setHealth call made after the new config', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const { form, oldStoreActions, recorder } = await mountRecordedForm();
+    const healths = recordEvents<FormHealth>(form, 'formHealth');
+
+    setConfig(form, recorder.configWith());
+    form.setHealth(callHealth);
+    await form.updateComplete;
+
+    expect(healths).toEqual([{ status: 'ok' }, callHealth]);
+    expect(form.context.store.getState().formHealth).toEqual(callHealth);
+    expect(oldStoreActions).toEqual([]);
+  });
+
+  it('dispatches the definition error of the new form and then the health of a setHealth call made after the new config', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const { form, oldStoreActions, recorder } = await mountRecordedForm();
+    const healths = recordEvents<FormHealth>(form, 'formHealth');
+
+    setConfig(form, recorder.configWith({ formDef: duplicateUidFormDef }));
+    form.setHealth(callHealth);
+    await form.updateComplete;
+
+    expect(healths).toEqual([duplicateUidHealth, callHealth]);
+    expect(oldStoreActions).toEqual([]);
+  });
+
+  it('gives a setData call made before the new config to the old form', async () => {
+    const { form, oldStoreActions, recorder } = await mountRecordedForm();
+    const oldStore = form.context.store;
+
+    form.setData(draft);
+    setConfig(form, recorder.configWith({ data: { firstName: 'Dana' } }));
+    await form.updateComplete;
+
+    expect(oldStore.getState().data).toEqual(draft);
+    expect(oldStoreActions).toEqual(['SET_DATA']);
+  });
+
+  it('starts the new form with the data of the new config after a setData call made before the new config', async () => {
+    const { form, recorder } = await mountRecordedForm();
+
+    form.setData(draft);
+    setConfig(form, recorder.configWith({ data: { firstName: 'Dana' } }));
+    await form.updateComplete;
+
+    expect(form.context.store.getState().data).toEqual({ firstName: 'Dana' });
+  });
+
+  it('starts the new form with the data of a setData call made after a new validators value', async () => {
+    const { form, oldStoreActions, recorder } = await mountRecordedForm();
+
+    form.validators = (validator, localization) => noopValidators(validator, localization);
+    form.setData(draft);
+    await form.updateComplete;
+
+    expect(form.context.store.getState().data).toEqual(draft);
+    expect(oldStoreActions).toEqual([]);
+    expect(recorder.actionTypesByStore).toHaveLength(2);
+  });
+
+  it('applies a setData call at once when the same config object is assigned again', async () => {
+    const { form, oldStoreActions, recorder } = await mountRecordedForm();
+
+    setConfig(form, form.config as unknown as ReturnType<typeof buildConfig>);
+    form.setData(draft);
+
+    expect(form.context.store.getState().data).toEqual(draft);
+    expect(oldStoreActions).toEqual(['SET_DATA']);
+    await form.updateComplete;
+    expect(recorder.actionTypesByStore).toHaveLength(1);
+  });
+
+  it('starts one time with the last of two configs and applies the last call of each kind made after it', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const { form, oldStoreActions, recorder } = await mountRecordedForm();
+    const healths = recordEvents<FormHealth>(form, 'formHealth');
+    const lastHealth: FormHealth = { status: 'errored', code: 10_005, message: 'last call' };
+
+    setConfig(form, recorder.configWith({ formName: 'first-config' }));
+    form.setData({ firstName: 'Between' });
+    form.setMeta({ tier: 'between' });
+    form.setHealth(callHealth);
+    setConfig(form, recorder.configWith({ formName: 'second-config' }));
+    form.setData(draft);
+    form.setMeta({ tier: 'paid' });
+    form.setHealth(lastHealth);
+    await form.updateComplete;
+
+    expect(recorder.actionTypesByStore).toHaveLength(2);
+    const newStoreActions = recorder.actionTypesByStore[1];
+    expect(countOf(newStoreActions, 'INITIALIZE')).toBe(1);
+    expect(form.context.store.getState().formName).toBe('second-config');
+    expect(form.context.store.getState().data).toEqual(draft);
+    expect(form.context.store.getState().meta).toEqual({ tier: 'paid' });
+    expect(healths).toEqual([{ status: 'ok' }, lastHealth]);
+    expect(oldStoreActions).toEqual([]);
+  });
+
+  it('gives the calls made after a new config to the old form when the config becomes undefined in the same task', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const { form, oldStoreActions, recorder } = await mountRecordedForm();
+    const oldStore = form.context.store;
+
+    setConfig(form, recorder.configWith({ data: { firstName: 'Dana' } }));
+    form.setData(draft);
+    form.setMeta({ tier: 'paid' });
+    form.setHealth(callHealth);
+    form.config = undefined as unknown as FormElement['config'];
+    await form.updateComplete;
+
+    expect(recorder.actionTypesByStore).toHaveLength(1);
+    expect(oldStoreActions).toEqual(['SET_DATA', 'SET_META', 'SET_FORM_HEALTH']);
+    expect(oldStore.getState().data).toEqual(draft);
+    expect(oldStore.getState().meta).toEqual({ tier: 'paid' });
+    expect(oldStore.getState().formHealth).toEqual(callHealth);
+  });
+
+  it('applies a later setData call at once after a new config became undefined in the same task', async () => {
+    const { form, recorder } = await mountRecordedForm();
+    const oldStore = form.context.store;
+
+    setConfig(form, recorder.configWith({ data: { firstName: 'Dana' } }));
+    form.setData(draft);
+    form.config = undefined as unknown as FormElement['config'];
+    await form.updateComplete;
+    form.setData({ firstName: 'Later' });
+
+    expect(oldStore.getState().data).toEqual({ firstName: 'Later' });
+  });
+
+  it('applies a setData call at once after a formHealth listener assigned another config during the start', async () => {
+    const { form, recorder } = await mountRecordedForm();
+    form.addEventListener(
+      'formHealth',
+      () => setConfig(form, recorder.configWith({ formName: 'listener-config' })),
+      { once: true, signal: listeners.signal },
+    );
+
+    setConfig(form, recorder.configWith({ formName: 'start-config' }));
+    await form.updateComplete;
+    const storeOfTheStart = form.context.store;
+    form.setData(draft);
+
+    expect(storeOfTheStart.getState().data).toEqual(draft);
+  });
+
+  it('starts one time with the last config and drops a setData call made for a config that was replaced in the same task', async () => {
+    const { form, oldStoreActions, recorder } = await mountRecordedForm();
+
+    setConfig(form, recorder.configWith({ formName: 'customer-b', data: { firstName: 'Bea' } }));
+    form.setData(draft);
+    setConfig(form, recorder.configWith({ formName: 'customer-c', data: { firstName: 'Cid' } }));
+    await form.updateComplete;
+
+    expect(recorder.actionTypesByStore).toHaveLength(2);
+    expect(countOf(recorder.actionTypesByStore[1], 'INITIALIZE')).toBe(1);
+    expect(form.context.store.getState().formName).toBe('customer-c');
+    expect(form.context.store.getState().data).toEqual({ firstName: 'Cid' });
+    expect(oldStoreActions).toEqual([]);
+  });
+
+  it('starts one time with the last config and drops a setMeta call made for a config that was replaced in the same task', async () => {
+    const { form, oldStoreActions, recorder } = await mountRecordedForm();
+
+    setConfig(form, recorder.configWith({ meta: { tier: 'free' } }));
+    form.setMeta({ tier: 'paid' });
+    setConfig(form, recorder.configWith({ meta: { tier: 'trial' } }));
+    await form.updateComplete;
+
+    expect(recorder.actionTypesByStore).toHaveLength(2);
+    expect(form.context.store.getState().meta).toEqual({ tier: 'trial' });
+    expect(oldStoreActions).toEqual([]);
+  });
+
+  it('starts one time with the last config and drops a setHealth call made for a config that was replaced in the same task', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const { form, oldStoreActions, recorder } = await mountRecordedForm();
+    const healths = recordEvents<FormHealth>(form, 'formHealth');
+
+    setConfig(form, recorder.configWith());
+    form.setHealth(callHealth);
+    setConfig(form, recorder.configWith());
+    await form.updateComplete;
+
+    expect(recorder.actionTypesByStore).toHaveLength(2);
+    expect(healths).toEqual([{ status: 'ok' }]);
+    expect(oldStoreActions).toEqual([]);
+  });
+
+  it('starts one time with the new config and the data of a setData call when a new validators value follows the call', async () => {
+    const { form, oldStoreActions, recorder } = await mountRecordedForm();
+
+    setConfig(form, recorder.configWith({ formName: 'customer-b', data: { firstName: 'Bea' } }));
+    form.setData(draft);
+    form.validators = (validator, localization) => noopValidators(validator, localization);
+    await form.updateComplete;
+
+    expect(recorder.actionTypesByStore).toHaveLength(2);
+    expect(countOf(recorder.actionTypesByStore[1], 'INITIALIZE')).toBe(1);
+    expect(form.context.store.getState().formName).toBe('customer-b');
+    expect(form.context.store.getState().data).toEqual(draft);
+    expect(oldStoreActions).toEqual([]);
   });
 });
 

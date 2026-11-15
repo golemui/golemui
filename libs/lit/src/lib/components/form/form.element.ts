@@ -13,7 +13,7 @@ import {
   shortUUID,
 } from '@golemui/core';
 import { provide } from '@lit/context';
-import { html, LitElement, nothing } from 'lit';
+import { html, LitElement, nothing, notEqual, type PropertyDeclaration } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import { keyed } from 'lit/directives/keyed.js';
 import { when } from 'lit/directives/when.js';
@@ -59,6 +59,9 @@ export class FormElement extends LitElement {
   // False before the first initialization, and from the start of each initialization until its
   // first health event was sent. The calls in that time wait in the three fields below.
   private started = false;
+  // True from a new config or validators value until the next update. The form starts with the new
+  // value only in that update, so a call in that time belongs to the new form and waits too.
+  private newConfigOrValidatorsWaits = false;
   private dataBeforeStart: Record<string, any> | undefined;
   private metaBeforeStart: Record<string, any> | undefined;
   private healthBeforeStart: FormHealth | undefined;
@@ -115,9 +118,48 @@ export class FormElement extends LitElement {
   // then shows the form instead of the loading fallback.
   override willUpdate(changed: Map<string, unknown>) {
     super.willUpdate(changed);
-    if ((changed.has('config') || changed.has('validators')) && this.config) {
-      this._reinitialize(this.config);
+    this.newConfigOrValidatorsWaits = false;
+    try {
+      if ((changed.has('config') || changed.has('validators')) && this.config) {
+        this._reinitialize(this.config);
+      } else if (this.started) {
+        // No new start, for example after `config = undefined`. The calls belong to the form there.
+        this.dispatchCallsBeforeStart();
+      }
+    } finally {
+      // A listener of the host can assign a config during the start. Lit starts no update for a
+      // change in willUpdate, so the field must not stay true.
+      this.newConfigOrValidatorsWaits = false;
     }
+  }
+
+  // Lit calls this from the property setter, with the change check of the property.
+  override requestUpdate(
+    name?: PropertyKey,
+    oldValue?: unknown,
+    options?: PropertyDeclaration,
+    useNewValue?: boolean,
+    newValue?: unknown,
+  ): void {
+    super.requestUpdate(name, oldValue, options, useNewValue, newValue);
+    if (name !== 'config' && name !== 'validators') {
+      return;
+    }
+    const value = useNewValue ? newValue : this[name];
+    if (!(options?.hasChanged ?? notEqual)(value, oldValue)) {
+      return;
+    }
+    // On a form that has started before, a config that replaces a waiting one before the update:
+    // the waiting one never starts, so the calls kept for it are dropped. A form that has never
+    // started keeps every call for its first start. An undefined config starts nothing, so
+    // willUpdate gives the calls to the form there.
+    const startedBefore = this.storeGeneration > 0;
+    if (name === 'config' && value && this.newConfigOrValidatorsWaits && startedBefore) {
+      this.dataBeforeStart = undefined;
+      this.metaBeforeStart = undefined;
+      this.healthBeforeStart = undefined;
+    }
+    this.newConfigOrValidatorsWaits = true;
   }
 
   // Lit accepts a new update only after the failed one has ended. That update renders the widgets
@@ -269,7 +311,7 @@ export class FormElement extends LitElement {
   }
 
   setData(data: Record<string, any>): void {
-    if (!this.started) {
+    if (!this.started || this.newConfigOrValidatorsWaits) {
       this.dataBeforeStart = data;
       return;
     }
@@ -277,7 +319,7 @@ export class FormElement extends LitElement {
   }
 
   setMeta(meta: Record<string, any>): void {
-    if (!this.started) {
+    if (!this.started || this.newConfigOrValidatorsWaits) {
       this.metaBeforeStart = meta;
       return;
     }
@@ -293,7 +335,7 @@ export class FormElement extends LitElement {
    * @param health - The new health. Codes below 1000 belong to the core.
    */
   setHealth(health: FormHealth): void {
-    if (!this.started) {
+    if (!this.started || this.newConfigOrValidatorsWaits) {
       this.healthBeforeStart = health;
       return;
     }
