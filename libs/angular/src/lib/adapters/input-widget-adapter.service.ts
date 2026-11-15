@@ -30,6 +30,9 @@ export class InputWidgetAdapter<
   }
 
   valueChanged<T>(value: T) {
+    if (!this.belongsToCurrentForm()) {
+      return;
+    }
     this.context.store.dispatch({
       type: 'SET_WIDGET_DATA',
       payload: { path: this.widget.path, data: value },
@@ -42,6 +45,9 @@ export class InputWidgetAdapter<
    * state, errors, injected issues and prop overrides of the other rows move with their rows.
    */
   rowRemoved<T>(rows: T, index: number) {
+    if (!this.belongsToCurrentForm()) {
+      return;
+    }
     this.context.store.dispatch({
       type: 'SET_WIDGET_DATA',
       payload: { path: this.widget.path, data: rows, rowChange: { type: 'removed', index } },
@@ -50,10 +56,16 @@ export class InputWidgetAdapter<
   }
 
   filterChanged<T>(value: T) {
+    if (!this.belongsToCurrentForm()) {
+      return;
+    }
     this.context.emitEvent('filter', this.widget, value);
   }
 
   injectValidationIssues(issues: string[] | null) {
+    if (!this.belongsToCurrentForm()) {
+      return;
+    }
     this.context.store.dispatch({
       type: 'INJECT_VALIDATION_ISSUES',
       payload: { path: this.widget.path, issues, reportedByWidget: true },
@@ -76,6 +88,9 @@ export class InputWidgetAdapter<
   }
 
   onBlur() {
+    if (!this.belongsToCurrentForm()) {
+      return;
+    }
     this.context.store.dispatch({
       type: 'ATTEMPT_VALIDATION',
       payload: { reason: 'blur', path: this.widget.path, uid: this.widget.uid },
