@@ -636,6 +636,12 @@ In Angular, React and Vue, the form gets a new config in its next render (Angula
 detection pass, also after `ComponentRef.setInput`). A call before that goes to the old form, and
 then the new config replaces that form (rule 25).
 
+In React, the form starts with the new config in an effect after that render. In that effect an
+object ref of the app (`useRef`) gets the handle of the new form. So a call from a `useEffect` of
+the component that renders the form reaches the new form and follows the rule above. Each handle
+calls only its own form, so a late call through the handle of the old form never reaches the new
+form.
+
 - Scenario: a page creates the form, fills in a draft that it saved in `localStorage`, and then
   adds the form to the page.
 - Scenario: a Lit page shows a form for the selected customer. When the user selects another
@@ -661,13 +667,25 @@ then the new config replaces that form (rule 25).
 
   -> the new form starts with `name: 'Ann'`, and the old form gets no `setData` call.
 
+- Example, a React page that passes the config of the selected customer:
+
+  ```tsx
+  useEffect(() => {
+    formRef.current?.setData(loadDraft(customer.id));
+  }, [config]);
+  ```
+
+  -> the form of the new config shows the draft, and the old form gets no `setData` call.
+
 - Status: follows for the first start. For a new config: follows in Lit. Vue starts the form in the
   render in which it gets the new config, so no call can come between. Angular starts the form in
   the change detection pass in which it gets the new config, but after the lifecycle hooks of that
   pass, so a call from `ngOnChanges`, `ngOnInit` or `ngDoCheck` of another directive in that pass
-  is lost. Not yet in React: after the form has started with the new config, the handle still calls
-  the old form until one more render, so a call from an effect of the host that runs for the new
-  config is lost.
+  is lost. React follows for a `useEffect` of the component that renders the form. A call that runs
+  before the form has started with the new config is lost: a call from a `useLayoutEffect` of that
+  render, and a call from a `useEffect` of a component that renders before the form. A callback ref
+  gets the handle of the new form one render later, so a call through a handle that a callback ref
+  stored is lost in that effect too.
 
 ### 27. The native `submit` event does not reach ancestor elements
 
