@@ -46,23 +46,23 @@ Define forms with the typed `gui` builder API, or as schema-validated JSON. Both
 
 ## Installation
 
-Install the four `@golemui/*` packages for your framework. The versions are published together; use matching versions.
+Install the five `@golemui/*` packages for your framework. The versions are published together; use matching versions.
 
 ```bash
 # React
-npm i @golemui/core @golemui/react @golemui/gui-react @golemui/gui-shared
+npm i @golemui/core @golemui/react @golemui/gui-react @golemui/gui-components @golemui/gui-shared
 
 # Angular
-npm i @golemui/core @golemui/angular @golemui/gui-angular @golemui/gui-shared
+npm i @golemui/core @golemui/angular @golemui/gui-angular @golemui/gui-components @golemui/gui-shared
 
 # Lit
-npm i @golemui/core @golemui/lit @golemui/gui-lit @golemui/gui-shared
+npm i @golemui/core @golemui/lit @golemui/gui-lit @golemui/gui-components @golemui/gui-shared
 
 # Vue
-npm i @golemui/core @golemui/vue @golemui/gui-vue @golemui/gui-shared
+npm i @golemui/core @golemui/vue @golemui/gui-vue @golemui/gui-components @golemui/gui-shared
 
 # Vanilla JS (web component)
-npm i @golemui/core @golemui/lit @golemui/gui-lit @golemui/gui-shared
+npm i @golemui/core @golemui/lit @golemui/gui-lit @golemui/gui-components @golemui/gui-shared
 ```
 
 Import the two stylesheets once, in this order, anywhere in your app entry:
