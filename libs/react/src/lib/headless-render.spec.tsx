@@ -1,5 +1,5 @@
-import { type FormSubmitEvent, preloadFormWidgets } from '@golemui/core';
-import { createRef } from 'react';
+import { type FormHealth, type FormSubmitEvent, preloadFormWidgets } from '@golemui/core';
+import { createElement, createRef, useEffect, useRef, useState } from 'react';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 import { FormComponent, type FormComponentHandle } from './FormComponent';
 import {
@@ -148,6 +148,80 @@ describe.skipIf(process.env.REACT18 === '1')('rendering a headless form without 
       expect(rendered.findByType('stub-input').props.value).toBe('Grace');
 
       await rendered.unmount();
+    });
+
+    it('renders the draft that a useEffect of the host sets with setData after a new config', async () => {
+      const firstConfig = buildFormConfig();
+      const nextConfig = { ...buildFormConfig(), data: { firstName: 'Ada' } };
+      function Host() {
+        const [config, setConfig] = useState(firstConfig);
+        const formRef = useRef<FormComponentHandle>(null);
+        useEffect(() => {
+          if (config === nextConfig) {
+            formRef.current?.setData({ firstName: 'Grace' });
+          }
+        }, [config]);
+        return (
+          <>
+            {createElement('stub-next-customer', { onPress: () => setConfig(nextConfig) })}
+            <FormComponent ref={formRef} config={config} validators={noopValidators} headless />
+          </>
+        );
+      }
+      const rendered = await renderToObjects(<Host />, rootKind);
+
+      await rendered.act(() => rendered.findByType('stub-next-customer').props.onPress());
+
+      expect(rendered.findByType('stub-input').props.value).toBe('Grace');
+
+      await rendered.unmount();
+    });
+
+    it('emits the start health of the new form before the health that a useEffect of the host sets after a new config', async () => {
+      // The form logs an errored health, which is expected here.
+      const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+      const draftError: FormHealth = {
+        status: 'errored',
+        message: 'The draft could not be loaded',
+        code: 1001,
+      };
+      const healths: FormHealth[] = [];
+      const firstConfig = buildFormConfig();
+      const nextConfig = buildFormConfig();
+      function Host() {
+        const [config, setConfig] = useState(firstConfig);
+        const formRef = useRef<FormComponentHandle>(null);
+        useEffect(() => {
+          if (config === nextConfig) {
+            formRef.current?.setHealth(draftError);
+          }
+        }, [config]);
+        return (
+          <>
+            {createElement('stub-next-customer', { onPress: () => setConfig(nextConfig) })}
+            <FormComponent
+              ref={formRef}
+              config={config}
+              validators={noopValidators}
+              formHealth={(health) => {
+                healths.push(health);
+              }}
+              headless
+            />
+          </>
+        );
+      }
+      try {
+        const rendered = await renderToObjects(<Host />, rootKind);
+
+        await rendered.act(() => rendered.findByType('stub-next-customer').props.onPress());
+
+        expect(healths).toEqual([{ status: 'ok' }, { status: 'ok' }, draftError]);
+
+        await rendered.unmount();
+      } finally {
+        consoleError.mockRestore();
+      }
     });
 
     it('renders only the stub elements and logs nothing', async () => {

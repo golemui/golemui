@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import {
   type Action,
+  errorCodes,
   FormContext,
   type FormHealth,
   type FormInitConfig,
@@ -13,9 +14,19 @@ import {
   type ValidatorFn,
   type WithWidget,
 } from '@golemui/core';
-import { act, createRef, type ReactElement } from 'react';
+import {
+  act,
+  createRef,
+  type ReactElement,
+  startTransition,
+  StrictMode,
+  Suspense,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { createRoot, type Root } from 'react-dom/client';
-import { afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { afterEach, beforeAll, describe, expect, it, onTestFinished, vi } from 'vitest';
 import { FormComponent, type FormComponentHandle } from './FormComponent';
 import { ReactFormContextProvider } from './ReactFormContextProvider';
 import WidgetRenderer from './WidgetRenderer';
@@ -27,6 +38,7 @@ import {
   hookOutputs,
   lastHookOutput,
   noopValidators,
+  storeRecorder,
   stubWidgetLoaders,
 } from './ssr.fixture';
 
@@ -137,6 +149,47 @@ const mountWidgetsWithoutLayout = async (
 };
 
 const childUids = (output: LayoutHookOutput) => output.children.map((child) => child.uid);
+
+const initializeCount = (actions: Action[]) =>
+  actions.filter((action) => action.type === 'INITIALIZE').length;
+
+const customerConfig = (
+  firstName: string,
+  middleware: Middleware<State, Action>,
+): FormInitConfig<StubComponent> => ({
+  formDef: rootLayout([firstNameInput]),
+  widgetLoaders: stubWidgetLoaders,
+  data: { firstName },
+  middlewares: [middleware],
+});
+
+type HostProps = {
+  config: FormInitConfig<StubComponent>;
+  validators?: ValidatorFn<any>;
+  formHealth?: (health: FormHealth) => void;
+  /** Runs in the effect of the host that follows a render with a new config or new validators. */
+  onNewConfig?: (form: FormComponentHandle) => void;
+};
+
+/**
+ * A host that calls the form handle from an effect, like a host that fills in a saved draft each
+ * time it shows the form of another customer.
+ */
+function Host({ config, validators = noopValidators, formHealth, onNewConfig }: HostProps) {
+  const formRef = useRef<FormComponentHandle>(null);
+  useEffect(() => {
+    if (formRef.current) {
+      onNewConfig?.(formRef.current);
+    }
+    // The effect runs for a new config or new validators only, like the effect of such a host.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [config, validators]);
+  return (
+    <FormComponent ref={formRef} config={config} validators={validators} formHealth={formHealth} />
+  );
+}
+
+const setDraft = (form: FormComponentHandle) => form.setData({ firstName: 'Linus' });
 
 beforeAll(async () => {
   (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -692,6 +745,23 @@ describe('a new validators object', () => {
     expect(lastHookOutput<InputHookOutput<string>>('firstName').value).toBe('Ada');
     expect(initializeActions).toHaveLength(2);
   });
+
+  it('shows the draft that a useEffect of the host sets with setData after new validators', async () => {
+    const stores = storeRecorder();
+    const config = customerConfig('Ada', stores.middleware);
+    const newValidators: ValidatorFn<any> = (validator) => noopValidators(validator);
+    await render(<Host config={config} />);
+    const oldStoreActionCount = stores.actionsByStore[0].length;
+
+    await act(async () =>
+      root?.render(<Host config={config} validators={newValidators} onNewConfig={setDraft} />),
+    );
+
+    expect(lastHookOutput<InputHookOutput<string>>('firstName').value).toBe('Linus');
+    expect(stores.actionsByStore).toHaveLength(2);
+    expect(stores.actionsByStore[0].slice(oldStoreActionCount)).toEqual([]);
+    expect(initializeCount(stores.actionsByStore[1])).toBe(1);
+  });
 });
 
 describe('a new config object', () => {
@@ -750,5 +820,540 @@ describe('a new config object', () => {
     await act(async () => secondTranslator.setLang('ar'));
 
     expect(mounted.querySelector('form')?.dir).toBe('rtl');
+  });
+
+  it('shows the draft that a useEffect of the host sets with setData after the new config', async () => {
+    const oldStores = storeRecorder();
+    const newStores = storeRecorder();
+    const newConfig = customerConfig('Grace', newStores.middleware);
+    await render(<Host config={customerConfig('Ada', oldStores.middleware)} />);
+    const oldStoreActionCount = oldStores.actionsByStore[0].length;
+
+    await act(async () => root?.render(<Host config={newConfig} onNewConfig={setDraft} />));
+
+    expect(lastHookOutput<InputHookOutput<string>>('firstName').value).toBe('Linus');
+    expect(oldStores.actionsByStore).toHaveLength(1);
+    expect(oldStores.actionsByStore[0].slice(oldStoreActionCount)).toEqual([]);
+    expect(newStores.actionsByStore).toHaveLength(1);
+    expect(initializeCount(newStores.actionsByStore[0])).toBe(1);
+
+    // A render with the same config and the same validators keeps the form and the draft.
+    await act(async () => root?.render(<Host config={newConfig} />));
+
+    expect(lastHookOutput<InputHookOutput<string>>('firstName').value).toBe('Linus');
+    expect(newStores.actionsByStore).toHaveLength(1);
+  });
+
+  it('starts one form and shows the draft that a useEffect of the host sets with setData after the new config, in StrictMode', async () => {
+    const oldStores = storeRecorder();
+    const newStores = storeRecorder();
+    await render(
+      <StrictMode>
+        <Host config={customerConfig('Ada', oldStores.middleware)} />
+      </StrictMode>,
+    );
+    const oldStoreActionCounts = oldStores.actionsByStore.map((actions) => actions.length);
+
+    await act(async () =>
+      root?.render(
+        <StrictMode>
+          <Host config={customerConfig('Grace', newStores.middleware)} onNewConfig={setDraft} />
+        </StrictMode>,
+      ),
+    );
+
+    expect(lastHookOutput<InputHookOutput<string>>('firstName').value).toBe('Linus');
+    const oldStoreActionsAfterNewConfig = oldStores.actionsByStore.map((actions, index) =>
+      actions.slice(oldStoreActionCounts[index]),
+    );
+    expect(oldStoreActionsAfterNewConfig.flat()).toEqual([]);
+    expect(newStores.actionsByStore.map(initializeCount)).toEqual([1]);
+  });
+
+  it('shows the meta that a useEffect of the host sets with setMeta after the new config', async () => {
+    const oldStores = storeRecorder();
+    const newStores = storeRecorder();
+    const customerMetaConfig = (
+      customer: string,
+      middleware: Middleware<State, Action>,
+    ): FormInitConfig<StubComponent> => ({
+      formDef: rootLayout([
+        {
+          uid: 'customer',
+          kind: 'display',
+          type: 'text',
+          props: { text: 'Customer {{$meta.customer}}' },
+        },
+      ]),
+      widgetLoaders: stubWidgetLoaders,
+      data: {},
+      meta: { customer },
+      middlewares: [middleware],
+    });
+    await render(<Host config={customerMetaConfig('Ada', oldStores.middleware)} />);
+    const oldStoreActionCount = oldStores.actionsByStore[0].length;
+
+    await act(async () =>
+      root?.render(
+        <Host
+          config={customerMetaConfig('Grace', newStores.middleware)}
+          onNewConfig={(form) => form.setMeta({ customer: 'Linus' })}
+        />,
+      ),
+    );
+
+    expect(lastHookOutput<DisplayHookOutput>('customer').templateData.text).toBe('Customer Linus');
+    expect(oldStores.actionsByStore[0].slice(oldStoreActionCount)).toEqual([]);
+    expect(newStores.actionsByStore).toHaveLength(1);
+  });
+
+  const draftError: FormHealth = {
+    status: 'errored',
+    message: 'The draft could not be loaded',
+    code: 1001,
+  };
+
+  const startResults = [
+    {
+      startResult: 'ok',
+      formDef: rootLayout([firstNameInput]),
+      startHealth: { status: 'ok' },
+    },
+    {
+      startResult: 'an error',
+      formDef: rootLayout([firstNameInput, firstNameInput]),
+      startHealth: {
+        status: 'errored',
+        code: errorCodes.initializeUidCollisionError,
+        message: expect.stringContaining('Duplicate UID "firstName"'),
+      },
+    },
+  ];
+
+  it.each(startResults)(
+    'emits the start health of the new form ($startResult) before the health that a useEffect of the host sets',
+    async ({ formDef, startHealth }) => {
+      // The form logs an errored health, which is expected here.
+      const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+      onTestFinished(() => consoleError.mockRestore());
+      const healths: FormHealth[] = [];
+      const recordHealth = (health: FormHealth) => {
+        healths.push(health);
+      };
+      const oldStores = storeRecorder();
+      const newStores = storeRecorder();
+      await render(
+        <Host config={customerConfig('Ada', oldStores.middleware)} formHealth={recordHealth} />,
+      );
+      const oldStoreActionCount = oldStores.actionsByStore[0].length;
+
+      await act(async () =>
+        root?.render(
+          <Host
+            config={{ ...customerConfig('Grace', newStores.middleware), formDef }}
+            formHealth={recordHealth}
+            onNewConfig={(form) => form.setHealth(draftError)}
+          />,
+        ),
+      );
+
+      expect(healths).toEqual([{ status: 'ok' }, startHealth, draftError]);
+      expect(oldStores.actionsByStore[0].slice(oldStoreActionCount)).toEqual([]);
+    },
+  );
+
+  it('replaces the form with the data of the new config after a setData call that runs before the new config renders', async () => {
+    const oldStores = storeRecorder();
+    const newStores = storeRecorder();
+    const oldConfig = customerConfig('Ada', oldStores.middleware);
+    const newConfig = customerConfig('Grace', newStores.middleware);
+    function NextCustomerHost() {
+      const [config, setConfig] = useState(oldConfig);
+      const formRef = useRef<FormComponentHandle>(null);
+      // React renders the new config after this handler returns, so setData reaches the old form.
+      const showNextCustomer = () => {
+        setConfig(newConfig);
+        formRef.current?.setData({ firstName: 'Linus' });
+      };
+      return (
+        <>
+          <button type="button" id="next-customer" onClick={showNextCustomer}>
+            Next customer
+          </button>
+          <FormComponent ref={formRef} config={config} validators={noopValidators} />
+        </>
+      );
+    }
+    const mounted = await render(<NextCustomerHost />);
+
+    await act(async () => mounted.querySelector<HTMLButtonElement>('#next-customer')?.click());
+
+    expect(lastHookOutput<InputHookOutput<string>>('firstName').value).toBe('Grace');
+    expect(oldStores.actionsByStore[0]).toContainEqual({
+      type: 'SET_DATA',
+      payload: { data: { firstName: 'Linus' } },
+    });
+    expect(newStores.actionsByStore).toHaveLength(1);
+  });
+
+  it('starts one form for each render of a host that passes a new config object each time', async () => {
+    const stores = storeRecorder();
+    function InlineConfigHost({ firstName }: { firstName: string }) {
+      return (
+        <FormComponent
+          config={customerConfig(firstName, stores.middleware)}
+          validators={noopValidators}
+        />
+      );
+    }
+    await render(<InlineConfigHost firstName="Ada" />);
+
+    await act(async () => root?.render(<InlineConfigHost firstName="Grace" />));
+    await act(async () => root?.render(<InlineConfigHost firstName="Linus" />));
+
+    expect(lastHookOutput<InputHookOutput<string>>('firstName').value).toBe('Linus');
+    expect(stores.actionsByStore.map(initializeCount)).toEqual([1, 1, 1]);
+  });
+
+  it('starts one form for a new config whose form has a widget that throws in render', async () => {
+    // The error boundary logs the caught error, which is expected here.
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    onTestFinished(() => consoleError.mockRestore());
+    const ThrowingWidget = (): never => {
+      throw new Error('render failed');
+    };
+    const widgetLoaders = {
+      ...stubWidgetLoaders,
+      throwing: async (): Promise<StubComponent> => ThrowingWidget,
+    };
+    await preloadFormWidgets({ widgetLoaders });
+    const newStores = storeRecorder();
+    await render(
+      <FormComponent
+        config={customerConfig('Ada', storeRecorder().middleware)}
+        validators={noopValidators}
+      />,
+    );
+
+    await act(async () =>
+      root?.render(
+        <FormComponent
+          config={{
+            ...customerConfig('Grace', newStores.middleware),
+            formDef: rootLayout([
+              firstNameInput,
+              { uid: 'broken', kind: 'input', type: 'throwing', path: 'broken' },
+            ]),
+            widgetLoaders,
+          }}
+          validators={noopValidators}
+        />,
+      ),
+    );
+
+    expect(lastHookOutput<InputHookOutput<string>>('firstName').value).toBe('Grace');
+    expect(newStores.actionsByStore.map(initializeCount)).toEqual([1]);
+  });
+
+  it('starts no form while a transition with the new config waits, and one form after it', async () => {
+    let isResolved = false;
+    let resolveDetails: () => void = () => undefined;
+    const detailsPromise = new Promise<void>((resolve) => {
+      resolveDetails = resolve;
+    });
+    /** Suspends until the details are loaded. */
+    function CustomerDetails() {
+      if (!isResolved) {
+        throw detailsPromise;
+      }
+      return <p>Details</p>;
+    }
+    const oldStores = storeRecorder();
+    const newStores = storeRecorder();
+    await render(
+      <Suspense fallback={<p>Loading</p>}>
+        <Host config={customerConfig('Ada', oldStores.middleware)} />
+      </Suspense>,
+    );
+    const oldStoreActionCount = oldStores.actionsByStore[0].length;
+
+    await act(async () =>
+      startTransition(() => {
+        root?.render(
+          <Suspense fallback={<p>Loading</p>}>
+            <Host config={customerConfig('Grace', newStores.middleware)} onNewConfig={setDraft} />
+            <CustomerDetails />
+          </Suspense>,
+        );
+      }),
+    );
+
+    expect(lastHookOutput<InputHookOutput<string>>('firstName').value).toBe('Ada');
+    expect(newStores.actionsByStore).toEqual([]);
+
+    await act(async () => {
+      isResolved = true;
+      resolveDetails();
+    });
+
+    expect(lastHookOutput<InputHookOutput<string>>('firstName').value).toBe('Linus');
+    expect(newStores.actionsByStore.map(initializeCount)).toEqual([1]);
+    expect(oldStores.actionsByStore[0].slice(oldStoreActionCount)).toEqual([]);
+  });
+
+  it('gives a later call through the handle that a host effect read for the new config to the new form', async () => {
+    const oldStores = storeRecorder();
+    const newStores = storeRecorder();
+    let handleOfEffect: FormComponentHandle | undefined;
+    await render(<Host config={customerConfig('Ada', oldStores.middleware)} />);
+    const oldStoreActionCount = oldStores.actionsByStore[0].length;
+
+    // A host reads the handle in its effect, loads a draft, and fills it in later.
+    await act(async () =>
+      root?.render(
+        <Host
+          config={customerConfig('Grace', newStores.middleware)}
+          onNewConfig={(form) => {
+            handleOfEffect = form;
+          }}
+        />,
+      ),
+    );
+    await act(async () => handleOfEffect?.setData({ firstName: 'Linus' }));
+
+    expect(lastHookOutput<InputHookOutput<string>>('firstName').value).toBe('Linus');
+    expect(oldStores.actionsByStore[0].slice(oldStoreActionCount)).toEqual([]);
+  });
+
+  it('keeps the handle that a host effect read for the new config in the ref of the host', async () => {
+    const formRef = createRef<FormComponentHandle>();
+    let handleOfEffect: FormComponentHandle | null = null;
+    /** Reads the handle in the effect that runs for a new config. */
+    function ReadingHost({ config }: { config: FormInitConfig<StubComponent> }) {
+      useEffect(() => {
+        handleOfEffect = formRef.current;
+      }, [config]);
+      return <FormComponent ref={formRef} config={config} validators={noopValidators} />;
+    }
+    await render(<ReadingHost config={customerConfig('Ada', storeRecorder().middleware)} />);
+    const handleOfOldForm = formRef.current;
+
+    await act(async () =>
+      root?.render(<ReadingHost config={customerConfig('Grace', storeRecorder().middleware)} />),
+    );
+
+    expect(handleOfEffect).not.toBe(handleOfOldForm);
+    expect(formRef.current).toBe(handleOfEffect);
+  });
+
+  it('gives a late call through the handle of the old form to the old store', async () => {
+    const formRef = createRef<FormComponentHandle>();
+    const oldStores = storeRecorder();
+    const newStores = storeRecorder();
+    const lateDraft = { type: 'SET_DATA', payload: { data: { firstName: 'Linus' } } };
+    await render(
+      <FormComponent
+        ref={formRef}
+        config={customerConfig('Ada', oldStores.middleware)}
+        validators={noopValidators}
+      />,
+    );
+    // A host keeps the handle while it loads a draft for this customer.
+    const handleOfOldForm = formRef.current;
+
+    await act(async () =>
+      root?.render(
+        <FormComponent
+          ref={formRef}
+          config={customerConfig('Grace', newStores.middleware)}
+          validators={noopValidators}
+        />,
+      ),
+    );
+    await act(async () => handleOfOldForm?.setData({ firstName: 'Linus' }));
+
+    expect(lastHookOutput<InputHookOutput<string>>('firstName').value).toBe('Grace');
+    expect(oldStores.actionsByStore[0]).toContainEqual(lateDraft);
+    expect(newStores.actionsByStore[0]).not.toContainEqual(lateDraft);
+  });
+
+  it('gives a call from an effect cleanup of the host to the old form', async () => {
+    const oldStores = storeRecorder();
+    const newStores = storeRecorder();
+    const emptyData = { type: 'SET_DATA', payload: { data: {} } };
+    /** Empties the old form in the cleanup of its effect. */
+    function ResettingHost({ config }: { config: FormInitConfig<StubComponent> }) {
+      const formRef = useRef<FormComponentHandle>(null);
+      useEffect(() => {
+        const form = formRef.current;
+        return () => form?.setData({});
+      }, [config]);
+      return <FormComponent ref={formRef} config={config} validators={noopValidators} />;
+    }
+    await render(<ResettingHost config={customerConfig('Ada', oldStores.middleware)} />);
+
+    await act(async () =>
+      root?.render(<ResettingHost config={customerConfig('Grace', newStores.middleware)} />),
+    );
+
+    expect(lastHookOutput<InputHookOutput<string>>('firstName').value).toBe('Grace');
+    expect(oldStores.actionsByStore[0]).toContainEqual(emptyData);
+    expect(newStores.actionsByStore[0]).not.toContainEqual(emptyData);
+  });
+
+  it('calls a callback ref of the host again for the form of a new config', async () => {
+    const newStores = storeRecorder();
+    // A callback ref with one identity, which fills in the draft of each form that it gets.
+    const fillInDraft = (form: FormComponentHandle | null) => {
+      form?.setData({ firstName: 'Linus' });
+    };
+    await render(
+      <FormComponent
+        ref={fillInDraft}
+        config={customerConfig('Ada', storeRecorder().middleware)}
+        validators={noopValidators}
+      />,
+    );
+
+    await act(async () =>
+      root?.render(
+        <FormComponent
+          ref={fillInDraft}
+          config={customerConfig('Grace', newStores.middleware)}
+          validators={noopValidators}
+        />,
+      ),
+    );
+
+    expect(lastHookOutput<InputHookOutput<string>>('firstName').value).toBe('Linus');
+    expect(newStores.actionsByStore[0]).toContainEqual({
+      type: 'SET_DATA',
+      payload: { data: { firstName: 'Linus' } },
+    });
+  });
+
+  it('applies two calls of a host effect after the new config in call order', async () => {
+    const newStores = storeRecorder();
+    await render(<Host config={customerConfig('Ada', storeRecorder().middleware)} />);
+
+    await act(async () =>
+      root?.render(
+        <Host
+          config={customerConfig('Grace', newStores.middleware)}
+          onNewConfig={(form) => {
+            form.setData({ firstName: 'Linus' });
+            form.setData({ firstName: 'Margaret' });
+          }}
+        />,
+      ),
+    );
+
+    expect(lastHookOutput<InputHookOutput<string>>('firstName').value).toBe('Margaret');
+    const dataOfSetDataActions = newStores.actionsByStore[0].flatMap((action) =>
+      action.type === 'SET_DATA' ? [action.payload.data] : [],
+    );
+    expect(dataOfSetDataActions).toEqual([
+      { firstName: 'Grace' },
+      { firstName: 'Linus' },
+      { firstName: 'Margaret' },
+    ]);
+  });
+
+  it('gives a call that the formHealth callback makes for the health of a host effect to the new form', async () => {
+    // The form logs an errored health, which is expected here.
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    onTestFinished(() => consoleError.mockRestore());
+    /** Sets a health from its effect, and reacts to an errored health with one more call. */
+    function ReactingHost({
+      config,
+      healthOfEffect,
+    }: {
+      config: FormInitConfig<StubComponent>;
+      healthOfEffect?: FormHealth;
+    }) {
+      const formRef = useRef<FormComponentHandle>(null);
+      useEffect(() => {
+        if (healthOfEffect) {
+          formRef.current?.setHealth(healthOfEffect);
+          formRef.current?.setData({ firstName: 'Linus' });
+        }
+      }, [config, healthOfEffect]);
+      return (
+        <FormComponent
+          ref={formRef}
+          config={config}
+          validators={noopValidators}
+          formHealth={(health) => {
+            if (health.status === 'errored') {
+              // The last call in time, so the form shows its data.
+              formRef.current?.setData({ firstName: 'Margaret' });
+            }
+          }}
+        />
+      );
+    }
+    await render(<ReactingHost config={customerConfig('Ada', storeRecorder().middleware)} />);
+
+    await act(async () =>
+      root?.render(
+        <ReactingHost
+          config={customerConfig('Grace', storeRecorder().middleware)}
+          healthOfEffect={draftError}
+        />,
+      ),
+    );
+
+    expect(lastHookOutput<InputHookOutput<string>>('firstName').value).toBe('Margaret');
+  });
+
+  it('does not give a call that a host effect made for one config to the form of the next config', async () => {
+    const storesOfNextConfig = storeRecorder();
+    const newConfig = customerConfig('Grace', storeRecorder().middleware);
+    const nextConfig = customerConfig('Margaret', storesOfNextConfig.middleware);
+    const draftOfNewConfig = { firstName: 'Linus' };
+    /** Fills in a draft for the new config, and in the same effect replaces that config. */
+    function ReplacingHost({ config: configOfProps }: { config: FormInitConfig<StubComponent> }) {
+      const [replacingConfig, setReplacingConfig] = useState<FormInitConfig<StubComponent>>();
+      const config = replacingConfig ?? configOfProps;
+      const formRef = useRef<FormComponentHandle>(null);
+      useEffect(() => {
+        if (config === newConfig) {
+          formRef.current?.setData(draftOfNewConfig);
+          setReplacingConfig(nextConfig);
+        }
+      }, [config]);
+      return <FormComponent ref={formRef} config={config} validators={noopValidators} />;
+    }
+    await render(<ReplacingHost config={customerConfig('Ada', storeRecorder().middleware)} />);
+
+    await act(async () => root?.render(<ReplacingHost config={newConfig} />));
+
+    expect(lastHookOutput<InputHookOutput<string>>('firstName').value).toBe('Margaret');
+    expect(storesOfNextConfig.actionsByStore.map(initializeCount)).toEqual([1]);
+    expect(storesOfNextConfig.actionsByStore[0]).not.toContainEqual({
+      type: 'SET_DATA',
+      payload: { data: draftOfNewConfig },
+    });
+  });
+
+  it('applies a call at once when no new config waits, also after a render with the same config', async () => {
+    const stores = storeRecorder();
+    const config = customerConfig('Ada', stores.middleware);
+    const formRef = createRef<FormComponentHandle>();
+    const form = () => <FormComponent ref={formRef} config={config} validators={noopValidators} />;
+    await render(form());
+    await act(async () => root?.render(form()));
+    let lastActionAfterCall: Action | undefined;
+
+    await act(async () => {
+      formRef.current?.setData({ firstName: 'Linus' });
+      lastActionAfterCall = stores.actionsByStore[0].at(-1);
+    });
+
+    expect(lastActionAfterCall).toEqual({
+      type: 'SET_DATA',
+      payload: { data: { firstName: 'Linus' } },
+    });
+    expect(stores.actionsByStore).toHaveLength(1);
   });
 });

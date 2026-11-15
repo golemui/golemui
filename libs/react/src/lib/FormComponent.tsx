@@ -1,4 +1,5 @@
 import {
+  type Action,
   FormContext,
   type FormEvent,
   type FormHealth,
@@ -76,10 +77,26 @@ type FormInstance = {
   /** The exact prop identities this instance was initialized with, compared by the reinit effect. */
   config: FormInitConfig<WidgetComponent>;
   validators: ValidatorFn<any>;
+  /** The handle of this instance. It is one object, so the ref of the host holds the same handle
+   * before and after React commits the instance. */
+  handle: FormComponentHandle;
   subscribe: (onStoreChange: () => void) => () => void;
   getFormLayout: () => LayoutWidget<string>;
   getLang: () => string;
   getHealthError: () => FormHealth | null;
+};
+
+type FormStore = FormInstance['store'];
+
+/** The store action of a handle call. */
+type HandleAction = Extract<Action, { type: 'SET_DATA' | 'SET_META' | 'SET_FORM_HEALTH' }>;
+
+/** What the handles of one form component share. */
+type HandleState = {
+  /** The store of the instance that the component created and React has not committed yet. */
+  uncommittedStore: FormStore | null;
+  /** The calls to that store, in call order. They are applied when React commits its instance. */
+  keptCalls: HandleAction[];
 };
 
 function createFormInstance(
@@ -87,6 +104,7 @@ function createFormInstance(
   validators: ValidatorFn<any>,
   generatedFormName: string,
   generation: number,
+  handleState: HandleState,
 ): FormInstance {
   const formName = config.formName ?? generatedFormName;
   const context = new FormContext<WidgetComponent>();
@@ -120,6 +138,7 @@ function createFormInstance(
     formName,
     config,
     validators,
+    handle: createHandle(store, handleState),
     subscribe: (onStoreChange) => {
       const subscription = store.state$.subscribe(onStoreChange);
       return () => subscription.unsubscribe();
@@ -141,6 +160,32 @@ function createFormInstance(
       }
       return lastHealthError;
     },
+  };
+}
+
+/**
+ * Creates the handle of one store. Each call goes to that store, so a late call through the
+ * handle of a replaced form never reaches the form of a newer config.
+ */
+function createHandle(store: FormStore, handleState: HandleState): FormComponentHandle {
+  const dispatchOrKeep = (action: HandleAction) => {
+    // An uncommitted store has no health subscription yet. A health call is applied after the
+    // subscription exists, so the host gets the health of the started form first. Each call
+    // after a kept call is kept too, so the call order stays.
+    const isKept =
+      store === handleState.uncommittedStore &&
+      (action.type === 'SET_FORM_HEALTH' || handleState.keptCalls.length > 0);
+    if (isKept) {
+      handleState.keptCalls.push(action);
+      return;
+    }
+    store.dispatch(action);
+  };
+  return {
+    setData: (data) => dispatchOrKeep({ type: 'SET_DATA', payload: { data } }),
+    setMeta: (meta) => dispatchOrKeep({ type: 'SET_META', payload: { meta } }),
+    setHealth: (health) =>
+      dispatchOrKeep({ type: 'SET_FORM_HEALTH', payload: { formHealth: health } }),
   };
 }
 
@@ -209,8 +254,11 @@ export const FormComponent = forwardRef<FormComponentHandle, FormComponentProps>
     // formName still produces matching markup. The id never changes for this component, so
     // every config without a formName gets the same one.
     const generatedFormName = useId();
+    // One mutable object for the life of the component. It is a state value, so the first
+    // instance gets it in the first render.
+    const [handleState] = useState<HandleState>(() => ({ uncommittedStore: null, keptCalls: [] }));
     const [instance, setInstance] = useState(() =>
-      createFormInstance(config, validators, generatedFormName, 0),
+      createFormInstance(config, validators, generatedFormName, 0, handleState),
     );
 
     const callbacksRef = useRef({ formHealth, formEvent, formSubmit });
@@ -236,10 +284,24 @@ export const FormComponent = forwardRef<FormComponentHandle, FormComponentProps>
       if (instance.config === config && instance.validators === validators) {
         return;
       }
-      setInstance(
-        createFormInstance(config, validators, generatedFormName, instance.generation + 1),
+      const nextInstance = createFormInstance(
+        config,
+        validators,
+        generatedFormName,
+        instance.generation + 1,
+        handleState,
       );
-    }, [config, validators, generatedFormName, instance]);
+      handleState.uncommittedStore = nextInstance.store;
+      handleState.keptCalls = [];
+      // The effects of the host for this config run after this effect and before the next render.
+      // So an object ref gets the handle of the new form here, and not only in the next commit.
+      if (ref && typeof ref !== 'function') {
+        ref.current = nextInstance.handle;
+      }
+      setInstance(nextInstance);
+      // `ref` is not in the list: a new ref identity must not start the form again.
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [config, validators, generatedFormName, instance, handleState]);
 
     // Browser-only subscription: a language change reaches the render through the store.
     useEffect(() => {
@@ -249,21 +311,28 @@ export const FormComponent = forwardRef<FormComponentHandle, FormComponentProps>
       return () => unsubscribeI18n();
     }, [instance]);
 
-    useImperativeHandle(
-      ref,
-      () => ({
-        setData: (data) => {
-          instance.store.dispatch({ type: 'SET_DATA', payload: { data } });
-        },
-        setMeta: (meta) => {
-          instance.store.dispatch({ type: 'SET_META', payload: { meta } });
-        },
-        setHealth: (health) => {
-          instance.store.dispatch({ type: 'SET_FORM_HEALTH', payload: { formHealth: health } });
-        },
-      }),
-      [instance],
-    );
+    useImperativeHandle(ref, () => instance.handle, [instance]);
+
+    // After useImperativeHandle, so the ref of the host holds the handle of this instance when a
+    // host callback reacts to a kept call. FormSubscriptions is a child, so its health
+    // subscription exists here.
+    useBrowserLayoutEffect(() => {
+      if (handleState.uncommittedStore !== instance.store) {
+        return;
+      }
+      // The store still counts as uncommitted during the loop. So a call that a host callback
+      // makes during the loop is added to the list, and the loop applies it in call order.
+      const keptCalls = handleState.keptCalls;
+      try {
+        for (let index = 0; index < keptCalls.length; index += 1) {
+          instance.store.dispatch(keptCalls[index]);
+        }
+      } finally {
+        // Also after a dispatch that throws, or every later call would be kept and never applied.
+        handleState.keptCalls = [];
+        handleState.uncommittedStore = null;
+      }
+    }, [instance, handleState]);
 
     const onFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();

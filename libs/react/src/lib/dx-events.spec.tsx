@@ -1,15 +1,18 @@
 // @vitest-environment jsdom
 import { type FormEvent, preloadFormWidgets } from '@golemui/core';
 import type { ResolveFormInputFn } from '@golemui/dx';
-import { act, type ReactNode } from 'react';
+import { act, type ReactNode, useEffect, useRef } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createFormComponent } from './createFormComponent';
+import { type FormComponentHandle } from './FormComponent';
 import {
   hookOutputs,
   type InputHookOutput,
   lastHookOutput,
   noopValidators,
+  type StoreRecorder,
+  storeRecorder,
   stubWidgetLoaders,
 } from './ssr.fixture';
 
@@ -99,5 +102,46 @@ describe('a form event of a widget set form with a resolved event handler', () =
     );
 
     expect(resolvedHandler).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('a widget set form with a new config object', () => {
+  it('shows the draft that a useEffect of the host sets with setData after the new config', async () => {
+    const WidgetSetForm = createFormComponent({
+      widgetLoaders: stubWidgetLoaders,
+      validators: () => noopValidators,
+    });
+    const oldStores = storeRecorder();
+    const newStores = storeRecorder();
+    const customerConfig = (customer: string, stores: StoreRecorder) => ({
+      formDef: formDefWithChangeEvent,
+      data: { firstName: customer },
+      middlewares: [stores.middleware],
+    });
+    function Host({
+      config,
+      draft,
+    }: {
+      config: ReturnType<typeof customerConfig>;
+      draft?: Record<string, unknown>;
+    }) {
+      const formRef = useRef<FormComponentHandle>(null);
+      useEffect(() => {
+        if (draft) {
+          formRef.current?.setData(draft);
+        }
+      }, [config, draft]);
+      return <WidgetSetForm ref={formRef} config={config} />;
+    }
+    await render(<Host config={customerConfig('Ada', oldStores)} />);
+    const oldStoreActionCount = oldStores.actionsByStore[0].length;
+
+    await render(
+      <Host config={customerConfig('Grace', newStores)} draft={{ firstName: 'Linus' }} />,
+    );
+
+    expect(lastHookOutput<InputHookOutput<string>>('firstName').value).toBe('Linus');
+    expect(oldStores.actionsByStore[0].slice(oldStoreActionCount)).toEqual([]);
+    expect(newStores.actionsByStore).toHaveLength(1);
   });
 });
