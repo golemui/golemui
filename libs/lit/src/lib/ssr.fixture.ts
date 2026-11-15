@@ -1,10 +1,13 @@
 import type {
+  Action,
   ActionWidget,
   DisplayWidget,
   FormInitConfig,
   InputWidget,
   LayoutWidget,
+  Middleware,
   NonFunctionWidget,
+  State,
   ValidatorFn,
   WithWidget,
 } from '@golemui/core';
@@ -198,6 +201,30 @@ export const reservedOnlyWidgetLoaders = {
   repeater: async (): Promise<Type<WithWidget>> => StubFlexElement as Type<WithWidget>,
   textinput: async (): Promise<Type<WithWidget>> => StubTextInputElement as Type<WithWidget>,
 };
+
+/**
+ * Records the action types of each store that a form creates with the returned middleware. Each
+ * new store adds one list to `actionTypesByStore`, so a spec can check the actions of the old
+ * store and of the new store separately.
+ *
+ * @returns The lists of action types, one for each store in the order of creation, and the
+ * middleware to put in the `middlewares` of each config.
+ */
+export function recordActionsByStore(): {
+  actionTypesByStore: string[][];
+  middleware: Middleware<State, Action>;
+} {
+  const actionTypesByStore: string[][] = [];
+  const middleware: Middleware<State, Action> = () => {
+    const actionTypes: string[] = [];
+    actionTypesByStore.push(actionTypes);
+    return (next) => (action) => {
+      actionTypes.push(action.type);
+      return next(action);
+    };
+  };
+  return { actionTypesByStore, middleware };
+}
 
 /** Accepts everything. The specs assert on markup, not on validation. */
 export const noopValidators: ValidatorFn<any> = () =>

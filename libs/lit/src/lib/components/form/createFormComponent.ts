@@ -4,7 +4,7 @@ import {
   type WidgetSetDefinition,
   type WidgetSetFormInitConfig,
 } from '@golemui/dx';
-import { html, LitElement, type PropertyValues } from 'lit';
+import { html, LitElement, notEqual, type PropertyDeclaration, type PropertyValues } from 'lit';
 import type { Type } from '../../utils/type';
 import type { FormElement as CoreFormElement } from './form.element';
 import './form.element';
@@ -74,53 +74,101 @@ export function createFormComponent<
     declare autocomplete: string | undefined;
     declare formHealthBoundary: FormHealthBoundary | undefined;
 
-    // The core form does not exist before the first render, so these calls wait for it.
-    private dataBeforeFirstRender: Record<string, any> | undefined;
-    private metaBeforeFirstRender: Record<string, any> | undefined;
-    private healthBeforeFirstRender: FormHealth | undefined;
+    // The core form gets a config only in a render: the first one, or the next one after a new
+    // config. A call before that render waits in these fields, so it reaches the core form after
+    // the core form got the config.
+    private dataBeforeRender: Record<string, any> | undefined;
+    private metaBeforeRender: Record<string, any> | undefined;
+    private healthBeforeRender: FormHealth | undefined;
+    // True from a new config until the next update.
+    private newConfigWaitsForRender = false;
 
     private get coreForm(): CoreFormElement | null {
       return this.renderRoot.querySelector('gui-core-form');
     }
 
     setData(data: Record<string, any>): void {
-      if (!this.hasUpdated) {
-        this.dataBeforeFirstRender = data;
+      if (!this.hasUpdated || this.newConfigWaitsForRender) {
+        this.dataBeforeRender = data;
         return;
       }
       this.coreForm?.setData(data);
     }
 
     setMeta(meta: Record<string, any>): void {
-      if (!this.hasUpdated) {
-        this.metaBeforeFirstRender = meta;
+      if (!this.hasUpdated || this.newConfigWaitsForRender) {
+        this.metaBeforeRender = meta;
         return;
       }
       this.coreForm?.setMeta(meta);
     }
 
     setHealth(health: FormHealth): void {
-      if (!this.hasUpdated) {
-        this.healthBeforeFirstRender = health;
+      if (!this.hasUpdated || this.newConfigWaitsForRender) {
+        this.healthBeforeRender = health;
         return;
       }
       this.coreForm?.setHealth(health);
     }
 
+    override requestUpdate(
+      name?: PropertyKey,
+      oldValue?: unknown,
+      options?: PropertyDeclaration,
+      useNewValue?: boolean,
+      newValue?: unknown,
+    ): void {
+      super.requestUpdate(name, oldValue, options, useNewValue, newValue);
+      if (name !== 'config') {
+        return;
+      }
+      const value = useNewValue ? newValue : this.config;
+      if (!(options?.hasChanged ?? notEqual)(value, oldValue)) {
+        return;
+      }
+      if (!value) {
+        // An undefined config starts nothing. The core form keeps its config, so the kept calls
+        // belong to it.
+        this.newConfigWaitsForRender = false;
+        if (this.hasUpdated) {
+          this.passCallsBeforeRender();
+        }
+        return;
+      }
+      // After a first render, the config of the kept calls is replaced before the next render, so
+      // it never starts. Before the first render every call is kept for the first start.
+      if (this.newConfigWaitsForRender && this.hasUpdated) {
+        this.dropCallsBeforeRender();
+      }
+      this.newConfigWaitsForRender = true;
+    }
+
+    private dropCallsBeforeRender() {
+      this.dataBeforeRender = undefined;
+      this.metaBeforeRender = undefined;
+      this.healthBeforeRender = undefined;
+    }
+
     // Not in firstUpdated(): a subclass can override that hook without calling super.
     protected override update(changed: PropertyValues) {
       super.update(changed);
-      if (this.dataBeforeFirstRender) {
-        this.coreForm?.setData(this.dataBeforeFirstRender);
-        this.dataBeforeFirstRender = undefined;
+      // A config assigned during this update starts no new update in Lit.
+      this.newConfigWaitsForRender = false;
+      this.passCallsBeforeRender();
+    }
+
+    private passCallsBeforeRender() {
+      if (this.dataBeforeRender) {
+        this.coreForm?.setData(this.dataBeforeRender);
+        this.dataBeforeRender = undefined;
       }
-      if (this.metaBeforeFirstRender) {
-        this.coreForm?.setMeta(this.metaBeforeFirstRender);
-        this.metaBeforeFirstRender = undefined;
+      if (this.metaBeforeRender) {
+        this.coreForm?.setMeta(this.metaBeforeRender);
+        this.metaBeforeRender = undefined;
       }
-      if (this.healthBeforeFirstRender) {
-        this.coreForm?.setHealth(this.healthBeforeFirstRender);
-        this.healthBeforeFirstRender = undefined;
+      if (this.healthBeforeRender) {
+        this.coreForm?.setHealth(this.healthBeforeRender);
+        this.healthBeforeRender = undefined;
       }
     }
 
@@ -135,8 +183,19 @@ export function createFormComponent<
 
     override willUpdate(changed: PropertyValues) {
       super.willUpdate(changed);
+      // Before the build: a build that throws must not leave the field true.
+      this.newConfigWaitsForRender = false;
       if (changed.has('config')) {
-        this.bundle = buildWidgetSetForm(widgetSet, this.config);
+        try {
+          this.bundle = buildWidgetSetForm(widgetSet, this.config);
+        } catch (error) {
+          // The core form never gets this config, so the calls kept for it are dropped. Before the
+          // first render they are kept for the first start.
+          if (this.hasUpdated) {
+            this.dropCallsBeforeRender();
+          }
+          throw error;
+        }
       }
     }
 
