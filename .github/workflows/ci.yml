@@ -51,6 +51,11 @@ jobs:
           git add -AN -- skills
           git diff --exit-code -- skills
 
+      # The release tool chooses the npm tag of a release. The root project has no test target, so
+      # the affected targets below do not run this test.
+      - name: Test the release tools
+        run: npm run test:release-tools
+
       - name: Build affected
         run: npx nx affected --target=build
 
