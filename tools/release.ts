@@ -1,7 +1,8 @@
-import { execSync } from 'node:child_process';
+import { execFileSync, execSync } from 'node:child_process';
 import { copyFileSync, existsSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { releaseChangelog, releasePublish, releaseVersion } from 'nx/release';
+import { npmTagForVersion, parseReleaseType, versionMatchesReleaseType } from './release-plan';
 import { updateTemplateVersions } from './update-template-versions';
 
 process.setMaxListeners(20);
@@ -125,18 +126,46 @@ function updateSkillReferences(dryRun: boolean) {
   }
 }
 
+/**
+ * The version tags of the repository, for example `v2.2.0`. They show which majors exist, and the
+ * npm tag of a release depends on that.
+ */
+function readVersionTags(): string[] {
+  return execFileSync('git', ['for-each-ref', '--format=%(refname:strip=2)', 'refs/tags'], {
+    encoding: 'utf8',
+  })
+    .split('\n')
+    .map((tag) => tag.trim())
+    .filter((tag) => tag !== '');
+}
+
 (async () => {
-  const releaseType = process.env.RELEASE_TYPE === 'rc' ? 'rc' : 'stable';
+  const releaseType = parseReleaseType(process.env.RELEASE_TYPE);
   const dryRun = process.env.DRY_RUN === 'true';
 
   console.log(`Release type: ${releaseType}${dryRun ? ' (dry-run)' : ''}`);
 
   const { workspaceVersion, projectsVersionData } = await releaseVersion(
-    releaseType === 'rc' ? { preid: 'rc', dryRun } : { dryRun },
+    releaseType === 'stable' ? { dryRun } : { preid: releaseType, dryRun },
   );
 
+  // Without a new version the built packages still hold their placeholder version, and no npm
+  // tag can be chosen. So nothing is published.
+  if (!workspaceVersion) {
+    throw new Error('The release computed no new version. Nothing is published.');
+  }
+  if (!versionMatchesReleaseType(workspaceVersion, releaseType)) {
+    throw new Error(
+      `The version ${workspaceVersion} is not a ${releaseType} version. Nothing is published.`,
+    );
+  }
+
+  const npmTag = npmTagForVersion(workspaceVersion, readVersionTags());
+  console.log(`Version: ${workspaceVersion}`);
+  console.log(`npm tag: ${npmTag}`);
+
   // Note: this will be pushed at the same time as the changelog. One push for all.
-  if (releaseType === 'stable' && workspaceVersion) {
+  if (releaseType === 'stable') {
     updateTemplateVersions(workspaceVersion, dryRun);
     updateSkillReferences(dryRun);
   }
@@ -155,10 +184,13 @@ function updateSkillReferences(dryRun: boolean) {
 
   const publishResult = await releasePublish({
     registry: 'https://registry.npmjs.org/',
-    tag: releaseType === 'rc' ? 'next' : undefined,
+    tag: npmTag,
     dryRun,
   });
 
   const ok = Object.values(publishResult).every((result) => result.code === 0);
   process.exit(ok ? 0 : 1);
-})();
+})().catch((error: unknown) => {
+  console.error(error);
+  process.exit(1);
+});
