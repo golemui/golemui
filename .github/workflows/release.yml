@@ -11,6 +11,8 @@ on:
         options:
           - stable
           - rc
+          - beta
+          - alpha
       dry-run:
         description: Dry run (skip publish and tag push)
         type: boolean
