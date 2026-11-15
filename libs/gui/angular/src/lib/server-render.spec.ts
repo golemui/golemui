@@ -57,13 +57,32 @@ const config: GuiFormInitConfig = {
             // inert until the client has bound `dependencies` (see the defer-hydration test).
             { kind: 'input', type: 'fileUpload', path: 'avatar', label: 'Avatar' },
             { kind: 'input', type: 'multiFileUpload', path: 'documents', label: 'Documents' },
+            {
+              kind: 'input',
+              type: 'repeater',
+              path: 'team',
+              label: 'Team',
+              props: {
+                template: {
+                  kind: 'layout',
+                  type: 'grid',
+                  children: [
+                    { kind: 'input', type: 'textinput', path: 'team.items.name', label: 'Name' },
+                  ],
+                },
+              },
+            },
           ],
         },
         { uid: 'tab2', kind: 'input', type: 'textinput', path: 'lastName', label: 'Last name' },
       ],
     },
   },
-  data: { firstName: 'Ada', lastName: 'Lovelace' },
+  data: {
+    firstName: 'Ada',
+    lastName: 'Lovelace',
+    team: [{ name: 'Grace' }, { name: 'Alan' }],
+  },
 };
 
 @Component({
@@ -111,6 +130,10 @@ describe('server rendering the gui widget set in plain node', () => {
     expect(markup).toMatch(/<gui-tabs-layout[^>]*class="[^"]*gui-tabs/);
     expect(markup).toContain('Account');
     expect(markup).toContain('Details');
+  });
+
+  it('renders a repeater with one card for each row', () => {
+    expect(markup.match(/<div class="gui-repeater__card"/g)).toHaveLength(2);
   });
 
   it('keeps the custom elements inert until the client removes the attribute', () => {

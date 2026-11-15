@@ -1,9 +1,47 @@
 import { GuiErrorsReact, GuiLabelReact } from '../web-components';
 import type { InputWidget, NonFunctionWidget, Validator, WithWidget } from '@golemui/core';
-import { type RepeaterProps } from '@golemui/gui-shared/internals';
+import {
+  findRepeaterRowFocus,
+  focusAfterRowRemoval,
+  type RepeaterProps,
+  type RepeaterRowFocus,
+} from '@golemui/gui-shared/internals';
 import { useInputWidget, WidgetRenderer } from '@golemui/react';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { Component, type RefObject, useCallback, useRef, useState } from 'react';
 import '../styles.scss';
+
+interface FocusAfterRowRemovalProps {
+  repeaterRef: RefObject<HTMLDivElement | null>;
+  /** The number of rows that this render shows. */
+  rowCount: number;
+}
+
+/**
+ * Moves the focus when an update removes the row that has it. A class component, because
+ * `getSnapshotBeforeUpdate` is the only React method that runs before React changes the DOM.
+ * It renders nothing and updates every time the repeater renders.
+ */
+class FocusAfterRowRemoval extends Component<
+  FocusAfterRowRemovalProps,
+  object,
+  RepeaterRowFocus | null
+> {
+  public getSnapshotBeforeUpdate(): RepeaterRowFocus | null {
+    return findRepeaterRowFocus(this.props.repeaterRef.current, this.props.rowCount);
+  }
+
+  public componentDidUpdate(
+    _previousProps: FocusAfterRowRemovalProps,
+    _previousState: object,
+    rowFocus: RepeaterRowFocus | null,
+  ) {
+    focusAfterRowRemoval(this.props.repeaterRef.current, rowFocus);
+  }
+
+  public render() {
+    return null;
+  }
+}
 
 export function Repeater(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as InputWidget<Record<string, unknown>[]>;
@@ -138,6 +176,7 @@ export function Repeater(widgetInstance: WithWidget) {
             {templateData.addLabel ?? 'Add'}
           </button>
         )}
+        <FocusAfterRowRemoval repeaterRef={repeaterRef} rowCount={templateData.rows?.length ?? 0} />
       </div>
 
       {showErrors && (

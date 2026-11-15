@@ -1,14 +1,24 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformServer } from '@angular/common';
 import {
+  afterRenderEffect,
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
+  effect,
+  type ElementRef,
   inject,
   type OnDestroy,
   type OnInit,
+  PLATFORM_ID,
+  viewChild,
 } from '@angular/core';
 import { InputWidgetAdapter, WidgetDirective } from '@golemui/angular';
 import type { InputWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
-import type { RepeaterProps } from '@golemui/gui-shared/internals';
+import {
+  findRepeaterRowFocus,
+  focusAfterRowRemoval,
+  type RepeaterProps,
+  type RepeaterRowFocus,
+} from '@golemui/gui-shared/internals';
 import '@golemui/gui-components/label';
 import '@golemui/gui-components/errors';
 import { deferHydrationAttr } from '../../utils/defer-hydration';
@@ -35,6 +45,31 @@ export class RepeaterComponent implements OnInit, OnDestroy, WithWidget {
   protected readonly deferHydration = deferHydrationAttr();
 
   isFocused = false;
+
+  private readonly repeaterCard = viewChild<ElementRef<HTMLElement>>('repeaterRef');
+  private rowFocus: RepeaterRowFocus | null = null;
+
+  constructor() {
+    // A server render has no focus to keep.
+    if (isPlatformServer(inject(PLATFORM_ID))) {
+      return;
+    }
+    // An effect runs before the view update, also when only this view refreshes. In Chromium the
+    // `focusout` of the removed input runs it again, so a place whose element is removed is kept.
+    effect(() => {
+      const rowCount = this.adapter.templateData().rows?.length ?? 0;
+      if (this.rowFocus === null || this.rowFocus.focusedElement.isConnected) {
+        this.rowFocus = findRepeaterRowFocus(this.repeaterCard()?.nativeElement, rowCount);
+      }
+    });
+    afterRenderEffect({
+      write: () => {
+        this.adapter.templateData();
+        focusAfterRowRemoval(this.repeaterCard()?.nativeElement, this.rowFocus);
+        this.rowFocus = null;
+      },
+    });
+  }
 
   ngOnInit(): void {
     this.adapter.init(this.widget);
