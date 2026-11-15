@@ -421,6 +421,8 @@ export {
   tabPanelId,
 } from './lib/utils/layout-ids';
 export { getItemKey, repeaterIndexSuffix } from './lib/utils/repeater';
+export { findRepeaterRowFocus, focusAfterRowRemoval } from './lib/utils/repeater-focus';
+export type { RepeaterRowFocus } from './lib/utils/repeater-focus';
 export {
   DEFAULT_MENU_PLACEMENT,
   isMenuSeparator,
