@@ -62,6 +62,9 @@ export class FormElement extends LitElement {
   private dataBeforeStart: Record<string, any> | undefined;
   private metaBeforeStart: Record<string, any> | undefined;
   private healthBeforeStart: FormHealth | undefined;
+  // True after a start that threw. The exception leaves `willUpdate`, so Lit skips the render, and
+  // the widgets of the old store stay in the form, where they ignore every call.
+  private startThrew = false;
 
   static FORM_SUBMIT_EVENT = formEventNames.submit;
   static FORM_HEALTH_EVENT = formEventNames.health;
@@ -117,6 +120,19 @@ export class FormElement extends LitElement {
     }
   }
 
+  // Lit accepts a new update only after the failed one has ended. That update renders the widgets
+  // of the new store and does not start the form again, because the config did not change.
+  protected override performUpdate() {
+    try {
+      super.performUpdate();
+    } finally {
+      if (this.startThrew) {
+        this.startThrew = false;
+        this.requestUpdate();
+      }
+    }
+  }
+
   private _reinitialize(c: FormInitConfig<WithWidget>) {
     this.started = false;
     // Tear down subscriptions tied to the previous store instance.
@@ -155,6 +171,9 @@ export class FormElement extends LitElement {
       this.metaBeforeStart = undefined;
       this.context.store.dispatch({ type: 'SET_DATA', payload: { data } });
       this.context.store.dispatch({ type: 'SET_META', payload: { meta } });
+    } catch (error) {
+      this.startThrew = true;
+      throw error;
     } finally {
       // Also after an exception of a middleware, so that the later calls are applied.
       // The store sends its current health on subscribe, and the first event must be the health

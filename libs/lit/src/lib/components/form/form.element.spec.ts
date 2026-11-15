@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { type FormHealth, identityTranslator } from '@golemui/core';
+import { type Action, type FormHealth, identityTranslator } from '@golemui/core';
 import { safeDefine } from '@golemui/lit-utils';
 import { html, nothing } from 'lit';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -472,6 +472,88 @@ describe('an exception during the start', () => {
     expect(form.startErrors).toEqual([middlewareError]);
     expect(form.context.store.getState().formHealth).toEqual(laterHealth);
     expect(healths.at(-1)).toEqual(laterHealth);
+  });
+});
+
+describe('a new config whose start throws', () => {
+  class FormThatKeepsUpdateErrors extends FormElement {
+    updateErrors: unknown[] = [];
+
+    // The exception still leaves willUpdate, so Lit skips the render as in an app. Lit would
+    // reject updateComplete and throw the error again at the next update. This keeps it instead.
+    protected override scheduleUpdate() {
+      try {
+        super.scheduleUpdate();
+      } catch (error) {
+        this.updateErrors.push(error);
+      }
+    }
+  }
+  safeDefine('form-element-spec-update-error', FormThatKeepsUpdateErrors);
+
+  /** A config whose middleware throws for one action type and counts the stores it is part of. */
+  const configThatThrowsOn = (actionType: string, middlewareError: Error) => {
+    const counts = { stores: 0, initializeActions: 0 };
+    const config = {
+      ...buildConfig(),
+      middlewares: [
+        () => {
+          counts.stores += 1;
+          return (next: (action: Action) => void) => (action: Action) => {
+            if (action.type === 'INITIALIZE') {
+              counts.initializeActions += 1;
+            }
+            if (action.type === actionType) {
+              throw middlewareError;
+            }
+            return next(action);
+          };
+        },
+      ],
+    } as ReturnType<typeof buildConfig>;
+    return { config, counts };
+  };
+
+  async function mountFormThatKeepsUpdateErrors() {
+    const form = document.createElement(
+      'form-element-spec-update-error',
+    ) as FormThatKeepsUpdateErrors;
+    form.validators = noopValidators;
+    setConfig(form, buildConfig());
+    await startForm(form);
+    await vi.waitFor(() => expect(form.querySelector('gui-stub-flex')).not.toBeNull());
+    return { form, oldRoot: form.querySelector('gui-stub-flex') as HTMLElement };
+  }
+
+  it('replaces the widgets of the old store with the root widget of the new store when a middleware throws during SET_DATA', async () => {
+    const { form, oldRoot } = await mountFormThatKeepsUpdateErrors();
+    const middlewareError = new Error('SET_DATA failed');
+    const { config, counts } = configThatThrowsOn('SET_DATA', middlewareError);
+
+    setConfig(form, config);
+
+    await vi.waitFor(() => {
+      const root = form.querySelector('gui-stub-flex');
+      expect(root).not.toBeNull();
+      expect(root).not.toBe(oldRoot);
+    });
+    expect(form.contains(oldRoot)).toBe(false);
+    expect(form.updateErrors).toEqual([middlewareError]);
+    expect(counts).toEqual({ stores: 1, initializeActions: 1 });
+  });
+
+  it('removes the widgets of the old store when a middleware throws during INITIALIZE', async () => {
+    // Before INITIALIZE the store holds an empty `grid` root, and the stub loaders have no `grid`.
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const { form, oldRoot } = await mountFormThatKeepsUpdateErrors();
+    const middlewareError = new Error('INITIALIZE failed');
+    const { config, counts } = configThatThrowsOn('INITIALIZE', middlewareError);
+
+    setConfig(form, config);
+
+    await vi.waitFor(() => expect(form.contains(oldRoot)).toBe(false));
+    expect(form.updateErrors).toEqual([middlewareError]);
+    expect(counts).toEqual({ stores: 1, initializeActions: 1 });
   });
 });
 
