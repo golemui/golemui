@@ -26,6 +26,9 @@ export class LayoutWidgetAdapter<
   }
 
   change<T>(detail?: T) {
+    if (!this.belongsToCurrentForm()) {
+      return;
+    }
     this.context.emitEvent('change', this.widget, detail);
   }
 }

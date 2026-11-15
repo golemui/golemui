@@ -1,6 +1,6 @@
 import { type Action, defineForm, type Middleware, type State } from '@golemui/core';
 import { createMockUploadService } from '../mocks/upload-service.mock';
-import { type FormHandle, type MountComponentFn } from '../utils';
+import { afterTwoFrames, eventsNamed, type FormHandle, type MountComponentFn } from '../utils';
 
 export const runReinitComponentTests = (mountFn: MountComponentFn) => {
   describe('Config replacement', () => {
@@ -209,7 +209,7 @@ export const runReinitComponentTests = (mountFn: MountComponentFn) => {
               path: 'firstName',
               label: 'First name',
               validator: { type: 'string', required: true },
-              on: { load: 'firstNameLoaded' },
+              on: { load: 'firstNameLoaded', blur: 'firstNameBlurred' },
             },
           ],
         });
@@ -269,6 +269,50 @@ export const runReinitComponentTests = (mountFn: MountComponentFn) => {
         cy.get(firstNameInput).should('have.value', 'Ada');
         cy.get(firstNameError).should('not.exist');
         cy.wrap(null).should(() => expect(newestState?.touchedControls).to.deep.equal({}));
+      });
+
+      it('leaves the new form untouched and sends no blur event when the focus is still in a field of the old form', () => {
+        let storeCount = 0;
+        let newestState: State | undefined;
+        const recordNewestState: Middleware<State, Action> = (api) => {
+          storeCount += 1;
+          const storeNumber = storeCount;
+          return (next) => (action) => {
+            next(action);
+            if (storeNumber === storeCount) {
+              newestState = api.getState();
+            }
+          };
+        };
+        const formEvent = cy.stub();
+        const getHandle = mountRequiredFirstName(formEvent, [recordNewestState]);
+        let oldInput: HTMLElement;
+
+        cy.get(firstNameInput).type('!');
+        cy.get(firstNameInput).then(($element) => {
+          oldInput = $element[0];
+        });
+        cy.focused().should(($element) => expect($element[0]).to.equal(oldInput));
+
+        cy.then(() => {
+          getHandle().setConfig({ formDef: requiredFirstNameFormDef(), data: {} });
+        });
+
+        cy.get(firstNameInput).should(($element) => expect($element[0]).not.to.equal(oldInput));
+        cy.get(firstNameInput).should('have.value', '');
+        // Two frames, so that the checks below also see a blur that comes after the render.
+        cy.then(() => afterTwoFrames());
+        // Firefox sends no blur for a removed input. The detached input still sends `gui-blur`, and
+        // the old Lit widget still listens to it. Angular removes that listener with the view.
+        cy.then(() => {
+          oldInput.dispatchEvent(new FocusEvent('blur'));
+        });
+        cy.then(() => afterTwoFrames());
+        cy.get(firstNameError).should('not.exist');
+        cy.wrap(null).should(() => expect(newestState?.touchedControls).to.deep.equal({}));
+        cy.wrap(formEvent).should(() =>
+          expect(eventsNamed(formEvent, 'firstNameBlurred')).to.have.length(0),
+        );
       });
 
       it('sends load again and renders a new input node without focus', () => {

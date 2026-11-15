@@ -1,8 +1,9 @@
 import { isPlatformBrowser } from '@angular/common';
-import { inject, PLATFORM_ID, type WritableSignal } from '@angular/core';
+import { inject, PLATFORM_ID, type Type, type WritableSignal } from '@angular/core';
 import {
   type NonFunctionWidget,
   type WidgetViewModel,
+  type WithWidget,
   assertNoPropCollisions,
   widgetViewModel$,
 } from '@golemui/core';
@@ -18,6 +19,10 @@ export abstract class BaseWidgetAdapter<F extends NonFunctionWidget> {
   protected widget!: F;
 
   private ids = { formName: '', domId: '' };
+
+  // A new config replaces the store of the same context. The form builds new widgets for the new
+  // store, so this store belongs to this widget for its whole life.
+  private storeOfWidget: AngularFormContext<Type<WithWidget>>['store'] | undefined;
 
   /**
    * The form's `formName`. Every DOM id the widget renders starts with it, so two forms on one
@@ -41,6 +46,22 @@ export abstract class BaseWidgetAdapter<F extends NonFunctionWidget> {
     this.widget = widget;
     const formName = this.context.formName;
     this.ids = { formName, domId: toDomId(formName, widget.uid as string) };
+    this.storeOfWidget = this.context.store;
+  }
+
+  /**
+   * False after a new config replaced the store this widget started on. A removed widget of the
+   * old form can still call its adapter, for example with the blur of a removed input that had the
+   * focus. Such a call must not change the new form or send an event to the app.
+   *
+   * @returns False only when the context no longer holds the store this widget started on. An
+   * adapter whose `init` does not call `setWidget` has no kept store, so it returns true.
+   */
+  protected belongsToCurrentForm(): boolean {
+    if (this.storeOfWidget === undefined) {
+      return true;
+    }
+    return this.context.store === this.storeOfWidget;
   }
 
   /**

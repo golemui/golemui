@@ -1,10 +1,21 @@
-import { Component, inject, signal, type Type, viewChild } from '@angular/core';
+import {
+  Component,
+  inject,
+  Injector,
+  PLATFORM_ID,
+  runInInjectionContext,
+  signal,
+  type Type,
+  viewChild,
+} from '@angular/core';
 import { type ComponentFixture, TestBed } from '@angular/core/testing';
 import {
   type Action,
+  type FormEvent,
   type FormHealth,
   type FormInitConfig,
   identityTranslator,
+  type InputWidget,
   type Middleware,
   type NonFunctionWidget,
   preloadFormWidgets,
@@ -16,6 +27,7 @@ import { afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { FormCoreComponent } from '../components/form/form.component';
 import { AngularFormContext } from '../context/form.context';
 import { WidgetDirective } from '../directives/widget.directive';
+import { InputWidgetAdapter } from './input-widget-adapter.service';
 import {
   type ActionAdapter,
   type DisplayAdapter,
@@ -81,12 +93,14 @@ const usersRepeater = (extra: Record<string, unknown> = {}) => ({
     [config]="config()"
     [validators]="validators()"
     (formHealth)="healths.push($event)"
+    (formEvent)="formEvents.push($event)"
   />`,
 })
 class FormHostComponent {
   config = signal<StubConfig>({ formDef: rootLayout([]), widgetLoaders: stubWidgetLoaders });
   validators = signal<ValidatorFn<any>>(noopValidators);
   healths: FormHealth[] = [];
+  formEvents: FormEvent[] = [];
   form = viewChild.required(FormCoreComponent);
 }
 
@@ -682,5 +696,194 @@ describe('a new config object', () => {
     mounted.fixture.detectChanges();
 
     expect(mounted.formElement().dir).toBe('rtl');
+  });
+});
+
+describe('a call of a widget of the old form after a new config', () => {
+  type FormAdapters = {
+    firstName: InputAdapter<string>;
+    users: InputAdapter<unknown[]>;
+    save: ActionAdapter;
+    root: LayoutAdapter;
+  };
+
+  // A new config creates a new store with the same middlewares. Only the newest store records.
+  const recordNewestStoreActions = () => {
+    const actions: Action[] = [];
+    let storeCount = 0;
+    const middleware: Middleware<State, Action> = () => {
+      storeCount += 1;
+      const storeNumber = storeCount;
+      return (next) => (action) => {
+        if (storeNumber === storeCount) {
+          actions.push(action);
+        }
+        next(action);
+      };
+    };
+    return { actions, middleware };
+  };
+
+  const configWithEvents = (middleware: Middleware<State, Action>): StubConfig => ({
+    formDef: {
+      form: {
+        uid: 'root',
+        kind: 'layout',
+        type: 'flex',
+        on: { change: 'rootChanged' },
+        children: [
+          {
+            ...firstNameInput,
+            on: {
+              change: 'firstNameChanged',
+              filter: 'firstNameFiltered',
+              blur: 'firstNameBlurred',
+            },
+          },
+          usersRepeater({ on: { change: 'usersChanged' } }),
+          {
+            uid: 'save',
+            kind: 'action',
+            type: 'button',
+            label: 'Save',
+            on: { click: 'saveClicked' },
+          },
+        ],
+      },
+    },
+    widgetLoaders: stubWidgetLoaders,
+    data: { firstName: 'Ada', users: [{ name: 'Ada' }, { name: 'Linus' }] },
+    middlewares: [middleware],
+  });
+
+  const lastAdapters = (): FormAdapters => ({
+    firstName: lastAdapter<InputAdapter<string>>('firstName'),
+    users: lastAdapter<InputAdapter<unknown[]>>('users'),
+    save: lastAdapter<ActionAdapter>('save'),
+    root: lastAdapter<LayoutAdapter>('root'),
+  });
+
+  /** Mounts the form and passes an equal new config. Records only what happens after that. */
+  const mountAndPassNewConfig = () => {
+    const recorder = recordNewestStoreActions();
+    const config = configWithEvents(recorder.middleware);
+    const mounted = mountForm(config);
+    const oldAdapters = lastAdapters();
+    mounted.setConfig({ ...config });
+    recorder.actions.length = 0;
+    const { formEvents } = mounted.fixture.componentInstance;
+    formEvents.length = 0;
+    const formEventNames = () => formEvents.map((event) => event.name);
+    return { oldAdapters, newAdapters: lastAdapters(), actions: recorder.actions, formEventNames };
+  };
+
+  const adapterCalls: { method: string; call: (adapters: FormAdapters) => void }[] = [
+    {
+      method: 'InputWidgetAdapter.valueChanged',
+      call: ({ firstName }) => firstName.valueChanged('Grace'),
+    },
+    {
+      method: 'InputWidgetAdapter.rowRemoved',
+      call: ({ users }) => users.rowRemoved([{ name: 'Linus' }], 0),
+    },
+    {
+      method: 'InputWidgetAdapter.filterChanged',
+      call: ({ firstName }) => firstName.filterChanged('Gr'),
+    },
+    {
+      method: 'InputWidgetAdapter.injectValidationIssues',
+      call: ({ firstName }) => firstName.injectValidationIssues(['taken']),
+    },
+    { method: 'InputWidgetAdapter.onBlur', call: ({ firstName }) => firstName.onBlur() },
+    { method: 'ActionWidgetAdapter.click', call: ({ save }) => save.click() },
+    { method: 'LayoutWidgetAdapter.change', call: ({ root }) => root.change('second') },
+  ];
+
+  it.each(adapterCalls)(
+    'sends no action to the new store and no form event for $method',
+    ({ call }) => {
+      const { oldAdapters, actions, formEventNames } = mountAndPassNewConfig();
+
+      call(oldAdapters);
+
+      expect(actions).toEqual([]);
+      expect(formEventNames()).toEqual([]);
+    },
+  );
+
+  it('dispatches and emits as before for the widgets of the new form', () => {
+    const { newAdapters, actions, formEventNames } = mountAndPassNewConfig();
+
+    for (const { call } of adapterCalls) {
+      call(newAdapters);
+    }
+
+    expect(actions.map((action) => action.type)).toEqual([
+      'SET_WIDGET_DATA',
+      'ATTEMPT_VALIDATION',
+      'SET_WIDGET_DATA',
+      'ATTEMPT_VALIDATION',
+      'INJECT_VALIDATION_ISSUES',
+      'ATTEMPT_VALIDATION',
+    ]);
+    expect(formEventNames()).toEqual([
+      'firstNameChanged',
+      'usersChanged',
+      'firstNameFiltered',
+      'firstNameBlurred',
+      'saveClicked',
+      'rootChanged',
+    ]);
+  });
+});
+
+describe('an input adapter whose init does not call setWidget', () => {
+  class InputAdapterWithoutSetWidget extends InputWidgetAdapter<string, Record<string, never>> {
+    override init(widget: InputWidget<string>) {
+      this.widget = widget;
+    }
+  }
+
+  it('still dispatches to the store and still sends its form event', () => {
+    const actions: Action[] = [];
+    const recordActions: Middleware<State, Action> = () => (next) => (action) => {
+      actions.push(action);
+      next(action);
+    };
+    const context = new AngularFormContext<Type<WithWidget>>();
+    context.initialize(
+      stubWidgetLoaders,
+      [recordActions],
+      noopValidators,
+      'eager',
+      {},
+      undefined,
+      {},
+    );
+    const formDef = rootLayout([
+      { ...firstNameInput, on: { change: 'firstNameChanged', blur: 'firstNameBlurred' } },
+    ]);
+    context.store.dispatch({ type: 'INITIALIZE', payload: { formName: 'adapters', formDef } });
+    const formEventNames: string[] = [];
+    context.events$.subscribe((event) => formEventNames.push(event.name));
+    const injector = Injector.create({
+      providers: [
+        { provide: AngularFormContext, useValue: context },
+        { provide: PLATFORM_ID, useValue: 'browser' },
+      ],
+    });
+    const adapter = runInInjectionContext(injector, () => new InputAdapterWithoutSetWidget());
+    adapter.init(context.store.getState().resolvedSources['firstName'] as InputWidget<string>);
+    actions.length = 0;
+
+    adapter.valueChanged('Grace');
+    adapter.onBlur();
+
+    expect(actions.map((action) => action.type)).toEqual([
+      'SET_WIDGET_DATA',
+      'ATTEMPT_VALIDATION',
+      'ATTEMPT_VALIDATION',
+    ]);
+    expect(formEventNames).toEqual(['firstNameChanged', 'firstNameBlurred']);
   });
 });

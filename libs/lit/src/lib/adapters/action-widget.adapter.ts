@@ -30,6 +30,9 @@ export class ActionWidgetAdapter<
 
   /** Emits `click`, with a detail such as the value of the item picked in a menu. */
   click(detail?: unknown) {
+    if (!this.belongsToCurrentForm()) {
+      return;
+    }
     this.context.emitEvent('click', this.widget, detail);
   }
 }
