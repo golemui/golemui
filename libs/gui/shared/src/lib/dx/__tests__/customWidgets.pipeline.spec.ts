@@ -161,7 +161,10 @@ describe('DX Pipeline — Custom Action', () => {
     expect(typeof btn.on?.click).toBe('string');
 
     dxResult.events!({ name: btn.on.click, data: { ok: true }, callback: vi.fn() });
-    expect(handler).toHaveBeenCalledWith({ ok: true });
+    expect(handler).toHaveBeenCalledWith(
+      { ok: true },
+      expect.objectContaining({ data: { ok: true } }),
+    );
   });
 
   it('passes through custom props', () => {

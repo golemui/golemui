@@ -29,7 +29,29 @@ const emit = defineEmits<{
 const useStableId = (vueRuntime as { useId?: () => string }).useId;
 
 const formContext = new VueFormContext();
-const formName = ref<string>(props.config.formName ?? useStableId?.() ?? shortUUID());
+// The id of this component for every config without a formName. `useId` runs only when the
+// first config has no formName, because each call changes the `useId` values of the
+// components that render after this form.
+let generatedFormName: string | undefined;
+if (props.config.formName === undefined || props.config.formName === null) {
+  generatedFormName = useStableId?.();
+}
+
+const formNameOfCurrentConfig = (): string => {
+  if (props.config.formName !== undefined && props.config.formName !== null) {
+    return props.config.formName;
+  }
+  // Created only when a start needs it: `shortUUID` uses `crypto.randomUUID`, which a page
+  // that is not a secure context does not have.
+  if (generatedFormName === undefined) {
+    generatedFormName = shortUUID();
+  }
+  return generatedFormName;
+};
+
+// Set before each INITIALIZE, which dispatches this same value, so the form id always matches
+// the DOM ids of the widgets of the current store.
+const formName = ref<string>('');
 const formLayoutField = ref<LayoutWidget<string> | null>(null);
 const health = ref<FormHealth>({ status: 'ok' });
 const direction = ref<'ltr' | 'rtl'>('ltr');
@@ -77,6 +99,9 @@ watch(
     initializedStoreVersion = storeVersion.value;
     initializedConfig = props.config;
     treeGeneration.value += 1;
+    // Read at every INITIALIZE, so a formName changed together with the formDef on the same
+    // config object is used too.
+    formName.value = formNameOfCurrentConfig();
     formContext.store.dispatch({
       type: 'INITIALIZE',
       payload: {
@@ -157,15 +182,26 @@ watch(
 const eventSub = formContext.events$.subscribe((event) => emit('form-event', event));
 const submitSub = formContext.submit$.subscribe((event) => emit('form-submit', event));
 
-let unsubscribeLang: (() => void) | null = null;
+// A new config or a new `validators` value gives a new store, and the listener moves to the
+// translator of the current config. A server render never mounts, so it adds no listener.
 onMounted(() => {
-  unsubscribeLang = formContext.localization.subscribe((lang) => {
-    direction.value = getDirectionFromLanguage(lang);
-    formContext.store.dispatch({
-      type: 'SET_LANGUAGE',
-      payload: { lang },
-    });
-  });
+  // Vue stops a watcher created in a lifecycle hook when the component unmounts, and runs its
+  // cleanup then.
+  watch(
+    () => storeVersion.value,
+    (_storeVersion, _previousStoreVersion, onCleanup) => {
+      // A translator written in JavaScript can return nothing, although the type asks for a function.
+      const unsubscribe: (() => void) | undefined = formContext.localization.subscribe((lang) => {
+        direction.value = getDirectionFromLanguage(lang);
+        formContext.store.dispatch({
+          type: 'SET_LANGUAGE',
+          payload: { lang },
+        });
+      });
+      onCleanup(() => unsubscribe?.());
+    },
+    { immediate: true },
+  );
 });
 
 onUnmounted(() => {
@@ -173,7 +209,6 @@ onUnmounted(() => {
   healthSub?.unsubscribe();
   eventSub.unsubscribe();
   submitSub.unsubscribe();
-  unsubscribeLang?.();
 });
 
 defineExpose<FormComponentHandle>({

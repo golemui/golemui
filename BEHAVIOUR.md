@@ -583,7 +583,7 @@ Moving a `gui-form` to another parent element keeps its data. It must keep its l
 
   -> the user had selected tab B before the move -> tab B is still selected.
 
-- Status: not yet. The tabs and the accordions go back to their `defaultOpen`.
+- Status: follows.
 
 ## Form component
 
@@ -598,26 +598,25 @@ When the app passes a new config object, the form starts again from the new conf
   <GuiForm config={{ formDef, formName: `customer-${customer.id}`, data: customer }} />
   ```
 
-- It uses the new `formName`. Status: follows in Angular and Lit. Not yet in React and Vue, which
-  keep the first name.
+- It uses the new `formName`. A new config with no `formName` gets the generated id of the form
+  component. Status: follows in React, Angular, Vue and Lit.
 - It follows the translator of the new config. For example, the app loads a translator for each
-  language and passes the new one in the config. Status: follows in React, Angular and Lit. Not
-  yet in Vue, which still listens to the old translator.
+  language and passes the new one in the config. Status: follows in React, Angular, Vue and Lit.
 - No field is touched. For example, the user types in a field and presses a keyboard shortcut
   that opens the next customer, so the focus is still in the field. Status: follows in React and
   Vue. Not yet in Angular and Lit. When the focused input is removed, its blur reaches the new
   form and marks the field there as touched. So a required empty field shows its error before
   the user does anything.
 - It initializes once, and `formHealth` sends one value. For example, a middleware that logs
-  each form start logs one start. Status: follows in React, Vue and Lit. Not yet in Angular,
-  which initializes two times.
+  each form start logs one start. Status: follows in React, Angular, Vue and Lit.
 
 ### 26. `setData` before the form has started keeps the values
 
 The form element exists before it has started (Lit: before its first update, Angular: before its
 config is applied). A `setData`, `setMeta` or `setHealth` call in that time must not be lost. The
 last call replaces the `data` or `meta` of the config, like a call after the start. A `setHealth`
-call gives the health the form starts with.
+call is applied when the form has started, so the first health value is the health of the started
+form (`ok` or the error of the start), and the health of the call follows.
 
 - Scenario: a page creates the form, fills in a draft that it saved in `localStorage`, and then
   adds the form to the page.
@@ -795,9 +794,10 @@ In a form definition, each `on` value is the name of the event, a string. Functi
   -> nothing runs when the form is built. On click, the handler gets the form data, and the event
   as a second parameter.
 
-- Status: not yet. Every handler is called once with `undefined` when the form is built, so this
-  example calls `api.save(undefined)`. A handler like `(event) => event.data` throws there, and
-  the form is not built. On click it gets only the data.
+- Status: follows for a handler that declares a parameter. A handler whose `length` is 0 is
+  called while the form is built, to read a host event name: a handler with no parameters, with
+  only default or rest parameters, or a wrapped function such as a debounced one. In a callback
+  button this call happens each time the callback runs.
 
 ### 36. `$log` works in every expression
 

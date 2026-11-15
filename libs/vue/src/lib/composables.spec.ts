@@ -20,6 +20,7 @@ import {
   h,
   nextTick,
   ref,
+  shallowReactive,
   shallowRef,
   toRaw,
 } from 'vue';
@@ -506,6 +507,114 @@ describe('the form id', () => {
 
     expect(mounted.container.querySelector('form')?.id).toBe('signup');
     expect(recorder.formNames.at(-1)).toBe('signup');
+  });
+
+  it('uses the formName of a new config object', async () => {
+    const recorder = formNameRecorder();
+    // A shallowRef passes the plain config object, as an app does.
+    const config = shallowRef<FormInitConfig<StubComponent>>({
+      formDef: rootLayout([firstNameInput]),
+      widgetLoaders: stubWidgetLoaders,
+      data: {},
+      formName: 'signup',
+      middlewares: [recorder.middleware],
+    });
+    const mounted = await mount({
+      setup: () => () => h(FormComponent, { config: config.value, validators: noopValidators }),
+    });
+
+    config.value = { ...config.value, formName: 'checkout' };
+    await nextTick();
+
+    expect(mounted.querySelector('form')?.id).toBe('checkout');
+    expect(recorder.formNames.at(-1)).toBe('checkout');
+    expect(lastComposableOutput<InputComposableOutput>('firstName').domId).toBe(
+      'checkout-firstName',
+    );
+  });
+
+  it('uses the generated id for a new config object with no formName, and keeps it', async () => {
+    const recorder = formNameRecorder();
+    const configOf = (formName?: string): FormInitConfig<StubComponent> => ({
+      formDef: rootLayout([firstNameInput]),
+      widgetLoaders: stubWidgetLoaders,
+      data: {},
+      formName,
+      middlewares: [recorder.middleware],
+    });
+    const config = shallowRef(configOf('signup'));
+    const mounted = await mount({
+      setup: () => () => h(FormComponent, { config: config.value, validators: noopValidators }),
+    });
+    const formId = () => mounted.querySelector('form')?.id;
+
+    config.value = configOf();
+    await nextTick();
+    const generatedId = formId();
+
+    expect(generatedId).toBeTruthy();
+    expect(generatedId).not.toBe('signup');
+    expect(recorder.formNames.at(-1)).toBe(generatedId);
+
+    config.value = configOf();
+    await nextTick();
+
+    expect(formId()).toBe(generatedId);
+    expect(recorder.formNames.at(-1)).toBe(generatedId);
+  });
+
+  it('uses the id generated at mount again after a config object with a formName', async () => {
+    const recorder = formNameRecorder();
+    const configOf = (formName?: string): FormInitConfig<StubComponent> => ({
+      formDef: rootLayout([firstNameInput]),
+      widgetLoaders: stubWidgetLoaders,
+      data: {},
+      formName,
+      middlewares: [recorder.middleware],
+    });
+    const config = shallowRef(configOf());
+    const mounted = await mount({
+      setup: () => () => h(FormComponent, { config: config.value, validators: noopValidators }),
+    });
+    const formId = () => mounted.querySelector('form')?.id;
+    const idGeneratedAtMount = formId();
+    expect(idGeneratedAtMount).toBeTruthy();
+
+    config.value = configOf('signup');
+    await nextTick();
+
+    expect(formId()).toBe('signup');
+
+    config.value = configOf();
+    await nextTick();
+
+    expect(formId()).toBe(idGeneratedAtMount);
+    expect(recorder.formNames.at(-1)).toBe(idGeneratedAtMount);
+  });
+
+  it('uses the new formName when formName and formDef change on the same reactive config object', async () => {
+    const recorder = formNameRecorder();
+    // Only a reactive config lets the form see a change on the same object.
+    const config = shallowReactive<FormInitConfig<StubComponent>>({
+      formDef: rootLayout([firstNameInput]),
+      widgetLoaders: stubWidgetLoaders,
+      data: {},
+      formName: 'signup',
+      middlewares: [recorder.middleware],
+    });
+    const mounted = await mount({
+      setup: () => () => h(FormComponent, { config, validators: noopValidators }),
+    });
+
+    config.formName = 'checkout';
+    config.formDef = rootLayout([
+      { uid: 'email', kind: 'input', type: 'textinput', path: 'email' },
+    ]);
+    await nextTick();
+
+    expect(mounted.querySelector('form')?.id).toBe('checkout');
+    expect(recorder.formNames.at(-1)).toBe('checkout');
+    expect(lastComposableOutput<InputComposableOutput>('email').domId).toBe('checkout-email');
   });
 
   it('gives two forms on one page different ids', async () => {

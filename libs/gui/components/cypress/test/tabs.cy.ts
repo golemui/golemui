@@ -194,5 +194,41 @@ describe('gui-tabs', () => {
 
       cy.get('gui-tab-list').invoke('scrollLeft').should('be.greaterThan', 0);
     });
+
+    it('scrolls the strip to the selected tab again after the element moves', () => {
+      cy.mount(html`<div style="width: 200px">${profile('billing')}</div>`);
+      cy.get('gui-tab-list').invoke('scrollLeft').should('be.greaterThan', 0);
+
+      // The browser sets the scroll position back to 0 when it inserts the element again.
+      cy.get('gui-tabs').then(([tabs]) => {
+        const firstParent = tabs.parentElement;
+        if (!firstParent) {
+          throw new Error('The tabs have no parent');
+        }
+        const otherParent = document.createElement('div');
+        document.body.append(otherParent);
+        otherParent.append(tabs);
+        firstParent.append(tabs);
+        otherParent.remove();
+      });
+
+      cy.get('gui-tab-list').invoke('scrollLeft').should('be.greaterThan', 0);
+    });
+
+    it('keeps the scroll position that the user gave the strip while the element stays', () => {
+      cy.mount(html`<div style="width: 200px">${profile('billing')}</div>`);
+      cy.get('gui-tab-list').invoke('scrollLeft').should('be.greaterThan', 0);
+
+      cy.get('gui-tab-list').scrollTo('left');
+      // A new tab updates the parts again, which must not scroll the strip to the selected tab.
+      cy.get('gui-tab-list').then(([list]) => {
+        const extraTab = document.createElement('gui-tab');
+        extraTab.setAttribute('panel', 'extra');
+        list.append(extraTab);
+      });
+      tab('extra').should('have.attr', 'aria-selected', 'false');
+
+      cy.get('gui-tab-list').invoke('scrollLeft').should('equal', 0);
+    });
   });
 });

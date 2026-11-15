@@ -31,6 +31,9 @@ export class TabsElement extends LitElement implements WithWidget {
   /** The tab uid, without row indexes: the panel children carry them, see `rowIndexSuffix`. */
   @state() private activeTab = '';
 
+  // A DOM move runs `connectedCallback` again, and the tab that the user selected must stay.
+  private defaultOpenWasRead = false;
+
   subscriptions: Subscription[] = [];
   private rowIndexSuffix = '';
 
@@ -43,8 +46,11 @@ export class TabsElement extends LitElement implements WithWidget {
     this.classList.add('gui-tabs', 'gui-field');
     this.adapter.context = this.formContext;
     this.adapter.init(this.widget);
-    const templateData = this.adapter.templateData;
-    this.activeTab = templateData.defaultOpen ?? templateData.tabs?.[0]?.uid ?? '';
+    if (!this.defaultOpenWasRead) {
+      const templateData = this.adapter.templateData;
+      this.activeTab = templateData.defaultOpen ?? templateData.tabs?.[0]?.uid ?? '';
+      this.defaultOpenWasRead = true;
+    }
     this.rowIndexSuffix = repeaterIndexSuffix(this.widget.uid);
 
     this.subscriptions.push(

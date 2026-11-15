@@ -29,6 +29,9 @@ export class AccordionElement extends LitElement implements WithWidget {
 
   subscriptions: Subscription[] = [];
 
+  // A DOM move runs `connectedCallback` again, and the user's open and closed sections must stay.
+  private defaultOpenWasRead = false;
+
   // Section uids come from raw props, children arrive from the store with row indexes applied.
   private rowIndexSuffix = '';
 
@@ -41,8 +44,11 @@ export class AccordionElement extends LitElement implements WithWidget {
     this.classList.add('gui-accordion', 'gui-field');
     this.adapter.context = this.formContext;
     this.adapter.init(this.widget);
-    // Copy: repeater rows share one `defaultOpen` object, a direct write would open the section in every row
-    this.activeSections = { ...(this.adapter.templateData.defaultOpen ?? {}) };
+    if (!this.defaultOpenWasRead) {
+      // Copy: repeater rows share one `defaultOpen` object, a direct write would open the section in every row
+      this.activeSections = { ...(this.adapter.templateData.defaultOpen ?? {}) };
+      this.defaultOpenWasRead = true;
+    }
     this.rowIndexSuffix = repeaterIndexSuffix(this.widget.uid);
 
     this.subscriptions.push(
