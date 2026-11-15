@@ -1,10 +1,13 @@
 import type {
+  Action,
   ActionWidget,
   DisplayWidget,
   FormInitConfig,
   InputWidget,
   LayoutWidget,
+  Middleware,
   NonFunctionWidget,
+  State,
   ValidatorFn,
   WithWidget,
 } from '@golemui/core';
@@ -154,6 +157,37 @@ export const noopValidators: ValidatorFn<any> = () =>
       validate: (value: unknown) => ({ value }),
     },
   }) as ReturnType<ValidatorFn<any>>;
+
+/** The stores that one config created, and the middleware that records them. */
+export type StoreRecorder = {
+  /** One list for each created store, in creation order, with the actions that reached it. */
+  actionsByStore: Action[][];
+  /** Put it in the `middlewares` of the config. */
+  middleware: Middleware<State, Action>;
+};
+
+/**
+ * Records each store that a config creates, with the actions that reach that store.
+ *
+ * @returns The recorded stores and the middleware that records them.
+ * @example
+ * const stores = storeRecorder();
+ * render(<FormComponent config={{ ...config, middlewares: [stores.middleware] }} />);
+ * expect(stores.actionsByStore).toHaveLength(1);
+ */
+export function storeRecorder(): StoreRecorder {
+  const actionsByStore: Action[][] = [];
+  // A store calls the outer function one time, when it is created.
+  const middleware: Middleware<State, Action> = () => {
+    const actions: Action[] = [];
+    actionsByStore.push(actions);
+    return (next) => (action) => {
+      actions.push(action);
+      next(action);
+    };
+  };
+  return { actionsByStore, middleware };
+}
 
 export const formDef = {
   form: {
