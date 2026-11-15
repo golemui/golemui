@@ -593,11 +593,9 @@ When the app passes a new config object, the form starts again from the new conf
   component. Status: follows in React, Angular, Vue and Lit.
 - It follows the translator of the new config. For example, the app loads a translator for each
   language and passes the new one in the config. Status: follows in React, Angular, Vue and Lit.
-- No field is touched. For example, the user types in a field and presses a keyboard shortcut
-  that opens the next customer, so the focus is still in the field. Status: follows in React and
-  Vue. Not yet in Angular and Lit. When the focused input is removed, its blur reaches the new
-  form and marks the field there as touched. So a required empty field shows its error before
-  the user does anything.
+- No field is touched, and the app gets no event for the blur of the removed input. For example,
+  the user types in a field and presses a keyboard shortcut that opens the next customer, so the
+  focus is still in the field. Status: follows in React, Angular, Vue and Lit.
 - It initializes once, and `formHealth` sends one value. For example, a middleware that logs
   each form start logs one start. Status: follows in React, Angular, Vue and Lit.
 
