@@ -114,7 +114,9 @@ await preloadFormWidgets({ widgetLoaders });
 
 - Set an explicit `formName` - required for SSR. Without one the server and the client mint
   different random ids (hydration still succeeds, but the markup id is not predictable).
-- Handlers run in the browser only - never during a server render.
+- Every handler except `formHealth` runs in the browser only, never during a server render. The
+  server render calls the `formHealth` listener once, with `{ status: 'ok' }`, or with the error
+  when the form definition has one.
 - The server renders the form structure and the native Angular widget internals (tabs,
   grid). `gui-*` element internals stay empty until the browser upgrades them. Each `gui-*`
   element carries `defer-hydration`, removed by the first client change detection pass.
@@ -155,7 +157,9 @@ Load the stylesheets through
 - `<GuiForm>` needs no compiler config. Only a component of your own that places a `gui-*` tag
   in its template needs `vue: { compilerOptions: { isCustomElement: (tag) => tag.startsWith('gui-') } }`,
   and object props on such a tag must be bound with `.prop` (an attribute would stringify them).
-- `onLoad`, like every handler, runs in the browser only — never during the server render.
+- `onLoad`, like every handler except `formHealth`, runs in the browser only, never during the
+  server render. The server render calls the `formHealth` listener once, with `{ status: 'ok' }`,
+  or with the error when the form definition has one.
 - The server renders the Vue layer (`<form>`, layouts, `gui-*` tags with their attributes and
   values); the Lit `gui-*` elements render their internals once the browser upgrades them.
 
@@ -248,8 +252,11 @@ register `gui-form` in `HTMLElementTagNameMap`, so an untyped `querySelector` yi
 
 In every case `formDef` is the bare array; form-wide config goes in the sibling
 `formConfig` (`config={{ formDef, formConfig: { states, validateOn } }}`). `validateOn` is one
-of `eager` | `change` | `blur` | `submit`. There is also a `formHealth` callback/event
-(validity reporting) and a `formEvent` event for host-dispatched widget events.
+of `eager` | `change` | `blur` | `submit`. There is also a `formHealth` callback/event and a
+`formEvent` event for host-dispatched widget events. `formHealth` sends `{ status: 'ok' }` or an
+error of the form itself, for example an error in the form definition. It does not report the
+validity of the data. Its first value is `{ status: 'ok' }`, or the error
+(`{ status: 'errored', code, message }`) when the form definition has one.
 
 ## Runtime methods — setData, setMeta, setHealth
 

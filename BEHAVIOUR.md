@@ -272,6 +272,12 @@ An app that waits for the first `formHealth` value must not see `ok` for a broke
 The user sees errors on the inputs. The app reads `isFormValid` and `$formIsInvalid`, for example
 to disable the submit button. Both must always agree with what the user sees.
 
+An issue injected with `INJECT_VALIDATION_ISSUES` (by the app, or by a widget through the adapter
+method `injectValidationIssues`) is an exception: `isFormValid` counts it, but `$formIsInvalid`
+and `$errors` do not. For example, the server rejects the email and the app injects the issue ->
+the email input shows the issue and `isFormValid` is false, but a submit button with
+`disabled: { when: '$formIsInvalid' }` stays enabled.
+
 ### 11. A hidden input never makes the form invalid
 
 - Scenario: a checkout form asks for a VAT number only from companies. The user checks "I buy as
@@ -504,9 +510,18 @@ is not leaving it.
 - Scenario: several users edit the same list. The app polls the server and calls `setData` with
   the new rows while a keyboard user types in the list.
 - Example: rows `[Alice, Bob, Carol]`, the focus is in Carol's input, the app calls
-  `setData({ rows: [Bob, Carol] })` -> the focus stays in an input of the repeater.
-- Status: not yet. The input of row 2 is removed, and the focus goes to `document.body`. A
-  keyboard user must start again from the top of the page.
+  `setData({ rows: [Bob, Carol] })` -> the input of row 2 is removed, and the focus moves to the
+  same input of the last row, row 1, which now shows Carol.
+- The user removes the last row with its Remove button: the focus is not moved, so it goes to
+  `document.body`. A moved focus would let a held Enter key remove one row after another.
+- The last row does not have the same element: another element of that row gets the focus, never
+  a Remove button. When the row has no such element, the focus goes to `document.body`.
+- No row is left: the Add button gets the focus. If there is no enabled Add button, the focus goes
+  to `document.body`.
+- The rows are keyed by position, so the focus follows a position, not a record. When the host
+  removes the record of the focus, the focus stays in the same input at its position, or moves to
+  the same input of the new last row when its position is gone. That input shows another record.
+- Status: follows.
 
 ## Tabs and accordion
 
@@ -684,8 +699,9 @@ an ancestor, for example of an outer page form, must not run for it.
 
 ### 30. A layout hidden at mount has `children: []`
 
-Custom layout widgets read `templateData.children`. Its type is an array, so it must always be
-one.
+Custom layout widgets in Angular and Lit read `templateData.children`. Its type is an array, so
+it must always be one. A React or Vue layout widget reads the `children` value that
+`useLayoutWidget` returns next to `templateData`.
 
 - Scenario: an app has a custom "card" layout widget that renders `templateData.children.map(...)`.
   A card has an `include.when` that is false when the form starts.

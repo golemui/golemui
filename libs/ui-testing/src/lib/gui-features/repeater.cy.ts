@@ -1797,6 +1797,180 @@ export const runRepeaterComponentTests = (baseMountFn: MountComponentFn) => {
       });
     });
 
+    describe('keyboard focus when rows are removed', () => {
+      const MEMBERS_PATH = 'members';
+      const THREE_MEMBERS = [{ name: 'Alice' }, { name: 'Bob' }, { name: 'Carol' }];
+      const nameInput = (row: number) => `[data-cy="memberName[${row}]_textinput"]`;
+      const outsideInput = '[data-cy="outsideInput_textinput"]';
+
+      const membersForm = (repeaterFields: Record<string, unknown>) =>
+        defineForm({
+          form: [
+            {
+              uid: 'membersRepeater',
+              kind: 'input',
+              type: 'repeater',
+              path: MEMBERS_PATH,
+              ...repeaterFields,
+              props: {
+                template: {
+                  kind: 'layout',
+                  type: 'grid',
+                  children: [
+                    {
+                      uid: 'memberName',
+                      kind: 'input',
+                      type: 'textinput',
+                      path: `${MEMBERS_PATH}.items.name`,
+                    },
+                    {
+                      uid: 'memberRole',
+                      kind: 'input',
+                      type: 'textinput',
+                      path: `${MEMBERS_PATH}.items.role`,
+                    },
+                  ],
+                },
+              },
+            } as FormWidget<string>,
+            { uid: 'outsideInput', kind: 'input', type: 'textinput', path: 'outside' },
+          ],
+        });
+
+      /** Mounts the members form and returns a function that calls `setData` on the host. */
+      const mountMembers = (
+        members: Record<string, unknown>[],
+        repeaterFields: Record<string, unknown> = {},
+      ) => {
+        let handle!: FormHandle;
+        mountFn({
+          data: { members },
+          formDef: membersForm(repeaterFields),
+          onFormReady: (formHandle) => {
+            handle = formHandle;
+          },
+        });
+        return (data: Record<string, unknown>) => cy.then(() => handle.setData(data));
+      };
+
+      // Reads `document.activeElement` itself, because `cy.focused()` sees no element when the
+      // focus is on the body.
+      const hasFocus = ($element: JQuery<HTMLElement>) => {
+        expect($element[0].ownerDocument.activeElement, 'document.activeElement').to.equal(
+          $element[0],
+        );
+      };
+
+      const expectNoFocus = () => {
+        cy.document().should((doc) => {
+          expect(doc.activeElement, 'document.activeElement').to.be.oneOf([null, doc.body]);
+        });
+      };
+
+      it('moves the focus to the same input of the last row when the host removes the row of the focus', () => {
+        const setData = mountMembers(THREE_MEMBERS);
+
+        cy.get(nameInput(2)).focus();
+        setData({ members: [{ name: 'Bob' }, { name: 'Carol' }] });
+
+        cy.get(nameInput(2)).should('not.exist');
+        cy.get(nameInput(1)).should('have.value', 'Carol').and(hasFocus);
+        // `.type()` on the input would focus it first. Typing into the focused element sends the
+        // keys to the body when the focus is lost.
+        cy.focused().type('!');
+        cy.get(nameInput(1)).should('have.value', 'Carol!');
+      });
+
+      it('keeps the focus on the same node when the row of the focus still exists', () => {
+        const setData = mountMembers(THREE_MEMBERS);
+        let focusedInput: HTMLElement | undefined;
+
+        cy.get(nameInput(0))
+          .focus()
+          .then(($input) => {
+            focusedInput = $input[0];
+          });
+        setData({ members: [{ name: 'Bob' }, { name: 'Carol' }] });
+
+        cy.get(nameInput(2)).should('not.exist');
+        cy.get(nameInput(0))
+          .should('have.value', 'Bob')
+          .and(($input) => {
+            expect($input[0], 'name input of row 0').to.equal(focusedInput);
+            hasFocus($input);
+          });
+      });
+
+      it('does not move the focus when the user removes the last row with its Remove button', () => {
+        mountMembers(THREE_MEMBERS);
+
+        cy.get('.gui-repeater__remove-btn').eq(2).focus().click();
+
+        cy.get(nameInput(2)).should('not.exist');
+        cy.get('.gui-repeater__remove-btn').should('have.length', 2);
+        // A held Enter key would remove one row after another from a moved focus.
+        expectNoFocus();
+      });
+
+      it('moves the focus to the Add button when the host removes every row', () => {
+        const setData = mountMembers([{ name: 'Alice' }]);
+
+        cy.get(nameInput(0)).focus();
+        setData({ members: [] });
+
+        cy.get(nameInput(0)).should('not.exist');
+        cy.get('.gui-repeater__add-btn').should(hasFocus);
+      });
+
+      it('moves the focus nowhere and throws no error when a read-only repeater loses every row', () => {
+        const setData = mountMembers([{ name: 'Alice' }], { readonly: true });
+
+        cy.get(nameInput(0)).focus();
+        setData({ members: [] });
+
+        cy.get(nameInput(0)).should('not.exist');
+        expectNoFocus();
+      });
+
+      it('keeps the focus in an input outside the repeater when the rows get shorter', () => {
+        const setData = mountMembers(THREE_MEMBERS);
+        let focusedInput: HTMLElement | undefined;
+
+        cy.get(outsideInput)
+          .focus()
+          .then(($input) => {
+            focusedInput = $input[0];
+          });
+        setData({ members: [{ name: 'Bob' }, { name: 'Carol' }] });
+
+        cy.get(nameInput(2)).should('not.exist');
+        cy.get(outsideInput).should(($input) => {
+          expect($input[0], 'outside input').to.equal(focusedInput);
+          hasFocus($input);
+        });
+      });
+
+      it('moves the focus to the same input of the last inner row when the host removes the inner row of the focus', () => {
+        const team = (developers: Record<string, unknown>[]) => ({
+          repeaters: { teams: [{ teamName: 'Team A', developers }] },
+        });
+        let handle!: FormHandle;
+        mountFn({
+          data: team([{ firstName: 'Alice' }, { firstName: 'Bob' }]),
+          formDef: getFormDefinition(),
+          onFormReady: (formHandle) => {
+            handle = formHandle;
+          },
+        });
+
+        cy.get('[data-cy="firstName[0][1]_textinput"]').focus();
+        cy.then(() => handle.setData(team([{ firstName: 'Bob' }])));
+
+        cy.get('[data-cy="firstName[0][1]_textinput"]').should('not.exist');
+        cy.get('[data-cy="firstName[0][0]_textinput"]').should('have.value', 'Bob').and(hasFocus);
+      });
+    });
+
     describe('readonly and disabled', () => {
       const MEMBERS_PATH = 'members';
       const MEMBERS = [

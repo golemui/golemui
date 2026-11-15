@@ -1,8 +1,13 @@
 <script setup lang="ts">
 import type { InputWidget, NonFunctionWidget, Validator, WithWidget } from '@golemui/core';
-import { type RepeaterProps } from '@golemui/gui-shared/internals';
+import {
+  findRepeaterRowFocus,
+  focusAfterRowRemoval,
+  type RepeaterProps,
+  type RepeaterRowFocus,
+} from '@golemui/gui-shared/internals';
 import { useInputWidget, WidgetRenderer } from '@golemui/vue';
-import { computed, ref, toRaw } from 'vue';
+import { computed, onBeforeUpdate, onUpdated, ref, toRaw } from 'vue';
 import '@golemui/gui-components/label';
 import '@golemui/gui-components/errors';
 
@@ -54,6 +59,19 @@ const onFocusOut = (event: FocusEvent) => {
   onBlur();
   isFocused.value = false;
 };
+
+let rowFocus: RepeaterRowFocus | null = null;
+onBeforeUpdate(() => {
+  // In Chromium the `focusout` of the removed input updates the component again before
+  // `onUpdated`. That update finds no focus, so a place whose element is removed is kept.
+  if (rowFocus === null || rowFocus.focusedElement.isConnected) {
+    rowFocus = findRepeaterRowFocus(repeaterRef.value, templateData.value.rows?.length ?? 0);
+  }
+});
+onUpdated(() => {
+  focusAfterRowRemoval(repeaterRef.value, rowFocus);
+  rowFocus = null;
+});
 
 const cardClass = computed(() => {
   let cls = 'gui-repeater__main-card gui-repeater__card';
