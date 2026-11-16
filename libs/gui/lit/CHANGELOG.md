@@ -1,3 +1,15 @@
+## 2.2.1-rc.0 (2026-11-16)
+
+### 🩹 Fixes
+
+- **lit:** give a call right after a new config to the new form ([#593](https://github.com/golemui/golemui/pull/593))
+- keep the keyboard focus in a repeater when the host removes its row ([#589](https://github.com/golemui/golemui/pull/589))
+- **gui-lit:** keep the selected tab and open sections of a moved form ([#584](https://github.com/golemui/golemui/pull/584))
+
+### ❤️ Thank You
+
+- Joan Llenas
+
 ## 2.2.0 (2026-11-13)
 
 ### 🚀 Features

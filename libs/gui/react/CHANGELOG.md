@@ -1,3 +1,14 @@
+## 2.2.1-rc.0 (2026-11-16)
+
+### 🩹 Fixes
+
+- **react:** give a call from a host effect after a new config to the new form ([#594](https://github.com/golemui/golemui/pull/594))
+- keep the keyboard focus in a repeater when the host removes its row ([#589](https://github.com/golemui/golemui/pull/589))
+
+### ❤️ Thank You
+
+- Joan Llenas
+
 ## 2.2.0 (2026-11-13)
 
 ### 🚀 Features

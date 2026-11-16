@@ -1,3 +1,13 @@
+## 2.2.1-rc.0 (2026-11-16)
+
+### 🩹 Fixes
+
+- **gui-lit:** keep the selected tab and open sections of a moved form ([#584](https://github.com/golemui/golemui/pull/584))
+
+### ❤️ Thank You
+
+- Joan Llenas
+
 ## 2.2.0 (2026-11-13)
 
 ### 🚀 Features

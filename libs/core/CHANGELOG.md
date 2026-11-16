@@ -1,3 +1,14 @@
+## 2.2.1-rc.0 (2026-11-16)
+
+### 🩹 Fixes
+
+- **gui-mcp:** report a repeated widget uid in the form validator ([#581](https://github.com/golemui/golemui/pull/581))
+- **core:** give $log to templates and i18n params ([#579](https://github.com/golemui/golemui/pull/579))
+
+### ❤️ Thank You
+
+- Joan Llenas
+
 ## 2.2.0 (2026-11-13)
 
 This was a version bump only for core to align it with other projects, there were no code changes.

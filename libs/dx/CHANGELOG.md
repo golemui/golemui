@@ -1,3 +1,13 @@
+## 2.2.1-rc.0 (2026-11-16)
+
+### 🩹 Fixes
+
+- **dx:** run a button onClick handler only on click ([#585](https://github.com/golemui/golemui/pull/585))
+
+### ❤️ Thank You
+
+- Joan Llenas
+
 ## 2.2.0 (2026-11-13)
 
 This was a version bump only for dx to align it with other projects, there were no code changes.
