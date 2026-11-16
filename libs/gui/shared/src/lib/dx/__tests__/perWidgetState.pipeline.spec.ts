@@ -343,6 +343,29 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
       result.events!({ name: eventName, data: {} } as any);
       expect(called).toBe(true);
     });
+
+    it('calls an onBlur handler of a state', () => {
+      let blurCalls = 0;
+      // A handler with no parameter is called while the form is built.
+      const handler = (_event: unknown) => {
+        blurCalls += 1;
+      };
+
+      const result = formDefs.processDxFacade(
+        [_guiTextInput('email', { states: { editing: { onBlur: handler } } })],
+        [],
+        { states: { editing: '!!$form.editing' } },
+      );
+
+      const rootLayout = result.form.form as LayoutWidget;
+      const widget = rootLayout.children?.[0] as NonFunctionWidget & Record<string, any>;
+      const eventName = widget.on?.['blur.editing'];
+      expect(typeof eventName).toBe('string');
+      expect(widget.props?.['onBlur.editing']).toBeUndefined();
+
+      result.events?.({ name: eventName, data: {} } as any);
+      expect(blurCalls).toBe(1);
+    });
   });
 
   // ═══════════════════════════════════════════════════
