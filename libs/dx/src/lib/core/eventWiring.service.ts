@@ -10,6 +10,15 @@ type ActionDefLike = { onClick?: (...args: any[]) => any } & Record<string, any>
 
 export type EventRegistry = Map<string, (event: FormEvent) => void>;
 
+/** Options of {@link EventWiringService.extractOnClickFromMergeResult}. */
+export interface OnClickWiringOptions {
+  /**
+   * With `true` the action keeps the uid of its definition, or has none. By default the
+   * generated event id replaces the uid.
+   */
+  keepDefinitionUid?: boolean;
+}
+
 /**
  * Mapping from DX event property names to core `on` keys.
  * onClick is handled separately in the action-specific path.
@@ -67,18 +76,19 @@ export class EventWiringService {
     mergeResult: MergeResult,
     eventRegistry: EventRegistry,
     eventIdGenerator: EventIdGenerator,
+    options: OnClickWiringOptions = {},
   ): MergeResult {
     if (mergeResult.kind === 'dynamic') {
       const originalFn = mergeResult.fn;
       const wrappedFn: RuntimeFunction = (params: FunctionWidgetParams<any>) => {
         const result = originalFn(params) as ActionDefLike;
-        return this.wireOnClick(result, eventRegistry, eventIdGenerator);
+        return this.wireOnClick(result, eventRegistry, eventIdGenerator, options);
       };
       return { kind: 'dynamic', fn: wrappedFn };
     }
 
     const actionDef = mergeResult.def as ActionDefLike;
-    const wired = this.wireOnClick(actionDef, eventRegistry, eventIdGenerator);
+    const wired = this.wireOnClick(actionDef, eventRegistry, eventIdGenerator, options);
     return { kind: 'static', def: wired };
   }
 
@@ -86,15 +96,17 @@ export class EventWiringService {
     actionDef: ActionDefLike,
     eventRegistry: EventRegistry,
     eventIdGenerator: EventIdGenerator,
+    options: OnClickWiringOptions,
   ): Record<string, any> {
     const actionId = eventIdGenerator.next();
+    const uid = options.keepDefinitionUid ? actionDef['uid'] : actionId;
     const rawOnClick = actionDef.onClick;
 
     if (typeof rawOnClick === 'function') {
       const { onClick: _, ...rest } = actionDef;
       const hostEventName = probeForHostEventName(rawOnClick);
       if (hostEventName != null) {
-        return { ...rest, uid: actionId, on: { click: hostEventName } };
+        return { ...rest, uid, on: { click: hostEventName } };
       }
       eventRegistry.set(actionId, (event: FormEvent) => {
         // The data stays the first parameter, so a handler written as `(data) => ...` keeps working.
@@ -103,10 +115,10 @@ export class EventWiringService {
           this.warnAboutIgnoredString(rawOnClick, returnValue);
         }
       });
-      return { ...rest, uid: actionId, on: { click: actionId } };
+      return { ...rest, uid, on: { click: actionId } };
     }
 
-    return { ...actionDef, uid: actionId };
+    return { ...actionDef, uid };
   }
 
   // `on.click` is already set when a registered handler runs, so the string cannot name an event.

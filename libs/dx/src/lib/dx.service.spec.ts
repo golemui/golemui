@@ -1,10 +1,20 @@
 import { describe, expect, it, vi } from 'vitest';
-import type { EventHandlerCallback, FormEvent } from '@golemui/core';
+import type { EventHandlerCallback, FormEvent, NonFunctionWidget } from '@golemui/core';
 import { DxService, createDxService, type DxAdapter } from './dx.service';
+import { createShortcutType, registerShortcutType } from './core/defineShortcutType';
+import type { ValidShortcut } from './core/dx.domain';
+import type { DxCommonFields } from './core/dxBase.types';
+import { createItemTypeRegistry } from './core/itemTypeRegistry';
 import type { ItemWalker } from './core/itemWalker.service';
 import selectorNormalizer from './core/selectorNormalizer.service';
-import type { EventRegistry } from './core/eventWiring.service';
-import { buildDemoImplementation, demoNote, demoStack, demoText } from './demo-widget-set.fixture';
+import eventWiringService, { type EventRegistry } from './core/eventWiring.service';
+import {
+  buildDemoImplementation,
+  demoNote,
+  demoStack,
+  demoText,
+  type DemoFieldDecorator,
+} from './demo-widget-set.fixture';
 
 // A walker that returns fixed widgets and a fixed event registry, so the result building of the
 // service is checked without the shortcut pipeline.
@@ -263,5 +273,140 @@ describe('DxService events', () => {
     events?.(makeEvent({ callback }));
 
     expect(callback).toHaveBeenCalledWith(action);
+  });
+});
+
+// A widget set with one action type whose hook is the click wiring of the pipeline, as in the
+// action of a real widget set.
+function buildServiceWithActionHook() {
+  const registry = createItemTypeRegistry();
+  registerShortcutType(
+    registry,
+    createShortcutType<DxCommonFields, DxCommonFields>({
+      itemType: 'DEMO_ACTION',
+      kind: 'action',
+      entryShape: 'bare',
+      mapToWidget: (def) =>
+        ({ uid: def.uid ?? '', kind: 'action', type: 'demoButton' }) as NonFunctionWidget,
+      afterMerge: (mergeResult, context) =>
+        eventWiringService.extractOnClickFromMergeResult(
+          mergeResult,
+          context.eventRegistry,
+          context.eventIdGenerator,
+          { keepDefinitionUid: context.omitGeneratedUids },
+        ),
+    }),
+  );
+  const demo = buildDemoImplementation();
+  for (const itemType of demo.registry.getRegisteredItemTypes()) {
+    registry.registerItemType(
+      itemType,
+      demo.registry.getItemTypeHandler(itemType),
+      demo.registry.getItemTypeKind(itemType),
+    );
+  }
+  const adapter: DxAdapter = {
+    bareItemToWidget: (renderFn) => demoNote(renderFn),
+    rootEntry: (children) => demoStack(children, { uid: '#root' }),
+  };
+  return createDxService({ registry, adapter });
+}
+
+const demoAction = (def: DxCommonFields | (() => DxCommonFields)): ValidShortcut => ({
+  type: 'ITEMS',
+  itemType: 'DEMO_ACTION',
+  items: [def],
+  tags: [],
+});
+
+describe('DxService form parts', () => {
+  it('returns the form with its states, the handlers by event name and the form config', () => {
+    const demo = buildDemoImplementation();
+    const onChange = (event: FormEvent): void => {
+      event.callback({} as EventHandlerCallback);
+    };
+
+    const parts = demo.formDefs.buildFormParts(
+      [demoText('a', { onChange } as DemoFieldDecorator)],
+      [],
+      { states: { adult$senior: 'x' }, validateOn: 'blur' },
+    );
+
+    const input = (parts.form.form as any).children[0];
+    expect(parts.form.states).toStrictEqual({ 'adult:senior': 'x' });
+    expect(parts.eventRegistry.get(input.on.change)).toBe(onChange);
+    expect(parts.formConfig.validateOn).toBe('blur');
+  });
+
+  it('gives the same form as processDxFacade', () => {
+    const demo = buildDemoImplementation();
+    const definitions = [demoText('a'), demoStack([demoText('b')])];
+    const formConfig = { states: { adult: 'x' } };
+
+    const parts = demo.formDefs.buildFormParts(definitions, [], formConfig);
+    const result = demo.formDefs.processDxFacade(definitions, [], formConfig);
+
+    expect(parts.form).toStrictEqual(result.form);
+  });
+
+  it('writes a generated uid for each widget without a uid by default', () => {
+    const service = buildServiceWithActionHook();
+
+    const parts = service.buildFormParts([
+      demoText('a'),
+      demoText('a'),
+      demoStack([]),
+      demoAction({ uid: 'save' }),
+    ]);
+
+    const uids = (parts.form.form as any).children.map((child: any) => child.uid);
+    expect(uids).toStrictEqual(['a', 'dx_0', 'dx_1', 'event_0']);
+  });
+
+  it('writes no generated uid with omitGeneratedUids', () => {
+    const service = buildServiceWithActionHook();
+
+    const parts = service.buildFormParts(
+      [demoText('a'), demoText('a'), demoStack([]), demoAction({ uid: 'save' }), demoAction({})],
+      [],
+      undefined,
+      { omitGeneratedUids: true },
+    );
+
+    const uids = (parts.form.form as any).children.map((child: any) => child.uid);
+    expect(uids).toStrictEqual(['a', '', '', 'save', '']);
+  });
+
+  it('keeps the uid of a runtime definition with omitGeneratedUids, with one call of its callback', () => {
+    const service = buildServiceWithActionHook();
+    const definition = vi.fn(() => ({ uid: 'save' }));
+
+    const parts = service.buildFormParts([demoAction(definition)], [], undefined, {
+      omitGeneratedUids: true,
+    });
+    const callsOfTheWalk = definition.mock.calls.length;
+    const actionCallback = (parts.form.form as any).children[0];
+    const action = actionCallback({ $form: {} });
+
+    expect(action.uid).toBe('save');
+    expect(definition.mock.calls.length - callsOfTheWalk).toBe(1);
+  });
+
+  it('gives an action with a handler the same event name with and without omitGeneratedUids', () => {
+    const service = buildServiceWithActionHook();
+    const onClick = (data: unknown): void => {
+      void data;
+    };
+    const definitions = [demoAction({ uid: 'save', onClick } as DxCommonFields)];
+
+    const withGeneratedUids = service.buildFormParts(definitions);
+    const withoutGeneratedUids = service.buildFormParts(definitions, [], undefined, {
+      omitGeneratedUids: true,
+    });
+
+    const actionOf = (parts: typeof withGeneratedUids) => (parts.form.form as any).children[0];
+    expect(actionOf(withGeneratedUids)).toMatchObject({ uid: 'event_0', on: { click: 'event_0' } });
+    expect(actionOf(withoutGeneratedUids)).toMatchObject({ uid: 'save', on: { click: 'event_0' } });
+    expect(withoutGeneratedUids.eventRegistry.has('event_0')).toBe(true);
   });
 });

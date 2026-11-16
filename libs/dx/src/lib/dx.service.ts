@@ -19,7 +19,7 @@ import { WidgetMerger } from './core/widgetMerger.service';
 import { WidgetMapper } from './core/widgetMapper.service';
 import { SelectorNormalizer } from './core/selectorNormalizer.service';
 import eventWiringService, { type EventRegistry } from './core/eventWiring.service';
-import { ItemWalker } from './core/itemWalker.service';
+import { ItemWalker, type WalkOptions } from './core/itemWalker.service';
 import stateExpansionService from './core/stateExpansion.service';
 import { type ItemTypeRegistry } from './core/itemTypeRegistry';
 import { objectUtils } from './utils/objectUtils.service';
@@ -58,6 +58,23 @@ interface PreparedForm<TDependencies extends Dependencies = Dependencies> {
 }
 
 /**
+ * The output of {@link DxService.buildFormParts}: the parts of a processed form, before
+ * {@link DxService.processDxFacade} joins them into one result.
+ */
+export interface DxFormParts<
+  StateKeys extends UiState = never,
+  FormData extends Record<string, any> = any,
+  TDependencies extends Dependencies = Dependencies,
+> {
+  /** The core form, with the states of the form config. */
+  form: Form<StateKeys, FormData>;
+  /** The handler functions of the definitions, by the event name that `form` holds. */
+  eventRegistry: EventRegistry;
+  /** The form config with its defaults applied. */
+  formConfig: FormConfig<TDependencies>;
+}
+
+/**
  * Transforms a developer-friendly form definition into a fully-fledged form definition
  * usable by the framework ({@link Form}<STATE_KEYS, FORM_DATA>).
  *
@@ -81,6 +98,38 @@ export class DxService<TDependencies extends Dependencies = Dependencies> {
     gslSelectorsInput: GslSelectorsInput = [],
     formConfigInput?: DxFormConfig<STATE_KEYS, TDependencies>,
   ): DxResult<STATE_KEYS, FORM_DATA, TDependencies> {
+    const { form, eventRegistry, formConfig } = this.buildFormParts<STATE_KEYS, FORM_DATA>(
+      dxDefinitionsRaw,
+      gslSelectorsInput,
+      formConfigInput,
+    );
+    return this.buildResult<STATE_KEYS, FORM_DATA>(form, eventRegistry, formConfig);
+  }
+
+  /**
+   * Runs the pipeline of {@link DxService.processDxFacade} and returns its parts separately: the
+   * core form, the handler functions by event name, and the form config. A tool that reads a
+   * processed form uses it, because the result of `processDxFacade` hides the handler functions
+   * inside one `events` function.
+   *
+   * @param dxDefinitionsRaw - The form definitions.
+   * @param gslSelectorsInput - The selectors.
+   * @param formConfigInput - The form config.
+   * @param walkOptions - Options of the walk, see {@link WalkOptions}.
+   * @returns The parts of the processed form.
+   *
+   * @example
+   * const { form, eventRegistry } = formDefs.buildFormParts(definitions, selectors, config);
+   * for (const [eventName, handler] of eventRegistry) {
+   *   console.log(eventName, handler.name);
+   * }
+   */
+  buildFormParts<STATE_KEYS extends UiState = never, FORM_DATA extends Record<string, any> = any>(
+    dxDefinitionsRaw: DxDefinitions,
+    gslSelectorsInput: GslSelectorsInput = [],
+    formConfigInput?: DxFormConfig<STATE_KEYS, TDependencies>,
+    walkOptions: WalkOptions = {},
+  ): DxFormParts<STATE_KEYS, FORM_DATA, TDependencies> {
     // -- 1. Prepare: normalize, auto-stack --
     const { defs, gslSelectors, formConfig } = this.prepareForm(
       dxDefinitionsRaw,
@@ -93,11 +142,20 @@ export class DxService<TDependencies extends Dependencies = Dependencies> {
       defs,
       gslSelectors,
       formConfig,
+      walkOptions,
     );
 
-    // -- 3. Build result --
+    // -- 3. Add the states of the form config --
     const rootLayout = widgets[0] as LayoutWidget<STATE_KEYS, FORM_DATA>;
-    return this.buildResult<STATE_KEYS, FORM_DATA>({ form: rootLayout }, eventRegistry, formConfig);
+    let form: Form<STATE_KEYS, FORM_DATA> = { form: rootLayout };
+    if (formConfig.states && Object.keys(formConfig.states).length > 0) {
+      form = {
+        ...form,
+        states: this.convertStateNames(formConfig.states) as Record<STATE_KEYS, string>,
+      };
+    }
+
+    return { form, eventRegistry, formConfig };
   }
 
   /**
@@ -163,14 +221,6 @@ export class DxService<TDependencies extends Dependencies = Dependencies> {
     eventRegistry: EventRegistry,
     formConfig: FormConfig<TDependencies>,
   ): DxResult<StateKeys, FormData, TDependencies> {
-    // Inject states into the core form if provided
-    if (formConfig.states && Object.keys(formConfig.states).length > 0) {
-      form = {
-        ...form,
-        states: this.convertStateNames(formConfig.states) as Record<StateKeys, string>,
-      };
-    }
-
     const result: DxResult<StateKeys, FormData, TDependencies> = { form };
 
     if (eventRegistry.size > 0) {
