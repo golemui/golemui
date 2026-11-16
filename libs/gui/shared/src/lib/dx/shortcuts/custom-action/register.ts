@@ -46,6 +46,7 @@ export const customActionShortcutType = createShortcutType<
       mergeResult,
       context.eventRegistry,
       context.eventIdGenerator,
+      { keepDefinitionUid: context.omitGeneratedUids },
     ),
 });
 

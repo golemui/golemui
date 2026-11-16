@@ -50,6 +50,7 @@ export const actionsShortcutType = createShortcutType<
       mergeResult,
       context.eventRegistry,
       context.eventIdGenerator,
+      { keepDefinitionUid: context.omitGeneratedUids },
     ),
 });
 

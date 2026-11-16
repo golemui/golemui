@@ -284,13 +284,16 @@ const guiSelectors = createSelectors({
   customLayoutByUid: _gslCustomLayoutByUid,
 });
 
+/** The uid of the root grid that the pipeline adds around the definitions of a form. */
+export const AUTOMATIC_ROOT_UID = '#root';
+
 // The gui choices for the generic DX pipeline: a bare function in a form
 // definition becomes a gui display widget, and the auto-stack root is a grid stack.
 const guiAdapter: DxAdapter = {
   bareItemToWidget: (renderFn) => _guiDisplay(renderFn),
   rootEntry: (children: ValidShortcut[]) => {
     const rootEntry: LayoutEntry = {
-      def: { uid: '#root', direction: 'column', widgetName: 'grid' },
+      def: { uid: AUTOMATIC_ROOT_UID, direction: 'column', widgetName: 'grid' },
       children,
     };
     return { type: 'ITEMS', itemType: GuiItemTypes.LAYOUTS, items: [rootEntry], tags: [] };
