@@ -1,3 +1,14 @@
+## 2.2.1 (2026-11-16)
+
+### 🩹 Fixes
+
+- **dx:** run a button onClick handler only on click ([#585](https://github.com/golemui/golemui/pull/585))
+- **gui-mcp:** report a repeated widget uid in the form validator ([#581](https://github.com/golemui/golemui/pull/581))
+
+### ❤️ Thank You
+
+- Joan Llenas
+
 ## 2.2.1-rc.0 (2026-11-16)
 
 ### 🩹 Fixes

@@ -1,3 +1,14 @@
+## 2.2.1 (2026-11-16)
+
+### 🩹 Fixes
+
+- **react,vue:** use the formName of a new config ([#586](https://github.com/golemui/golemui/pull/586))
+- **vue:** follow the translator of a new config ([#582](https://github.com/golemui/golemui/pull/582))
+
+### ❤️ Thank You
+
+- Joan Llenas
+
 ## 2.2.1-rc.0 (2026-11-16)
 
 ### 🩹 Fixes

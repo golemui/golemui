@@ -1,3 +1,14 @@
+## 2.2.1 (2026-11-16)
+
+### 🩹 Fixes
+
+- keep the keyboard focus in a repeater when the host removes its row ([#589](https://github.com/golemui/golemui/pull/589))
+- **dx:** run a button onClick handler only on click ([#585](https://github.com/golemui/golemui/pull/585))
+
+### ❤️ Thank You
+
+- Joan Llenas
+
 ## 2.2.1-rc.0 (2026-11-16)
 
 ### 🩹 Fixes

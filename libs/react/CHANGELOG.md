@@ -1,3 +1,14 @@
+## 2.2.1 (2026-11-16)
+
+### 🩹 Fixes
+
+- **react:** give a call from a host effect after a new config to the new form ([#594](https://github.com/golemui/golemui/pull/594))
+- **react,vue:** use the formName of a new config ([#586](https://github.com/golemui/golemui/pull/586))
+
+### ❤️ Thank You
+
+- Joan Llenas
+
 ## 2.2.1-rc.0 (2026-11-16)
 
 ### 🩹 Fixes

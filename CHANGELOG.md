@@ -1,3 +1,25 @@
+## 2.2.1 (2026-11-16)
+
+### 🩹 Fixes
+
+- keep the keyboard focus in a repeater when the host removes its row ([#589](https://github.com/golemui/golemui/pull/589))
+- **angular:** start the form one time for one new config ([#583](https://github.com/golemui/golemui/pull/583))
+- **angular:** apply an early setHealth call after the form has started ([#587](https://github.com/golemui/golemui/pull/587))
+- **core:** give $log to templates and i18n params ([#579](https://github.com/golemui/golemui/pull/579))
+- **dx:** run a button onClick handler only on click ([#585](https://github.com/golemui/golemui/pull/585))
+- **gui-lit:** keep the selected tab and open sections of a moved form ([#584](https://github.com/golemui/golemui/pull/584))
+- **gui-mcp:** report a repeated widget uid in the form validator ([#581](https://github.com/golemui/golemui/pull/581))
+- **lit:** do not report ok before an error of the form start ([#580](https://github.com/golemui/golemui/pull/580))
+- **lit:** give a call right after a new config to the new form ([#593](https://github.com/golemui/golemui/pull/593))
+- **lit,angular:** ignore a late call of a widget after a new config ([#591](https://github.com/golemui/golemui/pull/591))
+- **react:** give a call from a host effect after a new config to the new form ([#594](https://github.com/golemui/golemui/pull/594))
+- **react,vue:** use the formName of a new config ([#586](https://github.com/golemui/golemui/pull/586))
+- **vue:** follow the translator of a new config ([#582](https://github.com/golemui/golemui/pull/582))
+
+### ❤️ Thank You
+
+- Joan Llenas
+
 ## 2.2.1-rc.0 (2026-11-16)
 
 ### 🩹 Fixes

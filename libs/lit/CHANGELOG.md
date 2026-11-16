@@ -1,3 +1,16 @@
+## 2.2.1 (2026-11-16)
+
+### 🩹 Fixes
+
+- **lit:** give a call right after a new config to the new form ([#593](https://github.com/golemui/golemui/pull/593))
+- **lit,angular:** ignore a late call of a widget after a new config ([#591](https://github.com/golemui/golemui/pull/591))
+- **angular:** apply an early setHealth call after the form has started ([#587](https://github.com/golemui/golemui/pull/587))
+- **lit:** do not report ok before an error of the form start ([#580](https://github.com/golemui/golemui/pull/580))
+
+### ❤️ Thank You
+
+- Joan Llenas
+
 ## 2.2.1-rc.0 (2026-11-16)
 
 ### 🩹 Fixes
