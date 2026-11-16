@@ -7,19 +7,22 @@ const BUILDER_PROP_BY_EVENT: Record<string, string> = {
 };
 
 /**
- * Describes the handler of an `on` key with the name that the builder gives it.
+ * Describes the handler of an `on` key of a widget, with the name that the builder gives it.
  *
  * @param onKey - A key of `on`, for example `click` or `click.register`.
- * @returns For example `onClick` or `onClick in the state "register"`.
+ * @param widget - The widget that has the handler.
+ * @returns For example `onClick handler of the button "save"`, or
+ *   `onClick handler of the button "save" for the state "register"`.
  */
-export function describeHandler(onKey: string): string {
+export function describeHandler(onKey: string, widget: Record<string, unknown>): string {
   const separatorIndex = onKey.indexOf('.');
   const eventName = separatorIndex < 0 ? onKey : onKey.slice(0, separatorIndex);
   const builderProp = BUILDER_PROP_BY_EVENT[eventName] ?? eventName;
+  const handlerText = `${builderProp} handler of the ${describeWidget(widget)}`;
   if (separatorIndex < 0) {
-    return builderProp;
+    return handlerText;
   }
-  return `${builderProp} in the state "${onKey.slice(separatorIndex + 1)}"`;
+  return `${handlerText} for the state "${onKey.slice(separatorIndex + 1)}"`;
 }
 
 /**

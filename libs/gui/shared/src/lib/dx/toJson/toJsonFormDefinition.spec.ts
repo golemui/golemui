@@ -341,7 +341,9 @@ describe('toJsonFormDefinition', () => {
         expect.objectContaining({
           code: 'event-handler',
           pointer: '/form/0/on/click.register',
-          message: expect.stringContaining('The onClick in the state "register" handler'),
+          message: expect.stringContaining(
+            'The onClick handler of the button "submit" for the state "register" is a function',
+          ),
         }),
       ]);
     });

@@ -500,7 +500,7 @@ function nameEventHandlers(context: ConversionContext): void {
       nameByGeneratedName.set(generatedName, eventName);
     }
     use.on[use.onKey] = eventName;
-    use.diagnostic.message = `The ${describeHandler(use.onKey)} handler of the ${describeWidget(use.widget)} is a function, and JSON cannot hold a function. The JSON form holds the event name "${eventName}". Handle this event in the formEvent handler of the form component.`;
+    use.diagnostic.message = `The ${describeHandler(use.onKey, use.widget)} is a function, and JSON cannot hold a function. The JSON form holds the event name "${eventName}". Handle this event in the formEvent handler of the form component.`;
   }
 }
 
