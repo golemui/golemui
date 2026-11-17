@@ -1,3 +1,17 @@
+## 2.3.0-rc.0 (2026-11-17)
+
+### 🚀 Features
+
+- **gui-shared:** convert a gui.* form to a JSON form definition ([#606](https://github.com/golemui/golemui/pull/606))
+
+### 🩹 Fixes
+
+- **dx:** call an onBlur handler of a widget state ([#607](https://github.com/golemui/golemui/pull/607))
+
+### ❤️ Thank You
+
+- Joan Llenas
+
 ## 2.2.1 (2026-11-16)
 
 ### 🩹 Fixes
