@@ -1,3 +1,7 @@
+## 2.3.0 (2026-11-17)
+
+This was a version bump only for gui-lit to align it with other projects, there were no code changes.
+
 ## 2.3.0-rc.0 (2026-11-17)
 
 This was a version bump only for gui-lit to align it with other projects, there were no code changes.
