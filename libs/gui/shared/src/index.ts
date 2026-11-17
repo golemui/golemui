@@ -15,6 +15,18 @@ export type {
   GuiFormInitConfig,
 } from './lib/dx';
 
+// --- Conversion of a gui.* form to a JSON form definition ---
+export { toJsonFormDefinition } from './lib/dx';
+export type {
+  GuiFormSource,
+  JsonFormDefinition,
+  JsonFormDiagnostic,
+  JsonFormDiagnosticCode,
+  JsonFormDiagnosticSeverity,
+  JsonFormResult,
+  JsonFormWidget,
+} from './lib/dx';
+
 // ─── shared (external libs dependency injection) ───
 export type {
   Dependencies,

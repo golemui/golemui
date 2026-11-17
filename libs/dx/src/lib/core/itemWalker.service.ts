@@ -44,6 +44,16 @@ export interface WalkResult<
   eventRegistry: EventRegistry;
 }
 
+/** Options of {@link ItemWalker.walkAndMap}. */
+export interface WalkOptions {
+  /**
+   * With `true` the walk writes no generated uid. A widget keeps the uid of its definition, the
+   * first input of a path gets the path as its uid, and every other widget has an empty uid.
+   * The `afterMerge` hooks get the same value in their context. Defaults to `false`.
+   */
+  omitGeneratedUids?: boolean;
+}
+
 export class ItemWalker {
   constructor(
     private readonly registry: ItemTypeRegistry,
@@ -58,6 +68,7 @@ export class ItemWalker {
     guiShortcuts: ValidGuiShortcut[],
     gslSelectors: GslSelector[],
     formConfig: FormConfig,
+    walkOptions: WalkOptions = {},
   ): WalkResult<StateKeys, FormData> {
     const eventRegistry: EventRegistry = new Map();
     const eventIdGenerator = createEventIdGenerator();
@@ -71,6 +82,7 @@ export class ItemWalker {
       eventIdGenerator,
       widgetUidCounter,
       claimedPathUids,
+      walkOptions,
     );
     return { widgets, eventRegistry };
   }
@@ -83,6 +95,7 @@ export class ItemWalker {
     eventIdGenerator: EventIdGenerator,
     widgetUidCounter: { value: number },
     claimedPathUids: Set<string>,
+    walkOptions: WalkOptions,
   ): FormWidget<StateKeys, FormData>[] {
     return guiShortcuts.flatMap((shortcut) => {
       if (shortcut.type !== 'ITEMS') {
@@ -100,6 +113,7 @@ export class ItemWalker {
           eventIdGenerator,
           widgetUidCounter,
           claimedPathUids,
+          walkOptions,
         );
       });
     });
@@ -118,6 +132,7 @@ export class ItemWalker {
     eventIdGenerator: EventIdGenerator,
     widgetUidCounter: { value: number },
     claimedPathUids: Set<string>,
+    walkOptions: WalkOptions,
   ): FormWidget<StateKeys, FormData> {
     const gslItemType: GslItemType = itemType;
     // Look up the type-specific strategy for this widget type (inputs, actions, layouts, etc.).
@@ -142,6 +157,7 @@ export class ItemWalker {
         eventRegistry,
         formConfig,
         eventIdGenerator,
+        omitGeneratedUids: walkOptions.omitGeneratedUids === true,
       });
     }
 
@@ -168,6 +184,7 @@ export class ItemWalker {
         eventIdGenerator,
         widgetUidCounter,
         claimedPathUids,
+        walkOptions,
       );
       widget = this.buildCustomWidget<StateKeys, FormData>(handler, cleanedResult, context);
     } else {
@@ -186,7 +203,7 @@ export class ItemWalker {
         if (w.path && !claimedPathUids.has(w.path)) {
           w.uid = w.path;
           claimedPathUids.add(w.path);
-        } else {
+        } else if (!walkOptions.omitGeneratedUids) {
           w.uid = `dx_${widgetUidCounter.value++}`;
         }
       }
@@ -226,6 +243,7 @@ export class ItemWalker {
     eventIdGenerator: EventIdGenerator,
     widgetUidCounter: { value: number },
     claimedPathUids: Set<string>,
+    walkOptions: WalkOptions,
   ): BuildWidgetContext {
     return {
       children,
@@ -239,6 +257,7 @@ export class ItemWalker {
           eventIdGenerator,
           widgetUidCounter,
           claimedPathUids,
+          walkOptions,
         ),
     };
   }

@@ -88,7 +88,7 @@ An Nx monorepo. Use the Node version in `.nvmrc` and npm 11 (an older npm rewrit
 npm install
 npm run build:libs   # build every package
 npm run test:all     # run the test suite
-npm run lint
+npx nx run-many -t lint
 npm run format
 npx nx run react-playground:serve   # also angular-, vue-, lit-, nuxt-, nextjs-, astro-, analog-playground
 ```

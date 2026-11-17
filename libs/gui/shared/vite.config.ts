@@ -37,6 +37,7 @@ export default defineConfig(() => ({
       // External packages that should not be bundled into your library.
       external: [
         '@golemui/core',
+        /^@golemui\/core\/.+/,
         '@golemui/dx',
         '@golemui/gui-components',
         '@golemui/gui-validators',

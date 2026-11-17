@@ -102,6 +102,32 @@ Without the MCP, the same converter runs in code or from the command line:
 - As a file: `npx @golemui/schemas convert schema.json --preset @golemui/gui-schemas/json-schema --out form.json`
   writes the form definition, and does not replace an existing file without `--force`.
 
+## Converting a `gui.*` form to JSON
+
+`toJsonFormDefinition` from `@golemui/gui-shared` converts a form written with the TS API to a
+JSON definition. It runs the builder, so the JSON holds what the selectors, the automatic labels
+and the automatic placeholders add:
+
+```ts
+import { toJsonFormDefinition } from '@golemui/gui-shared';
+
+const { formDefinition, diagnostics } = toJsonFormDefinition({
+  formDef,
+  formSelectors,
+  formConfig,
+});
+```
+
+- `formDefinition` is the JSON document. Validate it as any other JSON definition.
+- `diagnostics` lists what JSON cannot hold, each with a JSON Pointer into the document:
+  - An event handler that is a function. The JSON holds an event name such as `save_click`.
+    Handle that event in the `formEvent` handler of the form component.
+  - A widget that is a callback. The JSON holds the result of one call with an empty form.
+  - A display widget that is a render function. It is left out.
+  - The `functions`, `dependencies`, `validateOn`, `itemRenderers` and `widgetLoaders` of
+    `formConfig`. Pass them in the config of the form component (`widgetLoaders` as
+    `customWidgetLoaders`), because a JSON form has no `formConfig`.
+
 ## Key docs (fetch as needed)
 
 - Form Definition API overview: https://golemui.com/json/form-definition/overview.md

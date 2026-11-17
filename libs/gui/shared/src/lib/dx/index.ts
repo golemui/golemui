@@ -180,6 +180,19 @@ export type {
 } from './formDef.domain';
 export { isDxDefinitions, resolveFormInput } from './resolveFormInput';
 export type { FormInput, GuiFormInitConfig, ResolvedFormInput } from './resolveFormInput';
+
+// --- Conversion of a gui.* form to a JSON form definition ---
+
+export { toJsonFormDefinition } from './toJson/toJsonFormDefinition';
+export type {
+  GuiFormSource,
+  JsonFormDefinition,
+  JsonFormDiagnostic,
+  JsonFormDiagnosticCode,
+  JsonFormDiagnosticSeverity,
+  JsonFormResult,
+  JsonFormWidget,
+} from './toJson/jsonFormTypes';
 export type {
   AccordionDecorator,
   GslAccordionConfig,

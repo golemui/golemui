@@ -31,6 +31,11 @@ export interface AfterMergeContext {
   eventRegistry: EventRegistry;
   formConfig: FormConfig;
   eventIdGenerator: EventIdGenerator;
+  /**
+   * True when the walk writes no generated uid. A hook that replaces the uid of a definition
+   * with a generated one must then keep the uid of the definition.
+   */
+  omitGeneratedUids?: boolean;
 }
 
 export interface BuildWidgetContext {

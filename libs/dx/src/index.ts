@@ -133,8 +133,9 @@ export { SelectorResolver } from './lib/core/selectorResolver.service';
 export { WidgetMerger } from './lib/core/widgetMerger.service';
 export { WidgetMapper } from './lib/core/widgetMapper.service';
 export { ItemWalker } from './lib/core/itemWalker.service';
-export type { WalkResult } from './lib/core/itemWalker.service';
+export type { WalkOptions, WalkResult } from './lib/core/itemWalker.service';
 export { EventWiringService, probeForHostEventName } from './lib/core/eventWiring.service';
+export type { OnClickWiringOptions } from './lib/core/eventWiring.service';
 export { default as eventWiringService } from './lib/core/eventWiring.service';
 export { StateExpansionService } from './lib/core/stateExpansion.service';
 export type { StateData } from './lib/core/stateExpansion.service';
@@ -143,7 +144,7 @@ export { SelectorNormalizer } from './lib/core/selectorNormalizer.service';
 // --- Form-definition service and framework bridge ---
 
 export { DxService, createDxService } from './lib/dx.service';
-export type { DxAdapter } from './lib/dx.service';
+export type { DxAdapter, DxFormParts } from './lib/dx.service';
 export { createResolveFormInput, isDxDefinitions } from './lib/resolveFormInput';
 export type { FormInput, ResolvedFormInput, ResolveFormInputFn } from './lib/resolveFormInput';
 
