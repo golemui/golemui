@@ -31,6 +31,7 @@ const EVENT_PROPS: Record<string, string> = {
   onChange: 'change',
   onLoad: 'load',
   onFilter: 'filter',
+  onBlur: 'blur',
   onClick: 'click',
 };
 
