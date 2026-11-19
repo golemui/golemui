@@ -40,7 +40,7 @@ const formHtml = await renderTemplate(html`<gui-form .config=${config}></gui-for
   import { widgetLoaders, type FormElement } from '@golemui/gui-lit';
   import { initValidators } from '@golemui/gui-validators';
   import { resumeServerRenderedForm, type FormElement as CoreFormElement } from '@golemui/lit';
-  import { config } from '../form';
+  import { CITIES, config, type FormShape } from '../form';
 
   // Same preload on the client, so the first client render resolves every widget. A rejected
   // preload skips the resume, so the page stays on the server markup.
@@ -48,7 +48,14 @@ const formHtml = await renderTemplate(html`<gui-form .config=${config}></gui-for
     .then(() => {
       const form = document.querySelector<FormElement>('gui-form')!;
       form.addEventListener('formEvent', (event) => {
-        const { name, data } = (event as CustomEvent<FormEvent>).detail;
+        const { name, data, callback } = (event as CustomEvent<FormEvent>).detail;
+        if (name === 'loadCities') {
+          const country = (data as FormShape).country;
+          callback({
+            type: 'OVERRIDE_WIDGET_PROP',
+            payload: { path: 'city', prop: 'options', value: CITIES[country ?? ''] ?? [] },
+          });
+        }
         if (name === 'handleSubmit') {
           console.log('Submitted:', data);
           alert(`Submitted:\n${JSON.stringify(data, null, 2)}`);
