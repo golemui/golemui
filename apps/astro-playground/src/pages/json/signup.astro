@@ -1,16 +1,16 @@
 ---
-import { config } from '../../forms/modular-dx';
+import { config } from '../../forms/json-signup';
 import Layout from '../../layouts/Layout.astro';
 import { renderForm } from '../../lib/render-form';
 
 // Opt this route out of per-request rendering so `astro build` exercises the Lit render at
-// build time (the other form pages validate request-time SSR).
+// build time (the other form page validates request-time SSR).
 export const prerender = true;
 
 const formHtml = await renderForm(config);
 ---
 
-<Layout title="Modular DX · Astro Playground">
+<Layout title="Sign-up form · Astro Playground">
   <div class="form-errors" hidden><ul id="form-errors"></ul></div>
   <Fragment set:html={formHtml} />
 </Layout>
@@ -18,7 +18,7 @@ const formHtml = await renderForm(config);
 <script>
   import { onFormEvent } from '@golemui/apps-shared';
   import type { FormSubmitEvent } from '@golemui/core';
-  import { config } from '../../forms/modular-dx';
+  import { config } from '../../forms/json-signup';
   import { collectFormErrors, resumeForm } from '../../lib/resume-form';
 
   resumeForm(config, {

@@ -1,32 +1,20 @@
-'use client';
-
-import {
-  mockMarkdownParser,
-  mockUploadService,
-  modularDx,
-  onFormEvent,
-} from '@golemui/apps-shared';
+import { mockMarkdownParser, mockUploadService, onFormEvent, signup } from '@golemui/apps-shared';
 import type { FormHealth, FormSubmitEvent } from '@golemui/core';
 import { GuiForm } from '@golemui/gui-react';
-import type { Dependencies, GuiFormInitConfig } from '@golemui/gui-shared';
+import type { Dependencies } from '@golemui/gui-shared';
 import { useCallback, useState } from 'react';
 
-const md = modularDx;
 const dependencies: Dependencies = {
   markdown: mockMarkdownParser,
   uploadService: mockUploadService,
 };
-const config: GuiFormInitConfig = {
-  // Stable id: with SSR the server and client must agree on the form id.
-  formName: 'nextjs-dx-modular',
-  formDef: md.formDef,
-  data: md.data,
-  formSelectors: md.formSelectors,
-  formConfig: md.formConfig,
+const config = {
+  formDef: signup.form,
+  data: signup.data,
   dependencies,
 };
 
-export default function ModularDxPage() {
+export function SignupPage() {
   const [errors, setErrors] = useState<string[]>([]);
 
   const onFormSubmit = useCallback((event: FormSubmitEvent) => {
@@ -66,3 +54,5 @@ export default function ModularDxPage() {
     </div>
   );
 }
+
+export default SignupPage;

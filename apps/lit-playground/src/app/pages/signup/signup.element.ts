@@ -1,16 +1,9 @@
-import {
-  mockMarkdownParser,
-  mockUploadService,
-  modularDx,
-  onFormEvent,
-} from '@golemui/apps-shared';
+import { mockMarkdownParser, mockUploadService, onFormEvent, signup } from '@golemui/apps-shared';
 import type { FormEvent, FormHealth, FormSubmitEvent } from '@golemui/core';
 import '@golemui/gui-lit';
 import { type Dependencies, type GuiFormInitConfig } from '@golemui/gui-shared';
 import { html, LitElement, nothing } from 'lit';
 import { customElement } from 'lit/decorators.js';
-
-const md = modularDx;
 
 const dependencies: Dependencies = {
   markdown: mockMarkdownParser,
@@ -18,15 +11,13 @@ const dependencies: Dependencies = {
 };
 
 const config: GuiFormInitConfig = {
-  formDef: md.formDef,
-  data: md.data,
-  formSelectors: md.formSelectors,
-  formConfig: md.formConfig,
+  formDef: signup.form,
+  data: signup.data,
   dependencies,
 };
 
-@customElement('lit-modular-dx')
-export class ModularDxElement extends LitElement {
+@customElement('lit-signup')
+export class SignupElement extends LitElement {
   private errors: string[] = [];
 
   override createRenderRoot() {
@@ -37,13 +28,15 @@ export class ModularDxElement extends LitElement {
     onFormEvent(event.detail);
   }
 
-  private onFormSubmit(event: FormSubmitEvent) {
-    console.log('👉 onFormSubmit', event.data);
+  private onFormSubmit(event: CustomEvent<FormSubmitEvent>) {
+    console.log('👉 onFormSubmit', event.detail.data);
   }
 
-  private onFormHealth(event: FormHealth) {
-    if (event.status === 'errored') {
-      this.errors = [...this.errors, event.message];
+  private onFormHealth(event: CustomEvent<FormHealth>) {
+    if (event.detail.status === 'errored') {
+      this.errors = [...this.errors, event.detail.message];
+      // `errors` is a plain field, so Lit does not render again without this call.
+      this.requestUpdate();
     }
   }
 

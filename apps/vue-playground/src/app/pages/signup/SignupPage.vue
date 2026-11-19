@@ -1,26 +1,17 @@
 <script setup lang="ts">
-import {
-  mockMarkdownParser,
-  mockUploadService,
-  modularDx,
-  onFormEvent,
-} from '@golemui/apps-shared';
+import { mockMarkdownParser, mockUploadService, onFormEvent, signup } from '@golemui/apps-shared';
 import type { FormHealth, FormSubmitEvent } from '@golemui/core';
 import { GuiForm } from '@golemui/gui-vue';
 import type { Dependencies, GuiFormInitConfig } from '@golemui/gui-shared';
 import { ref } from 'vue';
 
-const md = modularDx;
 const dependencies: Dependencies = {
   markdown: mockMarkdownParser,
   uploadService: mockUploadService,
 };
 const config: GuiFormInitConfig = {
-  formName: 'dx-modular',
-  formDef: md.formDef,
-  data: md.data,
-  formSelectors: md.formSelectors,
-  formConfig: md.formConfig,
+  formDef: signup.form,
+  data: signup.data,
   dependencies,
 };
 

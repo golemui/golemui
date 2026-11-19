@@ -2,8 +2,7 @@ import { LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
 import './app.element.scss';
 import './pages/form/form.element';
-import './pages/dx-form/dx-form.element';
-import './pages/modular-dx/modular-dx.element';
+import './pages/signup/signup.element';
 
 const LANDING_STYLES = `
 .kx-landing {
@@ -16,8 +15,7 @@ const LANDING_STYLES = `
   --kx-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px rgba(15, 23, 42, 0.06);
   --kx-shadow-hover: 0 1px 2px rgba(15, 23, 42, 0.04), 0 16px 36px rgba(15, 23, 42, 0.10);
   --kx-accent-json: #6366f1;
-  --kx-accent-dx: #0ea5e9;
-  --kx-accent-modular: #8b5cf6;
+  --kx-accent-signup: #8b5cf6;
   --kx-code-bg: rgba(15, 23, 42, 0.06);
   background: var(--kx-bg);
   color: var(--kx-fg);
@@ -35,8 +33,7 @@ const LANDING_STYLES = `
     --kx-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 10px 24px rgba(0, 0, 0, 0.45);
     --kx-shadow-hover: 0 1px 2px rgba(0, 0, 0, 0.4), 0 18px 40px rgba(0, 0, 0, 0.55);
     --kx-accent-json: #818cf8;
-    --kx-accent-dx: #38bdf8;
-    --kx-accent-modular: #a78bfa;
+    --kx-accent-signup: #a78bfa;
     --kx-code-bg: rgba(255, 255, 255, 0.08);
   }
 }
@@ -85,8 +82,7 @@ const LANDING_STYLES = `
 .kx-card:hover { transform: translateY(-2px); box-shadow: var(--kx-shadow-hover); border-color: var(--kx-card-hover-border); }
 .kx-card::before { content: ''; position: absolute; inset: 0 0 auto 0; height: 4px; background: var(--kx-card-accent); }
 .kx-card--json { --kx-card-accent: var(--kx-accent-json); }
-.kx-card--dx { --kx-card-accent: var(--kx-accent-dx); }
-.kx-card--modular { --kx-card-accent: var(--kx-accent-modular); }
+.kx-card--signup { --kx-card-accent: var(--kx-accent-signup); }
 .kx-card__head { display: flex; align-items: center; gap: 0.75rem; }
 .kx-card__badge {
   font-size: 0.7rem;
@@ -122,9 +118,8 @@ const LANDING_HTML = `
     <span class="kx-landing__eyebrow">Lit Playground</span>
     <h1 class="kx-landing__title">GolemUI Kitchen Sink</h1>
     <p class="kx-landing__subtitle">
-      Two ways to build the same form. Both pipelines render through the unified
-      <code>&lt;gui-form&gt;</code> component and produce identical output — pick the path
-      that fits how you author forms.
+      Two forms, each one a JSON definition: the kitchen sink with every widget, and a short
+      sign-up form.
     </p>
 
     <div class="kx-landing__grid">
@@ -149,44 +144,22 @@ const LANDING_HTML = `
         </span>
       </a>
 
-      <a href="#/dx/kitchen-sink" class="kx-card kx-card--dx">
+      <a href="#/json/signup" class="kx-card kx-card--signup">
         <div class="kx-card__head">
-          <span class="kx-card__badge">DX Path</span>
+          <span class="kx-card__badge">Small form</span>
         </div>
-        <h2 class="kx-card__title">Type-safe builder API</h2>
+        <h2 class="kx-card__title">Sign-up form</h2>
         <p class="kx-card__desc">
-          Compose forms with the <code>gui.*</code> builders and GSL selectors. The unified
-          <code>&lt;gui-form&gt;</code> runs <code>processDxFacade</code> internally, with
-          memoization so the tree only walks once per definition.
+          A short form in one tab, with custom validation messages and fields that appear for a
+          paid plan.
         </p>
         <ul class="kx-card__list">
-          <li>Autocomplete, refactor safety and inline docs</li>
-          <li>Validators &amp; reactive states colocated with widgets</li>
-          <li>Selectors apply cross-cutting concerns without prop-drilling</li>
+          <li>Custom validation messages</li>
+          <li>Fields that depend on a form state</li>
+          <li>A submit button that is disabled while the form is invalid</li>
         </ul>
         <span class="kx-card__cta">
-          Open DX kitchen sink
-          <span class="kx-card__cta__arrow">→</span>
-        </span>
-      </a>
-
-      <a href="#/dx/modular" class="kx-card kx-card--modular">
-        <div class="kx-card__head">
-          <span class="kx-card__badge">DX Modular</span>
-        </div>
-        <h2 class="kx-card__title">Multi-module tabbed form</h2>
-        <p class="kx-card__desc">
-          Combine independent <code>DxModule</code> slices into a single tabbed
-          <code>&lt;gui-form&gt;</code> via <code>buildModularDx()</code>. Each module owns its
-          layout, data, and reactive states — merged at the boundary.
-        </p>
-        <ul class="kx-card__list">
-          <li>Compose features as self-contained modules</li>
-          <li>Tabs auto-generated from module labels</li>
-          <li>Data and states merged transparently at runtime</li>
-        </ul>
-        <span class="kx-card__cta">
-          Open modular DX
+          Open sign-up form
           <span class="kx-card__cta__arrow">→</span>
         </span>
       </a>
@@ -218,10 +191,8 @@ export class AppElement extends LitElement {
     const hash = window.location.hash.replace(/^#\/?/, '');
     if (hash === 'json/kitchen-sink') {
       this.innerHTML = `<main class="container"><lit-form></lit-form></main>`;
-    } else if (hash === 'dx/kitchen-sink') {
-      this.innerHTML = `<main class="container"><lit-dx-form></lit-dx-form></main>`;
-    } else if (hash === 'dx/modular') {
-      this.innerHTML = `<main class="container"><lit-modular-dx></lit-modular-dx></main>`;
+    } else if (hash === 'json/signup') {
+      this.innerHTML = `<main class="container"><lit-signup></lit-signup></main>`;
     } else {
       this.innerHTML = LANDING_HTML;
     }

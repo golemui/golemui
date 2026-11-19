@@ -1,33 +1,25 @@
-import {
-  mockMarkdownParser,
-  mockUploadService,
-  modularDx,
-  onFormEvent,
-} from '@golemui/apps-shared';
+import { mockMarkdownParser, mockUploadService, onFormEvent, signup } from '@golemui/apps-shared';
 import type { FormHealth, FormSubmitEvent } from '@golemui/core';
 import { GuiForm } from '@golemui/gui-react';
 import type { Dependencies, GuiFormInitConfig } from '@golemui/gui-shared';
 import { createFileRoute } from '@tanstack/react-router';
 import { useCallback, useState } from 'react';
 
-const md = modularDx;
 const dependencies: Dependencies = {
   markdown: mockMarkdownParser,
   uploadService: mockUploadService,
 };
 const config: GuiFormInitConfig = {
   // Stable id: with SSR the server and client must agree on the form id.
-  formName: 'tanstack-dx-modular',
-  formDef: md.formDef,
-  data: md.data,
-  formSelectors: md.formSelectors,
-  formConfig: md.formConfig,
+  formName: 'tanstack-json-signup',
+  formDef: signup.form,
+  data: signup.data,
   dependencies,
 };
 
-export const Route = createFileRoute('/dx/modular')({ component: ModularDxPage });
+export const Route = createFileRoute('/json/signup')({ component: SignupPage });
 
-function ModularDxPage() {
+function SignupPage() {
   const [errors, setErrors] = useState<string[]>([]);
 
   const onFormSubmit = useCallback((event: FormSubmitEvent) => {

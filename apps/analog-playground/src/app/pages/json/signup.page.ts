@@ -1,15 +1,8 @@
 import { Component, signal } from '@angular/core';
-import {
-  mockMarkdownParser,
-  mockUploadService,
-  modularDx,
-  onFormEvent,
-} from '@golemui/apps-shared';
+import { mockMarkdownParser, mockUploadService, onFormEvent, signup } from '@golemui/apps-shared';
 import type { FormEvent, FormHealth, FormSubmitEvent } from '@golemui/core';
 import { FormComponent } from '@golemui/gui-angular';
 import type { Dependencies, GuiFormInitConfig } from '@golemui/gui-shared';
-
-const formExample = modularDx;
 
 const dependencies: Dependencies = {
   markdown: mockMarkdownParser,
@@ -20,7 +13,7 @@ const dependencies: Dependencies = {
 // wrote once, and the browser hydrates it like any request-rendered page.
 @Component({
   imports: [FormComponent],
-  selector: 'app-dx-modular-page',
+  selector: 'app-signup-page',
   template: `
     <div>
       @if (error()) {
@@ -37,14 +30,12 @@ const dependencies: Dependencies = {
     </div>
   `,
 })
-export default class DxModularPage {
+export default class SignupPage {
   protected readonly config: GuiFormInitConfig = {
     // Stable id: with SSR the server and client must agree on the form id.
-    formName: 'analog-dx-modular',
-    formDef: formExample.formDef,
-    data: formExample.data,
-    formSelectors: formExample.formSelectors,
-    formConfig: formExample.formConfig,
+    formName: 'analog-json-signup',
+    formDef: signup.form,
+    data: signup.data,
     dependencies,
   };
   protected readonly error = signal('');
