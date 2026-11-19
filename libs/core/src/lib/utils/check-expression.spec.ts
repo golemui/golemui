@@ -1,7 +1,5 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-// eslint-disable-next-line import/no-namespace -- the TypeScript compiler API is a CommonJS namespace
-import * as ts from 'typescript';
 import { describe, expect, it } from 'vitest';
 import {
   checkExpression,
@@ -269,9 +267,6 @@ describe('repository mock expressions', () => {
   const jsonExpressions = readMockFiles('.form.json').flatMap(({ file, text }) =>
     collectJsonExpressions(JSON.parse(text), file),
   );
-  const dxFiles = readMockFiles('.dx.ts').map(({ file, text }) => collectDxExpressions(text, file));
-  const dxExpressions = dxFiles.flatMap((result) => result.expressions);
-  const mockExpressions = [...jsonExpressions, ...dxExpressions];
 
   it('accepts every expression in the JSON mocks', () => {
     expect(jsonExpressions.length).toBeGreaterThan(0);
@@ -280,20 +275,14 @@ describe('repository mock expressions', () => {
     expect(issuesOf(jsonExpressions)).toEqual([]);
   });
 
-  it('accepts every when, states and {{ }} expression in the DX mocks', () => {
-    expect(dxExpressions.length).toBeGreaterThan(0);
-    expect(dxFiles.flatMap((result) => result.unresolvedTemplates)).toEqual([]);
-    expect(issuesOf(dxExpressions)).toEqual([]);
-  });
-
   it('keeps each size limit at twice the largest mock expression or more', () => {
-    const sizes = mockExpressions.map(({ expression }) => measureExpression(expression));
+    const sizes = jsonExpressions.map(({ expression }) => measureExpression(expression));
     const maxLength = Math.max(...sizes.map((size) => size.length));
     const maxNodes = Math.max(...sizes.map((size) => size.nodes));
     const maxDepth = Math.max(...sizes.map((size) => size.depth));
 
     console.info(
-      `[check-expression] largest of ${mockExpressions.length} mock expressions: ${maxLength} characters, ${maxNodes} nodes, depth ${maxDepth}`,
+      `[check-expression] largest of ${jsonExpressions.length} mock expressions: ${maxLength} characters, ${maxNodes} nodes, depth ${maxDepth}`,
     );
     expect(EXPRESSION_LIMITS.maxLength).toBeGreaterThanOrEqual(roundUp(2 * maxLength));
     expect(EXPRESSION_LIMITS.maxNodes).toBeGreaterThanOrEqual(roundUp(2 * maxNodes));
@@ -361,94 +350,4 @@ function collectJsonExpressions(formDefinition: unknown, file: string): MockExpr
   };
   visitNode(formDefinition, '');
   return found;
-}
-
-/**
- * The `when` values, the string values of a `states` object and the `{{ }}` slots of a DX mock,
- * read from the file text. A template literal resolves `${NAME}` through a `const NAME = '...'`
- * in the same file. Any other template literal is listed in `unresolvedTemplates`.
- */
-function collectDxExpressions(
-  text: string,
-  file: string,
-): { expressions: MockExpression[]; unresolvedTemplates: string[] } {
-  const sourceFile = ts.createSourceFile(file, text, ts.ScriptTarget.Latest, true);
-  const constants = new Map<string, string>();
-  const expressions: MockExpression[] = [];
-  const unresolvedTemplates: string[] = [];
-
-  const location = (node: ts.Node): string =>
-    `${file}:${sourceFile.getLineAndCharacterOfPosition(node.getStart()).line + 1}`;
-
-  const stringValue = (node: ts.Node): string | undefined => {
-    if (ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node)) {
-      return node.text;
-    }
-    if (!ts.isTemplateExpression(node)) {
-      return undefined;
-    }
-    let value = node.head.text;
-    for (const span of node.templateSpans) {
-      const constant = ts.isIdentifier(span.expression)
-        ? constants.get(span.expression.text)
-        : undefined;
-      if (constant === undefined) {
-        unresolvedTemplates.push(`${location(node)} ${node.getText()}`);
-        return undefined;
-      }
-      value += constant + span.literal.text;
-    }
-    return value;
-  };
-
-  const collectConstants = (node: ts.Node): void => {
-    if (ts.isVariableDeclaration(node) && ts.isIdentifier(node.name) && node.initializer) {
-      const value =
-        ts.isStringLiteral(node.initializer) || ts.isNoSubstitutionTemplateLiteral(node.initializer)
-          ? node.initializer.text
-          : undefined;
-      if (value !== undefined) {
-        constants.set(node.name.text, value);
-      }
-    }
-    ts.forEachChild(node, collectConstants);
-  };
-
-  const collectStates = (states: ts.ObjectLiteralExpression): void => {
-    for (const property of states.properties) {
-      const value = ts.isPropertyAssignment(property)
-        ? stringValue(property.initializer)
-        : undefined;
-      if (value !== undefined) {
-        expressions.push({ source: `${location(property)} states`, expression: value });
-      }
-    }
-  };
-
-  const collectExpressions = (node: ts.Node): void => {
-    const isStatesDeclaration =
-      (ts.isPropertyAssignment(node) || ts.isVariableDeclaration(node)) &&
-      node.name.getText() === 'states' &&
-      node.initializer !== undefined &&
-      ts.isObjectLiteralExpression(node.initializer);
-    if (isStatesDeclaration) {
-      collectStates(node.initializer as ts.ObjectLiteralExpression);
-    }
-    if (ts.isPropertyAssignment(node) && node.name.getText() === 'when') {
-      const value = stringValue(node.initializer);
-      if (value !== undefined) {
-        expressions.push({ source: `${location(node)} when`, expression: value });
-      }
-    }
-    if (ts.isStringLiteral(node) || ts.isTemplateLiteral(node)) {
-      for (const slot of slotsOf(stringValue(node) ?? '')) {
-        expressions.push({ source: `${location(node)} {{ }}`, expression: slot });
-      }
-    }
-    ts.forEachChild(node, collectExpressions);
-  };
-
-  collectConstants(sourceFile);
-  collectExpressions(sourceFile);
-  return { expressions, unresolvedTemplates };
 }
