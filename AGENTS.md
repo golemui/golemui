@@ -11,8 +11,10 @@ This file has two parts: [using GolemUI in an app](#using-golemui-in-an-app) and
 GolemUI is newer than most models' training data. Do not guess API names: take them from the
 skill, the MCP server or the docs below.
 
-- **Agent skill:** `npx skills add golemui/golemui` installs [`skills/golemui`](skills/golemui/SKILL.md),
-  the rules and API reference for writing GolemUI forms. Read it before writing form code.
+- **Agent skill:** `npx skills add golemui/golemui@v2.3.0` installs
+  [`skills/golemui`](https://github.com/golemui/golemui/tree/v2.3.0/skills/golemui) of the latest
+  release, the rules and API reference for writing GolemUI forms. Read it before writing form code.
+  Keep the tag: the `main` branch is the development branch of the next major version.
 - **MCP server:** `npx -y @golemui/gui-mcp` validates form definitions, type checks `gui.*` code
   and generates a form from a JSON Schema or an OpenAPI operation. In Claude Code:
   `claude mcp add golemui -- npx -y @golemui/gui-mcp`. Other clients:
