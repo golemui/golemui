@@ -26,6 +26,6 @@ Open <http://localhost:5173>.
 
 ## Learn more
 
-- [GolemUI docs](https://golemui.com/dx/getting-started/installation/)
-- [Form definition API](https://golemui.com/dx/form-definition-api/)
-- [Widgets reference](https://golemui.com/dx/widgets-reference/)
+- [GolemUI docs](https://golemui.com/json/getting-started/installation/)
+- [Form definition](https://golemui.com/json/form-definition/overview/)
+- [Input widgets](https://golemui.com/json/widgets-reference/input-fields/overview/)
